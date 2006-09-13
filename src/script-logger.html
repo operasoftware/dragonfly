@@ -1,0 +1,38 @@
+<html>
+
+<head>
+<script src="clientlib.js"></script>
+<script>
+var service = "ecmascript-logger";
+
+function go(fn)
+{
+    //setTimeout(fn, 100);
+}
+
+function setup()
+{
+    proxy.configure();
+
+    if (!proxy.enable(service))	{
+	alert( "No service: " + service );
+        return;
+    }
+
+    proxy.POST("/" + service, "<set-parameters reformat=\"yes\" />" );
+
+    go(getData);
+}
+
+function getData()
+{
+    var x = proxy.GET( "/xml/" + service );
+    alert( x.responseXML );
+}
+</script>
+</head>
+
+<body onload="go(setup)">
+</body>
+
+</html>
