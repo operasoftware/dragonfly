@@ -7,7 +7,7 @@ var service = "ecmascript-logger";
 
 function go(fn)
 {
-    //setTimeout(fn, 100);
+    setTimeout(fn, 100);
 }
 
 function setup()
@@ -19,20 +19,33 @@ function setup()
         return;
     }
 
-    proxy.POST("/" + service, "<set-parameters reformat=\"yes\" />" );
+    //proxy.onReceive = function (x) { alert(x.responseText); }
+
+    proxy.POST("/" + service, "<set-parameters reformat=\"yes\"/>" );
 
     go(getData);
 }
 
 function getData()
 {
-    var x = proxy.GET( "/xml/" + service );
-    alert( x.responseXML );
+    try {
+        var x = proxy.GET( "/" + service );
+	var p = document.createElement("pre");
+	p.appendChild(document.importNode(x.getElementsByTagName("source")[0].firstChild, true));
+	document.getElementById("sources").appendChild(p);
+
+	go(getData);
+    }
+    catch (e) {
+	alert( "FAILURE: " + e );
+    }
 }
 </script>
 </head>
 
 <body onload="go(setup)">
+<div id="sources">
+</div>
 </body>
 
 </html>
