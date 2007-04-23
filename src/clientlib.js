@@ -82,7 +82,7 @@ var proxy =
             if (x.status != 200) 
                 throw "Message failed: " + x.status;
 	    var xml = x.responseXML;
-            if (xml == null)
+            if (xml == null || xml.documentElement == null)
                 throw "Message failed: " + x.responseText;
 	    if (xml.documentElement.tagName != "timeout")
 	        return xml;
