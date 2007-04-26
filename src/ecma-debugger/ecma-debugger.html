@@ -1,0 +1,27 @@
+<!doctype html>
+<head>
+<title>ecma debugger</title>
+<link rel='stylesheet' href='style.css'>
+<script src="../scripts/dom.js"></script>
+<script src="../scripts/clientlib_async.js"></script>
+<script src="debug.js"></script>
+<script src="templates.js"></script>
+<script src="handlers.js"></script>
+<script src="ecma-debugger.js"></script>
+</head>
+<body>
+<div id='debug-container'>
+  <input type='button' value='clear output' onclick="document.getElementById('debug').innerHTML=''">
+  <h2>Debug</h2>
+  <pre id="debug"></pre>
+</div>
+<h2>Enviroment</h2>
+<div id="hello"></div>
+<h2>Runtimes</h2>
+<ul id="runtime-ids"></ul>
+<h2>Scripts</h2>
+<ul id="scripts"></ul>
+<h2>Script</h2>
+<div id="source-view"></div>
+</body>
+</html>
