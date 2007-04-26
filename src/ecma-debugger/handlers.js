@@ -1,6 +1,8 @@
 handlers = new function()
 {
-  this.showAllScripts = function()
+  var self = this;
+
+  this.showAllScripts = function(event)
   {
     var scripts=debugger.getScripts(this.getAttribute('runtime_id'));
     var scripts_container = document.getElementById('scripts');
@@ -10,10 +12,35 @@ handlers = new function()
     {
       scripts_container.render(templates.scriptLink(script));
     }
+    self.setSelected(event);
   }
 
-  this.showScript = function()
+  this.showScript = function(event)
   {
     document.getElementById('source-view').clearAndRender(['pre', this.ref['script-data']]);
+    self.setSelected(event);
+
+  }
+
+  this.setSelected = function(event)
+  {
+    var ele=event.target;
+    var siblings = ele.parentNode.getElementsByTagName(ele.nodeName), sibling = null, i=0;
+    for( ; sibling = siblings[i]; i++)
+    {
+      if(sibling == ele) 
+      {
+        sibling.addClass('selected'); 
+      }
+      else
+      {
+        sibling.removeClass('selected'); 
+      }
+    }
+  }
+
+  this.setStopAt = function(event)
+  {
+    debugger.setConfiguration(event.target.value, event.target.checked ? 'yes' : 'no');
   }
 }

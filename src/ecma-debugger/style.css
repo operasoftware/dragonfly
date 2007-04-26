@@ -10,17 +10,25 @@ body>div {
   padding:1px .7em;
   }
 
-h2 {
+h2, h3 {
   margin:0;
   padding:0;
   font-weight:normal;
   font-size:1.6em;
   }
 
+h3 {
+  font-size:1.3em;
+  }
+
 ul {
   margin:0;
   padding:0;
   list-style:none;
+  }
+
+li[hanler] {
+  cursor:pointer;
   }
 
 #debug-container {
@@ -38,4 +46,9 @@ ul {
   background-color:#fff;
   margin:.3em 0;
   padding:.5em;
+  }
+
+.selected {
+  background-color:#f00;
+  color:#fff;
   }

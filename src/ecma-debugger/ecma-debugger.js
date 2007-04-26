@@ -71,7 +71,6 @@ var debugger = new function()
       environment[child.nodeName] = child.textContent;
     }
     document.getElementById('hello').render(templates.hello(environment));
-    // stop at: "script" | "exception" | "error" | "abort" | "gc", yes/no;
     var config = storage.config_stop_at.get();
     var config_arr = [], prop = '';
     for ( prop in config )
