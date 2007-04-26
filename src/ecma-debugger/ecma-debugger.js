@@ -72,14 +72,15 @@ var debugger = new function()
     }
     document.getElementById('hello').render(templates.hello(environment));
     // stop at: "script" | "exception" | "error" | "abort" | "gc", yes/no;
-    self.setConfiguration
-    (
-      "script", 'no',  
-      "exception", 'no',  
-      "error", 'no',  
-      "abort", 'no',  
-      "gc", 'no'
-    );
+    var config = storage.config_stop_at.get();
+    var config_arr = [], prop = '';
+    for ( prop in config )
+    {
+      config_arr[config_arr.length] = prop;
+      config_arr[config_arr.length] = config[prop];
+    }
+    self.setConfiguration.apply(self, config_arr);
+    document.getElementById('configuration').render(templates.configStopAt(config));
   }
 
   this['new-script'] = function(xml)
