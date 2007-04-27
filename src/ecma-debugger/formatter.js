@@ -7,6 +7,7 @@ var simple_js_parser=new function()
   var __char=String.fromCharCode
   var __type=''; // WHITESPACE, LINE_TERMINATOR, NUMBER, STRING, PUNCTUATOR, DIV_PUNCTUIATOR, IDENTIFIER, REG_EXP
   var __previous_type='';
+  var __previous_value='';
   var __string_delimiter=0;
   var __cbo_onread=null;
   var __cbo_online=null;
@@ -46,40 +47,45 @@ var simple_js_parser=new function()
 
   var PUNCTUATOR=
   {
-    '{': 1,
-    '}': 1,
-    '(': 1,
-    ')': 1,
-    '[': 1,
-    ']': 1,
-    ';': 1,
-    ',': 1,
-    '<': 1,
-    '>': 1,
-    '=': 1,
-    '!': 1,
-    '+': 1,
-    '-': 1,
-    '*': 1,
-    '%': 1,
-    '&': 1,
-    '|': 1,
-    '^': 1,
-    '~': 1,
-    '?': 1,
-    ':': 1,
-    '.': 1
+    '{': '{',
+    '}': '}',
+    '(': '(',
+    ')': ')',
+    '[': '[',
+    ']': ']',
+    ';': ';',
+    ',': ',',
+    '<': '&lt;',
+    '>': '>',
+    '=': '=',
+    '!': '!',
+    '+': '+',
+    '-': '-',
+    '*': '*',
+    '%': '%',
+    '&': '&',
+    '|': '|',
+    '^': '^',
+    '~': '~',
+    '?': '?',
+    ':': ':',
+    '.': '.'
+  }
+
+  var __not_before_slash=
+  {
+    ')': 1
   }
 
   var PUNCTUATOR_2=
   {
-    '=': 1,
-    '+': 1,
-    '-': 1,
-    '<': 1,
-    '>': 1,
-    '&': 1,
-    '|': 1
+    '=': '=',
+    '+': '+',
+    '-': '-',
+    '<': '&lt;',
+    '>': '>',
+    '&': '&',
+    '|': '|'
   }
 
   var STRING_DELIMITER=
@@ -126,6 +132,7 @@ var simple_js_parser=new function()
   var default_parser=function(c)
   {
     var CRLF='';
+    __previous_value='';
     while(c)
     {
       if(c in WHITESPACE)
@@ -213,10 +220,11 @@ var simple_js_parser=new function()
         __type='PUNCTUATOR';
         do
         {
-          __buffer+=c;
+          __buffer+=PUNCTUATOR[c];
           c=__source.charAt(++__pointer);
         }
         while (c in PUNCTUATOR_2);
+        __previous_value=__buffer;
         read_buffer();
         __previous_type=__type;
         __type='IDENTIFIER';
@@ -244,7 +252,8 @@ var simple_js_parser=new function()
           c=singleline_comment_parser(__source.charAt(++__pointer));
           continue;
         }
-        if( __previous_type=='IDENTIFIER' || __previous_type=='NUMBER' )
+        if( __previous_type=='IDENTIFIER' || __previous_type=='NUMBER' || 
+          (__previous_type=='PUNCTUATOR' && __previous_value in __not_before_slash))
         {
           __type='DIV_PUNCTUIATOR';
           if(c=='=') 
@@ -266,7 +275,7 @@ var simple_js_parser=new function()
       }
       do
       {
-        __buffer+=c;
+        __buffer+=c=='<'?'&lt;':c;
         c=__source.charAt(++__pointer);
       }
       while (c && !(c in PUNCTUATOR  || c=='/' || c in LINETERMINATOR  || c in WHITESPACE));
@@ -326,7 +335,7 @@ var simple_js_parser=new function()
       {
         __buffer+=c;
         c=__source.charAt(++__pointer);
-        __buffer+=c;
+        __buffer+=c=='<'?'&lt;':c;
         c=__source.charAt(++__pointer);
       }
       if(c==__string_delimiter)
@@ -337,7 +346,7 @@ var simple_js_parser=new function()
         __type='IDENTIFIER';
         break;
       }
-      __buffer+=c;
+      __buffer+=c=='<'?'&lt;':c;
       c=__source.charAt(++__pointer);
     }
   }
@@ -377,7 +386,7 @@ var simple_js_parser=new function()
         }
         continue;
       }
-      __buffer+=c;
+      __buffer+=c=='<'?'&lt;':c;;
       c=__source.charAt(++__pointer);
     }
   }
@@ -405,7 +414,7 @@ var simple_js_parser=new function()
         }
         return c;
       }
-      __buffer+=c;
+      __buffer+=c=='<'?'&lt;':c;;
       c=__source.charAt(++__pointer);
     }
   }
@@ -418,8 +427,9 @@ var simple_js_parser=new function()
       {
         __buffer+=c;
         c=__source.charAt(++__pointer);
-        __buffer+=c;
+        __buffer+=c=='<'?'&lt;':c;;
         c=__source.charAt(++__pointer);
+        continue;
       }
       if(c=='/') 
       {
@@ -435,7 +445,7 @@ var simple_js_parser=new function()
         __type='IDENTIFIER';
         return c;
       }
-      __buffer+=c;
+      __buffer+=c=='<'?'&lt;':c;;
       c=__source.charAt(++__pointer);
     }
   }

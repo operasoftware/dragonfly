@@ -17,7 +17,8 @@ handlers = new function()
 
   this.showScript = function(event)
   {
-    document.getElementById('source-view').clearAndRender(['pre', this.ref['script-data']]);
+    var scipt=helpers.formatScript(this.ref['script-data']);
+    document.getElementById('source-view').innerHTML = scipt;//clearAndRender(['pre', this.ref['script-data']]);
     self.setSelected(event);
 
   }

@@ -48,6 +48,46 @@ li[hanler] {
   padding:.5em;
   }
 
+#source-view {
+  white-space: pre-wrap;
+  }
+
+#source-view li {
+  color:#999;
+  }
+
+#source-view li span {
+  color:#000;
+  }
+
+#source-view li .string {
+  color:#963;
+  }
+
+#source-view li .comment {
+  color:green;
+  }
+
+#source-view li .js_keywords {
+  color:#00f;
+  }
+
+#source-view li .js_builtins {
+  color:#f00;
+  }
+
+#source-view li .number {
+  color:#099;
+  }
+
+#source-view li .reg_exp {
+  color:#f60;
+  }
+
+#source-view li .punctuator {
+  color:#fc3;
+  }
+
 .selected {
   background-color:#f00;
   color:#fff;
