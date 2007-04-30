@@ -77,6 +77,11 @@ Element.prototype.removeClass=function(name)
   return this;
 }
 
+Element.prototype.hasClass=function(name)
+{
+  return (new RegExp('\\b'+name+'\\b')).test(this.className)
+}
+
 Element.prototype.releaseEvent=function(name)
 {
   var event=document.createEvent('Events');

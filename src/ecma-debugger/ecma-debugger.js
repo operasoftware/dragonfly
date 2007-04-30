@@ -20,10 +20,11 @@ var debugger = new function()
       {
         debug.output('not implemented: '+new XMLSerializer().serializeToString(xml));
         //alert("message not implemented: " +(new XMLSerializer().serializeToString(xml));
+        self.getData();
       }
       debug.formatXML(new XMLSerializer().serializeToString(xml));
     }
-    self.getData();
+    //self.getData();
   }
 
   var runtimes = {};
@@ -58,6 +59,11 @@ var debugger = new function()
       }
     }
   }
+
+  var parseBacktrace = function(xml)
+  {
+
+  }
   
   var environment = {}
 
@@ -80,6 +86,10 @@ var debugger = new function()
     }
     self.setConfiguration.apply(self, config_arr);
     document.getElementById('configuration').render(templates.configStopAt(config));
+    document.getElementById('continues').render(templates.continues());
+    helpers.setUpListeners();
+    helpers.setUpVerticalFrames()
+    self.getData();
   }
 
   this['new-script'] = function(xml)
@@ -91,10 +101,14 @@ var debugger = new function()
       script[child.nodeName] = child.firstChild.nodeValue;
     }
     scripts[scripts.length] = script;
-    addRuntime(script['runtime-id'])
+    addRuntime(script['runtime-id']);
+    self.getData();
   }
 
-  this['timeout'] = function() {}
+  this['timeout'] = function() 
+  {
+    self.getData();
+  }
 
   this['runtimes-reply'] = function(xml)
   {
@@ -107,8 +121,73 @@ var debugger = new function()
     {
       throw "runtimes-reply, missing tag";
     }
+    self.getData();
   }
 
+  /*
+
+  <thread-stopped-at>
+  <runtime-id>2</runtime-id>
+  <thread-id>8</thread-id>
+  <script-id>10</script-id>
+  <line-number>2</line-number>
+  <stopped-reason>unknown</stopped-reason>
+</thread-stopped-at>
+
+<runtimes-reply>
+
+CONTINUE ::= "<continue>" 
+                 RUNTIME-ID 
+                 THREAD-ID 
+                 MODE 
+               "</continue>" ;
+RUNTIME-ID ::= "<runtime-id>" UNSIGNED "</runtime-id>" ;
+THREAD-ID ::= "<thread-id>" UNSIGNED "</thread-id>" ;
+MODE ::= "<mode>" 
+             ( "run" | "step-into-call" | "step-over-call" | "finish-call" )
+           "</mode>" ;
+*/
+
+  var __stopAt = {}; // there can be only one stop at at the time
+
+  var __stopAtId = 1;
+
+  var getStopAtId = function()
+  {
+    return __stopAtId++;
+  }
+
+  this['thread-stopped-at'] = function(xml)
+  {
+    var stopAt = {};
+    var id = getStopAtId();
+    var children = xml.documentElement.childNodes, child=null, i=0;
+    for ( ; child = children[i]; i++)
+    {
+      stopAt[child.nodeName] = child.firstChild.nodeValue;
+    }
+    __stopAt[id] = stopAt;
+    var line = parseInt( stopAt['line-number'] );
+    if( typeof line == 'number' )
+    {
+      //self.backtrace(stopAt);
+      helpers.showLine( stopAt['script-id'], line );
+      helpers.disableContinues(id, false);
+    }
+    else
+    {
+      throw 'not a line number: '+stopAt['line-number'];
+    }
+  }
+/*
+
+  'runtime-id'
+  'script-id'
+  'script-type'
+  'script-data'
+  'uri'
+
+*/
   var scripts = [];
 
   this.getScripts=function(runtime_id)
@@ -122,6 +201,19 @@ var debugger = new function()
       }
     }
     return ret;
+  }
+
+  this.getScript=function(script_id)
+  {
+    var script = null, i=0;
+    for( ; script = scripts[i]; i++)
+    {
+      if(script['script-id'] == script_id)
+      {
+        return script;
+      }
+    }
+    return null;
   }
 
 
@@ -145,7 +237,7 @@ var debugger = new function()
 
   /**** commands ****/
 
-  this.setConfiguration = function() 
+  this.setConfiguration = function() // stopAt
   {
     var msg = "<set-configuration>", type='', bol='', i=0; 
     for ( ; (type = arguments[i++]) && (bol=arguments[i]); i++ )
@@ -172,6 +264,54 @@ var debugger = new function()
     msg += "</runtimes>";
     setTagCB(tag, parseRuntime);
     proxy.POST("/" + service, msg);
+  }
+
+  this.backtrace = function(stopAt)
+  {
+    var tag = getTagId();
+    var msg = "<backtrace>";
+    msg += "<tag>" + tag + "</tag>";
+    msg += "<runtime-id>" + stopAt['runtime-id'] + "</runtime-id>";
+    msg += "<thread-id>" + stopAt['thread-id'] + "</thread-id>";
+    msg += "<maxframes>" + 10 + "</maxframes>";  // not sure what is correct here;
+    msg += "</backtrace>";
+    setTagCB(tag, parseBacktrace);
+    proxy.POST("/" + service, msg);
+  }
+
+/*
+
+  <thread-stopped-at>
+  <runtime-id>2</runtime-id>
+  <thread-id>8</thread-id>
+  <script-id>10</script-id>
+  <line-number>2</line-number>
+  <stopped-reason>unknown</stopped-reason>
+</thread-stopped-at>
+
+
+CONTINUE ::= "<continue>" 
+                 RUNTIME-ID 
+                 THREAD-ID 
+                 MODE 
+               "</continue>" ;
+RUNTIME-ID ::= "<runtime-id>" UNSIGNED "</runtime-id>" ;
+THREAD-ID ::= "<thread-id>" UNSIGNED "</thread-id>" ;
+MODE ::= "<mode>" 
+             ( "run" | "step-into-call" | "step-over-call" | "finish-call" )
+           "</mode>" ;
+
+*/
+
+  this.__continue = function (stopAtId, mode)
+  {
+    var msg = "<continue>";
+    msg += "<runtime-id>" + __stopAt[stopAtId]['runtime-id'] + "</runtime-id>";
+    msg += "<thread-id>" + __stopAt[stopAtId]['thread-id'] + "</thread-id>";
+    msg += "<mode>" + mode + "</mode>";
+    msg += "</continue>";
+    proxy.POST("/" + service, msg);
+    self.getData();
   }
 
   /**** tags handling ****/

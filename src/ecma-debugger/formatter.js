@@ -1,5 +1,7 @@
 var simple_js_parser=new function()
 {
+  /* adjusted to return fotmatted HTML */
+
   var parser=null;
   var __source=null;
   var __buffer='';
@@ -9,10 +11,8 @@ var simple_js_parser=new function()
   var __previous_type='';
   var __previous_value='';
   var __string_delimiter=0;
-  var __cbo_onread=null;
-  var __cbo_online=null;
-  var __cbo_onfinish=null;
-
+  var __ret='<ol>';
+  var __line='';
   var WHITESPACE=
   {
     '\u0009': 1, //  Tab <TAB>
@@ -21,7 +21,6 @@ var simple_js_parser=new function()
     '\u0020': 1, //  Space <SP>
     '\u00A0': 1  //  No-break space <NBSP>
   }
-
   var LINETERMINATOR=
   {
     '\u000A': 1, //  Line Feed <LF>
@@ -30,7 +29,6 @@ var simple_js_parser=new function()
     '\u2028': 1, //  Line separator <LS>
     '\u2029': 1 //  Paragraph separator <PS>
   }
-
   var NUMBER=
   {
     '0': 1,
@@ -44,7 +42,6 @@ var simple_js_parser=new function()
     '8': 1,
     '9': 1
   }
-
   var PUNCTUATOR=
   {
     '{': '{',
@@ -71,12 +68,6 @@ var simple_js_parser=new function()
     ':': ':',
     '.': '.'
   }
-
-  var __not_before_slash=
-  {
-    ')': 1
-  }
-
   var PUNCTUATOR_2=
   {
     '=': '=',
@@ -87,13 +78,11 @@ var simple_js_parser=new function()
     '&': '&',
     '|': '|'
   }
-
   var STRING_DELIMITER=
   {
     '"': 1,
     '\'': 1
   }
-
   var HEX_NUMBER=
   {
     '0': 1,
@@ -119,16 +108,21 @@ var simple_js_parser=new function()
     'E': 1,
     'F': 1
   }
-
-
-
   var REG_EXP_FLAG=
   {
     'g': 1,
     'i': 1,
     'm': 1
   }
-
+  var PUNCTUATOR_DIV_PREDECESSOR=
+  {
+    ')': 1
+  }
+  var ESCAPE =
+  {
+    '<': '&lt;',
+    '&': '&amp;'
+  }
   var default_parser=function(c)
   {
     var CRLF='';
@@ -158,9 +152,9 @@ var simple_js_parser=new function()
         {
           c=__source.charAt(++__pointer);
         }
-        if(__cbo_online)
+        if(__online)
         {
-          __cbo_online();
+          __online();
         }
         continue;
       }
@@ -253,7 +247,7 @@ var simple_js_parser=new function()
           continue;
         }
         if( __previous_type=='IDENTIFIER' || __previous_type=='NUMBER' || 
-          (__previous_type=='PUNCTUATOR' && __previous_value in __not_before_slash))
+          (__previous_type=='PUNCTUATOR' && __previous_value in PUNCTUATOR_DIV_PREDECESSOR))
         {
           __type='DIV_PUNCTUIATOR';
           if(c=='=') 
@@ -275,7 +269,7 @@ var simple_js_parser=new function()
       }
       do
       {
-        __buffer+=c=='<'?'&lt;':c;
+        __buffer+=c in ESCAPE ? ESCAPE[c] : c;
         c=__source.charAt(++__pointer);
       }
       while (c && !(c in PUNCTUATOR  || c=='/' || c in LINETERMINATOR  || c in WHITESPACE));
@@ -325,8 +319,6 @@ var simple_js_parser=new function()
     return c;
   }
 
-
-
   var string_parser=function(c)
   {
     while(c)
@@ -335,8 +327,9 @@ var simple_js_parser=new function()
       {
         __buffer+=c;
         c=__source.charAt(++__pointer);
-        __buffer+=c=='<'?'&lt;':c;
+        __buffer+=c in ESCAPE ? ESCAPE[c] : c;
         c=__source.charAt(++__pointer);
+        continue;
       }
       if(c==__string_delimiter)
       {
@@ -346,11 +339,10 @@ var simple_js_parser=new function()
         __type='IDENTIFIER';
         break;
       }
-      __buffer+=c=='<'?'&lt;':c;
+      __buffer+=c in ESCAPE ? ESCAPE[c] : c;
       c=__source.charAt(++__pointer);
     }
   }
-
 
   var multiline_comment_parser=function(c)
   {
@@ -366,9 +358,9 @@ var simple_js_parser=new function()
         {
           c=__source.charAt(++__pointer);
         }
-        if(__cbo_online)
+        if(__online)
         {
-          __cbo_online();
+          __online();
         }
         continue;
       }
@@ -386,11 +378,10 @@ var simple_js_parser=new function()
         }
         continue;
       }
-      __buffer+=c=='<'?'&lt;':c;;
+      __buffer+=c in ESCAPE ? ESCAPE[c] : c;
       c=__source.charAt(++__pointer);
     }
   }
-
 
   var singleline_comment_parser=function(c)
   {
@@ -408,13 +399,13 @@ var simple_js_parser=new function()
         {
           c=__source.charAt(++__pointer);
         }
-        if(__cbo_online)
+        if(__online)
         {
-          __cbo_online();
+          __online();
         }
         return c;
       }
-      __buffer+=c=='<'?'&lt;':c;;
+      __buffer+=c in ESCAPE ? ESCAPE[c] : c;
       c=__source.charAt(++__pointer);
     }
   }
@@ -427,7 +418,7 @@ var simple_js_parser=new function()
       {
         __buffer+=c;
         c=__source.charAt(++__pointer);
-        __buffer+=c=='<'?'&lt;':c;;
+        __buffer+=c in ESCAPE ? ESCAPE[c] : c;
         c=__source.charAt(++__pointer);
         continue;
       }
@@ -445,7 +436,7 @@ var simple_js_parser=new function()
         __type='IDENTIFIER';
         return c;
       }
-      __buffer+=c=='<'?'&lt;':c;;
+      __buffer+=c in ESCAPE ? ESCAPE[c] : c;
       c=__source.charAt(++__pointer);
     }
   }
@@ -454,9 +445,48 @@ var simple_js_parser=new function()
   {
     if(__buffer)
     {
-      if(__cbo_onread)
+      switch (__type)
       {
-        __cbo_onread(__type, __buffer);
+        case 'STRING':
+        {
+          __line += "<span class='string'>" +  __buffer + "</span>";
+          break;
+        }
+        case 'IDENTIFIER':
+        {
+          if(__buffer in js_keywords)
+          {
+            __line += "<span class='js_keywords'>" +  __buffer + "</span>";
+          }
+          else if(__buffer in js_builtins)
+          {
+            __line += "<span class='js_builtins'>" +  __buffer + "</span>";
+          }
+          else
+          {
+            __line += __buffer;
+          }
+          break;
+        }
+        case 'NUMBER':
+        {
+          __line += "<span class='number'>" +  __buffer + "</span>";
+          break;
+        }
+        case 'COMMENT':
+        {
+          __line += "<span class='comment'>" +  __buffer + "</span>";
+          break;
+        }
+        case 'REG_EXP':
+        {
+          __line += "<span class='reg_exp'>" +  __buffer + "</span>";
+          break;
+        }
+        default:
+        {
+          __line += __buffer;
+        }
       }
       if(__type=='IDENTIFIER')
       {
@@ -466,15 +496,33 @@ var simple_js_parser=new function()
     __buffer='';
   }
 
-  this.parse=function(source, cbo)
+  var __online=function(c)
+  {
+    if( !__line ) 
+    {
+      __line += '\u00A0';
+    }
+    __ret += "<li><span>" + __line + "</span></li>";
+    __line='';
+
+  }
+
+  var __onfinish=function()
+  {
+    __online();
+    return __ret + "</ol>";
+  }
+
+  var __reset = function()
+  {
+    __ret='<ol>';
+    __line='';
+  }
+
+  this.parse=function(source)
   {
     ret='';
-    if(cbo)
-    {
-      __cbo_onread=cbo.onread;
-      __cbo_online=cbo.onlineterminator;
-      __cbo_onfinish=cbo.onfinish;
-    }
+    __reset();
     parser=default_parser;
     __previous_type='';
     __type='IDENTIFIER';
@@ -482,11 +530,9 @@ var simple_js_parser=new function()
     var length=__source.length;
     __pointer=0;
     parser(__source.charAt(__pointer));
-    if(__cbo_onfinish)
+    if(__onfinish)
     {
-      return __cbo_onfinish();
+      return __onfinish();
     }
   }
 }
-
-/* end file */

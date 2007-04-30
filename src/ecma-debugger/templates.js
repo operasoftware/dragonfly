@@ -55,6 +55,36 @@ templates = new function()
     {
       ret[ret.length] = this.checkbox(n, config[n]); 
     }
-    return ['div', ['h3', 'Stop At']].concat([ret]);
+    return ['div'].concat([ret]);
+  }
+/*
+
+MODE ::= "<mode>" 
+             ( "run" | "step-into-call" | "step-over-call" | "finish-call" )
+           "</mode>" ;
+
+           */
+  this.continues = function()
+  {
+    var ret = ['ul'];
+    ret[ret.length] = self.continueWithMode('run', 'run');
+    ret[ret.length] = self.continueWithMode('step into call', 'step-into-call');
+    ret[ret.length] = self.continueWithMode('step over call', 'step-over-call');
+    ret[ret.length] = self.continueWithMode('finish call', 'finish-call');
+    return ret;
+  }
+
+  this.continueWithMode = function(name, mode)
+  {
+    return ['li',
+        ['input',
+          'type', 'button',
+          'value', name,
+          'mode', mode,
+          'id', 'continue-' + mode,
+          'onclick', handlers.__continue,
+          'disabled', true
+        ]
+      ]
   }
 }

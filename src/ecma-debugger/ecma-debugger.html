@@ -15,20 +15,41 @@
 <script src="ecma-debugger.js"></script>
 </head>
 <body>
-<div id='debug-container'>
+<div id='debug-container' class='frame-vertical'>
   <input type='button' value='clear output' onclick="document.getElementById('debug').innerHTML=''">
   <h2>Debug</h2>
   <pre id="debug"></pre>
 </div>
-<h2>Enviroment</h2>
-<div id="hello"></div>
-<h2>Configuration</h2>
-<div id="configuration"></div>
-<h2>Runtimes</h2>
-<ul id="runtime-ids"></ul>
-<h2>Scripts</h2>
-<ul id="scripts"></ul>
-<h2>Script</h2>
-<div id="source-view"></div>
+<div id='slider-for-debug-container' class='frame-slider-vertical'></div>
+<div id='control-container' class='frame-vertical'>
+  <div class='block'>
+    <h2>Enviroment</h2>
+    <div id="hello"></div>
+  </div>
+  <div class='block'>
+    <h2>Stop At</h2>
+    <div id="configuration"></div>
+  </div>
+  <div class='block'>
+    <h2>Continue</h2>
+    <div id="continues"></div>
+  </div>
+  <div class='block'>
+    <h2>Runtimes</h2>
+    <ul id="runtime-ids"></ul>
+  </div>
+  <div class='block'>
+    <h2>Scripts</h2>
+    <ul id="scripts"></ul>
+  </div>
+</div>
+<div id='slider-for-control-container' class='frame-slider-vertical'></div>
+
+<div id='inspection-container' class='frame-vertical'>
+  <h2>Backtrace</h2>
+  <div id="backtrace"></div>
+  <h2>Script</h2>
+  <div id="source-view"></div>
+</div>
 </body>
 </html>

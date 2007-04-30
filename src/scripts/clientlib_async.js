@@ -69,7 +69,7 @@ var proxy = new function()
     {
       return false;
     }
-    proxy.GET( "/enable/" + service_name );  // ignore the response
+    proxy.GET( "/enable/" + service_name, function(){} );  // ignore the response
     return true;
   }
 
@@ -139,6 +139,7 @@ var proxy = new function()
           throw "Message failed, POST, empty document: " + this.responseText;
         }
         if(cb) cb(xml);
+        opera.postError('POST: '+this.responseText);
       }
       x.open("POST", "http://" + __host + ":" + __port + msg );
       x.send("postdata=" + data);

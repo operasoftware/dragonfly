@@ -44,4 +44,11 @@ handlers = new function()
   {
     debugger.setConfiguration(event.target.value, event.target.checked ? 'yes' : 'no');
   }
+
+  this.__continue = function(event)
+  {
+    var id = event.target.__stop_at_id;
+    helpers.disableContinues(0, true);
+    debugger.__continue(id, event.target.getAttribute('mode'));
+  }
 }
