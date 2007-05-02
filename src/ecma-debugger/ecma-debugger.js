@@ -88,7 +88,8 @@ var debugger = new function()
     document.getElementById('configuration').render(templates.configStopAt(config));
     document.getElementById('continues').render(templates.continues());
     helpers.setUpListeners();
-    helpers.setUpVerticalFrames()
+    helpers.verticalFrames.initFrames();
+    //helpers.verticalFrames.setUpFrames()
     self.getData();
   }
 

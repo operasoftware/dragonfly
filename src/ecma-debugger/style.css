@@ -39,6 +39,7 @@ li[hanler] {
 
 #debug-container {
   background-color:#ccc;
+  overflow: hidden;
   }
 
 #debug-container input {
@@ -46,12 +47,16 @@ li[hanler] {
   }
 
 #debug {
-  height:150px;
+  position:absolute;
   overflow:auto;
   border:1px solid #666;
   background-color:#fff;
-  margin:.3em 0;
+  top:25px;
+  left:5px;
+  right:5px;
+  bottom:5px;
   padding:.5em;
+  margin:0;
   }
 
 #source-view {
@@ -125,5 +130,20 @@ li[hanler] {
   border-bottom-width:5px;
   overflow: auto;
   position:relative;
+  }
+
+.frame-slider-vertical {
+  height:6px;
+  background-color:#09f;
+  position: absolute;
+  width: 100%;
+  cursor: n-resize;
+  z-index: 100;
+  }
+
+#selection_catcher_container {
+  position: absolute;
+  left: -200px;
+  top: -200px;
   }
 

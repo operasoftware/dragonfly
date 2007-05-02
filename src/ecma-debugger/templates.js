@@ -87,4 +87,18 @@ MODE ::= "<mode>"
         ]
       ]
   }
+/*
+<div 
+  id='slider-for-debug-container' 
+  class='frame-slider-vertical' 
+  onmousedown='helpers.verticalFrames.setUpResizeFrame(arguments[0])'></div>
+  */
+  this.verticalFrameSlider = function(id)
+  {
+    return ['div',
+      'id', 'slider-for-' + id,
+      'class', 'frame-slider-vertical',
+      'onmousedown', helpers.verticalFrames.setUpResizeFrame]
+        
+  }
 }

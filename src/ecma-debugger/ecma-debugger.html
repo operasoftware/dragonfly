@@ -9,18 +9,23 @@
 <script src="helpers.js"></script>
 <script src="syntax.js"></script>
 <script src="formatter.js"></script>
-
 <script src="templates.js"></script>
 <script src="handlers.js"></script>
 <script src="ecma-debugger.js"></script>
 </head>
-<body>
+<body class='vertical-frame-container'>
 <div id='debug-container' class='frame-vertical'>
-  <input type='button' value='clear output' onclick="document.getElementById('debug').innerHTML=''">
+  <input 
+    type='button' 
+    value='clear output' 
+    onclick="document.getElementById('debug').innerHTML=''">
   <h2>Debug</h2>
   <pre id="debug"></pre>
 </div>
-<div id='slider-for-debug-container' class='frame-slider-vertical'></div>
+<!-- <div 
+  id='slider-for-debug-container' 
+  class='frame-slider-vertical' 
+  onmousedown='helpers.verticalFrames.setUpResizeFrame(arguments[0])'></div> -->
 <div id='control-container' class='frame-vertical'>
   <div class='block'>
     <h2>Enviroment</h2>
@@ -43,13 +48,16 @@
     <ul id="scripts"></ul>
   </div>
 </div>
-<div id='slider-for-control-container' class='frame-slider-vertical'></div>
-
+<!-- <div 
+  id='slider-for-control-container' 
+  class='frame-slider-vertical' 
+  onmousedown='helpers.verticalFrames.setUpResizeFrame(arguments[0])'></div> -->
 <div id='inspection-container' class='frame-vertical'>
   <h2>Backtrace</h2>
   <div id="backtrace"></div>
   <h2>Script</h2>
   <div id="source-view"></div>
 </div>
+<div id='selection_catcher_container'><input></div>
 </body>
 </html>

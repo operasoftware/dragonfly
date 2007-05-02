@@ -82,6 +82,29 @@ Element.prototype.hasClass=function(name)
   return (new RegExp('\\b'+name+'\\b')).test(this.className)
 }
 
+Element.prototype.getNextSiblingElement = function()
+{
+  var next = this.nextSibling;
+  while( next && next.nodeType != 1 )
+  {
+    next = next.nextSibling;
+  }
+  return next;
+}
+
+Element.prototype.insertAfter = function(node)
+{
+  var nextElement = this.getNextSiblingElement();
+  if( nextElement )
+  {
+    nextElement.parentElement.insertBefore(node, nextElement);
+  }
+  else
+  {
+    this.parentElement.appendChild(node);
+  }
+}
+
 Element.prototype.releaseEvent=function(name)
 {
   var event=document.createEvent('Events');
@@ -108,3 +131,24 @@ Node.prototype.getAttributeFromNode=function(nodeName, attr)
   }
   return null;
 }
+
+Document.prototype.getElementsByClassName=Element.prototype.getElementsByClassName=function()
+{
+  var eles = this.getElementsByTagName("*"), 
+    ele = null, ret =[], c_n = '', cursor = null, i = 0, j = 0;
+  for( ; c_n = arguments[i]; i++) 
+  {
+    arguments[i] = new RegExp('\\b' + c_n + '\\b');
+    
+  }
+  for (i=0; ele=eles[i]; i++)
+  { 
+    c_n = ele.className;
+    for ( j=0; ( cursor = arguments[j] ) && cursor.test(c_n); j++);
+    if( !cursor )
+    {
+      ret[ret.length] = ele;
+    }
+  }
+  return ret;
+} 
