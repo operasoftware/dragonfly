@@ -147,11 +147,23 @@ li[hanler] {
   top: -200px;
   }
 
+#command-line {
+  overflow:hidden;
+  }
 #command-line textarea {
   width:100%;
+  height:100%
   }
 
 #command-line input {
   float:right;
   }
-
+#command-line-container {
+  position:absolute;
+  top:25px;
+  left:5px;
+  right:5px;
+  bottom:5px;
+  padding:0;
+  margin:0;
+  }

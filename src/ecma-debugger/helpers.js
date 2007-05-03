@@ -1,4 +1,4 @@
-﻿helpers = new function()
+helpers = new function()
 {
   var self = this;
 
@@ -202,7 +202,7 @@
         clearTimeout(cursor);
       }
       resizeEvents = [];
-      self.setUpFrames();
+      self.setUpAllFrames();
     }
 
     this.resizeListener = function(event)
