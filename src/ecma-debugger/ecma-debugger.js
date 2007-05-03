@@ -315,6 +315,12 @@ MODE ::= "<mode>"
     self.getData();
   }
 
+  this.postCommandline = function(msg)
+  {
+    var msg = document.getElementById('command-line').getElementsByTagName('textarea')[0].value;
+    proxy.POST("/" + service, msg);
+  }
+
   /**** tags handling ****/
 
   var tags = {};

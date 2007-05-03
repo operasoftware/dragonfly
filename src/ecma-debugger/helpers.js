@@ -245,7 +245,7 @@ helpers = new function()
             child.style.height = (min_height_vertical_frame-6)+'px';
             height = child.offsetHeight;
           }
-          win_height -= height;
+          win_height = or_win_height - height - child.offsetTop;
         }
         slider = document.getElementById('slider-for-' + child.id);
         if( slider )
