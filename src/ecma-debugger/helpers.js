@@ -1,4 +1,4 @@
-helpers = new function()
+﻿helpers = new function()
 {
   var self = this;
 
@@ -96,29 +96,32 @@ helpers = new function()
 
   var keypressListener = function(event)
   {
-    switch(event.keyCode)
+    if( event.which == 0 )
     {
-      case 116: // F5
+      switch(event.keyCode)
       {
-        handleKeypress(event, 'continue-run');
-        break;
-      }
-      case 121: // F10
-      {
-        handleKeypress(event, 'continue-step-over-call');
-        break;
-      }
-      case 122: // F11
-      {
-        if(event.shiftKey)
+        case 116: // F5
         {
-          handleKeypress(event, 'continue-finish-call');
+          handleKeypress(event, 'continue-run');
+          break;
         }
-        else
+        case 121: // F10
         {
-          handleKeypress(event, 'continue-step-into-call');
+          handleKeypress(event, 'continue-step-over-call');
+          break;
         }
-        break;
+        case 122: // F11
+        {
+          if(event.shiftKey)
+          {
+            handleKeypress(event, 'continue-finish-call');
+          }
+          else
+          {
+            handleKeypress(event, 'continue-step-into-call');
+          }
+          break;
+        }
       }
     }
   }

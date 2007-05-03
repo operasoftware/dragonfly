@@ -171,7 +171,7 @@ MODE ::= "<mode>"
       }
       else
       {
-        throw "empty element in <thread-stopped-at> event"
+        opera.postError( "empty element in <thread-stopped-at> event");
         stopAt[child.nodeName] = null
       }
     }

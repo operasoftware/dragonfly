@@ -1,4 +1,4 @@
-/* Copyright 2006 Opera Software ASA.  */
+﻿/* Copyright 2006 Opera Software ASA.  */
 
 /**
   * Convenience library for interacting with the httpd server in
@@ -142,7 +142,7 @@ var proxy = new function()
         opera.postError('POST: '+this.responseText);
       }
       x.open("POST", "http://" + __host + ":" + __port + msg );
-      x.send("postdata=" + data);
+      x.send(data);
     }
 
     /** WRITABLE.
