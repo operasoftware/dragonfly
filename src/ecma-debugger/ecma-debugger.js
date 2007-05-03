@@ -3,6 +3,8 @@ var debugger = new function()
   var self = this;
   var service = "ecmascript-debugger";
 
+  
+
   this.getData = function()
   {
     proxy.GET( "/" + service, genericEventListener );
@@ -89,6 +91,7 @@ var debugger = new function()
     document.getElementById('continues').render(templates.continues());
     helpers.setUpListeners();
     helpers.verticalFrames.initFrames();
+    helpers.horizontalFrames.initFrames();
     //helpers.verticalFrames.setUpFrames()
     self.getData();
   }
@@ -288,6 +291,32 @@ MODE ::= "<mode>"
     proxy.POST("/" + service, msg);
   }
 
+  this.addBreakpoint = function(id, msg_how )
+  {
+    var msg = "<add-breakpoint>";
+    msg += "<breakpoint-id>" + id + "</breakpoint-id>";
+    msg += msg_how;
+    msg += "</add-breakpoint>";
+    proxy.POST("/" + service, msg);
+  }
+
+  var addBreakpointWithSourcePosition = function(script_id, line)
+  {
+    var msg = "<source-position>";
+    msg += "<script-id>" + script_id + "</script-id>";
+    msg += "<line-number>" + line + "</line-number>"
+    msg += "</source-position>";
+    return msg;
+  }
+
+  this.removeBreakpoint = function(id)
+  {
+    var msg = "<remove-breakpoint>";
+    msg += "<breakpoint-id>" + id + "</breakpoint-id>";
+    msg += "</remove-breakpoint>";
+    proxy.POST("/" + service, msg);
+  }
+
 /*
 
   <thread-stopped-at>
@@ -327,6 +356,74 @@ MODE ::= "<mode>"
   {
     var msg = document.getElementById('command-line').getElementsByTagName('textarea')[0].value;
     proxy.POST("/" + service, msg);
+  }
+
+  var breakpoints = {};
+
+  var __breakpointCounter = 1;
+
+  var getBreakpointId = function()
+  {
+    return __breakpointCounter++;
+  }
+
+  var storeBreakpoint = function(script, line, id)
+  {
+    breakpoints[id] = 
+    {
+      'script-id': script,
+      'line': line
+    }
+    return id;
+  }
+
+  var clearBreakpoint = function(id)
+  {
+    delete breakpoints[id];
+  }
+
+  var getBreakpointsByScriptId = function(script_id)
+  {
+    var ret = [], cursor = null;
+    for( cursor in breakpoints )
+    {
+      if ( breakpoints[cursor]['script-id'] == script_id )
+      {
+        ret[ret.length] = cursor;
+      }
+    }
+    return ret;
+  }
+
+  var getBreakpointsByScriptIdAndLine = function(script_id, line)
+  {
+    var cursor = null, i=0;
+    var b_p_ids = getBreakpointsByScriptId(script_id);
+    for( ; cursor = b_p_ids[i]; i++ )
+    {
+      if ( breakpoints[cursor]['line'] == line )
+      {
+        return cursor;
+      }
+    }
+    return null;
+  }
+
+  this.handleBreakpoint = function(script_id, line)
+  {
+    var b_p = getBreakpointsByScriptIdAndLine(script_id, line);
+    if(b_p)
+    {
+      self.removeBreakpoint(b_p);
+      clearBreakpoint(b_p);
+      helpers.removeBreakpoint(b_p);
+    }
+    else
+    {
+      b_p = storeBreakpoint(script_id, line, getBreakpointId());
+      self.addBreakpoint(b_p, addBreakpointWithSourcePosition(script_id, line));
+      helpers.displayBreakpoint(line, b_p);
+    }
   }
 
   /**** tags handling ****/

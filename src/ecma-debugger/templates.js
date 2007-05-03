@@ -101,4 +101,13 @@ MODE ::= "<mode>"
       'onmousedown', helpers.verticalFrames.setUpResizeFrame]
         
   }
+       
+  this.horizontalFrameSlider = function(id)
+  {
+    return ['div',
+      'id', 'slider-for-' + id,
+      'class', 'frame-slider-horizontal',
+      'onmousedown', helpers.horizontalFrames.setUpResizeFrame]
+        
+  }
 }

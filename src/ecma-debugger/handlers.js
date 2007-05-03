@@ -51,4 +51,21 @@ handlers = new function()
     helpers.disableContinues(0, true);
     debugger.__continue(id, event.target.getAttribute('mode'));
   }
+
+  this.breakpoint = function(event)
+  {
+    var ele = event.target;
+    while(ele && !/^li$/i.test(ele.nodeName) && ele.parentElement)
+    { 
+      ele = ele.parentElement;
+    }
+    if(ele)
+    {
+      debugger.handleBreakpoint
+      (
+        ele.parentNode.parentNode.getAttribute('script-id'), 
+        parseInt(ele.getAttribute('line-ref'))
+      )
+    }
+  }
 }

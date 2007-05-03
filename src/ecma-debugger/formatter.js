@@ -13,6 +13,8 @@ var simple_js_parser=new function()
   var __string_delimiter=0;
   var __ret='<ol>';
   var __line='';
+
+  var __line_conter =0;
   var WHITESPACE=
   {
     '\u0009': 1, //  Tab <TAB>
@@ -502,7 +504,7 @@ var simple_js_parser=new function()
     {
       __line += '\u00A0';
     }
-    __ret += "<li><span>" + __line + "</span></li>";
+    __ret += "<li line-ref='" + (__line_conter++) +"'><span>" + __line + "</span></li>";
     __line='';
 
   }
@@ -517,6 +519,7 @@ var simple_js_parser=new function()
   {
     __ret='<ol>';
     __line='';
+    __line_conter = 1;
   }
 
   this.parse=function(source)

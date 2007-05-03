@@ -27,7 +27,7 @@ helpers = new function()
 
   this.showLine = function(scriptId, line)
   {
-    opera.postError(scriptId+' '+line);
+    //opera.postError(scriptId+' '+line);
     var s_c = document.getElementById('source-view'), script = null;
     if( scriptId == __current_script_id )
     {
@@ -39,6 +39,7 @@ helpers = new function()
       if(script)
       {
         __current_script_id = scriptId;
+        s_c.setAttribute('script-id', scriptId);
         s_c.innerHTML = self.formatScript(script['script-data']);
       }
       else
@@ -68,6 +69,40 @@ helpers = new function()
     else
     {
       throw "the script has no according line "+line;
+    }
+  }
+
+  this.displayBreakpoint = function(line, id)
+  {
+    var s_c = document.getElementById('source-view')
+    var line = s_c.getElementsByTagName('li')[line-1];
+    if(line)
+    {
+      s_c.firstChild.render
+      (
+        ['li',
+          'class', 'breakpoint',
+          'id', 'breakpoint-'+id,
+          'style', 'top:'+ line.offsetTop +'px'
+        ]
+      )
+    }
+    else
+    {
+      opera.postError('missing line for breakpoint')
+    }
+  }
+
+  this.removeBreakpoint = function(id)
+  {
+    var b_p = document.getElementById('breakpoint-'+id);
+    if (b_p)
+    {
+      b_p.parentNode.removeChild(b_p);
+    }
+    else
+    {
+      opera.postError('there is no breakpoint with that id');
     }
   }
 
@@ -300,4 +335,184 @@ helpers = new function()
       self.setUpAllFrames();
     }
   }
+
+  this.horizontalFrames = new function()
+  {
+    var self = this;
+    
+    var min_width_horizontal_frame = 150;
+    var min_height_vertical_frame_onresize = 25;
+    var resizeEvents = [];
+    var resize_slider = null;
+    var resize_slider_delta = 0;
+    var selection_catcher = null;
+    var __frames = [];
+    var __horizontal_frames_containers = [];
+    var is_resizing_frames = false;
+
+    var resize_frame_onmosemove = function(event)
+    {
+      if( is_resizing_frames ) return;
+      is_resizing_frames = true;
+      selection_catcher.focus();
+      var slider_left = event.pageX - resize_slider_delta;
+      var length = __frames.length;
+      var width = or_width = event.target.parentNode.offsetWidth;
+      var slider = frame = null;
+      
+      
+      for( i=0; frame = __frames[i]; i++ )
+      {
+        if ( i == 0 )
+        {
+          if( slider_left - frame.offsetLeft > min_height_vertical_frame_onresize )
+          {
+            frame.style.width = ( slider_left - frame.offsetLeft ) + 'px';
+            width -= frame.offsetLeft + frame.offsetWidth;
+            resize_slider.style.left = slider_left + 'px';
+          }
+          else
+          {
+            frame.style.width = min_height_vertical_frame_onresize + 'px';
+            width -= frame.offsetLeft + frame.offsetWidth;
+            resize_slider.style.left = ( or_width - width - 5 ) +'px';
+          }
+        }
+        else if( i == length-1 )
+        {
+          frame.style.width = (width-6)+'px';
+        }
+        else
+        {
+          width -= frame.offsetWidth;
+        }
+        slider = document.getElementById('slider-for-' + frame.id);
+        if( slider  && slider != resize_slider)
+        {
+          slider.style.left = ( or_width - width - 5 ) +'px';
+        }
+      }
+      is_resizing_frames = false;
+    }
+
+    var finish_frame_resize = function(event)
+    {
+      document.removeEventListener('mousemove', resize_frame_onmosemove, false);
+      document.removeEventListener('mouseup', finish_frame_resize, false);
+    }
+
+    var handleResizeEvents = function()
+    {
+      var cursor = 0,  length = resizeEvents.length, i=0;
+      for ( ; cursor = resizeEvents[i]; i++)
+      {
+        clearTimeout(cursor);
+      }
+      resizeEvents = [];
+      self.setUpAllFrames();
+    }
+
+    this.resizeListener = function(event)
+    {
+      resizeEvents[resizeEvents.length] = setTimeout(handleResizeEvents, 10);
+    }
+    
+    this.setUpAllFrames = function()
+    {
+      var cursor = null, i = 0;
+      for( ; cursor = __horizontal_frames_containers[i]; i++)
+      {
+        self.setUpFrames(cursor);
+      }
+    }
+
+    this.setUpFrames = function(container)
+    {
+      var children = container.childNodes, child = null, i = 0;
+      var __frames = [];
+      for( ; child = children[i]; i++)
+      {
+        if( child.nodeType == 1 && child.hasClass('frame-horizontal'))
+        {
+          __frames[__frames.length] = child;
+        }
+      }
+      var length = __frames.length;
+      var width = or_width = container.offsetWidth;
+      //alert(width)
+      var height = 0, styleHeight = 0;
+      var slider = null;
+      for(i=0; child = __frames[i]; i++)
+      {
+        if( i == length-1 )
+        {
+          child.style.width = (width-6)+'px';
+        }
+        else
+        {
+          width = child.offsetWidth;
+          if (width<min_width_horizontal_frame)
+          {
+            child.style.width = (min_width_horizontal_frame-6)+'px';
+            width = child.offsetWidth;
+          }
+          width = or_width - width - child.offsetLeft;
+        }
+        slider = document.getElementById('slider-for-' + child.id);
+        if( slider )
+        {
+          slider.style.left = ( or_width - width - 5 ) +'px';
+        }
+      }
+    }
+
+    this.setUpResizeFrame = function(event)
+    {
+      //alert(event.target.id);
+      
+      var children = event.target.parentElement.childNodes, child = null, i = 0;
+      __frames = [];
+      var addFrame = false;
+      for( ; child = children[i]; i++)
+      {
+        if ( !addFrame && child.nodeType == 1 && 
+          document.getElementById(event.target.id.slice(11)) == child )
+        {
+          addFrame = true;
+        }
+        if( addFrame && child.nodeType == 1 && child.hasClass('frame-horizontal'))
+        {
+          __frames[__frames.length] = child;
+        }
+      }
+      resize_slider = event.target;
+      resize_slider_delta = event.offsetX;
+      document.addEventListener('mousemove', resize_frame_onmosemove, false);
+      document.addEventListener('mouseup', finish_frame_resize, false);
+      selection_catcher = 
+        document.getElementById('selection_catcher_container').getElementsByTagName('input')[0];
+        
+    }
+
+    this.initFrames = function()
+    {
+      var frames_containers = document.getElementsByClassName('horizontal-frame-container');
+      var cursor = __frames = frame = null, length = i =  j = 0;
+      for( ; cursor = frames_containers[i]; i++)
+      {
+        __frames = cursor.getElementsByClassName('frame-horizontal');
+        length = __frames.length;
+        
+        for( j=0; j < length-1; j++ )
+        {
+          
+          cursor.render( templates.horizontalFrameSlider(__frames[j].id) )
+        }
+      }
+      __horizontal_frames_containers = frames_containers;
+      self.setUpAllFrames();
+    }
+  }
+
+
 }

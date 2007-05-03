@@ -107,11 +107,21 @@ li[hanler] {
   color:#fff;
   }
 
-.block {
-  float:left;
+.horizontal-frame-container {
+  padding:0;
+  overflow:hidden;
   }
 
-#source-view #line-pointer {
+.frame-horizontal {
+  float:left;
+  border: 0px solid #666;
+  border-right-width:5px;
+  overflow: auto;
+  position:relative;
+  height:100%;
+  }
+
+#source-view #line-pointer, #source-view .breakpoint {
   position:absolute;
   content: '\25B6';
   color:#f00;
@@ -123,6 +133,12 @@ li[hanler] {
   margin:0;
   margin-top:-4px;
   left:-10px;
+  }
+
+#source-view .breakpoint {
+  content: '\25C9';
+  color:#f00;
+  left:0px;
   }
 
 .frame-vertical {
@@ -138,6 +154,15 @@ li[hanler] {
   position: absolute;
   width: 100%;
   cursor: n-resize;
+  z-index: 100;
+  }
+
+.frame-slider-horizontal {
+  height:100%;
+  width:5px;
+  background-color:#09f;
+  position: absolute;
+  cursor: w-resize;
   z-index: 100;
   }
 
