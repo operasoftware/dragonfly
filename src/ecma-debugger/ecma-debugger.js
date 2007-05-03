@@ -165,7 +165,15 @@ MODE ::= "<mode>"
     var children = xml.documentElement.childNodes, child=null, i=0;
     for ( ; child = children[i]; i++)
     {
-      stopAt[child.nodeName] = child.firstChild.nodeValue;
+      if(child.firstChild)
+      {
+        stopAt[child.nodeName] = child.firstChild.nodeValue;
+      }
+      else
+      {
+        throw "empty element in <thread-stopped-at> event"
+        stopAt[child.nodeName] = null
+      }
     }
     __stopAt[id] = stopAt;
     var line = parseInt( stopAt['line-number'] );
