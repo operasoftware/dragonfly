@@ -15,8 +15,23 @@
 </head>
 <body class='vertical-frame-container'>
 
-<div id='command-line' class='frame-vertical'>
-<input type='button' value='post' onclick='debugger.postCommandline()'>
+<div id='command-line' class='frame-vertical' >
+<input 
+  type='button' 
+  value='post' 
+  onclick='debugger.postCommandline()' style='margin-left:50px'>
+<input 
+  type='button' 
+  value='examine obj' onclick="this.parentNode.getElementsByTagName('textarea')[0].value=
+ '<examine-objects>\n  <tag>1</tag>\n  <runtime-id>x</runtime-id>\n  <object-id>x</object-id>\n</examine-objects>';">
+
+<input 
+  type='button' 
+  value='set breakpoint' 
+  onclick="this.parentNode.getElementsByTagName('textarea')[0].value=
+'<add-breakpoint>\n  <breakpoint-id> x </breakpoint-id>\n  <source-position>\n    <script-id> x </script-id>\n    <line-number> x </line-number>\n  </source-position>\n</add-breakpoint>';">
+
+
 <h2>Command Line</h2>
 <div id='command-line-container'><textarea></textarea></div>
 </div>
@@ -54,7 +69,8 @@
   <h2>Backtrace</h2>
   <div id="backtrace"></div>
   <h2>Script</h2>
-  <div id="source-view" onclick='handlers.breakpoint(arguments[0])'></div>
+  <!-- <div id="source-view" onclick='handlers.breakpoint(arguments[0])'></div> -->
+  <div id="source-view"></div>
 </div>
 <div id='selection_catcher_container'><input></div>
 </body>

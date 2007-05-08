@@ -44,7 +44,7 @@ helpers = new function()
       }
       else
       {
-        throw "Script id not registered";
+        opera.postError( "Script id not registered");
       }
     }
     var __line = s_c.getElementsByTagName('li')[line-1];
@@ -68,7 +68,7 @@ helpers = new function()
     }
     else
     {
-      throw "the script has no according line "+line;
+      opera.postError( "the script has no according line "+line);
     }
   }
 

@@ -1,5 +1,5 @@
 
-Element.prototype.___add=function()
+Element.prototype.___add=Document.prototype.___add=function()
 {
   if(arguments.length)
   {
@@ -47,7 +47,7 @@ Element.prototype.___add=function()
   return null;
 }
 
-Element.prototype.render=function(template)
+Element.prototype.render=Document.prototype.render=function(template)
 {
   return this.___add.apply(this, template);
 }
@@ -79,7 +79,7 @@ Element.prototype.removeClass=function(name)
 
 Element.prototype.hasClass=function(name)
 {
-  return (new RegExp('\\b'+name+'\\b')).test(this.className)
+  return (new RegExp('(?:^| +)'+name+'(?: +|$)')).test(this.className)
 }
 
 Element.prototype.getNextSiblingElement = function()
@@ -90,6 +90,17 @@ Element.prototype.getNextSiblingElement = function()
     next = next.nextSibling;
   }
   return next;
+}
+
+Element.prototype.getTop = function()
+{
+  var c = this, o_p = null, top = c.offsetTop;
+  while( o_p = c.offsetParent )
+  {
+    top += o_p.offsetTop;
+    c = o_p;
+  }
+  return top;
 }
 
 Element.prototype.insertAfter = function(node)
@@ -105,11 +116,34 @@ Element.prototype.insertAfter = function(node)
   }
 }
 
+Element.prototype.getChildElements = function()
+{
+  var children = this.childNodes, ret = [], c = null, i=0;
+  for( ; c = children[i]; i++)
+  {
+    if(c.nodeType == 1) 
+    {
+      ret[ret.length] = c;
+    }
+  }
+  return ret;
+}
+
 Element.prototype.releaseEvent=function(name)
 {
   var event=document.createEvent('Events');
   event.initEvent(name, true, true);
   this.dispatchEvent(event);
+}
+/* currently broken in Opera */
+Element.prototype.getWidth=function(e)
+{
+  var style = window.getComputedStyle(this, null);
+  return this.offsetWidth 
+    - parseInt(style['paddingLeft'])
+    - parseInt(style['paddingRight'])
+    - parseInt(style['borderLeftWidth'])
+    - parseInt(style['borderRightWidth']);
 }
 
 Node.prototype.getNodeData=function(nodeName)
@@ -138,7 +172,8 @@ Document.prototype.getElementsByClassName=Element.prototype.getElementsByClassNa
     ele = null, ret =[], c_n = '', cursor = null, i = 0, j = 0;
   for( ; c_n = arguments[i]; i++) 
   {
-    arguments[i] = new RegExp('\\b' + c_n + '\\b');
+    // (new RegExp('(?:^| *)'+name+'(?: *|$)')).test(this.className)
+    arguments[i] = new RegExp('(?:^| +)' + c_n + '(?: +|$)');
     
   }
   for (i=0; ele=eles[i]; i++)

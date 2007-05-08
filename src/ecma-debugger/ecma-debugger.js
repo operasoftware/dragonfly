@@ -3,11 +3,18 @@ var debugger = new function()
   var self = this;
   var service = "ecmascript-debugger";
 
-  
+  this.__getData =function()
+  {
+    proxy.GET( "/" + service, genericEventListener );
+  }
 
   this.getData = function()
   {
-    proxy.GET( "/" + service, genericEventListener );
+    //opera.postError(proxy.getReadyState())
+    if(proxy.getReadyState())
+    {
+      setTimeout(self.__getData, 0);
+    }
   }
 
   var genericEventListener = function(xml) 
@@ -21,8 +28,7 @@ var debugger = new function()
       else
       {
         debug.output('not implemented: '+new XMLSerializer().serializeToString(xml));
-        //alert("message not implemented: " +(new XMLSerializer().serializeToString(xml));
-        self.getData();
+        //self.getData();
       }
       debug.formatXML(new XMLSerializer().serializeToString(xml));
     }
@@ -93,11 +99,12 @@ var debugger = new function()
     helpers.verticalFrames.initFrames();
     helpers.horizontalFrames.initFrames();
     //helpers.verticalFrames.setUpFrames()
-    self.getData();
+    //self.getData();
   }
 
   this['new-script'] = function(xml)
   {
+     
     var script = {};
     var children = xml.documentElement.childNodes, child=null, i=0;
     for ( ; child = children[i]; i++)
@@ -106,12 +113,13 @@ var debugger = new function()
     }
     scripts[scripts.length] = script;
     addRuntime(script['runtime-id']);
-    self.getData();
+    //proxy.POST("/" + service, "<break>"+script['runtime-id']+"</break>");
+    //self.getData();
   }
 
   this['timeout'] = function() 
   {
-    self.getData();
+    //self.getData();
   }
 
   this['runtimes-reply'] = function(xml)
@@ -125,7 +133,7 @@ var debugger = new function()
     {
       throw "runtimes-reply, missing tag";
     }
-    self.getData();
+    //self.getData();
   }
 
   /*
@@ -182,7 +190,8 @@ MODE ::= "<mode>"
     var line = parseInt( stopAt['line-number'] );
     if( typeof line == 'number' )
     {
-      //self.backtrace(stopAt);
+      self.backtrace(stopAt);
+      
       helpers.showLine( stopAt['script-id'], line );
       helpers.disableContinues(id, false);
     }
@@ -240,7 +249,7 @@ MODE ::= "<mode>"
         alert( "No service: " + service );
         return;
       }
-      self.getData();
+      //self.getData();
 
     }
     proxy.configure(host[0], host[1]);
@@ -285,10 +294,11 @@ MODE ::= "<mode>"
     msg += "<tag>" + tag + "</tag>";
     msg += "<runtime-id>" + stopAt['runtime-id'] + "</runtime-id>";
     msg += "<thread-id>" + stopAt['thread-id'] + "</thread-id>";
-    msg += "<maxframes>" + 10 + "</maxframes>";  // not sure what is correct here;
+    msg += "<maxframes>" + 100 + "</maxframes>";  // not sure what is correct here;
     msg += "</backtrace>";
     setTagCB(tag, parseBacktrace);
     proxy.POST("/" + service, msg);
+    //self.getData();
   }
 
   this.addBreakpoint = function(id, msg_how )
@@ -349,7 +359,7 @@ MODE ::= "<mode>"
     msg += "<mode>" + mode + "</mode>";
     msg += "</continue>";
     proxy.POST("/" + service, msg);
-    self.getData();
+    //self.getData();
   }
 
   this.postCommandline = function(msg)
@@ -445,6 +455,8 @@ MODE ::= "<mode>"
   {
     delete tags[tagId];
   }
+
+  proxy.onReceive = this.getData;
 
 }
 

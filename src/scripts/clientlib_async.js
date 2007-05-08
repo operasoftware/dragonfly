@@ -1,4 +1,4 @@
-﻿/* Copyright 2006 Opera Software ASA.  */
+/* Copyright 2006 Opera Software ASA.  */
 
 /**
   * Convenience library for interacting with the httpd server in
@@ -84,15 +84,17 @@ var proxy = new function()
     * \exceptions Throws an exception if the return code is not 200
     * changed the code to work in an asynchroneous environment
     */
+  var x = null;
   this.GET = function( msg, cb ) 
   {
-    var x = new XMLHttpRequest;
+    x = new XMLHttpRequest;
     x.onload=function()
     {
       if (this.status != 200) 
       {
         throw "Message failed, Status: " + this.status;
       }
+      self.onReceive(x);
       var xml = this.responseXML;
       if (xml.documentElement == null)
       {
@@ -109,6 +111,14 @@ var proxy = new function()
     }
     x.open("GET", "http://" + __host + ":" + __port + msg);
     x.send("");
+  }
+
+  this.getReadyState = function()
+  {
+    if(x)
+    {
+      return x.readyState==4;
+    }
   }
 
   /** Send a POST message to the configured host/port, wait until
@@ -132,7 +142,7 @@ var proxy = new function()
         {
           throw "Message failed, Status: " + this.status;
         }
-        self.onReceive(x);
+        //self.onReceive(x);
         var xml = this.responseXML;
         if (xml.documentElement == null)
         {
