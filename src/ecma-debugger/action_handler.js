@@ -46,7 +46,7 @@ var action_handler = new function()
     var runtime_id = ele.getAttribute('runtime_id');
     var container = document.getElementById('examine-objects');
     container.innerHTML = '';
-    var tag = tagManager.setCB(null, responseHandlers.examinObject, [runtime_id, container]);
+    var tag = tagManager.setCB(null, responseHandlers.examinFrame, [runtime_id, container, ele.getAttribute('argument_id')]);
     helpers.examine_objects( runtime_id, tag, ele.getAttribute('scope_id') );
   }
 

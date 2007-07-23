@@ -3,7 +3,7 @@
 <title>ecma debugger</title>
 <link rel='stylesheet' href='../styles/html_frame_style.css'>
 <link rel='stylesheet' href='debugger_style.css'>
-<script>var __debug__ = false; </script>
+<script>var __debug__ = 1; </script>
 <script src="../scripts/dom.js"></script>
 <script src="../scripts/html_frames.js"></script>
 <script src="../scripts/clientlib_async.js"></script>
@@ -23,8 +23,39 @@
 <script src="ecma-debugger.js"></script>
 </head>
 <body>
-<h1>ecma debugger</h1>
 <div class='vertical-frame-container'>
+
+<div id='command-line'>
+<input 
+  type='button' 
+  value='post' 
+  onclick='debugger.postCommandline()' style='margin-left:50px'>
+<input 
+  type='button' 
+  value='examine obj' onclick="this.parentNode.getElementsByTagName('textarea')[0].value=
+ '<examine-objects>\n  <tag>1</tag>\n  <runtime-id>x</runtime-id>\n  <object-id>x</object-id>\n</examine-objects>';">
+
+<input 
+  type='button' 
+  value='set breakpoint' 
+  onclick="this.parentNode.getElementsByTagName('textarea')[0].value=
+'<add-breakpoint>\n  <breakpoint-id> x </breakpoint-id>\n  <source-position>\n    <script-id> x </script-id>\n    <line-number> x </line-number>\n  </source-position>\n</add-breakpoint>';">
+
+
+<h2>Command Line</h2>
+<div id='command-line-container'><textarea></textarea></div>
+</div>
+
+
+<div id='debug-container'>
+  <input 
+    type='button' 
+    value='clear output' 
+    onclick="document.getElementById('debug').innerHTML=''">
+  <h2>Debug</h2>
+  <pre id="debug"></pre>
+</div>
+
 
 <div id='control-container' class='horizontal-frame-container'>
 

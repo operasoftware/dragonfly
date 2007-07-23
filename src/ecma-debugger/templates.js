@@ -120,22 +120,36 @@ MODE ::= "<mode>"
              self.key_value_folder(prop.getNodeData('property-name'), runtime_id, prop.getNodeData('object-id'));
             break;
           }
-          case 'number':
-          {
-            ret[ret.length] = 
-              self.key_value(prop.getNodeData('property-name'), prop.getNodeData('object-value'));
-            break;
-          }
+
           case 'undefined':
           {
             ret[ret.length] = 
-              self.key_value(prop.getNodeData('property-name'), 'undefined');
+              self.key_value(prop.getNodeData('property-name'), '"undefined"', 'type');
             break;
           }
-          default:
+          case 'null':
           {
             ret[ret.length] = 
-              self.key_value(prop.getNodeData('property-name'), prop.getNodeData('string'));
+              self.key_value(prop.getNodeData('property-name'), 'null', 'type');
+            break;
+          }
+          case 'number':
+          {
+            ret[ret.length] = 
+              self.key_value(prop.getNodeData('property-name'), prop.getNodeData('object-value'), 'value');
+            break;
+          }
+          case 'string':
+          {
+            ret[ret.length] = 
+              self.key_value(prop.getNodeData('property-name'), '"' + prop.getNodeData('string') + '"', 'value');
+            break;
+          }
+          case 'boolean':
+          {
+            ret[ret.length] = 
+              self.key_value(prop.getNodeData('property-name'), prop.getNodeData('object-value'), 'value');
+            break;
           }
         }
       }
@@ -156,7 +170,7 @@ MODE ::= "<mode>"
     return ['li', 
       ['input', 'type', 'button', 'handler', 'examine-object', 'class', 'folder-key'],
       ['span', key, 'class', 'key'], 
-      ['span', 'object', 'class', 'object'],
+      ['span', 'object', 'class', 'type'],
       'runtime-id', runtime_id, 'object-id', object_id
     ];
   }

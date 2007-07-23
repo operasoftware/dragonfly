@@ -23,9 +23,15 @@ var debugger = new function()
       }
       else
       {
-        debug.output('not implemented: '+new XMLSerializer().serializeToString(xml));
+        if( __debug__ )
+        {
+          debug.output('not implemented: '+new XMLSerializer().serializeToString(xml));
+        }
       }
-      debug.formatXML(new XMLSerializer().serializeToString(xml));
+      if( __debug__ )
+      {
+        debug.formatXML(new XMLSerializer().serializeToString(xml));
+      }
     }
     self.getEvent();
   }
@@ -280,7 +286,7 @@ MODE ::= "<mode>"
     verticalFrames.init
     (
       document.body.getElementsByTagName('div')[0], 
-      function(){ return window.innerHeight }
+      function(){ return window.innerHeight - document.body.getElementsByTagName('div')[0].offsetTop }
     )
     action_handler.init();
     var host = location.host.split(':');

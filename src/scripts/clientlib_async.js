@@ -141,7 +141,14 @@ var proxy = new function()
           throw "Message failed, POST, empty document: " + this.responseText;
         }
         if(cb) cb(xml);
-        opera.postError('POST: '+this.responseText);
+        if( __debug__ )
+        {
+          debug.output('POST response: '+this.responseText);
+        }
+      }
+      if( __debug__ )
+      {
+        debug.formatXML("POST:\n" + data);
       }
       x.open("POST", "http://" + __host + ":" + __port + msg );
       x.send(data);

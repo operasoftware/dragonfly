@@ -63,7 +63,7 @@ helpers = new function()
         ]
       );
       //line_pointer.style.top = __line.offsetTop +'px';
-      document.getElementById('inspection-container').scrollTop = __line.offsetTop;
+      document.getElementById('source-view').scrollTop = __line.offsetTop - 100;
 
     }
     else
@@ -128,6 +128,7 @@ helpers = new function()
       button.click();
     }
   }
+
 
   var keypressListener = function(event)
   {

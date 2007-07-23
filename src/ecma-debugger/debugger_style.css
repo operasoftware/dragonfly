@@ -1,4 +1,9 @@
-
+h1 {
+  margin:0;
+  font-weight:normal;
+  background-color:#ccc;
+  padding:3px 7px;
+  }
 
 h2, h3 {
   margin:0;
@@ -135,13 +140,20 @@ xx#debug {
   margin:0;
   }
 
-#examine-objects li {
-  padding-left:5px;
+#examine-objects li li {
+  padding-left:18px;
   }
 
 #examine-objects .key {
-  color:blue;
   margin-right:7px;
+  }
+
+#examine-objects .value {
+  color:red;
+  }
+
+#examine-objects .type {
+  color:blue;
   }
 
 #examine-objects input {
