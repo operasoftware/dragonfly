@@ -75,8 +75,8 @@ var debugger = new function()
       fn_name = frame.getNodeData('function-name');
       line = frame.getNodeData('line-number'); 
       script_id = frame.getNodeData('script-id');
-      argument_id = frame.getNodeData('argument-count');
-      scope_id = frame.getNodeData('variable-count');
+      argument_id = frame.getNodeData('argument-object');
+      scope_id = frame.getNodeData('variable-object');
       container.render(templates.frame(fn_name, line, runtime_id, script_id, argument_id, scope_id))
     }
   }
