@@ -1,20 +1,4 @@
 
-html, body {
-  overflow: hidden;
-  height:100%;
-  }
-
-body {
-  padding:0;
-  margin:0;
-  font-family: 'Lucida Sans Unicode', Arial, sans-serif;
-  font-size:.8em;
-  overflow: hidden;
-  }
-
-body>div {
-  padding:0px .7em;
-  }
 
 h2, h3 {
   margin:0;
@@ -38,15 +22,15 @@ li[hanler] {
   }
 
 #debug-container {
-  background-color:#ccc;
-  overflow: hidden;
+  xxbackground-color:#ccc;
+  xxoverflow: hidden;
   }
 
 #debug-container input {
   float:right;
   }
 
-#debug {
+xx#debug {
   position:absolute;
   overflow:auto;
   border:1px solid #666;
@@ -61,7 +45,6 @@ li[hanler] {
 
 #source-view {
   white-space: pre-wrap;
-  border:1px solid transparent; /* prevent any margin collapse */
   position: relative;
   }
 
@@ -107,19 +90,7 @@ li[hanler] {
   color:#fff;
   }
 
-.horizontal-frame-container {
-  padding:0;
-  overflow:hidden;
-  }
 
-.frame-horizontal {
-  float:left;
-  border: 0px solid #666;
-  border-right-width:5px;
-  overflow: auto;
-  position:relative;
-  height:100%;
-  }
 
 #source-view #line-pointer, #source-view .breakpoint {
   position:absolute;
@@ -132,7 +103,7 @@ li[hanler] {
   padding:0;
   margin:0;
   margin-top:-4px;
-  left:-10px;
+  left:0px;
   }
 
 #source-view .breakpoint {
@@ -141,36 +112,6 @@ li[hanler] {
   left:0px;
   }
 
-.frame-vertical {
-  border: 1px solid #666;
-  border-bottom-width:5px;
-  overflow: auto;
-  position:relative;
-  }
-
-.frame-slider-vertical {
-  height:6px;
-  background-color:#09f;
-  position: absolute;
-  width: 100%;
-  cursor: n-resize;
-  z-index: 100;
-  }
-
-.frame-slider-horizontal {
-  height:100%;
-  width:5px;
-  background-color:#09f;
-  position: absolute;
-  cursor: w-resize;
-  z-index: 100;
-  }
-
-#selection_catcher_container {
-  position: absolute;
-  left: -200px;
-  top: -200px;
-  }
 
 #command-line {
   overflow:hidden;
@@ -183,6 +124,7 @@ li[hanler] {
 #command-line input {
   float:right;
   }
+
 #command-line-container {
   position:absolute;
   top:25px;
@@ -193,5 +135,24 @@ li[hanler] {
   margin:0;
   }
 
+#examine-objects li {
+  padding-left:5px;
+  }
 
+#examine-objects .key {
+  color:blue;
+  margin-right:7px;
+  }
 
+#examine-objects input {
+  border:none;
+  margin:0;
+  margin-right:7px;
+  padding:0;
+  font-size:10px;
+  line-height:11px;
+  height:11px;
+  width:11px;
+  background: transparent url('data:image/gif,GIF89a%0B%00!%00%A2%00%00%00%00%00%FF%FF%FF%CC%CC%CCfff%FF%FF%FF%00%00%00%00%00%00%00%00%00!%F9%04%01%00%00%04%00%2C%00%00%00%00%0B%00!%00%00%03%3D(%BA%AC%F1%10%3A8%E2%7CU%8A%98%9F%1B%60X%5DA%17%90%26jm%D1%DA%BC0%D3%AE%B3V%7Bl%FD%89%E0%99%CF%A4V%90v%8B1%08%C8%A4r%C9l%3A%9FPfi%1A%ADZ%AF%CB%04%00%3B') scroll no-repeat 0 0;
+  cursor:pointer;
+  }

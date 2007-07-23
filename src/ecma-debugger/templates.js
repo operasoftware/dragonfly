@@ -47,6 +47,19 @@ templates = new function()
     ]
   }
 
+  this.frame = function(fn_name, line, runtime_id, script_id, argument_id, scope_id)
+  {
+    return ['li',
+      ( fn_name ? fn_name : 'anonymous' ) + ' ' + 'line '+line + ' script id ' + script_id,
+      'handler', 'show-frame',
+      'runtime_id', runtime_id.toString(),
+      'argument_id', argument_id, 
+      'scope_id', scope_id,
+      'line', line,
+      'script_id', script_id
+    ];
+  }
+
   this.configStopAt = function(config)
   {
     var ret =['ul'];
@@ -87,27 +100,65 @@ MODE ::= "<mode>"
         ]
       ]
   }
-/*
-<div 
-  id='slider-for-debug-container' 
-  class='frame-slider-vertical' 
-  onmousedown='helpers.verticalFrames.setUpResizeFrame(arguments[0])'></div>
-  */
-  this.verticalFrameSlider = function(id)
+
+  this.examineObject = function(xml, runtime_id)
   {
-    return ['div',
-      'id', 'slider-for-' + id,
-      'class', 'frame-slider-vertical',
-      'onmousedown', helpers.verticalFrames.setUpResizeFrame]
-        
+    var obj = xml.getElementsByTagName('object')[0];
+    if(obj)
+    {
+      var props = obj.getElementsByTagName('property'), prop = null, i=0;
+      var ret = ['ul'];
+      var prop_type = '';
+      for( ; prop = props[i]; i++)
+      {
+        // "number" | "boolean" | "string" | "null" | "undefined" | "object"
+        switch(prop.getNodeData('data-type'))
+        {
+          case 'object':
+          {
+            ret[ret.length] = 
+             self.key_value_folder(prop.getNodeData('property-name'), runtime_id, prop.getNodeData('object-id'));
+            break;
+          }
+          case 'number':
+          {
+            ret[ret.length] = 
+              self.key_value(prop.getNodeData('property-name'), prop.getNodeData('object-value'));
+            break;
+          }
+          case 'undefined':
+          {
+            ret[ret.length] = 
+              self.key_value(prop.getNodeData('property-name'), 'undefined');
+            break;
+          }
+          default:
+          {
+            ret[ret.length] = 
+              self.key_value(prop.getNodeData('property-name'), prop.getNodeData('string'));
+          }
+        }
+      }
+      return ret;
+    }
+    return [];
   }
-       
-  this.horizontalFrameSlider = function(id)
+
+
+
+  this.key_value = function(key, value, value_class)
   {
-    return ['div',
-      'id', 'slider-for-' + id,
-      'class', 'frame-slider-horizontal',
-      'onmousedown', helpers.horizontalFrames.setUpResizeFrame]
-        
+    return ['li', ['span', key, 'class', 'key'], ['span', value].concat( value_class ? ['class', value_class] : [])];
   }
+
+  this.key_value_folder = function(key, runtime_id, object_id)
+  {
+    return ['li', 
+      ['input', 'type', 'button', 'handler', 'examine-object', 'class', 'folder-key'],
+      ['span', key, 'class', 'key'], 
+      ['span', 'object', 'class', 'object'],
+      'runtime-id', runtime_id, 'object-id', object_id
+    ];
+  }
+
 }

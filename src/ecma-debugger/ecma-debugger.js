@@ -3,36 +3,31 @@ var debugger = new function()
   var self = this;
   var service = "ecmascript-debugger";
 
-  this.__getData =function()
+  this.getEvent = function()
   {
     proxy.GET( "/" + service, genericEventListener );
-  }
-
-  this.getData = function()
-  {
-    //opera.postError(proxy.getReadyState())
-    if(proxy.getReadyState())
-    {
-      setTimeout(self.__getData, 0);
-    }
   }
 
   var genericEventListener = function(xml) 
   {
     if(xml)
     {
-      if( self[xml.documentElement.nodeName])
+      if( tagManager.handleResponse(xml) )
       {
+        //alert('handled by tag manager');
+      }
+      else if( self[xml.documentElement.nodeName] )
+      {
+        //alert('handled by else if');
         self[xml.documentElement.nodeName](xml)
       }
       else
       {
         debug.output('not implemented: '+new XMLSerializer().serializeToString(xml));
-        //self.getData();
       }
       debug.formatXML(new XMLSerializer().serializeToString(xml));
     }
-    //self.getData();
+    self.getEvent();
   }
 
   var runtimes = {};
@@ -68,9 +63,22 @@ var debugger = new function()
     }
   }
 
-  var parseBacktrace = function(xml)
+  var parseBacktrace = function(xml, runtime_id)
   {
-
+    
+    var _frames = xml.getElementsByTagName('frame'), frame = null, i = 0;
+    var fn_name = '', line = '', script_id = '', argument_id = '', scope_id = '';
+    var container = document.getElementById('backtrace');
+    container.innerHTML = '';
+    for( ; frame  = _frames[i]; i++ )
+    {
+      fn_name = frame.getNodeData('function-name');
+      line = frame.getNodeData('line-number'); 
+      script_id = frame.getNodeData('script-id');
+      argument_id = frame.getNodeData('argument-count');
+      scope_id = frame.getNodeData('variable-count');
+      container.render(templates.frame(fn_name, line, runtime_id, script_id, argument_id, scope_id))
+    }
   }
   
   var environment = {}
@@ -96,10 +104,10 @@ var debugger = new function()
     document.getElementById('configuration').render(templates.configStopAt(config));
     document.getElementById('continues').render(templates.continues());
     helpers.setUpListeners();
-    helpers.verticalFrames.initFrames();
-    helpers.horizontalFrames.initFrames();
+    //helpers.verticalFrames.initFrames();
+    //helpers.horizontalFrames.initFrames();
     //helpers.verticalFrames.setUpFrames()
-    //self.getData();
+    //self.getEvent();
   }
 
   this['new-script'] = function(xml)
@@ -114,16 +122,17 @@ var debugger = new function()
     scripts[scripts.length] = script;
     addRuntime(script['runtime-id']);
     //proxy.POST("/" + service, "<break>"+script['runtime-id']+"</break>");
-    //self.getData();
+    //self.getEvent();
   }
 
   this['timeout'] = function() 
   {
-    //self.getData();
+    //self.getEvent();
   }
 
   this['runtimes-reply'] = function(xml)
   {
+    alert(88);
     var tag = xml.getNodeData('tag'), handler=null;
     if(tag && ( handler = tags[parseInt(tag)] ))
     {
@@ -133,8 +142,35 @@ var debugger = new function()
     {
       throw "runtimes-reply, missing tag";
     }
-    //self.getData();
+    //self.getEvent();
   }
+  /*
+
+    <frame>
+
+    <function-id>23</function-id>
+    <argument-count>24</argument-count>
+    <variable-count>25</variable-count>
+
+    <source-position>
+      <script-id>9</script-id>
+      <line-number>5</line-number>
+    </source-position>
+
+    <object-value>
+      <object-id>23</object-id>
+      <object-attributes>
+        <iscallable/>
+        <isfunction/>
+      </object-attributes>
+      <function-name>foo</function-name>
+    </object-value>
+
+  </frame>
+
+  */
+
+
 
   /*
 
@@ -241,6 +277,12 @@ MODE ::= "<mode>"
 
   this.setup = function()
   {
+    verticalFrames.init
+    (
+      document.body.getElementsByTagName('div')[0], 
+      function(){ return window.innerHeight }
+    )
+    action_handler.init();
     var host = location.host.split(':');
     proxy.onsetup = function()
     {
@@ -249,7 +291,10 @@ MODE ::= "<mode>"
         alert( "No service: " + service );
         return;
       }
-      //self.getData();
+      else
+      {
+        self.getEvent();
+      }
 
     }
     proxy.configure(host[0], host[1]);
@@ -275,7 +320,7 @@ MODE ::= "<mode>"
   this.getRuntime = function()
   {
     var msg = "<runtimes>";
-    var tag = getTagId();
+    var tag = tagManager.setCB(this, parseRuntime);
     msg += "<tag>" + tag +"</tag>";
     var i=0, r_t=0;
     for ( ; r_t = arguments[i]; i++)
@@ -283,22 +328,20 @@ MODE ::= "<mode>"
       msg += "<runtime-id>" + r_t +"</runtime-id>";
     }
     msg += "</runtimes>";
-    setTagCB(tag, parseRuntime);
     proxy.POST("/" + service, msg);
   }
 
   this.backtrace = function(stopAt)
   {
-    var tag = getTagId();
+    var tag = tagManager.setCB(this, parseBacktrace, [stopAt['runtime-id']]); 
     var msg = "<backtrace>";
     msg += "<tag>" + tag + "</tag>";
     msg += "<runtime-id>" + stopAt['runtime-id'] + "</runtime-id>";
     msg += "<thread-id>" + stopAt['thread-id'] + "</thread-id>";
     msg += "<maxframes>" + 100 + "</maxframes>";  // not sure what is correct here;
     msg += "</backtrace>";
-    setTagCB(tag, parseBacktrace);
     proxy.POST("/" + service, msg);
-    //self.getData();
+    //self.getEvent();
   }
 
   this.addBreakpoint = function(id, msg_how )
@@ -359,7 +402,7 @@ MODE ::= "<mode>"
     msg += "<mode>" + mode + "</mode>";
     msg += "</continue>";
     proxy.POST("/" + service, msg);
-    //self.getData();
+    //self.getEvent();
   }
 
   this.postCommandline = function(msg)
@@ -456,7 +499,7 @@ MODE ::= "<mode>"
     delete tags[tagId];
   }
 
-  proxy.onReceive = this.getData;
+  //proxy.onReceive = this.getEvent;
 
 }
 

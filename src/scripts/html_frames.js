@@ -125,9 +125,13 @@ var verticalFrames = new function()
       {
         if( i == length-1 )
         {
-          frame.style.height = ( height 
+          var new_height = height 
             - _frames[i-1].offsetTop - _frames[i-1].offsetHeight 
-            - getPaddingAndBorders(frame) )+'px';
+            - getPaddingAndBorders(frame);
+          if( new_height > 0 )
+          {
+            frame.style.height = new_height +'px';
+          }
         }
         else
         {
@@ -305,6 +309,8 @@ var horizontalFrames = new function()
       container.__init = true;
       table = document.createElement('ul');
       table.className = 'table';
+      //table.style.width='100%';
+      
       _frames = container.getChildElements();
       length = _frames.length;
       for( i=0; frame = _frames[i]; i++ )

@@ -1,0 +1,93 @@
+html, body {
+  overflow: hidden;
+  height:100%;
+  }
+
+body {
+  padding:0;
+  margin:0;
+  font-family: 'Lucida Sans Unicode', Arial, sans-serif;
+  font-size:.8em;
+  overflow: hidden;
+  }
+
+/* vertical frames */
+
+.vertical-frame-container {
+  overflow:hidden;
+  position:relative; /* force an offsetParent */
+  border:0px solid !important;
+  padding:0 !important;
+  }
+
+
+
+.vertical-frame {
+  border: 1px solid #333;
+  overflow: auto;
+  position:relative;
+  xxpadding:.8em;
+  }
+
+.vertical-frame-slider {
+  height:4px;
+  background-color:#ccc;
+  cursor: n-resize;
+  
+  }
+
+ 
+.horizontal-frame-container {
+  padding:0;
+  border:0px solid;
+  overflow:hidden;
+  }
+
+
+.table {
+  list-style:none;
+  margin:0;
+  padding:0;
+  display:table;
+  table-layout:fixed;
+  width:100%;
+  xxborder-collapse:collapse;
+  }
+
+.table>li {
+  display:table-cell;
+  vertical-align:top;
+  margin:0;
+  padding:0;
+  xxborder:1px solid green;
+  }
+
+.horizontal-frame-container.vertical-frame {
+  xxborder:1px solid red;
+  xxpadding:0;
+  }
+
+.horizontal-frame-slider {
+  width:4px;
+  background-color:#ccc;
+  cursor: w-resize;
+  }
+
+.horizontal-frame {
+  border: 1px solid #333;
+  overflow:auto;
+  padding: .3em;
+  }
+
+
+
+
+
+#selection_catcher_container {
+  position: absolute;
+  left: -200px;
+  top: -200px;
+  }
+
+
+

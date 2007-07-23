@@ -1,9 +1,13 @@
 <!doctype html>
 <head>
 <title>ecma debugger</title>
-<link rel='stylesheet' href='style.css'>
+<link rel='stylesheet' href='../styles/html_frame_style.css'>
+<link rel='stylesheet' href='debugger_style.css'>
+
 <script src="../scripts/dom.js"></script>
+<script src="../scripts/html_frames.js"></script>
 <script src="../scripts/clientlib_async.js"></script>
+
 <script src="debug.js"></script>
 <script src="storage.js"></script>
 <script src="helpers.js"></script>
@@ -11,11 +15,17 @@
 <script src="formatter.js"></script>
 <script src="templates.js"></script>
 <script src="handlers.js"></script>
+<script src="action_handler.js"></script>
+<script src="responseHandlers.js"></script>
+<script src="tag.js"></script>
+
+
 <script src="ecma-debugger.js"></script>
 </head>
-<body class='vertical-frame-container'>
+<body>
+<div class='vertical-frame-container'>
 
-<div id='command-line' class='frame-vertical' >
+<div id='command-line'>
 <input 
   type='button' 
   value='post' 
@@ -35,7 +45,9 @@
 <h2>Command Line</h2>
 <div id='command-line-container'><textarea></textarea></div>
 </div>
-<div id='debug-container' class='frame-vertical'>
+
+
+<div id='debug-container'>
   <input 
     type='button' 
     value='clear output' 
@@ -43,34 +55,58 @@
   <h2>Debug</h2>
   <pre id="debug"></pre>
 </div>
-<div id='control-container' class='frame-vertical horizontal-frame-container'>
-  <div id='hello-container' class='frame-horizontal'>
+
+
+<div id='control-container' class='horizontal-frame-container'>
+
+  <div id='hello-container'>
     <h2>Enviroment</h2>
     <div id="hello"></div>
   </div>
-  <div id='configuration-container' class='frame-horizontal'>
+
+
+  <div id='configuration-container'>
     <h2>Stop At</h2>
     <div id="configuration"></div>
   </div>
-  <div id='continues-container' class='frame-horizontal'>
+
+
+  <div id='continues-container'>
     <h2>Continue</h2>
     <div id="continues"></div>
   </div>
-  <div id='runtime-ids-container' class='frame-horizontal'>
+
+
+  <div id='runtime-ids-container'>
     <h2>Runtimes</h2>
     <ul id="runtime-ids"></ul>
   </div>
-  <div id="scripts-container" class='frame-horizontal'>
+
+
+  <div id="scripts-container">
     <h2>Scripts</h2>
     <ul id="scripts"></ul>
   </div>
+
 </div>
-<div id='inspection-container' class='frame-vertical'>
-  <h2>Backtrace</h2>
-  <div id="backtrace"></div>
-  <h2>Script</h2>
+
+<div id='inspection-container' class='horizontal-frame-container'>
+
   <!-- <div id="source-view" onclick='handlers.breakpoint(arguments[0])'></div> -->
   <div id="source-view"></div>
+  <div class='vertical-frame-container'>
+
+    <div>
+      <h2>Call Stack</h2>
+      <div id="backtrace"></div>
+    </div>
+
+    <div>
+      <ul id="examine-objects"></ul>
+    </div>
+
+  </div>
+</div>
 </div>
 <div id='selection_catcher_container'><input></div>
 </body>

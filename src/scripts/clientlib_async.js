@@ -84,10 +84,9 @@ var proxy = new function()
     * \exceptions Throws an exception if the return code is not 200
     * changed the code to work in an asynchroneous environment
     */
-  var x = null;
   this.GET = function( msg, cb ) 
   {
-    x = new XMLHttpRequest;
+    var x = new XMLHttpRequest;
     x.onload=function()
     {
       if (this.status != 200) 
@@ -113,13 +112,6 @@ var proxy = new function()
     x.send("");
   }
 
-  this.getReadyState = function()
-  {
-    if(x)
-    {
-      return x.readyState==4;
-    }
-  }
 
   /** Send a POST message to the configured host/port, wait until
     * there's a response, then return the response data.
