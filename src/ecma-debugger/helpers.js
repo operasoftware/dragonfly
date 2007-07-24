@@ -62,7 +62,7 @@ helpers = new function()
           'style', 'top:'+ __line.offsetTop +'px'
         ]
       );
-      //line_pointer.style.top = __line.offsetTop +'px';
+      // line_pointer.style.top = __line.offsetTop + 'px';
       document.getElementById('source-view').scrollTop = __line.offsetTop - 100;
 
     }

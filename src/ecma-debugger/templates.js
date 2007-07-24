@@ -82,8 +82,8 @@ MODE ::= "<mode>"
     var ret = ['ul'];
     ret[ret.length] = self.continueWithMode('run', 'run');
     ret[ret.length] = self.continueWithMode('step into call', 'step-into-call');
-    ret[ret.length] = self.continueWithMode('step over call', 'step-over-call');
-    ret[ret.length] = self.continueWithMode('finish call', 'finish-call');
+    ret[ret.length] = self.continueWithMode('step next line', 'step-over-call');
+    ret[ret.length] = self.continueWithMode('step out of call', 'finish-call');
     return ret;
   }
 
@@ -109,6 +109,9 @@ MODE ::= "<mode>"
       var props = obj.getElementsByTagName('property'), prop = null, i=0;
       var ret = ['ul'];
       var prop_type = '';
+      var unsorted = [];
+
+
       for( ; prop = props[i]; i++)
       {
         // "number" | "boolean" | "string" | "null" | "undefined" | "object"
@@ -116,39 +119,94 @@ MODE ::= "<mode>"
         {
           case 'object':
           {
-            ret[ret.length] = 
-             self.key_value_folder(prop.getNodeData('property-name'), runtime_id, prop.getNodeData('object-id'));
+            unsorted[unsorted.length] = 
+            {
+              key: prop.getNodeData('property-name'),
+              value: prop.getNodeData('object-id'),
+              type: 'object'
+            }
+            //self.key_value_folder(prop.getNodeData('property-name'), runtime_id, prop.getNodeData('object-id'));
             break;
           }
 
           case 'undefined':
           {
-            ret[ret.length] = 
-              self.key_value(prop.getNodeData('property-name'), '"undefined"', 'type');
+            unsorted[unsorted.length] = 
+            {
+              key: prop.getNodeData('property-name'),
+              value: '"undefined"',
+              type: 'undefined'
+            }
+            //self.key_value(prop.getNodeData('property-name'), '"undefined"', 'type');
             break;
           }
           case 'null':
           {
-            ret[ret.length] = 
-              self.key_value(prop.getNodeData('property-name'), 'null', 'type');
+            unsorted[unsorted.length] = 
+            {
+              key: prop.getNodeData('property-name'),
+              value: 'null',
+              type: 'null'
+            }
+            //self.key_value(prop.getNodeData('property-name'), 'null', 'type');
             break;
           }
           case 'number':
           {
-            ret[ret.length] = 
-              self.key_value(prop.getNodeData('property-name'), prop.getNodeData('object-value'), 'value');
+            unsorted[unsorted.length] = 
+            {
+              key: prop.getNodeData('property-name'),
+              value: prop.getNodeData('object-value'),
+              type: 'number'
+            }
+            //self.key_value(prop.getNodeData('property-name'), prop.getNodeData('object-value'), 'value');
             break;
           }
           case 'string':
           {
-            ret[ret.length] = 
-              self.key_value(prop.getNodeData('property-name'), '"' + prop.getNodeData('string') + '"', 'value');
+            unsorted[unsorted.length] = 
+            {
+              key: prop.getNodeData('property-name'),
+              value: '"' + prop.getNodeData('string') + '"',
+              type: 'string'
+            }
+            //self.key_value(prop.getNodeData('property-name'), '"' + prop.getNodeData('string') + '"', 'value');
             break;
           }
           case 'boolean':
           {
-            ret[ret.length] = 
-              self.key_value(prop.getNodeData('property-name'), prop.getNodeData('object-value'), 'value');
+            unsorted[unsorted.length] = 
+            {
+              key: prop.getNodeData('property-name'),
+              value: prop.getNodeData('object-value'),
+              type: 'boolean'
+            }
+            //self.key_value(prop.getNodeData('property-name'), prop.getNodeData('object-value'), 'value');
+            break;
+          }
+        }
+      }
+      
+      unsorted.sortByFieldName('key');
+
+      for( i=0 ; prop = unsorted[i]; i++)
+      {
+        switch(prop.type)
+        {
+          case 'object':
+          {
+            ret[ret.length] = self.key_value_folder(prop.key, runtime_id, prop.value);
+            break;
+          }
+          case 'undefined':
+          case 'null':
+          {
+            ret[ret.length] = self.key_value(prop.key, prop.value, 'type');
+            break;
+          }
+          default:
+          {
+            ret[ret.length] = ret[ret.length] = self.key_value(prop.key, prop.value, 'value');
             break;
           }
         }

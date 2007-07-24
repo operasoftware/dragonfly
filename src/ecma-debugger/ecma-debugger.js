@@ -1,3 +1,5 @@
+var __debug__ = false;
+
 var debugger = new function()
 {
   var self = this;
@@ -283,12 +285,39 @@ MODE ::= "<mode>"
 
   this.setup = function()
   {
+    var args = location.search, params = {}, arg = '', i = 0, ele = null;;
+    if( args )
+    {
+      args = args.slice(1).split(';');
+      for( ; arg = args[i]; i++)
+      {
+        arg = arg.split('=');
+        params[arg[0]] = arg[1] ? arg[1] : true;
+      }
+    }
+    if(params.debug)
+    {
+      __debug__ = true;
+    }
+    else
+    {
+      var rem = ['command-line', 'debug-container'];
+      for( i = 0; arg = rem[i]; i++)
+      {
+        ele = document.getElementById(arg);
+        ele.parentNode.removeChild(ele);
+      }
+      document.body.insertBefore(document.render(['h1', 'prototype ecma script debugger']), document.body.children[0]);
+    }
+
     verticalFrames.init
     (
       document.body.getElementsByTagName('div')[0], 
       function(){ return window.innerHeight - document.body.getElementsByTagName('div')[0].offsetTop }
     )
+
     action_handler.init();
+
     var host = location.host.split(':');
     proxy.onsetup = function()
     {

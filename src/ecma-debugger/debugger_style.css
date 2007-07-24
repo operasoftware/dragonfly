@@ -1,8 +1,10 @@
 h1 {
   margin:0;
   font-weight:normal;
-  background-color:#ccc;
+  background-color:#333;
+  color:#fff;
   padding:3px 7px;
+  border-bottom:5px solid #ccc;
   }
 
 h2, h3 {
