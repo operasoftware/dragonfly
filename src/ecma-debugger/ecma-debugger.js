@@ -1,4 +1,3 @@
-var __debug__ = false;
 
 var debugger = new function()
 {
@@ -25,12 +24,12 @@ var debugger = new function()
       }
       else
       {
-        if( __debug__ )
+        if( ini.debug )
         {
           debug.output('not implemented: '+new XMLSerializer().serializeToString(xml));
         }
       }
-      if( __debug__ )
+      if( ini.debug )
       {
         debug.formatXML(new XMLSerializer().serializeToString(xml));
       }
@@ -76,22 +75,47 @@ var debugger = new function()
     
     var _frames = xml.getElementsByTagName('frame'), frame = null, i = 0;
     var fn_name = '', line = '', script_id = '', argument_id = '', scope_id = '';
+    var _frames_length = _frames.length;
     var container = document.getElementById('backtrace');
     container.innerHTML = '';
+    var is_all_frames = _frames_length <= ini.max_frames;
     for( ; frame  = _frames[i]; i++ )
     {
-      fn_name = frame.getNodeData('function-name');
-      line = frame.getNodeData('line-number'); 
-      script_id = frame.getNodeData('script-id');
-      argument_id = frame.getNodeData('argument-object');
-      scope_id = frame.getNodeData('variable-object');
-      container.render(templates.frame(fn_name, line, runtime_id, script_id, argument_id, scope_id))
+      if( is_all_frames && i == _frames_length - 1 )
+      {
+        fn_name = 'global scope';
+        line = ''; 
+        script_id = '';
+        argument_id = frame.getNodeData('argument-object');
+        scope_id = frame.getNodeData('variable-object');
+        container.render(templates.frame(fn_name, line, runtime_id, script_id, argument_id, scope_id));
+      }
+      else
+      {
+        fn_name = frame.getNodeData('function-name');
+        line = frame.getNodeData('line-number'); 
+        script_id = frame.getNodeData('script-id');
+        argument_id = frame.getNodeData('argument-object');
+        scope_id = frame.getNodeData('variable-object');
+        container.render(templates.frame(fn_name, line, runtime_id, script_id, argument_id, scope_id));
+      }
     }
   }
   
   var environment = {}
 
   /**** generic event listener ****/
+
+  /*
+
+  hello>
+  <protocol-version>1</protocol-version>
+  <operating-system>WinGogi</operating-system>
+  <platform>WinGogi</platform>
+  <user-agent>WinGogiOpera/9.0 (Wi...</user-agent>
+</hello>
+
+*/
 
   this['hello'] = function(xml)
   {
@@ -101,17 +125,30 @@ var debugger = new function()
       environment[child.nodeName] = child.textContent;
     }
     document.getElementById('hello').render(templates.hello(environment));
-    var config = storage.config_stop_at.get();
-    var config_arr = [], prop = '';
-    for ( prop in config )
+    if( ini.protocol_version == environment['protocol-version'] )
     {
-      config_arr[config_arr.length] = prop;
-      config_arr[config_arr.length] = config[prop];
+
+      var config = storage.config_stop_at.get();
+      var config_arr = [], prop = '';
+      for ( prop in config )
+      {
+        config_arr[config_arr.length] = prop;
+        config_arr[config_arr.length] = config[prop];
+      }
+      self.setConfiguration.apply(self, config_arr);
+      document.getElementById('configuration').render(templates.configStopAt(config));
+      document.getElementById('continues').render(templates.continues());
+      helpers.setUpListeners();
     }
-    self.setConfiguration.apply(self, config_arr);
-    document.getElementById('configuration').render(templates.configStopAt(config));
-    document.getElementById('continues').render(templates.continues());
-    helpers.setUpListeners();
+    else
+    {
+      document.getElementById('source-view').render
+      (
+        ['h2', 'The debugger works with protocol version ' + ini.protocol_version, 'class', 'failed' ]
+      );
+
+
+    }
     //helpers.verticalFrames.initFrames();
     //helpers.horizontalFrames.initFrames();
     //helpers.verticalFrames.setUpFrames()
@@ -297,7 +334,7 @@ MODE ::= "<mode>"
     }
     if(params.debug)
     {
-      __debug__ = true;
+      ini.debug = true;
     }
     else
     {
@@ -373,7 +410,7 @@ MODE ::= "<mode>"
     msg += "<tag>" + tag + "</tag>";
     msg += "<runtime-id>" + stopAt['runtime-id'] + "</runtime-id>";
     msg += "<thread-id>" + stopAt['thread-id'] + "</thread-id>";
-    msg += "<maxframes>" + 100 + "</maxframes>";  // not sure what is correct here;
+    msg += "<maxframes>" + ini.max_frames + "</maxframes>";  // not sure what is correct here;
     msg += "</backtrace>";
     proxy.POST("/" + service, msg);
     //self.getEvent();
