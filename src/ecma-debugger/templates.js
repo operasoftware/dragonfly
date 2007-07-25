@@ -50,7 +50,9 @@ templates = new function()
   this.frame = function(fn_name, line, runtime_id, script_id, argument_id, scope_id)
   {
     return ['li',
-      ( fn_name ? fn_name : 'anonymous' ) + ' ' + 'line '+line + ' script id ' + script_id,
+      ( fn_name ? fn_name : 'anonymous' ) + 
+        ( line ? ' ' + 'line ' + line : '' ) + 
+        ( script_id ? ' script id ' + script_id : '' ),
       'handler', 'show-frame',
       'runtime_id', runtime_id.toString(),
       'argument_id', argument_id, 
@@ -156,7 +158,7 @@ MODE ::= "<mode>"
             unsorted[unsorted.length] = 
             {
               key: prop.getNodeData('property-name'),
-              value: prop.getNodeData('object-value'),
+              value: prop.getNodeData('string'),
               type: 'number'
             }
             //self.key_value(prop.getNodeData('property-name'), prop.getNodeData('object-value'), 'value');
@@ -178,7 +180,7 @@ MODE ::= "<mode>"
             unsorted[unsorted.length] = 
             {
               key: prop.getNodeData('property-name'),
-              value: prop.getNodeData('object-value'),
+              value: prop.getNodeData('string'),
               type: 'boolean'
             }
             //self.key_value(prop.getNodeData('property-name'), prop.getNodeData('object-value'), 'value');
