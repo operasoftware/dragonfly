@@ -287,9 +287,10 @@ MODE ::= "<mode>"
         params[arg[0]] = arg[1] ? arg[1] : true;
       }
     }
-    if(params.debug)
+    if( params.debug || params['event-flow'] )
     {
-      ini.debug = true;
+      if(params.debug) ini.debug = true;
+      if(params['event-flow']) window.__debug_event_flow__ = true;
     }
     else
     {
