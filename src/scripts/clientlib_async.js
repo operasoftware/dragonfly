@@ -141,12 +141,12 @@ var proxy = new function()
           throw "Message failed, POST, empty document: " + this.responseText;
         }
         if(cb) cb(xml);
-        if( __debug__ )
+        if( ini.debug )
         {
           debug.output('POST response: '+this.responseText);
         }
       }
-      if( __debug__ )
+      if( ini.debug )
       {
         debug.formatXML("POST:\n" + data);
       }

@@ -172,9 +172,7 @@ Document.prototype.getElementsByClassName=Element.prototype.getElementsByClassNa
     ele = null, ret =[], c_n = '', cursor = null, i = 0, j = 0;
   for( ; c_n = arguments[i]; i++) 
   {
-    // (new RegExp('(?:^| *)'+name+'(?: *|$)')).test(this.className)
     arguments[i] = new RegExp('(?:^| +)' + c_n + '(?: +|$)');
-    
   }
   for (i=0; ele=eles[i]; i++)
   { 
