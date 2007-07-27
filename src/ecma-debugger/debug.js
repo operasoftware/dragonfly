@@ -23,7 +23,11 @@ debug = new function()
       }
     }
     d_c.textContent += string +'\n';
-    //d_c.scrollTop = d_c.scrollHeight;
+    if( string.indexOf('<timeout/>') == -1 )
+    {
+    d_c=document.getElementById('debug-container');
+    d_c.scrollTop = d_c.scrollHeight;
+    }
   }
 
   this.formatXML=function(string)

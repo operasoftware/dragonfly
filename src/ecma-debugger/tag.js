@@ -15,6 +15,7 @@ var tagManager = new function()
   {
     var tag = (counter++).toString();
     tags[tag] = {obj: obj, methode: methode, args: args_list ? args_list : []};
+    //tags[tag].time = new Date().getTime();
     return tag;
   }
 
@@ -23,6 +24,7 @@ var tagManager = new function()
     var tag = response.getNodeData('tag'), cb = null;
     if( tag && ( cb = tags[tag] ) )
     {
+      //opera.postError('tag: '+( (new Date().getTime())- cb.time ));
       cb.methode.apply(cb.obj, [response].concat(cb.args));
       delete cb;
       return true;

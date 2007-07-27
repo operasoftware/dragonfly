@@ -11,11 +11,23 @@ templates = new function()
     }
     return ret;
   }
+
+  this.runtimes = function(runtimes)
+  {
+    var ret = ['ul'];
+    var cur = '';
+    for( cur in runtimes )
+    {
+      ret[ret.length] = self.runtimeId(runtimes[cur]);
+    }
+    return ret;
+  }
+
   this.runtimeId = function(runtime)
   {
     return ['li',
         runtime['uri'],
-        'onclick', handlers.showAllScripts,
+        'handler', 'show-scripts',
         'runtime_id', runtime['runtime-id'],
         'hanler', 'yes'
       ]
@@ -25,7 +37,7 @@ templates = new function()
     return ['li',
         script['script-type']+' - '+(script['uri']?script['uri']:'script-id: '+script['script-id']),
         'onclick', handlers.showScript,
-        'ref', script,
+        'script-id', script['script-id'],
         'hanler', 'yes'
       ]
   }
@@ -233,6 +245,15 @@ MODE ::= "<mode>"
       ['span', 'object', 'class', 'type'],
       'runtime-id', runtime_id, 'object-id', object_id
     ];
+  }
+
+  this.breakpoint = function(line_nr, top)
+  {
+    return ['li',
+          'class', 'breakpoint',
+          'line_nr', line_nr,
+          'style', 'top:'+ top +'px'
+        ]
   }
 
 }

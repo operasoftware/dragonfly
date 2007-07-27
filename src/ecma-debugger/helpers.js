@@ -162,9 +162,28 @@ helpers = new function()
     }
   }
 
+  this.setSelected = function(event)
+  {
+    var ele=event.target;
+    var siblings = ele.parentNode.getElementsByTagName(ele.nodeName), sibling = null, i=0;
+    for( ; sibling = siblings[i]; i++)
+    {
+      if(sibling == ele) 
+      {
+        sibling.addClass('selected'); 
+      }
+      else
+      {
+        sibling.removeClass('selected'); 
+      }
+    }
+  }
+
   this.setUpListeners = function()
   {
     document.addEventListener('keypress', keypressListener, true);
+    //alert(document.getElementById('source-view')+' '+ handlers.breakpoints);
+    document.getElementById('source-view').addEventListener('click', handlers.breakpoint, false);
   }
 
   this.examine_objects = function() // runtime_id, tag, object_1, ...

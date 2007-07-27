@@ -37,39 +37,6 @@ var debugger = new function()
     self.getEvent();
   }
 
-  var runtimes = {};
-
-  var addRuntime = function(id)
-  { 
-    if( !(id in runtimes) )
-    {
-      runtimes[id] = null;
-      self.getRuntime(id);
-    }
-  }
-
-  var parseRuntime = function(xml)
-  {
-    var r_ts = xml.getElementsByTagName('runtime'), r_t=null, i=0;
-    var runtimeId = '', runtime=null, prop = '', 
-      children = null, child = null, j = 0;
-    for ( ; r_t=r_ts[i]; i++)
-    {
-      runtimeId = r_t.getNodeData('runtime-id'); 
-      if(runtimeId)
-      {
-        runtime={};
-        children = r_t.childNodes;
-        for(j=0 ; child = children[j]; j++)
-        {
-          runtime[child.nodeName] = child.textContent;
-        }
-        runtimes[runtimeId] = runtime;
-        document.getElementById('runtime-ids').render(templates.runtimeId(runtime))
-      }
-    }
-  }
-
   var parseBacktrace = function(xml, runtime_id)
   {
     
@@ -149,30 +116,18 @@ var debugger = new function()
 
 
     }
-    //helpers.verticalFrames.initFrames();
-    //helpers.horizontalFrames.initFrames();
-    //helpers.verticalFrames.setUpFrames()
-    //self.getEvent();
+
   }
 
   this['new-script'] = function(xml)
   {
-     
-    var script = {};
-    var children = xml.documentElement.childNodes, child=null, i=0;
-    for ( ; child = children[i]; i++)
-    {
-      script[child.nodeName] = child.firstChild.nodeValue;
+    
+    runtimes.handle(xml);
     }
-    scripts[scripts.length] = script;
-    addRuntime(script['runtime-id']);
-    //proxy.POST("/" + service, "<break>"+script['runtime-id']+"</break>");
-    //self.getEvent();
-  }
 
   this['timeout'] = function() 
   {
-    //self.getEvent();
+
   }
 
   this['runtimes-reply'] = function(xml)
@@ -273,7 +228,7 @@ MODE ::= "<mode>"
     {
       self.backtrace(stopAt);
       
-      helpers.showLine( stopAt['script-id'], line );
+      views.source_code.showLine( stopAt['script-id'], line );
       helpers.disableContinues(id, false);
     }
     else
@@ -356,6 +311,7 @@ MODE ::= "<mode>"
     action_handler.init();
 
     var host = location.host.split(':');
+
     proxy.onsetup = function()
     {
       if (!proxy.enable(service))	
@@ -386,20 +342,6 @@ MODE ::= "<mode>"
         "</stop-at>";
     }
     msg += "</set-configuration>";
-    proxy.POST("/" + service, msg);
-  }
-
-  this.getRuntime = function()
-  {
-    var msg = "<runtimes>";
-    var tag = tagManager.setCB(this, parseRuntime);
-    msg += "<tag>" + tag +"</tag>";
-    var i=0, r_t=0;
-    for ( ; r_t = arguments[i]; i++)
-    {
-      msg += "<runtime-id>" + r_t +"</runtime-id>";
-    }
-    msg += "</runtimes>";
     proxy.POST("/" + service, msg);
   }
 
@@ -442,29 +384,6 @@ MODE ::= "<mode>"
     proxy.POST("/" + service, msg);
   }
 
-/*
-
-  <thread-stopped-at>
-  <runtime-id>2</runtime-id>
-  <thread-id>8</thread-id>
-  <script-id>10</script-id>
-  <line-number>2</line-number>
-  <stopped-reason>unknown</stopped-reason>
-</thread-stopped-at>
-
-
-CONTINUE ::= "<continue>" 
-                 RUNTIME-ID 
-                 THREAD-ID 
-                 MODE 
-               "</continue>" ;
-RUNTIME-ID ::= "<runtime-id>" UNSIGNED "</runtime-id>" ;
-THREAD-ID ::= "<thread-id>" UNSIGNED "</thread-id>" ;
-MODE ::= "<mode>" 
-             ( "run" | "step-into-call" | "step-over-call" | "finish-call" )
-           "</mode>" ;
-
-*/
 
   this.__continue = function (stopAtId, mode)
   {
@@ -482,6 +401,8 @@ MODE ::= "<mode>"
     var msg = document.getElementById('command-line').getElementsByTagName('textarea')[0].value;
     proxy.POST("/" + service, msg);
   }
+
+  /*
 
   var breakpoints = {};
 
@@ -551,7 +472,11 @@ MODE ::= "<mode>"
     }
   }
 
+  */
+
   /**** tags handling ****/
+
+  /*
 
   var tags = {};
   var __tagCounter=0;
@@ -570,6 +495,8 @@ MODE ::= "<mode>"
   {
     delete tags[tagId];
   }
+
+  */
 
   //proxy.onReceive = this.getEvent;
 
