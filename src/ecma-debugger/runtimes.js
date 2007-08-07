@@ -4,9 +4,10 @@ var runtimes = new function()
 
   var registerRuntime = function(id)
   { 
-
+    
     if( !(id in __runtimes) )
     {
+      //alert('runtime: '+ id);
       __runtimes[id] = null;
       commands.getRuntime( tagManager.setCB(null, parseRuntime), id );
     }
@@ -21,6 +22,7 @@ var runtimes = new function()
     for ( ; r_t = r_ts[i]; i++)
     {
       runtimeId = r_t.getNodeData('runtime-id'); 
+      //alert('parseRuntime: '+ runtimeId);
       if(runtimeId)
       {
         runtime={};

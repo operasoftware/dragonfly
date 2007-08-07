@@ -106,17 +106,7 @@ helpers = new function()
     }
   }
 
-  this.disableContinues = function(stopAtId, bol)
-  {
-    __stop_at_id = stopAtId;
-    var inputs = document.getElementById('continues').getElementsByTagName('input'),
-        input = null, i=0;
-    for( ; input = inputs[i]; i++)
-    {
-      input.disabled = bol;
-      input.__stop_at_id = stopAtId;
-    }
-  }
+
 
   var handleKeypress = function(event, id)
   {

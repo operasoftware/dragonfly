@@ -11,6 +11,50 @@ views.runtimes = new function()
   }
 }
 
+views.continues = new function()
+{
+  this.update = function()
+  {
+    var bol = !stop_at.getControlsEnabled();
+    var inputs = document.getElementById('continues').getElementsByTagName('input'),
+        input = null, i=0;
+    for( ; input = inputs[i]; i++)
+    {
+      input.disabled = bol;
+    }
+  }
+}
+
+views.callstack = new function()
+{
+  var container_id = 'backtrace';
+  this.update = function()
+  {
+    var _frames = stop_at.getFrames(), frame = null, i = 0;
+    var container = document.getElementById(container_id);
+    container.innerHTML = '';
+    for( ; frame = _frames[i]; i++)
+    {
+      container.render(templates.frame(frame));
+    }
+  }
+}
+
+views.scope = new function()
+{
+  var container_id = 'examine-objects';
+
+  this.clear = function()
+  {
+    var container = document.getElementById(container_id);
+    container.innerHTML = '';
+  }
+  this.get = function()
+  {
+    return document.getElementById(container_id);
+  }
+}
+
 views.source_code = new function()
 {
   var self = this;

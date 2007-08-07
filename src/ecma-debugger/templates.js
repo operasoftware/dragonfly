@@ -16,9 +16,12 @@ templates = new function()
   {
     var ret = ['ul'];
     var cur = '';
-    for( cur in runtimes )
+    for( cur in runtimes )  
     {
-      ret[ret.length] = self.runtimeId(runtimes[cur]);
+      if( runtimes[cur] ) // this is a temporary fix
+      {
+        ret[ret.length] = self.runtimeId(runtimes[cur]);
+      }
     }
     return ret;
   }
@@ -59,18 +62,14 @@ templates = new function()
     ]
   }
 
-  this.frame = function(fn_name, line, runtime_id, script_id, argument_id, scope_id)
+  this.frame = function(frame)
   {
     return ['li',
-      ( fn_name ? fn_name : 'anonymous' ) + 
-        ( line ? ' ' + 'line ' + line : '' ) + 
-        ( script_id ? ' script id ' + script_id : '' ),
+      ( frame.fn_name ? frame.fn_name : 'anonymous' ) + 
+        ( frame.line ? ' ' + 'line ' + frame.line : '' ) + 
+        ( frame.script_id ? ' script id ' + frame.script_id : '' ),
       'handler', 'show-frame',
-      'runtime_id', runtime_id.toString(),
-      'argument_id', argument_id, 
-      'scope_id', scope_id,
-      'line', line,
-      'script_id', script_id
+      'ref-id', frame.id
     ];
   }
 
@@ -109,7 +108,7 @@ MODE ::= "<mode>"
           'value', name,
           'mode', mode,
           'id', 'continue-' + mode,
-          'onclick', handlers.__continue,
+          'handler', 'continue',
           'disabled', true
         ]
       ]

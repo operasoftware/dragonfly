@@ -56,4 +56,26 @@ var commands = new function()
     proxy.POST("/" + "ecmascript-debugger", msg);
   }
 
+  this.backtrace = function(tag, stopAt)
+  {
+     
+    var msg = "<backtrace>";
+    msg += "<tag>" + tag + "</tag>";
+    msg += "<runtime-id>" + stopAt['runtime-id'] + "</runtime-id>";
+    msg += "<thread-id>" + stopAt['thread-id'] + "</thread-id>";
+    msg += "<maxframes>" + ini.max_frames + "</maxframes>";  // not sure what is correct here;
+    msg += "</backtrace>";
+    proxy.POST("/" + service, msg);
+  }
+
+  this.__continue = function (stopAt, mode)
+  {
+    var msg = "<continue>";
+    msg += "<runtime-id>" + stopAt['runtime-id'] + "</runtime-id>";
+    msg += "<thread-id>" + stopAt['thread-id'] + "</thread-id>";
+    msg += "<mode>" + mode + "</mode>";
+    msg += "</continue>";
+    proxy.POST("/" + service, msg);
+  }
+
 }

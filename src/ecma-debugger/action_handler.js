@@ -42,12 +42,20 @@ var action_handler = new function()
 
   handlers['show-frame'] = function(event)
   {
-    var ele = event.target;
-    var runtime_id = ele.getAttribute('runtime_id');
-    var container = document.getElementById('examine-objects');
-    container.innerHTML = '';
-    var tag = tagManager.setCB(null, responseHandlers.examinFrame, [runtime_id, container, ele.getAttribute('argument_id')]);
-    helpers.examine_objects( runtime_id, tag, ele.getAttribute('scope_id') );
+    //var ele = event.target;
+    var frame = stop_at.getFrame(event.target['ref-id']);
+    var runtime_id = stop_at.getRuntimeId(); // this is schabernack. each frame can be in a different runtime
+    if(frame)
+    {
+      views.scope.clear();
+      var tag = tagManager.setCB(null, responseHandlers.examinFrame, [runtime_id, views.scope.get(), frame.argument_id]);
+      helpers.examine_objects( runtime_id, tag, frame.scope_id );
+    }
+    else
+    {
+      opera.postError("missing frame in 'show-frame' handler");
+    }
+    
   }
 
   handlers['examine-object'] = function(event)
@@ -78,6 +86,11 @@ var action_handler = new function()
       scripts_container.render(templates.scriptLink(script));
     }
     helpers.setSelected(event);
+  }
+
+  handlers['continue'] = function(event)
+  {
+    stop_at.__continue(event.target.getAttribute('mode'));
   }
 
   this.init = function()
