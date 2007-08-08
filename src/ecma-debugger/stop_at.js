@@ -1,5 +1,29 @@
 var stop_at = new function()
 {
+
+  /**
+  * two layers are needed. 
+  * stop_at script must be enabled allways to be able to reasign breakpoints. 
+  */ 
+
+  var stop_at_settings =
+  {
+    script: 1,
+    exception: 0,
+    error: 0,
+    abort: 0,
+    gc: 0
+  }
+
+  var stop_at_user_settings =
+  {
+    script: 0,
+    exception: 0,
+    error: 0,
+    abort: 0,
+    gc: 0
+  }
+
   var stopAt = {}; // there can be only one stop at at the time
 
   var runtime_id = '';
@@ -13,6 +37,25 @@ var stop_at = new function()
   var getStopAtId = function()
   {
     return __stopAtId++;
+  }
+
+  this.getStopAts = function()
+  {
+    return stop_at_user_settings; // should be  copied
+  }
+
+  this.setUserStopAt = function(key, value)
+  {
+    stop_at_user_settings[key] = value; // true or false;
+    if( key == 'script' )
+    {
+
+    }
+    else
+    {
+      stop_at_settings[key] = value;
+      commands.setConfiguration(key, value ? 'yes' : 'no');
+    }
   }
 
   this.getRuntimeId = function()
@@ -73,12 +116,25 @@ var stop_at = new function()
     }
   }
 
-  this.__continue = function (mode)
+  this.setInitialSettings = function()
+  {
+    var config_arr = [], prop = '';
+    for ( prop in stop_at_settings )
+    {
+      config_arr[config_arr.length] = prop;
+      config_arr[config_arr.length] = stop_at_settings[prop] ? 'yes' : 'no';
+    }
+    commands.setConfiguration.apply(null, config_arr);
+  }
+
+  this.__continue = function (mode) //
   {
     __controls_enabled = false;
     commands.__continue(stopAt, mode);
     views.continues.update();
   }
+
+
 
 
   this.handle = function(stop_at_event)
@@ -101,14 +157,26 @@ var stop_at = new function()
     var line = parseInt( stopAt['line-number'] );
     if( typeof line == 'number' )
     {
-      runtime_id = stopAt['runtime-id'];
-      // the runtime id can be different for each frame. 
-      var tag = tagManager.setCB(null, parseBacktrace, [stopAt['runtime-id']]); 
-      commands.backtrace(tag, stopAt);
-      
-      views.source_code.showLine( stopAt['script-id'], line );
-      __controls_enabled = true;
-      views.continues.update();
+      /**
+      * This event is enabled by default to reassign breakpoints. 
+      * Here it must be checked if the user likes actually to stop or not.
+      * At the moment this is a hack because the stop reason is not set for that case.
+      * The check is if the stop reason is 'unknown' ( should be 'new script')
+      */
+      if(stopAt['stopped-reason'] == 'unknown')
+      {
+        this.__continue('run');
+      }
+      else
+      {
+        runtime_id = stopAt['runtime-id'];
+        // the runtime id can be different for each frame. 
+        var tag = tagManager.setCB(null, parseBacktrace, [stopAt['runtime-id']]); 
+        commands.backtrace(tag, stopAt);
+        views.source_code.showLine( stopAt['script-id'], line );
+        __controls_enabled = true;
+        views.continues.update();
+      }
     }
     else
     {

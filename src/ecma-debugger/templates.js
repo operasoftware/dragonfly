@@ -54,8 +54,8 @@ templates = new function()
         ['input', 
         'type', 'checkbox', 
         'value', settingName,
-        'checkbox', settingValue == 'yes' ? true : false,
-        'onclick', handlers.setStopAt
+        'checkbox', settingValue ?  true : false,
+        'handler', 'set-stop-at'
         ],
         settingName
       ]

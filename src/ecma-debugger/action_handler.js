@@ -93,6 +93,11 @@ var action_handler = new function()
     stop_at.__continue(event.target.getAttribute('mode'));
   }
 
+  handlers['set-stop-at'] = function(event)
+  {
+    stop_at.setUserStopAt(event.target.value, event.target.checked);
+  }
+
   this.init = function()
   {
     document.addEventListener('click', handler, false);

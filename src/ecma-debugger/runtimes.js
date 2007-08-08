@@ -123,8 +123,6 @@ var runtimes = new function()
     script['breakpoints'] = {};
     registerRuntime( script['runtime-id'] );
     registerScript( script );
-    //scripts[scripts.length] = script;
-    //addRuntime(script['runtime-id']);
   }
 
   this.getRuntimes = function()

@@ -78,4 +78,18 @@ var commands = new function()
     proxy.POST("/" + service, msg);
   }
 
+  this.setConfiguration = function() // stopAt
+  {
+    var msg = "<set-configuration>", type='', bol='', i=0; 
+    for ( ; (type = arguments[i++]) && (bol=arguments[i]); i++ )
+    {
+      msg += "<stop-at>" + 
+          ( bol=='yes' ? "<yes/>" : "<no/>" ) +
+          "<stop-type>"+type+"</stop-type>"+
+        "</stop-at>";
+    }
+    msg += "</set-configuration>";
+    proxy.POST("/" + service, msg);
+  }
+
 }

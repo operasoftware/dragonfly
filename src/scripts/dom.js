@@ -24,7 +24,7 @@ Element.prototype.___add=Document.prototype.___add=function()
       }
       for( ;arguments[i] ; i+=2)
       {
-        if(/string|number/.test(typeof arguments[i+1]))
+        if(/string/.test(typeof arguments[i+1]))
         {
           ele.setAttribute(arguments[i], arguments[i+1]);
         }

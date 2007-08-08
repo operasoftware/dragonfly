@@ -15,10 +15,7 @@ handlers = new function()
 
 
 
-  this.setStopAt = function(event)
-  {
-    debugger.setConfiguration(event.target.value, event.target.checked ? 'yes' : 'no');
-  }
+
 
 
   this.breakpoint = function(event)

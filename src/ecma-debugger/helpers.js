@@ -172,7 +172,6 @@ helpers = new function()
   this.setUpListeners = function()
   {
     document.addEventListener('keypress', keypressListener, true);
-    //alert(document.getElementById('source-view')+' '+ handlers.breakpoints);
     document.getElementById('source-view').addEventListener('click', handlers.breakpoint, false);
   }
 

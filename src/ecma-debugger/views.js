@@ -11,12 +11,38 @@ views.runtimes = new function()
   }
 }
 
+/*
+      views.configuration.render();
+      views.continues.render();
+
+      document.getElementById('configuration').render(templates.configStopAt(config));
+      document.getElementById('continues').render(templates.continues());
+
+      */
+
+views.configuration = new function()
+{
+  var self = this;
+  var container_id = 'configuration';
+  this.render = function()
+  {
+    document.getElementById('configuration').render(templates.configStopAt(stop_at.getStopAts()));
+  }
+
+}
+
 views.continues = new function()
 {
+  var self = this;
+  var container_id = 'continues';
+  this.render = function()
+  {
+    document.getElementById(container_id).render(templates.continues());
+  }
   this.update = function()
   {
     var bol = !stop_at.getControlsEnabled();
-    var inputs = document.getElementById('continues').getElementsByTagName('input'),
+    var inputs = document.getElementById(container_id).getElementsByTagName('input'),
         input = null, i=0;
     for( ; input = inputs[i]; i++)
     {

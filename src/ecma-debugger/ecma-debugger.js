@@ -44,16 +44,6 @@ var debugger = new function()
 
   /**** generic event listener ****/
 
-  /*
-
-  hello>
-  <protocol-version>1</protocol-version>
-  <operating-system>WinGogi</operating-system>
-  <platform>WinGogi</platform>
-  <user-agent>WinGogiOpera/9.0 (Wi...</user-agent>
-</hello>
-
-*/
 
   this['hello'] = function(xml)
   {
@@ -65,18 +55,13 @@ var debugger = new function()
     document.getElementById('hello').render(templates.hello(environment));
     if( ini.protocol_version == environment['protocol-version'] )
     {
+      stop_at.setInitialSettings();
 
-      var config = storage.config_stop_at.get();
-      var config_arr = [], prop = '';
-      for ( prop in config )
-      {
-        config_arr[config_arr.length] = prop;
-        config_arr[config_arr.length] = config[prop];
-      }
-      self.setConfiguration.apply(self, config_arr);
-      document.getElementById('configuration').render(templates.configStopAt(config));
-      document.getElementById('continues').render(templates.continues());
-      helpers.setUpListeners();
+      views.configuration.render();
+      views.continues.render();
+      
+      helpers.setUpListeners(); // clean this up!
+
     }
     else
     {
@@ -181,19 +166,7 @@ var debugger = new function()
 
   /**** commands ****/
 
-  this.setConfiguration = function() // stopAt
-  {
-    var msg = "<set-configuration>", type='', bol='', i=0; 
-    for ( ; (type = arguments[i++]) && (bol=arguments[i]); i++ )
-    {
-      msg += "<stop-at>" + 
-          ( bol=='yes' ? "<yes/>" : "<no/>" ) +
-          "<stop-type>"+type+"</stop-type>"+
-        "</stop-at>";
-    }
-    msg += "</set-configuration>";
-    proxy.POST("/" + service, msg);
-  }
+
 
   this.postCommandline = function(msg)
   {
