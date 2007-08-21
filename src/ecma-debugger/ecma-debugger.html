@@ -3,7 +3,9 @@
 <title>ecma debugger</title>
 <link rel='stylesheet' href='../styles/html_frame_style.css'>
 <link rel='stylesheet' href='debugger_style.css'>
+<link rel='stylesheet' href='js-source.css'>
 <script src="../scripts/dom.js"></script>
+<script src="../scripts/messages.js"></script>
 <script src="../scripts/array.js"></script>
 <script src="../scripts/html_frames.js"></script>
 <script src="../scripts/clientlib_async.js"></script>
@@ -13,6 +15,7 @@
 <script src="storage.js"></script>
 <script src="helpers.js"></script>
 <script src="syntax.js"></script>
+<script src='pre_lexer.js'></script>
 <script src="formatter.js"></script>
 <script src="templates.js"></script>
 <script src="handlers.js"></script>
@@ -20,7 +23,10 @@
 <script src="stop_at.js"></script>
 <script src="commands.js"></script>
 <script src="views.js"></script>
+
+<script src="js-source-view.js"></script>
 <script src="action_handler.js"></script>
+<script src="scroll_handler.js"></script>
 <script src="responseHandlers.js"></script>
 <script src="tag.js"></script>
 
@@ -104,7 +110,7 @@
 <div id='inspection-container' class='horizontal-frame-container'>
 
   <!-- <div id="source-view" onclick='handlers.breakpoint(arguments[0])'></div> -->
-  <div id="source-view"></div>
+  <div id="js-source"></div>
   <div class='vertical-frame-container'>
 
     <div>

@@ -1,4 +1,4 @@
-var views = {};
+(function(){ window.views = window.views || {}; })();
 
 views.runtimes = new function()
 {

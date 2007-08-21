@@ -172,7 +172,7 @@ helpers = new function()
   this.setUpListeners = function()
   {
     document.addEventListener('keypress', keypressListener, true);
-    document.getElementById('source-view').addEventListener('click', handlers.breakpoint, false);
+    //document.getElementById('source-view').addEventListener('click', handlers.breakpoint, false);
   }
 
   this.examine_objects = function() // runtime_id, tag, object_1, ...

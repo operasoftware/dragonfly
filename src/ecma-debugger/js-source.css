@@ -1,0 +1,172 @@
+/* for debugging 
+html, body {
+  height:100%;
+  }
+
+body {
+  padding:0;
+  margin:0;
+  font-family: 'Lucida Sans Unicode', Arial, sans-serif;
+  font-size:.8em;
+  position:relative;
+  }
+
+ul {
+  margin:0;
+  padding:0;
+  list-style:none;
+  }
+
+#js-source {
+  border:5px solid #ccc;
+  position:absolute;
+  left:20px;
+  top:100px;
+  bottom:100px;
+  right:200px;
+  }
+
+*/
+
+ul {
+  margin:0;
+  padding:0;
+  list-style:none;
+  }
+
+#js-source {
+  position:relative;
+  padding:0;
+  }
+
+#js-source-scroll-content, #js-source-scroll-container {
+  position:absolute;
+  left:40px; 
+  right:0px;
+  top:0px;
+  bottom:0px;
+  overflow:auto;
+  }
+
+
+
+#js-source-content {
+  xxpadding-left:10px;
+  }
+
+#js-source-content div {
+  color:#000;
+  line-height: 16px;
+  height:16px;
+  white-space:pre;
+  overflow:hidden;
+  padding-left:10px;
+  }
+
+/* line number */ 
+
+#js-source-line-numbers {
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  background-color:#f5f5f5;
+  width:40px;
+  border-right:1px solid #ccc;
+  }
+
+#break-point-container {
+  background-color:transparent;
+  }
+
+#js-source-line-numbers li {
+  position:relative;
+  height:16px;
+  }
+
+#js-source-line-numbers span {
+  position:absolute;
+  left:0;
+  top:0;
+  width:40px;
+  height:16px;
+  cursor:pointer;
+  background:transparent url('line-types.png') no-repeat 0 0;
+  }
+
+#js-source-line-numbers input {
+  width:37px;
+  text-align:right;
+  border:none;
+  margin:0;
+  padding:0;
+  padding-right:3px;
+  background-color:transparent;
+  height:16px; /* should be the same as the line height #js-source-content li */ 
+  font-size:12px;
+  vertical-align:middle;
+  }
+
+#js-source-line-numbers input:hover {
+  background-color:#f0f0f0;
+  }
+
+#js-source-line-numbers .line-pointer {
+  position:absolute;
+  left:0;
+  content: '';
+  margin-top:-2px;
+  height:20px;
+  line-height:20px;
+  font-size:16px;
+  width:20px;
+  background:transparent url('line-pointer.png') no-repeat 0 50%;
+  }
+
+#js-source-line-numbers .line-pointer.top-frame {
+  background-image:url('line-pointer-top-frame.png');
+  }
+
+#break-point-container .break-point {
+  position:absolute;
+  left:0;
+  content: '';
+  height:16px;
+  line-height:16px;
+  font-size:10px;
+  width:20px;
+  background:transparent url('break-point.png') no-repeat 0 50%;
+  }
+
+#js-source-content div span {
+  color:#000;
+  }
+
+#js-source-content div .string {
+  color:#963;
+  }
+
+#js-source-content div .comment {
+  color:green;
+  }
+
+#js-source-content div .js_keywords {
+  color:#00f;
+  }
+
+#js-source-content div .js_builtins {
+  color:#f00;
+  }
+
+#js-source-content div .number {
+  color:#099;
+  }
+
+#js-source-content div .reg_exp {
+  background-color:#fd9;
+  color:#333;
+  }
+
+#js-source-content div .punctuator {
+  color:#fc3;
+  }

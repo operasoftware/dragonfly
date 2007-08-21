@@ -88,13 +88,16 @@ var verticalFrames = new function()
     if(__next.hasClass('horizontal-frame-container'))
     {
       horizontalFrames.setFramesHeight(__next, __next.offsetHeight)
-    }       
+    } 
+    messages.post('update-layout', {});
+    
   }
 
   var finish_frame_resize = function(event)
   {
     document.removeEventListener('mousemove', resize_frame_onmousemove_listener, false);
     document.removeEventListener('mouseup', finish_frame_resize, false);
+    
     //document.documentElement.style.removeProperty('cursor');
   }
 
@@ -112,6 +115,7 @@ var verticalFrames = new function()
     }
     resizeEvents = [];
     self.setUpFrames(__start_ele, __getstart_height());
+    messages.post('update-layout', {});
   }
 
   this.setHeightFrames = function(container, height)
@@ -261,6 +265,7 @@ var horizontalFrames = new function()
       __next.style.width = ( next_offsetWidth - delta )+'px';
       __next.style.cssText += '';
     }
+    messages.post('update-layout', {});
     is_resizing_frames = false;
   }
 
@@ -268,6 +273,7 @@ var horizontalFrames = new function()
   {
     document.removeEventListener('mousemove', resize_frame_onmousemove, false);
     document.removeEventListener('mouseup', finish_frame_resize, false);
+    
   }
 
   this.setInitialFramesWidth = function(container)

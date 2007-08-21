@@ -2,6 +2,8 @@ var simple_js_parser=new function()
 {
   /* adjusted to return fotmatted HTML */
 
+  const DEFAULT = 0, SINGLE_QUOTE = 1, DOUBLE_QUOTE = 2, REG_EXP = 3, COMMENT = 4;
+
   var parser=null;
   var __source=null;
   var __buffer='';
@@ -13,8 +15,8 @@ var simple_js_parser=new function()
   var __string_delimiter=0;
   var __ret='<ol>';
   var __line='';
-
-  var __line_conter =0;
+  __line_number = 1;
+  __max_line_number = 0;
   var WHITESPACE=
   {
     '\u0009': 1, //  Tab <TAB>
@@ -118,7 +120,8 @@ var simple_js_parser=new function()
   }
   var PUNCTUATOR_DIV_PREDECESSOR=
   {
-    ')': 1
+    ')': 1,
+      ']': 1
   }
   var ESCAPE =
   {
@@ -154,9 +157,9 @@ var simple_js_parser=new function()
         {
           c=__source.charAt(++__pointer);
         }
-        if(__online)
+        if(__online && __online())
         {
-          __online();
+          return __ret;
         }
         continue;
       }
@@ -185,7 +188,10 @@ var simple_js_parser=new function()
         __string_delimiter=c;
         __buffer+=c;
         __type='STRING';
-        string_parser(__source.charAt(++__pointer));
+        if( string_parser(__source.charAt(++__pointer)) )
+        {
+          return __ret;
+        }
         c=__source.charAt(++__pointer);
         continue;
       }  
@@ -236,7 +242,10 @@ var simple_js_parser=new function()
         {
           __buffer+=c;
           __type='COMMENT';
-          multiline_comment_parser(__source.charAt(++__pointer));
+          if( multiline_comment_parser(__source.charAt(++__pointer)) )
+          {
+            return __ret;
+          }
           c=__source.charAt(++__pointer)
           
           continue;
@@ -245,7 +254,11 @@ var simple_js_parser=new function()
         {
           __buffer+=c;
           __type='COMMENT';
-          c=singleline_comment_parser(__source.charAt(++__pointer));
+          if( singleline_comment_parser(__source.charAt(++__pointer)) )
+          {
+            return __ret;
+          }
+          c = __source.charAt(__pointer);
           continue;
         }
         if( __previous_type=='IDENTIFIER' || __previous_type=='NUMBER' || 
@@ -323,15 +336,34 @@ var simple_js_parser=new function()
 
   var string_parser=function(c)
   {
+    var CRLF='';
     while(c)
     {
       if(c=='\\')  //\u005C
       {
         __buffer+=c;
         c=__source.charAt(++__pointer);
+        if(c in LINETERMINATOR)
+        {
+          read_buffer();
+          CRLF=c;
+          CRLF+=c=__source.charAt(++__pointer);
+          if(CRLF in LINETERMINATOR)
+          {
+            c=__source.charAt(++__pointer);
+          }
+          if(__online && __online())
+          {
+            return __ret;
+          }
+          continue;
+        }
+        else
+        {
         __buffer+=c in ESCAPE ? ESCAPE[c] : c;
         c=__source.charAt(++__pointer);
         continue;
+        }
       }
       if(c==__string_delimiter)
       {
@@ -360,9 +392,9 @@ var simple_js_parser=new function()
         {
           c=__source.charAt(++__pointer);
         }
-        if(__online)
+        if(__online && __online())
         {
-          __online();
+          return __ret;
         }
         continue;
       }
@@ -393,29 +425,39 @@ var simple_js_parser=new function()
       if(c in LINETERMINATOR) 
       {
         read_buffer();
-        __previous_type='COMMENT';
-        __type='IDENTIFIER';
-        CRLF=c;
-        CRLF+=c=__source.charAt(++__pointer);
-        if(CRLF in LINETERMINATOR)
+        __previous_type = 'COMMENT';
+        __type = 'IDENTIFIER';
+        CRLF = c;
+        CRLF += c = __source.charAt(++__pointer);
+        if( CRLF in LINETERMINATOR )
         {
-          c=__source.charAt(++__pointer);
+          __pointer++;
         }
-        if(__online)
+        if(__online && __online())
         {
-          __online();
+          return __ret;
         }
-        return c;
+        break;
       }
       __buffer+=c in ESCAPE ? ESCAPE[c] : c;
       c=__source.charAt(++__pointer);
     }
   }
 
+
   var reg_exp_parser=function(c)
   {
+    var is_in_brackets = false;
     while(c)
     {
+      if( c == '[' )
+      {
+        is_in_brackets = true;
+      }
+      if( is_in_brackets && c == ']' )
+      {
+        is_in_brackets = false;
+      }
       if(c=='\\') 
       {
         __buffer+=c;
@@ -424,7 +466,7 @@ var simple_js_parser=new function()
         c=__source.charAt(++__pointer);
         continue;
       }
-      if(c=='/') 
+      if( !is_in_brackets && c=='/' ) 
       {
         __buffer+=c;
         c=__source.charAt(++__pointer);
@@ -504,35 +546,58 @@ var simple_js_parser=new function()
     {
       __line += '\u00A0';
     }
-    __ret += "<li line-ref='" + (__line_conter++) +"'><span>" + __line + "</span></li>";
+    __ret[__ret.length] = "<div>" + __line + "</div>";
     __line='';
-
+    return (++__line_number) > __max_line_number;
   }
 
   var __onfinish=function()
   {
     __online();
-    return __ret + "</ol>";
+    return __ret;
   }
 
-  var __reset = function()
+  var __reset = function(line, max_line)
   {
-    __ret='<ol>';
+    __ret=[];
     __line='';
-    __line_conter = 1;
+    __line_number = line;
+    __max_line_number = line + max_line;
   }
 
-  this.parse=function(source)
+  var states = [];
+  states[COMMENT] = function()
+  {
+     __type = 'COMMENT';
+    if( multiline_comment_parser(__source.charAt(__pointer)) )
+    {
+      return __ret;
+    }
+    __pointer++;
+  };
+
+  this.parse=function(script, line, max_line, state)
   {
     ret='';
-    __reset();
+    __reset(line, max_line);
+
     parser=default_parser;
     __previous_type='';
     __type='IDENTIFIER';
-    __source=new String(source);
+    __source = script.source;
     var length=__source.length;
-    __pointer=0;
-    parser(__source.charAt(__pointer));
+    __pointer = script.line_arr[line];
+    if(script.state_arr[line])
+    {
+      if( states[script.state_arr[line]]() )
+      {
+        return __ret;
+      }
+    }
+    if( parser(__source.charAt(__pointer)) )
+    {
+      return __ret;
+    }
     if(__onfinish)
     {
       return __onfinish();

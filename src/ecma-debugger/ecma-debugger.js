@@ -145,6 +145,11 @@ var debugger = new function()
 
     action_handler.init();
 
+    scroll_handler.init();
+
+    window.views.js_source.setupBasics();
+    window.views.js_source.setup(1);
+
     var host = location.host.split(':');
 
     proxy.onsetup = function()

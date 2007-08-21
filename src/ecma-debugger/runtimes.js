@@ -136,6 +136,11 @@ var runtimes = new function()
     return __scripts[scriptId];
   }
 
+  this.getScriptSource = function(scriptId)
+  {
+    return __scripts[scriptId] && __scripts[scriptId]['script-data'] || null;
+  }
+
   this.getScripts = function(runtime_id)
   {
     var ret=[], script = null, cur = '';

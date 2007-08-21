@@ -3,7 +3,7 @@ var action_handler = new function()
   var handler = function(event)
   {
     var handler = event.target.getAttribute('handler');
-    if(handler)
+    if(handler && handlers[handler])
     {
       handlers[handler](event);
     }
@@ -96,6 +96,25 @@ var action_handler = new function()
   handlers['set-stop-at'] = function(event)
   {
     stop_at.setUserStopAt(event.target.value, event.target.checked);
+  }
+
+  handlers['set-break-point'] = function(event)
+  {
+    var line = event.target.parentElement.children[0].value;
+    var script_id = views.js_source.getCurrentScriptId();
+    if( line )
+    {
+      if( runtimes.hasBreakpoint(script_id, line) )
+      {
+        runtimes.removeBreakpoint(script_id, line);
+        views.js_source.removeBreakpoint(line);
+      }
+      else
+      {
+        runtimes.setBreakpoint(script_id, line);
+        views.js_source.addBreakpoint(parseInt(line));
+      }
+    }
   }
 
   this.init = function()

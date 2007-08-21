@@ -171,7 +171,8 @@ var stop_at = new function()
           // the runtime id can be different for each frame. 
           var tag = tagManager.setCB(null, parseBacktrace, [stopAt['runtime-id']]); 
           commands.backtrace(tag, stopAt);
-          views.source_code.showLine( stopAt['script-id'], line );
+          views.js_source.showLine( stopAt['script-id'], line - 10 );
+          views.js_source.showLinePointer( line, true );
           __controls_enabled = true;
           views.continues.update();
         }
@@ -186,7 +187,8 @@ var stop_at = new function()
         // the runtime id can be different for each frame. 
         var tag = tagManager.setCB(null, parseBacktrace, [stopAt['runtime-id']]); 
         commands.backtrace(tag, stopAt);
-        views.source_code.showLine( stopAt['script-id'], line );
+        views.js_source.showLine( stopAt['script-id'], line - 10 );
+        views.js_source.showLinePointer( line, true );
         __controls_enabled = true;
         views.continues.update();
       }
