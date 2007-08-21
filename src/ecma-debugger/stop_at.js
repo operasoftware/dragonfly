@@ -165,7 +165,20 @@ var stop_at = new function()
       */
       if(stopAt['stopped-reason'] == 'unknown')
       {
-        this.__continue('run');
+        if( stop_at_user_settings.script )
+        {
+          runtime_id = stopAt['runtime-id'];
+          // the runtime id can be different for each frame. 
+          var tag = tagManager.setCB(null, parseBacktrace, [stopAt['runtime-id']]); 
+          commands.backtrace(tag, stopAt);
+          views.source_code.showLine( stopAt['script-id'], line );
+          __controls_enabled = true;
+          views.continues.update();
+        }
+        else
+        {
+          this.__continue('run');
+        }
       }
       else
       {
