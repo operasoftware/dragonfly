@@ -247,6 +247,14 @@ var pre_lexer = function(script)
     }
     else
     {
+      if( !line_cur && !line_arr.length )
+      {
+        line_cur = string.indexOf('\n', line_cur) + 1 ;
+        if( line_cur )
+        {
+          line_arr[line_count++] = 0;
+        }
+      }
       while( line_cur )
       {
         line_arr[line_count++] = line_cur;

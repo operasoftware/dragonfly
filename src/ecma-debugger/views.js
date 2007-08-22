@@ -54,15 +54,39 @@ views.continues = new function()
 views.callstack = new function()
 {
   var container_id = 'backtrace';
+  var __clear_timeout = 0;
+
+  var __clearView = function()
+  {
+    var container = document.getElementById(container_id);
+    if( container ) 
+    {
+      container.innerHTML = ''; 
+      __clear_timeout = 0;
+    }
+  }
+
   this.update = function()
   {
+    if( __clear_timeout )
+    {
+      __clear_timeout = clearTimeout( __clear_timeout );
+    }
     var _frames = stop_at.getFrames(), frame = null, i = 0;
     var container = document.getElementById(container_id);
-    container.innerHTML = '';
-    for( ; frame = _frames[i]; i++)
+    if( container )
     {
-      container.render(templates.frame(frame));
+      container.innerHTML = '';
+      for( ; frame = _frames[i]; i++)
+      {
+        container.render(templates.frame(frame, i == 0));
+      }
     }
+  }
+
+  this.clearView = function()
+  {
+    __clear_timeout = setTimeout( __clearView, 150 );
   }
 }
 

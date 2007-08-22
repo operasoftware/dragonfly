@@ -11,6 +11,7 @@
 <script src="../scripts/clientlib_async.js"></script>
 
 <script src="ini.js"></script>
+<script src="windowInterface.js"></script>
 <script src="debug.js"></script>
 <script src="storage.js"></script>
 <script src="helpers.js"></script>
@@ -113,12 +114,12 @@
   <div id="js-source"></div>
   <div class='vertical-frame-container'>
 
-    <div>
+    <div id='backtrace-container'>
       <h2>Call Stack</h2>
-      <div id="backtrace"></div>
+      <ul id="backtrace"></ul>
     </div>
 
-    <div>
+    <div id="examine-objects-container">
       <ul id="examine-objects"></ul>
     </div>
 

@@ -92,11 +92,12 @@ xx#debug {
   color:#fc3;
   }
 
+/*
 .selected {
   background-color:#f00;
   color:#fff;
   }
-
+*/
 
 
 #source-view #line-pointer, #source-view .breakpoint {
@@ -173,5 +174,27 @@ xx#debug {
 
 .failed {
   color:red;
+  }
+
+/* backtrace */
+
+#backtrace-container, #examine-objects-container {
+  padding:.3em;
+  }
+
+
+#backtrace-container li {
+  padding-left: 20px;
+  line-height:16px;
+  background: transparent url('selected-frame.png') scroll no-repeat -20px 0;
+  cursor:pointer;
+  }
+
+#backtrace-container li:first-child {
+  background-image: url('selected-frame-top.png');
+  }
+
+#backtrace-container li.selected {
+  background-position: 0 0;
   }
 

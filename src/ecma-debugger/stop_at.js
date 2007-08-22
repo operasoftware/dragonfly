@@ -112,8 +112,13 @@ var stop_at = new function()
           id: i
         }
       }
-      views.callstack.update();
+
+      if( i == 0 )
+      {
+        action_handler.post('show-frame', {'target': { 'ref-id': 0 } });
+      }
     }
+    views.callstack.update();
   }
 
   this.setInitialSettings = function()
@@ -157,6 +162,7 @@ var stop_at = new function()
     var line = parseInt( stopAt['line-number'] );
     if( typeof line == 'number' )
     {
+      
       /**
       * This event is enabled by default to reassign breakpoints. 
       * Here it must be checked if the user likes actually to stop or not.

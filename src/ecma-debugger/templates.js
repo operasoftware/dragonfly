@@ -62,15 +62,16 @@ templates = new function()
     ]
   }
 
-  this.frame = function(frame)
+  this.frame = function(frame, is_top)
   {
     return ['li',
       ( frame.fn_name ? frame.fn_name : 'anonymous' ) + 
         ( frame.line ? ' ' + 'line ' + frame.line : '' ) + 
         ( frame.script_id ? ' script id ' + frame.script_id : '' ),
       'handler', 'show-frame',
-      'ref-id', frame.id
-    ];
+      'ref-id', frame.id,
+
+    ].concat( is_top ? ['class', 'selected'] : [] );
   }
 
   this.configStopAt = function(config)

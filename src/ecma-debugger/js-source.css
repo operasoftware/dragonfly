@@ -1,32 +1,3 @@
-/* for debugging 
-html, body {
-  height:100%;
-  }
-
-body {
-  padding:0;
-  margin:0;
-  font-family: 'Lucida Sans Unicode', Arial, sans-serif;
-  font-size:.8em;
-  position:relative;
-  }
-
-ul {
-  margin:0;
-  padding:0;
-  list-style:none;
-  }
-
-#js-source {
-  border:5px solid #ccc;
-  position:absolute;
-  left:20px;
-  top:100px;
-  bottom:100px;
-  right:200px;
-  }
-
-*/
 
 ul {
   margin:0;
@@ -51,7 +22,7 @@ ul {
 
 
 #js-source-content {
-  xxpadding-left:10px;
+
   }
 
 #js-source-content div {
@@ -170,3 +141,6 @@ ul {
 #js-source-content div .punctuator {
   color:#fc3;
   }
+
+
+  

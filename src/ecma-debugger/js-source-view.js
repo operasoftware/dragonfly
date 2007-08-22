@@ -19,7 +19,7 @@ views.js_source = new function()
       id: frame_id,
       property: 'height',
       target: 'container-height',
-      getValue: function(){return parseInt(document.getElementById(this.id).style.height)}
+      getValue: function(){return document.getElementById(this.id).clientHeight}
     },
     {
       id: 'test-line-height',
@@ -59,6 +59,8 @@ views.js_source = new function()
 
   var templates = {};
 
+  var __timeout_clear_view = 0;
+
   templates.line_nummer_container = function(lines)
   {
     var ret = ['ul'], i = 0;
@@ -80,22 +82,12 @@ views.js_source = new function()
   var updateLineNumbers = function(fromLine)
   {
     var lines = line_numbers.getElementsByTagName('input'), line = null, i=0;
-    
     var breakpoints = line_numbers.getElementsByTagName('span');
-    var script_breakpoints = script.breakpoints;
-    if( script_breakpoints )
+    if( script.breakpoints )
     {
       for( ; line = lines[i]; i++)
       {
-        line.value = fromLine;
-        if( script_breakpoints[ fromLine++ ] )
-        {
-          breakpoints[i].style.backgroundPosition='0 50%';
-        }
-        else
-        {
-          breakpoints[i].style.removeProperty('background-position');
-        }
+        line.value = fromLine++;
       }
       updateBreakpoints();
     }
@@ -103,6 +95,29 @@ views.js_source = new function()
     {
       lines[0].value = 1;
     }
+  }
+
+  var clearLineNumbers = function()
+  {
+    var lines = line_numbers.getElementsByTagName('input'), line = null, i=0;
+    
+    var breakpoints = line_numbers.getElementsByTagName('span');
+
+
+    for( ; line = lines[i]; i++)
+    {
+      if( i == 0 )
+      {
+        line.value = '1';
+      }
+      else
+      {
+        line.value = '';
+      }
+      breakpoints[i].style.removeProperty('background-position');
+    }
+
+
   }
 
   var updateBreakpoints = function()
@@ -241,7 +256,6 @@ views.js_source = new function()
       source_content.style.removeProperty('width');
     }
     
-
     if( max_lines > script.line_arr.length )
     {
       max_lines = script.line_arr.length;
@@ -274,6 +288,11 @@ views.js_source = new function()
   this.showLine = function(script_id, line_nr)
   {
     // too often called?
+    if( __timeout_clear_view )
+    {
+      __timeout_clear_view = clearTimeout( __timeout_clear_view );
+    }
+    
     if( script.id != script_id )
     {
       script =
@@ -284,6 +303,16 @@ views.js_source = new function()
         state_arr: [],
         breakpoints: []
       }
+      var b_ps = runtimes.getBreakpoints(script_id), b_p = '';
+      if( b_ps )
+      {
+        for( b_p in b_ps )
+        {
+          script.breakpoints[parseInt(b_p)] = 1;
+        }
+      }
+      __current_pointer = 0;
+      __current_pointer_type = 0;
       pre_lexer(script);
       setScriptContext(script_id, line_nr);
     }
@@ -296,6 +325,7 @@ views.js_source = new function()
       line_nr = script.line_arr.length - max_lines + 1;
     }
     __current_line = line_nr;
+    
     source_content.innerHTML = 
       simple_js_parser.parse(script, line_nr - 1, max_lines - 1).join(''); 
     updateLineNumbers(line_nr);
@@ -401,6 +431,24 @@ views.js_source = new function()
   {
     return script.id;
   }
+
+  this.clearView = function()
+  {
+    if( !__timeout_clear_view )
+    {
+      __timeout_clear_view = setTimeout( __clearView, 150);
+    }
+  }
+
+  var __clearView = function()
+  {
+    source_content.innerHTML = '';
+    __timeout_clear_view = 0;
+
+    clearLineNumbers();
+  }
+
+
 
   messages.addListener('update-layout', updateLayout);
 

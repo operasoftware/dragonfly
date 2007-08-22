@@ -47,10 +47,57 @@ Element.prototype.___add=Document.prototype.___add=function()
   return null;
 }
 
+Element.prototype.___add_inner = function()
+{
+  if(arguments.length)
+  {
+    if(arguments[0])
+    {
+      var i=1; 
+      var prop='', is_array=false, arg=arguments[i];
+      var head = "<" + arguments[0];
+      var content = '';
+      var attrs = ' ';
+      while((is_array=arg instanceof  Array) ||
+       (((typeof arg=='string') || (typeof arg=='number')) && (((arguments.length-i)%2)|| arguments[i+1] instanceof  Array ))
+      )
+      {
+        if(is_array) 
+        {
+          content += Element.prototype.___add_inner.apply(null, arg); 
+        }
+        else if(arg) 
+        {
+          content += arg;
+        }
+        arg=arguments[++i];
+      }
+      for( ;arguments[i] ; i+=2)
+      {
+        attrs += arguments[i] + "=\u0022" + arguments[i+1] + "\u0022";
+      }
+      head += attrs + ">" + content + "</" + arguments[0] +">";
+      if(this && this.nodeType == 1 )
+      {
+        this.innerHTML += head;
+      }
+      return head;
+    }
+  }
+  return '';
+}
+
 Element.prototype.render=Document.prototype.render=function(template)
 {
   return this.___add.apply(this, template);
 }
+
+Element.prototype.renderInner = function(template)
+{
+  return this.___add_inner.apply(this, template);
+}
+
+
 
 Element.prototype.clearAndRender=function(template)
 {
@@ -129,7 +176,7 @@ Element.prototype.getChildElements = function()
   return ret;
 }
 
-Element.prototype.releaseEvent=function(name)
+Element.prototype.releaseEvent =  function(name)
 {
   var event=document.createEvent('Events');
   event.initEvent(name, true, true);
