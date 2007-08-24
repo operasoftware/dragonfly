@@ -16,7 +16,6 @@ var windows = new function()
   key_id = 'window-id-',
   min_z_index = 100,
   focus_catcher = null,
-
   handlers = 
   {
     'window-move': true,
@@ -26,21 +25,9 @@ var windows = new function()
     'window-scale-bottom-right': true,
     'window-scale-bottom-left': true
   }, 
-
   set = {}, 
   update = {},
-
-  click_handlers =
-  {
-    'window-close': function(event)
-    {
-      var win = event.target.parentElement.parentElement;
-      if(win)
-      {
-        win.parentElement.removeChild(win);
-      }
-    }
-  },
+  click_handlers = {},
 
   setZIndex = function()
   {
@@ -249,6 +236,15 @@ var windows = new function()
     update['window-scale-bottom'](event);
   }
 
+  click_handlers['window-close'] = function(event)
+  {
+    var win = event.target.parentElement.parentElement;
+    if(win)
+    {
+      win.parentElement.removeChild(win);
+    }
+  }
+  
   this.showWindow = function(title, content_template, top, left, width, height)
   {
     document.body.render(template(title, content_template, top, left, width, height));
