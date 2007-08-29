@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head>
+<title> </title>
+<link rel='stylesheet' href='../../styles/html_windows.css'>
+
+<script src = "../../scripts/dom.js"></script>
+<script src = "../../scripts/html_windows.js"></script>
+
+
+<script>
+
+onload = function()
+{
+  windows.showWindow('', 'Test', ['div', 'some content']);
+  windows.showWindow('', 'Test 2', ['div', 'some other content'], 150, 150);
+  windows.showWindow('window-3', 'Test 3', ['div', 'something'], 200, 200, 200, 200);
+}
+
+</script>
+
+
+</script>
+</head>
+
+<body>
+<p><input type='button' value='test' onclick="windows.showWindow('window-3', 'Test 3', ['div', 'something'], 200, 200, 200, 200)";>
+</body>
+</html>

@@ -37,6 +37,7 @@ var pre_lexer = function(script)
 
   while( min_cur != -1 )
   {
+    
     state = '';
     if( ( s_quote_cur != -1 ) && ( s_quote_cur <= cur_cur ) ) 
     {
@@ -69,11 +70,16 @@ var pre_lexer = function(script)
     }
     if( state )
     {
+      
       while( line_cur < min_cur )
       {
         line_arr[line_count++] = line_cur;
         if( ( line_cur = string.indexOf('\n', line_cur) + 1 ) == 0 )
         {
+          if( line_arr[ line_arr.length - 1 ] < string.length )
+          {
+            line_arr[line_count] = string.length;
+          }
           return;
         } 
       }
@@ -100,6 +106,10 @@ var pre_lexer = function(script)
               state_arr[line_count++] = SINGLE_QUOTE;
               if( ( line_cur = string.indexOf('\n', line_cur) + 1 ) == 0 )
               {
+                if( line_arr[ line_arr.length - 1 ] < string.length )
+                {
+                  line_arr[line_count] = string.length;
+                }
                 return;
               }
             }
@@ -108,6 +118,7 @@ var pre_lexer = function(script)
         }
         case 'DOUBLE_QUOTE':
         {
+          
           do
           {
             d_quote_cur = string.indexOf(d_quote_val, d_quote_cur + 1);
@@ -127,10 +138,15 @@ var pre_lexer = function(script)
               state_arr[line_count++] = DOUBLE_QUOTE;
               if( ( line_cur = string.indexOf('\n', line_cur) + 1 ) == 0 )
               {
+                if( line_arr[ line_arr.length - 1 ] < string.length )
+                {
+                  line_arr[line_count] = string.length;
+                }
                 return;
               }
             }
           }
+          
           continue;
         }
         case 'SLASH':
@@ -145,6 +161,10 @@ var pre_lexer = function(script)
                 line_arr[line_count++] = line_cur;
                 if( ( line_cur = string.indexOf('\n', line_cur) + 1 ) == 0 )
                 {
+                  if( line_arr[ line_arr.length - 1 ] < string.length )
+                  {
+                    line_arr[line_count] = string.length;
+                  }
                   return;
                 }
               }
@@ -167,6 +187,10 @@ var pre_lexer = function(script)
                   state_arr[line_count++] = COMMENT;
                   if( ( line_cur = string.indexOf('\n', line_cur) + 1 ) == 0 )
                   {
+                    if( line_arr[ line_arr.length - 1 ] < string.length )
+                    {
+                      line_arr[line_count] = string.length;
+                    }
                     return;
                   }
                 }
@@ -229,6 +253,10 @@ var pre_lexer = function(script)
                     state_arr[line_count++] = REG_EXP;
                     if( ( line_cur = string.indexOf('\n', line_cur) + 1 ) == 0 )
                     {
+                      if( line_arr[ line_arr.length - 1 ] < string.length )
+                      {
+                        line_arr[line_count] = string.length;
+                      }
                       return;
                     }
                   }
@@ -250,7 +278,7 @@ var pre_lexer = function(script)
       if( !line_cur && !line_arr.length )
       {
         line_cur = string.indexOf('\n', line_cur) + 1 ;
-        if( line_cur )
+        if( line_cur  || string.length )
         {
           line_arr[line_count++] = 0;
         }
@@ -260,6 +288,11 @@ var pre_lexer = function(script)
         line_arr[line_count++] = line_cur;
         line_cur = string.indexOf('\n', line_cur + 1) + 1;
       }
+      if( line_arr[ line_arr.length - 1 ] < string.length )
+      {
+        line_arr[line_count] = string.length;
+      }
+      
       return;
     }
   }

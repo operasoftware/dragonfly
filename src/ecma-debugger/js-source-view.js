@@ -222,7 +222,6 @@ views.js_source = new function()
       previous = 0, 
       line_arr = script.line_arr, 
       length = line_arr.length;
-
     for( ; i < length; i++)
     {
       if( ( line_arr[i] - previous ) > max )
@@ -239,7 +238,6 @@ views.js_source = new function()
   {
     source_content.innerHTML = "<div style='visibility:hidden'>" +
       simple_js_parser.parse(script, getMaxLineLength() - 1, 1).join('') + "</div>";
-
     var scrollWidth = source_content.firstChild.firstChild.scrollWidth;
     var offsetWidth = source_content.firstChild.firstChild.offsetWidth;
 
@@ -260,7 +258,6 @@ views.js_source = new function()
     {
       max_lines = script.line_arr.length;
     }
-
     var lines = document.getElementById(container_line_nr_id);
 
     if( lines )
@@ -272,7 +269,6 @@ views.js_source = new function()
     source_content.style.height = ( context['line-height'] * max_lines ) +'px';
 
     var scrollHeight = script.line_arr.length * context['line-height'] + max_lines;
-
     document.getElementById(scroll_id).style.height = scrollHeight + 'px';
     if( scrollHeight > context['line-height'] * max_lines )
     {
@@ -288,6 +284,8 @@ views.js_source = new function()
   this.showLine = function(script_id, line_nr)
   {
     // too often called?
+
+    
     if( __timeout_clear_view )
     {
       __timeout_clear_view = clearTimeout( __timeout_clear_view );
@@ -295,26 +293,40 @@ views.js_source = new function()
     
     if( script.id != script_id )
     {
-      script =
+      var script_source = runtimes.getScriptSource(script_id);
+
+
+      if(script_source)
       {
-        id: script_id,
-        source: new String(runtimes.getScriptSource(script_id)),
-        line_arr: [],
-        state_arr: [],
-        breakpoints: []
-      }
-      var b_ps = runtimes.getBreakpoints(script_id), b_p = '';
-      if( b_ps )
-      {
-        for( b_p in b_ps )
+        script =
         {
-          script.breakpoints[parseInt(b_p)] = 1;
+          id: script_id,
+          source: new String(script_source),
+          line_arr: [],
+          state_arr: [],
+          breakpoints: []
         }
+        var b_ps = runtimes.getBreakpoints(script_id), b_p = '';
+        if( b_ps )
+        {
+          for( b_p in b_ps )
+          {
+            script.breakpoints[parseInt(b_p)] = 1;
+          }
+        }
+        __current_pointer = 0;
+        __current_pointer_type = 0;
+        pre_lexer(script);
+ 
+        setScriptContext(script_id, line_nr);
+
+
       }
-      __current_pointer = 0;
-      __current_pointer_type = 0;
-      pre_lexer(script);
-      setScriptContext(script_id, line_nr);
+      else
+      {
+        opera.postError("script source is missing for given id in views.js_source.showLine");
+        return;
+      }
     }
     if( line_nr < 1 )
     {
@@ -325,7 +337,6 @@ views.js_source = new function()
       line_nr = script.line_arr.length - max_lines + 1;
     }
     __current_line = line_nr;
-    
     source_content.innerHTML = 
       simple_js_parser.parse(script, line_nr - 1, max_lines - 1).join(''); 
     updateLineNumbers(line_nr);

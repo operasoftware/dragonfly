@@ -1,6 +1,6 @@
 debug = new function()
 {
-  var d_c = null;
+  //var d_c = null;
   var self = this;
   var indent='  ';
 
@@ -11,22 +11,49 @@ debug = new function()
     return ret;
   }
 
+  var out = [];
+
   this.output = function(string)
   {
-    if( !d_c )
+    if(string) out.push(string);
+    var d_c=document.getElementById('debug');
+    if( d_c )
     {
-      var d_c=document.getElementById('debug');
-      if(!d_c)
+      d_c.textContent = out.join('\n');
+      if( string && string.indexOf('<timeout/>') == -1 )
       {
-        self.output=function(){};
-        return;
+        d_c=document.getElementById('debug-container');
+        d_c.scrollTop = d_c.scrollHeight;
       }
     }
-    d_c.textContent += string +'\n';
-    if( string.indexOf('<timeout/>') == -1 )
+  }
+
+  this.clear = function()
+  {
+    out = [];
+    var d_c=document.getElementById('debug');
+    if( d_c )
     {
-    d_c=document.getElementById('debug-container');
-    d_c.scrollTop = d_c.scrollHeight;
+      d_c.textContent = '';
+    }
+  }
+
+  this.checkProfiling = function()
+  {
+    if( window.__profiling__ ) 
+    {
+      window.__times__[5] =  new Date().getTime(); // rendering
+      var stamps = ['request', 'response', 'parsing', 'sorting', 'markup', 'rendering'] 
+      var stamp = '', i= 0, out = ''; 
+      for ( ; stamp = stamps[i]; i++ )
+      {
+        out += stamp + ': ' + 
+          window.__times__[i] + 
+          ( i > 0 ? ' delta: ' + ( window.__times__[i] - window.__times__[i-1] ) : '' ) +
+          '\n';
+      }
+      out += 'total delta: ' + ( window.__times__[5] - window.__times__[0] ) + '\n';
+      debug.output(out);
     }
   }
 

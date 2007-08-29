@@ -23,25 +23,37 @@ templates = new function()
         ret[ret.length] = self.runtimeId(runtimes[cur]);
       }
     }
-    return ret;
+    return ret.concat(['class', 'folder']);
   }
 
   this.runtimeId = function(runtime)
   {
-    return ['li',
-        runtime['uri'],
-        'handler', 'show-scripts',
-        'runtime_id', runtime['runtime-id'],
-        'hanler', 'yes'
-      ]
+    var ret = ['li',
+        ['input', 
+          'type', 'button', 
+          'handler', 'show-scripts', 
+          'runtime_id', runtime['runtime-id'],
+          'class', 'folder-key'].concat(runtime.unfolded ? ['style', 'background-position:0 -11px'] : [] ),
+        runtime['uri'], 'handler', 'show-global-scope'
+      ];
+    if( runtime.unfolded )
+    {
+      var scripts = runtimes.getScripts(runtime['runtime-id']), 
+        script = null, i=0, scripts_container =['ul'];
+      for( ; script = scripts[i]; i++)
+      {
+        scripts_container.push(templates.scriptLink(script));
+      }
+      ret = ret.concat([scripts_container]);
+    }
+    return ret;
   }
   this.scriptLink = function(script)
   {
     return ['li',
         script['script-type']+' - '+(script['uri']?script['uri']:'script-id: '+script['script-id']),
-        'onclick', handlers.showScript,
-        'script-id', script['script-id'],
-        'hanler', 'yes'
+        'handler', 'display-script',
+        'script-id', script['script-id']
       ]
   }
   //templates.configStopAt(config)
@@ -93,7 +105,7 @@ MODE ::= "<mode>"
            */
   this.continues = function()
   {
-    var ret = ['ul'];
+    var ret = [];
     ret[ret.length] = self.continueWithMode('run', 'run');
     ret[ret.length] = self.continueWithMode('step into call', 'step-into-call');
     ret[ret.length] = self.continueWithMode('step next line', 'step-over-call');
@@ -103,20 +115,23 @@ MODE ::= "<mode>"
 
   this.continueWithMode = function(name, mode)
   {
-    return ['li',
-        ['input',
+    return ['input',
           'type', 'button',
-          'value', name,
+          'value', '',
+          'title', name,
           'mode', mode,
           'id', 'continue-' + mode,
           'handler', 'continue',
           'disabled', true
         ]
-      ]
   }
 
   this.examineObject = function(xml, runtime_id)
   {
+    if( window.__profiling__ ) 
+    {
+      window.__times__[1] =  new Date().getTime();
+    }
     var obj = xml.getElementsByTagName('object')[0];
     if(obj)
     {
@@ -200,8 +215,15 @@ MODE ::= "<mode>"
           }
         }
       }
-      
+      if( window.__profiling__ ) 
+      {
+        window.__times__[2] =  new Date().getTime(); // parsing
+      }
       unsorted.sortByFieldName('key');
+      if( window.__profiling__ ) 
+      {
+        window.__times__[3] =  new Date().getTime(); // sorting
+      }
 
       for( i=0 ; prop = unsorted[i]; i++)
       {
@@ -225,6 +247,11 @@ MODE ::= "<mode>"
           }
         }
       }
+      if( window.__profiling__ ) 
+      {
+        window.__times__[4] =  new Date().getTime(); // creating markup
+      }
+
       return ret;
     }
     return [];
@@ -254,6 +281,51 @@ MODE ::= "<mode>"
           'line_nr', line_nr,
           'style', 'top:'+ top +'px'
         ]
+  }
+
+
+  this.toolbars = function()
+  {
+    return ['div', 
+      ['h1', 'Opera developper tools'],
+      ['div', 'id', 'continues'],
+      ['ul', 
+        ['li', 'Runtimes', 'handler', 'drop-down', 'ref', 'runtimes'],
+        ['li', 'Configuration', 'handler', 'drop-down', 'ref', 'configuration'],
+        ['li', 'Console', 'handler', 'drop-down', 'ref', 'console'],
+        ['li', 'Enviroment', 'handler', 'drop-down', 'ref', 'environment'],
+        (ini.debug || window.__profiling__ ? ['li', 'Debug', 'handler', 'drop-down', 'ref', 'debug'] : [] ),
+        (ini.debug || window.__profiling__ ? ['li', 'Command Line', 'handler', 'drop-down', 'ref', 'command-line'] : [] ),
+
+      'class', 'dropdowns'],
+      'id', 'ecma-debugger-toolbar']
+  }
+
+  this.runtimes_dropdown = function(ele)
+  {
+    return ['div', ['ul', 'id', 'runtimes'], 'class', 'window-container'];
+  }
+
+  this.messages = function(messages)
+  {
+    var message = null, i = 0;
+    var ret = ['div'];
+    for( ; message = messages[i]; i++)
+    {
+      ret[ret.length] = self.message(message);
+    }
+    return ret;
+  }
+
+  this.message = function( message)
+  {
+    return ['ul',
+      ['li', message.source + ' ' + message.severity],
+      ['li', new Date(parseInt( message.time )*1000).toString().replace(/GMT.*$/, '') ],
+      ['li', message.url],
+      ['li', message.context],
+      ['li', ['pre', message['text']]]
+    ]
   }
 
 }

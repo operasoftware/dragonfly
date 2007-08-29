@@ -42,6 +42,11 @@ var debugger = new function()
   
   var environment = {}
 
+  this.getEnvironment = function()
+  {
+    return environment;
+  }
+
   /**** generic event listener ****/
 
 
@@ -52,12 +57,14 @@ var debugger = new function()
     {
       environment[child.nodeName] = child.textContent;
     }
-    document.getElementById('hello').render(templates.hello(environment));
+
+    views.environment.update();
+    
     if( ini.protocol_version == environment['protocol-version'] )
     {
       stop_at.setInitialSettings();
 
-      views.configuration.render();
+      views.configuration.update();
       views.continues.render();
       
       helpers.setUpListeners(); // clean this up!
@@ -126,6 +133,12 @@ var debugger = new function()
       if(params.debug) ini.debug = true;
       if(params['event-flow']) window.__debug_event_flow__ = true;
     }
+    if( params['profiling'] )
+    {
+      window.__profiling__ = true;
+      window.__times__ = [];
+    }
+    /*
     else
     {
       var rem = ['command-line', 'debug-container'];
@@ -134,13 +147,15 @@ var debugger = new function()
         ele = document.getElementById(arg);
         ele.parentNode.removeChild(ele);
       }
-      document.body.insertBefore(document.render(['h1', 'prototype ecma script debugger']), document.body.children[0]);
+      
     }
+    */
+    document.body.insertBefore(document.render(templates.toolbars()), document.body.children[0]);
 
     verticalFrames.init
     (
-      document.body.getElementsByTagName('div')[0], 
-      function(){ return window.innerHeight - document.body.getElementsByTagName('div')[0].offsetTop }
+      document.getElementById('main-container'), 
+      function(){ return window.innerHeight - document.getElementById('main-container').offsetTop }
     )
 
     action_handler.init();
@@ -161,11 +176,13 @@ var debugger = new function()
       }
       else
       {
+        console.setup();
         self.getEvent();
       }
 
     }
     proxy.configure(host[0], host[1]);
+    
   }
 
 

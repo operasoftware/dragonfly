@@ -3,11 +3,15 @@
 views.runtimes = new function()
 {
   var self = this;
+  var container_id = 'runtimes';
   this.update = function()
   {
-    var container = document.getElementById('runtime-ids');
-    container.innerHTML = '';
-    container.render(templates.runtimes(runtimes.getRuntimes()));
+    var container = document.getElementById('runtimes');
+    if( container )
+    {
+      container.innerHTML = '';
+      container.render(templates.runtimes(runtimes.getRuntimes()));
+    }
   }
 }
 
@@ -24,9 +28,13 @@ views.configuration = new function()
 {
   var self = this;
   var container_id = 'configuration';
-  this.render = function()
+  this.update = function()
   {
-    document.getElementById('configuration').render(templates.configStopAt(stop_at.getStopAts()));
+    var container = document.getElementById(container_id);
+    if( container )
+    {
+      container.render(templates.configStopAt(stop_at.getStopAts()));
+    }
   }
 
 }
@@ -105,6 +113,7 @@ views.scope = new function()
   }
 }
 
+/*
 views.source_code = new function()
 {
   var self = this;
@@ -220,24 +229,23 @@ views.source_code = new function()
 
 
   }
-  /*
 
-    this.displayBreakpoint = function(line, id)
+
+
+
+}
+*/
+views.environment = new function()
+{
+  var self = this;
+  var container_id = 'view-environment';
+  this.update = function()
   {
-    var s_c = document.getElementById('source-view')
-    var line = s_c.getElementsByTagName('li')[line-1];
-    if(line)
+    var container = document.getElementById(container_id);
+    if( container )
     {
-      s_c.firstChild.render
-      (
-        ['li',
-          'class', 'breakpoint',
-          'id', 'breakpoint-'+id,
-          'style', 'top:'+ line.offsetTop +'px'
-        ]
-      )
+      container.innerHTML = '';
+      container.render( templates.hello( debugger.getEnvironment()) );
     }
-
-    */
-
+  }
 }

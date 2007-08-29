@@ -1,0 +1,183 @@
+<!doctype html>
+<html>
+<head>
+<title> </title>
+<link rel='stylesheet' href='../js-source.css'>
+<style>
+/* for debugging */
+html, body {
+  height:100%;
+  }
+
+body {
+  padding:0;
+  margin:0;
+  font-family: 'Lucida Sans Unicode', Arial, sans-serif;
+  font-size:.8em;
+  position:relative;
+  }
+
+ul {
+  margin:0;
+  padding:0;
+  list-style:none;
+  }
+
+body #js-source {
+  border:5px solid #ccc;
+  position:absolute;
+  left:20px;
+  top:100px;
+  bottom:100px;
+  right:200px;
+  }
+
+/* */
+</style>
+<script src='../../scripts/dom.js'></script>
+<script src='../../scripts/messages.js'></script>
+<script src='../pre_lexer.js'></script>
+<script src='../formatter.js'></script>
+<script src='../syntax.js'></script>
+
+<script src='../js-source-view.js'></script>
+
+<script>
+
+/* fakes */
+
+__time = 0;
+
+__last_id = '';
+
+handlers = {};
+
+var breakpoints = {};
+
+
+
+handlers['set-break-point'] = function(event)
+{
+  var line = event.target.parentElement.children[0].value;
+  if( breakpoints[line] )
+  {
+    delete breakpoints[line];
+    views.js_source.removeBreakpoint(line);
+  }
+  else
+  {
+    breakpoints[line] = 1;
+    views.js_source.addBreakpoint(parseInt(line));
+  }
+}
+
+handlers['get-script-source'] = function()
+{
+  __time = new Date().getTime();
+  var url = document.getElementsByTagName('input')[0].value;
+  var line = parseInt( document.getElementsByTagName('input')[1].value );
+  var x = new XMLHttpRequest();
+  x.onload =function()
+  {
+    var id = runtimes.setScriptSource(this.responseText);
+    __last_id = id;
+    views.js_source.showLine(id, line);
+  }
+  x.open('GET', url);
+  x.send();
+}
+
+handlers['scroll-js-source'] = function(event)
+{
+  views.js_source.scroll();
+}
+
+handlers['set-pointer-line'] = function(event)
+{
+  var line = parseInt( document.getElementsByTagName('input')[1].value );
+    views.js_source.showLine(__last_id, line-7);
+    views.js_source.showLinePointer(line, true);
+}
+
+
+
+document.onclick = function()
+{
+  var handler = handlers[event.target.getAttribute('handler')];
+  if( handler )
+  {
+    handler(event);
+  }
+}
+
+document.onscroll = function(event)
+{
+  //opera.postError(event.target);
+  var handler = handlers[event.target.getAttribute('handler')];
+  if( handler )
+  {
+    handler(event);
+  }
+}
+
+runtimes = {}
+
+var id_counter = 1;
+
+runtimes.setScriptSource = function(source)
+{
+  var ret = id_counter.toString();
+  runtimes[id_counter] = source;
+  document.getElementById('script-ids').innerHTML += '<li>'+ (id_counter++) + '</li>';
+  return ret;
+}
+
+runtimes.getScriptSource = function(id)
+{
+  return runtimes[id];
+}
+
+runtimes.getBreakpoints = function(){return null};
+
+/* end fakes */
+
+onload=function()
+{
+  window.views.js_source.setupBasics();
+  window.views.js_source.setup(1);
+}
+
+document.onkeypress = function(event)
+{
+  switch (event.keyCode)
+  {
+    case 34:
+    {
+      views.js_source.scrollDown();
+      break;
+    }
+    case 33:
+    {
+      views.js_source.scrollUp();
+      break;
+    }
+  }
+}
+
+document.onresize = function(event)
+{
+  messages.post('update-layout', event);
+}
+
+</script>
+</head>
+
+<body>
+<div><label>source: <input value='souce-view-fail-2.js'></label><label>line: <input value ='1'></label><input type='submit' handler='get-script-source' value='get source file'><input type='submit' handler='set-pointer-line' value='set pointer line'></div>
+<ul id='script-ids'></ul>
+
+
+<div id='js-source'></div>
+
+</body>
+</html>

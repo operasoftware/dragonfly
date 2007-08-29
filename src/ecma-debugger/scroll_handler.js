@@ -2,7 +2,7 @@ var scroll_handler = new function()
 {
   var handler = function(event)
   {
-    var handler = event.target.getAttribute('handler');
+    var handler = event.target && event.target.getAttribute('handler');
     if(handler && handlers[handler])
     {
       handlers[handler](event);

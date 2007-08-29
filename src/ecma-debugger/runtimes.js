@@ -35,6 +35,12 @@ var runtimes = new function()
         {
           if( __runtimes[cur] && __runtimes[cur]['uri'] == runtime['uri'] )
           {
+            // copy states
+            //alert("__runtimes[cur]['unfolded'] "+__runtimes[cur]['unfolded'])
+            if( __runtimes[cur]['unfolded'] )
+            {
+              runtime['unfolded'] = __runtimes[cur]['unfolded'];
+            }
             delete __runtimes[cur];
           }
         }
@@ -57,7 +63,7 @@ var runtimes = new function()
     var new_script_id = script['script-id'];
     for( sc in __scripts )
     {
-      if( __scripts[sc]['uri'] == scripts['uri'] || __scripts[sc]['script-data'] == scripts['script-data'] )
+      if( __scripts[sc]['uri'] == script['uri'] || __scripts[sc]['script-data'] == script['script-data'] )
       {
         is_known = true;
         break;
@@ -123,12 +129,26 @@ var runtimes = new function()
     script['breakpoints'] = {};
     registerRuntime( script['runtime-id'] );
     registerScript( script );
+    views.runtimes.update();
   }
 
   this.getRuntimes = function()
   {
     // not very clever
     return __runtimes;
+  }
+
+  this.getRuntimeIdWithURL = function(url)
+  {
+    var r = '';
+    for( r in __runtimes )
+    {
+      if( __runtimes[r]['uri'] == url )
+      {
+        return __runtimes[r];
+      }
+    }
+    return null;
   }
 
   this.getScript = function(scriptId)
@@ -175,6 +195,17 @@ var runtimes = new function()
   this.getBreakpoints = function(script_id)
   {
     return __scripts[script_id] && __scripts[script_id]['breakpoints'];
+  }
+
+
+  this.setUnfolded = function(runtime_id, is_unfolded)
+  {
+    
+    if( __runtimes[runtime_id] )
+    {
+      //alert(__runtimes[runtime_id]+' '+is_unfolded);
+      __runtimes[runtime_id]['unfolded'] = is_unfolded;
+    }
   }
 
 

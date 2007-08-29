@@ -1,10 +1,11 @@
 h1 {
   margin:0;
   font-weight:normal;
-  background-color:#333;
-  color:#fff;
+  background-color:#ccc;
+  color:#000;
   padding:3px 7px;
-  border-bottom:5px solid #ccc;
+  text-align:right;
+  font-size:18px;
   }
 
 h2, h3 {
@@ -33,9 +34,7 @@ li[hanler] {
   xxoverflow: hidden;
   }
 
-#debug-container input {
-  float:right;
-  }
+
 
 xx#debug {
   position:absolute;
@@ -130,12 +129,12 @@ xx#debug {
   }
 
 #command-line input {
-  float:right;
+
   }
 
 #command-line-container {
   position:absolute;
-  top:25px;
+  top:30px;
   left:5px;
   right:5px;
   bottom:5px;
@@ -159,7 +158,11 @@ xx#debug {
   color:blue;
   }
 
-#examine-objects input {
+.folder li li {
+  margin-left:18px;
+  }
+
+.folder-key {
   border:none;
   margin:0;
   margin-right:7px;
@@ -197,4 +200,120 @@ xx#debug {
 #backtrace-container li.selected {
   background-position: 0 0;
   }
+
+#ecma-debugger-toolbar {
+  background-color:#ccc;
+  }
+
+#ecma-debugger-toolbar:after {
+  content:'';
+  display:block;
+  clear:both;
+  }
+
+#continues, .dropdowns {
+  height:24px;
+  line-height:24px;
+  float:left;
+  }
+
+#continues {
+  margin-left:5px;
+  }
+
+#continues input {
+  width:36px;
+  height:22px;
+  background-color:transparent;
+  background-repeat:no-repeat;
+  background-position:0 0;
+  padding:0;
+  margin:0;
+  border:none;
+  cursor:pointer;
+  }
+
+#continues input:hover {
+  background-position:0 -22px;
+  }
+
+#continue-run {
+  background-image:url('run.png');
+  }
+#continue-step-into-call {
+  background-image:url('step-into.png');
+  }
+#continue-step-over-call {
+  background-image:url('step-next.png');
+  }
+#continue-finish-call {
+  background-image:url('step-out.png');
+  } 
+
+#continues input[DISABLED] {
+  opacity:.5;
+  }
+  
+
+.dropdowns > li {
+  float:left;
+  padding:0;
+  margin:0 5px;
+  cursor:pointer;
+  position:relative;
+  z-index:1;
+  }
+
+#drop-down-view {
+  position:absolute;
+  left:0;
+  right:0;
+  border:1px solid #333;
+  background-color:#fff;
+  padding:.5em;
+}
+
+[handler="display-script"] {
+  cursor:pointer;
+  }
+
+
+
+[handler="display-script"].selected {
+  color:#333;
+  font-weight:bold;
+  }
+
+[handler="display-script"].selected:before {
+  content:'[';
+  padding-right:.3em;
+  }
+
+[handler="display-script"].selected:after {
+  content:']';
+  padding-left:.3em;
+  }
+
+.window-container {
+  position:absolute;
+  top:22px;
+  left:1px;
+  right:5px;
+  bottom:5px;
+  padding:.5em;
+  overflow:auto;
+  }
+
+
+#console-view pre {
+  white-space:pre-wrap;
+  border:1px solid #ccc;
+  background-color:#fffcf0;
+  padding:.5em;
+  font-family:monospace;
+  margin:.5em 0 1.5em 0;
+  }
+
+
+
 

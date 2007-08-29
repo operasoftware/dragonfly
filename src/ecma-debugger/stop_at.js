@@ -162,7 +162,6 @@ var stop_at = new function()
     var line = parseInt( stopAt['line-number'] );
     if( typeof line == 'number' )
     {
-      
       /**
       * This event is enabled by default to reassign breakpoints. 
       * Here it must be checked if the user likes actually to stop or not.
@@ -173,6 +172,7 @@ var stop_at = new function()
       {
         if( stop_at_user_settings.script )
         {
+          
           runtime_id = stopAt['runtime-id'];
           // the runtime id can be different for each frame. 
           var tag = tagManager.setCB(null, parseBacktrace, [stopAt['runtime-id']]); 

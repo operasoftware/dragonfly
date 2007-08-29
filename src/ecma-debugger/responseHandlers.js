@@ -4,10 +4,13 @@ var responseHandlers = new function()
   {
     container.render( templates.key_value_folder('arguments', runtime_id, arguments_id) );
     container.renderInner( templates.examineObject(xml, runtime_id) );
+    debug.checkProfiling();
+
   }
 
   this.examinObject = function(xml, runtime_id, container)
   {
     container.render( templates.examineObject(xml, runtime_id) );
+    debug.checkProfiling();
   }
 }

@@ -1,4 +1,4 @@
-var windowInterafce = new function()
+var windowInterface = new function()
 {
   var keyHandlers ={};
 
@@ -31,6 +31,7 @@ var windowInterafce = new function()
 
   this.handleKey = function(key)
   {
+    opera.postError(key);
     if(keyHandlers[key]) keyHandlers[key]();
   }
 

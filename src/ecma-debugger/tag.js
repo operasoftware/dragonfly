@@ -15,7 +15,14 @@ var tagManager = new function()
   {
     var tag = (counter++).toString();
     tags[tag] = {obj: obj, methode: methode, args: args_list ? args_list : []};
-    if( window.__debug_event_flow__ ) tags[tag].time = new Date().getTime();
+    if( window.__debug_event_flow__ ) 
+    {
+      tags[tag].time = new Date().getTime();
+    }
+    if( window.__profiling__ ) 
+    {
+      window.__times__[0] =  new Date().getTime();
+    }
     return tag;
   }
 
