@@ -287,7 +287,7 @@ MODE ::= "<mode>"
   this.toolbars = function()
   {
     return ['div', 
-      ['h1', 'Opera developper tools'],
+      ['h1', 'Opera developer tools'],
       ['div', 'id', 'continues'],
       ['ul', 
         ['li', 'Runtimes', 'handler', 'drop-down', 'ref', 'runtimes'],

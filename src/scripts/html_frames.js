@@ -129,9 +129,13 @@ var verticalFrames = new function()
       {
         if( i == length-1 )
         {
-          var new_height = height 
-            - _frames[i-1].offsetTop - _frames[i-1].offsetHeight 
-            - getPaddingAndBorders(frame);
+          var new_height = height - getPaddingAndBorders(frame);
+          if( _frames[i-1] )
+          {
+            new_height = new_height - _frames[i-1].offsetTop - _frames[i-1].offsetHeight;
+
+          }
+            
           if( new_height > 0 )
           {
             frame.style.height = new_height +'px';

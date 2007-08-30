@@ -64,6 +64,7 @@ var proxy = new function()
   this.enable = function (service_name) 
   {
     var i;
+    
     for ( i=0 ; i < this.services.length && this.services[i] != service_name ; i++ );
     if (i == this.services.length)
     {

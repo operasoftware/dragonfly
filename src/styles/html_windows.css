@@ -1,0 +1,149 @@
+
+
+window {
+  display:block;
+  position:absolute;
+  height:300px;
+  background-color:#fff;
+  background-color:#f5f5f5;
+  border:1px solid #999;
+  left:20px;
+  }
+
+window-control {
+  display:block;
+  position:absolute;
+  }
+
+window-header {
+  display:block;
+  background-color:#ccc;
+  color:#000;
+  cursor:move;
+  padding-left:.5em;
+  border-bottom:1px solid #999;
+  height:20px;
+  line-height:20px;
+  }
+
+[handler='window-close'] {
+  float:right;
+  width:16px;
+  height:16px;
+  margin:2px;
+  position:relative;
+  cursor:pointer;
+  background:transparent url('close.png') scroll no-repeat 50% 50%;
+  }
+
+[handler='window-scale-right'] {
+  right:-5px;
+  width:10px;
+  top:20px;
+  bottom:5px;
+  cursor:w-resize;
+  }
+
+[handler='window-scale-left'] {
+  left:-5px;
+  width:10px;
+  top:20px;
+  bottom:5px;
+  cursor:w-resize;
+  }
+
+[handler='window-scale-bottom'] {
+  left:0;
+  bottom:-5px;
+  height:10px;
+  right:5px;
+  cursor:s-resize;
+  }
+
+[handler='window-scale-bottom-right'] {
+  bottom:-5px;
+  height:10px;
+  width:10px;
+  right:-5px;
+  cursor:nw-resize;
+  }
+
+[handler='window-scale-bottom-left'] {
+  bottom:-5px;
+  height:10px;
+  width:10px;
+  left:-5px;
+  cursor:sw-resize;
+  }
+
+window-shadow {
+  display:block;
+  position:absolute;
+  }
+
+window-shadow.top-left {
+  left:-5px;
+  top:-5px;
+  width:7px;
+  height:7px;
+  background:transparent url('shadow-top-left.png') scroll repeat-x 0 0;
+  }
+
+window-shadow.top {
+  left:2px;
+  top:-5px;
+  right:2px;
+  height:4px;
+  background:transparent url('shadow-top.png') scroll repeat-x 0 0;
+  }
+
+window-shadow.top-right {
+  right:-7px;
+  top:-5px;
+  height:7px;
+  width:9px;
+  background:transparent url('shadow-top-right.png') scroll no-repeat 0 0;
+  }
+
+window-shadow.right {
+  right:-7px;
+  top:2px;
+  bottom:2px;
+  width:6px;
+  background:transparent url('shadow-right.png') scroll repeat-y 0 0;
+  }
+
+
+
+window-shadow.bottom {
+  right:2px;
+  bottom:-7px;
+  left:2px;
+  height:6px;
+  background:transparent url('shadow-bottom.png') scroll repeat-x 0 0;
+  }
+
+window-shadow.bottom-right {
+  right:-7px;
+  bottom:-7px;
+  height:9px;
+  width:9px;
+  background:transparent url('shadow-bottom-right.png') scroll no-repeat 0 0;
+  }
+
+window-shadow.bottom-left {
+  left:-5px;
+  bottom:-7px;
+  height:9px;
+  width:7px;
+  background:transparent url('shadow-bottom-left.png') scroll no-repeat 0 0;
+  }
+
+window-shadow.left {
+  left:-5px;
+  top:2px;
+  bottom:2px;
+  width:4px;
+  background:transparent url('shadow-left.png') scroll repeat-y 0 0;
+  }
+

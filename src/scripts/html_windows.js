@@ -28,6 +28,8 @@ var windows = new function()
   set = {}, 
   update = {},
   click_handlers = {},
+  ids = { 'empty': { top: 0, left: 0, width: 0, height: 0 } },
+  current_id = null,
 
   setZIndex = function()
   {
@@ -77,6 +79,9 @@ var windows = new function()
         current_style.zIndex = 200;
         update_handler = update[handler];
         set[handler](event);
+        var ref_id = event.target.parentNode.getAttribute('ref_id');
+        current_id = ref_id ? ids[ ref_id ] : ids[ 'empty' ];
+        
         document.addEventListener('mousemove', update_handler, false);
         document.addEventListener('mouseup', mouseup, false);
       }
@@ -108,7 +113,7 @@ var windows = new function()
     }
   },
 
-  template = function(title, content_template, top, left, width, height)
+  template = function(ref_id, title, content_template, top, left, width, height)
   {
     return ['window',
         ['window-header',   
@@ -127,7 +132,8 @@ var windows = new function()
       'top:' + ( top ? top : d_top ) + 'px;' +
       'left: ' + ( left ? left : d_left ) + 'px;' +
       'width: '+ ( width ? width : d_width ) + 'px;' +
-      'height: ' + ( height ? height : d_height ) + 'px;' ]
+      'height: ' + ( height ? height : d_height ) + 'px;',
+      'ref_id', ref_id]
   },
 
   template_shadows = function()
@@ -146,7 +152,7 @@ var windows = new function()
 
   mouseup = function(event)
   {
-    current_style = null;
+    current_id = current_style = null;
     document.removeEventListener('mousemove', update_handler, false);
     document.removeEventListener('mouseup', mouseup, false);
   };
@@ -159,8 +165,8 @@ var windows = new function()
 
   update['window-move'] = function(event)
   {
-    current_style.left = ( event.pageX - left_delta ) + 'px';
-    current_style.top = ( event.pageY - top_delta ) + 'px';
+    current_style.left = ( current_id.left = event.pageX - left_delta ) + 'px';
+    current_style.top = ( current_id.top = event.pageY - top_delta ) + 'px';
     focus_catcher_focus();
   }
 
@@ -174,7 +180,7 @@ var windows = new function()
     var width = event.pageX - left_delta;
     if( width > min_width )
     {
-      current_style.width = width + 'px';
+      current_style.width = ( current_id.width = width ) + 'px';
       focus_catcher_focus();
     }
   }
@@ -191,8 +197,8 @@ var windows = new function()
     var width =  right_delta - left;
     if( width > min_width )
     {
-      current_style.width = width + 'px';
-      current_style.left = left + 'px';
+      current_style.width = ( current_id.width = width ) + 'px';
+      current_style.left = ( current_id.left = left ) + 'px';
       focus_catcher_focus();
     }
   }
@@ -207,7 +213,7 @@ var windows = new function()
     var height = event.pageY - top_delta;
     if( height > min_height )
     {
-      current_style.height = height + 'px';
+      current_style.height = ( current_id.height = height ) + 'px';
       focus_catcher_focus();
     }
   }
@@ -245,9 +251,26 @@ var windows = new function()
     }
   }
   
-  this.showWindow = function(title, content_template, top, left, width, height)
+  this.showWindow = function(ref_id, title, content_template, top, left, width, height)
   {
-    document.body.render(template(title, content_template, top, left, width, height));
+    if ( ref_id )
+    {
+      if( ids[ref_id] )
+      {
+        top = ids[ref_id].top;
+        left = ids[ref_id].left;
+        width = ids[ref_id].width;
+        height = ids[ref_id].height;
+      }
+      else
+      {
+        ids[ref_id] = { top: 0, left: 0, width: 0, height: 0 };
+      }
+      current_id = ids[ref_id];
+    }
+    var win = document.body.render(template(ref_id, title, content_template, top, left, width, height));
+    setZIndex();
+    win.style.zIndex = 200;
   }
 
   document.addEventListener('mousedown', mousedown, false);
