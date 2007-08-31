@@ -25,6 +25,7 @@
 <script src="handlers.js"></script>
 <script src="runtimes.js"></script>
 <script src="stop_at.js"></script>
+<script src="frame_inspection.js"></script>
 <script src="commands.js"></script>
 <script src="views.js"></script>
 
@@ -42,48 +43,8 @@
 <body>
 <div id='main-container' class='vertical-frame-container'>
 
-<!-- <div id='command-line'>
-  <input 
-    type='button' 
-    value='post' 
-    onclick='debugger.postCommandline()' style='margin-left:50px'>
-  <input 
-    type='button' 
-    value='examine obj' onclick="this.parentNode.getElementsByTagName('textarea')[0].value=
-   '<examine-objects>\n  <tag>1</tag>\n  <runtime-id>x</runtime-id>\n  <object-id>x</object-id>\n</examine-objects>';">
-
-  <input 
-    type='button' 
-    value='set breakpoint' 
-    onclick="this.parentNode.getElementsByTagName('textarea')[0].value=
-  '<add-breakpoint>\n  <breakpoint-id> x </breakpoint-id>\n  <source-position>\n    <script-id> x </script-id>\n    <line-number> x </line-number>\n  </source-position>\n</add-breakpoint>';">
-
-  <input 
-    type='button' 
-    value='eval' 
-    onclick="this.parentNode.getElementsByTagName('textarea')[0].value=
-  '<eval>\n  <tag>1</tag>\n  <runtime-id></runtime-id>\n  <thread-id></thread-id>\n  <frame-id></frame-id>\n  <script-data></script-data>\n</eval>';">
-
-  <h2>Command Line</h2>
-  <div id='command-line-container'><textarea></textarea></div>
-</div>
-
-
-<div id='debug-container'>
-  <input 
-    type='button' 
-    value='clear output' 
-    onclick="document.getElementById('debug').innerHTML=''">
-  <h2>Debug</h2>
-  <pre id="debug"></pre>
-</div> -->
-
-
-
-
 <div id='inspection-container' class='horizontal-frame-container'>
 
-  <!-- <div id="source-view" onclick='handlers.breakpoint(arguments[0])'></div> -->
   <div id="js-source"></div>
   <div class='vertical-frame-container'>
 
@@ -93,7 +54,7 @@
     </div>
 
     <div id="examine-objects-container">
-      <ul id="examine-objects"></ul>
+      <div id="examine-objects"></div>
     </div>
 
   </div>

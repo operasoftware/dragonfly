@@ -2,6 +2,7 @@ var action_handler = new function()
 {
   var handler = function(event)
   {
+    
     var handler = event.target.getAttribute('handler');
     if(handler && handlers[handler])
     {
@@ -42,17 +43,16 @@ var action_handler = new function()
 
   handlers['show-frame'] = function(event)
   {
-    //___time = new Date().getTime();
     var frame = stop_at.getFrame(event.target['ref-id']);
     // is this schabernack? each frame can be in a different runtime
     var runtime_id = stop_at.getRuntimeId();
     if(frame)
     {
-      views.scope.clear();
+      views.frame_inspection.clearView();
       var tag = tagManager.setCB(
         null, 
         responseHandlers.examinFrame, 
-        [runtime_id, views.scope.get(), frame.argument_id]
+        [runtime_id, frame.argument_id]
         );
       helpers.examine_objects( runtime_id, tag, frame.scope_id );
       if( event.type == 'click' )
@@ -79,17 +79,34 @@ var action_handler = new function()
 
   handlers['examine-object'] = function(event)
   {
-    var ele = event.target.parentNode, list = null;
-    if( list = ele.getElementsByTagName('ul')[0] )
+    var ele = event.target.parentNode, 
+      list = null, 
+      path_arr = [], 
+      cur = ele, 
+      par = cur;
+    do
     {
-      ele.removeChild(list);
+      cur = par;
+      path_arr.unshift( parseInt( cur.getAttribute( 'ref_index' ) ) );
+    }
+    while ( ( par = cur.parentElement ) && ( par = par.parentElement ) && par.id != 'examine-objects' );
+    var obj = frame_inspection.getObject(path_arr);
+    //alert(path_arr +' '+obj);
+    if( !obj )
+    {
+      opera.postError("Error in action_handler handlers['examine-object']");
+    }
+    if(obj.items.length)
+    {
+      obj.items = []; // that should be done in frame_inspection
+      views.frame_inspection.clearView(path_arr);
       event.target.style.removeProperty('background-position');
     }
     else
     {
-      var runtime_id = ele.getAttribute('runtime-id');
-      var tag = tagManager.setCB(null, responseHandlers.examinObject, [runtime_id, ele]);
-      helpers.examine_objects( runtime_id, tag, ele.getAttribute('object-id') );
+      var runtime_id = frame_inspection.getRuntimeId();
+      var tag = tagManager.setCB(null, responseHandlers.examinObject, [runtime_id, path_arr]);
+      helpers.examine_objects( runtime_id, tag, obj.value );
       event.target.style.backgroundPosition = '0 -11px';
     }
   }
@@ -97,11 +114,12 @@ var action_handler = new function()
   handlers['show-global-scope'] = function(event)
   {
     var ele = event.target;
-    var runtime = runtimes.getRuntimeIdWithURL(ele.textContent);
+    var runtime = runtimes.getRuntimeIdWithURL(ele.childNodes[1].nodeValue);
     if( runtime )
     {
-      views.scope.clear();
-      var tag = tagManager.setCB(null, responseHandlers.examinObject, [runtime['runtime-id'], views.scope.get()]);
+      alert(runtime['runtime-id'] +' '+runtime['object-id'] )
+      views.frame_inspection.clearView();
+      var tag = tagManager.setCB(null, responseHandlers.examinObject, [ runtime['runtime-id'] ]);
       helpers.examine_objects( runtime['runtime-id'], tag, runtime['object-id'] );
     }
   }
@@ -149,6 +167,7 @@ var action_handler = new function()
   {
     views.js_source.clearView();
     views.callstack.clearView();
+    views.frame_inspection.clearView();
     stop_at.__continue(event.target.getAttribute('mode'));
   }
 
@@ -191,76 +210,90 @@ var action_handler = new function()
       {
         case 'runtimes':
         {
-          windows.showWindow('runtimes', 'Runtimes', templates.runtimes_dropdown(ele));
-          views.runtimes.update();
+          if( windows.showWindow('runtimes', 'Runtimes', templates.runtimes_dropdown(ele)) )
+          {
+            views.runtimes.update();
+          }
           break;
         }
         case 'console':
         {
-          windows.showWindow('console', 'Console', ['div', 'class', 'window-container', 'id', 'console-view']);
-          views.console.update();
+          if( windows.showWindow('console', 'Console', ['div', 'class', 'window-container', 'id', 'console-view']) )
+          {
+            views.console.update();
+          }
           break;
         }
         case 'environment':
         {
-          windows.showWindow('environment', 'Environment', ['div', 'class', 'window-container', 'id', 'view-environment']);
-          views.environment.update();
+          if( windows.showWindow('environment', 'Environment', ['div', 'class', 'window-container', 'id', 'view-environment']) )
+          {
+            views.environment.update();
+          }
           break;
         }
         case 'configuration':
         {
-          windows.showWindow('configuration', 'Stop At', ['div', 'class', 'window-container', 'id', 'configuration']);
-          views.configuration.update();
+          if( windows.showWindow('configuration', 'Stop At', ['div', 'class', 'window-container', 'id', 'configuration']) )
+          {
+            views.configuration.update();
+          }
           break;
         }
         case 'debug':
         {
-          windows.showWindow
-          (
-            'debug', 
-            'Debug', 
-            ['div', 
-              ['input', 
-                'type', 'button', 
-                'value', 'clear output', 
-                'onclick', 'debug.clear()'],
-              ['pre', 'id', 'debug'],
-            'class', 'window-container', 'id', 'debug-container']
-          );
-          window.debug.output();
+          if( windows.showWindow
+            (
+              'debug', 
+              'Debug', 
+              ['div', 
+                ['input', 
+                  'type', 'button', 
+                  'value', 'clear output', 
+                  'onclick', 'debug.clear()'],
+                ['pre', 'id', 'debug'],
+              'class', 'window-container', 'id', 'debug-container']
+            )
+          )
+          {
+            window.debug.output();
+          }
           break;
         }
 
         case 'command-line':
         {
-          windows.showWindow
-          (
-            'command-line', 
-            'Command Line', 
-            ['div', 
-              ['div',
-                ['input', 
-                  'type', 'button', 
-                  'value', 'eval', 
-                  'onclick', "this.parentNode.parentNode.getElementsByTagName('textarea')[0].value='<eval>\\n  <tag>1</tag>\\n  <runtime-id></runtime-id>\\n  <thread-id></thread-id>\\n  <frame-id></frame-id>\\n  <script-data></script-data>\\n</eval>';"],
-                ['input', 
-                  'type', 'button', 
-                  'value', 'set breakpoint', 
-                  'onclick', "this.parentNode.parentNode.getElementsByTagName('textarea')[0].value='<add-breakpoint>\\n  <breakpoint-id> x </breakpoint-id>\\n  <source-position>\\n    <script-id> x </script-id>\\n    <line-number> x </line-number>\\n  </source-position>\\n</add-breakpoint>';"],
-                ['input', 
-                  'type', 'button', 
-                  'value', 'examine obj', 
-                  'onclick', "this.parentNode.parentNode.getElementsByTagName('textarea')[0].value='<examine-objects>\\n  <tag>1</tag>\\n  <runtime-id>x</runtime-id>\\n  <object-id>x</object-id>\\n</examine-objects>';"],
-                ['input', 
-                  'type', 'button', 
-                  'value', 'post', 
-                  'style', 'margin-left:10px',
-                  'onclick', 'debugger.postCommandline()'],
-              'style', 'text-align: right'],
-              ['div', ['textarea'], 'id', 'command-line-container'],
-            'class', 'window-container', 'id', 'command-line']
-          );
-          window.debug.output();
+          if( windows.showWindow
+            (
+              'command-line', 
+              'Command Line', 
+              ['div', 
+                ['div',
+                  ['input', 
+                    'type', 'button', 
+                    'value', 'eval', 
+                    'onclick', "this.parentNode.parentNode.getElementsByTagName('textarea')[0].value='<eval>\\n  <tag>1</tag>\\n  <runtime-id></runtime-id>\\n  <thread-id></thread-id>\\n  <frame-id></frame-id>\\n  <script-data></script-data>\\n</eval>';"],
+                  ['input', 
+                    'type', 'button', 
+                    'value', 'set breakpoint', 
+                    'onclick', "this.parentNode.parentNode.getElementsByTagName('textarea')[0].value='<add-breakpoint>\\n  <breakpoint-id> x </breakpoint-id>\\n  <source-position>\\n    <script-id> x </script-id>\\n    <line-number> x </line-number>\\n  </source-position>\\n</add-breakpoint>';"],
+                  ['input', 
+                    'type', 'button', 
+                    'value', 'examine obj', 
+                    'onclick', "this.parentNode.parentNode.getElementsByTagName('textarea')[0].value='<examine-objects>\\n  <tag>1</tag>\\n  <runtime-id>x</runtime-id>\\n  <object-id>x</object-id>\\n</examine-objects>';"],
+                  ['input', 
+                    'type', 'button', 
+                    'value', 'post', 
+                    'style', 'margin-left:10px',
+                    'onclick', 'debugger.postCommandline()'],
+                'style', 'text-align: right'],
+                ['div', ['textarea'], 'id', 'command-line-container'],
+              'class', 'window-container', 'id', 'command-line']
+            )
+          )
+          {
+            window.debug.output();
+          }
           break;
         }       
       }

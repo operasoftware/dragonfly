@@ -66,7 +66,7 @@ templates = new function()
         ['input', 
         'type', 'checkbox', 
         'value', settingName,
-        'checkbox', settingValue ?  true : false,
+        'checked', settingValue ?  true : false,
         'handler', 'set-stop-at'
         ],
         settingName
@@ -126,151 +126,62 @@ MODE ::= "<mode>"
         ]
   }
 
-  this.examineObject = function(xml, runtime_id)
+  this.examineObject = function( data )
   {
+    var prop = null, 
+    i = 0, 
+    ret = ['ul'];
+
+
+    for( i=0 ; prop = data[i]; i++)
+    {
+      switch(prop.type)
+      {
+        case 'object':
+        {
+          ret[ret.length] = self.key_value_folder(prop.key, i);
+          break;
+        }
+        case 'undefined':
+        case 'null':
+        {
+          ret[ret.length] = self.key_value(prop.key, prop.value, 'type', i);
+          break;
+        }
+        default:
+        {
+          ret[ret.length] = ret[ret.length] = self.key_value(prop.key, prop.value, 'value', i);
+          break;
+        }
+      }
+    }
+
     if( window.__profiling__ ) 
     {
-      window.__times__[1] =  new Date().getTime();
+      window.__times__[4] =  new Date().getTime(); // creating markup
     }
-    var obj = xml.getElementsByTagName('object')[0];
-    if(obj)
-    {
-      var props = obj.getElementsByTagName('property'), prop = null, i=0;
-      var ret = ['ul'];
-      var prop_type = '';
-      var unsorted = [];
 
-
-      for( ; prop = props[i]; i++)
-      {
-        // "number" | "boolean" | "string" | "null" | "undefined" | "object"
-        switch(prop.getNodeData('data-type'))
-        {
-          case 'object':
-          {
-            unsorted[unsorted.length] = 
-            {
-              key: prop.getNodeData('property-name'),
-              value: prop.getNodeData('object-id'),
-              type: 'object'
-            }
-            //self.key_value_folder(prop.getNodeData('property-name'), runtime_id, prop.getNodeData('object-id'));
-            break;
-          }
-
-          case 'undefined':
-          {
-            unsorted[unsorted.length] = 
-            {
-              key: prop.getNodeData('property-name'),
-              value: '"undefined"',
-              type: 'undefined'
-            }
-            //self.key_value(prop.getNodeData('property-name'), '"undefined"', 'type');
-            break;
-          }
-          case 'null':
-          {
-            unsorted[unsorted.length] = 
-            {
-              key: prop.getNodeData('property-name'),
-              value: 'null',
-              type: 'null'
-            }
-            //self.key_value(prop.getNodeData('property-name'), 'null', 'type');
-            break;
-          }
-          case 'number':
-          {
-            unsorted[unsorted.length] = 
-            {
-              key: prop.getNodeData('property-name'),
-              value: prop.getNodeData('string'),
-              type: 'number'
-            }
-            //self.key_value(prop.getNodeData('property-name'), prop.getNodeData('object-value'), 'value');
-            break;
-          }
-          case 'string':
-          {
-            unsorted[unsorted.length] = 
-            {
-              key: prop.getNodeData('property-name'),
-              value: '"' + prop.getNodeData('string') + '"',
-              type: 'string'
-            }
-            //self.key_value(prop.getNodeData('property-name'), '"' + prop.getNodeData('string') + '"', 'value');
-            break;
-          }
-          case 'boolean':
-          {
-            unsorted[unsorted.length] = 
-            {
-              key: prop.getNodeData('property-name'),
-              value: prop.getNodeData('string'),
-              type: 'boolean'
-            }
-            //self.key_value(prop.getNodeData('property-name'), prop.getNodeData('object-value'), 'value');
-            break;
-          }
-        }
-      }
-      if( window.__profiling__ ) 
-      {
-        window.__times__[2] =  new Date().getTime(); // parsing
-      }
-      unsorted.sortByFieldName('key');
-      if( window.__profiling__ ) 
-      {
-        window.__times__[3] =  new Date().getTime(); // sorting
-      }
-
-      for( i=0 ; prop = unsorted[i]; i++)
-      {
-        switch(prop.type)
-        {
-          case 'object':
-          {
-            ret[ret.length] = self.key_value_folder(prop.key, runtime_id, prop.value);
-            break;
-          }
-          case 'undefined':
-          case 'null':
-          {
-            ret[ret.length] = self.key_value(prop.key, prop.value, 'type');
-            break;
-          }
-          default:
-          {
-            ret[ret.length] = ret[ret.length] = self.key_value(prop.key, prop.value, 'value');
-            break;
-          }
-        }
-      }
-      if( window.__profiling__ ) 
-      {
-        window.__times__[4] =  new Date().getTime(); // creating markup
-      }
-
-      return ret;
-    }
-    return [];
+    return ret;
   }
 
 
 
-  this.key_value = function(key, value, value_class)
+  this.key_value = function(key, value, value_class, ref_index)
   {
-    return ['li', ['span', key, 'class', 'key'], ['span', value].concat( value_class ? ['class', value_class] : [])];
+    return ['li', 
+        ['span', key, 'class', 'key'], 
+        ['span', value].concat( value_class ? ['class', value_class] : []),
+      'ref_index', ref_index
+    ];
   }
 
-  this.key_value_folder = function(key, runtime_id, object_id)
+  this.key_value_folder = function(key, ref_index)
   {
     return ['li', 
       ['input', 'type', 'button', 'handler', 'examine-object', 'class', 'folder-key'],
       ['span', key, 'class', 'key'], 
       ['span', 'object', 'class', 'type'],
-      'runtime-id', runtime_id, 'object-id', object_id
+      'ref_index', ref_index
     ];
   }
 

@@ -273,7 +273,7 @@ xx#debug {
   padding:.5em;
 }
 
-[handler="display-script"] {
+[handler="display-script"], [handler="show-global-scope"] {
   cursor:pointer;
   }
 

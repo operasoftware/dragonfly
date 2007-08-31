@@ -13,6 +13,7 @@ var windows = new function()
   current_style = null, 
   update_handler = null,
   id_counter = 0,
+  window_ids = {},
   key_id = 'window-id-',
   min_z_index = 100,
   focus_catcher = null,
@@ -30,19 +31,46 @@ var windows = new function()
   click_handlers = {},
   ids = { 'empty': { top: 0, left: 0, width: 0, height: 0 } },
   current_id = null,
+  __event = null,
+  interval = 0,
+
+  store_event = function(event)
+  {
+    __event = event;
+    focus_catcher_focus();
+  },
 
   setZIndex = function()
   {
-    var win = null, i = 0, z = 0
-    for( ; i < id_counter; i++ )
+    var win = null, id = '', z = 0;
+    for( id in window_ids )
     {
-      win = document.getElementById( key_id + i );
-      if( win && ( z = parseInt(win.style.zIndex ) ) && z > min_z_index )
+      win = document.getElementById( id );
+      if( win ) 
       {
+        if( ( z = parseInt( win.style.zIndex ) ) && z > min_z_index )
         win.style.zIndex = z - 1;
+      }
+      else
+      {
+        delete window_ids[ id ];
       }
     }
   },
+
+  checkRefId = function(ref_id)
+  {
+    var win = null, id = '';
+    for( id in window_ids )
+    {
+      win = document.getElementById( id );
+      if( win && ( win.getAttribute('ref_id') == ref_id ) ) 
+      {
+        return true;
+      }
+    }
+    return false;
+  },  
 
   template_focus_catcher = function()
   {
@@ -70,19 +98,20 @@ var windows = new function()
     {
       if( handler in handlers )
       {
-        if( !focus_catcher )
+        if( !focus_catcher && !interval )
         {
           createFocusCatcher();
         }
         current_style = event.target.parentNode.style;
         setZIndex();
         current_style.zIndex = 200;
+        interval = setInterval( update[handler], 15 );
         update_handler = update[handler];
         set[handler](event);
         var ref_id = event.target.parentNode.getAttribute('ref_id');
         current_id = ref_id ? ids[ ref_id ] : ids[ 'empty' ];
         
-        document.addEventListener('mousemove', update_handler, false);
+        document.addEventListener('mousemove', store_event, false);
         document.addEventListener('mouseup', mouseup, false);
       }
     }
@@ -115,6 +144,7 @@ var windows = new function()
 
   template = function(ref_id, title, content_template, top, left, width, height)
   {
+    window_ids[ key_id + id_counter ] = true;
     return ['window',
         ['window-header',   
           ['window-control', 'handler', 'window-close'],
@@ -152,9 +182,11 @@ var windows = new function()
 
   mouseup = function(event)
   {
-    current_id = current_style = null;
-    document.removeEventListener('mousemove', update_handler, false);
+    document.removeEventListener('mousemove', store_event, false);
     document.removeEventListener('mouseup', mouseup, false);
+    interval = clearInterval( interval );
+    update_handler();
+    current_id = current_style = __event = update_handler = null;
   };
 
   set['window-move'] = function(event)
@@ -163,11 +195,14 @@ var windows = new function()
     top_delta = event.pageY - event.target.parentNode.offsetTop;
   }
 
-  update['window-move'] = function(event)
+  update['window-move'] = function()
   {
-    current_style.left = ( current_id.left = event.pageX - left_delta ) + 'px';
-    current_style.top = ( current_id.top = event.pageY - top_delta ) + 'px';
-    focus_catcher_focus();
+    if(__event)
+    {
+      current_style.left = ( current_id.left = __event.pageX - left_delta ) + 'px';
+      current_style.top = ( current_id.top = __event.pageY - top_delta ) + 'px';
+      focus_catcher_focus();
+    }
   }
 
   set['window-scale-right'] = function(event)
@@ -175,13 +210,16 @@ var windows = new function()
     left_delta = event.pageX - ( event.target.parentNode.offsetWidth - 2 );
   }
 
-  update['window-scale-right'] = function(event)
+  update['window-scale-right'] = function()
   {
-    var width = event.pageX - left_delta;
-    if( width > min_width )
+    if(__event)
     {
-      current_style.width = ( current_id.width = width ) + 'px';
-      focus_catcher_focus();
+      var width = __event.pageX - left_delta;
+      if( width > min_width )
+      {
+        current_style.width = ( current_id.width = width ) + 'px';
+        focus_catcher_focus();
+      }
     }
   }
 
@@ -193,13 +231,16 @@ var windows = new function()
 
   update['window-scale-left'] = function(event)
   {
-    var left = event.pageX - left_delta;
-    var width =  right_delta - left;
-    if( width > min_width )
+    if( __event )
     {
-      current_style.width = ( current_id.width = width ) + 'px';
-      current_style.left = ( current_id.left = left ) + 'px';
-      focus_catcher_focus();
+      var left = __event.pageX - left_delta;
+      var width =  right_delta - left;
+      if( width > min_width )
+      {
+        current_style.width = ( current_id.width = width ) + 'px';
+        current_style.left = ( current_id.left = left ) + 'px';
+        focus_catcher_focus();
+      }
     }
   }
 
@@ -208,13 +249,16 @@ var windows = new function()
     top_delta = event.pageY - event.target.parentNode.offsetHeight;
   }
 
-  update['window-scale-bottom'] = function(event)
+  update['window-scale-bottom'] = function()
   {
-    var height = event.pageY - top_delta;
-    if( height > min_height )
+    if( __event )
     {
-      current_style.height = ( current_id.height = height ) + 'px';
-      focus_catcher_focus();
+      var height = __event.pageY - top_delta;
+      if( height > min_height )
+      {
+        current_style.height = ( current_id.height = height ) + 'px';
+        focus_catcher_focus();
+      }
     }
   }
 
@@ -224,10 +268,10 @@ var windows = new function()
     set['window-scale-bottom'](event);
   }
 
-  update['window-scale-bottom-right'] = function(event)
+  update['window-scale-bottom-right'] = function()
   {
-    update['window-scale-right'](event);
-    update['window-scale-bottom'](event);
+    update['window-scale-right']();
+    update['window-scale-bottom']();
   }
 
   set['window-scale-bottom-left'] = function(event)
@@ -236,10 +280,10 @@ var windows = new function()
     set['window-scale-bottom'](event);
   }
 
-  update['window-scale-bottom-left'] = function(event)
+  update['window-scale-bottom-left'] = function()
   {
-    update['window-scale-left'](event);
-    update['window-scale-bottom'](event);
+    update['window-scale-left']();
+    update['window-scale-bottom']();
   }
 
   click_handlers['window-close'] = function(event)
@@ -253,6 +297,10 @@ var windows = new function()
   
   this.showWindow = function(ref_id, title, content_template, top, left, width, height)
   {
+    if( checkRefId( ref_id ))
+    {
+      return false;
+    }
     if ( ref_id )
     {
       if( ids[ref_id] )
@@ -271,6 +319,7 @@ var windows = new function()
     var win = document.body.render(template(ref_id, title, content_template, top, left, width, height));
     setZIndex();
     win.style.zIndex = 200;
+    return true;
   }
 
   document.addEventListener('mousedown', mousedown, false);

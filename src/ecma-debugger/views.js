@@ -98,6 +98,7 @@ views.callstack = new function()
   }
 }
 
+/*
 views.scope = new function()
 {
   var container_id = 'examine-objects';
@@ -112,129 +113,8 @@ views.scope = new function()
     return document.getElementById(container_id);
   }
 }
-
-/*
-views.source_code = new function()
-{
-  var self = this;
-
-  var container_id = 'source-view';
-
-  var __current_script_id = '';
-
-  this.showLine = function(scriptId, line)
-  {
-    var s_c = document.getElementById(container_id), script = null;
-    if( scriptId == __current_script_id )
-    {
-
-    }
-    else
-    {
-      script = runtimes.getScript(scriptId);
-      if(script)
-      {
-        __current_script_id = scriptId;
-        s_c.setAttribute('script-id', scriptId);
-        
-        s_c.innerHTML = helpers.formatScript(script['script-data']);
-        self.updateBreakpoints();
-      }
-      else
-      {
-        opera.postError( "Script id not registered");
-      }
-    }
-    var __line = s_c.getElementsByTagName('li')[line-1];
-    var line_pointer = document.getElementById('line-pointer');
-    if(__line)
-    {
-      if(line_pointer)
-      {
-        line_pointer.parentElement.removeChild(line_pointer);
-      }
-      line_pointer = s_c.firstChild.render
-      (
-        ['li', 
-          'id', 'line-pointer', 
-          'style', 'top:'+ __line.offsetTop +'px'
-        ]
-      );
-      s_c.scrollTop = __line.offsetTop - 100;
-
-    }
-    else
-    {
-      opera.postError( "the script has no according line "+line);
-    }
-  }
-
-  this.displayScript = function(script_id)
-  {
-    var s_c = document.getElementById(container_id), script = null;
-    if( script_id == __current_script_id )
-    {
-
-    }
-    else
-    {
-      script = runtimes.getScript(script_id);
-      if(script)
-      {
-        __current_script_id = script_id;
-        s_c.setAttribute('script-id', script_id);
-        
-        s_c.innerHTML = helpers.formatScript(script['script-data']);
-        self.updateBreakpoints();
-      }
-      else
-      {
-        opera.postError( "Script id not registered");
-      }
-    }
-
-  }
-
-  this.updateBreakpoints = function()
-  {
-    var s_c = document.getElementById(container_id);
-    var b_ps = s_c.getElementsByClassName('breakpoint'), b_p = null, i = 0;
-    for( ; b_p =b_ps[i]; i++)
-    {
-      b_p.parentNode.removeChild(b_p);
-    }
-
-    var breakpoints = runtimes.getBreakpoints(__current_script_id), cur = '';
-    var list = s_c.getElementsByTagName('ol')[0];
-    var lines = list.getElementsByTagName('li');
-    var line = null;
-    var top = 0;
-    //alert(breakpoints);
-    if(breakpoints)
-    {
-      for(cur in breakpoints)
-      {
-        //alert(cur);
-        line = lines[parseInt(cur) - 1];
-        if(line)
-        {
-          list.render(templates.breakpoint(cur, line.offsetTop))
-        }
-        else
-        {
-          opera.postError('no according line number to breakpoint');
-        }
-      }
-    }
-
-
-  }
-
-
-
-
-}
 */
+
 views.environment = new function()
 {
   var self = this;
@@ -248,4 +128,62 @@ views.environment = new function()
       container.render( templates.hello( debugger.getEnvironment()) );
     }
   }
+}
+
+views.frame_inspection = new function()
+{
+  var self = this;
+  var container_id = 'examine-objects';
+
+  var getContainer = function(path_arr)
+  {
+    var container = document.getElementById(container_id);
+    var prov = null, length = 0, i = 0;
+    if( container )
+    {
+      if( path_arr )
+      {
+        length = path_arr.length
+        for( ; i < length; i++ )
+        {
+          container = container.getElementsByTagName('ul')[0].childNodes[ path_arr[ i ] ];
+          if( !container )
+          {
+            opera.postError('Error in views.frame_inspection.update');
+            break;
+          }
+        }
+      }
+    }
+    return container;
+  }
+
+  this.update = function( path_arr )
+  {
+    var container = getContainer( path_arr );
+    if( container )
+    {
+      container.renderInner( templates.examineObject( frame_inspection.getObject( path_arr ).items ) );
+    }
+  }
+
+  this.clearView = function(path_arr) 
+  {
+    var container = getContainer( path_arr );
+    if( container )
+    {
+      var ul = container.getElementsByTagName('ul')[0];
+      if( ul )
+      {
+        container.removeChild( ul );
+      }
+    }
+  }
+/*
+  this.clear = function()
+  {
+    var container = document.getElementById(container_id);
+    container.innerHTML = '';
+  }
+*/
 }
