@@ -357,6 +357,9 @@ views.js_source = new function()
   this.showLinePointer = function(line, is_top_frame)
   {
     var script_breakpoints = script.breakpoints;
+	if (!script_breakpoints) {
+		return;
+	}
     if( __current_pointer )
     {
       script_breakpoints[ __current_pointer ] -= __current_pointer_type;
