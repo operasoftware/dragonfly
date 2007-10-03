@@ -117,7 +117,6 @@ var action_handler = new function()
     var runtime = runtimes.getRuntimeIdWithURL(ele.childNodes[1].nodeValue);
     if( runtime )
     {
-      alert(runtime['runtime-id'] +' '+runtime['object-id'] )
       views.frame_inspection.clearView();
       var tag = tagManager.setCB(null, responseHandlers.examinObject, [ runtime['runtime-id'] ]);
       helpers.examine_objects( runtime['runtime-id'], tag, runtime['object-id'] );
