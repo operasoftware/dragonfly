@@ -152,6 +152,7 @@ var action_handler = new function()
   handlers['display-script'] = function(event)
   {
     var id  = event.target.getAttribute('script-id');
+
     if(id)
     {
       views.js_source.showLine(id, 0);

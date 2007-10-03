@@ -106,10 +106,10 @@ MODE ::= "<mode>"
   this.continues = function()
   {
     var ret = [];
-    ret[ret.length] = self.continueWithMode('run', 'run');
-    ret[ret.length] = self.continueWithMode('step into call', 'step-into-call');
-    ret[ret.length] = self.continueWithMode('step next line', 'step-over-call');
-    ret[ret.length] = self.continueWithMode('step out of call', 'finish-call');
+    ret[ret.length] = self.continueWithMode('run ( F5 )', 'run');
+    ret[ret.length] = self.continueWithMode('step into call ( F11 )', 'step-into-call');
+    ret[ret.length] = self.continueWithMode('step next line ( F10 )', 'step-over-call');
+    ret[ret.length] = self.continueWithMode('step out of call ( Shift F11 )', 'finish-call');
     return ret;
   }
 
