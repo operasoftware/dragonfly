@@ -98,7 +98,7 @@ var frame_inspection = new function()
         window.__times__[2] =  new Date().getTime(); // parsing
       }
 
-      unsorted.sortByFieldName('key');
+      unsorted.sortByItemProperty('key');
 
       if( window.__profiling__ ) 
       {
