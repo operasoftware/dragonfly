@@ -70,7 +70,8 @@ debug = new function()
         indentCount--;
         if( match[1] )
         {
-          if( match[1].length > 20 )
+          /*
+          if( match[1].length > 20  )
           {
             ret +=  match[1].slice(0, 20) +"..."+ match[2];
           }
@@ -78,6 +79,8 @@ debug = new function()
           {
             ret +=  match[1] + match[2];
           }
+          */
+          ret +=  match[1] + match[2];
         }
         else
         {
