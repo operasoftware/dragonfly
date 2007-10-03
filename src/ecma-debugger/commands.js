@@ -31,17 +31,9 @@ var commands = new function()
 
   this.setBreakpoint = function(script_id, line_nr, breakpoint_id)
   {
-    //alert('command set breakpoint '+script_id+' '+line_nr+' '+ breakpoint_id)
-
-
-
     self.addBreakpoint( addBreakpointWithSourcePosition(script_id, line_nr), breakpoint_id);
   }
 
-  this.removeBreakpoint = function(script_id, line_nr, breakpoint_id)
-  {
-    
-  }
 
   this.getRuntime = function(/* tag, runtime_1, ... */) 
   {

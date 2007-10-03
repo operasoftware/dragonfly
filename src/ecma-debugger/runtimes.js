@@ -189,9 +189,10 @@ var runtimes = new function()
 
   this.removeBreakpoint = function(script_id, line_nr)
   {
+    commands.removeBreakpoint( __scripts[script_id]['breakpoints'][line_nr] );
     delete __scripts[script_id]['breakpoints'][line_nr];
-    commands.removeBreakpoint(script_id, line_nr);
   }
+
   this.getBreakpoints = function(script_id)
   {
     return __scripts[script_id] && __scripts[script_id]['breakpoints'];
