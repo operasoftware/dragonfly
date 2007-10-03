@@ -52,6 +52,8 @@ var runtimes = new function()
     }
   }
 
+  var __scripts = {};
+
 /** checks if that script is already known from a previous runtime
   * checks first for the url and the for the script data. 
   * Both checks are not really reliable.
@@ -63,7 +65,7 @@ var runtimes = new function()
     var new_script_id = script['script-id'];
     for( sc in __scripts )
     {
-      if( __scripts[sc]['uri'] == script['uri'] || __scripts[sc]['script-data'] == script['script-data'] )
+      if( ( __scripts[sc]['uri'] && ( __scripts[sc]['uri'] == script['uri'] ) )|| __scripts[sc]['script-data'] == script['script-data'] )
       {
         is_known = true;
         break;
@@ -84,6 +86,9 @@ var runtimes = new function()
 
     __scripts[new_script_id] = script;
 
+    var a ='', b='';
+    for( a in __scripts ) b+=a+'; '; 
+
   }
   
 /*
@@ -100,7 +105,7 @@ var runtimes = new function()
 
   
 
-  var __scripts = {};
+  
 
   var breakpoint_count = 1;
 
