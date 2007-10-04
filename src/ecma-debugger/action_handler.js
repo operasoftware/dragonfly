@@ -118,6 +118,7 @@ var action_handler = new function()
     if( runtime )
     {
       views.frame_inspection.clearView();
+      frame_inspection.setNewFrame(runtime['runtime-id'] );
       var tag = tagManager.setCB(null, responseHandlers.examinObject, [ runtime['runtime-id'] ]);
       helpers.examine_objects( runtime['runtime-id'], tag, runtime['object-id'] );
     }
