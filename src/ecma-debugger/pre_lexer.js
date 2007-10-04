@@ -71,7 +71,7 @@ var pre_lexer = function(script)
     if( state )
     {
       
-      while( line_cur < min_cur )
+      while( line_cur <= min_cur )
       {
         line_arr[line_count++] = line_cur;
         if( ( line_cur = string.indexOf('\n', line_cur) + 1 ) == 0 )

@@ -576,6 +576,27 @@ var simple_js_parser=new function()
     __pointer++;
   };
 
+  // const DEFAULT = 0, SINGLE_QUOTE = 1, DOUBLE_QUOTE = 2, REG_EXP = 3, COMMENT = 4;
+  states[SINGLE_QUOTE] = function()
+  {
+    opera.postError('state parsing not implemented in formatter.js for SINGLE_QUOTE');
+  };
+
+  states[SINGLE_QUOTE] = function()
+  {
+    opera.postError('state parsing not implemented in formatter.js for SINGLE_QUOTE');
+  };
+
+  states[DOUBLE_QUOTE] = function()
+  {
+    opera.postError('state parsing not implemented in formatter.js for DOUBLE_QUOTE');
+  };
+
+  states[REG_EXP] = function()
+  {
+    opera.postError('state parsing not implemented in formatter.js for REG_EXP');
+  };
+
   this.parse=function(script, line, max_line, state)
   {
     ret='';
