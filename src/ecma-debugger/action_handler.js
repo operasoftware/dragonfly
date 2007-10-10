@@ -262,6 +262,16 @@ var action_handler = new function()
           break;
         }
 
+        case 'testing':
+        {
+          if( windows.showWindow('Testing', 'Testing', ['div', 'class', 'window-container', 'id', 'testing']) )
+          {
+            
+            testing.view.update();
+          }
+          break;
+        }
+
         case 'command-line':
         {
           if( windows.showWindow

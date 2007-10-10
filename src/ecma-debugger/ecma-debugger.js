@@ -118,7 +118,7 @@ var debugger = new function()
 
   this.setup = function()
   {
-    var args = location.search, params = {}, arg = '', i = 0, ele = null;;
+    var args = location.search, params = {}, arg = '', i = 0, ele = null;
     if( args )
     {
       args = args.slice(1).split(';');
@@ -137,6 +137,10 @@ var debugger = new function()
     {
       window.__profiling__ = true;
       window.__times__ = [];
+    }
+    if( params['test'] )
+    {
+      window.__testing__ = true;
     }
     /*
     else
