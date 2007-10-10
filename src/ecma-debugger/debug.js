@@ -60,7 +60,7 @@ debug = new function()
   this.formatXML=function(string)
   {
     string=string.replace(/<\?[^>]*>/, '');
-    var re = /([^<]*)(<(/)?[^>/]*(/)?>)/g, match = null, indentCount = 0;
+    var re = /([^<]*)(<(\/)?[^>/]*(\/)?>)/g, match = null, indentCount = 0;
    
     var ret = '';
     while(match = re.exec(string))
