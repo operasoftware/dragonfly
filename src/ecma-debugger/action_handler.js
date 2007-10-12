@@ -252,6 +252,10 @@ var action_handler = new function()
                   'type', 'button', 
                   'value', 'clear output', 
                   'onclick', 'debug.clear()'],
+                ['input', 
+                  'type', 'button', 
+                  'value', 'export', 
+                  'onclick', 'debug.export()'],
                 ['pre', 'id', 'debug'],
               'class', 'window-container', 'id', 'debug-container']
             )

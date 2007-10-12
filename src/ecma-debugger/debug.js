@@ -28,6 +28,15 @@ debug = new function()
     }
   }
 
+  this.export = function(string)
+  {
+
+    
+
+    window.open('data:text/plain;charset=utf-8,'+encodeURIComponent( out.join('\n') ));
+
+  }
+
   this.clear = function()
   {
     out = [];
