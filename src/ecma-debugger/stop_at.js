@@ -135,6 +135,10 @@ var stop_at = new function()
   this.__continue = function (mode) //
   {
     __controls_enabled = false;
+    if( mode != 'run' )
+    {
+      runtimes.setObserve(stopAt['runtime-id']);
+    }
     commands.__continue(stopAt, mode);
     views.continues.update();
   }
@@ -170,10 +174,9 @@ var stop_at = new function()
       */
       if(stopAt['stopped-reason'] == 'unknown')
       {
-        if( stop_at_user_settings.script )
+        runtime_id = stopAt['runtime-id'];
+        if( stop_at_user_settings.script || runtimes.getObserve(runtime_id))
         {
-          
-          runtime_id = stopAt['runtime-id'];
           // the runtime id can be different for each frame. 
           var tag = tagManager.setCB(null, parseBacktrace, [stopAt['runtime-id']]); 
           commands.backtrace(tag, stopAt);

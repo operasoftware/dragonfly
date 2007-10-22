@@ -214,6 +214,19 @@ var runtimes = new function()
     }
   }
 
+  this.setObserve = function(runtime_id)
+  {
+    if( __runtimes[runtime_id] )
+    {
+      __runtimes[runtime_id]['observe'] = true;
+    }
+  }
+
+  this.getObserve = function(runtime_id)
+  {
+    return __runtimes[runtime_id] && __runtimes[runtime_id]['observe']  || false;
+  }
+
 
 
 

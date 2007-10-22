@@ -357,6 +357,7 @@ views.js_source = new function()
   this.showLinePointer = function(line, is_top_frame)
   {
     var script_breakpoints = script.breakpoints;
+    // TODO fix from Johannes. Why is that needed?
 	if (!script_breakpoints) {
 		return;
 	}
