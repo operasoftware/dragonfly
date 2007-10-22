@@ -135,10 +135,9 @@ var stop_at = new function()
   this.__continue = function (mode) //
   {
     __controls_enabled = false;
-    if( mode != 'run' )
-    {
-      runtimes.setObserve(stopAt['runtime-id']);
-    }
+
+    runtimes.setObserve(stopAt['runtime-id'], mode != 'run');
+
     commands.__continue(stopAt, mode);
     views.continues.update();
   }

@@ -214,11 +214,11 @@ var runtimes = new function()
     }
   }
 
-  this.setObserve = function(runtime_id)
+  this.setObserve = function(runtime_id, observe)
   {
     if( __runtimes[runtime_id] )
     {
-      __runtimes[runtime_id]['observe'] = true;
+      __runtimes[runtime_id]['observe'] = observe;
     }
   }
 
@@ -231,3 +231,5 @@ var runtimes = new function()
 
 
 }
+
+//
