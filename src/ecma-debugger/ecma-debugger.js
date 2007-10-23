@@ -92,6 +92,11 @@ var debugger = new function()
     stop_at.handle(xml);
   }
 
+  this['handle-event'] = function(xml)
+  {
+    host_event_handlers.handle(xml);
+  }
+
 
   this['timeout'] = function() 
   {
@@ -141,6 +146,7 @@ var debugger = new function()
     if( params['test'] )
     {
       window.__testing__ = true;
+      window.__times_spotlight__ = [];
     }
     /*
     else

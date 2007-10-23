@@ -9,12 +9,27 @@ var testing = new function()
     'mouseover': '1'
   }
 
+  var mouseover = function(event)
+  {
+    var msg = "<spotlight-object>"+
+        "<runtime-id>"+__selected_runtime+"</runtime-id>"+
+        "<object-id>"+ event['object-id'] +"</object-id>"+
+      "</spotlight-object>";
+    proxy.POST("/" + "ecmascript-debugger", msg);
+    if( window.__times_spotlight__ ) 
+    {
+      debug.profileSpotlight();
+    }
+  }
+
   this.__setEventHandler = function(xml, __selected_runtime, event)
   {
     if( xml.getNodeData('status') == 'completed' )
     {
+      var id = event_map[event];
+      host_event_handlers.addListener(id, mouseover);
       var msg = "<add-event-handler>"+
-          "<handler-id>"+event_map[event]+"</handler-id>"+
+          "<handler-id>"+id+"</handler-id>"+
           "<object-id>"+ xml.getNodeData('object-id') +"</object-id>"+
           "<namespace>null</namespace>"+
           "<event-type>"+event+"</event-type>"+
@@ -32,7 +47,6 @@ var testing = new function()
   {
     if( !__selected_runtime ) return alert('select first a runtime');
     if( !event ) return alert('define an event');
-    alert(event);
     var tag = tagManager.setCB(null, testing.__setEventHandler, [__selected_runtime, event]);
     var msg = "<eval><tag>"+tag+"</tag><runtime-id>"+__selected_runtime+"</runtime-id>"+
       "<thread-id></thread-id><frame-id></frame-id>"+
@@ -62,7 +76,7 @@ var testing = new function()
                 'type', 'button',
                 'value', 'set event handler',
                 'onclick', function(){setEventHandler(this.nextSibling.value)}
-              ], ['input']
+              ], ['input', 'value', 'mouseover']
             ]
           );
       }

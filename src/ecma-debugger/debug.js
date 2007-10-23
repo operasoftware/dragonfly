@@ -66,6 +66,23 @@ debug = new function()
     }
   }
 
+  this.profileSpotlight = function()
+  {
+
+      window.__times_spotlight__[1] =  new Date().getTime(); // rendering
+      var stamps = ['event handle-event', 'command spotlight'] 
+      var stamp = '', i= 0, out = ''; 
+      for ( ; stamp = stamps[i]; i++ )
+      {
+        out += stamp + ': ' + 
+          window.__times_spotlight__[i] + 
+          ( i > 0 ? ' delta: ' + ( window.__times_spotlight__[i] - window.__times_spotlight__[i-1] ) : '' ) +
+          '\n';
+      }
+      debug.output(out);
+    
+  }
+
   this.formatXML=function(string)
   {
     string=string.replace(/<\?[^>]*>/, '');
