@@ -6,7 +6,9 @@ var testing = new function()
 
    var event_map =
   {
-    'mouseover': '1'
+    'mouseover': '1',
+    'click': '1',
+
   }
 
   var mouseover = function(event)
@@ -26,7 +28,7 @@ var testing = new function()
   {
     if( xml.getNodeData('status') == 'completed' )
     {
-      var id = event_map[event];
+      var id = '1'; //event_map[event];
       host_event_handlers.addListener(id, mouseover);
       var msg = "<add-event-handler>"+
           "<handler-id>"+id+"</handler-id>"+
