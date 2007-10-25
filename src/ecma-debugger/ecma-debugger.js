@@ -181,7 +181,12 @@ var debugger = new function()
     {
       if (!proxy.enable(service))	
       {
-        alert( "No service: " + service );
+        alert( 
+			'Could not find an Opera session to connect to.\n' +
+			'Please try the following:\n' + 
+			'1. Open another Opera instance\n' +
+			'2. In that Opera instance, open opera:config and check "Enable Debugging" and "Enable Script Debugging" under "Developer Tools"\n' +
+			'3. Restart that Opera instance' );
         return;
       }
       else
