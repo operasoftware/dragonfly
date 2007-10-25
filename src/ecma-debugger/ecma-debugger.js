@@ -94,7 +94,7 @@ var debugger = new function()
 
   this['handle-event'] = function(xml)
   {
-    host_event_handlers.handle(xml);
+    tabs.handleEventHandler(xml);
   }
 
 

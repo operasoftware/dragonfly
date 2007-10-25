@@ -232,3 +232,4 @@ Document.prototype.getElementsByClassName=Element.prototype.getElementsByClassNa
   }
   return ret;
 } 
+

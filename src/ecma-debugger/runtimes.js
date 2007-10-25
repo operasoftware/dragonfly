@@ -4,7 +4,6 @@ var runtimes = new function()
 
   var registerRuntime = function(id)
   { 
-    
     if( !(id in __runtimes) )
     {
       //alert('runtime: '+ id);
@@ -225,6 +224,32 @@ var runtimes = new function()
   this.getObserve = function(runtime_id)
   {
     return __runtimes[runtime_id] && __runtimes[runtime_id]['observe']  || false;
+  }
+
+  // this is a temporary solution as long as we don't have a concept for tabs
+
+  var __selected_runtime_id = '';
+
+  this.setSelectedRuntime = function(runtime)
+  {
+    var r = '';
+    for( r in __runtimes )
+    {
+      if( __runtimes[r] == runtime )
+      {
+        __runtimes[r]['selected'] = true;
+        __selected_runtime_id = __runtimes[r]['runtime-id'];
+      }
+      else
+      {
+        __runtimes[r]['selected'] = false;
+      }
+    }
+  }
+
+  this.getSelectedRuntimeId = function()
+  {
+    return __selected_runtime_id;
   }
 
 

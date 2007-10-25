@@ -84,4 +84,51 @@ var commands = new function()
     proxy.POST("/" + service, msg);
   }
 
+  this.addEventHandler = function(id, object_id, event, namespace)
+  {
+    var msg = "<add-event-handler>"+
+        "<handler-id>" + id + "</handler-id>" +
+        "<object-id>" + object_id + "</object-id>" +
+        "<namespace>" + ( namespace ? namespace : "null" ) + "</namespace>" +
+        "<event-type>" + event + "</event-type>" +
+      "</add-event-handler>";
+    proxy.POST("/" + "ecmascript-debugger", msg);
+  }
+
+  this.removeEventHandler = function(id)
+  {
+    var msg = "<remove-event-handler>" + id + "</remove-event-handler>";
+    proxy.POST("/" + "ecmascript-debugger", msg);
+  }
+
+  this.getDocumentFromRuntime = function(tag, runtime)
+  {
+    var msg = "<eval>" +
+                "<tag>" + tag + "</tag>" +
+                "<runtime-id>" + runtime + "</runtime-id>" +
+                "<thread-id></thread-id>"+
+                "<frame-id></frame-id>"+
+                "<script-data>return window.document</script-data>"+
+              "</eval>";
+    proxy.POST("/" + "ecmascript-debugger", msg);
+  }
+
+  this.spotlight = function(runtime, node_id)
+  {
+    var msg = "<spotlight-object>" +
+                "<runtime-id>" + runtime + "</runtime-id>" +
+                "<object-id>" + node_id + "</object-id>" +
+              "</spotlight-object>";
+    proxy.POST("/" + "ecmascript-debugger", msg);
+  }
+
+  this.clearSpotlight = function(runtime)
+  {
+    var msg = "<spotlight-object>"+
+                "<runtime-id>"+runtime+"</runtime-id>"+
+                "<object-id>0</object-id>"+
+              "</spotlight-object>";
+    proxy.POST("/" + "ecmascript-debugger", msg);
+  }
+
 }

@@ -314,6 +314,11 @@ xx#debug {
   margin:.5em 0 1.5em 0;
   }
 
+#runtimes .selected-runtime {
+  font-weight:bold;
+  color:#09f;
+}
+
 
 
 

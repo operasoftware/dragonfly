@@ -114,13 +114,17 @@ var action_handler = new function()
   handlers['show-global-scope'] = function(event)
   {
     var ele = event.target;
-    var runtime = runtimes.getRuntimeIdWithURL(ele.childNodes[1].nodeValue);
+    var runtime = runtimes.getRuntimeIdWithURL(ele.firstChild.nodeValue);
     if( runtime )
     {
+
       views.frame_inspection.clearView();
       frame_inspection.setNewFrame(runtime['runtime-id'] );
       var tag = tagManager.setCB(null, responseHandlers.examinObject, [ runtime['runtime-id'] ]);
       helpers.examine_objects( runtime['runtime-id'], tag, runtime['object-id'] );
+      runtimes.setSelectedRuntime( runtime );
+      tabs.setActiveTab(runtime['runtime-id']);
+      views.runtimes.update();
     }
   }
 

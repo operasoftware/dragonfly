@@ -29,12 +29,14 @@ templates = new function()
   this.runtimeId = function(runtime)
   {
     var ret = ['li',
-        ['input', 
-          'type', 'button', 
-          'handler', 'show-scripts', 
-          'runtime_id', runtime['runtime-id'],
-          'class', 'folder-key'].concat(runtime.unfolded ? ['style', 'background-position:0 -11px'] : [] ),
-        runtime['uri'], 'handler', 'show-global-scope'
+          ['input', 
+            'type', 'button', 
+            'handler', 'show-scripts', 
+            'runtime_id', runtime['runtime-id'],
+            'class', 'folder-key'].concat(runtime.unfolded ? ['style', 'background-position:0 -11px'] : [] ),
+          ['span', runtime['uri'], 'handler', 'show-global-scope'].
+            concat( runtime.selected ? ['class', 'selected-runtime'] : [] ) 
+        
       ];
     if( runtime.unfolded )
     {
