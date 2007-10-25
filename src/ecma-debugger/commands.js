@@ -97,7 +97,9 @@ var commands = new function()
 
   this.removeEventHandler = function(id)
   {
-    var msg = "<remove-event-handler>" + id + "</remove-event-handler>";
+    var msg = "<remove-event-handler>" +
+                "<handler-id>" + id + "</handler-id>" +  
+              "</remove-event-handler>";
     proxy.POST("/" + "ecmascript-debugger", msg);
   }
 
