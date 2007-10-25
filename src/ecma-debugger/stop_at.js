@@ -97,6 +97,7 @@ var stop_at = new function()
           script_id : '',
           argument_id : frame.getNodeData('argument-object'),
           scope_id : frame.getNodeData('variable-object'),
+          this_id : frame.getNodeData('this-object'),
           id: i
         }
       }
@@ -109,10 +110,11 @@ var stop_at = new function()
           script_id : frame.getNodeData('script-id'),
           argument_id : frame.getNodeData('argument-object'),
           scope_id : frame.getNodeData('variable-object'),
+          this_id : frame.getNodeData('this-object'),
           id: i
         }
       }
-
+      // fake a click event on the top frame in the stack
       if( i == 0 )
       {
         action_handler.post('show-frame', {'target': { 'ref-id': 0 } });

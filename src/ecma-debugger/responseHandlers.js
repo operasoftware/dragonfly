@@ -1,12 +1,15 @@
 var responseHandlers = new function()
 {
-  this.examinFrame = function(xml, runtime_id, arguments_id)
+  this.examinFrame = function(xml, runtime_id, arguments_id, this_id)
   {
     frame_inspection.setNewFrame(runtime_id);
     frame_inspection.handleExamineObject(xml, null);
     frame_inspection.addObjects(null, 
       0, 
       {key: 'arguments', value: arguments_id, type: 'object', items: []});
+    frame_inspection.addObjects(null, 
+      1, 
+      {key: 'this', value: this_id, type: 'object', items: []});
     views.frame_inspection.update(null);
     debug.checkProfiling();
 
