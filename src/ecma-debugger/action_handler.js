@@ -52,7 +52,7 @@ var action_handler = new function()
       var tag = tagManager.setCB(
         null, 
         responseHandlers.examinFrame, 
-        [runtime_id, frame.argument_id]
+        [runtime_id, frame.argument_id, frame.this_id]
         );
       helpers.examine_objects( runtime_id, tag, frame.scope_id );
       if( event.type == 'click' )
