@@ -8,7 +8,7 @@ var testing = new function()
 
   var spotlight = function(event)
   {
-    commands.spotlight(__selected_runtime, event['object-id']);
+    commands.spotlight(event['runtime-id'], event['object-id']);
     if( window.__times_spotlight__ ) 
     {
       debug.profileSpotlight();

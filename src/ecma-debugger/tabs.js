@@ -1,11 +1,14 @@
 var tabs = new function()
 {
   var self = this;
+  /* an array with all runtime ids off the active tab */
   var __activeTab = [];
   var document_map = {};
+
   var type_map = {};
   var callback_map = {};
   var node_map = {};
+  var runtime_id_map = {};
   var id_map = {};
   var handler_id = 1;
 
@@ -69,6 +72,7 @@ var tabs = new function()
     {
       event[child.nodeName] = child.firstChild.nodeValue;
     }
+    event['runtime-id'] = runtime_id_map[event['handler-id']];
     if( event['handler-id'] in callback_map )
     {
       callback_map[ event['handler-id'] ](event);
@@ -85,6 +89,7 @@ var tabs = new function()
       node_map[id] = node_id;
       type_map[id] = event_type;
       callback_map[id] = callback;
+      runtime_id_map[id] = runtime_id;
       commands.addEventHandler(id, node_id, event_type);     
     }
     else
@@ -109,6 +114,7 @@ var tabs = new function()
           node_map[id] = document_map[rt_p];
           type_map[id] = event_type;
           callback_map[id] = callback;
+          runtime_id_map[id] = rt_p;
           commands.addEventHandler(id, document_map[ rt_p ], event_type);
         }
         else
@@ -128,6 +134,7 @@ var tabs = new function()
         delete node_map[id];
         delete type_map[id];
         delete callback_map[id];
+        delete runtime_id_map[id];
       }
     }
 
