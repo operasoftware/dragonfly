@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+<head>
+<title> </title>
+<style>
+
+layout {
+  display:block;
+  position:relative;
+  }
+
+#layout_test {
+  width:702px;
+  height:702px;
+  background-color:#f0f0f0;
+  }
+
+view {
+  display:block;
+  position:absolute;
+  border:0px solid #09f;
+  }
+
+view-slider {
+  display:block;
+  position:absolute;
+  background-color:#6cf;
+  }
+
+view-slider.vertical {
+  cursor: w-resize;
+  }
+
+view-slider.horizontal {
+  cursor: s-resize;
+  }
+
+</style>
+<script src = "../../scripts/cell-layout.js"></script>
+<script>
+
+
+var rough_layout =
+{
+  dir: 'v', width: 700, height: 700,
+  children: 
+  [
+    { width: 500, height: 100, id: 'view_1' },
+    { width: 200, height: 300,
+      children: 
+      [
+        { width: 100, height: 300, id: 'view_2' },
+        { width: 100, height: 200,
+          children:
+          [
+            { width: 100, height: 100, id: 'view_3' },
+            { width: 100, height: 100,
+              children:
+              [
+                { width: 100, height: 50, id: 'view_7' },
+                { width: 700, height: 50, id: 'view_8' },
+                { width: 100, height: 50, id: 'view_9' },
+                { width: 100, height: 50, id: 'view_10' }
+              ]
+            },
+            { width: 100, height: 100, id: 'view_5' },
+            { width: 100, height: 100, 
+              children:
+              [
+                { width: 300, height: 50, id: 'view_11' },
+                { width: 100, height: 50, 
+                  children:
+                  [
+                    { width: 200, height: 50, id: 'view_14' }
+                    { width: 200, height: 50, id: 'view_15' }
+                  ]
+                },
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+var layout = new Layout('layout_test', rough_layout);
+
+onload = function()
+{
+  layout.display();
+}
+
+
+</script>
+</head>
+
+<body>
+<layout id='layout_test'></layout>
+</body>
+</html>
