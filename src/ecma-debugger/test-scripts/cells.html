@@ -4,21 +4,23 @@
 <title> </title>
 <style>
 
+html, body {
+  margin:0;
+  padding:0;
+  }
+
 layout {
   display:block;
-  position:relative;
   }
 
 #layout_test {
-  width:702px;
-  height:702px;
   background-color:#f0f0f0;
   }
 
 view {
   display:block;
   position:absolute;
-  border:0px solid #09f;
+  border:0px solid #069;
   }
 
 view-slider {
@@ -36,6 +38,7 @@ view-slider.horizontal {
   }
 
 </style>
+<script src = "../../scripts/layout.js"></script>
 <script src = "../../scripts/cell-layout.js"></script>
 <script>
 
@@ -45,36 +48,36 @@ var rough_layout =
   dir: 'v', width: 700, height: 700,
   children: 
   [
-    { width: 500, height: 100, id: 'view_1' },
-    { width: 200, height: 300,
+    { height: 100, id: 'view_1' },
+    { height: 300,
       children: 
       [
-        { width: 100, height: 300, id: 'view_2' },
-        { width: 100, height: 200,
+        { width: 100, id: 'view_2' },
+        { width: 100, 
           children:
           [
-            { width: 100, height: 100, id: 'view_3' },
-            { width: 100, height: 100,
+            { height: 100, id: 'view_3' },
+            { height: 100,
               children:
               [
-                { width: 100, height: 50, id: 'view_7' },
-                { width: 700, height: 50, id: 'view_8' },
-                { width: 100, height: 50, id: 'view_9' },
-                { width: 100, height: 50, id: 'view_10' }
+                { width: 100, id: 'view_7' },
+                { width: 700, id: 'view_8' },
+                { width: 100, id: 'view_9' },
+                { width: 100, id: 'view_10' }
               ]
             },
-            { width: 100, height: 100, id: 'view_5' },
-            { width: 100, height: 100, 
+            { height: 100, id: 'view_5' },
+            { height: 100, 
               children:
               [
-                { width: 300, height: 50, id: 'view_11' },
-                { width: 100, height: 50, 
+                { width: 300, id: 'view_11' },
+                { width: 100,
                   children:
                   [
-                    { width: 200, height: 50, id: 'view_14' }
-                    { width: 200, height: 50, id: 'view_15' }
+                    { height: 50, id: 'view_14' },
+                    { height: 50, id: 'view_15' }
                   ]
-                },
+                }
               ]
             }
           ]
@@ -84,11 +87,15 @@ var rough_layout =
   ]
 }
 
-var layout = new Layout('layout_test', rough_layout);
+var layout = null;
 
 onload = function()
 {
-  layout.display();
+  //var time = new Date().getTime();
+  layout = new Layout('layout_test', rough_layout);
+  document.body.innerHTML += "<layout id='layout_test'></layout>";
+  //layout.display();
+  //alert(new Date().getTime() - time);
 }
 
 
@@ -96,6 +103,7 @@ onload = function()
 </head>
 
 <body>
-<layout id='layout_test'></layout>
+<div><h2>some content</h2></div>
+
 </body>
 </html>

@@ -1,51 +1,4 @@
-var Layout = function(container_id, rough_layout)
-{
-  var self = this;
-  var cell = {};
 
-  var container = container_id;
-
-
-  this.parse = function(layout_rough)
-  {
-    cell = new Cell(layout_rough, layout_rough.dir, null, container);
-  }
-
-  this.display = function()
-  {
-    cell.setDefaultDimensions();
-    cell.update(0, 0);
-  }
-
-  this.update = function()
-  {
-
-  }
-  
-  var init = function()
-  {
-    if( rough_layout)
-    {
-      self.parse(rough_layout);
-    }
-  }
-
-  init();
-}
-
-
-
-Layout.defaults =
-{
-  min_height: 100,
-  min_width: 120,
-  maxHeight: 1000,
-  maxWidth: 1000,
-  container_name: 'view',
-  slider_name: 'view-slider',
-  border_width: 5,
-  view_border_width: 1
-}
 
 
 
@@ -60,6 +13,13 @@ Cell.prototype = new function()
   const VER = 'v', HOR = 'h';
 
   var defaults = Layout.defaults;
+
+  var id_count = 1;
+
+  var getId = function()
+  {
+    return 'invisible_' + ( id_count++ );
+  }
 
   this.checkWidth = function(width)
   {
@@ -87,7 +47,8 @@ Cell.prototype = new function()
     var delta = 0;
     if( children.length )
     {
-
+      this.left = left;
+      this.top = top;
       if( this.dir == VER )
       {
         delta = top;
@@ -126,15 +87,20 @@ Cell.prototype = new function()
           opera.postError('missing container in cell.update');
         }
       }
-      ele.style.cssText = 
-        'left:' + left + 'px;' +
-        'top:' + top + 'px;' +
+      if(this.is_dirty)
+      {
+        ele.style.cssText = 
+        'left:' + ( this.left = left ) + 'px;' +
+        'top:' + ( this.top = top ) + 'px;' +
         'width:' + this.width + 'px;' +
         'height:' + this.height + 'px;' +
         'border-width:' + defaults.view_border_width + 'px';
+        this.is_dirty = false;
+      }
     }
 
     // create sliders
+
     if( this.next )
     {
       ele = document.getElementById( 'slider-for-' + this.id );
@@ -145,6 +111,7 @@ Cell.prototype = new function()
         {
           ele = container.appendChild( document.createElement(Layout.defaults.slider_name));
           ele.id = 'slider-for-' + this.id;
+          ele.className = this.dir == HOR ? 'horizontal' : 'vertical';
         }
         else
         {
@@ -153,7 +120,6 @@ Cell.prototype = new function()
       }
       if( this.dir == HOR )
       {
-        ele.className = 'horizontal';
         ele.style.cssText = 
           'left:' + left + 'px;' +
           'top:' + ( 2 * defaults.view_border_width + top + this.height ) + 'px;' +
@@ -162,7 +128,6 @@ Cell.prototype = new function()
       }
       else
       {
-        ele.className = 'vertical';
         ele.style.cssText = 
           'left:' + ( 2 * defaults.view_border_width + left + this.width ) + 'px;' +
           'top:' + top + 'px;' +
@@ -170,7 +135,6 @@ Cell.prototype = new function()
           'height:' + ( 2 * defaults.view_border_width + this.height ) + 'px;';
       }
     }
-
 
     return ( this.dir == VER ? this.width : this.height ) + 
           2 * defaults.view_border_width + defaults.border_width;
@@ -190,15 +154,16 @@ Cell.prototype = new function()
     return sum;
   }
 
+  // recursive
+
   this.setDefaultDimensions = function()
   {
     var dim = this.dir == VER ? 'height' : 'width';
     var max = this[dim];
-    var child = null, i = 0, sum = 0, length = this.children.length;
-    var prov = 0;
+    var child = null, i = 0, sum = 0, length = this.children.length, prov = 0;
     if( length )
     {
-      while(length)
+      while( length )
       {
         sum = this.checkChildren(dim);
         length--;
@@ -206,6 +171,7 @@ Cell.prototype = new function()
         if( sum < max || defaults['min_' + dim ] < prov )
         {
           this.children[length][dim] = prov;
+          length = this.children.length;
           break;
         }
         else
@@ -214,22 +180,26 @@ Cell.prototype = new function()
         }
       }
 
-      if( length < 0 )
+      // min_width is to big 
+
+      if( !length )
       {
-        // TODO set average
+        length = this.children.length;
+        sum = max - ( length - 1 ) * ( 2 * defaults.view_border_width ) - ( length - 1 ) * defaults.border_width;
+        var average_width = sum / length >> 0;
+        for( i = 0 ; i < length - 1 ; i++)
+        {
+          this.children[i][dim] = average_width;
+        }
+        this.children[length - 1][dim] = sum - ( length - 1 ) * average_width;       
       }
+
+      // inherit one dimesin from the parent
 
       dim = this.dir == HOR ? 'height' : 'width';
       for( i = 0 ; child = this.children[i]; i++)
       {
         child[dim] = this[dim];
-      }
-
-    }
-    if( length )
-    {
-      for( i = 0; child = this.children[i]; i++)
-      {
         child.setDefaultDimensions();
       }
     }
@@ -245,8 +215,10 @@ Cell.prototype = new function()
     this.height = 
       rough_cell.height && rough_cell.height > defaults.min_height ?
       rough_cell.height : defaults.min_height;
-    this.id = rough_cell.id || '';
+    this.id = rough_cell.id || getId();
 
+    this.checked_height = 0;
+    this.checked_width = 0;
 
     this.type = '';
     this.children = [];
@@ -256,7 +228,7 @@ Cell.prototype = new function()
     this.dir = dir;
     this.parent = parent;
     this.container = container;
-
+    this.is_dirty = true;
 
     dir = dir == HOR ? VER : HOR;
 
@@ -275,6 +247,204 @@ Cell.prototype = new function()
         }
         previous = child;
         child = next;
+      }
+    }
+  }
+
+  this.getCellById = function(id)
+  {
+    var child = null, i = 0, ret = null;
+    if( this.id == id )
+    {
+      return this;
+    }
+    for( ; child = this.children[i]; i++)
+    {
+      if( ret = child.getCellById(id) )
+      {
+        return ret;
+      }
+    }
+    return null;
+  }
+
+  this.setCheckedDimesions = function()
+  {
+    if( this.checked_height )
+    {
+      this.height = this.checked_height;
+      this.is_dirty = true;
+    }
+    if( this.checked_width )
+    {
+      this.width = this.checked_width;
+      this.is_dirty = true;
+    }
+    var child = null, i = 0;
+    for( ; ( child = this.children[i] ) ; i++)
+    {
+      child.setCheckedDimesions();
+    }
+  }
+
+  this.clearCheckedDimesions = function()
+  {
+    this.checked_height = this.checked_width = 0;
+    this.is_dirty = false;
+    var child = null, i = 0;
+    for( ; ( child = this.children[i] ) ; i++)
+    {
+      child.clearCheckedDimesions();
+    }
+  }
+
+  this.checkDelta = function(dim, delta, sibling)
+  {
+    var delta_applied = 0;
+    var child = null, i = 0;
+    var deltas = [];
+    if( this.children.length )
+    {
+      if( ( dim == 'height' && this.dir == HOR ) || ( dim == 'width' && this.dir == VER ) )
+      {
+        if(delta)
+        {
+          for( ; child = this.children[i]; i++)
+          {
+            deltas[deltas.length] = child.checkDelta(dim, delta, sibling);
+          }
+          var min = Math.min.apply(null, deltas);
+          var max = Math.max.apply(null, deltas);
+          delta_applied = delta > 0 ? max : min;
+          if( max != min )
+          {
+            for( i = 0; child = this.children[i]; i++)
+            {
+              child.checkDelta(dim, delta - delta_applied, sibling)
+            }
+          }
+          this['checked_' + dim] = this[dim] + ( delta - delta_applied );
+        }
+        else // clear
+        {
+          for( i=0; child = this.children[i]; i++)
+          {
+            child.checkDelta(dim, 0, sibling);
+          }
+          delta_applied = this['checked_' + dim] = 0;
+        }
+      }
+      else
+      {
+        delta_applied = delta;
+        if( delta_applied )
+        {
+          for( i = 0; child = this.children[i]; i++) // if delta_applied is zero clear the rest
+          {
+            delta_applied = child.checkDelta(dim, delta_applied, sibling);
+          }
+          this['checked_' + dim] = this[dim] + ( delta - delta_applied );
+        }
+        else // clear
+        {
+          for( i = 0; child = this.children[i] ; i++)
+          {
+            child.checkDelta(dim, 0, sibling);
+          }
+          delta_applied = this['checked_' + dim] = 0;
+        }
+      }
+    }
+    else
+    {
+      if( delta)
+      {
+        var newDim = this[dim] + delta;
+        if( newDim >= defaults['min_' + dim] )
+        {
+          this['checked_' + dim] = newDim;
+        }
+        else
+        {
+          this['checked_' + dim] = defaults['min_' + dim]
+        }
+        delta_applied = delta - ( this['checked_' + dim] - this[dim] ); 
+      }
+      else // clear
+      {
+        delta_applied = this['checked_' + dim] = 0;
+      }
+    }
+    return delta_applied;
+  }
+
+  this.getCapTarget = function(dim, target)
+  {
+    if( !this.children.length ) return 0;
+    var child = null, i = 0, length = this.children.length - 1, 
+      sum = length * 2 * defaults.view_border_width + ( length ) * defaults.border_width;
+    
+    for( ; ( child = this.children[i] ) ; i++)
+    {
+      if( child != target )
+      {
+        sum += child['checked_' + dim] || child[dim];
+      }
+    }
+    return this[dim] - sum;
+  }
+
+  this.handleResizeEvent = function(event, _delta)
+  {
+    var dim = this.dir == HOR ? 'height' : 'width';
+    var pos = this.dir == HOR ? 'top' : 'left';
+    var delta = Math.round( event[this.dir == HOR ? 'pageY' : 'pageX'] - _delta - ( this[pos] + this[dim] ) );
+    var sibling = this;
+    var cap = 0;
+    var consumed = -delta;
+    if(delta)
+    {
+      if( delta > 0 )
+      {
+        do
+        {
+          sibling = sibling.next;
+          if( sibling )
+          {
+            consumed = sibling.checkDelta(dim, consumed, 'next');
+          }
+        }
+        while (sibling && consumed);
+        cap = this.parent.getCapTarget(dim, this) - this[dim];
+        if( cap )
+        {
+          this.checkDelta(dim, cap, 'next');
+          this.parent.setCheckedDimesions();
+          this.parent.update(this.parent.left, this.parent.top);
+        }
+        else
+        {
+          this.parent.clearCheckedDimesions();
+        }
+      }
+      else
+      {
+        while (sibling && delta)
+        {
+          delta = sibling.checkDelta(dim, delta, 'next');
+          sibling = sibling.previous;
+        }
+        cap = this.parent.getCapTarget(dim, this.next) - this.next[dim];
+        if( cap )
+        {
+          this.next.checkDelta(dim, cap, 'next');
+          this.parent.setCheckedDimesions();
+          this.parent.update(this.parent.left, this.parent.top);
+        }
+        else
+        {
+          this.parent.clearCheckedDimesions();
+        }
       }
     }
   }
