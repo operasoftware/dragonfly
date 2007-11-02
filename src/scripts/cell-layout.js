@@ -21,30 +21,59 @@ Cell.prototype = new function()
     return 'invisible_' + ( id_count++ );
   }
 
-  this.checkWidth = function(width)
-  {
+  // constructor call
 
+  this.init = function(rough_cell, dir, parent, container)
+  {
+    this.width = 
+      rough_cell.width && rough_cell.width > defaults.min_width ?
+      rough_cell.width : defaults.min_width;
+    this.height = 
+      rough_cell.height && rough_cell.height > defaults.min_height ?
+      rough_cell.height : defaults.min_height;
+    this.id = rough_cell.id || getId();
+
+    this.checked_height = 0;
+    this.checked_width = 0;
+
+    this.type = '';
+    this.children = [];
+    this.previous = null;
+    this.next = null;
+    this.parent = null;
+    this.dir = dir;
+    this.parent = parent;
+    this.container = container;
+    this.is_dirty = true;
+
+    dir = dir == HOR ? VER : HOR;
+
+    var rough_children = rough_cell.children, rough_child = null, i = 0;
+    var child = null, previous = null, next = null;
+
+    if( rough_children )
+    {
+      for( ; rough_child = rough_children[i]; i++)
+      {
+        next = this.children[this.children.length] = new Cell( rough_child, dir, this, container);
+        if( child )
+        {
+          child.previous = previous;
+          child.next = next;
+        }
+        previous = child;
+        child = next;
+      }
+    }
   }
 
-  this.checkHeight = function(width)
-  {
-
-  }
-
-  this.setWidth = function(width)
-  {
-
-  }
-
-  this.setHeigth = function(width)
-  {
-
-  }
+  // updating the view
 
   this.update = function(left, top)
   {
     var children = this.children, child = null, i = 0;
     var delta = 0;
+    var is_dirty = this.is_dirty;
     if( children.length )
     {
       this.left = left;
@@ -118,28 +147,31 @@ Cell.prototype = new function()
           opera.postError('missing container in cell.update');
         }
       }
-      if( this.dir == HOR )
+      if( is_dirty )
       {
-        ele.style.cssText = 
-          'left:' + left + 'px;' +
-          'top:' + ( 2 * defaults.view_border_width + top + this.height ) + 'px;' +
-          'width:' + ( 2 * defaults.view_border_width + this.width ) + 'px;' +
-          'height:' + defaults.border_width + 'px;';
-      }
-      else
-      {
-        ele.style.cssText = 
-          'left:' + ( 2 * defaults.view_border_width + left + this.width ) + 'px;' +
-          'top:' + top + 'px;' +
-          'width:' + defaults.border_width + 'px;' +
-          'height:' + ( 2 * defaults.view_border_width + this.height ) + 'px;';
+        if( this.dir == HOR )
+        {
+          ele.style.cssText = 
+            'left:' + left + 'px;' +
+            'top:' + ( 2 * defaults.view_border_width + top + this.height ) + 'px;' +
+            'width:' + ( 2 * defaults.view_border_width + this.width ) + 'px;' +
+            'height:' + defaults.border_width + 'px;';
+        }
+        else
+        {
+          ele.style.cssText = 
+            'left:' + ( 2 * defaults.view_border_width + left + this.width ) + 'px;' +
+            'top:' + top + 'px;' +
+            'width:' + defaults.border_width + 'px;' +
+            'height:' + ( 2 * defaults.view_border_width + this.height ) + 'px;';
+        }
       }
     }
 
     return ( this.dir == VER ? this.width : this.height ) + 
           2 * defaults.view_border_width + defaults.border_width;
   }
-
+  // helper to get the totalised dimesion
   this.checkChildren = function(dim)
   {
     var child = null, i = 0, sum = 0, length = this.children.length;
@@ -154,7 +186,7 @@ Cell.prototype = new function()
     return sum;
   }
 
-  // recursive
+  // set up the dimensions. recursive
 
   this.setDefaultDimensions = function()
   {
@@ -194,7 +226,7 @@ Cell.prototype = new function()
         this.children[length - 1][dim] = sum - ( length - 1 ) * average_width;       
       }
 
-      // inherit one dimesin from the parent
+      // inherit one dimesion from the parent
 
       dim = this.dir == HOR ? 'height' : 'width';
       for( i = 0 ; child = this.children[i]; i++)
@@ -205,52 +237,7 @@ Cell.prototype = new function()
     }
   }
 
-
-
-  this.init = function(rough_cell, dir, parent, container)
-  {
-    this.width = 
-      rough_cell.width && rough_cell.width > defaults.min_width ?
-      rough_cell.width : defaults.min_width;
-    this.height = 
-      rough_cell.height && rough_cell.height > defaults.min_height ?
-      rough_cell.height : defaults.min_height;
-    this.id = rough_cell.id || getId();
-
-    this.checked_height = 0;
-    this.checked_width = 0;
-
-    this.type = '';
-    this.children = [];
-    this.previous = null;
-    this.next = null;
-    this.parent = null;
-    this.dir = dir;
-    this.parent = parent;
-    this.container = container;
-    this.is_dirty = true;
-
-    dir = dir == HOR ? VER : HOR;
-
-    var rough_children = rough_cell.children, rough_child = null, i = 0;
-    var child = null, previous = null, next = null;
-
-    if( rough_children )
-    {
-      for( ; rough_child = rough_children[i]; i++)
-      {
-        next = this.children[this.children.length] = new Cell( rough_child, dir, this, container);
-        if( child )
-        {
-          child.previous = previous;
-          child.next = next;
-        }
-        previous = child;
-        child = next;
-      }
-    }
-  }
-
+  
   this.getCellById = function(id)
   {
     var child = null, i = 0, ret = null;
@@ -267,6 +254,8 @@ Cell.prototype = new function()
     }
     return null;
   }
+
+  // confirme the tested dimesions
 
   this.setCheckedDimesions = function()
   {
@@ -287,6 +276,8 @@ Cell.prototype = new function()
     }
   }
 
+  // clear the tested dimensions
+
   this.clearCheckedDimesions = function()
   {
     this.checked_height = this.checked_width = 0;
@@ -297,6 +288,8 @@ Cell.prototype = new function()
       child.clearCheckedDimesions();
     }
   }
+
+  // to check the change from a dimension. returns the possible change. recursive with children cells.
 
   this.checkDelta = function(dim, delta, sibling)
   {
@@ -337,22 +330,11 @@ Cell.prototype = new function()
       else
       {
         delta_applied = delta;
-        if( delta_applied )
+        for( i = 0; child = this.children[i]; i++) // if delta_applied is zero clear the rest
         {
-          for( i = 0; child = this.children[i]; i++) // if delta_applied is zero clear the rest
-          {
-            delta_applied = child.checkDelta(dim, delta_applied, sibling);
-          }
-          this['checked_' + dim] = this[dim] + ( delta - delta_applied );
+          delta_applied = child.checkDelta(dim, delta_applied, sibling);
         }
-        else // clear
-        {
-          for( i = 0; child = this.children[i] ; i++)
-          {
-            child.checkDelta(dim, 0, sibling);
-          }
-          delta_applied = this['checked_' + dim] = 0;
-        }
+        this['checked_' + dim] = this[dim] + ( delta - delta_applied );
       }
     }
     else
@@ -377,7 +359,7 @@ Cell.prototype = new function()
     }
     return delta_applied;
   }
-
+  
   this.getCapTarget = function(dim, target)
   {
     if( !this.children.length ) return 0;
