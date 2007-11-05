@@ -133,4 +133,65 @@ var commands = new function()
     proxy.POST("/" + "ecmascript-debugger", msg);
   }
 
+  /*
+
+  <eval>
+  <tag>1</tag>
+  <runtime-id>1</runtime-id>
+  <thread-id>
+  </thread-id>
+  <frame-id>
+  </frame-id>
+  <script-data>$2()</script-data>
+  <property>
+    <property-name>$2</property-name>
+    <value-data>
+      <data-type>object-id</data-type>
+      <object-id>2</object-id>
+    </value-data>
+  </property>
+</eval>
+
+*/
+
+  this.examineObjects = function() // tag, runtime_id, object_1, ...
+  {
+    var msg = "<examine-objects>", i = 2;
+    msg += "<tag>" + arguments[0] +"</tag>";
+    msg += "<runtime-id>" + arguments[1] +"</runtime-id>";
+    for( ; i < arguments.length; i++)
+    {
+      msg += "<object-id>" + arguments[i] +"</object-id>";
+    }
+    msg += "</examine-objects>";
+    proxy.POST("/" + "ecmascript-debugger", msg);
+  }
+
+  this.eval = function(tag, runtime_id, thread_id, frame_id, script_data, name_id_pairs)
+  {
+    var msg = "<eval>"+
+                "<tag>" + tag + "</tag>" +
+                "<runtime-id>" + runtime_id + "</runtime-id>" +
+                "<thread-id>" + thread_id + "</thread-id>" +
+                "<frame-id>" + frame_id + "</frame-id>" +
+                "<script-data xml:space=\"preserve\">" + script_data + "</script-data>";
+    
+    if( name_id_pairs )
+    {
+      var i = 0, length = name_id_pairs.length;
+      for( ; i < length; i++ )
+      {
+        msg += "<property>" +
+                 "<property-name>" + name_id_pairs[i++] + "</property-name>" +
+                 "<value-data>" +
+                   "<data-type>object-id</data-type>" +
+                   "<object-id>" + name_id_pairs[i] + "</object-id>" +
+                 "</value-data>" +
+               "</property>";
+      }
+    }
+    msg += "</eval>";
+    proxy.POST("/" + "ecmascript-debugger", msg);
+  }
+
 }

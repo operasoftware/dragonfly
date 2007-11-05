@@ -237,6 +237,14 @@ var action_handler = new function()
           }
           break;
         }
+        case 'dom-inspector':
+        {
+          if( windows.showWindow('dom-inspector', 'DOM Inspector', ['div', 'class', 'window-container', 'id', 'view-dom-inspector']) )
+          {
+            views['dom-inspector'].update();
+          }
+          break;
+        }
         case 'configuration':
         {
           if( windows.showWindow('configuration', 'Stop At', ['div', 'class', 'window-container', 'id', 'configuration']) )
@@ -318,6 +326,26 @@ var action_handler = new function()
       }
     }
 
+  }
+
+  handlers['get-children'] = function(event)
+  {
+    var container = event.target.parentNode;
+    var level = ( parseInt(container.style.marginLeft) || 0 ) / 16;
+    var level_next = ( container.nextSibling && parseInt(container.nextSibling.style.marginLeft) || 0 ) / 16;
+    var ref_id = container.getAttribute('ref-id');
+    alert(ref_id+' '+level_next +' '+ level)
+    
+    if(level_next > level)
+    {
+      //dom_tree.closeNode(ref_id);
+      //view.update();
+    }
+    else
+    {
+      dom_data.getChildernFromNode('runtime-id', ref_id);
+    }
+    
   }
 
   this.init = function()

@@ -5,13 +5,21 @@
 <link rel='stylesheet' href='../../styles/html_windows.css'>
 
 <script src = "../../scripts/dom.js"></script>
+<script src = "../../scripts/messages.js"></script>
 <script src = "../../scripts/html_windows.js"></script>
 
 
 <script>
 
+var check = function(msg)
+{
+  document.getElementsByTagName('pre')[0].textContent += msg.type + ': '+ msg.id +'\n';
+}
+
 onload = function()
 {
+  messages.addListener('show-view', check);
+  messages.addListener('hide-view', check);
   windows.showWindow('window-1', 'Test', ['div', 'some content']);
   windows.showWindow('window-2', 'Test 2', ['div', 'some other content'], 150, 150);
   windows.showWindow('window-3', 'Test 3', ['div', 'something'], 200, 200, 200, 200);
@@ -25,5 +33,6 @@ onload = function()
 
 <body>
 <p><input type='button' value='test' onclick="windows.showWindow('window-3', 'Test 3', ['div', 'something'], 200, 200, 200, 200)";>
+<pre></pre>
 </body>
 </html>

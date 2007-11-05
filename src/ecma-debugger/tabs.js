@@ -53,9 +53,17 @@ var tabs = new function()
 
   this.setActiveTab = function(top_frame_runtime_id)
   {
+    // TODO add all child runtimes
     activeTabOnChange();
     __activeTab = [top_frame_runtime_id];
-    // TODO add all child runtimes
+    messages.post('active-tab', {activeTab: __activeTab} );
+    
+  }
+
+  this.getActiveTab = function(top_frame_runtime_id)
+  {
+    return __activeTab;
+    
   }
 
   this.handleEventHandler = function(xml)
