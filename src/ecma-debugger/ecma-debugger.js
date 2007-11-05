@@ -72,9 +72,11 @@ var debugger = new function()
     }
     else
     {
-      document.getElementById('source-view').render
+      document.body.render
       (
-        ['h2', 'The debugger works with protocol version ' + ini.protocol_version, 'class', 'failed' ]
+        ['div', 
+          ['h2', 'The debugger works with protocol version ' + ini.protocol_version, 'class', 'failed' ],
+        'class', 'info']
       );
 
 
