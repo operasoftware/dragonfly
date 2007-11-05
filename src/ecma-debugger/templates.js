@@ -101,7 +101,7 @@ templates = new function()
 /*
 
 MODE ::= "<mode>" 
-             ( "run" | "step-into-call" | "step-over-call" | "finish-call" )
+             ( "run" | "step-into-call" | "step-next-line" | "step-out-of-call" )
            "</mode>" ;
 
            */
@@ -110,8 +110,8 @@ MODE ::= "<mode>"
     var ret = [];
     ret[ret.length] = self.continueWithMode('run ( F5 )', 'run');
     ret[ret.length] = self.continueWithMode('step into call ( F11 )', 'step-into-call');
-    ret[ret.length] = self.continueWithMode('step next line ( F10 )', 'step-over-call');
-    ret[ret.length] = self.continueWithMode('step out of call ( Shift F11 )', 'finish-call');
+    ret[ret.length] = self.continueWithMode('step next line ( F10 )', 'step-next-line');
+    ret[ret.length] = self.continueWithMode('step out of call ( Shift F11 )', 'step-out-of-call');
     return ret;
   }
 

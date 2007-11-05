@@ -133,14 +133,14 @@ helpers = new function()
         }
         case 121: // F10
         {
-          handleKeypress(event, 'continue-step-over-call');
+          handleKeypress(event, 'continue-step-next-line');
           break;
         }
         case 122: // F11
         {
           if(event.shiftKey)
           {
-            handleKeypress(event, 'continue-finish-call');
+            handleKeypress(event, 'continue-step-out-of-call');
           }
           else
           {

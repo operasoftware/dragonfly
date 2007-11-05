@@ -243,10 +243,10 @@ xx#debug {
 #continue-step-into-call {
   background-image:url('step-into.png');
   }
-#continue-step-over-call {
+#continue-step-next-line {
   background-image:url('step-next.png');
   }
-#continue-finish-call {
+#continue-step-out-of-call {
   background-image:url('step-out.png');
   } 
 
