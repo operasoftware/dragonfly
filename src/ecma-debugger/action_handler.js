@@ -3,10 +3,14 @@ var action_handler = new function()
   var handler = function(event)
   {
     
-    var handler = event.target.getAttribute('handler');
-    if(handler && handlers[handler])
+    var ele = event.target, handler = ele.getAttribute('handler');
+    while( !handler && ( ele = ele.parentElement ) )
     {
-      handlers[handler](event);
+      handler = ele.getAttribute('handler');
+    }
+    if( handler && handlers[handler] )
+    {
+      handlers[handler](event, ele);
     }
   }
 
@@ -239,7 +243,7 @@ var action_handler = new function()
         }
         case 'dom-inspector':
         {
-          if( windows.showWindow('dom-inspector', 'DOM Inspector', ['div', 'class', 'window-container', 'id', 'view-dom-inspector']) )
+          if( windows.showWindow('dom-inspector', 'DOM Inspector', templates.domInspector()/*['div', 'class', 'window-container', 'id', 'view-dom-inspector']*/) )
           {
             views['dom-inspector'].update();
           }
@@ -334,18 +338,35 @@ var action_handler = new function()
     var level = ( parseInt(container.style.marginLeft) || 0 ) / 16;
     var level_next = ( container.nextSibling && parseInt(container.nextSibling.style.marginLeft) || 0 ) / 16;
     var ref_id = container.getAttribute('ref-id');
-    alert(ref_id+' '+level_next +' '+ level)
-    
     if(level_next > level)
     {
-      //dom_tree.closeNode(ref_id);
-      //view.update();
+      dom_data.closeNode(ref_id);
     }
     else
     {
-      dom_data.getChildernFromNode('runtime-id', ref_id);
+      dom_data.getChildernFromNode(ref_id);
     }
     
+  }
+
+  handlers['spotlight-node'] = function(event, current_target)
+  {
+    var rt_id = dom_data.getDataRuntimeId(); // is this the correst way?
+    var obj_id = current_target.getAttribute('ref-id');
+    if(obj_id && !handlers['spotlight-node'].timeout )
+    {
+      commands.spotlight(rt_id, obj_id);
+      handlers['spotlight-node'].timeout = setTimeout(handlers['spotlight-node'].clearSpotlight, 800, rt_id)
+    }
+    //alert(obj_id);
+    //alert('spotlight');
+  }
+
+  handlers['spotlight-node'].timeout = 0;
+  handlers['spotlight-node'].clearSpotlight = function(rt_id)
+  {
+    commands.clearSpotlight(rt_id);
+    handlers['spotlight-node'].timeout = 0;
   }
 
   this.init = function()

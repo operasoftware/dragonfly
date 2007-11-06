@@ -242,5 +242,72 @@ MODE ::= "<mode>"
       ['li', ['pre', message['text']]]
     ]
   }
+    /*
+
+     <div id='dom-view-container'>
+
+      <div id='toolbar'>
+      <form>
+
+      <label><input type='radio' id='radio-markup-view' checked='checked'> markup view</label>
+      <label><input type='radio' id='radio-dom-view'> dom view</label>
+      <label>
+        <input type='checkbox' id='checkbox-show-attributes' checked='checked'>
+       show attributes</label>
+
+      <label>
+        <input type='checkbox' id='checkbox-force-lower-case' checked='checked'>
+      force lower case</label>
+
+      <label>
+        <input type='checkbox' id='checkbox-show-comments'>
+       show comments</label>
+
+      <label>
+        <input type='checkbox' id='checkbox-show-white-space-nodes'>
+       show white space nodes</label>
+
+      </form>
+      </div>
+
+      <div id='content'>
+        <div id='dom-view'></div>
+      </div>
+
+    </div>
+
+    */
+
+  this.domInspector = function()
+  {
+    return ['div', 
+      ['div',
+        ['form',
+          ['label',
+            ['input', 'type', 'radio', 'id', 'radio-markup-view', 'checked', 'checked'],
+          ' markup view '],
+          ['label',
+            ['input', 'type', 'radio', 'id', 'radio-dom-view'],
+          ' dom view '],
+          ['label',
+            ['input', 'type', 'checkbox', 'id', 'checkbox-show-attributes', 'checked', 'checked'],
+          ' show attributes '],
+          ['label',
+            ['input', 'type', 'checkbox', 'id', 'checkbox-force-lower-case', 'checked', 'checked'],
+          ' show attributes '],
+          ['label',
+            ['input', 'type', 'checkbox', 'id', 'checkbox-show-comments'],
+          ' show comments '],
+          ['label',
+            ['input', 'type', 'checkbox', 'id', 'checkbox-show-white-space-nodes'],
+          ' show white space nodes '],
+          ['label',
+            ['input', 'type', 'checkbox', 'id', 'checkbox-highlight-on-hover'],
+          ' highlight on hover ']
+        ],
+      'class', 'toolbar'],
+      ['div', ['div', 'id', 'dom-view'], 'class', 'content'],
+    'class', 'window-container', 'id', 'dom-view-container']
+  }
 
 }

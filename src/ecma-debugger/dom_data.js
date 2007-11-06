@@ -7,6 +7,7 @@ var dom_data = new function()
   var initializedRuntimes = {};
 
   var data = []; // TODO seperated for all runtimes off the active tab
+  var data_runtime_id = '';  // data off a dom tree has always just one runtime
 
   const 
   ID = 0, 
@@ -137,18 +138,19 @@ var dom_data = new function()
         {
           var children = node.childNodes, children_length = children.length;
           var attrs = node.attributes, attr = null, j = 0, s_attr = '';
-          data[ data_pointer + ID ] = id;
+          data[ data_pointer + ID ] = node;
           data[ data_pointer + TYPE ] = node.nodeType;
           data[ data_pointer + NAME ] = node.nodeName;
-          data[ data_pointer + NAMESPACE ] = node.namespaceURI;
+          data[ data_pointer + NAMESPACE ] = node.namespaceURI || 'null';
           data[ data_pointer + VALUE ] = ( node.nodeValue || '' ).replace(/\u003C/g, '&lt;');
           data[ data_pointer + DEPTH ] = level;
           if( attrs )
           {
             for( ; attr = attrs[j]; j++)
             {
-              s_attr += ( s_attr ? ',' : '' ) + '\u0022' + attr.name + '\u0022:'+
-                '\u0022' + attr.value.replace(/\u0022/g, '\\\\u0022') + '\u0022';
+              s_attr += ( s_attr ? ',' : '' ) + 
+                '"' + attr.name + '":' +
+                '"' + attr.value.replace(/"/g, '\\"') + '"';
             };
           };
           data[ data_pointer + ATTRS ] = s_attr;
@@ -197,7 +199,7 @@ var dom_data = new function()
       {
         document_id: items[2].textContent,
         getTreeWithTarget: items[3].textContent,
-        getCildren: items[4].textContent,
+        getChildren: items[4].textContent,
       }
     }
   }
@@ -221,6 +223,7 @@ var dom_data = new function()
 
   var clickHandlerHost = function(event)
   {
+    //window.time_dom_tree = new Date().getTime();
     var rt_id = event['runtime-id'], obj_id = event['object-id']
     var init_rt_id = initializedRuntimes[rt_id];
     if( init_rt_id  )
@@ -254,13 +257,12 @@ var dom_data = new function()
     
   }
 
-  var getTree = function(xml, runtime_id)
+  var parseXMLToNodeArray = function(xml)
   {
-    data = [];
-    data.runtime_id = runtime_id;
     var objects = xml.getElementsByTagName('object-id'), object = null;
     var strings = xml.getElementsByTagName('string');
     var i = 0, j = 1, k = 0;
+    var data = [];
     for( ; object = objects[j]; j++)
     {
       data[i + ID] = object.textContent; 
@@ -270,14 +272,21 @@ var dom_data = new function()
       data[i + VALUE] = strings[k + VALUE].textContent;
       data[i + DEPTH] = parseInt(strings[k + DEPTH].textContent);
       data[i + ATTRS] = eval( "({" + strings[k + ATTRS].textContent + "})" );
+      //opera.postError(strings[k + ATTRS].textContent)
       data[i + CHILDREN_LENGTH] = parseInt(strings[k + CHILDREN_LENGTH].textContent);
       data[i + IS_TARGET] = parseInt(strings[k + IS_TARGET].textContent);
       data[i + IS_LAST] = parseInt(strings[k + IS_TARGET].textContent);
       k += 9;
       i += 10;
     }
-    //opera.postError(data)
-    views['dom-inspector'].update();
+    return data;
+  }
+
+  var getTree = function(xml, runtime_id)
+  {
+    data = parseXMLToNodeArray(xml);
+    data_runtime_id = runtime_id;
+    views['dom-inspector'].update(true);
   }
 
   var onShowView = function(msg)
@@ -321,9 +330,109 @@ var dom_data = new function()
     return data.slice(0);
   }
 
-  this.getChildernFromNode = function(runtime_id, object_id)
+  this.getDataRuntimeId = function()
   {
-    alert('we are working on this one');
+    return data_runtime_id;
+  }
+
+  var handleGetChildren = function(xml, runtime_id, object_id)
+  {
+    //alert(8);
+    if(xml.getNodeData('status') == 'completed' )
+    {
+     var tag = tagManager.setCB(null, getChildren, [data_runtime_id, object_id]);
+     commands.examineObjects(tag, runtime_id, xml.getNodeData('object-id'))
+    }
+    else
+    {
+      opera.postError('handleGetTree in dom_data has failed');
+    }
+    
+  }
+
+  var getChildren = function(xml, runtime_id, object_id)
+  {
+    //opera.postError(new XMLSerializer().serializeToString(xml));
+    var new_data = parseXMLToNodeArray(xml);
+    //opera.postError(new_data);
+    
+    /* */
+    var i = 0, j = 0;
+    //var ref = self.update_ref;
+    //var new_data = [];
+    //if( ref )
+    //{
+      for( ; data[i] && data[i] != object_id; i += 10);
+      if( data[i] )
+      {
+        for( ; j < new_data.length; j += 10)
+        {
+          new_data[j+5] += data[i+5];
+          //arr[j+6] = eval( "({" + arr[j+6] + "})" );
+        }
+        data = data.slice(0, i+10).concat(new_data, data.slice(i+10));
+        views['dom-inspector'].update();
+      }
+      else
+      {
+        opera.postError('missing refrence');
+      }
+      //ref = '';
+      
+    //}
+    /* */
+  }
+
+  this.getChildernFromNode = function(object_id)
+  {
+    var init_rt_id = initializedRuntimes[data_runtime_id];
+    if( init_rt_id  )
+    {
+      tag = tagManager.setCB(null, handleGetChildren, [data_runtime_id, object_id]);
+      commands.eval
+      (
+        tag, 
+        data_runtime_id, '', '', 
+        '$' + init_rt_id.getChildren + '($' + object_id  + ')',  ['$' + init_rt_id.getChildren, init_rt_id.getChildren, '$' + object_id, object_id]
+      );
+    }
+  }
+
+  this.closeNode = function(object_id)
+  {
+    var i = 0, j = 0, level = 0;
+    for( ; data[i] && data[i] != object_id; i += 10);
+    if( data[i] )
+    {
+      level = data[ i + DEPTH ];
+      i += 10;
+      j = i;
+      while( data[j] && data[j + DEPTH ] > level ) j+=10;
+      data.splice(i, j - i);
+      views['dom-inspector'].update();
+    }
+    else
+    {
+      opera.postError('missing refrence');
+    }
+  }
+
+  var spotlight = function(event)
+  {
+    commands.spotlight(event['runtime-id'], event['object-id']);
+  }
+
+  this.highlight_on_hover = function(event)
+  {
+    if(event.target.checked)
+    {
+      tabs.activeTab.addEventListener('mouseover', spotlight);
+    }
+    else
+    {
+      commands.clearSpotlight(data_runtime_id);
+      tabs.activeTab.removeEventListener('mouseover', spotlight);
+    }
   }
   
   messages.addListener('active-tab', onActiveTab);

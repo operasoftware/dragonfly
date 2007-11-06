@@ -3,6 +3,8 @@ window.views = window.views || {};
 views['dom-inspector'] = new function()
 {
   var self = this;
+
+  var container_id = 'dom-view';
     /*
     0: object-id,
     1: type
@@ -30,7 +32,7 @@ views['dom-inspector'] = new function()
 
   var renderView = function(tree, target)
   {
-    var view_container = document.getElementById('view-dom-inspector');
+    var view_container = document.getElementById(container_id);
     view_container.innerHTML = tree;
     var scrollTop = view_container.parentNode.scrollTop;
     if( target )
@@ -49,6 +51,7 @@ views['dom-inspector'] = new function()
     {
       view_container.parentNode.scrollTop = scrollTop;
     }
+    //alert('time: '+(new Date().getTime() - window.time_dom_tree ));
   }
 
 
@@ -56,7 +59,7 @@ views['dom-inspector'] = new function()
   this.update = function(target, caller)
   {
 
-    if( true ||  ( document.getElementById('radio-markup-view') || {} ).checked )
+    if( ( document.getElementById('radio-markup-view') || {} ).checked )
     {
       updateMarkupStyle(target, caller);
       
@@ -66,6 +69,8 @@ views['dom-inspector'] = new function()
       updateDOMStyle(target, caller);
     }
   }
+
+
 
 
   var updateDOMStyle = function(target)
@@ -387,7 +392,7 @@ data:image/svg-xml,%3Csvg%20  %20height%3D'500px'%20width%3D'500px'%20viewBox%3D
 
     var force_lower_case = ( document.getElementById('checkbox-force-lower-case') || {} ).checked;
     var show_comments = ( document.getElementById('checkbox-show-comments') || {} ).checked;
-    var show_attrs = true || ( document.getElementById('checkbox-show-attributes') || {} ).checked;
+    var show_attrs = ( document.getElementById('checkbox-show-attributes') || {} ).checked;
     var node_name = '';
     var tag_head = '';
 
@@ -459,7 +464,7 @@ data:image/svg-xml,%3Csvg%20  %20height%3D'500px'%20width%3D'500px'%20viewBox%3D
             {
               tree += "<div " + ( data [ i + IS_TARGET ] ? "id='target-element'" : '' ) + 
                       " style='margin-left:" + 16 * data[ i + DEPTH ] + "px;' "+
-                      "ref-id='"+data[ i + ID ] + "'>"+
+                      "ref-id='"+data[ i + ID ] + "' handler='spotlight-node'>"+
                       "<span class='node'>&lt;" + node_name +  attrs + "&gt;</span>" +
                       one_child_value + 
                       "<span class='node'>&lt;/" + node_name + "&gt;</span>" +
@@ -470,7 +475,7 @@ data:image/svg-xml,%3Csvg%20  %20height%3D'500px'%20width%3D'500px'%20viewBox%3D
             {
               tree += "<div " + ( data [ i + IS_TARGET ] ? "id='target-element'" : '' ) + 
                       " style='margin-left:" + 16 * data[ i + DEPTH ] + "px;' "+
-                      "ref-id='"+data[ i + ID ] + "'>"+
+                      "ref-id='"+data[ i + ID ] + "' handler='spotlight-node'>"+
                       ( data[ i + CHILDREN_LENGTH ] ? 
                         "<input handler='get-children' type='button' class='open'>" : '' ) +
                       "<span class='node'>&lt;" + node_name + attrs + "&gt;</span>" +
@@ -487,7 +492,7 @@ data:image/svg-xml,%3Csvg%20  %20height%3D'500px'%20width%3D'500px'%20viewBox%3D
           {
           tree += "<div " + ( data [ i + IS_TARGET ] ? "id='target-element'" : '' ) + 
                   " style='margin-left:" + 16 * data[ i + DEPTH ] + "px;' "+
-                  "ref-id='"+data[ i + ID ] + "'>"+
+                  "ref-id='"+data[ i + ID ] + "' handler='spotlight-node'>"+
                   ( data[ i + CHILDREN_LENGTH ] ? 
                     "<input handler='get-children' type='button' class='close'>" : '' ) +
                   "<span class='node'>&lt;" + node_name + attrs + "&gt;</span>" +
