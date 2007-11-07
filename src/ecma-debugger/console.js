@@ -48,7 +48,38 @@ var console = new function()
   }
   
 }
+/*
 
+<?xml version="1.0"?>
+<message>
+<time>1194441921</time>
+<uri>file://localhost/d:/cvs-source/scope/http-clients/ecma-debugger/tests/test-console.html</uri>
+<context>Inline script thread</context>
+<severity>error</severity>
+<source>ecmascript</source>
+<description xml:space="preserve">Error:
+name: ReferenceError
+message: Statement on line 2: Undefined variable: b
+Backtrace:
+  Line 2 of inline#1 script in file://localhost/d:/cvs-source/scope/http-clients/ecma-debugger/tests/test-console.html
+    b.b = 'hallo';
+</description>
+</message>
+
+
+<message>
+<time>1194442013</time>
+<uri>file://localhost/d:/cvs-source/scope/http-clients/ecma-debugger/tests/test-console.html</uri>
+<context>Inlined stylesheet</context>
+<severity>information</severity>
+<source>css</source>
+<description xml:space="preserve">xxcolor is an unknown property
+
+Line 2:
+  body {xxcolor:red}
+  --------------^</description></message>
+
+*/
 
 var console_messages = new function()
 {
@@ -61,14 +92,7 @@ var console_messages = new function()
     var children = message_event.documentElement.childNodes, child=null, i=0, value = '';
     for ( ; child = children[i]; i++)
     {
-      if( value = child.getAttribute('value') )
-      {
-        message[child.nodeName] = value;
-      }
-      else if ( child.firstChild )
-      {
-        message[child.nodeName] = child.firstChild.nodeValue; 
-      }
+      message[child.nodeName] = child.textContent;
       
     }
     msgs[msgs.length] = message;
@@ -83,7 +107,7 @@ var console_messages = new function()
 };
 
 
-(function(){ window.views = window.views || {}; })();
+window.views = window.views || {};
 
 views.console = new function()
 {

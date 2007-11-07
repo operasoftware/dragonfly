@@ -232,14 +232,47 @@ MODE ::= "<mode>"
     return ret;
   }
 
+/*
+
+<?xml version="1.0"?>
+<message>
+<time>1194441921</time>
+<uri>file://localhost/d:/cvs-source/scope/http-clients/ecma-debugger/tests/test-console.html</uri>
+<context>Inline script thread</context>
+<severity>error</severity>
+<source>ecmascript</source>
+<description xml:space="preserve">Error:
+name: ReferenceError
+message: Statement on line 2: Undefined variable: b
+Backtrace:
+  Line 2 of inline#1 script in file://localhost/d:/cvs-source/scope/http-clients/ecma-debugger/tests/test-console.html
+    b.b = 'hallo';
+</description>
+</message>
+
+
+<message>
+<time>1194442013</time>
+<uri>file://localhost/d:/cvs-source/scope/http-clients/ecma-debugger/tests/test-console.html</uri>
+<context>Inlined stylesheet</context>
+<severity>information</severity>
+<source>css</source>
+<description xml:space="preserve">xxcolor is an unknown property
+
+Line 2:
+  body {xxcolor:red}
+  --------------^</description></message>
+
+*/
+
   this.message = function( message)
   {
     return ['ul',
       ['li', message.source + ' ' + message.severity],
       ['li', new Date(parseInt( message.time )*1000).toString().replace(/GMT.*$/, '') ],
-      ['li', message.url],
+      ['li', message.uri],
       ['li', message.context],
-      ['li', ['pre', message['text']]]
+      ['li', ['pre', message.description]]
     ]
   }
     /*
@@ -307,6 +340,7 @@ MODE ::= "<mode>"
         ],
       'class', 'toolbar'],
       ['div', ['div', 'id', 'dom-view'], 'class', 'content'],
+      ['div', '<status>', 'id', 'status-bar-dom-view', 'class', 'status-bar'],
     'class', 'window-container', 'id', 'dom-view-container']
   }
 
