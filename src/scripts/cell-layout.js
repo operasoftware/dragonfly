@@ -16,9 +16,11 @@ Cell.prototype = new function()
 
   var id_count = 1;
 
+  var __counter = 0;
+
   var getId = function()
   {
-    return 'invisible_' + ( id_count++ );
+    return 'invisible-' + ( id_count++ );
   }
 
   // constructor call
@@ -69,10 +71,14 @@ Cell.prototype = new function()
 
   // updating the view
 
-  this.update = function(left, top)
+  this.update = function(left, top, force_redraw)
   {
     var children = this.children, child = null, i = 0;
     var delta = 0;
+    if( force_redraw )
+    {
+      this.is_dirty = true;
+    }
     var is_dirty = this.is_dirty;
     if( children.length )
     {
@@ -83,7 +89,7 @@ Cell.prototype = new function()
         delta = top;
         for( ; child = children[i]; i++)
         {
-          delta += child.update(left, delta);
+          delta += child.update(left, delta, force_redraw);
         }
       }
       else
@@ -91,7 +97,7 @@ Cell.prototype = new function()
         delta = left;
         for( ; child = children[i]; i++)
         {
-          delta += child.update(delta, top);
+          delta += child.update(delta, top, force_redraw);
         }
       }
     }
@@ -118,6 +124,7 @@ Cell.prototype = new function()
       }
       if(this.is_dirty)
       {
+        //opera.postError(( __counter++) +' '+this.id);
         ele.style.cssText = 
         'left:' + ( this.left = left ) + 'px;' +
         'top:' + ( this.top = top ) + 'px;' +
@@ -127,6 +134,7 @@ Cell.prototype = new function()
         this.is_dirty = false;
       }
     }
+    
 
     // create sliders
 
@@ -149,6 +157,7 @@ Cell.prototype = new function()
       }
       if( is_dirty )
       {
+        
         if( this.dir == HOR )
         {
           ele.style.cssText = 
@@ -359,7 +368,7 @@ Cell.prototype = new function()
     }
     return delta_applied;
   }
-  
+  /*
   this.getCapTarget = function(dim, target)
   {
     if( !this.children.length ) return 0;
@@ -375,7 +384,7 @@ Cell.prototype = new function()
     }
     return this[dim] - sum;
   }
-
+  */
   this.handleResizeEvent = function(event, _delta)
   {
     var dim = this.dir == HOR ? 'height' : 'width';
@@ -383,6 +392,7 @@ Cell.prototype = new function()
     var delta = Math.round( event[this.dir == HOR ? 'pageY' : 'pageX'] - _delta - ( this[pos] + this[dim] ) );
     var sibling = this;
     var cap = 0;
+    var cap_holder = null;
     var consumed = -delta;
     if(delta)
     {
@@ -397,8 +407,12 @@ Cell.prototype = new function()
           }
         }
         while (sibling && consumed);
-        cap = this.parent.getCapTarget(dim, this) - this[dim];
-        if( cap )
+        cap_holder = this;
+        
+        //cap = this.parent.getCapTarget(dim, this) - this[dim];
+        //opera.postError('+: '+cap+' '+consumed+' '+delta +' '+(delta + consumed))
+        /*
+        if( cap = delta + consumed  )
         {
           this.checkDelta(dim, cap, 'next');
           this.parent.setCheckedDimesions();
@@ -408,6 +422,7 @@ Cell.prototype = new function()
         {
           this.parent.clearCheckedDimesions();
         }
+        */
       }
       else
       {
@@ -416,8 +431,11 @@ Cell.prototype = new function()
           delta = sibling.checkDelta(dim, delta, 'next');
           sibling = sibling.previous;
         }
-        cap = this.parent.getCapTarget(dim, this.next) - this.next[dim];
-        if( cap )
+        cap_holder = this.next;
+        //cap = this.parent.getCapTarget(dim, this.next) - this.next[dim];
+        //opera.postError('-: '+cap+' '+consumed+' '+delta +' '+(delta + consumed))
+        /*
+        if( cap = delta + consumed )
         {
           this.next.checkDelta(dim, cap, 'next');
           this.parent.setCheckedDimesions();
@@ -427,6 +445,17 @@ Cell.prototype = new function()
         {
           this.parent.clearCheckedDimesions();
         }
+        */
+      }
+      if( cap = delta + consumed  )
+      {
+        cap_holder.checkDelta(dim, cap, 'next');
+        this.parent.setCheckedDimesions();
+        this.parent.update(this.parent.left, this.parent.top);
+      }
+      else
+      {
+        this.parent.clearCheckedDimesions();
       }
     }
   }

@@ -6,7 +6,7 @@ var windows = new function()
   right_delta = 0,
   min_width = 200, 
   min_height = 100,
-  d_width = 300, 
+  d_width = 500, 
   d_height = 300, 
   d_top = 100, 
   d_left = 100,
@@ -291,6 +291,7 @@ var windows = new function()
     var win = event.target.parentElement.parentElement;
     if(win)
     {
+      messages.post("hide-view", {id: win.getAttribute('ref_id')});
       win.parentElement.removeChild(win);
     }
   }
@@ -315,6 +316,7 @@ var windows = new function()
         ids[ref_id] = { top: 0, left: 0, width: 0, height: 0 };
       }
       current_id = ids[ref_id];
+      messages.post("show-view", {id: ref_id});
     }
     var win = document.body.render(template(ref_id, title, content_template, top, left, width, height));
     setZIndex();

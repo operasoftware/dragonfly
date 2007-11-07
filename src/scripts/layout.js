@@ -7,9 +7,10 @@ var Layout = function(container_id, rough_layout)
 
   var resizehandler = function()
   {
+    //opera.postError('check: '+self.checkDimesions());
     if( !self.checkDimesions() )
     {
-      self.cell.update(self.cell.left, self.cell.top);
+      self.cell.update(self.cell.left, self.cell.top, true);
     }
   }
 
