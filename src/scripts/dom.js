@@ -198,7 +198,7 @@ Node.prototype.getNodeData=function(nodeName)
   var node=this.getElementsByTagName(nodeName)[0];
   if(node)
   {
-    return node.textContent;
+    return node.textContent.replace(/</g, '&lt;');
   }
   return null;
 }
