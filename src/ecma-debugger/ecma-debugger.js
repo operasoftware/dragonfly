@@ -166,43 +166,52 @@ var debugger = new function()
       
     }
     */
-    document.body.insertBefore(document.render(templates.toolbars()), document.body.children[0]);
-
-    verticalFrames.init
-    (
-      document.getElementById('main-container'), 
-      function(){ return window.innerHeight - document.getElementById('main-container').offsetTop }
-    )
-
-    action_handler.init();
-
-    scroll_handler.init();
-
-    window.views.js_source.setupBasics();
-    window.views.js_source.setup(1);
-
-    var host = location.host.split(':');
-
-    proxy.onsetup = function()
+    // this is just a quick fix
+    var viewport = document.getElementsByTagName('viewbox')[0];
+    if( viewport )
     {
-      if (!proxy.enable(service))	
-      {
-        alert( 
-			'Could not find an Opera session to connect to.\n' +
-			'Please try the following:\n' + 
-			'1. Open another Opera instance\n' +
-			'2. In that Opera instance, open opera:config and check "Enable Debugging" and "Enable Script Debugging" under "Developer Tools"\n' +
-			'3. Restart that Opera instance' );
-        return;
-      }
-      else
-      {
-        console.setup();
-        self.getEvent();
-      }
+      viewport.insertBefore(document.render(templates.toolbars()), viewport.children[0]);
 
+      verticalFrames.init
+      (
+        document.getElementById('main-container'), 
+        function(){ return window.innerHeight - document.getElementById('main-container').offsetTop }
+      )
+
+      action_handler.init();
+
+      scroll_handler.init();
+
+      window.views.js_source.setupBasics();
+      window.views.js_source.setup(1);
+
+      var host = location.host.split(':');
+
+      proxy.onsetup = function()
+      {
+        if (!proxy.enable(service))	
+        {
+          alert( 
+        'Could not find an Opera session to connect to.\n' +
+        'Please try the following:\n' + 
+        '1. Open another Opera instance\n' +
+        '2. In that Opera instance, open opera:config and check "Enable Debugging" and "Enable Script Debugging" under "Developer Tools"\n' +
+        '3. Restart that Opera instance' );
+          return;
+        }
+        else
+        {
+          console.setup();
+          self.getEvent();
+        }
+
+      }
+      proxy.configure(host[0], host[1]);
     }
-    proxy.configure(host[0], host[1]);
+    else
+    {
+      opera.postError('missing viewport');
+    }
     
   }
 

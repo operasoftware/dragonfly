@@ -76,6 +76,7 @@ debug = new function()
           '\n';
       }
       out += 'total delta: ' + ( window.__times_dom[4] - window.__times_dom[0] ) + '\n';
+      //out += 'response text length: ' + ( window.__times_dom.response_length ) + '\n';
       debug.output(out);
     }
   }

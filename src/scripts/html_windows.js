@@ -3,6 +3,7 @@ var windows = new function()
   var win = null,
   left_delta = 0,
   top_delta = 0,
+  bottom_delta = 0,
   right_delta = 0,
   min_width = 200, 
   min_height = 100,
@@ -19,6 +20,9 @@ var windows = new function()
   focus_catcher = null,
   handlers = 
   {
+    'window-scale-top-left': true,
+    'window-scale-top': true,
+    'window-scale-top-right': true,
     'window-move': true,
     'window-scale-right': true,
     'window-scale-left': true,
@@ -33,6 +37,7 @@ var windows = new function()
   current_id = null,
   __event = null,
   interval = 0,
+  viewport = null,
 
   store_event = function(event)
   {
@@ -110,9 +115,9 @@ var windows = new function()
         set[handler](event);
         var ref_id = event.target.parentNode.getAttribute('ref_id');
         current_id = ref_id ? ids[ ref_id ] : ids[ 'empty' ];
-        
         document.addEventListener('mousemove', store_event, false);
         document.addEventListener('mouseup', mouseup, false);
+        document.onselectstart = function (event) { return false };
       }
     }
   },
@@ -152,6 +157,9 @@ var windows = new function()
           'handler', 'window-move'],
         content_template,
         template_shadows(),
+        ['window-control', 'handler', 'window-scale-top-left'],
+        ['window-control', 'handler', 'window-scale-top'],
+        ['window-control', 'handler', 'window-scale-top-right'],
         ['window-control', 'handler', 'window-scale-right'],
         ['window-control', 'handler', 'window-scale-bottom'],
         ['window-control', 'handler', 'window-scale-bottom-right'],
@@ -184,6 +192,7 @@ var windows = new function()
   {
     document.removeEventListener('mousemove', store_event, false);
     document.removeEventListener('mouseup', mouseup, false);
+    document.onselectstart = null;
     interval = clearInterval( interval );
     update_handler();
     current_id = current_style = __event = update_handler = null;
@@ -199,9 +208,36 @@ var windows = new function()
   {
     if(__event)
     {
-      current_style.left = ( current_id.left = __event.pageX - left_delta ) + 'px';
-      current_style.top = ( current_id.top = __event.pageY - top_delta ) + 'px';
+      if( __event.pageX < innerWidth && __event.pageX > 0 )
+      {
+        current_style.left = ( current_id.left = __event.pageX - left_delta ) + 'px';
+      }
+      if( __event.pageY < innerHeight && __event.pageY > 0 )
+      {
+        current_style.top = ( current_id.top = __event.pageY - top_delta ) + 'px';
+      }
       focus_catcher_focus();
+    }
+  }
+
+  set['window-scale-top'] = function(event)
+  {
+    top_delta = event.pageY - event.target.parentNode.offsetTop;
+    bottom_delta = event.target.parentNode.offsetTop + event.target.parentNode.offsetHeight - 2;
+  }
+
+  update['window-scale-top'] = function(event)
+  {
+    if( __event )
+    {
+      var top = __event.pageY - top_delta;
+      var height =  bottom_delta - top;
+      if( height > min_width )
+      {
+        current_style.height = ( current_id.height = height ) + 'px';
+        current_style.top = ( current_id.top = top ) + 'px';
+        focus_catcher_focus();
+      }
     }
   }
 
@@ -262,6 +298,30 @@ var windows = new function()
     }
   }
 
+  set['window-scale-top-left'] = function(event)
+  {
+    set['window-scale-left'](event);
+    set['window-scale-top'](event);
+  }
+
+  update['window-scale-top-left'] = function()
+  {
+    update['window-scale-left']();
+    update['window-scale-top']();
+  }
+
+  set['window-scale-top-right'] = function(event)
+  {
+    set['window-scale-right'](event);
+    set['window-scale-top'](event);
+  }
+
+  update['window-scale-top-right'] = function()
+  {
+    update['window-scale-right']();
+    update['window-scale-top']();
+  }
+
   set['window-scale-bottom-right'] = function(event)
   {
     set['window-scale-right'](event);
@@ -318,13 +378,26 @@ var windows = new function()
       current_id = ids[ref_id];
       messages.post("show-view", {id: ref_id});
     }
-    var win = document.body.render(template(ref_id, title, content_template, top, left, width, height));
+    var win = viewport.render(template(ref_id, title, content_template, top, left, width, height));
     setZIndex();
     win.style.zIndex = 200;
     return true;
   }
 
+  var init = function(event)
+  {
+    document.removeEventListener('load', arguments.callee, false);
+    viewport = document.getElementsByTagName('viewbox')[0];
+    if(!viewport)
+    {
+      self.showWindow = function(){};
+      opera.postError( 'missing view port in init in windows');
+    }
+    
+  }
+
   document.addEventListener('mousedown', mousedown, false);
   document.addEventListener('click', mouseclick, false);
-
+  window.addEventListener('load', init, false);
+  
 }

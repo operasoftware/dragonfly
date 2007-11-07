@@ -1,4 +1,19 @@
+html, body {
+  width:100%;
+  height:100%;
+  padding:0;
+  margin:0;
+  }
 
+viewbox {
+  display:block;
+  overflow:hidden;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  position:relative;
+  }
 
 window {
   display:block;
@@ -36,10 +51,34 @@ window-header {
   background:transparent url('close.png') scroll no-repeat 50% 50%;
   }
 
+[handler='window-scale-top-left'] {
+  left:-5px;
+  top:-5px;
+  width:10px;
+  height:10px;
+  cursor:nw-resize;
+  }
+
+[handler='window-scale-top'] {
+  left:5px;
+  right:5px;
+  top:-5px;
+  height:10px;
+  cursor:s-resize;
+  }
+
+[handler='window-scale-top-right'] {
+  right:-5px;
+  width:10px;
+  height:10px;
+  top:-5px;
+  cursor:sw-resize;
+  }
+
 [handler='window-scale-right'] {
   right:-5px;
   width:10px;
-  top:20px;
+  top:5px;
   bottom:5px;
   cursor:w-resize;
   }
@@ -47,7 +86,7 @@ window-header {
 [handler='window-scale-left'] {
   left:-5px;
   width:10px;
-  top:20px;
+  top:5px;
   bottom:5px;
   cursor:w-resize;
   }

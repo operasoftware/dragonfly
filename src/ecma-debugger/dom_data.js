@@ -300,6 +300,7 @@ var dom_data = new function()
     if(window.__times_dom)
     {
       window.__times_dom[window.__times_dom.length] = new Date().getTime();
+      window.__times_dom.response_length = xml.response_length;
     }
     data = parseXMLToNodeArray(xml);
     if(window.__times_dom)

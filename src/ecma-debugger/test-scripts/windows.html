@@ -3,6 +3,23 @@
 <head>
 <title> </title>
 <link rel='stylesheet' href='../../styles/html_windows.css'>
+<style>
+
+body > div {
+  padding:7px;
+  }
+
+window > div {
+  position:absolute;
+  left:1px;
+  top:22px;
+  bottom:1px;
+  right:1px;
+  padding:7px;
+  overflow:auto;
+  }
+  
+</style>
 
 <script src = "../../scripts/dom.js"></script>
 <script src = "../../scripts/messages.js"></script>
@@ -21,6 +38,11 @@ var template = function()
   return ret
 }
 
+var test = function()
+{
+  windows.showWindow('window-3', 'Test 3', ['div', template()], 200, 200, 200, 200);
+}
+
 var check = function(msg)
 {
   document.getElementsByTagName('pre')[0].textContent += msg.type + ': '+ msg.id +'\n';
@@ -32,17 +54,19 @@ onload = function()
   messages.addListener('hide-view', check);
   windows.showWindow('window-1', 'Test', ['div', 'some content']);
   windows.showWindow('window-2', 'Test 2', ['div', 'some other content'], 150, 150);
-  windows.showWindow('window-3', 'Test 3', ['div', 'something', template()], 200, 200, 200, 200);
+  windows.showWindow('window-3', 'Test 3', ['div', template()], 200, 200, 200, 200);
 }
 
 </script>
 
 
-</script>
+
 </head>
 
 <body>
-<p><input type='button' value='test' onclick="windows.showWindow('window-3', 'Test 3', ['div', 'something'], 200, 200, 200, 200)";>
-<pre></pre>
+<viewbox>
+  <p><input type='button' value='test' onclick="test()";>
+  <pre></pre>
+</viewbox>
 </body>
 </html>
