@@ -150,6 +150,10 @@ var debugger = new function()
       window.__testing__ = true;
       window.__times_spotlight__ = [];
     }
+    if( params['profile-dom'] )
+    {
+      window.__times_dom = [];
+    }
     /*
     else
     {

@@ -228,7 +228,10 @@ var dom_data = new function()
 
   var clickHandlerHost = function(event)
   {
-    //window.time_dom_tree = new Date().getTime();
+    if(window.__times_dom)
+    {
+      window.__times_dom = [new Date().getTime()] 
+    }
     var rt_id = event['runtime-id'], obj_id = event['object-id'];
     current_target = obj_id;
     var init_rt_id = initializedRuntimes[rt_id];
@@ -251,6 +254,10 @@ var dom_data = new function()
 
   var handleGetTree = function(xml, runtime_id)
   {
+    if(window.__times_dom)
+    {
+      window.__times_dom[window.__times_dom.length] = new Date().getTime();
+    }
     if(xml.getNodeData('status') == 'completed' )
     {
      var tag = tagManager.setCB(null, getTree, [runtime_id]);
@@ -290,9 +297,22 @@ var dom_data = new function()
 
   var getTree = function(xml, runtime_id)
   {
+    if(window.__times_dom)
+    {
+      window.__times_dom[window.__times_dom.length] = new Date().getTime();
+    }
     data = parseXMLToNodeArray(xml);
+    if(window.__times_dom)
+    {
+      window.__times_dom[window.__times_dom.length] = new Date().getTime();
+    }
     data_runtime_id = runtime_id;
     views['dom-inspector'].update(true);
+    if(window.__times_dom)
+    {
+      window.__times_dom[window.__times_dom.length] = new Date().getTime();
+      debug.checkProfiling();
+    }
   }
 
   var onShowView = function(msg)

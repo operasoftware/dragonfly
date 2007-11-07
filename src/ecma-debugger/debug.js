@@ -64,6 +64,20 @@ debug = new function()
       out += 'total delta: ' + ( window.__times__[5] - window.__times__[0] ) + '\n';
       debug.output(out);
     }
+    if( window.__times_dom && window.__times_dom.length == 5 ) 
+    {
+      var stamps = ['click event', 'return object id', 'return object', 'parse xml', 'render view'] 
+      var stamp = '', i= 0, out = ''; 
+      for ( ; stamp = stamps[i]; i++ )
+      {
+        out += stamp + ': ' + 
+          window.__times_dom[i] + 
+          ( i > 0 ? ' delta: ' + ( window.__times_dom[i] - window.__times_dom[i-1] ) : '' ) +
+          '\n';
+      }
+      out += 'total delta: ' + ( window.__times_dom[4] - window.__times_dom[0] ) + '\n';
+      debug.output(out);
+    }
   }
 
   this.profileSpotlight = function()

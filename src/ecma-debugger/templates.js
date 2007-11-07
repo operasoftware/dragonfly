@@ -208,7 +208,8 @@ MODE ::= "<mode>"
         ['li', 'Console', 'handler', 'drop-down', 'ref', 'console'],
         ['li', 'Enviroment', 'handler', 'drop-down', 'ref', 'environment'],
         ['li', 'DOM Inspector', 'handler', 'drop-down', 'ref', 'dom-inspector'],
-        (ini.debug || window.__profiling__ || window.__times_spotlight__ ? ['li', 'Debug', 'handler', 'drop-down', 'ref', 'debug'] : [] ),
+        (ini.debug || window.__profiling__ || window.__times_spotlight__ || window.__times_dom ? 
+           ['li', 'Debug', 'handler', 'drop-down', 'ref', 'debug'] : [] ),
         (ini.debug || window.__profiling__ ? ['li', 'Command Line', 'handler', 'drop-down', 'ref', 'command-line'] : [] ),
         (ini.debug || window.__testing__ ? ['li', 'Testing', 'handler', 'drop-down', 'ref', 'testing'] : [] ),
 
