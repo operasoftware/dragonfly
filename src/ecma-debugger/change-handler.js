@@ -25,6 +25,8 @@ var change_handler = new function()
 
   handlers['checkbox-highlight-on-hover'] = dom_data.highlight_on_hover;
 
+  handlers['checkbox-find-element-with-click'] = dom_data.set_click_handler;
+
 
   this.post = function(handler, event)
   {

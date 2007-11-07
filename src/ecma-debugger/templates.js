@@ -336,7 +336,10 @@ Line 2:
           ' show white space nodes '],
           ['label',
             ['input', 'type', 'checkbox', 'id', 'checkbox-highlight-on-hover'],
-          ' highlight on hover ']
+          ' highlight on hover '],
+          ['label',
+            ['input', 'type', 'checkbox', 'id', 'checkbox-find-element-with-click', 'checked', 'checked'],
+          ' find element with click '],
         ],
       'class', 'toolbar'],
       ['div', ['div', 'id', 'dom-view'], 'class', 'content'],

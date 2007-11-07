@@ -1,38 +1,3 @@
-/*
-
-<DIV CLASS="window-container"  ID="dom-view-container" >
-        <DIV CLASS="toolbar" >
-          <FORM METHOD="get"  ENCTYPE="application/x-www-form-urlencoded" >
-            <LABEL>
-              <INPUT type="radio"  ID="radio-markup-view"  CHECKED="checked" >
-               markup view
-            </LABEL>
-          </FORM>
-        </DIV>
-        <DIV CLASS="content" >
-          <DIV ID="dom-view" ></DIV>
-        </DIV>
-      </DIV>
-      <window-shadow CLASS="top-left" ></window-shadow>
-      <window-shadow CLASS="top" ></window-shadow>
-      <window-shadow CLASS="top-right" ></window-shadow>
-      <window-shadow CLASS="left" ></window-shadow>
-      <window-shadow CLASS="right" ></window-shadow>
-      <window-shadow CLASS="bottom-left" ></window-shadow>
-      <window-shadow CLASS="bottom" ></window-shadow>
-      <window-shadow CLASS="bottom-right" ></window-shadow>
-      <window-control handler="window-scale-right" ></window-control>
-      <window-control handler="window-scale-bottom" ></window-control>
-      <window-control handler="window-scale-bottom-right" ></window-control>
-      <window-control handler="window-scale-bottom-left" ></window-control>
-      <window-control handler="window-scale-left" ></window-control>
-    </window>
-    <DIV STYLE="position:absolute;left:-1000px;top:0;" >
-      <INPUT TYPE="text" >
-    </DIV>
-
-    */
-
 #target-element{background-color:#6cf}
 
 #dom-view-container {
@@ -77,18 +42,28 @@
 
 
 .toolbar {
-  height:30px;
+  height:35px;
   border-bottom:1px solid #ccc;
   background-color:#f9f9f9;
   padding:1px 5px;
   }
 
-.content {
+.status-bar {
   position:absolute;
-  top:33px;
   left:0;
   right:0;
   bottom:0;
+  height:16px;
+  line-height:16px;
+  border-top:1px solid #ccc;
+  }
+
+.content {
+  position:absolute;
+  top:38px;
+  left:0;
+  right:0;
+  bottom:17px;
   overflow:auto;
   background-color:#fff;
   }

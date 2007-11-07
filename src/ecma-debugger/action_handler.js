@@ -356,10 +356,10 @@ var action_handler = new function()
     if(obj_id && !handlers['spotlight-node'].timeout )
     {
       commands.spotlight(rt_id, obj_id);
-      handlers['spotlight-node'].timeout = setTimeout(handlers['spotlight-node'].clearSpotlight, 800, rt_id)
+      handlers['spotlight-node'].timeout = setTimeout(handlers['spotlight-node'].clearSpotlight, 800, rt_id);
+      dom_data.setCurrentTarget(obj_id);
+      views['dom-inspector'].updateTarget(current_target);
     }
-    //alert(obj_id);
-    //alert('spotlight');
   }
 
   handlers['spotlight-node'].timeout = 0;

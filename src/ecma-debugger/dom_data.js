@@ -8,6 +8,7 @@ var dom_data = new function()
 
   var data = []; // TODO seperated for all runtimes off the active tab
   var data_runtime_id = '';  // data off a dom tree has always just one runtime
+  var current_target = '';
 
   const 
   ID = 0, 
@@ -201,6 +202,10 @@ var dom_data = new function()
         getTreeWithTarget: items[3].textContent,
         getChildren: items[4].textContent,
       }
+      if(views['dom-inspector'].isVisible())
+      {
+        onShowView({id: 'dom-inspector'})
+      }
     }
   }
 
@@ -224,7 +229,8 @@ var dom_data = new function()
   var clickHandlerHost = function(event)
   {
     //window.time_dom_tree = new Date().getTime();
-    var rt_id = event['runtime-id'], obj_id = event['object-id']
+    var rt_id = event['runtime-id'], obj_id = event['object-id'];
+    current_target = obj_id;
     var init_rt_id = initializedRuntimes[rt_id];
     if( init_rt_id  )
     {
@@ -335,6 +341,8 @@ var dom_data = new function()
     return data_runtime_id;
   }
 
+
+
   var handleGetChildren = function(xml, runtime_id, object_id)
   {
     //alert(8);
@@ -432,6 +440,59 @@ var dom_data = new function()
     {
       commands.clearSpotlight(data_runtime_id);
       tabs.activeTab.removeEventListener('mouseover', spotlight);
+    }
+  }
+
+  this.setCurrentTarget = function(obj_id)
+  {
+    current_target = obj_id;
+  }
+
+  this.getCurrentTarget = function(obj_id)
+  {
+    return current_target;
+  }
+
+  this.getCSSPath = function()
+  {
+    var i = 0, j = -1, path = '';
+    if(current_target)
+    {
+      for( ; data[i] && data[i] != current_target; i += 10);
+      if( data[i] )
+      {
+        path = data[i + NAME] + path;
+        j = i;
+        i -= 10;
+        for(  ; data[i]; i -= 10)
+        {
+          if(data[i + TYPE] == 1)
+          {
+            if(data[i + DEPTH] <= data[j + DEPTH])
+            {
+              path =  data[i + NAME] + ( data[i + DEPTH] < data[j + DEPTH] ? ' > ' : ' + ' ) + path;
+              j = i;
+            }
+          } 
+        }
+      }
+      else
+      {
+        opera.postError('missing refrence in getCSSPath in dom_data');
+      }
+      return path;
+    }
+  }
+
+  this.set_click_handler = function(event)
+  {
+    if(event.target.checked)
+    {
+      tabs.activeTab.addEventListener('click', clickHandlerHost);
+    }
+    else
+    {
+      tabs.activeTab.removeEventListener('click', clickHandlerHost);
     }
   }
   

@@ -44,12 +44,17 @@ views['dom-inspector'] = new function()
       }
       else
       {
-        opera.postError('missing target');
+        opera.postError("missing target in renderView in views['dom-inspector']");
       }
     }
     else
     {
       view_container.parentNode.scrollTop = scrollTop;
+    }
+    var status_bar = document.getElementById('status-bar-' + container_id);
+    if(status_bar)
+    {
+      status_bar.textContent = dom_data.getCSSPath();
     }
     //alert('time: '+(new Date().getTime() - window.time_dom_tree ));
   }
@@ -68,6 +73,34 @@ views['dom-inspector'] = new function()
     {
       updateDOMStyle(target, caller);
     }
+  }
+
+  this.updateTarget = function(ele)
+  {
+    if(ele)
+    {
+      var target = document.getElementById('target-element');
+      if(target)
+      {
+        target.removeAttribute('id');
+      }
+      ele.id = 'target-element';
+      var status_bar = document.getElementById('status-bar-' + container_id);
+      if(status_bar)
+      {
+        status_bar.textContent = dom_data.getCSSPath();
+      }
+    }
+    else
+    {
+      opera.postError("missing implementation in updateTarget in views['dom-inspector']");
+      // TODO
+    }
+  }
+
+  this.isVisible = function()
+  {
+    return document.getElementById(container_id) && true;
   }
 
 
@@ -375,8 +408,10 @@ data:image/svg-xml,%3Csvg%20  %20height%3D'500px'%20width%3D'500px'%20viewBox%3D
     NEXT = 10;
 
     var data = dom_data.getData();
+
     var tree = '', i = 0, length = data.length;
     var scrollTop = document.documentElement.scrollTop;
+    var target = dom_data.getCurrentTarget();
 
     var attrs = null, key = '';
 
@@ -396,156 +431,162 @@ data:image/svg-xml,%3Csvg%20  %20height%3D'500px'%20width%3D'500px'%20viewBox%3D
     var node_name = '';
     var tag_head = '';
 
-
-
-    for( ; i < length; i += 10 )
+    if( ! data.length )
+    {
+      renderView('<p>Probably no runtime is selected</p>');
+    }
+    else
     {
 
-      while( current_depth > data[i+5] )
+      for( ; i < length; i += 10 )
       {
 
-        tree += closing_tags.pop();
-        current_depth--;
-      }
-
-      current_depth = data[ i + DEPTH ];
-      child_pointer = 0;
-      node_name = data[ i + NAME ];
-
-      if( force_lower_case )
-      {
-        node_name = node_name.toLowerCase();
-      }
-      
-      switch ( data[ i + TYPE ] )
-      {
-        case 1:  // elemets
+        while( current_depth > data[i+5] )
         {
-          if( show_attrs )
-          {
-            attrs = '';
-            for( key in data[ i + ATTRS ] )
-            {
-              attrs += " <span class='key'>" + 
-                ( force_lower_case ? key.toLowerCase() : key ) + 
-                "</span>=<span class='value'>\"" + 
-                data[ i + ATTRS ][key] + 
-                "\"</span>";
-            }
-          }
-          else
-          {
-            attrs = '';
-          }
 
-          child_pointer = i + NEXT;
+          tree += closing_tags.pop();
+          current_depth--;
+        }
 
-          is_open = ( data[ child_pointer ] && ( data[ i + DEPTH ] < data[ child_pointer + DEPTH ] ) );
-          if( is_open ) 
+        current_depth = data[ i + DEPTH ];
+        child_pointer = 0;
+        node_name = data[ i + NAME ];
+
+        if( force_lower_case )
+        {
+          node_name = node_name.toLowerCase();
+        }
+        
+        switch ( data[ i + TYPE ] )
+        {
+          case 1:  // elemets
           {
-            has_only_one_child = 1;
-            one_child_value = '';
-            child_level = data[ child_pointer + DEPTH ];
-            for( ; data[child_pointer] &&  data[child_pointer + DEPTH] == child_level; child_pointer += 10 )
+            if( show_attrs )
             {
-              one_child_value += data[ child_pointer + VALUE ];
-              if( data[ child_pointer + TYPE ] != 3 )
+              attrs = '';
+              for( key in data[ i + ATTRS ] )
               {
-                has_only_one_child = 0;
-                one_child_value = '';
-                break;
+                attrs += " <span class='key'>" + 
+                  ( force_lower_case ? key.toLowerCase() : key ) + 
+                  "</span>=<span class='value'>\"" + 
+                  data[ i + ATTRS ][key] + 
+                  "\"</span>";
               }
-            }
-          }
-
-          if( is_open )
-          {
-            if( has_only_one_child )
-            {
-              tree += "<div " + ( data [ i + IS_TARGET ] ? "id='target-element'" : '' ) + 
-                      " style='margin-left:" + 16 * data[ i + DEPTH ] + "px;' "+
-                      "ref-id='"+data[ i + ID ] + "' handler='spotlight-node'>"+
-                      "<span class='node'>&lt;" + node_name +  attrs + "&gt;</span>" +
-                      one_child_value + 
-                      "<span class='node'>&lt;/" + node_name + "&gt;</span>" +
-                      "</div>";
-              i = child_pointer - 10;
             }
             else
             {
-              tree += "<div " + ( data [ i + IS_TARGET ] ? "id='target-element'" : '' ) + 
-                      " style='margin-left:" + 16 * data[ i + DEPTH ] + "px;' "+
-                      "ref-id='"+data[ i + ID ] + "' handler='spotlight-node'>"+
-                      ( data[ i + CHILDREN_LENGTH ] ? 
-                        "<input handler='get-children' type='button' class='open'>" : '' ) +
-                      "<span class='node'>&lt;" + node_name + attrs + "&gt;</span>" +
-                      "</div>";
-
-              closing_tags.push("<div class='node' style='margin-left:" + 
-                                ( 16 * data[ i + DEPTH ] ) + "px;'>" +
-                                "&lt;/" + node_name + "&gt;" +
-                                "</div>");
+              attrs = '';
             }
 
-          }
-          else
-          {
-          tree += "<div " + ( data [ i + IS_TARGET ] ? "id='target-element'" : '' ) + 
-                  " style='margin-left:" + 16 * data[ i + DEPTH ] + "px;' "+
-                  "ref-id='"+data[ i + ID ] + "' handler='spotlight-node'>"+
-                  ( data[ i + CHILDREN_LENGTH ] ? 
-                    "<input handler='get-children' type='button' class='close'>" : '' ) +
-                  "<span class='node'>&lt;" + node_name + attrs + "&gt;</span>" +
-                  "</div>";
-          }
-          break;
-        }
+            child_pointer = i + NEXT;
 
-        case 8:  // comments
-        {
-          if( show_comments )
-          {
-            if( !/^\s*$/.test(data[ i + VALUE ] ) )
+            is_open = ( data[ child_pointer ] && ( data[ i + DEPTH ] < data[ child_pointer + DEPTH ] ) );
+            if( is_open ) 
             {
-              tree += "<div style='margin-left:" + 16 * data[i+5] + "px;' " +      
-                      "class='comment'>&lt;!--" + data[ i + VALUE ] + "--&gt;</div>";
+              has_only_one_child = 1;
+              one_child_value = '';
+              child_level = data[ child_pointer + DEPTH ];
+              for( ; data[child_pointer] &&  data[child_pointer + DEPTH] == child_level; child_pointer += 10 )
+              {
+                one_child_value += data[ child_pointer + VALUE ];
+                if( data[ child_pointer + TYPE ] != 3 )
+                {
+                  has_only_one_child = 0;
+                  one_child_value = '';
+                  break;
+                }
+              }
+            }
+
+            if( is_open )
+            {
+              if( has_only_one_child )
+              {
+                tree += "<div " + ( data[ i + ID ] == target ? "id='target-element'" : '' ) + 
+                        " style='margin-left:" + 16 * data[ i + DEPTH ] + "px;' "+
+                        "ref-id='"+data[ i + ID ] + "' handler='spotlight-node'>"+
+                        "<span class='node'>&lt;" + node_name +  attrs + "&gt;</span>" +
+                        one_child_value + 
+                        "<span class='node'>&lt;/" + node_name + "&gt;</span>" +
+                        "</div>";
+                i = child_pointer - 10;
+              }
+              else
+              {
+                tree += "<div " + ( data[ i + ID ] == target ? "id='target-element'" : '' ) + 
+                        " style='margin-left:" + 16 * data[ i + DEPTH ] + "px;' "+
+                        "ref-id='"+data[ i + ID ] + "' handler='spotlight-node'>"+
+                        ( data[ i + CHILDREN_LENGTH ] ? 
+                          "<input handler='get-children' type='button' class='open'>" : '' ) +
+                        "<span class='node'>&lt;" + node_name + attrs + "&gt;</span>" +
+                        "</div>";
+
+                closing_tags.push("<div class='node' style='margin-left:" + 
+                                  ( 16 * data[ i + DEPTH ] ) + "px;'>" +
+                                  "&lt;/" + node_name + "&gt;" +
+                                  "</div>");
+              }
+
+            }
+            else
+            {
+            tree += "<div " + ( data[ i + ID ] == target ? "id='target-element'" : '' ) + 
+                    " style='margin-left:" + 16 * data[ i + DEPTH ] + "px;' "+
+                    "ref-id='"+data[ i + ID ] + "' handler='spotlight-node'>"+
+                    ( data[ i + CHILDREN_LENGTH ] ? 
+                      "<input handler='get-children' type='button' class='close'>" : '' ) +
+                    "<span class='node'>&lt;" + node_name + attrs + "&gt;</span>" +
+                    "</div>";
+            }
+            break;
+          }
+
+          case 8:  // comments
+          {
+            if( show_comments )
+            {
+              if( !/^\s*$/.test(data[ i + VALUE ] ) )
+              {
+                tree += "<div style='margin-left:" + 16 * data[i+5] + "px;' " +      
+                        "class='comment'>&lt;!--" + data[ i + VALUE ] + "--&gt;</div>";
+              }
+            }
+            break;
+
+          }
+
+          case 10:  // doctype
+          {
+            tree += "<div style='margin-left:" + 16 * data[i+5] + "px;' class='doctype'>"+
+                    "&lt;!doctype " + data[ i + NAME ] +
+                    ( data[ i + ATTRS ].publicId ? 
+                      ( " PUBLIC " + "\"" + data[i+ATTRS].publicId + "\"" ) :"" ) +
+                    ( data[ i + ATTRS ].systemId ?  
+                      ( " \"" + data[ i + ATTRS ].systemId + "\"" ) : "" ) +
+                    "&gt;</div>";
+            break;
+          }
+
+          default:
+          {
+            if( !/^\s*$/.test(data[i+4] ) )
+            {
+              tree += "<div style='margin-left:" + 16 * data[ i + DEPTH ] + "px;'>" + 
+                      data[ i + VALUE ] + "</div>";
             }
           }
-          break;
 
         }
-
-        case 10:  // doctype
-        {
-          tree += "<div style='margin-left:" + 16 * data[i+5] + "px;' class='doctype'>"+
-                  "&lt;!doctype " + data[ i + NAME ] +
-                  ( data[ i + ATTRS ].publicId ? 
-                    ( " PUBLIC " + "\"" + data[i+ATTRS].publicId + "\"" ) :"" ) +
-                  ( data[ i + ATTRS ].systemId ?  
-                    ( " \"" + data[ i + ATTRS ].systemId + "\"" ) : "" ) +
-                  "&gt;</div>";
-          break;
-        }
-
-        default:
-        {
-          if( !/^\s*$/.test(data[i+4] ) )
-          {
-            tree += "<div style='margin-left:" + 16 * data[ i + DEPTH ] + "px;'>" + 
-                    data[ i + VALUE ] + "</div>";
-          }
-        }
-
       }
-    }
-    
+      
 
-    while( closing_tags.length )
-    {
-      tree += closing_tags.pop();
-    }
+      while( closing_tags.length )
+      {
+        tree += closing_tags.pop();
+      }
 
-    renderView(tree, target);
+      renderView(tree, target);
+    }
   }
 }
 

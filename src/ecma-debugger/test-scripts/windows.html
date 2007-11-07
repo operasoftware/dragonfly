@@ -11,6 +11,16 @@
 
 <script>
 
+var template = function()
+{
+  var ret = ['ul'];
+  for( var i = 0; i <200; i++)
+  {
+    ret[ret.length] = ['li', 'item ' + i];
+  }
+  return ret
+}
+
 var check = function(msg)
 {
   document.getElementsByTagName('pre')[0].textContent += msg.type + ': '+ msg.id +'\n';
@@ -22,7 +32,7 @@ onload = function()
   messages.addListener('hide-view', check);
   windows.showWindow('window-1', 'Test', ['div', 'some content']);
   windows.showWindow('window-2', 'Test 2', ['div', 'some other content'], 150, 150);
-  windows.showWindow('window-3', 'Test 3', ['div', 'something'], 200, 200, 200, 200);
+  windows.showWindow('window-3', 'Test 3', ['div', 'something', template()], 200, 200, 200, 200);
 }
 
 </script>
