@@ -254,7 +254,9 @@ xx#debug {
   opacity:.5;
   }
   
-
+#main-button-toolbar {
+  float:left;
+  }
 .dropdowns > li {
   float:left;
   padding:0;

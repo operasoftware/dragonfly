@@ -105,20 +105,7 @@ var debugger = new function()
 
   }
 
-  this['runtimes-reply'] = function(xml)
-  {
-    alert(88);
-    var tag = xml.getNodeData('tag'), handler=null;
-    if(tag && ( handler = tags[parseInt(tag)] ))
-    {
-      handler(xml);
-    }
-    else
-    {
-      throw "runtimes-reply, missing tag";
-    }
-    //self.getEvent();
-  }
+  this['runtimes-reply'] = runtimes.handleRuntimesReplay;
 
 
 

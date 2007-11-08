@@ -12,6 +12,11 @@ var runtimes = new function()
     }
   }
 
+  this.handleRuntimesReplay = function(xml)
+  {
+    parseRuntime(xml);
+  }
+
   var parseRuntime = function(xml)
   {
     var r_ts = xml.getElementsByTagName('runtime'), r_t=null, i=0;

@@ -369,6 +369,11 @@ var action_handler = new function()
     handlers['spotlight-node'].timeout = 0;
   }
 
+  handlers['create-all-runtimes'] = function()
+  {
+    commands.createAllRuntimes();
+  }
+
   this.init = function()
   {
     document.addEventListener('click', handler, false);

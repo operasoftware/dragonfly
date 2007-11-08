@@ -194,4 +194,10 @@ var commands = new function()
     proxy.POST("/" + "ecmascript-debugger", msg);
   }
 
+  this.createAllRuntimes = function()
+  {
+    var msg = "<runtimes><tag></tag><create-all-runtimes/></runtimes>";
+    proxy.POST("/" + "ecmascript-debugger", msg);
+  }
+
 }
