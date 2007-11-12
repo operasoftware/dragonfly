@@ -118,7 +118,6 @@ var commands = new function()
   this.spotlight = function(runtime, node_id)
   {
     var msg = "<spotlight-object>" +
-                "<runtime-id>" + runtime + "</runtime-id>" +
                 "<object-id>" + node_id + "</object-id>" +
               "</spotlight-object>";
     proxy.POST("/" + "ecmascript-debugger", msg);
@@ -127,7 +126,6 @@ var commands = new function()
   this.clearSpotlight = function(runtime)
   {
     var msg = "<spotlight-object>"+
-                "<runtime-id>"+runtime+"</runtime-id>"+
                 "<object-id>0</object-id>"+
               "</spotlight-object>";
     proxy.POST("/" + "ecmascript-debugger", msg);
