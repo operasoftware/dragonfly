@@ -331,7 +331,7 @@ Line 2:
           ' show attributes '],
           ['label',
             ['input', 'type', 'checkbox', 'id', 'checkbox-force-lower-case', 'checked', 'checked'],
-          ' show attributes '],
+          ' lower case node names '],
           ['label',
             ['input', 'type', 'checkbox', 'id', 'checkbox-show-comments'],
           ' show comments '],
