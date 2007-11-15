@@ -200,7 +200,7 @@ var dom_data = new function()
       {
         document_id: items[2].textContent,
         getTreeWithTarget: items[3].textContent,
-        getChildren: items[4].textContent,
+        getChildren: items[4].textContent
       }
       if(views['dom-inspector'].isVisible())
       {
