@@ -8,7 +8,7 @@ var runtimes = new function()
     {
       //alert('runtime: '+ id);
       __runtimes[id] = null;
-      commands.getRuntime( tagManager.setCB(null, parseRuntime), id );
+      services['ecmascript-debugger'].getRuntime( tagManager.setCB(null, parseRuntime), id );
     }
   }
 
@@ -82,7 +82,7 @@ var runtimes = new function()
       var new_b_ps = script['breakpoints'];
       for( b_p in old_b_ps )
       {
-        commands.setBreakpoint(new_script_id, b_p, old_b_ps[b_p]);
+        services['ecmascript-debugger'].setBreakpoint(new_script_id, b_p, old_b_ps[b_p]);
         new_b_ps[b_p] = old_b_ps[b_p];
       }
       delete __scripts[sc];
@@ -193,12 +193,12 @@ var runtimes = new function()
   this.setBreakpoint = function(script_id, line_nr)
   {
     var b_p_id = __scripts[script_id]['breakpoints'][line_nr] = getBreakpointId();
-    commands.setBreakpoint(script_id, line_nr, b_p_id);
+    services['ecmascript-debugger'].setBreakpoint(script_id, line_nr, b_p_id);
   }
 
   this.removeBreakpoint = function(script_id, line_nr)
   {
-    commands.removeBreakpoint( __scripts[script_id]['breakpoints'][line_nr] );
+    services['ecmascript-debugger'].removeBreakpoint( __scripts[script_id]['breakpoints'][line_nr] );
     delete __scripts[script_id]['breakpoints'][line_nr];
   }
 

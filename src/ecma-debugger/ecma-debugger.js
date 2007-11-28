@@ -1,17 +1,17 @@
-
-var debugger = new function()
+(function()
 {
-  var self = this;
-  var service = "ecmascript-debugger";
-
-  this.getEvent = function()
+  var Service = function(name)
   {
-    proxy.GET( "/" + service, genericEventListener );
-  }
 
-  var genericEventListener = function(xml) 
-  {
-    if(xml)
+    var self = this;
+
+    this.onconnect = function()
+    {
+      window.views.js_source.setupBasics();
+      window.views.js_source.setup(1);
+    }
+
+    this.onreceive = function(xml) 
     {
       if( ini.debug )
       {
@@ -19,12 +19,11 @@ var debugger = new function()
       }
       if( tagManager.handleResponse(xml) )
       {
-        //alert('handled by tag manager');
+        
       }
-      else if( self[xml.documentElement.nodeName] )
+      else if( events[xml.documentElement.nodeName] )
       {
-        //alert('handled by else if');
-        self[xml.documentElement.nodeName](xml)
+        events[xml.documentElement.nodeName](xml)
       }
       else
       {
@@ -33,189 +32,280 @@ var debugger = new function()
           debug.output('not implemented: '+new XMLSerializer().serializeToString(xml));
         }
       }
-
-    }
-    self.getEvent();
-  }
-
-
-  
-  var environment = {}
-
-  this.getEnvironment = function()
-  {
-    return environment;
-  }
-
-  /**** generic event listener ****/
-
-
-  this['hello'] = function(xml)
-  {
-    var children = xml.documentElement.childNodes, child=null, i=0;
-    for ( ; child = children[i]; i++)
-    {
-      environment[child.nodeName] = child.textContent;
     }
 
-    views.environment.update();
-    
-    if( ini.protocol_version == environment['protocol-version'] )
+    this.onquit = function()
     {
-      stop_at.setInitialSettings();
 
-      views.configuration.update();
-      views.continues.render();
+    }
+
+
+    var environment = {}
+
+    this.getEnvironment = function()
+    {
+      return environment;
+    }
+
+    /**** event listener ****/
+
+    var events = {};
+
+
+    events['hello'] = function(xml)
+    {
+      var children = xml.documentElement.childNodes, child=null, i=0;
+      for ( ; child = children[i]; i++)
+      {
+        environment[child.nodeName] = child.textContent;
+      }
+
+      views.environment.update();
       
-      helpers.setUpListeners(); // clean this up!
-
-    }
-    else
-    {
-      document.body.render
-      (
-        ['div', 
-          ['h2', 'The debugger works with protocol version ' + ini.protocol_version, 'class', 'failed' ],
-        'class', 'info']
-      );
-
-
-    }
-
-  }
-
-  this['new-script'] = function(xml)
-  {
-    runtimes.handle(xml);
-  }
-
-  this['thread-stopped-at'] = function(xml)
-  {
-    stop_at.handle(xml);
-  }
-
-  this['handle-event'] = function(xml)
-  {
-    tabs.handleEventHandler(xml);
-  }
-
-
-  this['timeout'] = function() 
-  {
-
-  }
-
-  this['runtimes-reply'] = runtimes.handleRuntimesReplay;
-
-
-
-
-  this.setup = function()
-  {
-    var args = location.search, params = {}, arg = '', i = 0, ele = null;
-    if( args )
-    {
-      args = args.slice(1).split(';');
-      for( ; arg = args[i]; i++)
+      if( ini.protocol_version == environment['protocol-version'] )
       {
-        arg = arg.split('=');
-        params[arg[0]] = arg[1] ? arg[1] : true;
-      }
-    }
-    if( params.debug || params['event-flow'] )
-    {
-      if(params.debug) ini.debug = true;
-      if(params['event-flow']) window.__debug_event_flow__ = true;
-    }
-    if( params['profiling'] )
-    {
-      window.__profiling__ = true;
-      window.__times__ = [];
-    }
-    if( params['test'] )
-    {
-      window.__testing__ = true;
-      window.__times_spotlight__ = [];
-    }
-    if( params['profile-dom'] )
-    {
-      window.__times_dom = [];
-    }
-    /*
-    else
-    {
-      var rem = ['command-line', 'debug-container'];
-      for( i = 0; arg = rem[i]; i++)
-      {
-        ele = document.getElementById(arg);
-        ele.parentNode.removeChild(ele);
-      }
-      
-    }
-    */
-    // this is just a quick fix
-    var viewport = document.getElementsByTagName('viewbox')[0];
-    if( viewport )
-    {
-      viewport.insertBefore(document.render(templates.toolbars()), viewport.children[0]);
+        stop_at.setInitialSettings();
 
-      verticalFrames.init
-      (
-        document.getElementById('main-container'), 
-        function(){ return window.innerHeight - document.getElementById('main-container').offsetTop }
-      )
-
-      action_handler.init();
-
-      scroll_handler.init();
-
-      window.views.js_source.setupBasics();
-      window.views.js_source.setup(1);
-
-      var host = location.host.split(':');
-
-      proxy.onsetup = function()
-      {
-        if (!proxy.enable(service))	
-        {
-          alert( 
-        'Could not find an Opera session to connect to.\n' +
-        'Please try the following:\n' + 
-        '1. Open another Opera instance\n' +
-        '2. In that Opera instance, open opera:config and check "Enable Debugging" and "Enable Script Debugging" under "Developer Tools"\n' +
-        '3. Restart that Opera instance' );
-          return;
-        }
-        else
-        {
-          console.setup();
-          self.getEvent();
-        }
+        views.configuration.update();
+        views.continues.render();
+        
+        helpers.setUpListeners(); // clean this up!
 
       }
-      proxy.configure(host[0], host[1]);
+      else
+      {
+        document.body.render
+        (
+          ['div', 
+            ['h2', 'The debugger works with protocol version ' + ini.protocol_version +
+                ', but the Opera version you are connecting to uses version ' + environment['protocol-version'], 'class', 'failed' ],
+          'class', 'info']
+        );
+
+      }
+
     }
-    else
+
+    events['new-script'] = function(xml)
     {
-      opera.postError('missing viewport');
+      runtimes.handle(xml);
     }
+
+    events['thread-stopped-at'] = function(xml)
+    {
+      stop_at.handle(xml);
+    }
+
+    events['handle-event'] = function(xml)
+    {
+      tabs.handleEventHandler(xml);
+    }
+
+    events['runtimes-reply'] = runtimes.handleRuntimesReplay;
+
+
+
+
+
+
+    // constructor calls
+
+    this.initBase(name);
     
+    if( ! client)
+    {
+      opera.postError('client must be created in ecma debugger.js');
+      return;
+    }
+    client.addService(this);
+
+    /***** commands *****/
+
+    var service = "ecmascript-debugger";
+    var self = this;
+
+    var addBreakpointWithSourcePosition = function(script_id, line)
+    {
+      var msg = "<source-position>";
+      msg += "<script-id>" + script_id + "</script-id>";
+      msg += "<line-number>" + line + "</line-number>"
+      msg += "</source-position>";
+      return msg;
+    }
+
+    this.postCommandline = function(msg)
+    {
+      var msg = document.getElementById('command-line').getElementsByTagName('textarea')[0].value;
+      this.post(msg);
+    }
+
+    this.addBreakpoint = function(msg_how, id )
+    {
+      var msg = "<add-breakpoint>";
+      msg += "<breakpoint-id>" + id + "</breakpoint-id>";
+      msg += msg_how;
+      msg += "</add-breakpoint>";
+      this.post(msg);
+    }
+
+    this.removeBreakpoint = function(id)
+    {
+      var msg = "<remove-breakpoint>";
+      msg += "<breakpoint-id>" + id + "</breakpoint-id>";
+      msg += "</remove-breakpoint>";
+      this.post(msg);
+    }
+
+    this.setBreakpoint = function(script_id, line_nr, breakpoint_id)
+    {
+      self.addBreakpoint( addBreakpointWithSourcePosition(script_id, line_nr), breakpoint_id);
+    }
+
+    this.getRuntime = function(/* tag, runtime_1, ... */) 
+    {
+      var msg = "<runtimes>";
+      msg += "<tag>" + arguments[0] +"</tag>";
+      var i=1, r_t=0;
+      for ( ; r_t = arguments[i]; i++)
+      {
+        msg += "<runtime-id>" + r_t +"</runtime-id>";
+      }
+      msg += "</runtimes>";
+      this.post(msg);
+    }
+
+    this.backtrace = function(tag, stopAt)
+    {     
+      var msg = "<backtrace>";
+      msg += "<tag>" + tag + "</tag>";
+      msg += "<runtime-id>" + stopAt['runtime-id'] + "</runtime-id>";
+      msg += "<thread-id>" + stopAt['thread-id'] + "</thread-id>";
+      msg += "<maxframes>" + ini.max_frames + "</maxframes>";  // not sure what is correct here;
+      msg += "</backtrace>";
+      this.post(msg);
+    }
+
+    this.__continue = function (stopAt, mode)
+    {
+      var msg = "<continue>";
+      msg += "<runtime-id>" + stopAt['runtime-id'] + "</runtime-id>";
+      msg += "<thread-id>" + stopAt['thread-id'] + "</thread-id>";
+      msg += "<mode>" + mode + "</mode>";
+      msg += "</continue>";
+      this.post(msg);
+    }
+
+    this.setConfiguration = function() // stopAt
+    {
+      var msg = "<set-configuration>", type='', bol='', i=0; 
+      for ( ; (type = arguments[i++]) && (bol=arguments[i]); i++ )
+      {
+        msg += "<stop-at>" + 
+            ( bol=='yes' ? "<yes/>" : "<no/>" ) +
+            "<stop-type>"+type+"</stop-type>"+
+          "</stop-at>";
+      }
+      msg += "</set-configuration>";
+      this.post(msg);
+    }
+
+    this.addEventHandler = function(id, object_id, event, namespace)
+    {
+      var msg = "<add-event-handler>"+
+          "<handler-id>" + id + "</handler-id>" +
+          "<object-id>" + object_id + "</object-id>" +
+          "<namespace>" + ( namespace ? namespace : "null" ) + "</namespace>" +
+          "<event-type>" + event + "</event-type>" +
+        "</add-event-handler>";
+      this.post(msg);
+    }
+
+    this.removeEventHandler = function(id)
+    {
+      var msg = "<remove-event-handler>" +
+                  "<handler-id>" + id + "</handler-id>" +  
+                "</remove-event-handler>";
+      this.post(msg);
+    }
+
+    this.getDocumentFromRuntime = function(tag, runtime)
+    {
+      var msg = "<eval>" +
+                  "<tag>" + tag + "</tag>" +
+                  "<runtime-id>" + runtime + "</runtime-id>" +
+                  "<thread-id></thread-id>"+
+                  "<frame-id></frame-id>"+
+                  "<script-data>return window.document</script-data>"+
+                "</eval>";
+      this.post(msg);
+    }
+
+    this.spotlight = function(runtime, node_id)
+    {
+      var msg = "<spotlight-object>" +
+                  "<object-id>" + node_id + "</object-id>" +
+                "</spotlight-object>";
+      this.post(msg);
+    }
+
+    this.clearSpotlight = function(runtime)
+    {
+      var msg = "<spotlight-object>"+
+                  "<object-id>0</object-id>"+
+                "</spotlight-object>";
+      this.post(msg);
+    }
+
+    this.examineObjects = function() // tag, runtime_id, object_1, ...
+    {
+      var msg = "<examine-objects>", i = 2;
+      msg += "<tag>" + arguments[0] +"</tag>";
+      msg += "<runtime-id>" + arguments[1] +"</runtime-id>";
+      for( ; i < arguments.length; i++)
+      {
+        msg += "<object-id>" + arguments[i] +"</object-id>";
+      }
+      msg += "</examine-objects>";
+      this.post(msg);
+    }
+
+    this.eval = function(tag, runtime_id, thread_id, frame_id, script_data, name_id_pairs)
+    {
+      var msg = "<eval>"+
+                  "<tag>" + tag + "</tag>" +
+                  "<runtime-id>" + runtime_id + "</runtime-id>" +
+                  "<thread-id>" + thread_id + "</thread-id>" +
+                  "<frame-id>" + frame_id + "</frame-id>" +
+                  "<script-data xml:space=\"preserve\">" + script_data + "</script-data>";
+      
+      if( name_id_pairs )
+      {
+        var i = 0, length = name_id_pairs.length;
+        for( ; i < length; i++ )
+        {
+          msg += "<property>" +
+                   "<property-name>" + name_id_pairs[i++] + "</property-name>" +
+                   "<value-data>" +
+                     "<data-type>object-id</data-type>" +
+                     "<object-id>" + name_id_pairs[i] + "</object-id>" +
+                   "</value-data>" +
+                 "</property>";
+        }
+      }
+      msg += "</eval>";
+      this.post(msg);
+    }
+
+    this.createAllRuntimes = function()
+    {
+      this.post("<runtimes><tag></tag><create-all-runtimes/></runtimes>");
+    }
+
   }
 
+  Service.prototype = ServiceBase;
+  new Service('ecmascript-debugger');
 
-  /**** commands ****/
-
-
-
-  this.postCommandline = function(msg)
-  {
-    var msg = document.getElementById('command-line').getElementsByTagName('textarea')[0].value;
-    proxy.POST("/" + service, msg);
-  }
+})()
 
 
-
-}
-
-
-onload = debugger.setup

@@ -54,7 +54,7 @@ var stop_at = new function()
     else
     {
       stop_at_settings[key] = value;
-      commands.setConfiguration(key, value ? 'yes' : 'no');
+      services['ecmascript-debugger'].setConfiguration(key, value ? 'yes' : 'no');
     }
   }
 
@@ -131,7 +131,7 @@ var stop_at = new function()
       config_arr[config_arr.length] = prop;
       config_arr[config_arr.length] = stop_at_settings[prop] ? 'yes' : 'no';
     }
-    commands.setConfiguration.apply(null, config_arr);
+    services['ecmascript-debugger'].setConfiguration.apply(services['ecmascript-debugger'], config_arr);
   }
 
   this.__continue = function (mode) //
@@ -140,7 +140,7 @@ var stop_at = new function()
 
     runtimes.setObserve(stopAt['runtime-id'], mode != 'run');
 
-    commands.__continue(stopAt, mode);
+    services['ecmascript-debugger'].__continue(stopAt, mode);
     views.continues.update();
   }
 
@@ -180,7 +180,7 @@ var stop_at = new function()
         {
           // the runtime id can be different for each frame. 
           var tag = tagManager.setCB(null, parseBacktrace, [stopAt['runtime-id']]); 
-          commands.backtrace(tag, stopAt);
+          services['ecmascript-debugger'].backtrace(tag, stopAt);
           views.js_source.showLine( stopAt['script-id'], line - 10 );
           views.js_source.showLinePointer( line, true );
           __controls_enabled = true;
@@ -196,7 +196,7 @@ var stop_at = new function()
         runtime_id = stopAt['runtime-id'];
         // the runtime id can be different for each frame. 
         var tag = tagManager.setCB(null, parseBacktrace, [stopAt['runtime-id']]); 
-        commands.backtrace(tag, stopAt);
+        services['ecmascript-debugger'].backtrace(tag, stopAt);
         views.js_source.showLine( stopAt['script-id'], line - 10 );
         views.js_source.showLinePointer( line, true );
         __controls_enabled = true;

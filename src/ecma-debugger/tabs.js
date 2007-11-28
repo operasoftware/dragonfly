@@ -98,7 +98,7 @@ var tabs = new function()
       type_map[id] = event_type;
       callback_map[id] = callback;
       runtime_id_map[id] = runtime_id;
-      commands.addEventHandler(id, node_id, event_type);     
+      services['ecmascript-debugger'].addEventHandler(id, node_id, event_type);     
     }
     else
     {
@@ -123,12 +123,12 @@ var tabs = new function()
           type_map[id] = event_type;
           callback_map[id] = callback;
           runtime_id_map[id] = rt_p;
-          commands.addEventHandler(id, document_map[ rt_p ], event_type);
+          services['ecmascript-debugger'].addEventHandler(id, document_map[ rt_p ], event_type);
         }
         else
         {
           var tag = tagManager.setCB(null, handleAddEventWithDocument, [rt_p, event_type, callback]);
-          commands.getDocumentFromRuntime(tag, rt_p);
+          services['ecmascript-debugger'].getDocumentFromRuntime(tag, rt_p);
         }
       }
     }
@@ -138,7 +138,7 @@ var tabs = new function()
       var id = getHandlerId(event_type, callback);
       if( id )
       {
-        commands.removeEventHandler(id);
+        services['ecmascript-debugger'].removeEventHandler(id);
         delete node_map[id];
         delete type_map[id];
         delete callback_map[id];

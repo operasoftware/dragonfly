@@ -182,7 +182,7 @@ var dom_data = new function()
     if(xml.getNodeData('status') == 'completed' )
     {
      var tag = tagManager.setCB(null, initRuntime, [runtime_id]);
-     commands.examineObjects(tag, runtime_id, xml.getNodeData('object-id'))
+     services['ecmascript-debugger'].examineObjects(tag, runtime_id, xml.getNodeData('object-id'))
     }
     else
     {
@@ -217,7 +217,7 @@ var dom_data = new function()
     for( ; rt_id = tab[i]; i++)
     {
       tag = tagManager.setCB(null, handleInitRuntimeCall, [ rt_id ]);
-      commands.eval
+      services['ecmascript-debugger'].eval
       (
         tag, 
         rt_id, '', '', 
@@ -239,7 +239,7 @@ var dom_data = new function()
     {
       data = [];
       tag = tagManager.setCB(null, handleGetTree, [ rt_id ]);
-      commands.eval
+      services['ecmascript-debugger'].eval
       (
         tag, 
         rt_id, '', '', 
@@ -261,7 +261,7 @@ var dom_data = new function()
     if(xml.getNodeData('status') == 'completed' )
     {
      var tag = tagManager.setCB(null, getTree, [runtime_id]);
-     commands.examineObjects(tag, runtime_id, xml.getNodeData('object-id'))
+     services['ecmascript-debugger'].examineObjects(tag, runtime_id, xml.getNodeData('object-id'))
     }
     else
     {
@@ -330,7 +330,7 @@ var dom_data = new function()
           if( init_rt_id = initializedRuntimes[rt_id] )
           {
             tag = tagManager.setCB(null, handleGetTree, [ rt_id ]);
-            commands.eval
+            services['ecmascript-debugger'].eval
             (
               tag, 
               rt_id, '', '', 
@@ -370,7 +370,7 @@ var dom_data = new function()
     if(xml.getNodeData('status') == 'completed' )
     {
      var tag = tagManager.setCB(null, getChildren, [data_runtime_id, object_id]);
-     commands.examineObjects(tag, runtime_id, xml.getNodeData('object-id'))
+     services['ecmascript-debugger'].examineObjects(tag, runtime_id, xml.getNodeData('object-id'))
     }
     else
     {
@@ -418,7 +418,7 @@ var dom_data = new function()
     if( init_rt_id  )
     {
       tag = tagManager.setCB(null, handleGetChildren, [data_runtime_id, object_id]);
-      commands.eval
+      services['ecmascript-debugger'].eval
       (
         tag, 
         data_runtime_id, '', '', 
@@ -448,7 +448,7 @@ var dom_data = new function()
 
   var spotlight = function(event)
   {
-    commands.spotlight(event['runtime-id'], event['object-id']);
+    services['ecmascript-debugger'].spotlight(event['runtime-id'], event['object-id']);
   }
 
   this.highlight_on_hover = function(event)
@@ -459,7 +459,7 @@ var dom_data = new function()
     }
     else
     {
-      commands.clearSpotlight(data_runtime_id);
+      services['ecmascript-debugger'].clearSpotlight(data_runtime_id);
       tabs.activeTab.removeEventListener('mouseover', spotlight);
     }
   }

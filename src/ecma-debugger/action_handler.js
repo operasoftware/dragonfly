@@ -58,7 +58,7 @@ var action_handler = new function()
         responseHandlers.examinFrame, 
         [runtime_id, frame.argument_id, frame.this_id]
         );
-      helpers.examine_objects( runtime_id, tag, frame.scope_id );
+      services['ecmascript-debugger'].examineObjects( tag, runtime_id, frame.scope_id );
       if( event.type == 'click' )
       {
         helpers.setSelected(event);
@@ -110,7 +110,7 @@ var action_handler = new function()
     {
       var runtime_id = frame_inspection.getRuntimeId();
       var tag = tagManager.setCB(null, responseHandlers.examinObject, [runtime_id, path_arr]);
-      helpers.examine_objects( runtime_id, tag, obj.value );
+      services['ecmascript-debugger'].examineObjects( tag, runtime_id, obj.value );
       event.target.style.backgroundPosition = '0 -11px';
     }
   }
@@ -125,7 +125,7 @@ var action_handler = new function()
       views.frame_inspection.clearView();
       frame_inspection.setNewFrame(runtime['runtime-id'] );
       var tag = tagManager.setCB(null, responseHandlers.examinObject, [ runtime['runtime-id'] ]);
-      helpers.examine_objects( runtime['runtime-id'], tag, runtime['object-id'] );
+      services['ecmascript-debugger'].examineObjects( tag,  runtime['runtime-id'], runtime['object-id'] );
       runtimes.setSelectedRuntime( runtime );
       tabs.setActiveTab(runtime['runtime-id']);
       views.runtimes.update();
@@ -316,7 +316,7 @@ var action_handler = new function()
                     'type', 'button', 
                     'value', 'post', 
                     'style', 'margin-left:10px',
-                    'onclick', 'debugger.postCommandline()'],
+                    'onclick', 'services[\'ecmascript-debugger\'].postCommandline()'],
                 'style', 'text-align: right'],
                 ['div', ['textarea'], 'id', 'command-line-container'],
               'class', 'window-container', 'id', 'command-line']
@@ -355,7 +355,7 @@ var action_handler = new function()
     var obj_id = current_target.getAttribute('ref-id');
     if(obj_id && !handlers['spotlight-node'].timeout )
     {
-      commands.spotlight(rt_id, obj_id);
+      services['ecmascript-debugger'].spotlight(rt_id, obj_id);
       handlers['spotlight-node'].timeout = setTimeout(handlers['spotlight-node'].clearSpotlight, 800, rt_id);
       dom_data.setCurrentTarget(obj_id);
       views['dom-inspector'].updateTarget(current_target);
@@ -365,13 +365,13 @@ var action_handler = new function()
   handlers['spotlight-node'].timeout = 0;
   handlers['spotlight-node'].clearSpotlight = function(rt_id)
   {
-    commands.clearSpotlight(rt_id);
+    services['ecmascript-debugger'].clearSpotlight(rt_id);
     handlers['spotlight-node'].timeout = 0;
   }
 
   handlers['create-all-runtimes'] = function()
   {
-    commands.createAllRuntimes();
+    services['ecmascript-debugger'].createAllRuntimes();
   }
 
   this.init = function()

@@ -125,7 +125,7 @@ views.environment = new function()
     if( container )
     {
       container.innerHTML = '';
-      container.render( templates.hello( debugger.getEnvironment()) );
+      container.render( templates.hello( services['ecmascript-debugger'].getEnvironment()) );
     }
   }
 }

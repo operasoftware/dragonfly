@@ -1,85 +1,82 @@
-
-var console = new function()
+(function()
 {
-  var self = this;
-  var service = "console-logger";
-
-  this.getEvent = function()
+  var Service = function(name)
   {
-    proxy.GET( "/" + service, genericEventListener );
-  }
+    var self = this;
 
-  var messages = [];
+    var messages = [];
 
-  var genericEventListener = function(xml) 
-  {
-    if( xml && self[xml.documentElement.nodeName] )
+    this.onreceive = function(xml) // only called if there is a xml
     {
-      self[xml.documentElement.nodeName](xml)
+      if( self[xml.documentElement.nodeName] )
+      {
+        self[xml.documentElement.nodeName](xml)
+      }
+      else
+      {
+        opera.postError('error in console, genericEventListener');
+      }
     }
-    else
+
+
+    this['message'] = function(message) 
     {
-      opera.postError('error in console, genericEventListener');
+      window.console_messages.handle(message);
     }
-    self.getEvent();
-  }
 
-  this['timeout'] = function() 
-  {
 
-  }
+    // constructor calls
 
-  this['message'] = function(message) 
-  {
-    window.console_messages.handle(message);
-  }
-
-  this.setup = function()
-  {
-    if (!proxy.enable(service))	
+    this.initBase(name);
+    
+    if( ! client)
     {
-      alert( "No service: " + service );
+      opera.postError('client must be created in ecma comsole.js');
       return;
     }
-    else
-    {
-      self.getEvent();
-    }
+    client.addService(this);
+    
   }
-  
-}
-/*
-
-<?xml version="1.0"?>
-<message>
-<time>1194441921</time>
-<uri>file://localhost/d:/cvs-source/scope/http-clients/ecma-debugger/tests/test-console.html</uri>
-<context>Inline script thread</context>
-<severity>error</severity>
-<source>ecmascript</source>
-<description xml:space="preserve">Error:
-name: ReferenceError
-message: Statement on line 2: Undefined variable: b
-Backtrace:
-  Line 2 of inline#1 script in file://localhost/d:/cvs-source/scope/http-clients/ecma-debugger/tests/test-console.html
-    b.b = 'hallo';
-</description>
-</message>
 
 
-<message>
-<time>1194442013</time>
-<uri>file://localhost/d:/cvs-source/scope/http-clients/ecma-debugger/tests/test-console.html</uri>
-<context>Inlined stylesheet</context>
-<severity>information</severity>
-<source>css</source>
-<description xml:space="preserve">xxcolor is an unknown property
 
-Line 2:
-  body {xxcolor:red}
-  --------------^</description></message>
+  /*
 
-*/
+  <?xml version="1.0"?>
+  <message>
+  <time>1194441921</time>
+  <uri>file://localhost/d:/cvs-source/scope/http-clients/ecma-debugger/tests/test-console.html</uri>
+  <context>Inline script thread</context>
+  <severity>error</severity>
+  <source>ecmascript</source>
+  <description xml:space="preserve">Error:
+  name: ReferenceError
+  message: Statement on line 2: Undefined variable: b
+  Backtrace:
+    Line 2 of inline#1 script in file://localhost/d:/cvs-source/scope/http-clients/ecma-debugger/tests/test-console.html
+      b.b = 'hallo';
+  </description>
+  </message>
+
+
+  <message>
+  <time>1194442013</time>
+  <uri>file://localhost/d:/cvs-source/scope/http-clients/ecma-debugger/tests/test-console.html</uri>
+  <context>Inlined stylesheet</context>
+  <severity>information</severity>
+  <source>css</source>
+  <description xml:space="preserve">xxcolor is an unknown property
+
+  Line 2:
+    body {xxcolor:red}
+    --------------^</description></message>
+
+  */
+
+  Service.prototype = ServiceBase;
+  new Service('console-logger');
+
+})()
 
 var console_messages = new function()
 {
@@ -122,5 +119,3 @@ views.console = new function()
     }
   }
 }
-
-//onload = console.setup;

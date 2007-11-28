@@ -8,7 +8,7 @@ var testing = new function()
 
   var spotlight = function(event)
   {
-    commands.spotlight(event['runtime-id'], event['object-id']);
+    services['ecmascript-debugger'].spotlight(event['runtime-id'], event['object-id']);
     if( window.__times_spotlight__ ) 
     {
       debug.profileSpotlight();
@@ -55,7 +55,7 @@ var testing = new function()
                 'value', 'remove event handler',
                 'onclick', function()
                 {
-                  commands.clearSpotlight(__selected_runtime);
+                  services['ecmascript-debugger'].clearSpotlight(__selected_runtime);
                   tabs.activeTab.removeEventListener(this.nextSibling.value, spotlight);
                 }
               ], ['input', 'value', 'mouseover']
