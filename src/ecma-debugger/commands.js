@@ -3,15 +3,6 @@ var commands = new function()
   var service = "ecmascript-debugger";
   var self = this;
 
-  this.addBreakpoint = function(msg_how, id )
-  {
-    var msg = "<add-breakpoint>";
-    msg += "<breakpoint-id>" + id + "</breakpoint-id>";
-    msg += msg_how;
-    msg += "</add-breakpoint>";
-    proxy.POST("/" + service, msg);
-  }
-
   var addBreakpointWithSourcePosition = function(script_id, line)
   {
     var msg = "<source-position>";
@@ -19,6 +10,15 @@ var commands = new function()
     msg += "<line-number>" + line + "</line-number>"
     msg += "</source-position>";
     return msg;
+  }
+
+  this.addBreakpoint = function(msg_how, id )
+  {
+    var msg = "<add-breakpoint>";
+    msg += "<breakpoint-id>" + id + "</breakpoint-id>";
+    msg += msg_how;
+    msg += "</add-breakpoint>";
+    proxy.POST("/" + service, msg);
   }
 
   this.removeBreakpoint = function(id)
@@ -34,7 +34,6 @@ var commands = new function()
     self.addBreakpoint( addBreakpointWithSourcePosition(script_id, line_nr), breakpoint_id);
   }
 
-
   this.getRuntime = function(/* tag, runtime_1, ... */) 
   {
     var msg = "<runtimes>";
@@ -49,8 +48,7 @@ var commands = new function()
   }
 
   this.backtrace = function(tag, stopAt)
-  {
-     
+  {     
     var msg = "<backtrace>";
     msg += "<tag>" + tag + "</tag>";
     msg += "<runtime-id>" + stopAt['runtime-id'] + "</runtime-id>";
@@ -130,27 +128,6 @@ var commands = new function()
               "</spotlight-object>";
     proxy.POST("/" + "ecmascript-debugger", msg);
   }
-
-  /*
-
-  <eval>
-  <tag>1</tag>
-  <runtime-id>1</runtime-id>
-  <thread-id>
-  </thread-id>
-  <frame-id>
-  </frame-id>
-  <script-data>$2()</script-data>
-  <property>
-    <property-name>$2</property-name>
-    <value-data>
-      <data-type>object-id</data-type>
-      <object-id>2</object-id>
-    </value-data>
-  </property>
-</eval>
-
-*/
 
   this.examineObjects = function() // tag, runtime_id, object_1, ...
   {
