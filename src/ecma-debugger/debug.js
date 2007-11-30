@@ -1,4 +1,4 @@
-debug = new function()
+var Debug = function(id, name, container_class)
 {
   //var d_c = null;
   var self = this;
@@ -13,25 +13,35 @@ debug = new function()
 
   var out = [];
 
+  this.createView = function(d_c)
+  {
+    var first_child = d_c.firstChild || d_c.render(['div', 'class', 'padding']);
+    first_child.textContent = out.join('\n');
+    /*
+    if( string && string.indexOf('<timeout/>') == -1 )
+    {
+      //d_c=document.getElementById('debug-container');
+      d_c.scrollTop = d_c.scrollHeight;
+    }
+    */
+  }
+
+  this.scrollToBottom = function(container)
+  {
+    container.scrollTop = container.scrollHeight;
+  }
+
   this.output = function(string)
   {
     if(string) out.push(string);
-    var d_c=document.getElementById('debug');
-    if( d_c )
-    {
-      d_c.textContent = out.join('\n');
-      if( string && string.indexOf('<timeout/>') == -1 )
-      {
-        d_c=document.getElementById('debug-container');
-        d_c.scrollTop = d_c.scrollHeight;
-      }
-    }
+    this.update();
+    this.applyToContainers(this.scrollToBottom);
+
+
   }
 
   this.export = function(string)
   {
-
-    
 
     window.open('data:text/plain;charset=utf-8,'+encodeURIComponent( out.join('\n') ));
 
@@ -40,11 +50,7 @@ debug = new function()
   this.clear = function()
   {
     out = [];
-    var d_c=document.getElementById('debug');
-    if( d_c )
-    {
-      d_c.textContent = '';
-    }
+    this.update();
   }
 
   this.checkProfiling = function()
@@ -140,4 +146,35 @@ debug = new function()
     }
     self.output(ret);
   }
+
+  this.init(id, name, container_class);
 }
+
+Debug.init = function()
+{
+  window.debug = new Debug('debug', 'Debug', 'scroll debug-container');
+  new ToolbarConfig
+  (
+    'debug',
+    [
+      {
+        handler: 'clear-debug-view',
+        title: 'clear debug log'
+      },
+      {
+        handler: 'export-debug-log',
+        title: 'export debug log'
+      }
+    ]
+  )
+  eventHandlers.click['clear-debug-view'] = function(event, target)
+  {
+    debug.clear();
+  }
+  eventHandlers.click['export-debug-log'] = function(event, target)
+  {
+    debug.export();
+  }
+}
+
+Debug.prototype = ViewBase;

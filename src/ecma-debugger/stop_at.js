@@ -15,6 +15,7 @@ var stop_at = new function()
     gc: 0
   }
 
+  // replace with settings['js-source'].get(key)
   var stop_at_user_settings =
   {
     script: 0,
@@ -44,18 +45,28 @@ var stop_at = new function()
     return stop_at_user_settings; // should be  copied
   }
 
+  var onSettingChange = function(msg)
+  {
+    if(msg.id == 'js-source' )
+    {
+      var key = msg.key, value = settings['js-source'].get(key);
+      if( key == 'script' )
+      {
+
+      }
+      else
+      {
+        stop_at_settings[key] = value;
+        services['ecmascript-debugger'].setConfiguration(key, value ? 'yes' : 'no');
+      }
+    }
+  }
+
   this.setUserStopAt = function(key, value)
   {
-    stop_at_user_settings[key] = value; // true or false;
-    if( key == 'script' )
-    {
+    //stop_at_user_settings[key] = value; // true or false;
+    opera.postError('clean up. this should no longer be called. stop_at.setUserStopAt'); 
 
-    }
-    else
-    {
-      stop_at_settings[key] = value;
-      services['ecmascript-debugger'].setConfiguration(key, value ? 'yes' : 'no');
-    }
   }
 
   this.getRuntimeId = function()
@@ -141,7 +152,7 @@ var stop_at = new function()
     runtimes.setObserve(stopAt['runtime-id'], mode != 'run');
 
     services['ecmascript-debugger'].__continue(stopAt, mode);
-    views.continues.update();
+    toolbars.js_source.disableButtons('continue');
   }
 
 
@@ -176,15 +187,17 @@ var stop_at = new function()
       if(stopAt['stopped-reason'] == 'unknown')
       {
         runtime_id = stopAt['runtime-id'];
-        if( stop_at_user_settings.script || runtimes.getObserve(runtime_id))
+        if(  settings['js_source'].get('script') || runtimes.getObserve(runtime_id))
         {
           // the runtime id can be different for each frame. 
           var tag = tagManager.setCB(null, parseBacktrace, [stopAt['runtime-id']]); 
           services['ecmascript-debugger'].backtrace(tag, stopAt);
-          views.js_source.showLine( stopAt['script-id'], line - 10 );
-          views.js_source.showLinePointer( line, true );
+          if( views.js_source.showLine( stopAt['script-id'], line - 10 ) )
+          {
+            views.js_source.showLinePointer( line, true );
+          }
           __controls_enabled = true;
-          views.continues.update();
+          toolbars.js_source.enableButtons('continue');
         }
         else
         {
@@ -197,10 +210,12 @@ var stop_at = new function()
         // the runtime id can be different for each frame. 
         var tag = tagManager.setCB(null, parseBacktrace, [stopAt['runtime-id']]); 
         services['ecmascript-debugger'].backtrace(tag, stopAt);
-        views.js_source.showLine( stopAt['script-id'], line - 10 );
-        views.js_source.showLinePointer( line, true );
+        if( views.js_source.showLine( stopAt['script-id'], line - 10 ) )
+        {
+          views.js_source.showLinePointer( line, true );
+        }
         __controls_enabled = true;
-        views.continues.update();
+        toolbars.js_source.enableButtons('continue');
       }
     }
     else
@@ -208,4 +223,8 @@ var stop_at = new function()
       throw 'not a line number: '+stopAt['line-number'];
     }
   }
+
+
+
+  messages.addListener('setting-changed', onSettingChange);
 }

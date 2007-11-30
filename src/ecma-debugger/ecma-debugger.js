@@ -7,12 +7,12 @@
 
     this.onconnect = function()
     {
-      window.views.js_source.setupBasics();
-      window.views.js_source.setup(1);
+
     }
 
     this.onreceive = function(xml) 
     {
+      
       if( ini.debug )
       {
         debug.formatXML(new XMLSerializer().serializeToString(xml));
@@ -32,6 +32,7 @@
           debug.output('not implemented: '+new XMLSerializer().serializeToString(xml));
         }
       }
+      
     }
 
     this.onquit = function()
@@ -65,11 +66,7 @@
       if( ini.protocol_version == environment['protocol-version'] )
       {
         stop_at.setInitialSettings();
-
-        views.configuration.update();
-        views.continues.render();
         
-        helpers.setUpListeners(); // clean this up!
 
       }
       else
@@ -98,7 +95,7 @@
 
     events['handle-event'] = function(xml)
     {
-      tabs.handleEventHandler(xml);
+      host_tabs.handleEventHandler(xml);
     }
 
     events['runtimes-reply'] = runtimes.handleRuntimesReplay;

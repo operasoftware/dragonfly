@@ -10,7 +10,7 @@ var responseHandlers = new function()
     frame_inspection.addObjects(null, 
       1, 
       {key: 'this', value: this_id, type: 'object', items: []});
-    views.frame_inspection.update(null);
+    views.frame_inspection.updatePath(null);
     debug.checkProfiling();
 
   }
@@ -19,7 +19,7 @@ var responseHandlers = new function()
   {
     //alert(new XMLSerializer().serializeToString(xml))
     frame_inspection.handleExamineObject(xml, path_arr);
-    views.frame_inspection.update(path_arr);
+    views.frame_inspection.updatePath(path_arr);
     debug.checkProfiling();
     /*
     container.render( templates.examineObject(xml, runtime_id) );

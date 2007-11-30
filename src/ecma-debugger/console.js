@@ -85,7 +85,6 @@ var console_messages = new function()
   this.handle = function(message_event)
   {
     var message = {};
-    //alert(new XMLSerializer().serializeToString(message_event))
     var children = message_event.documentElement.childNodes, child=null, i=0, value = '';
     for ( ; child = children[i]; i++)
     {
@@ -93,6 +92,12 @@ var console_messages = new function()
       
     }
     msgs[msgs.length] = message;
+    views.console.update();
+  }
+
+  this.clear = function()
+  {
+    msgs = [];
     views.console.update();
   }
 
@@ -104,18 +109,57 @@ var console_messages = new function()
 };
 
 
-window.views = window.views || {};
 
-views.console = new function()
+(function()
 {
-  var container_id = 'console-view';
-  this.update = function()
+
+  var View = function(id, name, container_class)
   {
-    var container = document.getElementById( container_id ); 
-    if( container )
+    this.createView = function(container)
     {
       container.innerHTML = '';
       container.renderInner(templates.messages(console_messages.getMessages()));
     }
+    this.init(id, name, container_class);
   }
-}
+
+  View.prototype = ViewBase;
+
+  new View('console', 'Error Console', 'scroll error-console');
+
+  new ToolbarConfig
+  (
+    'console',
+    [
+      {
+        handler: 'clear-error-console',
+        title: 'Clear Error Log'
+      }
+    ]
+  )
+
+new Settings
+(
+  'console', 
+  {'css': true, 'ecmascript': true}, 
+  {
+    checkboxes:
+    [
+      {
+        key: 'css',
+        label: ' css error messages'
+      },
+      {
+        key: 'ecmascript',
+        label: ' ecmascript error messages'
+      },
+    ]
+  }
+);
+
+  eventHandlers.click['clear-error-console'] = function(event, target)
+  {
+    console_messages.clear();
+  }
+
+})()

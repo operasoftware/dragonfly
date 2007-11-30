@@ -17,9 +17,6 @@ var scroll_handler = new function()
   }
 
 
-  this.init = function()
-  {
-    document.addEventListener('scroll', handler, false);
-  }
+  document.addEventListener('scroll', handler, false);
 }
 

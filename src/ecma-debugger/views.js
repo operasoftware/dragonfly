@@ -1,189 +1,161 @@
 (function(){ window.views = window.views || {}; })();
 
-views.runtimes = new function()
+(function()
 {
-  var self = this;
-  var container_id = 'runtimes';
-  this.update = function()
+
+
+
+  var View = function(id, name, container_class)
   {
-    var container = document.getElementById('runtimes');
-    if( container )
+    var self = this;
+
+    this.createView = function(container)
     {
       container.innerHTML = '';
       container.render(templates.runtimes(runtimes.getRuntimes()));
     }
+    this.init(id, name, container_class);
   }
-}
+  View.prototype = ViewBase;
+  new View('runtimes', 'Runtimes', 'scroll runtimes');
 
-/*
-      views.configuration.render();
-      views.continues.render();
 
-      document.getElementById('configuration').render(templates.configStopAt(config));
-      document.getElementById('continues').render(templates.continues());
 
-      */
 
-views.configuration = new function()
-{
-  var self = this;
-  var container_id = 'configuration';
-  this.update = function()
+
+  View = function(id, name, container_class)
   {
-    var container = document.getElementById(container_id);
-    if( container )
-    {
-      container.render(templates.configStopAt(stop_at.getStopAts()));
-    }
-  }
-
-}
-
-views.continues = new function()
-{
-  var self = this;
-  var container_id = 'continues';
-  this.render = function()
-  {
-    document.getElementById(container_id).render(templates.continues());
-  }
-  this.update = function()
-  {
-    var bol = !stop_at.getControlsEnabled();
-    var inputs = document.getElementById(container_id).getElementsByTagName('input'),
-        input = null, i=0;
-    for( ; input = inputs[i]; i++)
-    {
-      input.disabled = bol;
-    }
-  }
-}
-
-views.callstack = new function()
-{
-  var container_id = 'backtrace';
-  var __clear_timeout = 0;
-
-  var __clearView = function()
-  {
-    var container = document.getElementById(container_id);
-    if( container ) 
-    {
-      container.innerHTML = ''; 
-      __clear_timeout = 0;
-    }
-  }
-
-  this.update = function()
-  {
-    if( __clear_timeout )
-    {
-      __clear_timeout = clearTimeout( __clear_timeout );
-    }
-    var _frames = stop_at.getFrames(), frame = null, i = 0;
-    var container = document.getElementById(container_id);
-    if( container )
-    {
-      container.innerHTML = '';
-      for( ; frame = _frames[i]; i++)
-      {
-        container.render(templates.frame(frame, i == 0));
-      }
-    }
-  }
-
-  this.clearView = function()
-  {
-    __clear_timeout = setTimeout( __clearView, 150 );
-  }
-}
-
-/*
-views.scope = new function()
-{
-  var container_id = 'examine-objects';
-
-  this.clear = function()
-  {
-    var container = document.getElementById(container_id);
-    container.innerHTML = '';
-  }
-  this.get = function()
-  {
-    return document.getElementById(container_id);
-  }
-}
-*/
-
-views.environment = new function()
-{
-  var self = this;
-  var container_id = 'view-environment';
-  this.update = function()
-  {
-    var container = document.getElementById(container_id);
-    if( container )
+    var self = this;
+    this.createView = function(container)
     {
       container.innerHTML = '';
       container.render( templates.hello( services['ecmascript-debugger'].getEnvironment()) );
     }
+    this.init(id, name, container_class);
   }
-}
+  View.prototype = ViewBase;
+  new View('environment', 'Environment', 'scroll');
 
-views.frame_inspection = new function()
-{
-  var self = this;
-  var container_id = 'examine-objects';
 
-  var getContainer = function(path_arr)
+
+
+
+  View = function(id, name, container_class)
   {
-    var container = document.getElementById(container_id);
-    var prov = null, length = 0, i = 0;
-    if( container )
+    var container_id = 'backtrace';
+    var __clear_timeout = 0;
+
+    var __clearView = function()
     {
-      if( path_arr )
+      var container = document.getElementById(container_id);
+      if( container ) 
       {
-        length = path_arr.length
-        for( ; i < length; i++ )
+        container.innerHTML = ''; 
+        __clear_timeout = 0;
+      }
+    }
+
+    this.createView = function(container)
+    {
+      var list = container.getElementsByTagName('ul')[0];
+      if(!list)
+      {
+        container.innerHTML = "<div id='backtrace-container'><ul id='backtrace'></ul></div>"; // TODO clean up
+        list = container.getElementsByTagName('ul')[0];
+      }
+
+      if( __clear_timeout )
+      {
+        __clear_timeout = clearTimeout( __clear_timeout );
+      }
+      var _frames = stop_at.getFrames(), frame = null, i = 0;
+      list.innerHTML = '';
+      for( ; frame = _frames[i]; i++)
+      {
+        list.render(templates.frame(frame, i == 0));
+      }
+      
+    }
+
+    this.clearView = function()
+    {
+      __clear_timeout = setTimeout( __clearView, 150 );
+    }
+
+    this.init(id, name, container_class);
+  }
+
+  View.prototype = ViewBase;
+  new View('callstack', 'Callstack', 'scroll');
+
+
+
+
+
+  View = function(id, name, container_class)
+  {
+
+    var self = this;
+    var container_id = 'examine-objects';
+
+    var getContainer = function(path_arr)
+    {
+      var container = document.getElementById(container_id);
+      var prov = null, length = 0, i = 0;
+      if( container )
+      {
+        if( path_arr )
         {
-          container = container.getElementsByTagName('ul')[0].childNodes[ path_arr[ i ] ];
-          if( !container )
+          length = path_arr.length
+          for( ; i < length; i++ )
           {
-            opera.postError('Error in views.frame_inspection.update');
-            break;
+            container = container.getElementsByTagName('ul')[0].childNodes[ path_arr[ i ] ];
+            if( !container )
+            {
+              opera.postError('Error in views.frame_inspection.update');
+              break;
+            }
           }
         }
       }
+      return container;
     }
-    return container;
-  }
 
-  this.update = function( path_arr )
-  {
-    var container = getContainer( path_arr );
-    if( container )
+    this.createView = function(container)
     {
-      container.renderInner( templates.examineObject( frame_inspection.getObject( path_arr ).items ) );
+      container.render(['div', ['div', 'id', container_id], 'id', 'examine-objects-container']); // TODO clean up
+      this.updatePath(null);
     }
-  }
 
-  this.clearView = function(path_arr) 
-  {
-    var container = getContainer( path_arr );
-    if( container )
+    this.updatePath = function( path_arr )
     {
-      var ul = container.getElementsByTagName('ul')[0];
-      if( ul )
+      var container = getContainer( path_arr );
+      if( container )
       {
-        container.removeChild( ul );
+        container.renderInner( templates.examineObject( frame_inspection.getObject( path_arr ).items ) );
       }
     }
+
+    this.clearView = function(path_arr) 
+    {
+      var container = getContainer( path_arr );
+      if( container )
+      {
+        var ul = container.getElementsByTagName('ul')[0];
+        if( ul )
+        {
+          container.removeChild( ul );
+        }
+      }
+    }
+
+    this.init(id, name, container_class);
+
   }
-/*
-  this.clear = function()
-  {
-    var container = document.getElementById(container_id);
-    container.innerHTML = '';
-  }
-*/
-}
+
+  View.prototype = ViewBase;
+  new View('frame_inspection', 'Frame Inspection', 'scroll');
+
+})()
+
+

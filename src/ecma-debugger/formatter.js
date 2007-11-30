@@ -15,8 +15,8 @@ var simple_js_parser=new function()
   var __string_delimiter=0;
   var __ret='<ol>';
   var __line='';
-  __line_number = 1;
-  __max_line_number = 0;
+  var __line_number = 1;
+  var __max_line_number = 0;
   var WHITESPACE=
   {
     '\u0009': 1, //  Tab <TAB>

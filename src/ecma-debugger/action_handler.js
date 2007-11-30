@@ -2,7 +2,6 @@ var action_handler = new function()
 {
   var handler = function(event)
   {
-    
     var ele = event.target, handler = ele.getAttribute('handler');
     while( !handler && ( ele = ele.parentElement ) )
     {
@@ -63,7 +62,7 @@ var action_handler = new function()
       {
         helpers.setSelected(event);
         if( frame.script_id )
-        {
+        { // assert view.js_source is visible
           views.js_source.showLine( frame.script_id, frame.line - 10 );
           views.js_source.showLinePointer( frame.line, frame.id == 0 );
         }
@@ -127,7 +126,7 @@ var action_handler = new function()
       var tag = tagManager.setCB(null, responseHandlers.examinObject, [ runtime['runtime-id'] ]);
       services['ecmascript-debugger'].examineObjects( tag,  runtime['runtime-id'], runtime['object-id'] );
       runtimes.setSelectedRuntime( runtime );
-      tabs.setActiveTab(runtime['runtime-id']);
+      host_tabs.setActiveTab(runtime['runtime-id']);
       views.runtimes.update();
     }
   }
@@ -177,7 +176,7 @@ var action_handler = new function()
     views.js_source.clearView();
     views.callstack.clearView();
     views.frame_inspection.clearView();
-    stop_at.__continue(event.target.getAttribute('mode'));
+    stop_at.__continue(event.target.id.slice(9));
   }
 
   handlers['set-stop-at'] = function(event)
@@ -358,7 +357,7 @@ var action_handler = new function()
       services['ecmascript-debugger'].spotlight(rt_id, obj_id);
       handlers['spotlight-node'].timeout = setTimeout(handlers['spotlight-node'].clearSpotlight, 800, rt_id);
       dom_data.setCurrentTarget(obj_id);
-      views['dom-inspector'].updateTarget(current_target);
+      views['dom-markup-style'].updateTarget(current_target);
     }
   }
 
@@ -374,10 +373,7 @@ var action_handler = new function()
     services['ecmascript-debugger'].createAllRuntimes();
   }
 
-  this.init = function()
-  {
-    document.addEventListener('click', handler, false);
-  }
+
 
   this.post = function(handler, event)
   {
@@ -386,4 +382,6 @@ var action_handler = new function()
       handlers[handler](event);
     }
   }
+
+  document.addEventListener('click', handler, false);
 }

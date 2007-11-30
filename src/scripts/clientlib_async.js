@@ -96,15 +96,17 @@ var proxy = new function()
       }
       self.onReceive(x);
       var xml = this.responseXML;
-      /*
-      if(window.__times_dom)
-      {
-        xml.response_length = this.responseText.length;
-      }
-      */
       if (xml.documentElement == null)
       {
-        throw "Message failed, GET, empty document: " + this.responseText;
+        if(client)
+        {
+          client.onquit();
+          return;
+        }
+        else
+        {
+          throw "Message failed, GET, empty document: " + this.responseText;
+        }
       }
       if(cb) 
       {

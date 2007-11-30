@@ -1,0 +1,558 @@
+viewport {
+  width:100%;
+  height:100%;
+  display:block;
+  font-family:sans-serif;
+  font-size:12px;
+  }
+
+main-view {
+  width:100%;
+  height:100%;
+  display:block;
+  position:relative;
+  background-color:#ccc;
+  z-index:1;
+  }
+
+windows-container, 
+toolbar, 
+tabs, 
+container, 
+top-tabs, 
+statusbar, 
+top-statusbar, 
+top-container, 
+top-toolbar {
+  display:block;
+  position:absolute;
+  }
+
+/* set with css. height, border and padding are supported */
+
+top-container {
+  border-bottom: 1px solid #666;
+  border-left: 1px solid #666;
+  border-right: 1px solid #666;
+  padding:4px;
+  }
+
+/* set with css. height, border and padding are supported */
+
+container {
+  border-top: 1px solid #666;
+  border-left: 1px solid #666;
+  border-right: 1px solid #666;
+  background-color:#fff;
+  overflow:hidden;
+  } 
+
+window container {
+  display:block;
+  position:relative;
+  border-width:0;
+  border-top:1px solid #999;
+  border-bottom:1px solid #999;
+  }
+
+/* set with css. height, border and padding are supported */
+
+top-statusbar {
+  background-color:#e8e8e8;
+  line-height:25px;
+  height:25px;
+  overflow:hidden;
+  }
+
+window-statusbar {
+  display:block;
+  background-color:#e8e8e8;
+  line-height:25px;
+  height:25px;
+  }
+
+info {
+  padding:0 7px;
+  }
+
+
+.scroll {
+  overflow:auto;
+  }
+
+top-toolbar {
+  background-color:#b9b9b9;
+  height:22px;
+  }
+
+window-toolbar {
+  display:block;
+  height:22px;
+  background-color:#e8e8e8;
+  border-top:1px solid #999;
+  }
+
+/* set with css. height, border and padding are supported */
+
+toolbar {
+  border-top: 1px solid #666;
+  border-left: 1px solid #666;
+  border-right: 1px solid #666;
+  background-color:#e8e8e8;
+  height:22px;
+  }
+
+toolbar-buttons {
+  display:block;
+  float:left;
+  }
+
+toolbar-buttons input{
+  width:20px;
+  height:20px;
+  margin:1px;
+  padding:0;
+  cursor:pointer;
+  border:none;
+  background:transparent url('../ui-images/test.png') scroll no-repeat 0 0;
+  }
+
+toolbar-buttons input[disabled] {
+  opacity:.3;
+  }
+
+toolbar-buttons input:hover {
+  background-position:0 -20px;
+  }
+
+toolbar-buttons input:active {
+  background-position:0 -40px;
+  }
+
+toolbar-buttons input[disabled]:hover,
+toolbar-buttons input[disabled]:active {
+  background-position:0 0;
+  }
+
+
+toolbar-filters {
+  display:block;
+  float:right;
+  }
+
+/* set with css. height, border and padding are supported */
+
+tabs {
+  background:#ccc url('../ui-images/tab-border.png') scroll repeat-x 0 0;
+  height:24px;
+  }
+
+top-tabs {
+  background:#b9b9b9 url('../ui-images/tab-border.png') scroll repeat-x 0 100%;
+  height:24px;
+  }
+
+tab {
+  display:inline-block;
+  background:transparent url('../ui-images/tab.png') scroll no-repeat 100% 0;
+  height:24px;
+  line-height:24px;
+  margin:0 2px 0 0;
+  }
+
+top-tabs tab {
+  background:transparent url('../ui-images/top-tab.png') scroll no-repeat 100% 0;
+  }
+
+input[handler="top-settings"] {
+  width:20px;
+  height:20px;
+  margin:2px;
+  padding:0;
+  cursor:pointer;  
+  background:transparent url('../ui-images/config.png') scroll no-repeat 0 0;
+  border:none;
+  float:right;
+  }
+
+input[handler="top-settings"]:hover {
+  background-position:0 -20px;
+  }
+
+input[handler="top-settings"]:active {
+  background-position:0 -40px;
+  }
+
+input[handler="tab"]{
+  background:transparent url('../ui-images/tab-left.png') scroll no-repeat 0 0;
+  border:none;
+  margin:0;
+  padding:0;
+  padding-left:7px;
+  padding-right:7px; /* to be removed when the close buttons are activated */
+  height:24px;
+  line-height:24px;
+  cursor: pointer;
+  }
+
+top-tabs input[handler="tab"]{
+  background:transparent url('../ui-images/top-tab-left.png') scroll no-repeat 0 0;
+  }
+
+tab:hover {
+  background-position:100% -24px;
+  }
+
+tab:hover input[handler="tab"]{
+  background-position:0 -24px;
+  }
+
+tab.active {
+  background-position:100% -48px;
+  }
+
+tab.active input[handler="tab"]{
+  background-position:0 -48px;
+  }
+
+input[handler="close-tab"] {
+  background:transparent url('../ui-images/close.png') scroll no-repeat 50% 0;
+  border:none;
+  padding:0;
+  margin:0px 2px;
+  width:12px;
+  height:12px;
+  line-height:12px;
+  vertical-align: -1px;
+  cursor: pointer;
+  }
+
+input[handler="close-tab"]:hover {
+  background-position:50% -12px;
+  }
+
+.default-container {
+  padding:7px;
+  }
+
+settings-container, settings, settings-header, checkboxes, checkbox {
+  display:block;
+  }
+
+settings {
+  margin:12px 0;
+  padding:3px 0;
+  border:1px solid #ccc;
+  }
+
+settings-header {
+  font-size: 1.2em;
+  }
+
+settings-header input {
+  background:transparent url('../ui-images/toggle.png') scroll no-repeat 0 0;
+  border:none;
+  padding:0;
+  margin:0px 5px;
+  width:14px;
+  height:14px;
+  cursor: pointer;
+  }
+
+settings-header input:hover {
+  background-position: 0 -14px;
+  }
+
+settings-header input:active {
+  background-position: 0 -28px;
+  }
+
+settings-header input.unfolded {
+  background-position: -14px 0;
+  }
+
+settings-header input.unfolded:hover {
+  background-position: -14px -14px;
+  }
+
+settings-header input.unfolded:active {
+  background-position: -14px -28px;
+  }
+
+checkboxes {
+  padding-left: 26px;
+  }
+
+settings-container {
+  padding: 7px;
+  }
+
+view-slider {
+  display:block;
+  position:absolute;
+  }
+
+view-slider.vertical {
+  cursor: w-resize;
+  }
+
+view-slider.horizontal {
+  cursor: s-resize;
+  }
+
+ui-menu {
+  display: block;
+  float:right;
+  width:80px;
+  cursor:pointer;
+  position:relative;
+  margin-right:7px;
+  }
+
+ui-menu > h2 {
+  padding:0;
+  padding-left:7px;
+  margin:0;
+  font-weight:normal;
+  font-size:14px;
+  background:transparent url('../ui-images/menu.png') scroll no-repeat 0 0;
+  height:24px;
+  line-height:24px;
+  }
+
+ui-menu > h2:after {
+  display:block;
+  width:7px;
+  height:24px;
+  content:'';
+  float:right;
+  background:transparent url('../ui-images/menu-right.png') scroll no-repeat 100% 0;
+  }
+
+ui-menu:hover > h2 {
+  background-position: 0 -24px;
+  }
+
+ui-menu:hover > h2:after {
+  background-position: 100% -24px;
+  }
+
+ui-menu ul {
+  position:absolute;
+  right:0;
+  top:24px;
+  background-color:#ccc;
+  margin:0;
+  padding:0;
+  list-style:none;
+  z-index:10;
+  }
+
+ui-menu li {
+  padding:0;
+  padding-left:7px;
+  min-width:80px;
+  background:transparent url('../ui-images/menu.png') scroll no-repeat 0 -1px;
+  }
+
+
+ui-menu li h2 {
+  height:22px;
+  line-height:22px;
+  padding:0;
+  margin:0;
+  padding-right:7px;
+  font-weight:normal;
+  font-size:14px;
+  background:transparent url('../ui-images/menu-right.png') scroll no-repeat 100% -1px;
+  white-space: nowrap;
+  }
+
+ui-menu ul li:hover {
+  background-position: 0 -25px;
+  }
+
+ui-menu ul li:hover h2 {
+  background-position: 100% -25px;
+  }
+
+
+window-control {
+  display:block;
+  position:absolute;
+  }
+
+window-header {
+  display:block;
+  background-color:#ccc;
+  color:#000;
+  cursor:move;
+  padding-left:.5em;
+  height:20px;
+  line-height:20px;
+  }
+
+[handler='window-close'] {
+  float:right;
+  width:16px;
+  height:16px;
+  margin:2px;
+  position:relative;
+  cursor:pointer;
+  background:transparent url('../ui-images/window-close.png') scroll no-repeat 50% 50%;
+  }
+
+[handler='window-scale-top-left'] {
+  left:-5px;
+  top:-5px;
+  width:10px;
+  height:10px;
+  cursor:nw-resize;
+  }
+
+[handler='window-scale-top'] {
+  left:5px;
+  right:5px;
+  top:-5px;
+  height:10px;
+  cursor:s-resize;
+  }
+
+[handler='window-scale-top-right'] {
+  right:-5px;
+  width:10px;
+  height:10px;
+  top:-5px;
+  cursor:sw-resize;
+  }
+
+[handler='window-scale-right'] {
+  right:-5px;
+  width:10px;
+  top:5px;
+  bottom:5px;
+  cursor:w-resize;
+  }
+
+[handler='window-scale-left'] {
+  left:-5px;
+  width:10px;
+  top:5px;
+  bottom:5px;
+  cursor:w-resize;
+  }
+
+[handler='window-scale-bottom'] {
+  left:0;
+  bottom:-5px;
+  height:10px;
+  right:5px;
+  cursor:s-resize;
+  }
+
+[handler='window-scale-bottom-right'] {
+  bottom:-5px;
+  height:10px;
+  width:10px;
+  right:-5px;
+  cursor:nw-resize;
+  }
+
+[handler='window-scale-bottom-left'] {
+  bottom:-5px;
+  height:10px;
+  width:10px;
+  left:-5px;
+  cursor:sw-resize;
+  }
+
+/* perhaps we could do this with svg's */
+
+windows-container {
+  width:100%;
+  height:100%;
+  display:block;
+  overflow:hidden;
+  left:0;
+  top:0;
+  }
+
+window {
+  display:block;
+  position:absolute;
+  height:300px;
+  background-color:#fff;
+  background-color:#f5f5f5;
+  border:1px solid #999;
+  left:20px;
+  }
+
+window-shadow {
+  display:block;
+  position:absolute;
+  }
+
+window-shadow.top-left {
+  left:-5px;
+  top:-5px;
+  width:7px;
+  height:7px;
+  background:transparent url('../ui-images/shadow-top-left.png') scroll repeat-x 0 0;
+  }
+
+window-shadow.top {
+  left:2px;
+  top:-5px;
+  right:2px;
+  height:4px;
+  background:transparent url('../ui-images/shadow-top.png') scroll repeat-x 0 0;
+  }
+
+window-shadow.top-right {
+  right:-7px;
+  top:-5px;
+  height:7px;
+  width:9px;
+  background:transparent url('../ui-images/shadow-top-right.png') scroll no-repeat 0 0;
+  }
+
+window-shadow.right {
+  right:-7px;
+  top:2px;
+  bottom:2px;
+  width:6px;
+  background:transparent url('../ui-images/shadow-right.png') scroll repeat-y 0 0;
+  }
+
+window-shadow.bottom {
+  right:2px;
+  bottom:-7px;
+  left:2px;
+  height:6px;
+  background:transparent url('../ui-images/shadow-bottom.png') scroll repeat-x 0 0;
+  }
+
+window-shadow.bottom-right {
+  right:-7px;
+  bottom:-7px;
+  height:9px;
+  width:9px;
+  background:transparent url('../ui-images/shadow-bottom-right.png') scroll no-repeat 0 0;
+  }
+
+window-shadow.bottom-left {
+  left:-5px;
+  bottom:-7px;
+  height:9px;
+  width:7px;
+  background:transparent url('../ui-images/shadow-bottom-left.png') scroll no-repeat 0 0;
+  }
+
+window-shadow.left {
+  left:-5px;
+  top:2px;
+  bottom:2px;
+  width:4px;
+  background:transparent url('../ui-images/shadow-left.png') scroll repeat-y 0 0;
+  }
+

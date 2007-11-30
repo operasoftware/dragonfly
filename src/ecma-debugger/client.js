@@ -79,7 +79,7 @@ var client = new function()
         function(){ return window.innerHeight - document.getElementById('main-container').offsetTop }
       )
 
-      action_handler.init();
+      //action_handler.init();
 
       scroll_handler.init();
 

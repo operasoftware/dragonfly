@@ -4,6 +4,7 @@
   - "active-tab" as runtime was selected array msg.activeTab
   - "show-view" a view was created id msg.view
   - "hide-view" a view was removed id msg.view
+  - "setting-changed" a setting has changed msg.id view_id, msg.key key
 
 */
 

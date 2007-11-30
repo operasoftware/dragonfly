@@ -1,4 +1,4 @@
-var tabs = new function()
+var host_tabs = new function()
 {
   var self = this;
   /* an array with all runtime ids off the active tab */
@@ -102,7 +102,7 @@ var tabs = new function()
     }
     else
     {
-      opera.postError( 'Error in tabs handleAddEventWithDocument');
+      opera.postError( 'Error in host_tabs handleAddEventWithDocument');
     }
      
   }

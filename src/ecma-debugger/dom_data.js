@@ -2,7 +2,7 @@ var dom_data = new function()
 {
   var self = this;
 
-  var view_id = 'dom-inspector';  // this needs to bre handled in a more general and sytematic way.
+  var view_ids = ['dom-markup-style', 'dom-tree-style'];  // this needs to be handled in a more general and sytematic way.
 
   var initializedRuntimes = {};
 
@@ -202,9 +202,13 @@ var dom_data = new function()
         getTreeWithTarget: items[3].textContent,
         getChildren: items[4].textContent
       }
-      if(views['dom-inspector'].isVisible())
+      var view_id = '', i = 0;
+      for( ; view_id = view_ids[i]; i++)
       {
-        onShowView({id: 'dom-inspector'})
+        if(views[view_id].isvisible())
+        {
+          onShowView({id: view_id})
+        }
       }
     }
   }
@@ -308,7 +312,12 @@ var dom_data = new function()
       window.__times_dom[window.__times_dom.length] = new Date().getTime();
     }
     data_runtime_id = runtime_id;
-    views['dom-inspector'].update(true);
+    var view_id = '', i = 0;
+    for( ; view_id = view_ids[i]; i++)
+    {
+      views[view_id].update();
+      views[view_id].scrollTargetIntoView();
+    }
     if(window.__times_dom)
     {
       window.__times_dom[window.__times_dom.length] = new Date().getTime();
@@ -316,14 +325,64 @@ var dom_data = new function()
     }
   }
 
+
+
+  var onSettingChange = function(msg)
+  {
+    var msg_id = msg.id, id = '', i = 0;
+    for( ; ( id = view_ids[i] ) && id != msg_id; i++);
+    if( id )
+    {
+      switch (msg.key)
+      {
+        case 'highlight-on-hover':
+        {
+          if(settings[id].get(msg.key))
+          {
+            host_tabs.activeTab.addEventListener('mouseover', spotlight);
+          }
+          else
+          {
+            services['ecmascript-debugger'].clearSpotlight(data_runtime_id);
+            host_tabs.activeTab.removeEventListener('mouseover', spotlight);
+          }
+          break;
+        }
+
+        case 'find-with-click':
+        {
+          if(settings[id].get(msg.key))
+          {
+            host_tabs.activeTab.addEventListener('click', clickHandlerHost);
+          }
+          else
+          {
+            host_tabs.activeTab.removeEventListener('click', clickHandlerHost);
+          }
+          break;
+        }
+
+      }
+    }
+  }
+
   var onShowView = function(msg)
   {
-    if(msg.id == view_id )
+    var msg_id = msg.id, id = '', i = 0;
+    for( ; ( id = view_ids[i] ) && id != msg_id; i++);
+    if( id )
     {
       if( !data.length )
       {
-        tabs.activeTab.addEventListener('click', clickHandlerHost);
-        var tab = tabs.getActiveTab(), rt_id = '', i = 0, tag = 0;
+        if(settings[id].get('find-with-click'))
+        {
+          host_tabs.activeTab.addEventListener('click', clickHandlerHost);
+        }
+        if(settings[id].get('highlight-on-hover'))
+        {
+          host_tabs.activeTab.addEventListener('mouseover', spotlight);
+        }
+        var tab = host_tabs.getActiveTab(), rt_id = '', i = 0, tag = 0;
         var init_rt_id = null;
         for( ; rt_id = tab[i]; i++)
         {
@@ -386,7 +445,7 @@ var dom_data = new function()
     //opera.postError(new_data);
     
     /* */
-    var i = 0, j = 0;
+    var i = 0, j = 0, k = 0, view_id = '';
     //var ref = self.update_ref;
     //var new_data = [];
     //if( ref )
@@ -400,7 +459,10 @@ var dom_data = new function()
           //arr[j+6] = eval( "({" + arr[j+6] + "})" );
         }
         data = data.slice(0, i+10).concat(new_data, data.slice(i+10));
-        views['dom-inspector'].update();
+        for( ; view_id = view_ids[k]; k++)
+        {
+          views[view_id].update();
+        }
       }
       else
       {
@@ -429,7 +491,7 @@ var dom_data = new function()
 
   this.closeNode = function(object_id)
   {
-    var i = 0, j = 0, level = 0;
+    var i = 0, j = 0, level = 0, k = 0, view_id = '';
     for( ; data[i] && data[i] != object_id; i += 10);
     if( data[i] )
     {
@@ -438,7 +500,10 @@ var dom_data = new function()
       j = i;
       while( data[j] && data[j + DEPTH ] > level ) j+=10;
       data.splice(i, j - i);
-      views['dom-inspector'].update();
+      for( ; view_id = view_ids[k]; k++)
+      {
+        views[view_id].update();
+      }
     }
     else
     {
@@ -455,12 +520,12 @@ var dom_data = new function()
   {
     if(event.target.checked)
     {
-      tabs.activeTab.addEventListener('mouseover', spotlight);
+      host_tabs.activeTab.addEventListener('mouseover', spotlight);
     }
     else
     {
       services['ecmascript-debugger'].clearSpotlight(data_runtime_id);
-      tabs.activeTab.removeEventListener('mouseover', spotlight);
+      host_tabs.activeTab.removeEventListener('mouseover', spotlight);
     }
   }
 
@@ -509,16 +574,17 @@ var dom_data = new function()
   {
     if(event.target.checked)
     {
-      tabs.activeTab.addEventListener('click', clickHandlerHost);
+      host_tabs.activeTab.addEventListener('click', clickHandlerHost);
     }
     else
     {
-      tabs.activeTab.removeEventListener('click', clickHandlerHost);
+      host_tabs.activeTab.removeEventListener('click', clickHandlerHost);
     }
   }
   
   messages.addListener('active-tab', onActiveTab);
   messages.addListener('show-view', onShowView);
   messages.addListener('hide-view', onHideView);
+  messages.addListener('setting-changed', onSettingChange);
 
 }

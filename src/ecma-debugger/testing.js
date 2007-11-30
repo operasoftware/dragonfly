@@ -40,7 +40,7 @@ var testing = new function()
                   __selected_runtime = runtimes.getSelectedRuntimeId();
                   if(__selected_runtime)
                   {
-                    tabs.activeTab.addEventListener(this.nextSibling.value, spotlight);
+                    host_tabs.activeTab.addEventListener(this.nextSibling.value, spotlight);
                   }
                   else
                   {
@@ -56,7 +56,7 @@ var testing = new function()
                 'onclick', function()
                 {
                   services['ecmascript-debugger'].clearSpotlight(__selected_runtime);
-                  tabs.activeTab.removeEventListener(this.nextSibling.value, spotlight);
+                  host_tabs.activeTab.removeEventListener(this.nextSibling.value, spotlight);
                 }
               ], ['input', 'value', 'mouseover']
             ]

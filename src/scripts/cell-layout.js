@@ -1,14 +1,4 @@
-
-
-
-
-var Cell = function(rough_cell, dir, parent, container)
-{
-  this.init(rough_cell, dir, parent, container)
-}
-
-
-Cell.prototype = new function()
+CellBase = function()
 {
   const VER = 'v', HOR = 'h';
 
@@ -65,6 +55,7 @@ Cell.prototype = new function()
         }
         previous = child;
         child = next;
+        // is previoue set for the last?
       }
     }
   }
@@ -351,7 +342,7 @@ Cell.prototype = new function()
       if( delta)
       {
         var newDim = this[dim] + delta;
-        if( newDim >= defaults['min_' + dim] )
+        if( newDim >= defaults['min_' + dim] || newDim >= this[dim] )
         {
           this['checked_' + dim] = newDim;
         }
@@ -368,7 +359,7 @@ Cell.prototype = new function()
     }
     return delta_applied;
   }
-  /*
+  
   this.getCapTarget = function(dim, target)
   {
     if( !this.children.length ) return 0;
@@ -384,7 +375,7 @@ Cell.prototype = new function()
     }
     return this[dim] - sum;
   }
-  */
+  
   this.handleResizeEvent = function(event, _delta)
   {
     var dim = this.dir == HOR ? 'height' : 'width';
@@ -410,6 +401,7 @@ Cell.prototype = new function()
         cap_holder = this;
         
         //cap = this.parent.getCapTarget(dim, this) - this[dim];
+        //opera.postError('bigger');
         //opera.postError('+: '+cap+' '+consumed+' '+delta +' '+(delta + consumed))
         /*
         if( cap = delta + consumed  )
@@ -423,6 +415,7 @@ Cell.prototype = new function()
           this.parent.clearCheckedDimesions();
         }
         */
+        
       }
       else
       {
@@ -446,7 +439,9 @@ Cell.prototype = new function()
           this.parent.clearCheckedDimesions();
         }
         */
+        
       }
+      
       if( cap = delta + consumed  )
       {
         cap_holder.checkDelta(dim, cap, 'next');
@@ -457,7 +452,15 @@ Cell.prototype = new function()
       {
         this.parent.clearCheckedDimesions();
       }
+      
     }
   }
 }
+
+var Cell = function(rough_cell, dir, parent, container)
+{
+  this.init(rough_cell, dir, parent, container)
+}
+
+Cell.prototype = new CellBase();
 

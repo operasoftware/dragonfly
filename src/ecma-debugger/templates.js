@@ -1,4 +1,4 @@
-templates = new function()
+(function()
 {
   var self = this; 
   this.hello = function(enviroment)
@@ -9,7 +9,7 @@ templates = new function()
     {
       ret[ret.length] = ['li', prop+': '+enviroment[prop]];
     }
-    return ret;
+    return ['div', ret, 'class', 'padding'];
   }
 
   this.runtimes = function(runtimes)
@@ -23,7 +23,7 @@ templates = new function()
         ret[ret.length] = self.runtimeId(runtimes[cur]);
       }
     }
-    return ret.concat(['class', 'folder']);
+    return ['div', ret.concat(['class', 'folder']), 'class', 'padding'];
   }
 
   this.runtimeId = function(runtime)
@@ -229,11 +229,19 @@ MODE ::= "<mode>"
   {
     var message = null, i = 0;
     var ret = ['div'];
+    var is_enabled = 
+    {
+      css: settings.console.get('css'),
+      ecmascript: settings.console.get('ecmascript')
+    };
     for( ; message = messages[i]; i++)
     {
-      ret[ret.length] = self.message(message);
+      if(is_enabled[message.source])
+      {
+        ret[ret.length] = self.message(message);
+      }
     }
-    return ret;
+    return ret.concat(['class', 'padding']);
   }
 
 /*
@@ -351,4 +359,4 @@ Line 2:
     'class', 'window-container', 'id', 'dom-view-container']
   }
 
-}
+}).apply(window.templates? window.templates : ( window.templates = {} ));

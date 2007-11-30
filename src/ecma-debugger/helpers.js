@@ -63,11 +63,9 @@ helpers = new function()
       }
     }
   }
+  
+  document.addEventListener('keypress', keypressListener, true);
 
-  this.setUpListeners = function()
-  {
-    document.addEventListener('keypress', keypressListener, true);
-  }
 
 
 

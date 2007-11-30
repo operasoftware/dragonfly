@@ -221,7 +221,7 @@ xx#debug {
   margin-left:5px;
   }
 
-#continues input {
+input[handler="continue"] {
   width:36px;
   height:22px;
   background-color:transparent;
@@ -249,6 +249,12 @@ xx#debug {
 #continue-step-out-of-call {
   background-image:url('step-out.png');
   } 
+
+/* TODO overrides ui.css quick fix */
+
+toolbar-buttons input[handler="continue"]:active {
+  background-position:-1px -1px;
+  }
 
 #continues input[DISABLED] {
   opacity:.5;
@@ -306,17 +312,38 @@ xx#debug {
   overflow:auto;
   }
 
+/*** views ***/
 
-#console-view pre {
+.padding {
+  padding:9px;
+  }
+
+/*** view error console ***/
+
+
+
+.error-console pre {
   white-space:pre-wrap;
   border:1px solid #ccc;
   background-color:#fffcf0;
   padding:.5em;
   font-family:monospace;
+  font-size:12px;
   margin:.5em 0 1.5em 0;
   }
 
-#runtimes .selected-runtime {
+
+
+/*** view debug ***/
+
+
+
+.debug-container > div {
+  white-space:pre;
+  xxfont-family:monospace;
+}
+
+.selected-runtime {
   font-weight:bold;
   color:#09f;
 }
@@ -329,8 +356,9 @@ xx#debug {
   width:60%px;
   height:100px;
   border:5px solid red;
-  background-color:#fff;
+  background-color:#fce8cf;
   padding:20px;
+  z-index:100;
   }
 
 .info h2 {
