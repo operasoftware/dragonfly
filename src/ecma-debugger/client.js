@@ -42,25 +42,28 @@ var client = new function()
     }
     if( params.debug || params['event-flow'] )
     {
-      if(params.debug) ini.debug = true;
       Debug.init();
+      if(params.debug) ini.debug = true;
       if(params['event-flow']) window.__debug_event_flow__ = true;
     }
 
     if( params['profiling'] )
     {
+      Debug.init();
       window.__profiling__ = true;
       window.__times__ = [];
     }
 
     if( params['test'] )
     {
+      Debug.init();
       window.__testing__ = true;
       window.__times_spotlight__ = [];
     }
 
     if( params['profile-dom'] )
     {
+      Debug.init();
       window.__times_dom = [];
     }
 
