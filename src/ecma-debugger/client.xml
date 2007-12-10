@@ -66,10 +66,14 @@
 <script src="responseHandlers.js"/>
 <script src="tag.js"/>
 
-<script src="client.js"/> <!--  for a standalone proxy-->
-<!--  <script src="client_with_proxy.js"/> for the opera with the build in proxy -->
-
-
+<script>
+<![CDATA[
+  document.documentElement.render
+  (
+    ['script', 'src', opera && opera.scopeAddClient ? 'client_with_proxy.js' : 'client.js']
+  );
+]]>
+</script>
 <script src="serviceBase.js"/>
 <script src="console.js"/>
 <script src="ecma-debugger.js"/>
