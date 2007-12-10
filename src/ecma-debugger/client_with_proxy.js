@@ -215,7 +215,7 @@ var client = new function()
   this.post = function(service, msg)
   {
     opera.postError('command: '+service+' '+ msg)
-    opera.scopeSendToHost(service, msg)
+    opera.scopeSendToHost(service, "<?xml version=\"1.0\"?>" + msg)
   }
 
   document.addEventListener('load', this.setup, false);
