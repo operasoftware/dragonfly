@@ -375,6 +375,7 @@ toolbar-buttons input[handler="continue"]:active {
   }
 
 #console-output div,
+#console-output pre,
 #console-input div, 
 #console-input textarea, 
 #console-input pre {
@@ -382,7 +383,6 @@ toolbar-buttons input[handler="continue"]:active {
   line-height:16px;
   font-size:14px !important;
   font-family:monospace;
-  xxborder:1px solid blue;
   padding:0;
   margin:0;
   }

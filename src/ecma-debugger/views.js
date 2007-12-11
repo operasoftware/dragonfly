@@ -236,8 +236,7 @@
       if(rt_id)
       {
         var tag = tagManager.setCB(null,handleEval);
-        // this.eval = function(tag, runtime_id, thread_id, frame_id, script_data, name_id_pairs)
-        services['ecmascript-debugger'].eval(tag, rt_id, '', '', input);
+        services['ecmascript-debugger'].eval(tag, rt_id, '', '', "<![CDATA["+input+"]]>");
       }
       else
       {
