@@ -156,6 +156,165 @@
   View.prototype = ViewBase;
   new View('frame_inspection', 'Frame Inspection', 'scroll');
 
+  View = function(id, name, container_class)
+  {
+    /* a quick hack */
+
+
+    /*      var tag = tagManager.setCB(
+        null, 
+        responseHandlers.examinFrame, 
+        [runtime_id, frame.argument_id, frame.this_id]
+        );
+        <?xml version="1.0"?>
+        <eval-reply>
+        <tag>4</tag>
+        <status>completed</status>
+        <value-data>
+        <data-type>string</data-type>
+        <string>red</string>
+        </value-data>
+        </eval-reply>
+
+ <?xml version="1.0"?>
+ <eval-reply>
+ <tag>6</tag>
+ <status>completed</status>
+ <value-data>
+ <data-type>object</data-type>
+ <object-id>285</object-id>
+ </value-data>
+ </eval-reply>
+
+        */
+
+    var self = this;
+
+    var handleEval = function(xml)
+    {
+      var value_type = xml.getNodeData('data-type');
+      var return_value = xml.getElementsByTagName('string')[0];
+      if(return_value)
+      {
+        var out = document.getElementById('console-output');
+        out.render(['pre', return_value.firstChild.nodeValue]);
+      }
+      
+    }
+
+
+    var markup = "\
+      <div class='padding'>\
+        <div id='console-output'></div>\
+        <div id='console-input' handler='console-focus-input'>\
+          <div>&gt;&gt;&gt;</div>\
+          <textarea rows='1' handler='console-input'></textarea>\
+        </div>\
+      </div>";
+
+    var templates = {};
+
+    templates.consoleInput = function(entry)
+    {
+      var lines_count = entry.msg.split(/\r?\n/).length;
+      var line_head = '>>>';
+      while( --lines_count > 1 )
+      {
+        line_head += '\n...';
+      }
+      return [['div', line_head], ['pre', entry.msg]];
+    }
+
+    eventHandlers.click['console-focus-input'] = function(event, ele)
+    {
+      ele.getElementsByTagName('textarea')[0].focus();
+    }
+
+    var submit = function(input)
+    {
+      var rt_id = runtimes.getSelectedRuntimeId();
+      if(rt_id)
+      {
+        var tag = tagManager.setCB(null,handleEval);
+        // this.eval = function(tag, runtime_id, thread_id, frame_id, script_data, name_id_pairs)
+        services['ecmascript-debugger'].eval(tag, rt_id, '', '', input);
+      }
+      else
+      {
+        alert('select runtime');
+      }
+      //opera.postError('submitted: '+input);
+    }
+
+    var lines_count_old = -1;
+
+    eventHandlers.input['console-input'] = function(event)
+    {
+      var lines = event.target.value.split(/\r?\n/);
+      var lines_count = lines.length;
+      if( lines_count != lines_count_old  )
+      {
+        var line_heads = '>>>';
+        var i = 1;
+        var is_ready = false;
+        var input = '';
+        for( ; i < lines_count; i++)
+        {
+          if(is_ready)
+          {
+            var console_entry = 
+            {
+              type: 'input', 
+              category: 'Input', 
+              timestamp: new Date().toString().replace(/GMT.*$/, ''),
+              path: location.href,
+              msg: ( input = lines.slice(0, lines_count - 1).join('\r\n') )
+            };
+            document.getElementById('console-output').render(templates.consoleInput(console_entry));
+            event.target.value = '';
+            line_heads = '>>>'
+            lines_count = 1;
+            submit(input);
+            break;
+          }
+          if( lines[i] )
+          {
+            line_heads += '\n...';
+          }
+          else
+          {
+            is_ready = true;
+            line_heads += '\n<';
+          }
+        }
+        event.target.parentElement.getElementsByTagName('div')[0].textContent= line_heads;
+        event.target.setAttribute('rows', lines_count);
+        var container = event.target.parentElement;
+        while( !/container/.test(container.nodeName) && ( container = container.parentElement ) );
+        if(container)
+        {
+          container.scrollTop = container.scrollHeight;
+        }
+        if( lines[lines_count-1] )
+        {
+          lines_count_old = lines_count;
+        };
+      }
+    }
+
+    this.createView = function(container)
+    {
+      lines_count_old = -1;
+      container.innerHTML = markup;
+    }
+
+    this.init(id, name, container_class);
+
+  }
+
+  View.prototype = ViewBase;
+  new View('command_line', 'Command Line', 'scroll');
+
 })()
 
 

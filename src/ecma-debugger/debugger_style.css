@@ -365,5 +365,42 @@ toolbar-buttons input[handler="continue"]:active {
   text-align: center;
   }
 
+/* command line */
+#console-input {
+  padding-left:35px;
+  }
+
+#console-output {
+  padding-left:35px;
+  }
+
+#console-output div,
+#console-input div, 
+#console-input textarea, 
+#console-input pre {
+  white-space:pre;
+  line-height:16px;
+  font-size:14px !important;
+  font-family:monospace;
+  xxborder:1px solid blue;
+  padding:0;
+  margin:0;
+  }
+
+#console-input div, 
+#console-output div {
+  float:left;
+  margin-left:-35px;
+  }
+
+#console-input textarea {
+  width:100%;
+  border:0px solid;
+  margin:0;
+  padding:0;
+  overflow:hidden;
+  display:block;
+  }
+
 
 
