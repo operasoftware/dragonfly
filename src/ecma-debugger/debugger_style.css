@@ -150,12 +150,32 @@ xx#debug {
   margin-right:7px;
   }
 
-#examine-objects .value {
-  color:red;
+#examine-objects .key {
+  color: #006;
   }
 
-#examine-objects .type {
-  color:blue;
+#examine-objects .string {
+  color:#f00;
+  }
+
+#examine-objects .number {
+  color:#990;
+  }
+
+#examine-objects .undefined {
+  color:#099;
+  }
+
+#examine-objects .null {
+  color:#00f;
+  }
+
+#examine-objects .boolean {
+  color:#909;
+  }
+
+#examine-objects .object {
+  color:#0f0;
   }
 
 .folder li li {

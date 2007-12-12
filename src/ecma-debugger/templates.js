@@ -147,12 +147,12 @@ MODE ::= "<mode>"
         case 'undefined':
         case 'null':
         {
-          ret[ret.length] = self.key_value(prop.key, prop.value, 'type', i);
+          ret[ret.length] = self.key_value(prop.key, prop.value, prop.type, i);
           break;
         }
         default:
         {
-          ret[ret.length] = ret[ret.length] = self.key_value(prop.key, prop.value, 'value', i);
+          ret[ret.length] = ret[ret.length] = self.key_value(prop.key, prop.value, prop.type, i);
           break;
         }
       }
@@ -182,7 +182,7 @@ MODE ::= "<mode>"
     return ['li', 
       ['input', 'type', 'button', 'handler', 'examine-object', 'class', 'folder-key'],
       ['span', key, 'class', 'key'], 
-      ['span', 'object', 'class', 'type'],
+      ['span', 'object', 'class', 'object'],
       'ref_index', ref_index
     ];
   }
