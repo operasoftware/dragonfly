@@ -161,33 +161,6 @@
     /* a quick hack */
 
 
-    /*      var tag = tagManager.setCB(
-        null, 
-        responseHandlers.examinFrame, 
-        [runtime_id, frame.argument_id, frame.this_id]
-        );
-        <?xml version="1.0"?>
-        <eval-reply>
-        <tag>4</tag>
-        <status>completed</status>
-        <value-data>
-        <data-type>string</data-type>
-        <string>red</string>
-        </value-data>
-        </eval-reply>
-
- <?xml version="1.0"?>
- <eval-reply>
- <tag>6</tag>
- <status>completed</status>
- <value-data>
- <data-type>object</data-type>
- <object-id>285</object-id>
- </value-data>
- </eval-reply>
-
-        */
-
     var self = this;
 
     var handleEval = function(xml, runtime_id)
@@ -214,35 +187,6 @@
       }
       
     }
-
-    /*
-    <?xml version="1.0"?>
-    <examine-reply>
-    <tag>6</tag>
-    <object>
-    <object-value>
-    <object-id>346</object-id>
-    <object-attributes/>
-    <class-name>Error</class-name>
-    </object-value>
-    <property>
-    <property-name>message</property-name>
-    <value-data>
-    <data-type>string</data-type>
-    <string>
-    Statement on line 1: Cannot convert undefined or null to Object Backtrace: Line 1 of unknown script document.foo.bar</string>
-    </value-data>
-    </property>
-    <property>
-    <property-name>opera#sourceloc</property-name>
-    <value-data>
-    <data-type>number</data-type>
-    <string>1</string>
-    </value-data>
-    </property>
-    </object></examine-reply>
-
-    */
 
     var handleError = function(xml)
     {
@@ -288,7 +232,6 @@
       if(rt_id)
       {
         var tag = tagManager.setCB(null, handleEval, [rt_id] );
-        //var script_string  = "var __ret__ ; try{ __ret__ = (function(){" + input + "})(); } catch(event){ __ret__ = event.message}; return __ret__;";
         var script_string  = input;
         services['ecmascript-debugger'].eval(tag, rt_id, '', '', "<![CDATA["+script_string+"]]>");
       }
@@ -296,7 +239,6 @@
       {
         alert('select runtime');
       }
-      //opera.postError('submitted: '+input);
     }
 
     var lines_count_old = -1;
