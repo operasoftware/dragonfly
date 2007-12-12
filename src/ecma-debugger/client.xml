@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="debugger_style.css"/>
 <link rel="stylesheet" href="js-source.css"/>
 <link rel="stylesheet" href="dom-inspector.css"/>
+<link rel="stylesheet" href="syntax-highlight.css"/>
 
 <script src="../scripts/dom.js"/>
 <script src="../scripts/messages.js"/>

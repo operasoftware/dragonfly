@@ -1,0 +1,106 @@
+/* ecma object tree */
+
+#examine-objects li li {
+  padding-left:18px;
+  }
+
+#examine-objects .key {
+  margin-right:7px;
+  }
+
+
+#examine-objects .key {
+  color: #111;
+  }
+
+#examine-objects .string {
+  color:#742;
+  }
+
+#examine-objects .number {
+  color:#920;
+  }
+
+#examine-objects .undefined {
+  color:#c00;
+  font-style: italic;
+  }
+
+#examine-objects .null {
+  color:#c00;
+  font-style: italic;
+  }
+
+#examine-objects .boolean {
+  color:#920;
+  }
+
+#examine-objects .object {
+  color:#18a;
+  }
+
+/* ecma script source */
+
+#js-source-content div {
+	font-family: monospace;
+	color: #111;
+  }
+
+#js-source-content .comment {
+  color: #888;
+  }
+
+#js-source-content .js_builtins {
+  color: #18a;
+  }
+
+#js-source-content .js_keywords {
+  color: #01c;
+  }
+
+#js-source-content .number {
+  color: #920;
+  }
+
+#js-source-content .punctuator {
+  color: #000;
+  }
+
+#js-source-content .reg_exp {
+  color: #c71;
+  }
+
+#js-source-content .string {
+  color: #a31;
+  }
+
+/* dom */
+
+.dom div {
+	font-family: monospace;
+	color: #111;
+  }
+
+#target-element{
+	background-color:#eec;
+  }
+
+.dom .comment{
+	color:#888;
+  }
+
+.dom .node {
+  color: #279;
+  }
+
+.dom .node:hover {
+  background-color:#ddb;
+  }
+
+.dom .key{
+	color:#229;
+  }
+
+.dom .value{
+	color:#742;
+  }

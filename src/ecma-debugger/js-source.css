@@ -108,39 +108,6 @@ ul {
   width:20px;
   background:transparent url('break-point.png') no-repeat 0 50%;
   }
-
-#js-source-content div span {
-  color:#000;
-  }
-
-#js-source-content div .string {
-  color:#963;
-  }
-
-#js-source-content div .comment {
-  color:green;
-  }
-
-#js-source-content div .js_keywords {
-  color:#00f;
-  }
-
-#js-source-content div .js_builtins {
-  color:#f00;
-  }
-
-#js-source-content div .number {
-  color:#099;
-  }
-
-#js-source-content div .reg_exp {
-  background-color:#fd9;
-  color:#333;
-  }
-
-#js-source-content div .punctuator {
-  color:#fc3;
-  }
-
-
   
+
+

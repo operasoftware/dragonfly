@@ -49,54 +49,7 @@ xx#debug {
   margin:0;
   }
 
-#source-view {
-  white-space: pre-wrap;
-  position: relative;
-  }
 
-#source-view li {
-  color:#999;
-  line-height: 16px;
-  }
-
-#source-view li span {
-  color:#000;
-  }
-
-#source-view li .string {
-  color:#963;
-  }
-
-#source-view li .comment {
-  color:green;
-  }
-
-#source-view li .js_keywords {
-  color:#00f;
-  }
-
-#source-view li .js_builtins {
-  color:#f00;
-  }
-
-#source-view li .number {
-  color:#099;
-  }
-
-#source-view li .reg_exp {
-  color:#f60;
-  }
-
-#source-view li .punctuator {
-  color:#fc3;
-  }
-
-/*
-.selected {
-  background-color:#f00;
-  color:#fff;
-  }
-*/
 
 
 #source-view #line-pointer, #source-view .breakpoint {
@@ -142,41 +95,7 @@ xx#debug {
   margin:0;
   }
 
-#examine-objects li li {
-  padding-left:18px;
-  }
-
-#examine-objects .key {
-  margin-right:7px;
-  }
-
-#examine-objects .key {
-  color: #006;
-  }
-
-#examine-objects .string {
-  color:#f00;
-  }
-
-#examine-objects .number {
-  color:#990;
-  }
-
-#examine-objects .undefined {
-  color:#099;
-  }
-
-#examine-objects .null {
-  color:#00f;
-  }
-
-#examine-objects .boolean {
-  color:#909;
-  }
-
-#examine-objects .object {
-  color:#0f0;
-  }
+  
 
 .folder li li {
   margin-left:18px;
@@ -420,6 +339,17 @@ toolbar-buttons input[handler="continue"]:active {
   padding:0;
   overflow:hidden;
   display:block;
+  }
+
+
+
+
+#examine-objects li li {
+  padding-left:18px;
+  }
+
+#examine-objects .key {
+  margin-right:7px;
   }
 
 
