@@ -399,7 +399,7 @@ toolbar-buttons input[handler="continue"]:active {
 #console-input div, 
 #console-input textarea, 
 #console-input pre {
-  white-space:pre;
+  white-space:pre-wrap;
   line-height:16px;
   font-size:14px !important;
   font-family:monospace;
