@@ -17,20 +17,19 @@
       {
         debug.formatXML(new XMLSerializer().serializeToString(xml));
       }
+      var is_handled = false;
       if( tagManager.handleResponse(xml) )
       {
-        
+        is_handled = true;
       }
       else if( events[xml.documentElement.nodeName] )
       {
-        events[xml.documentElement.nodeName](xml)
+        events[xml.documentElement.nodeName](xml);
+        is_handled = true;
       }
-      else
+      if( ini.debug && !is_handled)
       {
-        if( ini.debug )
-        {
-          debug.output('not implemented: '+new XMLSerializer().serializeToString(xml));
-        }
+        debug.output('not implemented: '+new XMLSerializer().serializeToString(xml));
       }
       
     }
@@ -99,6 +98,8 @@
     }
 
     events['runtimes-reply'] = runtimes.handleRuntimesReplay;
+
+    events['runtime-stopped'] = runtimes.handleRuntimeStoped;
 
 
 

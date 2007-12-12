@@ -12,6 +12,19 @@ var runtimes = new function()
     }
   }
 
+  var removeRuntime = function(id)
+  { 
+    var sc = null ;
+    for( sc in __scripts )
+    {
+      if( __scripts[sc]['runtime-id'] == id )
+      {
+        delete __scripts[sc];
+      }
+    }
+    delete __runtimes[id];
+  }
+
   this.handleRuntimesReplay = function(xml)
   {
     parseRuntime(xml);
@@ -139,6 +152,25 @@ var runtimes = new function()
     registerRuntime( script['runtime-id'] );
     registerScript( script );
     views.runtimes.update();
+  }
+
+  /*
+  <runtime-stopped>
+  <runtime-id>1</runtime-id>
+</runtime-stopped>
+
+*/
+
+  this.handleRuntimeStoped = function(xml)
+  {
+    var rt_id = xml.getNodeData('runtime-id');
+    if(rt_id)
+    {
+      removeRuntime(rt_id);
+      views.runtimes.update();
+    }
+
+    
   }
 
   this.getRuntimes = function()
