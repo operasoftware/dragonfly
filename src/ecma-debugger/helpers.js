@@ -50,16 +50,20 @@ helpers = new function()
   this.setSelected = function(event)
   {
     var ele=event.target;
-    var siblings = ele.parentNode.getElementsByTagName(ele.nodeName), sibling = null, i=0;
+    var parent = ele.parentNode;
+    var siblings = parent.getElementsByTagName(ele.nodeName), sibling = null, i=0;
     for( ; sibling = siblings[i]; i++)
     {
-      if(sibling == ele) 
+      if( sibling.parentElement == parent )
       {
-        sibling.addClass('selected'); 
-      }
-      else
-      {
-        sibling.removeClass('selected'); 
+        if(sibling == ele) 
+        {
+          sibling.addClass('selected'); 
+        }
+        else
+        {
+          sibling.removeClass('selected'); 
+        }
       }
     }
   }

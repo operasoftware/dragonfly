@@ -114,13 +114,12 @@ var action_handler = new function()
     }
   }
 
-  handlers['show-global-scope'] = function(event)
+  handlers['show-global-scope'] = function(event) // and select runtime
   {
     var ele = event.target;
     var runtime = runtimes.getRuntimeIdWithURL(ele.firstChild.nodeValue);
     if( runtime )
     {
-
       views.frame_inspection.clearView();
       frame_inspection.setNewFrame(runtime['runtime-id'] );
       var tag = tagManager.setCB(null, responseHandlers.examinObject, [ runtime['runtime-id'] ]);
@@ -131,7 +130,7 @@ var action_handler = new function()
     }
   }
 
-  handlers['show-scripts'] = function(event)
+  handlers['show-scripts'] = function(event)  
   {
     var runtime_id = event.target.getAttribute('runtime_id');
     var scripts = runtimes.getScripts(runtime_id);
@@ -164,6 +163,14 @@ var action_handler = new function()
     {
       views.js_source.showLine(id, 0);
       helpers.setSelected(event);
+      var runtime_container = event.target.parentElement.parentElement.getElementsByTagName('span')[0];
+      var runtime = runtimes.getRuntimeIdWithURL(runtime_container.firstChild.nodeValue); 
+      runtimes.setSelectedScript( runtime, id );
+      if( runtime_container && !runtime_container.hasClass('selected-runtime') )
+      {
+        handlers['show-global-scope']({target: runtime_container});
+      }
+      
     }
     else
     {

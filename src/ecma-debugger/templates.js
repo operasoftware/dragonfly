@@ -56,7 +56,7 @@
         script['script-type']+' - '+(script['uri']?script['uri']:'script-id: '+script['script-id']),
         'handler', 'display-script',
         'script-id', script['script-id']
-      ]
+      ].concat( script.selected ? ['class', 'selected'] : [] );
   }
   //templates.configStopAt(config)
   // stop at: "script" | "exception" | "error" | "abort" | "gc", yes/no;
