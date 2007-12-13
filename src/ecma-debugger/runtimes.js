@@ -15,6 +15,7 @@ var runtimes = new function()
   var removeRuntime = function(id)
   { 
     var sc = null ;
+    /*
     for( sc in __scripts )
     {
       if( __scripts[sc]['runtime-id'] == id )
@@ -22,6 +23,7 @@ var runtimes = new function()
         delete __scripts[sc];
       }
     }
+    */
     delete __runtimes[id];
   }
 
@@ -281,6 +283,15 @@ var runtimes = new function()
       {
         __runtimes[r]['selected'] = false;
       }
+    }
+  }
+
+  this.setSelectedScript = function( runtime, id )
+  {
+    var scripts = this.getScripts(runtime['runtime-id']), script = null, i = 0;
+    for( ; script = scripts[i]; i++)
+    {
+      script.selected = script['script-id'] == id ? true : false;
     }
   }
 
