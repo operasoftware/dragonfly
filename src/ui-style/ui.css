@@ -563,3 +563,16 @@ window-shadow.left {
   margin:5px;
   background:transparent url('../ui-images/spin4.png') scroll no-repeat 0 0;
   }
+
+
+input[handler="create-all-runtimes"] {
+  background-image:url('../ui-images/create-all-runtimes.png');
+  }
+
+input[handler="clear-error-console"] {
+  background-image:url('../ui-images/clear-error-console.png');
+  }
+
+
+
+
