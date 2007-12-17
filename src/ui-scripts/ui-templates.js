@@ -36,10 +36,14 @@
     return ret;
   }
 
-  this['top-statusbar'] = function()
+  this['top-statusbar'] = function(ui_obj)
   {
-    return [ this.configButton('top-settings'), ['info']]
+    return [ 
+      ['div', 'id', ui_obj.spin_animator.getId(),'title', 'status indicator for the browser and the debugger'], 
+      this.configButton('top-settings'), ['info']
+    ]
   }
+
 
   this['window-statusbar'] = function()
   {

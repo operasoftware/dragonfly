@@ -11,7 +11,7 @@ var TopCell = function(layout, setDimensions, onresize)
     this.container = new TopContainer(this); // actually just a cell
     this.tab = new TopTabs(this);
     this.toolbar = new TopToolbar(this);
-    this.statusbar = new Statusbar(this);
+    this.statusbar = new TopStatusbar(this);
   }
 
   this.update = function()

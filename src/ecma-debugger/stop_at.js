@@ -153,6 +153,7 @@ var stop_at = new function()
 
     services['ecmascript-debugger'].__continue(stopAt, mode);
     toolbars.js_source.disableButtons('continue');
+    messages.post('host-state', {state: 'ready'});
   }
 
 
@@ -198,6 +199,7 @@ var stop_at = new function()
           }
           __controls_enabled = true;
           toolbars.js_source.enableButtons('continue');
+          messages.post('host-state', {state: 'waiting'});
         }
         else
         {

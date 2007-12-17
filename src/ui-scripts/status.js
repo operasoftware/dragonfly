@@ -1,6 +1,6 @@
 var StatusbarBase = function()
 {
-  this.type = 'top-statusbar';
+  this.type = 'statusbar';
   this.height = 0;
   this.width = 200;
   this.top = 0;
@@ -10,7 +10,7 @@ var StatusbarBase = function()
   this.setup = function(view_id)
   {
     var statusbar = document.getElementById(this.type + '-to-' + this.cell.id) || this.update();
-    statusbar.render(templates[this.type]())
+    statusbar.render(templates[this.type](this))
     this.updateInfo('test');
   } 
   
@@ -79,9 +79,53 @@ var WindowStatusbar = function(cell)
   this.init(cell);
 }
 
+
+var TopStatusbar = function(cell)
+{
+  this.type = 'top-statusbar';
+  var self = this; 
+  var handleHostState = function(msg)
+  {
+    switch (msg.state)
+    {
+      case 'inactive':
+      {
+        self.spin_animator.is_inactive();
+        break;
+      }
+      case 'ready':
+      {
+        self.spin_animator.is_ready();
+        break;
+      }
+      case 'waiting':
+      {
+        self.spin_animator.is_busy();
+        break;
+      }      
+    }
+  }
+  messages.addListener('host-state', handleHostState);
+  var spin_animator = 
+  {
+    id: 'spin-button',
+    delta: -16,
+    iterations: 8,
+    ready: -16,
+    busy: -32,
+    time_delta: 60
+  };
+  this.spin_animator = new Animator(spin_animator);
+  this.init(cell);
+}
+
 StatusbarBase.prototype = UIBase;
 Statusbar.prototype = new StatusbarBase();
+
 WindowStatusbar.prototype = new StatusbarBase();
+TopStatusbar.prototype = new StatusbarBase();
+
+
 
 
 

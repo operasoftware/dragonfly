@@ -556,3 +556,10 @@ window-shadow.left {
   background:transparent url('../ui-images/shadow-left.png') scroll repeat-y 0 0;
   }
 
+#spin-button {
+  float:left;
+  height:16px;
+  width:48px;
+  margin:5px;
+  background:transparent url('../ui-images/spin4.png') scroll no-repeat 0 0;
+  }

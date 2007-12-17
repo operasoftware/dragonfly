@@ -54,6 +54,7 @@
 
     events['hello'] = function(xml)
     {
+      messages.post('host-state', {state: 'ready'});
       var children = xml.documentElement.childNodes, child=null, i=0;
       for ( ; child = children[i]; i++)
       {

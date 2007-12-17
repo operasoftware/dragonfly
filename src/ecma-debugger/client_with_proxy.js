@@ -177,7 +177,7 @@ var client = new function()
     viewport.removeChild(container);
 
     new CompositeView('console_new', 'Console', console_rough_layout);
-    new CompositeView('js_new', 'JS', js_rough_layout);
+    new CompositeView('js_new', 'Script', js_rough_layout);
     new CompositeView('dom_new', 'DOM', dom_rough_layout);
 
     window.topCell = new TopCell
@@ -203,13 +203,7 @@ var client = new function()
 
   this.onquit = function()
   {
-    viewport.render
-    (
-      ['div', 
-        ['h2', 'There is no longer a connection to the proxy'],
-      'class', 'info']
-      
-    );
+    messages.post('host-state', {state: 'inactive'});
   }
 
   this.post = function(service, msg)
@@ -240,16 +234,16 @@ var console_rough_layout =
   dir: 'v', width: 700, height: 700,
   children: 
   [
-    { height: 200, tabs: ['runtimes'] },
     { height: 200, tabs: ['console'] }
   ]
 }
 
 var dom_rough_layout =
 {
-  dir: 'h', width: 700, height: 700,
+  dir: 'v', width: 700, height: 700,
   children: 
   [
+    { height: 150, tabs: ['runtimes'] },
     { width: 200, tabs: ['dom-markup-style', 'dom-tree-style'] }
   ]
 }
@@ -259,9 +253,16 @@ var js_rough_layout =
   dir: 'h', width: 700, height: 700,
   children: 
   [
-    { width: 650, tabs: ['js_source']},
     { 
-      width: 300, 
+      width: 700, 
+      children: 
+      [
+        { height: 150, tabs: ['runtimes'] },
+        { width: 650, tabs: ['js_source']},
+      ] 
+    },
+    { 
+      width: 250, 
       children: 
       [
         { height: 250, tabs: ['callstack'] },
@@ -321,7 +322,7 @@ var resolve_map =
   },
   {
     source: 'top-statusbar',
-    target: Statusbar.prototype,
+    target: TopStatusbar.prototype,
     properties: resolve_map_properties
   },
   {
