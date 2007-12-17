@@ -234,16 +234,16 @@ var console_rough_layout =
   dir: 'v', width: 700, height: 700,
   children: 
   [
+    { height: 200, tabs: ['runtimes'] },
     { height: 200, tabs: ['console'] }
   ]
 }
 
 var dom_rough_layout =
 {
-  dir: 'v', width: 700, height: 700,
+  dir: 'h', width: 700, height: 700,
   children: 
   [
-    { height: 150, tabs: ['runtimes'] },
     { width: 200, tabs: ['dom-markup-style', 'dom-tree-style'] }
   ]
 }
@@ -253,16 +253,9 @@ var js_rough_layout =
   dir: 'h', width: 700, height: 700,
   children: 
   [
+    { width: 650, tabs: ['js_source']},
     { 
-      width: 700, 
-      children: 
-      [
-        { height: 150, tabs: ['runtimes'] },
-        { width: 650, tabs: ['js_source']},
-      ] 
-    },
-    { 
-      width: 250, 
+      width: 300, 
       children: 
       [
         { height: 250, tabs: ['callstack'] },
