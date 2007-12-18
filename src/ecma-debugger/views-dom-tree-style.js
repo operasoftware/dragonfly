@@ -358,7 +358,7 @@
       [
         {
           key: 'force-lowercase',
-          label: ' use allways lower case for tag names'
+          label: ' always use lower case for tag names'
         },
         {
           key: 'show-comments',
