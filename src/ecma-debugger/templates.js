@@ -241,7 +241,7 @@ MODE ::= "<mode>"
         ret[ret.length] = self.message(message);
       }
     }
-    return ret.concat(['class', 'padding']);
+    return ret;//.concat(['class', 'padding']);
   }
 
 /*
@@ -275,16 +275,20 @@ Line 2:
   body {xxcolor:red}
   --------------^</description></message>
 
+"<severity>"
+ ( "debug" | "verbose" | "information" | "error" | "critical" )
+"</severity>"
+
 */
 
   this.message = function( message)
   {
-    return ['ul',
-      ['li', message.source + ' ' + message.severity],
-      ['li', new Date(parseInt( message.time )*1000).toString().replace(/GMT.*$/, '') ],
-      ['li', message.uri],
-      ['li', message.context],
-      ['li', ['pre', message.description]]
+    return ['div',
+      ['date', new Date(parseInt( message.time )*1000).toString().replace(/GMT.*$/, '') ],
+      ['h2', message.source, 'severity', message.severity],
+      ['uri', message.uri],
+      ['context', message.context],
+      ['pre', message.description]
     ]
   }
     /*
