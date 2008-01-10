@@ -351,7 +351,7 @@
       'show-attributes': true,
       'show-whitespace-nodes': true,
       'find-with-click': true,
-      'highlight_on_hover': false,
+      'highlight_on_hover': false
     }, 
     {
       checkboxes:

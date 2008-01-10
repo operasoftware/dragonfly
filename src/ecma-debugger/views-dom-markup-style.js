@@ -265,7 +265,7 @@
       'show-comments': true, 
       'show-attributes': true, 
       'find-with-click': true,
-      'highlight_on_hover': false,
+      'highlight_on_hover': false
     }, 
     {
       checkboxes:
