@@ -1,6 +1,8 @@
 var runtimes = new function()
 {
   var __runtimes = {};
+  
+  var self = this;
 
   var registerRuntime = function(id)
   { 
@@ -170,6 +172,11 @@ var runtimes = new function()
     {
       removeRuntime(rt_id);
       views.runtimes.update();
+      var script_id = views.js_source.getCurrentScriptId();
+      if( script_id  && ( self.getScriptsRuntimeId(script_id) == rt_id ) )
+      {
+        views.js_source.clearView();
+      }
     }
 
     
@@ -197,6 +204,11 @@ var runtimes = new function()
   this.getScript = function(scriptId)
   {
     return __scripts[scriptId];
+  }
+
+  this.getScriptsRuntimeId = function(scriptId)
+  {
+    return __scripts[scriptId] && __scripts[scriptId]['runtime-id'] || null;
   }
 
   this.getScriptSource = function(scriptId)

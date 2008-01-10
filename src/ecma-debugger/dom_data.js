@@ -289,7 +289,6 @@ var dom_data = new function()
       data[i + VALUE] = strings[k + VALUE].textContent;
       data[i + DEPTH] = parseInt(strings[k + DEPTH].textContent);
       data[i + ATTRS] = eval( "({" + strings[k + ATTRS].textContent + "})" );
-      //opera.postError(strings[k + ATTRS].textContent)
       data[i + CHILDREN_LENGTH] = parseInt(strings[k + CHILDREN_LENGTH].textContent);
       data[i + IS_TARGET] = parseInt(strings[k + IS_TARGET].textContent);
       data[i + IS_LAST] = parseInt(strings[k + IS_TARGET].textContent);
