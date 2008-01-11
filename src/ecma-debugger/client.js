@@ -3,7 +3,71 @@ var client = new function()
   var self = this;
 
   var services = [];
+  var services_dict = {};
+  var services_avaible = {};
   
+  this.addService = function(service)
+  {
+    services[services.length] = service;
+    services_dict[service.name] = service;
+  }
+
+  /**** methods for integrated proxy ****/
+
+  var host_connected = function(_services)
+  {
+    opera.postError('on host_connected: '+_services);
+    services_avaible = eval("({\"" + _services.replace(/,/g, "\":1,\"") + "\":1})");
+    var service = null, i = 0;
+    for( ; service = services[i]; i++)
+    {
+      if (service.name in services_avaible)	
+      {
+        opera.postError(service.name);
+        opera.scopeEnableService(service.name);
+      }
+      else
+      {
+        alert
+        ( 
+           'Service is avaible: ' + service.name
+        );
+
+      }
+    }
+
+  }
+
+  var receive = function(service, msg)
+  {
+    //opera.postError(service+' '+msg);
+    var xml_doc = ( new DOMParser() ).parseFromString(msg, "application/xml");
+    if(xml_doc)
+    {
+      services_dict[service].onreceive(xml_doc);
+    }
+  }  
+
+  var quit = function()
+  {
+    alert('Session quited');
+  }
+
+  var post_scope = function(service, msg)
+  {
+    //opera.postError('command: '+service+' '+ msg)
+    opera.scopeSendToHost(service, "<?xml version=\"1.0\"?>" + msg)
+  }
+
+  /**** methods for standalone proxy ****/
+
+  var post_proxy = function(service, msg)
+  {
+    proxy.POST("/" + service, msg);
+  }
+
+
+
   var bindCB = function(service)
   {
     var service_name = service.name;
@@ -18,9 +82,29 @@ var client = new function()
     return boundGetEvent;
   }
 
-  this.addService = function(service)
+  var proxy_onsetup = function()
   {
-    services[services.length] = service;
+    var service = null, i = 0;
+    for( ; service = services[i]; i++)
+    {
+      if (!proxy.enable(service.name))	
+      {
+        alert
+        ( 
+           'Could not find an Opera session to connect to.\n' +
+           'Please try the following:\n' + 
+           '1. Open another Opera instance\n' +
+           '2. In that Opera instance, open opera:config and check "Enable Debugging" and "Enable Script Debugging" under "Developer Tools"\n' +
+           '3. Restart that Opera instance' 
+        );
+      }
+      else
+      {
+        service.onconnect();
+        proxy.GET( "/" + service.name, bindCB(service) );
+      }
+    }
+
   }
 
 
@@ -78,32 +162,17 @@ var client = new function()
 
       var host = location.host.split(':');
 
-      proxy.onsetup = function()
+      if( opera.scopeAddClient )
       {
-
-        var service = null, i = 0;
-        for( ; service = services[i]; i++)
-        {
-          if (!proxy.enable(service.name))	
-          {
-            alert
-            ( 
-               'Could not find an Opera session to connect to.\n' +
-               'Please try the following:\n' + 
-               '1. Open another Opera instance\n' +
-               '2. In that Opera instance, open opera:config and check "Enable Debugging" and "Enable Script Debugging" under "Developer Tools"\n' +
-               '3. Restart that Opera instance' 
-            );
-          }
-          else
-          {
-            service.onconnect();
-            proxy.GET( "/" + service.name, bindCB(service) );
-          }
-        }
-
+        self.post = post_scope;
+        opera.scopeAddClient(host_connected, receive, quit);
       }
-      proxy.configure(host[0], host[1]);
+      else
+      {
+        self.post = post_proxy;
+        proxy.onsetup = proxy_onsetup;
+        proxy.configure(host[0], host[1]);
+      }
     }
     else
     {
@@ -162,10 +231,7 @@ var client = new function()
     messages.post('host-state', {state: 'inactive'});
   }
 
-  this.post = function(service, msg)
-  {
-    proxy.POST("/" + service, msg);
-  }
+
 
   document.addEventListener('load', this.setup, false);
 
