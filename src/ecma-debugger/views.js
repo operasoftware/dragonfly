@@ -132,7 +132,21 @@
       var container = getContainer( path_arr );
       if( container )
       {
-        container.renderInner( templates.examineObject( frame_inspection.getObject( path_arr ).items ) );
+        var items = frame_inspection.getObject( path_arr ).items;
+        if(items.length)
+        {
+          container.renderInner( templates.examineObject( items ) );
+        }
+        else
+        {
+          var input = container.getElementsByTagName('input')[0];
+          if(input)
+          {
+            input.removeAttribute('handler');
+            input.removeAttribute('style');
+            input.disabled = true;
+          }
+        }
       }
     }
 

@@ -114,6 +114,10 @@ xx#debug {
   cursor:pointer;
   }
 
+.folder-key[disabled="true"] {
+  opacity: .3;
+  }
+
 .failed {
   color:red;
   }
