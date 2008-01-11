@@ -47,9 +47,9 @@ var stop_at = new function()
 
   var onSettingChange = function(msg)
   {
-    if(msg.id == 'js-source' )
+    if(msg.id == 'js_source' )
     {
-      var key = msg.key, value = settings['js-source'].get(key);
+      var key = msg.key, value = settings['js_source'].get(key);
       if( key == 'script' )
       {
 
