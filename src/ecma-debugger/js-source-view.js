@@ -560,7 +560,7 @@
   new Settings
   (
     'js_source', 
-    {script: 0, exception: 0, error: 0, abort: 0, gc: 0}, 
+    {script: 0, exception: 0, error: 0, abort: 0}, 
     {
       checkboxes:
       [
@@ -579,10 +579,6 @@
         {
           key: 'abort',
           label: ' stop at abort'
-        },
-        {
-          key: 'gc',
-          label: ' stop at garbage collection'
         },
 
       ]

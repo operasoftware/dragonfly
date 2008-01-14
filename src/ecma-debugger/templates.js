@@ -59,7 +59,7 @@
       ].concat( script.selected ? ['class', 'selected'] : [] );
   }
   //templates.configStopAt(config)
-  // stop at: "script" | "exception" | "error" | "abort" | "gc", yes/no;
+  // stop at: "script" | "exception" | "error" | "abort", yes/no;
 
   this.checkbox = function(settingName, settingValue)
   {
@@ -91,7 +91,7 @@
   this.configStopAt = function(config)
   {
     var ret =['ul'];
-    var arr = ["script", "exception", "error", "abort", "gc"], n='', i=0;
+    var arr = ["script", "exception", "error", "abort"], n='', i=0;
     for( ; n = arr[i]; i++)
     {
       ret[ret.length] = this.checkbox(n, config[n]); 

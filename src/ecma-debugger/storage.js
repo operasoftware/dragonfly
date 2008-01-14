@@ -27,16 +27,14 @@ storage = new function()
       sc: 'script',
       ex: 'exception',
       er: 'error',
-      ab: 'abort',
-      gc: 'gc'
+      ab: 'abort'
     },
     defaults:
     {
       sc: '0',
       ex: '0',
       er: '0',
-      ab: '0',
-      gc: '0'
+      ab: '0'
     },
     name: 'stop_at',
     get: function()
