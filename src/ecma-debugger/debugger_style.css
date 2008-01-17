@@ -85,14 +85,13 @@ xx#debug {
 
   }
 
-#command-line-container {
-  position:absolute;
-  top:30px;
-  left:5px;
-  right:5px;
-  bottom:5px;
-  padding:0;
-  margin:0;
+#command-line-debug-container {
+
+  }
+
+#command-line-debug-container textarea {
+  width:100%;
+  height:80%
   }
 
   

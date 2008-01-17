@@ -134,7 +134,7 @@
 
     this.postCommandline = function(msg)
     {
-      var msg = document.getElementById('command-line').getElementsByTagName('textarea')[0].value;
+      var msg = document.getElementById('command-line-debug').getElementsByTagName('textarea')[0].value;
       this.post(msg);
     }
 
