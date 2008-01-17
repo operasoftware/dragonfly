@@ -189,6 +189,15 @@
           var out = document.getElementById('console-output');
           out.render(['pre', return_value.firstChild.nodeValue]);
         }
+        else if (return_value = xml.getElementsByTagName('object-id')[0])
+        {
+          var object_id = return_value.textContent;
+          var object_ref_name = "$" + object_id;
+          var tag = tagManager.setCB(null, handleEval, [runtime_id] );
+          var script_string  = "return " + object_ref_name + ".toString()";
+          services['ecmascript-debugger'].eval(
+            tag, runtime_id, '', '', "<![CDATA["+script_string+"]]>", [object_ref_name, object_id]);
+        }
       }
       else
       {

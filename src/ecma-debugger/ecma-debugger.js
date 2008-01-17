@@ -270,6 +270,7 @@
 
     this.eval = function(tag, runtime_id, thread_id, frame_id, script_data, name_id_pairs)
     {
+      /* name_id_pairs: ( object_ref_name, object_id ) *  */
       var msg = "<eval>"+
                   "<tag>" + tag + "</tag>" +
                   "<runtime-id>" + runtime_id + "</runtime-id>" +
