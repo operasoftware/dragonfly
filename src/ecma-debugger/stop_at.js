@@ -185,9 +185,14 @@ var stop_at = new function()
       */
       if(stopAt['stopped-reason'] == 'unknown')
       {
+
         runtime_id = stopAt['runtime-id'];
         if(  settings['js_source'].get('script') || runtimes.getObserve(runtime_id))
         {
+          if( runtimes.getSelectedRuntimeId() != runtime_id )
+          {
+            runtimes.setSelectedRuntimeId(runtime_id);
+          }
           // the runtime id can be different for each frame. 
           var tag = tagManager.setCB(null, parseBacktrace, [stopAt['runtime-id']]); 
           services['ecmascript-debugger'].backtrace(tag, stopAt);
@@ -207,6 +212,7 @@ var stop_at = new function()
       else
       {
         runtime_id = stopAt['runtime-id'];
+       
         // the runtime id can be different for each frame. 
         var tag = tagManager.setCB(null, parseBacktrace, [stopAt['runtime-id']]); 
         services['ecmascript-debugger'].backtrace(tag, stopAt);

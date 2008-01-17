@@ -67,6 +67,12 @@ var runtimes = new function()
         }
         __runtimes[runtimeId] = runtime;
 
+        if(__next_runtime_id_to_select == runtimeId)
+        {
+          self.setSelectedRuntime(runtime);
+          __next_runtime_id_to_select = '';
+        }
+
         // update view
         views.runtimes.update();
       }
@@ -281,6 +287,8 @@ var runtimes = new function()
 
   var __selected_runtime_id = '';
 
+  var __next_runtime_id_to_select = ''
+
   this.setSelectedRuntime = function(runtime)
   {
     var r = '';
@@ -304,6 +312,19 @@ var runtimes = new function()
     for( ; script = scripts[i]; i++)
     {
       script.selected = script['script-id'] == id ? true : false;
+    }
+  }
+
+  this.setSelectedRuntimeId = function(id)
+  {
+    if(__runtimes[id])
+    {
+      this.setSelectedRuntime(__runtimes[id]);
+      views.runtimes.update();
+    }
+    else
+    {
+      __next_runtime_id_to_select = id;
     }
   }
 
