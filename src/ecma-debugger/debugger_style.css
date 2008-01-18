@@ -354,20 +354,16 @@ toolbar-buttons input[handler="continue"]:active {
   }
 
 /* command line */
-#console-input {
-  padding-left:35px;
+
+
+#console-output pre{
+  XXpadding-left:35px;
   }
 
-#console-output {
-  padding-left:35px;
-  }
-
-#console-output div,
+#console-output,
 #console-output pre,
-#console-input div, 
-#console-input textarea, 
-#console-input pre {
-  white-space:pre-wrap;
+#console-input, 
+#console-input textarea {
   line-height:16px;
   font-size:14px !important;
   font-family:monospace;
@@ -375,19 +371,24 @@ toolbar-buttons input[handler="continue"]:active {
   margin:0;
   }
 
-#console-input div, 
-#console-output div {
-  float:left;
-  margin-left:-35px;
+#console-output pre {
+  white-space: pre-wrap;
   }
 
+#console-input span {
+  float:left;
+  }
+
+#console-input span + div {
+  margin-left: 4ex;
+  }
+  
 #console-input textarea {
   width:100%;
   border:0px solid;
   margin:0;
   padding:0;
   overflow:hidden;
-  display:block;
   }
 
 

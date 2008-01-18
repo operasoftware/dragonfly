@@ -221,13 +221,12 @@
       }
     }
 
-
     var markup = "\
       <div class='padding'>\
         <div id='console-output'></div>\
         <div id='console-input' handler='console-focus-input'>\
-          <div>&gt;&gt;&gt;</div>\
-          <textarea rows='1' handler='console-input'></textarea>\
+          <span id='commandline-prefix'>&gt;&gt;&gt; </span>\
+          <div><textarea handler='commandline' rows='1' title='hold shift to add a new line'></textarea></div>\
         </div>\
       </div>";
 
@@ -255,8 +254,9 @@
       if(rt_id)
       {
         var tag = tagManager.setCB(null, handleEval, [rt_id] );
-        var script_string  = input;
+        var script_string  = submit_buffer.join('');
         services['ecmascript-debugger'].eval(tag, rt_id, '', '', "<![CDATA["+script_string+"]]>");
+        submit_buffer = [];
       }
       else
       {
@@ -264,65 +264,57 @@
       }
     }
 
-    var lines_count_old = -1;
+    var submit_buffer = [];
+    var line_buffer = [];
+    var line_buffer_cursor = 0;
 
-    eventHandlers.input['console-input'] = function(event)
+    var line_buffer_push = function(line)
     {
-      var lines = event.target.value.split(/\r?\n/);
-      var lines_count = lines.length;
-      if( lines_count != lines_count_old  )
+      line_buffer[line_buffer.length] = line.replace(/\r\n/g, "");
+      if( line_buffer.length > 100 )
       {
-        var line_heads = '>>>';
-        var i = 1;
-        var is_ready = false;
-        var input = '';
-        for( ; i < lines_count; i++)
-        {
-          if(is_ready)
-          {
-            var console_entry = 
-            {
-              type: 'input', 
-              category: 'Input', 
-              timestamp: new Date().toString().replace(/GMT.*$/, ''),
-              path: location.href,
-              msg: ( input = lines.slice(0, lines_count - 1).join('\r\n') )
-            };
-            document.getElementById('console-output').render(templates.consoleInput(console_entry));
-            event.target.value = '';
-            line_heads = '>>>'
-            lines_count = 1;
-            submit(input);
-            break;
-          }
-          if( lines[i] )
-          {
-            line_heads += '\n...';
-          }
-          else
-          {
-            is_ready = true;
-            line_heads += '\n<';
-          }
-        }
-        event.target.parentElement.getElementsByTagName('div')[0].textContent= line_heads;
-        event.target.setAttribute('rows', lines_count);
-        var container = event.target.parentElement;
-        while( !/container/.test(container.nodeName) && ( container = container.parentElement ) );
-        if(container)
-        {
-          container.scrollTop = container.scrollHeight;
-        }
-        if( lines[lines_count-1] )
-        {
-          lines_count_old = lines_count;
-        };
+        line_buffer = line_buffer.slice(line_buffer.length - 100);
       }
+      line_buffer_cursor = line_buffer.length;
+    }
+
+    eventHandlers.keyup['commandline'] = function(event)
+    {
+      if(event.keyCode == 38 || event.keyCode == 40)
+      {
+        
+        line_buffer_cursor += event.keyCode == 38 ? -1 : 1;
+        line_buffer_cursor = 
+          line_buffer_cursor < 0 ? line_buffer.length-1 : line_buffer_cursor > line_buffer.length-1 ? 0 : line_buffer_cursor;
+        event.target.value = (line_buffer.length ? line_buffer[line_buffer_cursor] : '').replace(/\r\n/g, ''); 
+        event.preventDefault();
+        return;
+      }
+      const CRLF = "\r\n";
+      var value = event.target.value;
+      var lastCRLFIndex = value.lastIndexOf(CRLF);
+      if(lastCRLFIndex != -1)
+      {
+        if ( value.length -2 != lastCRLFIndex )
+        {
+          value = value.slice(0, lastCRLFIndex) + value.slice(lastCRLFIndex + 2) + CRLF;
+        }
+        document.getElementById("console-output").render(
+          ['div', ( submit_buffer.length ? "... " : ">>> " ) + value, 'class', 'log-entry']);
+        line_buffer_push( submit_buffer[submit_buffer.length] = value );
+        if(!event.shiftKey)
+        {
+          submit();
+        }
+        document.getElementById("commandline-prefix").textContent = submit_buffer.length ? "... " : ">>> ";
+        event.target.value = '';
+        event.target.scrollTop = 0;
+      }
+
     }
 
     this.createView = function(container)
     {
-      lines_count_old = -1;
       container.innerHTML = markup;
     }
 

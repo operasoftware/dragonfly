@@ -39,6 +39,7 @@ var EventHandler = function(type)
 new EventHandler('click');
 new EventHandler('change');
 new EventHandler('input');
+new EventHandler('keyup');
 
 /***** click handler *****/
 
