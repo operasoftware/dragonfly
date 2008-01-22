@@ -11,7 +11,7 @@ var stop_at = new function()
     script: 1,
     exception: 0,
     error: 0,
-    abort: 0,
+    abort: 0
   }
 
   // replace with settings['js-source'].get(key)
@@ -20,7 +20,7 @@ var stop_at = new function()
     script: 0,
     exception: 0,
     error: 0,
-    abort: 0,
+    abort: 0
   }
 
   var stopAt = {}; // there can be only one stop at at the time
