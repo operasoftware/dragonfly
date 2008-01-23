@@ -88,10 +88,7 @@
       runtimes.handle(xml);
     }
 
-    events['thread-stopped-at'] = function(xml)
-    {
-      stop_at.handle(xml);
-    }
+
 
     events['handle-event'] = function(xml)
     {
@@ -101,6 +98,13 @@
     events['runtimes-reply'] = runtimes.handleRuntimesReplay;
 
     events['runtime-stopped'] = runtimes.handleRuntimeStoped;
+
+
+    events['thread-started'] = runtimes.handleThreadStarted;
+
+    events['thread-stopped-at'] = runtimes.handleThreadStopedAt;
+
+    events['thread-finished'] = runtimes.handleThreadFinished;
 
 
 

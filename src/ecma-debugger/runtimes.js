@@ -131,9 +131,6 @@ var runtimes = new function()
 */
 
   
-
-  
-
   var breakpoint_count = 1;
 
   var getBreakpointId = function()
@@ -164,15 +161,105 @@ var runtimes = new function()
     views.runtimes.update();
   }
 
+
+
+  var thread_queue = []
+  var threads = {}
+  var current_thread_id = ''
+
+  var clear_thread_id = function(id)
+  {
+    var cur = '', i = 0;
+    if( id == current_thread_id )
+    {
+      current_thread_id = '';
+    }
+    for( ; cur = thread_queue[i]; i++)
+    {
+      if( cur == id )
+      {
+        thread_queue.splice(i, 1);
+        delete threads[id];
+        return true;
+      }
+    }
+    return false;
+  }
+
+/*
+
+  <thread-started>
+    <runtime-id>3</runtime-id>
+    <thread-id>3</thread-id>
+    <parent-thread-id>0</parent-thread-id>
+    <thread-type>inline</thread-type>
+  </thread-started>
+
+  <thread-finished>
+    <runtime-id>3</runtime-id>
+    <thread-id>3</thread-id>
+    <status>completed</status>
+    <value type="null"/>
+  </thread-finished>
+
+*/
+
+
+
+  this.handleThreadStarted = function(xml)
+  {
+    var id = xml.getNodeData("thread-id");
+    thread_queue[thread_queue.length] = id;
+    if( !current_thread_id )
+    {
+      current_thread_id = id;
+    }
+  }
+
+  this.handleThreadStopedAt = function(xml)
+  {
+    var id = xml.getNodeData("thread-id");
+    // the current thread id should either be set in 'thread-started' event or 
+    // in shifting one from the thread event queue
+    if( id == current_thread_id )
+    {
+      stop_at.handle(xml);
+    }
+    else
+    {
+      // there should never be more the one 'thread-stopped-at' event per runtime 
+      threads[id] = xml;
+    }
+  }
+
+  this.handleThreadFinished = function(xml)
+  {
+    /* TODO
+    status "completed" | "unhandled-exception" | "aborted" | "cancelled-by-scheduler"
+    */
+
+    var id = xml.getNodeData("thread-id");
+    clear_thread_id(id);
+    while(thread_queue.length)
+    {
+      id = thread_queue.shift();
+      if( threads[id] )
+      {
+        stop_at.handle(threads[ current_thread_id = id ]);
+        break;
+      }
+    }
+  }
+
   /*
   <runtime-stopped>
   <runtime-id>1</runtime-id>
 </runtime-stopped>
 
 */
-
   this.handleRuntimeStoped = function(xml)
   {
+    
     var rt_id = xml.getNodeData('runtime-id');
     if(rt_id)
     {
@@ -301,7 +388,11 @@ var runtimes = new function()
       }
       else
       {
-        __runtimes[r]['selected'] = false;
+        // the runtime could be registered but not jet parsed
+        if( __runtimes[r] )
+        {
+          __runtimes[r]['selected'] = false;
+        }
       }
     }
   }
