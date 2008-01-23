@@ -165,14 +165,15 @@ var runtimes = new function()
 
   var thread_queue = []
   var threads = {}
-  var current_thread_id = ''
+  var current_thread = [];
+
 
   var clear_thread_id = function(id)
   {
     var cur = '', i = 0;
-    if( id == current_thread_id )
+    if( id == current_thread[ current_thread.length - 1 ] )
     {
-      current_thread_id = '';
+      current_thread.pop();
     }
     for( ; cur = thread_queue[i]; i++)
     {
@@ -209,10 +210,12 @@ var runtimes = new function()
   this.handleThreadStarted = function(xml)
   {
     var id = xml.getNodeData("thread-id");
+    var parent_thread_id = xml.getNodeData("parent-thread-id");
     thread_queue[thread_queue.length] = id;
-    if( !current_thread_id )
+    if( !current_thread.length || 
+      ( parent_thread_id != '0' && parent_thread_id == current_thread[ current_thread.length - 1 ] ) )
     {
-      current_thread_id = id;
+      current_thread[current_thread.length] = id;
     }
   }
 
@@ -221,7 +224,7 @@ var runtimes = new function()
     var id = xml.getNodeData("thread-id");
     // the current thread id should either be set in 'thread-started' event or 
     // in shifting one from the thread event queue
-    if( id == current_thread_id )
+    if( id == current_thread[ current_thread.length -1 ] )
     {
       stop_at.handle(xml);
     }
@@ -245,7 +248,8 @@ var runtimes = new function()
       id = thread_queue.shift();
       if( threads[id] )
       {
-        stop_at.handle(threads[ current_thread_id = id ]);
+        current_thread[current_thread.length] = id;
+        stop_at.handle(threads[id]);
         break;
       }
     }
