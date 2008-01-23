@@ -15,7 +15,8 @@
       
       if( ini.debug )
       {
-        debug.formatXML(new XMLSerializer().serializeToString(xml));
+        debug.log(xml);
+        
       }
       var is_handled = false;
       if( tagManager.handleResponse(xml) )

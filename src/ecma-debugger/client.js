@@ -129,6 +129,10 @@ var client = new function()
       Debug.init();
       if(params.debug) ini.debug = true;
       if(params['event-flow']) window.__debug_event_flow__ = true;
+      if( params['events'] )
+      {
+        debug.setFilter(params['events']);
+      }
     }
 
     if( params['profiling'] )
@@ -144,6 +148,8 @@ var client = new function()
       window.__testing__ = true;
       window.__times_spotlight__ = [];
     }
+
+
 
     if( params['profile-dom'] )
     {

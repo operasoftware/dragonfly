@@ -4,6 +4,8 @@ var Debug = function(id, name, container_class)
   var self = this;
   var indent='  ';
 
+  event_filter = null;
+
   var getIndent = function(n)
   {
     var ret = '';
@@ -102,6 +104,26 @@ var Debug = function(id, name, container_class)
       }
       debug.output(out);
     
+  }
+
+  this.setFilter = function(events)
+  {
+    events = events.split(',');
+    event_filter = {};
+    var e='', i=0;
+    for( ; e = events[i]; i++)
+    {
+      event_filter[e.replace(/^ +/, '').replace(/ +$/,'')] = true;
+    }
+  }
+
+  this.log = function(xml)
+  {
+    var event = xml.documentElement.nodeName;
+    if( !event_filter || ( event_filter && event in event_filter ) )
+    {
+      self.formatXML(new XMLSerializer().serializeToString(xml));
+    }
   }
 
   this.formatXML=function(string)
