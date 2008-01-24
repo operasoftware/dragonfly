@@ -15,7 +15,7 @@
       
       if( ini.debug )
       {
-        debug.log(xml);
+        debug.logEvents(xml);
         
       }
       var is_handled = false;

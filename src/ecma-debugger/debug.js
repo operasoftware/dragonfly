@@ -4,7 +4,10 @@ var Debug = function(id, name, container_class)
   var self = this;
   var indent='  ';
 
+  var reCommand=/<([^>]*)>/;
+
   event_filter = null;
+  command_filter = null;
 
   var getIndent = function(n)
   {
@@ -106,7 +109,7 @@ var Debug = function(id, name, container_class)
     
   }
 
-  this.setFilter = function(events)
+  this.setEventFilter = function(events)
   {
     events = events.split(',');
     event_filter = {};
@@ -117,7 +120,18 @@ var Debug = function(id, name, container_class)
     }
   }
 
-  this.log = function(xml)
+  this.setCommandFilter = function(events)
+  {
+    events = events.split(',');
+    command_filter = {};
+    var e='', i=0;
+    for( ; e = events[i]; i++)
+    {
+      command_filter[e.replace(/^ +/, '').replace(/ +$/,'')] = true;
+    }
+  }
+
+  this.logEvents = function(xml)
   {
     var event = xml.documentElement.nodeName;
     if( !event_filter || ( event_filter && event in event_filter ) )
@@ -125,6 +139,17 @@ var Debug = function(id, name, container_class)
       self.formatXML(new XMLSerializer().serializeToString(xml));
     }
   }
+
+  this.logCommand = function(msg)
+  {
+    var command = reCommand.exec(msg)[1];
+    if( !command_filter || ( command_filter && command in command_filter ) )
+    {
+      self.formatXML('POST:\n'+msg);
+    }
+  }
+
+  
 
   this.formatXML=function(string)
   {

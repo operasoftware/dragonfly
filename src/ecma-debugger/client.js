@@ -55,7 +55,10 @@ var client = new function()
 
   var post_scope = function(service, msg)
   {
-    //opera.postError('command: '+service+' '+ msg)
+    if( ini.debug )
+    {
+      debug.logCommand(msg);
+    }
     opera.scopeSendToHost(service, "<?xml version=\"1.0\"?>" + msg)
   }
 
@@ -63,6 +66,11 @@ var client = new function()
 
   var post_proxy = function(service, msg)
   {
+    if( ini.debug )
+    {
+      debug.logCommand(msg);
+      
+    }
     proxy.POST("/" + service, msg);
   }
 
@@ -129,10 +137,27 @@ var client = new function()
       Debug.init();
       if(params.debug) ini.debug = true;
       if(params['event-flow']) window.__debug_event_flow__ = true;
-      if( params['events'] )
+    }
+
+    if( params['log-events'] )
+    {
+      
+      if(!ini.debug) 
       {
-        debug.setFilter(params['events']);
+        ini.debug = true;
+        Debug.init();
       }
+      debug.setEventFilter(params['log-events']);
+    }
+
+    if( params['log-commands'] )
+    {
+      if(!ini.debug) 
+      {
+        ini.debug = true;
+        Debug.init();
+      }
+      debug.setCommandFilter(params['log-commands']);
     }
 
     if( params['profiling'] )

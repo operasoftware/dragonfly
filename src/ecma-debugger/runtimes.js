@@ -224,13 +224,14 @@ var runtimes = new function()
     var id = xml.getNodeData("thread-id");
     // the current thread id should either be set in 'thread-started' event or 
     // in shifting one from the thread event queue
-    if( id == current_thread[ current_thread.length -1 ] )
+    if( id == current_thread[ current_thread.length - 1 ] )
     {
       stop_at.handle(xml);
     }
     else
     {
-      // there should never be more the one 'thread-stopped-at' event per runtime 
+      // there should never be more then one 'thread-stopped-at' event per runtime
+      // is this really true ?
       threads[id] = xml;
     }
   }

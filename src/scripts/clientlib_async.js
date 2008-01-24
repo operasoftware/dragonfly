@@ -136,10 +136,7 @@ var proxy = new function()
     */
     this.POST = function ( msg, data, cb ) 
     {
-      if( ini.debug )
-      {
-        debug.formatXML("POST:\n" + data);
-      }
+
       var x = new XMLHttpRequest;
       x.onload=function()
       {
