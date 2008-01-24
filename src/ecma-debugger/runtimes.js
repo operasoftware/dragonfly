@@ -171,11 +171,21 @@ var runtimes = new function()
   var clear_thread_id = function(id)
   {
     var cur = '', i = 0;
+    /* it seems that the order of the thread-finished events can get reversed 
     if( id == current_thread[ current_thread.length - 1 ] )
     {
       current_thread.pop();
     }
-    for( ; cur = thread_queue[i]; i++)
+    */
+    for(i = 0 ; cur = current_thread[i]; i++)
+    {
+      if( cur == id )
+      {
+        current_thread.splice(i, 1);
+        break;
+      }
+    }
+    for(i = 0 ; cur = thread_queue[i]; i++)
     {
       if( cur == id )
       {
@@ -224,6 +234,7 @@ var runtimes = new function()
     var id = xml.getNodeData("thread-id");
     // the current thread id should either be set in 'thread-started' event or 
     // in shifting one from the thread event queue
+
     if( id == current_thread[ current_thread.length - 1 ] )
     {
       stop_at.handle(xml);
@@ -241,9 +252,8 @@ var runtimes = new function()
     /* TODO
     status "completed" | "unhandled-exception" | "aborted" | "cancelled-by-scheduler"
     */
-
     var id = xml.getNodeData("thread-id");
-    clear_thread_id(id);
+    clear_thread_id(id);  
     while(thread_queue.length)
     {
       id = thread_queue.shift();
