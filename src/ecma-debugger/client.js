@@ -292,11 +292,20 @@ var console_rough_layout =
 
 var dom_rough_layout =
 {
-  dir: 'v', width: 700, height: 700,
+  dir: 'h', width: 700, height: 700,
   children: 
   [
-    { height: 150, tabs: ['runtimes'] },
-    { width: 200, tabs: ['dom-markup-style', 'dom-tree-style'] }
+    { 
+      width: 700,
+      children: 
+      [
+        { height: 150, tabs: ['runtimes'] },
+        { width: 200, tabs: ['dom-markup-style', 'dom-tree-style'] }
+      ]
+    },
+    { 
+      width: 250, tabs: ['css-inspector'] 
+    }
   ]
 }
 

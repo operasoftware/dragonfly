@@ -298,12 +298,23 @@
         }
       }
       msg += "</eval>";
+      
       this.post(msg);
     }
 
     this.createAllRuntimes = function()
     {
       this.post("<runtimes><tag></tag><create-all-runtimes/></runtimes>");
+    }
+
+    this.getMatchingCSSRules = function(tag, obj_id, rt_id)
+    {
+      var msg = "<get-matching-css-rules>"+
+          "<tag>" + tag + "</tag>"+
+          "<runtime-id>" + obj_id + "</runtime-id>"+
+          "<object-id>" + rt_id + "</object-id>"+
+        "</get-matching-css-rules>";
+      this.post(msg);
     }
 
   }

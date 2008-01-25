@@ -1,11 +1,12 @@
 /*
   messages so far:
 
-  - "active-tab" as runtime was selected array msg.activeTab
+  - "active-tab" a runtime was selected array msg.activeTab
   - "show-view" a view was created id msg.view
   - "hide-view" a view was removed id msg.view
   - "setting-changed" a setting has changed msg.id view_id, msg.key key
   - "host-state" msg.state = 'disconnected' | 'ready' | waiting';
+  - "element-selected" msg.obj_id, msg.rt_id
 
 */
 

@@ -59,10 +59,12 @@
 <script src="views.js"/>
 <script src="testing.js"/>
 <script src="dom_data.js"/>
-
+<script src="css_data.js"/>
+<script src="views-css-inspector.js"/>
 <script src="js-source-view.js"/>
 <script src="views-dom-markup-style.js"/>
 <script src="views-dom-tree-style.js"/>
+
 <script src="action_handler.js"/>
 <script src="change-handler.js"/>
 <script src="scroll_handler.js"/>

@@ -237,6 +237,7 @@ var dom_data = new function()
       window.__times_dom = [new Date().getTime()] 
     }
     var rt_id = event['runtime-id'], obj_id = event['object-id'];
+    messages.post("element-selected", {obj_id: obj_id, rt_id: data_runtime_id});
     current_target = obj_id;
     var init_rt_id = initializedRuntimes[rt_id];
     if( init_rt_id  )
@@ -252,8 +253,6 @@ var dom_data = new function()
      
     }
 
-
-    //alert('clickHandlerHost: '+event['runtime-id']+' '+event['object-id'])
   }
 
   var handleGetTree = function(xml, runtime_id)
@@ -530,6 +529,8 @@ var dom_data = new function()
 
   this.setCurrentTarget = function(obj_id)
   {
+    // data_runtime_id will fail with more then one runtime per runtime container
+    messages.post("element-selected", {obj_id: obj_id, rt_id: data_runtime_id});
     current_target = obj_id;
   }
 
@@ -567,6 +568,11 @@ var dom_data = new function()
       }
       return path;
     }
+  }
+
+  var postElementSeleceted = function(obj_id, rt_id)
+  {
+    messages.post("element-selected", {obj_id: obj_id, rt_id: rt_id});
   }
 
   this.set_click_handler = function(event)

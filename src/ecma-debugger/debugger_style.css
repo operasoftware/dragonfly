@@ -400,5 +400,9 @@ toolbar-buttons input[handler="continue"]:active {
   margin-right:7px;
   }
 
+.css-inspector pre {
+  white-space: pre-wrap;
+  }
+
 
 
