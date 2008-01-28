@@ -248,20 +248,25 @@ var runtimes = new function()
   }
 
   this.handleThreadFinished = function(xml)
-  {
+{
     /* TODO
     status "completed" | "unhandled-exception" | "aborted" | "cancelled-by-scheduler"
     */
-    var id = xml.getNodeData("thread-id");
-    clear_thread_id(id);  
-    while(thread_queue.length)
+    var id = xml.getNodeData("thread-id") , i = 0, parent_thread_id = '', thread = null;
+    clear_thread_id(id);
+    // opera.postError("thread finished id: " + id +' queue: '+thread_queue+' current: '+current_thread)
+    for( ; id = thread_queue[i]; i++)
     {
-      id = thread_queue.shift();
-      if( threads[id] )
+      if( thread = threads[id] )
       {
-        current_thread[current_thread.length] = id;
-        stop_at.handle(threads[id]);
-        break;
+        parent_thread_id = thread.getNodeData("parent-thread-id");
+        if( !current_thread.length || 
+            ( parent_thread_id != '0' && parent_thread_id == current_thread[ current_thread.length - 1 ] ) )
+        {
+          current_thread[current_thread.length] = id;
+          stop_at.handle(threads[id]);
+          break;
+        }
       }
     }
   }
