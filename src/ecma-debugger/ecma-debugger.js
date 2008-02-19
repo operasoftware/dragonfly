@@ -317,6 +317,16 @@
       this.post(msg);
     }
 
+    this.inspectDOM = function( tag, obj_id , tarversal)
+    {
+      var msg = "<inspect-dom>"+
+          "<tag>" + tag + "</tag>"+
+          "<object-id>" + obj_id + "</object-id>"+
+          "<traversal>" + tarversal + "</traversal>" +
+        "</inspect-dom>";
+      this.post(msg);
+    }
+
   }
 
   Service.prototype = ServiceBase;

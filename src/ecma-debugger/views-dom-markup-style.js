@@ -55,23 +55,10 @@
     this.createView = function(container)
     {
 
-      const 
-      ID = 0, 
-      TYPE = 1, 
-      NAME = 2, 
-      NAMESPACE = 3, 
-      VALUE = 4, 
-      DEPTH = 5, 
-      ATTRS = 6, 
-      CHILDREN_LENGTH = 7, 
-      IS_TARGET = 8, 
-      IS_LAST = 9,
-      NEXT = 10;
-
       var data = dom_data.getData();
 
-      var tree = '', i = 0, length = data.length;
-      var scrollTop = document.documentElement.scrollTop;
+      var tree = '', i = 0, node = null, length = data.length;
+      
       var target = dom_data.getCurrentTarget();
 
       var attrs = null, key = '';
@@ -98,33 +85,33 @@
       }
       else
       {
-        for( ; i < length; i += 10 )
+        for( ; node = data[i]; i += 1 )
         {
-          while( current_depth > data[i+5] )
+          while( current_depth > node[DEPTH] )
           {
             tree += closing_tags.pop();
             current_depth--;
           }
-          current_depth = data[ i + DEPTH ];
+          current_depth = node[ DEPTH ];
           child_pointer = 0;
-          node_name = data[ i + NAME ];
+          node_name = node[ NAME ];
           if( force_lower_case )
           {
             node_name = node_name.toLowerCase();
           }
-          switch ( data[ i + TYPE ] )
+          switch ( node[ TYPE ] )
           {
             case 1:  // elemets
             {
               if( show_attrs )
               {
                 attrs = '';
-                for( key in data[ i + ATTRS ] )
+                for( key in node[ ATTRS ] )
                 {
                   attrs += " <span class='key'>" + 
                     ( force_lower_case ? key.toLowerCase() : key ) + 
                     "</span>=<span class='value'>\"" + 
-                    data[ i + ATTRS ][key] + 
+                    node[ ATTRS ][key] + 
                     "\"</span>";
                 }
               }
@@ -133,18 +120,18 @@
                 attrs = '';
               }
 
-              child_pointer = i + NEXT;
+              child_pointer = i + 1;
 
-              is_open = ( data[ child_pointer ] && ( data[ i + DEPTH ] < data[ child_pointer + DEPTH ] ) );
+              is_open = ( data[ child_pointer ] && ( node[ DEPTH ] < data[ child_pointer ][ DEPTH ] ) );
               if( is_open ) 
               {
                 has_only_one_child = 1;
                 one_child_value = '';
-                child_level = data[ child_pointer + DEPTH ];
-                for( ; data[child_pointer] &&  data[child_pointer + DEPTH] == child_level; child_pointer += 10 )
+                child_level = data[ child_pointer ][ DEPTH ];
+                for( ; data[child_pointer] &&  data[ child_pointer ][ DEPTH ] == child_level; child_pointer += 1 )
                 {
-                  one_child_value += data[ child_pointer + VALUE ];
-                  if( data[ child_pointer + TYPE ] != 3 )
+                  one_child_value += data[ child_pointer ] [ VALUE ];
+                  if( data[ child_pointer ][ TYPE ] != 3 )
                   {
                     has_only_one_child = 0;
                     one_child_value = '';
@@ -157,27 +144,27 @@
               {
                 if( has_only_one_child )
                 {
-                  tree += "<div " + ( data[ i + ID ] == target ? "id='target-element'" : '' ) + 
-                          " style='margin-left:" + 16 * data[ i + DEPTH ] + "px;' "+
-                          "ref-id='"+data[ i + ID ] + "' handler='spotlight-node'>"+
+                  tree += "<div " + ( node[ ID ] == target ? "id='target-element'" : '' ) + 
+                          " style='margin-left:" + 16 * node[ DEPTH ] + "px;' "+
+                          "ref-id='"+ node[ ID ] + "' handler='spotlight-node'>"+
                           "<span class='node'>&lt;" + node_name +  attrs + "&gt;</span>" +
                           one_child_value + 
                           "<span class='node'>&lt;/" + node_name + "&gt;</span>" +
                           "</div>";
-                  i = child_pointer - 10;
+                  i = child_pointer - 1;
                 }
                 else
                 {
-                  tree += "<div " + ( data[ i + ID ] == target ? "id='target-element'" : '' ) + 
-                          " style='margin-left:" + 16 * data[ i + DEPTH ] + "px;' "+
-                          "ref-id='"+data[ i + ID ] + "' handler='spotlight-node'>"+
-                          ( data[ i + CHILDREN_LENGTH ] ? 
+                  tree += "<div " + ( node[ ID ] == target ? "id='target-element'" : '' ) + 
+                          " style='margin-left:" + 16 * node[ DEPTH ] + "px;' "+
+                          "ref-id='"+node[ ID ] + "' handler='spotlight-node'>"+
+                          ( node[ CHILDREN_LENGTH ] ? 
                             "<input handler='get-children' type='button' class='open'>" : '' ) +
                           "<span class='node'>&lt;" + node_name + attrs + "&gt;</span>" +
                           "</div>";
 
                   closing_tags.push("<div class='node' style='margin-left:" + 
-                                    ( 16 * data[ i + DEPTH ] ) + "px;'>" +
+                                    ( 16 * node[ DEPTH ] ) + "px;'>" +
                                     "&lt;/" + node_name + "&gt;" +
                                     "</div>");
                 }
@@ -185,10 +172,10 @@
               }
               else
               {
-              tree += "<div " + ( data[ i + ID ] == target ? "id='target-element'" : '' ) + 
-                      " style='margin-left:" + 16 * data[ i + DEPTH ] + "px;' "+
-                      "ref-id='"+data[ i + ID ] + "' handler='spotlight-node'>"+
-                      ( data[ i + CHILDREN_LENGTH ] ? 
+              tree += "<div " + ( node[ ID ] == target ? "id='target-element'" : '' ) + 
+                      " style='margin-left:" + 16 * node[ DEPTH ] + "px;' "+
+                      "ref-id='"+ node[ ID ] + "' handler='spotlight-node'>"+
+                      ( node[ CHILDREN_LENGTH ] ? 
                         "<input handler='get-children' type='button' class='close'>" : '' ) +
                       "<span class='node'>&lt;" + node_name + attrs + "&gt;</span>" +
                       "</div>";
@@ -200,10 +187,10 @@
             {
               if( show_comments )
               {
-                if( !/^\s*$/.test(data[ i + VALUE ] ) )
+                if( !/^\s*$/.test(node[ VALUE ] ) )
                 {
-                  tree += "<div style='margin-left:" + 16 * data[i+5] + "px;' " +      
-                          "class='comment'>&lt;!--" + data[ i + VALUE ] + "--&gt;</div>";
+                  tree += "<div style='margin-left:" + 16 * node[ DEPTH ] + "px;' " +      
+                          "class='comment'>&lt;!--" + node[ VALUE ] + "--&gt;</div>";
                 }
               }
               break;
@@ -212,22 +199,22 @@
 
             case 10:  // doctype
             {
-              tree += "<div style='margin-left:" + 16 * data[i+5] + "px;' class='doctype'>"+
-                      "&lt;!doctype " + data[ i + NAME ] +
-                      ( data[ i + ATTRS ].publicId ? 
-                        ( " PUBLIC " + "\"" + data[i+ATTRS].publicId + "\"" ) :"" ) +
-                      ( data[ i + ATTRS ].systemId ?  
-                        ( " \"" + data[ i + ATTRS ].systemId + "\"" ) : "" ) +
+              tree += "<div style='margin-left:" + 16 * node[ DEPTH ] + "px;' class='doctype'>"+
+                      "&lt;!doctype " + node[ NAME ] +
+                      ( node[ ATTRS ].publicId ? 
+                        ( " PUBLIC " + "\"" + node[ATTRS].publicId + "\"" ) :"" ) +
+                      ( node[ ATTRS ].systemId ?  
+                        ( " \"" + node[ ATTRS ].systemId + "\"" ) : "" ) +
                       "&gt;</div>";
               break;
             }
 
             default:
             {
-              if( !/^\s*$/.test(data[i+4] ) )
+              if( !/^\s*$/.test(node[ VALUE ] ) )
               {
-                tree += "<div style='margin-left:" + 16 * data[ i + DEPTH ] + "px;'>" + 
-                        data[ i + VALUE ] + "</div>";
+                tree += "<div style='margin-left:" + 16 * node[ DEPTH ] + "px;'>" + 
+                        node[ VALUE ].replace(/[\x0A\x09\x0D]/g, '').replace(/ +/g, ' ') + "</div>";
               }
             }
 
@@ -244,10 +231,13 @@
           container.firstChild : 
           container.render(['div', 'class', 'padding']) 
         ).innerHTML = tree;
-        container.scrollTop.scrollTop = scrollTop;
+        container.scrollTop = scrollTop;
+        
         topCell.statusbar.updateInfo(dom_data.getCSSPath());
         
       }
+
+      
     }
 
     this.init(id, name, container_class);
@@ -293,5 +283,21 @@
       ]
     }
   );
+
+  new ToolbarConfig
+  (
+    'dom-markup-style',
+    [
+      {
+        handler: 'dom-inspection-snapshot',
+        title: 'Get the whole dom tree'
+      }
+    ]
+  )
+
+  eventHandlers.click['dom-inspection-snapshot'] = function(event, target)
+  {
+    dom_data.getSnapshot();
+  }
 
 })()
