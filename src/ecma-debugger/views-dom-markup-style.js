@@ -213,8 +213,8 @@
             {
               if( !/^\s*$/.test(node[ VALUE ] ) )
               {
-                tree += "<div style='margin-left:" + 16 * node[ DEPTH ] + "px;'>" + 
-                        node[ VALUE ].replace(/[\x0A\x09\x0D]/g, '').replace(/ +/g, ' ') + "</div>";
+                tree += "<div style='margin-left:" + ( 16 * node[ DEPTH ] )  + "px;'>" + 
+                        node[ VALUE ]/*.replace(/[\x0A\x09\x0D]/g, '').replace(/ +/g, ' ')*/ + "</div>";
               }
             }
 

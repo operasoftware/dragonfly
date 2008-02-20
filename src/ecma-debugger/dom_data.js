@@ -52,6 +52,8 @@ var dom_data = new function()
 
   var handleGetDOM = function(xml, rt_id)
   {
+     
+    /*
     var json = xml.getNodeData('jsondata');
     if( json )
     {
@@ -64,6 +66,16 @@ var dom_data = new function()
         views[view_id].scrollTargetIntoView();
       }
     }
+    */
+    data = getDataFromXML(xml);
+    data_runtime_id = rt_id;
+    var view_id = '', i = 0;
+    for( ; view_id = view_ids[i]; i++)
+    {
+      views[view_id].update();
+      views[view_id].scrollTargetIntoView();
+    }
+    
   }
 
   var onSettingChange = function(msg)
@@ -140,6 +152,48 @@ var dom_data = new function()
   this.getDataRuntimeId = function()
   {
     return data_runtime_id;
+  }
+
+
+
+  var getDataFromXML = function(xml)
+  {
+    var ret = [],
+      fields =
+      [
+        "object-id",
+        "type",
+        "name",
+        "namespace-prefix",
+        "value",
+        "depth",
+        "children-length",
+        "public-id",
+        "system-id",
+        "attributes",
+      ],
+      field = null, 
+      nodes = xml.getElementsByTagName('node'), 
+      node = null, i = 0, attrs = null, attr = null, attr_cur = null, j = 0;
+    for( ; node = nodes[i]; i++)
+    {
+      field = ret[ret.length] = [];
+      field[ID] = node.getNodeData(fields[0]);
+      field[TYPE] = parseInt(node.getNodeData(fields[1]));
+      field[NAME] = node.getNodeData(fields[2]);
+      field[NAMESPACE] = node.getNodeData(fields[3]);
+      field[VALUE] = node.getNodeData(fields[4]);
+      field[DEPTH] = parseInt(node.getNodeData(fields[5]));
+      field[CHILDREN_LENGTH] = parseInt(node.getNodeData(fields[6]) || 0);
+      attr_cur = field[ATTRS] = {};
+      attrs = node.getElementsByTagName('attribute');
+      for( j = 0; attr = attrs[j]; j++)
+      {
+        attr_cur[attr.getNodeData('name')] = attr.getNodeData('value');
+      }
+    }
+    return ret;
+
   }
 
 
