@@ -29,7 +29,7 @@ var runtimes = new function()
     delete __runtimes[id];
   }
 
-  this.handleRuntimesReplay = function(xml)
+  this.handleRuntimesReply = function(xml)
   {
     parseRuntime(xml);
   }

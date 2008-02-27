@@ -96,7 +96,7 @@
       host_tabs.handleEventHandler(xml);
     }
 
-    events['runtimes-reply'] = runtimes.handleRuntimesReplay;
+    events['runtimes-reply'] = runtimes.handleRuntimesReply;
 
     events['runtime-stopped'] = runtimes.handleRuntimeStoped;
 
