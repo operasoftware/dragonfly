@@ -47,13 +47,11 @@ var dom_data = new function()
     current_target = obj_id;
     data = [];
     tag = tagManager.setCB(null, handleGetDOM, [ rt_id ]);
-    services['ecmascript-debugger'].inspectDOM( tag, obj_id, 'parent-node-chain-with-children' );
+    services['ecmascript-debugger'].inspectDOM( tag, obj_id, 'parent-node-chain-with-children', 'json' );
   }
 
   var handleGetDOM = function(xml, rt_id)
   {
-     
-    /*
     var json = xml.getNodeData('jsondata');
     if( json )
     {
@@ -66,7 +64,7 @@ var dom_data = new function()
         views[view_id].scrollTargetIntoView();
       }
     }
-    */
+    /* with xml 
     data = getDataFromXML(xml);
     data_runtime_id = rt_id;
     var view_id = '', i = 0;
@@ -75,6 +73,7 @@ var dom_data = new function()
       views[view_id].update();
       views[view_id].scrollTargetIntoView();
     }
+    */
     
   }
 
@@ -132,9 +131,10 @@ var dom_data = new function()
         if(settings[id].get('highlight-on-hover'))
         {
           host_tabs.activeTab.addEventListener('mouseover', spotlight);
-        }
-        var tab = host_tabs.getActiveTab(), rt_id = '', i = 0, tag = 0;
-        var init_rt_id = null;
+        }       
+        var tag = tagManager.setCB(null, handleInitialView, [data_runtime_id]);
+        var script_data = "return ( $"+ data_runtime_id + ".document.body || $"+ data_runtime_id + ".document.documentElement )";
+        services['ecmascript-debugger'].eval(tag, data_runtime_id, '', '', script_data, ['$' + data_runtime_id, data_runtime_id]);
       }
     }
   }
@@ -154,8 +154,20 @@ var dom_data = new function()
     return data_runtime_id;
   }
 
+  var handleInitialView = function(xml, rt_id)
+  {
+    if(xml.getNodeData('status') == 'completed' )
+    {
+      clickHandlerHost({'runtime-id': rt_id, 'object-id': xml.getNodeData('object-id') })
+    }
+    else
+    {
+      opera.postError('handleInitialView failed in dom_data');
+    }
+  }
 
 
+  /* with xml format
   var getDataFromXML = function(xml)
   {
     var ret = [],
@@ -195,6 +207,7 @@ var dom_data = new function()
     return ret;
 
   }
+  */
 
 
 
@@ -224,7 +237,7 @@ var dom_data = new function()
   this.getChildernFromNode = function(object_id)
   {
     var tag = tagManager.setCB(null, handleGetChildren, [data_runtime_id, object_id]);
-    services['ecmascript-debugger'].inspectDOM(tag, object_id, 'children');
+    services['ecmascript-debugger'].inspectDOM(tag, object_id, 'children', 'json'  );
   }
 
   this.closeNode = function(object_id)
@@ -252,7 +265,7 @@ var dom_data = new function()
   this.getSnapshot = function()
   {
     var tag = tagManager.setCB(null, handleSnapshot, [data_runtime_id]);
-    var script_data = 'return $'+ data_runtime_id + '.document.documentElement';
+    var script_data = 'return $'+ data_runtime_id + '.document.document';
     services['ecmascript-debugger'].eval(tag, data_runtime_id, '', '', script_data, ['$' + data_runtime_id, data_runtime_id]);
   }
 
@@ -261,7 +274,7 @@ var dom_data = new function()
     if(xml.getNodeData('status') == 'completed' )
     {
       var tag = tagManager.setCB(null, handleGetDOM, [runtime_id]);
-      services['ecmascript-debugger'].inspectDOM( tag, xml.getNodeData('object-id'), 'subtree' );
+      services['ecmascript-debugger'].inspectDOM( tag, xml.getNodeData('object-id'), 'subtree', 'json' );
     }
     else
     {

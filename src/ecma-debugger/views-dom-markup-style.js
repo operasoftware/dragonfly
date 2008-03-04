@@ -11,13 +11,16 @@
     ID = 0, 
     TYPE = 1, 
     NAME = 2, 
-    NAMESPACE = 3, 
+    DEPTH = 3,
+    NAMESPACE = 4, 
     VALUE = 4, 
-    DEPTH = 5, 
-    ATTRS = 6, 
-    CHILDREN_LENGTH = 7, 
-    IS_TARGET = 8, 
-    IS_LAST = 9;
+    ATTRS = 5,
+    ATTR_PREFIX = 0,
+    ATTR_KEY = 1, 
+    ATTR_VALUE = 2,
+    CHILDREN_LENGTH = 6, 
+    PUBLIC_ID = 4,
+    SYSTEM_ID = 5;
 
     this.scrollTargetIntoView = function()
     {
@@ -52,6 +55,26 @@
       }
     }
 
+    var formatProcessingInstructionValue = function(str, force_lower_case)
+    {
+      
+      var r_attrs = str.split(' '), r_attr = '', i=0, attrs = '', attr = null;
+      
+      for( ; i < r_attrs.length; i++)
+      {
+        if(r_attr = r_attrs[i])
+        {
+          attr = r_attr.split('=');
+          attrs += " <span class='key'>" + 
+            ( force_lower_case ? attr[0].toLowerCase() : attr[0] ) + 
+            "</span>=<span class='value'>" + 
+            attr[1] + 
+            "</span>";
+        }
+      }
+      return attrs;
+    }
+
     this.createView = function(container)
     {
 
@@ -61,7 +84,7 @@
       
       var target = dom_data.getCurrentTarget();
 
-      var attrs = null, key = '';
+      var attrs = null, attr = null, k = 0, key = '';
 
       var is_open = 0;
       var has_only_one_child = 0;
@@ -106,12 +129,13 @@
               if( show_attrs )
               {
                 attrs = '';
-                for( key in node[ ATTRS ] )
+                for( k = 0; attr = node[ATTRS][k]; k++ )
                 {
                   attrs += " <span class='key'>" + 
-                    ( force_lower_case ? key.toLowerCase() : key ) + 
+                    ( attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '' ) + 
+                    ( force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ) + 
                     "</span>=<span class='value'>\"" + 
-                    node[ ATTRS ][key] + 
+                    attr[ATTR_VALUE] + 
                     "\"</span>";
                 }
               }
@@ -183,6 +207,15 @@
               break;
             }
 
+            case 7:  // processing instruction
+            {
+              tree += "<div style='margin-left:" + 16 * node[ DEPTH ] + "px;' " +      
+                "class='processing-instruction'>&lt;?" + node[NAME] + ' ' + 
+                formatProcessingInstructionValue(node[VALUE], force_lower_case) + "?&gt;</div>";
+              break;
+
+            }
+
             case 8:  // comments
             {
               if( show_comments )
@@ -193,6 +226,16 @@
                           "class='comment'>&lt;!--" + node[ VALUE ] + "--&gt;</div>";
                 }
               }
+              break;
+
+            }
+
+            case 9:  // document node
+            {
+              /* makes not too much sense in the markup view
+              tree += "<div style='margin-left:" + 16 * node[ DEPTH ] + "px;' " +      
+                ">#document</div>";
+              */
               break;
 
             }

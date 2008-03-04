@@ -317,12 +317,13 @@
       this.post(msg);
     }
 
-    this.inspectDOM = function( tag, obj_id , tarversal)
+    this.inspectDOM = function( tag, obj_id , tarversal, format)
     {
       var msg = "<inspect-dom>"+
           "<tag>" + tag + "</tag>"+
           "<object-id>" + obj_id + "</object-id>"+
           "<traversal>" + tarversal + "</traversal>" +
+          "<format>" + format + "</format>" +
         "</inspect-dom>";
       this.post(msg);
     }
