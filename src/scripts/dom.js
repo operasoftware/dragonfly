@@ -213,23 +213,28 @@ Node.prototype.getAttributeFromNode=function(nodeName, attr)
   return null;
 }
 
-Document.prototype.getElementsByClassName=Element.prototype.getElementsByClassName=function()
-{
-  var eles = this.getElementsByTagName("*"), 
-    ele = null, ret =[], c_n = '', cursor = null, i = 0, j = 0;
-  for( ; c_n = arguments[i]; i++) 
+(function(){
+  if( !document.getElementsByClassName )
   {
-    arguments[i] = new RegExp('(?:^| +)' + c_n + '(?: +|$)');
-  }
-  for (i=0; ele=eles[i]; i++)
-  { 
-    c_n = ele.className;
-    for ( j=0; ( cursor = arguments[j] ) && cursor.test(c_n); j++);
-    if( !cursor )
+    Document.prototype.getElementsByClassName=Element.prototype.getElementsByClassName=function()
     {
-      ret[ret.length] = ele;
-    }
+      var eles = this.getElementsByTagName("*"), 
+        ele = null, ret =[], c_n = '', cursor = null, i = 0, j = 0;
+      for( ; c_n = arguments[i]; i++) 
+      {
+        arguments[i] = new RegExp('(?:^| +)' + c_n + '(?: +|$)');
+      }
+      for (i=0; ele=eles[i]; i++)
+      { 
+        c_n = ele.className;
+        for ( j=0; ( cursor = arguments[j] ) && cursor.test(c_n); j++);
+        if( !cursor )
+        {
+          ret[ret.length] = ele;
+        }
+      }
+      return ret;
+    } 
   }
-  return ret;
-} 
+})()
 
