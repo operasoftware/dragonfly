@@ -7,6 +7,8 @@
   - "setting-changed" a setting has changed msg.id view_id, msg.key key
   - "host-state" msg.state = 'disconnected' | 'ready' | waiting';
   - "element-selected" msg.obj_id, msg.rt_id
+  - "view-created" msg.id, msg.container
+  - "view-destroyed" msg.id
 
 */
 
