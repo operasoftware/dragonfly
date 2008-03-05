@@ -280,7 +280,14 @@
         
       }
 
+      messages.post('view-created', {id: this.id, container: container});
+
       
+    }
+
+    this.ondestroy = function()
+    {
+      messages.post('view-destroyed', {id: this.id});
     }
 
     this.init(id, name, container_class);
@@ -335,12 +342,56 @@
         handler: 'dom-inspection-snapshot',
         title: 'Get the whole dom tree'
       }
+    ],
+    [
+      {
+        handler: 'dom-markup-text-search',
+        title: 'text search'
+      }
     ]
   )
 
+  // button handlers
   eventHandlers.click['dom-inspection-snapshot'] = function(event, target)
   {
     dom_data.getSnapshot();
+  }
+
+  // filter handlers
+  var textSearch = new TextSearch();
+
+  var onViewCreated = function(msg)
+  {
+    if( msg.id == 'dom-markup-style' )
+    {
+      textSearch.setContainer(msg.container);
+    }
+  }
+
+  var onViewDestroyed = function(msg)
+  {
+    if( msg.id == 'dom-markup-style' )
+    {
+      textSearch.cleanup();
+    }
+  }
+
+  messages.addListener('view-created', onViewCreated);
+  messages.addListener('view-destroyed', onViewDestroyed);
+
+
+
+  eventHandlers.input['dom-markup-text-search'] = function(event, target)
+  {
+    textSearch.searchDelayed(target.value);
+  }
+
+  eventHandlers.keyup['dom-markup-text-search'] = function(event, target)
+  {
+    if( event.keyCode == 13 )
+    {
+      textSearch.highlight();
+    }
   }
 
 })()

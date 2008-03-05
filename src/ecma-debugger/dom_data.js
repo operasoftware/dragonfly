@@ -141,7 +141,7 @@ var dom_data = new function()
 
   var onHideView = function(msg)
   {
-    
+    //opera.postError('hide: '+msg.id)
   }
 
   this.getData = function()
