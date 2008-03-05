@@ -76,6 +76,11 @@ var ViewBase = new function()
     container.innerHTML = this.inner;
   }
 
+  this.ondestroy = function()
+  {
+
+  }
+
   this.update = function(ele) // for testing
   {
     if( ele )
@@ -130,6 +135,17 @@ var ViewBase = new function()
   {
 
   }
+
+  var onHideView = function(msg)
+  {
+    var view = window.views[msg.id];
+    if(view)
+    {
+      view.ondestroy();
+    }
+  }
+
+  messages.addListener('hide-view', onHideView);
 
 }
 

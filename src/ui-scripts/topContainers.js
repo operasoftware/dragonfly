@@ -63,10 +63,20 @@ var TopContainerBase = function()
     {
       var children = viewport.childNodes, child = null, i = children.length - 1;
       var id = this.cell.id;
+      var tabs = null, tab = null, k = 0;
       for( ; child = children[i]; i--)
       {
         if( child.nodeType == 1 && child.id.indexOf(id) == -1 )
         {
+          
+          tabs = child.getElementsByTagName('tab');
+          for( k = 0; tab = tabs[k]; k++)
+          {
+            if( tab.hasClass('active') )
+            {
+              messages.post("hide-view", {id: tab.getAttribute('ref-id')});
+            }
+          }
           viewport.removeChild(child);
         }
       }
@@ -79,8 +89,7 @@ var TopContainerBase = function()
     }
 
 
-    var 
-    _views = ViewBase.getSingleViews(),
+    var _views = ViewBase.getSingleViews(),
     view = '',
     i = 0;
     for( ; id = _views[i]; i++)
