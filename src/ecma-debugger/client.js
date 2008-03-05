@@ -123,6 +123,8 @@ var client = new function()
 
     var args = location.search, params = {}, arg = '', i = 0, ele = null;
 
+    var no_params = true;
+
     if( args )
     {
       args = args.slice(1).split(';');
@@ -130,8 +132,10 @@ var client = new function()
       {
         arg = arg.split('=');
         params[arg[0]] = arg[1] ? arg[1] : true;
+        no_params = false;
       }
     }
+
     if( params.debug || params['event-flow'] )
     {
       Debug.init();
@@ -180,6 +184,11 @@ var client = new function()
     {
       Debug.init();
       window.__times_dom = [];
+    }
+
+    if( no_params )
+    {
+      opera.postError = function(){};
     }
 
   
