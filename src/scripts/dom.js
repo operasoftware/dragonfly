@@ -211,7 +211,7 @@ Node.prototype.getAttributeFromNode=function(nodeName, attr)
     return node.getAttribute(attr);
   }
   return null;
-}
+};
 
 (function(){
   if( !document.getElementsByClassName )
@@ -236,5 +236,5 @@ Node.prototype.getAttributeFromNode=function(nodeName, attr)
       return ret;
     } 
   }
-})()
+})();
 
