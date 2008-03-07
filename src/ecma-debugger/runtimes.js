@@ -184,16 +184,12 @@ var runtimes = new function()
     views.runtimes.update();
   }
 
-
-
   var thread_queues = {};
   var current_threads = {};
-  var threads = {}
   
   var runtime_stoped_queue = [];
   var stoped_threads = {};
 
-  /// clear_thread_id(rt_id, thread_id);
   var clear_thread_id = function(rt_id, thread_id)
   {
     var cur = '', i = 0;
@@ -237,16 +233,6 @@ var runtimes = new function()
   </thread-finished>
 
   */
-
-  /* stop_at:
-
-    this.getControlsEnabled = function()
-  {
-    return __controls_enabled;
-  }
-
-  */
-
 
 
   this.handleThreadStarted = function(xml)
@@ -298,22 +284,6 @@ var runtimes = new function()
       {
         stop_at.handle( stoped_threads[runtime_stoped_queue.shift()] );
       }
-      /*
-      for( ; thread_id = thread_queue[i]; i++)
-      {
-        if( thread = threads[thread_id] )
-        {
-          parent_thread_id = thread.getNodeData("parent-thread-id");
-          if( !current_thread.length || 
-              ( parent_thread_id != '0' && parent_thread_id == current_thread[ current_thread.length - 1 ] ) )
-          {
-            current_thread[current_thread.length] = thread_id;
-            stop_at.handle(threads[thread_id]);
-            break;
-          }
-        }
-      }
-      */
     }
 
     // messages.post('host-state', {state: 'ready'});
