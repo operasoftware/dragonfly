@@ -186,23 +186,23 @@ var runtimes = new function()
 
 
 
-  var thread_queue = []
+  var thread_queues = {};
+  var current_threads = {};
   var threads = {}
-  var current_thread = [];
+  
+  var runtime_stoped_queue = [];
+  var stoped_threads = {};
 
-
-  var clear_thread_id = function(id)
+  /// clear_thread_id(rt_id, thread_id);
+  var clear_thread_id = function(rt_id, thread_id)
   {
     var cur = '', i = 0;
-    /* it seems that the order of the thread-finished events can get reversed 
-    if( id == current_thread[ current_thread.length - 1 ] )
-    {
-      current_thread.pop();
-    }
-    */
+    var thread_queue = thread_queues[rt_id];
+    var current_thread = current_threads[rt_id];
+    // it seems that the order of the thread-finished events can get reversed 
     for(i = 0 ; cur = current_thread[i]; i++)
     {
-      if( cur == id )
+      if( cur == thread_id )
       {
         current_thread.splice(i, 1);
         break;
@@ -210,10 +210,10 @@ var runtimes = new function()
     }
     for(i = 0 ; cur = thread_queue[i]; i++)
     {
-      if( cur == id )
+      if( cur == thread_id )
       {
         thread_queue.splice(i, 1);
-        delete threads[id];
+        delete stoped_threads[rt_id][thread_id];
         return true;
       }
     }
@@ -238,12 +238,24 @@ var runtimes = new function()
 
   */
 
+  /* stop_at:
+
+    this.getControlsEnabled = function()
+  {
+    return __controls_enabled;
+  }
+
+  */
+
 
 
   this.handleThreadStarted = function(xml)
   {
+    var rt_id = xml.getNodeData("runtime-id");
     var id = xml.getNodeData("thread-id");
     var parent_thread_id = xml.getNodeData("parent-thread-id");
+    var thread_queue = thread_queues[rt_id] || ( thread_queues[rt_id] = [] );
+    var current_thread = current_threads[rt_id] || ( current_threads[rt_id] = [] );
     thread_queue[thread_queue.length] = id;
     if( !current_thread.length || 
       ( parent_thread_id != '0' && parent_thread_id == current_thread[ current_thread.length - 1 ] ) )
@@ -254,19 +266,23 @@ var runtimes = new function()
 
   this.handleThreadStopedAt = function(xml)
   {
-    var id = xml.getNodeData("thread-id");
-    // the current thread id should either be set in 'thread-started' event or 
-    // in shifting one from the thread event queue
-
-    if( id == current_thread[ current_thread.length - 1 ] )
+    var rt_id = xml.getNodeData("runtime-id");
+    var thread_id = xml.getNodeData("thread-id");
+    var current_thread = current_threads[rt_id];
+    // the current thread id must be set in 'thread-started' event  
+    if( !stop_at.getControlsEnabled () && thread_id == current_thread[ current_thread.length - 1 ] )
     {
       stop_at.handle(xml);
     }
     else
     {
-      // there should never be more then one 'thread-stopped-at' event per runtime
-      // is this really true ?
-      threads[id] = xml;
+      // it is sure to assume that per runtime there can be only one <stoped-at> event
+      if( ! stoped_threads[rt_id] )
+      {
+        stoped_threads[rt_id] = {};
+      } 
+      stoped_threads[rt_id] = xml;
+      runtime_stoped_queue[runtime_stoped_queue.length] = rt_id;
     }
   }
 
@@ -275,22 +291,40 @@ var runtimes = new function()
       /* TODO
       status "completed" | "unhandled-exception" | "aborted" | "cancelled-by-scheduler"
       */
-      var id = xml.getNodeData("thread-id") , i = 0, parent_thread_id = '', thread = null;
-      clear_thread_id(id);
-      // opera.postError("thread finished id: " + id +' queue: '+thread_queue+' current: '+current_thread)
-      for( ; id = thread_queue[i]; i++)
+      var rt_id = xml.getNodeData("runtime-id");
+      var thread_id = xml.getNodeData("thread-id");
+      clear_thread_id(rt_id, thread_id);
+      if( !stop_at.getControlsEnabled () && runtime_stoped_queue.length )
       {
-        if( thread = threads[id] )
+        stop_at.handle( stoped_threads[runtime_stoped_queue.shift()] );
+      }
+      /*
+      for( ; thread_id = thread_queue[i]; i++)
+      {
+        if( thread = threads[thread_id] )
         {
           parent_thread_id = thread.getNodeData("parent-thread-id");
           if( !current_thread.length || 
               ( parent_thread_id != '0' && parent_thread_id == current_thread[ current_thread.length - 1 ] ) )
           {
-            current_thread[current_thread.length] = id;
-            stop_at.handle(threads[id]);
+            current_thread[current_thread.length] = thread_id;
+            stop_at.handle(threads[thread_id]);
             break;
           }
         }
+      }
+      */
+    }
+
+    // messages.post('host-state', {state: 'ready'});
+    // fires when stop_at releases the control to the host
+    // if there is already a <thread-stoped> event in the queue 
+    // it has to be handled here
+    var onHostStateChange = function(msg)
+    {
+      if( !stop_at.getControlsEnabled() && runtime_stoped_queue.length )
+      {
+        stop_at.handle( stoped_threads[runtime_stoped_queue.shift()] );
       }
     }
 
@@ -504,6 +538,8 @@ var runtimes = new function()
   {
     return __selected_runtime_id;
   }
+  
+  messages.addListener('host-state', onHostStateChange);
 
 
 
