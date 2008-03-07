@@ -246,10 +246,11 @@
       this.post(msg);
     }
 
-    this.spotlight = function(runtime, node_id)
+    this.spotlight = function(runtime, node_id, scroll_into_view)
     {
       var msg = "<spotlight-object>" +
                   "<object-id>" + node_id + "</object-id>" +
+                  ( scroll_into_view ? "<scroll-into-view/>" : "" ) +
                 "</spotlight-object>";
       this.post(msg);
     }

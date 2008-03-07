@@ -388,7 +388,7 @@ var action_handler = new function()
     var obj_id = current_target.getAttribute('ref-id');
     if(obj_id && !handlers['spotlight-node'].timeout )
     {
-      services['ecmascript-debugger'].spotlight(rt_id, obj_id);
+      services['ecmascript-debugger'].spotlight(rt_id, obj_id, true);
       handlers['spotlight-node'].timeout = setTimeout(handlers['spotlight-node'].clearSpotlight, 800, rt_id);
       dom_data.setCurrentTarget(obj_id);
       views['dom-markup-style'].updateTarget(current_target);
