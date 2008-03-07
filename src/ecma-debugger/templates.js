@@ -12,18 +12,54 @@
     return ['div', ret, 'class', 'padding'];
   }
 
-  this.runtimes = function(runtimes)
+  this.windows = function(windows)
   {
     var ret = ['ul'];
-    var cur = '';
-    for( cur in runtimes )  
+    var win = null, i = 0;
+    for( ; win = windows[i]; i++ )  
     {
-      if( runtimes[cur] ) // this is a temporary fix
-      {
-        ret[ret.length] = self.runtimeId(runtimes[cur]);
-      }
+      ret[ret.length] = self.windowId(win);
     }
     return ['div', ret.concat(['class', 'folder']), 'class', 'padding'];
+  }
+
+  this.windowId = function(win)
+  {
+    var 
+    rts_c = null, 
+    rt = null, 
+    i = 0,
+    ret = ['li', 
+            ['input', 
+              'type', 'button', 
+              'handler', 'show-runtimes', 
+              'class', 'folder-key'].
+                concat(win.is_unfolded  ? ['style', 'background-position:0 -11px'] : [] ),
+            ['span', 
+              win['title'] || win['uri'], 
+              'handler', 'select-window', 
+              'title', 'select a window']
+         ];
+    if( win.is_unfolded )
+    {
+      ret.splice(ret.length, 0, this.runtimes(win.runtimes));
+    } 
+    if (win.selected)
+    {
+      ret.splice(ret.length, 0, 'class', 'selected-window'); 
+    }
+    ret.splice(ret.length, 0, 'window_id', win.id);
+    return ret;
+  }
+
+  this.runtimes = function(runtimes)
+  {
+    var ret = ['ul'], rt = null, i = 0;
+    for( ; rt = runtimes[i]; i++)
+    {
+      ret[ret.length] = self.runtimeId(rt);
+    }
+    return ret;
   }
 
   this.runtimeId = function(runtime)
@@ -34,7 +70,7 @@
             'handler', 'show-scripts', 
             'runtime_id', runtime['runtime-id'],
             'class', 'folder-key'].concat(runtime.unfolded ? ['style', 'background-position:0 -11px'] : [] ),
-          ['span', runtime['uri'], 'handler', 'show-global-scope'].
+          ['span', runtime['uri'], 'handler', 'show-global-scope', 'title', 'select a runtime'].
             concat( runtime.selected ? ['class', 'selected-runtime'] : [] ) 
         
       ];

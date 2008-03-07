@@ -223,10 +223,15 @@ toolbar-buttons input[handler="continue"]:active {
   padding:.5em;
 }
 
-[handler="display-script"], [handler="show-global-scope"] {
+[handler="select-window"], [handler="display-script"], [handler="show-global-scope"] {
   cursor:pointer;
   }
 
+
+[window_id].selected > span {
+  color:#930;
+  font-weight:bold;
+  }
 
 
 [handler="display-script"].selected {

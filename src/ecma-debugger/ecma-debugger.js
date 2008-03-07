@@ -98,6 +98,8 @@
 
     events['runtimes-reply'] = runtimes.handleRuntimesReplay;
 
+    events['runtime-started'] = runtimes.handleRuntimeStarted;
+
     events['runtime-stopped'] = runtimes.handleRuntimeStoped;
 
 

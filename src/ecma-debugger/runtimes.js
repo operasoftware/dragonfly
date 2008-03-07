@@ -1,6 +1,8 @@
 var runtimes = new function()
 {
   var __runtimes = {};
+
+  __windowsFolding = {};
   
   var self = this;
 
@@ -8,7 +10,7 @@ var runtimes = new function()
   { 
     if( !(id in __runtimes) )
     {
-      //alert('runtime: '+ id);
+      opera.postError('runtime id does not exist')
       __runtimes[id] = null;
       services['ecmascript-debugger'].getRuntime( tagManager.setCB(null, parseRuntime), id );
     }
@@ -18,6 +20,7 @@ var runtimes = new function()
   { 
     var sc = null ;
     /*
+    TODO check for existing breakpoints before cleaning up
     for( sc in __scripts )
     {
       if( __scripts[sc]['runtime-id'] == id )
@@ -27,6 +30,11 @@ var runtimes = new function()
     }
     */
     delete __runtimes[id];
+  }
+
+  this.handleRuntimeStarted = function(xml)
+  {
+    parseRuntime(xml);
   }
 
   this.handleRuntimesReplay = function(xml)
@@ -43,7 +51,6 @@ var runtimes = new function()
     for ( ; r_t = r_ts[i]; i++)
     {
       runtimeId = r_t.getNodeData('runtime-id'); 
-      //alert('parseRuntime: '+ runtimeId);
       if(runtimeId)
       {
         runtime={};
@@ -56,8 +63,6 @@ var runtimes = new function()
         {
           if( __runtimes[cur] && __runtimes[cur]['uri'] == runtime['uri'] )
           {
-            // copy states
-            //alert("__runtimes[cur]['unfolded'] "+__runtimes[cur]['unfolded'])
             if( __runtimes[cur]['unfolded'] )
             {
               runtime['unfolded'] = __runtimes[cur]['unfolded'];
@@ -65,6 +70,7 @@ var runtimes = new function()
             delete __runtimes[cur];
           }
         }
+        getTitleRuntime(runtimeId);
         __runtimes[runtimeId] = runtime;
 
         if(__next_runtime_id_to_select == runtimeId)
@@ -72,10 +78,28 @@ var runtimes = new function()
           self.setSelectedRuntime(runtime);
           __next_runtime_id_to_select = '';
         }
-
-        // update view
+        
         views.runtimes.update();
       }
+    }
+  }
+
+  var getTitleRuntime = function(rt_id)
+  {
+    var tag = tagManager.setCB(null, parseGetTitle, [rt_id]);
+    var script = "return $" + rt_id + ".document.title || ''";
+    services['ecmascript-debugger'].eval(tag, rt_id, '', '', script, ['$' + rt_id, rt_id] );
+  }
+
+  var parseGetTitle = function(xml, rt_id)
+  {
+    if(xml.getNodeData('status') == 'completed' )
+    {
+      __runtimes[rt_id]['title'] = xml.getNodeData('string');
+    }
+    else
+    {
+      opera.postError('getting title has failed in runtimes getTitleRuntime');
     }
   }
 
@@ -130,7 +154,6 @@ var runtimes = new function()
  "</new-script>" ;
 */
 
-  
   var breakpoint_count = 1;
 
   var getBreakpointId = function()
@@ -279,7 +302,6 @@ var runtimes = new function()
 */
   this.handleRuntimeStoped = function(xml)
   {
-    
     var rt_id = xml.getNodeData('runtime-id');
     if(rt_id)
     {
@@ -291,15 +313,49 @@ var runtimes = new function()
         views.js_source.clearView();
       }
     }
-
-    
   }
 
-  this.getRuntimes = function()
+  // windows means runtime containers here to stay in sync with the xml protocol
+
+  this.getWindows = function()
   {
-    // not very clever
-    return __runtimes;
+    var ret = [], r = '', is_unfolded = true;
+    for( r in __runtimes )
+    {
+      if( __runtimes[r]['html-frame-path'] && __runtimes[r]['html-frame-path'].indexOf('[') == -1 )
+      {
+        is_unfolded = true;
+        if( __windowsFolding[__runtimes[r]['window-id']] === false )
+        {
+          is_unfolded = false;
+        }
+        ret[ret.length] = 
+        {
+          id: __runtimes[r]['window-id'],
+          uri: __runtimes[r]['uri'],
+          title: __runtimes[r]['title'] || '',
+          is_unfolded: is_unfolded,
+          runtimes: this.getRuntimes( __runtimes[r]['window-id'] )
+        }
+      }
+    }
+    return ret;
   }
+
+  this.getRuntimes = function(window_id)
+  {
+    var ret = [], r = '';
+    for( r in __runtimes )
+    { 
+      if ( __runtimes[r] && __runtimes[r]['window-id'] &&  __runtimes[r]['window-id'] == window_id )
+      {
+        ret[ret.length] = __runtimes[r];
+      }
+    }
+    return ret;
+  }
+  
+
 
   this.getRuntimeIdWithURL = function(url)
   {
@@ -375,6 +431,11 @@ var runtimes = new function()
       //alert(__runtimes[runtime_id]+' '+is_unfolded);
       __runtimes[runtime_id]['unfolded'] = is_unfolded;
     }
+  }
+
+  this.setWindowUnfolded = function(window_id, is_unfolded)
+  {
+    __windowsFolding[window_id] = is_unfolded;
   }
 
   this.setObserve = function(runtime_id, observe)

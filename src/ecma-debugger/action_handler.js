@@ -155,6 +155,26 @@ var action_handler = new function()
     }
   }
 
+  handlers['show-runtimes'] = function(event)  
+  {
+    var window_id = event.target.parentNode.getAttribute('window_id');
+    var rts = runtimes.getRuntimes(window_id);
+    var runtime_container = event.target.parentNode.getElementsByTagName('ul')[0];
+    var rt = null, i=0;
+    if(runtime_container)
+    {
+      event.target.parentNode.removeChild(runtime_container);
+      event.target.style.removeProperty('background-position');
+      runtimes.setWindowUnfolded(window_id, false);
+    }
+    else
+    {
+      event.target.parentNode.render(templates.runtimes(rts));
+      event.target.style.backgroundPosition = '0 -11px';
+      runtimes.setWindowUnfolded(window_id, true);
+    }
+  }
+
   handlers['display-script'] = function(event)
   {
     var id  = event.target.getAttribute('script-id');
@@ -176,6 +196,13 @@ var action_handler = new function()
     {
       opera.postError("missing script id in handlers['display-script']")
     }
+  }
+
+  handlers['select-window'] = function(event)
+  {
+    var parent = event.target.parentNode;
+    var id  = parent.getAttribute('window-id');
+    helpers.setSelected({target: parent});
   }
 
   handlers['continue'] = function(event)

@@ -12,7 +12,8 @@
     this.createView = function(container)
     {
       container.innerHTML = '';
-      container.render(templates.runtimes(runtimes.getRuntimes()));
+      //container.render(templates.runtimes(runtimes.getRuntimes()));
+      container.render(templates.windows(runtimes.getWindows()));
     }
     this.init(id, name, container_class);
   }
