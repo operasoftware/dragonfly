@@ -14,14 +14,19 @@ var EventHandler = function(type)
   var handler = function(event)
   {
     
-    var ele = event.target, handler = ele.getAttribute('handler');
+    var ele = event.target, handler = ele.getAttribute('handler'), container = null;
     while( !handler && ( ele = ele.parentElement ) )
     {
       handler = ele.getAttribute('handler');
     }
     if( handler && eventHandlers[type][handler] )
     {
-      eventHandlers[type][handler](event, ele);
+      if( type == 'click' && /toolbar-buttons/.test(ele.parentNode.nodeName) )
+      {
+        container = 
+          document.getElementById(ele.parentNode.parentNode.id.replace('toolbar', 'container'));
+      }
+      eventHandlers[type][handler](event, ele, container);
     }
   }
 
