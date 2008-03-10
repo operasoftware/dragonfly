@@ -1,8 +1,15 @@
 var runtimes = new function()
 {
   var __runtimes = {};
+  var __runtimes_arr = [];
 
-  __windowsFolding = {};
+  var __threads = [];
+
+  var __log_threads = false;
+
+  var __windowsFolding = {};
+
+  var view_ids = ['threads'];
   
   var self = this;
 
@@ -45,6 +52,7 @@ var runtimes = new function()
   var parseRuntime = function(xml)
   {
     var r_ts = xml.getElementsByTagName('runtime'), r_t=null, i=0;
+    var length = 0, k = 0;
     var runtimeId = '', runtime=null, prop = '', 
       children = null, child = null, j = 0;
     var cur = '';
@@ -53,6 +61,12 @@ var runtimes = new function()
       runtimeId = r_t.getNodeData('runtime-id'); 
       if(runtimeId)
       {
+        length = __runtimes_arr.length
+        for( k = 0; k < length && runtimeId != __runtimes_arr[k]; k++);
+        if( k == length )
+        {
+          __runtimes_arr[k] = runtimeId;  
+        }
         runtime={};
         children = r_t.childNodes;
         for(j=0 ; child = children[j]; j++)
@@ -168,6 +182,62 @@ var runtimes = new function()
     return ( script_count++ ).toString();
   }
 
+  var log_thread = function(xml, rt_id, thread_id)
+  {
+    var event_map =
+    {
+       'thread-started': ['thread-type', 'parent-thread-id'],
+       'thread-finished': ['status'],
+       'thread-stopped-at': ['script-id', 'line-number', 'stopped-reason']
+    };
+    var thread = __threads[__threads.length] = 
+    {
+      stoped_at_queue: runtime_stoped_queue.slice(0),
+      rt_id: rt_id,
+      thread_id: thread_id
+    };
+    var type = thread.event_type = xml.documentElement.nodeName, key = '', i = 0;
+    for( ; key = event_map[type][i]; i++)
+    {
+      thread[key] = xml.getNodeData(key);
+    }
+    thread.threads = [];
+    for( i = 0; key = __runtimes_arr[i]; i++ )
+    {
+      if( key in current_threads && current_threads[key].length )
+      {
+        thread.threads[thread.threads.length] = [key].concat( current_threads[key] );
+      }
+    }
+  }
+
+  var onSettingChange = function(msg)
+  {
+    var msg_id = msg.id, id = '', i = 0;
+    for( ; ( id = view_ids[i] ) && id != msg_id; i++);
+    if( id )
+    {
+      switch (msg.key)
+      {
+        case 'log-threads':
+        {
+          __log_threads = settings[id].get(msg.key);
+          break;
+        }
+      }
+    }
+  }
+
+  this.getThreads = function()
+  {
+    return __threads;
+  }
+
+  this.clearThreadLog = function()
+  {
+    __threads = [];
+  }
+
 
 
   this.handle = function(new_script_event)
@@ -196,22 +266,33 @@ var runtimes = new function()
     var thread_queue = thread_queues[rt_id];
     var current_thread = current_threads[rt_id];
     // it seems that the order of the thread-finished events can get reversed 
-    for(i = 0 ; cur = current_thread[i]; i++)
+    // TODO this is a temporary fix for situations where a threads 
+    // finishes in a runtime whre it has never started
+    if(current_thread)
     {
-      if( cur == thread_id )
+      for(i = 0 ; cur = current_thread[i]; i++)
       {
-        current_thread.splice(i, 1);
-        break;
+        if( cur == thread_id )
+        {
+          current_thread.splice(i, 1);
+          break;
+        }
+      }
+      for(i = 0 ; cur = thread_queue[i]; i++)
+      {
+        if( cur == thread_id )
+        {
+          thread_queue.splice(i, 1);
+          delete stoped_threads[rt_id][thread_id];
+          return true;
+        }
       }
     }
-    for(i = 0 ; cur = thread_queue[i]; i++)
+    else
     {
-      if( cur == thread_id )
-      {
-        thread_queue.splice(i, 1);
-        delete stoped_threads[rt_id][thread_id];
-        return true;
-      }
+      opera.postError('got a thread finished event \n' +
+        'in a runtime where the thread \n'+
+        'has never started: '+ rt_id+' '+thread_id)
     }
     return false;
   }
@@ -248,6 +329,11 @@ var runtimes = new function()
     {
       current_thread[current_thread.length] = id;
     }
+    if( __log_threads )
+    {
+      log_thread(xml, rt_id, id);
+      views.threads.update();
+    }
   }
 
   this.handleThreadStopedAt = function(xml)
@@ -270,21 +356,31 @@ var runtimes = new function()
       stoped_threads[rt_id] = xml;
       runtime_stoped_queue[runtime_stoped_queue.length] = rt_id;
     }
+    if( __log_threads )
+    {
+      log_thread(xml, rt_id, thread_id);
+      views.threads.update();
+    }
   }
 
   this.handleThreadFinished = function(xml)
   {
-      /* TODO
-      status "completed" | "unhandled-exception" | "aborted" | "cancelled-by-scheduler"
-      */
-      var rt_id = xml.getNodeData("runtime-id");
-      var thread_id = xml.getNodeData("thread-id");
-      clear_thread_id(rt_id, thread_id);
-      if( !stop_at.getControlsEnabled () && runtime_stoped_queue.length )
-      {
-        stop_at.handle( stoped_threads[runtime_stoped_queue.shift()] );
-      }
+    /* TODO
+    status "completed" | "unhandled-exception" | "aborted" | "cancelled-by-scheduler"
+    */
+    var rt_id = xml.getNodeData("runtime-id");
+    var thread_id = xml.getNodeData("thread-id");
+    clear_thread_id(rt_id, thread_id);
+    if( !stop_at.getControlsEnabled () && runtime_stoped_queue.length )
+    {
+      stop_at.handle( stoped_threads[runtime_stoped_queue.shift()] );
     }
+    if( __log_threads )
+    {
+      log_thread(xml, rt_id, thread_id);
+      views.threads.update();
+    }
+  }
 
     // messages.post('host-state', {state: 'ready'});
     // fires when stop_at releases the control to the host
@@ -510,6 +606,7 @@ var runtimes = new function()
   }
   
   messages.addListener('host-state', onHostStateChange);
+  messages.addListener('setting-changed', onSettingChange);
 
 
 

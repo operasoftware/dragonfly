@@ -186,10 +186,7 @@ var client = new function()
       window.__times_dom = [];
     }
 
-    if( no_params )
-    {
-      opera.postError = function(){};
-    }
+
 
   
 
@@ -229,7 +226,7 @@ var client = new function()
 
     // TODO clean up
 
-    container = viewport.appendChild(document.createElement('div'));
+    var container = viewport.appendChild(document.createElement('div'));
     container.style.cssText = 'position:absolute;top:0;left:-1000px;';
     container.innerHTML = resolve_map_2.markup;
 
@@ -335,7 +332,7 @@ var js_rough_layout =
       width: 250, 
       children: 
       [
-        { height: 250, tabs: ['callstack'] },
+        { height: 250, tabs: ['callstack', 'threads'] },
         { height: 1000, tabs: ['frame_inspection'] }
       ] 
     }
