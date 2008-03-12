@@ -163,6 +163,10 @@ xx#debug {
   margin-left:5px;
   }
 
+*[handler] {
+  cursor: pointer;
+  }
+
 input[handler="continue"] {
   width:36px;
   height:22px;

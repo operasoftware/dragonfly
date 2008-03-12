@@ -142,7 +142,7 @@ var client = new function()
       if(params.debug) ini.debug = true;
       if(params['event-flow']) window.__debug_event_flow__ = true;
     }
-
+     // e.g. log-events=thread-started,thread-stopped-at,thread-finished,new-script
     if( params['log-events'] )
     {
       
@@ -153,7 +153,7 @@ var client = new function()
       }
       debug.setEventFilter(params['log-events']);
     }
-
+    // e.g. log-commands=continue
     if( params['log-commands'] )
     {
       if(!ini.debug) 
@@ -305,7 +305,7 @@ var dom_rough_layout =
       width: 700,
       children: 
       [
-        { height: 150, tabs: ['runtimes'] },
+        { height: 150, tabs: ['runtimes_dom'] },
         { width: 200, tabs: ['dom-markup-style', 'dom-tree-style'] }
       ]
     },

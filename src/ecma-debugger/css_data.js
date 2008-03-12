@@ -128,7 +128,7 @@ var css_data = new function()
   // a runtime was selected
   var onActiveTab = function(msg)
   {
-
+    /*
     // TODO clean up old tab
     data = []; // this must be split for all runtimes in the active tab
     var tab = msg.activeTab, rt_id = '', i = 0, tag = 0;
@@ -143,6 +143,7 @@ var css_data = new function()
         '(' + initRuntime_hostside_to_string +')(' + '$' + rt_id + ')', ['$' + rt_id, rt_id]
        );
     }
+    */
     
   }
 

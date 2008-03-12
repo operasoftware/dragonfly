@@ -161,6 +161,7 @@ var action_handler = new function()
     var rts = runtimes.getRuntimes(window_id);
     var runtime_container = event.target.parentNode.getElementsByTagName('ul')[0];
     var rt = null, i=0;
+    var template_type = event.target.parentNode.parentNode.getAttribute('template-type');
     if(runtime_container)
     {
       event.target.parentNode.removeChild(runtime_container);
@@ -169,9 +170,28 @@ var action_handler = new function()
     }
     else
     {
-      event.target.parentNode.render(templates.runtimes(rts));
+      event.target.parentNode.render(templates.runtimes(rts, template_type));
       event.target.style.backgroundPosition = '0 -11px';
       runtimes.setWindowUnfolded(window_id, true);
+    }
+  }
+
+  handlers['show-dom'] = function(event, target)
+  {
+    var rt_id = target.parentNode.getAttribute('runtime_id');
+    var window_id = target.parentNode.parentNode.parentNode.getAttribute('window_id');
+    
+    if(rt_id)
+    {
+      if( runtimes.getActiveWindowId() != window_id )
+      {
+        dom_data.setActiveRuntime(rt_id);
+        host_tabs.setActiveTab(window_id);
+      }
+      else
+      {
+        dom_data.getDOM(rt_id);
+      }
     }
   }
 
@@ -201,8 +221,9 @@ var action_handler = new function()
   handlers['select-window'] = function(event)
   {
     var parent = event.target.parentNode;
-    var id  = parent.getAttribute('window-id');
+    var id  = parent.getAttribute('window_id');
     helpers.setSelected({target: parent});
+    host_tabs.setActiveTab(id);
   }
 
   handlers['continue'] = function(event)

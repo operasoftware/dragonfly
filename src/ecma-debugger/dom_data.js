@@ -64,7 +64,7 @@ var dom_data = new function()
     if( data_runtime_id == rt_id )
     {
       for( ; ( node = data[i] ) && obj_id != node[ID]; i++ );
-      if( node )
+      if( node  && node[TYPE] == 1 ) // don't update the dom if it's only a text node
       {
         level = node[ DEPTH ];
         j = i + 1 ;
