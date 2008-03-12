@@ -13,7 +13,7 @@
     {
       container.innerHTML = '';
       //container.render(templates.runtimes(runtimes.getRuntimes()));
-      container.render(templates.windows(runtimes.getWindows()));
+      container.render(templates.windows(runtimes.getWindows(), 'script'));
     }
     this.init(id, name, container_class);
   }
@@ -21,6 +21,45 @@
   new View('runtimes', 'Runtimes', 'scroll runtimes');
 
 
+  var View = function(id, name, container_class)
+  {
+    var self = this;
+
+    this.createView = function(container)
+    {
+      container.innerHTML = '';
+      container.render(templates.windows(runtimes.getWindows(), 'dom'));
+    }
+
+    this.updateSelectedRuntime = function(rt_id)
+    {
+      var containers = this.getAllContainers(), c = null , i = 0;
+      var lis = null, li = null , k = 0;
+      for( ; c = containers[i]; i++)
+      {
+        lis = c.getElementsByTagName('li');
+        for( k = 0; li = lis[k]; k++ )
+        {
+          if( li.hasAttribute('runtime_id') )
+          {
+            if( li.getAttribute('runtime_id') == rt_id)
+            {
+              li.firstChild.addClass('selected-runtime');
+              helpers.setSelected({target: li.parentNode.parentNode});
+            }
+            else
+            {
+              li.firstChild.removeClass('selected-runtime');
+            }
+          }
+        }
+      }
+    }
+
+    this.init(id, name, container_class);
+  }
+  View.prototype = ViewBase;
+  new View('runtimes_dom', 'Runtimes DOM', 'scroll runtimes');
 
 
 

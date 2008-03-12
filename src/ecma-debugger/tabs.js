@@ -35,29 +35,42 @@ var host_tabs = new function()
 
   var getHandlerId = function(event_type, callback)
   {
-    var id_p = '';
+    var id_ps = [], id_p = '';
     for( id_p in id_map )
     {
       if( type_map[id_p] == event_type && callback_map[id_p] == callback )
       {
-        return id_p;
+        id_ps[id_ps.length] = id_p;
       }
     }
-    return null;
+    return id_ps;
   }
 
   var activeTabOnChange = function()
   {
-
+    // remove all event listeners
+    var rt_id = '', i = 0, h_id = '';
+    for( ; rt_id = __activeTab[i]; i++)
+    {
+      for( h_id in runtime_id_map )
+      {
+        if( runtime_id_map[h_id] == rt_id )
+        {
+          services['ecmascript-debugger'].removeEventHandler(h_id);
+          delete node_map[h_id];
+          delete type_map[h_id];
+          delete callback_map[h_id];
+          delete runtime_id_map[h_id];
+        }
+      }
+    }
   }
 
-  this.setActiveTab = function(top_frame_runtime_id)
+  this.setActiveTab = function(top_frame_rt_id)
   {
-    // TODO add all child runtimes
     activeTabOnChange();
-    __activeTab = [top_frame_runtime_id];
-    messages.post('active-tab', {activeTab: __activeTab} );
-    
+    __activeTab = runtimes.getRuntimeIdsFromWindow(top_frame_rt_id);
+    messages.post('active-tab', {activeTab: __activeTab} ); 
   }
 
   this.getActiveTab = function(top_frame_runtime_id)
@@ -65,6 +78,7 @@ var host_tabs = new function()
     return __activeTab;
     
   }
+
 
   this.handleEventHandler = function(xml)
   {
@@ -135,8 +149,8 @@ var host_tabs = new function()
 
     this.removeEventListener =  function(event_type, callback)
     {
-      var id = getHandlerId(event_type, callback);
-      if( id )
+      var ids = getHandlerId(event_type, callback), id = '', i = 0;
+      for( ; id = ids[i]; i++ )
       {
         services['ecmascript-debugger'].removeEventHandler(id);
         delete node_map[id];
@@ -145,7 +159,6 @@ var host_tabs = new function()
         delete runtime_id_map[id];
       }
     }
-
   }
 
 }

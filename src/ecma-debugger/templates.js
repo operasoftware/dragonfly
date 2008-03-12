@@ -12,18 +12,18 @@
     return ['div', ret, 'class', 'padding'];
   }
 
-  this.windows = function(windows)
+  this.windows = function(windows, win_type)
   {
     var ret = ['ul'];
     var win = null, i = 0;
     for( ; win = windows[i]; i++ )  
     {
-      ret[ret.length] = self.windowId(win);
+      ret[ret.length] = self['window-' + win_type](win);
     }
-    return ['div', ret.concat(['class', 'folder']), 'class', 'padding'];
+    return ['div', ret.concat(['class', 'folder', 'template-type', win_type]), 'class', 'padding'];
   }
 
-  this.windowId = function(win)
+  this['window-script']  = function(win)
   {
     var 
     rts_c = null, 
@@ -42,27 +42,56 @@
          ];
     if( win.is_unfolded )
     {
-      ret.splice(ret.length, 0, this.runtimes(win.runtimes));
+      ret.splice(ret.length, 0, this.runtimes(win.runtimes, 'script'));
     } 
-    if (win.selected)
+    if (win.is_selected)
     {
-      ret.splice(ret.length, 0, 'class', 'selected-window'); 
+      ret.splice(ret.length, 0, 'class', 'selected'); 
     }
     ret.splice(ret.length, 0, 'window_id', win.id);
     return ret;
   }
 
-  this.runtimes = function(runtimes)
+  this['window-dom'] = function(win)
+  {
+    var 
+    rts_c = null, 
+    rt = null, 
+    i = 0,
+    ret = ['li', 
+            ['input', 
+              'type', 'button', 
+              'handler', 'show-runtimes',
+              'class', 'folder-key'].
+                concat(win.is_unfolded  ? ['style', 'background-position:0 -11px'] : [] ),
+            ['span', 
+              win['title'] || win['uri'], 
+              'handler', 'select-window', 
+              'title', 'select a window']
+         ];
+    if( win.is_unfolded )
+    {
+      ret.splice(ret.length, 0, this.runtimes(win.runtimes, 'dom'));
+    } 
+    if (win.is_selected)
+    {
+      ret.splice(ret.length, 0, 'class', 'selected'); 
+    }
+    ret.splice(ret.length, 0, 'window_id', win.id);
+    return ret;
+  }
+
+  this.runtimes = function(runtimes, type)
   {
     var ret = ['ul'], rt = null, i = 0;
     for( ; rt = runtimes[i]; i++)
     {
-      ret[ret.length] = self.runtimeId(rt);
+      ret[ret.length] = self['runtime-' + type](rt);
     }
     return ret;
   }
 
-  this.runtimeId = function(runtime)
+  this['runtime-script'] = function(runtime)
   {
     var ret = ['li',
           ['input', 
@@ -86,6 +115,19 @@
     }
     return ret;
   }
+
+  this['runtime-dom'] = function(runtime)
+  {
+    var selected_rt = dom_data.getDataRuntimeId();
+    var ret = ['li',
+          ['span', runtime['uri'], 'handler', 'show-dom', 'title', 'show dom'].
+            concat( selected_rt == runtime['runtime-id'] ? ['class', 'selected-runtime'] : [] ),
+          'runtime_id', runtime['runtime-id']
+        
+      ];
+    return ret;
+  }
+
   this.scriptLink = function(script)
   {
     return ['li',

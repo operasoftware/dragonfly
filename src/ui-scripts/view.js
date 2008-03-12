@@ -118,7 +118,7 @@ var ViewBase = new function()
     
   }
 
-  this.isvisible = function() // for testing
+  this.isvisible = function() 
   {
     var id = '', i = 0;
     for( ; id = this.container_ids[i]; i++)
@@ -129,6 +129,19 @@ var ViewBase = new function()
       }
     }
     return false;
+  }
+
+  this.getAllContainers = function() 
+  {
+    var id = '', i = 0, c = null, ret = [];
+    for( ; id = this.container_ids[i]; i++)
+    {
+      if( c = document.getElementById(id) )
+      {
+        ret[ret.length] = c;
+      }
+    }
+    return ret;
   }
 
   this.onresize = function()

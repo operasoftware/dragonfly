@@ -3,6 +3,8 @@ var runtimes = new function()
   var __runtimes = {};
   var __runtimes_arr = [];
 
+  var __selected_window = '';
+
   var __threads = [];
 
   var __log_threads = false;
@@ -10,6 +12,17 @@ var runtimes = new function()
   var __windowsFolding = {};
 
   var view_ids = ['threads'];
+
+  var runtime_views = ['runtimes', 'runtimes_dom'];
+
+  var updateRuntimeViews = function()
+  {
+    var rt = '', i = 0;
+    for( ; rt = runtime_views[i]; i++ )
+    {
+      views[rt].update();
+    }
+  }
   
   var self = this;
 
@@ -92,8 +105,7 @@ var runtimes = new function()
           self.setSelectedRuntime(runtime);
           __next_runtime_id_to_select = '';
         }
-        
-        views.runtimes.update();
+        updateRuntimeViews();
       }
     }
   }
@@ -101,8 +113,8 @@ var runtimes = new function()
   var getTitleRuntime = function(rt_id)
   {
     var tag = tagManager.setCB(null, parseGetTitle, [rt_id]);
-    var script = "return $" + rt_id + ".document.title || ''";
-    services['ecmascript-debugger'].eval(tag, rt_id, '', '', script, ['$' + rt_id, rt_id] );
+    var script = "return ( document.title || '' )";
+    services['ecmascript-debugger'].eval(tag, rt_id, '', '', script);
   }
 
   var parseGetTitle = function(xml, rt_id)
@@ -110,6 +122,7 @@ var runtimes = new function()
     if(xml.getNodeData('status') == 'completed' )
     {
       __runtimes[rt_id]['title'] = xml.getNodeData('string');
+      updateRuntimeViews();
     }
     else
     {
@@ -228,6 +241,12 @@ var runtimes = new function()
     }
   }
 
+  var onActiveTab = function(msg)
+  {
+    __selected_window = msg.activeTab[0];
+    //opera.postError('__selected_window: '+__selected_window);
+  }
+
   this.getThreads = function()
   {
     return __threads;
@@ -251,7 +270,7 @@ var runtimes = new function()
     script['breakpoints'] = {};
     registerRuntime( script['runtime-id'] );
     registerScript( script );
-    views.runtimes.update();
+    updateRuntimeViews();
   }
 
   var thread_queues = {};
@@ -406,7 +425,7 @@ var runtimes = new function()
     if(rt_id)
     {
       removeRuntime(rt_id);
-      views.runtimes.update();
+      updateRuntimeViews();
       var script_id = views.js_source.getCurrentScriptId();
       if( script_id  && ( self.getScriptsRuntimeId(script_id) == rt_id ) )
       {
@@ -435,12 +454,20 @@ var runtimes = new function()
           uri: __runtimes[r]['uri'],
           title: __runtimes[r]['title'] || '',
           is_unfolded: is_unfolded,
+          is_selected: __selected_window == __runtimes[r]['window-id'],
           runtimes: this.getRuntimes( __runtimes[r]['window-id'] )
         }
       }
     }
     return ret;
   }
+
+  this.getActiveWindowId = function()
+  {
+    return __selected_window;
+  }
+
+ 
 
   this.getRuntimes = function(window_id)
   {
@@ -450,6 +477,19 @@ var runtimes = new function()
       if ( __runtimes[r] && __runtimes[r]['window-id'] &&  __runtimes[r]['window-id'] == window_id )
       {
         ret[ret.length] = __runtimes[r];
+      }
+    }
+    return ret;
+  }
+
+  this.getRuntimeIdsFromWindow = function(window_id)
+  {
+    var ret = [], r = '';
+    for( r in __runtimes )
+    { 
+      if ( __runtimes[r] && __runtimes[r]['window-id'] &&  __runtimes[r]['window-id'] == window_id )
+      {
+        ret[ret.length] = __runtimes[r]['runtime-id'];
       }
     }
     return ret;
@@ -592,6 +632,7 @@ var runtimes = new function()
     if(__runtimes[id])
     {
       this.setSelectedRuntime(__runtimes[id]);
+      // this is not clean
       views.runtimes.update();
     }
     else
@@ -607,6 +648,7 @@ var runtimes = new function()
   
   messages.addListener('host-state', onHostStateChange);
   messages.addListener('setting-changed', onSettingChange);
+  messages.addListener('active-tab', onActiveTab);
 
 
 

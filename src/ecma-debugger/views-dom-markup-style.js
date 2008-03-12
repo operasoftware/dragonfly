@@ -305,7 +305,8 @@
       'show-comments': true, 
       'show-attributes': true, 
       'find-with-click': true,
-      'highlight_on_hover': false
+      'highlight_on_hover': false,
+      'update-on-dom-node-inserted': false
     }, 
     {
       checkboxes:
@@ -329,6 +330,10 @@
         {
           key: 'highlight-on-hover',
           label: ' highlight element on mouseover'
+        },
+        {
+          key: 'update-on-dom-node-inserted',
+          label: ' update DOM when a node is removed'
         },
       ]
     }

@@ -4,11 +4,13 @@ var dom_data = new function()
 
   var view_ids = ['dom-markup-style', 'dom-tree-style'];  // this needs to be handled in a more general and sytematic way.
 
-  var initializedRuntimes = {};
 
   var data = []; // TODO seperated for all runtimes off the active tab
   var data_runtime_id = '';  // data of a dom tree has always just one runtime
   var current_target = '';
+  var __next_rt_id = '';
+
+  var activeWindow = [];
 
   const 
   ID = 0, 
@@ -27,10 +29,12 @@ var dom_data = new function()
   var onActiveTab = function(msg)
   {
     // TODO clean up old tab
-    data = []; // this must be split for all runtimes in the active tab
+    data = []; // this must be split for all runtimes in the active tab. no, not really
     var view_id = '', i = 0;
     // TODO handle runtimes per tab properly
-    data_runtime_id = msg.activeTab[0];
+    // the top frame is per default the active tab
+    data_runtime_id = __next_rt_id || msg.activeTab[0];
+    activeWindow = msg.activeTab.slice(0);
     for( ; view_id = view_ids[i]; i++)
     {
       if(views[view_id].isvisible())
@@ -50,13 +54,44 @@ var dom_data = new function()
     services['ecmascript-debugger'].inspectDOM( tag, obj_id, 'parent-node-chain-with-children', 'json' );
   }
 
+
+  var domNodeRemovedHandler = function(event)
+  {
+    // javascript:(function(){var e=document.getElementsByTagName('li')[0];e.parentNode.removeChild(e);})()
+    // if the node is in the current data handle it otherwise not.
+    var rt_id = event['runtime-id'], obj_id = event['object-id'];
+    var node = null, i = 0, j = 0, level = 0, k = 0, view_id = '';
+    if( data_runtime_id == rt_id )
+    {
+      for( ; ( node = data[i] ) && obj_id != node[ID]; i++ );
+      if( node )
+      {
+        level = node[ DEPTH ];
+        j = i + 1 ;
+        while( data[j] && data[j][ DEPTH ] > level ) j++;
+        data.splice(i, j - i);
+        for( ; view_id = view_ids[k]; k++)
+        {
+          views[view_id].update();
+        }
+      }
+    }
+  }
+
+
+
   var handleGetDOM = function(xml, rt_id)
   {
     var json = xml.getNodeData('jsondata');
     if( json )
     {
       data = eval('(' + json +')');
-      data_runtime_id = rt_id;
+      if( rt_id != data_runtime_id || __next_rt_id )
+      {
+        data_runtime_id = rt_id;
+        views.runtimes_dom.updateSelectedRuntime(data_runtime_id);
+        __next_rt_id = '';
+      }
       var view_id = '', i = 0;
       for( ; view_id = view_ids[i]; i++)
       {
@@ -81,7 +116,7 @@ var dom_data = new function()
   {
     var msg_id = msg.id, id = '', i = 0;
     for( ; ( id = view_ids[i] ) && id != msg_id; i++);
-    if( id )
+    if( id && views[id].isvisible() )
     {
       switch (msg.key)
       {
@@ -112,36 +147,77 @@ var dom_data = new function()
           break;
         }
 
+        case 'update-on-dom-node-inserted':
+        {
+          if(settings[id].get(msg.key))
+          {
+            host_tabs.activeTab.addEventListener('DOMNodeRemoved', domNodeRemovedHandler);
+          }
+          else
+          {
+            host_tabs.activeTab.removeEventListener('DOMNodeRemoved', domNodeRemovedHandler);
+          }
+          break;
+        }
       }
     }
   }
 
   var onShowView = function(msg)
   {
+    
     var msg_id = msg.id, id = '', i = 0;
     for( ; ( id = view_ids[i] ) && id != msg_id; i++);
     if( id )
     {
+      
       if( !data.length )
       {
-        if(settings[id].get('find-with-click'))
+        if(activeWindow.length)
         {
-          host_tabs.activeTab.addEventListener('click', clickHandlerHost);
+          // in the case there is no runtime selected 
+          // set the top window to the active runtime
+          if( !data_runtime_id )
+          {
+            data_runtime_id = activeWindow[0];
+          }
+          if(settings[id].get('find-with-click'))
+          {
+            host_tabs.activeTab.addEventListener('click', clickHandlerHost);
+          }
+          if(settings[id].get('highlight-on-hover'))
+          {
+            host_tabs.activeTab.addEventListener('mouseover', spotlight);
+          } 
+          getInitialView(data_runtime_id);
         }
-        if(settings[id].get('highlight-on-hover'))
-        {
-          host_tabs.activeTab.addEventListener('mouseover', spotlight);
-        }       
-        var tag = tagManager.setCB(null, handleInitialView, [data_runtime_id]);
-        var script_data = "return ( $"+ data_runtime_id + ".document.body || $"+ data_runtime_id + ".document.documentElement )";
-        services['ecmascript-debugger'].eval(tag, data_runtime_id, '', '', script_data, ['$' + data_runtime_id, data_runtime_id]);
       }
     }
   }
 
+  var getInitialView = function(rt_id)
+  {
+    var tag = tagManager.setCB(null, handleInitialView, [rt_id]);
+    var script_data = "return ( document.body || document.documentElement )";
+    services['ecmascript-debugger'].eval(tag, rt_id, '', '', script_data);
+  }
+
+  this.getDOM = function(rt_id)
+  {
+    getInitialView(rt_id);
+  }
+
   var onHideView = function(msg)
   {
-    //opera.postError('hide: '+msg.id)
+    var msg_id = msg.id, id = '', i = 0;
+    for( ; ( id = view_ids[i] ) && id != msg_id; i++);
+    if( id )
+    {
+      host_tabs.activeTab.removeEventListener('click', clickHandlerHost);
+      host_tabs.activeTab.removeEventListener('mouseover', spotlight);
+      host_tabs.activeTab.removeEventListener('DOMNodeRemoved', domNodeRemovedHandler);
+      data = [];
+    }
   }
 
   this.getData = function()
@@ -151,18 +227,27 @@ var dom_data = new function()
 
   this.getDataRuntimeId = function()
   {
+    
     return data_runtime_id;
+  }
+
+  this.setActiveRuntime = function(rt_id)
+  {
+    __next_rt_id = rt_id;
   }
 
   var handleInitialView = function(xml, rt_id)
   {
+    
     if(xml.getNodeData('status') == 'completed' )
     {
       clickHandlerHost({'runtime-id': rt_id, 'object-id': xml.getNodeData('object-id') })
     }
     else
     {
-      opera.postError('handleInitialView failed in dom_data');
+      opera.postError('handleInitialView failed in dom_data\n');// +
+       // (new XMLSerializer().serializeToString(xml)));
+      
     }
   }
 
