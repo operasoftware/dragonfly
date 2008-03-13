@@ -96,7 +96,9 @@ var ViewBase = new function()
         container = document.getElementById(id);
         if( container )
         {
+          container.innerHTML = '';
           this.createView(container);
+          messages.post('view-created', {id: this.id, container: container});
         }
       }
     }
@@ -155,6 +157,7 @@ var ViewBase = new function()
     if(view)
     {
       view.ondestroy();
+      messages.post('view-destroyed', {id: this.id});
     }
   }
 

@@ -431,6 +431,7 @@ var runtimes = new function()
       {
         views.js_source.clearView();
       }
+      messages.post('runtime-stopped', {id: rt_id} );
     }
   }
 

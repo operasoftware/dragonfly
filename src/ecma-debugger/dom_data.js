@@ -16,13 +16,17 @@ var dom_data = new function()
   ID = 0, 
   TYPE = 1, 
   NAME = 2, 
-  NAMESPACE = 3, 
+  DEPTH = 3,
+  NAMESPACE = 4, 
   VALUE = 4, 
-  DEPTH = 5, 
-  ATTRS = 6, 
-  CHILDREN_LENGTH = 7, 
-  IS_TARGET = 8, 
-  IS_LAST = 9;
+  ATTRS = 5,
+  ATTR_PREFIX = 0,
+  ATTR_KEY = 1, 
+  ATTR_VALUE = 2,
+  CHILDREN_LENGTH = 6, 
+  PUBLIC_ID = 4,
+  SYSTEM_ID = 5; 
+
 
 
 
@@ -171,8 +175,8 @@ var dom_data = new function()
     if( id )
     {
       
-      if( !data.length )
-      {
+      //if( !data.length )
+     // {
         if(activeWindow.length)
         {
           // in the case there is no runtime selected 
@@ -189,8 +193,37 @@ var dom_data = new function()
           {
             host_tabs.activeTab.addEventListener('mouseover', spotlight);
           } 
-          getInitialView(data_runtime_id);
+          if( !data.length )
+          {
+            getInitialView(data_runtime_id);
+          }
         }
+     // }
+    }
+  }
+
+  var onHideView = function(msg)
+  {
+    var msg_id = msg.id, id = '', i = 0;
+    for( ; ( id = view_ids[i] ) && id != msg_id; i++);
+    if( id )
+    {
+      host_tabs.activeTab.removeEventListener('click', clickHandlerHost);
+      host_tabs.activeTab.removeEventListener('mouseover', spotlight);
+      host_tabs.activeTab.removeEventListener('DOMNodeRemoved', domNodeRemovedHandler);
+      // switching between dom style and markup style data = [];
+    }
+  }
+
+  var onRuntimeStopped = function(msg)
+  {
+    if( msg.id == data_runtime_id )
+    {
+      data = [];
+      var id = '', i = 0;
+      for( ; id = view_ids[i] ; i++)
+      {
+        views[id].update();
       }
     }
   }
@@ -207,18 +240,7 @@ var dom_data = new function()
     getInitialView(rt_id);
   }
 
-  var onHideView = function(msg)
-  {
-    var msg_id = msg.id, id = '', i = 0;
-    for( ; ( id = view_ids[i] ) && id != msg_id; i++);
-    if( id )
-    {
-      host_tabs.activeTab.removeEventListener('click', clickHandlerHost);
-      host_tabs.activeTab.removeEventListener('mouseover', spotlight);
-      host_tabs.activeTab.removeEventListener('DOMNodeRemoved', domNodeRemovedHandler);
-      data = [];
-    }
-  }
+
 
   this.getData = function()
   {
@@ -451,5 +473,6 @@ var dom_data = new function()
   messages.addListener('show-view', onShowView);
   messages.addListener('hide-view', onHideView);
   messages.addListener('setting-changed', onSettingChange);
+  messages.addListener('runtime-stopped', onRuntimeStopped);
 
 }

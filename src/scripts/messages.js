@@ -9,6 +9,7 @@
   - "element-selected" msg.obj_id, msg.rt_id
   - "view-created" msg.id, msg.container
   - "view-destroyed" msg.id
+  - "runtime-stopped" msg.id
 
 */
 

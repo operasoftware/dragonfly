@@ -93,6 +93,7 @@
       var child_pointer = 0;
       var child_level = 0;
       var j = 0;
+      var children_length = 0;
 
       var closing_tags = [];
 
@@ -116,8 +117,9 @@
             current_depth--;
           }
           current_depth = node[ DEPTH ];
+          children_length = node[ CHILDREN_LENGTH ];
           child_pointer = 0;
-          node_name = node[ NAME ];
+          node_name =  ( node[NAMESPACE] ? node[NAMESPACE] + ':': '' ) +  node[ NAME ];
           if( force_lower_case )
           {
             node_name = node_name.toLowerCase();
@@ -199,9 +201,9 @@
               tree += "<div " + ( node[ ID ] == target ? "id='target-element'" : '' ) + 
                       " style='margin-left:" + 16 * node[ DEPTH ] + "px;' "+
                       "ref-id='"+ node[ ID ] + "' handler='spotlight-node'>"+
-                      ( node[ CHILDREN_LENGTH ] ? 
+                      ( children_length ? 
                         "<input handler='get-children' type='button' class='close'>" : '' ) +
-                      "<span class='node'>&lt;" + node_name + attrs + "&gt;</span>" +
+                      "<span class='node'>&lt;" + node_name + attrs + ( children_length ? '' : '/' ) + "&gt;</span>" +
                       "</div>";
               }
               break;
@@ -244,10 +246,10 @@
             {
               tree += "<div style='margin-left:" + 16 * node[ DEPTH ] + "px;' class='doctype'>"+
                       "&lt;!doctype " + node[ NAME ] +
-                      ( node[ ATTRS ].publicId ? 
-                        ( " PUBLIC " + "\"" + node[ATTRS].publicId + "\"" ) :"" ) +
-                      ( node[ ATTRS ].systemId ?  
-                        ( " \"" + node[ ATTRS ].systemId + "\"" ) : "" ) +
+                      ( node[PUBLIC_ID] ? 
+                        ( " PUBLIC " + "\"" + node[PUBLIC_ID] + "\"" ) :"" ) +
+                      ( node[SYSTEM_ID] ?  
+                        ( " \"" + node[SYSTEM_ID] + "\"" ) : "" ) +
                       "&gt;</div>";
               break;
             }
@@ -280,15 +282,12 @@
         
       }
 
-      messages.post('view-created', {id: this.id, container: container});
+      
 
       
     }
 
-    this.ondestroy = function()
-    {
-      messages.post('view-destroyed', {id: this.id});
-    }
+
 
     this.init(id, name, container_class);
   }

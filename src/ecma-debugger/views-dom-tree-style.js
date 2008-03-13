@@ -19,6 +19,35 @@
     IS_TARGET = 8, 
     IS_LAST = 9;
 
+     var map = 
+    {   
+      '\t': '\\t',
+      '\v': '\\v',
+      '\f': '\\f',
+      '\u0020': '\\u0020',
+      '\u00A0': '\\u00A0',
+      '\r': '\\r',
+      '\n': '\\n',
+      '\u2028': '\\u2028',
+      '\u2029': '\\u2029'
+    };
+
+    var _escape = function(string)
+    {
+      string = new String(string), _char = '', i = 0, ret = '';
+      for( ; _char = string.charAt(i); i++ )
+      {
+        ret += map[_char];
+      }
+      return ret;
+    }
+
+    var nodeNameMap =
+    {
+      3: "<span class='text-node'>#text</span>",
+      4: "<span class='cdata-node'>#cdata-section</span>"
+    }
+
     this.scrollTargetIntoView = function()
     {
       var target = document.getElementById('target-element');
@@ -59,17 +88,22 @@
       ID = 0, 
       TYPE = 1, 
       NAME = 2, 
-      NAMESPACE = 3, 
+      DEPTH = 3,
+      NAMESPACE = 4, 
       VALUE = 4, 
-      DEPTH = 5, 
-      ATTRS = 6, 
-      CHILDREN_LENGTH = 7, 
-      IS_TARGET = 8, 
-      IS_LAST = 9;
-      NEXT = 10;
+      ATTRS = 5,
+      ATTR_PREFIX = 0,
+      ATTR_KEY = 1, 
+      ATTR_VALUE = 2,
+      CHILDREN_LENGTH = 6, 
+      PUBLIC_ID = 4,
+      SYSTEM_ID = 5;
 
       var data = dom_data.getData();
-      var tree = '', i = 0, length = data.length;
+
+      var target = dom_data.getCurrentTarget();
+
+      var tree = '', i = 0, node = null, length = data.length;
       var scrollTop = document.documentElement.scrollTop;
 
       var attrs = null, key = '';
@@ -81,6 +115,9 @@
       var child_pointer = 0;
       var child_level = 0;
       var j = 0;
+      var k = 0;
+
+      var children_length = 0;
 
       var closing_tags = [];
 
@@ -92,56 +129,53 @@
       var tag_head = '';
 
       var graphic_arr = [];
-      var line_count = 0;
 
-      for( ; i < length; i += 10 )
+      for( ; node = data[i]; i += 1 )
       {
 
 
 
-        current_depth = data[ i + DEPTH ];
+        current_depth = node[DEPTH];
+        children_length = node[ CHILDREN_LENGTH ];
         child_pointer = 0;
-        node_name = data[ i + NAME ];
+        node_name = ( node[NAMESPACE] ? node[NAMESPACE] + ':': '' ) + node[ NAME ];
 
         if( force_lower_case )
         {
           node_name = node_name.toLowerCase();
         }
         
-        switch ( data[ i + TYPE ] )
+        switch ( node[TYPE] )
         {
           case 1:  // elemets
           {
+            attrs = '';
             if( show_attrs )
             {
-              attrs = '';
-              for( key in data[ i + ATTRS ] )
+              for( k = 0; attr = node[ATTRS][k]; k++ )
               {
                 attrs += " <span class='key'>" + 
-                  ( force_lower_case ? key.toLowerCase() : key ) + 
+                  ( attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '' ) + 
+                  ( force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ) + 
                   "</span>=<span class='value'>\"" + 
-                  data[ i + ATTRS ][key] + 
+                  attr[ATTR_VALUE] + 
                   "\"</span>";
               }
             }
-            else
-            {
-              attrs = '';
-            }
 
-            child_pointer = i + NEXT;
 
-            is_open = ( data[ child_pointer ] && ( data[ i + DEPTH ] < data[ child_pointer + DEPTH ] ) );
+            child_pointer = i + 1;
+
+            is_open = ( data[ child_pointer ] && ( node[DEPTH] < data[child_pointer][DEPTH] ) );
             if( is_open ) 
             {
               has_only_one_child = 1;
               one_child_value = '';
-              child_level = data[ child_pointer + DEPTH ];
-              for( ; data[child_pointer] &&  data[child_pointer + DEPTH] == child_level; 
-                    child_pointer += 10 )
+              child_level = data[ child_pointer ][ DEPTH ];
+              for( ; data[child_pointer] &&  data[ child_pointer ][ DEPTH ] == child_level; child_pointer += 1 )
               {
-                one_child_value += data[ child_pointer + VALUE ];
-                if( data[ child_pointer + TYPE ] != 3 )
+                one_child_value += data[ child_pointer ] [ VALUE ];
+                if( data[ child_pointer ][ TYPE ] != 3 )
                 {
                   has_only_one_child = 0;
                   one_child_value = '';
@@ -152,10 +186,11 @@
 
             if( is_open )
             {
-              tree += "<div " + ( data [ i + IS_TARGET ] ? "id='target-element'" : '' ) + 
-                      " style='margin-left:" + 16 * data[ i + DEPTH ] + "px;' "+
-                      "ref-id='"+data[ i + ID ] + "'>"+
-                      ( data[ i + CHILDREN_LENGTH ] && !has_only_one_child ? 
+
+              tree += "<div " + ( node[ID] == target ? "id='target-element'" : '' ) + 
+                      " style='margin-left:" + 16 * node[DEPTH] + "px;' "+
+                      "ref-id='"+node[ID] + "'>"+
+                      ( children_length && !has_only_one_child ? 
                         "<input handler='get-children' type='button' class='open'>" : '' ) +
                       "<span class='node'>" + node_name + attrs + "</span>" +
                       "</div>";
@@ -166,26 +201,15 @@
             }
             else
             {
-            tree += "<div " + ( data [ i + IS_TARGET ] ? "id='target-element'" : '' ) + 
-                    " style='margin-left:" + 16 * data[ i + DEPTH ] + "px;' "+
-                    "ref-id='"+data[ i + ID ] + "'>"+
-                    ( data[ i + CHILDREN_LENGTH ] ? 
+            tree += "<div " + ( node[ID] == target ? "id='target-element'" : '' ) + 
+                    " style='margin-left:" + 16 * node[DEPTH] + "px;' "+
+                    "ref-id='"+node[ID] + "'>"+
+                    ( node[CHILDREN_LENGTH] ? 
                       "<input handler='get-children' type='button' class='close'>" : '' ) +
                     "<span class='node'>" + node_name + attrs + "</span>" +
                     "</div>";
             }
-            /*
-            if( !graphic_arr[current_depth] ) 
-            {
-              graphic_arr[current_depth] = [ line_count ];
-            }
-            
-            else
-            {
-              graphic_arr[current_depth].push( line_count );
-            }
-            */
-            line_count++;
+
 
             break;
           }
@@ -194,82 +218,64 @@
           {
             if( show_comments )
             {
-              tree += "<div style='margin-left:" + 16 * data[i+5] + "px;' " +      
-                      "class='comment'>" + data[ i + NAME ] + "</div>";
+              tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;' " +      
+                      "class='comment'><span class='comment-node'>#comment</span>" + 
+                node[VALUE] + "</div>";
 
-              /*
-              if( !graphic_arr[current_depth] ) 
-              {
-                graphic_arr[current_depth] = [ line_count ];
-              }
-              else
-              {
-                graphic_arr[current_depth].push( line_count );
-              }
-              */
-              line_count++;
+
 
             }
+            break;
+
+          }
+          
+          case 9:  // comments
+          {
+
+              tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;' " +      
+                      "><span class='document-node'>#document</span></div>";
+
+            
             break;
 
           }
 
           case 10:  // doctype
           {
-            tree += "<div style='margin-left:" + 16 * data[i+5] + "px;' " +
-              "class='doctype'>doctype</div>";
-            /*
-            if( !graphic_arr[current_depth] ) 
-            {
-              graphic_arr[current_depth] = [ line_count ];
-            }
-            else
-            {
-              graphic_arr[current_depth].push( line_count );
-            }
-            */
-            line_count++;
+            tree += "<div style='margin-left:" + 16 * node[ DEPTH ] + "px;' class='doctype'>"+
+                      "<span class='doctype-value'>html " +
+                      ( node[PUBLIC_ID] ? 
+                        ( " PUBLIC " + "\"" + node[PUBLIC_ID] + "\"" ) :"" ) +
+                      ( node[SYSTEM_ID] ?  
+                        ( " \"" + node[SYSTEM_ID] + "\"" ) : "" ) +
+                      "</span></div>";
+
 
             break;
           }
 
           default:
           {
-            if( !( show_white_space_nodes ) && ( data[ i + TYPE ] == 3 ) )
+            if( !( show_white_space_nodes ) && ( node[TYPE] == 3 ) )
             {
-              if( !/^\s*$/.test( data[ i + VALUE ] ) ) 
+              if( !/^\s*$/.test( node[VALUE] ) ) 
               {
-                tree += "<div style='margin-left:" + 16 * data[i+5] + "px;'>"+data[i+2]+"</div>";
-
-                /*
-                if( !graphic_arr[current_depth] ) 
-                {
-                  graphic_arr[current_depth] = [ line_count ];
-                }
-                else
-                {
-                  graphic_arr[current_depth].push( line_count );
-                }
-                */
-                line_count++;
-
-
+                 tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;'>" +
+                  ( node[NAME] ? node[NAME] :  nodeNameMap[node[TYPE]] ) + ' ' +
+                  node[VALUE] +
+                  "</div>";
               }
             }
             else
             {
-              tree += "<div style='margin-left:" + 16 * data[i+5] + "px;'>"+data[i+2]+"</div>";
-              /*
-              if( !graphic_arr[current_depth] ) 
-              {
-                graphic_arr[current_depth] = [ line_count ];
-              }
-              else
-              {
-                graphic_arr[current_depth].push( line_count );
-              }
-              */
-              line_count++;
+
+
+              tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;'>" +
+                ( node[NAME] ? node[NAME] :  nodeNameMap[node[TYPE]] ) + ' ' +
+                ( /^\s*$/.test( node[VALUE] ) ? _escape(node[VALUE]) : node[VALUE] ) +
+                "</div>";
+              
+
 
             }
           }
@@ -279,61 +285,20 @@
       
 
       
-      //createGraphic(graphic_arr);
+
         var scrollTop = container.scrollTop;
-        ( 
-          container.firstChild ? 
-          container.firstChild : 
-          container.render(['div', 'class', 'padding']) 
-        ).innerHTML = tree;
+        if( !container.firstChild )
+        {
+          container.render(['div', ['div'], 'class', 'padding'])
+        }
+
+        container.firstChild.firstChild.innerHTML = tree;
+
         container.scrollTop.scrollTop = scrollTop;
         topCell.statusbar.updateInfo(dom_data.getCSSPath());
         
       }
 
-    var img_head_part = "data:image/svg-xml," + encodeURIComponent("<svg ");
-    var img_content_part = encodeURIComponent(" xmlns='http://www.w3.org/2000/svg'><path "+
-      "style='stroke:#ccc; fill:none; stroke-width:1; stroke-dasharray:1 1;' d='");
-    var img_end_part = encodeURIComponent("'/></svg>");
-    var line_height = 16;
-    var margin = 16;
-
-    var createGraphic = function(arr)
-    {
-      var p = null, i = 0;
-      var path = '';
-      var img_viewBox = '';
-      var max_x = 0;
-      var max_y = 0;
-      var move_to = 0;
-      var y_2 = 0;
-      var out = ' ';
-      for( ; p = arr[i]; i++)
-      {
-        if( p.length > 1 )
-        {
-          out += p + '\n';
-          max_x = move_to = 6.5 + ( margin * ( i - 1 ) );
-          y_2 = ( 8.5 + ( p[ p.length - 1 ] ) * line_height ); 
-          path += 'M%20' + move_to + "%20" + ( p[0] * line_height ) + "%20" +
-            "V%20" + y_2 + "%20";
-          if( y_2 > max_y ) 
-          {
-            max_y = y_2;
-          }
-        }
-      }
-      img_viewBox = "width='" + ( ( max_x + margin ) >> 0 ) +"' "+
-        "height='" + ( ( max_y + line_height ) >> 0 ) + "' " +
-        "viewBox='0 0 " + ( ( max_x + margin ) >> 0 ) + " " + ( ( max_y + line_height ) >> 0 ) + "' ";
-      var view_container = document.getElementById('dom-view');
-      var img = img_head_part + encodeURIComponent(img_viewBox) + img_content_part +
-        path + img_end_part;
-
-      view_container.style.backgroundImage = 'url("' + img + '")';
-      
-    }
-    
 
     this.init(id, name, container_class);
   }
@@ -383,5 +348,64 @@
       ]
     }
   );
+
+  new ToolbarConfig
+  (
+    'dom-tree-style',
+    [
+      {
+        handler: 'dom-inspection-snapshot',
+        title: 'Get the whole dom tree'
+      }
+    ],
+    [
+      {
+        handler: 'dom-tree-text-search',
+        title: 'text search'
+      }
+    ]
+  )
+
+  // button handlers
+  eventHandlers.click['dom-inspection-snapshot'] = function(event, target)
+  {
+    dom_data.getSnapshot();
+  }
+
+  // filter handlers
+  
+  var textSearch = new TextSearch();
+
+  var onViewCreated = function(msg)
+  {
+    if( msg.id == 'dom-tree-style' )
+    {
+      textSearch.setContainer(msg.container);
+    }
+  }
+
+  var onViewDestroyed = function(msg)
+  {
+    if( msg.id == 'dom-tree-style' )
+    {
+      textSearch.cleanup();
+    }
+  }
+
+  messages.addListener('view-created', onViewCreated);
+  messages.addListener('view-destroyed', onViewDestroyed);
+
+  eventHandlers.input['dom-tree-text-search'] = function(event, target)
+  {
+    textSearch.searchDelayed(target.value);
+  }
+
+  eventHandlers.keyup['dom-tree-text-search'] = function(event, target)
+  {
+    if( event.keyCode == 13 )
+    {
+      textSearch.highlight();
+    }
+  }
 
 })()
