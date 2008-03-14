@@ -1,8 +1,10 @@
 var runtimes = new function()
 {
   var __runtimes = {};
-  var __runtimes_arr = [];
 
+  var __runtimes_arr = []; // runtime ids
+
+  var __window_ids = {};
   var __selected_window = '';
 
   var __threads = [];
@@ -38,7 +40,12 @@ var runtimes = new function()
 
   var removeRuntime = function(id)
   { 
-    var sc = null ;
+    var sc = null , cur = '', i = 0;
+    for( ; cur = __runtimes_arr[i] && cur != id; i++);
+    if(cur)
+    {
+      __runtimes_arr.splice(cur, 1);
+    }
     /*
     TODO check for existing breakpoints before cleaning up
     for( sc in __scripts )
@@ -52,6 +59,20 @@ var runtimes = new function()
     delete __runtimes[id];
   }
 
+  var cleanupWindow = function(win_id, rt_id)
+  {
+    // assert there is not yet a child runtime from this new top runtime
+    // remove all runtimes in that window
+    var cur = '';
+    for( cur in __runtimes )
+    {
+      if( __runtimes[cur] && __runtimes[cur]['window-id'] == win_id )
+      {
+        removeRuntime(__runtimes[cur]['runtime-id']);
+      }
+    }
+  }
+
   this.handleRuntimeStarted = function(xml)
   {
     parseRuntime(xml);
@@ -61,6 +82,23 @@ var runtimes = new function()
   {
     parseRuntime(xml);
   }
+
+  var isTopRuntime = function(rt)
+  {
+    return rt['html-frame-path'].indexOf('[') == -1;
+  }
+
+  /*
+
+  <runtime>
+    <runtime-id>1</runtime-id>
+    <html-frame-path>_top</html-frame-path>
+    <window-id>1</window-id>
+    <object-id>1</object-id>
+    <uri>http://dev.opera.com/</uri>
+  </runtime>
+
+  */
 
   var parseRuntime = function(xml)
   {
@@ -97,9 +135,20 @@ var runtimes = new function()
             delete __runtimes[cur];
           }
         }
+        if( runtime.is_top = isTopRuntime(runtime) )
+        {
+          var win_id = runtime['window-id'];
+          if (win_id in __window_ids)
+          {
+            cleanupWindow(win_id, runtimeId);
+          }
+          else
+          {
+            __window_ids[win_id] = true;
+          }
+        } 
         getTitleRuntime(runtimeId);
         __runtimes[runtimeId] = runtime;
-
         if(__next_runtime_id_to_select == runtimeId)
         {
           self.setSelectedRuntime(runtime);
