@@ -64,6 +64,7 @@
 <script src="css_data.js"/>
 <script src="views-css-inspector.js"/>
 <script src="js-source-view.js"/>
+<script src="views-general-dom.js"/>
 <script src="views-dom-markup-style.js"/>
 <script src="views-dom-tree-style.js"/>
 <script src="views-threads.js"/>

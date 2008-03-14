@@ -310,42 +310,30 @@
 
   new Settings
   (
+    // id
     'dom-markup-style', 
+    // key-value map
     {
       'force-lowercase': false, 
       'show-comments': true, 
-      'show-attributes': true, 
-      'find-with-click': true,
-      'highlight_on_hover': false,
-      'update-on-dom-node-inserted': false
+      'show-attributes': true
     }, 
+    // key-label map
+    {
+      'force-lowercase': ' always use lower case for tag names', 
+      'show-comments': ' show comment nodes', 
+      'show-attributes': ' show attributes'
+    },
+    // settings map
     {
       checkboxes:
       [
-        {
-          key: 'force-lowercase',
-          label: ' always use lower case for tag names'
-        },
-        {
-          key: 'show-comments',
-          label: ' show comment nodes'
-        },
-        {
-          key: 'show-attributes',
-          label: ' show attributes'
-        },
-        {
-          key: 'find-with-click',
-          label: ' find element with click'
-        },
-        {
-          key: 'highlight-on-hover',
-          label: ' highlight element on mouseover'
-        },
-        {
-          key: 'update-on-dom-node-inserted',
-          label: ' update DOM when a node is removed'
-        },
+        'force-lowercase',
+        'show-comments',
+        'show-attributes',
+        'dom_general.find-with-click',
+        'dom_general.highlight-on-hover',
+        'dom_general.update-on-dom-node-inserted'
       ]
     }
   );

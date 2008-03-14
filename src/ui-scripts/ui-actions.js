@@ -111,6 +111,11 @@ eventHandlers.change['checkbox-setting'] = function(event)
   var view_id = ele.getAttribute('view-id');
   settings[view_id].set(ele.name, ele.checked);
   views[view_id].update();
+  var host_view = ele.getAttribute('host-view-id');
+  if( host_view )
+  {
+    views.settings_view.syncSetting(view_id, ele.name, ele.checked);
+  }
   messages.post("setting-changed", {id: view_id, key: ele.name});
 }
 

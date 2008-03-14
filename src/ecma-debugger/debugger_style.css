@@ -163,7 +163,7 @@ xx#debug {
   margin-left:5px;
   }
 
-*[handler] {
+[handler] {
   cursor: pointer;
   }
 

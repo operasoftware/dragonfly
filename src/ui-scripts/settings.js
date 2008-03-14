@@ -11,10 +11,11 @@ var SettingsBase = function()
     return this.map[key];
   }
 
-  this.init = function(view_id, key_map, setting_map)
+  this.init = function(view_id, key_map, label_map, setting_map)
   {
-    this.map ={};
+    this.map = {};
     this.view_id = view_id;
+    this.label_map = label_map;
     this.setting_map = setting_map;
     var stored_map = key_map, key = '';
     for( key in stored_map)
@@ -30,9 +31,9 @@ var SettingsBase = function()
 
 }
 
-var Settings = function(view_id, key_map, setting_map)
+var Settings = function(view_id, key_map, label_map, setting_map)
 {
-  this.init(view_id, key_map, setting_map);
+  this.init(view_id, key_map, label_map, setting_map);
 }
 
 Settings.prototype = new SettingsBase();

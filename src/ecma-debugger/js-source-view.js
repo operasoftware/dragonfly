@@ -559,28 +559,30 @@
 
   new Settings
   (
-    'js_source', 
-    {script: 0, exception: 0, error: 0, abort: 0}, 
+    // id
+    'js_source',
+    // key-value map
+    {
+      script: 0, 
+      exception: 0, 
+      error: 0, 
+      abort: 0
+    }, 
+    // key-label map
+    {
+      script: ' stop at new thread', 
+      exception: ' stop at exeption', 
+      error: ' stop at error', 
+      abort: ' stop at abort'
+    }, 
+    // settings map
     {
       checkboxes:
       [
-        {
-          key: 'script',
-          label: ' stop at new thread'
-        },
-        {
-          key: 'exception',
-          label: ' stop at exeption'
-        },
-        {
-          key: 'error',
-          label: ' stop at error'
-        },
-        {
-          key: 'abort',
-          label: ' stop at abort'
-        },
-
+        'script',
+        'exception',
+        'error',
+        'abort'
       ]
     }
   );

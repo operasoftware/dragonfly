@@ -111,11 +111,12 @@
     if( is_unfolded)
     {
       var setting = settings[view_id];
-      var map = setting.setting_map;
-      var cat = null;
-      if( cat = map.checkboxes )
+      var settings_map = setting.setting_map;
+      var cat_name = '';
+      // so far only checkboxes
+      for( cat_name in settings_map ) 
       {
-        ret[ret.length] = this.checkboxes(setting, cat);
+        ret[ret.length] = this[cat_name](setting, settings_map[cat_name]);
       }
     }
     return ret;
@@ -138,28 +139,56 @@
 
   this.checkboxes = function(setting, checkbox_arr)
   {
-    var checkboxes = ['checkboxes'], i = 0;
-    for( ; checkbox = checkbox_arr[i]; i++)
+    var checkboxes = ['checkboxes'], arr = null, view_id = '', key = '', i = 0;
+    for( ; key = checkbox_arr[i]; i++)
     {
-      checkboxes[checkboxes.length] = 
-        this.settingCheckbox(setting.view_id, checkbox.key, setting.get(checkbox.key), checkbox.label);
+      if( key.indexOf('.') == -1 )
+      {
+        checkboxes[checkboxes.length] = 
+          this.settingCheckbox
+          (
+            setting.view_id, 
+            key, 
+            setting.get(key), 
+            setting.label_map[key]
+          );
+      }
+      else
+      {
+        arr = key.split('.');
+        view_id = arr[0];
+        key = arr[1];
+        checkboxes[checkboxes.length] = 
+          this.settingCheckbox
+          (
+            view_id, 
+            key, 
+            settings[view_id].get(key), 
+            settings[view_id].label_map[key],
+            setting.view_id
+          );
+      }
     }
     return checkboxes;
   }
 
-  this.settingCheckbox = function(view_id, key, value, label)
+  this.settingCheckbox = function(view_id, key, value, label, host)
   {
-    return ['checkbox', 
-      ['label', 
-        ['input', 
-          'type', 'checkbox', 
-          'handler', 'checkbox-setting', 
-          'name', key,
-          'view-id', view_id
-        ].concat(value ? ['checked', 'checked'] : [] ), 
-        label
-      ] 
-    ]
+    var input = ['input', 
+        'type', 'checkbox', 
+        'handler', 'checkbox-setting', 
+        'name', key,
+        'view-id', view_id
+      ];
+    if( value )
+    {
+      input.splice(input.length, 0, 'checked', 'checked');
+    }
+    if( host )
+    {
+      input.splice(input.length, 0, 'host-view-id', host);
+    }
+    return ['checkbox', ['label', input, label ] ];
   }
 
   this._window = function(win)

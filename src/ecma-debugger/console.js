@@ -140,19 +140,24 @@ var console_messages = new function()
 
 new Settings
 (
+  // id 
   'console', 
-  {'css': true, 'ecmascript': true}, 
+  // key-value map
+  {
+    'css': true, 
+    'ecmascript': true
+  }, 
+  // key-label map
+  {
+    'css': ' css error messages', 
+    'ecmascript': ' ecmascript error messages'
+  }, 
+  // settings map
   {
     checkboxes:
     [
-      {
-        key: 'css',
-        label: ' css error messages'
-      },
-      {
-        key: 'ecmascript',
-        label: ' ecmascript error messages'
-      },
+      'css',
+      'ecmascript'
     ]
   }
 );

@@ -155,17 +155,21 @@
 
   new Settings
   (
+    // id
     'threads', 
+    // key-value map
     {
       'log-threads': false
     }, 
+    // key-label map
+    {
+      'log-threads': ' log all threads'
+    },
+    // settings map
     {
       checkboxes:
       [
-        {
-          key: 'log-threads',
-          label: ' log all threads'
-        }
+        'log-threads'
       ]
     }
   );

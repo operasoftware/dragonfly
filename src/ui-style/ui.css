@@ -382,7 +382,7 @@ window-control {
   position:absolute;
   }
 
-window-header {
+windows-container [handler="window-move"] {
   display:block;
   background-color:#ccc;
   color:#000;
@@ -392,7 +392,7 @@ window-header {
   line-height:20px;
   }
 
-[handler='window-close'] {
+windows-container [handler='window-close'] {
   float:right;
   width:16px;
   height:16px;
@@ -402,7 +402,7 @@ window-header {
   background:transparent url('../ui-images/window-close.png') scroll no-repeat 50% 50%;
   }
 
-[handler='window-scale-top-left'] {
+windows-container [handler='window-scale-top-left'] {
   left:-5px;
   top:-5px;
   width:10px;
@@ -410,7 +410,7 @@ window-header {
   cursor:nw-resize;
   }
 
-[handler='window-scale-top'] {
+windows-container [handler='window-scale-top'] {
   left:5px;
   right:5px;
   top:-5px;
@@ -418,7 +418,7 @@ window-header {
   cursor:s-resize;
   }
 
-[handler='window-scale-top-right'] {
+windows-container [handler='window-scale-top-right'] {
   right:-5px;
   width:10px;
   height:10px;
@@ -426,7 +426,7 @@ window-header {
   cursor:sw-resize;
   }
 
-[handler='window-scale-right'] {
+windows-container [handler='window-scale-right'] {
   right:-5px;
   width:10px;
   top:5px;
@@ -434,7 +434,7 @@ window-header {
   cursor:w-resize;
   }
 
-[handler='window-scale-left'] {
+windows-container [handler='window-scale-left'] {
   left:-5px;
   width:10px;
   top:5px;
@@ -442,7 +442,7 @@ window-header {
   cursor:w-resize;
   }
 
-[handler='window-scale-bottom'] {
+windows-container [handler='window-scale-bottom'] {
   left:0;
   bottom:-5px;
   height:10px;
@@ -450,7 +450,7 @@ window-header {
   cursor:s-resize;
   }
 
-[handler='window-scale-bottom-right'] {
+windows-container [handler='window-scale-bottom-right'] {
   bottom:-5px;
   height:10px;
   width:10px;
@@ -458,7 +458,7 @@ window-header {
   cursor:nw-resize;
   }
 
-[handler='window-scale-bottom-left'] {
+windows-container [handler='window-scale-bottom-left'] {
   bottom:-5px;
   height:10px;
   width:10px;

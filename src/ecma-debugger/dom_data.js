@@ -475,4 +475,5 @@ var dom_data = new function()
   messages.addListener('setting-changed', onSettingChange);
   messages.addListener('runtime-stopped', onRuntimeStopped);
 
-}
+};
+
