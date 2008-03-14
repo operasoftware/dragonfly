@@ -7,17 +7,20 @@
   {
     var self = this;
 
-    const 
-    ID = 0, 
-    TYPE = 1, 
-    NAME = 2, 
-    NAMESPACE = 3, 
-    VALUE = 4, 
-    DEPTH = 5, 
-    ATTRS = 6, 
-    CHILDREN_LENGTH = 7, 
-    IS_TARGET = 8, 
-    IS_LAST = 9;
+      const 
+      ID = 0, 
+      TYPE = 1, 
+      NAME = 2, 
+      DEPTH = 3,
+      NAMESPACE = 4, 
+      VALUE = 4, 
+      ATTRS = 5,
+      ATTR_PREFIX = 0,
+      ATTR_KEY = 1, 
+      ATTR_VALUE = 2,
+      CHILDREN_LENGTH = 6, 
+      PUBLIC_ID = 4,
+      SYSTEM_ID = 5;
 
      var map = 
     {   
@@ -46,6 +49,18 @@
     {
       3: "<span class='text-node'>#text</span>",
       4: "<span class='cdata-node'>#cdata-section</span>"
+    }
+
+    var getDoctypeName = function(data)
+    {
+      var node = null, i = 0;
+      for( ; node = data[i]; i++)
+      {
+        if( node[TYPE] == 1 )
+        {
+          return node[NAME];
+        }
+      }
     }
 
     this.scrollTargetIntoView = function()
@@ -243,7 +258,7 @@
           case 10:  // doctype
           {
             tree += "<div style='margin-left:" + 16 * node[ DEPTH ] + "px;' class='doctype'>"+
-                      "<span class='doctype-value'>html " +
+                      "<span class='doctype-value'>" + getDoctypeName(data) + " " +
                       ( node[PUBLIC_ID] ? 
                         ( " PUBLIC " + "\"" + node[PUBLIC_ID] + "\"" ) :"" ) +
                       ( node[SYSTEM_ID] ?  
