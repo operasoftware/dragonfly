@@ -96,7 +96,6 @@ var ViewBase = new function()
         container = document.getElementById(id);
         if( container )
         {
-          container.innerHTML = '';
           this.createView(container);
           messages.post('view-created', {id: this.id, container: container});
         }

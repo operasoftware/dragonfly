@@ -63,6 +63,7 @@ var ContainerBase = function()
     if( view )
     {
       container.className = view.container_class || '';
+      container.innerHTML = '';
       view.update();
     }
   }
