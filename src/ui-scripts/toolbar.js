@@ -68,6 +68,8 @@ var ToolbarBase = function()
     toolbar.innerHTML ='';
     toolbar.render(templates.filters(this.buttons = toolbars[view_id] && toolbars[view_id].filters || []));
     toolbar.render(templates.buttons(this.filters = toolbars[view_id] && toolbars[view_id].buttons || []));
+    toolbar.render(templates.toolbarSeparator());
+    toolbar.render(templates.switches(this.switches = switches[view_id] && switches[view_id].keys || []));
   }
 
   this.init = function(cell, buttons, filters)

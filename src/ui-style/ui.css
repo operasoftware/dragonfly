@@ -102,7 +102,7 @@ toolbar {
   height:22px;
   }
 
-toolbar-buttons {
+toolbar-buttons, toolbar-switches {
   display:block;
   float:left;
   }
@@ -133,6 +133,54 @@ toolbar-buttons input[disabled]:hover,
 toolbar-buttons input[disabled]:active {
   background-position:0 0;
   }
+
+/***/
+toolbar-switches input {
+  width:20px;
+  height:20px;
+  margin:1px;
+  padding:0;
+  cursor:pointer;
+  border:none;
+  background:transparent url('../ui-images/test-switch.png') scroll no-repeat 0 0;
+  }
+
+
+
+
+
+toolbar-switches input:hover {
+  background-position:0 -20px;
+  }
+
+toolbar-switches input:active {
+  background-position:0 -40px;
+  }
+
+toolbar-switches input[is-active="true"] {
+  background-position:0 -60px;
+  }
+
+toolbar-switches input[is-active="true"]:hover {
+  background-position:0 -80px;
+  }
+
+toolbar-switches input[is-active="true"]:active {
+  background-position:0 -100px;
+  }
+
+toolbar-separator {
+  display: block;
+  float: left;
+  width: 1px;
+  height: 22px;
+  margin: 0 3px;
+  background-color:#333;
+  }
+
+
+/***/
+
 
 
 toolbar-filters {

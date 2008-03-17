@@ -355,6 +355,16 @@
     ]
   )
 
+  new Switches
+  (
+    'dom-markup-style',
+    [
+      'dom_general.find-with-click',
+      'dom_general.highlight-on-hover',
+      'dom_general.update-on-dom-node-inserted'
+    ]
+  )
+
   // button handlers
   eventHandlers.click['dom-inspection-snapshot'] = function(event, target)
   {

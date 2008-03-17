@@ -40,6 +40,7 @@
 <script src="../ui-scripts/viewMenu.js"/>
 <script src="../ui-scripts/viewSlider.js"/>
 <script src="../ui-scripts/animator.js"/>
+<script src="../ui-scripts/Switches.js"/>
 
 
 

@@ -88,6 +88,8 @@ eventHandlers.click['toggle-setting'] = function(event)
   old_setting.parentElement.replaceChild(setting, old_setting);
 }
 
+
+
 eventHandlers.click['show-window'] = function(event)
 {
   var target = event.target;
@@ -99,6 +101,20 @@ eventHandlers.click['show-window'] = function(event)
 eventHandlers.click['top-settings'] = function(event)
 {
   UIWindowBase.showWindow('settings_view');
+}
+
+eventHandlers.click['toolbar-switch'] = function(event)
+{
+  var target = event.target;
+  var arr = target.getAttribute('key').split('.');
+  var setting = arr[0], key = arr[1];
+  var is_active = !( target.getAttribute('is-active') == 'true' && true || false );
+  settings[setting].set(key, is_active);
+  views.settings_view.syncSetting(setting, key, is_active);
+  messages.post("setting-changed", {id: setting, key: key});
+  target.setAttribute('is-active', is_active ? 'true' : 'false');
+
+
 }
 
 

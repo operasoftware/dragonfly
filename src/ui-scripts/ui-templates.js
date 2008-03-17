@@ -36,6 +36,36 @@
     return ret;
   }
 
+  this.switches = function(switches)
+  {
+    var ret = ['toolbar-switches'], _switch = '', i = 0;
+    var arr = null, setting = null, key = '';
+    for( ; _switch = switches[i]; i++)
+    {
+      arr = _switch.split('.');
+      if( arr.length > 1 )
+      {
+        setting = settings[arr[0]];
+        key = arr[1];
+        ret[ret.length] = 
+          ['input', 
+            'type', 'button', 
+            'handler', 'toolbar-switch', 
+            'title', setting.label_map[key],
+            'key', _switch,
+            'is-active', setting.get(key) ? 'true' : 'false',
+            'class', 'switch'
+          ];
+      }
+    }
+    return ret;
+  }
+
+  this.toolbarSeparator = function()
+  {
+    return ['toolbar-separator'];
+  }
+
   this['top-statusbar'] = function(ui_obj)
   {
     return [ 

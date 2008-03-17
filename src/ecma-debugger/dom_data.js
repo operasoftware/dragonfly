@@ -3,7 +3,7 @@ var dom_data = new function()
   var self = this;
 
   var view_ids = ['dom-markup-style', 'dom-tree-style'];  // this needs to be handled in a more general and sytematic way.
-
+  var settings_id = 'dom_general';
 
   var data = []; // TODO seperated for all runtimes off the active tab
   var data_runtime_id = '';  // data of a dom tree has always just one runtime
@@ -26,6 +26,13 @@ var dom_data = new function()
   CHILDREN_LENGTH = 6, 
   PUBLIC_ID = 4,
   SYSTEM_ID = 5; 
+
+  var is_view_visible = function()
+  {
+    var id = '', i = 0;
+    for( ; ( id = view_ids[i] ) && !views[id].isvisible(); i++);
+    return i < view_ids.length;
+  }
 
 
 
@@ -118,50 +125,51 @@ var dom_data = new function()
 
   var onSettingChange = function(msg)
   {
-    var msg_id = msg.id, id = '', i = 0;
-    for( ; ( id = view_ids[i] ) && id != msg_id; i++);
-    if( id && views[id].isvisible() )
+    if( msg.id == settings_id )
     {
-      switch (msg.key)
+      if( is_view_visible() )
       {
-        case 'highlight-on-hover':
+        switch (msg.key)
         {
-          if(settings[id].get(msg.key))
+          case 'highlight-on-hover':
           {
-            host_tabs.activeTab.addEventListener('mouseover', spotlight);
+            if(settings[settings_id].get(msg.key))
+            {
+              host_tabs.activeTab.addEventListener('mouseover', spotlight);
+            }
+            else
+            {
+              services['ecmascript-debugger'].clearSpotlight(data_runtime_id);
+              host_tabs.activeTab.removeEventListener('mouseover', spotlight);
+            }
+            break;
           }
-          else
-          {
-            services['ecmascript-debugger'].clearSpotlight(data_runtime_id);
-            host_tabs.activeTab.removeEventListener('mouseover', spotlight);
-          }
-          break;
-        }
 
-        case 'find-with-click':
-        {
-          if(settings[id].get(msg.key))
+          case 'find-with-click':
           {
-            host_tabs.activeTab.addEventListener('click', clickHandlerHost);
+            if(settings[settings_id].get(msg.key))
+            {
+              host_tabs.activeTab.addEventListener('click', clickHandlerHost);
+            }
+            else
+            {
+              host_tabs.activeTab.removeEventListener('click', clickHandlerHost);
+            }
+            break;
           }
-          else
-          {
-            host_tabs.activeTab.removeEventListener('click', clickHandlerHost);
-          }
-          break;
-        }
 
-        case 'update-on-dom-node-inserted':
-        {
-          if(settings[id].get(msg.key))
+          case 'update-on-dom-node-inserted':
           {
-            host_tabs.activeTab.addEventListener('DOMNodeRemoved', domNodeRemovedHandler);
+            if(settings[settings_id].get(msg.key))
+            {
+              host_tabs.activeTab.addEventListener('DOMNodeRemoved', domNodeRemovedHandler);
+            }
+            else
+            {
+              host_tabs.activeTab.removeEventListener('DOMNodeRemoved', domNodeRemovedHandler);
+            }
+            break;
           }
-          else
-          {
-            host_tabs.activeTab.removeEventListener('DOMNodeRemoved', domNodeRemovedHandler);
-          }
-          break;
         }
       }
     }
@@ -185,11 +193,11 @@ var dom_data = new function()
           {
             data_runtime_id = activeWindow[0];
           }
-          if(settings[id].get('find-with-click'))
+          if(settings[settings_id].get('find-with-click'))
           {
             host_tabs.activeTab.addEventListener('click', clickHandlerHost);
           }
-          if(settings[id].get('highlight-on-hover'))
+          if(settings[settings_id].get('highlight-on-hover'))
           {
             host_tabs.activeTab.addEventListener('mouseover', spotlight);
           } 
