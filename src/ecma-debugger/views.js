@@ -163,8 +163,19 @@
 
     this.createView = function(container)
     {
-      container.render(['div', ['div', 'id', container_id], 'id', 'examine-objects-container']); // TODO clean up
+      container.clearAndRender(['div', ['div', 'id', container_id], 'id', 'examine-objects-container']); // TODO clean up
       this.updatePath(null);
+    }
+
+    this.showGlobalScopeUpdateLink = function()
+    {
+      var containers = this.getAllContainers(), c = null , i = 0;
+      var lis = null, li = null , k = 0;
+      for( ; c = containers[i]; i++)
+      {
+       c.innerHTML = 
+        "<div class='padding'><p handler='update-global-scope'>show global scope</p></div>";
+      }
     }
 
     this.updatePath = function( path_arr )
@@ -201,6 +212,14 @@
           container.removeChild( ul );
         }
       }
+      else
+      {
+        var containers = this.getAllContainers(), c = null , i = 0;
+        for( ; c = containers[i]; i++)
+        {
+         c.clearAndRender(['div', ['div', 'id', container_id], 'id', 'examine-objects-container']);  
+        }
+      }
     }
 
     this.init(id, name, container_class);
@@ -209,6 +228,27 @@
 
   View.prototype = ViewBase;
   new View('frame_inspection', 'Frame Inspection', 'scroll');
+
+  new Settings
+  (
+    // id
+    'frame_inspection', 
+    // key-value map
+    {
+      'automatic-update-global-scope': false, 
+    }, 
+    // key-label map
+    {
+      'automatic-update-global-scope': ' update global scope automatically'
+    },
+    // settings map
+    {
+      checkboxes:
+      [
+        'automatic-update-global-scope'
+      ]
+    }
+  );
 
   View = function(id, name, container_class)
   {

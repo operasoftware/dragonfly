@@ -49,6 +49,7 @@ var action_handler = new function()
     var frame = stop_at.getFrame(event.target['ref-id']);
     // is this schabernack? each frame can be in a different runtime
     var runtime_id = stop_at.getRuntimeId();
+    
     if(frame)
     {
       views.frame_inspection.clearView();
@@ -426,6 +427,11 @@ var action_handler = new function()
   handlers['create-all-runtimes'] = function()
   {
     services['ecmascript-debugger'].createAllRuntimes();
+  }
+
+  handlers['update-global-scope'] = function(event)
+  {
+    handlers['show-frame']({'target': { 'ref-id': 0 } });
   }
 
 

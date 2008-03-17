@@ -126,7 +126,14 @@ var stop_at = new function()
       // fake a click event on the top frame in the stack
       if( i == 0 )
       {
-        action_handler.post('show-frame', {'target': { 'ref-id': 0 } });
+        if(settings.frame_inspection.get('automatic-update-global-scope'))
+        {
+          action_handler.post('show-frame', {'target': { 'ref-id': 0 } });
+        }
+        else
+        {
+          views.frame_inspection.showGlobalScopeUpdateLink();
+        }
       }
     }
     views.callstack.update();

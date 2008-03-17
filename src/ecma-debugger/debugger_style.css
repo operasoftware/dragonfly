@@ -413,5 +413,17 @@ toolbar-buttons input[handler="continue"]:active {
   white-space: pre-wrap;
   }
 
+p[handler="update-global-scope"] {
+  padding:0;
+  margin:0;
+  color: #999;
+  text-decoration: underline;
+  text-align: center;
+  }
+
+p[handler="update-global-scope"]:hover {
+  color: #333;
+  }
+
 
 
