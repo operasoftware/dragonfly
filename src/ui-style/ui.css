@@ -134,7 +134,7 @@ toolbar-buttons input[disabled]:active {
   background-position:0 0;
   }
 
-/***/
+
 toolbar-switches input {
   width:20px;
   height:20px;
@@ -144,10 +144,6 @@ toolbar-switches input {
   border:none;
   background:transparent url('../ui-images/test-switch.png') scroll no-repeat 0 0;
   }
-
-
-
-
 
 toolbar-switches input:hover {
   background-position:0 -20px;
@@ -179,7 +175,7 @@ toolbar-separator {
   }
 
 
-/***/
+
 
 
 
@@ -430,14 +426,17 @@ window-control {
   position:absolute;
   }
 
-windows-container [handler="window-move"] {
+window-header {
   display:block;
   background-color:#ccc;
   color:#000;
-  cursor:move;
   padding-left:.5em;
   height:20px;
   line-height:20px;
+  }
+
+windows-container [handler="window-move"] {
+  cursor:move;
   }
 
 windows-container [handler='window-close'] {
