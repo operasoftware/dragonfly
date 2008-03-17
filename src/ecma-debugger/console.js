@@ -119,6 +119,7 @@ var console_messages = new function()
     {
       container.innerHTML = '';
       container.renderInner(templates.messages(console_messages.getMessages()));
+      container.scrollTop = container.scrollHeight;
     }
     this.init(id, name, container_class);
   }
