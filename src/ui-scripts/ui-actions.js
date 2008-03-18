@@ -111,6 +111,7 @@ eventHandlers.click['toolbar-switch'] = function(event)
   var is_active = !( target.getAttribute('is-active') == 'true' && true || false );
   settings[setting].set(key, is_active);
   views.settings_view.syncSetting(setting, key, is_active);
+  views[setting].update();
   messages.post("setting-changed", {id: setting, key: key});
   target.setAttribute('is-active', is_active ? 'true' : 'false');
 

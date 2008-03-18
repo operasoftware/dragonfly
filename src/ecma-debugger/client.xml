@@ -69,6 +69,7 @@
 <script src="views-dom-markup-style.js"/>
 <script src="views-dom-tree-style.js"/>
 <script src="views-threads.js"/>
+<script src="export_data.js"/>
 
 <script src="action_handler.js"/>
 <script src="change-handler.js"/>

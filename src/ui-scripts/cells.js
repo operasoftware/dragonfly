@@ -24,6 +24,42 @@ CellBase = new function()
     this.toolbar = new Toolbar(this);
   }
 
+  this.getView = function(view_id)
+  {
+    var ret = null, tab = '', view = null, child = null, i = 0;
+    if( this.tab )
+    {
+      for( i = 0 ; tab = this.tab.tabs[i]; i++ )
+      {
+        if( view = views[tab.ref_id] )
+        {
+          if( view.type == 'composite-view' )
+          {
+            if( ret = view.cell.getView(view_id) )
+            {
+              return [ this.tab, tab.ref_id].concat(ret);
+            }
+          }
+          else if( tab.ref_id == view_id )
+          {
+            return [this.tab, view_id];
+          }
+        }
+      }
+    }
+    else
+    {
+      for( i = 0 ; child = this.children[i]; i++ )
+      {
+        if( ret = child.getView(view_id) )
+        {
+          return ret;
+        }
+      }
+    }
+    return null;
+  }
+
   this.init = function(rough_cell, dir, parent, container_id)
   {
     this.width = 

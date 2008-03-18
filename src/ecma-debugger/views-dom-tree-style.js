@@ -330,13 +330,15 @@
     {
       'force-lowercase': false, 
       'show-comments': true, 
-      'show-attributes': true
+      'show-attributes': true,
+      'show-whitespace-nodes': true
     }, 
     // key-label map
     {
       'force-lowercase': ' always use lower case for tag names', 
       'show-comments': ' show comment nodes', 
-      'show-attributes': ' show attributes'
+      'show-attributes': ' show attributes',
+      'show-whitespace-nodes': ' show white space nodes'
     },
     // settings map
     {
@@ -345,6 +347,7 @@
         'force-lowercase',
         'show-comments',
         'show-attributes',
+        'show-whitespace-nodes',
         'dom_general.find-with-click',
         'dom_general.highlight-on-hover',
         'dom_general.update-on-dom-node-inserted'
@@ -366,6 +369,18 @@
         handler: 'dom-tree-text-search',
         title: 'text search'
       }
+    ]
+  )
+
+  new Switches
+  (
+    'dom-tree-style',
+    [
+      'dom_general.find-with-click',
+      'dom_general.highlight-on-hover',
+      'dom_general.update-on-dom-node-inserted',
+      'show-comments',
+      'show-whitespace-nodes'
     ]
   )
 

@@ -425,5 +425,10 @@ p[handler="update-global-scope"]:hover {
   color: #333;
   }
 
+.export-data pre {
+  padding: 0;
+  margin: 0;
+  }
+
 
 

@@ -242,6 +242,8 @@ var client = new function()
     new CompositeView('js_new', 'Script', js_rough_layout);
     new CompositeView('dom_new', 'DOM', dom_rough_layout);
 
+    new CompositeView('export_new', 'Export', export_rough_layout);
+
     window.topCell = new TopCell
     (
       main_layout, 
@@ -296,6 +298,15 @@ var console_rough_layout =
   ]
 }
 
+var export_rough_layout =
+{
+  dir: 'v', width: 700, height: 700,
+  children: 
+  [
+    { height: 200, tabs: ['export_data'] }
+  ]
+}
+
 var dom_rough_layout =
 {
   dir: 'h', width: 700, height: 700,
@@ -343,7 +354,7 @@ var js_rough_layout =
 var main_layout =
 {
   id: 'main-view', 
-  tabs: ['js_new', 'dom_new', 'console_new']
+  tabs: ['js_new', 'dom_new', 'console_new', 'export_new']
 }
 
 var resolve_map_properties = 

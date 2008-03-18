@@ -434,6 +434,12 @@ var action_handler = new function()
     handlers['show-frame']({'target': { 'ref-id': 0 } });
   }
 
+  handlers['dom-inspection-export'] = function(event)
+  {
+    export_data.data = views['dom-markup-style'].exportMarkup();
+    topCell.showView('export_data');
+  }
+
 
 
   this.post = function(handler, event)

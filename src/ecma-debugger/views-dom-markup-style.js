@@ -20,7 +20,24 @@
     ATTR_VALUE = 2,
     CHILDREN_LENGTH = 6, 
     PUBLIC_ID = 4,
-    SYSTEM_ID = 5;
+    SYSTEM_ID = 5,
+    INDENT = "  ",
+    LINEBREAK = '\n';
+
+    var getIndent = function(count)
+    {
+      var ret = '';
+      if(count)
+      {
+        count--;
+      }
+      while(count)
+      {
+        ret += INDENT;
+        count--;
+      }
+      return ret;
+    }
 
     this.scrollTargetIntoView = function()
     {
@@ -74,6 +91,8 @@
       }
       return attrs;
     }
+
+
 
     var getDoctypeName = function(data)
     {
@@ -299,6 +318,185 @@
       
     }
 
+    this.exportMarkup = function()
+    {
+
+      var data = dom_data.getData();
+
+      var tree = '', i = 0, node = null, length = data.length;
+      
+ 
+
+      var attrs = null, attr = null, k = 0, key = '';
+
+      var is_open = 0;
+      var has_only_one_child = 0;
+      var one_child_value = ''
+      var current_depth = 0;
+      var child_pointer = 0;
+      var child_level = 0;
+      var j = 0;
+      var children_length = 0;
+
+      var closing_tags = [];
+
+      var force_lower_case = settings[self.id].get('force-lowercase');
+      var show_comments = settings[self.id].get('show-comments');
+      var show_attrs = settings[self.id].get('show-attributes');
+      var node_name = '';
+      var tag_head = '';
+
+
+        for( ; node = data[i]; i += 1 )
+        {
+          while( current_depth > node[DEPTH] )
+          {
+            tree += closing_tags.pop();
+            current_depth--;
+          }
+          current_depth = node[ DEPTH ];
+          children_length = node[ CHILDREN_LENGTH ];
+          child_pointer = 0;
+          node_name =  ( node[NAMESPACE] ? node[NAMESPACE] + ':': '' ) +  node[ NAME ];
+          if( force_lower_case )
+          {
+            node_name = node_name.toLowerCase();
+          }
+          switch ( node[ TYPE ] )
+          {
+            case 1:  // elemets
+            {
+              attrs = '';
+              if( show_attrs )
+              {
+                for( k = 0; attr = node[ATTRS][k]; k++ )
+                {
+                  attrs += " " + 
+                    ( attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '' ) + 
+                    ( force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ) + 
+                    "=\"" + 
+                    attr[ATTR_VALUE] + 
+                    "\"";
+                }
+              }
+
+              child_pointer = i + 1;
+
+              is_open = ( data[ child_pointer ] && ( node[ DEPTH ] < data[ child_pointer ][ DEPTH ] ) );
+              if( is_open ) 
+              {
+                has_only_one_child = 1;
+                one_child_value = '';
+                child_level = data[ child_pointer ][ DEPTH ];
+                for( ; data[child_pointer] &&  data[ child_pointer ][ DEPTH ] == child_level; child_pointer += 1 )
+                {
+                  one_child_value += data[ child_pointer ] [ VALUE ];
+                  if( data[ child_pointer ][ TYPE ] != 3 )
+                  {
+                    has_only_one_child = 0;
+                    one_child_value = '';
+                    break;
+                  }
+                }
+              }
+
+              if( is_open )
+              {
+                if( has_only_one_child )
+                {
+                  tree += LINEBREAK  + getIndent(node[ DEPTH ] ) +
+                          "&lt;" + node_name +  attrs + "&gt;" +
+                          one_child_value + 
+                          "&lt;/" + node_name + "&gt;";
+                  i = child_pointer - 1;
+                }
+                else
+                {
+                  tree += LINEBREAK  + getIndent(node[ DEPTH ] ) + 
+                          "&lt;" + node_name + attrs + "&gt;";
+
+                  closing_tags.push( LINEBREAK  + getIndent(node[ DEPTH ]) + 
+                                        "&lt;/" + node_name + "&gt;");
+                }
+
+              }
+              else // is closed
+              {
+              tree +=  LINEBREAK  + getIndent(node[ DEPTH ] ) +
+                      "&lt;" + node_name + attrs + "&gt;" + "&lt;/" + node_name + "&gt;" ;
+              }
+              break;
+            }
+
+            case 7:  // processing instruction
+            {
+              tree += LINEBREAK  + getIndent(node[ DEPTH ] ) +      
+                "&lt;?" + node[NAME] + ( node[VALUE] ? ' ' + node[VALUE] : '' ) + "?&gt;";
+              break;
+
+            }
+
+            case 8:  // comments
+            {
+              if( show_comments )
+              {
+                if( !/^\s*$/.test(node[ VALUE ] ) )
+                {
+                  tree += LINEBREAK  + getIndent(node[ DEPTH ] ) +      
+                          "&lt;!--" + node[ VALUE ] + "--&gt;";
+                }
+              }
+              break;
+
+            }
+
+            case 9:  // document node
+            {
+              /* makes not too much sense in the markup view
+              tree += "<div style='margin-left:" + 16 * node[ DEPTH ] + "px;' " +      
+                ">#document</div>";
+              */
+              break;
+
+            }
+
+            case 10:  // doctype
+            {
+              tree += LINEBREAK  + getIndent(node[ DEPTH ] ) +
+                      "&lt;!doctype " + getDoctypeName(data) +
+                      ( node[PUBLIC_ID] ? 
+                        ( " PUBLIC " + "\"" + node[PUBLIC_ID] + "\"" ) :"" ) +
+                      ( node[SYSTEM_ID] ?  
+                        ( " \"" + node[SYSTEM_ID] + "\"" ) : "" ) +
+                      "&gt;";
+              break;
+            }
+
+            default:
+            {
+              if( !/^\s*$/.test(node[ VALUE ] ) )
+              {
+                tree += LINEBREAK  + getIndent(node[ DEPTH ] ) + 
+                        node[ VALUE ];
+              }
+            }
+
+          }
+        }
+        
+        while( closing_tags.length )
+        {
+          tree += closing_tags.pop();
+        }
+        return tree;
+        
+
+
+      
+
+      
+    }
+
 
 
     this.init(id, name, container_class);
@@ -345,7 +543,11 @@
       {
         handler: 'dom-inspection-snapshot',
         title: 'Get the whole dom tree'
-      }
+      },
+      {
+        handler: 'dom-inspection-export',
+        title: 'Export the current view'
+      },
     ],
     [
       {
