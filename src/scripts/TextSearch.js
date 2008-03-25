@@ -66,7 +66,12 @@ var TextSearch = function()
         {
           search_node(container);
           self.highlight();
+          topCell.statusbar.updateInfo('matches for "' + search_therm + '": ' +search_results.length);
         }
+      }
+      else
+      {
+        topCell.statusbar.updateInfo('');
       }
     }
   }

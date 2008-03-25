@@ -15,7 +15,7 @@ var runtimes = new function()
 
   var view_ids = ['threads'];
 
-  var runtime_views = ['runtimes', 'runtimes_dom'];
+  var runtime_views = ['runtimes', 'runtimes_dom', 'runtimes_css'];
 
   var updateRuntimeViews = function()
   {
@@ -128,10 +128,8 @@ var runtimes = new function()
         {
           if( __runtimes[cur] && __runtimes[cur]['uri'] == runtime['uri'] )
           {
-            if( __runtimes[cur]['unfolded'] )
-            {
-              runtime['unfolded'] = __runtimes[cur]['unfolded'];
-            }
+            runtime['unfolded-script'] = __runtimes[cur]['unfolded-script'] || false;
+            runtime['unfolded-css'] = __runtimes[cur]['unfolded-css'] || false;
             delete __runtimes[cur];
           }
         }
@@ -534,12 +532,21 @@ var runtimes = new function()
 
   this.getRuntimeIdsFromWindow = function(window_id)
   {
+    // first member is the top runtime
     var ret = [], r = '';
     for( r in __runtimes )
     { 
-      if ( __runtimes[r] && __runtimes[r]['window-id'] &&  __runtimes[r]['window-id'] == window_id )
+      if ( __runtimes[r] && __runtimes[r]['window-id'] && __runtimes[r]['window-id'] == window_id )
       {
-        ret[ret.length] = __runtimes[r]['runtime-id'];
+        if(__runtimes[r].is_top)
+        {
+          ret = [__runtimes[r]['runtime-id']].concat(ret);
+        }
+        else
+        {
+          ret[ret.length] = __runtimes[r]['runtime-id'];
+        }
+        
       }
     }
     return ret;
@@ -613,13 +620,12 @@ var runtimes = new function()
   }
 
 
-  this.setUnfolded = function(runtime_id, is_unfolded)
+  this.setUnfolded = function(runtime_id, view, is_unfolded)
   {
     
     if( __runtimes[runtime_id] )
     {
-      //alert(__runtimes[runtime_id]+' '+is_unfolded);
-      __runtimes[runtime_id]['unfolded'] = is_unfolded;
+      __runtimes[runtime_id]['unfolded-' + view] = is_unfolded;
     }
   }
 

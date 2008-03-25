@@ -10,6 +10,7 @@
   - "view-created" msg.id, msg.container
   - "view-destroyed" msg.id
   - "runtime-stopped" msg.id
+  - "runtime-selected" msg.id
 
 */
 

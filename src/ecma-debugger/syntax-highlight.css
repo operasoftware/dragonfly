@@ -89,7 +89,7 @@
 	color:#888;
   }
 
-.dom .node {
+.dom .node, .stylesheets .selector {
   color: #279;
   }
 
@@ -97,11 +97,11 @@
   background-color:#ddb;
   }
 
-.dom .key{
+.dom .key, .stylesheets .key {
 	color:#229;
   }
 
-.dom .value, .doctype-value {
+.dom .value, .doctype-value, .stylesheets .value {
 	color:#742;
   }
 

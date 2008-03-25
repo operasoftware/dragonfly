@@ -40,11 +40,11 @@ var dom_data = new function()
   var onActiveTab = function(msg)
   {
     // TODO clean up old tab
-    data = []; // this must be split for all runtimes in the active tab. no, not really
+    data = []; 
     var view_id = '', i = 0;
-    // TODO handle runtimes per tab properly
     // the top frame is per default the active tab
     data_runtime_id = __next_rt_id || msg.activeTab[0];
+    messages.post("runtime-selected", {id: data_runtime_id});
     activeWindow = msg.activeTab.slice(0);
     for( ; view_id = view_ids[i]; i++)
     {
@@ -58,10 +58,9 @@ var dom_data = new function()
   var clickHandlerHost = function(event)
   {
     var rt_id = event['runtime-id'], obj_id = event['object-id'];
-    messages.post("element-selected", {obj_id: obj_id, rt_id: data_runtime_id});
     current_target = obj_id;
     data = [];
-    tag = tagManager.setCB(null, handleGetDOM, [ rt_id ]);
+    tag = tagManager.setCB(null, handleGetDOM, [ rt_id, obj_id]);
     services['ecmascript-debugger'].inspectDOM( tag, obj_id, 'parent-node-chain-with-children', 'json' );
   }
 
@@ -91,7 +90,7 @@ var dom_data = new function()
 
 
 
-  var handleGetDOM = function(xml, rt_id)
+  var handleGetDOM = function(xml, rt_id, obj_id)
   {
     var json = xml.getNodeData('jsondata');
     if( json )
@@ -100,7 +99,7 @@ var dom_data = new function()
       if( rt_id != data_runtime_id || __next_rt_id )
       {
         data_runtime_id = rt_id;
-        views.runtimes_dom.updateSelectedRuntime(data_runtime_id);
+        messages.post("runtime-selected", {id: data_runtime_id});
         __next_rt_id = '';
       }
       var view_id = '', i = 0;
@@ -108,6 +107,10 @@ var dom_data = new function()
       {
         views[view_id].update();
         views[view_id].scrollTargetIntoView();
+      }
+      if(obj_id)
+      {
+        messages.post("element-selected", {obj_id: obj_id, rt_id: rt_id});
       }
     }
     /* with xml 
@@ -417,7 +420,6 @@ var dom_data = new function()
 
   this.setCurrentTarget = function(obj_id)
   {
-    // data_runtime_id will fail with more then one runtime per runtime container
     messages.post("element-selected", {obj_id: obj_id, rt_id: data_runtime_id});
     current_target = obj_id;
   }

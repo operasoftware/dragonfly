@@ -330,6 +330,36 @@
         "</inspect-dom>";
       this.post(msg);
     }
+    
+    this.getAllStylesheets = function(tag, rt_id, format)
+    {
+      var msg = "<css-get-all-stylesheets>" +
+                  "<tag>" + tag + "</tag>" +
+                  "<runtime-id>" + rt_id+ "</runtime-id>" +
+                  ( format ? "<format>json</format>" : "" ) +
+                "</css-get-all-stylesheets>";
+      this.post(msg);
+    }
+    
+    this.getCSSRules = function( tag, rt_id, obj_id, format )
+    {
+      var msg = "<css-get-stylesheet>" +
+                  "<tag>" + tag + "</tag>" +
+                  "<runtime-id>" + rt_id+ "</runtime-id>" +
+                  "<object-id>" + obj_id + "</object-id>"+
+                  ( format ? "<format>json</format>" : "" ) +
+                "</css-get-stylesheet>";
+      this.post(msg);
+    }
+    
+    this.getIndexMap = function(tag, format)
+    {
+      var msg = "<css-get-index-map>" +
+                    "<tag>" + tag + "</tag>" +
+                    ( format ? "<format>json</format>" : "" ) +
+                  "</css-get-index-map>";
+      this.post(msg);
+    }
 
   }
 

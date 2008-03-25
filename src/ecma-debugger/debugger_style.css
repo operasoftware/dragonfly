@@ -429,6 +429,10 @@ p[handler="update-global-scope"]:hover {
   padding: 0;
   margin: 0;
   }
+  
+.stylesheets pre {
+  white-space: pre-wrap;
+  }
 
 
 

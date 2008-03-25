@@ -141,7 +141,7 @@ var action_handler = new function()
     {
       event.target.parentNode.removeChild(scripts_container);
       event.target.style.removeProperty('background-position');
-      runtimes.setUnfolded(runtime_id, false);
+      runtimes.setUnfolded(runtime_id, 'script', false);
     }
     else
     {
@@ -152,7 +152,58 @@ var action_handler = new function()
       }
       event.target.parentNode.render(scripts_container);
       event.target.style.backgroundPosition = '0 -11px';
-      runtimes.setUnfolded(runtime_id, true);
+      runtimes.setUnfolded(runtime_id, 'script', true);
+    }
+  }
+  
+  handlers['show-stylesheets'] = function(event, target, call_count)
+  {
+    var rt_id = target.getAttribute('runtime_id');
+    var sheets = stylesheets.getStylesheets(rt_id, arguments);
+    if(sheets)
+    {
+      var container = event.target.parentNode.getElementsByTagName('ul')[0];
+      var sheet = null, i = 0;
+      if(container)
+      {
+        target.parentNode.removeChild(container);
+        target.style.removeProperty('background-position');
+        runtimes.setUnfolded(rt_id, 'css', false);
+      }
+      else
+      {
+        container = ['ul'];
+        for( ; sheet = sheets[i]; i++)
+        {
+          container.push(templates.sheetLink(sheet, i));
+        }
+        event.target.parentNode.render(container);
+        event.target.style.backgroundPosition = '0 -11px';
+        runtimes.setUnfolded(rt_id, 'css', true);
+      }
+      
+    }
+
+    
+  }
+  
+  handlers['display-stylesheet'] = function(event, target, call_count)
+  {
+    var index = parseInt(target.getAttribute('index'));
+    var rt_id = target.parentNode.parentNode.firstChild.getAttribute('runtime_id');
+    var rules = stylesheets.getRulesWithSheetIndex(rt_id, index, arguments);
+    if(rules)
+    {
+      stylesheets.setSelectedSheet(rt_id, index, rules);
+      if( !views.stylesheets.isvisible() )
+      {
+        topCell.showView(views.stylesheets.id);
+      }
+      else
+      {
+        views.stylesheets.update();
+      }
+      
     }
   }
 
@@ -186,7 +237,6 @@ var action_handler = new function()
     {
       if( runtimes.getActiveWindowId() != window_id )
       {
-        dom_data.setActiveRuntime(rt_id);
         host_tabs.setActiveTab(window_id);
       }
       else

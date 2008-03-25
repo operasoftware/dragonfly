@@ -80,6 +80,35 @@
     ret.splice(ret.length, 0, 'window_id', win.id);
     return ret;
   }
+  
+  this['window-css']  = function(win)
+  {
+    var 
+    rts_c = null, 
+    rt = null, 
+    i = 0,
+    ret = ['li', 
+            ['input', 
+              'type', 'button', 
+              'handler', 'show-runtimes', 
+              'class', 'folder-key'].
+                concat(win.is_unfolded  ? ['style', 'background-position:0 -11px'] : [] ),
+            ['span', 
+              win['title'] || win['uri'], 
+              'handler', 'select-window', 
+              'title', 'select a window']
+         ];
+    if( win.is_unfolded )
+    {
+      ret.splice(ret.length, 0, this.runtimes(win.runtimes, 'css'));
+    } 
+    if (win.is_selected)
+    {
+      ret.splice(ret.length, 0, 'class', 'selected'); 
+    }
+    ret.splice(ret.length, 0, 'window_id', win.id);
+    return ret;
+  }
 
   this.runtimes = function(runtimes, type)
   {
@@ -98,12 +127,12 @@
             'type', 'button', 
             'handler', 'show-scripts', 
             'runtime_id', runtime['runtime-id'],
-            'class', 'folder-key'].concat(runtime.unfolded ? ['style', 'background-position:0 -11px'] : [] ),
+            'class', 'folder-key'].concat(runtime['unfolded-script'] ? ['style', 'background-position:0 -11px'] : [] ),
           ['span', runtime['uri'], 'handler', 'show-global-scope', 'title', 'select a runtime'].
             concat( runtime.selected ? ['class', 'selected-runtime'] : [] ) 
         
       ];
-    if( runtime.unfolded )
+    if( runtime['unfolded-script'])
     {
       var scripts = runtimes.getScripts(runtime['runtime-id']), 
         script = null, i=0, scripts_container =['ul'];
@@ -112,6 +141,34 @@
         scripts_container.push(templates.scriptLink(script));
       }
       ret = ret.concat([scripts_container]);
+    }
+    return ret;
+  }
+  
+  this['runtime-css'] = function(runtime)
+  {
+    var ret = ['li',
+          ['input', 
+            'type', 'button', 
+            'handler', 'show-stylesheets', 
+            'runtime_id', runtime['runtime-id'],
+            'class', 'folder-key'].concat(runtime.unfolded_css ? ['style', 'background-position:0 -11px'] : [] ),
+          ['span', runtime['uri']/*, 'handler', 'show-global-scope', 'title', 'select a runtime'*/].
+            concat( runtime.selected ? ['class', 'selected-runtime'] : [] ) 
+        
+      ];
+    if( runtime['unfolded-css'] )
+    {
+      var sheets = stylesheets.getStylesheets(runtime['runtime-id']),
+        sheet = null, i = 0, container = ['ul'];
+      if(sheets)
+      {
+        for( ; sheet = sheets[i]; i++)
+        {
+          container.push(templates.sheetLink(sheet, i));
+        }
+      }
+      ret = ret.concat([container])
     }
     return ret;
   }
@@ -135,6 +192,22 @@
         'handler', 'display-script',
         'script-id', script['script-id']
       ].concat( script.selected ? ['class', 'selected'] : [] );
+  }
+  
+  this.sheetLink = function(sheet, index)
+  {
+    const
+    OBJECT_ID = 3,
+    HREF = 1,
+    TITLE = 6;
+    
+    var title = sheet[HREF] ? sheet[HREF] : 'inline stylesheet ' + ( index + 1 ) ;
+    
+    return ['li',
+        title,
+        'handler', 'display-stylesheet',
+        'index', '' + index
+      ]
   }
   //templates.configStopAt(config)
   // stop at: "script" | "exception" | "error" | "abort", yes/no;
