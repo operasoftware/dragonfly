@@ -235,7 +235,7 @@
     'frame_inspection', 
     // key-value map
     {
-      'automatic-update-global-scope': false, 
+      'automatic-update-global-scope': false
     }, 
     // key-label map
     {
