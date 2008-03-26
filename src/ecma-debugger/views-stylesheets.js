@@ -10,9 +10,14 @@
       var selected_sheet = stylesheets.getSelectedSheet();
       if(selected_sheet)
       {
-        var t = new Date().getTime();
-        container.innerHTML = "<div class='padding'>" + stylesheets.prettyPrintRules(selected_sheet.rules) + "</div>";
-        opera.postError((new Date().getTime() - t) +' '+ container.innerHTML.length);  
+        // TODO check markup
+        //var t = new Date().getTime();
+        container.innerHTML = 
+          "<div class='padding'>" + 
+          stylesheets.prettyPrintRules(selected_sheet.rules, settings[this.id].get('shortcuts') ) + 
+          "</div>";
+        //window.open('data:text/plain;charset=utf-8,'+encodeURIComponent(container.innerHTML))
+        //opera.postError((new Date().getTime() - t) +' '+ container.innerHTML.length);  
       }
       else
       {

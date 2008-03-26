@@ -6,6 +6,8 @@ var TextSearch = function()
   DEFAULT_SCROLL_MARGIN = 50,
   SEARCH_DELAY = 50;
 
+
+
   var 
   self = this, 
   search_therm = '',
@@ -66,7 +68,7 @@ var TextSearch = function()
         {
           search_node(container);
           self.highlight();
-          topCell.statusbar.updateInfo('matches for "' + search_therm + '": ' +search_results.length);
+          
         }
       }
       else
@@ -96,6 +98,8 @@ var TextSearch = function()
       }
       search_results[cursor].style.cssText = HIGHLIGHT_STYLE;
       container.scrollTop += search_results[cursor].offsetTop - DEFAULT_SCROLL_MARGIN;
+      topCell.statusbar.updateInfo('matches for "' + 
+        search_therm + '": ' +search_results.length +', match ' + ( cursor + 1 ) );
     }
   }
 

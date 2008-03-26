@@ -62,7 +62,6 @@
 <script src="views.js"/>
 <script src="testing.js"/>
 <script src="dom_data.js"/>
-<script src="css_helper.js"/>
 <script src="css_data.js"/>
 <script src="stylesheets.js"/>
 <script src="views-css-inspector.js"/>

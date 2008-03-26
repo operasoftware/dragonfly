@@ -38,6 +38,31 @@ var stylesheets = new function()
   
   var
   SHORTHAND = [];
+
+  var short_hand_counts =
+  {
+    "background": 6,
+    "list-style": 4
+  }
+
+  var initials = 
+  {
+    "background-attachment": "scroll",
+    "background-color": "transparent",
+    "background-image": "none",
+    "background-position": "0% 0%",
+    "background-repeat": "repeat",
+    "list-style-image": "none",
+    "list-style-position": "outside",
+    "list-style-type": "disc",
+    "font-family": "-",
+    "font-size": "medium",
+    "font-style": "normal",
+    "font-variant": "normal",
+    "font-weight": "normal",
+  };
+
+
   
   
 /*
@@ -241,22 +266,69 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
         return ret;
       }
     }
-    
-    
-    
-
-    return 'something seriously missing'
-    
-    
+    return 'something seriously missing';
   }
+  
+  shorthands.background = function(prop, index_list, value_list, priority_list)
+  {
+    var 
+    priority_flag = -1, 
+    count = short_hand_counts[s_h_prop], 
+    i = 1, 
+    short_values = '', 
+    ret = '';
+    // check priority flags
+    for( ; i < count; i++ )
+    {
+      if(value_list[i])
+      {
+        if(priority_flag == -1)
+        {
+          priority_flag = priority_list[i];
+        }
+        else if(priority_flag != priority_list[i])
+        {
+          break;
+        }
+      }
+    }
+    if( i == count )
+    {
+      priority_flag = priority_flag ? MARKUP_IMPORTANT : MARKUP_EMPTY;
+      for( i = 0; i < count; i++ )
+      {
+        if(value_list[i] && value_list[i] != initials[__indexMap[index_list[i]]] )
+        {
+          short_values += ( short_values ? ' ' : '' ) + value_list[i];
+        }
+      }
+      ret += ( ret ? MARKUP_PROP_NL : "" ) +
+              INDENT + MARKUP_KEY + prop + MARKUP_KEY_CLOSE + 
+              MARKUP_VALUE + ( short_values ? short_values : 'none' )  + priority_flag + MARKUP_VALUE_CLOSE; 
+    }
+    else
+    {
+      for( i = 1; i < count; i++ )
+      {
+        if(value_list[i])
+        {
+          ret += ( ret ? MARKUP_PROP_NL : "" ) +
+                  this.fallback(index_list[i], value_list[i], priority_list[i]);   
+        }
+      } 
+    }
+    return ret;
+  }
+  
+  shorthands['list-style'] = shorthands.background;
   
   
   var pretyPrintRule = [];
-  pretyPrintRule[UNKNOWN_RULE] = function(rule)
+  pretyPrintRule[UNKNOWN_RULE] = function(rule, do_shortcuts)
   {
     return '';
   }
-  pretyPrintRule[STYLE_RULE] = function(rule)
+  pretyPrintRule[STYLE_RULE] = function(rule, do_shortcuts)
   {
     const
     HEADER = 0,
@@ -279,7 +351,7 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     for( ; i < length; i++ )
     {
       index = index_list[i];
-      if( SHORTHAND[index] )
+      if( do_shortcuts && SHORTHAND[index] )
       {
         s_h_index = [];
         s_h_value = [];
@@ -315,41 +387,41 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
 
       
     }
-    return "<pre rule-id='" + rule[HEADER][1] + "'>" + selectors + " {\n" + ret + "\n}";
+    return "<pre rule-id='" + rule[HEADER][1] + "'>" + selectors + " {\n" + ret + "\n}</pre>";
   }
   
-  pretyPrintRule[CHARSET_RULE] = function(rule)
+  pretyPrintRule[CHARSET_RULE] = function(rule, do_shortcuts)
   {
     return 'TODO';
   }
   
-  pretyPrintRule[IMPORT_RULE] = function(rule)
+  pretyPrintRule[IMPORT_RULE] = function(rule, do_shortcuts)
   {
     return 'TODO IMPORT_RULE';
   }
   
-  pretyPrintRule[MEDIA_RULE] = function(rule)
+  pretyPrintRule[MEDIA_RULE] = function(rule, do_shortcuts)
   {
     return 'TODO MEDIA_RULE';
   }
   
-  pretyPrintRule[FONT_FACE_RULE] = function(rule)
+  pretyPrintRule[FONT_FACE_RULE] = function(rule, do_shortcuts)
   {
     return 'TODO FONT_FACE_RULE';
   }
   
-  pretyPrintRule[PAGE_RULE] = function(rule)
+  pretyPrintRule[PAGE_RULE] = function(rule, do_shortcuts)
   {
     return 'TODO PAGE_RULE';
   }
   
   
-  this.prettyPrintRules = function(rules)
+  this.prettyPrintRules = function(rules, do_shortcuts)
   {
     var ret = '', rule = null, header = null, i = 0;
     for( ; rule = rules[i]; i++)
     {
-      ret += pretyPrintRule[rule[RULE_HEADER][2]](rule);
+      ret += pretyPrintRule[rule[RULE_HEADER][2]](rule, do_shortcuts);
     }
     return "<div stylesheet-id='" + rules[0][0][0] + "'>" + ret + "</div>";
   }
@@ -542,6 +614,64 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
             __shorthandIndexMap[i] = 'border';          
             break;
           }
+          // background
+          case 'background-color':
+          {
+            SHORTHAND[i] = 1;
+            __shorthandIndexMap[i] = 'background';          
+            break;
+          }
+          case 'background-image':
+          {
+            SHORTHAND[i] = 2;
+            __shorthandIndexMap[i] = 'background';          
+            break;
+          }
+          case 'background-attachment':
+          {
+            SHORTHAND[i] = 3;
+            __shorthandIndexMap[i] = 'background';          
+            break;
+          }
+          case 'background-repeat':
+          {
+            SHORTHAND[i] = 4;
+            __shorthandIndexMap[i] = 'background';          
+            break;
+          }
+          case 'background-position':
+          {
+            SHORTHAND[i] = 5;
+            __shorthandIndexMap[i] = 'background';          
+            break;
+          }
+          
+/// 'list-style-type'> || <'list-style-position'> || <'list-style-image'
+          // list-style
+          
+          case 'list-style-type':
+          {
+            SHORTHAND[i] = 1;
+            __shorthandIndexMap[i] = 'list-style';          
+            break;
+          }
+          case 'list-style-position':
+          {
+            SHORTHAND[i] = 2;
+            __shorthandIndexMap[i] = 'list-style';          
+            break;
+          }
+          case 'list-style-image':
+          {
+            SHORTHAND[i] = 3;
+            __shorthandIndexMap[i] = 'list-style';          
+            break;
+          }
+
+          
+
+          
+
 
         }
         
