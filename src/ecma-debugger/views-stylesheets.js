@@ -96,6 +96,7 @@
     if( msg.id == 'stylesheets' )
     {
       textSearch.setContainer(msg.container);
+      textSearch.update();
     }
   }
 

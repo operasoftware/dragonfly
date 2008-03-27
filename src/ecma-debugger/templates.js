@@ -163,9 +163,10 @@
         sheet = null, i = 0, container = ['ul'];
       if(sheets)
       {
+        
         for( ; sheet = sheets[i]; i++)
         {
-          container.push(templates.sheetLink(sheet, i));
+          container.push(templates.sheetLink(sheet, i, stylesheets.isSelectedSheet(runtime['runtime-id'], i)));
         }
       }
       ret = ret.concat([container])
@@ -187,6 +188,7 @@
 
   this.scriptLink = function(script)
   {
+    
     return ['li',
         script['script-type']+' - '+(script['uri']?script['uri']:'script-id: '+script['script-id']),
         'handler', 'display-script',
@@ -194,7 +196,7 @@
       ].concat( script.selected ? ['class', 'selected'] : [] );
   }
   
-  this.sheetLink = function(sheet, index)
+  this.sheetLink = function(sheet, index, is_selected)
   {
     const
     OBJECT_ID = 3,
@@ -202,12 +204,11 @@
     TITLE = 6;
     
     var title = sheet[HREF] ? sheet[HREF] : 'inline stylesheet ' + ( index + 1 ) ;
-    
     return ['li',
-        title,
-        'handler', 'display-stylesheet',
-        'index', '' + index
-      ]
+            title,
+            'handler', 'display-stylesheet',
+            'index', '' + index
+      ].concat( is_selected ? ['class', 'selected'] : [] )
   }
   //templates.configStopAt(config)
   // stop at: "script" | "exception" | "error" | "abort", yes/no;

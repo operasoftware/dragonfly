@@ -317,7 +317,7 @@ var runtimes = new function()
     script['breakpoints'] = {};
     registerRuntime( script['runtime-id'] );
     registerScript( script );
-    updateRuntimeViews();
+    views['runtimes'].update();
   }
 
   var thread_queues = {};

@@ -203,6 +203,7 @@ var action_handler = new function()
       {
         views.stylesheets.update();
       }
+      helpers.setSelected(event);
       
     }
   }

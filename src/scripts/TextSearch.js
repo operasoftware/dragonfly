@@ -82,6 +82,16 @@ var TextSearch = function()
   {
     timeouts.set(this.search, SEARCH_DELAY, new_search_therm);
   }
+  
+  this.update = function()
+  {
+    var new_search_therm = search_therm;
+    if( search_therm.length > 2 )
+    {
+      search_therm = '';
+      this.search(new_search_therm);
+    }
+  }
 
   this.highlight = function()
   {

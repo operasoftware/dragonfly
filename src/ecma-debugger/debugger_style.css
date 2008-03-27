@@ -252,6 +252,21 @@ toolbar-buttons input[handler="continue"]:active {
   content:']';
   padding-left:.3em;
   }
+  
+[handler="display-stylesheet"].selected {
+  color:#333;
+  font-weight:bold;
+  }
+
+[handler="display-stylesheet"].selected:before {
+  content:'[';
+  padding-right:.3em;
+  }
+
+[handler="display-stylesheet"].selected:after {
+  content:']';
+  padding-left:.3em;
+  }
 
 .window-container {
   position:absolute;
@@ -429,10 +444,32 @@ p[handler="update-global-scope"]:hover {
   padding: 0;
   margin: 0;
   }
-  
+
+/* styleseeht view */
+
+stylesheet, import-rule, media-rule, rules {
+  display: block;
+  }
+
+rule, font-face-rule, page-rule {
+  font-family:monospace;
+  display:block;
+  white-space: pre-wrap;
+  margin: 1em 0;
+  }
+
 .stylesheets pre {
+  background:red;
+  }
+  
+media{
   white-space: pre-wrap;
   }
+  
+media-rule rules {
+  padding-left: 2ex;
+  }
+
 
 
 

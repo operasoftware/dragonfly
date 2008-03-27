@@ -89,7 +89,7 @@
 	color:#888;
   }
 
-.dom .node, .stylesheets .selector {
+.dom .node, selector {
   color: #279;
   }
 
@@ -97,11 +97,11 @@
   background-color:#ddb;
   }
 
-.dom .key, .stylesheets .key {
+.dom .key, .stylesheets key {
 	color:#229;
   }
 
-.dom .value, .doctype-value, .stylesheets .value {
+.dom .value, .doctype-value, .stylesheets value {
 	color:#742;
   }
 
@@ -137,4 +137,12 @@
 
 .tree-style > div > div > div:first-child > span:first-child:before {
   display:none;
+  }
+  
+media, at {
+  color: #279;
+  }
+
+.stylesheets .import-rule {
+  color: #279;
   }

@@ -49,7 +49,7 @@ var ToolbarConfigBase = new function()
 
   this.getButtonsByHandler = function(handler)
   {
-    var buttons = [], i = 0;
+    var buttons = [], i = 0, button = null;
     for( ; button = this.buttons[i]; i++)
     {
       if(button.handler == handler )
