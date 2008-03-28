@@ -42,14 +42,21 @@ var TopCell = function(layout, setDimensions, onresize)
 
   this.showView = function(view_id)
   {
-    var ret = this.getView(view_id), tab = null, i = 0;
-    if( ret )
+    if( views[view_id].isvisible() )
     {
-      for( ; tab = ret[i]; i += 2 )
+      views[view_id].update();
+    }
+    else
+    {
+      var ret = this.getView(view_id), tab = null, i = 0;
+      if( ret )
       {
-        if( tab.activeTab != ret[i+1] )
+        for( ; tab = ret[i]; i += 2 )
         {
-          tab.setActiveTab(ret[i+1]);
+          if( tab.activeTab != ret[i+1] )
+          {
+            tab.setActiveTab(ret[i+1]);
+          }
         }
       }
     }

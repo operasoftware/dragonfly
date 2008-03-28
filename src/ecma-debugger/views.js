@@ -16,7 +16,7 @@
     this.init(id, name, container_class);
   }
   View.prototype = ViewBase;
-  new View('runtimes', 'Runtimes', 'scroll runtimes');
+  new View('runtimes', 'Runtimes Script', 'scroll runtimes');
 
 
   View = function(id, name, container_class)
