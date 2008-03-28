@@ -195,16 +195,8 @@ var action_handler = new function()
     if(rules)
     {
       stylesheets.setSelectedSheet(rt_id, index, rules);
-      if( !views.stylesheets.isvisible() )
-      {
-        topCell.showView(views.stylesheets.id);
-      }
-      else
-      {
-        views.stylesheets.update();
-      }
+      topCell.showView(views.stylesheets.id);
       helpers.setSelected(event);
-      
     }
   }
 
@@ -253,7 +245,8 @@ var action_handler = new function()
 
     if(id)
     {
-      views.js_source.showLine(id, 0);
+      // topCell.showView(views.stylesheets.id);
+      //views.js_source.showLine(id, 0);
       helpers.setSelected(event);
       var runtime_container = event.target.parentElement.parentElement.getElementsByTagName('span')[0];
       var runtime = runtimes.getRuntimeIdWithURL(runtime_container.firstChild.nodeValue); 
@@ -262,6 +255,8 @@ var action_handler = new function()
       {
         handlers['show-global-scope']({target: runtime_container});
       }
+      views.js_source.update();
+
       
     }
     else

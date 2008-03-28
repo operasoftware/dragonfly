@@ -701,6 +701,19 @@ var runtimes = new function()
   {
     return __selected_runtime_id;
   }
+
+  this.getSelecetdScriptIdFromSelectedRuntime = function()
+  {
+    var scripts = this.getScripts(__selected_runtime_id), script = null, i = 0;
+    for( ; script = scripts[i]; i++)
+    {
+      if( script.selected )
+      {
+        return script['script-id'];
+      }
+    }
+    return null;
+  }
   
   messages.addListener('host-state', onHostStateChange);
   messages.addListener('setting-changed', onSettingChange);

@@ -173,15 +173,22 @@
         }
         container.render(templates.line_nummer_container(max_lines || 1));
         line_numbers = document.getElementById(container_line_nr_id);
-        if( script.id )
+        var selected_script_id = runtimes.getSelecetdScriptIdFromSelectedRuntime();  
+        if(selected_script_id && selected_script_id != script.id)
+        {
+          this.showLine(selected_script_id, 0);
+        }
+        else if( script.id )
         {
           setScriptContext(script.id, __current_line);
           this.showLine( script.id, __current_line )
         }
+
         else
         {
           updateLineNumbers(0);
         }
+        
       }
     }
 

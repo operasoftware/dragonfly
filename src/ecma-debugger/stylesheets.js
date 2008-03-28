@@ -364,9 +364,9 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   
   
   
-  var pretyPrintRule = [];
+  var prettyPrintRule = [];
 
-  pretyPrintRule[COMMON] = function(rule, do_shortcuts)
+  prettyPrintRule[COMMON] = function(rule, do_shortcuts)
   {
     const
     HEADER = 0,
@@ -433,20 +433,20 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     return ret;
   }
 
-  pretyPrintRule[UNKNOWN_RULE] = function(rule, do_shortcuts)
+  prettyPrintRule[UNKNOWN_RULE] = function(rule, do_shortcuts)
   {
     return '';
   }
-  pretyPrintRule[STYLE_RULE] = function(rule, do_shortcuts)
+  prettyPrintRule[STYLE_RULE] = function(rule, do_shortcuts)
   {
     return "<rule rule-id='" + rule[HEADER][1] + "'>" + 
       "<selector>" + rule[HEADER][3].join(', ') + "</selector>" + 
       " {\n" + 
-      pretyPrintRule[COMMON](rule, do_shortcuts) +
+      prettyPrintRule[COMMON](rule, do_shortcuts) +
       "\n}</rule>";
   }
   
-  pretyPrintRule[CHARSET_RULE] = function(rule, do_shortcuts)
+  prettyPrintRule[CHARSET_RULE] = function(rule, do_shortcuts)
   {
     return 'TODO';
   }
@@ -456,7 +456,7 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   IMPORT-RULE ::= "[[" STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," HREF "," MEDIA-LIST "," STYLESHEET-ID "]]"
   */
 
-  pretyPrintRule[IMPORT_RULE] = function(rule, do_shortcuts)
+  prettyPrintRule[IMPORT_RULE] = function(rule, do_shortcuts)
   {
     return "<import-rule rule-id='" + rule[0][1] + "' imported-sheet='" + rule[0][5] + "'>" +
               "<span class='import-rule'>@import url(\"" + rule[0][3] + "\") " +
@@ -469,12 +469,12 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     MEDIA-RULE-HEADER ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," MEDIA-LIST
   */
 
-  pretyPrintRule[MEDIA_RULE] = function(rule, do_shortcuts)
+  prettyPrintRule[MEDIA_RULE] = function(rule, do_shortcuts)
   {
     var ret = '', _rule = null, header = null, i = 0;
     for( ; _rule = rule[1][i]; i++)
     {
-      ret += pretyPrintRule[_rule[RULE_HEADER][2]](_rule, do_shortcuts);
+      ret += prettyPrintRule[_rule[RULE_HEADER][2]](_rule, do_shortcuts);
     }
     return "<media-rule rule-id='" + rule[0][1] + "'>" +
               "<media>@media " + rule[0][3].join(', ') + "   </media>{" +
@@ -492,12 +492,12 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   FONT_FACE-RULE-HEADER ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE
   */
 
-  pretyPrintRule[FONT_FACE_RULE] = function(rule, do_shortcuts)
+  prettyPrintRule[FONT_FACE_RULE] = function(rule, do_shortcuts)
   {
 
     return "<font-face-rule rule-id='" + rule[HEADER][1] + "'>" +
               "<at>@font-face</at> {\n" +
-              pretyPrintRule[COMMON](rule, do_shortcuts) +
+              prettyPrintRule[COMMON](rule, do_shortcuts) +
             "\n}</font-face-rule>";
   }
 
@@ -511,13 +511,13 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   PAGE-RULE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SPECIFICITY "," PAGE-SELECTOR "," PSEUDO-CLASS
   */
   
-  pretyPrintRule[PAGE_RULE] = function(rule, do_shortcuts)
+  prettyPrintRule[PAGE_RULE] = function(rule, do_shortcuts)
   {
     return "<page-rule rule-id='" + rule[HEADER][1] + "'>" +
               "<at>@page</at>" + 
               ( rule[0][4] ? "<selector>" + rule[HEADER][4] + "</selector>" : "" ) + 
               " {\n" +
-              pretyPrintRule[COMMON](rule, do_shortcuts) +
+              prettyPrintRule[COMMON](rule, do_shortcuts) +
             "\n}</page-rule>";
   }
   
@@ -527,7 +527,7 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     var ret = '', rule = null, header = null, i = 0;
     for( ; rule = rules[i]; i++)
     {
-      ret += pretyPrintRule[rule[RULE_HEADER][2]](rule, do_shortcuts);
+      ret += prettyPrintRule[rule[RULE_HEADER][2]](rule, do_shortcuts);
     }
     return "<stylesheet stylesheet-id='" + rules[0][0][0] + "' runtime-id='" + rules['runtime-id'] + "'>" 
               + ret + "</stylesheet>";
