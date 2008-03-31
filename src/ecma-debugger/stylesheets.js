@@ -101,7 +101,6 @@ var stylesheets = new function()
   special_default_values["border-right-color"] = 
   special_default_values["border-top-color"] = function(data, value)
   {
-    opera.postError(value+' '+data[__colorIndex]);
     return value == data[__colorIndex];
   }
   
