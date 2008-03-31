@@ -11,6 +11,7 @@ var stylesheets = new function()
   var __initialValues = [];
   var __shorthandIndexMap = [];
   var __selectedRules = null;
+  var __colorIndex = 0;
   
   var line_height_index = 0;
   
@@ -92,6 +93,18 @@ var stylesheets = new function()
     'background': 1,
     'outline': 1
   }
+
+  var special_default_values = {}; 
+
+  special_default_values["border-bottom-color"] = 
+  special_default_values["border-left-color"] = 
+  special_default_values["border-right-color"] = 
+  special_default_values["border-top-color"] = function(data, value)
+  {
+    opera.postError(value+' '+data[__colorIndex]);
+    return value == data[__colorIndex];
+  }
+  
 
 
   
@@ -564,15 +577,19 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   prettyPrintCat[COMP_STYLE] = function(data)
   {
     // shorthand properties are filtered out
-    var ret = "", i = 0, index = 0;
+    var ret = "", i = 0, index = 0, prop = '', value = '';
     for ( ; i <  __indexMapLength; i++ )
     {
       index = __sortedIndexMap[i];
-      if( data[index] && !short_hand_props[__indexMap[index]] && data[index] != __initialValues[index] )
+      prop = __indexMap[index];
+      value = data[index];
+      if( value && !short_hand_props[prop] && value != __initialValues[index] &&
+        !(prop in special_default_values &&  special_default_values[prop](data, value)) )
       {
+        // check special props and default values
         ret += ( ret ? MARKUP_PROP_NL : "" ) +
-              MARKUP_KEY + __indexMap[index] + MARKUP_KEY_CLOSE + 
-              MARKUP_VALUE + data[index] + MARKUP_VALUE_CLOSE;
+              MARKUP_KEY + prop + MARKUP_KEY_CLOSE + 
+              MARKUP_VALUE + value + MARKUP_VALUE_CLOSE;
       }
     } 
     return ret;;
@@ -681,6 +698,11 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
         __initialValues[i] = css_initial_values[prop];
         switch (prop)
         {
+          case 'color':
+          {
+            __colorIndex = i;
+            break;
+          }
           // margin
           case 'margin-top':
           {
