@@ -60,7 +60,7 @@ var dom_data = new function()
     var rt_id = event['runtime-id'], obj_id = event['object-id'];
     current_target = obj_id;
     data = [];
-    tag = tagManager.setCB(null, handleGetDOM, [ rt_id, obj_id]);
+    var tag = tagManager.setCB(null, handleGetDOM, [ rt_id, obj_id]);
     services['ecmascript-debugger'].inspectDOM( tag, obj_id, 'parent-node-chain-with-children', 'json' );
   }
 

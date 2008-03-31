@@ -62,6 +62,7 @@
 <script src="views.js"/>
 <script src="testing.js"/>
 <script src="dom_data.js"/>
+<script src="css_initial_values.js"/>
 <script src="css_data.js"/>
 <script src="stylesheets.js"/>
 <script src="views-css-inspector.js"/>
@@ -72,6 +73,7 @@
 <script src="views-dom-tree-style.js"/>
 <script src="views-threads.js"/>
 <script src="export_data.js"/>
+<script src="elementStyle.js"/>
 
 <script src="action_handler.js"/>
 <script src="change-handler.js"/>

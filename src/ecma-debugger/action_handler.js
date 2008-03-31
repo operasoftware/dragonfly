@@ -228,6 +228,7 @@ var action_handler = new function()
     
     if(rt_id)
     {
+      topCell.showView('dom-markup-style');
       if( runtimes.getActiveWindowId() != window_id )
       {
         host_tabs.setActiveTab(window_id);
@@ -236,6 +237,7 @@ var action_handler = new function()
       {
         dom_data.getDOM(rt_id);
       }
+      
     }
   }
 
@@ -484,6 +486,37 @@ var action_handler = new function()
   {
     export_data.data = views['dom-markup-style'].exportMarkup();
     topCell.showView('export_data');
+  }
+/*
+<category>
+          <header>
+            <input type="button"  handler="css-toggle-category"  cat-id="computedStyle"  class="unfolded" />
+            computed style
+          </header>
+          <styles/>
+        </category>
+        */
+  handlers['css-toggle-category'] = function(event, target)
+  {
+    var cat = target.getAttribute('cat-id'), value = target.hasClass('unfolded');
+    var cat_container = target.parentNode.parentNode;
+    if( value )
+    {
+      target.removeClass('unfolded');
+      cat_container.removeClass('unfolded');
+      var styles = cat_container.getElementsByTagName('styles')[0];
+      if( styles )
+      {
+        styles.innerHTML = "";
+      }
+    }
+    else
+    {
+      target.addClass('unfolded');
+      cat_container.addClass('unfolded');
+    }
+    elementStyle.setUnfoldedCat( cat , !value);
+    settings['css-inspector'].set(cat, !value);
   }
 
 

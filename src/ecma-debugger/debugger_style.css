@@ -470,6 +470,62 @@ media-rule rules {
   padding-left: 2ex;
   }
 
+/* css inspector class css-inspector */
+
+category, header, styles {
+  display:block;
+  }
+
+styles {
+  white-space: pre-wrap;
+  }
+
+.unfolded styles {
+  padding: 5px;
+  }
+
+category {
+
+  }
+
+.css-inspector header {
+  font-size: 1.2em;
+  background-color: #ccc;
+  padding: 2px;
+  }
+
+.css-inspector header input {
+  background:transparent url('../ui-images/toggle.png') scroll no-repeat 0 0;
+  border:none;
+  padding:0;
+  margin:0px 5px;
+  width:14px;
+  height:14px;
+  cursor: pointer;
+  }
+
+.css-inspector header input:hover {
+  background-position: 0 -14px;
+  }
+
+.css-inspector header input:active {
+  background-position: 0 -28px;
+  }
+
+.css-inspector header input.unfolded {
+  background-position: -14px 0;
+  }
+
+.css-inspector header input.unfolded:hover {
+  background-position: -14px -14px;
+  }
+
+.css-inspector header input.unfolded:active {
+  background-position: -14px -28px;
+  }
+
+
+
 
 
 

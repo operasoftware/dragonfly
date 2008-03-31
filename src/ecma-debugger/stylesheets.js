@@ -6,6 +6,9 @@ var stylesheets = new function()
   // document.styleSheets[index].cssRules with runtime-id and index as keys
   var __rules = {};
   var __indexMap = null;
+  var __indexMapLength = 0;
+  var __sortedIndexMap = [];
+  var __initialValues = [];
   var __shorthandIndexMap = [];
   var __selectedRules = null;
   
@@ -37,7 +40,12 @@ var stylesheets = new function()
   MARKUP_IMPORTANT = " !important",
   MARKUP_SPACE = " ",
   MARKUP_EMPTY = "",
-  HEADER = 0;
+  HEADER = 0,
+  COMP_STYLE = 0,
+  INLINE_STYLE = 1,
+  MATCHING_RULES = 2,
+  INHERITED_RULES = 3,
+  DEFAULT_VALUES = 4;
   
   var
   SHORTHAND = [];
@@ -66,6 +74,24 @@ var stylesheets = new function()
     "font-weight": "400", // TODO this is a bug, see Bug 319914
     "line-height": "normal"
   };
+
+  var short_hand_props = 
+  {
+    'font': 1,
+    'padding': 1,
+    'margin': 1,
+    'list-style': 1,
+    'border': 1,
+    'border-top': 1,
+    'border-right': 1,
+    'border-bottom': 1,
+    'border-left': 1,
+    'border-width': 1,
+    'border-style': 1,
+    'border-color': 1,
+    'background': 1,
+    'outline': 1
+  }
 
 
   
@@ -532,6 +558,57 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     return "<stylesheet stylesheet-id='" + rules[0][0][0] + "' runtime-id='" + rules['runtime-id'] + "'>" 
               + ret + "</stylesheet>";
   }
+
+  var prettyPrintCat = [];
+
+  prettyPrintCat[COMP_STYLE] = function(data)
+  {
+    // shorthand properties are filtered out
+    var ret = "", i = 0, index = 0;
+    for ( ; i <  __indexMapLength; i++ )
+    {
+      index = __sortedIndexMap[i];
+      if( data[index] && !short_hand_props[__indexMap[index]] && data[index] != __initialValues[index] )
+      {
+        ret += ( ret ? MARKUP_PROP_NL : "" ) +
+              MARKUP_KEY + __indexMap[index] + MARKUP_KEY_CLOSE + 
+              MARKUP_VALUE + data[index] + MARKUP_VALUE_CLOSE;
+      }
+    } 
+    return ret;;
+  }
+
+  prettyPrintCat[INLINE_STYLE] = function(data)
+  {
+    return "TODO INLINE_STYLE";
+  }
+
+  prettyPrintCat[MATCHING_RULES] = function(data)
+  {
+    return "TODO MATCHING_RULES";
+  }
+
+  prettyPrintCat[INHERITED_RULES] = function(data)
+  {
+    return "TODO INHERITED_RULES";
+  }
+
+  prettyPrintCat[DEFAULT_VALUES] = function(data)
+  {
+    return "TODO DEFAULT_VALUES";
+  }
+
+
+  this.prettyPrintCat = function(cat_index, data, org_args)
+  {
+    if( !__indexMap )
+    {
+      var tag = tagManager.setCB(null, handleGetIndexMap, [org_args]);
+      services['ecmascript-debugger'].getIndexMap( tag, 'json' );
+      return '';
+    }
+    return prettyPrintCat[cat_index](data);
+  }
   
   this.getStylesheets = function(rt_id, org_args)
   {
@@ -590,15 +667,18 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
               index == __selectedRules.index && true || false );
   }
   
-  var handleGetIndexMap = function(xml)
+  var handleGetIndexMap = function(xml, org_args)
   {
     var json = xml.getNodeData('index');
     if( json )
     {
       __indexMap = eval('(' + json +')');
       var prop = '', i = 0;
+      var temp = [];
       for( ; prop = __indexMap[i]; i++)
       {
+        temp[i] = {index: i, key : prop};
+        __initialValues[i] = css_initial_values[prop];
         switch (prop)
         {
           // margin
@@ -828,6 +908,17 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
         }
         
       
+      }
+      temp.sort(function(a,b){return a.key < b.key ? -1 : a.key > b.key ? 1 : 0});
+      for( i = 0; prop = temp[i]; i++)
+      {
+        __sortedIndexMap[i] = prop.index;
+        
+      }
+      __indexMapLength = __indexMap.length;
+      if( org_args )
+      {
+        org_args.callee.call(null, org_args[0], org_args[1] ? 2 : 1)
       }
     } 
   }

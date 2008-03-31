@@ -515,4 +515,32 @@ Line 2:
     'class', 'window-container', 'id', 'dom-view-container']
   }
 
+  this.cssInspector = function(categories)
+  {
+    var ret = [], cat = null, i = 0;
+    for( ; cat = categories[i]; i++)
+    {
+      ret[ret.length] = this.cssInspectorCategory(cat);
+    }
+    return ret;
+  }
+
+  this.cssInspectorCategory = function(cat)
+  {
+    //<input type="button"  handler="toggle-setting"  view-id="css-inspector"  tab-id="css-inspector"  class="unfolded" />
+    return ['category',
+        ['header',
+          ['input',
+            'type', 'button',
+            'handler', 'css-toggle-category',
+            'cat-id', cat.id
+          ].concat( cat.unfolded ? ['class', 'unfolded'] : [] ),
+          cat.name
+        ],
+        ['styles']
+      ];
+           
+
+  }
+
 }).apply(window.templates? window.templates : ( window.templates = {} ));

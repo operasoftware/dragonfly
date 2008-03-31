@@ -97,11 +97,11 @@
   background-color:#ddb;
   }
 
-.dom .key, .stylesheets key {
+.dom .key, .stylesheets key, .css-inspector key {
 	color:#229;
   }
 
-.dom .value, .doctype-value, .stylesheets value {
+.dom .value, .doctype-value, .stylesheets value, .css-inspector value {
 	color:#742;
   }
 
