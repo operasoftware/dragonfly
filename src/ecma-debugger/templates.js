@@ -538,8 +538,8 @@ Line 2:
           cat.name
         ],
         ['styles']
-      ];
-           
+      ].concat(cat.unfolded ? ['class', 'unfolded'] : [] );
+             
 
   }
 

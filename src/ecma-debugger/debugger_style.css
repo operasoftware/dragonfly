@@ -472,8 +472,22 @@ media-rule rules {
 
 /* css inspector class css-inspector */
 
-category, header, styles {
+.css-inspector rule {
+  margin:0;
+  }
+
+category, header, styles, stylesheet-link {
   display:block;
+  }
+
+stylesheet-link {
+  text-align:right;
+  color: #ccc;
+  text-decoration: underline;
+  }
+
+stylesheet-link:hover {
+  color: #666;
   }
 
 styles {

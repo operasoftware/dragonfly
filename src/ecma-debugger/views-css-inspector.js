@@ -17,31 +17,45 @@
     this.createView = function(container)
     {
       container.innerHTML ='';
-      container.render(templates.cssInspector(elementStyle.getCategories()));
+      var cats = elementStyle.getCategories(), cat_key = '', cat = null, i = 0;
+      container.render(templates.cssInspector(cats));
+      for( ; cat = cats[i]; i++)
+      {
+        cat_key += cat.unfolded ? '1' : '0';
+      }
+      this.updateCategories({}, cat_key);
     }
 
-    this.updateCategories = function(cats, call_count)
+    this.updateCategories = function(ev, cats)
     {
-      if(call_count > 1 )
+      
+      if( self.isvisible() )
       {
-        opera.postError('failed updateCategories, missing indexMap, views-css-inspector')
-        return;
-      }
-      var containers = self.getAllContainers(), c = null , i = 0;
-      var styles = null, s_c = null , cat_index = 0, data = null;
-      for( ; c = containers[i]; i++)
-      {
-        styles = c.getElementsByTagName('styles');
-        
-        for( cat_index = 0; cat_index < 5; cat_index++ )
+        if(ev.__call_count && ev.__call_count > 2  )
         {
-          if( cats[cat_index] == '1' )
+          opera.postError('failed updateCategories, missing indexMap, views-css-inspector')
+          return;
+        }
+        var containers = self.getAllContainers(), c = null , i = 0;
+        var styles = null, s_c = null , cat_index = 0, data = null;
+        for( ; c = containers[i]; i++)
+        {
+          styles = c.getElementsByTagName('styles');
+          for( cat_index = 0; cat_index < 5; cat_index++ )
           {
-            // TODO update depending from the category
-            data = elementStyle.getCategoryData(cat_index);
-            if( data )
+            if( cats[cat_index] == '1' )
             {
-              styles[cat_index].innerHTML = stylesheets.prettyPrintCat(cat_index, data, arguments);
+              // TODO update depending from the category
+              data = elementStyle.getCategoryData(cat_index);
+              if( data )
+              {
+                // stylesheets.prettyPrintCat call will also ensure 
+                // that all style sheets for the given runtime and the index map
+                // will be avaible, that means the call will not return any data 
+                // before this datas are avaible
+                styles[cat_index].innerHTML = stylesheets.prettyPrintCat(cat_index, data, arguments);
+                styles[cat_index].setAttribute('rt-id', data.rt_id);
+              }
             }
           }
         }

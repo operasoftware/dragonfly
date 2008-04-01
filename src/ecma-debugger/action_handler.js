@@ -156,9 +156,12 @@ var action_handler = new function()
     }
   }
   
-  handlers['show-stylesheets'] = function(event, target, call_count)
+  handlers['show-stylesheets'] = function(event, target)
   {
     var rt_id = target.getAttribute('runtime_id');
+    // stylesheets.getStylesheets will call this function again if data is not avaible
+    // handleGetAllStylesheets in stylesheets will 
+    // set for this reason __call_count on the event object
     var sheets = stylesheets.getStylesheets(rt_id, arguments);
     if(sheets)
     {
@@ -187,16 +190,37 @@ var action_handler = new function()
     
   }
   
-  handlers['display-stylesheet'] = function(event, target, call_count)
+  handlers['display-stylesheet'] = function(event, target)
   {
     var index = parseInt(target.getAttribute('index'));
     var rt_id = target.parentNode.parentNode.firstChild.getAttribute('runtime_id');
+    // stylesheets.getRulesWithSheetIndex will call this function again if data is not avaible
+    // handleGetRulesWithIndex in stylesheets will 
+    // set for this reason __call_count on the event object
     var rules = stylesheets.getRulesWithSheetIndex(rt_id, index, arguments);
+
     if(rules)
     {
       stylesheets.setSelectedSheet(rt_id, index, rules);
       topCell.showView(views.stylesheets.id);
       helpers.setSelected(event);
+    }
+  }
+
+  handlers['display-rule-in-stylesheet'] = function(event, target)
+  {
+    var index = parseInt(target.getAttribute('index'));
+    var rt_id = target.getAttribute('rt-id');
+    var rule_id = target.parentNode.getAttribute('rule-id');
+    // stylesheets.getRulesWithSheetIndex will call this function again if data is not avaible
+    // handleGetRulesWithIndex in stylesheets will 
+    // set for this reason __call_count on the event object
+    var rules = stylesheets.getRulesWithSheetIndex(rt_id, index, arguments);
+
+    if(rules)
+    {
+      stylesheets.setSelectedSheet(rt_id, index, rules, rule_id);
+      topCell.showView(views.stylesheets.id);
     }
   }
 

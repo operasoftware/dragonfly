@@ -138,12 +138,17 @@ var elementStyle = new function()
       {
         if( cats[i] == '1' )
         {
+          if( !declarations[i] )
+          {
+            declarations[i] = []; // TODO this should be solved in the protocl
+          }
+          declarations[i].rt_id = rt_id;
           categories_data[i] = declarations[i];
         }
       }
       for ( i = 0; view_id = __views[i]; i++)
       {
-        views[view_id].updateCategories(cats);
+        views[view_id].updateCategories({}, cats);
       }
     }
   }

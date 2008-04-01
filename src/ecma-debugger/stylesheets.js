@@ -594,29 +594,110 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     return ret;;
   }
 
+  /*
+
+  STYLE-RULE ::= "["
+                    "[" STYLE-RULE-HEADER "],"
+                    "[" INDEX-LIST "],"
+                    "[" VALUE-LIST "],"
+                    "[" PRIORITY-LIST "]"
+                  "]"
+
+  STYLE-RULE-HEADER ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SPECIFICITY "," SELECTOR-TEXT
+
+
+  DIRECT-MATCHES ::= "[" STYLE-RULE { "," STYLE-RULE } "]"
+  */
+
+  prettyPrintCat[MATCHING_RULES] = function(data)
+  {
+    //opera.postError('data.rt_id: '+ data.rt_id)
+    var ret = '', rule = null, header = null, i = 0, sheet = null;
+    for( ; rule = data[i]; i++)
+    {
+      sheet = self.getSheetWithObjId(data.rt_id, rule[HEADER][0]);
+      if( sheet )
+      {
+        ret += "<rule rule-id='" + rule[HEADER][1] + "'>" + 
+          "<stylesheet-link rt-id='" + sheet[0] + "'"+
+            " index='" + sheet[1] + "' handler='display-rule-in-stylesheet'>" + sheet[2] + 
+          "</stylesheet-link>" +
+          //"<span>" + rule[HEADER][3] + "</span>" +
+          "<selector>" + rule[HEADER][4] + "</selector>" + 
+          " {\n" + 
+              prettyPrintRule[COMMON](rule) +
+          "\n}</rule>";
+      }
+      else
+      {
+        opera.postError('stylesheet is missing in stylesheets, prettyPrintCat[MATCHING_RULES]');
+      }
+    }
+    return ret;
+  }
+
   prettyPrintCat[INLINE_STYLE] = function(data)
   {
     return "TODO INLINE_STYLE";
   }
 
-  prettyPrintCat[MATCHING_RULES] = function(data)
-  {
-    return "TODO MATCHING_RULES";
-  }
+
 
   prettyPrintCat[INHERITED_RULES] = function(data)
   {
     return "TODO INHERITED_RULES";
   }
+  /*
+  DEFAULT-RULES ::= "[" DEFAULT-STYLE-RULE { "," DEFAULT-STYLE-RULE } "]"
+
+  DEFAULT-STYLE-RULE ::= "["
+                    "[" DEFAULT-STYLE-RULE-HEADER "],"
+                    "[" INDEX-LIST "],"
+                    "[" VALUE-LIST "],"
+                    "[" PRIORITY-LIST "]"
+                  "]"
+
+  DEFAULT-STYLE-RULE-HEADER ::= OBJECT-ID "," ELEMENT-NAME
+  */
+
+  /*
+
+  prettyPrintRule[STYLE_RULE] = function(rule, do_shortcuts)
+  {
+    return "<rule rule-id='" + rule[HEADER][1] + "'>" + 
+      "<selector>" + rule[HEADER][3].join(', ') + "</selector>" + 
+      " {\n" + 
+      prettyPrintRule[COMMON](rule, do_shortcuts) +
+      "\n}</rule>";
+  }
+
+  */
+
 
   prettyPrintCat[DEFAULT_VALUES] = function(data)
   {
-    return "TODO DEFAULT_VALUES";
+    var rule = null, i = 0, ret = '';
+    for( ; rule = data[i]; i++)
+    {
+      ret += "<rule>" + 
+      "<selector node-id='" + rule[HEADER][0] + "'>" + rule[HEADER][1] + "</selector>" + 
+      " {\n" + 
+      prettyPrintRule[COMMON](rule) +
+      "\n}</rule>";
+    }
+
+    return ret;
   }
 
 
-  this.prettyPrintCat = function(cat_index, data, org_args)
+  this.prettyPrintCat = function(cat_index, data, org_args, rt_id)
   {
+    if(!__sheets[data.rt_id])
+    {
+      var tag = tagManager.setCB(null, handleGetAllStylesheets, [data.rt_id, org_args]);
+      services['ecmascript-debugger'].getAllStylesheets( tag, data.rt_id, 'json' );
+      return '';
+    }
     if( !__indexMap )
     {
       var tag = tagManager.setCB(null, handleGetIndexMap, [org_args]);
@@ -644,6 +725,28 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
       return null;
     }
   }
+
+  this.getSheetWithObjId = function(rt_id, obj_id)
+  {
+    if(__sheets[rt_id])
+    {
+      var sheet = null, i = 0;
+      for( ; sheet = __sheets[rt_id][i]; i++)
+      {
+        if( sheet[SHEET_OBJECT_ID] == obj_id )
+        {
+          return [
+            rt_id, 
+            i, 
+            ( sheet[SHEET_HREF] && /\/([^/]*$)/.exec(sheet[SHEET_HREF])[1] 
+              || sheet[SHEET_TITLE] 
+              || 'stylesheet ' + i)
+          ];  
+        }
+      }
+      return null;
+    }
+  }
   
   this.getRulesWithSheetIndex = function(rt_id, index, org_args)
   {
@@ -661,13 +764,14 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     }
   }
   
-  this.setSelectedSheet = function(rt_id, index, rules)
+  this.setSelectedSheet = function(rt_id, index, rules, rule_id)
   {
     __selectedRules =
     {
       runtime_id: rt_id,
       index: index,
-      rules: rules
+      rules: rules,
+      rule_id: rule_id || ''
     }
   }
   
@@ -937,9 +1041,10 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
         
       }
       __indexMapLength = __indexMap.length;
-      if( org_args )
+      if( org_args && ( !org_args[0].__call_count || org_args[0].__call_count == 1 )  )
       {
-        org_args.callee.call(null, org_args[0], org_args[1] ? 2 : 1)
+        org_args[0].__call_count = org_args[0].__call_count ? org_args[0].__call_count + 1 : 1;
+        org_args.callee.apply(null, org_args)
       }
     } 
   }
@@ -951,9 +1056,10 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     {
       __rules[rt_id][index] = eval('(' + json +')');
       __rules[rt_id][index]['runtime-id'] = rt_id;
-      if(org_args && !org_args[2])
+      if(org_args && !org_args[0].__call_count)
       {
-        org_args.callee.call(null, org_args[0], org_args[1], 1);
+        org_args[0].__call_count = 1
+        org_args.callee.apply(null, org_args);
       }
     } 
   }
@@ -966,9 +1072,10 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
       __sheets[rt_id] = eval('(' + json +')');
       __sheets[rt_id]['runtime-id'] = rt_id;
       __rules[rt_id] = [];
-      if(org_args && !org_args[2])
+      if(org_args && !org_args[0].__call_count )
       {
-        org_args.callee.call(null, org_args[0], org_args[1], 1);
+        org_args[0].__call_count = 1;
+        org_args.callee.apply(null, org_args);
       }
     }   
   }
