@@ -604,19 +604,22 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     // shorthand properties are filtered out
     var ret = "", i = 0, index = 0, prop = '', value = '';
     var setProps = elementStyle.getSetProps();
+    var hideInitialValue = settings['css-inspector'].get('hide-initial-values');
     for ( ; i <  __indexMapLength; i++ )
     {
       index = __sortedIndexMap[i];
       prop = __indexMap[index];
       value = data[index];
-      if( value && ( setProps[index] || ( !short_hand_props[prop] && value != __initialValues[index] &&
-        !(prop in special_default_values &&  special_default_values[prop](data, value)) ) ) )
+      
+      if( !hideInitialValue || ( value && ( setProps[index] || ( !short_hand_props[prop] && value != __initialValues[index] &&
+        !(prop in special_default_values &&  special_default_values[prop](data, value)) ) ) ) )
       {
         // check special props and default values
         ret += ( ret ? MARKUP_PROP_NL : "" ) +
               MARKUP_KEY + prop + MARKUP_KEY_CLOSE + 
               MARKUP_VALUE + value + MARKUP_VALUE_CLOSE;
       }
+      
     } 
     return ret;;
   }

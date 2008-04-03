@@ -83,16 +83,40 @@
       'direct-match-style': false,
       'inherited-style': false,
       'default-style': false,
+      'hide-initial-values': true
     }, 
     // key-label map
     {
-
+      'hide-initial-values': 'Hide initial values in computed styles'
     },
     // settings map
     {
-
+      checkboxes:
+      [
+        'hide-initial-values',
+      ]
     }
   );
+
+  new ToolbarConfig
+  (
+    'css-inspector',
+    null,
+    [
+      {
+        handler: 'cssinspector-text-search',
+        title: 'text search'
+      }
+    ]
+  )
+
+  new Switches
+  (
+    'css-inspector',
+    [
+      'hide-initial-values',
+    ]
+  )
 
 
 })()
