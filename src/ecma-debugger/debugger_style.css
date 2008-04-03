@@ -538,6 +538,15 @@ category {
   background-position: -14px -28px;
   }
 
+.css-inspector key.overwritten, .css-inspector value.overwritten {
+  color: #ccc;
+  }
+
+.css-inspector value.overwritten:after {
+  content: " [overwritten]";
+  color: #c90;
+  }
+
 
 
 

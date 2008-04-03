@@ -63,6 +63,8 @@
 <script src="testing.js"/>
 <script src="dom_data.js"/>
 <script src="css_initial_values.js"/>
+<script src="css_inheritable_properties.js"/>
+
 <script src="css_data.js"/>
 <script src="stylesheets.js"/>
 <script src="views-css-inspector.js"/>
