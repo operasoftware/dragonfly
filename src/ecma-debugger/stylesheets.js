@@ -16,15 +16,15 @@ var stylesheets = new function()
   var line_height_index = 0;
   
   const
-  SHEET_OBJECT_ID = 3, // TODO use the right obj-id
-  SHEET_DISABLED = 0, 
-  SHEET_HREF = 1, 
-  SHEET_MEDIA_LIST = 2,  
-  SHEET_OWNERNODE = 3, 
-  SHEET_OWNERRULE = 4,  
-  SHEET_PARENT_STYLESHEET = 5, 
-  SHEET_TITLE = 6, 
-  SHEET_TYPE = 7,
+  SHEET_OBJECT_ID = 0, // TODO use the right obj-id
+  SHEET_DISABLED = 1, 
+  SHEET_HREF = 2, 
+  SHEET_MEDIA_LIST = 3,  
+  SHEET_OWNERNODE = 4, 
+  SHEET_OWNERRULE = 5,  
+  SHEET_PARENT_STYLESHEET = 6, 
+  SHEET_TITLE = 7, 
+  SHEET_TYPE = 8,
   UNKNOWN_RULE = 0,
   STYLE_RULE= 1,
   CHARSET_RULE = 2,

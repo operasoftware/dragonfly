@@ -199,9 +199,9 @@
   this.sheetLink = function(sheet, index, is_selected)
   {
     const
-    OBJECT_ID = 3,
-    HREF = 1,
-    TITLE = 6;
+    OBJECT_ID = 0,
+    HREF = 2,
+    TITLE = 7;
     
     var title = sheet[HREF] ? sheet[HREF] : 'inline stylesheet ' + ( index + 1 ) ;
     return ['li',
