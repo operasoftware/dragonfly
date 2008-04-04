@@ -38,6 +38,7 @@
         }
         var containers = self.getAllContainers(), c = null , i = 0;
         var styles = null, s_c = null , cat_index = 0, data = null;
+        var search_active = elementStyle.getSearchActive();
         for( ; c = containers[i]; i++)
         {
           styles = c.getElementsByTagName('styles');
@@ -53,7 +54,8 @@
                 // that all style sheets for the given runtime and the index map
                 // will be avaible, that means the call will not return any data 
                 // before this datas are avaible
-                styles[cat_index].innerHTML = stylesheets.prettyPrintCat(cat_index, data, arguments);
+                styles[cat_index].innerHTML = 
+                  stylesheets.prettyPrintCat(cat_index, data, arguments, search_active);
                 styles[cat_index].setAttribute('rt-id', data.rt_id);
               }
             }
@@ -104,7 +106,7 @@
     null,
     [
       {
-        handler: 'cssinspector-text-search',
+        handler: 'css-inspector-text-search',
         title: 'text search'
       }
     ]
@@ -117,6 +119,9 @@
       'hide-initial-values',
     ]
   )
+
+
+
 
 
 })()

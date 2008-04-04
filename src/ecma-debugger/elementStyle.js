@@ -16,10 +16,19 @@ var elementStyle = new function()
   PRIORITY_LIST = 3,
   OVERWRITTEN_LIST = 4,
   HAS_INHERITABLE_PROPS = 5;
+  SEARCH_LIST = 6,
+  HAS_MATCHING_SEARCH_PROPS = 7,
+  SEARCH_DELAY = 50,
+  MIN_SEARCH_THERM_LENGTH = 3;
 
   var __selectedElement = null;
   var __setProps = [];
   var __setPriorities = [];
+  var __searchMap = [];
+  var __search_is_active = false;
+  var __old_search_therm = '';
+
+  var searchtimeout = new Timeouts();
 
   var __views = ['css-inspector'];
 
@@ -73,8 +82,6 @@ var elementStyle = new function()
     parseStyleDeclarations(declarations, [categories_data[INLINE_STYLE]], false);
     parseStyleDeclarations(declarations, categories_data[MATCHING_RULES], false);
     parseStyleDeclarations(declarations, categories_data[INHERITED_RULES], true);
-    //opera.postError(categories_data[MATCHING_RULES]);
-    //opera.postError(categories_data[INHERITED_RULES]);
   }
 
   var parseStyleDeclarations = function(declarations, declaration_list, set_has_inherited_props)
@@ -84,7 +91,6 @@ var elementStyle = new function()
     {
       for( ; dec = declaration_list[i]; i++)
       {
-        declarations[declarations.length] = dec;
         if(dec.length > 3 )
         {
           to_update_props = parseStyleDec(dec, set_has_inherited_props);
@@ -92,6 +98,9 @@ var elementStyle = new function()
           {
             for( j = 0; j < to_update_props.length; j++)
             {
+              // TODO this is wrong
+              // priority flag overwrites any specificity, 
+              // but does not inherit
               updateOverwritten(to_update_props[j], declarations)
             }
           }
@@ -100,6 +109,7 @@ var elementStyle = new function()
         {
           opera.postError("dec: "+ dec + " in parseStyleDeclarations ");
         }
+        declarations[declarations.length] = dec;
       }
     }
   }
@@ -133,7 +143,6 @@ var elementStyle = new function()
     {
       
       prop = dec[PROP_LIST][i];
-      //opera.postError(css_index_map[prop]);
       if( set_has_inherited_props )
       {
         if(inherited_props_index_list[prop])
@@ -172,8 +181,99 @@ var elementStyle = new function()
     return ret;
   }
 
+  var searchDelayed = function(value)
+  {
+    searchtimeout.set(search, SEARCH_DELAY, value);
+  }
 
+  var search = function(search_therm)
+  {
+    if( __old_search_therm != search_therm 
+        && ( __search_is_active || search_therm.length >= MIN_SEARCH_THERM_LENGTH ) )
+    {
+      
+      if( search_therm.length >= MIN_SEARCH_THERM_LENGTH )
+      {
+        __searchMap = [];
+        var i = 0, length = css_index_map.length;
+        for( ; i < length; i++)
+        {
+          if( css_index_map[i].indexOf(search_therm) != -1 )
+          {
+            __searchMap[i] = 1;
+          }
+        }
+        searchStyleDeclarations([categories_data[INLINE_STYLE]], __searchMap);
+        searchStyleDeclarations(categories_data[MATCHING_RULES], __searchMap);
+        searchStyleDeclarations(categories_data[INHERITED_RULES], __searchMap);
+        __search_is_active = true;
+      } 
+      else
+      {
+        clearSearchStyleDeclarations([categories_data[INLINE_STYLE]]);
+        clearSearchStyleDeclarations(categories_data[MATCHING_RULES]);
+        clearSearchStyleDeclarations(categories_data[INHERITED_RULES]);
+        __search_is_active = false;
+      }
+      
 
+      for ( i = 0; view_id = __views[i]; i++)
+      {
+        views[view_id].updateCategories({}, getUnfoldedKey());
+      }
+      __old_search_therm = search_therm;
+    }
+  }
+
+  var searchStyleDeclarations = function(declaration_list, search_list)
+  {
+    // updates the search list for a styleDeclaration
+    // checks if the declaration actually has matchin property
+    // search_list is a list with matching properties indexes
+    // 
+    var dec = null, i = 0, j = 0, length = 0, has_matching_search_props = false;
+    if(declaration_list)
+    {
+      for( ; dec = declaration_list[i]; i++)
+      {
+        length = dec[PROP_LIST].length;
+        has_matching_search_props = false;
+        dec[SEARCH_LIST] = [];
+        for( j = 0; j < length; j++ )
+        {
+          if( search_list[dec[PROP_LIST][j]] )
+          {
+            dec[SEARCH_LIST][j] = 1;
+            has_matching_search_props = true;
+          };
+        }
+        dec[HAS_MATCHING_SEARCH_PROPS] = has_matching_search_props;
+      }
+    }
+  }
+
+  var clearSearchStyleDeclarations = function(declaration_list)
+  {
+    var dec = null, i = 0;
+    if(declaration_list)
+    {
+      for( ; dec = declaration_list[i]; i++)
+      {
+        delete dec[HAS_MATCHING_SEARCH_PROPS];
+        delete dec[SEARCH_LIST];
+      }
+    }
+  }
+
+  this.getSearchActive = function()
+  {
+    return __search_is_active;
+  }
+
+  this.getSearchMap = function()
+  {
+    return __searchMap.slice(0);
+  }
 
   this.getCategories = function()
   {
@@ -333,4 +433,9 @@ var elementStyle = new function()
   }
 
   messages.addListener('element-selected', onElementSelected);
+
+  eventHandlers.input['css-inspector-text-search'] = function(event, target)
+  {
+    searchDelayed(target.value);
+  }
 }
