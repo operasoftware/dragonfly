@@ -277,7 +277,7 @@ var client = new function()
 }
 
 /* TODO take that out from the global scope */
-
+/* this is a quick hack to get the create all runtimes button in the toptab bar */
 new ToolbarConfig
 (
   'main-view-top-tab',
