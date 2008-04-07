@@ -59,7 +59,7 @@ var client = new function()
     {
       debug.logCommand(msg);
     }
-    opera.scopeSendToHost(service, "<?xml version=\"1.0\"?>" + msg)
+    opera.scopeTransmit(service, "<?xml version=\"1.0\"?>" + msg)
   }
 
   /**** methods for standalone proxy ****/
