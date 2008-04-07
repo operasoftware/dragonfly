@@ -104,7 +104,9 @@
   this['top-tabs'] = function(obj)
   {
     //alert(tab.tabs.length)
-    var ret = [this.viewMenu()];
+    var ret = [this.viewMenu()].
+      // this is a quick hack
+      concat( [ templates.buttons(toolbars['main-view-top-tab'] && toolbars['main-view-top-tab'].buttons || [])] );
     var tab = null, i = 0;
     for( ; tab = obj.tabs[i]; i++)
     {

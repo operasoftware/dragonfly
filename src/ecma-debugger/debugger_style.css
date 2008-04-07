@@ -167,48 +167,11 @@ xx#debug {
   cursor: pointer;
   }
 
-input[handler="continue"] {
-  width:36px;
-  height:22px;
-  background-color:transparent;
-  background-repeat:no-repeat;
-  background-position:0 0;
-  padding:0;
-  margin:0;
-  border:none;
-  cursor:pointer;
-  }
 
-#continues input:hover {
-  background-position:0 -22px;
-  }
-
-#continue-run {
-  background-image:url('run.png');
-  }
-#continue-step-into-call {
-  background-image:url('step-into.png');
-  }
-#continue-step-next-line {
-  background-image:url('step-next.png');
-  }
-#continue-step-out-of-call {
-  background-image:url('step-out.png');
-  } 
-
-/* TODO overrides ui.css quick fix */
-
-toolbar-buttons input[handler="continue"]:active {
-  background-position:-1px -1px;
-  }
-
-#continues input[DISABLED] {
-  opacity:.5;
-  }
-  
 #main-button-toolbar {
   float:left;
   }
+
 .dropdowns > li {
   float:left;
   padding:0;

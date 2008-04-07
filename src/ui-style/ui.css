@@ -1,18 +1,17 @@
 viewport {
-  width:100%;
-  height:100%;
-  display:block;
-  font-family:sans-serif;
-  font-size:12px;
+  width: 100%;
+  height: 100%;
+  display: block;
+  font-family: sans-serif;
+  font-size: 12px;
   }
 
-main-view {
-  width:100%;
-  height:100%;
-  display:block;
-  position:relative;
-  background-color:#ccc;
-  z-index:1;
+main-view { /**/
+  width: 100%;
+  height: 100%;
+  display: block;
+  position: relative;
+  z-index: 1;
   }
 
 windows-container, 
@@ -24,282 +23,331 @@ statusbar,
 top-statusbar, 
 top-container, 
 top-toolbar {
-  display:block;
-  position:absolute;
+  display: block;
+  position: absolute;
   }
 
 /* set with css. height, border and padding are supported */
 
-top-container {
-  border-bottom: 1px solid #666;
-  border-left: 1px solid #666;
-  border-right: 1px solid #666;
-  padding:4px;
+top-container { /**/
+  border-bottom: 1px solid #c9cdd0;
+  border-left: 1px solid #c9cdd0;
+  border-right: 1px solid #c9cdd0;
+  padding: 4px 4px;
+	background-color: #e1e4e9;
   }
 
 /* set with css. height, border and padding are supported */
 
-container {
-  border-top: 1px solid #666;
-  border-left: 1px solid #666;
-  border-right: 1px solid #666;
-  background-color:#fff;
-  overflow:hidden;
+container { /**/
+  border-top: 1px solid #ccc;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  background-color: #fff;
+  overflow: hidden;
   } 
 
-window container {
-  display:block;
-  position:relative;
-  border-width:0;
-  border-top:1px solid #999;
-  border-bottom:1px solid #999;
+window container { /**/
+  display: block;
+  position: relative;
+  border-width: 0;
+  background-color: #eff2f7;
   }
 
 /* set with css. height, border and padding are supported */
 
-top-statusbar {
-  background-color:#e8e8e8;
-  line-height:25px;
-  height:25px;
-  overflow:hidden;
+top-statusbar { /**/
+  background-color: #f5f7fa;
+  line-height: 27px;
+  height: 27px;
+  overflow: hidden;
   }
 
-window-statusbar {
-  display:block;
-  background-color:#e8e8e8;
-  line-height:25px;
-  height:25px;
+window-statusbar { /**/
+  display: block;
+  background-color: #d4d8dd;
+	border-top: 1px solid #ccc;
+  line-height: 27px;
+  height: 27px;
   }
 
-info {
-  padding:0 7px;
+info { /**/
+  padding: 0 7px;
   }
 
 
 .scroll {
-  overflow:auto;
+  overflow: auto;
+  }
+	
+top-toolbar { /**/
+  height: 26px;
   }
 
-top-toolbar {
-  background-color:#b9b9b9;
-  height:22px;
-  }
-
-window-toolbar {
-  display:block;
-  height:22px;
-  background-color:#e8e8e8;
-  border-top:1px solid #999;
+window-toolbar { /**/
+  display: block;
+  height: 26px;
+	background-color: #e1e4e9;
+	border-bottom: 1px solid #ccc;
   }
 
 /* set with css. height, border and padding are supported */
 
-toolbar {
-  border-top: 1px solid #666;
-  border-left: 1px solid #666;
-  border-right: 1px solid #666;
-  background-color:#e8e8e8;
-  height:22px;
+toolbar { /**/
+  border-top: 1px solid #ccc;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  background-color: #f5f7fa;
+	padding: 0 1px;
+  height: 26px;
   }
 
 toolbar-buttons, toolbar-switches {
-  display:block;
-  float:left;
+  display: block;
+  float: left;
   }
 
-toolbar-buttons input{
-  width:20px;
-  height:20px;
-  margin:1px;
-  padding:0;
-  cursor:pointer;
-  border:none;
-  background:transparent url('../ui-images/test.png') scroll no-repeat 0 0;
-  }
-
-toolbar-buttons input[disabled] {
-  opacity:.3;
+toolbar-buttons input { /**/
+  width: 26px;
+  height: 24px;
+  margin: 1px;
+  padding: 0;
+  cursor: pointer;
+  border: none;
+  background: transparent url('../ui-images/btn-test.png') scroll no-repeat 0 0;
   }
 
 toolbar-buttons input:hover {
-  background-position:0 -20px;
+  background-position: 0 -24px;
   }
 
 toolbar-buttons input:active {
-  background-position:0 -40px;
+  background-position: 0 -48px;
   }
 
-toolbar-buttons input[disabled]:hover,
+toolbar-buttons input[disabled] { /**/
+  background-position: 0 -72px;
+  }
+
+/* toolbar-buttons input[disabled]:hover, */
 toolbar-buttons input[disabled]:active {
-  background-position:0 0;
+  background-position: 0 -72px;
   }
 
-
-toolbar-switches input {
-  width:20px;
-  height:20px;
-  margin:1px;
-  padding:0;
-  cursor:pointer;
-  border:none;
-  background:transparent url('../ui-images/test-switch.png') scroll no-repeat 0 0;
+toolbar-switches input { /**/
+  width: 26px;
+  height: 24px;
+  margin: 1px;
+  padding: 0;
+  cursor: pointer;
+  border: none;
+  background: transparent url('../ui-images/btn-test-switch.png') scroll no-repeat 0 0;
   }
 
-toolbar-switches input:hover {
-  background-position:0 -20px;
+toolbar-switches input:hover { /* State should change while cursor still hovers after click */
+  background-position: 0 -24px;
   }
 
 toolbar-switches input:active {
-  background-position:0 -40px;
+  background-position: 0 -48px;
   }
 
 toolbar-switches input[is-active="true"] {
-  background-position:0 -60px;
+  background-position: -26px 0;
   }
 
-toolbar-switches input[is-active="true"]:hover {
-  background-position:0 -80px;
+toolbar-switches input[is-active="true"]:hover { /* State should change while cursor still hovers after click */
+  background-position: -26px -24px;
   }
 
 toolbar-switches input[is-active="true"]:active {
-  background-position:0 -100px;
+  background-position: -26px -48px;
   }
 
-toolbar-separator {
+toolbar-separator { /**/
   display: block;
   float: left;
   width: 1px;
-  height: 22px;
+  height: 27px;
   margin: 0 3px;
-  background-color:#333;
+  }
+	
+toolbar-filters {
+  display: block;
+  float: right;
   }
 
-
-
-
-
-
-toolbar-filters {
-  display:block;
-  float:right;
+toolbar-filters input {
+  height: 20px;
+  margin: 1px;
+  padding: 0;
   }
 
 /* set with css. height, border and padding are supported */
 
-tabs {
-  background:#ccc url('../ui-images/tab-border.png') scroll repeat-x 0 0;
-  height:24px;
+tabs { /* The bottom tabs containers */
+  height: 17px;
+  background: #e1e4e9 url('../ui-images/tab-border.png') scroll repeat-x 0 0;
   }
 
-top-tabs {
-  background:#b9b9b9 url('../ui-images/tab-border.png') scroll repeat-x 0 100%;
-  height:24px;
-  }
-
-tab {
-  display:inline-block;
-  background:transparent url('../ui-images/tab.png') scroll no-repeat 100% 0;
-  height:24px;
-  line-height:24px;
-  margin:0 2px 0 0;
-  }
-
-top-tabs tab {
-  background:transparent url('../ui-images/top-tab.png') scroll no-repeat 100% 0;
-  }
-
-input[handler="top-settings"] {
-  width:20px;
-  height:20px;
-  margin:2px;
-  padding:0;
-  cursor:pointer;  
-  background:transparent url('../ui-images/config.png') scroll no-repeat 0 0;
-  border:none;
-  float:right;
-  }
-
-input[handler="top-settings"]:hover {
-  background-position:0 -20px;
-  }
-
-input[handler="top-settings"]:active {
-  background-position:0 -40px;
-  }
-
-input[handler="tab"]{
-  background:transparent url('../ui-images/tab-left.png') scroll no-repeat 0 0;
-  border:none;
-  margin:0;
-  padding:0;
-  padding-left:7px;
-  padding-right:7px; /* to be removed when the close buttons are activated */
-  height:24px;
-  line-height:24px;
-  cursor: pointer;
-  }
-
-top-tabs input[handler="tab"]{
-  background:transparent url('../ui-images/top-tab-left.png') scroll no-repeat 0 0;
+tab { /**/
+  display:block;
+  float:left;
+  background: transparent url('../ui-images/tab.png') scroll no-repeat 0 0;
+  height: 17px;
+  line-height: 17px;	
+  margin: 0 5px 0 0;
   }
 
 tab:hover {
-  background-position:100% -24px;
-  }
-
-tab:hover input[handler="tab"]{
-  background-position:0 -24px;
+  background-position: 0 -17px;
   }
 
 tab.active {
-  background-position:100% -48px;
+  background-position: 0 -34px;
+  }
+	
+input[handler="tab"] { /**/
+  font-size: 11px;
+  background: transparent url('../ui-images/tab.png') scroll no-repeat 100% 0;
+  border: none;
+  margin: 0 -4px 0 6px;
+  padding-left: 6px;
+  padding-right: 10px; /* to be removed when the close buttons are activated */
+  height: 17px;
+  line-height: 17px;
+  vertical-align: top;
+  cursor: pointer;
   }
 
-tab.active input[handler="tab"]{
-  background-position:0 -48px;
+tab:hover input[handler="tab"] {
+  background-position: 100% -17px;
   }
 
-input[handler="close-tab"] {
-  background:transparent url('../ui-images/close.png') scroll no-repeat 50% 0;
-  border:none;
-  padding:0;
-  margin:0px 2px;
-  width:12px;
-  height:12px;
-  line-height:12px;
+tab.active input[handler="tab"] {
+  background-position: 100% -34px;
+	font-weight: bold;
+  }
+
+top-tabs { /* The top tabs container, replaced with, placed into or merged with top-toolbar */
+  position: absolute;
+	top: 0;
+	left: 0;
+	background: url('../ui-images/tabcontainer.png') no-repeat 100% 0;
+  height: 20px;
+	padding: 7px 0 0 7px;
+  }
+		
+top-tabs:before {
+	position: absolute;
+	content: '';
+	top: 0;
+	left: 0;
+  height: 100%;
+	width: 3px;
+  background: url('../ui-images/tabcontainer-left.png') no-repeat 0 0;
+  }
+
+/* this is a quick hack to get the runtime button in the tabs bar */
+top-tabs toolbar-buttons { 
+  margin: -7px 3px 0 -2px;
+  }
+
+top-tabs tab {  /**/
+  float: left;
+  background: transparent url('../ui-images/top-tab-left.png') scroll no-repeat 0 0;
+  height: 19px;
+  line-height: 19px;	
+  margin: 1px 5px 0 0;
+  }
+
+top-tabs tab:hover {
+  background-position: 0 -19px;
+  }
+
+top-tabs tab.active {
+  background-position: 0 -38px;
+  }
+
+top-tabs input[handler="tab"] {  /**/
+  background: transparent url('../ui-images/top-tab.png') scroll no-repeat 100% 0;
+  margin: 1 -4px 0 8px;
+  padding-left: 4px;
+  padding-right: 10px; /* to be removed when the close buttons are activated */
+  height: 20px;
+  line-height: 20px;
+  }
+
+top-tabs tab:hover input[handler="tab"] {
+  background-position: 100% -19px;
+  }
+
+top-tabs tab.active input[handler="tab"] {
+  background-position: 100% -38px;
+	font-weight: bold;
+  }
+
+input[handler="close-tab"] { /* Currently not in use? */ 
+  background: transparent url('../ui-images/close.png') scroll no-repeat 50% 0;
+  border: none;
+  padding: 0;
+  margin: 0px 2px;
+  width: 12px;
+  height: 12px;
+  line-height: 12px;
   vertical-align: -1px;
   cursor: pointer;
   }
 
-input[handler="close-tab"]:hover {
-  background-position:50% -12px;
+input[handler="close-tab"]:hover { 
+  background-position: 100% -12px;
   }
 
+input[handler="top-settings"] { /* Doesn't receive correct background positioning on hover and active*/
+  width: 26px;
+  height: 24px;
+  margin: 2px;
+  padding: 0;
+  cursor: pointer;  
+  background: transparent url('../ui-images/btn-config.png') scroll no-repeat 0 0;
+  border: none;
+  float: right;
+  }
+
+input[handler="top-settings"]:hover {
+  background-position:0 -24px;
+  }
+
+input[handler="top-settings"]:active {
+  background-position:0 -48px;
+  }
+
+
 .default-container {
-  padding:7px;
+  padding: 7px;
   }
 
 settings-container, settings, settings-header, checkboxes, checkbox {
-  display:block;
+  display: block;
   }
 
-settings {
-  margin:12px 0;
-  padding:3px 0;
-  border:1px solid #ccc;
+settings { /**/
+  margin: 12px 0;
+  padding: 3px 0;
+  border: 1px solid #ccc;
   }
 
-settings-header {
+settings-header { /**/
   font-size: 1.2em;
   }
 
-settings-header input {
-  background:transparent url('../ui-images/toggle.png') scroll no-repeat 0 0;
-  border:none;
-  padding:0;
-  margin:0px 5px;
-  width:14px;
-  height:14px;
+settings-header input { /**/
+  background: transparent url('../ui-images/toggle.png') scroll no-repeat 0 0;
+  border: none;
+  padding: 0;
+  margin: 0px 5px;
+  width: 14px;
+  height: 14px;
   cursor: pointer;
   }
 
@@ -323,17 +371,17 @@ settings-header input.unfolded:active {
   background-position: -14px -28px;
   }
 
-checkboxes {
+checkboxes { /**/
   padding-left: 26px;
   }
 
-settings-container {
+settings-container { /**/
   padding: 7px;
   }
 
-view-slider {
-  display:block;
-  position:absolute;
+view-slider { /**/
+  display: block;
+  position: absolute;
   }
 
 view-slider.vertical {
@@ -344,282 +392,371 @@ view-slider.horizontal {
   cursor: s-resize;
   }
 
-ui-menu {
+ui-menu { /**/
   display: block;
-  float:right;
-  width:80px;
-  cursor:pointer;
-  position:relative;
-  margin-right:7px;
+  float: right;
+  width: 180px;
+  cursor: pointer;
+  position: relative;
+  margin: -7px 0 0 0;
   }
 
-ui-menu > h2 {
-  padding:0;
-  padding-left:7px;
-  margin:0;
-  font-weight:normal;
-  font-size:14px;
-  background:transparent url('../ui-images/menu.png') scroll no-repeat 0 0;
-  height:24px;
-  line-height:24px;
+ui-menu > h2 { /**/
+  padding-left: 10px;
+  font-weight: normal;
+  font-size: 11px;
+  background: transparent url('../ui-images/menu.png') scroll no-repeat 0 -66px;
+  width: 170px;
+	height: 18px;
+  line-height: 14px;
   }
 
-ui-menu > h2:after {
-  display:block;
-  width:7px;
-  height:24px;
-  content:'';
-  float:right;
-  background:transparent url('../ui-images/menu-right.png') scroll no-repeat 100% 0;
+ui-menu > h2:after { /**/ 
+  display: block;
+	margin-right: 5px;
+  width: 15px;
+  height: 18px;
+  content: '';
+  float: right;
+  background: transparent url('../ui-images/menu-right.png') scroll no-repeat 100% -66px;
   }
-
+	
 ui-menu:hover > h2 {
-  background-position: 0 -24px;
+  background-position: 0 0;
   }
 
 ui-menu:hover > h2:after {
-  background-position: 100% -24px;
+  background-position: 100% 0;
   }
 
-ui-menu ul {
-  position:absolute;
-  right:0;
-  top:24px;
-  background-color:#ccc;
-  margin:0;
-  padding:0;
-  list-style:none;
-  z-index:10;
+ui-menu ul { /* The list needs a bottom shadow when opened */
+  position: absolute;
+  right: 9px;
+  top: 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  z-index: 10;
   }
 
-ui-menu li {
-  padding:0;
-  padding-left:7px;
-  min-width:80px;
-  background:transparent url('../ui-images/menu.png') scroll no-repeat 0 -1px;
+ui-menu li { /**/
+  padding: 0;
+	margin-right: 6px;
+  padding-left: 10px;
+  width: 155px;
+  background: transparent url('../ui-images/menu.png') scroll no-repeat 0 -19px;
   }
 
-
-ui-menu li h2 {
-  height:22px;
-  line-height:22px;
-  padding:0;
-  margin:0;
-  padding-right:7px;
-  font-weight:normal;
-  font-size:14px;
-  background:transparent url('../ui-images/menu-right.png') scroll no-repeat 100% -1px;
+ui-menu li h2 { /**/
+  padding: 0;
+  margin: 0;
+	width: 165px;
+  height: 22px;
+  line-height: 22px;
+  font-weight: normal;
+  font-size: 12px;
+  background: transparent url('../ui-images/menu-right.png') scroll no-repeat 100% -19px;
   white-space: nowrap;
   }
 
 ui-menu ul li:hover {
-  background-position: 0 -25px;
+  background-position: 0 -41px;
   }
 
 ui-menu ul li:hover h2 {
-  background-position: 100% -25px;
+  background-position: 100% -41px;
   }
 
 
 window-control {
-  display:block;
-  position:absolute;
+  display: block;
+  position: absolute;
   }
 
-window-header {
-  display:block;
-  background-color:#ccc;
-  color:#000;
-  padding-left:.5em;
-  height:20px;
-  line-height:20px;
+window-header { /**/
+  display: block;
+  background-color: #d4d8dd;
+  border-bottom: 1px solid #ccc;
+	font-weight: bold;
+  color: #000;
+  padding-left: .5em;
+  height: 17px;
+  line-height: 17px;
   }
 
-windows-container [handler="window-move"] {
-  cursor:move;
+windows-container [handler="window-move"] { /**/
+  cursor: move;
   }
 
-windows-container [handler='window-close'] {
-  float:right;
-  width:16px;
-  height:16px;
-  margin:2px;
-  position:relative;
-  cursor:pointer;
-  background:transparent url('../ui-images/window-close.png') scroll no-repeat 50% 50%;
+windows-container [handler='window-close'] { /**/
+  float: right;
+  width: 24px;
+  height: 20px;
+  margin: -3px -3px 0 0;
+  position: relative;
+  cursor: pointer;
+  background: transparent url('../ui-images/btn-window-close.png') scroll no-repeat 0 0;
+	z-index:11;
   }
 
-windows-container [handler='window-scale-top-left'] {
-  left:-5px;
-  top:-5px;
-  width:10px;
-  height:10px;
-  cursor:nw-resize;
+windows-container [handler='window-close']:hover  { /**/
+  background-position:  0 -20px;
   }
 
-windows-container [handler='window-scale-top'] {
-  left:5px;
-  right:5px;
-  top:-5px;
-  height:10px;
-  cursor:s-resize;
+windows-container [handler='window-close']:active { /**/
+  background-position:  0 -40px;
   }
 
-windows-container [handler='window-scale-top-right'] {
-  right:-5px;
-  width:10px;
-  height:10px;
-  top:-5px;
-  cursor:sw-resize;
+windows-container [handler='window-scale-top-left'] { /**/
+  left: -5px;
+  top: -5px;
+  width: 10px;
+  height: 10px;
+  cursor: nw-resize;
   }
 
-windows-container [handler='window-scale-right'] {
-  right:-5px;
-  width:10px;
-  top:5px;
-  bottom:5px;
-  cursor:w-resize;
+windows-container [handler='window-scale-top'] { /**/
+  left: 5px;
+  right: 5px;
+  top: -5px;
+  height: 10px;
+  cursor: s-resize;
   }
 
-windows-container [handler='window-scale-left'] {
-  left:-5px;
-  width:10px;
-  top:5px;
-  bottom:5px;
-  cursor:w-resize;
+windows-container [handler='window-scale-top-right'] { /**/
+  right: -5px;
+  width: 10px;
+  height: 10px;
+  top: -5px;
+  cursor: sw-resize;
   }
 
-windows-container [handler='window-scale-bottom'] {
-  left:0;
-  bottom:-5px;
-  height:10px;
-  right:5px;
-  cursor:s-resize;
+windows-container [handler='window-scale-right'] { /**/
+  right: -5px;
+  width: 10px;
+  top: 5px;
+  bottom: 5px;
+  cursor: w-resize;
   }
 
-windows-container [handler='window-scale-bottom-right'] {
-  bottom:-5px;
-  height:10px;
-  width:10px;
-  right:-5px;
-  cursor:nw-resize;
+windows-container [handler='window-scale-left'] { /**/
+  left: -5px;
+  width: 10px;
+  top: 5px;
+  bottom: 5px;
+  cursor: w-resize;
   }
 
-windows-container [handler='window-scale-bottom-left'] {
-  bottom:-5px;
-  height:10px;
-  width:10px;
-  left:-5px;
-  cursor:sw-resize;
+windows-container [handler='window-scale-bottom'] { /**/
+  left: 0;
+  bottom: -5px;
+  height: 10px;
+  right: 5px;
+  cursor: s-resize;
+  }
+
+windows-container [handler='window-scale-bottom-right'] { /**/
+  bottom: -5px;
+  height: 10px;
+  width: 10px;
+  right: -5px;
+  cursor: nw-resize;
+  }
+
+windows-container [handler='window-scale-bottom-left'] { /**/
+  bottom: -5px;
+  height: 10px;
+  width: 10px;
+  left: -5px;
+  cursor: sw-resize;
   }
 
 /* perhaps we could do this with svg's */
 
-windows-container {
-  width:100%;
-  height:100%;
-  display:block;
-  overflow:hidden;
-  left:0;
-  top:0;
+windows-container { /**/
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: hidden;
+  left: 0;
+  top: 0;
   }
 
 window {
-  display:block;
-  position:absolute;
-  height:300px;
-  background-color:#fff;
-  background-color:#f5f5f5;
-  border:1px solid #999;
-  left:20px;
+  display: block;
+  position: absolute;
+  background-color: #eff2f7;
+  height: 300px;
+  left: 20px;
   }
 
 window-shadow {
-  display:block;
-  position:absolute;
+  display: block;
+  position: absolute;
   }
 
 window-shadow.top-left {
-  left:-5px;
-  top:-5px;
-  width:7px;
-  height:7px;
-  background:transparent url('../ui-images/shadow-top-left.png') scroll repeat-x 0 0;
+  left: -5px;
+  top: -5px;
+  width: 5px;
+  height: 5px;
+  background: transparent url('../ui-images/shadow-top-left.png') scroll repeat-x 0 0;
   }
 
 window-shadow.top {
-  left:2px;
-  top:-5px;
-  right:2px;
-  height:4px;
-  background:transparent url('../ui-images/shadow-top.png') scroll repeat-x 0 0;
+  left: 0px;
+  top: -5px;
+  right: 0px;
+  height: 6px;
+  background: transparent url('../ui-images/shadow-top.png') scroll repeat-x 0 0;
   }
 
 window-shadow.top-right {
-  right:-7px;
-  top:-5px;
-  height:7px;
-  width:9px;
-  background:transparent url('../ui-images/shadow-top-right.png') scroll no-repeat 0 0;
+  right: -5px;
+  top: -5px;
+  height: 5px;
+  width: 5px;
+  background: transparent url('../ui-images/shadow-top-right.png') scroll no-repeat 0 0;
   }
 
 window-shadow.right {
-  right:-7px;
-  top:2px;
-  bottom:2px;
-  width:6px;
-  background:transparent url('../ui-images/shadow-right.png') scroll repeat-y 0 0;
+  right: -5px;
+  top: 0px;
+  bottom: 0px;
+  width: 5px;
+  background: transparent url('../ui-images/shadow-right.png') scroll repeat-y 0 0;
   }
 
 window-shadow.bottom {
-  right:2px;
-  bottom:-7px;
-  left:2px;
-  height:6px;
-  background:transparent url('../ui-images/shadow-bottom.png') scroll repeat-x 0 0;
+  right: 0px;
+  bottom: -5px;
+  left: 0px;
+  height: 5px;
+  background: transparent url('../ui-images/shadow-bottom.png') scroll repeat-x 0 0;
   }
 
 window-shadow.bottom-right {
-  right:-7px;
-  bottom:-7px;
-  height:9px;
-  width:9px;
-  background:transparent url('../ui-images/shadow-bottom-right.png') scroll no-repeat 0 0;
+  right: -5px;
+  bottom: -5px;
+  height: 5px;
+  width: 5px;
+  background: transparent url('../ui-images/shadow-bottom-right.png') scroll no-repeat 0 0;
   }
 
 window-shadow.bottom-left {
-  left:-5px;
-  bottom:-7px;
-  height:9px;
-  width:7px;
-  background:transparent url('../ui-images/shadow-bottom-left.png') scroll no-repeat 0 0;
+  left: -5px;
+  bottom: -5px;
+  height: 5px;
+  width: 5px;
+  background: transparent url('../ui-images/shadow-bottom-left.png') scroll no-repeat 0 0;
   }
 
 window-shadow.left {
-  left:-5px;
-  top:2px;
-  bottom:2px;
-  width:4px;
-  background:transparent url('../ui-images/shadow-left.png') scroll repeat-y 0 0;
+  left: -5px;
+  top: 0px;
+  bottom: 0px;
+  width: 5px;
+  background: transparent url('../ui-images/shadow-left.png') scroll repeat-y 0 0;
   }
 
-#spin-button {
-  float:left;
-  height:16px;
-  width:48px;
-  margin:5px;
-  background:transparent url('../ui-images/spin4.png') scroll no-repeat 0 0;
+#spin-button { /**/
+  float: left;
+  height: 16px;
+  width: 48px;
+  margin: 5px;
+  background: transparent url('../ui-images/spin.png') scroll no-repeat 0 0;
   }
 
+/* Tried to hack around weird hover behaviour on hover/click. Scripted? */
+input[handler="threads-clear-log"] ,
+input[handler="threads-export-log"],
+input[handler="dom-inspection-snapshot"] ,
+input[key="dom_general.find-with-click"],
+input[key="dom_general.highlight-on-hover"] ,
+input[key="dom-tree-style.show-comments"] ,
+input[key="dom-tree-style.show-whitespace-nodes"],
+input[key="dom_general.update-on-dom-node-inserted"]  {
+	width: 26px;
+	height: 24px;
+  }
+
+input[handler="threads-clear-log"]:hover ,
+input[handler="threads-export-log"]:hover ,
+input[handler="dom-inspection-snapshot"]:hover ,
+input[key="dom_general.find-with-click"]:hover ,
+input[key="dom_general.highlight-on-hover"]:hover ,
+input[key="dom-tree-style.show-comments"]:hover ,
+input[key="dom-tree-style.show-whitespace-nodes"]:hover ,
+input[key="dom_general.update-on-dom-node-inserted"]:hover {
+  background-position: 0 -24px;
+  }
+
+input[handler="threads-clear-log"]:active ,
+input[handler="threads-export-log"]:active ,
+input[handler="dom-inspection-snapshot"]:active ,
+input[key="dom_general.find-with-click"]:active ,
+input[key="dom_general.highlight-on-hover"]:active ,
+input[key="dom-tree-style.show-comments"]:active ,
+input[key="dom-tree-style.show-whitespace-nodes"]:active ,
+input[key="dom_general.update-on-dom-node-inserted"] :active {
+  background-position: 0 -48px;
+  }
+
+input[handler="threads-clear-log"] {
+  background-image: url('../ui-images/btn-clear-error-console.png');
+  }
+
+input[handler="threads-export-log"] {
+  background-image: url('../ui-images/btn-export-log.png');
+  }
+
+input[handler="dom-inspection-snapshot"] {
+  background-image: url('../ui-images/btn-get-dom-tree.png');
+  }
+
+input[key="dom_general.find-with-click"] {
+  background-image: url('../ui-images/btn-find-onclick.png');
+  }
+
+input[key="dom_general.highlight-on-hover"] {
+  background-image: url('../ui-images/btn-highlight.png');
+  }
+
+input[key="dom-tree-style.show-comments"] {
+  background-image: url('../ui-images/btn-show-comments.png');
+  }
+
+input[key="dom-tree-style.show-whitespace-nodes"] {
+  background-image: url('../ui-images/btn-show-whitespace.png');
+  }
+
+input[key="dom_general.update-on-dom-node-inserted"] {
+  background-image: url('../ui-images/btn-update-onchange.png');
+  }
 
 input[handler="create-all-runtimes"] {
-  background-image:url('../ui-images/create-all-runtimes.png');
+  background-image: url('../ui-images/btn-create-all-runtimes.png');
+	width: 30px;
+	height: 24px;
   }
 
-input[handler="clear-error-console"] {
-  background-image:url('../ui-images/clear-error-console.png');
+input[handler="create-all-runtimes"]:hover {
+  background-position: 0 -24px;
   }
 
+input[handler="create-all-runtimes"]:active {
+  background-position: 0 -48px;
+  }
 
-
-
+#continue-run {
+  background-image:url('../ui-images/btn-run.png');
+  }
+#continue-step-into-call {
+  background-image:url('../ui-images/btn-step-into-call.png');
+  }
+#continue-step-next-line {
+  background-image:url('../ui-images/btn-step-next-line.png');
+  }
+#continue-step-out-of-call {
+  background-image:url('../ui-images/btn-step-out-call.png');
+  } 

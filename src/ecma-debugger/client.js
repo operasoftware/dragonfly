@@ -280,7 +280,7 @@ var client = new function()
 
 new ToolbarConfig
 (
-  'main-view',
+  'main-view-top-tab',
   [
     {
       handler: 'create-all-runtimes',
