@@ -546,6 +546,15 @@ category {
   content: " [overwritten]";
   color: #c90;
   }
+  
+.css-inspector key.inherited, .css-inspector value.inherited {
+  color: #ccc;
+  }
+
+.css-inspector value.inherited:after {
+  content: " [inherited]";
+  color: #09c;
+  }
 
 
 

@@ -346,7 +346,7 @@
       var msg = "<css-get-stylesheet>" +
                   "<tag>" + tag + "</tag>" +
                   "<runtime-id>" + rt_id+ "</runtime-id>" +
-                  "<object-id>" + obj_id + "</object-id>"+
+                  "<stylesheet-id>" + obj_id + "</stylesheet-id>"+
                   ( format ? "<format>json</format>" : "" ) +
                 "</css-get-stylesheet>";
       this.post(msg);

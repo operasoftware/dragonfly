@@ -34,10 +34,10 @@ var stylesheets = new function()
   PAGE_RULE = 6,
   COMMON = 11,
   MARKUP_KEY = "<key>",
-  MARKUP_KEY_OW = "<key class='overwritten'>",
+  MARKUP_KEY_OW = [ , "<key class='overwritten'>", "<key class='inherited'>"],
   MARKUP_KEY_CLOSE = "</key>: ",
   MARKUP_VALUE = "<value>",
-  MARKUP_VALUE_OW = "<value class='overwritten'>",
+  MARKUP_VALUE_OW = [ , "<value class='overwritten'>", "<value class='inherited'>"],
   MARKUP_VALUE_CLOSE = "</value>",
   MARKUP_PROP_NL = ";\n",
   MARKUP_IMPORTANT = " !important",
@@ -486,8 +486,8 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
         {
           ret += ( ret ? MARKUP_PROP_NL : MARKUP_EMPTY ) +
             INDENT +
-            MARKUP_KEY_OW + __indexMap[index] + MARKUP_KEY_CLOSE +
-            MARKUP_VALUE_OW + value_list[i] + ( priority_list[i] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE;   
+            MARKUP_KEY_OW[overwrittenlist[i]] + __indexMap[index] + MARKUP_KEY_CLOSE +
+            MARKUP_VALUE_OW[overwrittenlist[i]] + value_list[i] + ( priority_list[i] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE;   
         }
         else
         {
@@ -611,7 +611,7 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     var ret = "", i = 0, index = 0, prop = '', value = '';
     var setProps = elementStyle.getSetProps();
     var hideInitialValue = settings['css-inspector'].get('hide-initial-values');
-    var hide_shorthands = true; // TODO make a setting
+    var hide_shorthands = settings['css-inspector'].get('hide-shorthands'); // TODO make a setting
     var serach_map = search_active && elementStyle.getSearchMap() || [];
     var is_not_initial_value = false;
     var display = false;
@@ -651,14 +651,14 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   IN-LINE-STYLE-RULE ::= "[[" INDEX-LIST "],[" VALUE-LIST "],[" PRIORITY-LIST "]]"
   */
 
-  prettyPrintCat[INLINE_STYLE] = function(data)
+  prettyPrintCat[INLINE_STYLE] = function(data, search_active)
   {
     if(data[1].length)
     {
       return "<rule>" + 
         "<inline-style>element.style</inline-style>" + 
         " {\n" + 
-            prettyPrintRule[COMMON](data, false, true) +
+            prettyPrintRule[COMMON](data, false, true, search_active) +
         "\n}</rule>";
     }
     return "";
@@ -730,20 +730,20 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   INHERITED-TYPE ::= "inline" | "css"
   */
 
-  prettyPrintCat[INHERITED_RULES] = function(data)
+  prettyPrintCat[INHERITED_RULES] = function(data, search_active)
   {
     var ret = '', rule = null, header = null, i = 0, sheet = null;
     //opera.postError(data);
     for( ; rule = data[i]; i++)
     {
-      if( rule[HAS_INHERITABLE_PROPS] )
+      if( rule[HAS_INHERITABLE_PROPS] && ( !search_active || rule[HAS_MATCHING_SEARCH_PROPS] ) )
       {
         if(rule[HEADER][0] == "inline") // inline style
         {
           ret += "<rule>" + 
             "<inline-style>&lt;" + rule[HEADER][2] + "&gt;element.style</inline-style>" + 
             " {\n" + 
-                prettyPrintRule[COMMON](rule, false, true) +
+                prettyPrintRule[COMMON](rule, false, true, search_active) +
             "\n}</rule>";
 
         }
@@ -759,7 +759,7 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
               //"<span>" + rule[HEADER][3] + "</span>" +
               "<selector>" + rule[HEADER][5] + "</selector>" + 
               " {\n" + 
-                  prettyPrintRule[COMMON](rule, false, true) +
+                  prettyPrintRule[COMMON](rule, false, true, search_active) +
               "\n}</rule>";
           }
           else

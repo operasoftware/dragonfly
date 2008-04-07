@@ -1,6 +1,6 @@
 ﻿<viewport xmlns="http://www.w3.org/1999/xhtml">
 
-<title>ecma debugger</title>
+<title>Dragonfly</title>
 
 <link rel="stylesheet" href="../ui-style/ui.css"/>
 
@@ -65,7 +65,6 @@
 <script src="css_initial_values.js"/>
 <script src="css_inheritable_properties.js"/>
 
-<script src="css_data.js"/>
 <script src="stylesheets.js"/>
 <script src="views-css-inspector.js"/>
 <script src="views-stylesheets.js"/>

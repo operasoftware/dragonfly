@@ -85,17 +85,20 @@
       'direct-match-style': false,
       'inherited-style': false,
       'default-style': false,
-      'hide-initial-values': true
+      'hide-initial-values': true,
+      'hide-shorthands': true
     }, 
     // key-label map
     {
-      'hide-initial-values': 'Hide initial values in computed styles'
+      'hide-initial-values': 'Hide initial values in computed styles',
+      'hide-shorthands': 'Hide shorthands in computed styles'
     },
     // settings map
     {
       checkboxes:
       [
         'hide-initial-values',
+        'hide-shorthands',
       ]
     }
   );
@@ -117,6 +120,7 @@
     'css-inspector',
     [
       'hide-initial-values',
+      'hide-shorthands',
     ]
   )
 

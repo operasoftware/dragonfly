@@ -159,18 +159,18 @@ var elementStyle = new function()
         if(dec[PRIORITY_LIST][i] && !__setPriorities[prop])
         {
           ret[ret.length] = prop;
-          __setPriorities[prop] = 1;
+          __setPriorities[prop] = /%|em|ex/.test(dec[VAL_LIST][i]) ? 2 : 1;
         }
         else
         {
           
-          dec[OVERWRITTEN_LIST][i] = 1;
-          //opera.postError('set overwritten: '+ dec[OVERWRITTEN_LIST])
+          dec[OVERWRITTEN_LIST][i] = __setProps[prop];
+          __setProps[prop] = /%|em|ex/.test(dec[VAL_LIST][i]) ? 2 : 1;
         }
       }
       else
       {
-        __setProps[prop] = 1;
+        __setProps[prop] = /%|em|ex/.test(dec[VAL_LIST][i]) ? 2 : 1;
       }
     }
     if( set_has_inherited_props )
@@ -191,37 +191,40 @@ var elementStyle = new function()
     if( __old_search_therm != search_therm 
         && ( __search_is_active || search_therm.length >= MIN_SEARCH_THERM_LENGTH ) )
     {
-      
-      if( search_therm.length >= MIN_SEARCH_THERM_LENGTH )
-      {
-        __searchMap = [];
-        var i = 0, length = css_index_map.length;
-        for( ; i < length; i++)
-        {
-          if( css_index_map[i].indexOf(search_therm) != -1 )
-          {
-            __searchMap[i] = 1;
-          }
-        }
-        searchStyleDeclarations([categories_data[INLINE_STYLE]], __searchMap);
-        searchStyleDeclarations(categories_data[MATCHING_RULES], __searchMap);
-        searchStyleDeclarations(categories_data[INHERITED_RULES], __searchMap);
-        __search_is_active = true;
-      } 
-      else
-      {
-        clearSearchStyleDeclarations([categories_data[INLINE_STYLE]]);
-        clearSearchStyleDeclarations(categories_data[MATCHING_RULES]);
-        clearSearchStyleDeclarations(categories_data[INHERITED_RULES]);
-        __search_is_active = false;
-      }
-      
-
+      doSearch(search_therm);
       for ( i = 0; view_id = __views[i]; i++)
       {
         views[view_id].updateCategories({}, getUnfoldedKey());
       }
       __old_search_therm = search_therm;
+    }
+  }
+  
+  var doSearch = function(search_therm)
+  {
+    if( search_therm.length >= MIN_SEARCH_THERM_LENGTH )
+    {
+      __searchMap = [];
+      var i = 0, length = css_index_map.length;
+      for( ; i < length; i++)
+      {
+        if( css_index_map[i].indexOf(search_therm) != -1 )
+        {
+          __searchMap[i] = 1;
+        }
+      }
+      searchStyleDeclarations([categories_data[INLINE_STYLE]], __searchMap);
+      searchStyleDeclarations(categories_data[MATCHING_RULES], __searchMap);
+      searchStyleDeclarations(categories_data[INHERITED_RULES], __searchMap);
+      __search_is_active = true;
+    } 
+    else
+    {
+      clearSearchStyleDeclarations([categories_data[INLINE_STYLE]]);
+      clearSearchStyleDeclarations(categories_data[MATCHING_RULES]);
+      clearSearchStyleDeclarations(categories_data[INHERITED_RULES]);
+      __old_search_therm  = "";
+      __search_is_active = false;
     }
   }
 
@@ -363,6 +366,7 @@ var elementStyle = new function()
     //opera.postError("onElementSelected: " +get_data +' '+__selectedElement.req_type);
     if( get_data && __selectedElement.req_type )
     {
+      //opera.postError(__selectedElement.req_type)
       getData
       (
         msg.rt_id, 
@@ -424,6 +428,10 @@ var elementStyle = new function()
           }
           parse_data[req_type]();
         }
+      }
+      if( __old_search_therm )
+      {
+        doSearch(__old_search_therm);
       }
       for ( i = 0; view_id = __views[i]; i++)
       {

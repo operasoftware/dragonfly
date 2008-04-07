@@ -95,7 +95,6 @@ var action_handler = new function()
     }
     while ( ( par = cur.parentElement ) && ( par = par.parentElement ) && par.id != 'examine-objects' );
     var obj = frame_inspection.getObject(path_arr);
-    //alert(path_arr +' '+obj);
     if( !obj )
     {
       opera.postError("Error in action_handler handlers['examine-object']");
@@ -216,7 +215,6 @@ var action_handler = new function()
     // handleGetRulesWithIndex in stylesheets will 
     // set for this reason __call_count on the event object
     var rules = stylesheets.getRulesWithSheetIndex(rt_id, index, arguments);
-
     if(rules)
     {
       stylesheets.setSelectedSheet(rt_id, index, rules, rule_id);
