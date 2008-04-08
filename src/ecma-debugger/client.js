@@ -321,7 +321,7 @@ var dom_rough_layout =
       ]
     },
     { 
-      width: 250, tabs: ['css-inspector'] 
+      width: 250, tabs: ['css-inspector', 'dom_attrs'] 
     }
   ]
 }

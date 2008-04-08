@@ -4,38 +4,38 @@
   padding-left:18px;
   }
 
-#examine-objects .key {
+#examine-objects .key, examine-objects key {
   margin-right:7px;
   }
 
 
-#examine-objects .key {
+#examine-objects .key, examine-objects key {
   color: #111;
   }
 
-#examine-objects .string {
+#examine-objects .string, examine-objects .string {
   color:#742;
   }
 
-#examine-objects .number {
+#examine-objects .number, examine-objects .number {
   color:#920;
   }
 
-#examine-objects .undefined {
+#examine-objects .undefined, examine-objects .undefined {
   color:#c00;
   font-style: italic;
   }
 
-#examine-objects .null {
+#examine-objects .null, examine-objects .null {
   color:#c00;
   font-style: italic;
   }
 
-#examine-objects .boolean {
+#examine-objects .boolean, examine-objects .boolean {
   color:#920;
   }
 
-#examine-objects .object {
+#examine-objects .object, examine-objects .object {
   color:#18a;
   }
 

@@ -64,6 +64,8 @@
 <script src="dom_data.js"/>
 <script src="css_initial_values.js"/>
 <script src="css_inheritable_properties.js"/>
+<script src="ObjectDataBase.js"/>
+<script src="node_dom_attrs.js"/>
 
 <script src="stylesheets.js"/>
 <script src="views-css-inspector.js"/>
@@ -72,6 +74,7 @@
 <script src="views-general-dom.js"/>
 <script src="views-dom-markup-style.js"/>
 <script src="views-dom-tree-style.js"/>
+<script src="views-dom-attrs.js"/>
 <script src="views-threads.js"/>
 <script src="export_data.js"/>
 <script src="elementStyle.js"/>

@@ -193,6 +193,23 @@ Element.prototype.getWidth=function(e)
     - parseInt(style['borderRightWidth']);
 }
 
+Element.prototype.spliceInnerHTML = function(str)
+{
+  var
+  temp = this.ownerDocument.createElement('div-parser'),
+  range = this.ownerDocument.createRange();
+  temp.innerHTML = str;
+  if(this.nextSibling)
+  {
+    range.selectNodeContents(this.parentNode.insertBefore(temp, this.nextSibling));
+  }
+  else
+  {
+    range.selectNodeContents(this.parentNode.appendChild(temp));
+  }
+  this.parentNode.replaceChild(range.extractContents(), temp);
+}
+
 Node.prototype.getNodeData=function(nodeName)
 {
   var node=this.getElementsByTagName(nodeName)[0];

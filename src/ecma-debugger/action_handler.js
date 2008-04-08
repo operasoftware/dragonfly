@@ -114,6 +114,57 @@ var action_handler = new function()
     }
   }
 
+  handlers['examine-object-2'] = function(event, target)
+  {
+    var 
+    parent = target.parentNode,
+    obj_id = parent.getAttribute('obj-id'),
+    rt_id = parent.parentNode.getAttribute('rt-id'),
+    data_id = parent.parentNode.getAttribute('data-id'),
+    margin = parent.style.marginLeft,
+    is_expanded = target.disabled 
+      || ( parent.nextSibling && parseInt(parent.nextSibling.style.marginLeft) > parseInt(margin) ),
+    data = null,
+    obj_data = window[data_id], 
+    filter = null;
+    if( obj_data )
+    {
+      if( is_expanded )
+      {
+        if( !target.disabled )
+        {
+          obj_data.clearData(rt_id, obj_id);
+          var range = document.createRange();
+          range.setStartAfter(parent);
+          while( parent.nextSibling && parent.nextSibling.style.marginLeft != margin )
+          {
+            range.setEndAfter(parent.nextSibling);
+            parent = parent.nextSibling;
+          }
+          range.deleteContents();
+          target.style.removeProperty("background-position");
+        }
+      }
+      else
+      {
+        data = obj_data.getData(rt_id, obj_id, arguments);
+        if( data )
+        {
+          if( data.length )
+          {
+            filter = node_dom_attrs.getDataFilter();
+            parent.spliceInnerHTML(obj_data.prettyPrint(data, filter)); 
+            target.style.backgroundPosition = "0px -11px";
+          }
+          else
+          {
+            target.disabled = true;
+          }
+        }
+      }
+    }
+  }
+
   handlers['show-global-scope'] = function(event) // and select runtime
   {
     var ele = event.target;
