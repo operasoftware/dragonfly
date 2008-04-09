@@ -150,16 +150,20 @@ Element.prototype.getTop = function()
   return top;
 }
 
-Element.prototype.insertAfter = function(node)
+Element.prototype.insertAfter = function(node, target)
 {
-  var nextElement = this.getNextSiblingElement();
+  var nextElement = target.nextSibling;
+  while( nextElement && nextElement.nodeType != 1 )
+  {
+    nextElement = nextElement.nextSibling;
+  }
   if( nextElement )
   {
-    nextElement.parentElement.insertBefore(node, nextElement);
+    this.insertBefore(node, nextElement);
   }
   else
   {
-    this.parentElement.appendChild(node);
+    this.appendChild(node);
   }
 }
 

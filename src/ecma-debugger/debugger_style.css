@@ -520,8 +520,62 @@ category {
   }
 
 
-examine-objects, item {
+examine-objects, examine-objects item {
   display:block;
+  }
+
+examine-objects {
+  background-color: hsl(0, 0%, 92%);
+  }
+
+examine-objects item {
+  padding: 0 9px;
+  }
+
+examine-objects key {
+  margin-right:7px;
+  }
+
+
+
+examine-objects .back-refernce value:after {
+  content: "[selected object]";
+  color: #c90;
+  margin-left: 7px;
+  }
+
+start-search-scope, end-search-scope {
+  display:block;
+  height:3px;
+  background-color: #fff;
+  }
+
+start-search-scope {
+  border-top: 1px solid hsl(0, 0%, 75%);
+  margin-top: 3px;
+  }
+
+examine-objects start-search-scope:first-child {
+  border-top: 4px solid hsl(0, 0%, 100%);
+  margin-top: 0;
+  }
+
+end-search-scope {
+  border-bottom: 1px solid hsl(0, 0%, 75%);
+  margin-bottom: 3px;
+  }
+
+examine-objects end-search-scope:last-child {
+  border-bottom: 3px solid hsl(0, 0%, 100%);
+  margin-bottom: 0;
+  }
+
+start-search-scope ~ item {
+  background-color: #fff;
+  }
+
+start-search-scope ~ end-search-scope ~ item {
+  background-color: transparent;
   }
 
 

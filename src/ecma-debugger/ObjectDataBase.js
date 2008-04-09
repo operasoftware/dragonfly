@@ -108,6 +108,7 @@ var ObjectDataBase = new function()
 
       unsorted.sort(function(a, b){ return a[KEY] < b[KEY] ? -1 : a[KEY] > b[KEY] ? 1 : 0});
       this.data.splice.apply(this.data, unsorted);
+      //alert(org_args +' '+ org_args[0].__call_count)
       if( org_args && !org_args[0].__call_count )
       {
         org_args[0].__call_count = 1;
@@ -190,7 +191,7 @@ var ObjectDataBase = new function()
       i = index + 1;
       depth = this.data[index][DEPTH];
       for ( ; ( prop = this.data[i] ) && prop[DEPTH] > depth; i++ );
-      this.data.splice(index + 1, i);
+      this.data.splice(index + 1, i - ( index + 1 ) );
       delete this.data[index][QUERIED];
     }
   }
@@ -211,30 +212,38 @@ var ObjectDataBase = new function()
         val = val.slice(0, MAX_VALUE_LENGTH) +"...";
       }
       val = val.replace(/</g, "&gt;");
-      switch (prop[TYPE])
-      {
 
-        case 'object':
+
+      if( prop[TYPE] == 'object')
+      {
+        if(val == this.data[0][VALUE])
         {
-          ret += "<item style='margin-left:" + ( 16 * prop[DEPTH] ) + "px'" +
+          ret += "<item style='padding-left:" + ( 9 + 16 * prop[DEPTH] ) + "px'" +
+                        " obj-id='" + prop[VALUE] + "' class='back-refernce'>" +
+                    "<key>" + prop[KEY] + "</key>" +
+                    "<value class='object'>object</value>" +
+                  "</item>";
+        }
+        else
+        {
+          ret += "<item style='padding-left:" + ( 9 + 16 * prop[DEPTH] ) + "px'" +
                         " obj-id='" + prop[VALUE] + "'>" +
                     "<input type='button' handler='examine-object-2'  class='folder-key'/>" +
                     "<key>" + prop[KEY] + "</key>" +
                     "<value class='object'>object</value>" +
                   "</item>";
-          break;
         }
-
-        default:
-        {
-          ret += "<item style='margin-left:" + ( 16 * prop[DEPTH] ) + "px'>" +
-                    "<key>" + prop[KEY] + "</key>" +
-                    "<value class='" + prop[TYPE] + "'>" + val + "</value>" + 
-                  "</item>";
-          break;
-        }
+      }
+      else
+      {
+        ret += "<item style='padding-left:" + ( 9 + 16 * prop[DEPTH] ) + "px'>" +
+                  "<key>" + prop[KEY] + "</key>" +
+                  "<value class='" + prop[TYPE] + "'>" + val + "</value>" + 
+                "</item>";
 
       }
+
+      
 
     }
     return ret;

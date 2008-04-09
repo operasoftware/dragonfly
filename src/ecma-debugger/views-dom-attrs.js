@@ -20,8 +20,11 @@
         {
           filter = node_dom_attrs.getDataFilter();
           container.innerHTML = 
-            "<examine-objects rt-id='" + selectedNode.rt_id + "' data-id='node_dom_attrs' class='padding'>" +
+            "<examine-objects rt-id='" + selectedNode.rt_id + "' " + 
+                  "data-id='node_dom_attrs'>" +
+                "<start-search-scope></start-search-scope>" +
                 node_dom_attrs.prettyPrint(data, filter) + 
+                "<end-search-scope></end-search-scope>" +
             "</examine-objects>";
         }
     
@@ -77,6 +80,41 @@
       "hide-null-values"
     ]
   )
+
+  var listTextSearch = new ListTextSearch();
+
+  var onViewCreated = function(msg)
+  {
+    if( msg.id == 'dom_attrs' )
+    {
+      listTextSearch.setContainer(msg.container);
+    }
+  }
+
+  var onViewDestroyed = function(msg)
+  {
+    if( msg.id == 'dom_attrs' )
+    {
+      listTextSearch.cleanup();
+    }
+  }
+
+  messages.addListener('view-created', onViewCreated);
+  messages.addListener('view-destroyed', onViewDestroyed);
+
+  eventHandlers.input['dom-attrs-text-search'] = function(event, target)
+  {
+    listTextSearch.searchDelayed(target.value);
+  }
+  /*
+  eventHandlers.keyup['dom-markup-text-search'] = function(event, target)
+  {
+    if( event.keyCode == 13 )
+    {
+      textSearch.highlight();
+    }
+  }
+  */
 
   // button handlers
 

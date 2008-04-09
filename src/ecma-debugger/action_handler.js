@@ -118,15 +118,21 @@ var action_handler = new function()
   {
     var 
     parent = target.parentNode,
+    parent_parent = parent.parentNode, 
     obj_id = parent.getAttribute('obj-id'),
-    rt_id = parent.parentNode.getAttribute('rt-id'),
-    data_id = parent.parentNode.getAttribute('data-id'),
-    margin = parent.style.marginLeft,
+    rt_id = parent_parent.getAttribute('rt-id'),
+    data_id = parent_parent.getAttribute('data-id'),
+    margin = parseInt(parent.style.paddingLeft),
     is_expanded = target.disabled 
-      || ( parent.nextSibling && parseInt(parent.nextSibling.style.marginLeft) > parseInt(margin) ),
+      || ( parent.nextSibling && parseInt(parent.nextSibling.style.paddingLeft) > margin ),
     data = null,
     obj_data = window[data_id], 
-    filter = null;
+    filter = null,
+    search_start = null,
+    search_end = null,
+    cur = null,
+    is_in_search_scope = true,
+    is_child = true;
     if( obj_data )
     {
       if( is_expanded )
@@ -136,12 +142,47 @@ var action_handler = new function()
           obj_data.clearData(rt_id, obj_id);
           var range = document.createRange();
           range.setStartAfter(parent);
-          while( parent.nextSibling && parent.nextSibling.style.marginLeft != margin )
+          cur = parent;
+          while(is_in_search_scope && cur.nextSibling &&  cur.nodeName != "end-search-scope")
           {
-            range.setEndAfter(parent.nextSibling);
-            parent = parent.nextSibling;
+            cur = cur.nextSibling;
+            is_child = is_child && parseInt(cur.style.paddingLeft) > margin;
+            
+            is_in_search_scope = cur.nodeName != "start-search-scope" || is_child;
+          }
+          if( is_in_search_scope = cur && cur.nodeName == "end-search-scope" )
+          {
+            search_start = parent_parent.getElementsByTagName('start-search-scope')[0];
+            parent_parent.removeChild(search_start);
+            search_end = parent_parent.getElementsByTagName('end-search-scope')[0];
+            parent_parent.removeChild(search_end);
+          }
+          cur = parent;
+          while( cur.nextSibling && parseInt(cur.nextSibling.style.paddingLeft) > margin )
+          {
+            cur = cur.nextSibling;
+            range.setEndAfter(cur);
           }
           range.deleteContents();
+          if(is_in_search_scope)
+          {
+            cur = parent;
+            //opera.postError( is_in_search_scope +' '+cur.nextSibling.style.paddingLeft );
+            while( cur.nextSibling && parseInt(cur.nextSibling.style.paddingLeft) >= margin )
+            {
+              //opera.postError(cur.nextSibling.style.paddingLeft);
+              cur = cur.nextSibling;
+            }
+            parent_parent.insertAfter(search_end, cur);
+            cur = parent;
+            while( cur.previousSibling && parseInt(cur.previousSibling.style.paddingLeft) >= margin )
+            {
+              cur = cur.previousSibling;
+            }
+            parent_parent.insertBefore(search_start, cur.previousSibling ? cur.previousSibling : cur);
+            search_start.style.paddingLeft =search_end.style.paddingLeft = margin + "px";
+          }
+          
           target.style.removeProperty("background-position");
         }
       }
@@ -152,6 +193,15 @@ var action_handler = new function()
         {
           if( data.length )
           {
+            search_start = 
+              parent_parent.getElementsByTagName('start-search-scope')[0]
+              || document.createElement('start-search-scope');
+            parent_parent.insertBefore( search_start, parent);
+            search_end = 
+              parent_parent.getElementsByTagName('end-search-scope')[0]
+              || document.createElement('end-search-scope');
+            parent_parent.insertAfter( search_end, parent);
+            search_start.style.paddingLeft = parent.style.paddingLeft = margin + "px";
             filter = node_dom_attrs.getDataFilter();
             parent.spliceInnerHTML(obj_data.prettyPrint(data, filter)); 
             target.style.backgroundPosition = "0px -11px";

@@ -17,6 +17,9 @@
 <script src="../scripts/Timeouts.js"/>
 <script src="../scripts/TextSearch.js"/>
 
+
+
+
 <script src="../ui-scripts/defaults.js"/>
 <script src="../ui-scripts/window.js"/>
 <script src="../ui-scripts/cells.js"/>
@@ -43,6 +46,7 @@
 <script src="../ui-scripts/Switches.js"/>
 
 
+<script src="ListTextSearch.js"/>
 
 <script src="ini.js"/>
 <script src="windowInterface.js"/>
