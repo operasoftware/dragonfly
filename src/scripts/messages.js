@@ -11,6 +11,7 @@
   - "view-destroyed" msg.id
   - "runtime-stopped" msg.id
   - "runtime-selected" msg.id
+  - "list-search-context" msg.data_id, msg.obj_id, msg.depth
 
 */
 

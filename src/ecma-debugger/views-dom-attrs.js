@@ -15,17 +15,25 @@
       if( selectedNode )
       {
         delete container.__call_count;
-        data = node_dom_attrs.getData(selectedNode.rt_id, selectedNode.obj_id, arguments);
+        data = node_dom_attrs.getData(selectedNode.rt_id, selectedNode.obj_id, -1, arguments);
         if(data)
         {
           filter = node_dom_attrs.getDataFilter();
           container.innerHTML = 
             "<examine-objects rt-id='" + selectedNode.rt_id + "' " + 
-                  "data-id='node_dom_attrs'>" +
+                  "data-id='node_dom_attrs' " +
+                  "obj-id='" + selectedNode.obj_id + "' >" +
                 "<start-search-scope></start-search-scope>" +
-                node_dom_attrs.prettyPrint(data, filter) + 
+                node_dom_attrs.prettyPrint(data, -1, filter) + 
                 "<end-search-scope></end-search-scope>" +
             "</examine-objects>";
+          messages.post( 'list-search-cotext', 
+            {
+              'data_id': 'node_dom_attrs', 
+              'rt_id': selectedNode.rt_id,
+              'obj_id': selectedNode.obj_id, 
+              'depth': '-1'
+            });
         }
     
       }
@@ -99,22 +107,32 @@
     }
   }
 
+  var onListSearchContext = function(msg)
+  {
+    if( msg.data_id == 'node_dom_attrs' )
+    {
+      listTextSearch.onNewContext(msg);
+    }
+  }
+
   messages.addListener('view-created', onViewCreated);
   messages.addListener('view-destroyed', onViewDestroyed);
 
+  messages.addListener('list-search-cotext', onListSearchContext);
+
   eventHandlers.input['dom-attrs-text-search'] = function(event, target)
   {
+    listTextSearch.setInput(target);
     listTextSearch.searchDelayed(target.value);
   }
-  /*
-  eventHandlers.keyup['dom-markup-text-search'] = function(event, target)
+  
+  eventHandlers.keyup['dom-attrs-text-search'] = function(event, target)
   {
-    if( event.keyCode == 13 )
-    {
-      textSearch.highlight();
-    }
+    listTextSearch.handleEnterKey();
+
+    
   }
-  */
+  
 
   // button handlers
 

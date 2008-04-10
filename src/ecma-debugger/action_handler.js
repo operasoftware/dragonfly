@@ -114,97 +114,140 @@ var action_handler = new function()
     }
   }
 
+ 
   handlers['examine-object-2'] = function(event, target)
   {
-    var 
+    var
     parent = target.parentNode,
-    parent_parent = parent.parentNode, 
+    parent_parent = parent.parentNode,
     obj_id = parent.getAttribute('obj-id'),
+    depth = parseInt(parent.getAttribute('depth')),
     rt_id = parent_parent.getAttribute('rt-id'),
     data_id = parent_parent.getAttribute('data-id'),
     margin = parseInt(parent.style.paddingLeft),
-    is_expanded = target.disabled 
-      || ( parent.nextSibling && parseInt(parent.nextSibling.style.paddingLeft) > margin ),
     data = null,
-    obj_data = window[data_id], 
-    filter = null,
-    search_start = null,
-    search_end = null,
-    cur = null,
-    is_in_search_scope = true,
-    is_child = true;
-    if( obj_data )
+    cur = parent,
+    i = 0,
+    cur_2 = parent.nextSibling,
+    is_expanded = target.disabled
+      || ( cur_2 && parseInt(cur_2.style.paddingLeft) > margin )
+      // if it's the active search scope
+      || ( ( cur_2 = cur_2.nextSibling ) && parseInt(cur_2.style.paddingLeft) > margin ) ,
+    is_in_search_scope =
+      parent.previousSibling && parent.previousSibling.nodeName == "start-search-scope",
+    range = null;
+    if( window[data_id] )
     {
       if( is_expanded )
       {
         if( !target.disabled )
         {
-          obj_data.clearData(rt_id, obj_id);
-          var range = document.createRange();
+          window[data_id].clearData(rt_id, obj_id);
+          range = document.createRange();
           range.setStartAfter(parent);
-          cur = parent;
-          while(is_in_search_scope && cur.nextSibling &&  cur.nodeName != "end-search-scope")
+          while( ( cur = cur.nextSibling ) && ( parseInt(cur.style.paddingLeft) > margin || cur.nodeName != "item" ))
           {
-            cur = cur.nextSibling;
-            is_child = is_child && parseInt(cur.style.paddingLeft) > margin;
-            
-            is_in_search_scope = cur.nodeName != "start-search-scope" || is_child;
-          }
-          if( is_in_search_scope = cur && cur.nodeName == "end-search-scope" )
-          {
-            search_start = parent_parent.getElementsByTagName('start-search-scope')[0];
-            parent_parent.removeChild(search_start);
-            search_end = parent_parent.getElementsByTagName('end-search-scope')[0];
-            parent_parent.removeChild(search_end);
-          }
-          cur = parent;
-          while( cur.nextSibling && parseInt(cur.nextSibling.style.paddingLeft) > margin )
-          {
-            cur = cur.nextSibling;
             range.setEndAfter(cur);
+            cur_2 = cur;
+            if( cur.nodeName == "end-search-scope" )
+            {
+              is_in_search_scope = true;
+            }
           }
-          range.deleteContents();
           if(is_in_search_scope)
           {
-            cur = parent;
-            //opera.postError( is_in_search_scope +' '+cur.nextSibling.style.paddingLeft );
-            while( cur.nextSibling && parseInt(cur.nextSibling.style.paddingLeft) >= margin )
+            cur = cur_2;
+            while( ( cur = cur.nextSibling ) && ( parseInt(cur.style.paddingLeft) >= margin || cur.nodeName != "item" ) )
             {
-              //opera.postError(cur.nextSibling.style.paddingLeft);
-              cur = cur.nextSibling;
+              cur_2 = cur;
             }
-            parent_parent.insertAfter(search_end, cur);
+            parent_parent.insertAfter(parent_parent.getElementsByTagName('end-search-scope')[0], cur_2);
             cur = parent;
-            while( cur.previousSibling && parseInt(cur.previousSibling.style.paddingLeft) >= margin )
+            while( ( cur = cur.previousSibling ) && ( parseInt(cur.style.paddingLeft) >= margin || cur.nodeName != "item" ) )
             {
-              cur = cur.previousSibling;
+              cur_2 = cur;
             }
-            parent_parent.insertBefore(search_start, cur.previousSibling ? cur.previousSibling : cur);
-            search_start.style.paddingLeft =search_end.style.paddingLeft = margin + "px";
+            // the start of the list
+            if( !cur )
+            {
+              cur_2 = cur; 
+            }
+            cur = parent_parent.getElementsByTagName('start-search-scope')[0].previousSibling;
+            if( cur )
+            {
+              cur.removeClass('search-scope');
+            }
+            if( cur_2 )
+            {
+              parent_parent.insertAfter(parent_parent.getElementsByTagName('start-search-scope')[0],
+                cur_2 );
+              cur_2.addClass('search-scope');
+              messages.post( 'list-search-cotext', 
+                {
+                  'data_id': data_id,
+                  'rt_id': rt_id,
+                  'obj_id': cur_2.getAttribute('obj-id'), 
+                  'depth': cur_2.getAttribute('depth')
+                });
+            }
+            else
+            {
+              parent_parent.insertBefore(parent_parent.getElementsByTagName('start-search-scope')[0],
+                parent_parent.firstChild );
+              messages.post( 'list-search-cotext', 
+                {
+                  'data_id': data_id, 
+                  'rt_id': rt_id,
+                  'obj_id': parent_parent.getAttribute('obj-id'), 
+                  'depth': '-1'
+                });
+            }
+            
           }
-          
+          range.deleteContents();
+          parent.removeClass('search-scope');
           target.style.removeProperty("background-position");
         }
       }
       else
       {
-        data = obj_data.getData(rt_id, obj_id, arguments);
-        if( data )
+        if( data = window[data_id].getData(rt_id, obj_id, depth, arguments) )
         {
           if( data.length )
           {
-            search_start = 
-              parent_parent.getElementsByTagName('start-search-scope')[0]
-              || document.createElement('start-search-scope');
-            parent_parent.insertBefore( search_start, parent);
-            search_end = 
-              parent_parent.getElementsByTagName('end-search-scope')[0]
-              || document.createElement('end-search-scope');
-            parent_parent.insertAfter( search_end, parent);
-            search_start.style.paddingLeft = parent.style.paddingLeft = margin + "px";
-            filter = node_dom_attrs.getDataFilter();
-            parent.spliceInnerHTML(obj_data.prettyPrint(data, filter)); 
+
+            parent_parent.insertAfter( parent_parent.getElementsByTagName('end-search-scope')[0], parent);
+            parent.spliceInnerHTML(window[data_id].prettyPrint(data, depth, node_dom_attrs.getDataFilter()));
+            parent_parent.insertAfter( parent_parent.getElementsByTagName('start-search-scope')[0], parent);
+            cur_2 = parent_parent.getElementsByClassName('search-scope');
+            while( cur = cur_2[0] )
+            {
+              cur.removeClass('search-scope');
+            }
+            parent.addClass('search-scope');
+            cur = parent;
+            i = parseInt(cur.getAttribute('depth'));
+            while( cur = cur.previousSibling )
+            {
+              if( parseInt(cur.getAttribute('depth')) < i )
+              {
+                i = parseInt(cur.getAttribute('depth'));
+                cur.addClass('search-scope');
+                if( !i )
+                {
+                  break;
+                }
+              }
+            }
             target.style.backgroundPosition = "0px -11px";
+            messages.post( 'list-search-cotext', 
+              {
+                'data_id': data_id, 
+                'rt_id': rt_id,
+                'obj_id': obj_id, 
+                'depth': depth
+              });
+            
           }
           else
           {

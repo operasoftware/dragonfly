@@ -599,6 +599,7 @@
 
   eventHandlers.input['dom-markup-text-search'] = function(event, target)
   {
+    textSearch.setInput(target);
     textSearch.searchDelayed(target.value);
   }
 

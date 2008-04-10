@@ -150,7 +150,7 @@ var ObjectDataBase = new function()
   this.__cache = null;
   this.__cached_index = 0;
 
-  this.__getData = function(index)
+  this.__getData = function(index, target_depth)
   {
     /* TODO test if this works and if it's needed
     if( this.__cached_index == index && this.__cache )
@@ -159,23 +159,40 @@ var ObjectDataBase = new function()
     }
     */
     var ret = [], i = index + 1, depth = this.data[index][DEPTH], prop = null;
-    for ( ; ( prop = this.data[i] ) && prop[DEPTH] > depth; i++ )
+    // it's a back refernce, return only the properties from the current level 
+    // without the expanded properties and adjust the depth
+    if( target_depth > this.data[index][DEPTH] ) 
     {
-      ret[ret.length] = prop;
+      //opera.postError("backreference")
+      depth += 1;
+      for ( ; ( prop = this.data[i] ); i++ )
+      {
+        if(  prop[DEPTH] == depth )
+        {
+          ret[ret.length] = prop;
+        }
+      }
+    }
+    else
+    {
+      for ( ; ( prop = this.data[i] ) && prop[DEPTH] > depth; i++ )
+      {
+        ret[ret.length] = prop;
+      }
     }
     //this.__cache = ret;
     //this.__cached_index = index;
     return ret;
   }
 
-  this.getData = function(rt_id, obj_id, org_args)
+  this.getData = function(rt_id, obj_id, depth, org_args)
   {
     var index = this.getObject(obj_id);
     if( rt_id == this.rt_id && index > -1 )
     {
       if( this.data[index][QUERIED] )
       {
-        return this.__getData(index);
+        return this.__getData(index, depth);
       }
     }
     var tag = tagManager.setCB(this, this.parseXML, [rt_id, obj_id, org_args]);
@@ -196,12 +213,15 @@ var ObjectDataBase = new function()
     }
   }
 
-  this.prettyPrint = function(data, filter)
+  this.prettyPrint = function(data, target_depth, filter)
   {
     var ret = "", prop = null, i = 0, val = "";
+    // in case of a back reference
+    //opera.postError(target_depth +' '+ data[0][DEPTH]);
+    var forced_depth = data[0] && target_depth > data[0][DEPTH] && target_depth + 1 || 0;
+    var depth = 0;
     for( ; prop = data[i]; i++)
     {
-      
       val = prop[VALUE];
       if( filter && val in filter )
       {
@@ -213,37 +233,28 @@ var ObjectDataBase = new function()
       }
       val = val.replace(/</g, "&gt;");
 
+      depth = forced_depth || prop[DEPTH];
 
       if( prop[TYPE] == 'object')
       {
-        if(val == this.data[0][VALUE])
-        {
-          ret += "<item style='padding-left:" + ( 9 + 16 * prop[DEPTH] ) + "px'" +
-                        " obj-id='" + prop[VALUE] + "' class='back-refernce'>" +
-                    "<key>" + prop[KEY] + "</key>" +
-                    "<value class='object'>object</value>" +
-                  "</item>";
-        }
-        else
-        {
-          ret += "<item style='padding-left:" + ( 9 + 16 * prop[DEPTH] ) + "px'" +
-                        " obj-id='" + prop[VALUE] + "'>" +
-                    "<input type='button' handler='examine-object-2'  class='folder-key'/>" +
-                    "<key>" + prop[KEY] + "</key>" +
-                    "<value class='object'>object</value>" +
-                  "</item>";
-        }
+
+        ret += "<item style='padding-left:" + ( 9 + 16 * depth ) + "px'" +
+                      " obj-id='" + prop[VALUE] + "' "+
+                      " depth='" + depth + "'>" +
+                  "<input type='button' handler='examine-object-2'  class='folder-key'/>" +
+                  "<key>" + prop[KEY] + "</key>" +
+                  "<value class='object'>object</value>" +
+                "</item>";
+        
       }
       else
       {
-        ret += "<item style='padding-left:" + ( 9 + 16 * prop[DEPTH] ) + "px'>" +
+        ret += "<item style='padding-left:" + ( 9 + 16 * depth ) + "px'>" +
                   "<key>" + prop[KEY] + "</key>" +
                   "<value class='" + prop[TYPE] + "'>" + val + "</value>" + 
                 "</item>";
 
       }
-
-      
 
     }
     return ret;

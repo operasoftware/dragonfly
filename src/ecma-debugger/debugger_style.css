@@ -524,7 +524,7 @@ examine-objects, examine-objects item {
   display:block;
   }
 
-examine-objects {
+examine-objects, .dom-attrs {
   background-color: hsl(0, 0%, 92%);
   }
 
@@ -550,14 +550,24 @@ start-search-scope, end-search-scope {
   background-color: #fff;
   }
 
-start-search-scope {
-  border-top: 1px solid hsl(0, 0%, 75%);
-  margin-top: 3px;
+
+item.search-scope {
+  padding-top: 3px;
+  padding-bottom: 3px;
+  border-bottom: 1px solid hsl(0, 0%, 75%);
+  border-width: 1px 0;
+  background-color: hsl(0, 0%, 97%);
+  font-weight: bold;
   }
 
+
+item.search-scope + item.search-scope {
+  border-top-width: 0;
+  }
+
+
 examine-objects start-search-scope:first-child {
-  border-top: 4px solid hsl(0, 0%, 100%);
-  margin-top: 0;
+  height: 4px;
   }
 
 end-search-scope {
