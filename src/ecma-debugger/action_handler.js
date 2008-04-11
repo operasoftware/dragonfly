@@ -129,6 +129,7 @@ var action_handler = new function()
     cur = parent,
     i = 0,
     cur_2 = parent.nextSibling,
+    cur_3 = null,
     is_expanded = target.disabled
       || ( cur_2 && parseInt(cur_2.style.paddingLeft) > margin )
       // if it's the active search scope
@@ -142,7 +143,7 @@ var action_handler = new function()
       {
         if( !target.disabled )
         {
-          window[data_id].clearData(rt_id, obj_id);
+          window[data_id].clearData(rt_id, obj_id, depth, parent.getElementsByTagName('key')[0].textContent);
           range = document.createRange();
           range.setStartAfter(parent);
           while( ( cur = cur.nextSibling ) && ( parseInt(cur.style.paddingLeft) > margin || cur.nodeName != "item" ))
@@ -167,27 +168,22 @@ var action_handler = new function()
             {
               cur_2 = cur;
             }
-            // the start of the list
-            if( !cur )
+            if( cur_3 = parent_parent.getElementsByTagName('start-search-scope')[0].previousSibling )
             {
-              cur_2 = cur; 
+              cur_3.removeClass('search-scope');
             }
-            cur = parent_parent.getElementsByTagName('start-search-scope')[0].previousSibling;
             if( cur )
             {
-              cur.removeClass('search-scope');
-            }
-            if( cur_2 )
-            {
               parent_parent.insertAfter(parent_parent.getElementsByTagName('start-search-scope')[0],
-                cur_2 );
-              cur_2.addClass('search-scope');
+                cur );
+              cur.addClass('search-scope');
               messages.post( 'list-search-cotext', 
                 {
                   'data_id': data_id,
                   'rt_id': rt_id,
-                  'obj_id': cur_2.getAttribute('obj-id'), 
-                  'depth': cur_2.getAttribute('depth')
+                  'obj_id': cur.getAttribute('obj-id'), 
+                  'depth': cur.getAttribute('depth'),
+                  'key': cur.getElementsByTagName('key')[0].textContent
                 });
             }
             else
@@ -199,7 +195,8 @@ var action_handler = new function()
                   'data_id': data_id, 
                   'rt_id': rt_id,
                   'obj_id': parent_parent.getAttribute('obj-id'), 
-                  'depth': '-1'
+                  'depth': '-1',
+                  'key': ''
                 });
             }
             
@@ -211,8 +208,10 @@ var action_handler = new function()
       }
       else
       {
+        
         if( data = window[data_id].getData(rt_id, obj_id, depth, arguments) )
         {
+         
           if( data.length )
           {
 
@@ -245,7 +244,8 @@ var action_handler = new function()
                 'data_id': data_id, 
                 'rt_id': rt_id,
                 'obj_id': obj_id, 
-                'depth': depth
+                'depth': depth,
+                'key': parent.getElementsByTagName('key')[0].textContent
               });
             
           }

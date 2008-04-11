@@ -13,13 +13,19 @@ var ListTextSearch = function()
   timeouts = new Timeouts(),
   cache = {},
   current_id = '',
-  current_context = null;
+  current_context = null,
+  go_back = {};
 
   this.search = function(new_search_therm)
   {
     var cur = null, cur_2 = null, depth = 0, display = '';
+
     if( new_search_therm != search_therm )
     {
+      if(go_back[current_id])
+      {
+        delete go_back[current_id];
+      }
       search_results = [];
       cache[current_id] = search_therm = new_search_therm;
       cur = container.getElementsByTagName('start-search-scope')[0];
@@ -32,7 +38,6 @@ var ListTextSearch = function()
         cur.style.display = display;
         if( !display )
         {
-          //opera.postError(display +' '+cur.getElementsByTagName('key')[0].textContent)
           search_results[search_results.length] = cur;
         }
         depth = parseInt( cur.getAttribute('depth'));
@@ -55,7 +60,7 @@ var ListTextSearch = function()
   
   this.handleEnterKey = function()
   { 
-    
+    //opera.postError('keycode: '+event.keyCode)
     switch( event.keyCode)
     {
       case 13:
@@ -78,7 +83,15 @@ var ListTextSearch = function()
           if( target && ( target = target.getElementsByTagName('input')[0] ) )
           {
             // TOD this call causes problems
-            target.click();
+            if( go_back[current_id] )
+            {
+              target.click();
+            }
+            else
+            {
+              go_back[current_id] = 1;
+            }
+            //target.click();
           }
         }
         
@@ -96,7 +109,8 @@ var ListTextSearch = function()
       for( ; item = items[i]; i++)
       {
         if( item.getAttribute('obj-id') == current_context.obj_id 
-            && item.getAttribute('depth') == current_context.depth )
+            && item.getAttribute('depth') == current_context.depth 
+            && item.getElementsByTagName('key')[0].textContent == current_context.key )
         {
           break;
         }
@@ -114,7 +128,7 @@ var ListTextSearch = function()
       if( cache[current_id] )
       {
         input.value = cache[current_id];
-        this.search(cache[current_id]);
+        //this.search(cache[current_id]);
       }
       else
       {

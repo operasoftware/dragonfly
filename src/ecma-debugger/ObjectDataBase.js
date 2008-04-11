@@ -108,7 +108,6 @@ var ObjectDataBase = new function()
 
       unsorted.sort(function(a, b){ return a[KEY] < b[KEY] ? -1 : a[KEY] > b[KEY] ? 1 : 0});
       this.data.splice.apply(this.data, unsorted);
-      //alert(org_args +' '+ org_args[0].__call_count)
       if( org_args && !org_args[0].__call_count )
       {
         org_args[0].__call_count = 1;
@@ -118,12 +117,16 @@ var ObjectDataBase = new function()
     }
   }
 
-  this.getObject = function(obj_id)
+
+  this.getObject = function(obj_id, depth, key)
   {
     var prop = null, i = 0;
     for( ; prop = this.data[i]; i++)
     {
-      if( prop[VALUE] == obj_id )
+      if( prop[VALUE] == obj_id  
+          && ( isNaN(depth) || prop[DEPTH] == depth )
+          && ( !key || prop[KEY] == key )
+        )
       {
         return i;
       }
@@ -163,7 +166,6 @@ var ObjectDataBase = new function()
     // without the expanded properties and adjust the depth
     if( target_depth > this.data[index][DEPTH] ) 
     {
-      //opera.postError("backreference")
       depth += 1;
       for ( ; ( prop = this.data[i] ); i++ )
       {
@@ -200,9 +202,10 @@ var ObjectDataBase = new function()
     return null;
   }
 
-  this.clearData = function(rt_id, obj_id)
+  this.clearData = function(rt_id, obj_id, depth, key)
   {
-    var index = this.getObject(obj_id), i = 0, depth = 0, prop = null;
+      // back references can be tricky
+    var index = this.getObject(obj_id, depth, key), i = 0, depth = 0, prop = null;
     if( rt_id == this.rt_id && index > -1 )
     {
       i = index + 1;
@@ -217,7 +220,6 @@ var ObjectDataBase = new function()
   {
     var ret = "", prop = null, i = 0, val = "";
     // in case of a back reference
-    //opera.postError(target_depth +' '+ data[0][DEPTH]);
     var forced_depth = data[0] && target_depth > data[0][DEPTH] && target_depth + 1 || 0;
     var depth = 0;
     for( ; prop = data[i]; i++)

@@ -554,7 +554,7 @@ start-search-scope, end-search-scope {
 item.search-scope {
   padding-top: 3px;
   padding-bottom: 3px;
-  border-bottom: 1px solid hsl(0, 0%, 75%);
+  border: 1px solid hsl(0, 0%, 75%);
   border-width: 1px 0;
   background-color: hsl(0, 0%, 97%);
   font-weight: bold;
