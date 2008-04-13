@@ -202,7 +202,7 @@ var client = new function()
       if( opera.scopeAddClient )
       {
         self.post = post_scope;
-        opera.scopeAddClient(host_connected, receive, quit);
+        opera.scopeAddClient(host_connected, receive, quit, 0);
       }
       else
       {
