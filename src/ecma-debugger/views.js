@@ -570,7 +570,7 @@
     {
       settings.debug_remote_setting.set('debug-remote', is_debug_remote);
       settings.debug_remote_setting.set('port', port);  
-      alert(is_debug_remote+' '+port)
+      client.scopeSetupClient();
     }
   }
 

@@ -115,10 +115,17 @@ var client = new function()
 
   }
 
+  this.scopeSetupClient = function()
+  {      
+    var port = settings.debug_remote_setting.get('debug-remote') 
+      && settings.debug_remote_setting.get('port')
+      || 0; 
+    opera.scopeAddClient(host_connected, receive, quit, port);
+  }
+
 
   this.setup = function()
   {
-
     document.addEventListener('load', arguments.callee, false);
 
     var args = location.search, params = {}, arg = '', i = 0, ele = null;
@@ -202,7 +209,7 @@ var client = new function()
       if( opera.scopeAddClient )
       {
         self.post = post_scope;
-        opera.scopeAddClient(host_connected, receive, quit, 0);
+        self.scopeSetupClient();
       }
       else
       {
