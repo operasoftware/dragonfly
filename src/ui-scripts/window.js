@@ -13,6 +13,8 @@ var UIWindowBase = new function()
   this.default_height = 300; 
   this.default_top = 100;
   this.default_left = 100;
+  
+  
 
   var 
   min_width = 200, 
@@ -160,12 +162,29 @@ var UIWindowBase = new function()
   bottom_delta = 0,
   right_delta = 0,
   focus_catcher = null,
+  window_shadows = null,
 
   store_event = function(event)
   {
     __event = event;
     focus_catcher.focus();
   },
+  
+  force_reflow_shadows = function()
+  {
+    if(window_shadows)
+    {
+      window_shadows.innerHTML = "\
+        <window-shadow class='top-left'></window-shadow>\
+        <window-shadow class='top'></window-shadow>\
+        <window-shadow class='top-right'></window-shadow>\
+        <window-shadow class='left'></window-shadow>\
+        <window-shadow class='right'></window-shadow>\
+        <window-shadow class='bottom-left'></window-shadow>\
+        <window-shadow class='bottom'></window-shadow>\
+        <window-shadow class='bottom-right'></window-shadow>";
+    }
+  }
 
   mousedown = function(event)
   {
@@ -173,10 +192,15 @@ var UIWindowBase = new function()
     {
       if( handler in handlers )
       {
+        if( interval )
+        {
+          interval = clearInterval( interval );
+        }
         if(!focus_catcher)
         {
           focus_catcher = UIBase.getFocusCatcher();
         }
+        window_shadows = event.target.parentNode.getElementsByTagName('window-shadows')[0];
         current_style = event.target.parentNode.style;
         self.setZIndex();
         current_style.zIndex = 200;
@@ -222,7 +246,7 @@ var UIWindowBase = new function()
     document.onselectstart = null;
     interval = clearInterval( interval );
     update_handler();
-    current_target = current_style = __event = update_handler = null;
+    window_shadows = current_target = current_style = __event = update_handler = null;
   };
 
   set['window-move'] = function(event)
@@ -325,6 +349,7 @@ var UIWindowBase = new function()
         current_style.height = ( current_target.height = height ) + 'px';
         current_target.update(); 
         focus_catcher.focus();
+        force_reflow_shadows();
       }
     }
   }

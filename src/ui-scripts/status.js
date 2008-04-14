@@ -11,13 +11,13 @@ var StatusbarBase = function()
   {
     var statusbar = document.getElementById(this.type + '-to-' + this.cell.id) || this.update();
     statusbar.render(templates[this.type](this))
-    this.updateInfo('test');
+    this.updateInfo(' ');
   } 
   
   this.updateInfo = function(string)
   {
     var statusbar = document.getElementById(this.type + '-to-' + this.cell.id) || this.update();
-    statusbar.getElementsByTagName('info')[0].textContent =string;
+    statusbar.getElementsByTagName('info')[0].textContent = string;
   }
 
   this.setDimensions = function(force_redraw)

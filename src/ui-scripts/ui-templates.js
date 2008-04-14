@@ -6,7 +6,7 @@
   {
     return ['tab', 
       ['input', 'type', 'button', 'value', obj.name, 'handler', 'tab', ],
-      /* comming later ['input', 'type', 'button', 'handler', 'close-tab', ], */
+      ( obj.has_close_button ? ['input', 'type', 'button', 'handler', 'close-tab', ] : [] ), 
       'ref-id', obj.ref_id
     ].concat(is_active_tab ? ['class', 'active'] : [] );
   }
@@ -16,7 +16,7 @@
     var ret = ['toolbar-filters'], filter = '', i = 0;
     for( ; filter = filters[i]; i++)
     {
-      ret[ret.length] = ['input', 'handler', filter.handler, 'title', filter.title];
+      ret[ret.length] = ['input', 'type', 'text', 'handler', filter.handler, 'title', filter.title];
     }
     return ret;
   }
@@ -31,7 +31,10 @@
           'type', 'button', 
           'handler', button.handler, 
           'title', button.title
-        ].concat( button.id ? ['id', button.id] : [], button.disabled ? ['disabled', 'disabled'] : [] );
+        ].concat(
+            button.id ? ['id', button.id] : [],
+            button.disabled ? ['disabled', 'disabled'] : [],
+            button.param ? ['param', button.param] :[] );
     }
     return ret;
   }
@@ -47,6 +50,7 @@
       {
         setting = settings[arr[0]];
         key = arr[1];
+        
         ret[ret.length] = 
           ['input', 
             'type', 'button', 
@@ -104,7 +108,7 @@
   this['top-tabs'] = function(obj)
   {
     //alert(tab.tabs.length)
-    var ret = [this.viewMenu()].
+    var ret = [].
       // this is a quick hack
       concat( [ templates.buttons(toolbars['main-view-top-tab'] && toolbars['main-view-top-tab'].buttons || [])] );
     var tab = null, i = 0;
@@ -140,16 +144,25 @@
   {
     
     var ret = ['settings', self.settingsHeader(view_id, view_name, is_unfolded)];
-    if( is_unfolded)
+    if( is_unfolded )
     {
+      
       var setting = settings[view_id];
       var settings_map = setting.setting_map;
       var cat_name = '';
-      // so far only checkboxes
-      for( cat_name in settings_map ) 
+      if(setting.template)
       {
-        ret[ret.length] = this[cat_name](setting, settings_map[cat_name]);
+        ret[ret.length] = setting.template();
       }
+      else
+      {
+        // so far only checkboxes
+        for( cat_name in settings_map ) 
+        {
+          ret[ret.length] = this[cat_name](setting, settings_map[cat_name]);
+        }
+      }
+
     }
     return ret;
   }
@@ -257,7 +270,7 @@
 
   this.window_shadows = function()
   {
-    return [ 
+    return ['window-shadows',
       ['window-shadow', 'class', 'top-left'],
       ['window-shadow', 'class', 'top'],
       ['window-shadow', 'class', 'top-right'],

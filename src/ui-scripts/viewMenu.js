@@ -30,7 +30,7 @@ var ViewMenu = function(menu_id)
     if( !ul)
     {
       var 
-        _views = ViewBase.getSingleViews(),
+        _views = ViewBase.getSingleViews(['ishidden_in_menu']),
         unvisbibleViews = [],
         view = '',
         i = 0;

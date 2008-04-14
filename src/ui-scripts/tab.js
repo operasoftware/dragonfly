@@ -9,10 +9,11 @@ var TabBase = new function()
     return 'tab-' + (id_count++).toString();
   }
 
-  this.init = function(ref_id, name)
+  this.init = function(ref_id, name, has_close_button)
   {
     this.name = name;
     this.ref_id = ref_id;
+    this.has_close_button = has_close_button;
     ids [ this.id = getId() ] = this;
   }
 
@@ -28,9 +29,10 @@ var TabBase = new function()
 
 }
 
-var Tab = function(ref_id, name)
+var Tab = function(ref_id, name, has_close_button)
 {
-  this.init(ref_id, name)
+  // at some point all tabs will have a close button
+  this.init(ref_id, name, has_close_button)
 }
 
 Tab.prototype = TabBase;

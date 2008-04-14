@@ -143,6 +143,7 @@ var UIBase = new function()
           {
             target[property.t_name ? property.t_name : property.s_name] = 
               parseInt(declaration.getPropertyValue(property.s_name));
+            //opera.postError((property.t_name ? property.t_name : property.s_name) + ' '+target[property.t_name ? property.t_name : property.s_name])
           }
         }
       }

@@ -9,8 +9,15 @@ var ViewBase = new function()
   {
     return 'view-' + (id_count++).toString();
   }
+  
+  var filter = function(view, filters)
+  {
+    var filter = '', i = 0;
+    for( ; (filter = filters[i]) && !view[filter]; i++ );
+    return filter && true || false; 
+  }
 
-  this.getSingleViews = function()
+  this.getSingleViews = function(filters)
   {
     var 
       id = '', 
@@ -18,7 +25,7 @@ var ViewBase = new function()
       ret = [];
     for( ; id = ids[i]; i++)
     {
-      if(views[id].type == 'single-view' && !views[id].ishidden_in_menu)
+      if(views[id].type == 'single-view' && ( !filters || !filter(views[id], filters) ) )
       {
         ret[ret.length] = id;
       }

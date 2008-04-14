@@ -13,7 +13,13 @@ var TabsBase = function()
   
   this.tabs = [];
   this.activeTab = '';
-
+    
+  this.hasTab = function(ref_id)
+  {
+    var i = 0, tab = null;
+    for( ; ( tab = this.tabs[i] ) && tab.ref_id != ref_id; i++);
+    return tab && true || false;
+  }
 
   this.addTab = function()
   {
@@ -153,7 +159,7 @@ var TabsBase = function()
      // set css properties
     if(!this.default_height)
     {
-      this.setCSSProperties()
+      this.setCSSProperties();
     }
 
     dim = this.getTopPosition();
@@ -171,7 +177,7 @@ var TabsBase = function()
       this.left = dim;
     }
 
-    dim = this.cell.width - this.vertical_border_padding;
+    dim = this.cell.width - this.horizontal_border_padding;
     if( dim != this.width)
     {
       this.is_dirty = true;
