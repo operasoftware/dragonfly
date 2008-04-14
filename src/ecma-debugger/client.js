@@ -193,6 +193,11 @@ var client = new function()
       window.__times_dom = [];
     }
 
+    if( !ini.debug || !params['error-console'] )
+    {
+      // opera.postError = function(){};
+    }
+
 
 
   

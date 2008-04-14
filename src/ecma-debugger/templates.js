@@ -9,8 +9,11 @@
     {
       ret[ret.length] = ['li', prop+': '+enviroment[prop]];
     }
+    ret[ret.length] = ['li', 'Dragonfly Version: ' + ini.dragonfly_version];
+    ret[ret.length] = ['li', 'Revision Number: ' + ini.revision_number];
     return ['div', ret, 'class', 'padding'];
   }
+
 
   this.windows = function(windows, win_type)
   {

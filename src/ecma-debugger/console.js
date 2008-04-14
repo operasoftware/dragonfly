@@ -81,18 +81,24 @@
 var console_messages = new function()
 {
   var msgs = [];
+
+  var url_self = location.host + location.pathname;
   
   this.handle = function(message_event)
   {
-    var message = {};
-    var children = message_event.documentElement.childNodes, child=null, i=0, value = '';
-    for ( ; child = children[i]; i++)
+    var uri = message_event.getNodeData('uri');
+    if( uri && uri.indexOf(url_self) == -1 )
     {
-      message[child.nodeName] = child.textContent;
-      
+      var message = {};
+      var children = message_event.documentElement.childNodes, child=null, i=0, value = '';
+      for ( ; child = children[i]; i++)
+      {
+        message[child.nodeName] = child.textContent;
+        
+      }
+      msgs[msgs.length] = message;
+      views.console.update();
     }
-    msgs[msgs.length] = message;
-    views.console.update();
   }
 
   this.clear = function()
