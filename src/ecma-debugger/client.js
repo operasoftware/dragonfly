@@ -261,8 +261,11 @@ var client = new function()
         this.setup();
       }  
     );
-
+    
+    // event handlers to resize the views
     new SlideViews(document);
+    
+    document.documentElement.render(templates.viewMenu());
   }
 
   this.onquit = function()
@@ -321,7 +324,7 @@ var dom_rough_layout =
       ]
     },
     { 
-      width: 250, tabs: ['css-inspector', 'dom_attrs'] 
+      width: 250, tabs: ['css-inspector', 'dom_attrs', 'css-layout'] 
     }
   ]
 }
@@ -354,7 +357,7 @@ var js_rough_layout =
 var main_layout =
 {
   id: 'main-view', 
-  tabs: ['js_new', 'dom_new', 'console_new', 'export_new']
+  tabs: ['js_new', 'dom_new', 'console_new'/*, 'export_new'*/]
 }
 
 var resolve_map_properties = 
