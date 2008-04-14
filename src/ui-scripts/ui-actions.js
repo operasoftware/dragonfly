@@ -13,7 +13,6 @@ var EventHandler = function(type)
 
   var handler = function(event)
   {
-    
     var ele = event.target, handler = ele.getAttribute('handler'), container = null;
     while( !handler && ( ele = ele.parentElement ) )
     {
@@ -45,6 +44,7 @@ new EventHandler('click');
 new EventHandler('change');
 new EventHandler('input');
 new EventHandler('keyup');
+new EventHandler('mousedown');
 
 /***** click handler *****/
 
@@ -68,7 +68,7 @@ eventHandlers.click['close-tab'] = function(event, target)
 {
   target = target.parentElement;
   var container = target.parentElement;
-  var tabs = UI.prototype.getUIById(target.parentElement.getAttribute('ui-id'));
+  var tabs = UIBase.getUIById(target.parentElement.getAttribute('ui-id'));
   tabs.removeTab(target.getAttribute('ref-id'));
 }
 
@@ -103,7 +103,13 @@ eventHandlers.click['top-settings'] = function(event)
   UIWindowBase.showWindow('settings_view');
 }
 
-eventHandlers.click['toolbar-switch'] = function(event)
+eventHandlers.click['documentation'] = function(event)
+{
+  views.documentation.setURL( event.target.getAttribute('param'))
+  UIWindowBase.showWindow('documentation');
+}
+
+eventHandlers.mousedown['toolbar-switch'] = function(event)
 {
   var target = event.target;
   var arr = target.getAttribute('key').split('.');
@@ -114,8 +120,6 @@ eventHandlers.click['toolbar-switch'] = function(event)
   views[setting].update();
   messages.post("setting-changed", {id: setting, key: key});
   target.setAttribute('is-active', is_active ? 'true' : 'false');
-
-
 }
 
 
