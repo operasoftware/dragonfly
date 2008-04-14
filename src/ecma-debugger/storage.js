@@ -4,7 +4,7 @@ storage = new function()
   {
     document.cookie = name + "="+
       encodeURIComponent(value)+
-      "; expires="+(new Date(new Date().getTime()+time)).toGMTString()+
+      "; expires="+(new Date(new Date().getTime()+ ( time || 360 * 24 * 60 * 60 * 1000 ))).toGMTString()+
       "; path=/";
   }
 
@@ -17,7 +17,23 @@ storage = new function()
     }
 	  return null;
   }
-
+  
+  this.set = function(key, value)
+  {
+    setCookie(key, JSON.stringify(value))
+  }
+  
+  this.get = function(key, default_value)
+  {
+    var val = getCookie(key);
+    if(val)
+    {
+      // this can be false;
+      return JSON.parse(val);
+    }
+    return default_value;
+  }
+  
   var storage = {};
 
   this.config_stop_at = 
