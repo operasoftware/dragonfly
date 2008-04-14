@@ -4,7 +4,18 @@ var TopCell = function(layout, setDimensions, onresize)
 {
   var self = this;
   this.setStartDimesions = setDimensions;
+  var resize_timeout = new Timeouts();
   this.onresize = onresize;
+  
+  var delayed_resize = function()
+  {
+    self.onresize();
+  }
+  
+  var setDelayedResize = function()
+  {
+    resize_timeout.set(delayed_resize, 32);
+  }
 
   this.appendUiNodes = function()
   {
@@ -72,7 +83,7 @@ var TopCell = function(layout, setDimensions, onresize)
     }
   }
 
-  document.addEventListener('resize', function(event){self.onresize()}, false);
+  document.addEventListener('resize', setDelayedResize, false);
 
   this.init(layout);
   this.setStartDimesions();
