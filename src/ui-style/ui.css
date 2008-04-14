@@ -4,6 +4,7 @@ viewport {
   display: block;
   font-family: sans-serif;
   font-size: 12px;
+  overflow: hidden;
   }
 
 main-view { /**/
@@ -12,6 +13,7 @@ main-view { /**/
   display: block;
   position: relative;
   z-index: 1;
+  overflow: hidden;
   }
 
 windows-container, 
@@ -65,10 +67,10 @@ top-statusbar { /**/
 
 window-statusbar { /**/
   display: block;
-  background-color: #d4d8dd;
-	border-top: 1px solid #ccc;
-  line-height: 27px;
-  height: 27px;
+  background: #e1e4e9 url('../ui-images/window-dragger.png') no-repeat 100% 100%;
+  border-top: 1px solid #ccc;
+  line-height: 20px;
+  height: 20px;
   }
 
 info { /**/
@@ -87,8 +89,8 @@ top-toolbar { /**/
 window-toolbar { /**/
   display: block;
   height: 26px;
-	background-color: #e1e4e9;
-	border-bottom: 1px solid #ccc;
+  background-color: #e1e4e9;
+  border-bottom: 1px solid #ccc;
   }
 
 /* set with css. height, border and padding are supported */
@@ -226,25 +228,26 @@ tab:hover input[handler="tab"] {
 
 tab.active input[handler="tab"] {
   background-position: 100% -34px;
-	font-weight: bold;
+  font-weight: bold;
   }
 
 top-tabs { /* The top tabs container, replaced with, placed into or merged with top-toolbar */
   position: absolute;
-	top: 0;
-	left: 0;
-	background: url('../ui-images/tabcontainer.png') no-repeat 100% 0;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background: url('../ui-images/tabcontainer.png') no-repeat 100% 0;
   height: 20px;
-	padding: 7px 0 0 7px;
+  padding: 7px 200px 0px 7px;
   }
 		
 top-tabs:before {
-	position: absolute;
-	content: '';
-	top: 0;
-	left: 0;
+  position: absolute;
+  content: '';
+  top: 0;
+  left: 0;
   height: 100%;
-	width: 3px;
+  width: 3px;
   background: url('../ui-images/tabcontainer-left.png') no-repeat 0 0;
   }
 
@@ -255,43 +258,43 @@ top-tabs toolbar-buttons {
 
 top-tabs tab {  /**/
   float: left;
-  background: transparent url('../ui-images/top-tab-left.png') scroll no-repeat 0 0;
+  background: transparent url('../ui-images/top-tab.png') scroll no-repeat 100% 0;
   height: 19px;
   line-height: 19px;	
-  margin: 1px 5px 0 0;
+  margin: 1px 0 0 9px;
   }
 
 top-tabs tab:hover {
-  background-position: 0 -19px;
+  background-position: 100% -19px;
   }
 
 top-tabs tab.active {
-  background-position: 0 -38px;
+  background-position: 100% -38px;
   }
 
 top-tabs input[handler="tab"] {  /**/
-  background: transparent url('../ui-images/top-tab.png') scroll no-repeat 100% 0;
-  margin: 1 -4px 0 8px;
-  padding-left: 4px;
-  padding-right: 10px; /* to be removed when the close buttons are activated */
+  background: transparent url('../ui-images/top-tab-left.png') scroll no-repeat 0 0;
+  margin: 0 8px 0 -8px;
+  padding-left: 8px;
+  padding-right: 0px; /* to be removed when the close buttons are activated */
   height: 20px;
   line-height: 20px;
   }
 
 top-tabs tab:hover input[handler="tab"] {
-  background-position: 100% -19px;
+  background-position: 0 -19px;
   }
 
 top-tabs tab.active input[handler="tab"] {
-  background-position: 100% -38px;
-	font-weight: bold;
+  background-position: 0 -38px;
+  font-weight: bold;
   }
 
-input[handler="close-tab"] { /* Currently not in use? */ 
+input[handler="close-tab"] { /* Currently not in use? Now it is :) */ 
   background: transparent url('../ui-images/close.png') scroll no-repeat 50% 0;
-  border: none;
   padding: 0;
-  margin: 0px 2px;
+  margin: 0 6px 0 -4px;
+  border: none;
   width: 12px;
   height: 12px;
   line-height: 12px;
@@ -300,7 +303,7 @@ input[handler="close-tab"] { /* Currently not in use? */
   }
 
 input[handler="close-tab"]:hover { 
-  background-position: 100% -12px;
+  background-position: 50% -12px;
   }
 
 input[handler="top-settings"] { /* Doesn't receive correct background positioning on hover and active*/
@@ -327,7 +330,7 @@ input[handler="top-settings"]:active {
   padding: 7px;
   }
 
-settings-container, settings, settings-header, checkboxes, checkbox {
+settings-container, settings, settings-header, checkboxes, checkbox, setting-composite {
   display: block;
   }
 
@@ -371,9 +374,24 @@ settings-header input.unfolded:active {
   background-position: -14px -28px;
   }
 
-checkboxes { /**/
+checkboxes, setting-composite { /**/
   padding-left: 26px;
   }
+  
+setting-composite label + label {
+  margin-left: 20px;
+}
+
+setting-composite input[type="button"] {
+  float: right;
+  margin-right: 26px;
+
+}
+
+setting-buttons {
+  text-align: right;
+  padding-right: 26px;
+}
 
 settings-container { /**/
   padding: 7px;
@@ -394,11 +412,12 @@ view-slider.horizontal {
 
 ui-menu { /**/
   display: block;
-  float: right;
   width: 180px;
   cursor: pointer;
-  position: relative;
-  margin: -7px 0 0 0;
+  position: absolute;
+  right:0px;
+  top: 0px;
+  z-index:1000;
   }
 
 ui-menu > h2 { /**/
@@ -413,7 +432,7 @@ ui-menu > h2 { /**/
 
 ui-menu > h2:after { /**/ 
   display: block;
-	margin-right: 5px;
+  margin-right: 5px;
   width: 15px;
   height: 18px;
   content: '';
@@ -436,7 +455,6 @@ ui-menu ul { /* The list needs a bottom shadow when opened */
   margin: 0;
   padding: 0;
   list-style: none;
-  z-index: 10;
   }
 
 ui-menu li { /**/
@@ -589,7 +607,9 @@ window {
   height: 300px;
   left: 20px;
   }
-
+window-shadows {
+    display:block;
+}
 window-shadow {
   display: block;
   position: absolute;
@@ -624,6 +644,7 @@ window-shadow.right {
   top: 0px;
   bottom: 0px;
   width: 5px;
+  height: auto;
   background: transparent url('../ui-images/shadow-right.png') scroll repeat-y 0 0;
   }
 
@@ -759,4 +780,7 @@ input[handler="create-all-runtimes"]:active {
   }
 #continue-step-out-of-call {
   background-image:url('../ui-images/btn-step-out-call.png');
-  } 
+  }
+  
+
+  

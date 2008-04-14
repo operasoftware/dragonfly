@@ -10,6 +10,9 @@
 <link rel="stylesheet" href="dom-inspector.css"/>
 <link rel="stylesheet" href="syntax-highlight.css"/>
 
+<!-- command "new_file" source "../scripts" target "../scripts/common.js" -->
+
+<script src="../scripts/json.js"/>
 <script src="../scripts/dom.js"/>
 <script src="../scripts/messages.js"/>
 <script src="../scripts/array.js"/>
@@ -17,8 +20,7 @@
 <script src="../scripts/Timeouts.js"/>
 <script src="../scripts/TextSearch.js"/>
 
-
-
+<!-- command "new_file" source "../ui-scripts" target "../scripts/ui.js"   -->
 
 <script src="../ui-scripts/defaults.js"/>
 <script src="../ui-scripts/window.js"/>
@@ -45,6 +47,8 @@
 <script src="../ui-scripts/animator.js"/>
 <script src="../ui-scripts/Switches.js"/>
 
+<!-- command "new_file" source "" target "../scripts/dragonfly.js"   -->
+
 
 <script src="ListTextSearch.js"/>
 
@@ -56,7 +60,7 @@
 <script src="host_event_handlers.js"/>
 <script src="tabs.js"/>
 <script src="syntax.js"/>
-<script src='pre_lexer.js'/>
+<script src="pre_lexer.js"/>
 <script src="formatter.js"/>
 <script src="templates.js"/>
 <script src="handlers.js"/>
@@ -70,9 +74,12 @@
 <script src="css_inheritable_properties.js"/>
 <script src="ObjectDataBase.js"/>
 <script src="node_dom_attrs.js"/>
+<script src="elementLayout.js"/>
+
 
 <script src="stylesheets.js"/>
 <script src="views-css-inspector.js"/>
+<script src="views-css-layout.js"/>
 <script src="views-stylesheets.js"/>
 <script src="js-source-view.js"/>
 <script src="views-general-dom.js"/>

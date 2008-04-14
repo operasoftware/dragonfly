@@ -466,6 +466,113 @@
 
   View.prototype = ViewBase;
   new View('command_line', 'Command Line', 'scroll');
+  
+  View = function(id, name, container_class)
+  {
+    var __url = '';
+    this.setURL = function(url)
+    {
+      __url = url;
+    }
+    this.createView = function(container)
+    {
+      if( __url )
+      {
+        container.render(['iframe',
+                          'width', '100%', 'height', '100%',
+                          'style', 'dispaly:block;border:none',
+                          'src', __url])
+      }
+
+    }
+    this.init(id, name, container_class);
+  }
+
+  View.prototype = ViewBase;
+
+  new View('documentation', 'Documentation', '');
+  
+  View = function(id, name, container_class)
+  {
+    this.ishidden_in_menu = true;
+    this.createView = function(container)
+    {
+      ;
+    }
+    this.init(id, name, container_class);
+  }
+
+  View.prototype = ViewBase;
+
+  new View('debug_remote_setting', 'Debug remote', '');
+  
+  new Settings
+  (
+    // id
+    'debug_remote_setting', 
+    // key-value map
+    {
+      "debug-remote": false,
+      "port": 7001
+    }, 
+    // key-label map
+    {
+      "debug-remote": "debug remote"
+    },
+    // settings map
+    {
+      checkboxes:
+      [
+        "debug-remote"
+      ]
+    },
+    // template
+    function(setting)
+    {
+      return [
+        ['setting-composite',
+          ['label',
+            ['input',
+              'type', 'checkbox',
+              'checked', this.get('debug-remote'),
+              'handler', 'toggle-remote-debug'
+            ],
+            this.label_map['debug-remote']
+          ],
+          ['label',
+            'port: ',
+            ['input',
+              'type', 'number',
+              'value', this.get('port'),
+              'disabled', !this.get('debug-remote')
+            ]
+          ],
+          ['input',
+            'type', 'button',
+            'value', 'apply',
+            'handler', 'apply-remote-debugging'
+          ]
+        ]
+      ];
+    }
+  );
+  
+  eventHandlers.change['toggle-remote-debug'] = function(event, target)
+  {
+    target.parentNode.nextSibling.childNodes[1].disabled = !event.target.checked;  
+  }
+  
+  eventHandlers.click['apply-remote-debugging'] = function(event, target)
+  {
+    var is_debug_remote = target.parentNode.getElementsByTagName('input')[0].checked;
+    var port = parseInt(target.parentNode.getElementsByTagName('input')[1].value);
+    if( port )
+    {
+      settings.debug_remote_setting.set('debug-remote', is_debug_remote);
+      settings.debug_remote_setting.set('port', port);  
+      alert(is_debug_remote+' '+port)
+    }
+  }
 
 })()
 

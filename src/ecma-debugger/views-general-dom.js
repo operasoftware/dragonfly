@@ -4,6 +4,8 @@
   var View = function(id, name, container_class)
   {
     this.ishidden_in_menu = true;
+    this.hidden_in_settings = true;
+
     this.createView = function(container)
     {
     }

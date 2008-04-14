@@ -46,7 +46,7 @@
     this.init(id, name, container_class);
   }
   View.prototype = ViewBase;
-  new View('dom_attrs', 'DOMa attrs', 'scroll dom-attrs');
+  new View('dom_attrs', 'DOM attrs', 'scroll dom-attrs');
   
   new Settings
   (

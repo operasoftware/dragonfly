@@ -547,12 +547,19 @@
       {
         handler: 'dom-inspection-export',
         title: 'Export the current view'
-      },
+      }
     ],
     [
       {
         handler: 'dom-markup-text-search',
         title: 'text search'
+      }
+    ],
+    [
+      {
+        handler: 'documentation',
+        title: 'Documentation',
+        param: 'http://www.opera.com'
       }
     ]
   )
@@ -599,7 +606,6 @@
 
   eventHandlers.input['dom-markup-text-search'] = function(event, target)
   {
-    textSearch.setInput(target);
     textSearch.searchDelayed(target.value);
   }
 
