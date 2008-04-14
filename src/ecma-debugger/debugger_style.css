@@ -166,6 +166,10 @@ xx#debug {
 [handler] {
   cursor: pointer;
   }
+  
+input[type="text"] {
+  cursor: text;
+}
 
 
 #main-button-toolbar {
@@ -587,6 +591,77 @@ start-search-scope ~ item {
 start-search-scope ~ end-search-scope ~ item {
   background-color: transparent;
   }
+  
+.metrics ul {
+  margin:0;
+  padding:0;
+  list-style:none;
+  display:table-row;
+  }
+.metrics li {
+  display: table-cell;
+  border: 1px solid transparent;
+  text-align:center;
+  vertical-align:middle;
+  padding: 1px;
+  }
+.metrics p {
+  position:relative;
+  margin:0;
+  padding:0;
+  }
+.metrics span {
+  position:absolute;
+  top:0;
+  left:0;
+  font-size: 11px;
+  }
+.metrics .element {
+  white-space:nowrap
+  }
+.metrics .element li {
+  width: 300px
+  }
+.metrics .element .elementHeight{
+  text-align:left
+  }
+.metrics .element,
+.metrics .padding,
+#tree .metrics.margin {
+  border-color: #324c74;
+  background-color: #fff;
+  }
+.metrics .border {
+  border-color: #324c74;
+  background-color:#c7d4e8;
+  }
+  
+offsets-container {
+  display:block;
+}
+
+parent-offset {
+  border: 1px solid #324c74;
+  background-color:#c7d4e8;
+  padding: 0 2px;
+}
+  
+offsets{
+  display:table;
+}
+
+offsets item {
+  display:table-row;
+}
+
+offsets key, offsets value  {
+  display:table-cell;
+}
+
+offsets value  {
+  text-align: right;
+  padding-left: 8px;
+}
 
 
 
