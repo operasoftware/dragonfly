@@ -1,5 +1,8 @@
 var TabsBase = function()
 {
+  const
+  HISTORY_MAX_LENGTH = 10;
+
   this.type = 'tabs';
   this.height = 25;
   this.width = 200;
@@ -13,6 +16,8 @@ var TabsBase = function()
   
   this.tabs = [];
   this.activeTab = '';
+
+  this._history = [];
     
   this.hasTab = function(ref_id)
   {
@@ -56,7 +61,13 @@ var TabsBase = function()
         }
       }
     }
-    if( this.tabs[i] )
+    
+    this._history.pop();
+    if(this._history[ this._history.length - 1 ] )
+    {
+      this.setActiveTab( this._history[ this._history.length - 1 ] )
+    }
+    else if( this.tabs[i] )
     {
       this.setActiveTab(this.tabs[i].ref_id)
     }
@@ -87,7 +98,6 @@ var TabsBase = function()
   {
     var container_id = 'container-to-' + this.cell.id;
     var toolbar_id = 'toolbar-to-' + this.cell.id;
-
     if( this.activeTab != view_id || force_create)
     {
       if( force_create)
@@ -142,6 +152,12 @@ var TabsBase = function()
       }
 
       this.cell.setup();
+
+      this._history[this._history.length] = this.activeTab;
+      if( this._history.length > HISTORY_MAX_LENGTH )
+      {
+        this._history.splice(0, this._history.length - HISTORY_MAX_LENGTH); 
+      }
 
     }
   }
