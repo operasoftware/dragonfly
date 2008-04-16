@@ -1,7 +1,10 @@
 var elementStyle = new function()
 {
+  // TODO cleanup code history
+  
   const 
   COMP_STYLE = 0,
+  CSS = 1, 
   INLINE_STYLE = 1,
   MATCHING_RULES = 2,
   INHERITED_RULES = 3,
@@ -10,7 +13,8 @@ var elementStyle = new function()
   REQ_TYPE_COMP_STYLE = 1,
   REQ_TYPE_CSS = 2,
   REQ_TYPE_COMPLETE = 3,
-  REQ_MAP = ['00000', '10000', '01110', '11111'],
+  REQ_MAP = ['00000', '11111', '11111', '11111'],
+  HEADER = 0, 
   PROP_LIST = 1,
   VAL_LIST = 2,
   PRIORITY_LIST = 3,
@@ -28,6 +32,8 @@ var elementStyle = new function()
   var __search_is_active = false;
   var __old_search_therm = '';
 
+  var default_styles_pointer = 0;
+
   var searchtimeout = new Timeouts();
 
   var __views = ['css-inspector'];
@@ -35,11 +41,9 @@ var elementStyle = new function()
   var id_index_map = 
   {
     'computedStyle': COMP_STYLE,
-    'inlineStyle': INLINE_STYLE,
-    'matchingRules': MATCHING_RULES,
-    'inheritesRules': INHERITED_RULES,
-    'defaultValues': DEFAULT_VALUES
+    'css': CSS
   }
+
   var categories =
   [
     {
@@ -48,69 +52,176 @@ var elementStyle = new function()
       'unfolded': false
     },
     {
-      'id': 'inlineStyle',
-      'name': 'inline style',
-      'unfolded': false
-    },
-    {
-      'id': 'matchingRules',
-      'name': 'matching rules',
-      'unfolded': false
-    },
-    {
-      'id': 'inheritesRules',
-      'name': 'inherited rules',
-      'unfolded': false
-    },
-    {
-      'id': 'defaultValues',
-      'name': 'default values',
+      'id': 'css',
+      'name': 'CSS',
       'unfolded': false
     }
   ];
 
-  var categories_data = [null, null, null, null, null];
+
+  var node_cascades = [];
+
+  var getDefaultStyle = function(defaultStyles, pointer, obj_id)
+  {
+    for( var c = null; ( c = defaultStyles[pointer] ) && c[0][0] != obj_id; pointer++);
+    return c || [[obj_id],[],[],[]];
+  }
+
+
+  /*
+  fixing the protocol
+  data should follow the parent node chain, with the target as first element.
+  for each node a node style cascade with:
+  [
+    inline style declaration,
+    [ matching css declarations * ],
+    default style declaration,
+    ,
+    ,
+    has inheritable rules,
+    ,
+    has matching search props
+  ]
+  */
+  
+  var restructureData = function(rt_id, obj_id, declarations)
+  {
+    var 
+    inlineStyle = declarations[INLINE_STYLE] 
+      && [ ['inline'], declarations[INLINE_STYLE][0], declarations[INLINE_STYLE][1], declarations[INLINE_STYLE][2] ]
+      || [['inline'],[],[],[]],
+    matchingRules = declarations[MATCHING_RULES] || [[],[],[],[]],
+    inheritedRules = declarations[INHERITED_RULES] || [[],[],[],[]],
+    defaultValues = declarations[DEFAULT_VALUES] || [[],[],[],[]],
+    def_val_cur = 0,
+    def_val = null,
+    style_dec = null, 
+    i = 0,
+    node_casc_cur = [],
+    match_cur = null;
+    
+    for( ; ( def_val = defaultValues[def_val_cur] ) && def_val[0][0] != obj_id; def_val_cur++);
+    if( !def_val )
+    {
+      def_val = [[obj_id],[],[],[]];
+    }
+
+    node_cascades = [[inlineStyle, matchingRules, def_val]];
+
+    for( ; style_dec = inheritedRules[i]; i++)
+    {
+      if( style_dec[HEADER][0] == 'inline' )
+      {
+        for( ; ( def_val = defaultValues[def_val_cur] ) && def_val[0][0] != style_dec[HEADER][1]; def_val_cur++);
+        if( !def_val )
+        {
+          def_val = [[obj_id],[],[],[]];
+        }
+        match_cur = [];
+        node_cascades[node_cascades.length] = [style_dec, match_cur, def_val]; 
+      }
+      else
+      {
+        if( match_cur )
+        {
+          match_cur[match_cur.length] = style_dec;
+        }
+        else
+        {
+          opera.postError('failed in restructureData');
+        }
+      }
+    }
+
+    //window.open('data:text/plain;charset=utf-8,'+encodeURIComponent(JSON.stringify(node_cascades)));
+    categories_data[0] = declarations[0]; 
+    categories_data[1] = node_cascades;
+    categories_data[1].rt_id = categories_data[0].rt_id = rt_id;
+
+  }
+
+  var __setProps = [];
+  var __setPriorities = [];
+
+  
+  var categories_data = [];
 
   var parse_data = [];
   parse_data[REQ_TYPE_COMP_STYLE] = function() {};
 
   parse_data[REQ_TYPE_CSS] = parse_data[REQ_TYPE_COMPLETE] = function()
   {
+    var
+    node_casc = null,
+    i = 0;
+    
     __setProps = [];
     __setPriorities = [];
-    var dec = null, to_update_props = null, i = 0, declarations = [], j = 0;
-    parseStyleDeclarations(declarations, [categories_data[INLINE_STYLE]], false);
-    parseStyleDeclarations(declarations, categories_data[MATCHING_RULES], false);
-    parseStyleDeclarations(declarations, categories_data[INHERITED_RULES], true);
-  }
-
-  var parseStyleDeclarations = function(declarations, declaration_list, set_has_inherited_props)
-  {
-    var dec = null, to_update_props = null, i = 0, j = 0;
-    if(declaration_list)
+    for( ; node_casc = node_cascades[i]; i++)
     {
-      for( ; dec = declaration_list[i]; i++)
+      parseNodeCascade(node_casc, i > 0);
+    }
+  }
+  
+
+
+  var parseNodeCascade = function(node_cascade, set_has_inherited_props)
+  {
+    /*
+      node_cascade has the form
+      [
+        style_dec_inline,
+        [style_dec_css*],
+        style_dec_default,
+        ,
+        ,
+        has_inherited_props // must be set in this call
+      ]
+    */
+    
+    var
+    dec = null,
+    to_update_props = null,
+    i = 0,
+    j = 0,
+    declaration_list = node_cascade[1],
+    // to update the priority flags, only per node
+    declarations = [node_cascade[0]],
+    has_inherited_props = false;
+    
+    parseStyleDec(node_cascade[0], set_has_inherited_props);
+    has_inherited_props = set_has_inherited_props
+      && ( has_inherited_props || node_cascade[0][HAS_INHERITABLE_PROPS] );
+      
+    for( ; dec = declaration_list[i]; i++)
+    {
+      if( dec.length > 3 )
       {
-        if(dec.length > 3 )
+        to_update_props = parseStyleDec(dec, set_has_inherited_props);
+        has_inherited_props = set_has_inherited_props
+          && ( has_inherited_props || dec[HAS_INHERITABLE_PROPS] );
+        if( to_update_props.length )
         {
-          to_update_props = parseStyleDec(dec, set_has_inherited_props);
-          if( to_update_props.length )
+          for( j = 0; j < to_update_props.length; j++)
           {
-            for( j = 0; j < to_update_props.length; j++)
-            {
-              // TODO this is wrong
-              // priority flag overwrites any specificity, 
-              // but does not inherit
-              updateOverwritten(to_update_props[j], declarations)
-            }
+            updateOverwritten(to_update_props[j], declarations)
           }
         }
-        else
-        {
-          opera.postError("dec: "+ dec + " in parseStyleDeclarations ");
-        }
-        declarations[declarations.length] = dec;
       }
+      else
+      {
+        opera.postError("failed in parseNodeCascade: "+ JSON.stringify(dec) );
+      }
+      declarations[declarations.length] = dec;
+    }
+    
+    parseStyleDec(node_cascade[2], set_has_inherited_props);
+    has_inherited_props = set_has_inherited_props
+      && ( has_inherited_props || node_cascade[2][HAS_INHERITABLE_PROPS] );
+      
+    if( set_has_inherited_props )
+    {
+      node_cascade[HAS_INHERITABLE_PROPS] = has_inherited_props;
     }
   }
 
@@ -141,7 +252,6 @@ var elementStyle = new function()
     dec[OVERWRITTEN_LIST] = [];
     for( ; i < length; i++ )
     {
-      
       prop = dec[PROP_LIST][i];
       if( set_has_inherited_props )
       {
@@ -177,7 +287,6 @@ var elementStyle = new function()
     {
       dec[HAS_INHERITABLE_PROPS] = has_inherited_props;
     }
-    //opera.postError(dec);
     return ret;
   }
 
@@ -213,21 +322,109 @@ var elementStyle = new function()
           __searchMap[i] = 1;
         }
       }
-      searchStyleDeclarations([categories_data[INLINE_STYLE]], __searchMap);
-      searchStyleDeclarations(categories_data[MATCHING_RULES], __searchMap);
-      searchStyleDeclarations(categories_data[INHERITED_RULES], __searchMap);
+            
+      for( i = 0, length = categories_data[CSS].length; i < length; i++)
+      {
+        searchNodeCascade(categories_data[CSS][i], __searchMap);
+      }
+      
       __search_is_active = true;
     } 
     else
     {
-      clearSearchStyleDeclarations([categories_data[INLINE_STYLE]]);
-      clearSearchStyleDeclarations(categories_data[MATCHING_RULES]);
-      clearSearchStyleDeclarations(categories_data[INHERITED_RULES]);
+      for( i = 0, length = categories_data[CSS].length; i < length; i++)
+      {
+        clearNodeCascade(categories_data[CSS][i], __searchMap);
+      }
       __old_search_therm  = "";
       __search_is_active = false;
     }
   }
+  
+  var searchNodeCascade = function(node_cascade, search_list)
+  {
+    /*
+      node_cascade has the form
+      [
+        style_dec_inline,
+        [style_dec_css*],
+        style_dec_default,
+        ,
+        ,
+        has_inherited_props // must be set in this call
+      ]
+    */
+    //opera.postError("searchNodeCascade: "+ JSON.stringify(node_cascade) )
+    var
+    dec = null,
+    i = 0,
+    declaration_list = node_cascade[1],
+    has_matching_search_props = false;
+    
+    searchStyleDeclaration(node_cascade[0], search_list);
+    has_matching_search_props = has_matching_search_props || node_cascade[0][HAS_MATCHING_SEARCH_PROPS];
+      
+    for( ; dec = declaration_list[i]; i++)
+    {
+      if( dec.length > 3 )
+      {
+        searchStyleDeclaration(dec, search_list);
+        has_matching_search_props =
+          has_matching_search_props || dec[HAS_MATCHING_SEARCH_PROPS];
+      }
+      else
+      {
+        opera.postError("searchNodeCascade: "+ JSON.stringify(dec) );
+      }
+    }
+    searchStyleDeclaration(node_cascade[2], search_list);
 
+    has_matching_search_props =
+      has_matching_search_props || node_cascade[2][HAS_MATCHING_SEARCH_PROPS];
+      
+    node_cascade[HAS_MATCHING_SEARCH_PROPS] = has_matching_search_props;
+  
+  }
+  
+  var searchStyleDeclaration = function(declaration, search_list)
+  {
+    // updates a styleDeclaration
+    // checks if the declaration actually has matchin property
+    // search_list is a list with matching properties indexes
+    // 
+    var
+    i = 0,
+    length = declaration[PROP_LIST].length,
+    has_matching_search_props = false;
+
+    declaration[SEARCH_LIST] = [];
+    for( ; i < length; i++ )
+    {
+      if( search_list[declaration[PROP_LIST][i]] )
+      {
+        declaration[SEARCH_LIST][i] = 1;
+        has_matching_search_props = true;
+      };
+    }
+    declaration[HAS_MATCHING_SEARCH_PROPS] = has_matching_search_props;
+  }
+  
+  var clearNodeCascade = function(node_cascade, search_list)
+  {
+    
+    var
+    dec = null,
+    i = 0,
+    declaration_list = node_cascade[1];
+
+    delete node_cascade[0][HAS_MATCHING_SEARCH_PROPS];
+    for( ; dec = declaration_list[i]; i++)
+    {
+      delete dec[HAS_MATCHING_SEARCH_PROPS];
+    }
+    delete node_cascade[2][HAS_MATCHING_SEARCH_PROPS];  
+  }
+/*
   var searchStyleDeclarations = function(declaration_list, search_list)
   {
     // updates the search list for a styleDeclaration
@@ -254,7 +451,9 @@ var elementStyle = new function()
       }
     }
   }
+*/
 
+/*
   var clearSearchStyleDeclarations = function(declaration_list)
   {
     var dec = null, i = 0;
@@ -267,6 +466,7 @@ var elementStyle = new function()
       }
     }
   }
+*/
 
   this.getSearchActive = function()
   {
@@ -295,19 +495,13 @@ var elementStyle = new function()
 
   var getRequestType = function()
   {
-    var 
-    req_type_comp_style = categories[COMP_STYLE].unfolded && REQ_TYPE_COMP_STYLE || 0, 
-    req_type_css = ( categories[INLINE_STYLE].unfolded 
-      || categories[MATCHING_RULES].unfolded 
-      || categories[INHERITED_RULES].unfolded ) && REQ_TYPE_CSS || 0, 
-    req_type_complete = req_type_comp_style && req_type_css && REQ_TYPE_COMPLETE || 0;
-    return req_type_complete || req_type_css || req_type_comp_style || 0;
+    return ( categories[COMP_STYLE].unfolded  || categories[CSS].unfolded ) && REQ_TYPE_CSS || 0;
   }
 
   var getUnfoldedKey = function()
   {
     var ret = '', i = 0;
-    for( ; i < 5; i++)
+    for( ; i < 2; i++)
     {
       ret += categories[i].unfolded ? '1' : '0';
     }
@@ -359,14 +553,13 @@ var elementStyle = new function()
 
   var onElementSelected = function(msg)
   {
+    
     __selectedElement = {rt_id: msg.rt_id,  obj_id: msg.obj_id, req_type: getRequestType() };
     var view_id = '', i = 0, get_data = false;
     
     for ( ; ( view_id = __views[i] ) && !( get_data = views[view_id].isvisible() ); i++);
-    //opera.postError("onElementSelected: " +get_data +' '+__selectedElement.req_type);
     if( get_data && __selectedElement.req_type )
     {
-      //opera.postError(__selectedElement.req_type)
       getData
       (
         msg.rt_id, 
@@ -375,6 +568,7 @@ var elementStyle = new function()
         __selectedElement.req_type
       );
     }
+    
   }
 
   var getData = function(rt_id, obj_id, cats, req_type)
@@ -401,42 +595,30 @@ var elementStyle = new function()
     if( json )
     {
       declarations = eval('(' + json +')');
-      for( ; i < 5; i++)
+      if( cats[1] == '1' ) // there is only 11111, other do actually not make sense
       {
-        if( cats[i] == '1' )
-        {
-          if( !declarations[i] )
-          {
-            declarations[i] = [[],[],[],[]]; // TODO this should be solved in the protocol
-          }
-          if( i == 1 ) // inline style
-          {
-            declarations[i].splice(0, 0, []); // "fixing" protocol
-          }
-          /** wrong wrong
-          if( i > 0 && i < 4 )
-          {
-            // add an arry for the overwitten flags
-            declarations[i][declarations[i].length] = [];
-          }
-          */
-          declarations[i].rt_id = rt_id;
-          categories_data[i] = declarations[i]; 
-          if(!req_type)
-          {
-            opera.postError('missing req_type or req_type 0 in handleGetData in elementStyles')
-          }
-          parse_data[req_type]();
-        }
+        restructureData(rt_id, obj_id, declarations);
       }
+      if(!req_type)
+      {
+        opera.postError('missing req_type or req_type 0 in handleGetData in elementStyles')
+      }
+
+      parse_data[req_type]();
+
+      
       if( __old_search_therm )
       {
         doSearch(__old_search_therm);
       }
+      
+      
       for ( i = 0; view_id = __views[i]; i++)
       {
         views[view_id].updateCategories({}, getUnfoldedKey());
       }
+
+      
     }
   }
 

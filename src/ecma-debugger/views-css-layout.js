@@ -87,7 +87,7 @@
 
   new Switches
   (
-    'css-inspector',
+    'css-layout',
     [
     ]
   )

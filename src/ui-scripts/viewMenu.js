@@ -59,7 +59,7 @@ var ViewMenu = function(menu_id)
       i = 0;
     for( ; id = view_id_arr[i]; i++)
     {
-      ret[ret.length] = ['li', ['h2', views[id].name, 'handler', 'show-window', 'view-id', id]]
+      ret[ret.length] = ['li', ['h2', views[id].name, 'handler', 'show-window', 'view-id', id, 'tabindex', '1']]
     }
     return ret;
   }

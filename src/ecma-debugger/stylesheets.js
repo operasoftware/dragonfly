@@ -482,6 +482,7 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
       {
         // css inspector does not shorthand properties
         // perhaps later
+        
         if(check_overwritten && overwrittenlist[i] )
         {
           ret += ( ret ? MARKUP_PROP_NL : MARKUP_EMPTY ) +
@@ -604,8 +605,11 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   }
 
   var prettyPrintCat = [];
+  
+  var prettyPrintCat_2 = [];
+  
 
-  prettyPrintCat[COMP_STYLE] = function(data, search_active)
+  prettyPrintCat_2[COMP_STYLE] = prettyPrintCat[COMP_STYLE] = function(data, search_active)
   {
     
     var ret = "", i = 0, index = 0, prop = '', value = '';
@@ -645,6 +649,29 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     } 
     return ret;
   }
+  
+  prettyPrintCat_2[1] = function(data, search_active)
+  {
+    var node_casc = null, i = 0, ret = '', j = 0, css_style_dec = null;
+    var rt_id = data.rt_id;
+    for( ; node_casc = data[i]; i++)
+    {
+      if( search_active && !node_casc[HAS_MATCHING_SEARCH_PROPS] )
+      {
+        continue;
+      }
+      node_casc[0].rt_id = node_casc[1].rt_id = node_casc[2].rt_id = rt_id;
+      if( i && node_casc[ HAS_INHERITABLE_PROPS] )
+      {
+        ret += "<h2>inherited from <b>" + node_casc[0][HEADER][2] + "</b></h2>";
+      }
+      
+      ret += prettyPrintCat[INLINE_STYLE](node_casc[0], search_active, rt_id); 
+      ret += prettyPrintCat[ i ? INHERITED_RULES : MATCHING_RULES ](node_casc[1], search_active, rt_id);
+      ret += prettyPrintCat[DEFAULT_VALUES](node_casc[2], search_active, rt_id);
+    }
+    return ret;
+  }
 
   /*
   IN-LINE-STYLE ::= IN-LINE-STYLE-RULE | "null"
@@ -653,6 +680,8 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
 
   prettyPrintCat[INLINE_STYLE] = function(data, search_active)
   {
+
+    
     if(data[1].length)
     {
       return "<rule>" + 
@@ -682,19 +711,25 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   prettyPrintCat[MATCHING_RULES] = function(data, search_active)
   {
     var ret = '', rule = null, header = null, i = 0, sheet = null;
+    //opera.postError('prettyPrintCat[MATCHING_RULES]' + JSON.stringify(data))
     for( ; rule = data[i]; i++)
     {
+      //opera.postError('prettyPrintCat[MATCHING_RULES]' + rule)
+      //opera.postError(data.rt_id+' '+rule[HEADER][0])
       sheet = self.getSheetWithObjId(data.rt_id, rule[HEADER][0]);
-      if( sheet && ( !search_active || rule[HAS_MATCHING_SEARCH_PROPS] ) )
+      if( sheet )
       {
-        ret += "<rule rule-id='" + rule[HEADER][1] + "'>" + 
-          "<stylesheet-link rt-id='" + sheet[0] + "'"+
-            " index='" + sheet[1] + "' handler='display-rule-in-stylesheet'>" + sheet[2] + 
-          "</stylesheet-link>" +
-          "<selector>" + rule[HEADER][4] + "</selector>" + 
-          " {\n" + 
-              prettyPrintRule[COMMON](rule, false, true, search_active) +
-          "\n}</rule>";
+        if( !search_active || rule[HAS_MATCHING_SEARCH_PROPS] )
+        {
+          ret += "<rule rule-id='" + rule[HEADER][1] + "'>" + 
+            "<stylesheet-link rt-id='" + sheet[0] + "'"+
+              " index='" + sheet[1] + "' handler='display-rule-in-stylesheet'>" + sheet[2] + 
+            "</stylesheet-link>" +
+            "<selector>" + rule[HEADER][4] + "</selector>" + 
+            " {\n" + 
+                prettyPrintRule[COMMON](rule, false, true, search_active) +
+            "\n}</rule>";
+        }
       }
       else
       {
@@ -733,7 +768,6 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   prettyPrintCat[INHERITED_RULES] = function(data, search_active)
   {
     var ret = '', rule = null, header = null, i = 0, sheet = null;
-    //opera.postError(data);
     for( ; rule = data[i]; i++)
     {
       if( rule[HAS_INHERITABLE_PROPS] && ( !search_active || rule[HAS_MATCHING_SEARCH_PROPS] ) )
@@ -802,19 +836,18 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   */
 
 
-  prettyPrintCat[DEFAULT_VALUES] = function(data)
+  prettyPrintCat[DEFAULT_VALUES] = function(data, search_active)
   {
-    var rule = null, i = 0, ret = '';
-    for( ; rule = data[i]; i++)
+    if(data[1].length)
     {
-      ret += "<rule>" + 
-      "<selector node-id='" + rule[HEADER][0] + "'>" + rule[HEADER][1] + "</selector>" + 
-      " {\n" + 
-      prettyPrintRule[COMMON](rule, false, true) +
-      "\n}</rule>";
+      return "<rule>" +
+              "<stylesheet-link class='pseudo'>default values</stylesheet-link>" +
+        "<inline-style>" + data[HEADER][1] + "</inline-style>" + 
+        " {\n" + 
+            prettyPrintRule[COMMON](data, false, true, search_active) +
+        "\n}</rule>";
     }
-
-    return ret;
+    return "";
   }
 
 
@@ -832,7 +865,7 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
       services['ecmascript-debugger'].getIndexMap( tag, 'json' );
       return '';
     }
-    return prettyPrintCat[cat_index](data, search_active);
+    return prettyPrintCat_2[cat_index](data, search_active);
   }
   
   this.getStylesheets = function(rt_id, org_args)
@@ -922,7 +955,6 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   
   var handleGetIndexMap = function(xml, org_args)
   {
-    //opera.postError("parse handleGetIndexMap");
     var json = xml.getNodeData('index');
     if( json )
     {

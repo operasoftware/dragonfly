@@ -469,11 +469,18 @@ category {
 
   }
 
-.css-inspector header {
+category header {
   font-size: 1.2em;
-  background-color: #ccc;
+  border: 1px solid #ccc;
+  border-width: 0 0 1px;
+  background-color: hsl( 0, 0% , 95%);
   padding: 2px;
   }
+
+category.unfolded + category header {
+  border-top-width: 1px;
+}
+
 
 .css-inspector header input {
   background:transparent url('../ui-images/toggle.png') scroll no-repeat 0 0;
@@ -521,6 +528,21 @@ category {
 .css-inspector value.inherited:after {
   content: " [inherited]";
   color: #09c;
+  }
+
+.css-inspector h2 {
+  font-size: 12px;
+  font-weight: normal;
+  border: 1px solid #ccc;
+  border-width:1px 0;
+  background-color: hsl( 0, 0%, 95%);
+  text-align: center;
+  margin: 10px -5px;
+  color: hsl(0, 0%, 50%)
+  }
+  
+.css-inspector h2 b {
+  color: #279;
   }
 
 
@@ -662,6 +684,13 @@ offsets value  {
   text-align: right;
   padding-left: 8px;
 }
+
+stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
+  text-decoration: none;
+  color: hsl(0, 0%, 50%);
+}
+
+
 
 
 

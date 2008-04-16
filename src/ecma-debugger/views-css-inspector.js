@@ -28,7 +28,6 @@
 
     this.updateCategories = function(ev, cats)
     {
-      
       if( self.isvisible() )
       {
         if(ev.__call_count && ev.__call_count > 2  )
@@ -46,6 +45,7 @@
           {
             if( cats[cat_index] == '1' )
             {
+              
               // TODO update depending from the category
               data = elementStyle.getCategoryData(cat_index);
               if( data )
@@ -81,10 +81,7 @@
     // key-value map
     {
       'computed-style': false, 
-      'inline-style': false,
-      'direct-match-style': false,
-      'inherited-style': false,
-      'default-style': false,
+      'css': false,
       'hide-initial-values': true,
       'hide-shorthands': true
     }, 

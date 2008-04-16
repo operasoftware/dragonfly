@@ -16,7 +16,7 @@
     var ret = ['toolbar-filters'], filter = '', i = 0;
     for( ; filter = filters[i]; i++)
     {
-      ret[ret.length] = ['input', 'type', 'text', 'handler', filter.handler, 'title', filter.title];
+      ret[ret.length] = ['input', 'autocomplete', 'off', 'type', 'text', 'handler', filter.handler, 'title', filter.title];
     }
     return ret;
   }
@@ -102,7 +102,7 @@
 
   this.viewMenu = function()
   {
-    return ['ui-menu', ['h2', 'Views', 'handler', 'show-menu'], 'id', 'main-view-menu'];
+    return ['ui-menu', ['h2', 'Views', 'handler', 'show-menu', 'tabindex', '1'], 'id', 'main-view-menu'];
   }
 
   this['top-tabs'] = function(obj)

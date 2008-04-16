@@ -195,7 +195,8 @@
     return ['li',
         script['script-type']+' - '+(script['uri']?script['uri']:'script-id: '+script['script-id']),
         'handler', 'display-script',
-        'script-id', script['script-id']
+        'script-id', script['script-id'],
+        'tabindex', '1'
       ].concat( script.selected ? ['class', 'selected'] : [] );
   }
   

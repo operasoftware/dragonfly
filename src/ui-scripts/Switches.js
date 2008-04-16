@@ -10,6 +10,7 @@ var SwitchesBase = function()
       {
         keys[i] = view_id + '.' + key;
       }
+
     }
     this.keys = keys;
 
