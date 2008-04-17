@@ -66,6 +66,17 @@
     this.init(id, name, container_class);
     
     messages.addListener('runtime-selected', onRuntimeSelected);
+
+    var onViewCreated = function(msg)
+    {
+      if( msg.id == 'dom' )
+      {
+        topCell.showView(id);
+      }
+    }
+    messages.addListener('view-created', onViewCreated);
+
+    
   }
   View.prototype = ViewBase;
   new View('runtimes_dom', 'Runtimes DOM', 'scroll runtimes');
@@ -115,6 +126,15 @@
       }
       
     }
+
+    var onViewCreated = function(msg)
+    {
+      if( msg.id == 'stylesheets' )
+      {
+        topCell.showView(id);
+      }
+    }
+    messages.addListener('view-created', onViewCreated);
 
     this.init(id, name, container_class);
     
