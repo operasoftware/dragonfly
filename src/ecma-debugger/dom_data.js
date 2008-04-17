@@ -2,8 +2,8 @@ var dom_data = new function()
 {
   var self = this;
 
-  var view_ids = ['dom-markup-style', 'dom-tree-style'];  // this needs to be handled in a more general and sytematic way.
-  var settings_id = 'dom_general';
+  var view_ids = ['dom'];  // this needs to be handled in a more general and sytematic way.
+  var settings_id = 'dom';
 
   var data = []; // TODO seperated for all runtimes off the active tab
   var data_runtime_id = '';  // data of a dom tree has always just one runtime

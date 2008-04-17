@@ -689,13 +689,14 @@ window-shadow.left {
   }
 
 /* Tried to hack around weird hover behaviour on hover/click. Scripted? */
+/* Couldn't see any problem? /ck
 input[handler="threads-clear-log"] ,
 input[handler="threads-export-log"],
 input[handler="dom-inspection-snapshot"] ,
 input[key="dom_general.find-with-click"],
 input[key="dom_general.highlight-on-hover"] ,
-input[key="dom-tree-style.show-comments"] ,
-input[key="dom-tree-style.show-whitespace-nodes"],
+input[key="dom.show-comments"] ,
+input[key="dom.show-whitespace-nodes"],
 input[key="dom_general.update-on-dom-node-inserted"]  {
 	width: 26px;
 	height: 24px;
@@ -722,7 +723,7 @@ input[key="dom-tree-style.show-whitespace-nodes"]:active ,
 input[key="dom_general.update-on-dom-node-inserted"] :active {
   background-position: 0 -48px;
   }
-
+*/
 input[handler="threads-clear-log"] {
   background-image: url('../ui-images/btn-clear-error-console.png');
   }
@@ -735,23 +736,23 @@ input[handler="dom-inspection-snapshot"] {
   background-image: url('../ui-images/btn-get-dom-tree.png');
   }
 
-input[key="dom_general.find-with-click"] {
+input[key="dom.find-with-click"] {
   background-image: url('../ui-images/btn-find-onclick.png');
   }
 
-input[key="dom_general.highlight-on-hover"] {
+input[key="dom.highlight-on-hover"] {
   background-image: url('../ui-images/btn-highlight.png');
   }
 
-input[key="dom-tree-style.show-comments"] {
+input[key="dom.show-comments"] {
   background-image: url('../ui-images/btn-show-comments.png');
   }
 
-input[key="dom-tree-style.show-whitespace-nodes"] {
+input[key="dom.show-whitespace-nodes"] {
   background-image: url('../ui-images/btn-show-whitespace.png');
   }
 
-input[key="dom_general.update-on-dom-node-inserted"] {
+input[key="dom.update-on-dom-node-inserted"] {
   background-image: url('../ui-images/btn-update-onchange.png');
   }
 

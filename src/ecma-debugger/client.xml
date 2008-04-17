@@ -82,9 +82,14 @@
 <script src="views-css-layout.js"/>
 <script src="views-stylesheets.js"/>
 <script src="js-source-view.js"/>
-<script src="views-general-dom.js"/>
-<script src="views-dom-markup-style.js"/>
-<script src="views-dom-tree-style.js"/>
+
+
+<script src="DOM_markup_style.js"/>
+<script src="DOM_tree_style.js"/>
+
+<script src="views-dom.js"/>
+
+
 <script src="views-dom-attrs.js"/>
 <script src="views-threads.js"/>
 <script src="export_data.js"/>

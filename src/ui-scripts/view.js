@@ -152,6 +152,18 @@ var ViewBase = new function()
     return ret;
   }
 
+  this.clearAllContainers = function() 
+  {
+    var id = '', i = 0, c = null, ret = [];
+    for( ; id = this.container_ids[i]; i++)
+    {
+      if( c = document.getElementById(id) )
+      {
+        c.innerHTML = "";
+      }
+    }
+  }
+
   this.onresize = function()
   {
 

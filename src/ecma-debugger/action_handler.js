@@ -394,7 +394,7 @@ var action_handler = new function()
     
     if(rt_id)
     {
-      topCell.showView('dom-markup-style');
+      topCell.showView('dom');
       if( runtimes.getActiveWindowId() != window_id )
       {
         host_tabs.setActiveTab(window_id);
@@ -627,7 +627,7 @@ var action_handler = new function()
       services['ecmascript-debugger'].spotlight(rt_id, obj_id, true);
       handlers['spotlight-node'].timeout = setTimeout(handlers['spotlight-node'].clearSpotlight, 800, rt_id);
       dom_data.setCurrentTarget(obj_id);
-      views['dom-markup-style'].updateTarget(current_target);
+      views['dom'].updateTarget(current_target);
     }
   }
 
@@ -650,7 +650,7 @@ var action_handler = new function()
 
   handlers['dom-inspection-export'] = function(event)
   {
-    export_data.data = views['dom-markup-style'].exportMarkup();
+    export_data.data = views['dom'].exportMarkup();
     if(!topCell.tab.hasTab('export_new'))
     {
       topCell.tab.addTab(new Tab('export_new', views['export_new'].name, true))

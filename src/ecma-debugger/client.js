@@ -332,7 +332,7 @@ var dom_rough_layout =
       children: 
       [
         { height: 150, tabs: ['runtimes_dom', 'runtimes_css'] },
-        { width: 200, tabs: ['dom-markup-style', 'dom-tree-style', 'stylesheets'] }
+        { width: 200, tabs: ['dom', 'stylesheets'] }
       ]
     },
     { 
