@@ -128,7 +128,7 @@
   
   eventHandlers.keyup['dom-attrs-text-search'] = function(event, target)
   {
-    listTextSearch.handleEnterKey();
+    listTextSearch.handleKey(event, target)
 
     
   }

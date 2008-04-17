@@ -44,6 +44,7 @@ new EventHandler('click');
 new EventHandler('change');
 new EventHandler('input');
 new EventHandler('keyup');
+new EventHandler('keydown');
 new EventHandler('mousedown');
 
 /***** click handler *****/

@@ -57,6 +57,105 @@ var ListTextSearch = function()
   {
     timeouts.set(this.search, SEARCH_DELAY, new_search_therm);
   }
+
+  var __selected_element = null;
+
+  var scrollSoftIntoView = function(target)
+  {
+    var 
+    container = target.parentNode.parentNode,
+    scrollTop = container.scrollTop,
+    scrollBottom = scrollTop + container.offsetHeight,
+    targetTop = target.offsetTop,
+    targetBottom = targetTop + target.offsetHeight;
+    if( targetBottom > scrollBottom )
+    {
+      container.scrollTop += 50 + targetBottom - scrollBottom;
+    }
+    else if( targetTop < scrollTop )
+    {
+      container.scrollTop += targetTop - scrollTop - 50;
+    }
+  }
+
+  var selectNextInput = function(start, next, direction)
+  {
+    var 
+    cur = __selected_element && __selected_element.parentNode 
+      || container.getElementsByTagName(start)[0],
+    scrollTop = 0,
+    scrollBottom = 0,
+    targetTop = 0,
+    targetBottom = 0;
+
+    while( ( cur = cur[next] ) 
+      && !( cur.nodeName == 'item' 
+      && cur.style.display != 'none' 
+      && ( cur.firstChild && /input/i.test(cur.firstChild.nodeName) ) ) );
+    if( cur && cur.nodeName == 'item' )
+    {
+      if( __selected_element )
+      {
+        __selected_element.parentNode.removeClass('selected');
+      }
+      __selected_element = cur.firstChild;
+      cur.addClass('selected');
+      scrollTop = container.scrollTop;
+      scrollBottom = scrollTop + container.offsetHeight;
+      targetTop = cur.offsetTop;
+      targetBottom = targetTop + cur.offsetHeight;
+      if( targetBottom > scrollBottom )
+      {
+        container.scrollTop += 50 + targetBottom - scrollBottom;
+      }
+      else if( targetTop < scrollTop )
+      {
+        container.scrollTop += targetTop - scrollTop - 50;
+      }
+    }
+    else
+    {
+      container.scrollTop += direction * 50;
+    }
+  }
+
+
+  this.handleKey = function(event, target)
+  {
+    switch( event.keyCode)
+    {
+      case 40: // down
+      {
+        selectNextInput('start-search-scope', 'nextSibling', 1);
+        break;
+      }
+
+      case 38: // up
+      {
+        selectNextInput('end-search-scope', 'previousSibling', -1);
+        break;
+      }
+
+      case 13:
+      {
+        if( __selected_element )
+        {
+          __selected_element.click();
+        }
+        break;
+      }
+
+      default:
+      {
+        if( __selected_element )
+        {
+          __selected_element.parentNode.removeClass('selected');
+          __selected_element = null;
+        }
+
+      }
+    }
+  }
   
   this.handleEnterKey = function()
   { 

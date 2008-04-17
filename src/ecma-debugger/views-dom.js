@@ -290,6 +290,13 @@
         handler: 'dom-text-search',
         title: 'text search'
       }
+    ],
+    [
+      {
+        handler: 'documentation',
+        title: 'Documentation',
+        param: 'http://www.opera.com'
+      }
     ]
   )
 

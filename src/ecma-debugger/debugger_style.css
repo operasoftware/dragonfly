@@ -591,6 +591,10 @@ item.search-scope + item.search-scope {
   border-top-width: 0;
   }
 
+item.selected {
+  background-color:#eec;
+  }
+
 
 examine-objects start-search-scope:first-child {
   height: 4px;
