@@ -5,5 +5,5 @@ var ini =
   max_frames: 100,
   debug: false,
   dragonfly_version: '0.7',
-  revision_number: '08.04.17.19.09'
+  revision_number: '08.04.18.16.23'
 }
