@@ -107,10 +107,7 @@
 
   this['top-tabs'] = function(obj)
   {
-    //alert(tab.tabs.length)
-    var ret = [].
-      // this is a quick hack
-      concat( [ templates.buttons(toolbars['main-view-top-tab'] && toolbars['main-view-top-tab'].buttons || [])] );
+    var ret = [];
     var tab = null, i = 0;
     for( ; tab = obj.tabs[i]; i++)
     {

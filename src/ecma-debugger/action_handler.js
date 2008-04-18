@@ -177,7 +177,7 @@ var action_handler = new function()
               parent_parent.insertAfter(parent_parent.getElementsByTagName('start-search-scope')[0],
                 cur );
               cur.addClass('search-scope');
-              messages.post( 'list-search-cotext', 
+              messages.post( 'list-search-context', 
                 {
                   'data_id': data_id,
                   'rt_id': rt_id,
@@ -190,7 +190,7 @@ var action_handler = new function()
             {
               parent_parent.insertBefore(parent_parent.getElementsByTagName('start-search-scope')[0],
                 parent_parent.firstChild );
-              messages.post( 'list-search-cotext', 
+              messages.post( 'list-search-context', 
                 {
                   'data_id': data_id, 
                   'rt_id': rt_id,
@@ -239,7 +239,7 @@ var action_handler = new function()
               }
             }
             target.style.backgroundPosition = "0px -11px";
-            messages.post( 'list-search-cotext', 
+            messages.post( 'list-search-context', 
               {
                 'data_id': data_id, 
                 'rt_id': rt_id,

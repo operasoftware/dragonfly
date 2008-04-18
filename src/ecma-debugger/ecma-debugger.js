@@ -7,7 +7,7 @@
 
     this.onconnect = function()
     {
-
+      this.createAllRuntimes();
     }
 
     this.onreceive = function(xml) 

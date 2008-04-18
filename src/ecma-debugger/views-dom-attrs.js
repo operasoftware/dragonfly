@@ -27,7 +27,7 @@
                 node_dom_attrs.prettyPrint(data, -1, filter) + 
                 "<end-search-scope></end-search-scope>" +
             "</examine-objects>";
-          messages.post( 'list-search-cotext', 
+          messages.post( 'list-search-context', 
             {
               'data_id': 'node_dom_attrs', 
               'rt_id': selectedNode.rt_id,
@@ -118,7 +118,7 @@
   messages.addListener('view-created', onViewCreated);
   messages.addListener('view-destroyed', onViewDestroyed);
 
-  messages.addListener('list-search-cotext', onListSearchContext);
+  messages.addListener('list-search-context', onListSearchContext);
 
   eventHandlers.input['dom-attrs-text-search'] = function(event, target)
   {

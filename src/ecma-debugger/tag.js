@@ -31,12 +31,12 @@ var tagManager = new function()
     var tag = response.getNodeData('tag'), cb = null;
     if( tag && ( cb = tags[tag] ) )
     {
+      delete tags[tag];
       if( window.__debug_event_flow__ )  
       {
         debug.output('tag: '+( (new Date().getTime())- cb.time ));
       }
       cb.methode.apply(cb.obj, [response].concat(cb.args));
-      delete cb;
       return true;
     }
     else

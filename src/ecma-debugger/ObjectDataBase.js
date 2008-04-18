@@ -218,20 +218,22 @@ var ObjectDataBase = new function()
 
   this.prettyPrint = function(data, target_depth, filter)
   {
-    var ret = "", prop = null, i = 0, val = "";
+    var ret = "", prop = null, i = 0, val = "", short_val = "";
     // in case of a back reference
     var forced_depth = data[0] && target_depth > data[0][DEPTH] && target_depth + 1 || 0;
     var depth = 0;
     for( ; prop = data[i]; i++)
     {
       val = prop[VALUE];
+      short_val = "";
       if( filter && val in filter )
       {
         continue;
       }
       if( val.length > MAX_VALUE_LENGTH )
       {
-        val = val.slice(0, MAX_VALUE_LENGTH) +"...";
+        short_val = val.slice(0, MAX_VALUE_LENGTH) +"...";
+        val = val.replace(/</g, '&gt;').replace(/'/g, '&#39;');
       }
       val = val.replace(/</g, "&gt;");
 
@@ -251,10 +253,23 @@ var ObjectDataBase = new function()
       }
       else
       {
+        if( short_val )
+        {
+        ret += "<item style='padding-left:" + ( 9 + 16 * depth ) + "px'>" +
+                  "<key>" + prop[KEY] + "</key>" +
+                  "<value class='" + prop[TYPE] + "' title='" + val + "'>" + 
+                      short_val+ 
+                  "</value>" + 
+                "</item>";
+        }
+        else
+        {
         ret += "<item style='padding-left:" + ( 9 + 16 * depth ) + "px'>" +
                   "<key>" + prop[KEY] + "</key>" +
                   "<value class='" + prop[TYPE] + "'>" + val + "</value>" + 
                 "</item>";
+        }
+
 
       }
 
