@@ -203,15 +203,22 @@
         arr = key.split('.');
         view_id = arr[0];
         key = arr[1];
-        checkboxes[checkboxes.length] = 
-          this.settingCheckbox
-          (
-            view_id, 
-            key, 
-            settings[view_id].get(key), 
-            settings[view_id].label_map[key],
-            setting.view_id
-          );
+        if( settings[view_id] )
+        {
+          checkboxes[checkboxes.length] = 
+            this.settingCheckbox
+            (
+              view_id, 
+              key, 
+              settings[view_id].get(key), 
+              settings[view_id].label_map[key],
+              setting.view_id
+            );
+        }
+        else
+        {
+          opera.postError('failed in ui-templates checkboxes '+ arr + ' ' +setting.view_id);
+        }
       }
     }
     return checkboxes;

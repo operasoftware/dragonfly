@@ -238,7 +238,7 @@ top-tabs { /* The top tabs container, replaced with, placed into or merged with 
   left: 0;
   background: url('../ui-images/tabcontainer.png') no-repeat 100% 0;
   height: 20px;
-  padding: 7px 200px 0px 7px;
+  padding: 7px 0px 0px 7px;
   }
 		
 top-tabs:before {

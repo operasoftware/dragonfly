@@ -124,7 +124,7 @@ var client = new function()
 
   this.setup = function()
   {
-    document.addEventListener('load', arguments.callee, false);
+    document.removeEventListener('load', arguments.callee, false);
 
     var args = location.search, params = {}, arg = '', i = 0, ele = null;
 
@@ -275,7 +275,7 @@ var client = new function()
     // event handlers to resize the views
     new SlideViews(document);
     
-    document.documentElement.render(templates.viewMenu());
+    messages.post('setting-changed', {id: 'general', key: 'show-views-menu'});
 
     // a short workwround to hide some tabs as long as we don't have the dynamic tabs
     var is_disbaled = null, tabs = console_rough_layout.children[0].tabs, tab = '';
@@ -354,7 +354,7 @@ var dom_rough_layout =
       width: 700,
       children: 
       [
-        { height: 150, tabs: ['runtimes_dom', 'runtimes_css'] },
+        { height: 150, tabs: ['runtimes_dom', 'runtimes_css', 'environment'] },
         { width: 200, tabs: ['dom', 'stylesheets'] }
       ]
     },
@@ -373,8 +373,9 @@ var js_rough_layout =
       width: 700, 
       children: 
       [
-        { height: 150, tabs: ['runtimes'] },
-        { width: 650, tabs: ['js_source']},
+        { height: 150, tabs: ['runtimes', 'environment'] },
+        { height: 650, tabs: ['js_source']},
+        { height: 150, tabs:['command_line']}
       ] 
     },
     { 

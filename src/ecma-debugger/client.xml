@@ -2,6 +2,9 @@
 
 <title>Dragonfly</title>
 
+<windows-container></windows-container>
+<main-view><img src='../ui-images/busy_anim.gif' style='position:absolute;top:50%;left:50%;margin-top:-50px;margin-left:-50px;'/></main-view>
+
 <link rel="stylesheet" href="../ui-style/ui.css"/>
 
 
@@ -111,6 +114,5 @@
 <script src="console.js"/>
 <script src="ecma-debugger.js"/>
 
-<windows-container></windows-container>
-<main-view></main-view>
+
 </viewport>

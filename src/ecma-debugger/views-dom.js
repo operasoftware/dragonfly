@@ -269,9 +269,9 @@
         'show-comments',
         'show-attributes',
         'show-whitespace-nodes',
-        'dom_general.find-with-click',
-        'dom_general.highlight-on-hover',
-        'dom_general.update-on-dom-node-inserted'
+        'find-with-click',
+        'highlight-on-hover',
+        'update-on-dom-node-inserted'
       ]
     }
   );

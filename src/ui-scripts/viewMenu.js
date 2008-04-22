@@ -1,7 +1,8 @@
-var ViewMenu = function(menu_id)
+var ViewsMenu = function(menu_id)
 {
   var hide_timeouts = [];
   var menu = null;
+  var self = this;
   this.getAllViews = function()
   {
 
@@ -89,7 +90,48 @@ var ViewMenu = function(menu_id)
     }
   }
 
-  document.addEventListener('DOMNodeInserted', init, false);
+  this.create = function()
+  {
+
+    document.addEventListener('DOMNodeInserted', init, false);
+    document.documentElement.render(templates.viewMenu());
+    topCell.tab.addRightPadding(200);
+  }
+
+  this.remove = function()
+  {
+    menu = document.getElementById(menu_id);
+    if(menu)
+    {
+      menu.parentNode.removeChild(menu);
+      topCell.tab.addRightPadding(-200);
+    }
+  }
+
+  var onSettingChange = function(msg)
+  {
+    if( msg.id == 'general' )
+    {
+      switch(msg.key)
+      {
+        case 'show-views-menu':
+        {
+          if(settings.general.get(msg.key))
+          {
+            self.create();
+          }
+          else
+          {
+            self.remove();
+          }
+          break;
+        }
+      }
+    }
+  }
+
+  messages.addListener('setting-changed', onSettingChange);
+
 }
 
-new ViewMenu('main-view-menu');
+window.viewsMenu = new ViewsMenu('main-view-menu');

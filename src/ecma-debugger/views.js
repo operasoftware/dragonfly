@@ -350,6 +350,8 @@
         {
           var out = document.getElementById('console-output');
           out.render(['pre', return_value.firstChild.nodeValue]);
+          var container = out.parentNode.parentNode;
+          container.scrollTop = container.scrollHeight;
         }
         else if (return_value = xml.getElementsByTagName('object-id')[0])
         {
@@ -380,6 +382,8 @@
       {
         var out = document.getElementById('console-output');
         out.render(['pre', return_value.firstChild.nodeValue]);
+        var container = out.parentNode.parentNode;
+        container.scrollTop = container.scrollHeight;
       }
     }
 
@@ -470,7 +474,6 @@
         }
         document.getElementById("commandline-prefix").textContent = submit_buffer.length ? "... " : ">>> ";
         event.target.value = '';
-        event.target.scrollTop = 0;
       }
 
     }
@@ -478,6 +481,7 @@
     this.createView = function(container)
     {
       container.innerHTML = markup;
+      container.scrollTop = container.scrollHeight
     }
 
     this.init(id, name, container_class);
@@ -486,6 +490,39 @@
 
   View.prototype = ViewBase;
   new View('command_line', 'Command Line', 'scroll');
+
+  View = function(id, name, container_class)
+  {
+    this.ishidden_in_menu = true;
+    this.createView = function(container)
+    {
+    }
+    this.init(id, name, container_class);
+  }
+  View.prototype = ViewBase;
+  new View('general', 'General', '');
+
+  new Settings
+  (
+    // id
+    'general', 
+    // key-value map
+    {
+      "show-views-menu": false
+    }, 
+    // key-label map
+    {
+      "show-views-menu": "show views menu"
+    },
+    // settings map
+    {
+      checkboxes:
+      [
+        "show-views-menu"
+      ]
+    }
+
+  );
   
   View = function(id, name, container_class)
   {
