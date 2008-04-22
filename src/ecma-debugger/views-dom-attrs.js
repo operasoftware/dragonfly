@@ -58,7 +58,7 @@
     }, 
     // key-label map
     {
-      "hide-null-values": "hide empty string and null values"
+      "hide-null-values": " hide empty strings and null values"
     },
     // settings map
     {

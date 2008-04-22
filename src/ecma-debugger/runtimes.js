@@ -530,6 +530,11 @@ var runtimes = new function()
     return ret;
   }
 
+  this.getRuntime = function(rt_id)
+  {
+    return __runtimes[rt_id] || null;
+  }
+
   this.getRuntimeIdsFromWindow = function(window_id)
   {
     // first member is the top runtime
@@ -696,7 +701,16 @@ var runtimes = new function()
       __next_runtime_id_to_select = id;
     }
   }
-
+/*
+  this.getSelecetedRuntimeURL = function()
+  {
+    opera.postError(__selected_runtime_id);
+    return __selected_runtime_id 
+      && __runtimes[__selected_runtime_id] 
+      && __runtimes[__selected_runtime_id]['uri']
+      || '';
+  }
+*/
   this.getSelectedRuntimeId = function()
   {
     return __selected_runtime_id;

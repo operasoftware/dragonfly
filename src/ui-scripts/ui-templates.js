@@ -95,7 +95,10 @@
     var tab = null, i = 0;
     for( ; tab = obj.tabs[i]; i++)
     {
-      ret[ret.length] = this.tab(tab, obj.activeTab == tab.ref_id)
+      if( ! tab.disabled )
+      {
+        ret[ret.length] = this.tab(tab, obj.activeTab == tab.ref_id)
+      }
     }
     return ret;
   }

@@ -24,6 +24,8 @@ CellBase = new function()
     this.toolbar = new Toolbar(this);
   }
 
+
+
   this.getView = function(view_id)
   {
     var ret = null, tab = '', view = null, child = null, i = 0;
@@ -58,6 +60,40 @@ CellBase = new function()
       }
     }
     return null;
+  }
+
+  this.disableTab = function(ref_id , bool)
+  {
+    var tab = null, view = null, child = null, i = 0;
+    if( this.tab )
+    {
+      for( i = 0 ; tab = this.tab.tabs[i]; i++ )
+      {
+        if( ( view = views[tab.ref_id] )  && view.type == 'composite-view' )
+        {
+          view.cell.disableTab(ref_id , bool);
+        }
+        else if( tab.ref_id == ref_id )
+        {
+          tab.disabled = bool;
+          if(this.tab.isvisible())
+          {
+            this.tab.render();
+            if( this.tab.activeTab == ref_id )
+            {
+              this.tab.trySetAnActiveTab();
+            }
+          }
+        }
+      }
+    }
+    else
+    {
+      for( i = 0 ; child = this.children[i]; i++ )
+      {
+        child.disableTab(ref_id , bool);
+      }
+    }
   }
 
   this.init = function(rough_cell, dir, parent, container_id)
@@ -173,10 +209,7 @@ CellBase = new function()
 
         if( !this.tab.activeTab )
         {
-          if(this.tab.tabs.length)
-          {
-            this.tab.setActiveTab( this.tab.tabs[0].ref_id );
-          }
+          this.tab.trySetAnActiveTab();
         }
         else if( !document.getElementById('toolbar-to-' + this.id)) // check if frame for view is created
         {

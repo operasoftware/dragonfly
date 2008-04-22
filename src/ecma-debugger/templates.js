@@ -385,17 +385,9 @@ MODE ::= "<mode>"
   {
     var message = null, i = 0;
     var ret = ['div'];
-    var is_enabled = 
-    {
-      css: settings.console.get('css'),
-      ecmascript: settings.console.get('ecmascript')
-    };
     for( ; message = messages[i]; i++)
     {
-      if(is_enabled[message.source])
-      {
-        ret[ret.length] = self.message(message);
-      }
+      ret[ret.length] = self.message(message);
     }
     return ret;//.concat(['class', 'padding']);
   }

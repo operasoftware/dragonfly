@@ -48,7 +48,7 @@ var elementStyle = new function()
   [
     {
       'id': 'computedStyle',
-      'name': 'computed style',
+      'name': 'Computed Style',
       'unfolded': false
     },
     {

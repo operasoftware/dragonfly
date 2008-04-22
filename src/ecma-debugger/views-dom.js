@@ -251,11 +251,15 @@
     }, 
     // key-label map
     {
+      'find-with-click': ' find element with click',
+      'highlight-on-hover': ' highlight element on mouseover',
+      'update-on-dom-node-inserted': ' update DOM when a node is removed',
       'force-lowercase': ' always use lower case for tag names', 
       'show-comments': ' show comment nodes', 
       'show-attributes': ' show attributes',
       'show-whitespace-nodes': ' show white space nodes',
-      'dom-tree-style': 'show DOM in tee style'
+      'dom-tree-style': 'show DOM in tee style',
+    
     },
     // settings map
     {

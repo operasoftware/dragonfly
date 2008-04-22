@@ -36,6 +36,11 @@ var UIBase = new function()
       'width:' + this.width + 'px;';
   }
 
+  this.isvisible = function()
+  {
+    return document.getElementById(this.type + '-to-' + this.cell.id) && true || false;
+  }
+
   this.update = function(force_redraw)
   {
     if( force_redraw )

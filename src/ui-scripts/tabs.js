@@ -162,6 +162,16 @@ var TabsBase = function()
     }
   }
 
+  this.trySetAnActiveTab = function()
+  {
+    var tab = null, i = 0;
+    for( ; ( tab = this.tabs[i] ) && tab.disabled; i++);
+    if(tab)
+    {
+      this.setActiveTab(tab.ref_id);
+    }
+  }
+
 
   this.getTopPosition = function()
   {

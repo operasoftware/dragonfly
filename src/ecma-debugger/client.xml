@@ -10,6 +10,8 @@
 <link rel="stylesheet" href="dom-inspector.css"/>
 <link rel="stylesheet" href="syntax-highlight.css"/>
 
+<script src="../ui-strings/ui_strings.js"/>
+
 <!-- command "new_file" source "../scripts" target "../scripts/common.js" -->
 
 <script src="../scripts/json.js"/>
@@ -48,6 +50,7 @@
 <script src="../ui-scripts/Switches.js"/>
 
 <!-- command "new_file" source "" target "../scripts/dragonfly.js"   -->
+
 
 
 <script src="ListTextSearch.js"/>

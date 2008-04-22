@@ -32,10 +32,8 @@ var client = new function()
         ( 
            'Service is avaible: ' + service.name
         );
-
       }
     }
-
   }
 
   var receive = function(service, msg)
@@ -278,14 +276,22 @@ var client = new function()
     new SlideViews(document);
     
     document.documentElement.render(templates.viewMenu());
+
+    // a short workwround to hide some tabs as long as we don't have the dynamic tabs
+    var is_disbaled = null, tabs = console_rough_layout.children[0].tabs, tab = '';
+    for( i = 0; tab = tabs[i]; i++ )
+    {
+      is_disbaled = !settings.console.get(tab);
+      views[tab].ishidden_in_menu = is_disbaled;
+      topCell.disableTab(tab, is_disbaled);
+    }
+
   }
 
   this.onquit = function()
   {
     messages.post('host-state', {state: 'inactive'});
   }
-
-
 
   document.addEventListener('load', this.setup, false);
 
@@ -309,7 +315,24 @@ var console_rough_layout =
   dir: 'v', width: 700, height: 700,
   children: 
   [
-    { height: 200, tabs: ['console'] }
+    { height: 200, tabs: 
+      [
+        'console-all', 
+        'console-script', 
+        'console-css', 
+        'console-xml',
+        'console-java',
+        'console-m2',
+        'console-network',
+        'console-html',
+        'console-xslt',
+        'console-svg',
+        'console-bittorrent',
+        'console-voice',
+        'console-widget',
+        'console-dragonfly'
+      ] 
+    }
   ]
 }
 
