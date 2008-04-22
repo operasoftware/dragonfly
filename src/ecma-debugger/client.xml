@@ -3,7 +3,26 @@
 <title>Dragonfly</title>
 
 <windows-container></windows-container>
-<main-view><img src='../ui-images/busy_anim.gif' style='position:absolute;top:50%;left:50%;margin-top:-50px;margin-left:-50px;'/></main-view>
+<main-view>
+<div style='position:absolute;
+    width: 300px;
+    top:50%;
+    left:50%;
+    margin-top:-150px;
+    margin-left:-150px;
+    text-align:center;'>
+  <h1 style='height:100px;
+      line-height:100px;
+      margin:0;
+      padding:0;
+      color:#ccc;
+      background-color:#fff;
+      font-family:sans-serif;
+      font-size:30px;
+      text-align:center;'>Loading Dragonfly</h1>
+  <img src='../ui-images/busy_anim.gif' />
+</div>
+</main-view>
 
 <link rel="stylesheet" href="../ui-style/ui.css"/>
 
