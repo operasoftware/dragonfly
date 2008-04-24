@@ -47,29 +47,23 @@ var action_handler = new function()
   handlers['show-frame'] = function(event)
   {
     var frame = stop_at.getFrame(event.target['ref-id']);
-    // is this schabernack? each frame can be in a different runtime
-    var runtime_id = stop_at.getRuntimeId();
-    
     if(frame)
     {
-      views.frame_inspection.clearView();
-      var tag = tagManager.setCB(
-        null, 
-        responseHandlers.examinFrame, 
-        [runtime_id, frame.argument_id, frame.this_id]
-        );
-      services['ecmascript-debugger'].examineObjects( tag, runtime_id, frame.scope_id );
+      messages.post('frame-selected', {frame_index: event.target['ref-id']});
       if( event.type == 'click' )
       {
         helpers.setSelected(event);
-        if( frame.script_id )
-        { // assert view.js_source is visible
-          views.js_source.showLine( frame.script_id, frame.line - 10 );
-          views.js_source.showLinePointer( frame.line, frame.id == 0 );
-        }
-        else
+        if( views.js_source.isvisible() )
         {
-          views.js_source.clearView();
+          if( frame.script_id )
+          { 
+            views.js_source.showLine( frame.script_id, frame.line - 10 );
+            views.js_source.showLinePointer( frame.line, frame.id == 0 );
+          }
+          else
+          {
+            views.js_source.clearView();
+          }
         }
       }
     }
@@ -264,10 +258,7 @@ var action_handler = new function()
     var runtime = runtimes.getRuntimeIdWithURL(ele.firstChild.nodeValue);
     if( runtime )
     {
-      views.frame_inspection.clearView();
-      frame_inspection.setNewFrame(runtime['runtime-id'] );
-      var tag = tagManager.setCB(null, responseHandlers.examinObject, [ runtime['runtime-id'] ]);
-      services['ecmascript-debugger'].examineObjects( tag,  runtime['runtime-id'], runtime['object-id'] );
+      frame_inspection.examineObject(runtime['runtime-id'], runtime['runtime-id']);
       runtimes.setSelectedRuntime( runtime );
       host_tabs.setActiveTab(runtime['runtime-id']);
       views.runtimes.update();

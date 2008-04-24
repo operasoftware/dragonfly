@@ -24,7 +24,7 @@
                   "data-id='node_dom_attrs' " +
                   "obj-id='" + selectedNode.obj_id + "' >" +
                 "<start-search-scope></start-search-scope>" +
-                node_dom_attrs.prettyPrint(data, -1, filter) + 
+                node_dom_attrs.prettyPrint(data, -1, filter, 1) + 
                 "<end-search-scope></end-search-scope>" +
             "</examine-objects>";
           messages.post( 'list-search-context', 

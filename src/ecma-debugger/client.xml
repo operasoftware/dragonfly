@@ -91,13 +91,18 @@
 <script src="handlers.js"/>
 <script src="runtimes.js"/>
 <script src="stop_at.js"/>
+
+<script src="ObjectDataBase.js"/>
+
 <script src="frame_inspection.js"/>
 <script src="views.js"/>
 <script src="testing.js"/>
 <script src="dom_data.js"/>
 <script src="css_initial_values.js"/>
 <script src="css_inheritable_properties.js"/>
-<script src="ObjectDataBase.js"/>
+<script src="js_default_global_scope_properties.js"/>
+
+
 <script src="node_dom_attrs.js"/>
 <script src="elementLayout.js"/>
 
@@ -107,6 +112,8 @@
 <script src="views-css-layout.js"/>
 <script src="views-stylesheets.js"/>
 <script src="js-source-view.js"/>
+
+<script src="views-frame-inspection.js"/>
 
 
 <script src="DOM_markup_style.js"/>

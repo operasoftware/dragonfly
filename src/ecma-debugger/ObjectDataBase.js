@@ -8,6 +8,7 @@ var ObjectDataBase = new function()
   QUERIED = 4,
   SEARCH = 5,
   CONSTRUCTOR = 6,
+  IS_VIRTUAL = 7,
   MAX_VALUE_LENGTH = 50;
   
   
@@ -25,7 +26,7 @@ var ObjectDataBase = new function()
     i=0,
     prop_type = '',
     index = this.getObject(obj_id),
-    unsorted = [index + 1, 0],
+    unsorted = [index + 1 + this.getCountVirtualProperties(index), 0],
     depth = 0;
     if( obj && index > -1 )
     {
@@ -134,7 +135,18 @@ var ObjectDataBase = new function()
     return -1;
   }
 
-  this.setObject = function(rt_id, obj_id, name, type)
+  this.getCountVirtualProperties = function(index)
+  {
+    var prop = null, i = index + 1, depth = this.data[index][DEPTH] + 1, count = 0;
+    
+    for( ; ( prop = this.data[i] ) && prop[IS_VIRTUAL] && prop[DEPTH] == depth ; i++)
+    {
+      count += 1;
+    }
+    return count;
+  }
+
+  this.setObject = function(rt_id, obj_id, virtualProperties)
   {
     this.rt_id = rt_id;
     this.__cache = null;
@@ -142,12 +154,21 @@ var ObjectDataBase = new function()
     this.data = 
     [
       [
-        name,
+        '',
         obj_id
-        type,
+        'object',
         -1
       ]
     ]
+    if( virtualProperties )
+    {
+      var prop = null, i = 0;
+      for( ; prop = virtualProperties[i]; i++)
+      {
+        prop[IS_VIRTUAL] = 1;
+      }
+      this.data = this.data.concat(virtualProperties);
+    }    
   }
 
   this.__cache = null;
@@ -216,7 +237,7 @@ var ObjectDataBase = new function()
     }
   }
 
-  this.prettyPrint = function(data, target_depth, filter)
+  this.prettyPrint = function(data, target_depth, filter, filter_type)
   {
     var ret = "", prop = null, i = 0, val = "", short_val = "";
     // in case of a back reference
@@ -226,7 +247,7 @@ var ObjectDataBase = new function()
     {
       val = prop[VALUE];
       short_val = "";
-      if( filter && val in filter )
+      if( filter && prop[filter_type] in filter )
       {
         continue;
       }

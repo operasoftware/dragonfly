@@ -107,7 +107,8 @@ var stop_at = new function()
           argument_id : frame.getNodeData('argument-object'),
           scope_id : frame.getNodeData('variable-object'),
           this_id : frame.getNodeData('this-object'),
-          id: i
+          id: i,
+          rt_id: runtime_id
         }
       }
       else
@@ -120,23 +121,31 @@ var stop_at = new function()
           argument_id : frame.getNodeData('argument-object'),
           scope_id : frame.getNodeData('variable-object'),
           this_id : frame.getNodeData('this-object'),
-          id: i
+          id: i,
+          rt_id: runtime_id
+
         }
       }
-      // fake a click event on the top frame in the stack
-      if( i == 0 )
-      {
-        if(settings.frame_inspection.get('automatic-update-global-scope'))
-        {
-          action_handler.post('show-frame', {'target': { 'ref-id': 0 } });
-        }
-        else
-        {
-          views.frame_inspection.showGlobalScopeUpdateLink();
-        }
-      }
+      
+
     }
+
     views.callstack.update();
+
+    messages.post('frame-selected', {frame_index: 0});
+
+    /*
+    we have to see if we still need that update link
+    if(settings.frame_inspection.get('automatic-update-global-scope'))
+    {
+      action_handler.post('show-frame', {'target': { 'ref-id': 0 } });
+    }
+    else
+    {
+      views.frame_inspection.showGlobalScopeUpdateLink();
+    }
+    */
+
   }
 
   this.setInitialSettings = function()

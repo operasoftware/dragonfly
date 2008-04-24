@@ -14,7 +14,8 @@ var ListTextSearch = function()
   cache = {},
   current_id = '',
   current_context = null,
-  go_back = {};
+  go_back = {},
+  highlightColor = '';
 
   this.search = function(new_search_therm)
   {
@@ -96,10 +97,12 @@ var ListTextSearch = function()
     {
       if( __selected_element )
       {
-        __selected_element.parentNode.removeClass('selected');
+        //__selected_element.parentNode.removeClass('selected');
+        __selected_element.parentNode.style.removeProperty('background-color');
       }
       __selected_element = cur.firstChild;
-      cur.addClass('selected');
+      //cur.addClass('selected');
+      cur.style.backgroundColor = highlightColor;
       scrollTop = container.scrollTop;
       scrollBottom = scrollTop + container.offsetHeight;
       targetTop = cur.offsetTop;
@@ -122,6 +125,8 @@ var ListTextSearch = function()
 
   this.handleKey = function(event, target)
   {
+    event.stopPropagation();
+    event.preventDefault();
     switch( event.keyCode)
     {
       case 40: // down
@@ -181,7 +186,7 @@ var ListTextSearch = function()
           var target = getTarget();
           if( target && ( target = target.getElementsByTagName('input')[0] ) )
           {
-            // TOD this call causes problems
+            // TODO this call causes problems
             if( go_back[current_id] )
             {
               target.click();
@@ -246,6 +251,11 @@ var ListTextSearch = function()
     if( container != _container )
     {
       container = _container;
+      if( !highlightColor )
+      {
+        highlightColor = 
+          document.styleSheets.getPropertyValue('item.selected', 'background-color');
+      }
     }
   }
 

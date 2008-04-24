@@ -543,14 +543,14 @@
       },
       {
         handler: 'continue',
-        title: 'step into call ( F11 )',
-        id: 'continue-step-into-call',
+        title: 'step next line ( F10 )',
+        id: 'continue-step-next-line',
         disabled: true
       },
       {
         handler: 'continue',
-        title: 'step next line ( F10 )',
-        id: 'continue-step-next-line',
+        title: 'step into call ( F11 )',
+        id: 'continue-step-into-call',
         disabled: true
       },
       {
@@ -593,5 +593,15 @@
       ]
     }
   );
+
+  new Switches
+  (
+    'js_source',
+    [
+      'script',
+      'error',
+      'threads.log-threads'
+    ]
+  )
 
 })()
