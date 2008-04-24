@@ -108,7 +108,8 @@ var console_messages = new function()
     {
       message[child.nodeName] = child.textContent;
     }
-    if( uri && uri.indexOf(url_self) == -1 )
+    // TODO uri is not always present
+    if( !uri || uri.indexOf(url_self) == -1 )
     {
       msgs[msgs.length] = message;
     }

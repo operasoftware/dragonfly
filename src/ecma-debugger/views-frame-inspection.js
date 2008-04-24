@@ -25,7 +25,7 @@
                   "data-id='frame_inspection' " +
                   "obj-id='" + selectedObject.obj_id + "' >" +
                 "<start-search-scope></start-search-scope>" +
-                frame_inspection.prettyPrint(data, -1, filter, 0) + 
+                frame_inspection.prettyPrint(data, -1, filter, frame_inspection.filter_type) + 
                 "<end-search-scope></end-search-scope>" +
             "</examine-objects>";
           messages.post

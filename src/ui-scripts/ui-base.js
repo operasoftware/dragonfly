@@ -49,11 +49,19 @@ var UIBase = new function()
     }
     var id = this.type + '-to-' + this.cell.id
     var ele = document.getElementById(id);
+    var attr_key = '';
     if( !ele )
     {
       ele = document.createElement(this.type);
       ele.id = id;
       ele.setAttribute('ui-id', this.id);
+      if( this.attributes )
+      {
+        for( attr_key in  this.attributes )
+        {
+          ele.setAttribute(attr_key, this.attributes[attr_key]);
+        }
+      }
       if( this.parent_container_id )
       {
         var parent_container = document.getElementById(this.parent_container_id);

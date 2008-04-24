@@ -16,6 +16,12 @@ var ToolbarBase = function()
       'display:' + ( this.height ? 'block' : 'none' );
   }
 
+  this.attributes =
+  {
+    'focus-handler': 'focus',
+    'blur-handler': 'blur'
+  }
+
 
 
   this.setDimensions = function(force_redraw)

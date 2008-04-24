@@ -1,5 +1,10 @@
 var Node_dom_attrs = function()
 {
+
+  const 
+  KEY = 0,
+  VALUE = 1;
+
   var __selectedElement = null;
   var __views = ['dom_attrs'];
 
@@ -7,6 +12,8 @@ var Node_dom_attrs = function()
   this.data = [];
 
   var self = this;
+
+  this.filter_type = VALUE;
 
   this.getSelectedNode = function()
   {

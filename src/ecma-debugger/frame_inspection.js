@@ -1,10 +1,17 @@
 var Frame_inspection = function()
 {
+
+  const 
+  KEY = 0,
+  VALUE = 1;
+
   var __selectedObject = null;
   var __views = ['frame_inspection'];
 
   this.rt_id = '';
   this.data = [];
+
+  this.filter_type = KEY;
 
   var self = this;
 
@@ -54,7 +61,7 @@ var Frame_inspection = function()
         ],
         [
           'this',
-          frame.this_id,
+          frame.this_id == '0' ? frame.rt_id : frame.this_id,
           'object',
           0
         ]

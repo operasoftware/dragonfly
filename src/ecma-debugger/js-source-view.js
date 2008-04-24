@@ -559,6 +559,12 @@
         id: 'continue-step-out-of-call',
         disabled: true
       }
+    ],
+    [
+      {
+        handler: 'js-sorce-text-search',
+        title: 'text search'
+      }
     ]
   )
 

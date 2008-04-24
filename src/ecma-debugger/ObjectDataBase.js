@@ -184,7 +184,7 @@ var ObjectDataBase = new function()
     */
     var ret = [], i = index + 1, depth = this.data[index][DEPTH], prop = null;
     // it's a back refernce, return only the properties from the current level 
-    // without the expanded properties and adjust the depth
+    // without the expanded properties
     if( target_depth > this.data[index][DEPTH] ) 
     {
       depth += 1;
@@ -241,7 +241,7 @@ var ObjectDataBase = new function()
   {
     var ret = "", prop = null, i = 0, val = "", short_val = "";
     // in case of a back reference
-    var forced_depth = data[0] && target_depth > data[0][DEPTH] && target_depth + 1 || 0;
+    var forced_depth = data[0] && target_depth >= data[0][DEPTH] && target_depth + 1 || 0;
     var depth = 0;
     for( ; prop = data[i]; i++)
     {

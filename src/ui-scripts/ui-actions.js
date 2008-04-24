@@ -1,5 +1,6 @@
-var EventHandler = function(type)
+var EventHandler = function(type, is_capturing, handler_key)
 {
+  handler_key = handler_key ? handler_key : 'handler';
   if(!window.eventHandlers)
   {
     window.eventHandlers = {};
@@ -13,10 +14,16 @@ var EventHandler = function(type)
 
   var handler = function(event)
   {
-    var ele = event.target, handler = ele.getAttribute('handler'), container = null;
+
+    var ele = event.target, handler = null, container = null;
+    if( ele.nodeType != 1 )
+    {
+      return;
+    }
+    handler = ele.getAttribute(handler_key);
     while( !handler && ( ele = ele.parentElement ) )
     {
-      handler = ele.getAttribute('handler');
+      handler = ele.getAttribute(handler_key);
     }
     if( handler && eventHandlers[type][handler] )
     {
@@ -37,7 +44,7 @@ var EventHandler = function(type)
     }
   }
 
-  document.addEventListener(type, handler, false);
+  document.addEventListener(type, handler, is_capturing ? is_capturing : false);
 }
 
 new EventHandler('click');
@@ -46,6 +53,8 @@ new EventHandler('input');
 new EventHandler('keyup');
 new EventHandler('keydown');
 new EventHandler('mousedown');
+new EventHandler('focus', true, 'focus-handler');
+new EventHandler('blur', true, 'blur-handler');
 
 /***** click handler *****/
 
@@ -106,11 +115,7 @@ eventHandlers.click['top-settings'] = function(event)
 
 eventHandlers.click['documentation'] = function(event)
 {
-  //window.open('http://www.opera.com', '_blank');
-  /* */
-  views.documentation.setURL( event.target.getAttribute('param'))
-  UIWindowBase.showWindow('documentation');
-  /* */
+  window.open(event.target.getAttribute('param'), '_info_window').focus();
 }
 
 eventHandlers.mousedown['toolbar-switch'] = function(event)
@@ -142,6 +147,30 @@ eventHandlers.change['checkbox-setting'] = function(event)
     views.settings_view.syncSetting(view_id, ele.name, ele.checked);
   }
   messages.post("setting-changed", {id: view_id, key: ele.name});
+}
+
+eventHandlers.focus['focus'] = function(event, target)
+{
+  var parent = event.target.parentNode;
+  if( parent.nodeName == 'filter' )
+  {
+    parent.firstChild.textContent = '';
+    parent.addClass('focus');
+  }
+}
+
+eventHandlers.blur['blur'] = function(event, target)
+{
+  var parent = event.target.parentNode;
+  if( parent.nodeName == 'filter' )
+  {
+    if( !event.target.value )
+    {
+      parent.firstChild.textContent = 'search';
+      
+    }
+    parent.removeClass('focus');
+  }
 }
 
 
