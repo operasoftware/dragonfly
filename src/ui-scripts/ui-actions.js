@@ -106,8 +106,11 @@ eventHandlers.click['top-settings'] = function(event)
 
 eventHandlers.click['documentation'] = function(event)
 {
+  //window.open('http://www.opera.com', '_blank');
+  /* */
   views.documentation.setURL( event.target.getAttribute('param'))
   UIWindowBase.showWindow('documentation');
+  /* */
 }
 
 eventHandlers.mousedown['toolbar-switch'] = function(event)

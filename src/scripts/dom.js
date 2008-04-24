@@ -234,6 +234,22 @@ Node.prototype.getAttributeFromNode=function(nodeName, attr)
   return null;
 };
 
+StyleSheetList.prototype.getPropertyValue = function(selector, property)
+{
+  var sheet = null, i = 0, j = 0, rules = null, rule = null;
+  for( ; sheet = this[i]; i++ )
+  {
+    rules = sheet.cssRules;
+    // does not take into account import rules
+    for( j = 0; ( rule = rules[j] ) && !( rule.type == 1 && rule.selectorText == selector ); j++);
+    if( rule )
+    {
+      return rule.style.getPropertyValue(property);
+    }
+  }
+  return '';
+};
+
 (function(){
   if( !document.getElementsByClassName )
   {
