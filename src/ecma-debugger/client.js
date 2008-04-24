@@ -16,7 +16,7 @@ var client = new function()
 
   var host_connected = function(_services)
   {
-    opera.postError('on host_connected: '+_services);
+    //opera.postError('on host_connected: '+_services);
     services_avaible = eval("({\"" + _services.replace(/,/g, "\":1,\"") + "\":1})");
     var service = null, i = 0;
     for( ; service = services[i]; i++)

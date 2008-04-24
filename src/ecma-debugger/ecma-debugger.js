@@ -67,6 +67,7 @@
       if( ini.protocol_version == environment['protocol-version'] )
       {
         stop_at.setInitialSettings();
+        self.createAllRuntimes();
         
 
       }
