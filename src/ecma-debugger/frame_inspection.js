@@ -67,15 +67,16 @@ var Frame_inspection = function()
         ]
       ];
       self.setObject(__selectedObject.rt_id, __selectedObject.obj_id, virtualProperties);
-      var view_id = '', i = 0;
-      for ( ; view_id = __views[i] ; i++)
-      {
-        views[view_id].update();
-      }
     }
     else
     {
-      opera.postError('failed in frame_inspection.onFrameSelected');
+      __selectedObject = null;
+      self.clearData();
+    }
+    var view_id = '', i = 0;
+    for ( ; view_id = __views[i] ; i++)
+    {
+      views[view_id].update();
     }
   }
 

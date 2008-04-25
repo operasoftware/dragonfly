@@ -225,15 +225,23 @@ var ObjectDataBase = new function()
 
   this.clearData = function(rt_id, obj_id, depth, key)
   {
-      // back references can be tricky
-    var index = this.getObject(obj_id, depth, key), i = 0, depth = 0, prop = null;
-    if( rt_id == this.rt_id && index > -1 )
+    // obj_id is a string
+    if(obj_id)
     {
-      i = index + 1;
-      depth = this.data[index][DEPTH];
-      for ( ; ( prop = this.data[i] ) && prop[DEPTH] > depth; i++ );
-      this.data.splice(index + 1, i - ( index + 1 ) );
-      delete this.data[index][QUERIED];
+      // back references can be tricky
+      var index = this.getObject(obj_id, depth, key), i = 0, depth = 0, prop = null;
+      if( rt_id == this.rt_id && index > -1 )
+      {
+        i = index + 1;
+        depth = this.data[index][DEPTH];
+        for ( ; ( prop = this.data[i] ) && prop[DEPTH] > depth; i++ );
+        this.data.splice(index + 1, i - ( index + 1 ) );
+        delete this.data[index][QUERIED];
+      }
+    }
+    else
+    {
+      this.data = [];
     }
   }
 

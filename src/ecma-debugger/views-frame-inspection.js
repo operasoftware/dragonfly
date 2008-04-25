@@ -40,6 +40,10 @@
           );
         }
       }
+      else
+      {
+        container.innerHTML = "";
+      }
     }
 
     this.clearView = function()

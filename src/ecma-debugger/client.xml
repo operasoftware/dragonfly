@@ -112,6 +112,8 @@
 <script src="views-css-layout.js"/>
 <script src="views-stylesheets.js"/>
 <script src="js-source-view.js"/>
+<script src="view-commandline.js"/>
+
 
 <script src="views-frame-inspection.js"/>
 

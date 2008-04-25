@@ -87,7 +87,12 @@ var stop_at = new function()
     return callstack[id];
   }
 
-  var parseBacktrace = function(xml, runtime_id)
+  this.getThreadId = function()
+  {
+    return stopAt && stopAt['thread-id'] || '';
+  }
+
+  var parseBacktrace = function(xml, runtime_id, thread_id)
   {
     var _frames = xml.getElementsByTagName('frame'), frame = null, i = 0;
     var fn_name = '', line = '', script_id = '', argument_id = '', scope_id = '';
@@ -162,16 +167,29 @@ var stop_at = new function()
   this.__continue = function (mode) //
   {
     __controls_enabled = false;
+    callstack = [];
 
     runtimes.setObserve(stopAt['runtime-id'], mode != 'run');
 
     services['ecmascript-debugger'].__continue(stopAt, mode);
+    messages.post('frame-selected', {frame_index: -1});
     toolbars.js_source.disableButtons('continue');
     messages.post('host-state', {state: 'ready'});
   }
 
 
 
+  /*
+
+  <thread-stopped-at>
+    <runtime-id>2</runtime-id>
+    <thread-id>1</thread-id>
+    <script-id>41</script-id>
+    <line-number>2</line-number>
+    <stopped-reason>unknown</stopped-reason>
+  </thread-stopped-at>
+
+  */
 
   this.handle = function(stop_at_event)
   {
