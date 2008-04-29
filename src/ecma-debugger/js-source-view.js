@@ -54,6 +54,7 @@
 
     var __scroll_interval = 0;
     var __scrollEvent = 0;
+    var __target_scroll_top = 0;
 
     var __keyEvent = 0;
 
@@ -348,6 +349,8 @@
           {
             script.has_context = setScriptContext(script_id, line_nr);
           }
+          
+          messages.post('script-selected', {script: script});
 
 
         }
@@ -383,13 +386,18 @@
             scroll_lines = scroll_container.scrollTop / context['line-height'] >> 0; 
           if ( ( scroll_lines < __current_line - 5 ) || ( scroll_lines > __current_line + 6 ) ) 
           {
-            scroll_container.scrollTop = (__current_line - 1 ) * context['line-height'];
+            __target_scroll_top = scroll_container.scrollTop = (__current_line - 1 ) * context['line-height'];
           }
         }
       }
 
       return is_visible;
 
+    }
+    
+    this.getTopLine = function()
+    {
+      return __current_line;
     }
 
     /* first allays use showLine */
@@ -437,6 +445,7 @@
 
     this.scroll = function()
     {
+      
       if(!__scroll_interval && script.id)
       {
         __scroll_interval = setInterval(__scroll, 60);
@@ -448,21 +457,28 @@
     var __scroll = function()
     {
       var top = document.getElementById(scroll_container_id).scrollTop;
-      var target_line = ( top / context['line-height'] >> 0 ) + 1;
-      if( __keyEvent )
-      {
-        
-        target_line = __keyEvent;     
-      }
-      if(new Date().getTime() > __scrollEvent )
+      if( __target_scroll_top == top )
       {
         __scroll_interval = clearInterval(__scroll_interval);
-        self.showLine( script.id, target_line);
-        __keyEvent = 0;
       }
       else
       {
-        self.showLine( script.id, ( ( __current_line + target_line ) / 2 ) >> 0);
+        var target_line = ( top / context['line-height'] >> 0 ) + 1;
+        if( __keyEvent )
+        {
+          
+          target_line = __keyEvent;     
+        }
+        if(new Date().getTime() > __scrollEvent )
+        {
+          __scroll_interval = clearInterval(__scroll_interval);
+          self.showLine( script.id, target_line);
+          __keyEvent = 0;
+        }
+        else
+        {
+          self.showLine( script.id, ( ( __current_line + target_line ) / 2 ) >> 0);
+        }
       }
     }
     
@@ -562,7 +578,7 @@
     ],
     [
       {
-        handler: 'js-sorce-text-search',
+        handler: 'js-source-text-search',
         title: 'text search'
       }
     ]
@@ -609,5 +625,46 @@
       'threads.log-threads'
     ]
   )
+  
+  var textSearch = new VirtualTextSearch();
+
+  var onViewCreated = function(msg)
+  {
+    if( msg.id == 'js_source' )
+    {
+      textSearch.setContainer(msg.container);
+    }
+  }
+
+  var onViewDestroyed = function(msg)
+  {
+    if( msg.id == 'dom' )
+    {
+      textSearch.cleanup();
+    }
+  }
+  
+  var onScriptSeleceted = function(msg)
+  {
+    textSearch.setScript(msg.script);
+  }
+
+  messages.addListener('view-created', onViewCreated);
+  messages.addListener('view-destroyed', onViewDestroyed);
+  messages.addListener('script-selected', onScriptSeleceted);
+  
+
+  eventHandlers.input['js-source-text-search'] = function(event, target)
+  {
+    textSearch.searchDelayed(target.value);
+  }
+
+  eventHandlers.keyup['js-source-text-search'] = function(event, target)
+  {
+    if( event.keyCode == 13 )
+    {
+      textSearch.highlight();
+    }
+  }
 
 })()

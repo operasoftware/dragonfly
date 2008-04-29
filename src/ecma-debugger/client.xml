@@ -43,6 +43,7 @@
 <script src="../scripts/clientlib_async.js"/>
 <script src="../scripts/Timeouts.js"/>
 <script src="../scripts/TextSearch.js"/>
+<script src="../scripts/VirtualTextSearch.js"/>
 
 <!-- command "new_file" source "../ui-scripts" target "../scripts/ui.js"   -->
 

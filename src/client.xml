@@ -1,0 +1,146 @@
+﻿<viewport xmlns="http://www.w3.org/1999/xhtml">
+
+<title>Dragonfly</title>
+
+<windows-container></windows-container>
+<main-view>
+<div style='position:absolute;
+    width: 300px;
+    top:50%;
+    left:50%;
+    margin-top:-150px;
+    margin-left:-150px;
+    text-align:center;'>
+  <h1 style='height:100px;
+      line-height:100px;
+      margin:0;
+      padding:0;
+      color:#ccc;
+      background-color:#fff;
+      font-family:sans-serif;
+      font-size:30px;
+      text-align:center;'>Loading Dragonfly</h1>
+  <img src='../ui-images/busy_anim.gif' />
+</div>
+</main-view>
+
+<link rel="stylesheet" href="./ui-style/ui.css"/>
+
+
+<link rel="stylesheet" href="./ecma-debugger/debugger_style.css"/>
+<link rel="stylesheet" href="./ecma-debugger/js-source.css"/>
+<link rel="stylesheet" href="./ecma-debugger/dom-inspector.css"/>
+<link rel="stylesheet" href="./ecma-debugger/syntax-highlight.css"/>
+
+<script src="./ui-strings/ui_strings.js"/>
+
+<!-- command "new_file" source "../scripts" target "../scripts/common.js" -->
+
+<script src="./scripts/json.js"/>
+<script src="./scripts/dom.js"/>
+<script src="./scripts/messages.js"/>
+<script src="./scripts/array.js"/>
+<script src="./scripts/clientlib_async.js"/>
+<script src="./scripts/Timeouts.js"/>
+<script src="./scripts/TextSearch.js"/>
+
+<!-- command "new_file" source "../ui-scripts" target "../scripts/ui.js"   -->
+
+<script src="./ui-scripts/defaults.js"/>
+<script src="./ui-scripts/window.js"/>
+<script src="./ui-scripts/cells.js"/>
+<script src="./ui-scripts/topCell.js"/>
+<script src="./ui-scripts/view.js"/>
+<script src="./ui-scripts/compositeView.js"/>
+<script src="./ui-scripts/settingView.js"/>
+<script src="./ui-scripts/ui-base.js"/>
+<script src="./ui-scripts/toolbar.js"/>
+<script src="./ui-scripts/toolbarConfig.js"/>
+<script src="./ui-scripts/tabs.js"/>
+<script src="./ui-scripts/topTabs.js"/>
+<script src="./ui-scripts/containers.js"/>
+<script src="./ui-scripts/topContainers.js"/>
+<script src="./ui-scripts/windowContainers.js"/>
+<script src="./ui-scripts/tab.js"/>
+<script src="./ui-scripts/status.js"/>
+<script src="./ui-scripts/ui-templates.js"/>
+<script src="./ui-scripts/ui-actions.js"/>
+<script src="./ui-scripts/settings.js"/>
+<script src="./ui-scripts/viewMenu.js"/>
+<script src="./ui-scripts/viewSlider.js"/>
+<script src="./ui-scripts/animator.js"/>
+<script src="./ui-scripts/Switches.js"/>
+
+<!-- command "new_file" source "" target "../scripts/dragonfly.js"   -->
+
+
+
+<script src="./ecma-debugger/ListTextSearch.js"/>
+
+<script src="./ecma-debugger/ini.js"/>
+<script src="./ecma-debugger/windowInterface.js"/>
+<script src="./ecma-debugger/debug.js"/>
+<script src="./ecma-debugger/storage.js"/>
+<script src="./ecma-debugger/helpers.js"/>
+<script src="./ecma-debugger/host_event_handlers.js"/>
+<script src="./ecma-debugger/tabs.js"/>
+<script src="./ecma-debugger/syntax.js"/>
+<script src="./ecma-debugger/pre_lexer.js"/>
+<script src="./ecma-debugger/formatter.js"/>
+<script src="./ecma-debugger/templates.js"/>
+<script src="./ecma-debugger/handlers.js"/>
+<script src="./ecma-debugger/runtimes.js"/>
+<script src="./ecma-debugger/stop_at.js"/>
+
+<script src="./ecma-debugger/ObjectDataBase.js"/>
+
+<script src="./ecma-debugger/frame_inspection.js"/>
+<script src="./ecma-debugger/views.js"/>
+<script src="./ecma-debugger/testing.js"/>
+<script src="./ecma-debugger/dom_data.js"/>
+<script src="./ecma-debugger/css_initial_values.js"/>
+<script src="./ecma-debugger/css_inheritable_properties.js"/>
+<script src="./ecma-debugger/js_default_global_scope_properties.js"/>
+
+
+<script src="./ecma-debugger/node_dom_attrs.js"/>
+<script src="./ecma-debugger/elementLayout.js"/>
+
+
+<script src="./ecma-debugger/stylesheets.js"/>
+<script src="./ecma-debugger/views-css-inspector.js"/>
+<script src="./ecma-debugger/views-css-layout.js"/>
+<script src="./ecma-debugger/views-stylesheets.js"/>
+<script src="./ecma-debugger/js-source-view.js"/>
+<script src="./ecma-debugger/view-commandline.js"/>
+
+
+<script src="./ecma-debugger/views-frame-inspection.js"/>
+
+
+<script src="./ecma-debugger/DOM_markup_style.js"/>
+<script src="./ecma-debugger/DOM_tree_style.js"/>
+
+<script src="./ecma-debugger/views-dom.js"/>
+
+
+<script src="./ecma-debugger/views-dom-attrs.js"/>
+<script src="./ecma-debugger/views-threads.js"/>
+<script src="./ecma-debugger/export_data.js"/>
+<script src="./ecma-debugger/elementStyle.js"/>
+
+<script src="./ecma-debugger/action_handler.js"/>
+<script src="./ecma-debugger/change-handler.js"/>
+<script src="./ecma-debugger/scroll_handler.js"/>
+<script src="./ecma-debugger/responseHandlers.js"/>
+<script src="./ecma-debugger/tag.js"/>
+
+
+<script src="./ecma-debugger/client.js"/>
+
+<script src="./ecma-debugger/serviceBase.js"/>
+<script src="./ecma-debugger/console.js"/>
+<script src="./ecma-debugger/ecma-debugger.js"/>
+
+
+</viewport>

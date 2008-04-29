@@ -126,7 +126,9 @@ var runtimes = new function()
         }
         for( cur in __runtimes )
         {
-          if( __runtimes[cur] && __runtimes[cur]['uri'] == runtime['uri'] )
+          if( __runtimes[cur]
+             && __runtimes[cur]['uri'] == runtime['uri']
+             && __runtimes[cur]['window-id'] == runtime['window-id'])
           {
             runtime['unfolded-script'] = __runtimes[cur]['unfolded-script'] || false;
             runtime['unfolded-css'] = __runtimes[cur]['unfolded-css'] || false;
@@ -166,7 +168,7 @@ var runtimes = new function()
 
   var parseGetTitle = function(xml, rt_id)
   {
-    if(xml.getNodeData('status') == 'completed' )
+    if(__runtimes[rt_id] && xml.getNodeData('status') == 'completed' )
     {
       __runtimes[rt_id]['title'] = xml.getNodeData('string');
       updateRuntimeViews();
@@ -407,8 +409,10 @@ var runtimes = new function()
     var rt_id = xml.getNodeData("runtime-id");
     var thread_id = xml.getNodeData("thread-id");
     var current_thread = current_threads[rt_id];
-    // the current thread id must be set in 'thread-started' event  
-    if( !stop_at.getControlsEnabled () && thread_id == current_thread[ current_thread.length - 1 ] )
+    // the current thread id must be set in 'thread-started' event
+    // opera.postError(stop_at.getControlsEnabled () +' '+thread_id +' '+ current_thread[ current_thread.length - 1 ])
+    // TODO thread logic
+    if( !stop_at.getControlsEnabled () /* */ && thread_id == current_thread[ current_thread.length - 1 ] /* */ )
     {
       stop_at.handle(xml);
     }
@@ -489,7 +493,7 @@ var runtimes = new function()
     var ret = [], r = '', is_unfolded = true;
     for( r in __runtimes )
     {
-      if( __runtimes[r]['html-frame-path'] && __runtimes[r]['html-frame-path'].indexOf('[') == -1 )
+      if( __runtimes[r] && __runtimes[r]['html-frame-path'] && __runtimes[r]['html-frame-path'].indexOf('[') == -1 )
       {
         is_unfolded = true;
         if( __windowsFolding[__runtimes[r]['window-id']] === false )

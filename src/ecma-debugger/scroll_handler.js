@@ -13,7 +13,7 @@ var scroll_handler = new function()
 
   handlers['scroll-js-source'] = function(event)
   {
-    views.js_source.scroll();
+    views.js_source.scroll(event);
   }
 
 
