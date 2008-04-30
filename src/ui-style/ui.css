@@ -151,7 +151,7 @@ toolbar-switches input:hover { /* State should change while cursor still hovers 
   }
 
 toolbar-switches input:active {
-  background-position: 0 -48px;
+  background-position: -26px -48px;
   }
 
 toolbar-switches input[is-active="true"] {
@@ -163,7 +163,7 @@ toolbar-switches input[is-active="true"]:hover { /* State should change while cu
   }
 
 toolbar-switches input[is-active="true"]:active {
-  background-position: -26px -48px;
+  background-position: 0 -48px;
   }
 
 toolbar-separator { /**/
@@ -186,14 +186,7 @@ toolbar-filters filter {
   height: 24px;
   line-height: 24px;
   background: url('../ui-images/filter-bg.png') no-repeat;
-  }
-
-toolbar-filters filter.dropdown {
-  display: block;
-  margin: 1px;
-  padding-left:20px;
-  background: #09f url('../ui-images/filter-bg.png') no-repeat;
-  border: 1px solid red;
+  
   }
 
 toolbar-filters filter.focus {
@@ -353,8 +346,8 @@ top-tabs input[handler="tab"] {  /**/
   margin: 0 8px 0 -8px;
   padding-left: 8px;
   padding-right: 0px; /* to be removed when the close buttons are activated */
-  height: 20px;
-  line-height: 20px;
+  height: 19px;
+  line-height: 19px;
   }
 
 top-tabs tab:hover input[handler="tab"] {
@@ -832,6 +825,45 @@ input[key="dom.update-on-dom-node-inserted"] {
   background-image: url('../ui-images/btn-update-onchange.png');
   }
 
+input[key="js_source.script"] {
+  background-image: url('../ui-images/btn-stop-at-new-thread.png');
+  }
+input[key="js_source.error"] {
+  background-image: url('../ui-images/btn-stop-on-error.png');
+  }
+/*
+input[key="threads.log-threads"] {
+  background-image: url('../ui-images/btn-log-all-threads.png');
+  }
+*/
+input[key="frame_inspection.hide-default-properties-in-global-scope"] {
+  background-image: url('../ui-images/btn-hide-global-scope.png');
+  }
+input[key="css-inspector.hide-initial-values"] {
+  background-image: url('../ui-images/btn-initial-values.png');
+  }
+input[key="css-inspector.hide-shorthands"] {
+  background-image: url('../ui-images/btn-shorthand.png');
+  }
+input[key="dom.dom-tree-style"] {
+  background-image: url('../ui-images/btn-tree-style.png');
+  }
+input[key="dom_attrs.hide-null-values"] {
+  background-image: url('../ui-images/btn-hide-empty-values.png');
+  }
+input[key="stylesheets.shortcuts"] {
+  background-image: url('../ui-images/btn-shorthand.png'); /* Duplicate of 'css-inspector.hide-shorthands' */
+  }
+input[key="console.use-selected-runtime-as-filter"] {
+  background-image: url('../ui-images/btn-use-as-filter.png');
+  }
+input[handler="documentation"] {
+  background-image: url('../ui-images/btn-documentation.png');
+  }
+input[handler="clear-error-console"] {
+  background-image: url('../ui-images/btn-delete.png');
+  }
+	
 input[handler="create-all-runtimes"] {
   background-image: url('../ui-images/btn-create-all-runtimes.png');
 	width: 30px;
