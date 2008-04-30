@@ -221,38 +221,17 @@ toolbar-filters filter.focus input {
 window-select {
   display: block;
   position: relative;
-  margin: 1px 4px 1px 40px;
+  margin: 0px 1px 0px 40px;
   padding: 2px 0;
-  background: url('../ui-images/select-center-bg.png') repeat-x;
-  }
-
-window-select:after {
-  position:absolute;
-  top: 0px;
-  right: -3px;
-  content: '';
-  height:24px;
-  width: 3px;
-  background: url('../ui-images/select-bg.png') no-repeat 100% 0;
-  }
-
-window-select:before {
-  position:absolute;
-  top: 0;
-  left: -3px;
-  content: '';
-  height:24px;
-  width: 3px;
-  background: url('../ui-images/select-bg.png') no-repeat;
   }
 
 window-select select {
   width:100%;
   margin:0;
-  padding:0;
-  height: 20px;
-  border:none;
-  background: none;
+  xxpadding:0;
+  height: 22px;
+  xxborder:none;
+  xxbackground: none;
   }
 /* set with css. height, border and padding are supported */
 

@@ -54,7 +54,7 @@
 
     var __scroll_interval = 0;
     var __scrollEvent = 0;
-    var __target_scroll_top = 0;
+    var __target_scroll_top = -1;
 
     var __keyEvent = 0;
 
@@ -463,6 +463,7 @@
       }
       else
       {
+        __target_scroll_top = -1;
         var target_line = ( top / context['line-height'] >> 0 ) + 1;
         if( __keyEvent )
         {

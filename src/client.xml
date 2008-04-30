@@ -20,7 +20,7 @@
       font-family:sans-serif;
       font-size:30px;
       text-align:center;'>Loading Dragonfly</h1>
-  <img src='../ui-images/busy_anim.gif' />
+  <img src='./ui-images/busy_anim.gif' />
 </div>
 </main-view>
 

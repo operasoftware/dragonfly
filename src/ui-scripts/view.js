@@ -152,6 +152,25 @@ var ViewBase = new function()
     return ret;
   }
 
+  this.getToolbarControl = function( container, handler, handler_name) 
+  {
+    handler_name = handler_name || 'handler';
+    var toolbar = document.getElementById(container.id.replace(/container/,'toolbar'));
+    opera.postError('toolbar: '+toolbar)
+    if(toolbar)
+    {
+      var all = toolbar.getElementsByTagName('*'), control = null, i = 0;
+      for( ; control = all[i]; i++)
+      {
+        if( control.getAttribute(handler_name)  == handler )
+        {
+          return control;
+        }
+      }
+    }
+    return null;
+  }
+
   this.clearAllContainers = function() 
   {
     var id = '', i = 0, c = null, ret = [];

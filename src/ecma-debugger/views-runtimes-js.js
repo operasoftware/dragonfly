@@ -6,6 +6,13 @@
 
     this.createView = function(container)
     {
+      /*
+      var select = this.getToolbarControl(container, 'select-window');
+      if(select)
+      {
+        select.innerHTML ='<option>value 1</option><option>value 2</option>';
+      }
+      */
       container.innerHTML = '';
       //container.render(templates.runtimes(runtimes.getRuntimes()));
       container.render(templates.windows(runtimes.getWindows(), 'script'));
