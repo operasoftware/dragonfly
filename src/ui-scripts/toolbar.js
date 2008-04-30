@@ -56,7 +56,10 @@ var ToolbarBase = function()
       this.width = dim;
     }
 
-    dim = this.buttons.length || this.filters.length ? this.default_height : 0;
+    dim = ( this.buttons.length 
+            || this.filters.length
+            || this.specials.length
+            || this.customs.length )? this.default_height : 0;
     if( dim != this.height)
     {
       this.is_dirty = true;
@@ -72,20 +75,49 @@ var ToolbarBase = function()
   {
     var toolbar = document.getElementById(this.type + '-to-' + this.cell.id) || this.update();
     toolbar.innerHTML ='';
-    toolbar.render(templates.filters(this.filters = toolbars[view_id] && toolbars[view_id].filters || []));
-    toolbar.render(templates.buttons(this.buttons = toolbars[view_id] && toolbars[view_id].buttons || []));
-    toolbar.render(templates.toolbarSeparator());
-    toolbar.render(templates.switches(this.switches = switches[view_id] && switches[view_id].keys || []));
-    toolbar.render(templates.toolbarSeparator());
-    toolbar.render(templates.buttons(this.specials = toolbars[view_id] && toolbars[view_id].specials || []));
+    this.filters = toolbars[view_id] && toolbars[view_id].filters || [];
+    this.buttons = toolbars[view_id] && toolbars[view_id].buttons || [];
+    this.switches = switches[view_id] && switches[view_id].keys || [];
+    this.specials = toolbars[view_id] && toolbars[view_id].specials || [];
+    this.customs = toolbars[view_id] && toolbars[view_id].customs || [];
+
+    
+    if(this.filters.length)
+    {
+      toolbar.render(templates.filters(this.filters));
+    }
+    if(this.buttons.length)
+    {
+      toolbar.render(templates.buttons(this.buttons));
+      toolbar.render(templates.toolbarSeparator());
+    }
+    if(this.switches.length)
+    {
+      toolbar.render(templates.switches(this.switches));
+      toolbar.render(templates.toolbarSeparator());
+    }
+    if(this.specials.length)
+    {
+      toolbar.render(templates.buttons(this.specials));
+    } 
+    if(this.customs.length)
+    {
+     
+      var custom = null, i = 0;
+      for( ; custom = this.customs[i]; i++)
+      {
+        toolbar.render(custom.template());
+      } 
+    } 
   }
 
-  this.init = function(cell, buttons, filters, specials)
+  this.init = function(cell, buttons, filters, specials, customs)
   {
     this.cell = cell;
     this.buttons = buttons || [];
     this.filters = filters || [];
     this.specials = specials || [];
+    this.customs = customs || [];
     this.width = 0;
     this.top = 0;
     this.left = 0;
@@ -95,22 +127,22 @@ var ToolbarBase = function()
 
 }
 
-var Toolbar = function(cell, buttons, filters, specials)
+var Toolbar = function(cell, buttons, filters, specials, customs)
 {
-  this.init(cell, buttons, filters, specials);
+  this.init(cell, buttons, filters, specials, customs);
 }
 
-var TopToolbar = function(cell, buttons, filters, specials)
+var TopToolbar = function(cell, buttons, filters, specials, customs)
 {
   this.type = 'top-toolbar';
-  this.init(cell, buttons, filters, specials);
+  this.init(cell, buttons, filters, specials, customs);
 }
 
-var WindowToolbar = function(cell, buttons, filters, specials)
+var WindowToolbar = function(cell, buttons, filters, specials, customs)
 {
   this.type = 'window-toolbar';
   this.parent_container_id = cell.id;
-  this.init(cell, buttons, filters, specials);
+  this.init(cell, buttons, filters, specials, customs);
   this.getCssText = function()
   {
     return '';

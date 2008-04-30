@@ -96,6 +96,7 @@
 <script src="ObjectDataBase.js"/>
 
 <script src="frame_inspection.js"/>
+<script src="views-runtimes-js.js"/>
 <script src="views.js"/>
 <script src="testing.js"/>
 <script src="dom_data.js"/>

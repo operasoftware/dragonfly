@@ -186,7 +186,14 @@ toolbar-filters filter {
   height: 24px;
   line-height: 24px;
   background: url('../ui-images/filter-bg.png') no-repeat;
-  
+  }
+
+toolbar-filters filter.dropdown {
+  display: block;
+  margin: 1px;
+  padding-left:20px;
+  background: #09f url('../ui-images/filter-bg.png') no-repeat;
+  border: 1px solid red;
   }
 
 toolbar-filters filter.focus {
@@ -218,6 +225,42 @@ toolbar-filters filter.focus input {
   color: #000;
   }
 
+window-select {
+  display: block;
+  position: relative;
+  margin: 1px 4px 1px 40px;
+  padding: 2px 0;
+  background: url('../ui-images/select-center-bg.png') repeat-x;
+  }
+
+window-select:after {
+  position:absolute;
+  top: 0px;
+  right: -3px;
+  content: '';
+  height:24px;
+  width: 3px;
+  background: url('../ui-images/select-bg.png') no-repeat 100% 0;
+  }
+
+window-select:before {
+  position:absolute;
+  top: 0;
+  left: -3px;
+  content: '';
+  height:24px;
+  width: 3px;
+  background: url('../ui-images/select-bg.png') no-repeat;
+  }
+
+window-select select {
+  width:100%;
+  margin:0;
+  padding:0;
+  height: 20px;
+  border:none;
+  background: none;
+  }
 /* set with css. height, border and padding are supported */
 
 tabs { /* The bottom tabs containers */

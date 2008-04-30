@@ -95,12 +95,13 @@ var ToolbarConfigBase = new function()
     this.updateButtons();
   }
 
-  this.init = function(name, optional_button_array, optional_filter_array, optional_special_button_array)
+  this.init = function(name, optional_button_array, optional_filter_array, optional_special_button_array, optional_custom_button_array)
   {
     ids [ this.id = getId() ] = this;
     this.buttons = optional_button_array || [];
     this.filters = optional_filter_array || [];
     this.specials = optional_special_button_array || [];
+    this.customs = optional_custom_button_array || [];
     this.container_ids = [];
     if(!window.toolbars)
     {
@@ -120,9 +121,9 @@ var ToolbarConfigBase = new function()
   }
 }
 
-var ToolbarConfig = function(name, optional_button_array, optional_filter_array, optional_special_button_array)
+var ToolbarConfig = function(name, optional_button_array, optional_filter_array, optional_special_button_array, optional_custom_button_array)
 {
-  this.init(name, optional_button_array, optional_filter_array, optional_special_button_array);
+  this.init(name, optional_button_array, optional_filter_array, optional_special_button_array, optional_custom_button_array);
 }
 
 ToolbarConfig.prototype = ToolbarConfigBase;

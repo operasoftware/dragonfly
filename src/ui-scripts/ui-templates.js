@@ -16,19 +16,39 @@
     var ret = ['toolbar-filters'], filter = '', i = 0;
     for( ; filter = filters[i]; i++)
     {
-      ret[ret.length] = ['filter', 
-        ['em', filter.label ? filter.label : 'search'],
-        [
-          'input', 
-          'autocomplete', 'off', 
-          'type', 'text', 
-          'handler', filter.handler, 
-          'title', filter.title
-        ]
-        
-      ];
+      if( filter.type && this[filter.type] )
+      {
+        ret[ret.length] = this[filter.type](filter);
+      }
+      else
+      {
+        ret[ret.length] = ['filter', 
+          ['em', filter.label ? filter.label : 'search'],
+          [
+            'input', 
+            'autocomplete', 'off', 
+            'type', 'text', 
+            'handler', filter.handler, 
+            'title', filter.title
+          ]
+        ];
+      }
     }
     return ret;
+  }
+
+  this.dropdown = function(filter)
+  {
+    return ['filter', 
+          //['em', filter.label ? filter.label : 'search'],
+          [
+            'select',
+            'handler', filter.handler,
+            'title', filter.title,
+            'class', filter.class || ''
+          ],
+          'class', 'dropdown'
+        ];
   }
 
   this.buttons = function(buttons)

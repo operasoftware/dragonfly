@@ -2,7 +2,7 @@
 {
 
 
-
+  /*
   var View = function(id, name, container_class)
   {
     var self = this;
@@ -17,9 +17,10 @@
   }
   View.prototype = ViewBase;
   new View('runtimes', 'Runtimes Script', 'scroll runtimes');
+  */
 
 
-  View = function(id, name, container_class)
+  var View = function(id, name, container_class)
   {
     var self = this;
 
