@@ -945,6 +945,11 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   {
     return __selectedRules;
   }
+
+  this.hasSelectedSheetRuntime = function(rt_id)
+  {
+    return __selectedRules && __selectedRules.runtime_id == rt_id || false;
+  }
   
   this.isSelectedSheet = function(rt_id, index)
   {

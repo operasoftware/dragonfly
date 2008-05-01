@@ -1,6 +1,7 @@
 var host_tabs = new function()
 {
   var self = this;
+  var __window_id = '';
   /* an array with all runtime ids off the active tab */
   var __activeTab = [];
   var document_map = {};
@@ -11,6 +12,8 @@ var host_tabs = new function()
   var runtime_id_map = {};
   var id_map = {};
   var handler_id = 1;
+
+
 
   var getNewHandlerId = function()
   {
@@ -66,11 +69,20 @@ var host_tabs = new function()
     }
   }
 
-  this.setActiveTab = function(top_frame_rt_id)
+  this.setActiveTab = function(window_id)
   {
+    
     activeTabOnChange();
-    __activeTab = runtimes.getRuntimeIdsFromWindow(top_frame_rt_id);
+    __window_id = window_id;
+    runtimes.setActiveWindowId(window_id);
+    __activeTab = runtimes.getRuntimeIdsFromWindow(window_id);
     messages.post('active-tab', {activeTab: __activeTab} ); 
+    
+  }
+
+  this.updateActiveTab = function()
+  {
+    __activeTab = runtimes.getRuntimeIdsFromWindow(__window_id);
   }
 
   this.getActiveTab = function(top_frame_runtime_id)
@@ -127,6 +139,7 @@ var host_tabs = new function()
 
     this.addEventListener = function(event_type, callback)
     {
+      
       var rt_p = '', i = 0, id = '';
       for( ; rt_p = __activeTab[i]; i++ )
       {

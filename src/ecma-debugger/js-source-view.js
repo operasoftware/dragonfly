@@ -322,7 +322,8 @@
         var script_source = runtimes.getScriptSource(script_id);
 
 
-        if(script_source)
+
+        if(script_source || script_source == '')
         {
           script =
           {

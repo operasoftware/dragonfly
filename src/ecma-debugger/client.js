@@ -225,6 +225,8 @@ var client = new function()
     {
       opera.postError('missing viewport');
     }
+
+    messages.post('application-setup', {});
     
   }
 

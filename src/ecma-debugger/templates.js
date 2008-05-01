@@ -113,14 +113,14 @@
     return ret;
   }
 
-  this.runtimes = function(runtimes, type)
+  this.runtimes = function(runtimes, type, _class)
   {
     var ret = ['ul'], rt = null, i = 0;
     for( ; rt = runtimes[i]; i++)
     {
       ret[ret.length] = self['runtime-' + type](rt);
     }
-    return ret;
+    return ret.concat( _class ? ['class', _class] : [] );
   }
 
   this['runtime-script'] = function(runtime)

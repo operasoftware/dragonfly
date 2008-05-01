@@ -96,7 +96,7 @@
 <script src="./ecma-debugger/ObjectDataBase.js"/>
 
 <script src="./ecma-debugger/frame_inspection.js"/>
-<script src="./ecma-debugger/views-runtimes-js.js"/>
+<script src="./ecma-debugger/views-runtimes.js"/>
 <script src="./ecma-debugger/views.js"/>
 <script src="./ecma-debugger/testing.js"/>
 <script src="./ecma-debugger/dom_data.js"/>

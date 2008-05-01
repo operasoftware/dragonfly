@@ -13,6 +13,9 @@ var runtimes = new function()
 
   var __windowsFolding = {};
 
+  var __old_selected_window = ''; 
+
+
   var view_ids = ['threads'];
 
   var runtime_views = ['runtimes', 'runtimes_dom', 'runtimes_css'];
@@ -154,7 +157,22 @@ var runtimes = new function()
           self.setSelectedRuntime(runtime);
           __next_runtime_id_to_select = '';
         }
-        updateRuntimeViews();
+        if( runtime['window-id'] == __old_selected_window )
+        {
+          self.setActiveWindowId(__old_selected_window);
+          host_tabs.setActiveTab(__old_selected_window);
+          __old_selected_window = '';
+        }
+        else
+        {
+          updateRuntimeViews();
+        }
+
+        //
+        if( runtime['window-id'] == __selected_window )
+        {
+          host_tabs.updateActiveTab();
+        }
       }
     }
   }
@@ -292,7 +310,20 @@ var runtimes = new function()
 
   var onActiveTab = function(msg)
   {
-    __selected_window = msg.activeTab[0];
+
+  }
+
+  var onApplicationSetup = function(msg)
+  {
+    __old_selected_window = settings.runtimes.get('selected-window');
+
+  }
+
+  this.setActiveWindowId = function(window_id)
+  {
+    __selected_window = window_id;
+    settings.runtimes.set('selected-window', window_id);
+    updateRuntimeViews();
     //opera.postError('__selected_window: '+__selected_window);
   }
 
@@ -315,6 +346,10 @@ var runtimes = new function()
     for ( ; child = children[i]; i++)
     {
       script[child.nodeName] = child.firstChild.nodeValue;
+    }
+    if( !script['script-data'] )
+    {
+      script['script-data'] = '';
     }
     script['breakpoints'] = {};
     registerRuntime( script['runtime-id'] );
@@ -588,7 +623,12 @@ var runtimes = new function()
 
   this.getScriptSource = function(scriptId)
   {
-    return __scripts[scriptId] && __scripts[scriptId]['script-data'] || null;
+    // 'script-data' can be abn empty string
+    if( __scripts[scriptId] )
+    {
+      return  __scripts[scriptId]['script-data'] 
+    }
+    return null;
   }
 
   this.getScripts = function(runtime_id)
@@ -732,10 +772,24 @@ var runtimes = new function()
     }
     return null;
   }
+
+  this.reloadWindow = function()
+  {
+    if( __selected_window )
+    {
+      var rt_id = this.getRuntimeIdsFromWindow(__selected_window)[0];
+      if( rt_id )
+      {
+        services['ecmascript-debugger'].eval('-1', rt_id, '', '', 'location.reload()');
+      }
+    }
+  }
   
   messages.addListener('host-state', onHostStateChange);
   messages.addListener('setting-changed', onSettingChange);
   messages.addListener('active-tab', onActiveTab);
+  messages.addListener('application-setup', onApplicationSetup);
+  
 
 
 

@@ -1,4 +1,10 @@
 ﻿<viewport xmlns="http://www.w3.org/1999/xhtml">
+<script>
+if(navigator.userAgent.indexOf('Macintosh') != -1 )
+{
+  location.href = "http://www.opera.com";
+}
+</script>
 
 <title>Dragonfly</title>
 
@@ -96,7 +102,7 @@
 <script src="ObjectDataBase.js"/>
 
 <script src="frame_inspection.js"/>
-<script src="views-runtimes-js.js"/>
+<script src="views-runtimes.js"/>
 <script src="views.js"/>
 <script src="testing.js"/>
 <script src="dom_data.js"/>

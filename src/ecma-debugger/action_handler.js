@@ -381,40 +381,33 @@ var action_handler = new function()
   handlers['show-dom'] = function(event, target)
   {
     var rt_id = target.parentNode.getAttribute('runtime_id');
-    var window_id = target.parentNode.parentNode.parentNode.getAttribute('window_id');
     
     if(rt_id)
     {
       topCell.showView('dom');
-      if( runtimes.getActiveWindowId() != window_id )
-      {
-        host_tabs.setActiveTab(window_id);
-      }
-      else
-      {
-        dom_data.getDOM(rt_id);
-      }
-      
+      dom_data.getDOM(rt_id);
     }
   }
 
   handlers['display-script'] = function(event)
   {
     var id  = event.target.getAttribute('script-id');
-
     if(id)
     {
-      // topCell.showView(views.stylesheets.id);
-      //views.js_source.showLine(id, 0);
       helpers.setSelected(event);
+      
       var runtime_container = event.target.parentElement.parentElement.getElementsByTagName('span')[0];
-      var runtime = runtimes.getRuntimeIdWithURL(runtime_container.firstChild.nodeValue); 
+      var runtime = runtimes.getRuntimeIdWithURL(runtime_container.firstChild.nodeValue);
+      
       runtimes.setSelectedScript( runtime, id );
+      /*
       if( runtime_container && !runtime_container.hasClass('selected-runtime') )
       {
         handlers['show-global-scope']({target: runtime_container});
       }
+      */
       views.js_source.update();
+      
 
       
     }
@@ -422,14 +415,6 @@ var action_handler = new function()
     {
       opera.postError("missing script id in handlers['display-script']")
     }
-  }
-
-  handlers['select-window'] = function(event)
-  {
-    var parent = event.target.parentNode;
-    var id  = parent.getAttribute('window_id');
-    helpers.setSelected({target: parent});
-    host_tabs.setActiveTab(id);
   }
 
   handlers['continue'] = function(event)
