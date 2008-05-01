@@ -228,13 +228,16 @@ var dom_data = new function()
 
   var onRuntimeStopped = function(msg)
   {
+    
     if( msg.id == data_runtime_id )
     {
+      
       data = [];
+      data_runtime_id = '';
       var id = '', i = 0;
       for( ; id = view_ids[i] ; i++)
       {
-        views[id].update();
+        views[id].clearAllContainers();
       }
     }
   }
@@ -484,6 +487,7 @@ var dom_data = new function()
   messages.addListener('hide-view', onHideView);
   messages.addListener('setting-changed', onSettingChange);
   messages.addListener('runtime-stopped', onRuntimeStopped);
+  messages.addListener('runtime-destroyed', onRuntimeStopped);
 
 };
 

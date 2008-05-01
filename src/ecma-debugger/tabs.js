@@ -12,6 +12,7 @@ var host_tabs = new function()
   var runtime_id_map = {};
   var id_map = {};
   var handler_id = 1;
+  var activeEvents = [];
 
 
 
@@ -59,11 +60,7 @@ var host_tabs = new function()
       {
         if( runtime_id_map[h_id] == rt_id )
         {
-          services['ecmascript-debugger'].removeEventHandler(h_id);
-          delete node_map[h_id];
-          delete type_map[h_id];
-          delete callback_map[h_id];
-          delete runtime_id_map[h_id];
+          clearEventListener(h_id);
         }
       }
     }
@@ -83,6 +80,12 @@ var host_tabs = new function()
   this.updateActiveTab = function()
   {
     __activeTab = runtimes.getRuntimeIdsFromWindow(__window_id);
+    var ev = null, i = 0;
+    for( ; ev = activeEvents[i]; i++)
+    {
+      __addEvenetListener(ev.type, ev.cb);
+    }
+    cleanUpEventListener();
   }
 
   this.getActiveTab = function(top_frame_runtime_id)
@@ -133,43 +136,77 @@ var host_tabs = new function()
      
   }
 
+  var __addEvenetListener = function(event_type, callback)
+  {
+    var rt_p = '', i = 0, id = '';
+    for( ; rt_p = __activeTab[i]; i++ )
+    {
+      if( document_map[rt_p] && !checkTriple(document_map[rt_p], event_type, callback) )
+      {
+        id = getNewHandlerId();
+        node_map[id] = document_map[rt_p];
+        type_map[id] = event_type;
+        callback_map[id] = callback;
+        runtime_id_map[id] = rt_p;
+        services['ecmascript-debugger'].addEventHandler(id, document_map[ rt_p ], event_type);
+      }
+      else
+      {
+        var tag = tagManager.setCB(null, handleAddEventWithDocument, [rt_p, event_type, callback]);
+        services['ecmascript-debugger'].getDocumentFromRuntime(tag, rt_p);
+      }
+    }
+  }
+
+  var cleanUpEventListener =  function()
+  {
+    var ev = null, i =  0, j = 0, k = 0, ids = null, id = '', cur = '', rt = '';
+    for( ; ev = activeEvents[i]; i++)
+    {
+      ids = getHandlerId(ev.type, ev.cb);
+      for( j = 0; id = ids[j]; j++ )
+      {
+        rt_id = runtime_id_map[id];
+        for( k = 0; ( cur = __activeTab[k] ) && rt_id != cur; k++ );
+        if( !cur )
+        {
+          clearEventListener(id);
+        }
+      }
+    }
+  }
+
+  var clearEventListener = function(id)
+  {
+    services['ecmascript-debugger'].removeEventHandler(id);
+    delete node_map[id];
+    delete type_map[id];
+    delete callback_map[id];
+    delete runtime_id_map[id];
+    delete id_map[id];
+  }
+
   this.activeTab = new function()
   {
     var self = this;
 
     this.addEventListener = function(event_type, callback)
     {
-      
-      var rt_p = '', i = 0, id = '';
-      for( ; rt_p = __activeTab[i]; i++ )
-      {
-        if( document_map[rt_p] && !checkTriple(document_map[rt_p], event_type, callback) )
-        {
-          id = getNewHandlerId();
-          node_map[id] = document_map[rt_p];
-          type_map[id] = event_type;
-          callback_map[id] = callback;
-          runtime_id_map[id] = rt_p;
-          services['ecmascript-debugger'].addEventHandler(id, document_map[ rt_p ], event_type);
-        }
-        else
-        {
-          var tag = tagManager.setCB(null, handleAddEventWithDocument, [rt_p, event_type, callback]);
-          services['ecmascript-debugger'].getDocumentFromRuntime(tag, rt_p);
-        }
-      }
+      activeEvents[activeEvents.length] = {type: event_type, cb: callback};
+      __addEvenetListener(event_type, callback);
     }
 
     this.removeEventListener =  function(event_type, callback)
     {
-      var ids = getHandlerId(event_type, callback), id = '', i = 0;
+      var ids = getHandlerId(event_type, callback), id = '', i = 0, ev = null;
       for( ; id = ids[i]; i++ )
       {
-        services['ecmascript-debugger'].removeEventHandler(id);
-        delete node_map[id];
-        delete type_map[id];
-        delete callback_map[id];
-        delete runtime_id_map[id];
+        clearEventListener(id);
+      }
+      for( i = 0; ( ev = activeEvents[i] ) && !( ev.type == event_type && ev.cb == callback ); i++);
+      if( ev )
+      {
+        activeEvents.splice(i, 1);
       }
     }
   }

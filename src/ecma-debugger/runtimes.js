@@ -20,6 +20,10 @@ var runtimes = new function()
 
   var runtime_views = ['runtimes', 'runtimes_dom', 'runtimes_css'];
 
+  var __selected_runtime_id = '';
+
+  var __next_runtime_id_to_select = ''
+
   var updateRuntimeViews = function()
   {
     var rt = '', i = 0;
@@ -43,6 +47,7 @@ var runtimes = new function()
 
   var removeRuntime = function(id)
   { 
+    
     var sc = null , cur = '', i = 0;
     for( ; cur = __runtimes_arr[i] && cur != id; i++);
     if(cur)
@@ -59,6 +64,12 @@ var runtimes = new function()
       }
     }
     */
+    if( __selected_runtime_id == id )
+    {
+      __selected_runtime_id = '';
+    }
+    //opera.postError('remove rt: '+id);
+    messages.post('runtime-destroyed', {id: id});
     delete __runtimes[id];
   }
 
@@ -135,7 +146,7 @@ var runtimes = new function()
           {
             runtime['unfolded-script'] = __runtimes[cur]['unfolded-script'] || false;
             runtime['unfolded-css'] = __runtimes[cur]['unfolded-css'] || false;
-            delete __runtimes[cur];
+            removeRuntime(__runtimes[cur]['runtime-id'])
           }
         }
         if( runtime.is_top = isTopRuntime(runtime) )
@@ -517,6 +528,7 @@ var runtimes = new function()
       {
         views.js_source.clearView();
       }
+      
       messages.post('runtime-stopped', {id: rt_id} );
     }
   }
@@ -698,9 +710,7 @@ var runtimes = new function()
 
   // this is a temporary solution as long as we don't have a concept for tabs
 
-  var __selected_runtime_id = '';
 
-  var __next_runtime_id_to_select = ''
 
   this.setSelectedRuntime = function(runtime)
   {

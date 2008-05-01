@@ -95,7 +95,7 @@
 
   var View = null;
 
-  /* scripts */
+  /****** scripts ******/
 
   View = function(id, name, container_class)
   {
@@ -114,6 +114,8 @@
         _runtimes = runtimes.getRuntimes(active_window_id),
         rt = null, 
         i = 0;
+
+        
 
         
         for( ; ( rt = _runtimes[i] ) && !rt['selected']; i++);
@@ -150,7 +152,7 @@
     custum_controls
   )
 
-  /* dom */
+  /****** dom ******/
 
   View = function(id, name, container_class)
   {
@@ -169,6 +171,8 @@
         _runtimes = runtimes.getRuntimes(active_window_id),
         rt = null, 
         i = 0;
+
+        
 
         if( !dom_data.getDataRuntimeId() && _runtimes[0] )
         {
