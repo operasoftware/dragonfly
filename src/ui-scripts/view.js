@@ -156,7 +156,6 @@ var ViewBase = new function()
   {
     handler_name = handler_name || 'handler';
     var toolbar = document.getElementById(container.id.replace(/container/,'toolbar'));
-    opera.postError('toolbar: '+toolbar)
     if(toolbar)
     {
       var all = toolbar.getElementsByTagName('*'), control = null, i = 0;

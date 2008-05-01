@@ -13,6 +13,7 @@
   - "runtime-selected" msg.id
   - "list-search-context" msg.data_id, msg.obj_id, msg.depth
   - "script-selected" msg.rt_id, msg.script_id
+  - "onApplicationSetup" if the application was setup
 
 */
 

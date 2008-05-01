@@ -1,148 +1,7 @@
 (function()
 {
 
-
-  /*
-  var View = function(id, name, container_class)
-  {
-    var self = this;
-
-    this.createView = function(container)
-    {
-      container.innerHTML = '';
-      //container.render(templates.runtimes(runtimes.getRuntimes()));
-      container.render(templates.windows(runtimes.getWindows(), 'script'));
-    }
-    this.init(id, name, container_class);
-  }
-  View.prototype = ViewBase;
-  new View('runtimes', 'Runtimes Script', 'scroll runtimes');
-  */
-
-
-  var View = function(id, name, container_class)
-  {
-    var self = this;
-
-    this.createView = function(container)
-    {
-      container.innerHTML = '';
-      container.render(templates.windows(runtimes.getWindows(), 'dom'));
-    }
-
-    this.updateSelectedRuntime = function(rt_id)
-    {
-      var containers = this.getAllContainers(), c = null , i = 0;
-      var lis = null, li = null , k = 0;
-      for( ; c = containers[i]; i++)
-      {
-        lis = c.getElementsByTagName('li');
-        for( k = 0; li = lis[k]; k++ )
-        {
-          if( li.hasAttribute('runtime_id') )
-          {
-            if( li.getAttribute('runtime_id') == rt_id)
-            {
-              li.firstChild.addClass('selected-runtime');
-              helpers.setSelected({target: li.parentNode.parentNode});
-            }
-            else
-            {
-              li.firstChild.removeClass('selected-runtime');
-            }
-          }
-        }
-      }
-    }
-    
-    var onRuntimeSelected = function(msg)
-    {
-      if(self.isvisible())
-      {
-        self.updateSelectedRuntime(msg.id);
-      }
-      
-    }
-
-    this.init(id, name, container_class);
-    
-    messages.addListener('runtime-selected', onRuntimeSelected);
-
-    var onViewCreated = function(msg)
-    {
-      if( msg.id == 'dom' )
-      {
-        topCell.showView(id);
-      }
-    }
-    messages.addListener('view-created', onViewCreated);
-
-    
-  }
-  View.prototype = ViewBase;
-  new View('runtimes_dom', 'Runtimes DOM', 'scroll runtimes');
-  
-  View = function(id, name, container_class)
-  {
-    var self = this;
-
-    this.createView = function(container)
-    {
-      container.innerHTML = '';
-      container.render(templates.windows(runtimes.getWindows(), 'css'));
-    }
-
-    this.updateSelectedRuntime = function(rt_id)
-    {
-      /*
-      var containers = this.getAllContainers(), c = null , i = 0;
-      var lis = null, li = null , k = 0;
-      for( ; c = containers[i]; i++)
-      {
-        lis = c.getElementsByTagName('li');
-        for( k = 0; li = lis[k]; k++ )
-        {
-          if( li.hasAttribute('runtime_id') )
-          {
-            if( li.getAttribute('runtime_id') == rt_id)
-            {
-              li.firstChild.addClass('selected-runtime');
-              helpers.setSelected({target: li.parentNode.parentNode});
-            }
-            else
-            {
-              li.firstChild.removeClass('selected-runtime');
-            }
-          }
-        }
-      }
-      */
-    }
-    
-    var onRuntimeSelected = function(msg)
-    {
-      if(self.isvisible())
-      {
-        //self.updateSelectedRuntime(msg.id);
-      }
-      
-    }
-
-    var onViewCreated = function(msg)
-    {
-      if( msg.id == 'stylesheets' )
-      {
-        topCell.showView(id);
-      }
-    }
-    messages.addListener('view-created', onViewCreated);
-
-    this.init(id, name, container_class);
-    
-    messages.addListener('runtime-selected', onRuntimeSelected);
-  }
-  View.prototype = ViewBase;
-  new View('runtimes_css', 'Runtimes CSS', 'scroll runtimes');
+  var View = null;
 
 
 
@@ -158,7 +17,6 @@
   }
   View.prototype = ViewBase;
   new View('environment', 'Environment', 'scroll');
-
 
 
 
@@ -214,7 +72,6 @@
 
 
 
-
   View = function(id, name, container_class)
   {
     this.ishidden_in_menu = true;
@@ -248,6 +105,7 @@
 
   );
   
+
   View = function(id, name, container_class)
   {
     var __url = '';
@@ -273,6 +131,7 @@
 
   new View('documentation', 'Documentation', '');
   
+
   View = function(id, name, container_class)
   {
     this.ishidden_in_menu = true;

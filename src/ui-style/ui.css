@@ -228,11 +228,13 @@ window-select {
 window-select select {
   width:100%;
   margin:0;
-  xxpadding:0;
   height: 22px;
-  xxborder:none;
-  xxbackground: none;
   }
+
+window-select select option[value="-1"]  {
+  color: #999;
+  }
+
 /* set with css. height, border and padding are supported */
 
 tabs { /* The bottom tabs containers */
@@ -848,6 +850,12 @@ input[handler="create-all-runtimes"] {
 	width: 30px;
 	height: 24px;
   }
+
+input[handler="reload-window"] {
+  background-image: url('../ui-images/btn-reload-host.png');
+  }
+
+
 
 input[handler="create-all-runtimes"]:hover {
   background-position: 0 -24px;
