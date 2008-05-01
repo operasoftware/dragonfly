@@ -356,6 +356,10 @@ input[handler="close-tab"]:hover {
   background-position: 50% -12px;
   }
 
+input[handler="close-tab"]:active { 
+  background-position: 50% -24px;
+  }
+
 input[handler="top-settings"] { /* Doesn't receive correct background positioning on hover and active*/
   width: 26px;
   height: 24px;
@@ -812,11 +816,9 @@ input[key="js_source.script"] {
 input[key="js_source.error"] {
   background-image: url('../ui-images/btn-stop-on-error.png');
   }
-/*
 input[key="threads.log-threads"] {
   background-image: url('../ui-images/btn-log-all-threads.png');
   }
-*/
 input[key="frame_inspection.hide-default-properties-in-global-scope"] {
   background-image: url('../ui-images/btn-hide-global-scope.png');
   }
@@ -838,17 +840,20 @@ input[key="stylesheets.shortcuts"] {
 input[key="console.use-selected-runtime-as-filter"] {
   background-image: url('../ui-images/btn-use-as-filter.png');
   }
+input[key="threads.log-threads"] {
+  background-image: url('../ui-images/btn-log-threads.png');
+  }
+	
+	
 input[handler="documentation"] {
   background-image: url('../ui-images/btn-documentation.png');
   }
 input[handler="clear-error-console"] {
   background-image: url('../ui-images/btn-delete.png');
   }
-	
-input[handler="create-all-runtimes"] {
-  background-image: url('../ui-images/btn-create-all-runtimes.png');
-	width: 30px;
-	height: 24px;
+
+input[handler="dom-inspection-export"] {
+  background-image: url('../ui-images/btn-export-current-view.png');
   }
 
 input[handler="reload-window"] {
