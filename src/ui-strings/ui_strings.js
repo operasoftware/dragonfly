@@ -69,7 +69,7 @@ ui_strings.BUTTON_LABEL_CONTINUE = 'Continue (F8)';
 ui_strings.BUTTON_LABEL_STEP_OVER = 'Step Over (F10)';
 ui_strings.BUTTON_LABEL_STEP_INTO = 'Step Into (F11)';
 ui_strings.BUTTON_LABEL_STEP_OUT = 'Step Out (Shift F11)';
-ui_strings.BUTTON_LABEL_STOP_AT_THREAD = 'Stop at new thread';
+ui_strings.BUTTON_LABEL_STOP_AT_THREAD = 'Stop at new script';
 ui_strings.BUTTON_LABEL_AT_EXCEPTION = 'Stop at exception';
 ui_strings.BUTTON_LABEL_AT_ERROR = 'Stop at error';
 ui_strings.BUTTON_LABEL_AT_ABORT = 'Stop at abort';
@@ -95,7 +95,7 @@ ui_strings.BUTTON_LABEL_CLEAR_LOG = 'Clear log';
 ui_strings.BUTTON_LABEL_EXPORT_LOG = 'Export log';
 
 ui_strings.SETTING_LABEL_GENERAL = 'General';
-ui_strings.SWITCH_SHOW_VIEWS_MENU = "show views menu";
+ui_strings.SWITCH_SHOW_VIEWS_MENU = "Show views menu";
 
 
 
