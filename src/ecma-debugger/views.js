@@ -16,7 +16,7 @@
     this.init(id, name, container_class);
   }
   View.prototype = ViewBase;
-  new View('environment', 'Environment', 'scroll');
+  new View('environment', ui_strings.VIEW_LABEL_ENVIRONMENT, 'scroll');
 
 
 
@@ -67,7 +67,7 @@
   }
 
   View.prototype = ViewBase;
-  new View('callstack', 'Callstack', 'scroll');
+  new View('callstack', ui_strings.VIEW_LABEL_CALLSTACK, 'scroll');
 
 
 
@@ -81,7 +81,7 @@
     this.init(id, name, container_class);
   }
   View.prototype = ViewBase;
-  new View('general', 'General', '');
+  new View('general', ui_strings.SETTING_LABEL_GENERAL, '');
 
   new Settings
   (
@@ -93,7 +93,7 @@
     }, 
     // key-label map
     {
-      "show-views-menu": "show views menu"
+      "show-views-menu": ui_strings.SWITCH_SHOW_VIEWS_MENU
     },
     // settings map
     {
@@ -144,7 +144,7 @@
 
   View.prototype = ViewBase;
 
-  new View('debug_remote_setting', 'Debug remote', '');
+  new View('debug_remote_setting', ui_strings.SWITCH_REMOTE_DEBUG, '');
   
   new Settings
   (
@@ -157,7 +157,7 @@
     }, 
     // key-label map
     {
-      "debug-remote": "debug remote"
+      "debug-remote": ui_strings.SWITCH_REMOTE_DEBUG
     },
     // settings map
     {

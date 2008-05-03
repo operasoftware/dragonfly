@@ -555,7 +555,7 @@
   }
 
   View.prototype = ViewBase;
-  new View('js_source', 'JS Source', 'scroll js-source');
+  new View('js_source', ui_strings.VIEW_LABEL_SOURCE, 'scroll js-source');
 
 
 
@@ -566,25 +566,25 @@
     [
       {
         handler: 'continue',
-        title: 'run ( F5 )',
+        title: ui_strings.BUTTON_LABEL_CONTINUE,
         id: 'continue-run',
         disabled: true
       },
       {
         handler: 'continue',
-        title: 'step next line ( F10 )',
-        id: 'continue-step-next-line',
-        disabled: true
-      },
-      {
-        handler: 'continue',
-        title: 'step into call ( F11 )',
+        title: ui_strings.BUTTON_LABEL_STEP_INTO,
         id: 'continue-step-into-call',
         disabled: true
       },
       {
         handler: 'continue',
-        title: 'step out of call ( Shift F11 )',
+        title: ui_strings.BUTTON_LABEL_STEP_OVER,
+        id: 'continue-step-next-line',
+        disabled: true
+      },
+      {
+        handler: 'continue',
+        title: ui_strings.BUTTON_LABEL_STEP_OUT,
         id: 'continue-step-out-of-call',
         disabled: true
       }
@@ -592,7 +592,8 @@
     [
       {
         handler: 'js-source-text-search',
-        title: 'text search'
+        title: ui_strings.INPUT_DEFAULT_TEXT_SEARCH,
+        label: ui_strings.INPUT_DEFAULT_TEXT_SEARCH
       }
     ]
   )
@@ -612,10 +613,10 @@
     }, 
     // key-label map
     {
-      script: ' stop at new thread', 
-      exception: ' stop at exeption', 
-      error: ' stop at error', 
-      abort: ' stop at abort'
+      script: ui_strings.BUTTON_LABEL_STOP_AT_THREAD, 
+      exception: ui_strings.BUTTON_LABEL_AT_EXCEPTION, 
+      error: ui_strings.BUTTON_LABEL_AT_ERROR, 
+      abort: ui_strings.BUTTON_LABEL_AT_ABORT
     }, 
     // settings map
     {

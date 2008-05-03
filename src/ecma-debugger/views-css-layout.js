@@ -54,7 +54,7 @@
   }
 
   View.prototype = ViewBase;
-  new View('css-layout', 'Layout', 'scroll css-layout');
+  new View('css-layout', ui_strings.VIEW_LABEL_LAYOUT, 'scroll css-layout');
 
   new Settings
   (

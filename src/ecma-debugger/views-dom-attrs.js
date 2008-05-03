@@ -46,7 +46,7 @@
     this.init(id, name, container_class);
   }
   View.prototype = ViewBase;
-  new View('dom_attrs', 'DOM attrs', 'scroll dom-attrs');
+  new View('dom_attrs', ui_strings.VIEW_LABEL_DOM_ATTR, 'scroll dom-attrs');
   
   new Settings
   (
@@ -58,7 +58,7 @@
     }, 
     // key-label map
     {
-      "hide-null-values": " hide empty strings and null values"
+      "hide-null-values": ui_strings.SWITCH_HIDE_EMPTY_STRINGS
     },
     // settings map
     {

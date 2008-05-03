@@ -48,15 +48,25 @@ var elementStyle = new function()
   [
     {
       'id': 'computedStyle',
-      'name': 'Computed Style',
+      'name': ui_strings.VIEW_LABEL_COMPUTED_STYLE,
       'unfolded': false
     },
     {
       'id': 'css',
-      'name': 'CSS',
-      'unfolded': false
+      'name': ui_strings.VIEW_LABEL_STYLES,
+      'unfolded': true
     }
   ];
+
+
+  var onAplicationsetup = function()
+  {
+    var cat = null, i = 0;
+    for( ; cat = categories[i]; i++ )
+    {
+      cat.unfolded = settings['css-inspector'].get(cat.id);
+    }
+  }
 
 
   var node_cascades = [];
@@ -623,6 +633,7 @@ var elementStyle = new function()
   }
 
   messages.addListener('element-selected', onElementSelected);
+  messages.addListener('application-setup', onAplicationsetup);
 
   eventHandlers.input['css-inspector-text-search'] = function(event, target)
   {

@@ -151,7 +151,7 @@
   }
 
   View.prototype = ViewBase;
-  new View('threads', 'Threads', 'scroll threads');
+  new View('threads', ui_strings.VIEW_LABEL_THREAD_LOG, 'scroll threads');
 
   new Settings
   (
@@ -163,7 +163,7 @@
     }, 
     // key-label map
     {
-      'log-threads': ' log all threads'
+      'log-threads': ui_strings.BUTTON_LABEL_LOG_THREADS
     },
     // settings map
     {
@@ -180,11 +180,11 @@
     [
       {
         handler: 'threads-clear-log',
-        title: 'Clear log'
+        title: ui_strings.BUTTON_LABEL_CLEAR_LOG
       },
       {
         handler: 'threads-export-log',
-        title: 'Export log'
+        title: ui_strings.BUTTON_LABEL_EXPORT_LOG
       }
     ]
   )

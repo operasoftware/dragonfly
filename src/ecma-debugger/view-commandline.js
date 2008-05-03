@@ -187,5 +187,5 @@
   }
 
   View.prototype = ViewBase;
-  new View('command_line', 'Command Line', 'scroll');
+  new View('command_line', ui_strings.VIEW_LABEL_COMMAND_LINE, 'scroll');
 })()

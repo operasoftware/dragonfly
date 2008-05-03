@@ -243,7 +243,7 @@ var ErrorConsoleView = function(id, name, container_class, source)
   this.createView = function(container)
   {
     container.innerHTML = '';
-    container.renderInner(templates.messages(console_messages.getMessages(source)));
+    container.render(templates.messages(console_messages.getMessages(source)));
     container.scrollTop = container.scrollHeight;
   }
   this.init(id, name, container_class );

@@ -41,7 +41,7 @@
         for( ; c = containers[i]; i++)
         {
           styles = c.getElementsByTagName('styles');
-          for( cat_index = 0; cat_index < 5; cat_index++ )
+          for( cat_index = 0; cat_index < 2; cat_index++ )
           {
             if( cats[cat_index] == '1' )
             {
@@ -72,7 +72,7 @@
   }
 
   View.prototype = ViewBase;
-  new View('css-inspector', 'CSS', 'scroll css-inspector');
+  new View('css-inspector', ui_strings.VIEW_LABEL_STYLES, 'scroll css-inspector');
 
   new Settings
   (
@@ -80,8 +80,8 @@
     'css-inspector', 
     // key-value map
     {
-      'computed-style': false, 
-      'css': false,
+      'computedStyle': false, 
+      'css': true,
       'hide-initial-values': true,
       'hide-shorthands': true
     }, 
@@ -107,7 +107,8 @@
     [
       {
         handler: 'css-inspector-text-search',
-        title: 'text search'
+        title: 'text search',
+        label: ui_strings.INPUT_DEFAULT_TEXT_FILTER
       }
     ]
   )

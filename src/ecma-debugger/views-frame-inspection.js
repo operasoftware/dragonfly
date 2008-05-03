@@ -69,7 +69,7 @@
   }
 
   View.prototype = ViewBase;
-  new View('frame_inspection', 'Frame Inspection', 'scroll');
+  new View('frame_inspection', ui_strings.VIEW_LABEL_FRAME_INSPECTION, 'scroll');
 
   
 
@@ -84,14 +84,14 @@
     }, 
     // key-label map
     {
-      'automatic-update-global-scope': ' update global scope automatically',
-      'hide-default-properties-in-global-scope': 'Hide default properties in global scope'
+      'automatic-update-global-scope': ui_strings.SWITCH_UPDATE_GLOBAL_SCOPE,
+      'hide-default-properties-in-global-scope': ui_strings.BUTTON_LABEL_HIDE_DEFAULT_PROPS_IN_GLOBAL_SCOPE
     },
     // settings map
     {
       checkboxes:
       [
-        'automatic-update-global-scope'
+        'hide-default-properties-in-global-scope'
       ]
     }
   );
@@ -103,7 +103,8 @@
     [
       {
         handler: 'frame_inspection-text-search',
-        title: 'text search'
+        title: ui_strings.INPUT_DEFAULT_TEXT_FILTER,
+        label: ui_strings.INPUT_DEFAULT_TEXT_FILTER
       }
     ]
   )

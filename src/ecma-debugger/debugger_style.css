@@ -456,6 +456,7 @@ stylesheet-link:hover {
 
 styles {
   white-space: pre-wrap;
+  font-family:monospace;
   }
 
 .unfolded styles {

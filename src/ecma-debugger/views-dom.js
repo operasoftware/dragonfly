@@ -227,7 +227,7 @@
 
   View.prototype = ViewBase;
 
-  new View('dom', 'DOM', 'scroll dom');
+  new View('dom', ui_strings.VIEW_LABEL_DOM, 'scroll dom');
 
   View.prototype.constructor = View;
 
@@ -251,14 +251,14 @@
     }, 
     // key-label map
     {
-      'find-with-click': ' find element with click',
-      'highlight-on-hover': ' highlight element on mouseover',
-      'update-on-dom-node-inserted': ' update DOM when a node is removed',
-      'force-lowercase': ' always use lower case for tag names', 
-      'show-comments': ' show comment nodes', 
-      'show-attributes': ' show attributes',
-      'show-whitespace-nodes': ' show white space nodes',
-      'dom-tree-style': 'show DOM in tee style',
+      'find-with-click': ui_strings.SWITCH_FIND_ELEMENT_BY_CLICKING,
+      'highlight-on-hover': ui_strings.SWITCH_HIGHLIGHT_BY_MOUSE_OVER,
+      'update-on-dom-node-inserted': ui_strings.SWITCH_UPDATE_DOM_ON_NODE_REMOVE,
+      'force-lowercase': ui_strings.SWITCH_USE_LOWER_CASE_TAG_NAMES, 
+      'show-comments': ui_strings.SWITCH_SHOW_COMMENT_NODES, 
+      'show-attributes': ui_strings.SWITCH_SHOW_ATTRIBUTES,
+      'show-whitespace-nodes': ui_strings.SWITCH_SHOW_WHITE_SPACE_NODES,
+      'dom-tree-style': ui_strings.SWITCH_SHOW_DOM_INTREE_VIEW
     
     },
     // settings map
@@ -282,23 +282,23 @@
     [
       {
         handler: 'dom-inspection-snapshot',
-        title: 'Get the whole dom tree'
+        title: ui_strings.BUTTON_LABEL_GET_THE_WOHLE_TREE
       },
       {
         handler: 'dom-inspection-export',
-        title: 'Export the current view'
+        title: ui_strings.BUTTON_LABEL_EXPORT_DOM
       }
     ],
     [
       {
         handler: 'dom-text-search',
-        title: 'text search'
+        title: ui_strings.INPUT_DEFAULT_TEXT_SEARCH
       }
     ],
     [
       {
         handler: 'documentation',
-        title: 'Documentation',
+        title: ui_strings.BUTTON_LABEL_HELP,
         param: 'http://www.opera.com'
       }
     ]

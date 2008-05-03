@@ -262,9 +262,9 @@ var ObjectDataBase = new function()
       if( val.length > MAX_VALUE_LENGTH )
       {
         short_val = val.slice(0, MAX_VALUE_LENGTH) +"...";
-        val = val.replace(/</g, '&gt;').replace(/'/g, '&#39;');
+        val = val.replace(/</g, '&lt;').replace(/'/g, '&#39;');
       }
-      val = val.replace(/</g, "&gt;");
+      val = val.replace(/</g, "&lt;");
 
       depth = forced_depth || prop[DEPTH];
 

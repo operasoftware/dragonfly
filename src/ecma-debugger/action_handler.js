@@ -643,6 +643,10 @@ var action_handler = new function()
         */
   handlers['css-toggle-category'] = function(event, target)
   {
+    if(/header/.test(target.nodeName))
+    {
+      target = target.firstChild;
+    }
     var cat = target.getAttribute('cat-id'), value = target.hasClass('unfolded');
     var cat_container = target.parentNode.parentNode;
     if( value )

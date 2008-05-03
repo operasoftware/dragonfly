@@ -538,7 +538,8 @@ Line 2:
             'handler', 'css-toggle-category',
             'cat-id', cat.id
           ].concat( cat.unfolded ? ['class', 'unfolded'] : [] ),
-          cat.name
+          cat.name,
+          'handler', 'css-toggle-category'
         ],
         ['styles']
       ].concat(cat.unfolded ? ['class', 'unfolded'] : [] );

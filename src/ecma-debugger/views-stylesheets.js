@@ -57,7 +57,7 @@
     this.init(id, name, container_class);
   }
   View.prototype = ViewBase;
-  new View('stylesheets', 'Stylesheets', 'scroll stylesheets');
+  new View('stylesheets', ui_strings.VIEW_LABEL_STYLESHEET, 'scroll stylesheets');
   
   new Settings
   (

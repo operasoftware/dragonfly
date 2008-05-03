@@ -10,7 +10,7 @@
       windows = runtimes.getWindows(),
       win = null,
       i = 0,
-      markup = '<option value="-1"> - select a window - </option>';
+      markup = '<option value="-1"> - ' + ui_strings.SELECT_WINDOW_EMPTY + ' - </option>';
       if(select)
       {
         for( ; win = windows[i]; i++ )
@@ -46,7 +46,7 @@
   [
     {
       handler: 'reload-window',
-      title: 'Reload selected window in the host'
+      title: ui_strings.BUTTON_LABEL_RELOAD_HOST
     }
   ]
 
@@ -54,7 +54,7 @@
   [
     {
       handler: 'select-window',
-      title: 'Select which window you like to debug',
+      title: ui_strings.BUTTON_LABEL_SELECT_WINDOW,
       type: 'dropdown',
       class: 'window-select-dropdown',
       template: templates.windowSelect
@@ -115,9 +115,6 @@
         rt = null, 
         i = 0;
 
-        
-
-        
         for( ; ( rt = _runtimes[i] ) && !rt['selected']; i++);
         if( !rt && _runtimes[0] )
         {
@@ -141,7 +138,7 @@
 
   View.prototype = new RuntimeView();
 
-  new View('runtimes', 'Runtimes Script', 'scroll runtimes');
+  new View('runtimes', ui_strings.VIEW_LABEL_SCRIPTS, 'scroll runtimes');
 
   new ToolbarConfig
   (
@@ -244,7 +241,7 @@
 
   View.prototype = new RuntimeView();
 
-  new View('runtimes_dom', 'Runtimes DOM', 'scroll runtimes');
+  new View('runtimes_dom', ui_strings.VIEW_LABEL_DOCUMENTS, 'scroll runtimes');
 
   new ToolbarConfig
   (
@@ -337,7 +334,7 @@
 
   View.prototype = new RuntimeView();
 
-  new View('runtimes_css', 'Runtimes CSS', 'scroll runtimes');
+  new View('runtimes_css', ui_strings.VIEW_LABEL_STYLESHEETS, 'scroll runtimes');
 
   new ToolbarConfig
   (

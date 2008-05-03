@@ -25,7 +25,7 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
       background-color:#fff;
       font-family:sans-serif;
       font-size:30px;
-      text-align:center;'>Loading Dragonfly</h1>
+      text-align:center;'>Loading Opera Dragonfly</h1>
   <img src='../ui-images/busy_anim.gif' />
 </div>
 </main-view>
@@ -37,6 +37,8 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <link rel="stylesheet" href="js-source.css"/>
 <link rel="stylesheet" href="dom-inspector.css"/>
 <link rel="stylesheet" href="syntax-highlight.css"/>
+
+<!-- command "new_file" source "../ui-strings" target "../scripts/ui_strings.js" -->
 
 <script src="../ui-strings/ui_strings.js"/>
 
