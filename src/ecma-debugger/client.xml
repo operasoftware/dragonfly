@@ -1,12 +1,12 @@
 ﻿<viewport xmlns="http://www.w3.org/1999/xhtml">
-<script>
-if(navigator.userAgent.indexOf('Macintosh') != -1 )
+<script><![CDATA[
+if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()) <= 4789  )
 {
   location.href = "http://www.opera.com";
 }
-</script>
+]]></script>
 
-<title>Dragonfly</title>
+<title>Opera Dragonfly</title>
 
 <windows-container></windows-container>
 <main-view>

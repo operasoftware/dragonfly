@@ -23,6 +23,8 @@ var stop_at = new function()
     abort: 0
   }
 
+  var self = this;
+
   var stopAt = {}; // there can be only one stop at at the time
 
   var runtime_id = '';
@@ -263,6 +265,20 @@ var stop_at = new function()
       throw 'not a line number: '+stopAt['line-number'];
     }
   }
+
+    var onRuntimeDestroyed = function(msg)
+    {
+      if( stopAt && stopAt['runtime-id'] == msg.id )
+      {
+        views.js_source.clearView();
+        views.callstack.clearView();
+        views.frame_inspection.clearView();
+        self.__continue('run');
+      }
+
+    }
+
+    messages.addListener('runtime-destroyed', onRuntimeDestroyed);
 
 
 

@@ -28,5 +28,9 @@ var ui_strings =
   SWITCH_SHOW_TAB_BITTORRENT: 'Show Tab Bittorrent',
   SWITCH_SHOW_TAB_VOICE: 'Show Tab Voice',
   SWITCH_SHOW_TAB_WIDGET: 'Show Tab Widget',
-  SWITCH_SHOW_TAB_DRAGONFLY: 'Show Tab Dragonfly'
+  SWITCH_SHOW_TAB_DRAGONFLY: 'Show Tab Dragonfly',
+
+
+  INFO_NO_SCRIPTS: 'Click the reload button above to fetch the scripts for the selected window'
+ 
 }

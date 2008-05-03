@@ -139,9 +139,16 @@
     {
       var scripts = runtimes.getScripts(runtime['runtime-id']), 
         script = null, i=0, scripts_container =['ul'];
-      for( ; script = scripts[i]; i++)
+      if( scripts.length )
       {
-        scripts_container.push(templates.scriptLink(script));
+        for( ; script = scripts[i]; i++)
+        {
+          scripts_container.push(templates.scriptLink(script));
+        }
+      }
+      else
+      {
+        scripts_container = ['p', ui_strings.INFO_NO_SCRIPTS, 'class', 'info-text'];
       }
       ret = ret.concat([scripts_container]);
     }

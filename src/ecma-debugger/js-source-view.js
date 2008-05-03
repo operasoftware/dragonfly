@@ -537,9 +537,20 @@
 
 
 
-    messages.addListener('update-layout', updateLayout);
+    
+    var onRuntimeDestroyed = function(msg)
+    {
+      if( script && runtimes.getRuntimeIdWithScriptId(script.id) == msg.id )
+      {
+        __clearView();
+      }
+
+    }
+    
 
     this.init(id, name, container_class);
+    messages.addListener('update-layout', updateLayout);
+    messages.addListener('runtime-destroyed', onRuntimeDestroyed);
 
   }
 
@@ -651,9 +662,12 @@
     textSearch.setScript(msg.script);
   }
 
+
+
   messages.addListener('view-created', onViewCreated);
   messages.addListener('view-destroyed', onViewDestroyed);
   messages.addListener('script-selected', onScriptSeleceted);
+  
   
 
   eventHandlers.input['js-source-text-search'] = function(event, target)

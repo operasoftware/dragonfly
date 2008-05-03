@@ -260,7 +260,6 @@ var action_handler = new function()
     {
       frame_inspection.examineObject(runtime['runtime-id'], runtime['runtime-id']);
       runtimes.setSelectedRuntime( runtime );
-      host_tabs.setActiveTab(runtime['runtime-id']);
       views.runtimes.update();
     }
   }

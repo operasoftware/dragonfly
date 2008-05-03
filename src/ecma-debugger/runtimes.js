@@ -783,6 +783,11 @@ var runtimes = new function()
     return null;
   }
 
+  this.getRuntimeIdWithScriptId = function(scriptId)
+  {
+    return  __scripts[scriptId] && __scripts[scriptId]['runtime-id'] || null; 
+  }
+
   this.reloadWindow = function()
   {
     if( __selected_window )
