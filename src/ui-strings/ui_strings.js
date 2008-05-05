@@ -63,39 +63,35 @@ ui_strings.SWITCH_HIDE_INITIAL_VALUES = 'Hide initial values in computed styles'
 ui_strings.SWITCH_HIDE_SHORTHANDS = 'Hide shorthand for computed styles';
 ui_strings.SWITCH_HIDE_EMPTY_STRINGS = 'Hide empty strings and null values';
 ui_strings.SWITCH_REMOTE_DEBUG = 'Remote Debug';
+ui_strings.SWITCH_SHOW_VIEWS_MENU = "Show Views menu";
   
 ui_strings.BUTTON_LABEL_HELP = 'Help';
 ui_strings.BUTTON_LABEL_CONTINUE = 'Continue (F8)';
 ui_strings.BUTTON_LABEL_STEP_OVER = 'Step Over (F10)';
 ui_strings.BUTTON_LABEL_STEP_INTO = 'Step Into (F11)';
 ui_strings.BUTTON_LABEL_STEP_OUT = 'Step Out (Shift F11)';
-ui_strings.BUTTON_LABEL_STOP_AT_THREAD = 'Stop at new script';
+ui_strings.BUTTON_LABEL_STOP_AT_THREAD = 'Stop at new thread';
 ui_strings.BUTTON_LABEL_AT_EXCEPTION = 'Stop at exception';
 ui_strings.BUTTON_LABEL_AT_ERROR = 'Stop at error';
 ui_strings.BUTTON_LABEL_AT_ABORT = 'Stop at abort';
-  
+ui_strings.BUTTON_LABEL_RELOAD_HOST = 'Reload the selected window in the browser';
+ui_strings.BUTTON_LABEL_SELECT_WINDOW = "Select the window you'd like to debug";
+ui_strings.BUTTON_LABEL_GET_THE_WOHLE_TREE = 'Expand the DOM tree';
+ui_strings.BUTTON_LABEL_EXPORT_DOM = 'Export current DOM view';
+ui_strings.BUTTON_LABEL_HIDE_DEFAULT_PROPS_IN_GLOBAL_SCOPE = 'Hide default properties in global scope';
+ui_strings.BUTTON_LABEL_LOG_THREADS = 'Log threads';
+ui_strings.BUTTON_LABEL_CLEAR_LOG = 'Clear thread log';
+ui_strings.BUTTON_LABEL_EXPORT_LOG = 'Export thread log';
+
 ui_strings.INFO_NO_SCRIPTS = 'Click the reload button above to fetch the scripts for the selected window';
 
-// new 
-
-ui_strings.BUTTON_LABEL_RELOAD_HOST = 'Reload selected window in the host';
-ui_strings.BUTTON_LABEL_SELECT_WINDOW = 'Select which window you like to debug';
 ui_strings.SELECT_WINDOW_EMPTY = 'Select a window'; 
 
-ui_strings.BUTTON_LABEL_GET_THE_WOHLE_TREE = 'Get the whole dom tree';
-ui_strings.BUTTON_LABEL_EXPORT_DOM = 'Export the current view';
-
-ui_strings.INPUT_DEFAULT_TEXT_SEARCH = 'Text search';
+ui_strings.INPUT_DEFAULT_TEXT_SEARCH = 'Search';
 ui_strings.INPUT_DEFAULT_TEXT_FILTER = 'Quick find';
 
-ui_strings.BUTTON_LABEL_HIDE_DEFAULT_PROPS_IN_GLOBAL_SCOPE = 'Hide default properties in global scope';
-
-ui_strings.BUTTON_LABEL_LOG_THREADS = 'Log threads';
-ui_strings.BUTTON_LABEL_CLEAR_LOG = 'Clear log';
-ui_strings.BUTTON_LABEL_EXPORT_LOG = 'Export log';
-
 ui_strings.SETTING_LABEL_GENERAL = 'General';
-ui_strings.SWITCH_SHOW_VIEWS_MENU = "Show views menu";
+
 
 
 

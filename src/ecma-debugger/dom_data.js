@@ -386,8 +386,8 @@ var dom_data = new function()
   this.getSnapshot = function()
   {
     var tag = tagManager.setCB(null, handleSnapshot, [data_runtime_id]);
-    var script_data = 'return $'+ data_runtime_id + '.document.document';
-    services['ecmascript-debugger'].eval(tag, data_runtime_id, '', '', script_data, ['$' + data_runtime_id, data_runtime_id]);
+    var script_data = 'return document.document';
+    services['ecmascript-debugger'].eval(tag, data_runtime_id, '', '', script_data);
   }
 
   var handleSnapshot = function(xml, runtime_id)
