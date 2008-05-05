@@ -702,6 +702,28 @@ stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
   color: #666;
   }
 
+.dom input {
+  border: 0;
+  margin: 0;
+  margin-left: -15px;
+  padding-right:4px;
+  cursor: pointer;
+  height: 11px;
+  width: 11px;
+  color: #666;
+  background: transparent url('data:image/gif,GIF89a%0B%00!%00%A2%00%00%00%00%00%FF%FF%FF%CC%CC%CCfff%FF%FF%FF%00%00%00%00%00%00%00%00%00!%F9%04%01%00%00%04%00%2C%00%00%00%00%0B%00!%00%00%03%3D(%BA%AC%F1%10%3A8%E2%7CU%8A%98%9F%1B%60X%5DA%17%90%26jm%D1%DA%BC0%D3%AE%B3V%7Bl%FD%89%E0%99%CF%A4V%90v%8B1%08%C8%A4r%C9l%3A%9FPfi%1A%ADZ%AF%CB%04%00%3B') 0 0 no-repeat;
+  }
+
+
+
+.dom input.open {
+  background-position:0 -11px;
+  }
+
+.dom .node {
+  cursor:pointer;
+  }
+
 
 
 

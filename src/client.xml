@@ -33,10 +33,10 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <link rel="stylesheet" href="./ui-style/ui.css"/>
 
 
-<link rel="stylesheet" href="./ecma-debugger/debugger_style.css"/>
-<link rel="stylesheet" href="./ecma-debugger/js-source.css"/>
-<link rel="stylesheet" href="./ecma-debugger/dom-inspector.css"/>
-<link rel="stylesheet" href="./ecma-debugger/syntax-highlight.css"/>
+<link rel="stylesheet" href="./ui-style/debugger_style.css"/>
+<link rel="stylesheet" href="./ui-style/js-source.css"/>
+<link rel="stylesheet" href="./ui-style/dom-inspector.css"/>
+<link rel="stylesheet" href="./ui-style/syntax-highlight.css"/>
 
 <!-- command "new_file" source "./ui-strings" target "./scripts/ui_strings.js" -->
 
