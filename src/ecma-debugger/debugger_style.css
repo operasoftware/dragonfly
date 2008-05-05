@@ -131,12 +131,12 @@ xx#debug {
 #backtrace-container li {
   padding-left: 20px;
   line-height:16px;
-  background: transparent url('selected-frame.png') scroll no-repeat -20px 0;
+  background: transparent url('../ui-images/selected-frame.png') scroll no-repeat -20px 0;
   cursor:pointer;
   }
 
 #backtrace-container li:first-child {
-  background-image: url('selected-frame-top.png');
+  background-image: url('../ui-images/selected-frame-top.png');
   }
 
 #backtrace-container li.selected {

@@ -60,7 +60,7 @@ ul {
   width:40px;
   height:16px;
   cursor:pointer;
-  background:transparent url('line-types.png') no-repeat 0 0;
+  background:transparent url('../ui-images/line-types.png') no-repeat 0 0;
   }
 
 #js-source-line-numbers input {
