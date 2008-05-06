@@ -742,42 +742,6 @@ window-shadow.left {
   background: transparent url('../ui-images/spin.png') scroll no-repeat 0 0;
   }
 
-/* Tried to hack around weird hover behaviour on hover/click. Scripted? */
-/* Couldn't see any problem? /ck
-input[handler="threads-clear-log"] ,
-input[handler="threads-export-log"],
-input[handler="dom-inspection-snapshot"] ,
-input[key="dom_general.find-with-click"],
-input[key="dom_general.highlight-on-hover"] ,
-input[key="dom.show-comments"] ,
-input[key="dom.show-whitespace-nodes"],
-input[key="dom_general.update-on-dom-node-inserted"]  {
-	width: 26px;
-	height: 24px;
-  }
-
-input[handler="threads-clear-log"]:hover ,
-input[handler="threads-export-log"]:hover ,
-input[handler="dom-inspection-snapshot"]:hover ,
-input[key="dom_general.find-with-click"]:hover ,
-input[key="dom_general.highlight-on-hover"]:hover ,
-input[key="dom-tree-style.show-comments"]:hover ,
-input[key="dom-tree-style.show-whitespace-nodes"]:hover ,
-input[key="dom_general.update-on-dom-node-inserted"]:hover {
-  background-position: 0 -24px;
-  }
-
-input[handler="threads-clear-log"]:active ,
-input[handler="threads-export-log"]:active ,
-input[handler="dom-inspection-snapshot"]:active ,
-input[key="dom_general.find-with-click"]:active ,
-input[key="dom_general.highlight-on-hover"]:active ,
-input[key="dom-tree-style.show-comments"]:active ,
-input[key="dom-tree-style.show-whitespace-nodes"]:active ,
-input[key="dom_general.update-on-dom-node-inserted"] :active {
-  background-position: 0 -48px;
-  }
-*/
 input[handler="threads-clear-log"] {
   background-image: url('../ui-images/btn-clear-error-console.png');
   }
@@ -848,7 +812,7 @@ input[key="threads.log-threads"] {
 input[handler="documentation"] {
   background-image: url('../ui-images/btn-documentation.png');
   }
-input[handler="clear-error-console"] {
+input.clear-log {
   background-image: url('../ui-images/btn-delete.png');
   }
 

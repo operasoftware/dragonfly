@@ -2,7 +2,7 @@
 <script><![CDATA[
 if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()) <= 4789  )
 {
-  location.href = "http://www.opera.com";
+  location.href = "https://dragonfly.opera.com/error.html";
 }
 ]]></script>
 
@@ -15,7 +15,7 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
     top:50%;
     left:50%;
     margin-top:-150px;
-    margin-left:-150px;
+    margin-left:-175px;
     text-align:center;'>
   <h1 style='height:100px;
       line-height:100px;
@@ -30,19 +30,22 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 </div>
 </main-view>
 
+<!-- command "new_css" source "./ui-style" target "./style/dragonfly.css" -->
+
 <link rel="stylesheet" href="./ui-style/ui.css"/>
 
+<!-- command "append_css" source "./ecma-debugger" target "./dragonfly.css" -->
 
 <link rel="stylesheet" href="./ui-style/debugger_style.css"/>
 <link rel="stylesheet" href="./ui-style/js-source.css"/>
-<link rel="stylesheet" href="./ui-style/dom-inspector.css"/>
+
 <link rel="stylesheet" href="./ui-style/syntax-highlight.css"/>
 
-<!-- command "new_file" source "./ui-strings" target "./scripts/ui_strings.js" -->
+<!-- command "new_script" source "./ui-strings" target "./script/dragonfly.js" -->
 
 <script src="./ui-strings/ui_strings.js"/>
 
-<!-- command "new_file" source "./scripts" target "./scripts/common.js" -->
+<!-- command "append_script" source "./scripts" target "./dragonfly.js" -->
 
 <script src="./scripts/json.js"/>
 <script src="./scripts/dom.js"/>
@@ -53,7 +56,7 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./scripts/TextSearch.js"/>
 <script src="./scripts/VirtualTextSearch.js"/>
 
-<!-- command "new_file" source "./ui-scripts" target "./scripts/ui.js"   -->
+<!-- command "append_script" source "./ui-scripts" target "./dragonfly.js"   -->
 
 <script src="./ui-scripts/defaults.js"/>
 <script src="./ui-scripts/window.js"/>
@@ -80,7 +83,7 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./ui-scripts/animator.js"/>
 <script src="./ui-scripts/Switches.js"/>
 
-<!-- command "new_file" source "./ecma-debugger" target "./scripts/dragonfly.js"   -->
+<!-- command "append_script" source "./ecma-debugger" target "./dragonfly.js"   -->
 
 
 

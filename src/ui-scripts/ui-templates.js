@@ -23,7 +23,7 @@
       else
       {
         ret[ret.length] = ['filter', 
-          ['em', filter.label ? filter.label : 'search'],
+          ['em', filter.label ? filter.label : ui_strings.INPUT_DEFAULT_TEXT_SEARCH],
           [
             'input', 
             'autocomplete', 'off', 
@@ -64,7 +64,9 @@
         ].concat(
             button.id ? ['id', button.id] : [],
             button.disabled ? ['disabled', 'disabled'] : [],
-            button.param ? ['param', button.param] :[] );
+            button.param ? ['param', button.param] :[],
+            button.class_name ? ['class', button.class_name] :[]
+        );
     }
     return ret;
   }

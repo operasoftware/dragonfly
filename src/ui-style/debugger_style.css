@@ -724,6 +724,23 @@ stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
   cursor:pointer;
   }
 
+.css-layout h2 {
+  font-size: 1.2em;
+  border: 1px solid #ccc;
+  border-width: 1px 0;
+  background-color: hsl( 0, 0% , 95%);
+  padding: 2px;
+  margin: 7px -9px;
+  text-align: center;
+  }
+
+.css-layout > div > h2:first-child {
+
+  border-width: 0 0 1px;
+  margin-top: -9px;
+  }
+  
+
 
 
 
