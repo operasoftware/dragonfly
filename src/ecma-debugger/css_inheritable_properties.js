@@ -18,7 +18,7 @@ css_inheritable_properties =
 "color-rendering": 1,
 "cursor": 1,
 "direction": 1,
-"display": 1,
+// "display": 1, inherited in svg
 "display-align": 1,
 "empty-cells": 1,
 "font": 1,

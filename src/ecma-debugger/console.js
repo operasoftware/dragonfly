@@ -342,10 +342,12 @@ ErrorConsoleView.roughViews.createViews = function()
       [
         {
           handler: handler_id,
-          title: 'Clear Log'
+          title: 'Clear Log',
+          class_name: 'clear-log'
         }
       ]
     );
+    /*
     new Switches
     (
       r_v.id,
@@ -353,6 +355,7 @@ ErrorConsoleView.roughViews.createViews = function()
         'console.use-selected-runtime-as-filter'
       ]
     );
+    */
     eventHandlers.click[handler_id] = this.bindClearSource( r_v.source ? r_v.source : '' );
   }
 }

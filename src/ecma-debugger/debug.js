@@ -48,7 +48,14 @@ var Debug = function(id, name, container_class)
   this.export = function(string)
   {
 
-    window.open('data:text/plain;charset=utf-8,'+encodeURIComponent( out.join('\n') ));
+    export_data.data = out.join('\n').replace(/</g, '&lt;');
+    if(!topCell.tab.hasTab('export_new'))
+    {
+      topCell.tab.addTab(new Tab('export_new', views['export_new'].name, true))
+    }
+    topCell.showView('export_data');
+
+    // window.open('data:text/plain;charset=utf-8,'+encodeURIComponent( out.join('\n') ));
 
   }
 

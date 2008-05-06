@@ -140,7 +140,13 @@
         }
         log += NL;
       }
-      window.open('data:text/plain;charset=utf-8,'+encodeURIComponent(log));
+      export_data.data = log;
+      if(!topCell.tab.hasTab('export_new'))
+      {
+        topCell.tab.addTab(new Tab('export_new', views['export_new'].name, true))
+      }
+      topCell.showView('export_data');
+      //window.open('data:text/plain;charset=utf-8,'+encodeURIComponent(log));
     }
 
 

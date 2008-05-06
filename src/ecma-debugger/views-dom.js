@@ -294,7 +294,8 @@
         handler: 'dom-text-search',
         title: ui_strings.INPUT_DEFAULT_TEXT_SEARCH
       }
-    ],
+    ]/*,
+    // test for help button
     [
       {
         handler: 'documentation',
@@ -302,6 +303,7 @@
         param: 'http://www.opera.com'
       }
     ]
+    */
   )
 
   new Switches

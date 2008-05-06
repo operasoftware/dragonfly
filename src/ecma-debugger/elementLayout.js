@@ -259,7 +259,7 @@ var elementLayout = new function()
   {
     var
     data = __offsets_values.split(';'),
-    ret = '<h2>parent offsets</h2><parent-node-chain>',
+    ret = '<h2>Parent Offsets</h2><parent-node-chain>',
     i = 0,
     chain = data[0].split(','),
     cur = '';
@@ -277,7 +277,7 @@ var elementLayout = new function()
         ret += cur[0]; 
       }
     }
-    ret += "</parent-node-chain><h2>offset values</h2><offsets>";
+    ret += "</parent-node-chain><h2>Offset Values</h2><offsets>";
     for( i = 1; data[i]; i++ )
     {
       ret += "<item>" +

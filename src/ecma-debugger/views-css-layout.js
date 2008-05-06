@@ -13,7 +13,7 @@
       if( !container.getElementsByTagName('layout-container')[0] )
       {
         container.innerHTML = "<div class='padding'>\
-            <h2>metrics</h2>\
+            <h2>Metrics</h2>\
             <layout-container></layout-container>\
             <offsets-container></offsets-container>\
             </div>";
