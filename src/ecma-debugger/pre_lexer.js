@@ -286,7 +286,7 @@ var pre_lexer = function(script)
       while( line_cur )
       {
         line_arr[line_count++] = line_cur;
-        line_cur = string.indexOf('\n', line_cur + 1) + 1;
+        line_cur = string.indexOf('\n', line_cur) + 1;
       }
       if( line_arr[ line_arr.length - 1 ] < string.length )
       {
