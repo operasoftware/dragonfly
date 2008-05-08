@@ -22,7 +22,7 @@
         var return_value = xml.getElementsByTagName('string')[0];
         if(return_value)
         {
-          __console_output.render(['pre', return_value.firstChild.nodeValue]);
+          __console_output.render(['pre', return_value.firstChild && return_value.firstChild.nodeValue || '']);
           var container = __console_output.parentNode.parentNode;
           container.scrollTop = container.scrollHeight;
         }
