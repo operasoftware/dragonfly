@@ -375,6 +375,11 @@ var runtimes = new function()
   var runtime_stoped_queue = [];
   var stoped_threads = {};
 
+  var is_runtime_of_selected_window = function(rt_id)
+  {
+    return __runtimes[rt_id] && __runtimes[rt_id]['window-id'] == __selected_window;
+  }
+
   var clear_thread_id = function(rt_id, thread_id)
   {
     var cur = '', i = 0;
@@ -456,6 +461,14 @@ var runtimes = new function()
     var rt_id = xml.getNodeData("runtime-id");
     var thread_id = xml.getNodeData("thread-id");
     var current_thread = current_threads[rt_id];
+
+    // workaround for missing filtering 
+    if( !is_runtime_of_selected_window(rt_id) )
+    {
+      services['ecmascript-debugger'].continue_run(rt_id, thread_id);
+    }
+    // end workaround
+
     // the current thread id must be set in 'thread-started' event
     // opera.postError(stop_at.getControlsEnabled () +' '+thread_id +' '+ current_thread[ current_thread.length - 1 ])
     // TODO thread logic
@@ -608,6 +621,8 @@ var runtimes = new function()
     }
     return ret;
   }
+
+
   
 
 

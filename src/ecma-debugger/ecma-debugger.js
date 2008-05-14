@@ -202,6 +202,16 @@
       this.post(msg);
     }
 
+    this.continue_run = function (rt_id, thread_id)
+    {
+      var msg = "<continue>";
+      msg += "<runtime-id>" + rt_id + "</runtime-id>";
+      msg += "<thread-id>" + thread_id + "</thread-id>";
+      msg += "<mode>run</mode>";
+      msg += "</continue>";
+      this.post(msg);
+    }
+
     this.setConfiguration = function() // stopAt
     {
       var msg = "<set-configuration>", type='', bol='', i=0; 
