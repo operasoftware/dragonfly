@@ -142,7 +142,8 @@ var runtimes = new function()
         {
           if( __runtimes[cur]
              && __runtimes[cur]['uri'] == runtime['uri']
-             && __runtimes[cur]['window-id'] == runtime['window-id'])
+             && __runtimes[cur]['window-id'] == runtime['window-id']
+             && __runtimes[cur]['html-frame-path'] == runtime['html-frame-path'] )
           {
             runtime['unfolded-script'] = __runtimes[cur]['unfolded-script'] || false;
             runtime['unfolded-css'] = __runtimes[cur]['unfolded-css'] || false;
