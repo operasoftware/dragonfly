@@ -139,7 +139,7 @@ eventHandlers.change['checkbox-setting'] = function(event)
 {
   var ele = event.target;
   var view_id = ele.getAttribute('view-id');
-  settings[view_id].set(ele.name, ele.checked);
+  settings[view_id].set(ele.name, ele.checked, true);
   views[view_id].update();
   var host_view = ele.getAttribute('host-view-id');
   if( host_view )

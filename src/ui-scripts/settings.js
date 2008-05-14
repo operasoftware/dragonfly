@@ -1,9 +1,39 @@
 var SettingsBase = function()
 {
 
-  this.set = function(key, value) 
+  this.set = function(key, value, sync_switches) 
   {
     storage.set(key, ( this.map[key] = value ) );
+    if( sync_switches && typeof value == 'boolean' )
+    {
+      var 
+      switches = document.getElementsByTagName('toolbar-switches'),
+      _switch = null,
+      butttons = null,
+      button = null, 
+      i = 0,
+      j = 0,
+      key_id = this.view_id + '.' + key,
+      force_reflow = false;
+
+      for( ; _switch = switches[i]; i++)
+      {
+        force_reflow = false;
+        buttons = _switch.getElementsByTagName('input');
+        for( j = 0; button = buttons[j]; j++)
+        {
+          if( button.getAttribute('key') == key_id )
+          {
+            button.setAttribute('is-active' , value ? "true" : "false" );
+            force_reflow = true;
+          }
+        }
+        if( force_reflow )
+        {
+          _switch.innerHTML += "";
+        }
+      }
+    }
   }
 
   this.get = function(key) 
