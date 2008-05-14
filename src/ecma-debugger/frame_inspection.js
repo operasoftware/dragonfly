@@ -45,6 +45,25 @@ var Frame_inspection = function()
     }
   }
 
+  var handleShowGlobalScope = function(xml, rt_id)
+  {
+    if( xml.getNodeData('status') == 'completed' )
+    {
+      frame_inspection.examineObject(rt_id, xml.getNodeData('object-id'));
+    }
+    else
+    {
+      opera.postError('getting window id has failed in handleShowGlobalScope in frame_inspection');
+    }
+  }
+
+  this.showGlobalScope = function(rt_id)
+  {
+    var tag = tagManager.setCB(null, handleShowGlobalScope, [rt_id]);
+    var script = "return window";
+    services['ecmascript-debugger'].eval(tag, rt_id, '', '', script);
+  }
+
   var onFrameSelected = function(msg)
   { 
     var frame = stop_at.getFrame(msg.frame_index);

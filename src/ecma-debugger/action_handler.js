@@ -258,8 +258,8 @@ var action_handler = new function()
     var runtime = runtimes.getRuntimeIdWithURL(ele.firstChild.nodeValue);
     if( runtime )
     {
-      frame_inspection.examineObject(runtime['runtime-id'], runtime['runtime-id']);
-      runtimes.setSelectedRuntime( runtime );
+      frame_inspection.showGlobalScope(runtime['runtime-id']);
+      runtimes.setSelectedRuntime(runtime);
       views.runtimes.update();
     }
   }
