@@ -411,6 +411,11 @@
       return __current_line;
     }
 
+    this.getBottomLine = function()
+    {
+      return __current_line + max_lines;
+    }
+
     /* first allays use showLine */
     this.showLinePointer = function(line, is_top_frame)
     {

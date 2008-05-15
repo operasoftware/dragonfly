@@ -72,8 +72,13 @@ var VirtualTextSearch = function()
   
   this.clearHit = function()
   {
-    __hit.parentNode.replaceChild(__hit.firstChild, __hit);
-    __hit = null;
+    if( __hit )
+    {
+      var parent = __hit.parentNode;
+      parent.replaceChild(__hit.firstChild, __hit);
+      parent.normalize();
+      __hit = null;
+    }
   }
   
 
@@ -91,10 +96,7 @@ var VirtualTextSearch = function()
       if(new_search_therm.length > 2)
       {
         search_therm = new_search_therm;
-        if(__hit)
-        {
-          self.clearHit();
-        }
+        self.clearHit();
         if( __script )
         {
           var line_matches = __script.line_matches = [];
@@ -110,7 +112,7 @@ var VirtualTextSearch = function()
             line_matches[line_matches.length] = line_cur;
             line_offsets[line_offsets.length] = pos - line_arr[line_cur - 1];
           }
-          self.highlight();
+          self.highlight(true);
           topCell.statusbar.updateInfo('matches for "' + search_therm + '": ' +line_matches.length );
         }
       }
@@ -142,37 +144,53 @@ var VirtualTextSearch = function()
     }
   }
 
-  this.highlight = function()
+  this.highlight = function(set_match_cursor)
   {
-    if(__script && __script.line_matches && __script.line_matches.length )
+    if( views.js_source.isvisible() 
+        && __script 
+        && __script.line_matches 
+        && __script.line_matches.length )
     {
       var line = __script.line_matches[__script.match_cursor];
-      if( views.js_source.showLine(__script.id, line - 7 ) )
+      var top_line = views.js_source.getTopLine();
+      var bottom_line = views.js_source.getBottomLine();
+      if(set_match_cursor)
       {
-        var top_line = views.js_source.getTopLine();
-        if( !source_container )
+        __script.match_cursor = 0;
+        while( __script.line_matches[__script.match_cursor] < top_line )
         {
-          source_container_parentNode = container.getElementsByTagName('div')[0];
-          source_container = container.getElementsByTagName('div')[1];
+          __script.match_cursor++;
         }
-        var div = source_container.getElementsByTagName('div')[line - top_line];
-        __offset = __script.line_offsets[__script.match_cursor];
-        __length = __script.match_length;
-        __hit = null;
-        search_node(div);
-        source_container.parentNode.scrollLeft = 0;
-        if( __hit
-           && __hit.offsetLeft > source_container_parentNode.scrollLeft + source_container_parentNode.offsetWidth )
-        {
-          source_container.parentNode.scrollLeft = __hit.offsetLeft - 50;
-        }
-        topCell.statusbar.updateInfo('matches for "' + 
-          search_therm + '": ' + __script.line_matches.length +', match ' + __script.match_cursor );
-        if( ++__script.match_cursor >= __script.line_matches.length )
-        {
-          __script.match_cursor = 0;
-        }
+        line = __script.line_matches[__script.match_cursor];
       }
+      if( line <= top_line || line >= bottom_line )
+      {
+        views.js_source.showLine(__script.id, line - 7 );
+        top_line = views.js_source.getTopLine();
+      }
+      if( !source_container )
+      {
+        source_container_parentNode = container.getElementsByTagName('div')[0];
+        source_container = container.getElementsByTagName('div')[1];
+      }
+      var div = source_container.getElementsByTagName('div')[line - top_line];
+      __offset = __script.line_offsets[__script.match_cursor];
+      __length = __script.match_length;
+      self.clearHit();
+      search_node(div);
+      source_container.parentNode.scrollLeft = 0;
+      if( __hit
+         && __hit.offsetLeft > source_container_parentNode.scrollLeft + source_container_parentNode.offsetWidth )
+      {
+        source_container.parentNode.scrollLeft = __hit.offsetLeft - 50;
+      }
+      topCell.statusbar.updateInfo('matches for "' + 
+        search_therm + '": ' + __script.line_matches.length +', match ' + __script.match_cursor );
+      if( ++__script.match_cursor >= __script.line_matches.length )
+      {
+        __script.match_cursor = 0;
+      }
+      
     }
   }
 
