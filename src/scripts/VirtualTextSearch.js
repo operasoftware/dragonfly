@@ -181,12 +181,16 @@ var VirtualTextSearch = function()
     if( container != _container )
     {
       container = _container;
+      source_container = null;
+      source_container_parentNode = null;
     }
   }
   
   this.setScript = function(script)
   {
     __script = script;
+    source_container = null;
+    source_container_parentNode = null;
   }
 
   this.cleanup = function()
