@@ -4,7 +4,7 @@
   var View = function(id, name, container_class)
   {
 
-    // this view can just be visible once at the time otherwise there will be problems
+    // TODO this view can just be visible once at the time otherwise there will be problems
 
     var self = this;
     var frame_id = 'js-source';
@@ -65,6 +65,7 @@
     var templates = {};
 
     var __timeout_clear_view = 0;
+    var __container = null;
 
     templates.line_nummer_container = function(lines)
     {
@@ -149,6 +150,7 @@
 
     this.createView = function(container)
     {
+      __container = container;
       frame_id = container.id;
       container.innerHTML = "<div id='js-source-scroll-content'>"+
           "<div id='js-source-content'></div>"+
@@ -190,6 +192,14 @@
           updateLineNumbers(0);
         }
         
+      }
+    }
+
+    this.onresize = function()
+    {
+      if(this.isvisible())
+      {
+        this.createView(__container);
       }
     }
 
