@@ -668,7 +668,7 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
       
       ret += prettyPrintCat[INLINE_STYLE](node_casc[0], search_active, rt_id); 
       ret += prettyPrintCat[ i ? INHERITED_RULES : MATCHING_RULES ](node_casc[1], search_active, rt_id);
-      ret += prettyPrintCat[DEFAULT_VALUES](node_casc[2], search_active, rt_id);
+      ret += prettyPrintCat[DEFAULT_VALUES](node_casc[2], search_active, rt_id, i > 0);
     }
     return ret;
   }
@@ -836,9 +836,9 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   */
 
 
-  prettyPrintCat[DEFAULT_VALUES] = function(data, search_active)
+  prettyPrintCat[DEFAULT_VALUES] = function(data, search_active, rt_id, check_has_inheritable_props)
   {
-    if(data[1].length)
+    if(data[1].length && ( !check_has_inheritable_props || data[HAS_INHERITABLE_PROPS] ) )
     {
       return "<rule>" +
               "<stylesheet-link class='pseudo'>default values</stylesheet-link>" +
