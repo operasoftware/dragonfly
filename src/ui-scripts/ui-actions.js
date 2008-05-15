@@ -166,7 +166,7 @@ eventHandlers.blur['blur'] = function(event, target)
   {
     if( !event.target.value )
     {
-      parent.firstChild.textContent = 'search';
+      parent.firstChild.textContent = event.target.getAttribute('default-text');
       
     }
     parent.removeClass('focus');

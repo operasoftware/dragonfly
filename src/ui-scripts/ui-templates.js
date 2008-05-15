@@ -13,7 +13,7 @@
 
   this.filters = function(filters)
   {
-    var ret = ['toolbar-filters'], filter = '', i = 0;
+    var ret = ['toolbar-filters'], filter = '', i = 0, default_text = '';
     for( ; filter = filters[i]; i++)
     {
       if( filter.type && this[filter.type] )
@@ -23,13 +23,14 @@
       else
       {
         ret[ret.length] = ['filter', 
-          ['em', filter.label ? filter.label : ui_strings.INPUT_DEFAULT_TEXT_SEARCH],
+          ['em', ( default_text = filter.label ? filter.label : ui_strings.INPUT_DEFAULT_TEXT_SEARCH ) ],
           [
             'input', 
             'autocomplete', 'off', 
             'type', 'text', 
             'handler', filter.handler, 
-            'title', filter.title
+            'title', filter.title,
+            'default-text', default_text
           ]
         ];
       }
