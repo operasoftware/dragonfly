@@ -2,7 +2,7 @@ var VirtualTextSearch = function()
 {
   const 
   DEFAULT_STYLE = "background-color:#ff0; color:#000;",
-  HIGHLIGHT_STYLE = "background-color:hsl(230, 40%, 80%); color:#000;",
+  HIGHLIGHT_STYLE = "background-color:#0f0; color:#000;",
   DEFAULT_SCROLL_MARGIN = 50,
   SEARCH_DELAY = 50;
 
@@ -72,7 +72,6 @@ var VirtualTextSearch = function()
   
   this.clearHit = function()
   {
-    __hit.parentNode.style.removeProperty('background-color');
     __hit.parentNode.replaceChild(__hit.firstChild, __hit);
     __hit = null;
   }
@@ -162,12 +161,11 @@ var VirtualTextSearch = function()
         __hit = null;
         search_node(div);
         source_container.parentNode.scrollLeft = 0;
-        if(__hit
+        if( __hit
            && __hit.offsetLeft > source_container_parentNode.scrollLeft + source_container_parentNode.offsetWidth )
         {
           source_container.parentNode.scrollLeft = __hit.offsetLeft - 50;
         }
-        div.style.backgroundColor = 'hsl(0, 0%, 92%)';
         topCell.statusbar.updateInfo('matches for "' + 
           search_therm + '": ' + __script.line_matches.length +', match ' + __script.match_cursor );
         if( ++__script.match_cursor >= __script.line_matches.length )
@@ -199,9 +197,7 @@ var VirtualTextSearch = function()
     container = null;
     source_container = null;
     source_container_parentNode = null;
-    __script = null;
     __offset = 0;
-    __length = 0;
     __hit = null;
   }
   

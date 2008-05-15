@@ -662,7 +662,7 @@
 
   var onViewDestroyed = function(msg)
   {
-    if( msg.id == 'dom' )
+    if( msg.id == 'js_source' )
     {
       textSearch.cleanup();
     }
