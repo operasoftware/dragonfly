@@ -47,7 +47,7 @@ var ViewBase = new function()
     return false;
   }
 
-  this.init = function(id, name, container_class, html)
+  this.init = function(id, name, container_class, html, default_handler)
   {
     this.id = id || getId();
     this.name = name;
@@ -55,6 +55,7 @@ var ViewBase = new function()
     this.inner = html;  // only for testing;
     this.container_ids = [];
     this.type = this.type || 'single-view';
+    this.default_handler = default_handler || '';
     if(!window.views)
     {
       window.views = {};
@@ -193,7 +194,7 @@ var ViewBase = new function()
     if(view)
     {
       view.ondestroy();
-      messages.post('view-destroyed', {id: this.id});
+      messages.post('view-destroyed', {id: msg.id});
     }
   }
 
@@ -202,9 +203,9 @@ var ViewBase = new function()
 }
 
 
-var View = function(id, name, container_class, html)
+var View = function(id, name, container_class, html, default_handler)
 {
-  this.init(id, name, container_class, html);
+  this.init(id, name, container_class, html, default_handler);
 }
 
 View.prototype = ViewBase;

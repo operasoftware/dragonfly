@@ -62,6 +62,14 @@ var ContainerBase = function()
     var container = document.getElementById(this.type + '-to-' + this.cell.id) || this.update();
     if( view )
     {
+      if( view.default_handler )
+      {
+        container.setAttribute('handler', view.default_handler); 
+      }
+      else
+      {
+        container.removeAttribute('handler');
+      }
       container.className = view.container_class || '';
       container.innerHTML = '';
       view.update();

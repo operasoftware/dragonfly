@@ -1,6 +1,6 @@
 (function()
 {
-  View = function(id, name, container_class)
+  View = function(id, name, container_class, html, default_handler)
   {
     /* a quick hack */
 
@@ -182,10 +182,15 @@
 
     messages.addListener('frame-selected', onFrameSelected);
 
-    this.init(id, name, container_class);
+    this.init(id, name, container_class, html, default_handler);
 
   }
 
   View.prototype = ViewBase;
-  new View('command_line', ui_strings.VIEW_LABEL_COMMAND_LINE, 'scroll');
+  new View('command_line', ui_strings.VIEW_LABEL_COMMAND_LINE, 'scroll', '', 'cmd-focus');
+
+  eventHandlers.click['cmd-focus'] = function(event, target)
+  {
+    target.getElementsByTagName('textarea')[0].focus();
+  }
 })()
