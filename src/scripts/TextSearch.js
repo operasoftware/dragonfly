@@ -67,7 +67,7 @@ var TextSearch = function()
         if(container)
         {
           search_node(container);
-          self.highlight();
+          self.highlight(true);
           
         }
       }
@@ -93,7 +93,7 @@ var TextSearch = function()
     }
   }
 
-  this.highlight = function()
+  this.highlight = function(check_position)
   {
     if(search_results.length)
     {
@@ -101,13 +101,30 @@ var TextSearch = function()
       {
         search_results[cursor].style.cssText = DEFAULT_STYLE;
       }
-      cursor++;
+      
+      if( check_position )
+      {
+        cursor = 0;
+        //var top = 0; //container.scrollTop;
+        //opera.postError(search_results[cursor].offsetTop +' '+ container.scrollTop)
+        while( search_results[cursor] && search_results[cursor].offsetTop < 0  )
+        {
+          cursor++;
+        }
+      }
+      else
+      {
+        cursor++;
+      }
       if( cursor > search_results.length - 1)
       {
         cursor = 0;
       }
       search_results[cursor].style.cssText = HIGHLIGHT_STYLE;
-      container.scrollTop += search_results[cursor].offsetTop - DEFAULT_SCROLL_MARGIN;
+      if( !check_position || search_results[cursor].offsetTop > DEFAULT_SCROLL_MARGIN )
+      {
+        container.scrollTop += search_results[cursor].offsetTop - DEFAULT_SCROLL_MARGIN;
+      }
       topCell.statusbar.updateInfo('matches for "' + 
         search_therm + '": ' +search_results.length +', match ' + ( cursor + 1 ) );
     }
