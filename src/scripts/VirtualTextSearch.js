@@ -11,7 +11,6 @@ var VirtualTextSearch = function()
   var 
   self = this, 
   search_therm = '',
-  search_results = [], // collection of span elements
   cursor = -1,
   container = null,
   source_container = null,
@@ -21,7 +20,7 @@ var VirtualTextSearch = function()
   __offset = -1,
   __length = 0,
   __hit = null,
-  //matches = null,
+  __input = null,
  
   search_node = function(node) 
   {
@@ -203,6 +202,16 @@ var VirtualTextSearch = function()
       source_container_parentNode = null;
     }
   }
+
+  this.setFormInput = function(input)
+  {
+    __input = input;
+    if(search_therm)
+    {
+      __input.value = search_therm;
+      __input.parentNode.firstChild.textContent = '';
+    }
+  }
   
   this.setScript = function(script)
   {
@@ -213,14 +222,9 @@ var VirtualTextSearch = function()
 
   this.cleanup = function()
   {
-    search_therm = '';
-    search_results = [];
     cursor = -1;
-    container = null;
-    source_container = null;
-    source_container_parentNode = null;
+    container = source_container = source_container_parentNode = __hit = __input = null;
     __offset = -1;
-    __hit = null;
   }
   
 };

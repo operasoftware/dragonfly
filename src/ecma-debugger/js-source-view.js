@@ -662,6 +662,7 @@
     if( msg.id == 'js_source' )
     {
       textSearch.setContainer(msg.container);
+      textSearch.setFormInput(views.js_source.getToolbarControl( msg.container, 'js-source-text-search'));
     }
   }
 

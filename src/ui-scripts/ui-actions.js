@@ -156,6 +156,12 @@ eventHandlers.focus['focus'] = function(event, target)
   {
     parent.firstChild.textContent = '';
     parent.addClass('focus');
+    if(event.target.value)
+    {
+      event.target.selectionStart = 0;
+      event.target.selectionEnd = event.target.value.length;
+
+    }
   }
 }
 
