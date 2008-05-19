@@ -18,7 +18,7 @@ var VirtualTextSearch = function()
   source_container_parentNode = null,
   timeouts = new Timeouts(),
   __script = null,
-  __offset = 0,
+  __offset = -1,
   __length = 0,
   __hit = null,
   //matches = null,
@@ -26,7 +26,7 @@ var VirtualTextSearch = function()
   search_node = function(node) 
   {
     var cur_node = node.firstChild, pos = 0, hit = null, span = null, length = 0;
-    while( cur_node && __offset ) 
+    while( cur_node && __offset > -1 ) 
     {
       switch(cur_node.nodeType)
       {
@@ -44,7 +44,7 @@ var VirtualTextSearch = function()
             if( ( length = hit.nodeValue.length ) >= __length )
             {
               length = __length;
-              __offset = 0;
+              __offset = -1;
             }
             else
             {
@@ -108,7 +108,7 @@ var VirtualTextSearch = function()
           line_arr_length = line_arr.length
           while( ( pos = source.indexOf(search_therm, pos + 1) ) != -1 )
           {
-            while( line_cur < line_arr_length && line_arr[line_cur] < pos && ++line_cur );
+            while( line_cur < line_arr_length && line_arr[line_cur] <= pos && ++line_cur );
             line_matches[line_matches.length] = line_cur;
             line_offsets[line_offsets.length] = pos - line_arr[line_cur - 1];
           }
@@ -219,7 +219,7 @@ var VirtualTextSearch = function()
     container = null;
     source_container = null;
     source_container_parentNode = null;
-    __offset = 0;
+    __offset = -1;
     __hit = null;
   }
   
