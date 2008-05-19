@@ -191,6 +191,12 @@ var VirtualTextSearch = function()
       }
       
     }
+    else if(search_therm)
+    {
+      var new_search_therm = search_therm;
+      search_therm = '';
+      this.search(new_search_therm);
+    }
   }
 
   this.setContainer = function(_container)
