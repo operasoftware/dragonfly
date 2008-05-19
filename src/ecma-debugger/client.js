@@ -250,11 +250,11 @@ var client = new function()
     }
     viewport.removeChild(container);
 
-    new CompositeView('console_new', 'Console', console_rough_layout);
-    new CompositeView('js_new', 'Script', js_rough_layout);
-    new CompositeView('dom_new', 'DOM', dom_rough_layout);
+    new CompositeView('console_new', ui_strings.VIEW_LABEL_COMPOSITE_ERROR_CONSOLE, console_rough_layout);
+    new CompositeView('js_new', ui_strings.VIEW_LABEL_COMPOSITE_SCRIPTS, js_rough_layout);
+    new CompositeView('dom_new', ui_strings.VIEW_LABEL_COMPOSITE_DOM, dom_rough_layout);
 
-    new CompositeView('export_new', 'Export', export_rough_layout);
+    new CompositeView('export_new', ui_strings.VIEW_LABEL_COMPOSITE_EXPORTS, export_rough_layout);
 
     window.topCell = new TopCell
     (
