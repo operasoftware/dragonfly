@@ -92,6 +92,11 @@ ui_strings.INPUT_DEFAULT_TEXT_FILTER = 'Quick find';
 
 ui_strings.SETTING_LABEL_GENERAL = 'General';
 
+ui_strings.ALERT_WRONG_START = "Dragonfly can not be used in this way.\n" +
+  "Either set the current url in\n\n" +
+  "   opera:config > Developer Tools > Developer Tools URL\n\n" +
+  "or setup a debugger environment with a proxy and server."
+
 
 
 

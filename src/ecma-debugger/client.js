@@ -216,9 +216,18 @@ var client = new function()
       }
       else
       {
-        self.post = post_proxy;
-        proxy.onsetup = proxy_onsetup;
-        proxy.configure(host[0], host[1]);
+        if( host[1] )
+        {
+          self.post = post_proxy;
+          proxy.onsetup = proxy_onsetup;
+          proxy.configure(host[0], host[1]);
+        }
+        else
+        {
+          alert(ui_strings.ALERT_WRONG_START);
+          return;
+
+        }
       }
     }
     else
