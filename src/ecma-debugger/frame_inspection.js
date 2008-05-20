@@ -99,7 +99,20 @@ var Frame_inspection = function()
     }
   }
 
+  var onObjectSelected = function(msg)
+  { 
+    __selectedObject = {rt_id: msg.rt_id, obj_id: msg.obj_id};
+    self.setObject(__selectedObject.rt_id, __selectedObject.obj_id);
+    var view_id = '', i = 0;
+    for ( ; view_id = __views[i] ; i++)
+    {
+      views[view_id].update();
+    }
+  }
+
   messages.addListener('frame-selected', onFrameSelected);
+  messages.addListener('object-selected', onObjectSelected);
+  
 }
 
 Frame_inspection.prototype = ObjectDataBase;

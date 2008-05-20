@@ -739,7 +739,14 @@ stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
   border-width: 0 0 1px;
   margin-top: -9px;
   }
-  
+
+pre[handler="inspect-object-link"] {
+  color: blue;
+  }
+
+pre[handler="inspect-object-link"]:hover {
+  text-decoration: underline;;
+  }
 
 
 

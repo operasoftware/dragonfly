@@ -156,7 +156,14 @@ var action_handler = new function()
             {
               cur_2 = cur;
             }
-            parent_parent.insertAfter(parent_parent.getElementsByTagName('end-search-scope')[0], cur_2);
+            if(cur_2.nodeName == 'end-search-scope' &&  !cur_2.nextSibling && cur_2.previousSibling)
+            {
+              range.setEndAfter(cur_2.previousSibling);
+            }
+            else
+            {
+              parent_parent.insertAfter(parent_parent.getElementsByTagName('end-search-scope')[0], cur_2);
+            }
             cur = parent;
             while( ( cur = cur.previousSibling ) && ( parseInt(cur.style.paddingLeft) >= margin || cur.nodeName != "item" ) )
             {
@@ -198,6 +205,7 @@ var action_handler = new function()
           range.deleteContents();
           parent.removeClass('search-scope');
           target.style.removeProperty("background-position");
+          //alert(parent_parent.getElementsByTagName('end-search-scope')[0]);
         }
       }
       else
@@ -666,6 +674,13 @@ var action_handler = new function()
     }
     elementStyle.setUnfoldedCat( cat , !value);
     settings['css-inspector'].set(cat, !value);
+  }
+
+  handlers['inspect-object-link'] = function(event, target)
+  {
+    var rt_id = target.getAttribute('rt-id');
+    var obj_id = target.getAttribute('obj-id');
+    messages.post('object-selected', {rt_id: rt_id, obj_id: obj_id});
   }
 
 

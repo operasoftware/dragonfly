@@ -52,6 +52,7 @@ new EventHandler('change');
 new EventHandler('input');
 new EventHandler('keyup');
 new EventHandler('keydown');
+new EventHandler('keypress');
 new EventHandler('mousedown');
 new EventHandler('focus', true, 'focus-handler');
 new EventHandler('blur', true, 'blur-handler');
