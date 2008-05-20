@@ -104,37 +104,19 @@ var stop_at = new function()
     callstack = [];
     for( ; frame  = _frames[i]; i++ )
     {
-      if( is_all_frames && i == _frames_length - 1 )
+      callstack[i] =
       {
-        callstack[i] =
-        {
-          fn_name : 'global scope',
-          line : '', 
-          script_id : '',
-          argument_id : frame.getNodeData('argument-object'),
-          scope_id : frame.getNodeData('variable-object'),
-          this_id : frame.getNodeData('this-object'),
-          id: i,
-          rt_id: runtime_id
-        }
+        fn_name : is_all_frames && i == _frames_length - 1 
+                  ? 'global scope' 
+                  : frame.getNodeData('function-name'),
+        line : frame.getNodeData('line-number'), 
+        script_id : frame.getNodeData('script-id'),
+        argument_id : frame.getNodeData('argument-object'),
+        scope_id : frame.getNodeData('variable-object'),
+        this_id : frame.getNodeData('this-object'),
+        id: i,
+        rt_id: runtime_id
       }
-      else
-      {
-        callstack[i] =
-        {
-          fn_name : frame.getNodeData('function-name'),
-          line : frame.getNodeData('line-number'), 
-          script_id : frame.getNodeData('script-id'),
-          argument_id : frame.getNodeData('argument-object'),
-          scope_id : frame.getNodeData('variable-object'),
-          this_id : frame.getNodeData('this-object'),
-          id: i,
-          rt_id: runtime_id
-
-        }
-      }
-      
-
     }
 
     views.callstack.update();
