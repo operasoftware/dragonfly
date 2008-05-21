@@ -107,6 +107,7 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./ecma-debugger/ObjectDataBase.js"/>
 
 <script src="./ecma-debugger/frame_inspection.js"/>
+<script src="./ecma-debugger/object_inspection.js"/>
 <script src="./ecma-debugger/views-runtimes.js"/>
 <script src="./ecma-debugger/views.js"/>
 <script src="./ecma-debugger/testing.js"/>
@@ -129,6 +130,7 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 
 
 <script src="./ecma-debugger/views-frame-inspection.js"/>
+<script src="./ecma-debugger/views-object-inspection.js"/>
 
 
 <script src="./ecma-debugger/DOM_markup_style.js"/>

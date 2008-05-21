@@ -783,7 +783,7 @@ input[key="js_source.error"] {
 input[key="threads.log-threads"] {
   background-image: url('../ui-images/btn-log-all-threads.png');
   }
-input[key="frame_inspection.hide-default-properties-in-global-scope"] {
+input[key$="hide-default-properties-in-global-scope"] {
   background-image: url('../ui-images/btn-hide-global-scope.png');
   }
 input[key="css-inspector.hide-initial-values"] {

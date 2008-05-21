@@ -41,7 +41,7 @@ var Frame_inspection = function()
     var view_id = '', i = 0;
     for ( ; view_id = __views[i] ; i++)
     {
-      views[view_id].update();
+      topCell.showView(views[view_id].id);
     }
   }
 
@@ -95,24 +95,19 @@ var Frame_inspection = function()
     var view_id = '', i = 0;
     for ( ; view_id = __views[i] ; i++)
     {
-      views[view_id].update();
-    }
-  }
-
-  var onObjectSelected = function(msg)
-  { 
-    __selectedObject = {rt_id: msg.rt_id, obj_id: msg.obj_id};
-    self.setObject(__selectedObject.rt_id, __selectedObject.obj_id);
-    var view_id = '', i = 0;
-    for ( ; view_id = __views[i] ; i++)
-    {
-      views[view_id].update();
+      if( msg.frame_index == -1 )
+      {
+        views[view_id].update();
+      }
+      else
+      {
+        topCell.showView(views[view_id].id);
+      }
     }
   }
 
   messages.addListener('frame-selected', onFrameSelected);
-  messages.addListener('object-selected', onObjectSelected);
-  
+
 }
 
 Frame_inspection.prototype = ObjectDataBase;
