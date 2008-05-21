@@ -11,6 +11,12 @@
     var __console_input = null;
     var __prefix = null;
 
+    var submit_buffer = [];
+    var line_buffer = [];
+    var line_buffer_cursor = 0;
+
+    var __selection_start = -1;
+
 
 
     var handleEval = function(xml, runtime_id, obj_id)
@@ -22,12 +28,28 @@
         var return_value = xml.getElementsByTagName('string')[0];
         if(return_value)
         {
+          var value = return_value.firstChild && return_value.firstChild.nodeValue || ''; 
+          if( !obj_id )
+          {
+            switch (value_type)
+            {
+              case 'string':
+              {
+                value = '"' + value + '"';
+                break;
+              }
+              case 'null':
+              case 'undefined':
+              {
+                value = value_type;
+                break;
+              }
+            }
+          }
           __console_output.render
           (
-            [
-              'pre', 
-              return_value.firstChild && return_value.firstChild.nodeValue || ''
-            ].concat( obj_id 
+            ['pre', value ].concat( 
+                      obj_id 
                       ? ['handler', 'inspect-object-link', 'rt-id', runtime_id, 'obj-id', obj_id] 
                       : [] )
           );
@@ -121,9 +143,7 @@
       }
     }
 
-    var submit_buffer = [];
-    var line_buffer = [];
-    var line_buffer_cursor = 0;
+
 
     var line_buffer_push = function(line)
     {
@@ -165,37 +185,40 @@
         }
         __prefix.textContent = submit_buffer.length ? "... " : ">>> ";
         event.target.value = '';
+        var container = __console_output.parentNode.parentNode;
+        container.scrollTop = container.scrollHeight;
       }
 
     }
 
+    
     eventHandlers.keypress['commandline'] = function(event)
     {
       var target = event.target;
-
       switch(event.keyCode)
       {
+        case 16:
+        {
+          break;
+        }
         case 9:
         {
           event.preventDefault();
-          var selection_start = target.selectionStart;
-          var cur_str = target.value.slice(0, selection_start);
-          var suggest = autocomplete.getSuggest(cur_str, arguments);
+          if( __selection_start == -1 )
+          {
+            __selection_start = target.selectionStart;
+          }
+          var cur_str = target.value.slice(0, __selection_start);
+          var suggest = autocomplete.getSuggest(cur_str, event.shiftKey, arguments);
           if( suggest )
           {
-            target.value = cur_str + autocomplete.getSuggest(cur_str);
-            target.selectionStart = selection_start;
-            target.selectionEnd = target.value.length;
+            target.value = cur_str + suggest;
           }
           break;
         }
-        case 46: // .
+        default:
         {
-          if( target.selectionStart != target.selectionEnd )
-          {
-            target.selectionStart = target.selectionEnd;
-          }
-          break;
+          __selection_start = -1;
         }
       }
     }
@@ -217,6 +240,7 @@
 
       var get_scope = function(path, old_args)
       {
+        
         var 
         rt_id = runtimes.getSelectedRuntimeId(),
         frame_id = '', 
@@ -224,7 +248,11 @@
 
         if(rt_id)
         {
-          if( __frame_index.toString + rt_id + path == current_path )
+          if( !path && __frame_index == -1 )
+          {
+            path = 'this';
+          }
+          if( __frame_index.toString() + rt_id + path == current_path )
           {
             return scope;
           }
@@ -255,18 +283,13 @@
               }
             }
           }
-          else if( !path )
-          {
-            path = 'this';
-          }
-
           var tag = tagManager.setCB(null, handleEvalScope, [__frame_index, rt_id, path, old_args] );
           services['ecmascript-debugger'].eval(tag, rt_id, thread_id, 
             frame_id, "<![CDATA["+SCRIPT.replace(/%s/, path)+"]]>");
         }
         else
         {
-          alert('select a runtime');
+          alert('select a window');
         }
         return null;
       }
@@ -280,14 +303,13 @@
           if(return_value)
           {
             scope = return_value.textContent.split(',');
-            current_path = __frame_index.toString + rt_id + path;
+            current_path = __frame_index.toString() + rt_id + path;
             if( !old_args[0].__call_count )
             {
               old_args[0].__call_count = 1;
               old_args.callee.call(null, old_args[0]);
             }
           }
-
         }
         else
         {
@@ -295,7 +317,7 @@
         }
       }
 
-      this.getSuggest = function(str, old_args)
+      this.getSuggest = function(str, shift_key, old_args)
       {
         if( !str || str != str_input )
         {
@@ -311,6 +333,7 @@
           }
           if( path != new_path || !scope )
           {
+            match = [];
             if( !( scope = get_scope(new_path, old_args) ) )
             {
               return '';
@@ -334,11 +357,24 @@
           str_input = str;
 
         }
-        ret = match[match_cur++] || '';
-        if( match_cur >= match.length )
+        ret = match[match_cur] || '';
+        if(shift_key)
         {
-          match_cur = 0;
+          match_cur--;
+          if( match_cur < 0 )
+          {
+            match_cur = match.length ? match.length - 1 : 0;
+          }
         }
+        else
+        {
+          match_cur++;
+          if( match_cur >= match.length )
+          {
+            match_cur = 0;
+          }
+        }
+
         return  ret.slice(id.length);
       }
 

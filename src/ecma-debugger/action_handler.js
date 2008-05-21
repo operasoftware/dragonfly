@@ -266,7 +266,8 @@ var action_handler = new function()
     var runtime = runtimes.getRuntimeIdWithURL(ele.firstChild.nodeValue);
     if( runtime )
     {
-      frame_inspection.showGlobalScope(runtime['runtime-id']);
+      topCell.showView(views.object_inspection.id);
+      object_inspection.showGlobalScope(runtime['runtime-id']);
       runtimes.setSelectedRuntime(runtime);
       views.runtimes.update();
     }
@@ -680,6 +681,7 @@ var action_handler = new function()
   {
     var rt_id = target.getAttribute('rt-id');
     var obj_id = target.getAttribute('obj-id');
+    topCell.showView(views.object_inspection.id);
     messages.post('object-selected', {rt_id: rt_id, obj_id: obj_id});
   }
 
