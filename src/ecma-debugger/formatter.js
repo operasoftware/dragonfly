@@ -402,9 +402,9 @@ var simple_js_parser=new function()
       {
         __buffer+=c;
         c=__source.charAt(++__pointer);
-        __buffer+=c;
         if(c=='/')  
         {
+          __buffer+=c;
           read_buffer();
           __previous_type='COMMENT';
           __type='IDENTIFIER';
