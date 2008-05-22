@@ -94,28 +94,57 @@ var stop_at = new function()
     return stopAt && stopAt['thread-id'] || '';
   }
 
-  var parseBacktrace = function(xml, runtime_id, thread_id)
+
+  var parseBacktrace = function(xml, stopAt)
   {
+    var runtime_id = stopAt['runtime-id'];
     var _frames = xml.getElementsByTagName('frame'), frame = null, i = 0;
     var fn_name = '', line = '', script_id = '', argument_id = '', scope_id = '';
     var _frames_length = _frames.length;
+    var line_number = '';
+    var script_id = '';
 
     var is_all_frames = _frames_length <= ini.max_frames;
     callstack = [];
     for( ; frame  = _frames[i]; i++ )
     {
-      callstack[i] =
+      if( is_all_frames && i == _frames_length - 1 )
       {
-        fn_name : is_all_frames && i == _frames_length - 1 
-                  ? 'global scope' 
-                  : frame.getNodeData('function-name'),
-        line : frame.getNodeData('line-number'), 
-        script_id : frame.getNodeData('script-id'),
-        argument_id : frame.getNodeData('argument-object'),
-        scope_id : frame.getNodeData('variable-object'),
-        this_id : frame.getNodeData('this-object'),
-        id: i,
-        rt_id: runtime_id
+        line_number = frame.getNodeData('line-number');
+        script_id = frame.getNodeData('script-id');
+        // this is a workaround for Bug 331919
+        // ( script-id and line-number are wrong or missing for the bottom frame )
+        // must be fixed properly in scope
+        if( stopAt['line-number'] )
+        {
+          line_number = stopAt['line-number'];
+          script_id = stopAt['script-id'];
+        }
+        callstack[i] =
+        {
+          fn_name : 'global scope',
+          line : line_number, 
+          script_id : script_id,
+          argument_id : frame.getNodeData('argument-object'),
+          scope_id : frame.getNodeData('variable-object'),
+          this_id : frame.getNodeData('this-object'),
+          id: i,
+          rt_id: runtime_id
+        }
+      }
+      else
+      {
+        callstack[i] =
+        {
+          fn_name : frame.getNodeData('function-name'),
+          line : frame.getNodeData('line-number'), 
+          script_id : frame.getNodeData('script-id'),
+          argument_id : frame.getNodeData('argument-object'),
+          scope_id : frame.getNodeData('variable-object'),
+          this_id : frame.getNodeData('this-object'),
+          id: i,
+          rt_id: runtime_id
+        }
       }
     }
 
@@ -212,7 +241,7 @@ var stop_at = new function()
             runtimes.setSelectedRuntimeId(runtime_id);
           }
           // the runtime id can be different for each frame. 
-          var tag = tagManager.setCB(null, parseBacktrace, [stopAt['runtime-id']]); 
+          var tag = tagManager.setCB(null, parseBacktrace, [stopAt]); 
           services['ecmascript-debugger'].backtrace(tag, stopAt);
           if( views.js_source.showLine( stopAt['script-id'], line - 10 ) )
           {
@@ -232,7 +261,7 @@ var stop_at = new function()
         runtime_id = stopAt['runtime-id'];
        
         // the runtime id can be different for each frame. 
-        var tag = tagManager.setCB(null, parseBacktrace, [stopAt['runtime-id']]); 
+        var tag = tagManager.setCB(null, parseBacktrace, [stopAt]); 
         services['ecmascript-debugger'].backtrace(tag, stopAt);
         if( views.js_source.showLine( stopAt['script-id'], line - 10 ) )
         {
