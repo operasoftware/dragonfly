@@ -232,9 +232,11 @@
       var current_path = '';
       var match = [];
       var match_cur = 0;
+      var local_frame_index = 0;
+     
       
       const 
-      SCRIPT = "(function(){var a = '', b= ''; for( a in %s ){ b += a + ','; }; return b; })()",
+      SCRIPT = "(function(){var a = '', b= ''; for( a in %s ){ b += a + '_,_'; }; return b; })()",
       KEY = 0,
       DEPTH = 3;
 
@@ -302,7 +304,7 @@
           var return_value = xml.getElementsByTagName('string')[0];
           if(return_value)
           {
-            scope = return_value.textContent.split(',');
+            scope = return_value.textContent.split('_,_');
             current_path = __frame_index.toString() + rt_id + path;
             if( !old_args[0].__call_count )
             {
@@ -378,15 +380,23 @@
         return  ret.slice(id.length);
       }
 
-      this.clear = function()
+      this.clear = function(frame_index)
       {
-        str_input = '';
-        path = '';
-        id = '';
-        scope = null;
-        current_path = '';
-        match = [];
-        match_cur = 0;
+        // it could be that this check is too simple
+        // basically the global scope is invalided with a new thread
+        // but the tab completion feature is not very helpfull 
+        // with sites with intervals or timeouts
+        if( frame_index == -1 && frame_index != local_frame_index )
+        {
+          local_frame_index = -1;
+          str_input = '';
+          path = '';
+          id = '';
+          scope = null;
+          current_path = '';
+          match = [];
+          match_cur = 0;
+        }
       };
 
 
@@ -411,7 +421,7 @@
     var onFrameSelected = function(msg)
     {
       __frame_index = msg.frame_index;
-      autocomplete.clear();
+      autocomplete.clear(__frame_index);
     }
 
     messages.addListener('frame-selected', onFrameSelected);
