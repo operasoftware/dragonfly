@@ -67,6 +67,27 @@ helpers = new function()
       }
     }
   }
+
+  this.shortenURI = function(uri)
+  {
+    var ret_uri = uri;
+    var title = '';
+    var max_length = 40;
+    if( ret_uri && ret_uri.length > max_length )
+    {
+      title = uri;
+      ret_uri = uri.split('?')[0];
+      if( ret_uri.length > max_length )
+      {
+        var temp = /\/([^/]+)$/.exec(ret_uri);
+        if( temp )
+        {
+          ret_uri = temp[1];
+        }
+      }
+    }
+    return {uri: ret_uri, title: title};
+  }
   
   document.addEventListener('keypress', keypressListener, true);
 
