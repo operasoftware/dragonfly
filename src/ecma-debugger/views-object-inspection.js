@@ -22,10 +22,10 @@
           // TODO when is it the global scope?
           container.innerHTML = 
             "<examine-objects rt-id='" + selectedObject.rt_id + "' " + 
-                  "data-id='frame_inspection' " +
+                  "data-id='object_inspection' " +
                   "obj-id='" + selectedObject.obj_id + "' >" +
                 "<start-search-scope></start-search-scope>" +
-                object_inspection.prettyPrint(data, -1, filter, frame_inspection.filter_type) + 
+                object_inspection.prettyPrint(data, -1, filter, object_inspection.filter_type) + 
                 "<end-search-scope></end-search-scope>" +
             "</examine-objects>";
           messages.post
