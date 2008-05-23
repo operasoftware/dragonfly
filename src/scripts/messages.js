@@ -15,6 +15,8 @@
   - "script-selected" msg.rt_id, msg.script_id
   - "onApplicationSetup" if the application was setup
   - "runtime-destroyed" msg.id;
+  - "thread-stopped-event" msg.stop_at
+  - "thread-continue-event" msg.stop_at
 
 */
 

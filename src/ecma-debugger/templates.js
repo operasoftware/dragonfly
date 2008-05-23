@@ -125,14 +125,16 @@
 
   this['runtime-script'] = function(runtime)
   {
+    var display_uri = helpers.shortenURI(runtime['uri']);
     var ret = ['li',
           ['input', 
             'type', 'button', 
             'handler', 'show-scripts', 
             'runtime_id', runtime['runtime-id'],
             'class', 'folder-key'].concat(runtime['unfolded-script'] ? ['style', 'background-position:0 -11px'] : [] ),
-          ['span', runtime['uri'], 'handler', 'show-global-scope', 'title', 'select a runtime'].
-            concat( runtime.selected ? ['class', 'selected-runtime'] : [] ) 
+          ['span', display_uri.uri, 'handler', 'show-global-scope', 'title', 'select a runtime'].
+            concat( runtime.selected ? ['class', 'selected-runtime'] : [] ).
+            concat( display_uri.title ? ['title', display_uri.title] : [] ) 
         
       ];
     if( runtime['unfolded-script'])
@@ -198,13 +200,32 @@
 
   this.scriptLink = function(script)
   {
-    
-    return ['li',
-        script['script-type']+' - '+(script['uri']?script['uri']:'script-id: '+script['script-id']),
+    var display_uri = helpers.shortenURI(script['uri']);
+    var ret = ['li',
+        script['script-type']+' - ' + 
+         ( 
+            display_uri.uri
+            ? display_uri.uri
+            : 'script-id: ' + script['script-id'] 
+         ),
         'handler', 'display-script',
         'script-id', script['script-id'],
         'tabindex', '1'
-      ].concat( script.selected ? ['class', 'selected'] : [] );
+      ];
+
+    if( display_uri.title )
+    {
+      ret.splice(ret.length, 0, 'title', display_uri.title); 
+    }
+    if( script.selected )
+    {
+      ret.splice(ret.length, 0, 'class', 'selected'); 
+    }
+    if( script['stop-ats'].length )
+    {
+      ret.splice(ret.length, 0, 'style', 'background-position: 0 0'); 
+    }
+    return ret;
   }
   
   this.sheetLink = function(sheet, index, is_selected)

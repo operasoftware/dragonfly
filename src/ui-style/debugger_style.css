@@ -327,6 +327,15 @@ input[type="text"] {
   color:#09f;
 }
 
+.thread-stopped-event {
+  background-color: #09f;
+  }
+
+.folder li[handler="display-script"] {
+  margin-left: -2px;
+  padding-left: 20px;
+  background: transparent url('../ui-images/selected-frame-top.png') no-repeat 0 -16px; 
+  }
 
 .info {
   position:absolute;
@@ -747,6 +756,8 @@ pre[handler="inspect-object-link"] {
 pre[handler="inspect-object-link"]:hover {
   text-decoration: underline;;
   }
+
+
 
 
 

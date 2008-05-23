@@ -364,6 +364,7 @@ var runtimes = new function()
       script['script-data'] = '';
     }
     script['breakpoints'] = {};
+    script['stop-ats'] = [];
     registerRuntime( script['runtime-id'] );
     registerScript( script );
     views['runtimes'].update();
@@ -644,6 +645,11 @@ var runtimes = new function()
     return __scripts[scriptId];
   }
 
+  this.getStoppedAt = function(scriptId)
+  {
+    return __scripts[scriptId] && __scripts[scriptId]['stop-ats'] || null;
+  }
+
   this.getScriptsRuntimeId = function(scriptId)
   {
     return __scripts[scriptId] && __scripts[scriptId]['runtime-id'] || null;
@@ -815,6 +821,37 @@ var runtimes = new function()
       }
     }
   }
+
+  var onThreadStopped = function(msg)
+  {
+    var script_id = msg.stop_at['script-id'];
+    var stop_ats = __scripts[script_id]['stop-ats'];
+    stop_ats[stop_ats.length] = msg.stop_at;
+
+
+  }
+
+  var onThreadContinue = function(msg)
+  {
+    var script_id = msg.stop_at['script-id'];
+    var stop_ats = __scripts[script_id]['stop-ats'];
+    var stop_at = null, i = 0;
+    for( ; stop_at = stop_ats[i]; i++ )
+    {
+      if(stop_at == msg.stop_at)
+      {
+        stop_ats.splice(i, 1);
+        return;
+      }
+    }
+  }
+
+
+
+
+
+  messages.addListener("thread-stopped-event", onThreadStopped);
+  messages.addListener("thread-continue-event", onThreadContinue);
   
   messages.addListener('host-state', onHostStateChange);
   messages.addListener('setting-changed', onSettingChange);

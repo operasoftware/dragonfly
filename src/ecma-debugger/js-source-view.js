@@ -179,7 +179,17 @@
         var selected_script_id = runtimes.getSelecetdScriptIdFromSelectedRuntime();  
         if(selected_script_id && selected_script_id != script.id)
         {
-          this.showLine(selected_script_id, 0);
+          var stop_at = runtimes.getStoppedAt(selected_script_id);
+          if(stop_at && stop_at[0])
+          {
+            var line = parseInt( stop_at[0]['line-number'] );
+            this.showLine(selected_script_id, line - 10);
+            this.showLinePointer( line, true );
+          }
+          else
+          {
+            this.showLine(selected_script_id, 0);
+          }
         }
         else if( script.id )
         {

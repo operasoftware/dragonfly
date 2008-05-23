@@ -133,7 +133,51 @@
           'class', 'padding']);
       }
     }
+
+    var onThreadStopped = function(msg)
+    {
+      var script_id = msg.stop_at['script-id'];
+      var containers = self.getAllContainers(), c = null , i = 0;
+      var lis = null, li = null , k = 0;
+      for( ; c = containers[i]; i++)
+      {
+        lis = c.getElementsByTagName('li');
+        for( k = 0; li = lis[k]; k++)
+        {
+          if( li.getAttribute('script-id') == script_id )
+          {
+            li.style.backgroundPosition = '0 0';
+            return;
+          }
+        }
+      }
+    }
+
+    var onThreadContinue = function(msg)
+    {
+      var script_id = msg.stop_at['script-id'];
+      var containers = self.getAllContainers(), c = null , i = 0;
+      var lis = null, li = null , k = 0;
+      for( ; c = containers[i]; i++)
+      {
+        lis = c.getElementsByTagName('li');
+        for( k = 0; li = lis[k]; k++)
+        {
+          if( li.getAttribute('script-id') == script_id )
+          {
+            li.style.removeProperty('background-position');
+            return;
+          }
+        }
+      }
+    }
+
+
+
     this.init(id, name, container_class);
+
+    messages.addListener("thread-stopped-event", onThreadStopped);
+    messages.addListener("thread-continue-event", onThreadContinue);
   }
 
   View.prototype = new RuntimeView();
