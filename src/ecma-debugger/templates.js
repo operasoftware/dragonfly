@@ -127,19 +127,19 @@
   {
     var display_uri = helpers.shortenURI(runtime['uri']);
     var ret = ['li',
-          ['input', 
-            'type', 'button', 
-            'handler', 'show-scripts', 
+          ['input',
+            'type', 'button',
+            'handler', 'show-scripts',
             'runtime_id', runtime['runtime-id'],
             'class', 'folder-key'].concat(runtime['unfolded-script'] ? ['style', 'background-position:0 -11px'] : [] ),
           ['span', display_uri.uri, 'handler', 'show-global-scope', 'title', 'select a runtime'].
             concat( runtime.selected ? ['class', 'selected-runtime'] : [] ).
-            concat( display_uri.title ? ['title', display_uri.title] : [] ) 
-        
+            concat( display_uri.title ? ['title', display_uri.title] : [] )
+ 
       ];
     if( runtime['unfolded-script'])
     {
-      var scripts = runtimes.getScripts(runtime['runtime-id']), 
+      var scripts = runtimes.getScripts(runtime['runtime-id']),
         script = null, i=0, scripts_container =['ul'];
       if( scripts.length )
       {
@@ -152,6 +152,7 @@
       {
         scripts_container = ['p', ui_strings.INFO_NO_SCRIPTS, 'class', 'info-text'];
       }
+      scripts_container.splice(scripts_container.length, 0, 'runtime-id', runtime['runtime-id']);
       ret = ret.concat([scripts_container]);
     }
     return ret;

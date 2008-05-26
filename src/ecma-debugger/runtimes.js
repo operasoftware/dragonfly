@@ -755,12 +755,12 @@ var runtimes = new function()
     }
   }
 
-  this.setSelectedScript = function( runtime, id )
+  this.setSelectedScript = function( rt_id, script_id )
   {
-    var scripts = this.getScripts(runtime['runtime-id']), script = null, i = 0;
+    var scripts = this.getScripts(rt_id), script = null, i = 0;
     for( ; script = scripts[i]; i++)
     {
-      script.selected = script['script-id'] == id ? true : false;
+      script.selected = script['script-id'] == script_id ;
     }
   }
 

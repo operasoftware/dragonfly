@@ -399,25 +399,13 @@ var action_handler = new function()
 
   handlers['display-script'] = function(event)
   {
-    var id  = event.target.getAttribute('script-id');
-    if(id)
+    var script_id  = event.target.getAttribute('script-id');
+    var rt_id = event.target.parentNode.getAttribute('runtime-id');
+    if(script_id && rt_id)
     {
       helpers.setSelected(event);
-      
-      var runtime_container = event.target.parentElement.parentElement.getElementsByTagName('span')[0];
-      var runtime = runtimes.getRuntimeIdWithURL(runtime_container.firstChild.nodeValue);
-      
-      runtimes.setSelectedScript( runtime, id );
-      /*
-      if( runtime_container && !runtime_container.hasClass('selected-runtime') )
-      {
-        handlers['show-global-scope']({target: runtime_container});
-      }
-      */
+      runtimes.setSelectedScript( rt_id, script_id );
       views.js_source.update();
-      
-
-      
     }
     else
     {
