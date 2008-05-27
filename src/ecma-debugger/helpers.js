@@ -21,18 +21,21 @@ helpers = new function()
     {
       switch(event.keyCode)
       {
-        case 116: // F5
+        case 119: // F8
         {
+          event.preventDefault();
           handleKeypress(event, 'continue-run');
           break;
         }
         case 121: // F10
         {
+          event.preventDefault();
           handleKeypress(event, 'continue-step-next-line');
           break;
         }
         case 122: // F11
         {
+          event.preventDefault();
           if(event.shiftKey)
           {
             handleKeypress(event, 'continue-step-out-of-call');
