@@ -134,6 +134,8 @@ var DOM_markup_style = function(id, name, container_class)
     var show_attrs = settings[this.id].get('show-attributes');
     var node_name = '';
     var tag_head = '';
+    var class_name = '';
+    var re_formatted = /script|style|#comment/i;
 
     if( ! data.length )
     {
@@ -202,9 +204,11 @@ var DOM_markup_style = function(id, name, container_class)
             {
               if( has_only_one_child )
               {
+                class_name = re_formatted.test(node_name) ? " class='pre-wrap'" : '';
                 tree += "<div " + ( node[ ID ] == target ? "id='target-element'" : '' ) + 
                         " style='margin-left:" + 16 * node[ DEPTH ] + "px;' "+
-                        "ref-id='"+ node[ ID ] + "' handler='spotlight-node'>"+
+                        "ref-id='"+ node[ ID ] + "' handler='spotlight-node' " +
+                        class_name + ">"+
                         "<span class='node'>&lt;" + node_name +  attrs + "&gt;</span>" +
                         one_child_value + 
                         "<span class='node'>&lt;/" + node_name + "&gt;</span>" +
@@ -257,7 +261,7 @@ var DOM_markup_style = function(id, name, container_class)
               if( !/^\s*$/.test(node[ VALUE ] ) )
               {
                 tree += "<div style='margin-left:" + 16 * node[ DEPTH ] + "px;' " +      
-                        "class='comment'>&lt;!--" + node[ VALUE ] + "--&gt;</div>";
+                        "class='comment pre-wrap'>&lt;!--" + node[ VALUE ] + "--&gt;</div>";
               }
             }
             break;

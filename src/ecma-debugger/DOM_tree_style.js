@@ -141,6 +141,9 @@ var DOM_tree_style = function(id, name, container_class)
     var node_name = '';
     var tag_head = '';
 
+    var current_formatting = '';
+    var re_formatted = /script|style/i;
+
     var graphic_arr = [];
 
     for( ; node = data[i]; i += 1 )
@@ -223,7 +226,7 @@ var DOM_tree_style = function(id, name, container_class)
                   "</div>";
           }
 
-
+          current_formatting = re_formatted.test(node_name) &&  " class='pre-wrap'" || "";
           break;
         }
 
@@ -232,7 +235,7 @@ var DOM_tree_style = function(id, name, container_class)
           if( show_comments )
           {
             tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;' " +      
-                    "class='comment'><span class='comment-node'>#comment</span>" + 
+                    "class='comment pre-wrap'><span class='comment-node'>#comment</span>" + 
               node[VALUE] + "</div>";
 
 
@@ -273,7 +276,8 @@ var DOM_tree_style = function(id, name, container_class)
           {
             if( !/^\s*$/.test( node[VALUE] ) ) 
             {
-               tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;'>" +
+               tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;'" +
+                 current_formatting + ">" +
                 ( node[NAME] ? node[NAME] :  nodeNameMap[node[TYPE]] ) + ' ' +
                 node[VALUE] +
                 "</div>";
@@ -283,7 +287,8 @@ var DOM_tree_style = function(id, name, container_class)
           {
 
 
-            tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;'>" +
+            tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;'" +
+              current_formatting + ">" +
               ( node[NAME] ? node[NAME] :  nodeNameMap[node[TYPE]] ) + ' ' +
               ( /^\s*$/.test( node[VALUE] ) ? _escape(node[VALUE]) : node[VALUE] ) +
               "</div>";
