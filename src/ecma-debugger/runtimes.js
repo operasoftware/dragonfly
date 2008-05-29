@@ -2,9 +2,12 @@ var runtimes = new function()
 {
   var __runtimes = {};
 
+  var __old_runtimes = {};
+
   var __runtimes_arr = []; // runtime ids
 
   var __window_ids = {};
+  var __windows_reloaded = {};
   var __selected_window = '';
 
   var __threads = [];
@@ -68,8 +71,8 @@ var runtimes = new function()
     {
       __selected_runtime_id = '';
     }
-    //opera.postError('remove rt: '+id);
     messages.post('runtime-destroyed', {id: id});
+    __old_runtimes[id] = __runtimes[id];
     delete __runtimes[id];
   }
 
@@ -113,18 +116,39 @@ var runtimes = new function()
   </runtime>
 
   */
+  var checkOldRuntimes = function(runtime)
+  {
+    var cur = '', old_rt = null;
+    for( cur in __old_runtimes )
+    {
+      old_rt = __old_runtimes[cur];
+      if( old_rt
+          && old_rt['uri'] == runtime['uri']
+          && old_rt['window-id'] == runtime['window-id']
+          && old_rt['html-frame-path'] == runtime['html-frame-path'] )
+      {
+        runtime['unfolded-script'] = old_rt['unfolded-script'] || false;
+        runtime['unfolded-css'] = old_rt['unfolded-css'] || false;
+        delete __old_runtimes[cur];
+        return;
+      }
+    }
+  }
 
   var parseRuntime = function(xml)
   {
     var r_ts = xml.getElementsByTagName('runtime'), r_t=null, i=0;
     var length = 0, k = 0;
     var runtimeId = '', runtime=null, prop = '', 
+      window_id = '',
       children = null, child = null, j = 0;
     var cur = '';
     for ( ; r_t = r_ts[i]; i++)
     {
       runtimeId = r_t.getNodeData('runtime-id'); 
-      if(runtimeId)
+      // with the createAllRuntimes call and the runtime-started event
+      // it can happen that a runtime get parsed twice
+      if(runtimeId && !__runtimes[runtimeId] )
       {
         length = __runtimes_arr.length
         for( k = 0; k < length && runtimeId != __runtimes_arr[k]; k++);
@@ -138,18 +162,7 @@ var runtimes = new function()
         {
           runtime[child.nodeName] = child.textContent;
         }
-        for( cur in __runtimes )
-        {
-          if( __runtimes[cur]
-             && __runtimes[cur]['uri'] == runtime['uri']
-             && __runtimes[cur]['window-id'] == runtime['window-id']
-             && __runtimes[cur]['html-frame-path'] == runtime['html-frame-path'] )
-          {
-            runtime['unfolded-script'] = __runtimes[cur]['unfolded-script'] || false;
-            runtime['unfolded-css'] = __runtimes[cur]['unfolded-css'] || false;
-            removeRuntime(__runtimes[cur]['runtime-id'])
-          }
-        }
+        checkOldRuntimes(runtime);
         if( runtime.is_top = isTopRuntime(runtime) )
         {
           var win_id = runtime['window-id'];
@@ -178,6 +191,11 @@ var runtimes = new function()
         else
         {
           updateRuntimeViews();
+        }
+
+        if(__windows_reloaded[runtime['window-id']] == 1)
+        {
+          __windows_reloaded[runtime['window-id']] = 2;
         }
 
         //
@@ -334,9 +352,12 @@ var runtimes = new function()
   this.setActiveWindowId = function(window_id)
   {
     __selected_window = window_id;
+    if( settings.runtimes.get('reload-runtime-automatically') )
+    {
+      self.reloadWindow();
+    }
     settings.runtimes.set('selected-window', window_id);
     updateRuntimeViews();
-    //opera.postError('__selected_window: '+__selected_window);
   }
 
   this.getThreads = function()
@@ -363,11 +384,15 @@ var runtimes = new function()
     {
       script['script-data'] = '';
     }
-    script['breakpoints'] = {};
-    script['stop-ats'] = [];
-    registerRuntime( script['runtime-id'] );
-    registerScript( script );
-    views['runtimes'].update();
+    
+    if( is_runtime_of_selected_window(script['runtime-id']))
+    {
+      script['breakpoints'] = {};
+      script['stop-ats'] = [];
+      registerRuntime( script['runtime-id'] );
+      registerScript( script );
+      views['runtimes'].update();
+    }
   }
 
   var thread_queues = {};
@@ -440,20 +465,24 @@ var runtimes = new function()
   this.handleThreadStarted = function(xml)
   {
     var rt_id = xml.getNodeData("runtime-id");
-    var id = xml.getNodeData("thread-id");
-    var parent_thread_id = xml.getNodeData("parent-thread-id");
-    var thread_queue = thread_queues[rt_id] || ( thread_queues[rt_id] = [] );
-    var current_thread = current_threads[rt_id] || ( current_threads[rt_id] = [] );
-    thread_queue[thread_queue.length] = id;
-    if( !current_thread.length || 
-      ( parent_thread_id != '0' && parent_thread_id == current_thread[ current_thread.length - 1 ] ) )
+    // workaround for missing filtering
+    if( is_runtime_of_selected_window(rt_id) )
     {
-      current_thread[current_thread.length] = id;
-    }
-    if( __log_threads )
-    {
-      log_thread(xml, rt_id, id);
-      views.threads.update();
+      var id = xml.getNodeData("thread-id");
+      var parent_thread_id = xml.getNodeData("parent-thread-id");
+      var thread_queue = thread_queues[rt_id] || ( thread_queues[rt_id] = [] );
+      var current_thread = current_threads[rt_id] || ( current_threads[rt_id] = [] );
+      thread_queue[thread_queue.length] = id;
+      if( !current_thread.length || 
+        ( parent_thread_id != '0' && parent_thread_id == current_thread[ current_thread.length - 1 ] ) )
+      {
+        current_thread[current_thread.length] = id;
+      }
+      if( __log_threads )
+      {
+        log_thread(xml, rt_id, id);
+        views.threads.update();
+      }
     }
   }
 
@@ -461,36 +490,36 @@ var runtimes = new function()
   {
     var rt_id = xml.getNodeData("runtime-id");
     var thread_id = xml.getNodeData("thread-id");
-    var current_thread = current_threads[rt_id];
 
     // workaround for missing filtering 
-    if( !is_runtime_of_selected_window(rt_id) )
+    if( is_runtime_of_selected_window(rt_id) )
     {
-      services['ecmascript-debugger'].continue_run(rt_id, thread_id);
-    }
-    // end workaround
-
-    // the current thread id must be set in 'thread-started' event
-    // opera.postError(stop_at.getControlsEnabled () +' '+thread_id +' '+ current_thread[ current_thread.length - 1 ])
-    // TODO thread logic
-    if( !stop_at.getControlsEnabled () /* */ && thread_id == current_thread[ current_thread.length - 1 ] /* */ )
-    {
-      stop_at.handle(xml);
+      var current_thread = current_threads[rt_id];
+      // the current thread id must be set in 'thread-started' event
+      // TODO thread logic
+      if( !stop_at.getControlsEnabled () /* */ && thread_id == current_thread[ current_thread.length - 1 ] /* */ )
+      {
+        stop_at.handle(xml);
+      }
+      else
+      {
+        // it is sure to assume that per runtime there can be only one <stoped-at> event
+        if( ! stoped_threads[rt_id] )
+        {
+          stoped_threads[rt_id] = {};
+        } 
+        stoped_threads[rt_id] = xml;
+        runtime_stoped_queue[runtime_stoped_queue.length] = rt_id;
+      }
+      if( __log_threads )
+      {
+        log_thread(xml, rt_id, thread_id);
+        views.threads.update();
+      }
     }
     else
     {
-      // it is sure to assume that per runtime there can be only one <stoped-at> event
-      if( ! stoped_threads[rt_id] )
-      {
-        stoped_threads[rt_id] = {};
-      } 
-      stoped_threads[rt_id] = xml;
-      runtime_stoped_queue[runtime_stoped_queue.length] = rt_id;
-    }
-    if( __log_threads )
-    {
-      log_thread(xml, rt_id, thread_id);
-      views.threads.update();
+      services['ecmascript-debugger'].continue_run(rt_id, thread_id);
     }
   }
 
@@ -500,16 +529,20 @@ var runtimes = new function()
     status "completed" | "unhandled-exception" | "aborted" | "cancelled-by-scheduler"
     */
     var rt_id = xml.getNodeData("runtime-id");
-    var thread_id = xml.getNodeData("thread-id");
-    clear_thread_id(rt_id, thread_id);
-    if( !stop_at.getControlsEnabled () && runtime_stoped_queue.length )
+    // workaround for missing filtering 
+    if( is_runtime_of_selected_window(rt_id) )
     {
-      stop_at.handle( stoped_threads[runtime_stoped_queue.shift()] );
-    }
-    if( __log_threads )
-    {
-      log_thread(xml, rt_id, thread_id);
-      views.threads.update();
+      var thread_id = xml.getNodeData("thread-id");
+      clear_thread_id(rt_id, thread_id);
+      if( !stop_at.getControlsEnabled () && runtime_stoped_queue.length )
+      {
+        stop_at.handle( stoped_threads[runtime_stoped_queue.shift()] );
+      }
+      if( __log_threads )
+      {
+        log_thread(xml, rt_id, thread_id);
+        views.threads.update();
+      }
     }
   }
 
@@ -657,7 +690,7 @@ var runtimes = new function()
 
   this.getScriptSource = function(scriptId)
   {
-    // 'script-data' can be abn empty string
+    // 'script-data' can be an empty string
     if( __scripts[scriptId] )
     {
       return  __scripts[scriptId]['script-data'] 
@@ -777,16 +810,7 @@ var runtimes = new function()
       __next_runtime_id_to_select = id;
     }
   }
-/*
-  this.getSelecetedRuntimeURL = function()
-  {
-    opera.postError(__selected_runtime_id);
-    return __selected_runtime_id 
-      && __runtimes[__selected_runtime_id] 
-      && __runtimes[__selected_runtime_id]['uri']
-      || '';
-  }
-*/
+
   this.getSelectedRuntimeId = function()
   {
     return __selected_runtime_id;
@@ -814,6 +838,10 @@ var runtimes = new function()
   {
     if( __selected_window )
     {
+      if( !__windows_reloaded[__selected_window] )
+      {
+        __windows_reloaded[__selected_window] = 1;
+      }
       var rt_id = this.getRuntimeIdsFromWindow(__selected_window)[0];
       if( rt_id )
       {
@@ -822,26 +850,42 @@ var runtimes = new function()
     }
   }
 
+  this.isReloadedWindow = function(window_id)
+  {
+
+    return __windows_reloaded[window_id] == 2;
+  }
+
   var onThreadStopped = function(msg)
   {
     var script_id = msg.stop_at['script-id'];
-    var stop_ats = __scripts[script_id]['stop-ats'];
-    stop_ats[stop_ats.length] = msg.stop_at;
+    // only scripts from the selected runtime are registered
+    if( script_id && __scripts[script_id] )
+    {
+      var stop_ats = __scripts[script_id]['stop-ats'];
+      stop_ats[stop_ats.length] = msg.stop_at;
+    }
 
 
   }
 
   var onThreadContinue = function(msg)
   {
-    var script_id = msg.stop_at['script-id'];
-    var stop_ats = __scripts[script_id]['stop-ats'];
-    var stop_at = null, i = 0;
-    for( ; stop_at = stop_ats[i]; i++ )
+    var
+    script_id = msg.stop_at['script-id'],
+    stop_ats = __scripts[script_id] && __scripts[script_id]['stop-ats'],
+    stop_at = null,
+    i = 0;
+ 
+    if( stop_ats )
     {
-      if(stop_at == msg.stop_at)
+      for( ; stop_at = stop_ats[i]; i++ )
       {
-        stop_ats.splice(i, 1);
-        return;
+        if(stop_at == msg.stop_at)
+        {
+          stop_ats.splice(i, 1);
+          return;
+        }
       }
     }
   }

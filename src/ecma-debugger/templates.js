@@ -126,6 +126,7 @@
   this['runtime-script'] = function(runtime)
   {
     var display_uri = helpers.shortenURI(runtime['uri']);
+    var is_reloaded_window = runtimes.isReloadedWindow(runtime['window-id']);
     var ret = ['li',
           ['input',
             'type', 'button',
@@ -150,7 +151,11 @@
       }
       else
       {
-        scripts_container = ['p', ui_strings.INFO_NO_SCRIPTS, 'class', 'info-text'];
+        scripts_container = ['p', 
+          settings.runtimes.get('reload-runtime-automatically') || is_reloaded_window 
+          ? ui_strings.RUNTIME_HAS_NO_SCRIPTS
+          : ui_strings.INFO_NO_SCRIPTS_PLEASE_RELOAD, 
+          'class', 'info-text'];
       }
       scripts_container.splice(scripts_container.length, 0, 'runtime-id', runtime['runtime-id']);
       ret = ret.concat([scripts_container]);
@@ -172,6 +177,7 @@
       ];
     if( runtime['unfolded-css'] )
     {
+      
       var sheets = stylesheets.getStylesheets(runtime['runtime-id']),
         sheet = null, i = 0, container = ['ul'];
       if(sheets)

@@ -277,6 +277,7 @@
                     scope[scope.length] = prop[KEY];
                   }
                 }
+                current_path = __frame_index.toString() + rt_id + path;
                 return scope;
               }
               else

@@ -5,6 +5,9 @@
   {
 
     // TODO this view can just be visible once at the time otherwise there will be problems
+    // this must be refactored. line_arr, state_arr, breakpoints must be added to the script object
+    // getting context values must move out of this class
+    // split out one general class to handle partial view ( yield count of lines )
 
     var self = this;
     var frame_id = 'js-source';
@@ -66,6 +69,7 @@
 
     var __timeout_clear_view = 0;
     var __container = null;
+    var view_invalid = true;
 
     templates.line_nummer_container = function(lines)
     {
@@ -150,6 +154,13 @@
 
     this.createView = function(container)
     {
+      if( view_invalid )
+      {
+        script = {};
+        __current_line = 0;
+        __current_pointer = 0;
+        __current_pointer_type = 0; 
+      }
       __container = container;
       frame_id = container.id;
       container.innerHTML = "<div id='js-source-scroll-content'>"+
@@ -336,7 +347,6 @@
 
       var is_visible = ( source_content = document.getElementById(container_id) ) ? true : false; 
       
-      
       if( script.id != script_id )
       {
         var script_source = runtimes.getScriptSource(script_id);
@@ -411,7 +421,7 @@
           }
         }
       }
-
+      view_invalid = false;
       return is_visible;
 
     }
@@ -534,6 +544,7 @@
 
     this.clearView = function()
     {
+      //opera.postError('clear view');
       if( !__timeout_clear_view )
       {
         __timeout_clear_view = setTimeout( __clearView, 50);
@@ -542,22 +553,14 @@
 
     var __clearView = function()
     {
+      
       if(source_content = document.getElementById(container_id))
       {
         source_content.innerHTML = '';
-        clearScriptContext();
         clearLineNumbers();
       }
       __timeout_clear_view = 0;
-
-
-
-      script = {};
-      __current_line = 0;
-      __current_pointer = 0;
-      __current_pointer_type = 0;  
-
-      
+      view_invalid = true;      
     }
 
 
