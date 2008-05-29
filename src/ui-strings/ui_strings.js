@@ -17,7 +17,7 @@ ui_strings.VIEW_LABEL_STYLESHEETS = 'Stylesheets';
 ui_strings.VIEW_LABEL_DOM = 'DOM';
 ui_strings.VIEW_LABEL_STYLESHEET = 'Stylesheet';
 ui_strings.VIEW_LABEL_STYLES = 'Styles';
-ui_strings.VIEW_LABEL_DOM_ATTR = 'DOM Attributes';
+ui_strings.VIEW_LABEL_DOM_ATTR = 'Properties';
 ui_strings.VIEW_LABEL_LAYOUT = 'Layout';
 ui_strings.VIEW_LABEL_ERROR_ALL = 'All';
 ui_strings.VIEW_LABEL_ERROR_SCRIPT = 'JavaScript';
@@ -65,6 +65,7 @@ ui_strings.SWITCH_HIDE_SHORTHANDS = 'Hide shorthand for computed styles';
 ui_strings.SWITCH_HIDE_EMPTY_STRINGS = 'Hide empty strings and null values';
 ui_strings.SWITCH_REMOTE_DEBUG = 'Remote Debug';
 ui_strings.SWITCH_SHOW_VIEWS_MENU = "Show Views menu";
+ui_strings.SWITCH_RELOAD_SCRIPTS_AUTOMATICALLY = "Reload documents automatically on selecting a window"
   
 ui_strings.BUTTON_LABEL_HELP = 'Help';
 ui_strings.BUTTON_LABEL_CONTINUE = 'Continue (F8)';
@@ -84,7 +85,8 @@ ui_strings.BUTTON_LABEL_LOG_THREADS = 'Log threads';
 ui_strings.BUTTON_LABEL_CLEAR_LOG = 'Clear thread log';
 ui_strings.BUTTON_LABEL_EXPORT_LOG = 'Export thread log';
 
-ui_strings.INFO_NO_SCRIPTS = 'Click the reload button above to fetch the scripts for the selected window';
+ui_strings.INFO_NO_SCRIPTS_PLEASE_RELOAD = 'Click the reload button above to fetch the scripts for the selected window';
+ui_strings.RUNTIME_HAS_NO_SCRIPTS = 'This document has no scripts';
 
 ui_strings.SELECT_WINDOW_EMPTY = 'Select a window'; 
 

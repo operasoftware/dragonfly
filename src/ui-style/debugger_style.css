@@ -711,6 +711,10 @@ stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
   color: #666;
   }
 
+.dom .pre-wrap {
+  white-space: pre-wrap;
+  }
+
 .dom input {
   border: 0;
   margin: 0;

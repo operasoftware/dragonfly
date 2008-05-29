@@ -145,11 +145,27 @@
   {
     var ret = [];
     var tab = null, i = 0;
+    ret[ret.length] =  this.window_controls();
     for( ; tab = obj.tabs[i]; i++)
     {
       ret[ret.length] = this.tab(tab, obj.activeTab == tab.ref_id)
     }
     return ret;
+  }
+
+  this.window_controls = function()
+  {
+    return ['window-controls',
+      ['input', 
+        'type', 'button', 
+        'handler', 'top-window-toggle-attach', 
+        'class', 'switch' + ( window.opera.attached ? ' attached' : '') 
+      ],
+      ['input', 
+          'type', 'button', 
+          'handler', 'top-window-close'
+        ]
+      ]
   }
 
   this.settings = function(view_arr)

@@ -119,6 +119,24 @@ eventHandlers.click['documentation'] = function(event)
   window.open(event.target.getAttribute('param'), '_info_window').focus();
 }
 
+
+eventHandlers.click['top-window-close'] = function(event)
+{
+  window.close();
+}
+
+eventHandlers.click['top-window-toggle-attach'] = function(event)
+{
+  if( window.opera.attached = !window.opera.attached )
+  {
+    event.target.addClass('attached');
+  }
+  else
+  {
+    event.target.removeClass('attached');
+  }
+}
+
 eventHandlers.mousedown['toolbar-switch'] = function(event)
 {
   var target = event.target;
