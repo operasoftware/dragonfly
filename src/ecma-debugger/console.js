@@ -255,7 +255,7 @@ ErrorConsoleView.roughViews =
 [
   {
     id: 'console-all',
-    name: ui_strings.VIEW_LABEL_ERROR_ALL,
+    name: ui_strings.VIEW_LABEL_ERROR_ALL
   },
   {
     id: 'console-script',

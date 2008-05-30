@@ -155,7 +155,7 @@ var ObjectDataBase = new function()
     [
       [
         '',
-        obj_id
+        obj_id,
         'object',
         -1
       ]
