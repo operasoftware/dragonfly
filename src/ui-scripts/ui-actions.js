@@ -67,7 +67,6 @@ eventHandlers.click['tab'] = function(event, target)
   if( tabs )
   {
     tabs.setActiveTab(view_id);
-    messages.post("show-view", {id: view_id});
   }
   else
   {
@@ -135,6 +134,7 @@ eventHandlers.click['top-window-toggle-attach'] = function(event)
   {
     event.target.removeClass('attached');
   }
+  client.setupTopCell();
 }
 
 eventHandlers.mousedown['toolbar-switch'] = function(event)

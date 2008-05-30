@@ -258,30 +258,21 @@ var client = new function()
       defaults[set.target] = set.getValue();
     }
     viewport.removeChild(container);
-
+    
+    new CompositeView('environment_new', ui_strings.VIEW_LABEL_ENVIRONMENT, environment_rough_layout);
     new CompositeView('console_new', ui_strings.VIEW_LABEL_COMPOSITE_ERROR_CONSOLE, console_rough_layout);
     new CompositeView('js_new', ui_strings.VIEW_LABEL_COMPOSITE_SCRIPTS, js_rough_layout);
     new CompositeView('dom_new', ui_strings.VIEW_LABEL_COMPOSITE_DOM, dom_rough_layout);
 
     new CompositeView('export_new', ui_strings.VIEW_LABEL_COMPOSITE_EXPORTS, export_rough_layout);
 
-    window.topCell = new TopCell
-    (
-      main_layout, 
-      function()
-      {
-        this.top = 0; 
-        this.left = 0; 
-        this.width = innerWidth; 
-        this.height = innerHeight;
-      },
-      function()
-      {
-        this.setStartDimesions();
-        this.update();
-        this.setup();
-      }  
-    );
+    new CompositeView('js_panel', ui_strings.VIEW_LABEL_COMPOSITE_SCRIPTS, js_rough_layout_panel);
+
+    new CompositeView('dom_panel', ui_strings.VIEW_LABEL_COMPOSITE_DOM, dom_rough_layout_panel);
+
+    
+
+    self.setupTopCell();
     
     // event handlers to resize the views
     new SlideViews(document);
@@ -297,6 +288,29 @@ var client = new function()
       topCell.disableTab(tab, is_disbaled);
     }
 
+  }
+
+  this.setupTopCell = function()
+  {
+    viewport.innerHTML = '';
+    window.topCell = new TopCell
+    (
+      window.opera.attached ? panel_layout : main_layout,
+      function()
+      {
+        this.top = 0;
+        this.left = 0;
+        this.width = innerWidth;
+        this.height = innerHeight;
+      },
+      function()
+      {
+        this.setStartDimesions();
+        this.update();
+        this.setup();
+      }
+    );
+    window.topCell.setup();
   }
 
   this.onquit = function()
@@ -347,6 +361,15 @@ var console_rough_layout =
   ]
 }
 
+var environment_rough_layout =
+{
+  dir: 'v', width: 700, height: 700,
+  children: 
+  [
+    { height: 200, tabs: ['environment'] }
+  ]
+}
+
 var export_rough_layout =
 {
   dir: 'v', width: 700, height: 700,
@@ -365,9 +388,23 @@ var dom_rough_layout =
       width: 700,
       children: 
       [
-        { height: 150, tabs: ['runtimes_dom', 'runtimes_css', 'environment'] },
+        { height: 150, tabs: ['runtimes_dom', 'runtimes_css'] },
         { width: 200, tabs: ['dom', 'stylesheets'] }
       ]
+    },
+    { 
+      width: 250, tabs: ['css-inspector', 'dom_attrs', 'css-layout'] 
+    }
+  ]
+}
+
+var dom_rough_layout_panel =
+{
+  dir: 'h', width: 700, height: 700,
+  children: 
+  [
+    { 
+      width: 700, tabs: ['runtimes_dom', 'runtimes_css', 'dom', 'stylesheets']
     },
     { 
       width: 250, tabs: ['css-inspector', 'dom_attrs', 'css-layout'] 
@@ -384,7 +421,7 @@ var js_rough_layout =
       width: 700, 
       children: 
       [
-        { height: 150, tabs: ['runtimes', 'environment'] },
+        { height: 150, tabs: ['runtimes'] },
         { height: 650, tabs: ['js_source']},
         { height: 150, tabs:['command_line']}
       ] 
@@ -400,11 +437,39 @@ var js_rough_layout =
   ]
 }
 
+var js_rough_layout_panel =
+{
+  dir: 'h', width: 700, height: 700,
+  children: 
+  [
+    { 
+      width: 700, 
+      children: 
+      [
+        { height: 150, tabs: ['runtimes', 'js_source', 'command_line'] }
+      ] 
+    },
+    { 
+      width: 250, 
+      children: 
+      [
+        { height: 250, tabs: ['callstack', 'frame_inspection', 'threads'] }
+      ] 
+    }
+  ]
+}
+
 
 var main_layout =
 {
   id: 'main-view', 
-  tabs: ['js_new', 'dom_new', 'console_new'/*, 'export_new'*/]
+  tabs: ['js_new', 'dom_new', 'console_new', 'environment_new']
+}
+
+var panel_layout =
+{
+  id: 'main-view', 
+  tabs: ['js_panel', 'dom_panel', 'console_new', 'environment_new']
 }
 
 var resolve_map_properties = 

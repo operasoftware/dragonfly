@@ -80,15 +80,18 @@
     'runtimes', 
     // kel-value map
     {
-      'selected-window': ''
+      'selected-window': '',
+      'reload-runtime-automatically': true
     }, 
     // key-label map
     {
+      'reload-runtime-automatically': ui_strings.SWITCH_RELOAD_SCRIPTS_AUTOMATICALLY
     },
     // settings map
     {
       checkboxes:
       [
+        'reload-runtime-automatically'
       ]
     }
   );
@@ -270,7 +273,7 @@
 
     var onViewCreated = function(msg)
     {
-      if( msg.id == 'dom' )
+      if( !window.opera.attached && msg.id == 'dom' )
       {
         topCell.showView(id);
       }
@@ -304,7 +307,7 @@
 
     this.createView = function(container)
     {
-      this.updateWindowDropdown(container);
+      self.updateWindowDropdown(container);
       container.innerHTML = '';
 
       var active_window_id = runtimes.getActiveWindowId();
@@ -326,11 +329,18 @@
         
 
         for( ; ( rt = _runtimes[i] ) && !rt['unfolded-css']; i++);
-        if( !rt && _runtimes[0] )
+        if(rt)
+        {
+          if( !stylesheets.getStylesheets(rt['runtime-id']) )
+          {
+            showStylesheets({}, rt['runtime-id']);
+          }
+        }
+        else if( _runtimes[0] )
         {
           showStylesheets({}, _runtimes[0]['runtime-id']);
         }
-
+        
         container.render(['div', 
           templates.runtimes(_runtimes, 'css', 'folder'), 
           'class', 'padding']);
@@ -343,30 +353,41 @@
       // handleGetAllStylesheets in stylesheets will 
       // set for this reason __call_count on the event object
       var sheets = stylesheets.getStylesheets(rt_id, arguments);
+      
       if(sheets)
       {
+        delete obj.__call_count;
         runtimes.setUnfolded(rt_id, 'css', true);
-        if( !stylesheets.hasSelectedSheetRuntime(rt_id) && stylesheets.getStylesheets.length )
+        // opera.postError('selected sheet: ' + stylesheets.hasSelectedSheetRuntime(rt_id) );
+        if( !stylesheets.hasSelectedSheetRuntime(rt_id) && sheets.length )
         {
-          delete obj.__call_count;
+          
           // stylesheets.getRulesWithSheetIndex will call this function again if data is not avaible
           // handleGetRulesWithIndex in stylesheets will 
           // set for this reason __call_count on the event object
           var rules = stylesheets.getRulesWithSheetIndex(rt_id, 0, arguments);
+          //opera.postError('rules: '+(rules && rules[0]||'no rules'))
           if(rules)
           {
             stylesheets.setSelectedSheet(rt_id, 0, rules);
-            topCell.showView(views.stylesheets.id);
-            self.update();
+            if (! window.opera.attached)
+            {
+              topCell.showView(views.stylesheets.id);
+            }
+            
+            //self.update();
           }
         }
-        self.update();
+        else
+        {
+          self.update();
+        }
       }
     }
 
     var onViewCreated = function(msg)
     {
-      if( msg.id == 'stylesheets' )
+      if( !window.opera.attached && msg.id == 'stylesheets' )
       {
         topCell.showView(id);
       }

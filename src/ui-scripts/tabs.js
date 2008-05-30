@@ -158,7 +158,7 @@ var TabsBase = function()
       {
         this._history.splice(0, this._history.length - HISTORY_MAX_LENGTH); 
       }
-
+      messages.post("show-view", {id: view_id});
     }
   }
 

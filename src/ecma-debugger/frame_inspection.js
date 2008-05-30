@@ -8,6 +8,8 @@ var Frame_inspection = function()
   var __selectedObject = null;
   var __views = ['frame_inspection'];
 
+  var __is_active_inspection = true;
+
   this.rt_id = '';
   this.data = [];
 
@@ -93,20 +95,34 @@ var Frame_inspection = function()
       self.clearData();
     }
     var view_id = '', i = 0;
-    for ( ; view_id = __views[i] ; i++)
+    //opera.postError(__is_active_inspection);
+    if( __is_active_inspection )
     {
-      if( msg.frame_index == -1 )
+      for ( ; view_id = __views[i] ; i++)
       {
         views[view_id].update();
-      }
-      else
-      {
-        topCell.showView(views[view_id].id);
+        /*
+        if( msg.frame_index == -1 )
+        {
+          views[view_id].update();
+        }
+        else
+        {
+          topCell.showView(views[view_id].id);
+        }
+        */
       }
     }
   }
 
+  var onActiveInspectionType = function(msg)
+  {
+    __is_active_inspection = msg.inspection_type == 'frame';
+  }
+
   messages.addListener('frame-selected', onFrameSelected);
+  messages.addListener('active-inspection-type', onActiveInspectionType);
+  
 
 }
 

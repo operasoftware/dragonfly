@@ -5,34 +5,36 @@
 
     var self = this;
 
+    __ref_data = 'frame_inspection';
+
     this.createView = function(container)
     {
       var 
-      selectedObject = frame_inspection.getSelectedObject(),
+      selectedObject = window[__ref_data].getSelectedObject(),
       data = null,
       filter = null;
       
       if( selectedObject )
       {
-        data = frame_inspection.getData(selectedObject.rt_id, selectedObject.obj_id, -1, arguments);
+        data = window[__ref_data].getData(selectedObject.rt_id, selectedObject.obj_id, -1, arguments);
         if(data)
         {
           delete container.__call_count;
           // TODO when is it the global scope?
-          filter = frame_inspection.getDataFilter();
+          filter = window[__ref_data].getDataFilter();
           container.innerHTML = 
             "<examine-objects rt-id='" + selectedObject.rt_id + "' " + 
-                  "data-id='frame_inspection' " +
+                  "data-id=" + __ref_data + " " +
                   "obj-id='" + selectedObject.obj_id + "' >" +
                 "<start-search-scope></start-search-scope>" +
-                frame_inspection.prettyPrint(data, -1, filter, frame_inspection.filter_type) + 
+                window[__ref_data].prettyPrint(data, -1, filter, frame_inspection.filter_type) + 
                 "<end-search-scope></end-search-scope>" +
             "</examine-objects>";
           messages.post
           ( 
             'list-search-context', 
             {
-              'data_id': 'frame_inspection', 
+              'data_id': __ref_data, 
               'rt_id': selectedObject.rt_id,
               'obj_id': selectedObject.obj_id, 
               'depth': '-1'
@@ -52,6 +54,13 @@
     }
 
     this.init(id, name, container_class);
+
+    var onActiveInspectionType = function(msg)
+    {
+      __ref_data = msg.inspection_type == 'frame' ? 'frame_inspection' : 'object_inspection';
+    }
+
+    messages.addListener('active-inspection-type', onActiveInspectionType);
 
     /*
     this.showGlobalScopeUpdateLink = function()
@@ -147,6 +156,7 @@
   messages.addListener('view-destroyed', onViewDestroyed);
 
   messages.addListener('list-search-context', onListSearchContext);
+  
 
   eventHandlers.input['frame_inspection-text-search'] = function(event, target)
   {

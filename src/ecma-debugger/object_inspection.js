@@ -6,7 +6,10 @@ var Object_inspection = function()
   VALUE = 1;
 
   var __selectedObject = null;
-  var __views = ['object_inspection'];
+  // should be general inspection
+  var __views = ['frame_inspection'];
+
+  var __is_active_inspection = false;
 
   this.rt_id = '';
   this.data = [];
@@ -40,9 +43,12 @@ var Object_inspection = function()
     __selectedObject = {rt_id: rt_id, obj_id: obj_id};
     self.setObject(rt_id, obj_id);
     var view_id = '', i = 0;
-    for ( ; view_id = __views[i] ; i++)
+    if( __is_active_inspection )
     {
-      views[view_id].update();
+      for ( ; view_id = __views[i] ; i++)
+      {
+        views[view_id].update();
+      }
     }
   }
 
@@ -71,13 +77,24 @@ var Object_inspection = function()
     __selectedObject = {rt_id: msg.rt_id, obj_id: msg.obj_id};
     self.setObject(__selectedObject.rt_id, __selectedObject.obj_id);
     var view_id = '', i = 0;
-    for ( ; view_id = __views[i] ; i++)
+    opera.postError("onObjectSelected  __is_active_inspection: "+  __is_active_inspection)
+    if( __is_active_inspection )
     {
-      views[view_id].update();
+      for ( ; view_id = __views[i] ; i++)
+      {
+        views[view_id].update();
+      }
     }
   }
 
   messages.addListener('object-selected', onObjectSelected);
+
+  var onActiveInspectionType = function(msg)
+  {
+    __is_active_inspection = msg.inspection_type == 'object';
+  }
+
+  messages.addListener('active-inspection-type', onActiveInspectionType);
   
 }
 

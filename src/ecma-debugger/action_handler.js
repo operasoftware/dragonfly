@@ -49,6 +49,8 @@ var action_handler = new function()
     var frame = stop_at.getFrame(event.target['ref-id']);
     if(frame)
     {
+      topCell.showView(views['frame_inspection'].id);
+      messages.post('active-inspection-type', {inspection_type: 'frame'});
       messages.post('frame-selected', {frame_index: event.target['ref-id']});
       if( event.type == 'click' )
       {
@@ -65,6 +67,7 @@ var action_handler = new function()
             views.js_source.clearView();
           }
         }
+        
       }
     }
     else
@@ -405,7 +408,7 @@ var action_handler = new function()
     {
       helpers.setSelected(event);
       runtimes.setSelectedScript( rt_id, script_id );
-      views.js_source.update();
+      topCell.showView(views.js_source.id);
     }
     else
     {
@@ -669,8 +672,11 @@ var action_handler = new function()
   {
     var rt_id = target.getAttribute('rt-id');
     var obj_id = target.getAttribute('obj-id');
-    topCell.showView(views.object_inspection.id);
+    messages.post('active-inspection-type', {inspection_type: 'object'});
+    // if that works it should be just inspection
+    topCell.showView(views.frame_inspection.id);
     messages.post('object-selected', {rt_id: rt_id, obj_id: obj_id});
+
   }
 
 
