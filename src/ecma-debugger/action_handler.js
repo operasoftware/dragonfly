@@ -266,10 +266,11 @@ var action_handler = new function()
   handlers['show-global-scope'] = function(event) // and select runtime
   {
     var ele = event.target;
-    var runtime = runtimes.getRuntimeIdWithURL(ele.firstChild.nodeValue);
+    var runtime = runtimes.getRuntime( ele.previousSibling && ele.previousSibling.getAttribute('runtime_id') || '' );
     if( runtime )
     {
-      topCell.showView(views.object_inspection.id);
+      topCell.showView(views.frame_inspection.id);
+      messages.post('active-inspection-type', {inspection_type: 'object'});
       object_inspection.showGlobalScope(runtime['runtime-id']);
       runtimes.setSelectedRuntime(runtime);
       views.runtimes.update();
@@ -295,6 +296,7 @@ var action_handler = new function()
       {
         scripts_container.push(templates.scriptLink(script));
       }
+      scripts_container.splice(scripts_container.length, 0, 'runtime-id', runtime_id);
       event.target.parentNode.render(scripts_container);
       event.target.style.backgroundPosition = '0 -11px';
       runtimes.setUnfolded(runtime_id, 'script', true);
@@ -406,6 +408,7 @@ var action_handler = new function()
     var rt_id = event.target.parentNode.getAttribute('runtime-id');
     if(script_id && rt_id)
     {
+      //opera.postError('show script');
       helpers.setSelected(event);
       runtimes.setSelectedScript( rt_id, script_id );
       topCell.showView(views.js_source.id);
