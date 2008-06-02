@@ -129,7 +129,8 @@ var runtimes = new function()
       {
         runtime['unfolded-script'] = old_rt['unfolded-script'] || false;
         runtime['unfolded-css'] = old_rt['unfolded-css'] || false;
-        delete __old_runtimes[cur];
+        // the old runtimes are needed to find "known" scripts
+        // delete __old_runtimes[cur];
         return;
       }
     }
@@ -236,11 +237,21 @@ var runtimes = new function()
   */
   var registerScript = function(script)
   {
+  
     var sc = null, is_known = false;
     var new_script_id = script['script-id'];
+    var new_rt = __runtimes[script['runtime-id']];
+    var old_rt = null;
     for( sc in __scripts )
     {
-      if( ( __scripts[sc]['uri'] && ( __scripts[sc]['uri'] == script['uri'] ) )|| __scripts[sc]['script-data'] == script['script-data'] )
+      old_rt = __runtimes[__scripts[sc]['runtime-id']] || __old_runtimes[__scripts[sc]['runtime-id']] || {};
+      if( ( 
+            ( __scripts[sc]['uri'] && __scripts[sc]['uri'] == script['uri'] ) 
+            || __scripts[sc]['script-data'] == script['script-data'] 
+          )
+          && old_rt['uri'] == new_rt['uri']
+          && old_rt['window-id'] == new_rt['window-id']
+          && old_rt['html-frame-path'] == new_rt['html-frame-path'] )
       {
         is_known = true;
         break;
