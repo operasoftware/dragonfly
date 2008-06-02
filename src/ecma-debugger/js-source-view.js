@@ -187,7 +187,7 @@
         }
         container.render(templates.line_nummer_container(max_lines || 1));
         line_numbers = document.getElementById(container_line_nr_id);
-        var selected_script_id = runtimes.getSelecetdScriptIdFromSelectedRuntime();  
+        var selected_script_id = runtimes.getSelectedScript();  
         if(selected_script_id && selected_script_id != script.id)
         {
           var stop_at = runtimes.getStoppedAt(selected_script_id);

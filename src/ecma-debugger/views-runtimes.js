@@ -137,6 +137,25 @@
       }
     }
 
+    this.updateSelectedScript = function( target, script_id )
+    {
+
+      var 
+      containers = self.getAllContainers(), 
+      c = null , 
+      i = 0, 
+      old_target = null;
+
+      for( ; c = containers[i]; i++)
+      {
+        if ( old_target = c.getElementsByClassName('selected')[0] )
+        {
+          old_target.removeClass('selected');
+        }
+      }
+      target.addClass('selected');
+    }
+
     var onThreadStopped = function(msg)
     {
       var script_id = msg.stop_at['script-id'];

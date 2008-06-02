@@ -405,12 +405,10 @@ var action_handler = new function()
   handlers['display-script'] = function(event)
   {
     var script_id  = event.target.getAttribute('script-id');
-    var rt_id = event.target.parentNode.getAttribute('runtime-id');
-    if(script_id && rt_id)
+    if(script_id)
     {
-      //opera.postError('show script');
-      helpers.setSelected(event);
-      runtimes.setSelectedScript( rt_id, script_id );
+      runtimes.setSelectedScript( script_id );
+      views.runtimes.updateSelectedScript(event.target, script_id);
       topCell.showView(views.js_source.id);
     }
     else

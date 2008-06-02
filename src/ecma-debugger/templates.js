@@ -146,7 +146,7 @@
       {
         for( ; script = scripts[i]; i++)
         {
-          scripts_container.push(templates.scriptLink(script));
+          scripts_container.push(templates.scriptLink(script, runtimes.getSelectedScript()));
         }
       }
       else
@@ -205,7 +205,7 @@
     return ret;
   }
 
-  this.scriptLink = function(script)
+  this.scriptLink = function(script, selected_script)
   {
     var display_uri = helpers.shortenURI(script['uri']);
     var ret = ['li',
@@ -224,7 +224,7 @@
     {
       ret.splice(ret.length, 0, 'title', display_uri.title); 
     }
-    if( script.selected )
+    if( script['script-id'] == selected_script )
     {
       ret.splice(ret.length, 0, 'class', 'selected'); 
     }

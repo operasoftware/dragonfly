@@ -25,7 +25,9 @@ var runtimes = new function()
 
   var __selected_runtime_id = '';
 
-  var __next_runtime_id_to_select = ''
+  var __next_runtime_id_to_select = '';
+
+  var __selected_script = '';
 
   var updateRuntimeViews = function()
   {
@@ -798,14 +800,24 @@ var runtimes = new function()
       }
     }
   }
-
-  this.setSelectedScript = function( rt_id, script_id )
+  // only one script can be selected at a time
+  this.setSelectedScript = function( script_id )
   {
+    __selected_script = script_id;
+    
+    /*
+    don't understand why this was done in this way
     var scripts = this.getScripts(rt_id), script = null, i = 0;
     for( ; script = scripts[i]; i++)
     {
       script.selected = script['script-id'] == script_id ;
     }
+    */
+  }
+
+  this.getSelectedScript = function()
+  {
+    return __selected_script;
   }
 
   this.setSelectedRuntimeId = function(id)
