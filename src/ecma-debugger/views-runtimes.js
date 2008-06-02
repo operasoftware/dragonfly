@@ -150,6 +150,7 @@
           if( li.getAttribute('script-id') == script_id )
           {
             li.style.backgroundPosition = '0 0';
+            li.scrollIntoView();
             return;
           }
         }
