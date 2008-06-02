@@ -387,7 +387,7 @@
         // basically the global scope is invalided with a new thread
         // but the tab completion feature is not very helpfull 
         // with sites with intervals or timeouts
-        if( frame_index == -1 && frame_index != local_frame_index )
+        if( frame_index > -1 || frame_index != local_frame_index )
         {
           local_frame_index = -1;
           str_input = '';
