@@ -83,8 +83,15 @@ var TopCell = function(layout, setDimensions, onresize)
     }
   }
 
-  document.addEventListener('resize', setDelayedResize, false);
+  this.cleanUp = function()
+  {
+    document.removeEventListener('resize', setDelayedResize, false);
+    resize_timeout.clear();
+    resize_timeout = null;
+  }
 
+  document.addEventListener('resize', setDelayedResize, false);
+  
   this.init(layout);
   this.setStartDimesions();
   this.toolbar.setup(this.id);

@@ -270,29 +270,41 @@ var client = new function()
 
     new CompositeView('dom_panel', ui_strings.VIEW_LABEL_COMPOSITE_DOM, dom_rough_layout_panel);
 
-    
-
-    self.setupTopCell();
-    
-    // event handlers to resize the views
-    new SlideViews(document);
-    
-    messages.post('setting-changed', {id: 'general', key: 'show-views-menu'});
-
-    // a short workwround to hide some tabs as long as we don't have the dynamic tabs
-    var is_disbaled = null, tabs = console_rough_layout.children[0].tabs, tab = '';
-    for( i = 0; tab = tabs[i]; i++ )
+    if( window.opera.attached != settings.general.get('window-attached') )
     {
-      is_disbaled = !settings.console.get(tab);
-      views[tab].ishidden_in_menu = is_disbaled;
-      topCell.disableTab(tab, is_disbaled);
+      window.opera.attached = settings.general.get('window-attached') || false;
     }
+
+    setTimeout( function(){
+
+      self.setupTopCell();
+      
+      // event handlers to resize the views
+      new SlideViews(document);
+      
+      messages.post('setting-changed', {id: 'general', key: 'show-views-menu'});
+
+      // a short workwround to hide some tabs as long as we don't have the dynamic tabs
+      var is_disbaled = null, tabs = console_rough_layout.children[0].tabs, tab = '';
+      for( i = 0; tab = tabs[i]; i++ )
+      {
+        is_disbaled = !settings.console.get(tab);
+        views[tab].ishidden_in_menu = is_disbaled;
+        topCell.disableTab(tab, is_disbaled);
+      }
+    }, 0);
 
   }
 
   this.setupTopCell = function()
   {
     viewport.innerHTML = '';
+
+    if( window.topCell )
+    {
+      window.topCell.cleanUp();
+    }
+    
     window.topCell = new TopCell
     (
       window.opera.attached ? panel_layout : main_layout,

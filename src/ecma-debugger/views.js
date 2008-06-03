@@ -89,7 +89,8 @@
     'general', 
     // key-value map
     {
-      "show-views-menu": false
+      "show-views-menu": false,
+      "window-attached": true
     }, 
     // key-label map
     {

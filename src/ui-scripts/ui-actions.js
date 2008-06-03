@@ -126,7 +126,10 @@ eventHandlers.click['top-window-close'] = function(event)
 
 eventHandlers.click['top-window-toggle-attach'] = function(event)
 {
-  if( window.opera.attached = !window.opera.attached )
+  // TODO this is right now too hacky
+  window.topCell.onresize = function(){};
+  var is_attached = ( window.opera.attached = !window.opera.attached );
+  if( is_attached )
   {
     event.target.addClass('attached');
   }
@@ -134,6 +137,7 @@ eventHandlers.click['top-window-toggle-attach'] = function(event)
   {
     event.target.removeClass('attached');
   }
+  settings.general.set('window-attached',  is_attached || false);
   setTimeout(client.setupTopCell, 0);
 }
 
