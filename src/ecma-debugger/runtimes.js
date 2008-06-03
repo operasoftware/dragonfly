@@ -584,11 +584,6 @@ var runtimes = new function()
     {
       removeRuntime(rt_id);
       updateRuntimeViews();
-      var script_id = views.js_source.getCurrentScriptId();
-      if( script_id  && ( self.getScriptsRuntimeId(script_id) == rt_id ) )
-      {
-        views.js_source.clearView();
-      }
       
       messages.post('runtime-stopped', {id: rt_id} );
     }

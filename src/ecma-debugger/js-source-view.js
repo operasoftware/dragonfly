@@ -568,6 +568,7 @@
     
     var onRuntimeDestroyed = function(msg)
     {
+      // TODO this is not good, clean up the the local script
       if( script && runtimes.getRuntimeIdWithScriptId(script.id) == msg.id )
       {
         __clearView();
