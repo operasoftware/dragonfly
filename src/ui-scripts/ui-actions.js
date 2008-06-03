@@ -134,7 +134,7 @@ eventHandlers.click['top-window-toggle-attach'] = function(event)
   {
     event.target.removeClass('attached');
   }
-  client.setupTopCell();
+  setTimeout(client.setupTopCell, 0);
 }
 
 eventHandlers.mousedown['toolbar-switch'] = function(event)
