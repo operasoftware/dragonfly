@@ -155,11 +155,13 @@
 
   this.window_controls = function()
   {
+    var attached = window.opera.attached;
     return ['window-controls',
       ['input', 
         'type', 'button', 
         'handler', 'top-window-toggle-attach', 
-        'class', 'switch' + ( window.opera.attached ? ' attached' : '') 
+        'class', 'switch' + ( attached ? ' attached' : '') ,
+        'title', attached ? ui_strings.SWITCH_ATTACH_WINDOW : ui_strings.SWITCH_DETACH_WINDOW
       ],
       ['input', 
           'type', 'button', 

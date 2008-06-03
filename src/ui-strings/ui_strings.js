@@ -66,7 +66,9 @@ ui_strings.SWITCH_HIDE_EMPTY_STRINGS = 'Hide empty strings and null values';
 ui_strings.SWITCH_REMOTE_DEBUG = 'Remote Debug';
 ui_strings.SWITCH_SHOW_VIEWS_MENU = "Show Views menu";
 ui_strings.SWITCH_RELOAD_SCRIPTS_AUTOMATICALLY = "Reload documents automatically on selecting a window"
-  
+ui_strings.SWITCH_DETACH_WINDOW = "Undock into separate window"  ;
+ui_strings.SWITCH_ATTACH_WINDOW = "Dock to main window";
+
 ui_strings.BUTTON_LABEL_HELP = 'Help';
 ui_strings.BUTTON_LABEL_CONTINUE = 'Continue (F8)';
 ui_strings.BUTTON_LABEL_STEP_OVER = 'Step Over (F10)';
