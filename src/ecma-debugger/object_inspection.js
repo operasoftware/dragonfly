@@ -77,7 +77,6 @@ var Object_inspection = function()
     __selectedObject = {rt_id: msg.rt_id, obj_id: msg.obj_id};
     self.setObject(__selectedObject.rt_id, __selectedObject.obj_id);
     var view_id = '', i = 0;
-    opera.postError("onObjectSelected  __is_active_inspection: "+  __is_active_inspection)
     if( __is_active_inspection )
     {
       for ( ; view_id = __views[i] ; i++)
@@ -95,6 +94,18 @@ var Object_inspection = function()
   }
 
   messages.addListener('active-inspection-type', onActiveInspectionType);
+
+  var onRuntimeDestroyed = function(msg)
+  {
+    if(__selectedObject && __selectedObject.rt_id == msg.id )
+    {
+      __selectedObject = null;
+      views.frame_inspection.clearAllContainers();
+    }
+
+  }
+
+  messages.addListener('runtime-destroyed', onRuntimeDestroyed);
   
 }
 
