@@ -130,7 +130,7 @@ var action_handler = new function()
     is_expanded = target.disabled
       || ( cur_2 && parseInt(cur_2.style.paddingLeft) > margin )
       // if it's the active search scope
-      || ( ( cur_2 = cur_2.nextSibling ) && parseInt(cur_2.style.paddingLeft) > margin ) ,
+      || ( cur_2 && ( cur_2 = cur_2.nextSibling ) && parseInt(cur_2.style.paddingLeft) > margin ),
     is_in_search_scope =
       parent.previousSibling && parent.previousSibling.nodeName == "start-search-scope",
     range = null;
