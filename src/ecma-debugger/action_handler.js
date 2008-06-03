@@ -603,7 +603,7 @@ var action_handler = new function()
       services['ecmascript-debugger'].spotlight(rt_id, obj_id, obj_id != dom_data.getCurrentTarget());
       handlers['spotlight-node'].timeout = setTimeout(handlers['spotlight-node'].clearSpotlight, 800, rt_id);
       dom_data.setCurrentTarget(obj_id);
-      views['dom'].updateTarget(current_target);
+      views['dom'].updateTarget(current_target, obj_id);
     }
   }
 

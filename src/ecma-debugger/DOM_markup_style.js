@@ -48,7 +48,7 @@ var DOM_markup_style = function(id, name, container_class)
     }
   }
 
-  this.updateTarget = function(ele)
+  this.updateTarget = function(ele, obj_id)
   {
     if(ele)
     {
@@ -57,7 +57,14 @@ var DOM_markup_style = function(id, name, container_class)
       {
         target.removeAttribute('id');
       }
-      ele.id = 'target-element';
+      if(/<\//.test(ele.firstChild.nodeValue))
+      {
+        while( ( ele = ele.previousSibling ) && ele.getAttribute('ref-id') != obj_id );
+      }
+      if(ele)
+      {
+        ele.id = 'target-element';
+      }
       topCell.statusbar.updateInfo(dom_data.getCSSPath());
     }
     else
@@ -226,7 +233,8 @@ var DOM_markup_style = function(id, name, container_class)
                         "</div>";
 
                 closing_tags.push("<div class='node' style='margin-left:" + 
-                                  ( 16 * node[ DEPTH ] ) + "px;'>" +
+                                  ( 16 * node[ DEPTH ] ) + "px;' " +
+                                  "ref-id='"+node[ ID ] + "' handler='spotlight-node'>" +
                                   "&lt;/" + node_name + "&gt;" +
                                   "</div>");
               }
