@@ -185,12 +185,12 @@ var ObjectDataBase = new function()
     var ret = [], i = index + 1, depth = this.data[index][DEPTH], prop = null;
     // it's a back refernce, return only the properties from the current level 
     // without the expanded properties
-    if( target_depth > this.data[index][DEPTH] ) 
+    if( target_depth > depth ) 
     {
       depth += 1;
       for ( ; ( prop = this.data[i] ); i++ )
       {
-        if(  prop[DEPTH] == depth )
+        if(  prop[DEPTH] == depth && !prop[IS_VIRTUAL] )
         {
           ret[ret.length] = prop;
         }
