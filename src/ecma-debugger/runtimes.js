@@ -244,6 +244,9 @@ var runtimes = new function()
     var new_script_id = script['script-id'];
     var new_rt = __runtimes[script['runtime-id']];
     var old_rt = null;
+    var old_break_points = null;
+    var line_nr = '';
+
     for( sc in __scripts )
     {
       old_rt = __runtimes[__scripts[sc]['runtime-id']] || __old_runtimes[__scripts[sc]['runtime-id']] || {};
@@ -259,24 +262,17 @@ var runtimes = new function()
         break;
       }
     }
-
+    __scripts[new_script_id] = script;
     if( is_known )
     {
-      var old_b_ps = __scripts[sc]['breakpoints'];
-      var new_b_ps = script['breakpoints'];
-      for( b_p in old_b_ps )
+      old_break_points = __scripts[sc]['breakpoints'];
+      for( line_nr in old_break_points )
       {
-        services['ecmascript-debugger'].setBreakpoint(new_script_id, b_p, old_b_ps[b_p]);
-        new_b_ps[b_p] = old_b_ps[b_p];
+        // do we need to remove the old breakpoints?
+        self.setBreakpoint(new_script_id, line_nr);
       }
       delete __scripts[sc];
     }
-
-    __scripts[new_script_id] = script;
-
-    var a ='', b='';
-    for( a in __scripts ) b+=a+'; '; 
-
   }
   
 /*
