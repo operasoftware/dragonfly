@@ -219,12 +219,10 @@ var stop_at = new function()
           {
             topCell.showView(views.js_source.id);
           }
-          /*
           if( views.js_source.showLine( stopAt['script-id'], line - 10 ) )
           {
             views.js_source.showLinePointer( line, true );
           }
-          */
           __controls_enabled = true;
           toolbars.js_source.enableButtons('continue');
           messages.post('thread-stopped-event', {stop_at: stopAt});
@@ -242,12 +240,10 @@ var stop_at = new function()
         // the runtime id can be different for each frame. 
         var tag = tagManager.setCB(null, parseBacktrace, [stopAt['runtime-id']]); 
         services['ecmascript-debugger'].backtrace(tag, stopAt);
-        /*
         if( !views.js_source.isvisible() )
         {
           topCell.showView(views.js_source.id);
         }
-        */
         if( views.js_source.showLine( stopAt['script-id'], line - 10 ) )
         {
           views.js_source.showLinePointer( line, true );
