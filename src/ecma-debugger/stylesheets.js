@@ -874,7 +874,7 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     {
       return __sheets[rt_id];
     }
-    else
+    if( org_args && runtime_onload_handler.check(rt_id, org_args) )
     {
       if( !__indexMap )
       {
@@ -1255,4 +1255,31 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
       }
     }   
   }
+
+  var onRuntimeDestroyed = function(msg)
+  {
+    if( __selectedRules &&  __selectedRules.runtime_id == msg.id )
+    {
+      
+      views.stylesheets.clearAllContainers();
+    }
+
+  }
+
+  var onActiveTab = function(msg)
+  {
+    if( __selectedRules  )
+    {
+      var rt_id = __selectedRules.runtime_id, cur_rt_id = '', i = 0;
+      for( ; ( cur_rt_id = msg.activeTab[i] ) && cur_rt_id != rt_id ; i++);
+      if( !cur_rt_id )
+      {
+        views.stylesheets.clearAllContainers();
+      }
+    }
+  }
+  
+  messages.addListener('runtime-destroyed', onRuntimeDestroyed);
+  messages.addListener('active-tab', onActiveTab);
+  
 }

@@ -327,6 +327,7 @@ var action_handler = new function()
         {
           container.push(templates.sheetLink(sheet, i));
         }
+        container.splice(container.length, 0, 'runtime-id', rt_id);
         event.target.parentNode.render(container);
         event.target.style.backgroundPosition = '0 -11px';
         runtimes.setUnfolded(rt_id, 'css', true);
@@ -340,7 +341,7 @@ var action_handler = new function()
   handlers['display-stylesheet'] = function(event, target)
   {
     var index = parseInt(target.getAttribute('index'));
-    var rt_id = target.parentNode.parentNode.firstChild.getAttribute('runtime_id');
+    var rt_id = target.parentNode.getAttribute('runtime-id');
     // stylesheets.getRulesWithSheetIndex will call this function again if data is not avaible
     // handleGetRulesWithIndex in stylesheets will 
     // set for this reason __call_count on the event object

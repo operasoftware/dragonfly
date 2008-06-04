@@ -113,12 +113,12 @@
     return ret;
   }
 
-  this.runtimes = function(runtimes, type, _class)
+  this.runtimes = function(runtimes, type, _class, org_args)
   {
     var ret = ['ul'], rt = null, i = 0;
     for( ; rt = runtimes[i]; i++)
     {
-      ret[ret.length] = self['runtime-' + type](rt);
+      ret[ret.length] = self['runtime-' + type](rt, org_args);
     }
     return ret.concat( _class ? ['class', _class] : [] );
   }
@@ -163,22 +163,21 @@
     return ret;
   }
   
-  this['runtime-css'] = function(runtime)
+  this['runtime-css'] = function(runtime, org_args)
   {
     var ret = ['li',
           ['input', 
             'type', 'button', 
             'handler', 'show-stylesheets', 
             'runtime_id', runtime['runtime-id'],
-            'class', 'folder-key'].concat(runtime.unfolded_css ? ['style', 'background-position:0 -11px'] : [] ),
-          ['span', runtime['uri']/*, 'handler', 'show-global-scope', 'title', 'select a runtime'*/].
-            concat( runtime.selected ? ['class', 'selected-runtime'] : [] ) 
+            'class', 'folder-key'].concat(runtime['unfolded-css'] ? ['style', 'background-position:0 -11px'] : [] ),
+          ['span', runtime['uri']]
         
       ];
     if( runtime['unfolded-css'] )
     {
       
-      var sheets = stylesheets.getStylesheets(runtime['runtime-id']),
+      var sheets = stylesheets.getStylesheets(runtime['runtime-id'], org_args),
         sheet = null, i = 0, container = ['ul'];
       if(sheets)
       {
@@ -188,6 +187,11 @@
           container.push(templates.sheetLink(sheet, i, stylesheets.isSelectedSheet(runtime['runtime-id'], i)));
         }
       }
+      else
+      {
+        container = ['p', ui_strings.INFO_DOCUMNENT_LOADING, 'class', 'info-text'];
+      }
+      container.splice(container.length, 0, 'runtime-id', runtime['runtime-id']);
       ret = ret.concat([container])
     }
     return ret;

@@ -89,6 +89,7 @@ ui_strings.BUTTON_LABEL_EXPORT_LOG = 'Export thread log';
 
 ui_strings.INFO_NO_SCRIPTS_PLEASE_RELOAD = 'Click the reload button above to fetch the scripts for the selected window';
 ui_strings.RUNTIME_HAS_NO_SCRIPTS = 'This document has no scripts';
+ui_strings.INFO_DOCUMNENT_LOADING = 'The document is loading ...';
 
 ui_strings.SELECT_WINDOW_EMPTY = 'Select a window'; 
 

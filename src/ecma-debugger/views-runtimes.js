@@ -337,70 +337,40 @@
         var 
         _runtimes = runtimes.getRuntimes(active_window_id),
         rt = null, 
-        i = 0;
-
-        
-        for( ; ( rt = _runtimes[i] ) && !rt['selected']; i++);
-        if( !rt && _runtimes[0] )
-        {
-          runtimes.setSelectedRuntimeId(_runtimes[0]['runtime-id']);
-          return;
-        }
-        
+        i = 0,
+        selected = null,
+        lis = null;
 
         for( ; ( rt = _runtimes[i] ) && !rt['unfolded-css']; i++);
-        if(rt)
+        if( !rt && _runtimes[0] )
         {
-          if( !stylesheets.getStylesheets(rt['runtime-id']) )
-          {
-            showStylesheets({}, rt['runtime-id']);
-          }
+          runtimes.setUnfolded(_runtimes[0]['runtime-id'], 'css', true);
         }
-        else if( _runtimes[0] )
-        {
-          showStylesheets({}, _runtimes[0]['runtime-id']);
-        }
-        
-        container.render(['div', 
-          templates.runtimes(_runtimes, 'css', 'folder'), 
-          'class', 'padding']);
-      }
-    }
 
-    var showStylesheets = function(obj, rt_id)
-    {
-      // stylesheets.getStylesheets will call this function again if data is not avaible
-      // handleGetAllStylesheets in stylesheets will 
-      // set for this reason __call_count on the event object
-      var sheets = stylesheets.getStylesheets(rt_id, arguments);
-      
-      if(sheets)
-      {
-        delete obj.__call_count;
-        runtimes.setUnfolded(rt_id, 'css', true);
-        // opera.postError('selected sheet: ' + stylesheets.hasSelectedSheetRuntime(rt_id) );
-        if( !stylesheets.hasSelectedSheetRuntime(rt_id) && sheets.length )
+        container.render
+        (
+          ['div', 
+            templates.runtimes(_runtimes, 'css', 'folder', arguments), 
+            'class', 'padding'
+          ]
+        );
+
+        if( !( selected = container.getElementsByClassName('selected')[0] ) )
         {
-          
-          // stylesheets.getRulesWithSheetIndex will call this function again if data is not avaible
-          // handleGetRulesWithIndex in stylesheets will 
-          // set for this reason __call_count on the event object
-          var rules = stylesheets.getRulesWithSheetIndex(rt_id, 0, arguments);
-          //opera.postError('rules: '+(rules && rules[0]||'no rules'))
-          if(rules)
+          lis = container.getElementsByTagName('li');
+          i = 0;
+          while( selected = lis[i++] )
           {
-            stylesheets.setSelectedSheet(rt_id, 0, rules);
-            if (! window.opera.attached)
+            if( selected.getAttribute('handler') == 'display-stylesheet' )
             {
-              topCell.showView(views.stylesheets.id);
+              selected.releaseEvent('click');
+              break;
             }
-            
-            //self.update();
           }
         }
-        else
+        if(selected)
         {
-          self.update();
+          delete container.__call_count;
         }
       }
     }
