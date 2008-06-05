@@ -84,7 +84,11 @@ var UIBase = new function()
     if( this.is_dirty )
     {
       this.is_dirty = false;
-      ele.style.cssText = this.getCssText();
+      var css_text = this.getCssText();
+      if(css_text != ele.style.cssText ) 
+      {
+        ele.style.cssText = css_text;
+      }
     }
     return ele;
   }

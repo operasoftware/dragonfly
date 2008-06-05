@@ -174,6 +174,7 @@ CellBase = new function()
   {
     var children = this.children, child = null, i = 0;
     var delta = 0;
+    var css_text = '';
     if( force_redraw )
     {
       this.is_dirty = true;
@@ -252,7 +253,7 @@ CellBase = new function()
         
         if( this.dir == HOR )
         {
-          ele.style.cssText = 
+          css_text = 
             'left:' + left + 'px;' +
             'top:' + ( 2 * defaults.view_border_width + top + this.height ) + 'px;' +
             'width:' + ( 2 * defaults.view_border_width + this.width ) + 'px;' +
@@ -260,11 +261,15 @@ CellBase = new function()
         }
         else
         {
-          ele.style.cssText = 
+          css_text = 
             'left:' + ( 2 * defaults.view_border_width + left + this.width ) + 'px;' +
             'top:' + top + 'px;' +
             'width:' + defaults.slider_border_width + 'px;' +
             'height:' + ( 2 * defaults.view_border_width + this.height ) + 'px;';
+        }
+        if( ele.style.cssText != css_text )
+        {
+          ele.style.cssText = css_text;
         }
       }
     }
