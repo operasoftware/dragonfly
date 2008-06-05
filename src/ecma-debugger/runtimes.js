@@ -361,6 +361,7 @@ var runtimes = new function()
   this.setActiveWindowId = function(window_id)
   {
     __selected_window = window_id;
+    cleanUpThreadOnContextChange();
     if( settings.runtimes.get('reload-runtime-automatically') )
     {
       self.reloadWindow();
@@ -404,11 +405,31 @@ var runtimes = new function()
     }
   }
 
+  // TODO client side therads handling needs a revision
+
   var thread_queues = {};
   var current_threads = {};
   
   var runtime_stoped_queue = [];
   var stoped_threads = {};
+
+  var cleanUpThreadOnContextChange = function()
+  {
+    thread_queues = {};
+    current_threads = {};
+    // release all stopped events
+    var rt_id = '', i = 0, thread_id = '';
+    for( ; rt_id = runtime_stoped_queue[i]; i++)
+    {
+      thread_id = stoped_threads[rt_id] && stoped_threads[rt_id].getNodeData("thread-id");
+      if( thread_id )
+      {
+        services['ecmascript-debugger'].continue_run(rt_id, thread_id);
+      }
+    }
+    stoped_threads = {};
+    runtime_stoped_queue = [];
+  }
 
   var is_runtime_of_selected_window = function(rt_id)
   {
@@ -470,6 +491,8 @@ var runtimes = new function()
 
   */
 
+ 
+
 
   this.handleThreadStarted = function(xml)
   {
@@ -503,10 +526,14 @@ var runtimes = new function()
     // workaround for missing filtering 
     if( is_runtime_of_selected_window(rt_id) )
     {
+      
       var current_thread = current_threads[rt_id];
+
       // the current thread id must be set in 'thread-started' event
       // TODO thread logic
-      if( !stop_at.getControlsEnabled () /* */ && thread_id == current_thread[ current_thread.length - 1 ] /* */ )
+      if( !stop_at.getControlsEnabled ()  
+          && ( !current_thread // in case the window was switched 
+              || thread_id == current_thread[ current_thread.length - 1 ] ) )
       {
         stop_at.handle(xml);
       }
