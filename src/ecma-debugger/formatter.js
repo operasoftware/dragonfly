@@ -282,12 +282,22 @@ var simple_js_parser=new function()
         c=reg_exp_parser(c);
         continue;
       }
+      __buffer+=c in ESCAPE ? ESCAPE[c] : c;
+      c=__source.charAt(++__pointer);
+      /*
+      // TODO this is not very clever
       do
       {
         __buffer+=c in ESCAPE ? ESCAPE[c] : c;
         c=__source.charAt(++__pointer);
       }
-      while (c && !(c in PUNCTUATOR  || c=='/' || c in LINETERMINATOR  || c in WHITESPACE));
+      
+      while (c && !(c in PUNCTUATOR  
+                    || c=='/' 
+                    || c in LINETERMINATOR  
+                    || c in WHITESPACE 
+                    || c in STRING_DELIMITER ));
+                    */
 
     }
     read_buffer();
