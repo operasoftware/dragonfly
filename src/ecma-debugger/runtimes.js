@@ -746,7 +746,7 @@ var runtimes = new function()
 
   this.hasBreakpoint = function(script_id, line_nr)
   {
-    return (line_nr in __scripts[script_id]['breakpoints']);
+    return __scripts[script_id] && (line_nr in __scripts[script_id]['breakpoints']);
   }
 
   this.setBreakpoint = function(script_id, line_nr)

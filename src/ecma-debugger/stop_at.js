@@ -206,7 +206,12 @@ var stop_at = new function()
       {
 
         runtime_id = stopAt['runtime-id'];
-        if(  settings['js_source'].get('script') || runtimes.getObserve(runtime_id))
+        if(  settings['js_source'].get('script') 
+             || runtimes.getObserve(runtime_id)
+              // this is a workaround for Bug 328220
+              // if there is a breakpoint at the first statement of a script
+              // the event for stop at new script and the stop at breakpoint are the same
+             || runtimes.hasBreakpoint(stopAt['script-id'], line) )
         {
           if( runtimes.getSelectedRuntimeId() != runtime_id )
           {
