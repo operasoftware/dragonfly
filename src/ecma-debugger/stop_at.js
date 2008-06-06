@@ -229,6 +229,7 @@ var stop_at = new function()
             views.js_source.showLinePointer( line, true );
           }
           __controls_enabled = true;
+          window.focus();
           toolbars.js_source.enableButtons('continue');
           messages.post('thread-stopped-event', {stop_at: stopAt});
           messages.post('host-state', {state: 'waiting'});
@@ -254,6 +255,7 @@ var stop_at = new function()
           views.js_source.showLinePointer( line, true );
         }
         __controls_enabled = true;
+        window.focus();
         toolbars.js_source.enableButtons('continue');
         messages.post('thread-stopped-event', {stop_at: stopAt});
       }
