@@ -161,7 +161,7 @@
         'type', 'button', 
         'handler', 'top-window-toggle-attach', 
         'class', 'switch' + ( attached ? ' attached' : '') ,
-        'title', attached ? ui_strings.SWITCH_ATTACH_WINDOW : ui_strings.SWITCH_DETACH_WINDOW
+        'title', attached ? ui_strings.SWITCH_DETACH_WINDOW : ui_strings.SWITCH_ATTACH_WINDOW
       ],
       ['input', 
           'type', 'button', 
