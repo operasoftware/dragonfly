@@ -54,7 +54,8 @@ var elementStyle = new function()
     {
       'id': 'css',
       'name': ui_strings.VIEW_LABEL_STYLES,
-      'unfolded': true
+      'unfolded': true,
+      'handler': 'edit-css'
     }
   ];
 
@@ -109,7 +110,7 @@ var elementStyle = new function()
     i = 0,
     node_casc_cur = [],
     match_cur = null;
-    
+    // this is broken, see below for details
     for( ; ( def_val = defaultValues[def_val_cur] ) && def_val[0][0] != obj_id; def_val_cur++);
     if( !def_val )
     {
@@ -118,10 +119,22 @@ var elementStyle = new function()
 
     node_cascades = [[inlineStyle, matchingRules, def_val]];
 
+    /* 
+      the logic for default rules is quite broken here:
+
+      - not each element has default styles
+      - if a node has no matching rules, it will not be in the inherited rules
+
+      -> get the node chain from DOM data
+      -> fix inherited rules 
+         ( insert for each missing entry [["inline",<object-id>,<element-name>],[],[],[]]  )
+    */
+
     for( ; style_dec = inheritedRules[i]; i++)
     {
       if( style_dec[HEADER][0] == 'inline' )
       {
+        // this is broken, see above for details
         for( ; ( def_val = defaultValues[def_val_cur] ) && def_val[0][0] != style_dec[HEADER][1]; def_val_cur++);
         if( !def_val )
         {

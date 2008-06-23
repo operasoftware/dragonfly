@@ -872,6 +872,34 @@ input[handler="create-all-runtimes"]:active {
 #continue-step-out-of-call {
   background-image:url('../ui-images/btn-step-out-call.png');
   }
+
+/* editing */
+
+textarea-container {
+  display: block;
+  padding: 1px;
+  position:relative;
+  z-index: 1;
+  }
+ 
+textarea-inner-container {
+  display: block;
+  background-image: -o-skin('Speed Dial Configuration Dialog Skin');
+  padding: 3px 9px 10px 5px;
+  margin: -4px -10px -11px -6px;
+  }
+ 
+ 
+ 
+textarea-container textarea{
+  display: block;
+  width: 100%;
+  border: none;
+  margin: 0;
+  padding: 0;
+  vertical-align: text-top;
+  overflow: hidden;
+  }
   
 
   

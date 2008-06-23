@@ -18,6 +18,7 @@
   - "thread-stopped-event" msg.stop_at
   - "thread-continue-event" msg.stop_at
   - "active-inspection-type" msg.inspection_type
+  - "resize" 
 
 */
 

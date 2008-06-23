@@ -563,7 +563,7 @@ Line 2:
   this.cssInspectorCategory = function(cat)
   {
     //<input type="button"  handler="toggle-setting"  view-id="css-inspector"  tab-id="css-inspector"  class="unfolded" />
-    return ['category',
+    var ret = ['category',
         ['header',
           ['input',
             'type', 'button',
@@ -574,7 +574,19 @@ Line 2:
           'handler', 'css-toggle-category'
         ],
         ['styles']
-      ].concat(cat.unfolded ? ['class', 'unfolded'] : [] );
+      ];
+
+    if( cat.unfolded )
+    {
+      ret.splice(ret.length, 0, 'class', 'unfolded');
+    }
+
+    if( cat.handler )
+    {
+      ret.splice(ret.length, 0, 'handler', cat.handler);
+    }
+
+    return ret;
              
 
   }

@@ -420,14 +420,18 @@ p[handler="update-global-scope"]:hover {
 
 /* styleseeht view */
 
-stylesheet, import-rule, media-rule, rules {
+stylesheet, import-rule, media-rule, rules, property {
   display: block;
+  }
+
+property  {
+  padding-left: 2em;
+  padding-right: 3px;
   }
 
 rule, font-face-rule, page-rule {
   font-family:monospace;
   display:block;
-  white-space: pre-wrap;
   margin: 1em 0;
   }
 
@@ -435,8 +439,8 @@ rule, font-face-rule, page-rule {
   background:red;
   }
   
-media{
-  white-space: pre-wrap;
+media {
+
   }
   
 media-rule rules {
@@ -464,7 +468,6 @@ stylesheet-link:hover {
   }
 
 styles {
-  white-space: pre-wrap;
   font-family:monospace;
   }
 
@@ -519,22 +522,26 @@ category.unfolded + category header {
   background-position: -14px -28px;
   }
 
-.css-inspector key.overwritten, .css-inspector value.overwritten {
+.css-inspector .overwritten, .css-inspector .overwritten key, .css-inspector .overwritten value  {
   color: #ccc;
   }
 
-.css-inspector value.overwritten:after {
+.css-inspector .overwritten value:after {
   content: " [overwritten]";
   color: #c90;
   }
   
-.css-inspector key.inherited, .css-inspector value.inherited {
+.css-inspector .inherited {
   color: #ccc;
   }
 
-.css-inspector value.inherited:after {
+.css-inspector .inherited value:after {
   content: " [inherited]";
   color: #09c;
+  }
+
+.css-inspector .selected {
+  background-color: hsl(210, 70%, 80%);
   }
 
 .css-inspector h2 {

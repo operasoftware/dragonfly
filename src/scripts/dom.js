@@ -214,6 +214,177 @@ Element.prototype.spliceInnerHTML = function(str)
   this.parentNode.replaceChild(range.extractContents(), temp);
 }
 
+Element.prototype.getFirst = function(nodeName)
+{
+  return this.getElementsByTagName(nodeName)[0];
+}
+
+Element.prototype.getLast = function(nodeName)
+{
+  var all = this.getElementsByTagName(nodeName);
+  return all[all.length - 1];
+}
+
+Element.prototype.getPreviousSameNamed = function(current)
+{
+  var 
+  nodeName = current && current.nodeName;
+  all = this.getElementsByTagName(nodeName), 
+  cur = null, 
+  i = 0;
+
+  for( ; ( cur = all[i] ) && cur != current; i++);
+  return cur && all[i-1] || null;
+  
+}
+
+Element.prototype.getNextSameNamed = function(current)
+{
+  var 
+  nodeName = current && current.nodeName;
+  all = this.getElementsByTagName(nodeName), 
+  cur = null, 
+  i = 0;
+
+  for( ; ( cur = all[i] ) && cur != current; i++);
+  return cur && all[i+1] || null;
+}
+
+Element.prototype.getNextSameNamedSibling = function(target, next_name, next_type )
+{
+  var 
+  next = this.nextSibling,
+  name = this.nodeName;
+
+  while( next && next.nodeName != name )
+  {
+    next = next.nextSibling;
+  }
+  
+  return next;
+}
+
+Element.prototype.getPreviousSameNamedSibling = function(target, next_name, next_type )
+{
+  var 
+  previous = this.previousSibling,
+  name = this.nodeName;
+
+  while( previous && previous.nodeName != name )
+  {
+    previous = previous.previousSibling;
+  }
+  
+  return previous;
+}
+
+
+
+Element.prototype.getNextWithFilter = function(root_context, filter)
+{
+  var 
+  ret = this.__getNextWithFilter(true, filter),
+  parent = this.parentElement;
+
+  if( !ret )
+  {
+    while(parent && root_context.contains(parent) && !root_context.isSameNode(parent) )
+    {
+      if( parent.nextElementSibling 
+          && ( ret = parent.nextElementSibling.__getNextWithFilter(false, filter) ) )
+      {
+        break;
+      }
+      parent = parent.parentElement;
+    }
+  }
+  return ret; 
+}
+
+
+Element.prototype.__getNextWithFilter = function(is_start_node, filter)
+{
+  var next = is_start_node ? this.nextElementSibling : this, ret = null, i = 0;
+
+  while(next)
+  {
+    if( next.firstElementChild 
+        && ( ret = next.firstElementChild.__getNextWithFilter(false, filter) ) )
+    {
+      break;
+    }
+    if( filter(next) )
+    {
+      break;
+    }
+    next = next.nextElementSibling;
+  }
+  return ret || next;
+}
+
+Element.prototype.getPreviousWithFilter = function(root_context, filter)
+{
+  var 
+  ret = this.__getPreviousWithFilter(true, filter),
+  parent = this.parentElement;
+
+  if( !ret )
+  {
+    while(parent && root_context.contains(parent) && !root_context.isSameNode(parent) )
+    {
+      if( parent.previousElementSibling 
+          && ( ret = parent.previousElementSibling.__getPreviousWithFilter(false, filter) ) )
+      {
+        break;
+      }
+      parent = parent.parentElement;
+    }
+  }
+  return ret; 
+}
+
+
+Element.prototype.__getPreviousWithFilter = function(is_start_node, filter)
+{
+  var next = is_start_node ? this.previousElementSibling : this, ret = null, i = 0;
+
+  while(next)
+  {
+    if( next.lastElementChild 
+        && ( ret = next.lastElementChild.__getPreviousWithFilter(false, filter) ) )
+    {
+      break;
+    }
+    if( filter(next) )
+    {
+      break;
+    }
+    next = next.previousElementSibling;
+  }
+  return ret || next;
+}
+
+
+
+Element.prototype.scrollSoftIntoView = function()
+{
+  // just checking the first offsetParent to keep it simple
+  var scrollContainer = this.offsetParent;
+  var min_top = 20;
+  if( scrollContainer && scrollContainer.offsetHeight < scrollContainer.scrollHeight )
+  {
+    if( this.offsetTop < scrollContainer.scrollTop + min_top )
+    {
+      scrollContainer.scrollTop = this.offsetTop - min_top;
+    }
+    else if( this.offsetTop + this.offsetHeight > scrollContainer.scrollTop + scrollContainer.offsetHeight - min_top )
+    {
+      scrollContainer.scrollTop = 
+        this.offsetTop + this.offsetHeight - scrollContainer.offsetHeight + min_top;
+    }
+  }
+}
+
 Node.prototype.getNodeData=function(nodeName)
 {
   var node=this.getElementsByTagName(nodeName)[0];

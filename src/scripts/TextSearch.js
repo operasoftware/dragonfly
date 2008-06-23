@@ -80,7 +80,7 @@ var TextSearch = function()
 
   this.searchDelayed = function(new_search_therm)
   {
-    timeouts.set(this.search, SEARCH_DELAY, new_search_therm);
+    timeouts.set(this.search, SEARCH_DELAY, new_search_therm.toLowerCase());
   }
   
   this.update = function()

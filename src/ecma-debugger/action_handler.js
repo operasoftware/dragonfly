@@ -355,21 +355,7 @@ var action_handler = new function()
     }
   }
 
-  handlers['display-rule-in-stylesheet'] = function(event, target)
-  {
-    var index = parseInt(target.getAttribute('index'));
-    var rt_id = target.getAttribute('rt-id');
-    var rule_id = target.parentNode.getAttribute('rule-id');
-    // stylesheets.getRulesWithSheetIndex will call this function again if data is not avaible
-    // handleGetRulesWithIndex in stylesheets will 
-    // set for this reason __call_count on the event object
-    var rules = stylesheets.getRulesWithSheetIndex(rt_id, index, arguments);
-    if(rules)
-    {
-      stylesheets.setSelectedSheet(rt_id, index, rules, rule_id);
-      topCell.showView(views.stylesheets.id);
-    }
-  }
+
 
   handlers['show-runtimes'] = function(event)  
   {
@@ -643,32 +629,7 @@ var action_handler = new function()
           <styles/>
         </category>
         */
-  handlers['css-toggle-category'] = function(event, target)
-  {
-    if(/header/.test(target.nodeName))
-    {
-      target = target.firstChild;
-    }
-    var cat = target.getAttribute('cat-id'), value = target.hasClass('unfolded');
-    var cat_container = target.parentNode.parentNode;
-    if( value )
-    {
-      target.removeClass('unfolded');
-      cat_container.removeClass('unfolded');
-      var styles = cat_container.getElementsByTagName('styles')[0];
-      if( styles )
-      {
-        styles.innerHTML = "";
-      }
-    }
-    else
-    {
-      target.addClass('unfolded');
-      cat_container.addClass('unfolded');
-    }
-    elementStyle.setUnfoldedCat( cat , !value);
-    settings['css-inspector'].set(cat, !value);
-  }
+
 
   handlers['inspect-object-link'] = function(event, target)
   {
