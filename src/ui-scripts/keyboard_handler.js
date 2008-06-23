@@ -522,6 +522,7 @@ var key_identifier = new function()
 
     this['css-toggle-category'] = function(event, target)
     {
+      opera.postError('css-toggle-category')
       if(/header/.test(target.nodeName))
       {
         target = target.firstChild;
@@ -562,6 +563,14 @@ var key_identifier = new function()
         self.setSelected(target);
         stylesheets.setSelectedSheet(rt_id, index, rules, rule_id);
         topCell.showView(views.stylesheets.id);
+      }
+    }
+    
+    this.target_enter = function(event, action_id)
+    {
+      if(this.__target)
+      {
+        this.__target.releaseEvent('click');
       }
     }
 
@@ -625,7 +634,13 @@ var key_identifier = new function()
 
     this.escape_edit_mode = function(event, action_id)
     {
-      this.editor.escape();
+      
+      if(!this.editor.escape())
+      {
+        var cur_target = this.__target;
+        this.moveFocusUp();
+        cur_target.parentElement.removeChild(cur_target);
+      }
       key_identifier.setModeDefault(self);
 
       return false;
@@ -669,6 +684,11 @@ var key_identifier = new function()
     this[this.NAV_LEFT] = this[this.NAV_UP] = __actions.moveFocusUp;
 
     this[this.NAV_RIGHT] = this[this.NAV_DOWN] = __actions.moveFocusDown;
+    
+    this[this.ENTER] = function(event, action_id)
+    {
+      __actions.target_enter(event, action_id);
+    }
 
 
     this.focus = __actions.setActiveContainer;/*function(event, container)

@@ -432,6 +432,7 @@ property  {
 rule, font-face-rule, page-rule {
   font-family:monospace;
   display:block;
+  xxwhite-space: pre-wrap;
   margin: 1em 0;
   }
 
@@ -440,7 +441,7 @@ rule, font-face-rule, page-rule {
   }
   
 media {
-
+  xxwhite-space: pre-wrap;
   }
   
 media-rule rules {
@@ -468,6 +469,7 @@ stylesheet-link:hover {
   }
 
 styles {
+  xxwhite-space: pre-wrap;
   font-family:monospace;
   }
 

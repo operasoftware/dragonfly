@@ -278,8 +278,6 @@ Element.prototype.getPreviousSameNamedSibling = function(target, next_name, next
   return previous;
 }
 
-
-
 Element.prototype.getNextWithFilter = function(root_context, filter)
 {
   var 

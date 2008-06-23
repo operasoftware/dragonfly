@@ -26,6 +26,7 @@ var Editor = function()
   this.context_cur_prop = '';
   this.context_cur_value = '';
   this.context_cur_priority = '';
+  this.context_cur_text_content = '';
  
   this.get_base_style = function(ele)
   {
@@ -263,6 +264,10 @@ var Editor = function()
         }
       }
     }
+    if( last_pos  < value.length && ( val = value.slice(last_pos) ) )
+    {
+      ret[ret.length] = val;
+    }
     return ret;
   }
 
@@ -340,15 +345,15 @@ var Editor = function()
     
     
 
-    this.context_cur_value = this.textarea.value = ele.textContent;
+    this.context_cur_text_content = this.textarea.value = ele.textContent;
 
-    //var props = this.getProperties();
+    var props = this.getProperties();
 
-    //this.context_cur_prop = props[0] || '';
-    //this.context_cur_value = props[1] || '';
-    //this.context_cur_priority = props[2] || 0;
+    this.context_cur_prop = props[0] || '';
+    this.context_cur_value = props[1] || '';
+    this.context_cur_priority = props[2] || 0;
 
-    opera.postError("this.textarea.value: "+this.context_cur_value)
+    //opera.postError("this.textarea.value: "+this.context_cur_value)
 
     this.textarea.style.height = ( ele.offsetHeight  ) + 'px';
     ele.textContent = '';
@@ -533,45 +538,84 @@ var Editor = function()
     props = this.getProperties(), 
     i = 0,
     inner = '';
-
-    for( ; i < props.length; i += 3 )
+    
+    if( props[i+1] )
     {
-      if( props[i+1] )
-      {
-        inner = "<key>" + props[i] + "</key>: " +
-          "<value>"  + props[i+1] +  ( props[i+2] ? " !important" : "" ) + "</value>;";
-      }
+      this.textarea_container.parentElement.innerHTML =
+        "<key>" + props[i] + "</key>: " +
+        "<value>"  + props[i+1] +  ( props[i+2] ? " !important" : "" ) + "</value>;";
     }
-    this.textarea_container.parentElement.innerHTML = inner; 
+    else
+    {
+      this.textarea_container.parentElement.parentElement.
+        removeChild(this.textarea_container.parentElement);
+     
+    }
   }
 
   this.commit = function()
   {
     var props = self.getProperties(), 
     i = 0,
-    script = "";
+    script = "",
+    prop = null,
+    reset = false;
     
-    opera.postError('commit');
-    for( ; i < props.length; i += 3 )
+    while( props.length > 3 )
     {
-      if( props[i+1] )
-      {
-        script = "rule.style.setProperty(\"" + props[i] + "\", \"" + props[i+1] + "\", " + props[i+2]+ ")";
-        services['ecmascript-debugger'].eval(0, self.context_rt_id, '', '', script, ["rule", self.context_rule_id]);
-      }
+      reset = true;
+      prop = this.textarea_container.parentElement.parentElement.
+        insertBefore(document.createElement('property'), this.textarea_container.parentElement);
+
+      prop.innerHTML = "<key>" + props[0] + "</key>: " +
+          "<value>"  + props[1] +  ( props[2] ? " !important" : "" ) + "</value>;";
+      props.splice(0, 3);
+
+      //this.textarea_container.parentElement.innerHTML = inner; 
+      
     }
+    
+    //opera.postError('commit: '+ props.length+' '+props);
+    if( reset)
+    {
+      this.textarea.value =
+        props[0] + ( props[1] ? ': ' + props[1] + ( props[2] ? ' !important' : '' ) + ';' : '' );
+        
+      this.context_cur_text_content =
+      this.context_cur_prop =
+      this.context_cur_value = '';
+      this.context_cur_priority = 0;
+    }
+
+    if( props[i+1] )
+    {
+      script = "rule.style.setProperty(\"" + props[i] + "\", \"" + props[i+1] + "\", " + props[i+2]+ ")";
+      services['ecmascript-debugger'].eval(0, self.context_rt_id, '', '', script, ["rule", self.context_rule_id]);
+    }
+    
   }
 
   this.escape = function()
   {
-    var 
-    inner = "<key>" + this.context_cur_prop + "</key>: " +
-      "<value>"  + this.context_cur_value +  
-      ( this.context_cur_priority ? " !important" : "" ) + 
-      "</value>;";
+    if(this.context_cur_prop)
+    {
+      this.textarea.value = this.context_cur_text_content;
+      this.textarea_container.parentElement.innerHTML =
+        "<key>" + this.context_cur_prop + "</key>: " +
+        "<value>"  + this.context_cur_value +  
+        ( this.context_cur_priority ? " !important" : "" ) + 
+        "</value>;";
+        return true;
+    }
+    else
+    {
+      this.textarea.value = '';
+      this.textarea_container.parentElement.innerHTML = '';
+      return false;
+    }
 
-    this.textarea.value = this.context_cur_value;
-    this.textarea_container.parentElement.innerHTML = inner;
+    
+
 
   }
 
