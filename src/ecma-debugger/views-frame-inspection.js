@@ -5,7 +5,7 @@
 
     var self = this;
 
-    __ref_data = 'frame_inspection';
+    var __ref_data = 'frame_inspection';
 
     this.createView = function(container)
     {

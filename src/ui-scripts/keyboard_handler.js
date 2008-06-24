@@ -89,7 +89,7 @@ var BaseKeyhandler = new function()
     {
       if( action_ids[_id] == id )
       {
-        opera.postError('action: ' + _id);
+        // opera.postError('action: ' + _id);
         return false; // prevent default
       }
     }
@@ -143,7 +143,7 @@ var BaseEditKeyhandler = new function()
     {
       if( action_ids[_id] == id )
       {
-        opera.postError('action: ' + _id);
+        // opera.postError('action: ' + _id);
         return true; // perform default action
       }
     }
@@ -199,6 +199,8 @@ var key_identifier = new function()
 {
   var self = this;
 
+  var __container = null;
+
   const 
   TAB = 9,
   ENTER = 13,
@@ -216,6 +218,8 @@ var key_identifier = new function()
   F11 = 122;
 
   var key_handler_ids = {}, id = '';
+
+  var __key_handler = null;
 
   var __current_view = null;
 
@@ -263,6 +267,7 @@ var key_identifier = new function()
     if(__key_handler.id == actions.id && window.edit_keyhandlers && edit_keyhandlers[actions.id] )
     {
       __key_handler = edit_keyhandlers[actions.id];
+      __container.addClass('edit-mode');
     }
   }
 
@@ -271,6 +276,7 @@ var key_identifier = new function()
     if( __key_handler.id == actions.id  )
     {
       __key_handler = keyhandlers[actions.id];
+      __container.removeClass('edit-mode');
     }
   }
 
@@ -352,7 +358,13 @@ var key_identifier = new function()
         __key_handler = keyhandlers[ui_obj.view_id] || empty_keyhandler;
         __key_handler.focus(event, container);
         __current_view = ui_obj; 
+        if( __container && __container.hasClass('edit-mode') )
+        {
+          __container.removeClass('edit-mode');
+        }
+        __container = container;
       }
+      
     }
   }
 
@@ -498,6 +510,7 @@ var key_identifier = new function()
         case 'key':
         case 'value':
         {
+          
           if(event.target.parentElement.parentElement.hasAttribute('rule-id'))
           {
             key_identifier.setModeEdit(self);
@@ -522,7 +535,6 @@ var key_identifier = new function()
 
     this['css-toggle-category'] = function(event, target)
     {
-      opera.postError('css-toggle-category')
       if(/header/.test(target.nodeName))
       {
         target = target.firstChild;
@@ -574,12 +586,6 @@ var key_identifier = new function()
       }
     }
 
-    this.test = function(event, action_id)
-    {
-      opera.postError(event+' '+action_id);
-      // return false does cancel the default action;
-      return true;
-    }
 
     this.nav_previous_edit_mode = function(event, action_id)
     {
@@ -613,15 +619,6 @@ var key_identifier = new function()
         }
       }
 
-      /*
-      if( this.textarea.value != this.tab_context_value )
-      {
-        this.tab_context_tokens = this.getAllTokens();
-        
-        this.tab_context_value = this.textarea.value;
-      }
-      opera.postError("this.tab_context_tokens: "+this.tab_context_tokens);
-      */
 
       // to stop default action
       return false;
@@ -630,6 +627,7 @@ var key_identifier = new function()
     this.autocomplete = function(event, action_id)
     {
       this.editor.autocomplete(event, action_id);
+      return false;
     }
 
     this.escape_edit_mode = function(event, action_id)
@@ -643,6 +641,27 @@ var key_identifier = new function()
       }
       key_identifier.setModeDefault(self);
 
+      return false;
+    }
+
+    this.blur_edit_mode = function()
+    {
+      this.escape_edit_mode();
+      this.clearActiveContainer();
+    }
+
+    this.enter_edit_mode = function(event, action_id)
+    {
+      if( !this.editor.enter(event, action_id) )
+      {
+        key_identifier.setModeDefault(self);
+        if( !this.__target.textContent )
+        {
+          var cur_target = this.__target;
+          this.moveFocusUp();
+          cur_target.parentElement.removeChild(cur_target);
+        }
+      }
       return false;
     }
 
@@ -717,9 +736,6 @@ var key_identifier = new function()
 
     var __actions = actions[id]
 
-    this[this.NAV_LEFT] =  __actions.test;
-
-    this[this.NAV_RIGHT] =  __actions.test;
 
     this[this.NAV_UP] = this[this.NAV_DOWN] = function(event, action_id)
     {
@@ -741,6 +757,11 @@ var key_identifier = new function()
       __actions.escape_edit_mode(event, action_id);
     }
 
+    this[this.ENTER] = function(event, action_id)
+    {
+      __actions.enter_edit_mode(event, action_id);
+    }
+
 
 
 
@@ -748,7 +769,10 @@ var key_identifier = new function()
 
     this.focus = __actions.test;
 
-    this.blur = __actions.test
+    this.blur = function()
+    {
+      __actions.blur_edit_mode();
+    }
 
     this.init(id);
   };

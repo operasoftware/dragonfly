@@ -4,6 +4,12 @@ var Editor = function()
 
   // TODO make it more general so it can be used for other views then just the css inspector
   var self = this;
+
+  const 
+  SELECTION = 1,
+  TOKEN = 2,
+  VALUE = 3;
+
   this.base_style =
   {
     'font-family': '',
@@ -27,6 +33,13 @@ var Editor = function()
   this.context_cur_value = '';
   this.context_cur_priority = '';
   this.context_cur_text_content = '';
+
+  this.last_suggets_type = null;
+  this.suggets_count = 0;
+  this.suggets_iterate = false;
+  this.property_list_length = 0;
+
+  this.colors = new Colors();
  
   this.get_base_style = function(ele)
   {
@@ -112,7 +125,6 @@ var Editor = function()
       re_token.lastIndex = cur_pos;
       while( match_token = re_token.exec(value)  )
       {
-        //opera.postError(match_token.index+' '+value.length);
         if( match_str && match_str.index <= re_token.lastIndex + 1 )
         {
           ret.splice(ret.length, 0, match_str.index, re_str.lastIndex);
@@ -177,7 +189,6 @@ var Editor = function()
       re_token.lastIndex = cur_pos;
       while( match_token = re_token.exec(value) )
       {
-        //opera.postError(match_token.index+' '+value.length);
         if( match_str && match_str.index <= re_token.lastIndex + 1 )
         {
           if(re_str.lastIndex >= char_pos)
@@ -209,7 +220,7 @@ var Editor = function()
     var 
     re_str = /(?:"(?:[^"]|\\")*")|(?:'(?:[^']|\\')*')/g,
     re_token = /(;)|($)/g,
-    re_important = / *!important/;
+    re_important = / *!important/,
     value = this.textarea.value,
     last_pos = 0,
     cur_pos = 0,
@@ -226,7 +237,6 @@ var Editor = function()
     {
       prop = value.slice(last_pos, cur_pos);
       // TODO should test if pos is in match_token string
-      //opera.postError('prop: '+prop)
       cur_pos++;
       while( value.charAt(cur_pos) == ' ' || value.charAt(cur_pos) == '\n' )
       {
@@ -237,7 +247,6 @@ var Editor = function()
      
       while( match_token = re_token.exec(value) )
       {
-        //opera.postError('match_token: '+match_token)
         if( match_str && match_token.index < re_str.lastIndex )
         {
           re_token.lastIndex = re_str.lastIndex;
@@ -295,7 +304,6 @@ var Editor = function()
       {
         previous_line_chars = prev_match_index + 1;
         cur_top += this.line_height;
-        //opera.postError('previous_line_chars: '+value.slice(0,previous_line_chars))
       }
       prev_match_index = match.index;
     }
@@ -307,20 +315,15 @@ var Editor = function()
       charOffset = 
         previous_line_chars + ( ( left - ( left % this.char_width ) ) / this.char_width );
     }
-    //alert(this.textarea.value.length +' '+charOffset);
+
     var selection = this.getNextToken(charOffset);
-    //alert('selection: ' +( selection ? selection.start +' - '+selection.end : null))
+
     if(selection)
     {
       this.textarea.selectionStart = selection.start;
       this.textarea.selectionEnd = selection.end;
       
     }
-    /* *
-    opera.postError( 'left: '+left+' \ntop: '+top+ 
-    '\ncharOffset: '+charOffset+'\nprevious_line_chars: '+previous_line_chars +
-    '\nchar: '+value.slice(charOffset, charOffset+1) );
-    /* */
 
 
   }
@@ -338,7 +341,6 @@ var Editor = function()
     }
     this.context_rt_id = ele.parentElement.parentElement.getAttribute('rt-id');
     this.context_rule_id = ele.parentElement.getAttribute('rule-id');
-    //opera.postError('rt-id: '+this.context_rt_id +' rule-id: '+this.context_rule_id);
     var textContent = ele.textContent;
 
 
@@ -353,7 +355,6 @@ var Editor = function()
     this.context_cur_value = props[1] || '';
     this.context_cur_priority = props[2] || 0;
 
-    //opera.postError("this.textarea.value: "+this.context_cur_value)
 
     this.textarea.style.height = ( ele.offsetHeight  ) + 'px';
     ele.textContent = '';
@@ -388,14 +389,6 @@ var Editor = function()
           return true;
         }
       }
-      /*
-      var i = 1, t = this.tab_context_tokens[0]+'|', val = this.textarea.value;
-      for( ; i < this.tab_context_tokens.length; i += 2)
-      {
-        t += val.slice(this.tab_context_tokens[i], this.tab_context_tokens[i+1]) +'|';
-      }
-      opera.postError(t);
-      */
     }
     return false;
   }
@@ -430,7 +423,6 @@ var Editor = function()
   {
     this.tab_context_tokens = this.getAllTokens();
     this.tab_context_value = this.textarea.value;
-    //opera.postError('first: '+this.tab_context_tokens);
     if( this.tab_context_tokens && this.tab_context_tokens[2] )
     {
       this.textarea.selectionStart = this.tab_context_tokens[1];
@@ -463,9 +455,9 @@ var Editor = function()
 
   this.autocomplete = function(event, action_id)
   {
-    //opera.postError(action_id);
     var  
     cur_start = this.textarea.selectionStart,
+    new_start = 0,
     cur_end = this.textarea.selectionEnd,
     value = this.textarea.value,
     cur_token = '',
@@ -488,47 +480,215 @@ var Editor = function()
         }
       }
     }
-    if( cur_token )
-    {
-      suggest = this.getSuggest
-      (
-        this.tab_context_tokens[0], 
-        cur_end <= this.tab_context_tokens[2],
-        cur_token,
-        cur_start, 
-        cur_end, 
-        action_id
-      );
 
-      if(suggest)
+
+    suggest = this.getSuggest
+    (
+      this.tab_context_tokens && this.tab_context_tokens[0] || '', 
+      this.tab_context_tokens && cur_end <= this.tab_context_tokens[2],
+      cur_token,
+      cur_start, 
+      cur_end, 
+      action_id
+    );
+
+    if(suggest)
+    {
+
+      switch(suggest.replace_type)
       {
-        cur_start = this.tab_context_tokens[i];
-        this.textarea.value = 
-          value.slice(0, cur_start) + 
-          suggest +
-          value.slice(this.tab_context_tokens[i+1]);
-        this.textarea.selectionStart = cur_start;
-        this.textarea.selectionEnd = cur_start + suggest.length;
-        this.commit();
+        case SELECTION:
+        {
+          new_start = this.tab_context_tokens[i];
+          this.textarea.value = 
+            value.slice(0, new_start) + 
+            suggest.value +
+            value.slice(this.tab_context_tokens[i+1]);
+          this.textarea.selectionStart = cur_start;
+          this.textarea.selectionEnd = new_start + suggest.value.length;
+          break;
+        }
+        case TOKEN:
+        {
+          new_start = this.tab_context_tokens[i];
+          this.textarea.value = 
+            value.slice(0, new_start) + 
+            suggest.value +
+            value.slice(this.tab_context_tokens[i+1]);
+          this.textarea.selectionStart = new_start;
+          this.textarea.selectionEnd = new_start + suggest.value.length;
+          break;
+        }
+        case VALUE:
+        {
+          new_start = this.tab_context_tokens[2] + 2;
+          this.textarea.value = 
+            this.tab_context_tokens[0] + ': ' + suggest.value;
+          this.textarea.selectionStart = new_start;
+          this.textarea.selectionEnd = new_start + suggest.value.length;
+          break;
+        }
+
       }
 
+
+      this.textarea.style.height = this.textarea.scrollHeight + 'px';
+      this.commit();
     }
-    //opera.postError('cur_token: '+cur_token);
+
+
     return false;
   }
 
+
   this.getSuggest = function(prop_name, is_prop, token, cur_start, cur_end, action_id)
   {
-    // action_id == action_ids.NAV_UP
     var re_num = /^(-?)(\d+)(.*)$/;
-    var match = re_num.exec(token);
-    if( !is_prop && match )
+    var re_hex = /^#([0-9a-f]{6})$/i;
+    var match = null;
+    var suggest = null;
+
+    var suggest_type = 
+      ( is_prop && 'suggest-property' )
+      || ( ( match = re_hex.exec(token) ) && 'suggest-color' )
+      || ( ( match = re_num.exec(token) ) && 'suggest-number' )
+      
+      || ('suggest-value');
+
+    var suggest_handler = this[suggest_type];
+
+    ;
+
+    suggest_handler.cursor = this.setCursor
+    (
+      this.suggets_iterate = this.last_suggets_type == suggest_type, 
+      suggest_handler.cursor, 
+      suggest_handler.matches = this[suggest_type](token, cur_start, cur_end, action_id, match), 
+      action_id
+    )
+
+    this.last_suggets_type = suggest_type;
+
+    suggest = suggest_handler.matches && suggest_handler.matches[suggest_handler.cursor];
+    return suggest && {value: suggest, replace_type: suggest_handler.replace_type} || null;
+
+
+
+  }
+
+  this.getMatchesFromList = function(list, set)
+  {
+    var 
+    ret = [],
+    length = list && list.length || 0,
+    i = 0;
+
+    if( length == 1 )
     {
-      return ( parseInt(match[1] + match[2]) + ( action_id == action_ids.NAV_UP ? 1 : -1 ) ).toString() + match[3];
+      return list;
     }
 
-    return '';
+    if( length && set)
+    {
+      for( ; i < length; i++)
+      {
+        if( list[i].indexOf(set) == 0 )
+        {
+          ret[ret.length] = list[i];
+        }
+      }
+    }
+    else
+    {
+       ret = list.slice(0);
+    }
+    return ret;
   }
+
+  this.setCursor = function(iterate, cur_cursor, matches, action_id)
+  {
+    if( iterate && matches)
+    {
+      cur_cursor += ( action_id == action_ids.NAV_UP ? 1 : -1 );
+      if( cur_cursor > matches.length - 1 )
+      {
+        cur_cursor = 0;
+      }
+      else if( cur_cursor < 0 )
+      {
+        cur_cursor = matches.length - 1;
+      }
+    }
+    else
+    {
+      cur_cursor = 0;
+    }
+    return cur_cursor;
+  }
+
+
+
+  this['suggest-property'] = function(token, cur_start, cur_end, action_id, match)
+  {
+    if( !this.property_list )
+    {
+      this.property_list = stylesheets.getSortedProperties();
+      this.property_list_length = this.property_list.length;
+    }
+    return this.getMatchesFromList(this.property_list, this.textarea.value.slice(this.tab_context_tokens[1], cur_start));
+  }
+
+  this['suggest-property'].replace_type = SELECTION;
+  this['suggest-property'].cursor = 0;
+  this['suggest-property'].matches = null;
+
+  this['suggest-number'] = function(token, cur_start, cur_end, action_id, match)
+  {
+    return [ ( parseInt(match[1] + match[2]) + ( action_id == action_ids.NAV_UP ? 1 : -1 ) ).toString() + match[3]];
+  }
+
+  this['suggest-number'].replace_type = TOKEN;
+  this['suggest-number'].cursor = 0;
+  this['suggest-number'].matches = null;
+
+  this['suggest-color'] = function(token, cur_start, cur_end, action_id, match)
+  {
+    this.colors.setHex(match[1]);
+    var hsl = this.colors.getHSL();
+    var rgb = this.colors.getRGB();
+    var ret = 
+    [
+      ('hsl(' + hsl[0] + ', ' + parseInt(hsl[1]) +'%, ' + parseInt(hsl[1]) + '%)'),
+      ('rgb(' + rgb[0] + ', ' + rgb[1] +', ' + rgb[1] + ')')
+    ].concat(suggest_values['color']);
+    return ret;
+  }
+
+  this['suggest-color'].replace_type = TOKEN;
+  this['suggest-color'].cursor = 0;
+  this['suggest-color'].matches = null;
+
+
+
+
+
+  this['suggest-value'] = function(token, cur_start, cur_end, action_id, match)
+  {
+    var prop = this.tab_context_tokens[0];
+    var set = this.tab_context_tokens[3] 
+        && this.textarea.value.slice(this.tab_context_tokens[3], cur_start) 
+        || '';
+    
+    if( suggest_values[prop] && suggest_values[prop].length )
+    {
+      return this.getMatchesFromList(suggest_values[prop], set);
+    }
+    return null;
+  }
+
+  this['suggest-value'].replace_type = VALUE;
+  this['suggest-value'].cursor = 0;
+  this['suggest-value'].matches = null;
 
 
  
@@ -560,7 +720,7 @@ var Editor = function()
     script = "",
     prop = null,
     reset = false;
-    
+
     while( props.length > 3 )
     {
       reset = true;
@@ -571,11 +731,10 @@ var Editor = function()
           "<value>"  + props[1] +  ( props[2] ? " !important" : "" ) + "</value>;";
       props.splice(0, 3);
 
-      //this.textarea_container.parentElement.innerHTML = inner; 
+
       
     }
     
-    //opera.postError('commit: '+ props.length+' '+props);
     if( reset)
     {
       this.textarea.value =
@@ -589,10 +748,51 @@ var Editor = function()
 
     if( props[i+1] )
     {
-      script = "rule.style.setProperty(\"" + props[i] + "\", \"" + props[i+1] + "\", " + props[i+2]+ ")";
+      script = "rule.style.setProperty(\"" + props[i] + "\", \"" + props[i+1] + "\", " + ( props[i+2] ? "\"important\"" : null )+ ")";
       services['ecmascript-debugger'].eval(0, self.context_rt_id, '', '', script, ["rule", self.context_rule_id]);
     }
+
     
+  }
+
+  this.enter = function()
+  {
+    var 
+    props = self.getProperties(), 
+    keep_edit = false,
+    prop = null;
+
+    if( props && props.length == 3 )
+    {
+      if( this.textarea.selectionEnd == this.textarea.value.length 
+          || this.textarea.selectionEnd >= this.textarea.value.indexOf(';') )
+      {
+        prop = this.textarea_container.parentElement.parentElement.
+          insertBefore(document.createElement('property'), this.textarea_container.parentElement);
+        prop.innerHTML = "<key>" + props[0] + "</key>: " +
+          "<value>"  + props[1] +  ( props[2] ? " !important" : "" ) + "</value>;";
+        this.textarea.value =
+        this.context_cur_text_content =
+        this.context_cur_prop =
+        this.context_cur_value = '';
+        this.context_cur_priority = 0;
+        keep_edit = true;
+      }
+      else
+      {
+        this.textarea_container.parentElement.innerHTML = "<key>" + props[0] + "</key>: " +
+          "<value>"  + props[1] +  ( props[2] ? " !important" : "" ) + "</value>;";
+      }
+    }
+    else
+    {
+      this.textarea_container.parentElement.innerHTML = "";
+    }
+
+    return keep_edit;
+
+
+
   }
 
   this.escape = function()

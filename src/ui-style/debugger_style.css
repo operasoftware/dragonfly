@@ -546,6 +546,10 @@ category.unfolded + category header {
   background-color: hsl(210, 70%, 80%);
   }
 
+.css-inspector.edit-mode .selected {
+  background-color: transparent;
+  }
+
 .css-inspector h2 {
   font-size: 12px;
   font-weight: normal;

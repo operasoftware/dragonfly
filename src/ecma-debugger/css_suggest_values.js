@@ -1,3 +1,5 @@
+suggest_values = {};
+
 suggest_values['azimuth']=
 [
   'left-side',
@@ -20,10 +22,7 @@ suggest_values['background-attachment']=
   'fixed'
 ]
 
-suggest_values['background-color']=
-[
-  'transparent'
-]
+
 
 suggest_values['background-image']=
 [
@@ -166,8 +165,41 @@ suggest_values['color']=
   'silver',
   'teal',
   'white',
-  'yellow'
+  'yellow',
+  'ActiveBorder',
+  'ActiveCaption',
+  'AppWorkspace',
+  'Background',
+  'ButtonFace',
+  'ButtonHighlight',
+  'ButtonShadow',
+  'ButtonText',
+  'CaptionText',
+  'GrayText',
+  'Highlight',
+  'HighlightText',
+  'InactiveBorder',
+  'InactiveCaption',
+  'InactiveCaptionText',
+  'InfoBackground',
+  'InfoText',
+  'Menu',
+  'MenuText',
+  'Scrollbar',
+  'ThreeDDarkShadow',
+  'ThreeDFace',
+  'ThreeDHighlight',
+  'ThreeDLightShadow',
+  'ThreeDShadow',
+  'Window',
+  'WindowFrame',
+  'WindowText'
 ]
+
+suggest_values['background-color']=
+[
+  'transparent'
+].concat(suggest_values['color']);
 
 suggest_values['content']=
 [

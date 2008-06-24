@@ -180,6 +180,8 @@ var elementLayout = new function()
     __comp_style = null;
     __offsets_values = "";
     __selectedElement = {rt_id: msg.rt_id,  obj_id: msg.obj_id};
+
+    var i = 0, view_id = '';
     for ( i = 0; view_id = __views[i]; i++)
     {
       views[view_id].update();

@@ -160,7 +160,7 @@ var host_tabs = new function()
 
   var cleanUpEventListener =  function()
   {
-    var ev = null, i =  0, j = 0, k = 0, ids = null, id = '', cur = '', rt = '';
+    var ev = null, i =  0, j = 0, k = 0, ids = null, id = '', cur = '', rt_id = '';
     for( ; ev = activeEvents[i]; i++)
     {
       ids = getHandlerId(ev.type, ev.cb);

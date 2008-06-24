@@ -55,6 +55,7 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./scripts/Timeouts.js"/>
 <script src="./scripts/TextSearch.js"/>
 <script src="./scripts/VirtualTextSearch.js"/>
+<script src="./scripts/colors.js"/>
 
 <!-- command "append_script" source "./ui-scripts" target "./dragonfly.js"   -->
 
@@ -123,6 +124,10 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./ecma-debugger/css_initial_values.js"/>
 <script src="./ecma-debugger/css_inheritable_properties.js"/>
 <script src="./ecma-debugger/js_default_global_scope_properties.js"/>
+
+<script src="./ecma-debugger/css_suggest_values.js"/>
+
+
 
 
 <script src="./ecma-debugger/node_dom_attrs.js"/>

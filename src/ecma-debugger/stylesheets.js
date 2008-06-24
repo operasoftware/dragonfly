@@ -1279,6 +1279,16 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
       }
     }
   }
+
+  this.getSortedProperties = function()
+  {
+    var ret = [], i = 0;
+    for ( ; i <  __indexMapLength; i++ )
+    {
+      ret[i] = __indexMap[__sortedIndexMap[i]];
+    }
+    return ret;
+  }
   
   messages.addListener('runtime-destroyed', onRuntimeDestroyed);
   messages.addListener('active-tab', onActiveTab);
