@@ -355,6 +355,8 @@ var Editor = function()
     this.context_cur_value = props[1] || '';
     this.context_cur_priority = props[2] || 0;
 
+    this.last_suggets_type = '';
+
 
     this.textarea.style.height = ( ele.offsetHeight  ) + 'px';
     ele.textContent = '';
@@ -481,7 +483,6 @@ var Editor = function()
       }
     }
 
-
     suggest = this.getSuggest
     (
       this.tab_context_tokens && this.tab_context_tokens[0] || '', 
@@ -531,7 +532,6 @@ var Editor = function()
 
       }
 
-
       this.textarea.style.height = this.textarea.scrollHeight + 'px';
       this.commit();
     }
@@ -543,21 +543,15 @@ var Editor = function()
 
   this.getSuggest = function(prop_name, is_prop, token, cur_start, cur_end, action_id)
   {
-    var re_num = /^(-?)(\d+)(.*)$/;
-    var re_hex = /^#([0-9a-f]{6})$/i;
-    var match = null;
-    var suggest = null;
-
-    var suggest_type = 
+    var 
+    re_num = /^(-?)(\d+)(.*)$/,
+    match = null,
+    suggest = null,
+    suggest_type = 
       ( is_prop && 'suggest-property' )
-      || ( ( match = re_hex.exec(token) ) && 'suggest-color' )
       || ( ( match = re_num.exec(token) ) && 'suggest-number' )
-      
-      || ('suggest-value');
-
-    var suggest_handler = this[suggest_type];
-
-    ;
+      || ('suggest-value'),
+    suggest_handler = this[suggest_type];
 
     suggest_handler.cursor = this.setCursor
     (
@@ -566,7 +560,7 @@ var Editor = function()
       suggest_handler.matches = this[suggest_type](token, cur_start, cur_end, action_id, match), 
       action_id
     )
-
+    
     this.last_suggets_type = suggest_type;
 
     suggest = suggest_handler.matches && suggest_handler.matches[suggest_handler.cursor];
@@ -609,7 +603,7 @@ var Editor = function()
   {
     if( iterate && matches)
     {
-      cur_cursor += ( action_id == action_ids.NAV_UP ? 1 : -1 );
+      cur_cursor += ( action_id == action_ids.NAV_UP ? -1 : 1 );
       if( cur_cursor > matches.length - 1 )
       {
         cur_cursor = 0;
@@ -651,34 +645,38 @@ var Editor = function()
   this['suggest-number'].cursor = 0;
   this['suggest-number'].matches = null;
 
-  this['suggest-color'] = function(token, cur_start, cur_end, action_id, match)
-  {
-    this.colors.setHex(match[1]);
-    var hsl = this.colors.getHSL();
-    var rgb = this.colors.getRGB();
-    var ret = 
-    [
-      ('hsl(' + hsl[0] + ', ' + parseInt(hsl[1]) +'%, ' + parseInt(hsl[1]) + '%)'),
-      ('rgb(' + rgb[0] + ', ' + rgb[1] +', ' + rgb[1] + ')')
-    ].concat(suggest_values['color']);
-    return ret;
-  }
-
-  this['suggest-color'].replace_type = TOKEN;
-  this['suggest-color'].cursor = 0;
-  this['suggest-color'].matches = null;
-
-
-
-
-
   this['suggest-value'] = function(token, cur_start, cur_end, action_id, match)
   {
-    var prop = this.tab_context_tokens[0];
-    var set = this.tab_context_tokens[3] 
+    var 
+    prop = this.tab_context_tokens[0],
+    set = this.tab_context_tokens[3] 
         && this.textarea.value.slice(this.tab_context_tokens[3], cur_start) 
-        || '';
-    
+        || '',
+    re_hex = /^#([0-9a-f]{6})$/i,
+    match = null,
+    hsl = null,
+    rgb = null;
+
+    if( set == this['suggest-value'].last_set && prop == this['suggest-value'].last_prop )
+    {
+      return this['suggest-value'].matches;
+    }
+    this['suggest-value'].last_set = set;
+    this['suggest-value'].last_prop = prop;
+
+    if( /color/.test(prop) && token && ( match = re_hex.exec(token) ) )
+    {
+      this.colors.setHex(match[1]);
+      hsl = this.colors.getHSL();
+      rgb = this.colors.getRGB(); 
+      return [
+        match[0],
+        ('hsl(' + hsl[0] + ',' + parseInt(hsl[1]) +'%,' + parseInt(hsl[2]) + '%)'),
+        ('rgb(' + rgb[0] + ',' + rgb[1] +',' + rgb[2] + ')')
+      ].concat(suggest_values['color']);
+
+    }
+   
     if( suggest_values[prop] && suggest_values[prop].length )
     {
       return this.getMatchesFromList(suggest_values[prop], set);
@@ -689,6 +687,8 @@ var Editor = function()
   this['suggest-value'].replace_type = VALUE;
   this['suggest-value'].cursor = 0;
   this['suggest-value'].matches = null;
+  this['suggest-value'].last_set = '';
+  this['suggest-value'].last_prop = '';
 
 
  
@@ -731,8 +731,6 @@ var Editor = function()
           "<value>"  + props[1] +  ( props[2] ? " !important" : "" ) + "</value>;";
       props.splice(0, 3);
 
-
-      
     }
     
     if( reset)
@@ -752,7 +750,6 @@ var Editor = function()
       services['ecmascript-debugger'].eval(0, self.context_rt_id, '', '', script, ["rule", self.context_rule_id]);
     }
 
-    
   }
 
   this.enter = function()
@@ -761,7 +758,8 @@ var Editor = function()
     props = self.getProperties(), 
     keep_edit = false,
     prop = null;
-
+    
+    this.last_suggets_type = '';
     if( props && props.length == 3 )
     {
       if( this.textarea.selectionEnd == this.textarea.value.length 
@@ -788,15 +786,14 @@ var Editor = function()
     {
       this.textarea_container.parentElement.innerHTML = "";
     }
-
+    
     return keep_edit;
-
-
 
   }
 
   this.escape = function()
   {
+    this.last_suggets_type = '';
     if(this.context_cur_prop)
     {
       this.textarea.value = this.context_cur_text_content;
@@ -814,16 +811,11 @@ var Editor = function()
       return false;
     }
 
-    
-
-
   }
 
   var input_handler = function(event)
   {
     this.style.height = this.scrollHeight + 'px';
     self.commit();
-
-
   }
 }

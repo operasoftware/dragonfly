@@ -23,7 +23,7 @@ var client = new function()
     {
       if (service.name in services_avaible)	
       {
-        opera.postError(service.name);
+        opera.postError('register service: '+ service.name);
         opera.scopeEnableService(service.name);
       }
       else
@@ -117,7 +117,12 @@ var client = new function()
   {      
     var port = settings.debug_remote_setting.get('debug-remote') 
       && settings.debug_remote_setting.get('port')
-      || 0; 
+      || 0;
+    
+    if(port)
+    {
+      alert(ui_strings.ALERT_WAITING_FOR_CONNECTION.replace(/%s/, port));
+    }
     opera.scopeAddClient(host_connected, receive, quit, port);
   }
 

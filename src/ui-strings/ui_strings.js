@@ -103,6 +103,7 @@ ui_strings.ALERT_WRONG_START = "Dragonfly cannot be used in this way.\n" +
   "   opera:config > Developer Tools > Developer Tools URL\n\n" +
   "or setup a debugger environment with a proxy and server."
 
-
+ui_strings.ALERT_WAITING_FOR_CONNECTION = "Dragonfly is now waiting for a connection on port %s.\n" +
+  "Please connect your device on opera:debug.";
 
 

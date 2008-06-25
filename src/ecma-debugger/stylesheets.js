@@ -1282,12 +1282,21 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
 
   this.getSortedProperties = function()
   {
-    var ret = [], i = 0;
+    var ret = [], i = 0, dashs = [], value = '';
     for ( ; i <  __indexMapLength; i++ )
     {
-      ret[i] = __indexMap[__sortedIndexMap[i]];
+
+      value = __indexMap[__sortedIndexMap[i]];
+      if( value.indexOf('-') == 0 )
+      {
+        dashs[dashs.length] = value;
+      }
+      else
+      {
+        ret[ret.length] = value;
+      }
     }
-    return ret;
+    return ret.concat(dashs);
   }
   
   messages.addListener('runtime-destroyed', onRuntimeDestroyed);

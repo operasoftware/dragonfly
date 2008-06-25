@@ -63,10 +63,7 @@ suggest_values['border-collapse']=
   'separate'
 ]
 
-suggest_values['border-color']=
-[
-  'transparent'
-]
+
 
 suggest_values['border-spacing']=
 [
@@ -196,7 +193,7 @@ suggest_values['color']=
   'WindowText'
 ]
 
-suggest_values['background-color']=
+suggest_values['border-color'] = suggest_values['background-color'] =
 [
   'transparent'
 ].concat(suggest_values['color']);

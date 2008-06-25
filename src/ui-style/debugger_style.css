@@ -451,7 +451,12 @@ media-rule rules {
 /* css inspector class css-inspector */
 
 .css-inspector rule {
+  cursor: default;
   margin:0;
+  }
+
+.css-inspector rule[rule-id] {
+  cursor: text;
   }
 
 category, header, styles, stylesheet-link {
