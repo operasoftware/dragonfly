@@ -1,26 +1,29 @@
+
+var df_classes = window.df_classes || ( window.df_classes = {} );
+
+/**
+  * @constructor 
+  * @extends ViewBase
+  */
+
+df_classes.EnvironmentView = function(id, name, container_class)
+{
+  var self = this;
+  this.createView = function(container)
+  {
+    container.innerHTML = '';
+    container.render( templates.hello( services['ecmascript-debugger'].getEnvironment()) );
+  }
+  this.init(id, name, container_class);
+}
+
+df_classes.EnvironmentView.prototype = ViewBase;
+new df_classes.EnvironmentView('environment', ui_strings.VIEW_LABEL_ENVIRONMENT, 'scroll');
+
+
 (function()
 {
-
   var View = null;
-
-
-
-  View = function(id, name, container_class)
-  {
-    var self = this;
-    this.createView = function(container)
-    {
-      container.innerHTML = '';
-      container.render( templates.hello( services['ecmascript-debugger'].getEnvironment()) );
-    }
-    this.init(id, name, container_class);
-  }
-  View.prototype = ViewBase;
-  new View('environment', ui_strings.VIEW_LABEL_ENVIRONMENT, 'scroll');
-
-
-
-
   View = function(id, name, container_class)
   {
     var container_id = 'backtrace';

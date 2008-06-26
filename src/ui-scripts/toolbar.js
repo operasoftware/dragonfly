@@ -1,3 +1,8 @@
+/**
+  * @constructor
+  * @extends UIBase
+  */
+
 var ToolbarBase = function()
 {
   this.type = 'toolbar';
@@ -127,16 +132,28 @@ var ToolbarBase = function()
 
 }
 
+/**
+  * @constructor
+  */
+
 var Toolbar = function(cell, buttons, filters, specials, customs)
 {
   this.init(cell, buttons, filters, specials, customs);
 }
+
+/**
+  * @constructor
+  */
 
 var TopToolbar = function(cell, buttons, filters, specials, customs)
 {
   this.type = 'top-toolbar';
   this.init(cell, buttons, filters, specials, customs);
 }
+
+/**
+  * @constructor
+  */
 
 var WindowToolbar = function(cell, buttons, filters, specials, customs)
 {

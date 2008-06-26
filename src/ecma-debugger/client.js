@@ -28,10 +28,7 @@ var client = new function()
       }
       else
       {
-        alert
-        ( 
-           'Service is avaible: ' + service.name
-        );
+        alert ( ui_strings.ALERT_SERVICE_NOT_AVAILABLE.replace(/%s/, service.name) );
       }
     }
   }
