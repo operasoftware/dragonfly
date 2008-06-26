@@ -121,13 +121,16 @@ var host_tabs = new function()
     if( xml.getNodeData('status') == 'completed' )
     {
       var node_id = xml.getNodeData('object-id');
-      document_map[runtime_id] = node_id;
-      var id = getNewHandlerId();
-      node_map[id] = node_id;
-      type_map[id] = event_type;
-      callback_map[id] = callback;
-      runtime_id_map[id] = runtime_id;
-      services['ecmascript-debugger'].addEventHandler(id, node_id, event_type);     
+      if( !checkTriple(node_id, event_type, callback ) ) 
+      {
+        document_map[runtime_id] = node_id;
+        var id = getNewHandlerId();
+        node_map[id] = node_id;
+        type_map[id] = event_type;
+        callback_map[id] = callback;
+        runtime_id_map[id] = runtime_id;
+        services['ecmascript-debugger'].addEventHandler(id, node_id, event_type); 
+      }
     }
     else
     {
@@ -203,10 +206,14 @@ var host_tabs = new function()
       {
         clearEventListener(id);
       }
-      for( i = 0; ( ev = activeEvents[i] ) && !( ev.type == event_type && ev.cb == callback ); i++);
-      if( ev )
+      for( i = 0; i < activeEvents.length; i++)
       {
-        activeEvents.splice(i, 1);
+        ev = activeEvents[i];
+        if( ev && ev.type == event_type && ev.cb == callback )
+        {
+          activeEvents.splice(i, 1);
+          i--;
+        }
       }
     }
   }
