@@ -544,7 +544,7 @@ var Editor = function()
   this.getSuggest = function(prop_name, is_prop, token, cur_start, cur_end, action_id)
   {
     var 
-    re_num = /^(-?)(\d+)(.*)$/,
+    re_num = /^(-?)([\d.]+)(.*)$/,
     match = null,
     suggest = null,
     suggest_type = 
@@ -638,6 +638,11 @@ var Editor = function()
 
   this['suggest-number'] = function(token, cur_start, cur_end, action_id, match)
   {
+    var is_float = /\.(\d+)/.exec(match[2]);
+    if( is_float )
+    {
+      return [ ( parseFloat(match[1] + match[2]) + ( action_id == action_ids.NAV_UP ? 0.1 : -0.1 ) ).toFixed(is_float[1].length) + match[3]];
+    }
     return [ ( parseInt(match[1] + match[2]) + ( action_id == action_ids.NAV_UP ? 1 : -1 ) ).toString() + match[3]];
   }
 
