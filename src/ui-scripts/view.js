@@ -1,3 +1,7 @@
+/**
+  * @constructor 
+  */
+
 var ViewBase = new function()
 {
   var self = this;
@@ -201,6 +205,11 @@ var ViewBase = new function()
   messages.addListener('hide-view', onHideView);
 
 }
+
+/**
+  * @constructor 
+  * @extends ViewBase
+  */
 
 
 var View = function(id, name, container_class, html, default_handler)

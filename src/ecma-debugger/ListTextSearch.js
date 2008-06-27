@@ -1,3 +1,7 @@
+/**
+  * @constructor 
+  */
+
 var ListTextSearch = function()
 {
   const 

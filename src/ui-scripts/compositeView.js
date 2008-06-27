@@ -1,3 +1,7 @@
+/**
+  * @constructor 
+  * @extends ViewBase
+  */
 var CompositeViewBase = function()
 {
   this.type = 'composite-view';
@@ -31,7 +35,10 @@ var CompositeViewBase = function()
   }
 }
 
-
+/**
+  * @constructor 
+  * @extends CompositeViewBase
+  */
 
 var CompositeView = function(id, name, rough_layout)
 {

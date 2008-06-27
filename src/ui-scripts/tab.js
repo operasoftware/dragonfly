@@ -1,3 +1,7 @@
+/**
+  * @constructor 
+  */
+
 var TabBase = new function()
 {
   var self = this;
@@ -28,6 +32,11 @@ var TabBase = new function()
   }
 
 }
+
+/**
+  * @constructor 
+  * @extends TabBase
+  */
 
 var Tab = function(ref_id, name, has_close_button)
 {

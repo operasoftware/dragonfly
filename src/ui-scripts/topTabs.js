@@ -1,3 +1,8 @@
+/**
+  * @constructor 
+  * @extends TabsBase
+  */
+
 var TopTabsBase = function()
 {
   this.type = 'top-tabs';
@@ -39,6 +44,11 @@ var TopTabsBase = function()
     }
   }
 }
+
+/**
+  * @constructor 
+  * @extends TopTabsBase
+  */
 
 var TopTabs = function(cell)
 {

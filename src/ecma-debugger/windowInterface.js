@@ -1,3 +1,9 @@
+/**
+  * @constructor 
+  * @deprecated
+  * does not work as intended
+  */
+
 var windowInterface = new function()
 {
   var keyHandlers ={};
@@ -34,6 +40,4 @@ var windowInterface = new function()
     opera.postError(key);
     if(keyHandlers[key]) keyHandlers[key]();
   }
-
-
 }

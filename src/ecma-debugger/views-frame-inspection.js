@@ -1,131 +1,139 @@
-(function()
+
+
+var cls = window.cls || ( window.cls = {} );
+
+/**
+  * @constructor 
+  * @extends ViewBase
+  */
+cls.FrameInspectionView = function(id, name, container_class)
 {
-  View = function(id, name, container_class)
+
+  var self = this;
+
+  var __ref_data = 'frame_inspection';
+
+  this.createView = function(container)
   {
-
-    var self = this;
-
-    var __ref_data = 'frame_inspection';
-
-    this.createView = function(container)
+    var 
+    selectedObject = window[__ref_data].getSelectedObject(),
+    data = null,
+    filter = null;
+    
+    if( selectedObject )
     {
-      var 
-      selectedObject = window[__ref_data].getSelectedObject(),
-      data = null,
-      filter = null;
-      
-      if( selectedObject )
+      data = window[__ref_data].getData(selectedObject.rt_id, selectedObject.obj_id, -1, arguments);
+      if(data)
       {
-        data = window[__ref_data].getData(selectedObject.rt_id, selectedObject.obj_id, -1, arguments);
-        if(data)
-        {
-          delete container.__call_count;
-          // TODO when is it the global scope?
-          filter = window[__ref_data].getDataFilter();
-          container.innerHTML = 
-            "<examine-objects rt-id='" + selectedObject.rt_id + "' " + 
-                  "data-id=" + __ref_data + " " +
-                  "obj-id='" + selectedObject.obj_id + "' >" +
-                "<start-search-scope></start-search-scope>" +
-                window[__ref_data].prettyPrint(data, -1, filter, frame_inspection.filter_type) + 
-                "<end-search-scope></end-search-scope>" +
-            "</examine-objects>";
-          messages.post
-          ( 
-            'list-search-context', 
-            {
-              'data_id': __ref_data, 
-              'rt_id': selectedObject.rt_id,
-              'obj_id': selectedObject.obj_id, 
-              'depth': '-1'
-            }
-          );
-        }
-      }
-      else
-      {
-        container.innerHTML = "";
+        delete container.__call_count;
+        // TODO when is it the global scope?
+        filter = window[__ref_data].getDataFilter();
+        container.innerHTML = 
+          "<examine-objects rt-id='" + selectedObject.rt_id + "' " + 
+                "data-id=" + __ref_data + " " +
+                "obj-id='" + selectedObject.obj_id + "' >" +
+              "<start-search-scope></start-search-scope>" +
+              window[__ref_data].prettyPrint(data, -1, filter, frame_inspection.filter_type) + 
+              "<end-search-scope></end-search-scope>" +
+          "</examine-objects>";
+        messages.post
+        ( 
+          'list-search-context', 
+          {
+            'data_id': __ref_data, 
+            'rt_id': selectedObject.rt_id,
+            'obj_id': selectedObject.obj_id, 
+            'depth': '-1'
+          }
+        );
       }
     }
-
-    this.clearView = function()
+    else
     {
-      // TODO
+      container.innerHTML = "";
     }
-
-    this.init(id, name, container_class);
-
-    var onActiveInspectionType = function(msg)
-    {
-      __ref_data = msg.inspection_type == 'frame' ? 'frame_inspection' : 'object_inspection';
-    }
-
-    messages.addListener('active-inspection-type', onActiveInspectionType);
-
-    /*
-    this.showGlobalScopeUpdateLink = function()
-    {
-      var containers = this.getAllContainers(), c = null , i = 0;
-      var lis = null, li = null , k = 0;
-      for( ; c = containers[i]; i++)
-      {
-       c.innerHTML = 
-        "<div class='padding'><p handler='update-global-scope'>show global scope</p></div>";
-      }
-    }
-    */
-
   }
 
-  View.prototype = ViewBase;
-  new View('frame_inspection', ui_strings.VIEW_LABEL_FRAME_INSPECTION, 'scroll');
+  this.clearView = function()
+  {
+    // TODO
+  }
 
-  
+  this.init(id, name, container_class);
 
-  new Settings
-  (
-    // id
-    'frame_inspection', 
-    // key-value map
+  var onActiveInspectionType = function(msg)
+  {
+    __ref_data = msg.inspection_type == 'frame' ? 'frame_inspection' : 'object_inspection';
+  }
+
+  messages.addListener('active-inspection-type', onActiveInspectionType);
+
+  /*
+  this.showGlobalScopeUpdateLink = function()
+  {
+    var containers = this.getAllContainers(), c = null , i = 0;
+    var lis = null, li = null , k = 0;
+    for( ; c = containers[i]; i++)
     {
-      'automatic-update-global-scope': false,
-      'hide-default-properties-in-global-scope': true
-    }, 
-    // key-label map
-    {
-      'automatic-update-global-scope': ui_strings.SWITCH_UPDATE_GLOBAL_SCOPE,
-      'hide-default-properties-in-global-scope': ui_strings.BUTTON_LABEL_HIDE_DEFAULT_PROPS_IN_GLOBAL_SCOPE
-    },
-    // settings map
-    {
-      checkboxes:
-      [
-        'hide-default-properties-in-global-scope'
-      ]
+     c.innerHTML = 
+      "<div class='padding'><p handler='update-global-scope'>show global scope</p></div>";
     }
-  );
+  }
+  */
 
-  new ToolbarConfig
-  (
-    'frame_inspection',
-    null,
+}
+
+cls.FrameInspectionView.prototype = ViewBase;
+new cls.FrameInspectionView('frame_inspection', ui_strings.VIEW_LABEL_FRAME_INSPECTION, 'scroll');
+
+
+
+new Settings
+(
+  // id
+  'frame_inspection', 
+  // key-value map
+  {
+    'automatic-update-global-scope': false,
+    'hide-default-properties-in-global-scope': true
+  }, 
+  // key-label map
+  {
+    'automatic-update-global-scope': ui_strings.SWITCH_UPDATE_GLOBAL_SCOPE,
+    'hide-default-properties-in-global-scope': ui_strings.BUTTON_LABEL_HIDE_DEFAULT_PROPS_IN_GLOBAL_SCOPE
+  },
+  // settings map
+  {
+    checkboxes:
     [
-      {
-        handler: 'frame_inspection-text-search',
-        title: ui_strings.INPUT_DEFAULT_TEXT_FILTER,
-        label: ui_strings.INPUT_DEFAULT_TEXT_FILTER
-      }
+      'hide-default-properties-in-global-scope'
     ]
-  )
+  }
+);
 
-  new Switches
-  (
-    'frame_inspection',
-    [
-      "hide-default-properties-in-global-scope"
-    ]
-  )
+new ToolbarConfig
+(
+  'frame_inspection',
+  null,
+  [
+    {
+      handler: 'frame_inspection-text-search',
+      title: ui_strings.INPUT_DEFAULT_TEXT_FILTER,
+      label: ui_strings.INPUT_DEFAULT_TEXT_FILTER
+    }
+  ]
+)
 
+new Switches
+(
+  'frame_inspection',
+  [
+    "hide-default-properties-in-global-scope"
+  ]
+);
+
+(function()
+{
   var listTextSearch = new ListTextSearch();
 
   var onViewCreated = function(msg)

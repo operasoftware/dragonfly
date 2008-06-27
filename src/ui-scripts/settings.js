@@ -1,3 +1,7 @@
+/**
+  * @constructor 
+  */
+
 var SettingsBase = function()
 {
 
@@ -61,6 +65,11 @@ var SettingsBase = function()
   }
 
 }
+
+/**
+  * @constructor 
+  * @extends SettingsBase
+  */
 
 var Settings = function(view_id, key_map, label_map, setting_map, template)
 {

@@ -1,3 +1,7 @@
+/**
+  * @constructor 
+  */
+
 var tagManager = new function()
 {
   var counter = 1;
@@ -6,10 +10,10 @@ var tagManager = new function()
 /** To set a tagged callback. Arguments are object, method, additional arguments. 
   * The method will be called on the object with the response (xml document) as first argument, 
   * concatenated with the additional arguments.
-  * @param {Object} obj This is a string parameter
-  * @param {Object} methode This is a string parameter
-  * @param { } additinal argument
-  * @param { } ...
+  * @param {Object} obj the object on which the methode will be called or null
+  * @param {Function} methode the callback function
+  * @param {Array} args_list the arguments of this list will be concateneted with the xml response document as first argument
+  * @return {String} unique tag
   */
   this.setCB = function(obj, methode, args_list) // object, methode, other args
   {

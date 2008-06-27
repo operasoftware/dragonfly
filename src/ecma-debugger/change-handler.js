@@ -1,3 +1,9 @@
+/**
+  * @constructor 
+  * @deprecated
+  * use EventHandler and BaseActions
+  */
+
 var change_handler = new function()
 {
   var handler = function(event)

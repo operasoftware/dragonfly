@@ -105,7 +105,7 @@ ui_strings.ALERT_WRONG_START = "Dragonfly cannot be used in this way.\n" +
 
 ui_strings.ALERT_WAITING_FOR_CONNECTION = 
   "Opera Dragonfly is waiting for a connection on port %s.\n" +
-  "Please enter opera:debukg in your device’s URL field to connect."
+  "Please enter opera:debug in your device's URL field to connect."
 
 ui_strings.ALERT_SERVICE_NOT_AVAILABLE =  "Service is not available: %s"
   

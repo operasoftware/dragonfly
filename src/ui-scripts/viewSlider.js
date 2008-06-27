@@ -1,3 +1,7 @@
+/**
+  * @constructor 
+  */
+
 var SlideViews = function(container)
 {
   const VER = 'v', HOR = 'h';

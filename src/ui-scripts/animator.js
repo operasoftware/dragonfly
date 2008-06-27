@@ -1,3 +1,7 @@
+/**
+  * @constructor 
+  */
+
 var Animator = function(target)
 {
   var id = target.id;

@@ -1,3 +1,7 @@
+/**
+  * @constructor 
+  * @extends ObjectDataBase
+  */
 var Node_dom_attrs = function()
 {
 

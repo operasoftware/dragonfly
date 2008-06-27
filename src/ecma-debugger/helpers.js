@@ -1,3 +1,9 @@
+/**
+  * @constructor 
+  * @deprecated
+  * use EventHandler and BaseActions
+  */
+
 helpers = new function()
 {
   var self = this;

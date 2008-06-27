@@ -1,3 +1,9 @@
+/**
+  * @constructor 
+  * @deprecated
+  * use EventHandler and BaseActions
+  */
+
 var scroll_handler = new function()
 {
   var handler = function(event)

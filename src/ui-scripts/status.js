@@ -1,3 +1,8 @@
+/**
+  * @constructor 
+  * @extends UIBase
+  */
+
 var StatusbarBase = function()
 {
   this.type = 'statusbar';
@@ -63,10 +68,20 @@ var StatusbarBase = function()
 
 }
 
+/**
+  * @constructor 
+  * @extends StatusbarBase
+  */
+
 var Statusbar = function(cell)
 {
   this.init(cell);
 }
+
+/**
+  * @constructor 
+  * @extends StatusbarBase
+  */
 
 var WindowStatusbar = function(cell)
 {
@@ -79,6 +94,10 @@ var WindowStatusbar = function(cell)
   this.init(cell);
 }
 
+/**
+  * @constructor 
+  * @extends StatusbarBase
+  */
 
 var TopStatusbar = function(cell)
 {

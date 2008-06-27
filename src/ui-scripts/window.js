@@ -1,3 +1,7 @@
+/**
+  * @constructor 
+  */
+
 var UIWindowBase = new function()
 {
   var self = this;
@@ -430,6 +434,11 @@ var UIWindowBase = new function()
   window.addEventListener('load', init, false);
   
 }
+
+/**
+  * @constructor 
+  * @extends UIWindowBase
+  */
 
 var UIWindow = function(view_id)
 {

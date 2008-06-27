@@ -1,3 +1,7 @@
+/**
+  * @constructor 
+  */
+
 var ServiceBase = new function(name)
 {
 

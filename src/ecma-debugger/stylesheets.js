@@ -1,3 +1,7 @@
+/**
+  * @constructor 
+  */
+
 var stylesheets = new function()
 {
   var self = this;

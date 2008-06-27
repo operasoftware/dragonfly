@@ -1,3 +1,7 @@
+/**
+  * @constructor 
+  */
+
 storage = new function()
 {
   var setCookie =function(name, value, time)

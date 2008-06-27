@@ -1,3 +1,8 @@
+/**
+  * @constructor 
+  * @extends UIBase
+  */
+
 var ContainerBase = function()
 {
   this.type = 'container';
@@ -84,6 +89,10 @@ var ContainerBase = function()
 
 }
 
+/**
+  * @constructor 
+  * @extends ContainerBase
+  */
 
 var Container = function(cell)
 {

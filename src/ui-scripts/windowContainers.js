@@ -1,3 +1,8 @@
+/**
+  * @constructor 
+  * @extends ContainerBase
+  */
+
 var WindowContainerBase = function()
 {
 
@@ -59,6 +64,11 @@ var WindowContainerBase = function()
   }
 
 }
+
+/**
+  * @constructor 
+  * @extends WindowContainerBase
+  */
 
 var WindowContainer = function(cell)
 {

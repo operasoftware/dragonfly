@@ -1,3 +1,8 @@
+/**
+  * @constructor 
+  * @extends UIBase
+  */
+
 var TabsBase = function()
 {
   const
@@ -223,6 +228,11 @@ var TabsBase = function()
   }
 
 }
+
+/**
+  * @constructor 
+  * @extends TabsBase
+  */
 
 
 var Tabs = function(cell)

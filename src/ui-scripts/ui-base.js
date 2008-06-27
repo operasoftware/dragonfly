@@ -1,3 +1,7 @@
+/**
+  * @constructor 
+  */
+
 var UIBase = new function()
 {
   var self = this;

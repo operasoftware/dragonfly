@@ -1,3 +1,8 @@
+/**
+  * @constructor 
+  * @extends ObjectDataBase
+  */
+
 var Frame_inspection = function()
 {
 

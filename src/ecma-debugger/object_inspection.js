@@ -1,3 +1,8 @@
+/**
+  * @constructor 
+  * @extends ObjectDataBase
+  */
+
 var Object_inspection = function()
 {
 

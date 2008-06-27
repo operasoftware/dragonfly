@@ -1,3 +1,8 @@
+/**
+  * @constructor 
+  * @extends ViewBase
+  */
+
 var SettingView = function(id, name, container_class)
 {
   this.ishidden_in_menu = true;

@@ -1,4 +1,8 @@
-﻿var Colors = function()
+﻿/**
+* @constructor
+*/
+
+var Colors = function()
 {
   const 
   RED = 0, 

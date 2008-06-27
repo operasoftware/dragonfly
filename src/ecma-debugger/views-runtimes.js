@@ -1,403 +1,429 @@
-(function()
+//(function()
+//{
+
+var cls = window.cls || ( window.cls = {} );
+
+/**
+  * @constructor 
+  * @extends ViewBase
+  */
+
+var RuntimeBaseView = function()
 {
-
-  var RuntimeBaseView = function()
+  this.updateWindowDropdown = function(container)
   {
-    this.updateWindowDropdown = function(container)
+    var 
+    select = this.getToolbarControl(container, 'select-window'),
+    windows = runtimes.getWindows(),
+    win = null,
+    i = 0,
+    markup = '<option value="-1"> - ' + ui_strings.SELECT_WINDOW_EMPTY + ' - </option>';
+    if(select)
     {
-      var 
-      select = this.getToolbarControl(container, 'select-window'),
-      windows = runtimes.getWindows(),
-      win = null,
-      i = 0,
-      markup = '<option value="-1"> - ' + ui_strings.SELECT_WINDOW_EMPTY + ' - </option>';
-      if(select)
+      for( ; win = windows[i]; i++ )
       {
-        for( ; win = windows[i]; i++ )
-        {
-          markup += '<option value="' + win.id + '"' + 
-            ( win.is_selected ? ' selected="selected"' : '' ) + '>' + 
-            ( win.title || win.uri ) + 
-            '</option>';
-        }
-        select.innerHTML = markup;
+        markup += '<option value="' + win.id + '"' + 
+          ( win.is_selected ? ' selected="selected"' : '' ) + '>' + 
+          ( win.title || win.uri ) + 
+          '</option>';
       }
+      select.innerHTML = markup;
     }
   }
+}
 
-  RuntimeBaseView.prototype = ViewBase;
+RuntimeBaseView.prototype = ViewBase;
 
-  var RuntimeView = function(){};
-  RuntimeView.prototype = new RuntimeBaseView();
+/**
+  * @constructor 
+  * @extends RuntimeBaseView
+  */
 
-  var templates = window.templates ? window.templates : ( window.templates = {} );
-  templates.windowSelect = function()
+var RuntimeView = function(){};
+RuntimeView.prototype = new RuntimeBaseView();
+
+var templates = window.templates || ( window.templates = {} );
+templates.windowSelect = function()
+{
+  return [
+    'window-select',
+    [
+      'select',
+      'handler', this.handler
+    ]
+  ];
+}
+
+RuntimeBaseView.reload_button = 
+[
   {
-    return [
-      'window-select',
-      [
-        'select',
-        'handler', this.handler
-      ]
-    ];
+    handler: 'reload-window',
+    title: ui_strings.BUTTON_LABEL_RELOAD_HOST
   }
+]
 
-  var reload_button = 
-  [
-    {
-      handler: 'reload-window',
-      title: ui_strings.BUTTON_LABEL_RELOAD_HOST
-    }
-  ]
-
-  var custum_controls =
-  [
-    {
-      handler: 'select-window',
-      title: ui_strings.BUTTON_LABEL_SELECT_WINDOW,
-      type: 'dropdown',
-      class: 'window-select-dropdown',
-      template: templates.windowSelect
-    }
-  ]
-
-  eventHandlers.change['select-window'] = function(event, target)
+RuntimeBaseView.custum_controls =
+[
   {
-    if(target.value)
-    {
-      host_tabs.setActiveTab(target.value);
-    }
+    handler: 'select-window',
+    title: ui_strings.BUTTON_LABEL_SELECT_WINDOW,
+    type: 'dropdown',
+    class: 'window-select-dropdown',
+    template: templates.windowSelect
   }
+]
 
-  eventHandlers.click['reload-window'] = function(event, target)
+eventHandlers.change['select-window'] = function(event, target)
+{
+  if(target.value)
   {
-    runtimes.reloadWindow();
+    host_tabs.setActiveTab(target.value);
   }
+}
 
-  new Settings
-  (
-    // id
-    'runtimes', 
-    // kel-value map
-    {
-      'selected-window': '',
-      'reload-runtime-automatically': true
-    }, 
-    // key-label map
-    {
-      'reload-runtime-automatically': ui_strings.SWITCH_RELOAD_SCRIPTS_AUTOMATICALLY
-    },
-    // settings map
-    {
-      checkboxes:
-      [
-        'reload-runtime-automatically'
-      ]
-    }
-  );
+eventHandlers.click['reload-window'] = function(event, target)
+{
+  runtimes.reloadWindow();
+}
 
-  var View = null;
+new Settings
+(
+  // id
+  'runtimes', 
+  // kel-value map
+  {
+    'selected-window': '',
+    'reload-runtime-automatically': true
+  }, 
+  // key-label map
+  {
+    'reload-runtime-automatically': ui_strings.SWITCH_RELOAD_SCRIPTS_AUTOMATICALLY
+  },
+  // settings map
+  {
+    checkboxes:
+    [
+      'reload-runtime-automatically'
+    ]
+  }
+);
+
+
 
   /****** scripts ******/
 
-  View = function(id, name, container_class)
+/**
+  * @constructor 
+  * @extends RuntimeView
+  */
+
+cls.RuntimesView = function(id, name, container_class)
+{
+  var self = this;
+
+  this.createView = function(container)
   {
-    var self = this;
+    this.updateWindowDropdown(container);
+    container.innerHTML = '';
 
-    this.createView = function(container)
+    var active_window_id = runtimes.getActiveWindowId();
+
+    if( active_window_id )
     {
-      this.updateWindowDropdown(container);
-      container.innerHTML = '';
+      var 
+      _runtimes = runtimes.getRuntimes(active_window_id),
+      rt = null, 
+      i = 0;
 
-      var active_window_id = runtimes.getActiveWindowId();
-
-      if( active_window_id )
+      for( ; ( rt = _runtimes[i] ) && !rt['selected']; i++);
+      if( !rt && _runtimes[0] )
       {
-        var 
-        _runtimes = runtimes.getRuntimes(active_window_id),
-        rt = null, 
-        i = 0;
+        runtimes.setSelectedRuntimeId(_runtimes[0]['runtime-id']);
+        return;
+      }
 
-        for( ; ( rt = _runtimes[i] ) && !rt['selected']; i++);
-        if( !rt && _runtimes[0] )
+      for( ; ( rt = _runtimes[i] ) && !rt['unfolded-script']; i++);
+      if( !rt && _runtimes[0] )
+      {
+        _runtimes[0]['unfolded-script'] = true;
+      }
+
+      container.render(['div', 
+        templates.runtimes(_runtimes, 'script', 'folder'), 
+        'class', 'padding']);
+    }
+  }
+
+  this.updateSelectedScript = function( target, script_id )
+  {
+
+    var 
+    containers = self.getAllContainers(), 
+    c = null , 
+    i = 0, 
+    old_target = null;
+
+    for( ; c = containers[i]; i++)
+    {
+      if ( old_target = c.getElementsByClassName('selected')[0] )
+      {
+        old_target.removeClass('selected');
+      }
+    }
+    target.addClass('selected');
+  }
+
+  var onThreadStopped = function(msg)
+  {
+    var script_id = msg.stop_at['script-id'];
+    var containers = self.getAllContainers(), c = null , i = 0;
+    var lis = null, li = null , k = 0;
+    for( ; c = containers[i]; i++)
+    {
+      lis = c.getElementsByTagName('li');
+      for( k = 0; li = lis[k]; k++)
+      {
+        if( li.getAttribute('script-id') == script_id )
         {
-          runtimes.setSelectedRuntimeId(_runtimes[0]['runtime-id']);
+          li.style.backgroundPosition = '0 0';
+          li.scrollIntoView();
           return;
         }
-
-        for( ; ( rt = _runtimes[i] ) && !rt['unfolded-script']; i++);
-        if( !rt && _runtimes[0] )
-        {
-          _runtimes[0]['unfolded-script'] = true;
-        }
-
-        container.render(['div', 
-          templates.runtimes(_runtimes, 'script', 'folder'), 
-          'class', 'padding']);
       }
     }
-
-    this.updateSelectedScript = function( target, script_id )
-    {
-
-      var 
-      containers = self.getAllContainers(), 
-      c = null , 
-      i = 0, 
-      old_target = null;
-
-      for( ; c = containers[i]; i++)
-      {
-        if ( old_target = c.getElementsByClassName('selected')[0] )
-        {
-          old_target.removeClass('selected');
-        }
-      }
-      target.addClass('selected');
-    }
-
-    var onThreadStopped = function(msg)
-    {
-      var script_id = msg.stop_at['script-id'];
-      var containers = self.getAllContainers(), c = null , i = 0;
-      var lis = null, li = null , k = 0;
-      for( ; c = containers[i]; i++)
-      {
-        lis = c.getElementsByTagName('li');
-        for( k = 0; li = lis[k]; k++)
-        {
-          if( li.getAttribute('script-id') == script_id )
-          {
-            li.style.backgroundPosition = '0 0';
-            li.scrollIntoView();
-            return;
-          }
-        }
-      }
-    }
-
-    var onThreadContinue = function(msg)
-    {
-      var script_id = msg.stop_at['script-id'];
-      var containers = self.getAllContainers(), c = null , i = 0;
-      var lis = null, li = null , k = 0;
-      for( ; c = containers[i]; i++)
-      {
-        lis = c.getElementsByTagName('li');
-        for( k = 0; li = lis[k]; k++)
-        {
-          if( li.getAttribute('script-id') == script_id )
-          {
-            li.style.removeProperty('background-position');
-            return;
-          }
-        }
-      }
-    }
-
-
-
-    this.init(id, name, container_class);
-
-    messages.addListener("thread-stopped-event", onThreadStopped);
-    messages.addListener("thread-continue-event", onThreadContinue);
   }
 
-  View.prototype = new RuntimeView();
-
-  new View('runtimes', ui_strings.VIEW_LABEL_SCRIPTS, 'scroll runtimes');
-
-  new ToolbarConfig
-  (
-    'runtimes',
-    reload_button,
-    null,
-    null,
-    custum_controls
-  )
-
-  /****** dom ******/
-
-  View = function(id, name, container_class)
+  var onThreadContinue = function(msg)
   {
-    var self = this;
-
-    this.createView = function(container)
+    var script_id = msg.stop_at['script-id'];
+    var containers = self.getAllContainers(), c = null , i = 0;
+    var lis = null, li = null , k = 0;
+    for( ; c = containers[i]; i++)
     {
-      this.updateWindowDropdown(container);
-      container.innerHTML = '';
-
-      var active_window_id = runtimes.getActiveWindowId();
-
-      if( active_window_id )
+      lis = c.getElementsByTagName('li');
+      for( k = 0; li = lis[k]; k++)
       {
-        var 
-        _runtimes = runtimes.getRuntimes(active_window_id),
-        rt = null, 
-        i = 0;
-
-        
-
-        if( !dom_data.getDataRuntimeId() && _runtimes[0] )
+        if( li.getAttribute('script-id') == script_id )
         {
-          dom_data.getDOM(_runtimes[0]['runtime-id']);
-        }
-        
-        for( ; ( rt = _runtimes[i] ) && !rt['unfolded-dom']; i++);
-        if( !rt && _runtimes[0] )
-        {
-          _runtimes[0]['unfolded-dom'] = true;
-        }
-
-        container.render(['div', 
-          templates.runtimes(_runtimes, 'dom', 'folder'), 
-          'class', 'padding']);
-      }
-
-    }
-
-    this.updateSelectedRuntime = function(rt_id)
-    {
-
-      var containers = this.getAllContainers(), c = null , i = 0;
-      var lis = null, li = null , k = 0;
-      for( ; c = containers[i]; i++)
-      {
-        lis = c.getElementsByTagName('li');
-        for( k = 0; li = lis[k]; k++ )
-        {
-          if( li.hasAttribute('runtime_id') )
-          {
-            if( li.getAttribute('runtime_id') == rt_id)
-            {
-              li.firstChild.addClass('selected-runtime');
-              helpers.setSelected({target: li.parentNode.parentNode});
-            }
-            else
-            {
-              li.firstChild.removeClass('selected-runtime');
-            }
-          }
+          li.style.removeProperty('background-position');
+          return;
         }
       }
     }
+  }
 
-    var onRuntimeSelected = function(msg)
+
+
+  this.init(id, name, container_class);
+
+  messages.addListener("thread-stopped-event", onThreadStopped);
+  messages.addListener("thread-continue-event", onThreadContinue);
+}
+
+cls.RuntimesView.prototype = new RuntimeView();
+
+new cls.RuntimesView('runtimes', ui_strings.VIEW_LABEL_SCRIPTS, 'scroll runtimes');
+
+new ToolbarConfig
+(
+  'runtimes',
+  RuntimeBaseView.reload_button,
+  null,
+  null,
+  RuntimeBaseView.custum_controls
+)
+
+/****** dom ******/
+
+/**
+  * @constructor 
+  * @extends RuntimeView
+  */
+
+cls.RuntimesDOMView = function(id, name, container_class)
+{
+  var self = this;
+
+  this.createView = function(container)
+  {
+    this.updateWindowDropdown(container);
+    container.innerHTML = '';
+
+    var active_window_id = runtimes.getActiveWindowId();
+
+    if( active_window_id )
     {
-      if(self.isvisible())
+      var 
+      _runtimes = runtimes.getRuntimes(active_window_id),
+      rt = null, 
+      i = 0;
+
+      
+
+      if( !dom_data.getDataRuntimeId() && _runtimes[0] )
       {
-        self.updateSelectedRuntime(msg.id);
+        dom_data.getDOM(_runtimes[0]['runtime-id']);
       }
       
-    }
-
-    var onViewCreated = function(msg)
-    {
-      if( !window.opera.attached && msg.id == 'dom' )
+      for( ; ( rt = _runtimes[i] ) && !rt['unfolded-dom']; i++);
+      if( !rt && _runtimes[0] )
       {
-        topCell.showView(id);
+        _runtimes[0]['unfolded-dom'] = true;
       }
+
+      container.render(['div', 
+        templates.runtimes(_runtimes, 'dom', 'folder'), 
+        'class', 'padding']);
     }
 
-    this.init(id, name, container_class);
-    messages.addListener('runtime-selected', onRuntimeSelected);
-    messages.addListener('view-created', onViewCreated);
-
-    
   }
 
-  View.prototype = new RuntimeView();
-
-  new View('runtimes_dom', ui_strings.VIEW_LABEL_DOCUMENTS, 'scroll runtimes');
-
-  new ToolbarConfig
-  (
-    'runtimes_dom',
-    reload_button,
-    null,
-    null,
-    custum_controls
-  )
-
-  /* css */
-
-  View = function(id, name, container_class)
+  this.updateSelectedRuntime = function(rt_id)
   {
-    var self = this;
 
-    this.createView = function(container)
+    var containers = this.getAllContainers(), c = null , i = 0;
+    var lis = null, li = null , k = 0;
+    for( ; c = containers[i]; i++)
     {
-      self.updateWindowDropdown(container);
-      container.innerHTML = '';
-
-      var active_window_id = runtimes.getActiveWindowId();
-
-      if( active_window_id )
+      lis = c.getElementsByTagName('li');
+      for( k = 0; li = lis[k]; k++ )
       {
-        var 
-        _runtimes = runtimes.getRuntimes(active_window_id),
-        rt = null, 
-        i = 0,
-        selected = null,
-        lis = null;
-
-        for( ; ( rt = _runtimes[i] ) && !rt['unfolded-css']; i++);
-        if( !rt && _runtimes[0] )
+        if( li.hasAttribute('runtime_id') )
         {
-          runtimes.setUnfolded(_runtimes[0]['runtime-id'], 'css', true);
-        }
-
-        container.render
-        (
-          ['div', 
-            templates.runtimes(_runtimes, 'css', 'folder', arguments), 
-            'class', 'padding'
-          ]
-        );
-
-        if( !( selected = container.getElementsByClassName('selected')[0] ) )
-        {
-          lis = container.getElementsByTagName('li');
-          i = 0;
-          while( selected = lis[i++] )
+          if( li.getAttribute('runtime_id') == rt_id)
           {
-            if( selected.getAttribute('handler') == 'display-stylesheet' )
-            {
-              selected.releaseEvent('click');
-              break;
-            }
+            li.firstChild.addClass('selected-runtime');
+            helpers.setSelected({target: li.parentNode.parentNode});
+          }
+          else
+          {
+            li.firstChild.removeClass('selected-runtime');
           }
         }
-        if(selected)
-        {
-          delete container.__call_count;
-        }
       }
     }
-
-    var onViewCreated = function(msg)
-    {
-      if( !window.opera.attached && msg.id == 'stylesheets' )
-      {
-        topCell.showView(id);
-      }
-    }
-    
-    this.init(id, name, container_class);
-    messages.addListener('view-created', onViewCreated);
   }
 
-  View.prototype = new RuntimeView();
+  var onRuntimeSelected = function(msg)
+  {
+    if(self.isvisible())
+    {
+      self.updateSelectedRuntime(msg.id);
+    }
+    
+  }
 
-  new View('runtimes_css', ui_strings.VIEW_LABEL_STYLESHEETS, 'scroll runtimes');
+  var onViewCreated = function(msg)
+  {
+    if( !window.opera.attached && msg.id == 'dom' )
+    {
+      topCell.showView(id);
+    }
+  }
 
-  new ToolbarConfig
-  (
-    'runtimes_css',
-    reload_button,
-    null,
-    null,
-    custum_controls
-  )
+  this.init(id, name, container_class);
+  messages.addListener('runtime-selected', onRuntimeSelected);
+  messages.addListener('view-created', onViewCreated);
 
-})()
+  
+}
+
+cls.RuntimesDOMView.prototype = new RuntimeView();
+
+new cls.RuntimesDOMView('runtimes_dom', ui_strings.VIEW_LABEL_DOCUMENTS, 'scroll runtimes');
+
+new ToolbarConfig
+(
+  'runtimes_dom',
+  RuntimeBaseView.reload_button,
+  null,
+  null,
+  RuntimeBaseView.custum_controls
+)
+
+/* css */
+
+/**
+  * @constructor 
+  * @extends RuntimeView
+  */
+
+cls.RuntimesCSSView = function(id, name, container_class)
+{
+  var self = this;
+
+  this.createView = function(container)
+  {
+    self.updateWindowDropdown(container);
+    container.innerHTML = '';
+
+    var active_window_id = runtimes.getActiveWindowId();
+
+    if( active_window_id )
+    {
+      var 
+      _runtimes = runtimes.getRuntimes(active_window_id),
+      rt = null, 
+      i = 0,
+      selected = null,
+      lis = null;
+
+      for( ; ( rt = _runtimes[i] ) && !rt['unfolded-css']; i++);
+      if( !rt && _runtimes[0] )
+      {
+        runtimes.setUnfolded(_runtimes[0]['runtime-id'], 'css', true);
+      }
+
+      container.render
+      (
+        ['div', 
+          templates.runtimes(_runtimes, 'css', 'folder', arguments), 
+          'class', 'padding'
+        ]
+      );
+
+      if( !( selected = container.getElementsByClassName('selected')[0] ) )
+      {
+        lis = container.getElementsByTagName('li');
+        i = 0;
+        while( selected = lis[i++] )
+        {
+          if( selected.getAttribute('handler') == 'display-stylesheet' )
+          {
+            selected.releaseEvent('click');
+            break;
+          }
+        }
+      }
+      if(selected)
+      {
+        delete container.__call_count;
+      }
+    }
+  }
+
+  var onViewCreated = function(msg)
+  {
+    if( !window.opera.attached && msg.id == 'stylesheets' )
+    {
+      topCell.showView(id);
+    }
+  }
+  
+  this.init(id, name, container_class);
+  messages.addListener('view-created', onViewCreated);
+}
+
+cls.RuntimesCSSView.prototype = new RuntimeView();
+
+new cls.RuntimesCSSView('runtimes_css', ui_strings.VIEW_LABEL_STYLESHEETS, 'scroll runtimes');
+
+new ToolbarConfig
+(
+  'runtimes_css',
+  RuntimeBaseView.reload_button,
+  null,
+  null,
+  RuntimeBaseView.custum_controls
+)
+

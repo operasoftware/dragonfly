@@ -1,3 +1,7 @@
+/**
+  * @constructor 
+  */
+
 var runtime_onload_handler = new function()
 {
   // this is a workaround because some apis do not 

@@ -1,3 +1,5 @@
+window.templates = window.templates || ( window.templates = {} );
+
 (function()
 {
   var self = this;
@@ -340,4 +342,4 @@
       ];
   }
 
-}).apply(window.templates? window.templates : ( window.templates = {} ));
+}).apply(window.templates);

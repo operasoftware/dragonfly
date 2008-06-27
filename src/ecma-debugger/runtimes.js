@@ -1,3 +1,7 @@
+/**
+  * @constructor 
+  */
+
 var runtimes = new function()
 {
   var __runtimes = {};
@@ -949,4 +953,3 @@ var runtimes = new function()
 
 }
 
-//

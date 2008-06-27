@@ -1,3 +1,7 @@
+/**
+  * @constructor 
+  */
+
 var host_event_handlers = new function()
 {
   var self = this;

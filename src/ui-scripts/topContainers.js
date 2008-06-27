@@ -1,3 +1,8 @@
+/**
+  * @constructor 
+  * @extends UIBase
+  */
+
 var TopContainerBase = function()
 {
   this.type = 'top-container';
@@ -109,6 +114,11 @@ var TopContainerBase = function()
   }
 
 }
+
+/**
+  * @constructor 
+  * @extends TopContainerBase
+  */
 
 var TopContainer = function(cell)
 {

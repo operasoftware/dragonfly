@@ -1,3 +1,9 @@
+/**
+  * @constructor 
+  * @extends ViewBase
+  * this is a bit a hack
+  */
+
 var Debug = function(id, name, container_class)
 {
   //var d_c = null;

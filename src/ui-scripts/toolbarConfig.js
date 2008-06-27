@@ -1,3 +1,7 @@
+/**
+  * @constructor 
+  */
+
 var ToolbarConfigBase = new function()
 {
   var self = this;
@@ -120,6 +124,11 @@ var ToolbarConfigBase = new function()
     delete ids[id];
   }
 }
+
+/**
+  * @constructor 
+  * @extends ToolbarConfigBase
+  */
 
 var ToolbarConfig = function(name, optional_button_array, optional_filter_array, optional_special_button_array, optional_custom_button_array)
 {

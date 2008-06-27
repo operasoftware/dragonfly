@@ -1,3 +1,7 @@
+/**
+  * @constructor 
+  */
+
 var EventHandler = function(type, is_capturing, handler_key)
 {
   handler_key = handler_key ? handler_key : 'handler';
@@ -57,7 +61,7 @@ new EventHandler('mousedown');
 new EventHandler('focus', true, 'focus-handler');
 new EventHandler('blur', true, 'blur-handler');
 
-/***** click handler *****/
+/***** general ui click handler *****/
 
 eventHandlers.click['tab'] = function(event, target)
 {

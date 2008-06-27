@@ -1,3 +1,7 @@
+/**
+  * @constructor 
+  */
+
 var ObjectDataBase = new function()
 {
   const 

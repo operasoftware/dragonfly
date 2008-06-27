@@ -134,6 +134,7 @@ var ToolbarBase = function()
 
 /**
   * @constructor
+  * @extends ToolbarBase
   */
 
 var Toolbar = function(cell, buttons, filters, specials, customs)
@@ -143,6 +144,7 @@ var Toolbar = function(cell, buttons, filters, specials, customs)
 
 /**
   * @constructor
+  * @extends ToolbarBase
   */
 
 var TopToolbar = function(cell, buttons, filters, specials, customs)
@@ -153,6 +155,7 @@ var TopToolbar = function(cell, buttons, filters, specials, customs)
 
 /**
   * @constructor
+  * @extends ToolbarBase
   */
 
 var WindowToolbar = function(cell, buttons, filters, specials, customs)

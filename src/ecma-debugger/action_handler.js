@@ -1,3 +1,10 @@
+
+
+/**
+  * @constructor 
+  * @deprecated
+  * use EventHandler and BaseActions
+  */
 var action_handler = new function()
 {
   var handler = function(event)

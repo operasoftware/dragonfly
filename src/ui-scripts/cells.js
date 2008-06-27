@@ -559,6 +559,11 @@ CellBase = new function()
   }
 }
 
+/**
+  * @constructor 
+  * @extends ViewBase
+  */
+
 var Cell = function(rough_cell, dir, parent, container_id)
 {
   this.init(rough_cell, dir, parent, container_id)

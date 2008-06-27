@@ -1,3 +1,7 @@
+/**
+  * @constructor 
+  */
+
 var stop_at = new function()
 {
 

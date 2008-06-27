@@ -1,11 +1,11 @@
-var df_classes = window.df_classes || ( window.df_classes = {} );
+var cls = window.cls || ( window.cls = {} );
 
 /**
   * @constructor 
   * @extends ServiceBase
   */
 
-df_classes.ECMAScriptDebuggerService = function(name)
+cls.ECMAScriptDebuggerService = function(name)
 {
 
   var self = this;
@@ -391,8 +391,8 @@ df_classes.ECMAScriptDebuggerService = function(name)
 
 }
 
-df_classes.ECMAScriptDebuggerService.prototype = ServiceBase;
-new df_classes.ECMAScriptDebuggerService('ecmascript-debugger');
+cls.ECMAScriptDebuggerService.prototype = ServiceBase;
+new cls.ECMAScriptDebuggerService('ecmascript-debugger');
 
 
 

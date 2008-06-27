@@ -1,3 +1,7 @@
+/**
+  * @constructor 
+  */
+
 var TextSearch = function()
 {
   const 

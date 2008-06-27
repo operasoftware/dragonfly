@@ -1,3 +1,9 @@
+/**
+  * @constructor 
+  * @extends ViewBase
+  * @see DOM_tree_style this class can be dynamically exchanged with DOM_tree_style
+  */
+
 var DOM_markup_style = function(id, name, container_class)
 {
   var self = this;

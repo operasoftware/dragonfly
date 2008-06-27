@@ -1,3 +1,7 @@
+/**
+  * @constructor 
+  */
+
 var ViewsMenu = function(menu_id)
 {
   var hide_timeouts = [];

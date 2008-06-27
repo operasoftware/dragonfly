@@ -1,3 +1,7 @@
+/**
+  * @constructor 
+  */
+
 var host_tabs = new function()
 {
   var self = this;
@@ -188,6 +192,10 @@ var host_tabs = new function()
     delete runtime_id_map[id];
     delete id_map[id];
   }
+
+  /**
+  * @constructor 
+  */
 
   this.activeTab = new function()
   {

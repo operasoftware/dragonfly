@@ -1,3 +1,7 @@
+/**
+  * @constructor 
+  */
+
 var elementStyle = new function()
 {
   // TODO cleanup code history

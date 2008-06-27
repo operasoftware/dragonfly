@@ -1,3 +1,7 @@
+/**
+  * @constructor 
+  */
+
 var Timeouts = function()
 {
   var timeouts = [];

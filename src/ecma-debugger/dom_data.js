@@ -1,3 +1,7 @@
+/**
+  * @constructor 
+  */
+
 var dom_data = new function()
 {
   var self = this;

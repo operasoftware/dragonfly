@@ -1,3 +1,7 @@
+/**
+  * @constructor 
+  */
+
 var Editor = function()
 {
   // assert: a element wich is editable has a monospace font

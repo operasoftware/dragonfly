@@ -1,3 +1,7 @@
+/**
+  * @constructor 
+  */
+
 var SwitchesBase = function()
 {
   this.init = function(view_id, keys)
@@ -21,6 +25,11 @@ var SwitchesBase = function()
     window.switches[view_id] = this;
   }
 }
+
+/**
+  * @constructor 
+  * @extends ViewBase
+  */
 
 var Switches = function(view_id, key_map)
 {

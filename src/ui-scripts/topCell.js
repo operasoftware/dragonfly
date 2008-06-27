@@ -1,4 +1,9 @@
-// a bit different from a normal cell, it holds the main view ui elements but also the main conatiner
+
+/**
+  * @constructor 
+  * @extends CellBase
+  * a bit different from a normal cell, it holds the main view ui elements but also the main conatiner
+  */
 
 var TopCell = function(layout, setDimensions, onresize)
 {

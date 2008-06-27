@@ -1,3 +1,7 @@
+/**
+  * @constructor 
+  */
+
 var elementLayout = new function()
 {
   const

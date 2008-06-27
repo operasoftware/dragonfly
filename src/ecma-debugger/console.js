@@ -1,82 +1,89 @@
-(function()
-{
-  var Service = function(name)
-  {
-    var self = this;
-    var messages = [];
+var cls = window.cls || ( window.cls = {} );
 
-    this.onreceive = function(xml) // only called if there is a xml
-    {
-      if( ini.debug )
-      {
-        debug.logEvents(xml);
-      }
-      if( self[xml.documentElement.nodeName] )
-      {
-        self[xml.documentElement.nodeName](xml)
-      }
-      else
-      {
-        opera.postError('error in console, genericEventListener');
-      }
-    }
-
-    this['message'] = function(message) 
-    {
-      window.console_messages.handle(message);
-    }
-
-    // constructor calls
-
-    this.initBase(name);
-    
-    if( ! client)
-    {
-      opera.postError('client must be created in ecma comsole.js');
-      return;
-    }
-    client.addService(this);
-  }
-
-
-
-  /*
-
-  <?xml version="1.0"?>
-  <message>
-  <time>1194441921</time>
-  <uri>file://localhost/d:/cvs-source/scope/http-clients/ecma-debugger/tests/test-console.html</uri>
-  <context>Inline script thread</context>
-  <severity>error</severity>
-  <source>ecmascript</source>
-  <description xml:space="preserve">Error:
-  name: ReferenceError
-  message: Statement on line 2: Undefined variable: b
-  Backtrace:
-    Line 2 of inline#1 script in file://localhost/d:/cvs-source/scope/http-clients/ecma-debugger/tests/test-console.html
-      b.b = 'hallo';
-  </description>
-  </message>
-
-
-  <message>
-  <time>1194442013</time>
-  <uri>file://localhost/d:/cvs-source/scope/http-clients/ecma-debugger/tests/test-console.html</uri>
-  <context>Inlined stylesheet</context>
-  <severity>information</severity>
-  <source>css</source>
-  <description xml:space="preserve">xxcolor is an unknown property
-
-  Line 2:
-    body {xxcolor:red}
-    --------------^</description></message>
-
+/**
+  * @constructor 
+  * @extends ServiceBase
   */
 
-  Service.prototype = ServiceBase;
-  new Service('console-logger');
+cls.ErrorConsoleService = function(name)
+{
+  var self = this;
+  var messages = [];
 
-})()
+  this.onreceive = function(xml) // only called if there is a xml
+  {
+    if( ini.debug )
+    {
+      debug.logEvents(xml);
+    }
+    if( self[xml.documentElement.nodeName] )
+    {
+      self[xml.documentElement.nodeName](xml)
+    }
+    else
+    {
+      opera.postError('error in console, genericEventListener');
+    }
+  }
+
+  this['message'] = function(message) 
+  {
+    window.console_messages.handle(message);
+  }
+
+  // constructor calls
+
+  this.initBase(name);
+  
+  if( ! client)
+  {
+    opera.postError('client must be created in ecma comsole.js');
+    return;
+  }
+  client.addService(this);
+}
+
+
+
+/*
+
+<?xml version="1.0"?>
+<message>
+<time>1194441921</time>
+<uri>file://localhost/d:/cvs-source/scope/http-clients/ecma-debugger/tests/test-console.html</uri>
+<context>Inline script thread</context>
+<severity>error</severity>
+<source>ecmascript</source>
+<description xml:space="preserve">Error:
+name: ReferenceError
+message: Statement on line 2: Undefined variable: b
+Backtrace:
+  Line 2 of inline#1 script in file://localhost/d:/cvs-source/scope/http-clients/ecma-debugger/tests/test-console.html
+    b.b = 'hallo';
+</description>
+</message>
+
+
+<message>
+<time>1194442013</time>
+<uri>file://localhost/d:/cvs-source/scope/http-clients/ecma-debugger/tests/test-console.html</uri>
+<context>Inlined stylesheet</context>
+<severity>information</severity>
+<source>css</source>
+<description xml:space="preserve">xxcolor is an unknown property
+
+Line 2:
+  body {xxcolor:red}
+  --------------^</description></message>
+
+*/
+
+cls.ErrorConsoleService.prototype = ServiceBase;
+new cls.ErrorConsoleService('console-logger');
+
+/**
+  * @constructor 
+  */
 
 var console_messages = new function()
 {
@@ -235,6 +242,10 @@ var console_messages = new function()
   messages.addListener('runtime-selected', onRuntimeSelecetd);
 };
 
+/**
+  * @constructor 
+  * @extends ViewBase
+  */
 
 var ErrorConsoleView = function(id, name, container_class, source)
 {
@@ -362,113 +373,119 @@ ErrorConsoleView.roughViews.createViews = function()
 
 ErrorConsoleView.roughViews.createViews();
 
-(function()
+/**
+  * @constructor 
+  * @extends ViewBase
+  */
+cls.ConsoleDragonflyView = function(id, name, container_class)
 {
-  var View = function(id, name, container_class)
+  this.createView = function(container)
   {
-    this.createView = function(container)
-    {
-      container.innerHTML = '';
-      container.renderInner(templates.messages(console_messages.getDragonflyMessages()));
-      container.scrollTop = container.scrollHeight;
-    }
-    this.init(id, name, container_class );
+    container.innerHTML = '';
+    container.renderInner(templates.messages(console_messages.getDragonflyMessages()));
+    container.scrollTop = container.scrollHeight;
   }
+  this.init(id, name, container_class );
+}
 
-  View.prototype = ViewBase;
+cls.ConsoleDragonflyView.prototype = ViewBase;
 
-  new View('console-dragonfly', ui_strings.VIEW_LABEL_ERROR_DRAGONFLY, 'scroll error-console');
-  var handler_id = 'clear-error-console-dragonfly';
-  new ToolbarConfig
-  (
-    'console-dragonfly',
+new cls.ConsoleDragonflyView('console-dragonfly', ui_strings.VIEW_LABEL_ERROR_DRAGONFLY, 'scroll error-console');
+
+new ToolbarConfig
+(
+  'console-dragonfly',
+  [
+    {
+      handler: 'clear-error-console-dragonfly',
+      title: 'Clear Log'
+    }
+  ]
+);
+
+eventHandlers.click['clear-error-console-dragonfly'] = function()
+{
+  console_messages.clearDragonflyMessages();
+}
+
+/**
+  * @constructor 
+  * @extends ViewBase
+  * General view to get general console setting.
+  */
+cls.ConsoleView = function(id, name, container_class)
+{
+  this.ishidden_in_menu = true;
+  this.createView = function(container)
+  {
+  }
+  this.init(id, name, container_class);
+}
+
+cls.ConsoleView.prototype = ViewBase;
+
+new cls.ConsoleView('console', 'Console', 'scroll');
+
+new Settings
+(
+  // id 
+  'console', 
+  // key-value map
+  {
+    'console-all': true, 
+    'console-script': true, 
+    'console-css': true, 
+    'console-xml': false,
+    'console-java': false,
+    'console-m2': false,
+    'console-network': false,
+    'console-html': false,
+    'console-xslt': false,
+    'console-svg': false,
+    'console-bittorrent': false,
+    'console-voice': false,
+    'console-widget': false,
+    'console-dragonfly': false,
+    'use-selected-runtime-as-filter': false
+  }, 
+  // key-label map
+  {
+    'console-all': ui_strings.SWITCH_SHOW_TAB_ALL, 
+    'console-script': ui_strings.SWITCH_SHOW_TAB_SCRIPT, 
+    'console-css': ui_strings.SWITCH_SHOW_TAB_CSS, 
+    'console-xml': ui_strings.SWITCH_SHOW_TAB_XML,
+    'console-java': ui_strings.SWITCH_SHOW_TAB_JAVA,
+    'console-m2': ui_strings.SWITCH_SHOW_TAB_M2,
+    'console-network': ui_strings.SWITCH_SHOW_TAB_NETWORK,
+    'console-html': ui_strings.SWITCH_SHOW_TAB_HTML,
+    'console-xslt': ui_strings.SWITCH_SHOW_TAB_XSLT,
+    'console-svg': ui_strings.SWITCH_SHOW_TAB_SVG,
+    'console-bittorrent': ui_strings.SWITCH_SHOW_TAB_BITTORRENT,
+    'console-voice': ui_strings.SWITCH_SHOW_TAB_VOICE,
+    'console-widget': ui_strings.SWITCH_SHOW_TAB_WIDGET,
+    'console-dragonfly': ui_strings.SWITCH_SHOW_TAB_DRAGONFLY,
+    'use-selected-runtime-as-filter': ' use selected runtime as filter'
+  }, 
+  // settings map
+  {
+    checkboxes:
     [
-      {
-        handler: handler_id,
-        title: 'Clear Log'
-      }
+      'console-all', 
+      'console-script', 
+      'console-css', 
+      'console-xml',
+      'console-java',
+      'console-m2',
+      'console-network',
+      'console-html',
+      'console-xslt',
+      'console-svg',
+      'console-bittorrent',
+      'console-voice',
+      'console-widget',
+      'console-dragonfly'
     ]
-  );
-
-  eventHandlers.click[handler_id] = function()
-  {
-    console_messages.clearDragonflyMessages();
   }
+);
 
 
-  View = function(id, name, container_class)
-  {
-    this.ishidden_in_menu = true;
-    this.createView = function(container)
-    {
-    }
-    this.init(id, name, container_class);
-  }
-
-  View.prototype = ViewBase;
-
-  new View('console', 'Console', 'scroll');
-
-  new Settings
-  (
-    // id 
-    'console', 
-    // key-value map
-    {
-      'console-all': true, 
-      'console-script': true, 
-      'console-css': true, 
-      'console-xml': false,
-      'console-java': false,
-      'console-m2': false,
-      'console-network': false,
-      'console-html': false,
-      'console-xslt': false,
-      'console-svg': false,
-      'console-bittorrent': false,
-      'console-voice': false,
-      'console-widget': false,
-      'console-dragonfly': false,
-      'use-selected-runtime-as-filter': false
-    }, 
-    // key-label map
-    {
-      'console-all': ui_strings.SWITCH_SHOW_TAB_ALL, 
-      'console-script': ui_strings.SWITCH_SHOW_TAB_SCRIPT, 
-      'console-css': ui_strings.SWITCH_SHOW_TAB_CSS, 
-      'console-xml': ui_strings.SWITCH_SHOW_TAB_XML,
-      'console-java': ui_strings.SWITCH_SHOW_TAB_JAVA,
-      'console-m2': ui_strings.SWITCH_SHOW_TAB_M2,
-      'console-network': ui_strings.SWITCH_SHOW_TAB_NETWORK,
-      'console-html': ui_strings.SWITCH_SHOW_TAB_HTML,
-      'console-xslt': ui_strings.SWITCH_SHOW_TAB_XSLT,
-      'console-svg': ui_strings.SWITCH_SHOW_TAB_SVG,
-      'console-bittorrent': ui_strings.SWITCH_SHOW_TAB_BITTORRENT,
-      'console-voice': ui_strings.SWITCH_SHOW_TAB_VOICE,
-      'console-widget': ui_strings.SWITCH_SHOW_TAB_WIDGET,
-      'console-dragonfly': ui_strings.SWITCH_SHOW_TAB_DRAGONFLY,
-      'use-selected-runtime-as-filter': ' use selected runtime as filter'
-    }, 
-    // settings map
-    {
-      checkboxes:
-      [
-        'console-all', 
-        'console-script', 
-        'console-css', 
-        'console-xml',
-        'console-java',
-        'console-m2',
-        'console-network',
-        'console-html',
-        'console-xslt',
-        'console-svg',
-        'console-bittorrent',
-        'console-voice',
-        'console-widget',
-        'console-dragonfly'
-      ]
-    }
-  );
-
-})();

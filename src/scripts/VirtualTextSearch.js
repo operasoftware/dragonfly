@@ -1,3 +1,7 @@
+/**
+  * @constructor 
+  */
+
 var VirtualTextSearch = function()
 {
   const 
