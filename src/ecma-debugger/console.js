@@ -1,10 +1,16 @@
+/**
+ * @fileoverview
+ * This file contains most of the code implementing the console view in
+ * Dragonfly
+ */
+
 var cls = window.cls || ( window.cls = {} );
 
 /**
+  * Error console service class
   * @constructor 
   * @extends ServiceBase
   */
-
 cls.ErrorConsoleService = function(name)
 {
   var self = this;
@@ -356,7 +362,14 @@ ErrorConsoleView.roughViews.createViews = function()
           title: 'Clear Log',
           class_name: 'clear-log'
         }
-      ]
+      ],
+      [
+        {
+          handler: 'console-text-search-' + r_v.id,
+          title: ui_strings.INPUT_DEFAULT_TEXT_SEARCH
+        }
+    ]
+
     );
     /*
     new Switches
@@ -368,6 +381,47 @@ ErrorConsoleView.roughViews.createViews = function()
     );
     */
     eventHandlers.click[handler_id] = this.bindClearSource( r_v.source ? r_v.source : '' );
+
+    /* create the handler code for the text search box
+       We make a function here so we close around the view id */
+    (function() {
+      var textSearch = new TextSearch();
+
+      var view_id = r_v.id;
+      var onViewCreated = function(msg)
+      {
+        if( msg.id == view_id )
+        {
+          textSearch.setContainer(msg.container);
+        }
+      }
+    
+      var onViewDestroyed = function(msg)
+      {
+        if( msg.id == view_id )
+        {
+          textSearch.cleanup();
+        }
+      }
+    
+      messages.addListener('view-created', onViewCreated);
+      messages.addListener('view-destroyed', onViewDestroyed);
+    
+      eventHandlers.input['console-text-search-'+ view_id] = function(event, target)
+      {
+        textSearch.searchDelayed(target.value);
+      }
+    
+      eventHandlers.keyup['console-text-search-'+ view_id] = function(event, target)
+      {
+        opera.postError("keyup in " + view_id);
+        if( event.keyCode == 13 )
+        {
+          textSearch.highlight();
+        }
+      }
+    })();
+
   }
 }
 
@@ -407,6 +461,8 @@ eventHandlers.click['clear-error-console-dragonfly'] = function()
 {
   console_messages.clearDragonflyMessages();
 }
+
+
 
 /**
   * @constructor 
@@ -487,5 +543,4 @@ new Settings
     ]
   }
 );
-
 
