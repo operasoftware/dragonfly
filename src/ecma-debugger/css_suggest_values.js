@@ -1,3 +1,10 @@
+/**
+ * @fileoverview
+ * This file contains arrays of valid values for various CSS properties.
+ * They are used for autocompletion in the CSS editor
+ * @see Editor
+ */
+
 suggest_values = {};
 
 suggest_values['azimuth']=

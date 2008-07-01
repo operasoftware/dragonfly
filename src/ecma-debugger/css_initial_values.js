@@ -1,3 +1,11 @@
+/**
+ * @fileoverview
+ * This file contains a lookup table of css properties, the value of the
+ * property contains the default value used by Opera if ther is no CSS defined
+ * by the author. This is used in the CSS inspector
+ * @see stylesheets
+ */
+
 css_initial_values =
 {
 "-apple-dashboard-region": "",

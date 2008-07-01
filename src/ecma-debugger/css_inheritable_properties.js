@@ -1,3 +1,10 @@
+/**
+ * @fileoverview
+ * This file contains a lookup table of css properties, the value of a
+ * property tells whether the property is inheritable or not.
+ * @see stylesheets
+ */
+
 css_inheritable_properties = 
 {
 "-xv-voice-balance": 1,
