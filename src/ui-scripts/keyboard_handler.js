@@ -788,11 +788,6 @@ cls.CSSInspectorEditKeyhandler = function(id)
     __actions.enter_edit_mode(event, action_id);
   }
 
-
-
-
-
-
   this.focus = __actions.test;
 
   this.blur = function()

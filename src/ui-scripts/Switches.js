@@ -28,7 +28,7 @@ var SwitchesBase = function()
 
 /**
   * @constructor 
-  * @extends ViewBase
+  * @extends SwitchesBase
   */
 
 var Switches = function(view_id, key_map)

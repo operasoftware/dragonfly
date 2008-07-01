@@ -1,4 +1,11 @@
 /**
+ * @fileoverview
+  runtime_onload_handler is a workaround because some apis do not 
+  take into account if the document has finished loading
+  like e.g the api to get the stylesheets.
+  */
+
+/**
   * @constructor 
   */
 

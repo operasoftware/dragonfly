@@ -1,6 +1,5 @@
 /**
   * @constructor 
-  * @extends ViewBase
   */
 
 var export_data = new function ()
