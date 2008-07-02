@@ -30,27 +30,22 @@ li[hanler] {
   }
 
 #debug-container {
-  xxbackground-color:#ccc;
-  xxoverflow: hidden;
-  }
+  /*background-color:#ccc;*/
+  /*overflow: hidden;*/
+}
 
-
-
-xx#debug {
-  position:absolute;
-  overflow:auto;
-  border:1px solid #666;
-  background-color:#fff;
-  top:25px;
-  left:5px;
-  right:5px;
-  bottom:5px;
-  padding:.5em;
-  margin:0;
-  }
-
-
-
+/*#debug {*/
+/*  position:absolute;*/
+/*  overflow:auto;*/
+/*  border:1px solid #666;*/
+/*  background-color:#fff;*/
+/*  top:25px;*/
+/*  left:5px;*/
+/*  right:5px;*/
+/*  bottom:5px;*/
+/*  padding:.5em;*/
+/*  margin:0;*/
+/*  }*/
 
 #source-view #line-pointer, #source-view .breakpoint {
   position:absolute;
@@ -259,7 +254,7 @@ input[type="text"] {
 
 .error-console date {
   float:right;
-  xxline-height:22px;
+  /*xxline-height:22px;*/
   padding:7px;
   }
 
@@ -311,15 +306,11 @@ input[type="text"] {
 
 
 
-
-
 /*** view debug ***/
-
-
 
 .debug-container > div {
   white-space:pre;
-  xxfont-family:monospace;
+  /*xxfont-family:monospace;*/
 }
 
 .selected-runtime {
@@ -354,8 +345,6 @@ input[type="text"] {
   }
 
 /* command line */
-
-
 
 .console-output,
 .console-output pre,
@@ -432,7 +421,7 @@ property  {
 rule, font-face-rule, page-rule {
   font-family:monospace;
   display:block;
-  xxwhite-space: pre-wrap;
+  /*xxwhite-space: pre-wrap;*/
   margin: 1em 0;
   }
 
@@ -441,7 +430,7 @@ rule, font-face-rule, page-rule {
   }
   
 media {
-  xxwhite-space: pre-wrap;
+  /*xxwhite-space: pre-wrap;*/
   }
   
 media-rule rules {
@@ -474,7 +463,7 @@ stylesheet-link:hover {
   }
 
 styles {
-  xxwhite-space: pre-wrap;
+  /*xxwhite-space: pre-wrap;*/
   font-family:monospace;
   }
 

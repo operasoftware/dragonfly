@@ -36,7 +36,7 @@ top-container { /**/
   border-left: 1px solid #c9cdd0;
   border-right: 1px solid #c9cdd0;
   padding: 4px 4px;
-	background-color: #e1e4e9;
+  background-color: #e1e4e9;
   }
 
 /* set with css. height, border and padding are supported */
@@ -888,8 +888,6 @@ textarea-inner-container {
   padding: 3px 9px 10px 5px;
   margin: -4px -10px -11px -6px;
   }
- 
- 
  
 textarea-container textarea{
   display: block;
