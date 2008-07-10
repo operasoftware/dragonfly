@@ -1,0 +1,70 @@
+# This is the build spec for Dragonfly
+# Most of the settings are set in dragonfly.vel
+# See readme.txt for more information
+
+imports [
+    recipe(from 'dragonfly' as 'config')
+]
+
+# These are configuration options for building.
+# Depending on which build operations you want to use you might have to
+# adjust them.
+
+options (
+    config.sourcedir "src"
+    config.builddir "build"
+    config.packagedir "pkg"
+)
+
+depends (
+    weekly ['package.raw' 'package.concat' 'jsdoc.generate' 'jsdoc.archive']
+    jsdoc ['jsdoc.build' 'jsdoc.package']
+)
+
+targets (
+    weekly [
+    
+    ]
+
+    client.build [
+        $ python tools/dfbuild 
+    ]
+
+    client.build.raw [
+    
+    ]
+    
+    client.package [
+    
+    ]
+    
+
+    jsdoc [
+
+    ]
+
+    jsdoc.build [
+        given 'os.path.isfile("%(config.jsdoc)s")'
+        $  %(config.perl)s %(config.jsdoc)s -q -r --project-name="%(config.project)s" -d %(config.builddir)s/jsdoc %(config.sourcedir)s
+    ]
+
+    jdoc.package [
+        log "Packaging jsdoc.."
+    ]
+
+    jsdoc.upload [
+        given 'os.path.isfile(build/jsdoc/index.html)'
+        log "Uploading jsdoc to jsdoc_host.."
+    ]
+
+    requirements [
+        given 'os.path.isfile("%(config.perl)s")'
+        log 'Found perl!'
+        given 'os.path.isfile("%(config.jsdoc)s")'
+        log 'Found jsdoc!'
+        
+    ]
+
+
+)
+

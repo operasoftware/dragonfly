@@ -1,0 +1,19 @@
+#
+# These are build options for dragonfly. They are loaded
+# by vellum when a build task is run and are made available
+# in the config namespace in the build file. This means that
+# if the variable "foo" is defined here it's possible to use the value
+# as "%(foo)s" in the build spec. You usually don't need to care about
+# that, but you might want to tweak values defined underneath.
+# Known options
+#
+#
+#   Project: the project name
+#   perl: path to perl executable
+#   jsdoc: path to jsdoc.pl script
+
+options (
+   project "Dragonfly"
+   perl "c:/perl/bin/perl.exe"
+   jsdoc "c:/temp/JSDoc-1.10.2/jsdoc.pl"
+)
