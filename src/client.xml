@@ -30,22 +30,18 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 </div>
 </main-view>
 
-<!-- command "new_css" source "./ui-style" target "./style/dragonfly.css" -->
+<!-- the following two directives will make dfbuild concatenate all css and
+     js respectively into the named files. -->
+<!-- command concat_css "./style/dragonfly.css" -->
+<!-- command concat_js "./style/dragonfly.js" -->
+
 
 <link rel="stylesheet" href="./ui-style/ui.css"/>
-
-<!-- command "append_css" source "./ecma-debugger" target "./dragonfly.css" -->
-
 <link rel="stylesheet" href="./ui-style/debugger_style.css"/>
 <link rel="stylesheet" href="./ui-style/js-source.css"/>
-
 <link rel="stylesheet" href="./ui-style/syntax-highlight.css"/>
 
-<!-- command "new_script" source "./ui-strings" target "./script/dragonfly.js" -->
-
 <script src="./ui-strings/ui_strings.js"/>
-
-<!-- command "append_script" source "./scripts" target "./dragonfly.js" -->
 
 <script src="./scripts/json.js"/>
 <script src="./scripts/dom.js"/>
@@ -57,7 +53,6 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./scripts/VirtualTextSearch.js"/>
 <script src="./scripts/colors.js"/>
 
-<!-- command "append_script" source "./ui-scripts" target "./dragonfly.js"   -->
 
 <script src="./ui-scripts/defaults.js"/>
 <script src="./ui-scripts/window.js"/>
@@ -83,19 +78,11 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./ui-scripts/viewSlider.js"/>
 <script src="./ui-scripts/animator.js"/>
 <script src="./ui-scripts/Switches.js"/>
-
 <script src="./ui-scripts/Editor.js"/>
-
 <script src="./ui-scripts/keyboard_handler.js"/>
 
 
-
-<!-- command "append_script" source "./ecma-debugger" target "./dragonfly.js"   -->
-
-
-
 <script src="./ecma-debugger/ListTextSearch.js"/>
-
 <script src="./ecma-debugger/ini.js"/>
 <script src="./ecma-debugger/windowInterface.js"/>
 <script src="./ecma-debugger/debug.js"/>
@@ -110,11 +97,8 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./ecma-debugger/handlers.js"/>
 <script src="./ecma-debugger/runtimes.js"/>
 <script src="./ecma-debugger/stop_at.js"/>
-
 <script src="./ecma-debugger/runtime_onload_handler.js"/>
-
 <script src="./ecma-debugger/ObjectDataBase.js"/>
-
 <script src="./ecma-debugger/frame_inspection.js"/>
 <script src="./ecma-debugger/object_inspection.js"/>
 <script src="./ecma-debugger/views-runtimes.js"/>
@@ -124,48 +108,30 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./ecma-debugger/css_initial_values.js"/>
 <script src="./ecma-debugger/css_inheritable_properties.js"/>
 <script src="./ecma-debugger/js_default_global_scope_properties.js"/>
-
 <script src="./ecma-debugger/css_suggest_values.js"/>
-
-
-
-
 <script src="./ecma-debugger/node_dom_attrs.js"/>
 <script src="./ecma-debugger/elementLayout.js"/>
-
-
 <script src="./ecma-debugger/stylesheets.js"/>
 <script src="./ecma-debugger/views-css-inspector.js"/>
 <script src="./ecma-debugger/views-css-layout.js"/>
 <script src="./ecma-debugger/views-stylesheets.js"/>
 <script src="./ecma-debugger/js-source-view.js"/>
 <script src="./ecma-debugger/view-commandline.js"/>
-
-
 <script src="./ecma-debugger/views-frame-inspection.js"/>
 <script src="./ecma-debugger/views-object-inspection.js"/>
-
-
 <script src="./ecma-debugger/DOM_markup_style.js"/>
 <script src="./ecma-debugger/DOM_tree_style.js"/>
-
 <script src="./ecma-debugger/views-dom.js"/>
-
-
 <script src="./ecma-debugger/views-dom-attrs.js"/>
 <script src="./ecma-debugger/views-threads.js"/>
 <script src="./ecma-debugger/export_data.js"/>
 <script src="./ecma-debugger/elementStyle.js"/>
-
 <script src="./ecma-debugger/action_handler.js"/>
 <script src="./ecma-debugger/change-handler.js"/>
 <script src="./ecma-debugger/scroll_handler.js"/>
 <script src="./ecma-debugger/responseHandlers.js"/>
 <script src="./ecma-debugger/tag.js"/>
-
-
 <script src="./ecma-debugger/client.js"/>
-
 <script src="./ecma-debugger/serviceBase.js"/>
 <script src="./ecma-debugger/console.js"/>
 <script src="./ecma-debugger/ecma-debugger.js"/>
