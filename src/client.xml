@@ -33,7 +33,7 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <!-- the following two directives will make dfbuild concatenate all css and
      js respectively into the named files. -->
 <!-- command concat_css "./style/dragonfly.css" -->
-<!-- command concat_js "./style/dragonfly.js" -->
+<!-- command concat_js "./script/dragonfly.js" -->
 
 
 <link rel="stylesheet" href="./ui-style/ui.css"/>
