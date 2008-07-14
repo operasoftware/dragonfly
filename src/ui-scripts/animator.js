@@ -11,11 +11,11 @@
  *
  * @class
  *
- * (Note: the classname "Animator" is a bit of a misnomer. It's more of a
- * three-state-button-o-matic. Might be renamed at a later date (runeh))
+ * <div class="sidenote">Note: the classname "Animator" is a bit of a misnomer. It's more of a
+ * three-state-button-o-matic. Might be renamed at a later date (runeh)</div>
  * 
  * Handle a two or three state button with support for animaton. The button
- * has an initial state, an active state(possibly animated), and optionally
+ * has an initial state, an active state (possibly animated), and optionally
  * a final state. An example is a "connect" button. It starts out passive.
  * When pressed it animates a progress indicator, and when connected, it turns
  * green.
@@ -28,16 +28,14 @@
  * dictionary contains the following:
  *
  * <dl>
- *  <dt>id (required)<dd>The id of the element to operate
- *  <dt>delta (required)<dd>The height of a frame of animation.
- *  <dt>iterations (required)<dd>The number of frames in the active state
- *  <dt>active (optional)<dd>The offset of the first active state frame in the image. Default: 0
- *  <dt>final (optional)<dd>The offset of the final state frame in the image. Default: 0
- *  <dt>x_position (optional)<dd>The vertial offset of the strip of frames in the image. Default: 0px
- *  <dt>time_delta (optional)<dd>The time between each frame in ms. FPS is then equal to 1000/time_delta. Default: 30ms
+ *  <dt>id (required)<dd>The id of the element to operate as a string
+ *  <dt>delta (required)<dd>The height of a frame of animation in pixels as an int
+ *  <dt>iterations (required)<dd>The number of frames in the active state as in int
+ *  <dt>active (optional)<dd>The offset of the first active state frame in the image in pixels as an int. Default: 0
+ *  <dt>final (optional)<dd>The offset of the final state frame in the image in pixels as an int. Default: 0
+ *  <dt>x_position (optional)<dd>The vertial offset of the strip of frames in the image in pixels as an int. Default: 0px
+ *  <dt>time_delta (optional)<dd>The time between each frame in ms as an int. FPS is then equal to 1000/time_delta. Default: 30ms
  * </dl>
- *
- * 
  *
  *
  */
