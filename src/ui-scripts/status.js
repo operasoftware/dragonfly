@@ -109,17 +109,17 @@ var TopStatusbar = function(cell)
     {
       case 'inactive':
       {
-        self.spin_animator.is_inactive();
+        self.spin_animator.setInitial();
         break;
       }
       case 'ready':
       {
-        self.spin_animator.is_ready();
+        self.spin_animator.setFinal();
         break;
       }
       case 'waiting':
       {
-        self.spin_animator.is_busy();
+        self.spin_animator.setActive();
         break;
       }      
     }
