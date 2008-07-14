@@ -1,4 +1,3 @@
-#
 # These are build options for dragonfly. They are loaded
 # by vellum when a build task is run and are made available
 # in the config namespace in the build file. This means that
