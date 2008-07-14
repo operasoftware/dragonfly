@@ -16,4 +16,5 @@ options (
    project "Dragonfly"
    perl "c:/perl/bin/perl.exe"
    jsdoc "c:/temp/JSDoc-1.10.2/jsdoc.pl"
+   python" c:/python25/python.exe"
 )

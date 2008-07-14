@@ -11,6 +11,7 @@ imports [
 # adjust them.
 
 options (
+    default "client"
     config.sourcedir "src"
     config.builddir "build"
     config.packagedir "pkg"
@@ -18,7 +19,8 @@ options (
 
 depends (
     weekly ['package.raw' 'package.concat' 'jsdoc.generate' 'jsdoc.archive']
-    jsdoc ['jsdoc.build' 'jsdoc.package']
+    client ['client.build' 'jsdoc.build']
+    jsdoc ['jsdoc.build' 'jsdoc.upload']
 )
 
 targets (
@@ -27,7 +29,7 @@ targets (
     ]
 
     client.build [
-        $ python tools/dfbuild 
+        $ %(config.python)s tools/dfbuild.py -d %(config.sourcedir)s %(config.builddir)s/client 
     ]
 
     client.build.raw [
@@ -40,22 +42,19 @@ targets (
     
 
     jsdoc [
+    
 
     ]
 
     jsdoc.build [
         given 'os.path.isfile("%(config.jsdoc)s")'
-        $  %(config.perl)s %(config.jsdoc)s -q -r --project-name="%(config.project)s" -d %(config.builddir)s/jsdoc %(config.sourcedir)s
+        $ %(config.perl)s %(config.jsdoc)s -q -r --no-sources --project-name="%(config.project)s" -d %(config.builddir)s/jsdoc %(config.sourcedir)s
     ]
 
     jdoc.package [
         log "Packaging jsdoc.."
     ]
 
-    jsdoc.upload [
-        given 'os.path.isfile(build/jsdoc/index.html)'
-        log "Uploading jsdoc to jsdoc_host.."
-    ]
 
     requirements [
         given 'os.path.isfile("%(config.perl)s")'
