@@ -1,7 +1,8 @@
 /**
  * @fileoverview
- * <strong>fixme: Not in use!</strong>
+ * <strong>fixme: Deprecated. marked for removal</strong>
  */
+
 
 /**
   * @constructor

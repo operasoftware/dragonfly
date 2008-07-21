@@ -1,4 +1,9 @@
 /**
+ * @fileoverview
+ * <strong>fixme: Deprecated. marked for removal</strong>
+ */
+
+/**
   * @constructor 
   * @deprecated
   * does not work as intended
