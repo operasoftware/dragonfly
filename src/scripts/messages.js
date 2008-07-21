@@ -97,19 +97,36 @@ var messages = new function()
     }
   }
   
-  this.removeListener = function(key)
+  /**
+   * Remove a listener for a specific message.
+   * @param key {String} the name of the message to dispatch
+   * @param cb {Object} the callback function for the message.
+   */
+  this.removeListener = function(key, cb)
   {
-
+    var cur, listeners = __listeners[ key ];
+    if( listeners )
+    {
+      for( ; cur = listeners[i]; i++)
+      {
+        if (cur == cb)
+        {
+          __listeners.splice(i, 1);
+          i--;
+        }
+      }
+    }
   }
 
   /**
    * Post a message to all its listeners, optionally with a payload. The
    * payload object gets an extra "type" key with the name of the message
    * @param key {String} the name of the message to dispatch
-   * @param msg {Object} the payload to the message.
+   * @param msg {Object} the payload to the message. Optional
    */
   this.post = function( key, msg )
   {
+    msg = msg || {};
     var listeners = __listeners[ key ], cb = null, i = 0;
     msg.type = key;
     if( listeners )
