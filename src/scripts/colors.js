@@ -1,7 +1,17 @@
 ﻿/**
-* @constructor
-*/
+ * @fileoverview
+ * Color class
+ */
 
+/**
+* @constructor
+*
+*
+* @class
+* Represent a color. Allows for setting and getting color components based
+* on RGV, HSV and HSL color spaces.
+* See also http://en.wikipedia.org/wiki/Color_space
+*/
 var Colors = function()
 {
   const 
@@ -16,23 +26,54 @@ var Colors = function()
   var hsl = [0, 50, 50];
   var hsv = [0, 50, 50];
   
+  /**
+   * return val bounded to upper or lower if it over/underflows
+   * @private
+   * @param val {number} value to bound
+   * @param upper {number} upper bound
+   * @param lower {number} lower bound
+   * @returns {number}
+   */
   var fixRange = function( val, upper, lower)
   {
     return val > upper ? upper : val < lower ? lower : val;
   }
   
+  /**
+   * rounds off val and bounds it to upper and lower
+   * @see Colors#fixRange
+   * @private
+   * @returns {number}
+   * @param val {number} value to bound
+   * @param upper {number} upper bound
+   * @param lower {number} lower bound
+   */
   var roundVal = function( val, upper, lower)
   {
     val = Math.round(val);
     return val > upper ? upper : val < lower ? lower : val;
   }
   
+  /**
+   * turns val into a fixed number and bounds it to upper and lower
+   * @see Colors#fixRange
+   * @private
+   * @returns {number}
+   * @param val {number} value to bound
+   * @param upper {number} upper bound
+   * @param lower {number} lower bound
+   */
   var toFixed = function( val, upper, lower)
   {
     val = val.toFixed(2);
     return val > upper ? upper : val < lower ? lower : val;
   }
 
+  /**
+   * Set the hue component of the color
+   * @param h {int} desired value of hue
+   * @returns {int} new value of hue
+   */
   this.setHue = function(h)
   {
     h = fixRange(h, 360, 0);
@@ -42,6 +83,11 @@ var Colors = function()
     return h;
   }
 
+  /**
+   * Set the saturation component of the color
+   * @param s {int} desired value of saturation
+   * @returns {int} new value of saturation
+   */
   this.setSaturation = function(s)
   {
     s = fixRange(s, 100, 0);
@@ -51,7 +97,11 @@ var Colors = function()
     return s;
   }
   
-
+  /**
+   * Set the luminosity component of the color
+   * @param l {int} desired value of luminosity
+   * @returns {int} new value of luminosity
+   */
   this.setLuminosity = function(l)
   {
     l = fixRange(l, 100, 0);
@@ -61,6 +111,12 @@ var Colors = function()
     return l;
   }
 
+  /**
+   * Set hue component of the color, using HSV
+   * http://en.wikipedia.org/wiki/HSV_color_space
+   * @param h {float} desired value of hue
+   * @returns {int} new value of hue
+   */
   this.setHueV = function(h)
   {
     h = fixRange(h, 360, 0);
@@ -70,6 +126,11 @@ var Colors = function()
     return h;
   }
 
+  /**
+   * Set the saturation component of the color, using HSV
+   * @param h {float} desired value of saturation
+   * @returns {int} new value of saturation
+   */
   this.setSaturationV = function(s)
   {
     s = fixRange(s, 100, 0);
@@ -79,6 +140,11 @@ var Colors = function()
     return s;
   }
 
+  /**
+   * Set the value component of the color, using HSV
+   * @param h {float} desired value of value
+   * @returns {int} new value of value
+   */
   this.setValue = function(l)
   {
     l = fixRange(l, 100, 0);
@@ -88,6 +154,11 @@ var Colors = function()
     return l;
   }
 
+  /**
+   * Set the red component of the color
+   * @param r {int} value of red component
+   * @returns {int} value of red component
+   */
   this.setRed = function(r)
   {
     r = fixRange(r, 255, 0);
@@ -97,6 +168,11 @@ var Colors = function()
     return r;
   }
 
+  /**
+   * Set the green component of the color
+   * @param g {int} value of green component
+   * @returns {int} value of green component
+   */
   this.setGreen = function(g)
   {
     g = fixRange(g, 255, 0);
@@ -106,6 +182,10 @@ var Colors = function()
     return g;
   }
   
+  /**
+   * Set the red, green and blue components of the color
+   * @param c_arr {array} array containing red,green,blue ints
+   */
   this.setRGB = function(c_arr)
   {
     var i = 0;
@@ -117,6 +197,11 @@ var Colors = function()
     hsl = this.rgb_to_hsl( rgb[RED], rgb[GREEN], rgb[BLUE] );
   }
 
+  /**
+   * Set the blue component of the color
+   * @param b {int} value of blue component
+   * @returns {int} value of blue component
+   */
   this.setBlue = function(b)
   {
     b = fixRange(b, 255, 0);
@@ -126,6 +211,11 @@ var Colors = function()
     return b;
   }
 
+  /**
+   * Set the color from a hex color code
+   * @param hex {String} hex color
+   * @returns {String} hex color
+   */
   this.setHex = function(hex)
   {
     hex = /^[0-9a-f]*$/i.test(hex) ? hex : '';
@@ -140,61 +230,109 @@ var Colors = function()
     return hex;
   }
 
+  /**
+   * Get hue component of color
+   * @returns {int} hue
+   */
   this.getHue = function()
   {
     return roundVal(hsl[HUE], 360, 0);
   }
 
+  /**
+   * Get saturation component of color
+   * @returns {int} saturation
+   */
   this.getSaturation = function()
   {
     return toFixed(hsl[SAT], 100, 0);
   }
 
+  /**
+   * Get luminosity component of color
+   * @returns {int} luminosity
+   */
   this.getLuminosity = function()
   {
     return toFixed(hsl[LUM], 100, 0);
   }
 
+  /**
+   * Get hue, saturation and luminosity of color as an array
+   * @returns {array} [hue, sat, lum]
+   */
   this.getHSL = function()
   {
     return [roundVal(hsl[0], 360, 0), toFixed(hsl[1], 100, 0), toFixed(hsl[2], 100, 0)];
   }
 
+  /**
+   * Get hue component of color (HSV)
+   * @returns {int} hue
+   */
   this.getHueV = function()
   {
     return roundVal(hsv[HUE], 360, 0);
   }
 
+  /**
+   * Get saturation component of color (HSV)
+   * @returns {int} saturation
+   */
   this.getSaturationV = function()
   {
     return toFixed(hsv[SAT], 100, 0);
   }
 
+  /**
+   * Get value component of color (HSV)
+   * @returns {int} value
+   */
   this.getValue = function()
   {
     return toFixed(hsv[LUM], 100, 0);
   }
 
+  /**
+   * Get red component of color
+   * @returns {int} red value
+   */
   this.getRed = function()
   {
     return roundVal(rgb[RED], 255, 0);
   }
 
+  /**
+   * Get green component of color
+   * @returns {int} green value
+   */
   this.getGreen = function()
   {
     return roundVal(rgb[GREEN], 255, 0);
   }
 
+  /**
+   * Get blue component of color
+   * @returns {int} blue
+   */
   this.getBlue = function()
   {
     return roundVal(rgb[BLUE], 255, 0);
   }
 
+  /**
+   * Get red, green and blue component of color as an array
+   * @returns {array} [r, g, b]
+   */
   this.getRGB = function()
   {
     return [roundVal(rgb[0], 255, 0), roundVal(rgb[1], 255, 0), roundVal(rgb[2], 255, 0)];
   }
 
+  /**
+   * Get hex value of color
+   * @returns {String} hex value
+   */
   this.getHex = function()
   {
     return this.rgb_to_hex_c(rgb);
