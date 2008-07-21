@@ -9,7 +9,8 @@ var verticalFrames = new function()
   /* end settings */
 
   var resizeEvents = [];
-  var mousemoveEvents = [];
+  var resizeTimeouts = new Timeouts();
+  var mouseTimeouts = new Timeouts();
   var resize_slider_height = 0;
   var resize_slider_delta = 0;
   var selection_catcher = null;
@@ -48,20 +49,13 @@ var verticalFrames = new function()
 
   var resize_frame_onmousemove_listener = function(event)
   {
-    clearMousemoveTimeouts();
-    mousemoveEvents[mousemoveEvents.length] = setTimeout(resize_frame_onmousemove, 10, event)
-  }
-
-  var clearMousemoveTimeouts = function()
-  {
-    var c = null, i=0;
-    for( ; c = mousemoveEvents[i]; i++) clearTimeout(c);
-    mousemoveEvents = []
+    mouseTimeouts.clear();
+    mouseTimeouts.set(resize_frame_onmousemove, 10, event);
   }
 
   var resize_frame_onmousemove = function(event)
   {
-    clearMousemoveTimeouts();
+    mouseTimeouts.clear();
     selection_catcher.focus();
     var slider_top = event.pageY - __container_top - resize_slider_delta;
     var previous_offsetHeight = __previous.offsetHeight;
@@ -103,17 +97,13 @@ var verticalFrames = new function()
 
   var resizeListener = function(event)
   {
-    resizeEvents[resizeEvents.length] = setTimeout(handleResizeEvents, intervalOnResize);
+    resizeTimeouts.set(handleResizeEvents, intervalOnResize);
   }
 
   var handleResizeEvents = function()
   {
-    var cursor = 0,  length = resizeEvents.length, i=0;
-    for ( ; cursor = resizeEvents[i]; i++)
-    {
-      clearTimeout(cursor);
-    }
-    resizeEvents = [];
+    var cursor = 0, i=0;
+    resizeTimeouts.clear();
     self.setUpFrames(__start_ele, __getstart_height());
     messages.post('update-layout');
   }
@@ -133,7 +123,6 @@ var verticalFrames = new function()
           if( _frames[i-1] )
           {
             new_height = new_height - _frames[i-1].offsetTop - _frames[i-1].offsetHeight;
-
           }
             
           if( new_height > 0 )

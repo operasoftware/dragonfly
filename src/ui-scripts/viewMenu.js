@@ -4,7 +4,7 @@
 
 var ViewsMenu = function(menu_id)
 {
-  var hide_timeouts = [];
+  var hideTimeouts = Timeouts();
   var menu = null;
   var self = this;
   this.getAllViews = function()
@@ -27,10 +27,7 @@ var ViewsMenu = function(menu_id)
 
   var show = function(event)
   {
-    while(hide_timeouts.length)
-    {
-      clearTimeout(hide_timeouts.pop());
-    }
+    hideTimeouts.clear();
     var ul = menu.getElementsByTagName('ul')[0];
     if( !ul)
     {
@@ -80,7 +77,7 @@ var ViewsMenu = function(menu_id)
 
   var hide = function(event)
   {
-    hide_timeouts[hide_timeouts.length] = setTimeout(__hide, 100);
+    hideTimeouts.set(__hide, 100);
   }
 
   var init = function(event)
