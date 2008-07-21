@@ -89,7 +89,7 @@ var verticalFrames = new function()
     {
       horizontalFrames.setFramesHeight(__next, __next.offsetHeight)
     } 
-    messages.post('update-layout', {});
+    messages.post('update-layout');
     
   }
 
@@ -115,7 +115,7 @@ var verticalFrames = new function()
     }
     resizeEvents = [];
     self.setUpFrames(__start_ele, __getstart_height());
-    messages.post('update-layout', {});
+    messages.post('update-layout');
   }
 
   this.setHeightFrames = function(container, height)
@@ -269,7 +269,7 @@ var horizontalFrames = new function()
       __next.style.width = ( next_offsetWidth - delta )+'px';
       __next.style.cssText += '';
     }
-    messages.post('update-layout', {});
+    messages.post('update-layout');
     is_resizing_frames = false;
   }
 

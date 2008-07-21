@@ -15,7 +15,7 @@ var TopCell = function(layout, setDimensions, onresize)
   {
     
     self.onresize();
-    messages.post('resize', {});
+    messages.post('resize');
   }
   
   var setDelayedResize = function()
