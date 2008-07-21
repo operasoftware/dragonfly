@@ -1,3 +1,8 @@
+/**
+ * @fileoverview
+ * Helper function prototypes related to DOM objects and the DOM
+ * templating system.
+ */
 
 Element.prototype.___add=Document.prototype.___add=function()
 {

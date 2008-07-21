@@ -1,3 +1,10 @@
+/**
+ * @fileoverview
+ * JSON parsing tools
+ * <br>
+ * <strong>fixme:</strong> is this copied from somewhere? Do we need
+ * attribution
+ */
 
 if(!this.JSON){JSON=function(){function f(n){return n<10?'0'+n:n;}
 Date.prototype.toJSON=function(){return this.getUTCFullYear()+'-'+
