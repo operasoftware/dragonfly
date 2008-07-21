@@ -1,3 +1,9 @@
+/**
+ * @fileoverview
+ * Dictionaries of JavaScript keywords and builtins. Used by the JavaScript
+ * formatter for syntax highlighting.
+ */
+
 var js_keywords=
 {
   'abstract': 1,
