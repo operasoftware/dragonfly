@@ -8,7 +8,6 @@ var verticalFrames = new function()
 
   /* end settings */
 
-  var resizeEvents = [];
   var resizeTimeouts = new Timeouts();
   var mouseTimeouts = new Timeouts();
   var resize_slider_height = 0;
