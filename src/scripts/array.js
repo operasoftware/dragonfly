@@ -1,7 +1,18 @@
-Array.prototype.search=function(fieldname, searchTherm) 
+/**
+ * @fileoverview
+ * Array prototype functions
+ * fixme: This file can probably be removed. There doesn't seem to be any
+ * code still using it
+ */
+
+/**
+ * Not used anywhere and looks broken.
+ * @deprecated
+ */
+Array.prototype.search=function(fieldname, searchTerm) 
 {
   var pointer=null, i=this.length, ret=[];
-  var re=(searchTherm instanceof RegExp)?searchTherm:(new RegExp(searchTherm, 'i'));
+  var re=(searchTerm instanceof RegExp)?searchTerm:(new RegExp(searchTerm, 'i'));
   for( ; i--; )
   {
     if((pointer=this[i]) && (re.test(pointer[fieldname]))) ret[ret.length]=pointer;
@@ -9,7 +20,10 @@ Array.prototype.search=function(fieldname, searchTherm)
   return ret;
 }
 
-
+/**
+ * Not used anywhere
+ * @deprecated
+ */
 Array.prototype.sortByItemProperty = function( property )
 {
   this.sort
