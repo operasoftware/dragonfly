@@ -1,5 +1,11 @@
 /**
-  * @constructor 
+ * @fileoverview
+ * <strong>fixme: Not in use!</strong>
+ */
+
+/**
+  * @constructor
+  * @deprecated
   */
 
 var host_event_handlers = new function()
