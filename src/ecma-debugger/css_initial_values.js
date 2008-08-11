@@ -1,7 +1,8 @@
 /**
  * @fileoverview
  * This file contains a lookup table of css properties, the value of the
- * property contains the default value used by Opera if ther is no CSS defined
+ * property contains the initial value ( default value is defined in the browser.css ) 
+ * used by Opera if ther is no CSS defined
  * by the author. This is used in the CSS inspector
  * @see stylesheets
  */
