@@ -11,23 +11,27 @@ _keyword_exts = (".css", ".js", ".xml", ".html", ".xhtml", ".txt") # files we wi
 _license_exts = (".js", ".css") # extensions that should get a license
 _script_ele = "<script src=\"%s\"/>\n"
 _style_ele = "<link rel=\"stylesheet\" href=\"%s\"/>\n"
-_re_command = re.compile("""\s?<!--\s+command\s+(?P<command>\w+)\s+"?(?P<target>.*?)"?\s*-->""")
+_re_command = re.compile("""\s?<!--\s+command\s+(?P<command>\w+)\s+"?(?P<target>.*?)"?\s*(?:if\s+(?P<neg>not)?\s*(?P<cond>\S+?))?\s*-->""")
 _re_script = re.compile("\s?<script +src=\"(?P<src>[^\"]*)\"/>")
 _re_css = re.compile("\s?<link +rel=\"stylesheet\" +href=\"(?P<href>[^\"]*)\"/>")
+_re_condition = re.compile("\s+if\s+(not)? (.*)")
 
 _concatcomment ="""
 /* dfbuild: concatenated from: %s */
 """
 
-def _process_directive_files(dirpath):
+def _process_directive_files(dirpath, vars):
     for base, dirs, files in os.walk(dirpath, topdown=True):
         for file in [ os.path.join(dirpath, base, f) for f in files if f.endswith(_directive_exts) ]:
-            _process_directives(dirpath, file)
+            _process_directives(dirpath, file, vars)
 
 
-def _process_directives(root, filepath):
+def _process_directives(root, filepath, vars):
     """
     Process all directives in the file filepath. The root dir is in root
+    
+    TODO: Refactor this to use separate functions for each directive and
+    just pass in a context for it to keep stuff in.
     """
     file = open(filepath)
 
@@ -43,7 +47,16 @@ def _process_directives(root, filepath):
         match_css = _re_css.search(line)
         match_js = _re_script.search(line)
         if match_cmd:
-            cmd, target = match_cmd.groups()
+            cmd, target, neg, cond = match_cmd.groups()
+            if cond: # check if this directive is conditional
+                c = bool(cond in vars and vars[cond])
+                if neg:
+                    c = not c
+                    
+                if not c: # the condition was not met, skip rule
+                    continue
+
+            # at this point the rule will be honoured
             if cmd == "concat_css":
                 if target in ["off", "false", "no"]:
                     current_css_file = None
@@ -207,7 +220,8 @@ def make_archive(src, dst, in_subdir=True):
     
 
 def export(src, dst, process_directives=True, keywords={},
-           exclude_dirs=[], exclude_files=[], license=None):
+           exclude_dirs=[], exclude_files=[], license=None,
+           directive_vars={}):
     """
     Build from a directory to a directory.
     
@@ -220,6 +234,8 @@ def export(src, dst, process_directives=True, keywords={},
     exclude_dirs: directoriy blacklist. Will not be included in the build
     exclude_files: file blacklist. Will not be included in the build
     license: path to a license file to append to sources
+    directive_vars: a dictionary that will passed on to the diretive handling.
+        Can be used to control the handling of the directives
     """
     src = os.path.abspath(src); # make sure it's absolute
 
@@ -230,7 +246,7 @@ def export(src, dst, process_directives=True, keywords={},
     shutil.copytree(src, tmpdir)
 
     if process_directives:
-        _process_directive_files(tmpdir)
+        _process_directive_files(tmpdir, directive_vars)
         
     # remove empty directories and stuff in the blacklist
     _clean_dir(tmpdir, exclude_dirs, exclude_files)

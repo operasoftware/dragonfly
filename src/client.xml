@@ -35,14 +35,18 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <!-- command concat_css "./style/dragonfly.css" -->
 <!-- command concat_js "./script/dragonfly.js" -->
 
-
 <link rel="stylesheet" href="./ui-style/ui.css"/>
 <link rel="stylesheet" href="./ui-style/debugger_style.css"/>
 <link rel="stylesheet" href="./ui-style/js-source.css"/>
 <link rel="stylesheet" href="./ui-style/syntax-highlight.css"/>
 
+<!-- This will turn off including of the UI strings if the exclude_uistrings var is set -->
+<!-- command concat_js off if exclude_uistrings -->
 <script src="./ui-strings/ui_strings.js"/>
 
+
+<!-- restart normal concatenation -->
+<!-- command concat_js "./script/dragonfly.js" -->
 <script src="./scripts/json.js"/>
 <script src="./scripts/dom.js"/>
 <script src="./scripts/messages.js"/>
