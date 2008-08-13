@@ -26,6 +26,9 @@ def _process_directive_files(dirpath):
 
 
 def _process_directives(root, filepath):
+    """
+    Process all directives in the file filepath. The root dir is in root
+    """
     file = open(filepath)
 
     tmpfd, tmppath = tempfile.mkstemp(".tmp", "dfbuild.")
@@ -205,6 +208,19 @@ def make_archive(src, dst, in_subdir=True):
 
 def export(src, dst, process_directives=True, keywords={},
            exclude_dirs=[], exclude_files=[], license=None):
+    """
+    Build from a directory to a directory.
+    
+    src: Source dir to build from
+    dst: destination directory to build to
+    process_directives: if true, process <!-- command.. directives in html/xml files
+    Keywords: key/value pairs used for keyword replacement on the sources. As in,
+        if the source files contain $date$ the keywords dict could contain
+        {"$date$": "23.09.08"}, to insert that date into the sources.
+    exclude_dirs: directoriy blacklist. Will not be included in the build
+    exclude_files: file blacklist. Will not be included in the build
+    license: path to a license file to append to sources
+    """
     src = os.path.abspath(src); # make sure it's absolute
 
     # get a temporary place to do stuff
@@ -244,6 +260,10 @@ def export(src, dst, process_directives=True, keywords={},
 
 
 def main(argv=sys.argv):
+    """
+    Entry point when the script is called from the command line, not used
+    as a module.
+    """
     import optparse
     usage = """%prog [options] source destination
     
@@ -301,7 +321,6 @@ Destination can be either a directory or a zip file"""
         export(src, dst, process_directives=options.concat,
                keywords=keywords, license=options.license)
         
-
 
 if __name__ == "__main__":
     sys.exit(main())
