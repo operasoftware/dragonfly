@@ -141,6 +141,8 @@ def _add_license(root, license_path):
     """
     Read a license from license_path and append it to all files under root
     whose extension is in _license_exts.
+    
+    FIXME: move this so it's not called from export perhaps?
     """
     if not os.path.isfile(license_path):
         return
@@ -190,6 +192,39 @@ def _add_keywords(root, keywords):
         shutil.copy(tmppath, f)
         os.unlink(tmppath)
 
+
+def _localize_buildout(src, langdir):
+    """Make a localized version of the build dir. That is, with one
+    script.js for each language, with a prefix suffix for each language
+    src: directory containing the finished build
+    language: dir containing language files. NOT in build dir!
+    
+    Note, this function knows much more than it should about the structure
+    of the build. The whole thing should possibly be refactored :(
+    """
+    scriptpath = os.path.normpath(os.path.join(src, "script/dragonfly.js"))
+    fp = open(scriptpath)
+    script_data = fp.read()
+    fp.close()
+ 
+    clientpath = os.path.normpath(os.path.join(src, "client-en.xml"))
+    fp = open(clientpath)
+    clientdata = fp.read()
+    fp.close()
+    
+
+    for lang, newscriptpath, newclientpath, path in [ (f[:2], "script/dragonfly-"+f[:2]+".js", "client-"+f[:2]+".xml", os.path.join(langdir, f)) for f in os.listdir(langdir) if f.endswith("_strings.js") ]:
+        newscript = open(os.path.join(src,newscriptpath), "w")
+        newclient = open(os.path.join(src, newclientpath), "w")
+        langfile = open(path)
+        newscript.write(_concatcomment)
+        newscript.write(langfile.read())
+        newscript.write(script_data)
+        newclient.write(clientdata.replace("dragonfly.js", "dragonfly" + "-" + lang +".js"))
+        newclient.close()
+        langfile.close()
+        newscript.close()
+        
 
 def make_archive(src, dst, in_subdir=True):
     """
@@ -269,10 +304,7 @@ def export(src, dst, process_directives=True, keywords={},
         else:
             shutil.copy(os.path.join(tmpdir,entry), dst)
 
-
     shutil.rmtree(tmpbase)
-
-
 
 
 def main(argv=sys.argv):
@@ -297,6 +329,9 @@ Destination can be either a directory or a zip file"""
     parser.add_option("-d", "--delete", default=False,
                       action="store_true", dest="delete_dst",
                       help="Delete the destination before copying to it. Makes sure that there are no files left over from previous builds. Is destructive!")
+    parser.add_option("-t", "--translate", default=False,
+                      action="store_true", dest="translate_build",
+                      help="Apply translation changes to the finished build")
 
     options, args = parser.parse_args()
     
@@ -305,6 +340,11 @@ Destination can be either a directory or a zip file"""
         parser.error("Source and destination argument is required")
     else:
         src, dst = args
+    
+    dirvars = {}
+    
+    if options.translate_build:
+        dirvars["exclude_uistrings"]=True
     
     # Parse the keyword definitons
     keywords = {}
@@ -324,7 +364,9 @@ Destination can be either a directory or a zip file"""
                 os.unlink(dst)
         tempdir = tempfile.mkdtemp(".tmp", "dfbuild.")
         export(src, tempdir, process_directives=options.concat,
-               keywords=keywords, license=options.license)
+               keywords=keywords, license=options.license, directive_vars=dirvars)
+        if options.translate_build:
+            _localize_buildout(dst, "src/ui-strings")
         make_archive(tempdir, dst)
         shutil.rmtree(tempdir)
     else: # export to a directory
@@ -335,8 +377,10 @@ Destination can be either a directory or a zip file"""
                 shutil.rmtree(dst)
 
         export(src, dst, process_directives=options.concat,
-               keywords=keywords, license=options.license)
-        
+               keywords=keywords, license=options.license, directive_vars=dirvars)
+        if options.translate_build:
+            _localize_buildout(dst, "src/ui-strings")
+
 
 if __name__ == "__main__":
     sys.exit(main())
