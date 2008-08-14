@@ -362,6 +362,9 @@ Destination can be either a directory or a zip file"""
         except ValueError:
             parser.error("""Could not parse keyword option: "%s" """ % kw)
     
+    if options.translate_build and not options.concat:
+        parser.error("""Can't translate when not concatenateing. use --no-concat OR --translate""")
+    
     if dst.endswith(".zip"): # export to a zip file
         if os.path.isfile(dst):
             if not options.delete_dst:
