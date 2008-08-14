@@ -342,6 +342,8 @@ Destination can be either a directory or a zip file"""
         src, dst = args
     
     dirvars = {}
+    exdirs = ["scripts", "ecma-debugger", "ui-style"]
+    
     
     if options.translate_build:
         dirvars["exclude_uistrings"]=True
@@ -363,7 +365,7 @@ Destination can be either a directory or a zip file"""
             else:
                 os.unlink(dst)
         tempdir = tempfile.mkdtemp(".tmp", "dfbuild.")
-        export(src, tempdir, process_directives=options.concat,
+        export(src, tempdir, process_directives=options.concat, exclude_dirs=exdirs,
                keywords=keywords, license=options.license, directive_vars=dirvars)
         if options.translate_build:
             _localize_buildout(dst, "src/ui-strings")
@@ -376,7 +378,7 @@ Destination can be either a directory or a zip file"""
             else:
                 shutil.rmtree(dst)
 
-        export(src, dst, process_directives=options.concat,
+        export(src, dst, process_directives=options.concat, exclude_dirs=exdirs,
                keywords=keywords, license=options.license, directive_vars=dirvars)
         if options.translate_build:
             _localize_buildout(dst, "src/ui-strings")
