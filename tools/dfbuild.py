@@ -141,7 +141,7 @@ def _clean_dir(root, exclude_dirs, exclude_files):
             os.rmdir(base)
 
 
-def _add_license(root, license_path):
+def _add_license(root, license_path="license.txt"):
     """
     Read a license from license_path and append it to all files under root
     whose extension is in _license_exts.
@@ -259,7 +259,7 @@ def make_archive(src, dst, in_subdir=True):
     
 
 def export(src, dst, process_directives=True, keywords={},
-           exclude_dirs=[], exclude_files=[], license=None,
+           exclude_dirs=[], exclude_files=[], license=False,
            directive_vars={}):
     """
     Build from a directory to a directory.
@@ -290,8 +290,8 @@ def export(src, dst, process_directives=True, keywords={},
     # remove empty directories and stuff in the blacklist
     _clean_dir(tmpdir, exclude_dirs, exclude_files)
         
-    if license and os.path.isfile(license):
-        _add_license(tmpdir, license)
+    if license:
+        _add_license(tmpdir)
         
     if keywords:
         _add_keywords(tmpdir, keywords)
@@ -324,9 +324,9 @@ Destination can be either a directory or a zip file"""
     parser.add_option("-c", "--no-concat", dest="concat",
                       default=True, action="store_false",
                       help="don't concatenate script and css")
-    parser.add_option("-l", "--license", dest="license",
-                      default=None, type="string",
-                      help="append license file to js and css")
+    parser.add_option("-l", "--no-license", dest="license",
+                      default=True, action="store_false",
+                      help="Do NOT append license file to js and css. (license is taken from $cwd/license.txt")
     parser.add_option("-k", "--keyword", dest="kwlist",
                       default=None, type="string", action="append",
                       help="A key/value pair. All instances of key will be replaced by value in all files. More than one key/value is allowed by adding more -k switches", metavar="key=value")
