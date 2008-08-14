@@ -42,7 +42,7 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 
 <!-- This will turn off including of the UI strings if the exclude_uistrings var is set -->
 <!-- command concat_js off if exclude_uistrings -->
-<script src="./ui-strings/ui_strings.js"/>
+<script src="./ui-strings/en_strings.js"/>
 
 
 <!-- restart normal concatenation -->
