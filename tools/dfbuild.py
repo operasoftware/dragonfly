@@ -12,6 +12,7 @@ _license_exts = (".js", ".css") # extensions that should get a license
 _script_ele = "<script src=\"%s\"/>\n"
 _style_ele = "<link rel=\"stylesheet\" href=\"%s\"/>\n"
 _re_command = re.compile("""\s?<!--\s+command\s+(?P<command>\w+)\s+"?(?P<target>.*?)"?\s*(?:if\s+(?P<neg>not)?\s*(?P<cond>\S+?))?\s*-->""")
+_re_comment = re.compile("""\s*<!--.*-->\s*""")
 _re_script = re.compile("\s?<script +src=\"(?P<src>[^\"]*)\"/>")
 _re_css = re.compile("\s?<link +rel=\"stylesheet\" +href=\"(?P<href>[^\"]*)\"/>")
 _re_condition = re.compile("\s+if\s+(not)? (.*)")
@@ -45,6 +46,7 @@ def _process_directives(root, filepath, vars):
         match_cmd = _re_command.search(line)
         match_css = _re_css.search(line)
         match_js = _re_script.search(line)
+        match_comment = _re_comment.search(line)
         if match_cmd:
             cmd, target, neg, cond = match_cmd.groups()
             if cond: # check if this directive is conditional
@@ -78,6 +80,8 @@ def _process_directives(root, filepath, vars):
                 continue
             else: # some other unknown command! Let fall through so line is written
                 pass
+        elif match_comment:
+            continue
         elif match_css:
             if current_css_file:
                 known_files[current_css_file].append(match_css.group("href"))

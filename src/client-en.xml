@@ -30,8 +30,8 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 </div>
 </main-view>
 
-<!-- the following two directives will make dfbuild concatenate all css and
-     js respectively into the named files. -->
+<!-- please don't use multiline html comments yet. They confuse the build tool -->
+<!-- the following two directives will make dfbuild concatenate all css and js respectively into the named files. -->
 <!-- command concat_css "./style/dragonfly.css" -->
 <!-- command concat_js "./script/dragonfly.js" -->
 
@@ -40,7 +40,7 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <link rel="stylesheet" href="./ui-style/js-source.css"/>
 <link rel="stylesheet" href="./ui-style/syntax-highlight.css"/>
 
-<!-- This will turn off including of the UI strings if the exclude_uistrings var is set  ddd-->
+<!-- This will turn off including of the UI strings if the exclude_uistrings var is set -->
 <!-- command concat_js off if exclude_uistrings -->
 <script src="./ui-strings/ui_strings-en.js"/>
 
