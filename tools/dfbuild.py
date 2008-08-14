@@ -41,7 +41,6 @@ def _process_directives(root, filepath, vars):
     known_files = {}
     current_css_file = None
     current_js_file = None
- 
     for line in file:
         match_cmd = _re_command.search(line)
         match_css = _re_css.search(line)
@@ -86,7 +85,8 @@ def _process_directives(root, filepath, vars):
         elif match_js:
             if current_js_file:
                 known_files[current_js_file].append(match_js.group("src"))
-                continue
+                #fixme: The following continue should have been on the same level as this comment. However, that causes lang files to be included. must fix
+            continue
         elif line.isspace():
             continue
 
