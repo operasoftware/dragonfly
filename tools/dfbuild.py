@@ -229,6 +229,8 @@ def _localize_buildout(src, langdir):
         langfile.close()
         newscript.close()
         
+    os.unlink(os.path.join(src, "script/dragonfly.js"))
+        
 
 def make_archive(src, dst, in_subdir=True):
     """
@@ -323,7 +325,7 @@ Destination can be either a directory or a zip file"""
     parser = optparse.OptionParser(usage)
     parser.add_option("-c", "--no-concat", dest="concat",
                       default=True, action="store_false",
-                      help="don't concatenate script and css")
+                      help="Do NOT concatenate script and css")
     parser.add_option("-l", "--no-license", dest="license",
                       default=True, action="store_false",
                       help="Do NOT append license file to js and css. (license is taken from $cwd/license.txt")
