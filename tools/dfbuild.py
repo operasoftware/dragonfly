@@ -145,8 +145,6 @@ def _add_license(root, license_path="license.txt"):
     """
     Read a license from license_path and append it to all files under root
     whose extension is in _license_exts.
-    
-    FIXME: move this so it's not called from export perhaps?
     """
     if not os.path.isfile(license_path):
         return
@@ -261,8 +259,7 @@ def make_archive(src, dst, in_subdir=True):
     
 
 def export(src, dst, process_directives=True, keywords={},
-           exclude_dirs=[], exclude_files=[], license=False,
-           directive_vars={}):
+           exclude_dirs=[], exclude_files=[], directive_vars={}):
     """
     Build from a directory to a directory.
     
@@ -291,9 +288,6 @@ def export(src, dst, process_directives=True, keywords={},
         
     # remove empty directories and stuff in the blacklist
     _clean_dir(tmpdir, exclude_dirs, exclude_files)
-        
-    if license:
-        _add_license(tmpdir)
         
     if keywords:
         _add_keywords(tmpdir, keywords)
@@ -375,9 +369,13 @@ Destination can be either a directory or a zip file"""
                 os.unlink(dst)
         tempdir = tempfile.mkdtemp(".tmp", "dfbuild.")
         export(src, tempdir, process_directives=options.concat, exclude_dirs=exdirs,
-               keywords=keywords, license=options.license, directive_vars=dirvars)
+               keywords=keywords, directive_vars=dirvars)
         if options.translate_build:
             _localize_buildout(dst, "src/ui-strings")
+
+        if options.license:
+            _add_license(dst)
+
         make_archive(tempdir, dst)
         shutil.rmtree(tempdir)
     else: # export to a directory
@@ -388,9 +386,12 @@ Destination can be either a directory or a zip file"""
                 shutil.rmtree(dst)
 
         export(src, dst, process_directives=options.concat, exclude_dirs=exdirs,
-               keywords=keywords, license=options.license, directive_vars=dirvars)
+               keywords=keywords, directive_vars=dirvars)
         if options.translate_build:
             _localize_buildout(dst, "src/ui-strings")
+            
+        if options.license:
+            _add_license(dst)
 
 
 if __name__ == "__main__":
