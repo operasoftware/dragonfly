@@ -4,7 +4,7 @@
 
 var ViewsMenu = function(menu_id)
 {
-  var hideTimeouts = Timeouts();
+  var hideTimeouts = new Timeouts();
   var menu = null;
   var self = this;
   this.getAllViews = function()
