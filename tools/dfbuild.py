@@ -371,13 +371,14 @@ Destination can be either a directory or a zip file"""
         export(src, tempdir, process_directives=options.concat, exclude_dirs=exdirs,
                keywords=keywords, directive_vars=dirvars)
         if options.translate_build:
-            _localize_buildout(dst, "src/ui-strings")
+            _localize_buildout(tempdir, "src/ui-strings")
 
         if options.license:
-            _add_license(dst)
+            _add_license(tempdir)
 
         make_archive(tempdir, dst)
         shutil.rmtree(tempdir)
+
     else: # export to a directory
         if os.path.isdir(dst):
             if not options.delete_dst:
