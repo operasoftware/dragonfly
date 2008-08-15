@@ -1,4 +1,4 @@
-import re
+﻿import re
 import codecs
 import os
 import shutil
@@ -194,6 +194,15 @@ def _add_keywords(root, keywords):
         shutil.copy(tmppath, f)
         os.unlink(tmppath)
 
+def _is_utf8(path):
+    """Check if file at path is utf8. Note that this only checks for a
+    utf8 BOM, nothing more
+    """
+    if not os.path.isfile(path): return None
+    f = open(path, "rb")
+    bytes = f.read(3)
+    return bytes == r"ï»¿"
+    
 
 def _localize_buildout(src, langdir):
     """Make a localized version of the build dir. That is, with one
