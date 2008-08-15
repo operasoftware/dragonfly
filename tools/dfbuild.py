@@ -1,4 +1,4 @@
-import re
+﻿import re
 import codecs
 import os
 import shutil
@@ -6,6 +6,7 @@ import tempfile
 import sys
 import zipfile
 
+_text_exts = (".js", ".html", ".xml", ".css")
 _directive_exts = (".xml", ".html", ".xhtml") # files that may have <!-- command.. directives
 _keyword_exts = (".css", ".js", ".xml", ".html", ".xhtml", ".txt") # files we will try to do keyword interpolation on
 _license_exts = (".js", ".css") # extensions that should get a license
@@ -194,6 +195,15 @@ def _add_keywords(root, keywords):
         shutil.copy(tmppath, f)
         os.unlink(tmppath)
 
+def _is_utf8(path):
+    """Check if file at path is utf8. Note that this only checks for a
+    utf8 BOM, nothing more
+    """
+    if not os.path.isfile(path): return None
+    f = open(path, "rb")
+    return [ ord(b) for b in f.read(3) ] == [ 0xef, 0xbb, 0xbf ]
+
+    
 
 def _localize_buildout(src, langdir):
     """Make a localized version of the build dir. That is, with one
@@ -229,6 +239,22 @@ def _localize_buildout(src, langdir):
         
     os.unlink(os.path.join(src, "script/dragonfly.js"))
         
+
+def get_bad_encoding_files(src):
+    """Check the source directory if it passes the criteria for a valid
+    build. This means all files should be utf8 with a bom and all language
+    strings present in the sources should be present in all the language
+    files"""
+    files = os.walk(src)
+    
+    bad = []
+    for base, dirs, files in os.walk(src):
+        for file in [f for f in files if f.endswith(_text_exts)]:
+            abs = os.path.join(base, file)
+            if not _is_utf8(abs): bad.append(abs)
+            
+    return bad
+    
 
 def make_archive(src, dst, in_subdir=True):
     """
@@ -360,6 +386,16 @@ Destination can be either a directory or a zip file"""
     
     if options.translate_build and not options.concat:
         parser.error("""Can't translate when not concatenateing. use --no-concat OR --translate""")
+    
+    
+    
+    bad = get_bad_encoding_files(src)
+    if bad:
+        print "The following files do not seem to be UTF8 with BOM encoded:"
+        for b in bad: print "\t%s" % b
+        sys.exit()
+    
+    
     
     if dst.endswith(".zip"): # export to a zip file
         if os.path.isfile(dst):
