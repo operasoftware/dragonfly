@@ -1,4 +1,4 @@
-var pre_lexer = function(script)
+﻿var pre_lexer = function(script)
 {
   var input = script.source, line_arr = script.line_arr, state_arr = script.state_arr;
   var cur_cur = -1;

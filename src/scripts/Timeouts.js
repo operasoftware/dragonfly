@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @fileoverview
  * timeouts class
  */

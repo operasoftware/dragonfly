@@ -1,4 +1,4 @@
-/**
+﻿/**
   * @constructor 
   * @extends ViewBase
   * @see DOM_tree_style this class can be dynamically exchanged with DOM_tree_style

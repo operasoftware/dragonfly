@@ -1,4 +1,4 @@
-/**
+﻿/**
   * @constructor 
   * @extends ViewBase
   * @see DOM_markup_style this class can be dynamically exchanged with DOM_markup_style

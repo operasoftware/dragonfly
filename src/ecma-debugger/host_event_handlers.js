@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @fileoverview
  * <strong>fixme: Deprecated. marked for removal</strong>
  */

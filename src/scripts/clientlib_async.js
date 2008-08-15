@@ -1,4 +1,4 @@
-/* Copyright 2006 Opera Software ASA.  */
+﻿/* Copyright 2006 Opera Software ASA.  */
 
 /**
   * Convenience library for interacting with the httpd server in

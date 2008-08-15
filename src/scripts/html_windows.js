@@ -1,4 +1,4 @@
-var windows = new function()
+﻿var windows = new function()
 {
   var win = null,
   left_delta = 0,

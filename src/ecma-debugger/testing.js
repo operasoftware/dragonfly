@@ -1,4 +1,4 @@
-var testing = new function()
+﻿var testing = new function()
 {
    var self = this;
 

@@ -1,4 +1,4 @@
-var simple_js_parser=new function()
+﻿var simple_js_parser=new function()
 {
   /* adjusted to return fotmatted HTML */
 

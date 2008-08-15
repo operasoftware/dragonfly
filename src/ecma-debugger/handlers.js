@@ -1,4 +1,4 @@
-handlers = new function()
+﻿handlers = new function()
 {
   var self = this;
 

@@ -1,4 +1,4 @@
-/**
+﻿/**
   * @constructor 
   * @extends ViewBase
   * this is a bit a hack

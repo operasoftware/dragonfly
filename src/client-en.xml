@@ -1,4 +1,4 @@
-<viewport xmlns="http://www.w3.org/1999/xhtml">
+﻿<viewport xmlns="http://www.w3.org/1999/xhtml">
 <script><![CDATA[
 if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()) <= 4789  )
 {

@@ -1,4 +1,4 @@
-//(function()
+﻿//(function()
 //{
 
 var cls = window.cls || ( window.cls = {} );

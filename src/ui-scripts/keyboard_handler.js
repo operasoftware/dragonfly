@@ -1,4 +1,4 @@
-
+﻿
 // add here the combinations which will be handled
 // format shiftKey 0 | 1, ctrlKey 0 | 1, altKey 0 | 1, keyCode
 var key_ids = 

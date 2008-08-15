@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @fileoverview
  * Three-state animated button class
  */

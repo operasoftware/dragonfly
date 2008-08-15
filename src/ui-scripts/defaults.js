@@ -1,4 +1,4 @@
-var defaults =
+﻿var defaults =
 {
   viewport: 'viewport',
   viewport_main_container: 'main-view',

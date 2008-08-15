@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @fileoverview
  * Helper function prototypes related to DOM objects and the DOM
  * templating system.

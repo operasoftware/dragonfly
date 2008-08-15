@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @fileoverview
  * Array prototype functions
  * fixme: This file can probably be removed. There doesn't seem to be any

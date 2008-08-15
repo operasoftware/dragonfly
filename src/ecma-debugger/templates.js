@@ -1,4 +1,4 @@
-window.templates = window.templates || ( window.templates = {} );
+﻿window.templates = window.templates || ( window.templates = {} );
 
 (function()
 {

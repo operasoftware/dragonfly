@@ -1,4 +1,4 @@
-var verticalFrames = new function()
+﻿var verticalFrames = new function()
 {
   /* settings */
 

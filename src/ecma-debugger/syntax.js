@@ -1,4 +1,4 @@
-var js_keywords=
+﻿var js_keywords=
 {
   'abstract': 1,
   'boolean': 1,

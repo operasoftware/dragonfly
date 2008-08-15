@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @fileoverview
  * Message handling class definition and singleton instansiation.
  *

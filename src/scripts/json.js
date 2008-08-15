@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @fileoverview
  * JSON parsing tools
  * <br>

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @fileoverview
  * Dictionary of all objects in the default global scope. Used by views
  * that can include or hide the default properties.

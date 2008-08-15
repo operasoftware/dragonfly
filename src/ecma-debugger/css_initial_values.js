@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @fileoverview
  * This file contains a lookup table of css properties, the value of the
  * property contains the initial value ( default value is defined in the browser.css ) 

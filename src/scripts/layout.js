@@ -1,4 +1,4 @@
-var Layout = function(container_id, rough_layout)
+﻿var Layout = function(container_id, rough_layout)
 {
   const VER = 'v', HOR = 'h';
   var self = this; // most likely to bind listeners

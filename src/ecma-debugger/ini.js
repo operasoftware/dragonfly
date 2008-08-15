@@ -1,4 +1,4 @@
-var ini =
+﻿var ini =
 {
   // all files in http-clients must be updated to the cvs version of this file //
   protocol_version: '3',

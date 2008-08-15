@@ -1,4 +1,4 @@
-CellBase = function()
+﻿CellBase = function()
 {
   const VER = 'v', HOR = 'h';
 
