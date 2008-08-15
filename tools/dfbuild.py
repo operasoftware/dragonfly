@@ -219,7 +219,7 @@ def _localize_buildout(src, langdir):
         newscript = open(os.path.join(src,newscriptpath), "w")
         newclient = open(os.path.join(src, newclientpath), "w")
         langfile = open(path)
-        newscript.write(_concatcomment)
+        newscript.write(_concatcomment % path)
         newscript.write(langfile.read())
         newscript.write(script_data)
         newclient.write(clientdata.replace("dragonfly.js", "dragonfly" + "-" + lang +".js"))
