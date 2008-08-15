@@ -144,7 +144,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     }
     else
     {
-      alert('select a runtime');
+      alert(ui_strings.ALERT_NO_RUNTIME_SELECTED);
     }
   }
 

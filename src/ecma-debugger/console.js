@@ -359,7 +359,7 @@ ErrorConsoleView.roughViews.createViews = function()
       [
         {
           handler: handler_id,
-          title: 'Clear Log',
+          title: ui_strings.BUTTON_LABEL_CLEAR_LOG,
           class_name: 'clear-log'
         }
       ],
@@ -480,7 +480,7 @@ cls.ConsoleView = function(id, name, container_class)
 
 cls.ConsoleView.prototype = ViewBase;
 
-new cls.ConsoleView('console', 'Console', 'scroll');
+new cls.ConsoleView('console', ui_strings.VIEW_LABEL_CONSOLE, 'scroll');
 
 new Settings
 (

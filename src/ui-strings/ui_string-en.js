@@ -80,6 +80,14 @@ ui_strings.VIEW_LABEL_COMPUTED_STYLE = 'Computed Style';
 /* DESC: The styles that got defined in the stylesheets.*/
 ui_strings.VIEW_LABEL_STYLES = 'Styles';
 
+/* DESC: TODO */
+ui_strings.VIEW_LABEL_CONSOLE = 'Console';
+/* DESC: TODO */
+ui_strings.VIEW_LABEL_EXPORT = 'Export';
+
+
+
+
 /*
  * Settings dialogue entries
  */
@@ -149,6 +157,16 @@ ui_strings.SWITCH_DETACH_WINDOW = "Undock into separate window"  ;
 /* DESC: TODO. */
 ui_strings.SWITCH_ATTACH_WINDOW = "Dock to main window";
 
+/* DESC: TODO. */
+ui_strings.SWITCH_SHOW_INITIAL_VALUES = 'Hide initial values in computed styles';
+/* DESC: TODO. */
+ui_strings.SWITCH_SHOW_SHORTHANDS = 'Hide shorthands in computed styles';
+/* DESC: TODO. */
+ui_strings.SWITCH_CREATE_SHORTHANDS = 'Use shorthands for properties';
+
+
+
+
 /*
  * Button tool-tips.
  */ 
@@ -188,6 +206,21 @@ ui_strings.BUTTON_LABEL_CLEAR_LOG = 'Clear thread log';
 /* DESC: Exports current thread log. */
 ui_strings.BUTTON_LABEL_EXPORT_LOG = 'Export thread log';
 
+/* DESC: TODO. */
+ui_strings.BUTTON_LABEL_STATUS_INDICATOR = 'Status indicator for the browser and the debugger';
+/* DESC: TODO. */
+ui_strings.BUTTON_LABEL_CONFIGURATIONS = 'Configurations';
+
+/* DESC: TODO. */
+ui_strings.BUTTON_LABEL_PORT = 'Port';
+/* DESC: TODO. */
+ui_strings.BUTTON_LABEL_APPLY = 'Apply';
+/* DESC: TODO. */
+ui_strings.BUTTON_LABEL_CLEAR_LOG = 'Clear Log';
+/* DESC: TODO. */
+ui_strings.BUTTON_LABEL_CLOSE_WINDOW = 'Close Window';
+
+
 
 /*
  * Information strings in the UI
@@ -220,6 +253,61 @@ ui_strings.ALERT_WRONG_START = "Dragonfly cannot be used in this way.\n" +
 /* DESC: TODO. */
 ui_strings.ALERT_WAITING_FOR_CONNECTION = 
   "Opera Dragonfly is waiting for a connection on port %s.\n" +
-  "Please enter opera:debug in your device's URL field to connect."
+  "Please enter opera:debug in your device's URL field to connect.";
 /* DESC: TODO. */
-ui_strings.ALERT_SERVICE_NOT_AVAILABLE =  "Service is not available: %s"
+ui_strings.ALERT_SERVICE_NOT_AVAILABLE =  "Service is not available: %s";
+/* DESC: TODO. */
+ui_strings.ALERT_NO_RUNTIME_SELECTED =  "Select a runtime";
+
+
+
+/*
+ * other strings 
+ */
+
+/* DESC: TODO. */
+ui_strings.CALL_STACK_FRAME_LINE =  "%(function name)s line %(line number)s script id %(script id)s";
+/* DESC: TODO. */
+ui_strings.VIEW_SUB_HEADER_METRICS =  "Metrics";
+/* DESC: TODO. */
+/* not sure if that makes sense: the according property on a node is offsetParent; chrisk */
+ui_strings.VIEW_SUB_PARENT_OFFSETS =  "Parent Offsets";
+/* DESC: TODO. */
+/* the same not sure if that makes sense: it's offsetTop, offsetLeft, etc; chrisk */
+ui_strings.VIEW_SUB_OFFSET_VALUES =  "Offset Values";
+
+/* DESC: TODO. */
+ui_strings.ENVIRONMENT_PROTOCOL_VERSION = "Protocol Version";
+/* DESC: TODO. */
+ui_strings.ENVIRONMENT_OPERATING_SYSTEM = "Operating System";
+/* DESC: TODO. */
+ui_strings.ENVIRONMENT_PLATFORM = "Platform";
+/* DESC: TODO. */
+ui_strings.ENVIRONMENT_USER_AGENT = "User Agent";
+/* DESC: TODO. */
+ui_strings.ENVIRONMENT_DRAGONFLY_VERSION = "Dragonfly Version";
+/* DESC: TODO. */
+ui_strings.ENVIRONMENT_REVISION_NUMBER = "Revision Number";
+/* DESC: TODO. */
+ui_strings.ECMA_SCRIPT_TYPE_INLINE = "Inline";
+/* DESC: TODO. */
+ui_strings.ECMA_SCRIPT_TYPE_LINKED = "Linked";
+/* DESC: TODO. */
+ui_strings.ECMA_SCRIPT_TYPE_UNKNOWN = "Unknown";
+/* DESC: TODO. */
+ui_strings.ECMA_SCRIPT_SCRIPT_ID = "script id";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 

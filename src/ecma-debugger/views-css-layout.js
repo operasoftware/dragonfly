@@ -16,7 +16,7 @@ cls.CSSLayoutView = function(id, name, container_class)
     if( !container.getElementsByTagName('layout-container')[0] )
     {
       container.innerHTML = "<div class='padding'>\
-          <h2>Metrics</h2>\
+          <h2>" + ui_strings.VIEW_SUB_HEADER_METRICS + "</h2>\
           <layout-container></layout-container>\
           <offsets-container></offsets-container>\
           </div>";

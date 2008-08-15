@@ -108,7 +108,10 @@ window.templates = window.templates || ( window.templates = {} );
   this['top-statusbar'] = function(ui_obj)
   {
     return [ 
-      ['div', 'id', ui_obj.spin_animator.getId(),'title', 'status indicator for the browser and the debugger'], 
+      ['div', 
+        'id', ui_obj.spin_animator.getId(),
+        'title', ui_strings.BUTTON_LABEL_STATUS_INDICATOR
+      ], 
       this.configButton('top-settings'), ['info']
     ]
   }
@@ -121,7 +124,7 @@ window.templates = window.templates || ( window.templates = {} );
 
   this.configButton = function(handler)
   {
-    return ['input', 'type', 'button', 'handler', handler, 'title', 'Configurations'];
+    return ['input', 'type', 'button', 'handler', handler, 'title', ui_strings.BUTTON_LABEL_CONFIGURATIONS];
   }
 
   this.tabs = function(obj)
@@ -167,7 +170,8 @@ window.templates = window.templates || ( window.templates = {} );
       ],
       ['input', 
           'type', 'button', 
-          'handler', 'top-window-close'
+          'handler', 'top-window-close',
+          'title', ui_strings.BUTTON_LABEL_CLOSE_WINDOW
         ]
       ]
   }

@@ -26,5 +26,5 @@ cls.ExportDataView = function(id, name, container_class)
 
 cls.ExportDataView.prototype = ViewBase;
 
-new cls.ExportDataView('export_data', 'Export', 'scroll export-data');
+new cls.ExportDataView('export_data', ui_strings.VIEW_LABEL_EXPORT, 'scroll export-data');
 

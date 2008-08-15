@@ -82,8 +82,8 @@ new Settings
   }, 
   // key-label map
   {
-    'hide-initial-values': 'Hide initial values in computed styles',
-    'hide-shorthands': 'Hide shorthands in computed styles'
+    'hide-initial-values': ui_strings.SWITCH_SHOW_INITIAL_VALUES,
+    'hide-shorthands': ui_strings.SWITCH_SHOW_SHORTHANDS
   },
   // settings map
   {

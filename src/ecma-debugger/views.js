@@ -200,7 +200,7 @@ new Settings
           this.label_map['debug-remote']
         ],
         ['label',
-          'port: ',
+          ui_strings.BUTTON_LABEL_PORT + ': ',
           ['input',
             'type', 'number',
             'value', this.get('port'),
@@ -209,7 +209,7 @@ new Settings
         ],
         ['input',
           'type', 'button',
-          'value', 'apply',
+          'value', ui_strings.BUTTON_LABEL_APPLY,
           'handler', 'apply-remote-debugging'
         ]
       ]
