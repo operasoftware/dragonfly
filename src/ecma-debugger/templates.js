@@ -7,14 +7,22 @@ window.templates = window.templates || ( window.templates = {} );
   {
     var ret = ['ul'];
     var prop = '';
+    var prop_dict =
+    {
+      "protocol-version": ui_strings.ENVIRONMENT_PROTOCOL_VERSION,
+      "operating-system": ui_strings.ENVIRONMENT_OPERATING_SYSTEM,
+      "platform": ui_strings.ENVIRONMENT_PLATFORM, 
+      "user-agent": ui_strings.ENVIRONMENT_USER_AGENT
+    }
     for( prop in enviroment)
     {
-      ret[ret.length] = ['li', prop+': '+enviroment[prop]];
+      ret[ret.length] = ['li', prop_dict[prop] + ': ' + enviroment[prop]];
     }
-    ret[ret.length] = ['li', 'Dragonfly Version: ' + ini.dragonfly_version];
-    ret[ret.length] = ['li', 'Revision Number: ' + ini.revision_number];
+    ret[ret.length] = ['li', ui_strings.ENVIRONMENT_DRAGONFLY_VERSION + ': ' + ini.dragonfly_version];
+    ret[ret.length] = ['li', ui_strings.ENVIRONMENT_REVISION_NUMBER + ': ' + ini.revision_number];
     return ['div', ret, 'class', 'padding'];
   }
+
 
 
   this.windows = function(windows, win_type)
@@ -214,12 +222,21 @@ window.templates = window.templates || ( window.templates = {} );
   this.scriptLink = function(script, selected_script)
   {
     var display_uri = helpers.shortenURI(script['uri']);
+    // script types in the protocol: 
+    //   "inline" | "event" | "linked" | "timeout" | "java" | "generated" | "unknown"
+    var type_dict =
+    {
+      "inline": ui_strings.ECMA_SCRIPT_TYPE_INLINE,
+      "linked": ui_strings.ECMA_SCRIPT_TYPE_LINKED,
+      "unknown": ui_strings.ECMA_SCRIPT_TYPE_UNKNOWN
+    };
+    var script_type = script['script-type'];
     var ret = ['li',
-        script['script-type']+' - ' + 
+        ( type_dict[script_type] || script_type ) + ' - ' + 
          ( 
             display_uri.uri
             ? display_uri.uri
-            : 'script-id: ' + script['script-id'] 
+            : ui_strings.ECMA_SCRIPT_SCRIPT_ID + ': ' + script['script-id'] 
          ),
         'handler', 'display-script',
         'script-id', script['script-id'],
@@ -275,10 +292,12 @@ window.templates = window.templates || ( window.templates = {} );
 
   this.frame = function(frame, is_top)
   {
+    // %(function name)s line %(line number)s script id %(script id)s
     return ['li',
-      ( frame.fn_name ? frame.fn_name : 'anonymous' ) + 
-        ( frame.line ? ' ' + 'line ' + frame.line : '' ) + 
-        ( frame.script_id ? ' script id ' + frame.script_id : '' ),
+      ui_strings.CALL_STACK_FRAME_LINE.
+        replace("%(function name)s", ( frame.fn_name || ui_strings.ANONYMOUS_FUNCTION_NAME ) ).
+        replace("%(line number)s", ( frame.line || '-' ) ).
+        replace("%(script id)s", ( frame.script_id || '-' ) ),
       'handler', 'show-frame',
       'ref-id', frame.id,
 

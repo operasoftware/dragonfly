@@ -74,7 +74,7 @@ new Settings
   }, 
   // key-label map
   {
-    'shortcuts': ' use shortcuts for properties'
+    'shortcuts': ui_strings.SWITCH_CREATE_SHORTHANDS
   },
   // settings map
   {

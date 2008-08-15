@@ -293,7 +293,9 @@ var elementStyle = new function()
       }
       if( __setProps[prop] )
       {
-        if(dec[PRIORITY_LIST][i] && !__setPriorities[prop])
+        // the important flag is only relevant for the target node, 
+        // for any inherited property it doesn't matter
+        if( !set_has_inherited_props && dec[PRIORITY_LIST][i] && !__setPriorities[prop])
         {
           ret[ret.length] = prop;
           __setPriorities[prop] = /%|em|ex/.test(dec[VAL_LIST][i]) ? 2 : 1;
