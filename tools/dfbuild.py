@@ -240,7 +240,7 @@ def _localize_buildout(src, langdir):
     os.unlink(os.path.join(src, "script/dragonfly.js"))
         
 
-def get_bad_encoding_files(src):
+def _get_bad_encoding_files(src):
     """Check the source directory if it passes the criteria for a valid
     build. This means all files should be utf8 with a bom and all language
     strings present in the sources should be present in all the language
@@ -254,7 +254,22 @@ def get_bad_encoding_files(src):
             if not _is_utf8(abs): bad.append(abs)
             
     return bad
-    
+
+def _get_string_keys(path):
+    """Grab all the string keys of out a language file"""
+    re_key = re.compile("^ *ui_strings\.([^ ]*)")
+    file = open(path)
+    lang_keys = set()
+    for line in file:
+        lang_keys.update(re_key.findall(line))
+    file.close()
+    return lang_keys
+ 
+def _get_missing_strings(path, master):
+    """Get the differences between the set of all strings and the
+    strings in path"""
+    keys = _get_all_string_keys(path)
+    return master - keys
 
 def make_archive(src, dst, in_subdir=True):
     """
@@ -389,7 +404,7 @@ Destination can be either a directory or a zip file"""
     
     
     
-    bad = get_bad_encoding_files(src)
+    bad = _get_bad_encoding_files(src)
     if bad:
         print "The following files do not seem to be UTF8 with BOM encoded:"
         for b in bad: print "\t%s" % b
