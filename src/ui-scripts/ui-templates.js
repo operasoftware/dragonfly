@@ -25,7 +25,7 @@
       else
       {
         ret[ret.length] = ['filter', 
-          ['em', ( default_text = filter.label ? filter.label : ui_strings.INPUT_DEFAULT_TEXT_SEARCH ) ],
+          ['em', ( default_text = filter.label ? filter.label : ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH ) ],
           [
             'input', 
             'autocomplete', 'off', 
@@ -110,7 +110,7 @@
     return [ 
       ['div', 
         'id', ui_obj.spin_animator.getId(),
-        'title', ui_strings.BUTTON_LABEL_STATUS_INDICATOR
+        'title', ui_strings.S_LABEL_STATUS_INDICATOR
       ], 
       this.configButton('top-settings'), ['info']
     ]
@@ -124,7 +124,7 @@
 
   this.configButton = function(handler)
   {
-    return ['input', 'type', 'button', 'handler', handler, 'title', ui_strings.BUTTON_LABEL_CONFIGURATIONS];
+    return ['input', 'type', 'button', 'handler', handler, 'title', ui_strings.S_BUTTON_LABEL_SETTINGS];
   }
 
   this.tabs = function(obj)
@@ -166,12 +166,12 @@
         'type', 'button', 
         'handler', 'top-window-toggle-attach', 
         'class', 'switch' + ( attached ? ' attached' : '') ,
-        'title', attached ? ui_strings.SWITCH_DETACH_WINDOW : ui_strings.SWITCH_ATTACH_WINDOW
+        'title', attached ? ui_strings.S_SWITCH_DETACH_WINDOW : ui_strings.S_SWITCH_ATTACH_WINDOW
       ],
       ['input', 
           'type', 'button', 
           'handler', 'top-window-close',
-          'title', ui_strings.BUTTON_LABEL_CLOSE_WINDOW
+          'title', ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW
         ]
       ]
   }

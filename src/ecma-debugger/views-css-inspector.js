@@ -67,7 +67,7 @@ cls.CSSInspectorView = function(id, name, container_class)
 }
 
 cls.CSSInspectorView.prototype = ViewBase;
-new cls.CSSInspectorView('css-inspector', ui_strings.VIEW_LABEL_STYLES, 'scroll css-inspector');
+new cls.CSSInspectorView('css-inspector', ui_strings.M_VIEW_LABEL_STYLES, 'scroll css-inspector');
 
 new Settings
 (
@@ -82,8 +82,8 @@ new Settings
   }, 
   // key-label map
   {
-    'hide-initial-values': ui_strings.SWITCH_SHOW_INITIAL_VALUES,
-    'hide-shorthands': ui_strings.SWITCH_SHOW_SHORTHANDS
+    'hide-initial-values': ui_strings.S_SWITCH_SHOW_INITIAL_VALUES,
+    'hide-shorthands': ui_strings.S_SWITCH_SHOW_SHORTHANDS
   },
   // settings map
   {
@@ -103,7 +103,7 @@ new ToolbarConfig
     {
       handler: 'css-inspector-text-search',
       title: 'text search',
-      label: ui_strings.INPUT_DEFAULT_TEXT_FILTER
+      label: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER
     }
   ]
 )

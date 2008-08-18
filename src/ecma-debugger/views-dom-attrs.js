@@ -50,7 +50,7 @@ cls.DOMAttrsView = function(id, name, container_class)
   this.init(id, name, container_class);
 }
 cls.DOMAttrsView.prototype = ViewBase;
-new cls.DOMAttrsView('dom_attrs', ui_strings.VIEW_LABEL_DOM_ATTR, 'scroll dom-attrs');
+new cls.DOMAttrsView('dom_attrs', ui_strings.M_VIEW_LABEL_DOM_ATTR, 'scroll dom-attrs');
 
 new Settings
 (
@@ -62,7 +62,7 @@ new Settings
   }, 
   // key-label map
   {
-    "hide-null-values": ui_strings.SWITCH_HIDE_EMPTY_STRINGS
+    "hide-null-values": ui_strings.S_SWITCH_HIDE_EMPTY_STRINGS
   },
   // settings map
   {

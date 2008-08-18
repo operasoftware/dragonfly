@@ -9,17 +9,17 @@
     var prop = '';
     var prop_dict =
     {
-      "protocol-version": ui_strings.ENVIRONMENT_PROTOCOL_VERSION,
-      "operating-system": ui_strings.ENVIRONMENT_OPERATING_SYSTEM,
-      "platform": ui_strings.ENVIRONMENT_PLATFORM, 
-      "user-agent": ui_strings.ENVIRONMENT_USER_AGENT
+      "protocol-version": ui_strings.S_TEXT_ENVIRONMENT_PROTOCOL_VERSION,
+      "operating-system": ui_strings.S_TEXT_ENVIRONMENT_OPERATING_SYSTEM,
+      "platform": ui_strings.S_TEXT_ENVIRONMENT_PLATFORM, 
+      "user-agent": ui_strings.S_TEXT_ENVIRONMENT_USER_AGENT
     }
     for( prop in enviroment)
     {
       ret[ret.length] = ['li', prop_dict[prop] + ': ' + enviroment[prop]];
     }
-    ret[ret.length] = ['li', ui_strings.ENVIRONMENT_DRAGONFLY_VERSION + ': ' + ini.dragonfly_version];
-    ret[ret.length] = ['li', ui_strings.ENVIRONMENT_REVISION_NUMBER + ': ' + ini.revision_number];
+    ret[ret.length] = ['li', ui_strings.S_TEXT_ENVIRONMENT_DRAGONFLY_VERSION + ': ' + ini.dragonfly_version];
+    ret[ret.length] = ['li', ui_strings.S_TEXT_ENVIRONMENT_REVISION_NUMBER + ': ' + ini.revision_number];
     return ['div', ret, 'class', 'padding'];
   }
 
@@ -163,8 +163,8 @@
       {
         scripts_container = ['p', 
           settings.runtimes.get('reload-runtime-automatically') || is_reloaded_window 
-          ? ui_strings.RUNTIME_HAS_NO_SCRIPTS
-          : ui_strings.INFO_NO_SCRIPTS_PLEASE_RELOAD, 
+          ? ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS
+          : ui_strings.S_INFO_RELOAD_FOR_SCRIPT, 
           'class', 'info-text'];
       }
       scripts_container.splice(scripts_container.length, 0, 'runtime-id', runtime['runtime-id']);
@@ -199,7 +199,7 @@
       }
       else
       {
-        container = ['p', ui_strings.INFO_DOCUMNENT_LOADING, 'class', 'info-text'];
+        container = ['p', ui_strings.S_INFO_DOCUMNENT_LOADING, 'class', 'info-text'];
       }
       container.splice(container.length, 0, 'runtime-id', runtime['runtime-id']);
       ret = ret.concat([container])
@@ -226,9 +226,9 @@
     //   "inline" | "event" | "linked" | "timeout" | "java" | "generated" | "unknown"
     var type_dict =
     {
-      "inline": ui_strings.ECMA_SCRIPT_TYPE_INLINE,
-      "linked": ui_strings.ECMA_SCRIPT_TYPE_LINKED,
-      "unknown": ui_strings.ECMA_SCRIPT_TYPE_UNKNOWN
+      "inline": ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_INLINE,
+      "linked": ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_LINKED,
+      "unknown": ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_UNKNOWN
     };
     var script_type = script['script-type'];
     var ret = ['li',
@@ -236,7 +236,7 @@
          ( 
             display_uri.uri
             ? display_uri.uri
-            : ui_strings.ECMA_SCRIPT_SCRIPT_ID + ': ' + script['script-id'] 
+            : ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script['script-id'] 
          ),
         'handler', 'display-script',
         'script-id', script['script-id'],
@@ -294,7 +294,7 @@
   {
     // %(function name)s line %(line number)s script id %(script id)s
     return ['li',
-      ui_strings.CALL_STACK_FRAME_LINE.
+      ui_strings.S_TEXT_CALL_STACK_FRAME_LINE.
         replace("%(FUNCTION_NAME)s", ( frame.fn_name || ui_strings.ANONYMOUS_FUNCTION_NAME ) ).
         replace("%(LINE_NUMBER)s", ( frame.line || '-' ) ).
         replace("%(SCRIPT_ID)s", ( frame.script_id || '-' ) ),

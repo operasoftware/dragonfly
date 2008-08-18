@@ -62,7 +62,7 @@ cls.StylesheetsView = function(id, name, container_class)
   this.init(id, name, container_class);
 }
 cls.StylesheetsView.prototype = ViewBase;
-new cls.StylesheetsView('stylesheets', ui_strings.VIEW_LABEL_STYLESHEET, 'scroll stylesheets');
+new cls.StylesheetsView('stylesheets', ui_strings.M_VIEW_LABEL_STYLESHEET, 'scroll stylesheets');
 
 new Settings
 (
@@ -74,7 +74,7 @@ new Settings
   }, 
   // key-label map
   {
-    'shortcuts': ui_strings.SWITCH_CREATE_SHORTHANDS
+    'shortcuts': ui_strings.S_SWITCH_CREATE_SHORTHANDS
   },
   // settings map
   {

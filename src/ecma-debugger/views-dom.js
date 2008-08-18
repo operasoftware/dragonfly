@@ -235,7 +235,7 @@ cls.DOMView = function(id, name, container_class)
 
 cls.DOMView.prototype = ViewBase;
 
-new cls.DOMView('dom', ui_strings.VIEW_LABEL_DOM, 'scroll dom');
+new cls.DOMView('dom', ui_strings.M_VIEW_LABEL_DOM, 'scroll dom');
 
 cls.DOMView.prototype.constructor = cls.DOMView;
 
@@ -259,14 +259,14 @@ new Settings
   }, 
   // key-label map
   {
-    'find-with-click': ui_strings.SWITCH_FIND_ELEMENT_BY_CLICKING,
-    'highlight-on-hover': ui_strings.SWITCH_HIGHLIGHT_BY_MOUSE_OVER,
-    'update-on-dom-node-inserted': ui_strings.SWITCH_UPDATE_DOM_ON_NODE_REMOVE,
-    'force-lowercase': ui_strings.SWITCH_USE_LOWER_CASE_TAG_NAMES, 
-    'show-comments': ui_strings.SWITCH_SHOW_COMMENT_NODES, 
-    'show-attributes': ui_strings.SWITCH_SHOW_ATTRIBUTES,
-    'show-whitespace-nodes': ui_strings.SWITCH_SHOW_WHITE_SPACE_NODES,
-    'dom-tree-style': ui_strings.SWITCH_SHOW_DOM_INTREE_VIEW
+    'find-with-click': ui_strings.S_SWITCH_FIND_ELEMENT_BY_CLICKING,
+    'highlight-on-hover': ui_strings.S_SWITCH_HIGHLIGHT_BY_MOUSE_OVER,
+    'update-on-dom-node-inserted': ui_strings.S_SWITCH_UPDATE_DOM_ON_NODE_REMOVE,
+    'force-lowercase': ui_strings.S_SWITCH_USE_LOWER_CASE_TAG_NAMES, 
+    'show-comments': ui_strings.S_SWITCH_SHOW_COMMENT_NODES, 
+    'show-attributes': ui_strings.S_SWITCH_SHOW_ATTRIBUTES,
+    'show-whitespace-nodes': ui_strings.S_SWITCH_SHOW_WHITE_SPACE_NODES,
+    'dom-tree-style': ui_strings.S_SWITCH_SHOW_DOM_INTREE_VIEW
   
   },
   // settings map
@@ -290,24 +290,24 @@ new ToolbarConfig
   [
     {
       handler: 'dom-inspection-snapshot',
-      title: ui_strings.BUTTON_LABEL_GET_THE_WOHLE_TREE
+      title: ui_strings.S_BUTTON_LABEL_GET_THE_WOHLE_TREE
     },
     {
       handler: 'dom-inspection-export',
-      title: ui_strings.BUTTON_LABEL_EXPORT_DOM
+      title: ui_strings.S_BUTTON_LABEL_EXPORT_DOM
     }
   ],
   [
     {
       handler: 'dom-text-search',
-      title: ui_strings.INPUT_DEFAULT_TEXT_SEARCH
+      title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
     }
   ]/*,
   // test for help button
   [
     {
       handler: 'documentation',
-      title: ui_strings.BUTTON_LABEL_HELP,
+      title: ui_strings.S_BUTTON_LABEL_HELP,
       param: 'http://www.opera.com'
     }
   ]

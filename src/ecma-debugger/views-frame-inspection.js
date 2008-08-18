@@ -84,7 +84,7 @@ cls.FrameInspectionView = function(id, name, container_class)
 }
 
 cls.FrameInspectionView.prototype = ViewBase;
-new cls.FrameInspectionView('frame_inspection', ui_strings.VIEW_LABEL_FRAME_INSPECTION, 'scroll');
+new cls.FrameInspectionView('frame_inspection', ui_strings.M_VIEW_LABEL_FRAME_INSPECTION, 'scroll');
 
 
 
@@ -99,8 +99,8 @@ new Settings
   }, 
   // key-label map
   {
-    'automatic-update-global-scope': ui_strings.SWITCH_UPDATE_GLOBAL_SCOPE,
-    'hide-default-properties-in-global-scope': ui_strings.BUTTON_LABEL_HIDE_DEFAULT_PROPS_IN_GLOBAL_SCOPE
+    'automatic-update-global-scope': ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE,
+    'hide-default-properties-in-global-scope': ui_strings.S_BUTTON_LABEL_HIDE_DEFAULT_PROPS_IN_GLOBAL_SCOPE
   },
   // settings map
   {
@@ -118,8 +118,8 @@ new ToolbarConfig
   [
     {
       handler: 'frame_inspection-text-search',
-      title: ui_strings.INPUT_DEFAULT_TEXT_FILTER,
-      label: ui_strings.INPUT_DEFAULT_TEXT_FILTER
+      title: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER,
+      label: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER
     }
   ]
 )

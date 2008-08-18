@@ -162,7 +162,7 @@ cls.ThreadsView = function(id, name, container_class)
 }
 
 cls.ThreadsView.prototype = ViewBase;
-new cls.ThreadsView('threads', ui_strings.VIEW_LABEL_THREAD_LOG, 'scroll threads');
+new cls.ThreadsView('threads', ui_strings.M_VIEW_LABEL_THREAD_LOG, 'scroll threads');
 
 new Settings
 (
@@ -174,7 +174,7 @@ new Settings
   }, 
   // key-label map
   {
-    'log-threads': ui_strings.BUTTON_LABEL_LOG_THREADS
+    'log-threads': ui_strings.S_BUTTON_LABEL_LOG_THREADS
   },
   // settings map
   {
@@ -191,11 +191,11 @@ new ToolbarConfig
   [
     {
       handler: 'threads-clear-log',
-      title: ui_strings.BUTTON_LABEL_CLEAR_LOG
+      title: ui_strings.S_BUTTON_LABEL_CLEAR_LOG
     },
     {
       handler: 'threads-export-log',
-      title: ui_strings.BUTTON_LABEL_EXPORT_LOG
+      title: ui_strings.S_BUTTON_LABEL_EXPORT_LOG
     }
   ]
 )

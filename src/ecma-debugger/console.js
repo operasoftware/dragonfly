@@ -272,66 +272,66 @@ ErrorConsoleView.roughViews =
 [
   {
     id: 'console-all',
-    name: ui_strings.VIEW_LABEL_ERROR_ALL
+    name: ui_strings.M_VIEW_LABEL_ERROR_ALL
   },
   {
     id: 'console-script',
-    name: ui_strings.VIEW_LABEL_ERROR_SCRIPT,
+    name: ui_strings.M_VIEW_LABEL_ERROR_SCRIPT,
     source: 'ecmascript'
   },
   {
     id: 'console-css',
-    name: ui_strings.VIEW_LABEL_ERROR_CSS,
+    name: ui_strings.M_VIEW_LABEL_ERROR_CSS,
     source: 'css'
   },
   {
     id: 'console-java',
-    name: ui_strings.VIEW_LABEL_ERROR_JAVA,
+    name: ui_strings.M_VIEW_LABEL_ERROR_JAVA,
     source: 'java'
   },
   {
     id: 'console-m2',
-    name: ui_strings.VIEW_LABEL_ERROR_M2,
+    name: ui_strings.M_VIEW_LABEL_ERROR_M2,
     source: 'm2'
   },
   {
     id: 'console-network',
-    name: ui_strings.VIEW_LABEL_ERROR_NETWORK,
+    name: ui_strings.M_VIEW_LABEL_ERROR_NETWORK,
     source: 'network'
   },
   {
     id: 'console-xml',
-    name: ui_strings.VIEW_LABEL_ERROR_XML,
+    name: ui_strings.M_VIEW_LABEL_ERROR_XML,
     source: 'xml'
   },
   {
     id: 'console-html',
-    name: ui_strings.VIEW_LABEL_ERROR_HTML,
+    name: ui_strings.M_VIEW_LABEL_ERROR_HTML,
     source: 'html'
   },
   {
     id: 'console-xslt',
-    name: ui_strings.VIEW_LABEL_ERROR_XSLT,
+    name: ui_strings.M_VIEW_LABEL_ERROR_XSLT,
     source: 'xslt'
   },
   {
     id: 'console-svg',
-    name: ui_strings.VIEW_LABEL_ERROR_SVG,
+    name: ui_strings.M_VIEW_LABEL_ERROR_SVG,
     source: 'svg'
   },
   {
     id: 'console-bittorrent',
-    name: ui_strings.VIEW_LABEL_ERROR_BITTORRENT,
+    name: ui_strings.M_VIEW_LABEL_ERROR_BITTORRENT,
     source: 'bittorrent'
   },
   {
     id: 'console-voice',
-    name: ui_strings.VIEW_LABEL_ERROR_VOICE,
+    name: ui_strings.M_VIEW_LABEL_ERROR_VOICE,
     source: 'ecmascript'
   },
   {
     id: 'console-widget',
-    name: ui_strings.VIEW_LABEL_ERROR_WIDGET,
+    name: ui_strings.M_VIEW_LABEL_ERROR_WIDGET,
     source: 'widget'
   }
 ]
@@ -359,14 +359,14 @@ ErrorConsoleView.roughViews.createViews = function()
       [
         {
           handler: handler_id,
-          title: ui_strings.BUTTON_LABEL_CLEAR_LOG,
+          title: ui_strings.S_BUTTON_LABEL_CLEAR_LOG,
           class_name: 'clear-log'
         }
       ],
       [
         {
           handler: 'console-text-search-' + r_v.id,
-          title: ui_strings.INPUT_DEFAULT_TEXT_SEARCH
+          title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
         }
     ]
 
@@ -444,7 +444,7 @@ cls.ConsoleDragonflyView = function(id, name, container_class)
 
 cls.ConsoleDragonflyView.prototype = ViewBase;
 
-new cls.ConsoleDragonflyView('console-dragonfly', ui_strings.VIEW_LABEL_ERROR_DRAGONFLY, 'scroll error-console');
+new cls.ConsoleDragonflyView('console-dragonfly', ui_strings.M_VIEW_LABEL_ERROR_DRAGONFLY, 'scroll error-console');
 
 new ToolbarConfig
 (
@@ -480,7 +480,7 @@ cls.ConsoleView = function(id, name, container_class)
 
 cls.ConsoleView.prototype = ViewBase;
 
-new cls.ConsoleView('console', ui_strings.VIEW_LABEL_CONSOLE, 'scroll');
+new cls.ConsoleView('console', ui_strings.M_VIEW_LABEL_CONSOLE, 'scroll');
 
 new Settings
 (
@@ -506,20 +506,20 @@ new Settings
   }, 
   // key-label map
   {
-    'console-all': ui_strings.SWITCH_SHOW_TAB_ALL, 
-    'console-script': ui_strings.SWITCH_SHOW_TAB_SCRIPT, 
-    'console-css': ui_strings.SWITCH_SHOW_TAB_CSS, 
-    'console-xml': ui_strings.SWITCH_SHOW_TAB_XML,
-    'console-java': ui_strings.SWITCH_SHOW_TAB_JAVA,
-    'console-m2': ui_strings.SWITCH_SHOW_TAB_M2,
-    'console-network': ui_strings.SWITCH_SHOW_TAB_NETWORK,
-    'console-html': ui_strings.SWITCH_SHOW_TAB_HTML,
-    'console-xslt': ui_strings.SWITCH_SHOW_TAB_XSLT,
-    'console-svg': ui_strings.SWITCH_SHOW_TAB_SVG,
-    'console-bittorrent': ui_strings.SWITCH_SHOW_TAB_BITTORRENT,
-    'console-voice': ui_strings.SWITCH_SHOW_TAB_VOICE,
-    'console-widget': ui_strings.SWITCH_SHOW_TAB_WIDGET,
-    'console-dragonfly': ui_strings.SWITCH_SHOW_TAB_DRAGONFLY,
+    'console-all': ui_strings.S_SWITCH_SHOW_TAB_ALL, 
+    'console-script': ui_strings.S_SWITCH_SHOW_TAB_SCRIPT, 
+    'console-css': ui_strings.S_SWITCH_SHOW_TAB_CSS, 
+    'console-xml': ui_strings.S_SWITCH_SHOW_TAB_XML,
+    'console-java': ui_strings.S_SWITCH_SHOW_TAB_JAVA,
+    'console-m2': ui_strings.S_SWITCH_SHOW_TAB_M2,
+    'console-network': ui_strings.S_SWITCH_SHOW_TAB_NETWORK,
+    'console-html': ui_strings.S_SWITCH_SHOW_TAB_HTML,
+    'console-xslt': ui_strings.S_SWITCH_SHOW_TAB_XSLT,
+    'console-svg': ui_strings.S_SWITCH_SHOW_TAB_SVG,
+    'console-bittorrent': ui_strings.S_SWITCH_SHOW_TAB_BITTORRENT,
+    'console-voice': ui_strings.S_SWITCH_SHOW_TAB_VOICE,
+    'console-widget': ui_strings.S_SWITCH_SHOW_TAB_WIDGET,
+    'console-dragonfly': ui_strings.S_SWITCH_SHOW_TAB_DRAGONFLY,
     'use-selected-runtime-as-filter': ' use selected runtime as filter'
   }, 
   // settings map

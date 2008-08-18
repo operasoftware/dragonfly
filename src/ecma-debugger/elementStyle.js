@@ -52,12 +52,12 @@ var elementStyle = new function()
   [
     {
       'id': 'computedStyle',
-      'name': ui_strings.VIEW_LABEL_COMPUTED_STYLE,
+      'name': ui_strings.M_VIEW_LABEL_COMPUTED_STYLE,
       'unfolded': false
     },
     {
       'id': 'css',
-      'name': ui_strings.VIEW_LABEL_STYLES,
+      'name': ui_strings.M_VIEW_LABEL_STYLES,
       'unfolded': true,
       'handler': 'edit-css'
     }

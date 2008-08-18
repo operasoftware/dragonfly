@@ -18,7 +18,7 @@ cls.EnvironmentView = function(id, name, container_class)
 }
 
 cls.EnvironmentView.prototype = ViewBase;
-new cls.EnvironmentView('environment', ui_strings.VIEW_LABEL_ENVIRONMENT, 'scroll');
+new cls.EnvironmentView('environment', ui_strings.M_VIEW_LABEL_ENVIRONMENT, 'scroll');
 
 
 /**
@@ -72,7 +72,7 @@ cls.CallstackView = function(id, name, container_class)
 }
 
 cls.CallstackView.prototype = ViewBase;
-new cls.CallstackView('callstack', ui_strings.VIEW_LABEL_CALLSTACK, 'scroll');
+new cls.CallstackView('callstack', ui_strings.M_VIEW_LABEL_CALLSTACK, 'scroll');
 
 
 /**
@@ -103,7 +103,7 @@ new Settings
   }, 
   // key-label map
   {
-    "show-views-menu": ui_strings.SWITCH_SHOW_VIEWS_MENU
+    "show-views-menu": ui_strings.S_SWITCH_SHOW_VIEWS_MENU
   },
   // settings map
   {
@@ -164,7 +164,7 @@ cls.DebugRemoteSettingView = function(id, name, container_class)
 
 cls.DebugRemoteSettingView.prototype = ViewBase;
 
-new cls.DebugRemoteSettingView('debug_remote_setting', ui_strings.SWITCH_REMOTE_DEBUG, '');
+new cls.DebugRemoteSettingView('debug_remote_setting', ui_strings.S_SWITCH_REMOTE_DEBUG, '');
 
 new Settings
 (
@@ -177,7 +177,7 @@ new Settings
   }, 
   // key-label map
   {
-    "debug-remote": ui_strings.SWITCH_REMOTE_DEBUG
+    "debug-remote": ui_strings.S_SWITCH_REMOTE_DEBUG
   },
   // settings map
   {
@@ -200,7 +200,7 @@ new Settings
           this.label_map['debug-remote']
         ],
         ['label',
-          ui_strings.BUTTON_LABEL_PORT + ': ',
+          ui_strings.S_LABEL_PORT + ': ',
           ['input',
             'type', 'number',
             'value', this.get('port'),
@@ -209,7 +209,7 @@ new Settings
         ],
         ['input',
           'type', 'button',
-          'value', ui_strings.BUTTON_LABEL_APPLY,
+          'value', ui_strings.S_BUTTON_TEXT_APPLY,
           'handler', 'apply-remote-debugging'
         ]
       ]

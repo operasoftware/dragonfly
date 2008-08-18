@@ -65,7 +65,7 @@ cls.ObjectInspectionView = function(id, name, container_class)
 }
 
 cls.ObjectInspectionView.prototype = ViewBase;
-new cls.ObjectInspectionView('object_inspection', ui_strings.VIEW_LABEL_OBJECT_INSPECTION, 'scroll');
+new cls.ObjectInspectionView('object_inspection', ui_strings.M_VIEW_LABEL_OBJECT_INSPECTION, 'scroll');
 
 
 
@@ -79,7 +79,7 @@ new Settings
   }, 
   // key-label map
   {
-    'hide-default-properties-in-global-scope': ui_strings.BUTTON_LABEL_HIDE_DEFAULT_PROPS_IN_GLOBAL_SCOPE
+    'hide-default-properties-in-global-scope': ui_strings.S_BUTTON_LABEL_HIDE_DEFAULT_PROPS_IN_GLOBAL_SCOPE
   },
   // settings map
   {
@@ -97,8 +97,8 @@ new ToolbarConfig
   [
     {
       handler: 'object_inspection-text-search',
-      title: ui_strings.INPUT_DEFAULT_TEXT_FILTER,
-      label: ui_strings.INPUT_DEFAULT_TEXT_FILTER
+      title: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER,
+      label: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER
     }
   ]
 )

@@ -144,7 +144,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     }
     else
     {
-      alert(ui_strings.ALERT_NO_RUNTIME_SELECTED);
+      alert(ui_strings.S_INFO_NO_RUNTIME_SELECTED);
     }
   }
 
@@ -437,7 +437,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
 }
 
 cls.CommandLineView.prototype = ViewBase;
-new cls.CommandLineView('command_line', ui_strings.VIEW_LABEL_COMMAND_LINE, 'scroll', '', 'cmd-focus');
+new cls.CommandLineView('command_line', ui_strings.M_VIEW_LABEL_COMMAND_LINE, 'scroll', '', 'cmd-focus');
 
 eventHandlers.click['cmd-focus'] = function(event, target)
 {

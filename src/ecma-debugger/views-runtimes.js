@@ -17,7 +17,7 @@ var RuntimeBaseView = function()
     windows = runtimes.getWindows(),
     win = null,
     i = 0,
-    markup = '<option value="-1"> - ' + ui_strings.SELECT_WINDOW_EMPTY + ' - </option>';
+    markup = '<option value="-1"> - ' + ui_strings.S_SELECT_WINDOW_EMPTY + ' - </option>';
     if(select)
     {
       for( ; win = windows[i]; i++ )
@@ -58,7 +58,7 @@ RuntimeBaseView.reload_button =
 [
   {
     handler: 'reload-window',
-    title: ui_strings.BUTTON_LABEL_RELOAD_HOST
+    title: ui_strings.S_BUTTON_LABEL_RELOAD_HOST
   }
 ]
 
@@ -66,7 +66,7 @@ RuntimeBaseView.custum_controls =
 [
   {
     handler: 'select-window',
-    title: ui_strings.BUTTON_LABEL_SELECT_WINDOW,
+    title: ui_strings.S_BUTTON_LABEL_SELECT_WINDOW,
     type: 'dropdown',
     class: 'window-select-dropdown',
     template: templates.windowSelect
@@ -97,7 +97,7 @@ new Settings
   }, 
   // key-label map
   {
-    'reload-runtime-automatically': ui_strings.SWITCH_RELOAD_SCRIPTS_AUTOMATICALLY
+    'reload-runtime-automatically': ui_strings.S_SWITCH_RELOAD_SCRIPTS_AUTOMATICALLY
   },
   // settings map
   {
@@ -222,7 +222,7 @@ cls.RuntimesView = function(id, name, container_class)
 
 cls.RuntimesView.prototype = new RuntimeView();
 
-new cls.RuntimesView('runtimes', ui_strings.VIEW_LABEL_SCRIPTS, 'scroll runtimes');
+new cls.RuntimesView('runtimes', ui_strings.M_VIEW_LABEL_SCRIPTS, 'scroll runtimes');
 
 new ToolbarConfig
 (
@@ -330,7 +330,7 @@ cls.RuntimesDOMView = function(id, name, container_class)
 
 cls.RuntimesDOMView.prototype = new RuntimeView();
 
-new cls.RuntimesDOMView('runtimes_dom', ui_strings.VIEW_LABEL_DOCUMENTS, 'scroll runtimes');
+new cls.RuntimesDOMView('runtimes_dom', ui_strings.M_VIEW_LABEL_DOCUMENTS, 'scroll runtimes');
 
 new ToolbarConfig
 (
@@ -416,7 +416,7 @@ cls.RuntimesCSSView = function(id, name, container_class)
 
 cls.RuntimesCSSView.prototype = new RuntimeView();
 
-new cls.RuntimesCSSView('runtimes_css', ui_strings.VIEW_LABEL_STYLESHEETS, 'scroll runtimes');
+new cls.RuntimesCSSView('runtimes_css', ui_strings.M_VIEW_LABEL_STYLESHEETS, 'scroll runtimes');
 
 new ToolbarConfig
 (

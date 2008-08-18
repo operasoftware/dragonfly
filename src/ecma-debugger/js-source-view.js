@@ -583,7 +583,7 @@ cls.JsSourceView = function(id, name, container_class)
 }
 
 cls.JsSourceView.prototype = ViewBase;
-new cls.JsSourceView('js_source', ui_strings.VIEW_LABEL_SOURCE, 'scroll js-source');
+new cls.JsSourceView('js_source', ui_strings.M_VIEW_LABEL_SOURCE, 'scroll js-source');
 
 
 
@@ -594,25 +594,25 @@ new ToolbarConfig
   [
     {
       handler: 'continue',
-      title: ui_strings.BUTTON_LABEL_CONTINUE,
+      title: ui_strings.S_BUTTON_LABEL_CONTINUE,
       id: 'continue-run',
       disabled: true
     },
     {
       handler: 'continue',
-      title: ui_strings.BUTTON_LABEL_STEP_INTO,
+      title: ui_strings.S_BUTTON_LABEL_STEP_INTO,
       id: 'continue-step-into-call',
       disabled: true
     },
     {
       handler: 'continue',
-      title: ui_strings.BUTTON_LABEL_STEP_OVER,
+      title: ui_strings.S_BUTTON_LABEL_STEP_OVER,
       id: 'continue-step-next-line',
       disabled: true
     },
     {
       handler: 'continue',
-      title: ui_strings.BUTTON_LABEL_STEP_OUT,
+      title: ui_strings.S_BUTTON_LABEL_STEP_OUT,
       id: 'continue-step-out-of-call',
       disabled: true
     }
@@ -620,8 +620,8 @@ new ToolbarConfig
   [
     {
       handler: 'js-source-text-search',
-      title: ui_strings.INPUT_DEFAULT_TEXT_SEARCH,
-      label: ui_strings.INPUT_DEFAULT_TEXT_SEARCH
+      title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH,
+      label: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
     }
   ]
 );
@@ -641,10 +641,10 @@ new Settings
   }, 
   // key-label map
   {
-    script: ui_strings.BUTTON_LABEL_STOP_AT_THREAD, 
-    exception: ui_strings.BUTTON_LABEL_AT_EXCEPTION, 
-    error: ui_strings.BUTTON_LABEL_AT_ERROR, 
-    abort: ui_strings.BUTTON_LABEL_AT_ABORT
+    script: ui_strings.S_BUTTON_LABEL_STOP_AT_THREAD, 
+    exception: ui_strings.S_BUTTON_LABEL_AT_EXCEPTION, 
+    error: ui_strings.S_BUTTON_LABEL_AT_ERROR, 
+    abort: ui_strings.S_BUTTON_LABEL_AT_ABORT
   }, 
   // settings map
   {

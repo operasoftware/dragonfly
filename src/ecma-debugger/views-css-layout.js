@@ -16,7 +16,7 @@ cls.CSSLayoutView = function(id, name, container_class)
     if( !container.getElementsByTagName('layout-container')[0] )
     {
       container.innerHTML = "<div class='padding'>\
-          <h2>" + ui_strings.VIEW_SUB_HEADER_METRICS + "</h2>\
+          <h2>" + ui_strings.M_VIEW_SUB_LABEL_METRICS + "</h2>\
           <layout-container></layout-container>\
           <offsets-container></offsets-container>\
           </div>";
@@ -57,7 +57,7 @@ cls.CSSLayoutView = function(id, name, container_class)
 }
 
 cls.CSSLayoutView.prototype = ViewBase;
-new cls.CSSLayoutView('css-layout', ui_strings.VIEW_LABEL_LAYOUT, 'scroll css-layout');
+new cls.CSSLayoutView('css-layout', ui_strings.M_VIEW_LABEL_LAYOUT, 'scroll css-layout');
 
 new Settings
 (

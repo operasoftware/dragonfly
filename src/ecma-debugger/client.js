@@ -32,7 +32,7 @@ var client = new function()
       }
       else
       {
-        alert ( ui_strings.ALERT_SERVICE_NOT_AVAILABLE.replace(/%s/, service.name) );
+        alert ( ui_strings.S_INFO_SERVICE_NOT_AVAILABLE.replace(/%s/, service.name) );
       }
     }
   }
@@ -122,7 +122,7 @@ var client = new function()
     
     if(port)
     {
-      alert(ui_strings.ALERT_WAITING_FOR_CONNECTION.replace(/%s/, port));
+      alert(ui_strings.S_INFO_WAITING_FOR_CONNECTION.replace(/%s/, port));
     }
     opera.scopeAddClient(host_connected, receive, quit, port);
   }
@@ -230,7 +230,7 @@ var client = new function()
         }
         else
         {
-          alert(ui_strings.ALERT_WRONG_START);
+          alert(ui_strings.S_INFO_WRONG_START);
           return;
 
         }
@@ -265,16 +265,16 @@ var client = new function()
     }
     viewport.removeChild(container);
     
-    new CompositeView('environment_new', ui_strings.VIEW_LABEL_ENVIRONMENT, environment_rough_layout);
-    new CompositeView('console_new', ui_strings.VIEW_LABEL_COMPOSITE_ERROR_CONSOLE, console_rough_layout);
-    new CompositeView('js_new', ui_strings.VIEW_LABEL_COMPOSITE_SCRIPTS, js_rough_layout);
-    new CompositeView('dom_new', ui_strings.VIEW_LABEL_COMPOSITE_DOM, dom_rough_layout);
+    new CompositeView('environment_new', ui_strings.M_VIEW_LABEL_ENVIRONMENT, environment_rough_layout);
+    new CompositeView('console_new', ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE, console_rough_layout);
+    new CompositeView('js_new', ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS, js_rough_layout);
+    new CompositeView('dom_new', ui_strings.M_VIEW_LABEL_COMPOSITE_DOM, dom_rough_layout);
 
-    new CompositeView('export_new', ui_strings.VIEW_LABEL_COMPOSITE_EXPORTS, export_rough_layout);
+    new CompositeView('export_new', ui_strings.M_VIEW_LABEL_COMPOSITE_EXPORTS, export_rough_layout);
 
-    new CompositeView('js_panel', ui_strings.VIEW_LABEL_COMPOSITE_SCRIPTS, js_rough_layout_panel);
+    new CompositeView('js_panel', ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS, js_rough_layout_panel);
 
-    new CompositeView('dom_panel', ui_strings.VIEW_LABEL_COMPOSITE_DOM, dom_rough_layout_panel);
+    new CompositeView('dom_panel', ui_strings.M_VIEW_LABEL_COMPOSITE_DOM, dom_rough_layout_panel);
 
     if( window.opera.attached != settings.general.get('window-attached') )
     {
