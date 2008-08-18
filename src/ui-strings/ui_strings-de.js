@@ -88,6 +88,6 @@ ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS = "DE_Das Dokument enthält keine Scrip
 ui_strings.S_INFO_DOCUMNENT_LOADING = "DE_Das Dokument wird geladen ..."
 ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH = "DE_Suche"
 ui_strings.S_INPUT_DEFAULT_TEXT_FILTER = "DE_Schnellfilter"
-ui_strings.SETTING_LABEL_GENERAL = "DE_Allgemein"
+ui_strings.M_SETTING_LABEL_GENERAL = "DE_Allgemein"
 ui_strings.S_INFO_SERVICE_NOT_AVAILABLE = "DE_Der Service ist nicht verfügbar: %s"
 

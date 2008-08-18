@@ -129,8 +129,10 @@ var TextSearch = function()
       {
         container.scrollTop += search_results[cursor].offsetTop - DEFAULT_SCROLL_MARGIN;
       }
-      topCell.statusbar.updateInfo('matches for "' + 
-        search_therm + '": ' +search_results.length +', match ' + ( cursor + 1 ) );
+      topCell.statusbar.updateInfo(ui_strings.S_TEXT_STATUS_SEARCH.
+        replace("%(SEARCH_TERM)s", search_therm).
+        replace("%(SEARCH_COUNT_TOTAL)s", search_results.length).
+        replace("%(SEARCH_COUNT_INDEX)s", ( cursor + 1 )) );
     }
   }
 

@@ -241,7 +241,7 @@ ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS = 'This document has no scripts';
 /* DESC: TODO. */
 ui_strings.S_INFO_DOCUMNENT_LOADING = 'The document is loading ...';
 /* DESC: General. */
-ui_strings.SETTING_LABEL_GENERAL = 'General';
+ui_strings.M_SETTING_LABEL_GENERAL = 'General';
 
 /*
  * Alerts
@@ -298,3 +298,5 @@ ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_LINKED = "Linked";
 ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_UNKNOWN = "Unknown";
 /* DESC: TODO. */
 ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID = "script id";
+/* DESC: TODO. */
+ui_strings.S_TEXT_STATUS_SEARCH = "matches for %(SEARCH_TERM)s : %(SEARCH_COUNT_TOTAL)s, match %(SEARCH_COUNT_INDEX)s";

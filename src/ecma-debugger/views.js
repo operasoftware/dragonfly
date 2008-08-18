@@ -90,7 +90,7 @@ cls.GeneralView = function(id, name, container_class)
   this.init(id, name, container_class);
 }
 cls.GeneralView.prototype = ViewBase;
-new cls.GeneralView('general', ui_strings.SETTING_LABEL_GENERAL, '');
+new cls.GeneralView('general', ui_strings.M_SETTING_LABEL_GENERAL, '');
 
 new Settings
 (

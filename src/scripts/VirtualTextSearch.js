@@ -116,7 +116,6 @@ var VirtualTextSearch = function()
             line_offsets[line_offsets.length] = pos - line_arr[line_cur - 1];
           }
           self.highlight(true);
-          topCell.statusbar.updateInfo('matches for "' + search_therm + '": ' +line_matches.length );
         }
       }
       else
@@ -187,8 +186,10 @@ var VirtualTextSearch = function()
       {
         source_container.parentNode.scrollLeft = __hit.offsetLeft - 50;
       }
-      topCell.statusbar.updateInfo('matches for "' + 
-        search_therm + '": ' + __script.line_matches.length +', match ' + __script.match_cursor );
+      topCell.statusbar.updateInfo(ui_strings.S_TEXT_STATUS_SEARCH.
+        replace("%(SEARCH_TERM)s", search_therm).
+        replace("%(SEARCH_COUNT_TOTAL)s", __script.line_matches.length).
+        replace("%(SEARCH_COUNT_INDEX)s", __script.match_cursor) );
       if( ++__script.match_cursor >= __script.line_matches.length )
       {
         __script.match_cursor = 0;
