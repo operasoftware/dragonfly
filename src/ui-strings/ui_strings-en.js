@@ -296,18 +296,3 @@ ui_strings.ECMA_SCRIPT_TYPE_LINKED = "Linked";
 ui_strings.ECMA_SCRIPT_TYPE_UNKNOWN = "Unknown";
 /* DESC: TODO. */
 ui_strings.ECMA_SCRIPT_SCRIPT_ID = "script id";
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 

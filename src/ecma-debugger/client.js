@@ -1,7 +1,7 @@
 ﻿/**
   * @constructor 
   */
-
+// test
 var client = new function()
 {
   var self = this;
