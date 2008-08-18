@@ -295,9 +295,9 @@
     // %(function name)s line %(line number)s script id %(script id)s
     return ['li',
       ui_strings.CALL_STACK_FRAME_LINE.
-        replace("%(function name)s", ( frame.fn_name || ui_strings.ANONYMOUS_FUNCTION_NAME ) ).
-        replace("%(line number)s", ( frame.line || '-' ) ).
-        replace("%(script id)s", ( frame.script_id || '-' ) ),
+        replace("%(FUNCTION_NAME)s", ( frame.fn_name || ui_strings.ANONYMOUS_FUNCTION_NAME ) ).
+        replace("%(LINE_NUMBER)s", ( frame.line || '-' ) ).
+        replace("%(SCRIPT_ID)s", ( frame.script_id || '-' ) ),
       'handler', 'show-frame',
       'ref-id', frame.id,
 

@@ -266,7 +266,7 @@ ui_strings.ALERT_NO_RUNTIME_SELECTED =  "Select a runtime";
  */
 
 /* DESC: TODO. */
-ui_strings.CALL_STACK_FRAME_LINE =  "%(function name)s line %(line number)s script id %(script id)s";
+ui_strings.CALL_STACK_FRAME_LINE =  "%(FUNCTION_NAME)s line %(LINE_NUMBER)s script id %(SCRIPT_ID)s";
 /* DESC: TODO. */
 ui_strings.VIEW_SUB_HEADER_METRICS =  "Metrics";
 /* DESC: TODO. */
