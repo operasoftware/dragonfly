@@ -109,7 +109,7 @@ def _process_directives(root, filepath, vars):
         outdir = os.path.dirname(outpath)
 
         if not os.path.isdir(outdir): os.makedirs(outdir)
-        print "will now open in utf8-bom mode:", os.path.join(root, outfile) 
+
         fout = codecs.open(os.path.join(root, outfile), "w", encoding="utf_8_sig")
         for infile in contentfiles:
             fout.write(_concatcomment % infile)
@@ -152,7 +152,7 @@ def _add_license(root, license_path="license.txt"):
     if not os.path.isfile(license_path):
         return
     
-    lfile = open(license_path)
+    lfile = codecs.open(license_path, "r", encoding="utf_8_sig")
     license = lfile.read()
     lfile.close()
     
@@ -161,12 +161,14 @@ def _add_license(root, license_path="license.txt"):
         license_files.extend( [ os.path.join(base, f) for f in files if f.endswith(_license_exts)] )
     
     for f in license_files:
-        source = open(f)
+        source = codecs.open(f, "r", encoding="utf_8_sig")
         tmpfd, tmppath = tempfile.mkstemp(".tmp", "dfbuild.")
         tmpfile = os.fdopen(tmpfd, "w")
-        tmpfile.write(license)
-        tmpfile.write("\n")
-        tmpfile.write(source.read())
+        codecs.getwriter("utf_8_sig")
+        wrapped = codecs.getwriter("utf_8_sig")(tmpfile)
+        wrapped.write(license)
+        wrapped.write("\n")
+        wrapped.write(source.read())
         source.close()
         tmpfile.close()
         shutil.copy(tmppath, f)
@@ -184,7 +186,7 @@ def _add_keywords(root, keywords):
         keyword_files.extend( [ os.path.join(base, f) for f in files if f.endswith(_keyword_exts)] )
     
     for f in keyword_files:
-        source = open(f)
+        source = codecs.open(f, "r", encoding="utf_8_sig")
         tmpfd, tmppath = tempfile.mkstemp(".tmp", "dfbuild.")
         tmpfile = os.fdopen(tmpfd, "w")
         for line in source:
@@ -217,20 +219,20 @@ def _localize_buildout(src, langdir):
     of the build. The whole thing should possibly be refactored :(
     """
     scriptpath = os.path.normpath(os.path.join(src, "script/dragonfly.js"))
-    fp = open(scriptpath)
+    fp = codecs.open(scriptpath, "r", encoding="utf_8_sig")
     script_data = fp.read()
     fp.close()
  
     clientpath = os.path.normpath(os.path.join(src, "client-en.xml"))
-    fp = open(clientpath)
+    fp = codecs.open(clientpath, "r", encoding="utf_8_sig")
     clientdata = fp.read()
     fp.close()
     
 
     for lang, newscriptpath, newclientpath, path in [ (f[11:13], "script/dragonfly-"+f[11:13]+".js", "client-"+f[11:13]+".xml", os.path.join(langdir, f)) for f in os.listdir(langdir) if f.startswith("ui_strings-") and f.endswith(".js") ]:
-        newscript = open(os.path.join(src,newscriptpath), "w")
-        newclient = open(os.path.join(src, newclientpath), "w")
-        langfile = open(path)
+        newscript = codecs.open(os.path.join(src,newscriptpath), "w", encoding="utf_8_sig")
+        newclient = codecs.open(os.path.join(src, newclientpath), "w", encoding="utf_8_sig")
+        langfile = codecs.open(path, "r", encoding="utf_8_sig")
         newscript.write(_concatcomment % path)
         newscript.write(langfile.read())
         newscript.write(script_data)
