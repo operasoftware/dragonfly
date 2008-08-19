@@ -1,4 +1,5 @@
 ﻿window.ui_strings || ( window.ui_strings  = {} ) 
+window.ui_strings.lang_code = "en";
 
 /*
  * Level 1 View Tab Headings

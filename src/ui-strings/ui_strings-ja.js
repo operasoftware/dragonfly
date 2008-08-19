@@ -1,4 +1,5 @@
 ﻿window.ui_strings || ( window.ui_strings  = {} ) 
+window.ui_strings.lang_code = "ja";
 
 /*
  * Level 1 View Tab Headings
@@ -201,6 +202,8 @@ ui_strings.S_BUTTON_LABEL_EXPORT_DOM = '現在の DOM ビューをエクスポ�
 ui_strings.S_BUTTON_LABEL_HIDE_DEFAULT_PROPS_IN_GLOBAL_SCOPE = 'グローバルスコープにデフォルトプロパティを非表示にする';
 /* DESC: Logs all threads when activated. */
 ui_strings.S_BUTTON_LABEL_LOG_THREADS = 'スレッドをログする';
+/* DESC: Launches the Settings view. */
+ui_strings.S_BUTTON_LABEL_SETTINGS = 'Settings';
 /* DESC: Clears thread log. */
 ui_strings.S_BUTTON_LABEL_CLEAR_LOG = 'ログをクリア';
 /* DESC: Exports current thread log. */
@@ -296,6 +299,9 @@ ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_LINKED = "リンクされたスクリプト";
 ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_UNKNOWN = "不明なスクリプト";
 /* DESC: TODO. */
 ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID = "スクリプト ID";
+/* DESC: Result text for the search. Please do not modify the %(VARIABLE)s . */
+ui_strings.S_TEXT_STATUS_SEARCH = "Matches for %(SEARCH_TERM)s: Match %(SEARCH_COUNT_INDEX)s out of %(SEARCH_COUNT_TOTAL)s";
+
 
 
 

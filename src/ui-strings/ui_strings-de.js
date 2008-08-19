@@ -1,4 +1,5 @@
 ﻿window.ui_strings || ( window.ui_strings  = {} ) 
+window.ui_strings.lang_code = "de";
 
 /* Perspectives */
 ui_strings.M_VIEW_LABEL_COMPOSITE_DOM = "DOM"
