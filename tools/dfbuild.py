@@ -201,7 +201,7 @@ def _is_utf8(path):
     """
     if not os.path.isfile(path): return None
     f = open(path, "rb")
-    return [ ord(b) for b in f.read(3) ] == [ 0xef, 0xbb, 0xbf ]
+    return f.read(3) == codecs.BOM_UTF8
 
     
 
@@ -401,8 +401,6 @@ Destination can be either a directory or a zip file"""
     
     if options.translate_build and not options.concat:
         parser.error("""Can't translate when not concatenateing. use --no-concat OR --translate""")
-    
-    
     
     bad = _get_bad_encoding_files(src)
     if bad:
