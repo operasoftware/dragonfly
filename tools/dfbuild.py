@@ -10,15 +10,15 @@ _text_exts = (".js", ".html", ".xml", ".css")
 _directive_exts = (".xml", ".html", ".xhtml") # files that may have <!-- command.. directives
 _keyword_exts = (".css", ".js", ".xml", ".html", ".xhtml", ".txt") # files we will try to do keyword interpolation on
 _license_exts = (".js", ".css") # extensions that should get a license
-_script_ele = "<script src=\"%s\"/>\n"
-_style_ele = "<link rel=\"stylesheet\" href=\"%s\"/>\n"
+_script_ele = u"<script src=\"%s\"/>\n"
+_style_ele = u"<link rel=\"stylesheet\" href=\"%s\"/>\n"
 _re_command = re.compile("""\s?<!--\s+command\s+(?P<command>\w+)\s+"?(?P<target>.*?)"?\s*(?:if\s+(?P<neg>not)?\s*(?P<cond>\S+?))?\s*-->""")
 _re_comment = re.compile("""\s*<!--.*-->\s*""")
 _re_script = re.compile("\s?<script +src=\"(?P<src>[^\"]*)\"/>")
 _re_css = re.compile("\s?<link +rel=\"stylesheet\" +href=\"(?P<href>[^\"]*)\"/>")
 _re_condition = re.compile("\s+if\s+(not)? (.*)")
 
-_concatcomment ="""
+_concatcomment =u"""
 /* dfbuild: concatenated from: %s */
 """
 
@@ -107,11 +107,13 @@ def _process_directives(root, filepath, vars):
     for outfile, contentfiles in known_files.items():
         outpath = os.path.join(root, outfile)
         outdir = os.path.dirname(outpath)
+
         if not os.path.isdir(outdir): os.makedirs(outdir)
-        fout = open(os.path.join(root, outfile), "w")
+
+        fout = codecs.open(os.path.join(root, outfile), "w", encoding="utf_8_sig")
         for infile in contentfiles:
             fout.write(_concatcomment % infile)
-            fin = open(os.path.join(root, infile))
+            fin = codecs.open(os.path.join(root, infile), "r", encoding="utf_8_sig")
             fout.write(fin.read())
             fin.close()
             os.unlink(os.path.join(root, infile))
@@ -150,7 +152,7 @@ def _add_license(root, license_path="license.txt"):
     if not os.path.isfile(license_path):
         return
     
-    lfile = open(license_path)
+    lfile = codecs.open(license_path, "r", encoding="utf_8_sig")
     license = lfile.read()
     lfile.close()
     
@@ -159,12 +161,13 @@ def _add_license(root, license_path="license.txt"):
         license_files.extend( [ os.path.join(base, f) for f in files if f.endswith(_license_exts)] )
     
     for f in license_files:
-        source = open(f)
+        source = codecs.open(f, "r", encoding="utf_8_sig")
         tmpfd, tmppath = tempfile.mkstemp(".tmp", "dfbuild.")
         tmpfile = os.fdopen(tmpfd, "w")
-        tmpfile.write(license)
-        tmpfile.write("\n")
-        tmpfile.write(source.read())
+        wrapped = codecs.getwriter("utf_8_sig")(tmpfile)
+        wrapped.write(license)
+        wrapped.write("\n")
+        wrapped.write(source.read())
         source.close()
         tmpfile.close()
         shutil.copy(tmppath, f)
@@ -182,13 +185,14 @@ def _add_keywords(root, keywords):
         keyword_files.extend( [ os.path.join(base, f) for f in files if f.endswith(_keyword_exts)] )
     
     for f in keyword_files:
-        source = open(f)
+        source = codecs.open(f, "r", encoding="utf_8_sig")
         tmpfd, tmppath = tempfile.mkstemp(".tmp", "dfbuild.")
         tmpfile = os.fdopen(tmpfd, "w")
+        wrapped = codecs.getwriter("utf_8_sig")(tmpfile)
         for line in source:
             for key, val in keywords.items():
                 line = line.replace(key, val)
-            tmpfile.write(line)
+            wrapped.write(line)
             
         source.close()
         tmpfile.close()
@@ -201,7 +205,7 @@ def _is_utf8(path):
     """
     if not os.path.isfile(path): return None
     f = open(path, "rb")
-    return [ ord(b) for b in f.read(3) ] == [ 0xef, 0xbb, 0xbf ]
+    return f.read(3) == codecs.BOM_UTF8
 
     
 
@@ -215,20 +219,20 @@ def _localize_buildout(src, langdir):
     of the build. The whole thing should possibly be refactored :(
     """
     scriptpath = os.path.normpath(os.path.join(src, "script/dragonfly.js"))
-    fp = open(scriptpath)
+    fp = codecs.open(scriptpath, "r", encoding="utf_8_sig")
     script_data = fp.read()
     fp.close()
  
     clientpath = os.path.normpath(os.path.join(src, "client-en.xml"))
-    fp = open(clientpath)
+    fp = codecs.open(clientpath, "r", encoding="utf_8_sig")
     clientdata = fp.read()
     fp.close()
     
 
     for lang, newscriptpath, newclientpath, path in [ (f[11:13], "script/dragonfly-"+f[11:13]+".js", "client-"+f[11:13]+".xml", os.path.join(langdir, f)) for f in os.listdir(langdir) if f.startswith("ui_strings-") and f.endswith(".js") ]:
-        newscript = open(os.path.join(src,newscriptpath), "w")
-        newclient = open(os.path.join(src, newclientpath), "w")
-        langfile = open(path)
+        newscript = codecs.open(os.path.join(src,newscriptpath), "w", encoding="utf_8_sig")
+        newclient = codecs.open(os.path.join(src, newclientpath), "w", encoding="utf_8_sig")
+        langfile = codecs.open(path, "r", encoding="utf_8_sig")
         newscript.write(_concatcomment % path)
         newscript.write(langfile.read())
         newscript.write(script_data)
@@ -401,8 +405,6 @@ Destination can be either a directory or a zip file"""
     
     if options.translate_build and not options.concat:
         parser.error("""Can't translate when not concatenateing. use --no-concat OR --translate""")
-    
-    
     
     bad = _get_bad_encoding_files(src)
     if bad:
