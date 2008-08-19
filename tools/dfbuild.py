@@ -10,15 +10,15 @@ _text_exts = (".js", ".html", ".xml", ".css")
 _directive_exts = (".xml", ".html", ".xhtml") # files that may have <!-- command.. directives
 _keyword_exts = (".css", ".js", ".xml", ".html", ".xhtml", ".txt") # files we will try to do keyword interpolation on
 _license_exts = (".js", ".css") # extensions that should get a license
-_script_ele = "<script src=\"%s\"/>\n"
-_style_ele = "<link rel=\"stylesheet\" href=\"%s\"/>\n"
+_script_ele = u"<script src=\"%s\"/>\n"
+_style_ele = u"<link rel=\"stylesheet\" href=\"%s\"/>\n"
 _re_command = re.compile("""\s?<!--\s+command\s+(?P<command>\w+)\s+"?(?P<target>.*?)"?\s*(?:if\s+(?P<neg>not)?\s*(?P<cond>\S+?))?\s*-->""")
 _re_comment = re.compile("""\s*<!--.*-->\s*""")
 _re_script = re.compile("\s?<script +src=\"(?P<src>[^\"]*)\"/>")
 _re_css = re.compile("\s?<link +rel=\"stylesheet\" +href=\"(?P<href>[^\"]*)\"/>")
 _re_condition = re.compile("\s+if\s+(not)? (.*)")
 
-_concatcomment ="""
+_concatcomment =u"""
 /* dfbuild: concatenated from: %s */
 """
 
@@ -107,11 +107,13 @@ def _process_directives(root, filepath, vars):
     for outfile, contentfiles in known_files.items():
         outpath = os.path.join(root, outfile)
         outdir = os.path.dirname(outpath)
+
         if not os.path.isdir(outdir): os.makedirs(outdir)
-        fout = open(os.path.join(root, outfile), "w")
+        print "will now open in utf8-bom mode:", os.path.join(root, outfile) 
+        fout = codecs.open(os.path.join(root, outfile), "w", encoding="utf_8_sig")
         for infile in contentfiles:
             fout.write(_concatcomment % infile)
-            fin = open(os.path.join(root, infile))
+            fin = codecs.open(os.path.join(root, infile), "r", encoding="utf_8_sig")
             fout.write(fin.read())
             fin.close()
             os.unlink(os.path.join(root, infile))
