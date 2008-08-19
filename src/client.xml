@@ -1,4 +1,6 @@
-﻿<script xmlns="http://www.w3.org/1999/xhtml"><![CDATA[
+﻿<html xmlns="http://www.w3.org/1999/xhtml">
+<meta name="Expires" content="0">
+<script><![CDATA[
 var lang_dict = 
 {
   /*
@@ -23,7 +25,7 @@ var lang_dict =
   //"hu": "",
   //"id": "",
   //"it": "",
-  //"ja": "",
+  "ja": "ja",
   //"ka": "",
   //"ko": "",
   //"lt": "",
@@ -47,4 +49,5 @@ document.cookie = "ui-lang=" +
   "; path=/";
 location.href = "./client-" + lang + ".xml";
 ]]></script>
+</html>
 
