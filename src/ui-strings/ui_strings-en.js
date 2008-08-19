@@ -73,16 +73,15 @@ ui_strings.M_VIEW_LABEL_ERROR_BITTORRENT = 'Bittorrent';
 ui_strings.M_VIEW_LABEL_ERROR_VOICE = 'Voice';
 /* DESC: See Opera Error console: Error view filter for showing all Widget errors. */
 ui_strings.M_VIEW_LABEL_ERROR_WIDGET = 'Widget';
-/* DESC: See Opera Error console: Error view filter for showing all Dragonfly errors. */
-ui_strings.M_VIEW_LABEL_ERROR_DRAGONFLY = 'Dragonfly';
+/* DESC: See Opera Error console: Error view filter for showing all Opera Dragonfly errors. */
+ui_strings.M_VIEW_LABEL_ERROR_DRAGONFLY = 'Opera Dragonfly';
 /* DESC: The styles that the rendering computed from all stylesheets. */
 ui_strings.M_VIEW_LABEL_COMPUTED_STYLE = 'Computed Style';
 /* DESC: The styles that got defined in the stylesheets.*/
 ui_strings.M_VIEW_LABEL_STYLES = 'Styles';
-
-/* DESC: TODO */
+/* DESC: The view on the console. */
 ui_strings.M_VIEW_LABEL_CONSOLE = 'Console';
-/* DESC: TODO */
+/* DESC: One Export view. */
 ui_strings.M_VIEW_LABEL_EXPORT = 'Export';
 
 
@@ -118,8 +117,8 @@ ui_strings.S_SWITCH_SHOW_TAB_BITTORRENT = 'Show Tab Bittorrent';
 ui_strings.S_SWITCH_SHOW_TAB_VOICE = 'Show Tab Voice';
 /* DESC: Switch display of 'Widget' tab on or off. */
 ui_strings.S_SWITCH_SHOW_TAB_WIDGET = 'Show Tab Widget';
-/* DESC: Switch display of 'Dragonfly' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_DRAGONFLY = 'Show Tab Dragonfly';
+/* DESC: Switch display of 'Opera Dragonfly' tab on or off. */
+ui_strings.S_SWITCH_SHOW_TAB_DRAGONFLY = 'Show Tab Opera Dragonfly';
 /* DESC: TODO. */
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE = 'Automatically update global scope';
 /* DESC: Will select the element when clicked. */
@@ -150,18 +149,17 @@ ui_strings.S_SWITCH_HIDE_EMPTY_STRINGS = 'Hide empty strings and null values';
 ui_strings.S_SWITCH_REMOTE_DEBUG = 'Remote Debug';
 /* DESC: Show or hide Views menu. */
 ui_strings.S_SWITCH_SHOW_VIEWS_MENU = "Show Views menu";
-/* DESC: TODO. */
+/* DESC: Switch toggeling if the debugger should automatically reload the page when the user changes the window to debug. */
 ui_strings.S_SWITCH_RELOAD_SCRIPTS_AUTOMATICALLY = "Reload documents automatically on selecting a window"
-/* DESC: TODO. */
+/* DESC: Undocks Opera Dragonfly into an own window. */
 ui_strings.S_SWITCH_DETACH_WINDOW = "Undock into separate window"  ;
-/* DESC: TODO. */
+/* DESC: Attaches Opera Dragonfly to the main browser window. */
 ui_strings.S_SWITCH_ATTACH_WINDOW = "Dock to main window";
-
-/* DESC: TODO. */
+/* DESC: Toggles the display of pre-set values in the computed styles view. */
 ui_strings.S_SWITCH_SHOW_INITIAL_VALUES = 'Hide initial values in computed styles';
-/* DESC: TODO. */
-ui_strings.S_SWITCH_SHOW_SHORTHANDS = 'Hide shorthands in computed styles';
-/* DESC: TODO. */
+/* DESC: Toggles the display of shorthands in computed styles view. */
+ui_strings.S_SWITCH_SHOW_SHORTHANDS = 'Hide shorthands in computed styles view';
+/* DESC: Showing shorthands in style properties on or off. */
 ui_strings.S_SWITCH_CREATE_SHORTHANDS = 'Use shorthands for properties';
 
 
@@ -187,7 +185,7 @@ ui_strings.S_BUTTON_LABEL_STOP_AT_THREAD = 'Stop at new script';
 ui_strings.S_BUTTON_LABEL_AT_EXCEPTION = 'Stop at exception';
 /* DESC: Execution stops when encountering an error. */
 ui_strings.S_BUTTON_LABEL_AT_ERROR = 'Stop at error';
-/* DESC: TODO. */
+/* DESC: Execution stops at encountering an abort. */
 ui_strings.S_BUTTON_LABEL_AT_ABORT = 'Stop at abort';
 /* DESC: Reloads the browser to receive fresh DOM, etc.  */
 ui_strings.S_BUTTON_LABEL_RELOAD_HOST = 'Reload the selected window in the browser';
@@ -205,23 +203,22 @@ ui_strings.S_BUTTON_LABEL_LOG_THREADS = 'Log threads';
 ui_strings.S_BUTTON_LABEL_CLEAR_LOG = 'Clear thread log';
 /* DESC: Exports current thread log. */
 ui_strings.S_BUTTON_LABEL_EXPORT_LOG = 'Export thread log';
-/* DESC: TODO. */
+/* DESC: Launches the Settings view. */
 ui_strings.S_BUTTON_LABEL_SETTINGS = 'Settings';
-/* DESC: TODO. */
+/* DESC: Empties the log entries. */
 ui_strings.S_BUTTON_LABEL_CLEAR_LOG = 'Clear Log';
-/* DESC: TODO. */
+/* DESC: Closes the window. */
 ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW = 'Close Window';
-
-/* DESC: TODO. */
+/* DESC: Applies the changes. */
 ui_strings.S_BUTTON_TEXT_APPLY = 'Apply';
 
 /*
  * Labels
  */
 
-/* DESC: TODO. */
+/* DESC: Tooltip for a status indicator in the bottom left corner showing is the debugger is connected, busy, etc.. */
 ui_strings.S_LABEL_STATUS_INDICATOR = 'Status indicator for the browser and the debugger';
-/* DESC: TODO. */
+/* DESC: The network port to connect to. */
 ui_strings.S_LABEL_PORT = 'Port';
 /* DESC: For choosing a context (e.g. tab, window, widget) to be inspected. */
 ui_strings.S_SELECT_WINDOW_EMPTY = 'Select a window'; 
@@ -236,10 +233,10 @@ ui_strings.S_INPUT_DEFAULT_TEXT_FILTER = 'Quick find';
 
 /* DESC: Currently no scripts are loaded and a reload of the page will resolve all linked scripts.*/
 ui_strings.S_INFO_RELOAD_FOR_SCRIPT = 'Click the reload button above to fetch the scripts for the selected window';
-/* DESC: TODO. */
+/* DESC: Information shown if the document does not hold any scripts. */
 ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS = 'This document has no scripts';
-/* DESC: TODO. */
-ui_strings.S_INFO_DOCUMNENT_LOADING = 'The document is loading ...';
+/* DESC: Feedback showing that Opera Dragonfly is loading and the user shall have patience. */
+ui_strings.S_INFO_DOCUMNENT_LOADING = 'Opera Dragonfly is loading ...';
 /* DESC: General. */
 ui_strings.M_SETTING_LABEL_GENERAL = 'General';
 
@@ -248,17 +245,17 @@ ui_strings.M_SETTING_LABEL_GENERAL = 'General';
  */
 
 /* DESC: Error when people use the Drafgonfly URL right in the browser */
-ui_strings.S_INFO_WRONG_START = "Dragonfly cannot be used in this way.\n" +
+ui_strings.S_INFO_WRONG_START = "Opera Dragonfly cannot be used in this way.\n" +
   "Either set the current url in\n\n" +
   "   opera:config > Developer Tools > Developer Tools URL\n\n" +
   "or setup a debugger environment with a proxy and server."
-/* DESC: TODO. */
+/* DESC: Information shown when the user enables remote debug and still has to connect the client. */
 ui_strings.S_INFO_WAITING_FOR_CONNECTION = 
   "Opera Dragonfly is waiting for a connection on port %s.\n" +
   "Please enter opera:debug in your device's URL field to connect.";
-/* DESC: TODO. */
+/* DESC: Information shown if the service is not available. */
 ui_strings.S_INFO_SERVICE_NOT_AVAILABLE =  "Service is not available: %s";
-/* DESC: TODO. */
+/* DESC: Information shown when the user needs to select a runtime. */
 ui_strings.S_INFO_NO_RUNTIME_SELECTED =  "Select a runtime";
 
 
@@ -267,36 +264,33 @@ ui_strings.S_INFO_NO_RUNTIME_SELECTED =  "Select a runtime";
  * other strings 
  */
 
-/* DESC: TODO. */
-ui_strings.S_TEXT_CALL_STACK_FRAME_LINE =  "%(FUNCTION_NAME)s line %(LINE_NUMBER)s script id %(SCRIPT_ID)s";
-/* DESC: TODO. */
+/* DESC: Entry format in the call stack view showing the function name, line number and script ID. Please do not modify the %(VARIABLE)s . */
+ui_strings.S_TEXT_CALL_STACK_FRAME_LINE =  "%(FUNCTION_NAME)s: Line %(LINE_NUMBER)s (Script ID %(SCRIPT_ID)s)";
+/* DESC: The layout subview showing the box-model metrics of an element. */
 ui_strings.M_VIEW_SUB_LABEL_METRICS =  "Metrics";
-/* DESC: TODO. */
-/* not sure if that makes sense: the according property on a node is offsetParent; chrisk */
+/* DESC: The layout subview showing the parent node chain used to calculøate the offset. */
 ui_strings.M_VIEW_SUB_LABEL_PARENT_OFFSETS =  "Parent Offsets";
-/* DESC: TODO. */
-/* the same not sure if that makes sense: it's offsetTop, offsetLeft, etc; chrisk */
+/* DESC: The layout subvie showing offsets of the selected element. */
 ui_strings.M_VIEW_SUB_LABEL_OFFSET_VALUES =  "Offset Values";
-
-/* DESC: TODO. */
+/* DESC: Information on the Scope protocol version used. */
 ui_strings.S_TEXT_ENVIRONMENT_PROTOCOL_VERSION = "Protocol Version";
-/* DESC: TODO. */
+/* DESC: Information on the operating system used. */
 ui_strings.S_TEXT_ENVIRONMENT_OPERATING_SYSTEM = "Operating System";
-/* DESC: TODO. */
+/* DESC: Information on the platform in use. */
 ui_strings.S_TEXT_ENVIRONMENT_PLATFORM = "Platform";
-/* DESC: TODO. */
+/* DESC: Information on the user-agent submitted. */
 ui_strings.S_TEXT_ENVIRONMENT_USER_AGENT = "User Agent";
-/* DESC: TODO. */
-ui_strings.S_TEXT_ENVIRONMENT_DRAGONFLY_VERSION = "Dragonfly Version";
-/* DESC: TODO. */
+/* DESC: Information on the Opera Dragonfly version number. */
+ui_strings.S_TEXT_ENVIRONMENT_DRAGONFLY_VERSION = "Opera Dragonfly Version";
+/* DESC: Information on the Opera Dragonfly revision number. */
 ui_strings.S_TEXT_ENVIRONMENT_REVISION_NUMBER = "Revision Number";
-/* DESC: TODO. */
+/* DESC: Badge for inline scripts. */
 ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_INLINE = "Inline";
-/* DESC: TODO. */
+/* DESC: Badge for linked scripts. */
 ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_LINKED = "Linked";
-/* DESC: TODO. */
+/* DESC: Badge for unknown script types. */
 ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_UNKNOWN = "Unknown";
-/* DESC: TODO. */
-ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID = "script id";
-/* DESC: TODO. */
-ui_strings.S_TEXT_STATUS_SEARCH = "matches for %(SEARCH_TERM)s : %(SEARCH_COUNT_TOTAL)s, match %(SEARCH_COUNT_INDEX)s";
+/* DESC: The script ID. */
+ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID = "Script id";
+/* DESC: Result text for the search. Please do not modify the %(VARIABLE)s . */
+ui_strings.S_TEXT_STATUS_SEARCH = "Matches for %(SEARCH_TERM)s: Match %(SEARCH_COUNT_INDEX)s out of %(SEARCH_COUNT_TOTAL)s";
