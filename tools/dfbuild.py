@@ -164,7 +164,6 @@ def _add_license(root, license_path="license.txt"):
         source = codecs.open(f, "r", encoding="utf_8_sig")
         tmpfd, tmppath = tempfile.mkstemp(".tmp", "dfbuild.")
         tmpfile = os.fdopen(tmpfd, "w")
-        codecs.getwriter("utf_8_sig")
         wrapped = codecs.getwriter("utf_8_sig")(tmpfile)
         wrapped.write(license)
         wrapped.write("\n")
@@ -189,10 +188,11 @@ def _add_keywords(root, keywords):
         source = codecs.open(f, "r", encoding="utf_8_sig")
         tmpfd, tmppath = tempfile.mkstemp(".tmp", "dfbuild.")
         tmpfile = os.fdopen(tmpfd, "w")
+        wrapped = codecs.getwriter("utf_8_sig")(tmpfile)
         for line in source:
             for key, val in keywords.items():
                 line = line.replace(key, val)
-            tmpfile.write(line)
+            wrapped.write(line)
             
         source.close()
         tmpfile.close()
