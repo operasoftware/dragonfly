@@ -1,4 +1,4 @@
-﻿var ui_strings  = {}
+﻿window.ui_strings || ( window.ui_strings  = {} ) 
 
 /*
  * Level 1 View Tab Headings

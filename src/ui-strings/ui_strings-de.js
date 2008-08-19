@@ -1,4 +1,4 @@
-﻿var ui_strings  = {}
+﻿window.ui_strings || ( window.ui_strings  = {} ) 
 
 ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS = "DE_Scripts"
 ui_strings.M_VIEW_LABEL_COMPOSITE_DOM = "DE_DOM"
