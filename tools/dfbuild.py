@@ -262,7 +262,7 @@ def _get_bad_encoding_files(src):
 def _get_string_keys(path):
     """Grab all the string keys of out a language file"""
     re_key = re.compile("^ *ui_strings\.([^ ]*)")
-    file = open(path)
+    file = codecs.open(path, "r", "utf_8_sig")
     lang_keys = set()
     for line in file:
         lang_keys.update(re_key.findall(line))
@@ -272,8 +272,26 @@ def _get_string_keys(path):
 def _get_missing_strings(path, master):
     """Get the differences between the set of all strings and the
     strings in path"""
-    keys = _get_all_string_keys(path)
+    keys = _get_string_keys(path)
     return master - keys
+
+def _get_missing_strings_for_dir(stringsdir, masterlang):
+    stringfiles = os.listdir(stringsdir)
+    masterfile = os.path.join(stringsdir, "ui_strings-%s.js" % masterlang )
+    missing = {}
+    if not os.path.isfile(masterfile): return None
+
+    masterstrings = _get_string_keys(masterfile)
+    
+    for path, lang in [(f, f[-5:-3]) for f in stringfiles]:
+        if lang==masterlang: continue
+        langfile = os.path.join(stringsdir, "ui_strings-%s.js" % lang)
+        if not os.path.isfile(langfile): continue
+        s = _get_missing_strings(langfile, masterstrings)
+        if s:
+            missing[lang] = s
+            
+    return missing
 
 def make_archive(src, dst, in_subdir=True):
     """
@@ -410,6 +428,16 @@ Destination can be either a directory or a zip file"""
     if bad:
         print "The following files do not seem to be UTF8 with BOM encoded:"
         for b in bad: print "\t%s" % b
+        sys.exit()
+
+    missingstrings = _get_missing_strings_for_dir(os.path.join(src, "ui-strings"), "en")
+    if missingstrings==None:
+        print "couldn't parse the master string list!"
+        sys.exit()
+    elif missingstrings:
+        for lang, strings in missingstrings.items():
+            print """Language "%s" is missing the following strings:""" % lang
+            for s in strings: print "\t%s" % s
         sys.exit()
     
     
