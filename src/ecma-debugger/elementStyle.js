@@ -651,8 +651,9 @@ var elementStyle = new function()
     }
   }
 
-  messages.addListener('element-selected', onElementSelected);
-  messages.addListener('application-setup', onAplicationsetup);
+  // TODO update to protocol 4
+  // messages.addListener('element-selected', onElementSelected);
+  // messages.addListener('application-setup', onAplicationsetup);
 
   eventHandlers.input['css-inspector-text-search'] = function(event, target)
   {
