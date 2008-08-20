@@ -42,7 +42,7 @@ var lang_dict =
   //"zh-cn": "",
   //"zh-tw": "",
 };
-var lang = navigator.browserLanguge in lang_dict && navigator.browserLanguge || "en"; 
+var lang = navigator.browserLanguage in lang_dict && navigator.browserLanguage || "en"; 
 document.cookie = "ui-lang=" + 
   lang +
   "; expires=" + ( new Date( new Date().getTime() + 360*24*60*60*1000 ) ).toGMTString() +
