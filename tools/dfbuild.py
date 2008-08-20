@@ -395,6 +395,12 @@ Destination can be either a directory or a zip file"""
     parser.add_option("-t", "--translate", default=False,
                       action="store_true", dest="translate_build",
                       help="Apply translation changes to the finished build")
+    parser.add_option("-s", "--no-string-check", default=True,
+                      action="store_false", dest="check_strings",
+                      help="Check validity of strings before building")
+    parser.add_option("-e", "--no-enc-check", default=True,
+                      action="store_false", dest="check_encodings",
+                      help="Check encoding of files before building")
 
     options, args = parser.parse_args()
     
@@ -424,23 +430,23 @@ Destination can be either a directory or a zip file"""
     if options.translate_build and not options.concat:
         parser.error("""Can't translate when not concatenateing. use --no-concat OR --translate""")
     
-    bad = _get_bad_encoding_files(src)
-    if bad:
-        print "The following files do not seem to be UTF8 with BOM encoded:"
-        for b in bad: print "\t%s" % b
-        sys.exit()
+    if options.check_encodings:
+        bad = _get_bad_encoding_files(src)
+        if bad:
+            print "The following files do not seem to be UTF8 with BOM encoded:"
+            for b in bad: print "\t%s" % b
+            sys.exit()
 
-    missingstrings = _get_missing_strings_for_dir(os.path.join(src, "ui-strings"), "en")
-    if missingstrings==None:
-        print "couldn't parse the master string list!"
-        sys.exit()
-    elif missingstrings:
-        for lang, strings in missingstrings.items():
-            print """Language "%s" is missing the following strings:""" % lang
-            for s in strings: print "\t%s" % s
-        sys.exit()
-    
-    
+    if options.check_strings:
+        missingstrings = _get_missing_strings_for_dir(os.path.join(src, "ui-strings"), "en")
+        if missingstrings==None:
+            print "couldn't parse the master string list!"
+            sys.exit()
+        elif missingstrings:
+            for lang, strings in missingstrings.items():
+                print """Language "%s" is missing the following strings:""" % lang
+                for s in strings: print "\t%s" % s
+            sys.exit()
     
     if dst.endswith(".zip"): # export to a zip file
         if os.path.isfile(dst):
