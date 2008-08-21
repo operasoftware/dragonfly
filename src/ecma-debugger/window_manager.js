@@ -13,9 +13,6 @@ cls.WindowManagerService = function(name)
 {
   var self = this;
 
-  var view = "window_manager";
-
-
   this.onreceive = function(xml) // only called if there is a xml
   {
     if( ini.debug )
@@ -29,61 +26,39 @@ cls.WindowManagerService = function(name)
     else
     {
       opera.postError( "window manager not handled: " + new XMLSerializer().serializeToString(xml))
-      // opera.postError('error in window manager, genericEventListener');
     }
   }
 
   // events
-  // list-windows-reply, updated-window, window-closed, window
 
   this['active-window'] = function(msg) 
   {
-    
-    window_manager_data.active_window = msg.getNodeData("window-id");
-    views[view].update();
-
-    // opera.postError( "active window: " + new XMLSerializer().serializeToString(msg))
+    window_manager_data.set_active_window(msg.getNodeData("window-id"));
   }
-  /*
-
-  window manager not handled: <?xml version="1.0"?>
-  <list-windows-reply>
-  <window>
-  <window-id>1</window-id>
-  <title>Opera browser: Homepage</title>
-  <window-type>normal</window-type>
-  <opener-id>0</opener-id>
-  </window>
-
-  <window><window-id>2</window-id><title>(x)html, css, dom, js and design</title><window-type>normal</window-type><opener-id>0</opener-id></window></list-windows-reply>
-  */
 
   this['list-windows-reply'] = function(msg) 
   {
-    // opera.postError( "active window: " + new XMLSerializer().serializeToString(msg))
     var
-      window_list = [],
-      windows = msg.getElementsByTagName('window'),
-      _window = null,
-      children = null,
-      child = null,
-      win_obj = null,
-      i = 0, 
-      j = 0;
+    window_list = [],
+    windows = msg.getElementsByTagName('window'),
+    win = null,
+    i = 0;
     
-    for( ; _window = windows[i]; i++)
+    for( ; win = windows[i]; i++)
     {
-      win_obj = {};
-      children = _window.childNodes;
-      for( j = 0; child = children[j]; j++ )
-      {
-        win_obj[child.nodeName] = child.firstChild.nodeValue;
-      }
-      window_list[i] = win_obj;
+      window_list[i] = this.parseWindow(win);
     }
-    window_manager_data.window_list = window_list;
-    // alert(JSON.stringify(window_manager_data.window_list))
-    views[view].update();
+    window_manager_data.set_window_list(window_list);
+  }
+
+  this['updated-window'] = function(msg) 
+  {
+    window_manager_data.update_list( this.parseWindow(msg.getElementsByTagName('window')[0]) );
+  }
+
+  this['window-closed'] = function(msg)
+  {
+    window_manager_data.remove_window( msg.getNodeData('window-id') );
   }
 
   // commands
@@ -110,18 +85,29 @@ cls.WindowManagerService = function(name)
     this.post(msg);
   }
   
-
   this.onconnect = function(xml)
   {
     self.getActiveWindow();
-    // setInterval(function(){self.getActiveWindow();}, 5000);
     self.getWindowList();
-    //setTimeout(function(){self.getWindowList();}, 1000);
   }
 
-  var onAplicationsetup = function()
-  {
+  // helpers
 
+  this.parseWindow = function(win)
+  {
+    var 
+    win_obj = {},
+    children = win.childNodes,
+    child = null,
+    first_child = null,
+    i = 0;
+
+    for( ; child = children[i]; i++ )
+    {
+      win_obj[child.nodeName] = 
+        ( first_child = child.firstChild ) && first_child.nodeValue || "undefined";
+    }
+    return win_obj;
   }
 
   // constructor calls
@@ -135,25 +121,71 @@ cls.WindowManagerService = function(name)
   }
   client.addService(this);
 
-  // messages.addListener('application-setup', onAplicationsetup);
 }
 
 cls.WindowManagerService.prototype = ServiceBase;
 new cls.WindowManagerService('window-manager');
 
-// for testing
 
 var window_manager_data = new function()
 {
   this.active_window = null;
+
+  this.window_list = null;
+
+  var view = "window_manager";
+
+  this.set_active_window = function(win_id)
+  {
+    this.active_window = win_id;
+    views[view].update();
+  }
+
+  this.set_window_list = function(window_list)
+  {
+    this.window_list = window_list;
+    views[view].update();
+  }
+
+  this.update_list = function(win_obj)
+  {
+    var 
+    id = win_obj["window-id"],
+    win = null, 
+    i = 0;
+
+    if( this.window_list )
+    {
+      for( ; ( win = this.window_list[i] ) && !( id == win["window-id"] ); i++ )
+    }
+    this.window_list[i] = win_obj;
+    views[view].update();
+  }
+
+  this.remove_window = function(win_id)
+  {
+    var 
+    win = null, 
+    i = 0;
+
+    if( this.window_list )
+    {
+      for( ; win = this.window_list[i]; i++ )
+      {
+        if( win_id == win["window-id"] )
+        {
+          this.window_list.splice(i, 1);
+          break;
+        }
+      }
+    }
+    views[view].update();
+  }
 }
 
 var cls = window.cls || ( window.cls = {} );
 
-/**
-  * @constructor 
-  * @extends ViewBase
-  */
+// for testing the window manbager service
 
 cls.WindowManagerTestView = function(id, name, container_class)
 {
