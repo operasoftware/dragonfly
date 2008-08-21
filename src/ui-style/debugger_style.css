@@ -769,6 +769,16 @@ pre[handler="inspect-object-link"]:hover {
   }
 
 
+/* testing windows manager */
+
+.windows-manager h2 {
+  font-size: 12px;
+  }
+
+.windows-manager ul {
+  margin: 5px 10px;
+  }
+
 
 
 
