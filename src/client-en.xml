@@ -85,6 +85,9 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./ui-scripts/keyboard_handler.js"/>
 
 
+
+
+
 <script src="./ecma-debugger/ListTextSearch.js"/>
 <script src="./ecma-debugger/ini.js"/>
 <script src="./ecma-debugger/debug.js"/>
@@ -136,4 +139,7 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./ecma-debugger/window_manager.js"/>
 <script src="./ecma-debugger/console.js"/>
 <script src="./ecma-debugger/ecma-debugger.js"/>
+
+<script src="./ecma-debugger/httplogger.js"/>
+
 </viewport>
