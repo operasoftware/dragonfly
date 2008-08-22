@@ -89,7 +89,7 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 
 
 <script src="./ecma-debugger/ListTextSearch.js"/>
-<script src="./ecma-debugger/ini.js"/>
+<script src="./scripts/ini.js"/>
 <script src="./ecma-debugger/debug.js"/>
 <script src="./ecma-debugger/storage.js"/>
 <script src="./ecma-debugger/helpers.js"/>
@@ -107,7 +107,7 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./ecma-debugger/object_inspection.js"/>
 <script src="./ecma-debugger/views-runtimes.js"/>
 <script src="./ecma-debugger/views.js"/>
-<script src="./ecma-debugger/testing.js"/>
+
 <script src="./ecma-debugger/dom_data.js"/>
 <script src="./ecma-debugger/css_initial_values.js"/>
 <script src="./ecma-debugger/css_inheritable_properties.js"/>
@@ -134,12 +134,14 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./ecma-debugger/change-handler.js"/>
 <script src="./ecma-debugger/scroll_handler.js"/>
 <script src="./ecma-debugger/tag.js"/>
-<script src="./ecma-debugger/client.js"/>
-<script src="./ecma-debugger/serviceBase.js"/>
-<script src="./ecma-debugger/window_manager.js"/>
-<script src="./ecma-debugger/console.js"/>
+
+<script src="./client/client.js"/>
+
+<script src="./scripts/serviceBase.js"/>
+<script src="./window-manager/window-manager.js"/>
+<script src="./console-logger/console.js"/>
 <script src="./ecma-debugger/ecma-debugger.js"/>
 
-<script src="./ecma-debugger/httplogger.js"/>
+<script src="./http-logger/httplogger.js"/>
 
 </viewport>
