@@ -9,6 +9,7 @@ var cls = window.cls || ( window.cls = {} );
   * @constructor 
   * @extends ServiceBase
   */
+
 cls.WindowManagerService = function(name)
 {
   var self = this;
@@ -76,6 +77,7 @@ cls.WindowManagerService = function(name)
   this.setFilterActiveWindow = function()
   {
     var msg = "<filter>" +
+                "<clear />" +
                 "<include>" +
                   "<window-id>" + 
                     window_manager_data.active_window + 
@@ -185,7 +187,7 @@ var window_manager_data = new function()
 
 var cls = window.cls || ( window.cls = {} );
 
-// for testing the window manbager service
+// for testing the window manager service
 
 cls.WindowManagerTestView = function(id, name, container_class)
 {
