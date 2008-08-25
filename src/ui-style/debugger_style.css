@@ -776,8 +776,16 @@ pre[handler="inspect-object-link"]:hover {
   }
 
 .windows-manager ul {
-  margin: 5px 10px;
+  margin: 5px 0 5px 20px;
   }
+
+.windows-manager ul li:first-child 
+{
+  float: left;
+  margin-left: -20px;
+}
+
+
 
 
 

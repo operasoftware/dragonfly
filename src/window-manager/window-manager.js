@@ -74,13 +74,13 @@ cls.WindowManagerService = function(name)
     this.post("<list-windows />");
   }
 
-  this.setFilterActiveWindow = function()
+  this.set_debug_context = function(win_id)
   {
     var msg = "<filter>" +
                 "<clear />" +
                 "<include>" +
                   "<window-id>" + 
-                    window_manager_data.active_window + 
+                    win_id + 
                   "</window-id>" +
                 "</include>" +
               "</filter>";
@@ -89,9 +89,38 @@ cls.WindowManagerService = function(name)
   
   this.onconnect = function(xml)
   {
-    self.getActiveWindow();
-    self.getWindowList();
+    get_context();
   }
+
+  var get_context = function()
+  {
+    if( !window_manager_data.active_window )
+    {
+      self.getActiveWindow();
+    }
+    else if( !window_manager_data.debug_context )
+    {
+      window_manager_data.setDebugContext(window_manager_data.active_window);
+    }
+      
+    if( !window_manager_data.window_list )
+    {
+      self.getWindowList();
+    }
+
+    if( !window_manager_data.active_window || !window_manager_data.window_list )
+    {
+      if( check_counter++ < 20 )
+      {
+        setTimeout(get_context, 100);
+      }
+      else
+      {
+        throw "it not possible to get the active window";
+      }
+    }
+  },
+  check_counter = 0;
 
   // helpers
 
@@ -135,6 +164,8 @@ var window_manager_data = new function()
 
   this.window_list = null;
 
+  this.debug_context = 0;
+
   var view = "window_manager";
 
   this.set_active_window = function(win_id)
@@ -146,6 +177,13 @@ var window_manager_data = new function()
   this.set_window_list = function(window_list)
   {
     this.window_list = window_list;
+    views[view].update();
+  }
+
+  this.setDebugContext = function(win_id)
+  {
+    services['window-manager'].set_debug_context(win_id);
+    this.debug_context = win_id;
     views[view].update();
   }
 
@@ -194,31 +232,47 @@ cls.WindowManagerTestView = function(id, name, container_class)
   var self = this;
   this.createView = function(container)
   {
-    var win_list = window_manager_data.window_list,
-      win = null,
-      props = ['window-id', 'title', 'window-type', 'opener-id'],
-      prop = '', 
-      i = 0,
-      j = 0,
-      markup = \
-        "<div>" +
-          "<input type='button' value='get active window' handler='get-active-window'>" +
-          "<input type='button' value='list windows' handler='list-windows'>" +
-          "<input type='button' value='set filter active window' handler='set-filter-active-window'>" +
-        "</div>" +
-        "<h2>active window: " + window_manager_data.active_window + "</h2>" +
-        "<h2>window list</h2>";
+    var 
+    win_list = window_manager_data.window_list,
+    win = null,
+    props = ['window-id', 'title', 'window-type', 'opener-id'],
+    prop = '', 
+    i = 0,
+    j = 0,
+    debug_context = window_manager_data.debug_context,
+    /*
+      "<div>" +
+        "<input type='button' value='get active window' handler='get-active-window'>" +
+        "<input type='button' value='list windows' handler='list-windows'>" +
+        "<input type='button' value='set filter active window' handler='set-filter-active-window'>" +
+      "</div>" +
+    */
+    markup = \
+      "<h2>active window: " + window_manager_data.active_window + "</h2>" +
+      "<h2>debug context: " + debug_context + "</h2>" +
+      "<h2>window list</h2>";
+
     if( win_list )
     {
+      markup += "<form handler='set-debug-context'>";
       for ( ; win = win_list[i]; i++ )
       {
-        markup += "<ul>";
+        markup += 
+          "<ul window-id='" + win['window-id'] + "'>" +
+          "<li><input type='radio'" + 
+          ( 
+            debug_context && debug_context == win['window-id']
+            ? "checked='checked'" 
+            : ""
+          ) +
+          "></li>";
         for( j = 0; prop = props[j]; j++ )
         {
           markup += "<li>" + prop + ": " + win[prop] + "</li>";
         }
         markup += "</ul>";
       }
+      markup += "</form>";
     }
     else
     {
@@ -248,6 +302,24 @@ eventHandlers.click['set-filter-active-window'] = function(event, target)
 {
   services['window-manager'].setFilterActiveWindow();
 }
+
+eventHandlers.click['set-debug-context'] = function(event, target)
+{
+  if( /input/i.test(event.target.nodeName) )
+  {
+    var 
+    container = event.target.parentElement.parentElement,
+    win_id = container.getAttribute('window-id');
+
+    if( win_id )
+    {
+      window_manager_data.setDebugContext(win_id);
+    }
+  }
+}
+
+
+
 
 
 
