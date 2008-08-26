@@ -1,0 +1,142 @@
+html, body
+{
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  position: relative;
+}
+body
+{
+  font-family: sans-serif;
+  font-size: .75em;
+  position: relative;
+}
+h2
+{
+  font-weight: normal;
+}
+#test-document
+{
+  position:absolute;
+  top: 0;
+  left: 0;
+  right: 50%;
+  bottom: 0;
+}
+iframe
+{
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0px solid;
+}
+#dom-container
+{
+  position:absolute;
+  top: 0;
+  left: 50%;
+  right: 0;
+  bottom: 50%;
+  overflow: hidden;
+  border-left: 5px solid #ccc;
+}
+h2 
+{
+  height: 20px;
+  line-height: 20px;
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  text-align: center;
+  background-color: #ccc;
+}
+#dom-scoll-container
+{
+  position:absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: auto;
+}
+#dom
+{
+  padding: 5px;
+}
+node-container
+{
+  display: block;
+
+}
+/* dom *
+
+.dom div {
+	font-family: monospace;
+	color: #111;
+  }
+
+#target-element{
+	background-color:#eec;
+  }
+
+.dom .comment{
+	color:#888;
+  }
+
+.dom .node, selector {
+  color: #279;
+  }
+
+.dom .node:hover {
+  background-color:#ddb;
+  }
+
+.dom .key, .stylesheets key, .css-inspector key {
+	color:#229;
+  }
+
+.dom .value, .doctype-value, .stylesheets value, .css-inspector value {
+	color:#742;
+  }
+
+.dom .text-node, .dom .comment-node, .dom .cdata-node {
+	color: #abbaba;
+  }
+
+.dom .document-node {
+	color: #294556;
+  }
+
+.dom .document-node {
+	color: #294556;
+  }
+  */
+node
+{
+  color: #279;
+  cursor: pointer;
+}
+key
+{
+  color:#229;
+}
+value
+{
+  color:#742;;
+}
+.selected
+{
+  background-color:#ddb;
+}
+
+#controls-container
+{
+  position:absolute;
+  top: 50%;
+  left: 50%;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  border-left: 5px solid #ccc;
+}
+

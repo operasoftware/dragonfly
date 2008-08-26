@@ -1,0 +1,32 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title> </title>
+<script src="script.js"/>
+<link rel="stylesheet" href="style.css"/> 
+</head>
+<body>
+<div id="test-document">
+  <iframe></iframe>
+</div>
+
+<div id="dom-container">
+  <h2>DOM</h2>
+  <div id="dom-scoll-container">
+    <div id="dom"></div>
+  </div>
+</div>
+
+<div id="controls-container">
+  <h2>Controls</h2>
+  <div>
+    <input type="button" value="clear" handler="clear"/>
+    <input type="button" value="default" handler="default"/>
+    <input type="button" value="dimension" handler="dimension"/>
+    <input type="button" value="padding" handler="padding"/>
+    <input type="button" value="border" handler="border"/>
+    <input type="button" value="margin" handler="margin"/>
+  </div>
+</div>
+
+</body>
+</html>
