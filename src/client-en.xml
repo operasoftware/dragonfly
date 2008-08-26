@@ -144,6 +144,6 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./ecma-debugger/ecma-debugger.js"/>
 <script src="./ecma-debugger/exec.js"/>
 
-<script src="./http-logger/httplogger.js"/>
+<script src="./http-logger/httplogger_service.js"/>
 
 </viewport>
