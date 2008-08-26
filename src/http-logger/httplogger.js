@@ -83,12 +83,15 @@ cls.HTTPLoggerService = function(name)
                 retval.headers = hd.headers;
                 retval.method = hd.method;
                 retval.path = hd.path;
+                retval.protocol = hd.protocol;
             }
             else
             {
                 retval[ele.nodeName] = ele.textContent;
             }
         }
+        
+        retval.url = retval.headers.Host + retval.path
         return retval;
     }
 
@@ -141,10 +144,9 @@ cls.HTTPLoggerService = function(name)
         var lines = txt.split("\n");
 
         var requestline = lines.shift();
+        reqparts = requestline.match(/(\w*?) (.*) (.*)/);
 
-        reqparts = requestline.match(/(\w*?) (.*)/);
-
-        if (!reqparts || reqparts.length != 3) {
+        if (!reqparts || reqparts.length != 4) {
             opera.postError("COULD NOT PARSE REQUEST:\n" + requestline);
             return null;
         }
@@ -152,6 +154,7 @@ cls.HTTPLoggerService = function(name)
         
         retval.method = reqparts[1];
         retval.path = reqparts[2];
+        retval.protocol = reqparts[3];
         retval.headers = this.parseHeaders(lines);
         
         return retval;
@@ -193,7 +196,6 @@ cls.HTTPLoggerService = function(name)
             var value = parts[2];
 
             if (name in headers) {
-                opera.postError(typeof headers[name])
                 if (typeof headers[name] == "string")
                 {
                     headers[name] = [headers[name], parts[1]];
@@ -205,14 +207,11 @@ cls.HTTPLoggerService = function(name)
             }
             else
             {
-                opera.postError("setting to " + value)
                 headers[name] = value;
             }
         }
-        
         return headers;
     }
-
 
   // constructor calls
 
