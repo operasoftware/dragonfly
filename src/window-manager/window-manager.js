@@ -200,14 +200,13 @@ cls.WindowManagerTestView = function(id, name, container_class)
       prop = '', 
       i = 0,
       j = 0,
-      markup = \
-        "<div>" +
-          "<input type='button' value='get active window' handler='get-active-window'>" +
-          "<input type='button' value='list windows' handler='list-windows'>" +
-          "<input type='button' value='set filter active window' handler='set-filter-active-window'>" +
-        "</div>" +
-        "<h2>active window: " + window_manager_data.active_window + "</h2>" +
-        "<h2>window list</h2>";
+      markup = "<div>" +
+                "<input type='button' value='get active window' handler='get-active-window'>" +
+                "<input type='button' value='list windows' handler='list-windows'>" +
+                "<input type='button' value='set filter active window' handler='set-filter-active-window'>" +
+              "</div>" +
+              "<h2>active window: " + window_manager_data.active_window + "</h2>" +
+              "<h2>window list</h2>";
     if( win_list )
     {
       for ( ; win = win_list[i]; i++ )
