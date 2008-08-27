@@ -38,13 +38,15 @@ cls.HTTPLoggerService = function(name)
     this['request'] = function(msg) 
     {
         var data = this.parseRequest(msg);
-        opera.postError("just parsed a request:\n" + JSON.stringify(data))
+        //opera.postError("just parsed a request:\n" + JSON.stringify(data));
+        HTTPLoggerData.addRequest(data);
     }
 
     this['response'] = function(msg) 
     {
         var data = this.parseResponse(msg);
-        opera.postError("just parsed a response:\n" + JSON.stringify(data))
+        //opera.postError("just parsed a response:\n" + JSON.stringify(data))
+        HTTPLoggerData.addResponse(data);
     }
 
     this.onconnect = function(xml)
