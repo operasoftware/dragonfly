@@ -196,7 +196,7 @@ var window_manager_data = new function()
 
     if( this.window_list )
     {
-      for( ; ( win = this.window_list[i] ) && !( id == win["window-id"] ); i++ )
+      for( ; ( win = this.window_list[i] ) && !( id == win["window-id"] ); i++ ) {}
     }
     this.window_list[i] = win_obj;
     views[view].update();
