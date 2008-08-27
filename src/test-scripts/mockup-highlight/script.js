@@ -1,7 +1,15 @@
 const
-TEST_URL ="./test-doc/test-1.html",
+TEST_DIR ="./test-doc/",
+TEST_URL_LIST = TEST_DIR + "url-list.xml",
 PADDING = 12,
-b=0;
+// colors
+FADE_OUT_COLOR = 'rgba(0,0,0, 0.4)',
+DEFAULT_HIGHLIGHT_COLOR = 'rgba(0,0,0, 0)',
+HIGHLIGHT_COLOR = 'rgba(0,0,255, .4)',
+GRID_COLOR = 'rgba(0,255,255, 1)';
+
+
+
 
 var
 test_win = null,
@@ -10,6 +18,7 @@ dom_nodes = [],
 ref_index = 0,
 highlighter = null,
 selected_node = null,
+current_target_metrics = null,
 test_doc_target = null,
 
 
@@ -100,12 +109,6 @@ Highlighter = function(doc)
   doc_height = 0,
   doc_view_width = 0,
   doc_view_height = 0,
-  color_fade_out = 'rgba(0,0,0, 0.4)',
-  color_default_highlight = 'rgba(0,0,0, 0)',
-  color_clear = 'rgba(0,0,0,1)',
-  color_highlight = 'rgba(0,180,200, .4)',
-  color_highlight_negative = 'rgba(200,0,0, .4)',
-  color_grid = 'rgba(0,255,255, 1)',
   init = function()
   {
 
@@ -138,6 +141,7 @@ Highlighter = function(doc)
     var 
     container = test_doc.documentElement,
     scrollLeft = container.scrollLeft,
+    scrollRight = scrollLeft + doc_view_width,
     scrollTop = container.scrollTop,
     scrollBottom = scrollTop + doc_view_height,
     bounding_rect = node.getBoundingClientRect(),
@@ -251,7 +255,7 @@ Highlighter = function(doc)
     // grid
 
     ctx.clearRect(0, 0, doc_width, doc_height);
-    ctx.fillStyle = color_fade_out;
+    ctx.fillStyle = FADE_OUT_COLOR;
     ctx.fillRect (0, 0, doc_width, doc_height);
 
 
@@ -289,6 +293,17 @@ Highlighter = function(doc)
       container.scrollTop += top - scrollTop - 80;
     }
 
+    
+
+    if( right > scrollRight )
+    {
+      container.scrollLeft += 80 + right - scrollRight;
+    }
+    else if( left < scrollLeft )
+    {
+      container.scrollLeft += left - scrollLeft - 80;
+    }
+
 
   }
 
@@ -300,7 +315,7 @@ Highlighter = function(doc)
       box[TOP], 
       box[RIGHT] - box[LEFT], 
       box[BOTTOM] - box[TOP], 
-      color_default_highlight
+      DEFAULT_HIGHLIGHT_COLOR
     );
   }
 
@@ -312,7 +327,7 @@ Highlighter = function(doc)
       box[TOP], 
       box[RIGHT] - box[LEFT], 
       box[BOTTOM] - box[TOP], 
-      color_highlight
+      HIGHLIGHT_COLOR
     );
     draw_horizontal_line(box[TOP]);
     draw_horizontal_line(box[BOTTOM] - 1);
@@ -330,7 +345,7 @@ Highlighter = function(doc)
         outer_box[RIGHT], outer_box[TOP], 
         inner_box[RIGHT], inner_box[TOP]
       ],
-      color_highlight
+      HIGHLIGHT_COLOR
     );
     draw_path
     (
@@ -340,7 +355,7 @@ Highlighter = function(doc)
         outer_box[RIGHT], outer_box[BOTTOM], 
         inner_box[RIGHT], inner_box[BOTTOM]
       ],
-      color_highlight
+      HIGHLIGHT_COLOR
     );
     draw_path
     (
@@ -350,7 +365,7 @@ Highlighter = function(doc)
         outer_box[RIGHT], outer_box[BOTTOM], 
         inner_box[RIGHT], inner_box[BOTTOM]
       ],
-      color_highlight
+      HIGHLIGHT_COLOR
     );
     draw_path
     (
@@ -360,36 +375,8 @@ Highlighter = function(doc)
         outer_box[LEFT], outer_box[BOTTOM], 
         inner_box[LEFT], inner_box[BOTTOM]
       ],
-      color_highlight
+      HIGHLIGHT_COLOR
     );
-
-    /*
-    draw_box
-    (
-      inner_box[RIGHT], 
-      inner_box[TOP], 
-      outer_box[RIGHT] - inner_box[RIGHT], 
-      inner_box[BOTTOM] - inner_box[TOP], 
-      color_highlight
-    );
-    draw_box
-    (
-      inner_box[LEFT], 
-      inner_box[BOTTOM], 
-      inner_box[RIGHT] - inner_box[LEFT], 
-      outer_box[BOTTOM] - inner_box[BOTTOM], 
-      color_highlight
-    );
-    draw_box
-    (
-      outer_box[LEFT], 
-      inner_box[TOP], 
-      inner_box[LEFT] - outer_box[LEFT], 
-      inner_box[BOTTOM] - inner_box[TOP], 
-      color_highlight
-    );
-    */
-    
     
     draw_horizontal_line(outer_box[TOP]);
     draw_horizontal_line(outer_box[BOTTOM] - 1);
@@ -420,7 +407,7 @@ Highlighter = function(doc)
     {
       ctx.lineTo(path[i], path[i+1]);
     }
-    ctx.fillStyle = color_clear;
+    ctx.fillStyle = "rgb(0,0,0,1)";
     ctx.globalCompositeOperation = "destination-out";
     ctx.fill();
     ctx.fillStyle = color;
@@ -431,7 +418,7 @@ Highlighter = function(doc)
   var draw_horizontal_line = function(top)
   {
     ctx.save();
-    ctx.fillStyle = color_grid;
+    ctx.fillStyle = GRID_COLOR;
     ctx.clearRect(0, top, doc_width, 1);
     ctx.fillRect (0, top, doc_width, 1);
     ctx.restore();
@@ -440,7 +427,7 @@ Highlighter = function(doc)
   var draw_vertical_line = function(left)
   {
     ctx.save();
-    ctx.fillStyle = color_grid;
+    ctx.fillStyle = GRID_COLOR;
     ctx.clearRect(left, 0, 1, doc_height);
     ctx.fillRect (left, 0, 1, doc_height);
     ctx.restore();
@@ -458,7 +445,8 @@ click_handler_dom = function(event)
 {
   var 
   target = event.target,
-  ref_index = "";
+  ref_index = "",
+  metrics = null;
   
   while( target && !/node-container/i.test(target.nodeName) && ( target = target.parentElement ) );
   if(target && ( ref_index = target.getAttribute('ref-index') ) )
@@ -470,11 +458,17 @@ click_handler_dom = function(event)
     selected_node = target;
     selected_node.className = "selected";
     test_doc_target = dom_nodes[ref_index];
+    metrics = document.getElementById("metrics");
+    metrics.innerHTML = "";
+    metrics.render(templates.metrics(frames[0].getComputedStyle(test_doc_target, null)))
     highlighter.highlightNode(test_doc_target);
-    //alert(target.getAttribute('ref-index'));
+    setTimeout(function(){
+      highlighter.highlightNode(test_doc_target, "clear");
+    }, 800);
   }
   
 },
+
 click_handler_controls = function(event)
 {
   var 
@@ -483,13 +477,73 @@ click_handler_controls = function(event)
 
   if( test_doc_target && handler )
   {
-    
     highlighter.highlightNode(test_doc_target, handler);
   }
   
 },
 
-init = function()
+mouseover = function(event)
+{
+  var 
+  target = event.target,
+  cls = {margin:1, border:1, padding:1, dimension:1};
+
+  while(target && !(target.className in cls) && ( target = target.parentElement ) );
+  if( target == current_target_metrics )
+  {
+    return;
+  }
+  if( current_target_metrics )
+  {
+    current_target_metrics.style.removeProperty("background-color");
+    current_target_metrics.style.removeProperty("color");
+  }
+  current_target_metrics = target || null;
+  if( current_target_metrics )
+  {
+    target.style.backgroundColor = 
+      HIGHLIGHT_COLOR.replace(/rgba\( *(\d+) *, *(\d+) *, *(\d+).*/, "rgb($1,$2,$3)") ;
+    current_target_metrics.style.color = "#fff";
+  }
+
+  if( test_doc_target )
+  {
+    highlighter.highlightNode
+    (
+      test_doc_target, current_target_metrics && current_target_metrics.className || "clear" 
+    );
+  }
+},
+
+
+
+getTestUrls = function()
+{
+  var xhr = new XMLHttpRequest();
+  xhr.onload = function()
+  {
+    var 
+    h2 = document.getElementsByTagName('h2')[0],
+    markup = " <select onchange='loadurl(this.value)'>";
+    urls = this.responseXML.getElementsByTagName('url'),
+    url = '', 
+    i = 0;
+
+    for( ; url = urls[i]; i++)
+    {
+      markup += "<option>" + url.textContent + "</options>";
+    }
+
+    markup += "</select>";
+    h2.innerHTML = h2.textContent + markup;
+    loadurl(urls[0].textContent)
+    
+  }
+  xhr.open("GET", TEST_URL_LIST);
+  xhr.send(null);
+},
+
+loadurl = function(url)
 {
   test_win = document.getElementsByTagName('iframe')[0];
   test_win.onload = function()
@@ -497,11 +551,83 @@ init = function()
     getDOM(test_doc = this.contentDocument);
     highlighter = new Highlighter(test_doc);
   }
-  test_win.location = TEST_URL;
+  test_win.location = TEST_DIR + url;
+},
+
+init = function()
+{
+
   document.getElementById('dom-container').addEventListener('click', click_handler_dom, false);
   document.getElementById('controls-container').addEventListener('click', click_handler_controls, false);
+  getTestUrls();
   
   
 };
+
+window.templates || ( window.templates = {} );
+
+const
+PADDING_TOP = "padding-top",
+PADDING_RIGHT = "padding-right",
+PADDING_BOTTOM = "padding-bottom",
+PADDING_LEFT = "padding-left",
+BORDER_TOP_WIDTH = "border-top-width",
+BORDER_RIGHT_WIDTH = "border-right-width",
+BORDER_BOTTOM_WIDTH = "border-bottom-width",
+BORDER_LEFT_WIDTH = "border-left-width",
+MARGIN_TOP = "margin-top",
+MARGIN_RIGHT = "margin-right",
+MARGIN_BOTTOM = "margin-bottom",
+MARGIN_LEFT = "margin-left",
+WIDTH = "width",
+HEIGHT = "height";
+
+templates.metrics = function(style_dec)
+{
+  return \
+  ['ul', 
+    ['li',
+      ['ul', 
+        ['li',['p','\u00a0',['span', 'margin']]],
+        ['li', style_dec.getPropertyValue(MARGIN_TOP)],
+        ['li']
+      ],
+      ['ul', 
+        ['li', style_dec.getPropertyValue(MARGIN_LEFT)], 
+        ['li', 
+          ['ul', 
+            ['li',['p','\u00a0',['span', 'border']]], 
+            ['li', style_dec.getPropertyValue(BORDER_TOP_WIDTH)],
+            ['li']
+          ],
+          ['ul', 
+            ['li', style_dec.getPropertyValue(BORDER_LEFT_WIDTH)], 
+            ['li',
+              ['ul', 
+                ['li',['p','\u00a0',['span', 'padding']]], 
+                ['li', style_dec.getPropertyValue(PADDING_TOP)], 
+                ['li']
+              ],
+              ['ul', 
+                ['li', style_dec.getPropertyValue(PADDING_LEFT)], 
+                ['li', 
+                  ['ul', ['li', style_dec.getPropertyValue(WIDTH), 'class', 'elementWidth']],
+                  ['ul', ['li', style_dec.getPropertyValue(HEIGHT),'class', 'elementHeight']],
+                  ['ul', ['li', '\u00a0']],
+                  'class', 'dimension'], 
+                ['li', style_dec.getPropertyValue(PADDING_RIGHT)]
+              ],
+            ['ul', ['li', style_dec.getPropertyValue(PADDING_BOTTOM), 'colspan', '3']],
+          'class', 'padding'], ['li', style_dec.getPropertyValue(BORDER_RIGHT_WIDTH)]],
+          ['ul', ['li', style_dec.getPropertyValue(BORDER_BOTTOM_WIDTH), 'colspan', '3']],
+        'class', 'border'], 
+        ['li', style_dec.getPropertyValue(MARGIN_RIGHT)]
+      ],
+      ['ul', ['li', style_dec.getPropertyValue(MARGIN_BOTTOM), 'colspan', '3']],
+    'class', 'margin'], 
+  'class', 'metrics', 'onmouseover', mouseover];
+}
+
+
 
 onload = init;

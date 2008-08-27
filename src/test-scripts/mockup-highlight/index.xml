@@ -1,12 +1,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title> </title>
+<script src="../../scripts/dom.js"/>
 <script src="script.js"/>
 <link rel="stylesheet" href="style.css"/> 
 </head>
 <body>
 <div id="test-document">
+  <h2>Test Document</h2>
+  <div id="iframe-container">
   <iframe></iframe>
+  </div>
 </div>
 
 <div id="dom-container">
@@ -17,15 +21,8 @@
 </div>
 
 <div id="controls-container">
-  <h2>Controls</h2>
-  <div>
-    <input type="button" value="clear" handler="clear"/>
-    <input type="button" value="default" handler="default"/>
-    <input type="button" value="dimension" handler="dimension"/>
-    <input type="button" value="padding" handler="padding"/>
-    <input type="button" value="border" handler="border"/>
-    <input type="button" value="margin" handler="margin"/>
-  </div>
+  <h2>Metrics</h2>
+  <div id="metrics"></div>
 </div>
 
 </body>
