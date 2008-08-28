@@ -13,6 +13,8 @@ ui_strings.M_VIEW_LABEL_COMPOSITE_DOM = 'DOM';
 ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE = 'Error Console';
 /* DESC: View for exported code. */
 ui_strings.M_VIEW_LABEL_COMPOSITE_EXPORTS = 'Export';
+/* DESC: View for network debugging (and http logger) */
+ui_strings.M_VIEW_LABEL_NETWORK = 'Network';
 
 /*
  * Level 2 View Tab Headings

@@ -265,6 +265,8 @@ var client = new function()
     }
     viewport.removeChild(container);
     
+    new CompositeView('network_panel', ui_strings.M_VIEW_LABEL_NETWORK, network_rough_layout);
+
     new CompositeView('environment_new', ui_strings.M_VIEW_LABEL_ENVIRONMENT, environment_rough_layout);
     new CompositeView('console_new', ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE, console_rough_layout);
     new CompositeView('js_new', ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS, js_rough_layout);
@@ -478,16 +480,41 @@ var js_rough_layout_panel =
 }
 
 
+var network_rough_layout =
+{
+    dir: 'h',
+    width: 700,
+    height: 700,
+    children: [
+      { 
+        width: 700, 
+        children: 
+        [
+          { height: 1000, tabs: ['request_list'] },
+        ] 
+      },
+      { 
+        width: 250, 
+        children: 
+        [
+          { height: 400, tabs: ['request_info_request']},
+          { height: 400, tabs: ['request_info_response']}
+        ] 
+      }
+  ]
+
+}
+
 var main_layout =
 {
   id: 'main-view', 
-  tabs: ['js_new', 'dom_new', 'console_new', 'environment_new']
+  tabs: ['js_new', 'dom_new', 'console_new', 'environment_new', "network_panel"]
 }
 
 var panel_layout =
 {
   id: 'main-view', 
-  tabs: ['js_panel', 'dom_panel', 'console_new', 'environment_new']
+  tabs: ['js_panel', 'dom_panel', 'console_new', 'environment_new', "network_panel"]
 }
 
 var resolve_map_properties = 
