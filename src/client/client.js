@@ -27,7 +27,7 @@ var client = new function()
     {
       if (service.name in services_avaible)	
       {
-        opera.postError('register service: '+ service.name);
+        // opera.postError('register service: '+ service.name);
         opera.scopeEnableService(service.name);
       }
       else

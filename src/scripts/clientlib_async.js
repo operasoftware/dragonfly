@@ -50,7 +50,7 @@ var proxy = new function()
       services.push(service_elts[i].getAttribute("name"));
     }
     self.services = services;
-    opera.postError("services: "+services);
+    // opera.postError("services: "+services);
     self.onsetup();
   }
 

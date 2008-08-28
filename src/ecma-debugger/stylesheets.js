@@ -439,6 +439,8 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     s_h_priority = [],
     s_h_prop = '',
     check_inheritable = rule[HAS_INHERITABLE_PROPS];
+
+    //opera.postError("check_inheritable: "+check_inheritable)
     
     for( ; i < length; i++ )
     {
@@ -487,24 +489,24 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
       {
         // css inspector does not shorthand properties
         // perhaps later
-        
+        // protocol-4: overwrittenlist is now the STATUS
         if(check_overwritten && overwrittenlist[i] )
         {
           ret += ( ret ? MARKUP_PROP_NL : MARKUP_EMPTY ) +
             INDENT +
-            MARKUP_KEY_OW[overwrittenlist[i]] + __indexMap[index] + MARKUP_KEY_CLOSE +
-            MARKUP_VALUE_OW[overwrittenlist[i]] + value_list[i] + ( priority_list[i] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE;   
+            MARKUP_KEY + __indexMap[index] + MARKUP_KEY_CLOSE +
+            MARKUP_VALUE + value_list[i] + ( priority_list[i] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE; 
+  
         }
         else
         {
+          // TODO there is only overwritten or not
           ret += ( ret ? MARKUP_PROP_NL : MARKUP_EMPTY ) +
             INDENT +
-            MARKUP_KEY + __indexMap[index] + MARKUP_KEY_CLOSE +
-            MARKUP_VALUE + value_list[i] + ( priority_list[i] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE;   
+            MARKUP_KEY_OW[1] + __indexMap[index] + MARKUP_KEY_CLOSE +
+            MARKUP_VALUE_OW[1] + value_list[i] + ( priority_list[i] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE;   
         }
       }
-
-      
     }
     return ret;
   }
@@ -657,25 +659,101 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   
   prettyPrintCat_2[1] = function(data, search_active)
   {
-    var node_casc = null, i = 0, ret = '', j = 0, css_style_dec = null;
-    var rt_id = data.rt_id;
+    var 
+      node_casc = null, 
+      i = 0, 
+      ret = '', 
+      j = 0, 
+      css_style_dec = null,
+      rt_id = data.rt_id,
+      node_casc_header = null,
+      style_dec_list = null,
+      style_dec = null;
+
+    
+
     for( ; node_casc = data[i]; i++)
     {
+      /* TODO fix search 
       if( search_active && !node_casc[HAS_MATCHING_SEARCH_PROPS] )
       {
         continue;
       }
-      node_casc[0].rt_id = node_casc[1].rt_id = node_casc[2].rt_id = rt_id;
+      */
+
+
       if( i && node_casc[ HAS_INHERITABLE_PROPS] )
       {
-        ret += "<h2>inherited from <b>" + node_casc[0][HEADER][2] + "</b></h2>";
+        ret += "<h2>inherited from <b>" + node_casc[0][1] + "</b></h2>";
       }
       
+      node_casc_header = node_casc[0];
+      style_dec_list = node_casc[1];
+      for( j = 0; style_dec = style_dec_list[j]; j++)
+      {
+        ret += prettyPrintStyleDec[style_dec[0][0]](rt_id, node_casc_header, style_dec, search_active);
+      }
+      /*
       ret += prettyPrintCat[INLINE_STYLE](node_casc[0], search_active, rt_id); 
       ret += prettyPrintCat[ i ? INHERITED_RULES : MATCHING_RULES ](node_casc[1], search_active, rt_id);
       ret += prettyPrintCat[DEFAULT_VALUES](node_casc[2], search_active, rt_id, i > 0);
+      */
     }
     return ret;
+  }
+  
+  // for protocol-4
+  const
+  PROT_4_USER_AGENT = 1, // default
+  PROT_4_LOCAL = 2, // user
+  PROT_4_AUTHOR = 3, // author
+  PROT_4_ELEMENT = 4; // inline
+  
+  var prettyPrintStyleDec = [];
+
+  prettyPrintStyleDec[PROT_4_USER_AGENT] = function(rt_id, node_casc_header, style_dec, search_active)
+  {
+    return "TODO PROT_4_USER_AGENT";
+  }
+
+  prettyPrintStyleDec[PROT_4_LOCAL] = function(rt_id, node_casc_header, style_dec, search_active)
+  {
+    return "TOD PROT_4_LOCAL";
+  }
+
+  prettyPrintStyleDec[PROT_4_AUTHOR] = function(rt_id, node_casc_header, style_dec, search_active)
+  {
+    var 
+    ret = '', 
+    header = null, 
+    i = 0, 
+    sheet = self.getSheetWithObjId(rt_id, style_dec[HEADER][1]);
+  
+    if( sheet )
+    {
+      if( true /* TODO !search_active || style_dec[HAS_MATCHING_SEARCH_PROPS] */ )
+      {
+        ret += "<style_dec style_dec-id='" + style_dec[HEADER][2] + "'>" + 
+          "<stylesheet-link rt-id='" + sheet[0] + "'"+
+            " index='" + sheet[1] + "' handler='display-style_dec-in-stylesheet'>" + sheet[2] + 
+          "</stylesheet-link>" +
+          "<selector>" + style_dec[HEADER][5] + "</selector>" + 
+          " {\n" + 
+              prettyPrintRule[COMMON](style_dec, false, true, search_active) +
+          "\n}</style_dec>";
+      }
+    }
+    else
+    {
+      opera.postError('stylesheet is missing in stylesheets, prettyPrintCat[MATCHING_RULES]');
+    }
+
+    return ret;
+  }
+
+  prettyPrintStyleDec[PROT_4_ELEMENT] = function(rt_id, node_casc_header, style_dec, search_active)
+  {
+    return "TODO PROT_4_ELEMENT";
   }
 
   /*

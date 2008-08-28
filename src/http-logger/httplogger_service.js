@@ -17,7 +17,7 @@ cls.HTTPLoggerService = function(name)
 
     this.onreceive = function(xml) // only called if there is a xml
     {
-        opera.postError(xml.documentElement.nodeName);
+        //opera.postError(xml.documentElement.nodeName);
         if( ini.debug )
         {
             debug.logEvents(xml);

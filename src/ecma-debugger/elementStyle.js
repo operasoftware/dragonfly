@@ -27,7 +27,11 @@ var elementStyle = new function()
   SEARCH_LIST = 6,
   HAS_MATCHING_SEARCH_PROPS = 7,
   SEARCH_DELAY = 50,
-  MIN_SEARCH_THERM_LENGTH = 3;
+  MIN_SEARCH_THERM_LENGTH = 3,
+
+  // protoco-4
+
+  NODE_CHAIN_STYLE_CASCADE = 1;
 
   var __selectedElement = null;
   var __setProps = [];
@@ -101,6 +105,7 @@ var elementStyle = new function()
   
   var restructureData = function(rt_id, obj_id, declarations)
   {
+    /*
     var 
     inlineStyle = declarations[INLINE_STYLE] 
       && [ ['inline'], declarations[INLINE_STYLE][0], declarations[INLINE_STYLE][1], declarations[INLINE_STYLE][2] ]
@@ -122,7 +127,7 @@ var elementStyle = new function()
     }
 
     node_cascades = [[inlineStyle, matchingRules, def_val]];
-
+    */
     /* 
       the logic for default rules is quite broken here:
 
@@ -134,6 +139,7 @@ var elementStyle = new function()
          ( insert for each missing entry [["inline",<object-id>,<element-name>],[],[],[]]  )
     */
 
+    /*
     for( ; style_dec = inheritedRules[i]; i++)
     {
       if( style_dec[HEADER][0] == 'inline' )
@@ -160,9 +166,12 @@ var elementStyle = new function()
       }
     }
 
-    //window.open('data:text/plain;charset=utf-8,'+encodeURIComponent(JSON.stringify(node_cascades)));
+    */
+    
+    
+    
     categories_data[0] = declarations[0]; 
-    categories_data[1] = node_cascades;
+    node_cascades = categories_data[1] = declarations[1];
     categories_data[1].rt_id = categories_data[0].rt_id = rt_id;
 
   }
@@ -181,9 +190,8 @@ var elementStyle = new function()
     var
     node_casc = null,
     i = 0;
-    
-    __setProps = [];
-    __setPriorities = [];
+   
+  
     for( ; node_casc = node_cascades[i]; i++)
     {
       parseNodeCascade(node_casc, i > 0);
@@ -195,128 +203,75 @@ var elementStyle = new function()
   var parseNodeCascade = function(node_cascade, set_has_inherited_props)
   {
     /*
+      protocol-4
       node_cascade has the form
       [
-        style_dec_inline,
-        [style_dec_css*],
-        style_dec_default,
+        NODE-HEADER,
+        STYLE-DECLARATION-LIST,
         ,
         ,
         has_inherited_props // must be set in this call
       ]
+
+      has inheritable properties must be checked for each declaration 
+      and then set for the node cascade
+
+      for the next protocol version that should be sorted out on the host side
+
+      ( the overwritten flag is now set on the host side )
+
     */
+   
     
     var
     dec = null,
-    to_update_props = null,
     i = 0,
-    j = 0,
     declaration_list = node_cascade[1],
-    // to update the priority flags, only per node
-    declarations = [node_cascade[0]],
     has_inherited_props = false;
     
-    parseStyleDec(node_cascade[0], set_has_inherited_props);
-    has_inherited_props = set_has_inherited_props
-      && ( has_inherited_props || node_cascade[0][HAS_INHERITABLE_PROPS] );
-      
-    for( ; dec = declaration_list[i]; i++)
-    {
-      if( dec.length > 3 )
-      {
-        to_update_props = parseStyleDec(dec, set_has_inherited_props);
-        has_inherited_props = set_has_inherited_props
-          && ( has_inherited_props || dec[HAS_INHERITABLE_PROPS] );
-        if( to_update_props.length )
-        {
-          for( j = 0; j < to_update_props.length; j++)
-          {
-            updateOverwritten(to_update_props[j], declarations)
-          }
-        }
-      }
-      else
-      {
-        opera.postError("failed in parseNodeCascade: "+ JSON.stringify(dec) );
-      }
-      declarations[declarations.length] = dec;
-    }
-    
-    parseStyleDec(node_cascade[2], set_has_inherited_props);
-    has_inherited_props = set_has_inherited_props
-      && ( has_inherited_props || node_cascade[2][HAS_INHERITABLE_PROPS] );
-      
     if( set_has_inherited_props )
     {
-      node_cascade[HAS_INHERITABLE_PROPS] = has_inherited_props;
-    }
-  }
-
-  var updateOverwritten = function(prop_index, declarations)
-  {
-    var dec = null, i = 0, k = 0, length = 0
-    for( ; dec = declarations[i]; i++)
-    {
-      length = dec[PROP_LIST].length;
-      for( j = 0; j < length; j++)
+      for( ; dec = declaration_list[i]; i++)
       {
-        if( dec[PROP_LIST][j] == prop_index )
+        if( dec.length > 3 ) // TODO this was some workaround. still needed?
         {
-          dec[OVERWRITTEN_LIST][j] = 1;
+          if( parseStyleDec(dec) && !has_inherited_props )
+          {
+            has_inherited_props = true;
+          }
+          //opera.postError("dec: "+JSON.stringify(dec))
+        }
+        else
+        {
+          opera.postError("failed in parseNodeCascade: "+ JSON.stringify(dec) );
         }
       }
+      node_cascade[HAS_INHERITABLE_PROPS] = has_inherited_props;
     }
+
   }
 
-  var parseStyleDec = function(dec, set_has_inherited_props)
+
+  var parseStyleDec = function(dec)
   {
-    // updates the overwritten list for styleDeclaration
     // checks if the declaration actually has inheritable properties
-    // returns an array with properties which needs
-    // to be updated due to a setPriority flag
-    // 
-    var i = 0, prop = 0, length = dec[PROP_LIST].length, ret = [], has_inherited_props = false;
-    dec[OVERWRITTEN_LIST] = [];
+    // the overwritten flag is now set on the host
+
+    var 
+    i = 0, 
+    prop = 0, 
+    length = dec[PROP_LIST].length;
+
     for( ; i < length; i++ )
     {
       prop = dec[PROP_LIST][i];
-      if( set_has_inherited_props )
+
+      if( inherited_props_index_list[prop] )
       {
-        if(inherited_props_index_list[prop])
-        {
-          has_inherited_props = true;
-        }
-        else
-        {
-          continue;
-        }
-      }
-      if( __setProps[prop] )
-      {
-        // the important flag is only relevant for the target node, 
-        // for any inherited property it doesn't matter
-        if( !set_has_inherited_props && dec[PRIORITY_LIST][i] && !__setPriorities[prop])
-        {
-          ret[ret.length] = prop;
-          __setPriorities[prop] = /%|em|ex/.test(dec[VAL_LIST][i]) ? 2 : 1;
-        }
-        else
-        {
-          
-          dec[OVERWRITTEN_LIST][i] = __setProps[prop];
-          __setProps[prop] = /%|em|ex/.test(dec[VAL_LIST][i]) ? 2 : 1;
-        }
-      }
-      else
-      {
-        __setProps[prop] = /%|em|ex/.test(dec[VAL_LIST][i]) ? 2 : 1;
+        return ( dec[HAS_INHERITABLE_PROPS] = true );
       }
     }
-    if( set_has_inherited_props )
-    {
-      dec[HAS_INHERITABLE_PROPS] = has_inherited_props;
-    }
-    return ret;
+    return ( dec[HAS_INHERITABLE_PROPS] = false );
   }
 
   var searchDelayed = function(value)
@@ -582,7 +537,6 @@ var elementStyle = new function()
 
   var onElementSelected = function(msg)
   {
-    
     __selectedElement = {rt_id: msg.rt_id,  obj_id: msg.obj_id, req_type: getRequestType() };
     var view_id = '', i = 0, get_data = false;
     
@@ -615,6 +569,7 @@ var elementStyle = new function()
 
   var handleGetData = function(xml, rt_id, obj_id, cats, req_type)
   {
+    // req_type number
     var 
     json = xml.getNodeData('matching-style-declarations'), 
     declarations = null, 
@@ -623,7 +578,10 @@ var elementStyle = new function()
 
     if( json )
     {
+
+      opera.postError("json: "+json);
       declarations = eval('(' + json +')');
+
       if( cats[1] == '1' ) // there is only 11111, other do actually not make sense
       {
         restructureData(rt_id, obj_id, declarations);
@@ -632,7 +590,7 @@ var elementStyle = new function()
       {
         opera.postError('missing req_type or req_type 0 in handleGetData in elementStyles')
       }
-
+      
       parse_data[req_type]();
 
       
@@ -646,14 +604,15 @@ var elementStyle = new function()
       {
         views[view_id].updateCategories({}, getUnfoldedKey());
       }
+      
 
       
     }
   }
 
   // TODO update to protocol 4
-  // messages.addListener('element-selected', onElementSelected);
-  // messages.addListener('application-setup', onAplicationsetup);
+  messages.addListener('element-selected', onElementSelected);
+  messages.addListener('application-setup', onAplicationsetup);
 
   eventHandlers.input['css-inspector-text-search'] = function(event, target)
   {
