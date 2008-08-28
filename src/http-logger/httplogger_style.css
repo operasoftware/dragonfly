@@ -4,17 +4,17 @@
 #request-table tr {
 }
 
-/*#request-table tr:nth-child(odd) {*/
-/*    background-color: #fafafa;*/
-/*}*/
+#request-table tr:nth-child(odd) {
+    background-color: #e1e4e9;
+}
 
 #request-table tr:hover {
     background-color: yellow;
 }
 
 #request-table .selected-request {
-    border: solid thin black;
-    background-color: blue;
+    border: solid thick black;
+    font-weight: bold;
 }
 
 /* HTTP logger buttons start */
@@ -23,6 +23,10 @@ input[handler="clear-request-list"] {
   background-image: url('../ui-images/btn-clear-error-console.png');
 }
 
+.headerlist dt {
+    font-weight: bold;
+    background-color: #e1e4e9;
+}
 
 /* HTTP logger buttons end */
 

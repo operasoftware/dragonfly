@@ -237,3 +237,85 @@ cls.ResponseRawView = function(id, name, container_class)
 cls.ResponseRawView.prototype = ViewBase;
 new cls.ResponseRawView('response_info_raw', ui_strings.M_VIEW_LABEL_RAW_RESPONSE_INFO, 'scroll');
 
+
+cls.RequestHeadersView = function(id, name, container_class)
+{
+    this.createView = function(container)
+    {
+        var req = HTTPLoggerData.getSelectedRequest();
+
+        if (req)
+        {
+            container.clearAndRender(['div', [
+                                        ['h1', this.name],
+                                        this._createHeadersList(req.request.headers),
+                                     ],
+                                      'class', 'padding'
+                             ]
+                            );
+                             
+                             
+            //container.innerHTML = "<dl><dt>morradi <a href='fneh'>(huh?)</a></dt><dd>MANN </dd><dd>MANN2</dd><dt>morradi</dt><dd>MANN</dd></dl>"
+        }
+        else
+        {
+            container.clearAndRender(['div', [
+                                                 ['h1', this.name],
+                                                 ui_strings.S_TEXT_NO_REQUEST_SELECTED,
+                                             ],
+                                      'class', 'padding'
+                                     ]
+                                    );
+        }
+    }
+    
+    this._createHeadersList = function(headers)
+    {
+
+        var alphaheaders = [];
+        for (name in headers) {alphaheaders.push(name)}
+        alphaheaders = alphaheaders.sort();
+        
+        var dlbody = [];
+        
+        for (var i=0, name; name=alphaheaders[i]; i++)
+        {
+            var value = headers[name];
+            var dt = ['dt', name + " "]
+            if (name in header_specification_urls)
+            {
+                dt.push(['a', '(spec)',
+                              'href', header_specification_urls[name],
+                              'target', '_blank']);
+            }
+            
+            dlbody.push(dt);
+            
+            if (typeof value == "string")
+            {
+                var dd = ['dd', value]
+            }
+            else
+            {
+                var dd = [];
+                for (var n=0, e; e=value[n]; n++)
+                {
+                    dd.push(['dd', e]);
+                }
+            }
+            dlbody.push(dd);
+        }
+        var dl = ['dl', dlbody,
+                  'class', 'headerlist'
+                 ];
+        
+        return dl;
+        
+    }
+    
+    this.init(id, name, container_class);
+}
+
+
+cls.RequestHeadersView.prototype = ViewBase;
+new cls.RequestHeadersView('request_info_headers', ui_strings.M_VIEW_LABEL_REQUEST_HEADERS, 'scroll');
