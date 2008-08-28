@@ -18,7 +18,8 @@ window.HTTPLoggerData = new function()
     this._views = ["request_list",
                    "request_info_raw",
                    "response_info_raw",
-                   "request_info_headers"
+                   "request_info_headers",
+                   "response_info_headers"
                    ];
 
     /**
