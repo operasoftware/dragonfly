@@ -92,6 +92,10 @@ ui_strings.M_VIEW_LABEL_REQUEST_LOG = 'Request log';
 ui_strings.M_VIEW_LABEL_RAW_REQUEST_INFO = 'Raw request';
 /* DESC: Name of raw response tab */
 ui_strings.M_VIEW_LABEL_RAW_RESPONSE_INFO = 'Raw response';
+/* DESC: Name of request headers tab */
+ui_strings.M_VIEW_LABEL_REQUEST_HEADERS = 'Request headers';
+/* DESC: Name of response headers tab */
+ui_strings.M_VIEW_LABEL_RESPONSE_HEADERS = 'Response headers';
 
 
 /*
