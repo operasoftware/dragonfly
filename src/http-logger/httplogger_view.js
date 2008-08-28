@@ -28,7 +28,7 @@ cls.RequestListView = function(id, name, container_class)
     this._createTable = function(log)
     {
         var strings = [];
-        var sel = HTTPLoggerData.getSelectedRequest();
+        var sel = HTTPLoggerData.getSelectedRequestId();
         strings.push("<tr><th>#</th><th>host</th><th>path</th><th>method</th><th>status</th><th>time</th></tr>");
         if (log.length)
         {
@@ -59,12 +59,12 @@ cls.RequestListView = function(id, name, container_class)
 }
 
 cls.RequestListView.prototype = ViewBase;
-new cls.RequestListView('request_list', ui_strings.M_VIEW_LABEL_NETWORK, 'scroll');
+new cls.RequestListView('request_list', ui_strings.M_VIEW_LABEL_REQUEST_LOG, 'scroll');
 
 
 eventHandlers.click['request-list-select'] = function(event, target)
 {
-    var sel = HTTPLoggerData.getSelectedRequest();
+    var sel = HTTPLoggerData.getSelectedRequestId();
     var id = target.getAttribute("data-requestid");
     if (sel && sel==id)
     {
@@ -72,7 +72,7 @@ eventHandlers.click['request-list-select'] = function(event, target)
     }
     else
     {
-        HTTPLoggerData.setSelectedRequest(id);
+        HTTPLoggerData.setSelectedRequestId(id);
     }
     //opera.postError("REQ ID: " + id)
 }
@@ -101,7 +101,7 @@ new ToolbarConfig
     [
       {
         handler: 'clear-request-list',
-        title: '#STR Clear'
+        title: ui_strings.S_BUTTON_CLEAR_REQUEST_LOG
       }
     ],
     [
@@ -157,3 +157,165 @@ cls.RequestInfoResponseView = function(id, name, container_class)
 cls.RequestInfoResponseView.prototype = ViewBase;
 new cls.RequestInfoResponseView('request_info_response', "#req-info-resp", 'scroll');
 
+cls.RequestRawView = function(id, name, container_class)
+{
+    var self = this;
+
+    this.createView = function(container)
+    {
+        var req = HTTPLoggerData.getSelectedRequest();
+        if (req)
+        {
+            container.clearAndRender(['div', [
+                                                ['h1', this.name],
+                                                ['code',
+                                                    ['pre',
+                                                        req.request.raw
+                                                    ]
+                                                ]
+                                            ],
+                                     'class', 'padding'
+                                    ]
+                                    );
+        }
+        else
+        {
+            container.clearAndRender(['div', [
+                                                 ['h1', this.name],
+                                                 ui_strings.S_TEXT_NO_REQUEST_SELECTED,
+                                             ],
+                                      'class', 'padding'
+                                     ]
+                                    );
+        }
+    }
+    
+    this.init(id, name, container_class);
+}
+
+cls.RequestRawView.prototype = ViewBase;
+new cls.RequestRawView('request_info_raw', ui_strings.M_VIEW_LABEL_RAW_REQUEST_INFO, 'scroll');
+
+
+cls.ResponseRawView = function(id, name, container_class)
+{
+    var self = this;
+
+    this.createView = function(container)
+    {
+        var req = HTTPLoggerData.getSelectedRequest();
+        if (req)
+        {
+            container.clearAndRender(['div', [
+                                                ['h1', this.name],
+                                                ['code',
+                                                    ['pre',
+                                                        req.response.raw
+                                                    ]
+                                                ]
+                                            ],
+                                     'class', 'padding'
+                                    ]
+                                    );
+        }
+        else
+        {
+            container.clearAndRender(['div', [
+                                                 ['h1', this.name],
+                                                 ui_strings.S_TEXT_NO_REQUEST_SELECTED,
+                                             ],
+                                      'class', 'padding'
+                                     ]
+                                    );
+        }
+    }
+    
+    this.init(id, name, container_class);
+}
+
+
+cls.ResponseRawView.prototype = ViewBase;
+new cls.ResponseRawView('response_info_raw', ui_strings.M_VIEW_LABEL_RAW_RESPONSE_INFO, 'scroll');
+
+
+cls.RequestHeadersView = function(id, name, container_class)
+{
+    this.createView = function(container)
+    {
+        var req = HTTPLoggerData.getSelectedRequest();
+
+        if (req)
+        {
+            container.clearAndRender(['div', [
+                                        ['h1', this.name],
+                                        this._createHeadersList(req.request.headers),
+                                     ],
+                                      'class', 'padding'
+                             ]
+                            );
+                             
+                             
+            //container.innerHTML = "<dl><dt>morradi <a href='fneh'>(huh?)</a></dt><dd>MANN </dd><dd>MANN2</dd><dt>morradi</dt><dd>MANN</dd></dl>"
+        }
+        else
+        {
+            container.clearAndRender(['div', [
+                                                 ['h1', this.name],
+                                                 ui_strings.S_TEXT_NO_REQUEST_SELECTED,
+                                             ],
+                                      'class', 'padding'
+                                     ]
+                                    );
+        }
+    }
+    
+    this._createHeadersList = function(headers)
+    {
+
+        var alphaheaders = [];
+        for (name in headers) {alphaheaders.push(name)}
+        alphaheaders = alphaheaders.sort();
+        
+        var dlbody = [];
+        
+        for (var i=0, name; name=alphaheaders[i]; i++)
+        {
+            var value = headers[name];
+            var dt = ['dt', name + " "]
+            if (name in header_specification_urls)
+            {
+                dt.push(['a', '(spec)',
+                              'href', header_specification_urls[name],
+                              'target', '_blank']);
+            }
+            
+            dlbody.push(dt);
+            
+            if (typeof value == "string")
+            {
+                var dd = ['dd', value]
+            }
+            else
+            {
+                var dd = [];
+                for (var n=0, e; e=value[n]; n++)
+                {
+                    dd.push(['dd', e]);
+                }
+            }
+            dlbody.push(dd);
+        }
+        var dl = ['dl', dlbody,
+                  'class', 'headerlist'
+                 ];
+        
+        return dl;
+        
+    }
+    
+    this.init(id, name, container_class);
+}
+
+
+cls.RequestHeadersView.prototype = ViewBase;
+new cls.RequestHeadersView('request_info_headers', ui_strings.M_VIEW_LABEL_REQUEST_HEADERS, 'scroll');

@@ -13,9 +13,13 @@ window.HTTPLoggerData = new function()
 {
     this.requestList = [];
     this.requestMap = {};
-    this.selectedRequest = null;
+    this.selectedRequestId = null;
 
-    var view = "request_list";
+    this._views = ["request_list",
+                   "request_info_raw",
+                   "response_info_raw",
+                   "request_info_headers"
+                   ];
 
     /**
      * Get the log as a list
@@ -44,9 +48,8 @@ window.HTTPLoggerData = new function()
     {
         this.requestList = [];
         this.requestMap = {};
-        this.selectedRequest = null;
-        
-        views[view].update();
+        this.selectedRequestId = null;
+        this._updateViews();
     }
 
     /**
@@ -61,7 +64,7 @@ window.HTTPLoggerData = new function()
 
         this.requestList.push(r);
         this.requestMap[r.id] = r;
-        views[view].update();
+        this._updateViews();
     }
     
     /**
@@ -74,17 +77,17 @@ window.HTTPLoggerData = new function()
         if (r) {
             r.response = response;
         }
-        views[view].update();
+        this._updateViews();
     }
     
     /**
      * Set the currently selected request, that is, the request that is being
      * inspected
      */
-    this.setSelectedRequest = function(id)
+    this.setSelectedRequestId = function(id)
     {
-        this.selectedRequest = id;
-        views[view].update();
+        this.selectedRequestId = id;
+        this._updateViews();
     }
     
     /**
@@ -92,8 +95,8 @@ window.HTTPLoggerData = new function()
      */
     this.clearSelectedRequest = function()
     {
-        this.selectedRequest = null;
-        views[view].update();
+        this.selectedRequestId = null;
+        this._updateViews();
     }
     
     /**
@@ -101,6 +104,33 @@ window.HTTPLoggerData = new function()
      */
     this.getSelectedRequest = function()
     {
-        return this.selectedRequest;
+        if (this.selectedRequestId && this.selectedRequestId in this.requestMap)
+        {
+            return this.requestMap[this.selectedRequestId];
+        }
+        else
+        {
+            return null;
+        }
     }    
+
+    /**
+     * Get the ID of the selected request
+     */
+    this.getSelectedRequestId = function()
+    {
+        return this.selectedRequestId;
+    }
+    
+    /**
+     * Update all views that use this as a data source
+     */
+    this._updateViews = function()
+    {
+        for (var n=0, e; e=this._views[n]; n++)
+        {
+            if (e in window.views) { window.views[e].update() }
+        }
+    }
+
 }

@@ -81,6 +81,7 @@ cls.HTTPLoggerService = function(name)
         {
             if (ele.nodeName == "header")
             {
+                retval.raw = ele.textContent;
                 var hd = this.parseRequestHeader(ele);
                 retval.headers = hd.headers;
                 retval.method = hd.method;
@@ -121,6 +122,7 @@ cls.HTTPLoggerService = function(name)
         {
             if (ele.nodeName == "header")
             {
+                retval.raw = ele.textContent;
                 var hd = this.parseResponseHeader(ele);
                 if (!hd) {
                     opera.postError("could not parse response header!!!!111")
