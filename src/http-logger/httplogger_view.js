@@ -59,7 +59,7 @@ cls.RequestListView = function(id, name, container_class)
 }
 
 cls.RequestListView.prototype = ViewBase;
-new cls.RequestListView('request_list', ui_strings.M_VIEW_LABEL_NETWORK, 'scroll');
+new cls.RequestListView('request_list', ui_strings.M_VIEW_LABEL_REQUEST_LOG, 'scroll');
 
 
 eventHandlers.click['request-list-select'] = function(event, target)
@@ -101,7 +101,7 @@ new ToolbarConfig
     [
       {
         handler: 'clear-request-list',
-        title: '#STR Clear'
+        title: ui_strings.S_BUTTON_CLEAR_REQUEST_LOG
       }
     ],
     [
@@ -157,10 +157,6 @@ cls.RequestInfoResponseView = function(id, name, container_class)
 cls.RequestInfoResponseView.prototype = ViewBase;
 new cls.RequestInfoResponseView('request_info_response', "#req-info-resp", 'scroll');
 
-
-
-
-
 cls.RequestRawView = function(id, name, container_class)
 {
     var self = this;
@@ -170,7 +166,7 @@ cls.RequestRawView = function(id, name, container_class)
         var req = HTTPLoggerData.getSelectedRequest();
         if (req)
         {
-            container.innerHTML = "<div class='padding'><h1>Raw request:</h1><code><pre>" + req.request.raw + "</pre></code></div>"
+            container.innerHTML = "<div class='padding'><h1>" + this.name + "</h1><code><pre>" + req.request.raw + "</pre></code></div>"
         }
         else
         {
@@ -179,8 +175,32 @@ cls.RequestRawView = function(id, name, container_class)
     }
     
     this.init(id, name, container_class);
-
 }
 
 cls.RequestRawView.prototype = ViewBase;
-new cls.RequestRawView('request_info_raw', "#req-info-raw", 'scroll');
+new cls.RequestRawView('request_info_raw', ui_strings.M_VIEW_LABEL_RAW_REQUEST_INFO, 'scroll');
+
+
+cls.ResponseRawView = function(id, name, container_class)
+{
+    var self = this;
+
+    this.createView = function(container)
+    {
+        var req = HTTPLoggerData.getSelectedRequest();
+        if (req)
+        {
+            container.innerHTML = "<div class='padding'><h1>" + this.name + "</h1><code><pre>" + req.response.raw + "</pre></code></div>"
+        }
+        else
+        {
+            container.innerHTML = "<div class='padding'>No response selected</div>";
+        }
+    }
+    
+    this.init(id, name, container_class);
+}
+
+
+cls.ResponseRawView.prototype = ViewBase;
+new cls.ResponseRawView('response_info_raw', ui_strings.M_VIEW_LABEL_RAW_RESPONSE_INFO, 'scroll');

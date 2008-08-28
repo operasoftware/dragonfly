@@ -497,8 +497,8 @@ var network_rough_layout =
         width: 250, 
         children: 
         [
-          { height: 400, tabs: ['request_info_request']},
-          { height: 400, tabs: ['request_info_response']}
+          {height: 400, tabs: ['request_info_request', 'request_info_raw', 'request_info_request'] },
+          { height: 400, tabs: ['request_info_response', 'response_info_raw', 'request_info_response']}
         ] 
       }
   ]

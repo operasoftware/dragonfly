@@ -86,8 +86,12 @@ ui_strings.M_VIEW_LABEL_STYLES = 'Styles';
 ui_strings.M_VIEW_LABEL_CONSOLE = 'Console';
 /* DESC: One Export view. */
 ui_strings.M_VIEW_LABEL_EXPORT = 'Export';
-
-
+/* DESC: Name of request log tab */
+ui_strings.M_VIEW_LABEL_REQUEST_LOG = 'Request log';
+/* DESC: Name of raw request tab */
+ui_strings.M_VIEW_LABEL_RAW_REQUEST_INFO = 'Raw request';
+/* DESC: Name of raw response tab */
+ui_strings.M_VIEW_LABEL_RAW_RESPONSE_INFO = 'Raw response';
 
 
 /*
@@ -214,6 +218,8 @@ ui_strings.S_BUTTON_LABEL_CLEAR_LOG = 'Clear Log';
 ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW = 'Close Window';
 /* DESC: Applies the changes. */
 ui_strings.S_BUTTON_TEXT_APPLY = 'Apply';
+/* DESC: Clear request log. */
+ui_strings.S_BUTTON_CLEAR_REQUEST_LOG = 'Clear request log';
 
 /*
  * Labels
@@ -297,3 +303,5 @@ ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_UNKNOWN = "Unknown";
 ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID = "Script id";
 /* DESC: Result text for the search. Please do not modify the %(VARIABLE)s . */
 ui_strings.S_TEXT_STATUS_SEARCH = "Matches for %(SEARCH_TERM)s: Match %(SEARCH_COUNT_INDEX)s out of %(SEARCH_COUNT_TOTAL)s";
+/* DESC: Message in detail view of http logger when no request/respons is selected */
+ui_strings.S_TEXT_STATUS_SEARCH = "No request selected.";

@@ -16,7 +16,9 @@ window.HTTPLoggerData = new function()
     this.selectedRequestId = null;
 
     this._views = ["request_list",
-                 "request_info_raw"];
+                   "request_info_raw",
+                   "response_info_raw"
+                   ];
 
     /**
      * Get the log as a list
