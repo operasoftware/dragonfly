@@ -1,0 +1,28 @@
+#request-table {
+}
+
+#request-table tr {
+}
+
+/*#request-table tr:nth-child(odd) {*/
+/*    background-color: #fafafa;*/
+/*}*/
+
+#request-table tr:hover {
+    background-color: yellow;
+}
+
+#request-table .selected-request {
+    border: solid thin black;
+    background-color: blue;
+}
+
+/* HTTP logger buttons start */
+
+input[handler="clear-request-list"] {
+  background-image: url('../ui-images/btn-clear-error-console.png');
+}
+
+
+/* HTTP logger buttons end */
+

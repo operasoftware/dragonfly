@@ -4,68 +4,6 @@
  *
  */
 
-
-cls.HTTPLoggerView = function(id, name, container_class)
-{
-    var self = this;
-
-    this.isPaused = false;
-
-    this.createView = function(container)
-    {
-        var log = HTTPLoggerData.getLog();
-        container.innerHTML = "<div class='padding'>" +
-           this._createTable(log) +
-           "<button type='button' handler='clear-http-log'>Clear log</button>" +
-           "<button type='button' handler='clear-http-221log'>Clear log" + (this.isPaused ? "resume" : "pause") +"</button>" +
-            "</div>";
-    }
-    
-    this._createTable = function(log)
-    {
-        var strings = [];
-        strings.push("<th>#</th><th>url</th><th>method</th><th>status</th><th>time</th>");
-        if (log.length)
-        {
-            for (var n=0, entry; entry=log[n]; n++)
-            {
-                strings.push(
-                    "<th>" + (n+1) + "</th>" +
-                    "<td><a target=\"_blank\" href=\"http://" + entry.request.url + "\">" + entry.request.url + "</a></td>" +
-                    "<td>" + entry.request.method + "</td>" +
-                    "<td>" + (entry.response ? entry.response.status : "-") + "</td>" +
-                    "<td>" + (entry.response ? entry.response.time - entry.request.time : "-") + "</td>"
-                )
-            }
-        }
-        else
-        {
-            strings.push("<th>0</th><td colspan='4'>No logged requests yet</td>");
-        }
-        return "<table>\n<tr>" + strings.join("</tr>\n<tr>") + "</tr>\n</table>"
-    }
-    
-    this.init(id, name, container_class);
-}
-
-//cls.HTTPLoggerView.prototype = ViewBase;
-//new cls.HTTPLoggerView('http_logger', 'HTTP logger', 'scroll');
-
-
-eventHandlers.click['clear-http-log'] = function(event, target)
-{
-    HTTPLoggerData.clearLog();
-    views["http_logger"].update();
-}
-
-
-
-
-
-
-
-
-
 /**
   * @constructor 
   * @extends ViewBase
@@ -74,41 +12,46 @@ eventHandlers.click['clear-http-log'] = function(event, target)
 cls.RequestListView = function(id, name, container_class)
 {
     var self = this;
+    
 
     this.isPaused = false;
+    this.selectedRequestId = null;
 
     this.createView = function(container)
     {
         var log = HTTPLoggerData.getLog();
-        container.innerHTML = "<div class='padding'>" +
+        container.innerHTML = "" +
            this._createTable(log) +
-           "<button type='button' handler='clear-http-log'>Clear log</button>" +
-           "<button type='button' handler='clear-http-221log'>Clear log" + (this.isPaused ? "resume" : "pause") +"</button>" +
-            "</div>";
+            "";
     }
     
     this._createTable = function(log)
     {
         var strings = [];
-        strings.push("<th>#</th><th>url</th><th>method</th><th>status</th><th>time</th>");
+        var sel = HTTPLoggerData.getSelectedRequest();
+        strings.push("<tr><th>#</th><th>host</th><th>path</th><th>method</th><th>status</th><th>time</th></tr>");
         if (log.length)
         {
             for (var n=0, entry; entry=log[n]; n++)
             {
+                var current = (sel && sel==entry.id)
                 strings.push(
-                    "<th>" + (n+1) + "</th>" +
-                    "<td><a target=\"_blank\" href=\"http://" + entry.request.url + "\">" + entry.request.url + "</a></td>" +
-                    "<td>" + entry.request.method + "</td>" +
-                    "<td>" + (entry.response ? entry.response.status : "-") + "</td>" +
-                    "<td>" + (entry.response ? entry.response.time - entry.request.time : "-") + "</td>"
+                   "<tr handler='request-list-select' data-requestid=\"" + entry.id + "\" class='" +(current ? "selected-request" : "") + "' >" +
+                        "<th>" + (n+1) + "</th>" +
+                        "<td>" + entry.request.headers.Host + "</td>" +
+                        "<td>" + entry.request.path + "</td>" +
+                        "<td>" + entry.request.method + "</td>" +
+                        "<td>" + (entry.response ? entry.response.status : "-") + "</td>" +
+                        "<td>" + (entry.response ? entry.response.time - entry.request.time : "-") + "</td>" +
+                    "</tr>"
                 )
             }
         }
         else
         {
-            strings.push("<th>0</th><td colspan='4'>No logged requests yet</td>");
+            strings.push("<tr><th>0</th><td colspan='5'>No logged requests yet</td></tr>");
         }
-        return "<table>\n<tr>" + strings.join("</tr>\n<tr>") + "</tr>\n</table>"
+        return "<table id='request-table'>\n" + strings.join("") + "</table>";
     }
 
     this.init(id, name, container_class);
@@ -118,6 +61,69 @@ cls.RequestListView = function(id, name, container_class)
 cls.RequestListView.prototype = ViewBase;
 new cls.RequestListView('request_list', ui_strings.M_VIEW_LABEL_NETWORK, 'scroll');
 
+
+eventHandlers.click['request-list-select'] = function(event, target)
+{
+    var sel = HTTPLoggerData.getSelectedRequest();
+    var id = target.getAttribute("data-requestid");
+    if (sel && sel==id)
+    {
+        HTTPLoggerData.clearSelectedRequest();
+    }
+    else
+    {
+        HTTPLoggerData.setSelectedRequest(id);
+    }
+    //opera.postError("REQ ID: " + id)
+}
+
+
+new Settings
+(
+  // id
+  'request_list', 
+  // kel-value map
+  {
+    'pause-resume-request-list-update': true
+  }, 
+  // key-label map
+  {
+    'pause-resume-request-list-update':  "#STR Pause/resume"
+  },
+  // settings map
+  {
+  }
+);
+
+new ToolbarConfig
+(
+    'request_list',
+    [
+      {
+        handler: 'clear-request-list',
+        title: '#STR Clear'
+      }
+    ],
+    [
+      {
+        handler: 'request-list-filter',
+        title: "#STR filter request"
+      }
+    ]
+);
+
+new Switches
+(
+  'request_list',
+  [
+    'pause-resume-request-list-update'
+  ]
+)
+
+eventHandlers.click['clear-request-list'] = function(event, target)
+{
+    HTTPLoggerData.clearLog();
+}
 
 cls.RequestInfoRequestView = function(id, name, container_class)
 {
@@ -150,10 +156,4 @@ cls.RequestInfoResponseView = function(id, name, container_class)
 
 cls.RequestInfoResponseView.prototype = ViewBase;
 new cls.RequestInfoResponseView('request_info_response', "#req-info-resp", 'scroll');
-
-
-
-
-
-
 

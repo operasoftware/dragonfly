@@ -1,22 +1,57 @@
+/**
+ * @fileoverview
+ * Data objects and classes for the http logger
+ *
+ */
+
+
+/**
+ * @class
+ * Data class for http logger
+ */
 window.HTTPLoggerData = new function()
 {
     this.requestList = [];
     this.requestMap = {};
-
+    this.selectedRequest = null;
 
     var view = "request_list";
 
+    /**
+     * Get the log as a list
+     */
     this.getLog = function()
     {
         return this.requestList;
     }
     
+    /**
+     * Get a specific request
+     * @argument {string} id the id of the request
+     * @returns {object} data object for the request or null if not found
+     */
+    this.getRequestById = function(id)
+    {
+        if (id in requestMap) { return requestMap[id] }
+        else { return null }
+    }
+    
+    /**
+     * Clear the log data
+     *
+     */
     this.clearLog = function()
     {
         this.requestList = [];
         this.requestMap = {};
+        this.selectedRequest = null;
+        
+        views[view].update();
     }
 
+    /**
+     * Add a request to the log
+     */
     this.addRequest = function(request)
     {
         var r = { id:request["request-id"],
@@ -27,9 +62,12 @@ window.HTTPLoggerData = new function()
         this.requestList.push(r);
         this.requestMap[r.id] = r;
         views[view].update();
-
     }
     
+    /**
+     * Add a response object to an existing request
+     * fixme: now we silently ignore repsonses to non-exstant requests
+     */
     this.addResponse = function(response)
     {
         var r = this.requestMap[response["request-id"]];
@@ -37,55 +75,32 @@ window.HTTPLoggerData = new function()
             r.response = response;
         }
         views[view].update();
-        // fixme: now we silently ignore repsonses to non-exstant requests
     }
+    
+    /**
+     * Set the currently selected request, that is, the request that is being
+     * inspected
+     */
+    this.setSelectedRequest = function(id)
+    {
+        this.selectedRequest = id;
+        views[view].update();
+    }
+    
+    /**
+     * Clear the selected request
+     */
+    this.clearSelectedRequest = function()
+    {
+        this.selectedRequest = null;
+        views[view].update();
+    }
+    
+    /**
+     * Get the selected request
+     */
+    this.getSelectedRequest = function()
+    {
+        return this.selectedRequest;
+    }    
 }
-
-
-//  this.set_active_window = function(win_id)
-//  {
-//    this.active_window = win_id;
-//    views[view].update();
-//  }
-//
-//  this.set_window_list = function(window_list)
-//  {
-//    this.window_list = window_list;
-//    views[view].update();
-//  }
-//
-//  this.update_list = function(win_obj)
-//  {
-//    var 
-//    id = win_obj["window-id"],
-//    win = null, 
-//    i = 0;
-//
-//    if( this.window_list )
-//    {
-//      for( ; ( win = this.window_list[i] ) && !( id == win["window-id"] ); i++ ) {}
-//    }
-//    this.window_list[i] = win_obj;
-//    views[view].update();
-//  }
-//
-//  this.remove_window = function(win_id)
-//  {
-//    var 
-//    win = null, 
-//    i = 0;
-//
-//    if( this.window_list )
-//    {
-//      for( ; win = this.window_list[i]; i++ )
-//      {
-//        if( win_id == win["window-id"] )
-//        {
-//          this.window_list.splice(i, 1);
-//          break;
-//        }
-//      }
-//    }
-//    views[view].update();
-//  }
-//}
