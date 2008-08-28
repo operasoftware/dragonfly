@@ -1,8 +1,9 @@
 const
 TEST_DIR ="./test-doc/",
 TEST_URL_LIST = TEST_DIR + "url-list.xml",
-PADDING = 12,
-// colors
+PADDING = 12;
+
+var
 FADE_OUT_COLOR = 'rgba(0,0,0, 0.4)',
 DEFAULT_HIGHLIGHT_COLOR = 'rgba(0,0,0, 0)',
 HIGHLIGHT_COLOR = 'rgba(0,0,255, .4)',
@@ -548,6 +549,7 @@ loadurl = function(url)
   test_win = document.getElementsByTagName('iframe')[0];
   test_win.onload = function()
   {
+    document.getElementById("metrics").innerHTML = "";
     getDOM(test_doc = this.contentDocument);
     highlighter = new Highlighter(test_doc);
   }
