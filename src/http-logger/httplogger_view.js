@@ -166,11 +166,27 @@ cls.RequestRawView = function(id, name, container_class)
         var req = HTTPLoggerData.getSelectedRequest();
         if (req)
         {
-            container.innerHTML = "<div class='padding'><h1>" + this.name + "</h1><code><pre>" + req.request.raw + "</pre></code></div>"
+            container.clearAndRender(['div', [
+                                                ['h1', this.name],
+                                                ['code',
+                                                    ['pre',
+                                                        req.request.raw
+                                                    ]
+                                                ]
+                                            ],
+                                     'class', 'padding'
+                                    ]
+                                    );
         }
         else
         {
-            container.innerHTML = "<div class='padding'>No request selected</div>";
+            container.clearAndRender(['div', [
+                                                 ['h1', this.name],
+                                                 ui_strings.S_TEXT_NO_REQUEST_SELECTED,
+                                             ],
+                                      'class', 'padding'
+                                     ]
+                                    );
         }
     }
     
@@ -190,11 +206,27 @@ cls.ResponseRawView = function(id, name, container_class)
         var req = HTTPLoggerData.getSelectedRequest();
         if (req)
         {
-            container.innerHTML = "<div class='padding'><h1>" + this.name + "</h1><code><pre>" + req.response.raw + "</pre></code></div>"
+            container.clearAndRender(['div', [
+                                                ['h1', this.name],
+                                                ['code',
+                                                    ['pre',
+                                                        req.response.raw
+                                                    ]
+                                                ]
+                                            ],
+                                     'class', 'padding'
+                                    ]
+                                    );
         }
         else
         {
-            container.innerHTML = "<div class='padding'>No response selected</div>";
+            container.clearAndRender(['div', [
+                                                 ['h1', this.name],
+                                                 ui_strings.S_TEXT_NO_REQUEST_SELECTED,
+                                             ],
+                                      'class', 'padding'
+                                     ]
+                                    );
         }
     }
     
@@ -204,3 +236,4 @@ cls.ResponseRawView = function(id, name, container_class)
 
 cls.ResponseRawView.prototype = ViewBase;
 new cls.ResponseRawView('response_info_raw', ui_strings.M_VIEW_LABEL_RAW_RESPONSE_INFO, 'scroll');
+
