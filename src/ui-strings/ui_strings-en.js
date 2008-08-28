@@ -304,4 +304,4 @@ ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID = "Script id";
 /* DESC: Result text for the search. Please do not modify the %(VARIABLE)s . */
 ui_strings.S_TEXT_STATUS_SEARCH = "Matches for %(SEARCH_TERM)s: Match %(SEARCH_COUNT_INDEX)s out of %(SEARCH_COUNT_TOTAL)s";
 /* DESC: Message in detail view of http logger when no request/respons is selected */
-ui_strings.S_TEXT_STATUS_SEARCH = "No request selected.";
+ui_strings.S_TEXT_NO_REQUEST_SELECTED = "No request selected.";
