@@ -158,3 +158,29 @@ cls.RequestInfoResponseView.prototype = ViewBase;
 new cls.RequestInfoResponseView('request_info_response', "#req-info-resp", 'scroll');
 
 
+
+
+
+cls.RequestRawView = function(id, name, container_class)
+{
+    var self = this;
+
+    this.createView = function(container)
+    {
+        var req = HTTPLoggerData.getSelectedRequest();
+        if (req)
+        {
+            container.innerHTML = "<div class='padding'><h1>Raw request:</h1><code><pre>" + req.request.raw + "</pre></code></div>"
+        }
+        else
+        {
+            container.innerHTML = "<div class='padding'>No request selected</div>";
+        }
+    }
+    
+    this.init(id, name, container_class);
+
+}
+
+cls.RequestRawView.prototype = ViewBase;
+new cls.RequestRawView('request_info_raw', "#req-info-raw", 'scroll');

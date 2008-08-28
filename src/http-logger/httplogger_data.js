@@ -15,7 +15,8 @@ window.HTTPLoggerData = new function()
     this.requestMap = {};
     this.selectedRequestId = null;
 
-    var view = "request_list";
+    this._views = ["request_list",
+                 "request_info_raw"];
 
     /**
      * Get the log as a list
@@ -42,13 +43,10 @@ window.HTTPLoggerData = new function()
      */
     this.clearLog = function()
     {
-        opera.postError(this.requestList.join(", "))
-        
         this.requestList = [];
         this.requestMap = {};
         this.selectedRequestId = null;
-        
-        views[view].update();
+        this._updateViews();
     }
 
     /**
@@ -63,7 +61,7 @@ window.HTTPLoggerData = new function()
 
         this.requestList.push(r);
         this.requestMap[r.id] = r;
-        views[view].update();
+        this._updateViews();
     }
     
     /**
@@ -76,7 +74,7 @@ window.HTTPLoggerData = new function()
         if (r) {
             r.response = response;
         }
-        views[view].update();
+        this._updateViews();
     }
     
     /**
@@ -86,7 +84,7 @@ window.HTTPLoggerData = new function()
     this.setSelectedRequestId = function(id)
     {
         this.selectedRequestId = id;
-        views[view].update();
+        this._updateViews();
     }
     
     /**
@@ -95,7 +93,7 @@ window.HTTPLoggerData = new function()
     this.clearSelectedRequest = function()
     {
         this.selectedRequestId = null;
-        views[view].update();
+        this._updateViews();
     }
     
     /**
@@ -103,13 +101,13 @@ window.HTTPLoggerData = new function()
      */
     this.getSelectedRequest = function()
     {
-        if (this.selectedRequestId && this.selectedRequestId in this.requestList)
+        if (this.selectedRequestId && this.selectedRequestId in this.requestMap)
         {
-            return this.requestList[this.selectedRequestId];
+            return this.requestMap[this.selectedRequestId];
         }
         else
         {
-            return this.selectedRequestId;
+            return null;
         }
     }    
 
@@ -119,6 +117,17 @@ window.HTTPLoggerData = new function()
     this.getSelectedRequestId = function()
     {
         return this.selectedRequestId;
-    }    
+    }
+    
+    /**
+     * Update all views that use this as a data source
+     */
+    this._updateViews = function()
+    {
+        for (var n=0, e; e=this._views[n]; n++)
+        {
+            if (e in window.views) { window.views[e].update() }
+        }
+    }
 
 }
