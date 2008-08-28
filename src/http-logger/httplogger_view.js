@@ -28,7 +28,7 @@ cls.RequestListView = function(id, name, container_class)
     this._createTable = function(log)
     {
         var strings = [];
-        var sel = HTTPLoggerData.getSelectedRequest();
+        var sel = HTTPLoggerData.getSelectedRequestId();
         strings.push("<tr><th>#</th><th>host</th><th>path</th><th>method</th><th>status</th><th>time</th></tr>");
         if (log.length)
         {
@@ -64,7 +64,7 @@ new cls.RequestListView('request_list', ui_strings.M_VIEW_LABEL_NETWORK, 'scroll
 
 eventHandlers.click['request-list-select'] = function(event, target)
 {
-    var sel = HTTPLoggerData.getSelectedRequest();
+    var sel = HTTPLoggerData.getSelectedRequestId();
     var id = target.getAttribute("data-requestid");
     if (sel && sel==id)
     {
@@ -72,7 +72,7 @@ eventHandlers.click['request-list-select'] = function(event, target)
     }
     else
     {
-        HTTPLoggerData.setSelectedRequest(id);
+        HTTPLoggerData.setSelectedRequestId(id);
     }
     //opera.postError("REQ ID: " + id)
 }
@@ -156,4 +156,5 @@ cls.RequestInfoResponseView = function(id, name, container_class)
 
 cls.RequestInfoResponseView.prototype = ViewBase;
 new cls.RequestInfoResponseView('request_info_response', "#req-info-resp", 'scroll');
+
 

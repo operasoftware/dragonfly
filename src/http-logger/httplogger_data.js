@@ -13,7 +13,7 @@ window.HTTPLoggerData = new function()
 {
     this.requestList = [];
     this.requestMap = {};
-    this.selectedRequest = null;
+    this.selectedRequestId = null;
 
     var view = "request_list";
 
@@ -42,9 +42,11 @@ window.HTTPLoggerData = new function()
      */
     this.clearLog = function()
     {
+        opera.postError(this.requestList.join(", "))
+        
         this.requestList = [];
         this.requestMap = {};
-        this.selectedRequest = null;
+        this.selectedRequestId = null;
         
         views[view].update();
     }
@@ -81,9 +83,9 @@ window.HTTPLoggerData = new function()
      * Set the currently selected request, that is, the request that is being
      * inspected
      */
-    this.setSelectedRequest = function(id)
+    this.setSelectedRequestId = function(id)
     {
-        this.selectedRequest = id;
+        this.selectedRequestId = id;
         views[view].update();
     }
     
@@ -92,7 +94,7 @@ window.HTTPLoggerData = new function()
      */
     this.clearSelectedRequest = function()
     {
-        this.selectedRequest = null;
+        this.selectedRequestId = null;
         views[view].update();
     }
     
@@ -101,6 +103,22 @@ window.HTTPLoggerData = new function()
      */
     this.getSelectedRequest = function()
     {
-        return this.selectedRequest;
+        if (this.selectedRequestId && this.selectedRequestId in this.requestList)
+        {
+            return this.requestList[this.selectedRequestId];
+        }
+        else
+        {
+            return this.selectedRequestId;
+        }
     }    
+
+    /**
+     * Get the ID of the selected request
+     */
+    this.getSelectedRequestId = function()
+    {
+        return this.selectedRequestId;
+    }    
+
 }
