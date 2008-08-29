@@ -732,6 +732,16 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   prettyPrintStyleDec[PROT_4_LOCAL] = 
   function(rt_id, node_casc_header, style_dec, check_has_inheritable_props, search_active)
   {
+    if( !check_has_inheritable_props || data[HAS_INHERITABLE_PROPS]  )
+    {
+      return "<rule>" +
+              "<stylesheet-link class='pseudo'>local user stylesheet</stylesheet-link>" +
+        "<inline-style>" + style_dec[0][2] + "</inline-style>" + 
+        " {\n" + 
+            prettyPrintRule[COMMON](style_dec, false, true, search_active) +
+        "\n}</rule>";
+    }
+    return "";
     return "TOD PROT_4_LOCAL";
   }
 
