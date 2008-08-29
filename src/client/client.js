@@ -506,8 +506,8 @@ var network_rough_layout =
                                       'request_info_headers',
                                       'request_info_raw',
                                       'response_info_headers',
-                                      'response_info_body',
-                                      'response_info_raw'] },
+                                      'response_info_raw',
+                                      'response_info_body'] },
             ]
             
           }
