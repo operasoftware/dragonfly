@@ -482,23 +482,25 @@ var js_rough_layout_panel =
 
 var network_rough_layout =
 {
-    dir: 'h',
-    width: 700,
-    height: 700,
+    dir: 'v',
+    width: 1000,
+    height: 1000,
     children: [
       { 
-        width: 700, 
+        height: 500,
+        width: 1000,
         children: 
         [
-          { height: 1000, tabs: ['request_list'] },
+          { height: 500, tabs: ['request_list'] },
         ] 
       },
       { 
-        width: 250, 
+        height: 500,
+        width: 1000,
         children: 
         [
-          {height: 400, tabs: ['request_info_request', 'request_info_headers', 'request_info_raw'] },
-          { height: 400, tabs: ['request_info_response', 'response_info_headers', 'response_info_raw']}
+          {width: 500, tabs: ['request_info_request', 'request_info_headers', 'request_info_raw'] },
+          {width: 500, tabs: ['request_info_response', 'response_info_headers', 'response_info_raw']}
         ] 
       }
   ]

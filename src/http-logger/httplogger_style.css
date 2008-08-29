@@ -1,7 +1,18 @@
 #request-table {
+    border-collapse: collapse;
 }
 
 #request-table tr {
+    border-bottom: 1px solid #D9D9D9;
+}
+
+#request-table td, #request-table th {
+    border-left: 1px solid #D9D9D9;
+}
+
+
+#request-table tr th:first-child, #request-table tr td:first-child {
+   border-left: 0px;
 }
 
 #request-table tr:nth-child(odd) {
