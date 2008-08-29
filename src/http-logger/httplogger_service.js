@@ -66,6 +66,7 @@ cls.HTTPLoggerService = function(name)
      *  time: 345,
      *  method: "GET/POST/..",
      *  path: "/foo/bar/baz",
+     *  query: "?asdf=morradi",
      *  headers: {
      *            headername1, value: headerval1,
      *            headername2, value: [headerval2_a, headerval2_b]
@@ -86,6 +87,7 @@ cls.HTTPLoggerService = function(name)
                 retval.headers = hd.headers;
                 retval.method = hd.method;
                 retval.path = hd.path;
+                retval.query = hd.query;
                 retval.protocol = hd.protocol;
             }
             else
@@ -157,7 +159,16 @@ cls.HTTPLoggerService = function(name)
 
         
         retval.method = reqparts[1];
+        retval.query = "";
         retval.path = reqparts[2];
+        
+        var i;
+        if ((i = retval.path.indexOf("?")) > 0)
+        {
+            retval.query = retval.path.slice(i);
+            retval.path = retval.path.slice(0, i);
+        }
+        
         retval.protocol = reqparts[3];
         retval.headers = this.parseHeaders(lines);
         
