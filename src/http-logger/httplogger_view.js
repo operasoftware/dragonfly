@@ -125,37 +125,41 @@ eventHandlers.click['clear-request-list'] = function(event, target)
     HTTPLoggerData.clearLog();
 }
 
-cls.RequestInfoRequestView = function(id, name, container_class)
+cls.RequestOverviewView = function(id, name, container_class)
 {
     var self = this;
 
     this.createView = function(container)
     {
-        container.innerHTML = "<div class='padding'>This is the request info for the request</div>";
+        var req = HTTPLoggerData.getSelectedRequest();
+        if (req)
+        {
+            container.innerHTML = "<div class='padding'><h1>" + this.name + "</h1>This is the request info for " + req.request.headers["Host"] + req.request.path + "</div>";
+
+
+
+
+
+        }
+        else
+        {
+            container.clearAndRender(['div', [
+                                                 ['h1', this.name],
+                                                 ui_strings.S_TEXT_NO_REQUEST_SELECTED,
+                                             ],
+                                      'class', 'padding'
+                                     ]
+                                    );
+            
+        }
     }
     
     this.init(id, name, container_class);
 
 }
 
-cls.RequestInfoRequestView.prototype = ViewBase;
-new cls.RequestInfoRequestView('request_info_request', "#req-info-req", 'scroll');
-
-cls.RequestInfoResponseView = function(id, name, container_class)
-{
-    var self = this;
-
-    this.createView = function(container)
-    {
-        container.innerHTML = "<div class='padding'>This is the request info for the response</div>";
-    }
-    
-    this.init(id, name, container_class);
-
-}
-
-cls.RequestInfoResponseView.prototype = ViewBase;
-new cls.RequestInfoResponseView('request_info_response', "#req-info-resp", 'scroll');
+cls.RequestOverviewView .prototype = ViewBase;
+new cls.RequestOverviewView ('request_overview', ui_strings.M_VIEW_LABEL_REQUEST_INFO, 'scroll');
 
 cls.RequestRawView = function(id, name, container_class)
 {

@@ -96,7 +96,8 @@ ui_strings.M_VIEW_LABEL_RAW_RESPONSE_INFO = 'Raw response';
 ui_strings.M_VIEW_LABEL_REQUEST_HEADERS = 'Request headers';
 /* DESC: Name of response headers tab */
 ui_strings.M_VIEW_LABEL_RESPONSE_HEADERS = 'Response headers';
-
+/* DESC: Name of request info tab */
+ui_strings.M_VIEW_LABEL_REQUEST_INFO = 'Request info';
 
 /*
  * Settings dialogue entries

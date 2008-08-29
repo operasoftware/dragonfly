@@ -499,8 +499,17 @@ var network_rough_layout =
         width: 1000,
         children: 
         [
-          {width: 500, tabs: ['request_info_request', 'request_info_headers', 'request_info_raw'] },
-          {width: 500, tabs: ['request_info_response', 'response_info_headers', 'response_info_raw']}
+          { height: 500,
+            width: 1000,
+            children: [
+                { height: 500, tabs: ['request_overview',
+                                      'request_info_headers',
+                                      'request_info_raw',
+                                      'response_info_headers',
+                                      'response_info_raw'] },
+            ]
+            
+          }
         ] 
       }
   ]
