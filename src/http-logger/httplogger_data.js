@@ -20,7 +20,8 @@ window.HTTPLoggerData = new function()
                    "response_info_raw",
                    "request_info_headers",
                    "response_info_headers",
-                   "request_overview"
+                   "request_overview",
+                   "response_info_body"
                    ];
 
     /**

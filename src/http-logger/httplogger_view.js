@@ -312,3 +312,40 @@ cls.ResponseHeadersView = function(id, name, container_class)
 cls.ResponseHeadersView.prototype = ViewBase;
 new cls.ResponseHeadersView('response_info_headers', ui_strings.M_VIEW_LABEL_RESPONSE_HEADERS, 'scroll');
 
+
+cls.ResponseBodyView = function(id, name, container_class)
+{
+    this.createView = function(container)
+    {
+        var req = HTTPLoggerData.getSelectedRequest();
+
+        if (req && req.response)
+        {
+            container.clearAndRender(['div', [
+                                               ['h1', this.name],
+                                               "Not implemented yet, but it appears that we downloaded " + req.response.headers["Content-Length"] + " bytes."
+                                            ],
+                                      'class', 'padding'
+                                     ]
+                                    );
+        }
+        else
+        {
+            container.clearAndRender(['div', [
+                                                 ['h1', this.name],
+                                                 ui_strings.S_TEXT_NO_REQUEST_SELECTED,
+                                             ],
+                                      'class', 'padding'
+                                     ]
+                                    );
+        }
+    }
+    
+    this.init(id, name, container_class);
+}
+
+
+cls.ResponseBodyView.prototype = ViewBase;
+new cls.ResponseBodyView('response_info_body', ui_strings.M_VIEW_LABEL_RESPONSE_BODY, 'scroll');
+
+

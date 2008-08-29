@@ -98,6 +98,8 @@ ui_strings.M_VIEW_LABEL_REQUEST_HEADERS = 'Request headers';
 ui_strings.M_VIEW_LABEL_RESPONSE_HEADERS = 'Response headers';
 /* DESC: Name of request info tab */
 ui_strings.M_VIEW_LABEL_REQUEST_INFO = 'Request info';
+/* DESC: Name of response body tab */
+ui_strings.M_VIEW_LABEL_RESPONSE_BODY = 'Response body';
 
 /*
  * Settings dialogue entries
