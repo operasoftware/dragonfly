@@ -195,7 +195,7 @@ cls.HTTPLoggerService = function(name)
         var headers = {};
         for (var n=0, line; line=lines[n]; n++)
         {
-            var parts = line.match(/(\w*?): (.*)/);
+            var parts = line.match(/([\w-]*?): (.*)/);
             var name = parts[1];
             var value = parts[2];
 

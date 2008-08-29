@@ -5,16 +5,15 @@
 }
 
 #request-table tr:nth-child(odd) {
-    background-color: #e1e4e9;
+    background-color: #fafafa;
 }
 
 #request-table tr:hover {
     background-color: yellow;
 }
 
-#request-table .selected-request {
-    border: solid thick black;
-    font-weight: bold;
+#request-table tr.selected-request {
+    background-color: orange;
 }
 
 /* HTTP logger buttons start */
@@ -25,7 +24,7 @@ input[handler="clear-request-list"] {
 
 .headerlist dt {
     font-weight: bold;
-    background-color: #e1e4e9;
+    background-color: #fafafa;
 }
 
 /* HTTP logger buttons end */
