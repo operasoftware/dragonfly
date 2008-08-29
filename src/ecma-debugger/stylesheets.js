@@ -2,6 +2,8 @@
   * @constructor 
   */
 
+// TODO clean up pretty printing, does contain much too much code history
+
 var stylesheets = new function()
 {
   var self = this;
@@ -691,7 +693,7 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
       style_dec_list = node_casc[1];
       for( j = 0; style_dec = style_dec_list[j]; j++)
       {
-        ret += prettyPrintStyleDec[style_dec[0][0]](rt_id, node_casc_header, style_dec, search_active);
+        ret += prettyPrintStyleDec[style_dec[0][0]](rt_id, node_casc_header, style_dec, i>0, search_active);
       }
       /*
       ret += prettyPrintCat[INLINE_STYLE](node_casc[0], search_active, rt_id); 
@@ -711,17 +713,30 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   
   var prettyPrintStyleDec = [];
 
-  prettyPrintStyleDec[PROT_4_USER_AGENT] = function(rt_id, node_casc_header, style_dec, search_active)
+
+  prettyPrintStyleDec[PROT_4_USER_AGENT] = 
+  function(rt_id, node_casc_header, style_dec, check_has_inheritable_props, search_active)
   {
-    return "TODO PROT_4_USER_AGENT";
+    if( !check_has_inheritable_props || data[HAS_INHERITABLE_PROPS]  )
+    {
+      return "<rule>" +
+              "<stylesheet-link class='pseudo'>default values</stylesheet-link>" +
+        "<inline-style>" + node_casc_header[1] + "</inline-style>" + 
+        " {\n" + 
+            prettyPrintRule[COMMON](style_dec, false, true, search_active) +
+        "\n}</rule>";
+    }
+    return "";
   }
 
-  prettyPrintStyleDec[PROT_4_LOCAL] = function(rt_id, node_casc_header, style_dec, search_active)
+  prettyPrintStyleDec[PROT_4_LOCAL] = 
+  function(rt_id, node_casc_header, style_dec, check_has_inheritable_props, search_active)
   {
     return "TOD PROT_4_LOCAL";
   }
 
-  prettyPrintStyleDec[PROT_4_AUTHOR] = function(rt_id, node_casc_header, style_dec, search_active)
+  prettyPrintStyleDec[PROT_4_AUTHOR] = 
+  function(rt_id, node_casc_header, style_dec, check_has_inheritable_props, search_active)
   {
     var 
     ret = '', 
@@ -750,10 +765,40 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
 
     return ret;
   }
+/*
 
-  prettyPrintStyleDec[PROT_4_ELEMENT] = function(rt_id, node_casc_header, style_dec, search_active)
+  prettyPrintCat[INLINE_STYLE] = function(data, search_active)
   {
-    return "TODO PROT_4_ELEMENT";
+
+    
+    if(data[1].length)
+    {
+      return "<rule>" + 
+        "<inline-style>element.style</inline-style>" + 
+        " {\n" + 
+            prettyPrintRule[COMMON](data, false, true, search_active) +
+        "\n}</rule>";
+    }
+    return "";
+  }
+
+  */
+
+
+  prettyPrintStyleDec[PROT_4_ELEMENT] = 
+  function(rt_id, node_casc_header, style_dec, check_has_inheritable_props, search_active)
+  {
+
+    if(style_dec.length) // TODO check what exactely?
+    {
+      return "<rule>" + 
+        "<inline-style>element.style</inline-style>" + 
+        " {\n" + 
+            prettyPrintRule[COMMON](style_dec, false, true, search_active) +
+        "\n}</rule>";
+    }
+    return "";
+
   }
 
   /*
