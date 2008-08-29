@@ -579,7 +579,7 @@ var elementStyle = new function()
     if( json )
     {
 
-      // opera.postError("json: "+json);
+      opera.postError("json: "+json);
       declarations = eval('(' + json +')');
 
       if( cats[1] == '1' ) // there is only 11111, other do actually not make sense
