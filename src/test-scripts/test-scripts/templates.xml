@@ -77,21 +77,27 @@ var templates =
           }
         ]
     ]
-  }
+  },
+  title: function(title) {return ['h2', title]}
 }
 
 
 onload = function()
 {
   var 
-  template = null,
-  body =  document.getElementsByTagName('body')[0];
+  template = [],
+  body =  document.getElementsByTagName('body')[0],
+  tests = ["test_1", "test_2", "test_3", "test_4", "test_5"],
+  test = "", 
+  i = 0;
 
-  for (template in templates)
+  for ( ; test = tests[i]; i++)
   {
-    body.render(['h2', template]);
-    body.render(templates[template]());
+    template[template.length] = templates["title"](test);
+    template[template.length] = templates[test]();
   }
+
+  body.render(template);
 }
 
 ]]></script>
