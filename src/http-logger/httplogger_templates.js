@@ -50,8 +50,8 @@ window.templates.request_list_row = function(n, r, sel)
         ['td', r.request.headers["Host" || "?" ] ],
         ['td', r.request.path],
         ['td', r.request.method],
-        ['td', (r.response ? r.response.status : "-")],
-        ['td', (r.response ? r.response.time - r.request.time : "-")],
+        ['td', (r.response ? r.response.status : "-"), 'class', 'status-cell'],
+        ['td', (r.response ? r.response.time - r.request.time : "-"), 'class', 'time-cell'],
         'data-requestid', r.id,
         'handler', 'request-list-select'
         //,

@@ -75,8 +75,9 @@ cls.RequestListView = function(id, name, container_class)
                 req = HTTPLoggerData.getRequestById(rid);
                 if (req.response)
                 {
-                    e.childNodes[4].textContent = req.response.status;
-                    e.childNodes[5].textContent = req.response.time - req.request.time;
+                    
+                    e.getElementsByClassName('status-cell')[0].textContent = req.response.status;
+                    e.getElementsByClassName('time-cell')[0].textContent = req.response.time - req.request.time;
                 }
                 break;
             }
