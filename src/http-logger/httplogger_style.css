@@ -27,6 +27,31 @@
     background-color: orange;
 }
 
+.request-table tr.mime-image {
+    color: darkgray;
+}
+
+.request-table tr.mime-css {
+    color: gold;
+}
+
+.request-table tr.mime-javascript {
+    color: blue;
+}
+
+.request-table tr.mime-flash {
+    color: red;
+}
+
+.request-table tr.mime-xml {
+    color: pink;
+}
+
+.request-table tr.mime-markup {
+    color: green;
+}
+
+
 /* HTTP logger buttons start */
 
 input[handler="clear-request-list"] {

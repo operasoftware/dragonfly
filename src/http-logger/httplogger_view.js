@@ -75,15 +75,12 @@ cls.RequestListView = function(id, name, container_class)
                 req = HTTPLoggerData.getRequestById(rid);
                 if (req.response)
                 {
-                    
                     e.getElementsByClassName('status-cell')[0].textContent = req.response.status;
                     e.getElementsByClassName('time-cell')[0].textContent = req.response.time - req.request.time;
                 }
                 break;
             }
-            
         }
-        
     }
 
     this.ondestroy = function()
