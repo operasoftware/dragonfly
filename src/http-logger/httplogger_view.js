@@ -55,10 +55,13 @@ cls.RequestListView = function(id, name, container_class)
         this.tableBodyEle.render(tpls);
         
         this.lastIndex = i-1;
+
+        var last = HTTPLoggerData.getLastModifiedRequestId();
         
         for (var n=0, e; e=this.tableBodyEle.childNodes[n]; n++)
         {
-            if (e.getAttribute('data-requestid') == sel)
+            var rid = e.getAttribute('data-requestid');
+            if (rid == sel)
             {
                 e.addClass('selected-request');
             }
@@ -66,7 +69,19 @@ cls.RequestListView = function(id, name, container_class)
             {
                 e.removeClass('selected-request');
             }
+            
+            if (last == rid)
+            {
+                req = HTTPLoggerData.getRequestById(rid);
+                if (req.response)
+                {
+                    e.childNodes[4].textContent = req.response.status;
+                    e.childNodes[5].textContent = req.response.time - req.request.time;
+                }
+            }
+            
         }
+        
     }
 
     this.ondestroy = function()

@@ -14,6 +14,8 @@ window.HTTPLoggerData = new function()
     this.requestList = [];
     this.requestMap = {};
     this.selectedRequestId = null;
+    var lastModifiedRequestId = null;
+
 
     this._views = ["request_list",
                    "request_info_raw",
@@ -39,7 +41,7 @@ window.HTTPLoggerData = new function()
      */
     this.getRequestById = function(id)
     {
-        if (id in requestMap) { return requestMap[id] }
+        if (id in this.requestMap) { return this.requestMap[id] }
         else { return null }
     }
     
@@ -67,6 +69,7 @@ window.HTTPLoggerData = new function()
 
         this.requestList.push(r);
         this.requestMap[r.id] = r;
+        lastModifiedRequestId = r.id;
         this._updateViews();
     }
     
@@ -79,8 +82,9 @@ window.HTTPLoggerData = new function()
         var r = this.requestMap[response["request-id"]];
         if (r) {
             r.response = response;
+            lastModifiedRequestId = r.id;
+            this._updateViews();
         }
-        this._updateViews();
     }
     
     /**
@@ -123,6 +127,11 @@ window.HTTPLoggerData = new function()
     this.getSelectedRequestId = function()
     {
         return this.selectedRequestId;
+    }
+    
+    this.getLastModifiedRequestId = function()
+    {
+        return lastModifiedRequestId;
     }
     
     /**
