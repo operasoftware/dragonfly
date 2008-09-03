@@ -78,6 +78,7 @@ cls.RequestListView = function(id, name, container_class)
                     e.childNodes[4].textContent = req.response.status;
                     e.childNodes[5].textContent = req.response.time - req.request.time;
                 }
+                break;
             }
             
         }
