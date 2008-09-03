@@ -42,3 +42,20 @@ window.templates.header_definition_list = function(headers)
     
     return dl;
 }
+
+window.templates.request_list_row = function(n, r, sel)
+{
+    var a = [ 'tr',
+        ['th', n],
+        ['td', r.request.headers["Host" || "?" ] ],
+        ['td', r.request.path],
+        ['td', r.request.method],
+        ['td', (r.response ? r.response.status : "-")],
+        ['td', (r.response ? r.response.time - r.request.time : "-")],
+        'data-requestid', r.id,
+        'handler', 'request-list-select'
+        //,
+        //'class', (r.id==sel ? 'request-list-select' : '')
+    ];
+    return a;
+}

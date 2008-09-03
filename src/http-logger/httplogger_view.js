@@ -12,46 +12,71 @@
 cls.RequestListView = function(id, name, container_class)
 {
     var self = this;
-    
-
     this.isPaused = false;
-    this.selectedRequestId = null;
+    this.tableBodyEle = null;
+    this.lastIndex = null;
+    this.tbody = null;
 
     this.createView = function(container)
     {
         var log = HTTPLoggerData.getLog();
-        container.innerHTML = "" +
-           this._createTable(log) +
-            "";
-    }
-    
-    this._createTable = function(log)
-    {
-        var strings = [];
-        var sel = HTTPLoggerData.getSelectedRequestId();
-        strings.push("<tr><th>#</th><th>host</th><th>path</th><th>method</th><th>status</th><th>time</th></tr>");
-        if (log.length)
+        if (this.lastIndex == null)
         {
-            for (var n=0, entry; entry=log[n]; n++)
+            container.clearAndRender(
+                ['table',
+                    ['thead',
+                        ['tr',
+                            ['th', "#"],
+                            ['th', "Host"],
+                            ['th', "Path"],
+                            ['th', "Method"],
+                            ['th', "Status"],
+                            ['th', "Time"]
+                        ]
+                    ],
+                    ['tbody'],
+                 'class', 'request-table'
+                ]
+            );
+            this.tableBodyEle = container.getElementsByTagName('tbody')[0];
+            this.lastIndex = 0;
+        }
+
+        if (!log.length) { return }
+        
+        var i = this.lastIndex;
+        var sel = HTTPLoggerData.getSelectedRequestId();
+        var req;
+        var tpls = [];
+        while (req=log[i++])
+        {
+            tpls.push(window.templates.request_list_row(i-1, req, sel));
+        }
+        this.tableBodyEle.render(tpls);
+        
+        this.lastIndex = i-1;
+        
+        for (var n=0, e; e=this.tableBodyEle.childNodes[n]; n++)
+        {
+            if (e.getAttribute('data-requestid') == sel)
             {
-                var current = (sel && sel==entry.id)
-                strings.push(
-                   "<tr handler='request-list-select' data-requestid=\"" + entry.id + "\" class='" +(current ? "selected-request" : "") + "' >" +
-                        "<th>" + (n+1) + "</th>" +
-                        "<td>" + entry.request.headers.Host + "</td>" +
-                        "<td>" + entry.request.path + "</td>" +
-                        "<td>" + entry.request.method + "</td>" +
-                        "<td>" + (entry.response ? entry.response.status : "-") + "</td>" +
-                        "<td>" + (entry.response ? entry.response.time - entry.request.time : "-") + "</td>" +
-                    "</tr>"
-                )
+                e.addClass('selected-request');
+            }
+            else
+            {
+                e.removeClass('selected-request');
             }
         }
-        else
-        {
-            strings.push("<tr><th>0</th><td colspan='5'>No logged requests yet</td></tr>");
-        }
-        return "<table id='request-table'>\n" + strings.join("") + "</table>";
+    }
+
+    this.ondestroy = function()
+    {
+        this.lastIndex = null;
+    }
+
+    this.updateView = function(cont)
+    {
+        this.createView(cont);
     }
 
     this.init(id, name, container_class);
@@ -66,6 +91,7 @@ eventHandlers.click['request-list-select'] = function(event, target)
 {
     var sel = HTTPLoggerData.getSelectedRequestId();
     var id = target.getAttribute("data-requestid");
+
     if (sel && sel==id)
     {
         HTTPLoggerData.clearSelectedRequest();
@@ -74,7 +100,6 @@ eventHandlers.click['request-list-select'] = function(event, target)
     {
         HTTPLoggerData.setSelectedRequestId(id);
     }
-    //opera.postError("REQ ID: " + id)
 }
 
 
