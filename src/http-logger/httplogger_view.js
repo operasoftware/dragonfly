@@ -20,7 +20,7 @@ cls.RequestListView = function(id, name, container_class)
     this.createView = function(container)
     {
         var log = HTTPLoggerData.getLog();
-        if (this.lastIndex == null)
+        if (this.lastIndex == null || log.length==0)
         {
             container.clearAndRender(
                 ['table',
@@ -78,7 +78,6 @@ cls.RequestListView = function(id, name, container_class)
                     e.getElementsByClassName('status-cell')[0].textContent = req.response.status;
                     e.getElementsByClassName('time-cell')[0].textContent = req.response.time - req.request.time;
                 }
-                break;
             }
         }
     }
