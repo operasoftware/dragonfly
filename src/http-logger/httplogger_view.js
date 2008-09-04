@@ -16,6 +16,7 @@ cls.RequestListView = function(id, name, container_class)
     this.tableBodyEle = null;
     this.lastIndex = null;
     this.tbody = null;
+    var filter = null;
 
     this.createView = function(container)
     {
@@ -79,6 +80,58 @@ cls.RequestListView = function(id, name, container_class)
                     e.getElementsByClassName('time-cell')[0].textContent = req.response.time - req.request.time;
                 }
             }
+        }
+        if (filter)
+        {
+            applyFilter()
+        }
+    }
+
+    var clearFilter = function()
+    {
+        if (!self.tableBodyEle) { return }
+        var rows = self.tableBodyEle.childNodes;
+        for (var n=0, e; e=rows[n]; n++)
+        {
+            if (e.style.display == "none") { e.style.display = "" }
+        }
+    }
+
+    var applyFilter = function()
+    {
+        if (!self.tableBodyEle) { return }
+        var rows = self.tableBodyEle.childNodes;
+        for (var n=0, e; e=rows[n]; n++)
+        {
+            var r = HTTPLoggerData.getRequestById(e.getAttribute("data-requestid"));
+            var filtered = r.request.path.indexOf(filter)==-1 ;  //  fixme: last part should be enabled as soon as the duplicate IDs bug is fixed. &&  (r.request.headers["Host"] || "" ).indexOf(filter)==-1;
+            if (filtered)
+            {
+                e.style.display = "none";
+            }
+            else
+            {
+                e.style.display = "";
+            }
+        }
+        
+    }
+
+    this.setFilter = function(s)
+    {
+        if (filter && filter==s)
+        {
+            return;
+        } 
+        if (s=="")
+        {
+            filter = null;    
+            clearFilter()
+        }
+        else
+        {
+            filter = s;
+            applyFilter();
         }
     }
 
@@ -158,9 +211,13 @@ new Switches
   ]
 )
 
-eventHandlers.click['clear-request-list'] = function(event, target)
+eventHandlers.keyup['request-list-filter'] = function(event, target)
 {
-    HTTPLoggerData.clearLog();
+    if( event.keyCode == 13 )
+    {
+        window.views['request_list'].setFilter(target.value);
+    }
+    // fixme: Add delayed filtering here, so it'll work while typing
 }
 
 cls.RequestOverviewView = function(id, name, container_class)
