@@ -1,7 +1,7 @@
 /**
+ * @fileoverview
  * HTTP logger view code.
  * Defines views for request list, header info etc.
- *
  */
 
 /**
