@@ -211,6 +211,11 @@ new Switches
   ]
 )
 
+eventHandlers.click['clear-request-list'] = function(event, target)
+{
+    HTTPLoggerData.clearLog();
+}
+
 eventHandlers.keyup['request-list-filter'] = function(event, target)
 {
     if( event.keyCode == 13 )

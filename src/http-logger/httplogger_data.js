@@ -17,14 +17,14 @@ window.HTTPLoggerData = new function()
     var lastModifiedRequestId = null;
 
 
-    _views = ["request_list",
-                   "request_info_raw",
-                   "response_info_raw",
-                   "request_info_headers",
-                   "response_info_headers",
-                   "request_overview",
-                   "response_info_body"
-                   ];
+    _views = [ "request_info_raw",
+               "response_info_raw",
+               "request_info_headers",
+               "response_info_headers",
+               "request_overview",
+               "response_info_body",
+               "request_list"
+             ];
 
     /**
      * Get the log as a list
