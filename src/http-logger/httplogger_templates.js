@@ -1,7 +1,15 @@
+/**
+ * @fileoverview
+ * Templates used by the http logger views
+ */
+
 window.templates = window.templates || ( window.templates = {} );
 
-
-window.templates.header_definition_list = function(headers)
+/**
+ * Render the a definition list with a dt for each header and the dd with
+ * the value. Add link to the relevant header spec if we have the URL
+ */
+ window.templates.header_definition_list = function(headers)
 {
     var alphaheaders = [];
     for (name in headers) {alphaheaders.push(name)}
@@ -43,6 +51,9 @@ window.templates.header_definition_list = function(headers)
     return dl;
 }
 
+/**
+ * Renders a single row of request data in the request list
+ */
 window.templates.request_list_row = function(n, r, sel)
 {
     var a = [ 'tr',
@@ -62,3 +73,5 @@ window.templates.request_list_row = function(n, r, sel)
     ];
     return a;
 }
+
+
