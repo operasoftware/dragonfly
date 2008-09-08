@@ -376,14 +376,13 @@ cls.ECMAScriptDebuggerService = function(name)
                 "</css-get-index-map>";
     this.post(msg);
   }
-
+  // TODO clean up cats
   this.cssGetStyleDeclarations = function( tag, rt_id, obj_id, cats, format )
   {
     var msg = "<css-get-style-declarations>" +
                   "<tag>" + tag + "</tag>" +
                   "<runtime-id>" + rt_id+ "</runtime-id>" +
                   "<object-id>" + obj_id + "</object-id>" +
-                  "<categories>" + cats + "</categories>" +
                   ( format ? "<format>json</format>" : "" ) +
               "</css-get-style-declarations>";
     this.post(msg);

@@ -2,6 +2,7 @@
   * @constructor 
   */
 
+// TODO clean up cats
 var elementStyle = new function()
 {
   // TODO cleanup code history
@@ -231,6 +232,7 @@ var elementStyle = new function()
     
     if( set_has_inherited_props )
     {
+      /* check if the non inheritable rules are now removed TODO clean up
       for( ; dec = declaration_list[i]; i++)
       {
         if( dec.length > 3 ) // TODO this was some workaround. still needed?
@@ -246,7 +248,11 @@ var elementStyle = new function()
           opera.postError("failed in parseNodeCascade: "+ JSON.stringify(dec) );
         }
       }
-      node_cascade[HAS_INHERITABLE_PROPS] = has_inherited_props;
+      */
+
+      // TODO, clean up: this check is no longer needed
+      // for any node except the target only inheritable properties are returned
+      node_cascade[HAS_INHERITABLE_PROPS] = true; //has_inherited_props;
     }
 
   }

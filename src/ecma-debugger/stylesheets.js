@@ -449,7 +449,9 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
       index = index_list[i];
       if( check_inheritable && !inherited_props_index_list[index] )
       {
-        continue;
+        // TODO clean up
+        // check if non inheritable rules are removed continue;
+        // this check seems to be not needed any more
       }
       if( search_active && !search_list[i] )
       {
@@ -717,7 +719,7 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   prettyPrintStyleDec[PROT_4_USER_AGENT] = 
   function(rt_id, node_casc_header, style_dec, check_has_inheritable_props, search_active)
   {
-    if( !check_has_inheritable_props || data[HAS_INHERITABLE_PROPS]  )
+    if( !check_has_inheritable_props || style_dec[HAS_INHERITABLE_PROPS]  )
     {
       return "<rule>" +
               "<stylesheet-link class='pseudo'>default values</stylesheet-link>" +
