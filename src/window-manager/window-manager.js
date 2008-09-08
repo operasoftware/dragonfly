@@ -89,6 +89,7 @@ cls.WindowManagerService = function(name)
   
   this.onconnect = function(xml)
   {
+    opera.postError("windows manager onconnect")
     get_context();
   }
 
