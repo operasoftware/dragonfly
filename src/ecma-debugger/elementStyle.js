@@ -2,41 +2,26 @@
   * @constructor 
   */
 
-// TODO clean up cats
+
 var elementStyle = new function()
 {
   // TODO cleanup code history
+  //  cats is still overdone
   
   const 
   COMP_STYLE = 0,
   CSS = 1, 
-  INLINE_STYLE = 1,
-  MATCHING_RULES = 2,
-  INHERITED_RULES = 3,
-  DEFAULT_VALUES = 4,
-  REQ_TYPE_NONE = 0,
-  REQ_TYPE_COMP_STYLE = 1,
   REQ_TYPE_CSS = 2,
-  REQ_TYPE_COMPLETE = 3,
-  REQ_MAP = ['00000', '11111', '11111', '11111'],
-  HEADER = 0, 
   PROP_LIST = 1,
   VAL_LIST = 2,
   PRIORITY_LIST = 3,
-  OVERWRITTEN_LIST = 4,
-  HAS_INHERITABLE_PROPS = 5,
   SEARCH_LIST = 6,
   HAS_MATCHING_SEARCH_PROPS = 7,
   SEARCH_DELAY = 50,
-  MIN_SEARCH_THERM_LENGTH = 3,
+  MIN_SEARCH_THERM_LENGTH = 3;
 
-  // protoco-4
-
-  NODE_CHAIN_STYLE_CASCADE = 1;
-
+  var categories_data = [];
   var __selectedElement = null;
-  var __setProps = [];
-  var __setPriorities = [];
   var __searchMap = [];
   var __search_is_active = false;
   var __old_search_therm = '';
@@ -79,207 +64,6 @@ var elementStyle = new function()
   }
 
 
-  var node_cascades = [];
-
-  var getDefaultStyle = function(defaultStyles, pointer, obj_id)
-  {
-    for( var c = null; ( c = defaultStyles[pointer] ) && c[0][0] != obj_id; pointer++);
-    return c || [[obj_id],[],[],[]];
-  }
-
-
-  /*
-  fixing the protocol
-  data should follow the parent node chain, with the target as first element.
-  for each node a node style cascade with:
-  [
-    inline style declaration,
-    [ matching css declarations * ],
-    default style declaration,
-    ,
-    ,
-    has inheritable rules,
-    ,
-    has matching search props
-  ]
-  */
-  
-  var restructureData = function(rt_id, obj_id, declarations)
-  {
-    /*
-    var 
-    inlineStyle = declarations[INLINE_STYLE] 
-      && [ ['inline'], declarations[INLINE_STYLE][0], declarations[INLINE_STYLE][1], declarations[INLINE_STYLE][2] ]
-      || [['inline'],[],[],[]],
-    matchingRules = declarations[MATCHING_RULES] || [[],[],[],[]],
-    inheritedRules = declarations[INHERITED_RULES] || [[],[],[],[]],
-    defaultValues = declarations[DEFAULT_VALUES] || [[],[],[],[]],
-    def_val_cur = 0,
-    def_val = null,
-    style_dec = null, 
-    i = 0,
-    node_casc_cur = [],
-    match_cur = null;
-    // this is broken, see below for details
-    for( ; ( def_val = defaultValues[def_val_cur] ) && def_val[0][0] != obj_id; def_val_cur++);
-    if( !def_val )
-    {
-      def_val = [[obj_id],[],[],[]];
-    }
-
-    node_cascades = [[inlineStyle, matchingRules, def_val]];
-    */
-    /* 
-      the logic for default rules is quite broken here:
-
-      - not each element has default styles
-      - if a node has no matching rules, it will not be in the inherited rules
-
-      -> get the node chain from DOM data
-      -> fix inherited rules 
-         ( insert for each missing entry [["inline",<object-id>,<element-name>],[],[],[]]  )
-    */
-
-    /*
-    for( ; style_dec = inheritedRules[i]; i++)
-    {
-      if( style_dec[HEADER][0] == 'inline' )
-      {
-        // this is broken, see above for details
-        for( ; ( def_val = defaultValues[def_val_cur] ) && def_val[0][0] != style_dec[HEADER][1]; def_val_cur++);
-        if( !def_val )
-        {
-          def_val = [[obj_id],[],[],[]];
-        }
-        match_cur = [];
-        node_cascades[node_cascades.length] = [style_dec, match_cur, def_val]; 
-      }
-      else
-      {
-        if( match_cur )
-        {
-          match_cur[match_cur.length] = style_dec;
-        }
-        else
-        {
-          opera.postError('failed in restructureData');
-        }
-      }
-    }
-
-    */
-    
-    
-    
-    categories_data[0] = declarations[0]; 
-    node_cascades = categories_data[1] = declarations[1];
-    categories_data[1].rt_id = categories_data[0].rt_id = rt_id;
-
-  }
-
-  var __setProps = [];
-  var __setPriorities = [];
-
-  
-  var categories_data = [];
-
-  var parse_data = [];
-  parse_data[REQ_TYPE_COMP_STYLE] = function() {};
-
-  parse_data[REQ_TYPE_CSS] = parse_data[REQ_TYPE_COMPLETE] = function()
-  {
-    var
-    node_casc = null,
-    i = 0;
-   
-  
-    for( ; node_casc = node_cascades[i]; i++)
-    {
-      parseNodeCascade(node_casc, i > 0);
-    }
-  }
-  
-
-
-  var parseNodeCascade = function(node_cascade, set_has_inherited_props)
-  {
-    /*
-      protocol-4
-      node_cascade has the form
-      [
-        NODE-HEADER,
-        STYLE-DECLARATION-LIST,
-        ,
-        ,
-        has_inherited_props // must be set in this call
-      ]
-
-      has inheritable properties must be checked for each declaration 
-      and then set for the node cascade
-
-      for the next protocol version that should be sorted out on the host side
-
-      ( the overwritten flag is now set on the host side )
-
-    */
-   
-    
-    var
-    dec = null,
-    i = 0,
-    declaration_list = node_cascade[1],
-    has_inherited_props = false;
-    
-    if( set_has_inherited_props )
-    {
-      /* check if the non inheritable rules are now removed TODO clean up
-      for( ; dec = declaration_list[i]; i++)
-      {
-        if( dec.length > 3 ) // TODO this was some workaround. still needed?
-        {
-          if( parseStyleDec(dec) && !has_inherited_props )
-          {
-            has_inherited_props = true;
-          }
-          //opera.postError("dec: "+JSON.stringify(dec))
-        }
-        else
-        {
-          opera.postError("failed in parseNodeCascade: "+ JSON.stringify(dec) );
-        }
-      }
-      */
-
-      // TODO, clean up: this check is no longer needed
-      // for any node except the target only inheritable properties are returned
-      node_cascade[HAS_INHERITABLE_PROPS] = true; //has_inherited_props;
-    }
-
-  }
-
-
-  var parseStyleDec = function(dec)
-  {
-    // checks if the declaration actually has inheritable properties
-    // the overwritten flag is now set on the host
-
-    var 
-    i = 0, 
-    prop = 0, 
-    length = dec[PROP_LIST].length;
-
-    for( ; i < length; i++ )
-    {
-      prop = dec[PROP_LIST][i];
-
-      if( inherited_props_index_list[prop] )
-      {
-        return ( dec[HAS_INHERITABLE_PROPS] = true );
-      }
-    }
-    return ( dec[HAS_INHERITABLE_PROPS] = false );
-  }
-
   var searchDelayed = function(value)
   {
     searchtimeout.set(search, SEARCH_DELAY, value);
@@ -312,7 +96,7 @@ var elementStyle = new function()
           __searchMap[i] = 1;
         }
       }
-            
+           
       for( i = 0, length = categories_data[CSS].length; i < length; i++)
       {
         searchNodeCascade(categories_data[CSS][i], __searchMap);
@@ -330,33 +114,31 @@ var elementStyle = new function()
       __search_is_active = false;
     }
   }
+
+  /*
+
+    NODE-CHAIN-STYLE-CASCADE ::= "[" NODE-STYLE-CASCADE { "," NODE-STYLE-CASCADE  } "]"
+    NODE-STYLE-CASCADE       ::= "[[" NODE-HEADER "],"
+                                   STYLE-DECLARATION-LIST
+                                 "]"
+    NODE-HEADER              ::= OBJECT-ID "," ELEMENT-NAME
+    STYLE-DECLARATION-LIST   ::= "[" STYLE-DECLARATION { "," STYLE-DECLARATION } "]"
+    STYLE-DECLARATION        ::= ELEMENT-RULE | AUTHOR-RULE | LOCAL-RULE | USER-AGENT-RULE
+
+  */
   
   var searchNodeCascade = function(node_cascade, search_list)
   {
-    /*
-      node_cascade has the form
-      [
-        style_dec_inline,
-        [style_dec_css*],
-        style_dec_default,
-        ,
-        ,
-        has_inherited_props // must be set in this call
-      ]
-    */
-    //opera.postError("searchNodeCascade: "+ JSON.stringify(node_cascade) )
+    // search_list is an array which has either 0 or 1 for the whole index_ map
     var
     dec = null,
     i = 0,
     declaration_list = node_cascade[1],
     has_matching_search_props = false;
     
-    searchStyleDeclaration(node_cascade[0], search_list);
-    has_matching_search_props = has_matching_search_props || node_cascade[0][HAS_MATCHING_SEARCH_PROPS];
-      
     for( ; dec = declaration_list[i]; i++)
     {
-      if( dec.length > 3 )
+      if( dec.length > 3 ) // TODO is this needed?
       {
         searchStyleDeclaration(dec, search_list);
         has_matching_search_props =
@@ -367,10 +149,6 @@ var elementStyle = new function()
         opera.postError("searchNodeCascade: "+ JSON.stringify(dec) );
       }
     }
-    searchStyleDeclaration(node_cascade[2], search_list);
-
-    has_matching_search_props =
-      has_matching_search_props || node_cascade[2][HAS_MATCHING_SEARCH_PROPS];
       
     node_cascade[HAS_MATCHING_SEARCH_PROPS] = has_matching_search_props;
   
@@ -381,7 +159,7 @@ var elementStyle = new function()
     // updates a styleDeclaration
     // checks if the declaration actually has matchin property
     // search_list is a list with matching properties indexes
-    // 
+    
     var
     i = 0,
     length = declaration[PROP_LIST].length,
@@ -414,49 +192,7 @@ var elementStyle = new function()
     }
     delete node_cascade[2][HAS_MATCHING_SEARCH_PROPS];  
   }
-/*
-  var searchStyleDeclarations = function(declaration_list, search_list)
-  {
-    // updates the search list for a styleDeclaration
-    // checks if the declaration actually has matchin property
-    // search_list is a list with matching properties indexes
-    // 
-    var dec = null, i = 0, j = 0, length = 0, has_matching_search_props = false;
-    if(declaration_list)
-    {
-      for( ; dec = declaration_list[i]; i++)
-      {
-        length = dec[PROP_LIST].length;
-        has_matching_search_props = false;
-        dec[SEARCH_LIST] = [];
-        for( j = 0; j < length; j++ )
-        {
-          if( search_list[dec[PROP_LIST][j]] )
-          {
-            dec[SEARCH_LIST][j] = 1;
-            has_matching_search_props = true;
-          };
-        }
-        dec[HAS_MATCHING_SEARCH_PROPS] = has_matching_search_props;
-      }
-    }
-  }
-*/
 
-/*
-  var clearSearchStyleDeclarations = function(declaration_list)
-  {
-    var dec = null, i = 0;
-    if(declaration_list)
-    {
-      for( ; dec = declaration_list[i]; i++)
-      {
-        delete dec[HAS_MATCHING_SEARCH_PROPS];
-        delete dec[SEARCH_LIST];
-      }
-    }
-  }
-*/
 
   this.getSearchActive = function()
   {
@@ -478,10 +214,7 @@ var elementStyle = new function()
     return categories_data[index];
   }
 
-  this.getSetProps = function()
-  {
-    return __setProps.slice(0);
-  }
+
 
   var getRequestType = function()
   {
@@ -498,32 +231,26 @@ var elementStyle = new function()
     return ret;
   }
 
-  this.setUnfoldedCat = function( cat_id , value)
+  this.setUnfoldedCat = function( cat_id , unfolded)
   {
     var 
-    cat_index = id_index_map[cat_id],
-    cat = categories[cat_index], 
+    cat = categories[ id_index_map[cat_id] ], 
     req_type = 0,
     request_key = '',
     i = 0,
     view_id = '';
+
     if(cat)
     {
-      cat.unfolded = value;
-      if( value)
+      cat.unfolded = unfolded;
+      if(unfolded)
       {
         if( __selectedElement )
         {
           if( ( req_type = getRequestType() ) != __selectedElement.req_type )
           {
             __selectedElement.req_type = req_type;
-            getData
-            (
-              __selectedElement.rt_id, 
-              __selectedElement.obj_id, 
-              REQ_MAP[req_type],
-              req_type
-            );
+            getData(__selectedElement.rt_id, __selectedElement.obj_id);
           }
           else
           {
@@ -549,23 +276,17 @@ var elementStyle = new function()
     for ( ; ( view_id = __views[i] ) && !( get_data = views[view_id].isvisible() ); i++);
     if( get_data && __selectedElement.req_type )
     {
-      getData
-      (
-        msg.rt_id, 
-        msg.obj_id, 
-        REQ_MAP[__selectedElement.req_type], 
-        __selectedElement.req_type
-      );
+      getData(msg.rt_id, msg.obj_id);
     }
     
   }
 
-  var getData = function(rt_id, obj_id, cats, req_type)
+  var getData = function(rt_id, obj_id)
   {
     if( stylesheets.hasStylesheetsRuntime(rt_id) )
     {
-      var tag = tagManager.setCB(null, handleGetData, [rt_id, obj_id, cats, req_type]);
-      services['ecmascript-debugger'].cssGetStyleDeclarations( tag, rt_id, obj_id, cats, 'json' );
+      var tag = tagManager.setCB(null, handleGetData, [rt_id, obj_id]);
+      services['ecmascript-debugger'].cssGetStyleDeclarations( tag, rt_id, obj_id, 'json' );
     }
     else
     {
@@ -573,9 +294,9 @@ var elementStyle = new function()
     }
   }
 
-  var handleGetData = function(xml, rt_id, obj_id, cats, req_type)
+  var handleGetData = function(xml, rt_id, obj_id)
   {
-    // req_type number
+
     var 
     json = xml.getNodeData('matching-style-declarations'), 
     declarations = null, 
@@ -584,40 +305,25 @@ var elementStyle = new function()
 
     if( json )
     {
-
-      opera.postError("json: "+json);
       declarations = eval('(' + json +')');
 
-      if( cats[1] == '1' ) // there is only 11111, other do actually not make sense
-      {
-        // TODO clean up, no longer needed
-        restructureData(rt_id, obj_id, declarations);
-      }
-      if(!req_type)
-      {
-        opera.postError('missing req_type or req_type 0 in handleGetData in elementStyles')
-      }
-      
-      parse_data[req_type]();
+      categories_data[0] = declarations[0]; 
+      categories_data[1] = declarations[1];
+      categories_data[1].rt_id = categories_data[0].rt_id = rt_id;
 
-      
       if( __old_search_therm )
       {
         doSearch(__old_search_therm);
       }
-      
       
       for ( i = 0; view_id = __views[i]; i++)
       {
         views[view_id].updateCategories({}, getUnfoldedKey());
       }
       
-
-      
     }
   }
 
-  // TODO update to protocol 4
   messages.addListener('element-selected', onElementSelected);
   messages.addListener('application-setup', onAplicationsetup);
 

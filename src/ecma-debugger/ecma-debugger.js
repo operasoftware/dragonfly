@@ -376,8 +376,8 @@ cls.ECMAScriptDebuggerService = function(name)
                 "</css-get-index-map>";
     this.post(msg);
   }
-  // TODO clean up cats
-  this.cssGetStyleDeclarations = function( tag, rt_id, obj_id, cats, format )
+
+  this.cssGetStyleDeclarations = function( tag, rt_id, obj_id, format )
   {
     var msg = "<css-get-style-declarations>" +
                   "<tag>" + tag + "</tag>" +
