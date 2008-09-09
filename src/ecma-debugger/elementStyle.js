@@ -138,16 +138,9 @@ var elementStyle = new function()
     
     for( ; dec = declaration_list[i]; i++)
     {
-      if( dec.length > 3 ) // TODO is this needed?
-      {
-        searchStyleDeclaration(dec, search_list);
-        has_matching_search_props =
-          has_matching_search_props || dec[HAS_MATCHING_SEARCH_PROPS];
-      }
-      else
-      {
-        opera.postError("searchNodeCascade: "+ JSON.stringify(dec) );
-      }
+      searchStyleDeclaration(dec, search_list);
+      has_matching_search_props =
+        has_matching_search_props || dec[HAS_MATCHING_SEARCH_PROPS];
     }
       
     node_cascade[HAS_MATCHING_SEARCH_PROPS] = has_matching_search_props;
