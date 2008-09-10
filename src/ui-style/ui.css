@@ -84,7 +84,11 @@ info { /**/
 	
 top-toolbar { /**/
   height: 26px;
+  background-color: #69f;
+  padding-right: 0px;
   }
+
+
 
 window-toolbar { /**/
   display: block;
@@ -233,7 +237,7 @@ toolbar-filters filter.focus input {
 window-select {
   display: block;
   position: relative;
-  margin: 0px 1px 0px 40px;
+  margin: 0px 1px 0px 30px;
   padding: 2px 0;
   }
 
@@ -396,7 +400,11 @@ window-controls {
   position: absolute;
   top: 0;
   right: 0;
+  z-index:1000;
+  background-color: #0f0;
   }
+
+
 
 .default-container {
   padding: 7px;
@@ -487,9 +495,13 @@ ui-menu { /**/
   width: 180px;
   cursor: pointer;
   position: absolute;
-  right:60px;
+  right:30px;
   top: 0px;
   z-index:1000;
+  }
+
+ui-menu.attached { /**/
+  right:60px;
   }
 
 ui-menu > h2 { /**/

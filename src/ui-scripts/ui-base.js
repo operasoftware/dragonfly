@@ -40,6 +40,8 @@ var UIBase = new function()
       'width:' + this.width + 'px;';
   }
 
+  this.__is_visible = true;
+
   this.isvisible = function()
   {
     return document.getElementById(this.type + '-to-' + this.cell.id) && true || false;
@@ -128,7 +130,8 @@ var UIBase = new function()
     this.top_border_padding = this.getPropertiesSum(this.top_border_padding_properties);
     this.default_height = this.height = this.style.height;
     this.offsetHeight = this.height + this.vertical_border_padding;
-    this.offsetWidth = this.height + this.horizontal_border_padding;
+    this.offsetWidth = this.width + this.horizontal_border_padding;
+    
   }
 
   this.copyCSS = function(resolve_map)
@@ -167,9 +170,16 @@ var UIBase = new function()
             //opera.postError((property.t_name ? property.t_name : property.s_name) + ' '+target[property.t_name ? property.t_name : property.s_name])
           }
         }
+        
+
       }
     }
     viewport.removeChild(container);
+  }
+
+  this.setVisibility = function(visibility)
+  {
+    this.__is_visible = visibility == "visible";
   }
 
   this.getFocusCatcher = function()

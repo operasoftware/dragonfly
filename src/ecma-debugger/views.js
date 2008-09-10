@@ -237,3 +237,15 @@ eventHandlers.click['apply-remote-debugging'] = function(event, target)
 
 
 
+new ToolbarConfig
+(
+  'main-view',
+  RuntimeBaseView.reload_button,
+  null,
+  null,
+  RuntimeBaseView.custum_controls
+)
+
+
+
+

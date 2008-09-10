@@ -168,23 +168,33 @@ var window_manager_data = new function()
 
   var view = "window_manager";
 
+  var update_views = function()
+  {
+
+    topCell.toolbar.updateWindowDropdown();
+    views["window_manager"].update();
+
+
+
+  }
+
   this.set_active_window = function(win_id)
   {
     this.active_window = win_id;
-    views[view].update();
+    update_views();
   }
 
   this.set_window_list = function(window_list)
   {
     this.window_list = window_list;
-    views[view].update();
+    update_views();
   }
 
   this.setDebugContext = function(win_id)
   {
     services['window-manager'].set_debug_context(win_id);
     this.debug_context = win_id;
-    views[view].update();
+    update_views();
   }
 
   this.update_list = function(win_obj)
@@ -199,7 +209,7 @@ var window_manager_data = new function()
       for( ; ( win = this.window_list[i] ) && !( id == win["window-id"] ); i++ ) {}
     }
     this.window_list[i] = win_obj;
-    views[view].update();
+    update_views();
   }
 
   this.remove_window = function(win_id)
@@ -219,7 +229,7 @@ var window_manager_data = new function()
         }
       }
     }
-    views[view].update();
+    update_views.update();
   }
 }
 

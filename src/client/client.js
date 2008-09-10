@@ -279,6 +279,8 @@ var client = new function()
 
     new CompositeView('dom_panel', ui_strings.M_VIEW_LABEL_COMPOSITE_DOM, dom_rough_layout_panel);
 
+    new CompositeView('settings_new', "Settings", settings_rough_layout);
+
     if( window.opera.attached != settings.general.get('window-attached') )
     {
       window.opera.attached = settings.general.get('window-attached') || false;
@@ -287,6 +289,19 @@ var client = new function()
     setTimeout( function(){
 
       self.setupTopCell();
+
+      if( window.opera.attached )
+      {
+        topCell.tab.changeStyleProperty("padding-right", 60);
+      }
+      else
+      {
+        topCell.toolbar.changeStyleProperty("padding-right", 30);
+      }
+
+      document.documentElement.render(templates.window_controls(window.opera.attached))
+
+      
       
       // event handlers to resize the views
       new SlideViews(document);
@@ -399,6 +414,17 @@ var export_rough_layout =
     { height: 200, tabs: ['export_data'] }
   ]
 }
+
+var settings_rough_layout =
+{
+  dir: 'v', width: 700, height: 700,
+  children: 
+  [
+    { height: 200, tabs: ['settings_view'] }
+  ]
+}
+
+  
 
 var dom_rough_layout =
 {
@@ -521,13 +547,13 @@ var network_rough_layout =
 var main_layout =
 {
   id: 'main-view', 
-  tabs: ['js_new', 'dom_new', 'console_new', 'environment_new', "network_panel"]
+  tabs: ['js_new', 'dom_new', 'console_new', 'environment_new', "network_panel", 'settings_new']
 }
 
 var panel_layout =
 {
   id: 'main-view', 
-  tabs: ['js_panel', 'dom_panel', 'console_new', 'environment_new', "network_panel"]
+  tabs: ['js_panel', 'dom_panel', 'console_new', 'environment_new', "network_panel", 'settings_new']
 }
 
 var resolve_map_properties = 
@@ -625,6 +651,7 @@ var resolve_map =
     ]
   },
 ];
+
 
 var resolve_map_2 =
 [

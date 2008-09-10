@@ -66,6 +66,7 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./ui-scripts/compositeView.js"/>
 <script src="./ui-scripts/settingView.js"/>
 <script src="./ui-scripts/ui-base.js"/>
+<script src="./ui-scripts/TopUIBase.js"/>
 <script src="./ui-scripts/toolbar.js"/>
 <script src="./ui-scripts/toolbarConfig.js"/>
 <script src="./ui-scripts/tabs.js"/>

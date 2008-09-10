@@ -61,10 +61,11 @@ var ToolbarBase = function()
       this.width = dim;
     }
 
-    dim = ( this.buttons.length 
+    dim = ( this.__is_visible  && ( 
+            this.buttons.length 
             || this.filters.length
             || this.specials.length
-            || this.customs.length )? this.default_height : 0;
+            || this.customs.length ) ) ? this.default_height : 0;
     if( dim != this.height)
     {
       this.is_dirty = true;
@@ -86,34 +87,48 @@ var ToolbarBase = function()
     this.specials = toolbars[view_id] && toolbars[view_id].specials || [];
     this.customs = toolbars[view_id] && toolbars[view_id].customs || [];
 
-    
-    if(this.filters.length)
+    var set_separator = this.buttons.length;
+
+    if(this.__is_visible)
     {
-      toolbar.render(templates.filters(this.filters));
-    }
-    if(this.buttons.length)
-    {
-      toolbar.render(templates.buttons(this.buttons));
-      toolbar.render(templates.toolbarSeparator());
-    }
-    if(this.switches.length)
-    {
-      toolbar.render(templates.switches(this.switches));
-      toolbar.render(templates.toolbarSeparator());
-    }
-    if(this.specials.length)
-    {
-      toolbar.render(templates.buttons(this.specials));
-    } 
-    if(this.customs.length)
-    {
-     
-      var custom = null, i = 0;
-      for( ; custom = this.customs[i]; i++)
+      if(this.filters.length)
       {
-        toolbar.render(custom.template());
+        toolbar.render(templates.filters(this.filters));
+      }
+      if( this.buttons.length )
+      {
+        toolbar.render(templates.buttons(this.buttons));
+      }
+      if(this.switches.length)
+      {
+        if(set_separator)
+        {
+          toolbar.render(templates.toolbarSeparator());
+        }
+        else
+        {
+          set_separator = true;
+        }
+        toolbar.render(templates.switches(this.switches));
+      }
+      if(this.specials.length)
+      {
+        if(set_separator)
+        {
+          toolbar.render(templates.toolbarSeparator());
+        }
+        toolbar.render(templates.buttons(this.specials));
       } 
-    } 
+      if(this.customs.length)
+      {
+       
+        var custom = null, i = 0;
+        for( ; custom = this.customs[i]; i++)
+        {
+          toolbar.render(custom.template());
+        } 
+      } 
+    }
   }
 
   this.init = function(cell, buttons, filters, specials, customs)
@@ -150,6 +165,59 @@ var Toolbar = function(cell, buttons, filters, specials, customs)
 var TopToolbar = function(cell, buttons, filters, specials, customs)
 {
   this.type = 'top-toolbar';
+  this.updateWindowDropdown = function()
+  {
+    var toolbar = document.getElementById(this.type + '-to-' + this.cell.id);
+    if(toolbar)
+    {
+      var 
+      select = toolbar.getElementsByTagName('select')[0],
+      win_list = window_manager_data.window_list,
+        active_window = window_manager_data.active_window,
+        debug_context = window_manager_data.debug_context,
+      win = null,
+      props = ['window-id', 'title', 'window-type', 'opener-id'],
+      prop = '', 
+      i = 0,
+      id = '',
+      
+
+      markup = "";
+
+      if(select)
+      {
+        for( ; win = win_list[i]; i++ )
+        {
+          id = win['window-id'];
+          markup += '<option value="' + id + '"' + 
+            ( id == debug_context ? ' selected="selected"' : '' ) + '>' + 
+            win['title'] + 
+            '</option>';
+        }
+        select.innerHTML = markup;
+      }
+      /*
+      var 
+      select = this.getToolbarControl(container, 'select-window'),
+      windows = runtimes.getWindows(),
+      win = null,
+      i = 0,
+      markup = ; //'<option value="-1"> - ' + ui_strings.S_SELECT_WINDOW_EMPTY + ' - </option>';
+      if(select)
+      {
+        for( ; win = windows[i]; i++ )
+        {
+          markup += '<option value="' + win.id + '"' + 
+            ( win.is_selected ? ' selected="selected"' : '' ) + '>' + 
+            ( win.title || win.uri ) + 
+            '</option>';
+        }
+        select.innerHTML = markup;
+      }
+      */
+    }
+   
+  }
   this.init(cell, buttons, filters, specials, customs);
 }
 
@@ -172,6 +240,8 @@ var WindowToolbar = function(cell, buttons, filters, specials, customs)
 ToolbarBase.prototype = UIBase;
 Toolbar.prototype = new ToolbarBase();
 TopToolbar.prototype = new ToolbarBase();
+TopUIBase.apply(TopToolbar.prototype);
+TopToolbar.prototype.constructor = TopToolbar;
 WindowToolbar.prototype = new ToolbarBase();
 
 
