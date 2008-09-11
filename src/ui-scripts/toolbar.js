@@ -165,59 +165,6 @@ var Toolbar = function(cell, buttons, filters, specials, customs)
 var TopToolbar = function(cell, buttons, filters, specials, customs)
 {
   this.type = 'top-toolbar';
-  this.updateWindowDropdown = function()
-  {
-    var toolbar = document.getElementById(this.type + '-to-' + this.cell.id);
-    if(toolbar)
-    {
-      var 
-      select = toolbar.getElementsByTagName('select')[0],
-      win_list = window_manager_data.window_list,
-        active_window = window_manager_data.active_window,
-        debug_context = window_manager_data.debug_context,
-      win = null,
-      props = ['window-id', 'title', 'window-type', 'opener-id'],
-      prop = '', 
-      i = 0,
-      id = '',
-      
-
-      markup = "";
-
-      if(select)
-      {
-        for( ; win = win_list[i]; i++ )
-        {
-          id = win['window-id'];
-          markup += '<option value="' + id + '"' + 
-            ( id == debug_context ? ' selected="selected"' : '' ) + '>' + 
-            win['title'] + 
-            '</option>';
-        }
-        select.innerHTML = markup;
-      }
-      /*
-      var 
-      select = this.getToolbarControl(container, 'select-window'),
-      windows = runtimes.getWindows(),
-      win = null,
-      i = 0,
-      markup = ; //'<option value="-1"> - ' + ui_strings.S_SELECT_WINDOW_EMPTY + ' - </option>';
-      if(select)
-      {
-        for( ; win = windows[i]; i++ )
-        {
-          markup += '<option value="' + win.id + '"' + 
-            ( win.is_selected ? ' selected="selected"' : '' ) + '>' + 
-            ( win.title || win.uri ) + 
-            '</option>';
-        }
-        select.innerHTML = markup;
-      }
-      */
-    }
-   
-  }
   this.init(cell, buttons, filters, specials, customs);
 }
 

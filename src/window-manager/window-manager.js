@@ -171,10 +171,8 @@ var window_manager_data = new function()
   var update_views = function()
   {
 
-    topCell.toolbar.updateWindowDropdown();
+    windowsDropDown.update();
     views["window_manager"].update();
-
-
 
   }
 
@@ -195,6 +193,15 @@ var window_manager_data = new function()
     services['window-manager'].set_debug_context(win_id);
     this.debug_context = win_id;
     update_views();
+    // workaround as long as we don't have a command confirmation. see bug 361876
+    setTimeout
+    (
+      function() 
+      {
+        runtimes.createAllRuntimes(win_id)
+      }, 
+      100
+    )
   }
 
   this.update_list = function(win_obj)
@@ -321,6 +328,56 @@ eventHandlers.click['set-debug-context'] = function(event, target)
     }
   }
 }
+
+var windowsDropDown = new function()
+{
+
+  this.update = function()
+  {
+    var toolbar = topCell.toolbar.getElement();
+    if(toolbar)
+    {
+      var 
+      select = toolbar.getElementsByTagName('select')[0],
+      win_list = window_manager_data.window_list,
+        active_window = window_manager_data.active_window,
+        debug_context = window_manager_data.debug_context,
+      win = null,
+      props = ['window-id', 'title', 'window-type', 'opener-id'],
+      prop = '', 
+      i = 0,
+      id = '',
+      
+
+      markup = "";
+
+      if(win_list && select)
+      {
+        for( ; win = win_list[i]; i++ )
+        {
+          id = win['window-id'];
+          markup += '<option value="' + id + '"' + 
+            ( id == debug_context ? ' selected="selected"' : '' ) + '>' + 
+            win['title'] + 
+            '</option>';
+        }
+        select.innerHTML = markup;
+      }
+    }
+   
+  }
+}
+
+eventHandlers.change['select-window'] = function(event, target)
+{
+  if(target.value)
+  {
+    window_manager_data.setDebugContext(target.value);
+    
+  }
+}
+
+
 
 
 

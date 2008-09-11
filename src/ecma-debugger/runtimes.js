@@ -2,6 +2,7 @@
   * @constructor 
   */
 
+// TODO clean up in regard of protocol 4
 var runtimes = new function()
 {
   var __runtimes = {};
@@ -372,6 +373,20 @@ var runtimes = new function()
     }
     settings.runtimes.set('selected-window', window_id);
     updateRuntimeViews();
+  }
+
+  // new in proto 4
+
+  this.createAllRuntimes = function(win_id)
+  {
+    var tag =  tagManager.setCB(null, set_new_debug_context, [win_id]);
+    services['ecmascript-debugger'].createAllRuntimes(tag);
+  }
+
+  var set_new_debug_context = function(xml, win_id)
+  {
+    parseRuntime(xml);
+    self.setActiveWindowId(win_id);
   }
 
   this.getThreads = function()

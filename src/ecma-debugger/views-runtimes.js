@@ -73,13 +73,7 @@ RuntimeBaseView.custum_controls =
   }
 ]
 
-eventHandlers.change['select-window'] = function(event, target)
-{
-  if(target.value)
-  {
-    host_tabs.setActiveTab(target.value);
-  }
-}
+
 
 eventHandlers.click['reload-window'] = function(event, target)
 {

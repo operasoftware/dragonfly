@@ -47,6 +47,11 @@ var UIBase = new function()
     return document.getElementById(this.type + '-to-' + this.cell.id) && true || false;
   }
 
+  this.getElement = function()
+  {
+    return document.getElementById(this.type + '-to-' + this.cell.id);
+  }
+
   this.update = function(force_redraw)
   {
     if( force_redraw )

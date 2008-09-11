@@ -321,9 +321,9 @@ cls.ECMAScriptDebuggerService = function(name)
     this.post(msg);
   }
 
-  this.createAllRuntimes = function()
+  this.createAllRuntimes = function(tag)
   {
-    this.post("<runtimes><tag></tag><create-all-runtimes/></runtimes>");
+    this.post("<runtimes><tag>" +  ( tag || '' ) + "</tag><create-all-runtimes/></runtimes>");
   }
 
   this.getMatchingCSSRules = function(tag, obj_id, rt_id)
