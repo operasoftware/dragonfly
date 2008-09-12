@@ -1,0 +1,121 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title> </title>
+<style><![CDATA[
+
+cst-select
+{
+  display: inline-block;
+  position: relative;
+  background-image:-o-skin('Start Skin');
+  padding: .2em 0em .2em .3em;
+}
+
+cst-drop-down
+{
+  display: inline-block;
+  width: 18px;
+  height: 1.6em;
+  background-image:-o-skin('Push Button Skin');
+  margin: -.2em 0em -.2em .3em;
+  
+  
+  vertical-align: top;
+  cursor: pointer;
+}
+
+cst-drop-down:before
+{
+display: inline-block;
+content: "";
+  width: 18px;
+  height: 1.6em;
+background-image: -o-skin('Dropdown Button Skin.pressed');
+}
+
+cst-select-option-list
+{
+  display: block;
+  position:absolute;
+  top: 40px;
+  border: 1px solid blue;
+  background-color: #ccc;
+}
+
+cst-option
+{
+  display: block;
+  cursor: pointer;
+  padding: .2em .5em;
+}
+
+cst-option:hover
+{
+  background-color: #009;
+  color: #fff;
+}
+
+]]></style>
+<script src="../../scripts/dom.js"/>
+<script src="../../ui-scripts/cst-select.js"/>
+<script><![CDATA[
+
+var test_select = new CstSelect("test");
+
+var opt_list = \
+[
+  {
+    value: 0, 
+    title: "some long text variant", 
+    text: "test text 0"
+  },
+  {
+    value: 1, 
+    title: "some long text variant", 
+    text: "test text 1"
+  },
+  {
+    value: 2, 
+    title: "some long text variant", 
+    text: "test text 2"
+  },
+  {
+    value: 3, 
+    title: "some long text variant", 
+    text: "test text 3"
+  },
+  {
+    value: 4, 
+    title: "some long text variant", 
+    text: "test text 4"
+  },
+  {
+    value: 5, 
+    title: "some long text variant", 
+    text: "test text 5"
+  },
+];
+
+test_select.setOptionList(opt_list);
+
+onload = function()
+{
+  var tmpl = \
+  [
+    "div",
+    "some text: ",
+    templates['cst-select'](test_select),
+    " some more text"
+  ];
+
+  document.getElementsByTagName('body')[0].render(tmpl);
+}
+document.addEventListener('change', function(event){opera.postError(event.target.value)}, false);
+]]></script>
+
+</head>
+
+<body>
+<p><input type="button" value="test modal" onclick="alert(this)"/></p>
+</body>
+</html>

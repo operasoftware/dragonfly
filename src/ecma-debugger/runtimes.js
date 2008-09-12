@@ -386,7 +386,8 @@ var runtimes = new function()
   var set_new_debug_context = function(xml, win_id)
   {
     parseRuntime(xml);
-    self.setActiveWindowId(win_id);
+    host_tabs.setActiveTab(win_id);
+    //self.setActiveWindowId(win_id);
   }
 
   this.getThreads = function()
