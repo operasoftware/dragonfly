@@ -8,29 +8,34 @@ cst-select
   display: inline-block;
   position: relative;
   background-image:-o-skin('Start Skin');
-  padding: .2em 0em .2em .3em;
+  padding: .1em 18px .1em .3em;
 }
 
 cst-drop-down
 {
-  display: inline-block;
+  display: block;
   width: 18px;
-  height: 1.6em;
+  height: 1.4em;
   background-image:-o-skin('Push Button Skin');
-  margin: -.2em 0em -.2em .3em;
-  
-  
+  margin: -.1em -18px -.1em .3em;
   vertical-align: top;
+  float: right;
   cursor: pointer;
+}
+
+cst-drop-down:hover
+{
+  opacity: .7;
+
 }
 
 cst-drop-down:before
 {
-display: inline-block;
-content: "";
+  display: inline-block;
+  content: "";
   width: 18px;
-  height: 1.6em;
-background-image: -o-skin('Dropdown Button Skin.pressed');
+  height: 1.4em;
+  background-image: -o-skin('Dropdown Button Skin.pressed');
 }
 
 cst-select-option-list
@@ -38,15 +43,16 @@ cst-select-option-list
   display: block;
   position:absolute;
   top: 40px;
-  border: 1px solid blue;
-  background-color: #ccc;
+  border: 1px solid #999;
+  background-color: hsl(0, 0%, 95%);
 }
 
 cst-option
 {
   display: block;
   cursor: pointer;
-  padding: .2em .5em;
+  padding: .1em .5em;
+  white-space: nowrap;
 }
 
 cst-option:hover
@@ -60,7 +66,7 @@ cst-option:hover
 <script src="../../ui-scripts/cst-select.js"/>
 <script><![CDATA[
 
-var test_select = new CstSelect("test");
+
 
 var opt_list = \
 [
@@ -72,7 +78,7 @@ var opt_list = \
   {
     value: 1, 
     title: "some long text variant", 
-    text: "test text 1"
+    text: "test text 1 xcvxcv xcvxc xcvx"
   },
   {
     value: 2, 
@@ -96,6 +102,7 @@ var opt_list = \
   },
 ];
 
+var test_select = new CstSelect("test");
 test_select.setOptionList(opt_list);
 
 onload = function()
@@ -111,10 +118,10 @@ onload = function()
   document.getElementsByTagName('body')[0].render(tmpl);
 }
 document.addEventListener('change', function(event){opera.postError(event.target.value)}, false);
+
 ]]></script>
 
 </head>
-
 <body>
 <p><input type="button" value="test modal" onclick="alert(this)"/></p>
 </body>

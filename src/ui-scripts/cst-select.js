@@ -67,7 +67,6 @@ var CstSelectBase = new function()
 
     if( selected_opt )
     {
-
       for( ; select = selects[i]; i++)
       {
         if( select.getAttribute('cst-id') == this._id )
@@ -127,7 +126,8 @@ templates['cst-select'] = function(select)
       ["cst-value", select.getSelectedOptionText(), "unselectable", "on"],
       ["cst-drop-down"],
     "cst-id", select.getId(),
-    "unselectable", "on"
+    "unselectable", "on",
+    "style", "width: 200px"
   ]
 }
 
