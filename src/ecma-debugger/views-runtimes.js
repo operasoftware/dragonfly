@@ -132,7 +132,9 @@ cls.RuntimesView = function(id, name, container_class)
       for( ; ( rt = _runtimes[i] ) && !rt['selected']; i++);
       if( !rt && _runtimes[0] )
       {
-        runtimes.setSelectedRuntimeId(_runtimes[0]['runtime-id']);
+        // much too often called
+        // opera.postError('setSelectedRuntimeId in runtimes view')
+        //runtimes.setSelectedRuntimeId(_runtimes[0]['runtime-id']);
         return;
       }
 
@@ -141,7 +143,6 @@ cls.RuntimesView = function(id, name, container_class)
       {
         _runtimes[0]['unfolded-script'] = true;
       }
-
       container.render(['div', 
         templates.runtimes(_runtimes, 'script', 'folder'), 
         'class', 'padding']);

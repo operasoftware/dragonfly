@@ -125,7 +125,7 @@ var ToolbarBase = function()
         var custom = null, i = 0;
         for( ; custom = this.customs[i]; i++)
         {
-          toolbar.render(custom.template());
+          toolbar.render(custom.template(views[view_id]));
         } 
       } 
     }

@@ -550,6 +550,8 @@ cls.JsSourceView = function(id, name, container_class)
     }
   }
 
+  this.script_select = new CstSelect("js-script-select");
+
   var __clearView = function()
   {
     
@@ -622,6 +624,16 @@ new ToolbarConfig
       handler: 'js-source-text-search',
       title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH,
       label: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
+    }
+  ],
+  null,
+  [
+    {
+      handler: 'select-window',
+      title: ui_strings.S_BUTTON_LABEL_SELECT_WINDOW,
+      type: 'dropdown',
+      class: 'window-select-dropdown',
+      template: templates['js-script-select']
     }
   ]
 );

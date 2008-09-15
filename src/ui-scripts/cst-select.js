@@ -18,7 +18,7 @@ var CstSelectBase = new function()
       index = event.target['opt-index'];
       if( select_obj.getSelectedIndex() != index )
       {
-        select_obj.update(index);
+        select_obj.onchange(index);
       }
     }
     modal_box.parentElement.removeChild(modal_box);
@@ -56,8 +56,9 @@ var CstSelectBase = new function()
   {
     return this._id;
   }
-
-  this.update = function(index)
+  
+  // not sure if that makes sense
+  this.onchange = function(index)
   {
     var 
     selects = document.getElementsByTagName('cst-select'),

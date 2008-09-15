@@ -34,6 +34,8 @@ var runtimes = new function()
 
   var __selected_script = '';
 
+  var debug_context_frame_path = '';
+
   var updateRuntimeViews = function()
   {
     var rt = '', i = 0;
@@ -177,12 +179,19 @@ var runtimes = new function()
           if (win_id in __window_ids)
           {
             cleanupWindow(win_id, runtimeId);
+
           }
           else
           {
             __window_ids[win_id] = true;
           }
+          if (!debug_context_frame_path)
+          {
+            debug_context_frame_path = runtime['html-frame-path'];
+          }
         } 
+
+        // TODO check if that is still needed
         getTitleRuntime(runtimeId);
         __runtimes[runtimeId] = runtime;
         if(__next_runtime_id_to_select == runtimeId)
@@ -205,7 +214,10 @@ var runtimes = new function()
         {
           __windows_reloaded[runtime['window-id']] = 2;
         }
-
+        if( debug_context_frame_path == runtime['html-frame-path'] && runtimeId != __selected_runtime_id )
+        {
+          self.setSelectedRuntimeId (runtimeId)
+        }
         //
         if( runtime['window-id'] == __selected_window )
         {
@@ -224,6 +236,7 @@ var runtimes = new function()
 
   var parseGetTitle = function(xml, rt_id)
   {
+
     if(__runtimes[rt_id] && xml.getNodeData('status') == 'completed' )
     {
       __runtimes[rt_id]['title'] = xml.getNodeData('string');
@@ -365,29 +378,34 @@ var runtimes = new function()
 
   this.setActiveWindowId = function(window_id)
   {
-    __selected_window = window_id;
-    cleanUpThreadOnContextChange();
-    if( settings.runtimes.get('reload-runtime-automatically') )
+    if( window_id != __selected_window )
     {
-      self.reloadWindow();
+      __selected_window = window_id;
+      cleanUpThreadOnContextChange();
+      if( settings.runtimes.get('reload-runtime-automatically') )
+      {
+        self.reloadWindow();
+      }
+      settings.runtimes.set('selected-window', window_id);
+      updateRuntimeViews();
     }
-    settings.runtimes.set('selected-window', window_id);
-    updateRuntimeViews();
   }
 
   // new in proto 4
 
+  // window id is the new debug context
   this.createAllRuntimes = function(win_id)
   {
+    debug_context_frame_path = '';
     var tag =  tagManager.setCB(null, set_new_debug_context, [win_id]);
     services['ecmascript-debugger'].createAllRuntimes(tag);
   }
 
   var set_new_debug_context = function(xml, win_id)
   {
+    
     parseRuntime(xml);
     host_tabs.setActiveTab(win_id);
-    //self.setActiveWindowId(win_id);
   }
 
   this.getThreads = function()
@@ -708,9 +726,7 @@ var runtimes = new function()
   }
 
 
-  
-
-
+ 
   this.getRuntimeIdWithURL = function(url)
   {
     var r = '';

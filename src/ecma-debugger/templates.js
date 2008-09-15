@@ -29,6 +29,7 @@
   {
     var ret = ['ul'];
     var win = null, i = 0;
+    
     for( ; win = windows[i]; i++ )  
     {
       ret[ret.length] = self['window-' + win_type](win);
@@ -143,7 +144,7 @@
             'handler', 'show-scripts',
             'runtime_id', runtime['runtime-id'],
             'class', 'folder-key'].concat(runtime['unfolded-script'] ? ['style', 'background-position:0 -11px'] : [] ),
-          ['span', display_uri.uri, 'handler', 'show-global-scope', 'title', 'select a runtime'].
+          ['span', runtime['title'] || display_uri.uri, 'handler', 'show-global-scope', 'title', 'select a runtime'].
             concat( runtime.selected ? ['class', 'selected-runtime'] : [] ).
             concat( display_uri.title ? ['title', display_uri.title] : [] )
  
@@ -610,6 +611,11 @@ Line 2:
     return ret;
              
 
+  }
+
+  this['js-script-select'] = function(ui_obj)
+  {
+    return self['cst-select'](ui_obj.script_select);
   }
   
 

@@ -111,7 +111,7 @@ onload = function()
   [
     "div",
     "some text: ",
-    templates['cst-select'](test_select),
+    templates['cst-select']({script_select:test_select}),
     " some more text"
   ];
 

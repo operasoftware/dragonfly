@@ -911,5 +911,69 @@ textarea-container textarea{
   overflow: hidden;
   }
   
+/*
+  width: 26px;
+  height: 24px;
+  margin: 1px;
+  padding: 0;
+  */
+cst-select
+{
+  display: inline-block;
+  position: relative;
+  background-image:-o-skin('Start Skin');
+  height: 24px;
+  margin: 1px;
+  padding: 0;
+  padding-right: 18px;
+}
 
-  
+cst-drop-down
+{
+  display: block;
+  width: 18px;
+  height: 24px;
+  background-image:-o-skin('Push Button Skin');
+  margin-right: -18px;
+  vertical-align: top;
+  float: right;
+  cursor: pointer;
+}
+
+cst-drop-down:hover
+{
+  opacity: .7;
+
+}
+
+cst-drop-down:before
+{
+  display: inline-block;
+  content: "";
+  width: 18px;
+  height: 24px;
+  background-image: -o-skin('Dropdown Button Skin.pressed');
+}
+
+cst-select-option-list
+{
+  display: block;
+  position:absolute;
+  top: 40px;
+  border: 1px solid #999;
+  background-color: hsl(0, 0%, 95%);
+}
+
+cst-option
+{
+  display: block;
+  cursor: pointer;
+  padding: .1em .5em;
+  white-space: nowrap;
+}
+
+cst-option:hover
+{
+  background-color: #009;
+  color: #fff;
+}
