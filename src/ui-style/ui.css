@@ -923,9 +923,16 @@ cst-select
   position: relative;
   background-image:-o-skin('Start Skin');
   height: 24px;
+  line-height: 24px;
   margin: 1px;
   padding: 0;
   padding-right: 18px;
+}
+
+cst-value
+{
+  
+  padding: 0 .5em;
 }
 
 cst-drop-down
@@ -962,6 +969,7 @@ cst-select-option-list
   top: 40px;
   border: 1px solid #999;
   background-color: hsl(0, 0%, 95%);
+  z-index: 100;
 }
 
 cst-option

@@ -550,7 +550,7 @@ cls.JsSourceView = function(id, name, container_class)
     }
   }
 
-  this.script_select = new CstSelect("js-script-select");
+  
 
   var __clearView = function()
   {
@@ -588,6 +588,48 @@ cls.JsSourceView.prototype = ViewBase;
 new cls.JsSourceView('js_source', ui_strings.M_VIEW_LABEL_SOURCE, 'scroll js-source');
 
 
+cls.ScriptSelect = function(id)
+{
+
+  var selected_value = "test"
+
+  this.getSelectedOptionText = function()
+  {
+    return selected_value;
+  }
+
+  this.getSelectedOptionValue = function()
+  {
+
+  }
+
+  this.templateOptionList = function(select_obj)
+  {
+    return \
+    [
+      ["cst-option", "test 0"],
+      ["cst-option", "test 1"],
+      ["cst-option", "test 2"],
+      ["cst-option", "test 3"],
+    ]
+  }
+
+  this.checkChange = function(target_ele)
+  {
+    selected_value = target_ele.textContent;
+    return true;
+  }
+
+  // this.updateElement
+
+  this.init(id);
+}
+
+cls.ScriptSelect.prototype = new CstSelect();
+
+new cls.ScriptSelect("js-script-select");
+
+//this.script_select = new CstSelect("js-script-select");
 
 
 new ToolbarConfig
@@ -633,7 +675,7 @@ new ToolbarConfig
       title: ui_strings.S_BUTTON_LABEL_SELECT_WINDOW,
       type: 'dropdown',
       class: 'window-select-dropdown',
-      template: templates['js-script-select']
+      template: window['cst-selects']["js-script-select"].getTemplate()
     }
   ]
 );

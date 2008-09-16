@@ -103,7 +103,7 @@ var opt_list = \
 ];
 
 var test_select = new CstSelect("test");
-test_select.setOptionList(opt_list);
+test_select._option_list = opt_list;
 
 onload = function()
 {
@@ -111,12 +111,13 @@ onload = function()
   [
     "div",
     "some text: ",
-    templates['cst-select']({script_select:test_select}),
+    test_select.getTemplate()(),
     " some more text"
   ];
 
   document.getElementsByTagName('body')[0].render(tmpl);
 }
+
 document.addEventListener('change', function(event){opera.postError(event.target.value)}, false);
 
 ]]></script>
