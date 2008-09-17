@@ -65,7 +65,8 @@ var CstSelectBase = new function()
       var select = event.target.parentElement;
       document.addEventListener('click', modal_click_handler, true);
       select_obj = window['cst-selects'][select.getAttribute("cst-id")];
-      modal_box = select.offsetParent.render(templates['cst-select-option-list'](select_obj, select));
+      modal_box = document.documentElement.render(templates['cst-select-option-list'](select_obj, select));
+      // modal_box = select.offsetParent.appendChild(option_list);
     }
   }
 
@@ -185,21 +186,30 @@ templates['cst-select'] = function(select)
       ["cst-value", select.getSelectedOptionText(), "unselectable", "on"],
       ["cst-drop-down"],
     "cst-id", select.getId(),
-    "unselectable", "on",
-    "style", "width: 200px"
+    "unselectable", "on"
   ]
 }
 
 
 templates['cst-select-option-list'] = function(select_obj, select_ele)
 {
+  // TODO check for the best position to dispaly the option list
+  var 
+  box = select_ele.getBoundingClientRect(),
+  left = box.left,
+  bottom = box.bottom,
+  max_width = innerWidth - left - 30,
+  max_height = innerHeight - bottom - 30;
+
   return \
   [
     'cst-select-option-list', 
     select_obj.templateOptionList(select_obj),
     "style",
-    "top:" + ( select_ele.offsetTop - Toolbar.prototype.style['border-top-width'] + select_ele.offsetHeight ) + "px;" +
-    "left:" + ( select_ele.offsetLeft - Toolbar.prototype.style['border-left-width'] ) + "px;" +
-    "min-width:" + select_ele.offsetWidth + "px;"
-  ];
+    "top: " + box.bottom + "px;" +
+    "left: " + ( box.left ) + "px;" +
+    "min-width:" + select_ele.offsetWidth + "px;" +
+    "max-width: " + max_width + "px;" +
+    "max-height: " + max_height + "px"
+  ]
 }

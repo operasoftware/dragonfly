@@ -134,6 +134,8 @@
     return ret.concat( _class ? ['class', _class] : [] );
   }
 
+
+
   this['runtime-script'] = function(runtime)
   {
     var display_uri = helpers.shortenURI(runtime['uri']);
@@ -170,6 +172,95 @@
       }
       scripts_container.splice(scripts_container.length, 0, 'runtime-id', runtime['runtime-id']);
       ret = ret.concat([scripts_container]);
+    }
+    return ret;
+  }
+
+  // TODO clean up after all views and templates are update to core 2.2
+  this.runtimes_2 = function(runtimes, type, _class, org_args)
+  {
+    var ret = ['div'], rt = null, i = 0;
+    for( ; rt = runtimes[i]; i++)
+    {
+      ret[ret.length] = self['runtime-2-' + type](rt, org_args);
+    }
+    return ret.concat( _class ? ['class', _class] : [] );
+  }
+
+  this['runtime-2-script'] = function(runtime)
+  {
+    var 
+    display_uri = helpers.shortenURI(runtime['uri']),
+    is_reloaded_window = runtimes.isReloadedWindow(runtime['window-id']),
+    ret = \
+    [
+      ['h2', runtime['title'] || display_uri.uri].
+      concat( runtime.selected ? ['class', 'selected-runtime'] : [] ).
+      concat( display_uri.title ? ['title', display_uri.title] : [] )
+    ], 
+    scripts = runtimes.getScripts(runtime['runtime-id']),
+    script = null, 
+    i=0;
+
+    if( scripts.length )
+    {
+      for( ; script = scripts[i]; i++)
+      {
+        
+        ret[ret.length] = templates.scriptOption(script, runtimes.getSelectedScript());
+      }
+    }
+    /*
+    TODO handle runtimes with no scripts
+    else
+    {
+      scripts_container = ['p', 
+        settings.runtimes.get('reload-runtime-automatically') || is_reloaded_window 
+        ? ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS
+        : ui_strings.S_INFO_RELOAD_FOR_SCRIPT, 
+        'class', 'info-text'];
+    }
+    */
+
+    return ret;
+  }
+
+  this.scriptOption = function(script, selected_script)
+  {
+    var 
+    display_uri = helpers.shortenURI(script['uri']),
+    /* script types in the protocol: 
+       "inline" | "event" | "linked" | "timeout" | "java" | "generated" | "unknown" */
+    type_dict =
+    {
+      "inline": ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_INLINE,
+      "linked": ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_LINKED,
+      "unknown": ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_UNKNOWN
+    },
+    script_type = script['script-type'],
+    ret = \
+    [
+      'cst-option',
+      ( type_dict[script_type] || script_type ) + ' - ' + 
+      ( 
+        display_uri.uri
+        ? display_uri.uri
+        : ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script['script-id'] 
+      ),
+      'script-id', script['script-id']
+    ];
+
+    if( display_uri.title )
+    {
+      ret.splice(ret.length, 0, 'title', display_uri.title); 
+    }
+    if( script['script-id'] == selected_script )
+    {
+      ret.splice(ret.length, 0, 'class', 'selected'); 
+    }
+    if( script['stop-ats'].length )
+    {
+      ret.splice(ret.length, 0, 'style', 'background-position: 0 0'); 
     }
     return ret;
   }

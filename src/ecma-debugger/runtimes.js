@@ -291,6 +291,14 @@ var runtimes = new function()
       }
       delete __scripts[sc];
     }
+
+    if( !__selected_script )
+    {
+      __selected_script = new_script_id;
+      views['js_source'].update();
+      window['cst-selects']['js-script-select'].updateElement();
+
+    }
   }
   
 /*
@@ -394,9 +402,11 @@ var runtimes = new function()
   // new in proto 4
 
   // window id is the new debug context
+  // called to create all runtimes on setting or changing the debug context
   this.createAllRuntimes = function(win_id)
   {
     debug_context_frame_path = '';
+    __selected_script = '';
     var tag =  tagManager.setCB(null, set_new_debug_context, [win_id]);
     services['ecmascript-debugger'].createAllRuntimes(tag);
   }

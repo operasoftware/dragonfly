@@ -264,6 +264,7 @@ var client = new function()
     {
       defaults[set.target] = set.getValue();
     }
+
     viewport.removeChild(container);
     
     new CompositeView('network_panel', ui_strings.M_VIEW_LABEL_NETWORK, network_rough_layout);
@@ -468,7 +469,7 @@ var js_rough_layout =
       width: 700, 
       children: 
       [
-        { height: 150, tabs: ['runtimes'] },
+        //{ height: 150, tabs: ['runtimes'] },
         { height: 650, tabs: ['js_source']},
         { height: 150, tabs:['command_line']}
       ] 
@@ -493,7 +494,7 @@ var js_rough_layout_panel =
       width: 700, 
       children: 
       [
-        { height: 150, tabs: ['runtimes', 'js_source', 'command_line'] }
+        { height: 150, tabs: [/*'runtimes', */'js_source', 'command_line'] }
       ] 
     },
     { 
@@ -665,19 +666,70 @@ var resolve_map_2 =
     id: 'test-scrollbar-width',
     target: 'scrollbar-width',
     getValue: function(){return ( 100 - document.getElementById(this.id).offsetWidth )}
+  },
+  {
+    id: 'test-cst-select-width',
+    target: 'cst-select-margin-border-padding',
+    getValue: function()
+    {
+      var 
+      props = ['margin-left', 'border-left-width', 'padding-left', 
+       'margin-right', 'border-right-width', 'padding-right'],
+      prop = '', 
+      i = 0,
+      val = 0,
+      style = getComputedStyle(document.getElementById(this.id), null);
+
+      for( ; prop = props[i]; i++)
+      {
+        val += parseInt(style.getPropertyValue(prop));
+      }
+      val += 5;
+      return val;
+    }
   }
 ];
 
-resolve_map_2.markup = 
-  "<div class='js-source'>"+
-    "<div id='js-source-scroll-content'>"+
-      "<div id='js-source-content'>"+
-        "<div id='test-line-height'>test<div>"+
-        "<div style='position:absolute;width:100px;height:100px;overflow:auto'>"+
-          "<div id='test-scrollbar-width' style='height:300px'></div>"+
-        "</div>"        
-      "</div>"+
-    "</div>"+
-  "</div>";
+resolve_map_2.markup = "\
+<div> \
+  <div class='js-source'> \
+    <div id='js-source-scroll-content'> \
+      <div id='js-source-content'> \
+        <div id='test-line-height'>test</div> \
+        <div style='position:absolute;width:100px;height:100px;overflow:auto'> \
+          <div id='test-scrollbar-width' style='height:300px'></div> \
+        </div> \
+      </div> \
+    </div> \
+  </div> \
+  <toolbar style='top:50px;left:50px;height:26px;width:678px;display:block'> \
+    <cst-select id='test-cst-select-width' cst-id='js-script-select' unselectable='on' style='width: 302px' > \
+      <cst-value unselectable='on' /> \
+      <cst-drop-down/> \
+    </cst-select> \
+  </toolbar> \
+</div>\
+";
+
+/*
+  <toolbar style='top:50px;left:50px;height:26px;width:678px;display:block'> \
+    <toolbar-filters id='test-filter-width'> \
+      <filter> \
+        <em>Search</em> \
+        <input/> \
+      </filter> \
+    </toolbar-filters> \
+    <toolbar-buttons> \
+      <input type='button'/><input type='button' id='test-toolbar-button-width'/><input type='button'/> \
+    </toolbar-buttons> \
+      <toolbar-separator/> \
+    <toolbar-switches style='width:100px'> \
+      <input type='button'/><input type='button' id='test-toolbar-switch-width'/><input type='button'/> \
+    </toolbar-switches> \
+  </toolbar> \
+";
+*/
+
+
 
 

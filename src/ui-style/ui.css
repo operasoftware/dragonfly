@@ -924,14 +924,19 @@ cst-select
   background-image:-o-skin('Start Skin');
   height: 24px;
   line-height: 24px;
-  margin: 1px;
+  margin: 1px 0;
   padding: 0;
   padding-right: 18px;
+  margin-left: 5px;
 }
 
 cst-value
 {
-  
+  display: inline-block;
+  margin-right: 18px;
+  margin-top: 1px;
+  -o-text-overflow: ellipsis;
+  overflow:hidden;
   padding: 0 .5em;
 }
 
@@ -966,17 +971,19 @@ cst-select-option-list
 {
   display: block;
   position:absolute;
-  top: 40px;
   border: 1px solid #999;
-  background-color: hsl(0, 0%, 95%);
+  background-color: hsl(0, 0%, 97%);
   z-index: 100;
+  max-height: 200px;
+  overflow: auto;
+  width: auto;
 }
 
 cst-option
 {
   display: block;
   cursor: pointer;
-  padding: .1em .5em;
+  padding: .2em .5em;
   white-space: nowrap;
 }
 

@@ -786,6 +786,26 @@ pre[handler="inspect-object-link"]:hover {
 }
 
 
+.script-options h2
+{
+  padding: .1em .2em;
+  font-size: 1.3em;
+  border-top: 1px solid hsl(0, 0%, 80%);
+  border-bottom: 1px solid hsl(0, 0%, 80%);
+  background-color: hsl(0, 0%, 90%);
+  white-space: nowrap;
+}
+
+.script-options cst-option
+{
+  padding-left: 2.5em;
+}
+
+.script-options
+{
+  
+}
+
 
 
 

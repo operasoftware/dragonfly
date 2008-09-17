@@ -100,9 +100,12 @@ var UIBase = new function()
       {
         ele.style.cssText = css_text;
       }
+      this.update_sub_class();
     }
     return ele;
   }
+
+  this.update_sub_class = function() {};
 
   this.getPropertiesSum = function(prop_arr)
   {

@@ -77,6 +77,32 @@ var ToolbarBase = function()
      
   } 
 
+  this.update_sub_class = function()
+  {
+    var toolbar = document.getElementById(this.type + '-to-' + this.cell.id);
+    if( toolbar )
+    {
+      var cst_select = toolbar.getElementsByTagName('cst-select')[0];
+      if( cst_select )
+      {
+        var 
+        width = this.width,
+        filter = toolbar.getElementsByTagName('filter')[0],
+        previousEle = cst_select.previousElementSibling;
+
+        if( filter )
+        {
+          width -= filter.offsetWidth;
+        }
+        if( previousEle )
+        {
+          width -= ( previousEle.offsetLeft + previousEle.offsetWidth );
+        }
+        cst_select.style.width = ( width - defaults['cst-select-margin-border-padding'] ) + 'px';
+      }
+    }
+  }
+
   this.setup = function(view_id)
   {
     var toolbar = document.getElementById(this.type + '-to-' + this.cell.id) || this.update();

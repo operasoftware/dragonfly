@@ -186,7 +186,7 @@ cls.JsSourceView = function(id, name, container_class)
       }
       container.render(templates.line_nummer_container(max_lines || 1));
       line_numbers = document.getElementById(container_line_nr_id);
-      var selected_script_id = runtimes.getSelectedScript();  
+      var selected_script_id = runtimes.getSelectedScript(); 
       if(selected_script_id && selected_script_id != script.id)
       {
         var stop_at = runtimes.getStoppedAt(selected_script_id);
@@ -421,6 +421,7 @@ cls.JsSourceView = function(id, name, container_class)
       }
     }
     view_invalid = false;
+    
     return is_visible;
 
   }
@@ -554,7 +555,6 @@ cls.JsSourceView = function(id, name, container_class)
 
   var __clearView = function()
   {
-    
     if(source_content = document.getElementById(container_id))
     {
       source_content.innerHTML = '';
@@ -591,11 +591,30 @@ new cls.JsSourceView('js_source', ui_strings.M_VIEW_LABEL_SOURCE, 'scroll js-sou
 cls.ScriptSelect = function(id)
 {
 
-  var selected_value = "test"
+  var selected_value = ""
 
   this.getSelectedOptionText = function()
   {
-    return selected_value;
+    // TODO handle runtimes with no scripts
+    var selected_script_id = runtimes.getSelectedScript();
+    if( selected_script_id )
+    {
+      var script = runtimes.getScript(selected_script_id);
+      var display_uri = helpers.shortenURI(script['uri']);
+      if( script )
+      {
+        return ( 
+          display_uri.uri
+          ? display_uri.uri
+          : ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script['script-id'] 
+        )
+      }
+      else
+      {
+        opera.postError('missing script in getSelectedOptionText in cls.ScriptSelect');
+      }
+    }
+    return '';
   }
 
   this.getSelectedOptionValue = function()
@@ -605,18 +624,43 @@ cls.ScriptSelect = function(id)
 
   this.templateOptionList = function(select_obj)
   {
-    return \
-    [
-      ["cst-option", "test 0"],
-      ["cst-option", "test 1"],
-      ["cst-option", "test 2"],
-      ["cst-option", "test 3"],
-    ]
+    // TODO this is a relict of protocol 3, needs cleanup
+    var active_window_id = runtimes.getActiveWindowId();
+
+    if( active_window_id )
+    {
+      var 
+      _runtimes = runtimes.getRuntimes(active_window_id),
+      rt = null, 
+      i = 0;
+
+      for( ; ( rt = _runtimes[i] ) && !rt['selected']; i++);
+      if( !rt && _runtimes[0] )
+      {
+        opera.postError('no runtime selected')
+        return;
+      }
+      return templates.runtimes_2(_runtimes, 'script', 'script-options');
+    }
   }
 
   this.checkChange = function(target_ele)
   {
+    var script_id = target_ele.getAttribute('script-id');
+
+    if(script_id)
+    {
+      // TODO is this needed?
+      runtimes.setSelectedScript( script_id );
+      topCell.showView(views.js_source.id);
+    }
+    else
+    {
+      opera.postError("missing script id in handlers['display-script']")
+    }
     selected_value = target_ele.textContent;
+    // TODO
+    
     return true;
   }
 
