@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @fileoverview
  * Templates used by the http logger views
  */
@@ -19,7 +19,7 @@ window.templates = window.templates || ( window.templates = {} );
     
     for (var i=0, name; name=alphaheaders[i]; i++)
     {
-        var value = headers[name];
+        var value = headers[name];e
         var dt = ['dt', name + ": "]
         if (name in header_specification_urls)
         {
