@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @fileoverview
  * Stuff related to mime types and figuring out what kind of content we're
  * dealing with.

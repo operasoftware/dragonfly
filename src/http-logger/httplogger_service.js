@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @fileoverview
  * HTTP logger service
  */

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @fileoverview
  * Mappings between http header names and URLs to the relevant spec
  */

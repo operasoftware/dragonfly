@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @fileoverview
  * Data objects and classes for the http logger
  *
