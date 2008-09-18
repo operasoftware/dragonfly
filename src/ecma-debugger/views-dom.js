@@ -241,6 +241,88 @@ cls.DOMView.prototype.constructor = cls.DOMView;
 
 DOM_markup_style.apply(cls.DOMView.prototype);
 
+cls.DocumentSelect = function(id)
+{
+
+  var selected_value = "";
+
+  
+
+  this.getSelectedOptionText = function()
+  {
+    var selected_rt_id = dom_data.getDataRuntimeId();
+    if(selected_rt_id)
+    {
+      var rt = runtimes.getRuntime(selected_rt_id);
+      if( rt )
+      {
+        return rt['title'] || helpers.shortenURI(rt['uri']).uri;
+      }
+      else
+      {
+        opera.postError('missing runtime in getSelectedOptionText in cls.DocumentSelect');
+      }
+    }
+    return '';
+  }
+
+  this.getSelectedOptionValue = function()
+  {
+
+  }
+
+  this.templateOptionList = function(select_obj)
+  {
+    
+    // TODO this is a relict of protocol 3, needs cleanup
+    var active_window_id = runtimes.getActiveWindowId();
+
+    if( active_window_id )
+    {
+      var 
+      _runtimes = runtimes.getRuntimes(active_window_id),
+      rt = null, 
+      i = 0;
+
+      for( ; ( rt = _runtimes[i] ) && !rt['selected']; i++);
+      if( !rt && _runtimes[0] )
+      {
+        opera.postError('no runtime selected')
+        return;
+      }
+      return templates.runtimes_2(_runtimes, 'dom');
+    }
+    
+  }
+
+  this.checkChange = function(target_ele)
+  {
+    var rt_id = target_ele.getAttribute('runtime-id');
+
+    if( rt_id != dom_data.getDataRuntimeId() )
+    {
+      if(rt_id)
+      {
+        dom_data.getDOM(rt_id);
+      }
+      else
+      {
+        opera.postError("missing runtime id in cls.DocumentSelect.checkChange")
+      }
+      return true;
+    }
+    return false;
+  }
+
+  // this.updateElement
+
+  this.init(id);
+}
+
+cls.DocumentSelect.prototype = new CstSelect();
+
+new cls.DocumentSelect('document-select', 'document-options');
+
 new Settings
 (
   // id
@@ -302,16 +384,17 @@ new ToolbarConfig
       handler: 'dom-text-search',
       title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
     }
-  ]/*,
-  // test for help button
+  ],
+  null,
   [
     {
-      handler: 'documentation',
-      title: ui_strings.S_BUTTON_LABEL_HELP,
-      param: 'http://www.opera.com'
+      handler: 'select-window',
+      title: ui_strings.S_BUTTON_LABEL_SELECT_WINDOW,
+      type: 'dropdown',
+      class: 'window-select-dropdown',
+      template: window['cst-selects']['document-select'].getTemplate()
     }
   ]
-  */
 )
 
 new Switches

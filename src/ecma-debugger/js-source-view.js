@@ -588,7 +588,7 @@ cls.JsSourceView.prototype = ViewBase;
 new cls.JsSourceView('js_source', ui_strings.M_VIEW_LABEL_SOURCE, 'scroll js-source');
 
 
-cls.ScriptSelect = function(id)
+cls.ScriptSelect = function(id, class_name)
 {
 
   var selected_value = ""
@@ -640,7 +640,7 @@ cls.ScriptSelect = function(id)
         opera.postError('no runtime selected')
         return;
       }
-      return templates.runtimes_2(_runtimes, 'script', 'script-options');
+      return templates.runtimes_2(_runtimes, 'script');
     }
   }
 
@@ -666,12 +666,12 @@ cls.ScriptSelect = function(id)
 
   // this.updateElement
 
-  this.init(id);
+  this.init(id, class_name);
 }
 
 cls.ScriptSelect.prototype = new CstSelect();
 
-new cls.ScriptSelect("js-script-select");
+new cls.ScriptSelect('js-script-select', 'script-options');
 
 //this.script_select = new CstSelect("js-script-select");
 

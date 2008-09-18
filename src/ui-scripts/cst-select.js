@@ -70,6 +70,8 @@ var CstSelectBase = new function()
     }
   }
 
+   
+
   this.getTemplate = function()
   {
     var select = this;
@@ -105,12 +107,13 @@ var CstSelectBase = new function()
     return ret;
   }
 
-  this.init = function(id)
+  this.init = function(id, class_name)
   {
     ( window['cst-selects'] || ( window['cst-selects'] = {} ) )[id] = this;
     this._option_list = [];
     this._selected_option_index = 0;
     this._id = id;
+    this.class_name = class_name || '';
   }
 
   /* default interface implemetation */
@@ -168,9 +171,9 @@ var CstSelectBase = new function()
 
 
 
-var CstSelect = function(id)
+var CstSelect = function(id, class_name)
 {
-  this.init(id);
+  this.init(id, class_name);
 }
 
 CstSelect.prototype = CstSelectBase;
@@ -211,5 +214,5 @@ templates['cst-select-option-list'] = function(select_obj, select_ele)
     "min-width:" + select_ele.offsetWidth + "px;" +
     "max-width: " + max_width + "px;" +
     "max-height: " + max_height + "px"
-  ]
+  ].concat( select_obj.class_name ? ['class', select_obj.class_name] : [] );
 }

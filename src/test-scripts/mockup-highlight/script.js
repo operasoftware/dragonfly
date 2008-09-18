@@ -4,10 +4,12 @@ TEST_URL_LIST = TEST_DIR + "url-list.xml",
 PADDING = 12;
 
 var
-FADE_OUT_COLOR = 'rgba(0,0,0, 0.4)',
+FADE_OUT_COLOR = 'rgba(255,255,0, 0.2)',
 DEFAULT_HIGHLIGHT_COLOR = 'rgba(0,0,0, 0)',
-HIGHLIGHT_COLOR = 'rgba(0,0,255, .4)',
-GRID_COLOR = 'rgba(0,255,255, 1)';
+HIGHLIGHT_COLOR = 'rgba(0,255,0, .7)',
+GRID_COLOR = 'rgba(0,0,255, 1)',
+NONE = 'rgba(0,0,0, 0)',
+BORDER_COLOR = 'rgba(255, 0, 0, 1)';
 
 
 
@@ -264,26 +266,18 @@ Highlighter = function(doc)
     {
       if( white_box )
       {
-        draw_white_box(white_box);
         draw_hover_box(hover_box, white_box);
       }
       else
       {
         draw_default_hover_box(hover_box);
       }
-      
-    }
-    else if( white_box )
-    {
-      draw_white_box(white_box);
     }
     else
     {
       ctx.clearRect(0, 0, doc_width, doc_height);
 
     }
-
-
 
     if( bottom > scrollBottom )
     {
@@ -294,8 +288,6 @@ Highlighter = function(doc)
       container.scrollTop += top - scrollTop - 80;
     }
 
-    
-
     if( right > scrollRight )
     {
       container.scrollLeft += 80 + right - scrollRight;
@@ -305,19 +297,6 @@ Highlighter = function(doc)
       container.scrollLeft += left - scrollLeft - 80;
     }
 
-
-  }
-
-  var draw_white_box = function(box)
-  {
-    draw_box
-    (
-      box[LEFT], 
-      box[TOP], 
-      box[RIGHT] - box[LEFT], 
-      box[BOTTOM] - box[TOP], 
-      DEFAULT_HIGHLIGHT_COLOR
-    );
   }
 
   var draw_default_hover_box = function(box)
@@ -338,84 +317,92 @@ Highlighter = function(doc)
 
   var draw_hover_box = function(outer_box, inner_box)
   {
-    draw_path
+    var min = Math.min, max = Math.max;
+
+    ctx.save();
+    ctx.fillStyle = HIGHLIGHT_COLOR;
+    ctx.clearRect
     (
-      [
-        inner_box[LEFT], inner_box[TOP], 
-        outer_box[LEFT], outer_box[TOP], 
-        outer_box[RIGHT], outer_box[TOP], 
-        inner_box[RIGHT], inner_box[TOP]
-      ],
-      HIGHLIGHT_COLOR
+      inner_box[LEFT], 
+      inner_box[TOP], 
+      inner_box[RIGHT] - inner_box[LEFT], 
+      inner_box[BOTTOM] - inner_box[TOP]
     );
-    draw_path
+    ctx.clearRect
     (
-      [
-        inner_box[RIGHT], inner_box[TOP], 
-        outer_box[RIGHT], outer_box[TOP], 
-        outer_box[RIGHT], outer_box[BOTTOM], 
-        inner_box[RIGHT], inner_box[BOTTOM]
-      ],
-      HIGHLIGHT_COLOR
+      outer_box[LEFT], 
+      outer_box[TOP], 
+      outer_box[RIGHT] - outer_box[LEFT], 
+      outer_box[BOTTOM] - outer_box[TOP]
     );
-    draw_path
+    ctx.globalCompositeOperation = 'xor';
+    ctx.fillRect 
     (
-      [
-        inner_box[LEFT], inner_box[BOTTOM], 
-        outer_box[LEFT], outer_box[BOTTOM], 
-        outer_box[RIGHT], outer_box[BOTTOM], 
-        inner_box[RIGHT], inner_box[BOTTOM]
-      ],
-      HIGHLIGHT_COLOR
+      inner_box[LEFT], 
+      inner_box[TOP], 
+      inner_box[RIGHT] - inner_box[LEFT], 
+      inner_box[BOTTOM] - inner_box[TOP]
     );
-    draw_path
+    ctx.fillRect 
     (
-      [
-        inner_box[LEFT], inner_box[TOP], 
-        outer_box[LEFT], outer_box[TOP], 
-        outer_box[LEFT], outer_box[BOTTOM], 
-        inner_box[LEFT], inner_box[BOTTOM]
-      ],
-      HIGHLIGHT_COLOR
+      outer_box[LEFT], 
+      outer_box[TOP], 
+      outer_box[RIGHT] - outer_box[LEFT], 
+      outer_box[BOTTOM] - outer_box[TOP]
     );
-    
+    ctx.fillStyle = 'rgba(0,0,0, 1)';
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.fillRect 
+    (
+      max(outer_box[LEFT], inner_box[LEFT]),
+      max(outer_box[TOP], inner_box[TOP]),
+ 
+      min(outer_box[RIGHT], inner_box[RIGHT]) - max(outer_box[LEFT], inner_box[LEFT]), 
+      min(outer_box[BOTTOM], inner_box[BOTTOM]) - max(outer_box[TOP], inner_box[TOP])
+    );
+    ctx.restore();
     draw_horizontal_line(outer_box[TOP]);
     draw_horizontal_line(outer_box[BOTTOM] - 1);
     draw_vertical_line(outer_box[LEFT]);
     draw_vertical_line(outer_box[RIGHT] - 1);
+    draw_frame
+    (
+      inner_box[LEFT], 
+      inner_box[TOP], 
+      inner_box[RIGHT] - inner_box[LEFT], 
+      inner_box[BOTTOM] - inner_box[TOP],
+      BORDER_COLOR
+    );
   }
 
-  var draw_box = function(left, top, width, height, color)
+  var draw_box = function(left, top, width, height, color, border)
   {
     ctx.save();
     ctx.fillStyle = color;
     ctx.clearRect(left, top, width, height);
     ctx.fillRect (left, top, width, height);
     ctx.restore();
+    if(border)
+    {
+      draw_frame(left, top, width, height, border);
+    }
   }
 
-  var draw_path = function(path, color)
+  var draw_frame = function(left, top, width, height, color)
   {
-    var
-    x = 0,
-    y = 0,
-    i = 2;
-
     ctx.save();
-    ctx.beginPath();
-    ctx.moveTo(path[0], path[1]);
-    for( ; i < path.length; i += 2 )
-    {
-      ctx.lineTo(path[i], path[i+1]);
-    }
-    ctx.fillStyle = "rgb(0,0,0,1)";
-    ctx.globalCompositeOperation = "destination-out";
-    ctx.fill();
     ctx.fillStyle = color;
-    ctx.globalCompositeOperation = "source-over";
-    ctx.fill();
+    ctx.clearRect(left, top, width, 1);
+    ctx.fillRect (left, top, width, 1);
+    ctx.clearRect(left, top, 1, height);
+    ctx.fillRect (left, top, 1, height);
+    ctx.clearRect(left + width - 1, top, 1, height);
+    ctx.fillRect (left + width - 1, top, 1, height);
+    ctx.clearRect(left, top + height - 1 , width, 1);
+    ctx.fillRect (left, top + height - 1 , width, 1);
     ctx.restore();
   }
+
   var draw_horizontal_line = function(top)
   {
     ctx.save();
@@ -434,10 +421,6 @@ Highlighter = function(doc)
     ctx.restore();
   }
 
-
-
-
-  
   init();
   
 },

@@ -177,14 +177,14 @@
   }
 
   // TODO clean up after all views and templates are update to core 2.2
-  this.runtimes_2 = function(runtimes, type, _class, org_args)
+  this.runtimes_2 = function(runtimes, type)
   {
-    var ret = ['div'], rt = null, i = 0;
+    var ret = [], rt = null, i = 0;
     for( ; rt = runtimes[i]; i++)
     {
-      ret[ret.length] = self['runtime-2-' + type](rt, org_args);
+      ret[ret.length] = self['runtime-2-' + type](rt);
     }
-    return ret.concat( _class ? ['class', _class] : [] );
+    return ret; 
   }
 
   this['runtime-2-script'] = function(runtime)
@@ -297,6 +297,18 @@
       ret = ret.concat([container])
     }
     return ret;
+  }
+
+  this['runtime-2-dom'] = function(runtime)
+  {
+    var display_uri = runtime['title'] || helpers.shortenURI(runtime['uri']).uri;
+    return (
+    [
+      'cst-option',
+       runtime['title'] || runtime['uri'], 
+      'runtime-id', runtime['runtime-id']
+    ].concat( dom_data.getDataRuntimeId() == runtime['runtime-id'] ? ['class', 'selected-runtime'] : [] ).
+      concat( display_uri != runtime['uri'] ? ['title', runtime['uri']] : [] ) )
   }
 
   this['runtime-dom'] = function(runtime)
