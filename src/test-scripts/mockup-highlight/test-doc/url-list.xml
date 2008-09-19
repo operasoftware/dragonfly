@@ -1,1 +1,21 @@
-<root><url>dev-opera-com.html</url><url>test-negative-margins.html</url></root>
+<root>
+	<url>site-amazon_com.html</url>
+	<url>site-bbc_co_uk.html</url>
+	<url>site-blogger_com.html</url>
+	<url>site-cnn_com.html</url>
+	<url>site-craigslist_org.html</url>
+	<url>site-dev_opera_com.html</url>
+	<url>site-ebay_com.html</url>
+	<url>site-espn_go_com.html</url>
+	<url>site-flickr_com.html</url>
+	<url>site-google_com.html</url>
+	<url>site-live_com.html</url>
+	<url>site-mininova_org.html</url>
+	<url>site-msn_com.html</url>
+	<url>site-myspace_com.html</url>
+	<url>site-wikipedia_org.html</url>
+	<url>site-yahoo_com.html</url>
+	<url>site-youtube_com.html</url>
+	<url>test-negative-margins.html</url>
+	<url>test-shapes.html</url>
+</root>
