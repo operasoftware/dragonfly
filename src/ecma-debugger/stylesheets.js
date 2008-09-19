@@ -18,6 +18,10 @@ var stylesheets = new function()
   var __shorthandIndexMap = [];
   var __selectedRules = null;
   var __colorIndex = 0;
+
+  var __new_rts = null;
+  var __top_rt_id = '';
+  var __on_new_stylesheets_cbs = null;
   
   var line_height_index = 0;
   
@@ -826,6 +830,11 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
       return null;
     }
   }
+
+  this.getSheetWithRtIdAndIndex = function(rt_id, index)
+  {
+    return __sheets[rt_id] && __sheets[rt_id][index] || null;
+  }
   
   this.getRulesWithSheetIndex = function(rt_id, index, org_args)
   {
@@ -851,11 +860,31 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
       rules: rules,
       rule_id: rule_id || ''
     }
+    window['cst-selects']['stylesheet-select'].updateElement();
+
   }
   
-  this.getSelectedSheet = function()
+  this.getSelectedSheet = function(org_args)
   {
-    return __selectedRules;
+    if( __selectedRules )
+    {
+      return __selectedRules;
+    }
+    if( org_args )
+    {
+      onNewStylesheets(selectFirstSheet, __top_rt_id, 0, org_args);
+    }
+    return null;
+  }
+
+  var selectFirstSheet = function(rt_id, index, org_args)
+  {
+    var rules = stylesheets.getRulesWithSheetIndex(rt_id, index, arguments);
+    if(rules)
+    {
+      self.setSelectedSheet(rt_id, index, rules);
+      org_args.callee.apply(null, org_args);
+    }
   }
 
   this.hasSelectedSheetRuntime = function(rt_id)
@@ -1140,6 +1169,7 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   var handleGetRulesWithIndex = function(xml, rt_id, index, org_args)
   {
     var json = xml.getNodeData('rule-list');
+
     if( json )
     {
       __rules[rt_id][index] = eval('(' + json +')');
@@ -1155,6 +1185,7 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   var handleGetAllStylesheets = function(xml, rt_id, org_args)
   {
     var json = xml.getNodeData('stylesheets');
+
     if( json )
     {
       __sheets[rt_id] = eval('(' + json +')');
@@ -1172,31 +1203,85 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   {
     if( __selectedRules &&  __selectedRules.runtime_id == msg.id )
     {
-      
       views.stylesheets.clearAllContainers();
     }
+  }
 
+  var onNewStylesheets = function(/* cb, arg 1, arg 2, ... */)
+  {
+    if(__on_new_stylesheets_cbs)
+    {
+      __on_new_stylesheets_cbs[__on_new_stylesheets_cbs.length] = arguments;
+    }
+    else
+    {
+      arguments[0].apply(null, arguments.slice(1));
+    }
+  }
+
+  var resetOnNewStylesheets = function()
+  {
+    __on_new_stylesheets_cbs = [];
+  }
+
+  var checkNewRts = function(obj)
+  {
+    if( __new_rts )
+    {
+      var 
+      cursor = null, 
+      i = 0,
+      all_loaded = true;
+
+      for( i = 0; cursor = __new_rts[i]; i++)
+      {
+        if( !__sheets[cursor] )
+        {
+          all_loaded = false;
+          delete obj.__call_count;
+          self.getStylesheets(cursor, arguments);
+        }
+      }
+      if( all_loaded )
+      {
+        __new_rts = null;
+        if( __on_new_stylesheets_cbs )
+        {
+          for( i = 0; cursor = __on_new_stylesheets_cbs[i]; i++)
+          {
+            cursor[0].apply(null, cursor.slice(1));
+          }
+          __on_new_stylesheets_cbs = null;
+          // opera.postError(JSON.stringify(__sheets))
+        }
+      }
+    }
   }
 
   var onActiveTab = function(msg)
-  {
+  { 
     if( __selectedRules  )
     {
       var rt_id = __selectedRules.runtime_id, cur_rt_id = '', i = 0;
+
       for( ; ( cur_rt_id = msg.activeTab[i] ) && cur_rt_id != rt_id ; i++);
       if( !cur_rt_id )
       {
         views.stylesheets.clearAllContainers();
       }
     }
+    resetOnNewStylesheets();
+    __new_rts = msg.activeTab.slice(0);
+    __top_rt_id = msg.activeTab[0];
+    checkNewRts({});
   }
 
   this.getSortedProperties = function()
   {
     var ret = [], i = 0, dashs = [], value = '';
+
     for ( ; i <  __indexMapLength; i++ )
     {
-
       value = __indexMap[__sortedIndexMap[i]];
       if( value.indexOf('-') == 0 )
       {

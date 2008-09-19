@@ -192,13 +192,15 @@ var window_manager_data = new function()
   {
     services['window-manager'].set_debug_context(win_id);
     this.debug_context = win_id;
+    // TODO cleanup, the active window id should just be at one place
+    runtimes.setActiveWindowId(win_id);
     update_views();
     // workaround as long as we don't have a command confirmation. see bug 361876
     setTimeout
     (
       function() 
       {
-        runtimes.createAllRuntimes(win_id)
+        runtimes.createAllRuntimesOnDebugContextChange(win_id);
       }, 
       100
     )

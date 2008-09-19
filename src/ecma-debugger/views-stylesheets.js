@@ -12,14 +12,14 @@ cls.StylesheetsView = function(id, name, container_class)
 
   this.createView = function(container)
   {
-    var selected_sheet = stylesheets.getSelectedSheet();
+    var selected_sheet = stylesheets.getSelectedSheet(arguments);
     if(selected_sheet)
     {
       // TODO check markup
       //var t = new Date().getTime();
       container.innerHTML = 
         "<div class='padding'>" + 
-        stylesheets.prettyPrintRules(selected_sheet.rules, settings[this.id].get('shortcuts') ) + 
+        stylesheets.prettyPrintRules(selected_sheet.rules, settings[self.id].get('shortcuts') ) + 
         "</div>";
       if(selected_sheet.rule_id)
       {
@@ -64,6 +64,95 @@ cls.StylesheetsView = function(id, name, container_class)
 cls.StylesheetsView.prototype = ViewBase;
 new cls.StylesheetsView('stylesheets', ui_strings.M_VIEW_LABEL_STYLESHEET, 'scroll stylesheets');
 
+
+cls.StylesheetSelect = function(id)
+{
+
+  var selected_value = "";
+
+  const 
+    HREF = 2,
+  TITLE = 7;
+
+  
+
+  this.getSelectedOptionText = function()
+  {
+    var 
+    title = '',
+    selected_sheet = stylesheets.getSelectedSheet(),
+    sheet = null;
+
+    if(selected_sheet)
+    {
+      sheet = stylesheets.getSheetWithRtIdAndIndex(selected_sheet.runtime_id, selected_sheet.index);
+      if( sheet )
+      {
+        title = sheet[TITLE] ||sheet[HREF];
+      }
+    }
+    return title;
+  }
+
+  this.getSelectedOptionValue = function()
+  {
+
+  }
+
+  this.templateOptionList = function(select_obj)
+  {
+    /*
+    // TODO this is a relict of protocol 3, needs cleanup
+    var active_window_id = runtimes.getActiveWindowId();
+
+    if( active_window_id )
+    {
+      var 
+      _runtimes = runtimes.getRuntimes(active_window_id),
+      rt = null, 
+      i = 0;
+
+      for( ; ( rt = _runtimes[i] ) && !rt['selected']; i++);
+      if( !rt && _runtimes[0] )
+      {
+        opera.postError('no runtime selected')
+        return;
+      }
+      return templates.runtimes_2(_runtimes, 'dom');
+    }
+    */
+  }
+
+  this.checkChange = function(target_ele)
+  {
+    /*
+    var rt_id = target_ele.getAttribute('runtime-id');
+
+    if( rt_id != dom_data.getDataRuntimeId() )
+    {
+      if(rt_id)
+      {
+        dom_data.getDOM(rt_id);
+      }
+      else
+      {
+        opera.postError("missing runtime id in cls.StylesheetSelect.checkChange")
+      }
+      return true;
+    }
+    return false;
+    */
+  }
+
+  // this.updateElement
+
+  this.init(id);
+}
+
+cls.StylesheetSelect.prototype = new CstSelect();
+
+new cls.StylesheetSelect('stylesheet-select', 'stylesheet-options');
+
 new Settings
 (
   // id
@@ -93,6 +182,16 @@ new ToolbarConfig
     {
       handler: 'stylesheets-text-search',
       title: 'text search'
+    }
+  ],
+  null,
+  [
+    {
+      handler: 'select-window',
+      title: ui_strings.S_BUTTON_LABEL_SELECT_WINDOW,
+      type: 'dropdown',
+      class: 'window-select-dropdown',
+      template: window['cst-selects']['stylesheet-select'].getTemplate()
     }
   ]
 )

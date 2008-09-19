@@ -349,6 +349,7 @@ cls.RuntimesCSSView = function(id, name, container_class)
 
   this.createView = function(container)
   {
+    /*
     self.updateWindowDropdown(container);
     container.innerHTML = '';
 
@@ -395,14 +396,17 @@ cls.RuntimesCSSView = function(id, name, container_class)
         delete container.__call_count;
       }
     }
+    */
   }
 
   var onViewCreated = function(msg)
   {
+    /*
     if( !window.opera.attached && msg.id == 'stylesheets' )
     {
       topCell.showView(id);
     }
+    */
   }
   
   this.init(id, name, container_class);

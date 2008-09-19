@@ -188,12 +188,13 @@ var runtimes = new function()
           if (!debug_context_frame_path)
           {
             debug_context_frame_path = runtime['html-frame-path'];
-          }
+            
+          }          
         } 
-
-        // TODO check if that is still needed
         getTitleRuntime(runtimeId);
         __runtimes[runtimeId] = runtime;
+        // TODO check if that is still needed
+
         if(__next_runtime_id_to_select == runtimeId)
         {
           self.setSelectedRuntime(runtime);
@@ -386,14 +387,11 @@ var runtimes = new function()
 
   this.setActiveWindowId = function(window_id)
   {
+    
     if( window_id != __selected_window )
     {
       __selected_window = window_id;
       cleanUpThreadOnContextChange();
-      if( settings.runtimes.get('reload-runtime-automatically') )
-      {
-        self.reloadWindow();
-      }
       settings.runtimes.set('selected-window', window_id);
       updateRuntimeViews();
     }
@@ -403,7 +401,7 @@ var runtimes = new function()
 
   // window id is the new debug context
   // called to create all runtimes on setting or changing the debug context
-  this.createAllRuntimes = function(win_id)
+  this.createAllRuntimesOnDebugContextChange = function(win_id)
   {
     debug_context_frame_path = '';
     __selected_script = '';
@@ -413,9 +411,12 @@ var runtimes = new function()
 
   var set_new_debug_context = function(xml, win_id)
   {
-    
     parseRuntime(xml);
     host_tabs.setActiveTab(win_id);
+    if( settings.runtimes.get('reload-runtime-automatically') )
+    {
+      self.reloadWindow();
+    }
   }
 
   this.getThreads = function()
