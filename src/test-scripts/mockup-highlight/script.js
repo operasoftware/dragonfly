@@ -4,10 +4,10 @@ TEST_URL_LIST = TEST_DIR + "url-list.xml",
 PADDING = 12;
 
 var
-FADE_OUT_COLOR = 'rgba(255,255,0, 0.2)',
+FADE_OUT_COLOR = 'rgba(255,255,255, .5)',
 DEFAULT_HIGHLIGHT_COLOR = 'rgba(0,0,0, 0)',
 HIGHLIGHT_COLOR = 'rgba(0,255,0, .7)',
-GRID_COLOR = 'rgba(0,0,255, 1)',
+GRID_COLOR = 'rgba(0,50,255, 1)',
 NONE = 'rgba(0,0,0, 0)',
 BORDER_COLOR = 'rgba(255, 0, 0, 1)';
 
@@ -22,6 +22,7 @@ ref_index = 0,
 highlighter = null,
 selected_node = null,
 current_target_metrics = null,
+current_target_metrics_inner = null,
 test_doc_target = null,
 
 
@@ -97,6 +98,7 @@ getDOM = function()
   
   
 },
+
 Highlighter = function(doc)
 {
   const
@@ -273,6 +275,10 @@ Highlighter = function(doc)
         draw_default_hover_box(hover_box);
       }
     }
+    else if( white_box )
+    {
+      draw_default_hover_box(white_box);
+    }
     else
     {
       ctx.clearRect(0, 0, doc_width, doc_height);
@@ -356,7 +362,6 @@ Highlighter = function(doc)
     (
       max(outer_box[LEFT], inner_box[LEFT]),
       max(outer_box[TOP], inner_box[TOP]),
- 
       min(outer_box[RIGHT], inner_box[RIGHT]) - max(outer_box[LEFT], inner_box[LEFT]), 
       min(outer_box[BOTTOM], inner_box[BOTTOM]) - max(outer_box[TOP], inner_box[TOP])
     );
@@ -470,9 +475,16 @@ mouseover = function(event)
 {
   var 
   target = event.target,
-  cls = {margin:1, border:1, padding:1, dimension:1};
+  // cls = {margin:1, border:1, padding:1, dimension:1},
+  cls = ['margin', 'border', 'padding', 'dimension'],
+  cls_index = 0,
+  cn_in_cls = function(cn)
+  {
+    for( cls_index = 0; cls_index < cls.length && !(cn == cls[cls_index] ); cls_index++);
+    return cls_index < cls.length; 
+  };
 
-  while(target && !(target.className in cls) && ( target = target.parentElement ) );
+  while(target && !( cn_in_cls(target.className) ) && ( target = target.parentElement ) );
   if( target == current_target_metrics )
   {
     return;
@@ -482,12 +494,21 @@ mouseover = function(event)
     current_target_metrics.style.removeProperty("background-color");
     current_target_metrics.style.removeProperty("color");
   }
+  if( current_target_metrics_inner )
+  {
+    current_target_metrics_inner.style.removeProperty("border-color");
+  }
   current_target_metrics = target || null;
   if( current_target_metrics )
   {
     target.style.backgroundColor = 
       HIGHLIGHT_COLOR.replace(/rgba\( *(\d+) *, *(\d+) *, *(\d+).*/, "rgb($1,$2,$3)") ;
     current_target_metrics.style.color = "#fff";
+    if( cls[cls_index + 1] )
+    {
+        current_target_metrics_inner = current_target_metrics.getElementsByClassName(cls[cls_index + 1])[0];
+        current_target_metrics_inner.style.borderColor = BORDER_COLOR.replace(/rgba\( *(\d+) *, *(\d+) *, *(\d+).*/, "rgb($1,$2,$3)");
+    }
   }
 
   if( test_doc_target )
