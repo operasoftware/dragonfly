@@ -189,7 +189,8 @@ var runtimes = new function()
           {
             debug_context_frame_path = runtime['html-frame-path'];
             
-          }          
+          }   
+          __selected_script = '';
         } 
         getTitleRuntime(runtimeId);
         __runtimes[runtimeId] = runtime;

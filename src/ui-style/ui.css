@@ -84,7 +84,6 @@ info { /**/
 	
 top-toolbar { /**/
   height: 26px;
-  background-color: #69f;
   padding-right: 0px;
   }
 
@@ -401,7 +400,6 @@ window-controls {
   top: 0;
   right: 0;
   z-index:1000;
-  background-color: #0f0;
   }
 
 

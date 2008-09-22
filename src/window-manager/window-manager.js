@@ -238,7 +238,7 @@ var window_manager_data = new function()
         }
       }
     }
-    update_views.update();
+    update_views();
   }
 }
 

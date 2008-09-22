@@ -1,8 +1,8 @@
-var CstSelectBase = new function()
+﻿var CstSelectBase = new function()
 {
 
   /** interface **/
-
+	//
   /**
     * get the text string of the selected option 
     */
