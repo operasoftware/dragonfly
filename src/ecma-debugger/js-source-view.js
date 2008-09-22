@@ -640,7 +640,7 @@ cls.ScriptSelect = function(id, class_name)
         opera.postError('no runtime selected')
         return;
       }
-      return templates.runtimes_2(_runtimes, 'script');
+      return templates.runtimes(_runtimes, 'script');
     }
   }
 

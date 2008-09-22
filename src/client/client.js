@@ -433,12 +433,7 @@ var dom_rough_layout =
   children: 
   [
     { 
-      width: 700,
-      children: 
-      [
-        { height: 150, tabs: ['runtimes_dom', 'runtimes_css'] },
-        { width: 200, tabs: ['dom', 'stylesheets'] }
-      ]
+      width: 700, tabs: ['dom', 'stylesheets']
     },
     { 
       width: 250, tabs: ['css-inspector', 'dom_attrs', 'css-layout'] 
@@ -452,7 +447,7 @@ var dom_rough_layout_panel =
   children: 
   [
     { 
-      width: 700, tabs: ['runtimes_dom', 'runtimes_css', 'dom', 'stylesheets']
+      width: 700, tabs: ['dom', 'stylesheets']
     },
     { 
       width: 250, tabs: ['css-inspector', 'dom_attrs', 'css-layout'] 
@@ -548,13 +543,13 @@ var network_rough_layout =
 var main_layout =
 {
   id: 'main-view', 
-  tabs: ['js_new', 'dom_new', 'console_new', 'environment_new', "network_panel", 'settings_new']
+  tabs: ['js_new', 'dom_new', 'network_panel', 'console_new', 'environment_new',  'settings_new']
 }
 
 var panel_layout =
 {
   id: 'main-view', 
-  tabs: ['js_panel', 'dom_panel', 'console_new', 'environment_new', "network_panel", 'settings_new']
+  tabs: ['js_panel', 'dom_panel',  'network_panel', 'console_new', 'environment_new', 'settings_new']
 }
 
 var resolve_map_properties = 

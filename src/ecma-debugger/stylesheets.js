@@ -21,7 +21,7 @@ var stylesheets = new function()
 
   var __new_rts = null;
   var __top_rt_id = '';
-  var __on_new_stylesheets_cbs = null;
+  var __on_new_stylesheets_cbs = {};
   
   var line_height_index = 0;
   
@@ -872,7 +872,7 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     }
     if( org_args )
     {
-      onNewStylesheets(selectFirstSheet, __top_rt_id, 0, org_args);
+      onNewStylesheets(__top_rt_id, [null, selectFirstSheet, __top_rt_id, 0, org_args]);
     }
     return null;
   }
@@ -1207,52 +1207,69 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     }
   }
 
-  var onNewStylesheets = function(/* cb, arg 1, arg 2, ... */)
+  var onNewStylesheets = function(rt_id, cb_arr/* obj, cb_method, arg 1, arg 2, ... */)
   {
-    if(__on_new_stylesheets_cbs)
+    // cb_arr: [cb_obj, cb_method, arg 1, arg 2, ... ]
+    if(__on_new_stylesheets_cbs[rt_id])
     {
-      __on_new_stylesheets_cbs[__on_new_stylesheets_cbs.length] = arguments;
+      __on_new_stylesheets_cbs[rt_id][__on_new_stylesheets_cbs[rt_id].length] = cb_arr;
     }
     else
     {
-      arguments[0].apply(null, arguments.slice(1));
+      cb_arr[1].apply(cb_arr[0], cb_arr.slice(2));
     }
   }
 
-  var resetOnNewStylesheets = function()
+  var updateOnNewStylesheets = function(rt_ids) // rt_ids is an array
   {
-    __on_new_stylesheets_cbs = [];
+    var 
+    rt_id_c_1 = '',
+    rt_id_c_2 = '',
+    i = 0;
+
+    for( rt_id_c_1 in __on_new_stylesheets_cbs )
+    {
+      for( i = 0; ( rt_id_c_2 = rt_ids[i] ) && rt_id_c_1 != rt_id_c_2 ; i++ );
+      if( !rt_id_c_2 )
+      { 
+        delete __on_new_stylesheets_cbs[rt_id_c_1];
+      }
+    }
+    for( i = 0; rt_id_c_1 = rt_ids[i]; i++ )
+    {
+      if( ! ( rt_id_c_1 in __on_new_stylesheets_cbs ) )
+      {
+        __on_new_stylesheets_cbs[rt_id_c_1] = [];
+      }
+    }
+    __new_rts = rt_ids;
+    __top_rt_id = rt_ids[0];
   }
 
   var checkNewRts = function(obj)
   {
-    if( __new_rts )
-    {
-      var 
-      cursor = null, 
-      i = 0,
-      all_loaded = true;
+    var 
+    cursor = null, 
+    cbs = null,
+    cb = null,
+    i = 0;
 
-      for( i = 0; cursor = __new_rts[i]; i++)
+    for( i = 0; cursor = __new_rts[i]; i++)
+    {
+      if( !__sheets[cursor] )
       {
-        if( !__sheets[cursor] )
-        {
-          all_loaded = false;
-          delete obj.__call_count;
-          self.getStylesheets(cursor, arguments);
-        }
+        delete obj.__call_count;
+        self.getStylesheets(cursor, arguments);
       }
-      if( all_loaded )
+      else
       {
-        __new_rts = null;
-        if( __on_new_stylesheets_cbs )
+        if( cbs = __on_new_stylesheets_cbs[cursor] )
         {
-          for( i = 0; cursor = __on_new_stylesheets_cbs[i]; i++)
+          for( i = 0; cb = cbs[i]; i++)
           {
-            cursor[0].apply(null, cursor.slice(1));
+            cb[1].apply(cb[0], cursor.slice(2));
           }
-          __on_new_stylesheets_cbs = null;
-          // opera.postError(JSON.stringify(__sheets))
+          delete __on_new_stylesheets_cbs[cursor];
         }
       }
     }
@@ -1270,9 +1287,7 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
         views.stylesheets.clearAllContainers();
       }
     }
-    resetOnNewStylesheets();
-    __new_rts = msg.activeTab.slice(0);
-    __top_rt_id = msg.activeTab[0];
+    updateOnNewStylesheets(msg.activeTab.slice(0));
     checkNewRts({});
   }
 

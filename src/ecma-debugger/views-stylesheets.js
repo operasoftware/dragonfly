@@ -88,7 +88,7 @@ cls.StylesheetSelect = function(id)
       sheet = stylesheets.getSheetWithRtIdAndIndex(selected_sheet.runtime_id, selected_sheet.index);
       if( sheet )
       {
-        title = sheet[TITLE] ||sheet[HREF];
+        title = sheet[TITLE] || sheet[HREF] || 'inline stylesheet ' + ( selected_sheet.index + 1 );
       }
     }
     return title;
@@ -101,30 +101,35 @@ cls.StylesheetSelect = function(id)
 
   this.templateOptionList = function(select_obj)
   {
-    /*
+    
     // TODO this is a relict of protocol 3, needs cleanup
     var active_window_id = runtimes.getActiveWindowId();
 
     if( active_window_id )
     {
-      var 
-      _runtimes = runtimes.getRuntimes(active_window_id),
-      rt = null, 
-      i = 0;
-
-      for( ; ( rt = _runtimes[i] ) && !rt['selected']; i++);
-      if( !rt && _runtimes[0] )
-      {
-        opera.postError('no runtime selected')
-        return;
-      }
-      return templates.runtimes_2(_runtimes, 'dom');
+      return templates.runtimes(runtimes.getRuntimes(active_window_id), 'css');
     }
-    */
+    opera.postError('no active window in templateOptionList in cls.StylesheetSelect');
+    return [];
   }
 
   this.checkChange = function(target_ele)
   {
+
+    var index = parseInt(target_ele.getAttribute('index'));
+    var rt_id = target_ele.getAttribute('runtime-id');
+    // stylesheets.getRulesWithSheetIndex will call this function again if data is not avaible
+    // handleGetRulesWithIndex in stylesheets will 
+    // set for this reason __call_count on the event object
+    var rules = stylesheets.getRulesWithSheetIndex(rt_id, index, arguments);
+
+    if(rules)
+    {
+      stylesheets.setSelectedSheet(rt_id, index, rules);
+      topCell.showView(views.stylesheets.id);
+    }
+
+
     /*
     var rt_id = target_ele.getAttribute('runtime-id');
 

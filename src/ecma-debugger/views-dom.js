@@ -290,7 +290,7 @@ cls.DocumentSelect = function(id)
         opera.postError('no runtime selected')
         return;
       }
-      return templates.runtimes_2(_runtimes, 'dom');
+      return templates.runtimes(_runtimes, 'dom');
     }
     
   }
