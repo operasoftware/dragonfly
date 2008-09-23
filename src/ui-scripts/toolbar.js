@@ -60,7 +60,6 @@ var ToolbarBase = function()
       this.is_dirty = true;
       this.width = dim;
     }
-
     dim = ( this.__is_visible  && ( 
             this.buttons.length 
             || this.filters.length
@@ -103,6 +102,11 @@ var ToolbarBase = function()
     }
   }
 
+  this.setVisibility = function(bool)
+  {
+    this.__is_visible = bool;
+  }
+
   this.setup = function(view_id)
   {
     var toolbar = document.getElementById(this.type + '-to-' + this.cell.id) || this.update();
@@ -112,6 +116,7 @@ var ToolbarBase = function()
     this.switches = switches[view_id] && switches[view_id].keys || [];
     this.specials = toolbars[view_id] && toolbars[view_id].specials || [];
     this.customs = toolbars[view_id] && toolbars[view_id].customs || [];
+    this.__view_id = view_id;
 
     var set_separator = this.buttons.length;
 

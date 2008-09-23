@@ -234,6 +234,13 @@ var window_manager_data = new function()
         if( win_id == win["window-id"] )
         {
           this.window_list.splice(i, 1);
+          if( win_id == this.active_window )
+          {
+            if (this.window_list.length)
+            {
+              this.setDebugContext(this.window_list[0]['window-id'])
+            }
+          }
           break;
         }
       }

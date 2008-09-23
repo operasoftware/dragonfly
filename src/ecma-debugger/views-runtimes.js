@@ -117,6 +117,7 @@ cls.RuntimesView = function(id, name, container_class)
 
   this.createView = function(container)
   {
+    /*
     this.updateWindowDropdown(container);
     container.innerHTML = '';
 
@@ -147,11 +148,12 @@ cls.RuntimesView = function(id, name, container_class)
         templates.runtimes(_runtimes, 'script', 'folder'), 
         'class', 'padding']);
     }
+    */
   }
 
   this.updateSelectedScript = function( target, script_id )
   {
-
+    /*
     var 
     containers = self.getAllContainers(), 
     c = null , 
@@ -166,10 +168,13 @@ cls.RuntimesView = function(id, name, container_class)
       }
     }
     target.addClass('selected');
+    */
   }
 
   var onThreadStopped = function(msg)
   {
+    /*
+    // TODO port to the new drop downs
     var script_id = msg.stop_at['script-id'];
     var containers = self.getAllContainers(), c = null , i = 0;
     var lis = null, li = null , k = 0;
@@ -186,10 +191,14 @@ cls.RuntimesView = function(id, name, container_class)
         }
       }
     }
+    */
   }
 
   var onThreadContinue = function(msg)
   {
+    /*
+    // TODO port to the new drop downs
+    // move to dropdown select
     var script_id = msg.stop_at['script-id'];
     var containers = self.getAllContainers(), c = null , i = 0;
     var lis = null, li = null , k = 0;
@@ -205,6 +214,7 @@ cls.RuntimesView = function(id, name, container_class)
         }
       }
     }
+    */
   }
 
 
@@ -241,6 +251,7 @@ cls.RuntimesDOMView = function(id, name, container_class)
 
   this.createView = function(container)
   {
+    /*
     this.updateWindowDropdown(container);
     container.innerHTML = '';
 
@@ -270,12 +281,13 @@ cls.RuntimesDOMView = function(id, name, container_class)
         templates.runtimes(_runtimes, 'dom', 'folder'), 
         'class', 'padding']);
     }
+    */
 
   }
 
   this.updateSelectedRuntime = function(rt_id)
   {
-
+    /*
     var containers = this.getAllContainers(), c = null , i = 0;
     var lis = null, li = null , k = 0;
     for( ; c = containers[i]; i++)
@@ -297,23 +309,27 @@ cls.RuntimesDOMView = function(id, name, container_class)
         }
       }
     }
+    */
   }
 
   var onRuntimeSelected = function(msg)
   {
+    /*
     if(self.isvisible())
     {
       self.updateSelectedRuntime(msg.id);
     }
-    
+    */
   }
 
   var onViewCreated = function(msg)
   {
+    /*
     if( !window.opera.attached && msg.id == 'dom' )
     {
       topCell.showView(id);
     }
+    */
   }
 
   this.init(id, name, container_class);

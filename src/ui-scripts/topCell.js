@@ -11,6 +11,7 @@ var TopCell = function(layout, setDimensions, onresize)
   this.setStartDimesions = setDimensions;
   var resize_timeout = new Timeouts();
   this.onresize = onresize;
+  this.cell_type = 'top';
   var delayed_resize = function()
   {
     
@@ -76,6 +77,19 @@ var TopCell = function(layout, setDimensions, onresize)
             tab.setActiveTab(ret[i+1]);
           }
         }
+      }
+    }
+  }
+
+  this.setTooolbarVisibility = function(view_id, bool)
+  {
+    var tab = '', view = null, i = 0;
+
+    for( i = 0 ; tab = this.tab.tabs[i]; i++ )
+    {
+      if( view = views[tab.ref_id] )
+      {
+        view.cell.setTooolbarVisibility(view_id, bool);
       }
     }
   }

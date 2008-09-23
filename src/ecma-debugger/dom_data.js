@@ -257,7 +257,10 @@ var dom_data = new function()
 
   this.getDOM = function(rt_id)
   {
-    getInitialView(rt_id);
+    if(runtime_onload_handler.check(rt_id, arguments))
+    {
+      getInitialView(rt_id);
+    }
   }
 
 

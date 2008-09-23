@@ -299,6 +299,7 @@ var runtimes = new function()
       __selected_script = new_script_id;
       views['js_source'].update();
       window['cst-selects']['js-script-select'].updateElement();
+      window['cst-selects']['cmd-runtime-select'].updateElement();
 
     }
   }

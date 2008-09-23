@@ -1243,7 +1243,13 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
       }
     }
     __new_rts = rt_ids;
-    __top_rt_id = rt_ids[0];
+    if( rt_ids[0] != __top_rt_id )
+    {
+
+      __top_rt_id = rt_ids[0];
+      __selectedRules = null;
+      views['stylesheets'].update();
+    }
   }
 
   var checkNewRts = function(obj)
@@ -1267,7 +1273,7 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
         {
           for( i = 0; cb = cbs[i]; i++)
           {
-            cb[1].apply(cb[0], cursor.slice(2));
+            cb[1].apply(cb[0], cb.slice(2));
           }
           delete __on_new_stylesheets_cbs[cursor];
         }

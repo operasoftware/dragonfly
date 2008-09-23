@@ -24,7 +24,7 @@
   }
 
 
-
+/*
   this.windows = function(windows, win_type)
   {
     var ret = ['ul'];
@@ -123,18 +123,31 @@
     ret.splice(ret.length, 0, 'window_id', win.id);
     return ret;
   }
-
-  this.runtimes = function(runtimes, type)
+*/
+  this.runtimes = function(runtimes, type, arg_list)
   {
     var ret = [], rt = null, i = 0;
     for( ; rt = runtimes[i]; i++)
     {
-      ret[ret.length] = self['runtime-' + type](rt);
+      ret[ret.length] = self['runtime-' + type](rt, arg_list);
     }
     return ret; 
   }
 
-  this['runtime-script'] = function(runtime)
+  this['runtime-runtime'] = function(runtime, arg_list)
+  {
+    var display_uri = helpers.shortenURI(runtime['uri']);
+
+    return  \
+    [
+      'cst-option', 
+      runtime['title'] || display_uri.uri,
+      'rt-id', runtime['runtime-id']
+    ].concat( display_uri.title ? ['title', display_uri.title] : [] )
+    ;
+  }
+
+  this['runtime-script'] = function(runtime, arg_list)
   {
     var 
     display_uri = helpers.shortenURI(runtime['uri']),
@@ -147,14 +160,15 @@
     ], 
     scripts = runtimes.getScripts(runtime['runtime-id']),
     script = null, 
-    i=0;
+    i=0,
+    stopped_script_id = arg_list[0];
 
     if( scripts.length )
     {
       for( ; script = scripts[i]; i++)
       {
         
-        ret[ret.length] = templates.scriptOption(script, runtimes.getSelectedScript());
+        ret[ret.length] = templates.scriptOption(script, runtimes.getSelectedScript(), stopped_script_id);
       }
     }
     /*
@@ -172,7 +186,7 @@
     return ret;
   }
 
-  this.scriptOption = function(script, selected_script)
+  this.scriptOption = function(script, selected_script, stopped_script_id)
   {
     var 
     display_uri = helpers.shortenURI(script['uri']),
@@ -195,20 +209,23 @@
         : ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script['script-id'] 
       ),
       'script-id', script['script-id']
-    ];
+    ].concat( stopped_script_id == script['script-id'] ? ['class', 'stopped'] : [] );
 
     if( display_uri.title )
     {
       ret.splice(ret.length, 0, 'title', display_uri.title); 
     }
+    /*
     if( script['script-id'] == selected_script )
     {
       ret.splice(ret.length, 0, 'class', 'selected'); 
     }
+    
     if( script['stop-ats'].length )
     {
       ret.splice(ret.length, 0, 'style', 'background-position: 0 0'); 
     }
+    */
     return ret;
   }
   

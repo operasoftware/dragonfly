@@ -65,7 +65,7 @@ cls.StylesheetsView.prototype = ViewBase;
 new cls.StylesheetsView('stylesheets', ui_strings.M_VIEW_LABEL_STYLESHEET, 'scroll stylesheets');
 
 
-cls.StylesheetSelect = function(id)
+cls.StylesheetSelect = function(id, class_name)
 {
 
   var selected_value = "";
@@ -125,33 +125,13 @@ cls.StylesheetSelect = function(id)
 
     if(rules)
     {
+      delete target_ele.__call_count;
       stylesheets.setSelectedSheet(rt_id, index, rules);
-      topCell.showView(views.stylesheets.id);
+      views['stylesheets'].update();
     }
-
-
-    /*
-    var rt_id = target_ele.getAttribute('runtime-id');
-
-    if( rt_id != dom_data.getDataRuntimeId() )
-    {
-      if(rt_id)
-      {
-        dom_data.getDOM(rt_id);
-      }
-      else
-      {
-        opera.postError("missing runtime id in cls.StylesheetSelect.checkChange")
-      }
-      return true;
-    }
-    return false;
-    */
   }
 
-  // this.updateElement
-
-  this.init(id);
+  this.init(id, class_name);
 }
 
 cls.StylesheetSelect.prototype = new CstSelect();

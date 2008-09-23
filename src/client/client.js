@@ -464,16 +464,15 @@ var js_rough_layout =
       width: 700, 
       children: 
       [
-        //{ height: 150, tabs: ['runtimes'] },
-        { height: 650, tabs: ['js_source']},
-        { height: 150, tabs:['command_line']}
+        { height: 350, tabs: ['js_source']},
+        { height: 250, tabs:['command_line']}
       ] 
     },
     { 
       width: 250, 
       children: 
       [
-        { height: 250, tabs: ['callstack', 'threads'] },
+        { height: 200, tabs: ['callstack', 'threads'] },
         { height: 1000, tabs: ['frame_inspection'] }
       ] 
     }

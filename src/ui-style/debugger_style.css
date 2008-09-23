@@ -786,7 +786,7 @@ pre[handler="inspect-object-link"]:hover {
 }
 
 
-.script-options h2
+.script-options h2, .stylesheet-options h2
 {
   padding: .1em .2em;
   font-size: 1.3em;
@@ -796,12 +796,12 @@ pre[handler="inspect-object-link"]:hover {
   white-space: nowrap;
 }
 
-.script-options h2:first-child
+.script-options h2:first-child, .stylesheet-options h2:first-child
 {
   border-top: 0px solid;
 }
 
-.script-options cst-option
+.script-options cst-option, .stylesheet-options cst-option
 {
   padding-left: 2.5em;
 }
@@ -816,6 +816,20 @@ cst-select-option-list
   margin: -1px 0 0 -1px;
 }
 */
+
+.script-options cst-option
+{
+  background-image: url('../ui-images/selected-frame-top.png');
+  background-position:  5px -16px;
+  background-repeat: no-repeat ;
+}
+
+.script-options cst-option.stopped 
+{ 
+  background-position: 5px 50%;
+}
+
+
 
 
 
