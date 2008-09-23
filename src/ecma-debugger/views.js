@@ -235,16 +235,48 @@ eventHandlers.click['apply-remote-debugging'] = function(event, target)
 }
 
 
+// TODO clean up
+
+var templates = window.templates || ( window.templates = {} );
+
+templates.windowSelect = function()
+{
+  return [
+    'window-select',
+    [
+      'select',
+      'handler', this.handler
+    ]
+  ];
+}
 
 
 new ToolbarConfig
 (
   'main-view',
-  RuntimeBaseView.reload_button,
+  [
+    {
+      handler: 'reload-window',
+      title: ui_strings.S_BUTTON_LABEL_RELOAD_HOST
+    }
+  ],
   null,
   null,
-  RuntimeBaseView.custum_controls
+  [
+    {
+      handler: 'select-window',
+      title: ui_strings.S_BUTTON_LABEL_SELECT_WINDOW,
+      type: 'dropdown',
+      class: 'window-select-dropdown',
+      template: templates.windowSelect
+    }
+  ]
 )
+
+eventHandlers.click['reload-window'] = function(event, target)
+{
+  runtimes.reloadWindow();
+}
 
 
 

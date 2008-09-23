@@ -26,7 +26,7 @@ var runtimes = new function()
 
   var view_ids = ['threads'];
 
-  var runtime_views = ['runtimes', 'runtimes_dom', 'runtimes_css'];
+  var runtime_views = [];
 
   var __selected_runtime_id = '';
 
@@ -36,6 +36,7 @@ var runtimes = new function()
 
   var debug_context_frame_path = '';
 
+  // TODO check if that can be removed completly
   var updateRuntimeViews = function()
   {
     var rt = '', i = 0;
@@ -452,7 +453,7 @@ var runtimes = new function()
       script['stop-ats'] = [];
       registerRuntime( script['runtime-id'] );
       registerScript( script );
-      views['runtimes'].update();
+      // views['runtimes'].update();
     }
   }
 
@@ -893,7 +894,7 @@ var runtimes = new function()
     {
       this.setSelectedRuntime(__runtimes[id]);
       // this is not clean
-      views.runtimes.update();
+      // views.runtimes.update();
     }
     else
     {
