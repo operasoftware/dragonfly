@@ -1,4 +1,5 @@
 <root>
+	<url>test-shapes.html</url>
 	<url>site-amazon_com.html</url>
 	<url>site-bbc_co_uk.html</url>
 	<url>site-blogger_com.html</url>
@@ -17,5 +18,4 @@
 	<url>site-yahoo_com.html</url>
 	<url>site-youtube_com.html</url>
 	<url>test-negative-margins.html</url>
-	<url>test-shapes.html</url>
 </root>
