@@ -806,17 +806,6 @@ pre[handler="inspect-object-link"]:hover {
   padding-left: 2.5em;
 }
 
-/*
-cst-select-option-list
-{
-  background-image:-o-skin('Help Tooltip Skin');
-  padding: 1px 7px 7px 1px;
-  background-color: transparent;
-  border: 0px solid;
-  margin: -1px 0 0 -1px;
-}
-*/
-
 .script-options cst-option
 {
   background-image: url('../ui-images/selected-frame-top.png');

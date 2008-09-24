@@ -60,18 +60,17 @@
 
   var click_handler = function(event)
   {
-    if( /cst-drop-dow/.test(event.target.nodeName) )
+    var ele = event.target;
+    if( /^cst-/.test(ele.nodeName) )
     {
-      var select = event.target.parentElement;
+      var select = /^cst-select/.test(ele.nodeName) && ele || ele.parentElement;
       document.addEventListener('click', modal_click_handler, true);
       select_obj = window['cst-selects'][select.getAttribute("cst-id")];
       modal_box = document.documentElement.render(templates['cst-select-option-list'](select_obj, select));
-      // modal_box = select.offsetParent.appendChild(option_list);
     }
   }
 
    
-
   this.getTemplate = function()
   {
     var select = this;
