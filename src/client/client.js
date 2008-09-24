@@ -20,21 +20,27 @@ var client = new function()
 
   var host_connected = function(_services)
   {
-    // opera.postError('on host_connected: '+_services);
     services_avaible = eval("({\"" + _services.replace(/,/g, "\":1,\"") + "\":1})");
-    var service = null, i = 0;
-    for( ; service = services[i]; i++)
+    // workaround for a missing hello message
+    if( 'window-manager' in services_avaible )
     {
-      if (service.name in services_avaible)	
+      var service = null, i = 0;
+      for( ; service = services[i]; i++)
       {
-        //opera.postError('register service: '+ service.name);
-        opera.scopeEnableService(service.name);
-        service.onconnect();
+        if (service.name in services_avaible)	
+        {
+          opera.scopeEnableService(service.name);
+          service.onconnect();
+        }
+        else
+        {
+          alert ( ui_strings.S_INFO_SERVICE_NOT_AVAILABLE.replace(/%s/, service.name) );
+        }
       }
-      else
-      {
-        alert ( ui_strings.S_INFO_SERVICE_NOT_AVAILABLE.replace(/%s/, service.name) );
-      }
+    }
+    else
+    {
+      handle_fallback.apply(new XMLHttpRequest(), ["protocol-3"]);
     }
   }
 
@@ -74,8 +80,6 @@ var client = new function()
     proxy.POST("/" + service, msg);
   }
 
-
-
   var bindCB = function(service)
   {
     var service_name = service.name;
@@ -93,26 +97,59 @@ var client = new function()
   var proxy_onsetup = function()
   {
     var service = null, i = 0;
-    for( ; service = services[i]; i++)
+    // workaround for a missing hello message
+    for( ; ( service = this.services[i] ) && !( service == 'window-manager' ); i++);
+    if( service == 'window-manager' )
     {
-      if (!proxy.enable(service.name))	
+      for( i = 0; service = services[i]; i++)
       {
-        alert
-        ( 
-           'Could not find an Opera session to connect to.\n' +
-           'Please try the following:\n' + 
-           '1. Open another Opera instance\n' +
-           '2. In that Opera instance, open opera:config and check "Enable Debugging" and "Enable Script Debugging" under "Developer Tools"\n' +
-           '3. Restart that Opera instance' 
-        );
+        if (!proxy.enable(service.name))	
+        {
+          alert
+          ( 
+             'Could not find an Opera session to connect to.\n' +
+             'Please try the following:\n' + 
+             '1. Open another Opera instance\n' +
+             '2. In that Opera instance, open opera:config and check "Enable Debugging" and "Enable Script Debugging" under "Developer Tools"\n' +
+             '3. Restart that Opera instance' 
+          );
+        }
+        else
+        {
+          service.onconnect();
+          proxy.GET( "/" + service.name, bindCB(service) );
+        }
+      }
+    }
+    else
+    {
+      handle_fallback.apply(new XMLHttpRequest(), ["protocol-3"]);
+    }
+
+  }
+
+  var handle_fallback = function(version)
+  {
+    this.onload = function()
+    {
+      var fallback_urls = eval( "(" + this.responseText + ")" );
+      if( version in fallback_urls )
+      {
+        var url = location.href;
+        url = ( /\/$/.test(url) && url || url.replace(/\/[^/]*$/, '/') ) + 
+          fallback_urls[version];
+        if( confirm(ui_strings.S_CONFIRM_LOAD_COMPATIBLE_VERSION) )
+        {
+          location = url;
+        }
       }
       else
       {
-        service.onconnect();
-        proxy.GET( "/" + service.name, bindCB(service) );
+        alert(ui_strings.S_INFO_NO_COMPATIBLE_VERSION);
       }
     }
-
+    this.open('GET', './fall-back-urls.json');
+    this.send();
   }
 
   this.scopeSetupClient = function()
