@@ -89,6 +89,12 @@ value
 {
   color:#742;;
 }
+
+node-container:hover
+{
+  background-color:#ececda;
+}
+
 .selected
 {
   background-color:#ddb;
@@ -100,7 +106,18 @@ value
   top: 50%;
   left: 50%;
   right: 0;
-  bottom: 0%;
+  bottom: 15%;
+  overflow: hidden;
+  border-left: 5px solid #ccc;
+}
+
+#settings-container
+{
+  position:absolute;
+  top: 85%;
+  left: 50%;
+  right: 0;
+  bottom: 0;
   overflow: hidden;
   border-left: 5px solid #ccc;
 }
