@@ -23,11 +23,12 @@
 <div id="controls-container">
   <h2>Metrics</h2>
   <div id="metrics"></div>
+  <div id="controls">
+    <label><input type='checkbox' onchange='highlighter.setLock(this.checked)'/> lock</label>
+    <input type='button' value='clear lock' onclick='highlighter.clearLock()'/>
+  </div>
 </div>
-<div id="settings-container">
-  <h2>Settings</h2>
-  <p><label><input type='checkbox' onchange='setLock(this.checked)'/> lock</label></p>
-</div>
+
 <!--
 <div id="interface-container">
   <h2>Interface</h2>

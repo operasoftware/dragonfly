@@ -13,8 +13,7 @@ ACTION_SHOW_GRID_MARGIN = 5;
 var
 HIGHLIGHT_COLOR = 'rgba(0,255,0, .7)',
 GRID_COLOR = 'rgba(0,50,255, 1)',
-BORDER_COLOR = 'rgba(255, 0, 0, 1)',
-LOCKED_BORDER_COLOR = 'rgba(220, 0, 0, 1)';
+BORDER_COLOR = 'rgba(255, 0, 0, 1)';
 
 var
 test_win = null,
@@ -71,7 +70,8 @@ getDOM = function()
 		child = null,
 		i = 0,
 		length = 0,
-		close = false;
+		close = false,
+    value = '';
 
 		for( ; child = children[i]; i++) 
     {
@@ -86,10 +86,24 @@ getDOM = function()
 			}
 			else
       {
-				markup += 
-				children.length > 1
-				? "<node-container style='padding-left:" + padding * PADDING +"px;'>" + child.nodeValue + "</node-container>"
-				: child.nodeValue;  
+        try
+        {
+          value = child.nodeValue;
+          if( value.length > 500 )
+          {
+            value = value.slice(0, 500) + ' ... ';
+          }
+          markup += 
+          children.length > 1
+          ? "<node-container style='padding-left:" + padding * PADDING +"px;'>" + child.nodeValue.replace(/</g, '&lt;') + "</node-container>"
+          : value.replace(/</g, '&lt;');  
+          
+        }
+        catch (e)
+        {
+          opera.postError(child);
+        }
+
 			}
 		}
 	},
@@ -124,16 +138,19 @@ Highlighter = function(doc)
   is_lock = false, 
   lock_eles = [],
   lock_boxes = [],
+  last_selected = null,
 
 	init = function() 
   {
 
 		canvas = doc.documentElement.appendChild(doc.createElement('canvas'));
 
-		doc_width = canvas.width = doc.documentElement.scrollWidth;
-		doc_height = canvas.height = doc.documentElement.scrollHeight;
+		doc_width = canvas.width = ( doc.body || doc.documentElement ).scrollWidth;
+		doc_height = canvas.height = ( doc.body || doc.documentElement ).scrollHeight;
+
 		doc_view_width = test_win.contentWindow.innerWidth;
 		doc_view_height = test_win.contentWindow.innerHeight;
+
 
 		canvas.style.cssText =
 		"width:" + doc_width + "px;" +
@@ -143,6 +160,8 @@ Highlighter = function(doc)
 		"top: 0;" +
 		"left:0;" +
 		"z-index: 10000;";
+
+
 
 		ctx = canvas.getContext('2d');
 
@@ -191,7 +210,7 @@ Highlighter = function(doc)
     or_box = null,
     max = Math.max,
     min = Math.min;
-
+    
     ctx.save();
     // draw xor inner and outer box with alpha values
     if (inner_box)
@@ -317,16 +336,16 @@ Highlighter = function(doc)
     left = box[LEFT];
 
     // scroll into view vertically
-    if (bottom > scrollBottom)
+    if ( ( bottom - top ) < doc_view_height && bottom > scrollBottom )
     {
       container.scrollTop += 80 + bottom - scrollBottom;
     }
-    else if (top < scrollTop)
+    else if ( top < scrollTop)
     {
       container.scrollTop += top - scrollTop - 80;
     }
     // scroll into view horizontally
-    if (right > scrollRight)
+    if ( ( right - left ) < doc_view_width && right > scrollRight )
     {
       container.scrollLeft += 80 + right - scrollRight;
     }
@@ -338,12 +357,14 @@ Highlighter = function(doc)
 
   this.setLock = function(bool)
   {
-    if( !( is_lock = bool ) )
-    {
-      lock_eles = [];
-      lock_boxes = [];
-      this.highlightNode();
-    }
+    is_lock = bool;
+  }
+
+  this.clearLock = function()
+  {
+    lock_eles = [];
+    lock_boxes = [];
+    this.highlightNode();
   }
 
 	this.highlightNode = function(node, mode, check_lock) 
@@ -361,7 +382,8 @@ Highlighter = function(doc)
     {
 			case ACTION_SHOW_BORDER:
       {
-        scrollIntoView(frame_box = outer_box = boxes[BORDER]);
+        frame_box = outer_box = boxes[BORDER];
+        scrollIntoView(frame_box);
 				break;
       }
 			case ACTION_SHOW_GRID_DIMENSION:
@@ -390,17 +412,23 @@ Highlighter = function(doc)
 		}
 
     clear();
-    ctx.fillStyle = LOCKED_BORDER_COLOR;
+    ctx.fillStyle = BORDER_COLOR;
     for( ; cursor_box = lock_boxes[i]; i++)
     {
       draw_border(cursor_box);
     }
+    // not sure if that is good
+    if( !outer_box && last_selected )
+    {
+      frame_box = last_selected[1][BORDER];
+    }
     ctx.fillStyle = HIGHLIGHT_COLOR;
     draw_highlight(outer_box, inner_box);
-    ctx.fillStyle = BORDER_COLOR;
-    draw_border(frame_box);
     ctx.fillStyle = GRID_COLOR;
     draw_grid(grid_box);
+    ctx.fillStyle = BORDER_COLOR;
+    draw_border(frame_box);
+    last_selected = [node, boxes];
     if(check_lock && is_lock && ( grid_box || frame_box ) )
     {
       var index = lock_eles.indexOf(node);
@@ -432,20 +460,39 @@ click_handler_dom = function(event)
     if (selected_node)
     {
       selected_node.className = "";
+      selected_node.removeEventListener('mouseover', mouseover_dom_2, false);
+      selected_node.removeEventListener('mouseout', mouseout_dom_2, false);
     }
     selected_node = target;
     selected_node.className = "selected";
+    selected_node.addEventListener('mouseover', mouseover_dom_2, false);
+    selected_node.addEventListener('mouseout', mouseout_dom_2, false);
     test_doc_target = dom_nodes[ref_index];
     metrics = document.getElementById("metrics");
     metrics.innerHTML = "";
     metrics.render(templates.metrics(frames[0].getComputedStyle(test_doc_target, null)));
     highlighter.highlightNode(test_doc_target, ACTION_SHOW_BORDER, true);
+    if(event.syntetic)
+    {
+      event.target.scrollIntoView();
+    }
   }
-}
+},
+
+mouseover_dom_2 = function(event) 
+{
+  highlighter.highlightNode(test_doc_target, ACTION_SHOW_BORDER );
+},
+
+mouseout_dom_2 = function(event) 
+{
+  highlighter.highlightNode(test_doc_target, ACTION_CLEAR );
+},
 
 /* handle mouse hovering in DOM view: point to element */
 mouseover_dom = function(event) 
 {
+  /*
   var 
   target = event.target;
 
@@ -456,7 +503,10 @@ mouseover_dom = function(event)
     highlighter.highlightNode(test_doc_target, 
       target.hasClass('selected') && ACTION_SHOW_BORDER || ACTION_CLEAR );
   }
+  */
 },
+
+
 
 cls = ['margin', 'border', 'padding', 'dimension'],
 cls_map = 
@@ -518,6 +568,7 @@ mouseover_controls = function(event, check_lock)
     return;
   }
   clearHighlightControlMetrics();
+
   current_target_metrics = target;
   showHighlightControlMetrics(); 
   if (test_doc_target)
@@ -525,6 +576,13 @@ mouseover_controls = function(event, check_lock)
     highlighter.highlightNode(test_doc_target, 
       current_target_metrics && cls_map[current_target_metrics.className] || ACTION_CLEAR,
       check_lock);
+  }
+  if( !target )
+  {
+    current_target_metrics_inner = 
+      document.getElementById("metrics").getElementsByClassName(cls[1])[0];
+    current_target_metrics_inner.style.borderColor = 
+      BORDER_COLOR.replace(/rgba\( *(\d+) *, *(\d+) *, *(\d+).*/, "rgb($1,$2,$3)");
   }
 },
 
@@ -560,15 +618,52 @@ getTestUrls = function()
   xhr.send(null);
 },
 
+getRealTarget = function(event)
+{
+  var x = event.pageX, y = event.pageY;
+
+  event.target.style.display= 'none';
+
+  var target = this.elementFromPoint(x,y);
+
+  while(target && target.nodeType != 1 && ( target = target.parentNode ) );
+  event.target.style.removeProperty('display');
+
+  var 
+  index = dom_nodes.indexOf(target),
+  s_index = index.toString(),
+  nodes = document.getElementById('dom').getElementsByTagName('node-container'),
+  node = null,
+  i = 0;
+
+  for( ; ( node = nodes[i] ) && !( node.getAttribute('ref-index') == s_index ); i++);
+  if( node )
+  {
+    click_handler_dom({target: node, syntetic: true});
+  }
+},
+
+
+
 loadurl = function(url)
 {
+  document.getElementById('dom').innerHTML = '';
+  document.getElementById("metrics").innerHTML = "";
   test_win = document.getElementsByTagName('iframe')[0];
+  
   test_win.onload = function()
   {
+    
     document.getElementById("metrics").innerHTML = "";
+    
     getDOM(test_doc = this.contentDocument);
+    
+    this.contentDocument.addEventListener('click', getRealTarget, false);
+    
     highlighter = new Highlighter(test_doc);
+    
   }
+  
   test_win.location = TEST_DIR + url;
 },
 
@@ -577,12 +672,7 @@ init = function()
   document.getElementById('dom-container').addEventListener('click', click_handler_dom, false);
   document.getElementById('dom-container').addEventListener('mouseover', mouseover_dom, false);
   getTestUrls();
-},
-
-setLock = function(bool)
-{
-  highlighter.setLock(bool);
-},
+};
 
 window.templates || ( window.templates = {} );
 

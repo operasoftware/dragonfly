@@ -20,7 +20,19 @@ li
 }
 </style>
 <script>
+/*
+var getRealTarget = function(event)
+{
+  var x = event.pageX, y = event.pageY;
+  event.target.style.display= 'none';
+  var target = document.elementFromPoint(x,y);
+  while(target && target.nodeType != 1 && ( target = target.parentNode ) );
 
+  event.target.style.removeProperty('display');
+  opera.postError(target && target.nodeName || 'no target');
+}
+document.addEventListener('click', getRealTarget, false);
+*/
 </script>
 </head>
 
