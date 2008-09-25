@@ -145,7 +145,7 @@ Highlighter = function(doc)
 
 		canvas = doc.documentElement.appendChild(doc.createElement('canvas'));
 
-		doc_width = canvas.width = ( doc.body || doc.documentElement ).scrollWidth;
+		doc_width = canvas.width = ( doc.documentElement ).scrollWidth;
 		doc_height = canvas.height = ( doc.body || doc.documentElement ).scrollHeight;
 
 		doc_view_width = test_win.contentWindow.innerWidth;
