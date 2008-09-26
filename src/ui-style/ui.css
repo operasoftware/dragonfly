@@ -927,6 +927,7 @@ cst-select
   padding: 0;
   padding-right: 18px;
   margin-left: 5px;
+  
 }
 
 cst-value
@@ -991,4 +992,55 @@ cst-option:hover
 {
   background-color: #009;
   color: #fff;
+}
+
+cst-select.color
+{
+  background: none;
+  border: 1px solid #666;
+  padding: 0;
+  width: 18px;
+  margin: 0 .2em;
+  margin-left: 10px;
+  height: 18px;
+  vertical-align: middle;
+}
+
+cst-select.color cst-value
+{
+  display: none;
+}
+
+cst-select.color cst-drop-down
+{
+  margin-right: -20px;
+  display: none;
+}
+
+cst-select-option-list.color
+{
+  padding: .5em;
+  width: 10em;
+}
+
+cst-select-option-list.color cst-option 
+{
+  float: left;
+  width: 1.4em;
+  height: 1.4em;
+  padding: 0;
+  margin: .2em;
+  border: 1px solid #999;
+}
+
+cst-select-option-list.color label 
+{
+  display: block;
+  clear: both;
+  padding: .4em 0;
+}
+
+cst-select-option-list.color [type="text"] 
+{
+  width: 2em;
 }

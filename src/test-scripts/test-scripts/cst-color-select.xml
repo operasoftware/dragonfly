@@ -1,0 +1,141 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title> </title>
+<style><![CDATA[
+
+cst-select
+{
+  display: inline-block;
+  position: relative;
+  background-image:-o-skin('Start Skin');
+  padding: .1em 18px .1em .3em;
+}
+
+
+
+cst-drop-down
+{
+  display: block;
+  width: 18px;
+  height: 1.4em;
+  background-image:-o-skin('Push Button Skin');
+  margin: -.1em -18px -.1em .3em;
+  vertical-align: top;
+  float: right;
+  cursor: pointer;
+}
+
+cst-drop-down:hover
+{
+  opacity: .7;
+
+}
+
+cst-drop-down:before
+{
+  display: inline-block;
+  content: "";
+  width: 18px;
+  height: 1.4em;
+  background-image: -o-skin('Dropdown Button Skin.pressed');
+}
+
+cst-select-option-list
+{
+  display: block;
+  position:absolute;
+  top: 40px;
+  border: 1px solid #999;
+  background-color: hsl(0, 0%, 95%);
+}
+
+cst-option
+{
+  display: block;
+  cursor: pointer;
+  padding: .1em .5em;
+  white-space: nowrap;
+}
+
+cst-option:hover
+{
+  background-color: #009;
+  color: #fff;
+}
+
+cst-select.color
+{
+  background: none;
+  border: 1px solid #999;
+  padding: .1em 0 .1em 0;
+  width: 1.4em;
+  margin-right: 20px;
+}
+
+cst-select.color cst-drop-down
+{
+  margin-right: -20px;
+}
+
+cst-select-option-list.color
+{
+  padding: .5em;
+  width: 10em;
+}
+
+cst-select-option-list.color cst-option 
+{
+  float: left;
+  width: 1.4em;
+  height: 1.4em;
+  padding: 0;
+  margin: .2em;
+  border: 1px solid #999;
+}
+
+cst-select-option-list.color label 
+{
+  display: block;
+  clear: both;
+  padding: .4em 0;
+}
+
+cst-select-option-list.color [type="text"] 
+{
+  width: 2em;
+}
+
+]]></style>
+<script src="../../scripts/dom.js"/>
+<script src="./cst-select.js"/>
+<script><![CDATA[
+
+
+
+
+
+var test_select = new CstSelectColor("test");
+
+
+onload = function()
+{
+  var tmpl = \
+  [
+    "div",
+    "some text: ",
+    test_select.getTemplate()(),
+    " some more text"
+  ];
+
+  document.getElementsByTagName('body')[0].render(tmpl);
+}
+
+document.addEventListener('change', function(event){opera.postError(event.target.value)}, false);
+
+]]></script>
+
+</head>
+<body>
+<p><input type="button" value="test modal" onclick="alert(this)"/></p>
+</body>
+</html>

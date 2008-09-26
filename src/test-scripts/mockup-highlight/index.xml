@@ -1,7 +1,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title> </title>
+<link rel='stylesheet' href="../../ui-style/ui.css"/>
 <script src="../../scripts/dom.js"/>
+<script src="../test-scripts/cst-select.js"/>
+
 <script src="script.js"/>
 <link rel="stylesheet" href="style.css"/> 
 </head>
@@ -24,8 +27,7 @@
   <h2>Metrics</h2>
   <div id="metrics"></div>
   <div id="controls">
-    <label><input type='checkbox' onchange='highlighter.setLock(this.checked)'/> lock</label>
-    <input type='button' value='clear lock' onclick='highlighter.clearLock()'/>
+
   </div>
 </div>
 

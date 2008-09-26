@@ -10,10 +10,8 @@ ACTION_SHOW_GRID_PADDING = 3,
 ACTION_SHOW_GRID_BORDER = 4,
 ACTION_SHOW_GRID_MARGIN = 5;
 
-var
-HIGHLIGHT_COLOR = 'rgba(0,255,0, .7)',
-GRID_COLOR = 'rgba(0,50,255, 1)',
-BORDER_COLOR = 'rgba(255, 0, 0, 1)';
+
+
 
 var
 test_win = null,
@@ -31,60 +29,60 @@ locked_borders = [],
 /* create the DOM view */
 getDOM = function() 
 {
-	var 
+  var 
   traverseElementNodeHead = function(node, padding, close) 
   {
-		var
-		attrs = node.attributes,
-		attr = null,
-		i = 0,
-		ret =
-		"<node-container " +
-		"ref-index='" + ref_index + "'" +
-		"style='padding-left:" + padding * PADDING +"px;'>" +
-		"<node>&lt;" + node.nodeName;
+    var
+    attrs = node.attributes,
+    attr = null,
+    i = 0,
+    ret =
+    "<node-container " +
+    "ref-index='" + ref_index + "'" +
+    "style='padding-left:" + padding * PADDING +"px;'>" +
+    "<node>&lt;" + node.nodeName;
 
-		for( ; attr = attrs[i]; i++) 
+    for( ; attr = attrs[i]; i++) 
     {
-			ret += " <key>" +attr.name + "</key>=<value>&quot;" + attr.value + "&quot;</value>";
-		}
-		ret += "&gt;</node>" + ( close ? "</node-container>" : "" );
-		return ret;
-	},
-	
-	traverseElementNodeFoot = function(node, padding, close) 
+      ret += " <key>" +attr.name + "</key>=<value>&quot;" + attr.value + "&quot;</value>";
+    }
+    ret += "&gt;</node>" + ( close ? "</node-container>" : "" );
+    return ret;
+  },
+  
+  traverseElementNodeFoot = function(node, padding, close) 
   {
-		var
-		ret =
-		( close ? ( "<node-container style='padding-left:" + padding * PADDING +"px;'>" ) : "" ) +
-		"<node>&lt;/" + node.nodeName + "&gt;</node>" +
-		"</node-container>";
-		return ret;
+    var
+    ret =
+    ( close ? ( "<node-container style='padding-left:" + padding * PADDING +"px;'>" ) : "" ) +
+    "<node>&lt;/" + node.nodeName + "&gt;</node>" +
+    "</node-container>";
+    return ret;
 
-	},
-	
-	traverseNode = function(node, padding) 
+  },
+  
+  traverseNode = function(node, padding) 
   {
-		var
-		children = node.childNodes,
-		child = null,
-		i = 0,
-		length = 0,
-		close = false,
+    var
+    children = node.childNodes,
+    child = null,
+    i = 0,
+    length = 0,
+    close = false,
     value = '';
 
-		for( ; child = children[i]; i++) 
+    for( ; child = children[i]; i++) 
     {
-			if( child.nodeType == 1 )
+      if( child.nodeType == 1 )
       {
-				dom_nodes[ref_index = dom_nodes.length] = child;
-				length = child.childNodes.length;
-				close =  !( length == 0 || ( length == 1 && child.firstChild.nodeType != 1 ) );
-				markup += traverseElementNodeHead(child, padding, close);
-				traverseNode(child, padding + 1);
-				markup += traverseElementNodeFoot(child, padding, close);
-			}
-			else
+        dom_nodes[ref_index = dom_nodes.length] = child;
+        length = child.childNodes.length;
+        close =  !( length == 0 || ( length == 1 && child.firstChild.nodeType != 1 ) );
+        markup += traverseElementNodeHead(child, padding, close);
+        traverseNode(child, padding + 1);
+        markup += traverseElementNodeFoot(child, padding, close);
+      }
+      else
       {
         try
         {
@@ -104,21 +102,21 @@ getDOM = function()
           opera.postError(child);
         }
 
-			}
-		}
-	},
+      }
+    }
+  },
 
-	markup = "";
-	dom_nodes = [];
-	ref_index = 0;
-	traverseNode(test_doc, 0);
-	document.getElementById('dom').innerHTML = markup;
+  markup = "";
+  dom_nodes = [];
+  ref_index = 0;
+  traverseNode(test_doc, 0);
+  document.getElementById('dom').innerHTML = markup;
 },
 
 /* takes care of all the highlighting */
 Highlighter = function(doc) 
 {
-	const 
+  const 
   LEFT = 0, 
   TOP = 1, 
   RIGHT = 2, 
@@ -128,44 +126,44 @@ Highlighter = function(doc)
   BORDER = 2, 
   MARGIN = 3;
 
-	var
-	canvas = null,
-	ctx = null,
-	doc_width = 0,
-	doc_height = 0,
-	doc_view_width = 0,
-	doc_view_height = 0,
+  var
+  canvas = null,
+  ctx = null,
+  doc_width = 0,
+  doc_height = 0,
+  doc_view_width = 0,
+  doc_view_height = 0,
   is_lock = false, 
   lock_eles = [],
   lock_boxes = [],
   last_selected = null,
 
-	init = function() 
+  init = function() 
   {
 
-		canvas = doc.documentElement.appendChild(doc.createElement('canvas'));
+    canvas = doc.documentElement.appendChild(doc.createElement('canvas'));
 
-		doc_width = canvas.width = ( doc.documentElement ).scrollWidth;
-		doc_height = canvas.height = ( doc.body || doc.documentElement ).scrollHeight;
+    doc_width = canvas.width = doc.documentElement.scrollWidth;
+    doc_height = canvas.height = doc.documentElement.offsetHeight;
 
-		doc_view_width = test_win.contentWindow.innerWidth;
-		doc_view_height = test_win.contentWindow.innerHeight;
-
-
-		canvas.style.cssText =
-		"width:" + doc_width + "px;" +
-		"height:" + doc_height + "px;" +
-		"display: block;" +
-		"position:absolute;" +
-		"top: 0;" +
-		"left:0;" +
-		"z-index: 10000;";
+    doc_view_width = test_win.contentWindow.innerWidth;
+    doc_view_height = test_win.contentWindow.innerHeight;
 
 
+    canvas.style.cssText =
+    "width:" + doc_width + "px;" +
+    "height:" + doc_height + "px;" +
+    "display: block;" +
+    "position:absolute;" +
+    "top: 0;" +
+    "left:0;" +
+    "z-index: 10000;";
 
-		ctx = canvas.getContext('2d');
 
-	},
+
+    ctx = canvas.getContext('2d');
+
+  },
 
   clear = function()
   {
@@ -285,10 +283,10 @@ Highlighter = function(doc)
     }
   },
 
-	/*
-	calculate all boxes from a given node
-	returns an array: [dimension_box, padding_box, border_box, margin_box]
-	*/
+  /*
+  calculate all boxes from a given node
+  returns an array: [dimension_box, padding_box, border_box, margin_box]
+  */
   getBoxes = function(node) 
   {
     var 
@@ -367,9 +365,9 @@ Highlighter = function(doc)
     this.highlightNode();
   }
 
-	this.highlightNode = function(node, mode, check_lock) 
+  this.highlightNode = function(node, mode, check_lock) 
   {
-		var 
+    var 
     inner_box = null, 
     outer_box = null,
     grid_box = null,
@@ -378,41 +376,41 @@ Highlighter = function(doc)
     i = 0,
     boxes = node && getBoxes(node) || null;
 
-		switch (mode) 
+    switch (mode) 
     {
-			case ACTION_SHOW_BORDER:
+      case ACTION_SHOW_BORDER:
       {
         frame_box = outer_box = boxes[BORDER];
         scrollIntoView(frame_box);
-				break;
+        break;
       }
-			case ACTION_SHOW_GRID_DIMENSION:
+      case ACTION_SHOW_GRID_DIMENSION:
       {
-				grid_box = outer_box = boxes[DIMENSION];
-				break;
+        grid_box = outer_box = boxes[DIMENSION];
+        break;
       }
-			case ACTION_SHOW_GRID_PADDING:
+      case ACTION_SHOW_GRID_PADDING:
       {
-				grid_box = outer_box = boxes[PADDING];
+        grid_box = outer_box = boxes[PADDING];
         frame_box = inner_box = boxes[DIMENSION];
-				break;
+        break;
       }
-			case ACTION_SHOW_GRID_BORDER:
+      case ACTION_SHOW_GRID_BORDER:
       {
-				grid_box = outer_box = boxes[BORDER];
+        grid_box = outer_box = boxes[BORDER];
         frame_box = inner_box = boxes[PADDING];
-				break;
+        break;
       }
-			case ACTION_SHOW_GRID_MARGIN:
+      case ACTION_SHOW_GRID_MARGIN:
       {
-				grid_box = outer_box = boxes[MARGIN];
+        grid_box = outer_box = boxes[MARGIN];
         frame_box = inner_box = boxes[BORDER];
-				break;
+        break;
       }
-		}
+    }
 
     clear();
-    ctx.fillStyle = BORDER_COLOR;
+    ctx.fillStyle = colors.BORDER_COLOR;
     for( ; cursor_box = lock_boxes[i]; i++)
     {
       draw_border(cursor_box);
@@ -422,11 +420,11 @@ Highlighter = function(doc)
     {
       frame_box = last_selected[1][BORDER];
     }
-    ctx.fillStyle = HIGHLIGHT_COLOR;
+    ctx.fillStyle = colors.HIGHLIGHT_COLOR;
     draw_highlight(outer_box, inner_box);
-    ctx.fillStyle = GRID_COLOR;
+    ctx.fillStyle = colors.GRID_COLOR;
     draw_grid(grid_box);
-    ctx.fillStyle = BORDER_COLOR;
+    ctx.fillStyle = colors.BORDER_COLOR;
     draw_border(frame_box);
     last_selected = [node, boxes];
     if(check_lock && is_lock && ( grid_box || frame_box ) )
@@ -439,10 +437,10 @@ Highlighter = function(doc)
       lock_eles[index] = node;
       lock_boxes[index] = grid_box || frame_box;
     }
-	}
+  }
 
 
-		
+    
   init();
 },
 
@@ -539,7 +537,7 @@ showHighlightControlMetrics = function()
   if (current_target_metrics) 
   {
     current_target_metrics.style.backgroundColor = 
-      HIGHLIGHT_COLOR.replace(/rgba\( *(\d+) *, *(\d+) *, *(\d+).*/, "rgb($1,$2,$3)");
+      colors.HIGHLIGHT_COLOR.replace(/rgba\( *(\d+) *, *(\d+) *, *(\d+).*/, "rgb($1,$2,$3)");
     current_target_metrics.style.color = "#fff";
     var inner_index = cls.indexOf(current_target_metrics.className) + 1;
     if (inner_index > 0 && inner_index < 4) 
@@ -547,7 +545,7 @@ showHighlightControlMetrics = function()
       current_target_metrics_inner = 
         current_target_metrics.getElementsByClassName(cls[inner_index])[0];
       current_target_metrics_inner.style.borderColor = 
-        BORDER_COLOR.replace(/rgba\( *(\d+) *, *(\d+) *, *(\d+).*/, "rgb($1,$2,$3)");
+        colors.BORDER_COLOR.replace(/rgba\( *(\d+) *, *(\d+) *, *(\d+).*/, "rgb($1,$2,$3)");
     }
   }
 },
@@ -582,7 +580,7 @@ mouseover_controls = function(event, check_lock)
     current_target_metrics_inner = 
       document.getElementById("metrics").getElementsByClassName(cls[1])[0];
     current_target_metrics_inner.style.borderColor = 
-      BORDER_COLOR.replace(/rgba\( *(\d+) *, *(\d+) *, *(\d+).*/, "rgb($1,$2,$3)");
+      colors.BORDER_COLOR.replace(/rgba\( *(\d+) *, *(\d+) *, *(\d+).*/, "rgb($1,$2,$3)");
   }
 },
 
@@ -672,9 +670,12 @@ init = function()
   document.getElementById('dom-container').addEventListener('click', click_handler_dom, false);
   document.getElementById('dom-container').addEventListener('mouseover', mouseover_dom, false);
   getTestUrls();
+  document.getElementById('controls').render(templates.controls());
+  
 };
 
 window.templates || ( window.templates = {} );
+
 
 const
 PADDING_TOP = "padding-top",
@@ -691,6 +692,15 @@ MARGIN_BOTTOM = "margin-bottom",
 MARGIN_LEFT = "margin-left",
 WIDTH = "width",
 HEIGHT = "height";
+
+
+color_handlers = 
+{
+  HIGHLIGHT_COLOR: new CstSelectColor("HIGHLIGHT_COLOR", this, 0),
+  BORDER_COLOR: new CstSelectColor("BORDER_COLOR", this, 7),
+  GRID_COLOR: new CstSelectColor("GRID_COLOR", this, 14),
+}
+
 
 templates.metrics = function(style_dec)
 {
@@ -738,6 +748,42 @@ templates.metrics = function(style_dec)
       'class', 'margin'], 
     'class', 'metrics', 'onmouseover', mouseover_controls, 'onclick', click_handler_controls];
 }
+
+templates.controls = function()
+{
+  return \
+  [
+    ['label', 
+      ['input',
+        'type', 'checkbox',
+        'onchange', function()
+        {
+          highlighter.setLock(this.checked);
+        }
+      ]
+    ],
+    ['input',
+      'type', 'button',
+      'value', 'Clear Lock',
+      'onclick', function()
+      {
+        highlighter.clearLock();
+      }
+    ],
+    color_handlers.HIGHLIGHT_COLOR.getTemplate()(),
+    'highlight',
+    color_handlers.BORDER_COLOR.getTemplate()(),
+    'border',
+    color_handlers.GRID_COLOR.getTemplate()(),
+    'grid',
+  ];
+}
+
+
+
+
+
+  
 
 onload = init;
 
