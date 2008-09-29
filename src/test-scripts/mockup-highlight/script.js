@@ -381,7 +381,10 @@ Highlighter = function(doc)
       case ACTION_SHOW_BORDER:
       {
         frame_box = outer_box = boxes[BORDER];
-        scrollIntoView(frame_box);
+        if( last_selected && node != last_selected[0] )
+        {
+          scrollIntoView(frame_box);
+        }
         break;
       }
       case ACTION_SHOW_GRID_DIMENSION:
@@ -436,7 +439,7 @@ Highlighter = function(doc)
 /* handle click in DOM view: toggle select of element */
 click_handler_dom = function(event) 
 {
-  if(document.__modal_mode)
+  if(EventHandler.__modal_mode)
   {
     return;
   }
@@ -491,7 +494,7 @@ click_handler_dom = function(event)
 
 mouseover_dom = function(event) 
 {
-  if(document.__modal_mode)
+  if(EventHandler.__modal_mode)
   {
     return;
   }
@@ -505,7 +508,7 @@ mouseover_dom = function(event)
 
 mouseout_dom = function(event) 
 {
-  if(document.__modal_mode)
+  if(EventHandler.__modal_mode)
   {
     return;
   }
@@ -570,7 +573,7 @@ showHighlightControlMetrics = function()
 /* handle hovering in metrics view */
 mouseover_controls = function(event, check_lock) 
 {
-  if(document.__modal_mode)
+  if(EventHandler.__modal_mode)
   {
     return;
   }
@@ -601,7 +604,7 @@ mouseover_controls = function(event, check_lock)
 /* handle clicks on metrics view */
 click_handler_controls = function(event) 
 {
-  if(document.__modal_mode)
+  if(EventHandler.__modal_mode)
   {
     return;
   }
@@ -635,7 +638,7 @@ getTestUrls = function()
 
 getRealTarget = function(event)
 {
-  if(document.__modal_mode)
+  if(EventHandler.__modal_mode)
   {
     document.documentElement.releaseEvent('click');
     return;
@@ -682,6 +685,7 @@ loadurl = function(url)
 
 init = function()
 {
+  window.EventHandler || ( window.EventHandler = {} );
   document.getElementById('dom-container').addEventListener('click', click_handler_dom, false);
   document.getElementById('metrics').addEventListener('mouseover', mouseover_controls, false);
   document.getElementById('metrics').addEventListener('click', click_handler_controls, false);
