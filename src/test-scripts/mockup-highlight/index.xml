@@ -31,24 +31,5 @@
   </div>
 </div>
 
-<!--
-<div id="interface-container">
-  <h2>Interface</h2>
-  <div>
-    <label>fadeout-color: 
-      <input name="FADE_OUT_COLOR" value="rgba(0,0,0, 0.4)" onchange="window[this.name]=this.value"/>
-    </label>
-    <label>default-highlight-color: 
-      <input name="DEFAULT_HIGHLIGHT_COLOR" value="rgba(0,0,0, 0)" onchange="window[this.name]=this.value"/>
-    </label>
-    <label>highlight-color: 
-      <input name="HIGHLIGHT_COLOR" value="rgba(0,0,255, .4)" onchange="window[this.name]=this.value"/>
-    </label>
-    <label>fadeout-color: 
-      <input name="GRID_COLOR" value="rgba(0,255,255, 1)" onchange="window[this.name]=this.value"/>
-    </label>
-  </div>
-</div>
--->
 </body>
 </html>

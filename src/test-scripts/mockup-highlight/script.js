@@ -2,16 +2,26 @@ const
 TEST_DIR ="./test-doc/",
 TEST_URL_LIST = TEST_DIR + "url-list.xml",
 PADDING = 12,
-
 ACTION_CLEAR = 0,
 ACTION_SHOW_BORDER = 1,
 ACTION_SHOW_GRID_DIMENSION = 2,
 ACTION_SHOW_GRID_PADDING = 3,
 ACTION_SHOW_GRID_BORDER = 4,
-ACTION_SHOW_GRID_MARGIN = 5;
-
-
-
+ACTION_SHOW_GRID_MARGIN = 5,
+PADDING_TOP = "padding-top",
+PADDING_RIGHT = "padding-right",
+PADDING_BOTTOM = "padding-bottom",
+PADDING_LEFT = "padding-left",
+BORDER_TOP_WIDTH = "border-top-width",
+BORDER_RIGHT_WIDTH = "border-right-width",
+BORDER_BOTTOM_WIDTH = "border-bottom-width",
+BORDER_LEFT_WIDTH = "border-left-width",
+MARGIN_TOP = "margin-top",
+MARGIN_RIGHT = "margin-right",
+MARGIN_BOTTOM = "margin-bottom",
+MARGIN_LEFT = "margin-left",
+WIDTH = "width",
+HEIGHT = "height";
 
 var
 test_win = null,
@@ -140,29 +150,20 @@ Highlighter = function(doc)
 
   init = function() 
   {
-
     canvas = doc.documentElement.appendChild(doc.createElement('canvas'));
-
     doc_width = canvas.width = doc.documentElement.scrollWidth;
     doc_height = canvas.height = doc.documentElement.offsetHeight;
-
     doc_view_width = test_win.contentWindow.innerWidth;
     doc_view_height = test_win.contentWindow.innerHeight;
-
-
     canvas.style.cssText =
-    "width:" + doc_width + "px;" +
-    "height:" + doc_height + "px;" +
-    "display: block;" +
-    "position:absolute;" +
-    "top: 0;" +
-    "left:0;" +
-    "z-index: 10000;";
-
-
-
+      "width:" + doc_width + "px;" +
+      "height:" + doc_height + "px;" +
+      "display: block;" +
+      "position:absolute;" +
+      "top: 0;" +
+      "left:0;" +
+      "z-index: 10000;";
     ctx = canvas.getContext('2d');
-
   },
 
   clear = function()
@@ -188,7 +189,6 @@ Highlighter = function(doc)
       ctx.fillRect (0, top, doc_width, 1);
     }
     catch (event){};
-    
   },
 
   draw_vertical_line = function(left) 
@@ -415,11 +415,6 @@ Highlighter = function(doc)
     {
       draw_border(cursor_box);
     }
-    // not sure if that is good
-    if( !outer_box && last_selected )
-    {
-      frame_box = last_selected[1][BORDER];
-    }
     ctx.fillStyle = colors.HIGHLIGHT_COLOR;
     draw_highlight(outer_box, inner_box);
     ctx.fillStyle = colors.GRID_COLOR;
@@ -429,24 +424,22 @@ Highlighter = function(doc)
     last_selected = [node, boxes];
     if(check_lock && is_lock && ( grid_box || frame_box ) )
     {
-      var index = lock_eles.indexOf(node);
-      if( index == -1 )
-      {
-        index = lock_eles.length;
-      }
+      var index = 0;
+      for( ; lock_eles[index] && lock_eles[index] != node; index++ );
       lock_eles[index] = node;
       lock_boxes[index] = grid_box || frame_box;
     }
   }
-
-
-    
   init();
 },
 
 /* handle click in DOM view: toggle select of element */
 click_handler_dom = function(event) 
 {
+  if(document.__modal_mode)
+  {
+    return;
+  }
   var 
   target = event.target,
   ref_index = "",
@@ -458,55 +451,76 @@ click_handler_dom = function(event)
     if (selected_node)
     {
       selected_node.className = "";
-      selected_node.removeEventListener('mouseover', mouseover_dom_2, false);
-      selected_node.removeEventListener('mouseout', mouseout_dom_2, false);
+      selected_node.removeEventListener('mouseover', mouseover_dom, false);
+      selected_node.removeEventListener('mouseout', mouseout_dom, false);
     }
     selected_node = target;
     selected_node.className = "selected";
-    selected_node.addEventListener('mouseover', mouseover_dom_2, false);
-    selected_node.addEventListener('mouseout', mouseout_dom_2, false);
+    selected_node.addEventListener('mouseover', mouseover_dom, false);
+    selected_node.addEventListener('mouseout', mouseout_dom, false);
     test_doc_target = dom_nodes[ref_index];
     metrics = document.getElementById("metrics");
     metrics.innerHTML = "";
-    metrics.render(templates.metrics(frames[0].getComputedStyle(test_doc_target, null)));
+    var style_dec = frames[0].getComputedStyle(test_doc_target, null);
+    cls_not_null =
+    [
+      style_dec.getPropertyValue(MARGIN_TOP) != "0px"
+      || style_dec.getPropertyValue(MARGIN_RIGHT) != "0px"
+      || style_dec.getPropertyValue(MARGIN_BOTTOM) != "0px"
+      || style_dec.getPropertyValue(MARGIN_LEFT) != "0px",
+      style_dec.getPropertyValue(BORDER_TOP_WIDTH) != "0px"
+      || style_dec.getPropertyValue(BORDER_RIGHT_WIDTH) != "0px"
+      || style_dec.getPropertyValue(BORDER_BOTTOM_WIDTH) != "0px"
+      || style_dec.getPropertyValue(BORDER_LEFT_WIDTH) != "0px",
+       style_dec.getPropertyValue(PADDING_TOP) != "0px"
+      || style_dec.getPropertyValue(PADDING_RIGHT) != "0px"
+      || style_dec.getPropertyValue(PADDING_BOTTOM) != "0px"
+      || style_dec.getPropertyValue(PADDING_LEFT) != "0px",
+       style_dec.getPropertyValue(WIDTH) != "0px"
+      && style_dec.getPropertyValue(HEIGHT) != "0px"
+    ];
+    metrics.render(templates.metrics(style_dec));
     highlighter.highlightNode(test_doc_target, ACTION_SHOW_BORDER, true);
     if(event.syntetic)
     {
       event.target.scrollIntoView();
+      document.getElementById('dom-scoll-container').scrollTop -= 70;
     }
   }
 },
 
-mouseover_dom_2 = function(event) 
+mouseover_dom = function(event) 
 {
+  if(document.__modal_mode)
+  {
+    return;
+  }
+  var t = 0;
+  while( t = mouseout_dom.timeouts.shift() )
+  {
+    clearTimeout(t);
+  };
   highlighter.highlightNode(test_doc_target, ACTION_SHOW_BORDER );
 },
 
-mouseout_dom_2 = function(event) 
+mouseout_dom = function(event) 
+{
+  if(document.__modal_mode)
+  {
+    return;
+  }
+  mouseout_dom.timeouts.push(setTimeout(mouseout_dom.handler, 50));
+};
+
+mouseout_dom.timeouts = [];
+
+mouseout_dom.handler = function(event) 
 {
   highlighter.highlightNode(test_doc_target, ACTION_CLEAR );
-},
+};
 
-/* handle mouse hovering in DOM view: point to element */
-mouseover_dom = function(event) 
-{
-  /*
-  var 
-  target = event.target;
-
-  // get parent until one is reached with the name 'container'
-  while (target && !/node-container/i.test(target.nodeName) && (target = target.parentElement));
-  if (target && test_doc_target) 
-  {
-    highlighter.highlightNode(test_doc_target, 
-      target.hasClass('selected') && ACTION_SHOW_BORDER || ACTION_CLEAR );
-  }
-  */
-},
-
-
-
-cls = ['margin', 'border', 'padding', 'dimension'],
+var cls = ['margin', 'border', 'padding', 'dimension'],
+cls_not_null = [],
 cls_map = 
 {
   'margin': ACTION_SHOW_GRID_MARGIN, 
@@ -536,9 +550,12 @@ showHighlightControlMetrics = function()
 {
   if (current_target_metrics) 
   {
+    var not_null = cls_not_null[cls.indexOf(current_target_metrics.className)];
     current_target_metrics.style.backgroundColor = 
-      colors.HIGHLIGHT_COLOR.replace(/rgba\( *(\d+) *, *(\d+) *, *(\d+).*/, "rgb($1,$2,$3)");
-    current_target_metrics.style.color = "#fff";
+      not_null 
+      && colors.HIGHLIGHT_COLOR.replace(/rgba\( *(\d+) *, *(\d+) *, *(\d+).*/, "rgb($1,$2,$3)") 
+      || "hsl(0, 0%, 90%)";
+    current_target_metrics.style.color = not_null && "#fff" || "#333";
     var inner_index = cls.indexOf(current_target_metrics.className) + 1;
     if (inner_index > 0 && inner_index < 4) 
     {
@@ -553,6 +570,10 @@ showHighlightControlMetrics = function()
 /* handle hovering in metrics view */
 mouseover_controls = function(event, check_lock) 
 {
+  if(document.__modal_mode)
+  {
+    return;
+  }
   var 
   target = event.target,
   cls_index = 0;
@@ -575,18 +596,15 @@ mouseover_controls = function(event, check_lock)
       current_target_metrics && cls_map[current_target_metrics.className] || ACTION_CLEAR,
       check_lock);
   }
-  if( !target )
-  {
-    current_target_metrics_inner = 
-      document.getElementById("metrics").getElementsByClassName(cls[1])[0];
-    current_target_metrics_inner.style.borderColor = 
-      colors.BORDER_COLOR.replace(/rgba\( *(\d+) *, *(\d+) *, *(\d+).*/, "rgb($1,$2,$3)");
-  }
 },
 
 /* handle clicks on metrics view */
 click_handler_controls = function(event) 
 {
+  if(document.__modal_mode)
+  {
+    return;
+  }
   mouseover_controls(event, true);
 },
 
@@ -610,7 +628,6 @@ getTestUrls = function()
     markup += "</select>";
     h2.innerHTML = h2.textContent + markup;
     loadurl(urls[0].textContent)
-
   }
   xhr.open("GET", TEST_URL_LIST);
   xhr.send(null);
@@ -618,6 +635,11 @@ getTestUrls = function()
 
 getRealTarget = function(event)
 {
+  if(document.__modal_mode)
+  {
+    document.documentElement.releaseEvent('click');
+    return;
+  }
   var x = event.pageX, y = event.pageY;
 
   event.target.style.display= 'none';
@@ -648,61 +670,33 @@ loadurl = function(url)
   document.getElementById('dom').innerHTML = '';
   document.getElementById("metrics").innerHTML = "";
   test_win = document.getElementsByTagName('iframe')[0];
-  
   test_win.onload = function()
   {
-    
     document.getElementById("metrics").innerHTML = "";
-    
     getDOM(test_doc = this.contentDocument);
-    
     this.contentDocument.addEventListener('click', getRealTarget, false);
-    
     highlighter = new Highlighter(test_doc);
-    
   }
-  
   test_win.location = TEST_DIR + url;
 },
 
 init = function()
 {
   document.getElementById('dom-container').addEventListener('click', click_handler_dom, false);
-  document.getElementById('dom-container').addEventListener('mouseover', mouseover_dom, false);
+  document.getElementById('metrics').addEventListener('mouseover', mouseover_controls, false);
+  document.getElementById('metrics').addEventListener('click', click_handler_controls, false);
   getTestUrls();
   document.getElementById('controls').render(templates.controls());
-  
 };
-
-window.templates || ( window.templates = {} );
-
-
-const
-PADDING_TOP = "padding-top",
-PADDING_RIGHT = "padding-right",
-PADDING_BOTTOM = "padding-bottom",
-PADDING_LEFT = "padding-left",
-BORDER_TOP_WIDTH = "border-top-width",
-BORDER_RIGHT_WIDTH = "border-right-width",
-BORDER_BOTTOM_WIDTH = "border-bottom-width",
-BORDER_LEFT_WIDTH = "border-left-width",
-MARGIN_TOP = "margin-top",
-MARGIN_RIGHT = "margin-right",
-MARGIN_BOTTOM = "margin-bottom",
-MARGIN_LEFT = "margin-left",
-WIDTH = "width",
-HEIGHT = "height";
-
 
 color_handlers = 
 {
-  HIGHLIGHT_COLOR: new CstSelectColor("HIGHLIGHT_COLOR", this, 0),
-  BORDER_COLOR: new CstSelectColor("BORDER_COLOR", this, 7),
-  GRID_COLOR: new CstSelectColor("GRID_COLOR", this, 14),
-}
+  HIGHLIGHT_COLOR: new CstSelectColor("HIGHLIGHT_COLOR", 0),
+  BORDER_COLOR: new CstSelectColor("BORDER_COLOR", 7),
+  GRID_COLOR: new CstSelectColor("GRID_COLOR", 14),
+};
 
-
-templates.metrics = function(style_dec)
+( window.templates || ( window.templates = {} ) ).metrics = function(style_dec)
 {
   return \
     ['ul', 
@@ -746,7 +740,7 @@ templates.metrics = function(style_dec)
         ],
         ['ul', ['li', style_dec.getPropertyValue(MARGIN_BOTTOM), 'colspan', '3']],
       'class', 'margin'], 
-    'class', 'metrics', 'onmouseover', mouseover_controls, 'onclick', click_handler_controls];
+    'class', 'metrics'];
 }
 
 templates.controls = function()
@@ -778,12 +772,6 @@ templates.controls = function()
     'grid',
   ];
 }
-
-
-
-
-
-  
 
 onload = init;
 

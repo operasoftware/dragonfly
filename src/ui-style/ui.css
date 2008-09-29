@@ -1004,6 +1004,7 @@ cst-select.color
   margin-left: 10px;
   height: 18px;
   vertical-align: middle;
+  cursor: pointer;
 }
 
 cst-select.color cst-value
@@ -1019,19 +1020,64 @@ cst-select.color cst-drop-down
 
 cst-select-option-list.color
 {
-  padding: .5em;
-  width: 10em;
+  padding: 10px 15px 15px 10px;
+  width: 160px;
+  border: none;
+  background: none;
+  background-image:-o-skin('Speed Dial Configuration Dialog Skin');
 }
 
-cst-select-option-list.color cst-option 
+cst-select-option-list.color > div
+{
+
+  width: 160px;
+  margin: 5px 0 5px 5px;
+}
+
+cst-select-option-list.color > div:after
+{
+  display:block;
+  content: '';
+  clear: both;
+}
+
+
+cst-select-option-list.color cst-option
+{
+  float: left;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  margin: 3px;
+  border: 1px solid #999;
+  position: relative;
+}
+
+cst-select-option-list.color cst-selected-border
 {
   float: left;
   width: 1.4em;
   height: 1.4em;
-  padding: 0;
-  margin: .2em;
-  border: 1px solid #999;
+  padding: 2px;
+  margin: 0px 1px 1px -30px;
+  border: 2px solid #999;
 }
+
+cst-select-option-list.color cst-option.selected:after
+{
+
+  display: block;
+  content: '';
+  padding: 2px;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: -4px;
+  left: -4px;;
+  border: 2px solid #666;
+}
+
+
 
 cst-select-option-list.color label 
 {

@@ -114,23 +114,26 @@ node-container:hover
 #controls
 {
   position:absolute;
-  top: 250px;
+  top: 260px;
   left: 0;
   width: 100%;
   height: 40px;
   line-height: 40px;
   border: 1px solid #ccc;
+  text-align: center;
 }
 
 label 
 {
-  
+  margin: 0 5px; 
 }
 
 
 
 
 /* metrics */
+
+
 
 .metrics 
 {
