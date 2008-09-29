@@ -146,7 +146,7 @@
     return \
     [
       'ui-menu', 
-      ['h2', 'Views', 'handler', 'show-menu', 'tabindex', '1'], 
+      ['h2', ui_strings.M_VIEW_LABEL_VIEWS, 'handler', 'show-menu', 'tabindex', '1'], 
       'id', 'main-view-menu'
     ].concat(opera.attached ? ['class', 'attached'] : []);
   }

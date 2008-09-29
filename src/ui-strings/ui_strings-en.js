@@ -101,6 +101,9 @@ ui_strings.M_VIEW_LABEL_REQUEST_INFO = 'Request info';
 /* DESC: Name of response body tab */
 ui_strings.M_VIEW_LABEL_RESPONSE_BODY = 'Response body';
 
+/* DESC: Label of the Views menu */
+ui_strings.M_VIEW_LABEL_VIEWS = 'Views';
+
 /*
  * Settings dialogue entries
  */
@@ -183,8 +186,6 @@ ui_strings.S_SWITCH_CREATE_SHORTHANDS = 'Use shorthands for properties';
  * Button tool-tips.
  */ 
 
-/* DESC: Opens help. */
-ui_strings.S_BUTTON_LABEL_HELP = 'Help';
 /* DESC: Debugger continues debugging. */
 ui_strings.S_BUTTON_LABEL_CONTINUE = 'Continue (F8)';
 /* DESC: Debugger step over current statement. */
