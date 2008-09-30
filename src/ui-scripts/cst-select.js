@@ -320,7 +320,7 @@ var CstSelectColorBase = function(id, index)
         select_obj.setAlpha(this.value);
       }
     ];
-    return ret;
+    return ['cst-option-list-background', ret];
   }
 
   this._option_list = 

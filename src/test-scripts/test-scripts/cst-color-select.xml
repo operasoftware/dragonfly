@@ -8,12 +8,22 @@
 var test_select = new CstSelectColor("test");
 onload = function()
 {
+  var select_tmpl = test_select.getTemplate();
   var tmpl = \
   [
-    "div",
-    "some text: ",
-    test_select.getTemplate()(),
-    " some more text"
+    [
+      "div",
+      "some text: ",
+      select_tmpl(),
+      " some more text"
+    ],
+    [
+      "div",
+      "some text: ",
+      select_tmpl(),
+      " some more text",
+      'style', 'position:absolute; bottom: 50px;right: 50px'
+    ]
   ];
 
   document.getElementsByTagName('body')[0].render(tmpl);
