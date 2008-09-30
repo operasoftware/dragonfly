@@ -193,7 +193,10 @@ cls.JsSourceView = function(id, name, container_class)
         if(stop_at && stop_at[0])
         {
           var line = parseInt( stop_at[0]['line-number'] );
-          this.showLine(selected_script_id, line - 10);
+          var plus_lines = max_lines <= 10 
+            ? max_lines / 2 >> 0 
+            : 10;
+          this.showLine(selected_script_id, line - plus_lines);
           this.showLinePointer( line, true );
         }
         else
@@ -428,6 +431,11 @@ cls.JsSourceView = function(id, name, container_class)
   this.getTopLine = function()
   {
     return __current_line;
+  }
+
+  this.getMaxLines = function()
+  {
+    return max_lines;
   }
 
   this.getBottomLine = function()

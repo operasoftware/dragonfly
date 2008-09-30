@@ -167,7 +167,10 @@ var VirtualTextSearch = function()
       }
       if( line <= top_line || line >= bottom_line )
       {
-        views.js_source.showLine(__script.id, line - 7 );
+        var plus_lines = views.js_source.getMaxLines() <= 7 
+          ? views.js_source.getMaxLines() / 2 >> 0 
+          : 7;
+        views.js_source.showLine(__script.id, line - plus_lines );
         top_line = views.js_source.getTopLine();
       }
       if( !source_container )

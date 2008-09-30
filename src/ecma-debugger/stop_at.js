@@ -228,7 +228,10 @@ var stop_at = new function()
           {
             topCell.showView(views.js_source.id);
           }
-          if( views.js_source.showLine( stopAt['script-id'], line - 10 ) )
+          var plus_lines = views.js_source.getMaxLines() <= 10 
+            ? views.js_source.getMaxLines() / 2 >> 0 
+            : 10;
+          if( views.js_source.showLine( stopAt['script-id'], line - plus_lines ) )
           {
             views.js_source.showLinePointer( line, true );
           }
@@ -254,7 +257,10 @@ var stop_at = new function()
         {
           topCell.showView(views.js_source.id);
         }
-        if( views.js_source.showLine( stopAt['script-id'], line - 10 ) )
+        var plus_lines = views.js_source.getMaxLines() <= 10 
+          ? views.js_source.getMaxLines() / 2 >> 0 
+          : 10;
+        if( views.js_source.showLine( stopAt['script-id'], line - plus_lines ) )
         {
           views.js_source.showLinePointer( line, true );
         }
