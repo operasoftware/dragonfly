@@ -186,7 +186,7 @@ cls.JsSourceView = function(id, name, container_class)
       }
       container.render(templates.line_nummer_container(max_lines || 1));
       line_numbers = document.getElementById(container_line_nr_id);
-      var selected_script_id = runtimes.getSelectedScript();  
+      var selected_script_id = runtimes.getSelectedScript(); 
       if(selected_script_id && selected_script_id != script.id)
       {
         var stop_at = runtimes.getStoppedAt(selected_script_id);
@@ -424,6 +424,7 @@ cls.JsSourceView = function(id, name, container_class)
       }
     }
     view_invalid = false;
+    
     return is_visible;
 
   }
@@ -558,9 +559,10 @@ cls.JsSourceView = function(id, name, container_class)
     }
   }
 
+  
+
   var __clearView = function()
   {
-    
     if(source_content = document.getElementById(container_id))
     {
       source_content.innerHTML = '';
@@ -593,6 +595,111 @@ cls.JsSourceView = function(id, name, container_class)
 cls.JsSourceView.prototype = ViewBase;
 new cls.JsSourceView('js_source', ui_strings.M_VIEW_LABEL_SOURCE, 'scroll js-source');
 
+
+cls.helper_collection || ( cls.helper_collection = {} );
+
+cls.helper_collection.getSelectedOptionText = function()
+{
+  // TODO handle runtimes with no scripts
+  var selected_script_id = runtimes.getSelectedScript();
+  if( selected_script_id )
+  {
+    var script = runtimes.getScript(selected_script_id);
+    var display_uri = helpers.shortenURI(script['uri']);
+    if( script )
+    {
+      return ( 
+        display_uri.uri
+        ? display_uri.uri
+        : ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script['script-id'] 
+      )
+    }
+    else
+    {
+      opera.postError('missing script in getSelectedOptionText in cls.ScriptSelect');
+    }
+  }
+  return '';
+}
+
+
+cls.ScriptSelect = function(id, class_name)
+{
+
+  var selected_value = "";
+
+  var stopped_script_id = '';
+
+  this.getSelectedOptionText = cls.helper_collection.getSelectedOptionText;
+
+  this.getSelectedOptionValue = function()
+  {
+
+  }
+
+  this.templateOptionList = function(select_obj)
+  {
+    // TODO this is a relict of protocol 3, needs cleanup
+    var active_window_id = runtimes.getActiveWindowId();
+
+    if( active_window_id )
+    {
+      var 
+      _runtimes = runtimes.getRuntimes(active_window_id),
+      rt = null, 
+      i = 0;
+
+      for( ; ( rt = _runtimes[i] ) && !rt['selected']; i++);
+      if( !rt && _runtimes[0] )
+      {
+        opera.postError('no runtime selected')
+        return;
+      }
+      return templates.runtimes(_runtimes, 'script', [stopped_script_id]);
+    }
+  }
+
+  this.checkChange = function(target_ele)
+  {
+    var script_id = target_ele.getAttribute('script-id');
+
+    if(script_id)
+    {
+      // TODO is this needed?
+      runtimes.setSelectedScript( script_id );
+      topCell.showView(views.js_source.id);
+    }
+    else
+    {
+      opera.postError("missing script id in handlers['display-script']")
+    }
+    selected_value = target_ele.textContent;
+    // TODO
+    
+    return true;
+  }
+
+  // this.updateElement
+
+  var onThreadStopped = function(msg)
+  {
+    stopped_script_id = msg.stop_at['script-id'];
+  }
+
+  var onThreadContinue = function(msg)
+  {
+    stopped_script_id = '';
+  }
+
+  messages.addListener("thread-stopped-event", onThreadStopped);
+  messages.addListener("thread-continue-event", onThreadContinue);
+
+  this.init(id, class_name);
+}
+
+cls.ScriptSelect.prototype = new CstSelect();
+
+new cls.ScriptSelect('js-script-select', 'script-options');
 
 
 
@@ -630,6 +737,16 @@ new ToolbarConfig
       handler: 'js-source-text-search',
       title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH,
       label: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
+    }
+  ],
+  null,
+  [
+    {
+      handler: 'select-window',
+      title: ui_strings.S_BUTTON_LABEL_SELECT_WINDOW,
+      type: 'dropdown',
+      class: 'window-select-dropdown',
+      template: window['cst-selects']["js-script-select"].getTemplate()
     }
   ]
 );
