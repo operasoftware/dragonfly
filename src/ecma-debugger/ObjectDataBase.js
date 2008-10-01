@@ -13,6 +13,7 @@ var ObjectDataBase = new function()
   SEARCH = 5,
   CONSTRUCTOR = 6,
   IS_VIRTUAL = 7,
+  ITEM = 8,
   MAX_VALUE_LENGTH = 50;
   
   
@@ -25,6 +26,7 @@ var ObjectDataBase = new function()
     
     var 
     obj = xml.getElementsByTagName('object')[0],
+    class_name = xml.getNodeData('class-name'),
     props = null, 
     prop = null, 
     i=0,
@@ -111,7 +113,46 @@ var ObjectDataBase = new function()
         }
       }
 
-      unsorted.sort(function(a, b){ return a[KEY] < b[KEY] ? -1 : a[KEY] > b[KEY] ? 1 : 0});
+      var sort_key = function(a, b)
+      { 
+        return a[KEY] < b[KEY] ? -1 : a[KEY] > b[KEY] ? 1 : 0;
+      }
+
+      var sort_item = function(a, b)
+      { 
+        return a[ITEM] < b[ITEM] ? -1 : a[ITEM] > b[ITEM] ? 1 : 0;
+      }
+
+      if( class_name == "Array" )
+      {
+        // not very efficent, but dunno how to do it better
+        var
+        items = [],
+        attributes = [],
+        cursor = null,
+        i = 2,
+        re_d = /\d+/;
+
+        for( ; cursor = unsorted[i]; i++)
+        {
+          if( re_d.test(cursor[KEY]) )
+          {
+            cursor[ITEM] = parseInt(cursor[KEY]);
+            items[items.length] = cursor;
+          }
+          else
+          {
+            attributes[attributes.length] = cursor;
+          }
+        }
+        items = items.sort(sort_item);
+        attributes = attributes.sort(sort_key);
+        unsorted = [unsorted[0], unsorted[1]].concat(items, attributes);
+      }
+      else
+      {
+        unsorted.sort(sort_key);
+      }
       this.data.splice.apply(this.data, unsorted);
       if( org_args && !org_args[0].__call_count )
       {
