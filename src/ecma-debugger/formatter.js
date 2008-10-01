@@ -594,12 +594,25 @@
 
   states[SINGLE_QUOTE] = function()
   {
-    opera.postError('state parsing not implemented in formatter.js for SINGLE_QUOTE');
+    __string_delimiter= "'";
+    __type='STRING';
+    if( string_parser(__source.charAt(__pointer)) )
+    {
+      return __ret;
+    }
+    __pointer++;
   };
 
   states[DOUBLE_QUOTE] = function()
   {
-    opera.postError('state parsing not implemented in formatter.js for DOUBLE_QUOTE');
+
+    __string_delimiter= '"';
+    __type='STRING';
+    if( string_parser(__source.charAt(__pointer)) )
+    {
+      return __ret;
+    }
+    __pointer++;
   };
 
   states[REG_EXP] = function()
