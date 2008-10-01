@@ -255,7 +255,8 @@ def _get_bad_encoding_files(src):
     for base, dirs, files in os.walk(src):
         for file in [f for f in files if f.endswith(_text_exts)]:
             abs = os.path.join(base, file)
-            if not _is_utf8(abs): bad.append(abs)
+            # quick fix to do not test 'test-scripts' repo
+            if not 'test-scripts' in base and not _is_utf8(abs): bad.append(abs)
             
     return bad
 
