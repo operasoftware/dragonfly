@@ -147,7 +147,8 @@ var stop_at = new function()
     for ( prop in stop_at_settings )
     {
       config_arr[config_arr.length] = prop;
-      config_arr[config_arr.length] = stop_at_settings[prop] ? 'yes' : 'no';
+      config_arr[config_arr.length] = 
+        ( stop_at_settings[prop] = settings['js_source'].get(prop) ) ? 'yes' : 'no';
     }
     services['ecmascript-debugger'].setConfiguration.apply(services['ecmascript-debugger'], config_arr);
   }
@@ -292,4 +293,6 @@ var stop_at = new function()
 
 
   messages.addListener('setting-changed', onSettingChange);
+
+  
 }

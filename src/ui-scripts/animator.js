@@ -59,7 +59,7 @@ var Animator = function(target)
   {
     if( ele = document.getElementById(id) )
     {
-      ele.style.backgroundPosition = x_position + ( active + ( current_count++ ) * delta ) + 'px';
+      ele.style.backgroundPosition = x_position + ( ( active + ( current_count++ ) ) * delta ) + 'px';
       if( current_count >= iterations )
       {
         current_count = 0;
