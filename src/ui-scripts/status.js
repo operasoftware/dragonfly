@@ -132,7 +132,8 @@ var TopStatusbar = function(cell)
     iterations: 8,
     ready: -16,
     busy: -32,
-    time_delta: 60
+    time_delta: 60,
+    active: 2
   };
   this.spin_animator = new Animator(spin_animator);
   this.init(cell);

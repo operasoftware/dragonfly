@@ -78,7 +78,7 @@ cls.ECMAScriptDebuggerService = function(name)
     }
     else
     {
-      window[defaults.viewport].render
+      viewport.render
       (
         ['div', 
           ['h2', 'The debugger works with protocol version ' + ini.protocol_version +
