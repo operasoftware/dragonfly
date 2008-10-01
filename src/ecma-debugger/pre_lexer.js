@@ -1,6 +1,6 @@
 ﻿var pre_lexer = function(script)
 {
-  var input = script.source, line_arr = script.line_arr, state_arr = script.state_arr;
+  var input = script.source_data, line_arr = script.line_arr, state_arr = script.state_arr;
   var cur_cur = -1;
   var line_cur = 0;
   var line_cur_prev = -1;
