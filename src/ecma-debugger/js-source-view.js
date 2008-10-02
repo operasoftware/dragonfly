@@ -320,7 +320,7 @@ cls.JsSourceView = function(id, name, container_class)
     line_numbers = document.getElementById(container_line_nr_id);
     source_content.style.height = ( context['line-height'] * max_lines ) +'px';
 
-    var scrollHeight = script.line_arr.length * context['line-height'] + max_lines;
+    var scrollHeight = script.line_arr.length * context['line-height'];
     document.getElementById(scroll_id).style.height = scrollHeight + 'px';
     if( scrollHeight > context['line-height'] * max_lines )
     {
