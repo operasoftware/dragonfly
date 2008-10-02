@@ -269,6 +269,7 @@ var stop_at = new function()
         window.focus();
         toolbars.js_source.enableButtons('continue');
         messages.post('thread-stopped-event', {stop_at: stopAt});
+        messages.post('host-state', {state: 'waiting'});
       }
     }
     else
