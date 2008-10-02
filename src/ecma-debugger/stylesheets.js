@@ -18,6 +18,19 @@ var stylesheets = new function()
   var __colorIndex = 0;
   
   var line_height_index = 0;
+
+  var onResetState = function()
+  {
+    __sheets = {};
+    __rules = {};
+    __indexMap = null;
+    __indexMapLength = 0;
+    __sortedIndexMap = [];
+    __initialValues = [];
+    __shorthandIndexMap = [];
+    __selectedRules = null;
+    __colorIndex = 0;
+  }
   
   const
   SHEET_OBJECT_ID = 0, // TODO use the right obj-id
@@ -1305,5 +1318,7 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   
   messages.addListener('runtime-destroyed', onRuntimeDestroyed);
   messages.addListener('active-tab', onActiveTab);
+
+  messages.addListener('reset-state', onResetState);
   
 }

@@ -31,6 +31,15 @@ var dom_data = new function()
   PUBLIC_ID = 4,
   SYSTEM_ID = 5; 
 
+  var onResetState = function()
+  {
+    data = []; 
+    data_runtime_id = ''; 
+    current_target = '';
+    __next_rt_id = '';
+    activeWindow = [];
+  }
+
   var is_view_visible = function()
   {
     var id = '', i = 0;
@@ -495,6 +504,8 @@ var dom_data = new function()
   messages.addListener('setting-changed', onSettingChange);
   messages.addListener('runtime-stopped', onRuntimeStopped);
   messages.addListener('runtime-destroyed', onRuntimeStopped);
+
+  messages.addListener('reset-state', onResetState);
 
 };
 

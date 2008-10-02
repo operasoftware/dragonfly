@@ -175,6 +175,7 @@ var ViewBase = new function()
     return null;
   }
 
+ 
   this.clearAllContainers = function() 
   {
     var id = '', i = 0, c = null, ret = [];

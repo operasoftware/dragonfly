@@ -45,7 +45,7 @@ var Animator = function(target)
   var delta = target.delta;
   var iterations = target.iterations;
   var active = target.active || 0;
-  var finalState = target.final|| 0;
+  var finalState = target.ready || 0;
   var x_position = target.x_position || '0px ';
   var time_delta = target.time_delta || 30;
   var current_count = 0;
@@ -59,7 +59,7 @@ var Animator = function(target)
   {
     if( ele = document.getElementById(id) )
     {
-      ele.style.backgroundPosition = x_position + ( ( active + ( current_count++ ) ) * delta ) + 'px';
+      ele.style.backgroundPosition = x_position + ( active + ( current_count++ ) * delta ) + 'px';
       if( current_count >= iterations )
       {
         current_count = 0;

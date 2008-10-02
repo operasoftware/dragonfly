@@ -105,6 +105,7 @@ var TopStatusbar = function(cell)
   var self = this; 
   var handleHostState = function(msg)
   {
+    //opera.postError('msg.state: '+msg.state)
     switch (msg.state)
     {
       case 'inactive':
@@ -131,9 +132,8 @@ var TopStatusbar = function(cell)
     delta: -16,
     iterations: 8,
     ready: -16,
-    busy: -32,
-    time_delta: 60,
-    active: 2
+    active: -32,
+    time_delta: 60
   };
   this.spin_animator = new Animator(spin_animator);
   this.init(cell);

@@ -36,6 +36,16 @@ var elementStyle = new function()
   var __search_is_active = false;
   var __old_search_therm = '';
 
+  var onResetState = function()
+  {
+    __selectedElement = null;
+    __setProps = [];
+    __setPriorities = [];
+    __searchMap = [];
+    __search_is_active = false;
+    __old_search_therm = '';
+  }
+
   var default_styles_pointer = 0;
 
   var searchtimeout = new Timeouts();
@@ -653,6 +663,7 @@ var elementStyle = new function()
 
   messages.addListener('element-selected', onElementSelected);
   messages.addListener('application-setup', onAplicationsetup);
+  messages.addListener('reset-state', onResetState);
 
   eventHandlers.input['css-inspector-text-search'] = function(event, target)
   {
