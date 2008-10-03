@@ -18,6 +18,7 @@ var key_ids =
   SHIFT_ARROW_RIGHT: '10039',
   SHIFT_ARROW_DOWN: '10040',
   BACKSPACE: '0008',
+  CTRL_BACKSPACE: '0108',
   DELETE: '00046',
   F8: '000119',
   F9: '000120',
@@ -41,7 +42,9 @@ var action_ids =
   CONTINUE: 'action-continue',
   STEP_OVER: 'action-step-over',
   STEP_INTO: 'action-step-into',
-  STEP_OUT: 'action-step-out'  
+  STEP_OUT: 'action-step-out',
+  BACKSPACE: 'action-back-space',
+  CTRL_BACKSPACE: 'action-ctrl-back-space'
 }
 
 var action_map_win = {};
@@ -61,6 +64,8 @@ action_map_win[key_ids.F8] = action_ids.CONTINUE;
 action_map_win[key_ids.F10] = action_ids.STEP_OVER;
 action_map_win[key_ids.F11] = action_ids.STEP_INTO;
 action_map_win[key_ids.SHIFT_F11] = action_ids.STEP_OUT;
+action_map_win[key_ids.BACKSPACE] = action_ids.BACKSPACE;
+action_map_win[key_ids.CTRL_BACKSPACE] = action_ids.CTRL_BACKSPACE;
 
 var action_map = action_map_win;
 
@@ -147,7 +152,7 @@ var BaseEditKeyhandler = new function()
   var 
   key = '',
 
-  // return true to stop the default action and propagation
+  // return false to stop the default action and propagation
   default_handler = function(event, id)
   {
     var _id = '';
@@ -155,7 +160,7 @@ var BaseEditKeyhandler = new function()
     {
       if( action_ids[_id] == id )
       {
-        // opera.postError('action: ' + _id);
+       // opera.postError('action: ' + _id);
         return true; // perform default action
       }
     }
@@ -247,10 +252,10 @@ var key_identifier = new function()
     var 
     key = '',
 
-    // return true to stop the default action and propagation
+    // return false to stop the default action and propagation
     empty_handler = function(event, id)
     {
-      return true;
+      return /input|textarea/i.test(event.target.nodeName);
     };
 
 
@@ -323,6 +328,7 @@ var key_identifier = new function()
             ( event.ctrlKey ? '1' : '0' ) +
             ( event.altKey ? '1' : '0' ) +
             keyCode.toString();
+
         if( key_id in action_map 
             && !__key_handler[action_id = action_map[key_id]](event, action_id) )
         {
@@ -368,6 +374,7 @@ var key_identifier = new function()
       var ui_obj = UIBase.getUIById(container.getAttribute('ui-id'));
       if( ui_obj && ui_obj.view_id && ui_obj != __current_view )
       {
+        
         if(__key_handler)
         {
           __key_handler.blur();
@@ -386,7 +393,6 @@ var key_identifier = new function()
       
     }
   }
-
   document.addEventListener('keypress', this.handle, true);
   document.addEventListener('click', this.setView, true);
   
