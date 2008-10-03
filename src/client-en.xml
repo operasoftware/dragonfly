@@ -135,4 +135,5 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./ecma-debugger/serviceBase.js"/>
 <script src="./ecma-debugger/console.js"/>
 <script src="./ecma-debugger/ecma-debugger.js"/>
+<body/>
 </viewport>
