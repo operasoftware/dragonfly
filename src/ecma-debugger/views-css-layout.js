@@ -59,6 +59,7 @@ cls.CSSLayoutView = function(id, name, container_class)
 cls.CSSLayoutView.prototype = ViewBase;
 new cls.CSSLayoutView('css-layout', ui_strings.M_VIEW_LABEL_LAYOUT, 'scroll css-layout');
 
+/*
 new Settings
 (
   // id
@@ -94,6 +95,6 @@ new Switches
   [
   ]
 )
-
+*/
 
 
