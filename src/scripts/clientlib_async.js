@@ -95,6 +95,13 @@ var proxy = new function()
       {
         throw "Message failed, Status: " + this.status;
       }
+      /*
+      var r = this.responseText;
+      if(r.indexOf('hello') != -1 )
+      {
+        opera.postError(r);
+      }
+      */
       self.onReceive(x);
       var xml = this.responseXML;
       if (xml.documentElement == null)

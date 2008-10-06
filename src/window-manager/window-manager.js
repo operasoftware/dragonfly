@@ -182,9 +182,26 @@ var window_manager_data = new function()
     update_views();
   }
 
+  this.has_window_id_in_list = function(id)
+  {
+    var cursor = null, i = 0;
+    if( this.window_list )
+    {
+      for( ; ( cursor = this.window_list[i] ) && ! (cursor['window-id'] == id ); i++);
+    }
+    return cursor && true || false;
+  }
+
   this.set_window_list = function(window_list)
   {
     this.window_list = window_list;
+    if( this.active_window && !this.has_window_id_in_list(this.active_window) )
+    {
+      // TODO 
+      // workaround for wrong active window id. must be removed
+      this.setDebugContext(this.window_list[0]['window-id']);
+      opera.postError('active window id does not exist');
+    }
     update_views();
   }
 

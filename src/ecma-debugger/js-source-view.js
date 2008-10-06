@@ -363,19 +363,17 @@ cls.JsSourceView = function(id, name, container_class)
     
     if( script.id != script_id )
     {
-      var script_source = runtimes.getScriptSource(script_id);
-
       var script_obj = runtimes.getScript(script_id);
-      if( !script_obj.line_arr )
-      {
-        script_obj.source_data = new String(script_obj['script-data']);
-        script_obj.line_arr = [];
-        script_obj.state_arr = [];
-        pre_lexer(script_obj);
-      }
 
-      if(script_source || script_source == '')
+      if( script_obj )
       {
+        if( !script_obj.line_arr )
+        {
+          script_obj.source_data = new String(script_obj['script-data']);
+          script_obj.line_arr = [];
+          script_obj.state_arr = [];
+          pre_lexer(script_obj);
+        }
         script =
         {
           id: script_id,
