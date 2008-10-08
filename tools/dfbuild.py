@@ -412,7 +412,7 @@ Destination can be either a directory or a zip file"""
         src, dst = args
     
     dirvars = {}
-    exdirs = ["scripts", "ecma-debugger", "ui-style", "ui-strings"]
+    exdirs = ["scripts", "ui-style", "ui-strings"]
     
     
     if options.translate_build:
