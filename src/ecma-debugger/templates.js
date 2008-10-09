@@ -18,6 +18,10 @@
     {
       ret[ret.length] = ['li', prop_dict[prop] + ': ' + enviroment[prop]];
     }
+    if( ini.revision_number.indexOf("$") != -1 && ini.mercurial_revision )
+    {
+      ini.revision_number = ini.mercurial_revision;
+    }
     ret[ret.length] = ['li', ui_strings.S_TEXT_ENVIRONMENT_DRAGONFLY_VERSION + ': ' + ini.dragonfly_version];
     ret[ret.length] = ['li', ui_strings.S_TEXT_ENVIRONMENT_REVISION_NUMBER + ': ' + ini.revision_number];
     return ['div', ret, 'class', 'padding'];
