@@ -7,6 +7,7 @@ var SettingView = function(id, name, container_class)
 {
   this.ishidden_in_menu = true;
   this.hidden_in_settings = true;
+  this.do_not_reset = true;
   this.createView = function(container)
   {
     container.render(templates.settings(ViewBase.getSingleViews(['hidden_in_settings'])));

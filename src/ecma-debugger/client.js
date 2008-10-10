@@ -27,7 +27,7 @@ var client = new function()
     {
       if (service.name in services_avaible)	
       {
-        opera.postError('register service: '+ service.name);
+        // opera.postError('register service: '+ service.name);
         opera.scopeEnableService(service.name);
       }
       else
@@ -47,9 +47,29 @@ var client = new function()
     }
   }  
 
-  var quit = function()
+  this.onquit_timeout = 0;
+
+  this.reset_onquit_timeout = function()
   {
-    alert('Session quited');
+    self.onquit_timeout = 0;
+  }
+
+  var quit = function(msg)
+  {
+    if( !self.onquit_timeout )
+    {
+      // workaround. right now for each service a quit event is dispatched
+      messages.post('reset-state'); 
+      messages.post('host-state', {state: 'inactive'});
+      for( var view_id in views )
+      {
+        if( !views[view_id].do_not_reset )
+        {
+          views[view_id].clearAllContainers();
+        }
+      }
+      self.onquit_timeout = setTimeout(self.reset_onquit_timeout, 1000);
+    }
   }
 
   var post_scope = function(service, msg)

@@ -12,9 +12,12 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
 
   var __frame_index = -1;
 
+  var __container = null;
   var __console_output = null;
   var __console_input = null;
   var __prefix = null;
+  var __textarea = null;
+  var __textarea_value = '';
 
   var submit_buffer = [];
   var line_buffer = [];
@@ -22,7 +25,61 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
 
   var __selection_start = -1;
 
+  var console_output_data = [];
 
+  var cons_out_render_return_val = function(entry)
+  {
+    if( __console_output )
+    {
+      __console_output.render
+      (
+        ['pre', entry.value ].concat
+        ( 
+          entry.obj_id 
+          ? [
+              'handler', 'inspect-object-link', 
+              'rt-id', entry.runtime_id, 
+              'obj-id', entry.obj_id
+            ] 
+          : [] 
+        )
+      );
+    }
+  }
+
+  var cons_out_render_input = function(entry)
+  {
+    if( __console_output )
+    {
+      __console_output.render(['div', entry.value, 'class', 'log-entry']);
+    }
+  }
+
+  var type_map =
+  {
+    "return-value": cons_out_render_return_val,
+    "input-value": cons_out_render_input
+  }
+
+  var cons_out_update = function()
+  {
+    if( __console_output )
+    {
+      __console_output.innerHTML = '';
+      var entry = null, i = 0;
+      for( ; entry = console_output_data[i]; i++ )
+      {
+        type_map[entry.type](entry);
+      }
+      __container.scrollTop = __container.scrollHeight;
+    };
+    if( __textarea )
+    {
+      __textarea.value = __textarea_value;
+      __textarea.selectionEnd = __textarea.selectionStart = __textarea_value.length;
+      __textarea.focus();
+    };
+  }
 
   var handleEval = function(xml, runtime_id, obj_id)
   {
@@ -51,15 +108,17 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
             }
           }
         }
-        __console_output.render
+        cons_out_render_return_val
         (
-          ['pre', value ].concat( 
-                    obj_id 
-                    ? ['handler', 'inspect-object-link', 'rt-id', runtime_id, 'obj-id', obj_id] 
-                    : [] )
+          console_output_data[console_output_data.length] =
+          {
+            type: "return-value",
+            obj_id: obj_id,
+            runtime_id: runtime_id,
+            value: value
+          }
         );
-        var container = __console_output.parentNode.parentNode;
-        container.scrollTop = container.scrollHeight;
+        __container.scrollTop = __container.scrollHeight;
       }
       else if (return_value = xml.getElementsByTagName('object-id')[0])
       {
@@ -88,9 +147,15 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     var return_value = xml.getElementsByTagName('string')[0];
     if(return_value)
     {
-      __console_output.render(['pre', return_value.firstChild.nodeValue]);
-      var container = __console_output.parentNode.parentNode;
-      container.scrollTop = container.scrollHeight;
+      cons_out_render_return_val
+      (
+        console_output_data[console_output_data.length] =
+        {
+          type: "return-value",
+          value: return_value.firstChild.nodeValue
+        }
+      );
+      __container.scrollTop = __container.scrollHeight;
     }
   }
 
@@ -121,12 +186,26 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     ele.getElementsByTagName('textarea')[0].focus();
   }
 
+  var command_map =
+  {
+    "clear": function()
+    {
+      console_output_data = [];
+      cons_out_update();
+    }
+  };
+
   var submit = function(input)
   {
     var 
     rt_id = runtimes.getSelectedRuntimeId(),
     frame_id = '', 
-    thread_id = '';
+    thread_id = '',
+    script_string  = '',
+    command = '',
+    opening_brace = 0,
+    closing_brace = 0,
+    tag = 0;
 
     if(rt_id)
     {
@@ -134,12 +213,21 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
       {
         frame_id = __frame_index;
         thread_id = stop_at.getThreadId();
-
-        //opera.postError(JSON.stringify(frame_inspection.getSelectedObjectData()));
       }
-      var tag = tagManager.setCB(null, handleEval, [rt_id] );
-      var script_string  = submit_buffer.join('');
-      services['ecmascript-debugger'].eval(tag, rt_id, thread_id, frame_id, "<![CDATA["+script_string+"]]>");
+      script_string  = submit_buffer.join('');
+      opening_brace = script_string.indexOf('(');
+      command = ( opening_brace != -1 && script_string.slice(0, opening_brace) || '' ).
+        replace(/ +$/, '').replace(/^ +/, '');
+      closing_brace = script_string.lastIndexOf(')');
+      if ( command && command in command_map && closing_brace != -1 )
+      {
+        command_map[command](script_string.slice(opening_brace + 1, closing_brace));
+      }
+      else
+      {
+        tag = tagManager.setCB(null, handleEval, [rt_id] );
+        services['ecmascript-debugger'].eval(tag, rt_id, thread_id, frame_id, "<![CDATA["+script_string+"]]>");
+      }
       submit_buffer = [];
     }
     else
@@ -168,7 +256,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
       line_buffer_cursor += event.keyCode == 38 ? -1 : 1;
       line_buffer_cursor = 
         line_buffer_cursor < 0 ? line_buffer.length-1 : line_buffer_cursor > line_buffer.length-1 ? 0 : line_buffer_cursor;
-      event.target.value = (line_buffer.length ? line_buffer[line_buffer_cursor] : '').replace(/\r\n/g, ''); 
+      __textarea_value = event.target.value = (line_buffer.length ? line_buffer[line_buffer_cursor] : '').replace(/\r\n/g, ''); 
       event.preventDefault();
       return;
     }
@@ -177,12 +265,18 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     var lastCRLFIndex = value.lastIndexOf(CRLF);
     if(lastCRLFIndex != -1)
     {
-      if ( value.length -2 != lastCRLFIndex )
+      if ( value.length - 2 != lastCRLFIndex )
       {
         value = value.slice(0, lastCRLFIndex) + value.slice(lastCRLFIndex + 2) + CRLF;
       }
-      __console_output.render(
-        ['div', ( submit_buffer.length ? "... " : ">>> " ) + value, 'class', 'log-entry']);
+      cons_out_render_input
+      (
+        console_output_data[console_output_data.length] =
+        {
+          type: "input-value",
+          value: ( submit_buffer.length ? "... " : ">>> " ) + value
+        }
+      );
       line_buffer_push( submit_buffer[submit_buffer.length] = value );
       if(!event.shiftKey)
       {
@@ -190,9 +284,10 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
       }
       __prefix.textContent = submit_buffer.length ? "... " : ">>> ";
       event.target.value = '';
-      var container = __console_output.parentNode.parentNode;
-      container.scrollTop = container.scrollHeight;
+      __container.scrollTop = __container.scrollHeight;
+      __textarea.scrollTop = 0;
     }
+    __textarea_value = event.target.value;
 
   }
 
@@ -412,9 +507,12 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
   {
     container.innerHTML = markup;
     container.scrollTop = container.scrollHeight;
+    __container = container;
     __console_output = container.getElementsByTagName('div')[1];
     __console_input = container.getElementsByTagName('div')[2];
     __prefix = __console_input.getElementsByTagName('span')[0];
+    __textarea = container.getElementsByTagName('textarea')[0];
+    cons_out_update();
   }
 
   this.ondestroy = function()

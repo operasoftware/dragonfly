@@ -31,6 +31,15 @@ var dom_data = new function()
   PUBLIC_ID = 4,
   SYSTEM_ID = 5; 
 
+  var onResetState = function()
+  {
+    data = []; 
+    data_runtime_id = ''; 
+    current_target = '';
+    __next_rt_id = '';
+    activeWindow = [];
+  }
+
   var is_view_visible = function()
   {
     var id = '', i = 0;
@@ -71,7 +80,6 @@ var dom_data = new function()
 
   var domNodeRemovedHandler = function(event)
   {
-    // javascript:(function(){var e=document.getElementsByTagName('li')[0];e.parentNode.removeChild(e);})()
     // if the node is in the current data handle it otherwise not.
     var rt_id = event['runtime-id'], obj_id = event['object-id'];
     var node = null, i = 0, j = 0, level = 0, k = 0, view_id = '';
@@ -208,6 +216,10 @@ var dom_data = new function()
           {
             host_tabs.activeTab.addEventListener('mouseover', spotlight);
           } 
+          if(settings[settings_id].get('update-on-dom-node-inserted'))
+          {
+            host_tabs.activeTab.addEventListener('DOMNodeRemoved', domNodeRemovedHandler);
+          }
           if( !data.length )
           {
             getInitialView(data_runtime_id);
@@ -492,6 +504,8 @@ var dom_data = new function()
   messages.addListener('setting-changed', onSettingChange);
   messages.addListener('runtime-stopped', onRuntimeStopped);
   messages.addListener('runtime-destroyed', onRuntimeStopped);
+
+  messages.addListener('reset-state', onResetState);
 
 };
 

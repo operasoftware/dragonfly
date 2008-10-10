@@ -54,9 +54,9 @@ var EventHandler = function(type, is_capturing, handler_key)
 new EventHandler('click');
 new EventHandler('change');
 new EventHandler('input');
-new EventHandler('keyup');
-new EventHandler('keydown');
-new EventHandler('keypress');
+new EventHandler('keyup', true);
+new EventHandler('keydown', true);
+new EventHandler('keypress', true);
 new EventHandler('mousedown');
 new EventHandler('focus', true, 'focus-handler');
 new EventHandler('blur', true, 'blur-handler');

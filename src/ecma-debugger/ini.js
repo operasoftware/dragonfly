@@ -5,5 +5,6 @@
   max_frames: 100,
   debug: false,
   dragonfly_version: '$dfversion$',
-  revision_number: '$revdate$'
+  revision_number: '$revdate$', 
+  mercurial_revision: ""
 }

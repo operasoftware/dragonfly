@@ -147,7 +147,8 @@ var stop_at = new function()
     for ( prop in stop_at_settings )
     {
       config_arr[config_arr.length] = prop;
-      config_arr[config_arr.length] = stop_at_settings[prop] ? 'yes' : 'no';
+      config_arr[config_arr.length] = 
+        ( stop_at_settings[prop] = settings['js_source'].get(prop) ) ? 'yes' : 'no';
     }
     services['ecmascript-debugger'].setConfiguration.apply(services['ecmascript-debugger'], config_arr);
   }
@@ -228,7 +229,10 @@ var stop_at = new function()
           {
             topCell.showView(views.js_source.id);
           }
-          if( views.js_source.showLine( stopAt['script-id'], line - 10 ) )
+          var plus_lines = views.js_source.getMaxLines() <= 10 
+            ? views.js_source.getMaxLines() / 2 >> 0 
+            : 10;
+          if( views.js_source.showLine( stopAt['script-id'], line - plus_lines ) )
           {
             views.js_source.showLinePointer( line, true );
           }
@@ -254,7 +258,10 @@ var stop_at = new function()
         {
           topCell.showView(views.js_source.id);
         }
-        if( views.js_source.showLine( stopAt['script-id'], line - 10 ) )
+        var plus_lines = views.js_source.getMaxLines() <= 10 
+          ? views.js_source.getMaxLines() / 2 >> 0 
+          : 10;
+        if( views.js_source.showLine( stopAt['script-id'], line - plus_lines ) )
         {
           views.js_source.showLinePointer( line, true );
         }
@@ -262,6 +269,7 @@ var stop_at = new function()
         window.focus();
         toolbars.js_source.enableButtons('continue');
         messages.post('thread-stopped-event', {stop_at: stopAt});
+        messages.post('host-state', {state: 'waiting'});
       }
     }
     else
@@ -286,4 +294,6 @@ var stop_at = new function()
 
 
   messages.addListener('setting-changed', onSettingChange);
+
+  
 }

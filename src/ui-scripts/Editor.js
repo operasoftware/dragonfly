@@ -302,22 +302,26 @@ var Editor = function()
 
     re.lastIndex = 0;
 
-    while( top > cur_top && ( match = re.exec(value) ) )
+    if( isNaN(left) ) // it's a synthetic event
     {
-      if( match.index - previous_line_chars > max_line_char )
-      {
-        previous_line_chars = prev_match_index + 1;
-        cur_top += this.line_height;
-      }
-      prev_match_index = match.index;
+      charOffset = this.context_cur_prop.length + 1;
     }
-
-    
-
-    if( top < cur_top )
+    else
     {
-      charOffset = 
-        previous_line_chars + ( ( left - ( left % this.char_width ) ) / this.char_width );
+      while( top > cur_top && ( match = re.exec(value) ) )
+      {
+        if( match.index - previous_line_chars > max_line_char )
+        {
+          previous_line_chars = prev_match_index + 1;
+          cur_top += this.line_height;
+        }
+        prev_match_index = match.index;
+      }
+      if( top < cur_top )
+      {
+        charOffset = 
+          previous_line_chars + ( ( left - ( left % this.char_width ) ) / this.char_width );
+      }
     }
 
     var selection = this.getNextToken(charOffset);
@@ -326,9 +330,7 @@ var Editor = function()
     {
       this.textarea.selectionStart = selection.start;
       this.textarea.selectionEnd = selection.end;
-      
     }
-
 
   }
  
