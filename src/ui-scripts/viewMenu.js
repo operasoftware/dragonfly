@@ -96,7 +96,15 @@ var ViewsMenu = function(menu_id)
 
     document.addEventListener('DOMNodeInserted', init, false);
     document.documentElement.render(templates.viewMenu());
-    topCell.tab.addRightPadding(200);
+    if(opera.attached)
+    {
+      topCell.tab.changeStyleProperty("padding-right", 188);
+    }
+    else
+    {
+      topCell.toolbar.changeStyleProperty("padding-right", 188);
+    }
+    
   }
 
   this.remove = function()
@@ -105,7 +113,14 @@ var ViewsMenu = function(menu_id)
     if(menu)
     {
       menu.parentNode.removeChild(menu);
-      topCell.tab.addRightPadding(-200);
+      if(opera.attached)
+      {
+        topCell.tab.changeStyleProperty("padding-right", -188);
+      }
+      else
+      {
+        topCell.toolbar.changeStyleProperty("padding-right", -188);
+      }
     }
   }
 

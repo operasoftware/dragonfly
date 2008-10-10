@@ -769,6 +769,58 @@ pre[handler="inspect-object-link"]:hover {
   }
 
 
+/* testing windows manager */
+
+.windows-manager h2 {
+  font-size: 12px;
+  }
+
+.windows-manager ul {
+  margin: 5px 0 5px 20px;
+  }
+
+.windows-manager ul li:first-child 
+{
+  float: left;
+  margin-left: -20px;
+}
+
+
+.script-options h2, .stylesheet-options h2
+{
+  padding: .1em .2em;
+  font-size: 1.3em;
+  border-top: 1px solid hsl(0, 0%, 80%);
+  border-bottom: 1px solid hsl(0, 0%, 80%);
+  background-color: hsl(0, 0%, 90%);
+  white-space: nowrap;
+}
+
+.script-options h2:first-child, .stylesheet-options h2:first-child
+{
+  border-top: 0px solid;
+}
+
+.script-options cst-option, .stylesheet-options cst-option
+{
+  padding-left: 2.5em;
+}
+
+.script-options cst-option
+{
+  background-image: url('../ui-images/selected-frame-top.png');
+  background-position:  5px -16px;
+  background-repeat: no-repeat ;
+}
+
+.script-options cst-option.stopped 
+{ 
+  background-position: 5px 50%;
+}
+
+
+
+
 
 
 
