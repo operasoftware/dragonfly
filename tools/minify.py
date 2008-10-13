@@ -2,7 +2,11 @@ import types
 import sys
 import shutil
 import codecs
-import StringIO
+
+try:
+    import cStringIO as StringIo
+except ImportException:
+    import StringIO
 
 class JSTolkenizer(object):    
 
@@ -221,7 +225,8 @@ class JSTolkenizer(object):
             self.__input_str.next()
 
 
-class minify(object):
+class Minify(object):
+    """Minify class, handling minification frome one file to another"""
     
     WHITESPACE = 'WHITESPACE'
     LINETERMINATOR = 'LINETERMINATOR'
@@ -244,7 +249,7 @@ class minify(object):
             only new lines and white spaces which are safe to remove are removed
             
             FIXME: I might make more sense that input and output are always
-            file-like objects, so the minify class doesn't ever have to
+            file-like objects, so the Minify class doesn't ever have to
             know anything about paths and opening and closing files or
             encodings. That could all go in helper methods in the module scope.
             
@@ -311,9 +316,11 @@ class minify(object):
             pass
 
 def minify_in_place(path, encoding=None):
+    """Minify path and write it to to the same location.
+    Note: Uses stringIO so it will use memory for the entire destination file"""
     input = codecs.open(path, "r", encoding)
     tmpout = StringIO.StringIO();
-    minify(input, tmpout)
+    Minify(input, tmpout)
     input.close()
 
     output = codecs.open(path, "w", encoding)
@@ -324,6 +331,6 @@ def minify_in_place(path, encoding=None):
 
 if __name__ == "__main__":
     if len(sys.argv) == 3:
-        minify(sys.argv[1], sys.argv[2])   
+        Minify(sys.argv[1], sys.argv[2])   
     else:
         print "usage from commandline like: python minify.py input output"
