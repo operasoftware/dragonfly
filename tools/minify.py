@@ -30,7 +30,7 @@ class JSTolkenizer(object):
     STRING_COMMENT = 'COMMENT'
     STRING_KEYWORD = 'KEYWORD'
     KEYWORDS = \
-    [
+    (
         'break', 'else', 'new', 'var', 'case', 'finally',
         'return', 'void', 'catch', 'for', 'switch', 'while',
         'continue', 'function', 'this', 'with', 'default',
@@ -41,7 +41,7 @@ class JSTolkenizer(object):
         'class', 'float', 'package', 'throws', 'const', 'goto',
         'private', 'transient', 'debugger', 'implements',
         'protected', 'volatile', 'double', 'import', 'public'
-    ]
+    )
     
     def __init__(self, tolken_handler):
         """ tolken_handler must have an input and an ontolken and onfinish handler """
