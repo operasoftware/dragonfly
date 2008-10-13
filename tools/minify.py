@@ -2,15 +2,15 @@ import types
 
 class JSTolkenizer(object):    
 
-    WHITESPACE = [u'\u0009',u'\u000B',u'\u000C',u'\u0020',u'\u00A0',]
-    LINETERMINATOR = [u'\u000A',u'\u000D',u'\u2028',u'\u2029',]
-    NUMBER = ['0','1','2','3','4','5','6','7','8','9']
-    PUNCTUATOR = ['{','}','(',')','[',']',';',',','<','>','=','!','+','-','*','%','&','|','^','~','?',':','.']
-    PUNCTUATOR_2 = ['=','+','-','<','>','&','|']
-    STRING_DELIMITER = ['"', '\'']
-    HEX_NUMBER = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','A','B','C','D','E','F']
-    REG_EXP_FLAG = ['g','i','m']
-    PUNCTUATOR_DIV_PREDECESSOR = [')',']']    
+    WHITESPACE = (u'\u0009',u'\u000B',u'\u000C',u'\u0020',u'\u00A0')
+    LINETERMINATOR = (u'\u000A',u'\u000D',u'\u2028',u'\u2029')
+    NUMBER = ('0','1','2','3','4','5','6','7','8','9')
+    PUNCTUATOR = ('{','}','(',')','[',']',';',',','<','>','=','!','+','-','*','%','&','|','^','~','?',':','.')
+    PUNCTUATOR_2 = ('=','+','-','<','>','&','|')
+    STRING_DELIMITER = ('"', '\'')
+    HEX_NUMBER = ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','A','B','C','D','E','F')
+    REG_EXP_FLAG = ('g','i','m')
+    PUNCTUATOR_DIV_PREDECESSOR = (')',']')
     STRING_WHITESPACE = 'WHITESPACE'
     STRING_LINETERMINATOR = 'LINETERMINATOR'
     STRING_IDENTIFIER = 'IDENTIFIER'
@@ -229,9 +229,9 @@ class minify(object):
     REG_EXP = 'REG_EXP'
     COMMENT = 'COMMENT'
     KEYWORD = 'KEYWORD'
-    OPENERS = ['(', '{', '[']
-    ENDS = [";", ",","+","="]
-    CLOSENERS = [')', '}', ']']
+    OPENERS = ('(', '{', '[')
+    ENDS = (";", ",","+","=")
+    CLOSENERS = (')', '}', ']')
     TYPE = 0
     TOLKEN = 1
 
