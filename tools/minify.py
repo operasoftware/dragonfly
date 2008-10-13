@@ -4,7 +4,7 @@ import shutil
 import codecs
 
 try:
-    import cStringIO as StringIo
+    import cStringIO as StringIO
 except ImportException:
     import StringIO
 
@@ -316,7 +316,7 @@ class Minify(object):
             pass
 
 def minify_in_place(path, encoding=None):
-    """Minify path and write it to to the same location.
+    """Minify path and write it to to the same location. Optionally use encoding
     Note: Uses stringIO so it will use memory for the entire destination file"""
     input = codecs.open(path, "r", encoding)
     tmpout = StringIO.StringIO();
@@ -328,9 +328,16 @@ def minify_in_place(path, encoding=None):
     tmpout.close()
     output.close()
 
+def minify(inpath, outpath, encoding=None):
+    """Minify input path to outputpath, optionally using encoding"""
+    input = codecs.open(inpath, "r", encoding)
+    output = codecs.open(outpath, "w", encoding)
+    Minify(input, output)
+    input.close()
+    output.close()
 
 if __name__ == "__main__":
     if len(sys.argv) == 3:
-        Minify(sys.argv[1], sys.argv[2])   
+        minify(sys.argv[1], sys.argv[2])   
     else:
         print "usage from commandline like: python minify.py input output"
