@@ -336,8 +336,39 @@ def minify(inpath, outpath, encoding=None):
     input.close()
     output.close()
 
-if __name__ == "__main__":
-    if len(sys.argv) == 3:
-        minify(sys.argv[1], sys.argv[2])   
+def main():
+    import optparse
+    import os    
+    parser = optparse.OptionParser("%prog [options] source [destination]")
+    parser.add_option("-o", "--overwrite", dest="overwrite",
+                      default=False, action="store_true",
+                      help="Overwrite target if it exists. WARNING! Includes source if no target is given!")    
+
+    options, args = parser.parse_args()
+
+    if len(args) == 0: # no args, use as filter
+        print sys.stdin
+        Minify(sys.stdin, sys.stderr)
+        return 1
+    if len(args) == 1:
+        src = args[0]
+        dst = args[0]
+    elif len(args) == 2:
+        src = args[0]
+        dst = args[1]
     else:
-        print "usage from commandline like: python minify.py input output"
+        parser.error("Invalid number of arguments")
+
+    if not os.path.isfile(src):
+        parser.error("Source file not found: " + src)
+    elif not options.overwrite and os.path.isfile(dst):
+        parser.error("Destination file exists. Use -o to overwrite")
+
+    if src==dst:
+        minify_in_place(src)
+    else:
+        minify(src, dst)
+    return 1
+
+if __name__ == "__main__":
+    sys.exit(main())
