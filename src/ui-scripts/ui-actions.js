@@ -130,18 +130,30 @@ eventHandlers.click['top-window-close'] = function(event)
 
 eventHandlers.click['top-window-toggle-attach'] = function(event)
 {
-  // TODO this is right now too hacky
+
+  viewsMenu.remove();
   window.topCell.onresize = function(){};
   var is_attached = ( window.opera.attached = !window.opera.attached );
+  document.documentElement.removeChild(event.target.parentNode);
+  var win_controls = document.documentElement.render(templates.window_controls(is_attached));
+
+  
   if( is_attached )
   {
-    event.target.addClass('attached');
+    topCell.tab.changeStyleProperty("padding-right", 60);
+    topCell.toolbar.changeStyleProperty("padding-right", -30);
   }
   else
   {
-    event.target.removeClass('attached');
+    topCell.tab.changeStyleProperty("padding-right", -60);
+    topCell.toolbar.changeStyleProperty("padding-right", 30);
   }
+
   settings.general.set('window-attached',  is_attached || false);
+  if( settings.general.get('show-views-menu') )
+  {
+    viewsMenu.create();
+  }
   setTimeout(client.setupTopCell, 0);
 }
 

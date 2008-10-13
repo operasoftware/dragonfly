@@ -2,6 +2,7 @@
   * @constructor 
   */
 
+// TODO clean up in regard of protocol 4
 var runtimes = new function()
 {
   var __runtimes = {};
@@ -25,7 +26,7 @@ var runtimes = new function()
 
   var view_ids = ['threads'];
 
-  var runtime_views = ['runtimes', 'runtimes_dom', 'runtimes_css'];
+  var runtime_views = [];
 
   var __selected_runtime_id = '';
 
@@ -33,6 +34,9 @@ var runtimes = new function()
 
   var __selected_script = '';
 
+  var debug_context_frame_path = '';
+
+  // TODO check if that can be removed completly
   var updateRuntimeViews = function()
   {
     var rt = '', i = 0;
@@ -194,14 +198,23 @@ var runtimes = new function()
           if (win_id in __window_ids)
           {
             cleanupWindow(win_id, runtimeId);
+
           }
           else
           {
             __window_ids[win_id] = true;
           }
+          if (!debug_context_frame_path)
+          {
+            debug_context_frame_path = runtime['html-frame-path'];
+            
+          }   
+          __selected_script = '';
         } 
         getTitleRuntime(runtimeId);
         __runtimes[runtimeId] = runtime;
+        // TODO check if that is still needed
+
         if(__next_runtime_id_to_select == runtimeId)
         {
           self.setSelectedRuntime(runtime);
@@ -222,7 +235,10 @@ var runtimes = new function()
         {
           __windows_reloaded[runtime['window-id']] = 2;
         }
-
+        if( debug_context_frame_path == runtime['html-frame-path'] && runtimeId != __selected_runtime_id )
+        {
+          self.setSelectedRuntimeId (runtimeId)
+        }
         //
         if( runtime['window-id'] == __selected_window )
         {
@@ -241,6 +257,7 @@ var runtimes = new function()
 
   var parseGetTitle = function(xml, rt_id)
   {
+
     if(__runtimes[rt_id] && xml.getNodeData('status') == 'completed' )
     {
       __runtimes[rt_id]['title'] = xml.getNodeData('string');
@@ -294,6 +311,15 @@ var runtimes = new function()
         self.setBreakpoint(new_script_id, line_nr);
       }
       delete __scripts[sc];
+    }
+
+    if( !__selected_script )
+    {
+      __selected_script = new_script_id;
+      views['js_source'].update();
+      window['cst-selects']['js-script-select'].updateElement();
+      window['cst-selects']['cmd-runtime-select'].updateElement();
+
     }
   }
   
@@ -382,14 +408,36 @@ var runtimes = new function()
 
   this.setActiveWindowId = function(window_id)
   {
-    __selected_window = window_id;
-    cleanUpThreadOnContextChange();
+    
+    if( window_id != __selected_window )
+    {
+      __selected_window = window_id;
+      cleanUpThreadOnContextChange();
+      settings.runtimes.set('selected-window', window_id);
+      updateRuntimeViews();
+    }
+  }
+
+  // new in proto 4
+
+  // window id is the new debug context
+  // called to create all runtimes on setting or changing the debug context
+  this.createAllRuntimesOnDebugContextChange = function(win_id)
+  {
+    debug_context_frame_path = '';
+    __selected_script = '';
+    var tag =  tagManager.setCB(null, set_new_debug_context, [win_id]);
+    services['ecmascript-debugger'].createAllRuntimes(tag);
+  }
+
+  var set_new_debug_context = function(xml, win_id)
+  {
+    parseRuntime(xml);
+    host_tabs.setActiveTab(win_id);
     if( settings.runtimes.get('reload-runtime-automatically') )
     {
       self.reloadWindow();
     }
-    settings.runtimes.set('selected-window', window_id);
-    updateRuntimeViews();
   }
 
   this.getThreads = function()
@@ -423,7 +471,7 @@ var runtimes = new function()
       script['stop-ats'] = [];
       registerRuntime( script['runtime-id'] );
       registerScript( script );
-      views['runtimes'].update();
+      // views['runtimes'].update();
     }
   }
 
@@ -710,9 +758,7 @@ var runtimes = new function()
   }
 
 
-  
-
-
+ 
   this.getRuntimeIdWithURL = function(url)
   {
     var r = '';
@@ -866,7 +912,7 @@ var runtimes = new function()
     {
       this.setSelectedRuntime(__runtimes[id]);
       // this is not clean
-      views.runtimes.update();
+      // views.runtimes.update();
     }
     else
     {
