@@ -315,7 +315,7 @@ class Minify(object):
         except:
             pass
 
-def minify_in_place(path, encoding=None):
+def minify_in_place(path, encoding="utf_8_sig"):
     """Minify path and write it to to the same location. Optionally use encoding
     Note: Uses stringIO so it will use memory for the entire destination file"""
     input = codecs.open(path, "r", encoding)
@@ -328,7 +328,7 @@ def minify_in_place(path, encoding=None):
     tmpout.close()
     output.close()
 
-def minify(inpath, outpath, encoding=None):
+def minify(inpath, outpath, encoding="utf_8_sig"):
     """Minify input path to outputpath, optionally using encoding"""
     input = codecs.open(inpath, "r", encoding)
     output = codecs.open(outpath, "w", encoding)
