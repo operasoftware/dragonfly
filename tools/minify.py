@@ -1,3 +1,5 @@
+import types
+
 class JSTolkenizer(object):    
 
     WHITESPACE = [u'\u0009',u'\u000B',u'\u000C',u'\u0020',u'\u00A0',]
@@ -243,7 +245,9 @@ class minify(object):
         JSTolkenizer(self)
 
     def set_file(self, file, mode):
-        if type(file) == type(""):
+        """If file is a path as a string, open it in the correct way. If not,
+        assume that it's something file-like and just return it."""
+        if isinstance(file, basestring):
             import codecs
             file = codecs.open(file, mode, "utf_8_sig")
         return file
