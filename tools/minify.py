@@ -1,4 +1,8 @@
 import types
+import sys
+import shutil
+import codecs
+import StringIO
 
 class JSTolkenizer(object):    
 
@@ -239,10 +243,11 @@ class minify(object):
         """ input and out can be either be a file path or a file object 
             only new lines and white spaces which are safe to remove are removed
             
-            FIXME: I might make more sense that input and output are file-like
-            objects, so the minify class doesn't need to know anything about
-            paths and opening and closing files or encodings. That could all
-            go in helper methods in the module scope.
+            FIXME: I might make more sense that input and output are always
+            file-like objects, so the minify class doesn't ever have to
+            know anything about paths and opening and closing files or
+            encodings. That could all go in helper methods in the module scope.
+            
             """
         self.input = self.set_file(input, "r", encoding)
         self.output = self.set_file(output, "w", encoding)
@@ -255,9 +260,9 @@ class minify(object):
         encoding. If file_or_path is not, a string, assume that it's something
         file-like and just return it."""
         if isinstance(path_or_file, basestring):
-            import codecs
-            file = codecs.open(path_or_file, mode, encoding)
-        return file
+            return codecs.open(path_or_file, mode, encoding)
+        else:
+            return path_or_file
 
     def onfinish(self):
         self.buffersize = 0
@@ -305,9 +310,19 @@ class minify(object):
         except:
             pass
 
+def minify_in_place(path, encoding=None):
+    input = codecs.open(path, "r", encoding)
+    tmpout = StringIO.StringIO();
+    minify(input, tmpout)
+    input.close()
+
+    output = codecs.open(path, "w", encoding)
+    output.write(tmpout.getvalue())
+    tmpout.close()
+    output.close()
+
 
 if __name__ == "__main__":
-    import sys
     if len(sys.argv) == 3:
         minify(sys.argv[1], sys.argv[2])   
     else:
