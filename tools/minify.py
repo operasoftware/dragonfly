@@ -235,21 +235,28 @@ class minify(object):
     TYPE = 0
     TOLKEN = 1
 
-    def __init__(self, input, output):
+    def __init__(self, input, output, encoding="utf_8_sig"):
         """ input and out can be either be a file path or a file object 
-            only new lines and white spaces which are safe to remove are removed """
-        self.input = self.set_file(input, "r")
-        self.output = self.set_file(output, "w")
+            only new lines and white spaces which are safe to remove are removed
+            
+            FIXME: I might make more sense that input and output are file-like
+            objects, so the minify class doesn't need to know anything about
+            paths and opening and closing files or encodings. That could all
+            go in helper methods in the module scope.
+            """
+        self.input = self.set_file(input, "r", encoding)
+        self.output = self.set_file(output, "w", encoding)
         self.tolkens = [('', ''),('', ''),('', '')]
         self.buffersize = 2
         JSTolkenizer(self)
 
-    def set_file(self, file, mode):
-        """If file is a path as a string, open it in the correct way. If not,
-        assume that it's something file-like and just return it."""
-        if isinstance(file, basestring):
+    def set_file(self, path_or_file, mode, encoding):
+        """If file_or_path is a path as a string, open it using the provided
+        encoding. If file_or_path is not, a string, assume that it's something
+        file-like and just return it."""
+        if isinstance(path_or_file, basestring):
             import codecs
-            file = codecs.open(file, mode, "utf_8_sig")
+            file = codecs.open(path_or_file, mode, encoding)
         return file
 
     def onfinish(self):
