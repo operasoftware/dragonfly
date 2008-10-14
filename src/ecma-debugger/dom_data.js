@@ -455,14 +455,20 @@ var dom_data = new function()
 
   this.getCSSPath = function()
   {
-    var i = 0, j = -1, path = '';
+    var 
+    i = 0, 
+    j = -1,
+    path = '',
+    mode = 'simple path'; // or class and id or siblings 
 
-    if(current_target)
+    // TODO make new settings
+
+    if( current_target )
     {
       for( ; data[i] && data[i][ID] != current_target; i ++);
       if( data[i] )
       {
-        path = data[i][NAME];
+        path = [ {name: data[i][NAME], id: data[i][ID], combinator: ""} ];
         j = i;
         i --;
         for(  ; data[i]; i --)
@@ -471,7 +477,14 @@ var dom_data = new function()
           {
             if(data[i][ DEPTH] <= data[j][DEPTH])
             {
-              path =  data[i][NAME] + ( data[i][DEPTH] < data[j][DEPTH] ? ' > ' : ' + ' ) + path;
+              if ( data[i][DEPTH] < data[j][DEPTH] )
+              {
+                path.splice(0, 0, {name: data[i][NAME], id: data[i][ID], combinator: ">"});
+              }
+              else if ( mode == "siblings" )
+              {
+                path.splice(0, 0, {name: data[i][NAME], id: data[i][ID], combinator: "+"});
+              }
               j = i;
             }
           } 

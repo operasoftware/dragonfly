@@ -768,6 +768,13 @@ pre[handler="inspect-object-link"]:hover {
   text-decoration: underline;;
   }
 
+breadcrumb span
+{
+  display:inline-block;
+  padding: 0 .5em;
+  border: 1px solid transparent;
+  line-height: 25px;
+}
 
 /* testing windows manager */
 
@@ -784,7 +791,6 @@ pre[handler="inspect-object-link"]:hover {
   float: left;
   margin-left: -20px;
 }
-
 
 .script-options h2, .stylesheet-options h2
 {
@@ -818,13 +824,10 @@ pre[handler="inspect-object-link"]:hover {
   background-position: 5px 50%;
 }
 
-
-
-
-
-
-
-
-
+breadcrumb span:hover
+{
+  background-color: hsl(240, 80%, 90%);
+  border-color: hsl(240, 50%, 70%);
+}
 
 

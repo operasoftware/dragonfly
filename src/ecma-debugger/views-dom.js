@@ -42,6 +42,31 @@ cls.DOMView = function(id, name, container_class)
     return ret;
   }
 
+  this.updateBreadcrumbLink = function(obj_id)
+  {
+
+    var target = document.getElementById('target-element');
+    if(target)
+    {
+      target.removeAttribute('id');
+      while( target && !/container/.test(target.nodeName) && ( target = target.parentElement ) );
+      if( target )
+      {
+        var 
+        divs = target.getElementsByTagName('div'),
+        div = null,
+        i = 0;
+
+        for( ; ( div = divs[i] ) && div.getAttribute('ref-id') != obj_id; i++ );
+        if( div )
+        {
+          div.id = 'target-element';
+          this.scrollTargetIntoView();
+        }
+      }
+    }
+  }
+
   this.exportMarkup = function()
   {
     var data = dom_data.getData();
@@ -462,6 +487,17 @@ eventHandlers.click['dom-inspection-snapshot'] = function(event, target)
 
 
 messages.post('setting-changed', {id: 'dom', key: 'dom-tree-style'});
+
+eventHandlers.click['breadcrumb-link'] = function(event, target)
+{
+  // TODO: string or number?
+  var obj_id = target.getAttribute('obj-id'); 
+  if( obj_id )
+  {
+    dom_data.setCurrentTarget(obj_id);
+    views['dom'].updateBreadcrumbLink(obj_id);
+  }
+};
 
 
 
