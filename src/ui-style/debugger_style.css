@@ -768,6 +768,20 @@ pre[handler="inspect-object-link"]:hover {
   text-decoration: underline;;
   }
 
+breadcrumb span
+{
+  display:inline-block;
+  padding: 0 .5em;
+  border: 1px solid transparent;
+  line-height: 25px;
+}
+
+breadcrumb span:hover
+{
+  background-color: hsl(240, 80%, 90%);
+  border-color: hsl(240, 50%, 70%);
+}
+
 
 
 

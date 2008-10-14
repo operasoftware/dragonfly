@@ -19,10 +19,23 @@ var StatusbarBase = function()
     this.updateInfo(' ');
   } 
   
-  this.updateInfo = function(string)
+  this.updateInfo = function(info)
   {
-    var statusbar = document.getElementById(this.type + '-to-' + this.cell.id) || this.update();
-    statusbar.getElementsByTagName('info')[0].textContent = string;
+
+    var 
+    statusbar = document.getElementById(this.type + '-to-' + this.cell.id) || this.update(),
+    info_container = statusbar.getElementsByTagName('info')[0];
+
+    if( typeof info == "string" )
+    {
+      info_container.textContent = info;
+    }
+    else
+    {
+      info_container.innerHTML = "";
+      info_container.render(info);
+    }
+    
   }
 
   this.setDimensions = function(force_redraw)

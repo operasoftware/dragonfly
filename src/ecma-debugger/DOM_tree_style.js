@@ -88,7 +88,7 @@ var DOM_tree_style = function(id, name, container_class)
         target.removeAttribute('id');
       }
       ele.id = 'target-element';
-      topCell.statusbar.updateInfo(dom_data.getCSSPath());
+      topCell.statusbar.updateInfo(templates.breadcrumb(dom_data.getCSSPath()));
     }
     else
     {
@@ -319,7 +319,7 @@ var DOM_tree_style = function(id, name, container_class)
       container.firstChild.firstChild.innerHTML = tree;
 
       container.scrollTop.scrollTop = scrollTop;
-      topCell.statusbar.updateInfo(dom_data.getCSSPath());
+      topCell.statusbar.updateInfo(templates.breadcrumb(dom_data.getCSSPath()));
       
     }
 

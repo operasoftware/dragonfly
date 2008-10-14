@@ -615,6 +615,28 @@ Line 2:
              
 
   }
+
+  this.breadcrumb = function(css_path)
+  {
+    var
+    ret = ["breadcrumb"],
+    i = 0;
+    // opera.postError(JSON.stringify(css_path))
+    if( css_path )
+    {
+      for( ; i < css_path.length; i++ )
+      {
+        ret[ret.length] = ["span", css_path[i].name, 'obj-id', css_path[i].id.toString(), 'handler', 'breadcrumb-link' ];
+        ret[ret.length] = css_path[i].combinator;
+      }
+    }
+    else
+    {
+      opera.postError("css path missing in templates.breadcrumbs " + css_path );
+    }
+    return ret;
+
+  }
   
 
 }).apply(window.templates);

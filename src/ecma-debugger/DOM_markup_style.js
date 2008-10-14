@@ -71,7 +71,7 @@ var DOM_markup_style = function(id, name, container_class)
       {
         ele.id = 'target-element';
       }
-      topCell.statusbar.updateInfo(dom_data.getCSSPath());
+      topCell.statusbar.updateInfo(templates.breadcrumb(dom_data.getCSSPath()));
     }
     else
     {
@@ -328,7 +328,7 @@ var DOM_markup_style = function(id, name, container_class)
       ).innerHTML = tree;
       container.scrollTop = scrollTop;
       
-      topCell.statusbar.updateInfo(dom_data.getCSSPath());
+      topCell.statusbar.updateInfo(templates.breadcrumb(dom_data.getCSSPath()));
       
     }
 
