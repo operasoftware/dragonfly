@@ -1,14 +1,24 @@
+import types
+import sys
+import shutil
+import codecs
+
+try:
+    import cStringIO as StringIO
+except ImportException:
+    import StringIO
+
 class JSTolkenizer(object):    
 
-    WHITESPACE = [u'\u0009',u'\u000B',u'\u000C',u'\u0020',u'\u00A0',]
-    LINETERMINATOR = [u'\u000A',u'\u000D',u'\u2028',u'\u2029',]
-    NUMBER = ['0','1','2','3','4','5','6','7','8','9']
-    PUNCTUATOR = ['{','}','(',')','[',']',';',',','<','>','=','!','+','-','*','%','&','|','^','~','?',':','.']
-    PUNCTUATOR_2 = ['=','+','-','<','>','&','|']
-    STRING_DELIMITER = ['"', '\'']
-    HEX_NUMBER = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','A','B','C','D','E','F']
-    REG_EXP_FLAG = ['g','i','m']
-    PUNCTUATOR_DIV_PREDECESSOR = [')',']']    
+    WHITESPACE = (u'\u0009',u'\u000B',u'\u000C',u'\u0020',u'\u00A0')
+    LINETERMINATOR = (u'\u000A',u'\u000D',u'\u2028',u'\u2029')
+    NUMBER = ('0','1','2','3','4','5','6','7','8','9')
+    PUNCTUATOR = ('{','}','(',')','[',']',';',',','<','>','=','!','+','-','*','%','&','|','^','~','?',':','.')
+    PUNCTUATOR_2 = ('=','+','-','<','>','&','|')
+    STRING_DELIMITER = ('"', '\'')
+    HEX_NUMBER = ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','A','B','C','D','E','F')
+    REG_EXP_FLAG = ('g','i','m')
+    PUNCTUATOR_DIV_PREDECESSOR = (')',']')
     STRING_WHITESPACE = 'WHITESPACE'
     STRING_LINETERMINATOR = 'LINETERMINATOR'
     STRING_IDENTIFIER = 'IDENTIFIER'
@@ -20,7 +30,7 @@ class JSTolkenizer(object):
     STRING_COMMENT = 'COMMENT'
     STRING_KEYWORD = 'KEYWORD'
     KEYWORDS = \
-    [
+    (
         'break', 'else', 'new', 'var', 'case', 'finally',
         'return', 'void', 'catch', 'for', 'switch', 'while',
         'continue', 'function', 'this', 'with', 'default',
@@ -31,7 +41,7 @@ class JSTolkenizer(object):
         'class', 'float', 'package', 'throws', 'const', 'goto',
         'private', 'transient', 'debugger', 'implements',
         'protected', 'volatile', 'double', 'import', 'public'
-    ]
+    )
     
     def __init__(self, tolken_handler):
         """ tolken_handler must have an input and an ontolken and onfinish handler """
@@ -215,7 +225,8 @@ class JSTolkenizer(object):
             self.__input_str.next()
 
 
-class minify(object):
+class Minify(object):
+    """Minify class, handling minification frome one file to another"""
     
     WHITESPACE = 'WHITESPACE'
     LINETERMINATOR = 'LINETERMINATOR'
@@ -227,26 +238,36 @@ class minify(object):
     REG_EXP = 'REG_EXP'
     COMMENT = 'COMMENT'
     KEYWORD = 'KEYWORD'
-    OPENERS = ['(', '{', '[']
-    ENDS = [";", ",","+","="]
-    CLOSENERS = [')', '}', ']']
+    OPENERS = ('(', '{', '[')
+    ENDS = (";", ",","+","=")
+    CLOSENERS = (')', '}', ']')
     TYPE = 0
     TOLKEN = 1
 
-    def __init__(self, input, output):
+    def __init__(self, input, output, encoding="utf_8_sig"):
         """ input and out can be either be a file path or a file object 
-            only new lines and white spaces which are safe to remove are removed """
-        self.input = self.set_file(input, "r")
-        self.output = self.set_file(output, "w")
+            only new lines and white spaces which are safe to remove are removed
+            
+            FIXME: I might make more sense that input and output are always
+            file-like objects, so the Minify class doesn't ever have to
+            know anything about paths and opening and closing files or
+            encodings. That could all go in helper methods in the module scope.
+            
+            """
+        self.input = self.set_file(input, "r", encoding)
+        self.output = self.set_file(output, "w", encoding)
         self.tolkens = [('', ''),('', ''),('', '')]
         self.buffersize = 2
         JSTolkenizer(self)
 
-    def set_file(self, file, mode):
-        if type(file) == type(""):
-            import codecs
-            file = codecs.open(file, mode, "utf_8_sig")
-        return file
+    def set_file(self, path_or_file, mode, encoding):
+        """If file_or_path is a path as a string, open it using the provided
+        encoding. If file_or_path is not, a string, assume that it's something
+        file-like and just return it."""
+        if isinstance(path_or_file, basestring):
+            return codecs.open(path_or_file, mode, encoding)
+        else:
+            return path_or_file
 
     def onfinish(self):
         self.buffersize = 0
@@ -294,10 +315,60 @@ class minify(object):
         except:
             pass
 
+def minify_in_place(path, encoding="utf_8_sig"):
+    """Minify path and write it to to the same location. Optionally use encoding
+    Note: Uses stringIO so it will use memory for the entire destination file"""
+    input = codecs.open(path, "r", encoding)
+    tmpout = StringIO.StringIO();
+    Minify(input, tmpout)
+    input.close()
+
+    output = codecs.open(path, "w", encoding)
+    output.write(tmpout.getvalue())
+    tmpout.close()
+    output.close()
+
+def minify(inpath, outpath, encoding="utf_8_sig"):
+    """Minify input path to outputpath, optionally using encoding"""
+    input = codecs.open(inpath, "r", encoding)
+    output = codecs.open(outpath, "w", encoding)
+    Minify(input, output)
+    input.close()
+    output.close()
+
+def main():
+    import optparse
+    import os    
+    parser = optparse.OptionParser("%prog [options] source [destination]")
+    parser.add_option("-o", "--overwrite", dest="overwrite",
+                      default=False, action="store_true",
+                      help="Overwrite target if it exists. WARNING! Includes source if no target is given!")    
+
+    options, args = parser.parse_args()
+
+    if len(args) == 0: # no args, use as filter
+        print sys.stdin
+        Minify(sys.stdin, sys.stderr)
+        return 1
+    if len(args) == 1:
+        src = args[0]
+        dst = args[0]
+    elif len(args) == 2:
+        src = args[0]
+        dst = args[1]
+    else:
+        parser.error("Invalid number of arguments")
+
+    if not os.path.isfile(src):
+        parser.error("Source file not found: " + src)
+    elif not options.overwrite and os.path.isfile(dst):
+        parser.error("Destination file exists. Use -o to overwrite")
+
+    if src==dst:
+        minify_in_place(src)
+    else:
+        minify(src, dst)
+    return 1
 
 if __name__ == "__main__":
-    import sys
-    if len(sys.argv) == 3:
-        minify(sys.argv[1], sys.argv[2])   
-    else:
-        print "usage from commandline like: python minify.py input output"
+    sys.exit(main())
