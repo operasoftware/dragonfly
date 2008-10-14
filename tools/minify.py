@@ -9,16 +9,7 @@ except ImportException:
     import StringIO
 
 class JSTolkenizer(object):    
-
-    WHITESPACE = (u'\u0009',u'\u000B',u'\u000C',u'\u0020',u'\u00A0')
     LINETERMINATOR = (u'\u000A',u'\u000D',u'\u2028',u'\u2029')
-    NUMBER = ('0','1','2','3','4','5','6','7','8','9')
-    PUNCTUATOR = ('{','}','(',')','[',']',';',',','<','>','=','!','+','-','*','%','&','|','^','~','?',':','.')
-    PUNCTUATOR_2 = ('=','+','-','<','>','&','|')
-    STRING_DELIMITER = ('"', '\'')
-    HEX_NUMBER = ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','A','B','C','D','E','F')
-    REG_EXP_FLAG = ('g','i','m')
-    PUNCTUATOR_DIV_PREDECESSOR = (')',']')
     STRING_WHITESPACE = 'WHITESPACE'
     STRING_LINETERMINATOR = 'LINETERMINATOR'
     STRING_IDENTIFIER = 'IDENTIFIER'
@@ -48,29 +39,28 @@ class JSTolkenizer(object):
         self.__str = str
         self.__input = tolken_handler.input
         self.__tolken_handler = tolken_handler
-        self.__input_str = self.next_char()
         self.__tolkens = []
+        self.__char = ''
         self.__previous_value = ''
         self.__type = ''
         self.__string_delimiter = ''
-        self.__char = ''
         self.__buffer = ''
         self.__previous_type = ''
         self.__input.seek(0)
+        self.__input_str = self.next_char()
         try:
-            self.__input_str.next()
             self.default_parser()
         except:
+            self.__buffer += self.__char
             self.read_buffer('')
             self.__tolken_handler.onfinish()
           
     def next_char(self):
-        while True:
+        for char in self.__input.read():
             self.__buffer += self.__char
-            self.__char = self.__input.read(1)
-            if len(self.__char) == 0:
-                raise StopIteration
-            yield 
+            self.__char = char
+            yield char
+
         
     def read_buffer(self, next_type):
         if self.__buffer:
@@ -87,163 +77,174 @@ class JSTolkenizer(object):
         self.__type = next_type
         
     def default_parser (self):
+        WHITESPACE = (u'\u0009',u'\u000B',u'\u000C',u'\u0020',u'\u00A0')
+        LINETERMINATOR = self.LINETERMINATOR
+        NUMBER = ('0','1','2','3','4','5','6','7','8','9')
+        PUNCTUATOR_2 = ('<=','>=','==','!=','===','!==','++','--','<<','>>','>>>','&&','||','+=','-=','*=','%=','<<=','>>=','>>>=','&=','|=','^=')
+        STRING_WHITESPACE = 'WHITESPACE'
+        STRING_LINETERMINATOR = self.STRING_LINETERMINATOR
+        STRING_IDENTIFIER = self.STRING_IDENTIFIER
+        STRING_PUNCTUATOR = self.STRING_PUNCTUATOR
+        STRING_DIV_PUNCTUATOR = self.STRING_DIV_PUNCTUATOR
+        STRING_NUMBER = self.STRING_NUMBER
+        STRING_STRING = self.STRING_STRING
+        STRING_REG_EXP = self.STRING_REG_EXP
+        STRING_COMMENT = self.STRING_COMMENT
+        STRING_KEYWORD = self.STRING_KEYWORD
+        next = self.__input_str.next
+        read_buffer = self.read_buffer
+        char = ''
         while True:
-            if self.__char in self.WHITESPACE:
-                self.read_buffer(self.STRING_WHITESPACE)
-                self.__input_str.next()
-                while self.__char in self.WHITESPACE:
-                    self.__input_str.next()
-                self.read_buffer(self.STRING_IDENTIFIER);
-            if self.__char in self.LINETERMINATOR:
-                self.read_buffer(self.STRING_LINETERMINATOR)
-                self.__input_str.next()
-                while self.__char in self.LINETERMINATOR:
-                    self.__input_str.next()
-                self.read_buffer(self.STRING_IDENTIFIER)
+            if char in WHITESPACE:
+                read_buffer(STRING_WHITESPACE)
+                char = next()
+                while char in WHITESPACE:
+                    char = next()
+                read_buffer(STRING_IDENTIFIER);
+            if char in LINETERMINATOR:
+                read_buffer(STRING_LINETERMINATOR)
+                char = next()
+                while char in LINETERMINATOR:
+                    char = next()
+                read_buffer(STRING_IDENTIFIER)
                 continue;
-            if self.__char in self.NUMBER:
-                self.read_buffer(self.STRING_NUMBER)
-                self.__input_str.next()
-                if self.__char == 'x' or self.__char == 'X':
-                    self.__input_str.next()
-                    self.number_hex_parser()
+            if char in NUMBER:
+                read_buffer(STRING_NUMBER)
+                char = next()
+                if char == 'x' or char == 'X':
+                    char = next()
+                    char = self.number_hex_parser(char)
                 else:
-                  self.number_dec_parser()
-                self.read_buffer(self.STRING_IDENTIFIER)
+                  char = self.number_dec_parser(char)
+                read_buffer(STRING_IDENTIFIER)
                 continue
-            if self.__char in self.STRING_DELIMITER:
-                self.read_buffer(self.STRING_STRING)
-                self.__string_delimiter = self.__char
-                self.__input_str.next()
-                self.string_parser()
-                self.read_buffer(self.STRING_IDENTIFIER)
+            if char in ('"', '\''):
+                read_buffer(STRING_STRING)
+                self.__string_delimiter = char
+                char = next()
+                char = self.string_parser(char)
+                read_buffer(STRING_IDENTIFIER)
                 continue
-            if self.__char == '.' or self.__char == '+' or self.__char == '-':
-                self.read_buffer(self.STRING_PUNCTUATOR)
-                self.__input_str.next()
-                if self.__char in self.NUMBER:
-                    self.__type = self.STRING_NUMBER
-                    self.number_dec_parser()
+            if char == '.' or char == '+' or char == '-':
+                read_buffer(STRING_PUNCTUATOR)
+                punct_buffer = char
+                char = next()
+                punct_buffer += char
+                if char in NUMBER:
+                    self.__type = STRING_NUMBER
+                    char = self.number_dec_parser(char)
                 else:
-                    while self.__char in self.PUNCTUATOR_2:
-                        self.__input_str.next()
-                self.read_buffer(self.STRING_IDENTIFIER)
+                    while punct_buffer in PUNCTUATOR_2:
+                        char = next()
+                        punct_buffer += char
+                read_buffer(STRING_IDENTIFIER)
                 continue
-            if self.__char in self.PUNCTUATOR:
-                self.read_buffer(self.STRING_PUNCTUATOR)
-                self.__input_str.next()
-                while self.__char in self.PUNCTUATOR_2:
-                    self.__input_str.next()
+            if char in ('{','}','(',')','[',']',';',',','<','>','=','!','+','-','*','%','&','|','^','~','?',':','.'):
+                read_buffer(STRING_PUNCTUATOR)
+                punct_buffer = char
+                char = next()
+                punct_buffer += char
+                while punct_buffer in PUNCTUATOR_2:
+                    char = next()
+                    punct_buffer += char
                 self.__previous_value = self.__buffer
-                self.read_buffer(self.STRING_IDENTIFIER)
+                read_buffer(STRING_IDENTIFIER)
                 continue
-            if self.__char == '/': 
-                self.read_buffer(self.STRING_COMMENT)
-                self.__input_str.next()
-                if self.__char == '*':
-                    self.__input_str.next()
-                    self.multiline_comment_parser()
-                elif self.__char == '/': 
-                    self.__input_str.next()
-                    self.singleline_comment_parser()
-                elif self.__previous_type == self.STRING_IDENTIFIER \
-                        or  self.__previous_type == self.STRING_NUMBER \
-                        or \
-                        ( 
-                            self.__previous_type == self.STRING_PUNCTUATOR \
-                            and  self.__previous_value in self.PUNCTUATOR_DIV_PREDECESSOR
-                        ):
-                    self.__type = self.STRING_DIV_PUNCTUATOR
-                    if self.__char == '=': 
-                        self.__input_str.next()
+            if char == '/': 
+                read_buffer(STRING_COMMENT)
+                char = next()
+                if char == '*':
+                    char = next()
+                    char = self.multiline_comment_parser(char)
+                elif char == '/': 
+                    char = next()
+                    char = self.singleline_comment_parser(char)
+                elif self.__previous_type == STRING_IDENTIFIER \
+                        or  self.__previous_type == STRING_NUMBER \
+                        or ( self.__previous_type == STRING_PUNCTUATOR \
+                             and  self.__previous_value in (')',']') ):
+                    self.__type = STRING_DIV_PUNCTUATOR
+                    if char == '=': 
+                        char = next()
                 else:
-                    self.__type = self.STRING_REG_EXP
-                    self.reg_exp_parser()
-                self.read_buffer(self.STRING_IDENTIFIER)
+                    self.__type = STRING_REG_EXP
+                    char = self.reg_exp_parser(char)
+                read_buffer(STRING_IDENTIFIER)
                 continue
-            self.__input_str.next()
+            char = next()
 
-    def number_hex_parser(self):
-        while self.__char in self.HEX_NUMBER:
-            self.__input_str.next()
-        return 
+    def number_hex_parser(self, char):
+        next = self.__input_str.next
+        while char in ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','A','B','C','D','E','F'):
+            char = next()
+        return char
     
-    def number_dec_parser(self):
-        while self.__char in self.NUMBER or self.__char == '.':
-            self.__input_str.next()
-        if self.__char == 'e' or self.__char == 'E':  
-            self.__input_str.next()
-            if self.__char =='+' or self.__char == '-':
-                self.__input_str.next()
-            while self.__char in self.NUMBER:
-                self.__input_str.next()
-        return 
+    def number_dec_parser(self, char):
+        NUMBER = ('0','1','2','3','4','5','6','7','8','9')
+        next = self.__input_str.next
+        while char in NUMBER or char == '.':
+            char = next()
+        if char == 'e' or char == 'E':  
+            char = next()
+            if char =='+' or char == '-':
+                char = next()
+            while char in NUMBER:
+                char = next()
+        return char
     
-    def string_parser(self):
+    def string_parser(self, char):
+        next = self.__input_str.next
         while True:
-            if self.__char == '\\':  #\u005C
-                self.__input_str.next()
-                self.__input_str.next()
+            if char == '\\':  #\u005C
+                next()
+                char = next()
                 continue
-            if self.__char == self.__string_delimiter:
-                self.__input_str.next()
-                return 
-            self.__input_str.next()
+            if char == self.__string_delimiter:
+                char = next()
+                return char
+            char = next()
       
-    def multiline_comment_parser(self):
+    def multiline_comment_parser(self, char):
+        next = self.__input_str.next
         while True:
-            if self.__char == '*':
-                self.__input_str.next()
-                if self.__char == '/':
-                    self.__input_str.next()
-                    return 
+            if char == '*':
+                char = next()
+                if char == '/':
+                    char = next()
+                    return char
                 continue
-            self.__input_str.next()
+            char = next()
         
-    def singleline_comment_parser(self):
+    def singleline_comment_parser(self, char):
+        next = self.__input_str.next
         while True:
-            if self.__char in self.LINETERMINATOR:
-                return 
-            self.__input_str.next()
+            if char in self.LINETERMINATOR:
+                return char
+            char = next()
             
-    def reg_exp_parser(self):
+    def reg_exp_parser(self, char):
+        next = self.__input_str.next
         is_in_brackets = False
         while True:
-            if self.__char == '[':
+            if char == '[':
                 is_in_brackets = True
-            if is_in_brackets and self.__char == ']':
+            if is_in_brackets and char == ']':
                 is_in_brackets = False
-            if self.__char == '\\':
-                self.__input_str.next()
-                self.__input_str.next()
+            if char == '\\':
+                char = next()
+                char = next()
                 continue
-            if not is_in_brackets and  self.__char == '/': 
-                self.__input_str.next()
-                while self.__char in self.REG_EXP_FLAG:
-                    self.__input_str.next()
-                return 
-            self.__input_str.next()
+            if not is_in_brackets and  char == '/': 
+                char = next()
+                while char in ('g','i','m'):
+                    char = next()
+                return char
+            char = next()
 
 
 class Minify(object):
     """Minify class, handling minification frome one file to another"""
     
-    WHITESPACE = 'WHITESPACE'
-    LINETERMINATOR = 'LINETERMINATOR'
-    IDENTIFIER = 'IDENTIFIER'
-    PUNCTUATOR = 'PUNCTUATOR'
-    DIV_PUNCTUATOR = 'DIV_PUNCTUATOR'
-    NUMBER = 'NUMBER'
-    STRING = 'STRING'
-    REG_EXP = 'REG_EXP'
-    COMMENT = 'COMMENT'
-    KEYWORD = 'KEYWORD'
-    OPENERS = ('(', '{', '[')
-    ENDS = (";", ",","+","=")
-    CLOSENERS = (')', '}', ']')
-    TYPE = 0
-    TOLKEN = 1
-
     def __init__(self, input, output, encoding="utf_8_sig"):
         """ input and out can be either be a file path or a file object 
             only new lines and white spaces which are safe to remove are removed
@@ -258,6 +259,7 @@ class Minify(object):
         self.output = self.set_file(output, "w", encoding)
         self.tolkens = [('', ''),('', ''),('', '')]
         self.buffersize = 2
+        self.out = []
         JSTolkenizer(self)
 
     def set_file(self, path_or_file, mode, encoding):
@@ -273,45 +275,65 @@ class Minify(object):
         self.buffersize = 0
         self.tolkens += [('',''),('','')]
         self.ontolken(('',''))
+        self.output.write("".join(self.out))
+        
+        
 
     def ontolken(self, tolken):
-        self.tolkens.append(tolken)
+        """
+        tolken is a tuple, firts position is the tolken type, second position the tolken
+        """
+        tolkens = self.tolkens
+        WHITESPACE = 'WHITESPACE'
+        LINETERMINATOR = 'LINETERMINATOR'
+        IDENTIFIER = 'IDENTIFIER'
+        PUNCTUATOR = 'PUNCTUATOR'
+        DIV_PUNCTUATOR = 'DIV_PUNCTUATOR'
+        NUMBER = 'NUMBER'
+        STRING = 'STRING'
+        REG_EXP = 'REG_EXP'
+        COMMENT = 'COMMENT'
+        KEYWORD = 'KEYWORD'
+        OPENERS = ('(', '{', '[')
+        ENDS = (";", ",","+","=",":")
+        CLOSENERS = (')', '}', ']')
+        tolkens.append(tolken)
         try:
-            while len(self.tolkens) > self.buffersize:
-                if self.tolkens[2][self.TYPE] == self.COMMENT:
-                    self.tolkens.pop(2)
+            while len(tolkens) > self.buffersize:
+                if tolkens[2][0] == COMMENT:
+                    tolkens = tolkens.pop(2)
                     continue 
-                if self.tolkens[2][self.TYPE] == self.WHITESPACE:
-                    self.tolkens[2] = (self.WHITESPACE, ' ')
-                    if self.tolkens[1][self.TYPE] == self.LINETERMINATOR \
-                      or self.tolkens[1][self.TYPE] == self.PUNCTUATOR \
-                      or self.tolkens[1][self.TYPE] == self.DIV_PUNCTUATOR:
-                        self.tolkens.pop(2)
+                if tolkens[2][0] == WHITESPACE:
+                    tolkens[2] = (WHITESPACE, ' ')
+                    if tolkens[1][0] == LINETERMINATOR \
+                      or tolkens[1][0] == PUNCTUATOR \
+                      or tolkens[1][0] == DIV_PUNCTUATOR:
+                        tolkens.pop(2)
                         continue
-                if self.tolkens[1][self.TYPE] == self.WHITESPACE:
-                    if self.tolkens[2][self.TYPE] == self.LINETERMINATOR \
-                      or self.tolkens[2][self.TYPE] == self.PUNCTUATOR \
-                      or self.tolkens[2][self.TYPE] == self.DIV_PUNCTUATOR:
-                        self.tolkens.pop(1)
+                if tolkens[1][0] == WHITESPACE:
+                    if tolkens[2][0] == LINETERMINATOR \
+                      or tolkens[2][0] == PUNCTUATOR \
+                      or tolkens[2][0] == DIV_PUNCTUATOR:
+                        tolkens.pop(1)
                         continue
-                if self.tolkens[1][self.TYPE] == self.LINETERMINATOR:
-                    self.tolkens[1] = (self.LINETERMINATOR, '\n')
-                    if self.tolkens[2][self.TYPE] == self.LINETERMINATOR \
-                      or self.tolkens[2][self.TOLKEN] in self.CLOSENERS:
-                        self.tolkens.pop(1)
+                if tolkens[1][0] == LINETERMINATOR:
+                    tolkens[1] = (LINETERMINATOR, '\n')
+                    if tolkens[2][0] == LINETERMINATOR \
+                      or tolkens[2][1] in CLOSENERS:
+                        tolkens.pop(1)
                         continue
-                    if self.tolkens[0][self.TOLKEN] in self.CLOSENERS \
-                      and ( self.tolkens[2][self.TOLKEN] in self.CLOSENERS \
-                            or self.tolkens[2][self.TOLKEN] in self.OPENERS ):
-                        self.tolkens.pop(1)
+                    if tolkens[0][1] in CLOSENERS \
+                      and ( tolkens[2][1] in CLOSENERS \
+                            or tolkens[2][1] in OPENERS ):
+                        tolkens.pop(1)
                         continue
-                if self.tolkens[2][self.TYPE] == self.LINETERMINATOR:
-                    if self.tolkens[1][self.TYPE] == self.PUNCTUATOR \
-                        and ( self.tolkens[1][self.TOLKEN] in self.ENDS \
-                              or self.tolkens[1][self.TOLKEN] in self.OPENERS ):
-                        self.tolkens.pop(2)
+                if tolkens[2][0] == LINETERMINATOR:
+                    if tolkens[1][0] == PUNCTUATOR \
+                        and ( tolkens[1][1] in ENDS \
+                              or tolkens[1][1] in OPENERS ):
+                        tolkens.pop(2)
                         continue
-                self.output.write(self.tolkens.pop(0)[self.TOLKEN])
+                self.out.append(tolkens.pop(0)[1])
         except:
             pass
 
@@ -372,3 +394,12 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
+    """
+    import cProfile
+    p=open("profile", "w")
+    sys.stdout = p
+    cProfile.run("sys.exit(main())")
+    p.close()
+    """
+    
+    
