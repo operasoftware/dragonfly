@@ -91,9 +91,10 @@ def create_path(path):
     if not os.path.exists(path): os.makedirs(path)  
 
 def run_build_script(ui, repo, core_version=0, type=None, **opts):
-    """make a build from a configuration file"""
-
     """
+    make a build from a configuration file.
+    usage: hg build-app [-l <log range> <core version> <type, e.g. nightly>
+
     requires a configuration file 
 
     config file path defined in BUILD_CONFIG
@@ -121,7 +122,28 @@ def run_build_script(ui, repo, core_version=0, type=None, **opts):
     meaning build application log from xx to xx for core 2.2 as a cutting-edge ( or nightly ) build
 
     a log of the build commands will be created in the same repo as the config file 
-    """
+    """ 
+
+    if opts['command_log']:
+        path = os.path.join(os.path.split(BUILD_CONFIG)[0], "BUILD_LOG")
+        if os.path.exists(path):
+            l = open(path, 'r')
+            sys.stdout.write(l.read())
+            l.close()
+            return
+
+    if opts['show_config_file']:
+        if os.path.exists(BUILD_CONFIG):
+            f = open(BUILD_CONFIG, 'r')
+            sys.stdout.write(f.read())
+            f.close()
+            return
+    
+
+    if opts['config_file']:
+        print "path to config file: ", BUILD_CONFIG
+        print "path to config file set in: ", __file__
+        return
 
     log_entry = "hg build-app" +  \
         ( 'log' in opts and ( " -l " + opts['log'] ) or "" ) + \
@@ -193,7 +215,7 @@ def run_build_script(ui, repo, core_version=0, type=None, **opts):
         return
     print "zip created"
     print "make log"
-    if opts.has_key('log'):
+    if opts['log']:
         print "log", opts['log']
         path = type["local-log"] % (rev, sort_hash)
         create_path(os.path.split(path)[0])
@@ -236,7 +258,10 @@ cmdtable = \
     run_build_script,
     # see mercurial/fancyopts.py for all of the command
     # flag options.
-    [('l', 'log', '', 'log range')],
+    [('l', 'log', '', 'log range'), 
+    ('f', 'config-file', None, 'path to config file'),
+    ('s', 'show-config-file', None, 'show config file'),
+    ('o', 'command-log', None, 'show the log of the last used parameters')],
     "make a build, a zip and a log file"
   )
 }
