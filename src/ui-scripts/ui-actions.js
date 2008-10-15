@@ -137,16 +137,18 @@ eventHandlers.click['top-window-toggle-attach'] = function(event)
   document.documentElement.removeChild(event.target.parentNode);
   var win_controls = document.documentElement.render(templates.window_controls(is_attached));
 
-  
+  // TODO active window must be set correct
+  // then the window dropdown will be removed in the attached view
+  // topCell.tab.changeStyleProperty("padding-right", 60);
   if( is_attached )
   {
-    topCell.tab.changeStyleProperty("padding-right", 60);
-    topCell.toolbar.changeStyleProperty("padding-right", -30);
+    //topCell.tab.changeStyleProperty("padding-right", 60);
+    topCell.toolbar.changeStyleProperty("padding-right", 30);
   }
   else
   {
-    topCell.tab.changeStyleProperty("padding-right", -60);
-    topCell.toolbar.changeStyleProperty("padding-right", 30);
+    //topCell.tab.changeStyleProperty("padding-right", -60);
+    topCell.toolbar.changeStyleProperty("padding-right", -30);
   }
 
   settings.general.set('window-attached',  is_attached || false);

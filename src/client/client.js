@@ -350,7 +350,10 @@ var client = new function()
 
       if( window.opera.attached )
       {
-        topCell.tab.changeStyleProperty("padding-right", 60);
+        // TODO active window must be set correct
+        // then the window dropdown will be removed in the attached view
+        //topCell.tab.changeStyleProperty("padding-right", 60);
+        topCell.toolbar.changeStyleProperty("padding-right", 60);
       }
       else
       {
@@ -405,6 +408,7 @@ var client = new function()
       }
     );
     window.topCell.setup();
+    windowsDropDown.update();
   }
 
   this.onquit = function()

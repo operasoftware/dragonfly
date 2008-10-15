@@ -91,6 +91,10 @@ var ViewsMenu = function(menu_id)
     }
   }
 
+  // TODO active window must be set correct
+  // then the window dropdown will be removed in the attached view
+  // topCell.tab.changeStyleProperty("padding-right", 60);
+
   this.create = function()
   {
 
@@ -98,7 +102,8 @@ var ViewsMenu = function(menu_id)
     document.documentElement.render(templates.viewMenu());
     if(opera.attached)
     {
-      topCell.tab.changeStyleProperty("padding-right", 188);
+      //topCell.tab.changeStyleProperty("padding-right", 188);
+      topCell.toolbar.changeStyleProperty("padding-right", 188);
     }
     else
     {
@@ -115,7 +120,8 @@ var ViewsMenu = function(menu_id)
       menu.parentNode.removeChild(menu);
       if(opera.attached)
       {
-        topCell.tab.changeStyleProperty("padding-right", -188);
+        // topCell.tab.changeStyleProperty("padding-right", -188);
+        topCell.toolbar.changeStyleProperty("padding-right", -188);
       }
       else
       {
