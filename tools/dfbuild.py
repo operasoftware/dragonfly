@@ -5,6 +5,7 @@ import shutil
 import tempfile
 import sys
 import zipfile
+import minify
 
 _text_exts = (".js", ".html", ".xml", ".css")
 _directive_exts = (".xml", ".html", ".xhtml") # files that may have <!-- command.. directives
@@ -206,8 +207,16 @@ def _is_utf8(path):
     if not os.path.isfile(path): return None
     f = open(path, "rb")
     return f.read(3) == codecs.BOM_UTF8
-
     
+def _minify_buildout(src):
+    """
+    Run minification on all javascript files in directory src. Minification
+    is done in-place, so the original file is replaced with the minified one.
+    """
+    for base, dirs, files in os.walk(src):
+        for file in [f for f in files if f.endswith(".js")]:
+            abs = os.path.join(base, file)
+            minify.minify_in_place(abs)
 
 def _localize_buildout(src, langdir):
     """Make a localized version of the build dir. That is, with one
@@ -402,6 +411,9 @@ Destination can be either a directory or a zip file"""
     parser.add_option("-e", "--no-enc-check", default=True,
                       action="store_false", dest="check_encodings",
                       help="Check encoding of files before building")
+    parser.add_option("-m", "--minify", default=False,
+                      action="store_true", dest="minify",
+                      help="Minify the sources")
 
     options, args = parser.parse_args()
     
@@ -461,6 +473,9 @@ Destination can be either a directory or a zip file"""
         if options.translate_build:
             _localize_buildout(tempdir, "src/ui-strings")
 
+        if options.minify:
+            _minify_buildout(dst)
+
         if options.license:
             _add_license(tempdir)
 
@@ -478,6 +493,9 @@ Destination can be either a directory or a zip file"""
                keywords=keywords, directive_vars=dirvars)
         if options.translate_build:
             _localize_buildout(dst, "src/ui-strings")
+            
+        if options.minify:
+            _minify_buildout(dst)
             
         if options.license:
             _add_license(dst)
