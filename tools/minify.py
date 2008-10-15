@@ -2,11 +2,7 @@ import types
 import sys
 import shutil
 import codecs
-
-try:
-    import cStringIO as StringIO
-except ImportException:
-    import StringIO
+import tempfile
 
 class JSTolkenizer(object):    
     LINETERMINATOR = (u'\u000A',u'\u000D',u'\u2028',u'\u2029')
@@ -275,9 +271,9 @@ class Minify(object):
         self.buffersize = 0
         self.tolkens += [('',''),('','')]
         self.ontolken(('',''))
-        self.output.write("".join(self.out))
-        
-        
+
+        for token in self.out:
+            self.output.write(token.encode("utf-8"))
 
     def ontolken(self, tolken):
         """
@@ -304,7 +300,7 @@ class Minify(object):
                     tolkens = tolkens.pop(2)
                     continue 
                 if tolkens[2][0] == WHITESPACE:
-                    tolkens[2] = (WHITESPACE, ' ')
+                    tolkens[2] = (WHITESPACE, u' ')
                     if tolkens[1][0] == LINETERMINATOR \
                       or tolkens[1][0] == PUNCTUATOR \
                       or tolkens[1][0] == DIV_PUNCTUATOR:
@@ -317,7 +313,7 @@ class Minify(object):
                         tolkens.pop(1)
                         continue
                 if tolkens[1][0] == LINETERMINATOR:
-                    tolkens[1] = (LINETERMINATOR, '\n')
+                    tolkens[1] = (LINETERMINATOR, u'\n')
                     if tolkens[2][0] == LINETERMINATOR \
                       or tolkens[2][1] in CLOSENERS:
                         tolkens.pop(1)
@@ -341,19 +337,21 @@ def minify_in_place(path, encoding="utf_8_sig"):
     """Minify path and write it to to the same location. Optionally use encoding
     Note: Uses stringIO so it will use memory for the entire destination file"""
     input = codecs.open(path, "r", encoding)
-    tmpout = StringIO.StringIO();
+    tmpout = tempfile.TemporaryFile();
     Minify(input, tmpout)
     input.close()
+    output = codecs.open(path, "w", encoding=encoding)
 
-    output = codecs.open(path, "w", encoding)
-    output.write(tmpout.getvalue())
+    tmpout.seek(0)
+    d = tmpout.read().decode("utf-8")
+    output.write(d)
     tmpout.close()
     output.close()
 
 def minify(inpath, outpath, encoding="utf_8_sig"):
     """Minify input path to outputpath, optionally using encoding"""
-    input = codecs.open(inpath, "r", encoding)
-    output = codecs.open(outpath, "w", encoding)
+    input = codecs.open(inpath, "r", encoding=encoding)
+    output = codecs.open(outpath, "w", encoding=encoding)
     Minify(input, output)
     input.close()
     output.close()
