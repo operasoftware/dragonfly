@@ -453,13 +453,45 @@ var dom_data = new function()
     return current_target;
   }
 
+  var get_element_name = function(data_entry, with_ids_and_classes)
+  {
+    var 
+    name = data_entry[NAME],
+    attrs = data_entry[ATTRS],
+    attr = null,
+    i = 0,
+    id = '',
+    class_name = '';
+
+    if( settings.dom.get('force-lowercase') )
+    {
+      name = name.toLowerCase();
+    }
+    if(with_ids_and_classes)
+    {
+      for( ; attr = attrs[i]; i++)
+      {
+        if( attr[ATTR_KEY] == 'id' ) 
+        {
+          id = "#" + attr[ATTR_VALUE];
+        }
+        if( attr[ATTR_KEY] == 'class' ) 
+        {
+          class_name = "." + attr[ATTR_VALUE].replace(/ /g, "."); 
+        }
+      }
+    }
+    return name + id + class_name;
+  }
+
   this.getCSSPath = function()
   {
     var 
     i = 0, 
     j = -1,
     path = '',
-    mode = 'simple path'; // or class and id or siblings 
+    show_siblings = settings.dom.get('show-siblings-in-breadcrumb'); 
+    show_id_and_classes = settings.dom.get('show-id_and_classes-in-breadcrumb'); 
 
     // TODO make new settings
 
@@ -468,7 +500,8 @@ var dom_data = new function()
       for( ; data[i] && data[i][ID] != current_target; i ++);
       if( data[i] )
       {
-        path = [ {name: data[i][NAME], id: data[i][ID], combinator: ""} ];
+        path = [ {name: get_element_name(data[i], show_id_and_classes), 
+                  id: data[i][ID], combinator: ""} ];
         j = i;
         i --;
         for(  ; data[i]; i --)
@@ -479,11 +512,13 @@ var dom_data = new function()
             {
               if ( data[i][DEPTH] < data[j][DEPTH] )
               {
-                path.splice(0, 0, {name: data[i][NAME], id: data[i][ID], combinator: ">"});
+                path.splice(0, 0, {name: get_element_name(data[i], show_id_and_classes), 
+                                    id: data[i][ID], combinator: ">"});
               }
-              else if ( mode == "siblings" )
+              else if ( show_siblings )
               {
-                path.splice(0, 0, {name: data[i][NAME], id: data[i][ID], combinator: "+"});
+                path.splice(0, 0, {name: get_element_name(data[i], show_id_and_classes), 
+                                    id: data[i][ID], combinator: "+"} );
               }
               j = i;
             }
