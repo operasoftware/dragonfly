@@ -162,6 +162,10 @@ ui_strings.S_SWITCH_SHOW_INITIAL_VALUES = 'Hide initial values in computed style
 ui_strings.S_SWITCH_SHOW_SHORTHANDS = 'Hide shorthands in computed styles view';
 /* DESC: Showing shorthands in style properties on or off. */
 ui_strings.S_SWITCH_CREATE_SHORTHANDS = 'Use shorthands for properties';
+/* DESC: Showing the siblings in the breadcrumb in the statusbar. */
+ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB = 'Show Siblings in Breadcrumb';
+/* DESC: Showing the id's and class names in the breadcrumb in the statusbar. */
+ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB = "Show id's and classes in Breadcrumb";
 
 
 
