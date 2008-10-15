@@ -777,7 +777,23 @@ breadcrumb span
   line-height: 17px;
 }
 
-breadcrumb span:hover
+breadcrumb span.parent-offset
+{
+  color: #900;
+  font-weight: bold;
+}
+
+
+
+.css-layout breadcrumb span
+{
+  padding: 0 .2em;
+  margin: 0 .2em;
+  border: 1px solid transparent;
+  line-height: 15px;
+}
+
+breadcrumb span:hover, .css-layout breadcrumb span:hover
 {
   background-color: hsl(240, 80%, 90%);
   border-color: hsl(240, 50%, 70%);

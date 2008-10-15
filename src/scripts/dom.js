@@ -52,7 +52,7 @@ Element.prototype.___add=Document.prototype.___add=function()
   return null;
 }
 
-Element.prototype.___add_inner = function()
+Element.prototype.___add_inner = Document.prototype.___add_inner = function()
 {
   if(arguments.length)
   {
@@ -73,7 +73,7 @@ Element.prototype.___add_inner = function()
         }
         else if(arg) 
         {
-          content += arg;
+          content += arg.replace(/</g, "&lt;").replace(/>/g, "&gt;");
         }
         arg=arguments[++i];
       }
@@ -97,7 +97,7 @@ Element.prototype.render=Document.prototype.render=function(template)
   return this.___add.apply(this, template);
 }
 
-Element.prototype.renderInner = function(template)
+Element.prototype.renderInner = Document.prototype.renderInner = function(template)
 {
   return this.___add_inner.apply(this, template);
 }

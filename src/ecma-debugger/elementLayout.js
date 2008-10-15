@@ -269,20 +269,12 @@ var elementLayout = new function()
     i = 0,
     chain = data[0].split(','),
     cur = '';
-    
+
     for( i = 0; cur = chain[i]; i++)
     {
-      cur = cur.split('|');
-      ret += i ? " > " : "";
-      if( cur[1] == '1' )
-      {
-        ret += "<parent-offset>" + cur[0] + "</parent-offset>";       
-      }
-      else
-      {
-        ret += cur[0]; 
-      }
+      chain[i] = cur.split('|');
     }
+    ret += document.renderInner(templates.breadcrumb(dom_data.getCSSPath(chain)));
     ret += "</parent-node-chain><h2>" +  ui_strings.M_VIEW_SUB_LABEL_OFFSET_VALUES + "</h2><offsets>";
     for( i = 1; data[i]; i++ )
     {
