@@ -13,6 +13,8 @@ ui_strings.M_VIEW_LABEL_COMPOSITE_DOM = 'DOM';
 ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE = 'Error Console';
 /* DESC: View for exported code. */
 ui_strings.M_VIEW_LABEL_COMPOSITE_EXPORTS = 'Export';
+/* DESC: View for network debugging (and http logger) */
+ui_strings.M_VIEW_LABEL_NETWORK = 'Network';
 
 /*
  * Level 2 View Tab Headings
@@ -84,9 +86,23 @@ ui_strings.M_VIEW_LABEL_STYLES = 'Styles';
 ui_strings.M_VIEW_LABEL_CONSOLE = 'Console';
 /* DESC: One Export view. */
 ui_strings.M_VIEW_LABEL_EXPORT = 'Export';
+/* DESC: Name of request log tab */
+ui_strings.M_VIEW_LABEL_REQUEST_LOG = 'Request log';
+/* DESC: Name of raw request tab */
+ui_strings.M_VIEW_LABEL_RAW_REQUEST_INFO = 'Raw request';
+/* DESC: Name of raw response tab */
+ui_strings.M_VIEW_LABEL_RAW_RESPONSE_INFO = 'Raw response';
+/* DESC: Name of request headers tab */
+ui_strings.M_VIEW_LABEL_REQUEST_HEADERS = 'Request headers';
+/* DESC: Name of response headers tab */
+ui_strings.M_VIEW_LABEL_RESPONSE_HEADERS = 'Response headers';
+/* DESC: Name of request info tab */
+ui_strings.M_VIEW_LABEL_REQUEST_INFO = 'Request info';
+/* DESC: Name of response body tab */
+ui_strings.M_VIEW_LABEL_RESPONSE_BODY = 'Response body';
 
-
-
+/* DESC: Label of the Views menu */
+ui_strings.M_VIEW_LABEL_VIEWS = 'Views';
 
 /*
  * Settings dialogue entries
@@ -174,8 +190,6 @@ ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB = "Show id's and classes 
  * Button tool-tips.
  */ 
 
-/* DESC: Opens help. */
-ui_strings.S_BUTTON_LABEL_HELP = 'Help';
 /* DESC: Debugger continues debugging. */
 ui_strings.S_BUTTON_LABEL_CONTINUE = 'Continue (F8)';
 /* DESC: Debugger step over current statement. */
@@ -216,6 +230,8 @@ ui_strings.S_BUTTON_LABEL_CLEAR_LOG = 'Clear Log';
 ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW = 'Close Window';
 /* DESC: Applies the changes. */
 ui_strings.S_BUTTON_TEXT_APPLY = 'Apply';
+/* DESC: Clear request log. */
+ui_strings.S_BUTTON_CLEAR_REQUEST_LOG = 'Clear request log';
 
 /*
  * Labels
@@ -263,6 +279,12 @@ ui_strings.S_INFO_SERVICE_NOT_AVAILABLE =  "Service is not available: %s";
 /* DESC: Information shown when the user needs to select a runtime. */
 ui_strings.S_INFO_NO_RUNTIME_SELECTED =  "Select a runtime";
 
+ui_strings.S_INFO_NO_COMPATIBLE_VERSION =  "There is no compatible Opera Dragonfly version.";
+
+ui_strings.S_CONFIRM_LOAD_COMPATIBLE_VERSION = "The protocol version of Opera does not match the one which Opera Dragonfly is using.\n\nTry to load a compatible version?";
+        
+
+
 
 
 /*
@@ -299,3 +321,5 @@ ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_UNKNOWN = "Unknown";
 ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID = "Script id";
 /* DESC: Result text for the search. Please do not modify the %(VARIABLE)s . */
 ui_strings.S_TEXT_STATUS_SEARCH = "Matches for %(SEARCH_TERM)s: Match %(SEARCH_COUNT_INDEX)s out of %(SEARCH_COUNT_TOTAL)s";
+/* DESC: Message in detail view of http logger when no request/respons is selected */
+ui_strings.S_TEXT_NO_REQUEST_SELECTED = "No request selected.";

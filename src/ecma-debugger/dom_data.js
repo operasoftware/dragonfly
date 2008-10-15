@@ -58,6 +58,7 @@ var dom_data = new function()
     // the top frame is per default the active tab
     data_runtime_id = __next_rt_id || msg.activeTab[0];
     messages.post("runtime-selected", {id: data_runtime_id});
+    window['cst-selects']['document-select'].updateElement();
     activeWindow = msg.activeTab.slice(0);
     for( ; view_id = view_ids[i]; i++)
     {
@@ -112,6 +113,7 @@ var dom_data = new function()
       {
         data_runtime_id = rt_id;
         messages.post("runtime-selected", {id: data_runtime_id});
+        window['cst-selects']['document-select'].updateElement();
         __next_rt_id = '';
       }
       var view_id = '', i = 0;
@@ -267,7 +269,10 @@ var dom_data = new function()
 
   this.getDOM = function(rt_id)
   {
-    getInitialView(rt_id);
+    if(runtime_onload_handler.check(rt_id, arguments))
+    {
+      getInitialView(rt_id);
+    }
   }
 
 
