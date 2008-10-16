@@ -303,6 +303,58 @@ def _get_missing_strings_for_dir(stringsdir, masterlang):
             
     return missing
 
+def _clobbering_copytree(src, dst, symlinks=False):
+    """This is a modified version of copytree from the shutil module in
+    the standard library. This version will allow copying to existing folders
+    and will clobber existing files. USE WITH CAUTION!
+    Original docstring follows:
+    
+    Recursively copy a directory tree using copy2().
+
+    The destination directory must not already exist.
+    If exception(s) occur, an Error is raised with a list of reasons.
+
+    If the optional symlinks flag is true, symbolic links in the
+    source tree result in symbolic links in the destination tree; if
+    it is false, the contents of the files pointed to by symbolic
+    links are copied.
+
+    XXX Consider this example code rather than the ultimate tool.
+
+    """
+    names = os.listdir(src)
+    if not os.path.isdir(dst):
+        os.makedirs(dst)
+
+    errors = []
+    for name in names:
+        srcname = os.path.join(src, name)
+        dstname = os.path.join(dst, name)
+        try:
+            if symlinks and os.path.islink(srcname):
+                linkto = os.readlink(srcname)
+                os.symlink(linkto, dstname)
+            elif os.path.isdir(srcname):
+                _clobbering_copytree(srcname, dstname, symlinks)
+            else:
+                shutil.copy2(srcname, dstname)
+            # XXX What about devices, sockets etc.?
+        except (IOError, os.error), why:
+            errors.append((srcname, dstname, str(why)))
+        # catch the Error from the recursive copytree so that we can
+        # continue with other files
+        except Error, err:
+            errors.extend(err.args[0])
+    try:
+        shutil.copystat(src, dst)
+    except WindowsError:
+        # can't copy file access times on Windows
+        pass
+    except OSError, why:
+        errors.extend((src, dst, str(why)))
+    if errors:
+        raise Error, errors
+
 def make_archive(src, dst, in_subdir=True):
     """
     This simply packs up the contents in the directory src into a zip archive
@@ -373,7 +425,7 @@ def export(src, dst, process_directives=True, keywords={},
     for entry in os.listdir(tmpdir):
         path = os.path.join(tmpdir, entry)
         if os.path.isdir(path):
-            shutil.copytree(path, os.path.join(dst, entry))
+            _clobbering_copytree(path, os.path.join(dst, entry))
         else:
             shutil.copy(os.path.join(tmpdir,entry), dst)
 
@@ -400,7 +452,7 @@ Destination can be either a directory or a zip file"""
                       default=None, type="string", action="append",
                       help="A key/value pair. All instances of key will be replaced by value in all files. More than one key/value is allowed by adding more -k switches", metavar="key=value")
     parser.add_option("-d", "--delete", default=False,
-                      action="store_true", dest="delete_dst",
+                      action="store_true", dest="overwrite_dst",
                       help="Delete the destination before copying to it. Makes sure that there are no files left over from previous builds. Is destructive!")
     parser.add_option("-t", "--translate", default=False,
                       action="store_true", dest="translate_build",
@@ -463,10 +515,11 @@ Destination can be either a directory or a zip file"""
     
     if dst.endswith(".zip"): # export to a zip file
         if os.path.isfile(dst):
-            if not options.delete_dst:
+            if not options.overwrite_dst:
                 parser.error("Destination exists! use -d to force overwrite")
             else:
                 os.unlink(dst)
+
         tempdir = tempfile.mkdtemp(".tmp", "dfbuild.")
         export(src, tempdir, process_directives=options.concat, exclude_dirs=exdirs,
                keywords=keywords, directive_vars=dirvars)
@@ -483,14 +536,12 @@ Destination can be either a directory or a zip file"""
         shutil.rmtree(tempdir)
 
     else: # export to a directory
-        if os.path.isdir(dst):
-            if not options.delete_dst:
-                parser.error("Destination exists! use -d to force overwrite")
-            else:
-                shutil.rmtree(dst)
-
+        if os.path.isdir(dst) and not options.overwrite_dst:
+            parser.error("Destination exists! use -d to force overwrite")
+ 
         export(src, dst, process_directives=options.concat, exclude_dirs=exdirs,
                keywords=keywords, directive_vars=dirvars)
+
         if options.translate_build:
             _localize_buildout(dst, "src/ui-strings")
             
