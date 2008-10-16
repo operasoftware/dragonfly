@@ -484,13 +484,34 @@ var dom_data = new function()
     return name + id + class_name;
   }
 
-  this.getCSSPath = function()
+  var parse_parent_offset = function(chain)
   {
+    var 
+    ret = false,
+    cur = null;
+    if( chain )
+    {
+      cur = chain.pop();
+      if( cur )
+      {
+        ret = cur[1] == '1';
+      }
+      else
+      {
+        opera.postError("failed in parse_parent_offset in dom_data");
+      }
+    }
+    return ret;
+  }
+
+  this.getCSSPath = function(parent_offset_chain)
+  {
+    // parent_offset_chain array with 
     var 
     i = 0, 
     j = -1,
     path = '',
-    show_siblings = settings.dom.get('show-siblings-in-breadcrumb'); 
+    show_siblings = settings.dom.get('show-siblings-in-breadcrumb'),
     show_id_and_classes = settings.dom.get('show-id_and_classes-in-breadcrumb'); 
 
     // TODO make new settings
@@ -500,8 +521,15 @@ var dom_data = new function()
       for( ; data[i] && data[i][ID] != current_target; i ++);
       if( data[i] )
       {
-        path = [ {name: get_element_name(data[i], show_id_and_classes), 
-                  id: data[i][ID], combinator: ""} ];
+        path = 
+        [ 
+          {
+            name: get_element_name(data[i], show_id_and_classes), 
+            id: data[i][ID],
+            combinator: "", 
+            is_parent_offset: parse_parent_offset(parent_offset_chain) 
+          }
+        ];
         j = i;
         i --;
         for(  ; data[i]; i --)
@@ -512,13 +540,32 @@ var dom_data = new function()
             {
               if ( data[i][DEPTH] < data[j][DEPTH] )
               {
-                path.splice(0, 0, {name: get_element_name(data[i], show_id_and_classes), 
-                                    id: data[i][ID], combinator: ">"});
+                path.splice
+                (
+                  0, 
+                  0, 
+                  {
+                    name: get_element_name(data[i], show_id_and_classes), 
+                    id: data[i][ID], 
+                    combinator: ">" ,
+                    is_parent_offset: parse_parent_offset(parent_offset_chain) 
+                  }
+                );
               }
+              
               else if ( show_siblings )
               {
-                path.splice(0, 0, {name: get_element_name(data[i], show_id_and_classes), 
-                                    id: data[i][ID], combinator: "+"} );
+                path.splice
+                (
+                  0, 
+                  0, 
+                  {
+                    name: get_element_name(data[i], show_id_and_classes), 
+                    id: data[i][ID], 
+                    combinator: "+",
+                    is_parent_offset: false
+                  }
+                );
               }
               j = i;
             }

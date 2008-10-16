@@ -777,15 +777,18 @@ breadcrumb span
   line-height: 17px;
 }
 
+
 /* testing windows manager */
 
-.windows-manager h2 {
+.windows-manager h2 
+{
   font-size: 12px;
-  }
+}
 
-.windows-manager ul {
+.windows-manager ul 
+{
   margin: 5px 0 5px 20px;
-  }
+}
 
 .windows-manager ul li:first-child 
 {
@@ -825,10 +828,22 @@ breadcrumb span
   background-position: 5px 50%;
 }
 
-breadcrumb span:hover
+.css-layout breadcrumb span
+{
+  padding: 0 .2em;
+  margin: 0 .2em;
+  border: 1px solid transparent;
+  line-height: 15px;
+}
+
+breadcrumb span.parent-offset
+{
+  color: #900;
+  font-weight: bold;
+}
+
+breadcrumb span:hover, .css-layout breadcrumb span:hover
 {
   background-color: hsl(240, 80%, 90%);
   border-color: hsl(240, 50%, 70%);
 }
-
-
