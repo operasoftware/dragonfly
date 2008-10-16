@@ -81,7 +81,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     };
   }
 
-  var handleEval = function(xml, runtime_id, obj_id)
+  var handleEval = function(xml, runtime_id, obj_id, callback)
   {
     var value_type = xml.getNodeData('data-type');
     var status = xml.getNodeData('status');
@@ -108,6 +108,10 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
             }
           }
         }
+        if(callback)
+        {
+          callback(runtime_id, obj_id);
+        }
         cons_out_render_return_val
         (
           console_output_data[console_output_data.length] =
@@ -124,7 +128,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
       {
         var object_id = return_value.textContent;
         var object_ref_name = "$" + object_id;
-        var tag = tagManager.setCB(null, handleEval, [runtime_id, object_id] );
+        var tag = tagManager.setCB(null, handleEval, [runtime_id, object_id, callback] );
         var script_string  = "return " + object_ref_name + ".toString()";
         services['ecmascript-debugger'].eval(
           tag, runtime_id, '', '', "<![CDATA["+script_string+"]]>", [object_ref_name, object_id]);
@@ -186,12 +190,25 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     ele.getElementsByTagName('textarea')[0].focus();
   }
 
+  var dir_obj = function(rt_id, obj_id)
+  {
+    messages.post('active-inspection-type', {inspection_type: 'object'});
+    // if that works it should be just inspection
+    topCell.showView(views.frame_inspection.id);
+    messages.post('object-selected', {rt_id: rt_id, obj_id: obj_id});
+  }
+
   var command_map =
   {
-    "clear": function()
+    "clear": function(rt_id, frame_id, thread_id, script_string)
     {
       console_output_data = [];
       cons_out_update();
+    },
+    "dir": function(rt_id, frame_id, thread_id, script_string)
+    {
+      var tag = tagManager.setCB(null, handleEval, [rt_id, null, dir_obj] );
+      services['ecmascript-debugger'].eval(tag, rt_id, thread_id, frame_id, "<![CDATA["+script_string+"]]>");
     }
   };
 
@@ -221,7 +238,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
       closing_brace = script_string.lastIndexOf(')');
       if ( command && command in command_map && closing_brace != -1 )
       {
-        command_map[command](script_string.slice(opening_brace + 1, closing_brace));
+        command_map[command](rt_id, frame_id, thread_id, script_string.slice(opening_brace + 1, closing_brace));
       }
       else
       {
@@ -252,11 +269,6 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
   {
     if(event.keyCode == 38 || event.keyCode == 40)
     {
-      
-      line_buffer_cursor += event.keyCode == 38 ? -1 : 1;
-      line_buffer_cursor = 
-        line_buffer_cursor < 0 ? line_buffer.length-1 : line_buffer_cursor > line_buffer.length-1 ? 0 : line_buffer_cursor;
-      __textarea_value = event.target.value = (line_buffer.length ? line_buffer[line_buffer_cursor] : '').replace(/\r\n/g, ''); 
       event.preventDefault();
       return;
     }
@@ -295,30 +307,43 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
   eventHandlers.keypress['commandline'] = function(event)
   {
     var target = event.target;
-    switch(event.keyCode)
+    if( !(event.shiftKey || event.ctrlKey || event.altKey ) )
     {
-      case 16:
+      switch(event.keyCode)
       {
-        break;
-      }
-      case 9:
-      {
-        event.preventDefault();
-        if( __selection_start == -1 )
+        case 38:
+        case 40:
         {
-          __selection_start = target.selectionStart;
+          line_buffer_cursor += event.keyCode == 38 ? -1 : 1;
+          line_buffer_cursor = 
+            line_buffer_cursor < 0 ? line_buffer.length-1 : line_buffer_cursor > line_buffer.length-1 ? 0 : line_buffer_cursor;
+          __textarea_value = event.target.value = (line_buffer.length ? line_buffer[line_buffer_cursor] : '').replace(/\r\n/g, ''); 
+          event.preventDefault();
+          break;
         }
-        var cur_str = target.value.slice(0, __selection_start);
-        var suggest = autocomplete.getSuggest(cur_str, event.shiftKey, arguments);
-        if( suggest )
+        case 16:
         {
-          target.value = cur_str + suggest;
+          break;
         }
-        break;
-      }
-      default:
-      {
-        __selection_start = -1;
+        case 9:
+        {
+          event.preventDefault();
+          if( __selection_start == -1 )
+          {
+            __selection_start = target.selectionStart;
+          }
+          var cur_str = target.value.slice(0, __selection_start);
+          var suggest = autocomplete.getSuggest(cur_str, event.shiftKey, arguments);
+          if( suggest )
+          {
+            target.value = cur_str + suggest;
+          }
+          break;
+        }
+        default:
+        {
+          __selection_start = -1;
+        }
       }
     }
   }
@@ -424,10 +449,16 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     {
       if( !str || str != str_input )
       {
-        var last_dot = str.lastIndexOf('.'), new_path = '', new_id = '', ret = '';
+        var 
+        last_dot = Math.max(str.lastIndexOf('.'), str.lastIndexOf('('), str.lastIndexOf('[') ), 
+        last_dot_type_is_path = str.lastIndexOf('.') == last_dot,
+        new_path = '', 
+        new_id = '',
+        ret = '';
+
         if(last_dot > -1)
         {
-          new_path = str.slice(0, last_dot);
+          new_path = last_dot_type_is_path && str.slice(0, last_dot) || '';
           new_id = str.slice(last_dot + 1);
         }
         else

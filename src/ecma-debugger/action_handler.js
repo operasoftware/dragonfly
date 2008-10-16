@@ -652,7 +652,6 @@ var action_handler = new function()
     // if that works it should be just inspection
     topCell.showView(views.frame_inspection.id);
     messages.post('object-selected', {rt_id: rt_id, obj_id: obj_id});
-
   }
 
 
