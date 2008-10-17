@@ -142,7 +142,7 @@ var DOM_markup_style = function(id, name, container_class)
 
     
 
-    var force_lower_case = settings[this.id].get('force-lowercase');
+    var force_lower_case = dom_data.isTextHtml() && settings[this.id].get('force-lowercase');
     var show_comments = settings[this.id].get('show-comments');
     var show_attrs = settings[this.id].get('show-attributes');
     var node_name = '';
