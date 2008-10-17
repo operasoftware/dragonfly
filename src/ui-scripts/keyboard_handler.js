@@ -362,35 +362,57 @@ var key_identifier = new function()
     }
   }
 
+  var clear_current_handler = function()
+  {
+    if(__key_handler)
+    {
+      __key_handler.blur();
+    }
+    if( __container && __container.hasClass('edit-mode') )
+    {
+      __container.removeClass('edit-mode');
+    }
+    __current_view =  __container = null;
+    __key_handler = empty_keyhandler;
+  }
+
   this.setView = function(event)
   {
+    
     var container = event.target;
-    while( container && !/container/.test(container.nodeName) )
+    while( container && !/container|toolbar|tabs/.test(container.nodeName) )
     {
       container = container.parentElement;
     }
+    
     if( container )
     {
-      var ui_obj = UIBase.getUIById(container.getAttribute('ui-id'));
-      if( ui_obj && ui_obj.view_id && ui_obj != __current_view )
+      switch (container.nodeName)
       {
-        
-        if(__key_handler)
+        case 'container':
         {
-          __key_handler.blur();
+          var ui_obj = UIBase.getUIById(container.getAttribute('ui-id'));
+          if( ui_obj && ui_obj.view_id && ui_obj != __current_view )
+          {
+            clear_current_handler();
+            // TODO check if it has already focus
+            __key_handler = keyhandlers[ui_obj.view_id] || empty_keyhandler;
+            __key_handler.focus(event, container);
+            __current_view = ui_obj; 
+            __container = container;
+          }
+          break;
         }
-        // TODO check if it has already focus
-        
-        __key_handler = keyhandlers[ui_obj.view_id] || empty_keyhandler;
-        __key_handler.focus(event, container);
-        __current_view = ui_obj; 
-        if( __container && __container.hasClass('edit-mode') )
+        // TODO set according key handler, e.g. toolbar, tab
+        default:
         {
-          __container.removeClass('edit-mode');
+          clear_current_handler();
         }
-        __container = container;
       }
-      
+    }
+    else
+    {
+      clear_current_handler();
     }
   }
   document.addEventListener('keypress', this.handle, true);
