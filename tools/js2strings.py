@@ -7,7 +7,7 @@ tpl="""%(label)s=-1
 %(label)s.description="%(desc)s"
 """
 
-if len(sys.argv)<2:
+if len(sys.argv)<2 or ( len(sys.argv[1]) and '-' in sys.argv[1][0] ):
     print """usage: js2strings js_string_file.js
 
 Prints strings in english.db format to stdout
