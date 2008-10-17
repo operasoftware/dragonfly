@@ -10,6 +10,7 @@ var dom_data = new function()
   var settings_id = 'dom';
 
   var data = []; // TODO seperated for all runtimes off the active tab
+  var mime = '';
   var data_runtime_id = '';  // data of a dom tree has always just one runtime
   var current_target = '';
   var __next_rt_id = '';
@@ -34,6 +35,7 @@ var dom_data = new function()
   var onResetState = function()
   {
     data = []; 
+    mime = '';
     data_runtime_id = ''; 
     current_target = '';
     __next_rt_id = '';
@@ -54,6 +56,7 @@ var dom_data = new function()
   {
     // TODO clean up old tab
     data = []; 
+    mime = '';
     var view_id = '', i = 0;
     // the top frame is per default the active tab
     data_runtime_id = __next_rt_id || msg.activeTab[0];
@@ -74,6 +77,7 @@ var dom_data = new function()
     var rt_id = event['runtime-id'], obj_id = event['object-id'];
     current_target = obj_id;
     data = [];
+    mime = '';
     var tag = tagManager.setCB(null, handleGetDOM, [ rt_id, obj_id]);
     services['ecmascript-debugger'].inspectDOM( tag, obj_id, 'parent-node-chain-with-children', 'json' );
   }
@@ -100,8 +104,41 @@ var dom_data = new function()
       }
     }
   }
+/*
+  ID = 0, 
+  TYPE = 1, 
+  NAME = 2, 
+  DEPTH = 3,
+  NAMESPACE = 4, 
+  VALUE = 4, 
+  ATTRS = 5,
+  ATTR_PREFIX = 0,
+  ATTR_KEY = 1, 
+  ATTR_VALUE = 2,
+  CHILDREN_LENGTH = 6, 
+  PUBLIC_ID = 4,
+  SYSTEM_ID = 5; 
+  */
+  var set_mime = function()
+  {
+    var 
+    node = null, 
+    i = 0;
 
+    for( ; node = data[i]; i++)
+    {
+      if(node[TYPE] == 1 )
+      {
+        // TODO this must be a bit more precise
+        return /^[A-Z]*$/.test(node[NAME]) && "text/html" || "application/xml";
+      }
+    }
+  }
 
+  this.isTextHtml = function()
+  {
+    return data.length && mime == "text/html" || false;
+  }
 
   var handleGetDOM = function(xml, rt_id, obj_id)
   {
@@ -109,6 +146,7 @@ var dom_data = new function()
     if( json )
     {
       data = eval('(' + json +')');
+      mime = set_mime();
       if( rt_id != data_runtime_id || __next_rt_id )
       {
         data_runtime_id = rt_id;
@@ -251,6 +289,7 @@ var dom_data = new function()
     {
       
       data = [];
+      mime = "";
       data_runtime_id = '';
       var id = '', i = 0;
       for( ; id = view_ids[i] ; i++)

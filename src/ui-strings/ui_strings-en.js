@@ -145,7 +145,7 @@ ui_strings.S_SWITCH_HIGHLIGHT_BY_MOUSE_OVER = 'Highlight by mouse hover';
 /* DESC: Updates the DOM model automatically when a node is being removed. */
 ui_strings.S_SWITCH_UPDATE_DOM_ON_NODE_REMOVE = 'Update DOM when a node is removed';
 /* DESC: Spell HTML tag names upper or lower case. */
-ui_strings.S_SWITCH_USE_LOWER_CASE_TAG_NAMES = 'Use lower case tag names';
+ui_strings.S_SWITCH_USE_LOWER_CASE_TAG_NAMES = 'Use lower case tag names for text/html';
 /* DESC: Shows or hides comments in DOM. */
 ui_strings.S_SWITCH_SHOW_COMMENT_NODES = 'Show comment nodes';
 /* DESC: Shows or hides DOM node attributes. */

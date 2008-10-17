@@ -358,7 +358,7 @@ new Settings
     'find-with-click': true,
     'highlight-on-hover': false,
     'update-on-dom-node-inserted': false,
-    'force-lowercase': false, 
+    'force-lowercase': true, 
     'show-comments': true, 
     'show-attributes': true,
     'show-whitespace-nodes': true,

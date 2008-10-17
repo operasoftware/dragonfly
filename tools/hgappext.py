@@ -238,7 +238,7 @@ def run_build_script(ui, repo, core_version=0, type=None, **opts):
         sys.stdout = store_stdout
     path = os.path.join(os.path.split(BUILD_CONFIG)[0], "BUILD_LOG")
     f = open(path, os.path.exists(path) and "a" or "w") 
-    f.write(time.strftime("%d.%m.%y %H:%M", time.localtime()) + ': ' + log_entry)
+    f.write(time.strftime("%d.%m.%y %H:%M", time.localtime()) + ': ' + log_entry + "; rev: " + revision)
     f.write("\n") # FWIW os.linesep should be editor linesep
     print "done"
 
