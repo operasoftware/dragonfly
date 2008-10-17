@@ -103,21 +103,7 @@ var dom_data = new function()
       }
     }
   }
-/*
-  ID = 0, 
-  TYPE = 1, 
-  NAME = 2, 
-  DEPTH = 3,
-  NAMESPACE = 4, 
-  VALUE = 4, 
-  ATTRS = 5,
-  ATTR_PREFIX = 0,
-  ATTR_KEY = 1, 
-  ATTR_VALUE = 2,
-  CHILDREN_LENGTH = 6, 
-  PUBLIC_ID = 4,
-  SYSTEM_ID = 5; 
-  */
+
   var set_mime = function()
   {
     var 
@@ -128,7 +114,7 @@ var dom_data = new function()
     {
       if(node[TYPE] == 1 )
       {
-        // TODO this must be a bit more precise
+        // TODO take in account doctype if present
         return /^[A-Z]*$/.test(node[NAME]) && "text/html" || "application/xml";
       }
     }
