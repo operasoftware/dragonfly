@@ -20,6 +20,7 @@ var EventHandler = function(type, is_capturing, handler_key)
   {
 
     var ele = event.target, handler = null, container = null;
+
     if( ele.nodeType != 1 )
     {
       return;
@@ -52,6 +53,7 @@ var EventHandler = function(type, is_capturing, handler_key)
 }
 
 new EventHandler('click');
+new EventHandler('dblclick', false, 'edit-handler');
 new EventHandler('change');
 new EventHandler('input');
 new EventHandler('keyup', true);

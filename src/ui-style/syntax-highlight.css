@@ -89,19 +89,19 @@
 	color:#888;
   }
 
-.dom .node, selector {
+.dom node, selector {
   color: #279;
   }
 
-.dom .node:hover {
+.dom node:hover {
   background-color:#ddb;
   }
 
-.dom .key, .stylesheets key, .css-inspector key {
+.dom key, .stylesheets key, .css-inspector key {
 	color:#229;
   }
 
-.dom .value, .doctype-value, .stylesheets value, .css-inspector value {
+.dom value, .doctype-value, .stylesheets value, .css-inspector value {
 	color:#742;
   }
 
@@ -125,7 +125,7 @@
   background-color: #fff;
   }
 
-.tree-style > div > div > div > span:first-child:before {
+.tree-style > div > div > div > node:first-child:before {
   display:inline-block;
   vertical-align: middle;
   content: '';

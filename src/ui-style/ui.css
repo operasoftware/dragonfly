@@ -893,7 +893,7 @@ textarea-container {
   z-index: 1;
   }
  
-textarea-inner-container {
+textarea-container textarea-inner-container {
   display: block;
   background-image: -o-skin('Speed Dial Configuration Dialog Skin');
   padding: 3px 9px 10px 5px;
@@ -909,6 +909,33 @@ textarea-container textarea{
   vertical-align: text-top;
   overflow: hidden;
   }
+
+textarea-container-inline 
+{
+  display: inline-block;
+  padding: 1px;
+  line-height: 0px;
+  position:relative;
+  z-index: 1;
+}
+ 
+textarea-container-inline textarea-inner-container 
+{
+  display: inline-block;
+  background-image: -o-skin('Speed Dial Configuration Dialog Skin');
+  padding: 3px 9px 10px 5px;
+  margin: -4px -10px -11px -6px;
+}
+ 
+textarea-container-inline textarea
+{
+  border: none;
+  margin: 0;
+  padding: 0;
+  vertical-align: text-top;
+  overflow: hidden;
+  height: 0px;
+}
   
 /*
   width: 26px;

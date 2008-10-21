@@ -56,6 +56,7 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./scripts/TextSearch.js"/>
 <script src="./scripts/VirtualTextSearch.js"/>
 <script src="./scripts/colors.js"/>
+<script src="./scripts/serviceBase.js"/>
 
 
 <script src="./ui-scripts/defaults.js"/>
@@ -137,15 +138,14 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./ecma-debugger/change-handler.js"/>
 <script src="./ecma-debugger/scroll_handler.js"/>
 <script src="./ecma-debugger/tag.js"/>
+<script src="./ecma-debugger/DOMEditor.js"/>
+<script src="./ecma-debugger/DomMarkupEditor.js"/>
+<script src="./ecma-debugger/actions_dom.js"/>
 
 <script src="./client/client.js"/>
-
-<script src="./scripts/serviceBase.js"/>
-
 <script src="./window-manager/window-manager.js"/>
 <script src="./console-logger/console.js"/>
 <script src="./ecma-debugger/ecma-debugger.js"/>
-
 <script src="./ecma-debugger/exec.js"/>
 
 <script src="./http-logger/httplogger_service.js"/>
