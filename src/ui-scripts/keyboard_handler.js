@@ -392,6 +392,7 @@ var key_identifier = new function()
         case 'container':
         {
           var ui_obj = UIBase.getUIById(container.getAttribute('ui-id'));
+         
           if( ui_obj && ui_obj.view_id && ui_obj != __current_view )
           {
             clear_current_handler();

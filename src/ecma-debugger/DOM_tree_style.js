@@ -122,7 +122,12 @@ var DOM_tree_style = function(id, name, container_class)
 
     var target = dom_data.getCurrentTarget();
 
-    var tree = '', i = 0, node = null, length = data.length;
+    var
+    tree = "<div class='padding' edit-handler='edit-dom' rt-id='" + dom_data.getDataRuntimeId() + "'><div>",
+    i = 0,
+    node = null, 
+    length = data.length;
+
     var scrollTop = document.documentElement.scrollTop;
 
     var attrs = null, key = '';
@@ -154,9 +159,6 @@ var DOM_tree_style = function(id, name, container_class)
 
     for( ; node = data[i]; i += 1 )
     {
-
-
-
       current_depth = node[DEPTH];
       children_length = node[ CHILDREN_LENGTH ];
       child_pointer = 0;
@@ -176,12 +178,12 @@ var DOM_tree_style = function(id, name, container_class)
           {
             for( k = 0; attr = node[ATTRS][k]; k++ )
             {
-              attrs += " <span class='key'>" + 
+              attrs += " <key>" + 
                 ( attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '' ) + 
                 ( force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ) + 
-                "</span>=<span class='value'>\"" + 
+                "</key>=<value>\"" + 
                 attr[ATTR_VALUE] + 
-                "\"</span>";
+                "\"</value>";
             }
           }
 
@@ -214,7 +216,7 @@ var DOM_tree_style = function(id, name, container_class)
                     "ref-id='"+node[ID] + "' handler='spotlight-node'>"+
                     ( children_length && !has_only_one_child ? 
                       "<input handler='get-children' type='button' class='open'>" : '' ) +
-                    "<span class='node'>" + node_name + attrs + "</span>" +
+                    "<node>" + node_name + attrs + "</node>" +
                     "</div>";
 
 
@@ -228,7 +230,7 @@ var DOM_tree_style = function(id, name, container_class)
                   "ref-id='"+node[ID] + "' handler='spotlight-node'>"+
                   ( node[CHILDREN_LENGTH] ? 
                     "<input handler='get-children' type='button' class='close'>" : '' ) +
-                  "<span class='node'>" + node_name + attrs + "</span>" +
+                  "<node>" + node_name + attrs + "</node>" +
                   "</div>";
           }
 
@@ -311,12 +313,15 @@ var DOM_tree_style = function(id, name, container_class)
     
 
       var scrollTop = container.scrollTop;
+      /*
       if( !container.firstChild )
       {
         container.render(['div', ['div'], 'class', 'padding'])
       }
+      */
+      tree += "</div></div>";
 
-      container.firstChild.firstChild.innerHTML = tree;
+      container.innerHTML = tree;
 
       container.scrollTop.scrollTop = scrollTop;
       topCell.statusbar.updateInfo(templates.breadcrumb(dom_data.getCSSPath()));

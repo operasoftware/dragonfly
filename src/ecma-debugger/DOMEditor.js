@@ -1,0 +1,686 @@
+﻿/**
+  * @constructor 
+  */
+
+var BaseEditor = new function()
+{
+  /* to be implemented by subclass */
+
+  /* the input event handler of the edit element (textarea) */
+
+  this.__input_handler = function(event) {};
+
+  this.textarea_container_name = "textarea-container";
+
+  this.get_base_style = function(ele)
+  {
+    var
+    style = getComputedStyle(ele, null),
+    props = ['font-family', 'line-height', 'font-size'],
+    prop = null,
+    i = 0,
+    span = document.createElement('test-element'),
+    cssText = 'display:block;position:absolute;left:-100px;top:0;white-space:pre;';
+ 
+    for( ; prop = props[i]; i++)
+    {
+      this.base_style[prop] = style.getPropertyValue(prop);
+      cssText += prop +':' + this.base_style[prop] + ';';
+    }
+    span.textContent = '1234567890';
+    document.documentElement.appendChild(span);
+    span.style.cssText = cssText;
+    this.char_width = span.offsetWidth / 10;
+    this.base_style['line-height'] = ( this.line_height = span.offsetHeight ) + 'px';
+    document.documentElement.removeChild(span);
+
+    // host element style
+    this.host_element_border_padding_left = 
+      parseInt(style.getPropertyValue('padding-left')) +
+      parseInt(style.getPropertyValue('border-left-width'));
+    this.host_element_border_padding_top = 
+      parseInt(style.getPropertyValue('padding-top')) +
+      parseInt(style.getPropertyValue('border-top-width'));
+
+    cssText = '';
+    for( prop in this.base_style )
+    {
+      cssText += prop +':' + this.base_style[prop] + ';';
+    }
+    this.textarea_container = document.createElement(this.textarea_container_name);
+    this.textarea = this.textarea_container.
+      appendChild(document.createElement('textarea-inner-container')).
+      appendChild(document.createElement('textarea'));
+    this.textarea.style.cssText = cssText;
+    this.textarea.oninput = this.getInputHandler();
+  }
+
+  var _init = function()
+  {
+    this.base_style =
+    {
+      'font-family': '',
+      'line-height': 0,
+      'font-size': 0
+    }
+    
+    this.char_width = 0;
+    this.line_height = 0;
+    this.cssText = '';
+    this.textarea_container = null;
+    this.textarea = null;
+
+    
+    this.host_element_border_padding_left = 0;
+    this.host_element_border_padding_top = 0;
+  }
+
+  this.base_init = function(instance)
+  {
+    _init.apply(instance);
+  }
+}
+
+var DOMAttrAndTextEditor = function()
+{
+  // assert: a element wich is editable has a monospace font
+
+  var self = this;
+
+  this.type = "dom-attr-text-editor";
+
+  this.textarea_container_name = "textarea-container-inline";
+
+  /* basic editor */
+
+  this.context_cur_text_content = '';
+
+  /* editor type specific properties */
+  this.current_edit_type = "";
+  this.context_cur_key = "";
+  this.context_cur_value = "";
+
+
+  /*
+  this.tab_context_value = '';
+  this.tab_context_tokens = null;
+
+  this.context_cur_prop = '';
+  this.context_cur_value = '';
+  this.context_cur_priority = '';
+  this.context_cur_text_content = '';
+
+  this.last_suggets_type = null;
+  this.suggets_count = 0;
+  this.suggets_iterate = false;
+  this.property_list_length = 0;
+  */
+
+
+  this.edit = function(event, ref_ele)
+  {
+    var 
+    ele = ref_ele || event.target,
+    parent_parent = null;
+    
+    if( !this.base_style['font-size'] )
+    {
+      this.get_base_style(ele);
+    }
+    if( this.textarea_container.parentElement )
+    {
+      this.submit();
+    }
+    switch( this.current_edit_type = ele.nodeName )
+    {
+      case "key":
+      {
+        parent_parent = ele.parentElement.parentElement;
+        this.context_rt_id = parent_parent.parentElement.getAttribute('rt-id');
+        this.context_obj_id = parent_parent.getAttribute('ref-id');
+        this.context_cur_key = ele.textContent;
+        this.context_cur_value = 
+          ele.nextElementSibling 
+          && ele.nextElementSibling.nodeName == "value"
+          && ele.nextElementSibling.textContent.replace(/^"|"$/g, "")
+          || "";
+        break;
+      }
+      case "value":
+      {
+        parent_parent = ele.parentElement.parentElement;
+        this.context_rt_id = parent_parent.parentElement.getAttribute('rt-id');
+        this.context_obj_id = parent_parent.getAttribute('ref-id');
+        this.context_cur_key = 
+          ele.previousElementSibling 
+          && ele.previousElementSibling.nodeName == "key"
+          && ele.previousElementSibling.textContent
+          || "";
+        this.context_cur_value = ele.textContent.replace(/^"|"$/g, "");
+        break;
+      }
+      case "text":
+      {
+        parent_parent = ele.parentElement;
+        this.context_rt_id = parent_parent.parentElement.getAttribute('rt-id');
+        this.context_obj_id = ele.getAttribute('ref-id');
+        break;
+      }
+    }
+
+    this.max_width = parseInt( getComputedStyle(parent_parent, null).getPropertyValue('width'));
+    if( this.current_edit_type == "value" )
+    {
+      this.context_cur_text_content = this.textarea.value = ele.textContent.replace(/^"|"$/g, "");
+      ele.textContent = '"';
+      ele.appendChild(this.textarea_container);
+      ele.appendChild(document.createTextNode('"'));
+    }
+    else
+    {
+      this.context_cur_text_content = this.textarea.value = ele.textContent;
+      ele.textContent = "";
+      ele.appendChild(this.textarea_container);
+    }
+    this.set_textarea_dimensions();
+    // only for click events
+    if( event )
+    {
+      this.textarea.focus();
+    }
+  }
+
+  this.set_textarea_dimensions = function()
+  {
+    // TODO force new lines if needed
+    var width = this.char_width * this.textarea.value.length;
+    this.textarea.style.height = '0px';
+    this.textarea.style.width = ( width < this.max_width ? width : this.max_width ) + "px";
+    this.textarea.style.height = this.textarea.scrollHeight + 'px';
+  }
+
+  this.update = function(event)
+  {
+    var script = "";
+    this.set_textarea_dimensions();
+
+    switch(this.current_edit_type)
+    {
+      case "key":
+      {
+
+        break;
+      }
+      case "value":
+      {
+
+        break;
+      }
+      case "text":
+      {
+        script = 'node.nodeValue = "' + this.textarea.value + '"';
+        services['ecmascript-debugger'].
+          eval(0, this.context_rt_id, '', '', script, ["node", this.context_obj_id]);
+        break;
+      }
+    }
+    /*
+    this.style.height = this.scrollHeight + 'px';
+    self.commit();
+    */
+  }
+
+  this.getInputHandler = function()
+  {
+    return function(event)
+    {
+      self.update(event);
+    }
+  }
+
+  /*
+  this.nav_next = function(event, action_id)
+  {
+    var  
+    cur_pos = this.textarea.selectionEnd,
+    i = 1;
+
+    if( this.textarea.value != this.tab_context_value )
+    {
+      this.tab_context_tokens = this.getAllTokens();
+      this.tab_context_value = this.textarea.value;
+    }
+    if( this.tab_context_tokens)
+    {
+      for( ; i < this.tab_context_tokens.length; i += 2 )
+      {
+        if( this.tab_context_tokens[i+1] > cur_pos )
+        {
+          this.textarea.selectionStart = this.tab_context_tokens[i];
+          this.textarea.selectionEnd = this.tab_context_tokens[i+1];
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  this.nav_previous = function(event, action_id)
+  {
+    var  
+    cur_pos = this.textarea.selectionStart,
+    i = 1;
+
+    if( this.textarea.value != this.tab_context_value )
+    {
+      this.tab_context_tokens = this.getAllTokens();
+      this.tab_context_value = this.textarea.value;
+    }
+    if( this.tab_context_tokens)
+    {
+      for( i = this.tab_context_tokens.length - 1; i > 1; i -= 2 )
+      {
+        if( this.tab_context_tokens[i] < cur_pos )
+        {
+          this.textarea.selectionStart = this.tab_context_tokens[i-1];
+          this.textarea.selectionEnd = this.tab_context_tokens[i];
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  */
+
+
+
+  /* autocomplete
+
+
+  this.autocomplete = function(event, action_id)
+  {
+    var  
+    cur_start = this.textarea.selectionStart,
+    new_start = 0,
+    cur_end = this.textarea.selectionEnd,
+    value = this.textarea.value,
+    cur_token = '',
+    i = 1,
+    suggest = ''
+
+    if( this.textarea.value != this.tab_context_value )
+    {
+      this.tab_context_tokens = this.getAllTokens();
+      this.tab_context_value = this.textarea.value;
+    }
+    if( this.tab_context_tokens )
+    {
+      for( ; i < this.tab_context_tokens.length; i += 2 )
+      {
+        if( cur_start >= this.tab_context_tokens[i] && cur_start <= this.tab_context_tokens[i+1])
+        {
+          cur_token = value.slice(this.tab_context_tokens[i], this.tab_context_tokens[i+1]);
+          break;
+        }
+      }
+    }
+
+    suggest = this.getSuggest
+    (
+      this.tab_context_tokens && this.tab_context_tokens[0] || '', 
+      this.tab_context_tokens && cur_end <= this.tab_context_tokens[2],
+      cur_token,
+      cur_start, 
+      cur_end, 
+      action_id
+    );
+
+    if(suggest)
+    {
+
+      switch(suggest.replace_type)
+      {
+        case SELECTION:
+        {
+          new_start = this.tab_context_tokens[i];
+          this.textarea.value = 
+            value.slice(0, new_start) + 
+            suggest.value +
+            value.slice(this.tab_context_tokens[i+1]);
+          this.textarea.selectionStart = cur_start;
+          this.textarea.selectionEnd = new_start + suggest.value.length;
+          break;
+        }
+        case TOKEN:
+        {
+          new_start = this.tab_context_tokens[i];
+          this.textarea.value = 
+            value.slice(0, new_start) + 
+            suggest.value +
+            value.slice(this.tab_context_tokens[i+1]);
+          this.textarea.selectionStart = new_start;
+          this.textarea.selectionEnd = new_start + suggest.value.length;
+          break;
+        }
+        case VALUE:
+        {
+          new_start = this.tab_context_tokens[2] + 2;
+          this.textarea.value = 
+            this.tab_context_tokens[0] + ': ' + suggest.value;
+          this.textarea.selectionStart = new_start;
+          this.textarea.selectionEnd = new_start + suggest.value.length;
+          break;
+        }
+
+      }
+
+      this.textarea.style.height = this.textarea.scrollHeight + 'px';
+      this.commit();
+    }
+
+
+    return false;
+  }
+
+
+  this.getSuggest = function(prop_name, is_prop, token, cur_start, cur_end, action_id)
+  {
+    var 
+    re_num = /^(-?)([\d.]+)(.*)$/,
+    match = null,
+    suggest = null,
+    suggest_type = 
+      ( is_prop && 'suggest-property' )
+      || ( ( match = re_num.exec(token) ) && 'suggest-number' )
+      || ('suggest-value'),
+    suggest_handler = this[suggest_type];
+
+    suggest_handler.cursor = this.setCursor
+    (
+      this.suggets_iterate = this.last_suggets_type == suggest_type, 
+      suggest_handler.cursor, 
+      suggest_handler.matches = this[suggest_type](token, cur_start, cur_end, action_id, match), 
+      action_id
+    )
+    
+    this.last_suggets_type = suggest_type;
+
+    suggest = suggest_handler.matches && suggest_handler.matches[suggest_handler.cursor];
+    return suggest && {value: suggest, replace_type: suggest_handler.replace_type} || null;
+
+
+
+  }
+
+  this.getMatchesFromList = function(list, set)
+  {
+    var 
+    ret = [],
+    length = list && list.length || 0,
+    i = 0;
+
+    if( length == 1 )
+    {
+      return list;
+    }
+
+    if( length && set)
+    {
+      for( ; i < length; i++)
+      {
+        if( list[i].indexOf(set) == 0 )
+        {
+          ret[ret.length] = list[i];
+        }
+      }
+    }
+    else
+    {
+       ret = list.slice(0);
+    }
+    return ret;
+  }
+
+  this.setCursor = function(iterate, cur_cursor, matches, action_id)
+  {
+    if( iterate && matches)
+    {
+      cur_cursor += ( action_id == action_ids.NAV_UP ? -1 : 1 );
+      if( cur_cursor > matches.length - 1 )
+      {
+        cur_cursor = 0;
+      }
+      else if( cur_cursor < 0 )
+      {
+        cur_cursor = matches.length - 1;
+      }
+    }
+    else
+    {
+      cur_cursor = 0;
+    }
+    return cur_cursor;
+  }
+
+
+
+  this['suggest-property'] = function(token, cur_start, cur_end, action_id, match)
+  {
+    if( !this.property_list )
+    {
+      this.property_list = stylesheets.getSortedProperties();
+      this.property_list_length = this.property_list.length;
+    }
+    return this.getMatchesFromList(this.property_list, this.textarea.value.slice(this.tab_context_tokens[1], cur_start));
+  }
+
+  this['suggest-property'].replace_type = SELECTION;
+  this['suggest-property'].cursor = 0;
+  this['suggest-property'].matches = null;
+
+  this['suggest-number'] = function(token, cur_start, cur_end, action_id, match)
+  {
+    var is_float = /\.(\d+)/.exec(match[2]);
+    if( is_float )
+    {
+      return [ ( parseFloat(match[1] + match[2]) + ( action_id == action_ids.NAV_UP ? 0.1 : -0.1 ) ).toFixed(is_float[1].length) + match[3]];
+    }
+    return [ ( parseInt(match[1] + match[2]) + ( action_id == action_ids.NAV_UP ? 1 : -1 ) ).toString() + match[3]];
+  }
+
+  this['suggest-number'].replace_type = TOKEN;
+  this['suggest-number'].cursor = 0;
+  this['suggest-number'].matches = null;
+
+  this['suggest-value'] = function(token, cur_start, cur_end, action_id, match)
+  {
+    var 
+    prop = this.tab_context_tokens[0],
+    set = this.tab_context_tokens[3] 
+        && this.textarea.value.slice(this.tab_context_tokens[3], cur_start) 
+        || '',
+    re_hex = /^#([0-9a-f]{6})$/i,
+    match = null,
+    hsl = null,
+    rgb = null;
+
+    if( set == this['suggest-value'].last_set && prop == this['suggest-value'].last_prop )
+    {
+      return this['suggest-value'].matches;
+    }
+    this['suggest-value'].last_set = set;
+    this['suggest-value'].last_prop = prop;
+
+    if( /color/.test(prop) && token && ( match = re_hex.exec(token) ) )
+    {
+      this.colors.setHex(match[1]);
+      hsl = this.colors.getHSL();
+      rgb = this.colors.getRGB(); 
+      return [
+        match[0],
+        ('hsl(' + hsl[0] + ',' + parseInt(hsl[1]) +'%,' + parseInt(hsl[2]) + '%)'),
+        ('rgb(' + rgb[0] + ',' + rgb[1] +',' + rgb[2] + ')')
+      ].concat(suggest_values['color']);
+
+    }
+   
+    if( suggest_values[prop] && suggest_values[prop].length )
+    {
+      return this.getMatchesFromList(suggest_values[prop], set);
+    }
+    return null;
+  }
+
+  this['suggest-value'].replace_type = VALUE;
+  this['suggest-value'].cursor = 0;
+  this['suggest-value'].matches = null;
+  this['suggest-value'].last_set = '';
+  this['suggest-value'].last_prop = '';
+
+  end auto complete */
+
+
+  this.submit = function()
+  {
+    /*
+    var 
+    props = this.getProperties(), 
+    i = 0,
+    inner = '';
+    
+    if( props[i+1] )
+    {
+      this.textarea_container.parentElement.innerHTML =
+        "<key>" + props[i] + "</key>: " +
+        "<value>"  + props[i+1] +  ( props[i+2] ? " !important" : "" ) + "</value>;";
+    }
+    else
+    {
+      this.textarea_container.parentElement.parentElement.
+        removeChild(this.textarea_container.parentElement);
+     
+    }
+    */
+  }
+
+
+  /*
+
+  this.commit = function()
+  {
+    var props = self.getProperties(), 
+    i = 0,
+    script = "",
+    prop = null,
+    reset = false;
+
+    while( props.length > 3 )
+    {
+      reset = true;
+      prop = this.textarea_container.parentElement.parentElement.
+        insertBefore(document.createElement('property'), this.textarea_container.parentElement);
+
+      prop.innerHTML = "<key>" + props[0] + "</key>: " +
+          "<value>"  + props[1] +  ( props[2] ? " !important" : "" ) + "</value>;";
+      props.splice(0, 3);
+
+    }
+    
+    if( reset)
+    {
+      this.textarea.value =
+        props[0] + ( props[1] ? ': ' + props[1] + ( props[2] ? ' !important' : '' ) + ';' : '' );
+        
+      this.context_cur_text_content =
+      this.context_cur_prop =
+      this.context_cur_value = '';
+      this.context_cur_priority = 0;
+    }
+
+    if( props[i+1] )
+    {
+      script = "rule.style.setProperty(\"" + props[i] + "\", \"" + props[i+1] + "\", " + ( props[i+2] ? "\"important\"" : null )+ ")";
+      services['ecmascript-debugger'].eval(0, self.context_rt_id, '', '', script, ["rule", self.context_rule_id]);
+    }
+
+  }
+
+  this.enter = function()
+  {
+    var 
+    props = self.getProperties(), 
+    keep_edit = false,
+    prop = null;
+    
+    this.last_suggets_type = '';
+    if( props && props.length == 3 )
+    {
+      if( this.textarea.selectionEnd == this.textarea.value.length 
+          || this.textarea.selectionEnd >= this.textarea.value.indexOf(';') )
+      {
+        prop = this.textarea_container.parentElement.parentElement.
+          insertBefore(document.createElement('property'), this.textarea_container.parentElement);
+        prop.innerHTML = "<key>" + props[0] + "</key>: " +
+          "<value>"  + props[1] +  ( props[2] ? " !important" : "" ) + "</value>;";
+        this.textarea.value =
+        this.context_cur_text_content =
+        this.context_cur_prop =
+        this.context_cur_value = '';
+        this.context_cur_priority = 0;
+        keep_edit = true;
+      }
+      else
+      {
+        this.textarea_container.parentElement.innerHTML = "<key>" + props[0] + "</key>: " +
+          "<value>"  + props[1] +  ( props[2] ? " !important" : "" ) + "</value>;";
+      }
+    }
+    else
+    {
+      this.textarea_container.parentElement.innerHTML = "";
+    }
+    
+    return keep_edit;
+
+  }
+
+  this.escape = function()
+  {
+    this.last_suggets_type = '';
+    if(this.context_cur_prop)
+    {
+      this.textarea.value = this.context_cur_text_content;
+      this.textarea_container.parentElement.innerHTML =
+        "<key>" + this.context_cur_prop + "</key>: " +
+        "<value>"  + this.context_cur_value +  
+        ( this.context_cur_priority ? " !important" : "" ) + 
+        "</value>;";
+        return true;
+    }
+    else
+    {
+      this.textarea.value = '';
+      this.textarea_container.parentElement.innerHTML = '';
+      return false;
+    }
+
+  }
+
+  */
+
+
+
+  
+
+  this.base_init(this);
+}
+
+
+DOMAttrAndTextEditor.prototype = BaseEditor;
+
+
+
+
+
+
