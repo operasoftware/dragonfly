@@ -131,6 +131,11 @@ var BaseKeyhandler = new function()
 
   }
 
+  this.onclick = function(event)
+  {
+
+  };
+
   this.init = function(id)
   {
     if( !window.keyhandlers )
@@ -188,6 +193,11 @@ var BaseEditKeyhandler = new function()
   {
 
   }
+
+  this.onclick = function(event)
+  {
+
+  };
 
   this.init = function(id)
   {
@@ -270,6 +280,8 @@ var key_identifier = new function()
     this.blur = function() {};
 
     this.setTarget = function(){};
+
+    this.onclick = function(event){};
 
 
   }
@@ -380,11 +392,8 @@ var key_identifier = new function()
   {
     
     var container = event.target;
-    while( container && !/container|toolbar|tabs/.test(container.nodeName) )
-    {
-      container = container.parentElement;
-    }
-    
+    while( container && !/^(?:top-)?(?:container|toolbar|tabs)$/.test(container.nodeName) 
+      && ( container = container.parentElement ) );
     if( container )
     {
       switch (container.nodeName)
@@ -401,6 +410,10 @@ var key_identifier = new function()
             __key_handler.focus(event, container);
             __current_view = ui_obj; 
             __container = container;
+          }
+          else if( __key_handler )
+          {
+            __key_handler.onclick(event);
           }
           break;
         }

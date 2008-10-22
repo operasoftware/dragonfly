@@ -617,6 +617,41 @@ var dom_data = new function()
       host_tabs.activeTab.removeEventListener('click', clickHandlerHost);
     }
   }
+
+  // to be update from a editor
+  this.update = function(state)
+  {
+    if( state.rt_id == data_runtime_id )
+    {
+      var 
+      entry = null, 
+      i = 0,
+      obj_id = state.obj_id;
+
+      for( ; data[i] && data[i][ID] != obj_id; i ++);
+      if( data[i] )
+      {
+        switch(state.type)
+        {
+          case "key":
+          {
+
+            break;
+          }
+          case "value":
+          {
+
+            break;
+          }
+          case "text":
+          {
+            data[i][VALUE] = state.text;
+            break;
+          }
+        }
+      }
+    }
+  }
   
   messages.addListener('active-tab', onActiveTab);
   messages.addListener('show-view', onShowView);

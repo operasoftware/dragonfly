@@ -184,7 +184,6 @@ cls.DOMInspectorActions = function(id)
       {
         event.preventDefault();
         event.stopPropagation();
-        opera.postError(99)
         /*
         if(event.target.parentElement.hasAttribute('rule-id'))
         {
@@ -334,6 +333,21 @@ cls.DOMInspectorActions = function(id)
 
   */
 
+  this.escape_edit_mode = function(event, action_id)
+  {
+    var navigation_target = this.editor.cancel();
+    if(!navigation_target)
+    {
+      // TODO get a valid navigation target
+    }
+    else
+    {
+      // TODO set the return value as navigation target
+    }
+    key_identifier.setModeDefault(self);
+    return false;
+  }
+
   this.init(id);
 
   var onViewCreated = function(msg)
@@ -378,6 +392,8 @@ cls.DOMInspectorKeyhandler = function(id)
 
   this.blur = __actions.clearActiveContainer;
   */
+
+
   this.init(id);
 };
 
@@ -428,6 +444,27 @@ cls.DOMInspectorEditKeyhandler = function(id)
     __actions.blur_edit_mode();
   }
   */
+
+  this[this.ESCAPE] = function(event, action_id)
+  {
+    __actions.escape_edit_mode(event, action_id);
+  }
+
+  this.blur = function(event)
+  {
+    if( __actions.editor )
+    {
+      __actions.editor.submit();
+    }
+  }
+
+  this.onclick = function(event)
+  {
+    if( __actions.editor )
+    {
+      __actions.editor.onclick(event);
+    }
+  }
 
   this.init(id);
 };
