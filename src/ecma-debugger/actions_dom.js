@@ -1,4 +1,4 @@
-var cls = window.cls || ( window.cls = {} );
+﻿var cls = window.cls || ( window.cls = {} );
 // this should go in a own file
 
 /**

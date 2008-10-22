@@ -1,4 +1,4 @@
-
+﻿
 var DOMMarkupEditor = function()
 {
   // assert: a element wich is editable has a monospace font
