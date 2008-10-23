@@ -329,9 +329,46 @@ cls.DOMInspectorActions = function(id)
     }
     return false;
   }
-
-
   */
+
+
+  this.enter_edit_mode = function(event, action_id)
+  {
+    if( this.editor.type == "dom-attr-text-editor" )
+    {
+      var navigation_target = this.editor.submit();
+      if(!navigation_target)
+      {
+        // TODO get a valid navigation target
+      }
+      else
+      {
+        // TODO set the return value as navigation target
+      }
+      key_identifier.setModeDefault(self);
+      return false;
+    }
+    else
+    {
+      return true;
+    }
+
+
+    /*
+    if( !this.editor.enter(event, action_id) )
+    {
+      key_identifier.setModeDefault(self);
+      if( !this.__target.textContent )
+      {
+        var cur_target = this.__target;
+        this.moveFocusUp();
+        cur_target.parentElement.removeChild(cur_target);
+      }
+    }
+    return false;
+    */
+  }
+
 
   this.escape_edit_mode = function(event, action_id)
   {
@@ -444,6 +481,11 @@ cls.DOMInspectorEditKeyhandler = function(id)
     __actions.blur_edit_mode();
   }
   */
+
+  this[this.ENTER] = function(event, action_id)
+  {
+    __actions.enter_edit_mode(event, action_id);
+  }
 
   this[this.ESCAPE] = function(event, action_id)
   {
