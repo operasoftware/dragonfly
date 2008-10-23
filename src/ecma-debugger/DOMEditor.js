@@ -5,12 +5,13 @@
 var BaseEditor = new function()
 {
   // an editable element must have monospace font
-
+  
   /* interface */
   this.edit = 
   this.oninput =
+  // must return a valid navigation target or null
   this.submit =
-  // returns a valid navigation target or null
+  // must return a valid navigation target or null
   this.cancel = 
   // to handle click events while editing
   // could be perhaps a base method
@@ -20,6 +21,8 @@ var BaseEditor = new function()
 
   var _init = function(instance)
   {
+    this.context_enter = null;
+    this.context_cur = null;
     this.base_style =
     {
       'font-family': '',
@@ -93,6 +96,7 @@ var BaseEditor = new function()
 
 var DOMAttrAndTextEditor = function()
 {
+  this.base_init(this);
   this.type = "dom-attr-text-editor";
   this.textarea_container_name = "textarea-container-inline";
   // specific context 
@@ -205,6 +209,8 @@ var DOMAttrAndTextEditor = function()
     {
       this.textarea.focus();
     }
+    this.textarea.selectionStart = 0;
+    this.textarea.selectionEnd = this.textarea.value.length;
   }
 
   this.oninput = function(event)
@@ -213,7 +219,6 @@ var DOMAttrAndTextEditor = function()
     script = "",
     state = this.context_cur;
 
-    // TODO call back update data ?
     if( this.textarea_container.parentElement )
     {
       this.set_textarea_dimensions();
@@ -221,12 +226,20 @@ var DOMAttrAndTextEditor = function()
       {
         case "key":
         {
-
+          if(state.has_value)
+          {
+            script = 
+              'node.setAttribute("' + ( state.key = this.textarea.value ) + '","' + state.value + '")';
+            services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
+          }
           break;
         }
         case "value":
         {
-
+          // there should never be the situation that the key is not defined
+          script = 
+            'node.setAttribute("' + state.key + '","' + ( state.value = this.textarea.value ) + '")';
+          services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
           break;
         }
         case "text":
@@ -241,80 +254,103 @@ var DOMAttrAndTextEditor = function()
 
   this.submit = function()
   {
+    // return a valid navigation target or null
     var 
     script = "",
-    state = this.context_cur;
+    state = this.context_cur,
+    nav_target = this.textarea_container.parentElement,
+    cur = null;
 
-    if( this.textarea_container.parentElement )
+    if( nav_target )
     {
       switch(state.type)
       {
         case "key":
         {
-
+          if(state.key && state.value)
+          {
+            dom_data.update(state); 
+            nav_target.textContent = state.key;
+          }
+          else // delete the attribute
+          {
+            nav_target = this.remove_attribute('next', 'value');
+          }
           break;
         }
         case "value":
         {
-
+          if(state.key && state.value)
+          {
+            dom_data.update(state); 
+            nav_target.textContent = '"' + state.value+ '"';
+          }
+          else // delete the attribute
+          {
+            nav_target = this.remove_attribute('previous', 'key');
+          }
           break;
         }
         case "text":
         {
-          // TODO update data
-          dom_data.update(state);
-          this.textarea_container.parentElement.textContent = state.text;
+          dom_data.update(state); 
+          nav_target.textContent = state.text;
           break;
         }
       }
     }
+    return nav_target;
   }
 
   this.cancel = function()
   {
-    // return true if the textarea container is a valid navigation target
-    // this should be true if the edited entity is not new
+    // return a valid navigation target or null
     var 
     script = "",
     state = this.context_enter,
-    ret = null;
+    nav_target = null;
 
     if( this.textarea_container.parentElement )
     {
-      switch(state.type)
+      if(this.context_cur.is_new)
       {
-        case "key":
+        // TODO
+      }
+      else
+      {
+        nav_target = this.textarea_container.parentElement;
+        switch(state.type)
         {
-
-          break;
-        }
-        case "value":
-        {
-
-          break;
-        }
-        case "text":
-        {
-          if( this.context_cur.is_new )
+          case "key":
           {
-            // TODO
-            // remove the new markup
-            // return false
+            script = 
+              'node.setAttribute("' + state.key + '","' + state.value + '")';
+            services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
+            nav_target.textContent = state.key;
+            break;
           }
-          else
+          case "value":
+          {
+            script = 
+              'node.setAttribute("' + state.key + '","' + state.value + '")';
+            services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
+            nav_target.textContent = '"' + state.value + '"';
+            break;
+          }
+          case "text":
           {
             script = 'node.nodeValue = "' + state.text + '"';
             services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
-            ret = this.textarea_container.parentElement;
-            ret.textContent = state.text;
-            return ret;
+            nav_target.textContent = state.text;
+            break;
           }
-          break;
         }
       }
     }
+    return nav_target;
   }
 
+  // helpers
   this.set_textarea_dimensions = function()
   {
     // TODO force new lines if needed
@@ -322,6 +358,32 @@ var DOMAttrAndTextEditor = function()
     //this.textarea.style.height = '0px';
     this.textarea.style.width = ( width < this.max_width ? width : this.max_width )+ "px";
     this.textarea.style.height = this.textarea.scrollHeight + 'px';
+  }
+  
+  this.remove_attribute = function(pair_target, check)
+  {
+    var 
+    script = 'node.removeAttribute("' + this.context_enter.key + '")',
+    state = this.context_cur,
+    nav_target = this.textarea_container.parentElement;
+
+    services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
+    state.key = this.context_enter.key;
+    delete state.value;
+    dom_data.update(state);
+    nav_target.textContent = "";
+    cur = nav_target[pair_target + "ElementSibling"];
+    if( cur && cur.nodeName == check ) 
+    {
+      nav_target.parentElement.removeChild(cur);
+    }
+    cur = nav_target[pair_target + "Sibling"];
+    if( cur && /=/.test(cur.nodeValue) ) 
+    {
+      nav_target.parentElement.removeChild(cur);
+    }
+    nav_target.parentElement.removeChild(nav_target);
+    return null;
   }
 
   // could be the default method?
@@ -388,7 +450,7 @@ var DOMAttrAndTextEditor = function()
 
   */
 
-  this.base_init(this);
+  
 }
 
 DOMAttrAndTextEditor.prototype = BaseEditor;

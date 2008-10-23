@@ -631,21 +631,33 @@ var dom_data = new function()
       var 
       entry = null, 
       i = 0,
-      obj_id = state.obj_id;
-
+      obj_id = state.obj_id,
+      attrs = null,
+      attr = null, 
+      j = 0;
+      
       for( ; data[i] && data[i][ID] != obj_id; i ++);
       if( data[i] )
       {
         switch(state.type)
         {
           case "key":
-          {
-
-            break;
-          }
           case "value":
           {
-
+            if( state.key )
+            {
+              attrs = data[i][ATTRS];
+              for( ; ( attr = attrs[j] ) && attr[ATTR_KEY] != state.key; j++ );
+              attr || ( attr = attrs[j] = ["", state.key, ""] );
+              if( state.value )
+              {
+                attr[ATTR_VALUE] = state.value;
+              }
+              else
+              {
+                attrs.splice(j, 1);
+              }
+            }
             break;
           }
           case "text":
