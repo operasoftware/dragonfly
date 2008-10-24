@@ -16,8 +16,10 @@ var BaseEditor = new function()
   // to handle click events while editing
   // could be perhaps a base method
   this.onclick = 
+  // must return a valid navigation target or null
   this.nav_next =
-  this.nav_previous = function(){};
+  // must return a valid navigation target or null
+  this.nav_previous = function(){return null};
 
   var _init = function(instance)
   {
@@ -94,7 +96,7 @@ var BaseEditor = new function()
   }
 }
 
-var DOMAttrAndTextEditor = function()
+var DOMAttrAndTextEditor = function(nav_filters)
 {
   this.base_init(this);
   this.type = "dom-attr-text-editor";
@@ -144,10 +146,15 @@ var DOMAttrAndTextEditor = function()
     {
       this.get_base_style(ele);
     }
+    
+    // this should never be needed
+    
     if( this.textarea_container.parentElement )
     {
-      this.submit();
+      opera.postError("this.textarea_container.parentElement is not null in submit");
     }
+    
+    
     switch( enter_state.type = ele.nodeName )
     {
       case "key":
@@ -226,10 +233,11 @@ var DOMAttrAndTextEditor = function()
       {
         case "key":
         {
-          if(state.has_value)
+          state.key = this.textarea.value
+          if(state.value)
           {
             script = 
-              'node.setAttribute("' + ( state.key = this.textarea.value ) + '","' + state.value + '")';
+              'node.setAttribute("' + state.key + '","' + state.value + '")';
             services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
           }
           break;
@@ -252,7 +260,7 @@ var DOMAttrAndTextEditor = function()
     }
   }
 
-  this.submit = function()
+  this.submit = function(check_value)
   {
     // return a valid navigation target or null
     var 
@@ -267,14 +275,14 @@ var DOMAttrAndTextEditor = function()
       {
         case "key":
         {
-          if(state.key && state.value)
+          if(state.key && ( !check_value || state.value ) )
           {
             dom_data.update(state); 
             nav_target.textContent = state.key;
           }
-          else // delete the attribute
+          else 
           {
-            nav_target = this.remove_attribute('next', 'value');
+            nav_target = this.remove_attribute();
           }
           break;
         }
@@ -285,9 +293,9 @@ var DOMAttrAndTextEditor = function()
             dom_data.update(state); 
             nav_target.textContent = '"' + state.value+ '"';
           }
-          else // delete the attribute
+          else 
           {
-            nav_target = this.remove_attribute('previous', 'key');
+            nav_target = this.remove_attribute();
           }
           break;
         }
@@ -314,7 +322,7 @@ var DOMAttrAndTextEditor = function()
     {
       if(this.context_cur.is_new)
       {
-        // TODO
+        // TODO is this special?
       }
       else
       {
@@ -350,6 +358,74 @@ var DOMAttrAndTextEditor = function()
     return nav_target;
   }
 
+  this.nav_previous = function(event, action_id)
+  {
+    // must return a valid navigation target or null
+    var 
+    state = this.context_cur,
+    nav_target = this.textarea_container.parentElement,
+    nav_target_parent = nav_target.parentElement,
+    next = nav_target.previousElementSibling,
+    submit_success = this.submit(true),
+    container = nav_target_parent.parentElement.parentElement;
+    
+    if( next || ( next = nav_target_parent.getPreviousWithFilter(container, nav_filters.attr_text) ) )
+    {
+      if( next.nodeName == 'node' )
+      {
+        next.firstChild.splitText(next.firstChild.nodeValue.length - 1);
+        next = this.create_new_edit(next.firstChild);
+      }
+      else if( next.parentElement != nav_target_parent 
+                && next.nodeName == 'value' 
+                && next == next.parentElement.lastElementChild )
+      {
+        next = this.create_new_edit(next);
+      }
+      this.edit({}, next);
+    }
+    return next;
+  }
+
+  this.nav_next = function(event, action_id)
+  {
+    // must return a valid navigation target or null
+    var 
+    state = this.context_cur,
+    nav_target = this.textarea_container.parentElement,
+    nav_target_parent = nav_target.parentElement,
+    next = nav_target.nextElementSibling,
+    submit_success = this.submit(),
+    container = nav_target_parent.parentElement.parentElement;
+
+    switch(state.type)
+    {
+      case "key":
+      case "value":
+      {
+        if(submit_success)
+        {
+          next || ( next = this.create_new_edit(submit_success) );
+          break;
+        }
+      }
+      case "text":
+      {
+        next = nav_target_parent.getNextWithFilter(container, nav_filters.attr_text);
+      }
+    }
+    if(next)
+    {
+      if( next.nodeName == 'node' )
+      {
+        next.firstChild.splitText(next.firstChild.nodeValue.length - 1);
+        next = this.create_new_edit(next.firstChild);
+      }
+      this.edit({}, next);
+    }
+    return next;
+  }
+
   // helpers
   this.set_textarea_dimensions = function()
   {
@@ -359,30 +435,54 @@ var DOMAttrAndTextEditor = function()
     this.textarea.style.width = ( width < this.max_width ? width : this.max_width )+ "px";
     this.textarea.style.height = this.textarea.scrollHeight + 'px';
   }
+
+  this.create_new_edit = function(ref_node)
+  {
+    var 
+    name = ref_node.nodeName,
+    parent = ref_node.parentNode,
+    cur = parent.insertBefore
+    (
+      document.createTextNode( name == 'key' && '=' || ' ' ), ref_node.nextSibling
+    );
+    return parent.insertBefore
+    (
+      document.createElement( name == 'key' && 'value' || 'key' ), cur.nextSibling
+    );
+  }
   
-  this.remove_attribute = function(pair_target, check)
+  this.remove_attribute = function()
   {
     var 
     script = 'node.removeAttribute("' + this.context_enter.key + '")',
     state = this.context_cur,
-    nav_target = this.textarea_container.parentElement;
+    nav_target = this.textarea_container.parentElement,
+    nav_target_parent = nav_target.parentElement,
+    pair_target = nav_target.nodeName == 'key' && 'next' || 'previous', 
+    check = nav_target.nodeName == 'key' && 'value' || 'key';
 
     services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
     state.key = this.context_enter.key;
     delete state.value;
     dom_data.update(state);
+    // to clear the context of the textarea container
     nav_target.textContent = "";
     cur = nav_target[pair_target + "ElementSibling"];
     if( cur && cur.nodeName == check ) 
     {
-      nav_target.parentElement.removeChild(cur);
+      nav_target_parent.removeChild(cur);
     }
     cur = nav_target[pair_target + "Sibling"];
     if( cur && /=/.test(cur.nodeValue) ) 
     {
-      nav_target.parentElement.removeChild(cur);
+      nav_target_parent.removeChild(cur);
     }
-    nav_target.parentElement.removeChild(nav_target);
+    cur = nav_target.previousSibling;
+    if( cur && / +/.test(cur.nodeValue) ) 
+    {
+      nav_target_parent.removeChild(cur);
+    }
+    nav_target_parent.removeChild(nav_target);
     return null;
   }
 
@@ -391,66 +491,10 @@ var DOMAttrAndTextEditor = function()
   {
     if(!this.textarea_container.contains(event.target))
     {
-      this.submit();
+      this.submit(true);
     }
   }
 
-  /*
-  this.nav_next = function(event, action_id)
-  {
-    var  
-    cur_pos = this.textarea.selectionEnd,
-    i = 1;
-
-    if( this.textarea.value != this.tab_context_value )
-    {
-      this.tab_context_tokens = this.getAllTokens();
-      this.tab_context_value = this.textarea.value;
-    }
-    if( this.tab_context_tokens)
-    {
-      for( ; i < this.tab_context_tokens.length; i += 2 )
-      {
-        if( this.tab_context_tokens[i+1] > cur_pos )
-        {
-          this.textarea.selectionStart = this.tab_context_tokens[i];
-          this.textarea.selectionEnd = this.tab_context_tokens[i+1];
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  this.nav_previous = function(event, action_id)
-  {
-    var  
-    cur_pos = this.textarea.selectionStart,
-    i = 1;
-
-    if( this.textarea.value != this.tab_context_value )
-    {
-      this.tab_context_tokens = this.getAllTokens();
-      this.tab_context_value = this.textarea.value;
-    }
-    if( this.tab_context_tokens)
-    {
-      for( i = this.tab_context_tokens.length - 1; i > 1; i -= 2 )
-      {
-        if( this.tab_context_tokens[i] < cur_pos )
-        {
-          this.textarea.selectionStart = this.tab_context_tokens[i-1];
-          this.textarea.selectionEnd = this.tab_context_tokens[i];
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  */
-
-  
 }
 
 DOMAttrAndTextEditor.prototype = BaseEditor;
