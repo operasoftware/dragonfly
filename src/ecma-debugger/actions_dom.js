@@ -13,13 +13,32 @@ cls.DOMInspectorActions = function(id)
   this.__active_container = null;
   this.__target = null;
 
-
+  var nav_filters = 
+  {
+    attr_text: function(ele)
+    {
+      switch(ele.nodeName)
+      {
+        case 'text':
+        case 'key':
+        case 'value':
+        {
+          return true;
+        }
+        case 'node':
+        {
+          return !/<\//.test(ele.textContent) && !ele.getElementsByTagName('key')[0];
+        }
+      }
+      return false; 
+    }
+  }
 
   this.editor = null;
   this.editors = 
   {
-    "dom-attr-text-editor": new DOMAttrAndTextEditor(),
-    "dom-markup-editor": new DOMMarkupEditor()
+    "dom-attr-text-editor": new DOMAttrAndTextEditor(nav_filters),
+    "dom-markup-editor": new DOMMarkupEditor(nav_filters)
   };
 
   this.set_editor = function(type)
@@ -197,6 +216,7 @@ cls.DOMInspectorActions = function(id)
       }
     }
   }
+
   /*
   this['css-toggle-category'] = function(event, target)
   {
@@ -369,6 +389,38 @@ cls.DOMInspectorActions = function(id)
     */
   }
 
+  this.nav_next_edit_mode = function(event, action_id)
+  {
+    if( this.editor.type == "dom-attr-text-editor" )
+    {
+      if( !this.editor.nav_next(event, action_id) )
+      {
+        key_identifier.setModeDefault(self);
+      }
+      return false;
+    }
+    else
+    {
+      return true
+    }
+  }
+
+  this.nav_previous_edit_mode = function(event, action_id)
+  {
+    if( this.editor.type == "dom-attr-text-editor" )
+    {
+      if( !this.editor.nav_previous(event, action_id) )
+      {
+        key_identifier.setModeDefault(self);
+      }
+      return false;
+    }
+    else
+    {
+      return true
+    }
+  }
+
 
   this.escape_edit_mode = function(event, action_id)
   {
@@ -481,6 +533,16 @@ cls.DOMInspectorEditKeyhandler = function(id)
     __actions.blur_edit_mode();
   }
   */
+
+  this[this.NAV_PREVIOUS] = function(event, action_id)
+  {
+    __actions.nav_previous_edit_mode(event, action_id);
+  }
+
+  this[this.NAV_NEXT] = function(event, action_id)
+  {
+    __actions.nav_next_edit_mode(event, action_id);
+  }
 
   this[this.ENTER] = function(event, action_id)
   {
