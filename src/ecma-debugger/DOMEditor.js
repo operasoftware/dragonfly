@@ -368,8 +368,21 @@ var DOMAttrAndTextEditor = function(nav_filters)
     next = nav_target.previousElementSibling,
     submit_success = this.submit(true),
     container = nav_target_parent.parentElement.parentElement;
-    
-    if( next || ( next = nav_target_parent.getPreviousWithFilter(container, nav_filters.attr_text) ) )
+
+    switch(state.type)
+    {
+      case "key":
+      case "value":
+      {
+        next || ( next = nav_target_parent.getPreviousWithFilter(container, nav_filters.attr_text) );
+        break;
+      }
+      case "text":
+      {
+        next = nav_target.getPreviousWithFilter(container, nav_filters.attr_text);
+      }
+    }
+    if( next )
     {
       if( next.nodeName == 'node' )
       {
