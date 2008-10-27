@@ -25,7 +25,29 @@ cls.DOMView = function(id, name, container_class)
   PUBLIC_ID = 4,
   SYSTEM_ID = 5,
   INDENT = "  ",
-  LINEBREAK = '\n';
+  LINEBREAK = '\n',
+  VOID_ELEMNTS = 
+  {
+    'area': 1,
+    'base': 1,
+    'basefont': 1,
+    'bgsound': 1,
+    'br': 1,
+    'col': 1,
+    'embed': 1,
+    'frame': 1,
+    'hr': 1,
+    'img': 1,
+    'input': 1,
+    'link': 1,
+    'meta': 1,
+    'param': 1,
+    'spacer': 1,
+    'wbr': 1,
+    'command': 1,
+    'event-source': 1,
+    'source': 1,
+  }
 
   var getIndent = function(count)
   {
@@ -65,6 +87,163 @@ cls.DOMView = function(id, name, container_class)
         }
       }
     }
+  }
+
+  this.serializer =
+  {
+    'text/html': function(data)
+    {
+      var 
+      tree = '', 
+      i = 0, 
+      node = null, 
+      length = data.length,
+      attrs = '', 
+      attr = null, 
+      k = 0, 
+      key = '',
+      is_open = 0,
+      has_only_one_child = 0,
+      one_child_value = '',
+      current_depth = 0,
+      child_pointer = 0,
+      child_level = 0,
+      j = 0,
+      children_length = 0,
+      closing_tags = [],
+      force_lower_case = settings[self.id].get('force-lowercase'),
+      node_name = '',
+      tag_head = '',
+      start_depth = data[0][DEPTH] - 1;
+
+      for( ; node = data[i]; i++ )
+      {
+        while( current_depth > node[DEPTH] )
+        {
+          tree += closing_tags.pop();
+          current_depth--;
+        }
+        current_depth = node[DEPTH];
+        children_length = node[CHILDREN_LENGTH];
+        child_pointer = 0;
+        node_name =  node[NAME];
+        if( force_lower_case )
+        {
+          node_name = node_name.toLowerCase();
+        }
+        switch (node[TYPE])
+        {
+          case 1: // elemets
+          {
+            attrs = '';
+            for( k = 0; attr = node[ATTRS][k]; k++ )
+            {
+              attrs += " " + 
+                ( force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ) + 
+                "=\"" + 
+                attr[ATTR_VALUE].replace(/"/g, "&quot") + 
+                "\"";
+            }
+            child_pointer = i + 1;
+            is_open = ( data[child_pointer] && ( node[DEPTH] < data[child_pointer][DEPTH] ) );
+            if( is_open ) 
+            {
+              has_only_one_child = 1;
+              one_child_value = '';
+              child_level = data[child_pointer][DEPTH];
+              for( ; data[child_pointer] && data[child_pointer][DEPTH] == child_level; child_pointer++ )
+              {
+                one_child_value += data[child_pointer][VALUE];
+                if( data[child_pointer][TYPE] != 3 )
+                {
+                  has_only_one_child = 0;
+                  one_child_value = '';
+                  break;
+                }
+              }
+            }
+            if( is_open )
+            {
+              if( has_only_one_child )
+              {
+                tree += LINEBREAK  + getIndent(node[DEPTH] - start_depth) +
+                        "<" + node_name +  attrs + ">" +
+                        one_child_value + 
+                        "</" + node_name + ">";
+                i = child_pointer - 1;
+              }
+              else
+              {
+                tree += LINEBREAK  + getIndent(node[DEPTH] - start_depth) + 
+                        "<" + node_name + attrs + ">";
+                if( !(node_name in VOID_ELEMNTS) )
+                {
+                  closing_tags.push
+                  ( 
+                    LINEBREAK  + getIndent(node[DEPTH] - start_depth) + "</" + node_name + ">"
+                  );
+                }
+              }
+            }
+            else // is closed or empty
+            {
+              tree +=  LINEBREAK  + getIndent(node[DEPTH] - start_depth) +
+                    "<" + node_name + attrs + ">" + 
+                    ( node_name in VOID_ELEMNTS ? "" : "</" + node_name + ">" );
+            }
+            break;
+          }
+          case 7:  // processing instruction
+          {
+            tree += LINEBREAK  + getIndent(node[DEPTH] - start_depth) +      
+              "<?" + node[NAME] + ( node[VALUE] ? ' ' + node[VALUE] : '' ) + "?>";
+            break;
+          }
+          case 8:  // comments
+          {
+            tree += LINEBREAK  + getIndent(node[DEPTH] - start_depth) +      
+                    "<!--" + ( node[ VALUE ] || ' ' ) + "-->";
+            break;
+          }
+          case 9:  // document node
+          {
+            break;
+          }
+          case 10:  // doctype
+          {
+            tree += LINEBREAK  + getIndent(node[DEPTH] - start_depth) +
+                    "<!doctype " + getDoctypeName(data) +
+                    ( node[PUBLIC_ID] ? 
+                      ( " PUBLIC " + "\"" + node[PUBLIC_ID] + "\"" ) :"" ) +
+                    ( node[SYSTEM_ID] ?  
+                      ( " \"" + node[SYSTEM_ID] + "\"" ) : "" ) +
+                    ">";
+            break;
+          }
+          default:
+          {
+            if( !/^\s*$/.test(node[ VALUE ] ) )
+            {
+              tree += LINEBREAK  + getIndent(node[DEPTH] - start_depth) + helpers.escapeTextHtml(node[VALUE]);
+            }
+          }
+        }
+      }
+      while( closing_tags.length )
+      {
+        tree += closing_tags.pop();
+      }
+      return tree.replace(/^\n+/, '');
+    },
+    'application/xml': function(data)
+    {
+      return 'application/xml';
+    },
+  }
+
+  this.serializeToOuterHTML = function(data)
+  {
+    return this.serializer[dom_data.isTextHtml() && 'text/html' || 'application/xml'](data);
   }
 
   this.exportMarkup = function()

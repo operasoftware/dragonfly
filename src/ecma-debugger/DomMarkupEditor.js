@@ -1,812 +1,416 @@
 ﻿
 var DOMMarkupEditor = function()
 {
-  // assert: a element wich is editable has a monospace font
-
-  // TODO make it more general so it can be used for other views then just the css inspector
-  var self = this;
-
+  this.base_init(this);
   this.type = "dom-markup-editor";
-  /*
-  const 
-  SELECTION = 1,
-  TOKEN = 2,
-  VALUE = 3;
-  */
-
-  /*
-  this.tab_context_value = '';
-  this.tab_context_tokens = null;
-
-  this.context_cur_prop = '';
-  this.context_cur_value = '';
-  this.context_cur_priority = '';
-  this.context_cur_text_content = '';
-
-  this.last_suggets_type = null;
-  this.suggets_count = 0;
-  this.suggets_iterate = false;
-  this.property_list_length = 0;
-
-  this.colors = new Colors();
-  */
-  // move to base editor
-
-  /*
-  this.getAllTokens = function()
+  // specific context 
+  this.context_enter =
   {
-    const
-    SPACE = 1,
-    COMMA = 2,
-    BRACKET_OPEN = 3,
-    BRACKET_CLOSE = 4,
-    END = 5,
-    SEMICOLON = 6;
+    /*
+    type: '',
+    rt_id: '',
+    obj_id:'',
+    text: '',
+    key: '',
+    value: '',
+    has_value: false,
+    is_new: false
+    */
+  }
+  this.context_cur =
+  {
+    /*
+    type: '',
+    rt_id: '',
+    obj_id:'',
+    text: '',
+    key: '',
+    value: '',
+    has_value: false,
+    is_new: false
+    */
+  }
 
+  var crlf_encode = function(str)
+  {
+    return str.replace(/\r\n/g, "\\n");
+  }
+
+
+
+
+
+
+  this.edit = function(event, ref_ele)
+  {
     var 
-    re_str = /(?:"(?:[^"]|\\")*")|(?:'(?:[^']|\\')*')/g,
-    re_token = /([^,] +)|(, *)|(\( *)|(\))|($)|(;)/g,
-    value = this.textarea.value,
-    cur_pos = 0,
-    last_pos = 0,
-    next_pos = 0,
-    // last char would be ;
-    char_pos = value.length - 2,
-    match_str = null,
-    match_token = null,
-    ret = [];
+    ele = ref_ele || event.target,
+    rt_id = ele.parentElement.parentElement.getAttribute('rt-id'),
+    obj_id = ele.parentElement.getAttribute('ref-id'),
+    tag = tagManager.setCB(this, this.__edit, [rt_id, obj_id, ele]);
 
-    re_str.lastIndex = 0;
-    match_str = re_str.exec(value);
-    
+    services['ecmascript-debugger'].inspectDOM( tag, obj_id, 'subtree', 'json' );
+  }
 
-    if( ( cur_pos = value.indexOf(':', 0) ) > -1 )
+  this.__edit = function(xml, rt_id, obj_id, ele)
+  {
+    var json = xml.getNodeData('jsondata');
+    if( json )
     {
-      // TODO should test if pos is in match_token string
-      //ret[ret.length] = value.slice(0, cur_pos);
-      ret.splice(0, 0, value.slice(0, cur_pos), 0, cur_pos);
+      var 
+      outerHTML = views['dom'].serializeToOuterHTML(eval('(' + json +')')),
+      parent = ele.parentNode,
+      enter_state =
+      {
+        rt_id: rt_id,
+        obj_id: obj_id,
+        outer_html: outerHTML,
+      };
 
-      cur_pos++;
-      while( value.charAt(cur_pos) == ' ' )
+      if( !this.base_style['font-size'] )
       {
-        cur_pos++;
+        this.get_base_style(ele);
       }
-      re_token.lastIndex = cur_pos;
-      while( match_token = re_token.exec(value)  )
+      // this should never be needed
+      if( this.textarea_container.parentElement )
       {
-        if( match_str && match_str.index <= re_token.lastIndex + 1 )
-        {
-          ret.splice(ret.length, 0, match_str.index, re_str.lastIndex);
-          re_token.lastIndex = re_str.lastIndex;
-          match_str = re_str.exec(value);
-        }
-        else if( match_token[BRACKET_OPEN] )
-        {
-          cur_pos = re_token.lastIndex;
-        }
-        else if( match_token.index > cur_pos )
-        {
-          ret.splice(ret.length, 0, cur_pos, match_token.index  + ( match_token[SPACE] ? 1 : 0 ));
-        }
-        if( match_token.index > char_pos )
-        {
-          break;
-        }
-        cur_pos = re_token.lastIndex;
+        opera.postError("this.textarea_container.parentElement is not null in submit");
       }
+      this.textarea.value = outerHTML;
+      parent.innerHTML = "";
+      parent.appendChild(this.textarea_container);
+    
+      this.set_textarea_dimensions();
+      this.context_enter = enter_state;
+      for( prop in enter_state )
+      {
+        this.context_cur[prop] = enter_state[prop];
+      }
+      // only for click events
+      if( event )
+      {
+        this.textarea.focus();
+      }
+      //this.textarea.selectionStart = 0;
+      //this.textarea.selectionEnd = this.textarea.value.length;
     }
     else
     {
-      ret.splice(0, 0, value, 0, value.length);
+      opera.postError("get subtree failed in DOMMArkupEditor handleGetSubtree")
     }
-    return ret;
   }
 
-  this.getNextToken = function(char_pos)
+  this.oninput = function(event)
   {
+    /*
     var 
-    re_str = /(?:"(?:[^"]|\\")*")|(?:'(?:[^']|\\')*')/g,
-    re_token = /([^,] +)|(, *)|(\( *)|(\))|($)|(;)/g,
-    value = this.textarea.value,
-    cur_pos = 0,
-    last_pos = 0,
-    next_pos = 0,
-    match_str = null,
-    match_token = null;
+    script = "",
+    state = this.context_cur;
 
-    re_str.lastIndex = 0;
-    match_str = re_str.exec(value);
-    
-    // last char would be ;
-    if(char_pos >= value.length - 1)
-    {
-      char_pos = value.length - 2;
-    }
-
-    if( ( cur_pos = value.indexOf(':', 0) ) > -1 )
-    {
-      // TODO should test if pos is in match_token string
-      if( cur_pos >= char_pos )
-      {
-        return {start: 0, end: cur_pos};
-      }
-      cur_pos++;
-      while( value.charAt(cur_pos) == ' ' )
-      {
-        cur_pos++;
-      }
-      re_token.lastIndex = cur_pos;
-      while( match_token = re_token.exec(value) )
-      {
-        if( match_str && match_str.index <= re_token.lastIndex + 1 )
-        {
-          if(re_str.lastIndex >= char_pos)
-          {
-            return {start: match_str.index, end: re_str.lastIndex};
-          }
-          re_token.lastIndex = re_str.lastIndex;
-          match_str = re_str.exec(value);
-          continue;
-        }
-        if( match_token.index > char_pos )
-        {
-          if( match_token[3] )
-          {
-            cur_pos = re_token.lastIndex;
-            continue;
-          }
-          return {start:cur_pos, end: match_token.index + ( match_token[1] ? 1 : 0 )};
-        }
-        
-        cur_pos = re_token.lastIndex;
-      }
-    }
-    return null;
-  }
-
-  this.getProperties = function()
-  {
-    var 
-    re_str = /(?:"(?:[^"]|\\")*")|(?:'(?:[^']|\\')*')/g,
-    re_token = /(;)|($)/g,
-    re_important = / *!important/,
-    value = this.textarea.value,
-    last_pos = 0,
-    cur_pos = 0,
-    important_pos = 0,
-    prop = '',
-    val = '',
-    priority = 0,
-    match_str = null,
-    match_token = null,
-    match_important = null,
-    ret = [];
-
-    while( ( cur_pos = value.indexOf(':', last_pos) ) > -1 )
-    {
-      prop = value.slice(last_pos, cur_pos);
-      // TODO should test if pos is in match_token string
-      cur_pos++;
-      while( value.charAt(cur_pos) == ' ' || value.charAt(cur_pos) == '\n' )
-      {
-        cur_pos++;
-      }
-      re_str.lastIndex = re_token.lastIndex = cur_pos;
-      match_str = re_str.exec(value);
-     
-      while( match_token = re_token.exec(value) )
-      {
-        if( match_str && match_token.index < re_str.lastIndex )
-        {
-          re_token.lastIndex = re_str.lastIndex;
-          match_str = re_str.exec(value);
-          continue;
-        }
-        break;
-      }
-      if( match_token )
-      {
-        val = value.slice(cur_pos, re_token.lastIndex - ( match_token[1] ? 1 : 0 ) );
-        priority = 0;
-        if(  match_important =  re_important.exec(val) )
-        {
-          val = val.slice(0, match_important.index );
-          priority = 1;
-        }
-        ret.splice(ret.length, 0, prop, val, priority);
-
-        last_pos = re_token.lastIndex;
-        if( last_pos + 1 >= value.length )
-        {
-          break;
-        }
-      }
-    }
-    if( last_pos  < value.length && ( val = value.slice(last_pos) ) )
-    {
-      ret[ret.length] = val;
-    }
-    return ret;
-  }
-
-  this.getCharPosition = function(event)
-  {
-
-    var 
-    box = this.textarea.getBoundingClientRect(),
-    left = event.clientX - box.left,
-    top = event.clientY - box.top,
-    charOffset = 0,
-    cur_top = this.line_height,
-    previous_line_chars = 0,
-    re = /[ -/\n,]/g,
-    match = null,
-    prev_match_index = 0,
-    value = this.textarea.value,
-    max_line_char = this.textarea.offsetWidth / this.char_width >> 0;
-
-    re.lastIndex = 0;
-
-    if( isNaN(left) ) // it's a synthetic event
-    {
-      charOffset = this.context_cur_prop.length + 1;
-    }
-    else
-    {
-      while( top > cur_top && ( match = re.exec(value) ) )
-      {
-        if( match.index - previous_line_chars > max_line_char )
-        {
-          previous_line_chars = prev_match_index + 1;
-          cur_top += this.line_height;
-        }
-        prev_match_index = match.index;
-      }
-      if( top < cur_top )
-      {
-        charOffset = 
-          previous_line_chars + ( ( left - ( left % this.char_width ) ) / this.char_width );
-      }
-    }
-
-    var selection = this.getNextToken(charOffset);
-
-    if(selection)
-    {
-      this.textarea.selectionStart = selection.start;
-      this.textarea.selectionEnd = selection.end;
-    }
-
-  }
-  */
-
-  // mode or subclass?
-  this.edit = function(event, ref_ele, mode)
-  {
-    var ele = ref_ele || event.target;
-    if( !this.base_style['font-size'] )
-    {
-      this.get_base_style(ele);
-    }
- 
     if( this.textarea_container.parentElement )
     {
-      this.submit();
-    }
-    this.context_rt_id = ele.parentElement.parentElement.parentElement.getAttribute('rt-id');
-    this.context_obj_id = ele.parentElement.parentElement.getAttribute('ref-id');
-
-    var textContent = ele.textContent;
-
-    this.context_cur_text_content = this.textarea.value = ele.textContent;
-
-    /*
-    var props = this.getProperties();
-
-    this.context_cur_prop = props[0] || '';
-    this.context_cur_value = props[1] || '';
-    this.context_cur_priority = props[2] || 0;
-
-    this.last_suggets_type = '';
-    */
-
-
-    this.textarea.style.height = ( ele.offsetHeight  ) + 'px';
-    this.textarea.style.width = ( this.char_width * this.textarea.value.length ) + "px";
-    ele.textContent = '"';
-    ele.appendChild(this.textarea_container);
-    ele.appendChild(document.createTextNode('"'));
-    // only for click events
-    
-    if( event )
-    {
-      // this.getCharPosition(event);
-      this.textarea.focus();
-    }
-    
-  }
-  /*
-  this.nav_next = function(event, action_id)
-  {
-    var  
-    cur_pos = this.textarea.selectionEnd,
-    i = 1;
-
-    if( this.textarea.value != this.tab_context_value )
-    {
-      this.tab_context_tokens = this.getAllTokens();
-      this.tab_context_value = this.textarea.value;
-    }
-    if( this.tab_context_tokens)
-    {
-      for( ; i < this.tab_context_tokens.length; i += 2 )
+      this.set_textarea_dimensions();
+      switch(state.type)
       {
-        if( this.tab_context_tokens[i+1] > cur_pos )
+        case "key":
         {
-          this.textarea.selectionStart = this.tab_context_tokens[i];
-          this.textarea.selectionEnd = this.tab_context_tokens[i+1];
-          return true;
+          state.key = this.textarea.value
+          if(state.value)
+          {
+            script = 'node.setAttribute("' + crlf_encode(state.key) + '","' + 
+                      crlf_encode(state.value) + '")';
+            services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
+          }
+          break;
+        }
+        case "value":
+        {
+          // there should never be the situation that the key is not defined
+          script = 'node.setAttribute("' + crlf_encode(state.key) + '","' + 
+                    crlf_encode(( state.value = this.textarea.value )) + '")';
+          services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
+          break;
+        }
+        case "text":
+        {
+          
+          script = 'node.nodeValue = "' + crlf_encode( state.text = this.textarea.value ) + '"';
+          services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
+          break;
         }
       }
     }
-    return false;
+    */
+  }
+
+  this.submit = function(check_value)
+  {
+    /*
+    // return a valid navigation target or null
+    var 
+    script = "",
+    state = this.context_cur,
+    nav_target = this.textarea_container.parentElement,
+    cur = null;
+
+    if( nav_target )
+    {
+      switch(state.type)
+      {
+        case "key":
+        {
+          if(state.key && ( !check_value || state.value ) )
+          {
+            dom_data.update(state); 
+            nav_target.textContent = state.key;
+          }
+          else 
+          {
+            nav_target = this.remove_attribute();
+          }
+          break;
+        }
+        case "value":
+        {
+          if(state.key && state.value)
+          {
+            dom_data.update(state); 
+            nav_target.textContent = '"' + state.value+ '"';
+          }
+          else 
+          {
+            nav_target = this.remove_attribute();
+          }
+          break;
+        }
+        case "text":
+        {
+          dom_data.update(state); 
+          nav_target.textContent = state.text;
+          break;
+        }
+      }
+    }
+    return nav_target;
+    */
+  }
+
+  this.cancel = function()
+  {
+    /*
+    // return a valid navigation target or null
+    var 
+    script = "",
+    state = this.context_enter,
+    nav_target = null;
+
+    if( this.textarea_container.parentElement )
+    {
+      if(this.context_cur.is_new)
+      {
+        // TODO is this special?
+      }
+      else
+      {
+        nav_target = this.textarea_container.parentElement;
+        switch(state.type)
+        {
+          case "key":
+          {
+            script = 'node.setAttribute("' + crlf_encode(state.key) + '","' + crlf_encode(state.value) + '")';
+            services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
+            nav_target.textContent = state.key;
+            break;
+          }
+          case "value":
+          {
+            script =  'node.setAttribute("' + crlf_encode(state.key) + '","' + crlf_encode(state.value) + '")';
+            services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
+            nav_target.textContent = '"' + state.value + '"';
+            break;
+          }
+          case "text":
+          {
+            script = 'node.nodeValue = "' + crlf_ecode(state.text) + '"';
+            services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
+            nav_target.textContent = state.text;
+            break;
+          }
+        }
+      }
+    }
+    return nav_target;
+    */
   }
 
   this.nav_previous = function(event, action_id)
   {
-    var  
-    cur_pos = this.textarea.selectionStart,
-    i = 1;
-
-    if( this.textarea.value != this.tab_context_value )
-    {
-      this.tab_context_tokens = this.getAllTokens();
-      this.tab_context_value = this.textarea.value;
-    }
-    if( this.tab_context_tokens)
-    {
-      for( i = this.tab_context_tokens.length - 1; i > 1; i -= 2 )
-      {
-        if( this.tab_context_tokens[i] < cur_pos )
-        {
-          this.textarea.selectionStart = this.tab_context_tokens[i-1];
-          this.textarea.selectionEnd = this.tab_context_tokens[i];
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  this.focusFirstToken = function()
-  {
-    this.tab_context_tokens = this.getAllTokens();
-    this.tab_context_value = this.textarea.value;
-    if( this.tab_context_tokens && this.tab_context_tokens[2] )
-    {
-      this.textarea.selectionStart = this.tab_context_tokens[1];
-      this.textarea.selectionEnd = this.tab_context_tokens[2];
-    }
-    else
-    {
-      this.textarea.selectionStart = 0;
-      this.textarea.selectionEnd = 0;
-    }
-    this.textarea.focus();
-  }
-
-  this.focusLastToken = function()
-  {
-    this.tab_context_tokens = this.getAllTokens();
-    this.tab_context_value = this.textarea.value;
-    if( this.tab_context_tokens && this.tab_context_tokens[2] )
-    {
-      this.textarea.selectionStart = this.tab_context_tokens[this.tab_context_tokens.length-2];
-      this.textarea.selectionEnd = this.tab_context_tokens[this.tab_context_tokens.length-1];
-    }
-    else
-    {
-      this.textarea.selectionStart = this.tab_context_value.length;
-      this.textarea.selectionEnd = this.tab_context_value.length;
-    }
-    this.textarea.focus();
-  }
-
-  this.autocomplete = function(event, action_id)
-  {
-    var  
-    cur_start = this.textarea.selectionStart,
-    new_start = 0,
-    cur_end = this.textarea.selectionEnd,
-    value = this.textarea.value,
-    cur_token = '',
-    i = 1,
-    suggest = ''
-
-    if( this.textarea.value != this.tab_context_value )
-    {
-      this.tab_context_tokens = this.getAllTokens();
-      this.tab_context_value = this.textarea.value;
-    }
-    if( this.tab_context_tokens )
-    {
-      for( ; i < this.tab_context_tokens.length; i += 2 )
-      {
-        if( cur_start >= this.tab_context_tokens[i] && cur_start <= this.tab_context_tokens[i+1])
-        {
-          cur_token = value.slice(this.tab_context_tokens[i], this.tab_context_tokens[i+1]);
-          break;
-        }
-      }
-    }
-
-    suggest = this.getSuggest
-    (
-      this.tab_context_tokens && this.tab_context_tokens[0] || '', 
-      this.tab_context_tokens && cur_end <= this.tab_context_tokens[2],
-      cur_token,
-      cur_start, 
-      cur_end, 
-      action_id
-    );
-
-    if(suggest)
-    {
-
-      switch(suggest.replace_type)
-      {
-        case SELECTION:
-        {
-          new_start = this.tab_context_tokens[i];
-          this.textarea.value = 
-            value.slice(0, new_start) + 
-            suggest.value +
-            value.slice(this.tab_context_tokens[i+1]);
-          this.textarea.selectionStart = cur_start;
-          this.textarea.selectionEnd = new_start + suggest.value.length;
-          break;
-        }
-        case TOKEN:
-        {
-          new_start = this.tab_context_tokens[i];
-          this.textarea.value = 
-            value.slice(0, new_start) + 
-            suggest.value +
-            value.slice(this.tab_context_tokens[i+1]);
-          this.textarea.selectionStart = new_start;
-          this.textarea.selectionEnd = new_start + suggest.value.length;
-          break;
-        }
-        case VALUE:
-        {
-          new_start = this.tab_context_tokens[2] + 2;
-          this.textarea.value = 
-            this.tab_context_tokens[0] + ': ' + suggest.value;
-          this.textarea.selectionStart = new_start;
-          this.textarea.selectionEnd = new_start + suggest.value.length;
-          break;
-        }
-
-      }
-
-      this.textarea.style.height = this.textarea.scrollHeight + 'px';
-      this.commit();
-    }
-
-
-    return false;
-  }
-
-
-  this.getSuggest = function(prop_name, is_prop, token, cur_start, cur_end, action_id)
-  {
+    /*
+    // must return a valid navigation target or null
     var 
-    re_num = /^(-?)([\d.]+)(.*)$/,
-    match = null,
-    suggest = null,
-    suggest_type = 
-      ( is_prop && 'suggest-property' )
-      || ( ( match = re_num.exec(token) ) && 'suggest-number' )
-      || ('suggest-value'),
-    suggest_handler = this[suggest_type];
+    state = this.context_cur,
+    nav_target = this.textarea_container.parentElement,
+    nav_target_parent = nav_target.parentElement,
+    next = nav_target.previousElementSibling,
+    next_next = next && next.previousElementSibling,
+    submit_success = this.submit(true),
+    container = nav_target_parent.parentElement.parentElement;
 
-    suggest_handler.cursor = this.setCursor
-    (
-      this.suggets_iterate = this.last_suggets_type == suggest_type, 
-      suggest_handler.cursor, 
-      suggest_handler.matches = this[suggest_type](token, cur_start, cur_end, action_id, match), 
-      action_id
-    )
-    
-    this.last_suggets_type = suggest_type;
-
-    suggest = suggest_handler.matches && suggest_handler.matches[suggest_handler.cursor];
-    return suggest && {value: suggest, replace_type: suggest_handler.replace_type} || null;
-
-
-
-  }
-
-  this.getMatchesFromList = function(list, set)
-  {
-    var 
-    ret = [],
-    length = list && list.length || 0,
-    i = 0;
-
-    if( length == 1 )
+    switch(state.type)
     {
-      return list;
-    }
-
-    if( length && set)
-    {
-      for( ; i < length; i++)
+      case "key":
+      case "value":
       {
-        if( list[i].indexOf(set) == 0 )
-        {
-          ret[ret.length] = list[i];
-        }
+        ( next && ( submit_success || next.parentElement ) ) 
+        || ( next = next_next ) 
+        || ( next = nav_target_parent.getPreviousWithFilter(container, nav_filters.attr_text) );
+        break;
+      }
+      case "text":
+      {
+        next = nav_target.getPreviousWithFilter(container, nav_filters.attr_text);
       }
     }
-    else
-    {
-       ret = list.slice(0);
-    }
-    return ret;
-  }
 
-  this.setCursor = function(iterate, cur_cursor, matches, action_id)
-  {
-    if( iterate && matches)
+    if( next )
     {
-      cur_cursor += ( action_id == action_ids.NAV_UP ? -1 : 1 );
-      if( cur_cursor > matches.length - 1 )
+      if( next.nodeName == 'node' )
       {
-        cur_cursor = 0;
+        next.firstChild.splitText(next.firstChild.nodeValue.length - 1);
+        next = this.create_new_edit(next.firstChild);
       }
-      else if( cur_cursor < 0 )
+      else if( next.parentElement != nav_target_parent 
+                && next.nodeName == 'value' 
+                && next == next.parentElement.lastElementChild )
       {
-        cur_cursor = matches.length - 1;
+        next = this.create_new_edit(next);
+      }
+      if(next)
+      {
+        this.edit({}, next);
       }
     }
-    else
-    {
-      cur_cursor = 0;
-    }
-    return cur_cursor;
+    return next;
+    */
   }
 
-
-
-  this['suggest-property'] = function(token, cur_start, cur_end, action_id, match)
+  this.nav_next = function(event, action_id)
   {
-    if( !this.property_list )
+    /*
+    // must return a valid navigation target or null
+    var
+    state = this.context_cur,
+    nav_target = this.textarea_container.parentElement,
+    nav_target_parent = nav_target.parentElement,
+    next = nav_target.nextElementSibling,
+    next_next = next && next.nextElementSibling,
+    submit_success = this.submit(),
+    container = nav_target_parent.parentElement.parentElement;
+ 
+    switch(state.type)
     {
-      this.property_list = stylesheets.getSortedProperties();
-      this.property_list_length = this.property_list.length;
+      case "key":
+      case "value":
+      {
+        ( submit_success && ( next || ( next = this.create_new_edit(submit_success) ) ) )
+        || ( next && next.parentElement ) || ( next = next_next ) 
+        || ( next = nav_target_parent.getNextWithFilter(container, nav_filters.attr_text) );
+        break;
+      }
+      case "text":
+      {
+        next = nav_target.getNextWithFilter(container, nav_filters.attr_text);
+      }
     }
-    return this.getMatchesFromList(this.property_list, this.textarea.value.slice(this.tab_context_tokens[1], cur_start));
+    if(next)
+    {
+      if( next.nodeName == 'node' )
+      {
+        next.firstChild.splitText(next.firstChild.nodeValue.length - 1);
+        next = this.create_new_edit(next.firstChild);
+      }
+      this.edit({}, next);
+    }
+    return next;
+    */
   }
 
-  this['suggest-property'].replace_type = SELECTION;
-  this['suggest-property'].cursor = 0;
-  this['suggest-property'].matches = null;
-
-  this['suggest-number'] = function(token, cur_start, cur_end, action_id, match)
+  // helpers
+  this.set_textarea_dimensions = function()
   {
-    var is_float = /\.(\d+)/.exec(match[2]);
-    if( is_float )
-    {
-      return [ ( parseFloat(match[1] + match[2]) + ( action_id == action_ids.NAV_UP ? 0.1 : -0.1 ) ).toFixed(is_float[1].length) + match[3]];
-    }
-    return [ ( parseInt(match[1] + match[2]) + ( action_id == action_ids.NAV_UP ? 1 : -1 ) ).toString() + match[3]];
+    this.textarea.style.height = this.textarea.scrollHeight + 'px';
   }
 
-  this['suggest-number'].replace_type = TOKEN;
-  this['suggest-number'].cursor = 0;
-  this['suggest-number'].matches = null;
-
-  this['suggest-value'] = function(token, cur_start, cur_end, action_id, match)
-  {
-    var 
-    prop = this.tab_context_tokens[0],
-    set = this.tab_context_tokens[3] 
-        && this.textarea.value.slice(this.tab_context_tokens[3], cur_start) 
-        || '',
-    re_hex = /^#([0-9a-f]{6})$/i,
-    match = null,
-    hsl = null,
-    rgb = null;
-
-    if( set == this['suggest-value'].last_set && prop == this['suggest-value'].last_prop )
-    {
-      return this['suggest-value'].matches;
-    }
-    this['suggest-value'].last_set = set;
-    this['suggest-value'].last_prop = prop;
-
-    if( /color/.test(prop) && token && ( match = re_hex.exec(token) ) )
-    {
-      this.colors.setHex(match[1]);
-      hsl = this.colors.getHSL();
-      rgb = this.colors.getRGB(); 
-      return [
-        match[0],
-        ('hsl(' + hsl[0] + ',' + parseInt(hsl[1]) +'%,' + parseInt(hsl[2]) + '%)'),
-        ('rgb(' + rgb[0] + ',' + rgb[1] +',' + rgb[2] + ')')
-      ].concat(suggest_values['color']);
-
-    }
-   
-    if( suggest_values[prop] && suggest_values[prop].length )
-    {
-      return this.getMatchesFromList(suggest_values[prop], set);
-    }
-    return null;
-  }
-
-  this['suggest-value'].replace_type = VALUE;
-  this['suggest-value'].cursor = 0;
-  this['suggest-value'].matches = null;
-  this['suggest-value'].last_set = '';
-  this['suggest-value'].last_prop = '';
-
-
-  */
-  this.submit = function()
+  this.create_new_edit = function(ref_node)
   {
     /*
     var 
-    props = this.getProperties(), 
-    i = 0,
-    inner = '';
-    
-    if( props[i+1] )
-    {
-      this.textarea_container.parentElement.innerHTML =
-        "<key>" + props[i] + "</key>: " +
-        "<value>"  + props[i+1] +  ( props[i+2] ? " !important" : "" ) + "</value>;";
-    }
-    else
-    {
-      this.textarea_container.parentElement.parentElement.
-        removeChild(this.textarea_container.parentElement);
-     
-    }
+    name = ref_node.nodeName,
+    parent = ref_node.parentNode,
+    cur = parent.insertBefore
+    (
+      document.createTextNode( name == 'key' && '=' || ' ' ), ref_node.nextSibling
+    );
+    return parent.insertBefore
+    (
+      document.createElement( name == 'key' && 'value' || 'key' ), cur.nextSibling
+    );
     */
   }
-  /*
-  this.commit = function()
+  
+  this.remove_attribute = function()
   {
-    var props = self.getProperties(), 
-    i = 0,
-    script = "",
-    prop = null,
-    reset = false;
-
-    while( props.length > 3 )
+    /*
+    var
+    script = 'node.removeAttribute("' + this.context_enter.key + '")',
+    state = this.context_cur,
+    nav_target = this.textarea_container.parentElement,
+    nav_target_parent = nav_target.parentElement,
+    pair_target = nav_target.nodeName == 'key' && 'next' || 'previous',
+    check = nav_target.nodeName == 'key' && 'value' || 'key';
+ 
+    services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
+    state.key = this.context_enter.key;
+    delete state.value;
+    dom_data.update(state);
+    // to clear the context of the textarea container
+    nav_target.textContent = "";
+    cur = nav_target[pair_target + "ElementSibling"];
+    if( cur && cur.nodeName == check )
     {
-      reset = true;
-      prop = this.textarea_container.parentElement.parentElement.
-        insertBefore(document.createElement('property'), this.textarea_container.parentElement);
-
-      prop.innerHTML = "<key>" + props[0] + "</key>: " +
-          "<value>"  + props[1] +  ( props[2] ? " !important" : "" ) + "</value>;";
-      props.splice(0, 3);
-
+      nav_target_parent.removeChild(cur);
     }
-    
-    if( reset)
+    cur = nav_target[pair_target + "Sibling"];
+    if( cur && /=/.test(cur.nodeValue) )
     {
-      this.textarea.value =
-        props[0] + ( props[1] ? ': ' + props[1] + ( props[2] ? ' !important' : '' ) + ';' : '' );
-        
-      this.context_cur_text_content =
-      this.context_cur_prop =
-      this.context_cur_value = '';
-      this.context_cur_priority = 0;
+      nav_target_parent.removeChild(cur);
     }
-
-    if( props[i+1] )
+    cur = nav_target.previousSibling;
+    if( cur && / +/.test(cur.nodeValue) )
     {
-      script = "rule.style.setProperty(\"" + props[i] + "\", \"" + props[i+1] + "\", " + ( props[i+2] ? "\"important\"" : null )+ ")";
-      services['ecmascript-debugger'].eval(0, self.context_rt_id, '', '', script, ["rule", self.context_rule_id]);
-    }
-
-  }
-
-  this.enter = function()
-  {
-    var 
-    props = self.getProperties(), 
-    keep_edit = false,
-    prop = null;
-    
-    this.last_suggets_type = '';
-    if( props && props.length == 3 )
-    {
-      if( this.textarea.selectionEnd == this.textarea.value.length 
-          || this.textarea.selectionEnd >= this.textarea.value.indexOf(';') )
+      if(/^ +$/.test(cur.nodeValue))
       {
-        prop = this.textarea_container.parentElement.parentElement.
-          insertBefore(document.createElement('property'), this.textarea_container.parentElement);
-        prop.innerHTML = "<key>" + props[0] + "</key>: " +
-          "<value>"  + props[1] +  ( props[2] ? " !important" : "" ) + "</value>;";
-        this.textarea.value =
-        this.context_cur_text_content =
-        this.context_cur_prop =
-        this.context_cur_value = '';
-        this.context_cur_priority = 0;
-        keep_edit = true;
+        nav_target_parent.removeChild(cur);
       }
       else
       {
-        this.textarea_container.parentElement.innerHTML = "<key>" + props[0] + "</key>: " +
-          "<value>"  + props[1] +  ( props[2] ? " !important" : "" ) + "</value>;";
+        cur.nodeValue = cur.nodeValue.replace(/ +$/, '');
       }
     }
-    else
-    {
-      this.textarea_container.parentElement.innerHTML = "";
-    }
-    
-    return keep_edit;
-
-  }
-
-  this.escape = function()
-  {
-    this.last_suggets_type = '';
-    if(this.context_cur_prop)
-    {
-      this.textarea.value = this.context_cur_text_content;
-      this.textarea_container.parentElement.innerHTML =
-        "<key>" + this.context_cur_prop + "</key>: " +
-        "<value>"  + this.context_cur_value +  
-        ( this.context_cur_priority ? " !important" : "" ) + 
-        "</value>;";
-        return true;
-    }
-    else
-    {
-      this.textarea.value = '';
-      this.textarea_container.parentElement.innerHTML = '';
-      return false;
-    }
-
-  }
-
-  */
-
-  this.__input_handler = function(event)
-  {
-    /*
-    this.style.height = this.scrollHeight + 'px';
-    self.commit();
+    nav_target_parent.removeChild(nav_target);
+    nav_target_parent.normalize();
+    return null;
     */
   }
 
-  this.update = function(event)
+  // could be the default method?
+  this.onclick = function(event)
   {
-
-    /*
-    this.style.height = this.scrollHeight + 'px';
-    self.commit();
-    */
-  }
-
-  this.getInputHandler = function()
-  {
-    return function(event)
+    if(!this.textarea_container.contains(event.target))
     {
-      self.update(event);
+      this.submit(true);
     }
   }
-
-  
-
-  this.base_init(this);
 }
 
 DOMMarkupEditor.prototype = BaseEditor;

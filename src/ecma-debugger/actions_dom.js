@@ -203,6 +203,10 @@ cls.DOMInspectorActions = function(id)
       {
         event.preventDefault();
         event.stopPropagation();
+        key_identifier.setModeEdit(self);
+        self.setSelected(event.target.parentNode);
+        self.set_editor("dom-markup-editor");
+        self.editor.edit(event, event.target);
         /*
         if(event.target.parentElement.hasAttribute('rule-id'))
         {
