@@ -102,6 +102,11 @@ helpers = new function()
     }
     return {uri: ret_uri, title: title};
   }
+
+  this.escapeTextHtml = function(str)
+  {
+    return str.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/&/g, "&amp;");
+  }
   
   document.addEventListener('keypress', keypressListener, true);
 
