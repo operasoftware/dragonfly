@@ -125,6 +125,11 @@ var DOMAttrAndTextEditor = function(nav_filters)
     is_new: false
   }
 
+  var crlf_encode = function(str)
+  {
+    return str.replace(/\r\n/g, "\\n");
+  }
+
   this.edit = function(event, ref_ele)
   {
     var 
@@ -160,7 +165,9 @@ var DOMAttrAndTextEditor = function(nav_filters)
       case "key":
       {
         parent_parent = ele.parentElement.parentElement;
-        enter_state.rt_id = parent_parent.parentElement.getAttribute('rt-id');
+        // dom markup and dom tree have different markup
+        enter_state.rt_id = parent_parent.parentElement.getAttribute('rt-id')
+          || parent_parent.parentElement.parentElement.getAttribute('rt-id');
         enter_state.obj_id = parent_parent.getAttribute('ref-id');
         enter_state.key = ele.textContent;
         enter_state.has_value = ele.nextElementSibling && ele.nextElementSibling.nodeName == "value";
@@ -171,7 +178,9 @@ var DOMAttrAndTextEditor = function(nav_filters)
       case "value":
       {
         parent_parent = ele.parentElement.parentElement;
-        enter_state.rt_id = parent_parent.parentElement.getAttribute('rt-id');
+        // dom markup and dom tree have different markup
+        enter_state.rt_id = parent_parent.parentElement.getAttribute('rt-id')
+          || parent_parent.parentElement.parentElement.getAttribute('rt-id');
         enter_state.obj_id = parent_parent.getAttribute('ref-id');
         enter_state.key = 
           ele.previousElementSibling 
@@ -184,7 +193,9 @@ var DOMAttrAndTextEditor = function(nav_filters)
       case "text":
       {
         parent_parent = ele.parentElement;
-        enter_state.rt_id = parent_parent.parentElement.getAttribute('rt-id');
+        // dom markup and dom tree have different markup
+        enter_state.rt_id = parent_parent.parentElement.getAttribute('rt-id')
+          || parent_parent.parentElement.parentElement.getAttribute('rt-id');
         enter_state.obj_id = ele.getAttribute('ref-id');
         enter_state.text = ele.textContent;
         break;
@@ -236,8 +247,8 @@ var DOMAttrAndTextEditor = function(nav_filters)
           state.key = this.textarea.value
           if(state.value)
           {
-            script = 
-              'node.setAttribute("' + state.key + '","' + state.value + '")';
+            script = 'node.setAttribute("' + crlf_encode(state.key) + '","' + 
+                      crlf_encode(state.value) + '")';
             services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
           }
           break;
@@ -245,14 +256,15 @@ var DOMAttrAndTextEditor = function(nav_filters)
         case "value":
         {
           // there should never be the situation that the key is not defined
-          script = 
-            'node.setAttribute("' + state.key + '","' + ( state.value = this.textarea.value ) + '")';
+          script = 'node.setAttribute("' + crlf_encode(state.key) + '","' + 
+                    crlf_encode(( state.value = this.textarea.value )) + '")';
           services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
           break;
         }
         case "text":
         {
-          script = 'node.nodeValue = "' + ( state.text = this.textarea.value ) + '"';
+          
+          script = 'node.nodeValue = "' + crlf_encode( state.text = this.textarea.value ) + '"';
           services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
           break;
         }
@@ -331,23 +343,21 @@ var DOMAttrAndTextEditor = function(nav_filters)
         {
           case "key":
           {
-            script = 
-              'node.setAttribute("' + state.key + '","' + state.value + '")';
+            script = 'node.setAttribute("' + crlf_encode(state.key) + '","' + crlf_encode(state.value) + '")';
             services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
             nav_target.textContent = state.key;
             break;
           }
           case "value":
           {
-            script = 
-              'node.setAttribute("' + state.key + '","' + state.value + '")';
+            script =  'node.setAttribute("' + crlf_encode(state.key) + '","' + crlf_encode(state.value) + '")';
             services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
             nav_target.textContent = '"' + state.value + '"';
             break;
           }
           case "text":
           {
-            script = 'node.nodeValue = "' + state.text + '"';
+            script = 'node.nodeValue = "' + crlf_ecode(state.text) + '"';
             services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
             nav_target.textContent = state.text;
             break;
@@ -366,6 +376,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
     nav_target = this.textarea_container.parentElement,
     nav_target_parent = nav_target.parentElement,
     next = nav_target.previousElementSibling,
+    next_next = next && next.previousElementSibling,
     submit_success = this.submit(true),
     container = nav_target_parent.parentElement.parentElement;
 
@@ -374,7 +385,9 @@ var DOMAttrAndTextEditor = function(nav_filters)
       case "key":
       case "value":
       {
-        next || ( next = nav_target_parent.getPreviousWithFilter(container, nav_filters.attr_text) );
+        ( next && ( submit_success || next.parentElement ) ) 
+        || ( next = next_next ) 
+        || ( next = nav_target_parent.getPreviousWithFilter(container, nav_filters.attr_text) );
         break;
       }
       case "text":
@@ -382,6 +395,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
         next = nav_target.getPreviousWithFilter(container, nav_filters.attr_text);
       }
     }
+
     if( next )
     {
       if( next.nodeName == 'node' )
@@ -395,7 +409,10 @@ var DOMAttrAndTextEditor = function(nav_filters)
       {
         next = this.create_new_edit(next);
       }
-      this.edit({}, next);
+      if(next)
+      {
+        this.edit({}, next);
+      }
     }
     return next;
   }
@@ -403,28 +420,28 @@ var DOMAttrAndTextEditor = function(nav_filters)
   this.nav_next = function(event, action_id)
   {
     // must return a valid navigation target or null
-    var 
+    var
     state = this.context_cur,
     nav_target = this.textarea_container.parentElement,
     nav_target_parent = nav_target.parentElement,
     next = nav_target.nextElementSibling,
+    next_next = next && next.nextElementSibling,
     submit_success = this.submit(),
     container = nav_target_parent.parentElement.parentElement;
-
+ 
     switch(state.type)
     {
       case "key":
       case "value":
       {
-        if(submit_success)
-        {
-          next || ( next = this.create_new_edit(submit_success) );
-          break;
-        }
+        ( submit_success && ( next || ( next = this.create_new_edit(submit_success) ) ) )
+        || ( next && next.parentElement ) || ( next = next_next ) 
+        || ( next = nav_target_parent.getNextWithFilter(container, nav_filters.attr_text) );
+        break;
       }
       case "text":
       {
-        next = nav_target_parent.getNextWithFilter(container, nav_filters.attr_text);
+        next = nav_target.getNextWithFilter(container, nav_filters.attr_text);
       }
     }
     if(next)
@@ -443,7 +460,11 @@ var DOMAttrAndTextEditor = function(nav_filters)
   this.set_textarea_dimensions = function()
   {
     // TODO force new lines if needed
-    var width = this.char_width * ( this.textarea.value.length + 1 );
+    var 
+    max_content_length = 
+      Math.max.apply(null, this.textarea.value.split('\r\n').map(function(item){return item.length})),
+    width = this.char_width * ( max_content_length + 1 );
+
     //this.textarea.style.height = '0px';
     this.textarea.style.width = ( width < this.max_width ? width : this.max_width )+ "px";
     this.textarea.style.height = this.textarea.scrollHeight + 'px';
@@ -466,14 +487,14 @@ var DOMAttrAndTextEditor = function(nav_filters)
   
   this.remove_attribute = function()
   {
-    var 
+    var
     script = 'node.removeAttribute("' + this.context_enter.key + '")',
     state = this.context_cur,
     nav_target = this.textarea_container.parentElement,
     nav_target_parent = nav_target.parentElement,
-    pair_target = nav_target.nodeName == 'key' && 'next' || 'previous', 
+    pair_target = nav_target.nodeName == 'key' && 'next' || 'previous',
     check = nav_target.nodeName == 'key' && 'value' || 'key';
-
+ 
     services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
     state.key = this.context_enter.key;
     delete state.value;
@@ -481,21 +502,29 @@ var DOMAttrAndTextEditor = function(nav_filters)
     // to clear the context of the textarea container
     nav_target.textContent = "";
     cur = nav_target[pair_target + "ElementSibling"];
-    if( cur && cur.nodeName == check ) 
+    if( cur && cur.nodeName == check )
     {
       nav_target_parent.removeChild(cur);
     }
     cur = nav_target[pair_target + "Sibling"];
-    if( cur && /=/.test(cur.nodeValue) ) 
+    if( cur && /=/.test(cur.nodeValue) )
     {
       nav_target_parent.removeChild(cur);
     }
     cur = nav_target.previousSibling;
-    if( cur && / +/.test(cur.nodeValue) ) 
+    if( cur && / +/.test(cur.nodeValue) )
     {
-      nav_target_parent.removeChild(cur);
+      if(/^ +$/.test(cur.nodeValue))
+      {
+        nav_target_parent.removeChild(cur);
+      }
+      else
+      {
+        cur.nodeValue = cur.nodeValue.replace(/ +$/, '');
+      }
     }
     nav_target_parent.removeChild(nav_target);
+    nav_target_parent.normalize();
     return null;
   }
 

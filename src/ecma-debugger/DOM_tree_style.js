@@ -287,7 +287,7 @@ var DOM_tree_style = function(id, name, container_class)
                tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;'" +
                  current_formatting + ">" +
                 ( node[NAME] ? node[NAME] :  nodeNameMap[node[TYPE]] ) + ' ' +
-                node[VALUE] +
+                "<text ref-id='" + node[ID]+ "'>" + node[VALUE] + "</text>" +
                 "</div>";
             }
           }
@@ -298,7 +298,9 @@ var DOM_tree_style = function(id, name, container_class)
             tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;'" +
               current_formatting + ">" +
               ( node[NAME] ? node[NAME] :  nodeNameMap[node[TYPE]] ) + ' ' +
-              ( /^\s*$/.test( node[VALUE] ) ? _escape(node[VALUE]) : node[VALUE] ) +
+              "<text ref-id='" + node[ID]+ "'>" + 
+                ( /^\s*$/.test( node[VALUE] ) ? _escape(node[VALUE]) : node[VALUE] ) + 
+              "</text>" +
               "</div>";
             
 
