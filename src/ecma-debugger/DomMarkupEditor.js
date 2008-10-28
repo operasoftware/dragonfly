@@ -6,29 +6,19 @@ var DOMMarkupEditor = function()
   // specific context 
   this.context_enter =
   {
-    /*
-    type: '',
     rt_id: '',
-    obj_id:'',
-    text: '',
-    key: '',
-    value: '',
-    has_value: false,
-    is_new: false
-    */
+    obj_id: '',
+    parent_obj_id: '',
+    outer_html: '',
+    host_target: ''
   }
   this.context_cur =
   {
-    /*
-    type: '',
     rt_id: '',
-    obj_id:'',
-    text: '',
-    key: '',
-    value: '',
-    has_value: false,
-    is_new: false
-    */
+    obj_id: '',
+    parent_obj_id: '',
+    outer_html: '',
+    host_target: ''
   }
 
   var crlf_encode = function(str)
@@ -36,10 +26,68 @@ var DOMMarkupEditor = function()
     return str.replace(/\r\n/g, "\\n");
   }
 
+  var encode = function(str)
+  {
+    return str.replace(/\u200F\r\n/g, "").replace(/\r\n/g, "\\n").replace(/'/g, "\\'");
+  }
 
+  var Host_updater = function(target)
+  {
+    var 
+    range_target = document.createRange(),
+    timeout = 0,
+    new_str = '',
+    update = function(str)
+    {
+      var range_source = document.createRange();
+      var temp = document.createElement('df-temp-element');
+      ( document.body || document.documentElement ).appendChild(temp);
+      temp.innerHTML = new_str;
+      var first = temp.firstChild;
+      var last = temp.lastChild;
+      range_source.selectNodeContents(temp);
+      var fragment = range_source.extractContents();
+      temp.parentElement.removeChild(temp);
+      range_target.deleteContents();
+      range_target.insertNode(fragment);
+      range_target.setStartBefore(first);
+      range_target.setEndAfter(last);
+      timeout = 0;
+    };
 
+    range_target.selectNode(target);
+    this.__defineSetter__
+    (
+      "outerHTML", 
+      function(str)
+      {
+        new_str = str;
+        timeout || ( timeout = setTimeout(update, 100) );
+      }
+    );
+   
+  };
 
+  this.__is_active = function()
+  {
+    return this.context_enter && this.context_enter.host_target && true || false;
+  }
 
+  this.__set_host_updater = function(xml, rt_id)
+  {
+    var 
+    status = xml.getNodeData('status'),
+    obj_id = xml.getNodeData('object-id');
+
+    if(  status == 'completed' && obj_id )
+    {
+      this.context_enter.host_target = this.context_cur.host_target = obj_id;
+    }
+    else
+    {
+      opera.postError("failed __set_host_updater in DOMMarkupEditor");
+    }
+  }
 
   this.edit = function(event, ref_ele)
   {
@@ -47,26 +95,51 @@ var DOMMarkupEditor = function()
     ele = ref_ele || event.target,
     rt_id = ele.parentElement.parentElement.getAttribute('rt-id'),
     obj_id = ele.parentElement.getAttribute('ref-id'),
-    tag = tagManager.setCB(this, this.__edit, [rt_id, obj_id, ele]);
+    script = "return new (" + Host_updater.toString() + ")(target)",
+    tag = tagManager.setCB(this, this.__set_host_updater, [rt_id]),
+    prop = '',
+    container = ele;
 
-    services['ecmascript-debugger'].inspectDOM( tag, obj_id, 'subtree', 'json' );
+    while( container 
+            && !/container/.test(container.nodeName) 
+            && ( container = container.parentElement ) );
+    if(container)
+    {
+      container.firstChild.style.position = 'relative';
+      container.firstChild.render(['fade-out']);
+      this.context_enter =
+      {
+        rt_id: rt_id,
+        obj_id: obj_id,
+        parent_obj_id: dom_data.getParentElement(obj_id),
+        outer_html: '',
+        host_target: ''
+      };
+      this.context_cur = {};
+      for( prop in this.context_enter )
+      {
+        this.context_cur[prop] = this.context_enter[prop];
+      }
+      services['ecmascript-debugger'].eval( tag, rt_id, '', '', script, ['target', obj_id]);
+      tag = tagManager.setCB(this, this.__edit, [rt_id, obj_id, ele])
+      services['ecmascript-debugger'].inspectDOM( tag, obj_id, 'subtree', 'json' );
+    }
   }
 
   this.__edit = function(xml, rt_id, obj_id, ele)
   {
     var json = xml.getNodeData('jsondata');
+    
     if( json )
     {
       var 
       outerHTML = views['dom'].serializeToOuterHTML(eval('(' + json +')')),
       parent = ele.parentNode,
-      enter_state =
-      {
-        rt_id: rt_id,
-        obj_id: obj_id,
-        outer_html: outerHTML,
-      };
+      parent_parent = parent.parentElement,
+      margin = parseInt(parent.style.marginLeft),
+      next = null;
 
+      this.context_enter.outerHTML = this.context_cur.outerHTML = outerHTML;
       if( !this.base_style['font-size'] )
       {
         this.get_base_style(ele);
@@ -79,20 +152,20 @@ var DOMMarkupEditor = function()
       this.textarea.value = outerHTML;
       parent.innerHTML = "";
       parent.appendChild(this.textarea_container);
-    
-      this.set_textarea_dimensions();
-      this.context_enter = enter_state;
-      for( prop in enter_state )
+      while( ( next = parent.nextElementSibling ) && parseInt(next.style.marginLeft) > margin )
       {
-        this.context_cur[prop] = enter_state[prop];
+        parent_parent.removeChild(next);
+      };
+      if( next && parseInt(next.style.marginLeft) == margin && /<\//.test(next.textContent) )
+      {
+        parent_parent.removeChild(next);
       }
+      this.set_textarea_dimensions();
       // only for click events
       if( event )
       {
         this.textarea.focus();
       }
-      //this.textarea.selectionStart = 0;
-      //this.textarea.selectionEnd = this.textarea.value.length;
     }
     else
     {
@@ -102,97 +175,38 @@ var DOMMarkupEditor = function()
 
   this.oninput = function(event)
   {
-    /*
     var 
     script = "",
     state = this.context_cur;
 
-    if( this.textarea_container.parentElement )
+    if( this.textarea_container.parentElement && state.host_target)
     {
       this.set_textarea_dimensions();
-      switch(state.type)
-      {
-        case "key":
-        {
-          state.key = this.textarea.value
-          if(state.value)
-          {
-            script = 'node.setAttribute("' + crlf_encode(state.key) + '","' + 
-                      crlf_encode(state.value) + '")';
-            services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
-          }
-          break;
-        }
-        case "value":
-        {
-          // there should never be the situation that the key is not defined
-          script = 'node.setAttribute("' + crlf_encode(state.key) + '","' + 
-                    crlf_encode(( state.value = this.textarea.value )) + '")';
-          services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
-          break;
-        }
-        case "text":
-        {
-          
-          script = 'node.nodeValue = "' + crlf_encode( state.text = this.textarea.value ) + '"';
-          services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
-          break;
-        }
-      }
+      state.outerHTML = this.textarea.value;
+      var script = "host_target.outerHTML = '" + encode(state.outerHTML) + "';";
+      services['ecmascript-debugger'].eval
+      ( 
+        0, state.rt_id, '', '', script, ['host_target', state.host_target]
+      );
     }
-    */
   }
 
-  this.submit = function(check_value)
+  this.submit = function()
   {
-    /*
     // return a valid navigation target or null
-    var 
-    script = "",
+    var
     state = this.context_cur,
-    nav_target = this.textarea_container.parentElement,
-    cur = null;
-
-    if( nav_target )
+    nav_target = this.textarea_container.parentElement;
+    
+    if(nav_target)
     {
-      switch(state.type)
-      {
-        case "key":
-        {
-          if(state.key && ( !check_value || state.value ) )
-          {
-            dom_data.update(state); 
-            nav_target.textContent = state.key;
-          }
-          else 
-          {
-            nav_target = this.remove_attribute();
-          }
-          break;
-        }
-        case "value":
-        {
-          if(state.key && state.value)
-          {
-            dom_data.update(state); 
-            nav_target.textContent = '"' + state.value+ '"';
-          }
-          else 
-          {
-            nav_target = this.remove_attribute();
-          }
-          break;
-        }
-        case "text":
-        {
-          dom_data.update(state); 
-          nav_target.textContent = state.text;
-          break;
-        }
-      }
+      // to remove the textarea_container from the dom
+      nav_target.textContent = "";
+      this.context_cur = this.context_enter = null;
+      dom_data.closeNode(state.parent_obj_id, true);
+      dom_data.getChildernFromNode(state.parent_obj_id);
     }
     return nav_target;
-    */
   }
 
   this.cancel = function()
@@ -341,75 +355,17 @@ var DOMMarkupEditor = function()
     this.textarea.style.height = this.textarea.scrollHeight + 'px';
   }
 
-  this.create_new_edit = function(ref_node)
-  {
-    /*
-    var 
-    name = ref_node.nodeName,
-    parent = ref_node.parentNode,
-    cur = parent.insertBefore
-    (
-      document.createTextNode( name == 'key' && '=' || ' ' ), ref_node.nextSibling
-    );
-    return parent.insertBefore
-    (
-      document.createElement( name == 'key' && 'value' || 'key' ), cur.nextSibling
-    );
-    */
-  }
-  
-  this.remove_attribute = function()
-  {
-    /*
-    var
-    script = 'node.removeAttribute("' + this.context_enter.key + '")',
-    state = this.context_cur,
-    nav_target = this.textarea_container.parentElement,
-    nav_target_parent = nav_target.parentElement,
-    pair_target = nav_target.nodeName == 'key' && 'next' || 'previous',
-    check = nav_target.nodeName == 'key' && 'value' || 'key';
- 
-    services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
-    state.key = this.context_enter.key;
-    delete state.value;
-    dom_data.update(state);
-    // to clear the context of the textarea container
-    nav_target.textContent = "";
-    cur = nav_target[pair_target + "ElementSibling"];
-    if( cur && cur.nodeName == check )
-    {
-      nav_target_parent.removeChild(cur);
-    }
-    cur = nav_target[pair_target + "Sibling"];
-    if( cur && /=/.test(cur.nodeValue) )
-    {
-      nav_target_parent.removeChild(cur);
-    }
-    cur = nav_target.previousSibling;
-    if( cur && / +/.test(cur.nodeValue) )
-    {
-      if(/^ +$/.test(cur.nodeValue))
-      {
-        nav_target_parent.removeChild(cur);
-      }
-      else
-      {
-        cur.nodeValue = cur.nodeValue.replace(/ +$/, '');
-      }
-    }
-    nav_target_parent.removeChild(nav_target);
-    nav_target_parent.normalize();
-    return null;
-    */
-  }
-
   // could be the default method?
   this.onclick = function(event)
   {
+    event.preventDefault();
+    event.stopPropagation();
     if(!this.textarea_container.contains(event.target))
     {
       this.submit(true);
+      return false;
     }
+    return true;
   }
 }
 

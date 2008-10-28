@@ -90,6 +90,8 @@ var BaseEditor = new function()
     this.textarea.style.cssText = cssText;
     this.textarea.oninput = this.getInputHandler();
   }
+  this.__is_active = function(){return false};
+  this.__defineGetter__("is_active", function(){return this.__is_active()});
   this.base_init = function(instance)
   {
     _init.apply(instance, [instance]);
@@ -531,10 +533,14 @@ var DOMAttrAndTextEditor = function(nav_filters)
   // could be the default method?
   this.onclick = function(event)
   {
+    event.preventDefault();
+    event.stopPropagation();
     if(!this.textarea_container.contains(event.target))
     {
       this.submit(true);
+      return false;
     }
+    return true;
   }
 
 }

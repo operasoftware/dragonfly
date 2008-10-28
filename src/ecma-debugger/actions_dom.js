@@ -182,7 +182,7 @@ cls.DOMInspectorActions = function(id)
   */
   this.editDOM = function(event, target)
   {
-    
+
     switch(event.target.nodeName)
     {
       case 'key':
@@ -374,6 +374,7 @@ cls.DOMInspectorActions = function(id)
     }
     else
     {
+      
       return true;
     }
 
@@ -391,6 +392,29 @@ cls.DOMInspectorActions = function(id)
     }
     return false;
     */
+  }
+
+  this.ctrl_enter_edit_mode = function(event, action_id)
+  {
+    if( this.editor.type == "dom-attr-text-editor" )
+    {
+      
+      return false;
+    }
+    else
+    {
+      var navigation_target = this.editor.submit();
+      if(!navigation_target)
+      {
+        // TODO get a valid navigation target
+      }
+      else
+      {
+        // TODO set the return value as navigation target
+      }
+      key_identifier.setModeDefault(self);
+      return false;
+    }
   }
 
   this.nav_next_edit_mode = function(event, action_id)
@@ -439,6 +463,21 @@ cls.DOMInspectorActions = function(id)
     }
     key_identifier.setModeDefault(self);
     return false;
+  }
+
+  this.edit_onclick = function(event)
+  {
+    if( this.editor )
+    {
+      if( this.editor.onclick(event) )
+      {
+
+      }
+      else
+      {
+        key_identifier.setModeDefault(self);
+      }
+    }
   }
 
   this.init(id);
@@ -547,11 +586,17 @@ cls.DOMInspectorEditKeyhandler = function(id)
   {
     __actions.nav_next_edit_mode(event, action_id);
   }
-
+  
   this[this.ENTER] = function(event, action_id)
   {
-    __actions.enter_edit_mode(event, action_id);
+    return __actions.enter_edit_mode(event, action_id);
   }
+
+  this[this.CTRL_ENTER] = function(event, action_id)
+  {
+    return __actions.ctrl_enter_edit_mode(event, action_id);
+  }
+  
 
   this[this.ESCAPE] = function(event, action_id)
   {
@@ -568,10 +613,7 @@ cls.DOMInspectorEditKeyhandler = function(id)
 
   this.onclick = function(event)
   {
-    if( __actions.editor )
-    {
-      __actions.editor.onclick(event);
-    }
+    __actions.edit_onclick(event);
   }
 
   this.init(id);

@@ -48,7 +48,6 @@ var elementLayout = new function()
     'clientHeight'
   ],
   GET_OFFSETS_SCRIPT = "\
-    <![CDATA[\
     (function(ele)\
     {\
       var \
@@ -90,7 +89,7 @@ var elementLayout = new function()
       }\
       return log;\
     })(ele)\
-    ]]>";
+    ";
   var layout_map = [];
   
   var setup_layout_map = function()

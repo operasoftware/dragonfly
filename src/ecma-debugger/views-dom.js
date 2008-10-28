@@ -93,6 +93,8 @@ cls.DOMView = function(id, name, container_class)
   {
     'text/html': function(data)
     {
+      const LINEBREAK = '\u200F\r\n';
+
       var 
       tree = '', 
       i = 0, 
@@ -233,7 +235,7 @@ cls.DOMView = function(id, name, container_class)
       {
         tree += closing_tags.pop();
       }
-      return tree.replace(/^\n+/, '');
+      return tree.replace(/^(?:\u200F\r\n)+/, '');
     },
     'application/xml': function(data)
     {

@@ -7,6 +7,7 @@ var key_ids =
   SHIFT_TAB: '1009',
   ENTER: '00013',
   SHIFT_ENTER: '10013',
+  CTRL_ENTER: '01013',
   ESC: '00027',
   SPACE: '00032',
   ARROW_LEFT: '00037',
@@ -33,6 +34,7 @@ var action_ids =
   NAV_PREVIOUS: 'action-nav-previous',
   ENTER: 'action-enter',
   SHIFT_ENTER: 'action-shift-enter',
+  CTRL_ENTER: 'action-ctrl-enter',
   ESCAPE: 'action-escape',
   NAV_LEFT: 'action-nav-left',
   NAV_UP: 'action-nav-up',
@@ -53,6 +55,7 @@ action_map_win[key_ids.TAB] = action_ids.NAV_NEXT;
 action_map_win[key_ids.SHIFT_TAB] = action_ids.NAV_PREVIOUS;
 action_map_win[key_ids.ENTER] = action_ids.ENTER;
 action_map_win[key_ids.SHIFT_ENTER] = action_ids.SHIFT_ENTER;
+action_map_win[key_ids.CTRL_ENTER] = action_ids.CTRL_ENTER;
 action_map_win[key_ids.ESC] = action_ids.ESCAPE;
 action_map_win[key_ids.ARROW_LEFT] = action_ids.NAV_LEFT;
 action_map_win[key_ids.ARROW_UP] = action_ids.NAV_UP;

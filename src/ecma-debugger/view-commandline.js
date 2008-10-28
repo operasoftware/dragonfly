@@ -131,7 +131,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
         var tag = tagManager.setCB(null, handleEval, [runtime_id, object_id, callback] );
         var script_string  = "return " + object_ref_name + ".toString()";
         services['ecmascript-debugger'].eval(
-          tag, runtime_id, '', '', "<![CDATA["+script_string+"]]>", [object_ref_name, object_id]);
+          tag, runtime_id, '', '', script_string, [object_ref_name, object_id]);
       }
     }
     else
@@ -208,7 +208,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     "dir": function(rt_id, frame_id, thread_id, script_string)
     {
       var tag = tagManager.setCB(null, handleEval, [rt_id, null, dir_obj] );
-      services['ecmascript-debugger'].eval(tag, rt_id, thread_id, frame_id, "<![CDATA["+script_string+"]]>");
+      services['ecmascript-debugger'].eval(tag, rt_id, thread_id, frame_id, script_string);
     }
   };
 
@@ -243,7 +243,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
       else
       {
         tag = tagManager.setCB(null, handleEval, [rt_id] );
-        services['ecmascript-debugger'].eval(tag, rt_id, thread_id, frame_id, "<![CDATA["+script_string+"]]>");
+        services['ecmascript-debugger'].eval(tag, rt_id, thread_id, frame_id, script_string);
       }
       submit_buffer = [];
     }
@@ -413,7 +413,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
         }
         var tag = tagManager.setCB(null, handleEvalScope, [__frame_index, rt_id, path, old_args] );
         services['ecmascript-debugger'].eval(tag, rt_id, thread_id, 
-          frame_id, "<![CDATA["+SCRIPT.replace(/%s/, path)+"]]>");
+          frame_id, SCRIPT.replace(/%s/, path));
       }
       else
       {

@@ -87,7 +87,7 @@ var dom_data = new function()
     // if the node is in the current data handle it otherwise not.
     var rt_id = event['runtime-id'], obj_id = event['object-id'];
     var node = null, i = 0, j = 0, level = 0, k = 0, view_id = '';
-    if( data_runtime_id == rt_id )
+    if( !( actions['dom'].editor && actions['dom'].editor.is_active ) && data_runtime_id == rt_id )
     {
       for( ; ( node = data[i] ) && obj_id != node[ID]; i++ );
       if( node  && node[TYPE] == 1 ) // don't update the dom if it's only a text node
@@ -402,7 +402,7 @@ var dom_data = new function()
     services['ecmascript-debugger'].inspectDOM(tag, object_id, 'children', 'json'  );
   }
 
-  this.closeNode = function(object_id)
+  this.closeNode = function(object_id, do_not_update)
   {
     var i = 0, j = 0, level = 0, k = 0, view_id = '';
     for( ; data[i] && data[i][ID] != object_id; i++ );
@@ -413,9 +413,12 @@ var dom_data = new function()
       j = i;
       while( data[j] && data[j][ DEPTH ] > level ) j++;
       data.splice(i, j - i);
-      for( ; view_id = view_ids[k]; k++)
+      if(!do_not_update)
       {
-        views[view_id].update();
+        for( ; view_id = view_ids[k]; k++)
+        {
+          views[view_id].update();
+        }
       }
     }
     else
@@ -631,7 +634,7 @@ var dom_data = new function()
       attr = null, 
       j = 0;
       
-      for( ; data[i] && data[i][ID] != obj_id; i ++);
+      for( ; data[i] && data[i][ID] != obj_id; i++ );
       if( data[i] )
       {
         switch(state.type)
@@ -662,6 +665,21 @@ var dom_data = new function()
           }
         }
       }
+    }
+  }
+
+  this.getParentElement = function(obj_id)
+  {
+    var 
+    i = 0,
+    depth = 0;
+    
+    for( ; data[i] && data[i][ID] != obj_id; i++ );
+    if( data[i] )
+    {
+      depth = data[i][DEPTH];
+      for( ; data[i] && data[i][DEPTH] == depth; i-- );
+      return data[i] && data[i][ID] || '';
     }
   }
   
