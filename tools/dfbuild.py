@@ -264,7 +264,8 @@ def _get_bad_encoding_files(src):
     for base, dirs, files in os.walk(src):
         for file in [f for f in files if f.endswith(_text_exts)]:
             abs = os.path.join(base, file)
-            if not _is_utf8(abs): bad.append(abs)
+            # quick fix to do not test 'test-scripts' repo
+            if not 'test-scripts' in base and not _is_utf8(abs): bad.append(abs)
             
     return bad
 
@@ -475,7 +476,7 @@ Destination can be either a directory or a zip file"""
         src, dst = args
     
     dirvars = {}
-    exdirs = ["scripts", "ecma-debugger", "ui-style", "ui-strings"]
+    exdirs = ["scripts", "ui-style", "ui-strings"]
     
     
     if options.translate_build:
