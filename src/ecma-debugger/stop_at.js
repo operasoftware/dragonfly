@@ -148,7 +148,8 @@ var stop_at = new function()
     {
       config_arr[config_arr.length] = prop;
       config_arr[config_arr.length] = 
-        ( stop_at_settings[prop] = settings['js_source'].get(prop) ) ? 'yes' : 'no';
+        ( ( stop_at_user_settings[prop] = settings['js_source'].get(prop) ) 
+          || stop_at_settings[prop] ) && 'yes' || 'no';
     }
     services['ecmascript-debugger'].setConfiguration.apply(services['ecmascript-debugger'], config_arr);
   }
