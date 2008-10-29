@@ -597,7 +597,7 @@ var dom_data = new function()
       }
       else
       {
-        opera.postError('missing refrence in getCSSPath in dom_data');
+        current_target = '';
       }
       return path;
     }

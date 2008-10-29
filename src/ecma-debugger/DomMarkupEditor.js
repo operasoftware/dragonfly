@@ -39,19 +39,33 @@ var DOMMarkupEditor = function()
     new_str = '',
     update = function(str)
     {
+      range_target.deleteContents();
       var range_source = document.createRange();
       var temp = document.createElement('df-temp-element');
-      ( document.body || document.documentElement ).appendChild(temp);
+      ( document.body || document.documentElement || document ).appendChild(temp);
       temp.innerHTML = new_str;
       var first = temp.firstChild;
       var last = temp.lastChild;
-      range_source.selectNodeContents(temp);
-      var fragment = range_source.extractContents();
-      temp.parentElement.removeChild(temp);
-      range_target.deleteContents();
-      range_target.insertNode(fragment);
-      range_target.setStartBefore(first);
-      range_target.setEndAfter(last);
+      if(first)
+      {
+        range_source.selectNodeContents(temp);
+        var fragment = range_source.extractContents();
+        if( temp.parentNode == document )
+        {
+          document.replaceChild(fragment, temp);
+          range_target.selectNode(document.documentElement);
+        }
+        else
+        {
+          range_target.insertNode(fragment);
+          range_target.setStartBefore(first);
+          range_target.setEndAfter(last);
+        }
+      };
+      if(temp.parentNode)
+      {
+        temp.parentNode.removeChild(temp);
+      };
       timeout = 0;
     };
 

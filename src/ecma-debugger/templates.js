@@ -636,10 +636,6 @@ Line 2:
         ret[ret.length] = css_path[i].combinator;
       }
     }
-    else
-    {
-      opera.postError("css path missing in templates.breadcrumbs " + css_path );
-    }
     return ret;
 
   }
