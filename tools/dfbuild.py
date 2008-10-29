@@ -11,6 +11,7 @@ _text_exts = (".js", ".html", ".xml", ".css")
 _directive_exts = (".xml", ".html", ".xhtml") # files that may have <!-- command.. directives
 _keyword_exts = (".css", ".js", ".xml", ".html", ".xhtml", ".txt") # files we will try to do keyword interpolation on
 _license_exts = (".js", ".css") # extensions that should get a license
+_img_exts = (".png", ".jpg", ".gif")
 _script_ele = u"<script src=\"%s\"/>\n"
 _style_ele = u"<link rel=\"stylesheet\" href=\"%s\"/>\n"
 _re_command = re.compile("""\s?<!--\s+command\s+(?P<command>\w+)\s+"?(?P<target>.*?)"?\s*(?:if\s+(?P<neg>not)?\s*(?P<cond>\S+?))?\s*-->""")
@@ -354,14 +355,88 @@ def _clobbering_copytree(src, dst, symlinks=False):
     if errors:
         raise Error, errors
 
+def _make_image_preloader(src, dstpath, img_whitelist=None):
+    """Grab all images paths under src. Calculate relative path from dstpath
+    to the image path. Make one entry per image in a preloader file placed
+    at dstpath. dstpath must be under src somewhere!"""
+    abssrc = os.path.abspath(src)
+    imgpaths = set()
+    loaderlines = []
+    print abssrc
+    for base, dirs, files in os.walk(abssrc):
+        for filepath in [ os.path.join(abssrc, base, f) for f in files if f.endswith(_img_exts) ]:
+            p = _make_rel_url_path(dstpath, filepath)
+            loaderlines.append("""window._imageLoader["%s"] = new Image();
+window._imageLoader.onload=onImageLoad;
+window._imageLoader["%s"].src="%s";
+""" % (p,p,p))
+            
+
+    loadertemplate = u"""
+var onImageLoad = function(i)
+{
+    if (window._imageLoader && i.src in window._imageLoader)
+    {
+        window._imageLoader[i.src] = null;
+        delete window._imageLoader[i.src];
+        for (key in window._imageLoader) { return; } // don't delete if more keys in dict
+        delete window._imageLoader;
+
+    }
+}
+window._imageLoader = {};
+%s
+onImageLoad = null;
+delete onImageLoad;
+"""
+    return loadertemplate % u"\n".join(loaderlines)
+
+
+def _add_preloader(src, dst):
+    loaderstring = _make_image_preloader(src, dst)
+    for path in [os.path.join(dst, f) for f in os.listdir(dst) if f.endswith(".js")]:
+        source = codecs.open(path, "r", encoding="utf_8_sig")
+        dest = tempfile.TemporaryFile()
+        dest = codecs.getwriter("utf_8_sig")(dest)
+        dest.write(loaderstring)
+        dest.write(source.read())
+        dest.seek(0)
+        dest = codecs.getreader("utf_8_sig")(dest)
+        source.close()
+        source = codecs.open(path, "w", encoding="utf_8_sig")
+        d = dest.read()
+        source.write(d)
+        source.close()
+
+def _make_rel_url_path(src, dst):
+    """src is a file or dir which wants to adress dst relatively, calculate
+    the appropriate path to get from here to there."""
+    srcdir = os.path.abspath(src)
+    dst = os.path.abspath(dst)
+
+    # For future reference, I hate doing dir munging with string operations
+    # with a fiery passion, but pragmatism won out over making a lib.. .
+    
+    common = os.path.commonprefix((srcdir, dst))
+    
+    reldst = dst[len(common):]
+    srcdir = srcdir[len(common):]
+
+    newpath = re.sub(""".*?[/\\\]|.+$""", "../", srcdir) or "./"
+    newpath = newpath + reldst
+    newpath = newpath.replace("\\", "/")
+    newpath = newpath.replace("//", "/")
+    return newpath
+
+
+
 def make_archive(src, dst, in_subdir=True):
-    """
-    This simply packs up the contents in the directory src into a zip archive
-    dst. This is here so we can easily zip stuff from build files without
-    forcing the user to install a command line zip tool. If in_subdir is true,
-    the archive will contain a top level directory with the same name as the
-    archive, without the extension. If it is false, the files are put in the
-    root of the archive
+    """This simply packs up the contents in the directory src into a zip
+    archive dst. This is here so we can easily zip stuff from build files
+    without forcing the user to install a command line zip tool. If in_subdir
+    is true, the archive will contain a top level directory with the same
+    name as the archive, without the extension. If it is false, the files are
+    put in the root of the archive
     """
     src = os.path.abspath(src)
     z = zipfile.ZipFile(dst, "w", zipfile.ZIP_DEFLATED)
@@ -465,6 +540,9 @@ Destination can be either a directory or a zip file"""
     parser.add_option("-m", "--minify", default=False,
                       action="store_true", dest="minify",
                       help="Minify the sources")
+    parser.add_option("-p", "--preloader", default=False,
+                      action="store_true", dest="preloader",
+                      help="Generate image preloading script")
 
     options, args = parser.parse_args()
     
@@ -476,7 +554,6 @@ Destination can be either a directory or a zip file"""
     
     dirvars = {}
     exdirs = ["scripts", "ecma-debugger", "ui-style", "ui-strings"]
-    
     
     if options.translate_build:
         dirvars["exclude_uistrings"]=True
@@ -525,6 +602,9 @@ Destination can be either a directory or a zip file"""
         if options.translate_build:
             _localize_buildout(tempdir, "src/ui-strings")
 
+        if options.preloader:
+            _add_preloader(dst, "script/")
+
         if options.minify:
             _minify_buildout(dst)
 
@@ -540,6 +620,9 @@ Destination can be either a directory or a zip file"""
  
         export(src, dst, process_directives=options.concat, exclude_dirs=exdirs,
                keywords=keywords, directive_vars=dirvars)
+
+        if options.preloader:
+            _add_preloader(dst , dst + "/script/")
 
         if options.translate_build:
             _localize_buildout(dst, "src/ui-strings")
