@@ -1,5 +1,4 @@
-﻿
-var DOMMarkupEditor = function()
+﻿var DOMMarkupEditor = function()
 {
   this.base_init(this);
   this.type = "dom-markup-editor";
@@ -9,37 +8,175 @@ var DOMMarkupEditor = function()
     rt_id: '',
     obj_id: '',
     parent_obj_id: '',
-    outer_html: '',
+    outerHTML: '',
     host_target: ''
   }
+
   this.context_cur =
   {
     rt_id: '',
     obj_id: '',
     parent_obj_id: '',
-    outer_html: '',
+    outerHTML: '',
     host_target: ''
   }
 
-  var crlf_encode = function(str)
+  this.edit = function(event, ref_ele)
   {
-    return str.replace(/\r\n/g, "\\n");
+    var 
+    ele = ref_ele || event.target,
+    rt_id = ele.parentElement.parentElement.getAttribute('rt-id'),
+    obj_id = ele.parentElement.getAttribute('ref-id'),
+    script = '',
+    tag = '',
+    prop = '',
+    container = ele;
+
+    while( container 
+            && !/container/.test(container.nodeName) 
+            && ( container = container.parentElement ) );
+    if(container)
+    {
+      container.firstChild.style.position = 'relative';
+      container.firstChild.render(['fade-out']);
+      this.context_enter =
+      {
+        rt_id: rt_id,
+        obj_id: obj_id,
+        parent_obj_id: dom_data.getParentElement(obj_id),
+        outerHTML: '',
+        host_target: ''
+      };
+      this.context_cur = {};
+      for( prop in this.context_enter )
+      {
+        this.context_cur[prop] = this.context_enter[prop];
+      }
+      script = this["return new Host_updater(target)"];
+      tag = tagManager.setCB(this, this.register_host_updater, [rt_id]);
+      services['ecmascript-debugger'].eval( tag, rt_id, '', '', script, ['target', obj_id]);
+      tag = tagManager.setCB(this, this.handle_get_outer_html, [rt_id, obj_id, ele, event])
+      services['ecmascript-debugger'].inspectDOM( tag, obj_id, 'subtree', 'json' );
+    }
   }
+
+  this.oninput = function(event)
+  {
+    var 
+    script = "",
+    state = this.context_cur;
+
+    if( this.textarea_container.parentElement && state.host_target )
+    {
+      this.set_textarea_dimensions();
+      state.outerHTML = this.textarea.value;
+      var script = "host_target.outerHTML = '" + encode(state.outerHTML) + "';";
+      services['ecmascript-debugger'].eval
+      ( 
+        0, state.rt_id, '', '', script, ['host_target', state.host_target]
+      );
+    }
+  }
+
+  this.submit = function()
+  {
+    // return a valid navigation target or null
+    var
+    state = this.context_cur,
+    nav_target = this.textarea_container.parentElement;
+    
+    if(nav_target)
+    {
+      var script = "host_target.exit_edit()";
+      services['ecmascript-debugger'].eval
+      ( 
+        0, state.rt_id, '', '', script, ['host_target', state.host_target]
+      );
+      this.on_exit_edit(state, nav_target);
+    }
+    return nav_target;
+  }
+
+  this.cancel = function()
+  {
+    // return a valid navigation target or null
+    var 
+    script = "",
+    state = this.context_enter,
+    nav_target = this.textarea_container.parentElement;
+    
+    if( nav_target )
+    {
+      if(state.outerHTML != this.context_cur.outerHTML)
+      {
+        var script = "host_target.cancel_edit()";
+        services['ecmascript-debugger'].eval
+        ( 
+          0, state.rt_id, '', '', script, ['host_target', state.host_target]
+        );
+      }
+      this.on_exit_edit(state, nav_target);
+    }
+    return nav_target;
+  }
+
+  this.set_textarea_dimensions = function()
+  {
+    this.textarea.style.height = this.textarea.scrollHeight + 'px';
+  }
+
+  this.__is_active = function()
+  {
+    return this.context_enter && this.context_enter.host_target && true || false;
+  }
+
+  // could be the default method?
+  this.onclick = function(event)
+  {
+    event.preventDefault();
+    event.stopPropagation();
+    if(!this.textarea_container.contains(event.target))
+    {
+      this.submit(true);
+      return false;
+    }
+    return true;
+  }
+
+  // helpers
+
+  this.on_exit_edit = function(state, nav_target)
+  {
+    // to remove the textarea_container from the dom
+    nav_target.textContent = "";
+    this.context_cur = this.context_enter = null;
+    dom_data.closeNode(state.parent_obj_id, true);
+    dom_data.getChildernFromNode(state.parent_obj_id);
+  };
 
   var encode = function(str)
   {
     return str.replace(/\u200F\r\n/g, "").replace(/\r\n/g, "\\n").replace(/'/g, "\\'");
-  }
+  };
 
+  // class on the host side to update the given DOM range
   var Host_updater = function(target)
   {
     var 
     range_target = document.createRange(),
     timeout = 0,
     new_str = '',
+    enter_node = null,
     update = function(str)
     {
-      range_target.deleteContents();
+      if( enter_node )
+      {
+        range_target.deleteContents();
+      }
+      else
+      {
+        enter_node = range_target.extractContents();
+      };
       var range_source = document.createRange();
       var temp = document.createElement('df-temp-element');
       ( document.body || document.documentElement || document ).appendChild(temp);
@@ -79,15 +216,31 @@ var DOMMarkupEditor = function()
         timeout || ( timeout = setTimeout(update, 100) );
       }
     );
-   
+    this.cancel_edit = function()
+    {
+      timeout && ( timeout = clearTimeout(timeout) );
+      if(enter_node)
+      {
+        range_target.deleteContents();
+        range_target.insertNode(enter_node);
+      }
+      this.exit_edit();
+    };
+    this.exit_edit = function()
+    {
+      if( timeout )
+      {
+        timeout = clearTimeout(timeout);
+        update();
+      };
+      range_target = timeout = new_str = enter_node = update = null;
+    };
   };
 
-  this.__is_active = function()
-  {
-    return this.context_enter && this.context_enter.host_target && true || false;
-  }
+  this["return new Host_updater(target)"] = 
+    "return new (" + Host_updater.toString() + ")(target)";
 
-  this.__set_host_updater = function(xml, rt_id)
+  this.register_host_updater = function(xml, rt_id)
   {
     var 
     status = xml.getNodeData('status'),
@@ -99,51 +252,14 @@ var DOMMarkupEditor = function()
     }
     else
     {
-      opera.postError("failed __set_host_updater in DOMMarkupEditor");
+      opera.postError("failed register_host_updater in DOMMarkupEditor");
     }
   }
 
-  this.edit = function(event, ref_ele)
-  {
-    var 
-    ele = ref_ele || event.target,
-    rt_id = ele.parentElement.parentElement.getAttribute('rt-id'),
-    obj_id = ele.parentElement.getAttribute('ref-id'),
-    script = "return new (" + Host_updater.toString() + ")(target)",
-    tag = tagManager.setCB(this, this.__set_host_updater, [rt_id]),
-    prop = '',
-    container = ele;
-
-    while( container 
-            && !/container/.test(container.nodeName) 
-            && ( container = container.parentElement ) );
-    if(container)
-    {
-      container.firstChild.style.position = 'relative';
-      container.firstChild.render(['fade-out']);
-      this.context_enter =
-      {
-        rt_id: rt_id,
-        obj_id: obj_id,
-        parent_obj_id: dom_data.getParentElement(obj_id),
-        outer_html: '',
-        host_target: ''
-      };
-      this.context_cur = {};
-      for( prop in this.context_enter )
-      {
-        this.context_cur[prop] = this.context_enter[prop];
-      }
-      services['ecmascript-debugger'].eval( tag, rt_id, '', '', script, ['target', obj_id]);
-      tag = tagManager.setCB(this, this.__edit, [rt_id, obj_id, ele])
-      services['ecmascript-debugger'].inspectDOM( tag, obj_id, 'subtree', 'json' );
-    }
-  }
-
-  this.__edit = function(xml, rt_id, obj_id, ele)
+  // complete the edit call
+  this.handle_get_outer_html = function(xml, rt_id, obj_id, ele, event)
   {
     var json = xml.getNodeData('jsondata');
-    
     if( json )
     {
       var 
@@ -180,206 +296,12 @@ var DOMMarkupEditor = function()
       {
         this.textarea.focus();
       }
+      this.textarea.selectionEnd = this.textarea.selectionStart = 0;
     }
     else
     {
-      opera.postError("get subtree failed in DOMMArkupEditor handleGetSubtree")
+      opera.postError("get subtree failed in DOMMarkupEditor handleGetSubtree")
     }
-  }
-
-  this.oninput = function(event)
-  {
-    var 
-    script = "",
-    state = this.context_cur;
-
-    if( this.textarea_container.parentElement && state.host_target)
-    {
-      this.set_textarea_dimensions();
-      state.outerHTML = this.textarea.value;
-      var script = "host_target.outerHTML = '" + encode(state.outerHTML) + "';";
-      services['ecmascript-debugger'].eval
-      ( 
-        0, state.rt_id, '', '', script, ['host_target', state.host_target]
-      );
-    }
-  }
-
-  this.submit = function()
-  {
-    // return a valid navigation target or null
-    var
-    state = this.context_cur,
-    nav_target = this.textarea_container.parentElement;
-    
-    if(nav_target)
-    {
-      // to remove the textarea_container from the dom
-      nav_target.textContent = "";
-      this.context_cur = this.context_enter = null;
-      dom_data.closeNode(state.parent_obj_id, true);
-      dom_data.getChildernFromNode(state.parent_obj_id);
-    }
-    return nav_target;
-  }
-
-  this.cancel = function()
-  {
-    /*
-    // return a valid navigation target or null
-    var 
-    script = "",
-    state = this.context_enter,
-    nav_target = null;
-
-    if( this.textarea_container.parentElement )
-    {
-      if(this.context_cur.is_new)
-      {
-        // TODO is this special?
-      }
-      else
-      {
-        nav_target = this.textarea_container.parentElement;
-        switch(state.type)
-        {
-          case "key":
-          {
-            script = 'node.setAttribute("' + crlf_encode(state.key) + '","' + crlf_encode(state.value) + '")';
-            services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
-            nav_target.textContent = state.key;
-            break;
-          }
-          case "value":
-          {
-            script =  'node.setAttribute("' + crlf_encode(state.key) + '","' + crlf_encode(state.value) + '")';
-            services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
-            nav_target.textContent = '"' + state.value + '"';
-            break;
-          }
-          case "text":
-          {
-            script = 'node.nodeValue = "' + crlf_ecode(state.text) + '"';
-            services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
-            nav_target.textContent = state.text;
-            break;
-          }
-        }
-      }
-    }
-    return nav_target;
-    */
-  }
-
-  this.nav_previous = function(event, action_id)
-  {
-    /*
-    // must return a valid navigation target or null
-    var 
-    state = this.context_cur,
-    nav_target = this.textarea_container.parentElement,
-    nav_target_parent = nav_target.parentElement,
-    next = nav_target.previousElementSibling,
-    next_next = next && next.previousElementSibling,
-    submit_success = this.submit(true),
-    container = nav_target_parent.parentElement.parentElement;
-
-    switch(state.type)
-    {
-      case "key":
-      case "value":
-      {
-        ( next && ( submit_success || next.parentElement ) ) 
-        || ( next = next_next ) 
-        || ( next = nav_target_parent.getPreviousWithFilter(container, nav_filters.attr_text) );
-        break;
-      }
-      case "text":
-      {
-        next = nav_target.getPreviousWithFilter(container, nav_filters.attr_text);
-      }
-    }
-
-    if( next )
-    {
-      if( next.nodeName == 'node' )
-      {
-        next.firstChild.splitText(next.firstChild.nodeValue.length - 1);
-        next = this.create_new_edit(next.firstChild);
-      }
-      else if( next.parentElement != nav_target_parent 
-                && next.nodeName == 'value' 
-                && next == next.parentElement.lastElementChild )
-      {
-        next = this.create_new_edit(next);
-      }
-      if(next)
-      {
-        this.edit({}, next);
-      }
-    }
-    return next;
-    */
-  }
-
-  this.nav_next = function(event, action_id)
-  {
-    /*
-    // must return a valid navigation target or null
-    var
-    state = this.context_cur,
-    nav_target = this.textarea_container.parentElement,
-    nav_target_parent = nav_target.parentElement,
-    next = nav_target.nextElementSibling,
-    next_next = next && next.nextElementSibling,
-    submit_success = this.submit(),
-    container = nav_target_parent.parentElement.parentElement;
- 
-    switch(state.type)
-    {
-      case "key":
-      case "value":
-      {
-        ( submit_success && ( next || ( next = this.create_new_edit(submit_success) ) ) )
-        || ( next && next.parentElement ) || ( next = next_next ) 
-        || ( next = nav_target_parent.getNextWithFilter(container, nav_filters.attr_text) );
-        break;
-      }
-      case "text":
-      {
-        next = nav_target.getNextWithFilter(container, nav_filters.attr_text);
-      }
-    }
-    if(next)
-    {
-      if( next.nodeName == 'node' )
-      {
-        next.firstChild.splitText(next.firstChild.nodeValue.length - 1);
-        next = this.create_new_edit(next.firstChild);
-      }
-      this.edit({}, next);
-    }
-    return next;
-    */
-  }
-
-  // helpers
-  this.set_textarea_dimensions = function()
-  {
-    this.textarea.style.height = this.textarea.scrollHeight + 'px';
-  }
-
-  // could be the default method?
-  this.onclick = function(event)
-  {
-    event.preventDefault();
-    event.stopPropagation();
-    if(!this.textarea_container.contains(event.target))
-    {
-      this.submit(true);
-      return false;
-    }
-    return true;
   }
 }
 
