@@ -366,30 +366,34 @@ def _make_image_preloader(src, dstpath, img_whitelist=None):
     for base, dirs, files in os.walk(abssrc):
         for filepath in [ os.path.join(abssrc, base, f) for f in files if f.endswith(_img_exts) ]:
             p = _make_rel_url_path(dstpath, filepath)
-            loaderlines.append("""window._imageLoader["%s"] = new Image();
-window._imageLoader.onload=onImageLoad;
-window._imageLoader["%s"].src="%s";
-""" % (p,p,p))
-            
+            loaderlines.append("\"%s\"" % p);
 
-    loadertemplate = u"""
-var onImageLoad = function(i)
+    loadertemplate = """
+(function(url_list)
 {
-    if (window._imageLoader && i.src in window._imageLoader)
+  var Preload = function(url)
+  {
+    this.onload = function()
     {
-        window._imageLoader[i.src] = null;
-        delete window._imageLoader[i.src];
-        for (key in window._imageLoader) { return; } // don't delete if more keys in dict
-        delete window._imageLoader;
-
+      opera.postError("preloaded: " + this.src);
+    };
+    this.onerror= function()
+    {
+      opera.postError("preloading of " + this.src + " has failed");
     }
-}
-window._imageLoader = {};
-%s
-onImageLoad = null;
-delete onImageLoad;
+    this.src = url;
+  };
+  url_list.forEach
+  (
+    function(url)
+    {
+      Preload.call(new Image(), url)
+    }
+  );
+})([%s]);
 """
-    return loadertemplate % u"\n".join(loaderlines)
+
+    return loadertemplate % u",".join(loaderlines)
 
 
 def _add_preloader(src, dst):
@@ -411,7 +415,7 @@ def _add_preloader(src, dst):
 def _make_rel_url_path(src, dst):
     """src is a file or dir which wants to adress dst relatively, calculate
     the appropriate path to get from here to there."""
-    srcdir = os.path.abspath(src)
+    srcdir = os.path.abspath(src + "/..")
     dst = os.path.abspath(dst)
 
     # For future reference, I hate doing dir munging with string operations
