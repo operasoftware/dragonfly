@@ -187,6 +187,7 @@ def run_build_script(ui, repo, core_version=0, type=None, **opts):
             '-s',
             '-d',
             '-m',
+            '-p',
             '-k', '$dfversion$=' + type['name'],
             '-k', '$revdate$=' + revision
         ]
