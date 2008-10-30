@@ -553,7 +553,10 @@ Destination can be either a directory or a zip file"""
         src, dst = args
     
     dirvars = {}
-    exdirs = ["scripts", "ecma-debugger", "ui-style", "ui-strings"]
+    if options.concat:
+        exdirs = ["scripts", "ui-style", "ecma-debugger", "ui-strings"]
+    else:
+        exdirs = ["scripts", "ui-style", "ui-strings"]
     
     if options.translate_build:
         dirvars["exclude_uistrings"]=True
