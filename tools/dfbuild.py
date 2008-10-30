@@ -375,7 +375,7 @@ def _make_image_preloader(src, dstpath, img_whitelist=None):
   {
     this.onload = function()
     {
-      opera.postError("preloaded: " + this.src);
+      //opera.postError("preloaded: " + this.src);
     };
     this.onerror= function()
     {
