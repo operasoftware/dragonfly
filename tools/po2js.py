@@ -21,7 +21,9 @@ def po_parser(path):
     for block in block_generator(path):
         entry = {}
         for line in block:
-            if line.startswith("#. "):
+            if line.startswith("#. Scope: "):
+                entry["scope"] = line[10:].split(",")
+            elif line.startswith("#. "):
                 if not "desc" in entry: entry["desc"] = line[3:]
                 else: entry["desc"] += line[2:]
             elif line.startswith("#: "):
@@ -37,7 +39,7 @@ def po_parser(path):
 
 def make_js_from_po(path):
     strings = []
-    for po in po_parser(path):
+    for po in [p for p in po_parser(path) if "scope" in p and "dragonfly" in p["scope"] ]:
         strings.append("""ui_strings.%s="%s";""" % (po["jsname"], po["msgstr"]))
     return """window.ui_strings || ( window.ui_strings  = {} ) 
 window.ui_strings.lang_code = "?";
