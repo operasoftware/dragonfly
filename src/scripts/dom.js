@@ -1,7 +1,8 @@
 ﻿/**
  * @fileoverview
- * Helper function prototypes related to DOM objects and the DOM
+ * Helper function prototypes related to DOM objects and the DOM <strong>fixme: Christian should document the template syntax</strong>
  * templating system.
+ *
  */
 
 Element.prototype.___add=Document.prototype.___add=function()
