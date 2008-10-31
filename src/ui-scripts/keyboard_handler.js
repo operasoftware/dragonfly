@@ -258,7 +258,7 @@ var key_identifier = new function()
 
   var __key_handler = null;
 
-  var __current_view = null;
+  var __current_view_id = null;
 
   var empty_keyhandler = new function()
   {
@@ -321,6 +321,7 @@ var key_identifier = new function()
 
   this.handle = function(event)
   {
+   
     var 
     keyCode = event.keyCode, 
     key_id = '',
@@ -343,7 +344,7 @@ var key_identifier = new function()
             ( event.ctrlKey ? '1' : '0' ) +
             ( event.altKey ? '1' : '0' ) +
             keyCode.toString();
-
+        // opera.postError('key handler: ' + key_id +' '+ (key_id in action_map) +' '+__key_handler[action_id = action_map[key_id]])
         if( key_id in action_map 
             && !__key_handler[action_id = action_map[key_id]](event, action_id) )
         {
@@ -387,7 +388,8 @@ var key_identifier = new function()
     {
       __container.removeClass('edit-mode');
     }
-    __current_view =  __container = null;
+    __current_view_id = '';
+    __container = null;
     __key_handler = empty_keyhandler;
   }
 
@@ -397,6 +399,7 @@ var key_identifier = new function()
     var container = event.target;
     while( container && !/^(?:top-)?(?:container|toolbar|tabs)$/.test(container.nodeName) 
       && ( container = container.parentElement ) );
+    
     if( container )
     {
       switch (container.nodeName)
@@ -404,15 +407,14 @@ var key_identifier = new function()
         case 'container':
         {
           var ui_obj = UIBase.getUIById(container.getAttribute('ui-id'));
-         
-          if( ui_obj && ui_obj.view_id && ui_obj != __current_view )
+          if( ui_obj && ui_obj.view_id != __current_view_id )
           {
             clear_current_handler();
             // TODO check if it has already focus
-            __key_handler = keyhandlers[ui_obj.view_id] || empty_keyhandler;
+            __key_handler = keyhandlers[__current_view_id = ui_obj.view_id] || empty_keyhandler;
             __key_handler.focus(event, container);
-            __current_view = ui_obj; 
             __container = container;
+
           }
           else if( __key_handler )
           {

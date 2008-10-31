@@ -8,7 +8,7 @@ var BaseEditor = new function()
   
   /* interface */
   this.edit = 
-  this.oninput =
+  this.oninput = 
   // must return a valid navigation target or null
   this.submit =
   // must return a valid navigation target or null
@@ -97,6 +97,11 @@ var BaseEditor = new function()
     _init.apply(instance, [instance]);
   }
 }
+
+/**
+  * @constructor 
+  * @extends BaseEditor
+  */
 
 var DOMAttrAndTextEditor = function(nav_filters)
 {

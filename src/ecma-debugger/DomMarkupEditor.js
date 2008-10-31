@@ -1,4 +1,9 @@
-﻿var DOMMarkupEditor = function()
+﻿/**
+  * @constructor 
+  * @extends BaseEditor
+  */
+
+var DOMMarkupEditor = function()
 {
   this.base_init(this);
   this.type = "dom-markup-editor";
@@ -156,7 +161,7 @@
 
   var encode = function(str)
   {
-    return str.replace(/\u200F\r\n/g, "").replace(/\r\n/g, "\\n").replace(/'/g, "\\'");
+    return str.replace(/\u200F\r\n/g, "").replace(/\r\n/g, "\\n").replace(/'/g, "\\'"); 
   };
 
   // class on the host side to update the given DOM range
