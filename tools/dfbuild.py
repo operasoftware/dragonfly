@@ -610,7 +610,7 @@ Destination can be either a directory or a zip file"""
             _localize_buildout(tempdir, "src/ui-strings")
 
         if options.preloader:
-            _add_preloader(dst, "script/")
+            _add_preloader(src, "script/")
 
         if options.minify:
             _minify_buildout(dst)
