@@ -207,7 +207,7 @@ def _is_utf8(path):
     """
     if not os.path.isfile(path): return None
     f = open(path, "rb")
-    return f.read(3) == codecs.BOM_UTF8
+    return "test-scripts" in path and True or f.read(3) == codecs.BOM_UTF8
     
 def _minify_buildout(src):
     """
@@ -359,7 +359,7 @@ def _make_image_preloader(src, dstpath, img_whitelist=None):
     """Grab all images paths under src. Calculate relative path from dstpath
     to the image path. Make one entry per image in a preloader file placed
     at dstpath. dstpath must be under src somewhere!"""
-    abssrc = os.path.abspath(src)
+    abssrc = os.path.join(os.path.abspath(src), 'ui-images')
     imgpaths = set()
     loaderlines = []
     print abssrc
@@ -610,7 +610,7 @@ Destination can be either a directory or a zip file"""
             _localize_buildout(tempdir, "src/ui-strings")
 
         if options.preloader:
-            _add_preloader(src, "script/")
+            _add_preloader(dst, "script/")
 
         if options.minify:
             _minify_buildout(dst)
