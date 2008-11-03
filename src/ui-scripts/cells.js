@@ -68,7 +68,7 @@
 
     if( this.toolbar )
     {
-      if ( this.toolbar.__view_id == view_id)
+      if ( this.toolbar.__view_id == view_id && this.toolbar.isvisible() )
       {
         this.toolbar.setVisibility(bool);
         this.update(this.left, this.top, true);
