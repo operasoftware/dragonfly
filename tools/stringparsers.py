@@ -3,6 +3,12 @@ _db_findre = re.compile("""^([A-Z0-9_-]+)[\.=](.*)""")
 _db_scopere = re.compile("^[A-Z0-9_-]+?.scope=\"(.*)\"")
 _js_findre = re.compile("""^ui_strings.(\w*?)\s*=\s*['"](.*)['"]""")
 _js_concatere = re.compile("""\s*?['"](.*)['"]""")
+_po_tpl="""%(jsname)s=-1
+%(jsname)s.caption="%(msgstr)s"
+%(jsname)s.scope="dragonfly"
+%(jsname)s.description="%(desc)s"
+%(jsname)s.scope="dragonfly"
+"""
 
 def _db_block_reader(path):
     fp = open(path)
@@ -94,18 +100,21 @@ def _js_parser(path):
                 if m:
                     jsname = m.groups()[0]
                     msgstr.append(m.groups()[1])
-                    print len(m.groups())
             else:
                 m = _js_concatere.search(line)
                 if m: msgstr.append(m.groups()[0])
                 
         if desc and jsname:
             yield { "msgstr": "".join(msgstr), "jsname": jsname, "desc": desc}
+            desc = ""
+            jsname = ""
+            msgstr = []
 
     if desc and jsname:
         yield { "msgstr": "".join(msgstr), "jsname": jsname, "desc": desc}
-                    
 
+def make_po_entry(str):
+    return _po_tpl % str
 
 def get_db_strings(path):
     return list(_db_parser(path))
@@ -115,7 +124,3 @@ def get_po_strings(path):
 
 def get_js_strings(path):
     return list(_js_parser(path))
-
-#
-#for block in _js_parser("ui_strings-en.js"):
-#    print block, "\n"
