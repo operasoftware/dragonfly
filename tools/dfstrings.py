@@ -6,8 +6,7 @@ _js_concatere = re.compile("""\s*?['"](.*)['"]""")
 _po_tpl="""%(jsname)s=-1
 %(jsname)s.caption="%(msgstr)s"
 %(jsname)s.scope="dragonfly"
-%(jsname)s.description="%(desc)s"
-%(jsname)s.scope="dragonfly"
+%(jsname)s.description="%(desc)s
 """
 
 def _db_block_reader(path):
@@ -117,10 +116,20 @@ def make_po_entry(str):
     return _po_tpl % str
 
 def get_db_strings(path):
+    "return a list of string dicts taken from db file at path"
     return list(_db_parser(path))
 
 def get_po_strings(path):
+    "return a list of string dicts taken from po file at path"
     return list(_po_parser(path))
 
 def get_js_strings(path):
+    "return a list of string dicts taken from js file at path"
     return list(_js_parser(path))
+
+def get_db_version(path):
+    "return db file version as string from db files at path"
+    fp = open(path)
+    for line in fp:
+        if line.startswith("@dbversion"): return line.strip()[11:]
+    return "unknown"

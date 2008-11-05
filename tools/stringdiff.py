@@ -1,11 +1,7 @@
 import sys
 import dfstrings
 import optparse
-
-def get_db_version(path):
-    fp = open(path)
-    for line in fp:
-        if line.startswith("@dbversion"): return line.strip()[11:]
+import time
 
 def main():
     usage = """%prog [options] jspath dbpath
@@ -25,10 +21,9 @@ Find strings that are in the js file but missing in the db file"""
     elif options.bare and options.po:
         parser.error("-p and -b are mutually exclusive")
         
-
     js_strings = dfstrings.get_js_strings(args[0])
     db_strings = [e for e in dfstrings.get_db_strings(args[1]) if "dragonfly" in e["scope"]]
-    db_version = get_db_version(args[1])
+    db_version = dfstrings.get_db_version(args[1])
 
     # the following would be nicer if we could put dictionaries in sets,
     # but they're not hashable.
@@ -39,6 +34,9 @@ Find strings that are in the js file but missing in the db file"""
     if options.bare:
         print " ".join([e["jsname"] for e in missing])
     elif options.po:
+        print """# .db entries for strings in %s
+# that are missing from %s version %s.
+# this file generated %s.\n""" % (args[0], args[1], db_version, time.asctime())
         for s in missing: print dfstrings.make_po_entry(s)
     else:
         print """Comparing %s and %s version %s.\nFound %s missing strings""" % (args[0], args[1], db_version, len(missing) or "no")
