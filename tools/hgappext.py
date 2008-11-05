@@ -124,6 +124,8 @@ def run_build_script(ui, repo, core_version=0, type=None, **opts):
     a log of the build commands will be created in the same repo as the config file 
     """ 
 
+    import cPickle
+
     if opts['command_log']:
         path = os.path.join(os.path.split(BUILD_CONFIG)[0], "BUILD_LOG")
         if os.path.exists(path):
@@ -138,7 +140,17 @@ def run_build_script(ui, repo, core_version=0, type=None, **opts):
             sys.stdout.write(f.read())
             f.close()
             return
-    
+
+    if opts['log_history']:
+        path = os.path.join(os.path.split(BUILD_CONFIG)[0], "BUILD_LOG_PICKLE")
+        f = open(path, "rb")
+        try:
+            build_log = cPickle.load(f)
+            for key in build_log: print key, ': ', build_log[key]
+        except:
+            pass
+        f.close()
+        return
 
     if opts['config_file']:
         print "path to config file: ", BUILD_CONFIG
@@ -158,17 +170,31 @@ def run_build_script(ui, repo, core_version=0, type=None, **opts):
     build_config = parse_config(BUILD_CONFIG)
     if not build_config:
         print "no or broken build config file"
-        return  
+        return 
+    os.chdir(repo.root)
+
+    path = os.path.join(os.path.split(BUILD_CONFIG)[0], "BUILD_LOG_PICKLE")
+    f = open(path, "rb")
+    
+    try:
+        build_log = cPickle.load(f)
+        build_log['read-counter'] +=1
+    except:
+        build_log = {'title': 'logs', 'read-counter': 0}
+    f.close()
+    
     head = heads[0]
     root = repo.root
     sys.path.insert(0, os.path.join(root, 'tools' ))
+    
     import dfbuild
-    os.chdir(repo.root)
+    
     core_version = core_version in build_config and build_config[core_version] or None
     type = core_version and type in core_version and core_version[type] or None
     if not type:
         print "abort. the command arguments have no according entries in the config file"
         return
+    
     print "update to", core_version["branch"]
     if mercurial.commands.update(ui, repo, rev=core_version["branch"]) != 0: 
         print "abort. hg update failed"
@@ -176,6 +202,15 @@ def run_build_script(ui, repo, core_version=0, type=None, **opts):
     rev = repo.changelog.rev(head)
     sort_hash = short(head)
     revision = "%d:%s, %s" % (rev, sort_hash, core_version["branch"])
+
+    if not 'id' in type:
+        print "each entriy in the build config must have an id"
+        return
+
+    if not type['id'] in build_log: 
+        build_log[type['id']] = [] 
+    build_log[type['id']].append(sort_hash)
+
     print "make build, revision:", revision
     try:
         sys.argv = \
@@ -217,6 +252,10 @@ def run_build_script(ui, repo, core_version=0, type=None, **opts):
         return
     print "zip created"
     print "make log"
+
+    if not opts['log'] and len(build_log[type['id']]):
+        opts['log'] = "tip:%s" % ( build_log[type['id']][-1] )
+
     if opts['log']:
         print "log", opts['log']
         path = type["local-log"] % (rev, sort_hash)
@@ -242,7 +281,15 @@ def run_build_script(ui, repo, core_version=0, type=None, **opts):
     f = open(path, os.path.exists(path) and "a" or "w") 
     f.write(time.strftime("%d.%m.%y %H:%M", time.localtime()) + ': ' + log_entry + "; rev: " + revision)
     f.write("\n") # FWIW os.linesep should be editor linesep
+    
+    path = os.path.join(os.path.split(BUILD_CONFIG)[0], "BUILD_LOG_PICKLE")
+    f = open(path, "wb")
+    cPickle.dump(build_log, f)
+    f.close()
+
     print "done"
+    
+
 
 cmdtable = \
 {
@@ -263,7 +310,8 @@ cmdtable = \
     [('l', 'log', '', 'log range'), 
     ('f', 'config-file', None, 'path to config file'),
     ('s', 'show-config-file', None, 'show config file'),
-    ('o', 'command-log', None, 'show the log of the last used parameters')],
+    ('o', 'command-log', None, 'show the log of the last used parameters'),
+    ('i', 'log-history', None, 'show the log of the last created logs')],
     "make a build, a zip and a log file"
   )
 }
