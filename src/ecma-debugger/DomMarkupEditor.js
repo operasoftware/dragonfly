@@ -125,6 +125,19 @@ var DOMMarkupEditor = function()
     return nav_target;
   }
 
+  this.nav_next = function()
+  {
+    var 
+    val = this.textarea.value, 
+    start = this.textarea.selectionStart,
+    end = this.textarea.selectionEnd,
+    indent = '  ';
+
+    this.textarea.value = val.slice(0, start) + indent +  val.slice(end);
+    this.textarea.selectionStart = start + indent.length;
+    this.textarea.selectionEnd = start + indent.length;
+  }
+
   this.set_textarea_dimensions = function()
   {
     this.textarea.style.height = this.textarea.scrollHeight + 'px';
@@ -183,32 +196,209 @@ var DOMMarkupEditor = function()
         enter_node = range_target.extractContents();
       };
       var range_source = document.createRange();
-      var temp = document.createElement('df-temp-element');
-      ( document.body || document.documentElement || document ).appendChild(temp);
-      temp.innerHTML = new_str;
+      var temp = null;
+      if( document.documentElement )
+      {
+        temp = document.createElement('df-temp-element');
+        ( document.body || document.documentElement ).appendChild(temp);
+        temp.innerHTML = new_str;
+      }
+      else
+      {
+        var new_source = lexer.lex(new_str), tag = new_source[0]; 
+        
+        if(tag)
+        {
+          var attrs = tag[2], i = 0, attr = null;
+          for( ; ( attr = attrs[i] ) && attr[0] != 'xmlns'; i++);
+          if( attr )
+          {
+            attrs.splice(i, 1);
+            temp = document.createElementNS(attr[1], tag[1]);
+          }
+          else
+          {
+            temp = document.createElement(tag[1]);
+          }
+          for( i = 0 ; attr = attrs[i]; i++)
+          {
+            temp.setAttribute(attr[0], attr[1]);
+          }
+          temp.innerHTML = new_source[1];
+          document.appendChild(temp);
+          
+        }
+      };
       var first = temp.firstChild;
       var last = temp.lastChild;
       if(first)
       {
-        range_source.selectNodeContents(temp);
-        var fragment = range_source.extractContents();
-        if( temp.parentNode == document )
+        if( temp == document.documentElement )
         {
-          document.replaceChild(fragment, temp);
           range_target.selectNode(document.documentElement);
         }
         else
         {
+          range_source.selectNodeContents(temp);
+          var fragment = range_source.extractContents();
           range_target.insertNode(fragment);
           range_target.setStartBefore(first);
           range_target.setEndAfter(last);
         }
       };
-      if(temp.parentNode)
+      if(temp.parentElement)
       {
         temp.parentNode.removeChild(temp);
       };
       timeout = 0;
+    },
+    lexer = new function()
+    {
+      /* adjusted to get only the first tag */
+      const TEXT = 'TEXT', TAG = 'TAG';
+      var 
+      source = '',
+      cur = '',
+      pos = 0,
+      text = function()
+      {
+        var ret = [], buffer = '', _tag = null;
+        while( cur )
+        {
+          if( cur == '<' )
+          {
+            cur = source.charAt(pos++);
+            if(buffer)
+            {
+              ret[ret.length] = [TEXT, buffer];
+              buffer = '';
+            }
+            _tag = tag();
+            if( !/[!?]/.test(_tag[1].charAt(0)) ) 
+            {
+              return [_tag, source.slice(pos)];
+            }
+            continue;
+          }
+          buffer += cur;
+          cur = source.charAt(pos++);
+        }
+        return ret;
+      },
+      tag = function()
+      {
+        var buffer = '', attrs = [], has_attrs = false;
+        while( cur )
+        {
+          if( cur == '>' )
+          {
+            cur = source.charAt(pos++);
+            return [TAG, buffer, attrs];
+          }
+          if( cur == ' ' )
+          {
+            cur = source.charAt(pos++);
+            has_attrs = true;
+            continue;
+          }
+          if( has_attrs )
+          {
+            attrs = attr_key();
+            continue;
+          }
+          buffer += cur;
+          cur = source.charAt(pos++);
+        }
+      },
+      attr_key = function()
+      {
+        var attrs = [], attr_key = '', buffer = '';
+        while( cur )
+        {
+          if( cur == ' ' )
+          {
+            if(buffer)
+            {
+              attr_key = buffer;
+              buffer = '';
+            }
+            cur = source.charAt(pos++);
+            continue;
+          }
+          if( cur == '=' )
+          {
+            if(buffer)
+            {
+              attr_key = buffer;
+              buffer = '';
+            }
+            cur = source.charAt(pos++);
+            attrs[attrs.length] = [attr_key, set_attr_delimiter()];
+            attr_key = '';
+            continue;
+          }
+          if( cur == '>' )
+          {
+            if(buffer)
+            {
+              attr_key = buffer;
+              buffer = '';
+            }
+            if(attr_key)
+            {
+              attrs[attrs.length] = [attr_key];
+            }
+            return attrs;
+          }
+          buffer += cur;
+          cur = source.charAt(pos++);
+        }
+      },
+      set_attr_delimiter = function()
+      {
+        var delimiter = '';
+        while( cur )
+        {
+          if( cur == ' ' )
+          {
+            cur = source.charAt(pos++);
+            continue;
+          }
+          if( cur == '\'' || cur == '"' )
+          {
+            delimiter = cur;
+            cur = source.charAt(pos++);
+            return attr_value(delimiter);
+          }
+          return attr_value(' ');
+        }
+      },
+      attr_value = function(delimiter)
+      {
+        var buffer = '';
+        while(cur)
+        {
+          if( cur == delimiter )
+          {
+            cur = source.charAt(pos++);
+            return buffer;
+          }
+          if( cur == '>' && delimiter == ' ' )
+          {
+            return buffer;
+          }
+          buffer += cur;
+          cur = source.charAt(pos++);
+        }
+      };
+
+      this.lex = function(_source)
+      {
+        source = _source;
+        pos = 0;
+        cur = source.charAt(pos++);
+        return text();
+      }
     };
 
     range_target.selectNode(target);
@@ -238,7 +428,7 @@ var DOMMarkupEditor = function()
         timeout = clearTimeout(timeout);
         update();
       };
-      range_target = timeout = new_str = enter_node = update = null;
+      lexer = range_target = timeout = new_str = enter_node = update = null;
     };
   };
 

@@ -429,8 +429,9 @@ cls.DOMInspectorActions = function(id)
     }
     else
     {
-      return true
+      this.editor.nav_next(event, action_id);
     }
+    return false;
   }
 
   this.nav_previous_edit_mode = function(event, action_id)
@@ -579,12 +580,12 @@ cls.DOMInspectorEditKeyhandler = function(id)
 
   this[this.NAV_PREVIOUS] = function(event, action_id)
   {
-    __actions.nav_previous_edit_mode(event, action_id);
+    return __actions.nav_previous_edit_mode(event, action_id);
   }
 
   this[this.NAV_NEXT] = function(event, action_id)
   {
-    __actions.nav_next_edit_mode(event, action_id);
+    return __actions.nav_next_edit_mode(event, action_id);
   }
   
   this[this.ENTER] = function(event, action_id)
@@ -600,7 +601,7 @@ cls.DOMInspectorEditKeyhandler = function(id)
 
   this[this.ESCAPE] = function(event, action_id)
   {
-    __actions.escape_edit_mode(event, action_id);
+    return __actions.escape_edit_mode(event, action_id);
   }
 
   this.blur = function(event)
