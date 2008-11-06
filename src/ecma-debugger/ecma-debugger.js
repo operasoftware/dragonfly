@@ -321,9 +321,9 @@ cls.ECMAScriptDebuggerService = function(name)
     this.post(msg);
   }
 
-  this.createAllRuntimes = function()
+  this.createAllRuntimes = function(tag)
   {
-    this.post("<runtimes><tag></tag><create-all-runtimes/></runtimes>");
+    this.post("<runtimes><tag>" +  ( tag || '' ) + "</tag><create-all-runtimes/></runtimes>");
   }
 
   this.getMatchingCSSRules = function(tag, obj_id, rt_id)
@@ -377,13 +377,12 @@ cls.ECMAScriptDebuggerService = function(name)
     this.post(msg);
   }
 
-  this.cssGetStyleDeclarations = function( tag, rt_id, obj_id, cats, format )
+  this.cssGetStyleDeclarations = function( tag, rt_id, obj_id, format )
   {
     var msg = "<css-get-style-declarations>" +
                   "<tag>" + tag + "</tag>" +
                   "<runtime-id>" + rt_id+ "</runtime-id>" +
                   "<object-id>" + obj_id + "</object-id>" +
-                  "<categories>" + cats + "</categories>" +
                   ( format ? "<format>json</format>" : "" ) +
               "</css-get-style-declarations>";
     this.post(msg);
