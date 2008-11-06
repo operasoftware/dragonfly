@@ -414,6 +414,7 @@ ErrorConsoleView.roughViews.createViews = function()
     
       eventHandlers.keyup['console-text-search-'+ view_id] = function(event, target)
       {
+        //opera.postError("keyup in " + view_id);
         if( event.keyCode == 13 )
         {
           textSearch.highlight();
