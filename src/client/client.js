@@ -383,13 +383,13 @@ var client = new function()
 
   this.setupTopCell = function()
   {
-    viewport.innerHTML = '';
-
+    var spin_state = '';
     if( window.topCell )
     {
+      spin_state = window.topCell.statusbar.spin_animator.getState();
       window.topCell.cleanUp();
     }
-    
+    viewport.innerHTML = '';
     window.topCell = new TopCell
     (
       window.opera.attached ? panel_layout : main_layout,
@@ -409,6 +409,28 @@ var client = new function()
     );
     window.topCell.setup();
     windowsDropDown.update();
+    if(spin_state)
+    {
+      var spin_animator = window.topCell.statusbar.spin_animator;
+      switch (spin_state)
+      {
+        case 'initial':
+        {
+          spin_animator.setInitial();
+          break;
+        }
+        case 'active':
+        {
+          spin_animator.setActive();
+          break;
+        }
+        case 'final':
+        {
+          spin_animator.setFinal();
+          break;
+        }
+      }
+    }
   }
 
   this.onquit = function()
