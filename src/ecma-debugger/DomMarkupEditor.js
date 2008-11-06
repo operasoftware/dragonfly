@@ -224,9 +224,8 @@ var DOMMarkupEditor = function()
           {
             temp.setAttribute(attr[0], attr[1]);
           }
-          temp.innerHTML = new_source[1];
           document.appendChild(temp);
-          
+          temp.innerHTML = new_source[1];
         }
       };
       var first = temp.firstChild;
