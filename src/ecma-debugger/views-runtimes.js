@@ -390,7 +390,7 @@ cls.RuntimesCSSView = function(id, name, container_class)
         {
           if( selected.getAttribute('handler') == 'display-stylesheet' )
           {
-            selected.releaseEvent('click');
+            selected.releaseEvent('click', {'synthetic':  window.opera.attached} );
             break;
           }
         }

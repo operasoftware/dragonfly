@@ -185,10 +185,17 @@ Element.prototype.getChildElements = function()
   return ret;
 }
 
-Element.prototype.releaseEvent =  function(name)
+Element.prototype.releaseEvent =  function(name, custom_props)
 {
-  var event=document.createEvent('Events');
+  var event=document.createEvent('Events'), prop = '';
   event.initEvent(name, true, true);
+  if( custom_props )
+  {
+    for( prop in custom_props )
+    {
+      event[prop] = custom_props[prop];
+    }
+  }
   this.dispatchEvent(event);
 }
 /* currently broken in Opera */

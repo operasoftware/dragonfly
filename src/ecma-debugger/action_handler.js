@@ -363,7 +363,10 @@ var action_handler = new function()
     if(rules)
     {
       stylesheets.setSelectedSheet(rt_id, index, rules);
-      topCell.showView(views.stylesheets.id);
+      if(!event.synthetic)
+      {
+        topCell.showView(views.stylesheets.id);
+      }
       helpers.setSelected(event);
     }
   }
