@@ -52,18 +52,6 @@ var DOM_tree_style = function(id, name, container_class)
     4: "<span class='cdata-node'>#cdata-section</span>"
   }
 
-  var getDoctypeName = function(data)
-  {
-    var node = null, i = 0;
-    for( ; node = data[i]; i++)
-    {
-      if( node[TYPE] == 1 )
-      {
-        return node[NAME];
-      }
-    }
-  }
-
   this.scrollTargetIntoView = function()
   {
     var target = document.getElementById('target-element');
@@ -267,7 +255,7 @@ var DOM_tree_style = function(id, name, container_class)
         case 10:  // doctype
         {
           tree += "<div style='margin-left:" + 16 * node[ DEPTH ] + "px;' class='doctype'>"+
-                    "<span class='doctype-value'>" + getDoctypeName(data) + " " +
+                    "<span class='doctype-value'>" + this.getDoctypeName(data) + " " +
                     ( node[PUBLIC_ID] ? 
                       ( " PUBLIC " + "\"" + node[PUBLIC_ID] + "\"" ) :"" ) +
                     ( node[SYSTEM_ID] ?  

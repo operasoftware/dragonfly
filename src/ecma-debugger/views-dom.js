@@ -64,6 +64,19 @@ cls.DOMView = function(id, name, container_class)
     return ret;
   }
 
+  // workaround for bug CORE-16147
+  this.getDoctypeName = function(data)
+  {
+    var node = null, i = 0;
+    for( ; node = data[i]; i++)
+    {
+      if( node[TYPE] == 1 )
+      {
+        return node[NAME];
+      }
+    }
+  }
+
   this.updateBreadcrumbLink = function(obj_id)
   {
 
@@ -214,7 +227,7 @@ cls.DOMView = function(id, name, container_class)
           case 10:  // doctype
           {
             tree += LINEBREAK  + getIndent(node[DEPTH] - start_depth) +
-                    "<!doctype " + getDoctypeName(data) +
+                    "<!doctype " + this.getDoctypeName(data) +
                     ( node[PUBLIC_ID] ? 
                       ( " PUBLIC " + "\"" + node[PUBLIC_ID] + "\"" ) :"" ) +
                     ( node[SYSTEM_ID] ?  
@@ -384,7 +397,7 @@ cls.DOMView = function(id, name, container_class)
         case 10:  // doctype
         {
           tree += LINEBREAK  + getIndent(node[ DEPTH ] ) +
-                  "&lt;!doctype " + getDoctypeName(data) +
+                  "&lt;!doctype " + this.getDoctypeName(data) +
                   ( node[PUBLIC_ID] ? 
                     ( " PUBLIC " + "\"" + node[PUBLIC_ID] + "\"" ) :"" ) +
                   ( node[SYSTEM_ID] ?  

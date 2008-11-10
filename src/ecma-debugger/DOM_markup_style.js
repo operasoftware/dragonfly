@@ -101,19 +101,6 @@ var DOM_markup_style = function(id, name, container_class)
   }
 
 
-
-  var getDoctypeName = function(data)
-  {
-    var node = null, i = 0;
-    for( ; node = data[i]; i++)
-    {
-      if( node[TYPE] == 1 )
-      {
-        return node[NAME];
-      }
-    }
-  }
-
   this.createView = function(container)
   {
 
@@ -302,7 +289,7 @@ var DOM_markup_style = function(id, name, container_class)
           case 10:  // doctype
           {
             tree += "<div style='margin-left:" + 16 * node[ DEPTH ] + "px;' class='doctype'>"+
-                    "&lt;!doctype " + getDoctypeName(data) +
+                    "&lt;!doctype " + this.getDoctypeName(data) +
                     ( node[PUBLIC_ID] ? 
                       ( " PUBLIC " + "\"" + node[PUBLIC_ID] + "\"" ) :"" ) +
                     ( node[SYSTEM_ID] ?  
