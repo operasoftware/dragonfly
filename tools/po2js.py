@@ -1,49 +1,17 @@
 import sys
 import os.path
 import codecs
-
-def block_generator(path):
-    """Yield blocks of text from a po file at path. Blocks are delimited by a
-    newline"""
-    fp = codecs.open(path, "r", encoding="utf-8")
-    curblock = []
-    for line in fp:
-        if line.isspace() and curblock:
-            yield curblock
-            curblock = []
-        else:
-            curblock.append(line.strip())
-    if curblock: yield curblock
-    
-def po_parser(path):
-    """Generator that yields dicts containing parsed po data from file at
-    path."""
-    for block in block_generator(path):
-        entry = {}
-        for line in block:
-            if line.startswith("#. Scope: "):
-                entry["scope"] = line[10:].split(",")
-            elif line.startswith("#. "):
-                if not "desc" in entry: entry["desc"] = line[3:]
-                else: entry["desc"] += line[2:]
-            elif line.startswith("#: "):
-                cpos = line.rfind(":", 2)
-                if cpos != -1: entry["jsname"] = line[3:cpos]
-                else: entry["jsname"] = line[3:]
-            elif line.startswith("msgid"):
-                entry["msgid"] = line[6:]
-            elif line.startswith("msgstr"):
-                entry["msgstr"] = line[8:-1]
-        if "jsname" in entry and "msgstr" in entry:
-            yield entry
+import dfstrings
+import time
 
 def make_js_from_po(path):
     strings = []
-    for po in [p for p in po_parser(path) if "scope" in p and "dragonfly" in p["scope"] ]:
+    for po in [p for p in dfstrings.get_po_strings(path) if "scope" in p and "dragonfly" in p["scope"] ]:
         strings.append("""ui_strings.%s="%s";""" % (po["jsname"], po["msgstr"]))
-    return """window.ui_strings || ( window.ui_strings  = {} ) 
+    return """/* Generated from %s at %s */
+window.ui_strings || ( window.ui_strings  = {} ) 
 window.ui_strings.lang_code = "?";
-%s""" % "\n".join(strings)
+%s""" % (os.path.basename(path), time.asctime(), "\n".join(strings))
 
 def main():
     if len(sys.argv)==1:

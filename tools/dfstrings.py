@@ -1,4 +1,8 @@
 import re
+import codecs
+import polib
+# polib is easy_installable from pypi!
+
 _db_findre = re.compile("""^([A-Z0-9_-]+)[\.=](.*)""")
 _db_scopere = re.compile("^[A-Z0-9_-]+?.scope=\"(.*)\"")
 _js_findre = re.compile("""^ui_strings.(\w*?)\s*=\s*['"](.*)['"]""")
@@ -52,7 +56,7 @@ def _po_block_reader(path):
 def _po_parser(path):
     """Generator that yields dicts containing parsed po data from file at
     path."""
-    for block in block_reader(path):
+    for block in _po_block_reader(path):
         entry = {}
         for line in block:
             if line.startswith("#. Scope: "):
@@ -65,10 +69,15 @@ def _po_parser(path):
                 if cpos != -1: entry["jsname"] = line[3:cpos]
                 else: entry["jsname"] = line[3:]
             elif line.startswith("msgid"):
-                entry["msgid"] = line[6:]
+                print line
+                pos = line.index("::")
+                entry["msgid"] = line[6:pos]
+                entry["idstring"] = line[pos:-1]
             elif line.startswith("msgstr"):
                 entry["msgstr"] = line[8:-1]
         if "jsname" in entry and "msgstr" in entry:
+            if entry["msgstr"]  == "":
+                entry["msgstr"] = entry["msgid"]
             yield entry
 
 def _js_block_reader(path):
@@ -120,7 +129,32 @@ def get_db_strings(path):
     return list(_db_parser(path))
 
 def get_po_strings(path):
-    "return a list of string dicts taken from po file at path"
+    """polib does the heavy lifting in parsing, but we need to extract stuff
+    from comments etc."""
+    pofile = polib.pofile(path)
+    ret = []
+    for e in pofile:
+        if not e.occurrences: continue
+        cur = {
+            "desc": "",
+            "jsname": e.occurrences[0][0],
+            "msgstr": (e.msgstr or e.msgid[e.msgid.index("::")+2:]).replace("\n", "\\n"),
+            "scope": []
+        }
+        if e.comment:
+            lines = set(e.comment.split("\n"))
+            commentlines = set([e[7:] for e in lines if e.startswith("Scope: ")])
+            cur["scope"] = ",".join(commentlines).split(",")
+            lines = lines - commentlines
+            cur["desc"] = "\\n".join(lines)
+
+        ret.append(cur)
+        
+    return ret
+
+def get_po_strings_old(path):
+    """return a list of string dicts taken from po file at path.
+    Deprecated. New version is using polib module"""
     return list(_po_parser(path))
 
 def get_js_strings(path):
