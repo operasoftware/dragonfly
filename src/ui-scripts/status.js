@@ -30,10 +30,14 @@ var StatusbarBase = function()
     {
       info_container.textContent = info;
     }
-    else
+    else if(typeof info == "object")
     {
       info_container.innerHTML = "";
       info_container.render(info);
+    }
+    else
+    {
+      info_container.textContent = '';
     }
     
   }
