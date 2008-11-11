@@ -498,7 +498,10 @@ Line 2:
     return ['div',
       ['date', new Date(parseInt( message.time )*1000).toString().replace(/GMT.*$/, '') ],
       ['h2', message.source, 'severity', message.severity],
-      ['uri', message.uri],
+      ['uri', (
+                (message.uri && (message.uri.indexOf("http://") == 0 || message.uri.indexOf("https://") == 0 || message.uri.indexOf("file://")==0)) ? ["a", message.uri, "href", message.uri, "target", "_blank"] : message.uri
+              )
+      ],
       ['context', message.context],
       ['pre', message.description]
     ]
