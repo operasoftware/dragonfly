@@ -209,6 +209,7 @@ new Settings
         ],
         ['input',
           'type', 'button',
+          'disabled', 'disabled',
           'value', ui_strings.S_BUTTON_TEXT_APPLY,
           'handler', 'apply-remote-debugging'
         ]
@@ -219,7 +220,9 @@ new Settings
 
 eventHandlers.change['toggle-remote-debug'] = function(event, target)
 {
-  target.parentNode.nextSibling.childNodes[1].disabled = !event.target.checked;  
+  target.parentNode.nextSibling.childNodes[1].disabled = !event.target.checked; 
+  target.parentNode.nextSibling.nextSibling.disabled = 
+    event.target.checked == settings.debug_remote_setting.get('debug-remote') 
 }
 
 eventHandlers.click['apply-remote-debugging'] = function(event, target)
@@ -231,6 +234,8 @@ eventHandlers.click['apply-remote-debugging'] = function(event, target)
     settings.debug_remote_setting.set('debug-remote', is_debug_remote);
     settings.debug_remote_setting.set('port', port);  
     client.scopeSetupClient();
+    target.disabled = 
+      target.previousSibling.previousSibling.firstChild.checked == settings.debug_remote_setting.get('debug-remote');
   }
 }
 
