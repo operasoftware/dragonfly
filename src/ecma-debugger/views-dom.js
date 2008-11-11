@@ -578,6 +578,7 @@ eventHandlers.click['dom-inspection-snapshot'] = function(event, target)
     if( msg.id == 'dom' )
     {
       textSearch.cleanup();
+      topCell.statusbar.updateInfo();
     }
   }
 
