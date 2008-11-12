@@ -183,6 +183,9 @@ ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB = 'Show Siblings in Breadcrumb'
 /* DESC: Showing the id's and class names in the breadcrumb in the statusbar. */
 ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB = "Show id's and classes in Breadcrumb";
 
+/* */
+ui_strings.S_SWITCH_SHOW_ONLY_NORMAL_AND_GADGETS_TYPE_WINDOWS = "Show only normal windows and widgets ( unchecked Dragonfly will show any type of Opera window )";
+
 
 
 

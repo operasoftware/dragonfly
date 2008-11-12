@@ -194,7 +194,9 @@ var window_manager_data = new function()
 
   this.set_window_list = function(window_list)
   {
-    this.window_list = window_list;
+    this.window_list = 
+      !settings.general.get('show-only-normal-and-gadget-type-windows') && window_list
+      || window_list.filter(this.window_filter);
     if( this.active_window && !this.has_window_id_in_list(this.active_window) )
     {
       // TODO 
@@ -223,6 +225,11 @@ var window_manager_data = new function()
     )
   }
 
+  this.window_filter = function(win)
+  {
+    return win["window-type"] in {"normal": 1, "gadget": 1};
+  }
+
   this.update_list = function(win_obj)
   {
     var 
@@ -230,12 +237,20 @@ var window_manager_data = new function()
     win = null, 
     i = 0;
 
-    if( this.window_list )
+    if( !settings.general.get('show-only-normal-and-gadget-type-windows') 
+        || this.window_filter(win_obj) )
     {
-      for( ; ( win = this.window_list[i] ) && !( id == win["window-id"] ); i++ ) {}
+      if( this.window_list )
+      {
+        for( ; ( win = this.window_list[i] ) && !( id == win["window-id"] ); i++ ) {}
+      }
+      else
+      {
+        this.window_list = [];
+      }
+      this.window_list[i] = win_obj;
+      update_views();
     }
-    this.window_list[i] = win_obj;
-    update_views();
   }
 
   this.remove_window = function(win_id)

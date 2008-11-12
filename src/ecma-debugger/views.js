@@ -84,7 +84,6 @@ new cls.CallstackView('callstack', ui_strings.M_VIEW_LABEL_CALLSTACK, 'scroll');
 cls.GeneralView = function(id, name, container_class)
 {
   this.ishidden_in_menu = true;
-  this.hidden_in_settings = true;
   this.createView = function(container)
   {
   }
@@ -100,17 +99,19 @@ new Settings
   // key-value map
   {
     "show-views-menu": false,
-    "window-attached": true
+    "window-attached": true,
+    "show-only-normal-and-gadget-type-windows": true
   }, 
   // key-label map
   {
-    "show-views-menu": ui_strings.S_SWITCH_SHOW_VIEWS_MENU
+    "show-views-menu": ui_strings.S_SWITCH_SHOW_VIEWS_MENU,
+    "show-only-normal-and-gadget-type-windows": ui_strings.S_SWITCH_SHOW_ONLY_NORMAL_AND_GADGETS_TYPE_WINDOWS
   },
   // settings map
   {
     checkboxes:
     [
-      "show-views-menu"
+      "show-only-normal-and-gadget-type-windows"
     ]
   }
 
