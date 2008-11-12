@@ -25,6 +25,7 @@ var VirtualTextSearch = function()
   __length = 0,
   __hit = null,
   __input = null,
+  __last_match_cursor = 0,
  
   search_node = function(node) 
   {
@@ -224,6 +225,9 @@ var VirtualTextSearch = function()
     {
       __input.value = search_therm;
       __input.parentNode.firstChild.textContent = '';
+      var new_search_therm = search_therm;
+      search_therm = '';
+      this.search(new_search_therm);
     }
   }
   
