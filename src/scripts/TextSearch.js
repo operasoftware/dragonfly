@@ -18,6 +18,7 @@ var TextSearch = function()
   search_results = [], // collection of span elements
   cursor = -1,
   container = null,
+  __input = null,
   timeouts = new Timeouts(),
  
   search_node = function(node) 
@@ -144,12 +145,24 @@ var TextSearch = function()
     }
   }
 
+  this.setFormInput = function(input)
+  {
+    __input = input;
+    if(search_therm)
+    {
+      var new_search_therm = search_therm;
+      __input.value = search_therm;
+      __input.parentNode.firstChild.textContent = '';
+      search_therm = '';
+      this.searchDelayed (new_search_therm);
+    }
+  }
+
   this.cleanup = function()
   {
-    search_therm = '';
     search_results = [];
     cursor = -1;
-    container = null;
+    __input = container = null;
   }
   
 };
