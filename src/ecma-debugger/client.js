@@ -222,9 +222,7 @@ var client = new function()
       // opera.postError = function(){};
     }
 
-
-
-  
+    settings.general.set('show-views-menu', ini.debug)
 
 
     window[defaults.viewport] = document.getElementsByTagName(defaults.viewport_main_container)[0];

@@ -84,6 +84,7 @@ new cls.CallstackView('callstack', ui_strings.M_VIEW_LABEL_CALLSTACK, 'scroll');
 cls.GeneralView = function(id, name, container_class)
 {
   this.ishidden_in_menu = true;
+  this.hidden_in_settings = true;
   this.createView = function(container)
   {
   }
