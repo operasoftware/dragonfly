@@ -84,8 +84,18 @@ var VirtualTextSearch = function()
       __hit = null;
     }
   }
-  
 
+  this.clearScriptContext = function()
+  {
+    if(__script)
+    {
+      delete __script.line_matches;
+      delete __script.line_offsets;
+      delete __script.match_cursor;
+      delete __script.match_length;
+    }
+  }
+  
   this.search = function(new_search_therm)
   {    
     var
@@ -94,12 +104,12 @@ var VirtualTextSearch = function()
     line_arr = null,
     line_arr_length = 0,
     line_cur = 0;
-
-    if( new_search_therm && new_search_therm != search_therm )
+    
+    if( new_search_therm != search_therm )
     {
+      search_therm = new_search_therm;
       if(new_search_therm.length > 2)
       {
-        search_therm = new_search_therm;
         self.clearHit();
         if( __script )
         {
@@ -116,7 +126,15 @@ var VirtualTextSearch = function()
             line_matches[line_matches.length] = line_cur;
             line_offsets[line_offsets.length] = pos - line_arr[line_cur - 1];
           }
-          self.highlight(true);
+          if( __last_match_cursor )
+          {
+            if( __last_match_cursor < __script.match_length )
+            {
+              __script.match_cursor = __last_match_cursor;
+            }
+            __last_match_cursor = 0;
+          }
+          self.highlight(true, new_search_therm);
         }
       }
       else
@@ -125,6 +143,7 @@ var VirtualTextSearch = function()
         {
           self.clearHit();
         }
+        self.clearScriptContext();
         topCell.statusbar.updateInfo('');
         search_therm = '';
       }
@@ -147,8 +166,11 @@ var VirtualTextSearch = function()
     }
   }
 
-  this.highlight = function(set_match_cursor)
+  this.highlight = function(set_match_cursor, new_search_therm)
   {
+    // new_search_therm is passed to know the arguments.callee.caller context
+    // highlight is called at the end of a succesful search and
+    // on keyup if it was the enter key to highlight the next tolken
     if( views.js_source.isvisible() 
         && __script 
         && __script.line_matches 
@@ -200,12 +222,16 @@ var VirtualTextSearch = function()
       }
       
     }
-    else if(search_therm)
+    // if the view was switched and the search tolken is still there
+    // but no search was done jet for that new view 
+    // keyup event callback, so new_search_therm will be 'undefined'
+    else if( new_search_therm != search_therm )
     {
       var new_search_therm = search_therm;
       search_therm = '';
       this.search(new_search_therm);
     }
+    
   }
 
   this.setContainer = function(_container)
@@ -240,7 +266,9 @@ var VirtualTextSearch = function()
 
   this.cleanup = function()
   {
+    __last_match_cursor = __script && __script.match_cursor || 0;
     cursor = -1;
+    self.clearScriptContext();
     container = source_container = source_container_parentNode = __hit = __input = null;
     __offset = -1;
   }
