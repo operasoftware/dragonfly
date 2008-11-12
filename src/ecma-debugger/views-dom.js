@@ -570,6 +570,7 @@ eventHandlers.click['dom-inspection-snapshot'] = function(event, target)
     if( msg.id == 'dom' )
     {
       textSearch.setContainer(msg.container);
+      textSearch.setFormInput(views.dom.getToolbarControl( msg.container, 'dom-text-search'));
     }
   }
 
