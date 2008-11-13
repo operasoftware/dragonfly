@@ -293,6 +293,10 @@ var runtimes = new function()
         // do we need to remove the old breakpoints?
         self.setBreakpoint(new_script_id, line_nr);
       }
+      if( __scripts[sc]['script-id'] == __selected_script )
+      {
+        __selected_script = new_script_id;
+      }
       delete __scripts[sc];
     }
   }
