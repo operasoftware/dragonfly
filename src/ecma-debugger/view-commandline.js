@@ -449,16 +449,17 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     {
       if( !str || str != str_input )
       {
-        var 
-        last_dot = Math.max(str.lastIndexOf('.'), str.lastIndexOf('('), str.lastIndexOf('[') ), 
-        last_dot_type_is_path = str.lastIndexOf('.') == last_dot,
+        str = str.slice( Math.max(str.lastIndexOf('('), str.lastIndexOf('[') ) + 1 );
+
+        var         
+        last_dot = str.lastIndexOf('.'), 
         new_path = '', 
         new_id = '',
         ret = '';
 
         if(last_dot > -1)
         {
-          new_path = last_dot_type_is_path && str.slice(0, last_dot) || '';
+          new_path = str.slice(0, last_dot);
           new_id = str.slice(last_dot + 1);
         }
         else

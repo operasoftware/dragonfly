@@ -275,7 +275,8 @@ def run_build_script(ui, repo, core_version=0, type=None, **opts):
             keyword=[],
             style="changelog"
         ) 
-        f.close()
+        sys.stdout.flush()
+        sys.stdout.close()
         sys.stdout = store_stdout
     path = os.path.join(os.path.split(BUILD_CONFIG)[0], "BUILD_LOG")
     f = open(path, os.path.exists(path) and "a" or "w") 
