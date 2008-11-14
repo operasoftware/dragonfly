@@ -253,8 +253,8 @@ def run_build_script(ui, repo, core_version=0, type=None, **opts):
     print "zip created"
     print "make log"
 
-    if not opts['log'] and len(build_log[type['id']]):
-        opts['log'] = "tip:%s" % ( build_log[type['id']][-1] )
+    if not opts['log'] and len(build_log[type['id']]) > 1:
+        opts['log'] = "tip:%s" % ( build_log[type['id']][-2] )
 
     if opts['log']:
         print "log", opts['log']
