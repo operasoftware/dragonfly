@@ -194,7 +194,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
   {
     messages.post('active-inspection-type', {inspection_type: 'object'});
     // if that works it should be just inspection
-    topCell.showView(views.frame_inspection.id);
+    topCell.showView(views.inspection.id);
     messages.post('object-selected', {rt_id: rt_id, obj_id: obj_id});
   }
 
@@ -389,8 +389,8 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
           thread_id = stop_at.getThreadId();
           if( !path )
           {
-            var selectedObject = frame_inspection.getSelectedObject()
-            var data = frame_inspection.getData(selectedObject.rt_id, selectedObject.obj_id, -1, arguments);
+            var selectedObject = frame_inspection_data.getSelectedObject()
+            var data = frame_inspection_data.getData(selectedObject.rt_id, selectedObject.obj_id, -1, arguments);
             if( data )
             {
               var i = 2, prop = null;

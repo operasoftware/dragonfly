@@ -59,7 +59,7 @@ var action_handler = new function()
     var frame = stop_at.getFrame(event.target['ref-id']);
     if(frame)
     {
-      topCell.showView(views['frame_inspection'].id);
+      topCell.showView(views['inspection'].id);
       messages.post('active-inspection-type', {inspection_type: 'frame'});
       messages.post('frame-selected', {frame_index: event.target['ref-id']});
       if( event.type == 'click' )
@@ -90,40 +90,6 @@ var action_handler = new function()
 
     
   }
-
-  handlers['examine-object'] = function(event)
-  {
-    var ele = event.target.parentNode, 
-      list = null, 
-      path_arr = [], 
-      cur = ele, 
-      par = cur;
-    do
-    {
-      cur = par;
-      path_arr.unshift( parseInt( cur.getAttribute( 'ref_index' ) ) );
-    }
-    while ( ( par = cur.parentElement ) && ( par = par.parentElement ) && par.id != 'examine-objects' );
-    var obj = frame_inspection.getObject(path_arr);
-    if( !obj )
-    {
-      opera.postError("Error in action_handler handlers['examine-object']");
-    }
-    if(obj.items.length)
-    {
-      obj.items = []; // that should be done in frame_inspection
-      views.frame_inspection.clearView(path_arr);
-      event.target.style.removeProperty('background-position');
-    }
-    else
-    {
-      var runtime_id = frame_inspection.getRuntimeId();
-      var tag = tagManager.setCB(null, responseHandlers.examinObject, [runtime_id, path_arr]);
-      services['ecmascript-debugger'].examineObjects( tag, runtime_id, obj.value );
-      event.target.style.backgroundPosition = '0 -11px';
-    }
-  }
-
  
   handlers['examine-object-2'] = function(event, target)
   {
@@ -282,9 +248,9 @@ var action_handler = new function()
     var runtime = runtimes.getRuntime( ele.previousSibling && ele.previousSibling.getAttribute('runtime_id') || '' );
     if( runtime )
     {
-      topCell.showView(views.frame_inspection.id);
+      topCell.showView(views.inspection.id);
       messages.post('active-inspection-type', {inspection_type: 'object'});
-      object_inspection.showGlobalScope(runtime['runtime-id']);
+      object_inspection_data.showGlobalScope(runtime['runtime-id']);
       runtimes.setSelectedRuntime(runtime);
       views.runtimes.update();
     }
@@ -424,7 +390,7 @@ var action_handler = new function()
   {
     views.js_source.clearView();
     views.callstack.clearView();
-    views.frame_inspection.clearView();
+    views.inspection.clearView();
     stop_at.__continue(event.target.id.slice(9));
   }
 
@@ -653,7 +619,7 @@ var action_handler = new function()
     var obj_id = target.getAttribute('obj-id');
     messages.post('active-inspection-type', {inspection_type: 'object'});
     // if that works it should be just inspection
-    topCell.showView(views.frame_inspection.id);
+    topCell.showView(views.inspection.id);
     messages.post('object-selected', {rt_id: rt_id, obj_id: obj_id});
   }
 

@@ -467,7 +467,7 @@ var js_rough_layout =
       children: 
       [
         { height: 250, tabs: ['callstack', 'threads'] },
-        { height: 1000, tabs: ['frame_inspection'] }
+        { height: 1000, tabs: ['inspection'] }
       ] 
     }
   ]
@@ -489,7 +489,7 @@ var js_rough_layout_panel =
       width: 250, 
       children: 
       [
-        { height: 250, tabs: ['callstack', 'frame_inspection', 'threads'] }
+        { height: 250, tabs: ['callstack', 'inspection', 'threads'] }
       ] 
     }
   ]

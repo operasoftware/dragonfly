@@ -156,6 +156,12 @@ eventHandlers.mousedown['toolbar-switch'] = function(event)
   settings[setting].set(key, is_active);
   views.settings_view.syncSetting(setting, key, is_active);
   views[setting].update();
+  /*
+  // if the switch view is different, e.g. 'setting' is not the actual view
+  // getViewWithHandler is a bit expensive
+  var view = UIBase.getViewWithHandler(target);
+  view && view.update();
+  */
   messages.post("setting-changed", {id: setting, key: key});
   target.setAttribute('is-active', is_active ? 'true' : 'false');
 }
