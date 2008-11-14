@@ -19,6 +19,25 @@ var UIBase = new function()
     return ids[id];
   }
 
+  /*
+  this.getViewWithHandler = function(target)
+  {
+    var container = null, ui_obj = null;
+    while( target 
+            && !/^(toolbar|container|tabs)$/.test(target.nodeName) 
+            && ( target = target.parentElement ) );
+    if( target )
+    {
+      if( container = /container/.test(target.id) && target  
+          || document.getElementById(target.id.replace(/^(toolbar|tabs)/, "container") ) )
+      {
+        ui_obj = this.getUIById(container.getAttribute('ui-id'));
+      }
+      return ui_obj && views[ui_obj.view_id] || null;
+    }
+  }
+  */
+
   this._delete = function(id)
   {
     delete ids[id];

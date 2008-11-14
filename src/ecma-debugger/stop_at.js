@@ -39,6 +39,8 @@ var stop_at = new function()
 
   var __stopAtId = 1;
 
+  var cur_inspection_type = '';
+
   var getStopAtId = function()
   {
     return __stopAtId++;
@@ -124,6 +126,11 @@ var stop_at = new function()
     }
 
     views.callstack.update();
+
+    if( cur_inspection_type != 'frame' )
+    {
+      messages.post('active-inspection-type', {inspection_type: 'frame'});
+    }
 
     messages.post('frame-selected', {frame_index: 0});
 
@@ -284,13 +291,20 @@ var stop_at = new function()
       if( stopAt && stopAt['runtime-id'] == msg.id )
       {
         views.callstack.clearView();
-        views.frame_inspection.clearView();
+        views.inspection.clearView();
         self.__continue('run');
       }
 
     }
 
     messages.addListener('runtime-destroyed', onRuntimeDestroyed);
+
+  var onActiveInspectionType = function(msg)
+  {
+    cur_inspection_type = msg.inspection_type;
+  }
+
+  messages.addListener('active-inspection-type', onActiveInspectionType);
 
 
 
