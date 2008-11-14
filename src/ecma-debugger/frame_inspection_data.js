@@ -35,12 +35,6 @@ var Frame_inspection_data = function()
     }
   }
 
-  this.getDataFilter = function()
-  {
-    return settings['inspection'].get("hide-default-properties") 
-      && js_default_global_scope_properties || null;
-  }
-
   this.examineObject = function(rt_id, obj_id)
   {
     __selectedObject = {rt_id: rt_id, obj_id: obj_id};

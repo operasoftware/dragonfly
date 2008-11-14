@@ -34,6 +34,11 @@ var ObjectDataBase = new function()
     index = this.getObject(obj_id),
     unsorted = [index + 1 + this.getCountVirtualProperties(index), 0],
     depth = 0;
+    
+    // each object should have a class attribute 
+    // this is a workaround 
+    this.data[index][CONSTRUCTOR] || ( this.data[index][CONSTRUCTOR] = class_name );
+    
     if( obj && index > -1 )
     {
       props = obj.getElementsByTagName('property');
@@ -228,6 +233,7 @@ var ObjectDataBase = new function()
     }
     */
     var ret = [], i = index + 1, depth = this.data[index][DEPTH], prop = null;
+    ret.object_index = index;
     // it's a back refernce, return only the properties from the current level 
     // without the expanded properties
     if( target_depth > depth ) 
@@ -290,9 +296,29 @@ var ObjectDataBase = new function()
     }
   }
 
-  this.prettyPrint = function(data, target_depth, filter, filter_type)
+  this.prettyPrint = function(data, target_depth, use_filter, filter_type)
   {
-    var ret = "", prop = null, i = 0, val = "", short_val = "";
+    // opera.postError('class: '+this.data[data.object_index][CONSTRUCTOR])
+    var 
+    ret = "", 
+    prop = null, 
+    i = 0, 
+    val = "", 
+    short_val = "",
+    filter = {};
+    // TODO: create for each Interface a filter with the default value
+    if( use_filter )
+    {
+      if( filter_type == VALUE )
+      {
+        filter = { '""': 1, "null" : 1 };
+      }
+      else
+      {
+        filter = js_object_filters[ this.data[data.object_index][CONSTRUCTOR]] || {};
+      }
+    }
+   
     // in case of a back reference
     var forced_depth = data[0] && target_depth >= data[0][DEPTH] && target_depth + 1 || 0;
     var depth = 0;
