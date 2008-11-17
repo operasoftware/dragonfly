@@ -6,6 +6,8 @@ import tempfile
 import sys
 import zipfile
 import minify
+import base64
+
 
 _text_exts = (".js", ".html", ".xml", ".css")
 _directive_exts = (".xml", ".html", ".xhtml") # files that may have <!-- command.. directives
@@ -355,62 +357,44 @@ def _clobbering_copytree(src, dst, symlinks=False):
     if errors:
         raise Error, errors
 
-def _make_image_preloader(src, dstpath, img_whitelist=None):
-    """Grab all images paths under src. Calculate relative path from dstpath
-    to the image path. Make one entry per image in a preloader file placed
-    at dstpath. dstpath must be under src somewhere!"""
-    abssrc = os.path.join(os.path.abspath(src), 'ui-images')
-    imgpaths = set()
-    loaderlines = []
-    print abssrc
-    for base, dirs, files in os.walk(abssrc):
-        for filepath in [ os.path.join(abssrc, base, f) for f in files if f.endswith(_img_exts) ]:
-            p = _make_rel_url_path(dstpath, filepath)
-            loaderlines.append("\"%s\"" % p);
+def _data_uri_from_path(path):
+    if os.path.isfile(path):
+        fp = open(path, "rb")
+        return "'data:image/png;charset=utf-8;base64," + base64.b64encode(fp.read()) + "'"
+    else:
+        return None
 
-    loadertemplate = """
-(function(url_list)
-{
-  var Preload = function(url)
-  {
-    this.onload = function()
-    {
-      //opera.postError("preloaded: " + this.src);
-    };
-    this.onerror= function()
-    {
-      opera.postError("preloading of " + this.src + " has failed");
-    }
-    this.src = url;
-  };
-  url_list.forEach
-  (
-    function(url)
-    {
-      Preload.call(new Image(), url)
-    }
-  );
-})([%s]);
-"""
+def _convert_imgs_to_data_uris(src):
+    re_img = re.compile(""".*?url\((['"]?(.*?)['"])?\)""")
 
-    return loadertemplate % u",".join(loaderlines)
+    deletions = []
+    for base, dirs, files in os.walk(src):
+        for path in [ os.path.join(base, f) for f in files if f.endswith(".css") ]:
+            fp = open (path)
+            dirty = False
+            temp = tempfile.TemporaryFile(mode="wab")
+            temp = codecs.getreader("utf_8_sig")(temp)
+            for line in fp:
+                match = re_img.findall(line)
+                if match:
+                    for full, stripped in match:
+                        if stripped.startswith("data:"): continue
+                        deletions.append(stripped)
+                        uri = _data_uri_from_path(os.path.join(base, stripped))
+                        if uri:
+                            temp.write(line.replace(full, uri))
+                        else:
+                            temp.write(line)
+                            dirty = True
+                else:
+                    temp.write(line)
+                    dirty = True
 
-
-def _add_preloader(src, dst):
-    loaderstring = _make_image_preloader(src, dst)
-    for path in [os.path.join(dst, f) for f in os.listdir(dst) if f.endswith(".js")]:
-        source = codecs.open(path, "r", encoding="utf_8_sig")
-        dest = tempfile.TemporaryFile()
-        dest = codecs.getwriter("utf_8_sig")(dest)
-        dest.write(loaderstring)
-        dest.write(source.read())
-        dest.seek(0)
-        dest = codecs.getreader("utf_8_sig")(dest)
-        source.close()
-        source = codecs.open(path, "w", encoding="utf_8_sig")
-        d = dest.read()
-        source.write(d)
-        source.close()
+            if dirty:
+                fp.close()
+                fp = codecs.open(path, "w", encoding="utf_8_sig")
+                temp.seek(0)
+                fp.write(temp.read().encode("utf-8"))
 
 def _make_rel_url_path(src, dst):
     """src is a file or dir which wants to adress dst relatively, calculate
@@ -431,8 +415,6 @@ def _make_rel_url_path(src, dst):
     newpath = newpath.replace("\\", "/")
     newpath = newpath.replace("//", "/")
     return newpath
-
-
 
 def make_archive(src, dst, in_subdir=True):
     """This simply packs up the contents in the directory src into a zip
@@ -544,9 +526,9 @@ Destination can be either a directory or a zip file"""
     parser.add_option("-m", "--minify", default=False,
                       action="store_true", dest="minify",
                       help="Minify the sources")
-    parser.add_option("-p", "--preloader", default=False,
-                      action="store_true", dest="preloader",
-                      help="Generate image preloading script")
+    parser.add_option("-u", "--no-data-uri", default=True,
+                      action="store_false", dest="make_data_uris",
+                      help="Don't generate data URIs for images in css")
 
     options, args = parser.parse_args()
     
@@ -606,11 +588,12 @@ Destination can be either a directory or a zip file"""
         tempdir = tempfile.mkdtemp(".tmp", "dfbuild.")
         export(src, tempdir, process_directives=options.concat, exclude_dirs=exdirs,
                keywords=keywords, directive_vars=dirvars)
+
         if options.translate_build:
             _localize_buildout(tempdir, "src/ui-strings")
 
-        if options.preloader:
-            _add_preloader(dst, "script/")
+        if options.make_data_uris:
+            _convert_imgs_to_data_uris(dst)
 
         if options.minify:
             _minify_buildout(dst)
@@ -628,11 +611,11 @@ Destination can be either a directory or a zip file"""
         export(src, dst, process_directives=options.concat, exclude_dirs=exdirs,
                keywords=keywords, directive_vars=dirvars)
 
-        if options.preloader:
-            _add_preloader(dst , dst + "/script/")
-
         if options.translate_build:
             _localize_buildout(dst, "src/ui-strings")
+
+        if options.make_data_uris:
+            _convert_imgs_to_data_uris(dst)
             
         if options.minify:
             _minify_buildout(dst)
