@@ -379,7 +379,7 @@ def _convert_imgs_to_data_uris(src):
                 if match:
                     for full, stripped in match:
                         if stripped.startswith("data:"): continue
-                        deletions.append(stripped)
+                        deletions.append(os.path.join(base, stripped))
                         uri = _data_uri_from_path(os.path.join(base, stripped))
                         if uri:
                             temp.write(line.replace(full, uri))
@@ -395,6 +395,9 @@ def _convert_imgs_to_data_uris(src):
                 fp = codecs.open(path, "w", encoding="utf_8_sig")
                 temp.seek(0)
                 fp.write(temp.read().encode("utf-8"))
+                
+    for path in deletions:
+        if os.path.isfile(path): os.unlink(path)
 
 def _make_rel_url_path(src, dst):
     """src is a file or dir which wants to adress dst relatively, calculate
