@@ -42,6 +42,9 @@ var client = new function()
     {
       handle_fallback.apply(new XMLHttpRequest(), ["protocol-3"]);
     }
+
+
+
   }
 
   var receive = function(service, msg)
@@ -145,22 +148,26 @@ var client = new function()
     {
       handle_fallback.apply(new XMLHttpRequest(), ["protocol-3"]);
     }
-
   }
 
   var handle_fallback = function(version)
   {
+    // for local testing
+    var 
+    href = location.href,
+    root_path = href.slice(0, href.indexOf('/app') > -1 ? href.indexOf('/app') : href.indexOf('/src') ),
+    file_name = href.slice(href.lastIndexOf('/') + 1),
+    type = href.indexOf('cutting-edge') > -1 && 'cutting-edge' || 'default';
+
+    file_name = file_name.indexOf('.') > -1 && file_name || '';
     this.onload = function()
     {
       var fallback_urls = eval( "(" + this.responseText + ")" );
-      if( version in fallback_urls )
+      if( fallback_urls && fallback_urls[type] && version in fallback_urls[type] )
       {
-        var url = location.href;
-        url = ( /\/$/.test(url) && url || url.replace(/\/[^/]*$/, '/') ) + 
-          fallback_urls[version];
         if( confirm(ui_strings.S_CONFIRM_LOAD_COMPATIBLE_VERSION) )
         {
-          location = url;
+          location = root_path + fallback_urls[type][version] + file_name;
         }
       }
       else
@@ -168,7 +175,7 @@ var client = new function()
         alert(ui_strings.S_INFO_NO_COMPATIBLE_VERSION);
       }
     }
-    this.open('GET', './fall-back-urls.json');
+    this.open('GET', root_path + '/app/fall-back-urls.json');
     this.send();
   }
 
