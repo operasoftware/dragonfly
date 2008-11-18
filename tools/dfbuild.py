@@ -7,6 +7,7 @@ import sys
 import zipfile
 import minify
 import base64
+import StringIO
 
 
 _text_exts = (".js", ".html", ".xml", ".css")
@@ -366,28 +367,27 @@ def _data_uri_from_path(path):
 
 def _convert_imgs_to_data_uris(src):
     re_img = re.compile(""".*?url\((['"]?(.*?)['"])?\)""")
-
     deletions = []
     for base, dirs, files in os.walk(src):
         for path in [ os.path.join(base, f) for f in files if f.endswith(".css") ]:
-            fp = open (path)
+            fp = codecs.open(path, "r", "utf_8_sig")
             dirty = False
-            temp = tempfile.TemporaryFile(mode="wab")
-            temp = codecs.getreader("utf_8_sig")(temp)
+            temp = StringIO.StringIO()
             for line in fp:
                 match = re_img.findall(line)
                 if match:
                     for full, stripped in match:
-                        if stripped.startswith("data:"): continue
+                        if stripped.startswith("data:"): temp.write(line.encode("ascii"))
                         deletions.append(os.path.join(base, stripped))
                         uri = _data_uri_from_path(os.path.join(base, stripped))
+
                         if uri:
-                            temp.write(line.replace(full, uri))
+                            temp.write(line.replace(full, uri).encode("ascii"))
                         else:
-                            temp.write(line)
+                            temp.write(line.encode("ascii"))
                             dirty = True
                 else:
-                    temp.write(line)
+                    temp.write(line.encode("ascii"))
                     dirty = True
 
             if dirty:
@@ -395,6 +395,7 @@ def _convert_imgs_to_data_uris(src):
                 fp = codecs.open(path, "w", encoding="utf_8_sig")
                 temp.seek(0)
                 fp.write(temp.read().encode("utf-8"))
+                fp.close()
                 
     for path in deletions:
         if os.path.isfile(path): os.unlink(path)
