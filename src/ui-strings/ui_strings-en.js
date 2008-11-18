@@ -263,6 +263,10 @@ ui_strings.S_INFO_SERVICE_NOT_AVAILABLE =  "Service is not available: %s";
 /* DESC: Information shown when the user needs to select a runtime. */
 ui_strings.S_INFO_NO_RUNTIME_SELECTED =  "Select a runtime";
 
+ui_strings.S_INFO_NO_COMPATIBLE_VERSION =  "There is no compatible Opera Dragonfly version.";
+
+ui_strings.S_CONFIRM_LOAD_COMPATIBLE_VERSION = "The protocol version of Opera does not match the one which Opera Dragonfly is using.\n\nTry to load a compatible version?";
+
 
 
 /*
