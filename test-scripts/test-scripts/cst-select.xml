@@ -62,8 +62,8 @@ cst-option:hover
 }
 
 ]]></style>
-<script src="../../scripts/dom.js"/>
-<script src="../../ui-scripts/cst-select.js"/>
+<script src="../../src/scripts/dom.js"/>
+<script src="../../src/ui-scripts/cst-select.js"/>
 <script><![CDATA[
 
 
