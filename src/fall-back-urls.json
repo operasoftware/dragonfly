@@ -1,0 +1,12 @@
+﻿{
+  "default":
+  {
+    "protocol-3": "/app/core-2-1/",
+    "protocol-4": "/app/core-2-2/"
+  },
+  "cutting-edge":
+  {
+    "protocol-3": "/app/core-2-1/cutting-edge/",
+    "protocol-4": "/app/core-2-2/cutting-edge/"
+  }
+}
