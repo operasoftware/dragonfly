@@ -43,11 +43,311 @@ addEventListener('load', %s, false)
 """ % JS_ONLOAD
 }
 
+WINDOW_PROPERTIES = """[
+'Array',
+'Attr',
+'Audio',
+'Boolean',
+'CDATASection',
+'CSSMediaRule',
+'CSSPrimitiveValue',
+'CSSRule',
+'CSSRuleList',
+'CSSStyleDeclaration',
+'CSSStyleSheet',
+'CanvasGradient',
+'CanvasPattern',
+'CanvasRenderingContext2D',
+'CanvasRenderingContext2DGame',
+'CanvasRenderingContext3D',
+'Comment',
+'DOMError',
+'DOMException',
+'DOMImplementationLS',
+'DOMParser',
+'Date',
+'Document',
+'DocumentFragment',
+'DocumentType',
+'Element',
+'Entity',
+'EntityReference',
+'Error',
+'EvalError',
+'Event',
+'Function',
+'HTMLAnchorElement',
+'HTMLAppletElement',
+'HTMLAreaElement',
+'HTMLBRElement',
+'HTMLBaseElement',
+'HTMLBaseFontElement',
+'HTMLBodyElement',
+'HTMLButtonElement',
+'HTMLCanvasElement',
+'HTMLCollection',
+'HTMLDListElement',
+'HTMLDataListElement',
+'HTMLDirectoryElement',
+'HTMLDivElement',
+'HTMLDocument',
+'HTMLElement',
+'HTMLEmbedElement',
+'HTMLFieldSetElement',
+'HTMLFontElement',
+'HTMLFormElement',
+'HTMLFrameElement',
+'HTMLFrameSetElement',
+'HTMLHRElement',
+'HTMLHeadElement',
+'HTMLHeadingElement',
+'HTMLHtmlElement',
+'HTMLIFrameElement',
+'HTMLImageElement',
+'HTMLInputElement',
+'HTMLIsIndexElement',
+'HTMLLIElement',
+'HTMLLabelElement',
+'HTMLLegendElement',
+'HTMLLinkElement',
+'HTMLMapElement',
+'HTMLMarqueeElement',
+'HTMLMenuElement',
+'HTMLMetaElement',
+'HTMLModElement',
+'HTMLOListElement',
+'HTMLObjectElement',
+'HTMLOptGroupElement',
+'HTMLOptionElement',
+'HTMLOptionsCollection',
+'HTMLOutputElement',
+'HTMLParagraphElement',
+'HTMLParamElement',
+'HTMLPreElement',
+'HTMLQuoteElement',
+'HTMLScriptElement',
+'HTMLSelectElement',
+'HTMLStyleElement',
+'HTMLTableCaptionElement',
+'HTMLTableCellElement',
+'HTMLTableColElement',
+'HTMLTableElement',
+'HTMLTableRowElement',
+'HTMLTableSectionElement',
+'HTMLTextAreaElement',
+'HTMLTitleElement',
+'HTMLUListElement',
+'HTMLUnknownElement',
+'Image',
+'ImageData',
+'Infinity',
+'LSException',
+'LSParser',
+'LSParserFilter',
+'Math',
+'MediaList',
+'MemoryError',
+'MutationEvent',
+'NaN',
+'NamedNodeMap',
+'Node',
+'NodeFilter',
+'NodeList',
+'Notation',
+'Number',
+'Object',
+'Option',
+'Packages',
+'ProcessingInstruction',
+'RGBColor',
+'Range',
+'RangeError',
+'RangeException',
+'ReferenceError',
+'RegExp',
+'RepetitionElement',
+'RepetitionEvent',
+'SVGAElement',
+'SVGAngle',
+'SVGAnimateColorElement',
+'SVGAnimateElement',
+'SVGAnimateMotionElement',
+'SVGAnimateTransformElement',
+'SVGAnimationElement',
+'SVGAudioElement',
+'SVGCircleElement',
+'SVGClipPathElement',
+'SVGDefsElement',
+'SVGDescElement',
+'SVGDocument',
+'SVGEllipseElement',
+'SVGException',
+'SVGFEBlendElement',
+'SVGFEColorMatrixElement',
+'SVGFEComponentTransferElement',
+'SVGFECompositeElement',
+'SVGFEConvolveMatrixElement',
+'SVGFEDiffuseLightingElement',
+'SVGFEDisplacementMapElement',
+'SVGFEDistantLightElement',
+'SVGFEFloodElement',
+'SVGFEFuncAElement',
+'SVGFEFuncBElement',
+'SVGFEFuncGElement',
+'SVGFEFuncRElement',
+'SVGFEGaussianBlurElement',
+'SVGFEImageElement',
+'SVGFEMergeElement',
+'SVGFEMergeNodeElement',
+'SVGFEMorphologyElement',
+'SVGFEOffsetElement',
+'SVGFEPointLightElement',
+'SVGFESpecularLightingElement',
+'SVGFESpotLightElement',
+'SVGFETileElement',
+'SVGFETurbulenceElement',
+'SVGFilterElement',
+'SVGFontElement',
+'SVGForeignObjectElement',
+'SVGGElement',
+'SVGGlyphElement',
+'SVGImageElement',
+'SVGLength',
+'SVGLineElement',
+'SVGLinearGradientElement',
+'SVGMPathElement',
+'SVGMarkerElement',
+'SVGMaskElement',
+'SVGMatrix',
+'SVGMissingGlyphElement',
+'SVGNumber',
+'SVGPaint',
+'SVGPathElement',
+'SVGPathSeg',
+'SVGPatternElement',
+'SVGPoint',
+'SVGPolygonElement',
+'SVGPolylineElement',
+'SVGPreserveAspectRatio',
+'SVGRGBColor',
+'SVGRadialGradientElement',
+'SVGRect',
+'SVGRectElement',
+'SVGSVGElement',
+'SVGScriptElement',
+'SVGSetElement',
+'SVGStopElement',
+'SVGStyleElement',
+'SVGSwitchElement',
+'SVGSymbolElement',
+'SVGTRefElement',
+'SVGTSpanElement',
+'SVGTextAreaElement',
+'SVGTextContentElement',
+'SVGTextElement',
+'SVGTextPathElement',
+'SVGTitleElement',
+'SVGTransform',
+'SVGUnitTypes',
+'SVGUseElement',
+'SVGVideoElement',
+'SVGViewElement',
+'SVGZoomAndPan',
+'String',
+'StyleSheetList',
+'SyntaxError',
+'Text',
+'TypeError',
+'URIError',
+'XMLDocument',
+'XMLHttpRequest',
+'XMLSerializer',
+'XPathEvaluator',
+'XPathException',
+'XPathExpression',
+'XPathNSResolver',
+'XPathNamespace',
+'XPathResult',
+'XSLTProcessor',
+'__Opera_Internal_OHVBS',
+'addEventListener',
+'addEventStream',
+'alert',
+'attachEvent',
+'back',
+'captureEvents',
+'clearInterval',
+'clearTimeout',
+'closed',
+'confirm',
+'decodeURI',
+'decodeURIComponent',
+'defaultStatus',
+'detachEvent',
+'dispatchEvent',
+'document',
+'encodeURI',
+'encodeURIComponent',
+'escape',
+'eval',
+'event',
+'forward',
+'frameElement',
+'frames',
+'getComputedStyle',
+'getSelection',
+'history',
+'innerHeight',
+'innerWidth',
+'isFinite',
+'isNaN',
+'java',
+'length',
+'location',
+'name',
+'navigate',
+'navigator',
+'netscape',
+'open',
+'opener',
+'opera',
+'outerHeight',
+'outerWidth',
+'pageXOffset',
+'pageYOffset',
+'parent',
+'parseFloat',
+'parseInt',
+'print',
+'prompt',
+'releaseEvents',
+'removeEventListener',
+'removeEventStream',
+'screen',
+'screenLeft',
+'screenTop',
+'screenX',
+'screenY',
+'self',
+'setDocument',
+'setInterval',
+'setTimeout',
+'status',
+'stop',
+'sun',
+'top',
+'undefined',
+'unescape',
+'window',
+]"""
+
+
 
 
 raw_tests = \
 [
     #[<test-name>, <mime>, <test-object>, <test-object inherits from>]
+    ['window', 'HTML', 'this', "", WINDOW_PROPERTIES],
     ['element', 'XML', "document.createElement('test')", "Node"],
 
     ['xml-document', 'HTML', "document.implementation.createDocument('', 'test', null)", "Document"],
@@ -65,6 +365,8 @@ raw_tests = \
     ['node-list', 'HTML', "document.createElement('div').getElementsByTagName('*')", ""],
 
     ['named-node-map', 'HTML', "document.createElement('div').attributes", ""],
+    
+    ['event', 'HTML', "document.createEvent('Events')", ""],
 
     
 
@@ -130,29 +432,38 @@ raw_tests = \
 
 def tests():
     for t in raw_tests:
-        test = {'name': t[0], 'test': TEMPLATES[t[1]] % (t[2], t[3]), 'mime': MIME[t[1]] }
+        test = {'name': t[0], 'test': TEMPLATES[t[1]] % (t[2], t[3], len(t) > 4 and t[4] or 'null' ), 'mime': MIME[t[1]] }
         yield test
 
 def print_result(result):
     ret = []
-    try:
-        ret.append("// depth: %s\n" % result["inheritance-depth"] )
-        if "inherits-from" in result:
-            ret.append("// inherits from: "+ result["inherits-from"] + "\n") 
-        ret.append("filters." + result["interface"] + " =\n{\n")
-        is_first = True
-        result['properties'].sort(key = lambda s: s[0])
-        for name, value in result['properties']:
-            try:
-              if not ( value.isdigit() or value in ['true', 'false', 'null', 'undefined'] ):
-                  value = "\"" + value + "\""
-            except:
-              print value
-            ret.append( ( is_first and "  " or ",\n  " ) + name + ": " + value )
-            is_first = False
-        ret.append("\n}\n\n")
-    except Exception, msg:
-        print msg
+    if result["interface"]:
+        try:
+            # ret.append("// depth: %s\n" % result["inheritance-depth"] )
+     
+            ret.append("dom_interfaces." + result["interface"] + " = function()\n{\n")
+
+            result['properties'].sort(key = lambda s: s[0])
+            for name, value in result['properties']:
+                """
+                try:
+                  if not ( value.isdigit() or value in ['true', 'false', 'null', 'undefined'] ):
+                      value = "\"" + value + "\""
+                except:
+                  print value
+                """
+                ret.append( "  this." + name + " = \"" + value +"\";\n" )
+
+            ret.append("}\n")
+            if "inherits-from" in result:
+                ret.append("dom_interfaces." + result["interface"] + ".prototype = " + \
+                                "js_object_filters." + result["inherits-from"] + ";\n")
+            ret.append("js_object_filters." + result["interface"] + " = " + \
+                            "new dom_interfaces." + result["interface"] + "();\n\n") 
+        except Exception, msg:
+            print msg
+    else:
+        print 'result["interface"] is not defined'
     return "".join(ret)
         
 def store_result(name, result, UA):
@@ -189,26 +500,29 @@ def get_inheritance_depth(interface):
 
 def set_common_keys(interface):
     ret = set()
+    default_values = ['null', '-1']
     if "sub-classes" in interface:
         for sub_class_name in interface["sub-classes"]:
             sub_class = interfaces[sub_class_name]
             if not len(ret):
-                ret = set(sub_class["properties-keys"])
+                ret = set(sub_class["props-dict"].keys())
             else:
-                ret = ret & set(sub_class["properties-keys"])
-        interface["properties-keys"] =[key for key in ret]
+                ret = ret & set(sub_class["props-dict"].keys())
+        ##interface["properties-keys"] =[key for key in ret]
         interface["properties"] = []
-        interface["props"] = {}
-        for prop in interface["properties-keys"]:
+        interface["props-dict"] = {}
+        for prop in ret:
             value = "not-set"
             for sub_class_name in interface["sub-classes"]:
                 if value == "not-set":
-                    value = interfaces[sub_class_name]["props"][prop]
-                elif not value == interfaces[sub_class_name]["props"][prop]:
-                    value = ( value == 'null' or interfaces[sub_class_name]["props"][prop] == 'null' ) and 'null' or ""
+                    value = interfaces[sub_class_name]["props-dict"][prop]
+                elif not value == interfaces[sub_class_name]["props-dict"][prop]:
+                    value = value in default_values and value \
+                            or interfaces[sub_class_name]["props-dict"][prop] in default_values and  interfaces[sub_class_name]["props-dict"][prop] \
+                            or ""
                     break
             interface["properties"].append((prop, value))
-            interface["props"][prop] = value
+            interface["props-dict"][prop] = value
 
             
 
@@ -227,26 +541,21 @@ def evaluate(results):
                 print "interface already set: ", result['interface']
             else:
                 interfaces[result['interface']] = result
-                """
-                if "inherits-from" in result:
-                    print r, 'inherits-from: ', result['inherits-from']
-                """
                 if "inherits-from" in result and not result["inherits-from"] in interfaces:
                     super = interfaces[result["inherits-from"]] = {}
                     super["interface"] = result["inherits-from"]
                     super["properties"] = []
                     if super["interface"] in inheritances:
                         super["inherits-from"] = inheritances[super["interface"]]
-                result["properties-keys"] = [prop[0] for prop in result["properties"]]
-                result["props"] = {}
-                for prop in result["properties"]:
-                    result["props"][prop[0]] = prop[1]
+                result["props-dict"] = dict(result["properties"])
+                ##result["properties-keys"] = [prop[0] for prop in result["properties"]]
+                
          
             
 
 
         except Exception, msg:
-            print "eval failed", r, msg
+            print "eval failed", msg, r, results[r]
             # error_log.write(results[r])
 
     for i in interfaces: 
@@ -296,8 +605,11 @@ def evaluate(results):
             else:
                 print super, "has no sub classes"
     """
-    f = open(os.path.join('filter.js'), 'wb')
+    f = open(os.path.join('js_object_filters.js'), 'wb')
     f.write("/*\nfilters extracted from: " + UA.replace("\r", "") + "\n*/\n\n")
+
+    f.write("window.js_object_filters || ( window.js_object_filters = {} )\n")
+    f.write("window.dom_interfaces || ( window.dom_interfaces = {} )\n\n")
     
 
     for interface in interfaces_sorted:

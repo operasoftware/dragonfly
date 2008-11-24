@@ -298,6 +298,7 @@ var ObjectDataBase = new function()
 
   this.prettyPrint = function(data, target_depth, use_filter, filter_type)
   {
+    //opera.postError('use_filter: '+  use_filter)
     // opera.postError('class: '+this.data[data.object_index][CONSTRUCTOR])
     var 
     ret = "", 
@@ -326,9 +327,45 @@ var ObjectDataBase = new function()
     {
       val = prop[VALUE];
       short_val = "";
-      if( filter && prop[filter_type] in filter )
+      if( filter && prop[filter_type] in filter  )
       {
-        continue;
+        if( filter_type == KEY )
+        {
+          switch (prop[TYPE])
+          {
+            case 'object':
+            case 'null':
+            case 'undefined':
+            {
+              if ( prop[TYPE] == filter[prop[KEY]] )
+              {
+                continue;
+              }
+            }
+            case 'string':
+            {
+              if ( val  == '"' + filter[prop[KEY]] + '"')
+              {
+                continue;
+              }
+            }
+            case 'number':
+            case 'boolean':
+            {
+              if ( val == filter[prop[KEY]] )
+              {
+                continue;
+              }
+            }
+
+          
+          }
+
+        }
+        else
+        {
+          continue;
+        }
       }
       if( val.length > MAX_VALUE_LENGTH )
       {

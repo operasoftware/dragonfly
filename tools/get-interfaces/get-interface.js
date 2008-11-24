@@ -1,5 +1,6 @@
 function()
 {
+
   var submit_result = function(result)
   {
     var form_container = document.createElementNS("http://www.w3.org/1999/xhtml", 'div');
@@ -28,14 +29,19 @@ function()
       }
       case 'function':
       {
-        ret = typeof obj;
+        ret = 'object';
         break;
       }
       case 'string':
       {
-        if( /\n/.test(obj) || obj.length > 100 ) 
+        if( obj.length > 100 ) 
         {
           ret = '' + ( Math.random() * 100000 >> 0 ) + new Date().getTime();
+          break;
+        }
+        if( /\n/.test(obj) ) 
+        {
+          ret = encodeURIComponent('' + obj);
           break;
         }
       }
@@ -48,12 +54,23 @@ function()
     return ret;
   }
 
-  var get_properties = function(obj, inherits_from)
+  var get_properties = function(obj, inherits_from, check_list)
   {
-    var prop = '', ret = '';
+    var prop = '', ret = '', check_list_checked = {}, i = 0;
     for( prop in obj )
     {
       ret += ( ret.length ? "," : "" ) + "(\"" + prop +"\",\""+ get_type(obj[prop]) + "\")";
+      check_list_checked[prop] = 1;
+    }
+    if(check_list)
+    {
+      check_list.forEach(function(item)
+      {
+        if(!check_list_checked[item])
+        {
+          ret += ( ret.length ? "," : "" ) + "(\"" + item +"\",\""+ get_type(obj[item]) + "\")";
+        }
+      });
     }
     submit_result
     (
@@ -64,5 +81,5 @@ function()
       "}"
     );
   }
-  get_properties(%s, "%s");
+  get_properties(%s, "%s", %s);
 }
