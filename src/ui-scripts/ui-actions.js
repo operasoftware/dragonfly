@@ -25,6 +25,13 @@ var EventHandler = function(type, is_capturing, handler_key)
     {
       return;
     }
+    if(event.which == 3)
+    {
+      // right click
+      event.stopPropagation();
+      event.preventDefault();
+      return;
+    }
     handler = ele.getAttribute(handler_key);
     while( !handler && ( ele = ele.parentElement ) )
     {
