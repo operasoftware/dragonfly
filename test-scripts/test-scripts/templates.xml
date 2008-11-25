@@ -1,0 +1,109 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title> </title>
+<style><![CDATA[
+.foo {color: blue}
+h2, p {margin:.2em}
+]]></style>
+<script src="../../src/scripts/dom.js"/>
+<script><![CDATA[
+
+/*
+
+TEMPLATE ::= "[" NODE_NAME { ["," TEXT] ["," TEMPLATE] } { ["," KEY "," VALUE] } "]"
+           | "[" TEMPLATE { "," TEMPLATE } "]"
+ 
+NODE_NAME :: = <dom string>
+TEXT :: = <dom string>
+KEY :: = <dom string>
+VALUE :: = <any js object except an array. a string value will by set with setAttribute(key, value), any other object as js property on the object>
+
+*/
+
+var templates =
+{
+  test_1: function()
+  {
+    return \
+    ['p', 'some text']
+  },
+  test_2: function()
+  {
+    return \
+    [
+      'div', 
+        'some text',
+        ['p', 'paragraph 1'],
+        'some text',
+        ['p', 'paragraph 2'],
+        'some text',
+        ['p', 'paragraph 3']
+    ]
+  },
+  test_3: function()
+  {
+    return \
+    [
+      'div', 
+        'some text',
+        ['p', 'paragraph 1'],
+        'some text',
+        ['p', 'paragraph 2'],
+        'some text',
+        ['p', 'paragraph 3']
+      'class', 'foo'
+    ]
+  },
+  test_4: function()
+  {
+    return \
+    [ 
+      ['p', 'paragraph 1'],
+      ['p', 'paragraph 2'],
+      ['p', 'paragraph 3']
+    ]
+  },
+  test_5: function()
+  {
+    return \
+    [
+      'p', 
+        ['input',
+          'type', 'button',
+          'value', 'click me',
+          'onclick', function(event)
+          {
+            alert(event.target.nodeName);
+          }
+        ]
+    ]
+  },
+  title: function(title) {return ['h2', title]}
+}
+
+
+onload = function()
+{
+  var 
+  template = [],
+  body =  document.getElementsByTagName('body')[0],
+  tests = ["test_1", "test_2", "test_3", "test_4", "test_5"],
+  test = "", 
+  i = 0;
+
+  for ( ; test = tests[i]; i++)
+  {
+    template[template.length] = templates["title"](test);
+    template[template.length] = templates[test]();
+  }
+
+  body.render(template);
+}
+
+]]></script>
+</head>
+
+<body>
+
+</body>
+</html>
