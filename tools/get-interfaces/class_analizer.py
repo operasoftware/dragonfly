@@ -339,6 +339,12 @@ WINDOW_PROPERTIES = """[
 'undefined',
 'unescape',
 'window',
+/* added in core 2.2 */
+'ByteArray',
+'CanvasRenderingContext3D',
+'ClientRect',
+'ClientRectList',
+'SVGPath',
 ]"""
 
 

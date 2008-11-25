@@ -23,7 +23,7 @@ var VirtualTextSearch = function()
   __script = null,
   __offset = -1,
   __length = 0,
-  __hit = null,
+  __hit = [],
   __input = null,
   __last_match_cursor = 0,
  
@@ -52,16 +52,14 @@ var VirtualTextSearch = function()
             }
             else
             {
-              __length = __offset = __length - length;
+              __length -= length;
+              __offset = 0;
             }
             cur_node = hit.splitText(length);
             span = node.insertBefore(node.ownerDocument.createElement('span'), hit);
             span.style.cssText = HIGHLIGHT_STYLE;
             span.appendChild(node.removeChild(hit));
-            if( !__hit )
-            {
-              __hit = span;
-            }
+            __hit[__hit.length] = span;
           }
           else
           {
@@ -73,16 +71,18 @@ var VirtualTextSearch = function()
       cur_node = cur_node.nextSibling;
     }
   };
+
+  this.clearHighlightSpan = function(ele)
+  {
+      var parent = ele.parentNode;
+      parent.replaceChild(ele.firstChild, ele);
+      parent.normalize();
+  }
   
   this.clearHit = function()
   {
-    if( __hit )
-    {
-      var parent = __hit.parentNode;
-      parent.replaceChild(__hit.firstChild, __hit);
-      parent.normalize();
-      __hit = null;
-    }
+    __hit.forEach(this.clearHighlightSpan);
+    __hit = [];
   }
 
   this.clearScriptContext = function()
@@ -139,7 +139,7 @@ var VirtualTextSearch = function()
       }
       else
       {
-        if(__hit)
+        if(__hit.length)
         {
           self.clearHit();
         }
@@ -207,10 +207,10 @@ var VirtualTextSearch = function()
       self.clearHit();
       search_node(div);
       source_container.parentNode.scrollLeft = 0;
-      if( __hit
-         && __hit.offsetLeft > source_container_parentNode.scrollLeft + source_container_parentNode.offsetWidth )
+      if( __hit.length
+         && __hit[0].offsetLeft > source_container_parentNode.scrollLeft + source_container_parentNode.offsetWidth )
       {
-        source_container.parentNode.scrollLeft = __hit.offsetLeft - 50;
+        source_container.parentNode.scrollLeft = __hit[0].offsetLeft - 50;
       }
       topCell.statusbar.updateInfo(ui_strings.S_TEXT_STATUS_SEARCH.
         replace("%(SEARCH_TERM)s", search_therm).
@@ -269,7 +269,8 @@ var VirtualTextSearch = function()
     __last_match_cursor = __script && __script.match_cursor || 0;
     cursor = -1;
     self.clearScriptContext();
-    container = source_container = source_container_parentNode = __hit = __input = null;
+    self.clearHit();
+    container = source_container = source_container_parentNode = __input = null;
     __offset = -1;
   }
   
