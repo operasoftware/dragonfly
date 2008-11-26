@@ -212,6 +212,8 @@ Element.prototype.getWidth=function(e)
 
 Element.prototype.spliceInnerHTML = function(str)
 {
+  this.insertAdjacentHTML('afterEnd', str);
+  /*
   var
   temp = this.ownerDocument.createElement('div-parser'),
   range = this.ownerDocument.createRange();
@@ -225,6 +227,7 @@ Element.prototype.spliceInnerHTML = function(str)
     range.selectNodeContents(this.parentNode.appendChild(temp));
   }
   this.parentNode.replaceChild(range.extractContents(), temp);
+  */
 }
 
 Element.prototype.getFirst = function(nodeName)

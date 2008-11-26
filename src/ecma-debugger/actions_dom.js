@@ -182,9 +182,19 @@ cls.DOMInspectorActions = function(id)
   */
   this.editDOM = function(event, target)
   {
-
     switch(event.target.nodeName)
     {
+      /*
+      partial fix for DFL-269
+      case 'span':
+      {
+        if(/^(?:key|value|text|node)$/.test(event.target.parentElement.nodeName) )
+        {
+          event.target.parentElement.releaseEvent('dblclick');
+        }
+        break;
+      }
+      */
       case 'key':
       case 'value':
       case 'text':
