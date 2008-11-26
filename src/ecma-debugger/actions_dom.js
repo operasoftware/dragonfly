@@ -12,6 +12,7 @@ cls.DOMInspectorActions = function(id)
 
   this.__active_container = null;
   this.__target = null;
+  this.view_id = id;
 
   var nav_filters = 
   {
@@ -184,8 +185,6 @@ cls.DOMInspectorActions = function(id)
   {
     switch(event.target.nodeName)
     {
-      /*
-      partial fix for DFL-269
       case 'span':
       {
         if(/^(?:key|value|text|node)$/.test(event.target.parentElement.nodeName) )
@@ -194,7 +193,6 @@ cls.DOMInspectorActions = function(id)
         }
         break;
       }
-      */
       case 'key':
       case 'value':
       case 'text':

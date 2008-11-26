@@ -49,9 +49,17 @@ var TextSearch = function()
       }
       cur_node = cur_node.nextSibling;
     }
+  },
+
+  update_status_bar = function()
+  {
+    topCell.statusbar.updateInfo(ui_strings.S_TEXT_STATUS_SEARCH.
+      replace("%(SEARCH_TERM)s", search_therm).
+      replace("%(SEARCH_COUNT_TOTAL)s", search_results.length).
+      replace("%(SEARCH_COUNT_INDEX)s", ( cursor + 1 )) );
   };
   
-  this.search = function(new_search_therm)
+  this.search = function(new_search_therm, old_cursor)
   {
     var cur = null, i = 0, parent = null;
     if( new_search_therm != search_therm )
@@ -61,18 +69,31 @@ var TextSearch = function()
       {
         for( ; cur = search_results[i]; i++)
         {
-          ( parent = cur.parentNode ).replaceChild(cur.firstChild, cur);
-          parent.normalize();
+          if( parent = cur.parentNode )
+          {
+            parent.replaceChild(cur.firstChild, cur);
+            parent.normalize();
+          }
         }
       }
       search_results = [];
       cursor = -1;
+
       if( search_therm.length > 2 )
       {
         if(container)
         {
           search_node(container);
-          self.highlight(true);
+          if( old_cursor && search_results[old_cursor] )
+          {
+            cursor = old_cursor;
+            search_results[cursor].style.cssText = HIGHLIGHT_STYLE;
+            update_status_bar();
+          }
+          else
+          {
+            self.highlight(true);
+          }
           
         }
       }
@@ -130,10 +151,19 @@ var TextSearch = function()
       {
         container.scrollTop += search_results[cursor].offsetTop - DEFAULT_SCROLL_MARGIN;
       }
-      topCell.statusbar.updateInfo(ui_strings.S_TEXT_STATUS_SEARCH.
-        replace("%(SEARCH_TERM)s", search_therm).
-        replace("%(SEARCH_COUNT_TOTAL)s", search_results.length).
-        replace("%(SEARCH_COUNT_INDEX)s", ( cursor + 1 )) );
+      update_status_bar();
+    }
+  }
+
+
+
+  this.revalidateSearch = function()
+  {
+    if( !search_results.every(function(hit){ return hit.parentElement } ) )
+    {
+      var new_search_therm = search_therm;
+      search_therm = '';
+      this.search(new_search_therm, cursor);
     }
   }
 

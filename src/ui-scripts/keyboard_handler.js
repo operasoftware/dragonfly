@@ -307,6 +307,7 @@ var key_identifier = new function()
     {
       __key_handler = edit_keyhandlers[actions.id];
       __container.addClass('edit-mode');
+      messages.post('action-mode-changed', {mode: 'edit', id: actions.id});
     }
   }
 
@@ -316,6 +317,7 @@ var key_identifier = new function()
     {
       __key_handler = keyhandlers[actions.id];
       __container.removeClass('edit-mode');
+      messages.post('action-mode-changed', {mode: 'default', id: actions.id});
     }
   }
 

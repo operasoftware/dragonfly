@@ -666,8 +666,17 @@ eventHandlers.click['dom-inspection-snapshot'] = function(event, target)
     }
   }
 
+  var onActionModeChanged = function(msg)
+  {
+    if( msg.id == 'dom' && msg.mode == 'default' )
+    {
+      textSearch.revalidateSearch();
+    }
+  }
+
   messages.addListener('view-created', onViewCreated);
   messages.addListener('view-destroyed', onViewDestroyed);
+  messages.addListener('action-mode-changed', onActionModeChanged);
 
   eventHandlers.input['dom-text-search'] = function(event, target)
   {
