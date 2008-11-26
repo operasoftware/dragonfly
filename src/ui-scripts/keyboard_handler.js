@@ -484,24 +484,19 @@ cls.CSSInspectorActions = function(id)
     }
   }
 
-  this.resetTarget = function()
+  this.resetTarget = function(new_container)
   {
-    // opera.postError('reset target')
     if( self.__active_container && self.__target && !self.__active_container.parentNode )
     {
-      var new_container = document.getElementById(self.__active_container.id);
-      if(new_container)
+      var 
+      targets = self.__active_container.getElementsByTagName(self.__target.nodeName),
+      target = null, 
+      i = 0;
+      for( ; ( target = targets[i] ) && target != self.__target; i++ );
+      if( target && ( target = new_container.getElementsByTagName(self.__target.nodeName)[i] ) )
       {
-        var 
-        targets = self.__active_container.getElementsByTagName(self.__target.nodeName),
-        target = null, 
-        i = 0;
-        for( ; ( target = targets[i] ) && target != self.__target; i++ );
-        if( target && ( target = new_container.getElementsByTagName(self.__target.nodeName)[i] ) )
-        {
-          self.__active_container = new_container;
-          self.setSelected(target);
-        }
+        self.__active_container = new_container;
+        self.setSelected(target);
       }
     }
   }
@@ -556,7 +551,7 @@ cls.CSSInspectorActions = function(id)
 
   this.setActiveContainer = function(event, container)
   {
-    // opera.postError('set active container')
+    self.resetTarget(container);
     self.__active_container = container;
     if ( !self.__target || !self.__target.parentElement )
     {
@@ -571,7 +566,6 @@ cls.CSSInspectorActions = function(id)
 
   this.clearActiveContainer = function()
   {
-    // opera.postError('clear active container')
     self.clearSelected();
   }
 
@@ -746,10 +740,13 @@ cls.CSSInspectorActions = function(id)
 
   var onViewCreated = function(msg)
   {
+    /*
     if(msg.id == "css-inspector" )
     {
+
       self.resetTarget();
     }
+    */
   }
   messages.addListener('view-created', onViewCreated)
 
