@@ -200,7 +200,7 @@ var action_handler = new function()
           {
 
             parent_parent.insertAfter( parent_parent.getElementsByTagName('end-search-scope')[0], parent);
-            parent.spliceInnerHTML(window[data_id].prettyPrint(data, depth, settings['inspection'].get("hide-default-properties"), window[data_id].filter_type));
+            parent.insertAdjacentHTML('afterEnd', window[data_id].prettyPrint(data, depth, settings['inspection'].get("hide-default-properties"), window[data_id].filter_type));
             parent_parent.insertAfter( parent_parent.getElementsByTagName('start-search-scope')[0], parent);
             cur_2 = parent_parent.getElementsByClassName('search-scope');
             while( cur = cur_2[0] )

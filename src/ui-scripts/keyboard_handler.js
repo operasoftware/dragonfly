@@ -486,6 +486,7 @@ cls.CSSInspectorActions = function(id)
 
   this.resetTarget = function()
   {
+    // opera.postError('reset target')
     if( self.__active_container && self.__target && !self.__active_container.parentNode )
     {
       var new_container = document.getElementById(self.__active_container.id);
@@ -555,6 +556,7 @@ cls.CSSInspectorActions = function(id)
 
   this.setActiveContainer = function(event, container)
   {
+    // opera.postError('set active container')
     self.__active_container = container;
     if ( !self.__target || !self.__target.parentElement )
     {
@@ -569,6 +571,7 @@ cls.CSSInspectorActions = function(id)
 
   this.clearActiveContainer = function()
   {
+    // opera.postError('clear active container')
     self.clearSelected();
   }
 
