@@ -44,6 +44,9 @@
  *     <dt>view-destroyed</dt>
  *     <dd>Payload: msg.id</dd>
  *
+ *     <dt>action-mode-changed</dt>
+ *     <dd>Payload: msg.mode, msg.id</dd>
+ *
  *     <dt>runtime-stopped</dt>
  *     <dd>Payload: msg.id</dd>
  *
