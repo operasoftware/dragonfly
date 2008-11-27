@@ -602,7 +602,11 @@ new ToolbarConfig
     {
       handler: 'dom-inspection-export',
       title: ui_strings.S_BUTTON_LABEL_EXPORT_DOM
-    }
+    }/*,
+    {
+      handler: 'df-show-live-source',
+      title: 'show live source of DF'
+    }*/
   ],
   [
     {
@@ -639,6 +643,11 @@ new Switches
 eventHandlers.click['dom-inspection-snapshot'] = function(event, target)
 {
   dom_data.getSnapshot();
+};
+
+eventHandlers.click['df-show-live-source'] = function(event, target)
+{
+  debug_helpers.liveSource.open();
 };
 
 
