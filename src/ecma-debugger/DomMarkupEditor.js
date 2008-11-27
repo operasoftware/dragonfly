@@ -92,12 +92,12 @@ var DOMMarkupEditor = function()
     
     if(nav_target)
     {
+      var tag = tagManager.setCB(this, this.on_exit_edit, [state, nav_target]);
       var script = "host_target.exit_edit()";
       services['ecmascript-debugger'].eval
       ( 
-        0, state.rt_id, '', '', script, ['host_target', state.host_target]
+        tag, state.rt_id, '', '', script, ['host_target', state.host_target]
       );
-      this.on_exit_edit(state, nav_target);
     }
     return nav_target;
   }
@@ -114,13 +114,13 @@ var DOMMarkupEditor = function()
     {
       if(state.outerHTML != this.context_cur.outerHTML)
       {
+        var tag = tagManager.setCB(this, this.on_exit_edit, [state, nav_target]);
         var script = "host_target.cancel_edit()";
         services['ecmascript-debugger'].eval
         ( 
-          0, state.rt_id, '', '', script, ['host_target', state.host_target]
+          tag, state.rt_id, '', '', script, ['host_target', state.host_target]
         );
       }
-      this.on_exit_edit(state, nav_target);
     }
     return nav_target;
   }
@@ -163,13 +163,20 @@ var DOMMarkupEditor = function()
 
   // helpers
 
-  this.on_exit_edit = function(state, nav_target)
+  this.on_exit_edit = function(xml, state, nav_target)
   {
-    // to remove the textarea_container from the dom
-    nav_target.textContent = "";
-    this.context_cur = this.context_enter = null;
-    dom_data.closeNode(state.parent_obj_id, true);
-    dom_data.getChildernFromNode(state.parent_obj_id);
+    if( xml.getNodeData('status') == 'completed' )
+    {
+      // to remove the textarea_container from the dom
+      nav_target.textContent = "";
+      this.context_cur = this.context_enter = null;
+      dom_data.closeNode(state.parent_obj_id, true);
+      dom_data.getChildernFromNode(state.parent_obj_id);
+    }
+    else
+    {
+      opera.postError('exit markup edit failed in DOMMarkupEditor');
+    }
   };
 
   var encode = function(str)

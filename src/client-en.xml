@@ -55,7 +55,7 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./scripts/TextSearch.js"/>
 <script src="./scripts/VirtualTextSearch.js"/>
 <script src="./scripts/colors.js"/>
-
+<script src="./scripts/debug-helpers-liveSource.js"/>
 
 <script src="./ui-scripts/defaults.js"/>
 <script src="./ui-scripts/window.js"/>
