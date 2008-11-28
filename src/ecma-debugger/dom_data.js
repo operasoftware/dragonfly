@@ -404,7 +404,6 @@ var dom_data = new function()
 
   this.closeNode = function(object_id, do_not_update)
   {
-    opera.postError(object_id +' '+JSON.stringify(data));
     var i = 0, j = 0, level = 0, k = 0, view_id = '';
     for( ; data[i] && data[i][ID] != object_id; i++ );
     if( data[i] )
