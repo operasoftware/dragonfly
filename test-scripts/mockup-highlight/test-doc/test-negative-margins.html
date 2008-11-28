@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+<title> </title>
+<style>
+body
+{
+
+}
+ul
+{
+  width: 200px;
+  margin:auto;
+}
+li 
+{
+  padding: 20px;
+  border: 5px solid #66f;
+  margin: 20px;
+}
+</style>
+<script>
+/*
+var getRealTarget = function(event)
+{
+  var x = event.pageX, y = event.pageY;
+  event.target.style.display= 'none';
+  var target = document.elementFromPoint(x,y);
+  while(target && target.nodeType != 1 && ( target = target.parentNode ) );
+
+  event.target.style.removeProperty('display');
+  opera.postError(target && target.nodeName || 'no target');
+}
+document.addEventListener('click', getRealTarget, false);
+*/
+</script>
+</head>
+
+<body>
+<h1>test</h1>
+<ul>
+<li><span>item 1</span>
+<li style="margin-left: -20px"><span>item 2</span>
+<li style="margin-top: -35px"><span>item 3</span>
+<li><span>item 4</span>
+<li><span>item 5</span>
+<li style="margin: -50px -150px 70px 150px; border-color: #00f;"><span>item 3a</span>
+<li><span>item 6</span>
+<li><span>item 7</span>
+<li><span>item 4</span>
+<li style="margin: 20px -100px 20px 100px; border-color: #00f; "><span>item 5</span>
+<li><span>item 4</span>
+<li style="margin: 20px -220px 20px 220px; border-color: #0ff; "><span>item 5</span>
+<li><span>item 4</span>
+<li style="margin: -50px -100px 70px 100px; border-color: #f0f; "><span>item 5</span>
+<li><span>item 4</span>
+<li style="margin: -100px -100px 120px 100px; border-color: red; "><span>item 5</span>
+<li><span>item 6</span>
+<li style="margin: -100px -220px 120px 220px; border-color: #fc0; "><span>item 5</span>
+<li><span>item 7</span>
+</ul>
+</body>
+</html>
