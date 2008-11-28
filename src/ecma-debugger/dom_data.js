@@ -409,6 +409,7 @@ var dom_data = new function()
 
   this.closeNode = function(object_id, do_not_update)
   {
+    opera.postError(object_id +' '+JSON.stringify(data));
     var i = 0, j = 0, level = 0, k = 0, view_id = '';
     for( ; data[i] && data[i][ID] != object_id; i++ );
     if( data[i] )
@@ -418,6 +419,7 @@ var dom_data = new function()
       j = i;
       while( data[j] && data[j][ DEPTH ] > level ) j++;
       data.splice(i, j - i);
+      
       if(!do_not_update)
       {
         for( ; view_id = view_ids[k]; k++)
@@ -683,7 +685,7 @@ var dom_data = new function()
     if( data[i] )
     {
       depth = data[i][DEPTH];
-      for( ; data[i] && data[i][DEPTH] == depth; i-- );
+      for( ; data[i] && !( ( data[i][TYPE] == 1 || data[i][TYPE] == 9 ) && data[i][DEPTH] < depth ); i-- );
       return data[i] && data[i][ID] || '';
     }
   }
