@@ -1,4 +1,4 @@
-// helper to debug the client with the built-in proxy
+﻿// helper to debug the client with the built-in proxy
 window.debug_helpers || ( window.debug_helpers = {} );
 
 debug_helpers.liveSource = new function()

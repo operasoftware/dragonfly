@@ -1,4 +1,4 @@
-/*
+﻿/*
 filters extracted from: Opera/10.00 (Windows NT 5.1; U; en) Presto/2.2.0
 */
 
