@@ -393,6 +393,7 @@ ErrorConsoleView.roughViews.createViews = function()
         if( msg.id == view_id )
         {
           textSearch.setContainer(msg.container);
+          textSearch.setFormInput(views.console.getToolbarControl( msg.container, 'console-text-search-' + view_id));
         }
       }
     
