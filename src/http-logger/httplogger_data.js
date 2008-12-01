@@ -88,11 +88,10 @@ window.HTTPLoggerData = new function()
                 var s = Math.round(parseFloat(r.request.time))
                 var e = Math.round(parseFloat(r.response.time))
                 r.duration = e-s;
-                opera.postError("duration is " + r.duration)
             }
             else
             {
-                opera.postError("times are weird. " + r.request.time + " : " + r.response.time)
+                r.duration = "?";
             }
             lastModifiedRequestId = r.id;
             _updateViews();
