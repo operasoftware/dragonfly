@@ -64,7 +64,7 @@ window.templates.request_list_row = function(n, r, sel)
         ['td', r.request.path],
         ['td', r.request.method],
         ['td', (r.response ? r.response.status : "-"), 'class', 'status-cell'],
-        ['td', (r.response ? r.response.time - r.request.time : "-"), 'class', 'time-cell'],
+        ['td', (r.duration != null ? r.duration : "-"), 'class', 'time-cell'],
         'data-requestid', r.id,
         'handler', 'request-list-select',
         'class', 'typeicon mime-' + map_mime_to_type(get_mime_from_extension(r.request.path))
