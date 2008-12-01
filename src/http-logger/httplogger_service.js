@@ -67,6 +67,7 @@ cls.HTTPLoggerService = function(name)
      *  method: "GET/POST/..",
      *  path: "/foo/bar/baz",
      *  query: "?asdf=morradi",
+     *  queryDict: {asdf: "morradi"}
      *  headers: {
      *            headername1, value: headerval1,
      *            headername2, value: [headerval2_a, headerval2_b]
@@ -127,7 +128,7 @@ cls.HTTPLoggerService = function(name)
                 retval.raw = ele.textContent;
                 var hd = this.parseResponseHeader(ele);
                 if (!hd) {
-                    opera.postError("could not parse response header!!!!111")
+                    opera.postError("could not parse response header")
                     continue;
                 }
                 retval.protocol= hd.protocol;
@@ -157,7 +158,6 @@ cls.HTTPLoggerService = function(name)
             return null;
         }
 
-        
         retval.method = reqparts[1];
         retval.query = "";
         retval.path = reqparts[2];
@@ -166,6 +166,16 @@ cls.HTTPLoggerService = function(name)
         if ((i = retval.path.indexOf("?")) > 0)
         {
             retval.query = retval.path.slice(i);
+            retval.queryDict = {};
+            retval.query.substr(1).split("&").forEach(function(e)
+            {
+                var offset = e.indexOf("=");
+                if (offset<1) { return }
+                var key = e.substr(0, offset);
+                var val = e.substr(offset+1);
+                retval.queryDict[key] = val;
+            })
+            
             retval.path = retval.path.slice(0, i);
         }
         
