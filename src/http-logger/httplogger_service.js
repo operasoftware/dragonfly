@@ -89,6 +89,7 @@ cls.HTTPLoggerService = function(name)
                 retval.method = hd.method;
                 retval.path = hd.path;
                 retval.query = hd.query;
+                retval.queryDict = hd.queryDict;
                 retval.protocol = hd.protocol;
             }
             else
