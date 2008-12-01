@@ -64,7 +64,7 @@ window.HTTPLoggerData = new function()
     {
         var r = { id:request["request-id"],
                   "request": request,
-                  response:null
+                  response:null, duration: null
                 }
 
         requestList.push(r);
@@ -80,8 +80,20 @@ window.HTTPLoggerData = new function()
     this.addResponse = function(response)
     {
         var r = requestMap[response["request-id"]];
-        if (r) {
+        if (r)
+        {
             r.response = response;
+            if (r.request.time && r.response.time)
+            {
+                var s = Math.round(parseFloat(r.request.time))
+                var e = Math.round(parseFloat(r.response.time))
+                r.duration = e-s;
+                opera.postError("duration is " + r.duration)
+            }
+            else
+            {
+                opera.postError("times are weird. " + r.request.time + " : " + r.response.time)
+            }
             lastModifiedRequestId = r.id;
             _updateViews();
         }

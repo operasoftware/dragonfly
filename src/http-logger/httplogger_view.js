@@ -77,7 +77,7 @@ cls.RequestListView = function(id, name, container_class)
                 if (req.response)
                 {
                     e.getElementsByClassName('status-cell')[0].textContent = req.response.status;
-                    e.getElementsByClassName('time-cell')[0].textContent = req.response.time - req.request.time;
+                    e.getElementsByClassName('time-cell')[0].textContent = req.duration;
                 }
             }
         }
