@@ -74,4 +74,23 @@ window.templates.request_list_row = function(n, r, sel)
     return a;
 }
 
+window.templates.request_summary = function(req)
+{
+    pairs = [];
+    for (key in req.request.queryDict) { pairs.push([key, req.request.queryDict[key]]) }
+
+    ret = [
+              ["dl", [
+                      ["dt", "Host"],
+                      ["dd", "hostname2"],
+                      ["dt", "Path:"],
+                      ["dd", req.request.path],
+                      ["dt", "Query arguments"],
+                      ["dd", (pairs.length ? ["ul", pairs.sort().map(function(e) { return ["li", e.join(" = ")] } )] : "None" ) ]
+                     ]
+               ],
+               
+          ]
+    return ret;
+}
 

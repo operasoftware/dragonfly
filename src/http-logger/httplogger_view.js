@@ -234,12 +234,13 @@ cls.RequestOverviewView = function(id, name, container_class)
         var req = HTTPLoggerData.getSelectedRequest();
         if (req)
         {
-            container.innerHTML = "<div class='padding'><h1>" + this.name + "</h1>This is the request info for " + req.request.headers["Host"] + req.request.path + "</div>";
-
-
-
-
-
+            container.clearAndRender(['div', [
+                                               ['h1', this.name],
+                                               window.templates.request_summary(req)
+                                            ],
+                                      'class', 'padding'
+                                     ]
+                                    );
         }
         else
         {
@@ -423,7 +424,7 @@ cls.ResponseBodyView = function(id, name, container_class)
         {
             container.clearAndRender(['div', [
                                                ['h1', this.name],
-                                               "Not implemented yet, but it appears that we downloaded " + req.response.headers["Content-Length"] + " bytes."
+                                               "Request body inspection not supported yet."
                                             ],
                                       'class', 'padding'
                                      ]
