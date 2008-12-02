@@ -155,7 +155,7 @@ cls.HTTPLoggerService = function(name)
         reqparts = requestline.match(/(\w*?) (.*) (.*)/);
 
         if (!reqparts || reqparts.length != 4) {
-            opera.postError("COULD NOT PARSE REQUEST:\n" + requestline);
+            opera.postError("Could not parse request: " + requestline);
             return null;
         }
 
@@ -196,7 +196,7 @@ cls.HTTPLoggerService = function(name)
         respparts = respline.match(/(\w*?) (\w*?) (.*)/);
 
         if (!respparts || respparts.length != 4) {
-            opera.postError("COULD NOT PARSE RESPONSE:\n" + respline);
+            opera.postError("Could not parse response:\n" + respline);
             return null;
         }
         

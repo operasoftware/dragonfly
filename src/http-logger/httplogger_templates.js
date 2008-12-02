@@ -81,16 +81,34 @@ window.templates.request_summary = function(req)
 
     ret = [
               ["dl", [
+                      ["dt", "Full url"],
+                      ["dd", (req.request.url + req.request.query)],
+                      ["dt", "Response"],
+                      ["dd", (req.response ? req.response.status + ": " + req.response.reason : "-")],
+                      ["dt", "Method"],
+                      ["dd", window.templates.method_spec_link(req) || req.request.method ], 
                       ["dt", "Host"],
-                      ["dd", "hostname2"],
+                      ["dd", req.request.headers["Host" || "?" ]],
                       ["dt", "Path:"],
                       ["dd", req.request.path],
                       ["dt", "Query arguments"],
                       ["dd", (pairs.length ? ["ul", pairs.sort().map(function(e) { return ["li", e.join(" = ")] } )] : "None" ) ]
-                     ]
+                    ]
                ],
                
           ]
     return ret;
 }
 
+window.templates.method_spec_link = function(req)
+{
+    if (req && req.request.method)
+    {
+        var m = req.request.method.toLowerCase();
+        if (m in method_specification_urls)
+        {
+            return ["a", req.request.method + " (spec)", "target", "_blank", "href", method_specification_urls[m]]
+        }
+    }
+    return ""
+}
