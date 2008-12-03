@@ -31,25 +31,20 @@ var TextSearch = function()
   {
     return hit[0].parentElement;
   },
-  search_node = function(node) 
+  search_node = function(node)
   {
-    var 
+    var
     text_content = container.textContent.toLowerCase(),
-    matches = [],
-    match_cursor = 0,
-    match = 0,
-    matches_length = 0,
-    pos = 0,
-    last_pos = 0,
     search_term_length = search_therm.length,
+    match = text_content.indexOf(search_therm),
+    last_match = match != -1 && match + search_term_length || 0,
     consumed_total_length = 0,
     to_consume_hit_length = 0,
     span = null,
     search_result = null,
-
     consume_node = function(node)
     {
-      if( node && ( match_cursor < matches_length || to_consume_hit_length ) )
+      if( node && ( match != -1 || to_consume_hit_length ) )
       {
         switch(node.nodeType)
         {
@@ -79,7 +74,10 @@ var TextSearch = function()
               if( match - consumed_total_length < node.nodeValue.length )
               {
                 node.splitText(match - consumed_total_length);
-                match = matches[++match_cursor];
+                if( ( match = text_content.indexOf(search_therm, last_match) ) != -1 )
+                {
+                  last_match = match + search_term_length;
+                }
                 to_consume_hit_length = search_term_length;
                 search_result = search_results[search_results.length] = [];
               }
@@ -90,14 +88,6 @@ var TextSearch = function()
         consume_node(node.nextSibling);
       }
     };
-    while( ( pos = text_content.indexOf(search_therm, last_pos) ) != -1 ) 
-    { 
-      matches[matches.length] = pos;
-      last_pos = pos + search_term_length;
-    }
-    search_results = [];
-    matches_length = matches.length;
-    match = matches[match_cursor];
     consume_node(container);
   },
     
