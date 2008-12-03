@@ -30,7 +30,9 @@ var DOMMarkupEditor = function()
   {
     var 
     ele = ref_ele || event.target,
-    rt_id = ele.parentElement.parentElement.getAttribute('rt-id'),
+    rt_id = ele.parentElement.parentElement.getAttribute('rt-id') 
+      // for DOM tree style
+      || ele.parentElement.parentElement.parentElement.getAttribute('rt-id'),
     obj_id = ele.parentElement.getAttribute('ref-id'),
     script = '',
     tag = '',
@@ -67,6 +69,7 @@ var DOMMarkupEditor = function()
 
   this.oninput = function(event)
   {
+    
     var 
     script = "",
     state = this.context_cur;
