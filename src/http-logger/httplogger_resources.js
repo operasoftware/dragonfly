@@ -1,8 +1,8 @@
 ﻿/**
  * @fileoverview
- * Mappings between http header names and URLs to the relevant spec
+ * Mappings between various types of http data and their relevant specs
  */
-header_specification_urls = {
+window.http_header_specification_urls = {
     // from HTTP spec
     "Accept": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.1",
     "Accept-Charset": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.2",
@@ -60,4 +60,15 @@ header_specification_urls = {
     "Cookie2": "http://www.ietf.org/rfc/rfc2965.txt",
     "Set-Cookie2": "http://www.ietf.org/rfc/rfc2965.txt"
     
+}
+
+window.http_method_specification_urls = {
+    "options": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.2",
+    "get": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.3",
+    "head": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.4",
+    "post": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.5",
+    "put": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.6",
+    "delete": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.7",
+    "trace": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.8",
+    "connect": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.9"
 }

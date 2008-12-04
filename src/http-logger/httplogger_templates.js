@@ -21,10 +21,10 @@ window.templates = window.templates || ( window.templates = {} );
     {
         var value = headers[name];e
         var dt = ['dt', name + ": "]
-        if (name in header_specification_urls)
+        if (name in http_header_specification_urls)
         {
             dt.push(['a', '(spec)',
-                          'href', header_specification_urls[name],
+                          'href', http_header_specification_urls[name],
                           'target', '_blank']);
         }
         
@@ -105,9 +105,9 @@ window.templates.method_spec_link = function(req)
     if (req && req.request.method)
     {
         var m = req.request.method.toLowerCase();
-        if (m in method_specification_urls)
+        if (m in http_method_specification_urls)
         {
-            return ["a", req.request.method + " (spec)", "target", "_blank", "href", method_specification_urls[m]]
+            return ["a", req.request.method + " (spec)", "target", "_blank", "href", http_method_specification_urls[m]]
         }
     }
     return ""
