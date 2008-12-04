@@ -184,7 +184,7 @@ var DOMMarkupEditor = function()
 
   var encode = function(str)
   {
-    return str.replace(/\u200F\r\n/g, "").replace(/\r\n/g, "\\n").replace(/'/g, "\\'"); 
+    return str.replace(/\r\n/g, "\\n").replace(/'/g, "\\'"); 
   };
 
   // class on the host side to update the given DOM range
@@ -472,7 +472,8 @@ var DOMMarkupEditor = function()
       parent_parent = parent.parentElement,
       margin = parseInt(parent.style.marginLeft),
       next = null;
-
+      //window.open('data:text/plain,' + encodeURIComponent(json))
+      //window.open('data:text/plain,' + encodeURIComponent(outerHTML))
       this.context_enter.outerHTML = this.context_cur.outerHTML = outerHTML;
       if( !this.base_style['font-size'] )
       {
