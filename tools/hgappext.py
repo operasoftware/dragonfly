@@ -272,7 +272,8 @@ def run_build_script(ui, repo, core_version=0, type=None, **opts):
             no_merges=None, 
             only_merges=None,
             keyword=[],
-            style="changelog"
+            style="changelog",
+            user=[]
         ) 
         sys.stdout.flush()
         sys.stdout.close()
