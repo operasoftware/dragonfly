@@ -302,4 +302,4 @@ ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_UNKNOWN = "不明なスクリプト";
 /* DESC: The script ID. */
 ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID = "スクリプト ID";
 /* DESC: Result text for the search. Please do not modify the %(VARIABLE)s . */
-ui_strings.S_TEXT_STATUS_SEARCH = "%(SEARCH_TERM)sで検索した結果： %(SEARCH_COUNT_TOTAL)s件の%(SEARCH_COUNT_INDEX)s件目";>>>>>>> other
+ui_strings.S_TEXT_STATUS_SEARCH = "%(SEARCH_TERM)sで検索した結果： %(SEARCH_COUNT_TOTAL)s件の%(SEARCH_COUNT_INDEX)s件目";
