@@ -34,4 +34,4 @@ var SettingView = function(id, name, container_class)
 
 SettingView.prototype = ViewBase;
 
-new SettingView('settings_view', 'Settings', 'scroll');
+new SettingView('settings_view', ui_strings.S_BUTTON_LABEL_SETTINGS, 'scroll');
