@@ -101,13 +101,12 @@ eventHandlers.click['settings-tabs'] = function(event, target)
   windows.showWindow('window-3', 'Settings', templates.settings(tabs), 200, 200, 200, 200);
 }
 
-eventHandlers.click['toggle-setting'] = function(event)
+eventHandlers.click['toggle-setting'] = function(event, target)
 {
-  var target = event.target;
-  var old_setting = target.parentElement.parentElement;
+  var old_setting = target.parentElement;
   var view_id = target.getAttribute('view-id');
   var view = views[view_id];
-  var setting = document.render(templates.setting( view_id, view.name, !target.hasClass('unfolded') ));
+  var setting = document.render(templates.setting( view_id, view.name, !target.firstChild.hasClass('unfolded') ));
   old_setting.parentElement.replaceChild(setting, old_setting);
 }
 

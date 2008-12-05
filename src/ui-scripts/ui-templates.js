@@ -229,14 +229,13 @@
     return ['settings-header', 
         ['input', 
           'type', 'button', 
-          'handler', 'toggle-setting', 
-          'view-id', view_id,
+          ,
       /* i think something is not jet clear here. 
           Is this id really needed?
           Will it work for composited views? */
           'tab-id', view_id  
         ].concat(is_unfolded ? ['class', 'unfolded'] : []), 
-      view_name];
+      view_name, 'handler', 'toggle-setting', 'view-id', view_id];
   }
 
   this.checkboxes = function(setting, checkbox_arr)
