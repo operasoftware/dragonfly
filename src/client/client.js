@@ -342,7 +342,7 @@ var client = new function()
 
     new CompositeView('dom_panel', ui_strings.M_VIEW_LABEL_COMPOSITE_DOM, dom_rough_layout_panel);
 
-    new CompositeView('settings_new', "Settings", settings_rough_layout);
+    new CompositeView('settings_new', ui_strings.S_BUTTON_LABEL_SETTINGS, settings_rough_layout);
 
     if( window.opera.attached != settings.general.get('window-attached') )
     {
