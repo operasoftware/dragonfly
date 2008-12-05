@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+<head>
+<title> </title>
+<style>
+
+</style>
+<script>
+
+// example how to use the arguments object as callback
+
+var event_handlers =
+{
+  get_file: function(event)
+  {
+    // this looks almost like a synchronous call to handle some data
+    // but the arguments object is used as callback
+    var url = event.target.getAttribute('data-url');
+    var file = file_data.get_url(url, arguments);
+    if( file )
+    {
+      event.target.parentNode.
+        appendChild(document.createElement('div')).
+        appendChild(document.createTextNode(file));
+    }
+  }
+}
+
+var file_data = new function()
+{
+  var files = {};
+
+  var get_url = function(url, original_arguments)
+  {
+    this.onload = function()
+    {
+      files[url] = this.responseText;
+      if( original_arguments && !original_arguments[0].__call_count )
+      {
+        original_arguments[0].__call_count = 1;
+        original_arguments.callee.apply(null, original_arguments);
+      }
+    }
+    this.open('GET', url);
+    this.send();
+  }
+
+  this.get_url = function(url, original_arguments)
+  {
+    if(files[url])
+    {
+      return files[url];
+    }
+    get_url.call(new XMLHttpRequest(), url, original_arguments);
+    return null;
+  }
+}
+
+onload = function()
+{
+  document.getElementsByTagName('input')[0].addEventListener('click', event_handlers.get_file, false);
+}
+
+</script>
+</head>
+
+<body>
+<div><input type="button" value="test" data-url="TEST">
+</div>
+</body>
+</html>
