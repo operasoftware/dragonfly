@@ -7,6 +7,12 @@ var ViewsMenu = function(menu_id)
   var hideTimeouts = new Timeouts();
   var menu = null;
   var self = this;
+
+  var default_actions =
+  [
+    {label: "Show Live Source of DF", handler: "df-show-live-source"}
+  ];
+
   this.getAllViews = function()
   {
 
@@ -59,7 +65,11 @@ var ViewsMenu = function(menu_id)
       ret = ['ul'],
       id = '',
       i = 0;
-    for( ; id = view_id_arr[i]; i++)
+    for( ; id = default_actions[i]; i++)
+    {
+      ret[ret.length] = ['li', ['h2', id.label, 'handler', id.handler, 'tabindex', '1']]
+    }
+    for( i = 0 ; id = view_id_arr[i]; i++)
     {
       ret[ret.length] = ['li', ['h2', views[id].name, 'handler', 'show-window', 'view-id', id, 'tabindex', '1']]
     }
