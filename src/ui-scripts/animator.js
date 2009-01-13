@@ -45,7 +45,7 @@ var Animator = function(target)
   var delta = target.delta;
   var iterations = target.iterations;
   var active = target.active || 0;
-  var finalState = target.final|| 0;
+  var finalState = target.ready || 0;
   var x_position = target.x_position || '0px ';
   var time_delta = target.time_delta || 30;
   var current_count = 0;
@@ -57,7 +57,8 @@ var Animator = function(target)
    */
   var spin = function()
   {
-    if( ele = document.getElementById(id) )
+    var ele = document.getElementById(id);
+    if( ele )
     {
       ele.style.backgroundPosition = x_position + ( active + ( current_count++ ) * delta ) + 'px';
       if( current_count >= iterations )
@@ -82,7 +83,8 @@ var Animator = function(target)
   this.setFinal = function()
   {
     interval = interval ? clearInterval(interval) : 0;
-    if( ele = document.getElementById(id) )
+    var ele = document.getElementById(id);
+    if( ele )
     {
       ele.style.backgroundPosition = x_position + ( finalState ) + 'px';
       current_count = 0;
@@ -110,6 +112,14 @@ var Animator = function(target)
   this.getId = function()
   {
     return id;
+  }
+
+  this.getState = function()
+  {
+    var ele = document.getElementById(id);
+    return ( interval && 'active' 
+      || ele && ele.style.backgroundPosition.indexOf(' ' + finalState + 'px') != -1 && 'final'
+      || 'initial' );
   }
 
 }

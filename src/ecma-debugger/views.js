@@ -99,17 +99,19 @@ new Settings
   // key-value map
   {
     "show-views-menu": false,
-    "window-attached": true
+    "window-attached": true,
+    "show-only-normal-and-gadget-type-windows": true
   }, 
   // key-label map
   {
-    "show-views-menu": ui_strings.S_SWITCH_SHOW_VIEWS_MENU
+    "show-views-menu": ui_strings.S_SWITCH_SHOW_VIEWS_MENU,
+    "show-only-normal-and-gadget-type-windows": ui_strings.S_SWITCH_SHOW_ONLY_NORMAL_AND_GADGETS_TYPE_WINDOWS
   },
   // settings map
   {
     checkboxes:
     [
-      "show-views-menu"
+      "show-only-normal-and-gadget-type-windows"
     ]
   }
 
@@ -209,6 +211,7 @@ new Settings
         ],
         ['input',
           'type', 'button',
+          'disabled', 'disabled',
           'value', ui_strings.S_BUTTON_TEXT_APPLY,
           'handler', 'apply-remote-debugging'
         ]
@@ -219,7 +222,9 @@ new Settings
 
 eventHandlers.change['toggle-remote-debug'] = function(event, target)
 {
-  target.parentNode.nextSibling.childNodes[1].disabled = !event.target.checked;  
+  target.parentNode.nextSibling.childNodes[1].disabled = !event.target.checked; 
+  target.parentNode.nextSibling.nextSibling.disabled = 
+    event.target.checked == settings.debug_remote_setting.get('debug-remote') 
 }
 
 eventHandlers.click['apply-remote-debugging'] = function(event, target)
@@ -231,7 +236,53 @@ eventHandlers.click['apply-remote-debugging'] = function(event, target)
     settings.debug_remote_setting.set('debug-remote', is_debug_remote);
     settings.debug_remote_setting.set('port', port);  
     client.scopeSetupClient();
+    target.disabled = 
+      target.previousSibling.previousSibling.firstChild.checked == settings.debug_remote_setting.get('debug-remote');
   }
+}
+
+
+// TODO clean up
+
+var templates = window.templates || ( window.templates = {} );
+
+templates.windowSelect = function()
+{
+  return [
+    'window-select',
+    [
+      'select',
+      'handler', this.handler
+    ]
+  ];
+}
+
+
+new ToolbarConfig
+(
+  'main-view',
+  [
+    {
+      handler: 'reload-window',
+      title: ui_strings.S_BUTTON_LABEL_RELOAD_HOST
+    }
+  ],
+  null,
+  null,
+  [
+    {
+      handler: 'select-window',
+      title: ui_strings.S_BUTTON_LABEL_SELECT_WINDOW,
+      type: 'dropdown',
+      class: 'window-select-dropdown',
+      template: templates.windowSelect
+    }
+  ]
+)
+
+eventHandlers.click['reload-window'] = function(event, target)
+{
+  runtimes.reloadWindow();
 }
 
 

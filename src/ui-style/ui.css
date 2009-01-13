@@ -65,6 +65,23 @@ top-statusbar { /**/
   overflow: hidden;
   }
 
+top-statusbar:hover 
+{
+  overflow: visible;
+  z-index: 20;
+}
+
+top-statusbar:hover info
+{
+  display: block;
+  position:absolute;
+  bottom: 0;
+  left: 60px;
+  margin: 0px;
+  background-image: -o-skin('Speed Dial Configuration Dialog Skin');
+  padding: 3px 9px 10px 5px;
+}
+
 window-statusbar { /**/
   display: block;
   background: #e1e4e9 url('../ui-images/window-dragger.png') no-repeat 100% 100%;
@@ -84,7 +101,11 @@ info { /**/
 	
 top-toolbar { /**/
   height: 26px;
+  padding-right: 0px;
+  background-color: #f5f7fa;
   }
+
+
 
 window-toolbar { /**/
   display: block;
@@ -233,7 +254,7 @@ toolbar-filters filter.focus input {
 window-select {
   display: block;
   position: relative;
-  margin: 0px 1px 0px 40px;
+  margin: 0px 1px 0px 30px;
   padding: 2px 0;
   }
 
@@ -396,7 +417,10 @@ window-controls {
   position: absolute;
   top: 0;
   right: 0;
+  z-index:1000;
   }
+
+
 
 .default-container {
   padding: 7px;
@@ -487,9 +511,13 @@ ui-menu { /**/
   width: 180px;
   cursor: pointer;
   position: absolute;
-  right:60px;
+  right:30px;
   top: 0px;
   z-index:1000;
+  }
+
+ui-menu.attached { /**/
+  right:60px;
   }
 
 ui-menu > h2 { /**/
@@ -801,7 +829,7 @@ input[key="js_source.error"] {
 input[key="threads.log-threads"] {
   background-image: url('../ui-images/btn-log-all-threads.png');
   }
-input[key$="hide-default-properties-in-global-scope"] {
+input[key$="hide-default-properties"] {
   background-image: url('../ui-images/btn-hide-global-scope.png');
   }
 input[key="css-inspector.hide-initial-values"] {
@@ -879,10 +907,10 @@ textarea-container {
   display: block;
   padding: 1px;
   position:relative;
-  z-index: 1;
+  z-index: 10;
   }
  
-textarea-inner-container {
+textarea-container textarea-inner-container {
   display: block;
   background-image: -o-skin('Speed Dial Configuration Dialog Skin');
   padding: 3px 9px 10px 5px;
@@ -898,6 +926,229 @@ textarea-container textarea{
   vertical-align: text-top;
   overflow: hidden;
   }
-  
 
+textarea-container-inline 
+{
+  display: inline-block;
+  padding: 1px;
+  line-height: 0px;
+  position:relative;
+  z-index: 1;
+}
+ 
+textarea-container-inline textarea-inner-container 
+{
+  display: inline-block;
+  background-image: -o-skin('Speed Dial Configuration Dialog Skin');
+  padding: 3px 9px 10px 5px;
+  margin: -4px -10px -11px -6px;
+}
+ 
+textarea-container-inline textarea
+{
+  border: none;
+  margin: 0;
+  padding: 0;
+  vertical-align: text-top;
+  overflow: hidden;
+  height: 0px;
+}
+
+fade-out
+{
+  display: block;
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height: 100%;
+  background:url('../ui-images/black-20.png');
+}
   
+/*
+  width: 26px;
+  height: 24px;
+  margin: 1px;
+  padding: 0;
+  */
+cst-select
+{
+  display: inline-block;
+  position: relative;
+  background-image:-o-skin('Start Skin');
+  height: 24px;
+  line-height: 24px;
+  margin: 1px 0;
+  padding: 0;
+  padding-right: 18px;
+  margin-left: 5px;
+  
+}
+
+cst-value
+{
+  display: inline-block;
+  margin-right: 18px;
+  margin-top: 1px;
+  overflow: hidden;
+  -o-text-overflow: ellipsis;
+  padding: 0 .5em;
+  height: 22px;
+}
+
+cst-drop-down
+{
+  display: block;
+  width: 18px;
+  height: 24px;
+  background-image:-o-skin('Push Button Skin');
+  margin-right: -18px;
+  vertical-align: top;
+  float: right;
+  cursor: pointer;
+}
+
+cst-drop-down:hover
+{
+  opacity: .7;
+
+}
+
+cst-drop-down:before
+{
+  display: inline-block;
+  content: "";
+  width: 18px;
+  height: 24px;
+  background-image: -o-skin('Dropdown Button Skin.pressed');
+}
+
+cst-select-option-list
+{
+  display: block;
+  position:absolute;
+  border: 1px solid hsl(0, 0%, 60%);
+  background-color: hsl(0, 0%, 97%);
+  z-index: 100;
+  max-height: 200px;
+  overflow: auto;
+  width: auto;
+}
+
+cst-option
+{
+  display: block;
+  cursor: pointer;
+  padding: .2em .5em;
+  white-space: nowrap;
+}
+
+cst-option:hover
+{
+  background-color: #009;
+  color: #fff;
+}
+
+cst-select.color
+{
+  background: none;
+  border: 1px solid #666;
+  padding: 0;
+  width: 18px;
+  margin: 0 .2em;
+  margin-left: 10px;
+  height: 18px;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+cst-select.color cst-value
+{
+  display: none;
+}
+
+cst-select.color cst-drop-down
+{
+  margin-right: -20px;
+  display: none;
+}
+
+cst-select-option-list.color
+{
+  padding: 1px;
+  overflow: visible;
+  border: none;
+  background: none;
+}
+
+cst-option-list-background
+{
+  display:block;
+  position: relative;
+  width: 160px;
+  background-image:-o-skin('Speed Dial Configuration Dialog Skin');
+  padding: 10px 15px 15px 10px;
+  margin: -1px -11px -8px -8px;
+}
+
+cst-option-list-background > div
+{
+  width: 160px;
+  margin: 5px 0 5px 5px;
+}
+
+cst-option-list-background > div:after
+{
+  display:block;
+  content: '';
+  clear: both;
+}
+
+cst-select-option-list.color cst-option
+{
+  float: left;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  margin: 3px;
+  border: 1px solid #999;
+  position: relative;
+}
+
+cst-select-option-list.color cst-selected-border
+{
+  float: left;
+  width: 1.4em;
+  height: 1.4em;
+  padding: 2px;
+  margin: 0px 1px 1px -30px;
+  border: 2px solid #999;
+}
+
+cst-select-option-list.color cst-option.selected:after
+{
+
+  display: block;
+  content: '';
+  padding: 2px;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: -4px;
+  left: -4px;;
+  border: 2px solid #666;
+}
+
+
+
+cst-select-option-list.color label 
+{
+  display: block;
+  clear: both;
+  padding: .4em 0;
+}
+
+cst-select-option-list.color [type="text"] 
+{
+  width: 2em;
+}

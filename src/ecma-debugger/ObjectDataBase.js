@@ -13,6 +13,7 @@ var ObjectDataBase = new function()
   SEARCH = 5,
   CONSTRUCTOR = 6,
   IS_VIRTUAL = 7,
+  ITEM = 8,
   MAX_VALUE_LENGTH = 50;
   
   
@@ -25,6 +26,7 @@ var ObjectDataBase = new function()
     
     var 
     obj = xml.getElementsByTagName('object')[0],
+    class_name = xml.getNodeData('class-name'),
     props = null, 
     prop = null, 
     i=0,
@@ -32,6 +34,11 @@ var ObjectDataBase = new function()
     index = this.getObject(obj_id),
     unsorted = [index + 1 + this.getCountVirtualProperties(index), 0],
     depth = 0;
+    
+    // each object should have a class attribute 
+    // this is a workaround 
+    this.data[index][CONSTRUCTOR] || ( this.data[index][CONSTRUCTOR] = class_name );
+    
     if( obj && index > -1 )
     {
       props = obj.getElementsByTagName('property');
@@ -111,7 +118,46 @@ var ObjectDataBase = new function()
         }
       }
 
-      unsorted.sort(function(a, b){ return a[KEY] < b[KEY] ? -1 : a[KEY] > b[KEY] ? 1 : 0});
+      var sort_key = function(a, b)
+      { 
+        return a[KEY] < b[KEY] ? -1 : a[KEY] > b[KEY] ? 1 : 0;
+      }
+
+      var sort_item = function(a, b)
+      { 
+        return a[ITEM] < b[ITEM] ? -1 : a[ITEM] > b[ITEM] ? 1 : 0;
+      }
+
+      if( class_name == "Array" )
+      {
+        // not very efficent, but dunno how to do it better
+        var
+        items = [],
+        attributes = [],
+        cursor = null,
+        i = 2,
+        re_d = /\d+/;
+
+        for( ; cursor = unsorted[i]; i++)
+        {
+          if( re_d.test(cursor[KEY]) )
+          {
+            cursor[ITEM] = parseInt(cursor[KEY]);
+            items[items.length] = cursor;
+          }
+          else
+          {
+            attributes[attributes.length] = cursor;
+          }
+        }
+        items = items.sort(sort_item);
+        attributes = attributes.sort(sort_key);
+        unsorted = [unsorted[0], unsorted[1]].concat(items, attributes);
+      }
+      else
+      {
+        unsorted.sort(sort_key);
+      }
       this.data.splice.apply(this.data, unsorted);
       if( org_args && !org_args[0].__call_count )
       {
@@ -187,6 +233,7 @@ var ObjectDataBase = new function()
     }
     */
     var ret = [], i = index + 1, depth = this.data[index][DEPTH], prop = null;
+    ret.object_index = index;
     // it's a back refernce, return only the properties from the current level 
     // without the expanded properties
     if( target_depth > depth ) 
@@ -249,9 +296,30 @@ var ObjectDataBase = new function()
     }
   }
 
-  this.prettyPrint = function(data, target_depth, filter, filter_type)
+  this.prettyPrint = function(data, target_depth, use_filter, filter_type)
   {
-    var ret = "", prop = null, i = 0, val = "", short_val = "";
+    //opera.postError('use_filter: '+  use_filter)
+    // opera.postError('class: '+this.data[data.object_index][CONSTRUCTOR])
+    var 
+    ret = "", 
+    prop = null, 
+    i = 0, 
+    val = "", 
+    short_val = "",
+    filter = {};
+    // TODO: create for each Interface a filter with the default value
+    if( use_filter )
+    {
+      if( filter_type == VALUE )
+      {
+        filter = { '""': 1, "null" : 1 };
+      }
+      else
+      {
+        filter = js_object_filters[ this.data[data.object_index][CONSTRUCTOR]] || {};
+      }
+    }
+   
     // in case of a back reference
     var forced_depth = data[0] && target_depth >= data[0][DEPTH] && target_depth + 1 || 0;
     var depth = 0;
@@ -259,9 +327,45 @@ var ObjectDataBase = new function()
     {
       val = prop[VALUE];
       short_val = "";
-      if( filter && prop[filter_type] in filter )
+      if( filter && prop[filter_type] in filter  )
       {
-        continue;
+        if( filter_type == KEY )
+        {
+          switch (prop[TYPE])
+          {
+            case 'object':
+            case 'null':
+            case 'undefined':
+            {
+              if ( prop[TYPE] == filter[prop[KEY]] )
+              {
+                continue;
+              }
+            }
+            case 'string':
+            {
+              if ( val  == '"' + filter[prop[KEY]] + '"')
+              {
+                continue;
+              }
+            }
+            case 'number':
+            case 'boolean':
+            {
+              if ( val == filter[prop[KEY]] )
+              {
+                continue;
+              }
+            }
+
+          
+          }
+
+        }
+        else
+        {
+          continue;
+        }
       }
       if( val.length > MAX_VALUE_LENGTH )
       {

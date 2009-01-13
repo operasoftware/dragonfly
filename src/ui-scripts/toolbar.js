@@ -60,11 +60,11 @@ var ToolbarBase = function()
       this.is_dirty = true;
       this.width = dim;
     }
-
-    dim = ( this.buttons.length 
+    dim = ( this.__is_visible  && ( 
+            this.buttons.length 
             || this.filters.length
             || this.specials.length
-            || this.customs.length )? this.default_height : 0;
+            || this.customs.length ) ) ? this.default_height : 0;
     if( dim != this.height)
     {
       this.is_dirty = true;
@@ -76,6 +76,37 @@ var ToolbarBase = function()
      
   } 
 
+  this.update_sub_class = function()
+  {
+    var toolbar = document.getElementById(this.type + '-to-' + this.cell.id);
+    if( toolbar )
+    {
+      var cst_select = toolbar.getElementsByTagName('cst-select')[0];
+      if( cst_select )
+      {
+        var 
+        width = this.width,
+        filter = toolbar.getElementsByTagName('filter')[0],
+        previousEle = cst_select.previousElementSibling;
+
+        if( filter )
+        {
+          width -= filter.offsetWidth;
+        }
+        if( previousEle )
+        {
+          width -= ( previousEle.offsetLeft + previousEle.offsetWidth );
+        }
+        cst_select.style.width = ( width - defaults['cst-select-margin-border-padding'] ) + 'px';
+      }
+    }
+  }
+
+  this.setVisibility = function(bool)
+  {
+    this.__is_visible = bool;
+  }
+
   this.setup = function(view_id)
   {
     var toolbar = document.getElementById(this.type + '-to-' + this.cell.id) || this.update();
@@ -85,35 +116,50 @@ var ToolbarBase = function()
     this.switches = switches[view_id] && switches[view_id].keys || [];
     this.specials = toolbars[view_id] && toolbars[view_id].specials || [];
     this.customs = toolbars[view_id] && toolbars[view_id].customs || [];
+    this.__view_id = view_id;
 
-    
-    if(this.filters.length)
+    var set_separator = this.buttons.length;
+
+    if(this.__is_visible)
     {
-      toolbar.render(templates.filters(this.filters));
-    }
-    if(this.buttons.length)
-    {
-      toolbar.render(templates.buttons(this.buttons));
-      toolbar.render(templates.toolbarSeparator());
-    }
-    if(this.switches.length)
-    {
-      toolbar.render(templates.switches(this.switches));
-      toolbar.render(templates.toolbarSeparator());
-    }
-    if(this.specials.length)
-    {
-      toolbar.render(templates.buttons(this.specials));
-    } 
-    if(this.customs.length)
-    {
-     
-      var custom = null, i = 0;
-      for( ; custom = this.customs[i]; i++)
+      if(this.filters.length)
       {
-        toolbar.render(custom.template());
+        toolbar.render(templates.filters(this.filters));
+      }
+      if( this.buttons.length )
+      {
+        toolbar.render(templates.buttons(this.buttons));
+      }
+      if(this.switches.length)
+      {
+        if(set_separator)
+        {
+          toolbar.render(templates.toolbarSeparator());
+        }
+        else
+        {
+          set_separator = true;
+        }
+        toolbar.render(templates.switches(this.switches));
+      }
+      if(this.specials.length)
+      {
+        if(set_separator)
+        {
+          toolbar.render(templates.toolbarSeparator());
+        }
+        toolbar.render(templates.buttons(this.specials));
       } 
-    } 
+      if(this.customs.length)
+      {
+       
+        var custom = null, i = 0;
+        for( ; custom = this.customs[i]; i++)
+        {
+          toolbar.render(custom.template(views[view_id]));
+        } 
+      } 
+    }
   }
 
   this.init = function(cell, buttons, filters, specials, customs)
@@ -172,6 +218,8 @@ var WindowToolbar = function(cell, buttons, filters, specials, customs)
 ToolbarBase.prototype = UIBase;
 Toolbar.prototype = new ToolbarBase();
 TopToolbar.prototype = new ToolbarBase();
+TopUIBase.apply(TopToolbar.prototype);
+TopToolbar.prototype.constructor = TopToolbar;
 WindowToolbar.prototype = new ToolbarBase();
 
 

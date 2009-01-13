@@ -62,6 +62,27 @@
     return null;
   }
 
+  this.setTooolbarVisibility = function(view_id, bool)
+  {
+    var child = null, i = 0;
+
+    if( this.toolbar )
+    {
+      if ( this.toolbar.__view_id == view_id && this.toolbar.isvisible() )
+      {
+        this.toolbar.setVisibility(bool);
+        this.update(this.left, this.top, true);
+      }
+    }
+    else
+    {
+      for( ; child = this.children[i]; i++ )
+      {
+        child.setTooolbarVisibility(view_id, bool);
+      }
+    }
+  }
+
   this.disableTab = function(ref_id , bool)
   {
     var tab = null, view = null, child = null, i = 0;
@@ -218,6 +239,7 @@
         }
         else
         {
+         
           this.toolbar.setDimensions(force_redraw);
           this.tab.setDimensions(force_redraw);
           this.container.setDimensions(force_redraw);
@@ -363,11 +385,13 @@
     if( this.checked_height )
     {
       this.height = this.checked_height;
+      this.checked_height = 0;
       this.is_dirty = true;
     }
     if( this.checked_width )
     {
       this.width = this.checked_width;
+      this.checked_width = 0;
       this.is_dirty = true;
     }
     var child = null, i = 0;

@@ -10,6 +10,7 @@ var dom_data = new function()
   var settings_id = 'dom';
 
   var data = []; // TODO seperated for all runtimes off the active tab
+  var mime = '';
   var data_runtime_id = '';  // data of a dom tree has always just one runtime
   var current_target = '';
   var __next_rt_id = '';
@@ -31,6 +32,16 @@ var dom_data = new function()
   PUBLIC_ID = 4,
   SYSTEM_ID = 5; 
 
+  var onResetState = function()
+  {
+    data = []; 
+    mime = '';
+    data_runtime_id = ''; 
+    current_target = '';
+    __next_rt_id = '';
+    activeWindow = [];
+  }
+
   var is_view_visible = function()
   {
     var id = '', i = 0;
@@ -45,10 +56,12 @@ var dom_data = new function()
   {
     // TODO clean up old tab
     data = []; 
+    mime = '';
     var view_id = '', i = 0;
     // the top frame is per default the active tab
     data_runtime_id = __next_rt_id || msg.activeTab[0];
     messages.post("runtime-selected", {id: data_runtime_id});
+    window['cst-selects']['document-select'].updateElement();
     activeWindow = msg.activeTab.slice(0);
     for( ; view_id = view_ids[i]; i++)
     {
@@ -64,6 +77,7 @@ var dom_data = new function()
     var rt_id = event['runtime-id'], obj_id = event['object-id'];
     current_target = obj_id;
     data = [];
+    mime = '';
     var tag = tagManager.setCB(null, handleGetDOM, [ rt_id, obj_id]);
     services['ecmascript-debugger'].inspectDOM( tag, obj_id, 'parent-node-chain-with-children', 'json' );
   }
@@ -71,11 +85,10 @@ var dom_data = new function()
 
   var domNodeRemovedHandler = function(event)
   {
-    // javascript:(function(){var e=document.getElementsByTagName('li')[0];e.parentNode.removeChild(e);})()
     // if the node is in the current data handle it otherwise not.
     var rt_id = event['runtime-id'], obj_id = event['object-id'];
     var node = null, i = 0, j = 0, level = 0, k = 0, view_id = '';
-    if( data_runtime_id == rt_id )
+    if( !( actions['dom'].editor && actions['dom'].editor.is_active ) && data_runtime_id == rt_id )
     {
       for( ; ( node = data[i] ) && obj_id != node[ID]; i++ );
       if( node  && node[TYPE] == 1 ) // don't update the dom if it's only a text node
@@ -92,7 +105,26 @@ var dom_data = new function()
     }
   }
 
+  var set_mime = function()
+  {
+    var 
+    node = null, 
+    i = 0;
 
+    for( ; node = data[i]; i++)
+    {
+      if(node[TYPE] == 1 )
+      {
+        // TODO take in account doctype if present
+        return /^[A-Z]*$/.test(node[NAME]) && "text/html" || "application/xml";
+      }
+    }
+  }
+
+  this.isTextHtml = function()
+  {
+    return data.length && mime == "text/html" || false;
+  }
 
   var handleGetDOM = function(xml, rt_id, obj_id)
   {
@@ -100,10 +132,12 @@ var dom_data = new function()
     if( json )
     {
       data = eval('(' + json +')');
+      mime = set_mime();
       if( rt_id != data_runtime_id || __next_rt_id )
       {
         data_runtime_id = rt_id;
         messages.post("runtime-selected", {id: data_runtime_id});
+        window['cst-selects']['document-select'].updateElement();
         __next_rt_id = '';
       }
       var view_id = '', i = 0;
@@ -208,6 +242,10 @@ var dom_data = new function()
           {
             host_tabs.activeTab.addEventListener('mouseover', spotlight);
           } 
+          if(settings[settings_id].get('update-on-dom-node-inserted'))
+          {
+            host_tabs.activeTab.addEventListener('DOMNodeRemoved', domNodeRemovedHandler);
+          }
           if( !data.length )
           {
             getInitialView(data_runtime_id);
@@ -237,6 +275,7 @@ var dom_data = new function()
     {
       
       data = [];
+      mime = "";
       data_runtime_id = '';
       var id = '', i = 0;
       for( ; id = view_ids[i] ; i++)
@@ -255,7 +294,10 @@ var dom_data = new function()
 
   this.getDOM = function(rt_id)
   {
-    getInitialView(rt_id);
+    if(runtime_onload_handler.check(rt_id, arguments))
+    {
+      getInitialView(rt_id);
+    }
   }
 
 
@@ -365,7 +407,7 @@ var dom_data = new function()
     services['ecmascript-debugger'].inspectDOM(tag, object_id, 'children', 'json'  );
   }
 
-  this.closeNode = function(object_id)
+  this.closeNode = function(object_id, do_not_update)
   {
     var i = 0, j = 0, level = 0, k = 0, view_id = '';
     for( ; data[i] && data[i][ID] != object_id; i++ );
@@ -376,9 +418,13 @@ var dom_data = new function()
       j = i;
       while( data[j] && data[j][ DEPTH ] > level ) j++;
       data.splice(i, j - i);
-      for( ; view_id = view_ids[k]; k++)
+      
+      if(!do_not_update)
       {
-        views[view_id].update();
+        for( ; view_id = view_ids[k]; k++)
+        {
+          views[view_id].update();
+        }
       }
     }
     else
@@ -436,16 +482,83 @@ var dom_data = new function()
     return current_target;
   }
 
-  this.getCSSPath = function()
+  var get_element_name = function(data_entry, with_ids_and_classes)
   {
-    var i = 0, j = -1, path = '';
+    var 
+    name = data_entry[NAME],
+    attrs = data_entry[ATTRS],
+    attr = null,
+    i = 0,
+    id = '',
+    class_name = '';
 
-    if(current_target)
+    if( settings.dom.get('force-lowercase') )
+    {
+      name = name.toLowerCase();
+    }
+    if(with_ids_and_classes)
+    {
+      for( ; attr = attrs[i]; i++)
+      {
+        if( attr[ATTR_KEY] == 'id' ) 
+        {
+          id = "#" + attr[ATTR_VALUE];
+        }
+        if( attr[ATTR_KEY] == 'class' ) 
+        {
+          class_name = "." + attr[ATTR_VALUE].replace(/ /g, "."); 
+        }
+      }
+    }
+    return name + id + class_name;
+  }
+
+  var parse_parent_offset = function(chain)
+  {
+    var 
+    ret = false,
+    cur = null;
+    if( chain )
+    {
+      cur = chain.pop();
+      if( cur )
+      {
+        ret = cur[1] == '1';
+      }
+      else
+      {
+        opera.postError("failed in parse_parent_offset in dom_data");
+      }
+    }
+    return ret;
+  }
+
+  this.getCSSPath = function(parent_offset_chain)
+  {
+    // parent_offset_chain array with 
+    var 
+    i = 0, 
+    j = -1,
+    path = '',
+    show_siblings = settings.dom.get('show-siblings-in-breadcrumb'),
+    show_id_and_classes = settings.dom.get('show-id_and_classes-in-breadcrumb'); 
+
+    // TODO make new settings
+
+    if( current_target )
     {
       for( ; data[i] && data[i][ID] != current_target; i ++);
       if( data[i] )
       {
-        path = data[i][NAME];
+        path = 
+        [ 
+          {
+            name: get_element_name(data[i], show_id_and_classes), 
+            id: data[i][ID],
+            combinator: "", 
+            is_parent_offset: parse_parent_offset(parent_offset_chain) 
+          }
+        ];
         j = i;
         i --;
         for(  ; data[i]; i --)
@@ -454,7 +567,35 @@ var dom_data = new function()
           {
             if(data[i][ DEPTH] <= data[j][DEPTH])
             {
-              path =  data[i][NAME] + ( data[i][DEPTH] < data[j][DEPTH] ? ' > ' : ' + ' ) + path;
+              if ( data[i][DEPTH] < data[j][DEPTH] )
+              {
+                path.splice
+                (
+                  0, 
+                  0, 
+                  {
+                    name: get_element_name(data[i], show_id_and_classes), 
+                    id: data[i][ID], 
+                    combinator: ">" ,
+                    is_parent_offset: parse_parent_offset(parent_offset_chain) 
+                  }
+                );
+              }
+              
+              else if ( show_siblings )
+              {
+                path.splice
+                (
+                  0, 
+                  0, 
+                  {
+                    name: get_element_name(data[i], show_id_and_classes), 
+                    id: data[i][ID], 
+                    combinator: "+",
+                    is_parent_offset: false
+                  }
+                );
+              }
               j = i;
             }
           } 
@@ -462,7 +603,7 @@ var dom_data = new function()
       }
       else
       {
-        opera.postError('missing refrence in getCSSPath in dom_data');
+        current_target = '';
       }
       return path;
     }
@@ -485,6 +626,68 @@ var dom_data = new function()
       host_tabs.activeTab.removeEventListener('click', clickHandlerHost);
     }
   }
+
+  // to be update from a editor
+  this.update = function(state)
+  {
+    if( state.rt_id == data_runtime_id )
+    {
+      var 
+      entry = null, 
+      i = 0,
+      obj_id = state.obj_id,
+      attrs = null,
+      attr = null, 
+      j = 0;
+      
+      for( ; data[i] && data[i][ID] != obj_id; i++ );
+      if( data[i] )
+      {
+        switch(state.type)
+        {
+          case "key":
+          case "value":
+          {
+            if( state.key )
+            {
+              attrs = data[i][ATTRS];
+              for( ; ( attr = attrs[j] ) && attr[ATTR_KEY] != state.key; j++ );
+              attr || ( attr = attrs[j] = ["", state.key, ""] );
+              if( state.value )
+              {
+                attr[ATTR_VALUE] = state.value;
+              }
+              else
+              {
+                attrs.splice(j, 1);
+              }
+            }
+            break;
+          }
+          case "text":
+          {
+            data[i][VALUE] = state.text;
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  this.getParentElement = function(obj_id)
+  {
+    var 
+    i = 0,
+    depth = 0;
+    
+    for( ; data[i] && data[i][ID] != obj_id; i++ );
+    if( data[i] )
+    {
+      depth = data[i][DEPTH];
+      for( ; data[i] && !( ( data[i][TYPE] == 1 || data[i][TYPE] == 9 ) && data[i][DEPTH] < depth ); i-- );
+      return data[i] && data[i][ID] || '';
+    }
+  }
   
   messages.addListener('active-tab', onActiveTab);
   messages.addListener('show-view', onShowView);
@@ -492,6 +695,8 @@ var dom_data = new function()
   messages.addListener('setting-changed', onSettingChange);
   messages.addListener('runtime-stopped', onRuntimeStopped);
   messages.addListener('runtime-destroyed', onRuntimeStopped);
+
+  messages.addListener('reset-state', onResetState);
 
 };
 

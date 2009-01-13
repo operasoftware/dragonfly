@@ -20,8 +20,16 @@ var EventHandler = function(type, is_capturing, handler_key)
   {
 
     var ele = event.target, handler = null, container = null;
+
     if( ele.nodeType != 1 )
     {
+      return;
+    }
+    if(event.which == 3)
+    {
+      // right click
+      event.stopPropagation();
+      event.preventDefault();
       return;
     }
     handler = ele.getAttribute(handler_key);
@@ -52,11 +60,12 @@ var EventHandler = function(type, is_capturing, handler_key)
 }
 
 new EventHandler('click');
+new EventHandler('dblclick', false, 'edit-handler');
 new EventHandler('change');
 new EventHandler('input');
-new EventHandler('keyup');
-new EventHandler('keydown');
-new EventHandler('keypress');
+new EventHandler('keyup', true);
+new EventHandler('keydown', true);
+new EventHandler('keypress', true);
 new EventHandler('mousedown');
 new EventHandler('focus', true, 'focus-handler');
 new EventHandler('blur', true, 'blur-handler');
@@ -92,13 +101,12 @@ eventHandlers.click['settings-tabs'] = function(event, target)
   windows.showWindow('window-3', 'Settings', templates.settings(tabs), 200, 200, 200, 200);
 }
 
-eventHandlers.click['toggle-setting'] = function(event)
+eventHandlers.click['toggle-setting'] = function(event, target)
 {
-  var target = event.target;
-  var old_setting = target.parentElement.parentElement;
+  var old_setting = target.parentElement;
   var view_id = target.getAttribute('view-id');
   var view = views[view_id];
-  var setting = document.render(templates.setting( view_id, view.name, !target.hasClass('unfolded') ));
+  var setting = document.render(templates.setting( view_id, view.name, !target.firstChild.hasClass('unfolded') ));
   old_setting.parentElement.replaceChild(setting, old_setting);
 }
 
@@ -130,18 +138,32 @@ eventHandlers.click['top-window-close'] = function(event)
 
 eventHandlers.click['top-window-toggle-attach'] = function(event)
 {
-  // TODO this is right now too hacky
+
+  viewsMenu.remove();
   window.topCell.onresize = function(){};
   var is_attached = ( window.opera.attached = !window.opera.attached );
+  document.documentElement.removeChild(event.target.parentNode);
+  var win_controls = document.documentElement.render(templates.window_controls(is_attached));
+
+  // TODO active window must be set correct
+  // then the window dropdown will be removed in the attached view
+  // topCell.tab.changeStyleProperty("padding-right", 60);
   if( is_attached )
   {
-    event.target.addClass('attached');
+    //topCell.tab.changeStyleProperty("padding-right", 60);
+    topCell.toolbar.changeStyleProperty("padding-right", 30);
   }
   else
   {
-    event.target.removeClass('attached');
+    //topCell.tab.changeStyleProperty("padding-right", -60);
+    topCell.toolbar.changeStyleProperty("padding-right", -30);
   }
+
   settings.general.set('window-attached',  is_attached || false);
+  if( settings.general.get('show-views-menu') )
+  {
+    viewsMenu.create();
+  }
   setTimeout(client.setupTopCell, 0);
 }
 
@@ -154,6 +176,12 @@ eventHandlers.mousedown['toolbar-switch'] = function(event)
   settings[setting].set(key, is_active);
   views.settings_view.syncSetting(setting, key, is_active);
   views[setting].update();
+  /*
+  // if the switch view is different, e.g. 'setting' is not the actual view
+  // getViewWithHandler is a bit expensive
+  var view = UIBase.getViewWithHandler(target);
+  view && view.update();
+  */
   messages.post("setting-changed", {id: setting, key: key});
   target.setAttribute('is-active', is_active ? 'true' : 'false');
 }

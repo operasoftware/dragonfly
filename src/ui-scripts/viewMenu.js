@@ -7,6 +7,12 @@ var ViewsMenu = function(menu_id)
   var hideTimeouts = new Timeouts();
   var menu = null;
   var self = this;
+
+  var default_actions =
+  [
+    {label: "Show Live Source of DF", handler: "df-show-live-source"}
+  ];
+
   this.getAllViews = function()
   {
 
@@ -59,7 +65,11 @@ var ViewsMenu = function(menu_id)
       ret = ['ul'],
       id = '',
       i = 0;
-    for( ; id = view_id_arr[i]; i++)
+    for( ; id = default_actions[i]; i++)
+    {
+      ret[ret.length] = ['li', ['h2', id.label, 'handler', id.handler, 'tabindex', '1']]
+    }
+    for( i = 0 ; id = view_id_arr[i]; i++)
     {
       ret[ret.length] = ['li', ['h2', views[id].name, 'handler', 'show-window', 'view-id', id, 'tabindex', '1']]
     }
@@ -91,12 +101,25 @@ var ViewsMenu = function(menu_id)
     }
   }
 
+  // TODO active window must be set correct
+  // then the window dropdown will be removed in the attached view
+  // topCell.tab.changeStyleProperty("padding-right", 60);
+
   this.create = function()
   {
 
     document.addEventListener('DOMNodeInserted', init, false);
     document.documentElement.render(templates.viewMenu());
-    topCell.tab.addRightPadding(200);
+    if(opera.attached)
+    {
+      //topCell.tab.changeStyleProperty("padding-right", 188);
+      topCell.toolbar.changeStyleProperty("padding-right", 188);
+    }
+    else
+    {
+      topCell.toolbar.changeStyleProperty("padding-right", 188);
+    }
+    
   }
 
   this.remove = function()
@@ -105,7 +128,15 @@ var ViewsMenu = function(menu_id)
     if(menu)
     {
       menu.parentNode.removeChild(menu);
-      topCell.tab.addRightPadding(-200);
+      if(opera.attached)
+      {
+        // topCell.tab.changeStyleProperty("padding-right", -188);
+        topCell.toolbar.changeStyleProperty("padding-right", -188);
+      }
+      else
+      {
+        topCell.toolbar.changeStyleProperty("padding-right", -188);
+      }
     }
   }
 

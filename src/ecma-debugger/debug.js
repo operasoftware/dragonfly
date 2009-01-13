@@ -18,6 +18,10 @@ var Debug = function(id, name, container_class)
   var getIndent = function(n)
   {
     var ret = '';
+    if(n < 1)
+    {
+      return ret;
+    }
     while(n--) ret += indent;
     return ret;
   }
@@ -177,7 +181,7 @@ var Debug = function(id, name, container_class)
         indentCount--;
         if( match[1] )
         {
-          /*
+          /*          
           if( match[1].length > 20  )
           {
             ret +=  match[1].slice(0, 20) +"..."+ match[2];
@@ -203,7 +207,9 @@ var Debug = function(id, name, container_class)
         ret += '\n' + getIndent(indentCount) + match[0];
         indentCount++;
       }
+      
     }
+    
     self.output(ret);
   }
 

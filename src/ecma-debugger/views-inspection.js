@@ -6,40 +6,40 @@ var cls = window.cls || ( window.cls = {} );
   * @constructor 
   * @extends ViewBase
   */
-
-cls.ObjectInspectionView = function(id, name, container_class)
+cls.InspectionView = function(id, name, container_class)
 {
 
   var self = this;
 
+  var cur_data = 'frame_inspection_data'; // or object_inspection_data
+
   this.createView = function(container)
   {
     var 
-    selectedObject = object_inspection.getSelectedObject(),
+    data_model = window[cur_data],
+    selectedObject = data_model.getSelectedObject(),
     data = null,
-    filter = null;
+    use_filter = settings['inspection'].get("hide-default-properties");
     
     if( selectedObject )
     {
-      data = object_inspection.getData(selectedObject.rt_id, selectedObject.obj_id, -1, arguments);
-      filter = object_inspection.getDataFilter();
+      data = data_model.getData(selectedObject.rt_id, selectedObject.obj_id, -1, arguments);
       if(data)
       {
         delete container.__call_count;
-        // TODO when is it the global scope?
         container.innerHTML = 
           "<examine-objects rt-id='" + selectedObject.rt_id + "' " + 
-                "data-id='object_inspection' " +
+                "data-id=" + cur_data + " " +
                 "obj-id='" + selectedObject.obj_id + "' >" +
               "<start-search-scope></start-search-scope>" +
-              object_inspection.prettyPrint(data, -1, filter, object_inspection.filter_type) + 
+              data_model.prettyPrint(data, -1, use_filter, data_model.filter_type) + 
               "<end-search-scope></end-search-scope>" +
           "</examine-objects>";
         messages.post
         ( 
           'list-search-context', 
           {
-            'data_id': 'object_inspection', 
+            'data_id': cur_data, 
             'rt_id': selectedObject.rt_id,
             'obj_id': selectedObject.obj_id, 
             'depth': '-1'
@@ -60,43 +60,50 @@ cls.ObjectInspectionView = function(id, name, container_class)
 
   this.init(id, name, container_class);
 
+  var onActiveInspectionType = function(msg)
+  {
+    cur_data = msg.inspection_type + '_inspection_data';
+  }
 
+  messages.addListener('active-inspection-type', onActiveInspectionType);
 
 }
 
-cls.ObjectInspectionView.prototype = ViewBase;
-new cls.ObjectInspectionView('object_inspection', ui_strings.M_VIEW_LABEL_OBJECT_INSPECTION, 'scroll');
+cls.InspectionView.prototype = ViewBase;
+new cls.InspectionView('inspection', ui_strings.M_VIEW_LABEL_FRAME_INSPECTION, 'scroll');
 
 
 
 new Settings
 (
   // id
-  'object_inspection', 
+  'inspection', 
   // key-value map
   {
-    'hide-default-properties-in-global-scope': true
+    'automatic-update-global-scope': false,
+    'hide-default-properties': true
   }, 
   // key-label map
   {
-    'hide-default-properties-in-global-scope': ui_strings.S_BUTTON_LABEL_HIDE_DEFAULT_PROPS_IN_GLOBAL_SCOPE
+    'automatic-update-global-scope': ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE,
+    'hide-default-properties': ui_strings.S_BUTTON_LABEL_HIDE_DEFAULT_PROPS_IN_GLOBAL_SCOPE
   },
   // settings map
   {
     checkboxes:
     [
-      'hide-default-properties-in-global-scope'
+      'hide-default-properties'
     ]
   }
 );
 
 new ToolbarConfig
 (
-  'object_inspection',
+  'inspection',
   null,
   [
     {
-      handler: 'object_inspection-text-search',
+      handler: 'inspection-text-search',
       title: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER,
       label: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER
     }
@@ -105,9 +112,9 @@ new ToolbarConfig
 
 new Switches
 (
-  'object_inspection',
+  'inspection',
   [
-    "hide-default-properties-in-global-scope"
+    "hide-default-properties"
   ]
 );
 
@@ -117,7 +124,7 @@ new Switches
 
   var onViewCreated = function(msg)
   {
-    if( msg.id == 'object_inspection' )
+    if( msg.id == 'inspection' )
     {
       listTextSearch.setContainer(msg.container);
     }
@@ -125,7 +132,7 @@ new Switches
 
   var onViewDestroyed = function(msg)
   {
-    if( msg.id == 'object_inspection' )
+    if( msg.id == 'inspection' )
     {
       listTextSearch.cleanup();
     }
@@ -133,7 +140,7 @@ new Switches
 
   var onListSearchContext = function(msg)
   {
-    if( msg.data_id == 'object_inspection' )
+    if( msg.data_id == 'inspection' )
     {
       listTextSearch.onNewContext(msg);
     }
@@ -143,14 +150,15 @@ new Switches
   messages.addListener('view-destroyed', onViewDestroyed);
 
   messages.addListener('list-search-context', onListSearchContext);
+  
 
-  eventHandlers.input['object_inspection-text-search'] = function(event, target)
+  eventHandlers.input['inspection-text-search'] = function(event, target)
   {
     listTextSearch.setInput(target);
     listTextSearch.searchDelayed(target.value);
   }
   
-  eventHandlers.keyup['object_inspection-text-search'] = function(event, target)
+  eventHandlers.keyup['inspection-text-search'] = function(event, target)
   {
     listTextSearch.handleKey(event, target);
   }

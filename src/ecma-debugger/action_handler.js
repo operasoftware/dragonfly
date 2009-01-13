@@ -59,7 +59,7 @@ var action_handler = new function()
     var frame = stop_at.getFrame(event.target['ref-id']);
     if(frame)
     {
-      topCell.showView(views['frame_inspection'].id);
+      topCell.showView(views['inspection'].id);
       messages.post('active-inspection-type', {inspection_type: 'frame'});
       messages.post('frame-selected', {frame_index: event.target['ref-id']});
       if( event.type == 'click' )
@@ -69,7 +69,10 @@ var action_handler = new function()
         {
           if( frame.script_id )
           { 
-            views.js_source.showLine( frame.script_id, frame.line - 10 );
+            var plus_lines = views.js_source.getMaxLines() <= 10 
+              ? views.js_source.getMaxLines() / 2 >> 0 
+              : 10;
+            views.js_source.showLine( frame.script_id, frame.line - plus_lines );
             views.js_source.showLinePointer( frame.line, frame.id == 0 );
           }
           else
@@ -87,40 +90,6 @@ var action_handler = new function()
 
     
   }
-
-  handlers['examine-object'] = function(event)
-  {
-    var ele = event.target.parentNode, 
-      list = null, 
-      path_arr = [], 
-      cur = ele, 
-      par = cur;
-    do
-    {
-      cur = par;
-      path_arr.unshift( parseInt( cur.getAttribute( 'ref_index' ) ) );
-    }
-    while ( ( par = cur.parentElement ) && ( par = par.parentElement ) && par.id != 'examine-objects' );
-    var obj = frame_inspection.getObject(path_arr);
-    if( !obj )
-    {
-      opera.postError("Error in action_handler handlers['examine-object']");
-    }
-    if(obj.items.length)
-    {
-      obj.items = []; // that should be done in frame_inspection
-      views.frame_inspection.clearView(path_arr);
-      event.target.style.removeProperty('background-position');
-    }
-    else
-    {
-      var runtime_id = frame_inspection.getRuntimeId();
-      var tag = tagManager.setCB(null, responseHandlers.examinObject, [runtime_id, path_arr]);
-      services['ecmascript-debugger'].examineObjects( tag, runtime_id, obj.value );
-      event.target.style.backgroundPosition = '0 -11px';
-    }
-  }
-
  
   handlers['examine-object-2'] = function(event, target)
   {
@@ -231,7 +200,7 @@ var action_handler = new function()
           {
 
             parent_parent.insertAfter( parent_parent.getElementsByTagName('end-search-scope')[0], parent);
-            parent.spliceInnerHTML(window[data_id].prettyPrint(data, depth, window[data_id].getDataFilter(), window[data_id].filter_type));
+            parent.insertAdjacentHTML('afterEnd', window[data_id].prettyPrint(data, depth, settings['inspection'].get("hide-default-properties"), window[data_id].filter_type));
             parent_parent.insertAfter( parent_parent.getElementsByTagName('start-search-scope')[0], parent);
             cur_2 = parent_parent.getElementsByClassName('search-scope');
             while( cur = cur_2[0] )
@@ -279,9 +248,9 @@ var action_handler = new function()
     var runtime = runtimes.getRuntime( ele.previousSibling && ele.previousSibling.getAttribute('runtime_id') || '' );
     if( runtime )
     {
-      topCell.showView(views.frame_inspection.id);
+      topCell.showView(views.inspection.id);
       messages.post('active-inspection-type', {inspection_type: 'object'});
-      object_inspection.showGlobalScope(runtime['runtime-id']);
+      object_inspection_data.showGlobalScope(runtime['runtime-id']);
       runtimes.setSelectedRuntime(runtime);
       views.runtimes.update();
     }
@@ -387,7 +356,7 @@ var action_handler = new function()
       runtimes.setWindowUnfolded(window_id, true);
     }
   }
-
+/*
   handlers['show-dom'] = function(event, target)
   {
     var rt_id = target.parentNode.getAttribute('runtime_id');
@@ -398,7 +367,7 @@ var action_handler = new function()
       dom_data.getDOM(rt_id);
     }
   }
-
+*/
   handlers['display-script'] = function(event)
   {
     var script_id  = event.target.getAttribute('script-id');
@@ -418,7 +387,7 @@ var action_handler = new function()
   {
     views.js_source.clearView();
     views.callstack.clearView();
-    views.frame_inspection.clearView();
+    views.inspection.clearView();
     stop_at.__continue(event.target.id.slice(9));
   }
 
@@ -647,9 +616,8 @@ var action_handler = new function()
     var obj_id = target.getAttribute('obj-id');
     messages.post('active-inspection-type', {inspection_type: 'object'});
     // if that works it should be just inspection
-    topCell.showView(views.frame_inspection.id);
+    topCell.showView(views.inspection.id);
     messages.post('object-selected', {rt_id: rt_id, obj_id: obj_id});
-
   }
 
 

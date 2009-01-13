@@ -249,10 +249,10 @@ var console_messages = new function()
 };
 
 /**
-  * @constructor 
-  * @extends ViewBase
-  */
-
+ * Error Console view
+ * @constructor
+ * @extends ViewBase
+ */
 var ErrorConsoleView = function(id, name, container_class, source)
 {
   container_class = container_class ? container_class : 'scroll error-console';
@@ -393,6 +393,7 @@ ErrorConsoleView.roughViews.createViews = function()
         if( msg.id == view_id )
         {
           textSearch.setContainer(msg.container);
+          textSearch.setFormInput(views.console.getToolbarControl( msg.container, 'console-text-search-' + view_id));
         }
       }
     
@@ -414,7 +415,7 @@ ErrorConsoleView.roughViews.createViews = function()
     
       eventHandlers.keyup['console-text-search-'+ view_id] = function(event, target)
       {
-        opera.postError("keyup in " + view_id);
+        //opera.postError("keyup in " + view_id);
         if( event.keyCode == 13 )
         {
           textSearch.highlight();

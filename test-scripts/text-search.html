@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<head>
+<title> </title>
+<link rel='stylesheet' href='../src/ui-style/syntax-highlight.css'>
+<link rel='stylesheet' href='../src/ui-style/debugger_style.css'>
+<style>
+  #search-container
+  {
+    height:500px;
+    overflow:auto;
+    position:relative;
+    border: 3px solid #ccc;
+  }
+</style>
+<script src="../src/scripts/Timeouts.js"></script>
+<script src="../src/scripts/TextSearch.js"></script>
+<script>
+
+var topCell = 
+{
+  statusbar:
+  {
+    updateInfo: function(info){document.getElementById('statusbar').value = info}
+  }
+}
+
+ui_strings =
+{
+  S_TEXT_STATUS_SEARCH: "Matches for %(SEARCH_TERM)s: Match %(SEARCH_COUNT_INDEX)s out of %(SEARCH_COUNT_TOTAL)s"
+}
+
+
+onload = function()
+{
+  var 
+  textSearch = new TextSearch(),
+  input = document.getElementsByTagName('input')[0];
+
+  input.addEventListener
+  (
+    'input',  
+    function(event)
+    {
+      textSearch.searchDelayed(this.value);
+    },
+    false
+  );
+  input.addEventListener
+  (
+    'keyup',  
+    function(event)
+    {
+      if( event.keyCode == 13 )
+      {
+        textSearch.highlight();
+      }
+    },
+    false
+  );
+  textSearch.setContainer(document.getElementById('search-container'));
+  textSearch.setFormInput(input);
+}
+</script>
+</head>
+
+<body>
+  <p><label>search: <input></label>
+  <p><label>statusbar: <input id='statusbar' style='width: 500px'></label>
+ <div id='search-container' class='dom'>
+<div class='padding' ><div style='margin-left:16px;' ><input type='button' class='open'><node>&lt;html&gt;</node></div><div style='margin-left:32px;' ><input type='button' class='open'><node>&lt;head&gt;</node></div><div style='margin-left:48px;' ><node>&lt;title&gt;</node><text > </text><node>&lt;/title&gt;</node></div><div style='margin-left:48px;' class='pre-wrap'><node>&lt;style&gt;</node><text >
+</text><node>&lt;/style&gt;</node></div><div style='margin-left:48px;' class='pre-wrap'><node>&lt;script&gt;</node><text >
+</text><node>&lt;/script&gt;</node></div><div style='margin-left:32px;' ><node>&lt;/head&gt;</node></div><div id='target-element' style='margin-left:32px;' ><input type='button' class='open'><node>&lt;body&gt;</node></div><div style='margin-left:48px;' ><input type='button' class='open'><node>&lt;p&gt;</node></div><div style='margin-left:64px;' ><node>&lt;a <key>href</key>=<value>"http://dev.opera.com"</value>&gt;</node><text >dev.opera.com <span style="color:red">o</span>pera operaopera</text><node>&lt;/a&gt;</node></div><div style='margin-left:48px;' ><node>&lt;/p&gt;</node></div><div style='margin-left:48px;' ><input type='button' class='open'><node>&lt;p&gt;</node></div><div style='margin-left:64px;' ><node>&lt;a <key>href</key>=<value>"http://dev.opera.com"</value>&gt;</node><text >dev.op<span style="color:red">e</span>ra.com</text><node>&lt;/a&gt;</node></div><div style='margin-left:48px;' ><node>&lt;/p&gt;</node></div><div style='margin-left:48px;' ><input type='button' class='open'><node>&lt;p&gt;</node></div><div style='margin-left:64px;' ><node>&lt;a <key>href</key>=<value>"http://dev.opera.com"</value>&gt;</node><text >dev.opera.com <span style="color:red">o</span>pera operaopera</text><node>&lt;/a&gt;</node></div><div style='margin-left:48px;' ><node>&lt;/p&gt;</node></div><div style='margin-left:48px;' ><input type='button' class='open'><node>&lt;p&gt;</node></div><div style='margin-left:64px;' ><node>&lt;a <key>href</key>=<value>"http://dev.opera.com"</value>&gt;</node><text >dev.op<span style="color:red">e</span>ra.com</text><node>&lt;/a&gt;</node></div><div style='margin-left:48px;' ><node>&lt;/p&gt;</node></div><div style='margin-left:48px;' ><input type='button' class='open'><node>&lt;p&gt;</node></div><div style='margin-left:64px;' ><node>&lt;a <key>href</key>=<value>"http://dev.opera.com"</value>&gt;</node><text >dev.opera.com <span style="color:red">o</span>pera operaopera</text><node>&lt;/a&gt;</node></div><div style='margin-left:48px;' ><node>&lt;/p&gt;</node></div><div style='margin-left:48px;' ><input type='button' class='open'><node>&lt;p&gt;</node></div><div style='margin-left:64px;' ><node>&lt;a <key>href</key>=<value>"http://dev.opera.com"</value>&gt;</node><text >dev.op<span style="color:red">e</span>ra.com</text><node>&lt;/a&gt;</node></div><div style='margin-left:48px;' ><node>&lt;/p&gt;</node></div><div style='margin-left:48px;' ><input type='button' class='open'><node>&lt;p&gt;</node></div><div style='margin-left:64px;' ><node>&lt;a <key>href</key>=<value>"http://dev.opera.com"</value>&gt;</node><text >dev.opera.com <span style="color:red">o</span>pera operaopera</text><node>&lt;/a&gt;</node></div><div style='margin-left:48px;' ><node>&lt;/p&gt;</node></div><div style='margin-left:48px;' ><input type='button' class='open'><node>&lt;p&gt;</node></div><div style='margin-left:64px;' ><node>&lt;a <key>href</key>=<value>"http://dev.opera.com"</value>&gt;</node><text >dev.op<span style="color:red">e</span>ra.com</text><node>&lt;/a&gt;</node></div><div style='margin-left:48px;' ><node>&lt;/p&gt;</node></div><div style='margin-left:48px;' ><input type='button' class='open'><node>&lt;p&gt;</node></div><div style='margin-left:64px;' ><node>&lt;a <key>href</key>=<value>"http://dev.opera.com"</value>&gt;</node><text >dev.opera.com <span style="color:red">o</span>pera operaopera</text><node>&lt;/a&gt;</node></div><div style='margin-left:48px;' ><node>&lt;/p&gt;</node></div><div style='margin-left:48px;' ><input type='button' class='open'><node>&lt;p&gt;</node></div><div style='margin-left:64px;' ><node>&lt;a <key>href</key>=<value>"http://dev.opera.com"</value>&gt;</node><text >dev.op<span style="color:red">e</span>ra.com</text><node>&lt;/a&gt;</node></div><div style='margin-left:48px;' ><node>&lt;/p&gt;</node></div><div style='margin-left:48px;' ><input type='button' class='open'><node>&lt;p&gt;</node></div><div style='margin-left:64px;' ><node>&lt;a <key>href</key>=<value>"http://dev.opera.com"</value>&gt;</node><text >dev.opera.com <span style="color:red">o</span>pera operaopera</text><node>&lt;/a&gt;</node></div><div style='margin-left:48px;' ><node>&lt;/p&gt;</node></div><div style='margin-left:48px;' ><input type='button' class='open'><node>&lt;p&gt;</node></div><div style='margin-left:64px;' ><node>&lt;a <key>href</key>=<value>"http://dev.opera.com"</value>&gt;</node><text >dev.op<span style="color:red">e</span>ra.com</text><node>&lt;/a&gt;</node></div><div style='margin-left:48px;' ><node>&lt;/p&gt;</node></div><div style='margin-left:48px;' ><input type='button' class='open'><node>&lt;p&gt;</node></div><div style='margin-left:64px;' ><node>&lt;a <key>href</key>=<value>"http://dev.opera.com"</value>&gt;</node><text >dev.opera.com <span style="color:red">o</span>pera operaopera</text><node>&lt;/a&gt;</node></div><div style='margin-left:48px;' ><node>&lt;/p&gt;</node></div><div style='margin-left:48px;' ><input type='button' class='open'><node>&lt;p&gt;</node></div><div style='margin-left:64px;' ><node>&lt;a <key>href</key>=<value>"http://dev.opera.com"</value>&gt;</node><text >dev.op<span style="color:red">e</span>ra.com</text><node>&lt;/a&gt;</node></div><div style='margin-left:48px;' ><node>&lt;/p&gt;</node></div><div style='margin-left:48px;' ><input type='button' class='open'><node>&lt;p&gt;</node></div><div style='margin-left:64px;' ><node>&lt;a <key>href</key>=<value>"http://dev.opera.com"</value>&gt;</node><text >dev.opera.com <span style="color:red">o</span>pera operaopera</text><node>&lt;/a&gt;</node></div><div style='margin-left:48px;' ><node>&lt;/p&gt;</node></div><div style='margin-left:48px;' ><input type='button' class='open'><node>&lt;p&gt;</node></div><div style='margin-left:64px;' ><node>&lt;a <key>href</key>=<value>"http://dev.opera.com"</value>&gt;</node><text >dev.op<span style="color:red">e</span>ra.com</text><node>&lt;/a&gt;</node></div><div style='margin-left:48px;' ><node>&lt;/p&gt;</node></div><div style='margin-left:32px;' ><node>&lt;/body&gt;</node></div><div style='margin-left:16px;' ><node>&lt;/html&gt;</node></div></div>
+
+    </div>
+  </pre>
+</body>
+</html>

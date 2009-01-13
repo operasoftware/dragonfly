@@ -2,6 +2,8 @@
   * @constructor 
   */
 
+// TODO clean up pretty printing, does contain much too much code history
+
 var stylesheets = new function()
 {
   var self = this;
@@ -16,8 +18,25 @@ var stylesheets = new function()
   var __shorthandIndexMap = [];
   var __selectedRules = null;
   var __colorIndex = 0;
+
+  var __new_rts = null;
+  var __top_rt_id = '';
+  var __on_new_stylesheets_cbs = {};
   
   var line_height_index = 0;
+
+  var onResetState = function()
+  {
+    __sheets = {};
+    __rules = {};
+    __indexMap = null;
+    __indexMapLength = 0;
+    __sortedIndexMap = [];
+    __initialValues = [];
+    __shorthandIndexMap = [];
+    __selectedRules = null;
+    __colorIndex = 0;
+  }
   
   const
   SHEET_OBJECT_ID = 0, // TODO use the right obj-id
@@ -39,10 +58,10 @@ var stylesheets = new function()
   COMMON = 11,
   // TODO <property> was introduced later, need to be cleaned up.
   MARKUP_KEY = "<property><key>",
-  MARKUP_KEY_OW = [ , "<property class='overwritten'><key>", "<property class='inherited'><key>"],
+  MARKUP_KEY_OW = "<property class='overwritten'><key>",
   MARKUP_KEY_CLOSE = "</key>: ",
   MARKUP_VALUE = "<value>",
-  MARKUP_VALUE_OW = [ , "<value>", "<value>"],
+  MARKUP_VALUE_OW = "<value>",
   MARKUP_VALUE_CLOSE = "</value>;</property>",
   MARKUP_PROP_NL = "",
   MARKUP_IMPORTANT = " !important",
@@ -50,15 +69,11 @@ var stylesheets = new function()
   MARKUP_EMPTY = "",
   HEADER = 0,
   COMP_STYLE = 0,
-  INLINE_STYLE = 1,
-  MATCHING_RULES = 2,
-  INHERITED_RULES = 3,
-  DEFAULT_VALUES = 4,
+  CSS = 1,
   PROP_LIST = 1,
   VAL_LIST = 2,
   PRIORITY_LIST = 3,
   OVERWRITTEN_LIST = 4,
-  HAS_INHERITABLE_PROPS = 5,
   SEARCH_LIST = 6,
   HAS_MATCHING_SEARCH_PROPS = 7;
   
@@ -418,7 +433,7 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   
   var prettyPrintRule = [];
 
-  prettyPrintRule[COMMON] = function(rule, do_shortcuts, check_overwritten, search_active)
+  prettyPrintRule[COMMON] = function(rule, do_shortcuts, search_active)
   {
     const
     HEADER = 0,
@@ -437,16 +452,13 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     s_h_index = [],
     s_h_value = [],
     s_h_priority = [],
-    s_h_prop = '',
-    check_inheritable = rule[HAS_INHERITABLE_PROPS];
+    s_h_prop = '';
+
+
     
     for( ; i < length; i++ )
     {
       index = index_list[i];
-      if( check_inheritable && !inherited_props_index_list[index] )
-      {
-        continue;
-      }
       if( search_active && !search_list[i] )
       {
         continue;
@@ -485,26 +497,28 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
       }
       else
       {
-        // css inspector does not shorthand properties
-        // perhaps later
-        
-        if(check_overwritten && overwrittenlist[i] )
+        if(overwrittenlist)
         {
-          ret += ( ret ? MARKUP_PROP_NL : MARKUP_EMPTY ) +
-            INDENT +
-            MARKUP_KEY_OW[overwrittenlist[i]] + __indexMap[index] + MARKUP_KEY_CLOSE +
-            MARKUP_VALUE_OW[overwrittenlist[i]] + value_list[i] + ( priority_list[i] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE;   
-        }
-        else
-        {
-          ret += ( ret ? MARKUP_PROP_NL : MARKUP_EMPTY ) +
-            INDENT +
-            MARKUP_KEY + __indexMap[index] + MARKUP_KEY_CLOSE +
-            MARKUP_VALUE + value_list[i] + ( priority_list[i] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE;   
+          // css inspector does not shorthand properties
+          // perhaps later
+          // protocol-4: overwrittenlist is now the STATUS, the meaning is inverted, 1 means applied
+          if( overwrittenlist[i] )
+          {
+            ret += ( ret ? MARKUP_PROP_NL : MARKUP_EMPTY ) +
+              INDENT +
+              MARKUP_KEY + __indexMap[index] + MARKUP_KEY_CLOSE +
+              MARKUP_VALUE + value_list[i] + ( priority_list[i] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE; 
+    
+          }
+          else
+          {
+            ret += ( ret ? MARKUP_PROP_NL : MARKUP_EMPTY ) +
+              INDENT +
+              MARKUP_KEY_OW + __indexMap[index] + MARKUP_KEY_CLOSE +
+              MARKUP_VALUE_OW + value_list[i] + ( priority_list[i] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE;   
+          }
         }
       }
-
-      
     }
     return ret;
   }
@@ -655,206 +669,117 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     return ret;
   }
   
-  prettyPrintCat_2[1] = function(data, search_active)
+  prettyPrintCat_2[CSS] = function(data, search_active)
   {
-    var node_casc = null, i = 0, ret = '', j = 0, css_style_dec = null;
-    var rt_id = data.rt_id;
+    var 
+      node_casc = null, 
+      i = 0, 
+      ret = '', 
+      j = 0, 
+      css_style_dec = null,
+      rt_id = data.rt_id,
+      node_casc_header = null,
+      style_dec_list = null,
+      style_dec = null;
+
     for( ; node_casc = data[i]; i++)
     {
+
       if( search_active && !node_casc[HAS_MATCHING_SEARCH_PROPS] )
       {
         continue;
       }
-      node_casc[0].rt_id = node_casc[1].rt_id = node_casc[2].rt_id = rt_id;
-      if( i && node_casc[ HAS_INHERITABLE_PROPS] )
+
+      if( i )
       {
-        ret += "<h2>inherited from <b>" + node_casc[0][HEADER][2] + "</b></h2>";
+        ret += "<h2>inherited from <b>" + node_casc[0][1] + "</b></h2>";
       }
       
-      ret += prettyPrintCat[INLINE_STYLE](node_casc[0], search_active, rt_id); 
-      ret += prettyPrintCat[ i ? INHERITED_RULES : MATCHING_RULES ](node_casc[1], search_active, rt_id);
-      ret += prettyPrintCat[DEFAULT_VALUES](node_casc[2], search_active, rt_id, i > 0);
+      node_casc_header = node_casc[0];
+      style_dec_list = node_casc[1];
+      for( j = 0; style_dec = style_dec_list[j]; j++)
+      {
+        ret += prettyPrintStyleDec[style_dec[0][0]](rt_id, node_casc_header, style_dec, search_active);
+      }
+
     }
     return ret;
   }
+  
+  // for protocol-4
+  const
+  PROT_4_USER_AGENT = 1, // default
+  PROT_4_LOCAL = 2, // user
+  PROT_4_AUTHOR = 3, // author
+  PROT_4_ELEMENT = 4; // inline
+  
+  var prettyPrintStyleDec = [];
 
-  /*
-  IN-LINE-STYLE ::= IN-LINE-STYLE-RULE | "null"
-  IN-LINE-STYLE-RULE ::= "[[" INDEX-LIST "],[" VALUE-LIST "],[" PRIORITY-LIST "]]"
-  */
 
-  prettyPrintCat[INLINE_STYLE] = function(data, search_active)
+  prettyPrintStyleDec[PROT_4_USER_AGENT] = 
+  function(rt_id, node_casc_header, style_dec, search_active)
   {
-
-    
-    if(data[1].length)
-    {
-      return "<rule>" + 
-        "<inline-style>element.style</inline-style>" + 
-        " {\n" + 
-            prettyPrintRule[COMMON](data, false, true, search_active) +
-        "\n}</rule>";
-    }
-    return "";
-  }
-
-  /*
-
-  STYLE-RULE ::= "["
-                    "[" STYLE-RULE-HEADER "],"
-                    "[" INDEX-LIST "],"
-                    "[" VALUE-LIST "],"
-                    "[" PRIORITY-LIST "]"
-                  "]"
-
-  STYLE-RULE-HEADER ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SPECIFICITY "," SELECTOR-TEXT
-
-
-  DIRECT-MATCHES ::= "[" STYLE-RULE { "," STYLE-RULE } "]"
-  */
-
-  prettyPrintCat[MATCHING_RULES] = function(data, search_active)
-  {
-    var ret = '', rule = null, header = null, i = 0, sheet = null;
-    //opera.postError('prettyPrintCat[MATCHING_RULES]' + JSON.stringify(data))
-    for( ; rule = data[i]; i++)
-    {
-      //opera.postError('prettyPrintCat[MATCHING_RULES]' + rule)
-      //opera.postError(data.rt_id+' '+rule[HEADER][0])
-      sheet = self.getSheetWithObjId(data.rt_id, rule[HEADER][0]);
-      if( sheet )
-      {
-        if( !search_active || rule[HAS_MATCHING_SEARCH_PROPS] )
-        {
-          ret += "<rule rule-id='" + rule[HEADER][1] + "'>" + 
-            "<stylesheet-link rt-id='" + sheet[0] + "'"+
-              " index='" + sheet[1] + "' handler='display-rule-in-stylesheet'>" + sheet[2] + 
-            "</stylesheet-link>" +
-            "<selector>" + rule[HEADER][4] + "</selector>" + 
-            " {\n" + 
-                prettyPrintRule[COMMON](rule, false, true, search_active) +
-            "\n}</rule>";
-        }
-      }
-      else
-      {
-        opera.postError('stylesheet is missing in stylesheets, prettyPrintCat[MATCHING_RULES]');
-      }
-    }
-    return ret;
-  }
-
-  /*
-  ;INHERITED-RULES ::= "[" STYLE-RULE { "," STYLE-RULE } "]"
-
-  INHERITED-RULES ::= "[" INHERITED-RULE { "," INHERITED-RULE } "]"
-  INHERITED-RULE ::= INHERITED-STYLE-RULE | INHERITED-INLINE-STYLE
-   
-  INHERITED-STYLE-RULE ::= "["
-                     "[" INHERITED-STYLE-RULE-HEADER "],"
-                     "[" INDEX-LIST "],"
-                     "[" VALUE-LIST "],"
-                     "[" PRIORITY-LIST "]"
-                   "]"
-  INHERITED-STYLE-RULE-HEADER ::= INHERITED-TYPE "," STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SPECIFICITY "," SELECTOR-TEXT
-   
-   
-  INHERITED-IN-LINE-STYLE ::= "[
-                      [" INHERITED-IN-LINE-HEADER "],
-                      [" INDEX-LIST "],
-                      [" VALUE-LIST "],
-                      [" PRIORITY-LIST "]
-                    ]"
-  INHERITED-IN-LINE-HEADER ::= INHERITED-TYPE "," OBJECT-ID "," ELEMENT-NAME
-   
-  INHERITED-TYPE ::= "inline" | "css"
-  */
-
-  prettyPrintCat[INHERITED_RULES] = function(data, search_active)
-  {
-    var ret = '', rule = null, header = null, i = 0, sheet = null;
-    for( ; rule = data[i]; i++)
-    {
-      if( rule[HAS_INHERITABLE_PROPS] && ( !search_active || rule[HAS_MATCHING_SEARCH_PROPS] ) )
-      {
-        if(rule[HEADER][0] == "inline") // inline style
-        {
-          ret += "<rule>" + 
-            "<inline-style>&lt;" + rule[HEADER][2] + "&gt;element.style</inline-style>" + 
-            " {\n" + 
-                prettyPrintRule[COMMON](rule, false, true, search_active) +
-            "\n}</rule>";
-
-        }
-        else // css style
-        {
-          sheet = self.getSheetWithObjId(data.rt_id, rule[HEADER][1]);
-          if( sheet )
-          {
-            ret += "<rule rule-id='" + rule[HEADER][2] + "'>" + 
-              "<stylesheet-link rt-id='" + sheet[0] + "'"+
-                " index='" + sheet[1] + "' handler='display-rule-in-stylesheet'>" + sheet[2] + 
-              "</stylesheet-link>" +
-              //"<span>" + rule[HEADER][3] + "</span>" +
-              "<selector>" + rule[HEADER][5] + "</selector>" + 
-              " {\n" + 
-                  prettyPrintRule[COMMON](rule, false, true, search_active) +
-              "\n}</rule>";
-          }
-          else
-          {
-            opera.postError('stylesheet is missing in stylesheets, prettyPrintCat[MATCHING_RULES]');
-          }
-        }
-      }
-    }
-    return ret;
-  }
-
-
-
-
-  /*
-  DEFAULT-RULES ::= "[" DEFAULT-STYLE-RULE { "," DEFAULT-STYLE-RULE } "]"
-
-  DEFAULT-STYLE-RULE ::= "["
-                    "[" DEFAULT-STYLE-RULE-HEADER "],"
-                    "[" INDEX-LIST "],"
-                    "[" VALUE-LIST "],"
-                    "[" PRIORITY-LIST "]"
-                  "]"
-
-  DEFAULT-STYLE-RULE-HEADER ::= OBJECT-ID "," ELEMENT-NAME
-  */
-
-  /*
-
-  prettyPrintRule[STYLE_RULE] = function(rule, do_shortcuts)
-  {
-    return "<rule rule-id='" + rule[HEADER][1] + "'>" + 
-      "<selector>" + rule[HEADER][3].join(', ') + "</selector>" + 
+    return "<rule>" +
+            "<stylesheet-link class='pseudo'>default values</stylesheet-link>" +
+      "<inline-style>" + node_casc_header[1] + "</inline-style>" + 
       " {\n" + 
-      prettyPrintRule[COMMON](rule, do_shortcuts) +
+          prettyPrintRule[COMMON](style_dec, false, search_active) +
       "\n}</rule>";
   }
 
-  */
-
-
-  prettyPrintCat[DEFAULT_VALUES] = function(data, search_active, rt_id, check_has_inheritable_props)
+  prettyPrintStyleDec[PROT_4_LOCAL] = 
+  function(rt_id, node_casc_header, style_dec, search_active)
   {
-    if(data[1].length && ( !check_has_inheritable_props || data[HAS_INHERITABLE_PROPS] ) )
-    {
-      return "<rule>" +
-              "<stylesheet-link class='pseudo'>default values</stylesheet-link>" +
-        "<inline-style>" + data[HEADER][1] + "</inline-style>" + 
-        " {\n" + 
-            prettyPrintRule[COMMON](data, false, true, search_active) +
-        "\n}</rule>";
-    }
-    return "";
+    return "<rule>" +
+            "<stylesheet-link class='pseudo'>local user stylesheet</stylesheet-link>" +
+      "<inline-style>" + style_dec[0][2] + "</inline-style>" + 
+      " {\n" + 
+          prettyPrintRule[COMMON](style_dec, false, search_active) +
+      "\n}</rule>";
   }
 
+
+  prettyPrintStyleDec[PROT_4_AUTHOR] = 
+  function(rt_id, node_casc_header, style_dec, search_active)
+  {
+    var 
+    ret = '', 
+    header = null, 
+    i = 0, 
+    sheet = self.getSheetWithObjId(rt_id, style_dec[HEADER][1]);
+  
+    if( sheet )
+    {
+      if( !search_active || style_dec[HAS_MATCHING_SEARCH_PROPS]  )
+      {
+        ret += "<rule rule-id='" + style_dec[HEADER][2] + "'>" + 
+          "<stylesheet-link rt-id='" + sheet[0] + "'"+
+            " index='" + sheet[1] + "' handler='display-rule-in-stylesheet'>" + sheet[2] + 
+          "</stylesheet-link>" +
+          "<selector>" + style_dec[HEADER][5] + "</selector>" + 
+          " {\n" + 
+              prettyPrintRule[COMMON](style_dec, false, search_active) +
+          "\n}</rule>";
+      }
+    }
+    else
+    {
+      opera.postError('stylesheet is missing in stylesheets, prettyPrintStyleDec[PROT_4_AUTHOR]');
+    }
+
+    return ret;
+  }
+
+
+  prettyPrintStyleDec[PROT_4_ELEMENT] = 
+  function(rt_id, node_casc_header, style_dec, search_active)
+  {
+    return "<rule>" + 
+      "<inline-style>element.style</inline-style>" + 
+      " {\n" + 
+          prettyPrintRule[COMMON](style_dec, false, search_active) +
+      "\n}</rule>";
+  }
 
   this.prettyPrintCat = function(cat_index, data, org_args, search_active)
   {
@@ -918,6 +843,11 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
       return null;
     }
   }
+
+  this.getSheetWithRtIdAndIndex = function(rt_id, index)
+  {
+    return __sheets[rt_id] && __sheets[rt_id][index] || null;
+  }
   
   this.getRulesWithSheetIndex = function(rt_id, index, org_args)
   {
@@ -930,7 +860,6 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
       var tag = tagManager.setCB(null, handleGetRulesWithIndex, [rt_id, index, org_args]);
       var sheet_id = __sheets[rt_id][index][SHEET_OBJECT_ID];
       services['ecmascript-debugger'].getCSSRules( tag, rt_id, sheet_id, 'json' );
-      //alert('command get')
       return null;
     }
   }
@@ -944,11 +873,31 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
       rules: rules,
       rule_id: rule_id || ''
     }
+    window['cst-selects']['stylesheet-select'].updateElement();
+
   }
   
-  this.getSelectedSheet = function()
+  this.getSelectedSheet = function(org_args)
   {
-    return __selectedRules;
+    if( __selectedRules )
+    {
+      return __selectedRules;
+    }
+    if( org_args )
+    {
+      onNewStylesheets(__top_rt_id, [null, selectFirstSheet, __top_rt_id, 0, org_args]);
+    }
+    return null;
+  }
+
+  var selectFirstSheet = function(rt_id, index, org_args)
+  {
+    var rules = stylesheets.getRulesWithSheetIndex(rt_id, index, arguments);
+    if(rules)
+    {
+      self.setSelectedSheet(rt_id, index, rules);
+      org_args.callee.apply(null, org_args);
+    }
   }
 
   this.hasSelectedSheetRuntime = function(rt_id)
@@ -1233,6 +1182,7 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   var handleGetRulesWithIndex = function(xml, rt_id, index, org_args)
   {
     var json = xml.getNodeData('rule-list');
+
     if( json )
     {
       __rules[rt_id][index] = eval('(' + json +')');
@@ -1248,6 +1198,7 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   var handleGetAllStylesheets = function(xml, rt_id, org_args)
   {
     var json = xml.getNodeData('stylesheets');
+
     if( json )
     {
       __sheets[rt_id] = eval('(' + json +')');
@@ -1265,31 +1216,106 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   {
     if( __selectedRules &&  __selectedRules.runtime_id == msg.id )
     {
-      
       views.stylesheets.clearAllContainers();
     }
+  }
 
+  var onNewStylesheets = function(rt_id, cb_arr/* obj, cb_method, arg 1, arg 2, ... */)
+  {
+    // cb_arr: [cb_obj, cb_method, arg 1, arg 2, ... ]
+    if(__on_new_stylesheets_cbs[rt_id])
+    {
+      __on_new_stylesheets_cbs[rt_id][__on_new_stylesheets_cbs[rt_id].length] = cb_arr;
+    }
+    else
+    {
+      cb_arr[1].apply(cb_arr[0], cb_arr.slice(2));
+    }
+  }
+
+  var updateOnNewStylesheets = function(rt_ids) // rt_ids is an array
+  {
+    var 
+    rt_id_c_1 = '',
+    rt_id_c_2 = '',
+    i = 0;
+
+    for( rt_id_c_1 in __on_new_stylesheets_cbs )
+    {
+      for( i = 0; ( rt_id_c_2 = rt_ids[i] ) && rt_id_c_1 != rt_id_c_2 ; i++ );
+      if( !rt_id_c_2 )
+      { 
+        delete __on_new_stylesheets_cbs[rt_id_c_1];
+      }
+    }
+    for( i = 0; rt_id_c_1 = rt_ids[i]; i++ )
+    {
+      if( ! ( rt_id_c_1 in __on_new_stylesheets_cbs ) )
+      {
+        __on_new_stylesheets_cbs[rt_id_c_1] = [];
+      }
+    }
+    __new_rts = rt_ids;
+    if( rt_ids[0] != __top_rt_id )
+    {
+
+      __top_rt_id = rt_ids[0];
+      __selectedRules = null;
+      views['stylesheets'].update();
+    }
+  }
+
+  var checkNewRts = function(obj)
+  {
+    var 
+    cursor = null, 
+    cbs = null,
+    cb = null,
+    i = 0;
+
+    for( i = 0; cursor = __new_rts[i]; i++)
+    {
+      if( !__sheets[cursor] )
+      {
+        delete obj.__call_count;
+        self.getStylesheets(cursor, arguments);
+      }
+      else
+      {
+        if( cbs = __on_new_stylesheets_cbs[cursor] )
+        {
+          for( i = 0; cb = cbs[i]; i++)
+          {
+            cb[1].apply(cb[0], cb.slice(2));
+          }
+          delete __on_new_stylesheets_cbs[cursor];
+        }
+      }
+    }
   }
 
   var onActiveTab = function(msg)
-  {
+  { 
     if( __selectedRules  )
     {
       var rt_id = __selectedRules.runtime_id, cur_rt_id = '', i = 0;
+
       for( ; ( cur_rt_id = msg.activeTab[i] ) && cur_rt_id != rt_id ; i++);
       if( !cur_rt_id )
       {
         views.stylesheets.clearAllContainers();
       }
     }
+    updateOnNewStylesheets(msg.activeTab.slice(0));
+    checkNewRts({});
   }
 
   this.getSortedProperties = function()
   {
     var ret = [], i = 0, dashs = [], value = '';
+
     for ( ; i <  __indexMapLength; i++ )
     {
-
       value = __indexMap[__sortedIndexMap[i]];
       if( value.indexOf('-') == 0 )
       {
@@ -1305,5 +1331,7 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   
   messages.addListener('runtime-destroyed', onRuntimeDestroyed);
   messages.addListener('active-tab', onActiveTab);
+
+  messages.addListener('reset-state', onResetState);
   
 }

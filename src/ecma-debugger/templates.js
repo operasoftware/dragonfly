@@ -18,262 +18,179 @@
     {
       ret[ret.length] = ['li', prop_dict[prop] + ': ' + enviroment[prop]];
     }
+    if( ini.revision_number.indexOf("$") != -1 && ini.mercurial_revision )
+    {
+      ini.revision_number = ini.mercurial_revision;
+    }
     ret[ret.length] = ['li', ui_strings.S_TEXT_ENVIRONMENT_DRAGONFLY_VERSION + ': ' + ini.dragonfly_version];
     ret[ret.length] = ['li', ui_strings.S_TEXT_ENVIRONMENT_REVISION_NUMBER + ': ' + ini.revision_number];
     return ['div', ret, 'class', 'padding'];
   }
 
-
-
-  this.windows = function(windows, win_type)
+  this.runtimes = function(runtimes, type, arg_list)
   {
-    var ret = ['ul'];
-    var win = null, i = 0;
-    for( ; win = windows[i]; i++ )  
-    {
-      ret[ret.length] = self['window-' + win_type](win);
-    }
-    return ['div', ret.concat(['class', 'folder', 'template-type', win_type]), 'class', 'padding'];
-  }
-
-  this['window-script']  = function(win)
-  {
-    var 
-    rts_c = null, 
-    rt = null, 
-    i = 0,
-    ret = ['li', 
-            ['input', 
-              'type', 'button', 
-              'handler', 'show-runtimes', 
-              'class', 'folder-key'].
-                concat(win.is_unfolded  ? ['style', 'background-position:0 -11px'] : [] ),
-            ['span', 
-              win['title'] || win['uri'], 
-              'handler', 'select-window', 
-              'title', 'select a window']
-         ];
-    if( win.is_unfolded )
-    {
-      ret.splice(ret.length, 0, this.runtimes(win.runtimes, 'script'));
-    } 
-    if (win.is_selected)
-    {
-      ret.splice(ret.length, 0, 'class', 'selected'); 
-    }
-    ret.splice(ret.length, 0, 'window_id', win.id);
-    return ret;
-  }
-
-  this['window-dom'] = function(win)
-  {
-    var 
-    rts_c = null, 
-    rt = null, 
-    i = 0,
-    ret = ['li', 
-            ['input', 
-              'type', 'button', 
-              'handler', 'show-runtimes',
-              'class', 'folder-key'].
-                concat(win.is_unfolded  ? ['style', 'background-position:0 -11px'] : [] ),
-            ['span', 
-              win['title'] || win['uri'], 
-              'handler', 'select-window', 
-              'title', 'select a window']
-         ];
-    if( win.is_unfolded )
-    {
-      ret.splice(ret.length, 0, this.runtimes(win.runtimes, 'dom'));
-    } 
-    if (win.is_selected)
-    {
-      ret.splice(ret.length, 0, 'class', 'selected'); 
-    }
-    ret.splice(ret.length, 0, 'window_id', win.id);
-    return ret;
-  }
-  
-  this['window-css']  = function(win)
-  {
-    var 
-    rts_c = null, 
-    rt = null, 
-    i = 0,
-    ret = ['li', 
-            ['input', 
-              'type', 'button', 
-              'handler', 'show-runtimes', 
-              'class', 'folder-key'].
-                concat(win.is_unfolded  ? ['style', 'background-position:0 -11px'] : [] ),
-            ['span', 
-              win['title'] || win['uri'], 
-              'handler', 'select-window', 
-              'title', 'select a window']
-         ];
-    if( win.is_unfolded )
-    {
-      ret.splice(ret.length, 0, this.runtimes(win.runtimes, 'css'));
-    } 
-    if (win.is_selected)
-    {
-      ret.splice(ret.length, 0, 'class', 'selected'); 
-    }
-    ret.splice(ret.length, 0, 'window_id', win.id);
-    return ret;
-  }
-
-  this.runtimes = function(runtimes, type, _class, org_args)
-  {
-    var ret = ['ul'], rt = null, i = 0;
+    var ret = [], rt = null, i = 0;
     for( ; rt = runtimes[i]; i++)
     {
-      ret[ret.length] = self['runtime-' + type](rt, org_args);
+      ret[ret.length] = self['runtime-' + type](rt, arg_list);
     }
-    return ret.concat( _class ? ['class', _class] : [] );
+    return ret; 
   }
 
-  this['runtime-script'] = function(runtime)
+  this['runtime-runtime'] = function(runtime, arg_list)
   {
     var display_uri = helpers.shortenURI(runtime['uri']);
-    var is_reloaded_window = runtimes.isReloadedWindow(runtime['window-id']);
-    var ret = ['li',
-          ['input',
-            'type', 'button',
-            'handler', 'show-scripts',
-            'runtime_id', runtime['runtime-id'],
-            'class', 'folder-key'].concat(runtime['unfolded-script'] ? ['style', 'background-position:0 -11px'] : [] ),
-          ['span', display_uri.uri, 'handler', 'show-global-scope', 'title', 'select a runtime'].
-            concat( runtime.selected ? ['class', 'selected-runtime'] : [] ).
-            concat( display_uri.title ? ['title', display_uri.title] : [] )
- 
-      ];
-    if( runtime['unfolded-script'])
-    {
-      var scripts = runtimes.getScripts(runtime['runtime-id']),
-        script = null, i=0, scripts_container =['ul'];
-      if( scripts.length )
-      {
-        for( ; script = scripts[i]; i++)
-        {
-          scripts_container.push(templates.scriptLink(script, runtimes.getSelectedScript()));
-        }
-      }
-      else
-      {
-        scripts_container = ['p', 
-          settings.runtimes.get('reload-runtime-automatically') || is_reloaded_window 
-          ? ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS
-          : ui_strings.S_INFO_RELOAD_FOR_SCRIPT, 
-          'class', 'info-text'];
-      }
-      scripts_container.splice(scripts_container.length, 0, 'runtime-id', runtime['runtime-id']);
-      ret = ret.concat([scripts_container]);
-    }
-    return ret;
+
+    return  \
+    [
+      'cst-option', 
+      runtime['title'] || display_uri.uri,
+      'rt-id', runtime['runtime-id']
+    ].concat( display_uri.title ? ['title', display_uri.title] : [] )
+    ;
   }
-  
-  this['runtime-css'] = function(runtime, org_args)
+
+  this['runtime-script'] = function(runtime, arg_list)
   {
-    var ret = ['li',
-          ['input', 
-            'type', 'button', 
-            'handler', 'show-stylesheets', 
-            'runtime_id', runtime['runtime-id'],
-            'class', 'folder-key'].concat(runtime['unfolded-css'] ? ['style', 'background-position:0 -11px'] : [] ),
-          ['span', runtime['uri']]
-        
-      ];
-    if( runtime['unfolded-css'] )
+    var 
+    display_uri = helpers.shortenURI(runtime['uri']),
+    is_reloaded_window = runtimes.isReloadedWindow(runtime['window-id']),
+    ret = \
+    [
+      ['h2', runtime['title'] || display_uri.uri].
+      concat( runtime.selected ? ['class', 'selected-runtime'] : [] ).
+      concat( display_uri.title ? ['title', display_uri.title] : [] )
+    ], 
+    scripts = runtimes.getScripts(runtime['runtime-id']),
+    script = null, 
+    i=0,
+    stopped_script_id = arg_list[0];
+
+    if( scripts.length )
     {
-      
-      var sheets = stylesheets.getStylesheets(runtime['runtime-id'], org_args),
-        sheet = null, i = 0, container = ['ul'];
-      if(sheets)
+      for( ; script = scripts[i]; i++)
       {
         
-        for( ; sheet = sheets[i]; i++)
-        {
-          container.push(templates.sheetLink(sheet, i, stylesheets.isSelectedSheet(runtime['runtime-id'], i)));
-        }
+        ret[ret.length] = templates.scriptOption(script, runtimes.getSelectedScript(), stopped_script_id);
       }
-      else
-      {
-        container = ['p', ui_strings.S_INFO_DOCUMNENT_LOADING, 'class', 'info-text'];
-      }
-      container.splice(container.length, 0, 'runtime-id', runtime['runtime-id']);
-      ret = ret.concat([container])
     }
+    /*
+    TODO handle runtimes with no scripts
+    else
+    {
+      scripts_container = ['p', 
+        settings.runtimes.get('reload-runtime-automatically') || is_reloaded_window 
+        ? ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS
+        : ui_strings.S_INFO_RELOAD_FOR_SCRIPT, 
+        'class', 'info-text'];
+    }
+    */
+
     return ret;
   }
 
-  this['runtime-dom'] = function(runtime)
+  this.scriptOption = function(script, selected_script, stopped_script_id)
   {
-    var selected_rt = dom_data.getDataRuntimeId();
-    var ret = ['li',
-          ['span', runtime['uri'], 'handler', 'show-dom', 'title', 'show dom'].
-            concat( selected_rt == runtime['runtime-id'] ? ['class', 'selected-runtime'] : [] ),
-          'runtime_id', runtime['runtime-id']
-        
-      ];
-    return ret;
-  }
-
-  this.scriptLink = function(script, selected_script)
-  {
-    var display_uri = helpers.shortenURI(script['uri']);
-    // script types in the protocol: 
-    //   "inline" | "event" | "linked" | "timeout" | "java" | "generated" | "unknown"
-    var type_dict =
+    var 
+    display_uri = helpers.shortenURI(script['uri']),
+    /* script types in the protocol: 
+       "inline" | "event" | "linked" | "timeout" | "java" | "generated" | "unknown" */
+    type_dict =
     {
       "inline": ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_INLINE,
       "linked": ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_LINKED,
       "unknown": ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_UNKNOWN
-    };
-    var script_type = script['script-type'];
-    var ret = ['li',
-        ( type_dict[script_type] || script_type ) + ' - ' + 
-         ( 
-            display_uri.uri
-            ? display_uri.uri
-            : ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script['script-id'] 
-         ),
-        'handler', 'display-script',
-        'script-id', script['script-id'],
-        'tabindex', '1'
-      ];
+    },
+    script_type = script['script-type'],
+    ret = \
+    [
+      'cst-option',
+      ( type_dict[script_type] || script_type ) + ' - ' + 
+      ( 
+        display_uri.uri
+        ? display_uri.uri
+        : ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script['script-id'] 
+      ),
+      'script-id', script['script-id']
+    ].concat( stopped_script_id == script['script-id'] ? ['class', 'stopped'] : [] );
 
     if( display_uri.title )
     {
       ret.splice(ret.length, 0, 'title', display_uri.title); 
     }
+    /*
     if( script['script-id'] == selected_script )
     {
       ret.splice(ret.length, 0, 'class', 'selected'); 
     }
+    
     if( script['stop-ats'].length )
     {
       ret.splice(ret.length, 0, 'style', 'background-position: 0 0'); 
     }
+    */
     return ret;
   }
   
-  this.sheetLink = function(sheet, index, is_selected)
+  this['runtime-css'] = function(runtime, org_args)
   {
     const
     OBJECT_ID = 0,
     HREF = 2,
     TITLE = 7;
+
+    var 
+    display_uri = helpers.shortenURI(runtime['uri']),
+    ret = 
+    [
+      ['h2', runtime['title'] || display_uri.uri].
+      concat( display_uri.title ? ['title', display_uri.title] : [] )
+    ],
+    sheets = stylesheets.getStylesheets(runtime['runtime-id']),
+    sheet = null, 
+    i = 0, 
+    container = [],
+    rt_id = runtime['runtime-id'],
+    title = '';
+
+    if(sheets)
+    {
+      for( ; sheet = sheets[i]; i++)
+      {
+        title = sheet[HREF] ? sheet[HREF] : 'inline stylesheet ' + ( i + 1 ) ;
+        container[container.length] = 
+        [
+          'cst-option',
+          title,
+          'runtime-id', rt_id,
+          'index', '' + i
+        ];
+      }
+    }
+    /*
+    else
+    {
+      container = ['p', ui_strings.S_INFO_DOCUMNENT_LOADING, 'class', 'info-text'];
+    }
+    */
+    //container.splice(container.length, 0, 'runtime-id', runtime['runtime-id']);
+    ret = ret.concat([container])
     
-    var title = sheet[HREF] ? sheet[HREF] : 'inline stylesheet ' + ( index + 1 ) ;
-    return ['li',
-            title,
-            'handler', 'display-stylesheet',
-            'index', '' + index
-      ].concat( is_selected ? ['class', 'selected'] : [] )
+    return ret;
   }
-  //templates.configStopAt(config)
-  // stop at: "script" | "exception" | "error" | "abort", yes/no;
+
+
+  this['runtime-dom'] = function(runtime)
+  {
+    var display_uri = runtime['title'] || helpers.shortenURI(runtime['uri']).uri;
+    return (
+    [
+      'cst-option',
+       runtime['title'] || runtime['uri'], 
+      'runtime-id', runtime['runtime-id']
+    ].concat( dom_data.getDataRuntimeId() == runtime['runtime-id'] ? ['class', 'selected-runtime'] : [] ).
+      concat( display_uri != runtime['uri'] ? ['title', runtime['uri']] : [] ) )
+  }
 
   this.checkbox = function(settingName, settingValue)
   {
@@ -494,7 +411,10 @@ Line 2:
     return ['div',
       ['date', new Date(parseInt( message.time )*1000).toString().replace(/GMT.*$/, '') ],
       ['h2', message.source, 'severity', message.severity],
-      ['uri', message.uri],
+      ['uri', (
+                (message.uri && (message.uri.indexOf("http://") == 0 || message.uri.indexOf("https://") == 0 || message.uri.indexOf("file://")==0)) ? ["a", message.uri, "href", message.uri, "target", "_blank"] : message.uri
+              )
+      ],
       ['context', message.context],
       ['pre', message.description]
     ]
@@ -610,6 +530,35 @@ Line 2:
     return ret;
              
 
+  }
+
+
+  this['js-script-select'] = function(ui_obj)
+  {
+    return self['cst-select'](ui_obj.script_select);
+  }
+
+  this.breadcrumb = function(css_path)
+  {
+    var
+    ret = ["breadcrumb"],
+    i = 0;
+    // opera.postError(JSON.stringify(css_path))
+    if( css_path )
+    {
+      for( ; i < css_path.length; i++ )
+      {
+        ret[ret.length] = 
+        [
+          "span", css_path[i].name, 
+          'obj-id', css_path[i].id.toString(), 
+          'handler', 'breadcrumb-link',
+          'class', css_path[i].is_parent_offset ? 'parent-offset' : '', 
+        ];
+        ret[ret.length] = css_path[i].combinator;
+      }
+    }
+    return ret;
   }
   
 

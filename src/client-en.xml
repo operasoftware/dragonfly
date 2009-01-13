@@ -39,6 +39,7 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <link rel="stylesheet" href="./ui-style/debugger_style.css"/>
 <link rel="stylesheet" href="./ui-style/js-source.css"/>
 <link rel="stylesheet" href="./ui-style/syntax-highlight.css"/>
+<link rel="stylesheet" href="./http-logger/httplogger_style.css"/>
 
 <!-- This will turn off including of the UI strings if the exclude_uistrings var is set -->
 <!-- command concat_js off if exclude_uistrings -->
@@ -55,7 +56,8 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./scripts/TextSearch.js"/>
 <script src="./scripts/VirtualTextSearch.js"/>
 <script src="./scripts/colors.js"/>
-
+<script src="./scripts/serviceBase.js"/>
+<script src="./scripts/debug-helpers-liveSource.js"/>
 
 <script src="./ui-scripts/defaults.js"/>
 <script src="./ui-scripts/window.js"/>
@@ -65,6 +67,7 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./ui-scripts/compositeView.js"/>
 <script src="./ui-scripts/settingView.js"/>
 <script src="./ui-scripts/ui-base.js"/>
+<script src="./ui-scripts/TopUIBase.js"/>
 <script src="./ui-scripts/toolbar.js"/>
 <script src="./ui-scripts/toolbarConfig.js"/>
 <script src="./ui-scripts/tabs.js"/>
@@ -83,10 +86,14 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./ui-scripts/Switches.js"/>
 <script src="./ui-scripts/Editor.js"/>
 <script src="./ui-scripts/keyboard_handler.js"/>
+<script src="./ui-scripts/cst-select.js"/>
+
+
+
 
 
 <script src="./ecma-debugger/ListTextSearch.js"/>
-<script src="./ecma-debugger/ini.js"/>
+<script src="./scripts/ini.js"/>
 <script src="./ecma-debugger/debug.js"/>
 <script src="./ecma-debugger/storage.js"/>
 <script src="./ecma-debugger/helpers.js"/>
@@ -100,15 +107,15 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./ecma-debugger/stop_at.js"/>
 <script src="./ecma-debugger/runtime_onload_handler.js"/>
 <script src="./ecma-debugger/ObjectDataBase.js"/>
-<script src="./ecma-debugger/frame_inspection.js"/>
-<script src="./ecma-debugger/object_inspection.js"/>
+<script src="./ecma-debugger/frame_inspection_data.js"/>
+<script src="./ecma-debugger/object_inspection_data.js"/>
 <script src="./ecma-debugger/views-runtimes.js"/>
 <script src="./ecma-debugger/views.js"/>
-<script src="./ecma-debugger/testing.js"/>
+
 <script src="./ecma-debugger/dom_data.js"/>
 <script src="./ecma-debugger/css_initial_values.js"/>
 <script src="./ecma-debugger/css_inheritable_properties.js"/>
-<script src="./ecma-debugger/js_default_global_scope_properties.js"/>
+<script src="./ecma-debugger/js_object_filters.js"/>
 <script src="./ecma-debugger/css_suggest_values.js"/>
 <script src="./ecma-debugger/node_dom_attrs.js"/>
 <script src="./ecma-debugger/elementLayout.js"/>
@@ -118,8 +125,7 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./ecma-debugger/views-stylesheets.js"/>
 <script src="./ecma-debugger/js-source-view.js"/>
 <script src="./ecma-debugger/view-commandline.js"/>
-<script src="./ecma-debugger/views-frame-inspection.js"/>
-<script src="./ecma-debugger/views-object-inspection.js"/>
+<script src="./ecma-debugger/views-inspection.js"/>
 <script src="./ecma-debugger/DOM_markup_style.js"/>
 <script src="./ecma-debugger/DOM_tree_style.js"/>
 <script src="./ecma-debugger/views-dom.js"/>
@@ -131,8 +137,22 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./ecma-debugger/change-handler.js"/>
 <script src="./ecma-debugger/scroll_handler.js"/>
 <script src="./ecma-debugger/tag.js"/>
-<script src="./ecma-debugger/client.js"/>
-<script src="./ecma-debugger/serviceBase.js"/>
-<script src="./ecma-debugger/console.js"/>
+<script src="./ecma-debugger/DOMEditor.js"/>
+<script src="./ecma-debugger/DomMarkupEditor.js"/>
+<script src="./ecma-debugger/actions_dom.js"/>
+
+<script src="./client/client.js"/>
+<script src="./window-manager/window-manager.js"/>
+<script src="./console-logger/console.js"/>
 <script src="./ecma-debugger/ecma-debugger.js"/>
+<script src="./ecma-debugger/exec.js"/>
+
+<script src="./http-logger/httplogger_service.js"/>
+<script src="./http-logger/httplogger_data.js"/>
+<script src="./http-logger/httplogger_view.js"/>
+<script src="./http-logger/httplogger_resources.js"/>
+<script src="./http-logger/httplogger_mime_types.js"/>
+<script src="./http-logger/httplogger_templates.js"/>
+
+<body/>
 </viewport>

@@ -13,8 +13,8 @@ cls.DOMAttrsView = function(id, name, container_class)
   {
     var 
     selectedNode = node_dom_attrs.getSelectedNode(),
-    data = null
-    filter = {};
+    data = null,
+    use_filter = settings['dom_attrs'].get("hide-null-values");
     
     if( selectedNode )
     {
@@ -22,13 +22,12 @@ cls.DOMAttrsView = function(id, name, container_class)
       data = node_dom_attrs.getData(selectedNode.rt_id, selectedNode.obj_id, -1, arguments);
       if(data)
       {
-        filter = node_dom_attrs.getDataFilter();
         container.innerHTML = 
           "<examine-objects rt-id='" + selectedNode.rt_id + "' " + 
                 "data-id='node_dom_attrs' " +
                 "obj-id='" + selectedNode.obj_id + "' >" +
               "<start-search-scope></start-search-scope>" +
-              node_dom_attrs.prettyPrint(data, -1, filter, 1) + 
+              node_dom_attrs.prettyPrint(data, -1, use_filter, 1) + 
               "<end-search-scope></end-search-scope>" +
           "</examine-objects>";
         messages.post( 'list-search-context', 
