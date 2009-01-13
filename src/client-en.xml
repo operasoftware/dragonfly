@@ -55,7 +55,7 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./scripts/TextSearch.js"/>
 <script src="./scripts/VirtualTextSearch.js"/>
 <script src="./scripts/colors.js"/>
-
+<script src="./scripts/debug-helpers-liveSource.js"/>
 
 <script src="./ui-scripts/defaults.js"/>
 <script src="./ui-scripts/window.js"/>
@@ -100,15 +100,15 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./ecma-debugger/stop_at.js"/>
 <script src="./ecma-debugger/runtime_onload_handler.js"/>
 <script src="./ecma-debugger/ObjectDataBase.js"/>
-<script src="./ecma-debugger/frame_inspection.js"/>
-<script src="./ecma-debugger/object_inspection.js"/>
+<script src="./ecma-debugger/frame_inspection_data.js"/>
+<script src="./ecma-debugger/object_inspection_data.js"/>
 <script src="./ecma-debugger/views-runtimes.js"/>
 <script src="./ecma-debugger/views.js"/>
 <script src="./ecma-debugger/testing.js"/>
 <script src="./ecma-debugger/dom_data.js"/>
 <script src="./ecma-debugger/css_initial_values.js"/>
 <script src="./ecma-debugger/css_inheritable_properties.js"/>
-<script src="./ecma-debugger/js_default_global_scope_properties.js"/>
+<script src="./ecma-debugger/js_object_filters.js"/>
 <script src="./ecma-debugger/css_suggest_values.js"/>
 <script src="./ecma-debugger/node_dom_attrs.js"/>
 <script src="./ecma-debugger/elementLayout.js"/>
@@ -118,8 +118,7 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./ecma-debugger/views-stylesheets.js"/>
 <script src="./ecma-debugger/js-source-view.js"/>
 <script src="./ecma-debugger/view-commandline.js"/>
-<script src="./ecma-debugger/views-frame-inspection.js"/>
-<script src="./ecma-debugger/views-object-inspection.js"/>
+<script src="./ecma-debugger/views-inspection.js"/>
 <script src="./ecma-debugger/DOM_markup_style.js"/>
 <script src="./ecma-debugger/DOM_tree_style.js"/>
 <script src="./ecma-debugger/views-dom.js"/>
@@ -134,5 +133,12 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./ecma-debugger/client.js"/>
 <script src="./ecma-debugger/serviceBase.js"/>
 <script src="./ecma-debugger/console.js"/>
+<script src="./ecma-debugger/DOMEditor.js"/>
+<script src="./ecma-debugger/DomMarkupEditor.js"/>
+
+<script src="./ecma-debugger/actions_dom.js"/>
+
+
 <script src="./ecma-debugger/ecma-debugger.js"/>
+<body/>
 </viewport>

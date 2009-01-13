@@ -32,13 +32,6 @@ var Node_dom_attrs = function()
     }
   }
 
-  this.getDataFilter = function()
-  {
-    return settings['dom_attrs'].get("hide-null-values") && { '""': 1, "null" : 1 } || null;
-  }
-
-
-
   var onElementSelected = function(msg)
   {
     __selectedElement = {rt_id: msg.rt_id,  obj_id: msg.obj_id};

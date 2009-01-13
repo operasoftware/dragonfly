@@ -25,7 +25,29 @@ cls.DOMView = function(id, name, container_class)
   PUBLIC_ID = 4,
   SYSTEM_ID = 5,
   INDENT = "  ",
-  LINEBREAK = '\n';
+  LINEBREAK = '\n',
+  VOID_ELEMNTS = 
+  {
+    'area': 1,
+    'base': 1,
+    'basefont': 1,
+    'bgsound': 1,
+    'br': 1,
+    'col': 1,
+    'embed': 1,
+    'frame': 1,
+    'hr': 1,
+    'img': 1,
+    'input': 1,
+    'link': 1,
+    'meta': 1,
+    'param': 1,
+    'spacer': 1,
+    'wbr': 1,
+    'command': 1,
+    'event-source': 1,
+    'source': 1,
+  }
 
   var getIndent = function(count)
   {
@@ -40,6 +62,203 @@ cls.DOMView = function(id, name, container_class)
       count--;
     }
     return ret;
+  }
+
+  // workaround for bug CORE-16147
+  this.getDoctypeName = function(data)
+  {
+    var node = null, i = 0;
+    for( ; node = data[i]; i++)
+    {
+      if( node[TYPE] == 1 )
+      {
+        return node[NAME];
+      }
+    }
+  }
+
+  this.updateBreadcrumbLink = function(obj_id)
+  {
+
+    var target = document.getElementById('target-element');
+    if(target)
+    {
+      target.removeAttribute('id');
+      while( target && !/container/.test(target.nodeName) && ( target = target.parentElement ) );
+      if( target )
+      {
+        var 
+        divs = target.getElementsByTagName('div'),
+        div = null,
+        i = 0;
+
+        for( ; ( div = divs[i] ) && div.getAttribute('ref-id') != obj_id; i++ );
+        if( div )
+        {
+          div.id = 'target-element';
+          this.scrollTargetIntoView();
+        }
+      }
+    }
+  }
+
+  this.serializer =
+  {
+    'text/html': function(data)
+    {
+      const LINEBREAK = '\r\n';
+
+      var 
+      tree = '', 
+      i = 0, 
+      node = null, 
+      length = data.length,
+      attrs = '', 
+      attr = null, 
+      k = 0, 
+      key = '',
+      is_open = 0,
+      has_only_one_child = 0,
+      one_child_value = '',
+      current_depth = 0,
+      child_pointer = 0,
+      child_level = 0,
+      j = 0,
+      children_length = 0,
+      closing_tags = [],
+      force_lower_case = settings[self.id].get('force-lowercase'),
+      node_name = '',
+      tag_head = '',
+      start_depth = data[0][DEPTH] - 1;
+
+      for( ; node = data[i]; i++ )
+      {
+        while( current_depth > node[DEPTH] )
+        {
+          tree += closing_tags.pop();
+          current_depth--;
+        }
+        current_depth = node[DEPTH];
+        children_length = node[CHILDREN_LENGTH];
+        child_pointer = 0;
+        node_name =  node[NAME];
+        if( force_lower_case )
+        {
+          node_name = node_name.toLowerCase();
+        }
+        switch (node[TYPE])
+        {
+          case 1: // elemets
+          {
+            attrs = '';
+            for( k = 0; attr = node[ATTRS][k]; k++ )
+            {
+              attrs += " " + 
+                ( force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ) + 
+                "=\"" + 
+                attr[ATTR_VALUE].replace(/"/g, "&quot") + 
+                "\"";
+            }
+            child_pointer = i + 1;
+            is_open = ( data[child_pointer] && ( node[DEPTH] < data[child_pointer][DEPTH] ) );
+            if( is_open ) 
+            {
+              has_only_one_child = 1;
+              one_child_value = '';
+              child_level = data[child_pointer][DEPTH];
+              for( ; data[child_pointer] && data[child_pointer][DEPTH] == child_level; child_pointer++ )
+              {
+                one_child_value += data[child_pointer][VALUE];
+                if( data[child_pointer][TYPE] != 3 )
+                {
+                  has_only_one_child = 0;
+                  one_child_value = '';
+                  break;
+                }
+              }
+            }
+            if( is_open )
+            {
+              if( has_only_one_child )
+              {
+                tree += LINEBREAK  + getIndent(node[DEPTH] - start_depth) +
+                        "<" + node_name +  attrs + ">" +
+                        one_child_value + 
+                        "</" + node_name + ">";
+                i = child_pointer - 1;
+              }
+              else
+              {
+                tree += LINEBREAK  + getIndent(node[DEPTH] - start_depth) + 
+                        "<" + node_name + attrs + ">";
+                if( !(node_name in VOID_ELEMNTS) )
+                {
+                  closing_tags.push
+                  ( 
+                    LINEBREAK  + getIndent(node[DEPTH] - start_depth) + "</" + node_name + ">"
+                  );
+                }
+              }
+            }
+            else // is closed or empty
+            {
+              tree +=  LINEBREAK  + getIndent(node[DEPTH] - start_depth) +
+                    "<" + node_name + attrs + ">" + 
+                    ( node_name in VOID_ELEMNTS ? "" : "</" + node_name + ">" );
+            }
+            break;
+          }
+          case 7:  // processing instruction
+          {
+            tree += LINEBREAK  + getIndent(node[DEPTH] - start_depth) +      
+              "<?" + node[NAME] + ( node[VALUE] ? ' ' + node[VALUE] : '' ) + "?>";
+            break;
+          }
+          case 8:  // comments
+          {
+            tree += LINEBREAK  + getIndent(node[DEPTH] - start_depth) +      
+                    "<!--" + ( node[ VALUE ] || ' ' ) + "-->";
+            break;
+          }
+          case 9:  // document node
+          {
+            break;
+          }
+          case 10:  // doctype
+          {
+            tree += LINEBREAK  + getIndent(node[DEPTH] - start_depth) +
+                    "<!doctype " + this.getDoctypeName(data) +
+                    ( node[PUBLIC_ID] ? 
+                      ( " PUBLIC " + "\"" + node[PUBLIC_ID] + "\"" ) :"" ) +
+                    ( node[SYSTEM_ID] ?  
+                      ( " \"" + node[SYSTEM_ID] + "\"" ) : "" ) +
+                    ">";
+            break;
+          }
+          default:
+          {
+            if( !/^\s*$/.test(node[ VALUE ] ) )
+            {
+              tree += LINEBREAK  + getIndent(node[DEPTH] - start_depth) + helpers.escapeTextHtml(node[VALUE]);
+            }
+          }
+        }
+      }
+      while( closing_tags.length )
+      {
+        tree += closing_tags.pop();
+      }
+      return tree.replace(/^(?:\r\n)+/, '');
+    },
+    'application/xml': function(data)
+    {
+      return 'application/xml';
+    },
+  }
+
+  this.serializeToOuterHTML = function(data)
+  {
+    return this.serializer[dom_data.isTextHtml() && 'text/html' || 'application/xml'](data);
   }
 
   this.exportMarkup = function()
@@ -178,7 +397,7 @@ cls.DOMView = function(id, name, container_class)
         case 10:  // doctype
         {
           tree += LINEBREAK  + getIndent(node[ DEPTH ] ) +
-                  "&lt;!doctype " + getDoctypeName(data) +
+                  "&lt;!doctype " + this.getDoctypeName(data) +
                   ( node[PUBLIC_ID] ? 
                     ( " PUBLIC " + "\"" + node[PUBLIC_ID] + "\"" ) :"" ) +
                   ( node[SYSTEM_ID] ?  
@@ -251,11 +470,13 @@ new Settings
     'find-with-click': true,
     'highlight-on-hover': false,
     'update-on-dom-node-inserted': false,
-    'force-lowercase': false, 
+    'force-lowercase': true, 
     'show-comments': true, 
     'show-attributes': true,
     'show-whitespace-nodes': true,
-    'dom-tree-style': false
+    'dom-tree-style': false,
+    'show-siblings-in-breadcrumb': false,
+    'show-id_and_classes-in-breadcrumb': true
   }, 
   // key-label map
   {
@@ -266,7 +487,9 @@ new Settings
     'show-comments': ui_strings.S_SWITCH_SHOW_COMMENT_NODES, 
     'show-attributes': ui_strings.S_SWITCH_SHOW_ATTRIBUTES,
     'show-whitespace-nodes': ui_strings.S_SWITCH_SHOW_WHITE_SPACE_NODES,
-    'dom-tree-style': ui_strings.S_SWITCH_SHOW_DOM_INTREE_VIEW
+    'dom-tree-style': ui_strings.S_SWITCH_SHOW_DOM_INTREE_VIEW,
+    'show-siblings-in-breadcrumb': ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB,
+    'show-id_and_classes-in-breadcrumb': ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB
   
   },
   // settings map
@@ -279,7 +502,9 @@ new Settings
       'show-whitespace-nodes',
       'find-with-click',
       'highlight-on-hover',
-      'update-on-dom-node-inserted'
+      'update-on-dom-node-inserted',
+      'show-siblings-in-breadcrumb',
+      'show-id_and_classes-in-breadcrumb'
     ]
   }
 );
@@ -295,7 +520,11 @@ new ToolbarConfig
     {
       handler: 'dom-inspection-export',
       title: ui_strings.S_BUTTON_LABEL_EXPORT_DOM
-    }
+    }/*,
+    {
+      handler: 'df-show-live-source',
+      title: 'show live source of DF'
+    }*/
   ],
   [
     {
@@ -333,6 +562,11 @@ eventHandlers.click['dom-inspection-snapshot'] = function(event, target)
   dom_data.getSnapshot();
 };
 
+eventHandlers.click['df-show-live-source'] = function(event, target)
+{
+  debug_helpers.liveSource.open();
+};
+
 
 // filter handlers
 
@@ -345,6 +579,7 @@ eventHandlers.click['dom-inspection-snapshot'] = function(event, target)
     if( msg.id == 'dom' )
     {
       textSearch.setContainer(msg.container);
+      textSearch.setFormInput(views.dom.getToolbarControl( msg.container, 'dom-text-search'));
     }
   }
 
@@ -353,11 +588,21 @@ eventHandlers.click['dom-inspection-snapshot'] = function(event, target)
     if( msg.id == 'dom' )
     {
       textSearch.cleanup();
+      topCell.statusbar.updateInfo();
+    }
+  }
+
+  var onActionModeChanged = function(msg)
+  {
+    if( msg.id == 'dom' && msg.mode == 'default' )
+    {
+      textSearch.revalidateSearch();
     }
   }
 
   messages.addListener('view-created', onViewCreated);
   messages.addListener('view-destroyed', onViewDestroyed);
+  messages.addListener('action-mode-changed', onActionModeChanged);
 
   eventHandlers.input['dom-text-search'] = function(event, target)
   {
@@ -379,6 +624,24 @@ eventHandlers.click['dom-inspection-snapshot'] = function(event, target)
 
 
 messages.post('setting-changed', {id: 'dom', key: 'dom-tree-style'});
+
+eventHandlers.click['breadcrumb-link'] = function(event, target)
+{
+  // TODO: string or number?
+  var obj_id = target.getAttribute('obj-id'); 
+  if( obj_id )
+  {
+    dom_data.setCurrentTarget(obj_id);
+    views['dom'].updateBreadcrumbLink(obj_id);
+  }
+};
+
+eventHandlers.dblclick['dom-edit'] = function(event, target)
+{
+  alert(event.target.nodeName);
+  event.preventDefault();
+  event.stopPropagation();
+}
 
 
 

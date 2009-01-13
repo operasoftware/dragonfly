@@ -1,6 +1,6 @@
 ﻿<html xmlns="http://www.w3.org/1999/xhtml">
-<meta http-equiv="Expires" content="0">
-<meta http-equiv="Cache-Control" content="no-cache">
+<meta http-equiv="Expires" content="0"/>
+<meta http-equiv="Cache-Control" content="no-cache"/>
 <script><![CDATA[
 var lang_dict = 
 {
@@ -43,7 +43,7 @@ var lang_dict =
   //"zh-cn": "",
   //"zh-tw": "",
 };
-var lang = navigator.browserLanguage in lang_dict && navigator.browserLanguage || "en"; 
+var lang = navigator.browserLanguage in lang_dict && lang_dict[navigator.browserLanguage] || "en"; 
 document.cookie = "ui-lang=" + 
   lang +
   "; expires=" + ( new Date( new Date().getTime() + 360*24*60*60*1000 ) ).toGMTString() +

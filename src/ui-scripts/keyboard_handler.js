@@ -7,6 +7,7 @@ var key_ids =
   SHIFT_TAB: '1009',
   ENTER: '00013',
   SHIFT_ENTER: '10013',
+  CTRL_ENTER: '01013',
   ESC: '00027',
   SPACE: '00032',
   ARROW_LEFT: '00037',
@@ -18,6 +19,7 @@ var key_ids =
   SHIFT_ARROW_RIGHT: '10039',
   SHIFT_ARROW_DOWN: '10040',
   BACKSPACE: '0008',
+  CTRL_BACKSPACE: '0108',
   DELETE: '00046',
   F8: '000119',
   F9: '000120',
@@ -32,6 +34,7 @@ var action_ids =
   NAV_PREVIOUS: 'action-nav-previous',
   ENTER: 'action-enter',
   SHIFT_ENTER: 'action-shift-enter',
+  CTRL_ENTER: 'action-ctrl-enter',
   ESCAPE: 'action-escape',
   NAV_LEFT: 'action-nav-left',
   NAV_UP: 'action-nav-up',
@@ -41,7 +44,9 @@ var action_ids =
   CONTINUE: 'action-continue',
   STEP_OVER: 'action-step-over',
   STEP_INTO: 'action-step-into',
-  STEP_OUT: 'action-step-out'  
+  STEP_OUT: 'action-step-out',
+  BACKSPACE: 'action-back-space',
+  CTRL_BACKSPACE: 'action-ctrl-back-space'
 }
 
 var action_map_win = {};
@@ -50,6 +55,7 @@ action_map_win[key_ids.TAB] = action_ids.NAV_NEXT;
 action_map_win[key_ids.SHIFT_TAB] = action_ids.NAV_PREVIOUS;
 action_map_win[key_ids.ENTER] = action_ids.ENTER;
 action_map_win[key_ids.SHIFT_ENTER] = action_ids.SHIFT_ENTER;
+action_map_win[key_ids.CTRL_ENTER] = action_ids.CTRL_ENTER;
 action_map_win[key_ids.ESC] = action_ids.ESCAPE;
 action_map_win[key_ids.ARROW_LEFT] = action_ids.NAV_LEFT;
 action_map_win[key_ids.ARROW_UP] = action_ids.NAV_UP;
@@ -61,6 +67,8 @@ action_map_win[key_ids.F8] = action_ids.CONTINUE;
 action_map_win[key_ids.F10] = action_ids.STEP_OVER;
 action_map_win[key_ids.F11] = action_ids.STEP_INTO;
 action_map_win[key_ids.SHIFT_F11] = action_ids.STEP_OUT;
+action_map_win[key_ids.BACKSPACE] = action_ids.BACKSPACE;
+action_map_win[key_ids.CTRL_BACKSPACE] = action_ids.CTRL_BACKSPACE;
 
 var action_map = action_map_win;
 
@@ -126,6 +134,11 @@ var BaseKeyhandler = new function()
 
   }
 
+  this.onclick = function(event)
+  {
+
+  };
+
   this.init = function(id)
   {
     if( !window.keyhandlers )
@@ -147,7 +160,7 @@ var BaseEditKeyhandler = new function()
   var 
   key = '',
 
-  // return true to stop the default action and propagation
+  // return false to stop the default action and propagation
   default_handler = function(event, id)
   {
     var _id = '';
@@ -155,7 +168,7 @@ var BaseEditKeyhandler = new function()
     {
       if( action_ids[_id] == id )
       {
-        // opera.postError('action: ' + _id);
+       // opera.postError('action: ' + _id);
         return true; // perform default action
       }
     }
@@ -183,6 +196,11 @@ var BaseEditKeyhandler = new function()
   {
 
   }
+
+  this.onclick = function(event)
+  {
+
+  };
 
   this.init = function(id)
   {
@@ -240,17 +258,17 @@ var key_identifier = new function()
 
   var __key_handler = null;
 
-  var __current_view = null;
+  var __current_view_id = null;
 
   var empty_keyhandler = new function()
   {
     var 
     key = '',
 
-    // return true to stop the default action and propagation
+    // return false to stop the default action and propagation
     empty_handler = function(event, id)
     {
-      return true;
+      return /input|textarea/i.test(event.target.nodeName);
     };
 
 
@@ -265,6 +283,8 @@ var key_identifier = new function()
     this.blur = function() {};
 
     this.setTarget = function(){};
+
+    this.onclick = function(event){};
 
 
   }
@@ -287,6 +307,7 @@ var key_identifier = new function()
     {
       __key_handler = edit_keyhandlers[actions.id];
       __container.addClass('edit-mode');
+      messages.post('action-mode-changed', {mode: 'edit', id: actions.id});
     }
   }
 
@@ -296,11 +317,13 @@ var key_identifier = new function()
     {
       __key_handler = keyhandlers[actions.id];
       __container.removeClass('edit-mode');
+      messages.post('action-mode-changed', {mode: 'default', id: actions.id});
     }
   }
 
   this.handle = function(event)
   {
+   
     var 
     keyCode = event.keyCode, 
     key_id = '',
@@ -323,6 +346,7 @@ var key_identifier = new function()
             ( event.ctrlKey ? '1' : '0' ) +
             ( event.altKey ? '1' : '0' ) +
             keyCode.toString();
+        // opera.postError('key handler: ' + key_id +' '+ (key_id in action_map) +' '+__key_handler[action_id = action_map[key_id]])
         if( key_id in action_map 
             && !__key_handler[action_id = action_map[key_id]](event, action_id) )
         {
@@ -356,37 +380,62 @@ var key_identifier = new function()
     }
   }
 
-  this.setView = function(event)
+  var clear_current_handler = function()
   {
-    var container = event.target;
-    while( container && !/container/.test(container.nodeName) )
+    if(__key_handler)
     {
-      container = container.parentElement;
+      __key_handler.blur();
     }
-    if( container )
+    if( __container && __container.hasClass('edit-mode') )
     {
-      var ui_obj = UIBase.getUIById(container.getAttribute('ui-id'));
-      if( ui_obj && ui_obj.view_id && ui_obj != __current_view )
-      {
-        if(__key_handler)
-        {
-          __key_handler.blur();
-        }
-        // TODO check if it has already focus
-        
-        __key_handler = keyhandlers[ui_obj.view_id] || empty_keyhandler;
-        __key_handler.focus(event, container);
-        __current_view = ui_obj; 
-        if( __container && __container.hasClass('edit-mode') )
-        {
-          __container.removeClass('edit-mode');
-        }
-        __container = container;
-      }
-      
+      __container.removeClass('edit-mode');
     }
+    __current_view_id = '';
+    __container = null;
+    __key_handler = empty_keyhandler;
   }
 
+  this.setView = function(event)
+  {
+    
+    var container = event.target;
+    while( container && !/^(?:top-)?(?:container|toolbar|tabs)$/.test(container.nodeName) 
+      && ( container = container.parentElement ) );
+    
+    if( container )
+    {
+      switch (container.nodeName)
+      {
+        case 'container':
+        {
+          var ui_obj = UIBase.getUIById(container.getAttribute('ui-id'));
+          if( ui_obj && ui_obj.view_id != __current_view_id )
+          {
+            clear_current_handler();
+            // TODO check if it has already focus
+            __key_handler = keyhandlers[__current_view_id = ui_obj.view_id] || empty_keyhandler;
+            __key_handler.focus(event, container);
+            __container = container;
+
+          }
+          else if( __key_handler )
+          {
+            __key_handler.onclick(event);
+          }
+          break;
+        }
+        // TODO set according key handler, e.g. toolbar, tab
+        default:
+        {
+          clear_current_handler();
+        }
+      }
+    }
+    else
+    {
+      clear_current_handler();
+    }
+  }
   document.addEventListener('keypress', this.handle, true);
   document.addEventListener('click', this.setView, true);
   
@@ -437,23 +486,19 @@ cls.CSSInspectorActions = function(id)
     }
   }
 
-  this.resetTarget = function()
+  this.resetTarget = function(new_container)
   {
     if( self.__active_container && self.__target && !self.__active_container.parentNode )
     {
-      var new_container = document.getElementById(self.__active_container.id);
-      if(new_container)
+      var 
+      targets = self.__active_container.getElementsByTagName(self.__target.nodeName),
+      target = null, 
+      i = 0;
+      for( ; ( target = targets[i] ) && target != self.__target; i++ );
+      if( target && ( target = new_container.getElementsByTagName(self.__target.nodeName)[i] ) )
       {
-        var 
-        targets = self.__active_container.getElementsByTagName(self.__target.nodeName),
-        target = null, 
-        i = 0;
-        for( ; ( target = targets[i] ) && target != self.__target; i++ );
-        if( target && ( target = new_container.getElementsByTagName(self.__target.nodeName)[i] ) )
-        {
-          self.__active_container = new_container;
-          self.setSelected(target);
-        }
+        self.__active_container = new_container;
+        self.setSelected(target);
       }
     }
   }
@@ -508,6 +553,7 @@ cls.CSSInspectorActions = function(id)
 
   this.setActiveContainer = function(event, container)
   {
+    self.resetTarget(container);
     self.__active_container = container;
     if ( !self.__target || !self.__target.parentElement )
     {
@@ -696,10 +742,13 @@ cls.CSSInspectorActions = function(id)
 
   var onViewCreated = function(msg)
   {
+    /*
     if(msg.id == "css-inspector" )
     {
+
       self.resetTarget();
     }
+    */
   }
   messages.addListener('view-created', onViewCreated)
 

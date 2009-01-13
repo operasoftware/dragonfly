@@ -25,9 +25,16 @@ var runtime_onload_handler = new function()
 
   var poll = function(rt_id)
   {
-    var tag = tagManager.setCB(null, handleReadyState, [rt_id]);
-    var script = "return document.readyState";
-    services['ecmascript-debugger'].eval(tag, rt_id, '', '', script);
+    if( blocked_rts[rt_id] )
+    {
+      setTimeout(poll, poll_interval, rt_id);
+    }
+    else
+    {
+      var tag = tagManager.setCB(null, handleReadyState, [rt_id]);
+      var script = "return document.readyState";
+      services['ecmascript-debugger'].eval(tag, rt_id, '', '', script);
+    }
   }
 
   var handleReadyState = function(xml, rt_id)
@@ -84,5 +91,20 @@ var runtime_onload_handler = new function()
       return false;
     }
   }
+
+  var blocked_rts = {};
+
+  var onThreadStopped = function(msg)
+  {
+    blocked_rts[msg.stop_at["runtime-id"]] = true;
+  }
+
+  var onThreadContinue = function(msg)
+  {
+    blocked_rts[msg.stop_at["runtime-id"]] = false;
+  }
+
+  messages.addListener("thread-stopped-event", onThreadStopped);
+  messages.addListener("thread-continue-event", onThreadContinue);
 
 }

@@ -3,7 +3,7 @@
   * @extends ObjectDataBase
   */
 
-var Frame_inspection = function()
+var Frame_inspection_data = function()
 {
 
   const 
@@ -11,7 +11,7 @@ var Frame_inspection = function()
   VALUE = 1;
 
   var __selectedObject = null;
-  var __views = ['frame_inspection'];
+  var __views = ['inspection'];
 
   var __is_active_inspection = true;
 
@@ -35,12 +35,6 @@ var Frame_inspection = function()
     }
   }
 
-  this.getDataFilter = function()
-  {
-    return settings['frame_inspection'].get("hide-default-properties-in-global-scope") 
-      && js_default_global_scope_properties || null;
-  }
-
   this.examineObject = function(rt_id, obj_id)
   {
     __selectedObject = {rt_id: rt_id, obj_id: obj_id};
@@ -56,7 +50,7 @@ var Frame_inspection = function()
   {
     if( xml.getNodeData('status') == 'completed' )
     {
-      frame_inspection.examineObject(rt_id, xml.getNodeData('object-id'));
+      frame_inspection_data.examineObject(rt_id, xml.getNodeData('object-id'));
     }
     else
     {
@@ -131,6 +125,6 @@ var Frame_inspection = function()
 
 }
 
-Frame_inspection.prototype = ObjectDataBase;
-frame_inspection = new Frame_inspection();
+Frame_inspection_data.prototype = ObjectDataBase;
+frame_inspection_data = new Frame_inspection_data();
 

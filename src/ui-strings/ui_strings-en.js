@@ -129,7 +129,7 @@ ui_strings.S_SWITCH_HIGHLIGHT_BY_MOUSE_OVER = 'Highlight by mouse hover';
 /* DESC: Updates the DOM model automatically when a node is being removed. */
 ui_strings.S_SWITCH_UPDATE_DOM_ON_NODE_REMOVE = 'Update DOM when a node is removed';
 /* DESC: Spell HTML tag names upper or lower case. */
-ui_strings.S_SWITCH_USE_LOWER_CASE_TAG_NAMES = 'Use lower case tag names';
+ui_strings.S_SWITCH_USE_LOWER_CASE_TAG_NAMES = 'Use lower case tag names for text/html';
 /* DESC: Shows or hides comments in DOM. */
 ui_strings.S_SWITCH_SHOW_COMMENT_NODES = 'Show comment nodes';
 /* DESC: Shows or hides DOM node attributes. */
@@ -162,6 +162,10 @@ ui_strings.S_SWITCH_SHOW_INITIAL_VALUES = 'Hide initial values in computed style
 ui_strings.S_SWITCH_SHOW_SHORTHANDS = 'Hide shorthands in computed styles view';
 /* DESC: Showing shorthands in style properties on or off. */
 ui_strings.S_SWITCH_CREATE_SHORTHANDS = 'Use shorthands for properties';
+/* DESC: Showing the siblings in the breadcrumb in the statusbar. */
+ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB = 'Show Siblings in Breadcrumb';
+/* DESC: Showing the id's and class names in the breadcrumb in the statusbar. */
+ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB = "Show id's and classes in Breadcrumb";
 
 
 
@@ -258,6 +262,10 @@ ui_strings.S_INFO_WAITING_FOR_CONNECTION =
 ui_strings.S_INFO_SERVICE_NOT_AVAILABLE =  "Service is not available: %s";
 /* DESC: Information shown when the user needs to select a runtime. */
 ui_strings.S_INFO_NO_RUNTIME_SELECTED =  "Select a runtime";
+
+ui_strings.S_INFO_NO_COMPATIBLE_VERSION =  "There is no compatible Opera Dragonfly version.";
+
+ui_strings.S_CONFIRM_LOAD_COMPATIBLE_VERSION = "The protocol version of Opera does not match the one which Opera Dragonfly is using.\n\nTry to load a compatible version?";
 
 
 

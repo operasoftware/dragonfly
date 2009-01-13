@@ -71,7 +71,7 @@ var DOM_markup_style = function(id, name, container_class)
       {
         ele.id = 'target-element';
       }
-      topCell.statusbar.updateInfo(dom_data.getCSSPath());
+      topCell.statusbar.updateInfo(templates.breadcrumb(dom_data.getCSSPath()));
     }
     else
     {
@@ -90,29 +90,16 @@ var DOM_markup_style = function(id, name, container_class)
       if(r_attr = r_attrs[i])
       {
         attr = r_attr.split('=');
-        attrs += " <span class='key'>" + 
+        attrs += " <key>" + 
           ( force_lower_case ? attr[0].toLowerCase() : attr[0] ) + 
-          "</span>=<span class='value'>" + 
+          "</key>=<value>" + 
           attr[1] + 
-          "</span>";
+          "</value>";
       }
     }
     return attrs;
   }
 
-
-
-  var getDoctypeName = function(data)
-  {
-    var node = null, i = 0;
-    for( ; node = data[i]; i++)
-    {
-      if( node[TYPE] == 1 )
-      {
-        return node[NAME];
-      }
-    }
-  }
 
   this.createView = function(container)
   {
@@ -123,7 +110,11 @@ var DOM_markup_style = function(id, name, container_class)
     }
     var data = dom_data.getData();
 
-    var tree = '', i = 0, node = null, length = data.length;
+    var 
+    tree = "<div class='padding' edit-handler='edit-dom' rt-id='" + dom_data.getDataRuntimeId() + "'>", 
+    i = 0, 
+    node = null, 
+    length = data.length;
     
     var target = dom_data.getCurrentTarget();
 
@@ -131,6 +122,7 @@ var DOM_markup_style = function(id, name, container_class)
 
     var is_open = 0;
     var has_only_one_child = 0;
+    var one_child_id = "";
     var one_child_value = ''
     var current_depth = 0;
     var child_pointer = 0;
@@ -142,7 +134,7 @@ var DOM_markup_style = function(id, name, container_class)
 
     
 
-    var force_lower_case = settings[this.id].get('force-lowercase');
+    var force_lower_case = dom_data.isTextHtml() && settings[this.id].get('force-lowercase');
     var show_comments = settings[this.id].get('show-comments');
     var show_attrs = settings[this.id].get('show-attributes');
     var node_name = '';
@@ -152,7 +144,7 @@ var DOM_markup_style = function(id, name, container_class)
 
     if( ! data.length )
     {
-      container.innerHTML = "<div class='padding'><p></p></div>";
+      container.innerHTML = "<div class='padding' edit-handler='edit-dom'><p></p></div>";
     }
     else
     {
@@ -180,12 +172,12 @@ var DOM_markup_style = function(id, name, container_class)
               attrs = '';
               for( k = 0; attr = node[ATTRS][k]; k++ )
               {
-                attrs += " <span class='key'>" + 
+                attrs += " <key>" + 
                   ( attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '' ) + 
                   ( force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ) + 
-                  "</span>=<span class='value'>\"" + 
+                  "</key>=<value>\"" + 
                   attr[ATTR_VALUE] + 
-                  "\"</span>";
+                  "\"</value>";
               }
             }
             else
@@ -204,6 +196,7 @@ var DOM_markup_style = function(id, name, container_class)
               for( ; data[child_pointer] &&  data[ child_pointer ][ DEPTH ] == child_level; child_pointer += 1 )
               {
                 one_child_value += data[ child_pointer ] [ VALUE ];
+                one_child_id = data[ child_pointer ] [ ID ];
                 if( data[ child_pointer ][ TYPE ] != 3 )
                 {
                   has_only_one_child = 0;
@@ -222,9 +215,10 @@ var DOM_markup_style = function(id, name, container_class)
                         " style='margin-left:" + 16 * node[ DEPTH ] + "px;' "+
                         "ref-id='"+ node[ ID ] + "' handler='spotlight-node' " +
                         class_name + ">"+
-                        "<span class='node'>&lt;" + node_name +  attrs + "&gt;</span>" +
-                        one_child_value + 
-                        "<span class='node'>&lt;/" + node_name + "&gt;</span>" +
+                        "<node>&lt;" + node_name +  attrs + "&gt;</node>" +
+                  // TODO text node is a different node
+                        "<text ref-id='" + one_child_id + "'>" + one_child_value + "</text>" +
+                        "<node>&lt;/" + node_name + "&gt;</node>" +
                         "</div>";
                 i = child_pointer - 1;
               }
@@ -235,14 +229,14 @@ var DOM_markup_style = function(id, name, container_class)
                         "ref-id='"+node[ ID ] + "' handler='spotlight-node'>"+
                         ( node[ CHILDREN_LENGTH ] ? 
                           "<input handler='get-children' type='button' class='open'>" : '' ) +
-                        "<span class='node'>&lt;" + node_name + attrs + "&gt;</span>" +
+                        "<node>&lt;" + node_name + attrs + "&gt;</node>" +
                         "</div>";
 
-                closing_tags.push("<div class='node' style='margin-left:" + 
+                closing_tags.push("<div style='margin-left:" + 
                                   ( 16 * node[ DEPTH ] ) + "px;' " +
-                                  "ref-id='"+node[ ID ] + "' handler='spotlight-node'>" +
+                                  "ref-id='"+node[ ID ] + "' handler='spotlight-node'><node>" +
                                   "&lt;/" + node_name + "&gt;" +
-                                  "</div>");
+                                  "</node></div>");
               }
 
             }
@@ -253,7 +247,7 @@ var DOM_markup_style = function(id, name, container_class)
                     "ref-id='"+ node[ ID ] + "' handler='spotlight-node'>"+
                     ( children_length ? 
                       "<input handler='get-children' type='button' class='close'>" : '' ) +
-                    "<span class='node'>&lt;" + node_name + attrs + ( children_length ? '' : '/' ) + "&gt;</span>" +
+                    "<node>&lt;" + node_name + attrs + ( children_length ? '' : '/' ) + "&gt;</node>" +
                     "</div>";
             }
             break;
@@ -295,7 +289,7 @@ var DOM_markup_style = function(id, name, container_class)
           case 10:  // doctype
           {
             tree += "<div style='margin-left:" + 16 * node[ DEPTH ] + "px;' class='doctype'>"+
-                    "&lt;!doctype " + getDoctypeName(data) +
+                    "&lt;!doctype " + this.getDoctypeName(data) +
                     ( node[PUBLIC_ID] ? 
                       ( " PUBLIC " + "\"" + node[PUBLIC_ID] + "\"" ) :"" ) +
                     ( node[SYSTEM_ID] ?  
@@ -308,8 +302,10 @@ var DOM_markup_style = function(id, name, container_class)
           {
             if( !/^\s*$/.test(node[ VALUE ] ) )
             {
-              tree += "<div style='margin-left:" + ( 16 * node[ DEPTH ] )  + "px;'>" + 
-                      node[ VALUE ]/*.replace(/[\x0A\x09\x0D]/g, '').replace(/ +/g, ' ')*/ + "</div>";
+              tree += 
+                "<div style='margin-left:" + ( 16 * node[ DEPTH ] )  + "px;'>" + 
+                  "<text ref-id='"+ node[ ID ] + "'>" + node[ VALUE ] + "</text>" +
+                "</div>";
             }
           }
 
@@ -320,21 +316,13 @@ var DOM_markup_style = function(id, name, container_class)
       {
         tree += closing_tags.pop();
       }
+      tree += "</div>";
       var scrollTop = container.scrollTop;
-      ( 
-        container.firstChild ? 
-        container.firstChild : 
-        container.render(['div', 'class', 'padding']) 
-      ).innerHTML = tree;
+      container.innerHTML = tree;
       container.scrollTop = scrollTop;
-      
-      topCell.statusbar.updateInfo(dom_data.getCSSPath());
+      topCell.statusbar.updateInfo(templates.breadcrumb(dom_data.getCSSPath()));
       
     }
-
-    
-
-    
   }
 
 

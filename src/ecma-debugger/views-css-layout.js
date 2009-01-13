@@ -54,11 +54,23 @@ cls.CSSLayoutView = function(id, name, container_class)
   }
   
   this.init(id, name, container_class);
+
+  var onSettingChange = function(msg)
+  {
+    if( msg.id == "dom" 
+        && ( msg.key == "show-siblings-in-breadcrumb" || msg.key == "show-id_and_classes-in-breadcrumb" ) )
+    {
+      self.updateOffsets({});
+    }
+  }
+
+  messages.addListener("setting-changed", onSettingChange);
 }
 
 cls.CSSLayoutView.prototype = ViewBase;
 new cls.CSSLayoutView('css-layout', ui_strings.M_VIEW_LABEL_LAYOUT, 'scroll css-layout');
 
+/*
 new Settings
 (
   // id
@@ -94,6 +106,6 @@ new Switches
   [
   ]
 )
-
+*/
 
 

@@ -78,7 +78,7 @@ cls.ECMAScriptDebuggerService = function(name)
     }
     else
     {
-      document.body.render
+      viewport.render
       (
         ['div', 
           ['h2', 'The debugger works with protocol version ' + ini.protocol_version +
@@ -300,7 +300,7 @@ cls.ECMAScriptDebuggerService = function(name)
                 "<runtime-id>" + runtime_id + "</runtime-id>" +
                 "<thread-id>" + thread_id + "</thread-id>" +
                 "<frame-id>" + frame_id + "</frame-id>" +
-                "<script-data xml:space=\"preserve\">" + script_data + "</script-data>";
+                "<script-data xml:space=\"preserve\"><![CDATA[" + script_data + "]]></script-data>";
     
     if( name_id_pairs )
     {

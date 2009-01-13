@@ -36,6 +36,11 @@ cls.CSSInspectorView = function(id, name, container_class)
       for( ; c = containers[i]; i++)
       {
         styles = c.getElementsByTagName('styles');
+        if( !styles.length )
+        {
+          this.createView(c);
+          return;
+        }
         for( cat_index = 0; cat_index < 2; cat_index++ )
         {
           if( cats[cat_index] == '1' )

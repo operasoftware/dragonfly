@@ -218,6 +218,7 @@
         }
         else
         {
+         
           this.toolbar.setDimensions(force_redraw);
           this.tab.setDimensions(force_redraw);
           this.container.setDimensions(force_redraw);
@@ -363,11 +364,13 @@
     if( this.checked_height )
     {
       this.height = this.checked_height;
+      this.checked_height = 0;
       this.is_dirty = true;
     }
     if( this.checked_width )
     {
       this.width = this.checked_width;
+      this.checked_width = 0;
       this.is_dirty = true;
     }
     var child = null, i = 0;

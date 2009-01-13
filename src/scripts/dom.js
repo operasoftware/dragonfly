@@ -52,7 +52,7 @@ Element.prototype.___add=Document.prototype.___add=function()
   return null;
 }
 
-Element.prototype.___add_inner = function()
+Element.prototype.___add_inner = Document.prototype.___add_inner = function()
 {
   if(arguments.length)
   {
@@ -73,7 +73,7 @@ Element.prototype.___add_inner = function()
         }
         else if(arg) 
         {
-          content += arg;
+          content += arg.replace(/</g, "&lt;").replace(/>/g, "&gt;");
         }
         arg=arguments[++i];
       }
@@ -97,7 +97,7 @@ Element.prototype.render=Document.prototype.render=function(template)
   return this.___add.apply(this, template);
 }
 
-Element.prototype.renderInner = function(template)
+Element.prototype.renderInner = Document.prototype.renderInner = function(template)
 {
   return this.___add_inner.apply(this, template);
 }
@@ -185,10 +185,17 @@ Element.prototype.getChildElements = function()
   return ret;
 }
 
-Element.prototype.releaseEvent =  function(name)
+Element.prototype.releaseEvent =  function(name, custom_props)
 {
-  var event=document.createEvent('Events');
+  var event=document.createEvent('Events'), prop = '';
   event.initEvent(name, true, true);
+  if( custom_props )
+  {
+    for( prop in custom_props )
+    {
+      event[prop] = custom_props[prop];
+    }
+  }
   this.dispatchEvent(event);
 }
 /* currently broken in Opera */
@@ -204,6 +211,8 @@ Element.prototype.getWidth=function(e)
 
 Element.prototype.spliceInnerHTML = function(str)
 {
+  this.insertAdjacentHTML('afterEnd', str);
+  /*
   var
   temp = this.ownerDocument.createElement('div-parser'),
   range = this.ownerDocument.createRange();
@@ -217,6 +226,7 @@ Element.prototype.spliceInnerHTML = function(str)
     range.selectNodeContents(this.parentNode.appendChild(temp));
   }
   this.parentNode.replaceChild(range.extractContents(), temp);
+  */
 }
 
 Element.prototype.getFirst = function(nodeName)

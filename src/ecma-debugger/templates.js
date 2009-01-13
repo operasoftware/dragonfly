@@ -18,6 +18,10 @@
     {
       ret[ret.length] = ['li', prop_dict[prop] + ': ' + enviroment[prop]];
     }
+    if( ini.revision_number.indexOf("$") != -1 && ini.mercurial_revision )
+    {
+      ini.revision_number = ini.mercurial_revision;
+    }
     ret[ret.length] = ['li', ui_strings.S_TEXT_ENVIRONMENT_DRAGONFLY_VERSION + ': ' + ini.dragonfly_version];
     ret[ret.length] = ['li', ui_strings.S_TEXT_ENVIRONMENT_REVISION_NUMBER + ': ' + ini.revision_number];
     return ['div', ret, 'class', 'padding'];
@@ -494,7 +498,10 @@ Line 2:
     return ['div',
       ['date', new Date(parseInt( message.time )*1000).toString().replace(/GMT.*$/, '') ],
       ['h2', message.source, 'severity', message.severity],
-      ['uri', message.uri],
+      ['uri', (
+                (message.uri && (message.uri.indexOf("http://") == 0 || message.uri.indexOf("https://") == 0 || message.uri.indexOf("file://")==0)) ? ["a", message.uri, "href", message.uri, "target", "_blank"] : message.uri
+              )
+      ],
       ['context', message.context],
       ['pre', message.description]
     ]
@@ -609,6 +616,30 @@ Line 2:
 
     return ret;
              
+
+  }
+
+  this.breadcrumb = function(css_path)
+  {
+    var
+    ret = ["breadcrumb"],
+    i = 0;
+    // opera.postError(JSON.stringify(css_path))
+    if( css_path )
+    {
+      for( ; i < css_path.length; i++ )
+      {
+        ret[ret.length] = 
+        [
+          "span", css_path[i].name, 
+          'obj-id', css_path[i].id.toString(), 
+          'handler', 'breadcrumb-link',
+          'class', css_path[i].is_parent_offset ? 'parent-offset' : '', 
+        ];
+        ret[ret.length] = css_path[i].combinator;
+      }
+    }
+    return ret;
 
   }
   

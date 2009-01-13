@@ -5,11 +5,16 @@ import shutil
 import tempfile
 import sys
 import zipfile
+import minify
+import base64
+import StringIO
+
 
 _text_exts = (".js", ".html", ".xml", ".css")
 _directive_exts = (".xml", ".html", ".xhtml") # files that may have <!-- command.. directives
 _keyword_exts = (".css", ".js", ".xml", ".html", ".xhtml", ".txt") # files we will try to do keyword interpolation on
 _license_exts = (".js", ".css") # extensions that should get a license
+_img_exts = (".png", ".jpg", ".gif")
 _script_ele = u"<script src=\"%s\"/>\n"
 _style_ele = u"<link rel=\"stylesheet\" href=\"%s\"/>\n"
 _re_command = re.compile("""\s?<!--\s+command\s+(?P<command>\w+)\s+"?(?P<target>.*?)"?\s*(?:if\s+(?P<neg>not)?\s*(?P<cond>\S+?))?\s*-->""")
@@ -205,9 +210,17 @@ def _is_utf8(path):
     """
     if not os.path.isfile(path): return None
     f = open(path, "rb")
-    return f.read(3) == codecs.BOM_UTF8
-
+    return "test-scripts" in path and True or f.read(3) == codecs.BOM_UTF8
     
+def _minify_buildout(src):
+    """
+    Run minification on all javascript files in directory src. Minification
+    is done in-place, so the original file is replaced with the minified one.
+    """
+    for base, dirs, files in os.walk(src):
+        for file in [f for f in files if f.endswith(".js")]:
+            abs = os.path.join(base, file)
+            minify.minify_in_place(abs)
 
 def _localize_buildout(src, langdir):
     """Make a localized version of the build dir. That is, with one
@@ -293,14 +306,127 @@ def _get_missing_strings_for_dir(stringsdir, masterlang):
             
     return missing
 
-def make_archive(src, dst, in_subdir=True):
+def _clobbering_copytree(src, dst, symlinks=False):
+    """This is a modified version of copytree from the shutil module in
+    the standard library. This version will allow copying to existing folders
+    and will clobber existing files. USE WITH CAUTION!
+    Original docstring follows:
+    
+    Recursively copy a directory tree using copy2().
+
+    The destination directory must not already exist.
+    If exception(s) occur, an Error is raised with a list of reasons.
+
+    If the optional symlinks flag is true, symbolic links in the
+    source tree result in symbolic links in the destination tree; if
+    it is false, the contents of the files pointed to by symbolic
+    links are copied.
+
+    XXX Consider this example code rather than the ultimate tool.
+
     """
-    This simply packs up the contents in the directory src into a zip archive
-    dst. This is here so we can easily zip stuff from build files without
-    forcing the user to install a command line zip tool. If in_subdir is true,
-    the archive will contain a top level directory with the same name as the
-    archive, without the extension. If it is false, the files are put in the
-    root of the archive
+    names = os.listdir(src)
+    if not os.path.isdir(dst):
+        os.makedirs(dst)
+
+    errors = []
+    for name in names:
+        srcname = os.path.join(src, name)
+        dstname = os.path.join(dst, name)
+        try:
+            if symlinks and os.path.islink(srcname):
+                linkto = os.readlink(srcname)
+                os.symlink(linkto, dstname)
+            elif os.path.isdir(srcname):
+                _clobbering_copytree(srcname, dstname, symlinks)
+            else:
+                shutil.copy2(srcname, dstname)
+            # XXX What about devices, sockets etc.?
+        except (IOError, os.error), why:
+            errors.append((srcname, dstname, str(why)))
+        # catch the Error from the recursive copytree so that we can
+        # continue with other files
+        except Error, err:
+            errors.extend(err.args[0])
+    try:
+        shutil.copystat(src, dst)
+    except WindowsError:
+        # can't copy file access times on Windows
+        pass
+    except OSError, why:
+        errors.extend((src, dst, str(why)))
+    if errors:
+        raise Error, errors
+
+def _data_uri_from_path(path):
+    if os.path.isfile(path):
+        fp = open(path, "rb")
+        return "'data:image/png;charset=utf-8;base64," + base64.b64encode(fp.read()) + "'"
+    else:
+        return None
+
+def _convert_imgs_to_data_uris(src):
+    re_img = re.compile(""".*?url\((['"]?(.*?)['"])?\)""")
+    deletions = []
+    for base, dirs, files in os.walk(src):
+        for path in [ os.path.join(base, f) for f in files if f.endswith(".css") ]:
+            fp = codecs.open(path, "r", "utf_8_sig")
+            dirty = False
+            temp = StringIO.StringIO()
+            for line in fp:
+                match = re_img.findall(line)
+                if match:
+                    for full, stripped in match:
+                        if stripped.startswith("data:"): temp.write(line.encode("ascii"))
+                        deletions.append(os.path.join(base, stripped))
+                        uri = _data_uri_from_path(os.path.join(base, stripped))
+
+                        if uri:
+                            temp.write(line.replace(full, uri).encode("ascii"))
+                        else:
+                            temp.write(line.encode("ascii"))
+                            dirty = True
+                else:
+                    temp.write(line.encode("ascii"))
+                    dirty = True
+
+            if dirty:
+                fp.close()
+                fp = codecs.open(path, "w", encoding="utf_8_sig")
+                temp.seek(0)
+                fp.write(temp.read().encode("utf-8"))
+                fp.close()
+                
+    for path in deletions:
+        if os.path.isfile(path): os.unlink(path)
+
+def _make_rel_url_path(src, dst):
+    """src is a file or dir which wants to adress dst relatively, calculate
+    the appropriate path to get from here to there."""
+    srcdir = os.path.abspath(src + "/..")
+    dst = os.path.abspath(dst)
+
+    # For future reference, I hate doing dir munging with string operations
+    # with a fiery passion, but pragmatism won out over making a lib.. .
+    
+    common = os.path.commonprefix((srcdir, dst))
+    
+    reldst = dst[len(common):]
+    srcdir = srcdir[len(common):]
+
+    newpath = re.sub(""".*?[/\\\]|.+$""", "../", srcdir) or "./"
+    newpath = newpath + reldst
+    newpath = newpath.replace("\\", "/")
+    newpath = newpath.replace("//", "/")
+    return newpath
+
+def make_archive(src, dst, in_subdir=True):
+    """This simply packs up the contents in the directory src into a zip
+    archive dst. This is here so we can easily zip stuff from build files
+    without forcing the user to install a command line zip tool. If in_subdir
+    is true, the archive will contain a top level directory with the same
+    name as the archive, without the extension. If it is false, the files are
+    put in the root of the archive
     """
     src = os.path.abspath(src)
     z = zipfile.ZipFile(dst, "w", zipfile.ZIP_DEFLATED)
@@ -363,7 +489,7 @@ def export(src, dst, process_directives=True, keywords={},
     for entry in os.listdir(tmpdir):
         path = os.path.join(tmpdir, entry)
         if os.path.isdir(path):
-            shutil.copytree(path, os.path.join(dst, entry))
+            _clobbering_copytree(path, os.path.join(dst, entry))
         else:
             shutil.copy(os.path.join(tmpdir,entry), dst)
 
@@ -390,7 +516,7 @@ Destination can be either a directory or a zip file"""
                       default=None, type="string", action="append",
                       help="A key/value pair. All instances of key will be replaced by value in all files. More than one key/value is allowed by adding more -k switches", metavar="key=value")
     parser.add_option("-d", "--delete", default=False,
-                      action="store_true", dest="delete_dst",
+                      action="store_true", dest="overwrite_dst",
                       help="Delete the destination before copying to it. Makes sure that there are no files left over from previous builds. Is destructive!")
     parser.add_option("-t", "--translate", default=False,
                       action="store_true", dest="translate_build",
@@ -401,6 +527,12 @@ Destination can be either a directory or a zip file"""
     parser.add_option("-e", "--no-enc-check", default=True,
                       action="store_false", dest="check_encodings",
                       help="Check encoding of files before building")
+    parser.add_option("-m", "--minify", default=False,
+                      action="store_true", dest="minify",
+                      help="Minify the sources")
+    parser.add_option("-u", "--no-data-uri", default=True,
+                      action="store_false", dest="make_data_uris",
+                      help="Don't generate data URIs for images in css")
 
     options, args = parser.parse_args()
     
@@ -411,8 +543,10 @@ Destination can be either a directory or a zip file"""
         src, dst = args
     
     dirvars = {}
-    exdirs = ["scripts", "ecma-debugger", "ui-style", "ui-strings"]
-    
+    if options.concat:
+        exdirs = ["scripts", "ui-style", "ecma-debugger", "ui-strings"]
+    else:
+        exdirs = []
     
     if options.translate_build:
         dirvars["exclude_uistrings"]=True
@@ -450,15 +584,23 @@ Destination can be either a directory or a zip file"""
     
     if dst.endswith(".zip"): # export to a zip file
         if os.path.isfile(dst):
-            if not options.delete_dst:
+            if not options.overwrite_dst:
                 parser.error("Destination exists! use -d to force overwrite")
             else:
                 os.unlink(dst)
+
         tempdir = tempfile.mkdtemp(".tmp", "dfbuild.")
         export(src, tempdir, process_directives=options.concat, exclude_dirs=exdirs,
                keywords=keywords, directive_vars=dirvars)
+
         if options.translate_build:
             _localize_buildout(tempdir, "src/ui-strings")
+
+        if options.make_data_uris:
+            _convert_imgs_to_data_uris(dst)
+
+        if options.minify:
+            _minify_buildout(dst)
 
         if options.license:
             _add_license(tempdir)
@@ -467,16 +609,20 @@ Destination can be either a directory or a zip file"""
         shutil.rmtree(tempdir)
 
     else: # export to a directory
-        if os.path.isdir(dst):
-            if not options.delete_dst:
-                parser.error("Destination exists! use -d to force overwrite")
-            else:
-                shutil.rmtree(dst)
-
+        if os.path.isdir(dst) and not options.overwrite_dst:
+            parser.error("Destination exists! use -d to force overwrite")
+ 
         export(src, dst, process_directives=options.concat, exclude_dirs=exdirs,
                keywords=keywords, directive_vars=dirvars)
+
         if options.translate_build:
             _localize_buildout(dst, "src/ui-strings")
+
+        if options.make_data_uris:
+            _convert_imgs_to_data_uris(dst)
+            
+        if options.minify:
+            _minify_buildout(dst)
             
         if options.license:
             _add_license(dst)

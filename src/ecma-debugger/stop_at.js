@@ -39,6 +39,8 @@ var stop_at = new function()
 
   var __stopAtId = 1;
 
+  var cur_inspection_type = '';
+
   var getStopAtId = function()
   {
     return __stopAtId++;
@@ -125,6 +127,11 @@ var stop_at = new function()
 
     views.callstack.update();
 
+    if( cur_inspection_type != 'frame' )
+    {
+      messages.post('active-inspection-type', {inspection_type: 'frame'});
+    }
+
     messages.post('frame-selected', {frame_index: 0});
 
     /*
@@ -147,7 +154,9 @@ var stop_at = new function()
     for ( prop in stop_at_settings )
     {
       config_arr[config_arr.length] = prop;
-      config_arr[config_arr.length] = stop_at_settings[prop] ? 'yes' : 'no';
+      config_arr[config_arr.length] = 
+        ( ( stop_at_user_settings[prop] = settings['js_source'].get(prop) ) 
+          || stop_at_settings[prop] ) && 'yes' || 'no';
     }
     services['ecmascript-debugger'].setConfiguration.apply(services['ecmascript-debugger'], config_arr);
   }
@@ -228,7 +237,10 @@ var stop_at = new function()
           {
             topCell.showView(views.js_source.id);
           }
-          if( views.js_source.showLine( stopAt['script-id'], line - 10 ) )
+          var plus_lines = views.js_source.getMaxLines() <= 10 
+            ? views.js_source.getMaxLines() / 2 >> 0 
+            : 10;
+          if( views.js_source.showLine( stopAt['script-id'], line - plus_lines ) )
           {
             views.js_source.showLinePointer( line, true );
           }
@@ -254,7 +266,10 @@ var stop_at = new function()
         {
           topCell.showView(views.js_source.id);
         }
-        if( views.js_source.showLine( stopAt['script-id'], line - 10 ) )
+        var plus_lines = views.js_source.getMaxLines() <= 10 
+          ? views.js_source.getMaxLines() / 2 >> 0 
+          : 10;
+        if( views.js_source.showLine( stopAt['script-id'], line - plus_lines ) )
         {
           views.js_source.showLinePointer( line, true );
         }
@@ -262,6 +277,7 @@ var stop_at = new function()
         window.focus();
         toolbars.js_source.enableButtons('continue');
         messages.post('thread-stopped-event', {stop_at: stopAt});
+        messages.post('host-state', {state: 'waiting'});
       }
     }
     else
@@ -275,7 +291,7 @@ var stop_at = new function()
       if( stopAt && stopAt['runtime-id'] == msg.id )
       {
         views.callstack.clearView();
-        views.frame_inspection.clearView();
+        views.inspection.clearView();
         self.__continue('run');
       }
 
@@ -283,7 +299,16 @@ var stop_at = new function()
 
     messages.addListener('runtime-destroyed', onRuntimeDestroyed);
 
+  var onActiveInspectionType = function(msg)
+  {
+    cur_inspection_type = msg.inspection_type;
+  }
+
+  messages.addListener('active-inspection-type', onActiveInspectionType);
+
 
 
   messages.addListener('setting-changed', onSettingChange);
+
+  
 }

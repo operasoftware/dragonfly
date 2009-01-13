@@ -3,7 +3,7 @@
   * @extends ObjectDataBase
   */
 
-var Object_inspection = function()
+var Object_inspection_data = function()
 {
 
   const 
@@ -12,7 +12,7 @@ var Object_inspection = function()
 
   var __selectedObject = null;
   // should be general inspection
-  var __views = ['frame_inspection'];
+  var __views = ['inspection'];
 
   var __is_active_inspection = false;
 
@@ -36,13 +36,6 @@ var Object_inspection = function()
     }
   }
 
-  this.getDataFilter = function()
-  {
-    return settings['object_inspection'].get("hide-default-properties-in-global-scope") 
-      && js_default_global_scope_properties || null;
-  }
-
-
   this.examineObject = function(rt_id, obj_id)
   {
     __selectedObject = {rt_id: rt_id, obj_id: obj_id};
@@ -65,7 +58,7 @@ var Object_inspection = function()
     }
     else
     {
-      opera.postError('getting window id has failed in handleShowGlobalScope in object_inspection');
+      opera.postError('getting window id has failed in handleShowGlobalScope in object_inspection_data');
     }
   }
 
@@ -105,7 +98,7 @@ var Object_inspection = function()
     if(__selectedObject && __selectedObject.rt_id == msg.id )
     {
       __selectedObject = null;
-      views.frame_inspection.clearAllContainers();
+      views.inspection.clearAllContainers();
     }
 
   }
@@ -114,6 +107,6 @@ var Object_inspection = function()
   
 }
 
-Object_inspection.prototype = ObjectDataBase;
-object_inspection = new Object_inspection();
+Object_inspection_data.prototype = ObjectDataBase;
+object_inspection_data = new Object_inspection_data();
 

@@ -52,18 +52,6 @@ var DOM_tree_style = function(id, name, container_class)
     4: "<span class='cdata-node'>#cdata-section</span>"
   }
 
-  var getDoctypeName = function(data)
-  {
-    var node = null, i = 0;
-    for( ; node = data[i]; i++)
-    {
-      if( node[TYPE] == 1 )
-      {
-        return node[NAME];
-      }
-    }
-  }
-
   this.scrollTargetIntoView = function()
   {
     var target = document.getElementById('target-element');
@@ -88,7 +76,7 @@ var DOM_tree_style = function(id, name, container_class)
         target.removeAttribute('id');
       }
       ele.id = 'target-element';
-      topCell.statusbar.updateInfo(dom_data.getCSSPath());
+      topCell.statusbar.updateInfo(templates.breadcrumb(dom_data.getCSSPath()));
     }
     else
     {
@@ -122,7 +110,12 @@ var DOM_tree_style = function(id, name, container_class)
 
     var target = dom_data.getCurrentTarget();
 
-    var tree = '', i = 0, node = null, length = data.length;
+    var
+    tree = "<div class='padding' edit-handler='edit-dom' rt-id='" + dom_data.getDataRuntimeId() + "'><div>",
+    i = 0,
+    node = null, 
+    length = data.length;
+
     var scrollTop = document.documentElement.scrollTop;
 
     var attrs = null, key = '';
@@ -140,7 +133,7 @@ var DOM_tree_style = function(id, name, container_class)
 
     var closing_tags = [];
 
-    var force_lower_case = settings[this.id].get('force-lowercase');
+    var force_lower_case = dom_data.isTextHtml() && settings[this.id].get('force-lowercase');
     var show_comments = settings[this.id].get('show-comments');
     var show_attrs = settings[this.id].get('show-attributes');
     var show_white_space_nodes = settings[this.id].get('show-whitespace-nodes');
@@ -154,9 +147,6 @@ var DOM_tree_style = function(id, name, container_class)
 
     for( ; node = data[i]; i += 1 )
     {
-
-
-
       current_depth = node[DEPTH];
       children_length = node[ CHILDREN_LENGTH ];
       child_pointer = 0;
@@ -176,12 +166,12 @@ var DOM_tree_style = function(id, name, container_class)
           {
             for( k = 0; attr = node[ATTRS][k]; k++ )
             {
-              attrs += " <span class='key'>" + 
+              attrs += " <key>" + 
                 ( attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '' ) + 
                 ( force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ) + 
-                "</span>=<span class='value'>\"" + 
+                "</key>=<value>\"" + 
                 attr[ATTR_VALUE] + 
-                "\"</span>";
+                "\"</value>";
             }
           }
 
@@ -214,7 +204,7 @@ var DOM_tree_style = function(id, name, container_class)
                     "ref-id='"+node[ID] + "' handler='spotlight-node'>"+
                     ( children_length && !has_only_one_child ? 
                       "<input handler='get-children' type='button' class='open'>" : '' ) +
-                    "<span class='node'>" + node_name + attrs + "</span>" +
+                    "<node>" + node_name + attrs + "</node>" +
                     "</div>";
 
 
@@ -228,7 +218,7 @@ var DOM_tree_style = function(id, name, container_class)
                   "ref-id='"+node[ID] + "' handler='spotlight-node'>"+
                   ( node[CHILDREN_LENGTH] ? 
                     "<input handler='get-children' type='button' class='close'>" : '' ) +
-                  "<span class='node'>" + node_name + attrs + "</span>" +
+                  "<node>" + node_name + attrs + "</node>" +
                   "</div>";
           }
 
@@ -265,7 +255,7 @@ var DOM_tree_style = function(id, name, container_class)
         case 10:  // doctype
         {
           tree += "<div style='margin-left:" + 16 * node[ DEPTH ] + "px;' class='doctype'>"+
-                    "<span class='doctype-value'>" + getDoctypeName(data) + " " +
+                    "<span class='doctype-value'>" + this.getDoctypeName(data) + " " +
                     ( node[PUBLIC_ID] ? 
                       ( " PUBLIC " + "\"" + node[PUBLIC_ID] + "\"" ) :"" ) +
                     ( node[SYSTEM_ID] ?  
@@ -285,7 +275,7 @@ var DOM_tree_style = function(id, name, container_class)
                tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;'" +
                  current_formatting + ">" +
                 ( node[NAME] ? node[NAME] :  nodeNameMap[node[TYPE]] ) + ' ' +
-                node[VALUE] +
+                "<text ref-id='" + node[ID]+ "'>" + node[VALUE] + "</text>" +
                 "</div>";
             }
           }
@@ -296,7 +286,9 @@ var DOM_tree_style = function(id, name, container_class)
             tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;'" +
               current_formatting + ">" +
               ( node[NAME] ? node[NAME] :  nodeNameMap[node[TYPE]] ) + ' ' +
-              ( /^\s*$/.test( node[VALUE] ) ? _escape(node[VALUE]) : node[VALUE] ) +
+              "<text ref-id='" + node[ID]+ "'>" + 
+                ( /^\s*$/.test( node[VALUE] ) ? _escape(node[VALUE]) : node[VALUE] ) + 
+              "</text>" +
               "</div>";
             
 
@@ -311,15 +303,18 @@ var DOM_tree_style = function(id, name, container_class)
     
 
       var scrollTop = container.scrollTop;
+      /*
       if( !container.firstChild )
       {
         container.render(['div', ['div'], 'class', 'padding'])
       }
+      */
+      tree += "</div></div>";
 
-      container.firstChild.firstChild.innerHTML = tree;
+      container.innerHTML = tree;
 
       container.scrollTop.scrollTop = scrollTop;
-      topCell.statusbar.updateInfo(dom_data.getCSSPath());
+      topCell.statusbar.updateInfo(templates.breadcrumb(dom_data.getCSSPath()));
       
     }
 

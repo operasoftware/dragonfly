@@ -153,6 +153,14 @@ cls.JsSourceView = function(id, name, container_class)
 
   this.createView = function(container)
   {
+    // TODO this must be refactored
+    // the challenge is to do as less as possible in the right moment
+
+    view_invalid = view_invalid 
+    && script.id 
+    && runtimes.getSelectedScript() 
+    && runtimes.getSelectedScript() != script.id;
+
     if( view_invalid )
     {
       script = {};
@@ -162,7 +170,8 @@ cls.JsSourceView = function(id, name, container_class)
     }
     __container = container;
     frame_id = container.id;
-    container.innerHTML = "<div id='js-source-scroll-content'>"+
+    container.innerHTML = \
+      "<div id='js-source-scroll-content'>"+
         "<div id='js-source-content'></div>"+
       "</div>"+
       "<div id='js-source-scroll-container' handler='scroll-js-source'>"+
@@ -187,13 +196,17 @@ cls.JsSourceView = function(id, name, container_class)
       container.render(templates.line_nummer_container(max_lines || 1));
       line_numbers = document.getElementById(container_line_nr_id);
       var selected_script_id = runtimes.getSelectedScript();  
+
       if(selected_script_id && selected_script_id != script.id)
       {
         var stop_at = runtimes.getStoppedAt(selected_script_id);
         if(stop_at && stop_at[0])
         {
           var line = parseInt( stop_at[0]['line-number'] );
-          this.showLine(selected_script_id, line - 10);
+          var plus_lines = max_lines <= 10 
+            ? max_lines / 2 >> 0 
+            : 10;
+          this.showLine(selected_script_id, line - plus_lines);
           this.showLinePointer( line, true );
         }
         else
@@ -204,9 +217,8 @@ cls.JsSourceView = function(id, name, container_class)
       else if( script.id )
       {
         setScriptContext(script.id, __current_line);
-        this.showLine( script.id, __current_line )
+        this.showLine( script.id, __current_line );
       }
-
       else
       {
         updateLineNumbers(0);
@@ -226,6 +238,7 @@ cls.JsSourceView = function(id, name, container_class)
 
   var updateLayout = function()
   {
+    // not used
     if( source_content && source_content.innerHTML )
     {
       source_content.innerHTML = '';
@@ -306,7 +319,7 @@ cls.JsSourceView = function(id, name, container_class)
     line_numbers = document.getElementById(container_line_nr_id);
     source_content.style.height = ( context['line-height'] * max_lines ) +'px';
 
-    var scrollHeight = script.line_arr.length * context['line-height'] + max_lines;
+    var scrollHeight = script.line_arr.length * context['line-height'];
     document.getElementById(scroll_id).style.height = scrollHeight + 'px';
     if( scrollHeight > context['line-height'] * max_lines )
     {
@@ -339,6 +352,7 @@ cls.JsSourceView = function(id, name, container_class)
   {
     // too often called?
 
+
     if( __timeout_clear_view )
     {
       __timeout_clear_view = clearTimeout( __timeout_clear_view );
@@ -348,18 +362,23 @@ cls.JsSourceView = function(id, name, container_class)
     
     if( script.id != script_id )
     {
-      var script_source = runtimes.getScriptSource(script_id);
+      var script_obj = runtimes.getScript(script_id);
 
-
-
-      if(script_source || script_source == '')
+      if( script_obj )
       {
+        if( !script_obj.line_arr )
+        {
+          script_obj.source_data = new String(script_obj['script-data']);
+          script_obj.line_arr = [];
+          script_obj.state_arr = [];
+          pre_lexer(script_obj);
+        }
         script =
         {
           id: script_id,
-          source: new String(script_source),
-          line_arr: [],
-          state_arr: [],
+          source: script_obj.source_data,
+          line_arr: script_obj.line_arr,
+          state_arr: script_obj.state_arr,
           breakpoints: [],
           has_context: false
         }
@@ -373,15 +392,12 @@ cls.JsSourceView = function(id, name, container_class)
         }
         __current_pointer = 0;
         __current_pointer_type = 0;
-        pre_lexer(script);
- 
         if( is_visible )
         {
           script.has_context = setScriptContext(script_id, line_nr);
         }
         
         messages.post('script-selected', {script: script});
-
 
       }
       else
@@ -430,6 +446,11 @@ cls.JsSourceView = function(id, name, container_class)
     return __current_line;
   }
 
+  this.getMaxLines = function()
+  {
+    return max_lines;
+  }
+
   this.getBottomLine = function()
   {
     return __current_line + max_lines;
@@ -440,9 +461,9 @@ cls.JsSourceView = function(id, name, container_class)
   {
     var script_breakpoints = script.breakpoints;
     // TODO fix from Johannes. Why is that needed?
-  if (!script_breakpoints) {
-    return;
-  }
+    if (!script_breakpoints) {
+      return;
+    }
     if( __current_pointer )
     {
       script_breakpoints[ __current_pointer ] -= __current_pointer_type;
@@ -462,7 +483,6 @@ cls.JsSourceView = function(id, name, container_class)
     }
     __current_pointer = 0;
     __current_pointer_type = 0;
-    updateBreakpoints();
   }
 
   this.addBreakpoint = function(line)
@@ -480,7 +500,10 @@ cls.JsSourceView = function(id, name, container_class)
 
   this.scroll = function()
   {
-    
+    if( view_invalid )
+    {
+      return;
+    }
     if(!__scroll_interval && script.id)
     {
       __scroll_interval = setInterval(__scroll, 60);
@@ -543,7 +566,6 @@ cls.JsSourceView = function(id, name, container_class)
 
   this.clearView = function()
   {
-    //opera.postError('clear view');
     if( !__timeout_clear_view )
     {
       __timeout_clear_view = setTimeout( __clearView, 50);
@@ -552,12 +574,13 @@ cls.JsSourceView = function(id, name, container_class)
 
   var __clearView = function()
   {
-    
     if(source_content = document.getElementById(container_id))
     {
       source_content.innerHTML = '';
       clearLineNumbers();
     }
+    self.clearLinePointer();
+    __current_line = 0;
     __timeout_clear_view = 0;
     view_invalid = true;      
   }

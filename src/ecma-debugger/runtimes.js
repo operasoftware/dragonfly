@@ -44,6 +44,24 @@ var runtimes = new function()
   
   var self = this;
 
+  var onResetState = function()
+  {
+    __runtimes = {};
+    __old_runtimes = {};
+    __runtimes_arr = []; // runtime ids
+    __window_ids = {};
+    __windows_reloaded = {};
+    __selected_window = '';
+    __threads = [];
+    __log_threads = false;
+    __windowsFolding = {};
+    __old_selected_window = ''; 
+    __selected_runtime_id = '';
+    __next_runtime_id_to_select = '';
+    __selected_script = '';
+    updateRuntimeViews();
+  }
+
   var registerRuntime = function(id)
   { 
     if( !(id in __runtimes) )
@@ -274,6 +292,10 @@ var runtimes = new function()
       {
         // do we need to remove the old breakpoints?
         self.setBreakpoint(new_script_id, line_nr);
+      }
+      if( __scripts[sc]['script-id'] == __selected_script )
+      {
+        __selected_script = new_script_id;
       }
       delete __scripts[sc];
     }
@@ -946,6 +968,8 @@ var runtimes = new function()
   messages.addListener('setting-changed', onSettingChange);
   messages.addListener('active-tab', onActiveTab);
   messages.addListener('application-setup', onApplicationSetup);
+
+  messages.addListener('reset-state', onResetState);
   
 
 
