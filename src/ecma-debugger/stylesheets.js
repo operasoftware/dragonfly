@@ -632,6 +632,8 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   {
     
     var ret = "", i = 0, index = 0, prop = '', value = '';
+    // setProps is used to force the display if a given property is set 
+    // also if it has the initial value
     var setProps = elementStyle.getSetProps();
     var hideInitialValue = settings['css-inspector'].get('hide-initial-values');
     var hide_shorthands = settings['css-inspector'].get('hide-shorthands'); // TODO make a setting
