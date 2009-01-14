@@ -25,6 +25,7 @@ var elementStyle = new function()
   var __searchMap = [];
   var __search_is_active = false;
   var __old_search_therm = '';
+  var __setProps = [];
 
   var onResetState = function()
   {
@@ -135,6 +136,31 @@ var elementStyle = new function()
     STYLE-DECLARATION-LIST   ::= "[" STYLE-DECLARATION { "," STYLE-DECLARATION } "]"
     STYLE-DECLARATION        ::= ELEMENT-RULE | AUTHOR-RULE | LOCAL-RULE | USER-AGENT-RULE
 
+    ; Common header for style declarations
+    RULE-HEADER    ::= RULE-ORIGIN
+    RULE-ORIGIN    ::=   "1" ; user-agent (ie. default)
+                       | "2" ; local (ie. user)
+                       | "3" ; author (ie. stylesheet)
+                       | "4" ; element (ie. in-line)
+                       
+    ; Common property list for style declarations
+    PROPERTIES ::= "[" INDEX-LIST "],"
+                   "[" VALUE-LIST "],"
+                   "[" PRIORITY-LIST "],"
+                   "[" STATUS-LIST "]"
+
+    ELEMENT-RULE      ::= "[[" ELEMENT-HEADER "]," PROPERTIES "]"
+    ELEMENT-HEADER    ::= RULE-HEADER ; object-id and element-name is part of NODE-HEADER
+
+    AUTHOR-RULE       ::= "[[" AUTHOR-HEADER "]," PROPERTIES "]"
+    AUTHOR-HEADER     ::= RULE-HEADER "," STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SPECIFICITY "," SELECTOR-TEXT
+
+    USER-AGENT-RULE   ::= "[[" USER-AGENT-HEADER "]," PROPERTIES "]"
+    USER-AGENT-HEADER ::= RULE-HEADER ; object-id and element-name is part of NODE-HEADER
+
+    LOCAL-RULE       ::= "[[" LOCAL-HEADER "]," PROPERTIES "]"
+    LOCAL-HEADER     ::= RULE-HEADER "," SPECIFICITY "," SELECTOR-TEXT
+
   */
   
   var searchNodeCascade = function(node_cascade, search_list)
@@ -217,6 +243,10 @@ var elementStyle = new function()
     return categories_data[index];
   }
 
+  this.getSetProps = function()
+  {
+    return __setProps.slice(0);
+  }
 
 
   var getRequestType = function()
@@ -299,20 +329,51 @@ var elementStyle = new function()
 
   var handleGetData = function(xml, rt_id, obj_id)
   {
+    const
+    STYLE_DECLARATION_LIST = 1,
+    STYLE_DEC_HEADER = 0,
+    RULE_ORIGIN = 0,
+    INDEX_LIST = 1,
+    STATUS_LIST = 4;
 
     var 
     json = xml.getNodeData('matching-style-declarations'), 
     declarations = null, 
     i = 0, 
-    view_id = '';
+    view_id = '',
+    node_style_cascade = null, 
+    style_dec = null, 
+    j = 0, 
+    length = 0, 
+    k = 0;
 
     if( json )
     {
       declarations = eval('(' + json +')');
-
       categories_data[0] = declarations[0]; 
       categories_data[1] = declarations[1];
       categories_data[1].rt_id = categories_data[0].rt_id = rt_id;
+
+      // this is to ensure that a set property is always displayed in computed style,
+      // also if it maps the initial value and the setting "Hide Initial Values" is set to true.
+      __setProps = [];
+      for ( i = 0; node_style_cascade = categories_data[CSS][i]; i++)
+      {
+        for( j = 0; style_dec = node_style_cascade[STYLE_DECLARATION_LIST][j]; j++)
+        {
+          if( style_dec[STYLE_DEC_HEADER][RULE_ORIGIN] != 1 ) // any other rule except browser default rules
+          {
+            length = style_dec[INDEX_LIST].length;
+            for( k = 0; k < length; k++)
+            {
+              if( style_dec[STATUS_LIST][k] )
+              {
+                __setProps[style_dec[INDEX_LIST][k]] = 1;
+              }
+            }
+          }
+        }
+      }
 
       if( __old_search_therm )
       {
