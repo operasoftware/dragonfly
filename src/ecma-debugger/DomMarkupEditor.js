@@ -107,7 +107,8 @@ var DOMMarkupEditor = function()
 
   this.cancel = function()
   {
-    // return a valid navigation target or null
+    // return a valid navigation target or null. 
+    // this is aproblem. the view will be updated anyway.
     var 
     script = "",
     state = this.context_enter,
@@ -123,6 +124,12 @@ var DOMMarkupEditor = function()
         ( 
           tag, state.rt_id, '', '', script, ['host_target', state.host_target]
         );
+      }
+      else
+      {
+        nav_target.textContent = "";
+        this.context_cur = this.context_enter = null;
+        views.dom.update();
       }
     }
     return nav_target;
