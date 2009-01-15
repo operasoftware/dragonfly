@@ -364,7 +364,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
           }
           case "text":
           {
-            script = 'node.nodeValue = "' + crlf_ecode(state.text) + '"';
+            script = 'node.nodeValue = "' + crlf_encode(state.text) + '"';
             services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
             nav_target.textContent = state.text;
             break;
