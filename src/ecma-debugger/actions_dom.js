@@ -209,12 +209,23 @@ cls.DOMInspectorActions = function(id)
       }
       case 'node':
       {
+        var new_target = event.target;
+        if(/^<\//.test(new_target.textContent))
+        {
+          new_target = event.target.getPreviousWithFilter
+            (event.target.parentNode.parentNode, self.makeFilterGetStartTag(event.target.textContent));
+          if( !new_target )
+          {
+            opera.postError('failed getting start tag in this.editDOM in action_dom.js')
+            return;
+          }
+        }
         event.preventDefault();
         event.stopPropagation();
         key_identifier.setModeEdit(self);
-        self.setSelected(event.target.parentNode);
+        self.setSelected(new_target.parentNode);
         self.set_editor("dom-markup-editor");
-        self.editor.edit(event, event.target);
+        self.editor.edit(event, new_target);
         /*
         if(event.target.parentElement.hasAttribute('rule-id'))
         {
@@ -486,6 +497,15 @@ cls.DOMInspectorActions = function(id)
       {
         key_identifier.setModeDefault(self);
       }
+    }
+  }
+
+  this.makeFilterGetStartTag = function(endtag)
+  {
+    var start_tag = endtag.replace(/[\/>]/g, '');
+    return function(node)
+    {
+      return node.nodeName == 'node' && node.textContent.indexOf(start_tag) ==  0;
     }
   }
 
