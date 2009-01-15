@@ -1,0 +1,35 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title> </title>
+<link rel='stylesheet' href="../../ui-style/ui.css"/>
+<script src="../../scripts/dom.js"/>
+<script src="../../ui-scripts/cst-select.js"/>
+
+<script src="script.js"/>
+<link rel="stylesheet" href="style.css"/> 
+</head>
+<body>
+<div id="test-document">
+  <h2>Test Document</h2>
+  <div id="iframe-container">
+  <iframe></iframe>
+  </div>
+</div>
+
+<div id="dom-container">
+  <h2>DOM</h2>
+  <div id="dom-scoll-container">
+    <div id="dom"></div>
+  </div>
+</div>
+
+<div id="controls-container">
+  <h2>Metrics</h2>
+  <div id="metrics"></div>
+  <div id="controls">
+
+  </div>
+</div>
+
+</body>
+</html>
