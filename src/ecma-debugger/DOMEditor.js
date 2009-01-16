@@ -132,6 +132,59 @@ var DOMAttrAndTextEditor = function(nav_filters)
     is_new: false
   }
 
+  // TODO move this to an helper, this is duplicated code from DOM_tree_style
+  var map = 
+  {   
+    '\t': '\\t',
+    '\v': '\\v',
+    '\f': '\\f',
+    '\u0020': '\\u0020',
+    '\u00A0': '\\u00A0',
+    '\r': '\\r',
+    '\n': '\\n',
+    '\u2028': '\\u2028',
+    '\u2029': '\\u2029'
+  };
+
+  var _escape = function(string)
+  {
+    string = new String(string);
+    var _char = '', i = 0, ret = '';
+    for( ; _char = string.charAt(i); i++ )
+    {
+      ret += map[_char];
+    }
+    return ret;
+  }
+
+  var re_encoded = /^(?:\\t|\\v|\\f|\\u0020|\\u00A0|\\r|\\n|\\u2028|\\u2029)+$/;
+
+  var decode_escape = function(string)
+  {
+    var  
+    match = null, 
+    ret = '',
+    re = /\\t|\\v|\\f|\\u0020|\\u00A0|\\r|\\n|\\u2028|\\u2029/g,
+    decode_map = 
+    {   
+      '\\t': '\t',
+      '\\v': '\v',
+      '\\f': '\f',
+      '\\u0020': '\u0020',
+      '\\u00A0': '\u00A0',
+      '\\r': '\r',
+      '\\n': '\n',
+      '\\u2028': '\u2028',
+      '\\u2029': '\u2029'
+    };
+
+    while( match = re.exec(string) )
+    {
+      ret += decode_map[match[0]];
+    }
+    return ret;
+  }
+
   var crlf_encode = function(str)
   {
     return str.replace(/\r\n/g, "\\n");
@@ -180,6 +233,10 @@ var DOMAttrAndTextEditor = function(nav_filters)
         enter_state.has_value = ele.nextElementSibling && ele.nextElementSibling.nodeName == "value";
         enter_state.value = enter_state.has_value 
           && ele.nextElementSibling.textContent.replace(/^"|"$/g, "");
+
+        this.textarea.value = ele.textContent;
+        ele.textContent = "";
+        ele.appendChild(this.textarea_container);
         break;
       }
       case "value":
@@ -195,6 +252,11 @@ var DOMAttrAndTextEditor = function(nav_filters)
           && ele.previousElementSibling.textContent
           || "";
         enter_state.value = ele.textContent.replace(/^"|"$/g, "");
+
+        this.textarea.value = ele.textContent.replace(/^"|"$/g, "");
+        ele.textContent = '"';
+        ele.appendChild(this.textarea_container);
+        ele.appendChild(document.createTextNode('"'));
         break;
       }
       case "text":
@@ -204,25 +266,23 @@ var DOMAttrAndTextEditor = function(nav_filters)
         enter_state.rt_id = parent_parent.parentElement.getAttribute('rt-id')
           || parent_parent.parentElement.parentElement.getAttribute('rt-id');
         enter_state.obj_id = ele.getAttribute('ref-id');
-        enter_state.text = ele.textContent;
+        if( re_encoded.test(ele.textContent) )
+        {
+          enter_state.text = decode_escape(ele.textContent);
+        }
+        else
+        {
+          enter_state.text = ele.textContent;
+        }
+
+        this.textarea.value = enter_state.text;
+        ele.textContent = "";
+        ele.appendChild(this.textarea_container);
         break;
       }
     }
 
     this.max_width = parseInt( getComputedStyle(parent_parent, null).getPropertyValue('width'));
-    if( enter_state.type == "value" )
-    {
-      this.textarea.value = ele.textContent.replace(/^"|"$/g, "");
-      ele.textContent = '"';
-      ele.appendChild(this.textarea_container);
-      ele.appendChild(document.createTextNode('"'));
-    }
-    else
-    {
-      this.textarea.value = ele.textContent;
-      ele.textContent = "";
-      ele.appendChild(this.textarea_container);
-    }
     this.set_textarea_dimensions();
     this.context_enter = enter_state;
     for( prop in enter_state )
@@ -321,7 +381,14 @@ var DOMAttrAndTextEditor = function(nav_filters)
         case "text":
         {
           dom_data.update(state); 
-          nav_target.textContent = state.text;
+          if( /^\s*$/.test( state.text) ) 
+          {
+            nav_target.textContent = _escape(state.text);
+          }
+          else
+          {
+            nav_target.textContent = state.text;
+          }
           break;
         }
       }
@@ -366,7 +433,14 @@ var DOMAttrAndTextEditor = function(nav_filters)
           {
             script = 'node.nodeValue = "' + crlf_encode(state.text) + '"';
             services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
-            nav_target.textContent = state.text;
+            if( /^\s*$/.test( state.text) ) 
+            {
+              nav_target.textContent = _escape(state.text);
+            }
+            else
+            {
+              nav_target.textContent = state.text;
+            }
             break;
           }
         }

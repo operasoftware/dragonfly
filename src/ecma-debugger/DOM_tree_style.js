@@ -23,7 +23,7 @@ var DOM_tree_style = function(id, name, container_class)
     PUBLIC_ID = 4,
     SYSTEM_ID = 5;
 
-   var map = 
+  var map = 
   {   
     '\t': '\\t',
     '\v': '\\v',
@@ -38,7 +38,8 @@ var DOM_tree_style = function(id, name, container_class)
 
   var _escape = function(string)
   {
-    string = new String(string), _char = '', i = 0, ret = '';
+    string = new String(string);
+    var _char = '', i = 0, ret = '';
     for( ; _char = string.charAt(i); i++ )
     {
       ret += map[_char];
