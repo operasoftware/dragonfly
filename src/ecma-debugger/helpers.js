@@ -105,7 +105,7 @@ helpers = new function()
 
   this.escapeTextHtml = function(str)
   {
-    return str.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/&/g, "&amp;");
+    return str.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/&(?!.{2,4};)/g, "&amp;");
   }
   
   document.addEventListener('keypress', keypressListener, true);
