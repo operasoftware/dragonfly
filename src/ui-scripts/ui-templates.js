@@ -112,6 +112,11 @@
         'id', ui_obj.spin_animator.getId(),
         'title', ui_strings.S_LABEL_STATUS_INDICATOR
       ], 
+      ['input', 
+        'type', 'button', 
+        'handler', 'switch-info-type', 
+        'title', 'switch info type'
+      ],
       this.configButton('top-settings'), ['info']
     ]
   }

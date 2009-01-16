@@ -234,5 +234,20 @@ eventHandlers.blur['blur'] = function(event, target)
   }
 }
 
+eventHandlers.click['switch-info-type'] = function(event, target)
+{
+  var parent = event.target.parentNode;
+  if( parent.hasClass('type-tooltip' ) )
+  {
+    parent.removeClass('type-tooltip');
+  }
+  else
+  {
+    parent.addClass('type-tooltip');
+  }
+}
+
+
+
 
 

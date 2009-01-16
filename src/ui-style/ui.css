@@ -65,21 +65,37 @@ top-statusbar { /**/
   overflow: hidden;
   }
 
-top-statusbar:hover 
+top-statusbar.type-tooltip 
 {
   overflow: visible;
   z-index: 20;
 }
 
-top-statusbar:hover info
+top-statusbar.type-tooltip info
 {
   display: block;
   position:absolute;
   bottom: 0;
-  left: 60px;
+  left: 80px;
   margin: 0px;
   background-image: -o-skin('Speed Dial Configuration Dialog Skin');
-  padding: 3px 9px 10px 5px;
+  padding: 0px 9px 7px 5px;
+  min-height: 22px;
+  min-width: 22px;
+}
+
+top-statusbar input 
+{
+  width: 22px;
+  background-image: url('../ui-images/btn-switch-statusbar-type.png');
+  border: none;
+  background-position: 50% -3px;
+  background-repeat: no-repeat;
+}
+
+top-statusbar.type-tooltip input
+{
+  background-position: 50% -27px;
 }
 
 window-statusbar { /**/
