@@ -213,7 +213,7 @@ cls.DOMInspectorActions = function(id)
         if(/^<\//.test(new_target.textContent))
         {
           new_target = event.target.getPreviousWithFilter
-            (event.target.parentNode.parentNode, self.makeFilterGetStartTag(event.target.textContent));
+            (event.target.parentNode.parentNode, self.makeFilterGetStartTag(event.target));
           if( !new_target )
           {
             opera.postError('failed getting start tag in this.editDOM in action_dom.js')
@@ -500,12 +500,17 @@ cls.DOMInspectorActions = function(id)
     }
   }
 
-  this.makeFilterGetStartTag = function(endtag)
+  this.makeFilterGetStartTag = function(start_node)
   {
-    var start_tag = endtag.replace(/[\/>]/g, '');
+    var start_tag = start_node.textContent.replace(/[\/>]/g, '');
+    var margin_left = start_node.parentElement.style.marginLeft;
     return function(node)
     {
-      return node.nodeName == 'node' && node.textContent.indexOf(start_tag) ==  0;
+      return (
+        node.nodeName == 'node' 
+        && node.textContent.indexOf(start_tag) ==  0
+        && node.parentElement.style.marginLeft == margin_left
+        );
     }
   }
 
