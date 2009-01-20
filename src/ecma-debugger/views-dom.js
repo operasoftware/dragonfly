@@ -444,6 +444,11 @@ cls.DOMView = function(id, name, container_class)
     return tree;
   }
 
+  this.ondestroy = function()
+  {
+    services['ecmascript-debugger'].clearSpotlight(dom_data.getDataRuntimeId());
+  }
+
   var onSettingChange = function(msg)
   {
     if( msg.id == self.id )
