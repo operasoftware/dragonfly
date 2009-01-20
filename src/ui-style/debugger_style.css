@@ -847,3 +847,10 @@ breadcrumb span:hover, .css-layout breadcrumb span:hover
   background-color: hsl(240, 80%, 90%);
   border-color: hsl(240, 50%, 70%);
 }
+
+/* debug */
+
+d
+{
+  color: #999;
+}
