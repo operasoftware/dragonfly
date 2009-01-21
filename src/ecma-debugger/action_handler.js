@@ -564,6 +564,7 @@ var action_handler = new function()
   {
     var rt_id = dom_data.getDataRuntimeId(); // is this the correst way?
     var obj_id = current_target.getAttribute('ref-id');
+    // var input = current_target.firstElementChild
     if(obj_id && !handlers['spotlight-node'].timeout )
     {
       services['ecmascript-debugger'].spotlight(rt_id, obj_id, obj_id != dom_data.getCurrentTarget());
@@ -571,6 +572,12 @@ var action_handler = new function()
       dom_data.setCurrentTarget(obj_id);
       views['dom'].updateTarget(current_target, obj_id);
     }
+    /* to expand on clicking the line
+    if(obj_id && input && input.hasClass('close') )
+    {
+      handlers['get-children']({target: input});
+    }
+    */
   }
 
   handlers['spotlight-node'].timeout = 0;
