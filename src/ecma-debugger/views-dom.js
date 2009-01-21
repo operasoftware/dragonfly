@@ -123,7 +123,7 @@ cls.DOMView = function(id, name, container_class)
 
   this.serializer =
   {
-    'text/html': function(data)
+    'text/html': function(data, is_xml)
     {
       const LINEBREAK = '\r\n';
 
@@ -167,7 +167,7 @@ cls.DOMView = function(id, name, container_class)
         }
         switch (node[TYPE])
         {
-          case 1: // elemets
+          case 1: // elements
           {
             attrs = '';
             for( k = 0; attr = node[ATTRS][k]; k++ )
@@ -210,7 +210,7 @@ cls.DOMView = function(id, name, container_class)
               {
                 tree += LINEBREAK  + getIndent(node[DEPTH] - start_depth) + 
                         "<" + node_name + attrs + ">";
-                if( !(node_name in VOID_ELEMNTS) )
+                if( !(node_name in VOID_ELEMNTS) ) // TODO: why?
                 {
                   closing_tags.push
                   ( 
@@ -221,9 +221,8 @@ cls.DOMView = function(id, name, container_class)
             }
             else // is closed or empty
             {
-              tree +=  LINEBREAK  + getIndent(node[DEPTH] - start_depth) +
-                    "<" + node_name + attrs + ">" + 
-                    ( node_name in VOID_ELEMNTS ? "" : "</" + node_name + ">" );
+              tree +=  LINEBREAK  + getIndent(node[DEPTH] - start_depth) + "<" + node_name + attrs +
+                ( is_xml && "/>" || ">" +  ( node_name in VOID_ELEMNTS ? "" : "</" + node_name + ">" ) );
             }
             break;
           }
@@ -271,7 +270,7 @@ cls.DOMView = function(id, name, container_class)
     },
     'application/xml': function(data)
     {
-      return 'application/xml';
+      return self.serializer['text/html'](data, true);
     },
   }
 

@@ -202,6 +202,7 @@ var DOMMarkupEditor = function()
     timeout = 0,
     new_str = '',
     enter_node = null,
+    namespace = target.namespaceURI,
     update = function(str)
     {
       if( enter_node )
@@ -216,13 +217,22 @@ var DOMMarkupEditor = function()
       var temp = null;
       if( document.documentElement )
       {
-        temp = document.createElement('df-temp-element');
+        temp = namespace 
+                ? document.createElementNS(namespace, 'df-temp-element') 
+                : document.createElement('df-temp-element');
         ( document.body || document.documentElement ).appendChild(temp);
-        temp.innerHTML = new_str;
+        if(typeof temp.innerHTML == 'string')
+        {
+          temp.innerHTML = new_str;
+        }
+        else
+        {
+          innerXML(temp, new_str)
+        }
       }
       else
       {
-        var new_source = lexer.lex(new_str), tag = new_source[0]; 
+        var new_source = lexer.lex(new_str), tag = new_source.length && new_source[0];
         
         if(tag)
         {
@@ -242,27 +252,30 @@ var DOMMarkupEditor = function()
             temp.setAttribute(attr[0], attr[1]);
           }
           document.appendChild(temp);
-          temp.innerHTML = new_source[1];
+          if(typeof temp.innerHTML == 'string')
+          {
+            temp.innerHTML = new_source[1];
+          }
+          else
+          {
+            innerXML(temp, new_source[1].replace(new RegExp('</' + tag[1] + '>$'), ''))
+          }
+          range_target.selectNode(document.documentElement);
+          temp = null;
         }
       };
-      var first = temp.firstChild;
-      var last = temp.lastChild;
+      var first =  temp && temp.firstChild;
+      var last = temp && temp.lastChild;
       if(first)
       {
-        if( temp == document.documentElement )
-        {
-          range_target.selectNode(document.documentElement);
-        }
-        else
-        {
-          range_source.selectNodeContents(temp);
-          var fragment = range_source.extractContents();
-          range_target.insertNode(fragment);
-          range_target.setStartBefore(first);
-          range_target.setEndAfter(last);
-        }
+        range_source.selectNodeContents(temp);
+        var fragment = range_source.extractContents();
+        range_target.insertNode(fragment);
+        range_target.setStartBefore(first);
+        range_target.setEndAfter(last);
+        
       };
-      if(temp.parentElement)
+      if(temp && temp.parentElement)
       {
         temp.parentNode.removeChild(temp);
       };
@@ -290,9 +303,9 @@ var DOMMarkupEditor = function()
               buffer = '';
             }
             _tag = tag();
-            if( !/[!?]/.test(_tag[1].charAt(0)) ) 
+            if( _tag && !/[!?]/.test(_tag[1].charAt(0)) ) 
             {
-              return [_tag, source.slice(pos)];
+              return [_tag, source.slice(pos-1)];
             }
             continue;
           }
@@ -414,6 +427,24 @@ var DOMMarkupEditor = function()
         pos = 0;
         cur = source.charAt(pos++);
         return text();
+      }
+    }, 
+    innerXML = function(ele, str)
+    {
+      var 
+      parser = new DOMParser(),
+      source = "<temp-root xmlns=\"" + namespace + "\">" + str + "</temp-root>",
+      doc = parser.parseFromString(source, "application/xml");
+
+      if( doc.documentElement.nodeName == "temp-root" )
+      {
+        range = doc.createRange();
+        range.selectNodeContents(doc.documentElement);
+        ele.appendChild(range.extractContents());
+      }
+      else
+      {
+        ele.textContent = "<parseerror/>";
       }
     };
 
