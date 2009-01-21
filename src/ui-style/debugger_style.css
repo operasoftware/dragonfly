@@ -725,24 +725,29 @@ stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
 .dom input {
   border: 0;
   margin: 0;
-  margin-left: -15px;
+  margin-left: -23px;
   padding-right:4px;
   cursor: pointer;
-  height: 11px;
-  width: 11px;
+  height: 15px;
+  width: 19px;
   color: #666;
-  background: transparent url('../ui-images/expand-collapse.gif') 0 0 no-repeat;
+  background: transparent url('../ui-images/expand-collapse.png') 4px 2px no-repeat;
   }
 
 
 
 .dom input.open {
-  background-position:0 -11px;
+  background-position: 4px -13px;
   }
 
 .dom .node {
   cursor:pointer;
   }
+
+.dom [handler="spotlight-node"]:hover
+{
+  background-color: #f9f9ec;
+}
 
 .css-layout h2 {
   font-size: 1.2em;

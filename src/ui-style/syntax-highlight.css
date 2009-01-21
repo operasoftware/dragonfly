@@ -93,10 +93,6 @@
   color: #279;
   }
 
-.dom node:hover {
-  background-color:#ddb;
-  }
-
 .dom key, .stylesheets key, .css-inspector key {
 	color:#229;
   }
