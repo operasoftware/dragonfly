@@ -1058,6 +1058,11 @@ cst-option
   white-space: nowrap;
 }
 
+cst-option.selected
+{
+  background-color: #eec;
+}
+
 cst-option:hover
 {
   background-color: #009;

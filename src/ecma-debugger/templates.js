@@ -64,14 +64,15 @@
     scripts = runtimes.getScripts(runtime['runtime-id']),
     script = null, 
     i=0,
-    stopped_script_id = arg_list[0];
+    stopped_script_id = arg_list[0],
+    selected_script_id = arg_list[1];
 
     if( scripts.length )
     {
       for( ; script = scripts[i]; i++)
       {
         
-        ret[ret.length] = templates.scriptOption(script, runtimes.getSelectedScript(), stopped_script_id);
+        ret[ret.length] = templates.scriptOption(script, selected_script_id, stopped_script_id);
       }
     }
     /*
@@ -89,7 +90,7 @@
     return ret;
   }
 
-  this.scriptOption = function(script, selected_script, stopped_script_id)
+  this.scriptOption = function(script, selected_script_id, stopped_script_id)
   {
     var 
     display_uri = helpers.shortenURI(script['uri']),
@@ -112,18 +113,24 @@
         : ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script['script-id'] 
       ),
       'script-id', script['script-id']
-    ].concat( stopped_script_id == script['script-id'] ? ['class', 'stopped'] : [] );
+    ],
+    class_name = script['script-id'] == selected_script_id && 'selected';
 
+    if(stopped_script_id == script['script-id'])
+    {
+      class_name += ( class_name && ' ' || '' ) + 'stopped';
+    }
+      
     if( display_uri.title )
     {
       ret.splice(ret.length, 0, 'title', display_uri.title); 
     }
-    /*
-    if( script['script-id'] == selected_script )
-    {
-      ret.splice(ret.length, 0, 'class', 'selected'); 
-    }
     
+    if( class_name )
+    {
+      ret.splice(ret.length, 0, 'class', class_name); 
+    }
+    /*
     if( script['stop-ats'].length )
     {
       ret.splice(ret.length, 0, 'style', 'background-position: 0 0'); 
