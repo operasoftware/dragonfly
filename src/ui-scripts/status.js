@@ -78,10 +78,10 @@ var StatusbarBase = function()
             break;
           }
         }        
-        if(cursor && cursor.previousElementSibling)
+        if(cursor)
         {
           range.setStartBefore(breadcrumb.firstChild);
-          range.setEndAfter(cursor.previousElementSibling);
+          range.setEndAfter(cursor);
           range.deleteContents();
           breadcrumb.firstChild.nodeValue = '...';
         }
