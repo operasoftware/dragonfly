@@ -84,18 +84,18 @@ top-statusbar.type-tooltip info
   min-width: 22px;
 }
 
-top-statusbar input 
+top-statusbar .switch-info-type 
 {
-  width: 22px;
+  width: 16px;
   background-image: url('../ui-images/btn-switch-statusbar-type.png');
   border: none;
-  background-position: 50% -3px;
+  background-position: -5px -3px;
   background-repeat: no-repeat;
 }
 
-top-statusbar.type-tooltip input
+top-statusbar.type-tooltip .switch-info-type
 {
-  background-position: 50% -27px;
+  background-position: -31px -3px;
 }
 
 window-statusbar { /**/

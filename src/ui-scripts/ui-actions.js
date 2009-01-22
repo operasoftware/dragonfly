@@ -223,13 +223,14 @@ eventHandlers.blur['blur'] = function(event, target)
 eventHandlers.click['switch-info-type'] = function(event, target)
 {
   var parent = event.target.parentNode;
-  if( parent.hasClass('type-tooltip' ) )
+  var mode = topCell.statusbar.changeMode();
+  if( mode == "tooltip" )
   {
-    parent.removeClass('type-tooltip');
+    parent.addClass('type-tooltip');
   }
   else
   {
-    parent.addClass('type-tooltip');
+    parent.removeClass('type-tooltip');
   }
 }
 

@@ -115,7 +115,8 @@
       ['input', 
         'type', 'button', 
         'handler', 'switch-info-type', 
-        'title', 'switch info type'
+        'title', 'switch info type',
+        'class', 'switch-info-type'
       ],
       this.configButton('top-settings'), ['info']
     ]
