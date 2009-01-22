@@ -91,7 +91,6 @@ top-statusbar .switch-info-type
   border: none;
   background-position: -5px -3px;
   background-repeat: no-repeat;
-  border: 1px solid red;
 }
 
 top-statusbar.type-tooltip .switch-info-type
