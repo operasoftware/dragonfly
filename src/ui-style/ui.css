@@ -998,7 +998,7 @@ cst-select
   padding: 0;
   padding-right: 18px;
   margin-left: 5px;
-  
+  cursor: pointer;
 }
 
 cst-value
@@ -1021,7 +1021,6 @@ cst-drop-down
   margin-right: -18px;
   vertical-align: top;
   float: right;
-  cursor: pointer;
 }
 
 cst-drop-down:hover
