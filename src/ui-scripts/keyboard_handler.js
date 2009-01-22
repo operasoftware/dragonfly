@@ -735,6 +735,21 @@ cls.CSSInspectorActions = function(id)
     return false;
   }
 
+  this.edit_onclick = function(event)
+  {
+    if( this.editor )
+    {
+      if( this.editor.onclick(event) )
+      {
+
+      }
+      else
+      {
+        key_identifier.setModeDefault(self);
+      }
+    }
+  }
+
 
 
 
@@ -843,6 +858,11 @@ cls.CSSInspectorEditKeyhandler = function(id)
   {
     __actions.blur_edit_mode();
   }
+
+  this.onclick = function(event)
+  {
+    __actions.edit_onclick(event)
+  };
 
   this.init(id);
 };
