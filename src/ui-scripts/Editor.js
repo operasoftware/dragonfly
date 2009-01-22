@@ -7,6 +7,8 @@ var Editor = function()
   // assert: a element wich is editable has a monospace font
 
   // TODO make it more general so it can be used for other views then just the css inspector
+
+  // TODO make this a subclass of BAseEditor
   var self = this;
 
   const 
@@ -626,7 +628,17 @@ var Editor = function()
     return cur_cursor;
   }
 
-
+  this.onclick = function(event)
+  {
+    event.preventDefault();
+    event.stopPropagation();
+    if(!this.textarea_container.contains(event.target))
+    {
+      this.submit(true);
+      return false;
+    }
+    return true;
+  }
 
   this['suggest-property'] = function(token, cur_start, cur_end, action_id, match)
   {
