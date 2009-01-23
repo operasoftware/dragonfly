@@ -217,6 +217,7 @@ var runtimes = new function()
             
           }   
           __selected_script = '';
+          window['cst-selects']['js-script-select'].updateElement();
         } 
         getTitleRuntime(runtimeId);
         __runtimes[runtimeId] = runtime;

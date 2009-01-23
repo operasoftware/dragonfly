@@ -574,13 +574,20 @@ cls.JsSourceView = function(id, name, container_class)
     }
   }
 
-  
-
   var __clearView = function()
   {
-    if(source_content = document.getElementById(container_id))
+    if( ( source_content = document.getElementById(container_id) ) && source_content.parentElement )
     {
+      var 
+      divs = source_content.parentElement.parentElement.getElementsByTagName('div'), 
+      div = null, 
+      i = 0;
+
       source_content.innerHTML = '';
+      for( ; div = divs[i]; i++)
+      {
+        div.removeAttribute('style');
+      }
       clearLineNumbers();
     }
     self.clearLinePointer();
@@ -589,9 +596,6 @@ cls.JsSourceView = function(id, name, container_class)
     view_invalid = true;      
   }
 
-
-
-  
   var onRuntimeDestroyed = function(msg)
   {
     // TODO this is not good, clean up the the local script
