@@ -294,12 +294,12 @@ var DOM_markup_style = function(id, name, container_class)
           case 10:  // doctype
           {
             tree += "<div style='margin-left:" + 16 * node[ DEPTH ] + "px;' class='doctype'>"+
-                    "&lt;!doctype " + this.getDoctypeName(data) +
+                    "&lt;!doctype <doctype-attrs>" + node[NAME] +
                     ( node[PUBLIC_ID] ? 
                       ( " PUBLIC " + "\"" + node[PUBLIC_ID] + "\"" ) :"" ) +
                     ( node[SYSTEM_ID] ?  
                       ( " \"" + node[SYSTEM_ID] + "\"" ) : "" ) +
-                    "&gt;</div>";
+                    "</doctype-attrs>&gt;</div>";
             break;
           }
 
