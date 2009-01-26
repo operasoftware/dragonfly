@@ -397,7 +397,6 @@ var key_identifier = new function()
 
   this.setView = function(event)
   {
-    
     var container = event.target;
     while( container && !/^(?:top-)?(?:container|toolbar|tabs)$/.test(container.nodeName) 
       && ( container = container.parentElement ) );

@@ -3,11 +3,6 @@
   */
 // test
 
-var global_state =
-{
-  ui_framework: {}
-}
-
 var composite_view_convert_table = 
 {
   // opera.attached.toString()
@@ -421,12 +416,6 @@ var client = new function()
 
   this.setupTopCell = function()
   {
-    var spin_state = '';
-    if( window.topCell )
-    {
-      spin_state = window.topCell.statusbar.spin_animator.getState();
-      window.topCell.cleanUp();
-    }
     viewport.innerHTML = '';
     window.topCell = new TopCell
     (
@@ -446,33 +435,15 @@ var client = new function()
       }
     );
     windowsDropDown.update();
-    if(spin_state)
-    {
-      var spin_animator = window.topCell.statusbar.spin_animator;
-      switch (spin_state)
-      {
-        case 'initial':
-        {
-          spin_animator.setInitial();
-          break;
-        }
-        case 'active':
-        {
-          spin_animator.setActive();
-          break;
-        }
-        case 'final':
-        {
-          spin_animator.setFinal();
-          break;
-        }
-      }
-    }
     var view_id = global_state && global_state.ui_framework.last_selected_tab;
     if(  view_id && views[view_id] && !views[view_id].isvisible())
     {
       window.topCell.showView(view_id);
     } 
+    if(global_state.ui_framework.spin_state)
+    {
+      messages.post("host-state", {state: global_state.ui_framework.spin_state});
+    }
   }
 
   this.onquit = function()
