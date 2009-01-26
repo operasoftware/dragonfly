@@ -119,7 +119,13 @@ var TopCell = function(layout, setDimensions, onresize)
   this.setStartDimesions();
   this.toolbar.setup(this.id);
   this.statusbar.setup(this.id);
-  this.tab.setActiveTab( this.tab.tabs[0].ref_id );
+  this.tab.setActiveTab
+  ( 
+    global_state 
+    && global_state.ui_framework.last_selected_top_tab
+    && composite_view_convert_table[opera.attached.toString()][global_state.ui_framework.last_selected_top_tab]
+    || this.tab.tabs[0].ref_id 
+  );
   this.container.setup(this.id);
   this.update(this.left, this.top, true);
   this.setup();
