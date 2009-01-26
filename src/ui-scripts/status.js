@@ -18,6 +18,7 @@ var StatusbarBase = function()
   this.selector_cap_width = 0;
   this.available_width_delta = 0;
   this.info_container_scroll_height = 0;
+  this.global_state_store = global_state.ui_framework;
 
   this.setup = function(view_id)
   {
@@ -36,6 +37,10 @@ var StatusbarBase = function()
         + parseInt(style.getPropertyValue('padding-left'))
         + parseInt(style.getPropertyValue('padding-right'))
         + 50; // setting button in the protocol 3 branch
+    }
+    if(this.mode == this.TOOLTIP_MODE)
+    {
+      statusbar.addClass('type-tooltip');
     }
     this.updateInfo(' ');
   } 
@@ -95,7 +100,7 @@ var StatusbarBase = function()
 
   this.changeMode = function()
   {
-    this.mode = this.mode == this.DEFAULT_MODE && this.TOOLTIP_MODE || this.DEFAULT_MODE;
+    this.global_state_store[this.type + "_mode"] = this.mode = this.mode == this.DEFAULT_MODE && this.TOOLTIP_MODE || this.DEFAULT_MODE;
     this.updateInfo(this.info);
     return this.mode;
   }
@@ -139,6 +144,10 @@ var StatusbarBase = function()
   {
     this.cell = cell;
     this.initBase();
+    if( this.global_state_store[this.type + "_mode"] )
+    {
+      this.mode = this.global_state_store[this.type + "_mode"];
+    }
   }
 
 }
@@ -178,7 +187,6 @@ var TopStatusbar = function(cell)
 {
   this.type = 'top-statusbar';
   var self = this;
-  this.global_state_store = global_state.ui_framework;
   var handleHostState = function(msg)
   {
     self.global_state_store.spin_state = msg.state;
