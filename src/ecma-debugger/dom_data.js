@@ -292,7 +292,10 @@ var dom_data = new function()
 
   this.getDOM = function(rt_id)
   {
-    getInitialView(rt_id);
+    if( !(rt_id == data_runtime_id && data.length) )
+    {
+      getInitialView(rt_id);
+    }
   }
 
 
@@ -315,7 +318,6 @@ var dom_data = new function()
 
   var handleInitialView = function(xml, rt_id)
   {
-    
     if(xml.getNodeData('status') == 'completed' )
     {
       clickHandlerHost({'runtime-id': rt_id, 'object-id': xml.getNodeData('object-id') })
