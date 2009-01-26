@@ -84,7 +84,6 @@ new cls.CallstackView('callstack', ui_strings.M_VIEW_LABEL_CALLSTACK, 'scroll');
 cls.GeneralView = function(id, name, container_class)
 {
   this.ishidden_in_menu = true;
-  this.hidden_in_settings = true;
   this.createView = function(container)
   {
   }
@@ -100,17 +99,19 @@ new Settings
   // key-value map
   {
     "show-views-menu": false,
-    "window-attached": true
+    "window-attached": true,
+    "show-only-normal-and-gadget-type-windows": true
   }, 
   // key-label map
   {
-    "show-views-menu": ui_strings.S_SWITCH_SHOW_VIEWS_MENU
+    "show-views-menu": ui_strings.S_SWITCH_SHOW_VIEWS_MENU,
+    "show-only-normal-and-gadget-type-windows": ui_strings.S_SWITCH_SHOW_ONLY_NORMAL_AND_GADGETS_TYPE_WINDOWS
   },
   // settings map
   {
     checkboxes:
     [
-      "show-views-menu"
+      "show-only-normal-and-gadget-type-windows"
     ]
   }
 
@@ -245,6 +246,50 @@ eventHandlers.click['apply-remote-debugging'] = function(event, target)
     target.disabled = 
       target.previousSibling.previousSibling.firstChild.checked == settings.debug_remote_setting.get('debug-remote');
   }
+}
+
+
+// TODO clean up
+
+var templates = window.templates || ( window.templates = {} );
+
+templates.windowSelect = function()
+{
+  return [
+    'window-select',
+    [
+      'select',
+      'handler', this.handler
+    ]
+  ];
+}
+
+
+new ToolbarConfig
+(
+  'main-view',
+  [
+    {
+      handler: 'reload-window',
+      title: ui_strings.S_BUTTON_LABEL_RELOAD_HOST
+    }
+  ],
+  null,
+  null,
+  [
+    {
+      handler: 'select-window',
+      title: ui_strings.S_BUTTON_LABEL_SELECT_WINDOW,
+      type: 'dropdown',
+      class: 'window-select-dropdown',
+      template: templates.windowSelect
+    }
+  ]
+)
+
+eventHandlers.click['reload-window'] = function(event, target)
+{
+  runtimes.reloadWindow();
 }
 
 

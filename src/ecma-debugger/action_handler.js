@@ -329,10 +329,7 @@ var action_handler = new function()
     if(rules)
     {
       stylesheets.setSelectedSheet(rt_id, index, rules);
-      if(!event.synthetic)
-      {
-        topCell.showView(views.stylesheets.id);
-      }
+      topCell.showView(views.stylesheets.id);
       helpers.setSelected(event);
     }
   }
@@ -359,7 +356,7 @@ var action_handler = new function()
       runtimes.setWindowUnfolded(window_id, true);
     }
   }
-
+/*
   handlers['show-dom'] = function(event, target)
   {
     var rt_id = target.parentNode.getAttribute('runtime_id');
@@ -370,7 +367,7 @@ var action_handler = new function()
       dom_data.getDOM(rt_id);
     }
   }
-
+*/
   handlers['display-script'] = function(event)
   {
     var script_id  = event.target.getAttribute('script-id');
