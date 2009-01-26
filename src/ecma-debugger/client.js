@@ -2,6 +2,35 @@
   * @constructor 
   */
 // test
+
+var global_state =
+{
+  ui_framework: {}
+}
+
+var composite_view_convert_table = 
+{
+  // opera.attached.toString()
+  "true": 
+  {
+    'environment_new': 'environment_new',
+    'console_new': 'console_new',
+    'js_panel': 'js_panel',
+    'js_new': 'js_panel',
+    'dom_panel': 'dom_panel',
+    'dom_new': 'dom_panel',
+  },
+  "false": 
+  {
+    'environment_new': 'environment_new',
+    'console_new': 'console_new',
+    'js_panel': 'js_new',
+    'js_new': 'js_new',
+    'dom_panel': 'dom_new',
+    'dom_new': 'dom_new',
+  }
+}
+
 var client = new function()
 {
   var self = this;
@@ -397,7 +426,11 @@ var client = new function()
         this.setup();
       }
     );
-    window.topCell.setup();
+    var view_id = global_state && global_state.ui_framework.last_selected_tab;
+    if(  view_id && views[view_id] && !views[view_id].isvisible())
+    {
+      window.topCell.showView(view_id);
+    } 
   }
 
   this.onquit = function()
