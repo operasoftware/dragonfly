@@ -177,10 +177,11 @@ var WindowStatusbar = function(cell)
 var TopStatusbar = function(cell)
 {
   this.type = 'top-statusbar';
-  var self = this; 
+  var self = this;
+  this.global_state_store = global_state.ui_framework;
   var handleHostState = function(msg)
   {
-    //opera.postError('msg.state: '+msg.state)
+    self.global_state_store.spin_state = msg.state;
     switch (msg.state)
     {
       case 'inactive':
