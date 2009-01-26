@@ -3,11 +3,6 @@
   */
 // test
 
-var global_state =
-{
-  ui_framework: {}
-}
-
 var composite_view_convert_table = 
 {
   // opera.attached.toString()
@@ -473,6 +468,10 @@ var client = new function()
     {
       window.topCell.showView(view_id);
     } 
+    if(global_state.ui_framework.spin_state)
+    {
+      messages.post("host-state", {state: global_state.ui_framework.spin_state});
+    }
   }
 
   this.onquit = function()

@@ -10,3 +10,8 @@
   slider_border_width: 5,
   focus_catcher_id: 'opera-focus-catcher'
 }
+
+var global_state =
+{
+  ui_framework: {}
+}
