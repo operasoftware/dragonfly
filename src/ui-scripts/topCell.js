@@ -13,7 +13,6 @@ var TopCell = function(layout, setDimensions, onresize)
   this.onresize = onresize;
   var delayed_resize = function()
   {
-    
     self.onresize();
     messages.post('resize');
   }

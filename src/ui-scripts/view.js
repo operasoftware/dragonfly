@@ -188,7 +188,7 @@ var ViewBase = new function()
     }
   }
 
-  this.onresize = function()
+  this.onresize = function(container)
   {
 
   }

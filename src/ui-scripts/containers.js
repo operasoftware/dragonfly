@@ -56,8 +56,10 @@ var ContainerBase = function()
     }
 
     this.update(force_redraw);
-
-    views[this.view_id] && views[this.view_id].onresize();
+    if(views[this.view_id] && !force_redraw)
+    {
+      views[this.view_id].onresize(document.getElementById(this.type + '-to-' + this.cell.id));
+    }
 
   }
 

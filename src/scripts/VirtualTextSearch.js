@@ -244,7 +244,7 @@ var VirtualTextSearch = function()
 
   this.setContainer = function(_container)
   {
-    if( container != _container )
+    if(_container)
     {
       container = _container;
       source_container = null;
@@ -254,14 +254,17 @@ var VirtualTextSearch = function()
 
   this.setFormInput = function(input)
   {
-    __input = input;
-    if(search_therm)
+    if(input)
     {
-      __input.value = search_therm;
-      __input.parentNode.firstChild.textContent = '';
-      var new_search_therm = search_therm;
-      search_therm = '';
-      this.search(new_search_therm);
+      __input = input;
+      if(search_therm)
+      {
+        __input.value = search_therm;
+        __input.parentNode.firstChild.textContent = '';
+        var new_search_therm = search_therm;
+        search_therm = '';
+        this.search(new_search_therm);
+      }
     }
   }
   

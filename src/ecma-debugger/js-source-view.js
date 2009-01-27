@@ -227,11 +227,12 @@ cls.JsSourceView = function(id, name, container_class)
     }
   }
 
-  this.onresize = function()
+  this.onresize = function(container)
   {
     if(this.isvisible())
     {
-      this.createView(__container);
+      this.createView(container);
+      messages.post('view-created', {id: this.id, container: container});
     }
   }
 
