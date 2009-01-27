@@ -13,5 +13,8 @@
 
 var global_state =
 {
-  ui_framework: {}
+  ui_framework: 
+  {
+    temporary_tabs: []
+  }
 }

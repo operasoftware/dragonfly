@@ -98,9 +98,20 @@ eventHandlers.click['tab'] = function(event, target)
 eventHandlers.click['close-tab'] = function(event, target)
 {
   target = target.parentElement;
-  var container = target.parentElement;
-  var tabs = UIBase.getUIById(target.parentElement.getAttribute('ui-id'));
-  tabs.removeTab(target.getAttribute('ref-id'));
+
+  var 
+  tabs = UIBase.getUIById(target.parentElement.getAttribute('ui-id')),
+  view_id = target.getAttribute('ref-id'),
+  store = global_state.ui_framework.temporary_tabs,
+  cursor = '',
+  i = 0;
+
+  tabs.removeTab(view_id);
+  for( ; ( cursor = store[i] ) && cursor != view_id; i++);
+  if(cursor)
+  {
+    store.splice(i, 1);
+  }
 }
 
 eventHandlers.click['settings-tabs'] = function(event, target)
