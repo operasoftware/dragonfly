@@ -110,6 +110,22 @@ var TopCell = function(layout, setDimensions, onresize)
     resize_timeout = null;
   }
 
+  this.addTemporaryTabs = function()
+  {
+    var 
+    store = global_state.ui_framework.temporary_tabs,
+    view_id = '', 
+    i = 0;
+
+    for( ; view_id = store[i]; i++)
+    {
+      if(views[view_id])
+      {
+        this.tab.addTab(new Tab(view_id, views[view_id].name, true));
+      }
+    }
+  }
+
   document.addEventListener('resize', setDelayedResize, false);
 
 
@@ -118,6 +134,7 @@ var TopCell = function(layout, setDimensions, onresize)
   this.setStartDimesions();
   this.toolbar.setup(this.id);
   this.statusbar.setup(this.id);
+  this.addTemporaryTabs();
   this.tab.setActiveTab
   ( 
     global_state 
