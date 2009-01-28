@@ -347,6 +347,11 @@ var elementStyle = new function()
       __old_search_therm = search_therm;
     }
   }
+
+  this.getSearchTerm = function()
+  {
+    return __old_search_therm;
+  }
   
   var doSearch = function(search_therm)
   {

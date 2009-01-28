@@ -19,6 +19,13 @@ cls.CSSInspectorView = function(id, name, container_class)
       cat_key += cat.unfolded ? '1' : '0';
     }
     this.updateCategories({}, cat_key);
+
+    var quick_find = this.getToolbarControl( container, 'css-inspector-text-search');
+    if( quick_find && elementStyle.getSearchTerm() )
+    {
+      quick_find.value = elementStyle.getSearchTerm();
+      quick_find.previousElementSibling.textContent = "";
+    }
   }
 
   this.updateCategories = function(ev, cats)
@@ -63,6 +70,9 @@ cls.CSSInspectorView = function(id, name, container_class)
       }
     }
   }
+
+
+  
 
 
 
