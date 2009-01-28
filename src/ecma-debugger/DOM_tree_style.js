@@ -53,6 +53,8 @@ var DOM_tree_style = function(id, name, container_class)
     4: "<span class='cdata-node'>#cdata-section</span>"
   }
 
+  var div_padding_value = 0;
+
   this.scrollTargetIntoView = function()
   {
     var target = document.getElementById('target-element');
@@ -143,6 +145,10 @@ var DOM_tree_style = function(id, name, container_class)
 
     var current_formatting = '';
     var re_formatted = /script|style/i;
+    var scrollTop = 0;
+    var container_scroll_width = 0;
+    var container_first_child = null;
+    var style = null;
 
     var graphic_arr = [];
 
@@ -303,18 +309,27 @@ var DOM_tree_style = function(id, name, container_class)
 
     
 
-      var scrollTop = container.scrollTop;
-      /*
-      if( !container.firstChild )
-      {
-        container.render(['div', ['div'], 'class', 'padding'])
-      }
-      */
+
       tree += "</div></div>";
-
+      scrollTop = container.scrollTop;
       container.innerHTML = tree;
-
-      container.scrollTop.scrollTop = scrollTop;
+      container.scrollTop = scrollTop;
+      container_scroll_width = container.scrollWidth;
+      container_first_child = container.firstChild;
+      // preformatted text is in a span
+      // that does just add to the scroll width but does not expand the container
+      if( container_scroll_width > container_first_child.offsetWidth )
+      {
+        if( !div_padding_value )
+        {
+          style = getComputedStyle(container_first_child, null);
+          div_padding_value = \
+            parseInt( style.getPropertyValue('padding-left') ) +
+            parseInt( style.getPropertyValue('padding-right') );
+        }
+        container.firstChild.style.width = ( container_scroll_width - div_padding_value ) + 'px';
+        setTimeout(function(){container.scrollLeft = 0;}, 0);
+      }
       topCell.statusbar.updateInfo(templates.breadcrumb(dom_data.getCSSPath()));
       
     }
