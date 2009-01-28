@@ -72,7 +72,7 @@ var host_tabs = new function()
 
   this.setActiveTab = function(window_id)
   {
-    
+
     activeTabOnChange();
     __window_id = window_id;
     runtimes.setActiveWindowId(window_id);
@@ -90,6 +90,7 @@ var host_tabs = new function()
       __addEvenetListener(ev.type, ev.cb);
     }
     cleanUpEventListener();
+    messages.post('active-tab', {activeTab: __activeTab} );
   }
 
   this.getActiveTab = function(top_frame_runtime_id)
