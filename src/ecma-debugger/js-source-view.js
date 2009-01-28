@@ -155,12 +155,12 @@ cls.JsSourceView = function(id, name, container_class)
   {
     // TODO this must be refactored
     // the challenge is to do as less as possible in the right moment
-
+    
     view_invalid = view_invalid 
     && script.id 
     && runtimes.getSelectedScript() 
-    && runtimes.getSelectedScript() != script.id;
-
+    && runtimes.getSelectedScript() != script.id 
+    || !runtimes.getSelectedScript();
     if( view_invalid )
     {
       script = {};
