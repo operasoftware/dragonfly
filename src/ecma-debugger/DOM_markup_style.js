@@ -38,7 +38,9 @@ var DOM_markup_style = function(id, name, container_class)
       count--;
     }
     return ret;
-  }
+  };
+
+  var div_padding_value = 0;
 
   this.scrollTargetIntoView = function()
   {
@@ -141,6 +143,11 @@ var DOM_markup_style = function(id, name, container_class)
     var tag_head = '';
     var class_name = '';
     var re_formatted = /script|style|#comment/i;
+    var scrollTop = 0;
+    var container_scroll_width = 0;
+    var container_first_child = null;
+    var style = null;
+          
 
     if( ! data.length )
     {
@@ -317,11 +324,26 @@ var DOM_markup_style = function(id, name, container_class)
         tree += closing_tags.pop();
       }
       tree += "</div>";
-      var scrollTop = container.scrollTop;
+      scrollTop = container.scrollTop;
       container.innerHTML = tree;
       container.scrollTop = scrollTop;
+      container_scroll_width = container.scrollWidth;
+      container_first_child = container.firstChild;
+      // preformatted text is in a span
+      // that does just add to the scroll width but does not expand the container
+      if( container_scroll_width > container_first_child.offsetWidth )
+      {
+        if( !div_padding_value )
+        {
+          style = getComputedStyle(container_first_child, null);
+          div_padding_value = \
+            parseInt( style.getPropertyValue('padding-left') ) +
+            parseInt( style.getPropertyValue('padding-right') );
+        }
+        container.firstChild.style.width = ( container_scroll_width - div_padding_value ) + 'px';
+        setTimeout(function(){container.scrollLeft = 0;}, 0);
+      }
       topCell.statusbar.updateInfo(templates.breadcrumb(dom_data.getCSSPath()));
-      
     }
   }
 
