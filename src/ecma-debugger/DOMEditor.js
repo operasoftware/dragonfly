@@ -381,7 +381,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
         case "text":
         {
           dom_data.update(state); 
-          if( /^\s*$/.test( state.text) ) 
+          if( settings.dom.get('dom-tree-style') && /^\s*$/.test( state.text) ) 
           {
             nav_target.textContent = _escape(state.text);
           }
@@ -433,7 +433,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
           {
             script = 'node.nodeValue = "' + crlf_encode(state.text) + '"';
             services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
-            if( /^\s*$/.test( state.text) ) 
+            if( settings.dom.get('dom-tree-style') && /^\s*$/.test( state.text) ) 
             {
               nav_target.textContent = _escape(state.text);
             }
@@ -477,7 +477,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
       }
     }
 
-    if( next )
+    if( next || ( next = submit_success && nav_target ) || ( next = nav_target_parent ) )
     {
       if( next.nodeName == 'node' )
       {
@@ -525,7 +525,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
         next = nav_target.getNextWithFilter(container, nav_filters.attr_text);
       }
     }
-    if(next)
+    if(next || ( next = submit_success && nav_target ) || ( next = nav_target_parent ) )
     {
       if( next.nodeName == 'node' )
       {
