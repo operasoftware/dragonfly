@@ -195,7 +195,7 @@ var TextSearch = function()
 
   this.revalidateSearch = function()
   {
-    if( !search_results.every(function(hit){ return hit[0].parentElement } ) )
+    if( container && search_therm )
     {
       var new_search_therm = search_therm;
       search_therm = '';
