@@ -491,7 +491,7 @@ new Settings
   {
 
     'find-with-click': true,
-    'highlight-on-hover': false,
+    'highlight-on-hover': true,
     'update-on-dom-node-inserted': false,
     'force-lowercase': true, 
     'show-comments': true, 
