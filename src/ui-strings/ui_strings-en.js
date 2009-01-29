@@ -167,6 +167,8 @@ ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB = 'Show Siblings in Breadcrumb'
 /* DESC: Showing the id's and class names in the breadcrumb in the statusbar. */
 ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB = "Show id's and classes in Breadcrumb";
 
+/* DESC: Scroll an element in the host into view when selecting it in the DOM. */
+ui_strings.S_SWITCH_SCROLL_INTO_VIEW_ON_FIRST_SPOTLIGHT = 'Scroll into View on first Spotlight';
 
 
 

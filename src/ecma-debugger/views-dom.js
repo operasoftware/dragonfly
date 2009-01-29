@@ -499,7 +499,8 @@ new Settings
     'show-whitespace-nodes': true,
     'dom-tree-style': false,
     'show-siblings-in-breadcrumb': false,
-    'show-id_and_classes-in-breadcrumb': true
+    'show-id_and_classes-in-breadcrumb': true,
+    'scroll-into-view-on-spotlight': true
   }, 
   // key-label map
   {
@@ -512,7 +513,8 @@ new Settings
     'show-whitespace-nodes': ui_strings.S_SWITCH_SHOW_WHITE_SPACE_NODES,
     'dom-tree-style': ui_strings.S_SWITCH_SHOW_DOM_INTREE_VIEW,
     'show-siblings-in-breadcrumb': ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB,
-    'show-id_and_classes-in-breadcrumb': ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB
+    'show-id_and_classes-in-breadcrumb': ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB,
+    'scroll-into-view-on-spotlight': ui_strings.S_SWITCH_SCROLL_INTO_VIEW_ON_FIRST_SPOTLIGHT
   
   },
   // settings map
@@ -527,7 +529,8 @@ new Settings
       'highlight-on-hover',
       'update-on-dom-node-inserted',
       'show-siblings-in-breadcrumb',
-      'show-id_and_classes-in-breadcrumb'
+      'show-id_and_classes-in-breadcrumb',
+      'scroll-into-view-on-spotlight'
     ]
   }
 );
