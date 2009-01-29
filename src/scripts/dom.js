@@ -1,7 +1,8 @@
 ﻿/**
  * @fileoverview
- * Helper function prototypes related to DOM objects and the DOM
+ * Helper function prototypes related to DOM objects and the DOM <strong>fixme: Christian should document the template syntax</strong>
  * templating system.
+ *
  */
 
 Element.prototype.___add=Document.prototype.___add=function()
@@ -418,7 +419,7 @@ Node.prototype.getAttributeFromNode=function(nodeName, attr)
   return null;
 };
 
-StyleSheetList.prototype.getPropertyValue = function(selector, property)
+StyleSheetList.prototype.getDeclaration = function(selector)
 {
   var sheet = null, i = 0, j = 0, rules = null, rule = null;
   for( ; sheet = this[i]; i++ )
@@ -428,10 +429,16 @@ StyleSheetList.prototype.getPropertyValue = function(selector, property)
     for( j = 0; ( rule = rules[j] ) && !( rule.type == 1 && rule.selectorText == selector ); j++);
     if( rule )
     {
-      return rule.style.getPropertyValue(property);
+      return rule.style;
     }
   }
-  return '';
+  return null;
+};
+
+StyleSheetList.prototype.getPropertyValue = function(selector, property)
+{
+  var style = this.getDeclaration(selector);
+  return style && style.getPropertyValue(property) || '';
 };
 
 (function(){
