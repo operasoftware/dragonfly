@@ -567,7 +567,8 @@ var action_handler = new function()
     // var input = current_target.firstElementChild
     if(obj_id && !handlers['spotlight-node'].timeout )
     {
-      services['ecmascript-debugger'].spotlight(rt_id, obj_id, obj_id != dom_data.getCurrentTarget());
+      services['ecmascript-debugger'].spotlight(rt_id, obj_id, 
+        settings.dom.get('scroll-into-view-on-spotlight') && obj_id != dom_data.getCurrentTarget());
       handlers['spotlight-node'].timeout = setTimeout(handlers['spotlight-node'].clearSpotlight, 800, rt_id);
       dom_data.setCurrentTarget(obj_id);
       views['dom'].updateTarget(current_target, obj_id);
