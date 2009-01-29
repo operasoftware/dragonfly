@@ -142,76 +142,69 @@ toolbar-buttons, toolbar-switches {
   float: left;
   }
 
-toolbar-buttons input, window-controls input { /**/
-  width: 26px;
-  height: 24px;
-  margin: 1px;
-  padding: 0;
+toolbar button,  window-controls button
+{
+  background: transparent none;
+  border-color: transparent;
+  border-style: solid;
   cursor: pointer;
-  border: none;
+  /* default padding values */
+  padding: 1px 8px;
+  margin: 2px;
+}
+toolbar button:before, window-controls button:before
+{
+  content: '\00A0';
+  display: inline-block;
   background: transparent url('../ui-images/btn-test.png') scroll no-repeat 0 0;
-  }
-
-toolbar-buttons input:hover, window-controls input:hover {
-  background-position: 0 -24px;
-  }
-
-toolbar-buttons input:active, window-controls input:active {
-  background-position: 0 -48px;
-  }
-
-toolbar-buttons input[disabled] { /**/
-  background-position: 0 -72px;
-  }
-
-.attached {
-  background-position: -26px 0;
-  }
-
-.attached:hover {
-  background-position: -26px -24px;
-  }
-
-.attached:active {
-  background-position: -26px -48px;
-  }
-
-/* toolbar-buttons input[disabled]:hover, */
-toolbar-buttons input[disabled]:active {
-  background-position: 0 -72px;
-  }
-
-toolbar-switches input { /**/
-  width: 26px;
   height: 24px;
-  margin: 1px;
-  padding: 0;
-  cursor: pointer;
-  border: none;
-  background: transparent url('../ui-images/btn-test-switch.png') scroll no-repeat 0 0;
-  }
-
-toolbar-switches input:hover { /* State should change while cursor still hovers after click */
-  background-position: 0 -24px;
-  }
-
-toolbar-switches input:active {
-  background-position: -26px -48px;
-  }
-
-toolbar-switches input[is-active="true"] {
-  background-position: -26px 0;
-  }
-
-toolbar-switches input[is-active="true"]:hover { /* State should change while cursor still hovers after click */
+  width: 26px; 
+  margin: -4px -12px;
+  vertical-align: 4px;
+}
+toolbar button[disabled]:before,
+toolbar button[disabled]:hover:before,
+toolbar button[disabled]:active:before
+{
+  background-position: 0 -72px;
+}
+toolbar button:hover:before, window-controls button:hover:before
+{
+  background-position: 0px -24px;
+}
+toolbar button:active:before, window-controls button:active:before
+{
+  background-position: 0px -48px;
+}
+/* switches */
+toolbar button.switch[is-active="true"]:before
+{
+  background-position: -26px 0px;
+}
+toolbar button.switch[is-active="true"]:hover:before
+{
   background-position: -26px -24px;
-  }
+}
+toolbar button.switch[is-active="true"]:active:before
+{
+  background-position: -26px -48px;
+}
+.attached:before 
+{
+  background-position: -26px 0;
+}
 
-toolbar-switches input[is-active="true"]:active {
-  background-position: 0 -48px;
-  }
+.attached:hover:before 
+{
+  background-position: -26px -24px;
+}
 
-toolbar-separator { /**/
+.attached:active:before 
+{
+  background-position: -26px -48px;
+}
+
+toolbar-separator {
   display: block;
   float: left;
   width: 1px;
@@ -405,24 +398,35 @@ input[handler="close-tab"]:active {
   background-position: 50% -24px;
   }
 
-input[handler="top-settings"] { /* Doesn't receive correct background positioning on hover and active*/
-  width: 26px;
-  height: 24px;
-  margin: 2px;
-  padding: 0;
-  cursor: pointer;  
-  background: transparent url('../ui-images/btn-config.png') scroll no-repeat 0 0;
-  border: none;
+button[handler="top-settings"]
+{
+  background: transparent none;
+  border-color: transparent;
+  border-style: solid;
+  cursor: pointer;
+  padding: 1px 8px;
+  margin: 2px 4px;
   float: right;
-  }
-
-input[handler="top-settings"]:hover {
+  line-height: 10px;
+}
+button[handler="top-settings"]:before
+{
+  content: '\00A0';
+  display: inline-block;
+  background: transparent url('../ui-images/btn-config.png') scroll no-repeat 0 0;
+  height: 24px;
+  width: 26px; 
+  margin: -4px -12px;
+  vertical-align: 4px;
+}
+button[handler="top-settings"]:hover:before 
+{
   background-position:0 -24px;
-  }
-
-input[handler="top-settings"]:active {
+}
+button[handler="top-settings"]:active:before
+{
   background-position:0 -48px;
-  }
+}
 
 window-controls {
   display: block;
@@ -793,118 +797,122 @@ window-shadow.left {
   background: transparent url('../ui-images/spin.png') scroll no-repeat 0 0;
   }
 
-input[handler="threads-clear-log"] {
+button[handler="threads-clear-log"]:before 
+{
   background-image: url('../ui-images/btn-clear-error-console.png');
-  }
-
-input[handler="threads-export-log"] {
+}
+button[handler="threads-export-log"]:before
+{
   background-image: url('../ui-images/btn-export-log.png');
-  }
-
-input[handler="dom-inspection-snapshot"] {
+}
+button[handler="dom-inspection-snapshot"]:before 
+{
   background-image: url('../ui-images/btn-get-dom-tree.png');
-  }
-
-input[key="dom.find-with-click"] {
+}
+button[key="dom.find-with-click"]:before 
+{
   background-image: url('../ui-images/btn-find-onclick.png');
-  }
-
-input[key="dom.highlight-on-hover"] {
+}
+button[key="dom.highlight-on-hover"]:before 
+{
   background-image: url('../ui-images/btn-highlight.png');
-  }
-
-input[key="dom.show-comments"] {
+}
+button[key="dom.show-comments"]:before 
+{
   background-image: url('../ui-images/btn-show-comments.png');
-  }
-
-input[key="dom.show-whitespace-nodes"] {
+}
+button[key="dom.show-whitespace-nodes"]:before 
+{
   background-image: url('../ui-images/btn-show-whitespace.png');
-  }
-
-input[key="dom.update-on-dom-node-inserted"] {
+}
+button[key="dom.update-on-dom-node-inserted"]:before 
+{
   background-image: url('../ui-images/btn-update-onchange.png');
-  }
-
-input[key="js_source.script"] {
+}
+button[key="js_source.script"]:before 
+{
   background-image: url('../ui-images/btn-stop-at-new-thread.png');
-  }
-input[key="js_source.error"] {
+}
+button[key="js_source.error"]:before 
+{
   background-image: url('../ui-images/btn-stop-on-error.png');
-  }
-input[key="threads.log-threads"] {
+}
+button[key="threads.log-threads"]:before 
+{
   background-image: url('../ui-images/btn-log-all-threads.png');
-  }
-input[key$="hide-default-properties"] {
+}
+button[key$="hide-default-properties"]:before 
+{
   background-image: url('../ui-images/btn-hide-global-scope.png');
-  }
-input[key="css-inspector.hide-initial-values"] {
+}
+button[key="css-inspector.hide-initial-values"]:before 
+{
   background-image: url('../ui-images/btn-initial-values.png');
-  }
-input[key="css-inspector.hide-shorthands"] {
+}
+button[key="css-inspector.hide-shorthands"]:before 
+{
   background-image: url('../ui-images/btn-shorthand.png');
-  }
-input[key="dom.dom-tree-style"] {
+}
+button[key="dom.dom-tree-style"]:before 
+{
   background-image: url('../ui-images/btn-tree-style.png');
-  }
-input[key="dom_attrs.hide-null-values"] {
+}
+button[key="dom_attrs.hide-null-values"]:before 
+{
   background-image: url('../ui-images/btn-hide-empty-values.png');
-  }
-input[key="stylesheets.shortcuts"] {
+}
+button[key="stylesheets.shortcuts"]:before 
+{
   background-image: url('../ui-images/btn-shorthand.png'); /* Duplicate of 'css-inspector.hide-shorthands' */
-  }
-input[key="console.use-selected-runtime-as-filter"] {
+}
+button[key="console.use-selected-runtime-as-filter"]:before 
+{
   background-image: url('../ui-images/btn-use-as-filter.png');
-  }
-input[key="threads.log-threads"] {
+}
+button[key="threads.log-threads"]:before
+{
   background-image: url('../ui-images/btn-log-threads.png');
-  }
-	
-	
-input[handler="documentation"] {
+}
+button[handler="documentation"]:before 
+{
   background-image: url('../ui-images/btn-documentation.png');
-  }
-input.clear-log {
+}
+button.clear-log:before 
+{
   background-image: url('../ui-images/btn-delete.png');
-  }
-
-input[handler="dom-inspection-export"] {
+}
+button[handler="dom-inspection-export"]:before 
+{
   background-image: url('../ui-images/btn-export-current-view.png');
-  }
-
-input[handler="reload-window"] {
+}
+button[handler="reload-window"]:before 
+{
   background-image: url('../ui-images/btn-reload-host.png');
-  }
-
-input[handler="top-window-close"] {
+}
+button[handler="top-window-close"]:before 
+{
   background-image: url('../ui-images/btn-top-close.png');
-  }
-
-input[handler="top-window-toggle-attach"] {
+}
+button[handler="top-window-toggle-attach"]:before 
+{
   background-image: url('../ui-images/btn-toggle-attach.png');
-  }
-
-
-
-input[handler="create-all-runtimes"]:hover {
-  background-position: 0 -24px;
-  }
-
-input[handler="create-all-runtimes"]:active {
-  background-position: 0 -48px;
-  }
-
-#continue-run {
+}
+#continue-run:before 
+{
   background-image:url('../ui-images/btn-run.png');
-  }
-#continue-step-into-call {
+}
+#continue-step-into-call:before 
+{
   background-image:url('../ui-images/btn-step-into-call.png');
-  }
-#continue-step-next-line {
+}
+#continue-step-next-line:before 
+{
   background-image:url('../ui-images/btn-step-next-line.png');
-  }
-#continue-step-out-of-call {
+}
+#continue-step-out-of-call:before 
+{
   background-image:url('../ui-images/btn-step-out-call.png');
-  }
+}
 
 /* editing */
 

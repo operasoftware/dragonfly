@@ -60,8 +60,7 @@
     for( ; button = buttons[i]; i++)
     {
       ret[ret.length] = 
-        ['input', 
-          'type', 'button', 
+        ['button', 
           'handler', button.handler, 
           'title', button.title
         ].concat(
@@ -87,8 +86,7 @@
         key = arr[1];
         
         ret[ret.length] = 
-          ['input', 
-            'type', 'button', 
+          ['button', 
             'handler', 'toolbar-switch', 
             'title', setting.label_map[key],
             'key', _switch,
@@ -130,7 +128,7 @@
 
   this.configButton = function(handler)
   {
-    return ['input', 'type', 'button', 'handler', handler, 'title', ui_strings.S_BUTTON_LABEL_SETTINGS];
+    return ['button', 'type', 'button', 'handler', handler, 'title', ui_strings.S_BUTTON_LABEL_SETTINGS];
   }
 
   this.tabs = function(obj)
@@ -168,14 +166,12 @@
   {
     var attached = window.opera.attached;
     return ['window-controls',
-      ['input', 
-        'type', 'button', 
+      ['button', 
         'handler', 'top-window-toggle-attach', 
         'class', 'switch' + ( attached ? ' attached' : '') ,
         'title', attached ? ui_strings.S_SWITCH_DETACH_WINDOW : ui_strings.S_SWITCH_ATTACH_WINDOW
       ],
-      ['input', 
-          'type', 'button', 
+      ['button', 
           'handler', 'top-window-close',
           'title', ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW
         ]

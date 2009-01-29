@@ -42,7 +42,7 @@ var ToolbarConfigBase = new function()
       container = document.getElementById(id);
       if( container )
       {
-        buttons = container.getElementsByTagName('toolbar-buttons')[0].getElementsByTagName('input');
+        buttons = container.getElementsByTagName('toolbar-buttons')[0].getElementsByTagName('button');
         for( j = 0; button = buttons[j]; j++)
         {
           button.disabled = this.buttons[j].disabled ? true : false;
