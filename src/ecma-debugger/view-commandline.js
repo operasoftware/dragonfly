@@ -27,23 +27,42 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
 
   var console_output_data = [];
 
+  var is_debug = false;
+
   var cons_out_render_return_val = function(entry)
   {
     if( __console_output )
     {
-      __console_output.render
-      (
-        ['pre', entry.value ].concat
-        ( 
-          entry.obj_id 
-          ? [
-              'handler', 'inspect-object-link', 
-              'rt-id', entry.runtime_id, 
-              'obj-id', entry.obj_id
-            ] 
-          : [] 
-        )
-      );
+      if( is_debug && entry.obj_id )
+      {
+        __console_output.render
+        (
+          [
+            'pre', 
+            entry.value, 
+            ['d', ' [' + entry.obj_id + ']'],
+            'handler', 'inspect-object-link', 
+            'rt-id', entry.runtime_id, 
+            'obj-id', entry.obj_id
+          ]
+        );
+      }
+      else
+      {
+        __console_output.render
+        (
+          ['pre', entry.value ].concat
+          ( 
+            entry.obj_id 
+            ? [
+                'handler', 'inspect-object-link', 
+                'rt-id', entry.runtime_id, 
+                'obj-id', entry.obj_id
+              ]
+            : [] 
+          )
+        );
+      }
     }
   }
 
@@ -537,6 +556,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
 
   this.createView = function(container)
   {
+    is_debug = ini.debug;
     container.innerHTML = markup;
     container.scrollTop = container.scrollHeight;
     __container = container;
