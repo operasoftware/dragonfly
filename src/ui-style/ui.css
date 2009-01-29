@@ -509,6 +509,12 @@ settings-container { /**/
   padding: 7px;
   }
 
+settings hr
+{
+  border: 1px dotted #333;
+  margin: 9px 26px;
+}
+
 view-slider { /**/
   display: block;
   position: absolute;

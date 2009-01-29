@@ -216,23 +216,14 @@
     var ret = ['settings', self.settingsHeader(view_id, view_name, is_unfolded)];
     if( is_unfolded )
     {
-      
       var setting = settings[view_id];
       var settings_map = setting.setting_map;
       var cat_name = '';
-      if(setting.template)
+      // so far checkboxes, customSettings
+      for( cat_name in settings_map ) 
       {
-        ret[ret.length] = setting.template();
+        ret[ret.length] = this[cat_name](setting, settings_map[cat_name]); 
       }
-      else
-      {
-        // so far only checkboxes
-        for( cat_name in settings_map ) 
-        {
-          ret[ret.length] = this[cat_name](setting, settings_map[cat_name]);
-        }
-      }
-
     }
     return ret;
   }
@@ -287,6 +278,16 @@
       }
     }
     return checkboxes;
+  }
+
+  this.customSettings = function(setting, template_name_arr)
+  {
+    var ret = [], name = null, i = 0, templates = setting.templates;
+    for( ; name = template_name_arr[i]; i++)
+    {
+      ret[ret.length] = templates[name](setting);
+    }
+    return ret;
   }
 
   this.settingCheckbox = function(view_id, key, value, label, host)

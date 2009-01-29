@@ -713,8 +713,15 @@ cls.ScriptSelect = function(id, class_name)
     stopped_script_id = '';
   }
 
+  var onApplicationSetup = function()
+  {
+    eventHandlers.change['set-tab-size']({target: {value:  settings.js_source.get('tab-size')}});
+  }
+
   messages.addListener("thread-stopped-event", onThreadStopped);
   messages.addListener("thread-continue-event", onThreadContinue);
+  messages.addListener("application-setup", onApplicationSetup);
+  
 
   this.init(id, class_name);
 }
@@ -784,14 +791,16 @@ new Settings
     script: 0, 
     exception: 0, 
     error: 0, 
-    abort: 0
+    abort: 0,
+    'tab-size': 4
   }, 
   // key-label map
   {
     script: ui_strings.S_BUTTON_LABEL_STOP_AT_THREAD, 
     exception: ui_strings.S_BUTTON_LABEL_AT_EXCEPTION, 
     error: ui_strings.S_BUTTON_LABEL_AT_ERROR, 
-    abort: ui_strings.S_BUTTON_LABEL_AT_ABORT
+    abort: ui_strings.S_BUTTON_LABEL_AT_ABORT,
+    'tab-size': ui_strings.S_LABEL_TAB_SIZE
   }, 
   // settings map
   {
@@ -801,7 +810,38 @@ new Settings
       'exception',
       'error',
       'abort'
+    ],
+    customSettings:
+    [
+      'hr',
+      'tab-size'
     ]
+  },
+  // custom templates
+  {
+    'hr':
+    function(setting)
+    {
+      return ['hr'];
+    },
+    'tab-size':
+    function(setting)
+    {
+      return \
+      [
+        'setting-composite', 
+        ['label', 
+          setting.label_map['tab-size'] + ': ',
+          ['input',
+            'type', 'number',
+            'handler', 'set-tab-size',
+            'max', '8',
+            'min', '0',
+            'value', setting.get('tab-size')
+          ]
+        ]
+      ];
+    }
   }
 );
 
@@ -864,3 +904,16 @@ new Switches
   }
 
 })()
+
+eventHandlers.change['set-tab-size'] = function(event, target)
+{
+  var 
+  style = document.styleSheets.getDeclaration("#js-source-content div"),
+  tab_size = event.target.value;
+
+  if(style && /[0-8]/.test(tab_size))
+  {
+    style.setProperty('-o-tab-size', tab_size, 0);
+    settings.js_source.set('tab-size', tab_size);
+  }
+}
