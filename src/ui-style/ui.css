@@ -150,7 +150,7 @@ toolbar button,  window-controls button
   cursor: pointer;
   /* default padding values */
   padding: 1px 8px;
-  margin: 2px;
+  margin: 2px 3px;
 }
 toolbar button:before, window-controls button:before
 {
