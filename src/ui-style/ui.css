@@ -146,7 +146,9 @@ toolbar-buttons, toolbar-switches {
   float: left;
   }
 
-toolbar button,  window-controls button
+toolbar button, 
+top-toolbar button, 
+window-controls button
 {
   background: transparent none;
   border-color: transparent;
@@ -154,9 +156,12 @@ toolbar button,  window-controls button
   cursor: pointer;
   /* default padding values */
   padding: 1px 8px;
-  margin: 2px;
+  margin: 2px 3px;
 }
-toolbar button:before, window-controls button:before
+
+toolbar button:before, 
+top-toolbar button:before, 
+window-controls button:before
 {
   content: '\00A0';
   display: inline-block;
@@ -436,7 +441,7 @@ window-controls {
   display: block;
   position: absolute;
   top: 0;
-  right: 0;
+  right: 2px;
   z-index:1000;
   }
 
