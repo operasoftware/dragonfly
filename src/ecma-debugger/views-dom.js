@@ -502,7 +502,8 @@ cls.DocumentSelect = function(id)
       }
       else
       {
-        opera.postError('missing runtime in getSelectedOptionText in cls.DocumentSelect');
+        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+          'missing runtime in getSelectedOptionText in cls.DocumentSelect');
       }
     }
     return '';
@@ -529,7 +530,7 @@ cls.DocumentSelect = function(id)
       for( ; ( rt = _runtimes[i] ) && !rt['selected']; i++);
       if( !rt && _runtimes[0] )
       {
-        opera.postError('no runtime selected')
+        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'no runtime selected')
         return;
       }
       return templates.runtimes(_runtimes, 'dom');
@@ -549,7 +550,8 @@ cls.DocumentSelect = function(id)
       }
       else
       {
-        opera.postError("missing runtime id in cls.DocumentSelect.checkChange")
+        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+          "missing runtime id in cls.DocumentSelect.checkChange")
       }
       return true;
     }

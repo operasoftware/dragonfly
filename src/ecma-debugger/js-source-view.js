@@ -639,7 +639,8 @@ cls.helper_collection.getSelectedOptionText = function()
     }
     else
     {
-      opera.postError('missing script in getSelectedOptionText in cls.ScriptSelect');
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+        'missing script in getSelectedOptionText in cls.ScriptSelect');
     }
   }
   return '';
@@ -675,7 +676,7 @@ cls.ScriptSelect = function(id, class_name)
       for( ; ( rt = _runtimes[i] ) && !rt['selected']; i++);
       if( !rt && _runtimes[0] )
       {
-        opera.postError('no runtime selected')
+        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'no runtime selected')
         return;
       }
       return templates.runtimes(_runtimes, 'script', [stopped_script_id, runtimes.getSelectedScript()]);
@@ -694,7 +695,8 @@ cls.ScriptSelect = function(id, class_name)
     }
     else
     {
-      opera.postError("missing script id in handlers['display-script']")
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+        "missing script id in handlers['display-script']")
     }
     selected_value = target_ele.textContent;
     // TODO

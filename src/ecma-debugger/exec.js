@@ -26,7 +26,8 @@ cls.ExecService = function(name)
     }
     else
     {
-      opera.postError( "window manager not handled: " + new XMLSerializer().serializeToString(xml))
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+        "window manager not handled: " + new XMLSerializer().serializeToString(xml))
     }
   }
 
@@ -51,7 +52,7 @@ cls.ExecService = function(name)
   
   if( ! client)
   {
-    opera.postError('client does not exist');
+    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'client does not exist');
     return;
   }
   client.addService(this);

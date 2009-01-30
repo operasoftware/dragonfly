@@ -17,7 +17,7 @@ cls.HTTPLoggerService = function(name)
 
     this.onreceive = function(xml) // only called if there is a xml
     {
-        //opera.postError(xml.documentElement.nodeName);
+        //opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + xml.documentElement.nodeName);
         if( ini.debug )
         {
             debug.logEvents(xml);
@@ -29,7 +29,8 @@ cls.HTTPLoggerService = function(name)
         }
         else
         {
-            opera.postError( "http-logger not handled: " + new XMLSerializer().serializeToString(xml))
+            opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+              "http-logger not handled: " + new XMLSerializer().serializeToString(xml))
         }
     }
 
@@ -38,14 +39,14 @@ cls.HTTPLoggerService = function(name)
     this['request'] = function(msg) 
     {
         var data = this.parseRequest(msg);
-        //opera.postError("just parsed a request:\n" + JSON.stringify(data));
+        //opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + "just parsed a request:\n" + JSON.stringify(data));
         HTTPLoggerData.addRequest(data);
     }
 
     this['response'] = function(msg) 
     {
         var data = this.parseResponse(msg);
-        //opera.postError("just parsed a response:\n" + JSON.stringify(data))
+        //opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + "just parsed a response:\n" + JSON.stringify(data))
         HTTPLoggerData.addResponse(data);
     }
 
@@ -129,7 +130,8 @@ cls.HTTPLoggerService = function(name)
                 retval.raw = ele.textContent;
                 var hd = this.parseResponseHeader(ele);
                 if (!hd) {
-                    opera.postError("could not parse response header")
+                    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+                      "could not parse response header")
                     continue;
                 }
                 retval.protocol= hd.protocol;
@@ -155,7 +157,8 @@ cls.HTTPLoggerService = function(name)
         reqparts = requestline.match(/(\w*?) (.*) (.*)/);
 
         if (!reqparts || reqparts.length != 4) {
-            opera.postError("Could not parse request: " + requestline);
+            opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+              "Could not parse request: " + requestline);
             return null;
         }
 
@@ -196,7 +199,8 @@ cls.HTTPLoggerService = function(name)
         respparts = respline.match(/(\w*?) (\w*?) (.*)/);
 
         if (!respparts || respparts.length != 4) {
-            opera.postError("Could not parse response:\n" + respline);
+            opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+              "Could not parse response:\n" + respline);
             return null;
         }
         
@@ -245,7 +249,7 @@ cls.HTTPLoggerService = function(name)
   
     if( ! client)
     {
-        opera.postError('client does not exist');
+        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'client does not exist');
         return;
     }
     client.addService(this);

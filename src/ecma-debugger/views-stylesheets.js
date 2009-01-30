@@ -105,7 +105,8 @@ cls.StylesheetSelect = function(id, class_name)
     {
       return templates.runtimes(runtimes.getRuntimes(active_window_id), 'css');
     }
-    opera.postError('no active window in templateOptionList in cls.StylesheetSelect');
+    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+      'no active window in templateOptionList in cls.StylesheetSelect');
     return [];
   }
 

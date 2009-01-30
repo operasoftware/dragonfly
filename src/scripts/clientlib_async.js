@@ -50,7 +50,6 @@ var proxy = new function()
       services.push(service_elts[i].getAttribute("name"));
     }
     self.services = services;
-    // opera.postError("services: "+services);
     self.onsetup();
   }
 
@@ -95,13 +94,6 @@ var proxy = new function()
       {
         throw "Message failed, Status: " + this.status;
       }
-      /*
-      var r = this.responseText;
-      if(r.indexOf('hello') != -1 )
-      {
-        opera.postError(r);
-      }
-      */
       self.onReceive(x);
       var xml = this.responseXML;
       if (xml.documentElement == null)
@@ -144,7 +136,6 @@ var proxy = new function()
     */
     this.POST = function ( msg, data, cb ) 
     {
-      // opera.postError("POST: " + msg+' '+ data+' '+cb)
       var x = new XMLHttpRequest;
       x.onload=function()
       {

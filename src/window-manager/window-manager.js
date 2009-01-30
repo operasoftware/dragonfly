@@ -26,7 +26,8 @@ cls.WindowManagerService = function(name)
     }
     else
     {
-      opera.postError( "window manager not handled: " + new XMLSerializer().serializeToString(xml))
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+        "window manager not handled: " + new XMLSerializer().serializeToString(xml))
     }
   }
 
@@ -147,7 +148,7 @@ cls.WindowManagerService = function(name)
   
   if( ! client)
   {
-    opera.postError('client does not exist');
+    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'client does not exist');
     return;
   }
   client.addService(this);
@@ -202,7 +203,7 @@ var window_manager_data = new function()
       // TODO 
       // workaround for wrong active window id. must be removed
       this.setDebugContext(this.window_list[0]['window-id']);
-      opera.postError('active window id does not exist');
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'active window id does not exist');
     }
     update_views();
   }
