@@ -241,8 +241,10 @@ def _localize_buildout(src, langdir):
     clientdata = fp.read()
     fp.close()
     
-
-    for lang, newscriptpath, newclientpath, path in [ (f[11:13], "script/dragonfly-"+f[11:13]+".js", "client-"+f[11:13]+".xml", os.path.join(langdir, f)) for f in os.listdir(langdir) if f.startswith("ui_strings-") and f.endswith(".js") ]:
+    langnames = [f for f in os.listdir(langdir) if f.startswith("ui_strings-") and f.endswith(".js") ]
+    langnames = [f.replace("ui_strings-", "").replace(".js", "") for f in langnames]
+    
+    for lang, newscriptpath, newclientpath, path in [ (ln, "script/dragonfly-"+ln+".js", "client-"+ln+".xml", os.path.join(langdir, "ui_strings-"+ln+".js")) for ln in langnames ]:
         newscript = codecs.open(os.path.join(src,newscriptpath), "w", encoding="utf_8_sig")
         newclient = codecs.open(os.path.join(src, newclientpath), "w", encoding="utf_8_sig")
         langfile = codecs.open(path, "r", encoding="utf_8_sig")
