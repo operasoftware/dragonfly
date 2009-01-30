@@ -23,21 +23,17 @@ cls.StylesheetsView = function(id, name, container_class)
         "</div>";
       if(selected_sheet.rule_id)
       {
-        //opera.postError(selected_sheet.rule_id);
         var rules = container.getElementsByTagName('rule'), rule = null, i = 0;
         for( ; rule = rules[i]; i++)
         {
           if(rule.getAttribute('rule-id') == selected_sheet.rule_id )
           {
             container.scrollTop = rule.offsetTop;
-            //opera.postError(selected_sheet.rule_id+' '+rule.offsetTop)
             break;
           }
         }
-        //alert(selected_sheet.rule_id);
       }
       //window.open('data:text/plain;charset=utf-8,'+encodeURIComponent(container.innerHTML))
-      //opera.postError((new Date().getTime() - t) +' '+ container.innerHTML.length);  
     }
     else
     {

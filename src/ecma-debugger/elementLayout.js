@@ -299,7 +299,8 @@ var elementLayout = new function()
     }
     else
     {
-      opera.postError('handleGetOffsetsData failed')
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+        'handleGetOffsetsData failed')
     }
   }
   

@@ -165,7 +165,8 @@ var elementStyle = new function()
         }
         else
         {
-          opera.postError('failed in restructureData');
+          opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+            'failed in restructureData');
         }
       }
     }
@@ -247,7 +248,8 @@ var elementStyle = new function()
       }
       else
       {
-        opera.postError("failed in parseNodeCascade: "+ JSON.stringify(dec) );
+        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+          "failed in parseNodeCascade: "+ JSON.stringify(dec) );
       }
       declarations[declarations.length] = dec;
     }
@@ -398,7 +400,6 @@ var elementStyle = new function()
         has_inherited_props // must be set in this call
       ]
     */
-    //opera.postError("searchNodeCascade: "+ JSON.stringify(node_cascade) )
     var
     dec = null,
     i = 0,
@@ -418,7 +419,8 @@ var elementStyle = new function()
       }
       else
       {
-        opera.postError("searchNodeCascade: "+ JSON.stringify(dec) );
+        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+          "searchNodeCascade: "+ JSON.stringify(dec) );
       }
     }
     searchStyleDeclaration(node_cascade[2], search_list);
@@ -591,7 +593,8 @@ var elementStyle = new function()
     }
     else
     {
-      opera.postError('elementStyle, cat id does not return a cat');
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+        'elementStyle, cat id does not return a cat');
     }
   }
 
@@ -645,7 +648,8 @@ var elementStyle = new function()
       }
       if(!req_type)
       {
-        opera.postError('missing req_type or req_type 0 in handleGetData in elementStyles')
+        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+          'missing req_type or req_type 0 in handleGetData in elementStyles')
       }
 
       parse_data[req_type]();

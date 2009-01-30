@@ -54,7 +54,8 @@ var Frame_inspection_data = function()
     }
     else
     {
-      opera.postError('getting window id has failed in handleShowGlobalScope in frame_inspection');
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+        'getting window id has failed in handleShowGlobalScope in frame_inspection');
     }
   }
 
@@ -94,7 +95,6 @@ var Frame_inspection_data = function()
       self.clearData();
     }
     var view_id = '', i = 0;
-    //opera.postError(__is_active_inspection);
     if( __is_active_inspection )
     {
       for ( ; view_id = __views[i] ; i++)

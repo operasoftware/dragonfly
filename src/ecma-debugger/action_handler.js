@@ -85,7 +85,7 @@ var action_handler = new function()
     }
     else
     {
-      opera.postError("missing frame in 'show-frame' handler");
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + "missing frame in 'show-frame' handler");
     }
 
     
@@ -382,7 +382,8 @@ var action_handler = new function()
     }
     else
     {
-      opera.postError("missing script id in handlers['display-script']")
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+        "missing script id in handlers['display-script']")
     }
   }
 

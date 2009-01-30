@@ -729,11 +729,8 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   prettyPrintCat[MATCHING_RULES] = function(data, search_active)
   {
     var ret = '', rule = null, header = null, i = 0, sheet = null;
-    //opera.postError('prettyPrintCat[MATCHING_RULES]' + JSON.stringify(data))
     for( ; rule = data[i]; i++)
     {
-      //opera.postError('prettyPrintCat[MATCHING_RULES]' + rule)
-      //opera.postError(data.rt_id+' '+rule[HEADER][0])
       sheet = self.getSheetWithObjId(data.rt_id, rule[HEADER][0]);
       if( sheet )
       {
@@ -751,7 +748,8 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
       }
       else
       {
-        opera.postError('stylesheet is missing in stylesheets, prettyPrintCat[MATCHING_RULES]');
+        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+          'stylesheet is missing in stylesheets, prettyPrintCat[MATCHING_RULES]');
       }
     }
     return ret;
@@ -816,7 +814,8 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
           }
           else
           {
-            opera.postError('stylesheet is missing in stylesheets, prettyPrintCat[MATCHING_RULES]');
+            opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+              'stylesheet is missing in stylesheets, prettyPrintCat[MATCHING_RULES]');
           }
         }
       }

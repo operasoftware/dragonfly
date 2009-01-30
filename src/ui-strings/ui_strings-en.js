@@ -306,3 +306,5 @@ ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID = "Script id";
 /* DESC: Result text for the search. Please do not modify the %(VARIABLE)s . */
 ui_strings.S_TEXT_STATUS_SEARCH = "Matches for \"%(SEARCH_TERM)s\": Match %(SEARCH_COUNT_INDEX)s out of %(SEARCH_COUNT_TOTAL)s";
 ui_strings.S_TEXT_STATUS_SEARCH_NO_MATCH = "No match for \"%(SEARCH_TERM)s\"";
+
+ui_strings.DRAGONFLY_INFO_MESSAGE = "Opera Dragonfly info message:\n";

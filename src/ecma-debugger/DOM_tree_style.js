@@ -83,7 +83,8 @@ var DOM_tree_style = function(id, name, container_class)
     }
     else
     {
-      opera.postError("missing implementation in updateTarget in views['dom-inspector']");
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+        "missing implementation in updateTarget in views['dom-inspector']");
       // TODO
     }
   }

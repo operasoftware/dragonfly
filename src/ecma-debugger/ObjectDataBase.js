@@ -298,8 +298,6 @@ var ObjectDataBase = new function()
 
   this.prettyPrint = function(data, target_depth, use_filter, filter_type)
   {
-    //opera.postError('use_filter: '+  use_filter)
-    // opera.postError('class: '+this.data[data.object_index][CONSTRUCTOR])
     var 
     ret = "", 
     prop = null, 
