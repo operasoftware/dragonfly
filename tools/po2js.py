@@ -13,8 +13,11 @@ def make_js_from_po(path):
         strings.append(u"""ui_strings.%s="%s";""" % (po["jsname"], po["msgstr"]))
     return """/* Generated from %s at %s */
 window.ui_strings || ( window.ui_strings  = {} ) 
-window.ui_strings.lang_code = "?";
-%s""" % (unicode(os.path.basename(path)), unicode(time.asctime()), u"\n".join(strings))
+window.ui_strings.lang_code = "%s";
+%s""" % (unicode(os.path.basename(path)), 
+	unicode(time.asctime()),
+	unicode(os.path.splitext(os.path.basename(path))[0]), 
+	u"\n".join(strings))
 
 def main():
     if len(sys.argv)==1:
