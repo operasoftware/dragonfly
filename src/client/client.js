@@ -77,7 +77,6 @@ var client = new function()
 
   var receive = function(service, msg)
   {
-    //opera.postError(service+' '+msg);
     var xml_doc = ( new DOMParser() ).parseFromString(msg, "application/xml");
     if(xml_doc)
     {
@@ -329,7 +328,7 @@ var client = new function()
     }
     else
     {
-      opera.postError('missing viewport');
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'missing viewport');
     }
 
     messages.post('application-setup');

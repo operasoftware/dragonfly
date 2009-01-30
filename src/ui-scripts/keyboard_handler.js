@@ -105,7 +105,6 @@ var BaseKeyhandler = new function()
     {
       if( action_ids[_id] == id )
       {
-        // opera.postError('action: ' + _id);
         return false; // prevent default
       }
     }
@@ -168,7 +167,6 @@ var BaseEditKeyhandler = new function()
     {
       if( action_ids[_id] == id )
       {
-       // opera.postError('action: ' + _id);
         return true; // perform default action
       }
     }
@@ -346,7 +344,6 @@ var key_identifier = new function()
             ( event.ctrlKey ? '1' : '0' ) +
             ( event.altKey ? '1' : '0' ) +
             keyCode.toString();
-        // opera.postError('key handler: ' + key_id +' '+ (key_id in action_map) +' '+__key_handler[action_id = action_map[key_id]])
         if( key_id in action_map 
             && !__key_handler[action_id = action_map[key_id]](event, action_id) )
         {
@@ -513,7 +510,8 @@ cls.CSSInspectorActions = function(id)
     }
     else
     {
-      opera.postError('keyboard_handler: no target to move');
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+        'keyboard_handler: no target to move');
     }
   }
 
@@ -546,7 +544,8 @@ cls.CSSInspectorActions = function(id)
     }
     else
     {
-      opera.postError('keyboard_handler: no target to move');
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+        'keyboard_handler: no target to move');
     }
   }
 
@@ -797,7 +796,6 @@ cls.CSSInspectorKeyhandler = function(id)
   this.focus = __actions.setActiveContainer;/*function(event, container)
   {
     __actions.setActiveContainer(container);
-    //opera.postError(event.type);
     /*
     if( !__actions.__target )
     {

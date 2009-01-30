@@ -216,7 +216,8 @@ var DOMAttrAndTextEditor = function(nav_filters)
     
     if( this.textarea_container.parentElement )
     {
-      opera.postError("this.textarea_container.parentElement is not null in submit");
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+        "this.textarea_container.parentElement is not null in submit");
     }
     
     

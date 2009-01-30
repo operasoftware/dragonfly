@@ -326,3 +326,5 @@ ui_strings.S_TEXT_STATUS_SEARCH_NO_MATCH = "No match for \"%(SEARCH_TERM)s\"";
 /* DESC: Message in detail view of http logger when no request/respons is selected */
 ui_strings.S_TEXT_NO_REQUEST_SELECTED = "No request selected.";
 
+ui_strings.DRAGONFLY_INFO_MESSAGE = "Opera Dragonfly info message:\n";
+

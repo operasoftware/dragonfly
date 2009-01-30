@@ -101,7 +101,8 @@ var UIBase = new function()
         }
         else
         {
-          opera.postError('missing parent_container in update in UIBase');
+          opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+            'missing parent_container in update in UIBase');
         }
 
       }
@@ -194,7 +195,6 @@ var UIBase = new function()
           {
             target[property.t_name ? property.t_name : property.s_name] = 
               parseInt(declaration.getPropertyValue(property.s_name));
-            //opera.postError((property.t_name ? property.t_name : property.s_name) + ' '+target[property.t_name ? property.t_name : property.s_name])
           }
         }
         

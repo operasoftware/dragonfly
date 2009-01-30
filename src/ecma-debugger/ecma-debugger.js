@@ -126,7 +126,8 @@ cls.ECMAScriptDebuggerService = function(name)
   
   if( ! client)
   {
-    opera.postError('client must be created in ecma debugger.js');
+    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+      'client must be created in ecma debugger.js');
     return;
   }
   client.addService(this);

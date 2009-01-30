@@ -34,7 +34,8 @@ cls.CSSInspectorView = function(id, name, container_class)
     {
       if(ev.__call_count && ev.__call_count > 2  )
       {
-        opera.postError('failed updateCategories, missing indexMap, views-css-inspector')
+        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+          'failed updateCategories, missing indexMap, views-css-inspector')
         return;
       }
       var containers = self.getAllContainers(), c = null , i = 0;

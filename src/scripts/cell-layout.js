@@ -96,7 +96,7 @@
     {
       if( ! this.id )
       {
-        opera.postError('cell has no id');
+        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'cell has no id');
         return 0;
       }
       var ele = document.getElementById( this.id );
@@ -110,12 +110,12 @@
         }
         else
         {
-          opera.postError('missing container in cell.update');
+          opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+            'missing container in cell.update');
         }
       }
       if(this.is_dirty)
       {
-        //opera.postError(( __counter++) +' '+this.id);
         ele.style.cssText = 
         'left:' + ( this.left = left ) + 'px;' +
         'top:' + ( this.top = top ) + 'px;' +
@@ -143,7 +143,8 @@
         }
         else
         {
-          opera.postError('missing container in cell.update');
+          opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+            'missing container in cell.update');
         }
       }
       if( is_dirty )
@@ -401,8 +402,6 @@
         cap_holder = this;
         
         //cap = this.parent.getCapTarget(dim, this) - this[dim];
-        //opera.postError('bigger');
-        //opera.postError('+: '+cap+' '+consumed+' '+delta +' '+(delta + consumed))
         /*
         if( cap = delta + consumed  )
         {
@@ -426,7 +425,6 @@
         }
         cap_holder = this.next;
         //cap = this.parent.getCapTarget(dim, this.next) - this.next[dim];
-        //opera.postError('-: '+cap+' '+consumed+' '+delta +' '+(delta + consumed))
         /*
         if( cap = delta + consumed )
         {

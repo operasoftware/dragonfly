@@ -72,7 +72,8 @@ var runtimes = new function()
   { 
     if( !(id in __runtimes) )
     {
-      opera.postError('runtime id does not exist')
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+        'runtime id does not exist')
       __runtimes[id] = null;
       services['ecmascript-debugger'].getRuntime( tagManager.setCB(null, parseRuntime), id );
     }
@@ -276,7 +277,8 @@ var runtimes = new function()
     }
     else
     {
-      opera.postError('getting title has failed in runtimes getTitleRuntime');
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+        'getting title has failed in runtimes getTitleRuntime');
     }
   }
 
@@ -553,7 +555,8 @@ var runtimes = new function()
     }
     else
     {
-      opera.postError('got a thread finished event \n' +
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+        'got a thread finished event \n' +
         'in a runtime where the thread \n'+
         'has never started: '+ rt_id+' '+thread_id)
     }

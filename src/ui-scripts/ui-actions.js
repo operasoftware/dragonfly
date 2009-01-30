@@ -92,7 +92,8 @@ eventHandlers.click['tab'] = function(event, target)
   }
   else
   {
-    opera.postError("tabs is missing in eventHandlers.click['tab'] in ui-actions");
+    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+      "tabs is missing in eventHandlers.click['tab'] in ui-actions");
   }
 }
 

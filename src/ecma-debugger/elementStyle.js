@@ -302,7 +302,8 @@ var elementStyle = new function()
     }
     else
     {
-      opera.postError('elementStyle, cat id does not return a cat');
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+        'elementStyle, cat id does not return a cat');
     }
   }
 

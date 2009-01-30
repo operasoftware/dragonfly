@@ -766,7 +766,8 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     }
     else
     {
-      opera.postError('stylesheet is missing in stylesheets, prettyPrintStyleDec[PROT_4_AUTHOR]');
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+        'stylesheet is missing in stylesheets, prettyPrintStyleDec[PROT_4_AUTHOR]');
     }
 
     return ret;

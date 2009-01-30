@@ -139,7 +139,8 @@ var host_tabs = new function()
     }
     else
     {
-      opera.postError( 'Error in host_tabs handleAddEventWithDocument');
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+        'Error in host_tabs handleAddEventWithDocument');
     }
      
   }
