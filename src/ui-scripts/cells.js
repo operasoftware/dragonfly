@@ -246,7 +246,8 @@
         }
         else
         {
-          opera.postError('missing container in cell.update');
+          opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+            'missing container in cell.update');
         }
       }
       if( is_dirty )
@@ -506,8 +507,6 @@
         cap_holder = this;
         
         //cap = this.parent.getCapTarget(dim, this) - this[dim];
-        //opera.postError('bigger');
-        //opera.postError('+: '+cap+' '+consumed+' '+delta +' '+(delta + consumed))
         /*
         if( cap = delta + consumed  )
         {
@@ -531,7 +530,6 @@
         }
         cap_holder = this.next;
         //cap = this.parent.getCapTarget(dim, this.next) - this.next[dim];
-        //opera.postError('-: '+cap+' '+consumed+' '+delta +' '+(delta + consumed))
         /*
         if( cap = delta + consumed )
         {

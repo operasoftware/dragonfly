@@ -44,7 +44,6 @@ var client = new function()
 
   var host_connected = function(_services)
   {
-    //opera.postError('on host_connected: '+_services);
     services_avaible = eval("({\"" + _services.replace(/,/g, "\":1,\"") + "\":1})");
     var service = null, i = 0;
     // for now: if there is a windows manager assume that it's protocol-4
@@ -59,7 +58,6 @@ var client = new function()
       {
         if (service.name in services_avaible)	
         {
-          // opera.postError('register service: '+ service.name);
           opera.scopeEnableService(service.name);
         }
         else
@@ -75,7 +73,6 @@ var client = new function()
 
   var receive = function(service, msg)
   {
-    //opera.postError(service+' '+msg);
     var xml_doc = ( new DOMParser() ).parseFromString(msg, "application/xml");
     if(xml_doc)
     {
@@ -331,7 +328,7 @@ var client = new function()
     }
     else
     {
-      opera.postError('missing viewport');
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'missing viewport');
     }
 
     messages.post('application-setup');

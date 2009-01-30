@@ -324,9 +324,8 @@ var dom_data = new function()
     }
     else
     {
-      opera.postError('handleInitialView failed in dom_data\n');// +
-       // (new XMLSerializer().serializeToString(xml)));
-      
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+        'handleInitialView failed in dom_data\n');
     }
   }
 
@@ -392,7 +391,7 @@ var dom_data = new function()
       }
       else
       {
-        opera.postError('missing refrence');
+        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'missing refrence');
       }
     }
   }
@@ -426,7 +425,7 @@ var dom_data = new function()
     }
     else
     {
-      opera.postError('missing refrence');
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'missing refrence');
     }
   }
 
@@ -446,7 +445,8 @@ var dom_data = new function()
     }
     else
     {
-      opera.postError('handleSnapshot in dom_data has failed');
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+        'handleSnapshot in dom_data has failed');
     }
   }
 
@@ -524,7 +524,8 @@ var dom_data = new function()
       }
       else
       {
-        opera.postError("failed in parse_parent_offset in dom_data");
+        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+          "failed in parse_parent_offset in dom_data");
       }
     }
     return ret;

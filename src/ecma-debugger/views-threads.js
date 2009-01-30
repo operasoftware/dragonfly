@@ -109,7 +109,6 @@ cls.ThreadsView = function(id, name, container_class)
     }
     for( ; thread = threads[cursor]; cursor++)
     {
-      //opera.postError(thread+' '+thread.event_type)
       thread_inner = "<pre>";
       for( j = 0; key = propsKey[j]; j++)
       {

@@ -589,7 +589,8 @@
   // const DEFAULT = 0, SINGLE_QUOTE = 1, DOUBLE_QUOTE = 2, REG_EXP = 3, COMMENT = 4;
   states[SINGLE_QUOTE] = function()
   {
-    opera.postError('state parsing not implemented in formatter.js for SINGLE_QUOTE');
+    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+      'state parsing not implemented in formatter.js for SINGLE_QUOTE');
   };
 
   states[SINGLE_QUOTE] = function()
@@ -617,7 +618,8 @@
 
   states[REG_EXP] = function()
   {
-    opera.postError('state parsing not implemented in formatter.js for REG_EXP');
+    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+      'state parsing not implemented in formatter.js for REG_EXP');
   };
 
   this.parse=function(script, line, max_line, state)

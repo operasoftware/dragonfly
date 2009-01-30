@@ -624,7 +624,6 @@ Line 2:
     var
     ret = ["breadcrumb"],
     i = 0;
-    // opera.postError(JSON.stringify(css_path))
     if( css_path )
     {
       for( ; i < css_path.length; i++ )

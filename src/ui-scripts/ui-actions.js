@@ -83,6 +83,7 @@ eventHandlers.click['tab'] = function(event, target)
     if(views[view_id].type == 'composite-view' )
     {
       global_state.ui_framework.last_selected_top_tab = view_id;
+      global_state.ui_framework.last_selected_tab = '';
     }
     else
     {
@@ -91,7 +92,8 @@ eventHandlers.click['tab'] = function(event, target)
   }
   else
   {
-    opera.postError("tabs is missing in eventHandlers.click['tab'] in ui-actions");
+    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+      "tabs is missing in eventHandlers.click['tab'] in ui-actions");
   }
 }
 

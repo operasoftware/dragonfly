@@ -71,7 +71,8 @@ var stop_at = new function()
   this.setUserStopAt = function(key, value)
   {
     //stop_at_user_settings[key] = value; // true or false;
-    opera.postError('clean up. this should no longer be called. stop_at.setUserStopAt'); 
+    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+      'clean up. this should no longer be called. stop_at.setUserStopAt'); 
 
   }
 
@@ -202,7 +203,8 @@ var stop_at = new function()
       }
       else
       {
-        opera.postError( "empty element in <thread-stopped-at> event");
+        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +  
+          "empty element in <thread-stopped-at> event");
         stopAt[child.nodeName] = null
       }
     }

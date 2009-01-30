@@ -118,7 +118,7 @@ cls.DOMInspectorActions = function(id)
     }
     else
     {
-      opera.postError('keyboard_handler: no target to move');
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'keyboard_handler: no target to move');
     }
   }
 
@@ -151,7 +151,7 @@ cls.DOMInspectorActions = function(id)
     }
     else
     {
-      opera.postError('keyboard_handler: no target to move');
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'keyboard_handler: no target to move');
     }
   }
 
@@ -216,7 +216,8 @@ cls.DOMInspectorActions = function(id)
             (event.target.parentNode.parentNode, self.makeFilterGetStartTag(event.target));
           if( !new_target )
           {
-            opera.postError('failed getting start tag in this.editDOM in action_dom.js')
+            opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+              'failed getting start tag in this.editDOM in action_dom.js')
             return;
           }
         }
