@@ -250,6 +250,8 @@ ui_strings.S_SELECT_WINDOW_EMPTY = 'Select a window';
 ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH = 'Search';
 /* DESC: For filter fields. */
 ui_strings.S_INPUT_DEFAULT_TEXT_FILTER = 'Quick find';
+/* DESC: Tab size in source view. */
+ui_strings.S_LABEL_TAB_SIZE = 'Tab Size';
 
 /*
  * Information strings in the UI

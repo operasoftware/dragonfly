@@ -158,7 +158,6 @@ window-controls button
   padding: 1px 8px;
   margin: 2px 3px;
 }
-
 toolbar button:before, 
 top-toolbar button:before, 
 window-controls button:before
@@ -517,6 +516,12 @@ setting-buttons {
 settings-container { /**/
   padding: 7px;
   }
+
+settings hr
+{
+  border: 1px dotted #333;
+  margin: 9px 26px;
+}
 
 view-slider { /**/
   display: block;
