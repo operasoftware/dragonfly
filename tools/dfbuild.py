@@ -240,11 +240,24 @@ def _localize_buildout(src, langdir):
     fp = codecs.open(clientpath, "r", encoding="utf_8_sig")
     clientdata = fp.read()
     fp.close()
-    
 
-    for lang, newscriptpath, newclientpath, path in [ (f[11:13], "script/dragonfly-"+f[11:13]+".js", "client-"+f[11:13]+".xml", os.path.join(langdir, f)) for f in os.listdir(langdir) if f.startswith("ui_strings-") and f.endswith(".js") ]:
+    # Grab all english data. Will be put in front of localized strings so
+    # there are fallbacks
+    englishfile = os.path.join(langdir, "ui_strings-en.js")
+    fp = codecs.open(englishfile, "r", encoding="utf_8_sig")
+    englishdata = fp.read()
+    fp.close()
+    
+    langnames = [f for f in os.listdir(langdir) if f.startswith("ui_strings-") and f.endswith(".js") ]
+    langnames = [f.replace("ui_strings-", "").replace(".js", "") for f in langnames]
+    
+    for lang, newscriptpath, newclientpath, path in [ (ln, "script/dragonfly-"+ln+".js", "client-"+ln+".xml", os.path.join(langdir, "ui_strings-"+ln+".js")) for ln in langnames ]:
         newscript = codecs.open(os.path.join(src,newscriptpath), "w", encoding="utf_8_sig")
         newclient = codecs.open(os.path.join(src, newclientpath), "w", encoding="utf_8_sig")
+
+        newscript.write(_concatcomment % englishfile)
+        newscript.write(englishdata)
+
         langfile = codecs.open(path, "r", encoding="utf_8_sig")
         newscript.write(_concatcomment % path)
         newscript.write(langfile.read())
@@ -274,19 +287,20 @@ def _get_bad_encoding_files(src):
 
 def _get_string_keys(path):
     """Grab all the string keys of out a language file"""
-    re_key = re.compile("^ *ui_strings\.([^ ]*)")
-    file = codecs.open(path, "r", "utf_8_sig")
+    re_key = re.compile("^ *ui_strings\.([^ =]*)")
+    fp = codecs.open(path, "r", "utf_8_sig")
     lang_keys = set()
-    for line in file:
+    for line in fp:
         lang_keys.update(re_key.findall(line))
-    file.close()
+    fp.close()
     return lang_keys
  
 def _get_missing_strings(path, master):
     """Get the differences between the set of all strings and the
     strings in path"""
     keys = _get_string_keys(path)
-    return master - keys
+    diff = master - keys
+    return diff
 
 def _get_missing_strings_for_dir(stringsdir, masterlang):
     stringfiles = os.listdir(stringsdir)
@@ -299,8 +313,10 @@ def _get_missing_strings_for_dir(stringsdir, masterlang):
     for path, lang in [(f, f[-5:-3]) for f in stringfiles]:
         if lang==masterlang: continue
         langfile = os.path.join(stringsdir, "ui_strings-%s.js" % lang)
-        if not os.path.isfile(langfile): continue
+        if not os.path.isfile(langfile):
+            continue
         s = _get_missing_strings(langfile, masterstrings)
+
         if s:
             missing[lang] = s
             
