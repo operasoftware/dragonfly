@@ -449,7 +449,10 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     {
       if( !str || str != str_input )
       {
-        str = str.slice( Math.max(str.lastIndexOf('('), str.lastIndexOf('[') ) + 1 );
+        str = 
+          str.slice( Math.max(str.lastIndexOf('('), str.lastIndexOf('['), str.lastIndexOf('=') ) + 1 ).
+          replace(/^ +/, '').replace(/ $/, '');
+
 
         var         
         last_dot = str.lastIndexOf('.'), 
