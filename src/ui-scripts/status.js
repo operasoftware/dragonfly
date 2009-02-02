@@ -70,18 +70,18 @@ var StatusbarBase = function()
       {
         avaible_width = parseInt(info_container.parentElement.style.width) - this.available_width_delta;
         cursor = breadcrumb.lastElementChild;
-        consumed_width = 0;
-        delta = 4 * this.selector_cap_width;
+        consumed_width = 4 * this.selector_cap_width;
+        delta = 0;
         range = document.createRange();
         while(cursor)
         {
-          consumed_width += delta;
           delta = this.selector_cap_width + cursor.offsetWidth;
-          cursor = cursor.previousElementSibling;
           if( delta + consumed_width >= avaible_width )
           {
             break;
           }
+          consumed_width += delta;
+          cursor = cursor.previousElementSibling;
         }        
         if(cursor)
         {

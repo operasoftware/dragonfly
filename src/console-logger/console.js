@@ -28,7 +28,8 @@ cls.ErrorConsoleService = function(name)
     }
     else
     {
-      opera.postError('error in console, genericEventListener');
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+        'error in console, genericEventListener');
     }
   }
 
@@ -43,7 +44,8 @@ cls.ErrorConsoleService = function(name)
   
   if( ! client)
   {
-    opera.postError('client must be created in ecma comsole.js');
+    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+      'client must be created in ecma comsole.js');
     return;
   }
   client.addService(this);
@@ -249,10 +251,10 @@ var console_messages = new function()
 };
 
 /**
-  * @constructor 
-  * @extends ViewBase
-  */
-
+ * Error Console view
+ * @constructor
+ * @extends ViewBase
+ */
 var ErrorConsoleView = function(id, name, container_class, source)
 {
   container_class = container_class ? container_class : 'scroll error-console';
@@ -415,7 +417,6 @@ ErrorConsoleView.roughViews.createViews = function()
     
       eventHandlers.keyup['console-text-search-'+ view_id] = function(event, target)
       {
-        //opera.postError("keyup in " + view_id);
         if( event.keyCode == 13 )
         {
           textSearch.highlight();

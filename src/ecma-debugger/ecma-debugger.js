@@ -126,7 +126,8 @@ cls.ECMAScriptDebuggerService = function(name)
   
   if( ! client)
   {
-    opera.postError('client must be created in ecma debugger.js');
+    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+      'client must be created in ecma debugger.js');
     return;
   }
   client.addService(this);
@@ -264,10 +265,26 @@ cls.ECMAScriptDebuggerService = function(name)
 
   this.spotlight = function(runtime, node_id, scroll_into_view)
   {
+
+    var msg = "<spotlight-objects>" +
+                "<spotlight-object>" +
+                  "<object-id>" + node_id + "</object-id>" +
+                  "<scroll-into-view>" + ( scroll_into_view && 1 || 0 ) + "</scroll-into-view>" +
+                  "<box>" +
+                    "<box-type>0</box-type>" +
+                    "<fill-color>16711858</fill-color>" +
+                    "<frame-color>4278190335</frame-color>" +
+                    // "<grid-color>" COLOR "</grid-color>"
+                  "</box>"  +
+                "</spotlight-object>" +
+              "</spotlight-objects>" ;
+
+/*
     var msg = "<spotlight-object>" +
                 "<object-id>" + node_id + "</object-id>" +
                 ( scroll_into_view ? "<scroll-into-view/>" : "" ) +
               "</spotlight-object>";
+*/
     this.post(msg);
   }
 
@@ -321,9 +338,9 @@ cls.ECMAScriptDebuggerService = function(name)
     this.post(msg);
   }
 
-  this.createAllRuntimes = function()
+  this.createAllRuntimes = function(tag)
   {
-    this.post("<runtimes><tag></tag><create-all-runtimes/></runtimes>");
+    this.post("<runtimes><tag>" +  ( tag || '' ) + "</tag><create-all-runtimes/></runtimes>");
   }
 
   this.getMatchingCSSRules = function(tag, obj_id, rt_id)
@@ -377,13 +394,12 @@ cls.ECMAScriptDebuggerService = function(name)
     this.post(msg);
   }
 
-  this.cssGetStyleDeclarations = function( tag, rt_id, obj_id, cats, format )
+  this.cssGetStyleDeclarations = function( tag, rt_id, obj_id, format )
   {
     var msg = "<css-get-style-declarations>" +
                   "<tag>" + tag + "</tag>" +
                   "<runtime-id>" + rt_id+ "</runtime-id>" +
                   "<object-id>" + obj_id + "</object-id>" +
-                  "<categories>" + cats + "</categories>" +
                   ( format ? "<format>json</format>" : "" ) +
               "</css-get-style-declarations>";
     this.post(msg);

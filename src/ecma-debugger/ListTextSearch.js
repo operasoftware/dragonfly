@@ -168,7 +168,6 @@ var ListTextSearch = function()
   
   this.handleEnterKey = function()
   { 
-    //opera.postError('keycode: '+event.keyCode)
     switch( event.keyCode)
     {
       case 13:

@@ -58,7 +58,8 @@ var Object_inspection_data = function()
     }
     else
     {
-      opera.postError('getting window id has failed in handleShowGlobalScope in object_inspection_data');
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+        'getting window id has failed in handleShowGlobalScope in object_inspection_data');
     }
   }
 

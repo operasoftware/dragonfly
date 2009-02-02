@@ -83,6 +83,7 @@ eventHandlers.click['tab'] = function(event, target)
     if(views[view_id].type == 'composite-view' )
     {
       global_state.ui_framework.last_selected_top_tab = view_id;
+      global_state.ui_framework.last_selected_tab = '';
     }
     else
     {
@@ -91,7 +92,8 @@ eventHandlers.click['tab'] = function(event, target)
   }
   else
   {
-    opera.postError("tabs is missing in eventHandlers.click['tab'] in ui-actions");
+    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+      "tabs is missing in eventHandlers.click['tab'] in ui-actions");
   }
 }
 
@@ -157,18 +159,32 @@ eventHandlers.click['top-window-close'] = function(event)
 
 eventHandlers.click['top-window-toggle-attach'] = function(event)
 {
-  // TODO this is right now too hacky
+
+  viewsMenu.remove();
   window.topCell.onresize = function(){};
   var is_attached = ( window.opera.attached = !window.opera.attached );
+  document.documentElement.removeChild(event.target.parentNode);
+  var win_controls = document.documentElement.render(templates.window_controls(is_attached));
+
+  // TODO active window must be set correct
+  // then the window dropdown will be removed in the attached view
+  // topCell.tab.changeStyleProperty("padding-right", 60);
   if( is_attached )
   {
-    event.target.addClass('attached');
+    //topCell.tab.changeStyleProperty("padding-right", 60);
+    topCell.toolbar.changeStyleProperty("padding-right", 30);
   }
   else
   {
-    event.target.removeClass('attached');
+    //topCell.tab.changeStyleProperty("padding-right", -60);
+    topCell.toolbar.changeStyleProperty("padding-right", -30);
   }
+
   settings.general.set('window-attached',  is_attached || false);
+  if( settings.general.get('show-views-menu') )
+  {
+    viewsMenu.create();
+  }
   setTimeout(client.setupTopCell, 0);
 }
 

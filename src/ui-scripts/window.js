@@ -425,7 +425,8 @@ var UIWindowBase = new function()
     if(!viewport)
     {
       self.showWindow = function(){};
-      opera.postError( 'missing view port in init in windows');
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +  
+        'missing view port in init in windows');
     }
   }
 

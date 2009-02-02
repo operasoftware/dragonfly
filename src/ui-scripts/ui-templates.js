@@ -147,14 +147,19 @@
 
   this.viewMenu = function()
   {
-    return ['ui-menu', ['h2', 'Views', 'handler', 'show-menu', 'tabindex', '1'], 'id', 'main-view-menu'];
+    return \
+    [
+      'ui-menu', 
+      ['h2', ui_strings.M_VIEW_LABEL_VIEWS, 'handler', 'show-menu', 'tabindex', '1'], 
+      'id', 'main-view-menu'
+    ].concat(opera.attached ? ['class', 'attached'] : []);
   }
 
   this['top-tabs'] = function(obj)
   {
     var ret = [];
     var tab = null, i = 0;
-    ret[ret.length] =  this.window_controls();
+    // ret[ret.length] =  this.window_controls();
     for( ; tab = obj.tabs[i]; i++)
     {
       ret[ret.length] = this.tab(tab, obj.activeTab == tab.ref_id)
@@ -162,7 +167,7 @@
     return ret;
   }
 
-  this.window_controls = function()
+  this.window_controls = function(is_attached)
   {
     var attached = window.opera.attached;
     return ['window-controls',
@@ -171,11 +176,13 @@
         'class', 'switch' + ( attached ? ' attached' : '') ,
         'title', attached ? ui_strings.S_SWITCH_DETACH_WINDOW : ui_strings.S_SWITCH_ATTACH_WINDOW
       ],
-      ['button', 
+      is_attached
+      ? ['button', 
           'handler', 'top-window-close',
           'title', ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW
         ]
-      ]
+      : []
+      ].concat( is_attached ? ['class', 'attached'] : [] )
   }
 
   this.settings = function(view_arr)
@@ -205,23 +212,14 @@
     var ret = ['settings', self.settingsHeader(view_id, view_name, is_unfolded)];
     if( is_unfolded )
     {
-      
       var setting = settings[view_id];
       var settings_map = setting.setting_map;
       var cat_name = '';
-      if(setting.template)
+      // so far checkboxes, customSettings
+      for( cat_name in settings_map ) 
       {
-        ret[ret.length] = setting.template();
+        ret[ret.length] = this[cat_name](setting, settings_map[cat_name]); 
       }
-      else
-      {
-        // so far only checkboxes
-        for( cat_name in settings_map ) 
-        {
-          ret[ret.length] = this[cat_name](setting, settings_map[cat_name]);
-        }
-      }
-
     }
     return ret;
   }
@@ -271,11 +269,22 @@
         }
         else
         {
-          opera.postError('failed in ui-templates checkboxes '+ arr + ' ' +setting.view_id);
+          opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+            'failed in ui-templates checkboxes '+ arr + ' ' +setting.view_id);
         }
       }
     }
     return checkboxes;
+  }
+
+  this.customSettings = function(setting, template_name_arr)
+  {
+    var ret = [], name = null, i = 0, templates = setting.templates;
+    for( ; name = template_name_arr[i]; i++)
+    {
+      ret[ret.length] = templates[name](setting);
+    }
+    return ret;
   }
 
   this.settingCheckbox = function(view_id, key, value, label, host)

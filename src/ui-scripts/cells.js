@@ -62,6 +62,27 @@
     return null;
   }
 
+  this.setTooolbarVisibility = function(view_id, bool)
+  {
+    var child = null, i = 0;
+
+    if( this.toolbar )
+    {
+      if ( this.toolbar.__view_id == view_id && this.toolbar.isvisible() )
+      {
+        this.toolbar.setVisibility(bool);
+        this.update(this.left, this.top, true);
+      }
+    }
+    else
+    {
+      for( ; child = this.children[i]; i++ )
+      {
+        child.setTooolbarVisibility(view_id, bool);
+      }
+    }
+  }
+
   this.disableTab = function(ref_id , bool)
   {
     var tab = null, view = null, child = null, i = 0;
@@ -246,7 +267,8 @@
         }
         else
         {
-          opera.postError('missing container in cell.update');
+          opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+            'missing container in cell.update');
         }
       }
       if( is_dirty )
@@ -506,8 +528,6 @@
         cap_holder = this;
         
         //cap = this.parent.getCapTarget(dim, this) - this[dim];
-        //opera.postError('bigger');
-        //opera.postError('+: '+cap+' '+consumed+' '+delta +' '+(delta + consumed))
         /*
         if( cap = delta + consumed  )
         {
@@ -531,7 +551,6 @@
         }
         cap_holder = this.next;
         //cap = this.parent.getCapTarget(dim, this.next) - this.next[dim];
-        //opera.postError('-: '+cap+' '+consumed+' '+delta +' '+(delta + consumed))
         /*
         if( cap = delta + consumed )
         {

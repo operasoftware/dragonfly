@@ -10,19 +10,23 @@ var composite_view_convert_table =
   {
     'environment_new': 'environment_new',
     'console_new': 'console_new',
+    'settings_new': 'settings_new',
     'js_panel': 'js_panel',
     'js_new': 'js_panel',
     'dom_panel': 'dom_panel',
     'dom_new': 'dom_panel',
+    'network_panel': 'network_panel'
   },
   "false": 
   {
     'environment_new': 'environment_new',
     'console_new': 'console_new',
+    'settings_new': 'settings_new',
     'js_panel': 'js_new',
     'js_new': 'js_new',
     'dom_panel': 'dom_new',
     'dom_new': 'dom_new',
+    'network_panel': 'network_panel'
   }
 }
 
@@ -44,29 +48,27 @@ var client = new function()
 
   var host_connected = function(_services)
   {
-    //opera.postError('on host_connected: '+_services);
     services_avaible = eval("({\"" + _services.replace(/,/g, "\":1,\"") + "\":1})");
-    var service = null, i = 0;
-    // for now: if there is a windows manager assume that it's protocol-4
+    // workaround for a missing hello message
     if( 'window-manager' in services_avaible )
     {
-      handle_fallback.apply(new XMLHttpRequest(), ["protocol-4"]);
-    }
-    else
-    {
-      
+      var service = null, i = 0;
       for( ; service = services[i]; i++)
       {
         if (service.name in services_avaible)	
         {
-          // opera.postError('register service: '+ service.name);
           opera.scopeEnableService(service.name);
+          service.onconnect();
         }
         else
         {
           alert ( ui_strings.S_INFO_SERVICE_NOT_AVAILABLE.replace(/%s/, service.name) );
         }
       }
+    }
+    else
+    {
+      handle_fallback.apply(new XMLHttpRequest(), ["protocol-3"]);
     }
 
 
@@ -75,7 +77,6 @@ var client = new function()
 
   var receive = function(service, msg)
   {
-    //opera.postError(service+' '+msg);
     var xml_doc = ( new DOMParser() ).parseFromString(msg, "application/xml");
     if(xml_doc)
     {
@@ -129,8 +130,6 @@ var client = new function()
     proxy.POST("/" + service, msg);
   }
 
-
-
   var bindCB = function(service)
   {
     var service_name = service.name;
@@ -148,17 +147,13 @@ var client = new function()
   var proxy_onsetup = function()
   {
     var service = null, i = 0;
+    // workaround for a missing hello message
     for( ; ( service = this.services[i] ) && !( service == 'window-manager' ); i++);
-    // for now: if there is a windows manager assume that it's protocol-4
     if( service == 'window-manager' )
     {
-      handle_fallback.apply(new XMLHttpRequest(), ["protocol-4"]);
-    }
-    else
-    {
-      for( i = 0; service = services[i]; i++ )
+      for( i = 0; service = services[i]; i++)
       {
-        if ( !proxy.enable(service.name) )	
+        if (!proxy.enable(service.name))	
         {
           alert
           ( 
@@ -176,8 +171,10 @@ var client = new function()
         }
       }
     }
-
-
+    else
+    {
+      handle_fallback.apply(new XMLHttpRequest(), ["protocol-3"]);
+    }
   }
 
   var handle_fallback = function(version)
@@ -331,7 +328,7 @@ var client = new function()
     }
     else
     {
-      opera.postError('missing viewport');
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'missing viewport');
     }
 
     messages.post('application-setup');
@@ -356,8 +353,11 @@ var client = new function()
     {
       defaults[set.target] = set.getValue();
     }
+
     viewport.removeChild(container);
     
+    new CompositeView('network_panel', ui_strings.M_VIEW_LABEL_NETWORK, network_rough_layout);
+
     new CompositeView('environment_new', ui_strings.M_VIEW_LABEL_ENVIRONMENT, environment_rough_layout);
     new CompositeView('console_new', ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE, console_rough_layout);
     new CompositeView('js_new', ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS, js_rough_layout);
@@ -369,6 +369,8 @@ var client = new function()
 
     new CompositeView('dom_panel', ui_strings.M_VIEW_LABEL_COMPOSITE_DOM, dom_rough_layout_panel);
 
+    new CompositeView('settings_new', ui_strings.S_BUTTON_LABEL_SETTINGS, settings_rough_layout);
+
     if( window.opera.attached != settings.general.get('window-attached') )
     {
       window.opera.attached = settings.general.get('window-attached') || false;
@@ -377,6 +379,22 @@ var client = new function()
     setTimeout( function(){
 
       self.setupTopCell();
+
+      if( window.opera.attached )
+      {
+        // TODO active window must be set correct
+        // then the window dropdown will be removed in the attached view
+        //topCell.tab.changeStyleProperty("padding-right", 60);
+        topCell.toolbar.changeStyleProperty("padding-right", 60);
+      }
+      else
+      {
+        topCell.toolbar.changeStyleProperty("padding-right", 30);
+      }
+
+      document.documentElement.render(templates.window_controls(window.opera.attached))
+
+      
       
       // event handlers to resize the views
       new SlideViews(document);
@@ -398,12 +416,6 @@ var client = new function()
   this.setupTopCell = function()
   {
     viewport.innerHTML = '';
-
-    if( window.topCell )
-    {
-      window.topCell.cleanUp();
-    }
-    
     window.topCell = new TopCell
     (
       window.opera.attached ? panel_layout : main_layout,
@@ -421,6 +433,7 @@ var client = new function()
         this.setup();
       }
     );
+    windowsDropDown.update();
     var view_id = global_state && global_state.ui_framework.last_selected_tab;
     if(  view_id && views[view_id] && !views[view_id].isvisible())
     {
@@ -498,18 +511,24 @@ var export_rough_layout =
   ]
 }
 
+var settings_rough_layout =
+{
+  dir: 'v', width: 700, height: 700,
+  children: 
+  [
+    { height: 200, tabs: ['settings_view'] }
+  ]
+}
+
+  
+
 var dom_rough_layout =
 {
   dir: 'h', width: 700, height: 700,
   children: 
   [
     { 
-      width: 700,
-      children: 
-      [
-        { height: 150, tabs: ['runtimes_dom', 'runtimes_css'] },
-        { width: 200, tabs: ['dom', 'stylesheets'] }
-      ]
+      width: 700, tabs: ['dom', 'stylesheets']
     },
     { 
       width: 250, tabs: ['css-inspector', 'dom_attrs', 'css-layout'] 
@@ -523,7 +542,7 @@ var dom_rough_layout_panel =
   children: 
   [
     { 
-      width: 700, tabs: ['runtimes_dom', 'runtimes_css', 'dom', 'stylesheets']
+      width: 700, tabs: ['dom', 'stylesheets']
     },
     { 
       width: 250, tabs: ['css-inspector', 'dom_attrs', 'css-layout'] 
@@ -540,9 +559,8 @@ var js_rough_layout =
       width: 700, 
       children: 
       [
-        { height: 150, tabs: ['runtimes'] },
-        { height: 650, tabs: ['js_source']},
-        { height: 150, tabs:['command_line']}
+        { height: 350, tabs: ['js_source']},
+        { height: 250, tabs:['command_line']}
       ] 
     },
     { 
@@ -565,7 +583,7 @@ var js_rough_layout_panel =
       width: 700, 
       children: 
       [
-        { height: 150, tabs: ['runtimes', 'js_source', 'command_line'] }
+        { height: 150, tabs: [/*'runtimes', */'js_source', 'command_line'] }
       ] 
     },
     { 
@@ -579,16 +597,53 @@ var js_rough_layout_panel =
 }
 
 
+var network_rough_layout =
+{
+    dir: 'v',
+    width: 1000,
+    height: 1000,
+    children: [
+      { 
+        height: 500,
+        width: 1000,
+        children: 
+        [
+          { height: 500, tabs: ['request_list'] },
+        ] 
+      },
+      { 
+        height: 500,
+        width: 1000,
+        children: 
+        [
+          { height: 500,
+            width: 1000,
+            children: [
+                { height: 500, tabs: ['request_overview',
+                                      'request_info_headers',
+                                      'request_info_raw',
+                                      'response_info_headers',
+                                      'response_info_raw',
+                                      'response_info_body'] },
+            ]
+            
+          }
+        ] 
+      }
+  ]
+
+}
+
 var main_layout =
 {
   id: 'main-view', 
-  tabs: ['js_new', 'dom_new', 'console_new', 'environment_new']
+  tabs: ['js_new', 'dom_new', 'network_panel', 'console_new', 'environment_new',  'settings_new']
 }
 
 var panel_layout =
 {
   id: 'main-view', 
-  tabs: ['js_panel', 'dom_panel', 'console_new', 'environment_new']
+  tabs: ['js_panel', 'dom_panel',  'network_panel', 'console_new', 'environment_new', 'settings_new']
 }
 
 var resolve_map_properties = 
@@ -687,6 +742,7 @@ var resolve_map =
   },
 ];
 
+
 var resolve_map_2 =
 [
   {
@@ -699,19 +755,70 @@ var resolve_map_2 =
     id: 'test-scrollbar-width',
     target: 'scrollbar-width',
     getValue: function(){return ( 100 - document.getElementById(this.id).offsetWidth )}
+  },
+  {
+    id: 'test-cst-select-width',
+    target: 'cst-select-margin-border-padding',
+    getValue: function()
+    {
+      var 
+      props = ['margin-left', 'border-left-width', 'padding-left', 
+       'margin-right', 'border-right-width', 'padding-right'],
+      prop = '', 
+      i = 0,
+      val = 0,
+      style = getComputedStyle(document.getElementById(this.id), null);
+
+      for( ; prop = props[i]; i++)
+      {
+        val += parseInt(style.getPropertyValue(prop));
+      }
+      val += 5;
+      return val;
+    }
   }
 ];
 
-resolve_map_2.markup = 
-  "<div class='js-source'>"+
-    "<div id='js-source-scroll-content'>"+
-      "<div id='js-source-content'>"+
-        "<div id='test-line-height'>test<div>"+
-        "<div style='position:absolute;width:100px;height:100px;overflow:auto'>"+
-          "<div id='test-scrollbar-width' style='height:300px'></div>"+
-        "</div>"        
-      "</div>"+
-    "</div>"+
-  "</div>";
+resolve_map_2.markup = "\
+<div> \
+  <div class='js-source'> \
+    <div id='js-source-scroll-content'> \
+      <div id='js-source-content'> \
+        <div id='test-line-height'>test</div> \
+        <div style='position:absolute;width:100px;height:100px;overflow:auto'> \
+          <div id='test-scrollbar-width' style='height:300px'></div> \
+        </div> \
+      </div> \
+    </div> \
+  </div> \
+  <toolbar style='top:50px;left:50px;height:26px;width:678px;display:block'> \
+    <cst-select id='test-cst-select-width' cst-id='js-script-select' unselectable='on' style='width: 302px' > \
+      <cst-value unselectable='on' /> \
+      <cst-drop-down/> \
+    </cst-select> \
+  </toolbar> \
+</div>\
+";
+
+/*
+  <toolbar style='top:50px;left:50px;height:26px;width:678px;display:block'> \
+    <toolbar-filters id='test-filter-width'> \
+      <filter> \
+        <em>Search</em> \
+        <input/> \
+      </filter> \
+    </toolbar-filters> \
+    <toolbar-buttons> \
+      <input type='button'/><input type='button' id='test-toolbar-button-width'/><input type='button'/> \
+    </toolbar-buttons> \
+      <toolbar-separator/> \
+    <toolbar-switches style='width:100px'> \
+      <input type='button'/><input type='button' id='test-toolbar-switch-width'/><input type='button'/> \
+    </toolbar-switches> \
+  </toolbar> \
+";
+*/
+
+
 
 
