@@ -58,7 +58,7 @@ window.templates.request_list_row = function(n, r, sel)
 {
     var a = [ 'tr',
         ['th',
-             http_map_mime_to_type(get_mime_from_extension(r.request.path))             
+             http_map_mime_to_type(http_get_mime_from_extension(r.request.path))             
          ],
         ['td', r.request.headers["Host" || "?" ] ],
         ['td', r.request.path],
