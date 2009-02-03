@@ -4,13 +4,13 @@
  * dealing with.
  */
 
-function map_mime_to_type(mime)
+function http_map_mime_to_type(mime)
 {
     mime = mime.toLowerCase();
 
-    if (mime in mime_type_map)
+    if (mime in http_mime_type_map)
     {
-        return mime_type_map[mime];
+        return http_mime_type_map[mime];
     }
 
     if (mime.indexOf("image/") == 0)
@@ -31,7 +31,7 @@ function map_mime_to_type(mime)
     return "unknown";
 }
 
-window.mime_type_map = {
+window.http_mime_type_map = {
     "text/html": "markup",
     "text/css": "css",
     "application/x-javascript": "javascript",
@@ -44,7 +44,7 @@ window.mime_type_map = {
 /**
  * This one will be deprecated when we get mime types straight from core.
  */
-window.file_extension_map = {
+window.http_file_extension_map = {
     "html": "text/html", "htm": "text/html",
     "xml": "application/xml",
     "xhtml": "application/xhtml+xml", "xht": "application/xhtml+xml",
@@ -56,8 +56,8 @@ window.file_extension_map = {
     "css": "text/css"
 }
 
-function get_mime_from_extension(path)
+function http_get_mime_from_extension(path)
 {
     var ext = path.split(".").pop().toLowerCase();
-    return file_extension_map[ext] || "";
+    return http_file_extension_map[ext] || "";
 }

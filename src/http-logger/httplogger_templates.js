@@ -58,7 +58,7 @@ window.templates.request_list_row = function(n, r, sel)
 {
     var a = [ 'tr',
         ['th',
-             map_mime_to_type(get_mime_from_extension(r.request.path))             
+             http_map_mime_to_type(get_mime_from_extension(r.request.path))             
          ],
         ['td', r.request.headers["Host" || "?" ] ],
         ['td', r.request.path],
@@ -67,7 +67,7 @@ window.templates.request_list_row = function(n, r, sel)
         ['td', (r.duration != null ? r.duration : "-"), 'class', 'time-cell'],
         'data-requestid', r.id,
         'handler', 'request-list-select',
-        'class', 'typeicon mime-' + map_mime_to_type(get_mime_from_extension(r.request.path))
+        'class', 'typeicon mime-' + http_map_mime_to_type(http_get_mime_from_extension(r.request.path))
         //,
         //'class', (r.id==sel ? 'request-list-select' : '')
     ];
