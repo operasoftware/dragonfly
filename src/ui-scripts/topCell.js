@@ -28,7 +28,7 @@ var TopCell = function(layout, setDimensions, onresize)
     this.container = new TopContainer(this); // actually just a cell
     this.tab = new TopTabs(this);
     this.toolbar = new TopToolbar(this);
-    this.toolbar.setVisibility( opera.attached ? "hidden" : "visible" );
+    this.toolbar.setVisibility( !opera.attached );
     this.statusbar = new TopStatusbar(this);
   }
 

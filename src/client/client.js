@@ -382,10 +382,7 @@ var client = new function()
 
       if( window.opera.attached )
       {
-        // TODO active window must be set correct
-        // then the window dropdown will be removed in the attached view
-        //topCell.tab.changeStyleProperty("padding-right", 60);
-        topCell.toolbar.changeStyleProperty("padding-right", 60);
+        topCell.tab.changeStyleProperty("padding-right", 60);
       }
       else
       {
