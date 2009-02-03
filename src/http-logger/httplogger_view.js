@@ -7,6 +7,8 @@
 /**
   * @constructor 
   * @extends ViewBase
+  * This view implements update chocking. It will not do the update more often
+  * than every minUpdateInterval milliseconds
   */
 
 cls.RequestListView = function(id, name, container_class)
@@ -16,10 +18,34 @@ cls.RequestListView = function(id, name, container_class)
     this.tableBodyEle = null;
     this.lastIndex = null;
     this.tbody = null;
+
+    // The list will never be updated more often than this:
+    this.minUpdateInterval = 500; // in milliseconds.
+
     var filter = null;
+    var lastUpdateTime = null;
+    var updateTimer = null;
 
     this.createView = function(container)
     {
+        if (lastUpdateTime &&
+            (new Date().getTime() - lastUpdateTime) < this.minUpdateInterval) {
+            // Haven't waited long enough, so do nothing, but queue it for
+            // later if it isn't allready so.
+            if (!updateTimer) {
+                updateTimer = window.setTimeout(function() {self.createView(container)}, this.minUpdateInterval);
+            }
+
+            return;
+        }
+        
+        if (updateTimer) {
+            window.clearTimeout(updateTimer);
+            updateTimer = null;
+        }
+
+        lastUpdateTime = new Date().getTime();
+
         var log = HTTPLoggerData.getLog();
         if (this.lastIndex == null || log.length==0)
         {
@@ -134,6 +160,7 @@ cls.RequestListView = function(id, name, container_class)
             applyFilter();
         }
     }
+
 
     this.ondestroy = function()
     {
