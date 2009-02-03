@@ -563,7 +563,23 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     autocomplete.clear(__frame_index);
   }
 
+  var onConsoleMessage = function(msg)
+  {
+    if( settings['command_line'].get('show-ecma-errors') && msg['source'] == 'ecmascript')
+    {
+      cons_out_render_return_val
+      (
+        console_output_data[console_output_data.length] =
+        {
+          type: "return-value",
+          value: msg['context'] + '\n' + msg['description']
+        }
+      );
+    }
+  }
+
   messages.addListener('frame-selected', onFrameSelected);
+  messages.addListener('console-message', onConsoleMessage);
 
   this.init(id, name, container_class, html, default_handler);
 
@@ -571,6 +587,27 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
 
 cls.CommandLineView.prototype = ViewBase;
 new cls.CommandLineView('command_line', ui_strings.M_VIEW_LABEL_COMMAND_LINE, 'scroll', '', 'cmd-focus');
+
+new Settings
+(
+  // id
+  'command_line', 
+  // key-value map
+  {
+    "show-ecma-errors": true,
+  }, 
+  // key-label map
+  {
+    "show-ecma-errors": ui_strings.S_SWITCH_SHOW_ECMA_ERRORS_IN_COMMAND_LINE
+  },
+  // settings map
+  {
+    checkboxes:
+    [
+      "show-ecma-errors"
+    ]
+  }
+);
 
 eventHandlers.click['cmd-focus'] = function(event, target)
 {

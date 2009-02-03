@@ -132,6 +132,7 @@ var console_messages = new function()
     {
       dragonfly_msgs[dragonfly_msgs.length] = message;
     }
+    messages.post('console-message', message);
     updateViews();
   }
 
