@@ -147,6 +147,27 @@ cls.HTTPLoggerService = function(name)
         return retval;
     }
 
+    /**
+     * Parse a request header, returns an object with the shape:
+     *
+     * requst was GET http://example.com/foo?bar=baz&meh=flabaten
+     * 
+     * header = {
+     *            method: "GET",
+     *            path: "/foo",
+     *            protocol: "http",
+     *            query: {
+     *                  bar: "baz",
+     *                  meh: "flabaten"
+     *            }
+     *            headers: {
+     *                  name1: "value1",
+     *                  name2: "value2
+     *            }
+     *  }
+     *  
+     *
+     */
     this.parseRequestHeader = function(ele)
     {
         var retval = {};
@@ -158,7 +179,7 @@ cls.HTTPLoggerService = function(name)
 
         if (!reqparts || reqparts.length != 4) {
             opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
-              "Could not parse request: " + requestline);
+              "Could not parse request:\n" + txt);
             return null;
         }
 
@@ -189,6 +210,16 @@ cls.HTTPLoggerService = function(name)
         return retval;
     }
 
+    /**
+     * Parse a response header into a dictionary of the shape
+     * header = {
+     *     protocol: "http",
+     *     status: "200",
+     *     reason: "OK",
+     *     headers: <dictionary of http headers parsed by parseHeaders()>
+     * }
+     *
+     */
     this.parseResponseHeader = function(ele)
     {
         var retval = {};
