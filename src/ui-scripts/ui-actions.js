@@ -171,13 +171,13 @@ eventHandlers.click['top-window-toggle-attach'] = function(event)
   // topCell.tab.changeStyleProperty("padding-right", 60);
   if( is_attached )
   {
-    //topCell.tab.changeStyleProperty("padding-right", 60);
-    topCell.toolbar.changeStyleProperty("padding-right", 30);
+    topCell.tab.changeStyleProperty("padding-right", 60);
+    topCell.toolbar.changeStyleProperty("padding-right", -30);
   }
   else
   {
-    //topCell.tab.changeStyleProperty("padding-right", -60);
-    topCell.toolbar.changeStyleProperty("padding-right", -30);
+    topCell.tab.changeStyleProperty("padding-right", -60);
+    topCell.toolbar.changeStyleProperty("padding-right", 30);
   }
 
   settings.general.set('window-attached',  is_attached || false);
