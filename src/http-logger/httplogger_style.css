@@ -19,38 +19,64 @@
     background-color: #fafafa;
 }
 
-.request-table tr:hover {
-    background-color: yellow;
+/*.request-table tr:hover {*/
+/*    background-color: yellow;*/
+/*}*/
+/**/
+/*.request-table tr.selected-request {*/
+/*    background-color: orange;*/
+/*}*/
+/**/
+/*.request-table tr.mime-image {*/
+/*    color: darkgray;*/
+/*}*/
+/**/
+/*.request-table tr.mime-css {*/
+/*    color: gold;*/
+/*}*/
+/**/
+/*.request-table tr.mime-javascript {*/
+/*    color: blue;*/
+/*}*/
+/**/
+/*.request-table tr.mime-flash {*/
+/*    color: red;*/
+/*}*/
+/**/
+/*.request-table tr.mime-xml {*/
+/*    color: pink;*/
+/*}*/
+/**/
+/*.request-table tr.mime-markup {*/
+/*    color: green;*/
+/*}*/
+
+.request-table label {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background-image: url(../ui-images/filetype_unknown.png);
 }
 
-.request-table tr.selected-request {
-    background-color: orange;
+.request-table label.markup {
+    background-image: url(../ui-images/filetype_html.png);
 }
 
-.request-table tr.mime-image {
-    color: darkgray;
+.request-table label.image {
+    background-image: url(../ui-images/filetype_image.png);
 }
 
-.request-table tr.mime-css {
-    color: gold;
+.request-table label.css {
+    background-image: url(../ui-images/filetype_stylesheet.png);
 }
 
-.request-table tr.mime-javascript {
-    color: blue;
+.request-table label.flash {
+    background-image: url(../ui-images/filetype_flash.png);
 }
 
-.request-table tr.mime-flash {
-    color: red;
+.request-table label.javascript {
+    background-image: url(../ui-images/filetype_javascript.png);
 }
-
-.request-table tr.mime-xml {
-    color: pink;
-}
-
-.request-table tr.mime-markup {
-    color: green;
-}
-
 
 /* HTTP logger buttons start */
 
