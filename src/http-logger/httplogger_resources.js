@@ -123,7 +123,8 @@ window.http_file_extension_map = {
     "ico": "image/x-icon",
     "gif": "image/gif",
     "jpg": "image/jpeg", "jpeg": "image/jpeg", "jpe": "image/jpeg",
-    "css": "text/css"
+    "css": "text/css",
+    "js":  "application/x-javascript"
 }
 
 function http_get_mime_from_extension(path)
