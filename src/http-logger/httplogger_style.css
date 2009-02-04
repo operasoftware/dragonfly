@@ -54,7 +54,7 @@
 
 /* HTTP logger buttons start */
 
-input[handler="clear-request-list"] {
+button[handler="clear-request-list"]:before {
   background-image: url('../ui-images/btn-clear-error-console.png');
 }
 

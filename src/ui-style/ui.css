@@ -171,6 +171,10 @@ window-controls button:before
   margin: -4px -12px;
   vertical-align: 4px;
 }
+toolbar-switches button:before 
+{
+  background: transparent url('../ui-images/btn-test-switch.png') scroll no-repeat 0 0;
+}
 toolbar button[disabled]:before,
 toolbar button[disabled]:hover:before,
 toolbar button[disabled]:active:before
