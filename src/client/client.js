@@ -413,7 +413,7 @@ var client = new function()
   this.setupTopCell = function()
   {
     viewport.innerHTML = '';
-    window.topCell = new TopCell
+    new TopCell
     (
       window.opera.attached ? panel_layout : main_layout,
       function()

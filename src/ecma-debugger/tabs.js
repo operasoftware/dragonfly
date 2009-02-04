@@ -96,9 +96,12 @@ var host_tabs = new function()
   this.getActiveTab = function(top_frame_runtime_id)
   {
     return __activeTab;
-    
   }
 
+  this.isMultiRuntime = function()
+  {
+    return __activeTab.length > 1;
+  }
 
   this.handleEventHandler = function(xml)
   {

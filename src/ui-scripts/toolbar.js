@@ -105,6 +105,10 @@ var ToolbarBase = function()
   this.setVisibility = function(bool)
   {
     this.__is_visible = bool;
+    if(toolbars[this.__view_id])
+    {
+      toolbars[this.__view_id].setVisibility(bool);
+    }
   }
 
   this.setup = function(view_id)
@@ -117,9 +121,12 @@ var ToolbarBase = function()
     this.specials = toolbars[view_id] && toolbars[view_id].specials || [];
     this.customs = toolbars[view_id] && toolbars[view_id].customs || [];
     this.__view_id = view_id;
+    if(toolbars[view_id])
+    {
+      this.__is_visible = toolbars[view_id].getVisibility();
+    }
 
     var set_separator = this.buttons.length;
-
     if(this.__is_visible)
     {
       if(this.filters.length)
