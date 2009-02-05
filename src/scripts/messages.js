@@ -109,14 +109,14 @@ var messages = new function()
    */
   this.removeListener = function(key, cb)
   {
-    var cur, listeners = __listeners[ key ];
+    var cur = null, listeners = __listeners[ key ], i = 0;
     if( listeners )
     {
       for( ; cur = listeners[i]; i++)
       {
         if (cur == cb)
         {
-          __listeners.splice(i, 1);
+          listeners.splice(i, 1);
           i--;
         }
       }

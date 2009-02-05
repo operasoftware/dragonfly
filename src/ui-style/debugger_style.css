@@ -734,7 +734,10 @@ stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
   background: transparent url('../ui-images/expand-collapse.png') 4px 2px no-repeat;
   }
 
-
+.dom input:focus
+{
+  background-color: Highlight;
+}
 
 .dom input.open {
   background-position: 4px -13px;

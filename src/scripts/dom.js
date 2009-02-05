@@ -1,6 +1,7 @@
 ﻿/**
  * @fileoverview
- * Helper function prototypes related to DOM objects and the DOM <strong>fixme: Christian should document the template syntax</strong>
+ * Helper function prototypes related to DOM objects and the DOM 
+ * <strong>fixme: Christian should document the template syntax</strong>
  * templating system.
  *
  */
@@ -296,89 +297,41 @@ Element.prototype.getPreviousSameNamedSibling = function(target, next_name, next
 
 Element.prototype.getNextWithFilter = function(root_context, filter)
 {
-  var 
-  ret = this.__getNextWithFilter(true, filter),
-  parent = this.parentElement;
-
-  if( !ret )
-  {
-    while(parent && root_context.contains(parent) && !root_context.isSameNode(parent) )
-    {
-      if( parent.nextElementSibling 
-          && ( ret = parent.nextElementSibling.__getNextWithFilter(false, filter) ) )
-      {
-        break;
-      }
-      parent = parent.parentElement;
-    }
-  }
-  return ret; 
-}
-
-
-Element.prototype.__getNextWithFilter = function(is_start_node, filter)
-{
-  var next = is_start_node ? this.nextElementSibling : this, ret = null, i = 0;
-
-  while(next)
-  {
-    if( next.firstElementChild 
-        && ( ret = next.firstElementChild.__getNextWithFilter(false, filter) ) )
-    {
-      break;
-    }
-    if( filter(next) )
-    {
-      break;
-    }
-    next = next.nextElementSibling;
-  }
-  return ret || next;
+  var cursor = this;
+  while(( cursor = cursor.getNextInFlow(root_context) ) && !filter(cursor, this) );
+  return cursor; 
 }
 
 Element.prototype.getPreviousWithFilter = function(root_context, filter)
 {
-  var 
-  ret = this.__getPreviousWithFilter(true, filter),
-  parent = this.parentElement;
-
-  if( !ret )
-  {
-    while(parent && root_context.contains(parent) && !root_context.isSameNode(parent) )
-    {
-      if( parent.previousElementSibling 
-          && ( ret = parent.previousElementSibling.__getPreviousWithFilter(false, filter) ) )
-      {
-        break;
-      }
-      parent = parent.parentElement;
-    }
-  }
-  return ret; 
+  var cursor = this;
+  while( ( cursor = cursor.getPreviousInFlow(root_context) ) && !filter(cursor, this) );
+  return cursor; 
 }
 
-
-Element.prototype.__getPreviousWithFilter = function(is_start_node, filter)
+Element.prototype.getNextInFlow = function(root_context)
 {
-  var next = is_start_node ? this.previousElementSibling : this, ret = null, i = 0;
+  var
+  next = this.firstElementChild || this.nextElementSibling,
+  cursor = this;
 
-  while(next)
+  while(!next && ( cursor = cursor.parentNode ) && cursor != root_context  )
   {
-    if( next.lastElementChild 
-        && ( ret = next.lastElementChild.__getPreviousWithFilter(false, filter) ) )
-    {
-      break;
-    }
-    if( filter(next) )
-    {
-      break;
-    }
-    next = next.previousElementSibling;
+    next = cursor.nextElementSibling;
   }
-  return ret || next;
+  return next;
 }
 
+Element.prototype.getPreviousInFlow = function(root_context)
+{
+  var 
+  previous = this.previousElementSibling, 
+  parent = this.parentNode,
+  cursor = previous;
 
+  while( cursor && cursor.lastElementChild && ( cursor = cursor.lastElementChild ) );
+  return cursor || previous || parent != root_context && parent || null;
+}
 
 Element.prototype.scrollSoftIntoView = function()
 {
@@ -418,6 +371,18 @@ Node.prototype.getAttributeFromNode=function(nodeName, attr)
   }
   return null;
 };
+
+NodeList.prototype.indexOf = function(item)
+{
+  for( var cursor = null, i = 0; cursor = this[i]; i++)
+  {
+    if( cursor == item )
+    {
+      return i;
+    }
+  }
+  return -1;
+}
 
 StyleSheetList.prototype.getPropertyValue = function(selector, property)
 {
