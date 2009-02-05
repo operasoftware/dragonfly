@@ -253,6 +253,10 @@ cls.HTTPLoggerService = function(name)
         for (var n=0, line; line=lines[n]; n++)
         {
             var parts = line.match(/([\w-]*?): (.*)/);
+            if (!parts || parts.length!=3) {
+                opera.postError("Could not parse header!:\n" + line)
+                continue;
+            }
             var name = parts[1];
             var value = parts[2];
 
