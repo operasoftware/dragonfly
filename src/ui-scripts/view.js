@@ -111,7 +111,10 @@ var ViewBase = new function()
           this.createView(container);
           messages.post('view-created', {id: this.id, container: container});
         }
+        // if actions[this.id] actions[this.id].onViewUpdate(cotainer)
       }
+
+      
     }
   }
 
