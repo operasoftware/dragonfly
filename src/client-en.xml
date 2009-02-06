@@ -151,7 +151,6 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./http-logger/httplogger_data.js"/>
 <script src="./http-logger/httplogger_view.js"/>
 <script src="./http-logger/httplogger_resources.js"/>
-<script src="./http-logger/httplogger_mime_types.js"/>
 <script src="./http-logger/httplogger_templates.js"/>
 
 <body/>
