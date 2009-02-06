@@ -262,14 +262,14 @@ cls.HTTPLoggerService = function(name)
                     old = headerList.pop();
                     headerList.push([old[0], old[1]+value]);
                 } else { // should never happen with well formed headers
-                    opera.postError("this header is malformed\n" + line)
+                    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + "this header is malformed\n" + line)
                 }
             }
             else
             {
                 var parts = line.match(/([\w-]*?): (.*)/);
                 if (!parts || parts.length!=3) {
-                    opera.postError("Could not parse header!:\n" + line)
+                    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + "Could not parse header!:\n" + line)
                     continue;
                 }
                 var name = parts[1];
@@ -283,7 +283,6 @@ cls.HTTPLoggerService = function(name)
         // it and put it into a multidict like structure
         for (var n=0, tuple; tuple=headerList[n]; n++)
         {
-            opera.postError(tuple)
             var name = tuple[0];
             var value = tuple[1];
 
