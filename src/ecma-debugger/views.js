@@ -26,18 +26,27 @@ new Settings
   'environment', 
   // key-value map
   {
+    'environment': true
   }, 
   // key-label map
   {
   },
   // settings map
   {
+    customSettings:
+    [
+      'environment'
+    ]
   },
   // template
-  function(setting)
   {
-    return templates.hello( services['ecmascript-debugger'].getEnvironment());
+    environment:
+    function(setting)
+    {
+      return templates.hello( services['ecmascript-debugger'].getEnvironment());
+    }
   }
+
 
 );
 
