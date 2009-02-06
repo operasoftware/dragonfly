@@ -20,6 +20,27 @@ cls.EnvironmentView = function(id, name, container_class)
 cls.EnvironmentView.prototype = ViewBase;
 new cls.EnvironmentView('environment', ui_strings.M_VIEW_LABEL_ENVIRONMENT, 'scroll');
 
+new Settings
+(
+  // id
+  'environment', 
+  // key-value map
+  {
+  }, 
+  // key-label map
+  {
+  },
+  // settings map
+  {
+  },
+  // template
+  function(setting)
+  {
+    return templates.hello( services['ecmascript-debugger'].getEnvironment());
+  }
+
+);
+
 
 /**
   * @constructor 
@@ -91,6 +112,7 @@ cls.GeneralView = function(id, name, container_class)
 }
 cls.GeneralView.prototype = ViewBase;
 new cls.GeneralView('general', ui_strings.M_SETTING_LABEL_GENERAL, '');
+
 
 new Settings
 (

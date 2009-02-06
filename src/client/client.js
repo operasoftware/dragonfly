@@ -8,7 +8,6 @@ var composite_view_convert_table =
   // opera.attached.toString()
   "true": 
   {
-    'environment_new': 'environment_new',
     'console_new': 'console_new',
     'settings_new': 'settings_new',
     'js_panel': 'js_panel',
@@ -19,7 +18,6 @@ var composite_view_convert_table =
   },
   "false": 
   {
-    'environment_new': 'environment_new',
     'console_new': 'console_new',
     'settings_new': 'settings_new',
     'js_panel': 'js_new',
@@ -358,7 +356,6 @@ var client = new function()
     
     new CompositeView('network_panel', ui_strings.M_VIEW_LABEL_NETWORK, network_rough_layout);
 
-    new CompositeView('environment_new', ui_strings.M_VIEW_LABEL_ENVIRONMENT, environment_rough_layout);
     new CompositeView('console_new', ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE, console_rough_layout);
     new CompositeView('js_new', ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS, js_rough_layout);
     new CompositeView('dom_new', ui_strings.M_VIEW_LABEL_COMPOSITE_DOM, dom_rough_layout);
@@ -634,13 +631,13 @@ var network_rough_layout =
 var main_layout =
 {
   id: 'main-view', 
-  tabs: ['js_new', 'dom_new', 'network_panel', 'console_new', 'environment_new',  'settings_new']
+  tabs: ['js_new', 'dom_new', 'network_panel', 'console_new', 'settings_new']
 }
 
 var panel_layout =
 {
   id: 'main-view', 
-  tabs: ['js_panel', 'dom_panel',  'network_panel', 'console_new', 'environment_new', 'settings_new']
+  tabs: ['js_panel', 'dom_panel',  'network_panel', 'console_new', 'settings_new']
 }
 
 var resolve_map_properties = 
