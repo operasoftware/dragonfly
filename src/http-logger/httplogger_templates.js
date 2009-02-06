@@ -54,7 +54,7 @@ window.templates = window.templates || ( window.templates = {} );
 /**
  * Renders a single row of request data in the request list
  */
-window.templates.request_list_row = function(n, r, sel)
+window.templates.request_list_row = function(r)
 {
     var a = [ 'tr',
         ['th', ["label", "",
@@ -111,4 +111,22 @@ window.templates.method_spec_link = function(req)
         }
     }
     return ""
+}
+
+window.templates.request_list_header = function()
+{
+    return ['table',
+                ['thead',
+                    ['tr',
+                        ['th', "#"],
+                        ['th', "Host"],
+                        ['th', "Path"],
+                        ['th', "Method"],
+                        ['th', "Status"],
+                        ['th', "Time"]
+                    ]
+                ],
+                ['tbody'],
+             'class', 'request-table'
+            ];
 }
