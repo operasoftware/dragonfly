@@ -15,9 +15,6 @@ cls.RequestListView = function(id, name, container_class)
 {
     var self = this;
     this.isPaused = false;
-    this.tableBodyEle = null;
-    this.lastIndex = null;
-    this.tbody = null;
 
     // The list will never be updated more often than this:
     this.minUpdateInterval = 500; // in milliseconds.
@@ -78,25 +75,18 @@ cls.RequestListView = function(id, name, container_class)
             container.clearAndRender(window.templates.request_list_header());
             nextRenderedIndex = 0;
         }
-        this.tableBodyEle = container.getElementsByTagName('tbody')[0];
+        var tableBodyEle = container.getElementsByTagName('tbody')[0];
         var tpls = log.slice(nextRenderedIndex).map(window.templates.request_list_row);
-        opera.postError("template list starts at " + nextRenderedIndex + " and length is " + tpls.length)
-        this.tableBodyEle.render(tpls);
+        tableBodyEle.render(tpls);
         nextRenderedIndex = log.length;
     }
 
     this.ondestroy = function()
     {
-        this.lastIndex = null;
-    }
-
-    this.updateView = function(cont)
-    {
-        this.createView(cont);
+        keyEntryId = null;
     }
 
     this.init(id, name, container_class);
-
 }
 
 cls.RequestListView.prototype = ViewBase;
