@@ -8,17 +8,38 @@
 
 cls.DOMInspectorActions = function(id)
 {
-  var self = this;
-
-  this.__active_container = null;
-  this.__target = null;
   this.view_id = id;
+
+  var self = this;
+  var view_container = null;
+  var view_container_first_child = null;
+  var nav_target = null;
+  var selection = null;
+  var range = null;
+
+  var leftRightFilter = function(ele)
+  {
+    return \
+    /^key|value|input$/.test(ele.nodeName.toLowerCase())
+    || ( "text" == ele.nodeName && ele.textContent.length )
+    || ( "node" == ele.nodeName && ele.textContent.slice(0,2) != "</" );
+  }
+
+  var upDownFilter = function(ele, start_ele)
+  {
+    return \
+    ( "input" == ele.nodeName.toLowerCase() && !ele.parentNode.contains(start_ele))
+    || ( "node" == ele.nodeName
+          && ele.textContent.slice(0,2) != "</"
+          && "input" != ele.parentNode.firstElementChild.nodeName.toLowerCase()
+        );
+  }
 
   var nav_filters = 
   {
     attr_text: function(ele)
     {
-      switch(ele.nodeName)
+      switch(ele.nodeName.toLowerCase())
       {
         case 'text':
         case 'key':
@@ -54,133 +75,182 @@ cls.DOMInspectorActions = function(id)
     }
   }
 
-
-  /*
+  
   this.getFirstTarget = function()
-  {
-    return self.__active_container && self.__active_container.getElementsByTagName('styles')[1].getElementsByTagName('property')[0];
+  {    
+    return \
+      view_container 
+      && ( document.getElementById('target-element') || view_container ).
+      getElementsByTagName('input')[0];
   }
 
-  this.clearSelected = function()
+
+  this.resetTarget = function(new_container)
   {
-    if( self.__target )
+    if( view_container && nav_target )
     {
-      self.__target.removeClass('selected');
+      var tag_name = nav_target.nodeName.toLowerCase();
+      this.setSelected
+      ( 
+        nav_target = 
+        new_container.firstChild.getElementsByTagName(tag_name)
+        [
+          view_container_first_child.getElementsByTagName(tag_name).indexOf(nav_target)
+        ]
+      );
+      view_container = new_container;
+      view_container_first_child = new_container.firstChild;
     }
   }
-  */
+
+  var onViewCreated = function(msg)
+  {
+    if(msg.id == self.view_id)
+    {
+      self.resetTarget(msg.container)
+    }
+  }
+
+  this.setContainer = function(event, container)
+  {
+    messages.addListener('view-created', onViewCreated);
+    view_container = container;
+    view_container_first_child = container.firstChild;
+    selection = getSelection();
+    range = document.createRange();
+    if( event.type == 'click' && /^node|key|value|text|input$/i.test(event.target.nodeName) )
+    {
+      nav_target = event.target;
+    }
+    if (!nav_target)
+    {
+      nav_target = this.getFirstTarget();
+    }
+    this.setSelected(nav_target);
+  }
+
   this.setSelected = function(new_target)
   {
+    var firstChild = null;
     if(new_target)
     {
-      self.__target = new_target;
-      /*
-      TODO set target here
-      if( self.__target )
+      nav_target.blur();
+      selection.collapse(view_container, 0);
+      nav_target = new_target;
+
+      if(new_target.offsetTop + new_target.offsetHeight > view_container.offsetHeight)
       {
-        self.__target.removeClass('selected');
-      }       
-      ( self.__target = new_target ).addClass('selected');
-      self.__target.scrollSoftIntoView();
-      */
-    }
-  }
-  /*
-  this.resetTarget = function()
-  {
-    if( self.__active_container && self.__target && !self.__active_container.parentNode )
-    {
-      var new_container = document.getElementById(self.__active_container.id);
-      if(new_container)
+        view_container.scrollTop += 
+          new_target.offsetTop + new_target.offsetHeight + 30 - view_container.offsetHeight;
+      }
+      else if(new_target.offsetTop < 0)
       {
-        var 
-        targets = self.__active_container.getElementsByTagName(self.__target.nodeName),
-        target = null, 
-        i = 0;
-        for( ; ( target = targets[i] ) && target != self.__target; i++ );
-        if( target && ( target = new_container.getElementsByTagName(self.__target.nodeName)[i] ) )
+        view_container.scrollTop += ( new_target.offsetTop - 30 );
+      } 
+
+      switch (new_target.nodeName.toLowerCase())
+      {
+        case 'node':
+        case 'value':
         {
-          self.__active_container = new_container;
-          self.setSelected(target);
+          firstChild = new_target.firstChild;
+          range.setStart(firstChild, 1);
+          range.setEnd(firstChild, firstChild.nodeValue.length - 1)
+          selection.addRange(range);
+          break;
+        }
+        case 'key':
+        case 'text':
+        {
+          range.selectNodeContents(new_target);
+          selection.addRange(range);
+          break;
+        }
+        case 'input':
+        {
+          nav_target.focus();
+          break;
         }
       }
     }
+    return new_target;
   }
 
-  this.moveFocusUp = function(event, target)
+  this.target_enter = function(event, action_id)
   {
-    if( self.__target )
+    if(nav_target)
     {
-      self.setSelected( self.__target.getPreviousWithFilter( self.__active_container,
-        self.__target.nodeName == 'header' && self.__target.parentElement.getAttribute('handler') 
-        ? nav_filter.header 
-        : nav_filter._default ) );
+      nav_target.releaseEvent
+      (
+        /^input|node$/i.test(nav_target.nodeName) && "click" || "dblclick"
+      );
     }
-    else
-    {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'keyboard_handler: no target to move');
-    }
+    return false;
   }
 
-  var nav_filter = 
+  this.target_ctrl_enter = function(event, action_id)
   {
-    _default: function(ele)
+    if(nav_target && nav_target.nodeName == "node" )
     {
-      return ( ( ele.nodeName == 'property' && ele.parentElement.hasAttribute('rule-id') )
-               || ele.nodeName == 'header' 
-               || ele.getAttribute('handler') == 'display-rule-in-stylesheet' );
-    },
-    header: function(ele)
-    {
-      return ele.nodeName == 'header';
-    },
-    property_editable: function(ele)
-    {
-      return ele.nodeName == 'property' && ele.parentElement.hasAttribute('rule-id');
+      nav_target.releaseEvent("dblclick");
     }
+    return false;
   }
 
-  this.moveFocusDown = function(event, target)
+  this.keyhandler_onclick = function(event)
   {
-    if( self.__target )
+    var target = event.target;
+    if(target != nav_target && /^input|node|key|value|text$/i.test(target.nodeName))
     {
-      self.setSelected( self.__target.getNextWithFilter( self.__active_container,
-        self.__target.nodeName == 'header' && !self.__target.parentElement.getAttribute('handler') 
-        ? nav_filter.header 
-        : nav_filter._default ) );
-    }
-    else
-    {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'keyboard_handler: no target to move');
+      this.setSelected(target);
     }
   }
 
-  this.setActiveContainer = function(event, container)
+  this.blur = function(event)
   {
-    self.__active_container = container;
-    if ( !self.__target || !self.__target.parentElement )
-    {
-      self.__target = self.getFirstTarget()
-    }
-    if( self.__target && !self.__target.hasClass('selected') )
-    {
-      self.setSelected(self.__target);
-    }
-
+    selection.collapse(document.documentElement, 0);
+    view_container = null;
+    view_container_first_child = null;
+    nav_target = null;
+    selection = null;
+    range = null;
+    messages.removeListener('view-created', onViewCreated);
   }
 
-  this.clearActiveContainer = function()
+  this.nav_up = function(event, action_id)
   {
-    self.clearSelected();
+    // TODO if setting of nav target fails
+    if( ! this.setSelected( nav_target.getPreviousWithFilter(view_container, upDownFilter) ) )
+    {
+      view_container.scrollTop = 0;
+    }
+    return true;
   }
 
-
+  this.nav_down = function(event, action_id)
   {
-    "dom-attr-text-editor": new DOMAttrAndTextEditor(),
-    "dom-markup-editor":
+    // TODO if setting of nav target fails
+    if(!this.setSelected( nav_target.getNextWithFilter(view_container, upDownFilter) ) )
+    {
+      view_container.scrollTop = view_container.scrollHeight;
+    }
+    return true;
+  }
 
+  this.nav_left = function(event, action_id)
+  {
+    // TODO if setting of nav target fails
+    this.setSelected(nav_target.getPreviousWithFilter(view_container, leftRightFilter));
+    return true;
+  }
 
-  */
+  this.nav_right = function(event, action_id)
+  {
+    // TODO if setting of nav target fails
+    this.setSelected(nav_target.getNextWithFilter(view_container, leftRightFilter));
+    return true;
+  }
+
   this.editDOM = function(event, target)
   {
     switch(event.target.nodeName)
@@ -241,197 +311,29 @@ cls.DOMInspectorActions = function(id)
     }
   }
 
-  /*
-  this['css-toggle-category'] = function(event, target)
-  {
-    if(/header/.test(target.nodeName))
-    {
-      target = target.firstChild;
-    }
-    var cat = target.getAttribute('cat-id'), value = target.hasClass('unfolded');
-    var cat_container = target.parentNode.parentNode;
-    if( value )
-    {
-      target.removeClass('unfolded');
-      cat_container.removeClass('unfolded');
-      var styles = cat_container.getElementsByTagName('styles')[0];
-      if( styles )
-      {
-        styles.innerHTML = "";
-      }
-    }
-    else
-    {
-      target.addClass('unfolded');
-      cat_container.addClass('unfolded');
-    }
-    self.setSelected(target.parentNode);
-    elementStyle.setUnfoldedCat( cat , !value);
-    settings['css-inspector'].set(cat, !value);
-  }
-
-  this['display-rule-in-stylesheet'] = function(event, target)
-  {
-    var index = parseInt(target.getAttribute('index'));
-    var rt_id = target.getAttribute('rt-id');
-    var rule_id = target.parentNode.getAttribute('rule-id');
-    // stylesheets.getRulesWithSheetIndex will call this function again if data is not avaible
-    // handleGetRulesWithIndex in stylesheets will 
-    // set for this reason __call_count on the event object
-    var rules = stylesheets.getRulesWithSheetIndex(rt_id, index, arguments);
-    if(rules)
-    {
-      self.setSelected(target);
-      stylesheets.setSelectedSheet(rt_id, index, rules, rule_id);
-      topCell.showView(views.stylesheets.id);
-    }
-  }
-  
-  this.target_enter = function(event, action_id)
-  {
-    if(this.__target)
-    {
-      this.__target.releaseEvent('click');
-    }
-  }
-
-
-  this.nav_previous_edit_mode = function(event, action_id)
-  {
-    if( !this.editor.nav_previous(event, action_id) )
-    {
-      var new_target = 
-        this.__target.getPreviousWithFilter( this.__active_container, nav_filter.property_editable );
-      if(new_target)
-      {
-        this.setSelected(new_target);
-        this.editor.edit(null, this.__target);
-        this.editor.focusLastToken();
-      }
-    }
-
-    // to stop default action
-    return false;
-  }
-
-  this.nav_next_edit_mode = function(event, action_id)
-  {
-    if( !this.editor.nav_next(event, action_id) )
-    {
-      var new_target = 
-        this.__target.getNextWithFilter( this.__active_container, nav_filter.property_editable );
-      if(new_target)
-      {
-        this.setSelected(new_target);
-        this.editor.edit(null, this.__target);
-        this.editor.focusFirstToken();
-      }
-    }
-
-
-    // to stop default action
-    return false;
-  }
-
-  this.autocomplete = function(event, action_id)
-  {
-    this.editor.autocomplete(event, action_id);
-    return false;
-  }
-
-  this.escape_edit_mode = function(event, action_id)
-  {
-    
-    if(!this.editor.escape())
-    {
-      var cur_target = this.__target;
-      this.moveFocusUp();
-      cur_target.parentElement.removeChild(cur_target);
-    }
-    key_identifier.setModeDefault(self);
-
-    return false;
-  }
-
-  this.blur_edit_mode = function()
-  {
-    this.escape_edit_mode();
-    this.clearActiveContainer();
-  }
-
-  this.enter_edit_mode = function(event, action_id)
-  {
-    if( !this.editor.enter(event, action_id) )
-    {
-      key_identifier.setModeDefault(self);
-      if( !this.__target.textContent )
-      {
-        var cur_target = this.__target;
-        this.moveFocusUp();
-        cur_target.parentElement.removeChild(cur_target);
-      }
-    }
-    return false;
-  }
-  */
-
-
   this.enter_edit_mode = function(event, action_id)
   {
     if( this.editor.type == "dom-attr-text-editor" )
     {
-      var navigation_target = this.editor.submit();
-      if(!navigation_target)
-      {
-        // TODO get a valid navigation target
-      }
-      else
-      {
-        // TODO set the return value as navigation target
-      }
+      this.setSelected(this.editor.submit() || this.getFirstTarget() );
       key_identifier.setModeDefault(self);
       return false;
     }
     else
     {
-      
       return true;
     }
-
-
-    /*
-    if( !this.editor.enter(event, action_id) )
-    {
-      key_identifier.setModeDefault(self);
-      if( !this.__target.textContent )
-      {
-        var cur_target = this.__target;
-        this.moveFocusUp();
-        cur_target.parentElement.removeChild(cur_target);
-      }
-    }
-    return false;
-    */
   }
 
   this.ctrl_enter_edit_mode = function(event, action_id)
   {
     if( this.editor.type == "dom-attr-text-editor" )
     {
-      
       return false;
     }
     else
     {
-      var navigation_target = this.editor.submit();
-      if(!navigation_target)
-      {
-        // TODO get a valid navigation target
-      }
-      else
-      {
-        // TODO set the return value as navigation target
-      }
+      this.setSelected(this.editor.submit() || this.getFirstTarget() );
       key_identifier.setModeDefault(self);
       return false;
     }
@@ -443,7 +345,7 @@ cls.DOMInspectorActions = function(id)
     {
       if( !this.editor.nav_next(event, action_id) )
       {
-        key_identifier.setModeDefault(self);
+        key_identifier.setModeDefault(this);
       }
       return false;
     }
@@ -460,7 +362,7 @@ cls.DOMInspectorActions = function(id)
     {
       if( !this.editor.nav_previous(event, action_id) )
       {
-        key_identifier.setModeDefault(self);
+        key_identifier.setModeDefault(this);
       }
       return false;
     }
@@ -470,19 +372,10 @@ cls.DOMInspectorActions = function(id)
     }
   }
 
-
   this.escape_edit_mode = function(event, action_id)
   {
-    var navigation_target = this.editor.cancel();
-    if(!navigation_target)
-    {
-      // TODO get a valid navigation target
-    }
-    else
-    {
-      // TODO set the return value as navigation target
-    }
-    key_identifier.setModeDefault(self);
+    this.setSelected(this.editor.cancel() || this.getFirstTarget() );
+    key_identifier.setModeDefault(this);
     return false;
   }
 
@@ -517,16 +410,6 @@ cls.DOMInspectorActions = function(id)
 
   this.init(id);
 
-  var onViewCreated = function(msg)
-  {
-    if(msg.id == "dom" )
-    {
-      // self.resetTarget();
-    }
-  }
-  messages.addListener('view-created', onViewCreated)
-
-
 };
 
 cls.DOMInspectorActions.prototype = BaseActions;
@@ -542,25 +425,49 @@ new cls.DOMInspectorActions('dom'); // the view id
 cls.DOMInspectorKeyhandler = function(id)
 {
 
-  var __actions = actions[id]
-  
-  /*
-  this[this.NAV_LEFT] = this[this.NAV_UP] = __actions.moveFocusUp;
+  var __actions = actions[id];
 
-  this[this.NAV_RIGHT] = this[this.NAV_DOWN] = __actions.moveFocusDown;
-  
-  this[this.ENTER] = function(event, action_id)
+  this[this.NAV_UP] =  function(event, action_id)
   {
-    __actions.target_enter(event, action_id);
+    return __actions.nav_up(event, action_id);
+  }
+  this[this.NAV_DOWN] = function(event, action_id)
+  {
+    return __actions.nav_down(event, action_id);
+  }
+  this[this.NAV_LEFT] = function(event, action_id)
+  {
+    return __actions.nav_left(event, action_id);
   }
 
+  this[this.NAV_RIGHT] = function(event, action_id)
+  {
+    return __actions.nav_right(event, action_id);
+  }
 
-  this.focus = __actions.setActiveContainer;
+  this[this.ENTER] = function(event, action_id)
+  {
+    return __actions.target_enter(event, action_id);
+  }
 
-  this.blur = __actions.clearActiveContainer;
-  */
+  this[this.CTRL_ENTER] = function(event, action_id)
+  {
+    return __actions.target_ctrl_enter(event, action_id);
+  }
 
-
+  this.focus = function(event, container)
+  {
+    __actions.setContainer(event, container);
+  }
+  this.blur = function(event)
+  {
+    __actions.blur(event);
+  }
+  this.onclick = function(event)
+  {
+    __actions.keyhandler_onclick(event);
+  }
+  
   this.init(id);
 };
 
@@ -577,40 +484,6 @@ cls.DOMInspectorEditKeyhandler = function(id)
 {
 
   var __actions = actions[id]
-
-  /*
-  this[this.NAV_UP] = this[this.NAV_DOWN] = function(event, action_id)
-  {
-    __actions.autocomplete(event, action_id);
-  }
-
-  this[this.NAV_NEXT] = function(event, action_id)
-  {
-    __actions.nav_next_edit_mode(event, action_id);
-  }
-
-  this[this.NAV_PREVIOUS] = function(event, action_id)
-  {
-    __actions.nav_previous_edit_mode(event, action_id);
-  }
-
-  this[this.ESCAPE] = function(event, action_id)
-  {
-    __actions.escape_edit_mode(event, action_id);
-  }
-
-  this[this.ENTER] = function(event, action_id)
-  {
-    __actions.enter_edit_mode(event, action_id);
-  }
-
-  this.focus = __actions.test;
-
-  this.blur = function()
-  {
-    __actions.blur_edit_mode();
-  }
-  */
 
   this[this.NAV_PREVIOUS] = function(event, action_id)
   {
@@ -632,7 +505,6 @@ cls.DOMInspectorEditKeyhandler = function(id)
     return __actions.ctrl_enter_edit_mode(event, action_id);
   }
   
-
   this[this.ESCAPE] = function(event, action_id)
   {
     return __actions.escape_edit_mode(event, action_id);
@@ -657,7 +529,5 @@ cls.DOMInspectorEditKeyhandler = function(id)
 cls.DOMInspectorEditKeyhandler.prototype = BaseEditKeyhandler;
 
 new cls.DOMInspectorEditKeyhandler('dom');
-
-
 
 eventHandlers.dblclick['edit-dom'] = actions['dom'].editDOM;

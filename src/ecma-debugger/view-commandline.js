@@ -27,23 +27,43 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
 
   var console_output_data = [];
 
+  var is_debug = false;
+  var toolbar_visibility = true;
+
   var cons_out_render_return_val = function(entry)
   {
     if( __console_output )
     {
-      __console_output.render
-      (
-        ['pre', entry.value ].concat
-        ( 
-          entry.obj_id 
-          ? [
-              'handler', 'inspect-object-link', 
-              'rt-id', entry.runtime_id, 
-              'obj-id', entry.obj_id
-            ] 
-          : [] 
-        )
-      );
+      if( is_debug && entry.obj_id )
+      {
+        __console_output.render
+        (
+          [
+            'pre', 
+            entry.value, 
+            ['d', ' [' + entry.obj_id + ']'],
+            'handler', 'inspect-object-link', 
+            'rt-id', entry.runtime_id, 
+            'obj-id', entry.obj_id
+          ]
+        );
+      }
+      else
+      {
+        __console_output.render
+        (
+          ['pre', entry.value ].concat
+          ( 
+            entry.obj_id 
+            ? [
+                'handler', 'inspect-object-link', 
+                'rt-id', entry.runtime_id, 
+                'obj-id', entry.obj_id
+              ]
+            : [] 
+          )
+        );
+      }
     }
   }
 
@@ -441,7 +461,8 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
       }
       else
       {
-         opera.postError("getting scope failed in autocomplete view-commandline");
+         opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+           "getting scope failed in autocomplete view-commandline");
       }
     }
 
@@ -540,6 +561,8 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
 
   this.createView = function(container)
   {
+    is_debug = ini.debug;
+    checkToolbarVisibility();
     container.innerHTML = markup;
     container.scrollTop = container.scrollHeight;
     __container = container;
@@ -578,8 +601,18 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     }
   }
 
+  var checkToolbarVisibility = function(msg)
+  { 
+    var isMultiRuntime = host_tabs.isMultiRuntime();
+    if( toolbar_visibility != isMultiRuntime )
+    {
+      topCell.setTooolbarVisibility('command_line', toolbar_visibility = isMultiRuntime );
+    }
+  }
+
   messages.addListener('frame-selected', onFrameSelected);
   messages.addListener('console-message', onConsoleMessage);
+  messages.addListener('active-tab', checkToolbarVisibility);
 
   this.init(id, name, container_class, html, default_handler);
 
@@ -613,3 +646,87 @@ eventHandlers.click['cmd-focus'] = function(event, target)
 {
   target.getElementsByTagName('textarea')[0].focus();
 }
+
+
+cls.CndRtSelect = function(id, class_name)
+{
+
+  var selected_value = "";
+
+  this.getSelectedOptionText = function()
+  {
+    var selected_rt_id = runtimes.getSelectedRuntimeId();
+    if( selected_rt_id )
+    {
+      var rt = runtimes.getRuntime(selected_rt_id);
+      if( rt )
+      {
+        return rt['title'] || helpers.shortenURI(rt['uri']).uri; 
+      }
+    }
+    return '';
+  }
+
+  this.getSelectedOptionValue = function()
+  {
+
+  }
+
+  this.templateOptionList = function(select_obj)
+  {
+    // TODO this is a relict of protocol 3, needs cleanup
+    
+    var active_window_id = runtimes.getActiveWindowId();
+
+    if( active_window_id )
+    {
+      var 
+      _runtimes = runtimes.getRuntimes(active_window_id),
+      rt = null, 
+      i = 0;
+
+      for( ; ( rt = _runtimes[i] ) && !rt['selected']; i++);
+      if( !rt && _runtimes[0] )
+      {
+        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'no runtime selected')
+        return;
+      }
+      return templates.runtimes(_runtimes, 'runtime');
+    }
+    
+  }
+
+  this.checkChange = function(target_ele)
+  {
+    var rt_id = target_ele.getAttribute('rt-id');
+    if( rt_id && rt_id != runtimes.getSelectedRuntimeId() )
+    {
+      runtimes.setSelectedRuntimeId(rt_id)
+    }
+    return true;
+  }
+
+  this.init(id, class_name);
+}
+
+cls.CndRtSelect.prototype = new CstSelect();
+
+new cls.CndRtSelect('cmd-runtime-select', 'cmd-line-runtimes');
+
+new ToolbarConfig
+(
+  'command_line',
+  null,
+  null,
+  null,
+  [
+    {
+      handler: 'select-window',
+      title: ui_strings.S_BUTTON_LABEL_SELECT_WINDOW,
+      type: 'dropdown',
+      class: 'window-select-dropdown',
+      template: window['cst-selects']['cmd-runtime-select'].getTemplate()
+    }
+  ]
+);
+
