@@ -183,42 +183,45 @@ new Settings
   },
   // settings map
   {
-    checkboxes:
+    customSettings:
     [
-      "debug-remote"
+      'debug-remote'
     ]
   },
-  // template
-  function(setting)
+  // custom templates
   {
-    return [
-      ['setting-composite',
-        ['label',
-          ['input',
-            'type', 'checkbox',
-            'checked', this.get('debug-remote'),
-            'handler', 'toggle-remote-debug'
+    'debug-remote':
+    function(setting)
+    {
+      return [
+        ['setting-composite',
+          ['label',
+            ['input',
+              'type', 'checkbox',
+              'checked', setting.get('debug-remote'),
+              'handler', 'toggle-remote-debug'
+            ],
+            setting.label_map['debug-remote']
           ],
-          this.label_map['debug-remote']
-        ],
-        ['label',
-          ui_strings.S_LABEL_PORT + ': ',
+          ['label',
+            ui_strings.S_LABEL_PORT + ': ',
+            ['input',
+              'type', 'number',
+              'value', setting.get('port'),
+              'disabled', !setting.get('debug-remote'),
+              'handler', 'change-port-number-remote-debug',
+              'current-port', setting.get('port').toString()
+            ]
+          ],
           ['input',
-            'type', 'number',
-            'value', this.get('port'),
-            'disabled', !this.get('debug-remote'),
-            'handler', 'change-port-number-remote-debug',
-            'current-port', this.get('port').toString()
+            'type', 'button',
+            'disabled', 'disabled',
+            'value', ui_strings.S_BUTTON_TEXT_APPLY,
+            'handler', 'apply-remote-debugging'
           ]
-        ],
-        ['input',
-          'type', 'button',
-          'disabled', 'disabled',
-          'value', ui_strings.S_BUTTON_TEXT_APPLY,
-          'handler', 'apply-remote-debugging'
         ]
-      ]
-    ];
+      ];
+    }
   }
 );
 
