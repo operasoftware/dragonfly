@@ -605,42 +605,12 @@ var js_rough_layout_panel =
   ]
 }
 
-
 var network_rough_layout =
 {
     dir: 'v',
     width: 1000,
     height: 1000,
-    children: [
-      { 
-        height: 500,
-        width: 1000,
-        children: 
-        [
-          { height: 500, tabs: ['request_list'] },
-        ] 
-      },
-      { 
-        height: 500,
-        width: 1000,
-        children: 
-        [
-          { height: 500,
-            width: 1000,
-            children: [
-                { height: 500, tabs: ['request_overview',
-                                      'request_info_headers',
-                                      'request_info_raw',
-                                      'response_info_headers',
-                                      'response_info_raw',
-                                      'response_info_body'] },
-            ]
-            
-          }
-        ] 
-      }
-  ]
-
+    children: [ { height: 1000, tabs: ['request_list'] } ] 
 }
 
 var main_layout =

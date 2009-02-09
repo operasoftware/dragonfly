@@ -65,7 +65,6 @@ cls.RequestListView = function(id, name, container_class)
 
     this.doCreateView = function(container)
     {
-
         var log = HTTPLoggerData.getLog();
         if (!this.viewIsValid(log)) {
             container.clearAndRender(window.templates.request_list_header());
@@ -109,13 +108,11 @@ cls.RequestListView = function(id, name, container_class)
 cls.RequestListView.prototype = ViewBase;
 new cls.RequestListView('request_list', ui_strings.M_VIEW_LABEL_REQUEST_LOG, 'scroll');
 
-
 eventHandlers.click['request-list-expand-collapse'] = function(event, target)
 {
     window.views['request_list'].toggleDetails(target.getAttribute("data-requestid"));
     window.views['request_list'].update();
 }
-
 
 eventHandlers.click['request-list-select'] = function(event, target)
 {
@@ -132,24 +129,6 @@ eventHandlers.click['request-list-select'] = function(event, target)
     }
 }
 
-
-new Settings
-(
-  // id
-  'request_list', 
-  // kel-value map
-  {
-    'pause-resume-request-list-update': true
-  }, 
-  // key-label map
-  {
-    'pause-resume-request-list-update':  "#STR Pause/resume"
-  },
-  // settings map
-  {
-  }
-);
-
 new ToolbarConfig
 (
     'request_list',
@@ -158,259 +137,10 @@ new ToolbarConfig
         handler: 'clear-request-list',
         title: ui_strings.S_BUTTON_CLEAR_REQUEST_LOG
       }
-    ],
-    [
-      {
-        handler: 'request-list-filter',
-        title: "#STR filter request"
-      }
     ]
 );
-
-new Switches
-(
-  'request_list',
-  [
-    'pause-resume-request-list-update'
-  ]
-)
 
 eventHandlers.click['clear-request-list'] = function(event, target)
 {
     HTTPLoggerData.clearLog();
 }
-
-eventHandlers.keyup['request-list-filter'] = function(event, target)
-{
-    if( event.keyCode == 13 )
-    {
-        window.views['request_list'].setFilter(target.value);
-    }
-    // fixme: Add delayed filtering here, so it'll work while typing
-}
-
-cls.RequestOverviewView = function(id, name, container_class)
-{
-    var self = this;
-
-    this.createView = function(container)
-    {
-        var req = HTTPLoggerData.getSelectedRequest();
-        if (req)
-        {
-            container.clearAndRender(['div', [
-                                               ['h1', this.name],
-                                               window.templates.request_summary(req)
-                                            ],
-                                      'class', 'padding'
-                                     ]
-                                    );
-        }
-        else
-        {
-            container.clearAndRender(['div', [
-                                                 ['h1', this.name],
-                                                 ui_strings.S_TEXT_NO_REQUEST_SELECTED,
-                                             ],
-                                      'class', 'padding'
-                                     ]
-                                    );
-            
-        }
-    }
-    
-    this.init(id, name, container_class);
-
-}
-
-cls.RequestOverviewView .prototype = ViewBase;
-new cls.RequestOverviewView ('request_overview', ui_strings.M_VIEW_LABEL_REQUEST_INFO, 'scroll');
-
-cls.RequestRawView = function(id, name, container_class)
-{
-    var self = this;
-
-    this.createView = function(container)
-    {
-        var req = HTTPLoggerData.getSelectedRequest();
-        if (req)
-        {
-            container.clearAndRender(['div', [
-                                                ['h1', this.name],
-                                                ['code',
-                                                    ['pre',
-                                                        req.request.raw
-                                                    ]
-                                                ]
-                                            ],
-                                     'class', 'padding'
-                                    ]
-                                    );
-        }
-        else
-        {
-            container.clearAndRender(['div', [
-                                                 ['h1', this.name],
-                                                 ui_strings.S_TEXT_NO_REQUEST_SELECTED,
-                                             ],
-                                      'class', 'padding'
-                                     ]
-                                    );
-        }
-    }
-    
-    this.init(id, name, container_class);
-}
-
-cls.RequestRawView.prototype = ViewBase;
-new cls.RequestRawView('request_info_raw', ui_strings.M_VIEW_LABEL_RAW_REQUEST_INFO, 'scroll');
-
-
-cls.ResponseRawView = function(id, name, container_class)
-{
-    var self = this;
-
-    this.createView = function(container)
-    {
-        var req = HTTPLoggerData.getSelectedRequest();
-        if (req)
-        {
-            container.clearAndRender(['div', [
-                                                ['h1', this.name],
-                                                ['code',
-                                                    ['pre',
-                                                        req.response.raw
-                                                    ]
-                                                ]
-                                            ],
-                                     'class', 'padding'
-                                    ]
-                                    );
-        }
-        else
-        {
-            container.clearAndRender(['div', [
-                                                 ['h1', this.name],
-                                                 ui_strings.S_TEXT_NO_REQUEST_SELECTED,
-                                             ],
-                                      'class', 'padding'
-                                     ]
-                                    );
-        }
-    }
-    
-    this.init(id, name, container_class);
-}
-
-
-cls.ResponseRawView.prototype = ViewBase;
-new cls.ResponseRawView('response_info_raw', ui_strings.M_VIEW_LABEL_RAW_RESPONSE_INFO, 'scroll');
-
-
-cls.RequestHeadersView = function(id, name, container_class)
-{
-    this.createView = function(container)
-    {
-        var req = HTTPLoggerData.getSelectedRequest();
-
-        if (req)
-        {
-            container.clearAndRender(['div', [
-                                               ['h1', this.name],
-                                               window.templates.header_definition_list(req.request.headers),
-                                            ],
-                                      'class', 'padding'
-                                     ]
-                                    );
-        }
-        else
-        {
-            container.clearAndRender(['div', [
-                                                 ['h1', this.name],
-                                                 ui_strings.S_TEXT_NO_REQUEST_SELECTED,
-                                             ],
-                                      'class', 'padding'
-                                     ]
-                                    );
-        }
-    }
-    
-    this.init(id, name, container_class);
-}
-
-
-cls.RequestHeadersView.prototype = ViewBase;
-new cls.RequestHeadersView('request_info_headers', ui_strings.M_VIEW_LABEL_REQUEST_HEADERS, 'scroll');
-
-cls.ResponseHeadersView = function(id, name, container_class)
-{
-    this.createView = function(container)
-    {
-        var req = HTTPLoggerData.getSelectedRequest();
-
-        if (req && req.response)
-        {
-            container.clearAndRender(['div', [
-                                               ['h1', this.name],
-                                               window.templates.header_definition_list(req.response.headers),
-                                            ],
-                                      'class', 'padding'
-                                     ]
-                                    );
-        }
-        else
-        {
-            container.clearAndRender(['div', [
-                                                 ['h1', this.name],
-                                                 ui_strings.S_TEXT_NO_REQUEST_SELECTED,
-                                             ],
-                                      'class', 'padding'
-                                     ]
-                                    );
-        }
-    }
-    
-    this.init(id, name, container_class);
-}
-
-
-cls.ResponseHeadersView.prototype = ViewBase;
-new cls.ResponseHeadersView('response_info_headers', ui_strings.M_VIEW_LABEL_RESPONSE_HEADERS, 'scroll');
-
-
-cls.ResponseBodyView = function(id, name, container_class)
-{
-    this.createView = function(container)
-    {
-        var req = HTTPLoggerData.getSelectedRequest();
-
-        if (req && req.response)
-        {
-            container.clearAndRender(['div', [
-                                               ['h1', this.name],
-                                               "Request body inspection not supported yet."
-                                            ],
-                                      'class', 'padding'
-                                     ]
-                                    );
-        }
-        else
-        {
-            container.clearAndRender(['div', [
-                                                 ['h1', this.name],
-                                                 ui_strings.S_TEXT_NO_REQUEST_SELECTED,
-                                             ],
-                                      'class', 'padding'
-                                     ]
-                                    );
-        }
-    }
-    
-    this.init(id, name, container_class);
-}
-
-
-cls.ResponseBodyView.prototype = ViewBase;
-new cls.ResponseBodyView('response_info_body', ui_strings.M_VIEW_LABEL_RESPONSE_BODY, 'scroll');
-
-

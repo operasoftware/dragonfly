@@ -86,9 +86,9 @@ ui_strings.M_VIEW_LABEL_STYLES = 'Styles';
 ui_strings.M_VIEW_LABEL_CONSOLE = 'Console';
 /* DESC: One Export view. */
 ui_strings.M_VIEW_LABEL_EXPORT = 'Export';
-/* DESC: Name of request log tab */
+/* DESC: DEPRECATED Name of request log tab */
 ui_strings.M_VIEW_LABEL_REQUEST_LOG = 'Request log';
-/* DESC: Name of raw request tab */
+/* DESC: DEPRECATED Name of raw request tab */
 ui_strings.M_VIEW_LABEL_RAW_REQUEST_INFO = 'Raw request';
 /* DESC: Name of raw response tab */
 ui_strings.M_VIEW_LABEL_RAW_RESPONSE_INFO = 'Raw response';
@@ -325,7 +325,7 @@ ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID = "Script id";
 ui_strings.S_TEXT_STATUS_SEARCH = "Matches for \"%(SEARCH_TERM)s\": Match %(SEARCH_COUNT_INDEX)s out of %(SEARCH_COUNT_TOTAL)s";
 /*  */
 ui_strings.S_TEXT_STATUS_SEARCH_NO_MATCH = "No match for \"%(SEARCH_TERM)s\"";
-/* DESC: Message in detail view of http logger when no request/respons is selected */
+/* DESC: DEPRECATED Message in detail view of http logger when no request/response is selected */
 ui_strings.S_TEXT_NO_REQUEST_SELECTED = "No request selected.";
 
 ui_strings.DRAGONFLY_INFO_MESSAGE = "Opera Dragonfly info message:\n";
