@@ -91,11 +91,47 @@ window.templates.request_details_box = function(r)
      return [ 'tr',
               ['td',
                ["div", 
-                    ["h2", "Request overview"]
+                    ["h2", "Request summary"],
+                    window.templates.request_summary(r),
+                    ["hr"],
+                    ['h2', "Request headers"],
+                    window.templates.parsed_request_headers(r),
+                    ["hr"],
+                    ['h2', "Response headers"],
+                    window.templates.parsed_response_headers(r),
+                    ["hr"],
+                    ['h2', "Raw response"],
+                    window.templates.response_raw(r)
                ], "colspan", "7"]
             ]
-    
 }
+
+window.templates.response_raw = function(req)
+{
+    return [
+            ['code',
+                ['pre',
+                    (req.response ? req.response.raw : "Request in progress")
+                ]
+            ]
+    ]
+}
+
+window.templates.parsed_request_headers = function(req)
+{
+    return [
+             window.templates.header_definition_list(req.request.headers)
+    ]
+}
+
+window.templates.parsed_response_headers = function(req)
+{
+    return [
+            ['h2', this.name],
+            req.response ? window.templates.header_definition_list(req.response.headers) : ["span", "Request in progress"]
+    ]    
+}
+
 
 window.templates.request_summary = function(req)
 {
