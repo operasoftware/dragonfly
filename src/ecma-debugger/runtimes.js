@@ -792,6 +792,18 @@ var runtimes = new function()
     return null;
   }
 
+  this.getURI = function(rt_id)
+  {
+    for( var r in __runtimes )
+    {
+      if( __runtimes[r]['runtime-id'] == rt_id )
+      {
+        return __runtimes[r]['uri'];
+      }
+    }
+    return '';
+  }
+
   this.getScript = function(scriptId)
   {
     return __scripts[scriptId];

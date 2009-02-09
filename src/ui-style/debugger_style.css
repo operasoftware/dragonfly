@@ -855,3 +855,9 @@ breadcrumb span:hover, .css-layout breadcrumb span:hover
   background-color: hsl(240, 80%, 90%);
   border-color: hsl(240, 50%, 70%);
 }
+
+[handler="dom-resource-link"]:hover
+{
+  text-decoration: underline;
+  color: #4d1100;
+}
