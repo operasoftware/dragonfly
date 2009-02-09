@@ -51,6 +51,28 @@
 /*    color: green;*/
 /*}*/
 
+
+.request-table button.expand-collapse {
+  height: 15px;
+  width: 19px;
+  background: transparent url('../ui-images/expand-collapse.png') 4px -13px no-repeat;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.request-table button.expand-collapse:active {
+    background-color: highlight;
+}
+
+.request-table button.collapsed {
+  background: transparent url('../ui-images/expand-collapse.png') 4px 2px no-repeat;
+}
+
+.request-table button.expanded {
+}
+
 .request-table label {
     display: inline-block;
     width: 16px;

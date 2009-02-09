@@ -14,7 +14,6 @@
 cls.RequestListView = function(id, name, container_class)
 {
     var self = this;
-    this.isPaused = false;
 
     // The list will never be updated more often than this:
     this.minUpdateInterval = 500; // in milliseconds.
@@ -24,6 +23,7 @@ cls.RequestListView = function(id, name, container_class)
     var updateTimer = null;
     var nextRenderedIndex = null;
     var keyEntryId = null;
+    var expandedItems = [];
     
     this.createView = function(container)
     {
@@ -44,7 +44,6 @@ cls.RequestListView = function(id, name, container_class)
             updateTimer = null;
         }
         lastUpdateTime = new Date().getTime();
-        
         this.doCreateView(container);
     }
 
@@ -56,29 +55,47 @@ cls.RequestListView = function(id, name, container_class)
      */
     this.viewIsValid = function(log)
     {
-        if (log.length && log[0].id==keyEntryId)
-        {
+        if (log.length && log[0].id==keyEntryId) {
             return true;
-        }
-        else
-        {
+        } else {
             if (log.length) { keyEntryId = log[0].id }
             return false;
         }
-        
     }
 
     this.doCreateView = function(container)
     {
+
         var log = HTTPLoggerData.getLog();
         if (!this.viewIsValid(log)) {
             container.clearAndRender(window.templates.request_list_header());
             nextRenderedIndex = 0;
         }
         var tableBodyEle = container.getElementsByTagName('tbody')[0];
-        var tpls = log.slice(nextRenderedIndex).map(window.templates.request_list_row);
+        
+        // partial function invocation that closes over expandedItems
+        var fun = function(e) {
+            return window.templates.request_list_row(e, expandedItems);
+        }
+        
+        var tpls = log.slice(nextRenderedIndex).map(fun);
+
         tableBodyEle.render(tpls);
         nextRenderedIndex = log.length;
+    }
+    
+    this.toggleDetails = function(id)
+    {
+        // fixme: this, and doCreateView should just wile all entries after
+        // the one we want to expand and set nextRenderedIndex to the one
+        // that got expanded.
+        if (expandedItems.indexOf(id)==-1) {
+            expandedItems.push(id);
+        } else {
+            expandedItems.splice(expandedItems.indexOf(id), 1);
+        }
+        keyEntryId = null;
+        lastUpdateTime = 0;
     }
 
     this.ondestroy = function()
@@ -91,6 +108,13 @@ cls.RequestListView = function(id, name, container_class)
 
 cls.RequestListView.prototype = ViewBase;
 new cls.RequestListView('request_list', ui_strings.M_VIEW_LABEL_REQUEST_LOG, 'scroll');
+
+
+eventHandlers.click['request-list-expand-collapse'] = function(event, target)
+{
+    window.views['request_list'].toggleDetails(target.getAttribute("data-requestid"));
+    window.views['request_list'].update();
+}
 
 
 eventHandlers.click['request-list-select'] = function(event, target)

@@ -54,24 +54,47 @@ window.templates = window.templates || ( window.templates = {} );
 /**
  * Renders a single row of request data in the request list
  */
-window.templates.request_list_row = function(r)
+window.templates.request_list_row = function(r, expandList)
 {
-    var a = [ 'tr',
-        ['th', ["label", "",
-                "class", http_map_mime_to_type(http_get_mime_from_extension(r.request.path))]
+    var expanded = expandList.indexOf(r.id) != -1;
+
+    var a = [
+        [ 'tr',
+            ['th', ["button", "", "type", "button",
+                                  "handler", "request-list-expand-collapse",
+                                  'data-requestid', r.id,
+                                  "class", "expand-collapse " + (expanded ? "expanded" : "collapsed") ]],
+            ['th', ["label", "",
+                    "class", http_map_mime_to_type(http_get_mime_from_extension(r.request.path))]
+            ],
+            ['td', r.request.headers["Host" || "?" ] ],
+            ['td', r.request.path],
+            ['td', r.request.method],
+            ['td', (r.response ? r.response.status : "-"), 'class', 'status-cell'],
+            ['td', (r.duration != null ? r.duration : "-"), 'class', 'time-cell'],
+            'data-requestid', r.id,
+            'handler', 'request-list-select',
+            'class', 'typeicon mime-' + http_map_mime_to_type(http_get_mime_from_extension(r.request.path))
         ],
-        ['td', r.request.headers["Host" || "?" ] ],
-        ['td', r.request.path],
-        ['td', r.request.method],
-        ['td', (r.response ? r.response.status : "-"), 'class', 'status-cell'],
-        ['td', (r.duration != null ? r.duration : "-"), 'class', 'time-cell'],
-        'data-requestid', r.id,
-        'handler', 'request-list-select',
-        'class', 'typeicon mime-' + http_map_mime_to_type(http_get_mime_from_extension(r.request.path))
-        //,
-        //'class', (r.id==sel ? 'request-list-select' : '')
     ];
+    
+    if (expanded) // meaning "is expanded"
+    {
+        a.push(window.templates.request_details_box(r));
+    }
+    
     return a;
+}
+
+window.templates.request_details_box = function(r)
+{
+     return [ 'tr',
+              ['td',
+               ["div", 
+                    ["h2", "Request overview"]
+               ], "colspan", "7"]
+            ]
+    
 }
 
 window.templates.request_summary = function(req)
@@ -118,7 +141,8 @@ window.templates.request_list_header = function()
     return ['table',
                 ['thead',
                     ['tr',
-                        ['th', "#"],
+                        ['th', ""],
+                        ['th', ""],
                         ['th', "Host"],
                         ['th', "Path"],
                         ['th', "Method"],
