@@ -59,7 +59,8 @@ var runtime_onload_handler = new function()
     }
     else
     {
-      opera.postError('getting readyState has failed in runtime_onload_handler handleReadyState');
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+        'getting readyState has failed in runtime_onload_handler handleReadyState');
     }
   }
 

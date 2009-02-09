@@ -2,6 +2,7 @@
   * @constructor 
   */
 
+// TODO clean up in regard of protocol 4
 var runtimes = new function()
 {
   var __runtimes = {};
@@ -25,7 +26,7 @@ var runtimes = new function()
 
   var view_ids = ['threads'];
 
-  var runtime_views = ['runtimes', 'runtimes_dom', 'runtimes_css'];
+  var runtime_views = [];
 
   var __selected_runtime_id = '';
 
@@ -33,6 +34,11 @@ var runtimes = new function()
 
   var __selected_script = '';
 
+  // used to set the top runtime automatically 
+  // on start or on debug context change
+  var debug_context_frame_path = '';
+
+  // TODO check if that can be removed completly
   var updateRuntimeViews = function()
   {
     var rt = '', i = 0;
@@ -163,6 +169,11 @@ var runtimes = new function()
 
   var parseRuntime = function(xml)
   {
+    /* 
+       pop ups are top runtimes but they shal be 
+       treated like child runtimes of the opener.
+
+    */
     var r_ts = xml.getElementsByTagName('runtime'), r_t=null, i=0;
     var length = 0, k = 0;
     var runtimeId = '', runtime=null, prop = '', 
@@ -182,7 +193,7 @@ var runtimes = new function()
         {
           __runtimes_arr[k] = runtimeId;  
         }
-        runtime={};
+        runtime = {};
         children = r_t.childNodes;
         for(j=0 ; child = children[j]; j++)
         {
@@ -200,9 +211,21 @@ var runtimes = new function()
           {
             __window_ids[win_id] = true;
           }
+          // any window which has the opner set to the current top window is part of the debug context
+          if (!debug_context_frame_path)
+          {
+            debug_context_frame_path = runtime['html-frame-path'];
+            
+          }   
+          __selected_script = '';
+          views['js_source'].update();
+          window['cst-selects']['js-script-select'].updateElement();
+          window['cst-selects']['cmd-runtime-select'].updateElement();
         } 
         getTitleRuntime(runtimeId);
         __runtimes[runtimeId] = runtime;
+        // TODO check if that is still needed
+
         if(__next_runtime_id_to_select == runtimeId)
         {
           self.setSelectedRuntime(runtime);
@@ -216,6 +239,7 @@ var runtimes = new function()
         }
         else
         {
+          // TODO still needed?
           updateRuntimeViews();
         }
 
@@ -223,7 +247,10 @@ var runtimes = new function()
         {
           __windows_reloaded[runtime['window-id']] = 2;
         }
-
+        if( debug_context_frame_path == runtime['html-frame-path'] && runtimeId != __selected_runtime_id )
+        {
+          self.setSelectedRuntimeId (runtimeId)
+        }
         //
         if( runtime['window-id'] == __selected_window )
         {
@@ -242,6 +269,7 @@ var runtimes = new function()
 
   var parseGetTitle = function(xml, rt_id)
   {
+
     if(__runtimes[rt_id] && xml.getNodeData('status') == 'completed' )
     {
       __runtimes[rt_id]['title'] = xml.getNodeData('string');
@@ -300,6 +328,15 @@ var runtimes = new function()
         __selected_script = new_script_id;
       }
       delete __scripts[sc];
+    }
+
+    if( !__selected_script )
+    {
+      __selected_script = new_script_id;
+      views['js_source'].update();
+      window['cst-selects']['js-script-select'].updateElement();
+      window['cst-selects']['cmd-runtime-select'].updateElement();
+
     }
   }
   
@@ -388,14 +425,36 @@ var runtimes = new function()
 
   this.setActiveWindowId = function(window_id)
   {
-    __selected_window = window_id;
-    cleanUpThreadOnContextChange();
+    
+    if( window_id != __selected_window )
+    {
+      __selected_window = window_id;
+      cleanUpThreadOnContextChange();
+      settings.runtimes.set('selected-window', window_id);
+      updateRuntimeViews();
+    }
+  }
+
+  // new in proto 4
+
+  // window id is the new debug context
+  // called to create all runtimes on setting or changing the debug context
+  this.createAllRuntimesOnDebugContextChange = function(win_id)
+  {
+    debug_context_frame_path = '';
+    __selected_script = '';
+    var tag =  tagManager.setCB(null, set_new_debug_context, [win_id]);
+    services['ecmascript-debugger'].createAllRuntimes(tag);
+  }
+
+  var set_new_debug_context = function(xml, win_id)
+  {
+    parseRuntime(xml);
+    host_tabs.setActiveTab(win_id);
     if( settings.runtimes.get('reload-runtime-automatically') )
     {
       self.reloadWindow();
     }
-    settings.runtimes.set('selected-window', window_id);
-    updateRuntimeViews();
   }
 
   this.getThreads = function()
@@ -429,7 +488,6 @@ var runtimes = new function()
       script['stop-ats'] = [];
       registerRuntime( script['runtime-id'] );
       registerScript( script );
-      views['runtimes'].update();
     }
   }
 
@@ -461,6 +519,9 @@ var runtimes = new function()
 
   var is_runtime_of_selected_window = function(rt_id)
   {
+    // in protocol 4 popups are treated like child runtimes
+    // this check should not be needed anymore in proto 4, 
+    // everything that passes the window filter is part of the debug context
     return __runtimes[rt_id] && __runtimes[rt_id]['window-id'] == __selected_window;
   }
 
@@ -717,9 +778,7 @@ var runtimes = new function()
   }
 
 
-  
-
-
+ 
   this.getRuntimeIdWithURL = function(url)
   {
     var r = '';
@@ -731,6 +790,18 @@ var runtimes = new function()
       }
     }
     return null;
+  }
+
+  this.getURI = function(rt_id)
+  {
+    for( var r in __runtimes )
+    {
+      if( __runtimes[r]['runtime-id'] == rt_id )
+      {
+        return __runtimes[r]['uri'];
+      }
+    }
+    return '';
   }
 
   this.getScript = function(scriptId)
@@ -873,7 +944,7 @@ var runtimes = new function()
     {
       this.setSelectedRuntime(__runtimes[id]);
       // this is not clean
-      views.runtimes.update();
+      // views.runtimes.update();
     }
     else
     {
