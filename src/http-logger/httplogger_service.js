@@ -250,11 +250,41 @@ cls.HTTPLoggerService = function(name)
     this.parseHeaders = function(lines)
     {
         var headers = {};
+        var headerList = [];
         for (var n=0, line; line=lines[n]; n++)
         {
-            var parts = line.match(/([\w-]*?): (.*)/);
-            var name = parts[1];
-            var value = parts[2];
+            if (line.indexOf(" ") == 0 || line.indexOf("\t") == 0) {
+                // this is a continuation from the previous line
+                // Replace all leading whitespace with a single space
+                value = "line".replace(/^[ \t]+/, " ");
+
+                if (headerList.length) {
+                    old = headerList.pop();
+                    headerList.push([old[0], old[1]+value]);
+                } else { // should never happen with well formed headers
+                    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + "this header is malformed\n" + line)
+                }
+            }
+            else
+            {
+                var parts = line.match(/([\w-]*?): (.*)/);
+                if (!parts || parts.length!=3) {
+                    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + "Could not parse header!:\n" + line)
+                    continue;
+                }
+                var name = parts[1];
+                var value = parts[2];
+                
+                headerList.push([name, value]);
+            }
+        }
+
+        // we now have a list of header, value tuples. Grab tuples out of
+        // it and put it into a multidict like structure
+        for (var n=0, tuple; tuple=headerList[n]; n++)
+        {
+            var name = tuple[0];
+            var value = tuple[1];
 
             if (name in headers) {
                 if (typeof headers[name] == "string")
@@ -271,6 +301,7 @@ cls.HTTPLoggerService = function(name)
                 headers[name] = value;
             }
         }
+
         return headers;
     }
 

@@ -14,10 +14,6 @@
 cls.RequestListView = function(id, name, container_class)
 {
     var self = this;
-    this.isPaused = false;
-    this.tableBodyEle = null;
-    this.lastIndex = null;
-    this.tbody = null;
 
     // The list will never be updated more often than this:
     this.minUpdateInterval = 500; // in milliseconds.
@@ -25,7 +21,10 @@ cls.RequestListView = function(id, name, container_class)
     var filter = null;
     var lastUpdateTime = null;
     var updateTimer = null;
-
+    var nextRenderedIndex = null;
+    var keyEntryId = null;
+    var expandedItems = [];
+    
     this.createView = function(container)
     {
         if (lastUpdateTime &&
@@ -33,9 +32,10 @@ cls.RequestListView = function(id, name, container_class)
             // Haven't waited long enough, so do nothing, but queue it for
             // later if it isn't allready so.
             if (!updateTimer) {
-                updateTimer = window.setTimeout(function() {self.createView(container)}, this.minUpdateInterval);
+                updateTimer = window.setTimeout(
+                        function() { self.createView(container)},
+                        this.minUpdateInterval);
             }
-
             return;
         }
         
@@ -43,141 +43,78 @@ cls.RequestListView = function(id, name, container_class)
             window.clearTimeout(updateTimer);
             updateTimer = null;
         }
-
         lastUpdateTime = new Date().getTime();
+        this.doCreateView(container);
+    }
+
+    /**
+     * Check if the current view represents reality. This is
+     * done by checking the first element in the log. Its id needs to be the
+     * same as keyEntryId
+     *
+     */
+    this.viewIsValid = function(log)
+    {
+        if (log.length && log[0].id==keyEntryId) {
+            return true;
+        } else {
+            if (log.length) { keyEntryId = log[0].id }
+            return false;
+        }
+    }
+
+    this.doCreateView = function(container)
+    {
 
         var log = HTTPLoggerData.getLog();
-        if (this.lastIndex == null || log.length==0)
-        {
-            container.clearAndRender(
-                ['table',
-                    ['thead',
-                        ['tr',
-                            ['th', "#"],
-                            ['th', "Host"],
-                            ['th', "Path"],
-                            ['th', "Method"],
-                            ['th', "Status"],
-                            ['th', "Time"]
-                        ]
-                    ],
-                    ['tbody'],
-                 'class', 'request-table'
-                ]
-            );
-            this.tableBodyEle = container.getElementsByTagName('tbody')[0];
-            this.lastIndex = 0;
+        if (!this.viewIsValid(log)) {
+            container.clearAndRender(window.templates.request_list_header());
+            nextRenderedIndex = 0;
         }
+        var tableBodyEle = container.getElementsByTagName('tbody')[0];
+        
+        // partial function invocation that closes over expandedItems
+        var fun = function(e) {
+            return window.templates.request_list_row(e, expandedItems);
+        }
+        
+        var tpls = log.slice(nextRenderedIndex).map(fun);
 
-        if (!log.length) { return }
-        
-        var i = this.lastIndex;
-        var sel = HTTPLoggerData.getSelectedRequestId();
-        var req;
-        var tpls = [];
-        while (req=log[i++])
-        {
-            tpls.push(window.templates.request_list_row(i-1, req, sel));
-        }
-        this.tableBodyEle.render(tpls);
-        
-        this.lastIndex = i-1;
-
-        var last = HTTPLoggerData.getLastModifiedRequestId();
-        
-        for (var n=0, e; e=this.tableBodyEle.childNodes[n]; n++)
-        {
-            var rid = e.getAttribute('data-requestid');
-            if (rid == sel)
-            {
-                e.addClass('selected-request');
-            }
-            else
-            {
-                e.removeClass('selected-request');
-            }
-            
-            if (last == rid)
-            {
-                req = HTTPLoggerData.getRequestById(rid);
-                if (req.response)
-                {
-                    e.getElementsByClassName('status-cell')[0].textContent = req.response.status;
-                    e.getElementsByClassName('time-cell')[0].textContent = req.duration;
-                }
-            }
-        }
-        if (filter)
-        {
-            applyFilter()
-        }
+        tableBodyEle.render(tpls);
+        nextRenderedIndex = log.length;
     }
-
-    var clearFilter = function()
+    
+    this.toggleDetails = function(id)
     {
-        if (!self.tableBodyEle) { return }
-        var rows = self.tableBodyEle.childNodes;
-        for (var n=0, e; e=rows[n]; n++)
-        {
-            if (e.style.display == "none") { e.style.display = "" }
+        // fixme: this, and doCreateView should just wile all entries after
+        // the one we want to expand and set nextRenderedIndex to the one
+        // that got expanded.
+        if (expandedItems.indexOf(id)==-1) {
+            expandedItems.push(id);
+        } else {
+            expandedItems.splice(expandedItems.indexOf(id), 1);
         }
+        keyEntryId = null;
+        lastUpdateTime = 0;
     }
-
-    var applyFilter = function()
-    {
-        if (!self.tableBodyEle) { return }
-        var rows = self.tableBodyEle.childNodes;
-        for (var n=0, e; e=rows[n]; n++)
-        {
-            var r = HTTPLoggerData.getRequestById(e.getAttribute("data-requestid"));
-            var filtered = r.request.path.indexOf(filter)==-1 ;  //  fixme: last part should be enabled as soon as the duplicate IDs bug is fixed. &&  (r.request.headers["Host"] || "" ).indexOf(filter)==-1;
-            if (filtered)
-            {
-                e.style.display = "none";
-            }
-            else
-            {
-                e.style.display = "";
-            }
-        }
-        
-    }
-
-    this.setFilter = function(s)
-    {
-        if (filter && filter==s)
-        {
-            return;
-        } 
-        if (s=="")
-        {
-            filter = null;    
-            clearFilter()
-        }
-        else
-        {
-            filter = s;
-            applyFilter();
-        }
-    }
-
 
     this.ondestroy = function()
     {
-        this.lastIndex = null;
-    }
-
-    this.updateView = function(cont)
-    {
-        this.createView(cont);
+        keyEntryId = null;
     }
 
     this.init(id, name, container_class);
-
 }
 
 cls.RequestListView.prototype = ViewBase;
 new cls.RequestListView('request_list', ui_strings.M_VIEW_LABEL_REQUEST_LOG, 'scroll');
+
+
+eventHandlers.click['request-list-expand-collapse'] = function(event, target)
+{
+    window.views['request_list'].toggleDetails(target.getAttribute("data-requestid"));
+    window.views['request_list'].update();
+}
 
 
 eventHandlers.click['request-list-select'] = function(event, target)
