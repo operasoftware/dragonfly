@@ -68,23 +68,26 @@ var TabsBase = function()
       }
     }
     
-    this._history.pop();
-    if(this._history[ this._history.length - 1 ] )
+    if(this.activeTab == ref_id)
     {
-      this.setActiveTab( this._history[ this._history.length - 1 ] )
-    }
-    else if( this.tabs[i] )
-    {
-      this.setActiveTab(this.tabs[i].ref_id)
-    }
-    else if( this.tabs[i-1] )
-    {
-      this.setActiveTab(this.tabs[i-1].ref_id)
-    }
-    else
-    {
-      // remove cell
-      alert('destroy cell');
+      this._history.pop();
+      if(this._history[ this._history.length - 1 ] )
+      {
+        this.setActiveTab( this._history[ this._history.length - 1 ] )
+      }
+      else if( this.tabs[i] )
+      {
+        this.setActiveTab(this.tabs[i].ref_id)
+      }
+      else if( this.tabs[i-1] )
+      {
+        this.setActiveTab(this.tabs[i-1].ref_id)
+      }
+      else
+      {
+        // remove cell
+        alert('destroy cell');
+      }
     }
   }
 
