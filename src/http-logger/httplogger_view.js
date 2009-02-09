@@ -16,15 +16,20 @@ cls.RequestListView = function(id, name, container_class)
     var self = this;
 
     // The list will never be updated more often than this:
-    this.minUpdateInterval = 500; // in milliseconds.
+    this.minUpdateInterval = 350; // in milliseconds.
 
-    var filter = null;
     var lastUpdateTime = null;
-    var updateTimer = null;
-    var nextRenderedIndex = null;
-    var keyEntryId = null;
-    var expandedItems = [];
-    
+    var updateTimer = null; // timer id so we can cancel a timeout
+    var nextToRendereIndex = null;  // index in log of the next element to render
+    var keyEntryId = null; // first entry of log. If log[0] is different, view is invalid
+    var expandedItems = []; // IDs of items that are expanded
+
+    /**
+     *  Called by the framework through update()
+     *  Check if we should redraw the view or not. If we shall, call
+     *  doCreateView. The reason for not doing so is if there is less
+     *  than minUpdateInterval millis since the last time we did.
+     **/
     this.createView = function(container)
     {
         if (lastUpdateTime &&
@@ -51,7 +56,6 @@ cls.RequestListView = function(id, name, container_class)
      * Check if the current view represents reality. This is
      * done by checking the first element in the log. Its id needs to be the
      * same as keyEntryId
-     *
      */
     this.viewIsValid = function(log)
     {
@@ -63,12 +67,15 @@ cls.RequestListView = function(id, name, container_class)
         }
     }
 
+    /**
+     * Do the actual rendering
+     */
     this.doCreateView = function(container)
     {
         var log = HTTPLoggerData.getLog();
         if (!this.viewIsValid(log)) {
             container.clearAndRender(window.templates.request_list_header());
-            nextRenderedIndex = 0;
+            nextToRendereIndex = 0;
         }
         var tableBodyEle = container.getElementsByTagName('tbody')[0];
         
@@ -77,16 +84,20 @@ cls.RequestListView = function(id, name, container_class)
             return window.templates.request_list_row(e, expandedItems);
         }
         
-        var tpls = log.slice(nextRenderedIndex).map(fun);
+        var tpls = log.slice(nextToRendereIndex).map(fun);
 
         tableBodyEle.render(tpls);
-        nextRenderedIndex = log.length;
+        nextToRendereIndex = log.length;
     }
     
+    /**
+     * Called to toggle request with id. If it's expanded it gets collapsed
+     * and vice-versa
+     */
     this.toggleDetails = function(id)
     {
         // fixme: this, and doCreateView should just wile all entries after
-        // the one we want to expand and set nextRenderedIndex to the one
+        // the one we want to expand and set nextToRendereIndex to the one
         // that got expanded.
         if (expandedItems.indexOf(id)==-1) {
             expandedItems.push(id);
@@ -112,21 +123,6 @@ eventHandlers.click['request-list-expand-collapse'] = function(event, target)
 {
     window.views['request_list'].toggleDetails(target.getAttribute("data-requestid"));
     window.views['request_list'].update();
-}
-
-eventHandlers.click['request-list-select'] = function(event, target)
-{
-    var sel = HTTPLoggerData.getSelectedRequestId();
-    var id = target.getAttribute("data-requestid");
-
-    if (sel && sel==id)
-    {
-        HTTPLoggerData.clearSelectedRequest();
-    }
-    else
-    {
-        HTTPLoggerData.setSelectedRequestId(id);
-    }
 }
 
 new ToolbarConfig
