@@ -11,9 +11,9 @@
  */
 window.HTTPLoggerData = new function()
 {
-    requestList = [];
-    requestMap = {};
-    selectedRequestId = null;
+    var requestList = [];
+    var requestMap = {};
+    var selectedRequestId = null;
     var lastModifiedRequestId = null;
 
 
