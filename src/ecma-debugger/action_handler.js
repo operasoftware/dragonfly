@@ -630,7 +630,14 @@ var action_handler = new function()
     messages.post('object-selected', {rt_id: rt_id, obj_id: obj_id});
   }
 
+  handlers['dom-resource-link'] = function(event, target)
+  {
+    var 
+    url = target.textContent,
+    rt_id = target.parentNode.parentNode.parentNode.getAttribute('rt-id');
 
+    window.open(helpers.resolveURLS( runtimes.getURI(rt_id), url.slice(1, url.length - 1 ) ), "_blank");
+  }
 
   this.post = function(handler, event)
   {

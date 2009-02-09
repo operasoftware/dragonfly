@@ -857,8 +857,13 @@ breadcrumb span:hover, .css-layout breadcrumb span:hover
 }
 
 /* debug */
-
 d
 {
   color: #999;
+}
+
+[handler="dom-resource-link"]:hover
+{
+  text-decoration: underline;
+  color: #4d1100;
 }
