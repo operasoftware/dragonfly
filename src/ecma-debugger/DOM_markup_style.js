@@ -180,12 +180,16 @@ var DOM_markup_style = function(id, name, container_class)
               attrs = '';
               for( k = 0; attr = node[ATTRS][k]; k++ )
               {
+
                 attrs += " <key>" + 
                   ( attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '' ) + 
-                  ( force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ) + 
-                  "</key>=<value>\"" + 
-                  attr[ATTR_VALUE] + 
-                  "\"</value>";
+                  ( force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ) +
+                  "</key>=<value" + 
+                    ( /^href|src$/i.test(attr[ATTR_KEY])
+                      ? " handler='dom-resource-link'"
+                      : "" ) + ">\"" + 
+                    attr[ATTR_VALUE] + 
+                    "\"</value>";
               }
             }
             else

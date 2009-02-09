@@ -99,6 +99,16 @@ var ToolbarConfigBase = new function()
     this.updateButtons();
   }
 
+  this.setVisibility = function(bool)
+  {
+    this.__is_visible = bool;
+  }
+
+  this.getVisibility = function()
+  {
+    return this.__is_visible;
+  }
+
   this.init = function(name, optional_button_array, optional_filter_array, optional_special_button_array, optional_custom_button_array)
   {
     ids [ this.id = getId() ] = this;
@@ -107,6 +117,7 @@ var ToolbarConfigBase = new function()
     this.specials = optional_special_button_array || [];
     this.customs = optional_custom_button_array || [];
     this.container_ids = [];
+    this.__is_visible = true;
     if(!window.toolbars)
     {
       window.toolbars = {};

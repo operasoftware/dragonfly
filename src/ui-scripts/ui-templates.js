@@ -116,7 +116,7 @@
         'title', 'switch info type',
         'class', 'switch-info-type'
       ],
-      this.configButton('top-settings'), ['info']
+      ['info']
     ]
   }
 
@@ -147,14 +147,19 @@
 
   this.viewMenu = function()
   {
-    return ['ui-menu', ['h2', 'Views', 'handler', 'show-menu', 'tabindex', '1'], 'id', 'main-view-menu'];
+    return \
+    [
+      'ui-menu', 
+      ['h2', ui_strings.M_VIEW_LABEL_VIEWS, 'handler', 'show-menu', 'tabindex', '1'], 
+      'id', 'main-view-menu'
+    ].concat(opera.attached ? ['class', 'attached'] : []);
   }
 
   this['top-tabs'] = function(obj)
   {
     var ret = [];
     var tab = null, i = 0;
-    ret[ret.length] =  this.window_controls();
+    // ret[ret.length] =  this.window_controls();
     for( ; tab = obj.tabs[i]; i++)
     {
       ret[ret.length] = this.tab(tab, obj.activeTab == tab.ref_id)
@@ -162,7 +167,7 @@
     return ret;
   }
 
-  this.window_controls = function()
+  this.window_controls = function(is_attached)
   {
     var attached = window.opera.attached;
     return ['window-controls',
@@ -171,11 +176,13 @@
         'class', 'switch' + ( attached ? ' attached' : '') ,
         'title', attached ? ui_strings.S_SWITCH_DETACH_WINDOW : ui_strings.S_SWITCH_ATTACH_WINDOW
       ],
-      ['button', 
+      is_attached
+      ? ['button', 
           'handler', 'top-window-close',
           'title', ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW
         ]
-      ]
+      : []
+      ].concat( is_attached ? ['class', 'attached'] : [] )
   }
 
   this.settings = function(view_arr)
