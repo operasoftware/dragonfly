@@ -14,7 +14,8 @@ var composite_view_convert_table =
     'js_new': 'js_panel',
     'dom_panel': 'dom_panel',
     'dom_new': 'dom_panel',
-    'network_panel': 'network_panel'
+    'network_panel': 'network_panel',
+    'export_new': 'export_new'
   },
   "false": 
   {
@@ -24,7 +25,8 @@ var composite_view_convert_table =
     'js_new': 'js_new',
     'dom_panel': 'dom_new',
     'dom_new': 'dom_new',
-    'network_panel': 'network_panel'
+    'network_panel': 'network_panel',
+    'export_new': 'export_new'
   }
 }
 

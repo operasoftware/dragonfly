@@ -80,15 +80,6 @@ eventHandlers.click['tab'] = function(event, target)
   if( tabs )
   {
     tabs.setActiveTab(view_id);
-    if(views[view_id].type == 'composite-view' )
-    {
-      global_state.ui_framework.last_selected_top_tab = view_id;
-      global_state.ui_framework.last_selected_tab = '';
-    }
-    else
-    {
-      global_state.ui_framework.last_selected_tab = view_id;
-    }
   }
   else
   {
