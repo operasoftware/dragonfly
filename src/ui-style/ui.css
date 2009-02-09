@@ -152,7 +152,9 @@ toolbar button,  window-controls button
   padding: 1px 8px;
   margin: 2px 3px;
 }
-toolbar button:before, window-controls button:before
+toolbar button:before, 
+window-controls button:before, 
+window-toolbar button:before
 {
   content: '\00A0';
   display: inline-block;
@@ -164,28 +166,38 @@ toolbar button:before, window-controls button:before
 }
 toolbar button[disabled]:before,
 toolbar button[disabled]:hover:before,
-toolbar button[disabled]:active:before
+toolbar button[disabled]:active:before,
+window-toolbar button[disabled]:before,
+window-toolbar button[disabled]:hover:before,
+window-toolbar button[disabled]:active:before
 {
   background-position: 0 -72px;
 }
-toolbar button:hover:before, window-controls button:hover:before
+toolbar button:hover:before, 
+window-controls button:hover:before,
+window-toolbar button:hover:before
 {
   background-position: 0px -24px;
 }
-toolbar button:active:before, window-controls button:active:before
+toolbar button:active:before, 
+window-controls button:active:before,
+window-toolbar button:hover:before
 {
   background-position: 0px -48px;
 }
 /* switches */
-toolbar button.switch[is-active="true"]:before
+toolbar button.switch[is-active="true"]:before,
+window-toolbar button.switch[is-active="true"]:before
 {
   background-position: -26px 0px;
 }
-toolbar button.switch[is-active="true"]:hover:before
+toolbar button.switch[is-active="true"]:hover:before,
+window-toolbar button.switch[is-active="true"]:hover:before
 {
   background-position: -26px -24px;
 }
-toolbar button.switch[is-active="true"]:active:before
+toolbar button.switch[is-active="true"]:active:before,
+window-toolbar button.switch[is-active="true"]:active:before
 {
   background-position: -26px -48px;
 }
@@ -193,12 +205,10 @@ toolbar button.switch[is-active="true"]:active:before
 {
   background-position: -26px 0;
 }
-
 .attached:hover:before 
 {
   background-position: -26px -24px;
 }
-
 .attached:active:before 
 {
   background-position: -26px -48px;
