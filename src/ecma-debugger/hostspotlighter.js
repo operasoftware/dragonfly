@@ -1,4 +1,4 @@
-var hostspotlighter = new function()
+﻿var hostspotlighter = new function()
 {
   const
   INITIAL_DIMENSION_COLOR = [54, 68, 130, .3 * 255],
