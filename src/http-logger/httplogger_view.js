@@ -23,6 +23,7 @@ cls.RequestListView = function(id, name, container_class)
     var nextToRendereIndex = null;  // index in log of the next element to render
     var keyEntryId = null; // first entry of log. If log[0] is different, view is invalid
     var expandedItems = []; // IDs of items that are expanded
+    var tableBodyEle = null;
 
     /**
      *  Called by the framework through update()
@@ -74,10 +75,11 @@ cls.RequestListView = function(id, name, container_class)
     {
         var log = HTTPLoggerData.getLog();
         if (!this.viewIsValid(log)) {
-            container.clearAndRender(window.templates.request_list_header());
+            //container.clearAndRender(window.templates.request_list_header());
+            container.clearAndRender(['table',['tbody'], 'class', 'request-table']);
             nextToRendereIndex = 0;
         }
-        var tableBodyEle = container.getElementsByTagName('tbody')[0];
+        tableBodyEle = container.getElementsByTagName('tbody')[0];
         
         // partial function invocation that closes over expandedItems
         var fun = function(e) {
@@ -90,22 +92,56 @@ cls.RequestListView = function(id, name, container_class)
         nextToRendereIndex = log.length;
     }
     
+    this.collapseEntry = function(id)
+    {
+        if (!tableBodyEle) { return }
+        for (var n=0,e; e=tableBodyEle.childNodes[n]; n++)
+        {
+            if (e.getAttribute('data-requestid') == id)
+            {
+                e.className = e.className.replace("expanded", "collapsed");
+                tableBodyEle.removeChild(e.nextSibling);
+                return
+            }
+        }
+    }
+    
+    this.expandEntry = function(id) {
+        if (!tableBodyEle) { return }
+        for (var n=0,e; e=tableBodyEle.childNodes[n]; n++)
+        {
+            if (e.getAttribute('data-requestid') == id)
+            {
+                var req = HTTPLoggerData.getRequestById(id);
+                var tpl = window.templates.request_details_box(req);
+                var ele = document.render(tpl);
+                if (e.nextSibling) {
+                    tableBodyEle.insertBefore(ele, e.nextSibling);
+                }
+                else {
+                    tableBodyEle.appendChild(ele);
+                }
+                e.className = e.className.replace("collapsed", "expanded");
+                return; // or loop forever since you just made list longer.
+            }
+        }
+    }
+    
     /**
      * Called to toggle request with id. If it's expanded it gets collapsed
      * and vice-versa
      */
     this.toggleDetails = function(id)
     {
-        // fixme: this, and doCreateView should just wile all entries after
-        // the one we want to expand and set nextToRendereIndex to the one
-        // that got expanded.
         if (expandedItems.indexOf(id)==-1) {
             expandedItems.push(id);
+            this.expandEntry(id);
         } else {
             expandedItems.splice(expandedItems.indexOf(id), 1);
+            this.collapseEntry(id);
         }
-        keyEntryId = null;
-        lastUpdateTime = 0;
+        //keyEntryId = null;
+        //lastUpdateTime = 0;
     }
 
     this.ondestroy = function()
@@ -122,7 +158,6 @@ new cls.RequestListView('request_list', ui_strings.M_VIEW_LABEL_REQUEST_LOG, 'sc
 eventHandlers.click['request-list-expand-collapse'] = function(event, target)
 {
     window.views['request_list'].toggleDetails(target.getAttribute("data-requestid"));
-    window.views['request_list'].update();
 }
 
 new ToolbarConfig

@@ -58,22 +58,43 @@ window.templates.request_list_row = function(r, expandList)
 {
     var expanded = expandList.indexOf(r.id) != -1;
 
+    // fixme: this needs to move somewhere.
+    var basename = function(s) {
+        if (s=="") {
+            return "domain here"
+        }
+        var pos = s.lastIndexOf("/");
+        if (pos == s.length-1) {
+        
+            return basename(s.slice(0, pos));
+        }
+        else {
+            var cur = s.slice(pos+1);
+            if (cur.length>24) {
+                return cur
+            } else {
+                return cur;
+            }
+        }
+    }
+
     var a = [
         [ 'tr',
-            ['th', ["button", "", "type", "button",
+            ['td', ["button", "", "type", "button",
                                   "handler", "request-list-expand-collapse",
                                   'data-requestid', r.id,
-                                  "class", "expand-collapse " + (expanded ? "expanded" : "collapsed") ]],
-            ['th', ["label", "",
+                                  "class", "expand-collapse"]],
+            ['td', ["label", "",
                     "class", http_map_mime_to_type(http_get_mime_from_extension(r.request.path))]
             ],
-            ['td', r.request.headers["Host" || "?" ] ],
-            ['td', r.request.path],
             ['td', r.request.method],
+            ['td', basename(r.request.path) ],
             ['td', (r.response ? r.response.status : "-"), 'class', 'status-cell'],
-            ['td', (r.duration != null ? r.duration : "-"), 'class', 'time-cell'],
+            ['td', (r.response ? r.response.reason: "-"), 'class', 'reason-cell'],
             'data-requestid', r.id,
-            'class', 'typeicon mime-' + http_map_mime_to_type(http_get_mime_from_extension(r.request.path))
+            'class', 'typeicon mime-' + 
+                    http_map_mime_to_type(http_get_mime_from_extension(r.request.path)) +
+                    (expanded ? " expanded" : " collapsed")
         ],
     ];
     
