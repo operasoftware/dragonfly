@@ -564,7 +564,7 @@ Line 2:
         ret[ret.length] = css_path[i].combinator;
       }
     }
-    return ret;
+    return ret.concat(['onmouseover', helpers.breadcrumbSpotlight, 'onmouseout', helpers.breadcrumbClearSpotlight]);
   }
   
 

@@ -563,23 +563,14 @@ var action_handler = new function()
 
   handlers['spotlight-node'] = function(event, current_target)
   {
-    var rt_id = dom_data.getDataRuntimeId(); // is this the correst way?
     var obj_id = current_target.getAttribute('ref-id');
-    // var input = current_target.firstElementChild
-    if(obj_id && !handlers['spotlight-node'].timeout )
+    if(obj_id)
     {
-      services['ecmascript-debugger'].spotlight(rt_id, obj_id, 
+      hostspotlighter.spotlight(obj_id, 
         settings.dom.get('scroll-into-view-on-spotlight') && obj_id != dom_data.getCurrentTarget());
-      handlers['spotlight-node'].timeout = setTimeout(handlers['spotlight-node'].clearSpotlight, 800, rt_id);
       dom_data.setCurrentTarget(obj_id);
       views['dom'].updateTarget(current_target, obj_id);
     }
-    /* to expand on clicking the line
-    if(obj_id && input && input.hasClass('close') )
-    {
-      handlers['get-children']({target: input});
-    }
-    */
   }
 
   handlers['spotlight-node'].timeout = 0;

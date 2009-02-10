@@ -271,10 +271,18 @@ cls.ECMAScriptDebuggerService = function(name)
                   "<object-id>" + node_id + "</object-id>" +
                   "<scroll-into-view>" + ( scroll_into_view && 1 || 0 ) + "</scroll-into-view>" +
                   "<box>" +
+                    "<box-type>2</box-type>" +
+                    "<fill-color>439591602</fill-color>" +
+                    "<frame-color>439591679</frame-color>" +
+                    "<grid-color>2854294092</grid-color>" +
+                  "</box>"  +
+                  "<box>" +
+                    "<box-type>1</box-type>" +
+                    "<fill-color>439591551</fill-color>" +
+                  "</box>"  +
+                   "<box>" +
                     "<box-type>0</box-type>" +
-                    "<fill-color>16711858</fill-color>" +
-                    "<frame-color>4278190335</frame-color>" +
-                    // "<grid-color>" COLOR "</grid-color>"
+                    "<fill-color>439591500</fill-color>" +
                   "</box>"  +
                 "</spotlight-object>" +
               "</spotlight-objects>" ;
