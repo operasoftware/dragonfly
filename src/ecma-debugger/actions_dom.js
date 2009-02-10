@@ -185,7 +185,8 @@ cls.DOMInspectorActions = function(id)
     {
       nav_target.releaseEvent
       (
-        /^input|node$/i.test(nav_target.nodeName) && "click" || "dblclick"
+        ( /^input|node$/i.test(nav_target.nodeName)
+          || nav_target.getAttribute('handler') ) && "click" || "dblclick"
       );
     }
     return false;
