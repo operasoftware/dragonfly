@@ -17,23 +17,7 @@ cls.DOMInspectorActions = function(id)
   var selection = null;
   var range = null;
 
-  var leftRightFilter = function(ele)
-  {
-    return \
-    /^key|value|input$/.test(ele.nodeName.toLowerCase())
-    || ( "text" == ele.nodeName && ele.textContent.length )
-    || ( "node" == ele.nodeName && ele.textContent.slice(0,2) != "</" );
-  }
 
-  var upDownFilter = function(ele, start_ele)
-  {
-    return \
-    ( "input" == ele.nodeName.toLowerCase() && !ele.parentNode.contains(start_ele))
-    || ( "node" == ele.nodeName
-          && ele.textContent.slice(0,2) != "</"
-          && "input" != ele.parentNode.firstElementChild.nodeName.toLowerCase()
-        );
-  }
 
   var nav_filters = 
   {
@@ -53,6 +37,22 @@ cls.DOMInspectorActions = function(id)
         }
       }
       return false; 
+    },
+    left_right:function(ele)
+    {
+      return \
+      /^key|value|input$/.test(ele.nodeName.toLowerCase())
+      || ( "text" == ele.nodeName && ele.textContent.length )
+      || ( "node" == ele.nodeName && ele.textContent.slice(0,2) != "</" );
+    },
+    up_down: function(ele, start_ele)
+    {
+      return \
+      ( "input" == ele.nodeName.toLowerCase() && !ele.parentNode.contains(start_ele))
+      || ( "node" == ele.nodeName
+            && ele.textContent.slice(0,2) != "</"
+            && "input" != ele.parentNode.firstElementChild.nodeName.toLowerCase()
+          );
     }
   }
 
@@ -134,7 +134,10 @@ cls.DOMInspectorActions = function(id)
     var firstChild = null;
     if(new_target)
     {
-      nav_target.blur();
+      if(nav_target)
+      {
+        nav_target.blur();
+      }
       selection.collapse(view_container, 0);
       nav_target = new_target;
 
@@ -182,7 +185,8 @@ cls.DOMInspectorActions = function(id)
     {
       nav_target.releaseEvent
       (
-        /^input|node$/i.test(nav_target.nodeName) && "click" || "dblclick"
+        ( /^input|node$/i.test(nav_target.nodeName)
+          || nav_target.getAttribute('handler') ) && "click" || "dblclick"
       );
     }
     return false;
@@ -220,7 +224,7 @@ cls.DOMInspectorActions = function(id)
   this.nav_up = function(event, action_id)
   {
     // TODO if setting of nav target fails
-    if( ! this.setSelected( nav_target.getPreviousWithFilter(view_container, upDownFilter) ) )
+    if( ! this.setSelected( nav_target.getPreviousWithFilter(view_container, nav_filters.up_down) ) )
     {
       view_container.scrollTop = 0;
     }
@@ -230,7 +234,7 @@ cls.DOMInspectorActions = function(id)
   this.nav_down = function(event, action_id)
   {
     // TODO if setting of nav target fails
-    if(!this.setSelected( nav_target.getNextWithFilter(view_container, upDownFilter) ) )
+    if(!this.setSelected( nav_target.getNextWithFilter(view_container, nav_filters.up_down) ) )
     {
       view_container.scrollTop = view_container.scrollHeight;
     }
@@ -240,14 +244,14 @@ cls.DOMInspectorActions = function(id)
   this.nav_left = function(event, action_id)
   {
     // TODO if setting of nav target fails
-    this.setSelected(nav_target.getPreviousWithFilter(view_container, leftRightFilter));
+    this.setSelected(nav_target.getPreviousWithFilter(view_container, nav_filters.left_right));
     return true;
   }
 
   this.nav_right = function(event, action_id)
   {
     // TODO if setting of nav target fails
-    this.setSelected(nav_target.getNextWithFilter(view_container, leftRightFilter));
+    this.setSelected(nav_target.getNextWithFilter(view_container, nav_filters.left_right));
     return true;
   }
 
