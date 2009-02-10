@@ -20,6 +20,36 @@ cls.EnvironmentView = function(id, name, container_class)
 cls.EnvironmentView.prototype = ViewBase;
 new cls.EnvironmentView('environment', ui_strings.M_VIEW_LABEL_ENVIRONMENT, 'scroll');
 
+new Settings
+(
+  // id
+  'environment', 
+  // key-value map
+  {
+    'environment': true
+  }, 
+  // key-label map
+  {
+  },
+  // settings map
+  {
+    customSettings:
+    [
+      'environment'
+    ]
+  },
+  // template
+  {
+    environment:
+    function(setting)
+    {
+      return templates.hello( services['ecmascript-debugger'].getEnvironment());
+    }
+  }
+
+
+);
+
 
 /**
   * @constructor 
@@ -84,7 +114,6 @@ new cls.CallstackView('callstack', ui_strings.M_VIEW_LABEL_CALLSTACK, 'scroll');
 cls.GeneralView = function(id, name, container_class)
 {
   this.ishidden_in_menu = true;
-  this.hidden_in_settings = true;
   this.createView = function(container)
   {
   }
@@ -93,6 +122,7 @@ cls.GeneralView = function(id, name, container_class)
 cls.GeneralView.prototype = ViewBase;
 new cls.GeneralView('general', ui_strings.M_SETTING_LABEL_GENERAL, '');
 
+
 new Settings
 (
   // id
@@ -100,17 +130,19 @@ new Settings
   // key-value map
   {
     "show-views-menu": false,
-    "window-attached": true
+    "window-attached": true,
+    "show-only-normal-and-gadget-type-windows": true
   }, 
   // key-label map
   {
-    "show-views-menu": ui_strings.S_SWITCH_SHOW_VIEWS_MENU
+    "show-views-menu": ui_strings.S_SWITCH_SHOW_VIEWS_MENU,
+    "show-only-normal-and-gadget-type-windows": ui_strings.S_SWITCH_SHOW_ONLY_NORMAL_AND_GADGETS_TYPE_WINDOWS
   },
   // settings map
   {
     checkboxes:
     [
-      "show-views-menu"
+      "show-only-normal-and-gadget-type-windows"
     ]
   }
 
@@ -182,42 +214,45 @@ new Settings
   },
   // settings map
   {
-    checkboxes:
+    customSettings:
     [
-      "debug-remote"
+      'debug-remote'
     ]
   },
-  // template
-  function(setting)
+  // custom templates
   {
-    return [
-      ['setting-composite',
-        ['label',
-          ['input',
-            'type', 'checkbox',
-            'checked', this.get('debug-remote'),
-            'handler', 'toggle-remote-debug'
+    'debug-remote':
+    function(setting)
+    {
+      return [
+        ['setting-composite',
+          ['label',
+            ['input',
+              'type', 'checkbox',
+              'checked', setting.get('debug-remote'),
+              'handler', 'toggle-remote-debug'
+            ],
+            setting.label_map['debug-remote']
           ],
-          this.label_map['debug-remote']
-        ],
-        ['label',
-          ui_strings.S_LABEL_PORT + ': ',
+          ['label',
+            ui_strings.S_LABEL_PORT + ': ',
+            ['input',
+              'type', 'number',
+              'value', setting.get('port'),
+              'disabled', !setting.get('debug-remote'),
+              'handler', 'change-port-number-remote-debug',
+              'current-port', setting.get('port').toString()
+            ]
+          ],
           ['input',
-            'type', 'number',
-            'value', this.get('port'),
-            'disabled', !this.get('debug-remote'),
-            'handler', 'change-port-number-remote-debug',
-            'current-port', this.get('port').toString()
+            'type', 'button',
+            'disabled', 'disabled',
+            'value', ui_strings.S_BUTTON_TEXT_APPLY,
+            'handler', 'apply-remote-debugging'
           ]
-        ],
-        ['input',
-          'type', 'button',
-          'disabled', 'disabled',
-          'value', ui_strings.S_BUTTON_TEXT_APPLY,
-          'handler', 'apply-remote-debugging'
         ]
-      ]
-    ];
+      ];
+    }
   }
 );
 
@@ -245,6 +280,50 @@ eventHandlers.click['apply-remote-debugging'] = function(event, target)
     target.disabled = 
       target.previousSibling.previousSibling.firstChild.checked == settings.debug_remote_setting.get('debug-remote');
   }
+}
+
+
+// TODO clean up
+
+var templates = window.templates || ( window.templates = {} );
+
+templates.windowSelect = function()
+{
+  return [
+    'window-select',
+    [
+      'select',
+      'handler', this.handler
+    ]
+  ];
+}
+
+
+new ToolbarConfig
+(
+  'main-view',
+  [
+    {
+      handler: 'reload-window',
+      title: ui_strings.S_BUTTON_LABEL_RELOAD_HOST
+    }
+  ],
+  null,
+  null,
+  [
+    {
+      handler: 'select-window',
+      title: ui_strings.S_BUTTON_LABEL_SELECT_WINDOW,
+      type: 'dropdown',
+      class: 'window-select-dropdown',
+      template: templates.windowSelect
+    }
+  ]
+)
+
+eventHandlers.click['reload-window'] = function(event, target)
+{
+  runtimes.reloadWindow();
 }
 
 

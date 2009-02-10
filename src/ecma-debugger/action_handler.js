@@ -329,10 +329,7 @@ var action_handler = new function()
     if(rules)
     {
       stylesheets.setSelectedSheet(rt_id, index, rules);
-      if(!event.synthetic)
-      {
-        topCell.showView(views.stylesheets.id);
-      }
+      topCell.showView(views.stylesheets.id);
       helpers.setSelected(event);
     }
   }
@@ -359,7 +356,7 @@ var action_handler = new function()
       runtimes.setWindowUnfolded(window_id, true);
     }
   }
-
+/*
   handlers['show-dom'] = function(event, target)
   {
     var rt_id = target.parentNode.getAttribute('runtime_id');
@@ -370,7 +367,7 @@ var action_handler = new function()
       dom_data.getDOM(rt_id);
     }
   }
-
+*/
   handlers['display-script'] = function(event)
   {
     var script_id  = event.target.getAttribute('script-id');
@@ -633,7 +630,14 @@ var action_handler = new function()
     messages.post('object-selected', {rt_id: rt_id, obj_id: obj_id});
   }
 
+  handlers['dom-resource-link'] = function(event, target)
+  {
+    var 
+    url = target.textContent,
+    rt_id = target.parentNode.parentNode.parentNode.getAttribute('rt-id');
 
+    window.open(helpers.resolveURLS( runtimes.getURI(rt_id), url.slice(1, url.length - 1 ) ), "_blank");
+  }
 
   this.post = function(handler, event)
   {

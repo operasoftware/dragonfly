@@ -13,6 +13,8 @@ ui_strings.M_VIEW_LABEL_COMPOSITE_DOM = 'DOM';
 ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE = 'コンソール';
 /* DESC: View for exported code. */
 ui_strings.M_VIEW_LABEL_COMPOSITE_EXPORTS = 'エクスポート';
+/* DESC: View for network debugging (and http logger) */
+ui_strings.M_VIEW_LABEL_NETWORK = 'ネットワーク';
 
 /*
  * Level 2 View Tab Headings
@@ -84,9 +86,23 @@ ui_strings.M_VIEW_LABEL_STYLES = 'スタイル';
 ui_strings.M_VIEW_LABEL_CONSOLE = 'コンソール';
 /* DESC: One Export view. */
 ui_strings.M_VIEW_LABEL_EXPORT = 'エクスポート';
+/* DESC: Name of request log tab */
+ui_strings.M_VIEW_LABEL_REQUEST_LOG = 'リクエストログ';
+/* DESC: Name of raw request tab */
+ui_strings.M_VIEW_LABEL_RAW_REQUEST_INFO = '生のリクエストヘッダ';
+/* DESC: Name of raw response tab */
+ui_strings.M_VIEW_LABEL_RAW_RESPONSE_INFO = '生のレスポンスヘッダ';
+/* DESC: Name of request headers tab */
+ui_strings.M_VIEW_LABEL_REQUEST_HEADERS = 'リクエストヘッダ';
+/* DESC: Name of response headers tab */
+ui_strings.M_VIEW_LABEL_RESPONSE_HEADERS = 'レスポンスヘッダ';
+/* DESC: Name of request info tab */
+ui_strings.M_VIEW_LABEL_REQUEST_INFO = 'リクエスト情報';
+/* DESC: Name of response body tab */
+ui_strings.M_VIEW_LABEL_RESPONSE_BODY = 'レスポンスボディ';
 
-
-
+/* DESC: Label of the Views menu */
+ui_strings.M_VIEW_LABEL_VIEWS = 'ビュー';
 
 /*
  * Settings dialogue entries
@@ -166,6 +182,9 @@ ui_strings.S_SWITCH_CREATE_SHORTHANDS = 'プロパティに簡略値を使用す
 ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB = 'ブレッドクラムに兄弟要素を表示する';
 /* DESC: Showing the id's and class names in the breadcrumb in the statusbar. */
 ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB = "ブレッドクラムに ID 名や class 名を表示する";
+
+/* */
+ui_strings.S_SWITCH_SHOW_ONLY_NORMAL_AND_GADGETS_TYPE_WINDOWS = "普通の Opera ウィンドウやウィジェットしか表示しない";
 
 
 
@@ -268,7 +287,6 @@ ui_strings.S_INFO_NO_COMPATIBLE_VERSION =  "Opera Dragonfly の互換バージ�
 ui_strings.S_CONFIRM_LOAD_COMPATIBLE_VERSION = "Opera のプロトコルは Opera Dragonfly のプロトコルに互換していません。\n\n互換バージョンをロードしてください。";
 
 
-
 /*
  * other strings 
  */
@@ -303,3 +321,7 @@ ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_UNKNOWN = "不明なスクリプト";
 ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID = "スクリプト ID";
 /* DESC: Result text for the search. Please do not modify the %(VARIABLE)s . */
 ui_strings.S_TEXT_STATUS_SEARCH = "%(SEARCH_TERM)sで検索した結果： %(SEARCH_COUNT_TOTAL)s件の%(SEARCH_COUNT_INDEX)s件目";
+
+/* DESC: Message in detail view of http logger when no request/respons is selected */
+ui_strings.S_TEXT_NO_REQUEST_SELECTED = "選択されたリクエストはありません。";
+

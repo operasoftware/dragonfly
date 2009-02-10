@@ -150,6 +150,8 @@ var DOM_markup_style = function(id, name, container_class)
     var style = null;
           
 
+    var is_debug = ini.debug;
+
     if( ! data.length )
     {
       container.innerHTML = "<div class='padding' edit-handler='edit-dom'><p></p></div>";
@@ -180,12 +182,16 @@ var DOM_markup_style = function(id, name, container_class)
               attrs = '';
               for( k = 0; attr = node[ATTRS][k]; k++ )
               {
+
                 attrs += " <key>" + 
                   ( attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '' ) + 
-                  ( force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ) + 
-                  "</key>=<value>\"" + 
-                  attr[ATTR_VALUE] + 
-                  "\"</value>";
+                  ( force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ) +
+                  "</key>=<value" + 
+                    ( /^href|src$/i.test(attr[ATTR_KEY])
+                      ? " handler='dom-resource-link'"
+                      : "" ) + ">\"" + 
+                    attr[ATTR_VALUE] + 
+                    "\"</value>";
               }
             }
             else
@@ -227,6 +233,7 @@ var DOM_markup_style = function(id, name, container_class)
                   // TODO text node is a different node
                         "<text ref-id='" + one_child_id + "'>" + one_child_value + "</text>" +
                         "<node>&lt;/" + node_name + "&gt;</node>" +
+                        ( is_debug && ( " <d>[" + node[ ID ] +  "]</d>" ) || "" ) +
                         "</div>";
                 i = child_pointer - 1;
               }
@@ -238,6 +245,7 @@ var DOM_markup_style = function(id, name, container_class)
                         ( node[ CHILDREN_LENGTH ] ? 
                           "<input handler='get-children' type='button' class='open'>" : '' ) +
                         "<node>&lt;" + node_name + attrs + "&gt;</node>" +
+                        ( is_debug && ( " <d>[" + node[ ID ] +  "]</d>" ) || "" ) +
                         "</div>";
 
                 closing_tags.push("<div style='margin-left:" + 
@@ -256,6 +264,7 @@ var DOM_markup_style = function(id, name, container_class)
                     ( children_length ? 
                       "<input handler='get-children' type='button' class='close'>" : '' ) +
                     "<node>&lt;" + node_name + attrs + ( children_length ? '' : '/' ) + "&gt;</node>" +
+                    ( is_debug && ( " <d>[" + node[ ID ] +  "]</d>" ) || "" ) +
                     "</div>";
             }
             break;
@@ -297,12 +306,12 @@ var DOM_markup_style = function(id, name, container_class)
           case 10:  // doctype
           {
             tree += "<div style='margin-left:" + 16 * node[ DEPTH ] + "px;' class='doctype'>"+
-                    "&lt;!doctype " + this.getDoctypeName(data) +
+                    "&lt;!doctype <doctype-attrs>" + node[NAME] +
                     ( node[PUBLIC_ID] ? 
                       ( " PUBLIC " + "\"" + node[PUBLIC_ID] + "\"" ) :"" ) +
                     ( node[SYSTEM_ID] ?  
                       ( " \"" + node[SYSTEM_ID] + "\"" ) : "" ) +
-                    "&gt;</div>";
+                    "</doctype-attrs>&gt;</div>";
             break;
           }
 

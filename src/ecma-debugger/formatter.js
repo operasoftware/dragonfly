@@ -624,7 +624,6 @@
 
   this.parse=function(script, line, max_line, state)
   {
-    ret='';
     __reset(line, max_line);
 
     parser=default_parser;

@@ -35,8 +35,7 @@ var StatusbarBase = function()
       this.available_width_delta = 
         info_container.offsetLeft 
         + parseInt(style.getPropertyValue('padding-left'))
-        + parseInt(style.getPropertyValue('padding-right'))
-        + 50; // setting button in the protocol 3 branch
+        + parseInt(style.getPropertyValue('padding-right'));
     }
     if(this.mode == this.TOOLTIP_MODE)
     {
