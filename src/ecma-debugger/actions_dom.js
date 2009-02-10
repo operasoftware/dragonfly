@@ -134,7 +134,10 @@ cls.DOMInspectorActions = function(id)
     var firstChild = null;
     if(new_target)
     {
-      nav_target.blur();
+      if(nav_target)
+      {
+        nav_target.blur();
+      }
       selection.collapse(view_container, 0);
       nav_target = new_target;
 
