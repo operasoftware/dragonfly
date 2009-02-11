@@ -10,7 +10,6 @@
   * This view implements update chocking. It will not do the update more often
   * than every minUpdateInterval milliseconds
   */
-
 cls.RequestListView = function(id, name, container_class)
 {
     var self = this;
@@ -39,7 +38,7 @@ cls.RequestListView = function(id, name, container_class)
             // later if it isn't allready so.
             if (!updateTimer) {
                 updateTimer = window.setTimeout(
-                        function() { self.createView(container)},
+                        function() { self.createView(container) },
                         this.minUpdateInterval);
             }
             return;
@@ -69,7 +68,8 @@ cls.RequestListView = function(id, name, container_class)
     }
 
     /**
-     * Do the actual rendering
+     * Do the actual rendering of the request table, including expanded and
+     * collapsed details pages.
      */
     this.doCreateView = function(container)
     {
@@ -87,11 +87,15 @@ cls.RequestListView = function(id, name, container_class)
         }
         
         var tpls = log.slice(nextToRendereIndex).map(fun);
-
         tableBodyEle.render(tpls);
         nextToRendereIndex = log.length;
     }
     
+    /**
+     * Collapse the detail view of an entry in the log.
+     * Does not invalidate the view and re-render the table.
+     * It's fairly slow if the entry is far down in the log though.
+     */
     this.collapseEntry = function(id)
     {
         if (!tableBodyEle) { return }
@@ -106,6 +110,11 @@ cls.RequestListView = function(id, name, container_class)
         }
     }
     
+    /**
+     * Show the detail view of an entry in the log.
+     * Does not invalidate the view and re-render the table.
+     * It's fairly slow if the entry is far down in the log though.
+     */
     this.expandEntry = function(id) {
         if (!tableBodyEle) { return }
         for (var n=0,e; e=tableBodyEle.childNodes[n]; n++)
@@ -140,8 +149,6 @@ cls.RequestListView = function(id, name, container_class)
             expandedItems.splice(expandedItems.indexOf(id), 1);
             this.collapseEntry(id);
         }
-        //keyEntryId = null;
-        //lastUpdateTime = 0;
     }
 
     this.ondestroy = function()

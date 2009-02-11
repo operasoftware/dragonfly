@@ -1,6 +1,7 @@
 ﻿.request-table {
     border-collapse: collapse;
     width: 100%;
+    table-layout: fixed;
 }
 
 .request-table tr {
@@ -35,6 +36,10 @@
 
 .request-table tr td:nth-child(4) {
     width: 24ex;
+    overflow: hidden;
+    -o-text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: bold;
 }
 
 .request-table tr td:nth-child(5) {
