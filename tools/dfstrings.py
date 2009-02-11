@@ -168,3 +168,13 @@ def get_db_version(path):
     for line in fp:
         if line.startswith("@dbversion"): return line.strip()[11:]
     return "unknown"
+def get_strings_with_bad_escaping(strings):
+    quotere = re.compile(r"[^\\]\"")
+    return [e for e in strings if quotere.findall(e)]
+
+def get_strings_with_bad_format(strings):
+    formatre = re.compile(r"%\(.*?\)[^s]")
+    return [e for e in strings if formatre.findall(e)]
+
+
+
