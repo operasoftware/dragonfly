@@ -631,50 +631,61 @@ start-search-scope ~ item {
 start-search-scope ~ end-search-scope ~ item {
   background-color: transparent;
   }
-  
-.metrics ul {
+
+.css-layout layout-container
+{
+  display: table;
+  margin: 0 auto;
+  padding: 15px;
+  max-width: 250px;
+}
+.css-layout layout-container ul 
+{
   margin:0;
   padding:0;
-  list-style:none;
-  display:table-row;
-  }
-.metrics li {
+  list-style: none;
+  display: table-row;
+}
+.css-layout layout-container li 
+{
   display: table-cell;
   border: 1px solid transparent;
-  text-align:center;
-  vertical-align:middle;
+  text-align: center;
+  vertical-align: middle;
   padding: 1px;
-  }
-.metrics p {
+  cursor: pointer;
+}
+.css-layout layout-container p 
+{
   position:relative;
   margin:0;
   padding:0;
-  }
-.metrics span {
+}
+.css-layout layout-container span 
+{
   position:absolute;
   top:0;
   left:0;
   font-size: 11px;
-  }
-.metrics .element {
-  white-space:nowrap
-  }
-.metrics .element li {
+}
+
+.css-layout layout-container .dimension li 
+{
   width: 300px
-  }
-.metrics .element .elementHeight{
+}
+.css-layout layout-container .dimension ul + ul li
+{
   text-align:left
-  }
-.metrics .element,
-.metrics .padding,
-#tree .metrics.margin {
+}
+.css-layout layout-container .dimension,
+.css-layout layout-container .padding,
+.css-layout layout-container .margin,
+.css-layout layout-container .border 
+{
   border-color: #324c74;
   background-color: #fff;
-  }
-.metrics .border {
-  border-color: #324c74;
-  background-color:#c7d4e8;
-  }
+}
+
   
 offsets-container {
   display:block;
