@@ -412,6 +412,15 @@ cls.DOMInspectorActions = function(id)
     }
   }
 
+  this.select_all = function(event, action_id)
+  {
+    var selection = getSelection();
+    var range = document.createRange();
+    selection.collapse(view_container, 0);
+    range.selectNodeContents(view_container);
+    selection.addRange(range);
+  }
+
   this.init(id);
 
 };
@@ -457,6 +466,11 @@ cls.DOMInspectorKeyhandler = function(id)
   this[this.CTRL_ENTER] = function(event, action_id)
   {
     return __actions.target_ctrl_enter(event, action_id);
+  }
+
+  this[this.CTRL_A] = function(event, action_id)
+  {
+    return __actions.select_all(event, action_id);
   }
 
   this.focus = function(event, container)
