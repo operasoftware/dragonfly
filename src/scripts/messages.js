@@ -22,7 +22,7 @@
  *     <dd>If the application was set up</dd>
  *
  *     <dt>active-tab</dt>
- *     <dd>A new debug context was selected. Payload: array msg.activeTab</dd>
+ *     <dd>When the debug context changes or the top runtime of the active window changes. This will happen if a link is clicked in the active window. Payload: array msg.activeTab</dd>
  *
  *     <dt>host-state</dt>
  *     <dd>State of the host. Payload: msg.state = 'disconnected' | 'ready' | waiting'</dd>
