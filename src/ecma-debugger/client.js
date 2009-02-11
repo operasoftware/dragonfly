@@ -45,7 +45,15 @@ var client = new function()
   var host_connected = function(_services)
   {
     services_avaible = eval("({\"" + _services.replace(/,/g, "\":1,\"") + "\":1})");
-    var service = null, i = 0;
+    var service = null, i = 0, service_name = '';
+    for( service_name in services_avaible )
+    {
+      if( service_name.slice(0, 5) == 'core-' )
+      {
+        handle_fallback.apply(new XMLHttpRequest(), [service_name]);
+        return;
+      }
+    }
     // for now: if there is a windows manager assume that it's protocol-4
     if( 'window-manager' in services_avaible )
     {
@@ -53,7 +61,6 @@ var client = new function()
     }
     else
     {
-      
       for( ; service = services[i]; i++)
       {
         if (service.name in services_avaible)	
@@ -66,9 +73,6 @@ var client = new function()
         }
       }
     }
-
-
-
   }
 
   var receive = function(service, msg)
@@ -145,31 +149,39 @@ var client = new function()
   var proxy_onsetup = function()
   {
     var service = null, i = 0;
-    for( ; ( service = this.services[i] ) && !( service == 'window-manager' ); i++);
-    // for now: if there is a windows manager assume that it's protocol-4
-    if( service == 'window-manager' )
+    for( ; ( service = this.services[i] ) && service.slice(0, 5) != 'core-'; i++);
+    if( service )
     {
-      handle_fallback.apply(new XMLHttpRequest(), ["protocol-4"]);
+      handle_fallback.apply(new XMLHttpRequest(), [service]);
     }
     else
     {
-      for( i = 0; service = services[i]; i++ )
+      for( i = 0; ( service = this.services[i] ) && !( service == 'window-manager' ); i++);
+      // for now: if there is a windows manager assume that it's protocol-4
+      if( service == 'window-manager' )
       {
-        if ( !proxy.enable(service.name) )	
+        handle_fallback.apply(new XMLHttpRequest(), ["protocol-4"]);
+      }
+      else
+      {
+        for( i = 0; service = services[i]; i++ )
         {
-          alert
-          ( 
-             'Could not find an Opera session to connect to.\n' +
-             'Please try the following:\n' + 
-             '1. Open another Opera instance\n' +
-             '2. In that Opera instance, open opera:config and check "Enable Debugging" and "Enable Script Debugging" under "Developer Tools"\n' +
-             '3. Restart that Opera instance' 
-          );
-        }
-        else
-        {
-          service.onconnect();
-          proxy.GET( "/" + service.name, bindCB(service) );
+          if ( !proxy.enable(service.name) )	
+          {
+            alert
+            ( 
+               'Could not find an Opera session to connect to.\n' +
+               'Please try the following:\n' + 
+               '1. Open another Opera instance\n' +
+               '2. In that Opera instance, open opera:config and check "Enable Debugging" and "Enable Script Debugging" under "Developer Tools"\n' +
+               '3. Restart that Opera instance' 
+            );
+          }
+          else
+          {
+            service.onconnect();
+            proxy.GET( "/" + service.name, bindCB(service) );
+          }
         }
       }
     }
