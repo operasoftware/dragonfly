@@ -259,7 +259,13 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
 
   var line_buffer_push = function(line)
   {
-    line_buffer[line_buffer.length] = line.replace(/\r\n/g, "");
+    line = line.replace(/\r\n/g, "");
+    var index = line_buffer.indexOf(line);
+    if(index != -1)
+    {
+      line_buffer.splice(index, 1);
+    }
+    line_buffer[line_buffer.length] = line;
     if( line_buffer.length > 100 )
     {
       line_buffer = line_buffer.slice(line_buffer.length - 100);
