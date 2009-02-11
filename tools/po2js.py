@@ -29,10 +29,23 @@ def main():
             outfile = codecs.open(sys.argv[2], "w", encoding="utf_8_sig")
         else:
             outfile = sys.stdout
-         
-	data = make_js_from_po(infile)
-        outfile.write(data)
-        return 0
+
+    lines = [p["msgstr"] for p in dfstrings.get_po_strings(infile) 
+        if "scope" in p and "dragonfly" in p["scope"] ]
+    
+    bad_escaped = dfstrings.get_strings_with_bad_escaping(lines)
+    if bad_escaped:
+        print "error: %s contains strings with bad escaping: %s" % (infile, bad_escaped)
+        return 1
+
+    bad_format = dfstrings.get_strings_with_bad_format(lines)
+    if bad_format:
+        print "error: %s contains strings with bad formatting: %s" % (infile, bad_format)
+        return 1
+
+    data = make_js_from_po(infile)
+    outfile.write(data)
+    return 0
 
 if __name__ == "__main__":
     sys.exit(main())
