@@ -143,7 +143,33 @@ new Settings
     checkboxes:
     [
       "show-only-normal-and-gadget-type-windows"
+    ],
+    customSettings:
+    [
+      'hr',
+      'ui-language'
     ]
+  },
+  // custom templates
+  {
+    'hr':
+    function(setting)
+    {
+      return ['hr'];
+    },
+    'ui-language':
+    function(setting)
+    {
+      return [
+        ['setting-composite',
+          'User Interface Language' + ': ',
+          [
+            'select',
+            templates.uiLangOptions()
+          ]
+        ]
+      ];
+    }
   }
 
 );

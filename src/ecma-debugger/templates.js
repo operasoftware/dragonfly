@@ -566,6 +566,220 @@ Line 2:
     }
     return ret.concat(['onmouseover', helpers.breadcrumbSpotlight, 'onmouseout', helpers.breadcrumbClearSpotlight]);
   }
+
+  this.uiLangOptions = function(lang_dict)
+  {
+    var dict =
+    [
+      {
+        browserLanguge: "be",
+        key: "be",
+        name: "български език"
+      },
+      {
+        browserLanguge: "cs",
+        key: "cs",
+        name: "česky"
+      },
+      {
+        browserLanguge: "da",
+        key: "da",
+        name: "dansk"
+      },
+      {
+        browserLanguge: "de",
+        key: "de",
+        name: "Deutsch"
+      },
+      {
+        browserLanguge: "el",
+        key: "el",
+        name: "Ελληνικά"
+      },
+      {
+        browserLanguge: "en",
+        key: "en",
+        name: "English"
+      },
+      {
+        browserLanguge: "en-GB",
+        key: "en",
+        name: "English"
+      },
+      {
+        browserLanguge: "es-ES",
+        key: "es-ES",
+        name: "Español"
+      },
+      {
+        browserLanguge: "es-LA",
+        key: "es-LA",
+        name: "Español"
+      },
+      {
+        browserLanguge: "et",
+        key: "et",
+        name: "Eesti keel"
+      },
+      {
+        browserLanguge: "fi",
+        key: "fi",
+        name: "suomen kieli"
+      },
+      {
+        browserLanguge: "fr",
+        key: "fr",
+        name: "Français"
+      },
+      {
+        browserLanguge: "fr-CA",
+        key: "fr-CA",
+        name: "Français"
+      },
+      {
+        browserLanguge: "fy",
+        key: "fy",
+        name: "Frysk"
+      },
+      {
+        browserLanguge: "hi",
+        key: "hi",
+        name: "हिन्दी"
+      },
+      {
+        browserLanguge: "hr",
+        key: "hr",
+        name: "Hrvatski"
+      },
+      {
+        browserLanguge: "hu",
+        key: "hu",
+        name: "Magyar"
+      },
+      {
+        browserLanguge: "id",
+        key: "id",
+        name: "Bahasa Indonesia"
+      },
+      {
+        browserLanguge: "it",
+        key: "it",
+        name: "Italiano"
+      },
+      {
+        browserLanguge: "ja",
+        key: "ja",
+        name: "日本語 (にほんご／にっぽんご)"
+      },
+      {
+        browserLanguge: "ka",
+        key: "ka",
+        name: "ქართული"
+      },
+      {
+        browserLanguge: "ko",
+        key: "ko",
+        name: "한국어 (韓國語)"
+      },
+      {
+        browserLanguge: "lt",
+        key: "lt",
+        name: "lietuvių kalba"
+      },
+      {
+        browserLanguge: "mk",
+        key: "mk",
+        name: "македонски јазик"
+      },
+      {
+        browserLanguge: "nb",
+        key: "nb",
+        name: "Norsk bokmål"
+      },
+      {
+        browserLanguge: "nl",
+        key: "nl",
+        name: "Nederlands"
+      },
+      {
+        browserLanguge: "nn",
+        key: "nn",
+        name: "Norsk nynorsk"
+      },
+      {
+        browserLanguge: "pl",
+        key: "pl",
+        name: "polski"
+      },
+      {
+        browserLanguge: "pt",
+        key: "pt",
+        name: "Português"
+      },
+      {
+        browserLanguge: "pt-BR",
+        key: "pt-BR",
+        name: "Português"
+      },
+      {
+        browserLanguge: "ru",
+        key: "ru",
+        name: "русский язык"
+      },
+      {
+        browserLanguge: "sv",
+        key: "sv",
+        name: "svenska"
+      },
+      {
+        browserLanguge: "ta",
+        key: "ta",
+        name: "தமிழ்"
+      },
+      {
+        browserLanguge: "te",
+        key: "te",
+        name: "తెలుగు"
+      },
+      {
+        browserLanguge: "tr",
+        key: "tr",
+        name: "Türkçe"
+      },
+      {
+        browserLanguge: "uk",
+        key: "uk",
+        name: "Українська"
+      },
+      {
+        browserLanguge: "sv",
+        key: "sv",
+        name: "svenska"
+      },
+      {
+        browserLanguge: "zh-cn",
+        key: "zh-cn",
+        name: "中文, 汉语, 漢語"
+      },
+      {
+        browserLanguge: "zh-tw",
+        key: "zh-tw",
+        name: "中文, 汉语, 漢語"
+      }
+    ],
+    lang = null,
+    i = 0,
+    selected_lang = window.ui_strings.lang_code,
+    ret = [];
+
+    for( ; lang = dict[i]; i++)
+    {
+      ret[ret.length] = \
+        ['option', lang.name, 'value', lang.key].
+        concat( selected_lang == lang.key ? ['selected', 'selected'] : [] ); 
+    }
+    return ret;
+  }
   
 
 }).apply(window.templates);
