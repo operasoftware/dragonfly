@@ -25,7 +25,8 @@ var key_ids =
   F9: '000120',
   F10: '000121',
   F11: '000122',
-  SHIFT_F11: '100122'
+  SHIFT_F11: '100122',
+  CTRL_A: '01065'
 }
 
 var action_ids =
@@ -46,7 +47,8 @@ var action_ids =
   STEP_INTO: 'action-step-into',
   STEP_OUT: 'action-step-out',
   BACKSPACE: 'action-back-space',
-  CTRL_BACKSPACE: 'action-ctrl-back-space'
+  CTRL_BACKSPACE: 'action-ctrl-back-space',
+  CTRL_A: 'action-select-all'
 }
 
 var action_map_win = {};
@@ -69,6 +71,7 @@ action_map_win[key_ids.F11] = action_ids.STEP_INTO;
 action_map_win[key_ids.SHIFT_F11] = action_ids.STEP_OUT;
 action_map_win[key_ids.BACKSPACE] = action_ids.BACKSPACE;
 action_map_win[key_ids.CTRL_BACKSPACE] = action_ids.CTRL_BACKSPACE;
+action_map_win[key_ids.CTRL_A] = action_ids.CTRL_A;
 
 var action_map = action_map_win;
 
@@ -235,7 +238,7 @@ var key_identifier = new function()
   var self = this;
 
   var __container = null;
-
+ 
   const 
   TAB = 9,
   ENTER = 13,
@@ -250,7 +253,8 @@ var key_identifier = new function()
   F8 = 119,
   F9 = 120,
   F10 = 121,
-  F11 = 122;
+  F11 = 122,
+  A = 65;
 
   var key_handler_ids = {}, id = '';
 
@@ -326,7 +330,7 @@ var key_identifier = new function()
     keyCode = event.keyCode, 
     key_id = '',
     action_id = 0;
-
+    // TODO switch for the key_id
     switch(keyCode)
     {
       case TAB:
@@ -339,6 +343,7 @@ var key_identifier = new function()
       case ARROW_DOWN:
       case BACKSPACE:
       case DELETE:
+      case A:
       {
         key_id = ( event.shiftKey ? '1' : '0' ) +
             ( event.ctrlKey ? '1' : '0' ) +

@@ -168,6 +168,15 @@ var TabsBase = function()
         this._history.splice(0, this._history.length - HISTORY_MAX_LENGTH); 
       }
       messages.post("show-view", {id: view_id});
+      if(views[view_id].type == 'composite-view' )
+      {
+        global_state.ui_framework.last_selected_top_tab = view_id;
+        global_state.ui_framework.last_selected_tab = '';
+      }
+      else
+      {
+        global_state.ui_framework.last_selected_tab = view_id;
+      }
     }
   }
 
