@@ -683,7 +683,6 @@ start-search-scope ~ end-search-scope ~ item {
 .css-layout layout-container .border 
 {
   border-color: #324c74;
-  background-color: #fff;
 }
 
   
@@ -762,6 +761,7 @@ stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
 {
   background-color: #f9f9ec;
 }
+
 
 .css-layout h2 {
   font-size: 1.2em;

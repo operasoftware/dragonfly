@@ -7,6 +7,7 @@
   INITIAL_MARGIN_COLOR = [54, 68, 130, .9 * 255],
   INITIAL_FRAME_COLOR = [54, 68, 130, 1 * 255],
   INITIAL_GRID_COLOR = [170, 33, 18, .3 * 255];
+  INITIAL_LOCKED_COLOR = [170, 33, 18, .5 * 255];
 
   var self = this;
   var host_colors = {};
@@ -61,8 +62,11 @@
     host_colors.padding = convert_rgba_to_int(INITIAL_PADDING_COLOR);
     host_colors.border = convert_rgba_to_int(INITIAL_BORDER_COLOR);
     host_colors.margin = convert_rgba_to_int(INITIAL_MARGIN_COLOR);
+    client_colors.margin = convert_rgba_to_hex(INITIAL_MARGIN_COLOR);
     host_colors.frame = convert_rgba_to_int(INITIAL_FRAME_COLOR);
     host_colors.grid = convert_rgba_to_int(INITIAL_GRID_COLOR);
+    host_colors.locked = convert_rgba_to_int(INITIAL_LOCKED_COLOR);
+    
   }
 
   this.setRGBA = function(target, rgba_arr)
@@ -98,6 +102,111 @@
             "<fill-color>" + host_colors.dimension + "</fill-color>" +
           "</box>"  +
         "</spotlight-object>" +
+        getSpotlighLockedElements() +
+      "</spotlight-objects>"
+    );
+  }
+
+  this.spotlight_dimension = function(node_id, scroll_into_view)
+  {
+    services['ecmascript-debugger'].post
+    (
+      "<spotlight-objects>" +
+        "<spotlight-object>" +
+          "<object-id>" + node_id + "</object-id>" +
+          "<scroll-into-view>0</scroll-into-view>" +
+          "<box>" +
+            "<box-type>0</box-type>" +
+            "<fill-color>" + host_colors.border + "</fill-color>" +
+            //"<frame-color>" + host_colors.frame + "</frame-color>" +
+            "<grid-color>" + host_colors.grid + "</grid-color>" +
+          "</box>"  +
+        "</spotlight-object>" +
+        getSpotlighLockedElements() +
+      "</spotlight-objects>"
+    );
+  }
+  this.spotlight_padding = function(node_id, scroll_into_view)
+  {
+    services['ecmascript-debugger'].post
+    (
+      "<spotlight-objects>" +
+        "<spotlight-object>" +
+          "<object-id>" + node_id + "</object-id>" +
+          "<scroll-into-view>0</scroll-into-view>" +
+          "<box>" +
+            "<box-type>1</box-type>" +
+            "<fill-color>" + host_colors.border + "</fill-color>" +
+            //"<frame-color>" + host_colors.frame + "</frame-color>" +
+            "<grid-color>" + host_colors.grid + "</grid-color>" +
+          "</box>"  +
+          "<box>" +
+            "<box-type>0</box-type>" +
+            "<fill-color>" + host_colors.dimension + "</fill-color>" +
+            "<frame-color>" + host_colors.frame + "</frame-color>" +
+          "</box>"  +
+        "</spotlight-object>" +
+        getSpotlighLockedElements() +
+      "</spotlight-objects>"
+    );
+  }
+  this.spotlight_border = function(node_id, scroll_into_view)
+  {
+    services['ecmascript-debugger'].post
+    (
+      "<spotlight-objects>" +
+        "<spotlight-object>" +
+          "<object-id>" + node_id + "</object-id>" +
+          "<scroll-into-view>0</scroll-into-view>" +
+          "<box>" +
+            "<box-type>2</box-type>" +
+            "<fill-color>" + host_colors.border + "</fill-color>" +
+            //"<frame-color>" + host_colors.frame + "</frame-color>" +
+            "<grid-color>" + host_colors.grid + "</grid-color>" +
+          "</box>"  +
+          "<box>" +
+            "<box-type>1</box-type>" +
+            "<fill-color>" + host_colors.dimension + "</fill-color>" +
+            "<frame-color>" + host_colors.frame + "</frame-color>" +
+          "</box>"  +
+          "<box>" +
+            "<box-type>0</box-type>" +
+            "<fill-color>" + host_colors.dimension + "</fill-color>" +
+          "</box>"  +
+        "</spotlight-object>" +
+        getSpotlighLockedElements() +
+      "</spotlight-objects>"
+    );
+  }
+  this.spotlight_margin = function(node_id, scroll_into_view)
+  {
+    services['ecmascript-debugger'].post
+    (
+      "<spotlight-objects>" +
+        "<spotlight-object>" +
+          "<object-id>" + node_id + "</object-id>" +
+          "<scroll-into-view>0</scroll-into-view>" +
+          "<box>" +
+            "<box-type>3</box-type>" +
+            "<fill-color>" + host_colors.border + "</fill-color>" +
+            //"<frame-color>" + host_colors.frame + "</frame-color>" +
+            "<grid-color>" + host_colors.grid + "</grid-color>" +
+          "</box>"  +
+          "<box>" +
+            "<box-type>2</box-type>" +
+            "<fill-color>" + host_colors.dimension + "</fill-color>" +
+            "<frame-color>" + host_colors.frame + "</frame-color>" +
+          "</box>"  +
+          "<box>" +
+            "<box-type>1</box-type>" +
+            "<fill-color>" + host_colors.dimension + "</fill-color>" +
+          "</box>"  +
+          "<box>" +
+            "<box-type>0</box-type>" +
+            "<fill-color>" + host_colors.dimension + "</fill-color>" +
+          "</box>"  +
+        "</spotlight-object>" +
+        getSpotlighLockedElements() +
       "</spotlight-objects>"
     );
   }
@@ -105,18 +214,32 @@
   var mouse_handler_target = null;
   var mouse_handler_timeouts = new Timeouts();
   var colors = new Colors();
+  var class_names = ['margin', 'border', 'padding', 'dimension'];
   this.clearMouseHandlerTarget = function()
   {
     if(mouse_handler_target)
     {
-      mouse_handler_target.style.removeProperty('background-color');
+      mouse_handler_target.style.removeProperty('background-color');    
+      var index = class_names.indexOf(mouse_handler_target.className) + 1, target = null;
+      if( index && index < 4 )
+      {
+        mouse_handler_target.
+          getElementsByClassName(class_names[index])[0].style.removeProperty('background-color');
+      }
+      self.clearSpotlight();
     }
-    mouse_handler_target = null;
+    mouse_handler_target = null;    
   }
   var setStyleMouseHandlerTarget = function(target, class_name)
   {
     mouse_handler_target = target;
-    target.style.backgroundColor = client_colors.dimension;
+    target.style.backgroundColor = client_colors.margin;
+    var index = class_names.indexOf(class_name) + 1;
+    if( index && index < 4 )
+    {
+      target.getElementsByClassName(class_names[index])[0].style.backgroundColor = 
+        client_colors.dimension;
+    }
   }
   // mouseover handler in Layout Metrics
   this.metricsMouseoverHandler = function(event)
@@ -129,6 +252,7 @@
       mouse_handler_timeouts.clear();
       self.clearMouseHandlerTarget();
       setStyleMouseHandlerTarget(target, class_name);
+      self['spotlight_' + class_name](dom_data.getCurrentTarget());
     }
   }
   // mouseover handler in Layout Metrics
@@ -147,6 +271,70 @@
   {
     services['ecmascript-debugger'].post("<spotlight-objects/>");
   }
+  //{obj_id: obj_id, rt_id: data_runtime_id});
+  var getSpotlighLockedElements = function()
+  {
+    var ret = "", cursor = null, i = 0;
+    if(settings.dom.get('lock-selecked-elements'))
+    {
+      for( ; cursor = locked_elements[i]; i++)
+      {
+        ret += \
+        "<spotlight-object>" +
+          "<object-id>" + cursor + "</object-id>" +
+          "<scroll-into-view>0</scroll-into-view>" +
+          "<box>" +
+            "<box-type>2</box-type>" +
+            "<frame-color>" + host_colors.locked + "</frame-color>" +
+          "</box>"  +
+        "</spotlight-object>";
+      }
+    }
+    return ret;
+  }
+  // {activeTab: __activeTab} 
+  // TODO make a new message for new top runtime
+  var onActiveTab = function(msg)
+  {
+    if( msg.activeTab[0] != top_runtime )
+    {
+      top_runtime = msg.activeTab[0];
+      locked_elements = [];
+    }
+  }
+  var locked_elements = [];
+  var top_runtime ='';
+  var settings_id = 'dom';
+  var onElementSelected = function(msg)
+  {
+    if(settings.dom.get('lock-selecked-elements'))
+    {
+      locked_elements[locked_elements.length] = msg.obj_id;
+    }
+  }
+  var onSettingChange = function(msg)
+  {
+    if( msg.id == settings_id )
+    {
+
+      switch (msg.key)
+      {
+        case 'lock-selecked-elements':
+        {
+          if(!settings[settings_id].get(msg.key))
+          {
+            locked_elements = [];
+            self.clearSpotlight();
+          }
+          break;
+        }
+      }
+    }
+  }
+
+  messages.addListener("element-selected", onElementSelected); 
+  messages.addListener('active-tab', onActiveTab);
+  messages.addListener('setting-changed', onSettingChange);
 
   set_initial_values();
 }

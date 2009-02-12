@@ -188,7 +188,8 @@ ui_strings.S_SWITCH_SHOW_ONLY_NORMAL_AND_GADGETS_TYPE_WINDOWS = "Show only norma
 ui_strings.S_SWITCH_SCROLL_INTO_VIEW_ON_FIRST_SPOTLIGHT = 'Scroll into View on first Spotlight';
 /* DESC: Show ECMA error message of the error console in the command line */
 ui_strings.S_SWITCH_SHOW_ECMA_ERRORS_IN_COMMAND_LINE = "Show ECMA Script Errors of the Error Console";
-
+/* DESC: Draw a border on to selected DOM elements */
+ui_strings.S_SWITCH_LOCK_SELECTED_ELEMENTS = "Draw a border on to selected elements";
 
 
 /*
