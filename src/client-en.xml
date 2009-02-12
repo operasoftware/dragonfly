@@ -71,16 +71,12 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
   },
   lang = lang_dict[navigator.browserLanguage] || 'en',
   ui_lang = getCookie('ui-lang'),
-  lang_check = getCookie('lang-check');
+  ui_lang_set = getCookie('ui-lang-set')
 
-  if( !lang_check && ui_lang && ui_lang != lang )
+  if( !ui_lang_set && ui_lang && ui_lang != lang )
   {
-    setCookie('lang-check', '1');
-    if( confirm('Would you like to switch to your default user language?') )
-    {
-      setCookie('ui-lang', lang);
-      location.reload();
-    }
+    setCookie('ui-lang', lang);
+    location.reload();
   }
 })();
 ]]></script>

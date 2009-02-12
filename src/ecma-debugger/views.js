@@ -84,7 +84,6 @@ new cls.CallstackView('callstack', ui_strings.M_VIEW_LABEL_CALLSTACK, 'scroll');
 cls.GeneralView = function(id, name, container_class)
 {
   this.ishidden_in_menu = true;
-  this.hidden_in_settings = true;
   this.createView = function(container)
   {
   }
@@ -112,9 +111,30 @@ new Settings
     [
       "show-views-menu"
     ]
+  },
+  // template
+  function(setting)
+  {
+    return [
+      ['hr'],
+      ['setting-composite',
+        'User Interface Language' + ': ',
+        [
+          'select',
+          templates.uiLangOptions(),
+          'handler', 'set-ui-language'
+        ]
+      ]
+    ];
   }
-
 );
+
+eventHandlers.change['set-ui-language'] = function(event)
+{
+  helpers.setCookie('ui-lang', event.target.value);
+  helpers.setCookie('ui-lang-set', '1');
+  location.reload();
+}
   
 /**
   * @constructor 
