@@ -15,6 +15,7 @@ window.HTTPLoggerData = new function()
     var requestMap = {};
     var selectedRequestId = null;
     var lastModifiedRequestId = null;
+    var activeRuntime = null;
 
 
     _views = [ "request_info_raw",
@@ -54,6 +55,17 @@ window.HTTPLoggerData = new function()
         requestList = [];
         requestMap = {};
         selectedRequestId = null;
+        _updateViews();
+    }
+    
+    this.clearLogAllButLast = function()
+    {
+        if (requestList.length) {
+            var r = requestList.pop();
+            requestList = [r];
+            requestMap = {}
+            requestMap[r.id] = r;
+        }
         _updateViews();
     }
 
@@ -144,7 +156,24 @@ window.HTTPLoggerData = new function()
     {
         return lastModifiedRequestId;
     }
-    
+
+    /**
+     * Event listener for the active-tab msg. If the the top runtime id
+     * changes, it means our context is different and we should clear the
+     * log and tell the view
+     */
+    this.onActiveTab = function(msg) {
+        var id = msg.activeTab[0];
+        if (activeRuntime==null) {
+            activeRuntime=id;
+        } else if (id != activeRuntime) {
+            this.clearLogAllButLast();
+            activeRuntime=id;
+        } else {
+            //All is well
+        }
+    }
+
     /**
      * Update all views that use this as a data source
      */
@@ -157,3 +186,5 @@ window.HTTPLoggerData = new function()
     }
 
 }
+
+messages.addListener("active-tab", function(msg) { HTTPLoggerData.onActiveTab(msg) });
