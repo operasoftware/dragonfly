@@ -115,6 +115,20 @@ helpers = new function()
   {
     return str.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/&(?!.{2,4};)/g, "&amp;");
   }
+  this.setCookie = function(key, value, time) 
+  {
+    document.cookie = \
+      key + "=" + encodeURIComponent(value) +
+      "; expires=" + 
+      ( new Date( new Date().getTime() + ( time || 360*24*60*60*1000 ) ) ).toGMTString() + 
+      "; path=/";
+  }
+
+  this.getCookie = function(key) 
+  {
+    var value = new RegExp(key + "=([^;]*)").exec(document.cookie);
+    return value && decodeURIComponent(value[1]);
+  }
   // mouseover handler in the breadcrumb
   this.breadcrumbSpotlight = function(event)
   {

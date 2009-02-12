@@ -165,14 +165,21 @@ new Settings
           'User Interface Language' + ': ',
           [
             'select',
-            templates.uiLangOptions()
+            templates.uiLangOptions(),
+            'handler', 'set-ui-language'
           ]
         ]
       ];
     }
   }
-
 );
+
+eventHandlers.change['set-ui-language'] = function(event)
+{
+  helpers.setCookie('ui-lang', event.target.value);
+  helpers.setCookie('ui-lang-set', '1');
+  location.reload();
+}
   
 /**
   * @constructor 
