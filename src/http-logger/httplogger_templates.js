@@ -191,22 +191,3 @@ window.templates.method_spec_link = function(req)
     }
     return ""
 }
-
-window.templates.request_list_header = function()
-{
-    return ['table',
-                ['thead',
-                    ['tr',
-                        ['th', ""],
-                        ['th', ""],
-                        ['th', "Host"],
-                        ['th', "Path"],
-                        ['th', "Method"],
-                        ['th', "Status"],
-                        ['th', "Time"]
-                    ]
-                ],
-                ['tbody'],
-             'class', 'request-table'
-            ];
-}

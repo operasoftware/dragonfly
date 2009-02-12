@@ -16,7 +16,6 @@ cls.RequestListView = function(id, name, container_class)
 
     // The list will never be updated more often than this:
     this.minUpdateInterval = 350; // in milliseconds.
-
     var lastUpdateTime = null;
     var updateTimer = null; // timer id so we can cancel a timeout
     var nextToRendereIndex = null;  // index in log of the next element to render
@@ -59,6 +58,12 @@ cls.RequestListView = function(id, name, container_class)
      */
     this.viewIsValid = function(log)
     {
+        return false;
+
+        // The invalidation code is currently disabled because there is now
+        // no chance of a ginourmous list of requests. Hence this optimization
+        // is probably not needed
+
         if (log.length && log[0].id==keyEntryId) {
             return true;
         } else {
