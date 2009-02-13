@@ -40,6 +40,7 @@ cls.HTTPLoggerService = function(name)
     {
         var data = this.parseRequest(msg);
         //opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + "just parsed a request:\n" + JSON.stringify(data));
+ 
         HTTPLoggerData.addRequest(data);
     }
 
@@ -68,6 +69,7 @@ cls.HTTPLoggerService = function(name)
      *  method: "GET/POST/..",
      *  path: "/foo/bar/baz",
      *  query: "?asdf=morradi",
+     *  host: "foo.com"
      *  queryDict: {asdf: "morradi"}
      *  headers: {
      *            headername1, value: headerval1,
@@ -99,7 +101,8 @@ cls.HTTPLoggerService = function(name)
             }
         }
         
-        retval.url = retval.headers.Host + retval.path
+        retval.host = retval.headers.Host;
+        retval.url = retval.headers.Host + retval.path;
         return retval;
     }
 
