@@ -51,32 +51,31 @@ window.templates = window.templates || ( window.templates = {} );
     return dl;
 }
 
+
+window.templates.sanitize_url = function(req)
+{
+    var s = req.request.path;
+
+    if (s=="" || s=="/") {
+        return req.request.host;
+    }
+
+    var pos = s.lastIndexOf("/");
+    if (pos == s.length-1) { //  only query part
+        return s
+
+    }
+    else {
+        return s.slice(pos+1);
+    }
+}
+
 /**
  * Renders a single row of request data in the request list
  */
 window.templates.request_list_row = function(r, expandList)
 {
     var expanded = expandList.indexOf(r.id) != -1;
-
-    // fixme: this needs to move somewhere.
-    var basename = function(s) {
-        if (s=="") {
-            return "domain here"
-        }
-        var pos = s.lastIndexOf("/");
-        if (pos == s.length-1) {
-        
-            return basename(s.slice(0, pos));
-        }
-        else {
-            var cur = s.slice(pos+1);
-            if (cur.length>24) {
-                return cur
-            } else {
-                return cur;
-            }
-        }
-    }
 
     var a = [
         [ 'tr',
@@ -88,7 +87,7 @@ window.templates.request_list_row = function(r, expandList)
                     "class", http_map_mime_to_type(http_get_mime_from_extension(r.request.path))]
             ],
             ['td', r.request.method],
-            ['td', basename(r.request.path) ],
+            ['td', templates.sanitize_url(r) ],
             ['td', (r.response ? r.response.status : "-"), 'class', 'status-cell'],
             ['td', (r.response ? r.response.reason: "-"), 'class', 'reason-cell'],
             'data-requestid', r.id,

@@ -79,8 +79,8 @@ cls.RequestListView = function(id, name, container_class)
     this.doCreateView = function(container)
     {
         var log = HTTPLoggerData.getLog();
+
         if (!this.viewIsValid(log)) {
-            //container.clearAndRender(window.templates.request_list_header());
             container.clearAndRender(['table',['tbody'], 'class', 'request-table']);
             nextToRendereIndex = 0;
         }
@@ -92,6 +92,7 @@ cls.RequestListView = function(id, name, container_class)
         }
         
         var tpls = log.slice(nextToRendereIndex).map(fun);
+
         tableBodyEle.render(tpls);
         nextToRendereIndex = log.length;
     }
