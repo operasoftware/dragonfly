@@ -544,14 +544,6 @@ settings hr
   margin: 9px 26px;
 }
 
-setting-composite select
-{
-  padding: 0;
-  margin: 0;
-  height: 2em;
-  vertical-align: middle;
-}
-
 view-slider { /**/
   display: block;
   position: absolute;

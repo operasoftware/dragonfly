@@ -20,6 +20,14 @@ cls.CSSLayoutView = function(id, name, container_class)
           <layout-container></layout-container>\
           <offsets-container></offsets-container>\
           </div>";
+
+      var layout = container.getElementsByTagName('layout-container')[0];
+      if(layout)
+      {
+        hostspotlighter.clearMouseHandlerTarget();
+        layout.addEventListener('mouseover', hostspotlighter.metricsMouseoverHandler, false);
+        layout.addEventListener('mouseout', hostspotlighter.metricsMouseoutHandler, false);
+      }
     }
     this.updateLayout({});
     this.updateOffsets({});

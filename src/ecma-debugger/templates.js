@@ -564,7 +564,7 @@ Line 2:
         ret[ret.length] = css_path[i].combinator;
       }
     }
-    return ret;
+    return ret.concat(['onmouseover', helpers.breadcrumbSpotlight, 'onmouseout', helpers.breadcrumbClearSpotlight]);
   }
 
   this.uiLangOptions = function(lang_dict)
@@ -780,6 +780,5 @@ Line 2:
     }
     return ret;
   }
-  
 
 }).apply(window.templates);
