@@ -13,6 +13,24 @@
   var host_colors = {};
   var client_colors = {};
 
+  const
+  DIMENSION = 0,
+  PADDING = 1,
+  BORDER = 2,
+  MARGIN = 3,
+  FILL = 0,
+  FRAME = 1,
+  GRID = 2,
+  START_TAG = ["<fill-color>", "<frame-color>", "<grid-color>"],
+  END_TAG = ["</fill-color>", "</frame-color>", "</grid-color>"];
+
+  var matrixes =
+  {
+    "default": [],
+    "metrics-hover": [],
+    "locked": []
+  }
+
 
   var parse_int_16 = function(str)
   {
@@ -54,9 +72,66 @@
     return "";
   }
 
+  var set_metrics_matrixes = function( metrics_inner_inner, metrics_inner, metrics_active)
+  {
+
+  }
+
+  var setMetricsHoverMatrixes = function(matrix)
+  {
+
+  }
+
+
   var set_initial_values = function()
   {
-    
+    var 
+    matrix = matrixes["default"],
+    source_matrix = ini.hostspotlight_matrixes["default"],
+    temp = null,
+    box = null,
+    color = null,
+    i = 0,
+    j = 0;
+
+    for( ; i < 4; i++ )
+    {
+      if( box = source_matrix[i] )
+      {
+        matrix[i] = [];
+        for( j = 0; j < 3; j++)
+        {
+          matrix[i][j] = (color = box[j]) && convert_rgba_to_int(color) || 0;
+        }
+      }
+      else
+      {
+        matrix[i] = null;
+      }
+    }
+
+    matrix = [];
+    source_matrix = ini.hostspotlight_matrixes["default"]
+    for( i = 0; i < 3; i++ )
+    {
+      if( box = source_matrix[i] )
+      {
+        matrix[i] = [];
+        for( j = 0; j < 3; j++)
+        {
+          matrix[i][j] = (color = box[j]) && convert_rgba_to_int(color) || 0;
+        }
+      }
+      else
+      {
+        matrix[i] = null;
+      }
+    }
+
+    setMetricsHoverMatrixes(matrix);
+
+
+
     host_colors.dimension = convert_rgba_to_int(INITIAL_DIMENSION_COLOR);
     client_colors.dimension = convert_rgba_to_hex(INITIAL_DIMENSION_COLOR);
     host_colors.padding = convert_rgba_to_int(INITIAL_PADDING_COLOR);
@@ -79,32 +154,43 @@
 
   }
 
+  this.get_command = function(node_id, scroll_into_view, matrix)
+  {
+    var ret = \
+    "<spotlight-object>" +
+    "<object-id>" + node_id + "</object-id>" +
+    "<scroll-into-view>" + ( scroll_into_view && 1 || 0 ) + "</scroll-into-view>",
+    box = null, 
+    i = 0, 
+    j = 0;
+
+    for( ; i < 4; i++)
+    {
+      if( box = matrix[i] )
+      {
+        ret += "<box><box-type>" + i + "</box-type>";
+        for( j = 0; j < 3; j++ )
+        {
+          if( box[j] )
+          {
+            ret += START_TAG[j] + box[j] + END_TAG[j];
+          }
+        }
+        ret += "</box>";
+      }
+    }
+    ret += "</spotlight-object>";
+    return ret;
+  }
+
   this.spotlight = function(node_id, scroll_into_view)
   {
     services['ecmascript-debugger'].post
     (
       "<spotlight-objects>" +
-        "<spotlight-object>" +
-          "<object-id>" + node_id + "</object-id>" +
-          "<scroll-into-view>" + ( scroll_into_view && 1 || 0 ) + "</scroll-into-view>" +
-          "<box>" +
-            "<box-type>2</box-type>" +
-            "<fill-color>" + host_colors.border + "</fill-color>" +
-            "<frame-color>" + host_colors.frame + "</frame-color>" +
-            "<grid-color>" + host_colors.grid + "</grid-color>" +
-          "</box>"  +
-          "<box>" +
-            "<box-type>1</box-type>" +
-            "<fill-color>" + host_colors.padding + "</fill-color>" +
-          "</box>"  +
-          "<box>" +
-            "<box-type>0</box-type>" +
-            "<fill-color>" + host_colors.dimension + "</fill-color>" +
-          "</box>"  +
-        "</spotlight-object>" +
-        getSpotlighLockedElements() +
+       this.get_command(node_id, scroll_into_view, matrixes["default"]) +
       "</spotlight-objects>"
-    );
+    )
   }
 
   this.spotlight_dimension = function(node_id, scroll_into_view)
@@ -217,14 +303,18 @@
   var class_names = ['margin', 'border', 'padding', 'dimension'];
   this.clearMouseHandlerTarget = function()
   {
+    var index = 0, style = null;
     if(mouse_handler_target)
     {
-      mouse_handler_target.style.removeProperty('background-color');    
-      var index = class_names.indexOf(mouse_handler_target.className) + 1, target = null;
+      style = mouse_handler_target.style;
+      style.removeProperty('background-color');  
+      style.removeProperty('color');  
+      index = class_names.indexOf(mouse_handler_target.className) + 1;
       if( index && index < 4 )
       {
-        mouse_handler_target.
-          getElementsByClassName(class_names[index])[0].style.removeProperty('background-color');
+        style = mouse_handler_target.getElementsByClassName(class_names[index])[0].style;
+        style.removeProperty('background-color');
+        style.removeProperty('color');
       }
       self.clearSpotlight();
     }
@@ -234,11 +324,13 @@
   {
     mouse_handler_target = target;
     target.style.backgroundColor = client_colors.margin;
-    var index = class_names.indexOf(class_name) + 1;
+    target.style.color = "#fff"; //client_colors.margin;
+    var index = class_names.indexOf(class_name) + 1, style = null;
     if( index && index < 4 )
     {
-      target.getElementsByClassName(class_names[index])[0].style.backgroundColor = 
-        client_colors.dimension;
+      style = target.getElementsByClassName(class_names[index])[0].style
+      style.backgroundColor = client_colors.dimension;
+      style.color = "#000"; //client_colors.dimension;
     }
   }
   // mouseover handler in Layout Metrics
