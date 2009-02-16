@@ -81,7 +81,6 @@ cls.HTTPLoggerService = function(name)
     this.parseRequest = function(request)
     {
         var retval = {};
-        retval.time = new Date().getTime();
         var children = request.documentElement.childNodes;
         for (var n=0, ele; ele=children[n]; n++)
         {
@@ -98,12 +97,17 @@ cls.HTTPLoggerService = function(name)
             }
             else
             {
-                retval[ele.nodeName] = ele.textContent;
+                if (ele.nodeName == "time") {
+                    retval[ele.nodeName] = Math.round(parseFloat(ele.textContent))
+                } else {
+                    retval[ele.nodeName] = ele.textContent;
+                }
             }
         }
         
         retval.host = retval.headers.Host;
         retval.url = retval.headers.Host + retval.path;
+        
         return retval;
     }
 
@@ -126,7 +130,6 @@ cls.HTTPLoggerService = function(name)
     this.parseResponse = function(response)
     {
         var retval = {};
-        retval.time = new Date().getTime();
         var children = response.documentElement.childNodes;
         for (var n=0, ele; ele=children[n]; n++)
         {
@@ -146,7 +149,11 @@ cls.HTTPLoggerService = function(name)
             }
             else
             {
-                retval[ele.nodeName] = ele.textContent;
+                if (ele.nodeName == "time") {
+                    retval[ele.nodeName] = Math.round(parseFloat(ele.textContent))
+                } else {
+                    retval[ele.nodeName] = ele.textContent;
+                }
             }
         }
         return retval;
