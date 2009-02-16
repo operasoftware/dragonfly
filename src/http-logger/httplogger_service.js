@@ -65,7 +65,7 @@ cls.HTTPLoggerService = function(name)
      * request = {
      *  request-id: 123,
      *  window-id: 234,
-     *  time: 345,
+     *  time: 12341234, // time request event was received
      *  method: "GET/POST/..",
      *  path: "/foo/bar/baz",
      *  query: "?asdf=morradi",
@@ -81,6 +81,7 @@ cls.HTTPLoggerService = function(name)
     this.parseRequest = function(request)
     {
         var retval = {};
+        retval.time = new Date.getTime();
         var children = request.documentElement.childNodes;
         for (var n=0, ele; ele=children[n]; n++)
         {
@@ -111,7 +112,7 @@ cls.HTTPLoggerService = function(name)
      * response = {
      *  request-id: 123,
      *  window-id: 234,
-     *  time: 345,
+     *  time: 12664234, // time response event was received
      *  protocol: "HTTP 1/1",
      *  status: 200,
      *  reason: OK
@@ -125,6 +126,7 @@ cls.HTTPLoggerService = function(name)
     this.parseResponse = function(response)
     {
         var retval = {};
+        retval.time = new Date.getTime();
         var children = response.documentElement.childNodes;
         for (var n=0, ele; ele=children[n]; n++)
         {
