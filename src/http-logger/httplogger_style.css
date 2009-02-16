@@ -47,8 +47,6 @@
     text-align: right;
 }
 
-
-
 .request-table button.expand-collapse {
   height: 15px;
   width: 19px;
@@ -59,12 +57,12 @@
   cursor: pointer;
 }
 
-.request-table button.expand-collapse:active {
-    background-color: highlight;
+.request-table tr.collapsed button {
+  background: transparent url('../ui-images/expand-collapse.png') 4px 2px no-repeat;
 }
 
-.request-table tr.collapsed button.expand-collapse {
-  background: transparent url('../ui-images/expand-collapse.png') 4px 2px no-repeat;
+.request-table button[handler=request-list-expand-collapse]:active {
+    background-color: highlight;
 }
 
 .request-table label {
@@ -104,7 +102,6 @@ button[handler="clear-request-list"]:before {
     font-weight: bold;
     background-color: #fafafa;
 }
-
 
 .request-table div{
     padding: 6px;
