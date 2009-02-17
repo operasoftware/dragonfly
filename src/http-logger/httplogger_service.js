@@ -65,7 +65,7 @@ cls.HTTPLoggerService = function(name)
      * request = {
      *  request-id: 123,
      *  window-id: 234,
-     *  time: 345,
+     *  time: 12341234, // time request event was received
      *  method: "GET/POST/..",
      *  path: "/foo/bar/baz",
      *  query: "?asdf=morradi",
@@ -97,12 +97,17 @@ cls.HTTPLoggerService = function(name)
             }
             else
             {
-                retval[ele.nodeName] = ele.textContent;
+                if (ele.nodeName == "time") {
+                    retval[ele.nodeName] = Math.round(parseFloat(ele.textContent))
+                } else {
+                    retval[ele.nodeName] = ele.textContent;
+                }
             }
         }
         
         retval.host = retval.headers.Host;
         retval.url = retval.headers.Host + retval.path;
+        
         return retval;
     }
 
@@ -111,7 +116,7 @@ cls.HTTPLoggerService = function(name)
      * response = {
      *  request-id: 123,
      *  window-id: 234,
-     *  time: 345,
+     *  time: 12664234, // time response event was received
      *  protocol: "HTTP 1/1",
      *  status: 200,
      *  reason: OK
@@ -144,7 +149,11 @@ cls.HTTPLoggerService = function(name)
             }
             else
             {
-                retval[ele.nodeName] = ele.textContent;
+                if (ele.nodeName == "time") {
+                    retval[ele.nodeName] = Math.round(parseFloat(ele.textContent))
+                } else {
+                    retval[ele.nodeName] = ele.textContent;
+                }
             }
         }
         return retval;

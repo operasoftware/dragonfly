@@ -15,7 +15,7 @@ cls.RequestListView = function(id, name, container_class)
     var self = this;
 
     // The list will never be updated more often than this:
-    this.minUpdateInterval = 350; // in milliseconds.
+    this.minUpdateInterval = 500; // in milliseconds.
     var lastUpdateTime = null;
     var updateTimer = null; // timer id so we can cancel a timeout
     var nextToRendereIndex = null;  // index in log of the next element to render
@@ -85,12 +85,25 @@ cls.RequestListView = function(id, name, container_class)
             nextToRendereIndex = 0;
         }
         tableBodyEle = container.getElementsByTagName('tbody')[0];
+       
+        if (log.length) {
+            var times = log.map(function(e) {
+                return e.response ? e.response.time : e.request.time
+            })
+            var times = times.sort();
+            lastTime = times[times.length-1];
+        } else {
+            lastTime = new Date().getTime();
+        }
+        
+        var firstTime = log.length ? log[0].request.time : lastTime;
+
         
         // partial function invocation that closes over expandedItems
         var fun = function(e) {
-            return window.templates.request_list_row(e, expandedItems);
+            return window.templates.request_list_row(e, expandedItems, firstTime, lastTime);
         }
-        
+
         var tpls = log.slice(nextToRendereIndex).map(fun);
 
         tableBodyEle.render(tpls);

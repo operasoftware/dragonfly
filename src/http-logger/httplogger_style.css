@@ -47,6 +47,14 @@
     text-align: right;
 }
 
+.request-table tr td:nth-child(6) {
+    width: 8em;
+}
+
+.request-table tr td:nth-child(7) {
+    margin: 0;
+    padding: 0;
+}
 
 
 .request-table button.expand-collapse {
@@ -59,12 +67,12 @@
   cursor: pointer;
 }
 
-.request-table button.expand-collapse:active {
-    background-color: highlight;
+.request-table tr.collapsed button {
+  background: transparent url('../ui-images/expand-collapse.png') 4px 2px no-repeat;
 }
 
-.request-table tr.collapsed button.expand-collapse {
-  background: transparent url('../ui-images/expand-collapse.png') 4px 2px no-repeat;
+.request-table button[handler=request-list-expand-collapse]:active {
+    background-color: highlight;
 }
 
 .request-table label {
@@ -105,7 +113,18 @@ button[handler="clear-request-list"]:before {
     background-color: #fafafa;
 }
 
-
 .request-table div{
     padding: 6px;
+}
+
+/* timer bar stuff */
+
+.request-table span {
+    vertical-align: text-top;
+    height: 18px;
+    display: inline-block;
+    background-image:url(../ui-images/http-graph-right.png);
+    background-position: right;
+    border-left: solid 1px #9EADC4;
+    min-width: 10px;
 }
