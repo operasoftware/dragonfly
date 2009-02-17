@@ -579,12 +579,12 @@ Line 2:
       {
         browserLanguge: "cs",
         key: "cs",
-        name: "česky"
+        name: "Česky"
       },
       {
         browserLanguge: "da",
         key: "da",
-        name: "dansk"
+        name: "Dansk"
       },
       {
         browserLanguge: "de",
@@ -602,19 +602,14 @@ Line 2:
         name: "English"
       },
       {
-        browserLanguge: "en-GB",
-        key: "en",
-        name: "English"
-      },
-      {
         browserLanguge: "es-ES",
         key: "es-ES",
-        name: "Español"
+        name: "Español (España)"
       },
       {
         browserLanguge: "es-LA",
         key: "es-LA",
-        name: "Español"
+        name: "Español (Latinoamérica)"
       },
       {
         browserLanguge: "et",
@@ -624,7 +619,7 @@ Line 2:
       {
         browserLanguge: "fi",
         key: "fi",
-        name: "suomen kieli"
+        name: "Suomen kieli"
       },
       {
         browserLanguge: "fr",
@@ -634,7 +629,7 @@ Line 2:
       {
         browserLanguge: "fr-CA",
         key: "fr-CA",
-        name: "Français"
+        name: "Français Canadien"
       },
       {
         browserLanguge: "fy",
@@ -669,7 +664,7 @@ Line 2:
       {
         browserLanguge: "ja",
         key: "ja",
-        name: "日本語 (にほんご／にっぽんご)"
+        name: "日本語"
       },
       {
         browserLanguge: "ka",
@@ -679,12 +674,12 @@ Line 2:
       {
         browserLanguge: "ko",
         key: "ko",
-        name: "한국어 (韓國語)"
+        name: "한국어"
       },
       {
         browserLanguge: "lt",
         key: "lt",
-        name: "lietuvių kalba"
+        name: "Lietuvių kalba"
       },
       {
         browserLanguge: "mk",
@@ -709,7 +704,7 @@ Line 2:
       {
         browserLanguge: "pl",
         key: "pl",
-        name: "polski"
+        name: "Polski"
       },
       {
         browserLanguge: "pt",
@@ -719,17 +714,17 @@ Line 2:
       {
         browserLanguge: "pt-BR",
         key: "pt-BR",
-        name: "Português"
+        name: "Português (Brasil)"
       },
       {
         browserLanguge: "ru",
         key: "ru",
-        name: "русский язык"
+        name: "Русский язык"
       },
       {
         browserLanguge: "sv",
         key: "sv",
-        name: "svenska"
+        name: "Svenska"
       },
       {
         browserLanguge: "ta",
@@ -752,19 +747,14 @@ Line 2:
         name: "Українська"
       },
       {
-        browserLanguge: "sv",
-        key: "sv",
-        name: "svenska"
-      },
-      {
         browserLanguge: "zh-cn",
         key: "zh-cn",
-        name: "中文, 汉语, 漢語"
+        name: "简体中文"
       },
       {
         browserLanguge: "zh-tw",
         key: "zh-tw",
-        name: "中文, 汉语, 漢語"
+        name: "繁體中文"
       }
     ],
     lang = null,
