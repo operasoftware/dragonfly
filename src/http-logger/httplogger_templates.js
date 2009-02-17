@@ -73,9 +73,16 @@ window.templates.sanitize_url = function(req)
 /**
  * Renders a single row of request data in the request list
  */
-window.templates.request_list_row = function(r, expandList)
+window.templates.request_list_row = function(r, expandList, firstTime, lastTime)
 {
     var expanded = expandList.indexOf(r.id) != -1;
+
+    var range = lastTime - firstTime;
+    rangeP = 100/range;
+    var cur = r.request.time - firstTime;
+    curP = cur*rangeP;
+
+    dur = r.response ? Math.floor((r.response.time - r.request.time)*rangeP) : null
 
     var a = [
         [ 'tr',
@@ -90,6 +97,7 @@ window.templates.request_list_row = function(r, expandList)
             ['td', templates.sanitize_url(r) ],
             ['td', (r.response ? r.response.status : "-"), 'class', 'status-cell'],
             ['td', (r.response ? r.response.reason: "-"), 'class', 'reason-cell'],
+            ['td', ["span", "" + r.duration + "ms", "style", "margin-left: " + Math.floor(curP) + "%; width: " + (dur!=null ? dur : 50 ) + "%"], 'class', 'time-cell'],
             'data-requestid', r.id,
             'class', 'typeicon mime-' + 
                     http_map_mime_to_type(http_get_mime_from_extension(r.request.path)) +

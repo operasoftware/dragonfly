@@ -97,13 +97,11 @@ window.HTTPLoggerData = new function()
             r.response = response;
             if (r.request.time && r.response.time)
             {
-                var s = Math.round(parseFloat(r.request.time))
-                var e = Math.round(parseFloat(r.response.time))
-                r.duration = e-s;
+                r.duration = r.response.time-r.request.time;
             }
             else
             {
-                r.duration = "?";
+                r.duration = 0;
             }
             lastModifiedRequestId = r.id;
             _updateViews();
