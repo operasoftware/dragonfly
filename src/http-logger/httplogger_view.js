@@ -85,21 +85,25 @@ cls.RequestListView = function(id, name, container_class)
             nextToRendereIndex = 0;
         }
         tableBodyEle = container.getElementsByTagName('tbody')[0];
+       
+        if (log.length) {
+            var times = log.map(function(e) {
+                return e.response ? e.response.time : e.request.time
+            })
+            var times = times.sort();
+            lastTime = times[times.length-1];
+        } else {
+            lastTime = new Date().getTime();
+        }
         
-
-        // fixme nowtime is not right, should be lasttime. as in the highest
-        // recorded time in the log, or it'll look weird due to the
-        // use of lastUpdateTime
-        var nowTime = new Date().getTime();
-        var firstTime = log.length ? log[0].request.time : nowTime;
+        var firstTime = log.length ? log[0].request.time : lastTime;
 
         
         // partial function invocation that closes over expandedItems
         var fun = function(e) {
-            return window.templates.request_list_row(e, expandedItems, firstTime, nowTime);
+            return window.templates.request_list_row(e, expandedItems, firstTime, lastTime);
         }
 
-        opera.postError("======================================================")        
         var tpls = log.slice(nextToRendereIndex).map(fun);
 
         tableBodyEle.render(tpls);

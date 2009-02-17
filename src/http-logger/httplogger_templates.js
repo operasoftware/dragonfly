@@ -73,18 +73,16 @@ window.templates.sanitize_url = function(req)
 /**
  * Renders a single row of request data in the request list
  */
-window.templates.request_list_row = function(r, expandList, firstTime, nowTime)
+window.templates.request_list_row = function(r, expandList, firstTime, lastTime)
 {
     var expanded = expandList.indexOf(r.id) != -1;
 
-    var range = nowTime - firstTime;
+    var range = lastTime - firstTime;
     rangeP = 100/range;
     var cur = r.request.time - firstTime;
     curP = cur*rangeP;
 
     dur = r.response ? Math.floor((r.response.time - r.request.time)*rangeP) : null
-    
-    opera.postError("P " + cur + " : " + dur + " (" + r.duration + ") / " + range )
 
     var a = [
         [ 'tr',

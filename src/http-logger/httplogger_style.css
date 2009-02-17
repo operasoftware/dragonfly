@@ -120,9 +120,11 @@ button[handler="clear-request-list"]:before {
 /* timer bar stuff */
 
 .request-table span {
+    vertical-align: text-top;
     height: 18px;
     display: inline-block;
     background-image:url(../ui-images/http-graph-right.png);
     background-position: right;
     border-left: solid 1px #9EADC4;
+    min-width: 10px;
 }
