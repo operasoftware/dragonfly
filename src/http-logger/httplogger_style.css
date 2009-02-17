@@ -47,6 +47,16 @@
     text-align: right;
 }
 
+.request-table tr td:nth-child(6) {
+    width: 8em;
+}
+
+.request-table tr td:nth-child(7) {
+    margin: 0;
+    padding: 0;
+}
+
+
 .request-table button.expand-collapse {
   height: 15px;
   width: 19px;
@@ -105,4 +115,11 @@ button[handler="clear-request-list"]:before {
 
 .request-table div{
     padding: 6px;
+}
+
+/* timer bar stuff */
+
+.request-table span {
+    display: inline-block;
+    background-color: gold;
 }
