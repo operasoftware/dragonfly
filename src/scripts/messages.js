@@ -17,26 +17,21 @@
  * </p>
  *
  * <dl>
+ *
+ *     <dt>application-setup</dt>
+ *     <dd>If the application was set up</dd>
+ *
  *     <dt>active-tab</dt>
- *     <dd>A runtime was selected. Payload: array msg.activeTab</dd>
+ *     <dd>When the debug context changes or the top runtime of the active window changes. This will happen if a link is clicked in the active window. Payload: array msg.activeTab</dd>
+ *
+ *     <dt>host-state</dt>
+ *     <dd>State of the host. Payload: msg.state = 'disconnected' | 'ready' | waiting'</dd>
  *
  *     <dt>show-view</dt>
  *     <dd>a view was created. Payload: id msg.view</dd>
  *
  *     <dt>remove-view</dt>
  *     <dd>a view was removed. Payload: id msg.view</dd>
- *
- *     <dt>setting-changed</dt>
- *     <dd>A setting has changed. Payload: msg.id, msg.key</dd>
- *
- *     <dt>host-state</dt>
- *     <dd>State of the host. Payload: msg.state = 'disconnected' | 'ready' | waiting'</dd>
- *
- *     <dt>active-tab</dt>
- *     <dd>A runtime was selected. Payload: msg.activeTab</dd>
- *
- *     <dt>element-selected</dt>
- *     <dd>An element was selected. Payload: msg.obj_id, msg.rf_id</dd>
  *
  *     <dt>view-created</dt>
  *     <dd>Payload: msg.id, msg.container</dd>
@@ -53,15 +48,6 @@
  *     <dt>runtime-selected</dt>
  *     <dd>Payload: msg.id</dd>
  *
- *     <dt>list-search-context</dt>
- *     <dd>Payload: msg.data_id, msg.obj_id, msg.depth</dd>
- *
- *     <dt>script-selected</dt>
- *     <dd>A runtime was selected. Payload: msg.rt_id, msg.script_id</dd>
- *
- *     <dt>onApplicationSetup</dt>
- *     <dd>If the application was set up</dd>
- *
  *     <dt>runtime-destroyed</dt>
  *     <dd>Payload: msg.id</dd>
  *
@@ -70,6 +56,18 @@
  *
  *     <dt>thread-continue-event</dt>
  *     <dd>Payload: msg.stop_at</dd>
+ *
+ *     <dt>script-selected</dt>
+ *     <dd>A runtime was selected. Payload: msg.rt_id, msg.script_id</dd>
+ *
+ *     <dt>element-selected</dt>
+ *     <dd>An element was selected. Payload: msg.obj_id, msg.rf_id</dd>
+ *
+ *     <dt>setting-changed</dt>
+ *     <dd>A setting has changed. Payload: msg.id, msg.key</dd>
+ *
+ *     <dt>list-search-context</dt>
+ *     <dd>Payload: msg.data_id, msg.obj_id, msg.depth</dd>
  *
  *     <dt>active-inspection-type</dt>
  *     <dd>Payload: msg.inspection_type</dd>
@@ -111,14 +109,14 @@ var messages = new function()
    */
   this.removeListener = function(key, cb)
   {
-    var cur, listeners = __listeners[ key ];
+    var cur = null, listeners = __listeners[ key ], i = 0;
     if( listeners )
     {
       for( ; cur = listeners[i]; i++)
       {
         if (cur == cb)
         {
-          __listeners.splice(i, 1);
+          listeners.splice(i, 1);
           i--;
         }
       }

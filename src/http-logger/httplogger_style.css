@@ -1,0 +1,130 @@
+﻿.request-table {
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.request-table tr {
+    border-bottom: 1px solid #D9D9D9;
+}
+
+.request-table td {
+    border-left: 1px solid #D9D9D9;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+/*.request-table tr th:first-child, .request-table tr td:first-child {*/
+/*   border-left: 0px;*/
+/*}*/
+
+.request-table tr:nth-child(odd) {
+    background-color: #fbfafa;
+}
+
+.request-table tr td:nth-child(1) {
+    width: 16px;
+}
+
+.request-table tr td:nth-child(2) {
+    width: 16px;
+}
+
+.request-table tr td:nth-child(3) {
+    width: 4em;
+}
+
+.request-table tr td:nth-child(4) {
+    width: 24ex;
+    overflow: hidden;
+    -o-text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: bold;
+}
+
+.request-table tr td:nth-child(5) {
+    width: 3em;
+    text-align: right;
+}
+
+.request-table tr td:nth-child(6) {
+    width: 8em;
+}
+
+.request-table tr td:nth-child(7) {
+    margin: 0;
+    padding: 0;
+}
+
+
+.request-table button.expand-collapse {
+  height: 15px;
+  width: 19px;
+  background: transparent url('../ui-images/expand-collapse.png') 4px -13px no-repeat;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.request-table tr.collapsed button {
+  background: transparent url('../ui-images/expand-collapse.png') 4px 2px no-repeat;
+}
+
+.request-table button[handler=request-list-expand-collapse]:active {
+    background-color: highlight;
+}
+
+.request-table label {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background-image: url(../ui-images/filetype_unknown.png);
+}
+
+.request-table label.markup {
+    background-image: url(../ui-images/filetype_html.png);
+}
+
+.request-table label.image {
+    background-image: url(../ui-images/filetype_image.png);
+}
+
+.request-table label.css {
+    background-image: url(../ui-images/filetype_stylesheet.png);
+}
+
+.request-table label.flash {
+    background-image: url(../ui-images/filetype_flash.png);
+}
+
+.request-table label.javascript {
+    background-image: url(../ui-images/filetype_javascript.png);
+}
+
+/* HTTP logger buttons start */
+
+button[handler="clear-request-list"]:before {
+  background-image: url('../ui-images/btn-clear-error-console.png');
+}
+
+.headerlist dt {
+    font-weight: bold;
+    background-color: #fafafa;
+}
+
+.request-table div{
+    padding: 6px;
+}
+
+/* timer bar stuff */
+
+.request-table span {
+    vertical-align: text-top;
+    height: 18px;
+    display: inline-block;
+    background-image:url(../ui-images/http-graph-right.png);
+    background-position: right;
+    border-left: solid 1px #9EADC4;
+    min-width: 10px;
+}

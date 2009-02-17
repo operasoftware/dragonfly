@@ -11,6 +11,7 @@ var TopCell = function(layout, setDimensions, onresize)
   this.setStartDimesions = setDimensions;
   var resize_timeout = new Timeouts();
   this.onresize = onresize;
+  this.cell_type = 'top';
   var delayed_resize = function()
   {
     self.onresize();
@@ -27,6 +28,7 @@ var TopCell = function(layout, setDimensions, onresize)
     this.container = new TopContainer(this); // actually just a cell
     this.tab = new TopTabs(this);
     this.toolbar = new TopToolbar(this);
+    toolbars[this.id].setVisibility(!opera.attached);
     this.statusbar = new TopStatusbar(this);
   }
 
@@ -78,10 +80,25 @@ var TopCell = function(layout, setDimensions, onresize)
     }
   }
 
+  this.setTooolbarVisibility = function(view_id, bool)
+  {
+    var tab = '', view = null, i = 0;
+    if(toolbars[view_id])
+    {
+      toolbars[view_id].setVisibility(bool);
+    }
+    for( i = 0 ; tab = this.tab.tabs[i]; i++ )
+    {
+      if( view = views[tab.ref_id] )
+      {
+        view.cell.setTooolbarVisibility(view_id, bool);
+      }
+    }
+  }
+
   this.setup = function()
   {
     var view_id = this.tab && this.tab.activeTab;
-
     if( view_id )
     {
       this.container.setup(view_id);
@@ -112,7 +129,9 @@ var TopCell = function(layout, setDimensions, onresize)
   }
 
   document.addEventListener('resize', setDelayedResize, false);
-  
+
+  // constructor calls
+  window.topCell = this;
   this.init(layout);
   this.setStartDimesions();
   this.toolbar.setup(this.id);
