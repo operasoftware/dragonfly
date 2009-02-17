@@ -10,7 +10,7 @@
   INITIAL_LOCKED_COLOR = [170, 33, 18, .5 * 255];
 
   var self = this;
-  var host_colors = {};
+  var matrixes = {};
   var client_colors = {};
 
   const
@@ -22,15 +22,19 @@
   FRAME = 1,
   GRID = 2,
   START_TAG = ["<fill-color>", "<frame-color>", "<grid-color>"],
-  END_TAG = ["</fill-color>", "</frame-color>", "</grid-color>"];
-
-  var matrixes =
+  END_TAG = ["</fill-color>", "</frame-color>", "</grid-color>"],
+  CSS_TEXT = ["background-color: ", "border-color: ", "border-color: "],
+  CSS_CONVERT_TABLE =
   {
-    "default": [],
-    "metrics-hover": [],
-    "locked": []
-  }
-
+    'background-color': 'backgroundColor', 
+    'border-color': 'borderColor',
+    'color':  'color'
+  },
+  INNER_INNER = 0,
+  INNER = 1,
+  ACTIVE = 2;
+  
+  var commands = {};
 
   var parse_int_16 = function(str)
   {
@@ -72,78 +76,28 @@
     return "";
   }
 
-  var set_metrics_matrixes = function( metrics_inner_inner, metrics_inner, metrics_active)
-  {
-
-  }
-
-  var setMetricsHoverMatrixes = function(matrix)
-  {
-
-  }
-
 
   var set_initial_values = function()
   {
-    var 
-    matrix = matrixes["default"],
-    source_matrix = ini.hostspotlight_matrixes["default"],
-    temp = null,
-    box = null,
-    color = null,
-    i = 0,
-    j = 0;
-
-    for( ; i < 4; i++ )
-    {
-      if( box = source_matrix[i] )
-      {
-        matrix[i] = [];
-        for( j = 0; j < 3; j++)
-        {
-          matrix[i][j] = (color = box[j]) && convert_rgba_to_int(color) || 0;
-        }
-      }
-      else
-      {
-        matrix[i] = null;
-      }
-    }
-
-    matrix = [];
-    source_matrix = ini.hostspotlight_matrixes["default"]
-    for( i = 0; i < 3; i++ )
-    {
-      if( box = source_matrix[i] )
-      {
-        matrix[i] = [];
-        for( j = 0; j < 3; j++)
-        {
-          matrix[i][j] = (color = box[j]) && convert_rgba_to_int(color) || 0;
-        }
-      }
-      else
-      {
-        matrix[i] = null;
-      }
-    }
-
-    setMetricsHoverMatrixes(matrix);
-
-
-
-    host_colors.dimension = convert_rgba_to_int(INITIAL_DIMENSION_COLOR);
-    client_colors.dimension = convert_rgba_to_hex(INITIAL_DIMENSION_COLOR);
-    host_colors.padding = convert_rgba_to_int(INITIAL_PADDING_COLOR);
-    host_colors.border = convert_rgba_to_int(INITIAL_BORDER_COLOR);
-    host_colors.margin = convert_rgba_to_int(INITIAL_MARGIN_COLOR);
-    client_colors.margin = convert_rgba_to_hex(INITIAL_MARGIN_COLOR);
-    host_colors.frame = convert_rgba_to_int(INITIAL_FRAME_COLOR);
-    host_colors.grid = convert_rgba_to_int(INITIAL_GRID_COLOR);
-    host_colors.locked = convert_rgba_to_int(INITIAL_LOCKED_COLOR);
-    
+    matrixes["default"] = ini.hostspotlight_matrixes["default"];
+    matrixes["hover"] = ini.hostspotlight_matrixes["metrics-hover"];
+    matrixes["locked"] = ini.hostspotlight_matrixes["locked"];
+    stringify_commands();
   }
 
+  var stringify_commands = function()
+  {
+    var matrix = [matrixes["hover"][0]].concat(matrixes["hover"]);
+    commands["default"] = stringify_command(matrixes["default"]);
+    commands["locked"] = stringify_command(matrixes["locked"]);
+    commands["dimension"] = stringify_command(matrix.slice(3));
+    commands["padding"] = stringify_command(matrix.slice(2));
+    commands["border"] = stringify_command(matrix.slice(1));
+    commands["margin"] = stringify_command(matrix.slice(0));
+    extract_css_properties(matrixes["hover"][2], ( client_colors.active = {} ) );
+    extract_css_properties(matrixes["hover"][1], ( client_colors.inner = {} ) );
+  }
+  
   this.setRGBA = function(target, rgba_arr)
   {
 
@@ -153,148 +107,102 @@
   {
 
   }
-
-  this.get_command = function(node_id, scroll_into_view, matrix)
+  
+  var stringify_command = function(matrix)
   {
-    var ret = \
-    "<spotlight-object>" +
-    "<object-id>" + node_id + "</object-id>" +
-    "<scroll-into-view>" + ( scroll_into_view && 1 || 0 ) + "</scroll-into-view>",
-    box = null, 
-    i = 0, 
-    j = 0;
-
+    var ret = "", box = null, color = null, i = 0, j = 0;
     for( ; i < 4; i++)
     {
       if( box = matrix[i] )
       {
         ret += "<box><box-type>" + i + "</box-type>";
-        for( j = 0; j < 3; j++ )
+        for( j = 0; j < 3; j++)
         {
-          if( box[j] )
+          if( color = box[j])
           {
-            ret += START_TAG[j] + box[j] + END_TAG[j];
+            ret += START_TAG[j] + convert_rgba_to_int(color) + END_TAG[j];
+            
           }
         }
         ret += "</box>";
       }
     }
-    ret += "</spotlight-object>";
     return ret;
   }
 
-  this.spotlight = function(node_id, scroll_into_view)
+  var invert_colors = function(matrix)
+  {
+    var matrix = null, prop = '', box = null, color = null, i = 0, j = 0;
+    for( prop in matrixes )
+    {
+      matrix = matrixes[prop];
+      for( i = 0; i < 4; i++)
+      {
+        if( box = matrix[i] )
+        {
+          for( j = 0; j < 3; j++)
+          {
+            if( color = box[j])
+            {
+
+              colors.setRGB(color);
+              colors.invert();
+              box[j] = colors.getRGB().concat(color[3]);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  var extract_css_properties = function(box, target)
+  {
+    // fill, frame, grid
+    var 
+      properties = ['background-color', 'border-color', 'border-color'],
+      color = null, 
+      i = 0;
+
+    
+
+    for( i = 2; i > -1; i--)
+    {
+      if( color = box[i])
+      {
+        target[properties[i]] = convert_rgba_to_hex(color);
+      }
+    }
+    target['color'] = colors.getGrayValue() > 130 && "#000" || "#fff";
+    return target;
+  }
+
+  
+  this.get_command = function(node_id, scroll_into_view, name)
+  {
+    return \
+      "<spotlight-object>" +
+        "<object-id>" + node_id + "</object-id>" +
+        "<scroll-into-view>" + ( scroll_into_view && 1 || 0 ) + "</scroll-into-view>" +
+        commands[name] +
+      "</spotlight-object>";
+  }
+
+  this.spotlight = function(node_id, scroll_into_view, type)
   {
     services['ecmascript-debugger'].post
     (
       "<spotlight-objects>" +
-       this.get_command(node_id, scroll_into_view, matrixes["default"]) +
+        this.get_command(node_id, scroll_into_view, type || "default") +
+        ( settings.dom.get('lock-selecked-elements') 
+          && locked_elements.map(this.get_locked_commands, this).join("")
+          || "" ) +
       "</spotlight-objects>"
     )
   }
-
-  this.spotlight_dimension = function(node_id, scroll_into_view)
+    
+  this.get_locked_commands = function(node_id)
   {
-    services['ecmascript-debugger'].post
-    (
-      "<spotlight-objects>" +
-        "<spotlight-object>" +
-          "<object-id>" + node_id + "</object-id>" +
-          "<scroll-into-view>0</scroll-into-view>" +
-          "<box>" +
-            "<box-type>0</box-type>" +
-            "<fill-color>" + host_colors.border + "</fill-color>" +
-            //"<frame-color>" + host_colors.frame + "</frame-color>" +
-            "<grid-color>" + host_colors.grid + "</grid-color>" +
-          "</box>"  +
-        "</spotlight-object>" +
-        getSpotlighLockedElements() +
-      "</spotlight-objects>"
-    );
-  }
-  this.spotlight_padding = function(node_id, scroll_into_view)
-  {
-    services['ecmascript-debugger'].post
-    (
-      "<spotlight-objects>" +
-        "<spotlight-object>" +
-          "<object-id>" + node_id + "</object-id>" +
-          "<scroll-into-view>0</scroll-into-view>" +
-          "<box>" +
-            "<box-type>1</box-type>" +
-            "<fill-color>" + host_colors.border + "</fill-color>" +
-            //"<frame-color>" + host_colors.frame + "</frame-color>" +
-            "<grid-color>" + host_colors.grid + "</grid-color>" +
-          "</box>"  +
-          "<box>" +
-            "<box-type>0</box-type>" +
-            "<fill-color>" + host_colors.dimension + "</fill-color>" +
-            "<frame-color>" + host_colors.frame + "</frame-color>" +
-          "</box>"  +
-        "</spotlight-object>" +
-        getSpotlighLockedElements() +
-      "</spotlight-objects>"
-    );
-  }
-  this.spotlight_border = function(node_id, scroll_into_view)
-  {
-    services['ecmascript-debugger'].post
-    (
-      "<spotlight-objects>" +
-        "<spotlight-object>" +
-          "<object-id>" + node_id + "</object-id>" +
-          "<scroll-into-view>0</scroll-into-view>" +
-          "<box>" +
-            "<box-type>2</box-type>" +
-            "<fill-color>" + host_colors.border + "</fill-color>" +
-            //"<frame-color>" + host_colors.frame + "</frame-color>" +
-            "<grid-color>" + host_colors.grid + "</grid-color>" +
-          "</box>"  +
-          "<box>" +
-            "<box-type>1</box-type>" +
-            "<fill-color>" + host_colors.dimension + "</fill-color>" +
-            "<frame-color>" + host_colors.frame + "</frame-color>" +
-          "</box>"  +
-          "<box>" +
-            "<box-type>0</box-type>" +
-            "<fill-color>" + host_colors.dimension + "</fill-color>" +
-          "</box>"  +
-        "</spotlight-object>" +
-        getSpotlighLockedElements() +
-      "</spotlight-objects>"
-    );
-  }
-  this.spotlight_margin = function(node_id, scroll_into_view)
-  {
-    services['ecmascript-debugger'].post
-    (
-      "<spotlight-objects>" +
-        "<spotlight-object>" +
-          "<object-id>" + node_id + "</object-id>" +
-          "<scroll-into-view>0</scroll-into-view>" +
-          "<box>" +
-            "<box-type>3</box-type>" +
-            "<fill-color>" + host_colors.border + "</fill-color>" +
-            //"<frame-color>" + host_colors.frame + "</frame-color>" +
-            "<grid-color>" + host_colors.grid + "</grid-color>" +
-          "</box>"  +
-          "<box>" +
-            "<box-type>2</box-type>" +
-            "<fill-color>" + host_colors.dimension + "</fill-color>" +
-            "<frame-color>" + host_colors.frame + "</frame-color>" +
-          "</box>"  +
-          "<box>" +
-            "<box-type>1</box-type>" +
-            "<fill-color>" + host_colors.dimension + "</fill-color>" +
-          "</box>"  +
-          "<box>" +
-            "<box-type>0</box-type>" +
-            "<fill-color>" + host_colors.dimension + "</fill-color>" +
-          "</box>"  +
-        "</spotlight-object>" +
-        getSpotlighLockedElements() +
-      "</spotlight-objects>"
-    );
+    return this.get_command(node_id, 0, "locked");
   }
 
   var mouse_handler_target = null;
@@ -303,18 +211,29 @@
   var class_names = ['margin', 'border', 'padding', 'dimension'];
   this.clearMouseHandlerTarget = function()
   {
-    var index = 0, style = null;
+    var index = 0, 
+    style = null,
+    style_source = client_colors.active, 
+    prop = '';
+
+    
+
     if(mouse_handler_target)
     {
       style = mouse_handler_target.style;
-      style.removeProperty('background-color');  
-      style.removeProperty('color');  
+      for( prop in style_source )
+      {
+        style.removeProperty(prop);
+      } 
       index = class_names.indexOf(mouse_handler_target.className) + 1;
       if( index && index < 4 )
       {
         style = mouse_handler_target.getElementsByClassName(class_names[index])[0].style;
-        style.removeProperty('background-color');
-        style.removeProperty('color');
+        style_source = client_colors.inner;
+        for( prop in style_source )
+        {
+          style.removeProperty(prop);
+        } 
       }
       self.clearSpotlight();
     }
@@ -322,15 +241,25 @@
   }
   var setStyleMouseHandlerTarget = function(target, class_name)
   {
+    var 
+    index = class_names.indexOf(class_name) + 1, 
+    style = target.style,
+    style_source = client_colors.active, 
+    prop = '';
+
     mouse_handler_target = target;
-    target.style.backgroundColor = client_colors.margin;
-    target.style.color = "#fff"; //client_colors.margin;
-    var index = class_names.indexOf(class_name) + 1, style = null;
+    for( prop in style_source )
+    {
+      style[CSS_CONVERT_TABLE[prop]] = style_source[prop];
+    }
     if( index && index < 4 )
     {
-      style = target.getElementsByClassName(class_names[index])[0].style
-      style.backgroundColor = client_colors.dimension;
-      style.color = "#000"; //client_colors.dimension;
+      style = target.getElementsByClassName(class_names[index])[0].style;
+      style_source = client_colors.inner;
+      for( prop in style_source )
+      {
+        style[CSS_CONVERT_TABLE[prop]] = style_source[prop];
+      }
     }
   }
   // mouseover handler in Layout Metrics
@@ -344,7 +273,7 @@
       mouse_handler_timeouts.clear();
       self.clearMouseHandlerTarget();
       setStyleMouseHandlerTarget(target, class_name);
-      self['spotlight_' + class_name](dom_data.getCurrentTarget());
+      self.spotlight(dom_data.getCurrentTarget(), 0, class_name);
     }
   }
   // mouseover handler in Layout Metrics
@@ -364,26 +293,14 @@
     services['ecmascript-debugger'].post("<spotlight-objects/>");
   }
   //{obj_id: obj_id, rt_id: data_runtime_id});
-  var getSpotlighLockedElements = function()
+  
+
+  this.invertColors = function()
   {
-    var ret = "", cursor = null, i = 0;
-    if(settings.dom.get('lock-selecked-elements'))
-    {
-      for( ; cursor = locked_elements[i]; i++)
-      {
-        ret += \
-        "<spotlight-object>" +
-          "<object-id>" + cursor + "</object-id>" +
-          "<scroll-into-view>0</scroll-into-view>" +
-          "<box>" +
-            "<box-type>2</box-type>" +
-            "<frame-color>" + host_colors.locked + "</frame-color>" +
-          "</box>"  +
-        "</spotlight-object>";
-      }
-    }
-    return ret;
+    invert_colors();
+    stringify_commands();
   }
+
   // {activeTab: __activeTab} 
   // TODO make a new message for new top runtime
   var onActiveTab = function(msg)

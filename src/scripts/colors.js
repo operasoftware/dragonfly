@@ -230,6 +230,18 @@ var Colors = function()
     return hex;
   }
 
+  this.getGrayValue = function()
+  {
+    return 0.2126 * rgb[RED] + 0.7152 * rgb[GREEN] + 0.0722 * rgb[BLUE];
+  }
+
+  this.invert = function()
+  {
+    this.setLuminosity(100 - hsl[LUM]);
+    this.setSaturation(100 - hsl[SAT]);
+    this.setHue( (hsl[HUE] + 180 ) % 360 ); 
+  }
+
   /**
    * Get hue component of color
    * @returns {int} hue
@@ -515,6 +527,12 @@ Colors.prototype = new function()
   this.rgb_to_hsl = function ( r, g, b ) 
   {
     return rgb_to_hsl_or_hsv ( r, g, b, true );
+  }
+
+  this.toGrayScale = function()
+  {
+    
+
   }
 
 }
