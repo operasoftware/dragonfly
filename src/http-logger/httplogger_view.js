@@ -22,6 +22,7 @@ cls.RequestListView = function(id, name, container_class)
     var keyEntryId = null; // first entry of log. If log[0] is different, view is invalid
     var expandedItems = []; // IDs of items that are expanded
     var tableBodyEle = null;
+    var viewMap = {}; // mapping between ID and active part of detail view
 
     /**
      *  Called by the framework through update()
@@ -101,7 +102,7 @@ cls.RequestListView = function(id, name, container_class)
         
         // partial function invocation that closes over expandedItems
         var fun = function(e) {
-            return window.templates.request_list_row(e, expandedItems, firstTime, lastTime);
+            return window.templates.request_list_row(e, expandedItems, firstTime, lastTime, viewMap);
         }
 
         var tpls = log.slice(nextToRendereIndex).map(fun);
@@ -109,6 +110,19 @@ cls.RequestListView = function(id, name, container_class)
         tableBodyEle.render(tpls);
         nextToRendereIndex = log.length;
     }
+
+    this._getRowForId = function(id) {
+        if (!tableBodyEle) { return null }
+        for (var n=0,e; e=tableBodyEle.childNodes[n]; n++)
+        {
+            if (e.getAttribute('data-requestid') == id)
+            {
+                return e;
+            }
+        }
+        return null;
+    }
+    
     
     /**
      * Collapse the detail view of an entry in the log.
@@ -170,6 +184,28 @@ cls.RequestListView = function(id, name, container_class)
         }
     }
 
+    this.selectDetailView = function(id, name) {
+        viewMap[id] = name;
+        this.update();
+        return;
+        
+        // the bits under here could be used if we decide to do something
+        // smarter than just invalidating the view and redrawing.
+
+
+        //var row = this._getRowForId(id);
+        //if (!row) { return }
+        //
+        //row = row.nextSibling;
+        //var req = HTTPLoggerData.getRequestById(id);
+        //var div = row.getElementsByTagName("div")[0];
+        //div.clearAndRender(window.templates.parsed_request_headers(req, "headers"));
+
+
+
+        
+    }
+
     this.ondestroy = function()
     {
         keyEntryId = null;
@@ -184,6 +220,11 @@ new cls.RequestListView('request_list', ui_strings.M_VIEW_LABEL_REQUEST_LOG, 'sc
 eventHandlers.click['request-list-expand-collapse'] = function(event, target)
 {
     window.views['request_list'].toggleDetails(target.getAttribute("data-requestid"));
+}
+
+eventHandlers.click['select-http-detail-view'] = function(event, target)
+{
+    window.views['request_list'].selectDetailView(target.getAttribute("data-requestid"), target.getAttribute("data-viewname"));
 }
 
 new ToolbarConfig
