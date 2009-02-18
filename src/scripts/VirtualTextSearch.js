@@ -29,7 +29,7 @@ var VirtualTextSearch = function()
  
   search_node = function(node) 
   {
-    var cur_node = node.firstChild, pos = 0, hit = null, span = null, length = 0;
+    var cur_node = node && node.firstChild, pos = 0, hit = null, span = null, length = 0;
     while( cur_node && __offset > -1 ) 
     {
       switch(cur_node.nodeType)
