@@ -51,7 +51,6 @@ window.templates = window.templates || ( window.templates = {} );
     return dl;
 }
 
-
 window.templates.sanitize_url = function(req)
 {
     var s = req.request.path;
@@ -73,7 +72,7 @@ window.templates.sanitize_url = function(req)
 /**
  * Renders a single row of request data in the request list
  */
-window.templates.request_list_row = function(r, expandList, firstTime, lastTime)
+window.templates.request_list_row = function(r, expandList, firstTime, lastTime, viewMap)
 {
     var expanded = expandList.indexOf(r.id) != -1;
 
@@ -107,35 +106,34 @@ window.templates.request_list_row = function(r, expandList, firstTime, lastTime)
     
     if (expanded) // meaning "is expanded"
     {
-        a.push(window.templates.request_details_box(r));
+        a.push(window.templates.request_details_box(r, viewMap[r.id]));
     }
     
     return a;
 }
 
-window.templates.request_details_box = function(r)
+window.templates.request_details_box = function(r, aw)
 {
-     return [ 'tr',
+    aw = aw || "summary";
+    
+    var content = {"summary": window.templates.request_summary,
+                   "headers": window.templates.headers_view,
+                   "raw": window.templates.response_raw}[aw]||window.templates.request_summary;
+    
+    return [ 'tr',
               ['td',
-               ["div", 
-                    ["h2", "Request summary"],
-                    window.templates.request_summary(r),
-                    ["hr"],
-                    ['h2', "Request headers"],
-                    window.templates.parsed_request_headers(r),
-                    ["hr"],
-                    ['h2', "Response headers"],
-                    window.templates.parsed_response_headers(r),
-                    ["hr"],
-                    ['h2', "Raw response"],
-                    window.templates.response_raw(r)
-               ], "colspan", "7"]
-            ]
+               ['button', "Summary", "type", "button", "data-viewname", "summary", "data-requestid", r.id, "handler", "select-http-detail-view"],
+               ['button', "Headers", "type", "button", "data-viewname", "headers", "data-requestid", r.id, "handler", "select-http-detail-view"],
+               ['button', "Raw", "type", "button", "data-viewname", "raw", "data-requestid", r.id, "handler", "select-http-detail-view"],
+                 ["div", content(r)],
+                "colspan", "7"]
+           ]
 }
 
 window.templates.response_raw = function(req)
 {
     return [
+            ["h2", "Raw request"],
             ['code',
                 ['pre',
                     (req.response ? req.response.raw : "Request in progress")
@@ -144,21 +142,28 @@ window.templates.response_raw = function(req)
     ]
 }
 
+window.templates.headers_view = function(req) {
+    return [
+        window.templates.parsed_request_headers(req),
+        window.templates.parsed_response_headers(req)
+    ]
+}
+
 window.templates.parsed_request_headers = function(req)
 {
     return [
+            ["h2", "Request headers"],
              window.templates.header_definition_list(req.request.headers)
-    ]
+           ]
 }
 
 window.templates.parsed_response_headers = function(req)
 {
     return [
-            ['h2', this.name],
+            ["h2", "Response headers"],
             req.response ? window.templates.header_definition_list(req.response.headers) : ["span", "Request in progress"]
     ]    
 }
-
 
 window.templates.request_summary = function(req)
 {
@@ -166,22 +171,22 @@ window.templates.request_summary = function(req)
     for (key in req.request.queryDict) { pairs.push([key, req.request.queryDict[key]]) }
 
     ret = [
+              ["h2", "Request summary"],
               ["dl", [
-                      ["dt", "Full url"],
+                      ["dt", "Full url:"],
                       ["dd", (req.request.url + req.request.query)],
-                      ["dt", "Response"],
+                      ["dt", "Response:"],
                       ["dd", (req.response ? req.response.status + ": " + req.response.reason : "-")],
-                      ["dt", "Method"],
+                      ["dt", "Method:"],
                       ["dd", window.templates.method_spec_link(req) || req.request.method ], 
-                      ["dt", "Host"],
+                      ["dt", "Host:"],
                       ["dd", req.request.headers["Host" || "?" ]],
                       ["dt", "Path:"],
                       ["dd", req.request.path],
-                      ["dt", "Query arguments"],
+                      ["dt", "Query arguments:"],
                       ["dd", (pairs.length ? ["ul", pairs.sort().map(function(e) { return ["li", e.join(" = ")] } )] : "None" ) ]
                     ]
-               ],
-               
+               ]
           ]
     return ret;
 }
