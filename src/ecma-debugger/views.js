@@ -180,6 +180,67 @@ eventHandlers.change['set-ui-language'] = function(event)
   helpers.setCookie('ui-lang-set', '1');
   location.reload();
 }
+
+/**
+  * @constructor 
+  * @extends ViewBase
+  * Settings are bound to a view. This class it only to have 'General Settings'.
+  */
+
+cls.HostSpotlightView = function(id, name, container_class)
+{
+  this.ishidden_in_menu = true;
+  this.createView = function(container)
+  {
+  }
+  this.init(id, name, container_class);
+}
+cls.HostSpotlightView.prototype = ViewBase;
+new cls.GeneralView('host-spotlight', "Host Spotlight", '');
+
+new Settings
+(
+  // id
+  'host-spotlight', 
+  // key-value map
+  {
+
+  }, 
+  // key-label map
+  {
+
+  },
+  // settings map
+  {
+    checkboxes:
+    [
+
+    ],
+    customSettings:
+    [
+      'colors'
+    ]
+  },
+  // custom templates
+  {
+    'colors':
+    function(setting)
+    {
+      return [
+        ['div',
+          ['h2', 'test']
+        ]
+      ];
+    }
+  }
+);
+
+eventHandlers.change['set-ui-language'] = function(event)
+{
+  helpers.setCookie('ui-lang', event.target.value);
+  helpers.setCookie('ui-lang-set', '1');
+  location.reload();
+}
   
 /**
   * @constructor 

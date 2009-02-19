@@ -22,6 +22,18 @@
     * the call to check if a new selected option has actually changed 
     */
   this.checkChange = function(target_ele){};
+  /**
+    * a optional call to check if the changes shall be submitted
+    * for more complex selects like colors 
+    * return 0 submit, 1 cancel, 2 keep modal state
+    */
+  this.handleClick = function(target_ele, modal_box, select_obj)
+  {
+    return \
+    target_ele.nodeName != 'cst-option'  && 2
+    || select_obj.checkChange(target) && 1 
+    || 0;
+  };
 
   var modal_box = null;
   var select_obj = null;
@@ -38,17 +50,22 @@
     while( ele != modal_box && ( ele = ele.parentElement ) );
     if( ele )
     {
-      if( target.nodeName != 'cst-option' )
+      switch( select_obj.handleClick(target, modal_box, select_obj) )
       {
-        return;
-      }
-      if( select_obj.checkChange(target)  )
-      {
-        var select = select_obj.updateElement();
-        if( select )
+        // cancel
+        case 0: break;
+        // submit
+        case 1:
         {
-          select.releaseEvent('change');
+          var select = select_obj.updateElement();
+          if( select )
+          {
+            select.releaseEvent('change');
+          }
+          break;
         }
+        // keep modal state
+        case 2: return
       }
     }
     document.removeEventListener('click', modal_click_handler, true);
@@ -216,63 +233,71 @@ var CstSelect = function(id, class_name, type)
 
 var CstSelectColorBase = function(id, index)
 {
+  /** interface **
+  this.getSelectedOptionText = function(){};
+  this.getSelectedOptionValue = function(){};
+  this.templateOptionList = function(select_obj){};
+  this.checkChange = function(target_ele){};
+  this.handleClick = function(target_ele, modal_box){return true};
+  this.setNewValues
+  */
+
+  this.getSelectedOptionValue = function()
+  {
+    if( this._selected_value && this._selected_value.length == 4 )
+    {
+      colors.setRGB(this._selected_value);
+      var l = parseFloat(colors.getLuminosity());
+      colors.setLuminosity(l + (100 - l) * (1 - this._selected_value[3]/255));
+      return "#" + colors.getHex();
+    }
+    return "";
+  }
+  // returns a rgba array
+  this.getSelectedValue = function(rgba_arr)
+  {
+    return this._selected_value;
+  }
+  // to set the initial value
+  this.setSelectedValue = function(rgba_arr)
+  {
+    if(rgba_arr && rgba_arr.length == 4)
+    {
+      this._selected_value = rgba_arr;
+      var hue = colors.setRGB(rgba_arr).getHue();
+      this._selected_option_index = hue / 30 >> 0;
+      if( hue % 30 > 15 ) this._selected_option_index++;
+    }
+    else
+    {
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+        'not a rgba value in setSelect3dValue in CstSelectColorBase');
+    }
+  }
 
   this.setNewValues = function(select_ele)
   {
     select_ele.value = select_ele.style.backgroundColor = this.getSelectedOptionValue();
   }
 
-  this.getSelectedOptionValue = function()
-  {
-    var selected_option = this._option_list[this._selected_option_index];
-    return selected_option && selected_option['color-value'] || 'none';
-  }
+  this._selected_value = [];
+  this._selected_option_index = 0;
 
-  this.getSelectedOptionAlpha = function()
-  {
-    var selected_option = this._option_list[this._selected_option_index];
-    return selected_option && selected_option['alpha-value'] || 1;
-  }
-
-  this.checkChange = function(target_ele)
-  {
-    var 
-    index = target_ele['opt-index'],
-    selected_option = this._option_list[index],
-    alpha = target_ele.parentNode.parentNode.getElementsByTagName('input')[0];
-
-    alpha = parseFloat(alpha.value) || 1;
-    if( this._selected_option_index != index || selected_option['alpha-value'] != alpha )
-    {
-      this._selected_option_index = index;
-      selected_option['alpha-value'] = alpha;
-      delete selected_option['rgba'];
-      return true;
-    }
-    return false;
-  }
-
-  this.setAlpha = function(value)
-  {
-    var 
-    cursor = this._option_list[this._selected_option_index],
-    modal_box = document.getElementsByTagName('cst-select-option-list')[0];
-
-    if( cursor )
-    {
-      cursor['alpha-value'] = value / 100;
-      delete cursor['rgba'];
-    }
-    if( modal_box )
-    {
-      modal_box.getElementsByTagName('input')[0].value = value / 100;
-      cursor = modal_box.getElementsByTagName('cst-option')[this._selected_option_index];
-      if( cursor )
-      {
-        cursor.style.opacity = value / 100;
-      }
-    }
-  }
+  this._option_list =
+  [
+    [255, 0, 0, 255],   // red
+    [255, 127, 0, 255],
+    [255, 255, 0, 255], // yellow
+    [127, 255, 0, 255],
+    [0, 255, 0, 255],   // green
+    [0, 255, 127, 255],
+    [0, 255, 255, 255], // cyan
+    [0, 127, 255, 255],
+    [0, 0, 255, 255],   // blue
+    [127, 0, 255, 255], 
+    [255, 0, 255, 255], // magenta
+    [255, 0, 127, 255],
+  ]
 
   this.templateOptionList = function(select_obj)
   {
@@ -283,193 +308,235 @@ var CstSelectColorBase = function(id, index)
     opt = null, 
     i = 0;
 
+    new_value = select_obj.getSelectedValue();
+
+    colors.setRGB(new_value);
+
     for( ; opt = opt_list[i]; i++)
     {
+      if(i == selected_index)
+      {
+        opt = new_value;
+      }
       ret[ret.length] = 
       [
         "cst-option",
+        [
+          "cst-color"
+          "unselectable", "on",
+          "style", "background-color:" + rgba_to_hex(opt) + ";" +
+                  "opacity: " + extract_alpha(opt) + ";"
+        ],
         "opt-index", i,
-        "unselectable", "on",
-        "style", 
-          "background-color:" + opt["color-value"] + ";" +
-          "opacity: " + opt["alpha-value"] + ";",
+        "unselectable", "on"
       ]; 
       if( i == selected_index )
       {
         ret[ret.length] = ["cst-selected-border"];
       }
+
     }
     ret = [ret];
     ret[ret.length] = 
     [
-      "label",
-      "alpha: ",
-      [
-        "input",
-        "type", "text",
-        "value", select_obj.getSelectedOptionAlpha()
-      ]
+      "div", 
+      this.templateInputRange("Hue", colors.getHue(), "0", "360", "digit-3", "set-hsla"),
+      this.templateInputRange("Saturation", colors.getSaturation(), "0", "100", "digit-3", "set-hsla"),
+      this.templateInputRange("Lumination", colors.getLuminosity(), "0", "100", "digit-3", "set-hsla"),
+      this.templateInputRange("Opacity", extract_alpha(select_obj._selected_value) * 100 >> 0, "0", "100", "digit-3", "set-hsla"),
+      this.templateInputText("#", colors.getHex(), "digit-6", "set-hex"),
+      'onchange', update_new_value
     ];
-    ret[ret.length] =
-    [
-      "input",
-      "type", "range",
-      "value", select_obj.getSelectedOptionAlpha() * 100,
-      "onchange", function()
-      {
-        select_obj.setAlpha(this.value);
-      }
-    ];
+    ret[ret.length] = this.templateInputButton("Cancel", null, "0");
+    ret[ret.length] = this.templateInputButton("Ok", null, "1");
     return ['cst-option-list-background', ret];
   }
 
-  this._option_list = 
-  [
-    {
-      "color-value": "#00ff00", 
-      "alpha-value": .7, 
-      "ref-id": "color-1", 
-    },
-    {
-      "color-value": "#4dff00", 
-      "alpha-value": .7, 
-      "ref-id": "color-1", 
-    },
-    {
-      "color-value": "#99ff00", 
-      "alpha-value": .7, 
-      "ref-id": "color-1", 
-    },
-    {
-      "color-value": "#e6ff00", 
-      "alpha-value": .7, 
-      "ref-id": "color-1", 
-    },
-    {
-      "color-value": "#ffcc00", 
-      "alpha-value": .7, 
-      "ref-id": "color-1", 
-    },
-    {
-      "color-value": "#ff7f00", 
-      "alpha-value": .7, 
-      "ref-id": "color-1", 
-    },
-    {
-      "color-value": "#ff3300", 
-      "alpha-value": .7, 
-      "ref-id": "color-1", 
-    },
-    {
-      "color-value": "#ff001a", 
-      "alpha-value": .7, 
-      "ref-id": "color-1", 
-    },
-    {
-      "color-value": "#ff0066", 
-      "alpha-value": .7, 
-      "ref-id": "color-1", 
-    },
-    {
-      "color-value": "#ff00b3", 
-      "alpha-value": .7, 
-      "ref-id": "color-1", 
-    },
-    {
-      "color-value": "#ff00ff", 
-      "alpha-value": .7, 
-      "ref-id": "color-1", 
-    },
-    {
-      "color-value": "#b200ff", 
-      "alpha-value": .7, 
-      "ref-id": "color-1", 
-    },
-    {
-      "color-value": "#6600ff", 
-      "alpha-value": .7, 
-      "ref-id": "color-1", 
-    },
-    {
-      "color-value": "#1900ff", 
-      "alpha-value": .7, 
-      "ref-id": "color-1", 
-    },
-    {
-      "color-value": "#0033ff", 
-      "alpha-value": .7, 
-      "ref-id": "color-1", 
-    },
-    {
-      "color-value": "#0080ff", 
-      "alpha-value": .7, 
-      "ref-id": "color-1", 
-    },
-    {
-      "color-value": "#00ccff", 
-      "alpha-value": .7, 
-      "ref-id": "color-1", 
-    },
-    {
-      "color-value": "#00ffe5", 
-      "alpha-value": .7, 
-      "ref-id": "color-1", 
-    },
-    {
-      "color-value": "#00ff99", 
-      "alpha-value": .7, 
-      "ref-id": "color-1", 
-    },
-    {
-      "color-value": "#00ff4c", 
-      "alpha-value": .7, 
-      "ref-id": "color-1", 
-    },
-  ];
-
-  this.getSelectedRGBA = function()
+  this.handleClick = function(target, modal_box, select_obj)
   {
-    var
-    selected_option = this._option_list[this._selected_option_index],
-    hexs = null;
-    
-    if( selected_option )
+    // return 0 cancel, 1 submit, 2 keep modal state
+    var ret = 2, rgba = null;
+    switch (target.nodeName)
     {
-      if( !selected_option['rgba'] )
+      case 'cst-color':
       {
-        hexs = selected_option['color-value'].split(/([0-9-a-fA-F]{2})/);
-        selected_option['rgba'] = "rgba(" + 
-          parseInt(hexs[1], 16) + ", " +  
-          parseInt(hexs[3], 16) + ", " +  
-          parseInt(hexs[5], 16) + ", " +  
-          selected_option['alpha-value'] + ")";
+        if(target.parentElement.nextElementSibling)
+        {
+          target.parentElement.parentElement.insertBefore
+          (
+            modal_box.getElementsByTagName('cst-selected-border')[0], 
+            target.parentElement.nextElementSibling
+          );
+        }
+        else
+        {
+          target.parentElement.parentElement.appendChild
+          (
+            modal_box.getElementsByTagName('cst-selected-border')[0]
+          );
+        } 
+        if( rgba = extract_rgba(target) )
+        {
+          new_value = rgba;
+          colors.setRGB(rgba);
+          inputs = modal_box.getElementsByTagName('input');
+          inputs[0].value = colors.getHue();
+          inputs[1].value = colors.getSaturation();
+          inputs[2].value = colors.getLuminosity();
+          inputs[3].value = extract_alpha(rgba) * 100 >> 0;
+          inputs[4].value = colors.getHex();
+        }
+        break;
       }
-      return selected_option['rgba'];
+      case 'input':
+      {
+        if(/button/i.test(target.type))
+        { 
+          if(target.getAttribute('ref-value') == '1' && new_value != select_obj._selected_value)
+          {
+            select_obj.setSelectedValue(new_value);
+            ret = 1;
+          }
+          else
+          {
+            ret = 0;
+          }
+        }
+        break;
+      }
     }
-    return "rgba(0, 0, 0, 0.5)";
+    return ret;
+  }
+
+  this.templateInputRange = function(label, value, min, max, cn, change_handler_id)
+  {
+    return \
+    [
+      "label",
+      label + ": ",
+      [
+        "input",
+        "type", "number",
+        "min", min,
+        "max", max,
+        "ref-type", change_handler_id,
+        "class", cn,
+        "value", value
+      ]
+    ];
+  }
+
+  this.templateInputText = function(label, value, cn, change_handler_id)
+  {
+    return \
+    [
+      "label",
+      label + ": ",
+      [
+        "input",
+        "type", "text",
+        "ref-type", change_handler_id,
+        "class", cn,
+        "value", value
+      ]
+    ];
+  }
+
+  this.templateInputButton = function(value, cn, ref_value )
+  {
+    return \
+    [
+      "input",
+      "type", "button",
+      "ref-value", ref_value,
+      "class", cn || "",
+      "value", value
+    ];
+
+  }
+
+  // this is only valid during modal state
+  var new_value = [];
+
+  var colors = new Colors();
+
+  var extract_rgba = function(ele)
+  {
+    var color = /#(..)(..)(..)/.exec(ele.style.getPropertyValue('background-color'));
+    return color &&
+    [
+      parseInt(color[1], 16), 
+      parseInt(color[2], 16), 
+      parseInt(color[3], 16),
+      parseFloat(ele.style.getPropertyValue('opacity')) * 255 >> 0
+    ];
+  }
+
+  var int_to_hex = function(int)
+  {
+    var hex = int.toString(16);
+    return hex.length == 1 && "0" + hex || hex;
+  }
+
+  var rgba_to_hex = function(rgba)
+  {
+    return "#" + rgba.slice(0,3).map(int_to_hex).join('');
+  }
+
+  var extract_alpha = function(rgba)
+  {
+    return rgba[3] / 255;
+  }
+
+  // change event handler
+  var update_new_value = function(event)
+  {
+    var 
+    target = event.target,
+    targets_container = target.parentNode.parentNode,
+    inputs = targets_container.getElementsByTagName('input'),
+    selected = targets_container.parentNode.
+      getElementsByTagName('cst-selected-border')[0].previousElementSibling.firstElementChild;
+
+    switch(event.target.getAttribute('ref-type'))
+    {
+      case "set-hsla":
+      {
+        colors.
+          setHue(inputs[0].value).
+          setSaturation(inputs[1].value).
+          setLuminosity(inputs[2].value);
+        selected.style.backgroundColor = "#" + ( inputs[4].value = colors.getHex() );
+        selected.style.opacity = parseInt(inputs[3].value)/100;
+        new_value = colors.getRGB().concat([parseInt(inputs[3].value)/100*255]);
+        break;
+      }
+      case "set-hex":
+      {
+        colors.setHex(inputs[4].value);
+        inputs[0].value = colors.getHue();
+        inputs[1].value = colors.getSaturation();
+        inputs[2].value = colors.getLuminosity();
+        selected.style.backgroundColor = "#" + colors.getHex();
+        new_value = colors.getRGB().concat([parseInt(inputs[3].value)/100*255]);
+        break;
+      }
+    }
   }
 
   this.__init_base = this.init;
-  this.init = function(id, index)
+  this.init = function(id, rgba_arr)
   {
     this.__init_base(id, 'color', 'color');
-    this._selected_option_index = index || 0;
-    ( window.colors || ( window.colors = {} ) ).__defineGetter__
-    (
-      id, 
-      (function(obj)
-      { 
-        return function(){return obj.getSelectedRGBA()};
-      })(this)
-    );
+    this.setSelectedValue(rgba_arr || [255, 0, 0 ,255]);
   }
 }
 
 CstSelectColorBase.prototype = CstSelect.prototype = CstSelectBase;
 
-CstSelectColor = function(id, index)
+CstSelectColor = function(id, rgba_arr)
 {
-  this.init(id, index);
+  this.init(id, rgba_arr);
 };
 
 CstSelectColor.prototype = new CstSelectColorBase();

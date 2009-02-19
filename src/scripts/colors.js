@@ -36,6 +36,10 @@ var Colors = function()
    */
   var fixRange = function( val, upper, lower)
   {
+    if( typeof val == 'string')
+    {
+      val = parseFloat(val);
+    }
     return val > upper ? upper : val < lower ? lower : val;
   }
   
@@ -80,7 +84,7 @@ var Colors = function()
     hsl[HUE] = parseInt(h);
     rgb = this.hsl_to_rgb( hsl[HUE], hsl[SAT], hsl[LUM] );
     hsv = this.rgb_to_hsv( rgb[RED], rgb[GREEN], rgb[BLUE] );
-    return h;
+    return this;
   }
 
   /**
@@ -94,7 +98,7 @@ var Colors = function()
     hsl[SAT] = parseFloat(s);
     rgb = this.hsl_to_rgb( hsl[HUE], hsl[SAT], hsl[LUM] );
     hsv = this.rgb_to_hsv( rgb[RED], rgb[GREEN], rgb[BLUE] );
-    return s;
+    return this;
   }
   
   /**
@@ -108,7 +112,7 @@ var Colors = function()
     hsl[LUM] = parseFloat(l);
     rgb = this.hsl_to_rgb( hsl[HUE], hsl[SAT], hsl[LUM] );
     hsv = this.rgb_to_hsv( rgb[RED], rgb[GREEN], rgb[BLUE] );
-    return l;
+    return this;
   }
 
   /**
@@ -123,7 +127,7 @@ var Colors = function()
     hsv[HUE] = parseInt(h);
     rgb = this.hsv_to_rgb( hsv[HUE], hsv[SAT], hsv[LUM] );
     hsl = this.rgb_to_hsl( rgb[RED], rgb[GREEN], rgb[BLUE] );
-    return h;
+    return this;
   }
 
   /**
@@ -137,7 +141,7 @@ var Colors = function()
     hsv[SAT] = parseFloat(s);
     rgb = this.hsv_to_rgb( hsv[HUE], hsv[SAT], hsv[LUM] );
     hsl = this.rgb_to_hsl( rgb[RED], rgb[GREEN], rgb[BLUE] );
-    return s;
+    return this;
   }
 
   /**
@@ -151,7 +155,7 @@ var Colors = function()
     hsv[LUM] = parseFloat(l);
     rgb = this.hsv_to_rgb( hsv[HUE], hsv[SAT], hsv[LUM] );
     hsl = this.rgb_to_hsl( rgb[RED], rgb[GREEN], rgb[BLUE] );
-    return l;
+    return this;
   }
 
   /**
@@ -165,7 +169,7 @@ var Colors = function()
     rgb[RED] = parseInt(r);
     hsv = this.rgb_to_hsv( rgb[RED], rgb[GREEN], rgb[BLUE] );
     hsl = this.rgb_to_hsl( rgb[RED], rgb[GREEN], rgb[BLUE] );
-    return r;
+    return this;
   }
 
   /**
@@ -179,7 +183,7 @@ var Colors = function()
     rgb[GREEN] = parseInt(g);
     hsv = this.rgb_to_hsv( rgb[RED], rgb[GREEN], rgb[BLUE] );
     hsl = this.rgb_to_hsl( rgb[RED], rgb[GREEN], rgb[BLUE] );
-    return g;
+    return this;
   }
   
   /**
@@ -195,6 +199,7 @@ var Colors = function()
     }
     hsv = this.rgb_to_hsv( rgb[RED], rgb[GREEN], rgb[BLUE] );
     hsl = this.rgb_to_hsl( rgb[RED], rgb[GREEN], rgb[BLUE] );
+    return this;
   }
 
   /**
@@ -208,7 +213,7 @@ var Colors = function()
     rgb[BLUE] = parseInt(b);
     hsv = this.rgb_to_hsv( rgb[RED], rgb[GREEN], rgb[BLUE] );
     hsl = this.rgb_to_hsl( rgb[RED], rgb[GREEN], rgb[BLUE] );
-    return b;
+    return this;
   }
 
   /**
@@ -227,7 +232,15 @@ var Colors = function()
       hsv = this.rgb_to_hsv( rgb[RED], rgb[GREEN], rgb[BLUE] );
       hsl = this.rgb_to_hsl( rgb[RED], rgb[GREEN], rgb[BLUE] );
     }
-    return hex;
+    return this;
+  }
+
+  this.invert = function()
+  {
+    this.setLuminosity(100 - hsl[LUM]);
+    this.setSaturation(100 - hsl[SAT]);
+    this.setHue( (hsl[HUE] + 180 ) % 360 );
+    return this;
   }
 
   this.getGrayValue = function()
@@ -235,12 +248,7 @@ var Colors = function()
     return 0.2126 * rgb[RED] + 0.7152 * rgb[GREEN] + 0.0722 * rgb[BLUE];
   }
 
-  this.invert = function()
-  {
-    this.setLuminosity(100 - hsl[LUM]);
-    this.setSaturation(100 - hsl[SAT]);
-    this.setHue( (hsl[HUE] + 180 ) % 360 ); 
-  }
+
 
   /**
    * Get hue component of color
