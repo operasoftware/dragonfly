@@ -1166,37 +1166,34 @@ cst-option-list-background > div:after
 cst-select-option-list.color cst-option
 {
   float: left;
-  width: 22px;
-  height: 22px;
+  width: 32px;
+  height: 24px;
   padding: 0;
   margin: 3px;
   border: 1px solid #999;
   position: relative;
+  background-color: transparent;
+}
+
+cst-select-option-list.color cst-option cst-color
+{
+  display: inline-block;
+  width: 32px;
+  height: 24px;
+  vertical-align: text-top;
 }
 
 cst-select-option-list.color cst-selected-border
 {
   float: left;
-  width: 1.4em;
-  height: 1.4em;
+  width: 32px;
+  height: 24px;
   padding: 2px;
-  margin: 0px 1px 1px -30px;
+  margin: 0px 0px 0px -40px;
   border: 2px solid #999;
 }
 
-cst-select-option-list.color cst-option.selected:after
-{
 
-  display: block;
-  content: '';
-  padding: 2px;
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  top: -4px;
-  left: -4px;;
-  border: 2px solid #666;
-}
 
 
 
@@ -1204,10 +1201,31 @@ cst-select-option-list.color label
 {
   display: block;
   clear: both;
-  padding: .4em 0;
+  padding: 0;
+  border: 1px solid #ccc;
 }
 
+cst-select-option-list.color label input
+{
+  float: right;
+  vertical-align: middle;
+  height: 1em;
+}
+
+/*
 cst-select-option-list.color [type="text"] 
 {
   width: 2em;
+}
+*/
+
+cst-select-option-list.color .digit-3
+{
+  width: 4em;
+}
+
+cst-select-option-list.color .digit-6
+{
+  width: 4em;
+  text-align: right;
 }

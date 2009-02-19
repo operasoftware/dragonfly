@@ -3,9 +3,14 @@
 <title> </title>
 <link rel='stylesheet' href="../../src/ui-style/ui.css"/>
 <script src="../../src/scripts/dom.js"/>
+<script src="../../src/scripts/Colors.js"/>
+
 <script src="../../src/ui-scripts/cst-select.js"/>
 <script><![CDATA[
-var test_select = new CstSelectColor("test");
+window.EventHandler || ( window.EventHandler = {} );
+
+var test_select = new CstSelectColor("test", [54, 68, 130, .3 * 255]);
+var test_select_2 = new CstSelectColor("test-2", [0, 255, 0, 1 * 255]);
 onload = function()
 {
   var select_tmpl = test_select.getTemplate();
@@ -20,6 +25,12 @@ onload = function()
     [
       "div",
       "some text: ",
+      test_select_2.getTemplate()(),
+      " some more text"
+    ],
+    [
+      "div",
+      "some text: ",
       select_tmpl(),
       " some more text",
       'style', 'position:absolute; bottom: 50px;right: 50px'
@@ -29,7 +40,23 @@ onload = function()
   document.getElementsByTagName('body')[0].render(tmpl);
 }
 
-document.addEventListener('change', function(event){opera.postError(event.target.value)}, false);
+document.addEventListener
+(
+  'change', 
+  function(event)
+  {
+    if( event.target.getAttribute('cst-id') )
+    {
+      opera.postError
+      (
+        'cst-id: ' + event.target.getAttribute('cst-id') + '\n' +
+        'value: ' + event.target.value + '\n' +
+        'index: ' + window['cst-selects'][event.target.getAttribute('cst-id')].getSelectedValue() /* */
+      )
+    }
+  }, 
+  false
+);
 
 ]]></script>
 
