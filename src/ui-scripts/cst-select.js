@@ -174,6 +174,7 @@
     this._id = id;
     this.class_name = class_name || '';
     this.type = type || '';
+    this.template = this.getTemplate();
   }
 
   /* default interface implemetation */

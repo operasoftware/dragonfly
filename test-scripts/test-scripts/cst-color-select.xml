@@ -13,31 +13,30 @@ var test_select = new CstSelectColor("test", [54, 68, 130, .3 * 255]);
 var test_select_2 = new CstSelectColor("test-2", [0, 255, 0, 1 * 255]);
 onload = function()
 {
-  var select_tmpl = test_select.getTemplate();
   var tmpl = \
   [
     [
       "div",
       "some text: ",
-      select_tmpl(),
+      test_select.template(),
       " some more text"
     ],
     [
       "div",
       "some text: ",
-      test_select_2.getTemplate()("disabled"),
+      test_select_2.template("disabled"),
       " some more text"
     ],
     [
       "div",
       "some text: ",
-      test_select_2.getTemplate()(),
+      test_select_2.template(),
       " some more text"
     ],
     [
       "div",
       "some text: ",
-      select_tmpl(),
+      test_select.template(),
       " some more text",
       'style', 'position:absolute; bottom: 50px;right: 50px'
     ]
