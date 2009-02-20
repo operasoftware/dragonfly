@@ -1,13 +1,6 @@
 ﻿var hostspotlighter = new function()
 {
-  const
-  INITIAL_DIMENSION_COLOR = [54, 68, 130, .3 * 255],
-  INITIAL_PADDING_COLOR = [54, 68, 130, .5 * 255],
-  INITIAL_BORDER_COLOR = [54, 68, 130, .7 * 255],
-  INITIAL_MARGIN_COLOR = [54, 68, 130, .9 * 255],
-  INITIAL_FRAME_COLOR = [54, 68, 130, 1 * 255],
-  INITIAL_GRID_COLOR = [170, 33, 18, .3 * 255];
-  INITIAL_LOCKED_COLOR = [170, 33, 18, .5 * 255];
+
 
   var self = this;
   var matrixes = {};
@@ -75,6 +68,24 @@
     }
     return "";
   }
+
+  const
+  DEFAULT = 0,
+  HOVER = 1,
+  LOCKED = 2;
+
+  /*
+
+  var t = []
+  t[5] = []
+  t[5][7] = [];
+  t[5][7][3] = "hallo";
+  var id = ( 5 << 6 ) | (7 << 3 ) | 3 ;
+  alert(id)
+  alert((id>>6 & 7) +' '+ (id>>3&7) +' '+ (id&7))
+  alert(t[id>>6 & 7][id>>3&7][id&7])
+
+  */
 
 
   var set_initial_values = function()

@@ -81,10 +81,15 @@
     if( /^cst-/.test(ele.nodeName) )
     {
       var select = /^cst-select/.test(ele.nodeName) && ele || ele.parentElement;
+      if(select.hasAttribute("disabled"))
+      {
+        return;
+      }
       document.addEventListener('click', modal_click_handler, true);
       select_obj = window['cst-selects'][select.getAttribute("cst-id")];
-      modal_box = document.documentElement.render(templates['cst-select-option-list'](select_obj, select)),
-      box = select.getBoundingClientRect(),
+      modal_box = document.documentElement.render(templates['cst-select-option-list'](select_obj, select));
+
+      var box = select.getBoundingClientRect(),
       left = box.left,
       bottom = box.bottom,
       right = box.right,
@@ -124,9 +129,9 @@
   this.getTemplate = function()
   {
     var select = this;
-    return function()
+    return function(disabled)
     {
-      return window.templates['cst-select'](select);
+      return window.templates['cst-select'](select, disabled);
     }
   }
 
@@ -233,14 +238,6 @@ var CstSelect = function(id, class_name, type)
 
 var CstSelectColorBase = function(id, index)
 {
-  /** interface **
-  this.getSelectedOptionText = function(){};
-  this.getSelectedOptionValue = function(){};
-  this.templateOptionList = function(select_obj){};
-  this.checkChange = function(target_ele){};
-  this.handleClick = function(target_ele, modal_box){return true};
-  this.setNewValues
-  */
 
   this.getSelectedOptionValue = function()
   {
@@ -277,12 +274,13 @@ var CstSelectColorBase = function(id, index)
 
   this.setNewValues = function(select_ele)
   {
-    select_ele.value = select_ele.style.backgroundColor = this.getSelectedOptionValue();
+    select_ele.value = 
+    select_ele.firstElementChild.style.backgroundColor = 
+    this.getSelectedOptionValue();
   }
 
   this._selected_value = [];
   this._selected_option_index = 0;
-
   this._option_list =
   [
     [255, 0, 0, 255],   // red
@@ -309,9 +307,7 @@ var CstSelectColorBase = function(id, index)
     i = 0;
 
     new_value = select_obj.getSelectedValue();
-
     colors.setRGB(new_value);
-
     for( ; opt = opt_list[i]; i++)
     {
       if(i == selected_index)
@@ -334,21 +330,24 @@ var CstSelectColorBase = function(id, index)
       {
         ret[ret.length] = ["cst-selected-border"];
       }
-
     }
-    ret = [ret];
     ret[ret.length] = 
     [
       "div", 
-      this.templateInputRange("Hue", colors.getHue(), "0", "360", "digit-3", "set-hsla"),
-      this.templateInputRange("Saturation", colors.getSaturation(), "0", "100", "digit-3", "set-hsla"),
-      this.templateInputRange("Lumination", colors.getLuminosity(), "0", "100", "digit-3", "set-hsla"),
+      this.templateInputRange("Hue", colors.getHue(), "0", "360", "number", "set-hsla"),
+      this.templateInputRange("Saturation", colors.getSaturation(), "0", "100", "number", "set-hsla"),
+      this.templateInputRange("Luminosity", colors.getLuminosity(), "0", "100", "number", "set-hsla"),
       this.templateInputRange("Opacity", extract_alpha(select_obj._selected_value) * 100 >> 0, "0", "100", "digit-3", "set-hsla"),
-      this.templateInputText("#", colors.getHex(), "digit-6", "set-hex"),
+      this.templateInputText("# ", colors.getHex(), "text", "set-hex"),
       'onchange', update_new_value
     ];
-    ret[ret.length] = this.templateInputButton("Cancel", null, "0");
-    ret[ret.length] = this.templateInputButton("Ok", null, "1");
+    ret[ret.length] = 
+    [
+      "div",
+      this.templateInputButton("Ok", null, "1"),
+      this.templateInputButton("Cancel", null, "0"),
+      "class", "ok-cancel"
+    ];
     return ['cst-option-list-background', ret];
   }
 
@@ -392,14 +391,11 @@ var CstSelectColorBase = function(id, index)
       {
         if(/button/i.test(target.type))
         { 
+          ret = 0;
           if(target.getAttribute('ref-value') == '1' && new_value != select_obj._selected_value)
           {
             select_obj.setSelectedValue(new_value);
             ret = 1;
-          }
-          else
-          {
-            ret = 0;
           }
         }
         break;
@@ -413,16 +409,16 @@ var CstSelectColorBase = function(id, index)
     return \
     [
       "label",
-      label + ": ",
+      label,
       [
         "input",
         "type", "number",
         "min", min,
         "max", max,
         "ref-type", change_handler_id,
-        "class", cn,
         "value", value
-      ]
+      ],
+      "class", cn,
     ];
   }
 
@@ -431,14 +427,14 @@ var CstSelectColorBase = function(id, index)
     return \
     [
       "label",
-      label + ": ",
+      label,
       [
         "input",
         "type", "text",
         "ref-type", change_handler_id,
-        "class", cn,
         "value", value
       ]
+      "class", cn,
     ];
   }
 
@@ -541,16 +537,18 @@ CstSelectColor = function(id, rgba_arr)
 
 CstSelectColor.prototype = new CstSelectColorBase();
 
-( window.templates || ( window.templates = {} ) )['cst-select'] = function(select)
+( window.templates || ( window.templates = {} ) )['cst-select'] = function(select, disabled)
 {
   return \
   [
     "cst-select",
-      ["cst-value", select.getSelectedOptionText(), "unselectable", "on"],
+      ["cst-value", select.getSelectedOptionText(), "unselectable", "on"].
+        concat( select.type ? ['style', 'background-color:' + select.getSelectedOptionValue() ] : [] ),
       ["cst-drop-down"],
     "cst-id", select.getId(),
     "unselectable", "on"
-  ].concat( select.type ? ['class', select.type, 'style', 'background-color:' + select.getSelectedOptionValue() ] : [] ); 
+  ].concat( select.type ? ['class', select.type] : [] )
+   .concat( disabled ? ['disabled', 'disabled'] : [] ) ; 
 }
 
 templates['cst-select-option-list'] = function(select_obj, select_ele)

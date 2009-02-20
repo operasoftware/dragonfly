@@ -25,6 +25,12 @@ onload = function()
     [
       "div",
       "some text: ",
+      test_select_2.getTemplate()("disabled"),
+      " some more text"
+    ],
+    [
+      "div",
+      "some text: ",
       test_select_2.getTemplate()(),
       " some more text"
     ],

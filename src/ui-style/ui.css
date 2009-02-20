@@ -1040,6 +1040,11 @@ cst-select
   cursor: pointer;
 }
 
+cst-select[disabled]
+{
+  opacity: .3;
+}
+
 cst-value
 {
   display: inline-block;
@@ -1111,33 +1116,24 @@ cst-option:hover
 cst-select.color
 {
   background: none;
-  border: 1px solid #666;
-  padding: 0;
-  width: 18px;
+  width: 22px;
   margin: 0 .2em;
-  margin-left: 10px;
-  height: 18px;
-  vertical-align: middle;
-  cursor: pointer;
 }
 
 cst-select.color cst-value
 {
-  display: none;
-}
-
-cst-select.color cst-drop-down
-{
-  margin-right: -20px;
-  display: none;
+  border: 1px solid #999;
+  width: 4px;
+  margin: 0px;
 }
 
 cst-select-option-list.color
 {
-  padding: 1px;
+  padding: 2px 11px 8px 8px;
   overflow: visible;
   border: none;
   background: none;
+  max-height: none;
 }
 
 cst-option-list-background
@@ -1153,14 +1149,6 @@ cst-option-list-background
 cst-option-list-background > div
 {
   width: 160px;
-  margin: 5px 0 5px 5px;
-}
-
-cst-option-list-background > div:after
-{
-  display:block;
-  content: '';
-  clear: both;
 }
 
 cst-select-option-list.color cst-option
@@ -1193,16 +1181,16 @@ cst-select-option-list.color cst-selected-border
   border: 2px solid #999;
 }
 
-
-
-
+cst-option-list-background > div > div 
+{
+  clear: both;
+  padding-top: 5px;
+}
 
 cst-select-option-list.color label 
 {
   display: block;
-  clear: both;
-  padding: 0;
-  border: 1px solid #ccc;
+  margin: 2px 3px;
 }
 
 cst-select-option-list.color label input
@@ -1210,22 +1198,28 @@ cst-select-option-list.color label input
   float: right;
   vertical-align: middle;
   height: 1em;
+  width: 4.2em;
 }
 
-/*
-cst-select-option-list.color [type="text"] 
-{
-  width: 2em;
-}
-*/
 
-cst-select-option-list.color .digit-3
+cst-select-option-list.color .text,
+cst-select-option-list.color .text input
 {
-  width: 4em;
-}
-
-cst-select-option-list.color .digit-6
-{
-  width: 4em;
   text-align: right;
 }
+cst-select-option-list.color .text input
+{
+  margin-left: .2em;
+}
+
+cst-select-option-list.color .ok-cancel
+{
+  margin: 5px 3px;
+}
+
+cst-select-option-list.color .ok-cancel input + input
+{
+  float: right;
+}
+
+
