@@ -9,7 +9,7 @@
 <script><![CDATA[
 window.EventHandler || ( window.EventHandler = {} );
 
-var test_select = new CstSelectColor("test", [54, 68, 130, .3 * 255]);
+var test_select = new CstSelectColor("test", [54, 68, 130, .3 * 255], "test-handler");
 var test_select_2 = new CstSelectColor("test-2", [0, 255, 0, 1 * 255]);
 onload = function()
 {

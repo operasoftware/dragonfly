@@ -226,11 +226,7 @@ new Settings
     'colors':
     function(setting)
     {
-      return [
-        ['div',
-          ['h2', 'test']
-        ]
-      ];
+      return hostspotlighter.colorSelectsTemplate();
     }
   }
 );

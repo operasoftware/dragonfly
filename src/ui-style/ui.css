@@ -1038,12 +1038,10 @@ cst-select
   padding-right: 18px;
   margin-left: 5px;
   cursor: pointer;
+  vertical-align: middle;
 }
 
-cst-select[disabled]
-{
-  opacity: .3;
-}
+
 
 cst-value
 {
@@ -1052,7 +1050,7 @@ cst-value
   margin-top: 1px;
   overflow: hidden;
   -o-text-overflow: ellipsis;
-  padding: 0 .5em;
+  padding: 0 8px;
   height: 22px;
 }
 
@@ -1080,6 +1078,16 @@ cst-drop-down:before
   width: 18px;
   height: 24px;
   background-image: -o-skin('Dropdown Button Skin.pressed');
+}
+
+cst-select[disabled]
+{
+  background-color: #ccc !important;
+}
+
+cst-select[disabled] cst-drop-down
+{
+  opacity: .3;
 }
 
 cst-select-option-list
@@ -1112,7 +1120,10 @@ cst-option:hover
   background-color: #009;
   color: #fff;
 }
-
+td
+{
+  border: 1px solid #ccc;
+}
 cst-select.color
 {
   background: none;
@@ -1125,6 +1136,10 @@ cst-select.color cst-value
   border: 1px solid #999;
   width: 4px;
   margin: 0px;
+}
+cst-select.color[disabled] cst-value
+{
+  background-color: #ccc !important;
 }
 
 cst-select-option-list.color
@@ -1191,6 +1206,7 @@ cst-select-option-list.color label
 {
   display: block;
   margin: 2px 3px;
+  border: 1px solid #ccc;
 }
 
 cst-select-option-list.color label input

@@ -237,8 +237,6 @@ var Colors = function()
 
   this.invert = function()
   {
-    this.setLuminosity(100 - hsl[LUM]);
-    this.setSaturation(100 - hsl[SAT]);
     this.setHue( (hsl[HUE] + 180 ) % 360 );
     return this;
   }

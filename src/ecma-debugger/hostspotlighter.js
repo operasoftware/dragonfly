@@ -1,9 +1,7 @@
 ﻿var hostspotlighter = new function()
 {
-
-
   var self = this;
-  var matrixes = {};
+  var matrixes = [];
   var client_colors = {};
 
   const
@@ -90,23 +88,25 @@
 
   var set_initial_values = function()
   {
-    matrixes["default"] = ini.hostspotlight_matrixes["default"];
-    matrixes["hover"] = ini.hostspotlight_matrixes["metrics-hover"];
-    matrixes["locked"] = ini.hostspotlight_matrixes["locked"];
+    matrixes[DEFAULT] = ini.hostspotlight_matrixes["default"];
+    matrixes[HOVER] = ini.hostspotlight_matrixes["metrics-hover"];
+    matrixes[LOCKED] = ini.hostspotlight_matrixes["locked"];
+    normalize_matrixes();
     stringify_commands();
+    create_color_selects();
   }
 
   var stringify_commands = function()
   {
-    var matrix = [matrixes["hover"][0]].concat(matrixes["hover"]);
-    commands["default"] = stringify_command(matrixes["default"]);
-    commands["locked"] = stringify_command(matrixes["locked"]);
+    var matrix = [matrixes[HOVER][0]].concat(matrixes[HOVER]);
+    commands["default"] = stringify_command(matrixes[DEFAULT]);
+    commands["locked"] = stringify_command(matrixes[LOCKED]);
     commands["dimension"] = stringify_command(matrix.slice(3));
     commands["padding"] = stringify_command(matrix.slice(2));
     commands["border"] = stringify_command(matrix.slice(1));
     commands["margin"] = stringify_command(matrix.slice(0));
-    extract_css_properties(matrixes["hover"][2], ( client_colors.active = {} ) );
-    extract_css_properties(matrixes["hover"][1], ( client_colors.inner = {} ) );
+    extract_css_properties(matrixes[HOVER][2], ( client_colors.active = {} ) );
+    extract_css_properties(matrixes[HOVER][1], ( client_colors.inner = {} ) );
   }
   
   this.setRGBA = function(target, rgba_arr)
@@ -140,25 +140,108 @@
     }
     return ret;
   }
+  
+  var normalize_matrixes = function()
+  {
+    var matrix = null, i = 0, j = 0, k = 0;
+    for( i = 0; i < 3; i++)
+    {
+      matrix = matrixes[i];
+      for( j = 0; j < 4; j++)
+      {
+        matrix[j] || ( matrix[j] = [0, 0, 0] );
+      }
+    }
+  }
+  
+  var create_color_selects = function()
+  {
+    var matrix = null, box = null, i = 0, j = 0, k = 0;
+    for( i = 0; i < 3; i++)
+    {
+      matrix = matrixes[i];
+      for( j = 0; j < 4; j++)
+      {
+        box = matrix[j] || [];
+        for( k = 0; k < 3; k++)
+        {
+          new CstSelectColor
+          (
+            "spotlight-color-" + ( ( i << 6 ) | ( j << 3 ) | ( k ) ), 
+            box[k] || [0, 0, 255, 255],
+            "set-spotlight-color"
+          );
+        }
+      }
+    }
+  }
+  
+  this.colorSelectsTemplate = function()
+  {
+    return \
+    [
+      'table',
+      [
+        'tbody',
+        color_select_row("dimension", 0, 0),
+        color_select_row("padding", 0, 1),
+        color_select_row("border", 0, 2),
+        color_select_row("margin", 0, 3)
+      ]
+    ]
+        
+  }
+  eventHandlers.change['set-spotlight-color'] = function(event)
+  {
+    var target = event.target;
+    var id = parseInt(target.getAttribute('cst-id').slice(16));
+    matrixes[id>>6&7][id>>3&7][id&7] = window['cst-selects'][target.getAttribute('cst-id')].getSelectedValue();
+    stringify_commands();
+  }
+  
+
+  var color_select_row = function(label, i, j)
+  {
+    var row_id = ( i << 6 ) | ( j << 3 );
+    var ret = [];
+    var k = 0;
+    var checked = false;
+ 
+    for( ; k < 3; k++)
+    {
+      checked = matrixes[i][j][k] && true || false;
+      ret[ret.length] =
+      ['td', 
+        ['input', 'type', 'checkbox', 'checked', checked], 
+        window['cst-selects']['spotlight-color-' + ( row_id | k ) ].template(!checked)
+      ]
+    }
+    return \
+    [
+      'tr', 
+      ['td', label]
+    ].concat(ret)
+  }
+  
+
+  
+  
 
   var invert_colors = function(matrix)
   {
-    var matrix = null, prop = '', box = null, color = null, i = 0, j = 0;
-    for( prop in matrixes )
+    var matrix = null, prop = '', box = null, color = null, i = 0, j = 0, k = 0;
+    for( i = 0; i < 3; i++)
     {
-      matrix = matrixes[prop];
-      for( i = 0; i < 4; i++)
+      matrix = matrixes[i];
+      for( j = 0; j < 4; j++)
       {
-        if( box = matrix[i] )
+        if( box = matrix[j] )
         {
-          for( j = 0; j < 3; j++)
+          for( k = 0; k < 3; k++)
           {
-            if( color = box[j])
+            if( box[k])
             {
-
-              colors.setRGB(color);
-              colors.invert();
-              box[j] = colors.getRGB().concat(color[3]);
+              box[k] = colors.setRGB(box[k]).invert().getRGB().concat(box[k][3]);
             }
           }
         }
