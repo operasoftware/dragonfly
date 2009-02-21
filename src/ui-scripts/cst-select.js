@@ -81,19 +81,25 @@
     if( /^cst-/.test(ele.nodeName) )
     {
       var select = /^cst-select/.test(ele.nodeName) && ele || ele.parentElement;
+      var cursor = event.target;
       if(select.hasAttribute("disabled"))
       {
         return;
       }
+      while( cursor && !/^container$/i.test(cursor.nodeName) && ( cursor = cursor.parentElement ) );
       document.addEventListener('click', modal_click_handler, true);
       select_obj = window['cst-selects'][select.getAttribute("cst-id")];
-      modal_box = document.documentElement.render(templates['cst-select-option-list'](select_obj, select));
+      modal_box = (cursor || document.documentElement).render(templates['cst-select-option-list'](select_obj, select));
+      
+      
 
       var box = select.getBoundingClientRect(),
-      left = box.left,
-      bottom = box.bottom,
-      right = box.right,
-      top = box.top,
+      cursor_top = cursor && cursor.offsetTop - cursor.scrollTop || 0,
+      cursor_left = cursor && cursor.offsetLeft - cursor.scrollLeft || 0,
+      left = box.left - cursor_left,
+      bottom = box.bottom - cursor_top,
+      right = box.right - cursor_left,
+      top = box.top - cursor_top,
       _innerWidth = innerWidth, 
       _innerHeight = innerHeight,
       max_width = _innerWidth - left - 30,
@@ -129,7 +135,7 @@
   this.getTemplate = function()
   {
     var select = this;
-    return function(disabled)
+    return function(view, disabled)
     {
       return window.templates['cst-select'](select, disabled);
     }
@@ -558,9 +564,9 @@ CstSelectColor.prototype = new CstSelectColorBase();
     "cst-id", select.getId(),
     "unselectable", "on"
   ].
-    concat( select.type ? ['class', select.type] : [] ).
-    concat( disabled ? ['disabled', 'disabled'] : [] ).
-    concat( select.handler? ['handler', select.handler] : [] )    ; 
+  concat( select.type ? ['class', select.type] : [] ).
+  concat( disabled ? ['disabled', 'disabled'] : [] ).
+  concat( select.handler? ['handler', select.handler] : [] ); 
 }
 
 templates['cst-select-option-list'] = function(select_obj, select_ele)
