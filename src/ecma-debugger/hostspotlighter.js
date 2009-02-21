@@ -23,7 +23,31 @@
   },
   INNER_INNER = 0,
   INNER = 1,
-  ACTIVE = 2;
+  ACTIVE = 2,
+  DEFAULT = 0,
+  HOVER = 1,
+  LOCKED = 2,
+  COLOR_THEME_ALPHAS = // red: 1 grid color 0 fill-and-frame color
+  [
+    [
+      [[0, 0, 0, .3 * 255], [0, 0, 0, .6 * 255], 0],
+      [[0, 0, 0, .5 * 255], [0, 0, 0, .8 * 255], 0],
+      [[0, 0, 0, .7 * 255], [0, 0, 0, .1 * 255], [1, 0, 0, .3 * 255]],
+      [0, 0, 0]
+    ],
+    [
+      [[0, 0, 0, .3 * 255], 0, 0],
+      [[0, 0, 0, .3 * 255], [0, 0, 0, .8 * 255], 0],
+      [[0, 0, 0, .7 * 255], [0, 0, 0, .8 * 255], [1, 0, 0, .3 * 255]],
+      [0, 0, 0]
+    ],
+    [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, [1, 0, 0, .9 * 255], 0],
+      [0, 0, 0]
+    ],
+  ]
   
   var commands = {};
 
@@ -67,10 +91,7 @@
     return "";
   }
 
-  const
-  DEFAULT = 0,
-  HOVER = 1,
-  LOCKED = 2;
+
 
   /*
 
@@ -157,6 +178,20 @@
   var create_color_selects = function()
   {
     var matrix = null, box = null, i = 0, j = 0, k = 0;
+    new CstSelectColor
+    (
+      "spotlight-color-fill-and-frame", 
+      matrixes[0][0][0] || [0, 0, 255, 255],
+      "set-spotlight-color-theme",
+      "no-opacity"
+    );
+    new CstSelectColor
+    (
+      "spotlight-color-grid", 
+      matrixes[0][2][2] || [0, 0, 255, 255],
+      "set-spotlight-color-theme",
+      "no-opacity"
+    );
     for( i = 0; i < 3; i++)
     {
       matrix = matrixes[i];
@@ -176,17 +211,56 @@
     }
   }
   
+  var set_color_theme = function(fill_frame_color, grid_color)
+  {
+    var color = null, i = 0, j = 0, k = 0;
+    for( i = 0; i < 3; i++)
+    {
+      for( j = 0; j < 4; j++)
+      {
+        for( k = 0; k < 3; k++)
+        {
+          if( color = COLOR_THEME_ALPHAS[i][j][k] )
+          {
+            matrixes[i][j][k] = color[0] && grid_color.slice(0) || fill_frame_color.slice(0);
+            matrixes[i][j][k][3] = color[3];
+          }
+          else
+          {
+            matrixes[i][j][k] = 0;
+          }
+        }
+      }
+    }
+    stringify_commands();
+  }
+  
   this.colorSelectsTemplate = function()
   {
     return \
     [
-      'table',
       [
-        'tbody',
-        color_select_row("dimension", 0, 0),
-        color_select_row("padding", 0, 1),
-        color_select_row("border", 0, 2),
-        color_select_row("margin", 0, 3)
+        'div',
+        [
+          'label',
+          'fill and frame: '
+          window['cst-selects']['spotlight-color-fill-and-frame'].template(),
+        ],
+        [
+          'label',
+          'grid: '
+          window['cst-selects']['spotlight-color-grid'].template(),
+        ]
+      ],
+      [
+        'table',
+        [
+          'tbody',
+          color_select_row("dimension", 0, 0),
+          color_select_row("padding", 0, 1),
+          color_select_row("border", 0, 2),
+          color_select_row("margin", 0, 3)
+        ]
       ]
     ]
         
@@ -195,8 +269,15 @@
   {
     var target = event.target;
     var id = parseInt(target.getAttribute('cst-id').slice(16));
-    matrixes[id>>6&7][id>>3&7][id&7] = window['cst-selects'][target.getAttribute('cst-id')].getSelectedValue();
+    matrixes[id >> 6 & 7][id >> 3 & 7][id & 7] = 
+      window['cst-selects'][target.getAttribute('cst-id')].getSelectedValue();
     stringify_commands();
+  }
+  
+  eventHandlers.change['set-spotlight-color-theme'] = function(event)
+  {
+    set_color_theme(window['cst-selects']['spotlight-color-fill-and-frame'].getSelectedValue(),
+      window['cst-selects']['spotlight-color-grid'].getSelectedValue());
   }
   
 
@@ -222,6 +303,8 @@
       ['td', label]
     ].concat(ret)
   }
+  
+
   
 
   

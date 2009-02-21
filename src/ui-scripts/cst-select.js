@@ -238,7 +238,7 @@ var CstSelect = function(id, class_name, type, handler)
   this.init(id, class_name, type, handler);
 }
 
-var CstSelectColorBase = function(id, rgba_arr, handler)
+var CstSelectColorBase = function(id, rgba_arr, handler, option)
 {
 
   this.getSelectedOptionValue = function()
@@ -247,7 +247,10 @@ var CstSelectColorBase = function(id, rgba_arr, handler)
     {
       colors.setRGB(this._selected_value);
       var l = parseFloat(colors.getLuminosity());
-      colors.setLuminosity(l + (100 - l) * (1 - this._selected_value[3]/255));
+      if( this.has_opacity )
+      {
+        colors.setLuminosity(l + (100 - l) * (1 - this._selected_value[3]/255));
+      }
       return "#" + colors.getHex();
     }
     return "";
@@ -285,18 +288,18 @@ var CstSelectColorBase = function(id, rgba_arr, handler)
   this._selected_option_index = 0;
   this._option_list =
   [
-    [255, 0, 0, 255],   // red
-    [255, 127, 0, 255],
-    [255, 255, 0, 255], // yellow
-    [127, 255, 0, 255],
-    [0, 255, 0, 255],   // green
-    [0, 255, 127, 255],
-    [0, 255, 255, 255], // cyan
-    [0, 127, 255, 255],
-    [0, 0, 255, 255],   // blue
-    [127, 0, 255, 255], 
-    [255, 0, 255, 255], // magenta
-    [255, 0, 127, 255],
+    [255, 0, 0, 127],   // red
+    [255, 127, 0, 127],
+    [255, 255, 0, 127], // yellow
+    [127, 255, 0, 127],
+    [0, 255, 0, 127],   // green
+    [0, 255, 127, 127],
+    [0, 255, 255, 127], // cyan
+    [0, 127, 255, 127],
+    [0, 0, 255, 127],   // blue
+    [127, 0, 255, 127], 
+    [255, 0, 255, 127], // magenta
+    [255, 0, 127, 127],
   ]
 
   this.templateOptionList = function(select_obj)
@@ -323,7 +326,7 @@ var CstSelectColorBase = function(id, rgba_arr, handler)
           "cst-color"
           "unselectable", "on",
           "style", "background-color:" + rgba_to_hex(opt) + ";" +
-                  "opacity: " + extract_alpha(opt) + ";"
+                  ( select_obj.has_opacity && ( "opacity: " + extract_alpha(opt) + ";" ) || "")
         ],
         "opt-index", i,
         "unselectable", "on"
@@ -339,7 +342,8 @@ var CstSelectColorBase = function(id, rgba_arr, handler)
       this.templateInputRange("Hue", colors.getHue(), "0", "360", "number", "set-hsla"),
       this.templateInputRange("Saturation", colors.getSaturation(), "0", "100", "number", "set-hsla"),
       this.templateInputRange("Luminosity", colors.getLuminosity(), "0", "100", "number", "set-hsla"),
-      this.templateInputRange("Opacity", extract_alpha(select_obj._selected_value) * 100 >> 0, "0", "100", "digit-3", "set-hsla"),
+      this.templateInputRange("Opacity", extract_alpha(select_obj._selected_value) * 100 >> 0, "0", 
+        "100", "digit-3", "set-hsla", !select_obj.has_opacity),
       this.templateInputText("# ", colors.getHex(), "text", "set-hex"),
       'onchange', update_new_value
     ];
@@ -406,7 +410,7 @@ var CstSelectColorBase = function(id, rgba_arr, handler)
     return ret;
   }
 
-  this.templateInputRange = function(label, value, min, max, cn, change_handler_id)
+  this.templateInputRange = function(label, value, min, max, cn, change_handler_id, display_none)
   {
     return \
     [
@@ -421,7 +425,7 @@ var CstSelectColorBase = function(id, rgba_arr, handler)
         "value", value
       ],
       "class", cn,
-    ];
+    ].concat( display_none ? ['style', 'display:none'] : []);
   }
 
   this.templateInputText = function(label, value, cn, change_handler_id)
@@ -505,7 +509,10 @@ var CstSelectColorBase = function(id, rgba_arr, handler)
           setSaturation(inputs[1].value).
           setLuminosity(inputs[2].value);
         selected.style.backgroundColor = "#" + ( inputs[4].value = colors.getHex() );
-        selected.style.opacity = parseInt(inputs[3].value)/100;
+        if( inputs[3].parentElement.style.display != "none" )
+        {
+          selected.style.opacity = parseInt(inputs[3].value)/100;
+        }
         new_value = colors.getRGB().concat([parseInt(inputs[3].value)/100*255]);
         break;
       }
@@ -523,18 +530,19 @@ var CstSelectColorBase = function(id, rgba_arr, handler)
   }
 
   this.__init_base = this.init;
-  this.init = function(id, rgba_arr, handler)
+  this.init = function(id, rgba_arr, handler, option)
   {
     this.__init_base(id, 'color', 'color', handler);
     this.setSelectedValue(rgba_arr || [255, 0, 0 ,255]);
+    this.has_opacity = !(option == "no-opacity");
   }
 }
 
 CstSelectColorBase.prototype = CstSelect.prototype = CstSelectBase;
 
-CstSelectColor = function(id, rgba_arr, handler)
+CstSelectColor = function(id, rgba_arr, handler, option)
 {
-  this.init(id, rgba_arr, handler);
+  this.init(id, rgba_arr, handler, option);
 };
 
 CstSelectColor.prototype = new CstSelectColorBase();
