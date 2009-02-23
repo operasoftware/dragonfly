@@ -35,17 +35,17 @@ cls.ErrorConsoleService = function(name)
 
   this['message'] = function(message) 
   {
-    window.console_messages.handle(message);
+    window.ErrorConsoleData.handle(message);
   }
 
   // constructor calls
 
   this.initBase(name);
   
-  if( ! client)
+  if( !client)
   {
     opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
-      'client must be created in ecma comsole.js');
+      'client must be created in ecma console.js');
     return;
   }
   client.addService(this);
@@ -90,10 +90,10 @@ cls.ErrorConsoleService.prototype = ServiceBase;
 new cls.ErrorConsoleService('console-logger');
 
 /**
-  * @constructor 
-  */
-
-var console_messages = new function()
+ * Data class for console logger
+ * @constructor 
+ */
+var ErrorConsoleData = new function()
 {
   var msgs = [];
   var dragonfly_msgs = [];
@@ -263,7 +263,7 @@ var ErrorConsoleView = function(id, name, container_class, source)
   this.createView = function(container)
   {
     container.innerHTML = '';
-    container.render(templates.messages(console_messages.getMessages(source)));
+    container.render(templates.messages(ErrorConsoleData.getMessages(source)));
     container.scrollTop = container.scrollHeight;
   }
   this.init(id, name, container_class );
@@ -343,7 +343,7 @@ ErrorConsoleView.roughViews.bindClearSource = function(source)
 {
   return function(event, target)
   {
-    console_messages.clear(source);
+    ErrorConsoleData.clear(source);
   }
 }
 
@@ -354,7 +354,7 @@ ErrorConsoleView.roughViews.createViews = function()
   for( ; r_v = this[i]; i++)
   {
     new ErrorConsoleView(r_v.id, r_v.name, r_v.container_class, r_v.source);
-    console_messages.addView(r_v.id);
+    ErrorConsoleData.addView(r_v.id);
     handler_id = 'clear-error-console' + ( r_v.source ? '-' + r_v.source : '' );
     new ToolbarConfig
     (
@@ -439,7 +439,7 @@ cls.ConsoleDragonflyView = function(id, name, container_class)
   this.createView = function(container)
   {
     container.innerHTML = '';
-    container.renderInner(templates.messages(console_messages.getDragonflyMessages()));
+    container.renderInner(templates.messages(ErrorConsoleData.getDragonflyMessages()));
     container.scrollTop = container.scrollHeight;
   }
   this.init(id, name, container_class );
@@ -462,7 +462,7 @@ new ToolbarConfig
 
 eventHandlers.click['clear-error-console-dragonfly'] = function()
 {
-  console_messages.clearDragonflyMessages();
+  ErrorConsoleData.clearDragonflyMessages();
 }
 
 
