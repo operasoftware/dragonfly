@@ -262,7 +262,7 @@ var ErrorConsoleView = function(id, name, container_class, source)
   name = name ? name : 'missing name ' + id;
   this.createView = function(container)
   {
-    container.clearAndRender(templates.messages(ErrorConsoleData.getMessages(source)));
+    container.clearAndRender(templates.error_log_messages(ErrorConsoleData.getMessages(source)));
     container.scrollTop = container.scrollHeight;
   }
   this.init(id, name, container_class );
@@ -438,7 +438,7 @@ cls.ConsoleDragonflyView = function(id, name, container_class)
 {
   this.createView = function(container)
   {
-    container.clearAndRender(templates.messages(ErrorConsoleData.getDragonflyMessages()));
+    container.clearAndRender(templates.error_log_messages(ErrorConsoleData.getDragonflyMessages()));
     container.scrollTop = container.scrollHeight;
   }
   this.init(id, name, container_class );

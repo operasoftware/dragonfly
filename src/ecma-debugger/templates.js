@@ -1,4 +1,4 @@
-﻿window.templates = window.templates || ( window.templates = {} );
+﻿window.templates = window.templates || {};
 
 (function()
 {
@@ -364,103 +364,6 @@ MODE ::= "<mode>"
   {
     return ['div', ['ul', 'id', 'runtimes'], 'class', 'window-container'];
   }
-
-  this.messages = function(messages)
-  {
-    var message = null, i = 0;
-    var ret = ['div'];
-    for( ; message = messages[i]; i++)
-    {
-      ret[ret.length] = self.message(message);
-    }
-    return ret;//.concat(['class', 'padding']);
-  }
-
-/*
-
-<?xml version="1.0"?>
-<message>
-<time>1194441921</time>
-<uri>file://localhost/d:/cvs-source/scope/http-clients/ecma-debugger/tests/test-console.html</uri>
-<context>Inline script thread</context>
-<severity>error</severity>
-<source>ecmascript</source>
-<description xml:space="preserve">Error:
-name: ReferenceError
-message: Statement on line 2: Undefined variable: b
-Backtrace:
-  Line 2 of inline#1 script in file://localhost/d:/cvs-source/scope/http-clients/ecma-debugger/tests/test-console.html
-    b.b = 'hallo';
-</description>
-</message>
-
-
-<message>
-<time>1194442013</time>
-<uri>file://localhost/d:/cvs-source/scope/http-clients/ecma-debugger/tests/test-console.html</uri>
-<context>Inlined stylesheet</context>
-<severity>information</severity>
-<source>css</source>
-<description xml:space="preserve">xxcolor is an unknown property
-
-Line 2:
-  body {xxcolor:red}
-  --------------^</description></message>
-
-"<severity>"
- ( "debug" | "verbose" | "information" | "error" | "critical" )
-"</severity>"
-
-*/
-
-  this.message = function( message)
-  {
-    return ['div',
-      ['date', new Date(parseInt( message.time )*1000).toString().replace(/GMT.*$/, '') ],
-      ['h2', message.source, 'severity', message.severity],
-      ['uri', (
-                (message.uri && (message.uri.indexOf("http://") == 0 || message.uri.indexOf("https://") == 0 || message.uri.indexOf("file://")==0)) ? ["a", message.uri, "href", message.uri, "target", "_blank"] : message.uri
-              )
-      ],
-      ['context', message.context],
-      ['pre', message.description]
-    ]
-  }
-    /*
-
-     <div id='dom-view-container'>
-
-      <div id='toolbar'>
-      <form>
-
-      <label><input type='radio' id='radio-markup-view' checked='checked'> markup view</label>
-      <label><input type='radio' id='radio-dom-view'> dom view</label>
-      <label>
-        <input type='checkbox' id='checkbox-show-attributes' checked='checked'>
-       show attributes</label>
-
-      <label>
-        <input type='checkbox' id='checkbox-force-lower-case' checked='checked'>
-      force lower case</label>
-
-      <label>
-        <input type='checkbox' id='checkbox-show-comments'>
-       show comments</label>
-
-      <label>
-        <input type='checkbox' id='checkbox-show-white-space-nodes'>
-       show white space nodes</label>
-
-      </form>
-      </div>
-
-      <div id='content'>
-        <div id='dom-view'></div>
-      </div>
-
-    </div>
-
-    */
 
   this.domInspector = function()
   {

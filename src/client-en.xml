@@ -219,6 +219,7 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./client/client.js"/>
 <script src="./window-manager/window-manager.js"/>
 <script src="./console-logger/console.js"/>
+<script src="./console-logger/console_templates.js"/>
 <script src="./ecma-debugger/ecma-debugger.js"/>
 <script src="./ecma-debugger/exec.js"/>
 
