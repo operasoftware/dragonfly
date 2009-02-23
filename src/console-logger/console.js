@@ -262,8 +262,7 @@ var ErrorConsoleView = function(id, name, container_class, source)
   name = name ? name : 'missing name ' + id;
   this.createView = function(container)
   {
-    container.innerHTML = '';
-    container.render(templates.messages(ErrorConsoleData.getMessages(source)));
+    container.clearAndRender(templates.messages(ErrorConsoleData.getMessages(source)));
     container.scrollTop = container.scrollHeight;
   }
   this.init(id, name, container_class );
@@ -431,15 +430,15 @@ ErrorConsoleView.roughViews.createViews = function()
 ErrorConsoleView.roughViews.createViews();
 
 /**
-  * @constructor 
-  * @extends ViewBase
-  */
+ * View class for the error console
+ * @constructor 
+ * @extends ViewBase
+ */
 cls.ConsoleDragonflyView = function(id, name, container_class)
 {
   this.createView = function(container)
   {
-    container.innerHTML = '';
-    container.renderInner(templates.messages(ErrorConsoleData.getDragonflyMessages()));
+    container.clearAndRender(templates.messages(ErrorConsoleData.getDragonflyMessages()));
     container.scrollTop = container.scrollHeight;
   }
   this.init(id, name, container_class );
@@ -523,7 +522,7 @@ new Settings
     'console-voice': ui_strings.S_SWITCH_SHOW_TAB_VOICE,
     'console-widget': ui_strings.S_SWITCH_SHOW_TAB_WIDGET,
     'console-dragonfly': ui_strings.S_SWITCH_SHOW_TAB_DRAGONFLY,
-    'use-selected-runtime-as-filter': ' use selected runtime as filter'
+    'use-selected-runtime-as-filter': ' use selected runtime as filter' // Not in use!
   }, 
   // settings map
   {
