@@ -13,42 +13,39 @@ var cls = window.cls || ( window.cls = {} );
   */
 cls.ErrorConsoleService = function(name)
 {
-  var self = this;
-  var messages = [];
-
-  this.onreceive = function(xml) // only called if there is a xml
-  {
-    if( ini.debug )
-    {
-      debug.logEvents(xml);
-    }
-    if( self[xml.documentElement.nodeName] )
-    {
-      self[xml.documentElement.nodeName](xml)
-    }
-    else
-    {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
-        'error in console, genericEventListener');
-    }
-  }
-
-  this['message'] = function(message) 
-  {
-    window.ErrorConsoleData.handle(message);
-  }
-
-  // constructor calls
-
-  this.initBase(name);
+    var self = this;
+    var messages = [];
   
-  if( !client)
-  {
-    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
-      'client must be created in ecma console.js');
-    return;
-  }
-  client.addService(this);
+    this.onreceive = function(xml) // only called if there is a xml
+    {
+        if(ini.debug) {
+            debug.logEvents(xml);
+        }
+
+        if(self[xml.documentElement.nodeName]) {
+          self[xml.documentElement.nodeName](xml)
+        }
+        else {
+            opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+                      'error in console, genericEventListener');
+        }
+    }
+  
+    this['message'] = function(message) 
+    {
+        window.ErrorConsoleData.handle(message);
+    }
+  
+    // constructor calls
+  
+    this.initBase(name);
+    
+    if (!client) {
+        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+                  'client must be created in ecma console.js');
+        return;
+    }
+    client.addService(this);
 }
 
 
