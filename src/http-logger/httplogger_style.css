@@ -19,7 +19,7 @@
 /*}*/
 
 .request-table tr:nth-child(odd) {
-    background-color: #fbfafa;
+    background-color: #f2f2f2;
 }
 
 /* expand/collaps control cell */
