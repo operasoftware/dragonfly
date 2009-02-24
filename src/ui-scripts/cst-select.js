@@ -91,8 +91,6 @@
       select_obj = window['cst-selects'][select.getAttribute("cst-id")];
       modal_box = (cursor || document.documentElement).render(templates['cst-select-option-list'](select_obj, select));
       
-      
-
       var box = select.getBoundingClientRect(),
       cursor_top = cursor && cursor.offsetTop - cursor.scrollTop || 0,
       cursor_left = cursor && cursor.offsetLeft - cursor.scrollLeft || 0,
@@ -152,7 +150,7 @@
     select_ele.firstChild.textContent = this.getSelectedOptionText();
   }
 
-  this.updateElement = function()
+  this.updateElement = function(checkbox_value)
   {
     var 
     selects = document.getElementsByTagName('cst-select'),
@@ -165,7 +163,7 @@
     {
       if( select.getAttribute('cst-id') == id )
       {
-        this.setNewValues(select);
+        this.setNewValues(select, checkbox_value);
         ret = select;
       }
     }
@@ -266,7 +264,7 @@ var CstSelectColorBase = function(id, rgba_arr, handler, option)
   {
     return this._selected_value;
   }
-  // to set the initial value
+
   this.setSelectedValue = function(rgba_arr)
   {
     if(rgba_arr && rgba_arr.length == 4)
@@ -283,11 +281,27 @@ var CstSelectColorBase = function(id, rgba_arr, handler, option)
     }
   }
 
-  this.setNewValues = function(select_ele)
+  this.setNewValues = function(select_ele, checkbox_value)
   {
     select_ele.value = 
-    select_ele.firstElementChild.style.backgroundColor = 
-    this.getSelectedOptionValue();
+      select_ele.firstElementChild.style.backgroundColor = 
+      this.getSelectedOptionValue();
+    if( typeof checkbox_value == "boolean" )
+    {
+      var checkbox = select_ele.previousElementSibling;
+      if( checkbox && checkbox.type == "checkbox" )
+      {
+        checkbox.checked = checkbox_value;
+        if(checkbox_value)
+        {
+          select_ele.removeAttribute('disabled');
+        }
+        else
+        {
+          select_ele.setAttribute('disabled', 'disabled');
+        }
+      }
+    }
   }
 
   this._selected_value = [];
@@ -345,10 +359,10 @@ var CstSelectColorBase = function(id, rgba_arr, handler, option)
     ret[ret.length] = 
     [
       "div", 
-      this.templateInputRange("Hue", colors.getHue(), "0", "360", "number", "set-hsla"),
-      this.templateInputRange("Saturation", colors.getSaturation(), "0", "100", "number", "set-hsla"),
-      this.templateInputRange("Luminosity", colors.getLuminosity(), "0", "100", "number", "set-hsla"),
-      this.templateInputRange("Opacity", extract_alpha(select_obj._selected_value) * 100 >> 0, "0", 
+      this.templateInputRange(ui_strings.S_LABEL_COLOR_HUE, colors.getHue(), "0", "360", "number", "set-hsla"),
+      this.templateInputRange(ui_strings.S_LABEL_COLOR_SATURATION, colors.getSaturation(), "0", "100", "number", "set-hsla"),
+      this.templateInputRange(ui_strings.S_LABEL_COLOR_LUMINOSITY, colors.getLuminosity(), "0", "100", "number", "set-hsla"),
+      this.templateInputRange(ui_strings.S_LABEL_COLOR_OPACITY, extract_alpha(select_obj._selected_value) * 100 >> 0, "0", 
         "100", "digit-3", "set-hsla", !select_obj.has_opacity),
       this.templateInputText("# ", colors.getHex(), "text", "set-hex"),
       'onchange', update_new_value
@@ -356,8 +370,8 @@ var CstSelectColorBase = function(id, rgba_arr, handler, option)
     ret[ret.length] = 
     [
       "div",
-      this.templateInputButton("Ok", null, "1"),
-      this.templateInputButton("Cancel", null, "0"),
+      this.templateInputButton(ui_strings.S_BUTTON_OK, null, "1"),
+      this.templateInputButton(ui_strings.S_BUTTON_CANCEL, null, "0"),
       "class", "ok-cancel"
     ];
     return ['cst-option-list-background', ret];
@@ -460,7 +474,6 @@ var CstSelectColorBase = function(id, rgba_arr, handler, option)
       "class", cn || "",
       "value", value
     ];
-
   }
 
   // this is only valid during modal state

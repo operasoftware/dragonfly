@@ -573,11 +573,9 @@ var action_handler = new function()
     }
   }
 
-  handlers['spotlight-node'].timeout = 0;
   handlers['spotlight-node'].clearSpotlight = function(rt_id)
   {
-    services['ecmascript-debugger'].clearSpotlight(rt_id);
-    handlers['spotlight-node'].timeout = 0;
+    hostspotlighter.clearSpotlight();
   }
 
   handlers['create-all-runtimes'] = function()

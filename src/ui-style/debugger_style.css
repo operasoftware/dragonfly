@@ -878,3 +878,46 @@ d
   text-decoration: underline;
   color: #4d1100;
 }
+
+.host-spotlight h3 
+{
+  display: inline-block;
+  margin: .5em 0;
+  border: 1px solid #ccc;
+  padding-left: .5em;
+}
+
+.host-spotlight label 
+{
+  display: inline-block;
+  margin-left: 1.5em;
+}
+
+.host-spotlight cst-select
+{
+  margin-right: 0;
+}
+
+.reset-defaults
+{
+  vertical-align: middle;
+  margin-left: 2em;
+}
+
+.advanced-spotlight-color-settings
+{
+  border-collapse: collapse;
+  margin: 1.1em 0;
+}
+
+.advanced-spotlight-color-settings td,
+.advanced-spotlight-color-settings th
+{
+  border: 1px solid #ccc;
+  padding: .3em 1em;
+}
+
+.advanced-spotlight-color-settings th
+{
+  text-align: left;
+}

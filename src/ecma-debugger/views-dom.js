@@ -445,7 +445,7 @@ cls.DOMView = function(id, name, container_class)
 
   this.ondestroy = function()
   {
-    services['ecmascript-debugger'].clearSpotlight(dom_data.getDataRuntimeId());
+    hostspotlighter.clearSpotlight();
   }
 
   var onSettingChange = function(msg)

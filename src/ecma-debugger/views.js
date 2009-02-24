@@ -196,7 +196,7 @@ cls.HostSpotlightView = function(id, name, container_class)
   this.init(id, name, container_class);
 }
 cls.HostSpotlightView.prototype = ViewBase;
-new cls.GeneralView('host-spotlight', "Host Spotlight", '');
+new cls.GeneralView('host-spotlight', ui_strings.S_LABEL_SPOTLIGHT_TITLE, '');
 
 new Settings
 (
@@ -339,7 +339,8 @@ new Settings
             'disabled', 'disabled',
             'value', ui_strings.S_BUTTON_TEXT_APPLY,
             'handler', 'apply-remote-debugging'
-          ]
+          ],
+          'class', 'apply-button'
         ]
       ];
     }

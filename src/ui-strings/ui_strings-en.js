@@ -238,6 +238,10 @@ ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW = 'Close Window';
 ui_strings.S_BUTTON_TEXT_APPLY = 'Apply';
 /* DESC: Clear request log. */
 ui_strings.S_BUTTON_CLEAR_REQUEST_LOG = 'Clear request log';
+/* DESC: */
+ui_strings.S_BUTTON_OK = "Ok";
+/* DESC: */
+ui_strings.S_BUTTON_CANCEL = "Cancel";
 
 /*
  * Labels
@@ -255,6 +259,49 @@ ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH = 'Search';
 ui_strings.S_INPUT_DEFAULT_TEXT_FILTER = 'Quick find';
 /* DESC: Tab size in source view. */
 ui_strings.S_LABEL_TAB_SIZE = 'Tab Size';
+/* DESC: Label for the hue of a color value. */
+ui_strings.S_LABEL_COLOR_HUE = "Hue";
+/* DESC: Label for the saturation of a color value.  */
+ui_strings.S_LABEL_COLOR_SATURATION = "Saturation";
+/* DESC: Label for the luminosity of a color value. */
+ui_strings.S_LABEL_COLOR_LUMINOSITY = "Luminosity";
+/* DESC: Label for the opacity of a color value. */
+ui_strings.S_LABEL_COLOR_OPACITY = "Opacity";
+
+/* DESC: */
+ui_strings.S_LABEL_SPOTLIGHT_TITLE = "Spotlight";
+/* DESC: */
+ui_strings.S_LABEL_SPOTLIGHT_COLOR_THEME = "Color Theme";
+/* DESC: */
+ui_strings.S_LABEL_SPOTLIGHT_PROPERTY_FILL = "fill";
+/* DESC: */
+ui_strings.S_LABEL_SPOTLIGHT_PROPERTY_FRAME = "frame";
+/* DESC: */
+ui_strings.S_LABEL_SPOTLIGHT_PROPERTY_GRID = "grid";
+/* DESC: */
+ui_strings.S_BUTTON_SPOTLIGHT_RESET_DEFAULT_COLORS = "Reset Default Colors";
+/* DESC: */
+ui_strings.S_BUTTON_SPOTLIGHT_ADVANCED = "Advanced";
+/* DESC: */
+ui_strings.S_LABEL_SPOTLIGHT_TITLE_DEFAULT = "Default Spotlight";
+/* DESC: */
+ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_DIMENSION = "dimension";
+/* DESC: */
+ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_PADDING = "padding";
+/* DESC: */
+ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_BORDER = "border";
+/* DESC: */
+ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_MARGIN = "margin";
+/* DESC: */
+ui_strings.S_LABEL_SPOTLIGHT_TITLE_METRICS = "Spotlight Metrics";
+/* DESC: */
+ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_INNER_ANY = "hover inner any";
+/* DESC: */
+ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_INNER = "hover inner";
+/* DESC: */
+ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_HOVER = "hover";
+/* DESC: */
+ui_strings.S_LABEL_SPOTLIGHT_TITLE_LOCKED_ELEMENTS = "Spotlight Locked Elements";
 
 /*
  * Information strings in the UI

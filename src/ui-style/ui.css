@@ -475,6 +475,7 @@ settings { /**/
 
 settings-header { /**/
   font-size: 1.2em;
+  clear: both;
   }
 
 settings-header input { /**/
@@ -515,10 +516,12 @@ setting-composite label + label {
   margin-left: 20px;
 }
 
-setting-composite input[type="button"] {
+
+
+.apply-button input[type="button"] 
+{
   float: right;
   margin-right: 26px;
-
 }
 
 setting-composite select
@@ -1120,10 +1123,7 @@ cst-option:hover
   background-color: #009;
   color: #fff;
 }
-td
-{
-  border: 1px solid #ccc;
-}
+
 cst-select.color
 {
   background: none;
@@ -1206,14 +1206,16 @@ cst-select-option-list.color label
 {
   display: block;
   margin: 2px 3px;
-  border: 1px solid #ccc;
+  line-height: 1.4em;
+  clear: both;
 }
 
 cst-select-option-list.color label input
 {
   float: right;
   vertical-align: middle;
-  height: 1em;
+  height: 1.1em;
+  padding: 0;
   width: 4.2em;
 }
 

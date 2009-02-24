@@ -57,6 +57,9 @@ cls.CSSLayoutView = function(id, name, container_class)
       if( elementLayout.getOffsetsValues(arguments) )
       {
         c.innerHTML = elementLayout.prettyprintOffsetValues();
+        c = c.getElementsByTagName('breadcrumb')[0];
+        c.onmouseover = helpers.breadcrumbSpotlight;
+        c.onmouseout = helpers.breadcrumbClearSpotlight;
       }
     }
   }

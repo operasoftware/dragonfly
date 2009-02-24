@@ -81,7 +81,13 @@ var DOM_markup_style = function(id, name, container_class)
       {
         while( ( ele = ele.previousSibling ) && ele.getAttribute('ref-id') != obj_id );
       }
-      topCell.statusbar.updateInfo(templates.breadcrumb(dom_data.getCSSPath()));
+      topCell.statusbar.updateInfo
+      (
+        // the same template is used with inner html
+        templates.breadcrumb(dom_data.getCSSPath()).
+          concat(['onmouseover', helpers.breadcrumbSpotlight, 
+                  'onmouseout', helpers.breadcrumbClearSpotlight])  
+      );
     }
     if(ele || ( ele = document.getElementById('target-element') ) )
     {
