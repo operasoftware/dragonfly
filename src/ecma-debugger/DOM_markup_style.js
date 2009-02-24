@@ -374,7 +374,9 @@ var DOM_markup_style = function(id, name, container_class)
         setTimeout(function(){container.scrollLeft = 0;}, 0);
       }
       this.updateTarget();
-      topCell.statusbar.updateInfo(templates.breadcrumb(dom_data.getCSSPath()));
+      topCell.statusbar.updateInfo(templates.breadcrumb(dom_data.getCSSPath()).
+          concat(['onmouseover', helpers.breadcrumbSpotlight, 
+                  'onmouseout', helpers.breadcrumbClearSpotlight]));
     }
   }
 
