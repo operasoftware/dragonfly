@@ -27,13 +27,44 @@ cls.ErrorConsoleService = function(name)
         }
         else {
             opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
-                      'error in console, genericEventListener');
+                               'error in console, genericEventListener');
         }
     }
-  
+    
+    /**
+     * Makes a dict out of a lump of xml
+     */
+    var parseLogEntry = function(xml)
+    {
+        //var uri = message_event.getNodeData('uri'); FIXME!
+        var message = {};
+        var children = xml.documentElement.childNodes;
+
+        for (var n=0, e; e=children[n]; n++) {
+            switch (e.nodeName) {
+                case "time":
+                    message.time = new Date(parseFloat(e.textContent))
+                    break;
+                  
+                case "message":
+                    var parts = e.textContent.split("\n");
+                    if (parts.lenth) {
+                        message.title = parts[0];
+                    }
+                    else {
+                        message.title = ""
+                    }
+                // There is no break here. message is handled normally too!
+                default:
+                    message[e.nodeName] = e.textContent;
+            }
+        }
+        return message;
+    }
+
     this['message'] = function(message) 
     {
-        window.ErrorConsoleData.handle(message);
+        window.ErrorConsoleData.addEntry(parseLogEntry(message));
     }
   
     // constructor calls
@@ -97,6 +128,7 @@ var ErrorConsoleData = new function()
   var __views = ['console-dragonfly'];
   var __selected_rt_url = '';
   var url_self = location.host + location.pathname;
+
   var updateViews = function()
   {
     var view = '', i = 0;
@@ -111,8 +143,16 @@ var ErrorConsoleData = new function()
     __views[__views.length] = view_id;
   }
 
+  this.addEntry = function(entry)
+  {
+      msgs.push(entry);
+      messages.post('console-message', entry);
+      updateViews();
+  }
+
   this.handle = function(message_event)
   {
+    return;
     var uri = message_event.getNodeData('uri');
     var message = {};
     var children = message_event.documentElement.childNodes, child=null, i=0, value = '';
@@ -257,6 +297,10 @@ var ErrorConsoleView = function(id, name, container_class, source)
 {
   container_class = container_class ? container_class : 'scroll error-console';
   name = name ? name : 'missing name ' + id;
+
+  var expandAll = false;
+  var expanded = [];
+
   this.createView = function(container)
   {
     container.clearAndRender(templates.error_log_messages(ErrorConsoleData.getMessages(source)));
