@@ -117,6 +117,7 @@
   var set_color_theme = function(fill_frame_color, grid_color)
   {
     var color = null, i = 0, j = 0, k = 0;
+    var sat = 0;
     for( i = 0; i < 3; i++)
     {
       for( j = 0; j < 4; j++)
@@ -125,7 +126,13 @@
         {
           if( color = COLOR_THEME_ALPHAS[i][j][k] )
           {
-            matrixes[i][j][k] = color[0] && grid_color.slice(0) || fill_frame_color.slice(0);
+            colors.setRGB( color[0] && grid_color || fill_frame_color );
+            if( !color[0] )
+            {
+              colors.setSaturationV(colors.getSaturationV() * ( 1 - j * .28 ) * ( k == 1 && .2 || 1 ) );
+              colors.setValue(colors.getValue() * ( 1 - j * .28 ) * ( k == 1 && .2 || 1 ) );
+            }
+            matrixes[i][j][k] = colors.getRGB();
             matrixes[i][j][k][3] = color[3];
           }
           else
