@@ -75,7 +75,6 @@ window.templates.sanitize_url = function(req)
 window.templates.request_list_row = function(r, expandList, firstTime, lastTime, viewMap)
 {
     var expanded = expandList.indexOf(r.id) != -1;
-
     var range = lastTime - firstTime;
     rangeP = 100/range;
     var cur = r.request.time - firstTime;
