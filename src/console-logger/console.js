@@ -218,7 +218,7 @@ var ErrorConsoleData = new function()
   var getMessagesWithoutFilter = function(source)
   {
     if( source ) {
-        var fun = function(e) {return e.source!=source}
+        var fun = function(e) {return e.source==source}
         return msgs.filter(fun)
     }
     return msgs;
