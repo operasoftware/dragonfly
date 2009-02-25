@@ -98,7 +98,6 @@ cls.RequestListView = function(id, name, container_class)
         }
         
         var firstTime = log.length ? log[0].request.time : lastTime;
-
         
         // partial function invocation that closes over expandedItems
         var fun = function(e) {
@@ -106,7 +105,6 @@ cls.RequestListView = function(id, name, container_class)
         }
 
         var tpls = log.slice(nextToRendereIndex).map(fun);
-
         tableBodyEle.render(tpls);
         nextToRendereIndex = log.length;
     }
@@ -122,7 +120,6 @@ cls.RequestListView = function(id, name, container_class)
         }
         return null;
     }
-    
     
     /**
      * Collapse the detail view of an entry in the log.
@@ -177,11 +174,12 @@ cls.RequestListView = function(id, name, container_class)
     {
         if (expandedItems.indexOf(id)==-1) {
             expandedItems.push(id);
-            this.expandEntry(id);
+            //this.expandEntry(id);
         } else {
             expandedItems.splice(expandedItems.indexOf(id), 1);
-            this.collapseEntry(id);
+            //this.collapseEntry(id);
         }
+        this.update();
     }
 
     this.selectDetailView = function(id, name) {
@@ -189,17 +187,17 @@ cls.RequestListView = function(id, name, container_class)
         this.update();
         return;
         
-        // the bits under here could be used if we decide to do something
-        // smarter than just invalidating the view and redrawing.
+         //the bits under here could be used if we decide to do something
+         //smarter than just invalidating the view and redrawing.
 
 
-        //var row = this._getRowForId(id);
-        //if (!row) { return }
-        //
-        //row = row.nextSibling;
-        //var req = HTTPLoggerData.getRequestById(id);
-        //var div = row.getElementsByTagName("div")[0];
-        //div.clearAndRender(window.templates.parsed_request_headers(req, "headers"));
+        var row = this._getRowForId(id);
+        if (!row) { return }
+
+        row = row.nextSibling;
+        var req = HTTPLoggerData.getRequestById(id);
+        var div = row.getElementsByTagName("div")[0];
+        div.clearAndRender(window.templates.parsed_request_headers(req, "headers"));
 
 
 
@@ -226,17 +224,6 @@ eventHandlers.click['select-http-detail-view'] = function(event, target)
 {
     window.views['request_list'].selectDetailView(target.getAttribute("data-requestid"), target.getAttribute("data-viewname"));
 }
-
-new ToolbarConfig
-(
-    'request_list',
-    [
-      {
-        handler: 'clear-request-list',
-        title: ui_strings.S_BUTTON_CLEAR_REQUEST_LOG
-      }
-    ]
-);
 
 eventHandlers.click['clear-request-list'] = function(event, target)
 {
