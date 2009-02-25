@@ -1,4 +1,4 @@
-window.templates = window.templates || {}
+﻿window.templates = window.templates || {}
 
 
 window.templates.error_log_table = function(entries, allExpanded, expandedList, viewId)
