@@ -141,6 +141,12 @@ var BaseKeyhandler = new function()
 
   };
 
+  this[this.CTRL_A] = function(event, action_id)
+  {
+    return key_identifier.ctrl_a(event, action_id)
+  }
+
+
   this.init = function(id)
   {
     if( !window.keyhandlers )
@@ -262,6 +268,16 @@ var key_identifier = new function()
 
   var __current_view_id = null;
 
+  this.ctrl_a = function(event, action_id)
+  {
+    var selection = getSelection();
+    var range = document.createRange();
+    selection.collapse(__container, 0);
+    range.selectNodeContents(__container);
+    selection.addRange(range);
+    return false;
+  }
+
   var empty_keyhandler = new function()
   {
     var 
@@ -277,6 +293,11 @@ var key_identifier = new function()
     for( key in action_map )
     {
       this[action_map[key]] = empty_handler;
+    }
+
+    this[action_map[key_ids.CTRL_A]] = function(event, action_id)
+    {
+      return self.ctrl_a(event, action_id);
     }
 
     this.focus = function(container) {};
