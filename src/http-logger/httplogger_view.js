@@ -225,17 +225,6 @@ eventHandlers.click['select-http-detail-view'] = function(event, target)
     window.views['request_list'].selectDetailView(target.getAttribute("data-requestid"), target.getAttribute("data-viewname"));
 }
 
-new ToolbarConfig
-(
-    'request_list',
-    [
-      {
-        handler: 'clear-request-list',
-        title: ui_strings.S_BUTTON_CLEAR_REQUEST_LOG
-      }
-    ]
-);
-
 eventHandlers.click['clear-request-list'] = function(event, target)
 {
     HTTPLoggerData.clearLog();
