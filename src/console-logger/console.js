@@ -196,6 +196,9 @@ var ErrorConsoleData = new function()
     updateViews();
   }
 
+  /**
+   * Clear the log. If source is set, clear only the entries with that source
+   */
   this.clear = function(source)
   {
       if( source ) {
@@ -208,47 +211,29 @@ var ErrorConsoleData = new function()
       updateViews();
   }
 
+  /**
+   * Return all the messages. If souce is set, return only messages for
+   * that source.
+   */
   var getMessagesWithoutFilter = function(source)
   {
-    var ret = [], msg = null, i = 0;
-    if( source )
-    {
-      for( ; msg = msgs[i]; i++ )
-      {
-        if( msg.source == source )
-        {
-          ret[ret.length] =  msg;
-        }
-      }
+    if( source ) {
+        var fun = function(e) {return e.source!=source}
+        return msgs.filter(fun)
     }
-    else
-    {
-      ret = msgs;
-    }
-    return ret;
+    return msgs;
   }
 
+  /**
+   * Return all the messages whose uri is the same as __selected_rt_url.
+   * If souce is set, return only messages for that source.
+   */
   var getMessagesWithFilter = function(source)
   {
-    var ret = [], msg = null, i = 0;
-    for( ; msg = msgs[i]; i++ )
-    {
-      if( msg.uri == __selected_rt_url )
-      {
-        if( source )
-        {
-          if( msg.source == source )
-          {
-            ret[ret.length] =  msg;
-          }
-        }
-        else
-        {
-          ret[ret.length] =  msg;
-        }
+      var fun = function(e) { return e.uri == __selected_rt_url &&
+                              (!source || e.source==source)
       }
-    }
-    return ret;
+      return msgs.filter(fun)
   }
 
   this.getMessages = function(source, filter)
