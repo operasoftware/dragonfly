@@ -19,21 +19,25 @@
 /*}*/
 
 .request-table tr:nth-child(odd) {
-    background-color: #fbfafa;
+    background-color: #f2f2f2;
 }
 
+/* expand/collaps control cell */
 .request-table tr td:nth-child(1) {
     width: 16px;
 }
 
+/* icon cell */
 .request-table tr td:nth-child(2) {
     width: 16px;
 }
 
+/* method cell */
 .request-table tr td:nth-child(3) {
     width: 4em;
 }
 
+/* host/path cell */
 .request-table tr td:nth-child(4) {
     width: 24ex;
     overflow: hidden;
@@ -42,15 +46,18 @@
     font-weight: bold;
 }
 
+/* status code cell */
 .request-table tr td:nth-child(5) {
     width: 3em;
     text-align: right;
 }
 
+/* status message cell */
 .request-table tr td:nth-child(6) {
     width: 8em;
 }
 
+/* graph cell */
 .request-table tr td:nth-child(7) {
     margin: 0;
     padding: 0;

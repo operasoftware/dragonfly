@@ -1,0 +1,126 @@
+
+.error-console tr:nth-child(odd) {
+    background-color: #f2f2f2;
+}
+
+/* Expander cell */
+.error-console td:nth-child(1) {
+    width: 22px;
+}
+
+
+/* File cell */
+.error-console td:nth-child(2) {
+    width: 30%;
+    font-weight: bold;
+    overflow: hidden;
+    -o-text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 200px;
+}
+
+/* Line cell */
+.error-console td:nth-child(3) {
+    width: 128px;
+    text-align: right;
+}
+
+.error-console table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.error-console td, .error-console th {
+    border-bottom: 1px solid #b3b3b3;
+    border-left: 1px solid #b3b3b3;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.error-console td:first-child, .error-console th:first-child {
+    border-left: none;
+}
+
+.error-console button[handler=error-log-list-expand-collapse] {
+  height: 15px;
+  width: 19px;
+  background: transparent url('../ui-images/expand-collapse.png') 4px 2px no-repeat;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.error-console tr.expanded button {
+  background: transparent url('../ui-images/expand-collapse.png') 4px -13px no-repeat;
+}
+
+.error-console button[handler=error-log-list-expand-collapse]:active {
+    background-color: highlight;
+}
+
+.error-console pre {
+    padding: 6px;
+    margin: 6px;
+    border: dashed 1px #b3b3b3;
+    font-family: monospace;
+    background-color: white;
+}
+
+
+
+
+/**/
+/*.error-console date {*/
+/*  float:right;*/
+/*  /*xxline-height:22px;*/*/
+/*  padding:7px;*/
+/*  }*/
+/**/
+/*.error-console h2 {*/
+/*  padding:0;*/
+/*  margin:0;*/
+/*  padding-left:30px;*/
+/*  background:transparent url('../ui-images/error-console-default.png') scroll no-repeat 5px 1px;*/
+/*  }*/
+/**/
+/**/
+/*.error-console h2[severity="debug"] {*/
+/*  background-image:url('');*/
+/*  }*/
+/**/
+/*.error-console h2[severity="verbose"] {*/
+/*  background-image:url('');*/
+/*  }*/
+/**/
+/*.error-console h2[severity="information"] {*/
+/*  background-image:url('../ui-images/error-console-info.png');*/
+/*  }*/
+/**/
+/*.error-console h2[severity="error"] {*/
+/*  background-image:url('../ui-images/error-console-error.png');*/
+/*  }*/
+/**/
+/*.error-console h2[severity="critical"] {*/
+/*  background-image:url('../ui-images/error-console-critical.png');*/
+/*  }*/
+/**/
+/*.error-console uri, .error-console context {*/
+/*  display: block;*/
+/*  padding: 2px;*/
+/*  padding-left:30px;*/
+/*  }*/
+/**/
+/*.error-console pre {*/
+/*  white-space:pre-wrap;*/
+/*  border-top:1px solid #b3b3b3;*/
+/*  border-bottom:1px solid #b3b3b3;*/
+/*  background-color:#fff;*/
+/*  font-family:monospace;*/
+/*  font-size:12px;*/
+/*  margin:0;*/
+/*  padding:7px;*/
+/*  padding-left:30px;*/
+/*  }*/
+/**/
+

@@ -13,42 +13,93 @@ var cls = window.cls || ( window.cls = {} );
   */
 cls.ErrorConsoleService = function(name)
 {
-  var self = this;
-  var messages = [];
-
-  this.onreceive = function(xml) // only called if there is a xml
-  {
-    if( ini.debug )
-    {
-      debug.logEvents(xml);
-    }
-    if( self[xml.documentElement.nodeName] )
-    {
-      self[xml.documentElement.nodeName](xml)
-    }
-    else
-    {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
-        'error in console, genericEventListener');
-    }
-  }
-
-  this['message'] = function(message) 
-  {
-    window.console_messages.handle(message);
-  }
-
-  // constructor calls
-
-  this.initBase(name);
+    var self = this;
+    var messages = [];
+    var lastId = 0;
   
-  if( ! client)
-  {
-    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
-      'client must be created in ecma comsole.js');
-    return;
-  }
-  client.addService(this);
+    this.onreceive = function(xml) // only called if there is a xml
+    {
+        if(ini.debug) {
+            debug.logEvents(xml);
+        }
+
+        if(self[xml.documentElement.nodeName]) {
+          self[xml.documentElement.nodeName](xml)
+        }
+        else {
+            opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+                               'error in console, genericEventListener');
+        }
+    }
+    
+    /**
+     * Makes a dict out of a lump of xml
+     */
+    var parseLogEntry = function(xml)
+    {
+        //var uri = message_event.getNodeData('uri'); FIXME!
+
+        // this id is usefull for getting a particular message from the log
+        var message = {"id": ""+(++lastId)};
+        var children = xml.documentElement.childNodes;
+
+        for (var n=0, e; e=children[n]; n++) {
+            switch (e.nodeName) {
+                case "time":
+                    message.time = new Date(parseFloat(e.textContent))
+                    break;
+                  
+                case "description":
+                    var parts = e.textContent.split("\n");
+                    if (parts.length) {
+                        if (parts[0] == "Error:") {
+                            message.title = parts[1].substr(6);
+                        }
+                        else {
+                            message.title = parts[0];
+                        }
+                    }
+                    else {
+                        message.title = ""
+                    }
+                    var matcher = /[lL]ine (\d*)/g;
+                    
+                    // If this is not set explicitly, the value is something
+                    // bogus for every other use of the regexp.
+                    // This is scary and confusing.
+                    matcher.lastIndex = 0;
+
+                    var linematch = matcher.exec(e.textContent);
+                    if (linematch) {
+                        message.line = linematch[1];
+                    }
+                    else {
+                        message.line = null;
+                    }
+                    
+                // There is no break here. message is handled normally too!
+                default:
+                    message[e.nodeName] = e.textContent;
+            }
+        }
+        return message;
+    }
+
+    this['message'] = function(message) 
+    {
+        window.ErrorConsoleData.addEntry(parseLogEntry(message));
+    }
+  
+    // constructor calls
+  
+    this.initBase(name);
+    
+    if (!client) {
+        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+                  'client must be created in ecma console.js');
+        return;
+    }
+    client.addService(this);
 }
 
 
@@ -90,16 +141,17 @@ cls.ErrorConsoleService.prototype = ServiceBase;
 new cls.ErrorConsoleService('console-logger');
 
 /**
-  * @constructor 
-  */
-
-var console_messages = new function()
+ * Data class for console logger
+ * @constructor 
+ */
+var ErrorConsoleData = new function()
 {
   var msgs = [];
   var dragonfly_msgs = [];
   var __views = ['console-dragonfly'];
   var __selected_rt_url = '';
   var url_self = location.host + location.pathname;
+
   var updateViews = function()
   {
     var view = '', i = 0;
@@ -114,8 +166,16 @@ var console_messages = new function()
     __views[__views.length] = view_id;
   }
 
+  this.addEntry = function(entry)
+  {
+      msgs.push(entry);
+      messages.post('console-message', entry);
+      updateViews();
+  }
+
   this.handle = function(message_event)
   {
+    return;
     var uri = message_event.getNodeData('uri');
     var message = {};
     var children = message_event.documentElement.childNodes, child=null, i=0, value = '';
@@ -136,68 +196,44 @@ var console_messages = new function()
     updateViews();
   }
 
+  /**
+   * Clear the log. If source is set, clear only the entries with that source
+   */
   this.clear = function(source)
   {
-    var msg = null, i = 0;
-    if( source )
-    {
-      for( ; msg = msgs[i]; i++ )
-      {
-        if( msg.source == source )
-        {
-          msgs.splice(i, 1);
-          i--;
-        }
+      if( source ) {
+          var fun = function(e) {return e.source!=source}
+          msgs = msgs.filter(fun)
       }
-    }
-    else
-    {
-      msgs = [];
-    }
-    updateViews();
+      else {
+          msgs = [];
+      }
+      updateViews();
   }
 
+  /**
+   * Return all the messages. If souce is set, return only messages for
+   * that source.
+   */
   var getMessagesWithoutFilter = function(source)
   {
-    var ret = [], msg = null, i = 0;
-    if( source )
-    {
-      for( ; msg = msgs[i]; i++ )
-      {
-        if( msg.source == source )
-        {
-          ret[ret.length] =  msg;
-        }
-      }
+    if( source ) {
+        var fun = function(e) {return e.source==source}
+        return msgs.filter(fun)
     }
-    else
-    {
-      ret = msgs;
-    }
-    return ret;
+    return msgs;
   }
 
+  /**
+   * Return all the messages whose uri is the same as __selected_rt_url.
+   * If souce is set, return only messages for that source.
+   */
   var getMessagesWithFilter = function(source)
   {
-    var ret = [], msg = null, i = 0;
-    for( ; msg = msgs[i]; i++ )
-    {
-      if( msg.uri == __selected_rt_url )
-      {
-        if( source )
-        {
-          if( msg.source == source )
-          {
-            ret[ret.length] =  msg;
-          }
-        }
-        else
-        {
-          ret[ret.length] =  msg;
-        }
+      var fun = function(e) { return e.uri == __selected_rt_url &&
+                              (!source || e.source==source)
       }
-    }
-    return ret;
+      return msgs.filter(fun)
   }
 
   this.getMessages = function(source, filter)
@@ -260,12 +296,27 @@ var ErrorConsoleView = function(id, name, container_class, source)
 {
   container_class = container_class ? container_class : 'scroll error-console';
   name = name ? name : 'missing name ' + id;
+
+  var expandAll = false;
+  var expanded = [];
+
   this.createView = function(container)
   {
-    container.innerHTML = '';
-    container.render(templates.messages(console_messages.getMessages(source)));
-    container.scrollTop = container.scrollHeight;
+    container.clearAndRender(templates.error_log_table(ErrorConsoleData.getMessages(source), false, expanded, this.id));
+    //container.scrollTop = container.scrollHeight;
   }
+
+  this.toggleDetails = function(logid)
+  {
+      if (expanded.indexOf(logid) == -1) {
+          expanded.push(logid);
+      }
+      else {
+          expanded.splice(expanded.indexOf(logid), 1);
+      }
+      this.update();
+  }
+
   this.init(id, name, container_class );
 }
 
@@ -343,7 +394,7 @@ ErrorConsoleView.roughViews.bindClearSource = function(source)
 {
   return function(event, target)
   {
-    console_messages.clear(source);
+    ErrorConsoleData.clear(source);
   }
 }
 
@@ -354,7 +405,7 @@ ErrorConsoleView.roughViews.createViews = function()
   for( ; r_v = this[i]; i++)
   {
     new ErrorConsoleView(r_v.id, r_v.name, r_v.container_class, r_v.source);
-    console_messages.addView(r_v.id);
+    ErrorConsoleData.addView(r_v.id);
     handler_id = 'clear-error-console' + ( r_v.source ? '-' + r_v.source : '' );
     new ToolbarConfig
     (
@@ -431,15 +482,15 @@ ErrorConsoleView.roughViews.createViews = function()
 ErrorConsoleView.roughViews.createViews();
 
 /**
-  * @constructor 
-  * @extends ViewBase
-  */
+ * View class for the error console
+ * @constructor 
+ * @extends ViewBase
+ */
 cls.ConsoleDragonflyView = function(id, name, container_class)
 {
   this.createView = function(container)
   {
-    container.innerHTML = '';
-    container.renderInner(templates.messages(console_messages.getDragonflyMessages()));
+    container.clearAndRender(templates.error_log_messages(ErrorConsoleData.getDragonflyMessages()));
     container.scrollTop = container.scrollHeight;
   }
   this.init(id, name, container_class );
@@ -462,9 +513,17 @@ new ToolbarConfig
 
 eventHandlers.click['clear-error-console-dragonfly'] = function()
 {
-  console_messages.clearDragonflyMessages();
+  ErrorConsoleData.clearDragonflyMessages();
 }
 
+eventHandlers.click['error-log-list-expand-collapse'] = function(event, target)
+{
+    var view = target.getAttribute("data-viewid");
+    var logid = target.getAttribute("data-logid");
+    if (view in window.views) {
+        window.views[view].toggleDetails(logid);
+    }
+}
 
 
 /**
@@ -523,7 +582,7 @@ new Settings
     'console-voice': ui_strings.S_SWITCH_SHOW_TAB_VOICE,
     'console-widget': ui_strings.S_SWITCH_SHOW_TAB_WIDGET,
     'console-dragonfly': ui_strings.S_SWITCH_SHOW_TAB_DRAGONFLY,
-    'use-selected-runtime-as-filter': ' use selected runtime as filter'
+    'use-selected-runtime-as-filter': ' use selected runtime as filter' // Not in use!
   }, 
   // settings map
   {
