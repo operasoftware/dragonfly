@@ -1,7 +1,4 @@
 
-
-
-
 .error-console tr:nth-child(odd) {
     background-color: #f2f2f2;
 }
@@ -11,13 +8,9 @@
     width: 22px;
 }
 
-/* Type icon cell */
-.error-console td:nth-child(2) {
-    width: 22px;
-}
 
 /* File cell */
-.error-console td:nth-child(3) {
+.error-console td:nth-child(2) {
     width: 30%;
     font-weight: bold;
     overflow: hidden;
@@ -27,11 +20,10 @@
 }
 
 /* Line cell */
-.error-console td:nth-child(4) {
+.error-console td:nth-child(3) {
     width: 128px;
     text-align: right;
 }
-
 
 .error-console table {
     border-collapse: collapse;
@@ -48,7 +40,6 @@
 .error-console td:first-child, .error-console th:first-child {
     border-left: none;
 }
-
 
 .error-console button[handler=error-log-list-expand-collapse] {
   height: 15px;
@@ -68,7 +59,6 @@
     background-color: highlight;
 }
 
-
 .error-console pre {
     padding: 6px;
     margin: 6px;
@@ -76,9 +66,6 @@
     font-family: monospace;
     background-color: white;
 }
-
-
-
 
 
 

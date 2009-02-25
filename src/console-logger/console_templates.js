@@ -3,8 +3,6 @@ window.templates = window.templates || {}
 
 window.templates.error_log_table = function(entries, allExpanded, expandedList, viewId)
 {
-    
-    
     var rowClosure = function(e)
     {
         return window.templates.error_log_row(e, allExpanded, expandedList, viewId);
@@ -14,16 +12,15 @@ window.templates.error_log_table = function(entries, allExpanded, expandedList, 
         "tr", [
                
                ['th', " "],
-               ['th', "TT"],
+               //['th', "TT"],
                ['th', "File"],
                ['th', "Line"],
                ['th', "Error"]
               ]
         ],
         entries.map(rowClosure)
-    ]        
+    ]
 }
-
 
 window.templates.error_log_row = function(entry, allExpanded, expandedList, viewId)
 {
@@ -39,7 +36,7 @@ window.templates.error_log_row = function(entry, allExpanded, expandedList, view
                         "data-viewid", viewId
                         ]
                 ],
-                ["td", "T"],
+                //["td", "T"],
                 ["td", entry.uri],
                 ["td", (entry.line==null ? "?" : entry.line) ],
                 ["td", entry.title]
@@ -47,26 +44,20 @@ window.templates.error_log_row = function(entry, allExpanded, expandedList, view
         ] 
     ]
 
-
-
     if (expanded) {
         rows.push(
         [
             "tr", [
-                ["td", [
-                    "pre", entry.description
-                ],
-                 "colspan", "5"
+                ["td",
+                    [ "a", entry.uri, "href", entry.uri ],
+                    [ "pre", entry.description ],
+                 "colspan", "4"
                 ]
             ]
-            
-            
-            
         ])
     }
     
     return rows;
-
 }
 
 window.templates.error_log_messages = function(messages)
