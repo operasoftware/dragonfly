@@ -688,6 +688,12 @@ var dom_data = new function()
       return data[i] && data[i][ID] || '';
     }
   }
+
+  this.getRootElement = function()
+  {
+    for( var i = 0; data[i] && data[i][TYPE] != 1; i++);
+    return data[i] && data[i][ID] || 0;
+  }
   
   messages.addListener('active-tab', onActiveTab);
   messages.addListener('show-view', onShowView);

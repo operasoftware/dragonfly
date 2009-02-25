@@ -93,25 +93,25 @@
   {
     last_spotlight_commands = "";
     // workaround for bug CORE-18426
-    var 
-    current_target = dom_data.getCurrentTarget(),
-    msg = "<spotlight-objects/>";
-
-    if(current_target)
-    {
-      msg = \
+    var root_id = dom_data.getRootElement();
+    services['ecmascript-debugger'].post
+    (
       "<spotlight-objects>" +
-        "<spotlight-object>" +
-          "<object-id>" + current_target + "</object-id>" +
-          "<scroll-into-view>0</scroll-into-view>" +
-          "<box>" +
-            "<box-type>0</box-type>" +
-            "<fill-color>0</fill-color>" +
-          "</box>" +
-        "</spotlight-object>" +
-      "</spotlight-objects>";
-    };
-    services['ecmascript-debugger'].post(msg);
+        ( root_id && 
+          "<spotlight-object>" +
+            "<object-id>" + root_id + "</object-id>" +
+            "<scroll-into-view>0</scroll-into-view>" +
+            "<box>" +
+              "<box-type>0</box-type>" +
+              "<fill-color>0</fill-color>" +
+            "</box>" +
+          "</spotlight-object>" 
+          || "" ) +
+        ( settings.dom.get('lock-selecked-elements') 
+          && locked_elements.map(get_locked_commands).join("")
+          || "" ) +
+      "</spotlight-objects>"
+    );
   }
 
   var set_color_theme = function(fill_frame_color, grid_color)
