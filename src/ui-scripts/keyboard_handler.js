@@ -26,7 +26,8 @@ var key_ids =
   F10: '000121',
   F11: '000122',
   SHIFT_F11: '100122',
-  CTRL_A: '01065'
+  CTRL_A: '01065',
+  CTRL_I: '01073'
 }
 
 var action_ids =
@@ -48,7 +49,8 @@ var action_ids =
   STEP_OUT: 'action-step-out',
   BACKSPACE: 'action-back-space',
   CTRL_BACKSPACE: 'action-ctrl-back-space',
-  CTRL_A: 'action-select-all'
+  CTRL_A: 'action-select-all',
+  CTRL_I: 'invert'
 }
 
 var action_map_win = {};
@@ -72,6 +74,7 @@ action_map_win[key_ids.SHIFT_F11] = action_ids.STEP_OUT;
 action_map_win[key_ids.BACKSPACE] = action_ids.BACKSPACE;
 action_map_win[key_ids.CTRL_BACKSPACE] = action_ids.CTRL_BACKSPACE;
 action_map_win[key_ids.CTRL_A] = action_ids.CTRL_A;
+action_map_win[key_ids.CTRL_I] = action_ids.CTRL_I;
 
 var action_map = action_map_win;
 
@@ -140,6 +143,11 @@ var BaseKeyhandler = new function()
   {
 
   };
+
+  this[this.CTRL_I] = function(event, action_id)
+  {
+    hostspotlighter.invertColors();
+  }
 
   this.init = function(id)
   {
@@ -254,7 +262,8 @@ var key_identifier = new function()
   F9 = 120,
   F10 = 121,
   F11 = 122,
-  A = 65;
+  A = 65,
+  I = 73;
 
   var key_handler_ids = {}, id = '';
 
@@ -277,6 +286,11 @@ var key_identifier = new function()
     for( key in action_map )
     {
       this[action_map[key]] = empty_handler;
+    }
+
+    this[action_map[key_ids.CTRL_I]] = function(event, action_id)
+    {
+      hostspotlighter.invertColors();
     }
 
     this.focus = function(container) {};
@@ -344,11 +358,14 @@ var key_identifier = new function()
       case BACKSPACE:
       case DELETE:
       case A:
+      case I:
       {
+        
         key_id = ( event.shiftKey ? '1' : '0' ) +
             ( event.ctrlKey ? '1' : '0' ) +
             ( event.altKey ? '1' : '0' ) +
             keyCode.toString();
+
         if( key_id in action_map 
             && !__key_handler[action_id = action_map[key_id]](event, action_id) )
         {

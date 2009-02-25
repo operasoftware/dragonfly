@@ -180,7 +180,7 @@ var dom_data = new function()
             }
             else
             {
-              services['ecmascript-debugger'].clearSpotlight(data_runtime_id);
+              hostspotlighter.clearSpotlight();
               host_tabs.activeTab.removeEventListener('mouseover', spotlight);
             }
             break;
@@ -454,7 +454,7 @@ var dom_data = new function()
 
   var spotlight = function(event)
   {
-    services['ecmascript-debugger'].spotlight(event['runtime-id'], event['object-id']);
+    hostspotlighter.spotlight(event['object-id']);
   }
 
   this.highlight_on_hover = function(event)
@@ -465,7 +465,7 @@ var dom_data = new function()
     }
     else
     {
-      services['ecmascript-debugger'].clearSpotlight(data_runtime_id);
+      hostspotlighter.clearSpotlight();
       host_tabs.activeTab.removeEventListener('mouseover', spotlight);
     }
   }
