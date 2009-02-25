@@ -235,7 +235,7 @@ ui_strings.S_BUTTON_LABEL_CLEAR_LOG = 'Clear Log';
 ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW = 'Close Window';
 /* DESC: Applies the changes. */
 ui_strings.S_BUTTON_TEXT_APPLY = 'Apply';
-/* DESC: Clear request log. */
+/* DESC: DEPRECATED Clear request log. */
 ui_strings.S_BUTTON_CLEAR_REQUEST_LOG = 'Clear request log';
 
 /*
