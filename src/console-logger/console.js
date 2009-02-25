@@ -15,6 +15,7 @@ cls.ErrorConsoleService = function(name)
 {
     var self = this;
     var messages = [];
+    var lastId = 0;
   
     this.onreceive = function(xml) // only called if there is a xml
     {
@@ -37,7 +38,9 @@ cls.ErrorConsoleService = function(name)
     var parseLogEntry = function(xml)
     {
         //var uri = message_event.getNodeData('uri'); FIXME!
-        var message = {};
+
+        // this id is usefull for getting a particular message from the log
+        var message = {id: ++lastId};
         var children = xml.documentElement.childNodes;
 
         for (var n=0, e; e=children[n]; n++) {
@@ -46,14 +49,34 @@ cls.ErrorConsoleService = function(name)
                     message.time = new Date(parseFloat(e.textContent))
                     break;
                   
-                case "message":
+                case "description":
                     var parts = e.textContent.split("\n");
-                    if (parts.lenth) {
-                        message.title = parts[0];
+                    if (parts.length) {
+                        if (parts[0] == "Error:") {
+                            message.title = parts[1].substr(6);
+                        }
+                        else {
+                            message.title = parts[0];
+                        }
                     }
                     else {
                         message.title = ""
                     }
+                    var matcher = /[lL]ine (\d*)/g;
+                    
+                    // If this is not set explicitly, the value is something
+                    // bogus for every other use of the regexp.
+                    // This is scary and confusing.
+                    matcher.lastIndex = 0;
+
+                    var linematch = matcher.exec(e.textContent);
+                    if (linematch) {
+                        message.line = linematch[1];
+                    }
+                    else {
+                        message.line = null;
+                    }
+                    
                 // There is no break here. message is handled normally too!
                 default:
                     message[e.nodeName] = e.textContent;
@@ -175,23 +198,14 @@ var ErrorConsoleData = new function()
 
   this.clear = function(source)
   {
-    var msg = null, i = 0;
-    if( source )
-    {
-      for( ; msg = msgs[i]; i++ )
-      {
-        if( msg.source == source )
-        {
-          msgs.splice(i, 1);
-          i--;
-        }
+      if( source ) {
+          var fun = function(e) {return e.source!=source}
+          msgs = msgs.filter(fun)
       }
-    }
-    else
-    {
-      msgs = [];
-    }
-    updateViews();
+      else {
+          msgs = [];
+      }
+      updateViews();
   }
 
   var getMessagesWithoutFilter = function(source)
@@ -303,9 +317,17 @@ var ErrorConsoleView = function(id, name, container_class, source)
 
   this.createView = function(container)
   {
-    container.clearAndRender(templates.error_log_messages(ErrorConsoleData.getMessages(source)));
-    container.scrollTop = container.scrollHeight;
+    container.clearAndRender(templates.error_log_table(ErrorConsoleData.getMessages(source), true, []));
+    //container.scrollTop = container.scrollHeight;
   }
+
+  this.toggleDetails = function(id)
+  {
+       alert(id)
+    
+    
+  }
+
   this.init(id, name, container_class );
 }
 
@@ -505,6 +527,11 @@ eventHandlers.click['clear-error-console-dragonfly'] = function()
   ErrorConsoleData.clearDragonflyMessages();
 }
 
+eventHandlers.click['error-log-list-expand-collapse'] = function(event, target)
+{
+  alert(window.views['console-dragonfly'].toggleDetails)
+  window.views['console-dragonfly'].toggleDetails(target.getAttribute("data-logid"));
+}
 
 
 /**
