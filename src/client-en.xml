@@ -115,6 +115,7 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <link rel="stylesheet" href="./ui-style/js-source.css"/>
 <link rel="stylesheet" href="./ui-style/syntax-highlight.css"/>
 <link rel="stylesheet" href="./http-logger/httplogger_style.css"/>
+<link rel="stylesheet" href="./console-logger/consolelogger_style.css"/>
 
 <!-- This will turn off including of the UI strings if the exclude_uistrings var is set -->
 <!-- command concat_js off if exclude_uistrings -->
@@ -220,6 +221,7 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./client/client.js"/>
 <script src="./window-manager/window-manager.js"/>
 <script src="./console-logger/console.js"/>
+<script src="./console-logger/console_templates.js"/>
 <script src="./ecma-debugger/ecma-debugger.js"/>
 <script src="./ecma-debugger/exec.js"/>
 
