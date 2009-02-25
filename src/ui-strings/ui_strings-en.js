@@ -374,7 +374,7 @@ ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID = "Script id";
 /* DESC: Result text for the search. Please do not modify the %(VARIABLE)s . */
 ui_strings.S_TEXT_STATUS_SEARCH = "Matches for \"%(SEARCH_TERM)s\": Match %(SEARCH_COUNT_INDEX)s out of %(SEARCH_COUNT_TOTAL)s";
 /*  */
-ui_strings.S_T2EXT_STATUS_SEARCH_NO_MATCH = "No match for \"%(SEARCH_TERM)s\"";
+ui_strings.S_TEXT_STATUS_SEARCH_NO_MATCH = "No match for \"%(SEARCH_TERM)s\"";
 /* DESC: DEPRECATED Message in detail view of http logger when no request/response is selected */
 ui_strings.S_TEXT_NO_REQUEST_SELECTED = "No request selected.";
 
