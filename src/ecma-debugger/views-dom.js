@@ -97,29 +97,14 @@ cls.DOMView = function(id, name, container_class)
         {
           div.id = 'target-element';
           this.scrollTargetIntoView();
-
-          // quick fix, must be done properly when we get the new spotlight
-          var rt_id = dom_data.getDataRuntimeId(); // is this the correst way?
           if(!this.updateBreadcrumbLink.timeout )
           {
-            services['ecmascript-debugger'].spotlight(rt_id, obj_id, true);
-            this.updateBreadcrumbLink.timeout = setTimeout(this.updateBreadcrumbLink.clearSpotlight, 800, rt_id);
+            hostspotlighter.spotlight(obj_id, true);
           }
-          // end quick fix, must be done properly when we get the new spotlight
-
         }
       }
     }
   }
-
-  // quick fix, must be done properly when we get the new spotlight
-  this.updateBreadcrumbLink.timeout = 0;
-  this.updateBreadcrumbLink.clearSpotlight = function(rt_id)
-  {
-    services['ecmascript-debugger'].clearSpotlight(rt_id);
-    self.updateBreadcrumbLink.timeout = 0;
-  }
-  // end quick fix, must be done properly when we get the new spotlight
 
   this.serializer =
   {

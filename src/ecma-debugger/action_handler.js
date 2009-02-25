@@ -573,11 +573,6 @@ var action_handler = new function()
     }
   }
 
-  handlers['spotlight-node'].clearSpotlight = function(rt_id)
-  {
-    hostspotlighter.clearSpotlight();
-  }
-
   handlers['create-all-runtimes'] = function()
   {
     services['ecmascript-debugger'].createAllRuntimes();

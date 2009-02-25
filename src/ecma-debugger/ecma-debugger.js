@@ -263,47 +263,6 @@ cls.ECMAScriptDebuggerService = function(name)
     this.post(msg);
   }
 
-  this.spotlight = function(runtime, node_id, scroll_into_view)
-  {
-
-    var msg = "<spotlight-objects>" +
-                "<spotlight-object>" +
-                  "<object-id>" + node_id + "</object-id>" +
-                  "<scroll-into-view>" + ( scroll_into_view && 1 || 0 ) + "</scroll-into-view>" +
-                  "<box>" +
-                    "<box-type>2</box-type>" +
-                    "<fill-color>439591602</fill-color>" +
-                    "<frame-color>439591679</frame-color>" +
-                    "<grid-color>2854294092</grid-color>" +
-                  "</box>"  +
-                  "<box>" +
-                    "<box-type>1</box-type>" +
-                    "<fill-color>439591551</fill-color>" +
-                  "</box>"  +
-                   "<box>" +
-                    "<box-type>0</box-type>" +
-                    "<fill-color>439591500</fill-color>" +
-                  "</box>"  +
-                "</spotlight-object>" +
-              "</spotlight-objects>" ;
-
-/*
-    var msg = "<spotlight-object>" +
-                "<object-id>" + node_id + "</object-id>" +
-                ( scroll_into_view ? "<scroll-into-view/>" : "" ) +
-              "</spotlight-object>";
-*/
-    this.post(msg);
-  }
-
-  this.clearSpotlight = function(runtime)
-  {
-    var msg = "<spotlight-object>"+
-                "<object-id>0</object-id>"+
-              "</spotlight-object>";
-    this.post(msg);
-  }
-
   this.examineObjects = function() // tag, runtime_id, object_1, ...
   {
     var msg = "<examine-objects>", i = 2;
