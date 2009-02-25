@@ -1,5 +1,69 @@
 window.templates = window.templates || {}
 
+
+window.templates.error_log_table = function(entries, allExpanded, expandedList)
+{
+    //var rows = entries.map(window.templates.error_log_row);
+    //return rows;
+
+    var rowClosure = function(e)
+    {
+        return window.templates.error_log_row(e, allExpanded, expandedList);
+    }
+    
+    return ["table", [
+        "tr", [
+               
+               ['th', " "],
+               ['th', "TT"],
+               ['th', "File"],
+               ['th', "Line"],
+               ['th', "Error"]
+              ]
+        ],
+        entries.map(rowClosure)
+    ]        
+}
+
+
+window.templates.error_log_row = function(entry, allExpanded)
+{
+    var rows = [
+        [ "tr", [
+                ["td", ["button", "",
+                        "type", "button",
+                        "handler", "error-log-list-expand-collapse",
+                        "data-logid", entry.id
+                        ]
+                ],
+                ["td", "T"],
+                ["td", entry.uri],
+                ["td", (entry.line==null ? "?" : entry.line) ],
+                ["td", entry.title]
+            ]
+        ] 
+    ]
+
+    if (allExpanded) {
+        rows.push(
+        [
+            "tr", [
+                ["td", [
+                    "pre", entry.description
+                ],
+                 "colspan", "5"
+                ]
+            ]
+            
+            
+            
+        ])
+    }
+    
+    return rows;
+
+}
+
 window.templates.error_log_messages = function(messages)
 {
     var message = null, i = 0;
