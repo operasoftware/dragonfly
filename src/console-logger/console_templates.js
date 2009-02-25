@@ -48,7 +48,7 @@ window.templates.error_log_row = function(entry, allExpanded, expandedList, view
         [
             "tr", [
                 ["td",
-                    [ "a", entry.uri, "href", entry.uri ],
+                    [ "a", entry.uri, "href", entry.uri, "target", "_blank" ],
                     [ "pre", entry.description ],
                  "colspan", "4"
                 ]
