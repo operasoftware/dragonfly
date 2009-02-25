@@ -40,7 +40,7 @@ cls.ErrorConsoleService = function(name)
         //var uri = message_event.getNodeData('uri'); FIXME!
 
         // this id is usefull for getting a particular message from the log
-        var message = {id: ++lastId};
+        var message = {"id": ""+(++lastId)};
         var children = xml.documentElement.childNodes;
 
         for (var n=0, e; e=children[n]; n++) {
@@ -302,15 +302,19 @@ var ErrorConsoleView = function(id, name, container_class, source)
 
   this.createView = function(container)
   {
-    container.clearAndRender(templates.error_log_table(ErrorConsoleData.getMessages(source), true, []));
+    container.clearAndRender(templates.error_log_table(ErrorConsoleData.getMessages(source), false, expanded, this.id));
     //container.scrollTop = container.scrollHeight;
   }
 
-  this.toggleDetails = function(id)
+  this.toggleDetails = function(logid)
   {
-       alert(id)
-    
-    
+      if (expanded.indexOf(logid) == -1) {
+          expanded.push(logid);
+      }
+      else {
+          expanded.splice(expanded.indexOf(logid), 1);
+      }
+      this.update();
   }
 
   this.init(id, name, container_class );
@@ -514,8 +518,11 @@ eventHandlers.click['clear-error-console-dragonfly'] = function()
 
 eventHandlers.click['error-log-list-expand-collapse'] = function(event, target)
 {
-  alert(window.views['console-dragonfly'].toggleDetails)
-  window.views['console-dragonfly'].toggleDetails(target.getAttribute("data-logid"));
+    var view = target.getAttribute("data-viewid");
+    var logid = target.getAttribute("data-logid");
+    if (view in window.views) {
+        window.views[view].toggleDetails(logid);
+    }
 }
 
 

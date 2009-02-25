@@ -1,14 +1,13 @@
 window.templates = window.templates || {}
 
 
-window.templates.error_log_table = function(entries, allExpanded, expandedList)
+window.templates.error_log_table = function(entries, allExpanded, expandedList, viewId)
 {
-    //var rows = entries.map(window.templates.error_log_row);
-    //return rows;
-
+    
+    
     var rowClosure = function(e)
     {
-        return window.templates.error_log_row(e, allExpanded, expandedList);
+        return window.templates.error_log_row(e, allExpanded, expandedList, viewId);
     }
     
     return ["table", [
@@ -26,25 +25,31 @@ window.templates.error_log_table = function(entries, allExpanded, expandedList)
 }
 
 
-window.templates.error_log_row = function(entry, allExpanded)
+window.templates.error_log_row = function(entry, allExpanded, expandedList, viewId)
 {
+
+    var expanded = allExpanded || expandedList.indexOf(entry.id)!=-1
+
     var rows = [
         [ "tr", [
                 ["td", ["button", "",
                         "type", "button",
                         "handler", "error-log-list-expand-collapse",
-                        "data-logid", entry.id
+                        "data-logid", entry.id,
+                        "data-viewid", viewId
                         ]
                 ],
                 ["td", "T"],
                 ["td", entry.uri],
                 ["td", (entry.line==null ? "?" : entry.line) ],
                 ["td", entry.title]
-            ]
+            ], "class", (expanded ? "expanded" : "collapsed")
         ] 
     ]
 
-    if (allExpanded) {
+
+
+    if (expanded) {
         rows.push(
         [
             "tr", [
