@@ -39,7 +39,10 @@ window.templates.error_log_row = function(entry, allExpanded, expandedList, view
                 ["td", entry.uri],
                 ["td", (entry.line==null ? "?" : entry.line) ],
                 ["td", entry.title]
-            ], "class", (expanded ? "expanded" : "collapsed")
+            ],  "class", (expanded ? "expanded" : "collapsed"),
+                "handler", "error-log-list-expand-collapse",
+                "data-logid", entry.id,
+                "data-viewid", viewId
         ] 
     ]
 
