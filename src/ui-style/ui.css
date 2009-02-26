@@ -576,7 +576,7 @@ ui-menu { /**/
   }
 
 ui-menu.attached { /**/
-  right:60px;
+  right: 275px;
   }
 
 ui-menu > h2 { /**/
@@ -1218,4 +1218,30 @@ cst-select-option-list.color label
 cst-select-option-list.color [type="text"] 
 {
   width: 2em;
+}
+
+pin-label
+{
+  display: inline-block;
+  line-height: 22px;
+  padding: 2px 9px 0px 8px;
+  margin: -4px -4px -4px 0px;
+  vertical-align: -7px;
+  background-image:-o-skin('Speed Dial Configuration Dialog Skin');
+}
+
+pin-label span
+{
+  display: inline-block;
+  width: 200px;
+  padding: 0px;
+  margin: 0px;
+  overflow: hidden;
+  -o-text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+pin-label.pinned
+{
+  background-image:-o-skin('Speed Dial Configuration Dialog No Alpha Skin');
 }
