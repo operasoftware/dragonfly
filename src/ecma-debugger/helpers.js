@@ -129,6 +129,7 @@ helpers = new function()
     var value = new RegExp(key + "=([^;]*)").exec(document.cookie);
     return value && decodeURIComponent(value[1]);
   }
+
   // mouseover handler in the breadcrumb
   this.breadcrumbSpotlight = function(event)
   {
@@ -147,5 +148,39 @@ helpers = new function()
       hostspotlighter.clearSpotlight();
     }
   }
+
+  this.updatePinLabel = function()
+  {
+    var pin = document.getElementsByTagName('pin-label')[0];
+    if( pin && opera.attached )
+    {
+      if( settings['general'].get('pin-active-window') )
+      {
+        pin.firstElementChild.textContent = window_manager_data.getDebugContextTitle();
+        pin.title = "Unpin Debug Context";
+        pin.addClass('pinned');
+      }
+      else
+      {
+        pin.firstElementChild.textContent = "Pin Debug Context";
+        pin.title = "Pin the Debug Context to the focused window";
+        pin.removeClass('pinned');
+      }
+    }
+  }
+
+  messages.addListener
+  (
+    'setting-changed', 
+    function(msg)
+    {
+      if( msg.id == "general"  && msg.key == "pin-active-window")
+      {
+        self.updatePinLabel();
+      }
+    }
+  );
+
   document.addEventListener('keypress', keypressListener, true);
+
 }

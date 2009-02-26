@@ -131,18 +131,21 @@ new Settings
   {
     "show-views-menu": false,
     "window-attached": true,
+    "pin-active-window": true,
     "show-only-normal-and-gadget-type-windows": true
   }, 
   // key-label map
   {
     "show-views-menu": ui_strings.S_SWITCH_SHOW_VIEWS_MENU,
+    "pin-active-window": "Pin the debug context to the selected window",
     "show-only-normal-and-gadget-type-windows": ui_strings.S_SWITCH_SHOW_ONLY_NORMAL_AND_GADGETS_TYPE_WINDOWS
   },
   // settings map
   {
     checkboxes:
     [
-      "show-only-normal-and-gadget-type-windows"
+      "show-only-normal-and-gadget-type-windows",
+      "pin-active-window"
     ],
     customSettings:
     [

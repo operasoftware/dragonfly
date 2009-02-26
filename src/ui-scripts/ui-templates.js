@@ -171,6 +171,12 @@
   {
     var attached = window.opera.attached;
     return ['window-controls',
+      is_attached
+      ? ['pin-label', 
+         ['span', '\u00A0'], 
+         'handler', 'switch-pin-debug-context'
+        ].concat(settings['general'].get('pin-active-window') ? ['class', 'pinned'] : [] )
+      : [],
       ['button', 
         'handler', 'top-window-toggle-attach', 
         'class', 'switch' + ( attached ? ' attached' : '') ,
