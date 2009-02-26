@@ -102,7 +102,8 @@ window.templates.request_list_row = function(r, expandList, firstTime, lastTime,
             "handler", "request-list-expand-collapse",
             'class', 'typeicon mime-' + 
                     http_map_mime_to_type(http_get_mime_from_extension(r.request.path)) +
-                    (expanded ? " expanded" : " collapsed")
+                    (expanded ? " expanded" : " collapsed") +
+                    (r.duration==undefined ? " in-progress" : "")
         ],
     ];
     
