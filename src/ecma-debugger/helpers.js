@@ -147,6 +147,7 @@ helpers = new function()
         pin.firstElementChild.textContent = "Pin Debug Context";
         pin.title = "Pin the Debug Context to the focused window";
         pin.removeClass('pinned');
+        window_manager_data.set_active_window_as_debug_context();
       }
     }
   }
