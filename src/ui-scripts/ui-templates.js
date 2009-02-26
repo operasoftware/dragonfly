@@ -171,6 +171,12 @@
   {
     var attached = window.opera.attached;
     return ['window-controls',
+      is_attached
+      ? ['pin-label', 
+          ['span', '\u00A0'], 
+          'handler', 'switch-pin-debug-context'
+        ].concat(settings['general'].get('pin-active-window') ? ['class', 'pinned'] : [] )
+      : [],
       ['button', 
         'handler', 'top-window-toggle-attach', 
         'class', 'switch' + ( attached ? ' attached' : '') ,
@@ -216,17 +222,14 @@
       var setting = settings[view_id];
       var settings_map = setting.setting_map;
       var cat_name = '';
+      // so far only checkboxes
+      for( cat_name in settings_map ) 
+      {
+        ret[ret.length] = this[cat_name](setting, settings_map[cat_name]);
+      }
       if(setting.template)
       {
         ret[ret.length] = setting.template();
-      }
-      else
-      {
-        // so far only checkboxes
-        for( cat_name in settings_map ) 
-        {
-          ret[ret.length] = this[cat_name](setting, settings_map[cat_name]);
-        }
       }
 
     }

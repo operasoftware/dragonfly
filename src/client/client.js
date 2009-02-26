@@ -394,7 +394,7 @@ var client = new function()
 
       if( window.opera.attached )
       {
-        topCell.tab.changeStyleProperty("padding-right", 60);
+        topCell.tab.changeStyleProperty("padding-right", 275);
       }
       else
       {

@@ -180,7 +180,22 @@ var window_manager_data = new function()
   this.set_active_window = function(win_id)
   {
     this.active_window = win_id;
+    if( !settings['general'].get('pin-active-window'))
+    {
+      this.setDebugContext(win_id);
+      helpers.updatePinLabel();
+    }
     update_views();
+  }
+
+  this.getDebugContextTitle = function()
+  {
+    var cursor = null, i = 0;
+    if( this.window_list )
+    {
+      for( ; ( cursor = this.window_list[i] ) && cursor['window-id'] != this.debug_context; i++);
+    }
+    return cursor && cursor['title'] || '';
   }
 
   this.has_window_id_in_list = function(id)
@@ -406,6 +421,7 @@ var windowsDropDown = new function()
         select.innerHTML = markup;
       }
     }
+    helpers.updatePinLabel();
    
   }
 }
