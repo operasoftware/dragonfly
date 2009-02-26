@@ -85,8 +85,9 @@ window.templates.request_list_row = function(r, expandList, firstTime, lastTime,
     var a = [
         [ 'tr',
             ['td', ["button", "", "type", "button",
-                                  "handler", "request-list-expand-collapse",
                                   'data-requestid', r.id,
+                                  "handler", "request-list-expand-collapse",
+
                                   "class", "expand-collapse"]],
             ['td', ["label", "",
                     "class", http_map_mime_to_type(http_get_mime_from_extension(r.request.path))]
@@ -98,6 +99,7 @@ window.templates.request_list_row = function(r, expandList, firstTime, lastTime,
             ['td', (r.duration!=undefined ? ["span", "" + r.duration + "ms", "style", "margin-left: " + Math.floor(curP) + "%; width: " + (dur!=null ? dur : 50 ) + "%"] : "")
                   , 'class', 'time-cell'],
             'data-requestid', r.id,
+            "handler", "request-list-expand-collapse",
             'class', 'typeicon mime-' + 
                     http_map_mime_to_type(http_get_mime_from_extension(r.request.path)) +
                     (expanded ? " expanded" : " collapsed")
