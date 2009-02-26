@@ -30,6 +30,7 @@ ul {
   white-space:pre;
   overflow:hidden;
   padding-left:10px;
+  -o-tab-size: 4;
   }
 
 /* line number */ 
