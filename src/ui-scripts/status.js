@@ -56,6 +56,8 @@ var StatusbarBase = function()
     delta = 0,
     range = null;
 
+    info || ( info = "" );
+
     this.info = info;
     if( typeof info == "string" )
     {
