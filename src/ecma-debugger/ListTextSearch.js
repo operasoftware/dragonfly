@@ -1,15 +1,18 @@
 ﻿/**
-  * @constructor 
-  */
-
+ * Generic search/higlight component that honours depths and
+ * expanded/collapsed trees.
+ * @see VirtualTextSearch
+ * @see TextSearch
+ * @constructor 
+ */
 var ListTextSearch = function()
 {
   const 
-  SEARCH_DELAY = 50;
+  SEARCH_DELAY = 50; // in ms
 
   var 
   self = this, 
-  search_therm = '',
+  search_term = '',
   search_results = [],
   cursor = -1,
   container = null,
@@ -21,23 +24,23 @@ var ListTextSearch = function()
   go_back = {},
   highlightColor = '';
 
-  this.search = function(new_search_therm)
+  this.search = function(new_search_term)
   {
     var cur = null, cur_2 = null, depth = 0, display = '';
 
-    if( new_search_therm != search_therm )
+    if( new_search_term != search_term )
     {
       if(go_back[current_id])
       {
         delete go_back[current_id];
       }
       search_results = [];
-      cache[current_id] = search_therm = new_search_therm;
+      cache[current_id] = search_term = new_search_term;
       cur = container.getElementsByTagName('start-search-scope')[0];
       while( ( cur = cur.nextSibling ) && cur.nodeName != "end-search-scope" )
       {
         display = 
-          cur.getElementsByTagName('key')[0].textContent.indexOf(search_therm) == -1 
+          cur.getElementsByTagName('key')[0].textContent.indexOf(search_term) == -1 
           && 'none'
           || '';
         cur.style.display = display;
@@ -58,9 +61,9 @@ var ListTextSearch = function()
     }
   }
 
-  this.searchDelayed = function(new_search_therm)
+  this.searchDelayed = function(new_search_term)
   {
-    timeouts.set(this.search, SEARCH_DELAY, new_search_therm);
+    timeouts.set(this.search, SEARCH_DELAY, new_search_term);
   }
 
   var __selected_element = null;
@@ -265,7 +268,7 @@ var ListTextSearch = function()
   this.cleanup = function()
   {
     /*
-    search_therm = '';
+    search_term = '';
     search_results = [];
     cursor = -1;
     */

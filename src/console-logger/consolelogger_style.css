@@ -71,3 +71,9 @@
     font-size: 12px;
     background-color: white;
 }
+
+button[key="request_list.expand-all-entries"]:before
+{
+  background-image: url('../ui-images/btn-log-threads.png');
+}
+

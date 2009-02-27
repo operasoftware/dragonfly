@@ -19,7 +19,7 @@ window.templates = window.templates || ( window.templates = {} );
     
     for (var i=0, name; name=alphaheaders[i]; i++)
     {
-        var value = headers[name];e
+        var value = headers[name];
         var dt = ['dt', name + ": "]
         if (name in http_header_specification_urls)
         {
@@ -96,7 +96,7 @@ window.templates.request_list_row = function(r, expandList, firstTime, lastTime,
             ['td', templates.sanitize_url(r) ],
             ['td', (r.response ? r.response.status : "-"), 'class', 'status-cell'],
             ['td', (r.response ? r.response.reason: "-"), 'class', 'reason-cell'],
-            ['td', (r.duration!=undefined ? ["span", "" + r.duration + "ms", "style", "margin-left: " + Math.floor(curP) + "%; width: " + (dur!=null ? dur : 50 ) + "%"] : "")
+            ['td', (r.duration!=undefined ? ["span", "" + r.duration + "ms", "style", "margin-left: " + Math.floor(curP) + "%; width: " + (dur!=null ? dur : 50 ) + "%", "class", "graph-box"] : "")
                   , 'class', 'time-cell'],
             'data-requestid', r.id,
             "handler", "request-list-expand-collapse",
