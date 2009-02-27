@@ -1,20 +1,22 @@
 ﻿/**
-  * @constructor 
-  */
-
+ * Generic search/higlight component that uses a backing store for its data
+ * instead of the actual DOM. Used in the various code views where the DOM
+ * content is generated on demand based on the view.
+ * @see TextSearch
+ * @see ListTextSearch
+ * @constructor 
+ */
 var VirtualTextSearch = function()
 {
   const 
   DEFAULT_STYLE = "background-color:#ff0; color:#000;",
   HIGHLIGHT_STYLE = "background-color:#0f0; color:#000;",
   DEFAULT_SCROLL_MARGIN = 50,
-  SEARCH_DELAY = 50;
-
-
+  SEARCH_DELAY = 50; // in ms
 
   var 
   self = this, 
-  search_therm = '',
+  search_term = '',
   cursor = -1,
   container = null,
   source_container = null,
@@ -96,7 +98,7 @@ var VirtualTextSearch = function()
     }
   }
   
-  this.search = function(new_search_therm)
+  this.search = function(new_search_term)
   {    
     var
     pos = -1,
@@ -105,10 +107,10 @@ var VirtualTextSearch = function()
     line_arr_length = 0,
     line_cur = 0;
     
-    if( new_search_therm != search_therm )
+    if( new_search_term != search_term )
     {
-      search_therm = new_search_therm;
-      if(new_search_therm.length > 2)
+      search_term = new_search_term;
+      if(new_search_term.length > 2)
       {
         self.clearHit();
         if( __script )
@@ -116,11 +118,11 @@ var VirtualTextSearch = function()
           var line_matches = __script.line_matches = [];
           var line_offsets = __script.line_offsets = [];
           __script.match_cursor = 0;
-          __script.match_length = search_therm.length
+          __script.match_length = search_term.length
           source = __script.source;
           line_arr = __script.line_arr;
           line_arr_length = line_arr.length
-          while( ( pos = source.indexOf(search_therm, pos + 1) ) != -1 )
+          while( ( pos = source.indexOf(search_term, pos + 1) ) != -1 )
           {
             while( line_cur < line_arr_length && line_arr[line_cur] <= pos && ++line_cur );
             line_matches[line_matches.length] = line_cur;
@@ -136,12 +138,12 @@ var VirtualTextSearch = function()
           }
           if( __script.line_matches.length )
           {
-            self.highlight(true, new_search_therm);
+            self.highlight(true, new_search_term);
           }
           else
           {
             topCell.statusbar.updateInfo(ui_strings.S_TEXT_STATUS_SEARCH_NO_MATCH.
-              replace("%(SEARCH_TERM)s", new_search_therm));
+              replace("%(SEARCH_TERM)s", new_search_term));
           }
         }
       }
@@ -153,30 +155,30 @@ var VirtualTextSearch = function()
         }
         self.clearScriptContext();
         topCell.statusbar.updateInfo('');
-        search_therm = '';
+        search_term = '';
       }
     }
 
   }
 
-  this.searchDelayed = function(new_search_therm)
+  this.searchDelayed = function(new_search_term)
   {
-    timeouts.set(this.search, SEARCH_DELAY, new_search_therm);
+    timeouts.set(this.search, SEARCH_DELAY, new_search_term);
   }
   
   this.update = function()
   {
-    var new_search_therm = search_therm;
-    if( search_therm.length > 2 )
+    var new_search_term = search_term;
+    if( search_term.length > 2 )
     {
-      search_therm = '';
-      this.search(new_search_therm);
+      search_term = '';
+      this.search(new_search_term);
     }
   }
 
-  this.highlight = function(set_match_cursor, new_search_therm)
+  this.highlight = function(set_match_cursor, new_search_term)
   {
-    // new_search_therm is passed to know the arguments.callee.caller context
+    // new_search_term is passed to know the arguments.callee.caller context
     // highlight is called at the end of a succesful search and
     // on keyup if it was the enter key to highlight the next tolken
     if( views.js_source.isvisible() 
@@ -221,7 +223,7 @@ var VirtualTextSearch = function()
         source_container.parentNode.scrollLeft = __hit[0].offsetLeft - 50;
       }
       topCell.statusbar.updateInfo(ui_strings.S_TEXT_STATUS_SEARCH.
-        replace("%(SEARCH_TERM)s", search_therm).
+        replace("%(SEARCH_TERM)s", search_term).
         replace("%(SEARCH_COUNT_TOTAL)s", __script.line_matches.length).
         replace("%(SEARCH_COUNT_INDEX)s", __script.match_cursor + 1) );
       if( ++__script.match_cursor >= __script.line_matches.length )
@@ -232,12 +234,12 @@ var VirtualTextSearch = function()
     }
     // if the view was switched and the search tolken is still there
     // but no search was done jet for that new view 
-    // keyup event callback, so new_search_therm will be 'undefined'
-    else if( new_search_therm != search_therm )
+    // keyup event callback, so new_search_term will be 'undefined'
+    else if( new_search_term != search_term )
     {
-      var new_search_therm = search_therm;
-      search_therm = '';
-      this.search(new_search_therm);
+      var new_search_term = search_term;
+      search_term = '';
+      this.search(new_search_term);
     }
     
   }
@@ -257,13 +259,13 @@ var VirtualTextSearch = function()
     if(input)
     {
       __input = input;
-      if(search_therm)
+      if(search_term)
       {
-        __input.value = search_therm;
+        __input.value = search_term;
         __input.parentNode.firstChild.textContent = '';
-        var new_search_therm = search_therm;
-        search_therm = '';
-        this.search(new_search_therm);
+        var new_search_term = search_term;
+        search_term = '';
+        this.search(new_search_term);
       }
     }
   }

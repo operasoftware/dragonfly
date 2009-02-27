@@ -1,18 +1,22 @@
 ﻿/**
-  * @constructor 
-  */
-
+ * Generic search/higlight component. Used for instance in http logger and
+ * console logger to highlight words. Searches through an actual DOM for
+ * the target text.
+ * @see VirtualTextSearch
+ * @see ListTextSearch
+ * @constructor 
+ */
 var TextSearch = function()
 {
   const 
   DEFAULT_STYLE = "background-color:#ff0; color:#000;",
   HIGHLIGHT_STYLE = "background-color:#0f0; color:#000;",
   DEFAULT_SCROLL_MARGIN = 50,
-  SEARCH_DELAY = 50;
+  SEARCH_DELAY = 50; // in ms
 
   var 
   self = this, 
-  search_therm = '',
+  search_term = '',
   search_results = [], // collection of span elements
   cursor = -1,
   container = null,
@@ -35,8 +39,8 @@ var TextSearch = function()
   {
     var
     text_content = container.textContent.toLowerCase(),
-    search_term_length = search_therm.length,
-    match = text_content.indexOf(search_therm),
+    search_term_length = search_term.length,
+    match = text_content.indexOf(search_term),
     last_match = match != -1 && match + search_term_length || 0,
     consumed_total_length = 0,
     to_consume_hit_length = 0,
@@ -74,7 +78,7 @@ var TextSearch = function()
               if( match - consumed_total_length < node.nodeValue.length )
               {
                 node.splitText(match - consumed_total_length);
-                if( ( match = text_content.indexOf(search_therm, last_match) ) != -1 )
+                if( ( match = text_content.indexOf(search_term, last_match) ) != -1 )
                 {
                   last_match = match + search_term_length;
                 }
@@ -94,17 +98,17 @@ var TextSearch = function()
   update_status_bar = function()
   {
     topCell.statusbar.updateInfo(ui_strings.S_TEXT_STATUS_SEARCH.
-      replace("%(SEARCH_TERM)s", search_therm).
+      replace("%(SEARCH_TERM)s", search_term).
       replace("%(SEARCH_COUNT_TOTAL)s", search_results.length).
       replace("%(SEARCH_COUNT_INDEX)s", ( cursor + 1 )) );
   };
   
-  this.search = function(new_search_therm, old_cursor)
+  this.search = function(new_search_term, old_cursor)
   {
     var cur = null, i = 0, parent = null, search_hit = null, j = 0;
-    if( new_search_therm != search_therm )
+    if( new_search_term != search_term )
     {
-      search_therm = new_search_therm;
+      search_term = new_search_term;
       if(search_results)
       {
         for( ; cur = search_results[i]; i++)
@@ -121,7 +125,7 @@ var TextSearch = function()
       }
       search_results = [];
       cursor = -1;
-      if( search_therm.length > 2 )
+      if( search_term.length > 2 )
       {
         if(container)
         {
@@ -145,18 +149,18 @@ var TextSearch = function()
     }
   }
 
-  this.searchDelayed = function(new_search_therm)
+  this.searchDelayed = function(new_search_term)
   {
-    timeouts.set(this.search, SEARCH_DELAY, new_search_therm.toLowerCase());
+    timeouts.set(this.search, SEARCH_DELAY, new_search_term.toLowerCase());
   }
   
   this.update = function()
   {
-    var new_search_therm = search_therm;
-    if( search_therm.length > 2 )
+    var new_search_term = search_term;
+    if( search_term.length > 2 )
     {
-      search_therm = '';
-      this.search(new_search_therm);
+      search_term = '';
+      this.search(new_search_term);
     }
   }
 
@@ -195,11 +199,11 @@ var TextSearch = function()
 
   this.revalidateSearch = function()
   {
-    if( container && search_therm )
+    if( container && search_term )
     {
-      var new_search_therm = search_therm;
-      search_therm = '';
-      this.search(new_search_therm, cursor);
+      var new_search_term = search_term;
+      search_term = '';
+      this.search(new_search_term, cursor);
     }
   }
 
@@ -214,13 +218,13 @@ var TextSearch = function()
   this.setFormInput = function(input)
   {
     __input = input;
-    if(search_therm)
+    if(search_term)
     {
-      var new_search_therm = search_therm;
-      __input.value = search_therm;
+      var new_search_term = search_term;
+      __input.value = search_term;
       __input.parentNode.firstChild.textContent = '';
-      search_therm = '';
-      this.searchDelayed (new_search_therm);
+      search_term = '';
+      this.searchDelayed (new_search_term);
     }
   }
 
