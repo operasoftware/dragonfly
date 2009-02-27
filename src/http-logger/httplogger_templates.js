@@ -19,7 +19,7 @@ window.templates = window.templates || ( window.templates = {} );
     
     for (var i=0, name; name=alphaheaders[i]; i++)
     {
-        var value = headers[name];e
+        var value = headers[name];
         var dt = ['dt', name + ": "]
         if (name in http_header_specification_urls)
         {
