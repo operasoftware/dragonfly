@@ -31,7 +31,7 @@
   {
     return \
     target_ele.nodeName != 'cst-option'  && 2
-    || select_obj.checkChange(target) && 1 
+    || select_obj.checkChange(target_ele) && 1 
     || 0;
   };
 
