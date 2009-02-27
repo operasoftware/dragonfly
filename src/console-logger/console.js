@@ -261,15 +261,14 @@ var ErrorConsoleData = new function()
       switch(msg.key)
       {
         case 'use-selected-runtime-as-filter':
-        {
+        case 'expand-all-entries': {
           updateViews();
           break;
         }
-        default:
-        {
-          var is_disbaled = !settings[msg.id].get(msg.key);
-          views[msg.key].ishidden_in_menu = is_disbaled;
-          topCell.disableTab(msg.key, is_disbaled);
+        default: {
+          var is_disabled = !settings[msg.id].get(msg.key);
+          views[msg.key].ishidden_in_menu = is_disabled;
+          topCell.disableTab(msg.key, is_disabled);
         }
       }
 
@@ -297,12 +296,12 @@ var ErrorConsoleView = function(id, name, container_class, source)
   container_class = container_class ? container_class : 'scroll error-console';
   name = name ? name : 'missing name ' + id;
 
-  var expandAll = false;
   var expanded = [];
 
   this.createView = function(container)
   {
-    container.clearAndRender(templates.error_log_table(ErrorConsoleData.getMessages(source), false, expanded, this.id));
+    var expandAll = settings.console.get('expand-all-entries');
+    container.clearAndRender(templates.error_log_table(ErrorConsoleData.getMessages(source), expandAll, expanded, this.id));
     //container.scrollTop = container.scrollHeight;
   }
 
@@ -398,7 +397,6 @@ ErrorConsoleView.roughViews.bindClearSource = function(source)
   }
 }
 
-
 ErrorConsoleView.roughViews.createViews = function()
 {
   var r_v = null, i = 0, handler_id = '';
@@ -425,15 +423,14 @@ ErrorConsoleView.roughViews.createViews = function()
     ]
 
     );
-    /*
     new Switches
     (
       r_v.id,
       [
-        'console.use-selected-runtime-as-filter'
+        'console.expand-all-entries',
+        //'console.use-selected-runtime-as-filter' // Not in use
       ]
     );
-    */
     eventHandlers.click[handler_id] = this.bindClearSource( r_v.source ? r_v.source : '' );
 
     /* create the handler code for the text search box
@@ -564,7 +561,8 @@ new Settings
     'console-voice': false,
     'console-widget': false,
     'console-dragonfly': false,
-    'use-selected-runtime-as-filter': false
+    'use-selected-runtime-as-filter': false,
+    'expand-all-entries': false
   }, 
   // key-label map
   {
@@ -582,8 +580,9 @@ new Settings
     'console-voice': ui_strings.S_SWITCH_SHOW_TAB_VOICE,
     'console-widget': ui_strings.S_SWITCH_SHOW_TAB_WIDGET,
     'console-dragonfly': ui_strings.S_SWITCH_SHOW_TAB_DRAGONFLY,
-    'use-selected-runtime-as-filter': ' use selected runtime as filter' // Not in use!
-  }, 
+    'use-selected-runtime-as-filter': ' use selected runtime as filter', // Not in use!
+    'expand-all-entries': "Expand all"
+}, 
   // settings map
   {
     checkboxes:
