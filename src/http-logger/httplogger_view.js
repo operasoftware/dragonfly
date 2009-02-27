@@ -24,6 +24,19 @@ cls.RequestListView = function(id, name, container_class)
     var tableBodyEle = null;
     var viewMap = {}; // mapping between ID and active part of detail view
 
+    new ToolbarConfig
+    (
+      id,
+      [],
+      [
+        {
+          handler: 'http-text-search',
+          title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
+        }
+    ]
+
+    );
+
     /**
      *  Called by the framework through update()
      *  Check if we should redraw the view or not. If we shall, call
@@ -218,14 +231,53 @@ new cls.RequestListView('request_list', ui_strings.M_VIEW_LABEL_REQUEST_LOG, 'sc
 eventHandlers.click['request-list-expand-collapse'] = function(event, target)
 {
     window.views['request_list'].toggleDetails(target.getAttribute("data-requestid"));
-}
+};
 
 eventHandlers.click['select-http-detail-view'] = function(event, target)
 {
     window.views['request_list'].selectDetailView(target.getAttribute("data-requestid"), target.getAttribute("data-viewname"));
-}
+};
 
-eventHandlers.click['clear-request-list'] = function(event, target)
+
+
+/**
+ * This sets up the handlers for the search box
+ */
+
+(function()
 {
-    HTTPLoggerData.clearLog();
-}
+    var textSearch = new TextSearch();
+
+    var onViewCreated = function(msg)
+    {
+        if (msg.id == 'request_list') {
+            textSearch.setContainer(msg.container);
+            textSearch.setFormInput(views.request_list.getToolbarControl(msg.container, 'http-text-search'));
+        }
+    }
+
+    var onViewDestroyed = function(msg)
+    {
+        if (msg.id == 'request_list') {
+            textSearch.cleanup();
+            topCell.statusbar.updateInfo();
+        }
+    }
+
+    messages.addListener('view-created', onViewCreated);
+    messages.addListener('view-destroyed', onViewDestroyed);
+
+    eventHandlers.input['http-text-search'] = function(event, target)
+    {
+        textSearch.searchDelayed(target.value);
+    }
+
+    eventHandlers.keyup['http-text-search'] = function(event, target)
+    {
+        if (event.keyCode == 13) {
+            textSearch.highlight();
+        }
+    }
+
+})();
+

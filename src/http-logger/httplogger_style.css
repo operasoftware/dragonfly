@@ -137,7 +137,7 @@ button[handler="clear-request-list"]:before {
 
 /* timer bar stuff */
 
-.request-table span {
+.request-table span.graph-box {
     vertical-align: text-top;
     height: 18px;
     display: inline-block;
