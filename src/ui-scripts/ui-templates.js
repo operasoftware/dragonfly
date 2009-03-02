@@ -85,19 +85,21 @@
         setting = settings[arr[0]];
         key = arr[1];
       
-        if (!setting.exists(key)) {
+        if (setting.exists(key)) {
+          ret[ret.length] = 
+            ['button', 
+              'handler', 'toolbar-switch', 
+              'title', setting.label_map[key],
+              'key', _switch,
+              'is-active', setting.get(key) ? 'true' : 'false',
+              'class', 'switch'
+            ];
+        }
+        else
+        {
           opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
             "Can't attach switch to a setting that does not exist: " + _switch );
         }
-        
-        ret[ret.length] = 
-          ['button', 
-            'handler', 'toolbar-switch', 
-            'title', setting.label_map[key],
-            'key', _switch,
-            'is-active', setting.get(key) ? 'true' : 'false',
-            'class', 'switch'
-          ];
       }
     }
     return ret;
