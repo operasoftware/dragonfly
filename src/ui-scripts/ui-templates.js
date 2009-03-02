@@ -84,6 +84,11 @@
       {
         setting = settings[arr[0]];
         key = arr[1];
+      
+        if (!setting.exists(key)) {
+          opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+            "Can't attach switch to a setting that does not exist: " + _switch );
+        }
         
         ret[ret.length] = 
           ['button', 
