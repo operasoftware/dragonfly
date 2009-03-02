@@ -177,6 +177,15 @@ var window_manager_data = new function()
 
   }
 
+  this.set_active_window_as_debug_context = function()
+  {
+    if( this.active_window && this.active_window != this.debug_context )
+    {
+      this.setDebugContext(this.active_window);
+      update_views();
+    }
+  }
+
   this.set_active_window = function(win_id)
   {
     this.active_window = win_id;
