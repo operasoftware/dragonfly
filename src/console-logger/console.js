@@ -147,6 +147,7 @@ new cls.ErrorConsoleService('console-logger');
 var ErrorConsoleData = new function()
 {
   var msgs = [];
+  var toggled = [];
   var dragonfly_msgs = [];
   var __views = ['console-dragonfly'];
   var __selected_rt_url = '';
@@ -166,33 +167,21 @@ var ErrorConsoleData = new function()
     __views[__views.length] = view_id;
   }
 
+  /**
+   * Adds a log entry to the data model.
+   */
   this.addEntry = function(entry)
   {
+    if( !entry.uri || entry.uri.indexOf(url_self) == -1 )
+    {
       msgs.push(entry);
-      messages.post('console-message', entry);
-      updateViews();
-  }
-
-  this.handle = function(message_event)
-  {
-    return;
-    var uri = message_event.getNodeData('uri');
-    var message = {};
-    var children = message_event.documentElement.childNodes, child=null, i=0, value = '';
-    for ( ; child = children[i]; i++)
-    {
-      message[child.nodeName] = child.textContent;
-    }
-    // TODO uri is not always present
-    if( !uri || uri.indexOf(url_self) == -1 )
-    {
-      msgs[msgs.length] = message;
     }
     else
     {
-      dragonfly_msgs[dragonfly_msgs.length] = message;
+      dragonfly_msgs.push(entry);
     }
-    messages.post('console-message', message);
+
+    messages.post('console-message', entry);
     updateViews();
   }
 
@@ -207,9 +196,27 @@ var ErrorConsoleData = new function()
       }
       else {
           msgs = [];
+          toggledList = [];
       }
       updateViews();
   }
+
+  /**
+   * Toggle an entry. This is context sensitive. Whatever is in the list
+   * behaves opposite of the default. In other words, when items are expanded
+   * by default, items in the toggled list are not expanded and vice-versa.
+   */
+  this.toggleEntry = function(logid)
+  {
+      if (toggled.indexOf(logid) == -1) {
+          toggled.push(logid);
+      }
+      else {
+          toggled.splice(toggled.indexOf(logid), 1);
+      }
+      updateViews();
+  }
+
 
   /**
    * Return all the messages. If souce is set, return only messages for
@@ -254,21 +261,30 @@ var ErrorConsoleData = new function()
     return dragonfly_msgs;
   }
 
+  this.getToggled = function()
+  {
+    return toggled;
+  }
+
   var onSettingChange = function(msg)
   {
     if( msg.id == 'console' )
     {
       switch(msg.key)
       {
-        case 'use-selected-runtime-as-filter':
         case 'expand-all-entries': {
+          toggled = [];
+          updateViews();
+          break;
+        }
+        case 'use-selected-runtime-as-filter': {
           updateViews();
           break;
         }
         default: {
-          var is_disabled = !settings[msg.id].get(msg.key);
-          views[msg.key].ishidden_in_menu = is_disabled;
-          topCell.disableTab(msg.key, is_disabled);
+          //var is_disabled = !settings[msg.id].get(msg.key);
+          //views[msg.key].ishidden_in_menu = is_disabled;
+          //topCell.disableTab(msg.key, is_disabled);
         }
       }
 
@@ -296,24 +312,11 @@ var ErrorConsoleView = function(id, name, container_class, source)
   container_class = container_class ? container_class : 'scroll error-console';
   name = name ? name : 'missing name ' + id;
 
-  var expanded = [];
-
   this.createView = function(container)
   {
     var expandAll = settings.console.get('expand-all-entries');
-    container.clearAndRender(templates.error_log_table(ErrorConsoleData.getMessages(source), expandAll, expanded, this.id));
+    container.clearAndRender(templates.error_log_table(ErrorConsoleData.getMessages(source), expandAll, ErrorConsoleData.getToggled(), this.id));
     //container.scrollTop = container.scrollHeight;
-  }
-
-  this.toggleDetails = function(logid)
-  {
-      if (expanded.indexOf(logid) == -1) {
-          expanded.push(logid);
-      }
-      else {
-          expanded.splice(expanded.indexOf(logid), 1);
-      }
-      this.update();
   }
 
   this.init(id, name, container_class );
@@ -515,11 +518,8 @@ eventHandlers.click['clear-error-console-dragonfly'] = function()
 
 eventHandlers.click['error-log-list-expand-collapse'] = function(event, target)
 {
-    var view = target.getAttribute("data-viewid");
     var logid = target.getAttribute("data-logid");
-    if (view in window.views) {
-        window.views[view].toggleDetails(logid);
-    }
+    ErrorConsoleData.toggleEntry(logid);
 }
 
 

@@ -21,11 +21,18 @@ window.templates.error_log_table = function(entries, allExpanded, expandedList, 
     ]
 }
 
-window.templates.error_log_row = function(entry, allExpanded, expandedList, viewId)
+window.templates.error_log_row = function(entry, allExpanded, toggledList, viewId)
 {
-
-    var expanded = allExpanded || expandedList.indexOf(entry.id)!=-1
-
+    if (allExpanded) {
+        var expanded = true;
+        if (toggledList.indexOf(entry.id)!=-1) {
+            expanded = false;
+        }
+    }
+    else {
+        var expanded = toggledList.indexOf(entry.id)!=-1
+    }
+ 
     var rows = [
         [ "tr", [
                 ["td", ["button", "",
