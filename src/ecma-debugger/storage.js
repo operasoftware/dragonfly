@@ -1,10 +1,23 @@
 ﻿/**
-  * @constructor 
-  */
+ * Code dealing with persistant storage
+ *
+ */
+ 
 
+/**
+ * This singleton deals with actual storing of data. It currently uses
+ * cookies for this purpose. The store can save all data types supported
+ * by json. Storage are based on key/value pairs, with optional timestamp
+ * for expiry.
+ * @class
+ * @constructor 
+ */
 storage = new function()
 {
-  var setCookie =function(name, value, time)
+  /**
+   * @private
+   */
+  var setCookie = function(name, value, time)
   {
     document.cookie = name + "="+
       encodeURIComponent(value)+
@@ -12,6 +25,9 @@ storage = new function()
       "; path=/";
   }
 
+  /**
+   * @private
+   */
   var getCookie = function(name)
   {
     var match = null;
@@ -22,11 +38,19 @@ storage = new function()
 	  return null;
   }
   
+  /**
+   * store a value with the given key
+   */
   this.set = function(key, value)
   {
     setCookie(key, JSON.stringify(value))
   }
   
+  /**
+   * get a value with the given key. If there is no value for the key, the
+   * optional default_value argument is returned. If there is no value for
+   * the key, nor any default_value, undefined is returned.
+   */
   this.get = function(key, default_value)
   {
     var val = getCookie(key);

@@ -1,7 +1,8 @@
 ﻿/**
-  * @constructor 
-  */
-
+ * Base class for Switches
+ * @see Switches
+ * @constructor 
+ */
 var SwitchesBase = function()
 {
   this.init = function(view_id, keys)
@@ -14,7 +15,6 @@ var SwitchesBase = function()
       {
         keys[i] = view_id + '.' + key;
       }
-
     }
     this.keys = keys;
 
@@ -26,11 +26,15 @@ var SwitchesBase = function()
   }
 }
 
-/**
-  * @constructor 
-  * @extends SwitchesBase
-  */
 
+/**
+ * The switches class maps one or more keys from the Settings object of
+ * the view to toggle buttons in the UI
+ *
+ * @see Settings
+ * @constructor 
+ * @extends SwitchesBase
+ */
 var Switches = function(view_id, key_map)
 {
   this.init(view_id, key_map);
