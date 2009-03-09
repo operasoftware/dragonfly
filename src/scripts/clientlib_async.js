@@ -41,7 +41,7 @@ var proxy = new function()
     this.GET("/services", parseConfigureResponse)
   }
 
-  var parseConfigureResponse = function (xml)
+  var parseConfigureResponse = function (xml, xhr)
   {
     var service_elts = xml.getElementsByTagName("service");
     var services = new Array();
@@ -50,7 +50,7 @@ var proxy = new function()
       services.push(service_elts[i].getAttribute("name"));
     }
     self.services = services;
-    self.onsetup();
+    self.onsetup(xhr);
   }
 
   this.onsetup = function(){}
@@ -92,7 +92,7 @@ var proxy = new function()
     {
       if (this.status != 200) 
       {
-        throw "Message failed, Status: " + this.status;
+        throw "Message failed, Status: " + this.status + ", msg: " + msg ;
       }
       self.onReceive(x);
       var xml = this.responseXML;
@@ -110,7 +110,7 @@ var proxy = new function()
       }
       if(cb) 
       {
-        cb(xml)
+        cb(xml, x)
       }
       else
       {

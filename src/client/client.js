@@ -123,7 +123,20 @@ var client = new function()
     opera.scopeTransmit(service, "<?xml version=\"1.0\"?>" + msg)
   }
 
-  /**** methods for standalone proxy ****/
+  /* methods for standalone proxy Dragonkeeper */
+
+  var receive_dragonkeeper = function(xml, xhr)
+  {
+    if(xml.documentElement.nodeName != 'timeout')
+    {
+      services_dict[xhr.getResponseHeader("X-Scope-Message-Service")].onreceive(xml);
+    }
+    proxy.GET( "/scope-message", receive_dragonkeeper);
+  } 
+
+  /**** methods for standalone proxy Java ****/
+
+
 
   var post_proxy = function(service, msg)
   {
@@ -149,9 +162,9 @@ var client = new function()
     return boundGetEvent;
   }
 
-  var proxy_onsetup = function()
+  var proxy_onsetup = function(xhr)
   {
-    var service = null, i = 0;
+    var service = null, i = 0, is_event_loop = false;
     // workaround for a missing hello message
     for( ; ( service = this.services[i] ) && service.slice(0, 5) != 'core-'; i++);
     if( service )
@@ -178,8 +191,26 @@ var client = new function()
           }
           else
           {
-            service.onconnect();
-            proxy.GET( "/" + service.name, bindCB(service) );
+            if(xhr.getResponseHeader("Server").indexOf("Dragonkeeper") != -1 )
+            {
+              if(!is_event_loop)
+              {
+                is_event_loop = true;
+                setTimeout(function(){
+                  proxy.GET( "/scope-message", receive_dragonkeeper);
+                }, 10, service);
+              }
+              setTimeout(function(service){
+                service.onconnect();
+              }, 10, service);
+            }
+            else
+            {
+              setTimeout(function(service){
+                service.onconnect();
+                proxy.GET( "/" + service.name, bindCB(service) );
+              }, 10, service);
+            }
           }
         }
       }
