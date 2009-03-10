@@ -581,7 +581,7 @@ new Settings
     'console-widget': ui_strings.S_SWITCH_SHOW_TAB_WIDGET,
     'console-dragonfly': ui_strings.S_SWITCH_SHOW_TAB_DRAGONFLY,
     'use-selected-runtime-as-filter': ' use selected runtime as filter', // Not in use!
-    'expand-all-entries': ui_strings.S_BUTTON_EXPAND_ALL
+    'expand-all-entries': ui_strings.S_SWITCH_EXPAND_ALL
 }, 
   // settings map
   {
