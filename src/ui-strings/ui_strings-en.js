@@ -1,6 +1,15 @@
 ﻿window.ui_strings || ( window.ui_strings  = {} ) 
 window.ui_strings.lang_code = "en";
 
+/**
+ * Prefix -> use mapping for strings:
+ * Prefix   Use 
+ * D        Dialog titles and components 
+ * S        General strings 
+ * M        Menus
+ */
+
+
 /*
  * Level 1 View Tab Headings
  */
@@ -237,6 +246,9 @@ ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW = 'Close Window';
 ui_strings.S_BUTTON_TEXT_APPLY = 'Apply';
 /* DESC: DEPRECATED Clear request log. */
 ui_strings.S_BUTTON_CLEAR_REQUEST_LOG = 'Clear request log';
+/* DESC: Expand all (entries in a list) */
+ui_strings.S_BUTTON_EXPAND_ALL = 'Expand all';
+
 
 /*
  * Labels
@@ -252,6 +264,14 @@ ui_strings.S_SELECT_WINDOW_EMPTY = 'Select a window';
 ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH = 'Search';
 /* DESC: For filter fields. */
 ui_strings.S_INPUT_DEFAULT_TEXT_FILTER = 'Quick find';
+/* DESC: Table heading for "file" column */
+ui_strings.S_COLUMN_LABEL_FILE = "File";
+/* DESC: Table heading for column showing line number */
+ui_strings.S_COLUMN_LABEL_LINE = "Line";
+/* DESC: Table heading for column showing error descriptions */
+ui_strings.S_COLUMN_LABEL_ERROR = "Error";
+
+
 
 /*
  * Information strings in the UI
@@ -329,4 +349,5 @@ ui_strings.S_TEXT_STATUS_SEARCH_NO_MATCH = "No match for \"%(SEARCH_TERM)s\"";
 ui_strings.S_TEXT_NO_REQUEST_SELECTED = "No request selected.";
 
 ui_strings.DRAGONFLY_INFO_MESSAGE = "Opera Dragonfly info message:\n";
+
 

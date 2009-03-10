@@ -12,9 +12,9 @@ window.templates.error_log_table = function(entries, allExpanded, expandedList, 
                
                ['th', " "],
                //['th', "TT"],
-               ['th', "File"],
-               ['th', "Line"],
-               ['th', "Error"]
+               ['th', ui_strings.S_COLUMN_LABEL_FILE],
+               ['th', ui_strings.S_COLUMN_LABEL_LINE],
+               ['th', ui_strings.S_COLUMN_LABEL_ERROR]
               ]
         ],
         entries.map(rowClosure)
