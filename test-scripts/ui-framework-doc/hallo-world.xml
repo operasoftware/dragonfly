@@ -1,0 +1,64 @@
+﻿<viewport xmlns="http://www.w3.org/1999/xhtml">
+<title>UI Framework - Hello World</title>
+<windows-container></windows-container>
+<main-view></main-view>
+
+<!-- please don't use multiline html comments yet. They confuse the build tool -->
+<!-- the following two directives will make dfbuild concatenate all css and js respectively into the named files. -->
+<!-- command concat_css "./style/dragonfly.css" -->
+<!-- command concat_js "./script/dragonfly.js" -->
+
+<link rel="stylesheet" href="../../src/ui-style/ui.css"/>
+<link rel="stylesheet" href="hallo-world-style.css"/>
+
+<!-- This will turn off including of the UI strings if the exclude_uistrings var is set -->
+<!-- command concat_js off if exclude_uistrings -->
+<script src="../../src/ui-strings/ui_strings-en.js"/>
+
+<!-- restart normal concatenation -->
+<!-- command concat_js "./script/dragonfly.js" -->
+<script src="../../src/scripts/json.js"/>
+<script src="../../src/scripts/dom.js"/>
+<script src="../../src/scripts/messages.js"/>
+<script src="../../src/scripts/Timeouts.js"/>
+<script src="../../src/scripts/TextSearch.js"/>
+<script src="../../src/scripts/colors.js"/>
+<script src="../../src/scripts/ini.js"/>
+
+<script src="../../src/ui-scripts/defaults.js"/>
+<script src="../../src/ui-scripts/window.js"/>
+<script src="../../src/ui-scripts/cells.js"/>
+<script src="../../src/ui-scripts/topCell.js"/>
+<script src="../../src/ui-scripts/view.js"/>
+<script src="../../src/ui-scripts/compositeView.js"/>
+<script src="../../src/ui-scripts/settingView.js"/>
+<script src="../../src/ui-scripts/ui-base.js"/>
+<script src="../../src/ui-scripts/TopUIBase.js"/>
+<script src="../../src/ui-scripts/toolbar.js"/>
+<script src="../../src/ui-scripts/toolbarConfig.js"/>
+<script src="../../src/ui-scripts/tabs.js"/>
+<script src="../../src/ui-scripts/topTabs.js"/>
+<script src="../../src/ui-scripts/containers.js"/>
+<script src="../../src/ui-scripts/topContainers.js"/>
+<script src="../../src/ui-scripts/windowContainers.js"/>
+<script src="../../src/ui-scripts/tab.js"/>
+<script src="../../src/ui-scripts/status.js"/>
+<script src="../../src/ui-scripts/ui-templates.js"/>
+<script src="../../src/ui-scripts/ui-actions.js"/>
+<script src="../../src/ui-scripts/settings.js"/>
+<script src="../../src/ui-scripts/viewMenu.js"/>
+<script src="../../src/ui-scripts/viewSlider.js"/>
+<script src="../../src/ui-scripts/animator.js"/>
+<script src="../../src/ui-scripts/Switches.js"/>
+<script src="../../src/ui-scripts/Editor.js"/>
+<script src="../../src/ui-scripts/keyboard_handler.js"/>
+<script src="../../src/ui-scripts/cst-select.js"/>
+
+
+<script src="../../src/ecma-debugger/storage.js"/>
+<script src="../../src/ecma-debugger/views.js"/>
+
+<script src="ui-framework-hello-world.js"/>
+
+<body/>
+</viewport>
