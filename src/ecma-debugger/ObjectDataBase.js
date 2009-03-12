@@ -56,7 +56,10 @@ var ObjectDataBase = new function()
               prop.getNodeData('property-name'),
               prop.getNodeData('object-id'),
               'object',
-              depth
+              depth,
+              ,
+              ,
+              prop.getNodeData('class-name')
             ]
             break;
           }
@@ -382,7 +385,7 @@ var ObjectDataBase = new function()
                       " depth='" + depth + "'>" +
                   "<input type='button' handler='examine-object-2'  class='folder-key'/>" +
                   "<key>" + prop[KEY] + "</key>" +
-                  "<value class='object'>object</value>" +
+                  "<value class='object'>" + prop[CONSTRUCTOR] + "</value>" +
                 "</item>";
         
       }
