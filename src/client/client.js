@@ -132,7 +132,7 @@ var client = new function()
     {
       services_dict[xhr.getResponseHeader("X-Scope-Message-Service")].onreceive(xml);
     }
-    proxy.GET( "/scope-message"/*?time" + new Date().getTime()*/, receive_dragonkeeper);
+    proxy.GET( "/scope-message?time" + new Date().getTime(), receive_dragonkeeper);
   } 
 
   /**** methods for standalone proxy Java ****/
@@ -198,7 +198,7 @@ var client = new function()
               {
                 is_event_loop = true;
                 setTimeout(function(){
-                  proxy.GET( "/scope-message"/*?time=" + new Date().getTime()*/, receive_dragonkeeper);
+                  proxy.GET( "/scope-message?time=" + new Date().getTime(), receive_dragonkeeper);
                 }, 10, service);
               }
               setTimeout(function(service){
