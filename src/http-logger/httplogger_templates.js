@@ -23,7 +23,7 @@ window.templates = window.templates || ( window.templates = {} );
         var dt = ['dt', name + ": "]
         if (name in http_header_specification_urls)
         {
-            dt.push(['a', '(spec)',
+            dt.push(['a', ui_strings.S_SPEC_LINK_LABEL,
                           'href', http_header_specification_urls[name],
                           'target', '_blank']);
         }
@@ -125,9 +125,9 @@ window.templates.request_details_box = function(r, aw)
     
     return [ 'tr',
               ['td',
-               ['button', "Summary", "type", "button", "data-viewname", "summary", "data-requestid", r.id, "handler", "select-http-detail-view"],
-               ['button', "Headers", "type", "button", "data-viewname", "headers", "data-requestid", r.id, "handler", "select-http-detail-view"],
-               ['button', "Raw", "type", "button", "data-viewname", "raw", "data-requestid", r.id, "handler", "select-http-detail-view"],
+               ['button', ui_strings.S_BUTTON_SHOW_REQUEST_SUMMARY, "type", "button", "data-viewname", "summary", "data-requestid", r.id, "handler", "select-http-detail-view"],
+               ['button', ui_strings.S_BUTTON_SHOW_REQUEST_HEADERS, "type", "button", "data-viewname", "headers", "data-requestid", r.id, "handler", "select-http-detail-view"],
+               ['button', ui_strings.S_BUTTON_SHOW_REQUEST_RAW, "type", "button", "data-viewname", "raw", "data-requestid", r.id, "handler", "select-http-detail-view"],
                  ["div", content(r)],
                 "colspan", "7"]
            ]
@@ -136,10 +136,10 @@ window.templates.request_details_box = function(r, aw)
 window.templates.response_raw = function(req)
 {
     return [
-            ["h2", "Raw request"],
+            ["h2", ui_strings.M_VIEW_LABEL_RAW_REQUEST_INFO],
             ['code',
                 ['pre',
-                    (req.response ? req.response.raw : "Request in progress")
+                    (req.response ? req.response.raw : ui_strings.S_HTTP_REQUEST_IN_PROGRESS)
                 ]
             ]
     ]
@@ -155,7 +155,7 @@ window.templates.headers_view = function(req) {
 window.templates.parsed_request_headers = function(req)
 {
     return [
-            ["h2", "Request headers"],
+            ["h2", ui_strings.M_VIEW_LABEL_REQUEST_HEADERS],
              window.templates.header_definition_list(req.request.headers)
            ]
 }
@@ -163,8 +163,8 @@ window.templates.parsed_request_headers = function(req)
 window.templates.parsed_response_headers = function(req)
 {
     return [
-            ["h2", "Response headers"],
-            req.response ? window.templates.header_definition_list(req.response.headers) : ["span", "Request in progress"]
+            ["h2", ui_strings.M_VIEW_LABEL_RESPONSE_HEADERS],
+            req.response ? window.templates.header_definition_list(req.response.headers) : ["span", ui_strings.S_HTTP_REQUEST_IN_PROGRESS]
     ]    
 }
 
@@ -174,20 +174,20 @@ window.templates.request_summary = function(req)
     for (key in req.request.queryDict) { pairs.push([key, req.request.queryDict[key]]) }
 
     ret = [
-              ["h2", "Request summary"],
+              ["h2", ui_strings.M_VIEW_LABEL_REQUEST_SUMMARY],
               ["dl", [
-                      ["dt", "Full url:"],
+                      ["dt", ui_strings.S_HTTP_LABEL_URL],
                       ["dd", (req.request.url + req.request.query)],
-                      ["dt", "Response:"],
+                      ["dt", ui_strings.S_HTTP_LABEL_RESPONSE],
                       ["dd", (req.response ? req.response.status + ": " + req.response.reason : "-")],
-                      ["dt", "Method:"],
+                      ["dt", ui_strings.S_HTTP_LABEL_METHOD],
                       ["dd", window.templates.method_spec_link(req) || req.request.method ], 
-                      ["dt", "Host:"],
+                      ["dt", ui_strings.S_HTTP_LABEL_HOST],
                       ["dd", req.request.headers["Host" || "?" ]],
-                      ["dt", "Path:"],
+                      ["dt", ui_strings.S_HTTP_LABEL_PATH],
                       ["dd", req.request.path],
-                      ["dt", "Query arguments:"],
-                      ["dd", (pairs.length ? ["ul", pairs.sort().map(function(e) { return ["li", e.join(" = ")] } )] : "None" ) ]
+                      ["dt", ui_strings.S_HTTP_LABEL_QUERY_ARGS],
+                      ["dd", (pairs.length ? ["ul", pairs.sort().map(function(e) { return ["li", e.join(" = ")] } )] : ui_strings.S_NONE ) ]
                     ]
                ]
           ]
@@ -201,7 +201,7 @@ window.templates.method_spec_link = function(req)
         var m = req.request.method.toLowerCase();
         if (m in http_method_specification_urls)
         {
-            return ["a", req.request.method + " (spec)", "target", "_blank", "href", http_method_specification_urls[m]]
+            return ["a", req.request.method + " " + ui_strings.S_SPEC_LINK_LABEL, "target", "_blank", "href", http_method_specification_urls[m]]
         }
     }
     return ""

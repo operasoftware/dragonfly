@@ -1,6 +1,15 @@
 ﻿window.ui_strings || ( window.ui_strings  = {} ) 
 window.ui_strings.lang_code = "en";
 
+/**
+ * Prefix -> use mapping for strings:
+ * Prefix   Use 
+ * D        Dialog titles and components 
+ * S        General strings 
+ * M        Menus
+ */
+
+
 /*
  * Level 1 View Tab Headings
  */
@@ -96,10 +105,12 @@ ui_strings.M_VIEW_LABEL_RAW_RESPONSE_INFO = 'Raw response';
 ui_strings.M_VIEW_LABEL_REQUEST_HEADERS = 'Request headers';
 /* DESC: Name of response headers tab */
 ui_strings.M_VIEW_LABEL_RESPONSE_HEADERS = 'Response headers';
-/* DESC: Name of request info tab */
+/* DESC: Name of request info view */
 ui_strings.M_VIEW_LABEL_REQUEST_INFO = 'Request info';
-/* DESC: Name of response body tab */
+/* DESC: Name of response body view */
 ui_strings.M_VIEW_LABEL_RESPONSE_BODY = 'Response body';
+/* DESC: Name of request summary view */
+ui_strings.M_VIEW_LABEL_REQUEST_SUMMARY = 'Request summary';
 
 /* DESC: Label of the Views menu */
 ui_strings.M_VIEW_LABEL_VIEWS = 'Views';
@@ -188,6 +199,8 @@ ui_strings.S_SWITCH_SHOW_ONLY_NORMAL_AND_GADGETS_TYPE_WINDOWS = "Show only norma
 ui_strings.S_SWITCH_SCROLL_INTO_VIEW_ON_FIRST_SPOTLIGHT = 'Scroll into View on first Spotlight';
 /* DESC: Show ECMA error message of the error console in the command line */
 ui_strings.S_SWITCH_SHOW_ECMA_ERRORS_IN_COMMAND_LINE = "Show ECMA Script Errors of the Error Console";
+/* DESC: Expand all (entries in a list) */
+ui_strings.S_SWITCH_EXPAND_ALL = 'Expand all';
 /* DESC: Draw a border on to selected DOM elements */
 ui_strings.S_SWITCH_LOCK_SELECTED_ELEMENTS = "Draw a border on to selected elements";
 
@@ -242,6 +255,12 @@ ui_strings.S_BUTTON_CLEAR_REQUEST_LOG = 'Clear request log';
 ui_strings.S_BUTTON_OK = "Ok";
 /* DESC: */
 ui_strings.S_BUTTON_CANCEL = "Cancel";
+/* DESC: Show request summary. */
+ui_strings.S_BUTTON_SHOW_REQUEST_SUMMARY = 'Summary';
+/* DESC: Show request headers. */
+ui_strings.S_BUTTON_SHOW_REQUEST_HEADERS = 'Headers';
+/* DESC: Show raw request. */
+ui_strings.S_BUTTON_SHOW_REQUEST_RAW = 'Raw';
 
 /*
  * Labels
@@ -257,6 +276,27 @@ ui_strings.S_SELECT_WINDOW_EMPTY = 'Select a window';
 ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH = 'Search';
 /* DESC: For filter fields. */
 ui_strings.S_INPUT_DEFAULT_TEXT_FILTER = 'Quick find';
+/* DESC: Table heading for "file" column */
+ui_strings.S_COLUMN_LABEL_FILE = "File";
+/* DESC: Table heading for column showing line number */
+ui_strings.S_COLUMN_LABEL_LINE = "Line";
+/* DESC: Table heading for column showing error descriptions */
+ui_strings.S_COLUMN_LABEL_ERROR = "Error";
+/* DESC: label for link to the specification for something */
+ui_strings.S_SPEC_LINK_LABEL = "spec";
+/* DESC: label for url in http request details */
+ui_strings.S_HTTP_LABEL_URL = "URL";
+/* DESC: label for response in http request details */
+ui_strings.S_HTTP_LABEL_RESPONSE = "Response";
+/* DESC: label for method in http request details */
+ui_strings.S_HTTP_LABEL_METHOD = "Method";
+/* DESC: label for host in http request details */
+ui_strings.S_HTTP_LABEL_HOST = "Host";
+/* DESC: label for path in http request details */
+ui_strings.S_HTTP_LABEL_PATH = "Path";
+/* DESC: label for query arguments in http request details */
+ui_strings.S_HTTP_LABEL_QUERY_ARGS = "Query arguments";
+
 /* DESC: Tab size in source view. */
 ui_strings.S_LABEL_TAB_SIZE = 'Tab Size';
 /* DESC: Label for the hue of a color value. */
@@ -377,6 +417,10 @@ ui_strings.S_TEXT_STATUS_SEARCH = "Matches for \"%(SEARCH_TERM)s\": Match %(SEAR
 ui_strings.S_TEXT_STATUS_SEARCH_NO_MATCH = "No match for \"%(SEARCH_TERM)s\"";
 /* DESC: DEPRECATED Message in detail view of http logger when no request/response is selected */
 ui_strings.S_TEXT_NO_REQUEST_SELECTED = "No request selected.";
-
+/* DESC: Prefix before debug output */
 ui_strings.DRAGONFLY_INFO_MESSAGE = "Opera Dragonfly info message:\n";
+/* DESC: shown in response view of http logger when request isn't finished */
+ui_strings.S_HTTP_REQUEST_IN_PROGRESS = "Request in progress";
+/* DESC: The string "None" used wherever there's an abscense of something */
+ui_strings.S_NONE = "None";
 
