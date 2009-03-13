@@ -165,7 +165,7 @@ var client = new function()
 
   var proxy_onsetup = function(xhr)
   {
-    var service = null, i = 0, is_event_loop = false;
+    var service = null, i = 0, is_event_loop = false, server_name = xhr.getResponseHeader("Server");
     // workaround for a missing hello message
     for( ; ( service = this.services[i] ) && service.slice(0, 5) != 'core-'; i++);
     if( service )
@@ -192,7 +192,8 @@ var client = new function()
           }
           else
           {
-            if(xhr.getResponseHeader("Server").indexOf("Dragonkeeper") != -1 )
+
+            if(server_name && server_name.indexOf("Dragonkeeper") != -1 )
             {
               if(!is_event_loop)
               {
