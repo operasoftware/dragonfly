@@ -37,7 +37,7 @@ var ListTextSearch = function()
       search_results = [];
       cache[current_id] = search_term = new_search_term;
       cur = container.getElementsByTagName('start-search-scope')[0];
-      while( ( cur = cur.nextSibling ) && cur.nodeName != "end-search-scope" )
+      while( cur && ( cur = cur.nextSibling ) && cur.nodeName != "end-search-scope" )
       {
         display = 
           cur.getElementsByTagName('key')[0].textContent.indexOf(search_term) == -1 
