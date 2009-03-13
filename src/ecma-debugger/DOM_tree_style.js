@@ -177,12 +177,14 @@ var DOM_tree_style = function(id, name, container_class)
               attrs += " <key>" + 
                 ( attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '' ) + 
                 ( force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ) + 
-                "</key>=<value>\"" + 
-                attr[ATTR_VALUE] + 
+                "</key>=<value" + 
+                    ( /^href|src$/i.test(attr[ATTR_KEY])
+                      ? " handler='dom-resource-link'"
+                      : "" ) + ">\"" + 
+                    attr[ATTR_VALUE] +
                 "\"</value>";
             }
           }
-
 
           child_pointer = i + 1;
 

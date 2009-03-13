@@ -634,7 +634,9 @@ var action_handler = new function()
   {
     var 
     url = target.textContent,
-    rt_id = target.parentNode.parentNode.parentNode.getAttribute('rt-id');
+    rt_id = target.parentNode.parentNode.parentNode.getAttribute('rt-id') 
+      // for the case of dom tree-style
+      || target.parentNode.parentNode.parentNode.parentNode.getAttribute('rt-id');
 
     window.open(helpers.resolveURLS( runtimes.getURI(rt_id), url.slice(1, url.length - 1 ) ), "_blank");
   }
