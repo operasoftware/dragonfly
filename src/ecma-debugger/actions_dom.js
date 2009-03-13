@@ -57,6 +57,7 @@ cls.DOMInspectorActions = function(id)
   }
 
   this.editor = null;
+  this.is_dom_type_tree = false;
   this.editors = 
   {
     "dom-attr-text-editor": new DOMAttrAndTextEditor(nav_filters),
@@ -107,7 +108,8 @@ cls.DOMInspectorActions = function(id)
   {
     if(msg.id == self.view_id)
     {
-      self.resetTarget(msg.container)
+      self.resetTarget(msg.container);
+      self.is_dom_type_tree = msg.container.hasClass('tree-style');
     }
   }
 
@@ -118,6 +120,7 @@ cls.DOMInspectorActions = function(id)
     view_container_first_child = container.firstChild;
     selection = getSelection();
     range = document.createRange();
+    this.is_dom_type_tree = container.hasClass('tree-style');
     if( event.type == 'click' && /^node|key|value|text|input$/i.test(event.target.nodeName) )
     {
       nav_target = event.target;
@@ -157,8 +160,9 @@ cls.DOMInspectorActions = function(id)
         case 'value':
         {
           firstChild = new_target.firstChild;
-          range.setStart(firstChild, 1);
-          range.setEnd(firstChild, firstChild.nodeValue.length - 1)
+          range.setStart(firstChild, this.is_dom_type_tree ? 0 : 1);
+          range.setEnd(firstChild, 
+            firstChild.nodeValue.length - (this.is_dom_type_tree && !firstChild.nextSibling ? 0 : 1) )
           selection.addRange(range);
           break;
         }
