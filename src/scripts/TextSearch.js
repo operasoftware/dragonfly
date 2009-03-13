@@ -102,7 +102,7 @@ var TextSearch = function()
       replace("%(SEARCH_COUNT_TOTAL)s", search_results.length).
       replace("%(SEARCH_COUNT_INDEX)s", ( cursor + 1 )) );
   };
-  
+
   this.search = function(new_search_term, old_cursor)
   {
     var cur = null, i = 0, parent = null, search_hit = null, j = 0;
@@ -138,6 +138,8 @@ var TextSearch = function()
           }
           else
           {
+            topCell.statusbar.updateInfo(ui_strings.S_TEXT_STATUS_SEARCH_NO_MATCH.
+              replace("%(SEARCH_TERM)s", new_search_term));
             self.highlight(true);
           }
         }
@@ -147,6 +149,7 @@ var TextSearch = function()
         topCell.statusbar.updateInfo('');
       }
     }
+    
   }
 
   this.searchDelayed = function(new_search_term)
