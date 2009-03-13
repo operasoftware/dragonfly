@@ -160,8 +160,9 @@ var client = new function()
 
   var proxy_onsetup = function(xhr)
   {
-    var service = null, i = 0, is_event_loop = false;
+    var service = null, i = 0, is_event_loop = false, server_name = xhr.getResponseHeader("Server");
     // workaround for a missing hello message
+    // TODO check the fake core service version
     for( ; ( service = this.services[i] ) && !( service == 'window-manager' ); i++);
     if( service == 'window-manager' )
     {
@@ -180,7 +181,7 @@ var client = new function()
         }
         else
         {
-          if(xhr.getResponseHeader("Server").indexOf("Dragonkeeper") != -1 )
+          if(server_name && server_name.indexOf("Dragonkeeper") != -1 )
           {
             if(!is_event_loop)
             {
