@@ -179,12 +179,13 @@ eventHandlers.click['top-window-toggle-attach'] = function(event)
   setTimeout(client.setupTopCell, 0);
 }
 
-eventHandlers.mousedown['toolbar-switch'] = function(event)
+eventHandlers.click['toolbar-switch'] = function(event)
 {
   var target = event.target;
   var arr = target.getAttribute('key').split('.');
   var setting = arr[0], key = arr[1];
   var is_active = !( target.getAttribute('is-active') == 'true' && true || false );
+
   settings[setting].set(key, is_active);
   views.settings_view.syncSetting(setting, key, is_active);
   views[setting].update();
@@ -196,6 +197,9 @@ eventHandlers.mousedown['toolbar-switch'] = function(event)
   */
   messages.post("setting-changed", {id: setting, key: key});
   target.setAttribute('is-active', is_active ? 'true' : 'false');
+  // hack to trigger a repaint while
+  target.style.backgroundColor = "transparent";
+  target.style.removeProperty('background-color');
 }
 
 

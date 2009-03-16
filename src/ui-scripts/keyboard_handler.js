@@ -138,7 +138,7 @@ var BaseKeyhandler = new function()
 
   this.onclick = function(event)
   {
-
+    return true;
   };
 
   this[this.CTRL_A] = function(event, action_id)
@@ -206,7 +206,7 @@ var BaseEditKeyhandler = new function()
 
   this.onclick = function(event)
   {
-
+    return true;
   };
 
   this.init = function(id)
@@ -307,7 +307,7 @@ var key_identifier = new function()
 
     this.setTarget = function(){};
 
-    this.onclick = function(event){};
+    this.onclick = function(event){return true;};
 
 
   }
@@ -420,42 +420,41 @@ var key_identifier = new function()
 
   this.setView = function(event)
   {
-    var container = event.target;
-    while( container && !/^(?:top-)?(?:container|toolbar|tabs)$/.test(container.nodeName) 
-      && ( container = container.parentElement ) );
-    
-    if( container )
+    if( !( __key_handler && __key_handler.onclick(event) === false ) )
     {
-      switch (container.nodeName)
+      var container = event.target;
+      while( container && !/^(?:top-)?(?:container|toolbar|tabs)$/.test(container.nodeName) 
+        && ( container = container.parentElement ) );
+      
+      if( container )
       {
-        case 'container':
+        switch (container.nodeName)
         {
-          var ui_obj = UIBase.getUIById(container.getAttribute('ui-id'));
-          if( ui_obj && ui_obj.view_id != __current_view_id )
+          case 'container':
+          {
+            var ui_obj = UIBase.getUIById(container.getAttribute('ui-id'));
+            if( ui_obj && ui_obj.view_id != __current_view_id )
+            {
+              clear_current_handler();
+              // TODO check if it has already focus
+              __key_handler = keyhandlers[__current_view_id = ui_obj.view_id] || empty_keyhandler;
+              __key_handler.focus(event, container);
+              __container = container;
+
+            }
+            break;
+          }
+          // TODO set according key handler, e.g. toolbar, tab
+          default:
           {
             clear_current_handler();
-            // TODO check if it has already focus
-            __key_handler = keyhandlers[__current_view_id = ui_obj.view_id] || empty_keyhandler;
-            __key_handler.focus(event, container);
-            __container = container;
-
           }
-          else if( __key_handler )
-          {
-            __key_handler.onclick(event);
-          }
-          break;
-        }
-        // TODO set according key handler, e.g. toolbar, tab
-        default:
-        {
-          clear_current_handler();
         }
       }
-    }
-    else
-    {
-      clear_current_handler();
+      else
+      {
+        clear_current_handler();
+      }
     }
   }
   document.addEventListener('keypress', this.handle, true);

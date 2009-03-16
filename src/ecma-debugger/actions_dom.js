@@ -208,10 +208,15 @@ cls.DOMInspectorActions = function(id)
   this.keyhandler_onclick = function(event)
   {
     var target = event.target;
-    if(target != nav_target && /^input|node|key|value|text$/i.test(target.nodeName))
+    var is_in_container = view_container && view_container.contains(target);
+    if(is_in_container)
     {
-      this.setSelected(target);
+      if(target != nav_target && /^input|node|key|value|text$/i.test(target.nodeName))
+      {
+        this.setSelected(target);
+      }
     }
+    return !is_in_container;
   }
 
   this.blur = function(event)
@@ -279,6 +284,7 @@ cls.DOMInspectorActions = function(id)
         event.stopPropagation();
         
         key_identifier.setModeEdit(self);
+        document.documentElement.addClass('modal');
         self.setSelected(event.target.parentNode);
         self.set_editor("dom-attr-text-editor");
         self.editor.edit(event, event.target);
@@ -302,6 +308,7 @@ cls.DOMInspectorActions = function(id)
         event.preventDefault();
         event.stopPropagation();
         key_identifier.setModeEdit(self);
+        document.documentElement.addClass('modal');
         self.setSelected(new_target.parentNode);
         self.set_editor("dom-markup-editor");
         self.editor.edit(event, new_target);
@@ -325,6 +332,7 @@ cls.DOMInspectorActions = function(id)
     {
       this.setSelected(this.editor.submit() || this.getFirstTarget() );
       key_identifier.setModeDefault(self);
+      document.documentElement.removeClass('modal');
       return false;
     }
     else
@@ -354,6 +362,7 @@ cls.DOMInspectorActions = function(id)
       if( !this.editor.nav_next(event, action_id) )
       {
         key_identifier.setModeDefault(this);
+        document.documentElement.removeClass('modal');
       }
       return false;
     }
@@ -371,6 +380,7 @@ cls.DOMInspectorActions = function(id)
       if( !this.editor.nav_previous(event, action_id) )
       {
         key_identifier.setModeDefault(this);
+        document.documentElement.removeClass('modal');
       }
       return false;
     }
@@ -384,6 +394,7 @@ cls.DOMInspectorActions = function(id)
   {
     this.setSelected(this.editor.cancel() || this.getFirstTarget() );
     key_identifier.setModeDefault(this);
+    document.documentElement.removeClass('modal');
     return false;
   }
 
@@ -398,8 +409,11 @@ cls.DOMInspectorActions = function(id)
       else
       {
         key_identifier.setModeDefault(self);
+        document.documentElement.removeClass('modal');
       }
     }
+    // make the edit mode modal
+    return false;
   }
 
   this.makeFilterGetStartTag = function(start_node)
@@ -487,7 +501,7 @@ cls.DOMInspectorKeyhandler = function(id)
   }
   this.onclick = function(event)
   {
-    __actions.keyhandler_onclick(event);
+    return __actions.keyhandler_onclick(event);
   }
   
   this.init(id);
@@ -542,7 +556,7 @@ cls.DOMInspectorEditKeyhandler = function(id)
 
   this.onclick = function(event)
   {
-    __actions.edit_onclick(event);
+    return __actions.edit_onclick(event);
   }
 
   this.init(id);

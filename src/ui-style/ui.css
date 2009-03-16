@@ -225,6 +225,36 @@ window-toolbar button.switch[is-active="true"]:active:before
   background-position: -26px -48px;
 }
 
+/* mode modal */
+.modal toolbar button[disabled]:before,
+.modal toolbar button[disabled]:hover:before,
+.modal toolbar button[disabled]:active:before,
+.modal window-toolbar button[disabled]:before,
+.modal window-toolbar button[disabled]:hover:before,
+.modal window-toolbar button[disabled]:active:before,
+.modal toolbar button:hover:before, 
+.modal window-controls button:hover:before,
+.modal window-toolbar button:hover:before,
+.modal toolbar button:active:before, 
+.modal window-controls button:active:before,
+.modal window-toolbar button:hover:before
+{
+  background-position: 0 0;
+}
+
+.modal toolbar button.switch[is-active="true"]:before,
+.modal window-toolbar button.switch[is-active="true"]:before,
+.modal toolbar button.switch[is-active="true"]:hover:before,
+.modal window-toolbar button.switch[is-active="true"]:hover:before,
+.modal toolbar button.switch[is-active="true"]:active:before,
+.modal window-toolbar button.switch[is-active="true"]:active:before,
+.modal .attached:before,
+.modal .attached:hover:before,
+.modal .attached:active:before
+{
+  background-position: -26px 0;
+}
+
 toolbar-separator {
   display: block;
   float: left;
@@ -317,6 +347,12 @@ tab:hover {
 tab.active {
   background-position: 0 -34px;
   }
+
+.modal tab:hover,
+.modal tab.active
+{
+  background-position: 0 0;
+}
 	
 input[handler="tab"] { /**/
   font-size: 11px;
@@ -339,6 +375,12 @@ tab.active input[handler="tab"] {
   background-position: 100% -34px;
   font-weight: bold;
   }
+
+.modal tab:hover input[handler="tab"],
+.modal tab.active input[handler="tab"] 
+{
+  background-position: 100% 0;
+}
 
 top-tabs { /* The top tabs container, replaced with, placed into or merged with top-toolbar */
   position: absolute;
