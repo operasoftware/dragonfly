@@ -8,7 +8,7 @@ var TopTabsBase = function()
   this.type = 'top-tabs';
   this.getTopPosition = function()
   {
-    return this.cell.top + this.cell.toolbar.offsetHeight;
+    return this.cell.top + this.cell.toolbar && this.cell.toolbar.offsetHeight || 0;
   }
 }
 

@@ -5,13 +5,25 @@
   * a bit different from a normal cell, it holds the main view ui elements but also the main conatiner
   */
 
-var TopCell = function(layout, setDimensions, onresize)
+var TopCell = function(layout, setDimensions, onresize, TopToolbar, TopStatusbar)
 {
   var self = this;
-  this.setStartDimesions = setDimensions;
   var resize_timeout = new Timeouts();
-  this.onresize = onresize;
+  this.setStartDimesions = setDimensions || function()
+  {
+    this.top = 0;
+    this.left = 0;
+    this.width = innerWidth;
+    this.height = innerHeight;
+  };
+  this.onresize = onresize || function()
+  {
+    this.setStartDimesions();
+    this.update();
+    this.setup();
+  }
   this.cell_type = 'top';
+
   var delayed_resize = function()
   {
     self.onresize();
@@ -27,9 +39,12 @@ var TopCell = function(layout, setDimensions, onresize)
   {
     this.container = new TopContainer(this); // actually just a cell
     this.tab = new TopTabs(this);
-    this.toolbar = new TopToolbar(this);
-    toolbars[this.id].setVisibility(!opera.attached);
-    this.statusbar = new TopStatusbar(this);
+    this.toolbar = TopToolbar && new TopToolbar(this) || null;
+    if(this.toolbar)
+    {
+      toolbars[this.id].setVisibility(!opera.attached);
+    }
+    this.statusbar = TopStatusbar && new TopStatusbar(this) || null;
   }
 
   this.update = function()
@@ -45,9 +60,15 @@ var TopCell = function(layout, setDimensions, onresize)
       }
       else
       {
+        if(this.toolbar)
+        {
         this.toolbar.setDimensions();
+        }
         this.tab.setDimensions();
+        if(this.statusbar)
+        {
         this.statusbar.setDimensions();
+        }
         this.container.setDimensions();
       }
     }
@@ -134,8 +155,14 @@ var TopCell = function(layout, setDimensions, onresize)
   window.topCell = this;
   this.init(layout);
   this.setStartDimesions();
+  if(this.toolbar)
+  {
   this.toolbar.setup(this.id);
+  }
+  if(this.statusbar)
+  {
   this.statusbar.setup(this.id);
+  }
   this.addTemporaryTabs();
   this.tab.setActiveTab
   ( 

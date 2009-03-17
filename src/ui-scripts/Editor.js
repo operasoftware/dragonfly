@@ -732,6 +732,7 @@ var Editor = function()
     {
       this.textarea_container.parentElement.parentElement.
         removeChild(this.textarea_container.parentElement);
+      this.textarea_container.parentElement.innerHTML = "";
      
     }
   }
@@ -766,10 +767,14 @@ var Editor = function()
       this.context_cur_value = '';
       this.context_cur_priority = 0;
     }
-
     if( props[i+1] )
     {
       script = "rule.style.setProperty(\"" + props[i] + "\", \"" + props[i+1] + "\", " + ( props[i+2] ? "\"important\"" : null )+ ")";
+      services['ecmascript-debugger'].eval(0, self.context_rt_id, '', '', script, ["rule", self.context_rule_id]);
+    }
+    else if(!props[i])
+    {
+      script = "rule.style.removeProperty(\"" + this.context_cur_prop + "\")";
       services['ecmascript-debugger'].eval(0, self.context_rt_id, '', '', script, ["rule", self.context_rule_id]);
     }
 

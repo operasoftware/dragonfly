@@ -1,0 +1,78 @@
+.padding
+{
+  padding: 1em;
+}
+
+
+.navigation-tab
+{
+  background-color: #69f;
+  color: #fff;
+}
+h1, h2
+{
+  color: #fff;
+  font: 2.5em monospace normal;
+  text-align: center;
+  margin: 0;
+}
+h1
+{
+  font-size: 4em;
+}
+.navigation-tab h1
+{
+  color: #fff;
+}
+.navigation-tab h2
+{
+  margin: .2em 0;
+  color: #fff;
+}
+.navigation-tab p
+{
+  text-align: center;
+  padding: .3em 0;
+  margin: 0;
+  border-bottom: 1px dotted #fff;
+}
+.navigation-tab > div > div
+{
+  width: 21em;
+  margin: 0 auto;
+}
+.navigation-tab ul
+{
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+.navigation-tab a
+{
+  color: #fff;
+  text-decoration: none;
+  display: block;
+  padding: 0 .3em;
+}
+.navigation-tab a:hover
+{
+  color: #c00;
+  background-color: #fff;
+}
+
+.tab-2
+{
+  background-color: #9f9;
+}
+.tab-3
+{
+  background-color: #fc6;
+}
+.tab-4
+{
+  background-color: #ffc;
+}
+h1
+{
+  color: #000;
+}
