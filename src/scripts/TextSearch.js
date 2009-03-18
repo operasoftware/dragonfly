@@ -97,10 +97,13 @@ var TextSearch = function()
     
   update_status_bar = function()
   {
-    topCell.statusbar.updateInfo(ui_strings.S_TEXT_STATUS_SEARCH.
-      replace("%(SEARCH_TERM)s", search_term).
-      replace("%(SEARCH_COUNT_TOTAL)s", search_results.length).
-      replace("%(SEARCH_COUNT_INDEX)s", ( cursor + 1 )) );
+    if(topCell.statusbar)
+    {
+      topCell.statusbar.updateInfo(ui_strings.S_TEXT_STATUS_SEARCH.
+        replace("%(SEARCH_TERM)s", search_term).
+        replace("%(SEARCH_COUNT_TOTAL)s", search_results.length).
+        replace("%(SEARCH_COUNT_INDEX)s", ( cursor + 1 )) );
+    }
   };
 
   this.search = function(new_search_term, old_cursor)
@@ -138,13 +141,16 @@ var TextSearch = function()
           }
           else
           {
-            topCell.statusbar.updateInfo(ui_strings.S_TEXT_STATUS_SEARCH_NO_MATCH.
-              replace("%(SEARCH_TERM)s", new_search_term));
+            if(topCell.statusbar)
+            {
+              topCell.statusbar.updateInfo(ui_strings.S_TEXT_STATUS_SEARCH_NO_MATCH.
+                replace("%(SEARCH_TERM)s", new_search_term));
+            }
             self.highlight(true);
           }
         }
       }
-      else
+      else if(topCell.statusbar)
       {
         topCell.statusbar.updateInfo('');
       }

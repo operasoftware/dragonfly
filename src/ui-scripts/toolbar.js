@@ -62,9 +62,11 @@ var ToolbarBase = function()
     }
     dim = ( this.__is_visible  && ( 
             this.buttons.length 
+            || this.switches.length
             || this.filters.length
             || this.specials.length
             || this.customs.length ) ) ? this.default_height : 0;
+
     if( dim != this.height)
     {
       this.is_dirty = true;
@@ -125,7 +127,6 @@ var ToolbarBase = function()
     {
       this.__is_visible = toolbars[view_id].getVisibility();
     }
-
     var set_separator = this.buttons.length;
     if(this.__is_visible)
     {

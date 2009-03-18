@@ -59,6 +59,7 @@
 
 
 <script src="../common/templates.js"/>
+<script src="../common/view-source.js"/>
 <script src="application.js"/>
 
 <body/>

@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="../../../src/ui-style/ui.css"/>
 <link rel="stylesheet" href="../common/application.css"/>
 
+
 <!-- This will turn off including of the UI strings if the exclude_uistrings var is set -->
 <!-- command concat_js off if exclude_uistrings -->
 <script src="../../../src/ui-strings/ui_strings-en.js"/>
@@ -55,6 +56,10 @@
 <script src="../../../src/ui-scripts/cst-select.js"/>
 <script src="../../../src/ui-scripts/ui_framework.js"/>
 
+
+<script src="../../../src/ecma-debugger/formatter.js"/>
+<script src="../../../src/ecma-debugger/pre_lexer.js"/>
+<script src="../../../src/ecma-debugger/syntax.js"/>
 
 
 

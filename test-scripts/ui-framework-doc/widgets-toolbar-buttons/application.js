@@ -22,7 +22,23 @@ cls.HelloWorldView = function(id, name, container_class)
 }
 
 cls.HelloWorldView.prototype = ViewBase;
-new cls.HelloWorldView('hello-world', "Navigation", 'scroll navigation-tab');
+new cls.HelloWorldView('hello-world-toolbar-button', "Navigation", 'scroll navigation-tab');
+
+new ToolbarConfig
+(
+  'hello-world-toolbar-button',
+  [
+    {
+      handler: 'test-toolbar-button',
+      title: "Test how toolbar button works"
+    }
+  ]
+)
+
+eventHandlers.click['test-toolbar-button'] = function(event, target)
+{
+  alert('Hello World Toolbar Button');
+}
 
 ui_framework.layouts.main_layout =
 {
@@ -33,20 +49,17 @@ ui_framework.layouts.main_layout =
 ui_framework.layouts.hello_world_rough_layout =
 {
   dir: 'h',
-  tabs: ['hello-world'] 
+  tabs: ['hello-world-toolbar-button'] 
 }
 
 var helloWorldApplication = new function()
 {
   ui_framework.beforeSetup = function()
   {
-    new CompositeView('hello-world-composite', "Hello World", ui_framework.layouts.hello_world_rough_layout);
+    new CompositeView('hello-world-composite', "Hello World Toolbar Button", ui_framework.layouts.hello_world_rough_layout);
   }
   ui_framework.afterSetup = function()
   {
     new TopCell(ui_framework.layouts.main_layout);
   }
 }
-
-
-

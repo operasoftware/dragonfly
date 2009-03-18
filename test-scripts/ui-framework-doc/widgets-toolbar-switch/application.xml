@@ -56,7 +56,7 @@
 <script src="../../../src/ui-scripts/ui_framework.js"/>
 
 
-
+<script src="../../../src/ecma-debugger/storage.js"/>
 
 <script src="../common/templates.js"/>
 <script src="../common/view-source.js"/>

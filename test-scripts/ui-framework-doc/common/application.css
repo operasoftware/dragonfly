@@ -2,8 +2,6 @@
 {
   padding: 1em;
 }
-
-
 .navigation-tab
 {
   background-color: #69f;
@@ -34,7 +32,17 @@ h1
   text-align: center;
   padding: .3em 0;
   margin: 0;
+}
+.navigation-tab h1 + p
+{
   border-bottom: 1px dotted #fff;
+}
+.navigation-tab p + p
+{
+  margin: .3em auto 1.3em;
+  padding: 0;
+  width: 21em;
+  cursor: pointer;
 }
 .navigation-tab > div > div
 {
@@ -54,12 +62,12 @@ h1
   display: block;
   padding: 0 .3em;
 }
+.navigation-tab p + p:hover,
 .navigation-tab a:hover
 {
   color: #c00;
   background-color: #fff;
 }
-
 .tab-2
 {
   background-color: #9f9;
@@ -75,4 +83,91 @@ h1
 h1
 {
   color: #000;
+}
+
+
+.test-switch
+{
+  background-color: #630;
+}
+
+.templates-code h2
+{
+  color: #000;
+  text-align: left;
+}
+
+/* ecma script source */
+
+.templates-code div {
+	font-family: monospace;
+	color: #111;
+  }
+
+.templates-code .comment {
+  color: #888;
+  }
+
+.templates-code .js_builtins {
+  color: #18a;
+  }
+
+.templates-code .js_keywords {
+  color: #01c;
+  }
+
+.templates-code .number {
+  color: #920;
+  }
+
+.templates-code .punctuator {
+  color: #000;
+  }
+
+.templates-code .reg_exp {
+  color: #c71;
+  }
+
+.templates-code .string {
+  color: #a31;
+  }
+
+.export-data pre
+{
+
+font-family: monospace;
+
+color: #000;
+white-space: pre-wrap
+}
+
+.export-data .tag {color: #227799}
+.export-data .attr-name {color: #222299}
+.export-data .attr-value {color: #774422}
+.export-data .attr-doctype {color: #800080}
+.export-data .comment {color: hsl(0, 0% , 50%)}
+
+
+.filters h2
+{
+  color: #000;
+}
+.filters div div,
+.filters div div p
+{
+  border: 1px solid #ccc;
+  margin: 5px;
+  margin-left: 20px;
+}
+.filters > div > div
+{
+  margin-left: 5px;
+}
+.filters div span
+{
+  margin-left: 1em;
+}
+.filters  ::selection
+{
+  background-color: #0f0;
 }
