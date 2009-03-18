@@ -111,7 +111,8 @@ var BaseKeyhandler = new function()
     {
       if( action_ids[_id] == id )
       {
-        return false; // prevent default
+        // return false to stop propagation and prevent default action
+        return /input|textarea/i.test(event.target.nodeName); 
       }
     }
   };

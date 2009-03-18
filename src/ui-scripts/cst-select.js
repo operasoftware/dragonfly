@@ -124,7 +124,7 @@
       {
         style += "left: " + left + "px; max-width: " + max_width + "px;";
       };
-      style += "min-width:" + select.offsetWidth + "px;";
+      style += "min-width:" + ( select.offsetWidth < max_width ? select.offsetWidth : max_width ) + "px;";
       modal_box.style.cssText = style;
       EventHandler.__modal_mode= true;
     }
@@ -575,6 +575,7 @@ CstSelectColor.prototype = new CstSelectColorBase();
         concat( select.type ? ['style', 'background-color:' + select.getSelectedOptionValue() ] : [] ),
       ["cst-drop-down"],
     "cst-id", select.getId(),
+    "handler", select.getId(),
     "unselectable", "on"
   ].
   concat( select.type ? ['class', select.type] : [] ).
@@ -585,9 +586,8 @@ CstSelectColor.prototype = new CstSelectColorBase();
 templates['cst-select-option-list'] = function(select_obj, select_ele)
 {
   return \
-  [
-    'cst-select-option-list', 
-    select_obj.templateOptionList(select_obj),
-    "style", "top: -1000px; left: -1000px;" 
+  ['cst-select-option-list-container',
+    ['cst-select-option-list', select_obj.templateOptionList(select_obj)],
+    'style', 'top: -1000px; left: -1000px;'
   ].concat( select_obj.class_name ? ['class', select_obj.class_name] : [] );
 }

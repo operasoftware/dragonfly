@@ -6,11 +6,14 @@
 <script src="../../src/scripts/Colors.js"/>
 
 <script src="../../src/ui-scripts/cst-select.js"/>
+<script src="../../src/ui-strings/ui_strings-en.js"/>
 <script><![CDATA[
 window.EventHandler || ( window.EventHandler = {} );
 
+
 var test_select = new CstSelectColor("test", [54, 68, 130, .3 * 255], "test-handler");
 var test_select_2 = new CstSelectColor("test-2", [0, 255, 0, 1 * 255]);
+
 onload = function()
 {
   var tmpl = \

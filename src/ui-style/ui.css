@@ -1130,6 +1130,14 @@ cst-select[disabled]
   background-color: #ccc !important;
 }
 
+cst-select-option-list-container
+{
+  /* don't add here any border, padding or margin */
+  display: block;
+  position:absolute;
+  z-index: 100;
+}
+
 cst-select[disabled] cst-drop-down
 {
   opacity: .3;
@@ -1138,10 +1146,8 @@ cst-select[disabled] cst-drop-down
 cst-select-option-list
 {
   display: block;
-  position:absolute;
   border: 1px solid hsl(0, 0%, 60%);
   background-color: hsl(0, 0%, 97%);
-  z-index: 100;
   max-height: 200px;
   overflow: auto;
   width: auto;
@@ -1184,7 +1190,7 @@ cst-select.color[disabled] cst-value
   background-color: #ccc !important;
 }
 
-cst-select-option-list.color
+cst-select-option-list-container.color cst-select-option-list
 {
   padding: 2px 11px 8px 8px;
   overflow: visible;
@@ -1208,7 +1214,7 @@ cst-option-list-background > div
   width: 160px;
 }
 
-cst-select-option-list.color cst-option
+cst-select-option-list-container.color cst-option
 {
   float: left;
   width: 32px;
@@ -1220,7 +1226,7 @@ cst-select-option-list.color cst-option
   background-color: transparent;
 }
 
-cst-select-option-list.color cst-option cst-color
+cst-select-option-list-container.color cst-option cst-color
 {
   display: inline-block;
   width: 32px;
@@ -1228,7 +1234,7 @@ cst-select-option-list.color cst-option cst-color
   vertical-align: text-top;
 }
 
-cst-select-option-list.color cst-selected-border
+cst-select-option-list-container.color cst-selected-border
 {
   float: left;
   width: 32px;
@@ -1244,7 +1250,7 @@ cst-option-list-background > div > div
   padding-top: 5px;
 }
 
-cst-select-option-list.color label 
+cst-select-option-list-container.color label 
 {
   display: block;
   margin: 2px 3px;
@@ -1252,7 +1258,7 @@ cst-select-option-list.color label
   clear: both;
 }
 
-cst-select-option-list.color label input
+cst-select-option-list-container.color label input
 {
   float: right;
   vertical-align: middle;
@@ -1262,22 +1268,22 @@ cst-select-option-list.color label input
 }
 
 
-cst-select-option-list.color .text,
-cst-select-option-list.color .text input
+cst-select-option-list-container.color .text,
+cst-select-option-list-container.color .text input
 {
   text-align: right;
 }
-cst-select-option-list.color .text input
+cst-select-option-list-container.color .text input
 {
   margin-left: .2em;
 }
 
-cst-select-option-list.color .ok-cancel
+cst-select-option-list-container.color .ok-cancel
 {
   margin: 5px 3px;
 }
 
-cst-select-option-list.color .ok-cancel input + input
+cst-select-option-list-container.color .ok-cancel input + input
 {
   float: right;
 }
