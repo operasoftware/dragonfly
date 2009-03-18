@@ -56,6 +56,9 @@
 <script src="../../../src/ui-scripts/ui_framework.js"/>
 
 
+<script src="../../../src/ecma-debugger/formatter.js"/>
+<script src="../../../src/ecma-debugger/pre_lexer.js"/>
+<script src="../../../src/ecma-debugger/syntax.js"/>
 
 
 <script src="../common/templates.js"/>

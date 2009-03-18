@@ -4,7 +4,8 @@ templates.navigation = function()
 {
   return \
   [
-    ['p', 'ctrl-d or click here to get a source snapshot', 'handler', 'source-view'],
+    ['p', 'ctrl-d or click here to get a DOM snapshot', 'handler', 'source-view'],
+    ['p', 'ctrl-j or click here to get the js code', 'handler', 'js-source-view'],
     ['div',
       ['ul',
         ['li', 

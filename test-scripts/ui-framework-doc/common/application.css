@@ -37,12 +37,17 @@ h1
 {
   border-bottom: 1px dotted #fff;
 }
-.navigation-tab p + p
+.navigation-tab p + p,
+.navigation-tab p + p + p
 {
   margin: .3em auto 1.3em;
   padding: 0;
   width: 21em;
   cursor: pointer;
+}
+.navigation-tab p + p
+{
+  margin-bottom: .3em;
 }
 .navigation-tab > div > div
 {
