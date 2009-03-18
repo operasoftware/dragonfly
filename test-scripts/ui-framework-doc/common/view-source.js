@@ -258,7 +258,7 @@ var js_source = new function()
 eventHandlers.click['source-view'] = function(event)
 {
   export_data.data = utils.sourceView.getSource();
-  xport_data.type = '';
+  export_data.type = '';
   if(!topCell.tab.hasTab('export_new'))
   {
     topCell.tab.addTab(new Tab('export_new', views['export_new'].name, true))
