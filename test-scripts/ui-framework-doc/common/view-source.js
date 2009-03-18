@@ -5,6 +5,7 @@
 var export_data = new function ()
 {
   this.data = '';
+  this.type = '';
 };
 
 
@@ -19,7 +20,7 @@ cls.ExportDataView = function(id, name, container_class)
   this.hidden_in_settings = true;
   this.createView = function(container)
   {
-    container.innerHTML = "<div class='padding'><pre>" + export_data.data + "</pre></div>";
+    container.innerHTML = "<div class='padding " + (export_data.type && ' ' + export_data.type || '' ) + " '><pre>" + export_data.data + "</pre></div>";
   }
   this.init(id, name, container_class);
 }
@@ -229,15 +230,63 @@ new CompositeView('export_new', 'Source View', ui_framework.layouts.export_rough
   };
 };
 
+var js_source = new function()
+{
+  var self = this;
+  var source_file = '';
+  var GetSource = function(url, org_args)
+  {
+    this.onload = function()
+    {
+      source_file = this.responseText;
+      org_args.callee.apply(self, org_args);
+    }
+    this.open('GET', url);
+    this.send();
+  }
+  this.getSource = function(org_args)
+  {
+    if( source_file.length )
+    {
+      return source_file;
+    }
+    GetSource.call(new XMLHttpRequest(), 'application.js', org_args);
+    return '';
+  }
+}
+
 eventHandlers.click['source-view'] = function(event)
 {
   export_data.data = utils.sourceView.getSource();
+  xport_data.type = '';
   if(!topCell.tab.hasTab('export_new'))
   {
     topCell.tab.addTab(new Tab('export_new', views['export_new'].name, true))
   }
   topCell.showView('export_data');
 }
+
+eventHandlers.click['js-source-view'] = function(event)
+{
+  var js_source_file = js_source.getSource(arguments);
+  if(js_source_file)
+  {
+    var script_obj = {};
+    script_obj.source = script_obj.source_data = new String(js_source_file);
+    script_obj.line_arr = [];
+    script_obj.state_arr = [];
+    pre_lexer(script_obj);
+    export_data.data = simple_js_parser.parse(script_obj, 0, script_obj.line_arr.length ).join('');
+    export_data.type = 'templates-code';
+    if(!topCell.tab.hasTab('export_new'))
+    {
+      topCell.tab.addTab(new Tab('export_new', views['export_new'].name, true))
+    }
+    topCell.showView('export_data');
+  }
+}
+
+
 
 document.addEventListener
 (
@@ -249,6 +298,12 @@ document.addEventListener
       event.preventDefault();
       event.stopPropagation();
       eventHandlers.click['source-view'](event);
+    }
+    else if(event.ctrlKey && event.keyCode == 'J'.charCodeAt(0))
+    {
+      event.preventDefault();
+      event.stopPropagation();
+      eventHandlers.click['js-source-view'](event);
     }
   },
   false
