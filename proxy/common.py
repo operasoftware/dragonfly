@@ -44,7 +44,6 @@ CRLF = '\r\n'
 BLANK = ' '
 BUFFERSIZE = 8192
 RE_HEADER = re.compile(": *")
-OS_PATH_SEP = os.path.sep
 
 RESPONSE_BASIC = \
     'HTTP/1.1 %s %s' + CRLF + \
@@ -305,10 +304,10 @@ def decodeURI(str):
     return re.sub(r"%([0-9a-fA-F]{2})", lambda m: chr(int(m.group(1), 16)), str)
 
 def webURIToSystemPath(path):
-    return OS_PATH_SEP.join([decodeURI(part) for part in path.split('/')])
+    return os.path.join(*[decodeURI(part) for part in path.split('/')])
 
 def systemPathToWebUri(path):
-    return "/".join([encodeURI(part) for part in path.split(OS_PATH_SEP)])
+    return "/".join([encodeURI(part) for part in path.split(os.path.sep)])
 
 def getTimestamp(path = None):
     return strftime("%a, %d %b %Y %H:%M:%S GMT", 
