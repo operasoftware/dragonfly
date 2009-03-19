@@ -48,10 +48,10 @@ BUFFERSIZE = 8192
 RE_HEADER = re.compile(": *")
 
 RESPONSE_BASIC = \
-    'HTTP/1.1 %%s %%s' + CRLF + \
-    'Date: %%s' + CRLF + \
-    'Server: Dragonkeeper/%s' + CRLF + \
-    '%%s' % __version__
+    'HTTP/1.1 %s %s' + CRLF + \
+    'Date: %s' + CRLF + \
+    'Server: Dragonkeeper/%s' % __version__ + CRLF + \
+    '%s'
 
 # RESPONSE_OK_CONTENT % (timestamp, additional headers or empty, mime, content)
 #
