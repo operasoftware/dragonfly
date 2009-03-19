@@ -24,6 +24,8 @@ for the STP 1 version.
 The server is named Dragonkeeper to stay in the started namespace.
 """
 
+__version__ = 0.8
+
 import socket
 import asyncore
 import os
@@ -46,10 +48,10 @@ BUFFERSIZE = 8192
 RE_HEADER = re.compile(": *")
 
 RESPONSE_BASIC = \
-    'HTTP/1.1 %s %s' + CRLF + \
-    'Date: %s' + CRLF + \
-    'Server: Dragonkeeper/0.8' + CRLF + \
-    '%s'
+    'HTTP/1.1 %%s %%s' + CRLF + \
+    'Date: %%s' + CRLF + \
+    'Server: Dragonkeeper/%s' + CRLF + \
+    '%%s' % __version__
 
 # RESPONSE_OK_CONTENT % (timestamp, additional headers or empty, mime, content)
 #
