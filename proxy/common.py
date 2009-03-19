@@ -186,17 +186,6 @@ SCOPE_MESSAGE = RESPONSE_OK_CONTENT % (
     '%s'
 )
 
-MIME = \
-{
-    '.html': 'text/html',
-    '.js': 'apllication/x-javascript',
-    '.css': 'text/css',
-    '.ico': 'image/x-icon',
-    '.gif': 'image/gif',
-    '.png': 'image/png',
-    '.xml': 'application/xml'
-}
-
 # The template to create a html directory view
 DIR_VIEW = \
 """

@@ -1,6 +1,8 @@
 from common import *
 
 
+from mimetypes import types_map 
+
 class Connection(asyncore.dispatcher):
     """To handle a http request in the context of providing
     a http interface to the scope protocol. The purpose of this interface
@@ -155,7 +157,7 @@ class Connection(asyncore.dispatcher):
                 else:
                     ending = "." in path and path[path.rfind("."):] or \
                                 "no-ending"
-                    mime = ending in MIME and MIME[ending] or 'text/plain'
+                    mime = ending in types_map and types_map[ending] or 'text/plain'
                     try:
                         f = open(system_path, 'rb')
                         content = f.read()
