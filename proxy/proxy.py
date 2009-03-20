@@ -4,6 +4,8 @@ from ScopeConnection import ScopeConnection
 from SimpleServer import SimpleServer, asyncore
 from common import Options
 
+CONFIG_FILE = "dragonkeeper.ini"
+
 APP_DEFAULTS = {
     "host": "",
     "server_port": 8002,
@@ -47,33 +49,26 @@ def run_proxy(options, count=None):
 
 def _load_config(path):
     """Load an .ini file containing dragonkeeper options. Returns a dict
-    with options. If file does not exist, or """
+    with options. If file does not exist, or can't be parsed, return None """
     config = ConfigParser.RawConfigParser()
 
     okfile = config.read(path)
     if not okfile or not config.has_section("dragonkeeper"):
         return None
 
-    ret = APP_DEFAULTS.copy()
+    ret = {}
     for name, value in config.items("dragonkeeper"):
-        if name in DEFAULT_TYPES:
-            ret[name] = DEFAULT_TYPES[name](value)
+        ret[name] = DEFAULT_TYPES[name](value)
             
     return ret
 
 def _parse_options():
-    """Option resolution:
+    """Parse command line options.
     
-    We use either a config file, or command line options. Not both.
-    Any options that are not present after parsiing either file or command
-    line, is filled in by the defaults.
-
-    1. -c someconfig.ini
-    2. command line options
-    3. app defaults.
-    
-    Anything missing 
-    
+    The option priority is like so:
+    Least important, app defaults
+    More important, settings in config file
+    Most important, command line options
     """
     from optparse import OptionParser
 
@@ -87,20 +82,17 @@ def _parse_options():
         "-d", "--debug",
         action = "store_true", 
         dest = "debug", 
-        default = APP_DEFAULTS["debug"],
         help = "print message flow"
         )
     parser.add_option(
         "-f", "--format",
         action="store_true", 
         dest = "format", 
-        default = APP_DEFAULTS["format"],
         help = "pretty print message flow"
         )
     parser.add_option(
         "-r", "--root", 
         dest = "root", 
-        default = APP_DEFAULTS["root"],
         help = "the root directory of the server; default %s" % (
                     APP_DEFAULTS["root"])
         )
@@ -108,36 +100,48 @@ def _parse_options():
         "-p", "--proxy-port",
         dest = "proxy_port", 
         type="int",
-        default = APP_DEFAULTS["proxy_port"],
         help = "proxy port; default %s" % APP_DEFAULTS["proxy_port"]
         )
     parser.add_option(
         "-s", "--server-port",
         dest = "server_port", 
         type="int",
-        default = APP_DEFAULTS["server_port"],
         help = "server port; default %s" % APP_DEFAULTS["server_port"]
         )
     parser.add_option(
         "--host",
         dest = "host", 
-        default = APP_DEFAULTS["host"],
         help = "host; default %s" % APP_DEFAULTS["host"]
         )
     options, args = parser.parse_args()
 
-    if options.config_path:
+
+    # appopts contains the defaults
+    appopts = Options(APP_DEFAULTS)
+
+    if options.config_path: # an explicit config file was given. Overrides everything
         config = _load_config(options.config_path)
         if config:
             appopts = Options(config)
         else:
             parser.error("""Invalid path or config file "%s"!""" % options.config_path)
-    else:
-        appopts = Options()
-        for e in APP_DEFAULTS.keys():
-            appopts[e] = getattr(options, e)
 
-    # at this point we have an appopts object with all the keys we need!
+    elif os.path.isfile(CONFIG_FILE): # if not explicit config, try to load default ini file.
+        config = _load_config(CONFIG_FILE)
+        if config:
+            print config
+            for key, value in config.items():
+                appopts[key] = value
+
+    # at this point we have an appopts object with all we need. A mix 
+    # of defaults and the .ini files
+    # Any command line options will override this.
+
+    for name, value in [(e, getattr(options, e)) for e in APP_DEFAULTS.keys()]:
+        if not value is None:
+            appopts[name] = value
+
+    # All options set. Now we can check if they are OK
     
     if not os.path.isdir(appopts.root):
         parser.error("""Root directory "%s" does not exist""" % options.root)
