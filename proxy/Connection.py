@@ -1,5 +1,6 @@
 from common import *
 
+from mimetypes import types_map
 
 class Connection(asyncore.dispatcher):
     """To handle a http request in the context of providing
@@ -117,7 +118,7 @@ class Connection(asyncore.dispatcher):
                 elif command == "favicon.ico":
                     self.serve(path_join(sys.path[0], "favicon.ico"))
                 elif not command:
-                    self.out_buffer +=  REDIRECT % ( getTimestamp(), "file/" )
+                    self.out_buffer +=  REDIRECT % ( getTimestamp(), "/file/" )
                     self.timeout = 0
                 if self.in_buffer:
                     self.check_input()
@@ -144,7 +145,7 @@ class Connection(asyncore.dispatcher):
                 self.check_input()
 
     def serve(self, path):
-        system_path = webURIToSystemPath(path.rstrip("/")) or ""
+        system_path = webURIToSystemPath(path.rstrip("/")) or "."
         if path_exists(system_path) or path == "":
             if isfile(system_path):
                 if "If-Modified-Since" in self.headers and \
@@ -155,7 +156,7 @@ class Connection(asyncore.dispatcher):
                 else:
                     ending = "." in path and path[path.rfind("."):] or \
                                 "no-ending"
-                    mime = ending in MIME and MIME[ending] or 'text/plain'
+                    mime = ending in types_map and types_map[ending] or 'text/plain'
                     try:
                         f = open(system_path, 'rb')
                         content = f.read()

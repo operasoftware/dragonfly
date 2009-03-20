@@ -24,6 +24,8 @@ for the STP 1 version.
 The server is named Dragonkeeper to stay in the started namespace.
 """
 
+__version__ = 0.8
+
 import socket
 import asyncore
 import os
@@ -44,12 +46,11 @@ CRLF = '\r\n'
 BLANK = ' '
 BUFFERSIZE = 8192
 RE_HEADER = re.compile(": *")
-OS_PATH_SEP = os.path.sep
 
 RESPONSE_BASIC = \
     'HTTP/1.1 %s %s' + CRLF + \
     'Date: %s' + CRLF + \
-    'Server: Dragonkeeper/0.8' + CRLF + \
+    'Server: Dragonkeeper/%s' % __version__ + CRLF + \
     '%s'
 
 # RESPONSE_OK_CONTENT % (timestamp, additional headers or empty, mime, content)
@@ -106,8 +107,10 @@ NOT_FOUND = RESPONSE_BASIC % (
     404, 
     'NOT FOUND',
     '%s',
-    CRLF
+    'Content-Length:0' + 2 * CRLF 
 )
+
+
 
 # scope specific responses
 
@@ -184,17 +187,6 @@ SCOPE_MESSAGE = RESPONSE_OK_CONTENT % (
     '%s',
     '%s'
 )
-
-MIME = \
-{
-    '.html': 'text/html',
-    '.js': 'apllication/x-javascript',
-    '.css': 'text/css',
-    '.ico': 'image/x-icon',
-    '.gif': 'image/gif',
-    '.png': 'image/png',
-    '.xml': 'application/xml'
-}
 
 # The template to create a html directory view
 DIR_VIEW = \
@@ -305,10 +297,10 @@ def decodeURI(str):
     return re.sub(r"%([0-9a-fA-F]{2})", lambda m: chr(int(m.group(1), 16)), str)
 
 def webURIToSystemPath(path):
-    return OS_PATH_SEP.join([decodeURI(part) for part in path.split('/')])
+    return os.path.join(*[decodeURI(part) for part in path.split('/')])
 
 def systemPathToWebUri(path):
-    return "/".join([encodeURI(part) for part in path.split(OS_PATH_SEP)])
+    return "/".join([encodeURI(part) for part in path.split(os.path.sep)])
 
 def getTimestamp(path = None):
     return strftime("%a, %d %b %Y %H:%M:%S GMT", 
@@ -360,34 +352,34 @@ def formatXML(in_string):
         pass
     return "".join(ret)
 
-class DefaultOptions(object):
-    """To create the default options for the proxy / server"""
-    host = ""
-    server_port = 8002
-    proxy_port = 7001
-    root = '.'
-    debug = False
-    format = False
-    type_dict = {
-        'host': str,
-        'server_port': int,
-        'proxy_port': int,
-        'root': str,
-        'debug': bool,
-        'format': bool
-    }
-    def __init__(self):
-        try:
-            f = open('CONFIG', 'rb')
-            for line in f.readlines():
-                key, value = re.split(' *[:=]{1} *', line, maxsplit = 1)
-                key = key.strip('\n\r ')
-                value = value.strip('\n\r ')
-                if key in self.type_dict:
-                    setattr(self, key, self.type_dict[key](value))
-            f.close()
-        except:
-            pass
+class Options(object):
+    #todo: subclass dict
+    def __init__(self, *args, **kwargs):
+        for arg in args:
+            for key, val in arg.iteritems():
+                self.__dict__[key]=val
+            
+    def __getitem__(self, name):
+        return self.__dict__[name]
+        
+    def __getattr__(self, name):
+        return self.__dict__[name]
+        
+    def __setitem__(self, name, value):
+        self.__dict__[name]=value
+
+    def __setattr__(self, name, value):
+        self.__dict__[name]=value
+    
+    def __delattr__(self, name):
+        del self.__dict__[name]
+        
+    def __deltitem__(self, name):
+        del self.__dict__[name]
+
+    def __str__(self):
+        return str(self.__dict__)
+        
 
 class FileObject(object):
     def write(self, str):
