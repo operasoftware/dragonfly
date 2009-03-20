@@ -375,7 +375,10 @@ class Options(object):
         del self.__dict__[name]
         
     def __deltitem__(self, name):
-        del self.__items__[name]
+        del self.__dict__[name]
+
+    def __str__(self):
+        return str(self.__dict__)
         
 
 class FileObject(object):

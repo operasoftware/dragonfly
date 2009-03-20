@@ -132,7 +132,6 @@ def _parse_options():
         _print_config()
         sys.exit(0)
 
-
     # appopts contains the defaults
     appopts = Options(APP_DEFAULTS)
 
@@ -146,7 +145,6 @@ def _parse_options():
     elif os.path.isfile(CONFIG_FILE): # if not explicit config, try to load default ini file.
         config = _load_config(CONFIG_FILE)
         if config:
-            print config
             for key, value in config.items():
                 appopts[key] = value
 
