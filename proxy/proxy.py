@@ -31,6 +31,7 @@ Exit: Control-C
 Settings:  an optional file CONFIG does overwrite the defaults.
 The options file is a standard .ini file, with a single section called
 "dragonkeeper":
+
 [dragonkeeper]
 host:
 root: .
@@ -61,6 +62,11 @@ def _load_config(path):
         ret[name] = DEFAULT_TYPES[name](value)
             
     return ret
+
+def _print_config():
+    print "[dragonkeeper]"
+    for item in APP_DEFAULTS.items():
+        print "%s: %s" % item   
 
 def _parse_options():
     """Parse command line options.
@@ -113,7 +119,18 @@ def _parse_options():
         dest = "host", 
         help = "host; default %s" % APP_DEFAULTS["host"]
         )
+    parser.add_option(
+        "-i", "--make-ini",
+        dest = "make_ini", 
+        action="store_true",
+        default=False,
+        help = "Print a default dragonkeeper.ini and exit"
+        )
     options, args = parser.parse_args()
+
+    if options.make_ini:
+        _print_config()
+        sys.exit(0)
 
 
     # appopts contains the defaults
