@@ -1,7 +1,6 @@
 from common import *
 
-
-from mimetypes import types_map 
+from mimetypes import types_map
 
 class Connection(asyncore.dispatcher):
     """To handle a http request in the context of providing

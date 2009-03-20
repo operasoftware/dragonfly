@@ -350,34 +350,31 @@ def formatXML(in_string):
         pass
     return "".join(ret)
 
-class DefaultOptions(object):
-    """To create the default options for the proxy / server"""
-    host = ""
-    server_port = 8002
-    proxy_port = 7001
-    root = '.'
-    debug = False
-    format = False
-    type_dict = {
-        'host': str,
-        'server_port': int,
-        'proxy_port': int,
-        'root': str,
-        'debug': bool,
-        'format': bool
-    }
-    def __init__(self):
-        try:
-            f = open('CONFIG', 'rb')
-            for line in f.readlines():
-                key, value = re.split(' *[:=]{1} *', line, maxsplit = 1)
-                key = key.strip('\n\r ')
-                value = value.strip('\n\r ')
-                if key in self.type_dict:
-                    setattr(self, key, self.type_dict[key](value))
-            f.close()
-        except:
-            pass
+class Options(object):
+    #todo: subclass dict
+    def __init__(self, *args, **kwargs):
+        for arg in args:
+            for key, val in arg.iteritems():
+                self.__dict__[key]=val
+            
+    def __getitem__(self, name):
+        return self.__dict__[name]
+        
+    def __getattr__(self, name):
+        return self.__dict__[name]
+        
+    def __setitem__(self, name, value):
+        self.__dict__[name]=value
+
+    def __setattr__(self, name, value):
+        self.__dict__[name]=value
+    
+    def __delattr__(self, name):
+        del self.__dict__[name]
+        
+    def __deltitem__(self, name):
+        del self.__items__[name]
+        
 
 class FileObject(object):
     def write(self, str):
