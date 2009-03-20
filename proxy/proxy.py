@@ -26,20 +26,23 @@ USAGE = """%prog [options]
     
 Exit: Control-C
     
-Settings:  an optional file CONFIG does overwrite the defaults    
-   host:
-   root: .
-   server_port: 8002
-   proxy_port: 7001
-   debug: False
-   format: False"""
+Settings:  an optional file CONFIG does overwrite the defaults.
+The options file is a standard .ini file, with a single section called
+"dragonkeeper":
+[dragonkeeper]
+host:
+root: .
+server_port: 8002
+proxy_port: 7001
+debug: False
+format: False"""
 
 
 def run_proxy(options, count=None): 
-    SimpleServer(options["host"], options["server_port"], Connection, options)
-    SimpleServer(options["host"], options["proxy_port"], ScopeConnection, options)
+    SimpleServer(options.host, options.server_port, Connection, options)
+    SimpleServer(options.host, options.proxy_port, ScopeConnection, options)
     print "server on: http://%s:%s/" % ( 
-                options["host"] or "localhost", options["server_port"] )
+                options.host or "localhost", options.server_port )
     asyncore.loop(timeout = 0.1, count = count)
 
 def _load_config(path):
