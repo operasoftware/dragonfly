@@ -118,7 +118,7 @@ class Connection(asyncore.dispatcher):
                 elif command == "favicon.ico":
                     self.serve(path_join(sys.path[0], "favicon.ico"))
                 elif not command:
-                    self.out_buffer +=  REDIRECT % ( getTimestamp(), "file/" )
+                    self.out_buffer +=  REDIRECT % ( getTimestamp(), "/file/" )
                     self.timeout = 0
                 if self.in_buffer:
                     self.check_input()
@@ -145,7 +145,7 @@ class Connection(asyncore.dispatcher):
                 self.check_input()
 
     def serve(self, path):
-        system_path = webURIToSystemPath(path.rstrip("/")) or ""
+        system_path = webURIToSystemPath(path.rstrip("/")) or "."
         if path_exists(system_path) or path == "":
             if isfile(system_path):
                 if "If-Modified-Since" in self.headers and \

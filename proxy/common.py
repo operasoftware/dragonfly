@@ -107,8 +107,10 @@ NOT_FOUND = RESPONSE_BASIC % (
     404, 
     'NOT FOUND',
     '%s',
-    CRLF
+    'Content-Length:0' + 2 * CRLF 
 )
+
+
 
 # scope specific responses
 
