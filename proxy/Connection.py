@@ -99,6 +99,9 @@ class Connection(asyncore.dispatcher):
                     )
                     self.timeout = 0
                 elif command == "enable":
+                    print path
+                    if path.startswith('stp-'):
+                        scope.setSTPVersion(path)
                     if scope.services_enabled[path]:
                         print ">>> service is already enabled", path
                     else:

@@ -270,15 +270,26 @@ class Scope(object):
         self.sendCommand = self.empty_call
         self.commands_waiting = {}
         self.services_enabled = {}
+        self.connection = None
 
     def empty_call(self, msg):
         pass
     
-    def setSendCommand(self, send):
-        self.sendCommand = send
+    def setConnection(self, connection):
+        print 'set connection'
+        self.connection = connection
+        self.sendCommand = connection.send_command_STP_0
 
     def setServiceList(self, list):
         self.serviceList = list
+
+    def setSTPVersion(self, version):
+        self.version = version
+        if version == "stp-1":
+            self.connection.setInitializerSTP_1()
+        else:
+            print "This stp version is not jet supported"
+
 
     def reset(self):
         self.serviceList = []
