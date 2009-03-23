@@ -382,7 +382,7 @@ def _data_uri_from_path(path):
         return None
 
 def _convert_imgs_to_data_uris(src):
-    re_img = re.compile(""".*?url\((['"]?(.*?)['"])?\)""")
+    re_img = re.compile(r""".*?url\((['"]?(.*?)['"]?)\)""")
     deletions = []
     for base, dirs, files in os.walk(src):
         for path in [ os.path.join(base, f) for f in files if f.endswith(".css") ]:
