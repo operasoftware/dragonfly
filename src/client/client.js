@@ -195,7 +195,7 @@ var client = new function()
           }
           else
           {
-            opera.postError(service.name)
+
             if(server_name && server_name.indexOf("Dragonkeeper") != -1 )
             {
               if(!is_event_loop)
