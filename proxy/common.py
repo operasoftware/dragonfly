@@ -168,7 +168,7 @@ RESPONSE_TIMEOUT = RESPONSE_OK_CONTENT % (
     '<timeout/>'
 )
 
-# SCOPE_MESSAGE % ( timestamp, service, message length, message )
+# SCOPE_MESSAGE_STP_0 % ( timestamp, service, message length, message )
 # HTTP/1.1 200 OK
 # Date: %s
 # Server: Dragonkeeper/0.8
@@ -179,10 +179,22 @@ RESPONSE_TIMEOUT = RESPONSE_OK_CONTENT % (
 #
 # %s
 
-SCOPE_MESSAGE = RESPONSE_OK_CONTENT % (
+SCOPE_MESSAGE_STP_0 = RESPONSE_OK_CONTENT % (
     '%s',
     'Cache-Control: no-cache' + CRLF + \
     'X-Scope-Message-Service: %s' + CRLF,
+    'application/xml',
+    '%s',
+    '%s'
+)
+
+SCOPE_MESSAGE_STP_1 = RESPONSE_OK_CONTENT % (
+    '%s',
+    'Cache-Control: no-cache' + CRLF + \
+    'X-Scope-Message-Service: %s' + CRLF + \
+    'X-Scope-Message-Command: %s' + CRLF + \
+    'X-Scope-Message-Status: %s' + CRLF + \
+    'X-Scope-Message-Tag: %s',
     'application/xml',
     '%s',
     '%s'
@@ -263,6 +275,7 @@ class Scope(object):
         self.commands_waiting = {}
         self.services_enabled = {}
         self.connection = None
+        self.version = 'stp-0'
 
     def empty_call(self, msg):
         pass

@@ -39,7 +39,7 @@ class Connection(asyncore.dispatcher):
         self.debug = context.debug
         self.debug_format = context.format
 
-    def sendScopeEvent(self, msg, sender):
+    def sendScopeEventSTP0(self, msg, sender):
         """ return a message to the client"""
         service, payload = msg
         if self.debug:
@@ -47,12 +47,33 @@ class Connection(asyncore.dispatcher):
                 print "\nsend to client:", service, formatXML(payload)
             else:
                 print "send to client:", service, payload
-        self.out_buffer += SCOPE_MESSAGE % (
+        self.out_buffer += SCOPE_MESSAGE_STP_0 % (
             getTimestamp(), 
             service, 
             len(payload), 
             payload
         )
+        self.timeout = 0
+        if not sender == self:
+            self.handle_write()
+
+    def sendScopeEventSTP1(self, msg, sender):
+        """ return a message to the client"""
+        service, command, status, type, cid, tag, data = msg
+        if self.debug:
+            if self.debug_format:
+                print "\nsend to client:", service, command, status, type, cid, tag, data
+            else:
+                print "send to client:", service, command, status, type, cid, tag, data
+        self.out_buffer += SCOPE_MESSAGE_STP_1 % (
+            getTimestamp(), 
+            service, 
+            command,
+            status,
+            tag,
+            len(data), 
+            data
+            )
         self.timeout = 0
         if not sender == self:
             self.handle_write()
@@ -115,7 +136,10 @@ class Connection(asyncore.dispatcher):
                     self.timeout = 0
                 elif command == "scope-message":
                     if scope_messages:
-                        self.sendScopeEvent(scope_messages.pop(0), self)
+                        if scope.version == 'stp-1':
+                            self.sendScopeEventSTP1(scope_messages.pop(0), self)
+                        else:
+                            self.sendScopeEventSTP0(scope_messages.pop(0), self)
                     else:
                         connections_waiting.append(self)                    
                 elif command == "favicon.ico":
