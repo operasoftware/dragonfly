@@ -147,7 +147,14 @@ class ScopeConnection(asyncore.dispatcher):
                     else:
                         self.msg_buffer.append(self.binary_buffer)
                         # handle msg
-                        print self.msg_buffer
+                        if self.debug: 
+                            print ( "service: %s\n" 
+                                    "command: %s\n"
+                                    "status: %s\n"
+                                    "type: %s\n"
+                                    "cid: %s\n"
+                                    "tag: %s\n"
+                                    "data: %s" ) % tuple(self.msg_buffer)
                         self.varint = 0
                         self.varint_cursor = 0
                         self.binary_buffer = ""
@@ -156,7 +163,7 @@ class ScopeConnection(asyncore.dispatcher):
                         self.parse_msg_state = ""
                 else:
                     if self.parse_msg_state == "type_field":
-                        self.msg_buffer.extend([self.varint & 0x3, self.varint >> 2])
+                        self.msg_buffer.extend([self.varint >> 2, self.varint & 0x3])
                     else:
                         self.msg_buffer.append(self.varint)
                     self.parse_msg_states_cursor += 1
