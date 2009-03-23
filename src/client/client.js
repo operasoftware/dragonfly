@@ -557,13 +557,13 @@ ui_framework.layouts.network_rough_layout =
 ui_framework.layouts.main_layout =
 {
   id: 'main-view', 
-  tabs: ['js_new', 'dom_new', 'network_panel', 'console_new', 'settings_new']
+  tabs: ['dom_new', 'js_new', 'network_panel', 'console_new', 'settings_new']
 }
 
 ui_framework.layouts.panel_layout =
 {
   id: 'main-view', 
-  tabs: ['js_panel', 'dom_panel',  'network_panel', 'console_new', 'settings_new']
+  tabs: ['dom_panel', 'js_panel', 'network_panel', 'console_new', 'settings_new']
 }
 
 

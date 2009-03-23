@@ -924,10 +924,6 @@ button[key="js_source.error"]:before
 {
   background-image: url('../ui-images/btn-stop-on-error.png');
 }
-button[key="threads.log-threads"]:before 
-{
-  background-image: url('../ui-images/btn-log-all-threads.png');
-}
 button[key$="hide-default-properties"]:before 
 {
   background-image: url('../ui-images/btn-hide-global-scope.png');

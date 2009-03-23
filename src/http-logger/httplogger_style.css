@@ -97,27 +97,27 @@
     display: inline-block;
     width: 16px;
     height: 16px;
-    background-image: url(../ui-images/filetype_unknown.png);
+    background-image: url('../ui-images/filetype_unknown.png');
 }
 
 .request-table label.markup {
-    background-image: url(../ui-images/filetype_html.png);
+    background-image: url('../ui-images/filetype_html.png');
 }
 
 .request-table label.image {
-    background-image: url(../ui-images/filetype_image.png);
+    background-image: url('../ui-images/filetype_image.png');
 }
 
 .request-table label.css {
-    background-image: url(../ui-images/filetype_stylesheet.png);
+    background-image: url('../ui-images/filetype_stylesheet.png');
 }
 
 .request-table label.flash {
-    background-image: url(../ui-images/filetype_flash.png);
+    background-image: url('../ui-images/filetype_flash.png');
 }
 
 .request-table label.javascript {
-    background-image: url(../ui-images/filetype_javascript.png);
+    background-image: url('../ui-images/filetype_javascript.png');
 }
 
 /* HTTP logger buttons start */
@@ -141,7 +141,7 @@ button[handler="clear-request-list"]:before {
     vertical-align: text-top;
     height: 18px;
     display: inline-block;
-    background-image:url(../ui-images/http-graph-right.png);
+    background-image:url('../ui-images/http-graph-right.png');
     background-position: right;
     border-left: solid 1px #9EADC4;
     min-width: 10px;
