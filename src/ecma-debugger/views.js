@@ -26,18 +26,27 @@ new Settings
   'environment', 
   // key-value map
   {
+    'environment': true
   }, 
   // key-label map
   {
   },
   // settings map
   {
+    customSettings:
+    [
+      'environment'
+    ]
   },
   // template
-  function(setting)
   {
-    return templates.hello( services['ecmascript-debugger'].getEnvironment());
+    environment:
+    function(setting)
+    {
+      return templates.hello( services['ecmascript-debugger'].getEnvironment());
+    }
   }
+
 
 );
 
@@ -137,22 +146,91 @@ new Settings
     [
       "show-only-normal-and-gadget-type-windows",
       "pin-active-window"
+    ],
+    customSettings:
+    [
+      'hr',
+      'ui-language'
     ]
   },
-  // template
-  function(setting)
+  // custom templates
   {
-    return [
-      ['hr'],
-      ['setting-composite',
-        'User Interface Language' + ': ',
-        [
-          'select',
-          templates.uiLangOptions(),
-          'handler', 'set-ui-language'
+    'hr':
+    function(setting)
+    {
+      return ['hr'];
+    },
+    'ui-language':
+    function(setting)
+    {
+      return [
+        ['setting-composite',
+          'User Interface Language' + ': ',
+          [
+            'select',
+            templates.uiLangOptions(),
+            'handler', 'set-ui-language'
+          ]
         ]
-      ]
-    ];
+      ];
+    }
+  }
+);
+
+eventHandlers.change['set-ui-language'] = function(event)
+{
+  helpers.setCookie('ui-lang', event.target.value);
+  helpers.setCookie('ui-lang-set', '1');
+  location.reload();
+}
+
+/**
+  * @constructor 
+  * @extends ViewBase
+  * Settings are bound to a view. This class it only to have 'General Settings'.
+  */
+
+cls.HostSpotlightView = function(id, name, container_class)
+{
+  this.ishidden_in_menu = true;
+  this.createView = function(container)
+  {
+  }
+  this.init(id, name, container_class);
+}
+cls.HostSpotlightView.prototype = ViewBase;
+new cls.GeneralView('host-spotlight', ui_strings.S_LABEL_SPOTLIGHT_TITLE, '');
+
+new Settings
+(
+  // id
+  'host-spotlight', 
+  // key-value map
+  {
+
+  }, 
+  // key-label map
+  {
+
+  },
+  // settings map
+  {
+    checkboxes:
+    [
+
+    ],
+    customSettings:
+    [
+      'colors'
+    ]
+  },
+  // custom templates
+  {
+    'colors':
+    function(setting)
+    {
+      return hostspotlighter.colorSelectsTemplate();
+    }
   }
 );
 
@@ -229,42 +307,46 @@ new Settings
   },
   // settings map
   {
-    checkboxes:
+    customSettings:
     [
-
+      'debug-remote'
     ]
   },
-  // template
-  function(setting)
+  // custom templates
   {
-    return [
-      ['setting-composite',
-        ['label',
-          ['input',
-            'type', 'checkbox',
-            'checked', this.get('debug-remote'),
-            'handler', 'toggle-remote-debug'
+    'debug-remote':
+    function(setting)
+    {
+      return [
+        ['setting-composite',
+          ['label',
+            ['input',
+              'type', 'checkbox',
+              'checked', setting.get('debug-remote'),
+              'handler', 'toggle-remote-debug'
+            ],
+            setting.label_map['debug-remote']
           ],
-          this.label_map['debug-remote']
-        ],
-        ['label',
-          ui_strings.S_LABEL_PORT + ': ',
+          ['label',
+            ui_strings.S_LABEL_PORT + ': ',
+            ['input',
+              'type', 'number',
+              'value', setting.get('port'),
+              'disabled', !setting.get('debug-remote'),
+              'handler', 'change-port-number-remote-debug',
+              'current-port', setting.get('port').toString()
+            ]
+          ],
           ['input',
-            'type', 'number',
-            'value', this.get('port'),
-            'disabled', !this.get('debug-remote'),
-            'handler', 'change-port-number-remote-debug',
-            'current-port', this.get('port').toString()
-          ]
-        ],
-        ['input',
-          'type', 'button',
-          'disabled', 'disabled',
-          'value', ui_strings.S_BUTTON_TEXT_APPLY,
-          'handler', 'apply-remote-debugging'
+            'type', 'button',
+            'disabled', 'disabled',
+            'value', ui_strings.S_BUTTON_TEXT_APPLY,
+            'handler', 'apply-remote-debugging'
+          ],
+          'class', 'apply-button'
         ]
-      ]
-    ];
+      ];
+    }
   }
 );
 
