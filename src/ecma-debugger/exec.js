@@ -9,7 +9,7 @@ var cls = window.cls || ( window.cls = {} );
   * @constructor 
   * @extends ServiceBase
   */
-
+/*
 cls.ExecService = function(name)
 {
   var self = this;
@@ -55,6 +55,7 @@ cls.ExecService = function(name)
     opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'client does not exist');
     return;
   }
+  
   client.addService(this);
 
 }
@@ -92,5 +93,5 @@ eventHandlers.click['exec-action'] = function(event, target)
 {
   services['exec'].postAction(target.previousElementSibling.value);
 }
-
+*/
 
