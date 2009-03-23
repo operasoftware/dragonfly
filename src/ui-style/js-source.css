@@ -80,32 +80,7 @@ ul {
   background-color:#f0f0f0;
   }
 
-#js-source-line-numbers .line-pointer {
-  position:absolute;
-  left:0;
-  content: '';
-  margin-top:-2px;
-  height:20px;
-  line-height:20px;
-  font-size:16px;
-  width:20px;
-  background:transparent url('line-pointer.png') no-repeat 0 50%;
-  }
 
-#js-source-line-numbers .line-pointer.top-frame {
-  background-image:url('line-pointer-top-frame.png');
-  }
-
-#break-point-container .break-point {
-  position:absolute;
-  left:0;
-  content: '';
-  height:16px;
-  line-height:16px;
-  font-size:10px;
-  width:20px;
-  background:transparent url('break-point.png') no-repeat 0 50%;
-  }
   
 
 
