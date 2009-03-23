@@ -84,7 +84,7 @@ class ScopeConnection(asyncore.dispatcher):
                     scope.services_enabled[service] = False
             elif command in scope.services_enabled:
                 if connections_waiting:
-                    connections_waiting.pop(0).sendScopeEvent(
+                    connections_waiting.pop(0).sendScopeEventSTP0(
                             (command, msg), self)
                 else:
                     scope_messages.append((command, msg))
@@ -146,7 +146,12 @@ class ScopeConnection(asyncore.dispatcher):
                         self.check_input = self.read_binary
                     else:
                         self.msg_buffer.append(self.binary_buffer)
-                        # handle msg
+                        # TODO check service enabled
+                        if connections_waiting:
+                            connections_waiting.pop(0).sendScopeEventSTP1(
+                            self.msg_buffer, self)
+                        else:
+                            scope_messages.append(self.msg_buffer)
                         if self.debug: 
                             print ( "service: %s\n" 
                                     "command: %s\n"
