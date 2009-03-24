@@ -352,7 +352,6 @@ var client = new function()
       else
       {
         alert(ui_strings.S_INFO_WRONG_START);
-        return;
       }
     }
     new CompositeView('network_panel', ui_strings.M_VIEW_LABEL_NETWORK, layouts.network_rough_layout);
