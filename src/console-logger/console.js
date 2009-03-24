@@ -281,10 +281,10 @@ var ErrorConsoleData = new function()
           updateViews();
           break;
         }
-        default: {
-          //var is_disabled = !settings[msg.id].get(msg.key);
-          //views[msg.key].ishidden_in_menu = is_disabled;
-          //topCell.disableTab(msg.key, is_disabled);
+        default: { // these settings are names of tabs to show.
+          var is_disabled = !settings[msg.id].get(msg.key);
+          views[msg.key].ishidden_in_menu = is_disabled;
+          topCell.disableTab(msg.key, is_disabled);
         }
       }
 
