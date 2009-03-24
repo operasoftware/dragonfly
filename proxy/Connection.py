@@ -108,6 +108,7 @@ class Connection(asyncore.dispatcher):
                 if command == "file":
                     self.serve(path)
                 elif command == "services":
+                    # reset to stp 0
                     if connections_waiting:
                         print ">>> failed, connections_waiting is not empty"
                     content = SERVICE_LIST % "".join (
