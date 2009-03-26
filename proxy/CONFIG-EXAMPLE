@@ -1,6 +1,0 @@
-# host:
-# root: .
-# server_port: 8002
-# proxy_port: 7001
-# debug: False
-# format: False
