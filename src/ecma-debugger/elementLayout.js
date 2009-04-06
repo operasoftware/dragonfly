@@ -71,7 +71,7 @@ var elementLayout = new function()
       ],\
       offset = '',\
       i = 0;\
-      while( parent = parent.parentElement )\
+      while( ( parent = parent.parentNode ) && parent.nodeType == 1 )\
       {\
         if(parent == offsetParent)\
         {\
