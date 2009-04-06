@@ -140,8 +140,7 @@ var client = new function()
 
   /**** methods for standalone proxy Java ****/
 
-
-
+  var command_name = "/";
   var post_proxy = function(service, msg)
   {
     if( ini.debug )
@@ -149,7 +148,7 @@ var client = new function()
       debug.logCommand(msg);
       
     }
-    proxy.POST("/" + service, msg);
+    proxy.POST(command_name + service, msg);
   }
 
   var bindCB = function(service)
@@ -200,6 +199,7 @@ var client = new function()
             {
               if(!is_event_loop)
               {
+                command_name = "/send-command/";
                 is_event_loop = true;
                 setTimeout(function(){
                   proxy.GET( "/scope-message?time=" + new Date().getTime(), receive_dragonkeeper);
