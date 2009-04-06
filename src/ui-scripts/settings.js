@@ -79,13 +79,13 @@ var SettingsBase = function()
     return key in this.map;
   }
 
-  this.init = function(view_id, key_map, label_map, setting_map, template)
+  this.init = function(view_id, key_map, label_map, setting_map, templates)
   {
     this.map = {};
     this.view_id = view_id;
     this.label_map = label_map;
     this.setting_map = setting_map;
-    this.template = template;
+    this.templates = templates || {};
     var stored_map = key_map, key = '';
     for( key in stored_map)
     {
