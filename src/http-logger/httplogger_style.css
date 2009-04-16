@@ -146,3 +146,12 @@ button[handler="clear-request-list"]:before {
     border-left: solid 1px #9EADC4;
     min-width: 10px;
 }
+
+a.reference-link {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin: 0;
+    padding: 0;
+    background-image: url('../ui-images/reference-link.png');
+}

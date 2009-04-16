@@ -23,9 +23,7 @@ window.templates = window.templates || ( window.templates = {} );
         var dt = ['dt', name + ": "]
         if (name in http_header_specification_urls)
         {
-            dt.push(['a', ui_strings.S_SPEC_LINK_LABEL,
-                          'href', http_header_specification_urls[name],
-                          'target', '_blank']);
+            dt.push(templates.reference_link(http_header_specification_urls[name]));
         }
         
         dlbody.push(dt);
@@ -181,7 +179,7 @@ window.templates.request_summary = function(req)
                       ["dt", ui_strings.S_HTTP_LABEL_RESPONSE],
                       ["dd", (req.response ? req.response.status + ": " + req.response.reason : "-")],
                       ["dt", ui_strings.S_HTTP_LABEL_METHOD],
-                      ["dd", window.templates.method_spec_link(req) || req.request.method ], 
+                      ["dd",  req.request.method + " ", [window.templates.method_spec_link(req) || ""]], 
                       ["dt", ui_strings.S_HTTP_LABEL_HOST],
                       ["dd", req.request.headers["Host" || "?" ]],
                       ["dt", ui_strings.S_HTTP_LABEL_PATH],
@@ -201,8 +199,19 @@ window.templates.method_spec_link = function(req)
         var m = req.request.method.toLowerCase();
         if (m in http_method_specification_urls)
         {
-            return ["a", req.request.method + " " + ui_strings.S_SPEC_LINK_LABEL, "target", "_blank", "href", http_method_specification_urls[m]]
+            return window.templates.reference_link(http_method_specification_urls[m]);
         }
     }
     return ""
+}
+
+window.templates.reference_link = function(href, title)
+{
+    return ["a", " ",
+            "target", "_blank",
+            "alt", "Reference link",
+            "href", href,
+            "class", "reference-link",
+            "title", title||""
+            ]
 }
