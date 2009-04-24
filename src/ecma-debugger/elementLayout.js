@@ -307,39 +307,40 @@ var elementLayout = new function()
   this.metricsTemplate = function(styles)
   {
     
-    return ['div', 
+    return \
+    ['ul', ['li',
+    ['ul', 
+      ['li',['p','\u00a0',['span', 'margin']]],
+      ['li', __comp_style[layout_map[MARGIN_TOP]]],
+      ['li']
+    ],
+    ['ul', ['li', __comp_style[layout_map[MARGIN_LEFT]]], ['li', 
+      ['ul', 
+        ['li',['p','\u00a0',['span', 'border']]], 
+        ['li', __comp_style[layout_map[BORDER_TOP_WIDTH]]],
+        ['li']
+      ],
+      ['ul', ['li', __comp_style[layout_map[BORDER_LEFT_WIDTH]]], ['li',
         ['ul', 
-          ['li',['p','\u00a0',['span', 'margin']]],
-          ['li', __comp_style[layout_map[MARGIN_TOP]]],
+          ['li',['p','\u00a0',['span', 'padding']]], 
+          ['li', __comp_style[layout_map[PADDING_TOP]]], 
           ['li']
         ],
-        ['ul', ['li', __comp_style[layout_map[MARGIN_LEFT]]], ['li', 
-          ['ul', 
-            ['li',['p','\u00a0',['span', 'border']]], 
-            ['li', __comp_style[layout_map[BORDER_TOP_WIDTH]]],
-            ['li']
-          ],
-          ['ul', ['li', __comp_style[layout_map[BORDER_LEFT_WIDTH]]], ['li',
-            ['ul', 
-              ['li',['p','\u00a0',['span', 'padding']]], 
-              ['li', __comp_style[layout_map[PADDING_TOP]]], 
-              ['li']
-            ],
-            ['ul', 
-              ['li', __comp_style[layout_map[PADDING_LEFT]]], 
-              ['li', 
-                ['ul', ['li', __comp_style[layout_map[WIDTH]], 'class', 'elementWidth']],
-                ['ul', ['li', __comp_style[layout_map[HEIGHT]],'class', 'elementHeight']],
-                ['ul', ['li', '\u00a0']],
-                'class', 'element'], 
-              ['li', __comp_style[layout_map[PADDING_RIGHT]]]
-            ],
-            ['ul', ['li', __comp_style[layout_map[PADDING_BOTTOM]], 'colspan', '3']],
-            'class', 'padding'], ['li', __comp_style[layout_map[BORDER_RIGHT_WIDTH]]]],
-          ['ul', ['li', __comp_style[layout_map[BORDER_BOTTOM_WIDTH]], 'colspan', '3']],
-          'class', 'border'], ['li', __comp_style[layout_map[MARGIN_RIGHT]]]],
-        ['ul', ['li', __comp_style[layout_map[MARGIN_BOTTOM]], 'colspan', '3']],
-        'class', 'metrics border'];
+        ['ul', 
+          ['li', __comp_style[layout_map[PADDING_LEFT]]], 
+          ['li', 
+            ['ul', ['li', __comp_style[layout_map[WIDTH]]]],
+            ['ul', ['li', __comp_style[layout_map[HEIGHT]]]],
+            ['ul', ['li', '\u00a0']],
+            'class', 'dimension'], 
+          ['li', __comp_style[layout_map[PADDING_RIGHT]]]
+        ],
+        ['ul', ['li', __comp_style[layout_map[PADDING_BOTTOM]], 'colspan', '3']],
+        'class', 'padding'], ['li', __comp_style[layout_map[BORDER_RIGHT_WIDTH]]]],
+      ['ul', ['li', __comp_style[layout_map[BORDER_BOTTOM_WIDTH]], 'colspan', '3']],
+      'class', 'border'], ['li', __comp_style[layout_map[MARGIN_RIGHT]]]],
+    ['ul', ['li', __comp_style[layout_map[MARGIN_BOTTOM]], 'colspan', '3']],
+    'class', 'margin']];
   }
 
   messages.addListener('element-selected', onElementSelected);
