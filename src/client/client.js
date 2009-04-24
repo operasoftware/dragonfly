@@ -255,6 +255,7 @@ var client = new function()
     opera.scopeAddClient(host_connected, receive, quit, port);
   }
 
+  this.post = function(){};
 
   this.beforeUIFrameworkSetup = function()
   {
