@@ -78,6 +78,8 @@
  *     <dt>reset-state</dt>
  *     <dd>the application cuts the current connection and aits for a new one. Payload: None</dd>
  *
+ *     <dt>view-scrolled</dt>
+ *     <dd>A (virtual) view has scrolled. Payload: msg.id, msg.top_line, msg.bottom_line</dd>
  * </dl>
  *  
  */

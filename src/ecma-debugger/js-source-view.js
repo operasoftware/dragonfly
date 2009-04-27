@@ -350,7 +350,7 @@ cls.JsSourceView = function(id, name, container_class)
 
 
 
-  this.showLine = function(script_id, line_nr) // return boolean for the visibility of this view
+  this.showLine = function(script_id, line_nr, clear_scroll) // return boolean for the visibility of this view
   {
     // too often called?
 
@@ -359,6 +359,12 @@ cls.JsSourceView = function(id, name, container_class)
     {
       __timeout_clear_view = clearTimeout( __timeout_clear_view );
     }
+    
+    if(clear_scroll && __scroll_interval )
+    {
+      __scroll_interval = clearInterval(__scroll_interval);
+    }
+    
 
     var is_visible = ( source_content = document.getElementById(container_id) ) ? true : false; 
     
@@ -428,18 +434,31 @@ cls.JsSourceView = function(id, name, container_class)
         simple_js_parser.parse(script, line_nr - 1, max_lines - 1).join(''); 
       updateLineNumbers(line_nr);
 
-
       if(  !__scroll_interval )
       {
         var scroll_container = document.getElementById(scroll_container_id), 
           scroll_lines = scroll_container.scrollTop / context['line-height'] >> 0; 
         if ( ( scroll_lines < __current_line - 5 ) || ( scroll_lines > __current_line + 6 ) ) 
         {
-          __target_scroll_top = scroll_container.scrollTop = (__current_line - 1 ) * context['line-height'];
+          scroll_container.scrollTop = (__current_line - 1 ) * context['line-height'];
+          __target_scroll_top = scroll_container.scrollTop;
         }
       }
     }
     view_invalid = false;
+    // clear_scroll is never set in a real scroll event  
+    if(!clear_scroll)
+    {
+      messages.post
+      (
+        'view-scrolled', 
+        {
+          id: this.id, 
+          top_line: this.getTopLine(), 
+          bottom_line: this.getBottomLine()
+        }
+      );
+    }
     
     return is_visible;
 
@@ -845,11 +864,21 @@ new Switches
     textSearch.setScript(msg.script);
   }
 
+  var onViewScrolled = function(msg)
+  {
+    if( msg.id == 'js_source' )
+    {
+      textSearch.checkHit(msg.top_line, msg.bottom_line);
+    }
+  }
+
 
 
   messages.addListener('view-created', onViewCreated);
   messages.addListener('view-destroyed', onViewDestroyed);
   messages.addListener('script-selected', onScriptSeleceted);
+  messages.addListener('view-scrolled', onViewScrolled);
+  
   
   
 

@@ -97,6 +97,52 @@ var VirtualTextSearch = function()
       delete __script.match_length;
     }
   }
+
+  var serach_source = function()
+  {
+    __script.line_matches = [];
+    __script.line_offsets = [];
+    __script.match_cursor = 0;
+    __script.match_length = search_term.length;
+
+    var
+    pos = -1,
+    line_cur = 0,
+    source = __script.source,
+    line_arr = __script.line_arr,
+    line_arr_length = line_arr.length,
+    line_matches = __script.line_matches,
+    line_offsets = __script.line_offsets;
+
+    while( ( pos = source.indexOf(search_term, pos + 1) ) != -1 )
+    {
+      while( line_cur < line_arr_length && line_arr[line_cur] <= pos && ++line_cur );
+      line_matches[line_matches.length] = line_cur;
+      line_offsets[line_offsets.length] = pos - line_arr[line_cur - 1];
+    }
+    if( __last_match_cursor )
+    {
+      if( __last_match_cursor < __script.match_length )
+      {
+        __script.match_cursor = __last_match_cursor;
+      }
+      __last_match_cursor = 0;
+    }
+  }
+
+  var do_highlight = function(line, top_line, match_cursor)
+  {
+    __offset = __script.line_offsets[match_cursor];
+    __length = __script.match_length;
+    self.clearHit();
+    search_node(source_container.getElementsByTagName('div')[line - top_line]);
+    source_container.parentNode.scrollLeft = 0;
+    if( __hit.length
+       && __hit[0].offsetLeft > source_container_parentNode.scrollLeft + source_container_parentNode.offsetWidth )
+    {
+      source_container.parentNode.scrollLeft = __hit[0].offsetLeft - 50;
+    }
+  }
   
   this.search = function(new_search_term)
   {    
@@ -115,27 +161,7 @@ var VirtualTextSearch = function()
         self.clearHit();
         if( __script )
         {
-          var line_matches = __script.line_matches = [];
-          var line_offsets = __script.line_offsets = [];
-          __script.match_cursor = 0;
-          __script.match_length = search_term.length
-          source = __script.source;
-          line_arr = __script.line_arr;
-          line_arr_length = line_arr.length
-          while( ( pos = source.indexOf(search_term, pos + 1) ) != -1 )
-          {
-            while( line_cur < line_arr_length && line_arr[line_cur] <= pos && ++line_cur );
-            line_matches[line_matches.length] = line_cur;
-            line_offsets[line_offsets.length] = pos - line_arr[line_cur - 1];
-          }
-          if( __last_match_cursor )
-          {
-            if( __last_match_cursor < __script.match_length )
-            {
-              __script.match_cursor = __last_match_cursor;
-            }
-            __last_match_cursor = 0;
-          }
+          serach_source();
           if( __script.line_matches.length )
           {
             self.highlight(true, new_search_term);
@@ -203,7 +229,7 @@ var VirtualTextSearch = function()
         var plus_lines = views.js_source.getMaxLines() <= 7 
           ? views.js_source.getMaxLines() / 2 >> 0 
           : 7;
-        views.js_source.showLine(__script.id, line - plus_lines );
+        views.js_source.showLine(__script.id, line - plus_lines, true );
         top_line = views.js_source.getTopLine();
       }
       if( !source_container )
@@ -211,21 +237,17 @@ var VirtualTextSearch = function()
         source_container_parentNode = container.getElementsByTagName('div')[0];
         source_container = container.getElementsByTagName('div')[1];
       }
-      var div = source_container.getElementsByTagName('div')[line - top_line];
-      __offset = __script.line_offsets[__script.match_cursor];
-      __length = __script.match_length;
-      self.clearHit();
-      search_node(div);
-      source_container.parentNode.scrollLeft = 0;
-      if( __hit.length
-         && __hit[0].offsetLeft > source_container_parentNode.scrollLeft + source_container_parentNode.offsetWidth )
+      // views.js_source.showLine can invalidate the current script source
+      if( !__script.line_offsets ) 
       {
-        source_container.parentNode.scrollLeft = __hit[0].offsetLeft - 50;
+        serach_source();
       }
+      do_highlight(line, top_line, __script.match_cursor);
       topCell.statusbar.updateInfo(ui_strings.S_TEXT_STATUS_SEARCH.
         replace("%(SEARCH_TERM)s", search_term).
         replace("%(SEARCH_COUNT_TOTAL)s", __script.line_matches.length).
         replace("%(SEARCH_COUNT_INDEX)s", __script.match_cursor + 1) );
+      __last_match_cursor = __script.match_cursor;
       if( ++__script.match_cursor >= __script.line_matches.length )
       {
         __script.match_cursor = 0;
@@ -242,6 +264,17 @@ var VirtualTextSearch = function()
       this.search(new_search_term);
     }
     
+  }
+
+  this.checkHit = function(top_line, bottom_line)
+  {
+    var line = 0;
+    if( __script && __script.line_matches && 
+        top_line <=  ( line = __script.line_matches[__last_match_cursor] ) &&
+        bottom_line >=  line )
+    {
+      do_highlight(line, top_line, __last_match_cursor);
+    }
   }
 
   this.setContainer = function(_container)
