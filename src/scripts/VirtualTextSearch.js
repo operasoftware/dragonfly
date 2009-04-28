@@ -269,7 +269,7 @@ var VirtualTextSearch = function()
   this.checkHit = function(top_line, bottom_line)
   {
     var line = 0;
-    if( __script && __script.line_matches && 
+    if( search_term && __script && __script.line_matches && 
         top_line <=  ( line = __script.line_matches[__last_match_cursor] ) &&
         bottom_line >=  line )
     {
