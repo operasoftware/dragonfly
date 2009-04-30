@@ -86,11 +86,11 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <windows-container></windows-container>
 <main-view>
 <div style='position:absolute;
-    width: 24em;
+    width:500px;
     top:50%;
     left:50%;
-    margin-top:-150px;
-    margin-left:-12em;
+    margin-top:-90px;
+    margin-left:-250px;
     text-align:center;'>
   <h1 style='height:100px;
       line-height:100px;
@@ -99,8 +99,8 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
       color:#ccc;
       background-color:#fff;
       font-family:sans-serif;
-      font-weight: normal;
-      font-size:30px;
+      font-weight:normal !important;
+      font-size:30px !important;
       text-align:center;'>Loading Opera Dragonfly</h1>
   <img src="data:image/gif;charset=utf-8;base64,R0lGODlhQwBCAIABAMzMzP///yH/C05FVFNDQVBFMi4wAwEAAAAh+QQJAAABACwAAAAAQwBCAAAC54yPqcvtD6OctNqLs968+w+G4kiW5ok6wJp668u2GUzLF13bFQ7rO//yTYBBYYQYMz6QSSWD2XQmoFGpgVqVYrMk3mKbgk6pKPAVey66toA0M4ADsVlz9bpeF+Hz+r155PdWFgjUQuhleNiTqNhm0+j4qKgU6FQpRIjZg6eTwymTA/c5aPdGRFqFJIpYEopgWti1+HW6GtdnpwAb++H6VKt6xzUGzLvhq1Jri2zB3CAYjOGczBv9kythrUwxDbG9PDuEfX17YHw0To7Mmj2sPl6OHsJObAVu792N7xa5/5zu71W/gCYKAAAh+QQFAAABACwAAAAAQwBCAAAC6oyPqcvtDyOYsdqrJsW8M715IgeG4ymVAMo+6tqO2qfG8pzVtlfm+o75GV4w4OWFIBqDQuXS4hwKn64oklqxTrENIuzKrV6jYZqSXPaNt+mkN4BuH7yruBz+tt/peLacr9dG99ZnUjZ41iOIyPjHiLj3yOcoGUhV6ReGOZm2ycnlCQka+vhEuml62rijitmCqoqi2Hh6olj4iSpyiysqtdrB+ytpJnwEshB6iVxcuWSs5mwDnewZQ92la8tM4nqDsysdzC1b2g0+7ZtFbvQJgf2M/s5+ByVfv26In7/f3f8PMKDAgQQLGnxQAAA7"/>
 </div>
