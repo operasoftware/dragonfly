@@ -382,7 +382,6 @@ var dom_data = new function()
     if( json )
     {
       var _data = eval('(' + json +')'), i = 0, view_id = '';
-      alert(JSON.stringify(_data))
       for( ; data[i] && data[i][ID] != object_id; i += 1 );
       if( data[i] )
       {

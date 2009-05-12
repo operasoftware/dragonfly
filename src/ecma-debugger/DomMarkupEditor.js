@@ -204,6 +204,10 @@ var DOMMarkupEditor = function()
     new_str = '',
     enter_node = null,
     namespace = target.namespaceURI,
+    scripts = null, 
+    script = null, 
+    script_type_attr = '',
+    i = 0,
     update = function(str)
     {
       if( enter_node )
@@ -265,6 +269,11 @@ var DOMMarkupEditor = function()
           temp = null;
         }
       };
+      for( scripts = temp.getElementsByTagName('script'), i = 0; script = scripts[i]; i++)
+      {
+        script_attr = script.getAttribute('type');
+        script.setAttribute('type', ( script_attr ? script_attr + '/' : '' ) + 'edited');
+      }
       var first =  temp && temp.firstChild;
       var last = temp && temp.lastChild;
       if(first)

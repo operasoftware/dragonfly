@@ -18,41 +18,73 @@ cls.DOMInspectorActions = function(id)
   var range = null;
 
 
+  var _is_script_node = function(target)
+  {
+    switch(target.nodeName)
+    {
+      case 'value':
+      case 'key':
+      {
+        return /^<?script/i.test(target.parentNode.firstChild.nodeValue);
+      }
+      case 'text':
+      {
+        return target.previousElementSibling && 
+          target.previousElementSibling.firstChild && 
+          /^<?script/i.test(target.previousElementSibling.firstChild.nodeValue);
+      }
+      case 'node':
+      {
+        return target.textContent.slice(0,2) == "</" || 
+          ( target.firstChild && 
+            /^<?script/i.test(target.firstChild.nodeValue) );
+      }
+      default:
+      {
+        return false;
+      }
+    }
+  }
 
   var nav_filters = 
   {
     attr_text: function(ele)
     {
-      switch(ele.nodeName.toLowerCase())
+      if(!_is_script_node(ele))
       {
-        case 'text':
-        case 'key':
-        case 'value':
+        switch(ele.nodeName.toLowerCase())
         {
-          return true;
-        }
-        case 'node':
-        {
-          return !/<\//.test(ele.textContent) && !ele.getElementsByTagName('key')[0];
+          case 'text':
+          case 'key':
+          case 'value':
+          {
+            return true;
+          }
+          case 'node':
+          {
+            return !/<\//.test(ele.textContent) && !ele.getElementsByTagName('key')[0];
+          }
         }
       }
       return false; 
     },
-    left_right:function(ele)
+    left_right: function(ele)
     {
       return \
-      /^key|value|input$/.test(ele.nodeName.toLowerCase())
-      || ( "text" == ele.nodeName && ele.textContent.length )
-      || ( "node" == ele.nodeName && ele.textContent.slice(0,2) != "</" );
+      ( "input" == ele.nodeName ) ||
+      ( !_is_script_node(ele) &&
+        ( /^key|value|input$/.test(ele.nodeName.toLowerCase()) ||
+          ( "text" == ele.nodeName && ele.textContent.length ) ||
+          ( "node" == ele.nodeName && ele.textContent.slice(0,2) != "</" ) ) );
     },
     up_down: function(ele, start_ele)
     {
       return \
-      ( "input" == ele.nodeName.toLowerCase() && !ele.parentNode.contains(start_ele))
-      || ( "node" == ele.nodeName
-            && ele.textContent.slice(0,2) != "</"
-            && "input" != ele.parentNode.firstElementChild.nodeName.toLowerCase()
-          );
+      ( "input" == ele.nodeName.toLowerCase() && !ele.parentNode.contains(start_ele) ) ||
+      ( !_is_script_node(ele) && 
+          ( "node" == ele.nodeName &&
+            ele.textContent.slice(0,2) != "</" &&
+            "input" != ele.parentNode.firstElementChild.nodeName.toLowerCase() ) );
     }
   }
 
@@ -266,62 +298,65 @@ cls.DOMInspectorActions = function(id)
 
   this.editDOM = function(event, target)
   {
-    switch(event.target.nodeName)
+    if( !_is_script_node(event.target) )
     {
-      case 'span':
+      switch(event.target.nodeName)
       {
-        if(/^(?:key|value|text|node)$/.test(event.target.parentElement.nodeName) )
+        case 'span':
         {
-          event.target.parentElement.releaseEvent('dblclick');
-        }
-        break;
-      }
-      case 'key':
-      case 'value':
-      case 'text':
-      {
-        event.preventDefault();
-        event.stopPropagation();
-        
-        key_identifier.setModeEdit(self);
-        document.documentElement.addClass('modal');
-        self.setSelected(event.target.parentNode);
-        self.set_editor("dom-attr-text-editor");
-        self.editor.edit(event, event.target);
-        
-        break;
-      }
-      case 'node':
-      {
-        var new_target = event.target;
-        if(/^<\//.test(new_target.textContent))
-        {
-          new_target = event.target.getPreviousWithFilter
-            (event.target.parentNode.parentNode, self.makeFilterGetStartTag(event.target));
-          if( !new_target )
+          if(/^(?:key|value|text|node)$/.test(event.target.parentElement.nodeName) )
           {
-            opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
-              'failed getting start tag in this.editDOM in action_dom.js')
-            return;
+            event.target.parentElement.releaseEvent('dblclick');
           }
+          break;
         }
-        event.preventDefault();
-        event.stopPropagation();
-        key_identifier.setModeEdit(self);
-        document.documentElement.addClass('modal');
-        self.setSelected(new_target.parentNode);
-        self.set_editor("dom-markup-editor");
-        self.editor.edit(event, new_target);
-        /*
-        if(event.target.parentElement.hasAttribute('rule-id'))
+        case 'key':
+        case 'value':
+        case 'text':
         {
+          event.preventDefault();
+          event.stopPropagation();
+          
           key_identifier.setModeEdit(self);
-          self.setSelected(event.target);
-          self.editor.edit(event);
+          document.documentElement.addClass('modal');
+          self.setSelected(event.target.parentNode);
+          self.set_editor("dom-attr-text-editor");
+          self.editor.edit(event, event.target);
+          
+          break;
         }
-        */
-        // execute property click action
-        break;
+        case 'node':
+        {
+          var new_target = event.target;
+          if(/^<\//.test(new_target.textContent))
+          {
+            new_target = event.target.getPreviousWithFilter
+              (event.target.parentNode.parentNode, self.makeFilterGetStartTag(event.target));
+            if( !new_target )
+            {
+              opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+                'failed getting start tag in this.editDOM in action_dom.js')
+              return;
+            }
+          }
+          event.preventDefault();
+          event.stopPropagation();
+          key_identifier.setModeEdit(self);
+          document.documentElement.addClass('modal');
+          self.setSelected(new_target.parentNode);
+          self.set_editor("dom-markup-editor");
+          self.editor.edit(event, new_target);
+          /*
+          if(event.target.parentElement.hasAttribute('rule-id'))
+          {
+            key_identifier.setModeEdit(self);
+            self.setSelected(event.target);
+            self.editor.edit(event);
+          }
+          */
+          // execute property click action
+          break;
+        }
       }
     }
   }
@@ -566,4 +601,7 @@ cls.DOMInspectorEditKeyhandler.prototype = BaseEditKeyhandler;
 
 new cls.DOMInspectorEditKeyhandler('dom');
 
-eventHandlers.dblclick['edit-dom'] = actions['dom'].editDOM;
+eventHandlers.dblclick['edit-dom'] = function(event, target)
+{
+  actions['dom'].editDOM(event, target);
+}
