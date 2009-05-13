@@ -169,11 +169,7 @@ var runtimes = new function()
 
   var parseRuntime = function(xml)
   {
-    /* 
-       pop ups are top runtimes but they shal be 
-       treated like child runtimes of the opener.
 
-    */
     var r_ts = xml.getElementsByTagName('runtime'), r_t=null, i=0;
     var length = 0, k = 0;
     var runtimeId = '', runtime=null, prop = '', 
@@ -211,11 +207,27 @@ var runtimes = new function()
           {
             __window_ids[win_id] = true;
           }
-          // any window which has the opner set to the current top window is part of the debug context
+          /* 
+             pop-ups are top runtimes but part of the debug context.
+             right now we don't get the correct info in the message 
+             stream to know that directly. ( see bug CORE-17782 and CORE-17775 )
+             for now we trust the window manager and our 
+             setting to just use one window-id as filter.
+             that basically means that a top runtime with a differnt window id 
+             than __selected_window must actually be a pop-up 
+          */
+          if( __selected_window && win_id != __selected_window )
+          {
+            /*
+              it is a pop-up, but the id of the opener 
+              window is an assumption here, 
+              certainly not true in all cases. 
+            */
+            runtime['opener-window-id'] = __selected_window;
+          }
           if (!debug_context_frame_path)
           {
             debug_context_frame_path = runtime['html-frame-path'];
-            
           }   
           __selected_script = '';
           views['js_source'].update();
@@ -247,19 +259,22 @@ var runtimes = new function()
         {
           __windows_reloaded[runtime['window-id']] = 2;
         }
-        if( debug_context_frame_path == runtime['html-frame-path'] && runtimeId != __selected_runtime_id )
+        if( debug_context_frame_path == runtime['html-frame-path'] && 
+              __selected_window == runtime['window-id'] && 
+              runtimeId != __selected_runtime_id )
         {
-          self.setSelectedRuntimeId (runtimeId)
+          self.setSelectedRuntimeId(runtimeId);
         }
-        //
-        if( runtime['window-id'] == __selected_window )
+        if( runtime['window-id'] == __selected_window ||
+              runtime['opener-window-id'] == __selected_window )
         {
           host_tabs.updateActiveTab();
         }
       }
     }
   }
-
+  
+  // TODO remove this code
   var getTitleRuntime = function(rt_id)
   {
     var tag = tagManager.setCB(null, parseGetTitle, [rt_id]);
@@ -291,7 +306,6 @@ var runtimes = new function()
   */
   var registerScript = function(script)
   {
-  
     var sc = null, is_known = false;
     var new_script_id = script['script-id'];
     var new_rt = __runtimes[script['runtime-id']];
@@ -305,10 +319,12 @@ var runtimes = new function()
       if( ( 
             ( __scripts[sc]['uri'] && __scripts[sc]['uri'] == script['uri'] ) 
             || __scripts[sc]['script-data'] == script['script-data'] 
-          )
-          && old_rt['uri'] == new_rt['uri']
-          && old_rt['window-id'] == new_rt['window-id']
-          && old_rt['html-frame-path'] == new_rt['html-frame-path'] )
+          ) &&
+          old_rt['uri'] == new_rt['uri'] &&
+          ( old_rt['window-id'] == new_rt['window-id'] ||
+            ( new_rt['opener-window-id'] && 
+              old_rt['opener-window-id'] == new_rt['opener-window-id']  ) ) &&
+          old_rt['html-frame-path'] == new_rt['html-frame-path'] )
       {
         is_known = true;
         break;
@@ -327,7 +343,11 @@ var runtimes = new function()
       {
         __selected_script = new_script_id;
       }
-      delete __scripts[sc];
+      // the script could be in a pop-up window
+      if( old_rt['window-id'] == new_rt['window-id'] )
+      {
+        delete __scripts[sc];
+      }
     }
 
     if( !__selected_script )
@@ -425,7 +445,6 @@ var runtimes = new function()
 
   this.setActiveWindowId = function(window_id)
   {
-    
     if( window_id != __selected_window )
     {
       __selected_window = window_id;
@@ -482,7 +501,7 @@ var runtimes = new function()
       script['script-data'] = '';
     }
     
-    if( is_runtime_of_selected_window(script['runtime-id']))
+    if( is_runtime_of_debug_context(script['runtime-id']))
     {
       script['breakpoints'] = {};
       script['stop-ats'] = [];
@@ -517,12 +536,17 @@ var runtimes = new function()
     runtime_stoped_queue = [];
   }
 
-  var is_runtime_of_selected_window = function(rt_id)
+  var is_runtime_of_debug_context = function(rt_id)
   {
-    // in protocol 4 popups are treated like child runtimes
-    // this check should not be needed anymore in proto 4, 
-    // everything that passes the window filter is part of the debug context
-    return __runtimes[rt_id] && __runtimes[rt_id]['window-id'] == __selected_window;
+    /*
+      TODO remove this check
+      everything which passes the window manager filter
+      is part of the debug context
+    */
+    return __runtimes[rt_id] && 
+              ( __runtimes[rt_id]['window-id'] == __selected_window ||
+                __runtimes[rt_id]['opener-window-id'] == __selected_window );
+
   }
 
   var clear_thread_id = function(rt_id, thread_id)
@@ -588,7 +612,7 @@ var runtimes = new function()
   {
     var rt_id = xml.getNodeData("runtime-id");
     // workaround for missing filtering
-    if( is_runtime_of_selected_window(rt_id) )
+    if( is_runtime_of_debug_context(rt_id) )
     {
       var id = xml.getNodeData("thread-id");
       var parent_thread_id = xml.getNodeData("parent-thread-id");
@@ -614,7 +638,7 @@ var runtimes = new function()
     var thread_id = xml.getNodeData("thread-id");
 
     // workaround for missing filtering 
-    if( is_runtime_of_selected_window(rt_id) )
+    if( is_runtime_of_debug_context(rt_id) )
     {
       
       var current_thread = current_threads[rt_id];
@@ -656,7 +680,7 @@ var runtimes = new function()
     */
     var rt_id = xml.getNodeData("runtime-id");
     // workaround for missing filtering 
-    if( is_runtime_of_selected_window(rt_id) )
+    if( is_runtime_of_debug_context(rt_id) )
     {
       var thread_id = xml.getNodeData("thread-id");
       clear_thread_id(rt_id, thread_id);
@@ -722,7 +746,8 @@ var runtimes = new function()
           uri: __runtimes[r]['uri'],
           title: __runtimes[r]['title'] || '',
           is_unfolded: is_unfolded,
-          is_selected: __selected_window == __runtimes[r]['window-id'],
+          is_selected: __selected_window == __runtimes[r]['window-id'] ||
+            __selected_window == __runtimes[r]['opener-window-id'],
           runtimes: this.getRuntimes( __runtimes[r]['window-id'] )
         }
       }
@@ -742,7 +767,9 @@ var runtimes = new function()
     var ret = [], r = '';
     for( r in __runtimes )
     { 
-      if ( __runtimes[r] && __runtimes[r]['window-id'] &&  __runtimes[r]['window-id'] == window_id )
+      if ( __runtimes[r] && __runtimes[r]['window-id'] &&  
+            ( __runtimes[r]['window-id'] == window_id ||
+              __runtimes[r]['opener-window-id'] == window_id ) )
       {
         ret[ret.length] = __runtimes[r];
       }
@@ -761,9 +788,12 @@ var runtimes = new function()
     var ret = [], r = '';
     for( r in __runtimes )
     { 
-      if ( __runtimes[r] && __runtimes[r]['window-id'] && __runtimes[r]['window-id'] == window_id )
+      if ( __runtimes[r] && __runtimes[r]['window-id'] &&
+            ( __runtimes[r]['window-id'] == window_id ||
+              __runtimes[r]['opener-window-id'] == window_id )
+        )
       {
-        if(__runtimes[r].is_top)
+        if(__runtimes[r].is_top && !__runtimes[r]['opener-window-id'] )
         {
           ret = [__runtimes[r]['runtime-id']].concat(ret);
         }
