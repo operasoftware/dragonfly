@@ -145,6 +145,14 @@ toolbar-buttons, toolbar-switches {
   display: block;
   float: left;
   }
+/* real buttons do make too much trouble */
+.ui-button
+{
+  display: inline-block;
+  background: transparent url('../ui-images/btn-test.png') scroll no-repeat 0 0;
+  height: 24px;
+  width: 26px; 
+}
 
 toolbar button, 
 top-toolbar button, 
@@ -184,12 +192,14 @@ window-toolbar button[disabled]:active:before
 {
   background-position: 0 -72px;
 }
+.ui-button:hover,
 toolbar button:hover:before, 
 window-controls button:hover:before,
 window-toolbar button:hover:before
 {
   background-position: 0px -24px;
 }
+.ui-button:active
 toolbar button:active:before, 
 window-controls button:active:before,
 window-toolbar button:hover:before
@@ -1001,6 +1011,10 @@ button[handler="top-window-toggle-attach"]:before
 {
   background-image:url('../ui-images/btn-step-out-call.png');
 }
+.ui-button[handler="reload-window"]
+{
+  background-image: url('../ui-images/btn-reload-host.png');
+}
 
 /* editing */
 
@@ -1288,4 +1302,19 @@ pin-label span
 pin-label.pinned
 {
   background-image:-o-skin('Speed Dial Configuration Dialog No Alpha Skin');
+}
+
+.info-box
+{
+  background-image:-o-skin('Speed Dial Configuration Dialog No Alpha Skin');
+  font-size: 22px;
+  color: #999;
+  margin: 30px 50px 0 50px;
+  text-align: center;
+  padding: 18px 20px 24px 14px;
+}
+.info-box p 
+{
+  margin: 0;
+  padding: 0;
 }

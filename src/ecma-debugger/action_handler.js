@@ -637,7 +637,7 @@ var action_handler = new function()
     rt_id = target.parentNode.parentNode.parentNode.getAttribute('rt-id') 
       // for the case of dom tree-style
       || target.parentNode.parentNode.parentNode.parentNode.getAttribute('rt-id');
-
+    // TODO use the exec service to open new link when it's ready
     window.open(helpers.resolveURLS( runtimes.getURI(rt_id), url.slice(1, url.length - 1 ) ), "_blank");
   }
 

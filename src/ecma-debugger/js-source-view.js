@@ -223,6 +223,23 @@ cls.JsSourceView = function(id, name, container_class)
       else
       {
         updateLineNumbers(0);
+        if(runtimes.getSelectedRuntimeId())
+        {
+          document.getElementById('js-source-scroller').render(
+              runtimes.isReloadedWindow(runtimes.getActiveWindowId()) ?
+              ['div', 
+                ['p', ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS],
+                'class', 'info-box'
+              ] :
+              ['div',
+                ['span', 
+                  'class', 'ui-button', 
+                  'handler', 'reload-window'],
+                ['p', ui_strings.S_INFO_RELOAD_FOR_SCRIPT], 
+                'class', 'info-box'
+              ]
+            );
+        }
       }
       
     }
@@ -642,7 +659,6 @@ cls.helper_collection || ( cls.helper_collection = {} );
 
 cls.helper_collection.getSelectedOptionText = function()
 {
-  // TODO handle runtimes with no scripts
   var selected_script_id = runtimes.getSelectedScript();
   if( selected_script_id )
   {
@@ -661,6 +677,11 @@ cls.helper_collection.getSelectedOptionText = function()
       opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
         'missing script in getSelectedOptionText in cls.ScriptSelect');
     }
+  }
+  else if(runtimes.getSelectedRuntimeId() && 
+            runtimes.isReloadedWindow(runtimes.getActiveWindowId()))
+  {
+    return ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS;
   }
   return '';
 }

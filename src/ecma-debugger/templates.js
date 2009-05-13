@@ -67,6 +67,7 @@
     stopped_script_id = arg_list[0],
     selected_script_id = arg_list[1];
 
+
     if( scripts.length )
     {
       for( ; script = scripts[i]; i++)

@@ -230,9 +230,6 @@ var runtimes = new function()
             debug_context_frame_path = runtime['html-frame-path'];
           }   
           __selected_script = '';
-          views['js_source'].update();
-          window['cst-selects']['js-script-select'].updateElement();
-          window['cst-selects']['cmd-runtime-select'].updateElement();
         } 
         getTitleRuntime(runtimeId);
         __runtimes[runtimeId] = runtime;
@@ -254,7 +251,6 @@ var runtimes = new function()
           // TODO still needed?
           updateRuntimeViews();
         }
-
         if(__windows_reloaded[runtime['window-id']] == 1)
         {
           __windows_reloaded[runtime['window-id']] = 2;
@@ -269,6 +265,12 @@ var runtimes = new function()
               runtime['opener-window-id'] == __selected_window )
         {
           host_tabs.updateActiveTab();
+        }
+        if(runtime.is_top)
+        {
+          views['js_source'].update();
+          window['cst-selects']['js-script-select'].updateElement();
+          window['cst-selects']['cmd-runtime-select'].updateElement();
         }
       }
     }
@@ -468,6 +470,7 @@ var runtimes = new function()
 
   var set_new_debug_context = function(xml, win_id)
   {
+    
     parseRuntime(xml);
     host_tabs.setActiveTab(win_id);
     if( settings.runtimes.get('reload-runtime-automatically') )
@@ -1007,6 +1010,7 @@ var runtimes = new function()
 
   this.reloadWindow = function()
   {
+    
     if( __selected_window )
     {
       if( !__windows_reloaded[__selected_window] )
@@ -1023,7 +1027,6 @@ var runtimes = new function()
 
   this.isReloadedWindow = function(window_id)
   {
-
     return __windows_reloaded[window_id] == 2;
   }
 

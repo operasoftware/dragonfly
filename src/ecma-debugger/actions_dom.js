@@ -605,3 +605,4 @@ eventHandlers.dblclick['edit-dom'] = function(event, target)
 {
   actions['dom'].editDOM(event, target);
 }
+

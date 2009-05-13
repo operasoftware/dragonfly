@@ -742,12 +742,6 @@ eventHandlers.click['breadcrumb-link'] = function(event, target)
   }
 };
 
-eventHandlers.dblclick['dom-edit'] = function(event, target)
-{
-  alert(event.target.nodeName);
-  event.preventDefault();
-  event.stopPropagation();
-}
 
 
 
