@@ -90,9 +90,10 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     if( status == 'completed' )
     {
       var return_value = xml.getElementsByTagName('string')[0];
-      if(return_value)
+      if(return_value || /null|undefined/.test(value_type) )
       {
-        var value = return_value.firstChild && return_value.firstChild.nodeValue || ''; 
+        var value = return_value && return_value.firstChild && 
+                          return_value.firstChild.nodeValue || ''; 
         if( !obj_id )
         {
           switch (value_type)
@@ -458,10 +459,14 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     {
       if( !str || str != str_input )
       {
-        str = 
-          str.slice( Math.max(str.lastIndexOf('('), str.lastIndexOf('['), str.lastIndexOf('=') ) + 1 ).
-          replace(/^ +/, '').replace(/ $/, '');
-
+        var last_bracket = str.lastIndexOf('['), last_brace = str.lastIndexOf('(');
+        last_brace = str.lastIndexOf(')') <= last_brace ? last_brace : -1;
+        last_bracket = str.lastIndexOf(']') <= last_bracket ? last_bracket : -1;
+        str = str.slice( Math.max(
+                  last_brace, 
+                  last_bracket, 
+                  str.lastIndexOf('=') ) + 1 
+                ).replace(/^ +/, '').replace(/ $/, '');
 
         var         
         last_dot = str.lastIndexOf('.'), 
