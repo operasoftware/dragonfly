@@ -71,14 +71,6 @@ cls.CSSInspectorView = function(id, name, container_class)
       }
     }
   }
-
-
-  
-
-
-
-
-
   this.init(id, name, container_class);
 }
 

@@ -49,31 +49,21 @@ var elementStyle = new function()
     'css': CSS
   }
 
-  var categories =
-  [
-    {
-      'id': 'computedStyle',
-      'name': ui_strings.M_VIEW_LABEL_COMPUTED_STYLE,
-      'unfolded': false
-    },
-    {
-      'id': 'css',
-      'name': ui_strings.M_VIEW_LABEL_STYLES,
-      'unfolded': true,
-      'handler': 'edit-css'
-    }
-  ];
-
-
-  var onAplicationsetup = function()
+  var setCategories = function(id, name, unfolded, handler)
   {
-    var cat = null, i = 0;
-    for( ; cat = categories[i]; i++ )
-    {
-      cat.unfolded = settings['css-inspector'].get(cat.id);
+    return {
+        id: id,
+        name: name,
+        unfolded: settings['css-inspector'].get(id),
+        handler: handler || null 
     }
   }
 
+  var categories =
+  [
+    setCategories('computedStyle', ui_strings.M_VIEW_LABEL_COMPUTED_STYLE),
+    setCategories('css', ui_strings.M_VIEW_LABEL_STYLES, 'edit-css')
+  ];
 
   var searchDelayed = function(value)
   {
@@ -395,7 +385,6 @@ var elementStyle = new function()
   }
 
   messages.addListener('element-selected', onElementSelected);
-  messages.addListener('application-setup', onAplicationsetup);
   messages.addListener('reset-state', onResetState);
 
   eventHandlers.input['css-inspector-text-search'] = function(event, target)
