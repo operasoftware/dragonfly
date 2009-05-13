@@ -485,11 +485,6 @@ cls.DocumentSelect = function(id)
       {
         return rt['title'] || helpers.shortenURI(rt['uri']).uri;
       }
-      else
-      {
-        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
-          'missing runtime in getSelectedOptionText in cls.DocumentSelect');
-      }
     }
     return '';
   }
