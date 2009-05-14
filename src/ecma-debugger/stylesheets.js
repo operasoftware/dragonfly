@@ -497,26 +497,23 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
       }
       else
       {
-        if(overwrittenlist)
+        // css inspector does not shorthand properties
+        // perhaps later
+        // protocol-4: overwrittenlist is now the STATUS, the meaning is inverted, 1 means applied
+        if( overwrittenlist && overwrittenlist[i] )
         {
-          // css inspector does not shorthand properties
-          // perhaps later
-          // protocol-4: overwrittenlist is now the STATUS, the meaning is inverted, 1 means applied
-          if( overwrittenlist[i] )
-          {
-            ret += ( ret ? MARKUP_PROP_NL : MARKUP_EMPTY ) +
-              INDENT +
-              MARKUP_KEY + __indexMap[index] + MARKUP_KEY_CLOSE +
-              MARKUP_VALUE + value_list[i] + ( priority_list[i] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE; 
-    
-          }
-          else
-          {
-            ret += ( ret ? MARKUP_PROP_NL : MARKUP_EMPTY ) +
-              INDENT +
-              MARKUP_KEY_OW + __indexMap[index] + MARKUP_KEY_CLOSE +
-              MARKUP_VALUE_OW + value_list[i] + ( priority_list[i] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE;   
-          }
+          ret += ( ret ? MARKUP_PROP_NL : MARKUP_EMPTY ) +
+            INDENT +
+            MARKUP_KEY + __indexMap[index] + MARKUP_KEY_CLOSE +
+            MARKUP_VALUE + value_list[i] + ( priority_list[i] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE; 
+  
+        }
+        else
+        {
+          ret += ( ret ? MARKUP_PROP_NL : MARKUP_EMPTY ) +
+            INDENT +
+            MARKUP_KEY_OW + __indexMap[index] + MARKUP_KEY_CLOSE +
+            MARKUP_VALUE_OW + value_list[i] + ( priority_list[i] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE;   
         }
       }
     }
