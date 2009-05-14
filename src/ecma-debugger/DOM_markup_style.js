@@ -147,8 +147,8 @@ var DOM_markup_style = function(id, name, container_class)
     var container_scroll_width = 0;
     var container_first_child = null;
     var style = null;
+    var is_not_script_node = true;
           
-
     if( ! data.length )
     {
       container.innerHTML = "<div class='padding' edit-handler='edit-dom'><p></p></div>";
@@ -165,15 +165,16 @@ var DOM_markup_style = function(id, name, container_class)
         current_depth = node[ DEPTH ];
         children_length = node[ CHILDREN_LENGTH ];
         child_pointer = 0;
-        node_name =  ( node[NAMESPACE] ? node[NAMESPACE] + ':': '' ) +  node[ NAME ];
+        node_name =  ( node[NAMESPACE] ? node[NAMESPACE] + ':': '' ) +  node[NAME];
         if( force_lower_case )
         {
           node_name = node_name.toLowerCase();
         }
-        switch ( node[ TYPE ] )
+        switch ( node[TYPE] )
         {
-          case 1:  // elemets
+          case 1:  // elements
           {
+            is_not_script_node = node[NAME].toLowerCase() != 'script';
             if( show_attrs )
             {
               attrs = '';
@@ -228,7 +229,9 @@ var DOM_markup_style = function(id, name, container_class)
                         class_name + ">"+
                         "<node>&lt;" + node_name +  attrs + "&gt;</node>" +
                   // TODO text node is a different node
-                        "<text ref-id='" + one_child_id + "'>" + one_child_value + "</text>" +
+                        "<text" +
+                          ( is_not_script_node ? " ref-id='"+ node[ID] + "' " : "" ) +
+                          "'>" + one_child_value + "</text>" +
                         "<node>&lt;/" + node_name + "&gt;</node>" +
                         "</div>";
                 i = child_pointer - 1;
@@ -315,7 +318,9 @@ var DOM_markup_style = function(id, name, container_class)
             {
               tree += 
                 "<div style='margin-left:" + ( 16 * node[ DEPTH ] )  + "px;'>" + 
-                  "<text ref-id='"+ node[ ID ] + "'>" + node[ VALUE ] + "</text>" +
+                  "<text" + 
+                      ( is_not_script_node ? " ref-id='"+ node[ID] + "' " : "" ) + 
+                      ">" + node[ VALUE ] + "</text>" +
                 "</div>";
             }
           }

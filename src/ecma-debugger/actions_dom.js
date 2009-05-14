@@ -29,9 +29,7 @@ cls.DOMInspectorActions = function(id)
       }
       case 'text':
       {
-        return target.previousElementSibling && 
-          target.previousElementSibling.firstChild && 
-          /^<?script/i.test(target.previousElementSibling.firstChild.nodeValue);
+        return !target.hasAttribute('ref-id');
       }
       case 'node':
       {

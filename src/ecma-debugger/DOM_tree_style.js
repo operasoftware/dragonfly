@@ -150,6 +150,7 @@ var DOM_tree_style = function(id, name, container_class)
     var container_scroll_width = 0;
     var container_first_child = null;
     var style = null;
+    var is_not_script_node = true;
 
     var graphic_arr = [];
 
@@ -167,8 +168,9 @@ var DOM_tree_style = function(id, name, container_class)
       
       switch ( node[TYPE] )
       {
-        case 1:  // elemets
+        case 1:  // elements
         {
+          is_not_script_node = node[NAME].toLowerCase() != 'script';
           attrs = '';
           if( show_attrs )
           {
@@ -285,7 +287,8 @@ var DOM_tree_style = function(id, name, container_class)
                tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;'" +
                  current_formatting + ">" +
                 ( node[NAME] ? node[NAME] :  nodeNameMap[node[TYPE]] ) + ' ' +
-                "<text ref-id='" + node[ID]+ "'>" + node[VALUE] + "</text>" +
+                "<text" + ( is_not_script_node ? " ref-id='" + node[ID]+  "' " : "" ) + ">" + 
+                  node[VALUE] + "</text>" +
                 "</div>";
             }
           }
@@ -296,7 +299,7 @@ var DOM_tree_style = function(id, name, container_class)
             tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;'" +
               current_formatting + ">" +
               ( node[NAME] ? node[NAME] :  nodeNameMap[node[TYPE]] ) + ' ' +
-              "<text ref-id='" + node[ID]+ "'>" + 
+              "<text" + ( is_not_script_node ? " ref-id='" + node[ID]+  "' " : "" ) + ">" + 
                 ( /^\s*$/.test( node[VALUE] ) ? _escape(node[VALUE]) : node[VALUE] ) + 
               "</text>" +
               "</div>";
