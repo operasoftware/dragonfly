@@ -384,6 +384,7 @@ cls.DOMInspectorActions = function(id)
     {
       this.setSelected(this.editor.submit() || this.getFirstTarget() );
       key_identifier.setModeDefault(self);
+      document.documentElement.removeClass('modal');
       return false;
     }
   }
