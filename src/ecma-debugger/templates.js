@@ -468,7 +468,7 @@ MODE ::= "<mode>"
         ret[ret.length] = css_path[i].combinator;
       }
     }
-    return ret;
+    return ret; //.concat(['onmouseover', helpers.breadcrumbSpotlight, 'onmouseout', helpers.breadcrumbClearSpotlight]);
   }
 
   this.uiLangOptions = function(lang_dict)
@@ -674,6 +674,5 @@ MODE ::= "<mode>"
     }
     return ret;
   }
-  
 
 }).apply(window.templates);
