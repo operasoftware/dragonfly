@@ -233,7 +233,8 @@ var client = new function()
     href = location.href,
     root_path = href.slice(0, href.indexOf('/app') > -1 ? href.indexOf('/app') : href.indexOf('/src') ),
     file_name = href.slice(href.lastIndexOf('/') + 1),
-    type = href.indexOf('cutting-edge') > -1 && 'cutting-edge' || 'default';
+    type = href.indexOf('cutting-edge') > -1 && 'cutting-edge' || 'default',
+    search = location.search;
 
     file_name = file_name.indexOf('.') > -1 && file_name || '';
     this.onload = function()
@@ -243,7 +244,7 @@ var client = new function()
       {
         if( confirm(ui_strings.S_CONFIRM_LOAD_COMPATIBLE_VERSION) )
         {
-          location = root_path + fallback_urls[type][version] + file_name;
+          location = root_path + fallback_urls[type][version] + file_name + search;
         }
       }
       else
