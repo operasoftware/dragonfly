@@ -163,6 +163,11 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   RULE_HEADER = 0,
   INDENT = '  ';
   
+  /*
+    TODO create shorthands should probably be removed 
+    as soon as we get the source stylesheets.
+    if not the shorthand code needs cleanup.
+  */
   var shorthands = {};
   
   shorthands.padding = shorthands.margin = function(prop, index_list, value_list, priority_list)
@@ -227,6 +232,7 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   
   shorthands.border = function(prop, index_list, value_list, priority_list)
   {
+    
     var
     key_list = ['border-top', 'border-right', 'border-bottom', 'border-left'],
     key_type_list = ['border-width', 'border-style', 'border-color'],
@@ -253,6 +259,8 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     {
       
       i = is_short_color && 2 || is_short_style && 1 || 0;
+
+      
       
       if( priority_list[i+1] == priority_list[i+4] && priority_list[i+1] == priority_list[i+7] &&
             priority_list[i+1] == priority_list[i+10])
@@ -261,6 +269,7 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
         if( value_list[i+1] == value_list[i+4] && value_list[i+1] == value_list[i+7] &&
               value_list[i+1] == value_list[i+10])
         {
+          
           return INDENT + MARKUP_KEY + key_type_list[i] + MARKUP_KEY_CLOSE +
                   MARKUP_VALUE + value_list[i+1] + priority_flag + MARKUP_VALUE_CLOSE;
         }
@@ -452,7 +461,8 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     s_h_index = [],
     s_h_value = [],
     s_h_priority = [],
-    s_h_prop = '';
+    s_h_prop = '',
+    s_h_count = 0;
 
 
     
@@ -473,26 +483,49 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
         s_h_value = [];
         s_h_priority = [];
         s_h_prop = __shorthandIndexMap[index];
+        s_h_count = 0;
         do
         {
-          if( __shorthandIndexMap[index] != 'line-height' && __shorthandIndexMap[index] != s_h_prop )
+          if( __shorthandIndexMap[index] != 'line-height' && 
+                        __shorthandIndexMap[index] != s_h_prop )
           {
             ret += ( ret ? MARKUP_PROP_NL : "" ) +
               shorthands[s_h_prop](s_h_prop, s_h_index, s_h_value, s_h_priority);
+            s_h_count = s_h_count % 4;
+            while(s_h_prop == 'border' && s_h_count)
+            {
+              ret += ( ret ? MARKUP_PROP_NL : MARKUP_EMPTY ) +
+                INDENT +
+                MARKUP_KEY_OW + __indexMap[index_list[i - s_h_count]] + MARKUP_KEY_CLOSE +
+                MARKUP_VALUE_OW + value_list[i - s_h_count] + ( priority_list[i - s_h_count] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE; 
+              s_h_count--;
+            }
             SHORTHAND[line_height_index] = __shorthandIndexMap[index] == 'font' ? 5 : 0;
             s_h_index = [];
             s_h_value = [];
             s_h_priority = [];
             s_h_prop = __shorthandIndexMap[index];
+            s_h_count = 0;
           }
           s_h_index[SHORTHAND[index]] = index;
           s_h_value[SHORTHAND[index]] = value_list[i];
           s_h_priority[SHORTHAND[index]] = priority_list[i];
           index = index_list[++i];
+          s_h_count++;
         }
         while( SHORTHAND[index] );
+
         ret += ( ret ? MARKUP_PROP_NL : MARKUP_EMPTY ) +
           shorthands[s_h_prop](s_h_prop, s_h_index, s_h_value, s_h_priority);
+        s_h_count = s_h_count % 4;
+        while(s_h_count)
+        {
+          ret += ( ret ? MARKUP_PROP_NL : MARKUP_EMPTY ) +
+            INDENT +
+            MARKUP_KEY_OW + __indexMap[index_list[i - s_h_count]] + MARKUP_KEY_CLOSE +
+            MARKUP_VALUE_OW + value_list[i - s_h_count] + ( priority_list[i - s_h_count] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE; 
+          s_h_count--;
+        }
         SHORTHAND[line_height_index] = 0;
       }
       else
