@@ -49,7 +49,7 @@ var elementStyle = new function()
     'css': CSS
   }
 
-  var setCategories = function(id, name, unfolded, handler)
+  var setCategories = function(id, name, handler)
   {
     return {
         id: id,
