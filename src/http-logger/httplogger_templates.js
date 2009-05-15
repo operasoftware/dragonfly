@@ -137,6 +137,12 @@ window.templates.response_raw = function(req)
             ["h2", ui_strings.M_VIEW_LABEL_RAW_REQUEST_INFO],
             ['code',
                 ['pre',
+                    (req.request ? req.request.raw : ui_strings.S_HTTP_REQUEST_IN_PROGRESS)
+                ]
+            ],
+            ["h2", ui_strings.M_VIEW_LABEL_RAW_RESPONSE_INFO],
+            ['code',
+                ['pre',
                     (req.response ? req.response.raw : ui_strings.S_HTTP_REQUEST_IN_PROGRESS)
                 ]
             ]

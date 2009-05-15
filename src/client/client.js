@@ -226,6 +226,12 @@ var client = new function()
     file_name = file_name.indexOf('.') > -1 && file_name || '';
     this.onload = function()
     {
+      if (this.status != 200)
+      {
+        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+                        "could not load fallback urls. (during local development this is OK!)")
+        return;
+      }
       var fallback_urls = eval( "(" + this.responseText + ")" );
       if( fallback_urls && fallback_urls[type] && version in fallback_urls[type] )
       {

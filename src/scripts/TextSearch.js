@@ -12,21 +12,31 @@ var TextSearch = function()
   DEFAULT_STYLE = "background-color:#ff0; color:#000;",
   HIGHLIGHT_STYLE = "background-color:#0f0; color:#000;",
   DEFAULT_SCROLL_MARGIN = 50,
-  SEARCH_DELAY = 50; // in ms
+  SEARCH_DELAY = 50, // in ms
+  MIN_TERM_LENGTH = 3; // search term must be this long or longer
 
   var 
   self = this, 
   search_term = '',
-  search_results = [], // collection of span elements
+  // collection of span elements. This is so because a hit may cross an
+  // element border, so multiple elements needed for highlight.
+  search_results = [], 
   cursor = -1,
   container = null,
   __input = null,
   timeouts = new Timeouts(), 
 
+  /**
+   * Apply default styles to a span.
+   */
   span_set_default_style = function(span)
   {
     span.style.cssText = DEFAULT_STYLE;
   },
+
+  /**
+   * Apply highlight styles to a span.
+   */
   span_set_highlight_style = function(span)
   {
     span.style.cssText = HIGHLIGHT_STYLE;
@@ -95,6 +105,9 @@ var TextSearch = function()
     consume_node(container);
   },
     
+  /**
+   * Update status bar with the current state of the search.
+   */
   update_status_bar = function()
   {
     if(topCell.statusbar)
@@ -128,7 +141,7 @@ var TextSearch = function()
       }
       search_results = [];
       cursor = -1;
-      if( search_term.length > 2 )
+      if( search_term.length >= MIN_TERM_LENGTH )
       {
         if(container)
         {
@@ -166,25 +179,32 @@ var TextSearch = function()
   this.update = function()
   {
     var new_search_term = search_term;
-    if( search_term.length > 2 )
+    if( search_term.length >= MIN_TERM_LENGTH )
     {
       search_term = '';
       this.search(new_search_term);
     }
   }
 
+  /**
+   * Highlight a search result. The result to highlight is kept in the
+   * "cursor" instance variable. If check_position is true the highlight will
+   * only be applied to what is visible withing the viewport.
+   */
   this.highlight = function(check_position)
   {
     if(search_results.length)
     {
-      if( cursor >= 0 )
+      if( cursor >= 0 ) // if we have a currently highlighted hit..
       {
+        // then reset its style to the default
         search_results[cursor].forEach(span_set_default_style);
       }
+
       if( check_position )
       {
         cursor = 0;
-        while( search_results[cursor] && search_results[cursor][0].offsetTop < 0  )
+        while( search_results[cursor] && this.getRealOffsetTop(search_results[cursor][0]) < 0  )
         {
           cursor++;
         }
@@ -198,12 +218,21 @@ var TextSearch = function()
         cursor = 0;
       }
       search_results[cursor].forEach(span_set_highlight_style);
-      if( !check_position || search_results[cursor][0].offsetTop > DEFAULT_SCROLL_MARGIN )
+      
+      if( !check_position || this.getRealOffsetTop(search_results[cursor][0]) > DEFAULT_SCROLL_MARGIN )
       {
-        container.scrollTop += search_results[cursor][0].offsetTop - DEFAULT_SCROLL_MARGIN;
+        container.scrollTop += this.getRealOffsetTop(search_results[cursor][0]) - DEFAULT_SCROLL_MARGIN;
       }
       update_status_bar();
     }
+  }
+
+  /**
+   * Returns the top coordinate of ele in releation to container
+   */
+  this.getRealOffsetTop = function(ele)
+  {
+    return ele.getBoundingClientRect().top - container.getBoundingClientRect().top;
   }
 
   this.revalidateSearch = function()
@@ -216,11 +245,11 @@ var TextSearch = function()
     }
   }
 
-  this.setContainer = function(_container)
+  this.setContainer = function(cont)
   {
-    if( container != _container )
+    if( container != cont )
     {
-      container = _container;
+      container = cont;
     }
   }
 
@@ -233,10 +262,13 @@ var TextSearch = function()
       __input.value = search_term;
       __input.parentNode.firstChild.textContent = '';
       search_term = '';
-      this.searchDelayed (new_search_term);
+      this.searchDelayed(new_search_term);
     }
   }
 
+  /**
+   * Cleanup to be performed when searching has ended
+   */
   this.cleanup = function()
   {
     search_results = [];
