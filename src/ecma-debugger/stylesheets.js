@@ -896,11 +896,15 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     {
       return __rules[rt_id][index];
     }
-    else
+    else if(__sheets[rt_id][index])
     {
       var tag = tagManager.setCB(null, handleGetRulesWithIndex, [rt_id, index, org_args]);
       var sheet_id = __sheets[rt_id][index][SHEET_OBJECT_ID];
       services['ecmascript-debugger'].getCSSRules( tag, rt_id, sheet_id, 'json' );
+      return null;
+    }
+    else
+    {
       return null;
     }
   }
@@ -914,8 +918,6 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
       rules: rules,
       rule_id: rule_id || ''
     }
-    window['cst-selects']['stylesheet-select'].updateElement();
-
   }
   
   this.getSelectedSheet = function(org_args)
@@ -939,6 +941,7 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
       self.setSelectedSheet(rt_id, index, rules);
       org_args.callee.apply(null, org_args);
     }
+    window['cst-selects']['stylesheet-select'].updateElement();
   }
 
   this.hasSelectedSheetRuntime = function(rt_id)
