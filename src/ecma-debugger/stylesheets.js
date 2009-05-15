@@ -889,6 +889,20 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   {
     return __sheets[rt_id] && __sheets[rt_id][index] || null;
   }
+
+  this.invalidateSheet = function(rt_id, index)
+  {
+    if(__rules[rt_id] && __rules[rt_id][index] )
+    {
+      __rules[rt_id][index] = null;
+      if( __selectedRules && 
+            __selectedRules.runtime_id == rt_id &&
+            __selectedRules.index == index )
+      {
+        __selectedRules = null;
+      }
+    }
+  }
   
   this.getRulesWithSheetIndex = function(rt_id, index, org_args)
   {

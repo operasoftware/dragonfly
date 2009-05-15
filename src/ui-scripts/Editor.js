@@ -339,6 +339,7 @@ var Editor = function()
   this.edit = function(event, ref_ele)
   {
     var ele = ref_ele || event.target;
+    var sheet_link = ele.parentElement.getElementsByTagName('stylesheet-link')[0];
     if( !this.base_style['font-size'] )
     {
       this.get_base_style(ref_ele || ele);
@@ -349,6 +350,8 @@ var Editor = function()
     }
     this.context_rt_id = ele.parentElement.parentElement.getAttribute('rt-id');
     this.context_rule_id = ele.parentElement.getAttribute('rule-id');
+    this.context_stylesheet_index = 
+        sheet_link ? parseInt(sheet_link.getAttribute('index')) : -1;
     var textContent = ele.textContent;
 
 
@@ -770,14 +773,19 @@ var Editor = function()
     if( props[i+1] )
     {
       script = "rule.style.setProperty(\"" + props[i] + "\", \"" + props[i+1] + "\", " + ( props[i+2] ? "\"important\"" : null )+ ")";
-      services['ecmascript-debugger'].eval(0, self.context_rt_id, '', '', script, ["rule", self.context_rule_id]);
+      services['ecmascript-debugger'].eval(0, this.context_rt_id, '', '', script, ["rule", this.context_rule_id]);
     }
     else if(!props[i])
     {
       script = "rule.style.removeProperty(\"" + this.context_cur_prop + "\")";
-      services['ecmascript-debugger'].eval(0, self.context_rt_id, '', '', script, ["rule", self.context_rule_id]);
+      services['ecmascript-debugger'].eval(0, this.context_rt_id, '', '', script, ["rule", this.context_rule_id]);
     }
-
+    if(this.context_stylesheet_index > -1)
+    {
+      stylesheets.invalidateSheet(this.context_rt_id, this.context_stylesheet_index);
+      this.context_stylesheet_index = -1;
+    }
+    
   }
 
   this.enter = function()
