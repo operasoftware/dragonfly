@@ -108,7 +108,7 @@ var VirtualTextSearch = function()
     var
     pos = -1,
     line_cur = 0,
-    source = __script.source,
+    source = __script.source.toLowerCase(),
     line_arr = __script.line_arr,
     line_arr_length = line_arr.length,
     line_matches = __script.line_matches,
@@ -152,6 +152,8 @@ var VirtualTextSearch = function()
     line_arr = null,
     line_arr_length = 0,
     line_cur = 0;
+
+    new_search_term = new_search_term.toLowerCase();
     
     if( new_search_term != search_term )
     {
