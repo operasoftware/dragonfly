@@ -301,6 +301,8 @@ ui_strings.S_HTTP_LABEL_QUERY_ARGS = "Query arguments";
 ui_strings.S_INFO_RELOAD_FOR_SCRIPT = 'Click the reload button above to fetch the scripts for the selected window';
 /* DESC: Information shown if the document does not hold any scripts. */
 ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS = 'This document has no scripts';
+/* DESC: Information shown if the document does not hold any style sheet. */
+ui_strings.S_INFO_DOCUMENT_HAS_NO_STYLESHEETS = 'This document has no stylesheet';
 /* DESC: Information shown if the stylesheet does not hold any style rules. */
 ui_strings.S_INFO_STYLESHEET_HAS_NO_RULES = 'This stylesheet has no rules';
 /* DESC: Feedback showing that Opera Dragonfly is loading and the user shall have patience. */

@@ -37,7 +37,8 @@ cls.StylesheetsView = function(id, name, container_class)
     }
     else
     {
-      container.innerHTML = '';
+      container.innerHTML = "<div class='info-box'><p>" + 
+        ui_strings.S_INFO_DOCUMENT_HAS_NO_STYLESHEETS + "</p></div>";
     }
     
   }
@@ -75,7 +76,7 @@ cls.StylesheetSelect = function(id, class_name)
   this.getSelectedOptionText = function()
   {
     var 
-    title = '',
+    title = ui_strings.S_INFO_DOCUMENT_HAS_NO_STYLESHEETS,
     selected_sheet = stylesheets.getSelectedSheet(),
     sheet = null;
 
