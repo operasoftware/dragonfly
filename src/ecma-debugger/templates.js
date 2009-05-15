@@ -115,7 +115,7 @@
       ),
       'script-id', script['script-id']
     ],
-    class_name = script['script-id'] == selected_script_id && 'selected';
+    class_name = script['script-id'] == selected_script_id && 'selected' || '';
 
     if(stopped_script_id == script['script-id'])
     {

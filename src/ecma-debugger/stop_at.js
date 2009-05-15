@@ -244,6 +244,7 @@ var stop_at = new function()
             : 10;
           if( views.js_source.showLine( stopAt['script-id'], line - plus_lines ) )
           {
+            runtimes.setSelectedScript(stopAt['script-id']);
             views.js_source.showLinePointer( line, true );
           }
           __controls_enabled = true;
@@ -273,6 +274,7 @@ var stop_at = new function()
           : 10;
         if( views.js_source.showLine( stopAt['script-id'], line - plus_lines ) )
         {
+          runtimes.setSelectedScript(stopAt['script-id']);
           views.js_source.showLinePointer( line, true );
         }
         __controls_enabled = true;
