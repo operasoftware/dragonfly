@@ -645,12 +645,20 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   this.prettyPrintRules = function(rules, do_shortcuts)
   {
     var ret = '', rule = null, header = null, i = 0;
-    for( ; rule = rules[i]; i++)
+    if(rules.length)
     {
-      ret += prettyPrintRule[rule[RULE_HEADER][2]](rule, do_shortcuts);
+      for( ; rule = rules[i]; i++)
+      {
+        ret += prettyPrintRule[rule[RULE_HEADER][2]](rule, do_shortcuts);
+      }
+      return "<stylesheet stylesheet-id='" + rules[0][0][0] + "' runtime-id='" + rules['runtime-id'] + "'>" 
+                + ret + "</stylesheet>";
     }
-    return "<stylesheet stylesheet-id='" + rules[0][0][0] + "' runtime-id='" + rules['runtime-id'] + "'>" 
-              + ret + "</stylesheet>";
+    else
+    {
+      return "<div class='info-box'><p>" + 
+                  ui_strings.S_INFO_STYLESHEET_HAS_NO_RULES + "</p></div>";
+    }
   }
 
   var prettyPrintCat = [];
