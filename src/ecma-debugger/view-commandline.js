@@ -243,7 +243,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
       {
         command_map[command](rt_id, frame_id, thread_id, script_string.slice(opening_brace + 1, closing_brace));
       }
-      else
+      else if( !/^\s*$/.test(script_string) )
       {
         tag = tagManager.setCB(null, handleEval, [rt_id] );
         services['ecmascript-debugger'].eval(tag, rt_id, thread_id, frame_id, script_string);
