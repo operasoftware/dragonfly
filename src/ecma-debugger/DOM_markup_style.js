@@ -204,12 +204,12 @@ var DOM_markup_style = function(id, name, container_class)
             {
               has_only_one_child = 1;
               one_child_value = '';
-              child_level = data[ child_pointer ][ DEPTH ];
-              for( ; data[child_pointer] &&  data[ child_pointer ][ DEPTH ] == child_level; child_pointer += 1 )
+              child_level = data[child_pointer][DEPTH];
+              for( ; data[child_pointer] &&  data[child_pointer][DEPTH] == child_level; child_pointer += 1 )
               {
-                one_child_value += data[ child_pointer ] [ VALUE ];
-                one_child_id = data[ child_pointer ] [ ID ];
-                if( data[ child_pointer ][ TYPE ] != 3 )
+                one_child_value += data[child_pointer][VALUE];
+                one_child_id = data[child_pointer][ID];
+                if( data[child_pointer][TYPE] != 3 )
                 {
                   has_only_one_child = 0;
                   one_child_value = '';
@@ -224,13 +224,13 @@ var DOM_markup_style = function(id, name, container_class)
               {
                 class_name = re_formatted.test(node_name) ? " class='pre-wrap'" : '';
                 tree += "<div " + ( node[ ID ] == target ? "id='target-element'" : '' ) + 
-                        " style='margin-left:" + 16 * node[ DEPTH ] + "px;' "+
-                        "ref-id='"+ node[ ID ] + "' handler='spotlight-node' " +
+                        " style='margin-left:" + 16 * node[DEPTH] + "px;' "+
+                        "ref-id='" + node[ ID ] + "' handler='spotlight-node' " +
                         class_name + ">"+
                         "<node>&lt;" + node_name +  attrs + "&gt;</node>" +
                   // TODO text node is a different node
                         "<text" +
-                          ( is_not_script_node ? " ref-id='"+ node[ID] + "' " : "" ) +
+                          ( is_not_script_node ? " ref-id='" + one_child_id + "' " : "" ) +
                           "'>" + one_child_value + "</text>" +
                         "<node>&lt;/" + node_name + "&gt;</node>" +
                         "</div>";
