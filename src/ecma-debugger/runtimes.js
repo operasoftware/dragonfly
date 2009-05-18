@@ -34,6 +34,8 @@ var runtimes = new function()
 
   var __selected_script = '';
 
+  var _is_first_call_create_all_runtimes_on_debug_context_change = true;
+
   // used to set the top runtime automatically 
   // on start or on debug context change
   var debug_context_frame_path = '';
@@ -464,6 +466,12 @@ var runtimes = new function()
   {
     debug_context_frame_path = '';
     __selected_script = '';
+    if( _is_first_call_create_all_runtimes_on_debug_context_change )
+    {
+      stop_at.setInitialSettings();
+      // with the STP 1 design this workaround can be removed
+      _is_first_call_create_all_runtimes_on_debug_context_change = false;
+    }
     var tag =  tagManager.setCB(null, set_new_debug_context, [win_id]);
     services['ecmascript-debugger'].createAllRuntimes(tag);
   }
