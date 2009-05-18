@@ -33,9 +33,7 @@ cls.DOMInspectorActions = function(id)
       }
       case 'node':
       {
-        return target.textContent.slice(0,2) == "</" || 
-          ( target.firstChild && 
-            /^<?script/i.test(target.firstChild.nodeValue) );
+        return ( target.firstChild && /^<?\/?script/i.test(target.firstChild.nodeValue) );
       }
       default:
       {
@@ -60,7 +58,7 @@ cls.DOMInspectorActions = function(id)
           }
           case 'node':
           {
-            return !/<\//.test(ele.textContent) && !ele.getElementsByTagName('key')[0];
+            return !ele.getElementsByTagName('key')[0];
           }
         }
       }
@@ -73,7 +71,10 @@ cls.DOMInspectorActions = function(id)
       ( !_is_script_node(ele) &&
         ( /^key|value|input$/.test(ele.nodeName.toLowerCase()) ||
           ( "text" == ele.nodeName && ele.textContent.length ) ||
-          ( "node" == ele.nodeName && ele.textContent.slice(0,2) != "</" ) ) );
+          ( "node" == ele.nodeName  &&
+            ( ele.textContent.slice(0,2) != "</" ||
+              // it is a closing tag but it's also the only tag in this line
+              ( ele.parentNode.getElementsByTagName('node')[0] == ele ) ) ) ) );
     },
     up_down: function(ele, start_ele)
     {
@@ -81,7 +82,9 @@ cls.DOMInspectorActions = function(id)
       ( "input" == ele.nodeName.toLowerCase() && !ele.parentNode.contains(start_ele) ) ||
       ( !_is_script_node(ele) && 
           ( "node" == ele.nodeName &&
-            ele.textContent.slice(0,2) != "</" &&
+            ( ele.textContent.slice(0,2) != "</" ||
+              // it is a closing tag but it's also the only tag in this line
+              ( ele.parentNode.getElementsByTagName('node')[0] == ele ) ) &&
             "input" != ele.parentNode.firstElementChild.nodeName.toLowerCase() ) );
     }
   }
@@ -426,7 +429,19 @@ cls.DOMInspectorActions = function(id)
 
   this.escape_edit_mode = function(event, action_id)
   {
-    this.setSelected(this.editor.cancel() || this.getFirstTarget() );
+    if( this.editor.type == "dom-attr-text-editor" )
+    {
+      this.setSelected(this.editor.cancel() || this.getFirstTarget() );
+    }
+    else
+    {
+      /*
+        In case of markup editor the view will get re-created.
+        Setting the navigation target will be handled 
+        in the onViewCreated callback.
+      */
+      this.editor.cancel();
+    }
     key_identifier.setModeDefault(this);
     document.documentElement.removeClass('modal');
     return false;

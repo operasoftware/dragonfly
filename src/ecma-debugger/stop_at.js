@@ -117,7 +117,7 @@ var stop_at = new function()
       {
         fn_name : is_all_frames && i == _frames_length - 1 
                   ? 'global scope' 
-                  : frame.getNodeData('function-name'),
+                  : frame.getNodeData('function-name') || 'anonymous',
         line : frame.getNodeData('line-number'), 
         script_id : frame.getNodeData('script-id'),
         argument_id : frame.getNodeData('argument-object'),
