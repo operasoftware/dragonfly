@@ -2,8 +2,8 @@
 <head>
 <title> </title>
 <link rel='stylesheet' href="../../ui-style/ui.css"/>
-<script src="../../scripts/dom.js"/>
-<script src="../../ui-scripts/cst-select.js"/>
+<script src="../../src/scripts/dom.js"/>
+<script src="../../src/ui-scripts/cst-select.js"/>
 
 <script src="script.js"/>
 <link rel="stylesheet" href="style.css"/> 
