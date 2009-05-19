@@ -37,12 +37,11 @@ window.templates.error_log_row = function(entry, allExpanded, toggledList, viewI
         [ "tr", [
                 ["td", ["button", "",
                         "type", "button",
-                        "handler", "error-log-list-expand-collapse",
+                        //"handler", "error-log-list-expand-collapse",
                         "data-logid", entry.id,
                         "data-viewid", viewId
                         ]
                 ],
-                //["td", "T"],
                 ["td", entry.uri],
                 ["td", (entry.line==null ? "?" : entry.line) ],
                 ["td", entry.title]
@@ -54,8 +53,15 @@ window.templates.error_log_row = function(entry, allExpanded, toggledList, viewI
     ]
 
     if (expanded) {
-        rows.push(
-        [
+        rows.push(templates.error_log_detail_row(entry));
+    }
+    
+    return rows;
+}
+
+window.templates.error_log_detail_row = function(entry)
+{
+    return [
             "tr", [
                 ["td",
                     [ "a", entry.uri, "href", entry.uri, "target", "_blank" ],
@@ -63,8 +69,5 @@ window.templates.error_log_row = function(entry, allExpanded, toggledList, viewI
                  "colspan", "4"
                 ]
             ]
-        ])
-    }
-    
-    return rows;
+        ]   
 }

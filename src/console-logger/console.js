@@ -196,15 +196,16 @@ var ErrorConsoleData = new function()
       }
       else {
           msgs = [];
-          toggledList = [];
+          toggled = [];
       }
       updateViews();
   }
 
   /**
-   * Toggle an entry. This is context sensitive. Whatever is in the list
-   * behaves opposite of the default. In other words, when items are expanded
-   * by default, items in the toggled list are not expanded and vice-versa.
+   * Toggle an entry. This is context sensitive.
+   * Whatever is in the list behaves opposite of the default. In other words,
+   * when items are expanded by default, items in the toggled list are not
+   * expanded and vice-versa.
    */
   this.toggleEntry = function(logid)
   {
@@ -214,9 +215,7 @@ var ErrorConsoleData = new function()
       else {
           toggled.splice(toggled.indexOf(logid), 1);
       }
-      updateViews();
   }
-
 
   /**
    * Return all the messages. If souce is set, return only messages for
@@ -248,6 +247,21 @@ var ErrorConsoleData = new function()
     return filter || settings.console.get('use-selected-runtime-as-filter') 
       ? getMessagesWithFilter(source, filter)
       : getMessagesWithoutFilter(source);
+  }
+
+  this.getMessage = function(id)
+  {
+    if (! msgs)
+    {
+        return null
+    }
+    else
+    {
+      var filterFun = function(e) {
+        return e.id == id;
+      }
+      return msgs.filter(filterFun)[0] || null;
+    }
   }
 
   this.clearDragonflyMessages = function()
@@ -311,12 +325,54 @@ var ErrorConsoleView = function(id, name, container_class, source)
 {
   container_class = container_class ? container_class : 'scroll error-console';
   name = name ? name : 'missing name ' + id;
+  
+  var _expand_all_state = null;
+  var _table_ele = null;
 
   this.createView = function(container)
   {
-    var expandAll = settings.console.get('expand-all-entries');
-    container.clearAndRender(templates.error_log_table(ErrorConsoleData.getMessages(source), expandAll, ErrorConsoleData.getToggled(), this.id));
+    // Switch on whether we have a table element allready. If we do, just
+    // render the latest log entry
+    var entries = ErrorConsoleData.getMessages(source);
+    var expand_all = settings.console.get('expand-all-entries');
+
+    // Under these conditions, we re-render the whole thing:
+    if (! _table_ele || ! entries.length || expand_all != _expand_all_state)
+    {
+        // The expand all state thingy is to make sure we handle switching
+        // between expand all/collapse all properly.
+        _expand_all_state = expand_all;
+        this.renderFull(container, entries, expand_all);
+    }
+    else
+    {
+        this.renderUpdate(entries.slice(-1), expand_all);
+    }
+    this.renderFull
+  }
+
+  this.renderFull = function(container, messages, expand_all)
+  {
+    container.clearAndRender(templates.error_log_table(messages,
+                                                       expand_all,
+                                                       ErrorConsoleData.getToggled(),
+                                                       this.id)
+                             );
+    _table_ele = container.getElementsByTagName("table")[0];
     //container.scrollTop = container.scrollHeight;
+  }
+
+  this.renderUpdate = function(entries, expandAll)
+  {
+    for (var n=0, cur; cur=entries[n]; n++)
+    {
+        _table_ele.render(templates.error_log_row(cur, expandAll, ErrorConsoleData.getToggled(), this.id));
+    }
+  }
+
+  this.ondestroy = function() {
+    delete _table_ele;
+    _table_ele = null;
   }
 
   this.init(id, name, container_class );
@@ -520,6 +576,18 @@ eventHandlers.click['error-log-list-expand-collapse'] = function(event, target)
 {
     var logid = target.getAttribute("data-logid");
     ErrorConsoleData.toggleEntry(logid);
+    if (target.hasClass("expanded"))
+    {
+        target.parentNode.removeChild(target.nextSibling);
+        target.swapClass("expanded", "collapsed");
+    }
+    else
+    {   
+        var entry = ErrorConsoleData.getMessage(logid);
+        var row = document.render(templates.error_log_detail_row(entry));
+        target.parentNode.insertAfter(row, target);
+        target.swapClass("collapsed", "expanded");
+    }
 }
 
 

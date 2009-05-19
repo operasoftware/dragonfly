@@ -152,6 +152,18 @@ Element.prototype.hasClass=function(name)
 }
 
 /**
+ * Swap class "from" with class "to"
+ */
+Element.prototype.swapClass=function(from, to)
+{
+  if (this.hasClass(from))
+  {
+    this.removeClass(from);
+    this.addClass(to);
+  }
+}
+
+/**
  * Returns the next sibling of the element that is an element. Ignores
  * nodes that are not elements
  */
@@ -177,7 +189,7 @@ Element.prototype.getTop = function()
 }
 
 /**
- * Insert target after node in the tree.
+ * Insert node after target in the tree.
  */
 Element.prototype.insertAfter = function(node, target)
 {

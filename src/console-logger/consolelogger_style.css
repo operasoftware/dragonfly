@@ -45,7 +45,7 @@
     border-left: none;
 }
 
-.error-console button[handler=error-log-list-expand-collapse] {
+.error-console button {
   height: 15px;
   width: 19px;
   background: transparent url('../ui-images/expand-collapse.png') 4px 2px no-repeat;
@@ -59,7 +59,7 @@
   background: transparent url('../ui-images/expand-collapse.png') 4px -13px no-repeat;
 }
 
-.error-console button[handler=error-log-list-expand-collapse]:active {
+.error-console button:active {
     background-color: highlight;
 }
 
