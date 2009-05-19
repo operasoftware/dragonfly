@@ -185,14 +185,19 @@ cls.RequestListView = function(id, name, container_class)
      */
     this.toggleDetails = function(id)
     {
+        var dirty = false;
         if (expandedItems.indexOf(id)==-1) {
             expandedItems.push(id);
-            //this.expandEntry(id);
+            dirty = true;
         } else {
             expandedItems.splice(expandedItems.indexOf(id), 1);
-            //this.collapseEntry(id);
         }
         this.update();
+        if (dirty) {
+            var row = this._getRowForId(id).nextSibling
+            row.scrollSoftIntoContainerView();
+        }
+        
     }
 
     this.selectDetailView = function(id, name) {
@@ -203,7 +208,6 @@ cls.RequestListView = function(id, name, container_class)
          //the bits under here could be used if we decide to do something
          //smarter than just invalidating the view and redrawing.
 
-
         var row = this._getRowForId(id);
         if (!row) { return }
 
@@ -211,10 +215,6 @@ cls.RequestListView = function(id, name, container_class)
         var req = HTTPLoggerData.getRequestById(id);
         var div = row.getElementsByTagName("div")[0];
         div.clearAndRender(window.templates.parsed_request_headers(req, "headers"));
-
-
-
-        
     }
 
     this.ondestroy = function()
