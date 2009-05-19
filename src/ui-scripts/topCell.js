@@ -79,11 +79,19 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, TopStatusbar
 
   }
 
+  
+
   this.showView = function(view_id)
   {
-    if( views[view_id].isvisible() )
+    var view = views[view_id];
+    if(view.requires_view && !this.tab.hasTab(view.requires_view))
     {
-      views[view_id].update();
+      global_state.ui_framework.temporary_tabs.push(view.requires_view);
+      this.tab.addTab(new Tab(view.requires_view, views[view.requires_view].name, true))
+    }
+    if( view.isvisible() )
+    {
+      view.update();
     }
     else
     {

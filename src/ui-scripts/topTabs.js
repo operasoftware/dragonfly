@@ -10,6 +10,14 @@ var TopTabsBase = function()
   {
     return this.cell.top + this.cell.toolbar && this.cell.toolbar.offsetHeight || 0;
   }
+  this.switch_history = function(is_attached)
+  {
+    var cur = '', i = 0, map = composite_view_convert_table[is_attached.toString()];
+    for( ; cur = this._history[i]; i++)
+    {
+      this._history[i] = map[cur] || cur;
+    }
+  }
 }
 
 /**

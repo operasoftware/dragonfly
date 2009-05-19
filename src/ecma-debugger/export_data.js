@@ -17,6 +17,7 @@ cls.ExportDataView = function(id, name, container_class)
 {
   this.ishidden_in_menu = true;
   this.hidden_in_settings = true;
+  this.requires_view = "export_new";
   this.createView = function(container)
   {
     container.innerHTML = "<div class='padding'><pre>" + export_data.data + "</pre></div>";

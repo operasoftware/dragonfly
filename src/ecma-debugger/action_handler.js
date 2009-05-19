@@ -602,11 +602,6 @@ var action_handler = new function()
   handlers['dom-inspection-export'] = function(event)
   {
     export_data.data = views['dom'].exportMarkup();
-    if(!topCell.tab.hasTab('export_new'))
-    {
-      global_state.ui_framework.temporary_tabs.push('export_new');
-      topCell.tab.addTab(new Tab('export_new', views['export_new'].name, true))
-    }
     topCell.showView('export_data');
   }
 /*

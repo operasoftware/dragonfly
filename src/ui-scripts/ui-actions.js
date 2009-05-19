@@ -150,7 +150,6 @@ eventHandlers.click['top-window-close'] = function(event)
 
 eventHandlers.click['top-window-toggle-attach'] = function(event)
 {
-
   viewsMenu.remove();
   window.topCell.onresize = function(){};
   var is_attached = ( window.opera.attached = !window.opera.attached );
@@ -160,6 +159,8 @@ eventHandlers.click['top-window-toggle-attach'] = function(event)
   // TODO active window must be set correct
   // then the window dropdown will be removed in the attached view
   // topCell.tab.changeStyleProperty("padding-right", 60);
+  topCell.tab.switch_history(is_attached);
+  
   if( is_attached )
   {
     topCell.tab.changeStyleProperty("padding-right", 275);

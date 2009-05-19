@@ -52,7 +52,7 @@ var TabsBase = function()
     if(tab)
     {
       this.tabs.splice(i, 1);
-      var container = document.getElementById(this.type + '-to-' + this.cell.id)
+      var container = document.getElementById(this.type + '-to-' + this.cell.id);
       if( container)
       {
         var tab = container.getElementsByTagName('tab')[i];
@@ -70,10 +70,13 @@ var TabsBase = function()
     
     if(this.activeTab == ref_id)
     {
-      this._history.pop();
-      if(this._history[ this._history.length - 1 ] )
+      while(this._history[this._history.length - 1] == ref_id)
       {
-        this.setActiveTab( this._history[ this._history.length - 1 ] )
+        this._history.pop();
+      }
+      if(this._history[this._history.length - 1])
+      {
+        this.setActiveTab(this._history[this._history.length - 1])
       }
       else if( this.tabs[i] )
       {
@@ -137,7 +140,6 @@ var TabsBase = function()
       }
 
       var container = document.getElementById(this.type + '-to-' + this.cell.id) || this.render();
-
       if(container)
       {
         var tabs = container.getElementsByTagName('tab'), tab = null, i = 0;
