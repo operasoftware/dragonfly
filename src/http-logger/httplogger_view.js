@@ -24,6 +24,15 @@ cls.RequestListView = function(id, name, container_class)
     var tableBodyEle = null;
     var viewMap = {}; // mapping between ID and active part of detail view
 
+
+
+
+MAKE THIS MORE LIKE THE ONE IN ERROR CONSOLE! WE ARE JUST INVALIDATING VIEWS
+WHEN WE SHOULD BE SMARTER! Oof! Need to update fields in the table. Leave
+as is but make toggling smarter then?
+
+
+
     new ToolbarConfig
     (
       id,
@@ -146,9 +155,9 @@ cls.RequestListView = function(id, name, container_class)
         {
             if (e.getAttribute('data-requestid') == id)
             {
-                e.className = e.className.replace("expanded", "collapsed");
+                e.swapClass("expanded", "collapsed");
                 tableBodyEle.removeChild(e.nextSibling);
-                return
+                return;
             }
         }
     }
@@ -167,13 +176,8 @@ cls.RequestListView = function(id, name, container_class)
                 var req = HTTPLoggerData.getRequestById(id);
                 var tpl = window.templates.request_details_box(req);
                 var ele = document.render(tpl);
-                if (e.nextSibling) {
-                    tableBodyEle.insertBefore(ele, e.nextSibling);
-                }
-                else {
-                    tableBodyEle.appendChild(ele);
-                }
-                e.className = e.className.replace("collapsed", "expanded");
+                tableBodyEle.insertAfter(ele, e);
+                e.swapClass("collapsed", "expanded");
                 return; // or loop forever since you just made list longer.
             }
         }
@@ -203,7 +207,6 @@ cls.RequestListView = function(id, name, container_class)
          //the bits under here could be used if we decide to do something
          //smarter than just invalidating the view and redrawing.
 
-
         var row = this._getRowForId(id);
         if (!row) { return }
 
@@ -211,9 +214,6 @@ cls.RequestListView = function(id, name, container_class)
         var req = HTTPLoggerData.getRequestById(id);
         var div = row.getElementsByTagName("div")[0];
         div.clearAndRender(window.templates.parsed_request_headers(req, "headers"));
-
-
-
         
     }
 
