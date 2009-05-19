@@ -79,13 +79,10 @@ window.templates.request_list_row = function(r, expandList, firstTime, lastTime,
     curP = cur*rangeP;
 
     dur = r.response ? Math.floor((r.response.time - r.request.time)*rangeP) : null
-
     var a = [
         [ 'tr',
             ['td', ["button", "", "type", "button",
                                   'data-requestid', r.id,
-                                  "handler", "request-list-expand-collapse",
-
                                   "class", "expand-collapse"]],
             ['td', ["label", "",
                     "class", http_map_mime_to_type(http_get_mime_from_extension(r.request.path))]
@@ -101,10 +98,10 @@ window.templates.request_list_row = function(r, expandList, firstTime, lastTime,
             'class', 'typeicon mime-' + 
                     http_map_mime_to_type(http_get_mime_from_extension(r.request.path)) +
                     (expanded ? " expanded" : " collapsed") +
-                    (r.duration==undefined ? " in-progress" : "")
+                    (r.duration==undefined ? " in-progress" : "") +
+                    (r.response ? " http-status-"+r.response.statusClass : "")
         ],
     ];
-    
     if (expanded) // meaning "is expanded"
     {
         a.push(window.templates.request_details_box(r, viewMap[r.id]));

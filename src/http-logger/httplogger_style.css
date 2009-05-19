@@ -89,7 +89,7 @@
     color: #b3b3b3;
 }
 
-.request-table button[handler=request-list-expand-collapse]:active {
+.request-table button.expand-collapse:active {
     background-color: highlight;
 }
 
@@ -154,4 +154,8 @@ a.reference-link {
     margin: 0;
     padding: 0;
     background-image: url('../ui-images/reference-link.png');
+}
+
+.http-status-4, .http-status-5 {
+    color: red;
 }

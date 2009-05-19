@@ -144,6 +144,7 @@ cls.HTTPLoggerService = function(name)
                 }
                 retval.protocol= hd.protocol;
                 retval.status = hd.status;
+                retval.statusClass = retval.status ? retval.status.charAt(0) : "0";
                 retval.reason = hd.reason;
                 retval.headers = hd.headers;
             }
