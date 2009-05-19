@@ -403,6 +403,10 @@ Element.prototype.getPreviousInFlow = function(root_context)
   return cursor || previous || parent != root_context && parent || null;
 }
 
+/**
+ * Make sure the element is visible in its scoll context.
+ * @see Element.prototype.scrollSoftIntoContainerView
+ */
 Element.prototype.scrollSoftIntoView = function()
 {
   // just checking the first offsetParent to keep it simple
@@ -421,6 +425,36 @@ Element.prototype.scrollSoftIntoView = function()
     }
   }
 }
+
+
+/**
+ * Make sure the element is visible in the container. The container is the
+ * first <container> element found in the offsetParent chain, or body if no
+ * container element is found.
+ */
+Element.prototype.scrollSoftIntoContainerView = function()
+{
+  var scrollContainer = this.offsetParent;
+  while (scrollContainer && scrollContainer != document.body && scrollContainer.nodeName != "container")
+  {
+    scrollContainer = scrollContainer.offsetParent;
+  }
+
+  var min_top = 20;
+  if( scrollContainer && scrollContainer.offsetHeight < scrollContainer.scrollHeight )
+  {
+    if( this.offsetTop < scrollContainer.scrollTop + min_top )
+    {
+      scrollContainer.scrollTop = this.offsetTop - min_top;
+    }
+    else if( this.offsetTop + this.offsetHeight > scrollContainer.scrollTop + scrollContainer.offsetHeight - min_top )
+    {
+      scrollContainer.scrollTop = 
+        this.offsetTop + this.offsetHeight - scrollContainer.offsetHeight + min_top;
+    }
+  }
+}
+
 
 /**
  * Get the text content of the first node in Node with the name nodeName
