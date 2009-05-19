@@ -571,50 +571,60 @@ start-search-scope ~ item {
 start-search-scope ~ end-search-scope ~ item {
   background-color: transparent;
   }
-  
-.metrics ul {
+
+.css-layout layout-container
+{
+  display: table;
+  margin: 0 auto;
+  padding: 15px;
+  max-width: 250px;
+}
+.css-layout layout-container ul 
+{
   margin:0;
   padding:0;
-  list-style:none;
-  display:table-row;
-  }
-.metrics li {
+  list-style: none;
+  display: table-row;
+}
+.css-layout layout-container li 
+{
   display: table-cell;
   border: 1px solid transparent;
-  text-align:center;
-  vertical-align:middle;
+  text-align: center;
+  vertical-align: middle;
   padding: 1px;
-  }
-.metrics p {
+  cursor: pointer;
+}
+.css-layout layout-container p 
+{
   position:relative;
   margin:0;
   padding:0;
-  }
-.metrics span {
+}
+.css-layout layout-container span 
+{
   position:absolute;
   top:0;
   left:0;
   font-size: 11px;
-  }
-.metrics .element {
-  white-space:nowrap
-  }
-.metrics .element li {
+}
+
+.css-layout layout-container .dimension li 
+{
   width: 300px
-  }
-.metrics .element .elementHeight{
+}
+.css-layout layout-container .dimension ul + ul li
+{
   text-align:left
-  }
-.metrics .element,
-.metrics .padding,
-#tree .metrics.margin {
+}
+.css-layout layout-container .dimension,
+.css-layout layout-container .padding,
+.css-layout layout-container .margin,
+.css-layout layout-container .border 
+{
   border-color: #324c74;
-  background-color: #fff;
-  }
-.metrics .border {
-  border-color: #324c74;
-  background-color:#c7d4e8;
-  }
+}
+
   
 offsets-container {
   display:block;
@@ -691,6 +701,7 @@ stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
 {
   background-color: #f9f9ec;
 }
+
 
 .css-layout h2 {
   font-size: 1.2em;
@@ -796,10 +807,59 @@ breadcrumb span:hover, .css-layout breadcrumb span:hover
   border-color: hsl(240, 50%, 70%);
 }
 
+/* debug */
+d
+{
+  color: #999;
+}
+
 [handler="dom-resource-link"]:hover
 {
   text-decoration: underline;
   color: #4d1100;
 }
 
+.host-spotlight h3 
+{
+  display: inline-block;
+  margin: .5em 0;
+  border: 1px solid #ccc;
+  padding-left: .5em;
+}
+
+
+.host-spotlight label 
+{
+  display: inline-block;
+  margin-left: 1.5em;
+}
+
+.host-spotlight cst-select
+{
+  margin-right: 0;
+}
+
+.reset-defaults
+{
+  vertical-align: middle;
+  margin-left: 2em;
+}
+
+.advanced-spotlight-color-settings
+{
+  border-collapse: collapse;
+  margin: 1.1em 0;
+}
+
+.advanced-spotlight-color-settings td,
+.advanced-spotlight-color-settings th
+{
+  border: 1px solid #ccc;
+  padding: .3em 1em;
+}
+
+.advanced-spotlight-color-settings th
+{
+  text-align: left;
+}
 
