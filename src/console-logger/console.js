@@ -587,7 +587,7 @@ eventHandlers.click['error-log-list-expand-collapse'] = function(event, target)
         var row = document.render(templates.error_log_detail_row(entry));
         target.parentNode.insertAfter(row, target);
         target.swapClass("collapsed", "expanded");
-        row.scrollIntoView(false);
+        row.scrollSoftIntoContainerView();
     }
 }
 
