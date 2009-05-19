@@ -60,6 +60,7 @@ var ViewBase = new function()
     this.container_ids = [];
     this.type = this.type || 'single-view';
     this.default_handler = default_handler || '';
+    this.requires_view || ( this.requires_view = '' );
     if(!window.views)
     {
       window.views = {};

@@ -67,14 +67,9 @@ cls.DOMInspectorActions = function(id)
     left_right: function(ele)
     {
       return \
-      ( "input" == ele.nodeName ) ||
       ( !_is_script_node(ele) &&
-        ( /^key|value|input$/.test(ele.nodeName.toLowerCase()) ||
-          ( "text" == ele.nodeName && ele.textContent.length ) ||
-          ( "node" == ele.nodeName  &&
-            ( ele.textContent.slice(0,2) != "</" ||
-              // it is a closing tag but it's also the only tag in this line
-              ( ele.parentNode.getElementsByTagName('node')[0] == ele ) ) ) ) );
+        ( /^key|value|input|node$/.test(ele.nodeName.toLowerCase()) ||
+          "text" == ele.nodeName && ele.textContent.length ) );
     },
     up_down: function(ele, start_ele)
     {
@@ -123,17 +118,20 @@ cls.DOMInspectorActions = function(id)
   {
     if( view_container && nav_target )
     {
-      var tag_name = nav_target.nodeName.toLowerCase();
-      this.setSelected
-      ( 
-        nav_target = 
-        new_container.firstChild.getElementsByTagName(tag_name)
-        [
-          view_container_first_child.getElementsByTagName(tag_name).indexOf(nav_target)
-        ]
-      );
+      /*
+        the logic to reset the target must be improved
+      */
+      var 
+      tag_name = nav_target.nodeName.toLowerCase(),
+      count = 0,
+      new_container_elements = new_container.firstChild.getElementsByTagName(tag_name),
+      old_container_elements = view_container_first_child.getElementsByTagName(tag_name),
+      index = old_container_elements.indexOf(nav_target);
+
+      while( !( nav_target = new_container_elements[index - count] ) && count++ < index );
       view_container = new_container;
       view_container_first_child = new_container.firstChild;
+      this.setSelected(nav_target || ( nav_target = this.getFirstTarget() ) );
     }
   }
 
