@@ -294,6 +294,9 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
 
   eventHandlers.keyup['commandline'] = function(event)
   {
+    /*
+      TODO use the Keyhandler Classes
+    */  
     if(event.keyCode == 38 || event.keyCode == 40)
     {
       event.preventDefault();
@@ -333,15 +336,18 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
   
   eventHandlers.keypress['commandline'] = function(event)
   {
-    var target = event.target;
+    /*
+      TODO use the Keyhandler Classes
+    */  
+    var target = event.target, key_code = event.keyCode;
     if( !(event.shiftKey || event.ctrlKey || event.altKey ) )
     {
-      switch(event.keyCode)
+      switch(key_code)
       {
         case 38:
         case 40:
         {
-          line_buffer_cursor += event.keyCode == 38 ? -1 : 1;
+          line_buffer_cursor += key_code == 38 ? -1 : 1;
           line_buffer_cursor = 
             line_buffer_cursor < 0 ? line_buffer.length-1 : line_buffer_cursor > line_buffer.length-1 ? 0 : line_buffer_cursor;
           __textarea_value = event.target.value = (line_buffer.length ? line_buffer[line_buffer_cursor] : '').replace(/\r\n/g, ''); 
@@ -349,28 +355,28 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
           break;
         }
         case 16:
-        {
-          break;
-        }
         case 9:
         {
-          event.preventDefault();
-          if( __selection_start == -1 )
-          {
-            __selection_start = target.selectionStart;
-          }
-          var cur_str = target.value.slice(0, __selection_start);
-          var suggest = autocomplete.getSuggest(cur_str, event.shiftKey, arguments);
-          if( suggest )
-          {
-            target.value = cur_str + suggest;
-          }
           break;
         }
         default:
         {
           __selection_start = -1;
         }
+      }
+    }
+    if(key_code == 9)
+    {
+      event.preventDefault();
+      if( __selection_start == -1 )
+      {
+        __selection_start = target.selectionStart;
+      }
+      var cur_str = target.value.slice(0, __selection_start);
+      var suggest = autocomplete.getSuggest(cur_str, event.shiftKey, arguments);
+      if( suggest )
+      {
+        target.value = cur_str + suggest;
       }
     }
   }
@@ -385,6 +391,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     var match = [];
     var match_cur = 0;
     var local_frame_index = 0;
+    var _shift_key = false;
    
     
     const 
@@ -473,8 +480,33 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
       }
     }
 
+    this._move_match_cursor = function(shift_key, delta)
+    {
+      if(shift_key)
+      {
+        match_cur -= delta || 1;
+        if( match_cur < 0 )
+        {
+          match_cur = match.length ? match.length - 1 : 0;
+        }
+      }
+      else
+      {
+        match_cur += delta || 1;
+        if( match_cur >= match.length )
+        {
+          match_cur = 0;
+        }
+      }
+      return shift_key;
+    }
+
     this.getSuggest = function(str, shift_key, old_args)
     {
+      if( match.length && shift_key != _shift_key )
+      {
+        _shift_key = this._move_match_cursor(shift_key, 2);
+      }
       if( !str || str != str_input )
       {
         var last_bracket = str.lastIndexOf('['), last_brace = str.lastIndexOf('(');
@@ -528,23 +560,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
 
       }
       ret = match[match_cur] || '';
-      if(shift_key)
-      {
-        match_cur--;
-        if( match_cur < 0 )
-        {
-          match_cur = match.length ? match.length - 1 : 0;
-        }
-      }
-      else
-      {
-        match_cur++;
-        if( match_cur >= match.length )
-        {
-          match_cur = 0;
-        }
-      }
-
+      this._move_match_cursor(shift_key);
       return  ret.slice(id.length);
     }
 
