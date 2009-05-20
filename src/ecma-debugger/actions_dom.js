@@ -81,7 +81,7 @@ cls.DOMInspectorActions = function(id)
               // it is a closing tag but it's also the only tag in this line
               ( ele.parentNode.getElementsByTagName('node')[0] == ele ) ) &&
             "input" != ele.parentNode.firstElementChild.nodeName.toLowerCase() ) ) ||
-       // in tree style the text nodes are in a own line
+       // in tree style the text nodes are in a separate line
        ( self.is_dom_type_tree && 
             "text" == ele.nodeName.toLowerCase() && 
             !ele.parentNode.contains(start_ele) );
