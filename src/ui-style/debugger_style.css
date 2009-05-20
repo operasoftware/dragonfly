@@ -702,6 +702,11 @@ stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
   background-color: #f9f9ec;
 }
 
+.tree-style .text-node
+{
+  padding-right: 1ex;
+}
+
 
 .css-layout h2 {
   font-size: 1.2em;
