@@ -359,6 +359,8 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
       if( suggest )
       {
         target.value = cur_str + suggest;
+        target.selectionStart = __selection_start;
+        target.selectionEnd = target.value.length;
       }
     }
   }
