@@ -69,8 +69,6 @@
     cursor: pointer;
 }
 
-
-
 .request-table button.expand-collapse {
   height: 15px;
   width: 19px;
@@ -145,6 +143,19 @@ button[handler="clear-request-list"]:before {
     background-position: right;
     border-left: solid 1px #9EADC4;
     min-width: 10px;
+}
+
+/* Style for the graph cell of the first row, with the summary */
+.request-table tr:nth-child(1) td:nth-child(7) {
+    background-image:url('../ui-images/http-graph-full.png');
+    background-position: 0 1px;
+    background-repeat: repeat-x;
+}
+
+.request-table tr:nth-child(1) td:nth-child(7) span.totaltime {
+    /*padding-left: 12px;*/
+    float: right;
+
 }
 
 a.reference-link {

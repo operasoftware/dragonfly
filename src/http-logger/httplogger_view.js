@@ -95,7 +95,8 @@ cls.RequestListView = function(id, name, container_class)
         var log = HTTPLoggerData.getLog();
 
         if (!this.viewIsValid(log)) {
-            container.clearAndRender(['table',['tbody'], 'class', 'request-table']);
+            container.clearAndRender(['table',['tbody'], 'class',
+                                      'request-table']);
             nextToRendereIndex = 0;
         }
         tableBodyEle = container.getElementsByTagName('tbody')[0];
@@ -112,9 +113,16 @@ cls.RequestListView = function(id, name, container_class)
         
         var firstTime = log.length ? log[0].request.time : lastTime;
         
-        // partial function invocation that closes over expandedItems
+        // partial function invocation that closes over expandedItems and
+        // passes an arg if if it's the first element
+        var isFirst = true;
         var fun = function(e) {
-            return window.templates.request_list_row(e, expandedItems, firstTime, lastTime, viewMap);
+            var data = window.templates.request_list_row(e, expandedItems,
+                                                         firstTime, lastTime,
+                                                         viewMap,
+                                                         isFirst&log.length>1);
+            isFirst = false;
+            return data;
         }
 
         var tpls = log.slice(nextToRendereIndex).map(fun);
@@ -237,7 +245,6 @@ eventHandlers.click['select-http-detail-view'] = function(event, target)
 {
     window.views['request_list'].selectDetailView(target.getAttribute("data-requestid"), target.getAttribute("data-viewname"));
 };
-
 
 
 /**
