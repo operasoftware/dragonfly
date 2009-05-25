@@ -1,0 +1,97 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title> </title>
+<link rel="stylesheet" href="../../src/ui-style/ui.css"/>
+
+<script src="../../src/scripts/dom.js"/>
+<script src="../../src/scripts/colors.js"/>
+
+<script src="../../src/ui-scripts/ui-actions.js"/>
+<script src="../../src/ui-scripts/cst-select.js"/>
+<script><![CDATA[
+
+var opt_list = \
+[
+  {
+    value: 0, 
+    title: "some long text variant", 
+    text: "test text 0"
+  },
+  {
+    value: 1, 
+    title: "some long text variant", 
+    text: "test text 1 xcvxcv xcvxc xcvx"
+  },
+  {
+    value: 2, 
+    title: "some long text variant", 
+    text: "test text 2"
+  },
+  {
+    value: 3, 
+    title: "some long text variant", 
+    text: "test text 3"
+  },
+  {
+    value: 4, 
+    title: "some long text variant", 
+    text: "test text 4"
+  },
+  {
+    value: 5, 
+    title: "some long text variant", 
+    text: "test text 5"
+  },
+];
+
+var test_select = new CstSelectWithAction("test", "test-class");
+
+test_select._action_entries =   
+[
+    {
+      handler: 'reload', 
+      title: "reload document", 
+      text: "reload document"
+    },
+    {
+      handler: 'foo', 
+      title: "rfoo foo", 
+      text: "foo foo foo"
+    },
+];
+eventHandlers.click['reload'] = function(event, target)
+{
+  alert('reload');
+}
+eventHandlers.click['foo'] = function(event, target)
+{
+  alert('foo');
+}
+test_select._option_list = opt_list;
+
+onload = function()
+{
+  var tmpl = \
+  [
+    "div",
+    "some text: ",
+    test_select.getTemplate()(),
+    " some more text"
+  ];
+
+  document.getElementsByTagName('body')[0].render(tmpl);
+}
+
+document.addEventListener('change', function(event){opera.postError(event.target.value)}, false);
+
+]]></script>
+
+</head>
+<body>
+
+<p><input type="button" value="test modal" onclick="alert(this)"/></p>
+<cst-select cst-id="test"  handler="test"  unselectable="on" style="float: right">
+  <cst-drop-down/>
+</cst-select>
+</body>
+</html>
