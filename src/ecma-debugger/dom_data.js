@@ -251,6 +251,10 @@ var dom_data = new function()
             getInitialView(data_runtime_id);
           }
         }
+        else
+      {
+        views[id].update();
+      }
      // }
     }
   }

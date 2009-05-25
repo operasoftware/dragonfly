@@ -1362,12 +1362,13 @@ pin-label.pinned
 
 .info-box
 {
-  background-image:-o-skin('Speed Dial Configuration Dialog No Alpha Skin');
+  background-image:-o-skin('Speed Dial Configuration Dialog No Alpha Skin') !important;
   font-size: 22px;
-  color: #999;
+  color: #999 !important;
   margin: 30px 50px 0 50px;
   text-align: center;
   padding: 18px 20px 24px 14px;
+  font-family: sans-serif !important;
 }
 .info-box p 
 {

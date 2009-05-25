@@ -240,6 +240,15 @@ cls.JsSourceView = function(id, name, container_class)
               ]
             );
         }
+        else
+        {
+          document.getElementById('js-source-scroller').render(
+              ['div', 
+                ['p', ui_strings.S_INFO_WINDOW_HAS_NO_RUNTIME],
+                'class', 'info-box'
+              ] 
+            );
+        }
       }
       
     }
