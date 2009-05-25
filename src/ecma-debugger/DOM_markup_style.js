@@ -169,10 +169,21 @@ var DOM_markup_style = function(id, name, container_class)
     var style = null;
     var is_not_script_node = true;
     var is_debug = ini.debug;
-
-    if( ! data.length )
+    
+    if(!data.length)
     {
-      container.innerHTML = "<div class='padding' edit-handler='edit-dom'><p></p></div>";
+      if(!dom_data.getDataRuntimeId())
+      {
+        container.innerHTML = 
+          "<div class='padding'><div class='info-box'>" +
+            ui_strings.S_INFO_WINDOW_HAS_NO_RUNTIME +
+          "</div></div>";
+      }
+      else
+      {
+        container.innerHTML = "<div class='padding' edit-handler='edit-dom'><p></p></div>";
+      }
+      topCell.statusbar.updateInfo('');
     }
     else
     {

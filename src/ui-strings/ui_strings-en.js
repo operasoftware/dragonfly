@@ -263,6 +263,16 @@ ui_strings.S_BUTTON_SHOW_REQUEST_HEADERS = 'Headers';
 ui_strings.S_BUTTON_SHOW_REQUEST_RAW = 'Raw';
 
 /*
+  * Menus
+  */
+
+/* DESC: Select the active window as debugger context. */
+ui_strings.S_MENU_SELECT_ACTIVE_WINDOW = 'Select Active Window';
+/* DESC: Reload the debug context. */
+ui_strings.S_MENU_RELOAD_DEBUG_CONTEXT = 'Reload Debug Context';
+
+
+/*
  * Labels
  */
 
@@ -349,6 +359,9 @@ ui_strings.S_LABEL_SPOTLIGHT_TITLE_LOCKED_ELEMENTS = "Spotlight Locked Elements"
 
 /* DESC: Currently no scripts are loaded and a reload of the page will resolve all linked scripts.*/
 ui_strings.S_INFO_RELOAD_FOR_SCRIPT = 'Click the reload button above to fetch the scripts for the selected window';
+
+/* DESC: Information shown if the window has no runtime, e.g. speed dial. */
+ui_strings.S_INFO_WINDOW_HAS_NO_RUNTIME = 'This window has no runtime';
 /* DESC: Information shown if the document does not hold any scripts. */
 ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS = 'This document has no scripts';
 /* DESC: Information shown if the document does not hold any style sheet. */

@@ -178,6 +178,7 @@ var runtimes = new function()
       window_id = '',
       children = null, child = null, j = 0;
     var cur = '';
+
     for ( ; r_t = r_ts[i]; i++)
     {
       runtimeId = r_t.getNodeData('runtime-id'); 
@@ -276,6 +277,9 @@ var runtimes = new function()
         }
       }
     }
+    return r_ts;
+    
+
   }
   
   // TODO remove this code
@@ -478,12 +482,30 @@ var runtimes = new function()
 
   var set_new_debug_context = function(xml, win_id)
   {
-    
-    parseRuntime(xml);
+    var runtimes = parseRuntime(xml);
     host_tabs.setActiveTab(win_id);
-    if( settings.runtimes.get('reload-runtime-automatically') )
+    if( runtimes.length )
     {
-      self.reloadWindow();
+      if( settings.runtimes.get('reload-runtime-automatically') )
+      {
+        self.reloadWindow();
+      }
+    }
+    else
+    {
+      if (win_id in __window_ids)
+      {
+        cleanupWindow(win_id);
+      }
+      else
+      {
+        __window_ids[win_id] = true;
+      }
+      __selected_runtime_id = '';
+      __selected_script = '';
+      views['js_source'].update();
+      window['cst-selects']['js-script-select'].updateElement();
+      window['cst-selects']['cmd-runtime-select'].updateElement();
     }
   }
 

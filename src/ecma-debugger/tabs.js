@@ -72,13 +72,11 @@ var host_tabs = new function()
 
   this.setActiveTab = function(window_id)
   {
-
     activeTabOnChange();
     __window_id = window_id;
     runtimes.setActiveWindowId(window_id);
     __activeTab = runtimes.getRuntimeIdsFromWindow(window_id);
     messages.post('active-tab', {activeTab: __activeTab} ); 
-    
   }
 
   this.updateActiveTab = function()

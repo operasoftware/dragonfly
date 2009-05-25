@@ -163,12 +163,12 @@ eventHandlers.click['top-window-toggle-attach'] = function(event)
   
   if( is_attached )
   {
-    topCell.tab.changeStyleProperty("padding-right", 275);
+    topCell.tab.changeStyleProperty("padding-right", 50);
     topCell.toolbar.changeStyleProperty("padding-right", -30);
   }
   else
   {
-    topCell.tab.changeStyleProperty("padding-right", -275);
+    topCell.tab.changeStyleProperty("padding-right", -50);
     topCell.toolbar.changeStyleProperty("padding-right", 30);
   }
 

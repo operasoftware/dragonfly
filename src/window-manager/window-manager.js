@@ -434,7 +434,7 @@ var windowsDropDown = new function()
    
   }
 }
-
+ 
 eventHandlers.change['select-window'] = function(event, target)
 {
   if(target.value)
@@ -444,14 +444,98 @@ eventHandlers.change['select-window'] = function(event, target)
   }
 }
 
+cls.DebuggerMenu = function(id, class_name)
+{
+  /*
+  * TODO needs to be merged with windowsDropDown
+  */
+
+  var selected_value = "";
+
+  this._action_entries =   
+  [
+    {
+      handler: 'reload-window',  
+      text: ui_strings.S_MENU_RELOAD_DEBUG_CONTEXT
+    }
+  ];
+
+  this.getSelectedOptionValue = function()
+  {
+
+  }
+
+  this.templateOptionList = function(select_obj)
+  {
+    var 
+    win_list = window_manager_data.window_list,
+    active_window = window_manager_data.active_window,
+    debug_context = window_manager_data.debug_context,
+    win = null,
+    ret = [],
+    opt = null, 
+    i = 0;
+
+    if( active_window != debug_context )
+    {
+      ret[ret.length] = [
+          "cst-option",
+          ui_strings.S_MENU_SELECT_ACTIVE_WINDOW,
+          "opt-index", i,
+          "value", active_window,
+          "unselectable", "on"
+        ]
+    }
+    ret = ret.concat(select_obj._action_entries.map(this._action_entry));
+    ret[ret.length] = ["hr"];
+    for( ; win = win_list[i]; i++ )
+    {
+      ret[ret.length] = [
+          "cst-option",
+          win['title'],
+          "opt-index", i,
+          "value", win['window-id'],
+          "class", win['window-id'] == debug_context ? "selected" : "",
+          "unselectable", "on"
+        ]
+    }
+    return ret;
+  }
+  
+  this.checkChange = function(target_ele)
+  {
+    var win_id = target_ele.getAttribute('value');
+    if( win_id != window_manager_data.debug_context )
+    {
+      window_manager_data.setDebugContext(win_id);
+      return true;
+    }
+  }
+
+  // this.updateElement
 
 
 
+  this.getTemplate = function()
+  {
+    var select = this;
+    return function()
+    {
+      return [
+          "cst-select",
+          ["cst-drop-down"],
+          "cst-id", select.getId(),
+          "handler", select.getId(),
+          "unselectable", "on",
+          "class", select.class_name
+        ]
+    }
+  }
 
+  this.init(id, class_name);
+  this.select_template = this.getTemplate();
+}
 
+cls.DebuggerMenu.prototype = new CstSelectWithAction();
 
-
-
-
-
-
+new cls.DebuggerMenu('debugger-menu', 'debugger-menu');

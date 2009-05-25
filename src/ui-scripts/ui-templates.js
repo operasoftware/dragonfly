@@ -179,10 +179,7 @@
     var attached = window.opera.attached;
     return ['window-controls',
       is_attached
-      ? ['pin-label', 
-         ['span', '\u00A0'], 
-         'handler', 'switch-pin-debug-context'
-        ].concat(settings['general'].get('pin-active-window') ? ['class', 'pinned'] : [] )
+      ? window['cst-selects']['debugger-menu'].select_template()
       : [],
       ['button', 
         'handler', 'top-window-toggle-attach', 
