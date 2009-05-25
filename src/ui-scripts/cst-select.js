@@ -31,7 +31,8 @@
     var 
     ele = event.target,
     target = event.target, 
-    index = 0;
+    index = 0,
+    handler = '';
 
     event.stopPropagation();
     event.preventDefault();
@@ -42,7 +43,17 @@
       {
         return;
       }
-      if( select_obj.checkChange(target)  )
+      /*
+        this is a bit a hack to support action entries in the select menu 
+      */
+      if( handler = target.getAttribute('handler') )
+      {
+        if( eventHandlers.click[handler] )
+        {
+          eventHandlers.click[handler](event, target);
+        }
+      }
+      else if( select_obj.checkChange(target)  )
       {
         var select = select_obj.updateElement();
         if( select )
@@ -55,7 +66,7 @@
     modal_box.parentElement.removeChild(modal_box);
     modal_box = null;
     select_obj = null;
-    delete EventHandler.__modal_mode;
+    EventHandler.__modal_mode = false;
   }
 
   var click_handler = function(event)
@@ -98,9 +109,9 @@
       {
         style += "left: " + left + "px; max-width: " + max_width + "px;";
       };
-      style += "min-width:" + ( select.offsetWidth < max_width ? select.offsetWidth : max_width ) + "px;";
+      style += "min-width:" + ( select.offsetWidth < max_width ? select.offsetWidth : (  max_width > 0 ? max_width : 0 ) ) + "px;";
       modal_box.style.cssText = style;
-      EventHandler.__modal_mode= true;
+      EventHandler.__modal_mode = true;
     }
   }
 
@@ -121,7 +132,11 @@
   this.setNewValues = function(select_ele)
   {
     select_ele.value = this.getSelectedOptionValue();
-    select_ele.firstChild.textContent = this.getSelectedOptionText();
+    var firstElementChild = select_ele.firstElementChild;
+    if(firstElementChild && firstElementChild.nodeName == "cst-value" )
+    {
+      firstElementChild.textContent = this.getSelectedOptionText();
+    }
   }
 
   this.updateElement = function()
@@ -151,7 +166,7 @@
     this._option_list = this._option_list || [];
     this._id = id;
     this.class_name = class_name || '';
-    this.type = type || '';
+    this.type = type || '';    
   }
 
   /* default interface implemetation */
@@ -465,14 +480,76 @@ var CstSelectColorBase = function(id, index)
   }
 }
 
-CstSelectColorBase.prototype = CstSelect.prototype = CstSelectBase;
+var CstSelectWithActionBase = function(id, class_name, type)
+{
+  /*
+  this is a quick hack to have menu actions in a select
+  */
+  this._action_entries = [];
+
+  var action_entry = function(action)
+  {
+    return       [
+      "cst-option",
+      action.text,
+      "handler", action.handler,
+      "title", action.title,
+      "unselectable", "on"
+    ]
+  }
+
+
+
+  this.templateOptionList = function(select_obj)
+  {
+    var 
+    ret = select_obj._action_entries.map(action_entry),
+    opt_list = select_obj._option_list,
+    opt = null, 
+    i = 0;
+
+    if(ret.length)
+    {
+      ret[ret.length] = ["hr"];
+    }
+    for( ; opt = opt_list[i]; i++)
+    {
+      ret[ret.length] = 
+      [
+        "cst-option",
+        opt.text,
+        "opt-index", i,
+        "title", opt.title,
+        "unselectable", "on"
+      ]
+    }
+    return ret;
+  }
+
+}
+
+
+
+CstSelectWithActionBase.prototype = 
+CstSelectColorBase.prototype = 
+CstSelect.prototype = 
+CstSelectBase;
 
 CstSelectColor = function(id, index)
 {
   this.init(id, index);
 };
 
+
+
 CstSelectColor.prototype = new CstSelectColorBase();
+
+CstSelectWithAction = function(id, class_name, type)
+{
+  this.init(id, class_name, type);
+};
+
+CstSelectWithAction.prototype = new CstSelectWithActionBase();
 
 ( window.templates || ( window.templates = {} ) )['cst-select'] = function(select)
 {
@@ -495,3 +572,5 @@ templates['cst-select-option-list'] = function(select_obj, select_ele)
     'style', 'top: -1000px; left: -1000px;'
   ].concat( select_obj.class_name ? ['class', select_obj.class_name] : [] );
 }
+
+

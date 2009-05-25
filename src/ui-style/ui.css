@@ -1163,6 +1163,17 @@ cst-option
   white-space: nowrap;
 }
 
+cst-select-option-list hr
+{
+  margin: 0;
+  padding: 0;
+  height: 1px;
+  border: none;
+  background-color: hsl(0, 0%, 60%);
+}
+
+
+
 cst-option.selected
 {
   background-color: #eec;

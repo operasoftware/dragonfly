@@ -1,72 +1,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title> </title>
-<style><![CDATA[
+<link rel="stylesheet" href="../../src/ui-style/ui.css"/>
 
-cst-select
-{
-  display: inline-block;
-  position: relative;
-  background-image:-o-skin('Start Skin');
-  padding: .1em 18px .1em .3em;
-}
-
-cst-drop-down
-{
-  display: block;
-  width: 18px;
-  height: 1.4em;
-  background-image:-o-skin('Push Button Skin');
-  margin: -.1em -18px -.1em .3em;
-  vertical-align: top;
-  float: right;
-  cursor: pointer;
-}
-
-cst-drop-down:hover
-{
-  opacity: .7;
-
-}
-
-cst-drop-down:before
-{
-  display: inline-block;
-  content: "";
-  width: 18px;
-  height: 1.4em;
-  background-image: -o-skin('Dropdown Button Skin.pressed');
-}
-
-cst-select-option-list
-{
-  display: block;
-  position:absolute;
-  top: 40px;
-  border: 1px solid #999;
-  background-color: hsl(0, 0%, 95%);
-}
-
-cst-option
-{
-  display: block;
-  cursor: pointer;
-  padding: .1em .5em;
-  white-space: nowrap;
-}
-
-cst-option:hover
-{
-  background-color: #009;
-  color: #fff;
-}
-
-]]></style>
 <script src="../../src/scripts/dom.js"/>
 <script src="../../src/ui-scripts/cst-select.js"/>
 <script><![CDATA[
 
-
+window.EventHandler || ( window.EventHandler = {} ); 
 
 var opt_list = \
 [
@@ -124,6 +65,10 @@ document.addEventListener('change', function(event){opera.postError(event.target
 
 </head>
 <body>
+
 <p><input type="button" value="test modal" onclick="alert(this)"/></p>
+<cst-select cst-id="test"  handler="test"  unselectable="on" style="float: right">
+  <cst-drop-down/>
+</cst-select>
 </body>
 </html>
