@@ -165,6 +165,11 @@ window-controls button
   /* default padding values */
   padding: 1px 8px;
   margin: 2px 3px;
+  vertical-align: top;
+}
+window-controls cst-select
+{
+  vertical-align: top;
 }
 toolbar button:before, 
 top-toolbar button:before, 
@@ -1116,10 +1121,38 @@ cst-drop-down
   display: block;
   width: 18px;
   height: 24px;
-  background-image:-o-skin('Push Button Skin');
+  background-image: -o-skin('Push Button Skin');
   margin-right: -18px;
   vertical-align: top;
   float: right;
+}
+
+/* cst-select */.debugger-menu 
+{
+  padding-right: 0;
+  background-image: none;
+}
+
+.debugger-menu cst-drop-down
+{
+  width: 40px;
+  background: url('../ui-images/btn-debugger-menu.png');
+  margin-right: 0;
+}
+
+.debugger-menu cst-drop-down:hover
+{
+  background-position: 0px -24px;
+  opacity: 1;
+}
+.debugger-menu cst-drop-down:active
+{
+  background-position: 0px -48px;
+}
+
+.debugger-menu cst-drop-down:before
+{
+  display: none;
 }
 
 cst-drop-down:hover
@@ -1183,6 +1216,18 @@ cst-option:hover
 {
   background-color: #009;
   color: #fff;
+}
+
+.debugger-menu cst-option
+{
+  padding-left: 20px;
+}
+
+.debugger-menu cst-option.selected
+{
+  background-image: url('../ui-images/dragonfly-favicon.png');
+  background-repeat: no-repeat;
+  background-position: 2px 50%;
 }
 
 cst-select.color

@@ -337,7 +337,3 @@ eventHandlers.click['reload-window'] = function(event, target)
 {
   runtimes.reloadWindow();
 }
-
-
-
-

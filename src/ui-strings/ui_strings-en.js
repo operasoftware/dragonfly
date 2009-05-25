@@ -258,6 +258,16 @@ ui_strings.S_BUTTON_SHOW_REQUEST_HEADERS = 'Headers';
 ui_strings.S_BUTTON_SHOW_REQUEST_RAW = 'Raw';
 
 /*
+  * Menus
+  */
+
+/* DESC: Select the active window as debugger context. */
+ui_strings.S_MENU_SELECT_ACTIVE_WINDOW = 'Select Active Window';
+/* DESC: Reload the debug context. */
+ui_strings.S_MENU_RELOAD_DEBUG_CONTEXT = 'Reload Debug Context';
+
+
+/*
  * Labels
  */
 
