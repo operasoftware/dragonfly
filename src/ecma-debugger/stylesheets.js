@@ -444,6 +444,11 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
 
   prettyPrintRule[COMMON] = function(rule, do_shortcuts, search_active)
   {
+  /*
+    * TODO creating shorthands is not really a good idea 
+    * and should be removed as soon as we get the real css source files.
+    * we will have to see if we will still need a style sheet viewer
+    */
     const
     HEADER = 0,
     INDEX_LIST = 1,
@@ -518,7 +523,7 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
         ret += ( ret ? MARKUP_PROP_NL : MARKUP_EMPTY ) +
           shorthands[s_h_prop](s_h_prop, s_h_index, s_h_value, s_h_priority);
         s_h_count = s_h_count % 4;
-        while(s_h_count)
+        while(s_h_prop == 'border' && s_h_count)
         {
           ret += ( ret ? MARKUP_PROP_NL : MARKUP_EMPTY ) +
             INDENT +
