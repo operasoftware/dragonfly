@@ -265,11 +265,6 @@ eventHandlers.click['switch-info-type'] = function(event, target)
   }
 }
 
-eventHandlers.click['switch-pin-debug-context'] = function(event, target)
-{
-  settings['general'].set('pin-active-window', !settings['general'].get('pin-active-window'));
-  helpers.updatePinLabel();
-}
 
 
 
