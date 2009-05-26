@@ -137,8 +137,13 @@ var TabsBase = function()
             toolbars[view_id].addContainerId(toolbar_id);
           }
         }
+        // it's a top level tab with no view associated
+        else if(topCell.statusbar)
+        {
+          topCell.statusbar.updateInfo();
+        }
       }
-
+      
       var container = document.getElementById(this.type + '-to-' + this.cell.id) || this.render();
       if(container)
       {
@@ -169,10 +174,7 @@ var TabsBase = function()
       {
         this._history.splice(0, this._history.length - HISTORY_MAX_LENGTH); 
       }
-      if(topCell.statusbar)
-      {
-        topCell.statusbar.updateInfo();
-      }
+
       messages.post("show-view", {id: view_id});
       if(views[view_id].type == 'composite-view' )
       {
@@ -184,6 +186,7 @@ var TabsBase = function()
         global_state.ui_framework.last_selected_tab = view_id;
       }
     }
+    
   }
 
   this.trySetAnActiveTab = function()
