@@ -199,7 +199,8 @@ new Switches
     if( msg.id == 'stylesheets' )
     {
       textSearch.setContainer(msg.container);
-      textSearch.update();
+      textSearch.setFormInput(views.stylesheets.getToolbarControl( 
+          msg.container, 'stylesheets-text-search'));
     }
   }
 
