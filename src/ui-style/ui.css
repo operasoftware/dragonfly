@@ -305,16 +305,15 @@ toolbar-filters em {
   vertical-align: top;
   }
 
-
-
 toolbar-filters filter input {
-  width: 140px;
+  width: 138px;
   height: 20px;
   margin: 1px;
-  margin-left: -140px;
+  margin-left: -141px;
   background: none;
-  border:none;
+  border: none;
   padding: 0;
+  padding-right: 2px;
   color: #666;
   }
 
