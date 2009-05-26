@@ -180,7 +180,7 @@ var dom_data = new function()
             }
             else
             {
-              services['ecmascript-debugger'].clearSpotlight(data_runtime_id);
+              hostspotlighter.clearSpotlight();
               host_tabs.activeTab.removeEventListener('mouseover', spotlight);
             }
             break;
@@ -458,7 +458,7 @@ var dom_data = new function()
 
   var spotlight = function(event)
   {
-    services['ecmascript-debugger'].spotlight(event['runtime-id'], event['object-id']);
+    hostspotlighter.spotlight(event['object-id']);
   }
 
   this.highlight_on_hover = function(event)
@@ -469,7 +469,7 @@ var dom_data = new function()
     }
     else
     {
-      services['ecmascript-debugger'].clearSpotlight(data_runtime_id);
+      hostspotlighter.clearSpotlight();
       host_tabs.activeTab.removeEventListener('mouseover', spotlight);
     }
   }
@@ -691,6 +691,12 @@ var dom_data = new function()
       for( ; data[i] && !( ( data[i][TYPE] == 1 || data[i][TYPE] == 9 ) && data[i][DEPTH] < depth ); i-- );
       return data[i] && data[i][ID] || '';
     }
+  }
+
+  this.getRootElement = function()
+  {
+    for( var i = 0; data[i] && data[i][TYPE] != 1; i++);
+    return data[i] && data[i][ID] || 0;
   }
   
   messages.addListener('active-tab', onActiveTab);
