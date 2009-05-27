@@ -389,7 +389,15 @@ var dom_data = new function()
       for( ; data[i] && data[i][ID] != object_id; i += 1 );
       if( data[i] )
       {
-        Array.prototype.splice.apply( data, [i + 1, 0].concat(_data) );
+        // the traversal was subtree
+        if(object_id == _data[0][ID]) 
+        {
+          Array.prototype.splice.apply( data, [i, 1].concat(_data) );
+        }
+        else
+        {
+          Array.prototype.splice.apply( data, [i + 1, 0].concat(_data) );
+        }
         for(i = 0 ; view_id = view_ids[i]; i++)
         {
           views[view_id].update();
@@ -403,10 +411,10 @@ var dom_data = new function()
   }
 
 
-  this.getChildernFromNode = function(object_id)
+  this.getChildernFromNode = function(object_id, traversal)
   {
     var tag = tagManager.setCB(null, handleGetChildren, [data_runtime_id, object_id]);
-    services['ecmascript-debugger'].inspectDOM(tag, object_id, 'children', 'json'  );
+    services['ecmascript-debugger'].inspectDOM(tag, object_id, traversal, 'json'  );
   }
 
   this.closeNode = function(object_id, do_not_update)
