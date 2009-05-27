@@ -556,7 +556,7 @@ var action_handler = new function()
     }
     else
     {
-      dom_data.getChildernFromNode(ref_id);
+      dom_data.getChildernFromNode(ref_id, event.ctrlKey ? 'subtree' : 'children' );
     }
     
   }

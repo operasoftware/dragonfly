@@ -66,12 +66,11 @@ cls.StylesheetSelect = function(id, class_name)
 {
 
   var selected_value = "";
+  var self = this;
 
   const 
-    HREF = 2,
+  HREF = 2,
   TITLE = 7;
-
-  
 
   this.getSelectedOptionText = function()
   {
@@ -98,7 +97,6 @@ cls.StylesheetSelect = function(id, class_name)
 
   this.templateOptionList = function(select_obj)
   {
-    
     // TODO this is a relict of protocol 3, needs cleanup
     var active_window_id = runtimes.getActiveWindowId();
 
@@ -120,13 +118,17 @@ cls.StylesheetSelect = function(id, class_name)
     // handleGetRulesWithIndex in stylesheets will 
     // set for this reason __call_count on the event object
     var rules = stylesheets.getRulesWithSheetIndex(rt_id, index, arguments);
-
-    if(rules)
+    if(rules && rules.index != index)
     {
       delete target_ele.__call_count;
       stylesheets.setSelectedSheet(rt_id, index, rules);
       views['stylesheets'].update();
+      self.updateElement();
     }
+    // change is checked only when used as callback 
+    // in stylesheets, not in cst_select base
+    // change event will not be fired 
+    return false;
   }
 
   this.init(id, class_name);
