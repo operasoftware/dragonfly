@@ -233,9 +233,21 @@ cls.DOMInspectorActions = function(id)
 
   this.target_ctrl_enter = function(event, action_id)
   {
-    if(nav_target && nav_target.nodeName == "node" )
+    if(nav_target)
     {
-      nav_target.releaseEvent("dblclick");
+      switch (nav_target.nodeName.toUpperCase())
+      {
+        case "NODE":
+        {
+          nav_target.releaseEvent("dblclick");
+          break;
+        }
+        case "INPUT":
+        {
+          nav_target.releaseEvent("click", {ctrlKey: true});
+          break;
+        }
+      } 
     }
     return false;
   }
