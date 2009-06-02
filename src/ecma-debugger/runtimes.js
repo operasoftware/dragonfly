@@ -28,6 +28,8 @@ var runtimes = new function()
 
   var runtime_views = [];
 
+  var __replaced_scripts = {};
+
   var __selected_runtime_id = '';
 
   var __next_runtime_id_to_select = '';
@@ -324,6 +326,7 @@ var runtimes = new function()
     for( sc in __scripts )
     {
       old_rt = __runtimes[__scripts[sc]['runtime-id']] || __old_runtimes[__scripts[sc]['runtime-id']] || {};
+      // TODO check for script-type as well?
       if( ( 
             ( __scripts[sc]['uri'] && __scripts[sc]['uri'] == script['uri'] ) 
             || __scripts[sc]['script-data'] == script['script-data'] 
@@ -354,6 +357,7 @@ var runtimes = new function()
       // the script could be in a pop-up window
       if( old_rt['window-id'] == new_rt['window-id'] )
       {
+        __replaced_scripts[__scripts[sc]['script-id']] = new_script_id;
         delete __scripts[sc];
       }
     }
@@ -869,7 +873,7 @@ var runtimes = new function()
 
   this.getScript = function(scriptId)
   {
-    return __scripts[scriptId];
+    return __scripts[scriptId] || __scripts[__replaced_scripts[scriptId]] || null;
   }
 
   this.getStoppedAt = function(scriptId)
