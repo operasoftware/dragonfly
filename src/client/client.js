@@ -401,6 +401,13 @@ var client = new function()
 
   this.setupTopCell = function()
   {
+    for( var tabs = viewport.getElementsByTagName('tab'), i = 0; tab = tabs[i]; i++)
+    {
+      if( tab.hasClass('active') )
+      {
+        messages.post("hide-view", {id: tab.getAttribute('ref-id')});
+      }
+    }
     viewport.innerHTML = '';
     new TopCell
     (
