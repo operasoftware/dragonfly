@@ -2,7 +2,6 @@
 
 cls.JsSourceView = function(id, name, container_class)
 {
-
   // TODO this view can just be visible once at the time otherwise there will be problems
   // this must be refactored. line_arr, state_arr, breakpoints must be added to the script object
   // getting context values must move out of this class
@@ -155,7 +154,6 @@ cls.JsSourceView = function(id, name, container_class)
   {
     // TODO this must be refactored
     // the challenge is to do as less as possible in the right moment
-    
     view_invalid = view_invalid 
     && script.id 
     && runtimes.getSelectedScript() 
@@ -217,7 +215,7 @@ cls.JsSourceView = function(id, name, container_class)
       }
       else if( script.id )
       {
-        setScriptContext(script.id, __current_line);
+        script.has_context = setScriptContext(script.id, __current_line);
         this.showLine( script.id, __current_line );
       }
       else
@@ -313,26 +311,47 @@ cls.JsSourceView = function(id, name, container_class)
     return max_index;
   }
 
+  var updateScriptContext = function()
+  {
+    if( script.scrollWidth > script.offsetWidth )
+    {
+      document.getElementById(scroll_container_id).style.bottom = 
+          context['scrollbar-width'] + 'px';
+      source_content.style.width = script.scrollWidth +'px';
+    }
+    else
+    {
+      document.getElementById(scroll_container_id).style.removeProperty('bottom');
+      source_content.style.removeProperty('width');
+    }
+    document.getElementById(scroll_id).style.height = script.scrollHeight + 'px';
+    if( script.scrollHeight > context['line-height'] * max_lines )
+    {
+      document.getElementById(horizontal_scoller).style.right =
+        context['scrollbar-width'] + 'px';
+    }
+    else
+    {
+      document.getElementById(horizontal_scoller).style.right = '0px';
+    }
+  }
+
   var setScriptContext = function(script_id, line_nr)
   {
     source_content.innerHTML = "<div style='visibility:hidden'>" +
       simple_js_parser.parse(script, getMaxLineLength() - 1, 1).join('') + "</div>";
-    var scrollWidth = source_content.firstChild.firstChild.scrollWidth;
-    var offsetWidth = source_content.firstChild.firstChild.offsetWidth;
+    var scrollWidth = script.scrollWidth = source_content.firstChild.firstChild.scrollWidth;
+    var offsetWidth = script.offsetWidth = source_content.firstChild.firstChild.offsetWidth;
 
     if( scrollWidth > offsetWidth )
     {
-      max_lines = ( context['container-height'] - context['scrollbar-width'] )/ context['line-height'] >> 0;
-      document.getElementById(scroll_container_id).style.bottom = context['scrollbar-width'] + 'px';
-      source_content.style.width = scrollWidth +'px';
+      max_lines = 
+        ( context['container-height'] - context['scrollbar-width'] ) / context['line-height'] >> 0;
     }
     else
     {
       max_lines = context['container-height'] / context['line-height'] >> 0;
-      document.getElementById(scroll_container_id).style.removeProperty('bottom');
-      source_content.style.removeProperty('width');
     }
-    
     if( max_lines > script.line_arr.length )
     {
       max_lines = script.line_arr.length;
@@ -346,19 +365,8 @@ cls.JsSourceView = function(id, name, container_class)
     document.getElementById(frame_id).render(templates.line_nummer_container(max_lines));
     line_numbers = document.getElementById(container_line_nr_id);
     source_content.style.height = ( context['line-height'] * max_lines ) +'px';
-
-    var scrollHeight = script.line_arr.length * context['line-height'];
-    document.getElementById(scroll_id).style.height = scrollHeight + 'px';
-    if( scrollHeight > context['line-height'] * max_lines )
-    {
-      document.getElementById(horizontal_scoller).style.right =
-        context['scrollbar-width'] + 'px';
-    }
-    else
-    {
-      document.getElementById(horizontal_scoller).style.right = '0px';
-    }
-
+    script.scrollHeight = script.line_arr.length * context['line-height'];
+    updateScriptContext();
     return true;
   }
 
@@ -379,7 +387,6 @@ cls.JsSourceView = function(id, name, container_class)
   this.showLine = function(script_id, line_nr, clear_scroll) // return boolean for the visibility of this view
   {
     // too often called?
-
 
     if( __timeout_clear_view )
     {
@@ -456,12 +463,17 @@ cls.JsSourceView = function(id, name, container_class)
       {
         script.has_context = setScriptContext(script_id, line_nr);
       }
+      if(view_invalid)
+      {
+        updateScriptContext();
+      }
       source_content.innerHTML = 
         simple_js_parser.parse(script, line_nr - 1, max_lines - 1).join(''); 
       updateLineNumbers(line_nr);
 
       if(  !__scroll_interval )
       {
+        
         var scroll_container = document.getElementById(scroll_container_id), 
           scroll_lines = scroll_container.scrollTop / context['line-height'] >> 0; 
         if ( ( scroll_lines < __current_line - 5 ) || ( scroll_lines > __current_line + 6 ) ) 
@@ -617,7 +629,7 @@ cls.JsSourceView = function(id, name, container_class)
   {
     if( !__timeout_clear_view )
     {
-      __timeout_clear_view = setTimeout( __clearView, 50);
+      __timeout_clear_view = setTimeout( __clearView, 100);
     }
   }
 
