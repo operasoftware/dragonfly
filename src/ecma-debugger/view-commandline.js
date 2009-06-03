@@ -25,6 +25,8 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
 
   var __selection_start = -1;
 
+  var __is_tab = false;
+
   var console_output_data = [];
 
   var toolbar_visibility = true;
@@ -272,6 +274,27 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
       line_buffer = line_buffer.slice(line_buffer.length - 100);
     }
     line_buffer_cursor = line_buffer.length;
+  }
+
+
+  eventHandlers.keydown['commandline'] = function(event)
+  {
+    /*
+      TODO use the Keyhandler Classes
+    */  
+    if( event.keyCode == 16 ) // shift
+    {
+      return;
+    }
+    if( event.keyCode == 9 ) // tab
+    {
+      __is_tab = true;
+    }
+    else if( __is_tab )
+    {
+      event.target.selectionStart = event.target.value.length;
+      __is_tab = false;
+    }
   }
 
   eventHandlers.keyup['commandline'] = function(event)
