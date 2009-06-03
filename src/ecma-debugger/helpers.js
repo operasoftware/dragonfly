@@ -115,7 +115,6 @@ helpers = new function()
   {
     return str.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/&(?!.{2,4};)/g, "&amp;");
   }
-
   this.setCookie = function(key, value, time) 
   {
     document.cookie = \
@@ -130,7 +129,26 @@ helpers = new function()
     var value = new RegExp(key + "=([^;]*)").exec(document.cookie);
     return value && decodeURIComponent(value[1]);
   }
-  
+
+  // mouseover handler in the breadcrumb
+  this.breadcrumbSpotlight = function(event)
+  {
+    var obj_id = event.target.getAttribute('obj-id');
+    if( obj_id )
+    {
+      hostspotlighter.spotlight(obj_id);
+    }
+  }
+  // mouseover handler in the breadcrumb
+  this.breadcrumbClearSpotlight = function(event)
+  {
+    var obj_id = event.target.getAttribute('obj-id');
+    if( obj_id )
+    {
+      hostspotlighter.clearSpotlight();
+    }
+  }
+
   document.addEventListener('keypress', keypressListener, true);
 
 }
