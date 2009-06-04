@@ -181,7 +181,7 @@ var DOMMarkupEditor = function()
       nav_target.textContent = "";
       this.context_cur = this.context_enter = null;
       dom_data.closeNode(state.parent_obj_id, true);
-      dom_data.getChildernFromNode(state.parent_obj_id);
+      dom_data.getChildernFromNode(state.parent_obj_id, 'children');
     }
     else
     {
