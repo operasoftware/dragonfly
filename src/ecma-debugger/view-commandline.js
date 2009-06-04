@@ -24,6 +24,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
   var line_buffer_cursor = 0;
 
   var __selection_start = -1;
+  var __selection_end = 0;
 
   var __is_tab = false;
 
@@ -310,7 +311,11 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     }
     else if( __is_tab )
     {
-      event.target.selectionStart = event.target.value.length;
+      if( __selection_start == event.target.selectionStart &&
+              __selection_end == event.target.selectionEnd )
+      {
+        event.target.selectionStart = __selection_end;
+      }
       __is_tab = false;
     }
   }
@@ -401,7 +406,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
       {
         target.value = cur_str + suggest;
         target.selectionStart = __selection_start;
-        target.selectionEnd = target.value.length;
+        target.selectionEnd = __selection_end = target.value.length;
       }
     }
   }
