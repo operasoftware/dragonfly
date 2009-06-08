@@ -357,12 +357,17 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
         case 38:
         case 40:
         {
-          line_buffer_cursor += key_code == 38 ? -1 : 1;
-          line_buffer_cursor = 
-            line_buffer_cursor < 0 ? line_buffer.length-1 : line_buffer_cursor > line_buffer.length-1 ? 0 : line_buffer_cursor;
-          __textarea_value = event.target.value = (line_buffer.length ? line_buffer[line_buffer_cursor] : '').replace(/\r\n/g, ''); 
-          event.preventDefault();
-          break;
+          // workaround as long as we don't have support for keyIdentifier
+          // event.which is 0 in a keypress event for function keys
+          if( !event.which ) 
+          {
+            line_buffer_cursor += key_code == 38 ? -1 : 1;
+            line_buffer_cursor = 
+              line_buffer_cursor < 0 ? line_buffer.length-1 : line_buffer_cursor > line_buffer.length-1 ? 0 : line_buffer_cursor;
+            __textarea_value = event.target.value = (line_buffer.length ? line_buffer[line_buffer_cursor] : '').replace(/\r\n/g, ''); 
+            event.preventDefault();
+            break;
+          }
         }
         case 16:
         case 9:
