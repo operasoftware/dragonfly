@@ -651,6 +651,10 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
           value: msg['context'] + '\n' + msg['description']
         }
       );
+      if(__container)
+      {
+        __container.scrollTop = __container.scrollHeight;
+      }
     }
   }
 
