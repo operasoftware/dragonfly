@@ -108,7 +108,7 @@ helpers = new function()
     return (
         /^.{4,5}:\/\//.test(url) && url
         || /^\//.test(url) && /^.{4,5}:\/\/[^/]*/.exec(top_url)[0] + url
-        || top_url.replace(/\/[^/]*$/, "/") + url );
+        || top_url.replace(/\?.*$/, '').replace(/#.*$/, '').replace(/\/[^/]*$/, "/") + url );
   }
 
   this.escapeTextHtml = function(str)
