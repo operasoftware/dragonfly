@@ -113,6 +113,16 @@
 	color: #294556;
   }
 
+.dom .doctype
+{
+	color: #1a5c75;
+}
+
+.dom doctype-attrs
+{
+	color: #1a1a75;
+}
+
 .tree-style > div > div {
   background:transparent url('../ui-images/dom-tree-style.gif') scroll repeat 7px 0;
   }
