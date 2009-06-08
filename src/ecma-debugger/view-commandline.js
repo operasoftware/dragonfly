@@ -282,23 +282,33 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
   {
     /*
       TODO use the Keyhandler Classes
-    */  
-    if( event.keyCode == 16 ) // shift
+    */ 
+    switch(event.keyCode)
     {
-      return;
-    }
-    if( event.keyCode == 9 ) // tab
-    {
-      __is_tab = true;
-    }
-    else if( __is_tab )
-    {
-      if( __selection_start == event.target.selectionStart &&
-              __selection_end == event.target.selectionEnd )
+      case 46: // delete
+      case 8: // backspace
+      case 16: // shift
       {
-        event.target.selectionStart = __selection_end;
+        __is_tab = false;
+        break;
       }
-      __is_tab = false;
+      case 9: // tab
+      {
+        __is_tab = true;
+        break;
+      }
+      default:
+      {
+        if( __is_tab )
+        {
+          if( __selection_start == event.target.selectionStart &&
+                  __selection_end == event.target.selectionEnd )
+          {
+            event.target.selectionStart = __selection_end;
+          }
+          __is_tab = false;
+        }
+      }
     }
   }
 
