@@ -263,23 +263,6 @@ cls.ECMAScriptDebuggerService = function(name)
     this.post(msg);
   }
 
-  this.spotlight = function(runtime, node_id, scroll_into_view)
-  {
-    var msg = "<spotlight-object>" +
-                "<object-id>" + node_id + "</object-id>" +
-                ( scroll_into_view ? "<scroll-into-view/>" : "" ) +
-              "</spotlight-object>";
-    this.post(msg);
-  }
-
-  this.clearSpotlight = function(runtime)
-  {
-    var msg = "<spotlight-object>"+
-                "<object-id>0</object-id>"+
-              "</spotlight-object>";
-    this.post(msg);
-  }
-
   this.examineObjects = function() // tag, runtime_id, object_1, ...
   {
     var msg = "<examine-objects>", i = 2;
