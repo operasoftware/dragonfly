@@ -287,9 +287,14 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     {
       case 46: // delete
       case 8: // backspace
-      case 16: // shift
       {
         __is_tab = false;
+      }
+      // modifier keys shall not change the autocomplete state
+      case 16: // shift
+      case 17: // ctrl 
+      case 18: // alt
+      {
         break;
       }
       case 9: // tab
