@@ -18,6 +18,7 @@ var TextSearch = function()
   var 
   self = this, 
   search_term = '',
+  input_search_term = '', 
   // collection of span elements. This is so because a hit may cross an
   // element border, so multiple elements needed for highlight.
   search_results = [], 
@@ -173,7 +174,7 @@ var TextSearch = function()
 
   this.searchDelayed = function(new_search_term)
   {
-    timeouts.set(this.search, SEARCH_DELAY, new_search_term.toLowerCase());
+    timeouts.set(this.search, SEARCH_DELAY, ( input_search_term = new_search_term).toLowerCase());
   }
   
   this.update = function()
@@ -259,7 +260,7 @@ var TextSearch = function()
     if(search_term)
     {
       var new_search_term = search_term;
-      __input.value = search_term;
+      __input.value = input_search_term;
       __input.parentNode.firstChild.textContent = '';
       search_term = '';
       this.searchDelayed(new_search_term);
