@@ -772,7 +772,7 @@ var Editor = function()
     }
     if( props[i+1] )
     {
-      script = "rule.style.setProperty(\"" + props[i] + "\", \"" + props[i+1] + "\", " + ( props[i+2] ? "\"important\"" : null )+ ")";
+      script = "rule.style.setProperty(\"" + props[i] + "\", \"" + props[i+1].replace(/"/g, "'") + "\", " + ( props[i+2] ? "\"important\"" : null )+ ")";
       services['ecmascript-debugger'].eval(0, this.context_rt_id, '', '', script, ["rule", this.context_rule_id]);
     }
     else if(!props[i])

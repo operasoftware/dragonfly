@@ -355,14 +355,26 @@ var key_identifier = new function()
     // TODO switch for the key_id
     switch(keyCode)
     {
-      case TAB:
-      case ENTER:
-      case ESC:
-      case SPACE:
       case ARROW_LEFT:
       case ARROW_UP:
       case ARROW_RIGHT:
       case ARROW_DOWN:
+      case F8:
+      case F9:
+      case F10:
+      case F11:
+      {
+        // in the keypress events the which property for function keys is set to 0 
+        // this check lets pass e.g. '(' on a AZERTY keyboard
+        if( event.which != 0 )
+        {
+          break;
+        }
+      }
+      case TAB:
+      case ENTER:
+      case ESC:
+      case SPACE:
       case BACKSPACE:
       case DELETE:
       case A:
@@ -378,27 +390,6 @@ var key_identifier = new function()
           event.stopPropagation();
         }
         
-        break;
-      }
-      case F8:
-      case F9:
-      case F10:
-      case F11:
-      {
-        if( !event.which)
-        {
-          key_id = ( event.shiftKey ? '1' : '0' ) +
-              ( event.ctrlKey ? '1' : '0' ) +
-              ( event.altKey ? '1' : '0' ) +
-              keyCode.toString();
-          
-          if( key_id in action_map 
-              && !__key_handler[action_id = action_map[key_id]](event, action_id) )
-          {
-            event.preventDefault();
-            event.stopPropagation();
-          }
-        }
         break;
       }
     }
