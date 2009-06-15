@@ -179,12 +179,13 @@ cls.DOMInspectorActions = function(id)
       selection.collapse(view_container, 0);
       nav_target = new_target;
 
-      if(new_target.offsetTop + new_target.offsetHeight > view_container.offsetHeight)
+      if( new_target.offsetTop + new_target.offsetHeight - view_container.scrollTop > 
+                                                            view_container.offsetHeight)
       {
         view_container.scrollTop += 
           new_target.offsetTop + new_target.offsetHeight + 30 - view_container.offsetHeight;
       }
-      else if(new_target.offsetTop < 0)
+      else if( new_target.offsetTop - view_container.scrollTop < 0 )
       {
         view_container.scrollTop += ( new_target.offsetTop - 30 );
       } 
