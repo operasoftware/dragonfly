@@ -177,6 +177,7 @@ Element.prototype.getNextSiblingElement = function()
   return next;
 }
 
+// deprecated, use getBoundingClientRect instead
 Element.prototype.getTop = function()
 {
   var c = this, o_p = null, top = c.offsetTop;

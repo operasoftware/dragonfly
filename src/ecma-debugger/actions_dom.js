@@ -17,6 +17,8 @@ cls.DOMInspectorActions = function(id)
   var selection = null;
   var range = null;
 
+  const SCROLL_IN_PADDING = 30;
+
 
   var _is_script_node = function(target)
   {
@@ -169,7 +171,8 @@ cls.DOMInspectorActions = function(id)
 
   this.setSelected = function(new_target)
   {
-    var firstChild = null;
+    var firstChild = null, raw_delta = 0, delta = 0;
+ 
     if(new_target)
     {
       if(nav_target)
@@ -178,18 +181,21 @@ cls.DOMInspectorActions = function(id)
       }
       selection.collapse(view_container, 0);
       nav_target = new_target;
-
-      if( new_target.offsetTop + new_target.offsetHeight - view_container.scrollTop > 
-                                                            view_container.offsetHeight)
+ 
+      raw_delta = new_target.offsetTop - view_container.scrollTop;
+      // delta positive overflow of the container
+      delta = 
+        raw_delta + new_target.offsetHeight + SCROLL_IN_PADDING - view_container.offsetHeight;
+ 
+      // if delta is zero or less than zero, there is no positive overflow
+      // check for negative overflow
+      if( delta < 0 && ( delta = raw_delta - SCROLL_IN_PADDING ) > 0 )
       {
-        view_container.scrollTop += 
-          new_target.offsetTop + new_target.offsetHeight + 30 - view_container.offsetHeight;
+        // if there is no negative overfow, set the delta to 0, meanig don't scroll
+        delta = 0;
       }
-      else if( new_target.offsetTop - view_container.scrollTop < 0 )
-      {
-        view_container.scrollTop += ( new_target.offsetTop - 30 );
-      } 
-
+      view_container.scrollTop += delta;
+ 
       switch (new_target.nodeName.toLowerCase())
       {
         case 'node':
@@ -197,7 +203,7 @@ cls.DOMInspectorActions = function(id)
         {
           firstChild = new_target.firstChild;
           range.setStart(firstChild, this.is_dom_type_tree ? 0 : 1);
-          range.setEnd(firstChild, 
+          range.setEnd(firstChild,
             firstChild.nodeValue.length - (this.is_dom_type_tree && !firstChild.nextSibling ? 0 : 1) )
           selection.addRange(range);
           break;

@@ -68,28 +68,6 @@ var ListTextSearch = function()
 
   var __selected_element = null;
 
-  /**
-   * fixme: This should probably either call out to ele.scrollSoftIntoView from
-   * dom.js or be removed, as it does not seem like it is called from anywhere.
-   */
-  var scrollSoftIntoView = function(target)
-  {
-    var 
-    container = target.parentNode.parentNode,
-    scrollTop = container.scrollTop,
-    scrollBottom = scrollTop + container.offsetHeight,
-    targetTop = target.offsetTop,
-    targetBottom = targetTop + target.offsetHeight;
-    if( targetBottom > scrollBottom )
-    {
-      container.scrollTop += 50 + targetBottom - scrollBottom;
-    }
-    else if( targetTop < scrollTop )
-    {
-      container.scrollTop += targetTop - scrollTop - 50;
-    }
-  }
-
   var selectNextInput = function(start, next, direction)
   {
     var 
