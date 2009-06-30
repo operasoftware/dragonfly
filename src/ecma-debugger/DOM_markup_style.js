@@ -56,6 +56,16 @@ var DOM_markup_style = function(id, name, container_class)
     }
   }
 
+  var spotlightElement = function()
+  {
+    hostspotlighter.spotlight(this.getAttribute('ref-id'));
+  }
+
+  var clearSpotlightElement = function()
+  {
+    hostspotlighter.clearSpotlight();
+  }
+
   this.updateTarget = function(ele, obj_id)
   {
     if(ele)
@@ -64,16 +74,26 @@ var DOM_markup_style = function(id, name, container_class)
       if(target)
       {
         target.removeAttribute('id');
+        target.removeEventListener('mouseover', spotlightElement, false);
+        target.removeEventListener('mouseout', clearSpotlightElement, false);
       }
       if(/<\//.test(ele.firstChild.nodeValue))
       {
         while( ( ele = ele.previousSibling ) && ele.getAttribute('ref-id') != obj_id );
       }
-      if(ele)
-      {
-        ele.id = 'target-element';
-      }
-      topCell.statusbar.updateInfo(templates.breadcrumb(dom_data.getCSSPath()));
+      topCell.statusbar.updateInfo
+      (
+        // the same template is used with inner html
+        templates.breadcrumb(dom_data.getCSSPath()).
+          concat(['onmouseover', helpers.breadcrumbSpotlight, 
+                  'onmouseout', helpers.breadcrumbClearSpotlight])  
+      );
+    }
+    if(ele || ( ele = document.getElementById('target-element') ) )
+    {
+      ele.id = 'target-element';
+      ele.addEventListener('mouseover', spotlightElement, false);
+      ele.addEventListener('mouseout', clearSpotlightElement, false);
     }
     else
     {
@@ -148,7 +168,8 @@ var DOM_markup_style = function(id, name, container_class)
     var container_first_child = null;
     var style = null;
     var is_not_script_node = true;
-          
+    var is_debug = ini.debug;
+    
     if(!data.length)
     {
       if(!dom_data.getDataRuntimeId())
@@ -244,6 +265,7 @@ var DOM_markup_style = function(id, name, container_class)
                           ( is_not_script_node ? " ref-id='" + one_child_id + "' " : "" ) +
                           "'>" + one_child_value + "</text>" +
                         "<node>&lt;/" + node_name + "&gt;</node>" +
+                        ( is_debug && ( " <d>[" + node[ ID ] +  "]</d>" ) || "" ) +
                         "</div>";
                 i = child_pointer - 1;
               }
@@ -255,6 +277,7 @@ var DOM_markup_style = function(id, name, container_class)
                         ( node[ CHILDREN_LENGTH ] ? 
                           "<input handler='get-children' type='button' class='open'>" : '' ) +
                         "<node>&lt;" + node_name + attrs + "&gt;</node>" +
+                        ( is_debug && ( " <d>[" + node[ ID ] +  "]</d>" ) || "" ) +
                         "</div>";
 
                 closing_tags.push("<div style='margin-left:" + 
@@ -273,6 +296,7 @@ var DOM_markup_style = function(id, name, container_class)
                     ( children_length ? 
                       "<input handler='get-children' type='button' class='close'>" : '' ) +
                     "<node>&lt;" + node_name + attrs + ( children_length ? '' : '/' ) + "&gt;</node>" +
+                    ( is_debug && ( " <d>[" + node[ ID ] +  "]</d>" ) || "" ) +
                     "</div>";
             }
             break;
@@ -314,12 +338,12 @@ var DOM_markup_style = function(id, name, container_class)
           case 10:  // doctype
           {
             tree += "<div style='margin-left:" + 16 * node[ DEPTH ] + "px;' class='doctype'>"+
-                    "&lt;!doctype " + this.getDoctypeName(data) +
+                    "&lt;!doctype <doctype-attrs>" + node[NAME] +
                     ( node[PUBLIC_ID] ? 
                       ( " PUBLIC " + "\"" + node[PUBLIC_ID] + "\"" ) :"" ) +
                     ( node[SYSTEM_ID] ?  
                       ( " \"" + node[SYSTEM_ID] + "\"" ) : "" ) +
-                    "&gt;</div>";
+                    "</doctype-attrs>&gt;</div>";
             break;
           }
 
@@ -363,7 +387,10 @@ var DOM_markup_style = function(id, name, container_class)
         container.firstChild.style.width = ( container_scroll_width - div_padding_value ) + 'px';
         setTimeout(function(){container.scrollLeft = 0;}, 0);
       }
-      topCell.statusbar.updateInfo(templates.breadcrumb(dom_data.getCSSPath()));
+      this.updateTarget();
+      topCell.statusbar.updateInfo(templates.breadcrumb(dom_data.getCSSPath()).
+          concat(['onmouseover', helpers.breadcrumbSpotlight, 
+                  'onmouseout', helpers.breadcrumbClearSpotlight]));
     }
   }
 
