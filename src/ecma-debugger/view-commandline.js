@@ -135,7 +135,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
         var object_id = return_value.textContent;
         var object_ref_name = "$" + object_id;
         var tag = tagManager.setCB(null, handleEval, [runtime_id, object_id, callback] );
-        var script_string  = "return " + object_ref_name + ".toString()";
+        var script_string  = "return Object.prototype.toString.call(" + object_ref_name + ")";
         services['ecmascript-debugger'].eval(
           tag, runtime_id, '', '', script_string, [object_ref_name, object_id]);
       }
