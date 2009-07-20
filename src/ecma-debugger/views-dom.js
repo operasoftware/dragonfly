@@ -64,6 +64,21 @@ cls.DOMView = function(id, name, container_class)
     return ret;
   }
 
+  this.scrollTargetIntoView = function()
+  {
+    var target = document.getElementById('target-element');
+    var container = target;
+    while( container && !/container/.test(container.nodeName) && 
+              ( container = container.parentElement) );
+    if(target && container)
+    {
+      target.scrollIntoView();
+      container.scrollTop -= 
+          ( container.offsetHeight < 100 ? container.offsetHeight * .7 : 100 ) - 
+          ( target.offsetTop - container.scrollTop );
+    }
+  }
+
   // workaround for bug CORE-16147
   this.getDoctypeName = function(data)
   {

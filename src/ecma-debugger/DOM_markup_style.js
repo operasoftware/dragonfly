@@ -42,20 +42,6 @@ var DOM_markup_style = function(id, name, container_class)
 
   var div_padding_value = 0;
 
-  this.scrollTargetIntoView = function()
-  {
-    var target = document.getElementById('target-element');
-    if(target)
-    {
-      document.getElementById('target-element').scrollIntoView();
-      while( !/container/.test(target.nodeName) && ( target = target.parentElement) );
-      if(target)
-      {
-        target.scrollTop -= 100;
-      }
-    }
-  }
-
   this.updateTarget = function(ele, obj_id)
   {
     if(ele)
