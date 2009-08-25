@@ -457,7 +457,8 @@ window.cls.Client = function()
       views[tab].ishidden_in_menu = is_disbaled;
       topCell.disableTab(tab, is_disbaled);
     }
-    this.setup();
+
+    //this.setup();
   }
 
   this.setupTopCell = function()
@@ -495,14 +496,10 @@ window.cls.Client = function()
     messages.post('host-state', {state: 'inactive'});
   }
 
-  ui_framework.beforeSetup = function()
-  {
-    self.beforeUIFrameworkSetup();
-  }
-  ui_framework.afterSetup = function()
+  window.app.addListener('services-created', function()
   {
     self.afterUIFrameworkSetup();
-  }
+  });
 }
 
 ui_framework.layouts.console_rough_layout =

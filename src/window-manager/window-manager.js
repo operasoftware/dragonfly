@@ -1,165 +1,9 @@
-﻿/**
- * @fileoverview
- */
-
-var cls = window.cls || ( window.cls = {} );
-
-/**
-  * Window manager service class
-  * @constructor 
-  * @extends ServiceBase
-  */
-
-cls.WindowManagerService = function(name)
-{
-  var self = this;
-
-  this.onreceive = function(xml) // only called if there is a xml
-  {
-    if( ini.debug )
-    {
-      debug.logEvents(xml);
-    }
-    if( self[xml.documentElement.nodeName] )
-    {
-      self[xml.documentElement.nodeName](xml)
-    }
-    else
-    {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
-        "window manager not handled: " + new XMLSerializer().serializeToString(xml))
-    }
-  }
-
-  // events
-
-  this['active-window'] = function(msg) 
-  {
-    window_manager_data.set_active_window(msg.getNodeData("window-id"));
-  }
-
-  this['list-windows-reply'] = function(msg) 
-  {
-    var
-    window_list = [],
-    windows = msg.getElementsByTagName('window'),
-    win = null,
-    i = 0;
-    
-    for( ; win = windows[i]; i++)
-    {
-      window_list[i] = this.parseWindow(win);
-    }
-    window_manager_data.set_window_list(window_list);
-  }
-
-  this['updated-window'] = function(msg) 
-  {
-    window_manager_data.update_list( this.parseWindow(msg.getElementsByTagName('window')[0]) );
-  }
-
-  this['window-closed'] = function(msg)
-  {
-    window_manager_data.remove_window( msg.getNodeData('window-id') );
-  }
-
-  // commands
-
-  this.getActiveWindow = function()
-  {
-    this.post("<get-active-window />");
-  }
-
-  this.getWindowList = function()
-  {
-    this.post("<list-windows />");
-  }
-
-  this.set_debug_context = function(win_id)
-  {
-    var msg = "<filter>" +
-                "<clear />" +
-                "<include>" +
-                  "<window-id>" + 
-                    win_id + 
-                  "</window-id>" +
-                "</include>" +
-              "</filter>";
-    this.post(msg);
-  }
-  
-  this.onconnect = function(xml)
-  {
-    get_context();
-  }
-
-  var get_context = function()
-  {
-    if( !window_manager_data.active_window )
-    {
-      self.getActiveWindow();
-    }
-    else if( !window_manager_data.debug_context )
-    {
-      window_manager_data.setDebugContext(window_manager_data.active_window);
-    }
-      
-    if( !window_manager_data.window_list )
-    {
-      self.getWindowList();
-    }
-
-    if( !window_manager_data.active_window || !window_manager_data.window_list )
-    {
-      if( check_counter++ < 20 )
-      {
-        setTimeout(get_context, 100);
-      }
-      else
-      {
-        throw "it not possible to get the active window";
-      }
-    }
-  },
-  check_counter = 0;
-
-  // helpers
-
-  this.parseWindow = function(win)
-  {
-    var 
-    win_obj = {},
-    children = win.childNodes,
-    child = null,
-    first_child = null,
-    i = 0;
-
-    for( ; child = children[i]; i++ )
-    {
-      win_obj[child.nodeName] = 
-        ( first_child = child.firstChild ) && first_child.nodeValue || "undefined";
-    }
-    return win_obj;
-  }
-
-  // constructor calls
-
-  this.initBase(name);
-  
-  if( ! client)
-  {
-    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'client does not exist');
-    return;
-  }
-  client.addService(this);
-
-}
-
-// cls.WindowManagerService.prototype = ServiceBase;
-// new cls.WindowManagerService('window-manager');
+﻿window.cls || (window.cls = {});
+cls.WindowManager || (cls.WindowManager = {});
+cls.WindowManager["2.0"] || (cls.WindowManager["2.0"] = {});
 
 
-var window_manager_data = new function()
+cls.WindowManager["2.0"].WindowManagerData = function()
 {
   this.active_window = null;
 
@@ -169,12 +13,98 @@ var window_manager_data = new function()
 
   var view = "window_manager";
 
+  var self = this;
+
+
+  // command bindings
+
+  var window_manager = window.services['window-manager'];
+
+
+  // response bindings
+
+
+
+  window_manager.handleGetActiveWindow = 
+  window_manager.onWindowActivated = function(status, msg)
+  {
+    self.set_active_window(msg[0]);
+  }
+
+
+  window_manager.handleListWindows = function(status, message)
+  {
+    self.set_window_list(message[0].map(_parse_window));
+  }
+
+  // event bindings
+
+  window_manager.onWindowUpdated = function(status, message)
+  {
+    self.update_list(_parse_window(message));
+  }
+
+  window_manager.onWindowClosed = function(status, message)
+  {
+    self.remove_window(message[0]);
+  }
+
+
+
+  // TODO is this still ok?
+
+  var _get_context = function()
+  {
+    if( !self.active_window )
+    {
+      window_manager.requestGetActiveWindow();
+    }
+    else if( !window_manager_data.debug_context )
+    {
+      self.setDebugContext(self.active_window);
+    }
+      
+    if( !window_manager_data.window_list )
+    {
+      window_manager.requestListWindows();
+    }
+
+    if( !self.active_window || !self.window_list )
+    {
+      if( check_counter++ < 20 )
+      {
+        setTimeout(_get_context, 100);
+      }
+      else
+      {
+        throw "it not possible to get the active window";
+      }
+    }
+  }
+
+  var check_counter = 0;
+
+  window_manager.on_enable_success = function()
+  {
+    _get_context();
+  }
+
+
+  var _parse_window = function(win)
+  {
+    /*
+    WINDOW_ID = 0,
+    TITLE = 1,
+    WINDOW_TYPE = 2,
+    OPENER_ID = 3;
+    */
+    return {window_id: win[0], title: win[1], window_type: win[2], opener_id: win[3]};
+  }
+
   var update_views = function()
   {
-
     windowsDropDown.update();
-    views["window_manager"].update();
-
+    // views["window_manager"].update();
   }
 
   this.set_active_window_as_debug_context = function()
@@ -207,7 +137,7 @@ var window_manager_data = new function()
     var cursor = null, i = 0;
     if( this.window_list )
     {
-      for( ; ( cursor = this.window_list[i] ) && ! (cursor['window-id'] == id ); i++);
+      for( ; ( cursor = this.window_list[i] ) && ! (cursor.window_id == id ); i++);
     }
     return cursor && true || false;
   }
@@ -217,11 +147,12 @@ var window_manager_data = new function()
     this.window_list = 
       !settings.general.get('show-only-normal-and-gadget-type-windows') && window_list
       || window_list.filter(this.window_filter);
+
     if( this.active_window && !this.has_window_id_in_list(this.active_window) )
     {
       // TODO 
       // workaround for wrong active window id. must be removed
-      this.setDebugContext(this.window_list[0]['window-id']);
+      this.setDebugContext(this.window_list[0].window_id);
       opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'active window id does not exist');
     }
     update_views();
@@ -229,11 +160,14 @@ var window_manager_data = new function()
 
   this.setDebugContext = function(win_id)
   {
-    services['window-manager'].set_debug_context(win_id);
+    
+    window_manager.requestModifyFilter(0, [1, [win_id]]);
     this.debug_context = win_id;
+    
     // TODO cleanup, the active window id should just be at one place
     runtimes.setActiveWindowId(win_id);
     update_views();
+    /*
     // workaround as long as we don't have a command confirmation. see bug 361876
     setTimeout
     (
@@ -243,26 +177,24 @@ var window_manager_data = new function()
       }, 
       100
     )
+    */
+
   }
 
   this.window_filter = function(win)
   {
-    return win["window-type"] in {"normal": 1, "gadget": 1};
+    return win.window_type in {"normal": 1, "gadget": 1};
   }
 
   this.update_list = function(win_obj)
   {
-    var 
-    id = win_obj["window-id"],
-    win = null, 
-    i = 0;
-
+    var id = win_obj.window_id, win = null, i = 0;
     if( !settings.general.get('show-only-normal-and-gadget-type-windows') 
         || this.window_filter(win_obj) )
     {
       if( this.window_list )
       {
-        for( ; ( win = this.window_list[i] ) && !( id == win["window-id"] ); i++ ) {}
+        for( ; ( win = this.window_list[i] ) && !( id == win.window_id ); i++ );
       }
       else
       {
@@ -275,22 +207,19 @@ var window_manager_data = new function()
 
   this.remove_window = function(win_id)
   {
-    var 
-    win = null, 
-    i = 0;
-
+    var win = null, i = 0;
     if( this.window_list )
     {
       for( ; win = this.window_list[i]; i++ )
       {
-        if( win_id == win["window-id"] )
+        if( win_id == win.window_id )
         {
           this.window_list.splice(i, 1);
           if( win_id == this.active_window )
           {
             if (this.window_list.length)
             {
-              this.setDebugContext(this.window_list[0]['window-id'])
+              this.setDebugContext(this.window_list[0].window_id)
             }
           }
           break;
@@ -299,8 +228,10 @@ var window_manager_data = new function()
     }
     update_views();
   }
+
 }
 
+/*
 var cls = window.cls || ( window.cls = {} );
 
 // for testing the window manager service
@@ -360,19 +291,25 @@ cls.WindowManagerTestView = function(id, name, container_class)
 cls.WindowManagerTestView.prototype = ViewBase;
 new cls.WindowManagerTestView('window_manager', 'Test Window Manager', 'scroll windows-manager');
 
+*/
+
+
+// TODO use the action class
+
 eventHandlers.click['get-active-window'] = function(event, target)
 {
-  services['window-manager'].getActiveWindow();
+  services['window-manager'].requestGetActiveWindow();
 }
 
 eventHandlers.click['list-windows'] = function(event, target)
 {
-  services['window-manager'].getWindowList();
+  services['window-manager'].requestListWindows();
 }
 
 eventHandlers.click['set-filter-active-window'] = function(event, target)
 {
-  services['window-manager'].setFilterActiveWindow();
+  alert("not implemented eventHandlers.click['set-filter-active-window'] in window-manager.js")
+  // services['window-manager'].setFilterActiveWindow();
 }
 
 eventHandlers.click['set-debug-context'] = function(event, target)
@@ -385,12 +322,12 @@ eventHandlers.click['set-debug-context'] = function(event, target)
 
     if( win_id )
     {
-      window_manager_data.setDebugContext(win_id);
+      window_manager_data.setDebugContext(parseInt(win_id));
     }
   }
 }
 
-var windowsDropDown = new function()
+cls.WindowManager["2.0"].WindowsDropDown = function()
 {
 
   this.update = function()
@@ -404,22 +341,20 @@ var windowsDropDown = new function()
         active_window = window_manager_data.active_window,
         debug_context = window_manager_data.debug_context,
       win = null,
-      props = ['window-id', 'title', 'window-type', 'opener-id'],
+      props = ['window_id', 'title', 'window_type', 'opener_id'],
       prop = '', 
       i = 0,
       id = '',
-      
-
       markup = "";
 
       if(win_list && select)
       {
         for( ; win = win_list[i]; i++ )
         {
-          id = win['window-id'];
+          id = win.window_id;
           markup += '<option value="' + id + '"' + 
             ( id == debug_context ? ' selected="selected"' : '' ) + '>' + 
-            win['title'] + 
+            win.title + 
             '</option>';
         }
         select.innerHTML = markup;
@@ -432,12 +367,11 @@ eventHandlers.change['select-window'] = function(event, target)
 {
   if(target.value)
   {
-    window_manager_data.setDebugContext(target.value);
-    
+    window_manager_data.setDebugContext(parseInt(parseInt(target.value)));
   }
 }
 
-cls.DebuggerMenu = function(id, class_name)
+cls.WindowManager["2.0"].DebuggerMenu = function(id, class_name)
 {
   /*
   * TODO needs to be merged with windowsDropDown
@@ -475,7 +409,7 @@ cls.DebuggerMenu = function(id, class_name)
           "cst-option",
           ui_strings.S_MENU_SELECT_ACTIVE_WINDOW,
           "opt-index", i,
-          "value", active_window,
+          "value", active_window.toString(),
           "unselectable", "on"
         ]
     }
@@ -485,10 +419,10 @@ cls.DebuggerMenu = function(id, class_name)
     {
       ret[ret.length] = [
           "cst-option",
-          win['title'],
+          win.title,
           "opt-index", i,
-          "value", win['window-id'],
-          "class", win['window-id'] == debug_context ? "selected" : "",
+          "value", win.window_id.toString(),
+          "class", win.window_id == debug_context ? "selected" : "",
           "unselectable", "on"
         ]
     }
@@ -497,7 +431,7 @@ cls.DebuggerMenu = function(id, class_name)
   
   this.checkChange = function(target_ele)
   {
-    var win_id = target_ele.getAttribute('value');
+    var win_id = parseInt(target_ele.getAttribute('value'));
     if( win_id != window_manager_data.debug_context )
     {
       window_manager_data.setDebugContext(win_id);
@@ -529,6 +463,4 @@ cls.DebuggerMenu = function(id, class_name)
   this.select_template = this.getTemplate();
 }
 
-cls.DebuggerMenu.prototype = new CstSelectWithAction();
 
-new cls.DebuggerMenu('debugger-menu', 'debugger-menu');

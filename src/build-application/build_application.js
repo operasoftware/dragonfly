@@ -154,7 +154,7 @@ window.app.build_application = function(on_services_created, on_services_enabled
     window.client = new cls.Client();
     client.beforeUIFrameworkSetup();
     window.ui_framework.setup();
-    client.afterUIFrameworkSetup();
+    client.setup(); 
     messages.post('application-setup');
   }
   else
@@ -229,7 +229,14 @@ window.app.builders.WindowManager || ( window.app.builders.WindowManager = {} );
 window.app.builders.WindowManager["2.0"] = function(service)
 {
   var namespace = cls.WindowManager && cls.WindowManager["2.0"];
-  window.app.helpers.implement_service(namespace);
+  if(namespace)
+  {
+    window.app.helpers.implement_service(namespace);
+    window.window_manager_data = new namespace.WindowManagerData();
+    window.windowsDropDown = new namespace.WindowsDropDown();
+    namespace.DebuggerMenu.prototype = new CstSelectWithAction();
+    new namespace.DebuggerMenu('debugger-menu', 'debugger-menu');
+  }
 }
 
 
