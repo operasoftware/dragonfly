@@ -165,10 +165,8 @@ var ui_framework = new function()
   </div>\
   ";
 
-  var setup = function()
+  this.setup = function()
   {
-    document.removeEventListener('load', arguments.callee, false);
-    self.beforeSetup();
     window[defaults.viewport] = document.getElementsByTagName(defaults.viewport_main_container)[0];
 
     if( viewport )
@@ -184,10 +182,6 @@ var ui_framework = new function()
       viewport.removeChild(container);
       // event handlers to resize the views
       new SlideViews(document);
-      setTimeout(function(){
-        self.afterSetup();
-        messages.post('application-setup');
-      }, 0);
     }
     else
     {
@@ -198,7 +192,7 @@ var ui_framework = new function()
   window.toolbars || ( window.toolbars = {} );
   window.switches || ( window.switches = {} );
   window.cls || ( window.cls = {} );
-  document.addEventListener('load', setup, false);
+
 }
 
 

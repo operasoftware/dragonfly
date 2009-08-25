@@ -374,8 +374,8 @@ cls.ECMAScriptDebuggerService = function(name)
 
 }
 
-cls.ECMAScriptDebuggerService.prototype = ServiceBase;
-new cls.ECMAScriptDebuggerService('ecmascript-debugger');
+//cls.ECMAScriptDebuggerService.prototype = ServiceBase;
+//new cls.ECMAScriptDebuggerService('ecmascript-debugger');
 
 
 

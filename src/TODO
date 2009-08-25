@@ -1,0 +1,2 @@
+- move instatiation of window.messages to window.app.build_application. does require to clean up ui framework instatiations.
+

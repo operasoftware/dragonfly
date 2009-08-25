@@ -155,8 +155,8 @@ cls.WindowManagerService = function(name)
 
 }
 
-cls.WindowManagerService.prototype = ServiceBase;
-new cls.WindowManagerService('window-manager');
+// cls.WindowManagerService.prototype = ServiceBase;
+// new cls.WindowManagerService('window-manager');
 
 
 var window_manager_data = new function()
