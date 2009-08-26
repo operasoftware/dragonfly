@@ -99,7 +99,7 @@ window.app.build_application = function(on_services_created, on_services_enabled
         }
       }
     }
-    window.messages.post('services-created', {'service_description': service_descriptions});
+    window.app.post('services-created', {'service_description': service_descriptions});
     if (window.app.on_services_created)
     {
       window.app.on_services_created(service_descriptions);
@@ -120,6 +120,7 @@ window.app.build_application = function(on_services_created, on_services_enabled
     service_implementation.prototype = new cls.ServiceBase();
     service_class.prototype = new service_implementation();
     service_class.prototype.constructor = service_class;
+    window.cls.Messages.apply(service_class.prototype);
     window.services.add(new service_class());
   }
 
@@ -129,8 +130,8 @@ window.app.build_application = function(on_services_created, on_services_enabled
 
   // global objects
   window.tagManager = new window.cls.TagManager();
-  // TODO window.messages = new window.cls.Messages(); 
-
+  window.cls.Messages.apply(this);
+ 
   // create window.services namespace and register it.
   cls.ServiceBase.register_services(new cls.Namespace("services"));
   [
@@ -239,11 +240,6 @@ window.app.builders.WindowManager["2.0"] = function(service)
   }
 }
 
-
-window.app.addListener = function(type, callback)
-{
-  window.messages.addListener(type, callback);
-}
 
 window.app.helpers = {};
 

@@ -63,6 +63,7 @@ cls.Scope["1.0"].Service = function()
 
     if(status == 0)
     {
+      services[service].post('enable-success');
       services[service].on_enable_success();
       this._enable_requests[service] = true;
       for(service_name in this._enable_requests)
@@ -71,7 +72,7 @@ cls.Scope["1.0"].Service = function()
       }
       if(all_enabled)
       {
-        window.messages.post('services-enabled');
+        window.app.post('services-enabled');
         if (window.app.on_services_enabled)
         {
           window.app.on_services_enabled();

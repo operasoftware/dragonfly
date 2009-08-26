@@ -14,34 +14,35 @@ cls.WindowManager["2.0"].WindowManagerData = function()
   this.set_debug_context = function(win_id){};
   this.get_debug_context_title = function(){};
 
-  /* window_manager bindings */
+  /* binding */
 
-  var window_manager = window.services['window-manager'];
-  window_manager.handleGetActiveWindow = 
-  window_manager.onWindowActivated = function(status, msg)
+  var Bind = function(object)
   {
-    self._set_active_window(msg[0]);
-  }
-  window_manager.handleListWindows = function(status, message)
-  {
-    self._set_window_list(message[0].map(self._parse_window));
-  }
-  window_manager.onWindowUpdated = function(status, message)
-  {
-    self._update_list(self._parse_window(message));
-  }
-  window_manager.onWindowClosed = function(status, message)
-  {
-    self._remove_window(message[0]);
-  }
-  window_manager.on_enable_success = function()
-  {
-    self._get_context();
-  }
+    this.handleGetActiveWindow = 
+    this.onWindowActivated = function(status, msg)
+    {
+      object._set_active_window(msg[0]);
+    }
+    this.handleListWindows = function(status, message)
+    {
+      object._set_window_list(message[0].map(object._parse_window));
+    }
+    this.onWindowUpdated = function(status, message)
+    {
+      object._update_list(object._parse_window(message));
+    }
+    this.onWindowClosed = function(status, message)
+    {
+      object._remove_window(message[0]);
+    }
+    this.addListener('enable-success', object._get_context);
+  };
+
 
   /* private */
 
   var self = this;
+  var window_manager = window.services['window-manager'];
 
   this._active_window = 0;
   this._window_list = null;
@@ -230,6 +231,9 @@ cls.WindowManager["2.0"].WindowManagerData = function()
 
   }
 
+  /* constructor calls */
+
+  Bind.call(window_manager, this);
 }
 
 // TODO use the action class

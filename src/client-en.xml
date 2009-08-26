@@ -140,6 +140,7 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./lib/json.js"/>
 <script src="./lib/clientlib_async.js"/>
 <script src="./lib/tag_manager.js"/>
+<script src="./lib/messages.js"/>
 
 <script src="./lib/service_base.js"/>
 

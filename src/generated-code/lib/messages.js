@@ -20,13 +20,6 @@ window.cls || ( window.cls = {} );
 window.cls.Messages = function()
 {
 
-  // singleton
-  if(arguments.callee.instance)
-  {
-    return arguments.callee.instance;
-  }
-  arguments.callee.instance = this;
-
   var __listeners = {};
   
   /**
@@ -78,6 +71,7 @@ window.cls.Messages = function()
     msg = msg || {};
     var listeners = __listeners[ key ], cb = null, i = 0;
     msg.type = key;
+    msg.target = this;
     if( listeners )
     {
       for( ; cb = listeners[i]; i++)

@@ -66,6 +66,7 @@ cls.WindowManager["2.0"].Service = function()
       {
         if(services[service].is_implemented)
         {
+          services[service].post('window-filter-change', {filter: this._window_filter});
           services[service].on_window_filter_change(this._window_filter);
         }
       }
