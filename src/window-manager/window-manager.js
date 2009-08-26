@@ -11,8 +11,8 @@ cls.WindowManager["2.0"].WindowManagerData = function()
   this.get_active_window_id = function(){};
   this.get_window_list = function(){};
   this.get_debug_context = function(){};
-  this.get_debug_context_title = function(){};
   this.set_debug_context = function(win_id){};
+  this.get_debug_context_title = function(){};
 
   /* window_manager bindings */
 
@@ -56,11 +56,11 @@ cls.WindowManager["2.0"].WindowManagerData = function()
     {
       window_manager.requestGetActiveWindow();
     }
-    else if( !self._debug_context )
+    else if (!self._debug_context)
     {
       self.set_debug_context(self._active_window);
     }
-    if( !window_manager_data._window_list )
+    if (!window_manager_data._window_list)
     {
       window_manager.requestListWindows();
     }
@@ -111,7 +111,7 @@ cls.WindowManager["2.0"].WindowManagerData = function()
   this._has_window_id_in_list = function(id)
   {
     var cursor = null, i = 0;
-    if( this._window_list )
+    if (this._window_list)
     {
       for( ; ( cursor = this._window_list[i] ) && ! (cursor.window_id == id ); i++);
     }
@@ -168,7 +168,7 @@ cls.WindowManager["2.0"].WindowManagerData = function()
         if( win_id == win.window_id )
         {
           this._window_list.splice(i, 1);
-          if( win_id == this._active_window )
+          if( win_id == this._debug_context )
           {
             if (this._window_list.length)
             {
@@ -211,10 +211,8 @@ cls.WindowManager["2.0"].WindowManagerData = function()
 
   this.set_debug_context = function(win_id)
   {
-    
     window_manager.requestModifyFilter(0, [1, [win_id]]);
     this._debug_context = win_id;
-    
     // TODO cleanup, the active window id should just be at one place
     runtimes.setActiveWindowId(win_id);
     window.windowsDropDown.update();
@@ -258,11 +256,11 @@ eventHandlers.click['set-debug-context'] = function(event, target)
   {
     var 
     container = event.target.parentElement.parentElement,
-    win_id = container.getAttribute('window-id');
+    win_id = parseInt(container.getAttribute('window-id'));
 
     if( win_id )
     {
-      window_manager_data.set_debug_context(parseInt(win_id));
+      window_manager_data.set_debug_context(win_id);
     }
   }
 }
@@ -278,22 +276,18 @@ cls.WindowManager["2.0"].WindowsDropDown = function()
       var 
       select = toolbar.getElementsByTagName('select')[0],
       win_list = window_manager_data.get_window_list(),
-        active_window = window_manager_data.get_active_window_id(),
-        debug_context = window_manager_data.get_debug_context(),
+      active_window = window_manager_data.get_active_window_id(),
+      debug_context = window_manager_data.get_debug_context(),
       win = null,
-      props = ['window_id', 'title', 'window_type', 'opener_id'],
-      prop = '', 
       i = 0,
-      id = '',
       markup = "";
 
       if(win_list && select)
       {
         for( ; win = win_list[i]; i++ )
         {
-          id = win.window_id;
-          markup += '<option value="' + id + '"' + 
-            ( id == debug_context ? ' selected="selected"' : '' ) + '>' + 
+          markup += '<option value="' + win.window_id + '"' + 
+            ( win.window_id == debug_context ? ' selected="selected"' : '' ) + '>' + 
             win.title + 
             '</option>';
         }
@@ -307,7 +301,7 @@ eventHandlers.change['select-window'] = function(event, target)
 {
   if(target.value)
   {
-    window_manager_data.set_debug_context(parseInt(parseInt(target.value)));
+    window_manager_data.set_debug_context(parseInt(target.value));
   }
 }
 
@@ -372,16 +366,15 @@ cls.WindowManager["2.0"].DebuggerMenu = function(id, class_name)
   this.checkChange = function(target_ele)
   {
     var win_id = parseInt(target_ele.getAttribute('value'));
-    if( win_id != window_manager_data._debug_context )
+    if( win_id != window_manager_data.get_debug_context() )
     {
       window_manager_data.set_debug_context(win_id);
       return true;
     }
+    return false;
   }
 
   // this.updateElement
-
-
 
   this.getTemplate = function()
   {
