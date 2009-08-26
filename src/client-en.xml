@@ -1,4 +1,5 @@
 ﻿<viewport xmlns="http://www.w3.org/1999/xhtml">
+<link rel="icon" href="/favicon.ico" />
 <script><![CDATA[
 if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()) <= 4789  )
 {
