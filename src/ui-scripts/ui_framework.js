@@ -198,7 +198,7 @@ var ui_framework = new function()
   window.toolbars || ( window.toolbars = {} );
   window.switches || ( window.switches = {} );
   window.cls || ( window.cls = {} );
-  document.addEventListener('load', setup, false);
+  window.addEventListener('load', setup, false);
 }
 
 
