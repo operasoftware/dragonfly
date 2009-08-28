@@ -52,11 +52,24 @@ var client = new function()
   var host_connected = function(_services)
   {
     services_avaible = eval("({\"" + _services.replace(/,/g, "\":1,\"") + "\":1})");
-    var service = null, i = 0, service_name = '';
+    var service = null, i = 0, service_name = '', has_stp_version = false;
+    for( service_name in services_avaible )
+    {
+      if( service_name.slice(0, 4) == 'stp-' )
+      {
+        has_stp_version = true;
+        break;
+      }
+    }
     for( service_name in services_avaible )
     {
       if( service_name.slice(0, 5) == 'core-' )
       {
+        // protocol 6 is basically protocol 5 in a core 2.4 version
+        if(service_name == 'core-2-4' && !has_stp_version )
+        {
+          service_name = 'core-2-3';
+        }
         handle_fallback.apply(new XMLHttpRequest(), [service_name]);
         return;
       }
@@ -167,11 +180,24 @@ var client = new function()
 
   var proxy_onsetup = function(xhr)
   {
-    var service = null, i = 0, is_event_loop = false, server_name = xhr.getResponseHeader("Server");
+    var 
+    service = null, 
+    i = 0, 
+    is_event_loop = false, 
+    server_name = xhr.getResponseHeader("Server"),
+    has_stp_version = false;
+
     // workaround for a missing hello message
-    for( ; ( service = this.services[i] ) && service.slice(0, 5) != 'core-'; i++);
+    for( i = 0; ( service = this.services[i] ) && 
+          !(has_stp_version = service.slice(0, 4) == 'stp-'); i++);
+    for( i = 0; ( service = this.services[i] ) && service.slice(0, 5) != 'core-'; i++);
     if( service )
     {
+      // protocol 6 is basically protocol 5 in a core 2.4 version
+      if(service == 'core-2-4' && !has_stp_version )
+      {
+        service = 'core-2-3';
+      }
       handle_fallback.apply(new XMLHttpRequest(), [service]);
     }
     else
