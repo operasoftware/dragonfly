@@ -284,7 +284,6 @@ var DOMAttrAndTextEditor = function(nav_filters)
       }
     }
 
-    opera.postError('parent_parent: '+parent_parent)
     this.max_width = parseInt( getComputedStyle(parent_parent, null).getPropertyValue('width'));
     this.set_textarea_dimensions();
     this.context_enter = enter_state;

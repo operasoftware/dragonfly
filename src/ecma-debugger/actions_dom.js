@@ -316,7 +316,6 @@ cls.DOMInspectorActions = function(id)
 
   this.editDOM = function(event, target)
   {
-    opera.postError('_is_script_node(event.target): '+_is_script_node(event.target));
     if( !_is_script_node(event.target) )
     {
       switch(event.target.nodeName.toLowerCase())
