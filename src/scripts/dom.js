@@ -436,7 +436,8 @@ Element.prototype.scrollSoftIntoView = function()
 Element.prototype.scrollSoftIntoContainerView = function()
 {
   var scrollContainer = this.offsetParent;
-  while (scrollContainer && scrollContainer != document.body && scrollContainer.nodeName != "container")
+  while (scrollContainer && scrollContainer != document.body && 
+      scrollContainer.nodeName.toLowerCase() != "container")
   {
     scrollContainer = scrollContainer.offsetParent;
   }

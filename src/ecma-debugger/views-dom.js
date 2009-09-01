@@ -68,7 +68,7 @@ cls.DOMView = function(id, name, container_class)
   {
     var target = document.getElementById('target-element');
     var container = target;
-    while( container && !/container/.test(container.nodeName) && 
+    while( container && !/container/i.test(container.nodeName) && 
               ( container = container.parentElement) );
     if(target && container)
     {
@@ -99,7 +99,7 @@ cls.DOMView = function(id, name, container_class)
     if(target)
     {
       target.removeAttribute('id');
-      while( target && !/container/.test(target.nodeName) && ( target = target.parentElement ) );
+      while( target && !/container/i.test(target.nodeName) && ( target = target.parentElement ) );
       if( target )
       {
         var 

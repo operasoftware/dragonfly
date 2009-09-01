@@ -221,7 +221,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
     } 
     
     
-    switch( enter_state.type = ele.nodeName )
+    switch( enter_state.type = ele.nodeName.toLowerCase() )
     {
       case "key":
       {
@@ -231,7 +231,8 @@ var DOMAttrAndTextEditor = function(nav_filters)
           || parent_parent.parentElement.parentElement.getAttribute('rt-id');
         enter_state.obj_id = parent_parent.getAttribute('ref-id');
         enter_state.key = ele.textContent;
-        enter_state.has_value = ele.nextElementSibling && ele.nextElementSibling.nodeName == "value";
+        enter_state.has_value = ele.nextElementSibling && 
+          ele.nextElementSibling.nodeName.toLowerCase() == "value";
         enter_state.value = enter_state.has_value 
           && ele.nextElementSibling.textContent.replace(/^"|"$/g, "") || "";
 
@@ -249,7 +250,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
         enter_state.obj_id = parent_parent.getAttribute('ref-id');
         enter_state.key = 
           ele.previousElementSibling 
-          && ele.previousElementSibling.nodeName == "key"
+          && ele.previousElementSibling.nodeName.toLowerCase() == "key"
           && ele.previousElementSibling.textContent
           || "";
         enter_state.value = ele.textContent.replace(/^"|"$/g, "");
@@ -283,6 +284,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
       }
     }
 
+    opera.postError('parent_parent: '+parent_parent)
     this.max_width = parseInt( getComputedStyle(parent_parent, null).getPropertyValue('width'));
     this.set_textarea_dimensions();
     this.context_enter = enter_state;
@@ -494,13 +496,13 @@ var DOMAttrAndTextEditor = function(nav_filters)
 
     if( next || ( next = submit_success && nav_target ) || ( next = nav_target_parent ) )
     {
-      if( next.nodeName == 'node' )
+      if( next.nodeName.toLowerCase() == 'node' )
       {
         next.firstChild.splitText(next.firstChild.nodeValue.length - 1);
         next = this.create_new_edit(next.firstChild);
       }
       else if( next.parentElement != nav_target_parent 
-                && next.nodeName == 'value' 
+                && next.nodeName.toLowerCase() == 'value' 
                 && next == next.parentElement.lastElementChild )
       {
         next = this.create_new_edit(next);
@@ -542,7 +544,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
     }
     if(next || ( next = submit_success && nav_target ) || ( next = nav_target_parent ) )
     {
-      if( next.nodeName == 'node' )
+      if( next.nodeName.toLowerCase() == 'node' )
       {
         next.firstChild.splitText(next.firstChild.nodeValue.length - 1);
         next = this.create_new_edit(next.firstChild);
@@ -569,7 +571,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
   this.create_new_edit = function(ref_node)
   {
     var 
-    name = ref_node.nodeName,
+    name = ref_node.nodeName.toLowerCase(),
     parent = ref_node.parentNode,
     cur = parent.insertBefore
     (
@@ -588,8 +590,8 @@ var DOMAttrAndTextEditor = function(nav_filters)
     state = this.context_cur,
     nav_target = this.textarea_container.parentElement,
     nav_target_parent = nav_target.parentElement,
-    pair_target = nav_target.nodeName == 'key' && 'next' || 'previous',
-    check = nav_target.nodeName == 'key' && 'value' || 'key';
+    pair_target = nav_target.nodeName.toLowerCase() == 'key' && 'next' || 'previous',
+    check = nav_target.nodeName.toLowerCase() == 'key' && 'value' || 'key';
 
     if(this.context_enter.key)
     {
@@ -601,7 +603,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
     // to clear the context of the textarea container
     nav_target.textContent = "";
     cur = nav_target[pair_target + "ElementSibling"];
-    if( cur && cur.nodeName == check )
+    if( cur && cur.nodeName.toLowerCase() == check )
     {
       nav_target_parent.removeChild(cur);
     }

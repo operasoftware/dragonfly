@@ -411,12 +411,12 @@ var key_identifier = new function()
     if( !( __key_handler && __key_handler.onclick(event) === false ) )
     {
       var container = event.target;
-      while( container && !/^(?:top-)?(?:container|toolbar|tabs)$/.test(container.nodeName) 
+      while( container && !/^(?:top-)?(?:container|toolbar|tabs)$/i.test(container.nodeName) 
         && ( container = container.parentElement ) );
       
       if( container )
       {
-        switch (container.nodeName)
+        switch (container.nodeName.toLowerCase())
         {
           case 'container':
           {
@@ -517,7 +517,7 @@ cls.CSSInspectorActions = function(id)
     if( self.__target )
     {
       self.setSelected( self.__target.getPreviousWithFilter( self.__active_container,
-        self.__target.nodeName == 'header' && self.__target.parentElement.getAttribute('handler') 
+        self.__target.nodeName.toLowerCase() == 'header' && self.__target.parentElement.getAttribute('handler') 
         ? nav_filter.header 
         : nav_filter._default ) );
     }
@@ -532,17 +532,17 @@ cls.CSSInspectorActions = function(id)
   {
     _default: function(ele)
     {
-      return ( ( ele.nodeName == 'property' && ele.parentElement.hasAttribute('rule-id') )
-               || ele.nodeName == 'header' 
+      return ( ( ele.nodeName.toLowerCase() == 'property' && ele.parentElement.hasAttribute('rule-id') )
+               || ele.nodeName.toLowerCase() == 'header' 
                || ele.getAttribute('handler') == 'display-rule-in-stylesheet' );
     },
     header: function(ele)
     {
-      return ele.nodeName == 'header';
+      return ele.nodeName.toLowerCase() == 'header';
     },
     property_editable: function(ele)
     {
-      return ele.nodeName == 'property' && ele.parentElement.hasAttribute('rule-id');
+      return ele.nodeName.toLowerCase() == 'property' && ele.parentElement.hasAttribute('rule-id');
     }
   }
 
@@ -551,7 +551,7 @@ cls.CSSInspectorActions = function(id)
     if( self.__target )
     {
       self.setSelected( self.__target.getNextWithFilter( self.__active_container,
-        self.__target.nodeName == 'header' && !self.__target.parentElement.getAttribute('handler') 
+        self.__target.nodeName.toLowerCase() == 'header' && !self.__target.parentElement.getAttribute('handler') 
         ? nav_filter.header 
         : nav_filter._default ) );
     }
@@ -586,7 +586,7 @@ cls.CSSInspectorActions = function(id)
   {
     var cat = event.target;
     
-    switch(event.target.nodeName)
+    switch(event.target.nodeName.toLowerCase())
     {
       case 'key':
       case 'value':
@@ -616,7 +616,7 @@ cls.CSSInspectorActions = function(id)
 
   this['css-toggle-category'] = function(event, target)
   {
-    if(/header/.test(target.nodeName))
+    if(/header/i.test(target.nodeName))
     {
       target = target.firstChild;
     }

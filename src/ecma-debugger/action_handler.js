@@ -111,7 +111,7 @@ var action_handler = new function()
       // if it's the active search scope
       || ( cur_2 && ( cur_2 = cur_2.nextSibling ) && parseInt(cur_2.style.paddingLeft) > margin ),
     is_in_search_scope =
-      parent.previousSibling && parent.previousSibling.nodeName == "start-search-scope",
+      parent.previousSibling && parent.previousSibling.nodeName.toLowerCase() == "start-search-scope",
     range = null;
     if( window[data_id] )
     {
@@ -122,11 +122,12 @@ var action_handler = new function()
           window[data_id].clearData(rt_id, obj_id, depth, parent.getElementsByTagName('key')[0].textContent);
           range = document.createRange();
           range.setStartAfter(parent);
-          while( ( cur = cur.nextSibling ) && ( parseInt(cur.style.paddingLeft) > margin || cur.nodeName != "item" ))
+          while( ( cur = cur.nextSibling ) && ( parseInt(cur.style.paddingLeft) > margin || 
+                cur.nodeName.toLowerCase() != "item" ))
           {
             range.setEndAfter(cur);
             cur_2 = cur;
-            if( cur.nodeName == "end-search-scope" )
+            if( cur.nodeName.toLowerCase() == "end-search-scope" )
             {
               is_in_search_scope = true;
             }
@@ -134,11 +135,12 @@ var action_handler = new function()
           if(is_in_search_scope)
           {
             cur = cur_2;
-            while( ( cur = cur.nextSibling ) && ( parseInt(cur.style.paddingLeft) >= margin || cur.nodeName != "item" ) )
+            while( ( cur = cur.nextSibling ) && ( parseInt(cur.style.paddingLeft) >= margin || 
+              cur.nodeName.toLowerCase() != "item" ) )
             {
               cur_2 = cur;
             }
-            if(cur_2.nodeName == 'end-search-scope' &&  !cur_2.nextSibling && cur_2.previousSibling)
+            if(cur_2.nodeName.toLowerCase() == 'end-search-scope' &&  !cur_2.nextSibling && cur_2.previousSibling)
             {
               range.setEndAfter(cur_2.previousSibling);
             }
@@ -147,7 +149,8 @@ var action_handler = new function()
               parent_parent.insertAfter(parent_parent.getElementsByTagName('end-search-scope')[0], cur_2);
             }
             cur = parent;
-            while( ( cur = cur.previousSibling ) && ( parseInt(cur.style.paddingLeft) >= margin || cur.nodeName != "item" ) )
+            while( ( cur = cur.previousSibling ) && ( parseInt(cur.style.paddingLeft) >= margin || 
+              cur.nodeName.toLowerCase() != "item" ) )
             {
               cur_2 = cur;
             }
