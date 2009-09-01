@@ -29,7 +29,7 @@
     */
   this.handleClick = function(target_ele, modal_box, select_obj)
   {
-    return target_ele.nodeName != 'cst-option'  && 2 || 
+    return target_ele.nodeName.toLowerCase() != 'cst-option'  && 2 || 
           ( target_ele.hasAttribute('handler') || 
             select_obj.checkChange(target_ele) ) && 1  || 0;
   };
@@ -88,9 +88,9 @@
   var click_handler = function(event)
   {
     var ele = event.target;
-    if( /^cst-/.test(ele.nodeName) )
+    if( /^cst-/i.test(ele.nodeName) )
     {
-      var select = /^cst-select/.test(ele.nodeName) && ele || ele.parentElement;
+      var select = /^cst-select/i.test(ele.nodeName) && ele || ele.parentElement;
       var cursor = event.target;
       if(select.hasAttribute("disabled"))
       {
@@ -159,7 +159,7 @@
   {
     select_ele.value = this.getSelectedOptionValue();
     var firstElementChild = select_ele.firstElementChild;
-    if(firstElementChild && firstElementChild.nodeName == "cst-value" )
+    if(firstElementChild && firstElementChild.nodeName.toLowerCase() == "cst-value" )
     {
       firstElementChild.textContent = this.getSelectedOptionText();
     }
@@ -396,7 +396,7 @@ var CstSelectColorBase = function(id, rgba_arr, handler, option)
   {
     // return 0 cancel, 1 submit, 2 keep modal state
     var ret = 2, rgba = null, inputs = null;
-    switch (target.nodeName)
+    switch (target.nodeName.toLowerCase())
     {
       case 'cst-color':
       {

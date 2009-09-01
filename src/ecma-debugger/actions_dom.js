@@ -22,7 +22,7 @@ cls.DOMInspectorActions = function(id)
 
   var _is_script_node = function(target)
   {
-    switch(target.nodeName)
+    switch(target.nodeName.toLowerCase())
     {
       case 'value':
       case 'key':
@@ -71,14 +71,14 @@ cls.DOMInspectorActions = function(id)
       return \
       ( !_is_script_node(ele) &&
         ( /^key|value|input|node$/.test(ele.nodeName.toLowerCase()) ||
-          "text" == ele.nodeName && ele.textContent.length ) );
+          "text" == ele.nodeName.toLowerCase() && ele.textContent.length ) );
     },
     up_down: function(ele, start_ele)
     {
       return \
       ( "input" == ele.nodeName.toLowerCase() && !ele.parentNode.contains(start_ele) ) ||
       ( !_is_script_node(ele) && 
-          ( "node" == ele.nodeName &&
+          ( "node" == ele.nodeName.toLowerCase() &&
             ( ele.textContent.slice(0,2) != "</" ||
               // it is a closing tag but it's also the only tag in this line
               ( ele.parentNode.getElementsByTagName('node')[0] == ele ) ) &&
@@ -238,14 +238,14 @@ cls.DOMInspectorActions = function(id)
   {
     if(nav_target)
     {
-      switch (nav_target.nodeName.toUpperCase())
+      switch (nav_target.nodeName.toLowerCase())
       {
-        case "NODE":
+        case "node":
         {
           nav_target.releaseEvent("dblclick");
           break;
         }
-        case "INPUT":
+        case "input":
         {
           nav_target.releaseEvent("click", {ctrlKey: true});
           break;
@@ -318,11 +318,11 @@ cls.DOMInspectorActions = function(id)
   {
     if( !_is_script_node(event.target) )
     {
-      switch(event.target.nodeName)
+      switch(event.target.nodeName.toLowerCase())
       {
         case 'span':
         {
-          if(/^(?:key|value|text|node)$/.test(event.target.parentElement.nodeName) )
+          if(/^(?:key|value|text|node)$/.test(event.target.parentElement.nodeName.toLowerCase()) )
           {
             event.target.parentElement.releaseEvent('dblclick');
           }
@@ -489,7 +489,7 @@ cls.DOMInspectorActions = function(id)
     return function(node)
     {
       return (
-        node.nodeName == 'node' 
+        node.nodeName.toLowerCase() == 'node' 
         && node.textContent.indexOf(start_tag) ==  0
         && node.parentElement.style.marginLeft == margin_left
         );

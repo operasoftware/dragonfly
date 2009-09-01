@@ -39,7 +39,7 @@ var EventHandler = function(type, is_capturing, handler_key)
     }
     if( handler && eventHandlers[type][handler] )
     {
-      if( type == 'click' && /toolbar-buttons/.test(ele.parentNode.nodeName) )
+      if( type == 'click' && /toolbar-buttons/i.test(ele.parentNode.nodeName) )
       {
         container = 
           document.getElementById(ele.parentNode.parentNode.id.replace('toolbar', 'container'));
@@ -224,7 +224,7 @@ eventHandlers.change['checkbox-setting'] = function(event)
 eventHandlers.focus['focus'] = function(event, target)
 {
   var parent = event.target.parentNode;
-  if( parent.nodeName == 'filter' )
+  if( parent.nodeName.toLowerCase() == 'filter' )
   {
     parent.firstChild.textContent = '';
     parent.addClass('focus');
@@ -240,7 +240,7 @@ eventHandlers.focus['focus'] = function(event, target)
 eventHandlers.blur['blur'] = function(event, target)
 {
   var parent = event.target.parentNode;
-  if( parent.nodeName == 'filter' )
+  if( parent.nodeName.toLowerCase() == 'filter' )
   {
     if( !event.target.value )
     {

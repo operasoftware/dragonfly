@@ -40,7 +40,7 @@ var DOMMarkupEditor = function()
     container = ele;
 
     while( container 
-            && !/container/.test(container.nodeName) 
+            && !/container/i.test(container.nodeName) 
             && ( container = container.parentElement ) );
     if(container)
     {
@@ -446,7 +446,7 @@ var DOMMarkupEditor = function()
       source = "<temp-root xmlns=\"" + namespace + "\">" + str + "</temp-root>",
       doc = parser.parseFromString(source, "application/xml");
 
-      if( doc.documentElement.nodeName == "temp-root" )
+      if( doc.documentElement.nodeName.toLowerCase() == "temp-root" )
       {
         range = doc.createRange();
         range.selectNodeContents(doc.documentElement);

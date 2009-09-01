@@ -69,7 +69,8 @@ cls.ECMAScriptDebuggerService = function(name)
 
     views.environment.update();
     
-    if( ini.protocol_version == environment['protocol-version'] )
+    if( ini.protocol_version == environment['protocol-version'] ||
+        ( ini.protocol_version == 5 && environment['protocol-version'] == 6 ) )
     {
       stop_at.setInitialSettings();
       self.createAllRuntimes();

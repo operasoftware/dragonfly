@@ -32,7 +32,8 @@ var ObjectDataBase = new function()
     i=0,
     prop_type = '',
     index = this.getObject(obj_id),
-    unsorted = [index + 1 + this.getCountVirtualProperties(index), 0],
+    data_splice_args = [index + 1 + this.getCountVirtualProperties(index), 0],
+    unsorted = [],
     depth = 0;
     
     // each object should have a class attribute 
@@ -138,7 +139,7 @@ var ObjectDataBase = new function()
         items = [],
         attributes = [],
         cursor = null,
-        i = 2,
+        i = 0,
         re_d = /\d+/;
 
         for( ; cursor = unsorted[i]; i++)
@@ -155,13 +156,13 @@ var ObjectDataBase = new function()
         }
         items = items.sort(sort_item);
         attributes = attributes.sort(sort_key);
-        unsorted = [unsorted[0], unsorted[1]].concat(items, attributes);
+        unsorted = items.concat(attributes);
       }
       else
       {
         unsorted.sort(sort_key);
       }
-      this.data.splice.apply(this.data, unsorted);
+      this.data.splice.apply(this.data, data_splice_args.concat(unsorted));
       if( org_args && !org_args[0].__call_count )
       {
         org_args[0].__call_count = 1;

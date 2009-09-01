@@ -37,7 +37,7 @@ var ListTextSearch = function()
       search_results = [];
       cache[current_id] = search_term = new_search_term;
       cur = container.getElementsByTagName('start-search-scope')[0];
-      while( cur && ( cur = cur.nextSibling ) && cur.nodeName != "end-search-scope" )
+      while( cur && ( cur = cur.nextSibling ) && cur.nodeName.toLowerCase() != "end-search-scope" )
       {
         display = 
           cur.getElementsByTagName('key')[0].textContent.indexOf(search_term) == -1 
@@ -51,7 +51,7 @@ var ListTextSearch = function()
         depth = parseInt( cur.getAttribute('depth'));
         cur_2 = cur;
         while( ( cur_2 = cur_2.nextSibling ) 
-                  && cur_2.nodeName != "end-search-scope"
+                  && cur_2.nodeName.toLowerCase() != "end-search-scope"
                   && ( parseInt( cur.getAttribute('depth')) < depth ) )
         {
           cur = cur_2;
@@ -79,10 +79,10 @@ var ListTextSearch = function()
     targetBottom = 0;
 
     while( ( cur = cur[next] ) 
-      && !( cur.nodeName == 'item' 
+      && !( cur.nodeName.toLowerCase() == 'item' 
       && cur.style.display != 'none' 
       && ( cur.firstChild && /input/i.test(cur.firstChild.nodeName) ) ) );
-    if( cur && cur.nodeName == 'item' )
+    if( cur && cur.nodeName.toLowerCase() == 'item' )
     {
       if( __selected_element )
       {
