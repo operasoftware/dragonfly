@@ -1032,8 +1032,8 @@ textarea-container {
 textarea-container textarea-inner-container {
   display: block;
   background-image: -o-skin('Speed Dial Configuration Dialog Skin');
-  padding: 3px 9px 10px 5px;
-  margin: -4px -10px -11px -6px;
+  padding: 7px 8px 9px 8px;
+  margin: -8px -9px -10px -9px;
   }
  
 textarea-container textarea{
@@ -1059,8 +1059,8 @@ textarea-container-inline textarea-inner-container
 {
   display: inline-block;
   background-image: -o-skin('Speed Dial Configuration Dialog Skin');
-  padding: 3px 9px 10px 5px;
-  margin: -4px -10px -11px -6px;
+  padding: 7px 8px 9px 8px;
+  margin: -8px -9px -10px -9px;
 }
  
 textarea-container-inline textarea
