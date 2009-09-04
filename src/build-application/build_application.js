@@ -192,6 +192,9 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
   var namespace = cls.EcmascriptDebugger && cls.EcmascriptDebugger["5.0"];
   window.app.helpers.implement_service(namespace);
   window.runtimes = new namespace.Runtimes();
+  window.runtimes.bind();
+  window.stop_at = new namespace.StopAt();
+  window.stop_at.bind();
 }
 
 window.app.builders.EcmascriptLogger || ( window.app.builders.EcmascriptLogger = {} );

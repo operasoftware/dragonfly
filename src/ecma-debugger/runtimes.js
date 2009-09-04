@@ -9,6 +9,16 @@ cls.EcmascriptDebugger["5.0"] || (cls.EcmascriptDebugger["5.0"] = {});
 // TODO clean up in regard of protocol 4
 cls.EcmascriptDebugger["5.0"].Runtimes = function()
 {
+
+  const
+  RUNTIME_LIST = 0,
+  // sub message RuntimeInfo 
+  RUNTIME_ID = 0,
+  HTML_FRAME_PATH = 1,
+  WINDOW_ID = 2,
+  OBJECT_ID = 3,
+  URI = 4;
+
   var __runtimes = {};
 
   var __old_runtimes = {};
@@ -57,6 +67,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
   }
   
   var self = this;
+  var ecma_debugger = window.services['ecmascript-debugger'];
 
   var onResetState = function()
   {
@@ -175,115 +186,135 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     }
   }
 
-  var parseRuntime = function(xml)
+  this.handleListRuntimes = function(status, message)
+  {
+    message[RUNTIME_LIST].forEach(this.handleRuntime, this);
+  }
+
+  this.handleRuntime = function(r_t)
   {
 
-    var r_ts = xml.getElementsByTagName('runtime'), r_t=null, i=0;
+    /*
+    const
+    RUNTIME_LIST = 0,
+    // sub message RuntimeInfo 
+    RUNTIME_ID = 0,
+    HTML_FRAME_PATH = 1,
+    WINDOW_ID = 2,
+    OBJECT_ID = 3,
+    URI = 4;
+    */
+    var i=0;
     var length = 0, k = 0;
-    var runtimeId = '', runtime=null, prop = '', 
-      window_id = '',
-      children = null, child = null, j = 0;
+    var 
+    runtimeId = r_t[RUNTIME_ID], 
+    prop = '', 
+    window_id = '',
+    children = null, 
+    child = null, 
+    j = 0;
     var cur = '';
 
-    for ( ; r_t = r_ts[i]; i++)
-    {
-      runtimeId = r_t.getNodeData('runtime-id'); 
       // with the createAllRuntimes call and the runtime-started event
       // it can happen that a runtime get parsed twice
-      if(runtimeId && !__runtimes[runtimeId] )
+    if(runtimeId && !__runtimes[runtimeId] )
+    {
+      length = __runtimes_arr.length;
+      for( k = 0; k < length && runtimeId != __runtimes_arr[k]; k++);
+      if( k == length )
       {
-        length = __runtimes_arr.length
-        for( k = 0; k < length && runtimeId != __runtimes_arr[k]; k++);
-        if( k == length )
-        {
-          __runtimes_arr[k] = runtimeId;  
-        }
-        runtime = {};
-        children = r_t.childNodes;
-        for(j=0 ; child = children[j]; j++)
-        {
-          runtime[child.nodeName] = child.textContent;
-        }
-        checkOldRuntimes(runtime);
-        if( runtime.is_top = isTopRuntime(runtime) )
-        {
-          var win_id = runtime['window-id'];
-          if (win_id in __window_ids)
-          {
-            cleanupWindow(win_id, runtimeId);
-          }
-          else
-          {
-            __window_ids[win_id] = true;
-          }
-          /* 
-             pop-ups are top runtimes but part of the debug context.
-             right now we don't get the correct info in the message 
-             stream to know that directly. ( see bug CORE-17782 and CORE-17775 )
-             for now we trust the window manager and our 
-             setting to just use one window-id as filter.
-             that basically means that a top runtime with a differnt window id 
-             than __selected_window must actually be a pop-up 
-          */
-          if( __selected_window && win_id != __selected_window )
-          {
-            /*
-              it is a pop-up, but the id of the opener 
-              window is an assumption here, 
-              certainly not true in all cases. 
-            */
-            runtime['opener-window-id'] = __selected_window;
-          }
-          if (!debug_context_frame_path)
-          {
-            debug_context_frame_path = runtime['html-frame-path'];
-          }   
-          __selected_script = '';
-        } 
-        getTitleRuntime(runtimeId);
-        __runtimes[runtimeId] = runtime;
-        // TODO check if that is still needed
+        __runtimes_arr[k] = runtimeId;  
+      }
+      runtime = 
+      {
+        'runtime-id': r_t[RUNTIME_ID],
+        'html-frame-path': r_t[HTML_FRAME_PATH],
+        'window-id': r_t[RUNTIME_ID],
+        'object-id': r_t[OBJECT_ID],
+        'uri': r_t[URI],
+      };
 
-        if(__next_runtime_id_to_select == runtimeId)
+      checkOldRuntimes(runtime);
+      if( runtime.is_top = isTopRuntime(runtime) )
+      {
+        var win_id = runtime['window-id'];
+        if (win_id in __window_ids)
         {
-          self.setSelectedRuntime(runtime);
-          __next_runtime_id_to_select = '';
-        }
-        if( runtime['window-id'] == __old_selected_window )
-        {
-          self.setActiveWindowId(__old_selected_window);
-          host_tabs.setActiveTab(__old_selected_window);
-          __old_selected_window = '';
+          cleanupWindow(win_id, runtimeId);
         }
         else
         {
-          // TODO still needed?
-          updateRuntimeViews();
+          __window_ids[win_id] = true;
         }
-        if(__windows_reloaded[runtime['window-id']] == 1)
+        /* 
+           pop-ups are top runtimes but part of the debug context.
+           right now we don't get the correct info in the message 
+           stream to know that directly. ( see bug CORE-17782 and CORE-17775 )
+           for now we trust the window manager and our 
+           setting to just use one window-id as filter.
+           that basically means that a top runtime with a differnt window id 
+           than __selected_window must actually be a pop-up 
+        */
+        if( __selected_window && win_id != __selected_window )
         {
-          __windows_reloaded[runtime['window-id']] = 2;
+          /*
+            it is a pop-up, but the id of the opener 
+            window is an assumption here, 
+            certainly not true in all cases. 
+          */
+          runtime['opener-window-id'] = __selected_window;
         }
-        if( debug_context_frame_path == runtime['html-frame-path'] && 
-              __selected_window == runtime['window-id'] && 
-              runtimeId != __selected_runtime_id )
+        if (!debug_context_frame_path)
         {
-          self.setSelectedRuntimeId(runtimeId);
-        }
-        if( runtime['window-id'] == __selected_window ||
-              runtime['opener-window-id'] == __selected_window )
-        {
-          host_tabs.updateActiveTab();
-        }
-        if(runtime.is_top)
-        {
-          views['js_source'].update();
-          window['cst-selects']['js-script-select'].updateElement();
-          window['cst-selects']['cmd-runtime-select'].updateElement();
-        }
+          debug_context_frame_path = runtime['html-frame-path'];
+        }   
+        __selected_script = '';
+      } 
+      // TODO code outcommented 
+      // getTitleRuntime(runtimeId);
+      __runtimes[runtimeId] = runtime;
+      // TODO check if that is still needed
+
+      if(__next_runtime_id_to_select == runtimeId)
+      {
+        self.setSelectedRuntime(runtime);
+        __next_runtime_id_to_select = '';
+      }
+      if( runtime['window-id'] == __old_selected_window )
+      {
+        self.setActiveWindowId(__old_selected_window);
+        host_tabs.setActiveTab(__old_selected_window);
+        __old_selected_window = '';
+      }
+      else
+      {
+        // TODO still needed?
+        updateRuntimeViews();
+      }
+      if(__windows_reloaded[runtime['window-id']] == 1)
+      {
+        __windows_reloaded[runtime['window-id']] = 2;
+      }
+      if( debug_context_frame_path == runtime['html-frame-path'] && 
+            __selected_window == runtime['window-id'] && 
+            runtimeId != __selected_runtime_id )
+      {
+        self.setSelectedRuntimeId(runtimeId);
+      }
+      if( runtime['window-id'] == __selected_window ||
+            runtime['opener-window-id'] == __selected_window )
+      {
+        host_tabs.updateActiveTab();
+      }
+      if(runtime.is_top)
+      {
+        views['js_source'].update();
+        window['cst-selects']['js-script-select'].updateElement();
+        window['cst-selects']['cmd-runtime-select'].updateElement();
       }
     }
-    return r_ts;
+    
+
     
 
   }
@@ -478,21 +509,24 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
   {
     debug_context_frame_path = '';
     __selected_script = '';
+    /*
     if( _is_first_call_create_all_runtimes_on_debug_context_change )
     {
       stop_at.setInitialSettings();
       // with the STP 1 design this workaround can be removed
       _is_first_call_create_all_runtimes_on_debug_context_change = false;
     }
+    */
     var tag =  tagManager.setCB(null, set_new_debug_context, [win_id]);
-    services['ecmascript-debugger'].createAllRuntimes(tag);
+    ecma_debugger.requestListRuntimes(tag, [[],1]);
   }
 
-  var set_new_debug_context = function(xml, win_id)
+  var set_new_debug_context = function(status, message, win_id)
   {
-    var runtimes = parseRuntime(xml);
+
+    message[RUNTIME_LIST].forEach(self.handleRuntime, self);
     host_tabs.setActiveTab(win_id);
-    if( runtimes.length )
+    if( message[RUNTIME_LIST].length )
     {
       if( settings.runtimes.get('reload-runtime-automatically') )
       {
@@ -1115,6 +1149,22 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
   messages.addListener('application-setup', onApplicationSetup);
 
   messages.addListener('reset-state', onResetState);
+
+  this.bind = function()
+  {
+    var self = this,
+    ecma_debugger = window.services['ecmascript-debugger'];
+
+    ecma_debugger.handleListRuntimes = function(status, message)
+    {
+      self.handleListRuntimes(status, message);
+    }
+
+    ecma_debugger.addListener('window-filter-change', function(msg)
+    {
+      self.createAllRuntimesOnDebugContextChange(msg.filter[1][0])
+    });
+  }
   
 
 

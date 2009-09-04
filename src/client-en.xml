@@ -145,10 +145,10 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 
 <script src="./lib/service_base.js"/>
 
-<script src="./lib/http_logger.js"></script>
+<!--<script src="./lib/http_logger.js"></script>-->
 <script src="./lib/namespace.js"></script>
 <script src="./lib/stp_0_wrapper.js"></script>
-<script src="./lib/console_logger.js"></script>
+<!--<script src="./lib/console_logger.js"></script>-->
 <script src="./lib/scope.js"></script>
 <script src="./lib/ecmascript_debugger.js"></script>
 <script src="./lib/http_interface.js"></script>

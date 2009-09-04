@@ -1,8 +1,12 @@
-﻿/**
+﻿window.cls || (window.cls = {});
+cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
+cls.EcmascriptDebugger["5.0"] || (cls.EcmascriptDebugger["5.0"] = {});
+
+/**
   * @constructor 
   */
 
-var stop_at = new function()
+cls.EcmascriptDebugger["5.0"].StopAt = function()
 {
 
   /**
@@ -15,7 +19,9 @@ var stop_at = new function()
     script: 1,
     exception: 0,
     error: 0,
-    abort: 0
+    abort: 0,
+    gc: 0,
+    debugger_statement: 1
   }
 
   // replace with settings['js-source'].get(key)
@@ -24,10 +30,24 @@ var stop_at = new function()
     script: 0,
     exception: 0,
     error: 0,
-    abort: 0
+    abort: 0,
+    gc: 0,
+    debugger_statement: 1
+  }
+
+  var stop_at_id_map =
+  {
+    script: 0,
+    exception: 1,
+    error: 2,
+    abort: 3,
+    gc: 4,
+    debugger_statement: 5
   }
 
   var self = this;
+
+  var ecma_debugger = window.services['ecmascript-debugger'];
 
   var stopAt = {}; // there can be only one stop at at the time
 
@@ -158,12 +178,11 @@ var stop_at = new function()
       var config_arr = [], prop = '';
       for ( prop in stop_at_settings )
       {
-        config_arr[config_arr.length] = prop;
-        config_arr[config_arr.length] = 
+        config_arr[stop_at_id_map[prop]] = 
           ( ( stop_at_user_settings[prop] = settings['js_source'].get(prop) ) 
-            || stop_at_settings[prop] ) && 'yes' || 'no';
+            || stop_at_settings[prop] ) && 1 || 0;
       }
-      services['ecmascript-debugger'].setConfiguration.apply(services['ecmascript-debugger'], config_arr);
+      ecma_debugger.requestSetConfiguration(0, config_arr);
       _is_initial_settings_set = true;
     }
   }
@@ -319,6 +338,17 @@ var stop_at = new function()
 
 
   messages.addListener('setting-changed', onSettingChange);
+
+  this.bind = function()
+  {
+    var self = this,
+    ecma_debugger = window.services['ecmascript-debugger'];
+
+    ecma_debugger.addListener('enable-success', function()
+    {
+      self.setInitialSettings();
+    });
+  }
 
   
 }
