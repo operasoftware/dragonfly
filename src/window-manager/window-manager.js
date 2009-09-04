@@ -13,31 +13,7 @@ cls.WindowManager["2.0"].WindowManagerData = function()
   this.get_debug_context = function(){};
   this.set_debug_context = function(win_id){};
   this.get_debug_context_title = function(){};
-
-  /* binding */
-
-  var Bind = function(object)
-  {
-    this.handleGetActiveWindow = 
-    this.onWindowActivated = function(status, msg)
-    {
-      object._set_active_window(msg[0]);
-    }
-    this.handleListWindows = function(status, message)
-    {
-      object._set_window_list(message[0].map(object._parse_window));
-    }
-    this.onWindowUpdated = function(status, message)
-    {
-      object._update_list(object._parse_window(message));
-    }
-    this.onWindowClosed = function(status, message)
-    {
-      object._remove_window(message[0]);
-    }
-    this.addListener('enable-success', object._get_context);
-  };
-
+  this.bind = function(){};
 
   /* private */
 
@@ -53,30 +29,8 @@ cls.WindowManager["2.0"].WindowManagerData = function()
 
   this._get_context = function()
   {
-    if( !self._active_window )
-    {
-      window_manager.requestGetActiveWindow();
-    }
-    else if (!self._debug_context)
-    {
-      self.set_debug_context(self._active_window);
-    }
-    if (!window_manager_data._window_list)
-    {
-      window_manager.requestListWindows();
-    }
+    window_manager.requestListWindows();
 
-    if( !self._active_window || !self._window_list )
-    {
-      if( self._check_counter++ < 20 )
-      {
-        setTimeout(self._get_context, 100);
-      }
-      else
-      {
-        throw "it not possible to get the active window";
-      }
-    }
   }
 
   this._parse_window = function(win)
@@ -101,12 +55,20 @@ cls.WindowManager["2.0"].WindowManagerData = function()
 
   this._set_active_window = function(win_id)
   {
-    this._active_window = win_id;
-    if (!this._debug_context)
+    if(this._has_window_id_in_list(win_id))
     {
-      self.set_debug_context(this._active_window);
+      this._active_window = win_id;
+      if (!this._debug_context)
+      {
+        this.set_debug_context(this._active_window);
+      }
+      window.windowsDropDown.update();
     }
-    window.windowsDropDown.update();
+    else
+    {
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+          'active window id does not exist');
+    }
   }
 
   this._has_window_id_in_list = function(id)
@@ -124,6 +86,11 @@ cls.WindowManager["2.0"].WindowManagerData = function()
     this._window_list = 
       !settings.general.get('show-only-normal-and-gadget-type-windows') && window_list
       || window_list.filter(this._window_filter);
+
+    if( !this._active_window )
+    {
+      window_manager.requestGetActiveWindow();
+    }
 
     if( this._active_window && !this._has_window_id_in_list(this._active_window) )
     {
@@ -228,12 +195,37 @@ cls.WindowManager["2.0"].WindowManagerData = function()
       100
     )
     */
-
   }
 
-  /* constructor calls */
+  this.bind = function()
+  {
+    var 
+    self = this,
+    window_manager = window.services['window-manager'];
 
-  Bind.call(window_manager, this);
+    window_manager.handleGetActiveWindow = 
+    window_manager.onWindowActivated = function(status, msg)
+    {
+      self._set_active_window(msg[0]);
+    }
+    window_manager.handleListWindows = function(status, message)
+    {
+      self._set_window_list(message[0].map(self._parse_window));
+    }
+    window_manager.onWindowUpdated = function(status, message)
+    {
+      self._update_list(self._parse_window(message));
+    }
+    window_manager.onWindowClosed = function(status, message)
+    {
+      self._remove_window(message[0]);
+    }
+    window_manager.addListener('enable-success', function()
+    {
+      window_manager.requestListWindows();
+    });
+  };
+
 }
 
 // TODO use the action class

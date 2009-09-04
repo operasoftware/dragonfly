@@ -191,6 +191,7 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
 {
   var namespace = cls.EcmascriptDebugger && cls.EcmascriptDebugger["5.0"];
   window.app.helpers.implement_service(namespace);
+  window.runtimes = new namespace.Runtimes();
 }
 
 window.app.builders.EcmascriptLogger || ( window.app.builders.EcmascriptLogger = {} );
@@ -234,6 +235,7 @@ window.app.builders.WindowManager["2.0"] = function(service)
   {
     window.app.helpers.implement_service(namespace);
     window.window_manager_data = new namespace.WindowManagerData();
+    window.window_manager_data.bind();
     window.windowsDropDown = new namespace.WindowsDropDown();
     namespace.DebuggerMenu.prototype = new CstSelectWithAction();
     new namespace.DebuggerMenu('debugger-menu', 'debugger-menu');

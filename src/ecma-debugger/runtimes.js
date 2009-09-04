@@ -1,9 +1,13 @@
-﻿/**
+﻿window.cls || (window.cls = {});
+cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
+cls.EcmascriptDebugger["5.0"] || (cls.EcmascriptDebugger["5.0"] = {});
+
+/**
   * @constructor 
   */
 
 // TODO clean up in regard of protocol 4
-var runtimes = new function()
+cls.EcmascriptDebugger["5.0"].Runtimes = function()
 {
   var __runtimes = {};
 
