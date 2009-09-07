@@ -746,7 +746,7 @@ cls.ScriptSelect = function(id, class_name)
 
   this.checkChange = function(target_ele)
   {
-    var script_id = target_ele.getAttribute('script-id');
+    var script_id = parseInt(target_ele.getAttribute('script-id'));
 
     if(script_id)
     {

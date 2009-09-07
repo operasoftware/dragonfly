@@ -33,15 +33,16 @@ var runtime_onload_handler = new function()
     {
       var tag = tagManager.setCB(null, handleReadyState, [rt_id]);
       var script = "return document.readyState";
-      services['ecmascript-debugger'].eval(tag, rt_id, '', '', script);
+      services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, script]);
     }
   }
 
-  var handleReadyState = function(xml, rt_id)
+  var handleReadyState = function(status, message, rt_id)
   {
-    if( xml.getNodeData('status') == 'completed' )
+    const STATUS = 0, VALUE = 2;
+    if( message[STATUS] == 'completed' )
     {
-      if( xml.getNodeData('string') == COMPLETE)
+      if( message[VALUE] == COMPLETE)
       {
         __rts[rt_id] = COMPLETE;
         var onload_handlers = __onload_handlers[rt_id],  cur = null, i = 0;

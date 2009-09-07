@@ -1391,10 +1391,13 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     }
     return ret.concat(dashs);
   }
+
+  /*
   
   messages.addListener('runtime-destroyed', onRuntimeDestroyed);
   messages.addListener('active-tab', onActiveTab);
 
   messages.addListener('reset-state', onResetState);
+  */
   
 }

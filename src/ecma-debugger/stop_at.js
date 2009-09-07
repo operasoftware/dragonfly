@@ -194,7 +194,8 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
 
     runtimes.setObserve(stopAt['runtime-id'], mode != 'run');
 
-    services['ecmascript-debugger'].__continue(stopAt, mode);
+    services['ecmascript-debugger'].requestContinueThread(0, 
+        [stopAt['runtime-id'], stopAt['thread-id'], mode]);
     messages.post('frame-selected', {frame_index: -1});
     messages.post('thread-continue-event', {stop_at: stopAt});
     toolbars.js_source.disableButtons('continue');
@@ -215,25 +216,30 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
 
   */
 
-  this.handle = function(stop_at_event)
+  this.handle = function(message)
   {
-    stopAt = {};
-    var id = getStopAtId();
-    var children = stop_at_event.documentElement.childNodes, child=null, i=0;
-    for ( ; child = children[i]; i++)
+    const
+    RUNTIME_ID = 0,
+    THREAD_ID = 1,
+    SCRIPT_ID = 2,
+    LINE_NUMBER = 3,
+    STOPPED_REASON = 4,
+    BREAKPOINT_ID = 5;
+
+
+    stopAt = 
     {
-      if(child.firstChild)
-      {
-        stopAt[child.nodeName] = child.firstChild.nodeValue;
-      }
-      else
-      {
-        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +  
-          "empty element in <thread-stopped-at> event");
-        stopAt[child.nodeName] = null
-      }
-    }
-    var line = parseInt( stopAt['line-number'] );
+      'runtime-id': message[RUNTIME_ID],
+      'thread-id': message[THREAD_ID],
+      'script-id': message[SCRIPT_ID],
+      'line-number': message[LINE_NUMBER],
+      'stopped-reason': message[STOPPED_REASON],
+      'breakpoint-id': message[BREAKPOINT_ID]
+    };
+    // var id = getStopAtId();
+
+
+    var line = stopAt['line-number'];
     if( typeof line == 'number' )
     {
       /**
@@ -343,6 +349,9 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
   {
     var self = this,
     ecma_debugger = window.services['ecmascript-debugger'];
+
+    ecma_debugger.handleSetConfiguration = function(status, message){};
+
 
     ecma_debugger.addListener('enable-success', function()
     {

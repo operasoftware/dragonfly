@@ -37,3 +37,35 @@
 
       // TODO code outcommented 
       // getTitleRuntime(runtimeId);
+
+
+- tag manager 
+      this.setCB
+
+- dom_data
+      /*
+      messages.addListener('active-tab', onActiveTab);
+      messages.addListener('show-view', onShowView);
+      messages.addListener('hide-view', onHideView);
+      messages.addListener('setting-changed', onSettingChange);
+      messages.addListener('runtime-stopped', onRuntimeStopped);
+      messages.addListener('runtime-destroyed', onRuntimeStopped);
+
+      messages.addListener('reset-state', onResetState);
+      */
+
+- runtimes 
+  use exec to reload
+
+- stylesheets
+
+    /*
+    
+    messages.addListener('runtime-destroyed', onRuntimeDestroyed);
+    messages.addListener('active-tab', onActiveTab);
+
+    messages.addListener('reset-state', onResetState);
+    */
+
+- runtimes
+    clean up therad handling

@@ -191,6 +191,11 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     message[RUNTIME_LIST].forEach(this.handleRuntime, this);
   }
 
+  this.onRuntimeStarted = function(status, message) 
+  {
+    this.handleRuntime(message);
+  }
+
   this.handleRuntime = function(r_t)
   {
 
@@ -214,6 +219,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     child = null, 
     j = 0;
     var cur = '';
+    var runtime = null;
 
       // with the createAllRuntimes call and the runtime-started event
       // it can happen that a runtime get parsed twice
@@ -229,7 +235,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       {
         'runtime-id': r_t[RUNTIME_ID],
         'html-frame-path': r_t[HTML_FRAME_PATH],
-        'window-id': r_t[RUNTIME_ID],
+        'window-id': r_t[WINDOW_ID],
         'object-id': r_t[OBJECT_ID],
         'uri': r_t[URI],
       };
@@ -563,14 +569,25 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
 
 
 
-  this.handle = function(new_script_event)
+  this.onNewScript = function(status, message)
   {
-    var script = {};
-    var children = new_script_event.documentElement.childNodes, child=null, i=0;
-    for ( ; child = children[i]; i++)
+
+    const
+    RUNTIME_ID = 0,
+    SCRIPT_ID = 1,
+    SCRIPT_TYPE = 2,
+    SCRIPT_DATA = 3,
+    URI = 4;
+
+    var script = 
     {
-      script[child.nodeName] = child.firstChild.nodeValue;
-    }
+      'runtime-id': message[RUNTIME_ID],
+      'script-id': message[SCRIPT_ID],
+      'script-type': message[SCRIPT_TYPE],
+      'script-data': message[SCRIPT_DATA],
+      'uri': message[URI]
+    };
+
     if( !script['script-data'] )
     {
       script['script-data'] = '';
@@ -683,19 +700,28 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
  
 
 
-  this.handleThreadStarted = function(xml)
+  this.onThreadStarted = function(status, message)
   {
-    var rt_id = xml.getNodeData("runtime-id");
+        
+    const
+    RUNTIME_ID = 0,
+    THREAD_ID = 1,
+    PARENT_THREAD_ID = 2,
+    THREAD_TYPE = 3,
+    EVENT_NAMESPACE = 4,
+    EVENT_TYPE = 5;
+    
+    var rt_id = message[RUNTIME_ID];
     // workaround for missing filtering
     if( is_runtime_of_debug_context(rt_id) )
     {
-      var id = xml.getNodeData("thread-id");
-      var parent_thread_id = xml.getNodeData("parent-thread-id");
+      var id = message[THREAD_ID];
+      var parent_thread_id = message[PARENT_THREAD_ID];
       var thread_queue = thread_queues[rt_id] || ( thread_queues[rt_id] = [] );
       var current_thread = current_threads[rt_id] || ( current_threads[rt_id] = [] );
       thread_queue[thread_queue.length] = id;
       if( !current_thread.length || 
-        ( parent_thread_id != '0' && parent_thread_id == current_thread[ current_thread.length - 1 ] ) )
+        ( parent_thread_id !== 0 && parent_thread_id == current_thread[ current_thread.length - 1 ] ) )
       {
         current_thread[current_thread.length] = id;
       }
@@ -707,12 +733,21 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     }
   }
 
-  this.handleThreadStopedAt = function(xml)
+  this.onThreadStoppedAt = function(status, message)
   {
-    var rt_id = xml.getNodeData("runtime-id");
-    var thread_id = xml.getNodeData("thread-id");
 
-    // workaround for missing filtering 
+    const
+    RUNTIME_ID = 0,
+    THREAD_ID = 1,
+    SCRIPT_ID = 2,
+    LINE_NUMBER = 3,
+    STOPPED_REASON = 4,
+    BREAKPOINT_ID = 5;
+    
+    var rt_id = message[RUNTIME_ID];
+    var thread_id = message[THREAD_ID];
+
+    // TODO clean up workaround for missing filtering 
     if( is_runtime_of_debug_context(rt_id) )
     {
       
@@ -724,7 +759,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
           && ( !current_thread // in case the window was switched 
               || thread_id == current_thread[ current_thread.length - 1 ] ) )
       {
-        stop_at.handle(xml);
+        stop_at.handle(message);
       }
       else
       {
@@ -733,7 +768,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
         {
           stoped_threads[rt_id] = {};
         } 
-        stoped_threads[rt_id] = xml;
+        stoped_threads[rt_id] = message;
         runtime_stoped_queue[runtime_stoped_queue.length] = rt_id;
       }
       if( __log_threads )
@@ -748,16 +783,25 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     }
   }
 
-  this.handleThreadFinished = function(xml)
+  this.onThreadFinished = function(status, message)
   {
     /* TODO
     status "completed" | "unhandled-exception" | "aborted" | "cancelled-by-scheduler"
     */
-    var rt_id = xml.getNodeData("runtime-id");
+
+    const
+    RUNTIME_ID = 0,
+    THREAD_ID = 1,
+    SCRIPT_ID = 2,
+    LINE_NUMBER = 3,
+    STOPPED_REASON = 4,
+    BREAKPOINT_ID = 5;
+
+    var rt_id = message[RUNTIME_ID];
     // workaround for missing filtering 
     if( is_runtime_of_debug_context(rt_id) )
     {
-      var thread_id = xml.getNodeData("thread-id");
+      var thread_id = message[THREAD_ID];
       clear_thread_id(rt_id, thread_id);
       if( !stop_at.getControlsEnabled () && runtime_stoped_queue.length )
       {
@@ -765,7 +809,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       }
       if( __log_threads )
       {
-        log_thread(xml, rt_id, thread_id);
+        log_thread(message, rt_id, thread_id);
         views.threads.update();
       }
     }
@@ -789,9 +833,9 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
 </runtime-stopped>
 
 */
-  this.handleRuntimeStoped = function(xml)
+  this.onRuntimeStopped = function(status, message)
   {
-    var rt_id = xml.getNodeData('runtime-id');
+    var rt_id = message[0];
     if(rt_id)
     {
       removeRuntime(rt_id);
@@ -1092,7 +1136,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       var rt_id = this.getRuntimeIdsFromWindow(__selected_window)[0];
       if( rt_id )
       {
-        services['ecmascript-debugger'].eval('-1', rt_id, '', '', 'location.reload()');
+        services['ecmascript-debugger'].requestEval(0, [rt_id, 0, 0, 'location.reload()']);
       }
     }
   }
@@ -1155,10 +1199,52 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     var self = this,
     ecma_debugger = window.services['ecmascript-debugger'];
 
+    ecma_debugger.handleEval = function(status, message){};
+
     ecma_debugger.handleListRuntimes = function(status, message)
     {
       self.handleListRuntimes(status, message);
     }
+
+    ecma_debugger.onRuntimeStarted = function(status, message)
+    {
+      self.onRuntimeStarted(status, message);
+    }
+
+    ecma_debugger.onRuntimeStopped = function(status, message)
+    {
+      self.onRuntimeStopped(status, message);
+    }
+
+    ecma_debugger.onNewScript = function(status, message)
+    {
+      self.onNewScript(status, message);
+    }
+
+    ecma_debugger.onThreadStarted = function(status, message)
+    {
+      self.onThreadStarted(status, message);
+    }
+
+    ecma_debugger.onThreadStoppedAt = function(status, message)
+    {
+      self.onThreadStoppedAt(status, message);
+    }
+
+
+
+    ecma_debugger.onThreadFinished = function(status, message)
+    {
+      self.onThreadFinished(status, message);
+    }
+
+
+
+
+
+
+
+
 
     ecma_debugger.addListener('window-filter-change', function(msg)
     {

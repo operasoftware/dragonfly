@@ -113,7 +113,7 @@
         ? display_uri.uri
         : ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script['script-id'] 
       ),
-      'script-id', script['script-id']
+      'script-id', script['script-id'].toString()
     ],
     class_name = script['script-id'] == selected_script_id && 'selected' || '';
 

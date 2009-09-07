@@ -122,8 +122,9 @@ var host_tabs = new function()
     }
   }
 
-  var handleAddEventWithDocument = function(xml, runtime_id, event_type, callback)
+  var handleAddEventWithDocument = function(status, message, runtime_id, event_type, callback)
   {
+    // TODO fix
     if( xml.getNodeData('status') == 'completed' )
     {
       var node_id = xml.getNodeData('object-id');
@@ -163,7 +164,7 @@ var host_tabs = new function()
       else
       {
         var tag = tagManager.setCB(null, handleAddEventWithDocument, [rt_p, event_type, callback]);
-        services['ecmascript-debugger'].getDocumentFromRuntime(tag, rt_p);
+        services['ecmascript-debugger'].requestEval(tag, [rt_p, 0, 0, "return window.document"]);
       }
     }
   }

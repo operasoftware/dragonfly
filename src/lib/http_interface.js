@@ -56,8 +56,11 @@ cls.ScopeHTTPInterface = function(force_stp_0)
       var command = parseInt(xhr.getResponseHeader("X-Scope-Message-Command"));
       var status = parseInt(xhr.getResponseHeader("X-Scope-Message-Status"));
       var tag = parseInt(xhr.getResponseHeader("X-Scope-Message-Tag"));
+      try{
+
       var message = eval(xhr.responseText);
       _receive_callback(service, message, command, status, tag);
+      }catch(e){opera.postError(xhr.responseText)};
     }
     _proxy.GET( "/get-message?time=" + new Date().getTime(), _receive_dragonkeeper);
   }

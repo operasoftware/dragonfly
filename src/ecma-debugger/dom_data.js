@@ -706,7 +706,7 @@ var dom_data = new function()
     for( var i = 0; data[i] && data[i][TYPE] != 1; i++);
     return data[i] && data[i][ID] || 0;
   }
-  
+  /* *
   messages.addListener('active-tab', onActiveTab);
   messages.addListener('show-view', onShowView);
   messages.addListener('hide-view', onHideView);
@@ -715,6 +715,7 @@ var dom_data = new function()
   messages.addListener('runtime-destroyed', onRuntimeStopped);
 
   messages.addListener('reset-state', onResetState);
+  /* */
 
 };
 

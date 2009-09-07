@@ -374,6 +374,7 @@ var action_handler = new function()
   handlers['display-script'] = function(event)
   {
     var script_id  = event.target.getAttribute('script-id');
+
     if(script_id)
     {
       runtimes.setSelectedScript( script_id );
