@@ -96,9 +96,9 @@ var action_handler = new function()
     var
     parent = target.parentNode,
     parent_parent = parent.parentNode,
-    obj_id = parent.getAttribute('obj-id'),
+    obj_id = parseInt(parent.getAttribute('obj-id')),
     depth = parseInt(parent.getAttribute('depth')),
-    rt_id = parent_parent.getAttribute('rt-id'),
+    rt_id = parseInt(parent_parent.getAttribute('rt-id')),
     data_id = parent_parent.getAttribute('data-id'),
     margin = parseInt(parent.style.paddingLeft),
     data = null,
@@ -113,6 +113,7 @@ var action_handler = new function()
     is_in_search_scope =
       parent.previousSibling && parent.previousSibling.nodeName.toLowerCase() == "start-search-scope",
     range = null;
+
     if( window[data_id] )
     {
       if( is_expanded )
@@ -605,8 +606,8 @@ var action_handler = new function()
 
   handlers['inspect-object-link'] = function(event, target)
   {
-    var rt_id = target.getAttribute('rt-id');
-    var obj_id = target.getAttribute('obj-id');
+    var rt_id = parseInt(target.getAttribute('rt-id'));
+    var obj_id = parseInt(target.getAttribute('obj-id'));
     messages.post('active-inspection-type', {inspection_type: 'object'});
     // if that works it should be just inspection
     topCell.showView(views.inspection.id);

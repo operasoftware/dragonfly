@@ -69,3 +69,10 @@
 
 - runtimes
     clean up therad handling
+
+
+- view commandline
+    - thread and frame id in handleEval
+
+- ObjectDataBase
+    - order of key value ( object id)

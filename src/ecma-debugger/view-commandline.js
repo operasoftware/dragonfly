@@ -46,8 +46,8 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
             entry.value, 
             ['d', ' [' + entry.obj_id + ']'],
             'handler', 'inspect-object-link', 
-            'rt-id', entry.runtime_id, 
-            'obj-id', entry.obj_id
+            'rt-id', entry.runtime_id.toString(), 
+            'obj-id', entry.obj_id.toString()
           ]
         );
       }
@@ -60,8 +60,8 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
             entry.obj_id 
             ? [
                 'handler', 'inspect-object-link', 
-                'rt-id', entry.runtime_id, 
-                'obj-id', entry.obj_id
+                'rt-id', entry.runtime_id.toString(), 
+                'obj-id', entry.obj_id.toString()
               ]
             : [] 
           )
@@ -104,17 +104,29 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     };
   }
 
-  var handleEval = function(xml, runtime_id, obj_id, callback)
+  var handleEval = function(status, message, runtime_id, obj_id, callback)
   {
-    var value_type = xml.getNodeData('data-type');
-    var status = xml.getNodeData('status');
-    if( status == 'completed' )
+
+    const
+    STATUS = 0,
+    TYPE = 1,
+    VALUE = 2,
+    OBJECT_VALUE = 3,
+    OBJECT_ID = 0,
+    IS_CALLABLE = 1,
+    IS_FUNCTION = 2,
+    OBJECTVALUE_TYPE = 3,
+    PROTOTYPE_ID = 4,
+    NAME = 5;
+
+    var value_type = message[TYPE];
+
+    if( message[STATUS] == 'completed' )
     {
-      var return_value = xml.getElementsByTagName('string')[0];
+      var return_value = message[VALUE];
       if(return_value || /null|undefined/.test(value_type) )
       {
-        var value = return_value && return_value.firstChild && 
-                          return_value.firstChild.nodeValue || ''; 
+        var value = return_value || ''; 
         if( !obj_id )
         {
           switch (value_type)
@@ -148,14 +160,13 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
         );
         __container.scrollTop = __container.scrollHeight;
       }
-      else if (return_value = xml.getElementsByTagName('object-id')[0])
+      else if (return_value = message[OBJECT_VALUE])
       {
-        var object_id = return_value.textContent;
-        var object_ref_name = "$" + object_id;
+        var object_id = return_value[OBJECT_ID];
         var tag = tagManager.setCB(null, handleEval, [runtime_id, object_id, callback] );
-        var script_string  = "return Object.prototype.toString.call(" + object_ref_name + ")";
-        services['ecmascript-debugger'].eval(
-          tag, runtime_id, '', '', script_string, [object_ref_name, object_id]);
+        var script_string  = "return Object.prototype.toString.call(obj)";
+        services['ecmascript-debugger'].requestEval(tag, 
+              [runtime_id, 0, 0, script_string, [['obj', object_id]]]);
       }
     }
     else
@@ -240,8 +251,8 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
   {
     var 
     rt_id = runtimes.getSelectedRuntimeId(),
-    frame_id = '', 
-    thread_id = '',
+    frame_id = 0, 
+    thread_id = 0,
     script_string  = '',
     command = '',
     opening_brace = 0,
@@ -267,7 +278,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
       else if( !/^\s*$/.test(script_string) )
       {
         tag = tagManager.setCB(null, handleEval, [rt_id] );
-        services['ecmascript-debugger'].eval(tag, rt_id, thread_id, frame_id, script_string);
+        services['ecmascript-debugger'].requestEval(tag, [rt_id, thread_id, frame_id, script_string]);
       }
       submit_buffer = [];
     }
@@ -453,8 +464,8 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     {
       var 
       rt_id = runtimes.getSelectedRuntimeId(),
-      frame_id = '', 
-      thread_id = '';
+      frame_id = 0, 
+      thread_id = 0;
 
       if(rt_id)
       {
@@ -495,8 +506,8 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
           }
         }
         var tag = tagManager.setCB(null, handleEvalScope, [__frame_index, rt_id, path, old_args] );
-        services['ecmascript-debugger'].eval(tag, rt_id, thread_id, 
-          frame_id, SCRIPT.replace(/%s/, path));
+        services['ecmascript-debugger'].requestEval(tag, [rt_id, thread_id, 
+          frame_id, SCRIPT.replace(/%s/, path)]);
       }
       else
       {
@@ -505,15 +516,20 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
       return null;
     }
 
-    var handleEvalScope = function(xml, __frame_index, rt_id, path, old_args)
+    var handleEvalScope = function(status, message, __frame_index, rt_id, path, old_args)
     {
-      var status = xml.getNodeData('status');
-      if( status == 'completed' )
+      const
+      STATUS = 0,
+      TYPE = 1,
+      VALUE = 2,
+      OBJECT_VALUE = 3;
+
+
+      if( message[STATUS] == 'completed' )
       {
-        var return_value = xml.getElementsByTagName('string')[0];
-        if(return_value)
+        if(message[VALUE])
         {
-          scope = return_value.textContent.split('_,_');
+          scope = message[VALUE].split('_,_');
           current_path = __frame_index.toString() + rt_id + path;
           if( !old_args[0].__call_count )
           {

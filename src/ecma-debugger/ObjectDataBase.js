@@ -21,12 +21,30 @@ var ObjectDataBase = new function()
   this.rt_id = '';
   this.data = [];
 
-  this.parseXML = function(xml, rt_id, obj_id, org_args)
+  this.parseXML = function(status, message, rt_id, obj_id, org_args)
   {
-    
+    const
+    OBJECT_LIST = 0,
+    // sub message ObjectInfo 
+    VALUE = 0,
+    PROPERTY_LIST = 1,
+    // sub message ObjectValue 
+    OBJECT_ID = 0,
+    IS_CALLABLE = 1,
+    IS_FUNCTION = 2,
+    TYPE = 3,
+    PROTOTYPE_ID = 4,
+    NAME = 5;
+    // sub message Property 
+    PROPERTY_NAME = 0,
+    PROPERTY_TYPE = 1,
+    PROPERTY_VALUE = 2,
+    OBJECT_VALUE = 3;
+
+
     var 
-    obj = xml.getElementsByTagName('object')[0],
-    class_name = xml.getNodeData('class-name'),
+    obj = message[OBJECT_LIST][0],
+    class_name = obj[VALUE] && obj[VALUE][NAME],
     props = null, 
     prop = null, 
     i=0,
@@ -35,6 +53,7 @@ var ObjectDataBase = new function()
     data_splice_args = [index + 1 + this.getCountVirtualProperties(index), 0],
     unsorted = [],
     depth = 0;
+
     
     // each object should have a class attribute 
     // this is a workaround 
@@ -42,25 +61,25 @@ var ObjectDataBase = new function()
     
     if( obj && index > -1 )
     {
-      props = obj.getElementsByTagName('property');
+      props = obj[PROPERTY_LIST];
       depth = this.data[index][DEPTH] + 1;
       this.data[index][QUERIED] = 1;
 
       for( ; prop = props[i]; i++)
       {
-        switch(prop.getNodeData('data-type'))
+        switch(prop[PROPERTY_TYPE])
         {
           case 'object':
           {
             unsorted[unsorted.length] = 
             [
-              prop.getNodeData('property-name'),
-              prop.getNodeData('object-id'),
+              prop[PROPERTY_NAME],
+              prop[OBJECT_VALUE][OBJECT_ID],
               'object',
               depth,
               ,
               ,
-              prop.getNodeData('class-name')
+              prop[OBJECT_VALUE][NAME]
             ]
             break;
           }
@@ -68,7 +87,7 @@ var ObjectDataBase = new function()
           {
             unsorted[unsorted.length] = 
             [
-              prop.getNodeData('property-name'),
+              prop[PROPERTY_NAME],
               '"undefined"',
               'undefined',
               depth
@@ -79,7 +98,7 @@ var ObjectDataBase = new function()
           {
             unsorted[unsorted.length] = 
             [
-              prop.getNodeData('property-name'),
+              prop[PROPERTY_NAME],
               'null',
               'null',
               depth
@@ -90,8 +109,8 @@ var ObjectDataBase = new function()
           {
             unsorted[unsorted.length] = 
             [
-              prop.getNodeData('property-name'),
-              prop.getNodeData('string'),
+              prop[PROPERTY_NAME],
+              prop[PROPERTY_VALUE].toString(),
               'number',
               depth
             ]
@@ -101,8 +120,8 @@ var ObjectDataBase = new function()
           {
             unsorted[unsorted.length] = 
             [
-              prop.getNodeData('property-name'),
-              '"' + prop.getNodeData('string') + '"',
+              prop[PROPERTY_NAME],
+              '"' + prop[PROPERTY_VALUE] + '"',
               'string',
               depth
             ]
@@ -112,8 +131,8 @@ var ObjectDataBase = new function()
           {
             unsorted[unsorted.length] = 
             [
-              prop.getNodeData('property-name'),
-              prop.getNodeData('string'),
+              prop[PROPERTY_NAME],
+              prop[PROPERTY_VALUE],
               'boolean',
               depth
             ]
@@ -163,6 +182,7 @@ var ObjectDataBase = new function()
         unsorted.sort(sort_key);
       }
       this.data.splice.apply(this.data, data_splice_args.concat(unsorted));
+
       if( org_args && !org_args[0].__call_count )
       {
         org_args[0].__call_count = 1;
@@ -274,7 +294,7 @@ var ObjectDataBase = new function()
       }
     }
     var tag = tagManager.setCB(this, this.parseXML, [rt_id, obj_id, org_args]);
-    services['ecmascript-debugger'].examineObjects(tag, rt_id, obj_id);
+    services['ecmascript-debugger'].requestExamineObjects(tag, [rt_id, [obj_id]]);
     return null;
   }
 
@@ -325,9 +345,11 @@ var ObjectDataBase = new function()
     // in case of a back reference
     var forced_depth = data[0] && target_depth >= data[0][DEPTH] && target_depth + 1 || 0;
     var depth = 0;
+
     for( ; prop = data[i]; i++)
     {
       val = prop[VALUE];
+     
       short_val = "";
       if( filter && prop[filter_type] in filter  )
       {
@@ -374,7 +396,10 @@ var ObjectDataBase = new function()
         short_val = val.slice(0, MAX_VALUE_LENGTH) +"...";
         val = val.replace(/</g, '&lt;').replace(/'/g, '&#39;');
       }
-      val = val.replace(/</g, "&lt;");
+      if(typeof val == 'string')
+      {
+        val = val.replace(/</g, "&lt;");
+      }
 
       depth = forced_depth || prop[DEPTH];
 

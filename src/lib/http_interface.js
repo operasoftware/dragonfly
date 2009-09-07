@@ -58,9 +58,11 @@ cls.ScopeHTTPInterface = function(force_stp_0)
       var tag = parseInt(xhr.getResponseHeader("X-Scope-Message-Tag"));
       try{
 
-      var message = eval(xhr.responseText);
+      var message = eval('('+xhr.responseText+')');
+      
       _receive_callback(service, message, command, status, tag);
-      }catch(e){opera.postError(xhr.responseText)};
+      }catch(e){opera.postError('eval failed: ' +e.message + '\n' +xhr.responseText)};
+
     }
     _proxy.GET( "/get-message?time=" + new Date().getTime(), _receive_dragonkeeper);
   }
