@@ -85,7 +85,12 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
       else
       {
         stop_at_settings[key] = value;
-        services['ecmascript-debugger'].setConfiguration(key, value ? 'yes' : 'no');
+        var config_arr = [], prop = '';
+        for ( prop in stop_at_settings )
+        {
+          config_arr[stop_at_id_map[prop]] = stop_at_settings[prop] && 1 || 0;
+        }
+        ecma_debugger.requestSetConfiguration(0, config_arr);
       }
     }
   }
