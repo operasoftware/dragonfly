@@ -123,9 +123,27 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     return stopAt && stopAt['thread-id'] || '';
   }
 
-  var parseBacktrace = function(xml, runtime_id, thread_id)
+  var parseBacktrace = function(status, message, runtime_id, thread_id)
   {
-    var _frames = xml.getElementsByTagName('frame'), frame = null, i = 0;
+    const
+    FRAME_LIST = 0,
+    // sub message BacktraceFrame 
+    FUNCTION_ID = 0,
+    ARGUMENT_OBJECT = 1,
+    VARIABLE_OBJECT = 2,
+    THIS_OBJECT = 3,
+    OBJECT_VALUE = 4,
+    SCRIPT_ID = 5,
+    LINE_NUMBER = 6,
+    // sub message ObjectValue 
+    OBJECT_ID = 0,
+    IS_CALLABLE = 1,
+    IS_FUNCTION = 2,
+    TYPE = 3,
+    PROTOTYPE_ID = 4,
+    NAME = 5;
+
+    var _frames = message[FRAME_LIST], frame = null, i = 0;
     var fn_name = '', line = '', script_id = '', argument_id = '', scope_id = '';
     var _frames_length = _frames.length;
 
@@ -137,12 +155,12 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
       {
         fn_name : is_all_frames && i == _frames_length - 1 
                   ? 'global scope' 
-                  : frame.getNodeData('function-name') || 'anonymous',
-        line : frame.getNodeData('line-number'), 
-        script_id : frame.getNodeData('script-id'),
-        argument_id : frame.getNodeData('argument-object'),
-        scope_id : frame.getNodeData('variable-object'),
-        this_id : frame.getNodeData('this-object'),
+                  : frame[OBJECT_VALUE][NAME] || 'anonymous',
+        line : frame[LINE_NUMBER], 
+        script_id : frame[SCRIPT_ID],
+        argument_id : frame[ARGUMENT_OBJECT],
+        scope_id : frame[VARIABLE_OBJECT],
+        this_id : frame[THIS_OBJECT],
         id: i,
         rt_id: runtime_id
       }
@@ -265,7 +283,8 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
           }
           // the runtime id can be different for each frame. 
           var tag = tagManager.setCB(null, parseBacktrace, [stopAt['runtime-id']]); 
-          services['ecmascript-debugger'].backtrace(tag, stopAt);
+          services['ecmascript-debugger'].requestGetBacktrace(tag, 
+              [stopAt['runtime-id'], stopAt['thread-id'], ini.max_frames]);
           if( !views.js_source.isvisible() )
           {
             topCell.showView(views.js_source.id);
@@ -293,9 +312,10 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
       {
         runtime_id = stopAt['runtime-id'];
        
-        // the runtime id can be different for each frame. 
+        // the runtime id can be different for each frame
         var tag = tagManager.setCB(null, parseBacktrace, [stopAt['runtime-id']]); 
-        services['ecmascript-debugger'].backtrace(tag, stopAt);
+        services['ecmascript-debugger'].requestGetBacktrace(tag, 
+          [stopAt['runtime-id'], stopAt['thread-id'], ini.max_frames]);
         if( !views.js_source.isvisible() )
         {
           topCell.showView(views.js_source.id);

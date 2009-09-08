@@ -92,6 +92,10 @@ window.cls.Client = function()
         _on_host_quit, 
         _get_port_number()
       );
+
+    viewport.innerHTML = "<div class='padding'>" +
+        "<div class='info-box'>Waiting for a host connection</div>" +
+      "</div>";
   }
 
   /* end generated code */
@@ -331,6 +335,7 @@ window.cls.Client = function()
       alert(ui_strings.S_INFO_WAITING_FOR_CONNECTION.replace(/%s/, port));
     }
     opera.scopeAddClient(host_connected, receive, quit, port);
+
   }
 
   this.post = function(){};

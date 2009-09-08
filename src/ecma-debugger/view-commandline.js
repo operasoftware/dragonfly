@@ -243,7 +243,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     "dir": function(rt_id, frame_id, thread_id, script_string)
     {
       var tag = tagManager.setCB(null, handleEval, [rt_id, null, dir_obj] );
-      services['ecmascript-debugger'].eval(tag, rt_id, thread_id, frame_id, script_string);
+      services['ecmascript-debugger'].requestEval(tag, [rt_id, thread_id, frame_id, script_string]);
     }
   };
 

@@ -389,7 +389,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       for( line_nr in old_break_points )
       {
         // do we need to remove the old breakpoints?
-        self.setBreakpoint(new_script_id, line_nr);
+        self.setBreakpoint(new_script_id, parseInt(line_nr));
       }
       if( __scripts[sc]['script-id'] == __selected_script )
       {
@@ -429,7 +429,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
 
   var getBreakpointId = function()
   {
-    return ( breakpoint_count++ ).toString();
+    return ( breakpoint_count++ );
   }
 
   var script_count = 1;
@@ -1001,12 +1001,13 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
   this.setBreakpoint = function(script_id, line_nr)
   {
     var b_p_id = __scripts[script_id]['breakpoints'][line_nr] = getBreakpointId();
-    services['ecmascript-debugger'].setBreakpoint(script_id, line_nr, b_p_id);
+    services['ecmascript-debugger'].requestAddBreakpoint(0, [b_p_id, "line", script_id, line_nr]);
   }
 
   this.removeBreakpoint = function(script_id, line_nr)
   {
-    services['ecmascript-debugger'].removeBreakpoint( __scripts[script_id]['breakpoints'][line_nr] );
+    services['ecmascript-debugger'].requestRemoveBreakpoint(0, 
+      [__scripts[script_id]['breakpoints'][line_nr]] );
     delete __scripts[script_id]['breakpoints'][line_nr];
   }
 

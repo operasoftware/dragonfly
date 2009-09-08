@@ -58,17 +58,21 @@ cls.WindowManager["2.0"].WindowManagerData = function()
     if(this._has_window_id_in_list(win_id))
     {
       this._active_window = win_id;
-      if (!this._debug_context)
-      {
-        this.set_debug_context(this._active_window);
-      }
-      window.windowsDropDown.update();
     }
     else
     {
       opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
-          'active window id does not exist');
+          'active window id does not exist, trying to select the first window instead');
+      if(this._window_list.length)
+      {
+        this._active_window = this._window_list[0].window_id;
+      }
     }
+    if (this._active_window && !this._debug_context)
+    {
+      this.set_debug_context(this._active_window);
+    }
+    window.windowsDropDown.update();
   }
 
   this._has_window_id_in_list = function(id)

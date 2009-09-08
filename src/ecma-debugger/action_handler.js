@@ -404,7 +404,7 @@ var action_handler = new function()
 
   handlers['set-break-point'] = function(event)
   {
-    var line = event.target.parentElement.children[0].value;
+    var line = parseInt(event.target.parentElement.children[0].value);
     var script_id = views.js_source.getCurrentScriptId();
     if( line )
     {
@@ -416,7 +416,7 @@ var action_handler = new function()
       else
       {
         runtimes.setBreakpoint(script_id, line);
-        views.js_source.addBreakpoint(parseInt(line));
+        views.js_source.addBreakpoint(line);
       }
     }
   }
