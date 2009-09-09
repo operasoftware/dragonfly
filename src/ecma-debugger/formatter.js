@@ -623,7 +623,7 @@
     }
     else if(__line_number == __parse_error_line)
     {
-      __ret[__ret.length] = "<div class='error-line'>" + __line + "</div>";
+      __ret[__ret.length] = "<div class='first-error-line'>" + __line + "</div>";
     }
     else
     {

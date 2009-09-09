@@ -42,7 +42,7 @@ ul {
   margin-left:-10px;
 }
 
-#js-source-content .error-line
+#js-source-content  .first-error-line
 {
   position: relative;
   overflow: visible;
