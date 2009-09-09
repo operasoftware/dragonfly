@@ -292,7 +292,6 @@ cls.JsSourceView = function(id, name, container_class)
 
   var getMaxLineLength = function()
   {
-    var time = new Date().getTime();
     var i = 0, 
       max = 0, 
       max_index = 0, 
@@ -340,7 +339,7 @@ cls.JsSourceView = function(id, name, container_class)
   {
     source_content.innerHTML = "<div style='visibility:hidden'>" +
       simple_js_parser.parse(script, getMaxLineLength() - 1, 1).join('') + "</div>";
-    var scrollWidth = script.scrollWidth = source_content.firstChild.firstChild.scrollWidth;
+    var scrollWidth = script.scrollWidth = source_content.firstChild.firstChild.scrollWidth + 7;
     var offsetWidth = script.offsetWidth = source_content.firstChild.firstChild.offsetWidth;
 
     if( scrollWidth > offsetWidth )
