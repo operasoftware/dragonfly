@@ -443,6 +443,7 @@ cls.JsSourceView = function(id, name, container_class)
       }
       else
       {
+        document.getElementById(scroll_id).innerHTML = "";
         opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
           "script source is missing for given id in views.js_source.showLine");
         return;
