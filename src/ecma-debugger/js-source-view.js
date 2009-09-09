@@ -413,6 +413,18 @@ cls.JsSourceView = function(id, name, container_class)
           script_obj.line_arr = [];
           script_obj.state_arr = [];
           pre_lexer(script_obj);
+          if(script_obj.parse_error)
+          {
+            var error_line = 0;
+            while(error_line < script_obj.line_arr.length && 
+                script_obj.line_arr[error_line] < script_obj.parse_error.offset)
+            {
+              error_line++;
+            }
+            script_obj.parse_error.error_line = error_line - 1;
+            script_obj.parse_error.error_line_offset = 
+              script_obj.parse_error.offset - script_obj.line_arr[error_line - 1];
+          }
         }
         script =
         {
@@ -421,7 +433,8 @@ cls.JsSourceView = function(id, name, container_class)
           line_arr: script_obj.line_arr,
           state_arr: script_obj.state_arr,
           breakpoints: [],
-          has_context: false
+          has_context: false,
+          parse_error: script_obj.parse_error 
         }
         var b_ps = runtimes.getBreakpoints(script_id), b_p = '';
         if( b_ps )
@@ -854,7 +867,7 @@ new Settings
   {
     script: 0, 
     exception: 0, 
-    error: 0, 
+    error: 1, 
     abort: 0,
     'tab-size': 4
   }, 

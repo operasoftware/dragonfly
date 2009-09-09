@@ -74,6 +74,27 @@
   color: #a31;
   }
 
+#js-source-content .not-error
+{
+  background-color: #fff;
+}
+
+#js-source-content .first-error {
+  color: #333;
+  background-color: #f90;
+  }
+
+#js-source-content .error {
+  color: #999;
+  }
+
+#js-source-content  .error-line
+{
+  background-color: #e6e6e6;
+}
+
+
+
 /* dom */
 
 .dom div {

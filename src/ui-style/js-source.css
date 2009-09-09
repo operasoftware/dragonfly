@@ -33,6 +33,33 @@ ul {
   -o-tab-size: 4;
   }
 
+
+
+#js-source-content .not-error
+{
+  display: inline-block;
+  padding-left:10px;
+  margin-left:-10px;
+}
+
+#js-source-content .error-line
+{
+  position: relative;
+  overflow: visible;
+}
+
+#js-source-content .error-description
+{
+  position: absolute;
+  white-space: pre-wrap;
+  left: 30px;
+  top: 30px;
+  height: auto;
+  z-index: 1;
+  background-image: -o-skin('Speed Dial Configuration Dialog Skin');
+  padding: 9px 15px 11px 15px;
+}
+
 /* line number */ 
 
 #js-source-line-numbers {

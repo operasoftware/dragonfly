@@ -17,6 +17,12 @@
   var __line='';
   var __line_number = 1;
   var __max_line_number = 0;
+  
+  var __parse_error_line = 0;
+  var __parse_error_line_offset = 0;
+  var __parse_error_line_buffer ='';
+  var __parse_error_first_token = true;
+  var __parse_error_description = "";
   var WHITESPACE=
   {
     '\u0009': 1, //  Tab <TAB>
@@ -284,8 +290,8 @@
       }
       __buffer+=c in ESCAPE ? ESCAPE[c] : c;
       c=__source.charAt(++__pointer);
-      /*
-      // TODO this is not very clever
+      // read identifier
+      // numbers can be part of identifier
       do
       {
         __buffer+=c in ESCAPE ? ESCAPE[c] : c;
@@ -297,8 +303,6 @@
                     || c in LINETERMINATOR  
                     || c in WHITESPACE 
                     || c in STRING_DELIMITER ));
-                    */
-
     }
     read_buffer();
   }
@@ -495,7 +499,9 @@
     }
   }
 
-  var read_buffer=function()
+  var read_buffer=null;
+
+  var read_buffer_default=function()
   {
     if(__buffer)
     {
@@ -550,13 +556,79 @@
     __buffer='';
   }
 
-  var __online=function(c)
+  var read_buffer_with_parse_error = function()
+  {
+    if(__buffer)
+    {
+      if(__line_number < __parse_error_line)
+      {
+        read_buffer_default();
+      }
+      else if(__line_number == __parse_error_line)
+      {
+
+        __parse_error_line_buffer += __buffer;
+        if(__parse_error_line_offset > __parse_error_line_buffer.length) 
+        {
+          read_buffer_default();
+           
+        }
+        else
+        {
+          if(__parse_error_first_token)
+          {
+            __line = "<div class='error-description'>" + __parse_error_description + "</div>" +
+                        "<span class='not-error'>" +  __line + "</span>" +
+                        "<span class='first-error'>" +  __buffer + "</span>";
+            __parse_error_first_token = false;
+          }
+          else
+          {
+            __line += "<span class='error'>" +  __buffer + "</span>";
+          }
+          
+        }
+        
+      }
+      else
+      {
+        __line += __buffer ;
+      }
+    }
+    __buffer='';
+  }
+
+  var __online=null;
+
+  var __online_default=function(c)
   {
     if( !__line ) 
     {
       __line += '\u00A0';
     }
     __ret[__ret.length] = "<div>" + __line + "</div>";
+    __line='';
+    return (++__line_number) > __max_line_number;
+  }
+
+  var __online_parse_error=function(c)
+  {
+    if( !__line ) 
+    {
+      __line += '\u00A0';
+    }
+    if(__line_number < __parse_error_line)
+    {
+      __ret[__ret.length] = "<div>" + __line + "</div>";
+    }
+    else if(__line_number == __parse_error_line)
+    {
+      __ret[__ret.length] = "<div class='error-line'>" + __line + "</div>";
+    }
+    else
+    {
+      __ret[__ret.length] = "<div class='error-line error'>" + __line + "</div>";
+    }
     __line='';
     return (++__line_number) > __max_line_number;
   }
@@ -632,6 +704,25 @@
     __source = script.source;
     var length=__source.length;
     __pointer = script.line_arr[line];
+
+    if(script.parse_error) 
+    {
+      read_buffer = read_buffer_with_parse_error;
+      __online = __online_parse_error;
+      __parse_error_line = script.parse_error.error_line;
+      __parse_error_line_offset = script.parse_error.error_line_offset; 
+      __parse_error_line_buffer ='';
+      __parse_error_first_token = true;
+      __parse_error_description = 
+          script.parse_error.reason + '\n' + script.parse_error.expected_token;
+    }
+    else
+    {
+      read_buffer = read_buffer_default;
+      __online = __online_default;
+    }
+
+
     if(script.state_arr[line])
     {
       if( states[script.state_arr[line]]() )

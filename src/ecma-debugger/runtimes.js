@@ -602,6 +602,56 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     }
   }
 
+  this.onParseError = function(status, message)
+  {
+    const
+    RUNTIME_ID = 0,
+    SCRIPT_ID = 1,
+    LINE_NUMBER = 2,
+    OFFSET = 3,
+    CONTEXT = 4,
+    DESCRIPTION = 5;
+
+    if(__scripts[message[SCRIPT_ID]])
+    {
+      var reason = /^[^:]*/.exec(message[DESCRIPTION]);
+      var expected_token = /Expected token: '[^']*'/i.exec(message[DESCRIPTION]);
+      var error = __scripts[message[SCRIPT_ID]].parse_error =
+      {
+        runtime_id: message[RUNTIME_ID],
+        script_id: message[SCRIPT_ID],
+        line_nr: message[LINE_NUMBER],
+        offset: message[OFFSET],
+        context: message[CONTEXT],
+        description: message[DESCRIPTION],
+        reason: reason && reason[0] || '',
+        expected_token: expected_token && expected_token[0] || ''
+      };      
+      if(settings['js_source'].get('error'))
+      {
+        if(  !views['js_source'].isvisible())
+        {
+          window.topCell.showView('js_source');
+        }
+        var plus_lines = views.js_source.getMaxLines() <= 10 
+          ? views.js_source.getMaxLines() / 2 >> 0 
+          : 10;
+        if( views.js_source.showLine(error.script_id, error.line_nr - plus_lines) )
+        {
+          runtimes.setSelectedScript(error.script_id);
+          views.js_source.showLinePointer(error.line_nr, true );
+        }
+
+      }
+    }
+    else
+    {
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+        "script source is missing in onParseError handler in runtimes");
+    }
+
+  }
+
   // TODO client side therads handling needs a revision
 
   var thread_queues = {};
@@ -1238,6 +1288,13 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     {
       self.onThreadFinished(status, message);
     }
+
+    ecma_debugger.onParseError = function(status, message)
+    {
+      self.onParseError(status, message);
+    }
+
+
 
 
 

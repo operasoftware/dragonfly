@@ -1009,7 +1009,6 @@ button[handler="top-window-toggle-attach"]:before
 #continue-step-out-of-call:before 
 {
   background-image:url('../ui-images/btn-step-out-call.png');
-  xxbackground-image:url('../ui-images/btn-step-next-line.png');
 }
 .ui-button[handler="reload-window"]
 {
