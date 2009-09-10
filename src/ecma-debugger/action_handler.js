@@ -554,7 +554,7 @@ var action_handler = new function()
     var container = event.target.parentNode;
     var level = ( parseInt(container.style.marginLeft) || 0 ) / 16;
     var level_next = ( container.nextSibling && parseInt(container.nextSibling.style.marginLeft) || 0 ) / 16;
-    var ref_id = container.getAttribute('ref-id');
+    var ref_id = parseInt(container.getAttribute('ref-id'));
     if(level_next > level)
     {
       dom_data.closeNode(ref_id);
@@ -568,7 +568,7 @@ var action_handler = new function()
 
   handlers['spotlight-node'] = function(event, current_target)
   {
-    var obj_id = current_target.getAttribute('ref-id');
+    var obj_id = parseInt(current_target.getAttribute('ref-id'));
     if(obj_id)
     {
       hostspotlighter.spotlight(obj_id, 

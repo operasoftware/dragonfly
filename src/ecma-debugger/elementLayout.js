@@ -343,8 +343,9 @@ var elementLayout = new function()
     'class', 'margin']];
   }
 
+  /* *
   messages.addListener('element-selected', onElementSelected);
-
+  /* */
 }
 
 

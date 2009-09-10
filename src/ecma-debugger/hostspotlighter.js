@@ -77,12 +77,14 @@
 
   var get_command = function(node_id, scroll_into_view, name)
   {
-    return \
+    return [node_id, scroll_into_view && 1 || 0, commands[name]];
+    /*
       "<spotlight-object>" +
         "<object-id>" + node_id + "</object-id>" +
         "<scroll-into-view>" + ( scroll_into_view && 1 || 0 ) + "</scroll-into-view>" +
         commands[name] +
       "</spotlight-object>";
+    */
   }
 
   var get_locked_commands = function(node_id)
@@ -192,20 +194,17 @@
     
   var stringify_command = function(matrix)
   {
-    var ret = "", box = null, color = null, i = 0, j = 0;
+    var ret = [], box = null, spot_box = null, i = 0, j = 0;
     for( ; i < 4; i++)
     {
       if( box = matrix[i] )
       {
-        ret += "<box><box-type>" + i + "</box-type>";
+        spot_box = [i];
         for( j = 0; j < 3; j++)
         {
-          if( color = box[j])
-          {
-            ret += START_TAG[j] + convert_rgba_to_int(color) + END_TAG[j];
-          }
+          spot_box[spot_box.length] = convert_rgba_to_int(box[j]);
         }
-        ret += "</box>";
+        ret[ret.length] = spot_box;
       }
     }
     return ret;
@@ -508,7 +507,12 @@
     if( arguments.join() != last_spotlight_commands )
     {
       last_spotlight_commands = arguments.join();
-      services['ecmascript-debugger'].post
+
+      services['ecmascript-debugger'].requestSpotlightObjects(0,
+        [[get_command(node_id, scroll_into_view, type || "default")]])
+
+/*
+        ]
       (
         "<spotlight-objects>" +
           get_command(node_id, scroll_into_view, type || "default") +
@@ -517,6 +521,7 @@
             || "" ) +
         "</spotlight-objects>"
       )
+*/
     }
   }
   

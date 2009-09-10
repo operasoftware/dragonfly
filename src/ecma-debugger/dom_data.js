@@ -79,7 +79,8 @@ var dom_data = new function()
     data = [];
     mime = '';
     var tag = tagManager.setCB(null, handleGetDOM, [ rt_id, obj_id]);
-    services['ecmascript-debugger'].inspectDOM( tag, obj_id, 'parent-node-chain-with-children', 'json' );
+    services['ecmascript-debugger'].requestInspectDom(tag, 
+      [obj_id, 'parent-node-chain-with-children']);
   }
 
 
@@ -126,42 +127,30 @@ var dom_data = new function()
     return data.length && mime == "text/html" || false;
   }
 
-  var handleGetDOM = function(xml, rt_id, obj_id)
+  var handleGetDOM = function(status, message, rt_id, obj_id)
   {
-    var json = xml.getNodeData('jsondata');
-    if( json )
+    const NODE_LIST = 0;
+
+    data = message[NODE_LIST];
+    mime = set_mime();
+    if( rt_id != data_runtime_id || __next_rt_id )
     {
-      data = eval('(' + json +')');
-      mime = set_mime();
-      if( rt_id != data_runtime_id || __next_rt_id )
-      {
-        data_runtime_id = rt_id;
-        messages.post("runtime-selected", {id: data_runtime_id});
-        window['cst-selects']['document-select'].updateElement();
-        __next_rt_id = '';
-      }
-      var view_id = '', i = 0;
-      for( ; view_id = view_ids[i]; i++)
-      {
-        views[view_id].update();
-        views[view_id].scrollTargetIntoView();
-      }
-      if(obj_id)
-      {
-        messages.post("element-selected", {obj_id: obj_id, rt_id: rt_id});
-      }
+      data_runtime_id = rt_id;
+      messages.post("runtime-selected", {id: data_runtime_id});
+      window['cst-selects']['document-select'].updateElement();
+      __next_rt_id = '';
     }
-    /* with xml 
-    data = getDataFromXML(xml);
-    data_runtime_id = rt_id;
     var view_id = '', i = 0;
     for( ; view_id = view_ids[i]; i++)
     {
       views[view_id].update();
       views[view_id].scrollTargetIntoView();
     }
-    */
-    
+    if(obj_id)
+    {
+      messages.post("element-selected", {obj_id: obj_id, rt_id: rt_id});
+    }
+        
   }
 
   var onSettingChange = function(msg)
@@ -293,7 +282,7 @@ var dom_data = new function()
   {
     var tag = tagManager.setCB(null, handleInitialView, [rt_id]);
     var script_data = "return ( document.body || document.documentElement )";
-    services['ecmascript-debugger'].eval(tag, rt_id, '', '', script_data);
+    services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, script_data]);
   }
 
   this.getDOM = function(rt_id)
@@ -322,11 +311,18 @@ var dom_data = new function()
     __next_rt_id = rt_id;
   }
 
-  var handleInitialView = function(xml, rt_id)
+  var handleInitialView = function(status, message, rt_id)
   {
-    if(xml.getNodeData('status') == 'completed' )
+    
+    const
+    STATUS = 0,
+    OBJECT_VALUE = 3,
+    // sub message ObjectValue 
+    OBJECT_ID = 0;
+    
+    if(message[STATUS] == 'completed' )
     {
-      clickHandlerHost({'runtime-id': rt_id, 'object-id': xml.getNodeData('object-id') })
+      clickHandlerHost({'runtime-id': rt_id, 'object-id': message[OBJECT_VALUE][OBJECT_ID] })
     }
     else
     {
@@ -380,33 +376,30 @@ var dom_data = new function()
 
 
 
-  var handleGetChildren = function(xml, runtime_id, object_id)
+  var handleGetChildren = function(status, message, runtime_id, object_id)
   {
-    var json = xml.getNodeData('jsondata');
-    if( json )
+    const NODE_LIST = 0;
+    var _data = message[NODE_LIST], i = 0, view_id = '';
+    for( ; data[i] && data[i][ID] != object_id; i += 1 );
+    if( data[i] )
     {
-      var _data = eval('(' + json +')'), i = 0, view_id = '';
-      for( ; data[i] && data[i][ID] != object_id; i += 1 );
-      if( data[i] )
+      // the traversal was subtree
+      if(object_id == _data[0][ID]) 
       {
-        // the traversal was subtree
-        if(object_id == _data[0][ID]) 
-        {
-          Array.prototype.splice.apply( data, [i, 1].concat(_data) );
-        }
-        else
-        {
-          Array.prototype.splice.apply( data, [i + 1, 0].concat(_data) );
-        }
-        for(i = 0 ; view_id = view_ids[i]; i++)
-        {
-          views[view_id].update();
-        }
+        Array.prototype.splice.apply( data, [i, 1].concat(_data) );
       }
       else
       {
-        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'missing refrence');
+        Array.prototype.splice.apply( data, [i + 1, 0].concat(_data) );
       }
+      for(i = 0 ; view_id = view_ids[i]; i++)
+      {
+        views[view_id].update();
+      }
+    }
+    else
+    {
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'missing refrence');
     }
   }
 
@@ -414,7 +407,7 @@ var dom_data = new function()
   this.getChildernFromNode = function(object_id, traversal)
   {
     var tag = tagManager.setCB(null, handleGetChildren, [data_runtime_id, object_id]);
-    services['ecmascript-debugger'].inspectDOM(tag, object_id, traversal, 'json'  );
+    services['ecmascript-debugger'].requestInspectDom(tag, [object_id, traversal]);
   }
 
   this.closeNode = function(object_id, do_not_update)
@@ -447,15 +440,22 @@ var dom_data = new function()
   {
     var tag = tagManager.setCB(null, handleSnapshot, [data_runtime_id]);
     var script_data = 'return document.document';
-    services['ecmascript-debugger'].eval(tag, data_runtime_id, '', '', script_data);
+    services['ecmascript-debugger'].requestEval(tag, [data_runtime_id, 0, 0, script_data]);
   }
 
-  var handleSnapshot = function(xml, runtime_id)
+  var handleSnapshot = function(status, message, runtime_id)
   {
-    if(xml.getNodeData('status') == 'completed' )
+    const
+    STATUS = 0,
+    OBJECT_VALUE = 3,
+    // sub message ObjectValue 
+    OBJECT_ID = 0;
+
+    if(message[STATUS] == 'completed' )
     {
       var tag = tagManager.setCB(null, handleGetDOM, [runtime_id]);
-      services['ecmascript-debugger'].inspectDOM( tag, xml.getNodeData('object-id'), 'subtree', 'json' );
+      services['ecmascript-debugger'].requestInspectDom(tag,
+          [message[OBJECT_VALUE][OBJECT_ID], 'subtree']);
     }
     else
     {
@@ -706,7 +706,7 @@ var dom_data = new function()
     for( var i = 0; data[i] && data[i][TYPE] != 1; i++);
     return data[i] && data[i][ID] || 0;
   }
-  /* *
+  /* */
   messages.addListener('active-tab', onActiveTab);
   messages.addListener('show-view', onShowView);
   messages.addListener('hide-view', onHideView);

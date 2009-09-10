@@ -1,8 +1,12 @@
-﻿/**
+﻿window.cls || (window.cls = {});
+cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
+cls.EcmascriptDebugger["5.0"] || (cls.EcmascriptDebugger["5.0"] = {});
+
+/**
   * @constructor 
   */
 
-var host_tabs = new function()
+cls.EcmascriptDebugger["5.0"].HostTabs = function()
 {
   var self = this;
   var __window_id = '';
@@ -22,7 +26,7 @@ var host_tabs = new function()
 
   var getNewHandlerId = function()
   {
-    var id = handler_id.toString();
+    var id = handler_id;
     handler_id++;
     id_map[id] = 1;
     return id;
@@ -85,7 +89,7 @@ var host_tabs = new function()
     var ev = null, i = 0;
     for( ; ev = activeEvents[i]; i++)
     {
-      __addEvenetListener(ev.type, ev.cb);
+      __addEvenetListener(ev.type, ev.cb, ev.prevent_default, ev.stop_propagation);
     }
     cleanUpEventListener();
     messages.post('active-tab', {activeTab: __activeTab} );
@@ -101,33 +105,44 @@ var host_tabs = new function()
     return __activeTab.length > 1;
   }
 
-  this.handleEventHandler = function(xml)
+  this.handleEventHandler = function(status, message)
   {
 
     if( window.__times_spotlight__ ) 
     {
       window.__times_spotlight__[0] =  new Date().getTime();
     }
-    var event = {};
 
-    var children = xml.documentElement.childNodes, child=null, i=0;
-    for ( ; child = children[i]; i++)
+    const
+    OBJECT_ID = 0,
+    HANDLER_ID = 1,
+    EVENT_TYPE = 2;
+
+    if( message[HANDLER_ID] in callback_map )
     {
-      event[child.nodeName] = child.firstChild.nodeValue;
-    }
-    event['runtime-id'] = runtime_id_map[event['handler-id']];
-    if( event['handler-id'] in callback_map )
-    {
-      callback_map[ event['handler-id'] ](event);
+      callback_map[message[HANDLER_ID]](
+        {
+          'object-id': message[OBJECT_ID],
+          'handler-id': message[HANDLER_ID],
+          'event-type': message[EVENT_TYPE],
+          'runtime-id': runtime_id_map[message[HANDLER_ID]]
+        }
+      );
     }
   }
 
-  var handleAddEventWithDocument = function(status, message, runtime_id, event_type, callback)
+  var handleAddEventWithDocument = function(status, message, 
+        runtime_id, event_type, callback, prevent_default, stop_propagation)
   {
-    // TODO fix
-    if( xml.getNodeData('status') == 'completed' )
+    const
+    STATUS = 0,
+    OBJECT_VALUE = 3,
+    // sub message ObjectValue 
+    OBJECT_ID = 0;
+
+    if( message[STATUS] == 'completed' )
     {
-      var node_id = xml.getNodeData('object-id');
+      var node_id = message[OBJECT_VALUE][OBJECT_ID];
       if( !checkTriple(node_id, event_type, callback ) ) 
       {
         document_map[runtime_id] = node_id;
@@ -136,7 +151,8 @@ var host_tabs = new function()
         type_map[id] = event_type;
         callback_map[id] = callback;
         runtime_id_map[id] = runtime_id;
-        services['ecmascript-debugger'].addEventHandler(id, node_id, event_type); 
+        services['ecmascript-debugger'].requestAddEventHandler(33, 
+            [id, node_id, "", event_type, prevent_default && 1 || 0, stop_propagation && 1 || 0]); 
       }
     }
     else
@@ -147,7 +163,7 @@ var host_tabs = new function()
      
   }
 
-  var __addEvenetListener = function(event_type, callback)
+  var __addEvenetListener = function(event_type, callback, prevent_default, stop_propagation)
   {
     var rt_p = '', i = 0, id = '';
     for( ; rt_p = __activeTab[i]; i++ )
@@ -163,7 +179,8 @@ var host_tabs = new function()
       }
       else
       {
-        var tag = tagManager.setCB(null, handleAddEventWithDocument, [rt_p, event_type, callback]);
+        var tag = tagManager.setCB(null, handleAddEventWithDocument, 
+              [rt_p, event_type, callback, prevent_default, stop_propagation]);
         services['ecmascript-debugger'].requestEval(tag, [rt_p, 0, 0, "return window.document"]);
       }
     }
@@ -189,12 +206,20 @@ var host_tabs = new function()
 
   var clearEventListener = function(id)
   {
-    services['ecmascript-debugger'].removeEventHandler(id);
+    services['ecmascript-debugger'].requestRemoveEventHandler(0, [parseInt(id)]);
     delete node_map[id];
     delete type_map[id];
     delete callback_map[id];
     delete runtime_id_map[id];
     delete id_map[id];
+  }
+
+  this.bind = function()
+  {
+    window.services['ecmascript-debugger'].onHandleEvent = function(status, message)
+    {
+      self.handleEventHandler(status, message);
+    }
   }
 
   /**
@@ -205,10 +230,24 @@ var host_tabs = new function()
   {
     var self = this;
 
-    this.addEventListener = function(event_type, callback)
+    this.addEventListener = function(event_type, callback, prevent_default, stop_propagation)
     {
-      activeEvents[activeEvents.length] = {type: event_type, cb: callback};
-      __addEvenetListener(event_type, callback);
+      if(prevent_default !== false)
+      {
+        prevent_default = true;
+      }
+      if(stop_propagation !== false)
+      {
+        stop_propagation = true;
+      }
+      activeEvents[activeEvents.length] = 
+      {
+        type: event_type, 
+        cb: callback,
+        prevent_default: prevent_default, 
+        stop_propagation: stop_propagation
+      };
+      __addEvenetListener(event_type, callback, prevent_default, stop_propagation);
     }
 
     this.removeEventListener =  function(event_type, callback)

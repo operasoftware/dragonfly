@@ -14,14 +14,14 @@ var DOM_markup_style = function(id, name, container_class)
   NAME = 2, 
   DEPTH = 3,
   NAMESPACE = 4, 
-  VALUE = 4, 
+  VALUE = 7, 
   ATTRS = 5,
   ATTR_PREFIX = 0,
   ATTR_KEY = 1, 
   ATTR_VALUE = 2,
   CHILDREN_LENGTH = 6, 
-  PUBLIC_ID = 4,
-  SYSTEM_ID = 5,
+  PUBLIC_ID = 8,
+  SYSTEM_ID = 9,
   INDENT = "  ",
   LINEBREAK = '\n';
 
@@ -44,7 +44,7 @@ var DOM_markup_style = function(id, name, container_class)
 
   var spotlightElement = function()
   {
-    hostspotlighter.spotlight(this.getAttribute('ref-id'));
+    hostspotlighter.spotlight(parseInt(this.getAttribute('ref-id')));
   }
 
   var clearSpotlightElement = function()

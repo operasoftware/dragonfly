@@ -319,6 +319,7 @@ var elementStyle = new function()
     }
     else
     {
+      alert(8888)
       stylesheets.getStylesheets(rt_id, arguments);
     }
   }
@@ -384,9 +385,10 @@ var elementStyle = new function()
     }
   }
 
+  /* *
   messages.addListener('element-selected', onElementSelected);
   messages.addListener('reset-state', onResetState);
-
+  /* */
   eventHandlers.input['css-inspector-text-search'] = function(event, target)
   {
     searchDelayed(target.value);
