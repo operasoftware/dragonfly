@@ -855,10 +855,10 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
       if( !__indexMap )
       {
         var tag = tagManager.setCB(null, handleGetIndexMap, []);
-        services['ecmascript-debugger'].getIndexMap( tag, 'json' );
+        services['ecmascript-debugger'].requestCssGetIndexMap(tag);
       }
       var tag = tagManager.setCB(null, handleGetAllStylesheets, [rt_id, org_args]);
-      services['ecmascript-debugger'].getAllStylesheets( tag, rt_id, 'json' );
+      services['ecmascript-debugger'].requestCssGetAllStylesheets(tag, [rt_id]);
       return null;
     }
   }
@@ -975,271 +975,269 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
               index == __selectedRules.index && true || false );
   }
   
-  var handleGetIndexMap = function(xml, org_args)
+  var handleGetIndexMap = function(status, message, org_args)
   {
-    var json = xml.getNodeData('index');
-    if( json )
+    const NAME_LIST = 0;
+    window.css_index_map = __indexMap = message[NAME_LIST];
+    window.inherited_props_index_list = [];
+    var prop = '', i = 0;
+    var temp = [];
+    for( ; prop = __indexMap[i]; i++)
     {
-      window.css_index_map = __indexMap = eval('(' + json +')');
-      window.inherited_props_index_list = [];
-      var prop = '', i = 0;
-      var temp = [];
-      for( ; prop = __indexMap[i]; i++)
+      temp[i] = {index: i, key : prop};
+      __initialValues[i] = css_initial_values[prop];
+      if( prop in css_inheritable_properties )
       {
-        temp[i] = {index: i, key : prop};
-        __initialValues[i] = css_initial_values[prop];
-        if( prop in css_inheritable_properties )
+        inherited_props_index_list[i] = true;
+      }
+      switch (prop)
+      {
+        case 'color':
         {
-          inherited_props_index_list[i] = true;
+          __colorIndex = i;
+          break;
         }
-        switch (prop)
+        // margin
+        case 'margin-top':
         {
-          case 'color':
-          {
-            __colorIndex = i;
-            break;
-          }
-          // margin
-          case 'margin-top':
-          {
-            SHORTHAND[i] = 1;
-            __shorthandIndexMap[i] = 'margin';
-            break;
-          }
-          case 'margin-right':
-          {
-            SHORTHAND[i] = 2;
-            __shorthandIndexMap[i] = 'margin';
-            break;
-          }
-          case 'margin-bottom':
-          {
-            SHORTHAND[i] = 3;
-            __shorthandIndexMap[i] = 'margin';
-            break;
-          }
-          case 'margin-left':
-          {
-            SHORTHAND[i] = 4;
-            __shorthandIndexMap[i] = 'margin';
-            break;
-          }
-          // padding
-          case 'padding-top':
-          {
-            SHORTHAND[i] = 1;
-            __shorthandIndexMap[i] = 'padding';
-            break;
-          }
-          case 'padding-right':
-          {
-            SHORTHAND[i] = 2;
-            __shorthandIndexMap[i] = 'padding';
-            break;
-          }
-          case 'padding-bottom':
-          {
-            SHORTHAND[i] = 3;
-            __shorthandIndexMap[i] = 'padding';
-            break;
-          }
-          case 'padding-left':
-          {
-            SHORTHAND[i] = 4;
-            __shorthandIndexMap[i] = 'padding';
-            break;
-          }
-          // border top
-          case 'border-top-width':
-          {
-            SHORTHAND[i] = 1;
-            __shorthandIndexMap[i] = 'border';          
-            break;
-          }
-          case 'border-top-style':
-          {
-            SHORTHAND[i] = 2;
-            __shorthandIndexMap[i] = 'border';          
-            break;
-          }
-          case 'border-top-color':
-          {
-            SHORTHAND[i] = 3;
-            __shorthandIndexMap[i] = 'border';
-            break;
-          }
-          // border rigth
-          case 'border-right-width':
-          {
-            SHORTHAND[i] = 4;
-            __shorthandIndexMap[i] = 'border';          
-            break;
-          }
-          case 'border-right-style':
-          {
-            SHORTHAND[i] = 5;
-            __shorthandIndexMap[i] = 'border';          
-            break;
-          }
-          case 'border-right-color':
-          {
-            SHORTHAND[i] = 6;
-            __shorthandIndexMap[i] = 'border';          
-            break;
-          }
-          // border bottom
-          case 'border-bottom-width':
-          {
-            SHORTHAND[i] = 7;
-            __shorthandIndexMap[i] = 'border';          
-            break;
-          }
-          case 'border-bottom-style':
-          {
-            SHORTHAND[i] = 8;
-            __shorthandIndexMap[i] = 'border';
-            break;
-          }
-          case 'border-bottom-color':
-          {
-            SHORTHAND[i] = 9;
-            __shorthandIndexMap[i] = 'border';          
-            break;
-          }
-          // border left
-          case 'border-left-width':
-          {
-            SHORTHAND[i] = 10;
-            __shorthandIndexMap[i] = 'border';          
-            break;
-          }
-          case 'border-left-style':
-          {
-            SHORTHAND[i] = 11;
-            __shorthandIndexMap[i] = 'border';          
-            break;
-          }
-          case 'border-left-color':
-          {
-            SHORTHAND[i] = 12;
-            __shorthandIndexMap[i] = 'border';          
-            break;
-          }
-          // background
-          case 'background-color':
-          {
-            SHORTHAND[i] = 1;
-            __shorthandIndexMap[i] = 'background';          
-            break;
-          }
-          case 'background-image':
-          {
-            SHORTHAND[i] = 2;
-            __shorthandIndexMap[i] = 'background';          
-            break;
-          }
-          case 'background-attachment':
-          {
-            SHORTHAND[i] = 3;
-            __shorthandIndexMap[i] = 'background';          
-            break;
-          }
-          case 'background-repeat':
-          {
-            SHORTHAND[i] = 4;
-            __shorthandIndexMap[i] = 'background';          
-            break;
-          }
-          case 'background-position':
-          {
-            SHORTHAND[i] = 5;
-            __shorthandIndexMap[i] = 'background';          
-            break;
-          }
-          
+          SHORTHAND[i] = 1;
+          __shorthandIndexMap[i] = 'margin';
+          break;
+        }
+        case 'margin-right':
+        {
+          SHORTHAND[i] = 2;
+          __shorthandIndexMap[i] = 'margin';
+          break;
+        }
+        case 'margin-bottom':
+        {
+          SHORTHAND[i] = 3;
+          __shorthandIndexMap[i] = 'margin';
+          break;
+        }
+        case 'margin-left':
+        {
+          SHORTHAND[i] = 4;
+          __shorthandIndexMap[i] = 'margin';
+          break;
+        }
+        // padding
+        case 'padding-top':
+        {
+          SHORTHAND[i] = 1;
+          __shorthandIndexMap[i] = 'padding';
+          break;
+        }
+        case 'padding-right':
+        {
+          SHORTHAND[i] = 2;
+          __shorthandIndexMap[i] = 'padding';
+          break;
+        }
+        case 'padding-bottom':
+        {
+          SHORTHAND[i] = 3;
+          __shorthandIndexMap[i] = 'padding';
+          break;
+        }
+        case 'padding-left':
+        {
+          SHORTHAND[i] = 4;
+          __shorthandIndexMap[i] = 'padding';
+          break;
+        }
+        // border top
+        case 'border-top-width':
+        {
+          SHORTHAND[i] = 1;
+          __shorthandIndexMap[i] = 'border';          
+          break;
+        }
+        case 'border-top-style':
+        {
+          SHORTHAND[i] = 2;
+          __shorthandIndexMap[i] = 'border';          
+          break;
+        }
+        case 'border-top-color':
+        {
+          SHORTHAND[i] = 3;
+          __shorthandIndexMap[i] = 'border';
+          break;
+        }
+        // border rigth
+        case 'border-right-width':
+        {
+          SHORTHAND[i] = 4;
+          __shorthandIndexMap[i] = 'border';          
+          break;
+        }
+        case 'border-right-style':
+        {
+          SHORTHAND[i] = 5;
+          __shorthandIndexMap[i] = 'border';          
+          break;
+        }
+        case 'border-right-color':
+        {
+          SHORTHAND[i] = 6;
+          __shorthandIndexMap[i] = 'border';          
+          break;
+        }
+        // border bottom
+        case 'border-bottom-width':
+        {
+          SHORTHAND[i] = 7;
+          __shorthandIndexMap[i] = 'border';          
+          break;
+        }
+        case 'border-bottom-style':
+        {
+          SHORTHAND[i] = 8;
+          __shorthandIndexMap[i] = 'border';
+          break;
+        }
+        case 'border-bottom-color':
+        {
+          SHORTHAND[i] = 9;
+          __shorthandIndexMap[i] = 'border';          
+          break;
+        }
+        // border left
+        case 'border-left-width':
+        {
+          SHORTHAND[i] = 10;
+          __shorthandIndexMap[i] = 'border';          
+          break;
+        }
+        case 'border-left-style':
+        {
+          SHORTHAND[i] = 11;
+          __shorthandIndexMap[i] = 'border';          
+          break;
+        }
+        case 'border-left-color':
+        {
+          SHORTHAND[i] = 12;
+          __shorthandIndexMap[i] = 'border';          
+          break;
+        }
+        // background
+        case 'background-color':
+        {
+          SHORTHAND[i] = 1;
+          __shorthandIndexMap[i] = 'background';          
+          break;
+        }
+        case 'background-image':
+        {
+          SHORTHAND[i] = 2;
+          __shorthandIndexMap[i] = 'background';          
+          break;
+        }
+        case 'background-attachment':
+        {
+          SHORTHAND[i] = 3;
+          __shorthandIndexMap[i] = 'background';          
+          break;
+        }
+        case 'background-repeat':
+        {
+          SHORTHAND[i] = 4;
+          __shorthandIndexMap[i] = 'background';          
+          break;
+        }
+        case 'background-position':
+        {
+          SHORTHAND[i] = 5;
+          __shorthandIndexMap[i] = 'background';          
+          break;
+        }
+        
 /// 'list-style-type'> || <'list-style-position'> || <'list-style-image'
-          // list-style
-          
-          case 'list-style-type':
-          {
-            SHORTHAND[i] = 1;
-            __shorthandIndexMap[i] = 'list-style';          
-            break;
-          }
-          case 'list-style-position':
-          {
-            SHORTHAND[i] = 2;
-            __shorthandIndexMap[i] = 'list-style';          
-            break;
-          }
-          case 'list-style-image':
-          {
-            SHORTHAND[i] = 3;
-            __shorthandIndexMap[i] = 'list-style';          
-            break;
-          }
-          
-          // [ [ <'font-style'> || <'font-variant'> || <'font-weight'> ]? <'font-size'> [ / <'line-height'> ]? <'font-family'> ] |
-          case 'font-style':
-          {
-            SHORTHAND[i] = 1;
-            __shorthandIndexMap[i] = 'font';          
-            break;
-          }
-          case 'font-variant':
-          {
-            SHORTHAND[i] = 2;
-            __shorthandIndexMap[i] = 'font';          
-            break;
-          }
-          case 'font-weight':
-          {
-            SHORTHAND[i] = 3;
-            __shorthandIndexMap[i] = 'font';          
-            break;
-          }
-          case 'font-size':
-          {
-            SHORTHAND[i] = 4;
-            __shorthandIndexMap[i] = 'font';          
-            break;
-          }
-          case 'line-height':
-          {
-            line_height_index = i;
-            SHORTHAND[i] = 0; // | 5
-            __shorthandIndexMap[i] = 'font';          
-            break;
-          }
-          case 'font-family':
-          {
-            SHORTHAND[i] = 6;
-            __shorthandIndexMap[i] = 'font';          
-            break;
-          }
-
-          
-
-          
-
-
+        // list-style
+        
+        case 'list-style-type':
+        {
+          SHORTHAND[i] = 1;
+          __shorthandIndexMap[i] = 'list-style';          
+          break;
+        }
+        case 'list-style-position':
+        {
+          SHORTHAND[i] = 2;
+          __shorthandIndexMap[i] = 'list-style';          
+          break;
+        }
+        case 'list-style-image':
+        {
+          SHORTHAND[i] = 3;
+          __shorthandIndexMap[i] = 'list-style';          
+          break;
         }
         
-      
-      }
-      temp.sort(function(a,b){return a.key < b.key ? -1 : a.key > b.key ? 1 : 0});
-      for( i = 0; prop = temp[i]; i++)
-      {
-        __sortedIndexMap[i] = prop.index;
+        // [ [ <'font-style'> || <'font-variant'> || <'font-weight'> ]? <'font-size'> [ / <'line-height'> ]? <'font-family'> ] |
+        case 'font-style':
+        {
+          SHORTHAND[i] = 1;
+          __shorthandIndexMap[i] = 'font';          
+          break;
+        }
+        case 'font-variant':
+        {
+          SHORTHAND[i] = 2;
+          __shorthandIndexMap[i] = 'font';          
+          break;
+        }
+        case 'font-weight':
+        {
+          SHORTHAND[i] = 3;
+          __shorthandIndexMap[i] = 'font';          
+          break;
+        }
+        case 'font-size':
+        {
+          SHORTHAND[i] = 4;
+          __shorthandIndexMap[i] = 'font';          
+          break;
+        }
+        case 'line-height':
+        {
+          line_height_index = i;
+          SHORTHAND[i] = 0; // | 5
+          __shorthandIndexMap[i] = 'font';          
+          break;
+        }
+        case 'font-family':
+        {
+          SHORTHAND[i] = 6;
+          __shorthandIndexMap[i] = 'font';          
+          break;
+        }
+
         
+
+        
+
+
       }
-      __indexMapLength = __indexMap.length;
-      if( org_args && ( !org_args[0].__call_count || org_args[0].__call_count == 1 )  )
-      {
-        org_args[0].__call_count = org_args[0].__call_count ? org_args[0].__call_count + 1 : 1;
-        org_args.callee.apply(null, org_args)
-      }
-    } 
+      
+    
+    }
+    temp.sort(function(a,b){return a.key < b.key ? -1 : a.key > b.key ? 1 : 0});
+    for( i = 0; prop = temp[i]; i++)
+    {
+      __sortedIndexMap[i] = prop.index;
+      
+    }
+    __indexMapLength = __indexMap.length;
+    if( org_args && ( !org_args[0].__call_count || org_args[0].__call_count == 1 )  )
+    {
+      org_args[0].__call_count = org_args[0].__call_count ? org_args[0].__call_count + 1 : 1;
+      org_args.callee.apply(null, org_args)
+    }
+    
   }
   
   var handleGetRulesWithIndex = function(xml, rt_id, index, org_args)
@@ -1258,21 +1256,17 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     } 
   }
   
-  var handleGetAllStylesheets = function(xml, rt_id, org_args)
+  var handleGetAllStylesheets = function(status, message, rt_id, org_args)
   {
-    var json = xml.getNodeData('stylesheets');
-
-    if( json )
+    const STYLESHEET_LIST = 0;
+    __sheets[rt_id] = message[STYLESHEET_LIST];
+    __sheets[rt_id]['runtime-id'] = rt_id;
+    __rules[rt_id] = [];
+    if(org_args && !org_args[0].__call_count )
     {
-      __sheets[rt_id] = eval('(' + json +')');
-      __sheets[rt_id]['runtime-id'] = rt_id;
-      __rules[rt_id] = [];
-      if(org_args && !org_args[0].__call_count )
-      {
-        org_args[0].__call_count = 1;
-        org_args.callee.apply(null, org_args);
-      }
-    }   
+      org_args[0].__call_count = 1;
+      org_args.callee.apply(null, org_args);
+    }
   }
 
   var onRuntimeDestroyed = function(msg)

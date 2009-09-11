@@ -175,7 +175,8 @@ cls.EcmascriptDebugger["5.0"].HostTabs = function()
         type_map[id] = event_type;
         callback_map[id] = callback;
         runtime_id_map[id] = rt_p;
-        services['ecmascript-debugger'].addEventHandler(id, document_map[ rt_p ], event_type);
+        services['ecmascript-debugger'].requestAddEventHandler(0, 
+          [id, document_map[ rt_p ], "", event_type, prevent_default && 1 || 0, stop_propagation && 1 || 0]);
       }
       else
       {

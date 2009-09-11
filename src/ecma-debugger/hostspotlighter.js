@@ -528,7 +528,11 @@
       last_spotlight_commands = arguments.join();
 
       services['ecmascript-debugger'].requestSpotlightObjects(0,
-        [[get_command(node_id, scroll_into_view, type || "default")]])
+        [[get_command(node_id, scroll_into_view, type || "default")].concat(
+            settings.dom.get('lock-selecked-elements') && 
+            locked_elements.map(get_locked_commands) || [])])
+
+
 
 /*
         ]

@@ -209,7 +209,7 @@ var elementLayout = new function()
     if( stylesheets.hasStylesheetsRuntime(rt_id) )
     {
       var tag = tagManager.setCB(null, handleGetMetricsData, [rt_id, obj_id, org_args]);
-      services['ecmascript-debugger'].cssGetStyleDeclarations( tag, rt_id, obj_id, '10000', 'json' );
+      services['ecmascript-debugger'].requestCssGetStyleDeclarations(tag, [rt_id, obj_id]);
     }
     else
     {
@@ -218,25 +218,21 @@ var elementLayout = new function()
     return null;
   }
 
-  var handleGetMetricsData = function(xml, rt_id, obj_id, org_args)
+  var handleGetMetricsData = function(status, message, rt_id, obj_id, org_args)
   {
-    var 
-    json = xml.getNodeData('matching-style-declarations'), 
-    declarations = null;
+    const
+    COMPUTED_STYLE_LIST = 0,
+    NODE_STYLE_LIST = 1;
 
-    if( json )
+    __comp_style =  message[COMPUTED_STYLE_LIST];
+    if( !layout_map.length )
     {
-      declarations = eval('(' + json +')');
-      __comp_style =  declarations[0];
-      if( !layout_map.length )
-      {
-        setup_layout_map();
-      }
-      if( org_args && !org_args[0].__call_count )
-      {
-        org_args[0].__call_count = 1;
-        org_args.callee.apply(null, org_args)
-      }
+      setup_layout_map();
+    }
+    if( org_args && !org_args[0].__call_count )
+    {
+      org_args[0].__call_count = 1;
+      org_args.callee.apply(null, org_args)
     }
   }
   
@@ -256,7 +252,7 @@ var elementLayout = new function()
     obj_id = __selectedElement.obj_id,
     tag = tagManager.setCB(null, handleGetOffsetsData, [rt_id, obj_id, org_args] );
     
-    services['ecmascript-debugger'].eval( tag, rt_id, '', '', GET_OFFSETS_SCRIPT, ['ele', obj_id]);
+    services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, GET_OFFSETS_SCRIPT, [['ele', obj_id]]]);
     return null;
   }
   
@@ -286,11 +282,12 @@ var elementLayout = new function()
     return ret;
   }
     
-  var handleGetOffsetsData = function(xml, rt_id, obj_id, org_args)
+  var handleGetOffsetsData = function(status, message, rt_id, obj_id, org_args)
   {
-    if( xml.getNodeData('status') == 'completed' )
+    const STATUS = 0, VALUE = 2;
+    if( message[STATUS] == 'completed' )
     {
-      __offsets_values = xml.getNodeData('string')
+      __offsets_values = message[VALUE]
       if( org_args && !org_args[0].__call_count )
       {
         org_args[0].__call_count = 1;
@@ -306,7 +303,6 @@ var elementLayout = new function()
   
   this.metricsTemplate = function(styles)
   {
-    
     return \
     ['ul', ['li',
     ['ul', 
@@ -343,9 +339,7 @@ var elementLayout = new function()
     'class', 'margin']];
   }
 
-  /* *
   messages.addListener('element-selected', onElementSelected);
-  /* */
 }
 
 
