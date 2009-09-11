@@ -97,6 +97,15 @@
     last_spotlight_commands = "";
     // workaround for bug CORE-18426
     var root_id = dom_data.getRootElement();
+    if(root_id)
+    {
+      // TODO store clear command
+      services['ecmascript-debugger'].requestSpotlightObjects(0,
+        [[[root_id, 0, [[0,0]]]]]);
+
+    }
+    // TODO loked elements
+    /*
     services['ecmascript-debugger'].post
     (
       "<spotlight-objects>" +
@@ -115,6 +124,7 @@
           || "" ) +
       "</spotlight-objects>"
     );
+    */
   }
 
   var set_color_theme = function(fill_frame_color, grid_color)
@@ -191,20 +201,36 @@
     extract_css_properties(matrixes[HOVER][2], ( client_colors.active = {} ) );
     extract_css_properties(matrixes[HOVER][1], ( client_colors.inner = {} ) );
   }
-    
+  
+  // TODO fix name
   var stringify_command = function(matrix)
   {
-    var ret = [], box = null, spot_box = null, i = 0, j = 0;
+    var 
+    ret = [], 
+    box = null, 
+    spot_box = null, 
+    i = 0, 
+    j = 0, 
+    color = 0,
+    has_color = 0;
+
     for( ; i < 4; i++)
     {
       if( box = matrix[i] )
       {
+        has_color = 0;
         spot_box = [i];
-        for( j = 0; j < 3; j++)
+        for( j = 3; j--; j)
         {
-          spot_box[spot_box.length] = convert_rgba_to_int(box[j]);
+          if( has_color += ( color = convert_rgba_to_int(box[j] ) ) )
+          {
+            spot_box[j+1] = color;
+          }
         }
-        ret[ret.length] = spot_box;
+        if(has_color)
+        {
+          ret[ret.length] = spot_box;
+        }
       }
     }
     return ret;
@@ -397,15 +423,8 @@
   /* convert a rgba array to a integer */
   var convert_rgba_to_int = function(arr)
   {
-    var i = 4, ret = 0;
-    if(arr && arr.length == 4)
-    {
-      for( ; i--; )
-      {
-        ret += arr[3-i] << (i * 8);
-      }
-    }
-    return ret;
+    return arr && arr.length == 4 && 
+        ((arr[0] << 23) * 2 + (arr[1] << 16) +(arr[2] << 8) + (arr[3] << 0)) || 0;
   }
 
   /* convert a rgba array to a hex value
