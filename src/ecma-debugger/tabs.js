@@ -22,6 +22,8 @@ cls.EcmascriptDebugger["5.0"].HostTabs = function()
   var handler_id = 1;
   var activeEvents = [];
 
+  var __get_document_id = {};
+
 
 
   var getNewHandlerId = function()
@@ -100,6 +102,11 @@ cls.EcmascriptDebugger["5.0"].HostTabs = function()
     return __activeTab;
   }
 
+  this.is_runtime_of_active_tab = function(rt)
+  {
+    return __activeTab.indexOf(rt) != -1;
+  }
+
   this.isMultiRuntime = function()
   {
     return __activeTab.length > 1;
@@ -131,8 +138,7 @@ cls.EcmascriptDebugger["5.0"].HostTabs = function()
     }
   }
 
-  var handleAddEventWithDocument = function(status, message, 
-        runtime_id, event_type, callback, prevent_default, stop_propagation)
+  var handleAddEventWithDocument = function(status, message, runtime_id)
   {
     const
     STATUS = 0,
@@ -140,19 +146,37 @@ cls.EcmascriptDebugger["5.0"].HostTabs = function()
     // sub message ObjectValue 
     OBJECT_ID = 0;
 
+    var 
+    event_type = '', 
+    callback = null, 
+    prevent_default = null, 
+    stop_propagation = null,
+    id = 0,
+    ev_listener = null, 
+    i = 0,
+    node_id = 0;
+
     if( message[STATUS] == 'completed' )
     {
-      var node_id = message[OBJECT_VALUE][OBJECT_ID];
-      if( !checkTriple(node_id, event_type, callback ) ) 
+      node_id = message[OBJECT_VALUE][OBJECT_ID];
+      document_map[runtime_id] = node_id;
+      for( ; ev_listener = __get_document_id[runtime_id][i]; i++)
       {
-        document_map[runtime_id] = node_id;
-        var id = getNewHandlerId();
-        node_map[id] = node_id;
-        type_map[id] = event_type;
-        callback_map[id] = callback;
-        runtime_id_map[id] = runtime_id;
-        services['ecmascript-debugger'].requestAddEventHandler(33, 
-            [id, node_id, "", event_type, prevent_default && 1 || 0, stop_propagation && 1 || 0]); 
+        // __get_document_id[rt_p].push([rt_p, event_type, callback, prevent_default, stop_propagation])
+        event_type = ev_listener[1];
+        callback = ev_listener[2]; 
+        prevent_default = ev_listener[3];
+        stop_propagation = ev_listener[4];
+        if( !checkTriple(node_id, event_type, callback ) ) 
+        {
+          id = getNewHandlerId();
+          node_map[id] = node_id;
+          type_map[id] = event_type;
+          callback_map[id] = callback;
+          runtime_id_map[id] = runtime_id;
+          services['ecmascript-debugger'].requestAddEventHandler(33, 
+              [id, node_id, "", event_type, prevent_default && 1 || 0, stop_propagation && 1 || 0]); 
+        }
       }
     }
     else
@@ -178,14 +202,20 @@ cls.EcmascriptDebugger["5.0"].HostTabs = function()
         services['ecmascript-debugger'].requestAddEventHandler(0, 
           [id, document_map[ rt_p ], "", event_type, prevent_default && 1 || 0, stop_propagation && 1 || 0]);
       }
+      else if(__get_document_id[rt_p])
+      {
+        __get_document_id[rt_p].push([rt_p, event_type, callback, prevent_default, stop_propagation]);
+      }
       else
       {
-        var tag = tagManager.setCB(null, handleAddEventWithDocument, 
-              [rt_p, event_type, callback, prevent_default, stop_propagation]);
+        __get_document_id[rt_p] = [[rt_p, event_type, callback, prevent_default, stop_propagation]];
+        var tag = tagManager.setCB(null, handleAddEventWithDocument, [rt_p]);
         services['ecmascript-debugger'].requestEval(tag, [rt_p, 0, 0, "return window.document"]);
       }
     }
   }
+
+  
 
   var cleanUpEventListener =  function()
   {
@@ -217,7 +247,14 @@ cls.EcmascriptDebugger["5.0"].HostTabs = function()
 
   this.bind = function()
   {
-    window.services['ecmascript-debugger'].onHandleEvent = function(status, message)
+    var ecma_debugger = window.services['ecmascript-debugger'];
+
+    ecma_debugger.handleAddEventHandler =
+    ecma_debugger.handleRemoveEventHandler =
+    function(status, message){};
+     
+
+    ecma_debugger.onHandleEvent = function(status, message)
     {
       self.handleEventHandler(status, message);
     }

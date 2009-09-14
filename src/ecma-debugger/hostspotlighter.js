@@ -1,4 +1,8 @@
-﻿var hostspotlighter = new function()
+﻿window.cls || (window.cls = {});
+cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
+cls.EcmascriptDebugger["5.0"] || (cls.EcmascriptDebugger["5.0"] = {});
+
+cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
 {
   /* interface */
   // type: default, dimension, padding, border, margin, locked 
@@ -78,13 +82,6 @@
   var get_command = function(node_id, scroll_into_view, name)
   {
     return [node_id, scroll_into_view && 1 || 0, commands[name]];
-    /*
-      "<spotlight-object>" +
-        "<object-id>" + node_id + "</object-id>" +
-        "<scroll-into-view>" + ( scroll_into_view && 1 || 0 ) + "</scroll-into-view>" +
-        commands[name] +
-      "</spotlight-object>";
-    */
   }
 
   var get_locked_commands = function(node_id)
@@ -99,32 +96,11 @@
     var root_id = dom_data.getRootElement();
     if(root_id)
     {
-      // TODO store clear command
       services['ecmascript-debugger'].requestSpotlightObjects(0,
-        [[[root_id, 0, [[0,0]]]]]);
+        [ settings.dom.get('lock-selecked-elements') && 
+            locked_elements.map(get_locked_commands) || [[root_id, 0, [[0,0]]]] ]);
 
     }
-    // TODO loked elements
-    /*
-    services['ecmascript-debugger'].post
-    (
-      "<spotlight-objects>" +
-        ( root_id && 
-          "<spotlight-object>" +
-            "<object-id>" + root_id + "</object-id>" +
-            "<scroll-into-view>0</scroll-into-view>" +
-            "<box>" +
-              "<box-type>0</box-type>" +
-              "<fill-color>0</fill-color>" +
-            "</box>" +
-          "</spotlight-object>" 
-          || "" ) +
-        ( settings.dom.get('lock-selecked-elements') 
-          && locked_elements.map(get_locked_commands).join("")
-          || "" ) +
-      "</spotlight-objects>"
-    );
-    */
   }
 
   var set_color_theme = function(fill_frame_color, grid_color)
@@ -347,7 +323,9 @@
 
   var onElementSelected = function(msg)
   {
-    if(settings.dom.get('lock-selecked-elements'))
+    if(settings.dom.get('lock-selecked-elements') && 
+        // events can be asynchronous
+        window.host_tabs.is_runtime_of_active_tab(msg.rt_id) )
     {
       locked_elements[locked_elements.length] = msg.obj_id;
     }
@@ -531,20 +509,6 @@
         [[get_command(node_id, scroll_into_view, type || "default")].concat(
             settings.dom.get('lock-selecked-elements') && 
             locked_elements.map(get_locked_commands) || [])])
-
-
-
-/*
-        ]
-      (
-        "<spotlight-objects>" +
-          get_command(node_id, scroll_into_view, type || "default") +
-          ( settings.dom.get('lock-selecked-elements') 
-            && locked_elements.map(get_locked_commands).join("")
-            || "" ) +
-        "</spotlight-objects>"
-      )
-*/
     }
   }
   
@@ -701,5 +665,12 @@
   messages.addListener('setting-changed', onSettingChange);
   set_initial_values();
   create_color_selects();
-  
+
+  this.bind = function()
+  {
+    var ecma_debugger = window.services['ecmascript-debugger'];
+
+    ecma_debugger.handleSpotlightObjects = function(status, message){};
+  }
+
 }

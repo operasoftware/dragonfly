@@ -375,7 +375,9 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     var self = this,
     ecma_debugger = window.services['ecmascript-debugger'];
 
-    ecma_debugger.handleSetConfiguration = function(status, message){};
+    ecma_debugger.handleSetConfiguration = 
+    ecma_debugger.handleContinueThread = 
+    function(status, message){};
 
 
     ecma_debugger.addListener('enable-success', function()

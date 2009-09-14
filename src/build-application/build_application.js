@@ -197,6 +197,8 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
   window.stop_at.bind();
   window.host_tabs = new namespace.HostTabs();
   window.host_tabs.bind();
+  window.hostspotlighter = new namespace.Hostspotlighter();
+  window.hostspotlighter.bind();
 }
 
 window.app.builders.EcmascriptLogger || ( window.app.builders.EcmascriptLogger = {} );
