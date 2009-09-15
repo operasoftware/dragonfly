@@ -74,8 +74,27 @@ var stylesheets = new function()
   VAL_LIST = 2,
   PRIORITY_LIST = 3,
   OVERWRITTEN_LIST = 4,
-  SEARCH_LIST = 6,
-  HAS_MATCHING_SEARCH_PROPS = 7;
+  SEARCH_LIST = 10,
+  HAS_MATCHING_SEARCH_PROPS = 11,
+
+  // new names of the scope messages
+  COMPUTED_STYLE_LIST = 0,
+  NODE_STYLE_LIST = 1,
+  // sub message NodeStyle 
+  OBJECT_ID = 0,
+  ELEMENT_NAME = 1,
+  STYLE_LIST = 2,
+  // sub message StyleDeclaration 
+  ORIGIN = 0,
+  INDEX_LIST = 1,
+  VALUE_LIST = 2,
+  PRIORITY_LIST = 3,
+  STATUS_LIST = 4,
+  SELECTOR = 5,
+  SPECIFICITY = 6,
+  STYLESHEET_ID = 7,
+  RULE_ID = 8,
+  RULE_TYPE = 9;
   
   var
   SHORTHAND = [];
@@ -717,15 +736,16 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   prettyPrintCat_2[CSS] = function(data, search_active)
   {
     var 
-      node_casc = null, 
-      i = 0, 
-      ret = '', 
-      j = 0, 
-      css_style_dec = null,
-      rt_id = data.rt_id,
-      node_casc_header = null,
-      style_dec_list = null,
-      style_dec = null;
+    node_casc = null, 
+    i = 0, 
+    ret = '', 
+    j = 0, 
+    css_style_dec = null,
+    rt_id = data.rt_id,
+    element_name = null,
+    style_dec_list = null,
+    style_dec = null;
+
 
     for( ; node_casc = data[i]; i++)
     {
@@ -737,14 +757,15 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
 
       if( i )
       {
-        ret += "<h2>inherited from <b>" + node_casc[0][1] + "</b></h2>";
+        ret += "<h2>inherited from <b>" + node_casc[ELEMENT_NAME] + "</b></h2>";
       }
       
-      node_casc_header = node_casc[0];
-      style_dec_list = node_casc[1];
+      // TODO
+      element_name = node_casc[ELEMENT_NAME];
+      style_dec_list = node_casc[STYLE_LIST];
       for( j = 0; style_dec = style_dec_list[j]; j++)
       {
-        ret += prettyPrintStyleDec[style_dec[0][0]](rt_id, node_casc_header, style_dec, search_active);
+        ret += prettyPrintStyleDec[style_dec[ORIGIN]](rt_id, element_name, style_dec, search_active);
       }
 
     }
@@ -762,18 +783,18 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
 
 
   prettyPrintStyleDec[PROT_4_USER_AGENT] = 
-  function(rt_id, node_casc_header, style_dec, search_active)
+  function(rt_id, element_name, style_dec, search_active)
   {
     return "<rule>" +
             "<stylesheet-link class='pseudo'>default values</stylesheet-link>" +
-      "<inline-style>" + node_casc_header[1] + "</inline-style>" + 
+      "<inline-style>" + element_name + "</inline-style>" + 
       " {\n" + 
           prettyPrintRule[COMMON](style_dec, false, search_active) +
       "\n}</rule>";
   }
 
   prettyPrintStyleDec[PROT_4_LOCAL] = 
-  function(rt_id, node_casc_header, style_dec, search_active)
+  function(rt_id, element_name, style_dec, search_active)
   {
     return "<rule>" +
             "<stylesheet-link class='pseudo'>local user stylesheet</stylesheet-link>" +
@@ -785,23 +806,24 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
 
 
   prettyPrintStyleDec[PROT_4_AUTHOR] = 
-  function(rt_id, node_casc_header, style_dec, search_active)
+  function(rt_id, element_name, style_dec, search_active)
   {
+        
     var 
     ret = '', 
     header = null, 
     i = 0, 
-    sheet = self.getSheetWithObjId(rt_id, style_dec[HEADER][1]);
+    sheet = self.getSheetWithObjId(rt_id, style_dec[STYLESHEET_ID]);
   
     if( sheet )
     {
       if( !search_active || style_dec[HAS_MATCHING_SEARCH_PROPS]  )
       {
-        ret += "<rule rule-id='" + style_dec[HEADER][2] + "'>" + 
+        ret += "<rule rule-id='" + style_dec[RULE_ID] + "'>" + 
           "<stylesheet-link rt-id='" + sheet[0] + "'"+
             " index='" + sheet[1] + "' handler='display-rule-in-stylesheet'>" + sheet[2] + 
           "</stylesheet-link>" +
-          "<selector>" + style_dec[HEADER][5] + "</selector>" + 
+          "<selector>" + style_dec[SELECTOR] + "</selector>" + 
           " {\n" + 
               prettyPrintRule[COMMON](style_dec, false, search_active) +
           "\n}</rule>";
@@ -818,7 +840,7 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
 
 
   prettyPrintStyleDec[PROT_4_ELEMENT] = 
-  function(rt_id, node_casc_header, style_dec, search_active)
+  function(rt_id, element_name, style_dec, search_active)
   {
     return "<rule>" + 
       "<inline-style>element.style</inline-style>" + 
@@ -1259,13 +1281,16 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   var handleGetAllStylesheets = function(status, message, rt_id, org_args)
   {
     const STYLESHEET_LIST = 0;
-    __sheets[rt_id] = message[STYLESHEET_LIST];
-    __sheets[rt_id]['runtime-id'] = rt_id;
-    __rules[rt_id] = [];
-    if(org_args && !org_args[0].__call_count )
+    if(status == 0)
     {
-      org_args[0].__call_count = 1;
-      org_args.callee.apply(null, org_args);
+      __sheets[rt_id] = message[STYLESHEET_LIST];
+      __sheets[rt_id]['runtime-id'] = rt_id;
+      __rules[rt_id] = [];
+      if(org_args && !org_args[0].__call_count )
+      {
+        org_args[0].__call_count = 1;
+        org_args.callee.apply(null, org_args);
+      }
     }
   }
 
@@ -1386,12 +1411,12 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     return ret.concat(dashs);
   }
 
-  /*
+  
   
   messages.addListener('runtime-destroyed', onRuntimeDestroyed);
   messages.addListener('active-tab', onActiveTab);
 
   messages.addListener('reset-state', onResetState);
-  */
+  
   
 }

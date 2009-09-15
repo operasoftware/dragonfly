@@ -15,10 +15,29 @@ var elementStyle = new function()
   PROP_LIST = 1,
   VAL_LIST = 2,
   PRIORITY_LIST = 3,
-  SEARCH_LIST = 6,
-  HAS_MATCHING_SEARCH_PROPS = 7,
+  SEARCH_LIST = 10,
+  HAS_MATCHING_SEARCH_PROPS = 11,
   SEARCH_DELAY = 50,
-  MIN_SEARCH_THERM_LENGTH = 3;
+  MIN_SEARCH_THERM_LENGTH = 1,
+
+  // new scope messages
+  COMPUTED_STYLE_LIST = 0,
+  NODE_STYLE_LIST = 1;
+  // sub message NodeStyle 
+  OBJECT_ID = 0,
+  ELEMENT_NAME = 1,
+  STYLE_LIST = 2,
+  // sub message StyleDeclaration 
+  ORIGIN = 0,
+  INDEX_LIST = 1,
+  VALUE_LIST = 2,
+  PRIORITY_LIST = 3,
+  STATUS_LIST = 4,
+  SELECTOR = 5,
+  SPECIFICITY = 6,
+  STYLESHEET_ID = 7,
+  RULE_ID = 8,
+  RULE_TYPE = 9;
 
   var categories_data = [];
   var __selectedElement = null;
@@ -164,7 +183,7 @@ var elementStyle = new function()
     var
     dec = null,
     i = 0,
-    declaration_list = node_cascade[1],
+    declaration_list = node_cascade[STYLE_LIST],
     has_matching_search_props = false;
     
     for( ; dec = declaration_list[i]; i++)
@@ -183,7 +202,7 @@ var elementStyle = new function()
     // updates a styleDeclaration
     // checks if the declaration actually has matchin property
     // search_list is a list with matching properties indexes
-    
+
     var
     i = 0,
     length = declaration[PROP_LIST].length,
@@ -315,26 +334,18 @@ var elementStyle = new function()
     if( stylesheets.hasStylesheetsRuntime(rt_id) )
     {
       var tag = tagManager.setCB(null, handleGetData, [rt_id, obj_id]);
-      services['ecmascript-debugger'].cssGetStyleDeclarations( tag, rt_id, obj_id, 'json' );
+      services['ecmascript-debugger'].requestCssGetStyleDeclarations(tag, [rt_id, obj_id]);
     }
     else
     {
-      alert(8888)
       stylesheets.getStylesheets(rt_id, arguments);
     }
   }
 
-  var handleGetData = function(xml, rt_id, obj_id)
+  var handleGetData = function(status, message, rt_id, obj_id)
   {
-    const
-    STYLE_DECLARATION_LIST = 1,
-    STYLE_DEC_HEADER = 0,
-    RULE_ORIGIN = 0,
-    INDEX_LIST = 1,
-    STATUS_LIST = 4;
 
-    var 
-    json = xml.getNodeData('matching-style-declarations'), 
+    var  
     declarations = null, 
     i = 0, 
     view_id = '',
@@ -344,21 +355,20 @@ var elementStyle = new function()
     length = 0, 
     k = 0;
 
-    if( json )
+    if(status == 0)
     {
-      declarations = eval('(' + json +')');
-      categories_data[0] = declarations[0]; 
-      categories_data[1] = declarations[1];
-      categories_data[1].rt_id = categories_data[0].rt_id = rt_id;
+      categories_data[COMP_STYLE] = message[COMPUTED_STYLE_LIST]; 
+      categories_data[CSS] = message[NODE_STYLE_LIST];
+      categories_data[CSS].rt_id = categories_data[COMP_STYLE].rt_id = rt_id;
 
       // this is to ensure that a set property is always displayed in computed style,
       // also if it maps the initial value and the setting "Hide Initial Values" is set to true.
       __setProps = [];
       for ( i = 0; node_style_cascade = categories_data[CSS][i]; i++)
       {
-        for( j = 0; style_dec = node_style_cascade[STYLE_DECLARATION_LIST][j]; j++)
+        for( j = 0; style_dec = node_style_cascade[STYLE_LIST][j]; j++)
         {
-          if( style_dec[STYLE_DEC_HEADER][RULE_ORIGIN] != 1 ) // any other rule except browser default rules
+          if( style_dec[ORIGIN] != 1 ) // any other rule except browser default rules
           {
             length = style_dec[INDEX_LIST].length;
             for( k = 0; k < length; k++)
@@ -381,11 +391,10 @@ var elementStyle = new function()
       {
         views[view_id].updateCategories({}, getUnfoldedKey());
       }
-      
     }
   }
 
-  /* *
+  /* */
   messages.addListener('element-selected', onElementSelected);
   messages.addListener('reset-state', onResetState);
   /* */
