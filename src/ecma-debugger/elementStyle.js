@@ -116,17 +116,12 @@ var elementStyle = new function()
       var i = 0, length = css_index_map.length;
       for( ; i < length; i++)
       {
-        if( css_index_map[i].indexOf(search_therm) != -1 )
-        {
-          __searchMap[i] = 1;
-        }
-      }
-           
+        __searchMap[i] = css_index_map[i].indexOf(search_therm) != -1;
+      }    
       for( i = 0, length = categories_data[CSS].length; i < length; i++)
       {
         searchNodeCascade(categories_data[CSS][i], __searchMap);
       }
-      
       __search_is_active = true;
     } 
     else

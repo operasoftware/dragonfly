@@ -170,7 +170,7 @@
         [
           'cst-option',
           title,
-          'runtime-id', rt_id,
+          'runtime-id', '' + rt_id,
           'index', '' + i
         ];
       }
