@@ -795,7 +795,7 @@ cls.CndRtSelect = function(id, class_name)
 
   this.checkChange = function(target_ele)
   {
-    var rt_id = target_ele.getAttribute('rt-id');
+    var rt_id = parseInt(target_ele.getAttribute('rt-id'));
     if( rt_id && rt_id != runtimes.getSelectedRuntimeId() )
     {
       runtimes.setSelectedRuntimeId(rt_id)

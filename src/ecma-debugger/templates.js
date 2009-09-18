@@ -45,7 +45,7 @@
     [
       'cst-option', 
       runtime['title'] || display_uri.uri,
-      'rt-id', runtime['runtime-id']
+      'rt-id', runtime['runtime-id'].toString()
     ].concat( display_uri.title ? ['title', display_uri.title] : [] )
     ;
   }

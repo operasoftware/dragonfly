@@ -69,6 +69,19 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
   var self = this;
   var ecma_debugger = window.services['ecmascript-debugger'];
 
+  var _on_window_updated = function(msg)
+  {
+    opera.postError(JSON.stringify(msg))
+    for( var r in __runtimes )
+    { 
+      if (__runtimes[r] &&  __runtimes[r]['window-id'] == msg.window_id && __runtimes[r].is_top)
+      {
+        __runtimes[r].title = msg.title;
+        break;
+      }
+    }
+  }
+
   var onResetState = function()
   {
     __runtimes = {};
@@ -276,8 +289,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
         }   
         __selected_script = '';
       } 
-      // TODO code outcommented 
-      // getTitleRuntime(runtimeId);
+      runtime.title = (window.window_manager_data.get_window(win_id) || {}).title;
       __runtimes[runtimeId] = runtime;
       // TODO check if that is still needed
 
@@ -325,29 +337,6 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
 
   }
   
-  // TODO remove this code
-  var getTitleRuntime = function(rt_id)
-  {
-    var tag = tagManager.setCB(null, parseGetTitle, [rt_id]);
-    var script = "return ( document.title || '' )";
-    services['ecmascript-debugger'].eval(tag, rt_id, '', '', script);
-  }
-
-  var parseGetTitle = function(xml, rt_id)
-  {
-
-    if(__runtimes[rt_id] && xml.getNodeData('status') == 'completed' )
-    {
-      __runtimes[rt_id]['title'] = xml.getNodeData('string');
-      updateRuntimeViews();
-    }
-    else
-    {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
-        'getting title has failed in runtimes getTitleRuntime');
-    }
-  }
-
   var __scripts = {};
 
 /** checks if that script is already known from a previous runtime
@@ -1244,6 +1233,8 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
   messages.addListener('application-setup', onApplicationSetup);
 
   messages.addListener('reset-state', onResetState);
+
+  messages.addListener('window-updated', _on_window_updated)
 
   this.bind = function()
   {

@@ -50,16 +50,21 @@ var Object_inspection_data = function()
     }
   }
 
-  var handleShowGlobalScope = function(xml, rt_id)
+  var handleShowGlobalScope = function(status, message, rt_id)
   {
-    if( xml.getNodeData('status') == 'completed' )
+    const
+    STATUS = 0,
+    OBJECT_VALUE = 3,
+    OBJECT_ID = 0;
+
+    if( message[STATUS] == 'completed' )
     {
-      self.examineObject(rt_id, xml.getNodeData('object-id'));
+      frame_inspection_data.examineObject(rt_id, message[OBJECT_VALUE][OBJECT_ID]);
     }
     else
     {
       opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
-        'getting window id has failed in handleShowGlobalScope in object_inspection_data');
+        'getting window id has failed in handleShowGlobalScope in frame_inspection');
     }
   }
 
@@ -67,7 +72,7 @@ var Object_inspection_data = function()
   {
     var tag = tagManager.setCB(null, handleShowGlobalScope, [rt_id]);
     var script = "return window";
-    services['ecmascript-debugger'].eval(tag, rt_id, '', '', script);
+    services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, script]);
   }
 
 

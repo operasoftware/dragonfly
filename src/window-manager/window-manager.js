@@ -11,6 +11,7 @@ cls.WindowManager["2.0"].WindowManagerData = function()
   this.get_active_window_id = function(){};
   this.get_window_list = function(){};
   this.get_debug_context = function(){};
+  this.get_window = function(win_id){};
   this.set_debug_context = function(win_id){};
   this.get_debug_context_title = function(){};
   this.bind = function(){};
@@ -128,6 +129,8 @@ cls.WindowManager["2.0"].WindowManagerData = function()
       this._window_list[i] = win_obj;
       window.windowsDropDown.update();
     }
+    window.messages.post('window-updated', 
+      {window_id: win.window_id, title: win.title, window_type: win.window_type, opener_id: win.opener_id})
   }
 
   this._remove_window = function(win_id)
@@ -165,6 +168,16 @@ cls.WindowManager["2.0"].WindowManagerData = function()
   {
     return this._window_list;
   }
+
+  this.get_window = function(win_id)
+  {
+    var win = null, i = 0;
+    if( this._window_list )
+    {
+      for( ; ( win = this._window_list[i] ) && win.window_id != win_id ; i++ );
+    }
+    return win;
+  };
 
   this.get_debug_context = function()
   {
