@@ -149,6 +149,21 @@ window.app.build_application = function(on_services_created, on_services_enabled
   window.services.scope.set_host_info_callback(on_host_info_callback);
   window.services.scope.set_services_enabled_callback(on_services_enabled);
 
+  /* for debugging *
+  opera._scope_transmit = opera.scopeTransmit;
+  var _message_map = cls.ServiceBase.get_event_map();
+  opera.scopeTransmit = function(service, message, command_id, tag)
+  {
+    opera.postError(
+      'service: ' + service +'\n' + 
+      'command: ' + _message_map[service][command_id].replace("handle", "request") + '\n' + 
+      'tag: ' + tag + '\n' +
+      'message: ' + JSON.stringify(message)
+      )
+    opera._scope_transmit(service, message, command_id, tag);
+  }
+  /* */
+
   // create the client
   if(window.services.scope)
   {

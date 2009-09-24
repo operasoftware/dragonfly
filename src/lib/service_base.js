@@ -114,6 +114,15 @@ window.cls.ServiceBase = function()
     {
       debug.log_events(service, message, command, status, tag);
     }
+    /* for debugging *
+    opera.postError(
+      'service: ' + service +'\n' + 
+      'command: ' + _event_map[service][command] + '\n' + 
+      'tag: ' + tag + '\n' +
+      'status: ' + status + '\n' +
+      'message: ' + JSON.stringify(message)
+      )
+    /* */
     if( !tagManager.handle_message(tag, status, message) )
     {
       _services[service][_event_map[service][command]](status, message);
