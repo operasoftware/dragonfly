@@ -374,7 +374,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     __scripts[new_script_id] = script;
     if( is_known )
     {
-      old_break_points = __scripts[sc]['breakpoints'];
+      old_break_points = __scripts[sc].breakpoints;
       for( line_nr in old_break_points )
       {
         // do we need to remove the old breakpoints?
@@ -584,8 +584,8 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     
     if( is_runtime_of_debug_context(script.runtime_id))
     {
-      script['breakpoints'] = {};
-      script['stop-ats'] = [];
+      script.breakpoints = {};
+      script.stop_ats = [];
       registerRuntime( script.runtime_id );
       registerScript( script );
     }
@@ -999,7 +999,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
 
   this.getStoppedAt = function(scriptId)
   {
-    return __scripts[scriptId] && __scripts[scriptId]['stop-ats'] || null;
+    return __scripts[scriptId] && __scripts[scriptId].stop_ats || null;
   }
 
   this.getScriptsRuntimeId = function(scriptId)
@@ -1034,25 +1034,25 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
 
   this.hasBreakpoint = function(script_id, line_nr)
   {
-    return __scripts[script_id] && (line_nr in __scripts[script_id]['breakpoints']);
+    return __scripts[script_id] && (line_nr in __scripts[script_id].breakpoints);
   }
 
   this.setBreakpoint = function(script_id, line_nr)
   {
-    var b_p_id = __scripts[script_id]['breakpoints'][line_nr] = getBreakpointId();
+    var b_p_id = __scripts[script_id].breakpoints[line_nr] = getBreakpointId();
     services['ecmascript-debugger'].requestAddBreakpoint(0, [b_p_id, "line", script_id, line_nr]);
   }
 
   this.removeBreakpoint = function(script_id, line_nr)
   {
     services['ecmascript-debugger'].requestRemoveBreakpoint(0, 
-      [__scripts[script_id]['breakpoints'][line_nr]] );
-    delete __scripts[script_id]['breakpoints'][line_nr];
+      [__scripts[script_id].breakpoints[line_nr]] );
+    delete __scripts[script_id].breakpoints[line_nr];
   }
 
   this.getBreakpoints = function(script_id)
   {
-    return __scripts[script_id] && __scripts[script_id]['breakpoints'];
+    return __scripts[script_id] && __scripts[script_id].breakpoints;
   }
 
 
@@ -1192,7 +1192,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     // only scripts from the selected runtime are registered
     if( script_id && __scripts[script_id] )
     {
-      var stop_ats = __scripts[script_id]['stop-ats'];
+      var stop_ats = __scripts[script_id].stop_ats;
       stop_ats[stop_ats.length] = msg.stop_at;
     }
 
@@ -1203,7 +1203,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
   {
     var
     script_id = msg.stop_at.script_id,
-    stop_ats = __scripts[script_id] && __scripts[script_id]['stop-ats'],
+    stop_ats = __scripts[script_id] && __scripts[script_id].stop_ats,
     stop_at = null,
     i = 0;
  

@@ -132,7 +132,7 @@
       ret.splice(ret.length, 0, 'class', class_name); 
     }
     /*
-    if( script['stop-ats'].length )
+    if( script.stop_ats.length )
     {
       ret.splice(ret.length, 0, 'style', 'background-position: 0 0'); 
     }
