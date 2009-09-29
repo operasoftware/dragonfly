@@ -45,7 +45,7 @@
     [
       'cst-option', 
       runtime['title'] || display_uri.uri,
-      'rt-id', runtime['runtime-id'].toString()
+      'rt-id', runtime.runtime_id.toString()
     ].concat( display_uri.title ? ['title', display_uri.title] : [] )
     ;
   }
@@ -61,7 +61,7 @@
       concat( runtime.selected ? ['class', 'selected-runtime'] : [] ).
       concat( display_uri.title ? ['title', display_uri.title] : [] )
     ], 
-    scripts = runtimes.getScripts(runtime['runtime-id']),
+    scripts = runtimes.getScripts(runtime.runtime_id),
     script = null, 
     i=0,
     stopped_script_id = arg_list[0],
@@ -154,11 +154,11 @@
       ['h2', runtime['title'] || display_uri.uri].
       concat( display_uri.title ? ['title', display_uri.title] : [] )
     ],
-    sheets = stylesheets.getStylesheets(runtime['runtime-id']),
+    sheets = stylesheets.getStylesheets(runtime.runtime_id),
     sheet = null, 
     i = 0, 
     container = [],
-    rt_id = runtime['runtime-id'],
+    rt_id = runtime.runtime_id,
     title = '';
 
     if(sheets)
@@ -181,7 +181,7 @@
       container = ['p', ui_strings.S_INFO_DOCUMNENT_LOADING, 'class', 'info-text'];
     }
     */
-    //container.splice(container.length, 0, 'runtime-id', runtime['runtime-id']);
+    //container.splice(container.length, 0, 'runtime-id', runtime.runtime_id);
     ret = ret.concat([container])
     
     return ret;
@@ -195,8 +195,8 @@
     [
       'cst-option',
        runtime['title'] || runtime['uri'], 
-      'runtime-id', runtime['runtime-id']
-    ].concat( dom_data.getDataRuntimeId() == runtime['runtime-id'] ? ['class', 'selected-runtime'] : [] ).
+      'runtime-id', runtime.runtime_id
+    ].concat( dom_data.getDataRuntimeId() == runtime.runtime_id ? ['class', 'selected-runtime'] : [] ).
       concat( display_uri != runtime['uri'] ? ['title', runtime['uri']] : [] ) )
   }
 

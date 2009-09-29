@@ -98,12 +98,12 @@ var runtime_onload_handler = new function()
 
   var onThreadStopped = function(msg)
   {
-    blocked_rts[msg.stop_at["runtime-id"]] = true;
+    blocked_rts[msg.stop_at.runtime_id] = true;
   }
 
   var onThreadContinue = function(msg)
   {
-    blocked_rts[msg.stop_at["runtime-id"]] = false;
+    blocked_rts[msg.stop_at.runtime_id] = false;
   }
 
   messages.addListener("thread-stopped-event", onThreadStopped);

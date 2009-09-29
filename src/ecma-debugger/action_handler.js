@@ -254,7 +254,7 @@ var action_handler = new function()
     {
       topCell.showView(views.inspection.id);
       messages.post('active-inspection-type', {inspection_type: 'object'});
-      object_inspection_data.showGlobalScope(runtime['runtime-id']);
+      object_inspection_data.showGlobalScope(runtime.runtime_id);
       runtimes.setSelectedRuntime(runtime);
       views.runtimes.update();
     }

@@ -653,7 +653,7 @@ var stylesheets = new function()
       {
         ret += prettyPrintRule[rule[TYPE]](rule, do_shortcuts, true);
       }
-      return "<stylesheet stylesheet-id='" + rules[0][0][0] + "' runtime-id='" + rules['runtime-id'] + "'>" 
+      return "<stylesheet stylesheet-id='" + rules[0][0][0] + "' runtime-id='" + rules.runtime_id + "'>" 
                 + ret + "</stylesheet>";
     }
     return "<div class='info-box'><p>" + 
@@ -1252,7 +1252,7 @@ var stylesheets = new function()
     if(status == 0)
     {
       __rules[rt_id][index] = message[0] || [];
-      __rules[rt_id][index]['runtime-id'] = rt_id;
+      __rules[rt_id][index].runtime_id = rt_id;
       if(org_args && !org_args[0].__call_count)
       {
         org_args[0].__call_count = 1
@@ -1267,7 +1267,7 @@ var stylesheets = new function()
     if(status == 0)
     {
       __sheets[rt_id] = message[STYLESHEET_LIST] || [];
-      __sheets[rt_id]['runtime-id'] = rt_id;
+      __sheets[rt_id].runtime_id = rt_id;
       __rules[rt_id] = [];
       if(org_args && !org_args[0].__call_count )
       {

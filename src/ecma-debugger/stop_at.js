@@ -215,10 +215,10 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     __controls_enabled = false;
     callstack = [];
 
-    runtimes.setObserve(stopAt['runtime-id'], mode != 'run');
+    runtimes.setObserve(stopAt.runtime_id, mode != 'run');
 
     services['ecmascript-debugger'].requestContinueThread(0, 
-        [stopAt['runtime-id'], stopAt['thread-id'], mode]);
+        [stopAt.runtime_id, stopAt['thread-id'], mode]);
     messages.post('frame-selected', {frame_index: -1});
     messages.post('thread-continue-event', {stop_at: stopAt});
     toolbars.js_source.disableButtons('continue');
@@ -252,7 +252,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
 
     stopAt = 
     {
-      'runtime-id': message[RUNTIME_ID],
+      runtime_id: message[RUNTIME_ID],
       'thread-id': message[THREAD_ID],
       'script-id': message[SCRIPT_ID],
       'line-number': message[LINE_NUMBER],
@@ -274,7 +274,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
       if(stopAt['stopped-reason'] == 'unknown')
       {
 
-        runtime_id = stopAt['runtime-id'];
+        runtime_id = stopAt.runtime_id;
         if(  settings['js_source'].get('script') 
              || runtimes.getObserve(runtime_id)
               // this is a workaround for Bug 328220
@@ -287,9 +287,9 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
             runtimes.setSelectedRuntimeId(runtime_id);
           }
           // the runtime id can be different for each frame. 
-          var tag = tagManager.setCB(null, parseBacktrace, [stopAt['runtime-id']]); 
+          var tag = tagManager.setCB(null, parseBacktrace, [stopAt.runtime_id]); 
           services['ecmascript-debugger'].requestGetBacktrace(tag, 
-              [stopAt['runtime-id'], stopAt['thread-id'], ini.max_frames]);
+              [stopAt.runtime_id, stopAt['thread-id'], ini.max_frames]);
           if( !views.js_source.isvisible() )
           {
             topCell.showView(views.js_source.id);
@@ -315,12 +315,12 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
       }
       else
       {
-        runtime_id = stopAt['runtime-id'];
+        runtime_id = stopAt.runtime_id;
        
         // the runtime id can be different for each frame
-        var tag = tagManager.setCB(null, parseBacktrace, [stopAt['runtime-id']]); 
+        var tag = tagManager.setCB(null, parseBacktrace, [stopAt.runtime_id]); 
         services['ecmascript-debugger'].requestGetBacktrace(tag, 
-          [stopAt['runtime-id'], stopAt['thread-id'], ini.max_frames]);
+          [stopAt.runtime_id, stopAt['thread-id'], ini.max_frames]);
         if( !views.js_source.isvisible() )
         {
           topCell.showView(views.js_source.id);
@@ -348,7 +348,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
 
     var onRuntimeDestroyed = function(msg)
     {
-      if( stopAt && stopAt['runtime-id'] == msg.id )
+      if( stopAt && stopAt.runtime_id == msg.id )
       {
         views.callstack.clearView();
         views.inspection.clearView();

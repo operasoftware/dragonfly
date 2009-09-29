@@ -132,7 +132,7 @@ cls.EcmascriptDebugger["5.0"].HostTabs = function()
           'object-id': message[OBJECT_ID],
           'handler-id': message[HANDLER_ID],
           'event-type': message[EVENT_TYPE],
-          'runtime-id': runtime_id_map[message[HANDLER_ID]]
+          runtime_id: runtime_id_map[message[HANDLER_ID]]
         }
       );
     }

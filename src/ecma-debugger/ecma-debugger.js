@@ -192,7 +192,7 @@ cls.ECMAScriptDebuggerService = function(name)
   {     
     var msg = "<backtrace>";
     msg += "<tag>" + tag + "</tag>";
-    msg += "<runtime-id>" + stopAt['runtime-id'] + "</runtime-id>";
+    msg += "<runtime-id>" + stopAt.runtime_id + "</runtime-id>";
     msg += "<thread-id>" + stopAt['thread-id'] + "</thread-id>";
     msg += "<maxframes>" + ini.max_frames + "</maxframes>";  // not sure what is correct here;
     msg += "</backtrace>";
@@ -202,7 +202,7 @@ cls.ECMAScriptDebuggerService = function(name)
   this.__continue = function (stopAt, mode)
   {
     var msg = "<continue>";
-    msg += "<runtime-id>" + stopAt['runtime-id'] + "</runtime-id>";
+    msg += "<runtime-id>" + stopAt.runtime_id + "</runtime-id>";
     msg += "<thread-id>" + stopAt['thread-id'] + "</thread-id>";
     msg += "<mode>" + mode + "</mode>";
     msg += "</continue>";

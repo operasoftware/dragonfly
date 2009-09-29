@@ -124,7 +124,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     TODO check for existing breakpoints before cleaning up
     for( sc in __scripts )
     {
-      if( __scripts[sc]['runtime-id'] == id )
+      if( __scripts[sc].runtime_id == id )
       {
         delete __scripts[sc];
       }
@@ -148,7 +148,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     {
       if( __runtimes[cur] && __runtimes[cur]['window-id'] == win_id )
       {
-        removeRuntime(__runtimes[cur]['runtime-id']);
+        removeRuntime(__runtimes[cur].runtime_id);
       }
     }
   }
@@ -246,7 +246,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       }
       runtime = 
       {
-        'runtime-id': r_t[RUNTIME_ID],
+        runtime_id: r_t[RUNTIME_ID],
         'html-frame-path': r_t[HTML_FRAME_PATH],
         'window-id': r_t[WINDOW_ID],
         'object-id': r_t[OBJECT_ID],
@@ -348,14 +348,14 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
   {
     var sc = null, is_known = false;
     var new_script_id = script['script-id'];
-    var new_rt = __runtimes[script['runtime-id']];
+    var new_rt = __runtimes[script.runtime_id];
     var old_rt = null;
     var old_break_points = null;
     var line_nr = '';
 
     for( sc in __scripts )
     {
-      old_rt = __runtimes[__scripts[sc]['runtime-id']] || __old_runtimes[__scripts[sc]['runtime-id']] || {};
+      old_rt = __runtimes[__scripts[sc].runtime_id] || __old_runtimes[__scripts[sc].runtime_id] || {};
       // TODO check for script-type as well?
       if( ( 
             ( __scripts[sc]['uri'] && __scripts[sc]['uri'] == script['uri'] ) 
@@ -570,7 +570,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
 
     var script = 
     {
-      'runtime-id': message[RUNTIME_ID],
+      runtime_id: message[RUNTIME_ID],
       'script-id': message[SCRIPT_ID],
       'script-type': message[SCRIPT_TYPE],
       'script-data': message[SCRIPT_DATA],
@@ -582,11 +582,11 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       script['script-data'] = '';
     }
     
-    if( is_runtime_of_debug_context(script['runtime-id']))
+    if( is_runtime_of_debug_context(script.runtime_id))
     {
       script['breakpoints'] = {};
       script['stop-ats'] = [];
-      registerRuntime( script['runtime-id'] );
+      registerRuntime( script.runtime_id );
       registerScript( script );
     }
   }
@@ -953,11 +953,11 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       {
         if(__runtimes[r].is_top && !__runtimes[r]['opener-window-id'] )
         {
-          ret = [__runtimes[r]['runtime-id']].concat(ret);
+          ret = [__runtimes[r].runtime_id].concat(ret);
         }
         else
         {
-          ret[ret.length] = __runtimes[r]['runtime-id'];
+          ret[ret.length] = __runtimes[r].runtime_id;
         }
         
       }
@@ -984,7 +984,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
   {
     for( var r in __runtimes )
     {
-      if( __runtimes[r]['runtime-id'] == rt_id )
+      if( __runtimes[r].runtime_id == rt_id )
       {
         return __runtimes[r]['uri'];
       }
@@ -1004,7 +1004,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
 
   this.getScriptsRuntimeId = function(scriptId)
   {
-    return __scripts[scriptId] && __scripts[scriptId]['runtime-id'] || null;
+    return __scripts[scriptId] && __scripts[scriptId].runtime_id || null;
   }
 
   this.getScriptSource = function(scriptId)
@@ -1023,7 +1023,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     for( cur in __scripts )
     {
       script = __scripts[cur];
-      if(script['runtime-id'] == runtime_id)
+      if(script.runtime_id == runtime_id)
       {
         ret[ret.length] = script;
       }
@@ -1095,7 +1095,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       if( __runtimes[r] == runtime )
       {
         __runtimes[r]['selected'] = true;
-        __selected_runtime_id = __runtimes[r]['runtime-id'];
+        __selected_runtime_id = __runtimes[r].runtime_id;
       }
       else
       {
@@ -1161,7 +1161,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
 
   this.getRuntimeIdWithScriptId = function(scriptId)
   {
-    return  __scripts[scriptId] && __scripts[scriptId]['runtime-id'] || null; 
+    return  __scripts[scriptId] && __scripts[scriptId].runtime_id || null; 
   }
 
   this.reloadWindow = function()
