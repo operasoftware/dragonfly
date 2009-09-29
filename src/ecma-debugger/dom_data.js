@@ -74,7 +74,7 @@ var dom_data = new function()
 
   var clickHandlerHost = function(event)
   {
-    var rt_id = event.runtime_id, obj_id = event['object-id'];
+    var rt_id = event.runtime_id, obj_id = event.object_id;
     current_target = obj_id;
     data = [];
     mime = '';
@@ -87,7 +87,7 @@ var dom_data = new function()
   var domNodeRemovedHandler = function(event)
   {
     // if the node is in the current data handle it otherwise not.
-    var rt_id = event.runtime_id, obj_id = event['object-id'];
+    var rt_id = event.runtime_id, obj_id = event.object_id;
     var node = null, i = 0, j = 0, level = 0, k = 0, view_id = '';
     if( !( actions['dom'].editor && actions['dom'].editor.is_active ) && data_runtime_id == rt_id )
     {
@@ -322,7 +322,7 @@ var dom_data = new function()
     
     if(message[STATUS] == 'completed' )
     {
-      clickHandlerHost({runtime_id: rt_id, 'object-id': message[OBJECT_VALUE][OBJECT_ID] })
+      clickHandlerHost({runtime_id: rt_id, object_id: message[OBJECT_VALUE][OBJECT_ID] })
     }
     else
     {
@@ -466,7 +466,7 @@ var dom_data = new function()
 
   var spotlight = function(event)
   {
-    hostspotlighter.spotlight(event['object-id']);
+    hostspotlighter.spotlight(event.object_id);
   }
 
   this.highlight_on_hover = function(event)

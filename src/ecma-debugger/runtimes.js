@@ -249,7 +249,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
         runtime_id: r_t[RUNTIME_ID],
         html_frame_path: r_t[HTML_FRAME_PATH],
         window_id: r_t[WINDOW_ID],
-        'object-id': r_t[OBJECT_ID],
+        object_id: r_t[OBJECT_ID],
         'uri': r_t[URI],
       };
 
