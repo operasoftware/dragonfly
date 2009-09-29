@@ -111,13 +111,13 @@
       ( 
         display_uri.uri
         ? display_uri.uri
-        : ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script['script-id'] 
+        : ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script.script_id 
       ),
-      'script-id', script['script-id'].toString()
+      'script-id', script.script_id.toString()
     ],
-    class_name = script['script-id'] == selected_script_id && 'selected' || '';
+    class_name = script.script_id == selected_script_id && 'selected' || '';
 
-    if(stopped_script_id == script['script-id'])
+    if(stopped_script_id == script.script_id)
     {
       class_name += ( class_name && ' ' || '' ) + 'stopped';
     }

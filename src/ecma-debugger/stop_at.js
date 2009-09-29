@@ -254,7 +254,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     {
       runtime_id: message[RUNTIME_ID],
       'thread-id': message[THREAD_ID],
-      'script-id': message[SCRIPT_ID],
+      script_id: message[SCRIPT_ID],
       'line-number': message[LINE_NUMBER],
       'stopped-reason': message[STOPPED_REASON],
       'breakpoint-id': message[BREAKPOINT_ID]
@@ -280,7 +280,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
               // this is a workaround for Bug 328220
               // if there is a breakpoint at the first statement of a script
               // the event for stop at new script and the stop at breakpoint are the same
-             || runtimes.hasBreakpoint(stopAt['script-id'], line) )
+             || runtimes.hasBreakpoint(stopAt.script_id, line) )
         {
           if( runtimes.getSelectedRuntimeId() != runtime_id )
           {
@@ -297,9 +297,9 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
           var plus_lines = views.js_source.getMaxLines() <= 10 
             ? views.js_source.getMaxLines() / 2 >> 0 
             : 10;
-          if( views.js_source.showLine( stopAt['script-id'], line - plus_lines ) )
+          if( views.js_source.showLine( stopAt.script_id, line - plus_lines ) )
           {
-            runtimes.setSelectedScript(stopAt['script-id']);
+            runtimes.setSelectedScript(stopAt.script_id);
             views.js_source.showLinePointer( line, true );
           }
           __controls_enabled = true;
@@ -328,9 +328,9 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
         var plus_lines = views.js_source.getMaxLines() <= 10 
           ? views.js_source.getMaxLines() / 2 >> 0 
           : 10;
-        if( views.js_source.showLine( stopAt['script-id'], line - plus_lines ) )
+        if( views.js_source.showLine( stopAt.script_id, line - plus_lines ) )
         {
-          runtimes.setSelectedScript(stopAt['script-id']);
+          runtimes.setSelectedScript(stopAt.script_id);
           views.js_source.showLinePointer( line, true );
         }
         __controls_enabled = true;

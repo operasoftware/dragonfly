@@ -703,7 +703,7 @@ cls.helper_collection.getSelectedOptionText = function()
       return ( 
         display_uri.uri
         ? display_uri.uri
-        : ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script['script-id'] 
+        : ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script.script_id 
       )
     }
     else
@@ -782,7 +782,7 @@ cls.ScriptSelect = function(id, class_name)
 
   var onThreadStopped = function(msg)
   {
-    stopped_script_id = msg.stop_at['script-id'];
+    stopped_script_id = msg.stop_at.script_id;
   }
 
   var onThreadContinue = function(msg)

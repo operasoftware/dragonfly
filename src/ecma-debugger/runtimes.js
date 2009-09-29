@@ -347,7 +347,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
   var registerScript = function(script)
   {
     var sc = null, is_known = false;
-    var new_script_id = script['script-id'];
+    var new_script_id = script.script_id;
     var new_rt = __runtimes[script.runtime_id];
     var old_rt = null;
     var old_break_points = null;
@@ -380,14 +380,14 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
         // do we need to remove the old breakpoints?
         self.setBreakpoint(new_script_id, parseInt(line_nr));
       }
-      if( __scripts[sc]['script-id'] == __selected_script )
+      if( __scripts[sc].script_id == __selected_script )
       {
         __selected_script = new_script_id;
       }
       // the script could be in a pop-up window
       if( old_rt.window_id == new_rt.window_id )
       {
-        __replaced_scripts[__scripts[sc]['script-id']] = new_script_id;
+        __replaced_scripts[__scripts[sc].script_id] = new_script_id;
         delete __scripts[sc];
       }
     }
@@ -571,7 +571,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     var script = 
     {
       runtime_id: message[RUNTIME_ID],
-      'script-id': message[SCRIPT_ID],
+      script_id: message[SCRIPT_ID],
       'script-type': message[SCRIPT_TYPE],
       'script-data': message[SCRIPT_DATA],
       uri: message[URI]
@@ -1117,7 +1117,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     var scripts = this.getScripts(rt_id), script = null, i = 0;
     for( ; script = scripts[i]; i++)
     {
-      script.selected = script['script-id'] == script_id ;
+      script.selected = script.script_id == script_id ;
     }
     */
   }
@@ -1153,7 +1153,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     {
       if( script.selected )
       {
-        return script['script-id'];
+        return script.script_id;
       }
     }
     return null;
@@ -1188,7 +1188,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
 
   var onThreadStopped = function(msg)
   {
-    var script_id = msg.stop_at['script-id'];
+    var script_id = msg.stop_at.script_id;
     // only scripts from the selected runtime are registered
     if( script_id && __scripts[script_id] )
     {
@@ -1202,7 +1202,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
   var onThreadContinue = function(msg)
   {
     var
-    script_id = msg.stop_at['script-id'],
+    script_id = msg.stop_at.script_id,
     stop_ats = __scripts[script_id] && __scripts[script_id]['stop-ats'],
     stop_at = null,
     i = 0;
