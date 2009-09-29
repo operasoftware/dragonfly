@@ -165,7 +165,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
 
   var isTopRuntime = function(rt)
   {
-    return rt['html-frame-path'].indexOf('[') == -1;
+    return rt.html_frame_path.indexOf('[') == -1;
   }
 
   /*
@@ -188,7 +188,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       if( old_rt
           && old_rt['uri'] == runtime['uri']
           && old_rt['window-id'] == runtime['window-id']
-          && old_rt['html-frame-path'] == runtime['html-frame-path'] )
+          && old_rt.html_frame_path == runtime.html_frame_path )
       {
         runtime['unfolded-script'] = old_rt['unfolded-script'] || false;
         runtime['unfolded-css'] = old_rt['unfolded-css'] || false;
@@ -247,7 +247,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       runtime = 
       {
         runtime_id: r_t[RUNTIME_ID],
-        'html-frame-path': r_t[HTML_FRAME_PATH],
+        html_frame_path: r_t[HTML_FRAME_PATH],
         'window-id': r_t[WINDOW_ID],
         'object-id': r_t[OBJECT_ID],
         'uri': r_t[URI],
@@ -285,7 +285,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
         }
         if (!debug_context_frame_path)
         {
-          debug_context_frame_path = runtime['html-frame-path'];
+          debug_context_frame_path = runtime.html_frame_path;
         }   
         __selected_script = '';
       } 
@@ -313,7 +313,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       {
         __windows_reloaded[runtime['window-id']] = 2;
       }
-      if( debug_context_frame_path == runtime['html-frame-path'] && 
+      if( debug_context_frame_path == runtime.html_frame_path && 
             __selected_window == runtime['window-id'] && 
             runtimeId != __selected_runtime_id )
       {
@@ -365,7 +365,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
           ( old_rt['window-id'] == new_rt['window-id'] ||
             ( new_rt['opener-window-id'] && 
               old_rt['opener-window-id'] == new_rt['opener-window-id']  ) ) &&
-          old_rt['html-frame-path'] == new_rt['html-frame-path'] )
+          old_rt.html_frame_path == new_rt.html_frame_path )
       {
         is_known = true;
         break;
@@ -891,7 +891,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     var ret = [], r = '', is_unfolded = true;
     for( r in __runtimes )
     {
-      if( __runtimes[r] && __runtimes[r]['html-frame-path'] && __runtimes[r]['html-frame-path'].indexOf('[') == -1 )
+      if( __runtimes[r] && __runtimes[r].html_frame_path && __runtimes[r].html_frame_path.indexOf('[') == -1 )
       {
         is_unfolded = true;
         if( __windowsFolding[__runtimes[r]['window-id']] === false )
