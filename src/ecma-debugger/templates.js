@@ -54,7 +54,7 @@
   {
     var 
     display_uri = helpers.shortenURI(runtime['uri']),
-    is_reloaded_window = runtimes.isReloadedWindow(runtime['window-id']),
+    is_reloaded_window = runtimes.isReloadedWindow(runtime.window_id),
     ret = \
     [
       ['h2', runtime['title'] || display_uri.uri].

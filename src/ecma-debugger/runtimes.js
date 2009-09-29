@@ -74,7 +74,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     opera.postError(JSON.stringify(msg))
     for( var r in __runtimes )
     { 
-      if (__runtimes[r] &&  __runtimes[r]['window-id'] == msg.window_id && __runtimes[r].is_top)
+      if (__runtimes[r] &&  __runtimes[r].window_id == msg.window_id && __runtimes[r].is_top)
       {
         __runtimes[r].title = msg.title;
         break;
@@ -146,7 +146,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     var cur = '';
     for( cur in __runtimes )
     {
-      if( __runtimes[cur] && __runtimes[cur]['window-id'] == win_id )
+      if( __runtimes[cur] && __runtimes[cur].window_id == win_id )
       {
         removeRuntime(__runtimes[cur].runtime_id);
       }
@@ -187,7 +187,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       old_rt = __old_runtimes[cur];
       if( old_rt
           && old_rt['uri'] == runtime['uri']
-          && old_rt['window-id'] == runtime['window-id']
+          && old_rt.window_id == runtime.window_id
           && old_rt.html_frame_path == runtime.html_frame_path )
       {
         runtime['unfolded-script'] = old_rt['unfolded-script'] || false;
@@ -248,7 +248,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       {
         runtime_id: r_t[RUNTIME_ID],
         html_frame_path: r_t[HTML_FRAME_PATH],
-        'window-id': r_t[WINDOW_ID],
+        window_id: r_t[WINDOW_ID],
         'object-id': r_t[OBJECT_ID],
         'uri': r_t[URI],
       };
@@ -256,7 +256,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       checkOldRuntimes(runtime);
       if( runtime.is_top = isTopRuntime(runtime) )
       {
-        var win_id = runtime['window-id'];
+        var win_id = runtime.window_id;
         if (win_id in __window_ids)
         {
           cleanupWindow(win_id, runtimeId);
@@ -298,7 +298,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
         self.setSelectedRuntime(runtime);
         __next_runtime_id_to_select = '';
       }
-      if( runtime['window-id'] == __old_selected_window )
+      if( runtime.window_id == __old_selected_window )
       {
         self.setActiveWindowId(__old_selected_window);
         host_tabs.setActiveTab(__old_selected_window);
@@ -309,17 +309,17 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
         // TODO still needed?
         updateRuntimeViews();
       }
-      if(__windows_reloaded[runtime['window-id']] == 1)
+      if(__windows_reloaded[runtime.window_id] == 1)
       {
-        __windows_reloaded[runtime['window-id']] = 2;
+        __windows_reloaded[runtime.window_id] = 2;
       }
       if( debug_context_frame_path == runtime.html_frame_path && 
-            __selected_window == runtime['window-id'] && 
+            __selected_window == runtime.window_id && 
             runtimeId != __selected_runtime_id )
       {
         self.setSelectedRuntimeId(runtimeId);
       }
-      if( runtime['window-id'] == __selected_window ||
+      if( runtime.window_id == __selected_window ||
             runtime['opener-window-id'] == __selected_window )
       {
         host_tabs.updateActiveTab();
@@ -362,7 +362,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
             || __scripts[sc]['script-data'] == script['script-data'] 
           ) &&
           old_rt['uri'] == new_rt['uri'] &&
-          ( old_rt['window-id'] == new_rt['window-id'] ||
+          ( old_rt.window_id == new_rt.window_id ||
             ( new_rt['opener-window-id'] && 
               old_rt['opener-window-id'] == new_rt['opener-window-id']  ) ) &&
           old_rt.html_frame_path == new_rt.html_frame_path )
@@ -385,7 +385,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
         __selected_script = new_script_id;
       }
       // the script could be in a pop-up window
-      if( old_rt['window-id'] == new_rt['window-id'] )
+      if( old_rt.window_id == new_rt.window_id )
       {
         __replaced_scripts[__scripts[sc]['script-id']] = new_script_id;
         delete __scripts[sc];
@@ -675,7 +675,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       is part of the debug context
     */
     return __runtimes[rt_id] && 
-              ( __runtimes[rt_id]['window-id'] == __selected_window ||
+              ( __runtimes[rt_id].window_id == __selected_window ||
                 __runtimes[rt_id]['opener-window-id'] == __selected_window );
 
   }
@@ -894,19 +894,19 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       if( __runtimes[r] && __runtimes[r].html_frame_path && __runtimes[r].html_frame_path.indexOf('[') == -1 )
       {
         is_unfolded = true;
-        if( __windowsFolding[__runtimes[r]['window-id']] === false )
+        if( __windowsFolding[__runtimes[r].window_id] === false )
         {
           is_unfolded = false;
         }
         ret[ret.length] = 
         {
-          id: __runtimes[r]['window-id'],
+          id: __runtimes[r].window_id,
           uri: __runtimes[r]['uri'],
           title: __runtimes[r]['title'] || '',
           is_unfolded: is_unfolded,
-          is_selected: __selected_window == __runtimes[r]['window-id'] ||
+          is_selected: __selected_window == __runtimes[r].window_id ||
             __selected_window == __runtimes[r]['opener-window-id'],
-          runtimes: this.getRuntimes( __runtimes[r]['window-id'] )
+          runtimes: this.getRuntimes( __runtimes[r].window_id )
         }
       }
     }
@@ -925,8 +925,8 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     var ret = [], r = '';
     for( r in __runtimes )
     { 
-      if ( __runtimes[r] && __runtimes[r]['window-id'] &&  
-            ( __runtimes[r]['window-id'] == window_id ||
+      if ( __runtimes[r] && __runtimes[r].window_id &&  
+            ( __runtimes[r].window_id == window_id ||
               __runtimes[r]['opener-window-id'] == window_id ) )
       {
         ret[ret.length] = __runtimes[r];
@@ -946,8 +946,8 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     var ret = [], r = '';
     for( r in __runtimes )
     { 
-      if ( __runtimes[r] && __runtimes[r]['window-id'] &&
-            ( __runtimes[r]['window-id'] == window_id ||
+      if ( __runtimes[r] && __runtimes[r].window_id &&
+            ( __runtimes[r].window_id == window_id ||
               __runtimes[r]['opener-window-id'] == window_id )
         )
       {
