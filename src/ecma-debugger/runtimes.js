@@ -281,7 +281,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
             window is an assumption here, 
             certainly not true in all cases. 
           */
-          runtime['opener-window-id'] = __selected_window;
+          runtime.opener_window_id = __selected_window;
         }
         if (!debug_context_frame_path)
         {
@@ -320,7 +320,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
         self.setSelectedRuntimeId(runtimeId);
       }
       if( runtime.window_id == __selected_window ||
-            runtime['opener-window-id'] == __selected_window )
+            runtime.opener_window_id == __selected_window )
       {
         host_tabs.updateActiveTab();
       }
@@ -363,8 +363,8 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
           ) &&
           old_rt.uri == new_rt.uri &&
           ( old_rt.window_id == new_rt.window_id ||
-            ( new_rt['opener-window-id'] && 
-              old_rt['opener-window-id'] == new_rt['opener-window-id']  ) ) &&
+            ( new_rt.opener_window_id && 
+              old_rt.opener_window_id == new_rt.opener_window_id  ) ) &&
           old_rt.html_frame_path == new_rt.html_frame_path )
       {
         is_known = true;
@@ -676,7 +676,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     */
     return __runtimes[rt_id] && 
               ( __runtimes[rt_id].window_id == __selected_window ||
-                __runtimes[rt_id]['opener-window-id'] == __selected_window );
+                __runtimes[rt_id].opener_window_id == __selected_window );
 
   }
 
@@ -905,7 +905,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
           title: __runtimes[r]['title'] || '',
           is_unfolded: is_unfolded,
           is_selected: __selected_window == __runtimes[r].window_id ||
-            __selected_window == __runtimes[r]['opener-window-id'],
+            __selected_window == __runtimes[r].opener_window_id,
           runtimes: this.getRuntimes( __runtimes[r].window_id )
         }
       }
@@ -927,7 +927,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     { 
       if ( __runtimes[r] && __runtimes[r].window_id &&  
             ( __runtimes[r].window_id == window_id ||
-              __runtimes[r]['opener-window-id'] == window_id ) )
+              __runtimes[r].opener_window_id == window_id ) )
       {
         ret[ret.length] = __runtimes[r];
       }
@@ -948,10 +948,10 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     { 
       if ( __runtimes[r] && __runtimes[r].window_id &&
             ( __runtimes[r].window_id == window_id ||
-              __runtimes[r]['opener-window-id'] == window_id )
+              __runtimes[r].opener_window_id == window_id )
         )
       {
-        if(__runtimes[r].is_top && !__runtimes[r]['opener-window-id'] )
+        if(__runtimes[r].is_top && !__runtimes[r].opener_window_id )
         {
           ret = [__runtimes[r].runtime_id].concat(ret);
         }
