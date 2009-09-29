@@ -359,7 +359,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       // TODO check for script-type as well?
       if( ( 
             ( __scripts[sc].uri && __scripts[sc].uri == script.uri ) 
-            || __scripts[sc]['script-data'] == script['script-data'] 
+            || __scripts[sc].script_data == script.script_data 
           ) &&
           old_rt.uri == new_rt.uri &&
           ( old_rt.window_id == new_rt.window_id ||
@@ -572,14 +572,14 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     {
       runtime_id: message[RUNTIME_ID],
       script_id: message[SCRIPT_ID],
-      'script-type': message[SCRIPT_TYPE],
-      'script-data': message[SCRIPT_DATA],
+      script_type: message[SCRIPT_TYPE],
+      script_data: message[SCRIPT_DATA],
       uri: message[URI]
     };
 
-    if( !script['script-data'] )
+    if( !script.script_data )
     {
-      script['script-data'] = '';
+      script.script_data = '';
     }
     
     if( is_runtime_of_debug_context(script.runtime_id))
@@ -1009,10 +1009,10 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
 
   this.getScriptSource = function(scriptId)
   {
-    // 'script-data' can be an empty string
+    // script_data can be an empty string
     if( __scripts[scriptId] )
     {
-      return  __scripts[scriptId]['script-data'] 
+      return  __scripts[scriptId].script_data 
     }
     return null;
   }

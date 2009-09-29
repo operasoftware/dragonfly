@@ -103,7 +103,7 @@
       "linked": ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_LINKED,
       "unknown": ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_UNKNOWN
     },
-    script_type = script['script-type'],
+    script_type = script.script_type,
     ret = \
     [
       'cst-option',

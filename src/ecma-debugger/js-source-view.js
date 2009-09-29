@@ -408,7 +408,7 @@ cls.JsSourceView = function(id, name, container_class)
       {
         if( !script_obj.line_arr )
         {
-          script_obj.source_data = new String(script_obj['script-data']);
+          script_obj.source_data = new String(script_obj.script_data);
           script_obj.line_arr = [];
           script_obj.state_arr = [];
           pre_lexer(script_obj);
