@@ -39,7 +39,7 @@
 
   this['runtime-runtime'] = function(runtime, arg_list)
   {
-    var display_uri = helpers.shortenURI(runtime['uri']);
+    var display_uri = helpers.shortenURI(runtime.uri);
 
     return  \
     [
@@ -53,7 +53,7 @@
   this['runtime-script'] = function(runtime, arg_list)
   {
     var 
-    display_uri = helpers.shortenURI(runtime['uri']),
+    display_uri = helpers.shortenURI(runtime.uri),
     is_reloaded_window = runtimes.isReloadedWindow(runtime.window_id),
     ret = \
     [
@@ -94,7 +94,7 @@
   this.scriptOption = function(script, selected_script_id, stopped_script_id)
   {
     var 
-    display_uri = helpers.shortenURI(script['uri']),
+    display_uri = helpers.shortenURI(script.uri),
     /* script types in the protocol: 
        "inline" | "event" | "linked" | "timeout" | "java" | "generated" | "unknown" */
     type_dict =
@@ -148,7 +148,7 @@
     TITLE = 7;
 
     var 
-    display_uri = helpers.shortenURI(runtime['uri']),
+    display_uri = helpers.shortenURI(runtime.uri),
     ret = 
     [
       ['h2', runtime['title'] || display_uri.uri].
@@ -190,14 +190,14 @@
 
   this['runtime-dom'] = function(runtime)
   {
-    var display_uri = runtime['title'] || helpers.shortenURI(runtime['uri']).uri;
+    var display_uri = runtime['title'] || helpers.shortenURI(runtime.uri).uri;
     return (
     [
       'cst-option',
-       runtime['title'] || runtime['uri'], 
+       runtime['title'] || runtime.uri, 
       'runtime-id', runtime.runtime_id
     ].concat( dom_data.getDataRuntimeId() == runtime.runtime_id ? ['class', 'selected-runtime'] : [] ).
-      concat( display_uri != runtime['uri'] ? ['title', runtime['uri']] : [] ) )
+      concat( display_uri != runtime.uri ? ['title', runtime.uri] : [] ) )
   }
 
   this.checkbox = function(settingName, settingValue)

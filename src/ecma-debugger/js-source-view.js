@@ -697,7 +697,7 @@ cls.helper_collection.getSelectedOptionText = function()
   if( selected_script_id )
   {
     var script = runtimes.getScript(selected_script_id);
-    var display_uri = helpers.shortenURI(script['uri']);
+    var display_uri = helpers.shortenURI(script.uri);
     if( script )
     {
       return ( 

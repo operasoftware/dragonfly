@@ -186,7 +186,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     {
       old_rt = __old_runtimes[cur];
       if( old_rt
-          && old_rt['uri'] == runtime['uri']
+          && old_rt.uri == runtime.uri
           && old_rt.window_id == runtime.window_id
           && old_rt.html_frame_path == runtime.html_frame_path )
       {
@@ -250,7 +250,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
         html_frame_path: r_t[HTML_FRAME_PATH],
         window_id: r_t[WINDOW_ID],
         object_id: r_t[OBJECT_ID],
-        'uri': r_t[URI],
+        uri: r_t[URI],
       };
 
       checkOldRuntimes(runtime);
@@ -358,10 +358,10 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       old_rt = __runtimes[__scripts[sc].runtime_id] || __old_runtimes[__scripts[sc].runtime_id] || {};
       // TODO check for script-type as well?
       if( ( 
-            ( __scripts[sc]['uri'] && __scripts[sc]['uri'] == script['uri'] ) 
+            ( __scripts[sc].uri && __scripts[sc].uri == script.uri ) 
             || __scripts[sc]['script-data'] == script['script-data'] 
           ) &&
-          old_rt['uri'] == new_rt['uri'] &&
+          old_rt.uri == new_rt.uri &&
           ( old_rt.window_id == new_rt.window_id ||
             ( new_rt['opener-window-id'] && 
               old_rt['opener-window-id'] == new_rt['opener-window-id']  ) ) &&
@@ -574,7 +574,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       'script-id': message[SCRIPT_ID],
       'script-type': message[SCRIPT_TYPE],
       'script-data': message[SCRIPT_DATA],
-      'uri': message[URI]
+      uri: message[URI]
     };
 
     if( !script['script-data'] )
@@ -901,7 +901,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
         ret[ret.length] = 
         {
           id: __runtimes[r].window_id,
-          uri: __runtimes[r]['uri'],
+          uri: __runtimes[r].uri,
           title: __runtimes[r]['title'] || '',
           is_unfolded: is_unfolded,
           is_selected: __selected_window == __runtimes[r].window_id ||
@@ -972,7 +972,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     var r = '';
     for( r in __runtimes )
     {
-      if( __runtimes[r]['uri'] == url )
+      if( __runtimes[r].uri == url )
       {
         return __runtimes[r];
       }
@@ -986,7 +986,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     {
       if( __runtimes[r].runtime_id == rt_id )
       {
-        return __runtimes[r]['uri'];
+        return __runtimes[r].uri;
       }
     }
     return '';

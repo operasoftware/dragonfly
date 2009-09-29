@@ -499,7 +499,7 @@ cls.DocumentSelect = function(id)
       var rt = runtimes.getRuntime(selected_rt_id);
       if( rt )
       {
-        return rt['title'] || helpers.shortenURI(rt['uri']).uri;
+        return rt['title'] || helpers.shortenURI(rt.uri).uri;
       }
     }
     return '';
