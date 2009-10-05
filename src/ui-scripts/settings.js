@@ -108,5 +108,17 @@ var Settings = function(view_id, key_map, label_map, setting_map, template)
   this.init(view_id, key_map, label_map, setting_map, template);
 }
 
+Settings.get_setting_with_view_key_token = function(token)
+{
+  var arr = token.split('.'), setting = window.settings[arr[0]], key = arr[1];
+  return setting && setting.exists(key) && {
+      setting: setting, 
+      view: arr[0], 
+      key: key, 
+      value: setting.get(key), 
+      label: setting.label_map[key]
+    } || null;
+}
+
 Settings.prototype = new SettingsBase();
 

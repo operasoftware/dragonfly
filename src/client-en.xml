@@ -165,6 +165,7 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./ui-scripts/Editor.js"/>
 <script src="./ui-scripts/keyboard_handler.js"/>
 <script src="./ui-scripts/cst-select.js"/>
+<script src="./ui-scripts/toolbarcstselect.js"/>
 <script src="./ui-scripts/ui_framework.js"/>
 
 

@@ -73,34 +73,38 @@
     return ret;
   }
 
+  this.toolbar_settings = function(toolbar_settings)
+  {
+    return ['cst-select-toolbar-setting', 'class', 'toolbar-settings', 'cst-id', toolbar_settings.id];
+  }
+
   this.switches = function(switches)
   {
-    var ret = ['toolbar-switches'], _switch = '', i = 0;
-    var arr = null, setting = null, key = '';
+    var 
+    ret = ['toolbar-switches'], 
+    _switch = '', 
+    i = 0, 
+    setting = null;
+
     for( ; _switch = switches[i]; i++)
     {
-      arr = _switch.split('.');
-      if( arr.length > 1 )
+      if(setting = Settings.get_setting_with_view_key_token(_switch))
       {
-        setting = settings[arr[0]];
-        key = arr[1];
-      
-        if (setting.exists(key)) {
-          ret[ret.length] = 
-            ['button', 
-              'handler', 'toolbar-switch', 
-              'title', setting.label_map[key],
-              'key', _switch,
-              'is-active', setting.get(key) ? 'true' : 'false',
-              'class', 'switch'
-            ];
-        }
-        else
-        {
-          opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
-            "Can't attach switch to a setting that does not exist: " + _switch );
-        }
+        ret[ret.length] = 
+          ['button', 
+            'handler', 'toolbar-switch', 
+            'title', setting.label,
+            'key', _switch,
+            'is-active', setting.value ? 'true' : 'false',
+            'class', 'switch'
+          ];
       }
+      else
+      {
+        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+          "Can't attach switch to a setting that does not exist: " + _switch );
+      }
+
     }
     return ret;
   }

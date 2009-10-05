@@ -120,6 +120,7 @@ var ToolbarBase = function()
     this.filters = toolbars[view_id] && toolbars[view_id].filters || [];
     this.buttons = toolbars[view_id] && toolbars[view_id].buttons || [];
     this.switches = switches[view_id] && switches[view_id].keys || [];
+    this.toolbar_settings = toolbar_settings[view_id] || null;
     this.specials = toolbars[view_id] && toolbars[view_id].specials || [];
     this.customs = toolbars[view_id] && toolbars[view_id].customs || [];
     this.__view_id = view_id;
@@ -149,6 +150,14 @@ var ToolbarBase = function()
           set_separator = true;
         }
         toolbar.render(templates.switches(this.switches));
+      }
+      if(this.toolbar_settings)
+      {
+        if(set_separator)
+        {
+          toolbar.render(templates.toolbarSeparator());
+        }
+        toolbar.render(templates.toolbar_settings(this.toolbar_settings));
       }
       if(this.specials.length)
       {

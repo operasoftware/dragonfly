@@ -1100,6 +1100,21 @@ cst-select
   vertical-align: middle;
 }
 
+cst-select-toolbar-setting
+{
+  display: inline-block;
+  background: transparent url('../ui-images/btn-test.png') no-repeat 0 0;
+  height: 24px;
+  width: 26px;
+  vertical-align: middle;
+  margin: 1px;
+}
+
+cst-select-toolbar-setting:hover
+{
+  background-position: 0 -24px;
+}
+
 
 
 cst-value
