@@ -90,7 +90,7 @@ window.app.build_application = function(on_services_created, on_services_enabled
         */
         
         class_name = get_class_name(service_name); 
-        // workaround fixme: RFH: work around what?
+        // workaround for missing service version in the scope HostInfo message
         version = version_map[class_name];
         builder = window.app.builders[class_name] && window.app.builders[class_name][version];
         if (builder) 

@@ -200,8 +200,10 @@ var DOM_markup_style = function(id, name, container_class)
               {
 
                 attrs += " <key>" + 
-                  ( attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '' ) + 
-                  ( force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ) +
+                  (( attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '' ) + 
+                  /* regarding escaping "<". it happens that there are very starnge keys in broken html.
+                      perhaps we will have to extend the escaping to other data tokens as well */
+                  ( force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] )).replace(/</g, '&lt;') +
                   "</key>=<value" + 
                     ( /^href|src$/i.test(attr[ATTR_KEY])
                       ? " handler='dom-resource-link'"
@@ -249,7 +251,7 @@ var DOM_markup_style = function(id, name, container_class)
                   // TODO text node is a different node
                         "<text" +
                           ( is_not_script_node ? " ref-id='" + one_child_id + "' " : "" ) +
-                          "'>" + one_child_value + "</text>" +
+                          "'>" + one_child_value.replace(/</g, '&lt;') + "</text>" +
                         "<node>&lt;/" + node_name + "&gt;</node>" +
                         ( is_debug && ( " <d>[" + node[ ID ] +  "]</d>" ) || "" ) +
                         "</div>";
