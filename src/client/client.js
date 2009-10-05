@@ -33,10 +33,75 @@ var composite_view_convert_table =
 
 
 
-var client = new function()
+window.cls || ( window.cls = {} );
+
+window.cls.Client = function()
 {
+  /* generated code */
+  // singleton
+  if(arguments.callee.instance)
+  {
+    return arguments.callee.instance;
+  }
+  arguments.callee.instance = this;
+
   var self = this;
 
+  var _on_host_connected = function(servicelist)
+  {
+    servicelist = servicelist.split(',');
+    // TODO sort out all protocol version
+    // TODO check proxy version
+    if(servicelist.indexOf('stp-1') != -1)
+    {
+      services.scope.requestHostInfo();
+    }
+  }
+
+  var _on_host_quit = function()
+  {
+
+  }
+
+  var _get_port_number = function()
+  {
+    // TODO
+    // port 0 means debugging to current Opera instance, 
+    // any other port means remote debugging.
+    return 0;
+  }
+
+  this.setup = function()
+  {
+    
+    window.ini || ( window.ini = {debug: false} );
+    if( !opera.scopeAddClient )
+    {
+      // implement the scope DOM API
+      cls.ScopeHTTPInterface.call(opera /*, force_stp_0 */);
+    }
+    if( !opera.stpVersion )
+    {
+      // reimplement the scope DOM API STP/1 compatible
+      // in case of a (builtin) STP/0 proxy
+      cls.STP_0_Wrapper.call(opera);
+    }
+    opera.scopeAddClient(
+        _on_host_connected, 
+        cls.ServiceBase.get_generic_message_handler(), 
+        _on_host_quit, 
+        _get_port_number()
+      );
+
+    viewport.innerHTML = "<div class='padding'>" +
+        "<div class='info-box'>Waiting for a host connection</div>" +
+      "</div>";
+  }
+
+  /* end generated code */
+
+
+  /*
   var services = [];
   var services_dict = {};
   var services_avaible = {};
@@ -46,9 +111,11 @@ var client = new function()
     services[services.length] = service;
     services_dict[service.name] = service;
   }
+  */
 
   /**** methods for integrated proxy ****/
 
+  /*
   var host_connected = function(_services)
   {
     services_avaible = eval("({\"" + _services.replace(/,/g, "\":1,\"") + "\":1})");
@@ -121,8 +188,11 @@ var client = new function()
     opera.scopeTransmit(service, "<?xml version=\"1.0\"?>" + msg)
   }
 
+  */
+
   /* methods for standalone proxy Dragonkeeper */
 
+  /*
   var receive_dragonkeeper = function(xml, xhr)
   {
     // opera.postError('scope message: ' + (''+new Date().getTime()).slice(6) + ' '+ xml.documentElement.nodeName + ' '+ xhr.responseText)
@@ -133,8 +203,11 @@ var client = new function()
     proxy.GET( "/scope-message?time" + new Date().getTime(), receive_dragonkeeper);
   } 
 
+  */
+
   /**** methods for standalone proxy Java ****/
 
+  /*
   var command_name = "/";
   var post_proxy = function(service, msg)
   {
@@ -213,6 +286,8 @@ var client = new function()
     }
   }
 
+  */
+
   var handle_fallback = function(version)
   {
     // for local testing
@@ -260,6 +335,7 @@ var client = new function()
       alert(ui_strings.S_INFO_WAITING_FOR_CONNECTION.replace(/%s/, port));
     }
     opera.scopeAddClient(host_connected, receive, quit, port);
+
   }
 
   this.post = function(){};
@@ -331,6 +407,7 @@ var client = new function()
       // opera.postError = function(){};
     }
     settings.general.set('show-views-menu', ini.debug)
+    /*
     if( opera.scopeAddClient )
     {
       self.post = post_scope;
@@ -349,6 +426,7 @@ var client = new function()
         alert(ui_strings.S_INFO_WRONG_START);
       }
     }
+    */
     new CompositeView('network_panel', ui_strings.M_VIEW_LABEL_NETWORK, layouts.network_rough_layout);
     new CompositeView('console_new', ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE, layouts.console_rough_layout);
     new CompositeView('js_new', ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS, layouts.js_rough_layout);
@@ -384,6 +462,8 @@ var client = new function()
       views[tab].ishidden_in_menu = is_disbaled;
       topCell.disableTab(tab, is_disbaled);
     }
+
+    //this.setup();
   }
 
   this.setupTopCell = function()
@@ -421,14 +501,10 @@ var client = new function()
     messages.post('host-state', {state: 'inactive'});
   }
 
-  ui_framework.beforeSetup = function()
-  {
-    self.beforeUIFrameworkSetup();
-  }
-  ui_framework.afterSetup = function()
+  window.app.addListener('services-created', function()
   {
     self.afterUIFrameworkSetup();
-  }
+  });
 }
 
 ui_framework.layouts.console_rough_layout =

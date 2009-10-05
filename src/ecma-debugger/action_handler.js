@@ -96,9 +96,9 @@ var action_handler = new function()
     var
     parent = target.parentNode,
     parent_parent = parent.parentNode,
-    obj_id = parent.getAttribute('obj-id'),
+    obj_id = parseInt(parent.getAttribute('obj-id')),
     depth = parseInt(parent.getAttribute('depth')),
-    rt_id = parent_parent.getAttribute('rt-id'),
+    rt_id = parseInt(parent_parent.getAttribute('rt-id')),
     data_id = parent_parent.getAttribute('data-id'),
     margin = parseInt(parent.style.paddingLeft),
     data = null,
@@ -113,6 +113,7 @@ var action_handler = new function()
     is_in_search_scope =
       parent.previousSibling && parent.previousSibling.nodeName.toLowerCase() == "start-search-scope",
     range = null;
+
     if( window[data_id] )
     {
       if( is_expanded )
@@ -253,7 +254,7 @@ var action_handler = new function()
     {
       topCell.showView(views.inspection.id);
       messages.post('active-inspection-type', {inspection_type: 'object'});
-      object_inspection_data.showGlobalScope(runtime['runtime-id']);
+      object_inspection_data.showGlobalScope(runtime.runtime_id);
       runtimes.setSelectedRuntime(runtime);
       views.runtimes.update();
     }
@@ -374,6 +375,7 @@ var action_handler = new function()
   handlers['display-script'] = function(event)
   {
     var script_id  = event.target.getAttribute('script-id');
+
     if(script_id)
     {
       runtimes.setSelectedScript( script_id );
@@ -402,7 +404,7 @@ var action_handler = new function()
 
   handlers['set-break-point'] = function(event)
   {
-    var line = event.target.parentElement.children[0].value;
+    var line = parseInt(event.target.parentElement.children[0].value);
     var script_id = views.js_source.getCurrentScriptId();
     if( line )
     {
@@ -414,7 +416,7 @@ var action_handler = new function()
       else
       {
         runtimes.setBreakpoint(script_id, line);
-        views.js_source.addBreakpoint(parseInt(line));
+        views.js_source.addBreakpoint(line);
       }
     }
   }
@@ -552,7 +554,7 @@ var action_handler = new function()
     var container = event.target.parentNode;
     var level = ( parseInt(container.style.marginLeft) || 0 ) / 16;
     var level_next = ( container.nextSibling && parseInt(container.nextSibling.style.marginLeft) || 0 ) / 16;
-    var ref_id = container.getAttribute('ref-id');
+    var ref_id = parseInt(container.getAttribute('ref-id'));
     if(level_next > level)
     {
       dom_data.closeNode(ref_id);
@@ -566,7 +568,7 @@ var action_handler = new function()
 
   handlers['spotlight-node'] = function(event, current_target)
   {
-    var obj_id = current_target.getAttribute('ref-id');
+    var obj_id = parseInt(current_target.getAttribute('ref-id'));
     if(obj_id)
     {
       hostspotlighter.spotlight(obj_id, 
@@ -604,8 +606,8 @@ var action_handler = new function()
 
   handlers['inspect-object-link'] = function(event, target)
   {
-    var rt_id = target.getAttribute('rt-id');
-    var obj_id = target.getAttribute('obj-id');
+    var rt_id = parseInt(target.getAttribute('rt-id'));
+    var obj_id = parseInt(target.getAttribute('obj-id'));
     messages.post('active-inspection-type', {inspection_type: 'object'});
     // if that works it should be just inspection
     topCell.showView(views.inspection.id);

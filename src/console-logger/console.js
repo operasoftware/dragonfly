@@ -137,8 +137,8 @@ Line 2:
 
 */
 
-cls.ErrorConsoleService.prototype = ServiceBase;
-new cls.ErrorConsoleService('console-logger');
+// cls.ErrorConsoleService.prototype = ServiceBase;
+// new cls.ErrorConsoleService('console-logger');
 
 /**
  * Data class for console logger

@@ -133,7 +133,7 @@ helpers = new function()
   // mouseover handler in the breadcrumb
   this.breadcrumbSpotlight = function(event)
   {
-    var obj_id = event.target.getAttribute('obj-id');
+    var obj_id = parseInt(event.target.getAttribute('obj-id'));
     if( obj_id )
     {
       hostspotlighter.spotlight(obj_id);
