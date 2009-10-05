@@ -26,14 +26,20 @@ var DOMMarkupEditor = function()
     host_target: ''
   }
 
+  const
+  STATUS = 0,
+  OBJECT_VALUE = 3,
+  OBJECT_ID = 0,
+  NODE_LIST = 0;
+
   this.edit = function(event, ref_ele)
   {
     var 
     ele = ref_ele || event.target,
-    rt_id = ele.parentElement.parentElement.getAttribute('rt-id') 
+    rt_id = parseInt(ele.parentElement.parentElement.getAttribute('rt-id')
       // for DOM tree style
-      || ele.parentElement.parentElement.parentElement.getAttribute('rt-id'),
-    obj_id = ele.parentElement.getAttribute('ref-id'),
+      || ele.parentElement.parentElement.parentElement.getAttribute('rt-id')),
+    obj_id = parseInt(ele.parentElement.getAttribute('ref-id')),
     script = '',
     tag = '',
     prop = '',
@@ -61,9 +67,9 @@ var DOMMarkupEditor = function()
       }
       script = this["return new Host_updater(target)"];
       tag = tagManager.setCB(this, this.register_host_updater, [rt_id]);
-      services['ecmascript-debugger'].eval( tag, rt_id, '', '', script, ['target', obj_id]);
+      services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, script, [['target', obj_id]]]);
       tag = tagManager.setCB(this, this.handle_get_outer_html, [rt_id, obj_id, ele, event])
-      services['ecmascript-debugger'].inspectDOM( tag, obj_id, 'subtree', 'json' );
+      services['ecmascript-debugger'].requestInspectDom(tag, [obj_id, 'subtree']);
     }
   }
 
@@ -79,9 +85,9 @@ var DOMMarkupEditor = function()
       this.set_textarea_dimensions();
       state.outerHTML = this.textarea.value;
       var script = "host_target.outerHTML = '" + encode(state.outerHTML) + "';";
-      services['ecmascript-debugger'].eval
+      services['ecmascript-debugger'].requestEval
       ( 
-        0, state.rt_id, '', '', script, ['host_target', state.host_target]
+        0, [state.rt_id, 0, 0, script, [['host_target', state.host_target]]]
       );
     }
   }
@@ -97,9 +103,9 @@ var DOMMarkupEditor = function()
     {
       var tag = tagManager.setCB(this, this.on_exit_edit, [state, nav_target]);
       var script = "host_target.exit_edit()";
-      services['ecmascript-debugger'].eval
+      services['ecmascript-debugger'].requestEval
       ( 
-        tag, state.rt_id, '', '', script, ['host_target', state.host_target]
+        tag, [state.rt_id, 0, 0, script, [['host_target', state.host_target]]]
       );
     }
     return nav_target;
@@ -120,9 +126,9 @@ var DOMMarkupEditor = function()
       {
         var tag = tagManager.setCB(this, this.on_exit_edit, [state, nav_target]);
         var script = "host_target.cancel_edit()";
-        services['ecmascript-debugger'].eval
+        services['ecmascript-debugger'].requestEval
         ( 
-          tag, state.rt_id, '', '', script, ['host_target', state.host_target]
+          tag, [state.rt_id, 0, 0, script, [['host_target', state.host_target]]]
         );
       }
       else
@@ -173,9 +179,9 @@ var DOMMarkupEditor = function()
 
   // helpers
 
-  this.on_exit_edit = function(xml, state, nav_target)
+  this.on_exit_edit = function(status, message, state, nav_target)
   {
-    if( xml.getNodeData('status') == 'completed' )
+    if( message[STATUS] == 'completed' )
     {
       // to remove the textarea_container from the dom
       nav_target.textContent = "";
@@ -492,11 +498,11 @@ var DOMMarkupEditor = function()
   this["return new Host_updater(target)"] = 
     "return new (" + Host_updater.toString() + ")(target)";
 
-  this.register_host_updater = function(xml, rt_id)
+  this.register_host_updater = function(status, message, rt_id)
   {
     var 
-    status = xml.getNodeData('status'),
-    obj_id = xml.getNodeData('object-id');
+    status = message[STATUS],
+    obj_id = message[OBJECT_VALUE][OBJECT_ID];
 
     if(  status == 'completed' && obj_id )
     {
@@ -510,13 +516,13 @@ var DOMMarkupEditor = function()
   }
 
   // complete the edit call
-  this.handle_get_outer_html = function(xml, rt_id, obj_id, ele, event)
+  this.handle_get_outer_html = function(status, message, rt_id, obj_id, ele, event)
   {
-    var json = xml.getNodeData('jsondata');
-    if( json )
+    //var json = xml.getNodeData('jsondata');
+    if(status == 0)
     {
       var 
-      outerHTML = views['dom'].serializeToOuterHTML(eval('(' + json +')')),
+      outerHTML = views['dom'].serializeToOuterHTML(message[NODE_LIST]),
       parent = ele.parentNode,
       parent_parent = parent.parentElement,
       margin = parseInt(parent.style.marginLeft),

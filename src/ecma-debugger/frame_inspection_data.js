@@ -46,11 +46,16 @@ var Frame_inspection_data = function()
     }
   }
 
-  var handleShowGlobalScope = function(xml, rt_id)
+  var handleShowGlobalScope = function(status, message, rt_id)
   {
-    if( xml.getNodeData('status') == 'completed' )
+    const
+    STATUS = 0,
+    OBJECT_VALUE = 3,
+    OBJECT_ID = 0;
+
+    if( message[STATUS] == 'completed' )
     {
-      frame_inspection_data.examineObject(rt_id, xml.getNodeData('object-id'));
+      frame_inspection_data.examineObject(rt_id, message[OBJECT_VALUE][OBJECT_ID]);
     }
     else
     {
@@ -63,7 +68,7 @@ var Frame_inspection_data = function()
   {
     var tag = tagManager.setCB(null, handleShowGlobalScope, [rt_id]);
     var script = "return window";
-    services['ecmascript-debugger'].eval(tag, rt_id, '', '', script);
+    services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, script]);
   }
 
   var onFrameSelected = function(msg)

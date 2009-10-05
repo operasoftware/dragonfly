@@ -40,14 +40,14 @@ var stylesheets = new function()
   
   const
   SHEET_OBJECT_ID = 0, // TODO use the right obj-id
-  SHEET_DISABLED = 1, 
-  SHEET_HREF = 2, 
-  SHEET_MEDIA_LIST = 3,  
-  SHEET_OWNERNODE = 4, 
-  SHEET_OWNERRULE = 5,  
-  SHEET_PARENT_STYLESHEET = 6, 
-  SHEET_TITLE = 7, 
-  SHEET_TYPE = 8,
+  SHEET_IS_DISABLED = 1, 
+  SHEET_HREF = 2,
+  SHEET_TITLE = 3,
+  SHEET_TYPE = 4,
+  SHEET_MEDIA_LIST = 5,  
+  SHEET_OWNER_NODE_ID = 6, 
+  SHEET_OWNER_RULE_ID = 7,  
+  SHEET_PARENT_STYLESHEET_ID = 8, 
   UNKNOWN_RULE = 0,
   STYLE_RULE= 1,
   CHARSET_RULE = 2,
@@ -74,8 +74,27 @@ var stylesheets = new function()
   VAL_LIST = 2,
   PRIORITY_LIST = 3,
   OVERWRITTEN_LIST = 4,
-  SEARCH_LIST = 6,
-  HAS_MATCHING_SEARCH_PROPS = 7;
+  SEARCH_LIST = 10,
+  HAS_MATCHING_SEARCH_PROPS = 11,
+
+  // new names of the scope messages
+  COMPUTED_STYLE_LIST = 0,
+  NODE_STYLE_LIST = 1,
+  // sub message NodeStyle 
+  OBJECT_ID = 0,
+  ELEMENT_NAME = 1,
+  STYLE_LIST = 2,
+  // sub message StyleDeclaration 
+  ORIGIN = 0,
+  INDEX_LIST = 1,
+  VALUE_LIST = 2,
+  PRIORITY_LIST = 3,
+  STATUS_LIST = 4,
+  SELECTOR = 5,
+  SPECIFICITY = 6,
+  STYLESHEET_ID = 7,
+  RULE_ID = 8,
+  RULE_TYPE = 9;
   
   var
   SHORTHAND = [];
@@ -134,31 +153,6 @@ var stylesheets = new function()
   }
   
 
-
-  
-  
-/*
- RULE ::=    UNKNOWN-RULE
-          | STYLE-RULE-MULTIPLE
-          | CHARSET-RULE
-          | IMPORT-RULE
-          | MEDIA-RULE
-          | FONT-FACE-RULE
-          | PAGE-RULE
-
-; http://www.w3.org/TR/DOM-Level-2-Style/css.html#CSS-CSSStyleRule
-
-STYLE-RULE-MULTIPLE ::= "["
-                         "[" STYLE-RULE-HEADER-MULTIPLE "],"
-                         "[" INDEX-LIST "],"
-                         "[" VALUE-LIST "],"
-                         "[" PRIORITY-LIST "]"
-                        "]"
-
-STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELECTOR-LIST "," SPECIFICITY-LIST
-
-*/
-
   const
   RULE_HEADER = 0,
   INDENT = '  ';
@@ -169,8 +163,10 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     if not the shorthand code needs cleanup.
   */
   var shorthands = {};
-  
-  shorthands.padding = shorthands.margin = function(prop, index_list, value_list, priority_list)
+
+  shorthands.padding = 
+  shorthands.margin = 
+  function(prop, index_list, value_list, priority_list)
   {
     var
     consistent_pri_flag = priority_list[1] == priority_list[2] &&
@@ -232,7 +228,6 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   
   shorthands.border = function(prop, index_list, value_list, priority_list)
   {
-    
     var
     key_list = ['border-top', 'border-right', 'border-bottom', 'border-left'],
     key_type_list = ['border-width', 'border-style', 'border-color'],
@@ -243,9 +238,11 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     short_value_list = [],
     is_short_priority_list = [],
     short_priority_list = [],
+    processed_list = [],
     i = 1,
     j = 0,
     index_short = 0,
+    value_list_length = value_list.length,
     previous_value = '',
     is_short_short = true,
     is_all_and_consistent_pri_flag = true, 
@@ -257,11 +254,14 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     
     if( is_short_type ) // border-width or border-style or border-color 
     {
-      
       i = is_short_color && 2 || is_short_style && 1 || 0;
 
-      
-      
+      processed_list[i+1] = 
+      processed_list[i+4] = 
+      processed_list[i+7] = 
+      processed_list[i+10] = 
+      true;
+
       if( priority_list[i+1] == priority_list[i+4] && priority_list[i+1] == priority_list[i+7] &&
             priority_list[i+1] == priority_list[i+10])
       {
@@ -269,13 +269,12 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
         if( value_list[i+1] == value_list[i+4] && value_list[i+1] == value_list[i+7] &&
               value_list[i+1] == value_list[i+10])
         {
-          
-          return INDENT + MARKUP_KEY + key_type_list[i] + MARKUP_KEY_CLOSE +
+          ret = INDENT + MARKUP_KEY + key_type_list[i] + MARKUP_KEY_CLOSE +
                   MARKUP_VALUE + value_list[i+1] + priority_flag + MARKUP_VALUE_CLOSE;
         }
         else // eg border-width: 10px 8px 8px 10px
         {
-          return INDENT + MARKUP_KEY + key_type_list[i] + MARKUP_KEY_CLOSE +
+          ret = INDENT + MARKUP_KEY + key_type_list[i] + MARKUP_KEY_CLOSE +
                   MARKUP_VALUE + value_list[i+1] + MARKUP_SPACE + value_list[i+4] +
                   MARKUP_SPACE + value_list[i+7] + MARKUP_SPACE + value_list[i+10] +
                   priority_flag + MARKUP_VALUE_CLOSE;
@@ -288,98 +287,118 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
           ret += ( ret ? MARKUP_PROP_NL : "" ) +
             this.fallback(index_list[i+j], value_list[i+j], priority_list[i+j]);
         }
-        return ret;
       }
     }
-    // border-top or border-right or border-bottom or border-left or border
-    for( i = 1; i < 13; i+=3 )
+    if(!ret)
     {
-      if(value_list[i] && value_list[i+1] && value_list[i+2])
+      // border-top or border-right or border-bottom or border-left or border
+      for( i = 1; i < 13; i+=3 )
       {
-        if( is_short_priority_list[index_short] = priority_list[i] == priority_list[i+1] &&
-          priority_list[i] == priority_list[i+2] )
+        if(value_list[i] && value_list[i+1] && value_list[i+2])
         {
-          short_priority_list[index_short] = priority_list[i] ? MARKUP_IMPORTANT : MARKUP_EMPTY;
-          short_value_list[index_short] =
-            value_list[i+1] == 'none'
-            ? value_list[i+1]
-            : value_list[i] + MARKUP_SPACE + value_list[i+1] + MARKUP_SPACE + value_list[i+2];
-        }
-        else
-        {
-          short_value_list[index_short] = i;
-        }
+          processed_list[i] = 
+          processed_list[i+1] = 
+          processed_list[i+2] = true;
+          if( is_short_priority_list[index_short] = priority_list[i] == priority_list[i+1] &&
+            priority_list[i] == priority_list[i+2] )
+          {
+            short_priority_list[index_short] = priority_list[i] ? MARKUP_IMPORTANT : MARKUP_EMPTY;
+            short_value_list[index_short] =
+              value_list[i+1] == 'none'
+              ? value_list[i+1]
+              : value_list[i] + MARKUP_SPACE + value_list[i+1] + MARKUP_SPACE + value_list[i+2];
+          }
+          else
+          {
+            short_value_list[index_short] = i;
+          }
 
-      }
-      is_short_short = is_short_short && is_short_priority_list[index_short];
-      if(index_short && is_short_short)
-      {
-        is_short_short = previous_value && previous_value == short_value_list[index_short];
-      }
-      is_all_and_consistent_pri_flag = 
-        is_all_and_consistent_pri_flag && 
-        ( index_short
-        ? is_short_priority_list[index_short - 1] == is_short_priority_list[index_short]
-        : is_short_priority_list[index_short] );
-      previous_value = short_value_list[index_short];
-      index_short++;
-    }
-    if(is_short_short)
-    {
-      return INDENT + MARKUP_KEY + prop + MARKUP_KEY_CLOSE +
-                MARKUP_VALUE + short_value_list[0] + MARKUP_VALUE_CLOSE;
-    }
-    else if(is_all_and_consistent_pri_flag) // check for three identical values
-    {
-      _0_1_ = short_value_list[0] == short_value_list[1];
-      _2_3_ = short_value_list[2] == short_value_list[3];
-      three_equals = 
-      [
-        _2_3_ && short_value_list[1] == short_value_list[2],
-        _2_3_ && short_value_list[0] == short_value_list[2],
-        _0_1_ && short_value_list[0] == short_value_list[3],
-        _0_1_ && short_value_list[0] == short_value_list[2],
-      ]
-        
-      for( i = 0; i < 4 && !three_equals[i]; i++ );
-      if( i != 4 )
-      {
-        return  INDENT + MARKUP_KEY + prop + MARKUP_KEY_CLOSE +
-                MARKUP_VALUE + 
-                ( i 
-                  ? short_value_list[0] + short_priority_list[0] 
-                  : short_value_list[1] + short_priority_list[1] )  +
-                MARKUP_VALUE_CLOSE +
-                MARKUP_PROP_NL +
-                INDENT + MARKUP_KEY + key_list[i] + MARKUP_KEY_CLOSE + 
-                MARKUP_VALUE + short_value_list[i] + short_priority_list[i] + MARKUP_VALUE_CLOSE;
-      }
-    }
-    for( i = 0; i < 4; i++ )
-    {
-      if(short_value_list[i])
-      {
-        if(is_short_priority_list[i])
-        {
-          ret += ( ret ? MARKUP_PROP_NL : "" ) +
-                  INDENT + MARKUP_KEY + key_list[i] + MARKUP_KEY_CLOSE + 
-                  MARKUP_VALUE + short_value_list[i] + short_priority_list[i] + MARKUP_VALUE_CLOSE;              
         }
-        else
+        is_short_short = is_short_short && is_short_priority_list[index_short];
+        if(index_short && is_short_short)
         {
-          for( j = short_value_list[i]; j < short_value_list[i] + 3; j++ )
+          is_short_short = previous_value && previous_value == short_value_list[index_short];
+        }
+        is_all_and_consistent_pri_flag = 
+          is_all_and_consistent_pri_flag && 
+          ( index_short
+          ? is_short_priority_list[index_short - 1] == is_short_priority_list[index_short]
+          : is_short_priority_list[index_short] );
+        previous_value = short_value_list[index_short];
+        index_short++;
+      }
+      if(is_short_short)
+      {
+        ret = INDENT + MARKUP_KEY + prop + MARKUP_KEY_CLOSE +
+                  MARKUP_VALUE + short_value_list[0] + MARKUP_VALUE_CLOSE;
+      }
+      else if(is_all_and_consistent_pri_flag) // check for three identical values
+      {
+        _0_1_ = short_value_list[0] == short_value_list[1];
+        _2_3_ = short_value_list[2] == short_value_list[3];
+        three_equals = 
+        [
+          _2_3_ && short_value_list[1] == short_value_list[2],
+          _2_3_ && short_value_list[0] == short_value_list[2],
+          _0_1_ && short_value_list[0] == short_value_list[3],
+          _0_1_ && short_value_list[0] == short_value_list[2],
+        ]
+          
+        for( i = 0; i < 4 && !three_equals[i]; i++ );
+        if( i != 4 )
+        {
+          ret = INDENT + MARKUP_KEY + prop + MARKUP_KEY_CLOSE +
+                  MARKUP_VALUE + 
+                  ( i 
+                    ? short_value_list[0] + short_priority_list[0] 
+                    : short_value_list[1] + short_priority_list[1] )  +
+                  MARKUP_VALUE_CLOSE +
+                  MARKUP_PROP_NL +
+                  INDENT + MARKUP_KEY + key_list[i] + MARKUP_KEY_CLOSE + 
+                  MARKUP_VALUE + short_value_list[i] + short_priority_list[i] + MARKUP_VALUE_CLOSE;
+        }
+      }
+    }
+    // index_list, value_list, priority_list,
+
+    if(!ret)
+    {
+      for( i = 0; i < 4; i++ )
+      {
+        if(short_value_list[i])
+        {
+          if(is_short_priority_list[i])
           {
             ret += ( ret ? MARKUP_PROP_NL : "" ) +
-                    this.fallback(index_list[j], value_list[j], priority_list[j]);              
+                    INDENT + MARKUP_KEY + key_list[i] + MARKUP_KEY_CLOSE + 
+                    MARKUP_VALUE + short_value_list[i] + short_priority_list[i] + MARKUP_VALUE_CLOSE;              
+          }
+          else
+          {
+            for( j = short_value_list[i]; j < short_value_list[i] + 3; j++ )
+            {
+              ret += ( ret ? MARKUP_PROP_NL : "" ) +
+                      this.fallback(index_list[j], value_list[j], priority_list[j]);              
+            }
           }
         }
-      }
 
+      }
+    }
+    for( i = 0; i < value_list_length; i++ )
+    {
+      if (value_list[i] && !processed_list[i])
+      {
+        ret += ( ret ? MARKUP_PROP_NL : "" ) +
+                this.fallback(index_list[i], value_list[i], priority_list[i]);  
+      }
     }
     return ret;
   }
   
-  shorthands.font = shorthands['list-style'] = shorthands.background = function(prop, index_list, value_list, priority_list)
+  shorthands.font = 
+  shorthands['list-style'] = 
+  shorthands.background = function(prop, index_list, value_list, priority_list)
   {
     var 
     priority_flag = -1, 
@@ -387,6 +406,7 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     i = 1, 
     short_values = '', 
     ret = '';
+
     // check priority flags
     for( ; i < count; i++ )
     {
@@ -442,18 +462,15 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
   
   var prettyPrintRule = [];
 
-  prettyPrintRule[COMMON] = function(rule, do_shortcuts, search_active)
+  prettyPrintRule[COMMON] = function(rule, do_shortcuts, search_active, is_style_sheet)
   {
-  /*
-    * TODO creating shorthands is not really a good idea 
-    * and should be removed as soon as we get the real css source files.
-    * we will have to see if we will still need a style sheet viewer
-    */
+    // TODO is creating shorthands a good idea? 
+
     const
     HEADER = 0,
-    INDEX_LIST = 1,
-    VALUE_LSIT = 2,
-    PROPERTY_LIST = 3;
+    INDEX_LIST = is_style_sheet && 3 || 1,
+    VALUE_LSIT = is_style_sheet && 4 || 2,
+    PROPERTY_LIST = is_style_sheet && 5 || 3;
     
     var ret = '',
     index_list = rule[INDEX_LIST],
@@ -469,8 +486,6 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     s_h_prop = '',
     s_h_count = 0;
 
-
-    
     for( ; i < length; i++ )
     {
       index = index_list[i];
@@ -488,7 +503,6 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
         s_h_value = [];
         s_h_priority = [];
         s_h_prop = __shorthandIndexMap[index];
-        s_h_count = 0;
         do
         {
           if( __shorthandIndexMap[index] != 'line-height' && 
@@ -496,41 +510,21 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
           {
             ret += ( ret ? MARKUP_PROP_NL : "" ) +
               shorthands[s_h_prop](s_h_prop, s_h_index, s_h_value, s_h_priority);
-            s_h_count = s_h_count % 4;
-            while(s_h_prop == 'border' && s_h_count)
-            {
-              ret += ( ret ? MARKUP_PROP_NL : MARKUP_EMPTY ) +
-                INDENT +
-                MARKUP_KEY_OW + __indexMap[index_list[i - s_h_count]] + MARKUP_KEY_CLOSE +
-                MARKUP_VALUE_OW + value_list[i - s_h_count] + ( priority_list[i - s_h_count] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE; 
-              s_h_count--;
-            }
             SHORTHAND[line_height_index] = __shorthandIndexMap[index] == 'font' ? 5 : 0;
             s_h_index = [];
             s_h_value = [];
             s_h_priority = [];
             s_h_prop = __shorthandIndexMap[index];
-            s_h_count = 0;
           }
           s_h_index[SHORTHAND[index]] = index;
           s_h_value[SHORTHAND[index]] = value_list[i];
           s_h_priority[SHORTHAND[index]] = priority_list[i];
-          index = index_list[++i];
-          s_h_count++;
+          index = index_list[i + 1];
         }
-        while( SHORTHAND[index] );
+        while( SHORTHAND[index] && ++i );
 
         ret += ( ret ? MARKUP_PROP_NL : MARKUP_EMPTY ) +
           shorthands[s_h_prop](s_h_prop, s_h_index, s_h_value, s_h_priority);
-        s_h_count = s_h_count % 4;
-        while(s_h_prop == 'border' && s_h_count)
-        {
-          ret += ( ret ? MARKUP_PROP_NL : MARKUP_EMPTY ) +
-            INDENT +
-            MARKUP_KEY_OW + __indexMap[index_list[i - s_h_count]] + MARKUP_KEY_CLOSE +
-            MARKUP_VALUE_OW + value_list[i - s_h_count] + ( priority_list[i - s_h_count] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE; 
-          s_h_count--;
-        }
         SHORTHAND[line_height_index] = 0;
       }
       else
@@ -558,120 +552,118 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     return ret;
   }
 
-  prettyPrintRule[UNKNOWN_RULE] = function(rule, do_shortcuts)
+  /* to print the stylesheets */
+  /****************************/
+  prettyPrintRule[UNKNOWN_RULE] = function(rule, do_shortcuts, is_style_sheet)
   {
     return '';
   }
-  prettyPrintRule[STYLE_RULE] = function(rule, do_shortcuts)
+  prettyPrintRule[STYLE_RULE] = function(rule, do_shortcuts, is_style_sheet)
   {
-    return "<rule rule-id='" + rule[HEADER][1] + "'>" + 
-      "<selector>" + rule[HEADER][3].join(', ') + "</selector>" + 
+    const 
+    RULE_ID = 2, 
+    SELECTOR_LIST = 6;
+
+    return "<rule rule-id='" + rule[RULE_ID] + "'>" + 
+      "<selector>" + rule[SELECTOR_LIST].join(', ') + "</selector>" + 
       " {\n" + 
-      prettyPrintRule[COMMON](rule, do_shortcuts) +
+      prettyPrintRule[COMMON](rule, do_shortcuts, 0, is_style_sheet) +
       "\n}</rule>";
   }
   
-  prettyPrintRule[CHARSET_RULE] = function(rule, do_shortcuts)
+  prettyPrintRule[CHARSET_RULE] = function(rule, do_shortcuts, is_style_sheet)
   {
     return 'TODO';
   }
   
-  /*
-  e.g.: @import url("bluish.css") projection, tv;
-  IMPORT-RULE ::= "[[" STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," HREF "," MEDIA-LIST "," STYLESHEET-ID "]]"
-  */
-
-  prettyPrintRule[IMPORT_RULE] = function(rule, do_shortcuts)
+  /*  e.g.: @import url("bluish.css") projection, tv; */
+  prettyPrintRule[IMPORT_RULE] = function(rule, do_shortcuts, is_style_sheet)
   {
-    return "<import-rule rule-id='" + rule[0][1] + "' imported-sheet='" + rule[0][5] + "'>" +
-              "<span class='import-rule'>@import url(\"" + rule[0][3] + "\") " +
-              rule[0][4].join(', ') + "</span>" +
+    const
+    RULE_ID = 2,
+    MEDIA_LIST = 8,
+    HREF = 10,
+    IMPORT_STYLESHEET_ID = 11;
+
+    return "<import-rule rule-id='" + rule[RULE_ID] + 
+                  "' imported-sheet='" + rule[IMPORT_STYLESHEET_ID] + "'>" +
+              "<span class='import-rule'>@import url(\"" + rule[HREF] + "\") " +
+              rule[MEDIA_LIST].join(', ') + "</span>" +
             "</import-rule>";
   }
 
-  /*
-    MEDIA-RULE ::= "[[" MEDIA-RULE-HEADER "],[" RULE-LIST "]]"
-    MEDIA-RULE-HEADER ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," MEDIA-LIST
-  */
 
-  prettyPrintRule[MEDIA_RULE] = function(rule, do_shortcuts)
+  prettyPrintRule[MEDIA_RULE] = function(rule, do_shortcuts, is_style_sheet)
   {
+    const
+    TYPE = 0,
+    RULE_ID = 2,
+    MEDIA_LIST = 8,
+    STYLESHEETRULE_RULE_LIST = 9;
+
     var ret = '', _rule = null, header = null, i = 0;
-    for( ; _rule = rule[1][i]; i++)
+    for( ; _rule = rule[STYLESHEETRULE_RULE_LIST][i]; i++)
     {
-      ret += prettyPrintRule[_rule[RULE_HEADER][2]](_rule, do_shortcuts);
+      ret += prettyPrintRule[_rule[TYPE]](_rule, do_shortcuts, is_style_sheet);
     }
-    return "<media-rule rule-id='" + rule[0][1] + "'>" +
-              "<media>@media " + rule[0][3].join(', ') + "   </media>{" +
+    return "<media-rule rule-id='" + rule[RULE_ID] + "'>" +
+              "<media>@media " + rule[MEDIA_LIST].join(', ') + "   </media>{" +
               "<rules>" + ret + "</rules>" +
             "}</media-rule>";
   }
 
-  /*
-  FONT_FACE-RULE ::= "["
-                     "[" FONT_FACE-RULE-HEADER "]"
-                     "[" INDEX-LIST "]"
-                     "[" VALUE-LIST "]"
-                     "[" PRIORITY-LIST "]"
-                   "]"
-  FONT_FACE-RULE-HEADER ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE
-  */
-
-  prettyPrintRule[FONT_FACE_RULE] = function(rule, do_shortcuts)
+  prettyPrintRule[FONT_FACE_RULE] = function(rule, do_shortcuts, is_style_sheet)
   {
-
-    return "<font-face-rule rule-id='" + rule[HEADER][1] + "'>" +
+    const RULE_ID = 2;
+    return "<font-face-rule rule-id='" + rule[RULE_ID] + "'>" +
               "<at>@font-face</at> {\n" +
-              prettyPrintRule[COMMON](rule, do_shortcuts) +
+              prettyPrintRule[COMMON](rule, do_shortcuts, 0, is_style_sheet) +
             "\n}</font-face-rule>";
   }
-
-  /*
-  PAGE-RULE ::= "["
-                  "[" PAGE-RULE-HEADER "]"
-                  "[" INDEX-LIST "]"
-                  "[" VALUE-LIST "]"
-                  "[" PRIORITY-LIST "]"
-                "]"
-  PAGE-RULE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SPECIFICITY "," PAGE-SELECTOR "," PSEUDO-CLASS
-  */
   
-  prettyPrintRule[PAGE_RULE] = function(rule, do_shortcuts)
+  prettyPrintRule[PAGE_RULE] = function(rule, do_shortcuts, is_style_sheet)
   {
-    return "<page-rule rule-id='" + rule[HEADER][1] + "'>" +
+
+    const RULE_ID = 2, PSEUDO_CLASS = 12;
+
+    var pseudo_class_map =
+    {
+      '1': ':first',
+      '2': ':left',
+      '4': ':right'
+    }
+
+    return "<page-rule rule-id='" + rule[RULE_ID] + "'>" +
               "<at>@page</at>" + 
-              ( rule[0][4] ? "<selector>" + rule[HEADER][4] + "</selector>" : "" ) + 
-              " {\n" +
-              prettyPrintRule[COMMON](rule, do_shortcuts) +
+              ( rule[PSEUDO_CLASS] 
+                ? "<selector> " + pseudo_class_map[rule[PSEUDO_CLASS]] + "</selector>" 
+                : "" ) + " {\n" +
+              prettyPrintRule[COMMON](rule, do_shortcuts, 0, is_style_sheet) +
             "\n}</page-rule>";
   }
   
   
   this.prettyPrintRules = function(rules, do_shortcuts)
   {
+    const TYPE = 0;
     var ret = '', rule = null, header = null, i = 0;
     if(rules.length)
     {
       for( ; rule = rules[i]; i++)
       {
-        ret += prettyPrintRule[rule[RULE_HEADER][2]](rule, do_shortcuts);
+        ret += prettyPrintRule[rule[TYPE]](rule, do_shortcuts, true);
       }
-      return "<stylesheet stylesheet-id='" + rules[0][0][0] + "' runtime-id='" + rules['runtime-id'] + "'>" 
+      return "<stylesheet stylesheet-id='" + rules[0][0][0] + "' runtime-id='" + rules.runtime_id + "'>" 
                 + ret + "</stylesheet>";
     }
-    else
-    {
-      return "<div class='info-box'><p>" + 
-                  ui_strings.S_INFO_STYLESHEET_HAS_NO_RULES + "</p></div>";
-    }
+    return "<div class='info-box'><p>" + 
+                ui_strings.S_INFO_STYLESHEET_HAS_NO_RULES + "</p></div>";
   }
-
-  var prettyPrintCat = [];
   
-  var prettyPrintCat_2 = [];
+  var _pretty_print_cat = [];
   
 
-  prettyPrintCat_2[COMP_STYLE] = prettyPrintCat[COMP_STYLE] = function(data, search_active)
+  _pretty_print_cat[COMP_STYLE] = function(data, search_active)
   {
     
     var ret = "", i = 0, index = 0, prop = '', value = '';
@@ -714,18 +706,19 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     return ret;
   }
   
-  prettyPrintCat_2[CSS] = function(data, search_active)
+  _pretty_print_cat[CSS] = function(data, search_active)
   {
     var 
-      node_casc = null, 
-      i = 0, 
-      ret = '', 
-      j = 0, 
-      css_style_dec = null,
-      rt_id = data.rt_id,
-      node_casc_header = null,
-      style_dec_list = null,
-      style_dec = null;
+    node_casc = null, 
+    i = 0, 
+    ret = '', 
+    j = 0, 
+    css_style_dec = null,
+    rt_id = data.rt_id,
+    element_name = null,
+    style_dec_list = null,
+    style_dec = null;
+
 
     for( ; node_casc = data[i]; i++)
     {
@@ -737,71 +730,81 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
 
       if( i )
       {
-        ret += "<h2>inherited from <b>" + node_casc[0][1] + "</b></h2>";
+        ret += "<h2>inherited from <b>" + node_casc[ELEMENT_NAME] + "</b></h2>";
       }
       
-      node_casc_header = node_casc[0];
-      style_dec_list = node_casc[1];
+      // TODO
+      element_name = node_casc[ELEMENT_NAME];
+      style_dec_list = node_casc[STYLE_LIST];
       for( j = 0; style_dec = style_dec_list[j]; j++)
       {
-        ret += prettyPrintStyleDec[style_dec[0][0]](rt_id, node_casc_header, style_dec, search_active);
+        ret += prettyPrintStyleDec[style_dec[ORIGIN]](rt_id, element_name, style_dec, search_active);
       }
 
     }
     return ret;
   }
   
-  // for protocol-4
+  /* to print a matching style rule */
+  /**********************************/
+
   const
-  PROT_4_USER_AGENT = 1, // default
-  PROT_4_LOCAL = 2, // user
-  PROT_4_AUTHOR = 3, // author
-  PROT_4_ELEMENT = 4; // inline
+  ORIGIN_USER_AGENT = 1, // default
+  ORIGIN_LOCAL = 2, // user
+  ORIGIN_AUTHOR = 3, // author
+  ORIGIN_ELEMENT = 4; // inline
   
   var prettyPrintStyleDec = [];
 
 
-  prettyPrintStyleDec[PROT_4_USER_AGENT] = 
-  function(rt_id, node_casc_header, style_dec, search_active)
+  prettyPrintStyleDec[ORIGIN_USER_AGENT] = 
+  function(rt_id, element_name, style_dec, search_active)
   {
-    return "<rule>" +
-            "<stylesheet-link class='pseudo'>default values</stylesheet-link>" +
-      "<inline-style>" + node_casc_header[1] + "</inline-style>" + 
-      " {\n" + 
-          prettyPrintRule[COMMON](style_dec, false, search_active) +
-      "\n}</rule>";
+    if( !search_active || style_dec[HAS_MATCHING_SEARCH_PROPS]  )
+    {
+      return "<rule>" +
+              "<stylesheet-link class='pseudo'>default values</stylesheet-link>" +
+        "<selector>" + element_name + "</selector>" + 
+        " {\n" + 
+            prettyPrintRule[COMMON](style_dec, false, search_active) +
+        "\n}</rule>";
+    }
+    return "";
   }
 
-  prettyPrintStyleDec[PROT_4_LOCAL] = 
-  function(rt_id, node_casc_header, style_dec, search_active)
+  prettyPrintStyleDec[ORIGIN_LOCAL] = 
+  function(rt_id, element_name, style_dec, search_active)
   {
-    return "<rule>" +
-            "<stylesheet-link class='pseudo'>local user stylesheet</stylesheet-link>" +
-      "<inline-style>" + style_dec[0][2] + "</inline-style>" + 
-      " {\n" + 
-          prettyPrintRule[COMMON](style_dec, false, search_active) +
-      "\n}</rule>";
+    if( !search_active || style_dec[HAS_MATCHING_SEARCH_PROPS]  )
+    {
+      return "<rule>" +
+              "<stylesheet-link class='pseudo'>local user stylesheet</stylesheet-link>" +
+        "<selector>" + style_dec[SELECTOR] + "</selector>" +  
+        " {\n" + 
+            prettyPrintRule[COMMON](style_dec, false, search_active) +
+        "\n}</rule>";
+    }
+    return "";
   }
 
-
-  prettyPrintStyleDec[PROT_4_AUTHOR] = 
-  function(rt_id, node_casc_header, style_dec, search_active)
-  {
+  prettyPrintStyleDec[ORIGIN_AUTHOR] = 
+  function(rt_id, element_name, style_dec, search_active)
+  {  
     var 
     ret = '', 
     header = null, 
     i = 0, 
-    sheet = self.getSheetWithObjId(rt_id, style_dec[HEADER][1]);
+    sheet = self.getSheetWithObjId(rt_id, style_dec[STYLESHEET_ID]);
   
     if( sheet )
     {
       if( !search_active || style_dec[HAS_MATCHING_SEARCH_PROPS]  )
       {
-        ret += "<rule rule-id='" + style_dec[HEADER][2] + "'>" + 
-          "<stylesheet-link rt-id='" + sheet[0] + "'"+
-            " index='" + sheet[1] + "' handler='display-rule-in-stylesheet'>" + sheet[2] + 
+        ret += "<rule rule-id='" + style_dec[RULE_ID] + "'>" + 
+          "<stylesheet-link rt-id='" + rt_id + "'"+
+            " index='" + sheet.index + "' handler='display-rule-in-stylesheet'>" + sheet.name + 
           "</stylesheet-link>" +
-          "<selector>" + style_dec[HEADER][5] + "</selector>" + 
+          "<selector>" + style_dec[SELECTOR] + "</selector>" + 
           " {\n" + 
               prettyPrintRule[COMMON](style_dec, false, search_active) +
           "\n}</rule>";
@@ -810,22 +813,27 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     else
     {
       opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
-        'stylesheet is missing in stylesheets, prettyPrintStyleDec[PROT_4_AUTHOR]');
+        'stylesheet is missing in stylesheets, prettyPrintStyleDec[ORIGIN_AUTHOR]');
     }
 
     return ret;
   }
 
-
-  prettyPrintStyleDec[PROT_4_ELEMENT] = 
-  function(rt_id, node_casc_header, style_dec, search_active)
+  prettyPrintStyleDec[ORIGIN_ELEMENT] = 
+  function(rt_id, element_name, style_dec, search_active)
   {
-    return "<rule>" + 
-      "<inline-style>element.style</inline-style>" + 
-      " {\n" + 
-          prettyPrintRule[COMMON](style_dec, false, search_active) +
-      "\n}</rule>";
+    if( !search_active || style_dec[HAS_MATCHING_SEARCH_PROPS]  )
+    {
+      return "<rule>" + 
+        "<inline-style>element.style</inline-style>" + 
+        " {\n" + 
+            prettyPrintRule[COMMON](style_dec, false, search_active) +
+        "\n}</rule>";
+    }
+    return "";
   }
+
+
 
   this.prettyPrintCat = function(cat_index, data, org_args, search_active)
   {
@@ -841,7 +849,7 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
       services['ecmascript-debugger'].getIndexMap( tag, 'json' );
       return '';
     }
-    return prettyPrintCat_2[cat_index](data, search_active);
+    return _pretty_print_cat[cat_index](data, search_active);
   }
   
   this.getStylesheets = function(rt_id, org_args)
@@ -855,10 +863,10 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
       if( !__indexMap )
       {
         var tag = tagManager.setCB(null, handleGetIndexMap, []);
-        services['ecmascript-debugger'].getIndexMap( tag, 'json' );
+        services['ecmascript-debugger'].requestCssGetIndexMap(tag);
       }
       var tag = tagManager.setCB(null, handleGetAllStylesheets, [rt_id, org_args]);
-      services['ecmascript-debugger'].getAllStylesheets( tag, rt_id, 'json' );
+      services['ecmascript-debugger'].requestCssGetAllStylesheets(tag, [rt_id]);
       return null;
     }
   }
@@ -877,13 +885,12 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
       {
         if( sheet[SHEET_OBJECT_ID] == obj_id )
         {
-          return [
-            rt_id, 
-            i, 
-            ( sheet[SHEET_HREF] && /\/([^/]*$)/.exec(sheet[SHEET_HREF])[1] 
+          return {
+            index: i, 
+            name: ( sheet[SHEET_HREF] && /\/([^/]*$)/.exec(sheet[SHEET_HREF])[1] 
               || sheet[SHEET_TITLE] 
               || 'stylesheet ' + i)
-          ];  
+          };  
         }
       }
       return null;
@@ -919,7 +926,7 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     {
       var tag = tagManager.setCB(null, handleGetRulesWithIndex, [rt_id, index, org_args]);
       var sheet_id = __sheets[rt_id][index][SHEET_OBJECT_ID];
-      services['ecmascript-debugger'].getCSSRules( tag, rt_id, sheet_id, 'json' );
+      services['ecmascript-debugger'].requestCssGetStylesheet(tag, [rt_id, sheet_id]);
       return null;
     }
     else
@@ -975,281 +982,277 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
               index == __selectedRules.index && true || false );
   }
   
-  var handleGetIndexMap = function(xml, org_args)
+  var handleGetIndexMap = function(status, message, org_args)
   {
-    var json = xml.getNodeData('index');
-    if( json )
+    const NAME_LIST = 0;
+    window.css_index_map = __indexMap = message[NAME_LIST];
+    window.inherited_props_index_list = [];
+    var prop = '', i = 0;
+    var temp = [];
+    for( ; prop = __indexMap[i]; i++)
     {
-      window.css_index_map = __indexMap = eval('(' + json +')');
-      window.inherited_props_index_list = [];
-      var prop = '', i = 0;
-      var temp = [];
-      for( ; prop = __indexMap[i]; i++)
+      temp[i] = {index: i, key : prop};
+      __initialValues[i] = css_initial_values[prop];
+      if( prop in css_inheritable_properties )
       {
-        temp[i] = {index: i, key : prop};
-        __initialValues[i] = css_initial_values[prop];
-        if( prop in css_inheritable_properties )
+        inherited_props_index_list[i] = true;
+      }
+      switch (prop)
+      {
+        case 'color':
         {
-          inherited_props_index_list[i] = true;
+          __colorIndex = i;
+          break;
         }
-        switch (prop)
+        // margin
+        case 'margin-top':
         {
-          case 'color':
-          {
-            __colorIndex = i;
-            break;
-          }
-          // margin
-          case 'margin-top':
-          {
-            SHORTHAND[i] = 1;
-            __shorthandIndexMap[i] = 'margin';
-            break;
-          }
-          case 'margin-right':
-          {
-            SHORTHAND[i] = 2;
-            __shorthandIndexMap[i] = 'margin';
-            break;
-          }
-          case 'margin-bottom':
-          {
-            SHORTHAND[i] = 3;
-            __shorthandIndexMap[i] = 'margin';
-            break;
-          }
-          case 'margin-left':
-          {
-            SHORTHAND[i] = 4;
-            __shorthandIndexMap[i] = 'margin';
-            break;
-          }
-          // padding
-          case 'padding-top':
-          {
-            SHORTHAND[i] = 1;
-            __shorthandIndexMap[i] = 'padding';
-            break;
-          }
-          case 'padding-right':
-          {
-            SHORTHAND[i] = 2;
-            __shorthandIndexMap[i] = 'padding';
-            break;
-          }
-          case 'padding-bottom':
-          {
-            SHORTHAND[i] = 3;
-            __shorthandIndexMap[i] = 'padding';
-            break;
-          }
-          case 'padding-left':
-          {
-            SHORTHAND[i] = 4;
-            __shorthandIndexMap[i] = 'padding';
-            break;
-          }
-          // border top
-          case 'border-top-width':
-          {
-            SHORTHAND[i] = 1;
-            __shorthandIndexMap[i] = 'border';          
-            break;
-          }
-          case 'border-top-style':
-          {
-            SHORTHAND[i] = 2;
-            __shorthandIndexMap[i] = 'border';          
-            break;
-          }
-          case 'border-top-color':
-          {
-            SHORTHAND[i] = 3;
-            __shorthandIndexMap[i] = 'border';
-            break;
-          }
-          // border rigth
-          case 'border-right-width':
-          {
-            SHORTHAND[i] = 4;
-            __shorthandIndexMap[i] = 'border';          
-            break;
-          }
-          case 'border-right-style':
-          {
-            SHORTHAND[i] = 5;
-            __shorthandIndexMap[i] = 'border';          
-            break;
-          }
-          case 'border-right-color':
-          {
-            SHORTHAND[i] = 6;
-            __shorthandIndexMap[i] = 'border';          
-            break;
-          }
-          // border bottom
-          case 'border-bottom-width':
-          {
-            SHORTHAND[i] = 7;
-            __shorthandIndexMap[i] = 'border';          
-            break;
-          }
-          case 'border-bottom-style':
-          {
-            SHORTHAND[i] = 8;
-            __shorthandIndexMap[i] = 'border';
-            break;
-          }
-          case 'border-bottom-color':
-          {
-            SHORTHAND[i] = 9;
-            __shorthandIndexMap[i] = 'border';          
-            break;
-          }
-          // border left
-          case 'border-left-width':
-          {
-            SHORTHAND[i] = 10;
-            __shorthandIndexMap[i] = 'border';          
-            break;
-          }
-          case 'border-left-style':
-          {
-            SHORTHAND[i] = 11;
-            __shorthandIndexMap[i] = 'border';          
-            break;
-          }
-          case 'border-left-color':
-          {
-            SHORTHAND[i] = 12;
-            __shorthandIndexMap[i] = 'border';          
-            break;
-          }
-          // background
-          case 'background-color':
-          {
-            SHORTHAND[i] = 1;
-            __shorthandIndexMap[i] = 'background';          
-            break;
-          }
-          case 'background-image':
-          {
-            SHORTHAND[i] = 2;
-            __shorthandIndexMap[i] = 'background';          
-            break;
-          }
-          case 'background-attachment':
-          {
-            SHORTHAND[i] = 3;
-            __shorthandIndexMap[i] = 'background';          
-            break;
-          }
-          case 'background-repeat':
-          {
-            SHORTHAND[i] = 4;
-            __shorthandIndexMap[i] = 'background';          
-            break;
-          }
-          case 'background-position':
-          {
-            SHORTHAND[i] = 5;
-            __shorthandIndexMap[i] = 'background';          
-            break;
-          }
-          
+          SHORTHAND[i] = 1;
+          __shorthandIndexMap[i] = 'margin';
+          break;
+        }
+        case 'margin-right':
+        {
+          SHORTHAND[i] = 2;
+          __shorthandIndexMap[i] = 'margin';
+          break;
+        }
+        case 'margin-bottom':
+        {
+          SHORTHAND[i] = 3;
+          __shorthandIndexMap[i] = 'margin';
+          break;
+        }
+        case 'margin-left':
+        {
+          SHORTHAND[i] = 4;
+          __shorthandIndexMap[i] = 'margin';
+          break;
+        }
+        // padding
+        case 'padding-top':
+        {
+          SHORTHAND[i] = 1;
+          __shorthandIndexMap[i] = 'padding';
+          break;
+        }
+        case 'padding-right':
+        {
+          SHORTHAND[i] = 2;
+          __shorthandIndexMap[i] = 'padding';
+          break;
+        }
+        case 'padding-bottom':
+        {
+          SHORTHAND[i] = 3;
+          __shorthandIndexMap[i] = 'padding';
+          break;
+        }
+        case 'padding-left':
+        {
+          SHORTHAND[i] = 4;
+          __shorthandIndexMap[i] = 'padding';
+          break;
+        }
+        // border top
+        case 'border-top-width':
+        {
+          SHORTHAND[i] = 1;
+          __shorthandIndexMap[i] = 'border';          
+          break;
+        }
+        case 'border-top-style':
+        {
+          SHORTHAND[i] = 2;
+          __shorthandIndexMap[i] = 'border';          
+          break;
+        }
+        case 'border-top-color':
+        {
+          SHORTHAND[i] = 3;
+          __shorthandIndexMap[i] = 'border';
+          break;
+        }
+        // border rigth
+        case 'border-right-width':
+        {
+          SHORTHAND[i] = 4;
+          __shorthandIndexMap[i] = 'border';          
+          break;
+        }
+        case 'border-right-style':
+        {
+          SHORTHAND[i] = 5;
+          __shorthandIndexMap[i] = 'border';          
+          break;
+        }
+        case 'border-right-color':
+        {
+          SHORTHAND[i] = 6;
+          __shorthandIndexMap[i] = 'border';          
+          break;
+        }
+        // border bottom
+        case 'border-bottom-width':
+        {
+          SHORTHAND[i] = 7;
+          __shorthandIndexMap[i] = 'border';          
+          break;
+        }
+        case 'border-bottom-style':
+        {
+          SHORTHAND[i] = 8;
+          __shorthandIndexMap[i] = 'border';
+          break;
+        }
+        case 'border-bottom-color':
+        {
+          SHORTHAND[i] = 9;
+          __shorthandIndexMap[i] = 'border';          
+          break;
+        }
+        // border left
+        case 'border-left-width':
+        {
+          SHORTHAND[i] = 10;
+          __shorthandIndexMap[i] = 'border';          
+          break;
+        }
+        case 'border-left-style':
+        {
+          SHORTHAND[i] = 11;
+          __shorthandIndexMap[i] = 'border';          
+          break;
+        }
+        case 'border-left-color':
+        {
+          SHORTHAND[i] = 12;
+          __shorthandIndexMap[i] = 'border';          
+          break;
+        }
+        // background
+        case 'background-color':
+        {
+          SHORTHAND[i] = 1;
+          __shorthandIndexMap[i] = 'background';          
+          break;
+        }
+        case 'background-image':
+        {
+          SHORTHAND[i] = 2;
+          __shorthandIndexMap[i] = 'background';          
+          break;
+        }
+        case 'background-attachment':
+        {
+          SHORTHAND[i] = 3;
+          __shorthandIndexMap[i] = 'background';          
+          break;
+        }
+        case 'background-repeat':
+        {
+          SHORTHAND[i] = 4;
+          __shorthandIndexMap[i] = 'background';          
+          break;
+        }
+        case 'background-position':
+        {
+          SHORTHAND[i] = 5;
+          __shorthandIndexMap[i] = 'background';          
+          break;
+        }
+        
 /// 'list-style-type'> || <'list-style-position'> || <'list-style-image'
-          // list-style
-          
-          case 'list-style-type':
-          {
-            SHORTHAND[i] = 1;
-            __shorthandIndexMap[i] = 'list-style';          
-            break;
-          }
-          case 'list-style-position':
-          {
-            SHORTHAND[i] = 2;
-            __shorthandIndexMap[i] = 'list-style';          
-            break;
-          }
-          case 'list-style-image':
-          {
-            SHORTHAND[i] = 3;
-            __shorthandIndexMap[i] = 'list-style';          
-            break;
-          }
-          
-          // [ [ <'font-style'> || <'font-variant'> || <'font-weight'> ]? <'font-size'> [ / <'line-height'> ]? <'font-family'> ] |
-          case 'font-style':
-          {
-            SHORTHAND[i] = 1;
-            __shorthandIndexMap[i] = 'font';          
-            break;
-          }
-          case 'font-variant':
-          {
-            SHORTHAND[i] = 2;
-            __shorthandIndexMap[i] = 'font';          
-            break;
-          }
-          case 'font-weight':
-          {
-            SHORTHAND[i] = 3;
-            __shorthandIndexMap[i] = 'font';          
-            break;
-          }
-          case 'font-size':
-          {
-            SHORTHAND[i] = 4;
-            __shorthandIndexMap[i] = 'font';          
-            break;
-          }
-          case 'line-height':
-          {
-            line_height_index = i;
-            SHORTHAND[i] = 0; // | 5
-            __shorthandIndexMap[i] = 'font';          
-            break;
-          }
-          case 'font-family':
-          {
-            SHORTHAND[i] = 6;
-            __shorthandIndexMap[i] = 'font';          
-            break;
-          }
-
-          
-
-          
-
-
+        // list-style
+        
+        case 'list-style-type':
+        {
+          SHORTHAND[i] = 1;
+          __shorthandIndexMap[i] = 'list-style';          
+          break;
+        }
+        case 'list-style-position':
+        {
+          SHORTHAND[i] = 2;
+          __shorthandIndexMap[i] = 'list-style';          
+          break;
+        }
+        case 'list-style-image':
+        {
+          SHORTHAND[i] = 3;
+          __shorthandIndexMap[i] = 'list-style';          
+          break;
         }
         
-      
-      }
-      temp.sort(function(a,b){return a.key < b.key ? -1 : a.key > b.key ? 1 : 0});
-      for( i = 0; prop = temp[i]; i++)
-      {
-        __sortedIndexMap[i] = prop.index;
+        // [ [ <'font-style'> || <'font-variant'> || <'font-weight'> ]? <'font-size'> [ / <'line-height'> ]? <'font-family'> ] |
+        case 'font-style':
+        {
+          SHORTHAND[i] = 1;
+          __shorthandIndexMap[i] = 'font';          
+          break;
+        }
+        case 'font-variant':
+        {
+          SHORTHAND[i] = 2;
+          __shorthandIndexMap[i] = 'font';          
+          break;
+        }
+        case 'font-weight':
+        {
+          SHORTHAND[i] = 3;
+          __shorthandIndexMap[i] = 'font';          
+          break;
+        }
+        case 'font-size':
+        {
+          SHORTHAND[i] = 4;
+          __shorthandIndexMap[i] = 'font';          
+          break;
+        }
+        case 'line-height':
+        {
+          line_height_index = i;
+          SHORTHAND[i] = 0; // | 5
+          __shorthandIndexMap[i] = 'font';          
+          break;
+        }
+        case 'font-family':
+        {
+          SHORTHAND[i] = 6;
+          __shorthandIndexMap[i] = 'font';          
+          break;
+        }
+
         
+
+        
+
+
       }
-      __indexMapLength = __indexMap.length;
-      if( org_args && ( !org_args[0].__call_count || org_args[0].__call_count == 1 )  )
-      {
-        org_args[0].__call_count = org_args[0].__call_count ? org_args[0].__call_count + 1 : 1;
-        org_args.callee.apply(null, org_args)
-      }
-    } 
+      
+    
+    }
+    temp.sort(function(a,b){return a.key < b.key ? -1 : a.key > b.key ? 1 : 0});
+    for( i = 0; prop = temp[i]; i++)
+    {
+      __sortedIndexMap[i] = prop.index;
+      
+    }
+    __indexMapLength = __indexMap.length;
+    if( org_args && ( !org_args[0].__call_count || org_args[0].__call_count == 1 )  )
+    {
+      org_args[0].__call_count = org_args[0].__call_count ? org_args[0].__call_count + 1 : 1;
+      org_args.callee.apply(null, org_args)
+    }
+    
   }
   
-  var handleGetRulesWithIndex = function(xml, rt_id, index, org_args)
+  var handleGetRulesWithIndex = function(status, message, rt_id, index, org_args)
   {
-    var json = xml.getNodeData('rule-list');
-
-    if( json )
+    if(status == 0)
     {
-      __rules[rt_id][index] = eval('(' + json +')');
-      __rules[rt_id][index]['runtime-id'] = rt_id;
+      __rules[rt_id][index] = message[0] || [];
+      __rules[rt_id][index].runtime_id = rt_id;
       if(org_args && !org_args[0].__call_count)
       {
         org_args[0].__call_count = 1
@@ -1258,21 +1261,20 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     } 
   }
   
-  var handleGetAllStylesheets = function(xml, rt_id, org_args)
+  var handleGetAllStylesheets = function(status, message, rt_id, org_args)
   {
-    var json = xml.getNodeData('stylesheets');
-
-    if( json )
+    const STYLESHEET_LIST = 0;
+    if(status == 0)
     {
-      __sheets[rt_id] = eval('(' + json +')');
-      __sheets[rt_id]['runtime-id'] = rt_id;
+      __sheets[rt_id] = message[STYLESHEET_LIST] || [];
+      __sheets[rt_id].runtime_id = rt_id;
       __rules[rt_id] = [];
       if(org_args && !org_args[0].__call_count )
       {
         org_args[0].__call_count = 1;
         org_args.callee.apply(null, org_args);
       }
-    }   
+    }
   }
 
   var onRuntimeDestroyed = function(msg)
@@ -1391,10 +1393,13 @@ STYLE-RULE-HEADER-MULTIPLE ::= STYLESHEET-ID "," RULE-ID "," RULE-TYPE "," SELEC
     }
     return ret.concat(dashs);
   }
+
+  
   
   messages.addListener('runtime-destroyed', onRuntimeDestroyed);
   messages.addListener('active-tab', onActiveTab);
 
   messages.addListener('reset-state', onResetState);
+  
   
 }

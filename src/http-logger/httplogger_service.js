@@ -332,5 +332,5 @@ cls.HTTPLoggerService = function(name)
   // messages.addListener('application-setup', onAplicationsetup);
 }
 
-cls.HTTPLoggerService.prototype = ServiceBase;
-new cls.HTTPLoggerService('http-logger');
+// cls.HTTPLoggerService.prototype = ServiceBase;
+// new cls.HTTPLoggerService('http-logger');

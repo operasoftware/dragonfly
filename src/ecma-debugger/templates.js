@@ -39,13 +39,13 @@
 
   this['runtime-runtime'] = function(runtime, arg_list)
   {
-    var display_uri = helpers.shortenURI(runtime['uri']);
+    var display_uri = helpers.shortenURI(runtime.uri);
 
     return  \
     [
       'cst-option', 
       runtime['title'] || display_uri.uri,
-      'rt-id', runtime['runtime-id']
+      'rt-id', runtime.runtime_id.toString()
     ].concat( display_uri.title ? ['title', display_uri.title] : [] )
     ;
   }
@@ -53,15 +53,15 @@
   this['runtime-script'] = function(runtime, arg_list)
   {
     var 
-    display_uri = helpers.shortenURI(runtime['uri']),
-    is_reloaded_window = runtimes.isReloadedWindow(runtime['window-id']),
+    display_uri = helpers.shortenURI(runtime.uri),
+    is_reloaded_window = runtimes.isReloadedWindow(runtime.window_id),
     ret = \
     [
       ['h2', runtime['title'] || display_uri.uri].
       concat( runtime.selected ? ['class', 'selected-runtime'] : [] ).
       concat( display_uri.title ? ['title', display_uri.title] : [] )
     ], 
-    scripts = runtimes.getScripts(runtime['runtime-id']),
+    scripts = runtimes.getScripts(runtime.runtime_id),
     script = null, 
     i=0,
     stopped_script_id = arg_list[0],
@@ -94,7 +94,7 @@
   this.scriptOption = function(script, selected_script_id, stopped_script_id)
   {
     var 
-    display_uri = helpers.shortenURI(script['uri']),
+    display_uri = helpers.shortenURI(script.uri),
     /* script types in the protocol: 
        "inline" | "event" | "linked" | "timeout" | "java" | "generated" | "unknown" */
     type_dict =
@@ -103,7 +103,7 @@
       "linked": ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_LINKED,
       "unknown": ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_UNKNOWN
     },
-    script_type = script['script-type'],
+    script_type = script.script_type,
     ret = \
     [
       'cst-option',
@@ -111,13 +111,13 @@
       ( 
         display_uri.uri
         ? display_uri.uri
-        : ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script['script-id'] 
+        : ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script.script_id 
       ),
-      'script-id', script['script-id']
+      'script-id', script.script_id.toString()
     ],
-    class_name = script['script-id'] == selected_script_id && 'selected' || '';
+    class_name = script.script_id == selected_script_id && 'selected' || '';
 
-    if(stopped_script_id == script['script-id'])
+    if(stopped_script_id == script.script_id)
     {
       class_name += ( class_name && ' ' || '' ) + 'stopped';
     }
@@ -132,7 +132,7 @@
       ret.splice(ret.length, 0, 'class', class_name); 
     }
     /*
-    if( script['stop-ats'].length )
+    if( script.stop_ats.length )
     {
       ret.splice(ret.length, 0, 'style', 'background-position: 0 0'); 
     }
@@ -148,17 +148,17 @@
     TITLE = 7;
 
     var 
-    display_uri = helpers.shortenURI(runtime['uri']),
+    display_uri = helpers.shortenURI(runtime.uri),
     ret = 
     [
       ['h2', runtime['title'] || display_uri.uri].
       concat( display_uri.title ? ['title', display_uri.title] : [] )
     ],
-    sheets = stylesheets.getStylesheets(runtime['runtime-id']),
+    sheets = stylesheets.getStylesheets(runtime.runtime_id),
     sheet = null, 
     i = 0, 
     container = [],
-    rt_id = runtime['runtime-id'],
+    rt_id = runtime.runtime_id,
     title = '';
 
     if(sheets)
@@ -170,7 +170,7 @@
         [
           'cst-option',
           title,
-          'runtime-id', rt_id,
+          'runtime-id', '' + rt_id,
           'index', '' + i
         ];
       }
@@ -181,7 +181,7 @@
       container = ['p', ui_strings.S_INFO_DOCUMNENT_LOADING, 'class', 'info-text'];
     }
     */
-    //container.splice(container.length, 0, 'runtime-id', runtime['runtime-id']);
+    //container.splice(container.length, 0, 'runtime-id', runtime.runtime_id);
     ret = ret.concat([container])
     
     return ret;
@@ -190,14 +190,14 @@
 
   this['runtime-dom'] = function(runtime)
   {
-    var display_uri = runtime['title'] || helpers.shortenURI(runtime['uri']).uri;
+    var display_uri = runtime['title'] || helpers.shortenURI(runtime.uri).uri;
     return (
     [
       'cst-option',
-       runtime['title'] || runtime['uri'], 
-      'runtime-id', runtime['runtime-id']
-    ].concat( dom_data.getDataRuntimeId() == runtime['runtime-id'] ? ['class', 'selected-runtime'] : [] ).
-      concat( display_uri != runtime['uri'] ? ['title', runtime['uri']] : [] ) )
+       runtime['title'] || runtime.uri, 
+      'runtime-id', runtime.runtime_id
+    ].concat( dom_data.getDataRuntimeId() == runtime.runtime_id ? ['class', 'selected-runtime'] : [] ).
+      concat( display_uri != runtime.uri ? ['title', runtime.uri] : [] ) )
   }
 
   this.checkbox = function(settingName, settingValue)

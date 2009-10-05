@@ -227,9 +227,9 @@ var DOMAttrAndTextEditor = function(nav_filters)
       {
         parent_parent = ele.parentElement.parentElement;
         // dom markup and dom tree have different markup
-        enter_state.rt_id = parent_parent.parentElement.getAttribute('rt-id')
-          || parent_parent.parentElement.parentElement.getAttribute('rt-id');
-        enter_state.obj_id = parent_parent.getAttribute('ref-id');
+        enter_state.rt_id = parseInt(parent_parent.parentElement.getAttribute('rt-id')
+          || parent_parent.parentElement.parentElement.getAttribute('rt-id'));
+        enter_state.obj_id = parseInt(parent_parent.getAttribute('ref-id'));
         enter_state.key = ele.textContent;
         enter_state.has_value = ele.nextElementSibling && 
           ele.nextElementSibling.nodeName.toLowerCase() == "value";
@@ -245,9 +245,9 @@ var DOMAttrAndTextEditor = function(nav_filters)
       {
         parent_parent = ele.parentElement.parentElement;
         // dom markup and dom tree have different markup
-        enter_state.rt_id = parent_parent.parentElement.getAttribute('rt-id')
-          || parent_parent.parentElement.parentElement.getAttribute('rt-id');
-        enter_state.obj_id = parent_parent.getAttribute('ref-id');
+        enter_state.rt_id = parseInt(parent_parent.parentElement.getAttribute('rt-id')
+          || parent_parent.parentElement.parentElement.getAttribute('rt-id'));
+        enter_state.obj_id = parseInt(parent_parent.getAttribute('ref-id'));
         enter_state.key = 
           ele.previousElementSibling 
           && ele.previousElementSibling.nodeName.toLowerCase() == "key"
@@ -265,9 +265,9 @@ var DOMAttrAndTextEditor = function(nav_filters)
       {
         parent_parent = ele.parentElement;
         // dom markup and dom tree have different markup
-        enter_state.rt_id = parent_parent.parentElement.getAttribute('rt-id')
-          || parent_parent.parentElement.parentElement.getAttribute('rt-id');
-        enter_state.obj_id = ele.getAttribute('ref-id');
+        enter_state.rt_id = parseInt(parent_parent.parentElement.getAttribute('rt-id')
+          || parent_parent.parentElement.parentElement.getAttribute('rt-id'));
+        enter_state.obj_id = parseInt(ele.getAttribute('ref-id'));
         if( re_encoded.test(ele.textContent) )
         {
           enter_state.text = decode_escape(ele.textContent);
@@ -318,7 +318,8 @@ var DOMAttrAndTextEditor = function(nav_filters)
           {
             script = 'node.setAttribute("' + crlf_encode(state.key) + '","' + 
                       crlf_encode(state.value) + '")';
-            services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
+            services['ecmascript-debugger'].requestEval(0, 
+                [state.rt_id, 0, 0, script, [["node", state.obj_id]]]);
           }
           break;
         }
@@ -327,14 +328,16 @@ var DOMAttrAndTextEditor = function(nav_filters)
           // there should never be the situation that the key is not defined
           script = 'node.setAttribute("' + crlf_encode(state.key) + '","' + 
                     crlf_encode(( state.value = this.textarea.value )) + '")';
-          services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
+          services['ecmascript-debugger'].requestEval(0, 
+              [state.rt_id, 0, 0, script, [["node", state.obj_id]]]);
           break;
         }
         case "text":
         {
           
           script = 'node.nodeValue = "' + crlf_encode( state.text = this.textarea.value ) + '"';
-          services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
+          services['ecmascript-debugger'].requestEval(0, 
+              [state.rt_id, 0, 0, script, [["node", state.obj_id]]]);
           break;
         }
       }
@@ -422,7 +425,8 @@ var DOMAttrAndTextEditor = function(nav_filters)
             if(state.key)
             {
               script = 'node.setAttribute("' + crlf_encode(state.key) + '","' + crlf_encode(state.value) + '")';
-              services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
+              services['ecmascript-debugger'].requestEval(0, 
+                  [state.rt_id, 0, 0, script, [["node", state.obj_id]]]);
               nav_target.textContent = state.key;
               break
             }
@@ -432,7 +436,8 @@ var DOMAttrAndTextEditor = function(nav_filters)
             if(state.value)
             {
               script =  'node.setAttribute("' + crlf_encode(state.key) + '","' + crlf_encode(state.value) + '")';
-              services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
+              services['ecmascript-debugger'].requestEval(0, 
+                  [state.rt_id, 0, 0, script, [["node", state.obj_id]]]);
               nav_target.textContent = '"' + state.value + '"';
               break;
             }
@@ -448,7 +453,8 @@ var DOMAttrAndTextEditor = function(nav_filters)
           case "text":
           {
             script = 'node.nodeValue = "' + crlf_encode(state.text) + '"';
-            services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
+            services['ecmascript-debugger'].requestEval(0, 
+                [state.rt_id, 0, 0, script, [["node", state.obj_id]]]);
             if( settings.dom.get('dom-tree-style') && /^\s*$/.test( state.text) ) 
             {
               nav_target.textContent = _escape(state.text);
@@ -594,7 +600,8 @@ var DOMAttrAndTextEditor = function(nav_filters)
 
     if(this.context_enter.key)
     {
-      services['ecmascript-debugger'].eval(0, state.rt_id, '', '', script, ["node", state.obj_id]);
+      services['ecmascript-debugger'].requestEval(0, 
+      [state.rt_id, 0, 0, script, [["node", state.obj_id]]]);
       state.key = this.context_enter.key;
       delete state.value;
       dom_data.update(state);
