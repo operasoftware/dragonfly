@@ -14,6 +14,11 @@ cls.ExecService = function(name)
 {
   var self = this;
 
+  this._screen_watcher_reply_cb = function(xml)
+  {
+
+  }
+
   this.onreceive = function(xml) // only called if there is a xml
   {
     if( ini.debug )
@@ -34,21 +39,33 @@ cls.ExecService = function(name)
   // events
 
 
-
-
-  this.screen_watcher = function(win_id)
+  this["screen-watcher-reply"] = function(xml)
   {
-    this.post("<exec><screen-watcher>" +
-        "<window-id>"+ window.window_manager_data.debug_context +"</window-id>" +
-        "<timeout>" + 1 + "</timeout>" +
-        "<area>" +
-          "<x>" + 20 + "</x>" + // horizontal offset
-          "<y>" + 20 + "</y>" + // vertical offset
-          "<w>" + 40 + "</w>" + // width
-          "<h>" + 40 + "</h>" + // height
-        "</area>" +
-      "</screen-watcher></exec>");
+    if(this._screen_watcher_reply_cb)
+    {
+      this._screen_watcher_reply_cb(xml);
+    }
+  }
 
+
+
+
+  this.screen_watcher = function(cb, win_id, timeout, area)
+  {
+    this._screen_watcher_reply_cb = cb || null;
+    area || (area = {x:0, y:0, w:200, h: 200} );
+    this.post("<exec>" +
+          "<screen-watcher>" +
+          "<window-id>"+ ( win_id || window.window_manager_data.debug_context ) + "</window-id>" +
+          "<timeout>" + ( timeout || 1 ) + "</timeout>" +
+          "<area>" +
+            "<x>" + area.x + "</x>" + // horizontal offset
+            "<y>" + area.y + "</y>" + // vertical offset
+            "<w>" + area.w + "</w>" + // width
+            "<h>" + area.h + "</h>" + // height
+          "</area>" +
+        "</screen-watcher>" + 
+      "</exec>");
   }
 
 

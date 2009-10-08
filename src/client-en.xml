@@ -222,6 +222,8 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./ecma-debugger/actions_dom.js"/>
 <script src="./ecma-debugger/hostspotlighter.js"/>
 
+<script src="./exec/color_picker.js"/>
+
 
 <script src="./client/client.js"/>
 <script src="./window-manager/window-manager.js"/>

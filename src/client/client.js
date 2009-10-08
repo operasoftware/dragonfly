@@ -45,7 +45,6 @@ var client = new function()
   {
     services[services.length] = service;
     services_dict[service.name] = service;
-    opera.postError(service.name)
   }
 
   /**** methods for integrated proxy ****/
@@ -359,6 +358,7 @@ var client = new function()
     new CompositeView('js_panel', ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS, layouts.js_rough_layout_panel);
     new CompositeView('dom_panel', ui_strings.M_VIEW_LABEL_COMPOSITE_DOM, layouts.dom_rough_layout_panel);
     new CompositeView('settings_new', ui_strings.S_BUTTON_LABEL_SETTINGS, layouts.settings_rough_layout);
+    new CompositeView('utils', 'Utils', layouts.utils_rough_layout);
     if( window.opera.attached != settings.general.get('window-attached') )
     {
       window.opera.attached = settings.general.get('window-attached') || false;
@@ -570,16 +570,24 @@ ui_framework.layouts.network_rough_layout =
     children: [ { height: 1000, tabs: ['request_list'] } ] 
 }
 
+ui_framework.layouts.utils_rough_layout =
+{
+    dir: 'v',
+    width: 1000,
+    height: 1000,
+    children: [ { height: 1000, tabs: ['color_picker'] } ] 
+}
+
 ui_framework.layouts.main_layout =
 {
   id: 'main-view', 
-  tabs: ['dom_new', 'js_new', 'network_panel', 'console_new', 'settings_new']
+  tabs: ['dom_new', 'js_new', 'network_panel', 'console_new', 'settings_new', 'utils']
 }
 
 ui_framework.layouts.panel_layout =
 {
   id: 'main-view', 
-  tabs: ['dom_panel', 'js_panel', 'network_panel', 'console_new', 'settings_new']
+  tabs: ['dom_panel', 'js_panel', 'network_panel', 'console_new', 'settings_new', 'utils']
 }
 
 
