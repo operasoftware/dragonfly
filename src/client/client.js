@@ -45,6 +45,7 @@ var client = new function()
   {
     services[services.length] = service;
     services_dict[service.name] = service;
+    opera.postError(service.name)
   }
 
   /**** methods for integrated proxy ****/
@@ -187,6 +188,7 @@ var client = new function()
           {
             if(!is_event_loop)
             {
+              window.client.scope_proxy = "dragonkeeper";
               command_name = "/send-command/";
               is_event_loop = true;
               setTimeout(function(){

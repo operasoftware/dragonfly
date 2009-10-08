@@ -9,7 +9,7 @@ var cls = window.cls || ( window.cls = {} );
   * @constructor 
   * @extends ServiceBase
   */
-/*
+/* */
 cls.ExecService = function(name)
 {
   var self = this;
@@ -36,12 +36,25 @@ cls.ExecService = function(name)
 
 
 
-  
-
-
-  this.postAction = function(action)
+  this.screen_watcher = function(win_id)
   {
-    this.post("<exec><action>" + action + "</action></exec>");
+    this.post("<exec><screen-watcher>" +
+        "<window-id>"+ window.window_manager_data.debug_context +"</window-id>" +
+        "<timeout>" + 1 + "</timeout>" +
+        "<area>" +
+          "<x>" + 20 + "</x>" + // horizontal offset
+          "<y>" + 20 + "</y>" + // vertical offset
+          "<w>" + 40 + "</w>" + // width
+          "<h>" + 40 + "</h>" + // height
+        "</area>" +
+      "</screen-watcher></exec>");
+
+  }
+
+
+  this.postAction = function(action, param)
+  {
+    this.post("<exec><action><name>" + action + "</name><param>" + param + "</param></action></exec>");
   }
 
 
@@ -63,6 +76,8 @@ cls.ExecService = function(name)
 cls.ExecService.prototype = ServiceBase;
 new cls.ExecService('exec');
 
+
+/* *
 var cls = window.cls || ( window.cls = {} );
 
 // for testing the window manager service
