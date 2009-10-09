@@ -872,6 +872,7 @@ d
 {
   border-collapse: collapse;
   border: 1px solid #ccc;
+  cursor: crosshair;
 }
 
 #table-container td
@@ -879,4 +880,11 @@ d
   line-height: 1px;
   padding: 0;
   xborder: 1px solid #ccc;
+  
+}
+
+#center-color
+{
+  width: 180px;
+  height: 30px;
 }

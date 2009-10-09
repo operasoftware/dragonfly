@@ -7,10 +7,17 @@ var cls = window.cls || ( window.cls = {} );
 
 cls.ColorPicker = function(id, name, container_class)
 {
+  const 
+  DELTA_SCALE = 5, 
+  MAX_DIMENSION = 350,
+  MAX_PIXEL = 33;
+  
   var self = this;
 
   this._container = null;
   this._screenshot_element = null;
+
+  this._colors = new Colors();
 
   this.createView = function(container)
   {
@@ -20,23 +27,46 @@ cls.ColorPicker = function(id, name, container_class)
       "<div class='padding'>" +
         "<h1>Color Picker</h1>" +
         "<p><label><input type='checkbox' handler='utils-color-picker'/> color picker</label></p>" +
-        "<p><select id='scale-select-container' handler='update-color-picker-scale'></select></p>" +
-        "<div id='table-container'></div>" +
-        "<pre></pre>" +
+        "<p><label>dimensions: <select id='color-picker-area' " +
+            "handler='update-area'></select></label></p>" +
+        "<p><label>scale: <select id='color-picker-scale' " +
+            "handler='update-color-picker-scale'></select></label></p>" +
+        "<div id='table-container' handler='color-picker-picked'></div>" +
+        "<h2>center color</h2>" +
+        "<div id='center-color'></div>" +
+        "<pre id='center-color-values'></pre>" +
       "</div>";
     this._create_table();
     this._create_scale_select();
-
+    this._create_dimesion_select();
   }
 
   this._width = 0;
   this._height = 0;
-  this._scale = 30;
+  this._scale = 35;
 
   this.update_scale = function(scale)
   {
     this._scale = scale;
     this._create_table();
+  }
+
+  this.update_color_display = function()
+  {
+    this.get_dimesions();
+    if(this._scale * this._width > MAX_DIMENSION)
+    {
+      this._scale = DELTA_SCALE;
+      while((this._scale + DELTA_SCALE) * this._width <= MAX_DIMENSION)
+      {
+        this._scale += DELTA_SCALE;
+      }
+    }
+    if(this.isvisible())
+    {
+      this._create_table();
+      this._create_scale_select();
+    }
   }
 
   this.get_dimesions = function()
@@ -48,20 +78,24 @@ cls.ColorPicker = function(id, name, container_class)
 
   this._create_scale_select = function()
   {
-    const
-    DELTA = 5,
-    MAX_DIMENSION = 350;
     
-    var 
-    markup = "",
-    max_scale = MAX_DIMENSION / this._width >> 0,
-    i = DELTA;
-
-    for( ; i  < max_scale ; i += DELTA)
+    var markup = "", max_scale = MAX_DIMENSION / this._width >> 0, i = DELTA_SCALE;
+    for( ; i  <= max_scale ; i += DELTA_SCALE)
     {
       markup += "<option" +  ( i == this._scale && " selected='selected'" || "" ) + ">" + i + "</option>";
     }
-    document.getElementById('scale-select-container').innerHTML = markup;
+    document.getElementById('color-picker-scale').innerHTML = markup;
+  }
+
+  this._create_dimesion_select = function()
+  {
+    for( var markup = "", i = 3; i <= MAX_PIXEL; i += 2 )
+    {
+      markup += "<option value='" + i + "'" +
+        ( i == this._width && " selected='selected'" || "" ) + ">" + 
+        i + " x " + i + "</option>";
+    }
+    document.getElementById('color-picker-area').innerHTML = markup;
   }
 
   this._create_table = function()
@@ -84,10 +118,11 @@ cls.ColorPicker = function(id, name, container_class)
     pixel_count = this._width * this._height,
     img_data = window.color_picker_data.get_data(), 
     tds = document.getElementById('table-container').getElementsByTagName('td'), 
-    i = 0,
-    cur = 0;
+    i = ( ( ( pixel_count / 2 >> 0 ) ) + 1 ) * 4,
+    cur = 0,
+    center_color = [img_data[i + 0], img_data[i + 1], img_data[i + 2]];
       
-    for( ; i < pixel_count; i++)
+    for( i = 0 ; i < pixel_count; i++)
     {
       cur = 4 * i;
       tds[i].style.backgroundColor = "rgb(" + 
@@ -95,10 +130,35 @@ cls.ColorPicker = function(id, name, container_class)
           img_data[cur + 1] + "," + 
           img_data[cur + 2] +")";
     }
+    
+    this.update_center_color(center_color);
+
+
+  }
+
+  this.update_center_color = function(color)
+  {
+    if(this.isvisible())
+    {
+      this._colors[typeof color == "string" && "setHex" || "setRGB"](color);
+
+      var 
+      rgb = this._colors.getRGB(),
+      hsl = this._colors.getHSL(),
+      hex = this._colors.getHex();
+
+      document.getElementById('center-color').style.backgroundColor = "#" + hex;
+      document.getElementById('center-color-values').textContent = 
+        "rgb: " + rgb.join(", ") + "\n" +
+        "hsl: " + hsl[0] + ", " + hsl[1] + "%, " + hsl[2] + "%\n" +
+        "hex: " + "#" + hex;
+    }
   }
 
   this.init(id, name, container_class);
 }
+
+
 
 var color_picker_data = new function()
 {
@@ -113,8 +173,8 @@ var color_picker_data = new function()
   this._color_picker_rt_id = 0;
   this._interval = 0;
   this._is_active = false;
-  this._width = 9;
-  this._height = 9;
+  this._width = 7;
+  this._height = 7;
   this._delta = this._height / 2 << 0;
   this._x = 0;
   this._y = 0;
@@ -136,6 +196,14 @@ var color_picker_data = new function()
   this.get_data = function()
   {
     return this._data;
+  }
+
+  this.update_area = function(dimension)
+  {
+    this._width = this._height = dimension;
+    this._delta = this._height / 2 << 0;
+    this._set_canavas_dimensions();
+    window.views.color_picker.update_color_display();
   }
 
   this._set_canavas_dimensions = function()
@@ -340,6 +408,7 @@ var color_picker_data = new function()
       {
         document.addEventListener("mousemove", mousemove_handler, false);
         document.addEventListener("click", click_handler, true);
+        // document.documentElement.style.cursor="crosshair !important";
         mousemove_is_listening = true;
         is_setup = true;
       };
@@ -385,4 +454,14 @@ eventHandlers.change['utils-color-picker'] = function(event, target)
 eventHandlers.change["update-color-picker-scale"] = function(event, target)
 {
   window.views.color_picker.update_scale(parseInt(target.value));
+}
+
+eventHandlers.change["update-area"] = function(event, target)
+{
+  window.color_picker_data.update_area(parseInt(target.value));
+}
+
+eventHandlers.click["color-picker-picked"] = function(event, target)
+{
+  window.views.color_picker.update_center_color(event.target.style.backgroundColor.replace('#', ''));
 }
