@@ -868,3 +868,15 @@ d
   text-align: left;
 }
 
+#table-container table
+{
+  border-collapse: collapse;
+  border: 1px solid #ccc;
+}
+
+#table-container td
+{
+  line-height: 1px;
+  padding: 0;
+  xborder: 1px solid #ccc;
+}
