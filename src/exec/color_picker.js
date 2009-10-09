@@ -24,18 +24,18 @@ cls.ColorPicker = function(id, name, container_class)
     _container = container;
     this.get_dimesions();
     container.innerHTML = 
-      "<div class='padding'>" +
-        "<h1>Color Picker</h1>" +
-        "<p><label><input type='checkbox' handler='utils-color-picker'/> color picker</label></p>" +
-        "<p><label>dimensions: <select id='color-picker-area' " +
-            "handler='update-area'></select></label></p>" +
-        "<p><label>scale: <select id='color-picker-scale' " +
-            "handler='update-color-picker-scale'></select></label></p>" +
-        "<div id='table-container' handler='color-picker-picked'></div>" +
-        "<h2>center color</h2>" +
-        "<div id='center-color'></div>" +
-        "<pre id='center-color-values'></pre>" +
-      "</div>";
+    "<div class='padding'>" +
+      "<h1>Color Picker</h1>" +
+      "<p><label><input type='checkbox' handler='utils-color-picker'/> color picker</label></p>" +
+      "<p><label>dimensions: <select id='color-picker-area' " +
+          "handler='update-area'></select></label></p>" +
+      "<p><label>scale: <select id='color-picker-scale' " +
+          "handler='update-color-picker-scale'></select></label></p>" +
+      "<div id='table-container' handler='color-picker-picked'></div>" +
+      "<h2>center color</h2>" +
+      "<div id='center-color'></div>" +
+      "<pre id='center-color-values'></pre>" +
+    "</div>";
     this._create_table();
     this._create_scale_select();
     this._create_dimesion_select();
@@ -181,10 +181,9 @@ var color_picker_data = new function()
   this._count_no_change = 0;
   this._intervall = INTERVAL;
 
-  this._screenshot_element = null; //document.createElement('img'); 
-  //this._screenshot_element.onload = function(){opera.postError('screenshot loaded')};
-  this._canvas_source = null; //document.createElement('canvas'); 
-  this._ctx_source =  null; //this._canvas_source.getContext('2d');
+  this._screenshot_element = null; 
+  this._canvas_source = null; 
+  this._ctx_source =  null;
 
   var self = this;
 
@@ -251,7 +250,6 @@ var color_picker_data = new function()
       var tag = tagManager.setCB(this, this.register_color_picker, [this._top_rt_id]);
       services['ecmascript-debugger'].eval(tag, this._top_rt_id, '', '', script);
     }
-
   }
 
   this.register_color_picker = function(xml, rt_id)
@@ -408,7 +406,6 @@ var color_picker_data = new function()
       {
         document.addEventListener("mousemove", mousemove_handler, false);
         document.addEventListener("click", click_handler, true);
-        // document.documentElement.style.cursor="crosshair !important";
         mousemove_is_listening = true;
         is_setup = true;
       };
@@ -427,8 +424,6 @@ var color_picker_data = new function()
   };
   
 
-
-  
   this.init = function()
   {
     this["return new ColorPicer()"] = 
