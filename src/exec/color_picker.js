@@ -32,7 +32,15 @@ cls.ColorPicker = function(id, name, container_class)
       "<p><label>scale: <select id='color-picker-scale' " +
           "handler='update-color-picker-scale'></select></label></p>" +
       "<div id='table-container' handler='color-picker-picked'></div>" +
+      // "<div id='table-container-debug' ></div>" +
       "<h2>center color</h2>" +
+      "<p><label>number of pixel for the color: <select handler='update-average'>" +
+        "<option value='1'>1 x 1</option>" +
+        "<option value='3'>3 x 3</option>" +
+        "<option value='5' selected='selected'>5 x 5</option>" +
+        "<option value='7'>7 x 7</option>" +
+        "<option value='9'>9 x 9</option>" +
+        "</select></label></p>" +
       "<div id='center-color'></div>" +
       "<pre id='center-color-values'></pre>" +
     "</div>";
@@ -50,6 +58,17 @@ cls.ColorPicker = function(id, name, container_class)
     this._scale = scale;
     this._create_table();
   }
+
+  this._average = 0;
+  this._average_delta = 0;
+
+  this.update_average = function(average)
+  {
+    this._average = average;
+    this._average_delta = average/2 >> 0;
+  }
+  // move to init call
+  this.update_average(5);
 
   this.update_color_display = function()
   {
@@ -110,6 +129,41 @@ cls.ColorPicker = function(id, name, container_class)
     tr = markup = "<tr>" + markup + "</tr>";
     for( i = 1; i < this._height && ( markup += tr ); i++);
     document.getElementById('table-container').innerHTML = "<table>" + markup + "</table>";
+    //document.getElementById('table-container-debug').innerHTML = "<table>" + markup + "</table>";
+    
+    var tds = document.getElementById('table-container').getElementsByTagName('td'), td = null;
+    for( i=0; td = tds[i]; i++)
+    {
+      td.setAttribute('data-index', i);
+    }
+  }
+
+  var debug_color = function(_colors)
+  {
+    var tds = document.getElementById('table-container-debug').getElementsByTagName('td'),
+      td = null, i =0, cur = 0;
+    for(;td = tds[i]; i++)
+    {
+      
+
+        //cur = 4 * i;
+        //opera.postError(cur +' '+ _colors.length +' '+ i+' '+ self._width +' '+ self._average)
+        if( cur < _colors.length && (i % self._width) < self._average)
+      {
+
+        tds[i].style.backgroundColor = "rgb(" + 
+            _colors[cur + 0] + "," + 
+            _colors[cur + 1] + "," + 
+            _colors[cur + 2] +")";
+        cur += 4;
+      }
+      else
+      {
+         tds[i].style.backgroundColor = "transparent";
+      }
+      
+      
+    }
   }
 
   this.update_screenshot = function()
@@ -118,9 +172,10 @@ cls.ColorPicker = function(id, name, container_class)
     pixel_count = this._width * this._height,
     img_data = window.color_picker_data.get_data(), 
     tds = document.getElementById('table-container').getElementsByTagName('td'), 
-    i = ( ( ( pixel_count / 2 >> 0 ) ) + 1 ) * 4,
-    cur = 0,
-    center_color = [img_data[i + 0], img_data[i + 1], img_data[i + 2]];
+    i = 0, // ( ( ( pixel_count / 2 >> 0 ) ) + 1 ) * 4,
+    cur = 0; //,
+    //center_color = [img_data[i + 0], img_data[i + 1], img_data[i + 2]];
+    //opera.postError('center color: '+ center_color);
       
     for( i = 0 ; i < pixel_count; i++)
     {
@@ -131,16 +186,63 @@ cls.ColorPicker = function(id, name, container_class)
           img_data[cur + 2] +")";
     }
     
-    this.update_center_color(center_color);
+    this.update_center_color(/*center_color*/);
 
 
   }
 
-  this.update_center_color = function(color)
+  this.update_center_color = function(index)
   {
     if(this.isvisible())
     {
-      this._colors[typeof color == "string" && "setHex" || "setRGB"](color);
+      index || ( index = this._width * this._height / 2 >> 0 );
+      var 
+      x = ( index % this._width ) - this._average_delta,
+      y = ( index / this._width >> 0 ) - this._average_delta,
+      w = this._average,
+      h = this._average;
+
+      if( x < 0 )
+      {
+        w += x;
+        x = 0;
+      }
+      if( y < 0 )
+      {
+        h += y;
+        y = 0;
+      }
+      if( x + w > this._width )
+      {
+        w = this._width - x;
+      }
+      if( y + h > this._height )
+      {
+        h = this._height - y;
+      }
+      var 
+      color = window.color_picker_data.get_area_data(x, y, w, h),
+      r = 0, 
+      g = 0, 
+      b = 0, 
+      i = 0;
+      var debug_r=[],debug_g=[],debug_b=[];
+      //debug_color(color)
+      for( ; i < color.length; i += 4)
+      {
+        r += color[i+0];
+        g += color[i+1];
+        b += color[i+2];
+      };
+      i /= 4;
+      /*
+      opera.postError('i: '+i)
+        opera.postError(debug_r)
+        opera.postError(debug_g)
+        opera.postError(debug_b)
+      */
+      //opera.postError('average: '+[r/i, g/i, b/i])
+      this._colors.setRGB([r/i>>0, g/i>>0, b/i>>0]);
 
       var 
       rgb = this._colors.getRGB(),
@@ -195,6 +297,17 @@ var color_picker_data = new function()
   this.get_data = function()
   {
     return this._data;
+  }
+
+  this.get_area_data = function(x, y, w, h)
+  {
+    return this._ctx_source.getImageData(x, y, w, h).data;
+    for( var pos = y * this._width + x, i = 0, ret = []; i < h; i++)
+    {
+      ret = ret.concat(this._data.slice(pos * 4, (pos + w) * 4));
+      pos += this._width;
+    }
+    return ret;
   }
 
   this.update_area = function(dimension)
@@ -456,7 +569,14 @@ eventHandlers.change["update-area"] = function(event, target)
   window.color_picker_data.update_area(parseInt(target.value));
 }
 
+eventHandlers.change["update-average"] = function(event, target)
+{
+  window.views.color_picker.update_average(parseInt(target.value));
+}
+
+
+
 eventHandlers.click["color-picker-picked"] = function(event, target)
 {
-  window.views.color_picker.update_center_color(event.target.style.backgroundColor.replace('#', ''));
+  window.views.color_picker.update_center_color(parseInt(event.target.getAttribute('data-index')));
 }

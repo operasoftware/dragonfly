@@ -871,7 +871,7 @@ d
 #table-container table
 {
   border-collapse: collapse;
-  border: 1px solid #ccc;
+  border: 1px solid #666;
   cursor: crosshair;
 }
 
@@ -887,4 +887,11 @@ d
 {
   width: 180px;
   height: 30px;
+}
+
+#table-container-debug
+{
+  position:absolute;
+  right:0;
+  top:0;
 }
