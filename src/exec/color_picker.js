@@ -9,66 +9,48 @@ cls.ColorPicker = function(id, name, container_class)
 {
   const 
   DELTA_SCALE = 5, 
+  SCALE = 35,
   MAX_DIMENSION = 350,
-  MAX_PIXEL = 33;
+  MAX_PIXEL = 33,
+  AVERAGE_PIXEL_COUNT = 5;
   
   var self = this;
 
   this._container = null;
   this._screenshot_element = null;
-
   this._colors = new Colors();
+  this._width = 0;
+  this._height = 0;
+  this._scale = SCALE;
+  this._average = 0;
+  this._average_delta = 0;
 
   this.createView = function(container)
   {
     _container = container;
     this.get_dimesions();
-    container.innerHTML = 
-    "<div class='padding'>" +
-      "<h1>Color Picker</h1>" +
-      "<p><label><input type='checkbox' handler='utils-color-picker'/> color picker</label></p>" +
-      "<p><label>dimensions: <select id='color-picker-area' " +
-          "handler='update-area'></select></label></p>" +
-      "<p><label>scale: <select id='color-picker-scale' " +
-          "handler='update-color-picker-scale'></select></label></p>" +
-      "<div id='table-container' handler='color-picker-picked'></div>" +
-      // "<div id='table-container-debug' ></div>" +
-      "<h2>center color</h2>" +
-      "<p><label>number of pixel for the color: <select handler='update-average'>" +
-        "<option value='1'>1 x 1</option>" +
-        "<option value='3'>3 x 3</option>" +
-        "<option value='5' selected='selected'>5 x 5</option>" +
-        "<option value='7'>7 x 7</option>" +
-        "<option value='9'>9 x 9</option>" +
-        "</select></label></p>" +
-      "<div id='center-color'></div>" +
-      "<pre id='center-color-values'></pre>" +
-    "</div>";
-    this._create_table();
-    this._create_scale_select();
-    this._create_dimesion_select();
+    container.render(window.templates.color_picker(
+          this._width, this._height, this._scale, this._scale, MAX_PIXEL, 
+          this._scale, DELTA_SCALE, MAX_DIMENSION));
+    this.update_screenshot();
   }
-
-  this._width = 0;
-  this._height = 0;
-  this._scale = 35;
 
   this.update_scale = function(scale)
   {
     this._scale = scale;
-    this._create_table();
+    this._update_table_markup();
   }
 
-  this._average = 0;
-  this._average_delta = 0;
+  this.get_average = function()
+  {
+    return this._average;
+  }
 
   this.update_average = function(average)
   {
     this._average = average;
     this._average_delta = average/2 >> 0;
   }
-  // move to init call
-  this.update_average(5);
 
   this.update_color_display = function()
   {
@@ -83,8 +65,8 @@ cls.ColorPicker = function(id, name, container_class)
     }
     if(this.isvisible())
     {
-      this._create_table();
-      this._create_scale_select();
+      this._update_table_markup();
+      this._update_scale_select();
     }
   }
 
@@ -95,75 +77,23 @@ cls.ColorPicker = function(id, name, container_class)
     this._height = area.height;
   }
 
-  this._create_scale_select = function()
+  this._update_scale_select = function()
   {
-    
-    var markup = "", max_scale = MAX_DIMENSION / this._width >> 0, i = DELTA_SCALE;
-    for( ; i  <= max_scale ; i += DELTA_SCALE)
-    {
-      markup += "<option" +  ( i == this._scale && " selected='selected'" || "" ) + ">" + i + "</option>";
-    }
-    document.getElementById('color-picker-scale').innerHTML = markup;
+    document.getElementById('color-picker-scale').clearAndRender(
+        window.templates.color_picker_create_scale_select(
+            this._width, this._scale, DELTA_SCALE, MAX_DIMENSION));
   }
 
-  this._create_dimesion_select = function()
+  this._update_dimesion_select = function()
   {
-    for( var markup = "", i = 3; i <= MAX_PIXEL; i += 2 )
-    {
-      markup += "<option value='" + i + "'" +
-        ( i == this._width && " selected='selected'" || "" ) + ">" + 
-        i + " x " + i + "</option>";
-    }
-    document.getElementById('color-picker-area').innerHTML = markup;
+    document.getElementById('color-picker-area').clearAndRender(
+        window.templates.color_picker_create_dimesion_select(this._width, MAX_PIXEL));
   }
 
-  this._create_table = function()
+  this._update_table_markup = function()
   {
-    var 
-    cell = "<td style='height:" + this._scale + "px;width:" + this._scale + "px;'></td>",
-    markup = "",
-    tr = "",
-    i = 0;
-
-    for( ; i < this._width && (markup += cell); i++);
-    tr = markup = "<tr>" + markup + "</tr>";
-    for( i = 1; i < this._height && ( markup += tr ); i++);
-    document.getElementById('table-container').innerHTML = "<table>" + markup + "</table>";
-    //document.getElementById('table-container-debug').innerHTML = "<table>" + markup + "</table>";
-    
-    var tds = document.getElementById('table-container').getElementsByTagName('td'), td = null;
-    for( i=0; td = tds[i]; i++)
-    {
-      td.setAttribute('data-index', i);
-    }
-  }
-
-  var debug_color = function(_colors)
-  {
-    var tds = document.getElementById('table-container-debug').getElementsByTagName('td'),
-      td = null, i =0, cur = 0;
-    for(;td = tds[i]; i++)
-    {
-      
-
-        //cur = 4 * i;
-        //opera.postError(cur +' '+ _colors.length +' '+ i+' '+ self._width +' '+ self._average)
-        if( cur < _colors.length && (i % self._width) < self._average)
-      {
-
-        tds[i].style.backgroundColor = "rgb(" + 
-            _colors[cur + 0] + "," + 
-            _colors[cur + 1] + "," + 
-            _colors[cur + 2] +")";
-        cur += 4;
-      }
-      else
-      {
-         tds[i].style.backgroundColor = "transparent";
-      }
-      
-      
-    }
+    document.getElementById('table-container').clearAndRender(
+      window.templates.color_picker_create_table(this._width, this._height, this._scale, this._scale));
   }
 
   this.update_screenshot = function()
@@ -172,30 +102,31 @@ cls.ColorPicker = function(id, name, container_class)
     pixel_count = this._width * this._height,
     img_data = window.color_picker_data.get_data(), 
     tds = document.getElementById('table-container').getElementsByTagName('td'), 
-    i = 0, // ( ( ( pixel_count / 2 >> 0 ) ) + 1 ) * 4,
-    cur = 0; //,
-    //center_color = [img_data[i + 0], img_data[i + 1], img_data[i + 2]];
-    //opera.postError('center color: '+ center_color);
-      
-    for( i = 0 ; i < pixel_count; i++)
+    i = 0, 
+    cur = 0;
+
+    if(img_data)
     {
-      cur = 4 * i;
-      tds[i].style.backgroundColor = "rgb(" + 
-          img_data[cur + 0] + "," + 
-          img_data[cur + 1] + "," + 
-          img_data[cur + 2] +")";
+      for( i = 0 ; i < pixel_count; i++)
+      {
+        cur = 4 * i;
+        tds[i].style.backgroundColor = "rgb(" + 
+            img_data[cur + 0] + "," + 
+            img_data[cur + 1] + "," + 
+            img_data[cur + 2] +")";
+      }
+      this.update_center_color();
     }
-    
-    this.update_center_color(/*center_color*/);
-
-
   }
 
   this.update_center_color = function(index)
   {
     if(this.isvisible())
     {
+      var is_index = typeof index == "number";
+
       index || ( index = this._width * this._height / 2 >> 0 );
+
       var 
       x = ( index % this._width ) - this._average_delta,
       y = ( index / this._width >> 0 ) - this._average_delta,
@@ -220,14 +151,14 @@ cls.ColorPicker = function(id, name, container_class)
       {
         h = this._height - y;
       }
+
       var 
       color = window.color_picker_data.get_area_data(x, y, w, h),
       r = 0, 
       g = 0, 
       b = 0, 
       i = 0;
-      var debug_r=[],debug_g=[],debug_b=[];
-      //debug_color(color)
+
       for( ; i < color.length; i += 4)
       {
         r += color[i+0];
@@ -235,13 +166,6 @@ cls.ColorPicker = function(id, name, container_class)
         b += color[i+2];
       };
       i /= 4;
-      /*
-      opera.postError('i: '+i)
-        opera.postError(debug_r)
-        opera.postError(debug_g)
-        opera.postError(debug_b)
-      */
-      //opera.postError('average: '+[r/i, g/i, b/i])
       this._colors.setRGB([r/i>>0, g/i>>0, b/i>>0]);
 
       var 
@@ -254,20 +178,51 @@ cls.ColorPicker = function(id, name, container_class)
         "rgb: " + rgb.join(", ") + "\n" +
         "hsl: " + hsl[0] + ", " + hsl[1] + "%, " + hsl[2] + "%\n" +
         "hex: " + "#" + hex;
+
+      var 
+      _x = 0, 
+      _y = 0,
+      tds = document.getElementById('table-container').getElementsByTagName('td'), 
+      td = null,
+      is_last_index = index === this._last_index;
+            
+      if(is_index)
+      {
+        for( i = 0; td = tds[i]; i++)
+        {
+          _x = i % this._width;
+          _y = i / this._height >> 0;
+          if ( !is_last_index && ( _x < x || _x >= (x + w) || _y < y || _y >= ( y + h ) ) )
+          {
+            td.style.opacity = .3;
+          }
+          else
+          {
+            td.style.opacity = 1;
+          }
+        }
+        this._last_index = is_last_index ? -1 : index;
+      }
+      else if( this._last_index > -1 )
+      {
+        for( ; td = tds[i]; i++)
+        {
+          td.style.opacity = 1;
+        }
+        this._last_index = -1;
+      }
     }
   }
 
+  this.update_average(AVERAGE_PIXEL_COUNT);
   this.init(id, name, container_class);
 }
-
-
 
 var color_picker_data = new function()
 {
   const 
   INTERVAL = 50,
   INTERVAL_SLEEP = 500;
-
 
   // update values on top rt change
   this._top_rt_id = 0;
@@ -282,6 +237,7 @@ var color_picker_data = new function()
   this._y = 0;
   this._count_no_change = 0;
   this._intervall = INTERVAL;
+  this._data = null;
 
   this._screenshot_element = null; 
   this._canvas_source = null; 
@@ -343,13 +299,16 @@ var color_picker_data = new function()
     }
   }
 
+  this.get_active_state = function(bool)
+  {
+    return this._is_active;
+  }
+
   this.stop_color_picker = function()
   {
     this._is_active = false;
     // TODO call stop on host object
   }
-
-  
 
   this.setup_color_picker = function()
   {
@@ -396,7 +355,6 @@ var color_picker_data = new function()
     var tag = tagManager.setCB(this, this.handle_mouse_position);
     services['ecmascript-debugger'].eval(tag, this._color_picker_rt_id, 
       '', '', script, ["color_picker", this._color_picker]);
-
   }
 
   this.get_mouse_position_bound = function()
@@ -554,9 +512,11 @@ var color_picker_data = new function()
 cls.ColorPicker.prototype = ViewBase;
 new cls.ColorPicker('color_picker', 'Color Picker', 'scroll');
 
-eventHandlers.change['utils-color-picker'] = function(event, target)
+eventHandlers.click['utils-color-picker'] = function(event, target)
 {
-  window.color_picker_data.set_active_state(target.checked);
+  var is_active = window.color_picker_data.get_active_state();
+  window.color_picker_data.set_active_state(!is_active);
+  event.target.value = is_active && "Start" || "Stop";
 }
 
 eventHandlers.change["update-color-picker-scale"] = function(event, target)
@@ -573,8 +533,6 @@ eventHandlers.change["update-average"] = function(event, target)
 {
   window.views.color_picker.update_average(parseInt(target.value));
 }
-
-
 
 eventHandlers.click["color-picker-picked"] = function(event, target)
 {

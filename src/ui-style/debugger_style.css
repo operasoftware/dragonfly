@@ -868,25 +868,53 @@ d
   text-align: left;
 }
 
+.color-picker
+{
+  border: 1px solid #666;
+  width: 350px;
+  margin: auto;
+  text-align: center;
+}
+
+.color-picker h2
+{
+  background-color: hsl(0, 0%, 95%);
+  padding: .2em .5em;
+}
+
+.color-picker p
+{
+  margin: .8em;
+  padding: 0;
+  
+}
+.color-picker pre
+{
+  margin: .8em 3em;
+  padding: 0;
+  text-align: left;
+  
+}
+
 #table-container table
 {
   border-collapse: collapse;
-  border: 1px solid #666;
+  border: 3px solid #666;
   cursor: crosshair;
+  background-color: #000;
+  margin: .8em auto;
 }
 
 #table-container td
 {
   line-height: 1px;
-  padding: 0;
-  xborder: 1px solid #ccc;
-  
+  padding: 0;  
 }
 
 #center-color
 {
-  width: 180px;
-  height: 30px;
+  height: 40px;
+  margin:.8em 3em;
 }
 
 #table-container-debug
