@@ -69,9 +69,13 @@ cls.ExecService = function(name)
   }
 
 
-  this.postAction = function(action, param)
+  this.post_action = function(action, param)
   {
-    this.post("<exec><action><name>" + action + "</name><param>" + param + "</param></action></exec>");
+    this.post(
+      "<exec><action>" +
+        "<name>" + action + "</name>" +
+        ( param ? "<param>" + param + "</param>" : "" ) +
+      "</action></exec>");
   }
 
 

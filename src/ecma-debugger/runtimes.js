@@ -1054,7 +1054,7 @@ var runtimes = new function()
       var rt_id = this.getRuntimeIdsFromWindow(__selected_window)[0];
       if( rt_id )
       {
-        services['ecmascript-debugger'].eval('-1', rt_id, '', '', 'location.reload()');
+        services.exec.post_action('reload');
       }
     }
   }

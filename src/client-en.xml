@@ -222,6 +222,7 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./ecma-debugger/actions_dom.js"/>
 <script src="./ecma-debugger/hostspotlighter.js"/>
 
+
 <script src="./exec/color_picker.js"/>
 <script src="./exec/templates.js"/>
 
@@ -230,7 +231,8 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./console-logger/console.js"/>
 <script src="./console-logger/console_templates.js"/>
 <script src="./ecma-debugger/ecma-debugger.js"/>
-<script src="./ecma-debugger/exec.js"/>
+<script src="./exec/exec.js"/>
+
 
 <script src="./http-logger/httplogger_service.js"/>
 <script src="./http-logger/httplogger_data.js"/>

@@ -306,8 +306,25 @@ var color_picker_data = new function()
 
   this.stop_color_picker = function()
   {
-    this._is_active = false;
-    // TODO call stop on host object
+    var script = "color_picker.stop()";
+    var tag = tagManager.setCB(this, this.handle_stop);
+    services['ecmascript-debugger'].eval(tag, this._color_picker_rt_id, 
+      '', '', script, ["color_picker", this._color_picker]);
+  }
+
+  this.handle_stop = function(xml)
+  {
+    var status = xml.getNodeData('status');
+
+    if(  status == 'completed' )
+    {
+      this._is_active = false;
+    }
+    else
+    {
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+        "failed handle_stop in ColorPicker");
+    }
   }
 
   this.setup_color_picker = function()
