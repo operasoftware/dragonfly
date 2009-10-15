@@ -8,6 +8,7 @@
 cls.ColorPicker = function(id, name, container_class)
 {
   /* interface */
+
   this.createView = function(container){};
   this.display_screenshot = function(){};
   this.set_screenshot_dimension = function(){};
@@ -17,6 +18,7 @@ cls.ColorPicker = function(id, name, container_class)
   this.get_average_dimension = function(){};
 
   /* constants */
+
   const 
   DELTA_SCALE = 5, 
   SCALE = 35,
@@ -26,6 +28,7 @@ cls.ColorPicker = function(id, name, container_class)
   COLOR_MASK_ALPHA = 0.5;
 
   /* private */  
+
   var self = this;
 
   this._container = null;
@@ -62,17 +65,11 @@ cls.ColorPicker = function(id, name, container_class)
     this._ctx_color_mask.globalAlpha = COLOR_MASK_ALPHA;
   }
 
-  this._set_scale_select = function()
+  this._setup_scale_select = function()
   {
     document.getElementById('color-picker-scale').clearAndRender(
         window.templates.color_picker_create_scale_select(
             this._width, this._scale, DELTA_SCALE, MAX_DIMENSION));
-  }
-
-  this._update_dimesion_select = function()
-  {
-    document.getElementById('color-picker-area').clearAndRender(
-        window.templates.color_picker_create_dimesion_select(this._width, MAX_PIXEL));
   }
 
   this._update_center_color = function(x, y)
@@ -201,7 +198,7 @@ cls.ColorPicker = function(id, name, container_class)
     if(this.isvisible())
     {
       this._setup_canvas();
-      this._set_scale_select();
+      this._setup_scale_select();
     }
   }
 
