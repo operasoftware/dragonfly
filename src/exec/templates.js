@@ -10,12 +10,6 @@ window.templates.color_picker = function(
         ['div',
           ['h2', 'Pixel Magnifier and Color Picker'],
           ['p', 
-            ['input',
-                'type', 'button',
-                'handler', 'utils-color-picker',
-                'value', window.color_picker_data.get_active_state() && "Stop" || "Start"
-            ],
-            ' ',
             ['label', 
               'Area' + ': ',
               ['select', 
@@ -33,7 +27,6 @@ window.templates.color_picker = function(
             ],
           'class', 'controls'],
           ['div',
-            //this.color_picker_create_table(width, height, cell_width, cell_height),
             ['div',
               ['div',
                 ['canvas'],
@@ -66,30 +59,7 @@ window.templates.color_picker_average_select = function()
         ' pixels'],
     ]);
 }
-/*
-window.templates.color_picker_create_table = function(width, height, cell_width, cell_height)
-{
-  var 
-  ret = [], 
-  tr = ['tr'], 
-  i = 0, 
-  cell_count = width * height,
-  style = 'height:' + cell_height + 'px;width:' + cell_width + 'px;';
 
-  for( ; i < cell_count; i++)
-  {
-    if( i && !(i % width))
-    {
-      ret[ret.length] = tr;
-      tr = ['tr'];
-    }
-    tr[tr.length] = ['td', 'style', style, 'data-index', i.toString()];
-    
-  }
-  ret[ret.length] = tr;
-  return ['table', ret];
-}
-*/
 window.templates.color_picker_create_dimesion_select = function(width, max_pixel)
 {
   var ret = [], i = 3;

@@ -10,6 +10,8 @@ var host_tabs = new function()
   var __activeTab = [];
   var document_map = {};
 
+  var _top_runtime_id = '';
+
   var type_map = {};
   var callback_map = {};
   var node_map = {};
@@ -76,7 +78,8 @@ var host_tabs = new function()
     __window_id = window_id;
     runtimes.setActiveWindowId(window_id);
     __activeTab = runtimes.getRuntimeIdsFromWindow(window_id);
-    messages.post('active-tab', {activeTab: __activeTab} ); 
+    this.post_messages();
+
   }
 
   this.updateActiveTab = function()
@@ -88,7 +91,18 @@ var host_tabs = new function()
       __addEvenetListener(ev.type, ev.cb);
     }
     cleanUpEventListener();
-    messages.post('active-tab', {activeTab: __activeTab} );
+    this.post_messages();
+  }
+
+  this.post_messages = function()
+  {
+    messages.post('active-tab', {activeTab: __activeTab});
+    // first runtime is the top runtime of the selected window
+    if(__activeTab.length && __activeTab[0] != _top_runtime_id)
+    {
+      _top_runtime_id = __activeTab[0];
+      messages.post('new-top-runtime', {top_runtime_id:  _top_runtime_id});
+    }
   }
 
   this.getActiveTab = function(top_frame_runtime_id)
