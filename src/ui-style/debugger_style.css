@@ -896,6 +896,30 @@ d
   
 }
 
+.outer-canvas-container
+{
+  display: table;
+  margin: .8em auto;
+  border: 3px solid #666;
+}
+.canvas-container
+{
+  position: relative;
+}
+
+.color-picker canvas
+{
+  display: block;
+}
+
+#color-picker-mask
+{
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: crosshair;
+}
+
 #table-container table
 {
   border-collapse: collapse;

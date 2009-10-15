@@ -12,7 +12,8 @@ cls.ColorPicker = function(id, name, container_class)
   SCALE = 35,
   MAX_DIMENSION = 350,
   MAX_PIXEL = 33,
-  AVERAGE_PIXEL_COUNT = 5;
+  AVERAGE_PIXEL_COUNT = 5,
+  COLOR_MASK_ALPHA = 0.5;
   
   var self = this;
 
@@ -27,18 +28,19 @@ cls.ColorPicker = function(id, name, container_class)
 
   this.createView = function(container)
   {
-    _container = container;
+    this._container = container;
     this.get_dimesions();
     container.render(window.templates.color_picker(
           this._width, this._height, this._scale, this._scale, MAX_PIXEL, 
           this._scale, DELTA_SCALE, MAX_DIMENSION));
+    this.setup_canvas();
     this.update_screenshot();
   }
 
   this.update_scale = function(scale)
   {
     this._scale = scale;
-    this._update_table_markup();
+    this.setup_canvas();
   }
 
   this.get_average = function()
@@ -50,6 +52,24 @@ cls.ColorPicker = function(id, name, container_class)
   {
     this._average = average;
     this._average_delta = average/2 >> 0;
+  }
+
+  this.setup_canvas = function()
+  {
+    var 
+    w = this._scale * this._width,
+    h = this._scale * this._height,
+    canvases = this._container.getElementsByTagName('canvas'),
+    canvas = null;
+    i = 0;
+
+    for( ; canvas = canvases[i]; i++)
+    {
+      canvas.style.height = ( canvas.height = h ) + 'px';
+      canvas.style.width =  ( canvas.width = w ) + 'px';
+      this[i && '_ctx_color_mask' || '_ctx'] = canvas.getContext('2d');
+    }
+    this._ctx_color_mask.globalAlpha = COLOR_MASK_ALPHA;
   }
 
   this.update_color_display = function()
@@ -65,7 +85,7 @@ cls.ColorPicker = function(id, name, container_class)
     }
     if(this.isvisible())
     {
-      this._update_table_markup();
+      this.setup_canvas();
       this._update_scale_select();
     }
   }
@@ -90,49 +110,70 @@ cls.ColorPicker = function(id, name, container_class)
         window.templates.color_picker_create_dimesion_select(this._width, MAX_PIXEL));
   }
 
-  this._update_table_markup = function()
-  {
-    document.getElementById('table-container').clearAndRender(
-      window.templates.color_picker_create_table(this._width, this._height, this._scale, this._scale));
-  }
-
   this.update_screenshot = function()
   {
     var 
     pixel_count = this._width * this._height,
-    img_data = window.color_picker_data.get_data(), 
-    tds = document.getElementById('table-container').getElementsByTagName('td'), 
+    img_data = window.color_picker_data.get_data(),  
+    x = 0,
     i = 0, 
-    cur = 0;
+    cur = 0,
+    scale = this._scale;
 
     if(img_data)
     {
-      for( i = 0 ; i < pixel_count; i++)
+      for( ; i < pixel_count; i++)
       {
         cur = 4 * i;
-        tds[i].style.backgroundColor = "rgb(" + 
+        this._ctx.fillStyle = "rgb(" + 
             img_data[cur + 0] + "," + 
             img_data[cur + 1] + "," + 
             img_data[cur + 2] +")";
+        x = i % this._width;
+        this._ctx.fillRect(x * scale, ( i - x ) / this._width * scale, scale, scale); 
       }
       this.update_center_color();
     }
   }
 
-  this.update_center_color = function(index)
+  this.color_picker_picked = function(event, target)
+  {
+    if(this._container)
+    {
+      var box = event.target.getBoundingClientRect();
+      this.update_center_color(
+        (event.clientX - box.left) / this._scale >> 0,
+        (event.clientY- box.top) / this._scale >> 0);
+    }
+  }
+
+  this.update_center_color = function(x, y)
   {
     if(this.isvisible())
     {
-      var is_index = typeof index == "number";
-
-      index || ( index = this._width * this._height / 2 >> 0 );
-
       var 
-      x = ( index % this._width ) - this._average_delta,
-      y = ( index / this._width >> 0 ) - this._average_delta,
+      is_index = typeof x == "number" && typeof y == "number",
+      index = 0,
+      scale = this._scale,
       w = this._average,
-      h = this._average;
+      h = this._average,
+      color = null,
+      r = 0, 
+      g = 0, 
+      b = 0, 
+      i = 0,
+      rgb = null,
+      hsl = null,
+      hex = "";
 
+      if(!is_index)
+      {
+        x = this._width / 2 >> 0;
+        y = this._height / 2 >> 0;
+      }
+      index = y * this._width + x;
+      x -= this._average_delta;
+      y -= this._average_delta;
       if( x < 0 )
       {
         w += x;
@@ -151,14 +192,7 @@ cls.ColorPicker = function(id, name, container_class)
       {
         h = this._height - y;
       }
-
-      var 
-      color = window.color_picker_data.get_area_data(x, y, w, h),
-      r = 0, 
-      g = 0, 
-      b = 0, 
-      i = 0;
-
+      color = window.color_picker_data.get_area_data(x, y, w, h);
       for( ; i < color.length; i += 4)
       {
         r += color[i+0];
@@ -166,51 +200,23 @@ cls.ColorPicker = function(id, name, container_class)
         b += color[i+2];
       };
       i /= 4;
-      this._colors.setRGB([r/i>>0, g/i>>0, b/i>>0]);
-
-      var 
-      rgb = this._colors.getRGB(),
-      hsl = this._colors.getHSL(),
+      this._colors.setRGB([r / i >> 0, g / i >> 0, b / i >> 0]);
+      rgb = this._colors.getRGB();
+      hsl = this._colors.getHSL();
       hex = this._colors.getHex();
-
       document.getElementById('center-color').style.backgroundColor = "#" + hex;
       document.getElementById('center-color-values').textContent = 
         "rgb: " + rgb.join(", ") + "\n" +
         "hsl: " + hsl[0] + ", " + hsl[1] + "%, " + hsl[2] + "%\n" +
         "hex: " + "#" + hex;
 
-      var 
-      _x = 0, 
-      _y = 0,
-      tds = document.getElementById('table-container').getElementsByTagName('td'), 
-      td = null,
-      is_last_index = index === this._last_index;
-            
-      if(is_index)
+      this._ctx_color_mask.clearRect(0, 0, this._width * scale, this._height * scale);  
+      if(is_index && index !== this._last_index)
       {
-        for( i = 0; td = tds[i]; i++)
-        {
-          _x = i % this._width;
-          _y = i / this._height >> 0;
-          if ( !is_last_index && ( _x < x || _x >= (x + w) || _y < y || _y >= ( y + h ) ) )
-          {
-            td.style.opacity = .3;
-          }
-          else
-          {
-            td.style.opacity = 1;
-          }
-        }
-        this._last_index = is_last_index ? -1 : index;
+        this._ctx_color_mask.fillRect(0, 0, this._width * scale, this._height * scale); 
+        this._ctx_color_mask.clearRect(x * scale, y * scale, w * scale, h * scale); 
       }
-      else if( this._last_index > -1 )
-      {
-        for( ; td = tds[i]; i++)
-        {
-          td.style.opacity = 1;
-        }
-        this._last_index = -1;
-      }
+      this._last_index = is_index && index !== this._last_index ? index : -1;      
     }
   }
 
@@ -553,5 +559,5 @@ eventHandlers.change["update-average"] = function(event, target)
 
 eventHandlers.click["color-picker-picked"] = function(event, target)
 {
-  window.views.color_picker.update_center_color(parseInt(event.target.getAttribute('data-index')));
+  window.views.color_picker.color_picker_picked(event, target); //parseInt(event.target.getAttribute('data-index')));
 }

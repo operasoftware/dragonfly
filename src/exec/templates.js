@@ -33,7 +33,13 @@ window.templates.color_picker = function(
             ],
           'class', 'controls'],
           ['div',
-            this.color_picker_create_table(width, height, cell_width, cell_height),
+            //this.color_picker_create_table(width, height, cell_width, cell_height),
+            ['div',
+              ['div',
+                ['canvas'],
+                ['canvas', 'handler', 'color-picker-picked', 'id', 'color-picker-mask'],
+              'class', 'canvas-container'],
+            'class', 'outer-canvas-container'],
             'id', 'table-container',
             'handler', 'color-picker-picked'],
           ['h2', 'Color Select'],
@@ -60,7 +66,7 @@ window.templates.color_picker_average_select = function()
         ' pixels'],
     ]);
 }
-
+/*
 window.templates.color_picker_create_table = function(width, height, cell_width, cell_height)
 {
   var 
@@ -83,7 +89,7 @@ window.templates.color_picker_create_table = function(width, height, cell_width,
   ret[ret.length] = tr;
   return ['table', ret];
 }
-
+*/
 window.templates.color_picker_create_dimesion_select = function(width, max_pixel)
 {
   var ret = [], i = 3;
