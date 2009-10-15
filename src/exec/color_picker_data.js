@@ -85,6 +85,8 @@ var color_picker_data = new function()
 
   this._stop_color_picker = function()
   {
+    this._is_active = false;
+    this._color_picker = "";
     var script = "color_picker.stop()";
     var tag = tagManager.setCB(this, this._handle_stop);
     services['ecmascript-debugger'].eval(tag, this._color_picker_rt_id, 
@@ -94,13 +96,7 @@ var color_picker_data = new function()
   this._handle_stop = function(xml)
   {
     var status = xml.getNodeData('status');
-
-    if(  status == 'completed' )
-    {
-      this._is_active = false;
-      this._color_picker = "";
-    }
-    else
+    if(  status != 'completed' )
     {
       opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
         "failed handle_stop in ColorPicker");
