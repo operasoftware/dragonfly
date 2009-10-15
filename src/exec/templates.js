@@ -29,7 +29,7 @@ window.templates.color_picker = function(
               ['select', 
                 this.color_picker_create_scale_select(width, cur_scale, delta_scale, max_dimensions),
                 'id', 'color-picker-scale', 
-                'handler', 'update-color-picker-scale']
+                'handler', 'set-color-picker-scale']
             ],
           'class', 'controls'],
           ['div',
@@ -52,7 +52,7 @@ window.templates.color_picker = function(
 
 window.templates.color_picker_average_select = function()
 {
-  var ret = [], i = 1, average = window.views.color_picker.get_average();
+  var ret = [], i = 1, average = window.views.color_picker.get_average_dimension();
   for( ; i < 10; i+=2)
   {
     ret[ret.length] = 

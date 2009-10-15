@@ -7,6 +7,16 @@
 
 cls.ColorPicker = function(id, name, container_class)
 {
+  /* interface */
+  this.createView = function(container){};
+  this.display_screenshot = function(){};
+  this.set_screenshot_dimension = function(){};
+  this.set_scale = function(scale){};
+  this.pick_color = function(event, target){};
+  this.set_average_dimension = function(average){};
+  this.get_average_dimension = function(){};
+
+  /* constants */
   const 
   DELTA_SCALE = 5, 
   SCALE = 35,
@@ -14,7 +24,8 @@ cls.ColorPicker = function(id, name, container_class)
   MAX_PIXEL = 33,
   AVERAGE_PIXEL_COUNT = 5,
   COLOR_MASK_ALPHA = 0.5;
-  
+
+  /* private */  
   var self = this;
 
   this._container = null;
@@ -26,35 +37,14 @@ cls.ColorPicker = function(id, name, container_class)
   this._average = 0;
   this._average_delta = 0;
 
-  this.createView = function(container)
+  this._get_dimesions = function()
   {
-    this._container = container;
-    this.get_dimesions();
-    container.render(window.templates.color_picker(
-          this._width, this._height, this._scale, this._scale, MAX_PIXEL, 
-          this._scale, DELTA_SCALE, MAX_DIMENSION));
-    this.setup_canvas();
-    this.update_screenshot();
+    var area = window.color_picker_data.get_dimensions();
+    this._width = area.width;
+    this._height = area.height;
   }
 
-  this.update_scale = function(scale)
-  {
-    this._scale = scale;
-    this.setup_canvas();
-  }
-
-  this.get_average = function()
-  {
-    return this._average;
-  }
-
-  this.update_average = function(average)
-  {
-    this._average = average;
-    this._average_delta = average/2 >> 0;
-  }
-
-  this.setup_canvas = function()
+  this._setup_canvas = function()
   {
     var 
     w = this._scale * this._width,
@@ -72,32 +62,7 @@ cls.ColorPicker = function(id, name, container_class)
     this._ctx_color_mask.globalAlpha = COLOR_MASK_ALPHA;
   }
 
-  this.update_color_display = function()
-  {
-    this.get_dimesions();
-    if(this._scale * this._width > MAX_DIMENSION)
-    {
-      this._scale = DELTA_SCALE;
-      while((this._scale + DELTA_SCALE) * this._width <= MAX_DIMENSION)
-      {
-        this._scale += DELTA_SCALE;
-      }
-    }
-    if(this.isvisible())
-    {
-      this.setup_canvas();
-      this._update_scale_select();
-    }
-  }
-
-  this.get_dimesions = function()
-  {
-    var area = window.color_picker_data.get_dimensions();
-    this._width = area.width;
-    this._height = area.height;
-  }
-
-  this._update_scale_select = function()
+  this._set_scale_select = function()
   {
     document.getElementById('color-picker-scale').clearAndRender(
         window.templates.color_picker_create_scale_select(
@@ -110,44 +75,7 @@ cls.ColorPicker = function(id, name, container_class)
         window.templates.color_picker_create_dimesion_select(this._width, MAX_PIXEL));
   }
 
-  this.update_screenshot = function()
-  {
-    var 
-    pixel_count = this._width * this._height,
-    img_data = window.color_picker_data.get_data(),  
-    x = 0,
-    i = 0, 
-    cur = 0,
-    scale = this._scale;
-
-    if(img_data)
-    {
-      for( ; i < pixel_count; i++)
-      {
-        cur = 4 * i;
-        this._ctx.fillStyle = "rgb(" + 
-            img_data[cur + 0] + "," + 
-            img_data[cur + 1] + "," + 
-            img_data[cur + 2] +")";
-        x = i % this._width;
-        this._ctx.fillRect(x * scale, ( i - x ) / this._width * scale, scale, scale); 
-      }
-      this.update_center_color();
-    }
-  }
-
-  this.color_picker_picked = function(event, target)
-  {
-    if(this._container)
-    {
-      var box = event.target.getBoundingClientRect();
-      this.update_center_color(
-        (event.clientX - box.left) / this._scale >> 0,
-        (event.clientY- box.top) / this._scale >> 0);
-    }
-  }
-
-  this.update_center_color = function(x, y)
+  this._update_center_color = function(x, y)
   {
     if(this.isvisible())
     {
@@ -220,7 +148,102 @@ cls.ColorPicker = function(id, name, container_class)
     }
   }
 
-  this.update_average(AVERAGE_PIXEL_COUNT);
+  /* interface implementations */
+
+  this.createView = function(container)
+  {
+    this._container = container;
+    this._get_dimesions();
+    container.render(window.templates.color_picker(
+          this._width, this._height, this._scale, this._scale, MAX_PIXEL, 
+          this._scale, DELTA_SCALE, MAX_DIMENSION));
+    this._setup_canvas();
+    this.display_screenshot();
+  }
+
+  this.display_screenshot = function()
+  {
+    var 
+    pixel_count = this._width * this._height,
+    img_data = window.color_picker_data.get_data(),  
+    x = 0,
+    i = 0, 
+    cur = 0,
+    scale = this._scale;
+
+    if(img_data)
+    {
+      for( ; i < pixel_count; i++)
+      {
+        cur = 4 * i;
+        this._ctx.fillStyle = "rgb(" + 
+            img_data[cur + 0] + "," + 
+            img_data[cur + 1] + "," + 
+            img_data[cur + 2] +")";
+        x = i % this._width;
+        this._ctx.fillRect(x * scale, ( i - x ) / this._width * scale, scale, scale); 
+      }
+      this._update_center_color();
+    }
+  }
+
+  this.set_screenshot_dimension = function()
+  {
+    this._get_dimesions();
+    if(this._scale * this._width > MAX_DIMENSION)
+    {
+      this._scale = DELTA_SCALE;
+      while((this._scale + DELTA_SCALE) * this._width <= MAX_DIMENSION)
+      {
+        this._scale += DELTA_SCALE;
+      }
+    }
+    if(this.isvisible())
+    {
+      this._setup_canvas();
+      this._set_scale_select();
+    }
+  }
+
+  this.set_scale = function(scale)
+  {
+    this._scale = scale;
+    this._setup_canvas();
+  }
+
+  this.pick_color = function(event, target)
+  {
+    if(this._container)
+    {
+      var box = event.target.getBoundingClientRect();
+      this._update_center_color(
+        (event.clientX - box.left) / this._scale >> 0,
+        (event.clientY- box.top) / this._scale >> 0);
+    }
+  }
+
+  this.get_average_dimension = function()
+  {
+    return this._average;
+  }
+
+  this.set_average_dimension = function(average)
+  {
+    this._average = average;
+    this._average_delta = average/2 >> 0;
+    if(this._last_index > -1)
+    {
+      var 
+      x = this._last_index % this._width,
+      y = (this._last_index - x) / this._width;
+
+      this._last_index = -1;
+      this._update_center_color(x, y);
+    }
+  }
+
+  /* constructor calls */
+  this.set_average_dimension(AVERAGE_PIXEL_COUNT);
   this.init(id, name, container_class);
 }
 
@@ -277,7 +300,7 @@ var color_picker_data = new function()
     this._width = this._height = dimension;
     this._delta = this._height / 2 << 0;
     this._set_canavas_dimensions();
-    window.views.color_picker.update_color_display();
+    window.views.color_picker.set_screenshot_dimension();
   }
 
   this._set_canavas_dimensions = function()
@@ -448,7 +471,7 @@ var color_picker_data = new function()
   {
     this._ctx_source.drawImage(this._screenshot_element, 0, 0, this._width, this._height);
     this._data = this._ctx_source.getImageData(0, 0, this._width, this._height).data;
-    window.views.color_picker.update_screenshot();
+    window.views.color_picker.display_screenshot();
     setTimeout(this.get_mouse_position_bound, this._interval);
   }
 
@@ -542,9 +565,9 @@ eventHandlers.click['utils-color-picker'] = function(event, target)
   event.target.value = is_active && "Start" || "Stop";
 }
 
-eventHandlers.change["update-color-picker-scale"] = function(event, target)
+eventHandlers.change["set-color-picker-scale"] = function(event, target)
 {
-  window.views.color_picker.update_scale(parseInt(target.value));
+  window.views.color_picker.set_scale(parseInt(target.value));
 }
 
 eventHandlers.change["update-area"] = function(event, target)
@@ -554,10 +577,10 @@ eventHandlers.change["update-area"] = function(event, target)
 
 eventHandlers.change["update-average"] = function(event, target)
 {
-  window.views.color_picker.update_average(parseInt(target.value));
+  window.views.color_picker.set_average_dimension(parseInt(target.value));
 }
 
 eventHandlers.click["color-picker-picked"] = function(event, target)
 {
-  window.views.color_picker.color_picker_picked(event, target); //parseInt(event.target.getAttribute('data-index')));
+  window.views.color_picker.pick_color(event, target); //parseInt(event.target.getAttribute('data-index')));
 }
