@@ -1,4 +1,4 @@
-eventHandlers.click['utils-color-picker'] = function(event, target)
+﻿eventHandlers.click['utils-color-picker'] = function(event, target)
 {
   var is_active = window.color_picker_data.get_active_state();
   window.color_picker_data.set_active_state(!is_active);

@@ -1,4 +1,4 @@
-/* color picker data class */
+﻿/* color picker data class */
 
 var color_picker_data = new function()
 {
@@ -85,12 +85,12 @@ var color_picker_data = new function()
 
   this._stop_color_picker = function()
   {
-    this._is_active = false;
-    this._color_picker = "";
     var script = "color_picker.stop()";
     var tag = tagManager.setCB(this, this._handle_stop);
     services['ecmascript-debugger'].eval(tag, this._color_picker_rt_id, 
       '', '', script, ["color_picker", this._color_picker]);
+    this._is_active = false;
+    this._color_picker = "";
   }
 
   this._handle_stop = function(xml)
