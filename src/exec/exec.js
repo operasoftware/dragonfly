@@ -71,10 +71,12 @@ cls.ExecService = function(name)
 
   this.post_action = function(action, param)
   {
+    var debug_context = window.runtimes.getActiveWindowId();
     this.post(
       "<exec><action>" +
         "<name>" + action + "</name>" +
         ( param ? "<param>" + param + "</param>" : "" ) +
+        ( debug_context ? "<window-id>" + debug_context + "</window-id>" : "" ) +
       "</action></exec>");
   }
 
