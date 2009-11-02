@@ -1054,7 +1054,15 @@ var runtimes = new function()
       var rt_id = this.getRuntimeIdsFromWindow(__selected_window)[0];
       if( rt_id )
       {
-        services.exec.post_action('reload');
+        if(services.exec && services.exec.is_implemented)
+        {
+          services.exec.post_action('reload');
+        }
+        else
+        {
+          services['ecmascript-debugger'].eval('-1', rt_id, '', '', 'location.reload()');
+        }
+        
       }
     }
   }

@@ -61,6 +61,7 @@ var client = new function()
         if (service.name in services_avaible)	
         {
           opera.scopeEnableService(service.name);
+          service.is_implemented = true;
           service.onconnect();
         }
         else
@@ -183,6 +184,7 @@ var client = new function()
         }
         else
         {
+          service.is_implemented = true;
           if(server_name && server_name.indexOf("Dragonkeeper") != -1 )
           {
             if(!is_event_loop)
