@@ -79,7 +79,7 @@ top-statusbar.type-tooltip info
   left: 80px;
   margin: 0px;
   background-image: -o-skin('Speed Dial Configuration Dialog Skin');
-  padding: 0px 9px 7px 5px;
+  padding: 7px 9px 9px 9px;
   min-height: 22px;
   min-width: 22px;
 }
