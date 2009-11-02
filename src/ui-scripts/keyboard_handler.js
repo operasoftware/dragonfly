@@ -303,7 +303,7 @@ var key_identifier = new function()
     // return false to stop the default action and propagation
     empty_handler = function(event, id)
     {
-      return /input|textarea/i.test(event.target.nodeName);
+      return /input|textarea|button/i.test(event.target.nodeName);
     };
 
 
@@ -363,7 +363,6 @@ var key_identifier = new function()
 
   this.handle = function(event)
   {
-   
     var 
     keyCode = event.keyCode, 
     key_id = '',
@@ -397,12 +396,10 @@ var key_identifier = new function()
       case I:
       case S:
       {
-        
         key_id = ( event.shiftKey ? '1' : '0' ) +
             ( event.ctrlKey ? '1' : '0' ) +
             ( event.altKey ? '1' : '0' ) +
             keyCode.toString();
-
         if( key_id in action_map 
             && !__key_handler[action_id = action_map[key_id]](event, action_id) )
         {
