@@ -1103,7 +1103,7 @@ cst-select
 cst-select-toolbar-setting
 {
   display: inline-block;
-  background: transparent url('../ui-images/btn-test.png') no-repeat 0 0;
+  background: transparent url('../ui-images/btn-config.png') no-repeat 0 0;
   height: 24px;
   width: 26px;
   vertical-align: middle;
