@@ -136,7 +136,7 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, TopStatusbar
 
   this.cleanUp = function()
   {
-    document.removeEventListener('resize', setDelayedResize, false);
+    window.removeEventListener('resize', setDelayedResize, false);
     resize_timeout.clear();
     resize_timeout = null;
   }
@@ -157,7 +157,7 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, TopStatusbar
     }
   }
 
-  document.addEventListener('resize', setDelayedResize, false);
+  window.addEventListener('resize', setDelayedResize, false);
 
   // constructor calls
   window.topCell = this;
