@@ -168,6 +168,15 @@ var window_manager_data = new function()
   this.debug_context = 0;
 
   var view = "window_manager";
+  var self = this;
+
+  var reset_state_handler = function(msg)
+  {
+    self.active_window = null;
+    self.window_list = null;
+    self.debug_context = 0;
+    update_views();
+  }
 
   var update_views = function()
   {
@@ -299,6 +308,8 @@ var window_manager_data = new function()
     }
     update_views();
   }
+
+  window.messages.addListener('reset-state', reset_state_handler);
 }
 
 var cls = window.cls || ( window.cls = {} );

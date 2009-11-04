@@ -42,6 +42,12 @@ var client = new function()
   var services = [];
   var services_dict = {};
   var services_avaible = {};
+
+  var _client_id = 0;
+
+  // the quit calback of scopeAddClient doesn't work 
+  // if the callback is created in the scope of scopeSetupClient
+  var quit_callback = null; 
   
   this.addService = function(service)
   {
@@ -95,6 +101,21 @@ var client = new function()
   this.reset_onquit_timeout = function()
   {
     self.onquit_timeout = 0;
+    self.scopeSetupClient();
+  }
+
+  var get_quit_callback = function(client_id)
+  {
+    // workaround for bug CORE-25389
+    // onQuit() callback is called twice when 
+    // creating new client with addScopeClient
+    return function(msg)
+    {
+      if(client_id == _client_id)
+      {
+        quit(msg);
+      }
+    }
   }
 
   var quit = function(msg)
@@ -111,9 +132,11 @@ var client = new function()
           views[view_id].clearAllContainers();
         }
       }
-      self.onquit_timeout = setTimeout(self.reset_onquit_timeout, 1000);
+      self.onquit_timeout = setTimeout(self.reset_onquit_timeout, 500);
     }
   }
+
+  
 
   var post_scope = function(service, msg)
   {
@@ -254,8 +277,11 @@ var client = new function()
     this.send();
   }
 
+  
   this.scopeSetupClient = function()
   {      
+    _client_id++;
+    quit_callback = get_quit_callback(_client_id);
     var port = settings.debug_remote_setting.get('debug-remote') 
       && settings.debug_remote_setting.get('port')
       || 0;
@@ -264,7 +290,7 @@ var client = new function()
     {
       alert(ui_strings.S_INFO_WAITING_FOR_CONNECTION.replace(/%s/, port));
     }
-    opera.scopeAddClient(host_connected, receive, quit, port);
+    opera.scopeAddClient(host_connected, receive, quit_callback, port);
   }
 
   this.post = function(){};
