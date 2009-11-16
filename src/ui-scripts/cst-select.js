@@ -358,7 +358,7 @@ var CstSelectColorBase = function(id, rgba_arr, handler, option)
       [
         "cst-option",
         [
-          "cst-color"
+          "cst-color",
           "unselectable", "on",
           "style", "background-color:" + rgba_to_hex(opt) + ";" +
                   ( select_obj.has_opacity && ( "opacity: " + extract_alpha(opt) + ";" ) || "")
