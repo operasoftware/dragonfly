@@ -474,7 +474,7 @@ var CstSelectColorBase = function(id, rgba_arr, handler, option)
         "type", "text",
         "ref-type", change_handler_id,
         "value", value
-      ]
+      ],
       "class", cn,
     ] );
   }
