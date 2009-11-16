@@ -187,14 +187,14 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     }
   }
 
-  var markup = "\
-    <div class='padding'>\
-      <div class='console-output'></div>\
-      <div class='console-input' handler='console-focus-input'>\
-        <span class='commandline-prefix'>&gt;&gt;&gt; </span>\
-        <div><textarea handler='commandline' rows='1' title='hold shift to add a new line'></textarea></div>\
-      </div>\
-    </div>";
+  var markup = "" +
+    "<div class='padding'>" +
+      "<div class='console-output'></div>" +
+      "<div class='console-input' handler='console-focus-input'>" +
+        "<span class='commandline-prefix'>&gt;&gt;&gt; </span>" +
+        "<div><textarea handler='commandline' rows='1' title='hold shift to add a new line'></textarea></div>" +
+      "</div>" +
+    "</div>";
 
   var templates = {};
 

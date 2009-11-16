@@ -77,7 +77,7 @@
 
   var get_command = function(node_id, scroll_into_view, name)
   {
-    return \
+    return "" +
       "<spotlight-object>" +
         "<object-id>" + node_id + "</object-id>" +
         "<scroll-into-view>" + ( scroll_into_view && 1 || 0 ) + "</scroll-into-view>" +
@@ -389,8 +389,7 @@
         window['cst-selects']['spotlight-color-' + ( row_id | k ) ].template(null, !checked)
       ]
     }
-    return \
-    [
+    return [
       'tr', 
       ['td', label]
     ].concat(ret)
@@ -534,8 +533,7 @@
   /* templates */
   this.colorSelectsTemplate = function()
   {
-    return \
-    [
+    return [
       'setting-composite',
       [
         'h3', ui_strings.S_LABEL_SPOTLIGHT_COLOR_THEME,
@@ -569,8 +567,7 @@
   
   this.colorAdvancedSelectsTemplate = function()
   {
-    return \
-    [
+    return [
       'table',
       [
         'tbody',

@@ -330,7 +330,7 @@ cls.WindowManagerTestView = function(id, name, container_class)
     j = 0,
     debug_context = window_manager_data.debug_context,
 
-    markup = \
+    markup = "" +
       "<h2>active window: " + window_manager_data.active_window + "</h2>" +
       "<h2>debug context: " + debug_context + "</h2>" +
       "<h2>window list</h2>";

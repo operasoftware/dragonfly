@@ -68,21 +68,20 @@ cls.DOMInspectorActions = function(id)
     },
     left_right: function(ele)
     {
-      return \
-      ( !_is_script_node(ele) &&
+      return ( !_is_script_node(ele) &&
         ( /^key|value|input|node$/.test(ele.nodeName.toLowerCase()) ||
           "text" == ele.nodeName.toLowerCase() && ele.textContent.length ) );
     },
     up_down: function(ele, start_ele)
     {
-      return \
+      return (
       ( "input" == ele.nodeName.toLowerCase() && !ele.parentNode.contains(start_ele) ) ||
       ( !_is_script_node(ele) && 
           ( "node" == ele.nodeName.toLowerCase() &&
             ( ele.textContent.slice(0,2) != "</" ||
               // it is a closing tag but it's also the only tag in this line
               ( ele.parentNode.getElementsByTagName('node')[0] == ele ) ) &&
-            "input" != ele.parentNode.firstElementChild.nodeName.toLowerCase() ) );
+            "input" != ele.parentNode.firstElementChild.nodeName.toLowerCase() ) ) );
     }
   }
 
@@ -109,8 +108,7 @@ cls.DOMInspectorActions = function(id)
   
   this.getFirstTarget = function()
   {    
-    return \
-      view_container 
+    return view_container 
       && ( document.getElementById('target-element') || view_container ).
       getElementsByTagName('input')[0];
   }

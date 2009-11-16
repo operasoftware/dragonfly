@@ -168,7 +168,7 @@ cls.JsSourceView = function(id, name, container_class)
     }
     __container = container;
     frame_id = container.id;
-    container.innerHTML = \
+    container.innerHTML = "" +
       "<div id='js-source-scroll-content'>"+
         "<div id='js-source-content'></div>"+
       "</div>"+
@@ -892,7 +892,7 @@ new Settings
     'tab-size':
     function(setting)
     {
-      return \
+      return (
       [
         'setting-composite', 
         ['label', 
@@ -905,7 +905,7 @@ new Settings
             'value', setting.get('tab-size')
           ]
         ]
-      ];
+      ] );
     }
   }
 );

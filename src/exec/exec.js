@@ -111,7 +111,7 @@ cls.WindowManagerTestView = function(id, name, container_class)
   this.createView = function(container)
   {
     var 
-    markup = \
+    markup = "" +
       "<div>" +
         "<input value='New Page'>" +
         "<input type='button' value='post action' handler='exec-action'>" +

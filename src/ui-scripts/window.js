@@ -178,15 +178,15 @@ var UIWindowBase = new function()
   {
     if(window_shadows)
     {
-      window_shadows.innerHTML = "\
-        <window-shadow class='top-left'></window-shadow>\
-        <window-shadow class='top'></window-shadow>\
-        <window-shadow class='top-right'></window-shadow>\
-        <window-shadow class='left'></window-shadow>\
-        <window-shadow class='right'></window-shadow>\
-        <window-shadow class='bottom-left'></window-shadow>\
-        <window-shadow class='bottom'></window-shadow>\
-        <window-shadow class='bottom-right'></window-shadow>";
+      window_shadows.innerHTML = "" +
+        "<window-shadow class='top-left'></window-shadow>" +
+        "<window-shadow class='top'></window-shadow>" +
+        "<window-shadow class='top-right'></window-shadow>" +
+        "<window-shadow class='left'></window-shadow>" +
+        "<window-shadow class='right'></window-shadow>" +
+        "<window-shadow class='bottom-left'></window-shadow>" +
+        "<window-shadow class='bottom'></window-shadow>" +
+        "<window-shadow class='bottom-right'></window-shadow>";
     }
   }
 
