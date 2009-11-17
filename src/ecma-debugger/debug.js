@@ -55,7 +55,7 @@ var Debug = function(id, name, container_class)
 
   }
 
-  this.export = function(string)
+  this.export_data = function(string)
   {
 
     export_data.data = out.join('\n').replace(/</g, '&lt;');
@@ -239,7 +239,7 @@ Debug.init = function()
   }
   eventHandlers.click['export-debug-log'] = function(event, target)
   {
-    debug.export();
+    debug.export_data();
   }
 
   var View = function(id, name, container_class)

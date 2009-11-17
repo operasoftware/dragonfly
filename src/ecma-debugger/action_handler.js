@@ -486,7 +486,7 @@ var action_handler = new function()
                 ['input', 
                   'type', 'button', 
                   'value', 'export', 
-                  'onclick', 'debug.export()'],
+                  'onclick', 'debug.export_data()'],
                 ['pre', 'id', 'debug'],
               'class', 'window-container', 'id', 'debug-container']
             )
