@@ -230,6 +230,7 @@ var window_manager_data = new function()
     {
       // TODO 
       // workaround for wrong active window id. must be removed
+      this.active_window = 0;
       this.setDebugContext(this.window_list[0]['window-id']);
       opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'active window id does not exist');
     }
@@ -480,7 +481,7 @@ cls.DebuggerMenu = function(id, class_name)
     opt = null, 
     i = 0;
 
-    if( active_window != debug_context )
+    if( this.active_window && active_window != debug_context )
     {
       ret[ret.length] = [
           "cst-option",
