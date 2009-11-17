@@ -36,6 +36,11 @@ var stylesheets = new function()
     __shorthandIndexMap = [];
     __selectedRules = null;
     __colorIndex = 0;
+
+    __new_rts = null;
+    __top_rt_id = '';
+    __on_new_stylesheets_cbs = {};
+
   }
   
   const
