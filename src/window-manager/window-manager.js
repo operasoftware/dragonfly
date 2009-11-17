@@ -281,6 +281,10 @@ var window_manager_data = new function()
       this.window_list[i] = win_obj;
       update_views();
     }
+    else
+    {
+      this.remove_window(id);
+    }
   }
 
   this.remove_window = function(win_id)
