@@ -71,7 +71,6 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
 
   var _on_window_updated = function(msg)
   {
-    opera.postError(JSON.stringify(msg))
     for( var r in __runtimes )
     { 
       if (__runtimes[r] &&  __runtimes[r].window_id == msg.window_id && __runtimes[r].is_top)
@@ -1178,7 +1177,8 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       {
         if(services.exec && services.exec.is_implemented)
         {
-          services.exec.post_action('reload');
+          services.exec.requestExec(0, 
+              [[["reload", null, window.window_manager_data.get_debug_context()]]]);
         }
         else
         {

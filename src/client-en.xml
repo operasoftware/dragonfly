@@ -151,6 +151,7 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <!--<script src="./lib/console_logger.js"></script>-->
 <script src="./lib/scope.js"></script>
 <script src="./lib/ecmascript_debugger.js"></script>
+<script src="./lib/exec.js"></script>
 <script src="./lib/http_interface.js"></script>
 <script src="./lib/window_manager.js"></script>
 
@@ -252,7 +253,6 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./console-logger/console.js"/>
 <script src="./console-logger/console_templates.js"/>
 <script src="./ecma-debugger/ecma-debugger.js"/>
-<script src="./exec/exec.js"/>
 
 
 <script src="./http-logger/httplogger_service.js"/>
