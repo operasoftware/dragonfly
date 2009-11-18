@@ -868,3 +868,82 @@ d
   text-align: left;
 }
 
+.color-picker
+{
+  border: 1px solid #666;
+  width: 350px;
+  margin: auto;
+  text-align: center;
+}
+
+.color-picker h2
+{
+  background-color: hsl(0, 0%, 95%);
+  padding: .2em .5em;
+}
+
+.color-picker p
+{
+  margin: .8em;
+  padding: 0;
+  
+}
+.color-picker pre
+{
+  margin: .8em 3em;
+  padding: 0;
+  text-align: left;
+  
+}
+
+.outer-canvas-container
+{
+  display: table;
+  margin: .8em auto;
+  border: 3px solid #666;
+}
+.canvas-container
+{
+  position: relative;
+}
+
+.color-picker canvas
+{
+  display: block;
+}
+
+#color-picker-mask
+{
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: crosshair;
+}
+
+#table-container table
+{
+  border-collapse: collapse;
+  border: 3px solid #666;
+  cursor: crosshair;
+  background-color: #000;
+  margin: .8em auto;
+}
+
+#table-container td
+{
+  line-height: 1px;
+  padding: 0;  
+}
+
+#center-color
+{
+  height: 40px;
+  margin:.8em 3em;
+}
+
+#table-container-debug
+{
+  position:absolute;
+  right:0;
+  top:0;
+}

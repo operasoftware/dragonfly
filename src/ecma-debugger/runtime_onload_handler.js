@@ -23,6 +23,12 @@ var runtime_onload_handler = new function()
   __onload_handlers = {},
   poll_interval = 50;
 
+  var reset_state_handler = function()
+  {
+    __rts = {};
+    __onload_handlers = {};
+  }
+
   var poll = function(rt_id)
   {
     if( blocked_rts[rt_id] )
@@ -108,5 +114,6 @@ var runtime_onload_handler = new function()
 
   messages.addListener("thread-stopped-event", onThreadStopped);
   messages.addListener("thread-continue-event", onThreadContinue);
+  messages.addListener('reset-state', reset_state_handler);
 
 }

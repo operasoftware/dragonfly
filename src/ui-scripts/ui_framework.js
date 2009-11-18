@@ -144,26 +144,25 @@ var ui_framework = new function()
     }
   ];
 
-  resolve_map_2.markup = "\
-  <div> \
-    <div class='js-source'> \
-      <div id='js-source-scroll-content'> \
-        <div id='js-source-content'> \
-          <div id='test-line-height'>test</div> \
-          <div style='position:absolute;width:100px;height:100px;overflow:auto'> \
-            <div id='test-scrollbar-width' style='height:300px'></div> \
-          </div> \
-        </div> \
-      </div> \
-    </div> \
-    <toolbar style='top:50px;left:50px;height:26px;width:678px;display:block'> \
-      <cst-select id='test-cst-select-width' cst-id='js-script-select' unselectable='on' style='width: 302px' > \
-        <cst-value unselectable='on' /> \
-        <cst-drop-down/> \
-      </cst-select> \
-    </toolbar> \
-  </div>\
-  ";
+  resolve_map_2.markup = "" +
+  "<div> " +
+    "<div class='js-source'> " +
+      "<div id='js-source-scroll-content'> " +
+        "<div id='js-source-content'> " +
+          "<div id='test-line-height'>test</div> " +
+          "<div style='position:absolute;width:100px;height:100px;overflow:auto'> " +
+            "<div id='test-scrollbar-width' style='height:300px'></div> " +
+          "</div> " +
+        "</div> " +
+      "</div> " +
+    "</div> " +
+    "<toolbar style='top:50px;left:50px;height:26px;width:678px;display:block'> " +
+      "<cst-select id='test-cst-select-width' cst-id='js-script-select' unselectable='on' style='width: 302px' > " +
+        "<cst-value unselectable='on' /> " +
+        "<cst-drop-down/> " +
+      "</cst-select> " +
+    "</toolbar> " +
+  "</div>";
 
   this.setup = function()
   {

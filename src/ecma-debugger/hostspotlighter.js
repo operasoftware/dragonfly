@@ -392,8 +392,7 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
         window['cst-selects']['spotlight-color-' + ( row_id | k ) ].template(null, !checked)
       ]
     }
-    return \
-    [
+    return [
       'tr', 
       ['td', label]
     ].concat(ret)
@@ -526,8 +525,7 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
   /* templates */
   this.colorSelectsTemplate = function()
   {
-    return \
-    [
+    return [
       'setting-composite',
       [
         'h3', ui_strings.S_LABEL_SPOTLIGHT_COLOR_THEME,
@@ -561,8 +559,7 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
   
   this.colorAdvancedSelectsTemplate = function()
   {
-    return \
-    [
+    return [
       'table',
       [
         'tbody',

@@ -27,7 +27,8 @@ var key_ids =
   F11: '000122',
   SHIFT_F11: '100122',
   CTRL_A: '01065',
-  CTRL_I: '01073'
+  CTRL_I: '01073',
+  CTRL_SHIFT_S: '11083'
 }
 
 var action_ids =
@@ -50,7 +51,9 @@ var action_ids =
   BACKSPACE: 'action-back-space',
   CTRL_BACKSPACE: 'action-ctrl-back-space',
   CTRL_A: 'action-select-all',
-  CTRL_I: 'invert'
+  CTRL_I: 'invert',
+  CTRL_SHIFT_S: 'action-df-snapshot'
+
 }
 
 var action_map_win = {};
@@ -75,6 +78,7 @@ action_map_win[key_ids.BACKSPACE] = action_ids.BACKSPACE;
 action_map_win[key_ids.CTRL_BACKSPACE] = action_ids.CTRL_BACKSPACE;
 action_map_win[key_ids.CTRL_A] = action_ids.CTRL_A;
 action_map_win[key_ids.CTRL_I] = action_ids.CTRL_I;
+action_map_win[key_ids.CTRL_SHIFT_S] = action_ids.CTRL_SHIFT_S;
 
 var action_map = action_map_win;
 
@@ -148,6 +152,24 @@ var BaseKeyhandler = new function()
   this[this.CTRL_I] = function(event, action_id)
   {
     hostspotlighter.invertColors();
+  }
+  //BaseKeyhandler["action-df-snapshot"]()
+  this[this.CTRL_SHIFT_S] = function(event, action_id)
+  {
+    if(window.client.scope_proxy == "dragonkeeper")
+    {
+      var style = document.documentElement.style;
+      style.cssText = "width:" + window.innerWidth + "px;height:" + window.innerHeight + "px;";
+      var snapshot = new XMLSerializer().serializeToString(document);
+      var title = prompt("file name for the snapshot");
+      if(title)
+      {
+        title = title.replace(/ /g, '-');
+        window.proxy.POST("/snapshot", title + "\r\n" + snapshot);
+      }
+      //window.open("data:text/plain," + encodeURIComponent(new XMLSerializer().serializeToString(document)))
+      style.cssText = "";
+    }
   }
 
   this.init = function(id)
@@ -264,7 +286,8 @@ var key_identifier = new function()
   F10 = 121,
   F11 = 122,
   A = 65,
-  I = 73;
+  I = 73,
+  S = 83;
 
   var key_handler_ids = {}, id = '';
 
@@ -280,7 +303,7 @@ var key_identifier = new function()
     // return false to stop the default action and propagation
     empty_handler = function(event, id)
     {
-      return /input|textarea/i.test(event.target.nodeName);
+      return /input|textarea|button/i.test(event.target.nodeName);
     };
 
 
@@ -340,7 +363,6 @@ var key_identifier = new function()
 
   this.handle = function(event)
   {
-   
     var 
     keyCode = event.keyCode, 
     key_id = '',
@@ -372,13 +394,12 @@ var key_identifier = new function()
       case DELETE:
       case A:
       case I:
+      case S:
       {
-        
         key_id = ( event.shiftKey ? '1' : '0' ) +
             ( event.ctrlKey ? '1' : '0' ) +
             ( event.altKey ? '1' : '0' ) +
             keyCode.toString();
-
         if( key_id in action_map 
             && !__key_handler[action_id = action_map[key_id]](event, action_id) )
         {

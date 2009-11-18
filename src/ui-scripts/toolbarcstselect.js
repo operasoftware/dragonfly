@@ -1,4 +1,4 @@
-var CstSelectToolbarSettings = function(view_id, settings_arr)
+﻿var CstSelectToolbarSettings = function(view_id, settings_arr)
 {
 
   this._add_view_to_key = function(key)

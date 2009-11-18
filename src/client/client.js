@@ -15,7 +15,8 @@ var composite_view_convert_table =
     'dom_panel': 'dom_panel',
     'dom_new': 'dom_panel',
     'network_panel': 'network_panel',
-    'export_new': 'export_new'
+    'export_new': 'export_new',
+    'utils': 'utils'
   },
   "false": 
   {
@@ -26,7 +27,8 @@ var composite_view_convert_table =
     'dom_panel': 'dom_new',
     'dom_new': 'dom_new',
     'network_panel': 'network_panel',
-    'export_new': 'export_new'
+    'export_new': 'export_new',
+    'utils': 'utils'
   }
 }
 
@@ -105,6 +107,12 @@ window.cls.Client = function()
   var services = [];
   var services_dict = {};
   var services_avaible = {};
+
+  var _client_id = 0;
+
+  // the quit calback of scopeAddClient doesn't work 
+  // if the callback is created in the scope of scopeSetupClient
+  var quit_callback = null; 
   
   this.addService = function(service)
   {
@@ -128,6 +136,7 @@ window.cls.Client = function()
         if (service.name in services_avaible)	
         {
           opera.scopeEnableService(service.name);
+          service.is_implemented = true;
           service.onconnect();
         }
         else
@@ -159,6 +168,21 @@ window.cls.Client = function()
   this.reset_onquit_timeout = function()
   {
     self.onquit_timeout = 0;
+    self.scopeSetupClient();
+  }
+
+  var get_quit_callback = function(client_id)
+  {
+    // workaround for bug CORE-25389
+    // onQuit() callback is called twice when 
+    // creating new client with addScopeClient
+    return function(msg)
+    {
+      if(client_id == _client_id)
+      {
+        quit(msg);
+      }
+    }
   }
 
   var quit = function(msg)
@@ -175,9 +199,11 @@ window.cls.Client = function()
           views[view_id].clearAllContainers();
         }
       }
-      self.onquit_timeout = setTimeout(self.reset_onquit_timeout, 1000);
+      self.onquit_timeout = setTimeout(self.reset_onquit_timeout, 500);
     }
   }
+
+  
 
   var post_scope = function(service, msg)
   {
@@ -256,10 +282,12 @@ window.cls.Client = function()
         }
         else
         {
+          service.is_implemented = true;
           if(server_name && server_name.indexOf("Dragonkeeper") != -1 )
           {
             if(!is_event_loop)
             {
+              window.client.scope_proxy = "dragonkeeper";
               command_name = "/send-command/";
               is_event_loop = true;
               setTimeout(function(){
@@ -324,8 +352,11 @@ window.cls.Client = function()
     this.send();
   }
 
+  
   this.scopeSetupClient = function()
   {      
+    _client_id++;
+    quit_callback = get_quit_callback(_client_id);
     var port = settings.debug_remote_setting.get('debug-remote') 
       && settings.debug_remote_setting.get('port')
       || 0;
@@ -334,8 +365,7 @@ window.cls.Client = function()
     {
       alert(ui_strings.S_INFO_WAITING_FOR_CONNECTION.replace(/%s/, port));
     }
-    opera.scopeAddClient(host_connected, receive, quit, port);
-
+    opera.scopeAddClient(host_connected, receive, quit_callback, port);
   }
 
   this.post = function(){};
@@ -435,6 +465,7 @@ window.cls.Client = function()
     new CompositeView('js_panel', ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS, layouts.js_rough_layout_panel);
     new CompositeView('dom_panel', ui_strings.M_VIEW_LABEL_COMPOSITE_DOM, layouts.dom_rough_layout_panel);
     new CompositeView('settings_new', ui_strings.S_BUTTON_LABEL_SETTINGS, layouts.settings_rough_layout);
+    new CompositeView('utils', 'Utils', layouts.utils_rough_layout);
     if( window.opera.attached != settings.general.get('window-attached') )
     {
       window.opera.attached = settings.general.get('window-attached') || false;
@@ -644,16 +675,24 @@ ui_framework.layouts.network_rough_layout =
     children: [ { height: 1000, tabs: ['request_list'] } ] 
 }
 
+ui_framework.layouts.utils_rough_layout =
+{
+    dir: 'v',
+    width: 1000,
+    height: 1000,
+    children: [ { height: 1000, tabs: ['color_picker'] } ] 
+}
+
 ui_framework.layouts.main_layout =
 {
   id: 'main-view', 
-  tabs: ['dom_new', 'js_new', 'network_panel', 'console_new', 'settings_new']
+  tabs: ['dom_new', 'js_new', 'network_panel', 'console_new', 'settings_new', 'utils']
 }
 
 ui_framework.layouts.panel_layout =
 {
   id: 'main-view', 
-  tabs: ['dom_panel', 'js_panel', 'network_panel', 'console_new', 'settings_new']
+  tabs: ['dom_panel', 'js_panel', 'network_panel', 'console_new', 'settings_new', 'utils']
 }
 
 

@@ -101,6 +101,7 @@ cls.WindowManager["2.0"].WindowManagerData = function()
     {
       // TODO 
       // workaround for wrong active window id. must be removed
+      this._active_window = 0;
       this.set_debug_context(this._window_list[0].window_id);
       opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'active window id does not exist');
     }
@@ -129,6 +130,10 @@ cls.WindowManager["2.0"].WindowManagerData = function()
       this._window_list[i] = win_obj;
       window.windowsDropDown.update();
     }
+    else
+    {
+      this._remove_window(id);
+    }
     window.messages.post('window-updated', 
       {window_id: win.window_id, title: win.title, window_type: win.window_type, opener_id: win.opener_id})
   }
@@ -155,6 +160,14 @@ cls.WindowManager["2.0"].WindowManagerData = function()
       }
     }
     window.windowsDropDown.update();
+  }
+
+  this._reset_state_handler = function(msg)
+  {
+    this._active_window = 0;
+    this._window_list = null;
+    this._debug_context = 0;
+    this._check_counter = 0;
   }
 
   /* implementation */
@@ -242,6 +255,11 @@ cls.WindowManager["2.0"].WindowManagerData = function()
       window_manager.requestListWindows();
     });
   };
+
+  window.messages.addListener('reset-state', function(msg)
+  {
+    self._reset_state_handler(msg);
+  });
 
 }
 
@@ -350,7 +368,7 @@ cls.WindowManager["2.0"].DebuggerMenu = function(id, class_name)
     opt = null, 
     i = 0;
 
-    if( active_window != debug_context )
+    if( active_window && active_window != debug_context )
     {
       ret[ret.length] = [
           "cst-option",

@@ -368,9 +368,9 @@ var DOM_markup_style = function(id, name, container_class)
         if( !div_padding_value )
         {
           style = getComputedStyle(container_first_child, null);
-          div_padding_value = \
+          div_padding_value = (
             parseInt( style.getPropertyValue('padding-left') ) +
-            parseInt( style.getPropertyValue('padding-right') );
+            parseInt( style.getPropertyValue('padding-right') ) );
         }
         container.firstChild.style.width = ( container_scroll_width - div_padding_value ) + 'px';
         setTimeout(function(){container.scrollLeft = 0;}, 0);

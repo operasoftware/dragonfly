@@ -158,12 +158,12 @@
 
   this.viewMenu = function()
   {
-    return \
+    return ( 
     [
       'ui-menu', 
       ['h2', ui_strings.M_VIEW_LABEL_VIEWS, 'handler', 'show-menu', 'tabindex', '1'], 
       'id', 'main-view-menu'
-    ].concat(opera.attached ? ['class', 'attached'] : []);
+    ].concat(opera.attached ? ['class', 'attached'] : []) );
   }
 
   this['top-tabs'] = function(obj)

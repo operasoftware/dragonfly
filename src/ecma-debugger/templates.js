@@ -41,8 +41,7 @@
   {
     var display_uri = helpers.shortenURI(runtime.uri);
 
-    return  \
-    [
+    return [
       'cst-option', 
       runtime['title'] || display_uri.uri,
       'rt-id', runtime.runtime_id.toString()
@@ -55,8 +54,7 @@
     var 
     display_uri = helpers.shortenURI(runtime.uri),
     is_reloaded_window = runtimes.isReloadedWindow(runtime.window_id),
-    ret = \
-    [
+    ret = [
       ['h2', runtime['title'] || display_uri.uri].
       concat( runtime.selected ? ['class', 'selected-runtime'] : [] ).
       concat( display_uri.title ? ['title', display_uri.title] : [] )
@@ -104,8 +102,7 @@
       "unknown": ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_UNKNOWN
     },
     script_type = script.script_type,
-    ret = \
-    [
+    ret = [
       'cst-option',
       ( type_dict[script_type] || script_type ) + ' - ' + 
       ( 
@@ -668,8 +665,7 @@ MODE ::= "<mode>"
 
     for( ; lang = dict[i]; i++)
     {
-      ret[ret.length] = \
-        ['option', lang.name, 'value', lang.key].
+      ret[ret.length] = ['option', lang.name, 'value', lang.key].
         concat( selected_lang == lang.key ? ['selected', 'selected'] : [] ); 
     }
     return ret;

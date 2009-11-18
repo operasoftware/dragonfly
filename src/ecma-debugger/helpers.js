@@ -117,11 +117,11 @@ helpers = new function()
   }
   this.setCookie = function(key, value, time) 
   {
-    document.cookie = \
+    document.cookie = (
       key + "=" + encodeURIComponent(value) +
       "; expires=" + 
       ( new Date( new Date().getTime() + ( time || 360*24*60*60*1000 ) ) ).toGMTString() + 
-      "; path=/";
+      "; path=/");
   }
 
   this.getCookie = function(key) 

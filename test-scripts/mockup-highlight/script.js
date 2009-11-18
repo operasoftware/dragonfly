@@ -365,6 +365,16 @@ Highlighter = function(doc)
     this.highlightNode();
   }
 
+  this.get_color = function(id)
+  {
+    var color = window['cst-selects'][id].getSelectedValue();    
+    return "rgba(" + 
+      color[0] + ', ' + 
+      color[1] + ', ' + 
+      color[2] + ', ' + 
+      (color[3]/255) + ")";
+  }
+
   this.highlightNode = function(node, mode, check_lock) 
   {
     var 
@@ -413,16 +423,16 @@ Highlighter = function(doc)
     }
 
     clear();
-    ctx.fillStyle = colors.BORDER_COLOR;
+    ctx.fillStyle = this.get_color('BORDER_COLOR');
     for( ; cursor_box = lock_boxes[i]; i++)
     {
       draw_border(cursor_box);
     }
-    ctx.fillStyle = colors.HIGHLIGHT_COLOR;
+    ctx.fillStyle = this.get_color('HIGHLIGHT_COLOR');
     draw_highlight(outer_box, inner_box);
-    ctx.fillStyle = colors.GRID_COLOR;
+    ctx.fillStyle = this.get_color('GRID_COLOR');
     draw_grid(grid_box);
-    ctx.fillStyle = colors.BORDER_COLOR;
+    ctx.fillStyle = this.get_color('BORDER_COLOR');
     draw_border(frame_box);
     last_selected = [node, boxes];
     if(check_lock && is_lock && ( grid_box || frame_box ) )
@@ -556,7 +566,7 @@ showHighlightControlMetrics = function()
     var not_null = cls_not_null[cls.indexOf(current_target_metrics.className)];
     current_target_metrics.style.backgroundColor = 
       not_null 
-      && colors.HIGHLIGHT_COLOR.replace(/rgba\( *(\d+) *, *(\d+) *, *(\d+).*/, "rgb($1,$2,$3)") 
+      && ("rgb(" + window['cst-selects'].HIGHLIGHT_COLOR.getSelectedValue().slice(0,3).join(',') + ")") 
       || "hsl(0, 0%, 90%)";
     current_target_metrics.style.color = not_null && "#fff" || "#333";
     var inner_index = cls.indexOf(current_target_metrics.className) + 1;
@@ -565,7 +575,7 @@ showHighlightControlMetrics = function()
       current_target_metrics_inner = 
         current_target_metrics.getElementsByClassName(cls[inner_index])[0];
       current_target_metrics_inner.style.borderColor = 
-        colors.BORDER_COLOR.replace(/rgba\( *(\d+) *, *(\d+) *, *(\d+).*/, "rgb($1,$2,$3)");
+        "rgb(" + window['cst-selects'].BORDER_COLOR.getSelectedValue().slice(0,3).join(',') + ")";
     }
   }
 },
@@ -680,7 +690,7 @@ loadurl = function(url)
     this.contentDocument.addEventListener('click', getRealTarget, false);
     highlighter = new Highlighter(test_doc);
   }
-  test_win.location = TEST_DIR + url;
+  test_win.contentWindow.location = TEST_DIR + url;
 },
 
 init = function()
@@ -695,9 +705,9 @@ init = function()
 
 color_handlers = 
 {
-  HIGHLIGHT_COLOR: new CstSelectColor("HIGHLIGHT_COLOR", 0),
-  BORDER_COLOR: new CstSelectColor("BORDER_COLOR", 7),
-  GRID_COLOR: new CstSelectColor("GRID_COLOR", 14),
+  HIGHLIGHT_COLOR: new CstSelectColor("HIGHLIGHT_COLOR", [0, 255, 0, 127]),
+  BORDER_COLOR: new CstSelectColor("BORDER_COLOR", [0, 127, 255, 127]),
+  GRID_COLOR: new CstSelectColor("GRID_COLOR", [255, 0, 127, 127]),
 };
 
 ( window.templates || ( window.templates = {} ) ).metrics = function(style_dec)
@@ -777,5 +787,5 @@ templates.controls = function()
   ];
 }
 
-onload = init;
+window.onload = init;
 

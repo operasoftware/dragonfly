@@ -59,11 +59,11 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
   },
   setCookie = function(key, value, time) 
   {
-    document.cookie = \
+    document.cookie = (
       key + "=" + encodeURIComponent(value) +
       "; expires=" + 
       ( new Date( new Date().getTime() + ( time || 360*24*60*60*1000 ) ) ).toGMTString() + 
-      "; path=/";
+      "; path=/");
   },
   getCookie = function(key) 
   {
@@ -242,12 +242,18 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./ecma-debugger/actions_dom.js"/>
 <script src="./ecma-debugger/hostspotlighter.js"/>
 
+<script src="./exec/color_picker_data.js"/>
+<script src="./exec/color_picker_view.js"/>
+<script src="./exec/color_picker_controls.js"/>
+<script src="./exec/templates.js"/>
+
 <script src="./client/client.js"/>
 <script src="./window-manager/window-manager.js"/>
 <script src="./console-logger/console.js"/>
 <script src="./console-logger/console_templates.js"/>
 <script src="./ecma-debugger/ecma-debugger.js"/>
-<script src="./ecma-debugger/exec.js"/>
+<script src="./exec/exec.js"/>
+
 
 <script src="./http-logger/httplogger_service.js"/>
 <script src="./http-logger/httplogger_data.js"/>

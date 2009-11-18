@@ -79,7 +79,7 @@ top-statusbar.type-tooltip info
   left: 80px;
   margin: 0px;
   background-image: -o-skin('Speed Dial Configuration Dialog Skin');
-  padding: 0px 9px 7px 5px;
+  padding: 7px 9px 9px 9px;
   min-height: 22px;
   min-width: 22px;
 }
@@ -1103,7 +1103,7 @@ cst-select
 cst-select-toolbar-setting
 {
   display: inline-block;
-  background: transparent url('../ui-images/btn-test.png') no-repeat 0 0;
+  background: transparent url('../ui-images/btn-config.png') no-repeat 0 0;
   height: 24px;
   width: 26px;
   vertical-align: middle;

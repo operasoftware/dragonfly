@@ -1176,7 +1176,14 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       var rt_id = this.getRuntimeIdsFromWindow(__selected_window)[0];
       if( rt_id )
       {
-        services['ecmascript-debugger'].requestEval(0, [rt_id, 0, 0, 'location.reload()']);
+        if(services.exec && services.exec.is_implemented)
+        {
+          services.exec.post_action('reload');
+        }
+        else
+        {
+          services['ecmascript-debugger'].requestEval(0, [rt_id, 0, 0, 'location.reload()']);
+        }
       }
     }
   }

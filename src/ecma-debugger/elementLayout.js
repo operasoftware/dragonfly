@@ -303,7 +303,7 @@ var elementLayout = new function()
   
   this.metricsTemplate = function(styles)
   {
-    return \
+    return (
     ['ul', ['li',
     ['ul', 
       ['li',['p','\u00a0',['span', 'margin']]],
@@ -336,7 +336,7 @@ var elementLayout = new function()
       ['ul', ['li', __comp_style[layout_map[BORDER_BOTTOM_WIDTH]], 'colspan', '3']],
       'class', 'border'], ['li', __comp_style[layout_map[MARGIN_RIGHT]]]],
     ['ul', ['li', __comp_style[layout_map[MARGIN_BOTTOM]], 'colspan', '3']],
-    'class', 'margin']];
+    'class', 'margin']] );
   }
 
   messages.addListener('element-selected', onElementSelected);

@@ -9,13 +9,21 @@ var cls = window.cls || ( window.cls = {} );
   * @constructor 
   * @extends ServiceBase
   */
-/*
+/* */
+
+// TODO adjust to STP/1
 cls.ExecService = function(name)
 {
   var self = this;
 
+  this._screen_watcher_reply_cb = function(xml)
+  {
+
+  }
+
   this.onreceive = function(xml) // only called if there is a xml
   {
+    /*
     if( ini.debug )
     {
       debug.logEvents(xml);
@@ -29,25 +37,64 @@ cls.ExecService = function(name)
       opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
         "window manager not handled: " + new XMLSerializer().serializeToString(xml))
     }
+    */
   }
 
   // events
 
 
-
-
-  
-
-
-  this.postAction = function(action)
+  this["screen-watcher-reply"] = function(xml)
   {
-    this.post("<exec><action>" + action + "</action></exec>");
+    /*
+    if(this._screen_watcher_reply_cb)
+    {
+      this._screen_watcher_reply_cb(xml);
+    }
+    */
+  }
+
+
+
+
+  this.screen_watcher = function(cb, win_id, timeout, area)
+  {
+    /*
+    this._screen_watcher_reply_cb = cb || null;
+    area || (area = {x:0, y:0, w:200, h: 200} );
+    this.post("<exec>" +
+          "<screen-watcher>" +
+          "<window-id>"+ ( win_id || window.window_manager_data.debug_context ) + "</window-id>" +
+          "<timeout>" + ( timeout || 1 ) + "</timeout>" +
+          "<area>" +
+            "<x>" + area.x + "</x>" + // horizontal offset
+            "<y>" + area.y + "</y>" + // vertical offset
+            "<w>" + area.w + "</w>" + // width
+            "<h>" + area.h + "</h>" + // height
+          "</area>" +
+        "</screen-watcher>" + 
+      "</exec>");
+      */
+  }
+
+
+  this.post_action = function(action, param)
+  {
+    /*
+    var debug_context = window.runtimes.getActiveWindowId();
+    this.post(
+      "<exec><action>" +
+        "<name>" + action + "</name>" +
+        ( param ? "<param>" + param + "</param>" : "" ) +
+        ( debug_context ? "<window-id>" + debug_context + "</window-id>" : "" ) +
+      "</action></exec>");
+      */
   }
 
 
 
   // constructor calls
 
+/*
   this.initBase(name);
   
   if( ! client)
@@ -57,12 +104,18 @@ cls.ExecService = function(name)
   }
   
   client.addService(this);
+  */
 
 }
 
+/*
+TODO adjust to STP/1
 cls.ExecService.prototype = ServiceBase;
 new cls.ExecService('exec');
+*/
 
+
+/* *
 var cls = window.cls || ( window.cls = {} );
 
 // for testing the window manager service
@@ -73,7 +126,7 @@ cls.WindowManagerTestView = function(id, name, container_class)
   this.createView = function(container)
   {
     var 
-    markup = \
+    markup = "" +
       "<div>" +
         "<input value='New Page'>" +
         "<input type='button' value='post action' handler='exec-action'>" +

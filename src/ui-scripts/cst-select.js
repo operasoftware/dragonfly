@@ -358,7 +358,7 @@ var CstSelectColorBase = function(id, rgba_arr, handler, option)
       [
         "cst-option",
         [
-          "cst-color"
+          "cst-color",
           "unselectable", "on",
           "style", "background-color:" + rgba_to_hex(opt) + ";" +
                   ( select_obj.has_opacity && ( "opacity: " + extract_alpha(opt) + ";" ) || "")
@@ -447,7 +447,7 @@ var CstSelectColorBase = function(id, rgba_arr, handler, option)
 
   this.templateInputRange = function(label, value, min, max, cn, change_handler_id, display_none)
   {
-    return \
+    return (
     [
       "label",
       label,
@@ -460,12 +460,12 @@ var CstSelectColorBase = function(id, rgba_arr, handler, option)
         "value", value
       ],
       "class", cn,
-    ].concat( display_none ? ['style', 'display:none'] : []);
+    ].concat( display_none ? ['style', 'display:none'] : []) );
   }
 
   this.templateInputText = function(label, value, cn, change_handler_id)
   {
-    return \
+    return (
     [
       "label",
       label,
@@ -474,21 +474,21 @@ var CstSelectColorBase = function(id, rgba_arr, handler, option)
         "type", "text",
         "ref-type", change_handler_id,
         "value", value
-      ]
+      ],
       "class", cn,
-    ];
+    ] );
   }
 
   this.templateInputButton = function(value, cn, ref_value )
   {
-    return \
+    return (
     [
       "input",
       "type", "button",
       "ref-value", ref_value,
       "class", cn || "",
       "value", value
-    ];
+    ] );
   }
 
   // this is only valid during modal state
@@ -638,7 +638,7 @@ CstSelectWithAction.prototype = new CstSelectWithActionBase();
 
 ( window.templates || ( window.templates = {} ) )['cst-select'] = function(select, disabled)
 {
-  return \
+  return (
   [
     "cst-select",
       ["cst-value", select.getSelectedOptionText(), "unselectable", "on"].
@@ -650,14 +650,14 @@ CstSelectWithAction.prototype = new CstSelectWithActionBase();
   ].
   concat( select.type ? ['class', select.type] : [] ).
   concat( disabled ? ['disabled', 'disabled'] : [] ).
-  concat( select.handler? ['handler', select.handler] : [] ); 
+  concat( select.handler? ['handler', select.handler] : [] ) ); 
 }
 
 templates['cst-select-option-list'] = function(select_obj, select_ele)
 {
-  return \
+  return (
   ['cst-select-option-list-container',
     ['cst-select-option-list', select_obj.templateOptionList(select_obj)],
     'style', 'top: -1000px; left: -1000px;'
-  ].concat( select_obj.class_name ? ['class', select_obj.class_name] : [] );
+  ].concat( select_obj.class_name ? ['class', select_obj.class_name] : [] ) );
 }
