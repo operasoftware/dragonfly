@@ -69,7 +69,7 @@ var ObjectDataBase = new function()
             unsorted[unsorted.length] = 
             [
               prop.getNodeData('property-name'),
-              '"undefined"',
+              'undefined',
               'undefined',
               depth
             ]
