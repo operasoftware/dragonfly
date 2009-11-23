@@ -357,7 +357,7 @@ var runtimes = new function()
       // the script could be in a pop-up window
       if( old_rt['window-id'] == new_rt['window-id'] )
       {
-        __replaced_scripts[__scripts[sc]['script-id']] = new_script_id;
+        __replaced_scripts[sc] = script;
         delete __scripts[sc];
       }
     }
@@ -873,7 +873,7 @@ var runtimes = new function()
 
   this.getScript = function(scriptId)
   {
-    return __scripts[scriptId] || __scripts[__replaced_scripts[scriptId]] || null;
+    return __scripts[scriptId] || __replaced_scripts[scriptId] || null;
   }
 
   this.getStoppedAt = function(scriptId)
