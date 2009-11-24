@@ -463,7 +463,7 @@ category.unfolded + category header {
   }
 
 .css-inspector .overwritten value:after {
-  content: " [overwritten]";
+  content: " [overridden]";
   color: #c90;
   }
   
