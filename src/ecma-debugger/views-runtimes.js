@@ -15,7 +15,7 @@ new Settings
   // kel-value map
   {
     'selected-window': '',
-    'reload-runtime-automatically': true
+    'reload-runtime-automatically': false
   }, 
   // key-label map
   {
