@@ -989,6 +989,8 @@ var runtimes = new function()
   this.setSelectedScript = function( script_id )
   {
     __selected_script = script_id;
+    window['cst-selects']['js-script-select'].updateElement();
+
     
     /*
     don't understand why this was done in this way
