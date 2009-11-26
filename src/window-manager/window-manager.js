@@ -485,7 +485,7 @@ cls.DebuggerMenu = function(id, class_name)
     opt = null, 
     i = 0;
 
-    if( this.active_window && active_window != debug_context )
+    if( active_window && active_window != debug_context )
     {
       ret[ret.length] = [
           "cst-option",
