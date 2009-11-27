@@ -970,7 +970,7 @@ new Switches
     textSearch.searchDelayed(target.value);
   }
 
-  eventHandlers.keyup['js-source-text-search'] = function(event, target)
+  eventHandlers.keypress['js-source-text-search'] = function(event, target)
   {
     if( event.keyCode == 13 )
     {

@@ -523,7 +523,7 @@ ErrorConsoleView.roughViews.createViews = function()
         textSearch.searchDelayed(target.value);
       }
     
-      eventHandlers.keyup['console-text-search-'+ view_id] = function(event, target)
+      eventHandlers.keypress['console-text-search-'+ view_id] = function(event, target)
       {
         if( event.keyCode == 13 )
         {
