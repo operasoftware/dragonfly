@@ -117,7 +117,8 @@ cls.WindowManagerService = function(name)
       }
       else
       {
-        throw "it not possible to get the active window";
+        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+            "get active window failed in get_context in WindowManagerService");
       }
     }
   },
@@ -197,8 +198,11 @@ var window_manager_data = new function()
 
   this.set_active_window = function(win_id)
   {
-    this.active_window = win_id;
-    update_views();
+    if (!this.window_list || this.has_window_id_in_list(win_id))
+    {
+      this.active_window = win_id;
+      update_views();
+    }
   }
 
   this.getDebugContextTitle = function()
@@ -417,8 +421,8 @@ var windowsDropDown = new function()
       var 
       select = toolbar.getElementsByTagName('select')[0],
       win_list = window_manager_data.window_list,
-        active_window = window_manager_data.active_window,
-        debug_context = window_manager_data.debug_context,
+      active_window = window_manager_data.active_window,
+      debug_context = window_manager_data.debug_context,
       win = null,
       props = ['window-id', 'title', 'window-type', 'opener-id'],
       prop = '', 
