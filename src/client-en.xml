@@ -118,6 +118,22 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <link rel="stylesheet" href="./ui-style/syntax-highlight.css"/>
 <link rel="stylesheet" href="./http-logger/httplogger_style.css"/>
 <link rel="stylesheet" href="./console-logger/consolelogger_style.css"/>
+<!-- overwrite opera.scopeTransmit for debugging purpose <script><![CDATA[
+  (function(transmit)
+  {
+    opera._scopeTransmit = opera.scopeTransmit;
+    opera.scopeTransmit = function(service, message, command, tag)
+    {
+      opera.postError(
+        'service: ' + service + '\n' +
+        'messgae: ' + JSON.stringify(message) + '\n' +
+        'command: ' + command + '\n' +
+        'tag: ' + tag)
+
+      opera._scopeTransmit(service, message, command, tag);
+    };
+  })();
+]]></script> -->
 
 <!-- This will turn off including of the UI strings if the exclude_uistrings var is set -->
 <!-- command concat_js off if exclude_uistrings -->
