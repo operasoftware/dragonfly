@@ -70,12 +70,13 @@ window.cls.Client = function()
     // TODO
     // port 0 means debugging to current Opera instance, 
     // any other port means remote debugging.
-    return 0;
+    return settings.debug_remote_setting.get('debug-remote') 
+      && settings.debug_remote_setting.get('port')
+      || 0;
   }
 
   this.setup = function()
   {
-    
     window.ini || ( window.ini = {debug: false} );
     if( !opera.scopeAddClient )
     {

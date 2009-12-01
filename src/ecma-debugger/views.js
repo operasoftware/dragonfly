@@ -367,7 +367,7 @@ eventHandlers.click['apply-remote-debugging'] = function(event, target)
   {
     settings.debug_remote_setting.set('debug-remote', is_debug_remote);
     settings.debug_remote_setting.set('port', port);  
-    client.scopeSetupClient();
+    client.setup();
     target.disabled = 
       target.previousSibling.previousSibling.firstChild.checked == settings.debug_remote_setting.get('debug-remote');
   }
