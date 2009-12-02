@@ -195,7 +195,17 @@ window.app.builders.ConsoleLogger || ( window.app.builders.ConsoleLogger = {} );
 window.app.builders.ConsoleLogger["2.0"] = function(service)
 {
   var namespace = cls.ConsoleLogger && cls.ConsoleLogger["2.0"];
-  window.app.helpers.implement_service(namespace);
+  if(namespace)
+  {
+    window.app.helpers.implement_service(namespace);
+    window.error_console_data = new namespace.ErrorConsoleData();
+    window.error_console_data.bind();
+    // TODO proper namespace handling for views
+    ErrorConsoleView.roughViews.createViews();
+    // TODO this is a workaround for to much 
+    // dependency between views and ui framework
+    window.views.console_new.update_cell();
+  }
 }
 
 window.app.builders.EcmascriptDebugger || ( window.app.builders.EcmascriptDebugger = {} );

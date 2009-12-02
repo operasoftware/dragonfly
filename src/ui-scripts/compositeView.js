@@ -30,8 +30,15 @@ var CompositeViewBase = function()
 
   this.initCompositeView = function(id, name, layout_rough)
   {
+    this._layout_rough = layout_rough;
     this.cell = new Cell(layout_rough, layout_rough.dir);
     this.init(id, name);
+  }
+
+  this.update_cell = function(layout_rough)
+  {
+    this._layout_rough = layout_rough || (layout_rough = this._layout_rough);
+    this.cell = new Cell(layout_rough, layout_rough.dir);
   }
 }
 
