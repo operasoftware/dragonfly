@@ -384,7 +384,7 @@ cls.WindowManager["2.0"].DebuggerMenu = function(id, class_name)
     {
       ret[ret.length] = [
           "cst-option",
-          win.title,
+          win.title || "\u00A0",
           "opt-index", i,
           "value", win.window_id.toString(),
           "class", win.window_id == debug_context ? "selected" : "",

@@ -3,62 +3,19 @@
  * HTTP logger service
  */
 
-var cls = window.cls || ( window.cls = {} );
+window.cls || (window.cls = {});
+cls.HttpLogger || (cls.HttpLogger = {});
+cls.HttpLogger["2.0"] || (cls.HttpLogger["2.0"] = {});
 
 /**
   * HTTP logger class
   * @constructor 
   * @extends ServiceBase
   */
-cls.HTTPLoggerService = function(name)
+cls.HttpLogger["2.0"].ParseMessges = function(name)
 {
     var self = this;
     var view = "http_logger";
-
-    this.onreceive = function(xml) // only called if there is a xml
-    {
-        //opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + xml.documentElement.nodeName);
-        if( ini.debug )
-        {
-            debug.logEvents(xml);
-        }
-
-        if( self[xml.documentElement.nodeName] )
-        {
-            self[xml.documentElement.nodeName](xml)
-        }
-        else
-        {
-            opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
-              "http-logger not handled: " + new XMLSerializer().serializeToString(xml))
-        }
-    }
-
-  // events supported: request, response
-
-    this['request'] = function(msg) 
-    {
-        var data = this.parseRequest(msg);
-        //opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + "just parsed a request:\n" + JSON.stringify(data));
- 
-        HTTPLoggerData.addRequest(data);
-    }
-
-    this['response'] = function(msg) 
-    {
-        var data = this.parseResponse(msg);
-        //opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + "just parsed a response:\n" + JSON.stringify(data))
-        HTTPLoggerData.addResponse(data);
-    }
-
-    this.onconnect = function(xml)
-    {
-    }
-
-    var onAplicationsetup = function()
-    {
-    }
-
 
     /**
      * Parse a request. Returns an object with the shape:
@@ -78,37 +35,21 @@ cls.HTTPLoggerService = function(name)
      * }
      *
      */
-    this.parseRequest = function(request)
+    this.parseRequest = function(message)
     {
-        var retval = {};
-        var children = request.documentElement.childNodes;
-        for (var n=0, ele; ele=children[n]; n++)
-        {
-            if (ele.nodeName == "header")
-            {
-                retval.raw = ele.textContent;
-                var hd = this.parseRequestHeader(ele);
-                retval.headers = hd.headers;
-                retval.method = hd.method;
-                retval.path = hd.path;
-                retval.query = hd.query;
-                retval.queryDict = hd.queryDict;
-                retval.protocol = hd.protocol;
-            }
-            else
-            {
-                if (ele.nodeName == "time") {
-                    retval[ele.nodeName] = Math.round(parseFloat(ele.textContent))
-                } else {
-                    retval[ele.nodeName] = ele.textContent;
-                }
-            }
-        }
-        
-        retval.host = retval.headers.Host;
-        retval.url = retval.headers.Host + retval.path;
-        
-        return retval;
+        /*
+        const
+        REQUEST_ID = 0,
+        WINDOW_ID = 1,
+        TIME = 2,
+        HEADER = 3;
+        */
+        return this.parseRequestHeader({
+          "request-id": message[0],
+          "window-id": message[1],
+          time: Math.round(parseFloat(message[2])),
+          raw: message[3],
+        });        
     }
 
     /**
@@ -127,37 +68,21 @@ cls.HTTPLoggerService = function(name)
      * }
      *
      */
-    this.parseResponse = function(response)
+    this.parseResponse = function(message)
     {
-        var retval = {};
-        var children = response.documentElement.childNodes;
-        for (var n=0, ele; ele=children[n]; n++)
-        {
-            if (ele.nodeName == "header")
-            {
-                retval.raw = ele.textContent;
-                var hd = this.parseResponseHeader(ele);
-                if (!hd) {
-                    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
-                      "could not parse response header")
-                    continue;
-                }
-                retval.protocol= hd.protocol;
-                retval.status = hd.status;
-                retval.statusClass = retval.status ? retval.status.charAt(0) : "0";
-                retval.reason = hd.reason;
-                retval.headers = hd.headers;
-            }
-            else
-            {
-                if (ele.nodeName == "time") {
-                    retval[ele.nodeName] = Math.round(parseFloat(ele.textContent))
-                } else {
-                    retval[ele.nodeName] = ele.textContent;
-                }
-            }
-        }
-        return retval;
+        /*
+        const
+        REQUEST_ID = 0,
+        WINDOW_ID = 1,
+        TIME = 2,
+        HEADER = 3;
+        */ 
+        return this.parseResponseHeader({
+          "request-id": message[0],
+          "window-id": message[1],
+          time: Math.round(parseFloat(message[2])),
+          raw: message[3],
+        });
     }
 
     /**
@@ -181,44 +106,44 @@ cls.HTTPLoggerService = function(name)
      *  
      *
      */
-    this.parseRequestHeader = function(ele)
+    this.parseRequestHeader = function(retval)
     {
-        var retval = {};
-        var txt = ele.textContent;
-        var lines = txt.split("\n");
-
+        var lines = retval.raw.split("\r\n");
         var requestline = lines.shift();
-        reqparts = requestline.match(/(\w*?) (.*) (.*)/);
+        var reqparts = requestline.match(/(\w*?) (.*) (.*)/);
 
         if (!reqparts || reqparts.length != 4) {
             opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
-              "Could not parse request:\n" + txt);
-            return null;
+              "Could not parse request:\n" + retval.raw);
         }
+        else {
 
-        retval.method = reqparts[1];
-        retval.query = "";
-        retval.path = reqparts[2];
-        
-        var i;
-        if ((i = retval.path.indexOf("?")) > 0)
-        {
-            retval.query = retval.path.slice(i);
-            retval.queryDict = {};
-            retval.query.substr(1).split("&").forEach(function(e)
-            {
-                var offset = e.indexOf("=");
-                if (offset<1) { return }
-                var key = e.substr(0, offset);
-                var val = e.substr(offset+1);
-                retval.queryDict[key] = val;
-            })
+            retval.method = reqparts[1];
+            retval.query = "";
+            retval.path = reqparts[2];
             
-            retval.path = retval.path.slice(0, i);
+            var i;
+            if ((i = retval.path.indexOf("?")) > 0)
+            {
+                retval.query = retval.path.slice(i);
+                retval.queryDict = {};
+                retval.query.substr(1).split("&").forEach(function(e)
+                {
+                    var offset = e.indexOf("=");
+                    if (offset<1) { return }
+                    var key = e.substr(0, offset);
+                    var val = e.substr(offset+1);
+                    retval.queryDict[key] = val;
+                })
+                
+                retval.path = retval.path.slice(0, i);
+            }
+            
+            retval.protocol = reqparts[3];
+            retval.headers = this.parseHeaders(lines);
+            retval.host = retval.headers.Host;
+            retval.url = retval.headers.Host + retval.path;
         }
-        
-        retval.protocol = reqparts[3];
-        retval.headers = this.parseHeaders(lines);
         
         return retval;
     }
@@ -233,26 +158,23 @@ cls.HTTPLoggerService = function(name)
      * }
      *
      */
-    this.parseResponseHeader = function(ele)
+    this.parseResponseHeader = function(retval)
     {
-        var retval = {};
-        var txt = ele.textContent;
-        var lines = txt.split("\n");
+        var lines = retval.raw.split("\r\n");
         var respline = lines.shift();
-        
-        respparts = respline.match(/(\w*?) (\w*?) (.*)/);
+        var respparts = respline.match(/(\w*?) (\w*?) (.*)/);
 
         if (!respparts || respparts.length != 4) {
             opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
-              "Could not parse response:\n" + respline);
-            return null;
+              "could not parse response header");
         }
-        
-        retval.protocol = respparts[1];
-        retval.status = respparts[2];
-        retval.reason = respparts[3];
-        retval.headers = this.parseHeaders(lines);
-        
+        else {
+            retval.protocol = respparts[1];
+            retval.status = respparts[2];
+            retval.reason = respparts[3];
+            retval.headers = this.parseHeaders(lines);
+            retval.statusClass = retval.status ? retval.status.charAt(0) : "0";
+        }
         return retval;
     }
     
@@ -318,19 +240,27 @@ cls.HTTPLoggerService = function(name)
         return headers;
     }
 
-  // constructor calls
+  this.bind = function()
+  {
+    var 
+    self = this,
+    http_logger = window.services['http-logger'];
 
-    this.initBase(name);
-  
-    if( ! client)
+    
+
+    http_logger.onRequest = function(status, msg)
     {
-        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'client does not exist');
-        return;
+      //opera.postError(JSON.stringify(msg));
+      //return
+      window.HTTPLoggerData.addRequest(self.parseRequest(msg));
     }
-    client.addService(this);
-
-  // messages.addListener('application-setup', onAplicationsetup);
+    http_logger.onResponse = function(status, msg)
+    {
+      //opera.postError(JSON.stringify(msg));
+      //return
+      window.HTTPLoggerData.addResponse(self.parseResponse(msg));
+    }
+  }
 }
 
-// cls.HTTPLoggerService.prototype = ServiceBase;
-// new cls.HTTPLoggerService('http-logger');
+

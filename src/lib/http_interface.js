@@ -60,7 +60,6 @@ cls.ScopeHTTPInterface = function(force_stp_0)
       try
       {
         var message = eval('('+xhr.responseText+')');
-        _receive_callback(service, message, command, status, tag);
       }
       catch(e)
       {
@@ -71,6 +70,7 @@ cls.ScopeHTTPInterface = function(force_stp_0)
           xhr.responseText
           );
       };
+      _receive_callback(service, message, command, status, tag);
 
     }
     _proxy.GET( "/get-message?time=" + new Date().getTime(), _receive_dragonkeeper);

@@ -253,7 +253,11 @@ window.app.builders.HttpLogger || ( window.app.builders.HttpLogger = {} );
 window.app.builders.HttpLogger["2.0"] = function(service)
 {
   var namespace = cls.HttpLogger && cls.HttpLogger["2.0"];
-  window.app.helpers.implement_service(namespace);
+  if(namespace)
+  {
+    window.app.helpers.implement_service(namespace);
+    (new namespace.ParseMessges()).bind();
+  }
 }
 
 window.app.builders.WindowManager || ( window.app.builders.WindowManager = {} );

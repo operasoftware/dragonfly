@@ -238,12 +238,13 @@ new cls.RequestListView('request_list', ui_strings.M_VIEW_LABEL_REQUEST_LOG, 'sc
 
 eventHandlers.click['request-list-expand-collapse'] = function(event, target)
 {
-    window.views['request_list'].toggleDetails(target.getAttribute("data-requestid"));
+    window.views['request_list'].toggleDetails(parseInt(target.getAttribute("data-requestid")));
 };
 
 eventHandlers.click['select-http-detail-view'] = function(event, target)
 {
-    window.views['request_list'].selectDetailView(target.getAttribute("data-requestid"), target.getAttribute("data-viewname"));
+    window.views['request_list'].selectDetailView(parseInt(target.getAttribute("data-requestid")), 
+      target.getAttribute("data-viewname"));
 };
 
 
