@@ -202,9 +202,6 @@ window.app.builders.ConsoleLogger["2.0"] = function(service)
     window.error_console_data.bind();
     // TODO proper namespace handling for views
     ErrorConsoleView.roughViews.createViews();
-    // TODO this is a workaround for to much 
-    // dependency between views and ui framework
-    window.views.console_new.update_cell();
   }
 }
 

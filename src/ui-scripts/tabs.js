@@ -31,6 +31,12 @@ var TabsBase = function()
     return tab && true || false;
   }
 
+  this._get_tab = function(ref_id)
+  {
+    for( var i = 0, tab = null; (tab = this.tabs[i]) && tab.ref_id != ref_id; i++);
+    return tab;
+  }
+
   this.addTab = function()
   {
     var i = 0, tab = null;
@@ -242,12 +248,34 @@ var TabsBase = function()
     
   }
 
+  this.on_view_inizialized = function(msg)
+  {
+    if(this.hasTab(msg.view_id))
+    {
+      this._get_tab(msg.view_id).name = window.views[msg.view_id].name;
+      if(this.isvisible())
+      {
+        this.render();
+      }
+    }
+  }
+
+  this.on_view_inizialized_bound = function()
+  {
+    var self = this;
+    return function(msg)
+    {
+      self.on_view_inizialized(msg);
+    };
+  }
+
   this.init = function(cell)
   {
     this.tabs = [];
     this.activeTab = '';
     this.cell = cell;
     this.initBase();
+    window.messages.addListener('view-initialized', this.on_view_inizialized_bound());
   }
 
 }

@@ -86,6 +86,9 @@
  *
  *     <dt>window-updated</dt>
  *     <dd>a host window has changed. Payload: msg.window_id, msg.title, msg.window_type, msg.opener_id</dd>
+ *
+ *     <dt>view-initialized</dt>
+ *     <dd>a view was initialized. Payload: msg.view_id</dd>
  * </dl>
  *  
  */

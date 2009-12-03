@@ -67,6 +67,7 @@ var ViewBase = new function()
     }
     window.views[id] = this;
     ids[ids.length] = this.id;
+    messages.post('view-initialized', {'view_id': this.id});
   }
 
   this.addContainerId = function(id)
