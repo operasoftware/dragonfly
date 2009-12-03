@@ -381,7 +381,7 @@ var key_identifier = new function()
       {
         // in the keypress events the which property for function keys is set to 0 
         // this check lets pass e.g. '(' on a AZERTY keyboard
-        if( event.which != 0 )
+        if( event.which != 0 /* && event.which < 0xE000 */ )
         {
           break;
         }

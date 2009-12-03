@@ -394,7 +394,8 @@ ui_strings.S_INFO_NO_RUNTIME_SELECTED =  "Select a runtime";
 ui_strings.S_INFO_NO_COMPATIBLE_VERSION =  "There is no compatible Opera Dragonfly version.";
 
 ui_strings.S_CONFIRM_LOAD_COMPATIBLE_VERSION = "The protocol version of Opera does not match the one which Opera Dragonfly is using.\n\nTry to load a compatible version?";
-
+/* DESC: The info text in an alert box if the user has specified an invalid port number for remote debugging. */
+ui_strings.S_INFO_NO_VALID_PORT_NUMBER = "Please select a port number between 1 and 65535.";
 
 /*
  * other strings 

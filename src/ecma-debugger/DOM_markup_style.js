@@ -130,8 +130,7 @@ var DOM_markup_style = function(id, name, container_class)
 
     var is_open = 0;
     var has_only_one_child = 0;
-    var one_child_id = "";
-    var one_child_value = ''
+    var one_child_text_content = '';
     var current_depth = 0;
     var child_pointer = 0;
     var child_level = 0;
@@ -198,7 +197,6 @@ var DOM_markup_style = function(id, name, container_class)
               attrs = '';
               for( k = 0; attr = node[ATTRS][k]; k++ )
               {
-
                 attrs += " <key>" + 
                   (( attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '' ) + 
                   /* regarding escaping "<". it happens that there are very starnge keys in broken html.
@@ -216,24 +214,34 @@ var DOM_markup_style = function(id, name, container_class)
             {
               attrs = '';
             }
-
             child_pointer = i + 1;
-
-            is_open = ( data[ child_pointer ] && ( node[ DEPTH ] < data[ child_pointer ][ DEPTH ] ) );
+            is_open = (data[child_pointer] && (node[DEPTH] < data[child_pointer][DEPTH]));
             if( is_open ) 
             {
               has_only_one_child = 1;
-              one_child_value = '';
+              one_child_text_content = '';
               child_level = data[child_pointer][DEPTH];
               for( ; data[child_pointer] &&  data[child_pointer][DEPTH] == child_level; child_pointer += 1 )
               {
-                one_child_value += data[child_pointer][VALUE];
-                one_child_id = data[child_pointer][ID];
-                if( data[child_pointer][TYPE] != 3 )
+                if (data[child_pointer][TYPE] != 3)
                 {
                   has_only_one_child = 0;
-                  one_child_value = '';
+                  one_child_text_content = '';
                   break;
+                }
+                // perhaps this needs to be adjusted. a non-closed (e.g. p) tag 
+                // will create an additional CRLF text node, that means the text nodes are not normalized. 
+                // in markup view it doesn't make sense to display such a node, still we have to ensure
+                // that there is at least one text node. 
+                // perhaps there are other situation with not-normalized text nodes, 
+                // with the following code each of them will be a single text node, 
+                // if they contain more than just white space.
+                // for exact DOM representation it is anyway better to use the DOM tree style.
+                if (!one_child_text_content || !/^\s*$/.test(data[child_pointer][VALUE]))
+                {
+                  one_child_text_content += "<text" +
+                    ( is_not_script_node ? " ref-id='" + data[child_pointer][ID] + "' " : "" ) +
+                    "'>" + data[child_pointer][VALUE] + "</text>";
                 }
               }
             }
@@ -248,10 +256,7 @@ var DOM_markup_style = function(id, name, container_class)
                         "ref-id='" + node[ ID ] + "' handler='spotlight-node' " +
                         class_name + ">"+
                         "<node>&lt;" + node_name +  attrs + "&gt;</node>" +
-                  // TODO text node is a different node
-                        "<text" +
-                          ( is_not_script_node ? " ref-id='" + one_child_id + "' " : "" ) +
-                          "'>" + one_child_value.replace(/</g, '&lt;') + "</text>" +
+                        one_child_text_content.replace(/</g, '&lt;') +
                         "<node>&lt;/" + node_name + "&gt;</node>" +
                         ( is_debug && ( " <d>[" + node[ ID ] +  "]</d>" ) || "" ) +
                         "</div>";

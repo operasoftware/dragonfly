@@ -88,7 +88,7 @@ var ObjectDataBase = new function()
             unsorted[unsorted.length] = 
             [
               prop[PROPERTY_NAME],
-              '"undefined"',
+              'undefined',
               'undefined',
               depth
             ]

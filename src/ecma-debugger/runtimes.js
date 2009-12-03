@@ -386,7 +386,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       // the script could be in a pop-up window
       if( old_rt.window_id == new_rt.window_id )
       {
-        __replaced_scripts[__scripts[sc].script_id] = new_script_id;
+        __replaced_scripts[sc] = script;
         delete __scripts[sc];
       }
     }
@@ -995,7 +995,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
 
   this.getScript = function(scriptId)
   {
-    return __scripts[scriptId] || __scripts[__replaced_scripts[scriptId]] || null;
+    return __scripts[scriptId] || __replaced_scripts[scriptId] || null;
   }
 
   this.getStoppedAt = function(scriptId)
@@ -1112,6 +1112,8 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
   this.setSelectedScript = function( script_id )
   {
     __selected_script = script_id;
+    window['cst-selects']['js-script-select'].updateElement();
+
     
     /*
     don't understand why this was done in this way

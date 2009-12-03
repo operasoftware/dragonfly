@@ -137,10 +137,10 @@ cls.JsSourceView = function(id, name, container_class)
     {
       for( ; breakpoint = breakpoints[i]; i++)
       {
-        if( script_breakpoints[ __current_line + i ] )
+        if (script_breakpoints[__current_line + i])
         {
           breakpoint.style.backgroundPosition=
-            '0 ' + ( -1 * script_breakpoints[ __current_line + i ] * line_height ) + 'px';
+            '0 ' + (-1 * script_breakpoints[__current_line + i] * line_height) + 'px';
         }
         else
         {
@@ -449,9 +449,8 @@ cls.JsSourceView = function(id, name, container_class)
         {
           script.has_context = setScriptContext(script_id, line_nr);
         }
-        
         messages.post('script-selected', {script: script});
-
+        runtimes.setSelectedScript(script_id);
       }
       else
       {
@@ -557,6 +556,7 @@ cls.JsSourceView = function(id, name, container_class)
     }
     __current_pointer = 0;
     __current_pointer_type = 0;
+    updateBreakpoints();
   }
 
   this.addBreakpoint = function(line)
@@ -697,9 +697,9 @@ cls.helper_collection.getSelectedOptionText = function()
   if( selected_script_id )
   {
     var script = runtimes.getScript(selected_script_id);
-    var display_uri = helpers.shortenURI(script.uri);
     if( script )
     {
+      var display_uri = helpers.shortenURI(script.uri);
       return ( 
         display_uri.uri
         ? display_uri.uri
@@ -982,7 +982,7 @@ new Switches
     textSearch.searchDelayed(target.value);
   }
 
-  eventHandlers.keyup['js-source-text-search'] = function(event, target)
+  eventHandlers.keypress['js-source-text-search'] = function(event, target)
   {
     if( event.keyCode == 13 )
     {

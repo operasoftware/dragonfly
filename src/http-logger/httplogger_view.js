@@ -279,7 +279,7 @@ eventHandlers.click['select-http-detail-view'] = function(event, target)
         textSearch.searchDelayed(target.value);
     }
 
-    eventHandlers.keyup['http-text-search'] = function(event, target)
+    eventHandlers.keypress['http-text-search'] = function(event, target)
     {
         if (event.keyCode == 13) {
             textSearch.highlight();

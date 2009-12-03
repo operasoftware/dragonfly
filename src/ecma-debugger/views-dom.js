@@ -727,7 +727,7 @@ eventHandlers.click['df-show-live-source'] = function(event, target)
     textSearch.searchDelayed(target.value);
   }
 
-  eventHandlers.keyup['dom-text-search'] = function(event, target)
+  eventHandlers.keypress['dom-text-search'] = function(event, target)
   {
     if( event.keyCode == 13 )
     {

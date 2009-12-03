@@ -391,7 +391,7 @@ var action_handler = new function()
 
   handlers['continue'] = function(event)
   {
-    views.js_source.clearView();
+    views.js_source.clearLinePointer();
     views.callstack.clearView();
     views.inspection.clearView();
     stop_at.__continue(event.target.id.slice(9));

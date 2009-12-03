@@ -328,6 +328,8 @@ new Settings
             ui_strings.S_LABEL_PORT + ': ',
             ['input',
               'type', 'number',
+              'min', '1',
+              'max', '65535',
               'value', setting.get('port'),
               'disabled', !setting.get('debug-remote'),
               'handler', 'change-port-number-remote-debug',
@@ -363,14 +365,24 @@ eventHandlers.click['apply-remote-debugging'] = function(event, target)
 {
   var is_debug_remote = target.parentNode.getElementsByTagName('input')[0].checked;
   var port = parseInt(target.parentNode.getElementsByTagName('input')[1].value);
-  if( port )
+  if (typeof port == 'number')
   {
-    settings.debug_remote_setting.set('debug-remote', is_debug_remote);
-    settings.debug_remote_setting.set('port', port);  
-    client.setup();
-    target.disabled = 
-      target.previousSibling.previousSibling.firstChild.checked == settings.debug_remote_setting.get('debug-remote');
+    if(0 < port && port <= 0xffff)
+    {
+      settings.debug_remote_setting.set('debug-remote', is_debug_remote);
+      settings.debug_remote_setting.set('port', port);  
+      client.setup();
+      target.disabled = (
+        target.previousSibling.previousSibling.firstChild.checked == 
+                      settings.debug_remote_setting.get('debug-remote'));
+    }
+    else
+    {
+      alert(ui_strings.S_INFO_NO_VALID_PORT_NUMBER);
+      target.parentNode.getElementsByTagName('input')[1].value = port < 1 && 1 || 0xffff;
+    }
   }
+
 }
 
 
