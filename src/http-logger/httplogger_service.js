@@ -250,14 +250,10 @@ cls.HttpLogger["2.0"].ParseMessges = function(name)
 
     http_logger.onRequest = function(status, msg)
     {
-      //opera.postError(JSON.stringify(msg));
-      //return
       window.HTTPLoggerData.addRequest(self.parseRequest(msg));
     }
     http_logger.onResponse = function(status, msg)
     {
-      //opera.postError(JSON.stringify(msg));
-      //return
       window.HTTPLoggerData.addResponse(self.parseResponse(msg));
     }
   }
