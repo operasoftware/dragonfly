@@ -3,12 +3,15 @@
   * @extends ViewBase
   * this is a bit a hack
   */
+window.cls || (window.cls = {});
+cls.debug || (cls.debug = {});
 
-var Debug = function(id, name, container_class)
+cls.debug.Debug = function(id, name, container_class)
 {
   //var d_c = null;
   var self = this;
   var indent='  ';
+  this.show_in_views_menu = true;
 
   var reCommand=/<([^>]*)>/;
 
@@ -166,8 +169,20 @@ var Debug = function(id, name, container_class)
     }
   }
 
-  
 
+  // TODO
+  this.log_message = function(service, message, command, status, tag)
+  {
+    this.output('receive:\n' + service + ' ' + message + ' ' + command + ' ' + status + ' ' + tag); 
+  }
+
+  this.log_transmit = function(service, message, command, tag)
+  {
+    this.output('transmit\n' + service + ' ' + message + ' ' + command + ' ' + tag)
+  }
+
+
+ 
   this.formatXML=function(string)
   {
     string=string.replace(/<\?[^>]*>/, '');
@@ -216,9 +231,22 @@ var Debug = function(id, name, container_class)
   this.init(id, name, container_class);
 }
 
-Debug.init = function()
+cls.debug.Debug.prototype = ViewBase;
+
+cls.debug.wrap_transmit = function()
 {
-  window.debug = new Debug('debug', 'Debug', 'scroll debug-container');
+  opera._scopeTransmit = opera.scopeTransmit;
+  opera.scopeTransmit = function(service, message, command, tag)
+  {
+    window.debug.log_transmit(service, message, command, tag);
+    opera._scopeTransmit(service, message, command, tag);
+  };
+}
+
+cls.debug.create_debug_environment = function(params)
+{
+  window.ini.debug = true;
+  window.debug = new cls.debug.Debug('debug', 'Debug', 'scroll debug-container');
   new ToolbarConfig
   (
     'debug',
@@ -241,7 +269,9 @@ Debug.init = function()
   {
     debug.export_data();
   }
+  // 
 
+/*
   var View = function(id, name, container_class)
   {
 
@@ -289,6 +319,7 @@ Debug.init = function()
 
   View.prototype = ViewBase;
   new View('commandline_debug', 'Commandline Debug', 'scroll');
+  */
 }
 
-Debug.prototype = ViewBase;
+

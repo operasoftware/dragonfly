@@ -95,6 +95,10 @@ window.cls.Client = function()
         _on_host_quit, 
         _get_port_number()
       );
+    if(window.ini.debug)
+    {
+      cls.debug.wrap_transmit();
+    }
 
     viewport.innerHTML = "<div class='padding'>" +
         "<div class='info-box'>Waiting for a host connection</div>" +
@@ -373,10 +377,12 @@ window.cls.Client = function()
 
   this.beforeUIFrameworkSetup = function()
   {
-    var args = location.search, params = {}, arg = '', i = 0, ele = null;
-    var no_params = true;
     var host = location.host.split(':');
     var layouts = ui_framework.layouts;
+    /*
+    var args = location.search, params = {}, arg = '', i = 0, ele = null;
+    var no_params = true;
+
 
     if( args )
     {
@@ -485,7 +491,10 @@ window.cls.Client = function()
       topCell.toolbar.changeStyleProperty("padding-right", 30);
     }
     document.documentElement.render(templates.window_controls(window.opera.attached))
-    messages.post('setting-changed', {id: 'general', key: 'show-views-menu'});
+    if(window.ini.debug)
+    {
+      window.viewsMenu.create();
+    }
     // a short workwround to hide some tabs as long as we don't have the dynamic tabs
     var is_disbaled = null, tabs = ui_framework.layouts.console_rough_layout.children[0].tabs, tab = '';
     for( i = 0; tab = tabs[i]; i++ )

@@ -78,11 +78,6 @@ cls.ScopeHTTPInterface = function(force_stp_0)
 
   var _scopeTransmit_STP_0 = function(service, message, command_id, tag)
   {
-    if( ini.debug )
-    {
-      debug.log_command(msg);
-    }
-
     /** 
       * path format /post-command/<service-name>/<command-id>/<tag>, 
       * message in the request body 
@@ -93,15 +88,10 @@ cls.ScopeHTTPInterface = function(force_stp_0)
 
   var _scopeTransmit_STP_1 = function(service, message, command_id, tag)
   {
-    if( ini.debug )
-    {
-      debug.log_command(msg);
-    }
     /** 
       * path format /http-interface-command-name/service-name/command-id/tag, msg
       * format 1 is JSON structures (UMS) , encoding UTF-8
       */
-    
     _proxy.POST("/post-command/" + service + "/" + command_id + "/" + tag, 
                     JSON.stringify(message));
   }

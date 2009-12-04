@@ -110,19 +110,15 @@ window.cls.ServiceBase = function()
 
   var _handle_scope_message = function(service, message, command, status, tag)
   {
-    if(ini.debug)
+    if( !tagManager.handle_message(tag, status, message) )
     {
-      debug.log_events(service, message, command, status, tag);
+      _services[service][_event_map[service][command]](status, message);
     }
-    /* for debugging *
-    opera.postError(
-      'service: ' + service +'\n' + 
-      'command: ' + _event_map[service][command] + '\n' + 
-      'tag: ' + tag + '\n' +
-      'status: ' + status + '\n' +
-      'message: ' + JSON.stringify(message)
-      )
-    /* */
+  }
+
+  var _handle_scope_message_debug = function(service, message, command, status, tag)
+  {
+    window.debug.log_message(service, message, command, status, tag);
     if( !tagManager.handle_message(tag, status, message) )
     {
       _services[service][_event_map[service][command]](status, message);
@@ -148,7 +144,7 @@ window.cls.ServiceBase = function()
 
   arguments.callee.get_generic_message_handler = function()
   {
-    return _handle_scope_message;
+    return window.ini && window.ini.debug && _handle_scope_message_debug || _handle_scope_message;
   }
 
   arguments.callee.register_services = function(namespace)

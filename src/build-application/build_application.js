@@ -124,9 +124,14 @@ window.app.build_application = function(on_services_created, on_services_enabled
     window.services.add(new service_class());
   }
 
+  var params = this.helpers.parse_url_arguments();
+  if(params.debug)
+  {
+    cls.debug.create_debug_environment(params);
+  }
+
   // ensure that the static methods on cls.ServiceBase exist.
   new cls.ServiceBase();
-
 
   // global objects
   window.tagManager = new window.cls.TagManager();
@@ -285,6 +290,28 @@ window.app.helpers.implement_service = function(namespace)
     namespace.Service.apply(window.services[namespace.name].constructor.prototype);
     window.services[namespace.name].is_implemented = true;
   }
+}
+
+window.app.helpers.parse_url_arguments = function()
+{
+  /* 
+    supported arguments:
+      - debug
+      - log-filter
+  */
+  var 
+  args = location.search.slice(1).split(';'), 
+  params = {}, 
+  arg = '', 
+  i = 0;
+
+  for( ; arg = args[i]; i++)
+  {
+    arg = arg.split('=');
+    params[arg[0].replace(/^ +/, '').replace(/ +$/, '')] = 
+      arg[1] && arg[1].replace(/^ +/, '').replace(/ +$/, '') || true;
+  }
+  return params;
 }
 
 

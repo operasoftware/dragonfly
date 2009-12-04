@@ -208,12 +208,12 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./build-application/build_application.js"></script>
 
 
-
+<script src="./debug/debug.js"/>
 
 
 <script src="./ecma-debugger/ListTextSearch.js"/>
 <script src="./scripts/ini.js"/>
-<script src="./ecma-debugger/debug.js"/>
+
 <script src="./ecma-debugger/storage.js"/>
 <script src="./ecma-debugger/helpers.js"/>
 <script src="./ecma-debugger/tabs.js"/>
