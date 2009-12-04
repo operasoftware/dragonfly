@@ -31,10 +31,14 @@ cls.debug.Debug = function(id, name, container_class)
 
   var out = [];
 
+  this._textarea = null;
+
   this.createView = function(d_c)
   {
-    var first_child = d_c.firstChild || d_c.render(['div', 'class', 'padding']);
-    first_child.textContent = out.join('\n');
+    //var first_child = d_c.firstChild || d_c.render(['div', 'class', 'padding']);
+    //first_child.textContent = out.join('\n');
+    this._textarea = d_c.render(['textarea', 'class', 'debug-textarea']);
+    this._textarea.value = out.join('\n');
     /*
     if( string && string.indexOf('<timeout/>') == -1 )
     {
@@ -44,6 +48,11 @@ cls.debug.Debug = function(id, name, container_class)
     */
   }
 
+  this.ondestroy = function()
+  {
+    alert('destroy');
+  }
+
   this.scrollToBottom = function(container)
   {
     container.scrollTop = container.scrollHeight;
@@ -51,9 +60,18 @@ cls.debug.Debug = function(id, name, container_class)
 
   this.output = function(string)
   {
-    if(string) out.push(string);
+    if(string) 
+    {
+      out.push(string);
+      if(this._textarea)
+      {
+        this._textarea.value = out.join('\n');
+      }
+    }
+    /*
     this.update();
     this.applyToContainers(this.scrollToBottom);
+    */
 
 
   }
@@ -169,16 +187,126 @@ cls.debug.Debug = function(id, name, container_class)
     }
   }
 
+  var get_indent = function(count)
+  {
+    var ret = "";
+    while(count && count-- > 0)
+    {
+      ret += INDENT;
+    }
+    return ret;
+  }
+
+  var pretty_print_payload_item = function(indent, name, definition, item)
+  {
+    return (
+      get_indent(indent) +
+      name + ': ' + (
+        "message" in definition && "\n" + 
+            pretty_print_payload(item, definition["message"], indent + 1) ||
+        !item && "null" || 
+        typeof item == "string" && "\"" + item + "\"" || 
+        item));
+  }
+
+
+  var pretty_print_payload = function(payload, definitions, indent)
+  {
+    var 
+    ret = [], 
+    item = null,
+    i = 0,
+    definition = null,
+    j = 0;
+
+    //# TODO message: self
+    if (definitions)
+    {
+      for (; i < payload.length; i++)
+      {
+        item = payload[i];
+        definition = definitions[i];
+        if (definition["q"] == "repeated")
+        {
+          ret.push(get_indent(indent) + definition['name'] + ':');
+          for( j = 0; j < item.length; j++)
+          {
+            ret.push(pretty_print_payload_item(
+              indent + 1,
+              definition['name'].replace("List", ""),
+              definition,
+              item[j]));
+          }
+        }
+        else
+        {
+          ret.push(pretty_print_payload_item(
+            indent,
+            definition['name'],
+            definition,
+            item))
+        }
+      }
+      return ret.join("\n")
+    }
+    return "";
+  }
+
+  const INDENT = "  ", COMMAND = 1, RESPONSE = 2, EVENT = 3;
+  var _status_map = cls.ServiceBase.get_status_map();
+  var _event_map = cls.ServiceBase.get_event_map();
 
   // TODO
   this.log_message = function(service, message, command, status, tag)
   {
-    this.output('receive:\n' + service + ' ' + message + ' ' + command + ' ' + status + ' ' + tag); 
+    /*
+    var response = document.getElementById('message-response');
+    if(response)
+    {
+      response.parentNode.removeChild(response);
+    }
+    response = 
+      document.getElementById('message-container').
+      appendChild(document.createElement('pre'));
+    response.id = 'message-response';
+    service = _dashed_name(service);
+    var command_id = _event_map[service].indexOf('handle' + command);
+    var definitions = window.command_map[service][command_id][RESPONSE];
+    if (status != 0) // Use the error structure if we received an error response
+        definitions = window.package_map["com.opera.stp"]["Error"];
+    response.textContent = 
+      "response:\n  status: " + 
+      _status_map[status] + "\n" +
+      "  payload: \n" + 
+      pretty_print_payload(message, definitions, 2);
+    */
+    ///////////
+    var command_name = _event_map[service][command];
+    var definitions = window.command_map[service][command][/^on/g.test(command_name) && EVENT || RESPONSE];
+    this.output(
+      '\nreceive:\n' + 
+      INDENT + 'service: ' + service + '\n' + 
+      INDENT + 'command: ' + _event_map[service][command] + '\n' + 
+      INDENT + 'staus: ' + status + '\n' + 
+      INDENT + 'tag: ' + tag + '\n' +
+      INDENT + 'payload:\n' +
+        pretty_print_payload(message, definitions, 2)
+      ); 
   }
 
   this.log_transmit = function(service, message, command, tag)
   {
-    this.output('transmit\n' + service + ' ' + message + ' ' + command + ' ' + tag)
+    var command_name = _event_map[service][command];
+    var definitions = window.command_map[service][command][COMMAND];
+    this.output(
+      '\ntransmit:\n' + 
+      INDENT + 'service: ' + service + '\n' + 
+      INDENT + 'command: ' + _event_map[service][command] + '\n' + 
+      INDENT + 'tag: ' + tag + '\n' +
+      INDENT + 'payload:\n' +
+        pretty_print_payload(message, definitions, 2)
+      ); 
+    //this.output('transmit\n' + service + ' ' + message + ' ' + command + ' ' + tag)
   }
 
 

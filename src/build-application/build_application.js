@@ -124,14 +124,16 @@ window.app.build_application = function(on_services_created, on_services_enabled
     window.services.add(new service_class());
   }
 
+  // ensure that the static methods on cls.ServiceBase exist.
+  new cls.ServiceBase();
+
   var params = this.helpers.parse_url_arguments();
   if(params.debug)
   {
     cls.debug.create_debug_environment(params);
   }
 
-  // ensure that the static methods on cls.ServiceBase exist.
-  new cls.ServiceBase();
+
 
   // global objects
   window.tagManager = new window.cls.TagManager();

@@ -208,7 +208,9 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./build-application/build_application.js"></script>
 
 
+<script src="./debug/message_maps.js"/>
 <script src="./debug/debug.js"/>
+
 
 
 <script src="./ecma-debugger/ListTextSearch.js"/>
