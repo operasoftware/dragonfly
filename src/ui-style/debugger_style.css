@@ -81,7 +81,7 @@ li[hanler] {
   }
 
 #command-line-debug-container {
-
+  height: 100%;
   }
 
 #command-line-debug-container textarea {

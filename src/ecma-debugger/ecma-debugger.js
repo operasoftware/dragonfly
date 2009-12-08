@@ -117,9 +117,9 @@ cls.ECMAScriptDebuggerService = function(name)
   events['thread-finished'] = runtimes.handleThreadFinished;
 
 
-
-
-
+  events['get-selected-element'] =
+  events['on-element-selected'] = 
+  window.dom_data.on_element_selected;
 
   // constructor calls
 
@@ -371,6 +371,15 @@ cls.ECMAScriptDebuggerService = function(name)
                   ( format ? "<format>json</format>" : "" ) +
               "</css-get-style-declarations>";
     this.post(msg);
+  }
+
+  this.get_selected_element = function(tag)
+  {
+    this.post(
+      "<get-selected-element>" +
+        "<tag>" + (tag || "") + "</tag>" +
+      "</get-selected-element>"
+    );
   }
 
 }

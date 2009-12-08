@@ -74,24 +74,36 @@ var host_tabs = new function()
 
   this.setActiveTab = function(window_id)
   {
-    activeTabOnChange();
-    __window_id = window_id;
-    runtimes.setActiveWindowId(window_id);
-    __activeTab = runtimes.getRuntimeIdsFromWindow(window_id);
-    this.post_messages();
+    if(!__window_id || __window_id != window_id)
+    {
+      activeTabOnChange();
+      __window_id = window_id;
+      runtimes.setActiveWindowId(window_id);
+      __activeTab = runtimes.getRuntimeIdsFromWindow(window_id);
+      this.post_messages();
+    }
 
+  }
+
+  this._has_changed = function(arr_1, arr_2)
+  {
+    for(var i = 0; i < arr_1.length && arr_1[i] == arr_2[i]; i++);
+    return !(i == arr_1.length && i == arr_2.length);
   }
 
   this.updateActiveTab = function()
   {
-    __activeTab = runtimes.getRuntimeIdsFromWindow(__window_id);
-    var ev = null, i = 0;
-    for( ; ev = activeEvents[i]; i++)
+    var rt_ids = runtimes.getRuntimeIdsFromWindow(__window_id);
+    if(this._has_changed(rt_ids, __activeTab))
     {
-      __addEvenetListener(ev.type, ev.cb);
+      __activeTab = rt_ids;
+      for (var ev = null, i = 0; ev = activeEvents[i]; i++)
+      {
+        __addEvenetListener(ev.type, ev.cb);
+      }
+      cleanUpEventListener();
+      this.post_messages();
     }
-    cleanUpEventListener();
-    this.post_messages();
   }
 
   this.post_messages = function()
