@@ -494,6 +494,12 @@ window.cls.Client = function()
     if(window.ini.debug)
     {
       window.viewsMenu.create();
+      if(window.settings.debug.get('show-as-tab'))
+      {
+        ui_framework.layouts.main_layout.tabs.push('debug_new');
+        ui_framework.layouts.panel_layout.tabs.push('debug_new');
+        window.topCell.tab.addTab(new Tab('debug_new', window.views['debug_new'].name));
+      }
     }
     // a short workwround to hide some tabs as long as we don't have the dynamic tabs
     var is_disbaled = null, tabs = ui_framework.layouts.console_rough_layout.children[0].tabs, tab = '';

@@ -950,10 +950,11 @@ d
 
 .debug-textarea
 {
+  box-sizing: border-box;
   display: block;
   width: 100%;
   height: 100%;
   margin: 0;
   border: 0;
-  padding: 0;
+  padding: 2px 7px;
 }

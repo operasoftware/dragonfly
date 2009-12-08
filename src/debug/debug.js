@@ -37,7 +37,7 @@ cls.debug.Debug = function(id, name, container_class)
   {
     //var first_child = d_c.firstChild || d_c.render(['div', 'class', 'padding']);
     //first_child.textContent = out.join('\n');
-    this._textarea = d_c.render(['textarea', 'class', 'debug-textarea']);
+    this._textarea = d_c.clearAndRender(['textarea', 'class', 'debug-textarea', 'spellcheck', 'false']);
     this._textarea.value = out.join('\n');
     /*
     if( string && string.indexOf('<timeout/>') == -1 )
@@ -281,12 +281,12 @@ cls.debug.Debug = function(id, name, container_class)
       pretty_print_payload(message, definitions, 2);
     */
     ///////////
-    var command_name = _event_map[service][command];
+    var command_name = _event_map[service][command].replace('handle', '');
     var definitions = window.command_map[service][command][/^on/g.test(command_name) && EVENT || RESPONSE];
     this.output(
       '\nreceive:\n' + 
       INDENT + 'service: ' + service + '\n' + 
-      INDENT + 'command: ' + _event_map[service][command] + '\n' + 
+      INDENT + 'command: ' + command_name + '\n' + 
       INDENT + 'staus: ' + status + '\n' + 
       INDENT + 'tag: ' + tag + '\n' +
       INDENT + 'payload:\n' +
@@ -296,12 +296,12 @@ cls.debug.Debug = function(id, name, container_class)
 
   this.log_transmit = function(service, message, command, tag)
   {
-    var command_name = _event_map[service][command];
+    var command_name = _event_map[service][command].replace('handle', '');
     var definitions = window.command_map[service][command][COMMAND];
     this.output(
       '\ntransmit:\n' + 
       INDENT + 'service: ' + service + '\n' + 
-      INDENT + 'command: ' + _event_map[service][command] + '\n' + 
+      INDENT + 'command: ' + command_name + '\n' + 
       INDENT + 'tag: ' + tag + '\n' +
       INDENT + 'payload:\n' +
         pretty_print_payload(message, definitions, 2)
@@ -375,6 +375,35 @@ cls.debug.create_debug_environment = function(params)
 {
   window.ini.debug = true;
   window.debug = new cls.debug.Debug('debug', 'Debug', 'scroll debug-container');
+  new CompositeView('debug_new', 'Debug', {
+      dir: 'v', width: 700, height: 700,
+      children: 
+      [
+        { height: 200, tabs: ['debug'] }
+      ]
+    });
+  
+  
+  new Settings
+  (
+    // id
+    'debug', 
+    // kel-value map
+    {
+      'show-as-tab': true
+    }, 
+    // key-label map
+    {
+      'show-as-tab': 'Show view in a tab',
+    },
+    // settings map
+    {
+      checkboxes:
+      [
+
+      ]
+    }
+  );
   new ToolbarConfig
   (
     'debug',
@@ -387,6 +416,13 @@ cls.debug.create_debug_environment = function(params)
         handler: 'export-debug-log',
         title: 'export debug log'
       }
+    ]
+  )
+  new Switches
+  (
+    'debug',
+    [
+      'show-as-tab'
     ]
   )
   eventHandlers.click['clear-debug-view'] = function(event, target)

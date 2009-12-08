@@ -39,14 +39,14 @@ var TabsBase = function()
 
   this.addTab = function()
   {
+    
     var i = 0, tab = null;
-    var container = document.getElementById('tabs-to-' + this.cell.id);
     for( ; tab = arguments[i]; i++)
     {
       this.tabs[this.tabs.length] = tab;
-      if( container)
+      if(this.isvisible())
       {
-        container.render(templates.tab(tab));
+        this.render();
       }
     }
   }
