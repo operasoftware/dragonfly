@@ -504,9 +504,10 @@
   this.spotlight = function(node_id, scroll_into_view, type)
   {
     spotlight_clear_timeouts.clear();
-    if( arguments.join() != last_spotlight_commands )
+    var join = Array.prototype.join;
+    if( join.call(arguments) != last_spotlight_commands )
     {
-      last_spotlight_commands = arguments.join();
+      last_spotlight_commands = join.call(arguments);
       services['ecmascript-debugger'].post
       (
         "<spotlight-objects>" +
