@@ -115,6 +115,7 @@ window.app.build_application = function(on_services_created, on_services_enabled
     var service_class = function()
     {
       this.name = service_name;
+      this.is_implemented = false;
     }
     var service_implementation = function(){};
     service_implementation.prototype = new cls.ServiceBase();
@@ -127,11 +128,7 @@ window.app.build_application = function(on_services_created, on_services_enabled
   // ensure that the static methods on cls.ServiceBase exist.
   new cls.ServiceBase();
 
-  var params = this.helpers.parse_url_arguments();
-  if(params.debug)
-  {
-    cls.debug.create_debug_environment(params);
-  }
+
 
 
 
@@ -151,6 +148,11 @@ window.app.build_application = function(on_services_created, on_services_enabled
     'url-player',
     'ecmascript-debugger'
   ].forEach(create_raw_interface);
+  var params = this.helpers.parse_url_arguments();
+  if(params.debug)
+  {
+    cls.debug.create_debug_environment(params);
+  }
   var namespace = cls.Scope && cls.Scope["1.0"];
   window.app.helpers.implement_service(namespace);
   window.services.scope.set_host_info_callback(on_host_info_callback);

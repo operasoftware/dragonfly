@@ -149,6 +149,30 @@ helpers = new function()
     }
   }
 
+  this.service_dashed_name = function(name)
+  {
+    for ( var cur = '', i = 0, ret = ''; cur = name[i]; i++)
+    {
+      ret += /[A-Z]/.test(cur) && ( i ? '-' : '' ) + cur.toLowerCase() || cur;
+    }
+    return ret;
+  }
+
+  this.service_class_name = function(name)
+  {
+    for ( var cur = '', i = 0, ret = '', do_upper = true; cur = name[i]; i++)
+    {
+      if(cur == '-')
+      {
+        do_upper = true;
+        continue;
+      }
+      ret += do_upper && cur.toUpperCase() || cur;
+      do_upper = false;
+    }
+    return ret;
+  }
+
   document.addEventListener('keypress', keypressListener, true);
 
 }

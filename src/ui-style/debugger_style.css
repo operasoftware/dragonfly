@@ -672,7 +672,9 @@ stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
   white-space: pre-wrap;
   }
 
-.dom input {
+
+.dom input 
+{
   border: 0;
   margin: 0;
   margin-left: -23px;
@@ -682,7 +684,7 @@ stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
   width: 19px;
   color: #666;
   background: transparent url('../ui-images/expand-collapse.png') 4px 2px no-repeat;
-  }
+}
 
 .dom input:focus
 {
@@ -957,4 +959,44 @@ d
   margin: 0;
   border: 0;
   padding: 2px 7px;
+}
+
+.filter-container
+{
+  background-color: #fff;
+}
+
+.filter-container ul ul
+{
+  margin-left: 20px;
+}
+
+.filter-container ul.disabled
+{
+  opacity: .3;
+}
+
+.filter-container ul div
+{
+  border: 1px solid #ccc;
+  background-color: hsl(0, 0%, 95%);
+  padding: 5px 7px;
+  margin: 3px 0;
+}
+
+.filter-container input[type='button'] 
+{
+  border: 0;
+  margin: 0;
+  padding-right:4px;
+  cursor: pointer;
+  height: 15px;
+  width: 19px;
+  color: #666;
+  background: transparent url('../ui-images/expand-collapse.png') 4px 2px no-repeat;
+}
+
+.filter-container h3
+{
+  display: inline-block;
 }
