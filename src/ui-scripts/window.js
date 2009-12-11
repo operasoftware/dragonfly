@@ -29,12 +29,13 @@ var UIWindowBase = new function()
 
   this.init = function(view_id, left, top, width, height)
   {
+    var view = window.views[view_id];
     ids[ids.length] = this.id = getId();
     this.view_id = view_id;
     this.top = top || this.default_top;
     this.left = left || this.default_left;
-    this.width = width || this.default_width;
-    this.height = height || this.default_height;
+    this.width = width || view && view.window_width || this.default_width;
+    this.height = height || view && view.window_height || this.default_height;
     this.container = new WindowContainer(this);
     this.statusbar = new WindowStatusbar(this);
     if(toolbars[view_id])
@@ -116,7 +117,7 @@ var UIWindowBase = new function()
 
   this.showWindow = function(view_id, top, left, width, height)
   {
-    var win = this.getWindowByViewId( view_id );
+    var win = this.getWindowByViewId(view_id);
 
     if(win)
     {

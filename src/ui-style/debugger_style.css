@@ -976,12 +976,18 @@ d
   opacity: .3;
 }
 
+.filter-container ul li
+{
+  margin: 3px 0;
+  border: 1px solid transparent;
+}
+
 .filter-container ul div
 {
-  border: 1px solid #ccc;
-  background-color: hsl(0, 0%, 95%);
+  border-top: 1px solid #999;
+  background-color: hsl(0, 0%, 97%);
   padding: 5px 7px;
-  margin: 3px 0;
+  margin-top: 3px;
 }
 
 .filter-container input[type='button'] 
@@ -995,6 +1001,16 @@ d
   color: #666;
   background: transparent url('../ui-images/expand-collapse.png') 4px 2px no-repeat;
 }
+
+.filter-container li.open
+{
+  background-color: hsl(0, 0%, 90%);
+  border-color: #999;
+}
+
+.filter-container li.open > input[type='button'] {
+  background-position: 4px -13px;
+  }
 
 .filter-container h3
 {
