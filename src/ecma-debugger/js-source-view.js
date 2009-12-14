@@ -185,6 +185,10 @@ cls.JsSourceView = function(id, name, container_class)
     source_content = document.getElementById(container_id);
     if(source_content)
     {
+      if(document.getElementById(scroll_container_id))
+      {
+        document.getElementById(scroll_container_id).onscroll = this.scroll; 
+      }
       max_lines = context['container-height'] / context['line-height'] >> 0;
       var lines = document.getElementById(container_line_nr_id);
       if( lines )
@@ -398,9 +402,8 @@ cls.JsSourceView = function(id, name, container_class)
       __scroll_interval = clearInterval(__scroll_interval);
     }
     
-
     var is_visible = ( source_content = document.getElementById(container_id) ) ? true : false; 
-    
+
     if( script.id != script_id )
     {
       var script_obj = runtimes.getScript(script_id);
@@ -447,6 +450,9 @@ cls.JsSourceView = function(id, name, container_class)
           "script source is missing for given id in views.js_source.showLine");
         return;
       }
+      // reset the stored current line to ensure 
+      // that the view gets updated in the next block
+      __current_line = 0;
     }
     if( line_nr < 1 )
     {
@@ -456,7 +462,6 @@ cls.JsSourceView = function(id, name, container_class)
     {
       line_nr = script.line_arr.length - max_lines + 1;
     }
-    __current_line = line_nr;
     if( is_visible )
     {
       if( !script.has_context )
@@ -467,10 +472,12 @@ cls.JsSourceView = function(id, name, container_class)
       {
         updateScriptContext();
       }
-      source_content.innerHTML = 
-        simple_js_parser.parse(script, line_nr - 1, max_lines - 1).join(''); 
-      updateLineNumbers(line_nr);
-
+      if(__current_line != line_nr)
+      {
+        source_content.innerHTML = 
+          simple_js_parser.parse(script, line_nr - 1, max_lines - 1).join(''); 
+        updateLineNumbers(line_nr);
+      }
       if(  !__scroll_interval )
       {
         
@@ -478,11 +485,11 @@ cls.JsSourceView = function(id, name, container_class)
           scroll_lines = scroll_container.scrollTop / context['line-height'] >> 0; 
         if ( ( scroll_lines < __current_line - 5 ) || ( scroll_lines > __current_line + 6 ) ) 
         {
-          scroll_container.scrollTop = (__current_line - 1 ) * context['line-height'];
-          __target_scroll_top = scroll_container.scrollTop;
+          __target_scroll_top =  (__current_line - 1 ) * context['line-height']; 
         }
       }
     }
+    __current_line = line_nr;
     view_invalid = false;
     // clear_scroll is never set in a real scroll event  
     if(!clear_scroll)

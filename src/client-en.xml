@@ -215,7 +215,6 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./ecma-debugger/elementStyle.js"/>
 <script src="./ecma-debugger/action_handler.js"/>
 <script src="./ecma-debugger/change-handler.js"/>
-<script src="./ecma-debugger/scroll_handler.js"/>
 <script src="./ecma-debugger/tag.js"/>
 <script src="./ecma-debugger/DOMEditor.js"/>
 <script src="./ecma-debugger/DomMarkupEditor.js"/>
