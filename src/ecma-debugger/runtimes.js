@@ -462,7 +462,6 @@ var runtimes = new function()
 
   var onApplicationSetup = function(msg)
   {
-    __old_selected_window = settings.runtimes.get('selected-window');
 
   }
 
@@ -472,7 +471,6 @@ var runtimes = new function()
     {
       __selected_window = window_id;
       cleanUpThreadOnContextChange();
-      settings.runtimes.set('selected-window', window_id);
       updateRuntimeViews();
     }
   }
