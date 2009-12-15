@@ -17,7 +17,7 @@ cls.debug.ConfigureMessgeFilters = function(id, name, container_class)
   this._filter_command = function(msg){return /^handle/.test(msg);}
 
   this._filter_event = function(msg, index){return /^on/.test(msg);}
-  
+
   this._get_message_class = function(msg){return msg.replace(/^handle/, "").replace(/^on/, "On");}
 
   this._template_checkbox_message = function(msg, label)
@@ -57,7 +57,7 @@ cls.debug.ConfigureMessgeFilters = function(id, name, container_class)
     ret = ['div'],
     event_map_service = this._event_map[service],
     messages = event_map_service.filter(this._filter_command),
-    filter = window.debug.get_filter()[service];
+    filter = window.debug.get_log_filter()[service];
     
     if (messages.length)
     {
@@ -91,7 +91,7 @@ cls.debug.ConfigureMessgeFilters = function(id, name, container_class)
 
   this._template_main = function()
   {
-    var services = [], service = null, filter = window.debug.get_filter().all.all;
+    var services = [], service = null, filter = window.debug.get_log_filter().all.all;
     for(service in window.services)
     {
       if(window.services[service].is_implemented)

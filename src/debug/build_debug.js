@@ -73,7 +73,7 @@ cls.debug.create_debug_environment = function(params)
   )
   eventHandlers.click['clear-debug-view'] = function(event, target)
   {
-    debug.clear();
+    debug.clear_log();
   }
   eventHandlers.click['export-debug-log'] = function(event, target)
   {
@@ -114,7 +114,7 @@ cls.debug.create_debug_environment = function(params)
     type = parent.getAttribute('data-filter-type'),
     service = parent.getAttribute('data-service-name');
 
-    window.debug.set_filter_message(service, type, msg, event.target.checked);
+    window.debug.set_log_filter(service, type, msg, event.target.checked);
     if(msg == 'all')
     {
       if(service == 'all')
@@ -130,57 +130,4 @@ cls.debug.create_debug_environment = function(params)
       }
     }
   }
-
-  
-  // 
-
-/*
-  var View = function(id, name, container_class)
-  {
-
-
-
-
-    this.createView = function(container)
-    {
-      container.render
-      (
-        ['div', 
-          ['div',
-            ['input', 
-              'type', 'button', 
-              'value', 'spotlight', 
-              'onclick', "this.parentNode.parentNode.getElementsByTagName('textarea')[0].value='<spotlight-objects>\\n  <spotlight-object>\\n    <object-id>xx</object-id>\\n    <scroll-into-view>1</scroll-into-view>\\n    <box>\\n      <box-type>0</box-type>\\n      <fill-color>16711858</fill-color>\\n      <frame-color>4278190335</frame-color>\\n      <grid-color>0</grid-color>\\n    </box> \\n  </spotlight-object>\\n</spotlight-objects>';"],
-            ['input', 
-              'type', 'button', 
-              'value', 'eval', 
-              'onclick', "this.parentNode.parentNode.getElementsByTagName('textarea')[0].value='<eval>\\n  <tag>1</tag>\\n  <runtime-id></runtime-id>\\n  <thread-id></thread-id>\\n  <frame-id></frame-id>\\n  <script-data></script-data>\\n</eval>';"],
-            ['input', 
-              'type', 'button', 
-              'value', 'set breakpoint', 
-              'onclick', "this.parentNode.parentNode.getElementsByTagName('textarea')[0].value='<add-breakpoint>\\n  <breakpoint-id> x </breakpoint-id>\\n  <source-position>\\n    <script-id> x </script-id>\\n    <line-number> x </line-number>\\n  </source-position>\\n</add-breakpoint>';"],
-            ['input', 
-              'type', 'button', 
-              'value', 'examine obj', 
-              'onclick', "this.parentNode.parentNode.getElementsByTagName('textarea')[0].value='<examine-objects>\\n  <tag>1</tag>\\n  <runtime-id>x</runtime-id>\\n  <object-id>x</object-id>\\n</examine-objects>';"],
-            ['input', 
-              'type', 'button', 
-              'value', 'post', 
-              'style', 'margin-left:10px',
-              'onclick', 'services[\'ecmascript-debugger\'].postCommandline()'],
-          'style', 'text-align: right'],
-          ['div', ['textarea'], 'id', 'command-line-debug-container'],
-        'class', 'window-container', 'id', 'command-line-debug']
-      )
-      
-    }
-
-
-
-    this.init(id, name, container_class);
-  }
-
-  View.prototype = ViewBase;
-  new View('commandline_debug', 'Commandline Debug', 'scroll');
-  */
 }
