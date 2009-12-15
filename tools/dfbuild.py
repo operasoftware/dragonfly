@@ -19,7 +19,7 @@ _script_ele = u"<script src=\"%s\"/>\n"
 _style_ele = u"<link rel=\"stylesheet\" href=\"%s\"/>\n"
 _re_command = re.compile("""\s?<!--\s+command\s+(?P<command>\w+)\s+"?(?P<target>.*?)"?\s*(?:if\s+(?P<neg>not)?\s*(?P<cond>\S+?))?\s*-->""")
 _re_comment = re.compile("""\s*<!--.*-->\s*""")
-_re_script = re.compile("\s?<script +src=\"(?P<src>[^\"]*)\"/>")
+_re_script = re.compile("\s?<script +src=\"(?P<src>[^\"]*)\"")
 _re_css = re.compile("\s?<link +rel=\"stylesheet\" +href=\"(?P<href>[^\"]*)\"/>")
 _re_condition = re.compile("\s+if\s+(not)? (.*)")
 
@@ -53,6 +53,8 @@ def _process_directives(root, filepath, vars):
         match_css = _re_css.search(line)
         match_js = _re_script.search(line)
         match_comment = _re_comment.search(line)
+        
+        
         if match_cmd:
             cmd, target, neg, cond = match_cmd.groups()
             if cond: # check if this directive is conditional
@@ -480,6 +482,7 @@ def export(src, dst, process_directives=True, keywords={},
     directive_vars: a dictionary that will passed on to the diretive handling.
         Can be used to control the handling of the directives
     """
+
     src = os.path.abspath(src); # make sure it's absolute
 
     # get a temporary place to do stuff

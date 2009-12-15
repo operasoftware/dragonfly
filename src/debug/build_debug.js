@@ -1,4 +1,4 @@
-window.cls || (window.cls = {});
+﻿window.cls || (window.cls = {});
 cls.debug || (cls.debug = {});
 
 cls.debug.wrap_transmit = function()
@@ -98,7 +98,6 @@ cls.debug.create_debug_environment = function(params)
     {
       parent.removeChild(unfold_container);
       parent.removeClass('open');
-
     }
     else
     {
