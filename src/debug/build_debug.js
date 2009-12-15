@@ -106,34 +106,29 @@ cls.debug.create_debug_environment = function(params)
     }
   }
 
-  eventHandlers.change['config-filter-msg-all'] = function(event, target)
-  {
-    var filter_target = event.target.getAttribute('data-filter-target');
-    window.debug.set_filter(filter_target, 
-      event.target.getAttribute('data-filter-type'), event.target.checked);
-    if(filter_target == 'all')
-    {
-      window.views['configure-message-filters'].update();
-    }
-    else
-    {
-      var parent = event.target.parentNode.parentNode.parentNode.parentNode.parentNode;
-      var div = parent.getElementsByTagName('div')[0];
-      parent.removeChild(div);
-      window.views['configure-message-filters'].show_configuration(
-                    parent, parent.firstElementChild.getAttribute('data-service-name'));
-    }
-  }
-
   eventHandlers.change['config-filter-msg'] = function(event, target)
   {
     var 
-    msg = event.target.getAttribute('data-filter-target'),
     parent = event.target.parentNode.parentNode.parentNode,
+    msg = event.target.getAttribute('data-filter-target'),
     type = parent.getAttribute('data-filter-type'),
     service = parent.getAttribute('data-service-name');
 
     window.debug.set_filter_message(service, type, msg, event.target.checked);
+    if(msg == 'all')
+    {
+      if(service == 'all')
+      {
+        window.views['configure-message-filters'].update();
+      }
+      else
+      {
+        parent = parent.parentNode.parentNode;
+        var div = parent.getElementsByTagName('div')[0];
+        parent.removeChild(div);
+        window.views['configure-message-filters'].show_configuration(parent, service);
+      }
+    }
   }
 
   

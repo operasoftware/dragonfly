@@ -971,7 +971,7 @@ d
   margin-left: 20px;
 }
 
-.filter-container ul.disabled
+.filter-container .disabled
 {
   opacity: .3;
 }

@@ -14,24 +14,16 @@ cls.debug.ConfigureMessgeFilters = function(id, name, container_class)
   this._event_map = cls.ServiceBase.get_event_map();
   this._unfolded = {};
 
-  this._filter_command = function(msg)
-  {
-    return /^handle/.test(msg);
-  }
+  this._filter_command = function(msg){return /^handle/.test(msg);}
 
-  this._filter_event = function(msg, index)
-  {
-    return /^on/.test(msg);
-  }
+  this._filter_event = function(msg, index){return /^on/.test(msg);}
   
-  this.get_message_class = function(msg)
-  {
-    return msg.replace(/^handle/, "").replace(/^on/, "On");
-  }
+  this._get_message_class = function(msg){return msg.replace(/^handle/, "").replace(/^on/, "On");}
 
-  this._template_message = function(msg)
+  this._template_checkbox_message = function(msg, label)
   {
     // this is the filter of the given service
+    var is_disabled = msg != 'all' && this.all;
     return (
     ['li',
       ['label',
@@ -39,42 +31,23 @@ cls.debug.ConfigureMessgeFilters = function(id, name, container_class)
           'type', 'checkbox',
           'data-filter-target', msg, 
           'handler', 'config-filter-msg'
-        ].concat(this.all ? ['disabled', 'disabled'] : []). 
+        ].concat(is_disabled ? ['disabled', 'disabled'] : []). 
          concat(this[msg] ? ['checked', 'checked'] : []),
-        ' '+ msg
+        ' '+ (label && typeof label == 'string' ? label : msg)
       ]
-    ]);
-  }
-
-  this._template_checkbox_all = function(service, msg_type, label, checked)
-  {
-    return (
-    ['ul',
-      ['li',
-        ['label',
-          ['input',
-            'type', 'checkbox',
-            'data-filter-target', service,
-            'data-filter-type', msg_type,
-            'handler', 'config-filter-msg-all'
-          ].concat(checked ? ['checked', 'checked'] : []),
-          ' ' + label
-        ]
-      ]
-    ]);
+    ].concat(is_disabled ? ['class', 'disabled'] : []));
   }
   
-  this._template_messages = function(service, title, type, filter, messages)
+  this._template_messages = function(service, title, type, messages, filter)
   {
     return (
     [
       ['h3', title],
-      this._template_checkbox_all(service, type, 'log all ' + type, filter.all),
       ['ul',
-        messages.map(this._template_message, filter),
+        messages.map(this._template_checkbox_message, filter),
         'data-filter-type', type,
         'data-service-name', service,
-      ].concat(filter.all ? ['class', 'disabled'] : []),
+      ],
     ]);
   }
 
@@ -89,13 +62,13 @@ cls.debug.ConfigureMessgeFilters = function(id, name, container_class)
     if (messages.length)
     {
       ret.push(this._template_messages(service, 'Commands', 'commands', 
-                      filter.commands, messages.map(this.get_message_class)));
+                      ['all'].concat(messages.map(this._get_message_class)), filter.commands));
     }
     messages = event_map_service.filter(this._filter_event);
     if (messages.length)
     {
       ret.push(this._template_messages(service, 'Events', 'events', 
-                      filter.events, messages.map(this.get_message_class)));
+                      ['all'].concat(messages.map(this._get_message_class)), filter.events));
     }
     return ret;
   }
@@ -129,7 +102,11 @@ cls.debug.ConfigureMessgeFilters = function(id, name, container_class)
     return (
     ['div',
       ['h2', 'Services'],
-      this._template_checkbox_all('all', 'all', 'log all messages', filter.all),
+      ['ul',
+        this._template_checkbox_message.call(filter, 'all', 'log all messages'),
+        'data-filter-type', 'all',
+        'data-service-name', 'all',
+      ],
       ['ul', 
         services.map(this._template_service, {view: this, filter: filter})
       ].concat(filter.all ? ['class', 'disabled'] : []),
