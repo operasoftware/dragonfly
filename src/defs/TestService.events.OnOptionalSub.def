@@ -1,0 +1,9 @@
+message <span class="message">OptionalSub</span>
+{
+  message <span class="message">OptionalSubInner</span>
+  {
+    required <span class="string">string</span> a = 1; 
+  }
+  optional <span class="message">OptionalSubInner</span> a = 1; 
+  optional <span class="message">OptionalSubInner</span> b = 2; 
+}

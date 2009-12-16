@@ -1,0 +1,4 @@
+message <span class="message">BytesAccess</span>
+{
+  required <span class="bytes">bytes</span> a = 1; 
+}

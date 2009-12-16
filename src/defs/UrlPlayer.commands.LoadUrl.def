@@ -1,0 +1,8 @@
+message <span class="message">Request</span>
+{
+  <span class="comment">/** 
+   * Signifies the zero-based ordinal of the window into which we want to load `url`.
+   */</span>
+  required <span class="number">uint32</span> windowNumber = 1; 
+  required <span class="string">string</span> url          = 2; 
+}

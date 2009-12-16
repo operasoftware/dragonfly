@@ -1,0 +1,25 @@
+message <span class="message">MouseAction</span>
+{
+  required <span class="number">uint32</span> windowID     = 1; 
+  required <span class="number">int32 </span> x            = 2; 
+  required <span class="number">int32 </span> y            = 3; 
+  <span class="comment">/** 
+   * `buttonAction` specifies the buttons to press or release
+   * It is specifies as the sum of button actions:
+   *       1 - Button 1 down
+   *       2 - Button 1 up
+   * 
+   *       4 - Button 2 down
+   *       8 - Button 2 up
+   * 
+   *      16 - Button 3 down
+   *      32 - Button 3 up
+   * 
+   * For example, to press button 1 and release button 2, the value is 9 (1+8)
+   * 
+   * Buttons are clicked in the sequence listed above. Note that down actions are
+   * listed before up actions, thus allowing single-clicking with one command
+   * (e.g. using value 3)
+   */</span>
+  required <span class="number">uint32</span> buttonAction = 4; 
+}

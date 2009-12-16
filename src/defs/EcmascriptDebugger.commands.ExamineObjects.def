@@ -1,0 +1,5 @@
+message <span class="message">ExamineList</span>
+{
+  required <span class="number">uint32</span> runtimeID  = 1; 
+  repeated <span class="number">uint32</span> objectList = 2; 
+}

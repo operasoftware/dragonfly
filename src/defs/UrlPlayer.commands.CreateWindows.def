@@ -1,0 +1,7 @@
+message <span class="message">WindowCount</span>
+{
+  <span class="comment">/** 
+   * Signifies the number of windows to open.
+   */</span>
+  required <span class="number">uint32</span> windowCount = 1; 
+}

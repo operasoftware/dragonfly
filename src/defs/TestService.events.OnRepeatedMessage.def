@@ -1,0 +1,13 @@
+message <span class="message">Repeated</span>
+{
+  message <span class="message">RepeatedInner</span>
+  {
+    optional <span class="number">int32 </span> a     = 1; 
+    repeated <span class="string">string</span> bList = 2; 
+    repeated <span class="bytes">bytes </span> cList = 3; 
+  }
+  required <span class="number">int32        </span> a     = 1; 
+  optional <span class="number">uint32       </span> b     = 2; 
+  repeated <span class="number">sint32       </span> cList = 3; 
+  repeated <span class="message">RepeatedInner</span> dList = 4; 
+}

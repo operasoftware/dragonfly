@@ -1,0 +1,59 @@
+message <span class="message">MessageInfoList</span>
+{
+  <span class="comment">/** 
+   * Introspection result for a given message.
+   */</span>
+  message <span class="message">MessageInfo</span>
+  {
+    required <span class="number">uint32   </span> id        = 1; 
+    required <span class="string">string   </span> name      = 2; 
+    repeated <span class="message">FieldInfo</span> fieldList = 3; 
+    optional <span class="number">uint32   </span> parentID  = 4; 
+  }
+  message <span class="message">FieldInfo</span>
+  {
+    required <span class="string">string</span> name       = 1; 
+    <span class="comment">/** 
+     * The protocol buffer type for this field. The types are:
+     * 
+     * == ============================
+     * 1  Double
+     * 2  Float
+     * 3  Int32
+     * 4  Uint32
+     * 5  Sint32
+     * 6  Fixed32
+     * 7  Sfixed32
+     * 8  Bool
+     * 9  String
+     * 10 Bytes
+     * 11 Message
+     * 12 Int64 (not supported yet)
+     * 13 Uint64 (not supported yet)
+     * 14 Sint64 (not supported yet)
+     * 15 Fixed64 (not supported yet)
+     * 16 Sfixed64 (not supported yet)
+     * == ============================
+     */</span>
+    required <span class="number">uint32</span> type       = 2; 
+    <span class="comment">/** 
+     * The unique protocol buffer number for this field.
+     */</span>
+    required <span class="number">uint32</span> number     = 3; 
+    <span class="comment">/** 
+     * Specifies whether the fields is required, optional or repeated:
+     * 
+     * = ========
+     * 0 Required
+     * 1 Optional
+     * 2 Repeated
+     * = ========
+     */</span>
+    optional <span class="number">uint32</span> quantifier = 4; 
+    <span class="comment">/** 
+     * ID of message this field references, only set for Message fields
+     */</span>
+    optional <span class="number">uint32</span> messageID  = 5; 
+  }
+  repeated <span class="message">MessageInfo</span> messageList = 1; 
+}

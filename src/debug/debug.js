@@ -83,60 +83,6 @@ cls.debug.Debug = function(id, name, container_class)
     return ret;
   }
 
-  this._pretty_print_payload_item = function(indent, name, definition, item)
-  {
-    return (
-      this._get_indent(indent) +
-      name + ': ' + (
-        "message" in definition && "\n" + 
-            this._pretty_print_payload(item, definition["message"], indent + 1) ||
-        !item && "null" || 
-        typeof item == "string" && "\"" + item + "\"" || 
-        item));
-  }
-
-  this._pretty_print_payload = function(payload, definitions, indent)
-  {
-    var 
-    ret = [], 
-    item = null,
-    i = 0,
-    definition = null,
-    j = 0;
-
-    //# TODO message: self
-    if (definitions)
-    {
-      for (; i < payload.length; i++)
-      {
-        item = payload[i];
-        definition = definitions[i];
-        if (definition["q"] == "repeated")
-        {
-          ret.push(this._get_indent(indent) + definition['name'] + ':');
-          for( j = 0; j < item.length; j++)
-          {
-            ret.push(this._pretty_print_payload_item(
-              indent + 1,
-              definition['name'].replace("List", ""),
-              definition,
-              item[j]));
-          }
-        }
-        else
-        {
-          ret.push(this._pretty_print_payload_item(
-            indent,
-            definition['name'],
-            definition,
-            item))
-        }
-      }
-      return ret.join("\n")
-    }
-    return "";
-  }
-
   this._display_log = function(log)
   {
     if(log) 
@@ -239,4 +185,4 @@ cls.debug.Debug = function(id, name, container_class)
   this.init(id, name, container_class);
 }
 
-cls.debug.Debug.prototype = ViewBase;
+

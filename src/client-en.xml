@@ -154,6 +154,8 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./lib/http_interface.js"></script>
 <script src="./lib/window_manager.js"></script>
 <script src="./lib/message_maps.js"/>
+<script src="./lib/service_descriptions.js"/>
+<script src="./lib/test_framework.js"/>
 
 
 <script src="./ui-scripts/defaults.js"/>
@@ -190,10 +192,13 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./build-application/build_application.js"></script>
 
 
-
 <script src="./debug/debug.js"/>
 <script src="./debug/configure_message_filter.js"/>
+<script src="./debug/test_messages.js"/>
 <script src="./debug/build_debug.js"/>
+
+
+
 
 
 

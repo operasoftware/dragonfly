@@ -1,0 +1,5 @@
+message <span class="message">RepeatedFloat</span>
+{
+  repeated <span class="number">float </span> fuzzyList = 1; 
+  repeated <span class="number">double</span> piList    = 2; 
+}

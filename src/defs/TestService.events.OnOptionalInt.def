@@ -1,0 +1,9 @@
+message <span class="message">OptionalInteger</span>
+{
+  optional <span class="number">uint32  </span> runtimeID = 1; 
+  optional <span class="number">fixed32 </span> objectID  = 2; 
+  optional <span class="number">int32   </span> windowID  = 3; 
+  optional <span class="number">sint32  </span> scriptID  = 4; 
+  optional <span class="number">sfixed32</span> htmlID    = 5; 
+  optional <span class="bool">bool    </span> isActive  = 6; 
+}

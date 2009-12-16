@@ -1,0 +1,20 @@
+message <span class="message">DomTraversal</span>
+{
+  required <span class="number">uint32</span> objectID  = 1; 
+  <span class="comment">/** 
+   * traversal on off:  
+   * - `"parent-node-chain-with-children"`
+   *     take the parent node chain for the target node.
+   *     add for each node in that chain all children, 
+   *     and for all children there first child,
+   *     if that is a text node and the only node, 
+   *     starting with the document node.
+   * - `"children"`
+   *     get node data for all children in their flow
+   * - `"node"
+   *     get node data for that node
+   * - `"subtree"`
+   *     get node data for the subtree in the flow of it
+   */</span>
+  required <span class="string">string</span> traversal = 2; 
+}

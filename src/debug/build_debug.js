@@ -14,17 +14,24 @@ cls.debug.wrap_transmit = function()
 cls.debug.create_debug_environment = function(params)
 {
   window.ini.debug = true;
+  window.cls.TestFramework.prototype = ViewBase; 
+  cls.debug.Debug.prototype = 
+  window.cls.debug.TestScopeMessages.prototype = 
+  new window.cls.TestFramework();
   window.debug = new cls.debug.Debug('debug', 'Debug', 'scroll debug-container');
-  new cls.debug.ConfigureMessgeFilters('configure-message-filters', 
-                      'Message Filters', 'scroll filter-container');
+  new cls.debug.ConfigureMessgeFilters(
+    'configure-message-filters', 'Message Filters', 'scroll filter-container');
+  var test_messages = new cls.debug.TestScopeMessages(
+    'test-messages', 'Test Messages', 'scroll test-messages');
+  eventHandlers.click['test-messages'] = test_messages.get_bound_click_handler();
+  eventHandlers.change['test-messages'] = test_messages.get_bound_change_handler();
   new CompositeView('debug_new', 'Debug', {
       dir: 'v', width: 700, height: 700,
       children: 
       [
-        { height: 200, tabs: ['debug'] }
+        { height: 200, tabs: ['debug', 'test-messages'] }
       ]
     });
-  
   
   new Settings
   (
@@ -129,5 +136,53 @@ cls.debug.create_debug_environment = function(params)
         window.views['configure-message-filters'].show_configuration(parent, service);
       }
     }
+  }
+
+
+
+  /**
+   * Cookie handling functions
+   */
+  window.cookies = new function()
+  {
+    /**
+     * Set a cookie named "key" to the value "value" with expiry in "time "
+     * seconds. If time is not set, time out after a year
+     */
+    this.set = function(key, value, time) 
+    {
+      document.cookie = \
+        key + "=" + encodeURIComponent(value) +
+        "; expires=" + 
+        ( new Date( new Date().getTime() + ( time || 360*24*60*60*1000 ) ) ).toGMTString() + 
+        "; path=/";
+      return value;
+    }
+
+    /**
+     * Get a cookie with name "key"
+     */
+    this.get = function(key) 
+    {
+      var value = new RegExp(key + "=([^;]*)").exec(document.cookie);
+      return value && decodeURIComponent(value[1]);
+    }
+
+  }
+
+  /**
+   * Convenience function for loading a resource with XHR using the get method.
+   * Will automatically append a "time" guery argument to avoid caching.
+   * When the load is finished, callback will be invoced with context as its
+   * "this" value
+   */
+  XMLHttpRequest.prototype.loadResource = function(url, callback, context)
+  {
+    this.onload = function()
+    {
+      callback(this, context);
+    }
+    this.open('GET', url);
+    this.send(null);
   }
 }

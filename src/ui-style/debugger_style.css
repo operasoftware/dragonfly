@@ -1016,3 +1016,105 @@ d
 {
   display: inline-block;
 }
+
+
+
+.test-messages h2,
+.test-messages h3
+{
+  font-size: 1em;
+  padding: 0 5px;
+  margin: 0;
+  border: 1px solid #666;
+  border-width: 0 1px;
+}
+
+.test-messages h2
+{
+  font-weight: bold;
+  background-color: hsl(0, 0%, 95%);
+  margin-top: 1em;
+  border-width: 1px;
+}
+
+.test-messages .column
+{
+  xfloat: left;
+  display: table-cell;
+  padding: 0 .7em;
+}
+
+.test-messages .column div
+{
+  border-bottom: 1px solid #666;
+}
+
+.test-messages ul
+{
+  margin-bottom: -1px;
+}
+
+.test-messages li
+{
+  border: 1px solid #666;
+  border-width: 0 1px;
+  padding: 0 5px;
+}
+
+.test-messages .selected
+{
+  background-color: #666;
+  color: #fff;
+  font-weight: bold;
+}
+
+.test-messages pre
+{
+  padding: 5px;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.test-messages .comment
+{
+  color: #666;
+}
+
+.test-messages p
+{
+  padding: 0 5px;
+  margin: 0;
+}
+
+.test-messages .definition
+{
+  border: 1px solid #666;
+  background-color: hsl(0, 0%, 98%);
+}
+
+.test-messages .right-aligned
+{
+  text-align: right;
+  padding: 1px;
+  border: 1px solid #666;
+  border-width: 0 1px 1px 1px;
+  background-color: hsl(0, 0%, 98%);
+  margin-bottom: -1px;
+}
+
+.test-messages textarea
+{
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0 5px;
+  border: 1px solid #666;
+  border-width: 0 1px 1px 1px;
+}
+#message-response
+{
+  border: 1px solid #666;
+  border-width: 0 1px;
+}
+

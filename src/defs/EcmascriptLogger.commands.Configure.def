@@ -1,0 +1,4 @@
+message <span class="message">Config</span>
+{
+  optional <span class="bool">bool</span> reformat = 1; 
+}

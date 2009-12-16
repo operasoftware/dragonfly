@@ -1,0 +1,14 @@
+message <span class="message">Optional</span>
+{
+  message <span class="message">OptionalInner</span>
+  {
+    required <span class="string">string</span> a = 1; 
+  }
+  required <span class="number">int32        </span> a     = 1; 
+  optional <span class="number">uint32       </span> b     = 2; 
+  repeated <span class="number">sint32       </span> cList = 3; 
+  repeated <span class="string">string       </span> dList = 4; 
+  repeated <span class="number">uint32       </span> eList = 5; 
+  optional <span class="message">OptionalInner</span> f     = 6; 
+  optional <span class="message">OptionalInner</span> g     = 7; 
+}

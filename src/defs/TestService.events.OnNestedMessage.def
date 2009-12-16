@@ -1,0 +1,17 @@
+message <span class="message">Outer</span>
+{
+  message <span class="message">Inner</span>
+  {
+    required <span class="number">int32    </span> a = 1; 
+    required <span class="string">string   </span> b = 2; 
+    required <span class="message">Innermost</span> c = 3; 
+    required <span class="bytes">bytes    </span> d = 4; 
+  }
+  message <span class="message">Innermost</span>
+  {
+    required <span class="number">int32</span> a = 1; 
+  }
+  required <span class="number">int32 </span> a = 1; 
+  required <span class="string">string</span> b = 2; 
+  required <span class="message">Inner </span> c = 3; 
+}

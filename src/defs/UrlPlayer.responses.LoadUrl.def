@@ -1,0 +1,7 @@
+message <span class="message">Window</span>
+{
+  <span class="comment">/** 
+   * The window number that was the target of the LoadUrl command.
+   */</span>
+  required <span class="number">uint32</span> windowID = 1; 
+}

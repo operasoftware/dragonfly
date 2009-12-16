@@ -1,0 +1,23 @@
+message <span class="message">BreakpointPosition</span>
+{
+  <span class="comment">/** 
+   * A nonzero ID chosen by the client.
+   */</span>
+  required <span class="number">uint32</span> breakpointID = 1; 
+  <span class="comment">/** 
+   * "line", "function", "event"
+   */</span>
+  required <span class="string">string</span> type         = 2; 
+  <span class="comment">/** 
+   * Present when `type` is `"line"`
+   */</span>
+  optional <span class="number">uint32</span> scriptID     = 3; 
+  <span class="comment">/** 
+   * Present when `type` is `"line"`
+   */</span>
+  optional <span class="number">uint32</span> lineNumber   = 4; 
+  <span class="comment">/** 
+   * Present when `type` is `"event"`
+   */</span>
+  optional <span class="string">string</span> eventType    = 5; 
+}

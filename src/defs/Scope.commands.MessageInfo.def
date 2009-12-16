@@ -1,0 +1,22 @@
+<span class="comment">/** 
+ * Selects which messages to introspect.
+ */</span>
+message <span class="message">MessageSelection</span>
+{
+  <span class="comment">/** 
+   * Name of service to fetch messages from. Message ids are unique per service.
+   */</span>
+  required <span class="string">string</span> serviceName    = 1; 
+  <span class="comment">/** 
+   * Contains ids of message which should be fetched.
+   */</span>
+  repeated <span class="number">uint32</span> idList         = 2; 
+  <span class="comment">/** 
+   * Set to true to automatically include messages which are referenced (fields of type Message). This makes it easy to fetch the entire message chain for a given message.
+   */</span>
+  optional <span class="bool">bool  </span> includeRelated = 3; 
+  <span class="comment">/** 
+   * Set to true if all message in the service should be included. Overrides includeRelated and idList.
+   */</span>
+  optional <span class="bool">bool  </span> includeAll     = 4; 
+}

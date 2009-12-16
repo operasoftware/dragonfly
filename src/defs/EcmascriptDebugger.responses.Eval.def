@@ -1,0 +1,40 @@
+message <span class="message">EvalResult</span>
+{
+  message <span class="message">ObjectValue</span>
+  {
+    required <span class="number">uint32</span> objectID    = 1; 
+    required <span class="bool">bool  </span> isCallable  = 2; 
+    required <span class="bool">bool  </span> isFunction  = 3; 
+    <span class="comment">/** 
+     * type, function or object
+     */</span>
+    required <span class="string">string</span> type        = 4; 
+    optional <span class="number">uint32</span> prototypeID = 5; 
+    <span class="comment">/** 
+     * Name of class (object) or function
+     */</span>
+    optional <span class="string">string</span> name        = 6; 
+  }
+  <span class="comment">/** 
+   * If it is "completed" or "unhandled-exception" then `type`, `value` and `objectValue` will be present.
+   */</span>
+  required <span class="string">string     </span> status      = 1; 
+  <span class="comment">/** 
+   * One of:
+   * - `"number"`
+   * - `"boolean"`
+   * - `"string"`
+   * - `"null"`
+   * - `"undefined"`
+   * - `"object"`
+   */</span>
+  required <span class="string">string     </span> type        = 2; 
+  <span class="comment">/** 
+   * Only present when `type` is `"number"`, `"string"` or `"boolean"`
+   */</span>
+  optional <span class="string">string     </span> value       = 3; 
+  <span class="comment">/** 
+   * Only present when `type` is `"object"`
+   */</span>
+  optional <span class="message">ObjectValue</span> objectValue = 4; 
+}

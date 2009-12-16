@@ -1,0 +1,26 @@
+message <span class="message">Header</span>
+{
+  <span class="comment">/** 
+   * An identifier for the request; it is not necessarily unique across
+   * time, as it is just the memory address of the request object.
+   */</span>
+  required <span class="number">uint32</span> requestID = 1; 
+  <span class="comment">/** 
+   * The window ID is shared across scope. Notably, it's the same as in the ecmascript debugger.
+   * INTERNAL: The value is from Window::id
+   */</span>
+  required <span class="number">uint32</span> windowID  = 2; 
+  <span class="comment">/** 
+   * Timestamp of the message, in milliseconds since `1970-01-01 00:00 UTC`
+   * (be sure not to rely on the time being correct - this is client time, and
+   * may be wildly different than the host time)
+   * 
+   * Note: Float encoded as string
+   */</span>
+  required <span class="string">string</span> time      = 3; 
+  <span class="comment">/** 
+   * Header of the request/response, i.e. the `HTTP` data up until the first
+   * occurence of `CR+LF+CR+LF`, inclusive.
+   */</span>
+  required <span class="string">string</span> header    = 4; 
+}
