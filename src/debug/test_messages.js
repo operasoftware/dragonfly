@@ -64,7 +64,7 @@ cls.debug.TestScopeMessages = function(id, name, container_class)
     ['div',
       ['div',
         ['div',
-          ['h2', 'Active Window'],
+          ['h2', 'Debug Context'],
           ['ul', 
             ( win ? this._template_debug_context(win) : []),
             'id', 'test-messages-debug-context'

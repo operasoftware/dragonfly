@@ -898,7 +898,8 @@ window-shadow.left {
   background: transparent url('../ui-images/spin.png') scroll no-repeat 0 0;
   }
 
-button[handler="threads-clear-log"]:before 
+button[handler="threads-clear-log"]:before,
+button[handler="debug-clear-log"]:before
 {
   background-image: url('../ui-images/btn-clear-error-console.png');
 }
@@ -974,7 +975,7 @@ button[handler="documentation"]:before
 {
   background-image: url('../ui-images/btn-documentation.png');
 }
-button.clear-log:before 
+button.clear-log:before,
 {
   background-image: url('../ui-images/btn-delete.png');
 }
@@ -993,6 +994,10 @@ button[handler="top-window-close"]:before
 button[handler="top-window-toggle-attach"]:before 
 {
   background-image: url('../ui-images/btn-toggle-attach.png');
+}
+button[handler="configure-message-filters"]:before
+{
+  background-image: url('../ui-images/btn-message-filter.png');
 }
 #continue-run:before 
 {

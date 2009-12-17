@@ -58,12 +58,8 @@ cls.debug.create_debug_environment = function(params)
     'debug',
     [
       {
-        handler: 'clear-debug-view',
+        handler: 'debug-clear-log',
         title: 'clear debug log'
-      },
-      {
-        handler: 'export-debug-log',
-        title: 'export debug log'
       },
       {
         handler: 'configure-message-filters',
@@ -71,20 +67,9 @@ cls.debug.create_debug_environment = function(params)
       }
     ]
   )
-  new Switches
-  (
-    'debug',
-    [
-      'show-as-tab'
-    ]
-  )
-  eventHandlers.click['clear-debug-view'] = function(event, target)
+  eventHandlers.click['debug-clear-log'] = function(event, target)
   {
-    debug.clear_log();
-  }
-  eventHandlers.click['export-debug-log'] = function(event, target)
-  {
-    debug.export_data();
+    window.debug.clear_log();
   }
 
   eventHandlers.click['configure-message-filters'] = function(event, target)
