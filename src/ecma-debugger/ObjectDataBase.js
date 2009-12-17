@@ -14,7 +14,7 @@ var ObjectDataBase = new function()
   CONSTRUCTOR = 6,
   IS_VIRTUAL = 7,
   ITEM = 8,
-  MAX_VALUE_LENGTH = 50;
+  MAX_VALUE_LENGTH = 30;
   
   
 
@@ -349,6 +349,8 @@ var ObjectDataBase = new function()
     for( ; prop = data[i]; i++)
     {
       val = prop[VALUE];
+
+      //if(prop[KEY]
      
       short_val = "";
       if( filter && prop[filter_type] in filter  )
@@ -393,14 +395,15 @@ var ObjectDataBase = new function()
       }
       if( val.length > MAX_VALUE_LENGTH )
       {
-        short_val = val.slice(0, MAX_VALUE_LENGTH) +"...";
         val = val.replace(/</g, '&lt;').replace(/'/g, '&#39;');
+        short_val = val.slice(0, MAX_VALUE_LENGTH) + "...";
+        
       }
       if(typeof val == 'string')
       {
         val = val.replace(/</g, "&lt;");
       }
-
+      
       depth = forced_depth || prop[DEPTH];
 
       if( prop[TYPE] == 'object')
@@ -420,9 +423,10 @@ var ObjectDataBase = new function()
         if( short_val )
         {
         ret += "<item style='padding-left:" + ( 9 + 16 * depth ) + "px'>" +
+                  "<input type='button' handler='expand-value'  class='folder-key'/>" +
                   "<key>" + prop[KEY] + "</key>" +
-                  "<value class='" + prop[TYPE] + "' title='" + val + "'>" + 
-                      short_val+ 
+                  "<value class='" + prop[TYPE] + "' data-value='" + val + "' >" + 
+                      short_val + 
                   "</value>" + 
                 "</item>";
         }

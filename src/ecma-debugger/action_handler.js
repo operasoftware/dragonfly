@@ -90,6 +90,24 @@ var action_handler = new function()
 
     
   }
+
+  handlers['expand-value'] = function(event, target)
+  {
+    var 
+    val = target.parentNode.getElementsByTagName('value')[0],
+    text_content = val.textContent;
+
+    val.textContent = val.getAttribute('data-value');
+    val.setAttribute('data-value', text_content);
+    if(target.style.backgroundPosition)
+    {
+      target.style.removeProperty('background-position');
+    }
+    else
+    {
+      target.style.backgroundPosition = '0px -11px';
+    }
+  }
  
   handlers['examine-object-2'] = function(event, target)
   {
