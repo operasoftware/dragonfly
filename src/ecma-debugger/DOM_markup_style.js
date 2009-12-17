@@ -241,7 +241,7 @@ var DOM_markup_style = function(id, name, container_class)
                 {
                   one_child_text_content += "<text" +
                     ( is_not_script_node ? " ref-id='" + data[child_pointer][ID] + "' " : "" ) +
-                    "'>" + data[child_pointer][VALUE] + "</text>";
+                    ">" + data[child_pointer][VALUE].replace(/</g, '&lt;') + "</text>";
                 }
               }
             }
@@ -256,7 +256,7 @@ var DOM_markup_style = function(id, name, container_class)
                         "ref-id='" + node[ ID ] + "' handler='spotlight-node' " +
                         class_name + ">"+
                         "<node>&lt;" + node_name +  attrs + "&gt;</node>" +
-                        one_child_text_content.replace(/</g, '&lt;') +
+                        one_child_text_content +
                         "<node>&lt;/" + node_name + "&gt;</node>" +
                         ( is_debug && ( " <d>[" + node[ ID ] +  "]</d>" ) || "" ) +
                         "</div>";
