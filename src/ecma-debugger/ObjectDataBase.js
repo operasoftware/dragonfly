@@ -433,7 +433,7 @@ var ObjectDataBase = new function()
         else
         {
         ret += "<item style='padding-left:" + ( 9 + 16 * depth ) + "px'>" +
-                  "<key>" + prop[KEY] + "</key>" +
+                  "<key class='no-expander'>" + prop[KEY] + "</key>" +
                   "<value class='" + prop[TYPE] + "'>" + val + "</value>" + 
                 "</item>";
         }

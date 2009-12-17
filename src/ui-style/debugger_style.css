@@ -516,7 +516,10 @@ examine-objects key {
   margin-right:7px;
   }
 
-
+examine-objects key.no-expander
+{
+  margin-left: 18px;
+}
 
 examine-objects .back-refernce value:after {
   content: "[selected object]";
