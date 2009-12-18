@@ -495,86 +495,32 @@ category.unfolded + category header {
   color: hsl(0, 0%, 50%)
   }
   
-.css-inspector h2 b {
+.css-inspector h2 b 
+{
   color: #279;
-  }
+}
 
-
-examine-objects, examine-objects item {
+examine-objects, 
+examine-objects item 
+{
   display:block;
-  }
-
-examine-objects, .dom-attrs {
-  background-color: hsl(0, 0%, 92%);
-  }
-
-examine-objects item {
+}
+examine-objects
+{
   padding: 0 9px;
-  }
-
-examine-objects key {
+}
+examine-objects examine-objects
+{
+  padding: 0 0 0 16px;
+}
+examine-objects key 
+{
   margin-right:7px;
-  }
-
+}
 examine-objects key.no-expander
 {
   margin-left: 18px;
 }
-
-examine-objects .back-refernce value:after {
-  content: "[selected object]";
-  color: #c90;
-  margin-left: 7px;
-  }
-
-start-search-scope, end-search-scope {
-  display:block;
-  height:3px;
-  background-color: #fff;
-  }
-
-
-item.search-scope {
-  padding-top: 3px;
-  padding-bottom: 3px;
-  border: 1px solid hsl(0, 0%, 75%);
-  border-width: 1px 0;
-  background-color: hsl(0, 0%, 97%);
-  font-weight: bold;
-  }
-
-
-item.search-scope + item.search-scope {
-  border-top-width: 0;
-  }
-
-item.selected {
-  background-color:#eec;
-  }
-
-
-examine-objects start-search-scope:first-child {
-  height: 4px;
-  }
-
-end-search-scope {
-  border-bottom: 1px solid hsl(0, 0%, 75%);
-  margin-bottom: 3px;
-  }
-
-examine-objects end-search-scope:last-child {
-  border-bottom: 3px solid hsl(0, 0%, 100%);
-  margin-bottom: 0;
-  }
-
-start-search-scope ~ item {
-  background-color: #fff;
-  }
-
-start-search-scope ~ end-search-scope ~ item {
-  background-color: transparent;
-  }
-
 .css-layout layout-container
 {
   display: table;

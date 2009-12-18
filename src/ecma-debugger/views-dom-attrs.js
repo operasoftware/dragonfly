@@ -25,10 +25,8 @@ cls.DOMAttrsView = function(id, name, container_class)
         container.innerHTML = 
           "<examine-objects rt-id='" + selectedNode.rt_id + "' " + 
                 "data-id='node_dom_attrs' " +
-                "obj-id='" + selectedNode.obj_id + "' >" +
-              "<start-search-scope></start-search-scope>" +
+                "obj-id='" + selectedNode.obj_id + "' class='search-scope-inspection'>" +
               node_dom_attrs.prettyPrint(data, -1, use_filter, 1) + 
-              "<end-search-scope></end-search-scope>" +
           "</examine-objects>";
         messages.post( 'list-search-context', 
           {
@@ -95,13 +93,14 @@ new Switches
 (function()
 {
 
-  var listTextSearch = new ListTextSearch();
+  var text_search = new TextSearch();
 
   var onViewCreated = function(msg)
   {
     if( msg.id == 'dom_attrs' )
     {
-      listTextSearch.setContainer(msg.container);
+      text_search.setContainer(msg.container);
+      text_search.setFormInput(views.dom_attrs.getToolbarControl( msg.container, 'dom-attrs-text-search'));
     }
   }
 
@@ -109,41 +108,25 @@ new Switches
   {
     if( msg.id == 'dom_attrs' )
     {
-      listTextSearch.cleanup();
-    }
-  }
-
-  var onListSearchContext = function(msg)
-  {
-    if( msg.data_id == 'node_dom_attrs' )
-    {
-      listTextSearch.onNewContext(msg);
+      text_search.cleanup();
+      topCell.statusbar.updateInfo();
     }
   }
 
   messages.addListener('view-created', onViewCreated);
   messages.addListener('view-destroyed', onViewDestroyed);
 
-  messages.addListener('list-search-context', onListSearchContext);
-
   eventHandlers.input['dom-attrs-text-search'] = function(event, target)
   {
-    listTextSearch.setInput(target);
-    listTextSearch.searchDelayed(target.value);
+    text_search.searchDelayed(target.value);
   }
   
-  eventHandlers.keyup['dom-attrs-text-search'] = function(event, target)
+  eventHandlers.keypress['dom-attrs-text-search'] = function(event, target)
   {
-    listTextSearch.handleKey(event, target)
-
-    
+    if( event.keyCode == 13 )
+    {
+      text_search.highlight();
+    }
   }
-  
-
-  // button handlers
-
-
-  // filter handlers
-
   
 })();

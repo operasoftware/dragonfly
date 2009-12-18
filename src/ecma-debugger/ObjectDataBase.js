@@ -64,79 +64,82 @@ var ObjectDataBase = new function()
       props = obj[PROPERTY_LIST];
       depth = this.data[index][DEPTH] + 1;
       this.data[index][QUERIED] = 1;
-
-      for( ; prop = props[i]; i++)
+      
+      if (props)
       {
-        switch(prop[PROPERTY_TYPE])
+        for( ; prop = props[i]; i++)
         {
-          case 'object':
+          switch(prop[PROPERTY_TYPE])
           {
-            unsorted[unsorted.length] = 
-            [
-              prop[PROPERTY_NAME],
-              prop[OBJECT_VALUE][OBJECT_ID],
-              'object',
-              depth,
-              ,
-              ,
-              prop[OBJECT_VALUE][NAME]
-            ]
-            break;
-          }
-          case 'undefined':
-          {
-            unsorted[unsorted.length] = 
-            [
-              prop[PROPERTY_NAME],
-              'undefined',
-              'undefined',
-              depth
-            ]
-            break;
-          }
-          case 'null':
-          {
-            unsorted[unsorted.length] = 
-            [
-              prop[PROPERTY_NAME],
-              'null',
-              'null',
-              depth
-            ]
-            break;
-          }
-          case 'number':
-          {
-            unsorted[unsorted.length] = 
-            [
-              prop[PROPERTY_NAME],
-              prop[PROPERTY_VALUE].toString(),
-              'number',
-              depth
-            ]
-            break;
-          }
-          case 'string':
-          {
-            unsorted[unsorted.length] = 
-            [
-              prop[PROPERTY_NAME],
-              '"' + prop[PROPERTY_VALUE] + '"',
-              'string',
-              depth
-            ]
-            break;
-          }
-          case 'boolean':
-          {
-            unsorted[unsorted.length] = 
-            [
-              prop[PROPERTY_NAME],
-              prop[PROPERTY_VALUE],
-              'boolean',
-              depth
-            ]
-            break;
+            case 'object':
+            {
+              unsorted[unsorted.length] = 
+              [
+                prop[PROPERTY_NAME],
+                prop[OBJECT_VALUE][OBJECT_ID],
+                'object',
+                depth,
+                ,
+                ,
+                prop[OBJECT_VALUE][NAME]
+              ]
+              break;
+            }
+            case 'undefined':
+            {
+              unsorted[unsorted.length] = 
+              [
+                prop[PROPERTY_NAME],
+                'undefined',
+                'undefined',
+                depth
+              ]
+              break;
+            }
+            case 'null':
+            {
+              unsorted[unsorted.length] = 
+              [
+                prop[PROPERTY_NAME],
+                'null',
+                'null',
+                depth
+              ]
+              break;
+            }
+            case 'number':
+            {
+              unsorted[unsorted.length] = 
+              [
+                prop[PROPERTY_NAME],
+                prop[PROPERTY_VALUE].toString(),
+                'number',
+                depth
+              ]
+              break;
+            }
+            case 'string':
+            {
+              unsorted[unsorted.length] = 
+              [
+                prop[PROPERTY_NAME],
+                '"' + prop[PROPERTY_VALUE] + '"',
+                'string',
+                depth
+              ]
+              break;
+            }
+            case 'boolean':
+            {
+              unsorted[unsorted.length] = 
+              [
+                prop[PROPERTY_NAME],
+                prop[PROPERTY_VALUE],
+                'boolean',
+                depth
+              ]
+              break;
+            }
           }
         }
       }
@@ -383,8 +386,6 @@ var ObjectDataBase = new function()
                 continue;
               }
             }
-
-          
           }
 
         }
@@ -409,7 +410,7 @@ var ObjectDataBase = new function()
       if( prop[TYPE] == 'object')
       {
 
-        ret += "<item style='padding-left:" + ( 9 + 16 * depth ) + "px'" +
+        ret += "<item" + 
                       " obj-id='" + prop[VALUE] + "' "+
                       " depth='" + depth + "'>" +
                   "<input type='button' handler='examine-object-2'  class='folder-key'/>" +
@@ -422,7 +423,7 @@ var ObjectDataBase = new function()
       {
         if( short_val )
         {
-        ret += "<item style='padding-left:" + ( 9 + 16 * depth ) + "px'>" +
+        ret += "<item>" + 
                   "<input type='button' handler='expand-value'  class='folder-key'/>" +
                   "<key>" + prop[KEY] + "</key>" +
                   "<value class='" + prop[TYPE] + "' data-value='" + val + "' >" + 
@@ -432,7 +433,7 @@ var ObjectDataBase = new function()
         }
         else
         {
-        ret += "<item style='padding-left:" + ( 9 + 16 * depth ) + "px'>" +
+        ret += "<item>" + 
                   "<key class='no-expander'>" + prop[KEY] + "</key>" +
                   "<value class='" + prop[TYPE] + "'>" + val + "</value>" + 
                 "</item>";

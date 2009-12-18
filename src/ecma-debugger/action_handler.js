@@ -118,142 +118,31 @@ var action_handler = new function()
     depth = parseInt(parent.getAttribute('depth')),
     rt_id = parseInt(parent_parent.getAttribute('rt-id')),
     data_id = parent_parent.getAttribute('data-id'),
-    margin = parseInt(parent.style.paddingLeft),
     data = null,
-    cur = parent,
-    i = 0,
-    cur_2 = parent.nextSibling,
-    cur_3 = null,
-    is_expanded = target.disabled
-      || ( cur_2 && parseInt(cur_2.style.paddingLeft) > margin )
-      // if it's the active search scope
-      || ( cur_2 && ( cur_2 = cur_2.nextSibling ) && parseInt(cur_2.style.paddingLeft) > margin ),
-    is_in_search_scope =
-      parent.previousSibling && parent.previousSibling.nodeName.toLowerCase() == "start-search-scope",
-    range = null;
+    examine_object = parent.getElementsByTagName('examine-objects')[0];
 
     if( window[data_id] )
     {
-      if( is_expanded )
+      if(examine_object) // is unfolded
       {
         if( !target.disabled )
         {
           window[data_id].clearData(rt_id, obj_id, depth, parent.getElementsByTagName('key')[0].textContent);
-          range = document.createRange();
-          range.setStartAfter(parent);
-          while( ( cur = cur.nextSibling ) && ( parseInt(cur.style.paddingLeft) > margin || 
-                cur.nodeName.toLowerCase() != "item" ))
-          {
-            range.setEndAfter(cur);
-            cur_2 = cur;
-            if( cur.nodeName.toLowerCase() == "end-search-scope" )
-            {
-              is_in_search_scope = true;
-            }
-          }
-          if(is_in_search_scope)
-          {
-            cur = cur_2;
-            while( ( cur = cur.nextSibling ) && ( parseInt(cur.style.paddingLeft) >= margin || 
-              cur.nodeName.toLowerCase() != "item" ) )
-            {
-              cur_2 = cur;
-            }
-            if(cur_2.nodeName.toLowerCase() == 'end-search-scope' &&  !cur_2.nextSibling && cur_2.previousSibling)
-            {
-              range.setEndAfter(cur_2.previousSibling);
-            }
-            else
-            {
-              parent_parent.insertAfter(parent_parent.getElementsByTagName('end-search-scope')[0], cur_2);
-            }
-            cur = parent;
-            while( ( cur = cur.previousSibling ) && ( parseInt(cur.style.paddingLeft) >= margin || 
-              cur.nodeName.toLowerCase() != "item" ) )
-            {
-              cur_2 = cur;
-            }
-            if( cur_3 = parent_parent.getElementsByTagName('start-search-scope')[0].previousSibling )
-            {
-              cur_3.removeClass('search-scope');
-            }
-            if( cur )
-            {
-              parent_parent.insertAfter(parent_parent.getElementsByTagName('start-search-scope')[0],
-                cur );
-              cur.addClass('search-scope');
-              messages.post( 'list-search-context', 
-                {
-                  'data_id': data_id,
-                  'rt_id': rt_id,
-                  'obj_id': cur.getAttribute('obj-id'), 
-                  'depth': cur.getAttribute('depth'),
-                  'key': cur.getElementsByTagName('key')[0].textContent
-                });
-            }
-            else
-            {
-              parent_parent.insertBefore(parent_parent.getElementsByTagName('start-search-scope')[0],
-                parent_parent.firstChild );
-              messages.post( 'list-search-context', 
-                {
-                  'data_id': data_id, 
-                  'rt_id': rt_id,
-                  'obj_id': parent_parent.getAttribute('obj-id'), 
-                  'depth': '-1',
-                  'key': ''
-                });
-            }
-            
-          }
-          range.deleteContents();
-          parent.removeClass('search-scope');
+          parent.removeChild(examine_object);
           target.style.removeProperty("background-position");
-          //alert(parent_parent.getElementsByTagName('end-search-scope')[0]);
         }
       }
       else
       {
-        
-        if( data = window[data_id].getData(rt_id, obj_id, depth, arguments) )
+        if (data = window[data_id].getData(rt_id, obj_id, depth, arguments))
         {
-         
-          if( data.length )
+          if (data.length)
           {
-
-            parent_parent.insertAfter( parent_parent.getElementsByTagName('end-search-scope')[0], parent);
-            parent.insertAdjacentHTML('afterEnd', window[data_id].prettyPrint(data, depth, settings['inspection'].get("hide-default-properties"), window[data_id].filter_type));
-            parent_parent.insertAfter( parent_parent.getElementsByTagName('start-search-scope')[0], parent);
-            cur_2 = parent_parent.getElementsByClassName('search-scope');
-            while( cur = cur_2[0] )
-            {
-              cur.removeClass('search-scope');
-            }
-            parent.addClass('search-scope');
-            cur = parent;
-            i = parseInt(cur.getAttribute('depth'));
-            while( cur = cur.previousSibling )
-            {
-              if( parseInt(cur.getAttribute('depth')) < i )
-              {
-                i = parseInt(cur.getAttribute('depth'));
-                cur.addClass('search-scope');
-                if( !i )
-                {
-                  break;
-                }
-              }
-            }
+            examine_object = parent_parent.cloneNode(false);
+            examine_object.innerHTML = window[data_id].prettyPrint(data, depth, 
+              settings['inspection'].get("hide-default-properties"), window[data_id].filter_type);
+            parent.appendChild(examine_object);
             target.style.backgroundPosition = "0px -11px";
-            messages.post( 'list-search-context', 
-              {
-                'data_id': data_id, 
-                'rt_id': rt_id,
-                'obj_id': obj_id, 
-                'depth': depth,
-                'key': parent.getElementsByTagName('key')[0].textContent
-              });
-            
           }
           else
           {
