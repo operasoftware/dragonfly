@@ -31,6 +31,8 @@ cls.debug.Debug = function(id, name, container_class)
   INDENT = "  ";
 
   var self = this;
+
+  this._times = {};
   
   this._status_map = cls.ServiceBase.get_status_map();
   this._event_map = cls.ServiceBase.get_event_map();
@@ -137,8 +139,10 @@ cls.debug.Debug = function(id, name, container_class)
     definitions = status == 0 ? 
       window.command_map[service][command][is_event && EVENT || RESPONSE] :
       window.package_map["com.opera.stp"]["Error"],
+    time_submitted = this._times[service + command + tag] || 0,
+    delta = time_submitted ? new Date().getTime() - time_submitted : 0,
     log_entry =
-      '\nreceive:\n' +
+      '\nreceive' + (delta ? ', delta: ' + delta : '') + ':\n' +
       INDENT + 'service: ' + service + '\n' + 
       INDENT + (is_event && 'event: ' || 'command: ') + command_name + '\n' + 
       INDENT + 'staus: ' + status + '\n' + 
@@ -163,6 +167,7 @@ cls.debug.Debug = function(id, name, container_class)
       this._pretty_print_payload(message, definitions, 2);
 
     this._display_log([service, command_name, 'commands', log_entry]);
+    this._times[service + command + tag] = new Date().getTime();
   }
 
   this.get_log_filter = function(){return this._filter;}
@@ -176,6 +181,7 @@ cls.debug.Debug = function(id, name, container_class)
   this.clear_log = function()
   {
     this._log_entries = [];
+    this._times = {};
     this.update();
   }
 
