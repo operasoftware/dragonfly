@@ -310,8 +310,8 @@ var DOM_markup_style = function(id, name, container_class)
             {
               if( !/^\s*$/.test(node[ VALUE ] ) )
               {
-                tree += "<div style='margin-left:" + 16 * node[ DEPTH ] + "px;' " +      
-                        "class='comment pre-wrap'>&lt;!--" + node[ VALUE ] + "--&gt;</div>";
+                tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;' " +      
+                        "class='comment pre-wrap'>&lt;!--" + node[VALUE].replace(/</g, '&lt;') + "--&gt;</div>";
               }
             }
             break;
