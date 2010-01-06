@@ -1,10 +1,24 @@
-﻿/**
+﻿window.cls || (window.cls = {});
+cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
+cls.EcmascriptDebugger["5.0"] || (cls.EcmascriptDebugger["5.0"] = {});
+
+/**
   * @constructor 
   */
 
 // TODO clean up in regard of protocol 4
-var runtimes = new function()
+cls.EcmascriptDebugger["5.0"].Runtimes = function()
 {
+
+  const
+  RUNTIME_LIST = 0,
+  // sub message RuntimeInfo 
+  RUNTIME_ID = 0,
+  HTML_FRAME_PATH = 1,
+  WINDOW_ID = 2,
+  OBJECT_ID = 3,
+  URI = 4;
+
   var __runtimes = {};
 
   var __old_runtimes = {};
@@ -53,6 +67,19 @@ var runtimes = new function()
   }
   
   var self = this;
+  var ecma_debugger = window.services['ecmascript-debugger'];
+
+  var _on_window_updated = function(msg)
+  {
+    for( var r in __runtimes )
+    { 
+      if (__runtimes[r] &&  __runtimes[r].window_id == msg.window_id && __runtimes[r].is_top)
+      {
+        __runtimes[r].title = msg.title;
+        break;
+      }
+    }
+  }
 
   var onResetState = function()
   {
@@ -96,7 +123,7 @@ var runtimes = new function()
     TODO check for existing breakpoints before cleaning up
     for( sc in __scripts )
     {
-      if( __scripts[sc]['runtime-id'] == id )
+      if( __scripts[sc].runtime_id == id )
       {
         delete __scripts[sc];
       }
@@ -118,9 +145,9 @@ var runtimes = new function()
     var cur = '';
     for( cur in __runtimes )
     {
-      if( __runtimes[cur] && __runtimes[cur]['window-id'] == win_id )
+      if( __runtimes[cur] && __runtimes[cur].window_id == win_id )
       {
-        removeRuntime(__runtimes[cur]['runtime-id']);
+        removeRuntime(__runtimes[cur].runtime_id);
       }
     }
   }
@@ -137,7 +164,7 @@ var runtimes = new function()
 
   var isTopRuntime = function(rt)
   {
-    return rt['html-frame-path'].indexOf('[') == -1;
+    return rt.html_frame_path.indexOf('[') == -1;
   }
 
   /*
@@ -158,9 +185,9 @@ var runtimes = new function()
     {
       old_rt = __old_runtimes[cur];
       if( old_rt
-          && old_rt['uri'] == runtime['uri']
-          && old_rt['window-id'] == runtime['window-id']
-          && old_rt['html-frame-path'] == runtime['html-frame-path'] )
+          && old_rt.uri == runtime.uri
+          && old_rt.window_id == runtime.window_id
+          && old_rt.html_frame_path == runtime.html_frame_path )
       {
         runtime['unfolded-script'] = old_rt['unfolded-script'] || false;
         runtime['unfolded-css'] = old_rt['unfolded-css'] || false;
@@ -171,115 +198,138 @@ var runtimes = new function()
     }
   }
 
-  var parseRuntime = function(xml)
+  this.handleListRuntimes = function(status, message)
+  {
+    message[RUNTIME_LIST].forEach(this.handleRuntime, this);
+  }
+
+  this.onRuntimeStarted = function(status, message) 
+  {
+    this.handleRuntime(message);
+  }
+
+  this.handleRuntime = function(r_t)
   {
 
-    var r_ts = xml.getElementsByTagName('runtime'), r_t=null, i=0;
+    /*
+    const
+    RUNTIME_LIST = 0,
+    // sub message RuntimeInfo 
+    RUNTIME_ID = 0,
+    HTML_FRAME_PATH = 1,
+    WINDOW_ID = 2,
+    OBJECT_ID = 3,
+    URI = 4;
+    */
+    var i=0;
     var length = 0, k = 0;
-    var runtimeId = '', runtime=null, prop = '', 
-      window_id = '',
-      children = null, child = null, j = 0;
+    var 
+    runtimeId = r_t[RUNTIME_ID], 
+    prop = '', 
+    window_id = '',
+    children = null, 
+    child = null, 
+    j = 0;
     var cur = '';
+    var runtime = null;
     var host_tabs_update_active_tab = false;
     var host_tabs_set_active_tab = 0;
 
-    for ( ; r_t = r_ts[i]; i++)
-    {
-      runtimeId = r_t.getNodeData('runtime-id'); 
       // with the createAllRuntimes call and the runtime-started event
       // it can happen that a runtime get parsed twice
-      if(runtimeId && !__runtimes[runtimeId] )
+    if(runtimeId && !__runtimes[runtimeId] )
+    {
+      length = __runtimes_arr.length;
+      for( k = 0; k < length && runtimeId != __runtimes_arr[k]; k++);
+      if( k == length )
       {
-        length = __runtimes_arr.length
-        for( k = 0; k < length && runtimeId != __runtimes_arr[k]; k++);
-        if( k == length )
-        {
-          __runtimes_arr[k] = runtimeId;  
-        }
-        runtime = {};
-        children = r_t.childNodes;
-        for(j=0 ; child = children[j]; j++)
-        {
-          runtime[child.nodeName] = child.textContent;
-        }
-        checkOldRuntimes(runtime);
-        if( runtime.is_top = isTopRuntime(runtime) )
-        {
-          var win_id = runtime['window-id'];
-          if (win_id in __window_ids)
-          {
-            cleanupWindow(win_id, runtimeId);
-          }
-          else
-          {
-            __window_ids[win_id] = true;
-          }
-          /* 
-             pop-ups are top runtimes but part of the debug context.
-             right now we don't get the correct info in the message 
-             stream to know that directly. ( see bug CORE-17782 and CORE-17775 )
-             for now we trust the window manager and our 
-             setting to just use one window-id as filter.
-             that basically means that a top runtime with a differnt window id 
-             than __selected_window must actually be a pop-up 
-          */
-          if( __selected_window && win_id != __selected_window )
-          {
-            /*
-              it is a pop-up, but the id of the opener 
-              window is an assumption here, 
-              certainly not true in all cases. 
-            */
-            runtime['opener-window-id'] = __selected_window;
-          }
-          if (!debug_context_frame_path)
-          {
-            debug_context_frame_path = runtime['html-frame-path'];
-          }   
-          __selected_script = '';
-        } 
-        getTitleRuntime(runtimeId);
-        __runtimes[runtimeId] = runtime;
-        // TODO check if that is still needed
+        __runtimes_arr[k] = runtimeId;  
+      }
+      runtime = 
+      {
+        runtime_id: r_t[RUNTIME_ID],
+        html_frame_path: r_t[HTML_FRAME_PATH],
+        window_id: r_t[WINDOW_ID],
+        object_id: r_t[OBJECT_ID],
+        uri: r_t[URI],
+      };
 
-        if(__next_runtime_id_to_select == runtimeId)
+      checkOldRuntimes(runtime);
+      if( runtime.is_top = isTopRuntime(runtime) )
+      {
+        var win_id = runtime.window_id;
+        if (win_id in __window_ids)
         {
-          self.setSelectedRuntime(runtime);
-          __next_runtime_id_to_select = '';
-        }
-        if( runtime['window-id'] == __old_selected_window )
-        {
-          self.setActiveWindowId(__old_selected_window);
-          host_tabs_set_active_tab = __old_selected_window;
-          __old_selected_window = '';
+          cleanupWindow(win_id, runtimeId);
         }
         else
         {
-          // TODO still needed?
-          updateRuntimeViews();
+          __window_ids[win_id] = true;
         }
-        if(__windows_reloaded[runtime['window-id']] == 1)
+        /* 
+           pop-ups are top runtimes but part of the debug context.
+           right now we don't get the correct info in the message 
+           stream to know that directly. ( see bug CORE-17782 and CORE-17775 )
+           for now we trust the window manager and our 
+           setting to just use one window-id as filter.
+           that basically means that a top runtime with a differnt window id 
+           than __selected_window must actually be a pop-up 
+        */
+        if( __selected_window && win_id != __selected_window )
         {
-          __windows_reloaded[runtime['window-id']] = 2;
+          /*
+            it is a pop-up, but the id of the opener 
+            window is an assumption here, 
+            certainly not true in all cases. 
+          */
+          runtime.opener_window_id = __selected_window;
         }
-        if( debug_context_frame_path == runtime['html-frame-path'] && 
-              __selected_window == runtime['window-id'] && 
-              runtimeId != __selected_runtime_id )
+        if (!debug_context_frame_path)
         {
-          self.setSelectedRuntimeId(runtimeId);
-        }
-        if( runtime['window-id'] == __selected_window ||
-              runtime['opener-window-id'] == __selected_window )
-        {
-          host_tabs_update_active_tab = true;
-          
-        }
-        if(runtime.is_top)
-        {
-          views['js_source'].update();
-          window['cst-selects']['js-script-select'].updateElement();
-          window['cst-selects']['cmd-runtime-select'].updateElement();
-        }
+          debug_context_frame_path = runtime.html_frame_path;
+        }   
+        __selected_script = '';
+      } 
+      runtime.title = (window.window_manager_data.get_window(win_id) || {}).title;
+      __runtimes[runtimeId] = runtime;
+      // TODO check if that is still needed
+
+      if(__next_runtime_id_to_select == runtimeId)
+      {
+        self.setSelectedRuntime(runtime);
+        __next_runtime_id_to_select = '';
+      }
+      if( runtime.window_id == __old_selected_window )
+      {
+        self.setActiveWindowId(__old_selected_window);
+        host_tabs_set_active_tab = __old_selected_window;
+        __old_selected_window = '';
+      }
+      else
+      {
+        // TODO still needed?
+        updateRuntimeViews();
+      }
+      if(__windows_reloaded[runtime.window_id] == 1)
+      {
+        __windows_reloaded[runtime.window_id] = 2;
+      }
+      if( debug_context_frame_path == runtime.html_frame_path && 
+            __selected_window == runtime.window_id && 
+            runtimeId != __selected_runtime_id )
+      {
+        self.setSelectedRuntimeId(runtimeId);
+      }
+      if( runtime.window_id == __selected_window ||
+            runtime.opener_window_id == __selected_window )
+      {
+        host_tabs_update_active_tab = true;
+      }
+      if(runtime.is_top)
+      {
+        views['js_source'].update();
+        window['cst-selects']['js-script-select'].updateElement();
+        window['cst-selects']['cmd-runtime-select'].updateElement();
       }
     }
     if(host_tabs_set_active_tab)
@@ -290,34 +340,9 @@ var runtimes = new function()
     {
       host_tabs.updateActiveTab();
     }
-    return r_ts;
     
-
   }
   
-  // TODO remove this code
-  var getTitleRuntime = function(rt_id)
-  {
-    var tag = tagManager.setCB(null, parseGetTitle, [rt_id]);
-    var script = "return ( document.title || '' )";
-    services['ecmascript-debugger'].eval(tag, rt_id, '', '', script);
-  }
-
-  var parseGetTitle = function(xml, rt_id)
-  {
-
-    if(__runtimes[rt_id] && xml.getNodeData('status') == 'completed' )
-    {
-      __runtimes[rt_id]['title'] = xml.getNodeData('string');
-      updateRuntimeViews();
-    }
-    else
-    {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
-        'getting title has failed in runtimes getTitleRuntime');
-    }
-  }
-
   var __scripts = {};
 
 /** checks if that script is already known from a previous runtime
@@ -328,25 +353,25 @@ var runtimes = new function()
   var registerScript = function(script)
   {
     var sc = null, is_known = false;
-    var new_script_id = script['script-id'];
-    var new_rt = __runtimes[script['runtime-id']];
+    var new_script_id = script.script_id;
+    var new_rt = __runtimes[script.runtime_id];
     var old_rt = null;
     var old_break_points = null;
     var line_nr = '';
 
     for( sc in __scripts )
     {
-      old_rt = __runtimes[__scripts[sc]['runtime-id']] || __old_runtimes[__scripts[sc]['runtime-id']] || {};
+      old_rt = __runtimes[__scripts[sc].runtime_id] || __old_runtimes[__scripts[sc].runtime_id] || {};
       // TODO check for script-type as well?
       if( ( 
-            ( __scripts[sc]['uri'] && __scripts[sc]['uri'] == script['uri'] ) 
-            || __scripts[sc]['script-data'] == script['script-data'] 
+            ( __scripts[sc].uri && __scripts[sc].uri == script.uri ) 
+            || __scripts[sc].script_data == script.script_data 
           ) &&
-          old_rt['uri'] == new_rt['uri'] &&
-          ( old_rt['window-id'] == new_rt['window-id'] ||
-            ( new_rt['opener-window-id'] && 
-              old_rt['opener-window-id'] == new_rt['opener-window-id']  ) ) &&
-          old_rt['html-frame-path'] == new_rt['html-frame-path'] )
+          old_rt.uri == new_rt.uri &&
+          ( old_rt.window_id == new_rt.window_id ||
+            ( new_rt.opener_window_id && 
+              old_rt.opener_window_id == new_rt.opener_window_id  ) ) &&
+          old_rt.html_frame_path == new_rt.html_frame_path )
       {
         is_known = true;
         break;
@@ -355,18 +380,18 @@ var runtimes = new function()
     __scripts[new_script_id] = script;
     if( is_known )
     {
-      old_break_points = __scripts[sc]['breakpoints'];
+      old_break_points = __scripts[sc].breakpoints;
       for( line_nr in old_break_points )
       {
         // do we need to remove the old breakpoints?
-        self.setBreakpoint(new_script_id, line_nr);
+        self.setBreakpoint(new_script_id, parseInt(line_nr));
       }
-      if( __scripts[sc]['script-id'] == __selected_script )
+      if( __scripts[sc].script_id == __selected_script )
       {
         __selected_script = new_script_id;
       }
       // the script could be in a pop-up window
-      if( old_rt['window-id'] == new_rt['window-id'] )
+      if( old_rt.window_id == new_rt.window_id )
       {
         __replaced_scripts[sc] = script;
         delete __scripts[sc];
@@ -399,7 +424,7 @@ var runtimes = new function()
 
   var getBreakpointId = function()
   {
-    return ( breakpoint_count++ ).toString();
+    return ( breakpoint_count++ );
   }
 
   var script_count = 1;
@@ -462,6 +487,7 @@ var runtimes = new function()
 
   var onApplicationSetup = function(msg)
   {
+    __old_selected_window = settings.runtimes.get('selected-window');
 
   }
 
@@ -471,6 +497,7 @@ var runtimes = new function()
     {
       __selected_window = window_id;
       cleanUpThreadOnContextChange();
+      settings.runtimes.set('selected-window', window_id);
       updateRuntimeViews();
     }
   }
@@ -483,42 +510,47 @@ var runtimes = new function()
   {
     debug_context_frame_path = '';
     __selected_script = '';
+    /*
     if( _is_first_call_create_all_runtimes_on_debug_context_change )
     {
       stop_at.setInitialSettings();
       // with the STP 1 design this workaround can be removed
       _is_first_call_create_all_runtimes_on_debug_context_change = false;
     }
+    */
     var tag =  tagManager.setCB(null, set_new_debug_context, [win_id]);
-    services['ecmascript-debugger'].createAllRuntimes(tag);
+    ecma_debugger.requestListRuntimes(tag, [[],1]);
   }
 
-  var set_new_debug_context = function(xml, win_id)
+  var set_new_debug_context = function(status, message, win_id)
   {
-    var runtimes = parseRuntime(xml);
-    host_tabs.setActiveTab(win_id);
-    if( runtimes.length )
+    if(message[RUNTIME_LIST])
     {
-      if( settings.runtimes.get('reload-runtime-automatically') )
+      message[RUNTIME_LIST].forEach(self.handleRuntime, self);
+      host_tabs.setActiveTab(win_id);
+      if( message[RUNTIME_LIST].length )
       {
-        self.reloadWindow();
-      }
-    }
-    else
-    {
-      if (win_id in __window_ids)
-      {
-        cleanupWindow(win_id);
+        if( settings.runtimes.get('reload-runtime-automatically') )
+        {
+          self.reloadWindow();
+        }
       }
       else
       {
-        __window_ids[win_id] = true;
+        if (win_id in __window_ids)
+        {
+          cleanupWindow(win_id);
+        }
+        else
+        {
+          __window_ids[win_id] = true;
+        }
+        __selected_runtime_id = '';
+        __selected_script = '';
+        views['js_source'].update();
+        window['cst-selects']['js-script-select'].updateElement();
+        window['cst-selects']['cmd-runtime-select'].updateElement();
       }
-      __selected_runtime_id = '';
-      __selected_script = '';
-      views['js_source'].update();
-      window['cst-selects']['js-script-select'].updateElement();
-      window['cst-selects']['cmd-runtime-select'].updateElement();
     }
   }
 
@@ -534,26 +566,87 @@ var runtimes = new function()
 
 
 
-  this.handle = function(new_script_event)
+  this.onNewScript = function(status, message)
   {
-    var script = {};
-    var children = new_script_event.documentElement.childNodes, child=null, i=0;
-    for ( ; child = children[i]; i++)
+
+    const
+    RUNTIME_ID = 0,
+    SCRIPT_ID = 1,
+    SCRIPT_TYPE = 2,
+    SCRIPT_DATA = 3,
+    URI = 4;
+
+    var script = 
     {
-      script[child.nodeName] = child.firstChild.nodeValue;
-    }
-    if( !script['script-data'] )
+      runtime_id: message[RUNTIME_ID],
+      script_id: message[SCRIPT_ID],
+      script_type: message[SCRIPT_TYPE],
+      script_data: message[SCRIPT_DATA],
+      uri: message[URI]
+    };
+
+    if( !script.script_data )
     {
-      script['script-data'] = '';
+      script.script_data = '';
     }
     
-    if( is_runtime_of_debug_context(script['runtime-id']))
+    if( is_runtime_of_debug_context(script.runtime_id))
     {
-      script['breakpoints'] = {};
-      script['stop-ats'] = [];
-      registerRuntime( script['runtime-id'] );
+      script.breakpoints = {};
+      script.stop_ats = [];
+      registerRuntime( script.runtime_id );
       registerScript( script );
     }
+  }
+
+  this.onParseError = function(status, message)
+  {
+    const
+    RUNTIME_ID = 0,
+    SCRIPT_ID = 1,
+    LINE_NUMBER = 2,
+    OFFSET = 3,
+    CONTEXT = 4,
+    DESCRIPTION = 5;
+
+    if(__scripts[message[SCRIPT_ID]])
+    {
+      var reason = /^[^:]*/.exec(message[DESCRIPTION]);
+      var expected_token = /Expected token: '[^']*'/i.exec(message[DESCRIPTION]);
+      var error = __scripts[message[SCRIPT_ID]].parse_error =
+      {
+        runtime_id: message[RUNTIME_ID],
+        script_id: message[SCRIPT_ID],
+        line_nr: message[LINE_NUMBER],
+        offset: message[OFFSET],
+        context: message[CONTEXT],
+        description: message[DESCRIPTION],
+        reason: reason && reason[0] || '',
+        expected_token: expected_token && expected_token[0] || ''
+      };      
+      if(settings['js_source'].get('error'))
+      {
+        if(  !views['js_source'].isvisible())
+        {
+          window.topCell.showView('js_source');
+        }
+        var plus_lines = views.js_source.getMaxLines() <= 10 
+          ? views.js_source.getMaxLines() / 2 >> 0 
+          : 10;
+        if( views.js_source.showLine(error.script_id, error.line_nr - plus_lines) )
+        {
+          runtimes.setSelectedScript(error.script_id);
+          views.js_source.showLinePointer(error.line_nr, true );
+        }
+
+      }
+    }
+    else
+    {
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+        "script source is missing in onParseError handler in runtimes");
+    }
+
   }
 
   // TODO client side therads handling needs a revision
@@ -590,8 +683,8 @@ var runtimes = new function()
       is part of the debug context
     */
     return __runtimes[rt_id] && 
-              ( __runtimes[rt_id]['window-id'] == __selected_window ||
-                __runtimes[rt_id]['opener-window-id'] == __selected_window );
+              ( __runtimes[rt_id].window_id == __selected_window ||
+                __runtimes[rt_id].opener_window_id == __selected_window );
 
   }
 
@@ -654,19 +747,28 @@ var runtimes = new function()
  
 
 
-  this.handleThreadStarted = function(xml)
+  this.onThreadStarted = function(status, message)
   {
-    var rt_id = xml.getNodeData("runtime-id");
+        
+    const
+    RUNTIME_ID = 0,
+    THREAD_ID = 1,
+    PARENT_THREAD_ID = 2,
+    THREAD_TYPE = 3,
+    EVENT_NAMESPACE = 4,
+    EVENT_TYPE = 5;
+    
+    var rt_id = message[RUNTIME_ID];
     // workaround for missing filtering
     if( is_runtime_of_debug_context(rt_id) )
     {
-      var id = xml.getNodeData("thread-id");
-      var parent_thread_id = xml.getNodeData("parent-thread-id");
+      var id = message[THREAD_ID];
+      var parent_thread_id = message[PARENT_THREAD_ID];
       var thread_queue = thread_queues[rt_id] || ( thread_queues[rt_id] = [] );
       var current_thread = current_threads[rt_id] || ( current_threads[rt_id] = [] );
       thread_queue[thread_queue.length] = id;
       if( !current_thread.length || 
-        ( parent_thread_id != '0' && parent_thread_id == current_thread[ current_thread.length - 1 ] ) )
+        ( parent_thread_id !== 0 && parent_thread_id == current_thread[ current_thread.length - 1 ] ) )
       {
         current_thread[current_thread.length] = id;
       }
@@ -678,12 +780,21 @@ var runtimes = new function()
     }
   }
 
-  this.handleThreadStopedAt = function(xml)
+  this.onThreadStoppedAt = function(status, message)
   {
-    var rt_id = xml.getNodeData("runtime-id");
-    var thread_id = xml.getNodeData("thread-id");
 
-    // workaround for missing filtering 
+    const
+    RUNTIME_ID = 0,
+    THREAD_ID = 1,
+    SCRIPT_ID = 2,
+    LINE_NUMBER = 3,
+    STOPPED_REASON = 4,
+    BREAKPOINT_ID = 5;
+    
+    var rt_id = message[RUNTIME_ID];
+    var thread_id = message[THREAD_ID];
+
+    // TODO clean up workaround for missing filtering 
     if( is_runtime_of_debug_context(rt_id) )
     {
       
@@ -695,7 +806,7 @@ var runtimes = new function()
           && ( !current_thread // in case the window was switched 
               || thread_id == current_thread[ current_thread.length - 1 ] ) )
       {
-        stop_at.handle(xml);
+        stop_at.handle(message);
       }
       else
       {
@@ -704,7 +815,7 @@ var runtimes = new function()
         {
           stoped_threads[rt_id] = {};
         } 
-        stoped_threads[rt_id] = xml;
+        stoped_threads[rt_id] = message;
         runtime_stoped_queue[runtime_stoped_queue.length] = rt_id;
       }
       if( __log_threads )
@@ -719,16 +830,25 @@ var runtimes = new function()
     }
   }
 
-  this.handleThreadFinished = function(xml)
+  this.onThreadFinished = function(status, message)
   {
     /* TODO
     status "completed" | "unhandled-exception" | "aborted" | "cancelled-by-scheduler"
     */
-    var rt_id = xml.getNodeData("runtime-id");
+
+    const
+    RUNTIME_ID = 0,
+    THREAD_ID = 1,
+    SCRIPT_ID = 2,
+    LINE_NUMBER = 3,
+    STOPPED_REASON = 4,
+    BREAKPOINT_ID = 5;
+
+    var rt_id = message[RUNTIME_ID];
     // workaround for missing filtering 
     if( is_runtime_of_debug_context(rt_id) )
     {
-      var thread_id = xml.getNodeData("thread-id");
+      var thread_id = message[THREAD_ID];
       clear_thread_id(rt_id, thread_id);
       if( !stop_at.getControlsEnabled () && runtime_stoped_queue.length )
       {
@@ -736,7 +856,7 @@ var runtimes = new function()
       }
       if( __log_threads )
       {
-        log_thread(xml, rt_id, thread_id);
+        log_thread(message, rt_id, thread_id);
         views.threads.update();
       }
     }
@@ -760,9 +880,9 @@ var runtimes = new function()
 </runtime-stopped>
 
 */
-  this.handleRuntimeStoped = function(xml)
+  this.onRuntimeStopped = function(status, message)
   {
-    var rt_id = xml.getNodeData('runtime-id');
+    var rt_id = message[0];
     if(rt_id)
     {
       removeRuntime(rt_id);
@@ -779,22 +899,22 @@ var runtimes = new function()
     var ret = [], r = '', is_unfolded = true;
     for( r in __runtimes )
     {
-      if( __runtimes[r] && __runtimes[r]['html-frame-path'] && __runtimes[r]['html-frame-path'].indexOf('[') == -1 )
+      if( __runtimes[r] && __runtimes[r].html_frame_path && __runtimes[r].html_frame_path.indexOf('[') == -1 )
       {
         is_unfolded = true;
-        if( __windowsFolding[__runtimes[r]['window-id']] === false )
+        if( __windowsFolding[__runtimes[r].window_id] === false )
         {
           is_unfolded = false;
         }
         ret[ret.length] = 
         {
-          id: __runtimes[r]['window-id'],
-          uri: __runtimes[r]['uri'],
+          id: __runtimes[r].window_id,
+          uri: __runtimes[r].uri,
           title: __runtimes[r]['title'] || '',
           is_unfolded: is_unfolded,
-          is_selected: __selected_window == __runtimes[r]['window-id'] ||
-            __selected_window == __runtimes[r]['opener-window-id'],
-          runtimes: this.getRuntimes( __runtimes[r]['window-id'] )
+          is_selected: __selected_window == __runtimes[r].window_id ||
+            __selected_window == __runtimes[r].opener_window_id,
+          runtimes: this.getRuntimes( __runtimes[r].window_id )
         }
       }
     }
@@ -813,9 +933,9 @@ var runtimes = new function()
     var ret = [], r = '';
     for( r in __runtimes )
     { 
-      if ( __runtimes[r] && __runtimes[r]['window-id'] &&  
-            ( __runtimes[r]['window-id'] == window_id ||
-              __runtimes[r]['opener-window-id'] == window_id ) )
+      if ( __runtimes[r] && __runtimes[r].window_id &&  
+            ( __runtimes[r].window_id == window_id ||
+              __runtimes[r].opener_window_id == window_id ) )
       {
         ret[ret.length] = __runtimes[r];
       }
@@ -834,18 +954,18 @@ var runtimes = new function()
     var ret = [], r = '';
     for( r in __runtimes )
     { 
-      if ( __runtimes[r] && __runtimes[r]['window-id'] &&
-            ( __runtimes[r]['window-id'] == window_id ||
-              __runtimes[r]['opener-window-id'] == window_id )
+      if ( __runtimes[r] && __runtimes[r].window_id &&
+            ( __runtimes[r].window_id == window_id ||
+              __runtimes[r].opener_window_id == window_id )
         )
       {
-        if(__runtimes[r].is_top && !__runtimes[r]['opener-window-id'] )
+        if(__runtimes[r].is_top && !__runtimes[r].opener_window_id )
         {
-          ret = [__runtimes[r]['runtime-id']].concat(ret);
+          ret = [__runtimes[r].runtime_id].concat(ret);
         }
         else
         {
-          ret[ret.length] = __runtimes[r]['runtime-id'];
+          ret[ret.length] = __runtimes[r].runtime_id;
         }
         
       }
@@ -860,7 +980,7 @@ var runtimes = new function()
     var r = '';
     for( r in __runtimes )
     {
-      if( __runtimes[r]['uri'] == url )
+      if( __runtimes[r].uri == url )
       {
         return __runtimes[r];
       }
@@ -872,9 +992,9 @@ var runtimes = new function()
   {
     for( var r in __runtimes )
     {
-      if( __runtimes[r]['runtime-id'] == rt_id )
+      if( __runtimes[r].runtime_id == rt_id )
       {
-        return __runtimes[r]['uri'];
+        return __runtimes[r].uri;
       }
     }
     return '';
@@ -887,20 +1007,20 @@ var runtimes = new function()
 
   this.getStoppedAt = function(scriptId)
   {
-    return __scripts[scriptId] && __scripts[scriptId]['stop-ats'] || null;
+    return __scripts[scriptId] && __scripts[scriptId].stop_ats || null;
   }
 
   this.getScriptsRuntimeId = function(scriptId)
   {
-    return __scripts[scriptId] && __scripts[scriptId]['runtime-id'] || null;
+    return __scripts[scriptId] && __scripts[scriptId].runtime_id || null;
   }
 
   this.getScriptSource = function(scriptId)
   {
-    // 'script-data' can be an empty string
+    // script_data can be an empty string
     if( __scripts[scriptId] )
     {
-      return  __scripts[scriptId]['script-data'] 
+      return  __scripts[scriptId].script_data 
     }
     return null;
   }
@@ -911,7 +1031,7 @@ var runtimes = new function()
     for( cur in __scripts )
     {
       script = __scripts[cur];
-      if(script['runtime-id'] == runtime_id)
+      if(script.runtime_id == runtime_id)
       {
         ret[ret.length] = script;
       }
@@ -922,24 +1042,25 @@ var runtimes = new function()
 
   this.hasBreakpoint = function(script_id, line_nr)
   {
-    return __scripts[script_id] && (line_nr in __scripts[script_id]['breakpoints']);
+    return __scripts[script_id] && (line_nr in __scripts[script_id].breakpoints);
   }
 
   this.setBreakpoint = function(script_id, line_nr)
   {
-    var b_p_id = __scripts[script_id]['breakpoints'][line_nr] = getBreakpointId();
-    services['ecmascript-debugger'].setBreakpoint(script_id, line_nr, b_p_id);
+    var b_p_id = __scripts[script_id].breakpoints[line_nr] = getBreakpointId();
+    services['ecmascript-debugger'].requestAddBreakpoint(0, [b_p_id, "line", script_id, line_nr]);
   }
 
   this.removeBreakpoint = function(script_id, line_nr)
   {
-    services['ecmascript-debugger'].removeBreakpoint( __scripts[script_id]['breakpoints'][line_nr] );
-    delete __scripts[script_id]['breakpoints'][line_nr];
+    services['ecmascript-debugger'].requestRemoveBreakpoint(0, 
+      [__scripts[script_id].breakpoints[line_nr]] );
+    delete __scripts[script_id].breakpoints[line_nr];
   }
 
   this.getBreakpoints = function(script_id)
   {
-    return __scripts[script_id] && __scripts[script_id]['breakpoints'];
+    return __scripts[script_id] && __scripts[script_id].breakpoints;
   }
 
 
@@ -982,7 +1103,7 @@ var runtimes = new function()
       if( __runtimes[r] == runtime )
       {
         __runtimes[r]['selected'] = true;
-        __selected_runtime_id = __runtimes[r]['runtime-id'];
+        __selected_runtime_id = __runtimes[r].runtime_id;
       }
       else
       {
@@ -1006,7 +1127,7 @@ var runtimes = new function()
     var scripts = this.getScripts(rt_id), script = null, i = 0;
     for( ; script = scripts[i]; i++)
     {
-      script.selected = script['script-id'] == script_id ;
+      script.selected = script.script_id == script_id ;
     }
     */
   }
@@ -1042,7 +1163,7 @@ var runtimes = new function()
     {
       if( script.selected )
       {
-        return script['script-id'];
+        return script.script_id;
       }
     }
     return null;
@@ -1050,7 +1171,7 @@ var runtimes = new function()
 
   this.getRuntimeIdWithScriptId = function(scriptId)
   {
-    return  __scripts[scriptId] && __scripts[scriptId]['runtime-id'] || null; 
+    return  __scripts[scriptId] && __scripts[scriptId].runtime_id || null; 
   }
 
   this.reloadWindow = function()
@@ -1067,13 +1188,13 @@ var runtimes = new function()
       {
         if(services.exec && services.exec.is_implemented)
         {
-          services.exec.post_action('reload');
+          services.exec.requestExec(0, 
+              [[["reload", null, window.window_manager_data.get_debug_context()]]]);
         }
         else
         {
-          services['ecmascript-debugger'].eval('-1', rt_id, '', '', 'location.reload()');
+          services['ecmascript-debugger'].requestEval(0, [rt_id, 0, 0, 'location.reload()']);
         }
-        
       }
     }
   }
@@ -1085,11 +1206,11 @@ var runtimes = new function()
 
   var onThreadStopped = function(msg)
   {
-    var script_id = msg.stop_at['script-id'];
+    var script_id = msg.stop_at.script_id;
     // only scripts from the selected runtime are registered
     if( script_id && __scripts[script_id] )
     {
-      var stop_ats = __scripts[script_id]['stop-ats'];
+      var stop_ats = __scripts[script_id].stop_ats;
       stop_ats[stop_ats.length] = msg.stop_at;
     }
 
@@ -1099,8 +1220,8 @@ var runtimes = new function()
   var onThreadContinue = function(msg)
   {
     var
-    script_id = msg.stop_at['script-id'],
-    stop_ats = __scripts[script_id] && __scripts[script_id]['stop-ats'],
+    script_id = msg.stop_at.script_id,
+    stop_ats = __scripts[script_id] && __scripts[script_id].stop_ats,
     stop_at = null,
     i = 0;
  
@@ -1130,6 +1251,73 @@ var runtimes = new function()
   messages.addListener('application-setup', onApplicationSetup);
 
   messages.addListener('reset-state', onResetState);
+
+  messages.addListener('window-updated', _on_window_updated)
+
+  this.bind = function()
+  {
+    var self = this,
+    ecma_debugger = window.services['ecmascript-debugger'];
+
+    ecma_debugger.handleEval = function(status, message){};
+
+    ecma_debugger.handleListRuntimes = function(status, message)
+    {
+      self.handleListRuntimes(status, message);
+    }
+
+    ecma_debugger.onRuntimeStarted = function(status, message)
+    {
+      self.onRuntimeStarted(status, message);
+    }
+
+    ecma_debugger.onRuntimeStopped = function(status, message)
+    {
+      self.onRuntimeStopped(status, message);
+    }
+
+    ecma_debugger.onNewScript = function(status, message)
+    {
+      self.onNewScript(status, message);
+    }
+
+    ecma_debugger.onThreadStarted = function(status, message)
+    {
+      self.onThreadStarted(status, message);
+    }
+
+    ecma_debugger.onThreadStoppedAt = function(status, message)
+    {
+      self.onThreadStoppedAt(status, message);
+    }
+
+
+
+    ecma_debugger.onThreadFinished = function(status, message)
+    {
+      self.onThreadFinished(status, message);
+    }
+
+    ecma_debugger.onParseError = function(status, message)
+    {
+      self.onParseError(status, message);
+    }
+
+
+
+
+
+
+
+
+
+
+
+    ecma_debugger.addListener('window-filter-change', function(msg)
+    {
+      self.createAllRuntimesOnDebugContextChange(msg.filter[1][0])
+    });
+  }
   
 
 

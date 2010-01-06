@@ -495,83 +495,32 @@ category.unfolded + category header {
   color: hsl(0, 0%, 50%)
   }
   
-.css-inspector h2 b {
+.css-inspector h2 b 
+{
   color: #279;
-  }
+}
 
-
-examine-objects, examine-objects item {
+examine-objects, 
+examine-objects item 
+{
   display:block;
-  }
-
-examine-objects, .dom-attrs {
-  background-color: hsl(0, 0%, 92%);
-  }
-
-examine-objects item {
+}
+examine-objects
+{
   padding: 0 9px;
-  }
-
-examine-objects key {
+}
+examine-objects examine-objects
+{
+  padding: 0 0 0 16px;
+}
+examine-objects key 
+{
   margin-right:7px;
-  }
-
-
-
-examine-objects .back-refernce value:after {
-  content: "[selected object]";
-  color: #c90;
-  margin-left: 7px;
-  }
-
-start-search-scope, end-search-scope {
-  display:block;
-  height:3px;
-  background-color: #fff;
-  }
-
-
-item.search-scope {
-  padding-top: 3px;
-  padding-bottom: 3px;
-  border: 1px solid hsl(0, 0%, 75%);
-  border-width: 1px 0;
-  background-color: hsl(0, 0%, 97%);
-  font-weight: bold;
-  }
-
-
-item.search-scope + item.search-scope {
-  border-top-width: 0;
-  }
-
-item.selected {
-  background-color:#eec;
-  }
-
-
-examine-objects start-search-scope:first-child {
-  height: 4px;
-  }
-
-end-search-scope {
-  border-bottom: 1px solid hsl(0, 0%, 75%);
-  margin-bottom: 3px;
-  }
-
-examine-objects end-search-scope:last-child {
-  border-bottom: 3px solid hsl(0, 0%, 100%);
-  margin-bottom: 0;
-  }
-
-start-search-scope ~ item {
-  background-color: #fff;
-  }
-
-start-search-scope ~ end-search-scope ~ item {
-  background-color: transparent;
-  }
-
+}
+examine-objects key.no-expander
+{
+  margin-left: 18px;
+}
 .css-layout layout-container
 {
   display: table;
@@ -672,7 +621,9 @@ stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
   white-space: pre-wrap;
   }
 
-.dom input {
+
+.dom input 
+{
   border: 0;
   margin: 0;
   margin-left: -23px;
@@ -682,7 +633,7 @@ stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
   width: 19px;
   color: #666;
   background: transparent url('../ui-images/expand-collapse.png') 4px 2px no-repeat;
-  }
+}
 
 .dom input:focus
 {
@@ -947,3 +898,172 @@ d
   right:0;
   top:0;
 }
+
+.debug-textarea
+{
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border: 0;
+  padding: 2px 7px;
+}
+
+.filter-container
+{
+  background-color: #fff;
+}
+
+.filter-container ul ul
+{
+  margin-left: 20px;
+}
+
+.filter-container .disabled
+{
+  opacity: .3;
+}
+
+.filter-container ul li
+{
+  margin: 3px 0;
+  border: 1px solid transparent;
+}
+
+.filter-container ul div
+{
+  border-top: 1px solid #999;
+  background-color: hsl(0, 0%, 97%);
+  padding: 5px 7px;
+  margin-top: 3px;
+}
+
+.filter-container input[type='button'] 
+{
+  border: 0;
+  margin: 0;
+  padding-right:4px;
+  cursor: pointer;
+  height: 15px;
+  width: 19px;
+  color: #666;
+  background: transparent url('../ui-images/expand-collapse.png') 4px 2px no-repeat;
+}
+
+.filter-container li.open
+{
+  background-color: hsl(0, 0%, 90%);
+  border-color: #999;
+}
+
+.filter-container li.open > input[type='button'] {
+  background-position: 4px -13px;
+  }
+
+.filter-container h3
+{
+  display: inline-block;
+}
+
+
+
+.test-messages h2,
+.test-messages h3
+{
+  font-size: 1em;
+  padding: 0 5px;
+  margin: 0;
+  border: 1px solid #666;
+  border-width: 0 1px;
+}
+
+.test-messages h2
+{
+  font-weight: bold;
+  background-color: hsl(0, 0%, 95%);
+  margin-top: 1em;
+  border-width: 1px;
+}
+
+.test-messages .column
+{
+  xfloat: left;
+  display: table-cell;
+  padding: 0 .7em;
+}
+
+.test-messages .column div
+{
+  border-bottom: 1px solid #666;
+}
+
+.test-messages ul
+{
+  margin-bottom: -1px;
+}
+
+.test-messages li
+{
+  border: 1px solid #666;
+  border-width: 0 1px;
+  padding: 0 5px;
+}
+
+.test-messages .selected
+{
+  background-color: #666;
+  color: #fff;
+  font-weight: bold;
+}
+
+.test-messages pre
+{
+  padding: 5px;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.test-messages .comment
+{
+  color: #666;
+}
+
+.test-messages p
+{
+  padding: 0 5px;
+  margin: 0;
+}
+
+.test-messages .definition
+{
+  border: 1px solid #666;
+  background-color: hsl(0, 0%, 98%);
+}
+
+.test-messages .right-aligned
+{
+  text-align: right;
+  padding: 1px;
+  border: 1px solid #666;
+  border-width: 0 1px 1px 1px;
+  background-color: hsl(0, 0%, 98%);
+  margin-bottom: -1px;
+}
+
+.test-messages textarea
+{
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0 5px;
+  border: 1px solid #666;
+  border-width: 0 1px 1px 1px;
+}
+#message-response
+{
+  border: 1px solid #666;
+  border-width: 0 1px;
+}
+

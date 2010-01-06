@@ -1,0 +1,9 @@
+message <span class="message">RepeatedInteger</span>
+{
+  repeated <span class="number">uint32  </span> runtimeIDList  = 1; 
+  repeated <span class="number">fixed32 </span> objectIDList   = 2; 
+  repeated <span class="number">int32   </span> windowIDList   = 3; 
+  repeated <span class="number">sint32  </span> scriptIDList   = 4; 
+  repeated <span class="number">sfixed32</span> htmlIDList     = 5; 
+  repeated <span class="bool">bool    </span> activationList = 6; 
+}

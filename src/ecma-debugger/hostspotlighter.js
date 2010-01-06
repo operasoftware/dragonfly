@@ -1,4 +1,8 @@
-﻿var hostspotlighter = new function()
+﻿window.cls || (window.cls = {});
+cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
+cls.EcmascriptDebugger["5.0"] || (cls.EcmascriptDebugger["5.0"] = {});
+
+cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
 {
   /* interface */
   // type: default, dimension, padding, border, margin, locked 
@@ -77,12 +81,7 @@
 
   var get_command = function(node_id, scroll_into_view, name)
   {
-    return "" +
-      "<spotlight-object>" +
-        "<object-id>" + node_id + "</object-id>" +
-        "<scroll-into-view>" + ( scroll_into_view && 1 || 0 ) + "</scroll-into-view>" +
-        commands[name] +
-      "</spotlight-object>";
+    return [node_id, scroll_into_view && 1 || 0, commands[name]];
   }
 
   var get_locked_commands = function(node_id)
@@ -95,24 +94,13 @@
     last_spotlight_commands = "";
     // workaround for bug CORE-18426
     var root_id = dom_data.getRootElement();
-    services['ecmascript-debugger'].post
-    (
-      "<spotlight-objects>" +
-        ( root_id && 
-          "<spotlight-object>" +
-            "<object-id>" + root_id + "</object-id>" +
-            "<scroll-into-view>0</scroll-into-view>" +
-            "<box>" +
-              "<box-type>0</box-type>" +
-              "<fill-color>0</fill-color>" +
-            "</box>" +
-          "</spotlight-object>" 
-          || "" ) +
-        ( settings.dom.get('lock-selecked-elements') 
-          && locked_elements.map(get_locked_commands).join("")
-          || "" ) +
-      "</spotlight-objects>"
-    );
+    if(root_id)
+    {
+      services['ecmascript-debugger'].requestSpotlightObjects(0,
+        [ settings.dom.get('lock-selecked-elements') && 
+            locked_elements.map(get_locked_commands) || [[root_id, 0, [[0,0]]]] ]);
+
+    }
   }
 
   var set_color_theme = function(fill_frame_color, grid_color)
@@ -189,23 +177,36 @@
     extract_css_properties(matrixes[HOVER][2], ( client_colors.active = {} ) );
     extract_css_properties(matrixes[HOVER][1], ( client_colors.inner = {} ) );
   }
-    
+  
+  // TODO fix name
   var stringify_command = function(matrix)
   {
-    var ret = "", box = null, color = null, i = 0, j = 0;
+    var 
+    ret = [], 
+    box = null, 
+    spot_box = null, 
+    i = 0, 
+    j = 0, 
+    color = 0,
+    has_color = 0;
+
     for( ; i < 4; i++)
     {
       if( box = matrix[i] )
       {
-        ret += "<box><box-type>" + i + "</box-type>";
-        for( j = 0; j < 3; j++)
+        has_color = 0;
+        spot_box = [i];
+        for( j = 3; j--; j)
         {
-          if( color = box[j])
+          if( has_color += ( color = convert_rgba_to_int(box[j] ) ) )
           {
-            ret += START_TAG[j] + convert_rgba_to_int(color) + END_TAG[j];
+            spot_box[j+1] = color;
           }
         }
-        ret += "</box>";
+        if(has_color)
+        {
+          ret[ret.length] = spot_box;
+        }
       }
     }
     return ret;
@@ -322,7 +323,9 @@
 
   var onElementSelected = function(msg)
   {
-    if(settings.dom.get('lock-selecked-elements'))
+    if(settings.dom.get('lock-selecked-elements') && 
+        // events can be asynchronous
+        window.host_tabs.is_runtime_of_active_tab(msg.rt_id) )
     {
       locked_elements[locked_elements.length] = msg.obj_id;
     }
@@ -397,15 +400,8 @@
   /* convert a rgba array to a integer */
   var convert_rgba_to_int = function(arr)
   {
-    var i = 4, ret = 0;
-    if(arr && arr.length == 4)
-    {
-      for( ; i--; )
-      {
-        ret += arr[3-i] << (i * 8);
-      }
-    }
-    return ret;
+    return arr && arr.length == 4 && 
+        ((arr[0] << 23) * 2 + (arr[1] << 16) +(arr[2] << 8) + (arr[3] << 0)) || 0;
   }
 
   /* convert a rgba array to a hex value
@@ -508,15 +504,10 @@
     if( join.call(arguments) != last_spotlight_commands )
     {
       last_spotlight_commands = join.call(arguments);
-      services['ecmascript-debugger'].post
-      (
-        "<spotlight-objects>" +
-          get_command(node_id, scroll_into_view, type || "default") +
-          ( settings.dom.get('lock-selecked-elements') 
-            && locked_elements.map(get_locked_commands).join("")
-            || "" ) +
-        "</spotlight-objects>"
-      )
+      services['ecmascript-debugger'].requestSpotlightObjects(0,
+        [[get_command(node_id, scroll_into_view, type || "default")].concat(
+            settings.dom.get('lock-selecked-elements') && 
+            locked_elements.map(get_locked_commands) || [])])
     }
   }
   
@@ -671,5 +662,12 @@
   messages.addListener('setting-changed', onSettingChange);
   set_initial_values();
   create_color_selects();
-  
+
+  this.bind = function()
+  {
+    var ecma_debugger = window.services['ecmascript-debugger'];
+
+    ecma_debugger.handleSpotlightObjects = function(status, message){};
+  }
+
 }

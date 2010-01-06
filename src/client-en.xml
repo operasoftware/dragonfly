@@ -126,16 +126,37 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 
 <!-- restart normal concatenation -->
 <!-- command concat_js "./script/dragonfly.js" -->
-<script src="./scripts/json.js"/>
+
 <script src="./scripts/dom.js"/>
-<script src="./scripts/messages.js"/>
-<script src="./scripts/clientlib_async.js"/>
+
+
 <script src="./scripts/Timeouts.js"/>
 <script src="./scripts/TextSearch.js"/>
 <script src="./scripts/VirtualTextSearch.js"/>
 <script src="./scripts/colors.js"/>
-<script src="./scripts/serviceBase.js"/>
+<script src="./scripts/messages.js"/>
+
 <script src="./scripts/debug-helpers-liveSource.js"/>
+
+<script src="./lib/json.js"/>
+<script src="./lib/clientlib_async.js"/>
+<script src="./lib/tag_manager.js"/>
+<script src="./lib/messages.js"/>
+
+<script src="./lib/service_base.js"/>
+<script src="./lib/http_logger.js"></script>
+<script src="./lib/namespace.js"></script>
+<script src="./lib/stp_0_wrapper.js"></script>
+<script src="./lib/console_logger.js"></script>
+<script src="./lib/scope.js"></script>
+<script src="./lib/ecmascript_debugger.js"></script>
+<script src="./lib/exec.js"></script>
+<script src="./lib/http_interface.js"></script>
+<script src="./lib/window_manager.js"></script>
+<script src="./lib/message_maps.js"/>
+<script src="./lib/service_descriptions.js"/>
+<script src="./lib/test_framework.js"/>
+
 
 <script src="./ui-scripts/defaults.js"/>
 <script src="./ui-scripts/window.js"/>
@@ -168,13 +189,22 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./ui-scripts/toolbarcstselect.js"/>
 <script src="./ui-scripts/ui_framework.js"/>
 
+<script src="./build-application/build_application.js"></script>
+
+
+<script src="./debug/debug.js"/>
+<script src="./debug/configure_message_filter.js"/>
+<script src="./debug/test_messages.js"/>
+<script src="./debug/build_debug.js"/>
+
+
 
 
 
 
 <script src="./ecma-debugger/ListTextSearch.js"/>
 <script src="./scripts/ini.js"/>
-<script src="./ecma-debugger/debug.js"/>
+
 <script src="./ecma-debugger/storage.js"/>
 <script src="./ecma-debugger/helpers.js"/>
 <script src="./ecma-debugger/tabs.js"/>
@@ -215,7 +245,6 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./ecma-debugger/elementStyle.js"/>
 <script src="./ecma-debugger/action_handler.js"/>
 <script src="./ecma-debugger/change-handler.js"/>
-<script src="./ecma-debugger/tag.js"/>
 <script src="./ecma-debugger/DOMEditor.js"/>
 <script src="./ecma-debugger/DomMarkupEditor.js"/>
 <script src="./ecma-debugger/actions_dom.js"/>
@@ -231,7 +260,6 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./console-logger/console.js"/>
 <script src="./console-logger/console_templates.js"/>
 <script src="./ecma-debugger/ecma-debugger.js"/>
-<script src="./exec/exec.js"/>
 
 
 <script src="./http-logger/httplogger_service.js"/>

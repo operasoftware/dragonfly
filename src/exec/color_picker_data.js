@@ -21,7 +21,12 @@ var color_picker_data = new function()
 
   const 
   INTERVAL = 50,
-  INTERVAL_SLEEP = 500;
+  INTERVAL_SLEEP = 500,
+  STATUS = 0,
+  VALUE = 2,
+  OBJECT_VALUE = 3,
+  // sub message ObjectValue 
+  OBJECT_ID = 0;
 
   /* private */
 
@@ -54,19 +59,17 @@ var color_picker_data = new function()
     {
       var script = this["return new ColorPicer()"];
       var tag = tagManager.setCB(this, this._register_color_picker, [this._top_rt_id]);
-      services['ecmascript-debugger'].eval(tag, this._top_rt_id, '', '', script);
+      services['ecmascript-debugger'].requestEval(tag, [this._top_rt_id, 0, 0, script]);
     }
   }
 
-  this._register_color_picker = function(xml, rt_id)
+  this._register_color_picker = function(satus, message, rt_id)
   {
-    var 
-    status = xml.getNodeData('status'),
-    obj_id = xml.getNodeData('object-id');
 
-    if(  status == 'completed' && obj_id )
+
+    if (message[STATUS] == 'completed')
     {
-      this._color_picker = obj_id;
+      this._color_picker = message[OBJECT_VALUE][OBJECT_ID];
       this._color_picker_rt_id = rt_id;
       this._activate_color_picker();
     }
@@ -87,16 +90,15 @@ var color_picker_data = new function()
   {
     var script = "color_picker.stop()";
     var tag = tagManager.setCB(this, this._handle_stop);
-    services['ecmascript-debugger'].eval(tag, this._color_picker_rt_id, 
-      '', '', script, ["color_picker", this._color_picker]);
+    services['ecmascript-debugger'].requestEval(tag, 
+      [this._color_picker_rt_id, 0, 0, script, [["color_picker", this._color_picker]]]);
     this._is_active = false;
     this._color_picker = "";
   }
 
-  this._handle_stop = function(xml)
+  this._handle_stop = function(status, message)
   {
-    var status = xml.getNodeData('status');
-    if(  status != 'completed' )
+    if(message[STATUS] != 'completed')
     {
       opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
         "failed handle_stop in ColorPicker");
@@ -116,8 +118,8 @@ var color_picker_data = new function()
   {
     var script = "color_picker.get_mouse_position()";
     var tag = tagManager.setCB(this, this._handle_mouse_position);
-    services['ecmascript-debugger'].eval(tag, this._color_picker_rt_id, 
-      '', '', script, ["color_picker", this._color_picker]);
+    services['ecmascript-debugger'].requestEval(tag,
+      [this._color_picker_rt_id, 0, 0, script, [["color_picker", this._color_picker]]]);
   }
 
   this._get_mouse_position_bound = function()
@@ -125,13 +127,12 @@ var color_picker_data = new function()
     self._get_mouse_position();
   }
 
-  this._handle_mouse_position = function(xml)
+  this._handle_mouse_position = function(status, message)
   {
-    var status = xml.getNodeData('status');
-    if( status == 'completed' )
+    if (message[STATUS] == 'completed')
     {
-      var return_value = xml.getElementsByTagName('string')[0];
-      var pos_raw = eval(return_value.textContent);
+      // TODO return a json format
+      var pos_raw = eval(message[VALUE]);
       var pos = pos_raw && {
         x: pos_raw.x - this._delta,
           y: pos_raw.y - this._delta,
@@ -161,17 +162,27 @@ var color_picker_data = new function()
         this._count_no_change = 0;
         this._interval = INTERVAL;
         /* */
-        window.services.exec.screen_watcher(this._handle_screenshot_bound, 0, 0, pos);
+        window.services.exec.requestSetupScreenWatcher(
+          tagManager.setCB(this, this._handle_screenshot),
+          [
+            1,
+            [pos.x, pos.y, pos.w, pos.h],
+            [],
+            window.window_manager_data.get_debug_context(),
+            [],
+            1
+          ]
+        );
       }
     }
   }
 
-  this._handle_screenshot = function(xml)
+  this._handle_screenshot = function(status, message)
   {
-    var png= xml.getElementsByTagName('png')[0];
-    if(png)
+    const PNG = 2;
+    if(status == 0)
     {
-      this._screenshot_element.src = "data:image/png;base64," + png.firstChild.nodeValue;
+      this._screenshot_element.src = "data:image/png;base64," + message[PNG];
     }
     else
     {

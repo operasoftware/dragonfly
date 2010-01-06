@@ -1,0 +1,34 @@
+message <span class="message">ActionList</span>
+{
+  message <span class="message">Action</span>
+  {
+    <span class="comment">/** 
+     * The name of the action to execute. 
+     * This is either a regular Opera action (e.g. "Page Down"),
+     * or a special exec-action. Both kinds can be found by 
+     * calling `GetActionInfoList`. The special cases are
+     * prefixed with underscore ("_"), and these require `value` 
+     * parameter to work, but always ignores `windowID`.
+     * 
+     * The special cases may include:
+     *     _keydown | _keyup: 
+     *         The `value` is either a key-name ("ctrl", "down", etc.)
+     *         or a single character ("a", "b", etc.)
+     *     _type: 
+     *         Types the text present in `value` 
+     *         (a different approach is the "Insert" action)
+     * 
+     * It is currently not possible to figure out which actions 
+     * take parameters (`value`), and which don't. Optimistically, 
+     * we have made the `Action` type extendable to include 
+     * such information later.
+     */</span>
+    required <span class="string">string</span> name     = 1; 
+    <span class="comment">/** 
+     * Additional parameters to the action. E.g. "opera.com" to the command "go"
+     */</span>
+    optional <span class="string">string</span> value    = 2; 
+    optional <span class="number">uint32</span> windowID = 3; 
+  }
+  repeated <span class="message">Action</span> actionList = 1; 
+}

@@ -1,0 +1,52 @@
+<span class="comment">/** 
+ * To highlight elements in the document
+ */</span>
+message <span class="message">SpotlightSelection</span>
+{
+  <span class="comment">/** 
+   * The drawing order is box, reference-box-frame, box-frame, grid.
+   */</span>
+  message <span class="message">SpotlightObject</span>
+  {
+    required <span class="number">uint32      </span> objectID       = 1; 
+    <span class="comment">/** 
+     * Chooses whether the given object should be scrolled into view or not.
+     */</span>
+    required <span class="bool">bool        </span> scrollIntoView = 2; 
+    repeated <span class="message">SpotlightBox</span> boxList        = 3; 
+  }
+  <span class="comment">/** 
+   * Colors are encoded as RGBA with 8 bits for each channel.
+   * encoded_color = ( red << 24 ) + ( green << 16 ) + ( blue << 8 ) + ( alpha ) 
+   * with red, green, blue and alpha in a range of 0 - 255
+   * e.g.:
+   * 
+   *     red     4278190335
+   *     green     16711935
+   *     blue         65535
+   *     yellow  4294902015
+   *     cyan      16777215
+   *     magenta 4278255615
+   */</span>
+  message <span class="message">SpotlightBox</span>
+  {
+    <span class="comment">/** 
+     * Valid values:
+     *   0: dimension
+     *   1: padding
+     *   2: border
+     *   3: margin
+     */</span>
+    required <span class="number">uint32</span> boxType    = 1; 
+    optional <span class="number">uint32</span> fillColor  = 2; 
+    <span class="comment">/** 
+     * Drawn with 1px width inside the box
+     */</span>
+    optional <span class="number">uint32</span> frameColor = 3; 
+    <span class="comment">/** 
+     * Drawn with 1px width inside the box over the whole document
+     */</span>
+    optional <span class="number">uint32</span> gridColor  = 4; 
+  }
+  repeated <span class="message">SpotlightObject</span> spotlightObjectList = 1; 
+}

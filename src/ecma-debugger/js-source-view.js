@@ -296,7 +296,6 @@ cls.JsSourceView = function(id, name, container_class)
 
   var getMaxLineLength = function()
   {
-    var time = new Date().getTime();
     var i = 0, 
       max = 0, 
       max_index = 0, 
@@ -344,7 +343,7 @@ cls.JsSourceView = function(id, name, container_class)
   {
     source_content.innerHTML = "<div style='visibility:hidden'>" +
       simple_js_parser.parse(script, getMaxLineLength() - 1, 1).join('') + "</div>";
-    var scrollWidth = script.scrollWidth = source_content.firstChild.firstChild.scrollWidth;
+    var scrollWidth = script.scrollWidth = source_content.firstChild.firstChild.scrollWidth + 7;
     var offsetWidth = script.offsetWidth = source_content.firstChild.firstChild.offsetWidth;
 
     if( scrollWidth > offsetWidth )
@@ -412,10 +411,22 @@ cls.JsSourceView = function(id, name, container_class)
       {
         if( !script_obj.line_arr )
         {
-          script_obj.source_data = new String(script_obj['script-data']);
+          script_obj.source_data = new String(script_obj.script_data);
           script_obj.line_arr = [];
           script_obj.state_arr = [];
           pre_lexer(script_obj);
+          if(script_obj.parse_error)
+          {
+            var error_line = 0;
+            while(error_line < script_obj.line_arr.length && 
+                script_obj.line_arr[error_line] < script_obj.parse_error.offset)
+            {
+              error_line++;
+            }
+            script_obj.parse_error.error_line = error_line - 1;
+            script_obj.parse_error.error_line_offset = 
+              script_obj.parse_error.offset - script_obj.line_arr[error_line - 1];
+          }
         }
         script =
         {
@@ -424,7 +435,8 @@ cls.JsSourceView = function(id, name, container_class)
           line_arr: script_obj.line_arr,
           state_arr: script_obj.state_arr,
           breakpoints: [],
-          has_context: false
+          has_context: false,
+          parse_error: script_obj.parse_error 
         }
         var b_ps = runtimes.getBreakpoints(script_id), b_p = '';
         if( b_ps )
@@ -694,11 +706,11 @@ cls.helper_collection.getSelectedOptionText = function()
     var script = runtimes.getScript(selected_script_id);
     if( script )
     {
-      var display_uri = helpers.shortenURI(script['uri']);
+      var display_uri = helpers.shortenURI(script.uri);
       return ( 
         display_uri.uri
         ? display_uri.uri
-        : ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script['script-id'] 
+        : ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script.script_id 
       )
     }
     else
@@ -754,7 +766,7 @@ cls.ScriptSelect = function(id, class_name)
 
   this.checkChange = function(target_ele)
   {
-    var script_id = target_ele.getAttribute('script-id');
+    var script_id = parseInt(target_ele.getAttribute('script-id'));
 
     if(script_id)
     {
@@ -777,7 +789,7 @@ cls.ScriptSelect = function(id, class_name)
 
   var onThreadStopped = function(msg)
   {
-    stopped_script_id = msg.stop_at['script-id'];
+    stopped_script_id = msg.stop_at.script_id;
   }
 
   var onThreadContinue = function(msg)
@@ -862,7 +874,7 @@ new Settings
   {
     script: 0, 
     exception: 0, 
-    error: 0, 
+    error: 1, 
     abort: 0,
     'tab-size': 4
   }, 

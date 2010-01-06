@@ -1,0 +1,6 @@
+message <span class="message">StringMessage</span>
+{
+  required <span class="string">string</span> first  = 1; 
+  required <span class="string">string</span> second = 2; 
+  required <span class="string">string</span> empty  = 3; 
+}

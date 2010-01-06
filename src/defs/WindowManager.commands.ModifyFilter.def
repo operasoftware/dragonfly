@@ -1,0 +1,13 @@
+message <span class="message">WindowFilter</span>
+{
+  required <span class="bool">bool  </span> clearFilter        = 1; 
+  repeated <span class="number">uint32</span> includeIDList      = 2; 
+  <span class="comment">/** 
+   * The string can currently only have one value: `""`, meaing all window-ids.
+   * The filter automatically includes windows that are opened from windows
+   * in the INCLUDE filter.
+   */</span>
+  repeated <span class="string">string</span> includePatternList = 3; 
+  repeated <span class="number">uint32</span> excludeIDList      = 4; 
+  repeated <span class="string">string</span> excludePatternList = 5; 
+}

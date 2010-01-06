@@ -78,11 +78,12 @@ window.templates.request_list_row = function(r, expandList, firstTime, lastTime,
     var cur = r.request.time - firstTime;
     curP = cur*rangeP;
 
+
     dur = r.response ? Math.floor((r.response.time - r.request.time)*rangeP) : null
     var a = [
         [ 'tr',
             ['td', ["button", "", "type", "button",
-                                  'data-requestid', r.id,
+                                  'data-requestid', r.id.toString(),
                                   "class", "expand-collapse"]],
             ['td', ["label", "",
                     "class", http_map_mime_to_type(http_get_mime_from_extension(r.request.path))]
@@ -94,7 +95,7 @@ window.templates.request_list_row = function(r, expandList, firstTime, lastTime,
             ['td', (r.duration!=undefined ? ["span", "" + r.duration + "ms", "style", "margin-left: " + Math.floor(curP) + "%; width: " + (dur!=null ? dur : 50 ) + "%", "class", "graph-box"] : ""),
                         (isFirst ? ["span", "" + (lastTime-firstTime) + "ms", "class", "totaltime"] : []),
                   , 'class', 'time-cell'],
-            'data-requestid', r.id,
+            'data-requestid', r.id.toString(),
             "handler", "request-list-expand-collapse",
             'class', 'typeicon mime-' + 
                     http_map_mime_to_type(http_get_mime_from_extension(r.request.path)) +
@@ -121,9 +122,9 @@ window.templates.request_details_box = function(r, aw)
     
     return [ 'tr',
               ['td',
-               ['button', ui_strings.S_BUTTON_SHOW_REQUEST_SUMMARY, "type", "button", "data-viewname", "summary", "data-requestid", r.id, "handler", "select-http-detail-view"],
-               ['button', ui_strings.S_BUTTON_SHOW_REQUEST_HEADERS, "type", "button", "data-viewname", "headers", "data-requestid", r.id, "handler", "select-http-detail-view"],
-               ['button', ui_strings.S_BUTTON_SHOW_REQUEST_RAW, "type", "button", "data-viewname", "raw", "data-requestid", r.id, "handler", "select-http-detail-view"],
+               ['button', ui_strings.S_BUTTON_SHOW_REQUEST_SUMMARY, "type", "button", "data-viewname", "summary", "data-requestid", r.id.toString(), "handler", "select-http-detail-view"],
+               ['button', ui_strings.S_BUTTON_SHOW_REQUEST_HEADERS, "type", "button", "data-viewname", "headers", "data-requestid", r.id.toString(), "handler", "select-http-detail-view"],
+               ['button', ui_strings.S_BUTTON_SHOW_REQUEST_RAW, "type", "button", "data-viewname", "raw", "data-requestid", r.id.toString(), "handler", "select-http-detail-view"],
                  ["div", content(r)],
                 "colspan", "7"]
            ]

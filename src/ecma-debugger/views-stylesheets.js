@@ -113,7 +113,7 @@ cls.StylesheetSelect = function(id, class_name)
   {
 
     var index = parseInt(target_ele.getAttribute('index'));
-    var rt_id = target_ele.getAttribute('runtime-id');
+    var rt_id = parseInt(target_ele.getAttribute('runtime-id'));
     // stylesheets.getRulesWithSheetIndex will call this function again if data is not avaible
     // handleGetRulesWithIndex in stylesheets will 
     // set for this reason __call_count on the event object

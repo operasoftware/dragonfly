@@ -14,14 +14,14 @@ var DOM_markup_style = function(id, name, container_class)
   NAME = 2, 
   DEPTH = 3,
   NAMESPACE = 4, 
-  VALUE = 4, 
+  VALUE = 7, 
   ATTRS = 5,
   ATTR_PREFIX = 0,
   ATTR_KEY = 1, 
   ATTR_VALUE = 2,
   CHILDREN_LENGTH = 6, 
-  PUBLIC_ID = 4,
-  SYSTEM_ID = 5,
+  PUBLIC_ID = 8,
+  SYSTEM_ID = 9,
   INDENT = "  ",
   LINEBREAK = '\n';
 
@@ -44,7 +44,7 @@ var DOM_markup_style = function(id, name, container_class)
 
   var spotlightElement = function()
   {
-    hostspotlighter.spotlight(this.getAttribute('ref-id'));
+    hostspotlighter.spotlight(parseInt(this.getAttribute('ref-id')));
   }
 
   var clearSpotlightElement = function()
@@ -198,8 +198,10 @@ var DOM_markup_style = function(id, name, container_class)
               for( k = 0; attr = node[ATTRS][k]; k++ )
               {
                 attrs += " <key>" + 
-                  ( attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '' ) + 
-                  ( force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ) +
+                  (( attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '' ) + 
+                  /* regarding escaping "<". it happens that there are very starnge keys in broken html.
+                      perhaps we will have to extend the escaping to other data tokens as well */
+                  ( force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] )).replace(/</g, '&lt;') +
                   "</key>=<value" + 
                     ( /^href|src$/i.test(attr[ATTR_KEY])
                       ? " handler='dom-resource-link'"
@@ -239,7 +241,7 @@ var DOM_markup_style = function(id, name, container_class)
                 {
                   one_child_text_content += "<text" +
                     ( is_not_script_node ? " ref-id='" + data[child_pointer][ID] + "' " : "" ) +
-                    "'>" + data[child_pointer][VALUE] + "</text>";
+                    ">" + data[child_pointer][VALUE].replace(/</g, '&lt;') + "</text>";
                 }
               }
             }
@@ -308,8 +310,8 @@ var DOM_markup_style = function(id, name, container_class)
             {
               if( !/^\s*$/.test(node[ VALUE ] ) )
               {
-                tree += "<div style='margin-left:" + 16 * node[ DEPTH ] + "px;' " +      
-                        "class='comment pre-wrap'>&lt;!--" + node[ VALUE ] + "--&gt;</div>";
+                tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;' " +      
+                        "class='comment pre-wrap'>&lt;!--" + node[VALUE].replace(/</g, '&lt;') + "--&gt;</div>";
               }
             }
             break;

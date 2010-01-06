@@ -90,151 +90,59 @@ var action_handler = new function()
 
     
   }
+
+  handlers['expand-value'] = function(event, target)
+  {
+    var 
+    val = target.parentNode.getElementsByTagName('value')[0],
+    text_content = val.textContent;
+
+    val.textContent = val.getAttribute('data-value');
+    val.setAttribute('data-value', text_content);
+    if(target.style.backgroundPosition)
+    {
+      target.style.removeProperty('background-position');
+    }
+    else
+    {
+      target.style.backgroundPosition = '0px -11px';
+    }
+  }
  
   handlers['examine-object-2'] = function(event, target)
   {
     var
     parent = target.parentNode,
     parent_parent = parent.parentNode,
-    obj_id = parent.getAttribute('obj-id'),
+    obj_id = parseInt(parent.getAttribute('obj-id')),
     depth = parseInt(parent.getAttribute('depth')),
-    rt_id = parent_parent.getAttribute('rt-id'),
+    rt_id = parseInt(parent_parent.getAttribute('rt-id')),
     data_id = parent_parent.getAttribute('data-id'),
-    margin = parseInt(parent.style.paddingLeft),
     data = null,
-    cur = parent,
-    i = 0,
-    cur_2 = parent.nextSibling,
-    cur_3 = null,
-    is_expanded = target.disabled
-      || ( cur_2 && parseInt(cur_2.style.paddingLeft) > margin )
-      // if it's the active search scope
-      || ( cur_2 && ( cur_2 = cur_2.nextSibling ) && parseInt(cur_2.style.paddingLeft) > margin ),
-    is_in_search_scope =
-      parent.previousSibling && parent.previousSibling.nodeName.toLowerCase() == "start-search-scope",
-    range = null;
+    examine_object = parent.getElementsByTagName('examine-objects')[0];
+
     if( window[data_id] )
     {
-      if( is_expanded )
+      if(examine_object) // is unfolded
       {
         if( !target.disabled )
         {
           window[data_id].clearData(rt_id, obj_id, depth, parent.getElementsByTagName('key')[0].textContent);
-          range = document.createRange();
-          range.setStartAfter(parent);
-          while( ( cur = cur.nextSibling ) && ( parseInt(cur.style.paddingLeft) > margin || 
-                cur.nodeName.toLowerCase() != "item" ))
-          {
-            range.setEndAfter(cur);
-            cur_2 = cur;
-            if( cur.nodeName.toLowerCase() == "end-search-scope" )
-            {
-              is_in_search_scope = true;
-            }
-          }
-          if(is_in_search_scope)
-          {
-            cur = cur_2;
-            while( ( cur = cur.nextSibling ) && ( parseInt(cur.style.paddingLeft) >= margin || 
-              cur.nodeName.toLowerCase() != "item" ) )
-            {
-              cur_2 = cur;
-            }
-            if(cur_2.nodeName.toLowerCase() == 'end-search-scope' &&  !cur_2.nextSibling && cur_2.previousSibling)
-            {
-              range.setEndAfter(cur_2.previousSibling);
-            }
-            else
-            {
-              parent_parent.insertAfter(parent_parent.getElementsByTagName('end-search-scope')[0], cur_2);
-            }
-            cur = parent;
-            while( ( cur = cur.previousSibling ) && ( parseInt(cur.style.paddingLeft) >= margin || 
-              cur.nodeName.toLowerCase() != "item" ) )
-            {
-              cur_2 = cur;
-            }
-            if( cur_3 = parent_parent.getElementsByTagName('start-search-scope')[0].previousSibling )
-            {
-              cur_3.removeClass('search-scope');
-            }
-            if( cur )
-            {
-              parent_parent.insertAfter(parent_parent.getElementsByTagName('start-search-scope')[0],
-                cur );
-              cur.addClass('search-scope');
-              messages.post( 'list-search-context', 
-                {
-                  'data_id': data_id,
-                  'rt_id': rt_id,
-                  'obj_id': cur.getAttribute('obj-id'), 
-                  'depth': cur.getAttribute('depth'),
-                  'key': cur.getElementsByTagName('key')[0].textContent
-                });
-            }
-            else
-            {
-              parent_parent.insertBefore(parent_parent.getElementsByTagName('start-search-scope')[0],
-                parent_parent.firstChild );
-              messages.post( 'list-search-context', 
-                {
-                  'data_id': data_id, 
-                  'rt_id': rt_id,
-                  'obj_id': parent_parent.getAttribute('obj-id'), 
-                  'depth': '-1',
-                  'key': ''
-                });
-            }
-            
-          }
-          range.deleteContents();
-          parent.removeClass('search-scope');
+          parent.removeChild(examine_object);
           target.style.removeProperty("background-position");
-          //alert(parent_parent.getElementsByTagName('end-search-scope')[0]);
         }
       }
       else
       {
-        
-        if( data = window[data_id].getData(rt_id, obj_id, depth, arguments) )
+        if (data = window[data_id].getData(rt_id, obj_id, depth, arguments))
         {
-         
-          if( data.length )
+          if (data.length)
           {
-
-            parent_parent.insertAfter( parent_parent.getElementsByTagName('end-search-scope')[0], parent);
-            parent.insertAdjacentHTML('afterEnd', window[data_id].prettyPrint(data, depth, settings['inspection'].get("hide-default-properties"), window[data_id].filter_type));
-            parent_parent.insertAfter( parent_parent.getElementsByTagName('start-search-scope')[0], parent);
-            cur_2 = parent_parent.getElementsByClassName('search-scope');
-            while( cur = cur_2[0] )
-            {
-              cur.removeClass('search-scope');
-            }
-            parent.addClass('search-scope');
-            cur = parent;
-            i = parseInt(cur.getAttribute('depth'));
-            while( cur = cur.previousSibling )
-            {
-              if( parseInt(cur.getAttribute('depth')) < i )
-              {
-                i = parseInt(cur.getAttribute('depth'));
-                cur.addClass('search-scope');
-                if( !i )
-                {
-                  break;
-                }
-              }
-            }
+            examine_object = parent_parent.cloneNode(false);
+            examine_object.innerHTML = window[data_id].prettyPrint(data, depth, 
+              settings['inspection'].get("hide-default-properties"), window[data_id].filter_type);
+            parent.appendChild(examine_object);
             target.style.backgroundPosition = "0px -11px";
-            messages.post( 'list-search-context', 
-              {
-                'data_id': data_id, 
-                'rt_id': rt_id,
-                'obj_id': obj_id, 
-                'depth': depth,
-                'key': parent.getElementsByTagName('key')[0].textContent
-              });
-            
           }
           else
           {
@@ -253,7 +161,7 @@ var action_handler = new function()
     {
       topCell.showView(views.inspection.id);
       messages.post('active-inspection-type', {inspection_type: 'object'});
-      object_inspection_data.showGlobalScope(runtime['runtime-id']);
+      object_inspection_data.showGlobalScope(runtime.runtime_id);
       runtimes.setSelectedRuntime(runtime);
       views.runtimes.update();
     }
@@ -374,6 +282,7 @@ var action_handler = new function()
   handlers['display-script'] = function(event)
   {
     var script_id  = event.target.getAttribute('script-id');
+
     if(script_id)
     {
       runtimes.setSelectedScript( script_id );
@@ -402,7 +311,7 @@ var action_handler = new function()
 
   handlers['set-break-point'] = function(event)
   {
-    var line = event.target.parentElement.children[0].value;
+    var line = parseInt(event.target.parentElement.children[0].value);
     var script_id = views.js_source.getCurrentScriptId();
     if( line )
     {
@@ -414,7 +323,7 @@ var action_handler = new function()
       else
       {
         runtimes.setBreakpoint(script_id, line);
-        views.js_source.addBreakpoint(parseInt(line));
+        views.js_source.addBreakpoint(line);
       }
     }
   }
@@ -552,7 +461,7 @@ var action_handler = new function()
     var container = event.target.parentNode;
     var level = ( parseInt(container.style.marginLeft) || 0 ) / 16;
     var level_next = ( container.nextSibling && parseInt(container.nextSibling.style.marginLeft) || 0 ) / 16;
-    var ref_id = container.getAttribute('ref-id');
+    var ref_id = parseInt(container.getAttribute('ref-id'));
     if(level_next > level)
     {
       dom_data.closeNode(ref_id);
@@ -566,7 +475,7 @@ var action_handler = new function()
 
   handlers['spotlight-node'] = function(event, current_target)
   {
-    var obj_id = current_target.getAttribute('ref-id');
+    var obj_id = parseInt(current_target.getAttribute('ref-id'));
     if(obj_id)
     {
       hostspotlighter.spotlight(obj_id, 
@@ -604,8 +513,8 @@ var action_handler = new function()
 
   handlers['inspect-object-link'] = function(event, target)
   {
-    var rt_id = target.getAttribute('rt-id');
-    var obj_id = target.getAttribute('obj-id');
+    var rt_id = parseInt(target.getAttribute('rt-id'));
+    var obj_id = parseInt(target.getAttribute('obj-id'));
     messages.post('active-inspection-type', {inspection_type: 'object'});
     // if that works it should be just inspection
     topCell.showView(views.inspection.id);

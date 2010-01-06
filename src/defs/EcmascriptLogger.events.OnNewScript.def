@@ -1,0 +1,15 @@
+message <span class="message">ScriptInfo</span>
+{
+  <span class="comment">/** 
+   * Type of script ("inline", "linked", etc; may be "none")
+   */</span>
+  required <span class="string">string</span> context = 1; 
+  <span class="comment">/** 
+   * The string `"none"` or the URL at which the script originated
+   */</span>
+  required <span class="string">string</span> url     = 2; 
+  <span class="comment">/** 
+   * The source code
+   */</span>
+  required <span class="string">string</span> source  = 3; 
+}

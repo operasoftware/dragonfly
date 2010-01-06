@@ -34,23 +34,13 @@ var ViewsMenu = function(menu_id)
   var show = function(event)
   {
     hideTimeouts.clear();
-    var ul = menu.getElementsByTagName('ul')[0];
-    if( !ul)
+    if(!menu.getElementsByTagName('ul')[0])
     {
-      var 
-        _views = ViewBase.getSingleViews(['ishidden_in_menu']),
-        unvisbibleViews = [],
-        view = '',
-        i = 0;
-      for( ; id = _views[i]; i++)
-      {
-        if(!views[id].isvisible())
-        {
-          unvisbibleViews[unvisbibleViews.length] = id;
-        }
-      }
-      unvisbibleViews.sort(sortViewsWithIds);
-      menu.render(menuTemplate(unvisbibleViews));
+      menu.render(
+        menuTemplate(
+          window.ViewBase.getSingleViews().filter(function(id){return window.views[id].show_in_views_menu})
+        )
+      );
     }
   }
 
@@ -156,7 +146,7 @@ var ViewsMenu = function(menu_id)
     }
   }
 
-  messages.addListener('setting-changed', onSettingChange);
+  //messages.addListener('setting-changed', onSettingChange);
 
 }
 

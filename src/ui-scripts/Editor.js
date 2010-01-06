@@ -348,8 +348,8 @@ var Editor = function()
     {
       this.submit();
     }
-    this.context_rt_id = ele.parentElement.parentElement.getAttribute('rt-id');
-    this.context_rule_id = ele.parentElement.getAttribute('rule-id');
+    this.context_rt_id = parseInt(ele.parentElement.parentElement.getAttribute('rt-id'));
+    this.context_rule_id = parseInt(ele.parentElement.getAttribute('rule-id'));
     this.context_stylesheet_index = 
         sheet_link ? parseInt(sheet_link.getAttribute('index')) : -1;
     var textContent = ele.textContent;
@@ -773,12 +773,14 @@ var Editor = function()
     if( props[i+1] )
     {
       script = "rule.style.setProperty(\"" + props[i] + "\", \"" + props[i+1].replace(/"/g, "'") + "\", " + ( props[i+2] ? "\"important\"" : null )+ ")";
-      services['ecmascript-debugger'].eval(0, this.context_rt_id, '', '', script, ["rule", this.context_rule_id]);
+      services['ecmascript-debugger'].requestEval(0, 
+          [this.context_rt_id, 0, 0, script, [["rule", this.context_rule_id]]]);
     }
     else if(!props[i])
     {
       script = "rule.style.removeProperty(\"" + this.context_cur_prop + "\")";
-      services['ecmascript-debugger'].eval(0, this.context_rt_id, '', '', script, ["rule", this.context_rule_id]);
+      services['ecmascript-debugger'].requestEval(0, 
+        [this.context_rt_id, 0, 0, script, [["rule", this.context_rule_id]]]);
     }
     if(this.context_stylesheet_index > -1)
     {

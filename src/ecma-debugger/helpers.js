@@ -133,7 +133,7 @@ helpers = new function()
   // mouseover handler in the breadcrumb
   this.breadcrumbSpotlight = function(event)
   {
-    var obj_id = event.target.getAttribute('obj-id');
+    var obj_id = parseInt(event.target.getAttribute('obj-id'));
     if( obj_id )
     {
       hostspotlighter.spotlight(obj_id);
@@ -147,6 +147,30 @@ helpers = new function()
     {
       hostspotlighter.clearSpotlight();
     }
+  }
+
+  this.service_dashed_name = function(name)
+  {
+    for ( var cur = '', i = 0, ret = ''; cur = name[i]; i++)
+    {
+      ret += /[A-Z]/.test(cur) && ( i ? '-' : '' ) + cur.toLowerCase() || cur;
+    }
+    return ret;
+  }
+
+  this.service_class_name = function(name)
+  {
+    for ( var cur = '', i = 0, ret = '', do_upper = true; cur = name[i]; i++)
+    {
+      if(cur == '-')
+      {
+        do_upper = true;
+        continue;
+      }
+      ret += do_upper && cur.toUpperCase() || cur;
+      do_upper = false;
+    }
+    return ret;
   }
 
   document.addEventListener('keypress', keypressListener, true);

@@ -1,8 +1,12 @@
-﻿/**
+﻿window.cls || (window.cls = {});
+cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
+cls.EcmascriptDebugger["5.0"] || (cls.EcmascriptDebugger["5.0"] = {});
+
+/**
   * @constructor 
   */
 
-var stop_at = new function()
+cls.EcmascriptDebugger["5.0"].StopAt = function()
 {
 
   /**
@@ -15,7 +19,9 @@ var stop_at = new function()
     script: 1,
     exception: 0,
     error: 0,
-    abort: 0
+    abort: 0,
+    gc: 0,
+    debugger_statement: 1
   }
 
   // replace with settings['js-source'].get(key)
@@ -24,10 +30,24 @@ var stop_at = new function()
     script: 0,
     exception: 0,
     error: 0,
-    abort: 0
+    abort: 0,
+    gc: 0,
+    debugger_statement: 1
+  }
+
+  var stop_at_id_map =
+  {
+    script: 0,
+    exception: 1,
+    error: 2,
+    abort: 3,
+    gc: 4,
+    debugger_statement: 5
   }
 
   var self = this;
+
+  var ecma_debugger = window.services['ecmascript-debugger'];
 
   var stopAt = {}; // there can be only one stop at at the time
 
@@ -65,7 +85,12 @@ var stop_at = new function()
       else
       {
         stop_at_settings[key] = value;
-        services['ecmascript-debugger'].setConfiguration(key, value ? 'yes' : 'no');
+        var config_arr = [], prop = '';
+        for ( prop in stop_at_settings )
+        {
+          config_arr[stop_at_id_map[prop]] = stop_at_settings[prop] && 1 || 0;
+        }
+        ecma_debugger.requestSetConfiguration(0, config_arr);
       }
     }
   }
@@ -103,9 +128,27 @@ var stop_at = new function()
     return stopAt && stopAt['thread-id'] || '';
   }
 
-  var parseBacktrace = function(xml, runtime_id, thread_id)
+  var parseBacktrace = function(status, message, runtime_id, thread_id)
   {
-    var _frames = xml.getElementsByTagName('frame'), frame = null, i = 0;
+    const
+    FRAME_LIST = 0,
+    // sub message BacktraceFrame 
+    FUNCTION_ID = 0,
+    ARGUMENT_OBJECT = 1,
+    VARIABLE_OBJECT = 2,
+    THIS_OBJECT = 3,
+    OBJECT_VALUE = 4,
+    SCRIPT_ID = 5,
+    LINE_NUMBER = 6,
+    // sub message ObjectValue 
+    OBJECT_ID = 0,
+    IS_CALLABLE = 1,
+    IS_FUNCTION = 2,
+    TYPE = 3,
+    PROTOTYPE_ID = 4,
+    NAME = 5;
+
+    var _frames = message[FRAME_LIST], frame = null, i = 0;
     var fn_name = '', line = '', script_id = '', argument_id = '', scope_id = '';
     var _frames_length = _frames.length;
 
@@ -117,12 +160,12 @@ var stop_at = new function()
       {
         fn_name : is_all_frames && i == _frames_length - 1 
                   ? 'global scope' 
-                  : frame.getNodeData('function-name') || 'anonymous',
-        line : frame.getNodeData('line-number'), 
-        script_id : frame.getNodeData('script-id'),
-        argument_id : frame.getNodeData('argument-object'),
-        scope_id : frame.getNodeData('variable-object'),
-        this_id : frame.getNodeData('this-object'),
+                  : frame[OBJECT_VALUE][NAME] || 'anonymous',
+        line : frame[LINE_NUMBER], 
+        script_id : frame[SCRIPT_ID],
+        argument_id : frame[ARGUMENT_OBJECT],
+        scope_id : frame[VARIABLE_OBJECT],
+        this_id : frame[THIS_OBJECT],
         id: i,
         rt_id: runtime_id
       }
@@ -158,12 +201,11 @@ var stop_at = new function()
       var config_arr = [], prop = '';
       for ( prop in stop_at_settings )
       {
-        config_arr[config_arr.length] = prop;
-        config_arr[config_arr.length] = 
+        config_arr[stop_at_id_map[prop]] = 
           ( ( stop_at_user_settings[prop] = settings['js_source'].get(prop) ) 
-            || stop_at_settings[prop] ) && 'yes' || 'no';
+            || stop_at_settings[prop] ) && 1 || 0;
       }
-      services['ecmascript-debugger'].setConfiguration.apply(services['ecmascript-debugger'], config_arr);
+      ecma_debugger.requestSetConfiguration(0, config_arr);
       _is_initial_settings_set = true;
     }
   }
@@ -173,9 +215,10 @@ var stop_at = new function()
     __controls_enabled = false;
     callstack = [];
 
-    runtimes.setObserve(stopAt['runtime-id'], mode != 'run');
+    runtimes.setObserve(stopAt.runtime_id, mode != 'run');
 
-    services['ecmascript-debugger'].__continue(stopAt, mode);
+    services['ecmascript-debugger'].requestContinueThread(0, 
+        [stopAt.runtime_id, stopAt['thread-id'], mode]);
     messages.post('frame-selected', {frame_index: -1});
     messages.post('thread-continue-event', {stop_at: stopAt});
     toolbars.js_source.disableButtons('continue');
@@ -196,25 +239,30 @@ var stop_at = new function()
 
   */
 
-  this.handle = function(stop_at_event)
+  this.handle = function(message)
   {
-    stopAt = {};
-    var id = getStopAtId();
-    var children = stop_at_event.documentElement.childNodes, child=null, i=0;
-    for ( ; child = children[i]; i++)
+    const
+    RUNTIME_ID = 0,
+    THREAD_ID = 1,
+    SCRIPT_ID = 2,
+    LINE_NUMBER = 3,
+    STOPPED_REASON = 4,
+    BREAKPOINT_ID = 5;
+
+
+    stopAt = 
     {
-      if(child.firstChild)
-      {
-        stopAt[child.nodeName] = child.firstChild.nodeValue;
-      }
-      else
-      {
-        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +  
-          "empty element in <thread-stopped-at> event");
-        stopAt[child.nodeName] = null
-      }
-    }
-    var line = parseInt( stopAt['line-number'] );
+      runtime_id: message[RUNTIME_ID],
+      'thread-id': message[THREAD_ID],
+      script_id: message[SCRIPT_ID],
+      'line-number': message[LINE_NUMBER],
+      'stopped-reason': message[STOPPED_REASON],
+      'breakpoint-id': message[BREAKPOINT_ID]
+    };
+    // var id = getStopAtId();
+
+
+    var line = stopAt['line-number'];
     if( typeof line == 'number' )
     {
       /**
@@ -226,21 +274,22 @@ var stop_at = new function()
       if(stopAt['stopped-reason'] == 'unknown')
       {
 
-        runtime_id = stopAt['runtime-id'];
+        runtime_id = stopAt.runtime_id;
         if(  settings['js_source'].get('script') 
              || runtimes.getObserve(runtime_id)
               // this is a workaround for Bug 328220
               // if there is a breakpoint at the first statement of a script
               // the event for stop at new script and the stop at breakpoint are the same
-             || runtimes.hasBreakpoint(stopAt['script-id'], line) )
+             || runtimes.hasBreakpoint(stopAt.script_id, line) )
         {
           if( runtimes.getSelectedRuntimeId() != runtime_id )
           {
             runtimes.setSelectedRuntimeId(runtime_id);
           }
           // the runtime id can be different for each frame. 
-          var tag = tagManager.setCB(null, parseBacktrace, [stopAt['runtime-id']]); 
-          services['ecmascript-debugger'].backtrace(tag, stopAt);
+          var tag = tagManager.setCB(null, parseBacktrace, [stopAt.runtime_id]); 
+          services['ecmascript-debugger'].requestGetBacktrace(tag, 
+              [stopAt.runtime_id, stopAt['thread-id'], ini.max_frames]);
           if( !views.js_source.isvisible() )
           {
             topCell.showView(views.js_source.id);
@@ -248,9 +297,9 @@ var stop_at = new function()
           var plus_lines = views.js_source.getMaxLines() <= 10 
             ? views.js_source.getMaxLines() / 2 >> 0 
             : 10;
-          if( views.js_source.showLine( stopAt['script-id'], line - plus_lines ) )
+          if( views.js_source.showLine( stopAt.script_id, line - plus_lines ) )
           {
-            runtimes.setSelectedScript(stopAt['script-id']);
+            runtimes.setSelectedScript(stopAt.script_id);
             views.js_source.showLinePointer( line, true );
           }
           __controls_enabled = true;
@@ -266,11 +315,12 @@ var stop_at = new function()
       }
       else
       {
-        runtime_id = stopAt['runtime-id'];
+        runtime_id = stopAt.runtime_id;
        
-        // the runtime id can be different for each frame. 
-        var tag = tagManager.setCB(null, parseBacktrace, [stopAt['runtime-id']]); 
-        services['ecmascript-debugger'].backtrace(tag, stopAt);
+        // the runtime id can be different for each frame
+        var tag = tagManager.setCB(null, parseBacktrace, [stopAt.runtime_id]); 
+        services['ecmascript-debugger'].requestGetBacktrace(tag, 
+          [stopAt.runtime_id, stopAt['thread-id'], ini.max_frames]);
         if( !views.js_source.isvisible() )
         {
           topCell.showView(views.js_source.id);
@@ -278,9 +328,9 @@ var stop_at = new function()
         var plus_lines = views.js_source.getMaxLines() <= 10 
           ? views.js_source.getMaxLines() / 2 >> 0 
           : 10;
-        if( views.js_source.showLine( stopAt['script-id'], line - plus_lines ) )
+        if( views.js_source.showLine( stopAt.script_id, line - plus_lines ) )
         {
-          runtimes.setSelectedScript(stopAt['script-id']);
+          runtimes.setSelectedScript(stopAt.script_id);
           views.js_source.showLinePointer( line, true );
         }
         __controls_enabled = true;
@@ -298,7 +348,7 @@ var stop_at = new function()
 
     var onRuntimeDestroyed = function(msg)
     {
-      if( stopAt && stopAt['runtime-id'] == msg.id )
+      if( stopAt && stopAt.runtime_id == msg.id )
       {
         views.callstack.clearView();
         views.inspection.clearView();
@@ -319,6 +369,22 @@ var stop_at = new function()
 
 
   messages.addListener('setting-changed', onSettingChange);
+
+  this.bind = function()
+  {
+    var self = this,
+    ecma_debugger = window.services['ecmascript-debugger'];
+
+    ecma_debugger.handleSetConfiguration = 
+    ecma_debugger.handleContinueThread = 
+    function(status, message){};
+
+
+    ecma_debugger.addListener('enable-success', function()
+    {
+      self.setInitialSettings();
+    });
+  }
 
   
 }

@@ -1,0 +1,18 @@
+message <span class="message">RepeatedData</span>
+{
+  message <span class="message">Nested</span>
+  {
+    repeated <span class="message">MoreNested</span> moreNestedList = 1; 
+  }
+  message <span class="message">MoreNested</span>
+  {
+    required <span class="number">int32</span> a = 1; 
+    required <span class="number">int32</span> b = 2; 
+    required <span class="number">int32</span> c = 3; 
+    required <span class="number">int32</span> d = 4; 
+  }
+  repeated <span class="number">uint32</span> integerList = 1; 
+  repeated <span class="bool">bool  </span> booleanList = 2; 
+  repeated <span class="string">string</span> stringList  = 3; 
+  repeated <span class="message">Nested</span> nestedList  = 4; 
+}

@@ -120,13 +120,14 @@ new Switches
 
 (function()
 {
-  var listTextSearch = new ListTextSearch();
+  var text_search = new TextSearch();
 
   var onViewCreated = function(msg)
   {
     if( msg.id == 'inspection' )
     {
-      listTextSearch.setContainer(msg.container);
+      text_search.setContainer(msg.container);
+      text_search.setFormInput(views.inspection.getToolbarControl(msg.container, 'inspection-text-search'));
     }
   }
 
@@ -134,33 +135,25 @@ new Switches
   {
     if( msg.id == 'inspection' )
     {
-      listTextSearch.cleanup();
+      text_search.cleanup();
     }
   }
 
-  var onListSearchContext = function(msg)
-  {
-    if( msg.data_id == 'inspection' )
-    {
-      listTextSearch.onNewContext(msg);
-    }
-  }
 
   messages.addListener('view-created', onViewCreated);
   messages.addListener('view-destroyed', onViewDestroyed);
 
-  messages.addListener('list-search-context', onListSearchContext);
-  
-
   eventHandlers.input['inspection-text-search'] = function(event, target)
   {
-    listTextSearch.setInput(target);
-    listTextSearch.searchDelayed(target.value);
+    text_search.searchDelayed(target.value);
   }
   
-  eventHandlers.keyup['inspection-text-search'] = function(event, target)
+  eventHandlers.keypress['inspection-text-search'] = function(event, target)
   {
-    listTextSearch.handleKey(event, target);
+    if( event.keyCode == 13 )
+    {
+      text_search.highlight();
+    }
   }
 
 })()

@@ -171,10 +171,7 @@
       var tabs = rough_cell.tabs, tab = '', i = 0;
       for( ; tab = tabs[i]; i++)
       {
-        if( views[tab] )
-        {
-          this.tab.addTab(new Tab(tab, views[tab].name));
-        }
+        this.tab.addTab(new Tab(tab, views[tab] && views[tab].name || ''));
       }
     }
   }
