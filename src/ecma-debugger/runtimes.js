@@ -1303,15 +1303,12 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       self.onParseError(status, message);
     }
 
-
-
-
-
-
-
-
-
-
+    // TODO move to a bind method of dom_data
+    ecma_debugger.onObjectSelected =
+    ecma_debugger.handleGetSelectedObject = function(status, message)
+    {
+      window.dom_data.on_element_selected(status, message);
+    }
 
     ecma_debugger.addListener('window-filter-change', function(msg)
     {

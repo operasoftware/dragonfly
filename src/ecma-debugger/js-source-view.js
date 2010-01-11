@@ -682,10 +682,10 @@ cls.JsSourceView = function(id, name, container_class)
     {
       __clearView();
     }
-
   }
-  
 
+  this.ondestroy = __clearView;
+  
   this.init(id, name, container_class);
   messages.addListener('update-layout', updateLayout);
   messages.addListener('runtime-destroyed', onRuntimeDestroyed);
