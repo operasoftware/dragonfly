@@ -11,6 +11,7 @@ var elementStyle = new function()
   const 
   COMP_STYLE = 0,
   CSS = 1, 
+  IS_VALID = 2,
   REQ_TYPE_CSS = 2,
   PROP_LIST = 1,
   VAL_LIST = 2,
@@ -235,7 +236,15 @@ var elementStyle = new function()
 
   this.getCategoryData = function(index)
   {
-    return categories_data[index];
+    if(categories_data[IS_VALID])
+    {
+      return categories_data[index];
+    }
+    if(__selectedElement)
+    {
+      getData(__selectedElement.rt_id, __selectedElement.obj_id);
+    }
+    return null;
   }
 
   this.getSetProps = function()
@@ -307,6 +316,10 @@ var elementStyle = new function()
     {
       getData(msg.rt_id, msg.obj_id);
     }
+    else
+    {
+      categories_data[IS_VALID] = false;
+    }
     
   }
 
@@ -349,6 +362,7 @@ var elementStyle = new function()
       categories_data[0] = declarations[0]; 
       categories_data[1] = declarations[1];
       categories_data[1].rt_id = categories_data[0].rt_id = rt_id;
+      categories_data[IS_VALID] = true;
 
       // this is to ensure that a set property is always displayed in computed style,
       // also if it maps the initial value and the setting "Hide Initial Values" is set to true.
