@@ -183,7 +183,7 @@
         }
         else
         {
-          c=number_dec_parser(c);
+          c=number_dec_parser(c, '.');
         }
         continue;
       }
@@ -210,7 +210,7 @@
         if(c in NUMBER)
         {
           __type='NUMBER';
-          c=number_dec_parser(c);
+          c=number_dec_parser(c, 0);
           continue;
         }
         else
@@ -288,21 +288,22 @@
         c=reg_exp_parser(c);
         continue;
       }
-      __buffer+=c in ESCAPE ? ESCAPE[c] : c;
-      c=__source.charAt(++__pointer);
       // read identifier
       // numbers can be part of identifier
-      do
+      while(true)
       {
         __buffer+=c in ESCAPE ? ESCAPE[c] : c;
         c=__source.charAt(++__pointer);
+        if (!c 
+            || c in PUNCTUATOR  
+            || c=='/' 
+            || c in LINETERMINATOR  
+            || c in WHITESPACE 
+            || c in STRING_DELIMITER)
+        {
+          break;
+        }
       }
-      
-      while (c && !(c in PUNCTUATOR  
-                    || c=='/' 
-                    || c in LINETERMINATOR  
-                    || c in WHITESPACE 
-                    || c in STRING_DELIMITER ));
     }
     read_buffer();
   }
@@ -320,10 +321,14 @@
     return c;
   }
 
-  var number_dec_parser=function(c)
+  var number_dec_parser=function(c, dot)
   {
-    while(c in NUMBER || c=='.')
+    while(c in NUMBER || c==dot)
     {
+      if(c==dot)
+      {
+        dot = 0;
+      }
       __buffer+=c;
       c=__source.charAt(++__pointer);
     }
@@ -420,7 +425,7 @@
         {
           __buffer+=c;
           read_buffer();
-          __previous_type='COMMENT';
+          // don't change the previous type
           __type='IDENTIFIER';
           break;
         }
@@ -439,7 +444,7 @@
       if(c in LINETERMINATOR) 
       {
         read_buffer();
-        __previous_type = 'COMMENT';
+        // don't change the previous type
         __type = 'IDENTIFIER';
         CRLF = c;
         CRLF += c = __source.charAt(++__pointer);
