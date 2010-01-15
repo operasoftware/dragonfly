@@ -56,6 +56,7 @@ cls.JsSourceView = function(id, name, container_class)
   var __scroll_interval = 0;
   var __scrollEvent = 0;
   var __target_scroll_top = -1;
+  var __view_is_destroyed = true;
 
   var __keyEvent = 0;
 
@@ -144,7 +145,8 @@ cls.JsSourceView = function(id, name, container_class)
         }
         else
         {
-          breakpoint.style.removeProperty('background-position');
+          breakpoint.style.backgroundPosition='0 0';
+          //breakpoint.style.removeProperty('background-position');
         }
       }
     }
@@ -390,6 +392,7 @@ cls.JsSourceView = function(id, name, container_class)
   this.showLine = function(script_id, line_nr, clear_scroll) // return boolean for the visibility of this view
   {
     // too often called?
+    
 
     if( __timeout_clear_view )
     {
@@ -484,11 +487,12 @@ cls.JsSourceView = function(id, name, container_class)
       {
         updateScriptContext();
       }
-      if(__current_line != line_nr)
+      if(__current_line != line_nr || __view_is_destroyed)
       {
         source_content.innerHTML = 
           simple_js_parser.parse(script, line_nr - 1, max_lines - 1).join(''); 
         updateLineNumbers(line_nr);
+        __view_is_destroyed = false;
       }
       if(  !__scroll_interval )
       {
@@ -672,7 +676,8 @@ cls.JsSourceView = function(id, name, container_class)
     self.clearLinePointer();
     __current_line = 0;
     __timeout_clear_view = 0;
-    view_invalid = true;      
+    view_invalid = true;  
+    __view_is_destroyed = true;
   }
 
   var onRuntimeDestroyed = function(msg)
@@ -684,7 +689,11 @@ cls.JsSourceView = function(id, name, container_class)
     }
   }
 
-  this.ondestroy = __clearView;
+  this.ondestroy = function()
+  {
+    // keep any state about the script currently displayed
+    __view_is_destroyed = true;
+  }
   
   this.init(id, name, container_class);
   messages.addListener('update-layout', updateLayout);
