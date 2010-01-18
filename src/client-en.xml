@@ -72,7 +72,7 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
   },
   lang = lang_dict[navigator.browserLanguage] || 'en',
   ui_lang = getCookie('ui-lang'),
-  ui_lang_set = getCookie('ui-lang-set')
+  ui_lang_set = getCookie('ui-lang-set');
 
   if( !ui_lang_set && ui_lang && ui_lang != lang )
   {
