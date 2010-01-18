@@ -633,12 +633,8 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
         var plus_lines = views.js_source.getMaxLines() <= 10 
           ? views.js_source.getMaxLines() / 2 >> 0 
           : 10;
-        if( views.js_source.showLine(error.script_id, error.line_nr - plus_lines) )
-        {
-          runtimes.setSelectedScript(error.script_id);
-          views.js_source.showLinePointer(error.line_nr, true );
-        }
-
+        runtimes.setSelectedScript(error.script_id);
+        views.js_source.showLine(error.script_id, error.line_nr - plus_lines, false, true);
       }
     }
     else
