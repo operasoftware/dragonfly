@@ -123,7 +123,9 @@ cls.JsSourceView = function(id, name, container_class)
       {
         line.value = '';
       }
-      breakpoints[i].style.removeProperty('background-position');
+      // workaround crash bug
+      //breakpoints[i].style.removeProperty('background-position');
+      breakpoints[i].style.backgroundPosition = '0 0';
     }
 
 
@@ -201,7 +203,6 @@ cls.JsSourceView = function(id, name, container_class)
       line_numbers = document.getElementById(container_line_nr_id);
 
       var selected_script_id = runtimes.getSelectedScript();  
-
       if(selected_script_id && selected_script_id != script.id)
       {
         var stop_at = runtimes.getStoppedAt(selected_script_id);
@@ -262,6 +263,7 @@ cls.JsSourceView = function(id, name, container_class)
   {
     if(this.isvisible())
     {
+      __view_is_destroyed = true;
       this.createView(container);
       messages.post('view-created', {id: this.id, container: container});
     }
@@ -389,10 +391,9 @@ cls.JsSourceView = function(id, name, container_class)
 
 
 
-  this.showLine = function(script_id, line_nr, clear_scroll) // return boolean for the visibility of this view
+  this.showLine = function(script_id, line_nr, clear_scroll, is_parse_error) // return boolean for the visibility of this view
   {
     // too often called?
-    
 
     if( __timeout_clear_view )
     {
@@ -405,31 +406,25 @@ cls.JsSourceView = function(id, name, container_class)
     }
     
     var is_visible = ( source_content = document.getElementById(container_id) ) ? true : false; 
-
-    if( script.id != script_id )
+    // if the view is visible it shows the first new script 
+    // before any parse error, that means in case of a parse error 
+    // the current script has not set the parse_error property 
+    if(script.parse_error)
+    {
+      is_parse_error = true;
+    }
+    if (script.id != script_id || is_parse_error)
     {
       var script_obj = runtimes.getScript(script_id);
 
       if( script_obj )
       {
-        if( !script_obj.line_arr )
+        if (!script_obj.line_arr)
         {
-          script_obj.source_data = new String(script_obj.script_data);
+          script_obj.source_data = script_obj.script_data;
           script_obj.line_arr = [];
           script_obj.state_arr = [];
           pre_lexer(script_obj);
-          if(script_obj.parse_error)
-          {
-            var error_line = 0;
-            while(error_line < script_obj.line_arr.length && 
-                script_obj.line_arr[error_line] < script_obj.parse_error.offset)
-            {
-              error_line++;
-            }
-            script_obj.parse_error.error_line = error_line - 1;
-            script_obj.parse_error.error_line_offset = 
-              script_obj.parse_error.offset - script_obj.line_arr[error_line - 1];
-          }
         }
         script =
         {
@@ -438,8 +433,20 @@ cls.JsSourceView = function(id, name, container_class)
           line_arr: script_obj.line_arr,
           state_arr: script_obj.state_arr,
           breakpoints: [],
-          has_context: false,
-          parse_error: script_obj.parse_error 
+          has_context: false
+        }
+        if(script_obj.parse_error)
+        {
+          var error_line = 0;
+          while(error_line < script_obj.line_arr.length && 
+              script_obj.line_arr[error_line] < script_obj.parse_error.offset)
+          {
+            error_line++;
+          }
+          script_obj.parse_error.error_line = error_line - 1;
+          script_obj.parse_error.error_line_offset = 
+            script_obj.parse_error.offset - script_obj.line_arr[error_line - 1];
+          script.parse_error = script_obj.parse_error;
         }
         var b_ps = runtimes.getBreakpoints(script_id), b_p = '';
         if( b_ps )
@@ -487,11 +494,21 @@ cls.JsSourceView = function(id, name, container_class)
       {
         updateScriptContext();
       }
-      if(__current_line != line_nr || __view_is_destroyed)
+      if(__current_line != line_nr)
       {
         source_content.innerHTML = 
           simple_js_parser.parse(script, line_nr - 1, max_lines - 1).join(''); 
         updateLineNumbers(line_nr);
+      }
+      if(__view_is_destroyed)
+      {
+        var scroll_container = document.getElementById(scroll_container_id);
+        if(scroll_container)
+        {
+          // setting scrollTop will trigger a scroll event
+          scroll_container.scrollTop = 
+            __current_line / script.line_arr.length * scroll_container.scrollHeight;
+        }
         __view_is_destroyed = false;
       }
       if(  !__scroll_interval )
@@ -503,6 +520,10 @@ cls.JsSourceView = function(id, name, container_class)
         {
           __target_scroll_top =  (__current_line - 1 ) * context['line-height']; 
         }
+      }
+      if(script.parse_error)
+      {
+        views.js_source.showLinePointer(script.parse_error.error_line, true )
       }
     }
     __current_line = line_nr;
@@ -698,7 +719,6 @@ cls.JsSourceView = function(id, name, container_class)
   this.init(id, name, container_class);
   messages.addListener('update-layout', updateLayout);
   messages.addListener('runtime-destroyed', onRuntimeDestroyed);
-
 }
 
 cls.JsSourceView.prototype = ViewBase;
