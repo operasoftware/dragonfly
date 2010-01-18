@@ -205,7 +205,6 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="./ecma-debugger/ListTextSearch.js"/>
 <script src="./scripts/ini.js"/>
 
-<script src="./ecma-debugger/storage.js"/>
 <script src="./ecma-debugger/helpers.js"/>
 <script src="./ecma-debugger/tabs.js"/>
 <script src="./ecma-debugger/syntax.js"/>

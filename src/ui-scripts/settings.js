@@ -12,7 +12,6 @@
  */
 var SettingsBase = function()
 {
-
   /**
    * Update the view according to the new value of the setting key.
    * @private
@@ -53,8 +52,7 @@ var SettingsBase = function()
    */
   this.set = function(key, value, sync_switches) 
   {
-    // storage is a global singleton defined in storage.js
-    storage.set(key, ( this.map[key] = value ) );
+    window.localStorage.setItem(key, JSON.stringify(this.map[key] = value))
     if( sync_switches && typeof value == 'boolean' )
     {
       syncView(key, value);
@@ -86,16 +84,40 @@ var SettingsBase = function()
     this.label_map = label_map;
     this.setting_map = setting_map;
     this.templates = templates || {};
-    var stored_map = key_map, key = '';
+    var stored_map = key_map, key = '', val = '';
     for( key in stored_map)
     {
-      this.map[key] = storage.get(key, key_map[key]);
+      val = window.localStorage.getItem(key);
+      this.map[key] = (val === undefined || val === null) ? key_map[key] : JSON.parse(val);
     }
     if(!window.settings)
     {
       window.settings = {};
     }
     window.settings[arguments[0]] = this;
+  }
+
+  if(!window.localStorage)
+  {
+    window.localStorage = 
+    {
+      setItem: function(name, value)
+      {
+        document.cookie = name + "="+
+          encodeURIComponent(value)+
+          "; expires="+(new Date(new Date().getTime()+ (360 * 24 * 60 * 60 * 1000 ))).toGMTString()+
+          "; path=/";
+      },
+      getItem: function(name)
+      {
+        var match = null;
+        if (match = new RegExp(name+'\=([^;]*);','').exec(document.cookie+';'))
+        {
+          return decodeURIComponent(match[1]);
+        }
+        return null;
+      }
+    }
   }
 }
 

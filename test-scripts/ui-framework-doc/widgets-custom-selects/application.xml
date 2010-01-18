@@ -56,7 +56,6 @@
 <script src="../../../src/ui-scripts/ui_framework.js"/>
 
 
-<script src="../../../src/ecma-debugger/storage.js"/>
 
 <script src="../../../src/ecma-debugger/formatter.js"/>
 <script src="../../../src/ecma-debugger/pre_lexer.js"/>
