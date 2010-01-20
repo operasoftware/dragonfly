@@ -13,6 +13,32 @@ window.cls || ( window.cls = {} );
 
 window.cls.TestFramework = function()
 {
+  /**
+    * class to inspect and test the scope interface
+    *
+    * the class expects the following markup:
+    *
+    *   <ul id="window-list"></ul> optional
+    *
+    *   <ul id="service-list">
+    *     <li>Scope</li>
+    *     <li>WindowManager</li>
+    *     <li>EcmascriptDebugger</li>
+    *     <li>HttpLogger</li>
+    *     etc
+    *   </ul>
+    *
+    *   <ul id="command-list"></ul>
+    *
+    *   <ul id="event-list"></ul>
+    *
+    *   <div id="message-container"></div>
+    *
+    *  the two methods `get_bound_click_handler` 
+    *  and `get_bound_change_handler` must be set to
+    *  an appropriated event listeners
+    *
+    */
 
   /* interface */
 
@@ -49,7 +75,7 @@ window.cls.TestFramework = function()
       name + ': ' + (
         "message" in definition && "\n" + 
             this._pretty_print_payload(item, definition["message"], indent + 1) ||
-        !item && item !== 0 && "null" || 
+        !item && item === null &&  "null" || 
         typeof item == "string" && "\"" + item + "\"" || 
         item));
   }
@@ -208,12 +234,12 @@ window.cls.TestFramework = function()
     while (target && !target.id && (target = target.parentNode));
     if (target)
     {
-      switch (target.id.replace(/-\d+$/, ''))
+      switch (target.id)
       {
-        case 'window-id':
+        case 'window-list':
         {
           this._update_selected(target.parentNode, event.target);
-          windows.set_debug_context(parseInt(event.target.id.slice(10)));
+          windows.set_debug_context(parseInt(event.target.getAttribute('data-window-id')));
           break;
         }
         case 'service-list':
