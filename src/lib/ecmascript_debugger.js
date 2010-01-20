@@ -6,7 +6,7 @@ cls.EcmascriptDebugger["5.0"].name = 'ecmascript-debugger';
 /**
   * @constructor 
   * @extends ServiceBase
-  * generated with opprotoc from the service definitions
+  * generated with hob from the service definitions
   */
 
 cls.EcmascriptDebugger["5.0"].Service = function()
@@ -16,7 +16,7 @@ cls.EcmascriptDebugger["5.0"].Service = function()
     */
   this.name = 'ecmascript-debugger';
   this.version = '5.0';
-  this.core_release = '2.4';
+  this.core_release = '2.5';
 
 
   // see http://dragonfly.opera.com/app/scope-interface/EcmascriptDebugger.html#listruntimes

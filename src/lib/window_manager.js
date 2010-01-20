@@ -6,7 +6,7 @@ cls.WindowManager["2.0"].name = 'window-manager';
 /**
   * @constructor 
   * @extends ServiceBase
-  * generated with opprotoc from the service definitions
+  * generated with hob from the service definitions
   */
 
 cls.WindowManager["2.0"].Service = function()
@@ -16,7 +16,7 @@ cls.WindowManager["2.0"].Service = function()
     */
   this.name = 'window-manager';
   this.version = '2.0';
-  this.core_release = '2.4';
+  this.core_release = '2.5';
 
 
   // see http://dragonfly.opera.com/app/scope-interface/WindowManager.html#getactivewindow

@@ -159,10 +159,6 @@ window.cls.Proxy = function()
           throw "Message failed, POST, empty document: " + this.responseText;
         }
         if(cb) cb(xml);
-        if( ini.debug )
-        {
-          debug.output('POST response: '+this.responseText);
-        }
       }
       x.open("POST", "http://" + _host + ":" + _port + msg );
       x.send(data);

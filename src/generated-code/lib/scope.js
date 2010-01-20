@@ -6,7 +6,7 @@ cls.Scope["1.0"].name = 'scope';
 /**
   * @constructor 
   * @extends ServiceBase
-  * generated with opprotoc from the service definitions
+  * generated with hob from the service definitions
   */
 
 cls.Scope["1.0"].Service = function()
@@ -16,7 +16,7 @@ cls.Scope["1.0"].Service = function()
     */
   this.name = 'scope';
   this.version = '1.0';
-  this.core_release = '2.4';
+  this.core_release = '2.5';
 
 
   // see http://dragonfly.opera.com/app/scope-interface/Scope.html#connect
@@ -26,10 +26,6 @@ cls.Scope["1.0"].Service = function()
   }
   this.handleConnect = function(status, message)
   {
-    /*
-    const
-    CLIENT_ID = 0;
-    */
     opera.postError("NotBoundWarning: Scope, Connect");
   }
 
@@ -154,9 +150,7 @@ cls.Scope["1.0"].Service = function()
     SERVICE_LIST = 5,
     // sub message Service 
     NAME = 0,
-    VERSION = 1,
-    ACTIVE_CLIENTS = 2,
-    MAX_CLIENTS = 3;
+    VERSION = 1;
     
     hello_message = 
     {
@@ -175,8 +169,6 @@ cls.Scope["1.0"].Service = function()
       {
         name: service[NAME],
         version: service[VERSION],
-        activeClients: service[ACTIVE_CLIENTS],
-        maxClients: service[MAX_CLIENTS],
         index: i
       }
     }

@@ -205,19 +205,15 @@ window.cls.TestFramework = function()
   this._click_handler = function(event)
   {
     var target = event.target;
-
     while (target && !target.id && (target = target.parentNode));
     if (target)
     {
-      switch (target.id)
+      switch (target.id.replace(/-\d+$/, ''))
       {
-        case 'window-list':
+        case 'window-id':
         {
-          if( event.target.id.slice(0, 10) == "window-id-" )
-          {
-            this._update_selected(target, event.target);
-            windows.set_debug_context(parseInt(event.target.id.slice(10)));
-          }
+          this._update_selected(target.parentNode, event.target);
+          windows.set_debug_context(parseInt(event.target.id.slice(10)));
           break;
         }
         case 'service-list':

@@ -64,11 +64,6 @@ cls.ScopeHTTPInterface = function(force_stp_0)
 
   var _scopeTransmit_STP_0 = function(service, message, command_id, tag)
   {
-    if( ini.debug )
-    {
-      debug.log_command(msg);
-    }
-
     /** 
       * path format /post-command/<service-name>/<command-id>/<tag>, 
       * message in the request body 
@@ -79,10 +74,6 @@ cls.ScopeHTTPInterface = function(force_stp_0)
 
   var _scopeTransmit_STP_1 = function(service, message, command_id, tag)
   {
-    if( ini.debug )
-    {
-      debug.log_command(msg);
-    }
     /** 
       * path format /http-interface-command-name/service-name/command-id/tag, msg
       * format 1 is JSON structures (UMS) , encoding UTF-8
@@ -94,22 +85,35 @@ cls.ScopeHTTPInterface = function(force_stp_0)
 
   var _receive_dragonkeeper = null;
 
-  var _proxy_onsetup = function(xhr)
+  var _on_stp_version = function(xml, xhr)
   {
+    switch(self.stpVersion = xhr.responseText)
+    {
+      case undefined:
+      case "STP/0":
+      {
+        _receive_dragonkeeper = _receive_dragonkeeper_STP_0;
+        self.scopeTransmit = _scopeTransmit_STP_0;
+        break;
+      }
+      case "STP/1":
+      {
+        _receive_dragonkeeper = _receive_dragonkeeper_STP_1;
+        self.scopeTransmit = _scopeTransmit_STP_1;
+        break;
+      }
+      default:
+      {
+        opera.postError("not able to handle STP version" + self.stpVersion + " in _on_stp_version");
+      }
+    }
     _connect_callback(_proxy.services.join(','));
     _proxy.GET( "/get-message?time=" + new Date().getTime(), _receive_dragonkeeper);
   }
 
-  if(force_stp_0)
+  var _proxy_onsetup = function(xhr)
   {
-    _receive_dragonkeeper = _receive_dragonkeeper_STP_0;
-    this.scopeTransmit = _scopeTransmit_STP_0;
-  }
-  else
-  {
-    _receive_dragonkeeper = _receive_dragonkeeper_STP_1;
-    this.scopeTransmit = _scopeTransmit_STP_1;
-    this.stpVersion = 1;
+    _proxy.GET( "/get-stp-version?time=" + new Date().getTime(), _on_stp_version);
   }
 
   this.scopeAddClient = function(connect_callback, receive_callback, quit_callback, port)
