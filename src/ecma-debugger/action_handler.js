@@ -33,7 +33,7 @@ var action_handler = new function()
 
   {
     var msg = "<runtimes>";
-    var tag = tagManager.setCB(this, parseRuntime);
+    var tag = tagManager.set_callback(this, parseRuntime);
     msg += "<tag>" + tag +"</tag>";
     var i=0, r_t=0;
     for ( ; r_t = arguments[i]; i++)

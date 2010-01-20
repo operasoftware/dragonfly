@@ -58,7 +58,7 @@ var color_picker_data = new function()
     if(this._top_rt_id)
     {
       var script = this["return new ColorPicer()"];
-      var tag = tagManager.setCB(this, this._register_color_picker, [this._top_rt_id]);
+      var tag = tagManager.set_callback(this, this._register_color_picker, [this._top_rt_id]);
       services['ecmascript-debugger'].requestEval(tag, [this._top_rt_id, 0, 0, script]);
     }
   }
@@ -89,7 +89,7 @@ var color_picker_data = new function()
   this._stop_color_picker = function()
   {
     var script = "color_picker.stop()";
-    var tag = tagManager.setCB(this, this._handle_stop);
+    var tag = tagManager.set_callback(this, this._handle_stop);
     services['ecmascript-debugger'].requestEval(tag, 
       [this._color_picker_rt_id, 0, 0, script, [["color_picker", this._color_picker]]]);
     this._is_active = false;
@@ -117,7 +117,7 @@ var color_picker_data = new function()
   this._get_mouse_position = function()
   {
     var script = "color_picker.get_mouse_position()";
-    var tag = tagManager.setCB(this, this._handle_mouse_position);
+    var tag = tagManager.set_callback(this, this._handle_mouse_position);
     services['ecmascript-debugger'].requestEval(tag,
       [this._color_picker_rt_id, 0, 0, script, [["color_picker", this._color_picker]]]);
   }
@@ -163,7 +163,7 @@ var color_picker_data = new function()
         this._interval = INTERVAL;
         /* */
         window.services.exec.requestSetupScreenWatcher(
-          tagManager.setCB(this, this._handle_screenshot),
+          tagManager.set_callback(this, this._handle_screenshot),
           [
             1,
             [pos.x, pos.y, pos.w, pos.h],

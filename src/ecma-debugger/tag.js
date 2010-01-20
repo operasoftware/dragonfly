@@ -15,7 +15,7 @@ var tagManager = new function()
   * @param {Array} args_list the arguments of this list will be concateneted with the xml response document as first argument
   * @return {String} unique tag
   */
-  this.setCB = function(obj, methode, args_list) // object, methode, other args
+  this.set_callback = function(obj, methode, args_list) // object, methode, other args
   {
     var tag = (counter++).toString();
     tags[tag] = {obj: obj, methode: methode, args: args_list ? args_list : []};

@@ -106,7 +106,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
         'runtime id does not exist')
       __runtimes[id] = null;
-      services['ecmascript-debugger'].getRuntime( tagManager.setCB(null, parseRuntime), id );
+      services['ecmascript-debugger'].getRuntime( tagManager.set_callback(null, parseRuntime), id );
     }
   }
 
@@ -518,7 +518,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       _is_first_call_create_all_runtimes_on_debug_context_change = false;
     }
     */
-    var tag =  tagManager.setCB(null, set_new_debug_context, [win_id]);
+    var tag =  tagManager.set_callback(null, set_new_debug_context, [win_id]);
     ecma_debugger.requestListRuntimes(tag, [[],1]);
   }
 

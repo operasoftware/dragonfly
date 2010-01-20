@@ -296,7 +296,7 @@ var ObjectDataBase = new function()
         return this.__getData(index, depth);
       }
     }
-    var tag = tagManager.setCB(this, this.parseXML, [rt_id, obj_id, org_args]);
+    var tag = tagManager.set_callback(this, this.parseXML, [rt_id, obj_id, org_args]);
     services['ecmascript-debugger'].requestExamineObjects(tag, [rt_id, [obj_id]]);
     return null;
   }

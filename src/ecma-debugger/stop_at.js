@@ -287,7 +287,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
             runtimes.setSelectedRuntimeId(runtime_id);
           }
           // the runtime id can be different for each frame. 
-          var tag = tagManager.setCB(null, parseBacktrace, [stopAt.runtime_id]); 
+          var tag = tagManager.set_callback(null, parseBacktrace, [stopAt.runtime_id]); 
           services['ecmascript-debugger'].requestGetBacktrace(tag, 
               [stopAt.runtime_id, stopAt['thread-id'], ini.max_frames]);
           if( !views.js_source.isvisible() )
@@ -318,7 +318,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
         runtime_id = stopAt.runtime_id;
        
         // the runtime id can be different for each frame
-        var tag = tagManager.setCB(null, parseBacktrace, [stopAt.runtime_id]); 
+        var tag = tagManager.set_callback(null, parseBacktrace, [stopAt.runtime_id]); 
         services['ecmascript-debugger'].requestGetBacktrace(tag, 
           [stopAt.runtime_id, stopAt['thread-id'], ini.max_frames]);
         if( !views.js_source.isvisible() )

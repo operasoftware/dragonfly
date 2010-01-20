@@ -37,7 +37,7 @@ var runtime_onload_handler = new function()
     }
     else
     {
-      var tag = tagManager.setCB(null, handleReadyState, [rt_id]);
+      var tag = tagManager.set_callback(null, handleReadyState, [rt_id]);
       var script = "return document.readyState";
       services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, script]);
     }

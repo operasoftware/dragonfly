@@ -70,7 +70,7 @@ var Object_inspection_data = function()
 
   this.showGlobalScope = function(rt_id)
   {
-    var tag = tagManager.setCB(null, handleShowGlobalScope, [rt_id]);
+    var tag = tagManager.set_callback(null, handleShowGlobalScope, [rt_id]);
     var script = "return window";
     services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, script]);
   }

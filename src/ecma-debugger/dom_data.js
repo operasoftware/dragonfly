@@ -53,7 +53,7 @@ var dom_data = new function()
 
   var get_selected_element = function(rt_id)
   {
-    var tag = tagManager.setCB(self, self.on_element_selected, [rt_id, true]);
+    var tag = tagManager.set_callback(self, self.on_element_selected, [rt_id, true]);
     window.services['ecmascript-debugger'].requestGetSelectedObject(tag);
   }
 
@@ -115,7 +115,7 @@ var dom_data = new function()
     current_target = obj_id;
     data = [];
     mime = '';
-    var tag = tagManager.setCB(null, handleGetDOM, [ rt_id, obj_id]);
+    var tag = tagManager.set_callback(null, handleGetDOM, [ rt_id, obj_id]);
     services['ecmascript-debugger'].requestInspectDom(tag, 
       [obj_id, 'parent-node-chain-with-children']);
   }
@@ -336,7 +336,7 @@ var dom_data = new function()
 
   var getInitialView = function(rt_id)
   {
-    var tag = tagManager.setCB(null, handleInitialView, [rt_id]);
+    var tag = tagManager.set_callback(null, handleInitialView, [rt_id]);
     var script_data = "return ( document.body || document.documentElement )";
     services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, script_data]);
   }
@@ -462,7 +462,7 @@ var dom_data = new function()
 
   this.getChildernFromNode = function(object_id, traversal)
   {
-    var tag = tagManager.setCB(null, handleGetChildren, [data_runtime_id, object_id]);
+    var tag = tagManager.set_callback(null, handleGetChildren, [data_runtime_id, object_id]);
     services['ecmascript-debugger'].requestInspectDom(tag, [object_id, traversal]);
   }
 
@@ -494,7 +494,7 @@ var dom_data = new function()
 
   this.getSnapshot = function()
   {
-    var tag = tagManager.setCB(null, handleSnapshot, [data_runtime_id]);
+    var tag = tagManager.set_callback(null, handleSnapshot, [data_runtime_id]);
     var script_data = 'return document.document';
     services['ecmascript-debugger'].requestEval(tag, [data_runtime_id, 0, 0, script_data]);
   }
@@ -509,7 +509,7 @@ var dom_data = new function()
 
     if(message[STATUS] == 'completed' )
     {
-      var tag = tagManager.setCB(null, handleGetDOM, [runtime_id]);
+      var tag = tagManager.set_callback(null, handleGetDOM, [runtime_id]);
       services['ecmascript-debugger'].requestInspectDom(tag,
           [message[OBJECT_VALUE][OBJECT_ID], 'subtree']);
     }

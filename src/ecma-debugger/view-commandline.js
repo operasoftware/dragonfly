@@ -163,7 +163,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
       else if (return_value = message[OBJECT_VALUE])
       {
         var object_id = return_value[OBJECT_ID];
-        var tag = tagManager.setCB(null, handleEval, [runtime_id, object_id, callback] );
+        var tag = tagManager.set_callback(null, handleEval, [runtime_id, object_id, callback] );
         var script_string  = "return Object.prototype.toString.call(obj)";
         services['ecmascript-debugger'].requestEval(tag, 
               [runtime_id, 0, 0, script_string, [['obj', object_id]]]);
@@ -174,7 +174,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
       var error_id = xml.getNodeData('object-id');
       if( error_id )
       {
-        var tag = tagManager.setCB(null, handleError);
+        var tag = tagManager.set_callback(null, handleError);
         services['ecmascript-debugger'].examineObjects(tag, runtime_id, error_id);
       }
     }
@@ -242,7 +242,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     },
     "dir": function(rt_id, frame_id, thread_id, script_string)
     {
-      var tag = tagManager.setCB(null, handleEval, [rt_id, null, dir_obj] );
+      var tag = tagManager.set_callback(null, handleEval, [rt_id, null, dir_obj] );
       services['ecmascript-debugger'].requestEval(tag, [rt_id, thread_id, frame_id, script_string]);
     }
   };
@@ -277,7 +277,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
       }
       else if( !/^\s*$/.test(script_string) )
       {
-        tag = tagManager.setCB(null, handleEval, [rt_id] );
+        tag = tagManager.set_callback(null, handleEval, [rt_id] );
         services['ecmascript-debugger'].requestEval(tag, [rt_id, thread_id, frame_id, script_string]);
       }
       submit_buffer = [];
@@ -505,7 +505,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
             }
           }
         }
-        var tag = tagManager.setCB(null, handleEvalScope, [__frame_index, rt_id, path, old_args] );
+        var tag = tagManager.set_callback(null, handleEvalScope, [__frame_index, rt_id, path, old_args] );
         services['ecmascript-debugger'].requestEval(tag, [rt_id, thread_id, 
           frame_id, SCRIPT.replace(/%s/, path)]);
       }

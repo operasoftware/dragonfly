@@ -208,7 +208,7 @@ var elementLayout = new function()
     
     if( stylesheets.hasStylesheetsRuntime(rt_id) )
     {
-      var tag = tagManager.setCB(null, handleGetMetricsData, [rt_id, obj_id, org_args]);
+      var tag = tagManager.set_callback(null, handleGetMetricsData, [rt_id, obj_id, org_args]);
       services['ecmascript-debugger'].requestCssGetStyleDeclarations(tag, [rt_id, obj_id]);
     }
     else
@@ -250,7 +250,7 @@ var elementLayout = new function()
     var
     rt_id = __selectedElement.rt_id,
     obj_id = __selectedElement.obj_id,
-    tag = tagManager.setCB(null, handleGetOffsetsData, [rt_id, obj_id, org_args] );
+    tag = tagManager.set_callback(null, handleGetOffsetsData, [rt_id, obj_id, org_args] );
     
     services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, GET_OFFSETS_SCRIPT, [['ele', obj_id]]]);
     return null;

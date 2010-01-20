@@ -235,7 +235,7 @@ cls.EcmascriptDebugger["5.0"].HostTabs = function()
       else
       {
         __get_document_id[rt_p] = [[rt_p, event_type, callback, prevent_default, stop_propagation]];
-        var tag = tagManager.setCB(null, handleAddEventWithDocument, [rt_p]);
+        var tag = tagManager.set_callback(null, handleAddEventWithDocument, [rt_p]);
         services['ecmascript-debugger'].requestEval(tag, [rt_p, 0, 0, "return window.document"]);
       }
     }

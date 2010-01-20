@@ -45,7 +45,6 @@ window.cls.TagManager = function()
    *               status and message data
    * @return {Number} temporary unique tag
    */
-  this.setCB = 
   this.set_callback = function(obj, method, args_list)
   {
     var tag = _get_empty_tag();

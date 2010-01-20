@@ -844,13 +844,13 @@ var stylesheets = new function()
   {
     if(!__sheets[data.rt_id])
     {
-      var tag = tagManager.setCB(null, handleGetAllStylesheets, [data.rt_id, org_args]);
+      var tag = tagManager.set_callback(null, handleGetAllStylesheets, [data.rt_id, org_args]);
       services['ecmascript-debugger'].getAllStylesheets( tag, data.rt_id, 'json' );
       return '';
     }
     if( !__indexMap )
     {
-      var tag = tagManager.setCB(null, handleGetIndexMap, [org_args]);
+      var tag = tagManager.set_callback(null, handleGetIndexMap, [org_args]);
       services['ecmascript-debugger'].getIndexMap( tag, 'json' );
       return '';
     }
@@ -867,10 +867,10 @@ var stylesheets = new function()
     {
       if( !__indexMap )
       {
-        var tag = tagManager.setCB(null, handleGetIndexMap, []);
+        var tag = tagManager.set_callback(null, handleGetIndexMap, []);
         services['ecmascript-debugger'].requestCssGetIndexMap(tag);
       }
-      var tag = tagManager.setCB(null, handleGetAllStylesheets, [rt_id, org_args]);
+      var tag = tagManager.set_callback(null, handleGetAllStylesheets, [rt_id, org_args]);
       services['ecmascript-debugger'].requestCssGetAllStylesheets(tag, [rt_id]);
       return null;
     }
@@ -929,7 +929,7 @@ var stylesheets = new function()
     }
     else if(__sheets[rt_id][index])
     {
-      var tag = tagManager.setCB(null, handleGetRulesWithIndex, [rt_id, index, org_args]);
+      var tag = tagManager.set_callback(null, handleGetRulesWithIndex, [rt_id, index, org_args]);
       var sheet_id = __sheets[rt_id][index][SHEET_OBJECT_ID];
       services['ecmascript-debugger'].requestCssGetStylesheet(tag, [rt_id, sheet_id]);
       return null;

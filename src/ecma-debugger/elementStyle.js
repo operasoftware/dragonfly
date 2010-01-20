@@ -341,7 +341,7 @@ var elementStyle = new function()
   {
     if( stylesheets.hasStylesheetsRuntime(rt_id) )
     {
-      var tag = tagManager.setCB(null, handleGetData, [rt_id, obj_id]);
+      var tag = tagManager.set_callback(null, handleGetData, [rt_id, obj_id]);
       services['ecmascript-debugger'].requestCssGetStyleDeclarations(tag, [rt_id, obj_id]);
     }
     else

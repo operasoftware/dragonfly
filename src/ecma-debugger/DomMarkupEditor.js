@@ -66,9 +66,9 @@ var DOMMarkupEditor = function()
         this.context_cur[prop] = this.context_enter[prop];
       }
       script = this["return new Host_updater(target)"];
-      tag = tagManager.setCB(this, this.register_host_updater, [rt_id]);
+      tag = tagManager.set_callback(this, this.register_host_updater, [rt_id]);
       services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, script, [['target', obj_id]]]);
-      tag = tagManager.setCB(this, this.handle_get_outer_html, [rt_id, obj_id, ele, event])
+      tag = tagManager.set_callback(this, this.handle_get_outer_html, [rt_id, obj_id, ele, event])
       services['ecmascript-debugger'].requestInspectDom(tag, [obj_id, 'subtree']);
     }
   }
@@ -101,7 +101,7 @@ var DOMMarkupEditor = function()
     
     if(nav_target)
     {
-      var tag = tagManager.setCB(this, this.on_exit_edit, [state, nav_target]);
+      var tag = tagManager.set_callback(this, this.on_exit_edit, [state, nav_target]);
       var script = "host_target.exit_edit()";
       services['ecmascript-debugger'].requestEval
       ( 
@@ -124,7 +124,7 @@ var DOMMarkupEditor = function()
     {
       if(state.outerHTML != this.context_cur.outerHTML)
       {
-        var tag = tagManager.setCB(this, this.on_exit_edit, [state, nav_target]);
+        var tag = tagManager.set_callback(this, this.on_exit_edit, [state, nav_target]);
         var script = "host_target.cancel_edit()";
         services['ecmascript-debugger'].requestEval
         ( 
