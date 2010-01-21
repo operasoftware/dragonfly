@@ -107,6 +107,10 @@ cls.ScopeHTTPInterface = function(force_stp_0)
         opera.postError("not able to handle STP version" + self.stpVersion + " in _on_stp_version");
       }
     }
+    if(window.ini.debug)
+    {
+      cls.debug.wrap_transmit();
+    }
     _connect_callback(_proxy.services.join(','));
     _proxy.GET( "/get-message?time=" + new Date().getTime(), _receive_dragonkeeper);
   }
