@@ -3,11 +3,11 @@ cls.debug || (cls.debug = {});
 
 cls.debug.wrap_transmit = function()
 {
-  opera._scopeTransmit = opera.scopeTransmit;
+  opera._debug_wrap_scopeTransmit = opera.scopeTransmit;
   opera.scopeTransmit = function(service, message, command, tag)
   {
     window.debug.log_transmit(service, message, command, tag);
-    opera._scopeTransmit(service, message, command, tag);
+    opera._debug_wrap_scopeTransmit(service, message, command, tag);
   };
 }
 
