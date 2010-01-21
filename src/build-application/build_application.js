@@ -68,30 +68,14 @@ window.app.build_application = function(on_services_created, on_services_enabled
     i = 0,
     builder = null;
 
-    // workaround fixme: RFH: work around what?
-    var version_map = {};
-    version_map["ConsoleLogger"] = "2.0";
-    version_map["EcmascriptDebugger"] = "5.0";
-    version_map["EcmascriptLogger"] = "2.0";
-    version_map["Exec"] = "2.0";
-    version_map["HttpLogger"] = "2.0";
-    version_map["Scope"] = "1.0";
-    version_map["WindowManager"] = "2.0";
-
     for (service_name in service_descriptions)
     {
       if (service_name != "scope")
       {
         service = service_descriptions[service_name];
-        /* 
-        currently there is a bug with the service version
         version = re_version.exec(service.version);
-        version = version && version[1] || null;
-        */
-        
+        version = version && version[1] || 0;        
         class_name = get_class_name(service_name); 
-        // workaround for missing service version in the scope HostInfo message
-        version = version_map[class_name];
         builder = window.app.builders[class_name] && window.app.builders[class_name][version];
         if (builder) 
         {
