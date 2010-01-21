@@ -42,11 +42,6 @@ var DOM_markup_style = function(id, name, container_class)
 
   var div_padding_value = 0;
 
-  var spotlightElement = function()
-  {
-    hostspotlighter.spotlight(parseInt(this.getAttribute('ref-id')));
-  }
-
   var clearSpotlightElement = function()
   {
     hostspotlighter.clearSpotlight();
@@ -60,8 +55,6 @@ var DOM_markup_style = function(id, name, container_class)
       if(target)
       {
         target.removeAttribute('id');
-        target.removeEventListener('mouseover', spotlightElement, false);
-        target.removeEventListener('mouseout', clearSpotlightElement, false);
       }
       if(/<\//.test(ele.firstChild.nodeValue))
       {
@@ -78,8 +71,6 @@ var DOM_markup_style = function(id, name, container_class)
     if(ele || ( ele = document.getElementById('target-element') ) )
     {
       ele.id = 'target-element';
-      ele.addEventListener('mouseover', spotlightElement, false);
-      ele.addEventListener('mouseout', clearSpotlightElement, false);
     }
     else
     {

@@ -754,6 +754,11 @@ eventHandlers.click['breadcrumb-link'] = function(event, target)
   }
 };
 
+eventHandlers.mouseover['spotlight-node'] = function(event, target)
+{
+  hostspotlighter.soft_spotlight(parseInt(target.getAttribute('ref-id')));
+}
+
 
 
 

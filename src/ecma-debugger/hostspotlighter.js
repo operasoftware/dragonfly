@@ -76,6 +76,7 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
   var mouse_handler_target = null;
   var mouse_handler_timeouts = new Timeouts();
   var class_names = ['margin', 'border', 'padding', 'dimension'];
+  var last_spotlight_command = null;
    
   /* helpers */
 
@@ -505,11 +506,19 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
     {
       last_spotlight_commands = join.call(arguments);
       services['ecmascript-debugger'].requestSpotlightObjects(0,
-        [[get_command(node_id, scroll_into_view, type || "default")].concat(
+        [last_spotlight_command = [get_command(node_id, scroll_into_view, type || "default")].concat(
             settings.dom.get('lock-selecked-elements') && 
             locked_elements.map(get_locked_commands) || [])])
     }
   }
+
+  this.soft_spotlight = function(node_id)
+  {
+    services['ecmascript-debugger'].requestSpotlightObjects(0,
+      [(last_spotlight_command || []).concat([get_command(node_id, 0, "locked")])]);
+  }
+
+  // commands["locked"]
   
   this.clearSpotlight = function()
   {
