@@ -15,6 +15,8 @@ var dom_data = new function()
   var current_target = '';
   var __next_rt_id = '';
 
+  var reset_spotlight_timeouts = new Timeouts();
+
   var activeWindow = [];
 
   const 
@@ -216,11 +218,13 @@ var dom_data = new function()
             if(settings[settings_id].get(msg.key))
             {
               host_tabs.activeTab.addEventListener('mouseover', spotlight);
+              host_tabs.activeTab.addEventListener('mouseout', set_reset_spotlight);
             }
             else
             {
               hostspotlighter.clearSpotlight();
               host_tabs.activeTab.removeEventListener('mouseover', spotlight);
+              host_tabs.activeTab.removeEventListener('mouseout', set_reset_spotlight);
             }
             break;
           }
@@ -278,6 +282,7 @@ var dom_data = new function()
         if(settings[settings_id].get('highlight-on-hover'))
         {
           host_tabs.activeTab.addEventListener('mouseover', spotlight);
+          host_tabs.activeTab.addEventListener('mouseout', set_reset_spotlight);
         } 
         if(settings[settings_id].get('update-on-dom-node-inserted'))
         {
@@ -387,51 +392,6 @@ var dom_data = new function()
     }
   }
 
-
-  /* with xml format
-  var getDataFromXML = function(xml)
-  {
-    var ret = [],
-      fields =
-      [
-        "object-id",
-        "type",
-        "name",
-        "namespace-prefix",
-        "value",
-        "depth",
-        "children-length",
-        "public-id",
-        "system-id",
-        "attributes",
-      ],
-      field = null, 
-      nodes = xml.getElementsByTagName('node'), 
-      node = null, i = 0, attrs = null, attr = null, attr_cur = null, j = 0;
-    for( ; node = nodes[i]; i++)
-    {
-      field = ret[ret.length] = [];
-      field[ID] = node.getNodeData(fields[0]);
-      field[TYPE] = parseInt(node.getNodeData(fields[1]));
-      field[NAME] = node.getNodeData(fields[2]);
-      field[NAMESPACE] = node.getNodeData(fields[3]);
-      field[VALUE] = node.getNodeData(fields[4]);
-      field[DEPTH] = parseInt(node.getNodeData(fields[5]));
-      field[CHILDREN_LENGTH] = parseInt(node.getNodeData(fields[6]) || 0);
-      attr_cur = field[ATTRS] = {};
-      attrs = node.getElementsByTagName('attribute');
-      for( j = 0; attr = attrs[j]; j++)
-      {
-        attr_cur[attr.getNodeData('name')] = attr.getNodeData('value');
-      }
-    }
-    return ret;
-
-  }
-  */
-
-
-
   var handleGetChildren = function(status, message, runtime_id, object_id)
   {
     const NODE_LIST = 0;
@@ -522,20 +482,21 @@ var dom_data = new function()
 
   var spotlight = function(event)
   {
+    reset_spotlight_timeouts.clear();
     hostspotlighter.spotlight(event.object_id);
   }
 
-  this.highlight_on_hover = function(event)
+  var reset_spotlight = function()
   {
-    if(event.target.checked)
+    if(current_target)
     {
-      host_tabs.activeTab.addEventListener('mouseover', spotlight);
+      hostspotlighter.spotlight(current_target);
     }
-    else
-    {
-      hostspotlighter.clearSpotlight();
-      host_tabs.activeTab.removeEventListener('mouseover', spotlight);
-    }
+  }
+
+  var set_reset_spotlight = function(event)
+  {
+    reset_spotlight_timeouts.set(reset_spotlight, 70);
   }
 
   this.setCurrentTarget = function(obj_id)
