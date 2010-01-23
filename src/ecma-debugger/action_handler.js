@@ -313,7 +313,6 @@ var action_handler = new function()
   {
     var line = parseInt(event.target.parentElement.children[0].value);
     var script_id = views.js_source.getCurrentScriptId();
-    opera.postError('line: '+line)
     if( line )
     {
       if( runtimes.hasBreakpoint(script_id, line) )

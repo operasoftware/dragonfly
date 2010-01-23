@@ -514,13 +514,13 @@ cls.JsSourceView = function(id, name, container_class)
           scroll_container.scrollTop = 
             __current_line / script.line_arr.length * scroll_container.scrollHeight;
         }
-
+/*
         if(window.__last_scroll)
         {
           opera.postError('scroll: '+( Date.now() - window.__last_scroll));
         }
         window.__last_scroll = Date.now();
-        
+      */  
         //__disregard_scroll_event = false;
         //setTimeout(clear_disregard_scroll_event, 5);
       }
@@ -578,11 +578,12 @@ cls.JsSourceView = function(id, name, container_class)
 
   }
 
+/*
   var clear_disregard_scroll_event = function()
   {
     __disregard_scroll_event = false;
   }
-  
+  */
   this.getTopLine = function()
   {
     return __current_line;
@@ -653,9 +654,9 @@ cls.JsSourceView = function(id, name, container_class)
     }
     if(!__scroll_interval && script.id)
     {
-      __scroll_interval = setInterval(__scroll, 40);
+      __scroll_interval = setInterval(__scroll, 60);
     }
-    __scrollEvent = new Date().getTime() + 70;
+    __scrollEvent = new Date().getTime() + 100;
     
   }
 
