@@ -57,6 +57,7 @@ cls.JsSourceView = function(id, name, container_class)
   var __scrollEvent = 0;
   var __target_scroll_top = -1;
   var __view_is_destroyed = true;
+  var __disregard_scroll_event = false;
 
   var __keyEvent = 0;
 
@@ -391,7 +392,7 @@ cls.JsSourceView = function(id, name, container_class)
 
 
 
-  this.showLine = function(script_id, line_nr, clear_scroll, is_parse_error) // return boolean for the visibility of this view
+  this.showLine = function(script_id, line_nr, clear_scroll, is_parse_error, do_not_update_scroll_height) // return boolean for the visibility of this view
   {
     // too often called?
 
@@ -484,6 +485,7 @@ cls.JsSourceView = function(id, name, container_class)
     {
       line_nr = script.line_arr.length - max_lines + 1;
     }
+    
     if( is_visible )
     {
       if( !script.has_context )
@@ -494,12 +496,35 @@ cls.JsSourceView = function(id, name, container_class)
       {
         updateScriptContext();
       }
-      if(__current_line != line_nr)
+      if(__current_line != line_nr || __view_is_destroyed)
       {
+
         source_content.innerHTML = 
-          simple_js_parser.parse(script, line_nr - 1, max_lines - 1).join(''); 
+          simple_js_parser.parse(script, line_nr - 1, max_lines - 1).join('');
+        
+        __current_line = line_nr;
+        __view_is_destroyed = false;
         updateLineNumbers(line_nr);
+          
+        var scroll_container = !do_not_update_scroll_height && document.getElementById(scroll_container_id);
+        if(scroll_container)
+        {
+          __disregard_scroll_event = true;
+          // setting scrollTop will trigger a scroll event
+          scroll_container.scrollTop = 
+            __current_line / script.line_arr.length * scroll_container.scrollHeight;
+        }
+
+        if(window.__last_scroll)
+        {
+          opera.postError('scroll: '+( Date.now() - window.__last_scroll));
+        }
+        window.__last_scroll = Date.now();
+        
+        //__disregard_scroll_event = false;
+        //setTimeout(clear_disregard_scroll_event, 5);
       }
+      /*
       if(__view_is_destroyed)
       {
         var scroll_container = document.getElementById(scroll_container_id);
@@ -511,6 +536,12 @@ cls.JsSourceView = function(id, name, container_class)
         }
         __view_is_destroyed = false;
       }
+      */
+
+
+      // is this needed?
+
+      /*
       if(  !__scroll_interval )
       {
         
@@ -521,6 +552,7 @@ cls.JsSourceView = function(id, name, container_class)
           __target_scroll_top =  (__current_line - 1 ) * context['line-height']; 
         }
       }
+      */
       if(script.parse_error)
       {
         views.js_source.showLinePointer(script.parse_error.error_line, true )
@@ -544,6 +576,11 @@ cls.JsSourceView = function(id, name, container_class)
     
     return is_visible;
 
+  }
+
+  var clear_disregard_scroll_event = function()
+  {
+    __disregard_scroll_event = false;
   }
   
   this.getTopLine = function()
@@ -593,7 +630,10 @@ cls.JsSourceView = function(id, name, container_class)
 
   this.addBreakpoint = function(line)
   {
-    if( !script.breakpoints[ line ] )  script.breakpoints[ line ] = 0;
+    if( !script.breakpoints[line] )  
+    {
+      script.breakpoints[line] = 0;
+    }
     script.breakpoints[line] += 1;
     updateBreakpoints();
   }
@@ -606,15 +646,16 @@ cls.JsSourceView = function(id, name, container_class)
 
   this.scroll = function()
   {
-    if( view_invalid )
+    if(view_invalid || __disregard_scroll_event)
     {
+      __disregard_scroll_event = false;
       return;
     }
     if(!__scroll_interval && script.id)
     {
-      __scroll_interval = setInterval(__scroll, 60);
+      __scroll_interval = setInterval(__scroll, 40);
     }
-    __scrollEvent = new Date().getTime() + 100;
+    __scrollEvent = new Date().getTime() + 70;
     
   }
 
@@ -631,18 +672,17 @@ cls.JsSourceView = function(id, name, container_class)
       var target_line = ( top / context['line-height'] >> 0 ) + 1;
       if( __keyEvent )
       {
-        
         target_line = __keyEvent;     
       }
       if(new Date().getTime() > __scrollEvent )
       {
         __scroll_interval = clearInterval(__scroll_interval);
-        self.showLine( script.id, target_line);
+        self.showLine(script.id, target_line, null, null, true);
         __keyEvent = 0;
       }
       else
       {
-        self.showLine( script.id, ( ( __current_line + target_line ) / 2 ) >> 0);
+        self.showLine( script.id, ( ( __current_line + target_line ) / 2 ) >> 0, null, null, true);
       }
     }
   }

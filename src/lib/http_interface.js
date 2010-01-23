@@ -57,7 +57,19 @@ cls.ScopeHTTPInterface = function(force_stp_0)
       var status = parseInt(xhr.getResponseHeader("X-Scope-Message-Status"));
       var tag = parseInt(xhr.getResponseHeader("X-Scope-Message-Tag"));
       var message = eval(xhr.responseText);
-      _receive_callback(service, message, command, status, tag);
+      try
+      {
+        _receive_callback(service, message, command, status, tag);
+      }
+      catch(e)
+      {
+        opera.postError(
+          'failed to handle message\n' +
+          'service: ' + service + '\n' +
+          'command: ' + command + '\n' +
+          'message: ' + JSON.stringify(message)
+          )
+      }
     }
     _proxy.GET( "/get-message?time=" + new Date().getTime(), _receive_dragonkeeper);
   }
@@ -107,12 +119,12 @@ cls.ScopeHTTPInterface = function(force_stp_0)
         opera.postError("not able to handle STP version" + self.stpVersion + " in _on_stp_version");
       }
     }
+    _connect_callback(_proxy.services.join(','));
+    _proxy.GET( "/get-message?time=" + new Date().getTime(), _receive_dragonkeeper);
     if(window.ini.debug)
     {
       cls.debug.wrap_transmit();
     }
-    _connect_callback(_proxy.services.join(','));
-    _proxy.GET( "/get-message?time=" + new Date().getTime(), _receive_dragonkeeper);
   }
 
   var _proxy_onsetup = function(xhr)
@@ -136,6 +148,7 @@ cls.ScopeHTTPInterface = function(force_stp_0)
     _proxy.enable(name);
   }
 
+  window.ini || (window.ini = {debug: false});
   _get_maps();
     
 }

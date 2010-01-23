@@ -127,7 +127,7 @@ cls.WindowManager["2.0"].WindowManagerData = function()
       {
         this._window_list = [];
       }
-      this._window_list[i] = win_obj;
+      this._window_list[i] = win = win_obj;
       window.windowsDropDown.update();
     }
     else
@@ -250,7 +250,7 @@ cls.WindowManager["2.0"].WindowManagerData = function()
     {
       self._remove_window(message[0]);
     }
-    window_manager.addListener('enable-success', function()
+    window.app.addListener('services-enabled', function()
     {
       window_manager.requestListWindows();
     });
