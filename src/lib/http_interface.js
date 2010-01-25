@@ -65,9 +65,14 @@ cls.ScopeHTTPInterface = function(force_stp_0)
       {
         opera.postError(
           'failed to handle message\n' +
-          'service: ' + service + '\n' +
-          'command: ' + command + '\n' +
-          'message: ' + JSON.stringify(message)
+          '  service: ' + service + '\n' +
+          '  command: ' + command + '\n' +
+          '  message: ' + JSON.stringify(message) + '\n' +
+          '  ------------------------------------\n' +
+          '  error message: ' + e.message + '\n' +
+          '  ------------------------------------\n' +
+          '  error stacktrace: \n' + e.stacktrace + '\n' +
+          '  ------------------------------------\n'
           )
       }
     }
