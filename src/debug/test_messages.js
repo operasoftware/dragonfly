@@ -1,4 +1,4 @@
-window.cls || (window.cls = {});
+﻿window.cls || (window.cls = {});
 cls.debug || (cls.debug = {});
 
 cls.debug.TestScopeMessages = function(id, name, container_class)
