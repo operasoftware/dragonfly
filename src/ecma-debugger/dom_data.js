@@ -317,6 +317,7 @@ var dom_data = new function()
     {
       host_tabs.activeTab.removeEventListener('click', clickHandlerHost);
       host_tabs.activeTab.removeEventListener('mouseover', spotlight);
+      host_tabs.activeTab.removeEventListener('mouseout', set_reset_spotlight);
       host_tabs.activeTab.removeEventListener('DOMNodeRemoved', domNodeRemovedHandler);
       // switching between dom style and markup style data = [];
     }
