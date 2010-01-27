@@ -95,6 +95,10 @@ window.cls.TestFramework = function()
       for (; i < payload.length; i++)
       {
         item = payload[i];
+        if (item === null)
+        {
+          item = [];
+        }
         definition = definitions[i];
         if (definition["q"] == "repeated")
         {
