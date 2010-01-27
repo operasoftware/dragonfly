@@ -137,14 +137,18 @@ window.cls.TestFramework = function()
     response.id = 'message-response';
     service = this._dashed_name(service);
     var command_id = this._event_map[service].indexOf('handle' + command);
-    var definitions = window.command_map[service][command_id][RESPONSE];
+    var definitions = 
+      window.message_maps[service] && 
+      window.message_maps[service][command_id] && 
+      window.message_maps[service][command_id][RESPONSE] || 
+      null;
     if (status != 0) // Use the error structure if we received an error response
         definitions = window.package_map["com.opera.stp"]["Error"];
     response.textContent = 
       "response:\n  status: " + 
       this._status_map[status] + "\n" +
       "  payload: \n" + 
-      (cookies.get('pretty-print-message') == 'true' ?
+      (cookies.get('pretty-print-message') == 'true' && definitions ?
         this._pretty_print_payload(message, definitions, 2) :
         JSON.stringify(message));
   }

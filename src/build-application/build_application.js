@@ -76,6 +76,15 @@ window.app.build_application = function(on_services_created, on_services_enabled
         version = re_version.exec(service.version);
         version = version && version[1] || 0;        
         class_name = get_class_name(service_name); 
+        // the initial message map is set in cls.debug.guess_message_map
+        if(window.ini.debug && 
+            window.message_maps[service_name] && 
+            window.message_maps[service_name].versions &&
+            window.message_maps[service_name].versions[version])
+        {
+          window.message_maps[service_name] = window.message_maps[service_name].versions[version];
+          window.message_maps[service_name].versions = null;
+        }
         builder = window.app.builders[class_name] && window.app.builders[class_name][version];
         if (builder) 
         {

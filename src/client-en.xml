@@ -155,6 +155,15 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 <script src="lib/http_logger_2_0.js"></script>
 <script src="lib/scope_1_0.js"></script>
 
+<script src="lib/message-maps/message_map_console_logger_2_0.js"></script>
+<script src="lib/message-maps/message_map_exec_2_0.js"></script>
+<script src="lib/message-maps/message_map_window_manager_2_0.js"></script>
+<script src="lib/message-maps/message_map_ecmascript_debugger_5_0.js"></script>
+<script src="lib/message-maps/message_map_http_logger_2_0.js"></script>
+<script src="lib/message-maps/message_map_scope_1_0.js"></script>
+<script src="lib/message-maps/message_map_url_player_2_0.js"></script>
+<script src="lib/message-maps/message_map_ecmascript_logger_2_0.js"></script>
+
 <script src="./lib/message_maps.js"/>
 <script src="./lib/service_descriptions.js"/>
 <script src="./lib/test_framework.js"/>
