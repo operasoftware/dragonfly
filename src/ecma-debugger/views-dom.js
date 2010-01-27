@@ -536,7 +536,7 @@ cls.DocumentSelect = function(id)
 
   this.checkChange = function(target_ele)
   {
-    var rt_id = target_ele.getAttribute('runtime-id');
+    var rt_id = parseInt(target_ele.getAttribute('runtime-id'));
 
     if( rt_id != dom_data.getDataRuntimeId() )
     {

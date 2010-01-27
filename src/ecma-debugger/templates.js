@@ -192,7 +192,7 @@
     [
       'cst-option',
        runtime['title'] || runtime.uri, 
-      'runtime-id', runtime.runtime_id
+      'runtime-id', runtime.runtime_id.toString()
     ].concat( dom_data.getDataRuntimeId() == runtime.runtime_id ? ['class', 'selected-runtime'] : [] ).
       concat( display_uri != runtime.uri ? ['title', runtime.uri] : [] ) )
   }
