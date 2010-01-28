@@ -75,14 +75,14 @@ var dom_data = new function()
         window.topCell.showView('dom');
       }
       // TODO this will fail on inspecting a popup which is part of the debug context
-      if(message[WINDOW_ID] == window.window_manager_data.debug_context)
+      if(message[WINDOW_ID] == window.window_manager_data.get_debug_context())
       {
-        clickHandlerHost(obj);
+        clickHandlerHost({runtime_id: message[RUNTIME_ID], object_id: message[OBJECT_ID]});
       }
       else
       {
         _is_element_selected_checked = false;
-        window.window_manager_data.setDebugContext(message[WINDOW_ID]);
+        window.window_manager_data.set_debug_context(message[WINDOW_ID]);
       }
     }
     else if (show_initial_view)
