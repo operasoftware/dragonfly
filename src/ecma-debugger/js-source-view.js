@@ -375,6 +375,7 @@ cls.JsSourceView = function(id, name, container_class)
     source_content.style.height = ( context['line-height'] * max_lines ) +'px';
     script.scrollHeight = script.line_arr.length * context['line-height'];
     updateScriptContext();
+    source_content.innerHTML = "";
     return true;
   }
 
@@ -496,7 +497,8 @@ cls.JsSourceView = function(id, name, container_class)
       {
         updateScriptContext();
       }
-      if(__current_line != line_nr || __view_is_destroyed)
+      // TODO check if __current_line != line_nr makes any sense
+      if(__current_line != line_nr || __view_is_destroyed || !source_content.innerHTML)
       {
 
         source_content.innerHTML = 
