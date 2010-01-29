@@ -102,7 +102,11 @@ window.cls.Client = function()
     }
 
     viewport.innerHTML = "<div class='padding'>" +
-        "<div class='info-box'>Waiting for a host connection</div>" +
+        "<div class='info-box'>Waiting for a host connection" +
+        ( settings.debug_remote_setting.get('debug-remote') ?
+          "<p><input type='button' value='Cancel remote debug' handler='cancel-remote-debug'></p>" :
+          "") +
+        "</div>" +
       "</div>";
   }
 

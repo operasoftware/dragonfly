@@ -385,6 +385,14 @@ eventHandlers.click['apply-remote-debugging'] = function(event, target)
 
 }
 
+eventHandlers.click['cancel-remote-debug'] = function(event, target)
+{
+  settings.debug_remote_setting.set('debug-remote', false); 
+  client.setup();
+}
+
+
+
 
 // TODO clean up
 
