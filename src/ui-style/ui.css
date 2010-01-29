@@ -1098,12 +1098,12 @@ cst-select
 {
   display: inline-block;
   position: relative;
-  background-image:-o-skin('Start Skin');
+  background-image:-o-skin('Dropdown Skin');
   height: 24px;
   line-height: 24px;
   margin: 1px 0;
   padding: 0;
-  padding-right: 18px;
+  padding-right: 20px;
   margin-left: 5px;
   cursor: pointer;
   vertical-align: middle;
@@ -1124,12 +1124,9 @@ cst-select-toolbar-setting:hover
   background-position: 0 -24px;
 }
 
-
-
 cst-value
 {
   display: inline-block;
-  margin-right: 18px;
   margin-top: 1px;
   overflow: hidden;
   -o-text-overflow: ellipsis;
@@ -1140,10 +1137,11 @@ cst-value
 cst-drop-down
 {
   display: block;
-  width: 18px;
-  height: 24px;
-  background-image: -o-skin('Push Button Skin');
+  width: 16px;
+  height: 20px;
+  background-image: -o-skin('Dropdown Button Skin');
   margin-right: -18px;
+  margin-top: 2px;
   vertical-align: top;
   float: right;
 }
@@ -1180,15 +1178,6 @@ cst-drop-down:hover
 {
   opacity: .7;
 
-}
-
-cst-drop-down:before
-{
-  display: inline-block;
-  content: "";
-  width: 18px;
-  height: 24px;
-  background-image: -o-skin('Dropdown Button Skin.pressed');
 }
 
 cst-select[disabled]
