@@ -174,7 +174,7 @@ eventHandlers.click['top-window-toggle-attach'] = function(event)
   }
 
   settings.general.set('window-attached',  is_attached || false);
-  if( settings.general.get('show-views-menu') )
+  if(window.ini.debug)
   {
     viewsMenu.create();
   }
