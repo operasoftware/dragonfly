@@ -56,6 +56,7 @@ window.cls.Client = function()
     // TODO check proxy version
     if(servicelist.indexOf('stp-1') != -1)
     {
+      messages.post('host-state', {state: global_state.ui_framework.spin_state = 'ready'});
       services.scope.requestHostInfo();
     }
   }
@@ -545,7 +546,7 @@ window.cls.Client = function()
 
   this.onquit = function()
   {
-    messages.post('host-state', {state: 'inactive'});
+    messages.post('host-state', {state: global_state.ui_framework.spin_state = 'inactive'});
   }
 
   window.app.addListener('services-created', function()
