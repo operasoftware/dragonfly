@@ -931,6 +931,10 @@ button[key="dom.update-on-dom-node-inserted"]:before
 {
   background-image: url('../ui-images/btn-update-onchange.png');
 }
+button[key="dom.lock-selecked-elements"]:before 
+{
+  background-image: url('../ui-images/btn-multiple-selected-elements.png');
+}
 button[key="js_source.script"]:before 
 {
   background-image: url('../ui-images/btn-stop-at-new-thread.png');
