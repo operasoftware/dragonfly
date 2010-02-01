@@ -163,8 +163,8 @@ window-controls button
   border-style: solid;
   cursor: pointer;
   /* default padding values */
-  padding: 1px 8px;
-  margin: 2px 3px;
+  padding: 3px 11px;
+  margin: 0;
   vertical-align: top;
 }
 window-controls cst-select
