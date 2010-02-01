@@ -9,6 +9,7 @@ cls.debug.wrap_transmit = function()
     window.debug.log_transmit(service, message, command, tag);
     opera._debug_wrap_scopeTransmit(service, message, command, tag);
   };
+  cls.debug.wrap_transmit = function(){};
 }
 
 cls.debug.guess_message_map = function()

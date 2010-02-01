@@ -496,7 +496,7 @@ window.cls.Client = function()
       topCell.toolbar.changeStyleProperty("padding-right", 30);
     }
     document.documentElement.render(templates.window_controls(window.opera.attached))
-    if(window.ini.debug)
+    if(window.ini.debug && ui_framework.layouts.main_layout.tabs.indexOf('debug_new') == -1)
     {
       window.viewsMenu.create();
       if(window.settings.debug.get('show-as-tab'))
