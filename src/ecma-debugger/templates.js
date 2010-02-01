@@ -9,12 +9,13 @@
     var prop = '';
     var prop_dict =
     {
-      "protocol-version": ui_strings.S_TEXT_ENVIRONMENT_PROTOCOL_VERSION,
-      "operating-system": ui_strings.S_TEXT_ENVIRONMENT_OPERATING_SYSTEM,
+      "stpVersion": ui_strings.S_TEXT_ENVIRONMENT_PROTOCOL_VERSION,
+      "coreVersion": "Core Version",
+      "operatingSystem": ui_strings.S_TEXT_ENVIRONMENT_OPERATING_SYSTEM,
       "platform": ui_strings.S_TEXT_ENVIRONMENT_PLATFORM, 
-      "user-agent": ui_strings.S_TEXT_ENVIRONMENT_USER_AGENT
+      "userAgent": ui_strings.S_TEXT_ENVIRONMENT_USER_AGENT
     }
-    for( prop in enviroment)
+    for( prop in prop_dict)
     {
       ret[ret.length] = ['li', prop_dict[prop] + ': ' + enviroment[prop]];
     }

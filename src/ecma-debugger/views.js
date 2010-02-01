@@ -12,7 +12,7 @@ cls.EnvironmentView = function(id, name, container_class)
   this.createView = function(container)
   {
     container.innerHTML = '';
-    container.render( templates.hello( services['ecmascript-debugger'].getEnvironment()) );
+    container.render(templates.hello(window.services['scope'].get_hello_message()));
   }
   this.init(id, name, container_class);
 }
@@ -43,7 +43,7 @@ new Settings
     environment:
     function(setting)
     {
-      return templates.hello( services['ecmascript-debugger'].getEnvironment());
+      return templates.hello(window.services['scope'].get_hello_message());
     }
   }
 

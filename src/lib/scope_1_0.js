@@ -255,6 +255,11 @@ cls.Scope["1.0"].Service = function()
   var hello_message = {};
   var service_descriptions = {};
 
+  this.get_hello_message = function()
+  {
+    return hello_message;
+  }
+
   this.set_host_info_callback = function(on_host_info_callback)
   {
     this._onHostInfoCallback = on_host_info_callback;
