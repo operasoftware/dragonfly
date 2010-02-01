@@ -487,35 +487,37 @@ window.cls.Client = function()
   this.afterUIFrameworkSetup =  function()
   {
     this.setupTopCell();
-    if( window.opera.attached )
+    if(!arguments.callee._called_once)
     {
-      topCell.tab.changeStyleProperty("padding-right", 80);
-    }
-    else
-    {
-      topCell.toolbar.changeStyleProperty("padding-right", 30);
-    }
-    document.documentElement.render(templates.window_controls(window.opera.attached))
-    if(window.ini.debug && ui_framework.layouts.main_layout.tabs.indexOf('debug_new') == -1)
-    {
-      window.viewsMenu.create();
-      if(window.settings.debug.get('show-as-tab'))
+      if( window.opera.attached )
       {
-        ui_framework.layouts.main_layout.tabs.push('debug_new');
-        ui_framework.layouts.panel_layout.tabs.push('debug_new');
-        window.topCell.tab.addTab(new Tab('debug_new', window.views['debug_new'].name));
+        topCell.tab.changeStyleProperty("padding-right", 80);
       }
+      else
+      {
+        topCell.toolbar.changeStyleProperty("padding-right", 30);
+      }
+      document.documentElement.render(templates.window_controls(window.opera.attached))
+      if(window.ini.debug)
+      {
+        window.viewsMenu.create();
+        if(window.settings.debug.get('show-as-tab'))
+        {
+          ui_framework.layouts.main_layout.tabs.push('debug_new');
+          ui_framework.layouts.panel_layout.tabs.push('debug_new');
+          window.topCell.tab.addTab(new Tab('debug_new', window.views['debug_new'].name));
+        }
+      }
+      // a short workwround to hide some tabs as long as we don't have the dynamic tabs
+      var is_disbaled = null, tabs = ui_framework.layouts.console_rough_layout.children[0].tabs, tab = '';
+      for( i = 0; tab = tabs[i]; i++ )
+      {
+        is_disbaled = !settings.console.get(tab);
+        views[tab].ishidden_in_menu = is_disbaled;
+        topCell.disableTab(tab, is_disbaled);
+      }
+      arguments.callee._called_once = true;
     }
-    // a short workwround to hide some tabs as long as we don't have the dynamic tabs
-    var is_disbaled = null, tabs = ui_framework.layouts.console_rough_layout.children[0].tabs, tab = '';
-    for( i = 0; tab = tabs[i]; i++ )
-    {
-      is_disbaled = !settings.console.get(tab);
-      views[tab].ishidden_in_menu = is_disbaled;
-      topCell.disableTab(tab, is_disbaled);
-    }
-
-    //this.setup();
   }
 
   this.setupTopCell = function()
