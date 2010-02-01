@@ -661,7 +661,17 @@ Destination can be either a directory or a zip file"""
 
         if options.make_data_uris:
             _convert_imgs_to_data_uris(dst)
-
+            # any remaining image in ui-images is not used
+            img_dir = os.path.join(dst, 'ui-images')
+            for file in os.listdir(img_dir):
+                path = os.path.join(img_dir, file)
+                if os.path.isfile(path): 
+                    os.unlink(path)
+            try:
+                os.rmdir(img_dir)
+            except OSError:
+                print "ui-images in destination not empty"
+                         
         if options.license:
             _add_license(dst)
 
