@@ -115,16 +115,21 @@ def _process_directives(root, filepath, vars):
         outpath = os.path.join(root, outfile)
         outdir = os.path.dirname(outpath)
 
-        if not os.path.isdir(outdir): os.makedirs(outdir)
+        if not os.path.isdir(outdir): 
+            os.makedirs(outdir)
 
-        fout = codecs.open(os.path.join(root, outfile), "w", encoding="utf_8_sig")
+        fout_path = os.path.join(root, outfile)
+        fout = codecs.open(fout_path, "w", encoding="utf_8_sig")
         for infile in contentfiles:
             fout.write(_concatcomment % infile)
             fin = codecs.open(os.path.join(root, infile), "r", encoding="utf_8_sig")
             fout.write(fin.read())
             fin.close()
             os.unlink(os.path.join(root, infile))
-
+        fout.close()
+        if fout_path.endswith('.js') and options.minify:
+            # fout is a temp file here
+            minify.minify_in_place(fout_path)
 
 def _clean_dir(root, exclude_dirs, exclude_files):
     """
@@ -223,6 +228,12 @@ def _minify_buildout(src):
         for file in [f for f in files if f.endswith(".js")]:
             abs = os.path.join(base, file)
             minify.minify_in_place(abs)
+            
+def _minify_file(path):
+    tmpfd, tmppath = tempfile.mkstemp(".tmp", "dfbuild.")
+    os.fdopen(tmpfd).close()
+    minify.minify(path, tmppath)
+    return tmppath
 
 def _localize_buildout(src, langdir):
     """Make a localized version of the build dir. That is, with one
@@ -233,6 +244,7 @@ def _localize_buildout(src, langdir):
     Note, this function knows much more than it should about the structure
     of the build. The whole thing should possibly be refactored :(
     """
+    tmpfiles = []
     scriptpath = os.path.normpath(os.path.join(src, "script/dragonfly.js"))
     fp = codecs.open(scriptpath, "r", encoding="utf_8_sig")
     script_data = fp.read()
@@ -246,6 +258,9 @@ def _localize_buildout(src, langdir):
     # Grab all english data. Will be put in front of localized strings so
     # there are fallbacks
     englishfile = os.path.join(langdir, "ui_strings-en.js")
+    if options.minify:
+        englishfile = _minify_file(englishfile)
+        tmpfiles.append(englishfile)
     fp = codecs.open(englishfile, "r", encoding="utf_8_sig")
     englishdata = fp.read()
     fp.close()
@@ -257,11 +272,15 @@ def _localize_buildout(src, langdir):
         newscript = codecs.open(os.path.join(src,newscriptpath), "w", encoding="utf_8_sig")
         newclient = codecs.open(os.path.join(src, newclientpath), "w", encoding="utf_8_sig")
 
-        newscript.write(_concatcomment % englishfile)
+        if not options.minify:
+            newscript.write(_concatcomment % englishfile)
         newscript.write(englishdata)
-
+        if options.minify:
+            path = _minify_file(path)
+            tmpfiles.append(path)
         langfile = codecs.open(path, "r", encoding="utf_8_sig")
-        newscript.write(_concatcomment % path)
+        if not options.minify:
+            newscript.write(_concatcomment % path)
         newscript.write(langfile.read())
         newscript.write(script_data)
         newclient.write(clientdata.replace("dragonfly.js", "dragonfly" + "-" + lang +".js"))
@@ -270,6 +289,8 @@ def _localize_buildout(src, langdir):
         newscript.close()
         
     os.unlink(os.path.join(src, "script/dragonfly.js"))
+    while tmpfiles:
+        os.unlink(tmpfiles.pop())
         
 
 def _get_bad_encoding_files(src):
@@ -554,6 +575,7 @@ Destination can be either a directory or a zip file"""
                       help="Don't generate data URIs for images in css")
 
     options, args = parser.parse_args()
+    globals()['options'] = options
     
     # Make sure we have a source and destination
     if len(args) != 2:
@@ -630,7 +652,7 @@ Destination can be either a directory or a zip file"""
     else: # export to a directory
         if os.path.isdir(dst) and not options.overwrite_dst:
             parser.error("Destination exists! use -d to force overwrite")
- 
+
         export(src, dst, process_directives=options.concat, exclude_dirs=exdirs,
                keywords=keywords, directive_vars=dirvars)
 
@@ -639,10 +661,7 @@ Destination can be either a directory or a zip file"""
 
         if options.make_data_uris:
             _convert_imgs_to_data_uris(dst)
-            
-        if options.minify:
-            _minify_buildout(dst)
-            
+
         if options.license:
             _add_license(dst)
 

@@ -1,5 +1,6 @@
 import types
 import sys
+import os
 import shutil
 import codecs
 import tempfile
@@ -76,7 +77,8 @@ class JSTolkenizer(object):
         WHITESPACE = (u'\u0009',u'\u000B',u'\u000C',u'\u0020',u'\u00A0')
         LINETERMINATOR = self.LINETERMINATOR
         NUMBER = ('0','1','2','3','4','5','6','7','8','9')
-        PUNCTUATOR_2 = ('<=','>=','==','!=','===','!==','++','--','<<','>>','>>>','&&','||','+=','-=','*=','%=','<<=','>>=','>>>=','&=','|=','^=')
+        PUNCTUATOR_2 = ('<=','>=','==','!=','===','!==','++','--',
+            '<<','>>','>>>','&&','||','+=','-=','*=','%=','<<=','>>=','>>>=','&=','|=','^=')
         STRING_WHITESPACE = 'WHITESPACE'
         STRING_LINETERMINATOR = self.STRING_LINETERMINATOR
         STRING_IDENTIFIER = self.STRING_IDENTIFIER
@@ -135,7 +137,8 @@ class JSTolkenizer(object):
                         punct_buffer += char
                 read_buffer(STRING_IDENTIFIER)
                 continue
-            if char in ('{','}','(',')','[',']',';',',','<','>','=','!','+','-','*','%','&','|','^','~','?',':','.'):
+            if char in ('{','}','(',')','[',']',';',',','<','>',
+                  '=','!','+','-','*','%','&','|','^','~','?',':','.'):
                 read_buffer(STRING_PUNCTUATOR)
                 punct_buffer = char
                 char = next()
@@ -171,7 +174,8 @@ class JSTolkenizer(object):
 
     def number_hex_parser(self, char):
         next = self.__input_str.next
-        while char in ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','A','B','C','D','E','F'):
+        while char in ('0','1','2','3','4','5','6','7','8','9',
+              'a','b','c','d','e','f','A','B','C','D','E','F'):
             char = next()
         return char
     
@@ -242,30 +246,14 @@ class Minify(object):
     """Minify class, handling minification frome one file to another"""
     
     def __init__(self, input, output, encoding="utf_8_sig"):
-        """ input and out can be either be a file path or a file object 
-            only new lines and white spaces which are safe to remove are removed
-            
-            FIXME: I might make more sense that input and output are always
-            file-like objects, so the Minify class doesn't ever have to
-            know anything about paths and opening and closing files or
-            encodings. That could all go in helper methods in the module scope.
-            
-            """
-        self.input = self.set_file(input, "r", encoding)
-        self.output = self.set_file(output, "w", encoding)
+        """ only new lines and white spaces which are safe to remove are removed 
+            input and output must be file like objects """
+        self.input = input
+        self.output = output
         self.tolkens = [('', ''),('', ''),('', '')]
         self.buffersize = 2
         self.out = []
         JSTolkenizer(self)
-
-    def set_file(self, path_or_file, mode, encoding):
-        """If file_or_path is a path as a string, open it using the provided
-        encoding. If file_or_path is not, a string, assume that it's something
-        file-like and just return it."""
-        if isinstance(path_or_file, basestring):
-            return codecs.open(path_or_file, mode, encoding)
-        else:
-            return path_or_file
 
     def onfinish(self):
         self.buffersize = 0
@@ -273,7 +261,7 @@ class Minify(object):
         self.ontolken(('',''))
 
         for token in self.out:
-            self.output.write(token.encode("utf-8"))
+            self.output.write(token)
 
     def ontolken(self, tolken):
         """
@@ -336,17 +324,11 @@ class Minify(object):
 def minify_in_place(path, encoding="utf_8_sig"):
     """Minify path and write it to to the same location. Optionally use encoding
     Note: Uses stringIO so it will use memory for the entire destination file"""
-    input = codecs.open(path, "r", encoding)
-    tmpout = tempfile.TemporaryFile();
-    Minify(input, tmpout)
-    input.close()
-    output = codecs.open(path, "w", encoding=encoding)
-
-    tmpout.seek(0)
-    d = tmpout.read().decode("utf-8")
-    output.write(d)
-    tmpout.close()
-    output.close()
+    tmpfd, tmppath = tempfile.mkstemp(".tmp", "minify.")
+    os.fdopen(tmpfd).close()
+    minify(path, tmppath, encoding=encoding)
+    shutil.copyfile(tmppath, path)
+    os.unlink(tmppath)
 
 def minify(inpath, outpath, encoding="utf_8_sig"):
     """Minify input path to outputpath, optionally using encoding"""
