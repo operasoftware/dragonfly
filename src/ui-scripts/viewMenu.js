@@ -93,7 +93,6 @@ var ViewsMenu = function(menu_id)
 
   this.create = function()
   {
-    opera.postError('create debug menu')
     document.addEventListener('DOMNodeInserted', init, false);
     document.documentElement.render(templates.viewMenu());
     if(opera.attached)
