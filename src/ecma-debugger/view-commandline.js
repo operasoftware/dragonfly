@@ -171,31 +171,51 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     }
     else
     {
-      var error_id = xml.getNodeData('object-id');
+      var error_id = message[OBJECT_VALUE][OBJECT_ID];
       if( error_id )
       {
-        var tag = tagManager.set_callback(null, handleError);
-        services['ecmascript-debugger'].examineObjects(tag, runtime_id, error_id);
+        var tag = tagManager.set_callback(null, handleError, [message[STATUS]]);
+        services['ecmascript-debugger'].requestExamineObjects(tag, [runtime_id, [error_id]]);
       }
     }
-    
   }
 
-  var handleError = function(xml)
+  var handleError = function(status, message, error_name)
   {
-    var return_value = xml.getElementsByTagName('string')[0];
-    if(return_value)
+    const
+    OBJECT_LIST = 0,
+    // sub message ObjectInfo 
+    PROPERTY_LIST = 1,
+    // sub message Property 
+    PROPERTY_NAME = 0,
+    PROPERTY_VALUE = 2;
+
+    var 
+    obj = message[OBJECT_LIST][0], 
+    props = obj && obj[PROPERTY_LIST] || [],
+    prop = null,
+    i = 0,
+    error_msg = window.helpers.service_class_name(error_name) + "\n" ;
+
+    if(props)
     {
-      cons_out_render_return_val
-      (
-        console_output_data[console_output_data.length] =
+      for( ; prop = props[i]; i++)
+      {
+        if(prop[PROPERTY_VALUE])
         {
-          type: "return-value",
-          value: return_value.firstChild.nodeValue
+          error_msg += prop[PROPERTY_NAME] + ": " + prop[PROPERTY_VALUE] + "\n";
         }
-      );
-      __container.scrollTop = __container.scrollHeight;
+      }
     }
+    cons_out_render_return_val
+    (
+      console_output_data[console_output_data.length] =
+      {
+        type: "return-value",
+        value: error_msg
+      }
+    );
+    __container.scrollTop = __container.scrollHeight;
   }
 
   var markup = "" +
