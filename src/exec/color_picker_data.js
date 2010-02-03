@@ -35,8 +35,8 @@ var color_picker_data = new function()
   this._color_picker_rt_id = 0;
   this._interval = 0;
   this._is_active = false;
-  this._width = 7;
-  this._height = 7;
+  this._width = 15;
+  this._height = 15;
   this._delta = this._height / 2 << 0;
   this._x = 0;
   this._y = 0;
@@ -250,8 +250,17 @@ var color_picker_data = new function()
         mousemove_is_listening = true;
       };
     };
+    var timeout_cleanup = 0;
+    var self = this;
+    var remove_and_cleanup = function()
+    {
+      self.stop();
+    };
+
     this.get_mouse_position = function()
     {
+      clearTimeout(timeout_cleanup);
+      timeout_cleanup = setTimeout(remove_and_cleanup, 1200);
       if(mousemove_event)
       {
         return "({" +
@@ -287,6 +296,8 @@ var color_picker_data = new function()
         document.addEventListener("click", click_handler, true);
         mousemove_is_listening = true;
         is_setup = true;
+        /* remove everything if data polling stops */
+        timeout_cleanup = setTimeout(remove_and_cleanup, 1200);
       };
     };
     this.stop = function()

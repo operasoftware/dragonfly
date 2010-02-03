@@ -22,10 +22,10 @@ cls.ColorPicker = function(id, name, container_class)
 
   const 
   DELTA_SCALE = 5, 
-  SCALE = 35,
+  SCALE = 20,
   MAX_DIMENSION = 350,
   MAX_PIXEL = 33,
-  AVERAGE_PIXEL_COUNT = 5,
+  AVERAGE_PIXEL_COUNT = 3,
   COLOR_MASK_ALPHA = 0.5;
 
   /* private */  

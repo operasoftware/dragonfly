@@ -819,10 +819,18 @@ d
   text-align: left;
 }
 
+.table
+{
+  display: table;
+  margin: auto;
+}
+
 .color-picker
 {
-  border: 1px solid #666;
-  width: 350px;
+  display: table-cell;
+  vertical-align: top;
+  width: 260px;
+  padding: 0 5px;
   margin: auto;
   text-align: center;
 }
@@ -831,6 +839,9 @@ d
 {
   background-color: hsl(0, 0%, 95%);
   padding: .2em .5em;
+  font-size: 1.3em;
+  font-weight: normal;
+  border: 1px solid #ccc;
 }
 
 .color-picker p
@@ -850,7 +861,7 @@ d
 .outer-canvas-container
 {
   display: table;
-  margin: .8em auto;
+  margin: 0 auto;
   border: 3px solid #666;
 }
 .canvas-container

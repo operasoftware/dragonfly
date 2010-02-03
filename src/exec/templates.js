@@ -26,6 +26,8 @@ window.templates.color_picker = function(
                 'handler', 'set-color-picker-scale']
             ],
           'class', 'controls'],
+        'class', 'color-picker'],
+        ['div',
           ['div',
             ['div',
               ['div',
@@ -35,12 +37,14 @@ window.templates.color_picker = function(
             'class', 'outer-canvas-container'],
             'id', 'table-container',
             'handler', 'color-picker-picked'],
+        'class', 'color-picker'],
+        ['div',
           ['h2', 'Color Select'],
           this.color_picker_average_select(),
           ['div', 'id', 'center-color'],
           ['pre', 'id', 'center-color-values'],
         'class', 'color-picker'],
-      'class', 'padding']);
+      'class', 'table padding']);
 }
 
 window.templates.color_picker_average_select = function()
