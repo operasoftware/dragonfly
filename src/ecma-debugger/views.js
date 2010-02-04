@@ -371,6 +371,9 @@ eventHandlers.click['apply-remote-debugging'] = function(event, target)
     {
       settings.debug_remote_setting.set('debug-remote', is_debug_remote);
       settings.debug_remote_setting.set('port', port);  
+      // for older clients
+      windows.helpers.setCookie('debug-remote', JSON.stringify(is_debug_remote));
+      windows.helpers.setCookie('port', JSON.stringify(port));
       client.setup();
       target.disabled = (
         target.previousSibling.previousSibling.firstChild.checked == 

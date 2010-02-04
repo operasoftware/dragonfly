@@ -393,7 +393,7 @@ window.cls.Client = function()
         alert(ui_strings.S_INFO_NO_COMPATIBLE_VERSION);
       }
     }
-    this.open('GET', protocol + hostname + port + path);
+    this.open('GET', protocol + hostname + port + fallback_filename);
     this.send(null);
   }
 
