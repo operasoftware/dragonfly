@@ -41,21 +41,26 @@ cls.STP_0_Wrapper = function()
 
   var _wrapper_connect_callback = function(_services)
   {
+    var servicelist = _services.split(',');
     switch(self.stpVersion)
     {
       case undefined:
       case "STP/0":
       {
-        _get_maps();
-        STP_0_MethodWrapper.call(self);
-        _target_receive_callback = _wrapper_receive_callback_stp_0;
-        _target_quit_callback = _wrapper_quit_callback_stp_0;
-        // enable scope service as a common transport channel
-        self.scopeEnableService('scope');
-        services.scope.handleConnect = _handle_connect;
-        _service_list = _services;
-        services.scope.requestConnect(0, ["json"]);
-        break;
+        // the host must be a stp 1 host
+        if(servicelist.indexOf('stp-1') != -1)
+        {
+          _get_maps();
+          STP_0_MethodWrapper.call(self);
+          _target_receive_callback = _wrapper_receive_callback_stp_0;
+          _target_quit_callback = _wrapper_quit_callback_stp_0;
+          // enable scope service as a common transport channel
+          self.scopeEnableService('scope');
+          services.scope.handleConnect = _handle_connect;
+          _service_list = _services;
+          services.scope.requestConnect(0, ["json"]);
+          break;
+        }
       }
       case "STP/1":
       {

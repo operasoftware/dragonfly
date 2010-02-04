@@ -2,11 +2,15 @@
   "default":
   {
     "protocol-3": "/app/core-2-1/",
-    "protocol-4": "/app/core-2-2/"
+    "protocol-4": "/app/core-2-2/",
+    "core-2-3": "/app/core-2-3/",
+    "core-2-4": "/app/core-2-4/",
+    "stp-1": "/app/core-2-5/"
   },
   "cutting-edge":
   {
     "protocol-3": "/app/core-2-1/cutting-edge/",
-    "protocol-4": "/app/core-2-2/cutting-edge/"
+    "protocol-4": "/app/core-2-2/cutting-edge/",
+    "core-2-3": "/app/core-2-3/cutting-edge/"
   }
 }

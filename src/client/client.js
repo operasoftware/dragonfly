@@ -52,12 +52,42 @@ window.cls.Client = function()
   var _on_host_connected = function(servicelist)
   {
     servicelist = servicelist.split(',');
-    // TODO sort out all protocol version
-    // TODO check proxy version
     if(servicelist.indexOf('stp-1') != -1)
     {
       messages.post('host-state', {state: global_state.ui_framework.spin_state = 'ready'});
       services.scope.requestHostInfo();
+    }
+    else
+    {
+      var 
+      has_window_manager = servicelist.indexOf('window-manager') != -1, 
+      i = 0, 
+      core_version = '',
+      fallback_version = !has_window_manager && 'protocol-3' || '';
+
+      if(!fallback_version)
+      {
+        for( ; (core_version = servicelist[i] ) && !(core_version.slice(0, 5) == 'core-'); i++);
+        if(core_version)
+        {
+          if(core_version == 'core-2-5')
+          {
+            fallback_version = 'core-2-4';
+          }
+          else
+          {
+            fallback_version = core_version;
+          }
+        }
+        else
+        {
+          if(has_window_manager)
+          {
+            fallback_version = 'protocol-4';
+          }
+        }
+      }
+      handle_fallback.call(new XMLHttpRequest(), fallback_version);
     }
   }
 
@@ -331,10 +361,32 @@ window.cls.Client = function()
     // for local testing
     var 
     href = location.href,
-    root_path = href.slice(0, href.indexOf('/app') > -1 ? href.indexOf('/app') : href.indexOf('/src') ),
-    file_name = href.slice(href.lastIndexOf('/') + 1),
+    protocol = location.protocol + '//',
+    hostname = location.hostname,
+    port = location.port ? ':' + location.port : '',
+    path = location.pathname,
+    file_name = path.slice(path.lastIndexOf('/') + 1),
+    fallback_filename = 'fall-back-urls.json',
     type = href.indexOf('cutting-edge') > -1 && 'cutting-edge' || 'default',
-    search = location.search;
+    search = location.search,
+    pos = 0;
+
+    if(hostname == 'localhost')
+    {
+      if((pos = path.indexOf('/src')) != -1)
+      {
+        path = path.slice(0, pos) + '/src/' + fallback_filename;
+      }
+      else
+      {
+        path = '/' + fallback_filename;
+      }
+    }
+    else
+    {
+      path = '/app/' + fallback_filename;
+    }
+
 
     file_name = file_name.indexOf('.') > -1 && file_name || '';
     this.onload = function()
@@ -350,7 +402,7 @@ window.cls.Client = function()
       {
         if( confirm(ui_strings.S_CONFIRM_LOAD_COMPATIBLE_VERSION) )
         {
-          location = root_path + fallback_urls[type][version] + file_name + search;
+          location = protocol + hostname + port + fallback_urls[type][version] + file_name + search;
         }
       }
       else
@@ -358,8 +410,8 @@ window.cls.Client = function()
         alert(ui_strings.S_INFO_NO_COMPATIBLE_VERSION);
       }
     }
-    this.open('GET', root_path + '/app/fall-back-urls.json');
-    this.send();
+    this.open('GET', protocol + hostname + port + path);
+    this.send(null);
   }
 
   
