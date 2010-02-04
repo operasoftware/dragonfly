@@ -366,27 +366,10 @@ window.cls.Client = function()
     port = location.port ? ':' + location.port : '',
     path = location.pathname,
     file_name = path.slice(path.lastIndexOf('/') + 1),
-    fallback_filename = 'fall-back-urls.json',
+    fallback_filename = '/app/fall-back-urls.json',
     type = href.indexOf('cutting-edge') > -1 && 'cutting-edge' || 'default',
     search = location.search,
     pos = 0;
-
-    if(hostname == 'localhost')
-    {
-      if((pos = path.indexOf('/src')) != -1)
-      {
-        path = path.slice(0, pos) + '/src/' + fallback_filename;
-      }
-      else
-      {
-        path = '/' + fallback_filename;
-      }
-    }
-    else
-    {
-      path = '/app/' + fallback_filename;
-    }
-
 
     file_name = file_name.indexOf('.') > -1 && file_name || '';
     this.onload = function()
