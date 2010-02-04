@@ -181,12 +181,14 @@ var DOM_tree_style = function(id, name, container_class)
               {
                 attrs += " <key>" + 
                   ( attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '' ) + 
-                  ( force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ) + 
+                  /* regarding escaping "<". it happens that there are very starnge keys in broken html.
+                     perhaps we will have to extend the escaping to other data tokens as well */
+                  ( force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ).replace(/</g, '&lt;') + 
                   "</key>=<value" + 
                       ( /^href|src$/i.test(attr[ATTR_KEY])
                         ? " handler='dom-resource-link'"
                         : "" ) + ">\"" + 
-                      attr[ATTR_VALUE] +
+                      attr[ATTR_VALUE].replace(/</g, '&lt;') +
                   "\"</value>";
               }
             }
