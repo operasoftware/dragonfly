@@ -159,7 +159,7 @@ cls.STP_0_Wrapper = function()
         INT          ::= "0"-"9"+
       */
       var header = JSON.stringify([service, 1, command_id, 1, tag]);
-      _scopeTransmit('scope', "STP/1 " + header.length + " " + header + JSON.stringify(message), '', '');
+      _scopeTransmit.call(self, 'scope', "STP/1 " + header.length + " " + header + JSON.stringify(message), '', '');
     }
   }
 
@@ -168,7 +168,7 @@ cls.STP_0_Wrapper = function()
     _connect_callback = connect_callback;
     _receive_callback = receive_callback;
     _quit_callback = quit_callback;
-    _scopeAddClient(
+    _scopeAddClient.call(self,
         _wrapper_connect_callback, 
         _wrapper_receive_callback, 
         _wrapper_quit_callback, 

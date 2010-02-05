@@ -101,9 +101,20 @@ window.cls.Client = function()
     // TODO
     // port 0 means debugging to current Opera instance, 
     // any other port means remote debugging.
-    return settings.debug_remote_setting.get('debug-remote') 
-      && settings.debug_remote_setting.get('port')
-      || 0;
+    /*
+          window.helpers.setCookie('debug-remote', JSON.stringify(is_debug_remote));
+      window.helpers.setCookie('port', JSON.stringify(port));
+      */
+    var is_remote_debug = 
+      settings.debug_remote_setting.get('debug-remote') ||
+      JSON.parse(window.helpers.getCookie('debug-remote')) || 
+      false;
+    
+    return ( 
+      is_remote_debug && 
+      (settings.debug_remote_setting.get('port') ||
+      JSON.parse(window.helpers.getCookie('port'))) ||
+      0);
   }
 
   this.setup = function()
@@ -120,11 +131,12 @@ window.cls.Client = function()
       // in case of a (builtin) STP/0 proxy
       cls.STP_0_Wrapper.call(opera);
     }
+    var port = _get_port_number();
     opera.scopeAddClient(
         _on_host_connected, 
         cls.ServiceBase.get_generic_message_handler(), 
         _on_host_quit, 
-        _get_port_number()
+        port
       );
     if(window.ini.debug)
     {
@@ -133,7 +145,7 @@ window.cls.Client = function()
 
     viewport.innerHTML = "<div class='padding'>" +
         "<div class='info-box'>Waiting for a host connection" +
-        ( settings.debug_remote_setting.get('debug-remote') ?
+        ( port ?
           "<p><input type='button' value='Cancel remote debug' handler='cancel-remote-debug'></p>" :
           "") +
         "</div>" +
