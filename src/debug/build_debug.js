@@ -70,11 +70,13 @@ cls.debug.create_debug_environment = function(params)
     'debug', 
     // kel-value map
     {
-      'show-as-tab': true
+      'show-as-tab': true,
+      'pretty-print-messages': true
     }, 
     // key-label map
     {
       'show-as-tab': 'Show view in a tab',
+      'pretty-print-messages': "Pretty print the scope messages",
     },
     // settings map
     {
@@ -96,6 +98,13 @@ cls.debug.create_debug_environment = function(params)
         handler: 'configure-message-filters',
         title: 'Configure Message Filters'
       }
+    ]
+  )
+  new Switches
+  (
+    'debug',
+    [
+      'pretty-print-messages',
     ]
   )
   eventHandlers.click['debug-clear-log'] = function(event, target)
