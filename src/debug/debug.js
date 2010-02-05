@@ -154,7 +154,7 @@ cls.debug.Debug = function(id, name, container_class)
       INDENT + 'tag: ' + tag + '\n' +
       INDENT + 'payload:\n' +
       (
-        definitions ? 
+        definitions && window.settings.debug.get('pretty-print-messages')? 
         this._pretty_print_payload(message, definitions, 2) :
         JSON.stringify(message)
       ); 
