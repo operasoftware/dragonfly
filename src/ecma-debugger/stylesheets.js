@@ -478,7 +478,7 @@ var stylesheets = new function()
     PROPERTY_LIST = is_style_sheet && 5 || 3;
     
     var ret = '',
-    index_list = rule[INDEX_LIST],
+    index_list = rule[INDEX_LIST] || [], // the built-in proxy returns empty repeated values as null
     value_list = rule[VALUE_LSIT],
     priority_list = rule[PROPERTY_LIST],
     overwrittenlist = rule[OVERWRITTEN_LIST],
