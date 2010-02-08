@@ -169,6 +169,9 @@ window-controls button
 }
 window-controls cst-select
 {
+  position: static;
+  margin: 0;
+  padding: 0;
   vertical-align: top;
 }
 toolbar button:before, 
@@ -1156,17 +1159,18 @@ cst-drop-down
 {
   width: 40px;
   background: url('../ui-images/btn-debugger-menu.png');
+  background-position: 0 -1px;
   margin-right: 0;
 }
 
 .debugger-menu cst-drop-down:hover
 {
-  background-position: 0px -24px;
+  background-position: 0px -25px;
   opacity: 1;
 }
 .debugger-menu cst-drop-down:active
 {
-  background-position: 0px -48px;
+  background-position: 0px -49px;
 }
 
 .debugger-menu cst-drop-down:before
