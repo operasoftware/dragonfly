@@ -296,8 +296,16 @@ var ObjectDataBase = new function()
         return this.__getData(index, depth);
       }
     }
-    var tag = tagManager.set_callback(this, this.parseXML, [rt_id, obj_id, org_args]);
-    services['ecmascript-debugger'].requestExamineObjects(tag, [rt_id, [obj_id]]);
+    if(rt_id && obj_id)
+    {
+      var tag = tagManager.set_callback(this, this.parseXML, [rt_id, obj_id, org_args]);
+      services['ecmascript-debugger'].requestExamineObjects(tag, [rt_id, [obj_id]]);
+    }
+    else
+    {
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+        "not valid id.\n  rt id: " + rt_id + "\n  object id: " + obj_id);
+    }
     return null;
   }
 
