@@ -138,7 +138,7 @@ window.cls.Client = function()
         _on_host_quit, 
         port
       );
-    if(window.ini.debug)
+    if(window.ini.debug && !opera.scopeHTTPInterface)
     {
       cls.debug.wrap_transmit();
     }

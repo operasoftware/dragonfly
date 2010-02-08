@@ -137,6 +137,8 @@ cls.ScopeHTTPInterface = function(force_stp_0)
     _proxy.GET( "/get-stp-version?time=" + new Date().getTime(), _on_stp_version);
   }
 
+  this.scopeHTTPInterface = true;
+
   this.scopeAddClient = function(connect_callback, receive_callback, quit_callback, port)
   {
     _connect_callback = connect_callback;
