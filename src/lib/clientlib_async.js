@@ -40,7 +40,15 @@ window.cls.Proxy = function()
   {
     if (host) { _host = host; }
     if (port) { _port = port; }
-    this.GET("/services", parseConfigureResponse)
+    if(_port == window.location.port)
+    {
+      this.GET("/services", parseConfigureResponse);
+    }
+    else
+    {
+      opera.postError("failed to configure the proxy, " +
+        "host and port must be the same as the main document");
+    }
   }
 
   var parseConfigureResponse = function (xml, xhr)

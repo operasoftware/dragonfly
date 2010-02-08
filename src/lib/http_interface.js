@@ -145,9 +145,8 @@ cls.ScopeHTTPInterface = function(force_stp_0)
     _receive_callback = receive_callback;
     _quit_callback = quit_callback;
     _port = port;
-    var host = location.host.split(':');
     _proxy.onsetup = _proxy_onsetup;
-    _proxy.configure(host[0], host[1]);
+    _proxy.configure(location.hostname, location.port);
   }
 
   this.scopeEnableService = function(name, callback)
