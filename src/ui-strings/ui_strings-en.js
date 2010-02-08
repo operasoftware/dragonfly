@@ -261,6 +261,8 @@ ui_strings.S_BUTTON_SHOW_REQUEST_SUMMARY = 'Summary';
 ui_strings.S_BUTTON_SHOW_REQUEST_HEADERS = 'Headers';
 /* DESC: Show raw request. */
 ui_strings.S_BUTTON_SHOW_REQUEST_RAW = 'Raw';
+/* DESC: Cancel button while the client is waiting for a host connection. */
+ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG = "Cancel remote debug";
 
 /*
   * Menus
@@ -372,6 +374,8 @@ ui_strings.S_INFO_STYLESHEET_HAS_NO_RULES = 'This stylesheet has no rules';
 ui_strings.S_INFO_DOCUMNENT_LOADING = 'Opera Dragonfly is loading ...';
 /* DESC: General. */
 ui_strings.M_SETTING_LABEL_GENERAL = 'General';
+/* DESC: Dragonfly is waiting for host connection */
+ui_strings.S_INFO_WAITING_FORHOST_CONNECTION = "Waiting for a host connection on port %s.";
 
 /*
  * Alerts

@@ -137,7 +137,7 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, TopStatusbar
   this.cleanUp = function()
   {
     window.removeEventListener('resize', setDelayedResize, false);
-    resize_timeout.clear();
+    resize_timeout && resize_timeout.clear();
     resize_timeout = null;
   }
 

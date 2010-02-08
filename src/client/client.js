@@ -1,7 +1,6 @@
 ﻿/**
   * @constructor 
   */
-// test
 
 var composite_view_convert_table = 
 {
@@ -32,15 +31,10 @@ var composite_view_convert_table =
   }
 }
 
-
-
-
 window.cls || ( window.cls = {} );
 
 window.cls.Client = function()
 {
-  /* generated code */
-  // singleton
   if(arguments.callee.instance)
   {
     return arguments.callee.instance;
@@ -94,6 +88,7 @@ window.cls.Client = function()
   var _on_host_quit = function()
   {
     window.window_manager_data.clear_debug_context();
+    messages.post('host-state', {state: global_state.ui_framework.spin_state = 'inactive'});
   }
 
   var _get_port_number = function()
@@ -101,10 +96,6 @@ window.cls.Client = function()
     // TODO
     // port 0 means debugging to current Opera instance, 
     // any other port means remote debugging.
-    /*
-          window.helpers.setCookie('debug-remote', JSON.stringify(is_debug_remote));
-      window.helpers.setCookie('port', JSON.stringify(port));
-      */
     var is_remote_debug = 
       settings.debug_remote_setting.get('debug-remote') ||
       JSON.parse(window.helpers.getCookie('debug-remote')) || 
@@ -142,240 +133,21 @@ window.cls.Client = function()
     {
       cls.debug.wrap_transmit();
     }
-
     if(window.topCell)
     {
       window.topCell.cleanUp();
     }
-
-    viewport.innerHTML = "<div class='padding'>" +
-        "<div class='info-box'>Waiting for a host connection" +
-        ( port ?
-          "<p><input type='button' value='Cancel remote debug' handler='cancel-remote-debug'></p>" :
-          "") +
-        "</div>" +
-      "</div>";
+    viewport.innerHTML = 
+    "<div class='padding'>" +
+      "<div class='info-box'>" + ui_strings.S_INFO_WAITING_FORHOST_CONNECTION.replace(/%s/, port) +
+          ( port ? "<p><input type='button' value='" + ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG + "'" +
+                " handler='cancel-remote-debug'></p>" : "") +
+      "</div>" +
+    "</div>";
   }
-
-  /* end generated code */
-
-
-  /*
-  var services = [];
-  var services_dict = {};
-  var services_avaible = {};
-
-  var _client_id = 0;
-
-  // the quit calback of scopeAddClient doesn't work 
-  // if the callback is created in the scope of scopeSetupClient
-  var quit_callback = null; 
-  
-  this.addService = function(service)
-  {
-    services[services.length] = service;
-    services_dict[service.name] = service;
-  }
-  */
-
-  /**** methods for integrated proxy ****/
-
-  /*
-  var host_connected = function(_services)
-  {
-    services_avaible = eval("({\"" + _services.replace(/,/g, "\":1,\"") + "\":1})");
-    // workaround for a missing hello message
-    if( 'window-manager' in services_avaible )
-    {
-      var service = null, i = 0;
-      for( ; service = services[i]; i++)
-      {
-        if (service.name in services_avaible)	
-        {
-          opera.scopeEnableService(service.name);
-          service.is_implemented = true;
-          service.onconnect();
-        }
-        else
-        {
-          alert ( ui_strings.S_INFO_SERVICE_NOT_AVAILABLE.replace(/%s/, service.name) );
-        }
-      }
-    }
-    else
-    {
-      handle_fallback.apply(new XMLHttpRequest(), ["protocol-3"]);
-    }
-
-
-
-  }
-
-  var receive = function(service, msg)
-  {
-    var xml_doc = ( new DOMParser() ).parseFromString(msg, "application/xml");
-    if(xml_doc)
-    {
-      services_dict[service].onreceive(xml_doc);
-    }
-  }  
-
-  this.onquit_timeout = 0;
-
-  this.reset_onquit_timeout = function()
-  {
-    self.onquit_timeout = 0;
-    self.scopeSetupClient();
-  }
-
-  var get_quit_callback = function(client_id)
-  {
-    // workaround for bug CORE-25389
-    // onQuit() callback is called twice when 
-    // creating new client with addScopeClient
-    return function(msg)
-    {
-      if(client_id == _client_id)
-      {
-        quit(msg);
-      }
-    }
-  }
-
-  var quit = function(msg)
-  {
-    if( !self.onquit_timeout )
-    {
-      // workaround. right now for each service a quit event is dispatched
-      messages.post('reset-state'); 
-      messages.post('host-state', {state: 'inactive'});
-      for( var view_id in views )
-      {
-        if( !views[view_id].do_not_reset )
-        {
-          views[view_id].clearAllContainers();
-        }
-      }
-      self.onquit_timeout = setTimeout(self.reset_onquit_timeout, 500);
-    }
-  }
-
-  
-
-  var post_scope = function(service, msg)
-  {
-    if( ini.debug )
-    {
-      debug.logCommand(msg);
-    }
-    opera.scopeTransmit(service, "<?xml version=\"1.0\"?>" + msg)
-  }
-
-  */
-
-  /* methods for standalone proxy Dragonkeeper */
-
-  /*
-  var receive_dragonkeeper = function(xml, xhr)
-  {
-    // opera.postError('scope message: ' + (''+new Date().getTime()).slice(6) + ' '+ xml.documentElement.nodeName + ' '+ xhr.responseText)
-    if(xml.documentElement.nodeName != 'timeout')
-    {
-      services_dict[xhr.getResponseHeader("X-Scope-Message-Service")].onreceive(xml);
-    }
-    proxy.GET( "/scope-message?time" + new Date().getTime(), receive_dragonkeeper);
-  } 
-
-  */
-
-  /**** methods for standalone proxy Java ****/
-
-  /*
-  var command_name = "/";
-  var post_proxy = function(service, msg)
-  {
-    if( ini.debug )
-    {
-      debug.logCommand(msg);
-      
-    }
-    proxy.POST(command_name + service, msg);
-  }
-
-  var bindCB = function(service)
-  {
-    var service_name = service.name;
-    var boundGetEvent = function(xml)
-    {
-      if(xml.documentElement.nodeName != 'timeout')
-      {
-        service.onreceive(xml);
-      }
-      proxy.GET( "/" + service_name, boundGetEvent );
-    }
-    return boundGetEvent;
-  }
-
-  var proxy_onsetup = function(xhr)
-  {
-    var service = null, i = 0, is_event_loop = false, server_name = xhr.getResponseHeader("Server");
-    // workaround for a missing hello message
-    // TODO check the fake core service version
-    for( ; ( service = this.services[i] ) && !( service == 'window-manager' ); i++);
-    if( service == 'window-manager' )
-    {
-      for( i = 0; service = services[i]; i++)
-      {
-        if (!proxy.enable(service.name))	
-        {
-          alert
-          ( 
-             'Could not find an Opera session to connect to.\n' +
-             'Please try the following:\n' + 
-             '1. Open another Opera instance\n' +
-             '2. In that Opera instance, open opera:config and check "Enable Debugging" and "Enable Script Debugging" under "Developer Tools"\n' +
-             '3. Restart that Opera instance' 
-          );
-        }
-        else
-        {
-          service.is_implemented = true;
-          if(server_name && server_name.indexOf("Dragonkeeper") != -1 )
-          {
-            if(!is_event_loop)
-            {
-              window.client.scope_proxy = "dragonkeeper";
-              command_name = "/send-command/";
-              is_event_loop = true;
-              setTimeout(function(){
-                proxy.GET( "/scope-message?time=" + new Date().getTime(), receive_dragonkeeper);
-              }, 10, service);
-            }
-            setTimeout(function(service){
-              service.onconnect();
-            }, 10, service);
-          }
-          else
-          {
-            setTimeout(function(service){
-              service.onconnect();
-              proxy.GET( "/" + service.name, bindCB(service) );
-            }, 10, service);
-          }
-        }
-      }
-    }
-    else
-    {
-      handle_fallback.apply(new XMLHttpRequest(), ["protocol-3"]);
-    }
-  }
-
-  */
 
   var handle_fallback = function(version)
   {
-    // for local testing
     var 
     href = location.href,
     protocol = location.protocol + '//',
@@ -394,7 +166,7 @@ window.cls.Client = function()
       if (this.status != 200)
       {
         opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
-                        "could not load fallback urls. (during local development this is OK!)")
+            "could not load fallback urls. (during local development this is OK!)")
         return;
       }
       var fallback_urls = eval( "(" + this.responseText + ")" );
@@ -414,113 +186,9 @@ window.cls.Client = function()
     this.send(null);
   }
 
-  
-  this.scopeSetupClient = function()
-  {      
-    _client_id++;
-    quit_callback = get_quit_callback(_client_id);
-    var port = settings.debug_remote_setting.get('debug-remote') 
-      && settings.debug_remote_setting.get('port')
-      || 0;
-    
-    if(port)
-    {
-      alert(ui_strings.S_INFO_WAITING_FOR_CONNECTION.replace(/%s/, port));
-    }
-    opera.scopeAddClient(host_connected, receive, quit_callback, port);
-  }
-
-  this.post = function(){};
-
   this.beforeUIFrameworkSetup = function()
   {
-    var host = location.host.split(':');
     var layouts = ui_framework.layouts;
-    /*
-    var args = location.search, params = {}, arg = '', i = 0, ele = null;
-    var no_params = true;
-
-
-    if( args )
-    {
-      args = args.slice(1).split(';');
-      for( ; arg = args[i]; i++)
-      {
-        arg = arg.split('=');
-        params[arg[0]] = arg[1] ? arg[1] : true;
-        no_params = false;
-      }
-    }
-    if( params.debug || params['event-flow'] )
-    {
-      Debug.init();
-      if(params.debug) ini.debug = true;
-      if(params['event-flow']) window.__debug_event_flow__ = true;
-    }
-     // e.g. log-events=thread-started,thread-stopped-at,thread-finished,new-script
-    if( params['log-events'] )
-    {
-      
-      if(!ini.debug) 
-      {
-        ini.debug = true;
-        Debug.init();
-      }
-      debug.setEventFilter(params['log-events']);
-    }
-    // e.g. log-commands=continue
-    if( params['log-commands'] )
-    {
-      if(!ini.debug) 
-      {
-        ini.debug = true;
-        Debug.init();
-      }
-      debug.setCommandFilter(params['log-commands']);
-    }
-    if( params['profiling'] )
-    {
-      Debug.init();
-      window.__profiling__ = true;
-      window.__times__ = [];
-    }
-    if( params['test'] )
-    {
-      Debug.init();
-      window.__testing__ = true;
-      window.__times_spotlight__ = [];
-    }
-    if( params['profile-dom'] )
-    {
-      Debug.init();
-      window.__times_dom = [];
-    }
-
-    if( !ini.debug || !params['error-console'] )
-    {
-      // opera.postError = function(){};
-    }
-    settings.general.set('show-views-menu', ini.debug)
-    /*
-    if( opera.scopeAddClient )
-    {
-      self.post = post_scope;
-      self.scopeSetupClient();
-    }
-    else
-    {
-      if( host[1] )
-      {
-        self.post = post_proxy;
-        proxy.onsetup = proxy_onsetup;
-        proxy.configure(host[0], host[1]);
-      }
-      else
-      {
-        alert(ui_strings.S_INFO_WRONG_START);
-      }
-    }
-    */
     new CompositeView('network_panel', ui_strings.M_VIEW_LABEL_NETWORK, layouts.network_rough_layout);
     new CompositeView('console_new', ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE, layouts.console_rough_layout);
     new CompositeView('js_new', ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS, layouts.js_rough_layout);
@@ -600,11 +268,6 @@ window.cls.Client = function()
     {
       messages.post("host-state", {state: global_state.ui_framework.spin_state});
     }
-  }
-
-  this.onquit = function()
-  {
-    messages.post('host-state', {state: global_state.ui_framework.spin_state = 'inactive'});
   }
 
   window.app.addListener('services-created', function()

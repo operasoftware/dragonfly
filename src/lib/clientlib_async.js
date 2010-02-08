@@ -109,21 +109,13 @@ window.cls.Proxy = function()
     {
       if ( this.status != 200) 
       {
-        throw "Message failed, Status: " + this.status + ", msg: " + msg ;
+        throw ("Message failed, Status: " + this.status + ", msg: " + msg);
       }
       self.onReceive(x);
       var xml = this.responseXML;
       if ( ( !xml || xml.documentElement == null ) && !this.responseText )
       {
-        if(client)
-        {
-          client.onquit();
-          return;
-        }
-        else
-        {
-          throw "Message failed, GET, empty document: " + this.responseText;
-        }
+        throw "Message failed, GET, empty document: " + this.responseText;
       }
       if(cb) 
       {
