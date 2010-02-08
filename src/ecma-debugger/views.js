@@ -374,6 +374,7 @@ eventHandlers.click['apply-remote-debugging'] = function(event, target)
       // for older clients
       window.helpers.setCookie('debug-remote', JSON.stringify(is_debug_remote));
       window.helpers.setCookie('port', JSON.stringify(port));
+      window.topCell.showView('dom');
       client.setup();
       target.disabled = (
         target.previousSibling.previousSibling.firstChild.checked == 

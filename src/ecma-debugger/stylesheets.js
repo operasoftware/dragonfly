@@ -845,13 +845,13 @@ var stylesheets = new function()
     if(!__sheets[data.rt_id])
     {
       var tag = tagManager.set_callback(null, handleGetAllStylesheets, [data.rt_id, org_args]);
-      services['ecmascript-debugger'].getAllStylesheets( tag, data.rt_id, 'json' );
+      services['ecmascript-debugger'].requestCssGetAllStylesheets(tag, [data.rt_id]);
       return '';
     }
     if( !__indexMap )
     {
       var tag = tagManager.set_callback(null, handleGetIndexMap, [org_args]);
-      services['ecmascript-debugger'].getIndexMap( tag, 'json' );
+      services['ecmascript-debugger'].requestCssGetIndexMap(tag);
       return '';
     }
     return _pretty_print_cat[cat_index](data, search_active);
@@ -923,21 +923,21 @@ var stylesheets = new function()
   
   this.getRulesWithSheetIndex = function(rt_id, index, org_args)
   {
-    if(__rules[rt_id][index])
+    if(rt_id)
     {
-      return __rules[rt_id][index];
+      if(__rules[rt_id][index])
+      {
+        return __rules[rt_id][index];
+      }
+      if(__sheets[rt_id][index])
+      {
+        var tag = tagManager.set_callback(null, handleGetRulesWithIndex, [rt_id, index, org_args]);
+        var sheet_id = __sheets[rt_id][index][SHEET_OBJECT_ID];
+        services['ecmascript-debugger'].requestCssGetStylesheet(tag, [rt_id, sheet_id]);
+        return null;
+      }
     }
-    else if(__sheets[rt_id][index])
-    {
-      var tag = tagManager.set_callback(null, handleGetRulesWithIndex, [rt_id, index, org_args]);
-      var sheet_id = __sheets[rt_id][index][SHEET_OBJECT_ID];
-      services['ecmascript-debugger'].requestCssGetStylesheet(tag, [rt_id, sheet_id]);
-      return null;
-    }
-    else
-    {
-      return null;
-    }
+    return null;
   }
   
   this.setSelectedSheet = function(rt_id, index, rules, rule_id)
@@ -1310,6 +1310,8 @@ var stylesheets = new function()
     rt_id_c_2 = '',
     i = 0;
 
+    
+
     for( rt_id_c_1 in __on_new_stylesheets_cbs )
     {
       for( i = 0; ( rt_id_c_2 = rt_ids[i] ) && rt_id_c_1 != rt_id_c_2 ; i++ );
@@ -1328,8 +1330,7 @@ var stylesheets = new function()
     __new_rts = rt_ids;
     if( rt_ids[0] != __top_rt_id )
     {
-
-      __top_rt_id = rt_ids[0];
+      __top_rt_id = rt_ids[0] || 0;
       __selectedRules = null;
       views['stylesheets'].update();
     }
@@ -1376,8 +1377,27 @@ var stylesheets = new function()
         views.stylesheets.clearAllContainers();
       }
     }
-    updateOnNewStylesheets(msg.activeTab.slice(0));
-    checkNewRts({});
+    if(!msg.activeTab.length)
+    {
+      __sheets = {};
+      // document.styleSheets[index].cssRules with runtime-id and index as keys
+      __rules = {};
+      __indexMap = null;
+      __indexMapLength = 0;
+      __sortedIndexMap = [];
+      __initialValues = [];
+      __shorthandIndexMap = [];
+      __selectedRules = null;
+      __colorIndex = 0;
+      __new_rts = null;
+      __top_rt_id = '';
+      __on_new_stylesheets_cbs = {};
+    }
+    else
+    {
+      updateOnNewStylesheets(msg.activeTab.slice(0));
+      checkNewRts({});
+    }
   }
 
   this.getSortedProperties = function()

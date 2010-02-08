@@ -82,7 +82,11 @@ cls.EcmascriptDebugger["5.0"].HostTabs = function()
   {
     if(!__window_id || __window_id != window_id)
     {
-      activeTabOnChange();
+      // if window id is 0 the connection is closed
+      if(window_id)
+      {
+        activeTabOnChange();
+      }
       __window_id = window_id;
       runtimes.setActiveWindowId(window_id);
       __activeTab = runtimes.getRuntimeIdsFromWindow(window_id);

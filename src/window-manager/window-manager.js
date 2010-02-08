@@ -13,6 +13,7 @@ cls.WindowManager["2.0"].WindowManagerData = function()
   this.get_debug_context = function(){};
   this.get_window = function(win_id){};
   this.set_debug_context = function(win_id){};
+  this.clear_debug_context = function(){};
   this.get_debug_context_title = function(){};
   this.bind = function(){};
 
@@ -225,6 +226,16 @@ cls.WindowManager["2.0"].WindowManagerData = function()
       100
     )
     */
+  }
+
+  this.clear_debug_context = function()
+  {
+    this._active_window = 0;
+    this._window_list = null;
+    this._debug_context = 0;
+    this._check_counter = 0;
+    window.host_tabs.setActiveTab(0);
+    window.windowsDropDown.update();
   }
 
   this.bind = function()

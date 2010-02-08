@@ -93,7 +93,7 @@ window.cls.Client = function()
 
   var _on_host_quit = function()
   {
-
+    window.window_manager_data.clear_debug_context();
   }
 
   var _get_port_number = function()
@@ -141,6 +141,11 @@ window.cls.Client = function()
     if(window.ini.debug && !opera.scopeHTTPInterface)
     {
       cls.debug.wrap_transmit();
+    }
+
+    if(window.topCell)
+    {
+      window.topCell.cleanUp();
     }
 
     viewport.innerHTML = "<div class='padding'>" +
