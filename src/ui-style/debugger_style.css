@@ -623,7 +623,8 @@ stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
 
 .dom div
 {
-  padding-left: 2px;
+  padding-left: 1px;
+  border-left: 1px solid transparent;
 }
 
 

@@ -103,9 +103,14 @@
 	color: #111;
   }
 
-#target-element{
-	background-color:#e8e8b9;
-  }
+#target-element
+{
+	background-color:#eec;
+  margin-top: -1px;
+  margin-right: -1px;
+  margin-bottom: -1px;
+  border: 1px solid hsl(60, 30%, 60%); 
+}
 
 .dom [handler="spotlight-node"]:hover
 {
