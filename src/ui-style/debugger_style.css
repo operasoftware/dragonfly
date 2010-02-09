@@ -621,18 +621,23 @@ stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
   white-space: pre-wrap;
   }
 
+.dom div
+{
+  padding-left: 2px;
+}
+
 
 .dom input 
 {
   border: 0;
   margin: 0;
-  margin-left: -23px;
-  padding-right:4px;
+  padding: 0;
+  margin-left: -21px;
   cursor: pointer;
   height: 15px;
-  width: 19px;
+  width: 22px;
   color: #666;
-  background: transparent url('../ui-images/expand-collapse.png') 4px 2px no-repeat;
+  background: transparent url('../ui-images/expand-collapse.png') 6px 2px no-repeat;
 }
 
 .dom input:focus
@@ -641,17 +646,14 @@ stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
 }
 
 .dom input.open {
-  background-position: 4px -13px;
+  background-position: 6px -13px;
   }
 
 .dom .node {
   cursor:pointer;
   }
 
-.dom [handler="spotlight-node"]:hover
-{
-  background-color: #f9f9ec;
-}
+
 
 .tree-style .text-node
 {
