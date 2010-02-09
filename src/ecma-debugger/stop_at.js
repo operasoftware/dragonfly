@@ -303,7 +303,6 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
             views.js_source.showLinePointer( line, true );
           }
           __controls_enabled = true;
-          window.focus();
           toolbars.js_source.enableButtons('continue');
           messages.post('thread-stopped-event', {stop_at: stopAt});
           messages.post('host-state', {state: 'waiting'});
@@ -334,7 +333,6 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
           views.js_source.showLinePointer( line, true );
         }
         __controls_enabled = true;
-        window.focus();
         toolbars.js_source.enableButtons('continue');
         messages.post('thread-stopped-event', {stop_at: stopAt});
         messages.post('host-state', {state: 'waiting'});
