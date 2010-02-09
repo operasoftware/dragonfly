@@ -118,6 +118,8 @@
       max_height_2 = top - 30,
       style = '';
 
+      
+
       if( modal_box_height > max_height && modal_box_height < max_height_2 )
       {
         style += "top: " + ( top - modal_box_height ) + "px;";
@@ -127,9 +129,10 @@
         style += "top: " + bottom + "px;";
         modal_box.firstElementChild.style.cssText = "max-height: " + max_height + "px;"
       };
-      if( modal_box_width > max_width && modal_box_width < max_width_2 )
+      if (modal_box_width > max_width && max_width_2 > max_width)
       {
-        style += "left: " + ( right - modal_box_width ) + "px;";
+        style += "left: " + (right - Math.min(modal_box_width, max_width_2)) + "px;" +
+          "max-width: " + Math.min(modal_box_width, max_width_2) + "px;";
       }
       else
       {
