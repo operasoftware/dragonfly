@@ -136,7 +136,7 @@ helpers = new function()
     var obj_id = parseInt(event.target.getAttribute('obj-id'));
     if( obj_id )
     {
-      hostspotlighter.spotlight(obj_id);
+      hostspotlighter.soft_spotlight(obj_id);
     }
   }
   // mouseover handler in the breadcrumb
@@ -145,7 +145,7 @@ helpers = new function()
     var obj_id = event.target.getAttribute('obj-id');
     if( obj_id )
     {
-      hostspotlighter.clearSpotlight();
+      //hostspotlighter.clearSpotlight();
     }
   }
 

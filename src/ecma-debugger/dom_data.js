@@ -117,7 +117,7 @@ var dom_data = new function()
     current_target = obj_id;
     data = [];
     mime = '';
-    var tag = tagManager.set_callback(null, handleGetDOM, [ rt_id, obj_id]);
+    var tag = tagManager.set_callback(null, handleGetDOM, [rt_id, obj_id, event.highlight === false ? false : true]);
     services['ecmascript-debugger'].requestInspectDom(tag, 
       [obj_id, 'parent-node-chain-with-children']);
   }
@@ -166,7 +166,7 @@ var dom_data = new function()
     return data.length && mime == "text/html" || false;
   }
 
-  var handleGetDOM = function(status, message, rt_id, obj_id)
+  var handleGetDOM = function(status, message, rt_id, obj_id, highlight_target)
   {
     const NODE_LIST = 0;
     var view_id = '', i = 0;
@@ -183,6 +183,10 @@ var dom_data = new function()
     if(data[i] && data[i][ID] != obj_id)
     {
       current_target = obj_id = data[i][ID];
+    }
+    if(highlight_target)
+    {
+      hostspotlighter.spotlight(current_target);
     }
 
     if( rt_id != data_runtime_id || __next_rt_id )
@@ -384,7 +388,7 @@ var dom_data = new function()
     
     if(message[STATUS] == 'completed' )
     {
-      clickHandlerHost({runtime_id: rt_id, object_id: message[OBJECT_VALUE][OBJECT_ID] })
+      clickHandlerHost({runtime_id: rt_id, object_id: message[OBJECT_VALUE][OBJECT_ID], highlight: false})
     }
     else
     {
@@ -484,7 +488,7 @@ var dom_data = new function()
   var spotlight = function(event)
   {
     reset_spotlight_timeouts.clear();
-    hostspotlighter.spotlight(event.object_id);
+    hostspotlighter.soft_spotlight(event.object_id);
   }
 
   var reset_spotlight = function()

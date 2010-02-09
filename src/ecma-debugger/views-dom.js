@@ -745,8 +745,7 @@ messages.post('setting-changed', {id: 'dom', key: 'dom-tree-style'});
 
 eventHandlers.click['breadcrumb-link'] = function(event, target)
 {
-  // TODO: string or number?
-  var obj_id = target.getAttribute('obj-id'); 
+  var obj_id = parseInt(target.getAttribute('obj-id')); 
   if( obj_id )
   {
     dom_data.setCurrentTarget(obj_id);
@@ -756,7 +755,10 @@ eventHandlers.click['breadcrumb-link'] = function(event, target)
 
 eventHandlers.mouseover['spotlight-node'] = function(event, target)
 {
-  hostspotlighter.soft_spotlight(parseInt(target.getAttribute('ref-id')));
+  if(settings['dom'].get('highlight-on-hover'))
+  {
+    hostspotlighter.soft_spotlight(parseInt(target.getAttribute('ref-id')));
+  }
 }
 
 
