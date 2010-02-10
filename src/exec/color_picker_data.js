@@ -12,7 +12,9 @@ var color_picker_data = new function()
   // returns the dimension of the screenshot 
   // as an object with width and height properties
   this.get_dimensions = function(){};
-  this.set_screenshot_dimension = function(dimension){};
+  // to set the pixel dimensions of the screenshot
+  this.set_dimensions = function(width, height){};
+  this.set_screenshot_dimension = function(width, height){};
   // to start and stop the color picker
   this.set_active_state = function(bool){};
   this.get_active_state = function(){}; 
@@ -35,8 +37,8 @@ var color_picker_data = new function()
   this._color_picker_rt_id = 0;
   this._interval = 0;
   this._is_active = false;
-  this._width = 15;
-  this._height = 15;
+  this._width = 1;
+  this._height = 1;
   this._delta = this._height / 2 << 0;
   this._x = 0;
   this._y = 0;
@@ -134,8 +136,8 @@ var color_picker_data = new function()
       // TODO return a json format
       var pos_raw = eval(message[VALUE]);
       var pos = pos_raw && {
-        x: pos_raw.x - this._delta,
-          y: pos_raw.y - this._delta,
+        x: pos_raw.x - (this._width / 2 >> 0),
+          y: pos_raw.y - (this._height / 2 >> 0),
           w: this._width,
           h: this._height
 
@@ -348,12 +350,12 @@ var color_picker_data = new function()
     return {width: this._width, height: this._height};
   }
 
-  this.set_screenshot_dimension = function(dimension)
+  this.set_dimension =
+  this.set_screenshot_dimension = function(width, height)
   {
-    this._width = this._height = dimension;
-    this._delta = this._height / 2 << 0;
+    this._width = width;
+    this._height = height;
     this._set_canavas_dimensions();
-    window.views.color_picker.set_screenshot_dimension();
   }
 
   this.set_active_state = function(bool)

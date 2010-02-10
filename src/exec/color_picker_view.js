@@ -12,7 +12,7 @@ cls.ColorPicker = function(id, name, container_class)
   this.createView = function(container){};
   this.ondestroy = function(){};
   this.display_screenshot = function(){};
-  this.set_screenshot_dimension = function(){};
+  this.set_screenshot_dimension = function(json_object){};
   this.set_scale = function(scale){};
   this.pick_color = function(event, target){};
   this.set_average_dimension = function(average){};
@@ -21,10 +21,9 @@ cls.ColorPicker = function(id, name, container_class)
   /* constants */
 
   const 
-  DELTA_SCALE = 5, 
-  SCALE = 20,
+  DELTA_SCALE = 5,
+  SCALE = 15,
   MAX_DIMENSION = 350,
-  MAX_PIXEL = 33,
   AVERAGE_PIXEL_COUNT = 3,
   COLOR_MASK_ALPHA = 0.5;
 
@@ -36,42 +35,32 @@ cls.ColorPicker = function(id, name, container_class)
   this._ctx = null;
   this._ctx_color_mask = null;
   this._colors = new Colors();
+
   this._width = 0;
   this._height = 0;
   this._scale = SCALE;
+  this._screenshot_width = 0;
+  this._screenshot_height = 0;
   this._average = 0;
   this._average_delta = 0;
-
-  this._get_dimesions = function()
-  {
-    var area = window.color_picker_data.get_dimensions();
-    this._width = area.width;
-    this._height = area.height;
-  }
 
   this._setup_canvas = function()
   {
     var 
-    w = this._scale * this._width,
-    h = this._scale * this._height,
+    w = this._width,
+    h = this._height,
     canvases = this._container.getElementsByTagName('canvas'),
     canvas = null;
     i = 0;
 
     for( ; canvas = canvases[i]; i++)
     {
+      
       canvas.style.height = ( canvas.height = h ) + 'px';
       canvas.style.width =  ( canvas.width = w ) + 'px';
       this[i && '_ctx_color_mask' || '_ctx'] = canvas.getContext('2d');
     }
     this._ctx_color_mask.globalAlpha = COLOR_MASK_ALPHA;
-  }
-
-  this._setup_scale_select = function()
-  {
-    document.getElementById('color-picker-scale').clearAndRender(
-        window.templates.color_picker_create_scale_select(
-            this._width, this._scale, DELTA_SCALE, MAX_DIMENSION));
   }
 
   this._update_center_color = function(x, y)
@@ -95,10 +84,10 @@ cls.ColorPicker = function(id, name, container_class)
 
       if(!is_index)
       {
-        x = this._width / 2 >> 0;
-        y = this._height / 2 >> 0;
+        x = this._screenshot_width / 2 >> 0;
+        y = this._screenshot_height / 2 >> 0;
       }
-      index = y * this._width + x;
+      index = y * this._screenshot_width + x;
       x -= this._average_delta;
       y -= this._average_delta;
       if( x < 0 )
@@ -111,13 +100,13 @@ cls.ColorPicker = function(id, name, container_class)
         h += y;
         y = 0;
       }
-      if( x + w > this._width )
+      if( x + w > this._screenshot_width )
       {
-        w = this._width - x;
+        w = this._screenshot_width - x;
       }
-      if( y + h > this._height )
+      if( y + h > this._screenshot_height )
       {
-        h = this._height - y;
+        h = this._screenshot_height - y;
       }
       color = window.color_picker_data.get_area_data(x, y, w, h);
       for( ; i < color.length; i += 4)
@@ -137,14 +126,32 @@ cls.ColorPicker = function(id, name, container_class)
         "hsl: " + hsl[0] + ", " + hsl[1] + "%, " + hsl[2] + "%\n" +
         "hex: " + "#" + hex;
 
-      this._ctx_color_mask.clearRect(0, 0, this._width * scale, this._height * scale);  
+      this._ctx_color_mask.clearRect(0, 0, this._screenshot_width * scale, this._screenshot_height * scale);  
       if(is_index && index !== this._last_index)
       {
-        this._ctx_color_mask.fillRect(0, 0, this._width * scale, this._height * scale); 
+        this._ctx_color_mask.fillRect(0, 0, this._screenshot_width * scale, this._screenshot_height * scale); 
         this._ctx_color_mask.clearRect(x * scale, y * scale, w * scale, h * scale); 
       }
       this._last_index = is_index && index !== this._last_index ? index : -1;      
     }
+  }
+
+  this._set_dimesions = function(container, screenshot_width, screenshot_height)
+  {
+    this._width = container.offsetWidth - (2 * 280);
+    this._height = container.offsetHeight - (2* 12);
+    this._width > MAX_DIMENSION && (this._width = MAX_DIMENSION);
+    this._height > MAX_DIMENSION && (this._height = MAX_DIMENSION);
+    if(screenshot_width && screenshot_height)
+    {
+      this._scale = Math.max(this._width / screenshot_width, this._height / screenshot_height) >> 0;
+    }
+    window.settings['color_picker'].set('color-picker-scale', this._scale);
+    this._width -= this._width % this._scale;
+    this._height -= this._height % this._scale;
+    this._screenshot_width = this._width / this._scale;
+    this._screenshot_height = this._height / this._scale;
+    window.color_picker_data.set_dimension(this._screenshot_width, this._screenshot_height);
   }
 
   /* interface implementations */
@@ -153,10 +160,16 @@ cls.ColorPicker = function(id, name, container_class)
   {
     window.color_picker_data.set_active_state(true);
     this._container = container;
-    this._get_dimesions();
+    var scale = window.settings['color_picker'].get('color-picker-scale');
+    scale != this._scale && ( this._scale = scale);
+    this._set_dimesions(container);
     container.render(window.templates.color_picker(
-          this._width, this._height, this._scale, this._scale, MAX_PIXEL, 
-          this._scale, DELTA_SCALE, MAX_DIMENSION));
+      this._screenshot_width, 
+      this._screenshot_height, 
+      this._scale, 
+      DELTA_SCALE
+      )
+    );
     this._setup_canvas();
     this.display_screenshot();
   }
@@ -166,13 +179,13 @@ cls.ColorPicker = function(id, name, container_class)
     window.color_picker_data.set_active_state(false);
     this._container = 
     this._ctx = 
-    this._ctx_color_mask = null;null;
+    this._ctx_color_mask = null;
   }
 
   this.display_screenshot = function()
   {
     var 
-    pixel_count = this._width * this._height,
+    pixel_count = this._screenshot_width * this._screenshot_height,
     img_data = window.color_picker_data.get_data(),  
     x = 0,
     i = 0, 
@@ -188,35 +201,33 @@ cls.ColorPicker = function(id, name, container_class)
             img_data[cur + 0] + "," + 
             img_data[cur + 1] + "," + 
             img_data[cur + 2] +")";
-        x = i % this._width;
-        this._ctx.fillRect(x * scale, ( i - x ) / this._width * scale, scale, scale); 
+        x = i % this._screenshot_width;
+        this._ctx.fillRect(x * scale, ( i - x ) / this._screenshot_width * scale, scale, scale); 
       }
       this._update_center_color();
     }
   }
 
-  this.set_screenshot_dimension = function()
+  this.set_screenshot_dimension = function(json_obj)
   {
-    this._get_dimesions();
-    if(this._scale * this._width > MAX_DIMENSION)
+    var area = JSON.parse(json_obj);
+    if (this.isvisible())
     {
-      this._scale = DELTA_SCALE;
-      while((this._scale + DELTA_SCALE) * this._width <= MAX_DIMENSION)
-      {
-        this._scale += DELTA_SCALE;
-      }
-    }
-    if(this.isvisible())
-    {
-      this._setup_canvas();
-      this._setup_scale_select();
+      this._set_dimesions (this._container, area.w, area.h);
+      this._container.innerHTML = "";
+      this.createView(this._container);
     }
   }
 
   this.set_scale = function(scale)
   {
     this._scale = scale;
-    this._setup_canvas();
+    window.settings['color_picker'].set('color-picker-scale', scale);
+    if (this.isvisible())
+    {
+      this._container.innerHTML = "";
+      this.createView(this._container);
+    }
   }
 
   this.pick_color = function(event, target)
@@ -242,8 +253,8 @@ cls.ColorPicker = function(id, name, container_class)
     if(this._last_index > -1)
     {
       var 
-      x = this._last_index % this._width,
-      y = (this._last_index - x) / this._width;
+      x = this._last_index % this._screenshot_width,
+      y = (this._last_index - x) / this._screenshot_width;
 
       this._last_index = -1;
       this._update_center_color(x, y);
@@ -255,6 +266,28 @@ cls.ColorPicker = function(id, name, container_class)
   this.set_average_dimension(AVERAGE_PIXEL_COUNT);
   this.init(id, name, container_class);
 }
+
+new Settings
+(
+  // id
+  'color_picker', 
+  // kel-value map
+  {
+
+    'color-picker-scale': 15,
+  }, 
+  // key-label map
+  {
+  
+  },
+  // settings map
+  {
+    checkboxes:
+    [
+
+    ]
+  }
+);
 
 cls.ColorPicker.prototype = ViewBase;
 new cls.ColorPicker('color_picker', 'Color Picker', 'scroll');

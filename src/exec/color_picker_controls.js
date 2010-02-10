@@ -12,7 +12,7 @@ eventHandlers.change["set-color-picker-scale"] = function(event, target)
 
 eventHandlers.change["update-area"] = function(event, target)
 {
-  window.color_picker_data.set_screenshot_dimension(parseInt(target.value));
+  window.views.color_picker.set_screenshot_dimension(target.value);
 }
 
 eventHandlers.change["update-average"] = function(event, target)

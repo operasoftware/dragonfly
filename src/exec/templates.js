@@ -3,7 +3,7 @@
 // TODO create text strings
       
 window.templates.color_picker = function(
-    width, height, cell_width, cell_height, max_pixel, cur_scale, delta_scale, max_dimensions)
+    screenshot_width, screenshot_height, scale, delta_scale)
 {
   return (
     ['div',
@@ -13,7 +13,7 @@ window.templates.color_picker = function(
             ['label', 
               'Area' + ': ',
               ['select', 
-                this.color_picker_create_dimesion_select(width, max_pixel),
+                this.color_picker_create_dimesion_select(screenshot_width, screenshot_height),
                 'id', 'color-picker-area', 
                 'handler', 'update-area']
             ],
@@ -21,7 +21,7 @@ window.templates.color_picker = function(
             ['label', 
               'Scale' + ': ',
               ['select', 
-                this.color_picker_create_scale_select(width, cur_scale, delta_scale, max_dimensions),
+                this.color_picker_create_scale_select(scale, delta_scale),
                 'id', 'color-picker-scale', 
                 'handler', 'set-color-picker-scale']
             ],
@@ -64,26 +64,52 @@ window.templates.color_picker_average_select = function()
     ]);
 }
 
-window.templates.color_picker_create_dimesion_select = function(width, max_pixel)
+window.templates.color_picker_create_dimesion_select = function(width, height)
 {
-  var ret = [], i = 3;
-  for( ; i <= max_pixel; i+=2)
+  // width and height are the actual pixel values of the screenshot
+  var 
+  ret = [], 
+  delta = 3, 
+  steps = 4,
+  lower_lim = steps,
+  min = Math.min(width, height),
+  i = 0,
+  w = 0,
+  h = 0;
+
+  while ((i = min - lower_lim * delta) < 1)
   {
+    lower_lim--;
+  }
+  for( ; i <= min + steps * delta; i += delta)
+  {
+    // i is either of type width or height
+    w = i * (min == width ? 1 : width / height)  >> 0;
+    h = i * (min == width ? height / width : 1)  >> 0;
     ret[ret.length] = 
-      ['option', i + " x " + i, 'value', i.toString()].
-      concat(i == width ? ['selected', 'selected'] : []);
+      ['option', w + " x " + h , 'value', JSON.stringify({w: w, h: h})].
+      concat(i == min ? ['selected', 'selected'] : []);
   }
   return ret;
 }
 
-window.templates.color_picker_create_scale_select = function(width, cur_scale, delta_scale, max_dimensions)
+window.templates.color_picker_create_scale_select = function(scale, delta)
 {
-  var ret = [], max_scale = max_dimensions / width >> 0, i = delta_scale;
-  for( ; i <= max_scale; i += delta_scale)
+  var 
+  ret = [], 
+  steps = 3,
+  lower_lim = steps,
+  i = delta;
+
+  while ((i = scale - lower_lim * delta) < 1)
+  {
+    lower_lim--;
+  }
+  for( ; i <= scale + steps * delta; i += delta)
   {
     ret[ret.length] = 
       ['option', i.toString()].
-      concat(i == cur_scale ? ['selected', 'selected'] : []);
+      concat(i == scale ? ['selected', 'selected'] : []);
   }
   return ret;
 }
