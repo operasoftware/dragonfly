@@ -17,6 +17,11 @@ cls.ColorPicker = function(id, name, container_class)
   this.pick_color = function(event, target){};
   this.set_average_dimension = function(average){};
   this.get_average_dimension = function(){};
+  this.store_selected_color = function(){};
+  this.set_stored_color = function(color){};
+  this.manage_stored_colors = function(){};
+  this.manage_stored_colors_done = function(){};
+  this.delete_stored_color = function(index){};
 
   /* constants */
 
@@ -43,6 +48,7 @@ cls.ColorPicker = function(id, name, container_class)
   this._screenshot_height = 0;
   this._average = 0;
   this._average_delta = 0;
+  this._selected_color = '';
 
   this._setup_canvas = function()
   {
@@ -77,10 +83,7 @@ cls.ColorPicker = function(id, name, container_class)
       r = 0, 
       g = 0, 
       b = 0, 
-      i = 0,
-      rgb = null,
-      hsl = null,
-      hex = "";
+      i = 0;
 
       if(!is_index)
       {
@@ -117,23 +120,32 @@ cls.ColorPicker = function(id, name, container_class)
       };
       i /= 4;
       this._colors.setRGB([r / i >> 0, g / i >> 0, b / i >> 0]);
-      rgb = this._colors.getRGB();
-      hsl = this._colors.getHSL();
-      hex = this._colors.getHex();
-      document.getElementById('center-color').style.backgroundColor = "#" + hex;
-      document.getElementById('center-color-values').textContent = 
-        "rgb: " + rgb.join(", ") + "\n" +
-        "hsl: " + hsl[0] + ", " + hsl[1] + "%, " + hsl[2] + "%\n" +
-        "hex: " + "#" + hex;
-
+      this._update_selected_color();
       this._ctx_color_mask.clearRect(0, 0, this._screenshot_width * scale, this._screenshot_height * scale);  
       if(is_index && index !== this._last_index)
       {
         this._ctx_color_mask.fillRect(0, 0, this._screenshot_width * scale, this._screenshot_height * scale); 
         this._ctx_color_mask.clearRect(x * scale, y * scale, w * scale, h * scale); 
       }
-      this._last_index = is_index && index !== this._last_index ? index : -1;      
+      this._last_index = is_index && index !== this._last_index ? index : -1; 
     }
+  }
+
+  this._update_selected_color = function()
+  {
+    var
+    rgb = this._colors.getRGB(),
+    hsl = this._colors.getHSL(),
+    hex = this._colors.getHex();
+    if(this.isvisible() && document.getElementById('center-color'))
+    {
+      document.getElementById('center-color').style.backgroundColor = "#" + hex;
+      document.getElementById('center-color-values').textContent = 
+        "rgb: " + rgb.join(", ") + "\n" +
+        "hsl: " + hsl[0] + ", " + hsl[1] + "%, " + hsl[2] + "%\n" +
+        "hex: " + "#" + hex;
+    }
+    this._selected_color = hex;
   }
 
   this._set_dimesions = function(container, screenshot_width, screenshot_height)
@@ -258,6 +270,52 @@ cls.ColorPicker = function(id, name, container_class)
 
       this._last_index = -1;
       this._update_center_color(x, y);
+    }
+  }
+
+  this.store_selected_color = function()
+  {
+    var stored_colors = window.settings.color_picker.get('color-picker-stored-colors') || [];
+    stored_colors.push(this._selected_color);
+    window.settings.color_picker.set('color-picker-stored-colors', stored_colors);
+    if(stored_colors = document.getElementsByClassName('color-picker-stored-colors')[0])
+    {
+      stored_colors.parentNode.replaceChild(
+        document.render(window.templates.color_picker_stored_colors()), stored_colors);
+    }
+  }
+
+  this.set_stored_color = function(color)
+  {
+    this._colors.setHex(color);
+    this._update_selected_color();
+  }
+
+  this.manage_stored_colors = function()
+  {
+    if(this._container)
+    {
+      this._container.clearAndRender(window.templates.manage_stored_colors());
+    }
+  }
+
+  this.manage_stored_colors_done = function()
+  {
+    if(this._container)
+    {
+      this._container.innerHTML = '';
+      this.createView(this._container);
+    }
+  }
+
+  this.delete_stored_color = function(index)
+  {
+    if(typeof index == 'number')
+    {
+      var stored_colors = window.settings.color_picker.get('color-picker-stored-colors') || [];
+      stored_colors.splice(index, 1);
+      window.settings.color_picker.set('color-picker-stored-colors', stored_colors);
+      this.manage_stored_colors();
     }
   }
 

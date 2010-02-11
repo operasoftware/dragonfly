@@ -66,7 +66,10 @@ var SettingsBase = function()
    */
   this.get = function(key) 
   {
-    return this.map[key];
+    return (
+      this.map[key] || 
+      (this.map[key] = JSON.parse(window.localStorage.getItem(key) || null))
+    );
   }
   
   /**

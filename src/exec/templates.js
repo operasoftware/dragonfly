@@ -26,6 +26,15 @@ window.templates.color_picker = function(
                 'handler', 'set-color-picker-scale']
             ],
           'class', 'controls'],
+          ['h2', 'Stored colors'],
+          this.color_picker_stored_colors(),
+          ['p', 
+            ['input', 
+              'type', 'button', 
+              'value', 'Manage stored colors', 
+              'handler', 'color-picker-manage-stored-colors'],
+            'class', 'color-picker-button-controls'
+          ],
         'class', 'color-picker'],
         ['div',
           ['div',
@@ -43,8 +52,70 @@ window.templates.color_picker = function(
           this.color_picker_average_select(),
           ['div', 'id', 'center-color'],
           ['pre', 'id', 'center-color-values'],
+          ['p', 
+            ['input', 
+              'type', 'button', 
+              'value', 'Store color', 
+              'handler', 'color-picker-store-color'],
+            'class', 'color-picker-button-controls'
+          ],
         'class', 'color-picker'],
       'class', 'table padding']);
+}
+
+window.templates.color_picker_stored_colors = function()
+{
+  return (
+  ['ul',
+    (window.settings.color_picker.get('color-picker-stored-colors') || []).map(this.color_picker_stored_color, this),
+    'class', 'color-picker-stored-colors',
+    'handler', 'color-picker-set-stored-color'
+  ]);
+      
+}
+
+window.templates.color_picker_stored_color = function(color)
+{
+  return (
+  ['li', 
+    'style', 'background-color: #'+ color,
+    'data-stored-color', color
+  ]);
+}
+
+window.templates.manage_stored_colors = function()
+{
+  return (
+  ['div',
+    ['div',
+      ['h2', 'Manage stored colors'],
+      ['ul',
+        (window.settings.color_picker.get('color-picker-stored-colors') || []).map(this.color_picker_manage_stored_color, this),
+      
+      ],
+      ['p', 
+        ['input', 
+        'type', 'button', 
+        'value', 'Done', 
+        'handler', 'color-picker-manage-stored-colors-done'],
+        'class', 'color-picker-button-controls'
+      ],
+     'class', 'manage-stored-colors'
+    ],
+  'class', 'padding']);
+}
+
+window.templates.color_picker_manage_stored_color = function(color, index)
+{
+  return (
+  ['li', 
+    ['span', 'style', 'background-color: #'+ color],
+    ['input', 
+      'type', 'button',
+      'value', 'delete',
+      'handler', 'delete-stored-color'],
+    'data-color-index', index.toString()
+  ]);
 }
 
 window.templates.color_picker_average_select = function()

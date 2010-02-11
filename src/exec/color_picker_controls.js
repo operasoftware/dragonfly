@@ -24,3 +24,40 @@ eventHandlers.click["color-picker-picked"] = function(event, target)
 {
   window.views.color_picker.pick_color(event, target); 
 }
+
+eventHandlers.click["color-picker-store-color"] = function(event, target)
+{
+  window.views.color_picker.store_selected_color(); 
+}
+
+eventHandlers.click["color-picker-set-stored-color"] = function(event, target)
+{
+  var color = event.target.getAttribute('data-stored-color');
+  if(color)
+  {
+    window.views.color_picker.set_stored_color(color);
+  }
+}
+
+eventHandlers.click["color-picker-manage-stored-colors"] = function(event, target)
+{
+  window.views.color_picker.manage_stored_colors();
+}
+
+eventHandlers.click["color-picker-manage-stored-colors-done"] = function(event, target)
+{
+  window.views.color_picker.manage_stored_colors_done();
+}
+
+eventHandlers.click["delete-stored-color"] = function(event, target)
+{
+  var index = parseInt(event.target.parentNode.getAttribute('data-color-index'));
+  window.views.color_picker.delete_stored_color(index);
+}
+
+
+
+
+
+
+
