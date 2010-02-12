@@ -275,7 +275,7 @@ var DOMMarkupEditor = function()
           temp = null;
         }
       };
-      for( scripts = temp.getElementsByTagName('script'), i = 0; script = scripts[i]; i++)
+      for( scripts = (temp || document).getElementsByTagName('script'), i = 0; script = scripts[i]; i++)
       {
         script_attr = script.getAttribute('type');
         script.setAttribute('type', ( script_attr ? script_attr + '/' : '' ) + 'edited');
