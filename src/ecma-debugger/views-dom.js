@@ -328,7 +328,7 @@ cls.DOMView = function(id, name, container_class)
                 ( attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '' ) + 
                 ( force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ) + 
                 "=\"" + 
-                attr[ATTR_VALUE] + 
+                attr[ATTR_VALUE].replace(/</, '&lt,') + 
                 "\"";
             }
           }
@@ -359,7 +359,7 @@ cls.DOMView = function(id, name, container_class)
             {
               tree += LINEBREAK  + getIndent(node[ DEPTH ] ) +
                       "&lt;" + node_name +  attrs + "&gt;" +
-                      one_child_value + 
+                      one_child_value.replace(/</, '&lt,') + 
                       "&lt;/" + node_name + "&gt;";
               i = child_pointer - 1;
             }
@@ -396,7 +396,7 @@ cls.DOMView = function(id, name, container_class)
             if( !/^\s*$/.test(node[ VALUE ] ) )
             {
               tree += LINEBREAK  + getIndent(node[ DEPTH ] ) +      
-                      "&lt;!--" + node[ VALUE ] + "--&gt;";
+                      "&lt;!--" + node[VALUE].replace(/</, '&lt,') + "--&gt;";
             }
           }
           break;
@@ -430,7 +430,7 @@ cls.DOMView = function(id, name, container_class)
           if( !/^\s*$/.test(node[ VALUE ] ) )
           {
             tree += LINEBREAK  + getIndent(node[ DEPTH ] ) + 
-                    node[ VALUE ];
+                    node[VALUE].replace(/</, '&lt,');
           }
         }
 
