@@ -43,7 +43,6 @@ cls.WindowManager["2.0"].WindowManagerData = function()
     WINDOW_TYPE = 2,
     OPENER_ID = 3;
     */
-    //opera.postError('win: '+JSON.parse(win))
     return {window_id: win[0], title: win[1], window_type: win[2], opener_id: win[3]};
   }
 

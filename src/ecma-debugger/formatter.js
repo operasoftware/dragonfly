@@ -127,7 +127,8 @@
   var PUNCTUATOR_DIV_PREDECESSOR=
   {
     ')': 1,
-      ']': 1
+    ']': 1,
+    '}': 1
   }
   var ESCAPE =
   {
