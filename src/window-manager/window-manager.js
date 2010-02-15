@@ -43,6 +43,7 @@ cls.WindowManager["2.0"].WindowManagerData = function()
     WINDOW_TYPE = 2,
     OPENER_ID = 3;
     */
+    //opera.postError('win: '+JSON.parse(win))
     return {window_id: win[0], title: win[1], window_type: win[2], opener_id: win[3]};
   }
 
@@ -135,8 +136,17 @@ cls.WindowManager["2.0"].WindowManagerData = function()
     {
       this._remove_window(id);
     }
-    window.messages.post('window-updated', 
-      {window_id: win.window_id, title: win.title, window_type: win.window_type, opener_id: win.opener_id})
+    if(win)
+    {
+      window.messages.post('window-updated', 
+        {
+          window_id: win.window_id, 
+          title: win.title, 
+          window_type: win.window_type, 
+          opener_id: win.opener_id
+        }
+      );
+    }
   }
 
   this._remove_window = function(win_id)
