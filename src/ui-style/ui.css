@@ -1059,7 +1059,7 @@ textarea-container-inline
   padding: 1px;
   line-height: 0px;
   position:relative;
-  z-index: 1;
+  z-index: 2;
 }
  
 textarea-container-inline textarea-inner-container 

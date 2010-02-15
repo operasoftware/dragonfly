@@ -523,6 +523,11 @@ var action_handler = new function()
 
   handlers['dom-resource-link'] = function(event, target)
   {
+    eventHandlers.dblclick['edit-dom'].delay(arguments.callee.execute, event, target);
+  }
+
+  handlers['dom-resource-link'].execute = function(event, target)
+  {
     var 
     url = target.textContent,
     rt_id = target.parentNode.parentNode.parentNode.getAttribute('rt-id') 
@@ -531,6 +536,8 @@ var action_handler = new function()
     // TODO use the exec service to open new link when it's ready
     window.open(helpers.resolveURLS( runtimes.getURI(rt_id), url.slice(1, url.length - 1 ) ), "_blank");
   }
+
+
 
   this.post = function(handler, event)
   {
