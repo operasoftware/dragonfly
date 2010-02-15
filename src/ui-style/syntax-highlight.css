@@ -110,6 +110,8 @@
   margin-right: -1px;
   margin-bottom: -1px;
   border: 1px solid hsl(60, 30%, 60%); 
+  position: relative;
+  z-index: 1;
 }
 
 .dom [handler="spotlight-node"]:hover
