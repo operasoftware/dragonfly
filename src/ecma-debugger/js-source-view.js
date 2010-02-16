@@ -350,7 +350,12 @@ cls.JsSourceView = function(id, name, container_class)
       simple_js_parser.parse(script, getMaxLineLength() - 1, 1).join('') + "</div>";
     var scrollWidth = script.scrollWidth = source_content.firstChild.firstChild.scrollWidth + 7;
     var offsetWidth = script.offsetWidth = source_content.firstChild.firstChild.offsetWidth;
-
+    // ensure that a scrollbar is also displayed with very long one-liner scripts
+    // max width which produces a scrollbar is 0x7FFF - 1
+    if(script.scrollWidth > 0x7FFE)
+    {
+      script.scrollWidth = 0x7FFE;
+    }
     if( scrollWidth > offsetWidth )
     {
       max_lines = 
