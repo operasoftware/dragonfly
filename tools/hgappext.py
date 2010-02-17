@@ -195,8 +195,9 @@ def run_build_script(ui, repo, core_version=0, type=None, **opts):
         print "abort. the command arguments have no according entries in the config file"
         return
     
-    print "update to", core_version["branch"]
-    if mercurial.commands.update(ui, repo, rev=core_version["branch"]) != 0: 
+    print "update to default branch"
+    # update always to the default branch, we no longer use named branches
+    if mercurial.commands.update(ui, repo, rev="default") != 0: 
         print "abort. hg update failed"
         return
     rev = repo.changelog.rev(head)
@@ -222,6 +223,7 @@ def run_build_script(ui, repo, core_version=0, type=None, **opts):
             '-s',
             '-d',
             '-m',
+            '-b', 'app',
             '-k', '$dfversion$=' + type['name'],
             '-k', '$revdate$=' + revision
         ]
@@ -268,7 +270,6 @@ def run_build_script(ui, repo, core_version=0, type=None, **opts):
             rev=[opts['log']], 
             copies=None, 
             date='', 
-            only_branch=[core_version["branch"]], 
             no_merges=None, 
             only_merges=None,
             keyword=[],

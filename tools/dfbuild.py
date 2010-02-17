@@ -17,6 +17,7 @@ _license_exts = (".js", ".css") # extensions that should get a license
 _img_exts = (".png", ".jpg", ".gif")
 _script_ele = u"<script src=\"%s\"/>\n"
 _style_ele = u"<link rel=\"stylesheet\" href=\"%s\"/>\n"
+_base_url = u"<base href=\"%s\" />\n"
 _re_command = re.compile("""\s?<!--\s+command\s+(?P<command>\w+)\s+"?(?P<target>.*?)"?\s*(?:if\s+(?P<neg>not)?\s*(?P<cond>\S+?))?\s*-->""")
 _re_comment = re.compile("""\s*<!--.*-->\s*""")
 _re_script = re.compile("\s?<script +src=\"(?P<src>[^\"]*)\"")
@@ -85,6 +86,10 @@ def _process_directives(root, filepath, vars):
                     known_files[target] = []
                     current_js_file = target
                     tmpfile.write(_script_ele % target)
+                continue
+            elif cmd == "set_rel_base_url" and \
+               vars.has_key("base_url") and vars["base_url"]:
+                tmpfile.write(_base_url % vars["base_url"])
                 continue
             else: # some other unknown command! Let fall through so line is written
                 pass
@@ -574,6 +579,17 @@ Destination can be either a directory or a zip file"""
                       action="store_false", dest="make_data_uris",
                       help="Don't generate data URIs for images in css")
 
+    parser.add_option("-b", "--set-base", default=None,
+                      type="string", dest="set_base",
+                      help="""Set a base url in the document. """
+                      """The value of the setting is the realative root in the """
+                      """destination path. E.g. a the value "app" with the destination"""
+                      """ "<some loca path>/app/core-2-5" will set the base url"""
+                      """ to "/app/core-2-5/". The purpose is to ba able to rewrite"""
+                      """ urls without breaking other urls of the rewritten document,"""
+                      """ e.g. handling all different core version on the "/app/" path"""
+                      """ without redirects.""")
+
     options, args = parser.parse_args()
     globals()['options'] = options
     
@@ -584,6 +600,7 @@ Destination can be either a directory or a zip file"""
         src, dst = args
     
     dirvars = {}
+    
     if options.concat:
         exdirs = ["scripts", "ui-style", "ecma-debugger", "ui-strings"]
     else:
@@ -591,6 +608,11 @@ Destination can be either a directory or a zip file"""
     
     if options.translate_build:
         dirvars["exclude_uistrings"]=True
+
+    if options.set_base:
+        path_segs = os.path.normpath(dst).split(os.sep)
+        pos = path_segs.index(options.set_base)
+        dirvars["base_url"] = pos > -1 and "/%s/" % "/".join(path_segs[pos:]) or ""
     
     # Parse the keyword definitons
     keywords = {}
@@ -635,7 +657,7 @@ Destination can be either a directory or a zip file"""
                keywords=keywords, directive_vars=dirvars)
 
         if options.translate_build:
-            _localize_buildout(tempdir, "src/ui-strings")
+            _localize_buildout(tempdir, os.path.join(os.path.abspath(src), "ui-strings"))
 
         if options.make_data_uris:
             _convert_imgs_to_data_uris(dst)
@@ -657,7 +679,7 @@ Destination can be either a directory or a zip file"""
                keywords=keywords, directive_vars=dirvars)
 
         if options.translate_build:
-            _localize_buildout(dst, "src/ui-strings")
+            _localize_buildout(dst, os.path.join(os.path.abspath(src), "ui-strings"))
 
         if options.make_data_uris:
             _convert_imgs_to_data_uris(dst)
