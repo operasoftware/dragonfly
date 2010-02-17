@@ -65,10 +65,11 @@ var SettingsBase = function()
    * @argument {string} key whos value to get
    */
   this.get = function(key) 
-  {
+  { 
+    var val = "";
     return (
       this.map[key] || 
-      (this.map[key] = JSON.parse(window.localStorage.getItem(key) || null))
+      (this.map[key] = ((val = window.localStorage.getItem(key)) && JSON.parse(val) || null))
     );
   }
   
