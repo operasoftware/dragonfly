@@ -302,7 +302,7 @@ window.cls.TestFramework = function()
             "<pre class='definition'></pre>";
           var pres = message_container.getElementsByTagName('pre');
           new XMLHttpRequest().loadResource(
-              './defs/' + this._selected_service + '.events.' + event.target.textContent + '.def',
+              document.baseURI + 'defs/' + this._selected_service + '.events.' + event.target.textContent + '.def',
               this._show_def,
               {'pre': pres[0]}
             );
