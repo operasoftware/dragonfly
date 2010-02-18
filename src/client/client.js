@@ -42,6 +42,7 @@ window.cls.Client = function()
   arguments.callee.instance = this;
 
   var self = this;
+  var _client_id = 0;
 
   var _on_host_connected = function(servicelist)
   {
@@ -87,8 +88,24 @@ window.cls.Client = function()
 
   var _on_host_quit = function()
   {
+
     window.window_manager_data.clear_debug_context();
     messages.post('host-state', {state: global_state.ui_framework.spin_state = 'inactive'});
+    client.setup();
+  }
+
+  var get_quit_callback = function(client_id)
+  {
+    // workaround for bug CORE-25389
+    // onQuit() callback is called twice when 
+    // creating new client with addScopeClient
+    return function()
+    {
+      if(client_id == _client_id)
+      {
+        _on_host_quit();
+      }
+    }
   }
 
   var _get_port_number = function()
@@ -110,6 +127,7 @@ window.cls.Client = function()
 
   this.setup = function()
   {
+    _client_id++;
     window.ini || ( window.ini = {debug: false} );
     if( !opera.scopeAddClient )
     {
@@ -126,7 +144,7 @@ window.cls.Client = function()
     opera.scopeAddClient(
         _on_host_connected, 
         cls.ServiceBase.get_generic_message_handler(), 
-        _on_host_quit, 
+        get_quit_callback(_client_id), 
         port
       );
     if(window.ini.debug && !opera.scopeHTTPInterface)
