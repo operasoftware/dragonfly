@@ -106,7 +106,7 @@ var DOM_tree_style = function(id, name, container_class)
     var target = dom_data.getCurrentTarget();
 
     var
-    tree = "<div class='padding' edit-handler='edit-dom' rt-id='" + dom_data.getDataRuntimeId() + "'><div>",
+    tree = "<div class='padding table-cell' edit-handler='edit-dom' rt-id='" + dom_data.getDataRuntimeId() + "'><div>",
     i = 0,
     node = null, 
     length = data.length;
@@ -306,38 +306,17 @@ var DOM_tree_style = function(id, name, container_class)
 
         }
       }
-    
-    
-
-    
-
-
       tree += "</div></div>";
       scrollTop = container.scrollTop;
       container.innerHTML = tree;
       container_scroll_width = container.scrollWidth;
       container_first_child = container.firstChild;
-      // preformatted text is in a span
-      // that does just add to the scroll width but does not expand the container
-      if( container_scroll_width > container_first_child.offsetWidth )
-      {
-        if( !div_padding_value )
-        {
-          style = getComputedStyle(container_first_child, null);
-          div_padding_value = (
-            parseInt( style.getPropertyValue('padding-left') ) +
-            parseInt( style.getPropertyValue('padding-right') ) );
-        }
-        container.firstChild.style.width = ( container_scroll_width - div_padding_value ) + 'px';
-        setTimeout(function(){container.scrollLeft = 0;}, 0);
-      }
       if(!this.scrollTargetIntoView())
       {
         container.scrollTop = scrollTop;
       }
       topCell.statusbar.updateInfo(templates.breadcrumb(dom_data.getCSSPath()));
     }
-      
   }
 
 

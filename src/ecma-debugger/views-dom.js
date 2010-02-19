@@ -95,6 +95,7 @@ cls.DOMView = function(id, name, container_class)
       container.scrollTop -= 
           ( container.offsetHeight < 100 ? container.offsetHeight * .7 : 100 ) - 
           ( target.offsetTop - container.scrollTop );
+      container.scrollLeft = 0;
     }
     return target && container;
   }

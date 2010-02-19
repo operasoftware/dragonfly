@@ -654,7 +654,10 @@ stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
   cursor:pointer;
   }
 
-
+.table-cell
+{
+  display: table-cell;
+}
 
 .tree-style .text-node
 {
