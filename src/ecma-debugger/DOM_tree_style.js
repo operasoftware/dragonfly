@@ -200,10 +200,10 @@ var DOM_tree_style = function(id, name, container_class)
             {
               has_only_one_child = 1;
               one_child_value = '';
-              child_level = data[ child_pointer ][ DEPTH ];
-              for( ; data[child_pointer] &&  data[ child_pointer ][ DEPTH ] == child_level; child_pointer += 1 )
+              child_level = data[child_pointer][DEPTH];
+              for( ; data[child_pointer] &&  data[child_pointer][DEPTH] == child_level; child_pointer += 1 )
               {
-                one_child_value += data[ child_pointer ] [ VALUE ];
+                one_child_value += data[child_pointer][VALUE];
                 if( data[ child_pointer ][ TYPE ] != 3 )
                 {
                   has_only_one_child = 0;
@@ -249,7 +249,7 @@ var DOM_tree_style = function(id, name, container_class)
             {
               tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;' " +      
                       "class='comment pre-wrap'><span class='comment-node'>#comment</span>" + 
-                node[VALUE] + "</div>";
+                node[VALUE].replace(/</, '&lt;') + "</div>";
 
 
 
@@ -285,7 +285,7 @@ var DOM_tree_style = function(id, name, container_class)
 
           default:
           {
-            if( !( show_white_space_nodes ) && ( node[TYPE] == 3 ) )
+            if( !(show_white_space_nodes) && (node[TYPE] == 3) )
             {
               if( !/^\s*$/.test( node[VALUE] ) ) 
               {
@@ -293,7 +293,7 @@ var DOM_tree_style = function(id, name, container_class)
                    current_formatting + ">" +
                   ( node[NAME] ? node[NAME] :  nodeNameMap[node[TYPE]] ) + 
                   "<text" + ( is_not_script_node ? " ref-id='" + node[ID]+  "' " : "" ) + ">" + 
-                    node[VALUE] + "</text>" +
+                    node[VALUE].replace(/</, '&lt;') + "</text>" +
                   "</div>";
               }
             }
@@ -304,13 +304,10 @@ var DOM_tree_style = function(id, name, container_class)
               tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;'" +
                 current_formatting + ">" +
                 ( node[NAME] ? node[NAME] :  nodeNameMap[node[TYPE]] ) + 
-                "<text" + ( is_not_script_node ? " ref-id='" + node[ID]+  "' " : "" ) + ">" + 
-                  ( /^\s*$/.test( node[VALUE] ) ? _escape(node[VALUE]) : node[VALUE] ) + 
+                "<text" + (is_not_script_node ? " ref-id='" + node[ID]+  "' " : "") + ">" + 
+                  ( /^\s*$/.test(node[VALUE]) ? _escape(node[VALUE]) : node[VALUE].replace(/</g, '&lt;') ) + 
                 "</text>" +
                 "</div>";
-              
-
-
             }
           }
 
