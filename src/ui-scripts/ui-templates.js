@@ -127,8 +127,10 @@
         'title', 'switch info type',
         'class', 'switch-info-type'
       ],
-      ['info']
-    ]
+      ['info'],
+      'onmouseover', helpers.breadcrumbSpotlight, 
+      'onmouseout', helpers.breadcrumbClearSpotlight
+    ];
   }
 
 

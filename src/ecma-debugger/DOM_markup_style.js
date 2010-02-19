@@ -63,9 +63,7 @@ var DOM_markup_style = function(id, name, container_class)
       topCell.statusbar.updateInfo
       (
         // the same template is used with inner html
-        templates.breadcrumb(dom_data.getCSSPath()).
-          concat(['onmouseover', helpers.breadcrumbSpotlight, 
-                  'onmouseout', helpers.breadcrumbClearSpotlight])  
+        templates.breadcrumb(dom_data.getCSSPath())  
       );
     }
     if(ele || ( ele = document.getElementById('target-element') ) )
@@ -372,14 +370,9 @@ var DOM_markup_style = function(id, name, container_class)
         setTimeout(function(){container.scrollLeft = 0;}, 0);
       }
       this.updateTarget();
-      topCell.statusbar.updateInfo(templates.breadcrumb(dom_data.getCSSPath()).
-          concat(['onmouseover', helpers.breadcrumbSpotlight, 
-                  'onmouseout', helpers.breadcrumbClearSpotlight]));
+      topCell.statusbar.updateInfo(templates.breadcrumb(dom_data.getCSSPath()));
     }
   }
-
-
-
 }
 
 

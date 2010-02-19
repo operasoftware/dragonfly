@@ -134,7 +134,7 @@ helpers = new function()
   this.breadcrumbSpotlight = function(event)
   {
     var obj_id = parseInt(event.target.getAttribute('obj-id'));
-    if( obj_id )
+    if(obj_id && /^breadcrumb$/i.test(event.target.parentNode.nodeName))
     {
       hostspotlighter.soft_spotlight(obj_id);
     }

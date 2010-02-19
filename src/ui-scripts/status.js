@@ -54,7 +54,8 @@ var StatusbarBase = function()
     cursor = null,
     consumed_width = 0,
     delta = 0,
-    range = null;
+    range = null,
+    range_content = null;
 
     info || ( info = "" );
 
@@ -86,10 +87,13 @@ var StatusbarBase = function()
         }        
         if(cursor)
         {
-          range.setStartBefore(breadcrumb.firstChild);
-          range.setEndAfter(cursor);
-          range.deleteContents();
-          breadcrumb.firstChild.nodeValue = '...';
+          // range.deleteContents() causes 'jumping'
+          range.setStartAfter(cursor);
+          range.setEndAfter(breadcrumb.lastChild);
+          range_content = range.cloneContents();
+          range_content.firstChild.nodeValue = '...';
+          breadcrumb.innerHTML = "";
+          breadcrumb.appendChild(range_content);
         }
       }
     }
