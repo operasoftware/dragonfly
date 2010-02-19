@@ -91,7 +91,7 @@ if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()
 window.load_screen_timeout = window.setTimeout(function()
 {
   var main_container = document.getElementsByTagName('main-view')[0];
-  if (main_container)
+  if (main_container && !main_container.childNodes.length)
   {
     main_container.innerHTML = "<div style='position:absolute; \
     width:500px; \
