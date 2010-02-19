@@ -77,6 +77,11 @@ var DOM_tree_style = function(id, name, container_class)
 
   this.createView = function(container)
   {
+    if(this._create_view_no_data_timeout)
+    {
+      clearTimeout(this._create_view_no_data_timeout);
+      this._create_view_no_data_timeout = 0;
+    }
     if( !container.hasClass('tree-style') )
     {
       container.addClass('tree-style');
@@ -141,22 +146,10 @@ var DOM_tree_style = function(id, name, container_class)
     var graphic_arr = [];
     if(!data.length)
     {
-      if(!dom_data.getDataRuntimeId())
-      {
-        container.innerHTML = 
-          "<div class='padding'><div class='info-box'>" +
-            ui_strings.S_INFO_WINDOW_HAS_NO_RUNTIME +
-          "</div></div>";
-      }
-      else
-      {
-        container.innerHTML = "<div class='padding' edit-handler='edit-dom'><p></p></div>";
-      }
-      topCell.statusbar.updateInfo('');
+      this._create_view_no_data_timeout = setTimeout(this._create_view_no_data, 100, container);
     }
     else
     {
-
       for( ; node = data[i]; i += 1 )
       {
         current_depth = node[DEPTH];
@@ -322,7 +315,6 @@ var DOM_tree_style = function(id, name, container_class)
       tree += "</div></div>";
       scrollTop = container.scrollTop;
       container.innerHTML = tree;
-      container.scrollTop = scrollTop;
       container_scroll_width = container.scrollWidth;
       container_first_child = container.firstChild;
       // preformatted text is in a span
@@ -338,6 +330,10 @@ var DOM_tree_style = function(id, name, container_class)
         }
         container.firstChild.style.width = ( container_scroll_width - div_padding_value ) + 'px';
         setTimeout(function(){container.scrollLeft = 0;}, 0);
+      }
+      if(!this.scrollTargetIntoView())
+      {
+        container.scrollTop = scrollTop;
       }
       topCell.statusbar.updateInfo(templates.breadcrumb(dom_data.getCSSPath()));
     }

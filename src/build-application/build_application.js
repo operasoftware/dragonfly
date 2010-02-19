@@ -299,6 +299,7 @@ window.app.helpers.parse_url_arguments = function()
 
 window.onload = function()
 {
+  window.clearTimeout(window.load_screen_timeout);
   window.app.build_application();
 }
 

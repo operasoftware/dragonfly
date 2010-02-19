@@ -65,6 +65,24 @@ cls.DOMView = function(id, name, container_class)
     return ret;
   }
 
+  this._create_view_no_data_timeout = 0;
+
+  this._create_view_no_data = function(container)
+  {
+    if(!dom_data.getDataRuntimeId())
+    {
+      container.innerHTML = 
+        "<div class='padding'><div class='info-box'>" +
+          ui_strings.S_INFO_WINDOW_HAS_NO_RUNTIME +
+        "</div></div>";
+    }
+    else
+    {
+      container.innerHTML = "<div class='padding' edit-handler='edit-dom'><p></p></div>";
+    }
+    topCell.statusbar.updateInfo('');
+  }
+
   this.scrollTargetIntoView = function()
   {
     var target = document.getElementById('target-element');
@@ -78,6 +96,7 @@ cls.DOMView = function(id, name, container_class)
           ( container.offsetHeight < 100 ? container.offsetHeight * .7 : 100 ) - 
           ( target.offsetTop - container.scrollTop );
     }
+    return target && container;
   }
 
   // workaround for bug CORE-16147

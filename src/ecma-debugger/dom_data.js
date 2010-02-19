@@ -200,7 +200,7 @@ var dom_data = new function()
     for( i = 0; view_id = view_ids[i]; i++)
     {
       views[view_id].update();
-      views[view_id].scrollTargetIntoView();
+      //views[view_id].scrollTargetIntoView();
     }
     if(obj_id)
     {

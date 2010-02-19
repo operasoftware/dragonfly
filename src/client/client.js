@@ -43,9 +43,16 @@ window.cls.Client = function()
 
   var self = this;
   var _client_id = 0;
+  var _first_setup = true;
+  var _waiting_screen_timeout = 0;
 
   var _on_host_connected = function(servicelist)
   {
+    if(_waiting_screen_timeout)
+    {
+      clearTimeout(_waiting_screen_timeout);
+      _waiting_screen_timeout = 0;
+    }
     servicelist = servicelist.split(',');
     if(servicelist.indexOf('stp-1') != -1)
     {
@@ -155,6 +162,20 @@ window.cls.Client = function()
     {
       window.topCell.cleanUp();
     }
+    if(_first_setup)
+    {
+      _first_setup = false;
+      _waiting_screen_timeout = setTimeout(show_waiting_screen, 250, port);
+      
+    }
+    else
+    {
+      show_waiting_screen(port);
+    }
+  }
+
+  var show_waiting_screen = function(port)
+  {
     viewport.innerHTML = 
     "<div class='padding'>" +
       "<div class='info-box'>" + ui_strings.S_INFO_WAITING_FORHOST_CONNECTION.replace(/%s/, port) +
