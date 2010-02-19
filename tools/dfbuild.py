@@ -5,7 +5,7 @@ import shutil
 import tempfile
 import sys
 import zipfile
-import minify
+import jsminify
 import base64
 import StringIO
 
@@ -134,7 +134,7 @@ def _process_directives(root, filepath, vars):
         fout.close()
         if fout_path.endswith('.js') and options.minify:
             # fout is a temp file here
-            minify.minify_in_place(fout_path)
+            jsminify.minify_in_place(fout_path)
 
 def _clean_dir(root, exclude_dirs, exclude_files):
     """
@@ -232,12 +232,12 @@ def _minify_buildout(src):
     for base, dirs, files in os.walk(src):
         for file in [f for f in files if f.endswith(".js")]:
             abs = os.path.join(base, file)
-            minify.minify_in_place(abs)
+            jsminify.minify_in_place(abs)
             
 def _minify_file(path):
     tmpfd, tmppath = tempfile.mkstemp(".tmp", "dfbuild.")
     os.fdopen(tmpfd).close()
-    minify.minify(path, tmppath)
+    jsminify.minify(path, tmppath)
     return tmppath
 
 def _localize_buildout(src, langdir):
