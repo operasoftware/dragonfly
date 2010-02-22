@@ -208,6 +208,10 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
   window.host_tabs.bind();
   window.hostspotlighter = new namespace.Hostspotlighter();
   window.hostspotlighter.bind();
+
+  window.local_storage_data = new cls.LocalStorageData();
+  new cls.LocalStorageView('local_storage', 'Local Storage', 'scroll');
+  new cls.CookiesView('cookies', 'Cookies', 'scroll');
 }
 
 window.app.builders.EcmascriptLogger || ( window.app.builders.EcmascriptLogger = {} );

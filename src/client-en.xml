@@ -279,6 +279,12 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ecma-debugger/ecma-debugger.js"/>
 
 
+<script src="./storage/data-local-storage.js"/>
+<script src="./storage/data-cookies.js"/>
+<script src="./storage/templates.js"/>
+<script src="./storage/views-local-storage.js"/>
+<script src="./storage/views-cookies.js"/>
+
 <script src="./http-logger/httplogger_service.js"/>
 <script src="./http-logger/httplogger_data.js"/>
 <script src="./http-logger/httplogger_view.js"/>

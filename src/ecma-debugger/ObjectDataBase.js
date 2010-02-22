@@ -34,7 +34,7 @@ var ObjectDataBase = new function()
     IS_FUNCTION = 2,
     TYPE = 3,
     PROTOTYPE_ID = 4,
-    NAME = 5;
+    NAME = 5,
     // sub message Property 
     PROPERTY_NAME = 0,
     PROPERTY_TYPE = 1,

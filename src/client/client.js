@@ -15,7 +15,8 @@ var composite_view_convert_table =
     'dom_new': 'dom_panel',
     'network_panel': 'network_panel',
     'export_new': 'export_new',
-    'utils': 'utils'
+    'utils': 'utils',
+    'storage': 'storage'
   },
   "false": 
   {
@@ -27,7 +28,8 @@ var composite_view_convert_table =
     'dom_new': 'dom_new',
     'network_panel': 'network_panel',
     'export_new': 'export_new',
-    'utils': 'utils'
+    'utils': 'utils',
+    'storage': 'storage'
   }
 }
 
@@ -237,6 +239,7 @@ window.cls.Client = function()
     new CompositeView('dom_panel', ui_strings.M_VIEW_LABEL_COMPOSITE_DOM, layouts.dom_rough_layout_panel);
     new CompositeView('settings_new', ui_strings.S_BUTTON_LABEL_SETTINGS, layouts.settings_rough_layout);
     new CompositeView('utils', 'Utils', layouts.utils_rough_layout);
+    new CompositeView('storage', 'Storage', layouts.storage_rough_layout);
     if( window.opera.attached != settings.general.get('window-attached') )
     {
       window.opera.attached = settings.general.get('window-attached') || false;
@@ -460,16 +463,24 @@ ui_framework.layouts.utils_rough_layout =
     children: [ { height: 1000, tabs: ['color_picker'] } ] 
 }
 
+ui_framework.layouts.storage_rough_layout =
+{
+    dir: 'v',
+    width: 1000,
+    height: 1000,
+    children: [ { height: 1000, tabs: ['local_storage', 'cookies'] } ] 
+}
+
 ui_framework.layouts.main_layout =
 {
   id: 'main-view', 
-  tabs: ['dom_new', 'js_new', 'network_panel', 'console_new', 'settings_new', 'utils']
+  tabs: ['dom_new', 'js_new', 'network_panel', 'console_new', 'settings_new', 'utils', 'storage']
 }
 
 ui_framework.layouts.panel_layout =
 {
   id: 'main-view', 
-  tabs: ['dom_panel', 'js_panel', 'network_panel', 'console_new', 'settings_new', 'utils']
+  tabs: ['dom_panel', 'js_panel', 'network_panel', 'console_new', 'settings_new', 'utils', 'storage']
 }
 
 
