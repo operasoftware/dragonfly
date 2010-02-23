@@ -69,7 +69,7 @@ var SettingsBase = function()
     var val = "";
     return (
       this.map[key] || 
-      (this.map[key] = ((val = window.localStorage.getItem(key)) && JSON.parse(val) || null))
+      (this.map[key] = ((val = window.localStorage.getItem(key)) ? JSON.parse(val) : null))
     );
   }
   
