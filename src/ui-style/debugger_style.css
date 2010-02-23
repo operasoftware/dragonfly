@@ -1136,5 +1136,75 @@ d
   border-width: 0 1px;
 }
 
+.storage-table
+{
+  border-collapse: collapse;
+  min-width: 28%;
+}
+
+.storage-table td,
+.storage-table th
+{
+  border: 1px solid #666;
+  padding: 2px 5px;
+  line-height: 22px;
+}
+
+.storage-table th
+{
+  text-align: left;
+}
+
+.storage-table .storage-edit
+{
+  padding: 0;
+}
+
+.storage-table h4
+{
+  margin: 0;
+  padding: 2px 5px;
+  line-height: 22px;
+  font-weight: normal;
+  background-color: hsl(0, 0%, 90%);
+  border-bottom: 1px solid #666;
+}
+
+.storage-table p
+{
+  margin: 0;
+  padding: 2px 5px;
+  background-color: hsl(0, 0%, 90%);
+  border-top: 1px solid #999;
+  text-align: right;
+}
+
+.storage-table textarea
+{
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  height: 14ex;
+  margin: 0;
+  padding: 0 5px;
+  border: 0px;
+}
+
+.storage-table .new-key
+{
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  height: 26px;
+  padding: 2px 5px;
+  background-color: hsl(0, 0%, 90%);
+  border: 0px;
+  border-bottom: 1px solid #999;
+}
+
+.storage-table .add-key
+{
+  text-align: right;
+}
 
 

@@ -4,8 +4,7 @@ cls.LocalStorageView = function(id, name, container_class)
 {
   this.createView = function(container)
   {
-    var storages = window.local_storage_data.get_local_storages();
-    container.innerHTML = "<div class='padding'>" + JSON.stringify(storages) + "</div>";
+    container.clearAndRender(window.templates.local_storage(window.local_storage_data.get_local_storages()));
   }
   this.on_local_storage_update = function(msg)
   {
