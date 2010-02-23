@@ -215,18 +215,20 @@ cls.LocalStorageData = function()
     i = 0, 
     storage = [];
 
-    if (status === 0 && message[OBJECT_LIST] && 
-        message[OBJECT_LIST][0] && (prop_list = message[OBJECT_LIST][0][PROPERTY_LIST]))
+    if (status === 0 && message[OBJECT_LIST])
     {
-      prop_list = prop_list.filter(this._is_digit);
-      for( ; i < prop_list.length; i += 3)
+      if(message[OBJECT_LIST][0] && (prop_list = message[OBJECT_LIST][0][PROPERTY_LIST]))
       {
-        storage.push(
+        prop_list = prop_list.filter(this._is_digit);
+        for( ; i < prop_list.length; i += 3)
         {
-          key: prop_list[i][PROPERTY_VALUE],
-          value: prop_list[i + 1][PROPERTY_VALUE],
-          type: prop_list[i + 2][PROPERTY_VALUE]
-        });
+          storage.push(
+          {
+            key: prop_list[i][PROPERTY_VALUE],
+            value: prop_list[i + 1][PROPERTY_VALUE],
+            type: prop_list[i + 2][PROPERTY_VALUE]
+          });
+        }
       }
       this._rts[rt_id].storage = storage.sort(this._sort_keys);
       this.post('local-storage-update', {data: this._rts});
