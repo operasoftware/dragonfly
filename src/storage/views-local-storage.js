@@ -1,4 +1,4 @@
-var cls = window.cls || ( window.cls = {} );
+﻿var cls = window.cls || ( window.cls = {} );
 
 cls.LocalStorageView = function(id, name, container_class)
 {

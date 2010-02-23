@@ -1,4 +1,4 @@
-window.eventHandlers.click['storage-edit'] = function(event, target)
+﻿window.eventHandlers.click['storage-edit'] = function(event, target)
 {
   var 
   tr = event.target.parentNode.parentNode,

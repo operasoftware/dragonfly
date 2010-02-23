@@ -1,4 +1,4 @@
-var cls = window.cls || ( window.cls = {} );
+﻿var cls = window.cls || ( window.cls = {} );
 
 
 cls.CookiesView = function(id, name, container_class, html, default_handler)
