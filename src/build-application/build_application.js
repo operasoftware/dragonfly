@@ -209,7 +209,10 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
   window.hostspotlighter = new namespace.Hostspotlighter();
   window.hostspotlighter.bind();
 
-  window.local_storage_data = new cls.LocalStorageData();
+  new cls.Namespace("storages");
+  window.storages.add(new cls.LocalStorageData('local_storage', 'local-staorage', 'Local Storage'));
+  window.storages.add(new cls.CookiesData('cookies', 'cookies', 'Cookies'));
+  //window.local_storage_data = new cls.LocalStorageData();
   new cls.LocalStorageView('local_storage', 'Local Storage', 'scroll');
   new cls.CookiesView('cookies', 'Cookies', 'scroll');
 }

@@ -561,3 +561,12 @@ StyleSheetList.prototype.getPropertyValue = function(selector, property)
   }
 })();
 
+Function.prototype.bind = function(object)
+{
+  var method = this;
+  return function()
+  {
+    method.apply(object, arguments);
+  }
+}
+

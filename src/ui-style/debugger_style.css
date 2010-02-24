@@ -1136,19 +1136,82 @@ d
   border-width: 0 1px;
 }
 
+/* storage */
+
+.storage-type
+{
+  display: table-cell;
+  width: 40%;
+  padding: 0 10px;
+}
+
+.storage-type h2
+{
+  background-color: hsl(0, 0%, 95%);
+  padding: .2em .5em;
+  font-size: 1.3em;
+  font-weight: normal;
+  border: 1px solid #ccc;
+  margin-bottom: 1em;
+}
+
+
+
 .storage-table
 {
   border-collapse: collapse;
-  min-width: 28%;
+  width: 100%;
 }
 
 .storage-table td,
 .storage-table th
 {
-  border: 1px solid #666;
+  border: 1px solid #ccc;
   padding: 2px 5px;
   line-height: 22px;
 }
+
+.storage-table td
+{
+  font-family: monospace;
+}
+
+.storage-table .key
+{
+  background-color: hsl(0, 0%, 90%);
+}
+
+.storage-table .value
+{
+  border-right: 0px;
+}
+
+.storage-table .control
+{
+  text-align: right;
+  border-left: 0px;
+}
+
+.storage-table .control input
+{
+  background: transparent none;
+  border: 0px;
+  margin: 0 3px;
+  width: -o-skin;
+  height: -o-skin;
+}
+
+.storage-table .control input[handler="storage-edit"]
+{
+  background-image: -o-skin('Compose mail');
+}
+
+.storage-table .control input[handler="storage-delete"]
+{
+  background-image: -o-skin('Delete');
+}
+
+
 
 .storage-table th
 {
@@ -1167,15 +1230,27 @@ d
   line-height: 22px;
   font-weight: normal;
   background-color: hsl(0, 0%, 90%);
-  border-bottom: 1px solid #666;
+  border-bottom: 1px solid #ccc;
 }
+
+.storage-table h4::after
+{
+  display: block;
+  float: right;
+  margin-top: 2px;
+  width: -o-skin;
+  height: -o-skin;
+  content: -o-skin('Group.open');
+}
+
+
 
 .storage-table p
 {
   margin: 0;
   padding: 2px 5px;
-  background-color: hsl(0, 0%, 90%);
-  border-top: 1px solid #999;
+  xbackground-color: hsl(0, 0%, 90%);
+  border-top: 1px solid #ccc;
   text-align: right;
 }
 
@@ -1186,7 +1261,7 @@ d
   width: 100%;
   height: 14ex;
   margin: 0;
-  padding: 0 5px;
+  padding: 2px 5px;
   border: 0px;
 }
 
@@ -1202,9 +1277,22 @@ d
   border-bottom: 1px solid #999;
 }
 
-.storage-table .add-key
+.storage-table .single-control
 {
   text-align: right;
 }
+
+.storage-table input[handler="storage-add-key"]
+{
+  background: transparent -o-skin('New Folder');;
+  border: 0px;
+  margin: 0 3px;
+  width: -o-skin;
+  height: -o-skin;
+}
+
+
+
+ 
 
 

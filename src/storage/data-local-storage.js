@@ -1,8 +1,18 @@
 ﻿var cls = window.cls || ( window.cls = {} );
 
-cls.LocalStorageData = function()
+cls.StorageDataBase = new function()
 {
-  this.get_local_storages = function()
+  /* interface */
+  this.get_storages = function(){};
+  this.get_item = function(rt_id, key){};
+  this.set_item = function(rt_id, key, value){};
+  this.remove_item = function(rt_id, key){};
+  this.clear = function(rt_id){};
+  this.set_item_edit = function(rt_id, key, is_edit){};
+
+
+
+  this.get_storages = function()
   {
     return this._rts;
   }
@@ -41,7 +51,7 @@ cls.LocalStorageData = function()
       ["failed set_item in LocalStorageData"]);
     services['ecmascript-debugger'].requestEval(tag, 
       [this._rts[rt_id].rt_id, 0, 0, script, 
-        [["local_storage", this._rts[rt_id].host_storage]]]);
+        [["local_storage", this._host_objects[rt_id]]]]);
     return item;
   }
 
@@ -55,7 +65,7 @@ cls.LocalStorageData = function()
         ["failed remove_item in LocalStorageData"]);
       services['ecmascript-debugger'].requestEval(tag, 
         [this._rts[rt_id].rt_id, 0, 0, script, 
-          [["local_storage", this._rts[rt_id].host_storage]]]);
+          [["local_storage", this._host_objects[rt_id]]]]);
     }
   }
 
@@ -68,7 +78,7 @@ cls.LocalStorageData = function()
       var tag = tagManager.set_callback(this, this._handle_clear, [this._rts[rt_id].rt_id]);
       services['ecmascript-debugger'].requestEval(tag, 
         [this._rts[rt_id].rt_id, 0, 0, script, 
-          [["local_storage", this._rts[rt_id].host_storage]]]);
+          [["local_storage", this._host_objects[rt_id]]]]);
     }
   }
 
@@ -79,12 +89,6 @@ cls.LocalStorageData = function()
     {
       item.is_edit = is_edit;
     }
-  }
-
-  this._get_item_with_key = function(rt_id, key)
-  {
-
-
   }
 
   this._handle_clear = function(status, message, rt_id)
@@ -101,16 +105,16 @@ cls.LocalStorageData = function()
     }
   }
 
-  this._rts = {};
+
 
   this._on_active_tab = function(msg)
   {
     var i = 0, rt_id = 0, active_tab = msg.activeTab;
-    for( ; i < active_tab; i++)
+    for( ; i < active_tab.length; i++)
     {
       if (!this._rts[active_tab[i]])
       {
-        this._rts[active_tab[i]] = {};
+        this._rts[active_tab[i]] = {storage: []};
         this._setup_local_storage(active_tab[i]);
       }
     }
@@ -121,12 +125,13 @@ cls.LocalStorageData = function()
         this._rts[i] = null;
       }
     }
-    window.messages.post('local-storage-update', {data: this._rts});
+    this.post('storage-update', {storage: this.id});
   }
 
   this._setup_local_storage = function(rt_id)
   {
-    var script = this["return new _LocalStorageHostr()"];
+    var script = this["return new _StorageHost()"];
+    
     var tag = tagManager.set_callback(this, this._register_loacal_storage, [rt_id]);
     services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, script]);
   }
@@ -142,7 +147,7 @@ cls.LocalStorageData = function()
 
     if (message[STATUS] == 'completed')
     {
-      this._rts[rt_id].host_storage = message[OBJECT_VALUE][OBJECT_ID];
+      this._host_objects[rt_id] = message[OBJECT_VALUE][OBJECT_ID];
       this._rts[rt_id].rt_id = rt_id;
       this._get_key_value_pairs(rt_id);
 
@@ -159,7 +164,7 @@ cls.LocalStorageData = function()
     var script = "local_storage.get_key_value_pairs()";
     var tag = tagManager.set_callback(this, this._handle_get_key_value_pairs, [rt_id]);
     services['ecmascript-debugger'].requestEval(tag, 
-      [rt_id, 0, 0, script, [["local_storage", this._rts[rt_id].host_storage]]]);
+      [rt_id, 0, 0, script, [["local_storage", this._host_objects[rt_id]]]]);
   }
 
   this._handle_get_key_value_pairs = function(status, message, rt_id)
@@ -231,7 +236,7 @@ cls.LocalStorageData = function()
         }
       }
       this._rts[rt_id].storage = storage.sort(this._sort_keys);
-      this.post('local-storage-update', {data: this._rts});
+      this.post('storage-update', {storage: this.id});
     }
     else
     {
@@ -240,7 +245,35 @@ cls.LocalStorageData = function()
     }
   }
 
-  this._LocalStorageHost = function()
+  this.init = function(id, update_event_name, title)
+  {
+    this.id = id;
+    this.update_event_name = update_event_name;
+    this.title = title;
+    this._rts = {};
+    this._host_objects = {};
+    this["return new _StorageHost()"] = "return new " + this._StorageHost.toString() + "()";
+    window.cls.Messages.apply(this);
+    window.messages.addListener('active-tab', this._on_active_tab.bind(this));
+  }
+
+
+}
+
+
+cls.LocalStorageData = function(id, update_event_name, title)
+{
+  /**
+    * _StorageHost is the class on the host side to 
+    * expose a storage interface for a given storage type
+    * it must implement 
+    *    this.get_key_value_pairs() returns Array {key, value, type} 
+    *    this.set_item(key, value, type)
+    *    this.remove_item(key)
+    *    this.clear()
+    */
+
+  this._StorageHost = function()
   {
     this.get_key_value_pairs = function()
     {
@@ -285,22 +318,86 @@ cls.LocalStorageData = function()
     };
   };
 
-  this["return new _LocalStorageHostr()"] = "return new " + this._LocalStorageHost.toString() + "()";
-
-  this.init = function()
-  {
-    window.cls.Messages.apply(this);
-    window.messages.addListener('active-tab', this._on_active_tab.bind(this));
-  }
-
-  this.init();
+  this.init(id, update_event_name, title);
 }
 
-Function.prototype.bind = function(object)
+cls.LocalStorageData.prototype = cls.StorageDataBase;
+
+cls.CookiesData = function(id, update_event_name, title)
 {
-  var method = this;
-  return function()
+  /**
+    * _StorageHost is the class on the host side to 
+    * expose a storage interface for a given storage type
+    * it must implement 
+    *    this.get_key_value_pairs() returns Array {key, value, type} 
+    *    this.set_item(key, value, type)
+    *    this.remove_item(key)
+    *    this.clear()
+    */
+
+  /**
+    * This is very basic. HTTP only cookies are not exposed.
+    * Also delete cookies is not expected to work reliable.
+    */
+
+  this._StorageHost = function()
   {
-    method.apply(object, arguments);
-  }
+    this.get_key_value_pairs = function()
+    {
+      var 
+      cookies = document.cookie.split(';'),
+      cookie = null,
+      length = cookies.length,
+      ret = [],
+      key = '',
+      value = '',
+      pos = 0,
+      type = '',
+      i = 0;
+
+      for ( ; i < length; i++)
+      {
+        cookie = cookies[i];
+        pos = cookie.indexOf('=', 0);
+        key = cookie.slice(0, pos);
+        value = decodeURIComponent(cookie.slice(pos+1));
+        type = 'string';
+        if (key.length)
+        {
+          ret.push(key)
+          ret.push(value);
+          ret.push(type);
+        }
+      }
+      return ret;
+    };
+
+    this.set_item = function(key, value, type)
+    {
+      document.cookie = (
+        key + "=" + encodeURIComponent(value) +
+        "; expires=" + 
+        (new Date(new Date().getTime() + 360*24*60*60*1000)).toGMTString() + 
+        "; path=/");
+    };
+
+    this.remove_item = function(key)
+    {
+      document.cookie = key + "=; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/";
+    };
+
+    this.clear = function()
+    {
+      var cookies = this.get_key_value_pairs(), i = 0;
+      for ( ; i < cookies.length; i += 3)
+      {
+        this.remove_item(cookies[i]);
+      };
+    };
+  };
+
+  this.init(id, update_event_name, title);
 }
+
+cls.CookiesData.prototype = cls.StorageDataBase;
+

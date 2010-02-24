@@ -1,13 +1,13 @@
 ﻿window.templates = window.templates || {};
 
-window.templates.local_storage = function(local_storages)
+window.templates.storage = function(storages, storage_id, storage_title)
 {
   /*
-  local_storages
+  storages
   {
+    "stoarge_id": <storage id>,
     "<rt-id>":
     {
-      "host_storage": <object-id>,
       "rt_id": <rt-id>,
       "storage":
       [
@@ -40,44 +40,49 @@ window.templates.local_storage = function(local_storages)
   rt = null,
   ret = [];
 
-  for (rt_id in local_storages)
+  for (rt_id in storages)
   {
-    storage = local_storages[rt_id];
+    storage = storages[rt_id];
     if(storage)
     {
-      rt = window.runtimes.getRuntime(storage.rt_id);
-      ret.push(
-      ['div',
-        ['table',
-          window.templates.storage_domain_header(rt),
-          ['tr', 
-            ['td', 'Key'], 
-            ['td', 'Value'], 
-            ['th',
-              window.templates.storage_button({label: 'Delete all', handler: 'storage-delete-all'})
-            ]
+      if (rt = window.runtimes.getRuntime(storage.rt_id))
+      {
+        ret.push(
+        ['div',
+          ['table',
+            window.templates.storage_domain_header(rt),
+            ['tr', 
+              //['td', 'Key', 'class', 'key'], 
+              //['td', 'Value', 'class', 'value'], 
+              ['th',
+                window.templates.storage_button({label: 'Delete all', handler: 'storage-delete-all'}),
+                'colspan', '3',
+                'class', 'single-control'
+              ]
+            ],
+            storage.storage.map(window.templates.storage_item),
+            ['tr', 
+              ['th',
+                window.templates.storage_button({title: 'Add', handler: 'storage-add-key'}),
+                'colspan', '3',
+                'class', 'single-control'
+              ]
+            ],
+            'data-rt-id', rt_id,
+            'data-storage-id', storage_id,
+            'class', 'storage-table'
           ],
-          storage.storage.map(window.templates.storage_item),
-          ['tr', 
-            ['th',
-              window.templates.storage_button({label: 'Add', handler: 'storage-add-key'}),
-              'colspan', '3',
-              'class', 'add-key'
-            ]
-          ],
-          'data-rt-id', rt_id,
-          'class', 'storage-table'
-        ],
-        'class', 'storage-domain'
-      ]);
+          'class', 'storage-domain'
+        ]);
+      }
     }
   }
   
   return (
   ['div',
-    ['h2', 'Local Storage'],
+    ['h2', storage_title],
     ret,
-    'class', 'padding'
+    'class', 'storage-type'
   ]);
 }
 
@@ -94,11 +99,12 @@ window.templates.storage_item = function(entry, index, storage_arr)
   const MAX_LENGTH = 15;
   return (
   ['tr',
-    ['td', entry.key],
-    ['td', entry.value.length > MAX_LENGTH ? entry.value.slice(0, MAX_LENGTH) + '...' : entry.value],
+    ['td', entry.key, 'class', 'key'],
+    ['td', entry.value.length > MAX_LENGTH ? entry.value.slice(0, MAX_LENGTH) + '...' : entry.value, 'class', 'value'],
     ['td', 
-      window.templates.storage_button({label: 'Edit', handler: 'storage-edit'}),
-      window.templates.storage_button({label: 'Delete', handler: 'storage-delete'})
+      window.templates.storage_button({title: 'Edit', handler: 'storage-edit'}),
+      window.templates.storage_button({title: 'Delete', handler: 'storage-delete'}),
+      'class', 'control'
     ],
     'data-storage-key', entry.key
   ]);
@@ -116,7 +122,7 @@ window.templates.storage_item_edit = function(item, index)
         window.templates.storage_button({label: 'Cancel', handler: 'storage-edit-cancel'}),
       ],
       'class', 'storage-edit',
-      'colspan', '4'
+      'colspan', '3'
     ],
     'data-storage-key', item.key,
   ]);
@@ -144,7 +150,8 @@ window.templates.storage_button = function(action)
   return (
   ['input', 
     'type', 'button',
-    'value', action.label,
     'handler', action.handler
-  ]);
+  ].
+  concat(action.label ? ['value', action.label] : []).
+  concat(action.title ? ['title', action.title] : []));
 }
