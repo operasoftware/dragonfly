@@ -1274,7 +1274,8 @@ d
   padding: 2px 5px;
   background-color: hsl(0, 0%, 90%);
   border: 0px;
-  border-bottom: 1px solid #999;
+  border-bottom: 1px solid #ccc;
+  font-family: monospace;
 }
 
 .storage-table .single-control
