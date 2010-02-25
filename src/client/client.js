@@ -468,7 +468,7 @@ ui_framework.layouts.storage_rough_layout =
     dir: 'v',
     width: 1000,
     height: 1000,
-    children: [ { height: 1000, tabs: ['local_storage', 'cookies'] } ] 
+    children: [ { height: 1000, tabs: ['local_storage'] } ] 
 }
 
 ui_framework.layouts.main_layout =

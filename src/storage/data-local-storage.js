@@ -245,14 +245,14 @@ cls.StorageDataBase = new function()
     }
   }
 
-  this.init = function(id, update_event_name, title)
+  this.init = function(id, update_event_name, title, storage_object)
   {
     this.id = id;
     this.update_event_name = update_event_name;
     this.title = title;
     this._rts = {};
     this._host_objects = {};
-    this["return new _StorageHost()"] = "return new " + this._StorageHost.toString() + "()";
+    this["return new _StorageHost()"] = "return new " + this._StorageHost.toString() + "(\"" + storage_object + "\")";
     window.cls.Messages.apply(this);
     window.messages.addListener('active-tab', this._on_active_tab.bind(this));
   }
@@ -261,7 +261,7 @@ cls.StorageDataBase = new function()
 }
 
 
-cls.LocalStorageData = function(id, update_event_name, title)
+cls.LocalStorageData = function(id, update_event_name, title, storage_object)
 {
   /**
     * _StorageHost is the class on the host side to 
@@ -273,12 +273,12 @@ cls.LocalStorageData = function(id, update_event_name, title)
     *    this.clear()
     */
 
-  this._StorageHost = function()
+  this._StorageHost = function(storage_object)
   {
     this.get_key_value_pairs = function()
     {
       var 
-      length = window.localStorage.length,
+      length = window[storage_object].length,
       ret = [],
       key = '',
       value = null,
@@ -287,8 +287,8 @@ cls.LocalStorageData = function(id, update_event_name, title)
 
       for ( ; i < length; i++)
       {
-        key = window.localStorage.key(i);
-        value = window.localStorage.getItem(key);
+        key = window[storage_object].key(i);
+        value = window[storage_object].getItem(key);
         type = typeof value;
         if (value && type !== 'string')
         {
@@ -306,19 +306,19 @@ cls.LocalStorageData = function(id, update_event_name, title)
       {
         value = JSON.parse(value);
       };
-      window.localStorage.setItem(key, value);
+      window[storage_object].setItem(key, value);
     };
     this.remove_item = function(key)
     {
-      window.localStorage.removeItem(key);
+      window[storage_object].removeItem(key);
     };
     this.clear = function()
     {
-      window.localStorage.clear();
+      window[storage_object].clear();
     };
   };
 
-  this.init(id, update_event_name, title);
+  this.init(id, update_event_name, title, storage_object);
 }
 
 cls.LocalStorageData.prototype = cls.StorageDataBase;

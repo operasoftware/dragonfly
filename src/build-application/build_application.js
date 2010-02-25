@@ -210,11 +210,12 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
   window.hostspotlighter.bind();
 
   new cls.Namespace("storages");
-  window.storages.add(new cls.LocalStorageData('local_storage', 'local-staorage', 'Local Storage'));
+  window.storages.add(new cls.LocalStorageData(
+    'local_storage', 'local-storage', 'Local Storage', 'localStorage'));
+  window.storages.add(new cls.LocalStorageData(
+    'session_storage', 'session-storage', 'Session Storage', 'sessionStorage'));
   window.storages.add(new cls.CookiesData('cookies', 'cookies', 'Cookies'));
-  //window.local_storage_data = new cls.LocalStorageData();
-  new cls.LocalStorageView('local_storage', 'Local Storage', 'scroll');
-  new cls.CookiesView('cookies', 'Cookies', 'scroll');
+  new cls.LocalStorageView('local_storage', 'Storage', 'scroll');
 }
 
 window.app.builders.EcmascriptLogger || ( window.app.builders.EcmascriptLogger = {} );

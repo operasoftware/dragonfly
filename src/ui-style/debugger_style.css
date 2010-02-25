@@ -1137,12 +1137,17 @@ d
 }
 
 /* storage */
+.table-full-width
+{
+  display: table;
+  table-layout: fixed;
+  width: 100%;
+}
 
 .storage-type
 {
   display: table-cell;
-  width: 40%;
-  padding: 0 10px;
+  padding: 12px;
 }
 
 .storage-type h2

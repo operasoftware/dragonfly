@@ -5,7 +5,7 @@ cls.LocalStorageView = function(id, name, container_class)
   this.createView = function(container)
   {
     var 
-    inner_container = container.clearAndRender(['div', 'class', 'padding table']);
+    inner_container = container.clearAndRender(['div', 'class', 'table-full-width']);
     stoarge = null, 
     storage_name = '';
     
