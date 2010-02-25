@@ -89,6 +89,13 @@ window.eventHandlers.click['storage-delete-all'] = function(event, target)
   window.storages[storage_id].clear(parseInt(rt_id));
 }
 
+window.eventHandlers.click['storage-update'] = function(event, target)
+{
+  window.storages[event.target.parentNode.getAttribute('data-storage-id')].update();
+}
+
+
+
 window.eventHandlers.click['storage-add-key'] = function(event, target)
 {
   

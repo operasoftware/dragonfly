@@ -17,6 +17,14 @@ cls.StorageDataBase = new function()
     return this._rts;
   }
 
+  this.update = function()
+  {
+    for(var rt_id in this._rts)
+    {
+      this._get_key_value_pairs(this._rts[rt_id].rt_id);
+    }
+  }
+
   this.get_item = function(rt_id, key)
   {
     var 
@@ -126,7 +134,7 @@ cls.StorageDataBase = new function()
         this._rts[i] = null;
       }
     }
-    this.post('storage-update', {storage: this.id});
+    this.post('storage-update', {storage_id: this.id});
   }
 
   this._setup_local_storage = function(rt_id)
@@ -237,7 +245,7 @@ cls.StorageDataBase = new function()
         }
       }
       this._rts[rt_id].storage = storage.sort(this._sort_keys);
-      this.post('storage-update', {storage: this.id});
+      this.post('storage-update', {storage_id: this.id});
     }
     else
     {

@@ -19,12 +19,34 @@ cls.LocalStorageView = function(id, name, container_class)
     }
     
   }
+
   this.on_storage_update = function(msg)
   {
-    this.update();
+    if(this.isvisible())
+    {
+      var 
+      tables = document.getElementsByTagName('table'), 
+      table = null, 
+      storage = null,
+      storage_container = null,
+      i = 0;
+
+      for( ; table = tables[i]; i++)
+      {
+        if(table.getAttribute('data-storage-id') == msg.storage_id)
+        {
+          storage = window.storages[msg.storage_id];
+          storage_container = document.render(
+            window.templates.storage(storage.get_storages(), storage.id, storage.title));
+          table = table.parentNode.parentNode;
+          table.parentNode.replaceChild(storage_container, table);
+          break;
+        }
+      }
+    }
   }
-  var stoarge = null, storage_name = '';
-  for (storage_name in window.storages)
+
+  for (var storage_name in window.storages)
   {
     if(window.storages.hasOwnProperty(storage_name))
     {

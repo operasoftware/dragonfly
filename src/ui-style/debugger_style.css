@@ -1160,6 +1160,18 @@ d
   margin-bottom: 1em;
 }
 
+.storage-type input[handler="storage-update"]
+{
+  float: right;
+  background: transparent -o-skin('Reload');
+  border: 0;
+  margin: -.2em;
+  width: -o-skin;
+  height: -o-skin;
+}
+
+
+
 
 
 .storage-table

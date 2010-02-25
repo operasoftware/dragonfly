@@ -34,53 +34,44 @@ window.templates.storage = function(storages, storage_id, storage_title)
   }
   */
 
-  var 
-  rt_id = '', 
-  storage = null, 
-  rt = null,
-  ret = [];
-
+  var rt_id = '', storage = null, rt = null, ret = [];
   for (rt_id in storages)
   {
-    storage = storages[rt_id];
-    if(storage)
+    if((storage = storages[rt_id]) && (rt = window.runtimes.getRuntime(storage.rt_id)))
     {
-      if (rt = window.runtimes.getRuntime(storage.rt_id))
-      {
-        ret.push(
-        ['div',
-          ['table',
-            window.templates.storage_domain_header(rt),
-            ['tr', 
-              //['td', 'Key', 'class', 'key'], 
-              //['td', 'Value', 'class', 'value'], 
-              ['th',
-                window.templates.storage_button({label: 'Delete all', handler: 'storage-delete-all'}),
-                'colspan', '3',
-                'class', 'single-control'
-              ]
-            ],
-            storage.storage.map(window.templates.storage_item),
-            ['tr', 
-              ['th',
-                window.templates.storage_button({title: 'Add', handler: 'storage-add-key'}),
-                'colspan', '3',
-                'class', 'single-control'
-              ]
-            ],
-            'data-rt-id', rt_id,
-            'data-storage-id', storage_id,
-            'class', 'storage-table'
+      ret.push(
+      ['div',
+        ['table',
+          window.templates.storage_domain_header(rt),
+          ['tr', 
+            ['th',
+              window.templates.storage_button({label: 'Delete all', handler: 'storage-delete-all'}),
+              'colspan', '3',
+              'class', 'single-control'
+            ]
           ],
-          'class', 'storage-domain'
-        ]);
-      }
+          storage.storage.map(window.templates.storage_item),
+          ['tr', 
+            ['th',
+              window.templates.storage_button({title: 'Add', handler: 'storage-add-key'}),
+              'colspan', '3',
+              'class', 'single-control'
+            ]
+          ],
+          'data-rt-id', rt_id,
+          'data-storage-id', storage_id,
+          'class', 'storage-table'
+        ],
+        'class', 'storage-domain'
+      ]);
     }
   }
-  
   return (
   ['div',
-    ['h2', storage_title],
+    ['h2', storage_title,
+      window.templates.storage_button({title: 'Update', handler: 'storage-update'}),
+      'data-storage-id', storage_id,
+    ],
     ret,
     'class', 'storage-type'
   ]);
