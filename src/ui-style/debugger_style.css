@@ -1313,7 +1313,7 @@ d
 
 .storage-table input[handler="storage-add-key"]
 {
-  background: transparent -o-skin('New Folder');;
+  background: transparent -o-skin('New item menu');;
   border: 0px;
   margin: 0 3px;
   width: -o-skin;
