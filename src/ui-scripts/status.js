@@ -60,46 +60,49 @@ var StatusbarBase = function()
     info || ( info = "" );
 
     this.info = info;
-    if( typeof info == "string" )
+    if(info_container)
     {
-      info_container.textContent = info;
-    }
-    else if(typeof info == "object")
-    {
-      info_container.innerHTML = "";
-      breadcrumb = info_container.render(info);
-      if( this.mode == this.DEFAULT_MODE && info_container.scrollHeight > this.info_container_scroll_height )
+      if( typeof info == "string" )
       {
-        avaible_width = parseInt(info_container.parentElement.style.width) - this.available_width_delta;
-        cursor = breadcrumb.lastElementChild;
-        consumed_width = 4 * this.selector_cap_width;
-        delta = 0;
-        range = document.createRange();
-        while(cursor)
+        info_container.textContent = info;
+      }
+      else if(typeof info == "object")
+      {
+        info_container.innerHTML = "";
+        breadcrumb = info_container.render(info);
+        if( this.mode == this.DEFAULT_MODE && info_container.scrollHeight > this.info_container_scroll_height )
         {
-          delta = this.selector_cap_width + cursor.offsetWidth;
-          if( delta + consumed_width >= avaible_width )
+          avaible_width = parseInt(info_container.parentElement.style.width) - this.available_width_delta;
+          cursor = breadcrumb.lastElementChild;
+          consumed_width = 4 * this.selector_cap_width;
+          delta = 0;
+          range = document.createRange();
+          while(cursor)
           {
-            break;
+            delta = this.selector_cap_width + cursor.offsetWidth;
+            if( delta + consumed_width >= avaible_width )
+            {
+              break;
+            }
+            consumed_width += delta;
+            cursor = cursor.previousElementSibling;
+          }        
+          if(cursor)
+          {
+            // range.deleteContents() causes 'jumping'
+            range.setStartAfter(cursor);
+            range.setEndAfter(breadcrumb.lastChild);
+            range_content = range.cloneContents();
+            range_content.firstChild.nodeValue = '...';
+            breadcrumb.innerHTML = "";
+            breadcrumb.appendChild(range_content);
           }
-          consumed_width += delta;
-          cursor = cursor.previousElementSibling;
-        }        
-        if(cursor)
-        {
-          // range.deleteContents() causes 'jumping'
-          range.setStartAfter(cursor);
-          range.setEndAfter(breadcrumb.lastChild);
-          range_content = range.cloneContents();
-          range_content.firstChild.nodeValue = '...';
-          breadcrumb.innerHTML = "";
-          breadcrumb.appendChild(range_content);
         }
       }
-    }
-    else
-    {
-      info_container.textContent = '';
+      else
+      {
+        info_container.textContent = '';
+      }
     }
   }
 
