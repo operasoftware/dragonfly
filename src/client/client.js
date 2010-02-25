@@ -47,6 +47,7 @@ window.cls.Client = function()
   var _client_id = 0;
   var _first_setup = true;
   var _waiting_screen_timeout = 0;
+  var cbs = [];
 
   var _on_host_connected = function(servicelist)
   {
@@ -150,10 +151,11 @@ window.cls.Client = function()
       cls.STP_0_Wrapper.call(opera);
     }
     var port = _get_port_number();
+    var cb_index = cbs.push(get_quit_callback(_client_id)) - 1;
     opera.scopeAddClient(
         _on_host_connected, 
         cls.ServiceBase.get_generic_message_handler(), 
-        get_quit_callback(_client_id), 
+        cbs[cb_index], 
         port
       );
     if(window.ini.debug && !opera.scopeHTTPInterface)
