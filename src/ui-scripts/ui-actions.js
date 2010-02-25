@@ -73,7 +73,7 @@ new EventHandler('blur', true, 'blur-handler');
 
 /***** general ui click handler *****/
 
-eventHandlers.click['tab'] = function(event, target)
+eventHandlers.mousedown['tab'] = function(event, target)
 {
   target = target.parentElement;
   var tabs = UIBase.getUIById(target.parentElement.getAttribute('ui-id'));
