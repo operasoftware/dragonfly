@@ -1184,8 +1184,8 @@ d
 .storage-table th
 {
   border: 1px solid #ccc;
-  padding: 2px 5px;
-  line-height: 22px;
+  padding: 0px 5px;
+  line-height: 20px;
 }
 
 .storage-table td
@@ -1216,6 +1216,17 @@ d
   margin: 0 3px;
   width: -o-skin;
   height: -o-skin;
+  opacity: 0;
+}
+
+.storage-table tr:hover .control input
+{
+  opacity: .3;
+}
+
+.storage-table tr:hover .control input:hover
+{
+  opacity: 1;
 }
 
 .storage-table .control input[handler="storage-edit"]
@@ -1243,8 +1254,8 @@ d
 .storage-table h4
 {
   margin: 0;
-  padding: 2px 5px;
-  line-height: 22px;
+  padding: 0px 5px;
+  line-height: 20px;
   font-weight: normal;
   background-color: hsl(0, 0%, 90%);
   border-bottom: 1px solid #ccc;
@@ -1265,8 +1276,8 @@ d
 .storage-table p
 {
   margin: 0;
-  padding: 2px 5px;
-  xbackground-color: hsl(0, 0%, 90%);
+  padding: 0px 5px;
+  background-color: hsl(0, 0%, 90%);
   border-top: 1px solid #ccc;
   text-align: right;
 }

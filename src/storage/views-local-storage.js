@@ -40,10 +40,11 @@ cls.LocalStorageView = function(id, name, container_class)
             window.templates.storage(storage.get_storages(), storage.id, storage.title));
           table = table.parentNode.parentNode;
           table.parentNode.replaceChild(storage_container, table);
-          break;
+          return;
         }
       }
     }
+    this.update();
   }
 
   for (var storage_name in window.storages)
