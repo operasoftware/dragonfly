@@ -11,7 +11,6 @@
   tr.parentNode.replaceChild(document.render(window.templates.storage_item_edit(item)), tr);
 }
 
-window.eventHandlers.click['storage-edit-cancel'] =
 window.eventHandlers.click['storage-save'] = function(event, target)
 {
   var 
@@ -21,15 +20,32 @@ window.eventHandlers.click['storage-save'] = function(event, target)
   key = tr.getAttribute('data-storage-key') || 
   (tr.getElementsByTagName('input')[0] && tr.getElementsByTagName('input')[0].value),
   value = tr.getElementsByTagName('textarea')[0].value,
-  handler = event.target.getAttribute('handler'),
   item = null;
 
-  if (key && handler == 'storage-save')
+  window.storages[storage_id].set_item(rt_id, key, value, function(success)
   {
-    window.storages[storage_id].set_item(rt_id, key, value);
-  }
+    if(success)
+    {
+      window.eventHandlers.click['storage-edit-cancel'](event, target);
+    }
+    else
+    {
+      // TODO
+    }
+  });
+}
+
+window.eventHandlers.click['storage-edit-cancel'] = function(event, target)
+{
+  var 
+  tr = event.target.parentNode.parentNode.parentNode,
+  rt_id = tr.parentNode.getAttribute('data-rt-id'), 
+  storage_id = tr.parentNode.getAttribute('data-storage-id'), 
+  key = tr.getAttribute('data-storage-key') || 
+  (tr.getElementsByTagName('input')[0] && tr.getElementsByTagName('input')[0].value),
+  item = window.storages[storage_id].get_item(rt_id, key);
+
   window.storages[storage_id].set_item_edit(rt_id, key, false);
-  item = window.storages[storage_id].get_item(rt_id, key, value);
   if(item)
   {
     tr.parentNode.replaceChild(document.render(window.templates.storage_item(item)), tr);
@@ -49,8 +65,18 @@ window.eventHandlers.click['storage-delete'] = function(event, target)
   storage_id = tr.parentNode.getAttribute('data-storage-id'), 
   key = tr.getAttribute('data-storage-key');
   
-  window.storages[storage_id].remove_item(rt_id, key);
-  tr.parentNode.removeChild(tr);
+  window.storages[storage_id].remove_item(rt_id, key, function(success)
+  {
+    if(success)
+    {
+      tr.parentNode.removeChild(tr);
+    }
+    else
+    {
+      // TODO
+    }
+  });
+  
 }
 
 window.eventHandlers.click['storage-delete-all'] = function(event, target)

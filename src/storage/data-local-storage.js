@@ -28,7 +28,7 @@ cls.StorageDataBase = new function()
     return item;
   } 
 
-  this.set_item = function(rt_id, key, value)
+  this.set_item = function(rt_id, key, value, success_callback)
   {
     var item = this.get_item(rt_id, key);
     if(item)
@@ -48,21 +48,21 @@ cls.StorageDataBase = new function()
     }
     var script = "local_storage.set_item(\"" + item.key + "\",\"" + value + "\",\"" + item.type + "\")";
     var tag = tagManager.set_callback(this, this._handle_default,
-      ["failed set_item in LocalStorageData"]);
+      [success_callback, "failed set_item in LocalStorageData"]);
     services['ecmascript-debugger'].requestEval(tag, 
       [this._rts[rt_id].rt_id, 0, 0, script, 
         [["local_storage", this._host_objects[rt_id]]]]);
     return item;
   }
 
-  this.remove_item = function(rt_id, key)
+  this.remove_item = function(rt_id, key, success_callback)
   {
     var item = this.get_item(rt_id, key);
     if(item)
     {
       var script = "local_storage.remove_item(\"" + item.key + "\")";
       var tag = tagManager.set_callback(this, this._handle_default,
-        ["failed remove_item in LocalStorageData"]);
+        [success_callback, "failed remove_item in LocalStorageData"]);
       services['ecmascript-debugger'].requestEval(tag, 
         [this._rts[rt_id].rt_id, 0, 0, script, 
           [["local_storage", this._host_objects[rt_id]]]]);
@@ -96,9 +96,10 @@ cls.StorageDataBase = new function()
     this._get_key_value_pairs(rt_id);
   }
 
-  this._handle_default = function(status, message, info)
+  this._handle_default = function(status, message, success_callback, info)
   {
     const STATUS = 0;
+    success_callback(message[STATUS] == 'completed');
     if (message[STATUS] != 'completed')
     {
       opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + info);
