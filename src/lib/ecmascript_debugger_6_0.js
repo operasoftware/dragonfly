@@ -1,7 +1,7 @@
 ﻿window.cls || (window.cls = {});
 cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
-cls.EcmascriptDebugger["5.0"] || (cls.EcmascriptDebugger["5.0"] = {});
-cls.EcmascriptDebugger["5.0"].name = 'ecmascript-debugger';
+cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
+cls.EcmascriptDebugger["6.0"].name = 'ecmascript-debugger';
 
 /**
   * @constructor 
@@ -9,14 +9,13 @@ cls.EcmascriptDebugger["5.0"].name = 'ecmascript-debugger';
   * generated with hob from the service definitions
   */
 
-cls.EcmascriptDebugger["5.0"].Service = function()
+cls.EcmascriptDebugger["6.0"].Service = function()
 {
   /**
     * The name of the service used in scope in ScopeTransferProtocol
     */
   this.name = 'ecmascript-debugger';
-  this.version = '5.0';
-  this.core_release = '2.5';
+  this.version = '6.0';
 
 
   // see http://dragonfly.opera.com/app/scope-interface/EcmascriptDebugger.html#listruntimes
@@ -65,10 +64,10 @@ cls.EcmascriptDebugger["5.0"].Service = function()
     // sub message ObjectValue 
     OBJECT_ID = 0,
     IS_CALLABLE = 1,
-    IS_FUNCTION = 2,
-    OBJECTVALUE_TYPE = 3,
-    PROTOTYPE_ID = 4,
-    NAME = 5;
+    OBJECTVALUE_TYPE = 2,
+    PROTOTYPE_ID = 3,
+    CLASS_NAME = 4,
+    FUNCTION_NAME = 5;
     */
     opera.postError("NotBoundWarning: EcmascriptDebugger, Eval");
   }
@@ -82,6 +81,8 @@ cls.EcmascriptDebugger["5.0"].Service = function()
   {
     /*
     const
+    OBJECT_CHAIN_LIST = 0,
+    // sub message ObjectList 
     OBJECT_LIST = 0,
     // sub message ObjectInfo 
     VALUE = 0,
@@ -89,12 +90,12 @@ cls.EcmascriptDebugger["5.0"].Service = function()
     // sub message ObjectValue 
     OBJECT_ID = 0,
     IS_CALLABLE = 1,
-    IS_FUNCTION = 2,
-    TYPE = 3,
-    PROTOTYPE_ID = 4,
-    NAME = 5;
+    TYPE = 2,
+    PROTOTYPE_ID = 3,
+    CLASS_NAME = 4,
+    FUNCTION_NAME = 5;
     // sub message Property 
-    PROPERTY_NAME = 0,
+    NAME = 0,
     PROPERTY_TYPE = 1,
     PROPERTY_VALUE = 2,
     OBJECT_VALUE = 3;
@@ -183,10 +184,10 @@ cls.EcmascriptDebugger["5.0"].Service = function()
     // sub message ObjectValue 
     OBJECT_ID = 0,
     IS_CALLABLE = 1,
-    IS_FUNCTION = 2,
-    TYPE = 3,
-    PROTOTYPE_ID = 4,
-    NAME = 5;
+    TYPE = 2,
+    PROTOTYPE_ID = 3,
+    CLASS_NAME = 4,
+    FUNCTION_NAME = 5;
     */
     opera.postError("NotBoundWarning: EcmascriptDebugger, GetBacktrace");
   }
@@ -363,6 +364,26 @@ cls.EcmascriptDebugger["5.0"].Service = function()
     opera.postError("NotBoundWarning: EcmascriptDebugger, ReleaseObjects");
   }
 
+  // see http://dragonfly.opera.com/app/scope-interface/EcmascriptDebugger.html#setpropertyfilter
+  this.requestSetPropertyFilter = function(tag, message)
+  {
+    opera.scopeTransmit('ecmascript-debugger', message || [], 30, tag || 0);
+  }
+  this.handleSetPropertyFilter = function(status, message)
+  {
+    opera.postError("NotBoundWarning: EcmascriptDebugger, SetPropertyFilter");
+  }
+
+  // see http://dragonfly.opera.com/app/scope-interface/EcmascriptDebugger.html#addeventbreakpoint
+  this.requestAddEventBreakpoint = function(tag, message)
+  {
+    opera.scopeTransmit('ecmascript-debugger', message || [], 38, tag || 0);
+  }
+  this.handleAddEventBreakpoint = function(status, message)
+  {
+    opera.postError("NotBoundWarning: EcmascriptDebugger, AddEventBreakpoint");
+  }
+
   // see http://dragonfly.opera.com/app/scope-interface/EcmascriptDebugger.html#onruntimestarted
   this.onRuntimeStarted = function(status, message)
   {
@@ -480,5 +501,111 @@ cls.EcmascriptDebugger["5.0"].Service = function()
     DESCRIPTION = 5;
     */
     opera.postError("NotBoundWarning: EcmascriptDebugger, OnParseError");
+  }
+
+  // see http://dragonfly.opera.com/app/scope-interface/EcmascriptDebugger.html#onreadystatechanged
+  this.onReadyStateChanged = function(status, message)
+  {
+    /*
+    const
+    RUNTIME_ID = 0,
+    STATE = 1;
+    */
+    opera.postError("NotBoundWarning: EcmascriptDebugger, OnReadyStateChanged");
+  }
+
+  // see http://dragonfly.opera.com/app/scope-interface/EcmascriptDebugger.html#onconsolelog
+  this.onConsoleLog = function(status, message)
+  {
+    /*
+    const
+    RUNTIME_ID = 0,
+    TYPE = 1,
+    VALUE_LIST = 2,
+    POSITION = 3,
+    // sub message Value 
+    VALUE = 0,
+    OBJECT_VALUE = 1,
+    // sub message ObjectValue 
+    OBJECT_ID = 0,
+    IS_CALLABLE = 1,
+    OBJECTVALUE_TYPE = 2,
+    PROTOTYPE_ID = 3,
+    CLASS_NAME = 4,
+    FUNCTION_NAME = 5;
+    // sub message Position 
+    SCRIPT_ID = 0,
+    LINE_NUMBER = 1;
+    */
+    opera.postError("NotBoundWarning: EcmascriptDebugger, OnConsoleLog");
+  }
+
+  // see http://dragonfly.opera.com/app/scope-interface/EcmascriptDebugger.html#onconsoletime
+  this.onConsoleTime = function(status, message)
+  {
+    /*
+    const
+    RUNTIME_ID = 0,
+    TITLE = 1;
+    */
+    opera.postError("NotBoundWarning: EcmascriptDebugger, OnConsoleTime");
+  }
+
+  // see http://dragonfly.opera.com/app/scope-interface/EcmascriptDebugger.html#onconsoletimeend
+  this.onConsoleTimeEnd = function(status, message)
+  {
+    /*
+    const
+    RUNTIME_ID = 0,
+    TITLE = 1,
+    ELAPSED = 2;
+    */
+    opera.postError("NotBoundWarning: EcmascriptDebugger, OnConsoleTimeEnd");
+  }
+
+  // see http://dragonfly.opera.com/app/scope-interface/EcmascriptDebugger.html#onconsoletrace
+  this.onConsoleTrace = function(status, message)
+  {
+    /*
+    const
+    RUNTIME_ID = 0,
+    FRAME_LIST = 1,
+    // sub message BacktraceFrame 
+    FUNCTION_ID = 0,
+    ARGUMENT_OBJECT = 1,
+    VARIABLE_OBJECT = 2,
+    THIS_OBJECT = 3,
+    OBJECT_VALUE = 4,
+    SCRIPT_ID = 5,
+    LINE_NUMBER = 6,
+    // sub message ObjectValue 
+    OBJECT_ID = 0,
+    IS_CALLABLE = 1,
+    TYPE = 2,
+    PROTOTYPE_ID = 3,
+    CLASS_NAME = 4,
+    FUNCTION_NAME = 5;
+    */
+    opera.postError("NotBoundWarning: EcmascriptDebugger, OnConsoleTrace");
+  }
+
+  // see http://dragonfly.opera.com/app/scope-interface/EcmascriptDebugger.html#onconsoleprofile
+  this.onConsoleProfile = function(status, message)
+  {
+    /*
+    const
+    RUNTIME_ID = 0;
+    */
+    opera.postError("NotBoundWarning: EcmascriptDebugger, OnConsoleProfile");
+  }
+
+  // see http://dragonfly.opera.com/app/scope-interface/EcmascriptDebugger.html#onconsoleprofileend
+  this.onConsoleProfileEnd = function(status, message)
+  {
+    /*
+    const
+    RUNTIME_ID = 0;
+    */
+    opera.postError("NotBoundWarning: EcmascriptDebugger, OnConsoleProfileEnd");
   }
 }
