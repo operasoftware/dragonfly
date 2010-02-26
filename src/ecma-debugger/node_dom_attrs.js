@@ -1,8 +1,13 @@
-﻿/**
+﻿window.cls || (window.cls = {});
+cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
+cls.EcmascriptDebugger["5.0"] || (cls.EcmascriptDebugger["5.0"] = {});
+
+/**
   * @constructor 
   * @extends ObjectDataBase
   */
-var Node_dom_attrs = function()
+
+cls.EcmascriptDebugger["5.0"].Node_dom_attrs = function()
 {
 
   const 
@@ -46,5 +51,3 @@ var Node_dom_attrs = function()
   messages.addListener('element-selected', onElementSelected);
 }
 
-Node_dom_attrs.prototype = ObjectDataBase;
-node_dom_attrs = new Node_dom_attrs();

@@ -1,8 +1,12 @@
-﻿/**
+﻿window.cls || (window.cls = {});
+cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
+cls.EcmascriptDebugger["5.0"] || (cls.EcmascriptDebugger["5.0"] = {});
+
+/**
   * @constructor 
   */
 
-var dom_data = new function()
+cls.EcmascriptDebugger["5.0"].DOMData = function()
 {
   var self = this;
 
@@ -728,16 +732,21 @@ var dom_data = new function()
     for( var i = 0; data[i] && data[i][TYPE] != 1; i++);
     return data[i] && data[i][ID] || 0;
   }
-  /* */
+
+  this.bind = function(ecma_debugger)
+  {
+    ecma_debugger.onObjectSelected =
+    ecma_debugger.handleGetSelectedObject = 
+    this.on_element_selected.bind(this);
+  }
+  
   messages.addListener('active-tab', onActiveTab);
   messages.addListener('show-view', onShowView);
   messages.addListener('hide-view', onHideView);
   messages.addListener('setting-changed', onSettingChange);
   messages.addListener('runtime-stopped', onRuntimeStopped);
   messages.addListener('runtime-destroyed', onRuntimeStopped);
-
   messages.addListener('reset-state', onResetState);
-  /* */
 
 };
 

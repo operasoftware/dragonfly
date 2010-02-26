@@ -192,31 +192,7 @@ window.app.builders.ConsoleLogger["2.0"] = function(service)
   }
 }
 
-window.app.builders.EcmascriptDebugger || ( window.app.builders.EcmascriptDebugger = {} );
-/**
-  * @param {Object} service the service description of the according service on the host side
-  */
-window.app.builders.EcmascriptDebugger["5.0"] = function(service)
-{
-  var namespace = cls.EcmascriptDebugger && cls.EcmascriptDebugger["5.0"];
-  window.app.helpers.implement_service(namespace);
-  window.runtimes = new namespace.Runtimes();
-  window.runtimes.bind();
-  window.stop_at = new namespace.StopAt();
-  window.stop_at.bind();
-  window.host_tabs = new namespace.HostTabs();
-  window.host_tabs.bind();
-  window.hostspotlighter = new namespace.Hostspotlighter();
-  window.hostspotlighter.bind();
 
-  new cls.Namespace("storages");
-  window.storages.add(new cls.LocalStorageData(
-    'local_storage', 'local-storage', 'Local Storage', 'localStorage'));
-  window.storages.add(new cls.LocalStorageData(
-    'session_storage', 'session-storage', 'Session Storage', 'sessionStorage'));
-  window.storages.add(new cls.CookiesData('cookies', 'cookies', 'Cookies'));
-  new cls.LocalStorageView('local_storage', 'Storage', 'scroll');
-}
 
 window.app.builders.EcmascriptLogger || ( window.app.builders.EcmascriptLogger = {} );
 /**
@@ -279,7 +255,9 @@ window.app.helpers.implement_service = function(namespace)
   {
     namespace.Service.apply(window.services[namespace.name].constructor.prototype);
     window.services[namespace.name].is_implemented = true;
+    return window.services[namespace.name];
   }
+  return null;
 }
 
 window.app.helpers.parse_url_arguments = function()

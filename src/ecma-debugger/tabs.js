@@ -275,10 +275,8 @@ cls.EcmascriptDebugger["5.0"].HostTabs = function()
     delete id_map[id];
   }
 
-  this.bind = function()
+  this.bind = function(ecma_debugger)
   {
-    var ecma_debugger = window.services['ecmascript-debugger'];
-
     ecma_debugger.handleAddEventHandler =
     ecma_debugger.handleRemoveEventHandler =
     function(status, message){};

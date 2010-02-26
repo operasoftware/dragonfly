@@ -672,10 +672,8 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
   set_initial_values();
   create_color_selects();
 
-  this.bind = function()
+  this.bind = function(ecma_debugger)
   {
-    var ecma_debugger = window.services['ecmascript-debugger'];
-
     ecma_debugger.handleSpotlightObjects = function(status, message){};
   }
 

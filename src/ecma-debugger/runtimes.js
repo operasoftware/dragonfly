@@ -1250,10 +1250,9 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
 
   messages.addListener('window-updated', _on_window_updated)
 
-  this.bind = function()
+  this.bind = function(ecma_debugger)
   {
-    var self = this,
-    ecma_debugger = window.services['ecmascript-debugger'];
+    var self = this;
 
     ecma_debugger.handleEval = function(status, message){};
 
@@ -1287,8 +1286,6 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       self.onThreadStoppedAt(status, message);
     }
 
-
-
     ecma_debugger.onThreadFinished = function(status, message)
     {
       self.onThreadFinished(status, message);
@@ -1299,22 +1296,11 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       self.onParseError(status, message);
     }
 
-    // TODO move to a bind method of dom_data
-    ecma_debugger.onObjectSelected =
-    ecma_debugger.handleGetSelectedObject = function(status, message)
-    {
-      window.dom_data.on_element_selected(status, message);
-    }
-
     ecma_debugger.addListener('window-filter-change', function(msg)
     {
       self.createAllRuntimesOnDebugContextChange(msg.filter[1][0])
     });
   }
   
-
-
-
-
 }
 

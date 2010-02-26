@@ -1,11 +1,13 @@
-﻿var cls = window.cls || ( window.cls = {} );
+﻿window.cls || (window.cls = {});
+cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
+cls.EcmascriptDebugger["5.0"] || (cls.EcmascriptDebugger["5.0"] = {});
 
 /**
   * @constructor 
   * @extends ViewBase
   */
 
-cls.DOMAttrsView = function(id, name, container_class)
+cls.EcmascriptDebugger["5.0"].DOMAttrsView = function(id, name, container_class)
 {
   var self = this;
 
@@ -46,52 +48,51 @@ cls.DOMAttrsView = function(id, name, container_class)
 
   this.init(id, name, container_class);
 }
-cls.DOMAttrsView.prototype = ViewBase;
-new cls.DOMAttrsView('dom_attrs', ui_strings.M_VIEW_LABEL_DOM_ATTR, 'scroll dom-attrs');
 
-new Settings
-(
-  // id
-  'dom_attrs', 
-  // key-value map
-  {
-    "hide-null-values": true
-  }, 
-  // key-label map
-  {
-    "hide-null-values": ui_strings.S_SWITCH_HIDE_EMPTY_STRINGS
-  },
-  // settings map
-  {
-    checkboxes:
+cls.EcmascriptDebugger["5.0"].DOMAttrsView.create_ui_widgets = function()
+{
+
+  new Settings
+  (
+    // id
+    'dom_attrs', 
+    // key-value map
+    {
+      "hide-null-values": true
+    }, 
+    // key-label map
+    {
+      "hide-null-values": ui_strings.S_SWITCH_HIDE_EMPTY_STRINGS
+    },
+    // settings map
+    {
+      checkboxes:
+      [
+        "hide-null-values"
+      ]
+    }
+  );
+
+  new ToolbarConfig
+  (
+    'dom_attrs',
+    null,
+    [
+      {
+        handler: 'dom-attrs-text-search',
+        title: 'text search'
+      }
+    ]
+  )
+
+  new Switches
+  (
+    'dom_attrs',
     [
       "hide-null-values"
     ]
-  }
-);
+  );
 
-new ToolbarConfig
-(
-  'dom_attrs',
-  null,
-  [
-    {
-      handler: 'dom-attrs-text-search',
-      title: 'text search'
-    }
-  ]
-)
-
-new Switches
-(
-  'dom_attrs',
-  [
-    "hide-null-values"
-  ]
-);
-
-(function()
-{
 
   var text_search = new TextSearch();
 
@@ -129,4 +130,4 @@ new Switches
     }
   }
   
-})();
+};

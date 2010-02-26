@@ -1,12 +1,13 @@
-﻿
-
-var cls = window.cls || ( window.cls = {} );
+﻿window.cls || (window.cls = {});
+cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
+cls.EcmascriptDebugger["5.0"] || (cls.EcmascriptDebugger["5.0"] = {});
 
 /**
   * @constructor 
   * @extends ViewBase
   */
-cls.InspectionView = function(id, name, container_class)
+
+cls.EcmascriptDebugger["5.0"].InspectionView = function(id, name, container_class)
 {
 
   var self = this;
@@ -69,57 +70,54 @@ cls.InspectionView = function(id, name, container_class)
 
 }
 
-cls.InspectionView.prototype = ViewBase;
-new cls.InspectionView('inspection', ui_strings.M_VIEW_LABEL_FRAME_INSPECTION, 'scroll');
-
-
-
-new Settings
-(
-  // id
-  'inspection', 
-  // key-value map
-  {
-    'automatic-update-global-scope': false,
-    'hide-default-properties': true
-  }, 
-  // key-label map
-  {
-    'automatic-update-global-scope': ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE,
-    'hide-default-properties': ui_strings.S_BUTTON_LABEL_HIDE_DEFAULT_PROPS_IN_GLOBAL_SCOPE
-  },
-  // settings map
-  {
-    checkboxes:
-    [
-      'hide-default-properties'
-    ]
-  }
-);
-
-new ToolbarConfig
-(
-  'inspection',
-  null,
-  [
-    {
-      handler: 'inspection-text-search',
-      title: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER,
-      label: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER
-    }
-  ]
-)
-
-new Switches
-(
-  'inspection',
-  [
-    "hide-default-properties"
-  ]
-);
-
-(function()
+cls.EcmascriptDebugger["5.0"].InspectionView.create_ui_widgets = function()
 {
+  new Settings
+  (
+    // id
+    'inspection', 
+    // key-value map
+    {
+      'automatic-update-global-scope': false,
+      'hide-default-properties': true
+    }, 
+    // key-label map
+    {
+      'automatic-update-global-scope': ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE,
+      'hide-default-properties': ui_strings.S_BUTTON_LABEL_HIDE_DEFAULT_PROPS_IN_GLOBAL_SCOPE
+    },
+    // settings map
+    {
+      checkboxes:
+      [
+        'hide-default-properties'
+      ]
+    }
+  );
+
+  new ToolbarConfig
+  (
+    'inspection',
+    null,
+    [
+      {
+        handler: 'inspection-text-search',
+        title: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER,
+        label: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER
+      }
+    ]
+  )
+
+  new Switches
+  (
+    'inspection',
+    [
+      "hide-default-properties"
+    ]
+  );
+
+
+
   var text_search = new TextSearch();
 
   var onViewCreated = function(msg)
@@ -156,4 +154,4 @@ new Switches
     }
   }
 
-})()
+};

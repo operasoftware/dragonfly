@@ -208,7 +208,11 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/toolbarcstselect.js"/>
 <script src="./ui-scripts/ui_framework.js"/>
 
+
+
+
 <script src="./build-application/build_application.js"></script>
+<script src="./build-application/build_ecmascript_debugger_5_0.js"></script>
 
 
 <script src="./debug/debug.js"/>

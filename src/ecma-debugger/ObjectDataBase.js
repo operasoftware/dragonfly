@@ -1,8 +1,12 @@
-﻿/**
+﻿window.cls || (window.cls = {});
+cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
+cls.EcmascriptDebugger["5.0"] || (cls.EcmascriptDebugger["5.0"] = {});
+
+/**
   * @constructor 
   */
 
-var ObjectDataBase = new function()
+cls.EcmascriptDebugger["5.0"].ObjectDataBase = function()
 {
   const 
   KEY = 0,

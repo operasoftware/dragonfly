@@ -368,10 +368,9 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
 
   messages.addListener('setting-changed', onSettingChange);
 
-  this.bind = function()
+  this.bind = function(ecma_debugger)
   {
-    var self = this,
-    ecma_debugger = window.services['ecmascript-debugger'];
+    var self = this;
 
     ecma_debugger.handleSetConfiguration = 
     ecma_debugger.handleContinueThread = 

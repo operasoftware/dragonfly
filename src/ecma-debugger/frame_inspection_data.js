@@ -1,9 +1,13 @@
-﻿/**
+﻿window.cls || (window.cls = {});
+cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
+cls.EcmascriptDebugger["5.0"] || (cls.EcmascriptDebugger["5.0"] = {});
+
+/**
   * @constructor 
   * @extends ObjectDataBase
   */
 
-var Frame_inspection_data = function()
+cls.EcmascriptDebugger["5.0"].Frame_inspection_data = function()
 {
 
   const 
@@ -130,6 +134,5 @@ var Frame_inspection_data = function()
 
 }
 
-Frame_inspection_data.prototype = ObjectDataBase;
-frame_inspection_data = new Frame_inspection_data();
+
 
