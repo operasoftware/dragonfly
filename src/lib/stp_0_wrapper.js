@@ -47,7 +47,8 @@ cls.STP_0_Wrapper = function()
       case undefined:
       case "STP/0":
       {
-        // the host must be a stp 1 host
+        // the stpVersion is about the proxy
+        // only wrapp if the host is a stp 1 host
         if(servicelist.indexOf('stp-1') != -1)
         {
           _get_maps();

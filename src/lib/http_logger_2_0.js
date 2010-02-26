@@ -16,7 +16,6 @@ cls.HttpLogger["2.0"].Service = function()
     */
   this.name = 'http-logger';
   this.version = '2.0';
-  this.core_release = '2.5';
 
 
   // see http://dragonfly.opera.com/app/scope-interface/HttpLogger.html#onrequest

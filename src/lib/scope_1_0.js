@@ -16,7 +16,6 @@ cls.Scope["1.0"].Service = function()
     */
   this.name = 'scope';
   this.version = '1.0';
-  this.core_release = '2.5';
 
 
   // see http://dragonfly.opera.com/app/scope-interface/Scope.html#connect

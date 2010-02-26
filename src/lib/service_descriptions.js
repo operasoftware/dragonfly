@@ -37,6 +37,8 @@ service_descriptions.commands.EcmascriptDebugger =
   "GetSelectedObject",
   "SpotlightObjects",
   "ReleaseObjects",
+  "SetPropertyFilter",
+  "AddEventBreakpoint",
 ];
 service_descriptions.commands.HttpLogger = 
 [
@@ -86,6 +88,13 @@ service_descriptions.events.EcmascriptDebugger =
   "OnHandleEvent",
   "OnObjectSelected",
   "OnParseError",
+  "OnReadyStateChanged",
+  "OnConsoleLog",
+  "OnConsoleTime",
+  "OnConsoleTimeEnd",
+  "OnConsoleTrace",
+  "OnConsoleProfile",
+  "OnConsoleProfileEnd",
 ];
 service_descriptions.events.HttpLogger = 
 [

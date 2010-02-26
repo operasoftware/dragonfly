@@ -16,7 +16,6 @@ cls.ConsoleLogger["2.0"].Service = function()
     */
   this.name = 'console-logger';
   this.version = '2.0';
-  this.core_release = '2.5';
 
 
   // see http://dragonfly.opera.com/app/scope-interface/ConsoleLogger.html#onconsolemessage
