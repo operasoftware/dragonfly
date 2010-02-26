@@ -1,4 +1,4 @@
-/* load after build_application.jsn */
+﻿/* load after build_application.jsn */
 
 window.app.builders.EcmascriptDebugger || ( window.app.builders.EcmascriptDebugger = {} );
 
