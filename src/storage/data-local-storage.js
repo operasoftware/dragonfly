@@ -21,7 +21,10 @@ cls.StorageDataBase = new function()
   {
     for(var rt_id in this._rts)
     {
-      this._get_key_value_pairs(this._rts[rt_id].rt_id);
+      if(this._rts[rt_id])
+      {
+        this._get_key_value_pairs(this._rts[rt_id].rt_id);
+      }
     }
   }
 
