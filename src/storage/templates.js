@@ -81,7 +81,7 @@ window.templates.storage_domain_header = function(rt)
 {
   return (
   ['tr', 
-    ['th', rt.title || window.helpers.shortenURI(rt.uri), 'colspan', '3']
+    ['th', rt.title || window.helpers.shortenURI(rt.uri).uri, 'colspan', '3']
   ]);
 }
 
