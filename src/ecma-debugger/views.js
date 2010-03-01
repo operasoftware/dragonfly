@@ -50,6 +50,52 @@ new Settings
 
 );
 
+cls.AboutView = function(id, name, container_class)
+{
+  this.init(id, name, container_class);
+}
+
+cls.AboutView.prototype = ViewBase;
+new cls.AboutView('about', 'About', 'scroll');
+
+new Settings
+(
+  // id
+  'about', 
+  // key-value map
+  {
+    'about': true
+  }, 
+  // key-label map
+  {
+  },
+  // settings map
+  {
+    customSettings:
+    [
+      'about'
+    ]
+  },
+  // template
+  {
+    about:
+    function(setting)
+    {
+      new XMLHttpRequest().loadResource('AUTHORS', function(xml)
+      {
+        var 
+        authors = document.getElementById('about-authors'),
+        response_text = xml.responseText;
+        if(authors && response_text)
+        {
+          authors.render(['pre', response_text]);
+        }
+      });
+      return ['ul', ['li', 'id', 'about-authors']];
+    }
+  }
+);
+
 
 /**
   * @constructor 

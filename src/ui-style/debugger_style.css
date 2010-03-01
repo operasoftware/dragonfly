@@ -1320,6 +1320,12 @@ d
   height: -o-skin;
 }
 
+#about-authors pre
+{
+  font-family: sans-serif;
+  padding: 0 2em;
+}
+
 
 
  
