@@ -166,7 +166,6 @@ cls.DOMInspectorActions = function(id)
   this.setSelected = function(new_target)
   {
     var firstChild = null, raw_delta = 0, delta = 0;
- 
     if(new_target)
     {
       if(nav_target)
@@ -175,8 +174,7 @@ cls.DOMInspectorActions = function(id)
       }
       selection.collapse(view_container, 0);
       nav_target = new_target;
- 
-      raw_delta = new_target.offsetTop - view_container.scrollTop;
+      raw_delta = new_target.getBoundingClientRect().top - view_container.getBoundingClientRect().top; 
       // delta positive overflow of the container
       delta = 
         raw_delta + new_target.offsetHeight + SCROLL_IN_PADDING - view_container.offsetHeight;
