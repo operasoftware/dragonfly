@@ -568,10 +568,10 @@ Destination can be either a directory or a zip file"""
                       help="Apply translation changes to the finished build")
     parser.add_option("-s", "--no-string-check", default=True,
                       action="store_false", dest="check_strings",
-                      help="Check validity of strings before building")
+                      help="Don't check validity of strings before building")
     parser.add_option("-e", "--no-enc-check", default=True,
                       action="store_false", dest="check_encodings",
-                      help="Check encoding of files before building")
+                      help="Don't check encoding of files before building")
     parser.add_option("-m", "--minify", default=False,
                       action="store_true", dest="minify",
                       help="Minify the sources")
