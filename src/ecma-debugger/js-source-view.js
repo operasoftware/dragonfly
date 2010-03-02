@@ -724,39 +724,6 @@ cls.JsSourceView = function(id, name, container_class)
 }
 
 cls.JsSourceView.prototype = ViewBase;
-new cls.JsSourceView('js_source', ui_strings.M_VIEW_LABEL_SOURCE, 'scroll js-source');
-
-
-cls.helper_collection || ( cls.helper_collection = {} );
-
-cls.helper_collection.getSelectedOptionText = function()
-{
-  var selected_script_id = runtimes.getSelectedScript();
-  if( selected_script_id )
-  {
-    var script = runtimes.getScript(selected_script_id);
-    if( script )
-    {
-      var display_uri = helpers.shortenURI(script.uri);
-      return ( 
-        display_uri.uri
-        ? display_uri.uri
-        : ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script.script_id 
-      )
-    }
-    else
-    {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
-        'missing script in getSelectedOptionText in cls.ScriptSelect');
-    }
-  }
-  else if(runtimes.getSelectedRuntimeId() && 
-            runtimes.isReloadedWindow(runtimes.getActiveWindowId()))
-  {
-    return ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS;
-  }
-  return '';
-}
 
 
 cls.ScriptSelect = function(id, class_name)
@@ -767,7 +734,34 @@ cls.ScriptSelect = function(id, class_name)
 
   var stopped_script_id = '';
 
-  this.getSelectedOptionText = cls.helper_collection.getSelectedOptionText;
+  this.getSelectedOptionText = function()
+  {
+    var selected_script_id = runtimes.getSelectedScript();
+    if( selected_script_id )
+    {
+      var script = runtimes.getScript(selected_script_id);
+      if( script )
+      {
+        var display_uri = helpers.shortenURI(script.uri);
+        return ( 
+          display_uri.uri
+          ? display_uri.uri
+          : ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script.script_id 
+        )
+      }
+      else
+      {
+        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+          'missing script in getSelectedOptionText in cls.ScriptSelect');
+      }
+    }
+    else if(runtimes.getSelectedRuntimeId() && 
+              runtimes.isReloadedWindow(runtimes.getActiveWindowId()))
+    {
+      return ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS;
+    }
+    return '';
+  }
 
   this.getSelectedOptionValue = function()
   {
@@ -848,136 +842,134 @@ cls.ScriptSelect = function(id, class_name)
 
 cls.ScriptSelect.prototype = new CstSelect();
 
-new cls.ScriptSelect('js-script-select', 'script-options');
+
+cls.JsSourceView.create_ui_widgets = function()
+{
+
+  new ToolbarConfig
+  (
+    'js_source',
+    [
+      {
+        handler: 'continue',
+        title: ui_strings.S_BUTTON_LABEL_CONTINUE,
+        id: 'continue-run',
+        disabled: true
+      },
+      {
+        handler: 'continue',
+        title: ui_strings.S_BUTTON_LABEL_STEP_INTO,
+        id: 'continue-step-into-call',
+        disabled: true
+      },
+      {
+        handler: 'continue',
+        title: ui_strings.S_BUTTON_LABEL_STEP_OVER,
+        id: 'continue-step-next-line',
+        disabled: true
+      },
+      {
+        handler: 'continue',
+        title: ui_strings.S_BUTTON_LABEL_STEP_OUT,
+        id: 'continue-step-out-of-call',
+        disabled: true
+      }
+    ],
+    [
+      {
+        handler: 'js-source-text-search',
+        title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH,
+        label: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
+      }
+    ],
+    null,
+    [
+      {
+        handler: 'select-window',
+        title: ui_strings.S_BUTTON_LABEL_SELECT_WINDOW,
+        type: 'dropdown',
+        class: 'window-select-dropdown',
+        template: window['cst-selects']["js-script-select"].getTemplate()
+      }
+    ]
+  );
 
 
 
-new ToolbarConfig
-(
-  'js_source',
-  [
+  new Settings
+  (
+    // id
+    'js_source',
+    // key-value map
     {
-      handler: 'continue',
-      title: ui_strings.S_BUTTON_LABEL_CONTINUE,
-      id: 'continue-run',
-      disabled: true
+      script: 0, 
+      exception: 0, 
+      error: 1, 
+      abort: 0,
+      'tab-size': 4
+    }, 
+    // key-label map
+    {
+      script: ui_strings.S_BUTTON_LABEL_STOP_AT_THREAD, 
+      exception: ui_strings.S_BUTTON_LABEL_AT_EXCEPTION, 
+      error: ui_strings.S_BUTTON_LABEL_AT_ERROR, 
+      abort: ui_strings.S_BUTTON_LABEL_AT_ABORT,
+      'tab-size': ui_strings.S_LABEL_TAB_SIZE
+    }, 
+    // settings map
+    {
+      checkboxes:
+      [
+        'script',
+        'exception',
+        'error',
+        'abort'
+      ],
+      customSettings:
+      [
+        'hr',
+        'tab-size'
+      ]
     },
+    // custom templates
     {
-      handler: 'continue',
-      title: ui_strings.S_BUTTON_LABEL_STEP_INTO,
-      id: 'continue-step-into-call',
-      disabled: true
-    },
-    {
-      handler: 'continue',
-      title: ui_strings.S_BUTTON_LABEL_STEP_OVER,
-      id: 'continue-step-next-line',
-      disabled: true
-    },
-    {
-      handler: 'continue',
-      title: ui_strings.S_BUTTON_LABEL_STEP_OUT,
-      id: 'continue-step-out-of-call',
-      disabled: true
+      'hr':
+      function(setting)
+      {
+        return ['hr'];
+      },
+      'tab-size':
+      function(setting)
+      {
+        return (
+        [
+          'setting-composite', 
+          ['label', 
+            setting.label_map['tab-size'] + ': ',
+            ['input',
+              'type', 'number',
+              'handler', 'set-tab-size',
+              'max', '8',
+              'min', '0',
+              'value', setting.get('tab-size')
+            ]
+          ]
+        ] );
+      }
     }
-  ],
-  [
-    {
-      handler: 'js-source-text-search',
-      title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH,
-      label: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
-    }
-  ],
-  null,
-  [
-    {
-      handler: 'select-window',
-      title: ui_strings.S_BUTTON_LABEL_SELECT_WINDOW,
-      type: 'dropdown',
-      class: 'window-select-dropdown',
-      template: window['cst-selects']["js-script-select"].getTemplate()
-    }
-  ]
-);
+  );
 
-
-
-new Settings
-(
-  // id
-  'js_source',
-  // key-value map
-  {
-    script: 0, 
-    exception: 0, 
-    error: 1, 
-    abort: 0,
-    'tab-size': 4
-  }, 
-  // key-label map
-  {
-    script: ui_strings.S_BUTTON_LABEL_STOP_AT_THREAD, 
-    exception: ui_strings.S_BUTTON_LABEL_AT_EXCEPTION, 
-    error: ui_strings.S_BUTTON_LABEL_AT_ERROR, 
-    abort: ui_strings.S_BUTTON_LABEL_AT_ABORT,
-    'tab-size': ui_strings.S_LABEL_TAB_SIZE
-  }, 
-  // settings map
-  {
-    checkboxes:
+  new Switches
+  (
+    'js_source',
     [
       'script',
-      'exception',
       'error',
-      'abort'
-    ],
-    customSettings:
-    [
-      'hr',
-      'tab-size'
+      'threads.log-threads'
     ]
-  },
-  // custom templates
-  {
-    'hr':
-    function(setting)
-    {
-      return ['hr'];
-    },
-    'tab-size':
-    function(setting)
-    {
-      return (
-      [
-        'setting-composite', 
-        ['label', 
-          setting.label_map['tab-size'] + ': ',
-          ['input',
-            'type', 'number',
-            'handler', 'set-tab-size',
-            'max', '8',
-            'min', '0',
-            'value', setting.get('tab-size')
-          ]
-        ]
-      ] );
-    }
-  }
-);
-
-new Switches
-(
-  'js_source',
-  [
-    'script',
-    'error',
-    'threads.log-threads'
-  ]
-);
+  );
 
 
-(function()
-{
   var textSearch = new VirtualTextSearch();
 
   var onViewCreated = function(msg)
@@ -1033,17 +1025,19 @@ new Switches
     }
   }
 
-})()
 
-eventHandlers.change['set-tab-size'] = function(event, target)
-{
-  var 
-  style = document.styleSheets.getDeclaration("#js-source-content div"),
-  tab_size = event.target.value;
 
-  if(style && /[0-8]/.test(tab_size))
+  eventHandlers.change['set-tab-size'] = function(event, target)
   {
-    style.setProperty('-o-tab-size', tab_size, 0);
-    settings.js_source.set('tab-size', tab_size);
+    var 
+    style = document.styleSheets.getDeclaration("#js-source-content div"),
+    tab_size = event.target.value;
+
+    if(style && /[0-8]/.test(tab_size))
+    {
+      style.setProperty('-o-tab-size', tab_size, 0);
+      settings.js_source.set('tab-size', tab_size);
+    }
   }
+
 }

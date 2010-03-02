@@ -34,6 +34,16 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
     window.hostspotlighter = new namespace.Hostspotlighter();
     window.hostspotlighter.bind(service_interface);
 
+    /* ECMA object inspection */
+    namespace.InspectionView.prototype = ViewBase;
+    new namespace.InspectionView('inspection', ui_strings.M_VIEW_LABEL_FRAME_INSPECTION, 'scroll');
+    namespace.InspectionView.create_ui_widgets();
+
+    /* DOM object inspection */
+    namespace.DOMAttrsView.prototype = ViewBase;
+    new namespace.DOMAttrsView('dom_attrs', ui_strings.M_VIEW_LABEL_DOM_ATTR, 'scroll dom-attrs');
+    namespace.DOMAttrsView.create_ui_widgets();
+
     /* 
       we will use a namespace for all the followindg classes only 
       if we need to adjust them for an  updated service version
@@ -44,22 +54,22 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
     window.export_data = new cls.ExportData();
     new cls.ExportDataView('export_data', ui_strings.M_VIEW_LABEL_EXPORT, 'scroll export-data');
 
+    
+    
+
+    /* JS source */
     window.simple_js_parser = new window.cls.SimpleJSParser();
+    new cls.JsSourceView('js_source', ui_strings.M_VIEW_LABEL_SOURCE, 'scroll js-source');
+    new cls.ScriptSelect('js-script-select', 'script-options');
+    cls.JsSourceView.create_ui_widgets();
+    
 
     /* DOM */
     new cls.DOMInspectorActions('dom'); // the view id
     new cls.DOMInspectorKeyhandler('dom');
     new cls.DOMInspectorEditKeyhandler('dom');
 
-    /* ECMA object inspection */
-    namespace.InspectionView.prototype = ViewBase;
-    new namespace.InspectionView('inspection', ui_strings.M_VIEW_LABEL_FRAME_INSPECTION, 'scroll');
-    namespace.InspectionView.create_ui_widgets();
 
-    /* DOM object inspection */
-    namespace.DOMAttrsView.prototype = ViewBase;
-    new namespace.DOMAttrsView('dom_attrs', ui_strings.M_VIEW_LABEL_DOM_ATTR, 'scroll dom-attrs');
-    namespace.DOMAttrsView.create_ui_widgets();
 
     /* storage objects and cookies */
     new cls.Namespace("storages");

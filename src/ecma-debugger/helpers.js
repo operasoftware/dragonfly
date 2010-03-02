@@ -1,4 +1,6 @@
-﻿/**
+﻿var cls = window.cls || ( window.cls = {} );
+
+/**
  * @fileoverview
  * <strong>fixme: Deprecated. marked for removal</strong>
  */
@@ -9,7 +11,7 @@
   * use EventHandler and BaseActions
   */
 
-helpers = new function()
+window.cls.Helpers = function()
 {
   var self = this;
 
@@ -25,7 +27,7 @@ helpers = new function()
     }
   }
 
-
+  // TODO this should be handled with the Keyhandler class
   var keypressListener = function(event)
   {
     if( event.which == 0 )
