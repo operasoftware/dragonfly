@@ -180,18 +180,6 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
 
     messages.post('frame-selected', {frame_index: 0});
 
-    /*
-    we have to see if we still need that update link
-    if(settings.frame_inspection.get('automatic-update-global-scope'))
-    {
-      action_handler.post('show-frame', {'target': { 'ref-id': 0 } });
-    }
-    else
-    {
-      views.frame_inspection.showGlobalScopeUpdateLink();
-    }
-    */
-
   }
 
   this.setInitialSettings = function()

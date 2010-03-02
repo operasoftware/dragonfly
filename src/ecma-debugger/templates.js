@@ -336,68 +336,9 @@ MODE ::= "<mode>"
   }
 
 
-  this.toolbars = function()
-  {
-    return ['div', 
-      ['h1', 'Opera developer tools'],
-      ['div', 'id', 'continues'],
-      ['div', 
-        ['input', 'type', 'button', 'value', 'create runtimes', 'handler', 'create-all-runtimes'],
-      'id', 'main-button-toolbar'],
-      ['ul', 
-        ['li', 'Runtimes', 'handler', 'drop-down', 'ref', 'runtimes'],
-        ['li', 'Configuration', 'handler', 'drop-down', 'ref', 'configuration'],
-        ['li', 'Console', 'handler', 'drop-down', 'ref', 'console'],
-        ['li', 'Enviroment', 'handler', 'drop-down', 'ref', 'environment'],
-        ['li', 'DOM Inspector', 'handler', 'drop-down', 'ref', 'dom-inspector'],
-        (ini.debug || window.__profiling__ || window.__times_spotlight__ || window.__times_dom ? 
-           ['li', 'Debug', 'handler', 'drop-down', 'ref', 'debug'] : [] ),
-        (ini.debug || window.__profiling__ ? ['li', 'Command Line', 'handler', 'drop-down', 'ref', 'command-line'] : [] ),
-        (ini.debug || window.__testing__ ? ['li', 'Testing', 'handler', 'drop-down', 'ref', 'testing'] : [] ),
-
-      'class', 'dropdowns'],
-      'id', 'ecma-debugger-toolbar']
-  }
-
   this.runtimes_dropdown = function(ele)
   {
     return ['div', ['ul', 'id', 'runtimes'], 'class', 'window-container'];
-  }
-
-  this.domInspector = function()
-  {
-    return ['div', 
-      ['div',
-        ['form',
-          ['label',
-            ['input', 'type', 'radio', 'id', 'radio-markup-view', 'checked', 'checked'],
-          ' markup view '],
-          ['label',
-            ['input', 'type', 'radio', 'id', 'radio-dom-view'],
-          ' dom view '],
-          ['label',
-            ['input', 'type', 'checkbox', 'id', 'checkbox-show-attributes', 'checked', 'checked'],
-          ' show attributes '],
-          ['label',
-            ['input', 'type', 'checkbox', 'id', 'checkbox-force-lower-case', 'checked', 'checked'],
-          ' lower case node names '],
-          ['label',
-            ['input', 'type', 'checkbox', 'id', 'checkbox-show-comments'],
-          ' show comments '],
-          ['label',
-            ['input', 'type', 'checkbox', 'id', 'checkbox-show-white-space-nodes'],
-          ' show white space nodes '],
-          ['label',
-            ['input', 'type', 'checkbox', 'id', 'checkbox-highlight-on-hover'],
-          ' highlight on hover '],
-          ['label',
-            ['input', 'type', 'checkbox', 'id', 'checkbox-find-element-with-click', 'checked', 'checked'],
-          ' find element with click '],
-        ],
-      'class', 'toolbar'],
-      ['div', ['div', 'id', 'dom-view'], 'class', 'content'],
-      ['div', '<status>', 'id', 'status-bar-dom-view', 'class', 'status-bar'],
-    'class', 'window-container', 'id', 'dom-view-container']
   }
 
   this.cssInspector = function(categories)
