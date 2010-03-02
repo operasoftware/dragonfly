@@ -239,6 +239,13 @@ window.cls.TestFramework = function()
   this._click_handler = function(event)
   {
     var target = event.target;
+    if(!this._doc_base_uri)
+    {
+      this._doc_base_uri = 
+      document.getElementsByTagName('base')[0] ? 
+      document.baseURI :
+      './';
+    }
     while (target && !target.id && (target = target.parentNode));
     if (target)
     {
@@ -279,13 +286,14 @@ window.cls.TestFramework = function()
                   " id='pretty-print-message'>" +
                 "</label></p>";
           var pres = message_container.getElementsByTagName('pre');
+
           new XMLHttpRequest().loadResource(
-              document.baseURI + 'defs/' + this._selected_service + '.commands.' + event.target.textContent + '.def',
+              this._doc_base_uri + 'defs/' + this._selected_service + '.commands.' + event.target.textContent + '.def',
               this._show_def,
               {'pre': pres[0]}
             )
           new XMLHttpRequest().loadResource(
-              './defs/' + this._selected_service + '.responses.' + event.target.textContent + '.def',
+              this._doc_base_uri + 'defs/' + this._selected_service + '.responses.' + event.target.textContent + '.def',
               this._show_def,
               {'pre': pres[1]}
             )
@@ -302,7 +310,7 @@ window.cls.TestFramework = function()
             "<pre class='definition'></pre>";
           var pres = message_container.getElementsByTagName('pre');
           new XMLHttpRequest().loadResource(
-              document.baseURI + 'defs/' + this._selected_service + '.events.' + event.target.textContent + '.def',
+              this._doc_base_uri + 'defs/' + this._selected_service + '.events.' + event.target.textContent + '.def',
               this._show_def,
               {'pre': pres[0]}
             );
