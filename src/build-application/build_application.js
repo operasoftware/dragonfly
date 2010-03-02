@@ -235,11 +235,11 @@ window.app.builders.WindowManager || ( window.app.builders.WindowManager = {} );
 window.app.builders.WindowManager["2.0"] = function(service)
 {
   var namespace = cls.WindowManager && cls.WindowManager["2.0"];
-  if(namespace)
+  var service_interface = window.app.helpers.implement_service(namespace);
+  if(service_interface)
   {
-    window.app.helpers.implement_service(namespace);
     window.window_manager_data = new namespace.WindowManagerData();
-    window.window_manager_data.bind();
+    window.window_manager_data.bind(service_interface);
     window.windowsDropDown = new namespace.WindowsDropDown();
     namespace.DebuggerMenu.prototype = new CstSelectWithAction();
     new namespace.DebuggerMenu('debugger-menu', 'debugger-menu');

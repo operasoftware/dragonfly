@@ -26,13 +26,14 @@ window.cls.TagManager = function()
   ARGS = 2;
 
   var 
-  _counter = 1,
   _tags = [],
   _get_empty_tag = function()
   {
-    for(var i = 1; _tags[i]; i++);
+    for(var i = 2; _tags[i]; i++);
     return i;
   };
+  // use tag with value 1 to explicitly ignore the response
+  _tags[1] = [null, function(status, message){}, []];
 
   /**
    * To set a tagged callback. Arguments are object, method, additional

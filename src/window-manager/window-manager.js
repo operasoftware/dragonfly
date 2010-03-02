@@ -247,11 +247,9 @@ cls.WindowManager["2.0"].WindowManagerData = function()
     window.windowsDropDown.update();
   }
 
-  this.bind = function()
+  this.bind = function(window_manager)
   {
-    var 
-    self = this,
-    window_manager = window.services['window-manager'];
+    var self = this;
 
     window_manager.handleGetActiveWindow = 
     window_manager.onWindowActivated = function(status, msg)
@@ -274,6 +272,10 @@ cls.WindowManager["2.0"].WindowManagerData = function()
     {
       window_manager.requestListWindows();
     });
+    window_manager.onWindowLoaded = function(status, message)
+    {
+      // do nothing
+    }
   };
 
   window.messages.addListener('reset-state', function(msg)

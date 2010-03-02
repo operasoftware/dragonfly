@@ -1184,7 +1184,8 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       {
         if(services.exec && services.exec.is_implemented)
         {
-          services.exec.requestExec(0, 
+          // tag 1 is a resreved tag for callbacks to be ignored
+          services.exec.requestExec(1, 
               [[["reload", null, window.window_manager_data.get_debug_context()]]]);
         }
         else
