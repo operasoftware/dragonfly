@@ -1,8 +1,10 @@
-﻿/**
+﻿window.cls || (window.cls = {});
+
+/**
   * @constructor 
   */
 
-var elementLayout = new function()
+cls.ElementLayout = function()
 {
   const
   PADDING_TOP = 0,

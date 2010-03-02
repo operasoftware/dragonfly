@@ -34,14 +34,34 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
     window.hostspotlighter = new namespace.Hostspotlighter();
     window.hostspotlighter.bind(service_interface);
 
+    /* 
+      we will use a namespace for all the followindg classes only 
+      if we need to adjust them for an  updated service version
+    */
+
+    window.elementLayout = new cls.ElementLayout();
+    window.elementStyle = new cls.ElementStyle();
+    window.export_data = new cls.ExportData();
+    new cls.ExportDataView('export_data', ui_strings.M_VIEW_LABEL_EXPORT, 'scroll export-data');
+
+    window.simple_js_parser = new window.cls.SimpleJSParser();
+
+    /* DOM */
+    new cls.DOMInspectorActions('dom'); // the view id
+    new cls.DOMInspectorKeyhandler('dom');
+    new cls.DOMInspectorEditKeyhandler('dom');
+
+    /* ECMA object inspection */
     namespace.InspectionView.prototype = ViewBase;
     new namespace.InspectionView('inspection', ui_strings.M_VIEW_LABEL_FRAME_INSPECTION, 'scroll');
     namespace.InspectionView.create_ui_widgets();
 
+    /* DOM object inspection */
     namespace.DOMAttrsView.prototype = ViewBase;
     new namespace.DOMAttrsView('dom_attrs', ui_strings.M_VIEW_LABEL_DOM_ATTR, 'scroll dom-attrs');
     namespace.DOMAttrsView.create_ui_widgets();
 
+    /* storage objects and cookies */
     new cls.Namespace("storages");
     window.storages.add(new cls.LocalStorageData(
       'local_storage', 'local-storage', 'Local Storage', 'localStorage'));
@@ -49,6 +69,7 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
       'session_storage', 'session-storage', 'Session Storage', 'sessionStorage'));
     window.storages.add(new cls.CookiesData('cookies', 'cookies', 'Cookies'));
     new cls.LocalStorageView('local_storage', 'Storage', 'scroll');
+
   }
 
 }

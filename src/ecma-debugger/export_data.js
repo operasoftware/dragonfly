@@ -1,14 +1,16 @@
-﻿/**
+﻿var cls = window.cls || ( window.cls = {} );
+
+/**
   * @constructor 
   */
 
-var export_data = new function ()
+cls.ExportData = function ()
 {
   this.data = '';
 };
 
 
-var cls = window.cls || ( window.cls = {} );
+
 /**
   * @constructor 
   * @extends ViewBase
@@ -27,5 +29,5 @@ cls.ExportDataView = function(id, name, container_class)
 
 cls.ExportDataView.prototype = ViewBase;
 
-new cls.ExportDataView('export_data', ui_strings.M_VIEW_LABEL_EXPORT, 'scroll export-data');
+
 

@@ -1,4 +1,6 @@
-﻿var simple_js_parser=new function()
+﻿window.cls || (window.cls = {});
+
+window.cls.SimpleJSParser = function()
 {
   /* adjusted to return fotmatted HTML */
 

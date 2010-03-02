@@ -1,9 +1,11 @@
-﻿/**
+﻿window.cls || (window.cls = {});
+
+/**
   * @constructor 
   */
 
 
-var elementStyle = new function()
+cls.ElementStyle = function()
 {
   // TODO cleanup code history
   //  cats is still overdone

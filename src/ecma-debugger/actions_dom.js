@@ -507,7 +507,7 @@ cls.DOMInspectorActions = function(id)
 
 cls.DOMInspectorActions.prototype = BaseActions;
 
-new cls.DOMInspectorActions('dom'); // the view id
+
 
 
 /**
@@ -571,7 +571,7 @@ cls.DOMInspectorKeyhandler = function(id)
 
 cls.DOMInspectorKeyhandler.prototype = BaseKeyhandler;
 
-new cls.DOMInspectorKeyhandler('dom');
+
 
 /**
   * @constructor 
@@ -626,7 +626,7 @@ cls.DOMInspectorEditKeyhandler = function(id)
 
 cls.DOMInspectorEditKeyhandler.prototype = BaseEditKeyhandler;
 
-new cls.DOMInspectorEditKeyhandler('dom');
+
 
 eventHandlers.dblclick['edit-dom'] = (function(event, target)
 {
