@@ -1137,39 +1137,6 @@ d
 }
 
 /* storage */
-.table-full-width
-{
-  display: table;
-  table-layout: fixed;
-  width: 100%;
-}
-
-.storage-type
-{
-  display: table-cell;
-  padding: 12px;
-}
-
-.storage-type h2
-{
-  background-color: hsl(0, 0%, 95%);
-  padding: .2em .5em;
-  font-size: 1.3em;
-  font-weight: normal;
-  border: 1px solid #ccc;
-  margin-bottom: 1em;
-}
-
-.storage-type input[handler="storage-update"]
-{
-  float: right;
-  background: transparent -o-skin('Reload');
-  border: 0;
-  margin: -.2em;
-  width: -o-skin;
-  height: -o-skin;
-}
-
 
 
 
@@ -1178,19 +1145,40 @@ d
 {
   border-collapse: collapse;
   width: 100%;
+  margin-bottom: 10px;
 }
 
-.storage-table td,
 .storage-table th
+{
+  text-align: left;
+  line-height: 20px;
+  border: 0px;
+  padding: 0;
+  background-color: #fff;
+}
+
+.storage-table tr:first-child th
+{
+  border-bottom: 1px solid #ccc;
+}
+
+
+
+.storage-table td
 {
   border: 1px solid #ccc;
   padding: 0px 5px;
-  line-height: 20px;
+  line-height: 16px;
 }
 
 .storage-table td
 {
   font-family: monospace;
+}
+
+.storage-table tr:nth-child(even)  
+{
+  background-color: hsl(0, 0%, 97%);
 }
 
 .storage-table .key
@@ -1201,6 +1189,7 @@ d
 .storage-table .value
 {
   border-right: 0px;
+  cursor: pointer;
 }
 
 .storage-table .control
@@ -1216,35 +1205,18 @@ d
   margin: 0 3px;
   width: -o-skin;
   height: -o-skin;
-  opacity: 0;
-}
-
-.storage-table tr:hover .control input
-{
-  opacity: .3;
-}
-
-.storage-table tr:hover .control input:hover
-{
-  opacity: 1;
-}
-
-.storage-table .control input[handler="storage-edit"]
-{
-  background-image: -o-skin('Compose mail');
 }
 
 .storage-table .control input[handler="storage-delete"]
 {
-  background-image: -o-skin('Delete');
+  background-image: -o-skin('Search Close History Item');
 }
 
-
-
-.storage-table th
+.storage-table .control input[handler="storage-delete"]:hover
 {
-  text-align: left;
+  background-image: -o-skin('Search Close History Item.hover');
 }
+
 
 .storage-table .storage-edit
 {
@@ -1255,7 +1227,7 @@ d
 {
   margin: 0;
   padding: 0px 5px;
-  line-height: 20px;
+  line-height: 16px;
   font-weight: normal;
   background-color: hsl(0, 0%, 90%);
   border-bottom: 1px solid #ccc;
@@ -1265,18 +1237,16 @@ d
 {
   display: block;
   float: right;
-  margin-top: 2px;
   width: -o-skin;
   height: -o-skin;
   content: -o-skin('Group.open');
+  margin-bottom: -10px;
 }
-
-
 
 .storage-table p
 {
   margin: 0;
-  padding: 0px 5px;
+  padding: 0px;
   background-color: hsl(0, 0%, 90%);
   border-top: 1px solid #ccc;
   text-align: right;
@@ -1291,6 +1261,7 @@ d
   margin: 0;
   padding: 2px 5px;
   border: 0px;
+  background-color: #fff;
 }
 
 .storage-table .new-key
@@ -1298,8 +1269,8 @@ d
   box-sizing: border-box;
   display: block;
   width: 100%;
-  height: 26px;
-  padding: 2px 5px;
+  height: 16px;
+  padding: 0px 5px;
   background-color: hsl(0, 0%, 90%);
   border: 0px;
   border-bottom: 1px solid #ccc;
@@ -1311,13 +1282,19 @@ d
   text-align: right;
 }
 
-.storage-table input[handler="storage-add-key"]
+.storage-table input[handler="storage-add-key"],
+.storage-table input[handler="storage-update"]
 {
   background: transparent -o-skin('New item menu');;
   border: 0px;
   margin: 0 3px;
   width: -o-skin;
   height: -o-skin;
+}
+
+.storage-table input[handler="storage-update"]
+{
+  background: transparent -o-skin('Reload');
 }
 
 #about-authors pre

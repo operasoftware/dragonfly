@@ -78,7 +78,10 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
     window.storages.add(new cls.LocalStorageData(
       'session_storage', 'session-storage', 'Session Storage', 'sessionStorage'));
     window.storages.add(new cls.CookiesData('cookies', 'cookies', 'Cookies'));
-    new cls.LocalStorageView('local_storage', 'Storage', 'scroll');
+    
+    new cls.StorageView('local_storage', 'Local Storage', 'scroll');
+    new cls.StorageView('session_storage', 'Session Storage', 'scroll');
+    new cls.StorageView('cookies', 'Cookies', 'scroll');
 
   }
 

@@ -1,7 +1,7 @@
-﻿window.eventHandlers.click['storage-edit'] = function(event, target)
+﻿window.eventHandlers.dblclick['storage-edit'] = function(event, target)
 {
   var 
-  tr = event.target.parentNode.parentNode,
+  tr = event.target.parentNode,
   rt_id = tr.parentNode.getAttribute('data-rt-id'), 
   storage_id = tr.parentNode.getAttribute('data-storage-id'), 
   key = tr.getAttribute('data-storage-key'),
@@ -91,7 +91,7 @@ window.eventHandlers.click['storage-delete-all'] = function(event, target)
 
 window.eventHandlers.click['storage-update'] = function(event, target)
 {
-  window.storages[event.target.parentNode.getAttribute('data-storage-id')].update();
+  window.storages[event.target.parentNode.parentNode.parentNode.getAttribute('data-storage-id')].update();
 }
 
 

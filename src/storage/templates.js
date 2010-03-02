@@ -43,17 +43,12 @@ window.templates.storage = function(storages, storage_id, storage_title)
       ['div',
         ['table',
           window.templates.storage_domain_header(rt),
-          ['tr', 
-            ['th',
-              window.templates.storage_button({label: 'Delete all', handler: 'storage-delete-all'}),
-              'colspan', '3',
-              'class', 'single-control'
-            ]
-          ],
           storage.storage.map(window.templates.storage_item),
           ['tr', 
             ['th',
               window.templates.storage_button({title: 'Add', handler: 'storage-add-key'}),
+              window.templates.storage_button({title: 'Update', handler: 'storage-update'}),
+              window.templates.storage_button({label: 'Delete all', handler: 'storage-delete-all'}),
               'colspan', '3',
               'class', 'single-control'
             ]
@@ -66,15 +61,7 @@ window.templates.storage = function(storages, storage_id, storage_title)
       ]);
     }
   }
-  return (
-  ['div',
-    ['h2', storage_title,
-      window.templates.storage_button({title: 'Update', handler: 'storage-update'}),
-      'data-storage-id', storage_id,
-    ],
-    ret,
-    'class', 'storage-type'
-  ]);
+  return  ['div', ret, 'class', 'padding'];
 }
 
 window.templates.storage_domain_header = function(rt)
@@ -87,13 +74,15 @@ window.templates.storage_domain_header = function(rt)
 
 window.templates.storage_item = function(entry, index, storage_arr)
 {
-  const MAX_LENGTH = 15;
+  const MAX_LENGTH = 40;
   return (
   ['tr',
     ['td', entry.key, 'class', 'key'],
-    ['td', entry.value.length > MAX_LENGTH ? entry.value.slice(0, MAX_LENGTH) + '...' : entry.value, 'class', 'value'],
     ['td', 
-      window.templates.storage_button({title: 'Edit', handler: 'storage-edit'}),
+      entry.value.length > MAX_LENGTH ? entry.value.slice(0, MAX_LENGTH) + '...' : entry.value,
+      'edit-handler', 'storage-edit',
+      'class', 'value'],
+    ['td', 
       window.templates.storage_button({title: 'Delete', handler: 'storage-delete'}),
       'class', 'control'
     ],
