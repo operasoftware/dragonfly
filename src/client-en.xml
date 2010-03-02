@@ -280,8 +280,6 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./window-manager/window-manager.js"/>
 <script src="./console-logger/console.js"/>
 <script src="./console-logger/console_templates.js"/>
-<script src="./ecma-debugger/ecma-debugger.js"/>
-
 
 <script src="./storage/data-local-storage.js"/>
 <script src="./storage/data-cookies.js"/>
