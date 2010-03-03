@@ -39,6 +39,27 @@ cls.StorageDataBase = new function()
     return item;
   } 
 
+  this._encode_new_line_chars = (function()
+  {
+    /* from the ecma spec
+      \u000A Line Feed <LF>
+      \u000D Carriage Retu rn <CR>
+      \u2028 Line separator <LS>
+      \u2029 Paragraph separator <PS>
+    */
+    var 
+    re = /(\u000A)|(\u000D)|(\u2028)|(\u2029)/g,
+    fn = function(match, NL, CR, LS, PS)
+    {
+      return NL && "\\u000A" || CR && "\\u000D" || LS && "\\u2028" || PS && "\\u2029";
+    };
+
+    return function(str)
+    {
+      return str.replace(re, fn);
+    }
+  })();
+
   this.set_item = function(rt_id, key, value, success_callback)
   {
     var item = this.get_item(rt_id, key);
@@ -57,7 +78,8 @@ cls.StorageDataBase = new function()
         }
       );
     }
-    var script = "local_storage.set_item(\"" + item.key + "\",\"" + value + "\",\"" + item.type + "\")";
+    var script = "local_storage.set_item(\"" + item.key + "\",\"" + 
+      this._encode_new_line_chars(value) + "\",\"" + item.type + "\")";
     var tag = tagManager.set_callback(this, this._handle_default,
       [success_callback, "failed set_item in LocalStorageData"]);
     services['ecmascript-debugger'].requestEval(tag, 
