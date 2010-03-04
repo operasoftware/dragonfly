@@ -1227,19 +1227,21 @@ d
 {
   margin: 0;
   padding: 0px 5px;
+  padding-right: 20px;
   line-height: 16px;
   font-weight: normal;
   background-color: hsl(0, 0%, 90%);
   border-bottom: 1px solid #ccc;
 }
 
-.storage-table h4::after
+.storage-table h4::before
 {
   display: block;
   float: right;
   width: -o-skin;
   height: -o-skin;
   content: -o-skin('Group.open');
+  margin-right: -15px;
   margin-bottom: -10px;
 }
 
@@ -1270,10 +1272,10 @@ d
   display: block;
   width: 100%;
   height: 16px;
-  padding: 0px 5px;
   background-color: hsl(0, 0%, 90%);
+  padding: 0px 5px;
   border: 0px;
-  border-bottom: 1px solid #ccc;
+  margin-left: -5px;
   font-family: monospace;
 }
 

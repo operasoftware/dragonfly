@@ -75,11 +75,24 @@ window.templates.storage_domain_header = function(rt)
 window.templates.storage_item = function(entry, index, storage_arr)
 {
   const MAX_LENGTH = 40;
+  var value = entry.value, pos = value.indexOf('\n');
+  if(pos > -1 || value.length > MAX_LENGTH)
+  {
+    if(pos > -1)
+    {
+      value = value.slice(0, pos).replace(/\r$/, '');
+    }
+    if(value.length > MAX_LENGTH)
+    {
+      value.slice(0, MAX_LENGTH);
+    }
+    value += ' ...';
+  }
   return (
   ['tr',
     ['td', entry.key, 'class', 'key'],
     ['td', 
-      entry.value.length > MAX_LENGTH ? entry.value.slice(0, MAX_LENGTH) + '...' : entry.value,
+      value,
       'edit-handler', 'storage-edit',
       'class', 'value'],
     ['td', 
@@ -96,7 +109,7 @@ window.templates.storage_item_edit = function(item, index)
   ['tr',
     ['td',
       ['h4', item.key],
-      ['textarea', item.value],
+      ['_auto_height_textarea', item.value],
       ['p',
         window.templates.storage_button({label: 'Save', handler: 'storage-save'}),
         window.templates.storage_button({label: 'Cancel', handler: 'storage-edit-cancel'}),
@@ -113,8 +126,8 @@ window.templates.storage_item_add = function()
   return (
   ['tr',
     ['td',
-      ['input', 'class', 'new-key'],
-      ['textarea'],
+      ['h4', ['_html5_input', 'data-placeholder', '<new key>', 'class', 'new-key']],
+      ['_auto_height_textarea', 'data-placeholder', '<new value>'],
       ['p',
         window.templates.storage_button({label: 'Save', handler: 'storage-save'}),
         window.templates.storage_button({label: 'Cancel', handler: 'storage-edit-cancel'}),

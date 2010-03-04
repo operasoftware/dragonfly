@@ -6,6 +6,7 @@
  *
  */
 
+
 Element.prototype.___add=Document.prototype.___add=function()
 {
   if(arguments.length)
@@ -13,7 +14,12 @@ Element.prototype.___add=Document.prototype.___add=function()
     if(arguments[0])
     {
       var doc=this.nodeType==9?this:this.ownerDocument;
-      var i=0, ele=(typeof arguments[0])=='string'?doc.createElement(arguments[i++]):this; 
+      var i = 0, ele = this, firts_arg = arguments[0];
+      if (typeof firts_arg == 'string')
+      {
+        ele = firts_arg in CustomElements ? CustomElements[firts_arg].create() : doc.createElement(firts_arg);
+        i++;
+      };
       var prop='', is_array=false, arg=arguments[i];
       while((is_array=arg instanceof  Array) ||
        (((typeof arg=='string') || (typeof arg=='number')) && (((arguments.length-i)%2)|| arguments[i+1] instanceof  Array ))
@@ -566,7 +572,7 @@ Function.prototype.bind = function(object)
   var method = this;
   return function()
   {
-    method.apply(object, arguments);
+    return method.apply(object, arguments);
   }
 }
 
@@ -576,6 +582,7 @@ Function.prototype.bind = function(object)
  * When the load is finished, callback will be invoced with context as its
  * "this" value
  */
+
 XMLHttpRequest.prototype.loadResource = function(url, callback, context)
 {
   this.onload = function()
@@ -586,3 +593,166 @@ XMLHttpRequest.prototype.loadResource = function(url, callback, context)
   this.send(null);
 }
 
+window.CustomElements = new function()
+{
+  this._init_queue = [];
+
+  this._init_listener = function(event)
+  {
+    var 
+    queue = CustomElements._init_queue,
+    wait_list = [],
+    item = null,
+    i = 0,
+    target = event.target;
+
+    for( ; item = queue[i]; i++)
+    {
+      if (target.contains(item.ele))
+      {
+        CustomElements[item.type].init(item.ele);
+      }
+      else
+      {
+        wait_list.push(item);
+      }
+    }
+    CustomElements._init_queue = wait_list;
+    if (!wait_list.length)
+    {
+      document.removeEventListener('DOMNodeInserted', arguments.callee, false);
+    }
+  }
+
+  this.add = function(CustomElementClass)
+  {
+    CustomElementClass.prototype = this.Base;
+    var custom_element = new CustomElementClass(), feature = '', i = 1;
+    if(custom_element.type)
+    {
+      for( ; feature = arguments[i]; i++)
+      {
+        if (feature in this)
+        {
+          this[feature].apply(CustomElementClass.prototype);
+        }
+      }
+      this[custom_element.type] = custom_element;
+    }
+  }
+
+}
+
+window.CustomElements.Base = new function()
+{
+  this.create = function()
+  {
+    var ele = document.createElement(this.html_name);
+    if (!CustomElements._init_queue.length)
+    {
+      document.addEventListener('DOMNodeInserted', CustomElements._init_listener, false);
+    }
+    CustomElements._init_queue.push(
+    {
+      ele: ele,
+      type: this.type
+    });
+    return ele;
+  }
+
+  this.init = function(ele)
+  {
+    if(this._inits)
+    {
+      for (var init = null, i = 0; init = this._inits[i]; i++)
+      {
+        init.call(this, ele);
+      }
+    }
+  }
+
+}
+
+window.CustomElements.PleceholderFeature = function()
+{
+  this.set_placeholder = function()
+  {
+    var placeholder = this.getAttribute('data-placeholder');
+    if (!this.value && placeholder)
+    {
+      this.value = placeholder;
+      this.addClass('placeholder');
+    }
+  }
+
+  this.clear_placeholder = function()
+  {
+    if (this.hasClass('placeholder'))
+    {
+      this.removeClass('placeholder');
+      this.value = '';
+    }
+  }
+
+  this.get_value = function()
+  {
+    return this.hasClass('placeholder') ? '' : this._get_value();
+  };
+
+  (this._inits || (this._inits = [])).push(function(ele)
+  {
+    if (!ele._get_value)
+    {
+      var _interface = ele.toString().slice(8).replace(']', '');
+      window[_interface].prototype._get_value = ele.__lookupGetter__('value');
+      window[_interface].prototype._set_value = ele.__lookupSetter__('value');
+    }
+    ele.__defineSetter__('value', ele._set_value);
+    ele.__defineGetter__('value', this.get_value);
+    this.set_placeholder.call(ele);
+    ele.addEventListener('focus', this.clear_placeholder, false);
+    ele.addEventListener('blur', this.set_placeholder, false);
+  });
+
+}
+
+window.CustomElements.AutoScrollHeightFeature = function()
+{
+  this.adjust_height = function()
+  {
+    if (this.scrollHeight != this.offsetHeight)
+    {
+      // TODO values should not be hardcoded
+      this.style.height = (4 + (this.scrollHeight > 16 ? this.scrollHeight : 16)) + 'px';
+    }
+  };
+
+  (this._inits || (this._inits = [])).push(function(ele)
+  {
+    this.adjust_height.call(ele);
+    ele.addEventListener('input', this.adjust_height, false);
+  });
+
+}
+
+CustomElements.add(function()
+{
+  this.type = '_html5_input';
+  this.html_name = 'input';
+}, 
+'PleceholderFeature');
+
+CustomElements.add(function()
+{
+  this.type = '_html5_textarea';
+  this.html_name = 'textarea';
+}, 
+'PleceholderFeature');
+
+CustomElements.add(function()
+{
+  this.type = '_auto_height_textarea';
+  this.html_name = 'textarea';
+}, 
+'PleceholderFeature', 
+'AutoScrollHeightFeature');

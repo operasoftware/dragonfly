@@ -21,6 +21,7 @@ window.eventHandlers.click['storage-save'] = function(event, target)
   (tr.getElementsByTagName('input')[0] && tr.getElementsByTagName('input')[0].value),
   value = tr.getElementsByTagName('textarea')[0].value,
   item = null;
+  
 
   window.storages[storage_id].set_item(rt_id, key, value, function(success)
   {
