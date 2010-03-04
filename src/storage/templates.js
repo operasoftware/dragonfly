@@ -66,27 +66,16 @@ window.templates.storage = function(storages, storage_id, storage_title)
 
 window.templates.storage_domain_header = function(rt)
 {
-  return (
-  ['tr', 
-    ['th', rt.title || window.helpers.shortenURI(rt.uri).uri, 'colspan', '3']
-  ]);
+  return ['caption', rt.title || window.helpers.shortenURI(rt.uri).uri];
 }
 
 window.templates.storage_item = function(entry, index, storage_arr)
 {
   const MAX_LENGTH = 40;
   var value = entry.value, pos = value.indexOf('\n');
-  if(pos > -1 || value.length > MAX_LENGTH)
+  if(pos > -1)
   {
-    if(pos > -1)
-    {
-      value = value.slice(0, pos).replace(/\r$/, '');
-    }
-    if(value.length > MAX_LENGTH)
-    {
-      value.slice(0, MAX_LENGTH);
-    }
-    value += ' ...';
+    value = value.slice(0, pos).replace(/\r$/, '') + ' ...';
   }
   return (
   ['tr',
@@ -133,7 +122,7 @@ window.templates.storage_item_add = function()
         window.templates.storage_button({label: 'Cancel', handler: 'storage-edit-cancel'}),
       ],
       'class', 'storage-edit',
-      'colspan', '4'
+      'colspan', '3'
     ],
   ]);
 }

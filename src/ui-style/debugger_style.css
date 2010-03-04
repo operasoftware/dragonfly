@@ -1138,31 +1138,35 @@ d
 
 /* storage */
 
-
-
-
 .storage-table
 {
   border-collapse: collapse;
   width: 100%;
   margin-bottom: 10px;
+  table-layout: fixed;
 }
 
-.storage-table th
+.storage-table td
+{
+  overflow: hidden;
+  white-space: nowrap;
+  -o-text-overflow: ellipsis;
+}
+
+.storage-table caption
 {
   text-align: left;
   line-height: 20px;
   border: 0px;
   padding: 0;
   background-color: #fff;
+  font-weight: bold;
 }
 
-.storage-table tr:first-child th
+.storage-table th
 {
-  border-bottom: 1px solid #ccc;
+  border-top: 1px solid #ccc;
 }
-
-
 
 .storage-table td
 {
@@ -1184,6 +1188,7 @@ d
 .storage-table .key
 {
   background-color: hsl(0, 0%, 90%);
+  width: 140px;
 }
 
 .storage-table .value
@@ -1196,6 +1201,7 @@ d
 {
   text-align: right;
   border-left: 0px;
+  width: 30px;
 }
 
 .storage-table .control input
@@ -1217,10 +1223,11 @@ d
   background-image: -o-skin('Search Close History Item.hover');
 }
 
-
 .storage-table .storage-edit
 {
   padding: 0;
+  /* overflow: hidden causes 1px padding on the right and bottom side */
+  overflow: auto;
 }
 
 .storage-table h4
@@ -1282,6 +1289,7 @@ d
 .storage-table .single-control
 {
   text-align: right;
+  background-color: #fff;
 }
 
 .storage-table input[handler="storage-add-key"],

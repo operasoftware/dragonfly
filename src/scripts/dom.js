@@ -14,10 +14,10 @@ Element.prototype.___add=Document.prototype.___add=function()
     if(arguments[0])
     {
       var doc=this.nodeType==9?this:this.ownerDocument;
-      var i = 0, ele = this, firts_arg = arguments[0];
-      if (typeof firts_arg == 'string')
+      var i = 0, ele = this, first_arg = arguments[0];
+      if (typeof first_arg == 'string')
       {
-        ele = firts_arg in CustomElements ? CustomElements[firts_arg].create() : doc.createElement(firts_arg);
+        ele = first_arg in CustomElements ? CustomElements[first_arg].create() : doc.createElement(first_arg);
         i++;
       };
       var prop='', is_array=false, arg=arguments[i];
@@ -620,7 +620,7 @@ window.CustomElements = new function()
     CustomElements._init_queue = wait_list;
     if (!wait_list.length)
     {
-      document.removeEventListener('DOMNodeInserted', arguments.callee, false);
+      document.removeEventListener('DOMNodeInserted', CustomElements._init_listener, false);
     }
   }
 
@@ -673,7 +673,7 @@ window.CustomElements.Base = new function()
 
 }
 
-window.CustomElements.PleceholderFeature = function()
+window.CustomElements.PlaceholderFeature = function()
 {
   this.set_placeholder = function()
   {
@@ -740,19 +740,19 @@ CustomElements.add(function()
   this.type = '_html5_input';
   this.html_name = 'input';
 }, 
-'PleceholderFeature');
+'PlaceholderFeature');
 
 CustomElements.add(function()
 {
   this.type = '_html5_textarea';
   this.html_name = 'textarea';
 }, 
-'PleceholderFeature');
+'PlaceholderFeature');
 
 CustomElements.add(function()
 {
   this.type = '_auto_height_textarea';
   this.html_name = 'textarea';
 }, 
-'PleceholderFeature', 
+'PlaceholderFeature', 
 'AutoScrollHeightFeature');
