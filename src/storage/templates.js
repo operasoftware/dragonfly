@@ -1,4 +1,4 @@
-﻿window.templates = window.templates || {};
+﻿window.templates || (window.templates = {});
 
 window.templates.storage = function(storages, storage_id, storage_title)
 {
@@ -42,13 +42,13 @@ window.templates.storage = function(storages, storage_id, storage_title)
       ret.push(
       ['div',
         ['table',
-          window.templates.storage_domain_header(rt),
-          storage.storage.map(window.templates.storage_item),
+          this.storage_domain_header(rt),
+          storage.storage.map(this.storage_item, this),
           ['tr', 
             ['th',
-              window.templates.storage_button({title: 'Add', handler: 'storage-add-key'}),
-              window.templates.storage_button({title: 'Update', handler: 'storage-update'}),
-              window.templates.storage_button({label: 'Delete all', handler: 'storage-delete-all'}),
+              this.storage_button({title: 'Add', handler: 'storage-add-key'}),
+              this.storage_button({title: 'Update', handler: 'storage-update'}),
+              this.storage_button({label: 'Delete all', handler: 'storage-delete-all'}),
               'colspan', '3',
               'class', 'single-control'
             ]
@@ -71,7 +71,6 @@ window.templates.storage_domain_header = function(rt)
 
 window.templates.storage_item = function(entry, index, storage_arr)
 {
-  const MAX_LENGTH = 40;
   var value = entry.value, pos = value.indexOf('\n');
   if(pos > -1)
   {
@@ -83,9 +82,10 @@ window.templates.storage_item = function(entry, index, storage_arr)
     ['td', 
       value,
       'edit-handler', 'storage-edit',
+      'title', 'Double click to edit',
       'class', 'value'],
     ['td', 
-      window.templates.storage_button({title: 'Delete', handler: 'storage-delete'}),
+      this.storage_button({title: 'Delete', handler: 'storage-delete'}),
       'class', 'control'
     ],
     'data-storage-key', entry.key
@@ -100,8 +100,8 @@ window.templates.storage_item_edit = function(item, index)
       ['h4', item.key],
       ['_auto_height_textarea', item.value],
       ['p',
-        window.templates.storage_button({label: 'Save', handler: 'storage-save'}),
-        window.templates.storage_button({label: 'Cancel', handler: 'storage-edit-cancel'}),
+        this.storage_button({label: 'Save', handler: 'storage-save'}),
+        this.storage_button({label: 'Cancel', handler: 'storage-edit-cancel'}),
       ],
       'class', 'storage-edit',
       'colspan', '3'
@@ -118,8 +118,8 @@ window.templates.storage_item_add = function()
       ['h4', ['_html5_input', 'data-placeholder', '<new key>', 'class', 'new-key']],
       ['_auto_height_textarea', 'data-placeholder', '<new value>'],
       ['p',
-        window.templates.storage_button({label: 'Save', handler: 'storage-save'}),
-        window.templates.storage_button({label: 'Cancel', handler: 'storage-edit-cancel'}),
+        this.storage_button({label: 'Save', handler: 'storage-save'}),
+        this.storage_button({label: 'Cancel', handler: 'storage-edit-cancel'}),
       ],
       'class', 'storage-edit',
       'colspan', '3'
@@ -136,4 +136,9 @@ window.templates.storage_button = function(action)
   ].
   concat(action.label ? ['value', action.label] : []).
   concat(action.title ? ['title', action.title] : []));
+}
+
+window.templates.storage_not_existing = function(storage_id)
+{
+  return ['div', ['div', 'window.' + storage_id + ' does not exist.', 'class', 'info-box'], 'class', 'padding'];
 }

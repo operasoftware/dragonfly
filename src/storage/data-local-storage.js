@@ -174,6 +174,7 @@ cls.StorageDataBase = new function()
   {
     const 
     STATUS = 0,
+    TYPE = 1,
     VALUE = 2,
     OBJECT_VALUE = 3,
     // sub message ObjectValue 
@@ -181,9 +182,17 @@ cls.StorageDataBase = new function()
 
     if (message[STATUS] == 'completed')
     {
-      this._host_objects[rt_id] = message[OBJECT_VALUE][OBJECT_ID];
-      this._rts[rt_id].rt_id = rt_id;
-      this._get_key_value_pairs(rt_id);
+      if(message[TYPE] == "object")
+      {
+        this.exists = true;
+        this._host_objects[rt_id] = message[OBJECT_VALUE][OBJECT_ID];
+        this._rts[rt_id].rt_id = rt_id;
+        this._get_key_value_pairs(rt_id);
+      }
+      else
+      {
+        this.exists = false;
+      }
 
     }
     else
@@ -282,11 +291,13 @@ cls.StorageDataBase = new function()
   this.init = function(id, update_event_name, title, storage_object)
   {
     this.id = id;
+    this.storage_object = storage_object;
     this.update_event_name = update_event_name;
     this.title = title;
     this._rts = {};
     this._host_objects = {};
-    this["return new _StorageHost()"] = "return new " + this._StorageHost.toString() + "(\"" + storage_object + "\")";
+    this["return new _StorageHost()"] = 
+      "return new " + this._StorageHost.toString() + "(\"" + storage_object + "\").check_storage_object()";
     window.cls.Messages.apply(this);
     window.messages.addListener('active-tab', this._on_active_tab.bind(this));
   }
@@ -312,7 +323,7 @@ cls.LocalStorageData = function(id, update_event_name, title, storage_object)
     this.get_key_value_pairs = function()
     {
       var 
-      length = window[storage_object].length,
+      length = this._storage_object.length,
       ret = [],
       key = '',
       value = null,
@@ -321,8 +332,8 @@ cls.LocalStorageData = function(id, update_event_name, title, storage_object)
 
       for ( ; i < length; i++)
       {
-        key = window[storage_object].key(i);
-        value = window[storage_object].getItem(key);
+        key = this._storage_object.key(i);
+        value = this._storage_object.getItem(key);
         type = typeof value;
         if (value && type !== 'string')
         {
@@ -340,15 +351,22 @@ cls.LocalStorageData = function(id, update_event_name, title, storage_object)
       {
         value = JSON.parse(value);
       };
-      window[storage_object].setItem(key, value);
+      this._storage_object.setItem(key, value);
     };
     this.remove_item = function(key)
     {
-      window[storage_object].removeItem(key);
+      this._storage_object.removeItem(key);
     };
     this.clear = function()
     {
-      window[storage_object].clear();
+      this._storage_object.clear();
+    };
+    this.check_storage_object = function()
+    {
+      var nss = storage_object.split('.'), ns = '', i = 0;
+      this._storage_object = window;
+      for( ; (ns = nss[i]) && (this._storage_object = this._storage_object[ns]); i++);
+      return this._storage_object && this || null;
     };
   };
 
@@ -427,6 +445,10 @@ cls.CookiesData = function(id, update_event_name, title)
       {
         this.remove_item(cookies[i]);
       };
+    };
+    this.check_storage_object = function()
+    {
+      return this;
     };
   };
 
