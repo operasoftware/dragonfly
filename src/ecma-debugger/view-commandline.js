@@ -476,7 +476,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
    
     
     const 
-    SCRIPT = "(function(){var a = '', b= ''; for( a in %s ){ b += a + '_,_'; }; return b; })()",
+    SCRIPT = "var a = '', b= ''; for( a in %s ){ b += a + '_,_'; }; return b;",
     KEY = 0,
     DEPTH = 3;
 
