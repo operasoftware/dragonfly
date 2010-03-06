@@ -18,12 +18,12 @@ Element.prototype.render = Document.prototype.render =  function(args)
   doc = this.nodeType == 9 ? this : this.ownerDocument,
   i = 0, 
   ele = this, 
-  first_arg = '',
+  first_arg = args[0],
   arg = null;
   
   if (args.length)
   {
-    if (first_arg = args[0])
+    if (first_arg)
     {
       if (typeof first_arg == 'string')
       {
