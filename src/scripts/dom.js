@@ -14,19 +14,17 @@
 
 Element.prototype.render = Document.prototype.render =  function(args)
 {
+  var 
+  doc = this.nodeType == 9 ? this : this.ownerDocument,
+  i = 0, 
+  ele = this, 
+  first_arg = '',
+  arg = null;
+  
   if (args.length)
   {
-    if (args[0])
+    if (first_arg = args[0])
     {
-      var 
-      doc = this.nodeType == 9 ? this : this.ownerDocument,
-      i = 0, 
-      ele = this, 
-      first_arg = args[0],
-      prop = '', 
-      is_array = false, 
-      arg = null;
-      
       if (typeof first_arg == 'string')
       {
         ele = first_arg in CustomElements ? CustomElements[first_arg].create() : doc.createElement(first_arg);
@@ -40,7 +38,7 @@ Element.prototype.render = Document.prototype.render =  function(args)
           ele.render(arg); 
           arg = args[++i];
         }
-        else if (typeof arg == 'string' && ((args.length - i ) % 2 || args[i + 1] instanceof Array)) 
+        else if (typeof arg == 'string' && ((args.length - i) % 2 || args[i + 1] instanceof Array)) 
         {
           ele.appendChild(doc.createTextNode(arg));
           arg = args[++i];
