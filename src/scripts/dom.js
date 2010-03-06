@@ -14,9 +14,9 @@
 
 Element.prototype.render = Document.prototype.render =  function(args)
 {
-  if(args.length)
+  if (args.length)
   {
-    if(args[0])
+    if (args[0])
     {
       var 
       doc = this.nodeType == 9 ? this : this.ownerDocument,
@@ -35,12 +35,12 @@ Element.prototype.render = Document.prototype.render =  function(args)
       arg = args[i];
       while (true)
       {
-        if(arg instanceof  Array) 
+        if (arg instanceof  Array) 
         {
           ele.render(arg); 
           arg = args[++i];
         }
-        else if(typeof arg == 'string' && ((args.length - i ) % 2 || args[i + 1] instanceof  Array)) 
+        else if (typeof arg == 'string' && ((args.length - i ) % 2 || args[i + 1] instanceof Array)) 
         {
           ele.appendChild(doc.createTextNode(arg));
           arg = args[++i];
@@ -50,13 +50,13 @@ Element.prototype.render = Document.prototype.render =  function(args)
           break;
         }
       }
-      for( ; args[i]; i += 2)
+      for ( ; args[i]; i += 2)
       {
-        if(typeof args[i] != 'string')
+        if (typeof args[i] != 'string')
         {
           throw "TemplateSyntaxError";
         }
-        if(typeof args[i + 1] == 'string')
+        if (typeof args[i + 1] == 'string')
         {
           ele.setAttribute(args[i], args[i + 1]);
         }
@@ -65,7 +65,7 @@ Element.prototype.render = Document.prototype.render =  function(args)
           ele[args[i]] = args[i + 1];
         }
       }
-      if(this.nodeType == 1 && (this != ele))
+      if (this.nodeType == 1 && (this != ele))
       {
         this.appendChild(ele);
       }
