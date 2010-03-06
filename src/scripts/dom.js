@@ -2,51 +2,70 @@
  * @fileoverview
  * Helper function prototypes related to DOM objects and the DOM 
  * <strong>fixme: Christian should document the template syntax</strong>
- * templating system.
  *
+ * TEMPLATE :: =
+ *     "[" [NODENAME | "null"]
+ *         {"," TEXT | "," TEMPLATE}
+ *         {"," KEY "," VALUE}
+ *      "]"
+ *
+ * where NODENAME, TEXT and KEY are DOM strings and VALUE can be everything except an array
  */
 
-
-Element.prototype.___add=Document.prototype.___add=function()
+Element.prototype.render = Document.prototype.render =  function(args)
 {
-  if(arguments.length)
+  if(args.length)
   {
-    if(arguments[0])
+    if(args[0])
     {
-      var doc=this.nodeType==9?this:this.ownerDocument;
-      var i = 0, ele = this, first_arg = arguments[0];
+      var 
+      doc = this.nodeType == 9 ? this : this.ownerDocument,
+      i = 0, 
+      ele = this, 
+      first_arg = args[0],
+      prop = '', 
+      is_array = false, 
+      arg = null;
+      
       if (typeof first_arg == 'string')
       {
         ele = first_arg in CustomElements ? CustomElements[first_arg].create() : doc.createElement(first_arg);
         i++;
       };
-      var prop='', is_array=false, arg=arguments[i];
-      while((is_array=arg instanceof  Array) ||
-       (((typeof arg=='string') || (typeof arg=='number')) && (((arguments.length-i)%2)|| arguments[i+1] instanceof  Array ))
-      )
+      arg = args[i];
+      while (true)
       {
-        if(is_array) 
+        if(arg instanceof  Array) 
         {
-          ele.___add.apply(ele, arg); 
+          ele.render(arg); 
+          arg = args[++i];
         }
-        else if(arg) 
+        else if(typeof arg == 'string' && ((args.length - i ) % 2 || args[i + 1] instanceof  Array)) 
         {
           ele.appendChild(doc.createTextNode(arg));
-        }
-        arg=arguments[++i];
-      }
-      for( ;arguments[i] ; i+=2)
-      {
-        if(/string/.test(typeof arguments[i+1]))
-        {
-          ele.setAttribute(arguments[i], arguments[i+1]);
+          arg = args[++i];
         }
         else
         {
-          ele[arguments[i]]=arguments[i+1];
+          break;
         }
       }
-      if(this.nodeType==1 && (this!=ele))
+      for( ; args[i]; i += 2)
+      {
+        if(typeof args[i] != 'string')
+        {
+          throw "TemplateSyntaxError";
+        }
+        if(typeof args[i + 1] == 'string')
+        {
+          ele.setAttribute(args[i], args[i + 1]);
+        }
+        else
+        {
+          ele[args[i]] = args[i + 1];
+        }
+      }
+      if(this.nodeType == 1 && (this != ele))
       {
         this.appendChild(ele);
       }
@@ -54,65 +73,11 @@ Element.prototype.___add=Document.prototype.___add=function()
     }
     else
     {
-      return this.appendChild(doc.createTextNode(arguments[1]));
+      return this.appendChild(doc.createTextNode(args[1]));
     }
   }
   return null;
 }
-
-Element.prototype.___add_inner = Document.prototype.___add_inner = function()
-{
-  if(arguments.length)
-  {
-    if(arguments[0])
-    {
-      var i=1; 
-      var prop='', is_array=false, arg=arguments[i];
-      var head = "<" + arguments[0];
-      var content = '';
-      var attrs = ' ';
-      while((is_array=arg instanceof  Array) ||
-       (((typeof arg=='string') || (typeof arg=='number')) && (((arguments.length-i)%2)|| arguments[i+1] instanceof  Array ))
-      )
-      {
-        if(is_array) 
-        {
-          content += Element.prototype.___add_inner.apply(null, arg); 
-        }
-        else if(arg) 
-        {
-          content += arg.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        }
-        arg=arguments[++i];
-      }
-      for( ;arguments[i] ; i+=2)
-      {
-        attrs += arguments[i] + "=\u0022" + arguments[i+1] + "\u0022";
-      }
-      head += attrs + ">" + content + "</" + arguments[0] +">";
-      if(this && this.nodeType == 1 )
-      {
-        this.innerHTML += head;
-      }
-      return head;
-    }
-  }
-  return '';
-}
-
-/**
- * Render template into the body of the element, keeping the existing condent
- */
-Element.prototype.render=Document.prototype.render=function(template)
-{
-  return this.___add.apply(this, template);
-}
-
-Element.prototype.renderInner = Document.prototype.renderInner = function(template)
-{
-  return this.___add_inner.apply(this, template);
-}
-
 
 /**
  * Clear the element and render the template into it
@@ -120,7 +85,7 @@ Element.prototype.renderInner = Document.prototype.renderInner = function(templa
 Element.prototype.clearAndRender=function(template)
 {
   this.innerHTML='';
-  return this.___add.apply(this, template);
+  return this.render(template);
 }
 
 /**
