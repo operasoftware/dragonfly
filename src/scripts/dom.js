@@ -597,7 +597,7 @@ window.CustomElements = new function()
       {
         if (feature in this)
         {
-          this[feature].apply(CustomElementClass.prototype);
+          this[feature].apply(custom_element);
         }
       }
       this[custom_element.type] = custom_element;
@@ -690,10 +690,73 @@ window.CustomElements.AutoScrollHeightFeature = function()
     }
   };
 
+  this._get_adjust_height = function(count_lines, line_height, border_padding)
+  {
+    var lines = -1;
+    return function()
+    { 
+      var new_count = count_lines(this.value);
+      if (new_count != lines)
+      {
+        lines = new_count;
+        this.style.height = (border_padding + (lines) * line_height) + 'px';
+      }
+    }
+  }
+
+  this._count_lines = (function(re)
+  {
+    return function(str)
+    {
+      for (var count = 1; re.exec(str); count++);
+      return count;
+    };
+  })(/\r\n/g);
+
+  this._get_line_height = function(textarea)
+  {
+    // computed style returns by default just "normal"
+    var 
+    CRLF = "\r\n", 
+    offset_height = textarea.offsetHeight,
+    textarea_value = textarea._get_value(),
+    line_height = 0,
+    test_value = "\r\n\r\n\r\n\r\n\r\n\r\n";
+
+    textarea.value = test_value;
+    while (textarea.scrollHeight < offset_height)
+    {
+      textarea.value = (test_value += CRLF); 
+    }
+    line_height = textarea.scrollHeight;
+    textarea.value = (test_value += CRLF);
+    line_height = textarea.scrollHeight - line_height;
+    textarea.value = textarea_value;
+    return line_height;
+  };
+
+  this._get_border_padding = function(ele)
+  {
+    var 
+    border_padding = 0,
+    style_dec = window.getComputedStyle(ele, null);
+ 
+    if (style_dec.getPropertyValue('box-sizing') == 'border-box')
+    {
+      ['padding-top', 'padding-bottom', 'border-top', 'border-bottom'].forEach(function(prop)
+      {
+        border_padding += parseInt(style_dec.getPropertyValue(prop)) || 0;
+      })
+    };
+    return border_padding;
+  };
+
   (this._inits || (this._inits = [])).push(function(ele)
   {
-    this.adjust_height.call(ele);
-    ele.addEventListener('input', this.adjust_height, false);
+    var adjust_height = this._get_adjust_height(this._count_lines, 
+          this._get_line_height(ele), this._get_border_padding(ele));
+    adjust_height.call(ele);
+    ele.addEventListener('input', adjust_height, false);
   });
 
 }

@@ -153,8 +153,6 @@ cls.StorageDataBase = new function()
     }
   }
 
-
-
   this._on_active_tab = function(msg)
   {
     var i = 0, rt_id = 0, active_tab = msg.activeTab;
@@ -163,6 +161,10 @@ cls.StorageDataBase = new function()
       if (!this._rts[active_tab[i]])
       {
         this._rts[active_tab[i]] = {storage: [], rt_id: active_tab[i]};
+        if (this.is_setup)
+        {
+          this._setup_local_storage(active_tab[i]);
+        }
       }
     }
     for(i in this._rts)
