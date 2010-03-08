@@ -5,13 +5,20 @@ cls.StorageView = function(id, name, container_class, storage_name)
   this.createView = function(container)
   {
     var storage = window.storages[id];
-    if(storage.exists)
+    if(storage.is_setup)
     {
-      container.clearAndRender(window.templates.storage(storage.get_storages(), storage.id, storage.title)); 
+      if(storage.exists)
+      {
+        container.clearAndRender(window.templates.storage(storage.get_storages(), storage.id, storage.title)); 
+      }
+      else
+      {
+        container.clearAndRender(window.templates.storage_not_existing(storage.storage_object));
+      }
     }
     else
     {
-      container.clearAndRender(window.templates.storage_not_existing(storage.storage_object));
+      storage.get_storages();
     }
   }
 

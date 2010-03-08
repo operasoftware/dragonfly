@@ -14,7 +14,21 @@ cls.StorageDataBase = new function()
 
   this.get_storages = function()
   {
-    return this._rts;
+    if (this.is_setup)
+    {
+      return this._rts;
+    }
+    else
+    {
+      for(var rt_id in this._rts)
+      {
+        if(this._rts[rt_id])
+        {
+          this._setup_local_storage(this._rts[rt_id].rt_id);
+        }
+      }
+      return null;
+    }
   }
 
   this.update = function()
@@ -148,8 +162,7 @@ cls.StorageDataBase = new function()
     {
       if (!this._rts[active_tab[i]])
       {
-        this._rts[active_tab[i]] = {storage: []};
-        this._setup_local_storage(active_tab[i]);
+        this._rts[active_tab[i]] = {storage: [], rt_id: active_tab[i]};
       }
     }
     for(i in this._rts)
@@ -164,8 +177,7 @@ cls.StorageDataBase = new function()
 
   this._setup_local_storage = function(rt_id)
   {
-    var script = this["return new _StorageHost()"];
-    
+    var script = this["return new _StorageHost()"]; 
     var tag = tagManager.set_callback(this, this._register_loacal_storage, [rt_id]);
     services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, script]);
   }
@@ -182,18 +194,18 @@ cls.StorageDataBase = new function()
 
     if (message[STATUS] == 'completed')
     {
+      this.is_setup = true;
       if(message[TYPE] == "object")
       {
         this.exists = true;
         this._host_objects[rt_id] = message[OBJECT_VALUE][OBJECT_ID];
-        this._rts[rt_id].rt_id = rt_id;
         this._get_key_value_pairs(rt_id);
       }
       else
       {
         this.exists = false;
+        this.post('storage-update', {storage_id: this.id});
       }
-
     }
     else
     {
@@ -296,6 +308,7 @@ cls.StorageDataBase = new function()
     this.title = title;
     this._rts = {};
     this._host_objects = {};
+    this.is_setup = false;
     this["return new _StorageHost()"] = 
       "return new " + this._StorageHost.toString() + "(\"" + storage_object + "\").check_storage_object()";
     window.cls.Messages.apply(this);
