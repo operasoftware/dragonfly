@@ -1,4 +1,4 @@
-﻿var cls = window.cls || ( window.cls = {} );
+﻿window.cls || (window.cls = {});
 
 cls.StorageDataBase = new function()
 {

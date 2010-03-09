@@ -1,4 +1,4 @@
-﻿var cls = window.cls || ( window.cls = {} );
+﻿window.cls || (window.cls = {});
 
 cls.StorageView = function(id, name, container_class, storage_name)
 {
