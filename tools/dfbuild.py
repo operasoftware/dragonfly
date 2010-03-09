@@ -697,6 +697,11 @@ Destination can be either a directory or a zip file"""
         if options.license:
             _add_license(dst)
 
+        AUTHORS = os.path.join(src, '..', 'AUTHORS')
+        if os.path.isfile(AUTHORS):
+            shutil.copy(AUTHORS, os.path.join(dst, 'AUTHORS'))
+            
+
 
 if __name__ == "__main__":
     sys.exit(main())
