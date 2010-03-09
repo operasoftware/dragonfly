@@ -280,11 +280,10 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./console-logger/console.js"/>
 <script src="./console-logger/console_templates.js"/>
 
-<script src="./storage/data-local-storage.js"/>
-<script src="./storage/actions-local-stoarge.js"/>
-
+<script src="./storage/data-storages.js"/>
+<script src="./storage/actions-stoarges.js"/>
 <script src="./storage/templates.js"/>
-<script src="./storage/views-local-storage.js"/>
+<script src="./storage/views-storages.js"/>
 
 <script src="./http-logger/httplogger_service.js"/>
 <script src="./http-logger/httplogger_data.js"/>

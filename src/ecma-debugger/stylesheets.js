@@ -1,10 +1,12 @@
-﻿/**
+﻿window.cls || (window.cls = {});
+
+/**
   * @constructor 
   */
 
 // TODO clean up pretty printing, does contain much too much code history
 
-var stylesheets = new function()
+cls.Stylesheets = function()
 {
   var self = this;
   // document.styleSheets dict with runtime-id as key

@@ -659,8 +659,8 @@ cls.CSSInspectorActions = function(id)
       cat_container.addClass('unfolded');
     }
     self.setSelected(target.parentNode);
-    elementStyle.setUnfoldedCat( cat , !value);
     settings['css-inspector'].set(cat, !value);
+    elementStyle.setUnfoldedCat( cat , !value);
   }
 
   this['display-rule-in-stylesheet'] = function(event, target)

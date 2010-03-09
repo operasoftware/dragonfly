@@ -1,4 +1,4 @@
-﻿var cls = window.cls || ( window.cls = {} );
+﻿cls = window.cls || (window.cls = {});
 
 /**
   * @constructor 
@@ -735,35 +735,52 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
 
 }
 
-cls.CommandLineView.prototype = ViewBase;
-new cls.CommandLineView('command_line', ui_strings.M_VIEW_LABEL_COMMAND_LINE, 'scroll', '', 'cmd-focus');
-
-new Settings
-(
-  // id
-  'command_line', 
-  // key-value map
-  {
-    "show-ecma-errors": true,
-  }, 
-  // key-label map
-  {
-    "show-ecma-errors": ui_strings.S_SWITCH_SHOW_ECMA_ERRORS_IN_COMMAND_LINE
-  },
-  // settings map
-  {
-    checkboxes:
-    [
-      "show-ecma-errors"
-    ]
-  }
-);
-
-eventHandlers.click['cmd-focus'] = function(event, target)
+cls.CommandLineView.create_ui_widgets = function()
 {
-  target.getElementsByTagName('textarea')[0].focus();
-}
 
+  new Settings
+  (
+    // id
+    'command_line', 
+    // key-value map
+    {
+      "show-ecma-errors": true,
+    }, 
+    // key-label map
+    {
+      "show-ecma-errors": ui_strings.S_SWITCH_SHOW_ECMA_ERRORS_IN_COMMAND_LINE
+    },
+    // settings map
+    {
+      checkboxes:
+      [
+        "show-ecma-errors"
+      ]
+    }
+  );
+
+  eventHandlers.click['cmd-focus'] = function(event, target)
+  {
+    target.getElementsByTagName('textarea')[0].focus();
+  }
+
+  new ToolbarConfig
+  (
+    'command_line',
+    null,
+    null,
+    null,
+    [
+      {
+        handler: 'select-window',
+        title: ui_strings.S_BUTTON_LABEL_SELECT_WINDOW,
+        type: 'dropdown',
+        class: 'window-select-dropdown',
+        template: window['cst-selects']['cmd-runtime-select'].getTemplate()
+      }
+    ]
+  );
+};
 
 cls.CndRtSelect = function(id, class_name)
 {
@@ -826,24 +843,5 @@ cls.CndRtSelect = function(id, class_name)
   this.init(id, class_name);
 }
 
-cls.CndRtSelect.prototype = new CstSelect();
 
-new cls.CndRtSelect('cmd-runtime-select', 'cmd-line-runtimes');
-
-new ToolbarConfig
-(
-  'command_line',
-  null,
-  null,
-  null,
-  [
-    {
-      handler: 'select-window',
-      title: ui_strings.S_BUTTON_LABEL_SELECT_WINDOW,
-      type: 'dropdown',
-      class: 'window-select-dropdown',
-      template: window['cst-selects']['cmd-runtime-select'].getTemplate()
-    }
-  ]
-);
 

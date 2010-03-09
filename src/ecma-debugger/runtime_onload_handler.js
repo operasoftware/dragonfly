@@ -1,4 +1,6 @@
-﻿/**
+﻿window.cls || (window.cls = {});
+
+/**
  * @fileoverview
   runtime_onload_handler is a workaround because some apis do not 
   take into account if the document has finished loading
@@ -9,7 +11,7 @@
   * @constructor 
   */
 
-var runtime_onload_handler = new function()
+window.cls.RuntimeOnloadHandler = function()
 {
   // this is a workaround because some apis do not 
   // take into account if the document has finished loading

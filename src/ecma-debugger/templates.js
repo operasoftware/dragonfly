@@ -360,14 +360,14 @@ MODE ::= "<mode>"
             'type', 'button',
             'handler', 'css-toggle-category',
             'cat-id', cat.id
-          ].concat( cat.unfolded ? ['class', 'unfolded'] : [] ),
+          ].concat( cat.is_unfolded() ? ['class', 'unfolded'] : [] ),
           cat.name,
           'handler', 'css-toggle-category'
         ],
         ['styles']
       ];
 
-    if( cat.unfolded )
+    if( cat.is_unfolded() )
     {
       ret.splice(ret.length, 0, 'class', 'unfolded');
     }

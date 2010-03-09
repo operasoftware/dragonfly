@@ -1,4 +1,4 @@
-﻿var cls = window.cls || ( window.cls = {} );
+﻿window.cls || (window.cls = {});
 
 /**
   * @constructor 
@@ -74,56 +74,58 @@ cls.CSSInspectorView = function(id, name, container_class)
   this.init(id, name, container_class);
 }
 
-cls.CSSInspectorView.prototype = ViewBase;
-new cls.CSSInspectorView('css-inspector', ui_strings.M_VIEW_LABEL_STYLES, 'scroll css-inspector');
+cls.CSSInspectorView.create_ui_widgets = function()
+{
 
-new Settings
-(
-  // id
-  'css-inspector', 
-  // key-value map
-  {
-    'computedStyle': false, 
-    'css': true,
-    'hide-initial-values': true,
-    'hide-shorthands': true
-  }, 
-  // key-label map
-  {
-    'hide-initial-values': ui_strings.S_SWITCH_SHOW_INITIAL_VALUES,
-    'hide-shorthands': ui_strings.S_SWITCH_SHOW_SHORTHANDS
-  },
-  // settings map
-  {
-    checkboxes:
+  new Settings
+  (
+    // id
+    'css-inspector', 
+    // key-value map
+    {
+      'computedStyle': false, 
+      'css': true,
+      'hide-initial-values': true,
+      'hide-shorthands': true
+    }, 
+    // key-label map
+    {
+      'hide-initial-values': ui_strings.S_SWITCH_SHOW_INITIAL_VALUES,
+      'hide-shorthands': ui_strings.S_SWITCH_SHOW_SHORTHANDS
+    },
+    // settings map
+    {
+      checkboxes:
+      [
+        'hide-initial-values',
+        'hide-shorthands',
+      ]
+    }
+  );
+
+  new ToolbarConfig
+  (
+    'css-inspector',
+    null,
+    [
+      {
+        handler: 'css-inspector-text-search',
+        title: 'text search',
+        label: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER
+      }
+    ]
+  );
+
+  new Switches
+  (
+    'css-inspector',
     [
       'hide-initial-values',
       'hide-shorthands',
     ]
-  }
-);
+  );
 
-new ToolbarConfig
-(
-  'css-inspector',
-  null,
-  [
-    {
-      handler: 'css-inspector-text-search',
-      title: 'text search',
-      label: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER
-    }
-  ]
-)
-
-new Switches
-(
-  'css-inspector',
-  [
-    'hide-initial-values',
-    'hide-shorthands',
-  ]
-)
+}
 
 
 

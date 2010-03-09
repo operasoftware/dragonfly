@@ -49,13 +49,22 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
       if we need to adjust them for an  updated service version
     */
 
+    window.runtime_onload_handler = new cls.RuntimeOnloadHandler();
+    window.stylesheets = new cls.Stylesheets();
+
     window.elementLayout = new cls.ElementLayout();
     window.elementStyle = new cls.ElementStyle();
     window.export_data = new cls.ExportData();
+
+
     new cls.ExportDataView('export_data', ui_strings.M_VIEW_LABEL_EXPORT, 'scroll export-data');
 
-    
-    
+    /* commandline */
+    cls.CommandLineView.prototype = ViewBase;
+    new cls.CommandLineView('command_line', ui_strings.M_VIEW_LABEL_COMMAND_LINE, 'scroll', '', 'cmd-focus');
+    cls.CndRtSelect.prototype = new CstSelect();
+    new cls.CndRtSelect('cmd-runtime-select', 'cmd-line-runtimes');
+    cls.CommandLineView.create_ui_widgets();
 
     /* JS source */
     window.simple_js_parser = new window.cls.SimpleJSParser();
@@ -63,13 +72,15 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
     new cls.ScriptSelect('js-script-select', 'script-options');
     cls.JsSourceView.create_ui_widgets();
     
-
     /* DOM */
     new cls.DOMInspectorActions('dom'); // the view id
     new cls.DOMInspectorKeyhandler('dom');
     new cls.DOMInspectorEditKeyhandler('dom');
 
-
+    /* CSS inspector */
+    cls.CSSInspectorView.prototype = ViewBase;
+    new cls.CSSInspectorView('css-inspector', ui_strings.M_VIEW_LABEL_STYLES, 'scroll css-inspector');
+    cls.CSSInspectorView.create_ui_widgets();
 
     /* storage objects and cookies */
     new cls.Namespace("storages");
