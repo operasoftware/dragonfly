@@ -7,8 +7,9 @@
 
 cls.ElementStyle = function()
 {
-  // TODO cleanup code history
-  //  cats is still overdone
+  // TODO 
+  // cleanup code history
+  // categories and everything related needs to be removed completely
   
   const 
   COMP_STYLE = 0,
@@ -76,7 +77,7 @@ cls.ElementStyle = function()
     return {
         id: id,
         name: name,
-        unfolded: settings['css-inspector'].get(id),
+        is_unfolded: function(){return settings['css-inspector'].get(id)},
         handler: handler || null 
     }
   }
@@ -271,7 +272,7 @@ cls.ElementStyle = function()
 
   var getRequestType = function()
   {
-    return ( categories[COMP_STYLE].unfolded  || categories[CSS].unfolded ) && REQ_TYPE_CSS || 0;
+    return ( categories[COMP_STYLE].is_unfolded()  || categories[CSS].is_unfolded() ) && REQ_TYPE_CSS || 0;
   }
 
   var getUnfoldedKey = function()
@@ -279,15 +280,17 @@ cls.ElementStyle = function()
     var ret = '', i = 0;
     for( ; i < 2; i++)
     {
-      ret += categories[i].unfolded ? '1' : '0';
+      ret += categories[i].is_unfolded() ? '1' : '0';
     }
     return ret;
   }
 
+  // TODO
+  // replace with a listener for setting change
   this.setUnfoldedCat = function( cat_id , unfolded)
   {
     var 
-    cat = categories[ id_index_map[cat_id] ], 
+    cat = categories[id_index_map[cat_id]], 
     req_type = 0,
     request_key = '',
     i = 0,
@@ -295,7 +298,6 @@ cls.ElementStyle = function()
 
     if(cat)
     {
-      cat.unfolded = unfolded;
       if(unfolded)
       {
         if( __selectedElement )
