@@ -18,6 +18,7 @@ cls.StorageView = function(id, name, container_class, storage_name)
     }
     else
     {
+      container.innerHTML = "";
       storage.get_storages();
     }
   }
