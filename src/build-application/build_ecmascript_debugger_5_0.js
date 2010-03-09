@@ -45,18 +45,14 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
     namespace.DOMAttrsView.create_ui_widgets();
 
     /* 
-      we will use a namespace for all the followindg classes only 
-      if we need to adjust them for an  updated service version
+      a namespace for all the followindg classes will only be created 
+      if needed to adjust them for an updated service version
     */
 
     window.runtime_onload_handler = new cls.RuntimeOnloadHandler();
-    window.stylesheets = new cls.Stylesheets();
-
-    window.elementLayout = new cls.ElementLayout();
-    window.elementStyle = new cls.ElementStyle();
+    
+    /* temporary export view */
     window.export_data = new cls.ExportData();
-
-
     new cls.ExportDataView('export_data', ui_strings.M_VIEW_LABEL_EXPORT, 'scroll export-data');
 
     /* commandline */
@@ -95,6 +91,7 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
     messages.post('setting-changed', {id: 'dom', key: 'dom-tree-style'});
 
     /* Stylesheets */
+    window.stylesheets = new cls.Stylesheets();
     cls.StylesheetsView.prototype = ViewBase;
     new cls.StylesheetsView('stylesheets', ui_strings.M_VIEW_LABEL_STYLESHEET, 'scroll stylesheets');
     cls.StylesheetSelect.prototype = new CstSelect();
@@ -102,24 +99,37 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
     cls.StylesheetsView.create_ui_widgets();
 
     /* CSS inspector */
+    window.elementStyle = new cls.ElementStyle();
     cls.CSSInspectorView.prototype = ViewBase;
     new cls.CSSInspectorView('css-inspector', ui_strings.M_VIEW_LABEL_STYLES, 'scroll css-inspector');
     cls.CSSInspectorView.create_ui_widgets();
 
     /* Layout */
+    window.elementLayout = new cls.ElementLayout();
     cls.CSSLayoutView.prototype = ViewBase;
     new cls.CSSLayoutView('css-layout', ui_strings.M_VIEW_LABEL_LAYOUT, 'scroll css-layout');
 
     /* storage objects and cookies */
     new cls.Namespace("storages");
     window.storages.add(new cls.LocalStorageData(
-      'local_storage', 'local-storage', 'Local Storage', 'localStorage'));
+      'local_storage', 
+      'local-storage', 
+      ui_strings.M_VIEW_LABEL_LOCAL_STOARGE, 
+      'localStorage'));
     window.storages.add(new cls.LocalStorageData(
-      'session_storage', 'session-storage', 'Session Storage', 'sessionStorage'));
+      'session_storage', 
+      'session-storage', 
+      ui_strings.M_VIEW_LABEL_SESSION_STORAGE, 
+      'sessionStorage'));
     window.storages.add(new cls.LocalStorageData(
-      'widget_preferences', 'widget-preferences', 'Widget Preferences', 'widget.preferences'));
-    window.storages.add(new cls.CookiesData('cookies', 'cookies', 'Cookies'));
-    
+      'widget_preferences', 
+      'widget-preferences', 
+      ui_strings.M_VIEW_LABEL_WIDGET_PREFERNCES, 
+      'widget.preferences'));
+    window.storages.add(new cls.CookiesData(
+      'cookies', 
+      'cookies', 
+      ui_strings.M_VIEW_LABEL_COOKIES));
     new cls.StorageView('local_storage', ui_strings.M_VIEW_LABEL_LOCAL_STOARGE, 'scroll');
     new cls.StorageView('session_storage', ui_strings.M_VIEW_LABEL_SESSION_STORAGE, 'scroll');
     new cls.StorageView('cookies', ui_strings.M_VIEW_LABEL_COOKIES, 'scroll');
