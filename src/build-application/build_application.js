@@ -152,6 +152,18 @@ window.app.build_application = function(on_services_created, on_services_enabled
   window.services.scope.set_host_info_callback(on_host_info_callback);
   window.services.scope.set_services_enabled_callback(on_services_enabled);
 
+  /* Instatiations needed to setup the client */
+
+  /* General */
+  cls.GeneralView.prototype = ViewBase;
+  new cls.GeneralView('general', ui_strings.M_SETTING_LABEL_GENERAL, '');
+  cls.GeneralView.create_ui_widgets();
+
+  /* Debug remote */
+  cls.DebugRemoteSettingView.prototype = ViewBase;
+  new cls.DebugRemoteSettingView('debug_remote_setting', ui_strings.S_SWITCH_REMOTE_DEBUG, '');
+  cls.DebugRemoteSettingView.create_ui_widgets();
+
   // create the client
   if(window.services.scope)
   {

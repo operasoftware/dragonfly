@@ -1,5 +1,4 @@
-﻿
-var cls = window.cls || ( window.cls = {} );
+﻿window.cls || (window.cls = {});
 
 /**
 * @constructor 
@@ -58,8 +57,6 @@ cls.StylesheetsView = function(id, name, container_class)
   }
   this.init(id, name, container_class);
 }
-cls.StylesheetsView.prototype = ViewBase;
-new cls.StylesheetsView('stylesheets', ui_strings.M_VIEW_LABEL_STYLESHEET, 'scroll stylesheets');
 
 
 cls.StylesheetSelect = function(id, class_name)
@@ -134,65 +131,61 @@ cls.StylesheetSelect = function(id, class_name)
   this.init(id, class_name);
 }
 
-cls.StylesheetSelect.prototype = new CstSelect();
 
-new cls.StylesheetSelect('stylesheet-select', 'stylesheet-options');
+cls.StylesheetsView.create_ui_widgets = function()
+{
+  new Settings
+  (
+    // id
+    'stylesheets', 
+    // key-value map
+    {
+      'shortcuts': true
+    }, 
+    // key-label map
+    {
+      'shortcuts': ui_strings.S_SWITCH_CREATE_SHORTHANDS
+    },
+    // settings map
+    {
+      checkboxes:
+      [
+        'shortcuts'
+      ]
+    }
+  );
 
-new Settings
-(
-  // id
-  'stylesheets', 
-  // key-value map
-  {
-    'shortcuts': true
-  }, 
-  // key-label map
-  {
-    'shortcuts': ui_strings.S_SWITCH_CREATE_SHORTHANDS
-  },
-  // settings map
-  {
-    checkboxes:
+  new ToolbarConfig
+  (
+    'stylesheets',
+    null,
+    [
+      {
+        handler: 'stylesheets-text-search',
+        title: 'text search'
+      }
+    ],
+    null,
+    [
+      {
+        handler: 'select-window',
+        title: ui_strings.S_BUTTON_LABEL_SELECT_WINDOW,
+        type: 'dropdown',
+        class: 'window-select-dropdown',
+        template: window['cst-selects']['stylesheet-select'].getTemplate()
+      }
+    ]
+  );
+
+  new Switches
+  (
+    'stylesheets',
     [
       'shortcuts'
     ]
-  }
-);
+  );
 
-new ToolbarConfig
-(
-  'stylesheets',
-  null,
-  [
-    {
-      handler: 'stylesheets-text-search',
-      title: 'text search'
-    }
-  ],
-  null,
-  [
-    {
-      handler: 'select-window',
-      title: ui_strings.S_BUTTON_LABEL_SELECT_WINDOW,
-      type: 'dropdown',
-      class: 'window-select-dropdown',
-      template: window['cst-selects']['stylesheet-select'].getTemplate()
-    }
-  ]
-)
-
-new Switches
-(
-  'stylesheets',
-  [
-    'shortcuts'
-  ]
-);
-
-  // button handlers
-
-(function()
-{
+ 
   // filter handlers
   var textSearch = new TextSearch();
 
@@ -232,4 +225,4 @@ new Switches
     }
   }
   
-})();
+};

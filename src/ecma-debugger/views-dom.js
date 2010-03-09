@@ -1,4 +1,4 @@
-﻿var cls = window.cls || ( window.cls = {} );
+﻿window.cls || (window.cls = {});
 
 /**
   * @constructor 
@@ -496,20 +496,11 @@ cls.DOMView = function(id, name, container_class)
 
 }
 
-cls.DOMView.prototype = ViewBase;
-
-new cls.DOMView('dom', ui_strings.M_VIEW_LABEL_DOM, 'scroll dom');
-
-cls.DOMView.prototype.constructor = cls.DOMView;
-
-DOM_markup_style.apply(cls.DOMView.prototype);
 
 cls.DocumentSelect = function(id)
 {
 
   var selected_value = "";
-
-  
 
   this.getSelectedOptionText = function()
   {
@@ -579,137 +570,135 @@ cls.DocumentSelect = function(id)
   this.init(id);
 }
 
-cls.DocumentSelect.prototype = new CstSelect();
 
-new cls.DocumentSelect('document-select', 'document-options');
+cls.DOMView.create_ui_widgets = function()
+{
 
-new Settings
-(
-  // id
-  'dom', 
-  // kel-value map
-  {
+  new Settings
+  (
+    // id
+    'dom', 
+    // kel-value map
+    {
 
-    'find-with-click': true,
-    'highlight-on-hover': true,
-    'update-on-dom-node-inserted': false,
-    'force-lowercase': true, 
-    'show-comments': true, 
-    'show-attributes': true,
-    'show-whitespace-nodes': true,
-    'dom-tree-style': false,
-    'show-siblings-in-breadcrumb': false,
-    'show-id_and_classes-in-breadcrumb': true,
-    'scroll-into-view-on-spotlight': true,
-    'lock-selecked-elements': false
-  }, 
-  // key-label map
-  {
-    'find-with-click': ui_strings.S_SWITCH_FIND_ELEMENT_BY_CLICKING,
-    'highlight-on-hover': ui_strings.S_SWITCH_HIGHLIGHT_BY_MOUSE_OVER,
-    'update-on-dom-node-inserted': ui_strings.S_SWITCH_UPDATE_DOM_ON_NODE_REMOVE,
-    'force-lowercase': ui_strings.S_SWITCH_USE_LOWER_CASE_TAG_NAMES, 
-    'show-comments': ui_strings.S_SWITCH_SHOW_COMMENT_NODES, 
-    'show-attributes': ui_strings.S_SWITCH_SHOW_ATTRIBUTES,
-    'show-whitespace-nodes': ui_strings.S_SWITCH_SHOW_WHITE_SPACE_NODES,
-    'dom-tree-style': ui_strings.S_SWITCH_SHOW_DOM_INTREE_VIEW,
-    'show-siblings-in-breadcrumb': ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB,
-    'show-id_and_classes-in-breadcrumb': ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB,
-    'scroll-into-view-on-spotlight': ui_strings.S_SWITCH_SCROLL_INTO_VIEW_ON_FIRST_SPOTLIGHT,
-    'lock-selecked-elements': ui_strings.S_SWITCH_LOCK_SELECTED_ELEMENTS
-  
-  },
-  // settings map
-  {
-    checkboxes:
+      'find-with-click': true,
+      'highlight-on-hover': true,
+      'update-on-dom-node-inserted': false,
+      'force-lowercase': true, 
+      'show-comments': true, 
+      'show-attributes': true,
+      'show-whitespace-nodes': true,
+      'dom-tree-style': false,
+      'show-siblings-in-breadcrumb': false,
+      'show-id_and_classes-in-breadcrumb': true,
+      'scroll-into-view-on-spotlight': true,
+      'lock-selecked-elements': false
+    }, 
+    // key-label map
+    {
+      'find-with-click': ui_strings.S_SWITCH_FIND_ELEMENT_BY_CLICKING,
+      'highlight-on-hover': ui_strings.S_SWITCH_HIGHLIGHT_BY_MOUSE_OVER,
+      'update-on-dom-node-inserted': ui_strings.S_SWITCH_UPDATE_DOM_ON_NODE_REMOVE,
+      'force-lowercase': ui_strings.S_SWITCH_USE_LOWER_CASE_TAG_NAMES, 
+      'show-comments': ui_strings.S_SWITCH_SHOW_COMMENT_NODES, 
+      'show-attributes': ui_strings.S_SWITCH_SHOW_ATTRIBUTES,
+      'show-whitespace-nodes': ui_strings.S_SWITCH_SHOW_WHITE_SPACE_NODES,
+      'dom-tree-style': ui_strings.S_SWITCH_SHOW_DOM_INTREE_VIEW,
+      'show-siblings-in-breadcrumb': ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB,
+      'show-id_and_classes-in-breadcrumb': ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB,
+      'scroll-into-view-on-spotlight': ui_strings.S_SWITCH_SCROLL_INTO_VIEW_ON_FIRST_SPOTLIGHT,
+      'lock-selecked-elements': ui_strings.S_SWITCH_LOCK_SELECTED_ELEMENTS
+    
+    },
+    // settings map
+    {
+      checkboxes:
+      [
+        'force-lowercase',
+        'show-comments',
+        'show-attributes',
+        'show-whitespace-nodes',
+        'find-with-click',
+        'highlight-on-hover',
+        'update-on-dom-node-inserted',
+        'show-siblings-in-breadcrumb',
+        'show-id_and_classes-in-breadcrumb',
+        'scroll-into-view-on-spotlight',
+        'lock-selecked-elements'
+      ]
+    }
+  );
+
+  new ToolbarConfig
+  (
+    'dom',
     [
-      'force-lowercase',
+      {
+        handler: 'dom-inspection-snapshot',
+        title: ui_strings.S_BUTTON_LABEL_GET_THE_WOHLE_TREE
+      },
+      {
+        handler: 'dom-inspection-export',
+        title: ui_strings.S_BUTTON_LABEL_EXPORT_DOM
+      }/*,
+      {
+        handler: 'df-show-live-source',
+        title: 'show live source of DF'
+      }*/
+    ],
+    [
+      {
+        handler: 'dom-text-search',
+        title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
+      }
+    ],
+    null,
+    [
+      {
+        handler: 'select-window',
+        title: ui_strings.S_BUTTON_LABEL_SELECT_WINDOW,
+        type: 'dropdown',
+        class: 'window-select-dropdown',
+        template: window['cst-selects']['document-select'].getTemplate()
+      }
+    ]
+  )
+
+
+  new CstSelectToolbarSettings
+  (
+    'dom', 
+    [
       'show-comments',
-      'show-attributes',
       'show-whitespace-nodes',
+      'dom-tree-style'
+    ]
+  );
+
+  new Switches
+  (
+    'dom',
+    [
       'find-with-click',
       'highlight-on-hover',
       'update-on-dom-node-inserted',
-      'show-siblings-in-breadcrumb',
-      'show-id_and_classes-in-breadcrumb',
-      'scroll-into-view-on-spotlight',
       'lock-selecked-elements'
     ]
-  }
-);
+  );
 
-new ToolbarConfig
-(
-  'dom',
-  [
-    {
-      handler: 'dom-inspection-snapshot',
-      title: ui_strings.S_BUTTON_LABEL_GET_THE_WOHLE_TREE
-    },
-    {
-      handler: 'dom-inspection-export',
-      title: ui_strings.S_BUTTON_LABEL_EXPORT_DOM
-    }/*,
-    {
-      handler: 'df-show-live-source',
-      title: 'show live source of DF'
-    }*/
-  ],
-  [
-    {
-      handler: 'dom-text-search',
-      title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
-    }
-  ],
-  null,
-  [
-    {
-      handler: 'select-window',
-      title: ui_strings.S_BUTTON_LABEL_SELECT_WINDOW,
-      type: 'dropdown',
-      class: 'window-select-dropdown',
-      template: window['cst-selects']['document-select'].getTemplate()
-    }
-  ]
-)
+  // button handlers
+  eventHandlers.click['dom-inspection-snapshot'] = function(event, target)
+  {
+    dom_data.getSnapshot();
+  };
+
+  eventHandlers.click['df-show-live-source'] = function(event, target)
+  {
+    debug_helpers.liveSource.open();
+  };
 
 
-new CstSelectToolbarSettings(
-  'dom', 
-  [
-    'show-comments',
-    'show-whitespace-nodes',
-    'dom-tree-style'
-  ]
-);
 
-new Switches
-(
-  'dom',
-  [
-    'find-with-click',
-    'highlight-on-hover',
-    'update-on-dom-node-inserted',
-    'lock-selecked-elements'
-  ]
-)
-
-// button handlers
-eventHandlers.click['dom-inspection-snapshot'] = function(event, target)
-{
-  dom_data.getSnapshot();
-};
-
-eventHandlers.click['df-show-live-source'] = function(event, target)
-{
-  debug_helpers.liveSource.open();
-};
-
-
-// filter handlers
-
-(function()
-{
   var textSearch = new TextSearch();
 
   var onViewCreated = function(msg)
@@ -755,30 +744,24 @@ eventHandlers.click['df-show-live-source'] = function(event, target)
     }
   }
 
-})();
-
-
-
-
-
-messages.post('setting-changed', {id: 'dom', key: 'dom-tree-style'});
-
-eventHandlers.click['breadcrumb-link'] = function(event, target)
-{
-  var obj_id = parseInt(target.getAttribute('obj-id')); 
-  if( obj_id )
+  eventHandlers.click['breadcrumb-link'] = function(event, target)
   {
-    dom_data.setCurrentTarget(obj_id);
-    views['dom'].updateBreadcrumbLink(obj_id);
-  }
-};
+    var obj_id = parseInt(target.getAttribute('obj-id')); 
+    if( obj_id )
+    {
+      dom_data.setCurrentTarget(obj_id);
+      views['dom'].updateBreadcrumbLink(obj_id);
+    }
+  };
 
-eventHandlers.mouseover['spotlight-node'] = function(event, target)
-{
-  if(settings['dom'].get('highlight-on-hover'))
+  eventHandlers.mouseover['spotlight-node'] = function(event, target)
   {
-    hostspotlighter.soft_spotlight(parseInt(target.getAttribute('ref-id')));
+    if(settings['dom'].get('highlight-on-hover'))
+    {
+      hostspotlighter.soft_spotlight(parseInt(target.getAttribute('ref-id')));
+    }
   }
+
 }
 
 

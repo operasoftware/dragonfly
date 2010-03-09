@@ -8,9 +8,17 @@ var SettingView = function(id, name, container_class)
   this.ishidden_in_menu = true;
   this.hidden_in_settings = true;
   this.do_not_reset = true;
+  this._sort_by_title = function(a, b)
+  {
+    return (
+    window.views[a].name > window.views[b].name && 1 ||
+    window.views[a].name < window.views[b].name && -1 ||
+    0);
+  }
   this.createView = function(container)
   {
-    container.render(templates.settings(ViewBase.getSingleViews(['hidden_in_settings'])));
+    var views = ViewBase.getSingleViews(['hidden_in_settings']).sort(this._sort_by_title);
+    container.render(templates.settings(views));
   }
 
   this.syncSetting = function(view_id, key_name, is_checked)

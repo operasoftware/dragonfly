@@ -1,5 +1,4 @@
-﻿
-var cls = window.cls || ( window.cls = {} );
+﻿window.cls || (window.cls = {});
 
 /**
   * @constructor 
@@ -77,46 +76,3 @@ cls.CSSLayoutView = function(id, name, container_class)
 
   messages.addListener("setting-changed", onSettingChange);
 }
-
-cls.CSSLayoutView.prototype = ViewBase;
-new cls.CSSLayoutView('css-layout', ui_strings.M_VIEW_LABEL_LAYOUT, 'scroll css-layout');
-
-/*
-new Settings
-(
-  // id
-  'css-layout', 
-  // key-value map
-  {
-  }, 
-  // key-label map
-  {
-
-  },
-  // settings map
-  {
-    checkboxes:
-    [
-    ]
-  }
-);
-
-new ToolbarConfig
-(
-  'css-layout',
-  // buttons
-  null,
-  // filters
-  [
-  ]
-)
-
-new Switches
-(
-  'css-layout',
-  [
-  ]
-)
-*/
-
-

@@ -1,6 +1,4 @@
-﻿
-
-var cls = window.cls || ( window.cls = {} );
+﻿window.cls || (window.cls = {});
 
 /**
   * @constructor 
@@ -156,59 +154,61 @@ cls.ThreadsView = function(id, name, container_class)
   this.init(id, name, container_class);
 }
 
-cls.ThreadsView.prototype = ViewBase;
-new cls.ThreadsView('threads', ui_strings.M_VIEW_LABEL_THREAD_LOG, 'scroll threads');
+cls.ThreadsView.create_ui_widgets = function()
+{
 
-new Settings
-(
-  // id
-  'threads', 
-  // key-value map
-  {
-    'log-threads': false
-  }, 
-  // key-label map
-  {
-    'log-threads': ui_strings.S_BUTTON_LABEL_LOG_THREADS
-  },
-  // settings map
-  {
-    checkboxes:
-    [
-      'log-threads'
-    ]
-  }
-);
-
-new ToolbarConfig
-(
-  'threads',
-  [
+  new Settings
+  (
+    // id
+    'threads', 
+    // key-value map
     {
-      handler: 'threads-clear-log',
-      title: ui_strings.S_BUTTON_LABEL_CLEAR_LOG
+      'log-threads': false
+    }, 
+    // key-label map
+    {
+      'log-threads': ui_strings.S_BUTTON_LABEL_LOG_THREADS
     },
+    // settings map
     {
-      handler: 'threads-export-log',
-      title: ui_strings.S_BUTTON_LABEL_EXPORT_LOG
+      checkboxes:
+      [
+        'log-threads'
+      ]
     }
-  ]
-)
+  );
 
-// button handlers
-eventHandlers.click['threads-clear-log'] = function(event, target, container)
-{
-  runtimes.clearThreadLog();
-  views.threads.resetCursor();
-  if( container && container.firstChild )
+  new ToolbarConfig
+  (
+    'threads',
+    [
+      {
+        handler: 'threads-clear-log',
+        title: ui_strings.S_BUTTON_LABEL_CLEAR_LOG
+      },
+      {
+        handler: 'threads-export-log',
+        title: ui_strings.S_BUTTON_LABEL_EXPORT_LOG
+      }
+    ]
+  );
+
+  // button handlers
+  eventHandlers.click['threads-clear-log'] = function(event, target, container)
   {
-    container.firstChild.innerHTML = '';
+    runtimes.clearThreadLog();
+    views.threads.resetCursor();
+    if( container && container.firstChild )
+    {
+      container.firstChild.innerHTML = '';
+    }
+    
   }
-  
-}
 
-eventHandlers.click['threads-export-log'] = function(event, target, container)
-{
-  views.threads.exportLog();
+  eventHandlers.click['threads-export-log'] = function(event, target, container)
+  {
+    views.threads.exportLog();
+  }
+
 }
 

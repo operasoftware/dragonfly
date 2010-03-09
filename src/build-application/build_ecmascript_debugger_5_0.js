@@ -71,16 +71,44 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
     new cls.JsSourceView('js_source', ui_strings.M_VIEW_LABEL_SOURCE, 'scroll js-source');
     new cls.ScriptSelect('js-script-select', 'script-options');
     cls.JsSourceView.create_ui_widgets();
+
+    /* Callstack */
+    cls.CallstackView.prototype = ViewBase;
+    new cls.CallstackView('callstack', ui_strings.M_VIEW_LABEL_CALLSTACK, 'scroll');
+
+    /* Threads */
+    cls.ThreadsView.prototype = ViewBase;
+    new cls.ThreadsView('threads', ui_strings.M_VIEW_LABEL_THREAD_LOG, 'scroll threads');
+    cls.ThreadsView.create_ui_widgets();
     
     /* DOM */
     new cls.DOMInspectorActions('dom'); // the view id
     new cls.DOMInspectorKeyhandler('dom');
     new cls.DOMInspectorEditKeyhandler('dom');
+    cls.DOMView.prototype = ViewBase;
+    new cls.DOMView('dom', ui_strings.M_VIEW_LABEL_DOM, 'scroll dom');
+    cls.DOMView.prototype.constructor = cls.DOMView;
+    DOM_markup_style.apply(cls.DOMView.prototype);
+    cls.DocumentSelect.prototype = new CstSelect();
+    new cls.DocumentSelect('document-select', 'document-options');
+    cls.DOMView.create_ui_widgets();
+    messages.post('setting-changed', {id: 'dom', key: 'dom-tree-style'});
+
+    /* Stylesheets */
+    cls.StylesheetsView.prototype = ViewBase;
+    new cls.StylesheetsView('stylesheets', ui_strings.M_VIEW_LABEL_STYLESHEET, 'scroll stylesheets');
+    cls.StylesheetSelect.prototype = new CstSelect();
+    new cls.StylesheetSelect('stylesheet-select', 'stylesheet-options');
+    cls.StylesheetsView.create_ui_widgets();
 
     /* CSS inspector */
     cls.CSSInspectorView.prototype = ViewBase;
     new cls.CSSInspectorView('css-inspector', ui_strings.M_VIEW_LABEL_STYLES, 'scroll css-inspector');
     cls.CSSInspectorView.create_ui_widgets();
+
+    /* Layout */
+    cls.CSSLayoutView.prototype = ViewBase;
+    new cls.CSSLayoutView('css-layout', ui_strings.M_VIEW_LABEL_LAYOUT, 'scroll css-layout');
 
     /* storage objects and cookies */
     new cls.Namespace("storages");
@@ -96,6 +124,26 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
     new cls.StorageView('session_storage', ui_strings.M_VIEW_LABEL_SESSION_STORAGE, 'scroll');
     new cls.StorageView('cookies', ui_strings.M_VIEW_LABEL_COOKIES, 'scroll');
     new cls.StorageView('widget_preferences', ui_strings.M_VIEW_LABEL_WIDGET_PREFERNCES, 'scroll');
+
+    /* the following views must be created to get entry in the Settings tab */
+
+    /* Environment */
+    cls.EnvironmentView.prototype = ViewBase;
+    new cls.EnvironmentView('environment', ui_strings.M_VIEW_LABEL_ENVIRONMENT, 'scroll');
+    cls.EnvironmentView.create_ui_widgets();
+
+    /* About */
+    cls.AboutView.prototype = ViewBase;
+    new cls.AboutView('about', 'About', 'scroll');
+    cls.AboutView.create_ui_widgets();
+
+    /* Hostspotlighter */
+    cls.HostSpotlightView.prototype = ViewBase;
+    new cls.HostSpotlightView('host-spotlight', ui_strings.S_LABEL_SPOTLIGHT_TITLE, '');
+    cls.HostSpotlightView.create_ui_widgets();
+
+    /* main view doesn't really exist */
+    cls.MainView.create_ui_widgets();
 
   }
 
