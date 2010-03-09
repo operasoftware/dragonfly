@@ -129,13 +129,16 @@ window.templates.storage_item_add = function()
 
 window.templates.storage_button = function(action)
 {
-  return (
+  var templ = 
   ['input', 
     'type', 'button',
     'handler', action.handler
-  ].
-  concat(action.label ? ['value', action.label] : []).
-  concat(action.title ? ['title', action.title] : []));
+  ];
+  if (action.label)
+    templ.push('value', action.label);
+  if (action.title)
+    templ.push('title', action.title);
+  return templ;
 }
 
 window.templates.storage_not_existing = function(storage_id)
