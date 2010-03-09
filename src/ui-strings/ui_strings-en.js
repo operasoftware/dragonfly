@@ -24,6 +24,10 @@ ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE = 'Error Console';
 ui_strings.M_VIEW_LABEL_COMPOSITE_EXPORTS = 'Export';
 /* DESC: View for network debugging (and http logger) */
 ui_strings.M_VIEW_LABEL_NETWORK = 'Network';
+/* DESC: View with utilities, e.g. a pixel maginfier and color picker */
+ui_strings.M_VIEW_LABEL_UTILITIES = 'Utilities';
+/* DESC: View for all storages, e.g. cookis, localStorage, sessionStorage e.t.c */
+ui_strings.M_VIEW_LABEL_STORAGE = 'Storage';
 
 /*
  * Level 2 View Tab Headings
@@ -111,6 +115,15 @@ ui_strings.M_VIEW_LABEL_REQUEST_INFO = 'Request info';
 ui_strings.M_VIEW_LABEL_RESPONSE_BODY = 'Response body';
 /* DESC: Name of request summary view */
 ui_strings.M_VIEW_LABEL_REQUEST_SUMMARY = 'Request summary';
+
+/* DESC: view for the local storage */
+ui_strings.M_VIEW_LABEL_LOCAL_STOARGE = 'Local Storage';
+/* DESC: view foe the session storage */
+ui_strings.M_VIEW_LABEL_SESSION_STORAGE = 'Session Storage';
+/* DESC: view for cookies */
+ui_strings.M_VIEW_LABEL_COOKIES = 'Cookies';
+/* DESC: view for widget prefernces */
+ui_strings.M_VIEW_LABEL_WIDGET_PREFERNCES = 'Widget Preferences';
 
 /* DESC: Label of the Views menu */
 ui_strings.M_VIEW_LABEL_VIEWS = 'Views';
@@ -254,6 +267,8 @@ ui_strings.S_BUTTON_CLEAR_REQUEST_LOG = 'Clear request log';
 /* DESC: */
 ui_strings.S_BUTTON_OK = "Ok";
 /* DESC: */
+ui_strings.S_BUTTON_SAVE = "Save";
+/* DESC: */
 ui_strings.S_BUTTON_CANCEL = "Cancel";
 /* DESC: Show request summary. */
 ui_strings.S_BUTTON_SHOW_REQUEST_SUMMARY = 'Summary';
@@ -263,6 +278,8 @@ ui_strings.S_BUTTON_SHOW_REQUEST_HEADERS = 'Headers';
 ui_strings.S_BUTTON_SHOW_REQUEST_RAW = 'Raw';
 /* DESC: Cancel button while the client is waiting for a host connection. */
 ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG = "Cancel remote debug";
+/* DESC: */
+ui_strings.S_BUTTON_STORAGE_DELETE_ALL = "Delete all";
 
 /*
   * Menus
@@ -354,6 +371,14 @@ ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_INNER = "hover inner";
 ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_HOVER = "hover";
 /* DESC: */
 ui_strings.S_LABEL_SPOTLIGHT_TITLE_LOCKED_ELEMENTS = "Spotlight Locked Elements";
+/* DESC: */
+ui_strings.S_LABEL_STOARGE_ADD = "Add";
+/* DESC: */
+ui_strings.S_LABEL_STORAGE_UPDATE = "Update";
+/* DESC: */
+ui_strings.S_LABEL_STORAGE_DELETE = "Delete";
+/* DESC: */
+ui_strings.S_LABEL_STORAGE_DOUBLE_CLICK_TO_EDIT = "Double click to edit";
 
 /*
  * Information strings in the UI
@@ -376,6 +401,10 @@ ui_strings.S_INFO_DOCUMNENT_LOADING = 'Opera Dragonfly is loading ...';
 ui_strings.M_SETTING_LABEL_GENERAL = 'General';
 /* DESC: Dragonfly is waiting for host connection */
 ui_strings.S_INFO_WAITING_FORHOST_CONNECTION = "Waiting for a host connection on port %s.";
+/* DESC: the given stoarge type doesn't exist, e.g. a widget without the w3 widget namespace 
+ * will not have a widget.preferences storage object.
+ */
+ui_strings.S_INFO_STORAGE_TYPE_DOES_NOT_EXIST = "%s does not exist."
 
 /*
  * Alerts

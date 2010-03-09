@@ -81,11 +81,12 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
       'widget_preferences', 'widget-preferences', 'Widget Preferences', 'widget.preferences'));
     window.storages.add(new cls.CookiesData('cookies', 'cookies', 'Cookies'));
     
-    new cls.StorageView('local_storage', 'Local Storage', 'scroll');
-    new cls.StorageView('session_storage', 'Session Storage', 'scroll');
-    new cls.StorageView('cookies', 'Cookies', 'scroll');
-    new cls.StorageView('widget_preferences', 'Widget Preferences', 'scroll');
+    new cls.StorageView('local_storage', ui_strings.M_VIEW_LABEL_LOCAL_STOARGE, 'scroll');
+    new cls.StorageView('session_storage', ui_strings.M_VIEW_LABEL_SESSION_STORAGE, 'scroll');
+    new cls.StorageView('cookies', ui_strings.M_VIEW_LABEL_COOKIES, 'scroll');
+    new cls.StorageView('widget_preferences', ui_strings.M_VIEW_LABEL_WIDGET_PREFERNCES, 'scroll');
 
   }
 
 }
+

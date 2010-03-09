@@ -46,9 +46,9 @@ window.templates.storage = function(storages, storage_id, storage_title)
           storage.storage.map(this.storage_item, this),
           ['tr', 
             ['th',
-              this.storage_button({title: 'Add', handler: 'storage-add-key'}),
-              this.storage_button({title: 'Update', handler: 'storage-update'}),
-              this.storage_button({label: 'Delete all', handler: 'storage-delete-all'}),
+              this.storage_button({title: ui_strings.S_LABEL_STOARGE_ADD, handler: 'storage-add-key'}),
+              this.storage_button({title: ui_strings.S_LABEL_STOARGE_UPDATE, handler: 'storage-update'}),
+              this.storage_button({label: ui_strings.S_BUTTON_STORAGE_DELETE_ALL, handler: 'storage-delete-all'}),
               'colspan', '3',
               'class', 'single-control'
             ]
@@ -82,10 +82,10 @@ window.templates.storage_item = function(entry, index, storage_arr)
     ['td', 
       value,
       'edit-handler', 'storage-edit',
-      'title', 'Double click to edit',
+      'title', ui_strings.S_LABEL_STORAGE_DOUBLE_CLICK_TO_EDIT,
       'class', 'value'],
     ['td', 
-      this.storage_button({title: 'Delete', handler: 'storage-delete'}),
+      this.storage_button({title: ui_strings.S_LABEL_STORAGE_DELETE, handler: 'storage-delete'}),
       'class', 'control'
     ],
     'data-storage-key', entry.key
@@ -100,8 +100,8 @@ window.templates.storage_item_edit = function(item, index)
       ['h4', item.key],
       ['_auto_height_textarea', item.value],
       ['p',
-        this.storage_button({label: 'Save', handler: 'storage-save'}),
-        this.storage_button({label: 'Cancel', handler: 'storage-edit-cancel'}),
+        this.storage_button({label: ui_strings.S_BUTTON_SAVE, handler: 'storage-save'}),
+        this.storage_button({label: ui_strings.S_BUTTON_CANCEL, handler: 'storage-edit-cancel'}),
       ],
       'class', 'storage-edit',
       'colspan', '3'
@@ -118,8 +118,8 @@ window.templates.storage_item_add = function()
       ['h4', ['_html5_input', 'data-placeholder', '<new key>', 'class', 'new-key']],
       ['_auto_height_textarea', 'data-placeholder', '<new value>'],
       ['p',
-        this.storage_button({label: 'Save', handler: 'storage-save'}),
-        this.storage_button({label: 'Cancel', handler: 'storage-edit-cancel'}),
+        this.storage_button({label: ui_strings.S_BUTTON_SAVE, handler: 'storage-save'}),
+        this.storage_button({label: ui_strings.S_BUTTON_CANCEL, handler: 'storage-edit-cancel'}),
       ],
       'class', 'storage-edit',
       'colspan', '3'
@@ -140,5 +140,12 @@ window.templates.storage_button = function(action)
 
 window.templates.storage_not_existing = function(storage_id)
 {
-  return ['div', ['div', 'window.' + storage_id + ' does not exist.', 'class', 'info-box'], 'class', 'padding'];
+  return (
+  ['div', 
+    ['div', 
+      ui_strings.S_INFO_STORAGE_TYPE_DOES_NOT_EXIST.replace("%s", 'window.' + storage_id), 
+      'class', 'info-box'
+    ], 
+    'class', 'padding'
+  ]);
 }

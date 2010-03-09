@@ -240,8 +240,8 @@ window.cls.Client = function()
     new CompositeView('js_panel', ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS, layouts.js_rough_layout_panel);
     new CompositeView('dom_panel', ui_strings.M_VIEW_LABEL_COMPOSITE_DOM, layouts.dom_rough_layout_panel);
     new CompositeView('settings_new', ui_strings.S_BUTTON_LABEL_SETTINGS, layouts.settings_rough_layout);
-    new CompositeView('utils', 'Utilities', layouts.utils_rough_layout);
-    new CompositeView('storage', 'Storage', layouts.storage_rough_layout);
+    new CompositeView('utils', ui_strings.M_VIEW_LABEL_UTILITIES, layouts.utils_rough_layout);
+    new CompositeView('storage', ui_strings.M_VIEW_LABEL_STORAGE, layouts.storage_rough_layout);
     if( window.opera.attached != settings.general.get('window-attached') )
     {
       window.opera.attached = settings.general.get('window-attached') || false;
