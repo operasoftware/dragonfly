@@ -25,8 +25,6 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
   FILL = 0,
   FRAME = 1,
   GRID = 2,
-  START_TAG = ["<fill-color>", "<frame-color>", "<grid-color>"],
-  END_TAG = ["</fill-color>", "</frame-color>", "</grid-color>"],
   CSS_TEXT = ["background-color: ", "border-color: ", "border-color: "],
   CSS_CONVERT_TABLE =
   {
@@ -40,6 +38,12 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
   DEFAULT = 0,
   HOVER = 1,
   LOCKED = 2,
+  SETTING_MATRIXES =
+  [
+    "spotlighter-matrix-default",
+    "spotlighter-matrix-hover",
+    "spotlighter-matrix-locked",
+  ],
   COLOR_THEME_ALPHAS = // red: 1 grid color 0 fill-and-frame color
   [
     [
@@ -159,9 +163,18 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
 
   var set_initial_values = function()
   {
-    matrixes[DEFAULT] = ini.hostspotlight_matrixes["default"].map(copy_array);
-    matrixes[HOVER] = ini.hostspotlight_matrixes["metrics-hover"].map(copy_array);
-    matrixes[LOCKED] = ini.hostspotlight_matrixes["locked"].map(copy_array);
+    matrixes[DEFAULT] = 
+    (window.settings['host-spotlight'].get(SETTING_MATRIXES[DEFAULT]) || 
+    ini.hostspotlight_matrixes["default"]).map(copy_array);
+
+    matrixes[HOVER] = 
+    (window.settings['host-spotlight'].get(SETTING_MATRIXES[HOVER]) || 
+    ini.hostspotlight_matrixes["metrics-hover"]).map(copy_array);
+
+    matrixes[LOCKED] = 
+    (window.settings['host-spotlight'].get(SETTING_MATRIXES[LOCKED]) ||
+    ini.hostspotlight_matrixes["locked"]).map(copy_array);
+
     normalize_matrixes();
     stringify_commands();
   }
@@ -455,6 +468,10 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
 
   eventHandlers.click["reset-default-spotlight-colors"] = function(event, target)
   {
+    [DEFAULT, HOVER, LOCKED].forEach(function(matrix, index, arr)
+    {
+      window.settings['host-spotlight'].set(SETTING_MATRIXES[matrix], null);
+    });
     set_initial_values();
     update_color_selects();
   }
@@ -463,9 +480,11 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
   {
     var target = event.target;
     var id = parseInt(target.getAttribute('cst-id').slice(16));
-    matrixes[id >> 6 & 7][id >> 3 & 7][id & 7] = 
+    var matrix = id >> 6 & 7;
+    matrixes[matrix][id >> 3 & 7][id & 7] = 
       window['cst-selects'][target.getAttribute('cst-id')].getSelectedValue();
     stringify_commands();
+    window.settings['host-spotlight'].set(SETTING_MATRIXES[matrix], matrixes[matrix]);
   }
   
   eventHandlers.change['set-spotlight-color-theme'] = function(event)
@@ -669,8 +688,11 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
   messages.addListener("element-selected", onElementSelected); 
   messages.addListener('active-tab', onActiveTab);
   messages.addListener('setting-changed', onSettingChange);
-  set_initial_values();
-  create_color_selects();
+  window.app.addListener('services-created', function()
+  {
+    set_initial_values();
+    create_color_selects();
+  });
 
   this.bind = function(ecma_debugger)
   {
