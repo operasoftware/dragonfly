@@ -86,6 +86,48 @@ Element.prototype.clearAndRender=function(template)
   return this.render(template);
 }
 
+Element.prototype.renderInner = Document.prototype.renderInner = function callee(template)
+{
+  var 
+  i = 1, 
+  arg = template[i],
+  tag_name = template[0],
+  ret = "",
+  content = [],
+  attrs = [];
+
+  if(tag_name)
+  {
+    while (true)
+    {
+      if(arg instanceof  Array) 
+      {
+        content.push(callee.call(null, arg)); 
+        arg = template[++i];
+      }
+      else if (typeof arg == 'string' && ((template.length - i) % 2 || template[i + 1] instanceof Array))
+      {
+        content.push(arg.replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+        arg = template[++i];
+      }
+      else
+      {
+        break;
+      }
+    }
+    for ( ; template[i]; i += 2)
+    {
+      attrs.push(template[i], "=\u0022", template[i + 1], "\u0022");
+    }
+    ret = "<" + tag_name + " " + attrs.join(" ") + ">" + content.join("") + "</" + tag_name + ">";
+    if (this && this.nodeType == 1)
+    {
+      this.innerHTML += head;
+    }
+  }
+  return ret;
+}
+
 /**
  * Add the css class "name" to the element's list of classes
  * fixme: Does not work with dashes in the name!
