@@ -91,7 +91,12 @@ cls.DOMView = function(id, name, container_class)
               ( container = container.parentElement) );
     if(target && container)
     {
-      target.scrollIntoView();
+      // if there are no scrollbars scrollIntoView 
+      // causes a 'jump' of the whole viewport
+      if (container.scrollHeight > container.offsetHeight)
+      {
+        target.scrollIntoView();
+      }
       container.scrollTop -= 
           ( container.offsetHeight < 100 ? container.offsetHeight * .7 : 100 ) - 
           ( target.offsetTop - container.scrollTop );

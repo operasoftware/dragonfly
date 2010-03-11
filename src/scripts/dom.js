@@ -86,7 +86,7 @@ Element.prototype.clearAndRender=function(template)
   return this.render(template);
 }
 
-Element.prototype.renderInner = Document.prototype.renderInner = function callee(template)
+Element.prototype.renderInner = Document.prototype.renderInner = function callee (template)
 {
   var 
   i = 1, 

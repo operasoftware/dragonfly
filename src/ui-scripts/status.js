@@ -68,6 +68,7 @@ var StatusbarBase = function()
       }
       else if(typeof info == "object")
       {
+        
         info_container.innerHTML = "";
         breadcrumb = info_container.render(info);
         if( this.mode == this.DEFAULT_MODE && info_container.scrollHeight > this.info_container_scroll_height )
