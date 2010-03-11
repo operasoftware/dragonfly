@@ -94,7 +94,7 @@ Element.prototype.renderInner = Document.prototype.renderInner = function callee
   tag_name = template[0],
   ret = "",
   content = [],
-  attrs = [];
+  attrs = ["<", tag_name, " "];
 
   if(tag_name)
   {
@@ -107,7 +107,7 @@ Element.prototype.renderInner = Document.prototype.renderInner = function callee
       }
       else if (typeof arg == 'string' && ((template.length - i) % 2 || template[i + 1] instanceof Array))
       {
-        content.push(arg.replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+        content.push(arg.replace(/</g, "&lt;").replace(/>/g, "&gt;"), " ");
         arg = template[++i];
       }
       else
@@ -115,14 +115,16 @@ Element.prototype.renderInner = Document.prototype.renderInner = function callee
         break;
       }
     }
+    content.push("</", tag_name, ">");
     for ( ; template[i]; i += 2)
     {
       attrs.push(template[i], "=\u0022", template[i + 1], "\u0022");
     }
-    ret = "<" + tag_name + " " + attrs.join(" ") + ">" + content.join("") + "</" + tag_name + ">";
+    attrs.push(">");
+    ret = attrs.join("") + content.join("");
     if (this && this.nodeType == 1)
     {
-      this.innerHTML += head;
+      this.innerHTML += ret;
     }
   }
   return ret;
