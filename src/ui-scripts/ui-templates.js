@@ -180,17 +180,17 @@
     return ret;
   }
 
-  this.window_controls = function(is_attached)
+  this.window_controls = function()
   {
-    var attached = window.opera.attached;
+    var is_attached = window.opera.attached;
     return ['window-controls',
       is_attached
       ? window['cst-selects']['debugger-menu'].select_template()
       : [],
       ['button', 
         'handler', 'top-window-toggle-attach', 
-        'class', 'switch' + ( attached ? ' attached' : '') ,
-        'title', attached ? ui_strings.S_SWITCH_DETACH_WINDOW : ui_strings.S_SWITCH_ATTACH_WINDOW
+        'class', 'switch' + ( is_attached ? ' attached' : '') ,
+        'title', is_attached ? ui_strings.S_SWITCH_DETACH_WINDOW : ui_strings.S_SWITCH_ATTACH_WINDOW
       ],
       is_attached
       ? ['button', 
@@ -199,6 +199,22 @@
         ]
       : []
       ].concat( is_attached ? ['class', 'attached'] : [] )
+  }
+
+  this.window_controls_close = function()
+  {
+    if (window.opera.attached)
+    {
+      return (
+      ['window-controls',
+        ['button', 
+          'handler', 'top-window-close',
+          'title', ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW
+        ],
+        'class', 'attached'
+      ]);
+    }
+    return [];
   }
 
   this.settings = function(view_arr)

@@ -187,6 +187,12 @@ window.cls.Client = function()
                 " handler='cancel-remote-debug'></p>" : "") +
       "</div>" +
     "</div>";
+    var window_controls = document.getElementsByTagName('window-controls')[0];
+    if (window_controls)
+    {
+      window_controls.parentNode.removeChild(window_controls);
+    };
+    document.documentElement.render(templates.window_controls_close());
   }
 
   var handle_fallback = function(version)
@@ -250,6 +256,12 @@ window.cls.Client = function()
 
   this.afterUIFrameworkSetup =  function()
   {
+    var window_controls = document.getElementsByTagName('window-controls')[0];
+    if (window_controls)
+    {
+      window_controls.parentNode.removeChild(window_controls);
+    };
+    document.documentElement.render(templates.window_controls());
     this.setupTopCell();
     if(!arguments.callee._called_once)
     {
@@ -261,7 +273,6 @@ window.cls.Client = function()
       {
         topCell.toolbar.changeStyleProperty("padding-right", 30);
       }
-      document.documentElement.render(templates.window_controls(window.opera.attached))
       if(window.ini.debug)
       {
         window.viewsMenu.create();
