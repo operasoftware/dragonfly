@@ -33,6 +33,7 @@ if( window.app )
   throw "window.app does already exist";
 }
 window.app = {};
+window.cls.Messages.apply(window.app);
 
 
 window.app.build_application = function(on_services_created, on_services_enabled)
@@ -127,7 +128,6 @@ window.app.build_application = function(on_services_created, on_services_enabled
 
   // global objects
   window.tagManager = new window.cls.TagManager();
-  window.cls.Messages.apply(this);
   window.helpers = new cls.Helpers();
  
   // create window.services namespace and register it.
