@@ -914,11 +914,6 @@ d
   margin: 6px 3px;
 }
 
-.color-picker-button-controls
-{
-  xtext-align: right;
-}
-
 .manage-stored-colors li
 {
   padding: 3px;
@@ -1057,7 +1052,6 @@ d
 
 .test-messages .column
 {
-  xfloat: left;
   display: table-cell;
   padding: 0 .7em;
 }
