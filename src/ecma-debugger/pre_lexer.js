@@ -7,12 +7,17 @@
   var s_quote_cur = -2;
   var d_quote_cur = -2;
   var slash_cur = -2;
+  var nl_cur = 0;
+  var cr_cur = 0;
+  
 
   var min_cur = 0;
 
   var s_quote_val = '\'';
   var d_quote_val = '"';
   var slash_val = '/';
+  var NL = '\n';
+  var CR = '\r';
 
   var line_count = 0;
 
@@ -23,7 +28,7 @@
   var temp_type = '';
 
 
-  var string = new String(input);
+  var string = input;
   // states = default, s_quote, d_qute, slash
   var DEFAULT = 0, SINGLE_QUOTE = 1, DOUBLE_QUOTE = 2, REG_EXP = 3, COMMENT = 4;
   // lexer_states = default, s_quote, d_qute, slash
@@ -87,16 +92,29 @@
       {
         case 'SINGLE_QUOTE':
         {
+          // ensure that a string never exceeds the current 
+          // line if the newline is not escaped 
+          cr_cur = nl_cur = d_quote_cur;
           do
           {
             s_quote_cur = string.indexOf(s_quote_val, s_quote_cur + 1);
+            nl_cur = string.indexOf(NL, nl_cur + 1);
+            cr_cur = string.indexOf(CR, cr_cur + 1);
+            if (nl_cur > -1 && nl_cur < s_quote_cur)
+            {
+              s_quote_cur = nl_cur;
+            }
+            if (cr_cur > -1 && cr_cur < s_quote_cur)
+            {
+              s_quote_cur = cr_cur;
+            }
             temp_count = 0;
-            while( string.charAt( s_quote_cur - temp_count - 1 )=='\\' )
+            while (string.charAt(s_quote_cur - temp_count - 1) == '\\')
             {
               temp_count++;
             }
           }
-          while ( ( temp_count&1 ) && s_quote_cur != -1 );
+          while ((temp_count & 1) && s_quote_cur != -1);
           if( s_quote_cur != -1 )
           {
             cur_cur = s_quote_cur;
@@ -118,10 +136,22 @@
         }
         case 'DOUBLE_QUOTE':
         {
-          
+          // ensure that a string never exceeds the current 
+          // line if the newline is not escaped
+          cr_cur = nl_cur = d_quote_cur;          
           do
           {
             d_quote_cur = string.indexOf(d_quote_val, d_quote_cur + 1);
+            nl_cur = string.indexOf(NL, nl_cur + 1);
+            cr_cur = string.indexOf(CR, cr_cur + 1);
+            if (nl_cur > -1 && nl_cur < d_quote_cur)
+            {
+              d_quote_cur = nl_cur;
+            }
+            if (cr_cur > -1 && cr_cur < d_quote_cur)
+            {
+              d_quote_cur = cr_cur;
+            }
             temp_count = 0;
             while( string.charAt( d_quote_cur - temp_count - 1 )=='\\' )
             {

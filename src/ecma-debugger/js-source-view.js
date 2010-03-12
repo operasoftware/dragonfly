@@ -432,6 +432,7 @@ cls.JsSourceView = function(id, name, container_class)
           script_obj.line_arr = [];
           script_obj.state_arr = [];
           pre_lexer(script_obj);
+          //opera.postError(JSON.stringify(script_obj))
         }
         script =
         {

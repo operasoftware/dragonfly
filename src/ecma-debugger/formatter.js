@@ -132,6 +132,10 @@ window.cls.SimpleJSParser = function()
     ']': 1,
     '}': 1
   }
+  var REG_EXP_PREDECESSOR =
+  {
+    'return': 1,
+  }
   var ESCAPE =
   {
     '<': '&lt;',
@@ -270,8 +274,9 @@ window.cls.SimpleJSParser = function()
           c = __source.charAt(__pointer);
           continue;
         }
-        if( __previous_type=='IDENTIFIER' || __previous_type=='NUMBER' || 
-          (__previous_type=='PUNCTUATOR' && __previous_value in PUNCTUATOR_DIV_PREDECESSOR))
+        if ((__previous_type=='IDENTIFIER' && !(__previous_value in REG_EXP_PREDECESSOR)) || 
+              __previous_type=='NUMBER' || 
+              (__previous_type=='PUNCTUATOR' && __previous_value in PUNCTUATOR_DIV_PREDECESSOR))
         {
           __type='DIV_PUNCTUIATOR';
           if(c=='=') 
@@ -387,7 +392,9 @@ window.cls.SimpleJSParser = function()
         continue;
         }
       }
-      if(c==__string_delimiter)
+      if(c==__string_delimiter || 
+        /* abort string parsing on a new line */
+        c in LINETERMINATOR) 
       {
         __buffer+=c;
         read_buffer();
@@ -502,6 +509,14 @@ window.cls.SimpleJSParser = function()
         __type='IDENTIFIER';
         return c;
       }
+      /* abort string parsing on a new line */
+      if(c in LINETERMINATOR) 
+      {
+        read_buffer();
+        __previous_type='REG_EXP';
+        __type='IDENTIFIER';
+        return c;
+      }
       __buffer+=c in ESCAPE ? ESCAPE[c] : c;
       c=__source.charAt(++__pointer);
     }
@@ -559,6 +574,7 @@ window.cls.SimpleJSParser = function()
       if(__type=='IDENTIFIER')
       {
         __previous_type=__type;
+        __previous_value = __buffer;
       }
     }
     __buffer='';
