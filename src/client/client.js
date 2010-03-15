@@ -284,7 +284,12 @@ window.cls.Client = function()
         }
       }
       // a short workwround to hide some tabs as long as we don't have the dynamic tabs
-      var is_disbaled = null, tabs = ui_framework.layouts.console_rough_layout.children[0].tabs, tab = '';
+      var 
+      is_disbaled = null, 
+      tabs = ui_framework.layouts.console_rough_layout.children[0].tabs, 
+      tab = '',
+      i = 0;
+
       for( i = 0; tab = tabs[i]; i++ )
       {
         is_disbaled = !settings.console.get(tab);
@@ -297,7 +302,8 @@ window.cls.Client = function()
 
   this.setupTopCell = function()
   {
-    for( var tabs = viewport.getElementsByTagName('tab'), i = 0; tab = tabs[i]; i++)
+    var tabs = viewport.getElementsByTagName('tab'), i = 0, tab = null;
+    for( ; tab = tabs[i]; i++)
     {
       if( tab.hasClass('active') )
       {
