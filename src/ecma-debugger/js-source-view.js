@@ -431,7 +431,9 @@ cls.JsSourceView = function(id, name, container_class)
           script_obj.source_data = script_obj.script_data;
           script_obj.line_arr = [];
           script_obj.state_arr = [];
+          opera.postError('perlex')
           pre_lexer(script_obj);
+          opera.postError('after perlex')
           //opera.postError(JSON.stringify(script_obj))
         }
         script =

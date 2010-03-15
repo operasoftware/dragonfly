@@ -94,7 +94,7 @@
         {
           // ensure that a string never exceeds the current 
           // line if the newline is not escaped 
-          cr_cur = nl_cur = d_quote_cur;
+          cr_cur = nl_cur = s_quote_cur;
           do
           {
             s_quote_cur = string.indexOf(s_quote_val, s_quote_cur + 1);
@@ -153,7 +153,7 @@
               d_quote_cur = cr_cur;
             }
             temp_count = 0;
-            while( string.charAt( d_quote_cur - temp_count - 1 )=='\\' )
+            while( string.charAt( d_quote_cur - temp_count - 1 ) == '\\' )
             {
               temp_count++;
             }
