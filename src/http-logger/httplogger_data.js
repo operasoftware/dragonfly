@@ -18,7 +18,7 @@ window.HTTPLoggerData = new function()
     var activeRuntime = null;
 
 
-    _views = [ "request_info_raw",
+    var _views = [ "request_info_raw",
                "response_info_raw",
                "request_info_headers",
                "response_info_headers",
