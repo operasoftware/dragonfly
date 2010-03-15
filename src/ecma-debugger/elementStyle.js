@@ -26,7 +26,7 @@ cls.ElementStyle = function()
 
   // new scope messages
   COMPUTED_STYLE_LIST = 0,
-  NODE_STYLE_LIST = 1;
+  NODE_STYLE_LIST = 1,
   // sub message NodeStyle 
   OBJECT_ID = 0,
   ELEMENT_NAME = 1,
@@ -328,7 +328,6 @@ cls.ElementStyle = function()
   {
     __selectedElement = {rt_id: msg.rt_id,  obj_id: msg.obj_id, req_type: getRequestType() };
     var view_id = '', i = 0, get_data = false;
-    
     for ( ; ( view_id = __views[i] ) && !( get_data = views[view_id].isvisible() ); i++);
     if( get_data && __selectedElement.req_type )
     {
