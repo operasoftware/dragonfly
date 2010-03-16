@@ -66,7 +66,10 @@ var ViewBase = new function()
       window.views = {};
     }
     window.views[id] = this;
-    ids[ids.length] = this.id;
+    if (ids.indexOf(this.id) == -1)
+    {
+      ids[ids.length] = this.id;
+    }
     messages.post('view-initialized', {'view_id': this.id});
   }
 

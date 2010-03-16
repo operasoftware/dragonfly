@@ -1256,7 +1256,7 @@ cls.Stylesheets = function()
   
   var handleGetRulesWithIndex = function(status, message, rt_id, index, org_args)
   {
-    if(status == 0)
+    if(status == 0 && __rules[rt_id])
     {
       __rules[rt_id][index] = message[0] || [];
       __rules[rt_id][index].runtime_id = rt_id;

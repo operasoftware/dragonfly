@@ -84,7 +84,7 @@ cls.StylesheetSelect = function(id, class_name)
         title = sheet[TITLE] || sheet[HREF] || 'inline stylesheet ' + ( selected_sheet.index + 1 );
       }
     }
-    return title;
+    return title.toString();
   }
 
   this.getSelectedOptionValue = function()

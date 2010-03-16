@@ -167,9 +167,8 @@ window.app.build_application = function(on_services_created, on_services_enabled
   // create the client
   if(window.services.scope)
   {
-    window.client = new cls.Client();
-    client.beforeUIFrameworkSetup();
     window.ui_framework.setup();
+    window.client = new cls.Client();
     client.setup(); 
     messages.post('application-setup');
   }

@@ -98,7 +98,6 @@ window.cls.Client = function()
 
   var _on_host_quit = function()
   {
-
     window.window_manager_data.clear_debug_context();
     messages.post('host-state', {state: global_state.ui_framework.spin_state = 'inactive'});
     client.setup();
@@ -139,7 +138,9 @@ window.cls.Client = function()
   {
     _client_id++;
     window.ini || ( window.ini = {debug: false} );
-    if( !opera.scopeAddClient )
+    window.messages.post('reset-state');
+    this.create_top_level_views();
+    if (!opera.scopeAddClient)
     {
       // implement the scope DOM API
       cls.ScopeHTTPInterface.call(opera /*, force_stp_0 */);
@@ -235,7 +236,7 @@ window.cls.Client = function()
     this.send(null);
   }
 
-  this.beforeUIFrameworkSetup = function()
+  this.create_top_level_views = function()
   {
     var layouts = ui_framework.layouts;
     new CompositeView('network_panel', ui_strings.M_VIEW_LABEL_NETWORK, layouts.network_rough_layout);
@@ -254,7 +255,7 @@ window.cls.Client = function()
     }
   }
 
-  this.afterUIFrameworkSetup =  function()
+  this.on_services_created =  function()
   {
     var window_controls = document.getElementsByTagName('window-controls')[0];
     if (window_controls)
@@ -331,10 +332,8 @@ window.cls.Client = function()
     }
   }
 
-  window.app.addListener('services-created', function()
-  {
-    self.afterUIFrameworkSetup();
-  });
+  window.app.addListener('services-created', this.on_services_created.bind(this));
+
 }
 
 ui_framework.layouts.console_rough_layout =
