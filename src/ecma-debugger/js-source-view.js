@@ -594,7 +594,8 @@ cls.JsSourceView = function(id, name, container_class)
 
   this.addBreakpoint = function(line)
   {
-    if( !script.breakpoints[line] )  
+    if (!script.breakpoints) { return; }
+    if (!script.breakpoints[line])
     {
       script.breakpoints[line] = 0;
     }
