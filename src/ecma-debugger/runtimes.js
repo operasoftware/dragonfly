@@ -1043,6 +1043,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
 
   this.setBreakpoint = function(script_id, line_nr)
   {
+    if (!__scripts[script_id]) { return; }
     var b_p_id = __scripts[script_id].breakpoints[line_nr] = getBreakpointId();
     services['ecmascript-debugger'].requestAddBreakpoint(0, [b_p_id, "line", script_id, line_nr]);
   }
