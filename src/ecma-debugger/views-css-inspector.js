@@ -16,7 +16,7 @@ cls.CSSInspectorView = function(id, name, container_class)
     container.render(templates.cssInspector(cats));
     for( ; cat = cats[i]; i++)
     {
-      cat_key += cat.unfolded ? '1' : '0';
+      cat_key += cat.is_unfolded() ? '1' : '0';
     }
     this.updateCategories({}, cat_key);
 
