@@ -80,6 +80,18 @@ window.cls.TestFramework = function()
         item));
   }
 
+  this._get_recursiv_messge = function(definitions, definition)
+  {
+    for (var def = null, i = 0; def = definitions[i]; i++)
+    {
+      if (def.name == definition.name)
+      {
+        return def.message;
+      }
+    }
+    return null;
+  }
+
   this._pretty_print_payload = function(payload, definitions, indent)
   {
     var 
@@ -89,7 +101,11 @@ window.cls.TestFramework = function()
     definition = null,
     j = 0;
 
-    //# TODO message: self
+    if (!this._definitions)
+    {
+      this._definitions = definitions;
+    }
+
     if (definitions)
     {
       for (; i < payload.length; i++)
@@ -100,6 +116,10 @@ window.cls.TestFramework = function()
           item = [];
         }
         definition = definitions[i];
+        if (definition && (definition.message == "self"))
+        {
+          definition.message = this._get_recursiv_messge(this._definitions, definition);
+        }
         if (definition["q"] == "repeated")
         {
           ret.push(this._get_indent(indent) + definition['name'] + ':');
@@ -121,9 +141,9 @@ window.cls.TestFramework = function()
             item))
         }
       }
-      return ret.join("\n")
     }
-    return "";
+    this._definitions = null;
+    return ret.join("\n")
   }
 
   // handle a command response
