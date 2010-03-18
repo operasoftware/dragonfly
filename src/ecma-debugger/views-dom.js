@@ -485,7 +485,6 @@ cls.DOMView = function(id, name, container_class)
           ( settings.dom.get('dom-tree-style') 
             ? DOM_tree_style 
             : DOM_markup_style ).apply(self.constructor.prototype);
-          self.clearAllContainers();
           self.update();
           break;
         }
