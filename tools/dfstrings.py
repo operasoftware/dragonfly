@@ -130,8 +130,7 @@ def get_db_strings(path):
 
 def get_po_strings(path):
     """polib does the heavy lifting in parsing, but we need to extract stuff
-    from comments etc. Also, because some genious decided that a po parsing
-    library shouldn't return unicode objects, we do that coversion for them."""
+    from comments etc."""
     pofile = polib.pofile(path)
     ret = []
     for e in pofile:
@@ -139,11 +138,11 @@ def get_po_strings(path):
         cur = {
             "desc": u"",
             "jsname": e.occurrences[0][0].decode(e.encoding),
-            "msgstr": (e.msgstr or e.msgid[e.msgid.index("::")+2:]).replace("\n", "\\n").decode(e.encoding),
+            "msgstr": (e.msgstr or e.msgid[e.msgid.index("::")+2:]).replace("\n", "\\n"),
             "scope": []
         }
         if e.comment:
-            lines = set([l.decode(e.encoding) for l in e.comment.split("\n")])
+            lines = set([l for l in e.comment.split("\n")])
             commentlines = set([l[7:] for l in lines if l.startswith("Scope: ")])
             cur["scope"] = ",".join(commentlines).split(",")
             lines = lines - commentlines
