@@ -228,7 +228,7 @@ cls.RequestListView.create_ui_widgets = function()
       [
         {
           handler: 'clear-request-list',
-          title: ui_strings.S_BUTTON_LABEL_GET_THE_WOHLE_TREE
+          title: ui_strings.S_BUTTON_LABEL_CLEAR_LOG
         }
       ],
       [
