@@ -5,7 +5,7 @@
 var CompositeViewBase = function()
 {
   this.type = 'composite-view';
-  this.update = function(cell) // for testing
+  this.update = function(cell, is_resize) // for testing
   {
     // copie from the container cell to the view cell
 
@@ -22,7 +22,7 @@ var CompositeViewBase = function()
         if(this.cell.width + this.cell.height) 
         {
           this.cell.setDefaultDimensions();
-          this.cell.update(this.cell.left, this.cell.top, true);
+          this.cell.update(this.cell.left, this.cell.top, true, is_resize);
         }
       }
     }
