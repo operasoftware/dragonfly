@@ -24,19 +24,6 @@ cls.RequestListView = function(id, name, container_class)
     var tableBodyEle = null;
     var viewMap = {}; // mapping between ID and active part of detail view
 
-    new ToolbarConfig
-    (
-      id,
-      [],
-      [
-        {
-          handler: 'http-text-search',
-          title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
-        }
-    ]
-
-    );
-
     /**
      *  Called by the framework through update()
      *  Check if we should redraw the view or not. If we shall, call
@@ -56,7 +43,7 @@ cls.RequestListView = function(id, name, container_class)
             }
             return;
         }
-        
+
         if (updateTimer) {
             window.clearTimeout(updateTimer);
             updateTimer = null;
@@ -100,7 +87,7 @@ cls.RequestListView = function(id, name, container_class)
             nextToRendereIndex = 0;
         }
         tableBodyEle = container.getElementsByTagName('tbody')[0];
-       
+
         if (log.length) {
             var times = log.map(function(e) {
                 return e.response ? e.response.time : e.request.time
@@ -110,9 +97,9 @@ cls.RequestListView = function(id, name, container_class)
         } else {
             lastTime = new Date().getTime();
         }
-        
+
         var firstTime = log.length ? log[0].request.time : lastTime;
-        
+
         // partial function invocation that closes over expandedItems and
         // passes an arg if if it's the first element
         var isFirst = true;
@@ -141,7 +128,7 @@ cls.RequestListView = function(id, name, container_class)
         }
         return null;
     }
-    
+
     /**
      * Collapse the detail view of an entry in the log.
      * Does not invalidate the view and re-render the table.
@@ -160,7 +147,7 @@ cls.RequestListView = function(id, name, container_class)
             }
         }
     }
-    
+
     /**
      * Show the detail view of an entry in the log.
      * Does not invalidate the view and re-render the table.
@@ -186,7 +173,7 @@ cls.RequestListView = function(id, name, container_class)
             }
         }
     }
-    
+
     /**
      * Called to toggle request with id. If it's expanded it gets collapsed
      * and vice-versa
@@ -205,14 +192,14 @@ cls.RequestListView = function(id, name, container_class)
             var row = this._getRowForId(id).nextSibling
             row.scrollSoftIntoContainerView();
         }
-        
+
     }
 
     this.selectDetailView = function(id, name) {
         viewMap[id] = name;
         this.update();
         return;
-        
+
          //the bits under here could be used if we decide to do something
          //smarter than just invalidating the view and redrawing.
 
@@ -233,8 +220,29 @@ cls.RequestListView = function(id, name, container_class)
     this.init(id, name, container_class);
 }
 
+cls.RequestListView.create_ui_widgets = function()
+{
+    new ToolbarConfig
+    (
+      'request_list',
+      [
+        {
+          handler: 'clear-request-list',
+          title: ui_strings.S_BUTTON_LABEL_CLEAR_LOG
+        }
+      ],
+      [
+        {
+          handler: 'http-text-search',
+          title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
+        }
+      ]
+    );
+};
+
 cls.RequestListView.prototype = ViewBase;
 new cls.RequestListView('request_list', ui_strings.M_VIEW_LABEL_REQUEST_LOG, 'scroll');
+cls.RequestListView.create_ui_widgets();
 
 eventHandlers.click['request-list-expand-collapse'] = function(event, target)
 {
@@ -245,6 +253,11 @@ eventHandlers.click['select-http-detail-view'] = function(event, target)
 {
     window.views['request_list'].selectDetailView(parseInt(target.getAttribute("data-requestid")), 
       target.getAttribute("data-viewname"));
+};
+
+eventHandlers.click['clear-request-list'] = function(event, target)
+{
+  HTTPLoggerData.clearLog();
 };
 
 
