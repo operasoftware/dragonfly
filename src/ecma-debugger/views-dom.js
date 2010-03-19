@@ -270,12 +270,14 @@ cls.DOMView = function(id, name, container_class)
           }
           case 10:  // doctype
           {
-            tree += LINEBREAK  + getIndent(node[DEPTH] - start_depth) +
+            tree += LINEBREAK + getIndent(node[DEPTH] - start_depth) +
                     "<!DOCTYPE " + this.getDoctypeName(data) +
-                    ( node[PUBLIC_ID] ? 
-                      ( " PUBLIC " + "\"" + node[PUBLIC_ID] + "\"" ) :"" ) +
-                    ( node[SYSTEM_ID] ?  
-                      ( " \"" + node[SYSTEM_ID] + "\"" ) : "" ) +
+                    (node[PUBLIC_ID] ?
+                      (" PUBLIC " + "\"" + node[PUBLIC_ID] + "\"") : "") +
+                    (!node[PUBLIC_ID] && node[SYSTEM_ID] ?
+                      " SYSTEM" : "") +
+                    (node[SYSTEM_ID] ?
+                      (" \"" + node[SYSTEM_ID] + "\"") : "") +
                     ">";
             break;
           }
@@ -440,12 +442,14 @@ cls.DOMView = function(id, name, container_class)
 
         case 10:  // doctype
         {
-          tree += LINEBREAK  + getIndent(node[ DEPTH ] ) +
+          tree += LINEBREAK + getIndent(node[ DEPTH ]) +
                   "&lt;!DOCTYPE " + this.getDoctypeName(data) +
-                  ( node[PUBLIC_ID] ? 
-                    ( " PUBLIC " + "\"" + node[PUBLIC_ID] + "\"" ) :"" ) +
-                  ( node[SYSTEM_ID] ?  
-                    ( " \"" + node[SYSTEM_ID] + "\"" ) : "" ) +
+                  (node[PUBLIC_ID] ?
+                    (" PUBLIC " + "\"" + node[PUBLIC_ID] + "\"") : "") +
+                  (!node[PUBLIC_ID] && node[SYSTEM_ID] ?
+                    " SYSTEM" : "") +
+                  (node[SYSTEM_ID] ?
+                    (" \"" + node[SYSTEM_ID] + "\"") : "") +
                   "&gt;";
           break;
         }
