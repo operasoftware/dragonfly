@@ -359,7 +359,7 @@ property  {
   padding-right: 3px;
   }
 
-rule, font-face-rule, page-rule {
+rule, font-face-rule, page-rule, import-rule, charset-rule, media-rule {
   font-family:monospace;
   display:block;
   /*xxwhite-space: pre-wrap;*/

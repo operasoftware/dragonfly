@@ -585,7 +585,7 @@ cls.Stylesheets = function()
     CHARSET = 13; // Actually the encoding
 
     return "<charset-rule rule-id='" + rule[RULE_ID] + "'>" +
-               "@charset \"" + rule[CHARSET] + "\";" +
+               "<at>@charset</at> \"" + rule[CHARSET] + "\";" +
            "</charset-rule>";
   }
   
@@ -620,7 +620,7 @@ cls.Stylesheets = function()
       ret += prettyPrintRule[_rule[TYPE]](_rule, do_shortcuts, is_style_sheet);
     }
     return "<media-rule rule-id='" + rule[RULE_ID] + "'>" +
-              "<media>@media " + rule[MEDIA_LIST].join(', ') + "   </media>{" +
+              "<at>@media " + rule[MEDIA_LIST].join(', ') + " </at>{" +
               "<rules>" + ret + "</rules>" +
             "}</media-rule>";
   }
