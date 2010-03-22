@@ -1,5 +1,5 @@
-﻿/* Generated from zh-tw.po at Fri Jan 30 08:29:46 2009 */
-window.ui_strings || ( window.ui_strings  = {} ) 
+﻿/* Generated from zh-tw.po at Mon Mar 22 13:43:57 2010 */
+window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "zh-tw";
 ui_strings.S_SWITCH_SHOW_TAB_ALL="顯示頁籤：全部";
 ui_strings.S_SWITCH_SHOW_TAB_SCRIPT="顯示頁籤：Script";
@@ -62,7 +62,7 @@ ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH="搜尋";
 ui_strings.S_INPUT_DEFAULT_TEXT_FILTER="快速搜尋";
 ui_strings.S_INFO_RELOAD_FOR_SCRIPT="請按上方的重新載入鈕以讀取選定視窗中的 script";
 ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS="這份文件中沒有 script";
-ui_strings.S_INFO_DOCUMNENT_LOADING="正在載入 Opera Dragonfly ...";
+ui_strings.S_INFO_DOCUMNENT_LOADING="正在載入 Opera Dragonfly...";
 ui_strings.S_INFO_SERVICE_NOT_AVAILABLE="找不到服務: %s";
 ui_strings.S_INFO_NO_RUNTIME_SELECTED="請選擇 runtime";
 ui_strings.S_TEXT_CALL_STACK_FRAME_LINE="%(FUNCTION_NAME)s: 第 %(LINE_NUMBER)s 行 (Script ID %(SCRIPT_ID)s)";

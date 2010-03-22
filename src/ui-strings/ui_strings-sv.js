@@ -1,5 +1,5 @@
-﻿/* Generated from sv.po at Fri Jan 30 08:28:29 2009 */
-window.ui_strings || ( window.ui_strings  = {} ) 
+﻿/* Generated from sv.po at Mon Mar 22 13:43:24 2010 */
+window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "sv";
 ui_strings.S_SWITCH_SHOW_TAB_ALL="Visa fliken Alla";
 ui_strings.S_SWITCH_SHOW_TAB_SCRIPT="Visa fliken Skript";
@@ -62,7 +62,7 @@ ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH="Sök";
 ui_strings.S_INPUT_DEFAULT_TEXT_FILTER="Snabbsökning";
 ui_strings.S_INFO_RELOAD_FOR_SCRIPT="Trycka Hämta om ovan för att hämta skripten för markerat fönster";
 ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS="Dokumentet innehåller inte några skript";
-ui_strings.S_INFO_DOCUMNENT_LOADING="Läser in Opera Dragonfly ...";
+ui_strings.S_INFO_DOCUMNENT_LOADING="Läser in Opera Dragonfly…";
 ui_strings.S_INFO_SERVICE_NOT_AVAILABLE="Tjänsten är inte tillgänglig: %s";
 ui_strings.S_INFO_NO_RUNTIME_SELECTED="Välj en körtidsmiljö";
 ui_strings.S_TEXT_CALL_STACK_FRAME_LINE="%(FUNCTION_NAME)s: Rad %(LINE_NUMBER)s (skript-id %(SCRIPT_ID)s)";

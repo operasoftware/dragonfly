@@ -1,5 +1,5 @@
-﻿/* Generated from pl.po at Fri Jan 30 08:29:05 2009 */
-window.ui_strings || ( window.ui_strings  = {} ) 
+﻿/* Generated from pl.po at Mon Mar 22 13:42:53 2010 */
+window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "pl";
 ui_strings.S_SWITCH_SHOW_TAB_ALL="Pokaż kartę „Wszystko”";
 ui_strings.S_SWITCH_SHOW_TAB_SCRIPT="Pokaż kartę „Skrypt”";
@@ -7,7 +7,7 @@ ui_strings.S_SWITCH_SHOW_TAB_JAVA="Pokaż kartę „Java”";
 ui_strings.S_SWITCH_SHOW_TAB_M2="Pokaż kartę „Poczta”";
 ui_strings.S_SWITCH_SHOW_TAB_NETWORK="Pokaż kartę „Sieć”";
 ui_strings.S_SWITCH_SHOW_TAB_XML="Pokaż kartę „XML”";
-ui_strings.S_SWITCH_SHOW_TAB_HTML="Pokaż karte „HTML”";
+ui_strings.S_SWITCH_SHOW_TAB_HTML="Pokaż kartę „HTML”";
 ui_strings.S_SWITCH_SHOW_TAB_CSS="Pokaż kartę „CSS”";
 ui_strings.S_SWITCH_SHOW_TAB_XSLT="Pokaż kartę „XSLT”";
 ui_strings.S_SWITCH_SHOW_TAB_SVG="Pokaż kartę „SVG”";
@@ -56,13 +56,13 @@ ui_strings.S_BUTTON_LABEL_CLEAR_LOG="Wyczyść dziennik";
 ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW="Zamknij okno";
 ui_strings.S_BUTTON_TEXT_APPLY="Zastosuj";
 ui_strings.S_BUTTON_CLEAR_REQUEST_LOG="Wyczyść dziennik żądań";
-ui_strings.S_LABEL_STATUS_INDICATOR="Wskaźnik stanu przeglądarki i debuggera";
+ui_strings.S_LABEL_STATUS_INDICATOR="Wskaźnik stanu przeglądarki i debugera";
 ui_strings.S_LABEL_PORT="Port";
 ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH="Szukaj";
 ui_strings.S_INPUT_DEFAULT_TEXT_FILTER="Znajdź";
 ui_strings.S_INFO_RELOAD_FOR_SCRIPT="Kliknij przycisk „Odśwież”, aby pobrać skrypty dla wybranego okna";
 ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS="W tym dokumencie nie ma skryptów";
-ui_strings.S_INFO_DOCUMNENT_LOADING="Opera Dragonfly - ładowanie…";
+ui_strings.S_INFO_DOCUMNENT_LOADING="Trwa ładowanie narzędzia Opera Dragonfly…";
 ui_strings.S_INFO_SERVICE_NOT_AVAILABLE="Usługa jest niedostępna: %s";
 ui_strings.S_INFO_NO_RUNTIME_SELECTED="Wybierz środowisko";
 ui_strings.S_TEXT_CALL_STACK_FRAME_LINE="%(FUNCTION_NAME)s: Wiersz %(LINE_NUMBER)s (Script ID %(SCRIPT_ID)s)";

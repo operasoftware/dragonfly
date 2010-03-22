@@ -1,5 +1,5 @@
-﻿/* Generated from id.po at Fri Jan 30 08:29:43 2009 */
-window.ui_strings || ( window.ui_strings  = {} ) 
+﻿/* Generated from id.po at Mon Mar 22 13:42:04 2010 */
+window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "id";
 ui_strings.S_SWITCH_SHOW_TAB_ALL="Tampilkan Semua Tab";
 ui_strings.S_SWITCH_SHOW_TAB_SCRIPT="Tampilkan Tab Script";
@@ -62,8 +62,8 @@ ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH="Cari";
 ui_strings.S_INPUT_DEFAULT_TEXT_FILTER="Cari cepat";
 ui_strings.S_INFO_RELOAD_FOR_SCRIPT="Klik tombol muat ulang di atas untuk mengambil skrip di jendela yang dipilih";
 ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS="Dokumen ini tidak memiliki skrip";
-ui_strings.S_INFO_DOCUMNENT_LOADING="Memuat Opera Dragonfly";
-ui_strings.S_INFO_SERVICE_NOT_AVAILABLE="Servis tidak tersedia";
+ui_strings.S_INFO_DOCUMNENT_LOADING="Memuat Opera Dragonfly…";
+ui_strings.S_INFO_SERVICE_NOT_AVAILABLE="Layanan tidak tersedia: %s";
 ui_strings.S_INFO_NO_RUNTIME_SELECTED="Pilih runtime";
 ui_strings.S_TEXT_CALL_STACK_FRAME_LINE="%(FUNCTION_NAME)s: Baris %(LINE_NUMBER)s (ID Skrip %(SCRIPT_ID)s)";
 ui_strings.S_TEXT_ENVIRONMENT_PROTOCOL_VERSION="Versi Protokol";

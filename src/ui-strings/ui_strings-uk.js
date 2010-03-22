@@ -1,5 +1,5 @@
-﻿/* Generated from uk.po at Fri Jan 30 08:29:36 2009 */
-window.ui_strings || ( window.ui_strings  = {} ) 
+﻿/* Generated from uk.po at Mon Mar 22 13:43:41 2010 */
+window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "uk";
 ui_strings.S_SWITCH_SHOW_TAB_ALL="Показати вкладку «Всі»";
 ui_strings.S_SWITCH_SHOW_TAB_SCRIPT="Показати вкладку «Скрипт»";
@@ -33,7 +33,7 @@ ui_strings.S_SWITCH_SHOW_VIEWS_MENU="Показати меню «Перегля�
 ui_strings.S_SWITCH_RELOAD_SCRIPTS_AUTOMATICALLY="Автоматично перезавантажувати документи по вибору вікна";
 ui_strings.S_SWITCH_ATTACH_WINDOW="Вбудовувати до головного вікна";
 ui_strings.S_SWITCH_SHOW_INITIAL_VALUES="Ховати початкові значення у визначених стилях";
-ui_strings.S_SWITCH_SHOW_SHORTHANDS="Ховати скоропис у перегляді визначених стилей";
+ui_strings.S_SWITCH_SHOW_SHORTHANDS="Ховати скоропис у перегляді визначених стилів";
 ui_strings.S_SWITCH_CREATE_SHORTHANDS="Використовувати скоропис для властивостей";
 ui_strings.S_BUTTON_LABEL_CONTINUE="Продовжити (F8)";
 ui_strings.S_BUTTON_LABEL_STEP_OVER="Пропустити (F10)";
@@ -62,7 +62,7 @@ ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH="Пошук";
 ui_strings.S_INPUT_DEFAULT_TEXT_FILTER="Швидкий пошук";
 ui_strings.S_INFO_RELOAD_FOR_SCRIPT="Натисніть кнопку «Перезавантажити», розташовану вище, для отримання скриптів для вибраного вікна";
 ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS="У цьому документі скриптів немає";
-ui_strings.S_INFO_DOCUMNENT_LOADING="Завантажується Opera Dragonfly...";
+ui_strings.S_INFO_DOCUMNENT_LOADING="Завантажується Opera Dragonfly…";
 ui_strings.S_INFO_SERVICE_NOT_AVAILABLE="Служба недоступна: %s";
 ui_strings.S_INFO_NO_RUNTIME_SELECTED="Виберіть динамічний об’єкт";
 ui_strings.S_TEXT_CALL_STACK_FRAME_LINE="%(FUNCTION_NAME)s: Рядок %(LINE_NUMBER)s (Ідентифікатор скрипту %(SCRIPT_ID)s)";

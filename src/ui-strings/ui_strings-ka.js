@@ -1,5 +1,5 @@
-﻿/* Generated from ka.po at Fri Jan 30 08:29:12 2009 */
-window.ui_strings || ( window.ui_strings  = {} ) 
+﻿/* Generated from ka.po at Mon Mar 22 13:42:16 2010 */
+window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "ka";
 ui_strings.S_SWITCH_SHOW_TAB_ALL="ყველას ჩანართის ჩვენება";
 ui_strings.S_SWITCH_SHOW_TAB_SCRIPT="სკრიფტის ჩანართის ჩვენება";
@@ -62,7 +62,7 @@ ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH="ძიება";
 ui_strings.S_INPUT_DEFAULT_TEXT_FILTER="სწრაფი ძიება";
 ui_strings.S_INFO_RELOAD_FOR_SCRIPT="ამორჩეული ფანჯრის სკრიფტების გადმოსაწერად დააწკაპუნეთ განახლების ღილაკზე";
 ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS="დოკუმენტს სკრიფტები არ გააჩნია";
-ui_strings.S_INFO_DOCUMNENT_LOADING="მიმდინარეობს Opera Dragonfly-ს გამოძახება ...";
+ui_strings.S_INFO_DOCUMNENT_LOADING="მიმდინარეობს Opera Dragonfly-ს გამოძახება...";
 ui_strings.S_INFO_SERVICE_NOT_AVAILABLE="სერვისი მიუწვდომელია: %s";
 ui_strings.S_INFO_NO_RUNTIME_SELECTED="ამოირჩიეთ runtime";
 ui_strings.S_TEXT_CALL_STACK_FRAME_LINE="%(FUNCTION_NAME)s: სტრიქონი %(LINE_NUMBER)s (Script ID %(SCRIPT_ID)s)";

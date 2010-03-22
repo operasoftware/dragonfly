@@ -1,5 +1,5 @@
-﻿/* Generated from da.po at Fri Jan 30 08:29:15 2009 */
-window.ui_strings || ( window.ui_strings  = {} ) 
+﻿/* Generated from da.po at Mon Mar 22 13:40:56 2010 */
+window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "da";
 ui_strings.S_SWITCH_SHOW_TAB_ALL="Vis fanen Alle";
 ui_strings.S_SWITCH_SHOW_TAB_SCRIPT="Vis fanen Script";
@@ -62,7 +62,7 @@ ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH="Søg";
 ui_strings.S_INPUT_DEFAULT_TEXT_FILTER="Kvikfind";
 ui_strings.S_INFO_RELOAD_FOR_SCRIPT="Klik på opdater-knappen herover for at hente scriptet for det valgte vindue";
 ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS="Dette dokument indeholder ingen scripts";
-ui_strings.S_INFO_DOCUMNENT_LOADING="Opera Dragonfly indlæses ...";
+ui_strings.S_INFO_DOCUMNENT_LOADING="Opera Dragonfly indlæses…";
 ui_strings.S_INFO_SERVICE_NOT_AVAILABLE="Service er ikke tilgængelig: %s";
 ui_strings.S_INFO_NO_RUNTIME_SELECTED="Vælg kørselsmiljø";
 ui_strings.S_TEXT_CALL_STACK_FRAME_LINE="%(FUNCTION_NAME)s: Linje %(LINE_NUMBER)s (Script-ID %(SCRIPT_ID)s)";

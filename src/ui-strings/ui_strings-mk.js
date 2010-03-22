@@ -1,5 +1,5 @@
-﻿/* Generated from mk.po at Fri Jan 30 08:28:30 2009 */
-window.ui_strings || ( window.ui_strings  = {} ) 
+﻿/* Generated from mk.po at Mon Mar 22 13:42:30 2010 */
+window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "mk";
 ui_strings.S_SWITCH_SHOW_TAB_ALL="Прикажи јазиче за сите";
 ui_strings.S_SWITCH_SHOW_TAB_SCRIPT="Прикажи јазиче за скрипта";
@@ -62,7 +62,7 @@ ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH="Пребарај";
 ui_strings.S_INPUT_DEFAULT_TEXT_FILTER="Брзо пребарување";
 ui_strings.S_INFO_RELOAD_FOR_SCRIPT="Притисни горе на копчето за обнова за добавување на скриптите за избраниот прозорец";
 ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS="Овој документ нема скрипти";
-ui_strings.S_INFO_DOCUMNENT_LOADING="Opera Dragonfly се подигнува ...";
+ui_strings.S_INFO_DOCUMNENT_LOADING="Opera Dragonfly се вчитува…";
 ui_strings.S_INFO_SERVICE_NOT_AVAILABLE="Сервисот не е достапен: %s";
 ui_strings.S_INFO_NO_RUNTIME_SELECTED="Изберете извршител";
 ui_strings.S_TEXT_CALL_STACK_FRAME_LINE="%(FUNCTION_NAME)s: Линија %(LINE_NUMBER)s (ID на скрипта %(SCRIPT_ID)s)";
@@ -83,7 +83,7 @@ ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB="Прикажи сродни в
 ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB="Прикажи id и класи во трага";
 ui_strings.S_BUTTON_LABEL_HELP="Помош";
 ui_strings.S_SELECT_WINDOW_EMPTY="Избери прозорец";
-ui_strings.S_INFO_WRONG_START="Opera Dragonfly не може да се користи на овој начин.\nИли поставете го тековниот URL во\n\n   opera:config > Алатки за Веб дизајнери > URL за алатки\n\nили поставете околина за откривање грешки со север посредник и сервер.";
+ui_strings.S_INFO_WRONG_START="Opera Dragonfly не може да се користи на овој начин.\nИли поставете го тековниот URL во\n\n   opera:config > Алатки за веб дизајнери > URL за алатки\n\nили поставете околина за откривање грешки со север посредник и сервер.";
 ui_strings.S_INFO_WAITING_FOR_CONNECTION="Opera Dragonfly чека врска на порта %s.\nЗа проврзување, ве молиме внесете opera:debug во URL полето на вашиот уред.";
 ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS="Скрипти";
 ui_strings.M_VIEW_LABEL_COMPOSITE_DOM="DOM";
@@ -96,8 +96,8 @@ ui_strings.M_VIEW_LABEL_SOURCE="Изворен код";
 ui_strings.M_VIEW_LABEL_COMMAND_LINE="Командна линија";
 ui_strings.M_VIEW_LABEL_CALLSTACK="Листа на повици";
 ui_strings.M_VIEW_LABEL_THREAD_LOG="Лог на нишки";
-ui_strings.M_VIEW_LABEL_FRAME_INSPECTION="Инспекција";
-ui_strings.M_VIEW_LABEL_OBJECT_INSPECTION="Инспекција на објект";
+ui_strings.M_VIEW_LABEL_FRAME_INSPECTION="Испитување";
+ui_strings.M_VIEW_LABEL_OBJECT_INSPECTION="Испитување на објект";
 ui_strings.M_VIEW_LABEL_DOCUMENTS="Документи";
 ui_strings.M_VIEW_LABEL_STYLESHEETS="Дефиниции на стил";
 ui_strings.M_VIEW_LABEL_DOM="DOM";

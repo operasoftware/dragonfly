@@ -1,5 +1,5 @@
-﻿/* Generated from pt-BR.po at Fri Jan 30 08:29:34 2009 */
-window.ui_strings || ( window.ui_strings  = {} ) 
+﻿/* Generated from pt-BR.po at Mon Mar 22 13:42:57 2010 */
+window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "pt-BR";
 ui_strings.S_SWITCH_SHOW_TAB_ALL="Exibir guia Todos";
 ui_strings.S_SWITCH_SHOW_TAB_SCRIPT="Exibir guia Script";
@@ -78,6 +78,13 @@ ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_UNKNOWN="Desconhecido";
 ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID="ID do script";
 ui_strings.S_TEXT_STATUS_SEARCH="Correspondências para %(SEARCH_TERM)s: correspondência %(SEARCH_COUNT_INDEX)s fora de %(SEARCH_COUNT_TOTAL)s";
 ui_strings.S_TEXT_NO_REQUEST_SELECTED="Nenhuma solicitação selecionada.";
+ui_strings.S_SWITCH_DETACH_WINDOW="Desencaixar em uma janela separada";
+ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB="Exibir irmãos na trilha de navegação";
+ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB="Exibir IDs e classes na trilha de navegação";
+ui_strings.S_BUTTON_LABEL_HELP="Ajuda";
+ui_strings.S_SELECT_WINDOW_EMPTY="Selecione uma janela";
+ui_strings.S_INFO_WRONG_START="O Opera Dragonfly não pode ser usado desta maneira.\nDefina a URL atual em\n\n   opera:config > Ferramentas de desenvolvimento > URL de ferramentas de desenvolvimento\n\nou configure um ambiente de depuração com um proxy e um servidor.";
+ui_strings.S_INFO_WAITING_FOR_CONNECTION="O Opera Dragonfly está aguardando uma conexão na porta %s.\nDigite opera:debug no campo URL do dispositivo para conectar.";
 ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS="Scripts";
 ui_strings.M_VIEW_LABEL_COMPOSITE_DOM="DOM";
 ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE="Console de erro";
@@ -127,10 +134,3 @@ ui_strings.M_VIEW_SUB_LABEL_METRICS="Métricas";
 ui_strings.M_VIEW_SUB_LABEL_PARENT_OFFSETS="Deslocamentos-pai";
 ui_strings.M_VIEW_SUB_LABEL_OFFSET_VALUES="Valores de deslocamento";
 ui_strings.M_SETTING_LABEL_GENERAL="Geral";
-ui_strings.S_SWITCH_DETACH_WINDOW="Desencaixar em uma janela separada";
-ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB="Exibir irmãos na trilha de navegação";
-ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB="Exibir IDs e classes na trilha de navegação";
-ui_strings.S_BUTTON_LABEL_HELP="Ajuda";
-ui_strings.S_SELECT_WINDOW_EMPTY="Selecione uma janela";
-ui_strings.S_INFO_WRONG_START="O Opera Dragonfly não pode ser usado desta maneira.\nDefina a URL atual em\n\n   opera:config > Ferramentas de desenvolvimento > URL de ferramentas de desenvolvimento\n\nou configure um ambiente de depuração com um proxy e um servidor.";
-ui_strings.S_INFO_WAITING_FOR_CONNECTION="O Opera Dragonfly está aguardando uma conexão na porta %s.\nDigite opera:debug no campo URL do dispositivo para conectar.";

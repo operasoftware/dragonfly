@@ -1,5 +1,5 @@
-﻿/* Generated from tr.po at Fri Jan 30 08:29:30 2009 */
-window.ui_strings || ( window.ui_strings  = {} ) 
+﻿/* Generated from tr.po at Mon Mar 22 13:43:37 2010 */
+window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "tr";
 ui_strings.S_SWITCH_SHOW_TAB_ALL="Tümü sekmesini göster";
 ui_strings.S_SWITCH_SHOW_TAB_SCRIPT="Betik sekmesini göster";
@@ -62,7 +62,7 @@ ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH="Arama";
 ui_strings.S_INPUT_DEFAULT_TEXT_FILTER="Hızlı arama";
 ui_strings.S_INFO_RELOAD_FOR_SCRIPT="Seçili pencere betiklerini çekmek için yukarıdaki yenile düğmesini tıklayın";
 ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS="Bu belgede çalışan betik yok";
-ui_strings.S_INFO_DOCUMNENT_LOADING="Opera Dragonfly yükleniyor...";
+ui_strings.S_INFO_DOCUMNENT_LOADING="Opera Dragonfly yükleniyor…";
 ui_strings.S_INFO_SERVICE_NOT_AVAILABLE="Servis kullanılamaz: %s";
 ui_strings.S_INFO_NO_RUNTIME_SELECTED="Çalıştırma ortamı seçin";
 ui_strings.S_TEXT_CALL_STACK_FRAME_LINE="%(FUNCTION_NAME)s: Satır %(LINE_NUMBER)s  (Betik Tanımlaması %(SCRIPT_ID)s)";

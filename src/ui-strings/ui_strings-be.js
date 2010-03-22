@@ -1,5 +1,5 @@
-﻿/* Generated from be.po at Fri Jan 30 08:28:54 2009 */
-window.ui_strings || ( window.ui_strings  = {} ) 
+﻿/* Generated from be.po at Mon Mar 22 13:40:38 2010 */
+window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "be";
 ui_strings.S_SWITCH_SHOW_TAB_ALL="Паказаць кнопку Ўсе";
 ui_strings.S_SWITCH_SHOW_TAB_SCRIPT="Паказаць кнопку Скрыпт";
@@ -28,7 +28,7 @@ ui_strings.S_SWITCH_USE_SHORTHAND_PROPERTIES="Скарыстоўваць пан�
 ui_strings.S_SWITCH_HIDE_INITIAL_VALUES="Схаваць пачатковыя значэньні ў разьлічаных стылях";
 ui_strings.S_SWITCH_HIDE_SHORTHANDS="Схаваць панэль разьлічаных стыляў";
 ui_strings.S_SWITCH_HIDE_EMPTY_STRINGS="Схаваць пустныя радкі і нулявыя значэньні";
-ui_strings.S_SWITCH_REMOTE_DEBUG="Далёкае выпраўленьне памылак";
+ui_strings.S_SWITCH_REMOTE_DEBUG="Далёкая папраўка";
 ui_strings.S_SWITCH_SHOW_VIEWS_MENU="Паказаць мэню Выгляды";
 ui_strings.S_SWITCH_RELOAD_SCRIPTS_AUTOMATICALLY="Пасьля выбару вакна аўтаматычна перагружаць дакумэнты";
 ui_strings.S_SWITCH_ATTACH_WINDOW="Далучыць да галоўнага вакна";

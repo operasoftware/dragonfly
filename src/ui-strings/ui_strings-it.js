@@ -1,5 +1,5 @@
-﻿/* Generated from it.po at Fri Jan 30 08:29:50 2009 */
-window.ui_strings || ( window.ui_strings  = {} ) 
+﻿/* Generated from it.po at Mon Mar 22 13:42:09 2010 */
+window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "it";
 ui_strings.S_SWITCH_SHOW_TAB_ALL="Mostra la scheda Tutti";
 ui_strings.S_SWITCH_SHOW_TAB_SCRIPT="Mostra la scheda Script";
@@ -36,13 +36,13 @@ ui_strings.S_SWITCH_SHOW_INITIAL_VALUES="Nascondi i valori iniziali nella vista 
 ui_strings.S_SWITCH_SHOW_SHORTHANDS="Nascondi gli shorthand nella vista Stile calcolato";
 ui_strings.S_SWITCH_CREATE_SHORTHANDS="Usa gli shorthand per le proprietà";
 ui_strings.S_BUTTON_LABEL_CONTINUE="Continua (F8)";
-ui_strings.S_BUTTON_LABEL_STEP_OVER="Step Over (F10)";
-ui_strings.S_BUTTON_LABEL_STEP_INTO="Step Into (F11)";
-ui_strings.S_BUTTON_LABEL_STEP_OUT="Step Out (Maiusc F11)";
+ui_strings.S_BUTTON_LABEL_STEP_OVER="Salta (step over) (F10)";
+ui_strings.S_BUTTON_LABEL_STEP_INTO="Entra (step into) (F11)";
+ui_strings.S_BUTTON_LABEL_STEP_OUT="Esci (step out) (Maiusc F11)";
 ui_strings.S_BUTTON_LABEL_STOP_AT_THREAD="Arresta quando incontri un nuovo script";
 ui_strings.S_BUTTON_LABEL_AT_EXCEPTION="Arresta in caso di eccezione";
 ui_strings.S_BUTTON_LABEL_AT_ERROR="Arresta in caso di errore";
-ui_strings.S_BUTTON_LABEL_AT_ABORT="Arresta in caso di abort";
+ui_strings.S_BUTTON_LABEL_AT_ABORT="Arresta in caso di annullamento";
 ui_strings.S_BUTTON_LABEL_RELOAD_HOST="Ricarica la finestra selezionata nel browser";
 ui_strings.S_BUTTON_LABEL_SELECT_WINDOW="Selezionare una finestra";
 ui_strings.S_BUTTON_LABEL_GET_THE_WOHLE_TREE="Espandi il DOM";
@@ -62,7 +62,7 @@ ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH="Cerca";
 ui_strings.S_INPUT_DEFAULT_TEXT_FILTER="Ricerca veloce";
 ui_strings.S_INFO_RELOAD_FOR_SCRIPT="Cliccare il tasto ricarica in alto per scaricare gli script della finestra selezionata";
 ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS="Il documento non ha script";
-ui_strings.S_INFO_DOCUMNENT_LOADING="Caricamento di Opera Dragonfly in corso ...";
+ui_strings.S_INFO_DOCUMNENT_LOADING="Caricamento di Opera Dragonfly in corso…";
 ui_strings.S_INFO_SERVICE_NOT_AVAILABLE="Il servizio non è disponibile: %s";
 ui_strings.S_INFO_NO_RUNTIME_SELECTED="Selezionare un runtime";
 ui_strings.S_TEXT_CALL_STACK_FRAME_LINE="%(FUNCTION_NAME)s: Riga %(LINE_NUMBER)s (Script ID %(SCRIPT_ID)s)";

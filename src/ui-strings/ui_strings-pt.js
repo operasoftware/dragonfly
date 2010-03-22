@@ -1,5 +1,5 @@
-﻿/* Generated from pt.po at Fri Jan 30 08:29:20 2009 */
-window.ui_strings || ( window.ui_strings  = {} ) 
+﻿/* Generated from pt.po at Mon Mar 22 13:43:01 2010 */
+window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "pt";
 ui_strings.S_SWITCH_SHOW_TAB_ALL="Mostrar Separador Todos";
 ui_strings.S_SWITCH_SHOW_TAB_SCRIPT="Mostrar Separador Script";
@@ -47,7 +47,7 @@ ui_strings.S_BUTTON_LABEL_RELOAD_HOST="Recarregar a janela seleccionada no brows
 ui_strings.S_BUTTON_LABEL_SELECT_WINDOW="Seleccionar a janela";
 ui_strings.S_BUTTON_LABEL_GET_THE_WOHLE_TREE="Expandir a árvore DOM";
 ui_strings.S_BUTTON_LABEL_EXPORT_DOM="Exportar a actual vista DOM";
-ui_strings.S_BUTTON_LABEL_HIDE_DEFAULT_PROPS_IN_GLOBAL_SCOPE="Ocultar propriedades padrão no escopo global";
+ui_strings.S_BUTTON_LABEL_HIDE_DEFAULT_PROPS_IN_GLOBAL_SCOPE="Ocultar propriedades predefinidas no escopo global";
 ui_strings.S_BUTTON_LABEL_LOG_THREADS="Registrar thread";
 ui_strings.S_BUTTON_LABEL_CLEAR_THREAD_LOG="Limpar o registo de threads";
 ui_strings.S_BUTTON_LABEL_EXPORT_LOG="Exportar registo de threads";
@@ -62,7 +62,7 @@ ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH="Pesquisar";
 ui_strings.S_INPUT_DEFAULT_TEXT_FILTER="Pesquisa rápida";
 ui_strings.S_INFO_RELOAD_FOR_SCRIPT="Clique no botão recarregar acima para buscar os scripts para a janela seleccionada";
 ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS="Este documento não tem scripts";
-ui_strings.S_INFO_DOCUMNENT_LOADING="O Opera Dragonfly está a carregar ...";
+ui_strings.S_INFO_DOCUMNENT_LOADING="O Opera Dragonfly está a carregar…";
 ui_strings.S_INFO_SERVICE_NOT_AVAILABLE="Serviço não disponível: %s";
 ui_strings.S_INFO_NO_RUNTIME_SELECTED="Seleccione um tempo de execução";
 ui_strings.S_TEXT_CALL_STACK_FRAME_LINE="%(FUNCTION_NAME)s: Linha %(LINE_NUMBER)s (Script ID %(SCRIPT_ID)s)";

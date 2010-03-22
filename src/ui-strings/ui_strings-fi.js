@@ -1,5 +1,5 @@
-﻿/* Generated from fi.po at Fri Jan 30 08:28:20 2009 */
-window.ui_strings || ( window.ui_strings  = {} ) 
+﻿/* Generated from fi.po at Mon Mar 22 13:41:28 2010 */
+window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "fi";
 ui_strings.S_SWITCH_SHOW_TAB_ALL="Näytä Kaikki-välilehti";
 ui_strings.S_SWITCH_SHOW_TAB_SCRIPT="Näytä Skripti-välilehti";
@@ -62,7 +62,7 @@ ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH="Haku";
 ui_strings.S_INPUT_DEFAULT_TEXT_FILTER="Pikahaku";
 ui_strings.S_INFO_RELOAD_FOR_SCRIPT="Napsauta yllä olevaa päivityspainiketta hakeaksesi valitun ikkun skriptit";
 ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS="Tässä dokumentissa ei ole skriptejä";
-ui_strings.S_INFO_DOCUMNENT_LOADING="Opera Dragonfly latautuu...";
+ui_strings.S_INFO_DOCUMNENT_LOADING="Opera Dragonfly latautuu…";
 ui_strings.S_INFO_SERVICE_NOT_AVAILABLE="Palvelu ei ole saatavilla: %s";
 ui_strings.S_INFO_NO_RUNTIME_SELECTED="Valitse ajo";
 ui_strings.S_TEXT_CALL_STACK_FRAME_LINE="%(FUNCTION_NAME)s: rivi %(LINE_NUMBER)s (Script ID %(SCRIPT_ID)s)";

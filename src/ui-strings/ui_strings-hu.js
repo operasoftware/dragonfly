@@ -1,5 +1,5 @@
-﻿/* Generated from hu.po at Fri Jan 30 08:28:39 2009 */
-window.ui_strings || ( window.ui_strings  = {} ) 
+﻿/* Generated from hu.po at Mon Mar 22 13:42:00 2010 */
+window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "hu";
 ui_strings.S_SWITCH_SHOW_TAB_ALL="'Mind' fül megjelenítése";
 ui_strings.S_SWITCH_SHOW_TAB_SCRIPT="Szkript fül megjelenítése";
@@ -62,7 +62,7 @@ ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH="Keresés";
 ui_strings.S_INPUT_DEFAULT_TEXT_FILTER="Gyors keresés";
 ui_strings.S_INFO_RELOAD_FOR_SCRIPT="Kattintson a fenti újratöltés gombra, hogy betöltse a szkripteket a kijelölt ablakból";
 ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS="A dokumentum nem tartalmaz szkripteket";
-ui_strings.S_INFO_DOCUMNENT_LOADING="Opera Dragonfly betöltése ...";
+ui_strings.S_INFO_DOCUMNENT_LOADING="Opera Dragonfly betöltése folyamatban…";
 ui_strings.S_INFO_SERVICE_NOT_AVAILABLE="A szolgáltatás nem elérhető: %s";
 ui_strings.S_INFO_NO_RUNTIME_SELECTED="Válasszon egy futó környezetet";
 ui_strings.S_TEXT_CALL_STACK_FRAME_LINE="%(FUNCTION_NAME)s: Sor %(LINE_NUMBER)s (Szkript ID %(SCRIPT_ID)s)";

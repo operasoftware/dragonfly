@@ -1,5 +1,5 @@
-﻿/* Generated from ta.po at Fri Jan 30 08:29:51 2009 */
-window.ui_strings || ( window.ui_strings  = {} ) 
+﻿/* Generated from ta.po at Mon Mar 22 13:43:28 2010 */
+window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "ta";
 ui_strings.S_SWITCH_SHOW_TAB_ALL="அனைத்தும் தாவலைக் காண்பி";
 ui_strings.S_SWITCH_SHOW_TAB_SCRIPT="ஸ்கிரிப்ட் தாவலைக் காண்பி";
@@ -62,7 +62,7 @@ ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH="தேடு";
 ui_strings.S_INPUT_DEFAULT_TEXT_FILTER="விரைவாக கண்டறி";
 ui_strings.S_INFO_RELOAD_FOR_SCRIPT="தேர்ந்தெடுக்கப்பட்ட சாளரத்துக்கான ஸ்கிரிப்ட்களை எடுக்க மறுநினைவேற்று பொத்தானைக் கிளிக் செய்யவும்";
 ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS="இந்த ஆவணத்தில் ஸ்கிரிப்ட்கள் ஏதுமில்லை";
-ui_strings.S_INFO_DOCUMNENT_LOADING="Opera Dragonfly நினைவேறுகிறது ...";
+ui_strings.S_INFO_DOCUMNENT_LOADING="Opera Dragonfly நினைவேறுகிறது...";
 ui_strings.S_INFO_SERVICE_NOT_AVAILABLE="சேவை கிடைக்கவில்லை: %s";
 ui_strings.S_INFO_NO_RUNTIME_SELECTED="ஒரு இயக்கநேரத்தைத் தேர்ந்தெடுக்கவும்";
 ui_strings.S_TEXT_CALL_STACK_FRAME_LINE="%(FUNCTION_NAME)s: வரி %(LINE_NUMBER)s (Script ID %(SCRIPT_ID)s)";
@@ -78,6 +78,13 @@ ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_UNKNOWN="தெரியாதது";
 ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID="ஸ்கிரிப்ட் ID";
 ui_strings.S_TEXT_STATUS_SEARCH="%(SEARCH_TERM)s க்கான பொருத்தங்கள்: மொத்தம் %(SEARCH_COUNT_TOTAL)s களில் %(SEARCH_COUNT_INDEX)s பொருத்தங்கள்";
 ui_strings.S_TEXT_NO_REQUEST_SELECTED="கோரிக்கை எதுவும் தேர்ந்தெடுக்கப்படவில்லை.";
+ui_strings.S_SWITCH_DETACH_WINDOW="தனியான சாளரமாக பிரிக்கவும்";
+ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB="சிறுகாட்சிகளைக் காண்பி";
+ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB="ஐடிகள் மற்றும் கிளாஸ்களை ப்ரெட்கிரம்பில் காண்பி";
+ui_strings.S_BUTTON_LABEL_HELP="உதவி";
+ui_strings.S_SELECT_WINDOW_EMPTY="ஒரு சாளரத்தைத் தேர்ந்தெடு";
+ui_strings.S_INFO_WRONG_START="Opera Dragonfly -ஐ இவ்விதம் பயன்படுத்த முடியாது.\nURL-ஐ\n\n   opera:config > Developer Tools > Developer Tools URL\n\nஎன்பதில் அமைக்கவும் அல்லது ஒரு ப்ராக்ஸி மற்றும் சர்வரைக் கொண்டு ஒரு பிழைநீக்கி சூழலை உருவாக்கவும்.";
+ui_strings.S_INFO_WAITING_FOR_CONNECTION="%s போர்ட்டில் ஒரு இணைப்புக்கு Opera Dragonfly காத்திருக்கிறது.\nஉங்கள் சாதனத்தின்  URL புலத்தில் opera:debug என்று உள்ளிட்டு இயக்கவும்.";
 ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS="ஸ்கிரிப்ட்கள்";
 ui_strings.M_VIEW_LABEL_COMPOSITE_DOM="DOM";
 ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE="பிழை கன்சோல்";

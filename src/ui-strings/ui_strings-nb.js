@@ -1,5 +1,5 @@
-﻿/* Generated from nb.po at Fri Jan 30 08:29:38 2009 */
-window.ui_strings || ( window.ui_strings  = {} ) 
+﻿/* Generated from nb.po at Mon Mar 22 13:42:38 2010 */
+window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "nb";
 ui_strings.S_SWITCH_SHOW_TAB_ALL="Vis fane: Alle";
 ui_strings.S_SWITCH_SHOW_TAB_SCRIPT="Vis fane: Skript";
@@ -62,7 +62,7 @@ ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH="Søk";
 ui_strings.S_INPUT_DEFAULT_TEXT_FILTER="Hurtigsøk";
 ui_strings.S_INFO_RELOAD_FOR_SCRIPT="Klikk på oppdater-knappen ovenfor for å hente skriptene til det valgte vinduet";
 ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS="Dette dokumentet har ingen skript";
-ui_strings.S_INFO_DOCUMNENT_LOADING="Opera Dragonfly lastes ...";
+ui_strings.S_INFO_DOCUMNENT_LOADING="Opera Dragonfly lastes…";
 ui_strings.S_INFO_SERVICE_NOT_AVAILABLE="Tjenesten er ikke tilgjengelig: %s";
 ui_strings.S_INFO_NO_RUNTIME_SELECTED="Velg et kjøretidsmiljø";
 ui_strings.S_TEXT_CALL_STACK_FRAME_LINE="%(FUNCTION_NAME)s: Linje %(LINE_NUMBER)s (Skript-ID %(SCRIPT_ID)s)";

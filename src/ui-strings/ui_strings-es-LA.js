@@ -1,5 +1,5 @@
-﻿/* Generated from es-LA.po at Fri Jan 30 08:29:54 2009 */
-window.ui_strings || ( window.ui_strings  = {} ) 
+﻿/* Generated from es-LA.po at Mon Mar 22 13:41:19 2010 */
+window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "es-LA";
 ui_strings.S_SWITCH_SHOW_TAB_ALL="Mostrar pestaña Todos";
 ui_strings.S_SWITCH_SHOW_TAB_SCRIPT="Mostrar pestaña Script";
@@ -62,7 +62,7 @@ ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH="Buscar";
 ui_strings.S_INPUT_DEFAULT_TEXT_FILTER="Búsqueda rápida";
 ui_strings.S_INFO_RELOAD_FOR_SCRIPT="Haga clic en el botón recargar arriba para obtener los scripts de la ventana seleccionada";
 ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS="Este documento no tiene scripts";
-ui_strings.S_INFO_DOCUMNENT_LOADING="Opera Dragonfly está cargando ...";
+ui_strings.S_INFO_DOCUMNENT_LOADING="Opera Dragonfly está cargando…";
 ui_strings.S_INFO_SERVICE_NOT_AVAILABLE="El servicio no está disponible: %s";
 ui_strings.S_INFO_NO_RUNTIME_SELECTED="Seleccionar un entorno de ejecución";
 ui_strings.S_TEXT_CALL_STACK_FRAME_LINE="%(FUNCTION_NAME)s: Línea %(LINE_NUMBER)s (Script ID %(SCRIPT_ID)s)";

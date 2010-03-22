@@ -1,5 +1,5 @@
-﻿/* Generated from fr-CA.po at Fri Jan 30 08:29:03 2009 */
-window.ui_strings || ( window.ui_strings  = {} ) 
+﻿/* Generated from fr-CA.po at Mon Mar 22 13:41:31 2010 */
+window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "fr-CA";
 ui_strings.S_SWITCH_SHOW_TAB_ALL="Afficher tous les onglets";
 ui_strings.S_SWITCH_SHOW_TAB_SCRIPT="Afficher l'onglet de script";
@@ -48,7 +48,7 @@ ui_strings.S_BUTTON_LABEL_SELECT_WINDOW="Choisir fenêtre";
 ui_strings.S_BUTTON_LABEL_GET_THE_WOHLE_TREE="Agrandir l'arbre DOM";
 ui_strings.S_BUTTON_LABEL_EXPORT_DOM="Exporter vue DOM courante";
 ui_strings.S_BUTTON_LABEL_HIDE_DEFAULT_PROPS_IN_GLOBAL_SCOPE="Masquer les propriétés par défaut de la vue globale";
-ui_strings.S_BUTTON_LABEL_LOG_THREADS="Journal d'éxécution";
+ui_strings.S_BUTTON_LABEL_LOG_THREADS="Journal d'xécution";
 ui_strings.S_BUTTON_LABEL_CLEAR_THREAD_LOG="Effacer le journal d'exécution";
 ui_strings.S_BUTTON_LABEL_EXPORT_LOG="Exporter le journal d'exécution";
 ui_strings.S_BUTTON_LABEL_SETTINGS="Réglages";
@@ -64,7 +64,7 @@ ui_strings.S_INFO_RELOAD_FOR_SCRIPT="Cliquer sur \"Recharger\" ci-haut pour amen
 ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS="Ce document ne contient pas de script";
 ui_strings.S_INFO_DOCUMNENT_LOADING="Chargement d'Opera Dragonfly en cours...";
 ui_strings.S_INFO_SERVICE_NOT_AVAILABLE="Service non disponible: %s";
-ui_strings.S_INFO_NO_RUNTIME_SELECTED="Choisir fichier d'éxécution";
+ui_strings.S_INFO_NO_RUNTIME_SELECTED="Choisir fichier d'exécution";
 ui_strings.S_TEXT_CALL_STACK_FRAME_LINE="%(FUNCTION_NAME)s: Ligne %(LINE_NUMBER)s (Script %(SCRIPT_ID)s)";
 ui_strings.S_TEXT_ENVIRONMENT_PROTOCOL_VERSION="Version de protocole";
 ui_strings.S_TEXT_ENVIRONMENT_OPERATING_SYSTEM="Système d'exploitation";
@@ -95,7 +95,7 @@ ui_strings.M_VIEW_LABEL_ENVIRONMENT="Environnement";
 ui_strings.M_VIEW_LABEL_SOURCE="Source";
 ui_strings.M_VIEW_LABEL_COMMAND_LINE="Ligne de commande";
 ui_strings.M_VIEW_LABEL_CALLSTACK="Pile des appels";
-ui_strings.M_VIEW_LABEL_THREAD_LOG="Journal d'éxécution";
+ui_strings.M_VIEW_LABEL_THREAD_LOG="Journal d'exécution";
 ui_strings.M_VIEW_LABEL_FRAME_INSPECTION="Inspection";
 ui_strings.M_VIEW_LABEL_OBJECT_INSPECTION="Inspection d'objet";
 ui_strings.M_VIEW_LABEL_DOCUMENTS="Documents";

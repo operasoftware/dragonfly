@@ -1,5 +1,5 @@
-﻿/* Generated from hi.po at Fri Jan 30 08:29:47 2009 */
-window.ui_strings || ( window.ui_strings  = {} ) 
+﻿/* Generated from hi.po at Mon Mar 22 13:41:53 2010 */
+window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "hi";
 ui_strings.S_SWITCH_SHOW_TAB_ALL="सभी वाला टैब दिखाएं";
 ui_strings.S_SWITCH_SHOW_TAB_SCRIPT="स्क्रिप्ट टैब दिखाएं";
@@ -62,7 +62,7 @@ ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH="खोज";
 ui_strings.S_INPUT_DEFAULT_TEXT_FILTER="तेज खोज";
 ui_strings.S_INFO_RELOAD_FOR_SCRIPT="चुनी गई खिड़की के स्क्रिप्ट लाने के लिए ऊपर के पुनर्भरण बटन को क्लिक करें";
 ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS="इस दस्तावेज में कोई स्क्रिप्ट नहीं है";
-ui_strings.S_INFO_DOCUMNENT_LOADING="Opera Dragonfly का भरण हो रहा है...";
+ui_strings.S_INFO_DOCUMNENT_LOADING="Opera Dragonfly लोड हो रहा है...";
 ui_strings.S_INFO_SERVICE_NOT_AVAILABLE="सेवा अनुपलब्ध: %s";
 ui_strings.S_INFO_NO_RUNTIME_SELECTED="कोई रनटाइम चुनें";
 ui_strings.S_TEXT_CALL_STACK_FRAME_LINE="%(FUNCTION_NAME)s: पंक्ति %(LINE_NUMBER)s (Script ID %(SCRIPT_ID)s)";
@@ -78,6 +78,13 @@ ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_UNKNOWN="अज्ञात";
 ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID="स्क्रिप्ट आइडी";
 ui_strings.S_TEXT_STATUS_SEARCH="%(SEARCH_TERM)s के लिए मेल: मेल %(SEARCH_COUNT_INDEX)s out of %(SEARCH_COUNT_TOTAL)s";
 ui_strings.S_TEXT_NO_REQUEST_SELECTED="कोई अनुरोध नहीं चुना गया है";
+ui_strings.S_SWITCH_DETACH_WINDOW="अलग खिड़की में अनलोक करें";
+ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB="ब्रेडक्रंब में सिबलिंगों को दिखाएं";
+ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB="ब्रेडक्रंब में आईडी और क्लास दिखाएं";
+ui_strings.S_BUTTON_LABEL_HELP="मदद";
+ui_strings.S_SELECT_WINDOW_EMPTY="खिड़की चुनें";
+ui_strings.S_INFO_WRONG_START="Opera Dragonfly को इस तरह उपयोग नहीं किया जा सकता है।\nया तो वर्तमान यूआरएल को\n\n   opera:config > डेवलपर औजर > डेवलपर औजार यूआरएल में सेट करें\n\nया प्रोक्सी और सर्वर की मदद से दोषमार्जन परिवेश सेट अप करें।";
+ui_strings.S_INFO_WAITING_FOR_CONNECTION="Opera Dragonfly पोर्ट %s पर कनेक्शन के लिए इंतजार कर रहा है।\nकनेक्ट होने के लिए अपनी युक्ति के यूआरएल वाले क्षेत्र में opera:debug दर्ज करें।";
 ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS="स्क्रिप्ट";
 ui_strings.M_VIEW_LABEL_COMPOSITE_DOM="डोम";
 ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE="त्रुटि कन्सोल";

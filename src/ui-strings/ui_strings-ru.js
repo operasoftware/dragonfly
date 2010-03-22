@@ -1,5 +1,5 @@
-﻿/* Generated from ru.po at Fri Jan 30 08:29:18 2009 */
-window.ui_strings || ( window.ui_strings  = {} ) 
+﻿/* Generated from ru.po at Mon Mar 22 13:43:09 2010 */
+window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "ru";
 ui_strings.S_SWITCH_SHOW_TAB_ALL="Показывать вкладку «Все»";
 ui_strings.S_SWITCH_SHOW_TAB_SCRIPT="Показывать вкладку «Скрипты»";
@@ -46,7 +46,7 @@ ui_strings.S_BUTTON_LABEL_AT_ABORT="Останов на аварийном за�
 ui_strings.S_BUTTON_LABEL_RELOAD_HOST="Перезагрузить выделенное окно в браузере";
 ui_strings.S_BUTTON_LABEL_SELECT_WINDOW="Выберите окно";
 ui_strings.S_BUTTON_LABEL_GET_THE_WOHLE_TREE="Развернуть дерево DOM";
-ui_strings.S_BUTTON_LABEL_EXPORT_DOM="Экспортировать текущее предствление DOM";
+ui_strings.S_BUTTON_LABEL_EXPORT_DOM="Экспортировать текущее представление DOM";
 ui_strings.S_BUTTON_LABEL_HIDE_DEFAULT_PROPS_IN_GLOBAL_SCOPE="Скрывать свойства по-умолчанию в глобальной области";
 ui_strings.S_BUTTON_LABEL_LOG_THREADS="Журналировать цепочки";
 ui_strings.S_BUTTON_LABEL_CLEAR_THREAD_LOG="Очистить журнал";
@@ -60,9 +60,9 @@ ui_strings.S_LABEL_STATUS_INDICATOR="Индикатор состояния бр�
 ui_strings.S_LABEL_PORT="Порт";
 ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH="Поиск";
 ui_strings.S_INPUT_DEFAULT_TEXT_FILTER="Найти";
-ui_strings.S_INFO_RELOAD_FOR_SCRIPT="Щёлкните кнопку \"Перезагрузить\" выше, чтобы извлечь скрипты для текущего окна";
+ui_strings.S_INFO_RELOAD_FOR_SCRIPT="Щёлкните кнопку «Перезагрузить» выше, чтобы извлечь скрипты для текущего окна";
 ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS="Этот документ не содержит скриптов";
-ui_strings.S_INFO_DOCUMNENT_LOADING="Загрузка Opera Dragonfly...";
+ui_strings.S_INFO_DOCUMNENT_LOADING="Загружается Opera Dragonfly…";
 ui_strings.S_INFO_SERVICE_NOT_AVAILABLE="Сервис недоступен: %s";
 ui_strings.S_INFO_NO_RUNTIME_SELECTED="Выбрать документ";
 ui_strings.S_TEXT_CALL_STACK_FRAME_LINE="%(FUNCTION_NAME)s: Строка %(LINE_NUMBER)s (ID скрипта %(SCRIPT_ID)s)";
@@ -97,7 +97,7 @@ ui_strings.M_VIEW_LABEL_COMMAND_LINE="Командная строка";
 ui_strings.M_VIEW_LABEL_CALLSTACK="Стек вызовов";
 ui_strings.M_VIEW_LABEL_THREAD_LOG="Журнал процессов";
 ui_strings.M_VIEW_LABEL_FRAME_INSPECTION="Исследование";
-ui_strings.M_VIEW_LABEL_OBJECT_INSPECTION="Исследовение объекта";
+ui_strings.M_VIEW_LABEL_OBJECT_INSPECTION="Исследование объекта";
 ui_strings.M_VIEW_LABEL_DOCUMENTS="Документы";
 ui_strings.M_VIEW_LABEL_STYLESHEETS="Таблицы стилей";
 ui_strings.M_VIEW_LABEL_DOM="DOM";

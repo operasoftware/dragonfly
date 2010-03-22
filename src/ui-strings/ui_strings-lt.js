@@ -1,5 +1,5 @@
-﻿/* Generated from lt.po at Fri Jan 30 08:28:21 2009 */
-window.ui_strings || ( window.ui_strings  = {} ) 
+﻿/* Generated from lt.po at Mon Mar 22 13:42:25 2010 */
+window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "lt";
 ui_strings.S_SWITCH_SHOW_TAB_ALL="Rodyti skirtuką „Visi“";
 ui_strings.S_SWITCH_SHOW_TAB_SCRIPT="Rodyti skirtuką „Rašmenys“";
@@ -78,6 +78,13 @@ ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_UNKNOWN="Nežinomas";
 ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID="Scenarijaus id";
 ui_strings.S_TEXT_STATUS_SEARCH="Atitikimai %(SEARCH_TERM)s: Atitikimas %(SEARCH_COUNT_INDEX)s iš %(SEARCH_COUNT_TOTAL)s";
 ui_strings.S_TEXT_NO_REQUEST_SELECTED="Užklausa nepasirinkta.";
+ui_strings.S_SWITCH_DETACH_WINDOW="Atjungti atskirame lange";
+ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB="Rodyti vieno lygmens elementus naršymo kelyje";
+ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB="Rodyti identifikatorius ir klases naršymo kelyje";
+ui_strings.S_BUTTON_LABEL_HELP="Žinynas ";
+ui_strings.S_SELECT_WINDOW_EMPTY="Pasirinkti langą";
+ui_strings.S_INFO_WRONG_START="„Opera Dragonfly“ negalima naudoti šiuo būdu.\nArba nustatykite esamą URL \n\n   opera:konfig. > Programavimo įrankiai > Programavimo įrankių URL\n\narba nustatykite derinimo aplinką su tarpiniu serveriu ir serveriu.";
+ui_strings.S_INFO_WAITING_FOR_CONNECTION="„Opera Dragonfly“ laukia prisijungimo prie prievado %s.\nPrašome įvesti opera:derinimas įrenginio URL lauke, kad prisijungtų.";
 ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS="Rašmenys";
 ui_strings.M_VIEW_LABEL_COMPOSITE_DOM="DOM";
 ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE="Klaidų pultas";

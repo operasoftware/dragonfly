@@ -1,5 +1,5 @@
-﻿/* Generated from fy.po at Fri Jan 30 08:28:18 2009 */
-window.ui_strings || ( window.ui_strings  = {} ) 
+﻿/* Generated from fy.po at Mon Mar 22 13:41:38 2010 */
+window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "fy";
 ui_strings.S_SWITCH_SHOW_TAB_ALL="Alle ljeppers sjen litte";
 ui_strings.S_SWITCH_SHOW_TAB_SCRIPT="Skript ljepper sjen litte";
@@ -62,7 +62,7 @@ ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH="Sykje";
 ui_strings.S_INPUT_DEFAULT_TEXT_FILTER="Fluch sykje";
 ui_strings.S_INFO_RELOAD_FOR_SCRIPT="Klik op de ferfarsk klnop hjirboppe om de skripts foar it selektearre finster te heljen";
 ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS="Dit dokumint had gjin skripts";
-ui_strings.S_INFO_DOCUMNENT_LOADING="Opera Dragonfly wurdt laden …";
+ui_strings.S_INFO_DOCUMNENT_LOADING="Opera Dragonfly wurdt laden…";
 ui_strings.S_INFO_SERVICE_NOT_AVAILABLE="Tsjinst is net beskikber: %s";
 ui_strings.S_INFO_NO_RUNTIME_SELECTED="In runtime selektearje";
 ui_strings.S_TEXT_CALL_STACK_FRAME_LINE="%(FUNCTION_NAME)s: Line %(LINE_NUMBER)s (Script ID %(SCRIPT_ID)s)";
@@ -79,7 +79,7 @@ ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID="Skript id";
 ui_strings.S_TEXT_STATUS_SEARCH="Oerienkomsten foar %(SEARCH_TERM)s: Oerienkomst %(SEARCH_COUNT_INDEX)s fan %(SEARCH_COUNT_TOTAL)s";
 ui_strings.S_TEXT_NO_REQUEST_SELECTED="Gjin fersyk selektearre.";
 ui_strings.S_SWITCH_DETACH_WINDOW="As apart finster brûke";
-ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB="besibbe yn bôlekrommel sjen litte";
+ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB="Besibbe yn bôlekrommel sjen litte";
 ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB="Id's en klassen yn bôlekrommel sjen litte";
 ui_strings.S_BUTTON_LABEL_HELP="Help";
 ui_strings.S_SELECT_WINDOW_EMPTY="Selektearje in finster";

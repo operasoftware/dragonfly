@@ -1,5 +1,5 @@
-﻿/* Generated from et.po at Fri Jan 30 08:28:51 2009 */
-window.ui_strings || ( window.ui_strings  = {} ) 
+﻿/* Generated from et.po at Mon Mar 22 13:41:23 2010 */
+window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "et";
 ui_strings.S_SWITCH_SHOW_TAB_ALL="Näita kõiki kaarte";
 ui_strings.S_SWITCH_SHOW_TAB_SCRIPT="Näita skripti kaarti";
