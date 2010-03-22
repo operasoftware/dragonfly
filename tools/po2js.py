@@ -56,15 +56,11 @@ def _find_pofiles(top):
     """Make a list of all po files in dirctory top, or any subdir"""
     matches = []
     for dirpath, dirnames, filenames in os.walk(top):
-        # only add files that are 5 chars long (<countrycode>.po)
-        # and that ends in .po
-        # and that does not already exist in the matches list
-        # Search is top down, so most shallow match will remain
+        # only add files that are named <something>.po and that is in
+        # a dir named <something>. As in, dirname and filename must match.
         matches.extend([os.path.join(dirpath, e)
                         for e in filenames
-                        if len(e) == 5
-                        and e.endswith(".po")
-                        and e not in [os.path.basename(x) for x in matches]])
+                        if os.path.basename(dirpath)+".po" == e])
     return matches
 
 
