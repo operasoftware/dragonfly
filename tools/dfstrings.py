@@ -10,7 +10,7 @@ _js_concatere = re.compile("""\s*?['"](.*)['"]""")
 _po_tpl="""%(jsname)s=-1
 %(jsname)s.caption="%(msgstr)s"
 %(jsname)s.scope="dragonfly"
-%(jsname)s.description="%(desc)s
+%(jsname)s.description="%(desc)s"
 """
 
 def _db_block_reader(path):
