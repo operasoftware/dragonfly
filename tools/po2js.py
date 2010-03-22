@@ -36,14 +36,16 @@ def _process_file(inpath, outfd):
         return 1
 
     data = make_js_from_po(inpath)
-    print "WRITING TO", outfd
     outfd.write(data)
 
 
 def _process_dir(dirpath, destpath):
     files = _find_pofiles(dirpath)
-    for path in files:
+    files.sort()
+
+    for i, path in enumerate(files):
         out = os.path.join(destpath, "ui_strings-%s.js" % os.path.basename(path)[:-3])
+        print "writing %s. (%s of %s)" % (out, i+1, len(files))
         outfd = codecs.open(out, "w", encoding="utf_8_sig")
         _process_file(path, outfd)
         outfd.close()
