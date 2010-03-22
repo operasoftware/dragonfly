@@ -580,7 +580,13 @@ cls.Stylesheets = function()
   
   prettyPrintRule[CHARSET_RULE] = function(rule, do_shortcuts, is_style_sheet)
   {
-    return 'TODO';
+    const
+    RULE_ID = 2,
+    CHARSET = 13; // Actually the encoding
+
+    return "<charset-rule rule-id='" + rule[RULE_ID] + "'>" +
+               "@charset \"" + rule[CHARSET] + "\";" +
+           "</charset-rule>";
   }
   
   /*  e.g.: @import url("bluish.css") projection, tv; */
