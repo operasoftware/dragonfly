@@ -43,9 +43,9 @@ def _process_file(inpath, outfd):
 def _process_dir(dirpath, destpath):
     files = _find_pofiles(dirpath)
     for path in files:
-        out = os.path.join(destpath, os.path.basename(path))
+        out = os.path.join(destpath, "ui_strings-%s.js" % os.path.basename(path)[:-3])
         outfd = codecs.open(out, "w", encoding="utf_8_sig")
-        process_file(path, outfd)
+        _process_file(path, outfd)
         outfd.close()
 
 
