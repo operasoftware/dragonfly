@@ -21,7 +21,7 @@ window.ui_strings.lang_code = "%s";
         u"\n".join(strings))
 
 
-def process_file(inpath, outfd):
+def _process_file(inpath, outfd):
     lines = [p["msgstr"] for p in dfstrings.get_po_strings(inpath)
         if "scope" in p and "dragonfly" in p["scope"] ]
 
