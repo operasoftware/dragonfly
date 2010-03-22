@@ -167,11 +167,19 @@ def get_db_version(path):
     for line in fp:
         if line.startswith("@dbversion"): return line.strip()[11:]
     return "unknown"
+
 def get_strings_with_bad_escaping(strings):
+    """Find strings that contain quotes that are not escaped
+    The string 'hello "world"' is not allowed, the string
+    'hello \\"world\\"' is fine, since the string will remain properly
+    escaped when stuck into a js file
+    """
     quotere = re.compile(r"[^\\]\"")
     return [e for e in strings if quotere.findall(e)]
 
 def get_strings_with_bad_format(strings):
+    """Finds strings where the "s" is missing in replacement tokens, such
+    as "%(foo)s" has been changed to "%(foo)" """
     formatre = re.compile(r"%\(.*?\)[^s]")
     return [e for e in strings if formatre.findall(e)]
 
