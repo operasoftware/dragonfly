@@ -15,7 +15,7 @@ var ContainerBase = function()
   this.is_dirty = true;
   this.view_id = '';
 
-  this.setDimensions = function(force_redraw)
+  this.setDimensions = function(force_redraw, is_resize)
   {
     var dim = '', i = 0;
 
@@ -56,7 +56,7 @@ var ContainerBase = function()
     }
 
     this.update(force_redraw);
-    if(views[this.view_id] && !force_redraw)
+    if(views[this.view_id] && (!force_redraw || is_resize))
     {
       views[this.view_id].onresize(document.getElementById(this.type + '-to-' + this.cell.id));
     }

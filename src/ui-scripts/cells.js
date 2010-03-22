@@ -189,7 +189,7 @@
 
   // updating the frames for the views
 
-  this.update = function(left, top, force_redraw)
+  this.update = function(left, top, force_redraw, is_resize)
   {
     var children = this.children, child = null, i = 0;
     var delta = 0;
@@ -208,7 +208,7 @@
         delta = top;
         for( ; child = children[i]; i++)
         {
-          delta += child.update(left, delta, force_redraw);
+          delta += child.update(left, delta, force_redraw, is_resize);
         }
       }
       else
@@ -216,7 +216,7 @@
         delta = left;
         for( ; child = children[i]; i++)
         {
-          delta += child.update(delta, top, force_redraw);
+          delta += child.update(delta, top, force_redraw, is_resize);
         }
       }
     }
@@ -240,7 +240,7 @@
          
           this.toolbar.setDimensions(force_redraw);
           this.tab.setDimensions(force_redraw);
-          this.container.setDimensions(force_redraw);
+          this.container.setDimensions(force_redraw, is_resize);
         }
 
         this.is_dirty = false;

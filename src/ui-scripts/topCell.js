@@ -20,7 +20,11 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, TopStatusbar
   {
     this.setStartDimesions();
     this.update();
-    this.setup();
+    var view_id = this.tab && this.tab.activeTab;
+    if( view_id )
+    {
+      window.views[view_id].update(this.container, true);
+    }
   }
   this.cell_type = 'top';
 

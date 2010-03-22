@@ -270,12 +270,14 @@ cls.DOMView = function(id, name, container_class)
           }
           case 10:  // doctype
           {
-            tree += LINEBREAK  + getIndent(node[DEPTH] - start_depth) +
-                    "<!doctype " + this.getDoctypeName(data) +
-                    ( node[PUBLIC_ID] ? 
-                      ( " PUBLIC " + "\"" + node[PUBLIC_ID] + "\"" ) :"" ) +
-                    ( node[SYSTEM_ID] ?  
-                      ( " \"" + node[SYSTEM_ID] + "\"" ) : "" ) +
+            tree += LINEBREAK + getIndent(node[DEPTH] - start_depth) +
+                    "<!DOCTYPE " + this.getDoctypeName(data) +
+                    (node[PUBLIC_ID] ?
+                      (" PUBLIC " + "\"" + node[PUBLIC_ID] + "\"") : "") +
+                    (!node[PUBLIC_ID] && node[SYSTEM_ID] ?
+                      " SYSTEM" : "") +
+                    (node[SYSTEM_ID] ?
+                      (" \"" + node[SYSTEM_ID] + "\"") : "") +
                     ">";
             break;
           }
@@ -440,12 +442,14 @@ cls.DOMView = function(id, name, container_class)
 
         case 10:  // doctype
         {
-          tree += LINEBREAK  + getIndent(node[ DEPTH ] ) +
-                  "&lt;!doctype " + this.getDoctypeName(data) +
-                  ( node[PUBLIC_ID] ? 
-                    ( " PUBLIC " + "\"" + node[PUBLIC_ID] + "\"" ) :"" ) +
-                  ( node[SYSTEM_ID] ?  
-                    ( " \"" + node[SYSTEM_ID] + "\"" ) : "" ) +
+          tree += LINEBREAK + getIndent(node[ DEPTH ]) +
+                  "&lt;!DOCTYPE " + this.getDoctypeName(data) +
+                  (node[PUBLIC_ID] ?
+                    (" PUBLIC " + "\"" + node[PUBLIC_ID] + "\"") : "") +
+                  (!node[PUBLIC_ID] && node[SYSTEM_ID] ?
+                    " SYSTEM" : "") +
+                  (node[SYSTEM_ID] ?
+                    (" \"" + node[SYSTEM_ID] + "\"") : "") +
                   "&gt;";
           break;
         }
@@ -485,7 +489,6 @@ cls.DOMView = function(id, name, container_class)
           ( settings.dom.get('dom-tree-style') 
             ? DOM_tree_style 
             : DOM_markup_style ).apply(self.constructor.prototype);
-          self.clearAllContainers();
           self.update();
           break;
         }

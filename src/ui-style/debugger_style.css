@@ -345,6 +345,7 @@ p[handler="update-global-scope"]:hover {
 .export-data pre {
   padding: 0;
   margin: 0;
+  white-space: pre-wrap;
   }
 
 /* styleseeht view */
