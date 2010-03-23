@@ -77,3 +77,41 @@ Running test builds of dragonfly:
 Open opera:config#DeveloperTools|DeveloperToolsURL and set the url to the
 path to the dragonfly build to use.
 
+Updating translations:
+
+NOTE: While translated strings are placed in the src/ui-strings
+directory, that is not the authoritative location for translations.
+Strings are kept in Opera's translation infrastructure, which uses .po
+files. These are not publicly available.
+
+As a consequence, we can not integrate string fixes from volunteers by
+simply merging new versions of the JavaScript string files. The
+strings will need to be whetted by the translations team and
+integrated into the Opera translation infrastructure.
+
+For those with access to Opera translations, do the following to
+update the strings:
+
+- Make sure you have python, and that you have installed polib. polib
+  is on pypi.
+- Check out the translations
+- In the tools directory of the dragonfly repo there is a script
+  called po2js.py. Run it as follows:
+
+  python ./tools/po2js.py -d <translations checkout dir> ./src/ui-strings
+
+- If there were new languages added, the language code must be added
+  to the list in ./src/client.xml
+
+
+To submit new strings to translators you need to make a diff between
+strings used in dragonfly and the strings that exist in the english.db
+file. This is done with the stringdiff.py script in the tools
+directory.
+
+- Check out the strings module
+- Run stringdiff.py as follows;
+
+  python ./tools/stringdiff.py ./src/ui-strings/en.js <path_to_engish_db>
+
+
