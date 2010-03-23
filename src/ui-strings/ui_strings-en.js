@@ -1,11 +1,11 @@
-﻿window.ui_strings || ( window.ui_strings  = {} ) 
+﻿window.ui_strings || ( window.ui_strings  = {} );
 window.ui_strings.lang_code = "en";
 
 /**
  * Prefix -> use mapping for strings:
- * Prefix   Use 
- * D        Dialog titles and components 
- * S        General strings 
+ * Prefix   Use
+ * D        Dialog titles and components
+ * S        General strings
  * M        Menus
  */
 
@@ -18,15 +18,15 @@ window.ui_strings.lang_code = "en";
 ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS = 'Scripts';
 /* DESC: View for DOM debugging. */
 ui_strings.M_VIEW_LABEL_COMPOSITE_DOM = 'DOM';
-/* DESC: View for errors. */
+/* DESC: View for error log. */
 ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE = 'Error Console';
 /* DESC: View for exported code. */
 ui_strings.M_VIEW_LABEL_COMPOSITE_EXPORTS = 'Export';
 /* DESC: View for network debugging (and http logger) */
 ui_strings.M_VIEW_LABEL_NETWORK = 'Network';
-/* DESC: View with utilities, e.g. a pixel maginfier and color picker */
+/* DESC: View for utilities, e.g. a pixel maginfier and color picker */
 ui_strings.M_VIEW_LABEL_UTILITIES = 'Utilities';
-/* DESC: View for all storages, e.g. cookis, localStorage, sessionStorage e.t.c */
+/* DESC: View for all types of storage, cookies, localStorage, sessionStorage e.t.c */
 ui_strings.M_VIEW_LABEL_STORAGE = 'Storage';
 
 /*
@@ -118,7 +118,7 @@ ui_strings.M_VIEW_LABEL_REQUEST_SUMMARY = 'Request summary';
 
 /* DESC: view for the local storage */
 ui_strings.M_VIEW_LABEL_LOCAL_STOARGE = 'Local Storage';
-/* DESC: view foe the session storage */
+/* DESC: view for the session storage */
 ui_strings.M_VIEW_LABEL_SESSION_STORAGE = 'Session Storage';
 /* DESC: view for cookies */
 ui_strings.M_VIEW_LABEL_COOKIES = 'Cookies';
@@ -220,7 +220,7 @@ ui_strings.S_SWITCH_LOCK_SELECTED_ELEMENTS = "Draw a border on to selected eleme
 
 /*
  * Button tool-tips.
- */ 
+ */
 
 /* DESC: Debugger continues debugging. */
 ui_strings.S_BUTTON_LABEL_CONTINUE = 'Continue (F8)';
@@ -300,7 +300,7 @@ ui_strings.S_LABEL_STATUS_INDICATOR = 'Status indicator for the browser and the 
 /* DESC: The network port to connect to. */
 ui_strings.S_LABEL_PORT = 'Port';
 /* DESC: For choosing a context (e.g. tab, window, widget) to be inspected. */
-ui_strings.S_SELECT_WINDOW_EMPTY = 'Select a window'; 
+ui_strings.S_SELECT_WINDOW_EMPTY = 'Select a window';
 /* DESC: For search fields. */
 ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH = 'Search';
 /* DESC: For filter fields. */
@@ -401,10 +401,10 @@ ui_strings.S_INFO_DOCUMNENT_LOADING = 'Opera Dragonfly is loading ...';
 ui_strings.M_SETTING_LABEL_GENERAL = 'General';
 /* DESC: Dragonfly is waiting for host connection */
 ui_strings.S_INFO_WAITING_FORHOST_CONNECTION = "Waiting for a host connection on port %s.";
-/* DESC: the given stoarge type doesn't exist, e.g. a widget without the w3 widget namespace 
+/* DESC: the given stoarge type doesn't exist, e.g. a widget without the w3 widget namespace
  * will not have a widget.preferences storage object.
  */
-ui_strings.S_INFO_STORAGE_TYPE_DOES_NOT_EXIST = "%s does not exist."
+ui_strings.S_INFO_STORAGE_TYPE_DOES_NOT_EXIST = "%s does not exist.";
 
 /*
  * Alerts
@@ -414,9 +414,9 @@ ui_strings.S_INFO_STORAGE_TYPE_DOES_NOT_EXIST = "%s does not exist."
 ui_strings.S_INFO_WRONG_START = "Opera Dragonfly cannot be used in this way.\n" +
   "Either set the current url in\n\n" +
   "   opera:config > Developer Tools > Developer Tools URL\n\n" +
-  "or setup a debugger environment with a proxy and server."
+  "or setup a debugger environment with a proxy and server.";
 /* DESC: Information shown when the user enables remote debug and still has to connect the client. */
-ui_strings.S_INFO_WAITING_FOR_CONNECTION = 
+ui_strings.S_INFO_WAITING_FOR_CONNECTION =
   "Opera Dragonfly is waiting for a connection on port %s.\n" +
   "Please enter opera:debug in your device's URL field to connect.";
 /* DESC: Information shown if the service is not available. */
@@ -431,7 +431,7 @@ ui_strings.S_CONFIRM_LOAD_COMPATIBLE_VERSION = "The protocol version of Opera do
 ui_strings.S_INFO_NO_VALID_PORT_NUMBER = "Please select a port number between 1 and 65535.";
 
 /*
- * other strings 
+ * other strings
  */
 
 /* DESC: Entry format in the call stack view showing the function name, line number and script ID. Please do not modify the %(VARIABLE)s . */
