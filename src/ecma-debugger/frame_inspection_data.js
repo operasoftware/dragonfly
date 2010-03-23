@@ -87,13 +87,19 @@ cls.EcmascriptDebugger["5.0"].Frame_inspection_data = function()
           'arguments',
           frame.argument_id,
           'object',
-          0
+          0,
+          ,
+          ,
+          ""
         ],
         [
           'this',
           frame.this_id == '0' ? frame.rt_id : frame.this_id,
           'object',
-          0
+          0,
+          ,
+          ,
+          ""
         ]
       ];
       self.setObject(__selectedObject.rt_id, __selectedObject.obj_id, virtualProperties);
