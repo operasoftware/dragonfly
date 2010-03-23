@@ -34,8 +34,8 @@ var lang_dict =
   "ko": "ko",
   "lt": "lt",
   "mk": "mk",
-  "nb": "nb",
   "nl": "nl",
+  "nb": "nb", // sort NO_nn and NO_nb together
   "nn": "nn",
   "pl": "pl",
   "pt": "pt",
