@@ -55,6 +55,11 @@ eventHandlers.click["delete-stored-color"] = function(event, target)
   window.views.color_picker.delete_stored_color(index);
 }
 
+eventHandlers.click["color-picker-reset-default-values"] = function(event, target)
+{
+  window.views.color_picker.reset_default_values();
+}
+
 
 
 

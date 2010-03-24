@@ -26,6 +26,13 @@ window.templates.color_picker = function(
                 'handler', 'set-color-picker-scale']
             ],
           'class', 'controls'],
+          ['p', 
+            ['input', 
+              'type', 'button', 
+              'value', 'Reset default values', 
+              'handler', 'color-picker-reset-default-values'],
+            'class', 'color-picker-button-controls'
+          ],
           ['h2', 'Stored colors'],
           this.color_picker_stored_colors(),
           ['p', 
