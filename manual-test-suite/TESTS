@@ -1,7 +1,4 @@
-#  /projectLabel/specs/test-suite/
-# /projectLabel/specs/test-suite/readme.txt
-# /projectLabel/specs/test-suite/test-cases/[dir]|[files]
-
+# comment
 
 DOM.DOM
 *******
@@ -84,7 +81,7 @@ label: Edit attributes
 desc:
   - Double click an attribute
   - Verify that the attribute is displayed in a edit field.
-  - Change the value and verify that the change applies instatntly in the host document.
+  - Change the value and verify that the change applies instantly in the host document.
   - Verify that escape reverts the changes
   - Verify that enter does keep the changes an leaves the edit mode.
   - Verify that tab moves to the next attribute
@@ -118,21 +115,21 @@ desc:
 
 label: Hide initial value
 desc:
-  - Select and unselect the 'Hide initila value' switch
+  - Select and unselect the 'Hide initial value' switch
   - Verify that the Computed Style section is updated accordingly
 
 label: Hide shorthands
 desc:
   - Select and unselect the 'Hide shorthands' switch
   - Verify that the Computed Style section is updated accordingly, 
-    e.g. if the swich is unchecked there must be an additional 
+    e.g. if the switch is unchecked there must be an additional 
     border, border-left, border-top, border-right and border-bottom rule.
 
 label: Search
 desc:
   - Expand both sections, Computed Styles and Styles
   - Search for a property, e.g. margin
-  - Verify that both section collaps to only contain the matching properties
+  - Verify that both section collapse to only contain the matching properties
 
 
 
@@ -153,7 +150,7 @@ desc:
 
 label: Hide empty strings
 desc:
-  - Sewlect and unselect the 'Hide empty strings' switch
+  - Select and unselect the 'Hide empty strings' switch
   - Verify that the view is updated accordingly, e.g. that values which are empty strings, 0 or null are displayed or hidden.
   
 label: Search
@@ -167,21 +164,21 @@ DOM.Layout
 
 label: Highlight boxes
 desc:
-  - Select an elemnt in the DOM
-  - Hover the differnt boxes in the Metrics view
+  - Select an element in the DOM
+  - Hover the different boxes in the Metrics view
   - Verify that the according box is highlighted on the lement in the host
 
 label: Parent Offsets
 desc:
   - Select some elements in the DOM
-  - Verify the the parent offsey chain is updated accordingly. 
+  - Verify the the parent offset chain is updated accordingly. 
     Each parent offset must stand out in the parent node chain. 
   - Verify that also the offset values are updated accordingly
 
 label: Parent Offsets hover
 desc:
-  - Select some elemnts in the DOM
-  - Hover over the different bnodes in the parent node chain.
+  - Select some elements in the DOM
+  - Hover over the different nodes in the parent node chain.
   - Verify that the according elements are highlighted in the host
 
 Statusbar
@@ -191,15 +188,15 @@ url: http://aleto.ch
 
 label: Status info
 desc:
-  - Select some elemnts in the DOM
+  - Select some elements in the DOM
   - Verify that the statusbar is updated with an according breadcrumb
   - Serach for some tokens.
-  - Verify that the statusbar is updted with the matching count
+  - Verify that the statusbar is updated with the matching count
 
 label: Breadcrumb navigation
 desc:
   - Select some elements in the DOM
-  - Verify that elemnts are highlighted on hover in the host
+  - Verify that elements are highlighted on hover in the host
   - Verify that elements are selected on click in the host and in the DOM.
 
 url: http://nzz.ch
@@ -213,7 +210,7 @@ desc:
 label: Connection status
 desc:
   - Set a breakpoint on line 18 oo scrollFolders.js
-  - Hover over the titles in the documnet
+  - Hover over the titles in the document
   - Verify that the status icon updates while stepping into the code
 
 
@@ -233,7 +230,7 @@ url: http://dragonfly.opera.com/app/tests/scripts-source/callstack.html
 label: Set breakpoint
 desc: 
   - Set a breakpoint on line 4, 'var aa = 1;'.
-  - Verify that a breakpoint is diaplayed on the clicked line.
+  - Verify that a breakpoint is displayed on the clicked line.
   - Press the 'e()' button
   - Verify that the engine stops on line 4, e.g that the script is displayed 
     and that an arrow points to the breakpoint
@@ -251,7 +248,7 @@ desc:
   - Press the 'e()' button
   - Verify that the 'Continue' button changes from disabled to enabled.
   - Press the 'Continue' button.
-  - Verify that that the stopped pointer arrow disapears and that the button gets disabled.
+  - Verify that that the stopped pointer arrow disappears and that the button gets disabled.
   - Repeat several times and verify that it always works as described above.
 
 label: Breakpoint, Continue with keyboard
@@ -263,7 +260,7 @@ desc:
   - Set a breakpoint on line 23, 'var ee = 1;'.
   - Press the 'e()' button.
   - Verify that the engine stops on that line
-  - Press the 'Step Into' button continously.
+  - Press the 'Step Into' button continuously.
   - Verify that the stop arrow follows the execution flow, 
     e.g. arrives at some point at 'var aa = 1;' and 
     finishes one call after the other.
@@ -277,9 +274,9 @@ desc:
   - Set a breakpoint on line 23, 'var ee = 1;'.
   - Press the 'e()' button.
   - Verify that the engine stops on that line
-  - Pressing the 'Step Into' button continousli till yo get to the line 'c();'.
+  - Pressing the 'Step Into' button continuously till yo get to the line 'c();'.
   - Now press the 'Step Over' button.
-  - Verify that engine stops right after 'c()' and does not follow the exection flow of 'c()'.
+  - Verify that engine stops right after 'c()' and does not follow the execution flow of 'c()'.
 
 label: Breakpoint, Step Over with keyboard
 desc: 
@@ -290,8 +287,8 @@ label: Breakpoint, Step Out
 desc: 
   - Set a breakpoint on line 4, 'var aa = 1;'.
   - Press the 'e()' button
-  - Press the 'Step Into' button continously till you get to 'var cc = 1;'.
-  - Now press the 'Step Out' button continously.
+  - Press the 'Step Into' button continuously till you get to 'var cc = 1;'.
+  - Now press the 'Step Out' button continuously.
   - Verify that the engine stops at 'c()', then 'd()' and then finishes.
 
 label: Breakpoint, Step Out with keyboard
@@ -314,9 +311,9 @@ desc:
   - Turn the 'Stop at error' switch on.
   - Go tho the test url
   - Verify that the Script Source pane opens, 
-    the first unparsable token is highlighted, 
+    the first non parsable token is highlighted, 
     e.g. the dot in 'var aa.a = 1;',
-    any following code is greyd out and
+    any following code is greyed out and
     an info box with a hint for the cause of the error is displayed.
   - Verify that the setting can be turned off.
 
@@ -343,10 +340,10 @@ url: http://dragonfly.opera.com/app/tests/scripts-source/callstack.html
 desc: 
   - Set a breakpoint on line 4, 'var aa = 1;'.
   - Press the 'e()' button.
-  - Verify that the Call Stack view dispalys the call stack.
+  - Verify that the Call Stack view displays the call stack.
   - Verify that each entry can be selected in the callstack.
   - Verify that the source view is updated on selecting an entry in the callstack.
-  - Verify that the Inspection view is updated with the accordingscope. 
+  - Verify that the Inspection view is updated with the according scope. 
 
 Scripts.Inspection
 ******************
@@ -354,7 +351,7 @@ Scripts.Inspection
 label: Hide default properties
 desc:
   - Do 'dir(window)' in the command line.
-  - Select and unslect the *hide default properties' switch.
+  - Select and unselect the *hide default properties' switch.
   - Verify that the according properties are shown or hidden in the view.
 
 Scripts.Command Line
@@ -366,21 +363,21 @@ Scripts.Command Line
 url: http://dragonfly.opera.com/app/tests/scripts-source/callstack.html
 label: Autosuggest
 desc:
-  - Set a brakpoint on line 23, 'var ee = 1;'.
+  - Set a breakpoint on line 23, 'var ee = 1;'.
   - Press the 'e()' button.
   - Hit tab.
   - Verify that you get the variables of the scope
   - Use 'Step Into' and verify for each scope that you get the correct variables.
   - Type 'this.'.
-  - Hit tab repeatatly.
-  - Verifiy that you get all properties of the window.
+  - Hit tab repeatedly.
+  - Verify that you get all properties of the window.
   - Start to write something after the dot and hit tab again.
   - Verify that the property gets completed with all matches.
 
 label: History navigation.
 desc:
   - Use the up and down arrows.
-  - Verify that you get all previous subbmited lines. 
+  - Verify that you get all previous submitted lines. 
 
 label: Object links.
 desc:
@@ -394,7 +391,7 @@ desc:
   - Create some entries and type clear().
   - Verify that the view gets cleared.
   - Type e.g. 'dir(this)'
-  - Verify that the according object is displayed in thee Inspection view.
+  - Verify that the according object is displayed in the Inspection view.
 
 Network.Request Log
 *******************
@@ -434,7 +431,7 @@ label: Delete cookies
 desc:
   - Delete some of the cookies
   - Reload the document
-  - Verify that the deleted cokies are gone.
+  - Verify that the deleted cookies are gone.
 
 label: Edit cookies
 desc:
@@ -548,5 +545,89 @@ desc:
 label: Expand all
 desc:
   - Select and unselect the 'Expand all' switch
-  - Verify that the enries are expanded and collapse accordingly
-  - Verift\y that in the 'All', 'JavaScript' and 'CSS' pane.
+  - Verify that the entries are expanded and collapse accordingly
+  - Verify that in the 'All', 'JavaScript' and 'CSS' pane.
+
+Utilities.Color Picker
+**********************
+
+url: http://www.nzz.ch
+
+label: Pixel Magnifier
+desc:
+  - Hover over the page
+  - Verify that the screenshot area is updated accordingly
+  - Click some where on a image
+  - Verify that the updating of the screenshot area stops.
+  - Change the Area in the dropdown
+  - Verify that the screenshot area is updated accordingly
+  - Change the scale
+  - Verify that the screenshot area is update accordingly
+  - Press the 'Reset default values' button.
+  - Verify that the values and the screenshot area are reset.
+
+label: Color Picker
+desc: 
+  - Select an image
+  - Click in the screenshot area.
+  - Verify that the screenshot highlights the selected area and updates the average color of the selected area.
+  - Change the 'Average color' in the dropdown.
+  - Click again in the screenshot.
+  - Verify that the average color is updated accordingly.
+
+label: Store colors
+desc:
+  - Select some colors and store them.
+  - Verify that they are displayed as 'stored colors'.
+  - Press 'Manage stored colors'.
+  - Delete some of the store colors.
+  - Press 'Done'.
+  - Verify that the colors are removed.
+
+Settings.Settings
+*****************
+
+label: Expand sections
+desc:
+  - Expand all the sections
+  - Verify that the sections display additional info and settings
+
+
+label: Remote debug
+desc:
+  - Start Dragonfly with the Opera built-in proxy
+  - Unfold 'Remote Debug'
+  - Select 'Remote Debug' and press 'Apply'
+  - Connect an other Opera instance to Dragonfly
+  - Verify that the connection succeeds and that Dragonfly seems to work.
+  - Uncheck 'Remote Debug' and press 'Apply'
+  - Verify that Dragonfly debugs the client instance.
+  - Repeat several times the above steps.
+  - Verify that reconnecting to a remote Opera instance always works.
+
+
+label: Host highlight
+desc:
+  - Expand 'Spotlight' and expand 'Advanced'
+  - Change some colors
+  - Switch back to DOM
+  - Verify that the colors for the highlight have changed accordingly.
+  - Go back to 'Spotlight' and press 'Reset Default Colors'
+  - Verify that the colors have changed back.
+  
+
+General
+*******
+
+label: Dock and undock
+desc:
+  - Dock and undock the Dragonfly window
+  - Verify that all views have still the same information.
+
+label: Dragonfly menu
+desc:
+  - Verify that 'Reload Debug Context' works
+  - Focus an other window than the current debug context.
+  - Verify that 'Select Active Window' works 
+  - Verify that each open tab can be selected as debug context.
+
