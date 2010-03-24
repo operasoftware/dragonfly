@@ -255,7 +255,7 @@ var ErrorConsoleView = function(id, name, container_class, source)
     var entries = error_console_data.getMessages(source);
     var expand_all = settings.console.get('expand-all-entries');
 
-    // Under these conditions, we re-render the whole thing:
+    // If there is no table, it's empty or expand state changed, render all
     if (! _table_ele || ! entries.length || expand_all != _expand_all_state)
     {
         // The expand all state thingy is to make sure we handle switching
@@ -263,11 +263,14 @@ var ErrorConsoleView = function(id, name, container_class, source)
         _expand_all_state = expand_all;
         this.renderFull(container, entries, expand_all);
     }
-    else
+    // but if not, check if there are new entries to show and just
+    // update the list with them
+    else if (_table_ele.childNodes.length-1 < entries.length)
     {
         this.renderUpdate(entries.slice(-1), expand_all);
     }
   };
+
 
   this.renderFull = function(container, messages, expand_all)
   {
