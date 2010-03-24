@@ -5,171 +5,160 @@
  * @see Editor
  */
 
-suggest_values = {};
-
-suggest_values['azimuth']=
+const COLORS =
 [
-  'left-side',
-  'far-left',
-  'left',
-  'center-left',
-  'center',
-  'center-right',
-  'right',
-  'far-right',
-  'right-side',
-  'behind',
-  'leftwards',
-  'rightwards'
-]
+  'transparent',
+  'currentColor',
 
-suggest_values['background-attachment']=
-[
-  'scroll',
-  'fixed'
-]
-
-
-
-suggest_values['background-image']=
-[
-  'none'
-]
-
-suggest_values['background-position']=
-[
-  'left',
-  'center',
-  'right',
-  'top',
-  'center',
-  'bottom',
-  'left',
-  'center',
-  'right',
-  'top',
-  'center',
-  'bottom'
-]
-
-suggest_values['background-repeat']=
-[
-  'repeat',
-  'repeat-x',
-  'repeat-y',
-  'no-repeat'
-]
-
-suggest_values['background']=
-[
-]
-
-suggest_values['border-collapse']=
-[
-  'collapse',
-  'separate'
-]
-
-
-
-suggest_values['border-spacing']=
-[
-]
-
-suggest_values['border-style']=
-[
-  'none', 
-  'hidden', 
-  'dotted ',
-  'dashed',
-  'solid',  
-  'double', 
-  'groove', 
-  'ridge', 
-  'inset', 
-  'outset'
-]
-
-suggest_values['border-top']=
-suggest_values['border-right']=
-suggest_values['border-bottom']=
-suggest_values['border-left']=
-[
-]
-
-suggest_values['border-top-color']=
-suggest_values['border-right-color']=
-suggest_values['border-bottom-color']=
-suggest_values['border-left-color']=
-[
-  'transparent'
-]
-
-suggest_values['border-top-style']=
-suggest_values['border-right-style']=
-suggest_values['border-bottom-style']=
-suggest_values['border-left-style']=
-[
-]
-
-suggest_values['border-top-width']=
-suggest_values['border-right-width']=
-suggest_values['border-bottom-width']=
-suggest_values['border-left-width']=
-[
-]
-
-suggest_values['border-width']=
-[
-]
-
-suggest_values['border']=
-[
-]
-
-suggest_values['bottom']=
-[
-  'auto'
-]
-
-suggest_values['caption-side']=
-[
-  'top',
-  'bottom'
-]
-
-suggest_values['clear']=
-[
-  'none',
-  'left',
-  'right',
-  'both'
-]
-
-suggest_values['clip']=
-[
-  'auto'
-]
-
-suggest_values['color']=
-[
+  // HTML4 color keywords and SVG color keywords
+  'antiquewhite',
   'aqua',
+  'aquamarine',
+  'azure',
+  'beige',
+  'bisque',
   'black',
+  'blanchedalmond',
   'blue',
+  'blueviolet',
+  'brown',
+  'burlywood',
+  'cadetblue',
+  'chartreuse',
+  'chocolate',
+  'coral',
+  'cornflowerblue',
+  'cornsilk',
+  'crimson',
+  'cyan',
+  'darkblue',
+  'darkcyan',
+  'darkgoldenrod',
+  'darkgray',
+  'darkgreen',
+  'darkgrey',
+  'darkkhaki',
+  'darkmagenta',
+  'darkolivegreen',
+  'darkorange',
+  'darkorchid',
+  'darkred',
+  'darksalmon',
+  'darkseagreen',
+  'darkslateblue',
+  'darkslategray',
+  'darkslategrey',
+  'darkturquoise',
+  'darkviolet',
+  'deeppink',
+  'deepskyblue',
+  'dimgray',
+  'dimgrey',
+  'dodgerblue',
+  'firebrick',
+  'floralwhite',
+  'forestgreen',
   'fuchsia',
+  'gainsboro',
+  'ghostwhite',
+  'gold',
+  'goldenrod',
   'gray',
   'green',
+  'greenyellow',
+  'grey',
+  'honeydew',
+  'hotpink',
+  'indianred',
+  'indigo',
+  'ivory',
+  'khaki',
+  'lavender',
+  'lavenderblush',
+  'lawngreen',
+  'lemonchiffon',
+  'lightblue',
+  'lightcoral',
+  'lightcyan',
+  'lightgoldenrodyellow',
+  'lightgray',
+  'lightgreen',
+  'lightgrey',
+  'lightpink',
+  'lightsalmon',
+  'lightseagreen',
+  'lightskyblue',
+  'lightslategray',
+  'lightslategrey',
+  'lightsteelblue',
+  'lightyellow',
   'lime',
+  'limegreen',
+  'linen',
+  'magenta',
   'maroon',
+  'mediumaquamarine',
+  'mediumblue',
+  'mediumorchid',
+  'mediumpurple',
+  'mediumseagreen',
+  'mediumslateblue',
+  'mediumspringgreen',
+  'mediumturquoise',
+  'mediumvioletred',
+  'midnightblue',
+  'mintcream',
+  'mistyrose',
+  'moccasin',
+  'navajowhite',
   'navy',
+  'oldlace',
   'olive',
+  'olivedrab',
   'orange',
+  'orangered',
+  'orchid',
+  'palegoldenrod',
+  'palegreen',
+  'paleturquoise',
+  'palevioletred',
+  'papayawhip',
+  'peachpuff',
+  'peru',
+  'pink',
+  'plum',
+  'powderblue',
   'purple',
   'red',
+  'rosybrown',
+  'royalblue',
+  'saddlebrown',
+  'salmon',
+  'sandybrown',
+  'seagreen',
+  'seashell',
+  'sienna',
   'silver',
+  'skyblue',
+  'slateblue',
+  'slategray',
+  'slategrey',
+  'snow',
+  'springgreen',
+  'steelblue',
+  'tan',
   'teal',
+  'thistle',
+  'tomato',
+  'turquoise',
+  'violet',
+  'wheat',
   'white',
+  'whitesmoke',
   'yellow',
+  'yellowgreen',
+
+  // CSS System Colors (these are deprecated)
   'ActiveBorder',
   'ActiveCaption',
   'AppWorkspace',
@@ -198,12 +187,277 @@ suggest_values['color']=
   'Window',
   'WindowFrame',
   'WindowText'
+];
+
+var suggest_values = {};
+
+suggest_values['-apple-dashboard-region'] =
+suggest_values['-o-link'] =
+suggest_values['-o-link-source'] =
+suggest_values['-o-tab-size'] =
+suggest_values['-o-table-baseline'] =
+[
 ]
 
-suggest_values['border-color'] = suggest_values['background-color'] =
+suggest_values['-o-text-overflow'] =
 [
-  'transparent'
-].concat(suggest_values['color']);
+  'ellipsis'
+]
+
+suggest_values['-o-transform'] =
+[
+  'none'
+]
+
+suggest_values['-o-transform-origin'] =
+[
+  'left',
+  'center',
+  'right',
+  'top',
+  'bottom'
+]
+suggest_values['-o-transition'] =
+[
+]
+
+suggest_values['-o-transition-delay'] =
+[
+]
+
+suggest_values['-o-transition-duration'] =
+[
+]
+
+suggest_values['-o-transition-property'] =
+[
+  'none',
+  'all'
+]
+
+suggest_values['-o-transition-timing-function'] =
+[
+  'ease',
+  'linear',
+  'ease-in',
+  'ease-out',
+  'ease-in-out',
+  'cubic-bezier()'
+]
+
+suggest_values['-wap-accesskey'] =
+suggest_values['-wap-input-format'] =
+suggest_values['-wap-input-required'] =
+suggest_values['-wap-marquee-dir'] =
+suggest_values['-wap-marquee-loop'] =
+suggest_values['-wap-marquee-speed'] =
+suggest_values['-wap-marquee-style'] =
+suggest_values['-xv-interpret-as'] =
+suggest_values['-xv-phonemes'] =
+suggest_values['-xv-voice-balance'] =
+suggest_values['-xv-voice-duration'] =
+suggest_values['-xv-voice-pitch'] =
+suggest_values['-xv-voice-pitch-range'] =
+suggest_values['-xv-voice-rate'] =
+suggest_values['-xv-voice-stress'] =
+suggest_values['-xv-voice-volume'] =
+[
+]
+
+suggest_values['azimuth']=
+[
+  // <angle>
+  'left-side',
+  'far-left',
+  'left',
+  'center-left',
+  'center',
+  'center-right',
+  'right',
+  'far-right',
+  'right-side',
+  'behind',
+  'leftwards',
+  'rightwards',
+  'inherit'
+]
+
+suggest_values['background-attachment']=
+[
+  'scroll',
+  'fixed',
+  'local',
+  'inherit'
+]
+
+suggest_values['background-color'] = COLORS.concat('inherit');
+
+suggest_values['background-clip']=
+[
+  'border-box',
+  'padding-box'
+]
+
+suggest_values['background-image']=
+[
+  // <image>
+  'none',
+  'inherit'
+]
+
+suggest_values['background-origin']=
+[
+  'border-box',
+  'padding-box',
+  'content-box'
+]
+
+suggest_values['background-position']=
+[
+  'left',
+  'center',
+  'right',
+  'top',
+  'center',
+  'bottom'
+]
+
+suggest_values['background-size']=
+[
+  'auto',
+  'cover',
+  'contain'
+]
+
+suggest_values['background-repeat']=
+[
+  'repeat-x',
+  'repeat-y',
+  'repeat',
+  'space',
+  'round',
+  'no-repeat',
+  'inherit'
+]
+
+suggest_values['background']=
+[
+]
+
+suggest_values['border-collapse']=
+[
+  'collapse',
+  'separate'
+]
+
+
+
+suggest_values['border-spacing']=
+[
+  'inherit'
+]
+
+suggest_values['border-style']=
+suggest_values['border-top-style']=
+suggest_values['border-right-style']=
+suggest_values['border-bottom-style']=
+suggest_values['border-left-style']=
+[
+  'none', 
+  'hidden', 
+  'dotted ',
+  'dashed',
+  'solid',  
+  'double', 
+  'groove', 
+  'ridge', 
+  'inset', 
+  'outset',
+  'inherit'
+]
+
+suggest_values['border-color']=
+suggest_values['border-top-color']=
+suggest_values['border-right-color']=
+suggest_values['border-bottom-color']=
+suggest_values['border-left-color']= COLORS.concat('inherit');
+
+suggest_values['border-radius'],
+suggest_values['border-top-right-radius'],
+suggest_values['border-bottom-right-radius'],
+suggest_values['border-bottom-left-radius'],
+suggest_values['border-top-left-radius'] =
+[
+]
+
+suggest_values['border-width']=
+suggest_values['border-top-width']=
+suggest_values['border-right-width']=
+suggest_values['border-bottom-width']=
+suggest_values['border-left-width']=
+[
+  // <length>
+  'thin',
+  'medium',
+  'thick'
+]
+
+suggest_values['border']=
+suggest_values['border-top']=
+suggest_values['border-right']=
+suggest_values['border-bottom']=
+suggest_values['border-left']=
+[
+]
+
+suggest_values['bottom']=
+[
+  'auto',
+  'inherit'
+]
+
+suggest_values['box-sizing']=
+[
+  'content-box',
+  'border-box',
+  'inherit'
+]
+
+suggest_values['box-shadow']=
+[
+  'inset'
+]
+
+suggest_values['caption-side']=
+[
+  'top',
+  'bottom',
+  'inherit'
+]
+
+suggest_values['caption-side']=
+[
+  'top',
+  'bottom',
+  'inherit'
+]
+
+suggest_values['clear']=
+[
+  'none',
+  'left',
+  'right',
+  'both',
+  'inherit'
+]
+
+suggest_values['clip']=
+[
+  'auto',
+  'inherit'
+]
+
+suggest_values['color'] = COLORS.concat('inherit');
 
 suggest_values['content']=
 [
@@ -213,31 +467,37 @@ suggest_values['content']=
   'open-quote',
   'close-quote',
   'no-open-quote',
-  'no-close-quote'
+  'no-close-quote',
+  'inherit'
 ]
 
 suggest_values['counter-increment']=
 [
-  'none'
+  'none',
+  'inherit'
 ]
 
 suggest_values['counter-reset']=
 [
-  'none'
+  'none',
+  'inherit'
 ]
 
 suggest_values['cue-after']=
 [
-  'none'
+  'none',
+  'inherit'
 ]
 
 suggest_values['cue-before']=
 [
-  'none'
+  'none',
+  'inherit'
 ]
 
 suggest_values['cue']=
 [
+  'inherit'
 ]
 
 suggest_values['cursor']=
@@ -258,13 +518,15 @@ suggest_values['cursor']=
   'text',
   'wait',
   'help',
-  'progress'
+  'progress',
+  'inherit'
 ]
 
 suggest_values['direction']=
 [
   'ltr',
-  'rtl'
+  'rtl',
+  'inherit'
 ]
 
 suggest_values['display']=
@@ -284,7 +546,8 @@ suggest_values['display']=
   'table-column',
   'table-cell',
   'table-caption',
-  'none'
+  'none',
+  'inherit'
 ]
 
 suggest_values['elevation']=
@@ -293,41 +556,48 @@ suggest_values['elevation']=
   'level',
   'above',
   'higher',
-  'lower'
+  'lower',
+  'inherit'
 ]
 
 suggest_values['empty-cells']=
 [
   'show',
-  'hide'
+  'hide',
+  'inherit'
 ]
 
 suggest_values['float']=
 [
   'left',
   'right',
-  'none'
+  'none',
+  'inherit'
 ]
 
 suggest_values['font-family']=
 [
+  'inherit'
 ]
 
 suggest_values['font-size']=
 [
+  'inherit'
 ]
 
 suggest_values['font-style']=
 [
   'normal',
   'italic',
-  'oblique'
+  'oblique',
+  'inherit'
 ]
 
 suggest_values['font-variant']=
 [
   'normal',
-  'small-caps'
+  'small-caps',
+  'inherit'
 ]
 
 suggest_values['font-weight']=
@@ -335,7 +605,17 @@ suggest_values['font-weight']=
   'normal',
   'bold',
   'bolder',
-  'lighter'
+  'lighter',
+  '100',
+  '200',
+  '300',
+  '400',
+  '500',
+  '600',
+  '700',
+  '800',
+  '900',
+  'inherit'
 ]
 
 suggest_values['font']=
@@ -345,38 +625,45 @@ suggest_values['font']=
   'menu',
   'message-box',
   'small-caption',
-  'status-bar'
+  'status-bar',
+  'inherit'
 ]
 
 suggest_values['height']=
 [
-  'auto'
+  'auto',
+  'inherit'
 ]
 
 suggest_values['left']=
 [
-  'auto'
+  'auto',
+  'inherit'
 ]
 
 suggest_values['letter-spacing']=
 [
-  'normal'
+  'normal',
+  'inherit'
 ]
 
 suggest_values['line-height']=
 [
-  'normal'
+  'normal',
+  'inherit'
 ]
 
 suggest_values['list-style-image']=
 [
-  'none'
+  'none',
+  'inherit'
 ]
 
 suggest_values['list-style-position']=
 [
   'inside',
-  'outside'
+  'outside',
+  'inherit'
 ]
 
 suggest_values['list-style-type']=
@@ -395,47 +682,49 @@ suggest_values['list-style-type']=
   'georgian',
   'lower-alpha',
   'upper-alpha',
-  'none'
+  'none',
+  'inherit'
 ]
 
 suggest_values['list-style']=
 [
-]
-
-suggest_values['margin-right']=
-suggest_values['margin-left']=
-[
-]
-
-suggest_values['margin-top']=
-suggest_values['margin-bottom']=
-[
+  'inherit'
 ]
 
 suggest_values['margin']=
+suggest_values['margin-top']=
+suggest_values['margin-bottom']=
+suggest_values['margin-right']=
+suggest_values['margin-left']=
 [
+  'inherit'
 ]
 
 suggest_values['max-height']=
 [
-  'none'
+  'none',
+  'inherit'
 ]
 
 suggest_values['max-width']=
 [
-  'none'
+  'none',
+  'inherit'
 ]
 
 suggest_values['min-height']=
 [
+  'inherit'
 ]
 
 suggest_values['min-width']=
 [
+  'inherit'
 ]
 
 suggest_values['orphans']=
 [
+  'inherit'
 ]
 
 suggest_values['outline-color']=
@@ -445,14 +734,17 @@ suggest_values['outline-color']=
 
 suggest_values['outline-style']=
 [
+  'inherit'
 ]
 
 suggest_values['outline-width']=
 [
+  'inherit'
 ]
 
 suggest_values['outline']=
 [
+  'inherit'
 ]
 
 suggest_values['overflow']=
@@ -460,18 +752,17 @@ suggest_values['overflow']=
   'visible',
   'hidden',
   'scroll',
-  'auto'
+  'auto',
+  'inherit'
 ]
 
+suggest_values['padding']=
 suggest_values['padding-top']=
 suggest_values['padding-right']=
 suggest_values['padding-bottom']=
 suggest_values['padding-left']=
 [
-]
-
-suggest_values['padding']=
-[
+  'inherit'
 ]
 
 suggest_values['page-break-after']=
@@ -480,7 +771,8 @@ suggest_values['page-break-after']=
   'always',
   'avoid',
   'left',
-  'right'
+  'right',
+  'inherit'
 ]
 
 suggest_values['page-break-before']=
@@ -489,29 +781,35 @@ suggest_values['page-break-before']=
   'always',
   'avoid',
   'left',
-  'right'
+  'right',
+  'inherit'
 ]
 
 suggest_values['page-break-inside']=
 [
   'avoid',
-  'auto'
+  'auto',
+  'inherit'
 ]
 
 suggest_values['pause-after']=
 [
+  'inherit'
 ]
 
 suggest_values['pause-before']=
 [
+  'inherit'
 ]
 
 suggest_values['pause']=
 [
+  'inherit'
 ]
 
 suggest_values['pitch-range']=
 [
+  'inherit'
 ]
 
 suggest_values['pitch']=
@@ -520,7 +818,8 @@ suggest_values['pitch']=
   'low',
   'medium',
   'high',
-  'x-high'
+  'x-high',
+  'inherit'
 ]
 
 suggest_values['play-during']=
@@ -528,7 +827,8 @@ suggest_values['play-during']=
   'mix',
   'repeat',
   'auto',
-  'none'
+  'none',
+  'inherit'
 ]
 
 suggest_values['position']=
@@ -536,46 +836,54 @@ suggest_values['position']=
   'static',
   'relative',
   'absolute',
-  'fixed'
+  'fixed',
+  'inherit'
 ]
 
 suggest_values['quotes']=
 [
-  'none'
+  'none',
+  'inherit'
 ]
 
 suggest_values['richness']=
 [
+  'inherit'
 ]
 
 suggest_values['right']=
 [
-  'auto'
+  'auto',
+  'inherit'
 ]
 
 suggest_values['speak-header']=
 [
   'once',
-  'always'
+  'always',
+  'inherit'
 ]
 
 suggest_values['speak-numeral']=
 [
   'digits',
-  'continuous'
+  'continuous',
+  'inherit'
 ]
 
 suggest_values['speak-punctuation']=
 [
   'code',
-  'none'
+  'none',
+  'inherit'
 ]
 
 suggest_values['speak']=
 [
   'normal',
   'none',
-  'spell-out'
+  'spell-out',
+  'inherit'
 ]
 
 suggest_values['speech-rate']=
@@ -586,17 +894,20 @@ suggest_values['speech-rate']=
   'fast',
   'x-fast',
   'faster',
-  'slower'
+  'slower',
+  'inherit'
 ]
 
 suggest_values['stress']=
 [
+  'inherit'
 ]
 
 suggest_values['table-layout']=
 [
   'auto',
-  'fixed'
+  'fixed',
+  'inherit'
 ]
 
 suggest_values['text-align']=
@@ -604,7 +915,8 @@ suggest_values['text-align']=
   'left',
   'right',
   'center',
-  'justify'
+  'justify',
+  'inherit'
 ]
 
 suggest_values['text-decoration']=
@@ -613,11 +925,13 @@ suggest_values['text-decoration']=
   'underline',
   'overline',
   'line-through',
-  'blink'
+  'blink',
+  'inherit'
 ]
 
 suggest_values['text-indent']=
 [
+  'inherit'
 ]
 
 suggest_values['text-transform']=
@@ -625,19 +939,22 @@ suggest_values['text-transform']=
   'capitalize',
   'uppercase',
   'lowercase',
-  'none'
+  'none',
+  'inherit'
 ]
 
 suggest_values['top']=
 [
-  'auto'
+  'auto',
+  'inherit'
 ]
 
 suggest_values['unicode-bidi']=
 [
   'normal',
   'embed',
-  'bidi-override'
+  'bidi-override',
+  'inherit'
 ]
 
 suggest_values['vertical-align']=
@@ -649,18 +966,21 @@ suggest_values['vertical-align']=
   'text-top',
   'middle',
   'bottom',
-  'text-bottom'
+  'text-bottom',
+  'inherit'
 ]
 
 suggest_values['visibility']=
 [
   'visible',
   'hidden',
-  'collapse'
+  'collapse',
+  'inherit'
 ]
 
 suggest_values['voice-family']=
 [
+  'inherit'
 ]
 
 suggest_values['volume']=
@@ -670,7 +990,8 @@ suggest_values['volume']=
   'soft',
   'medium',
   'loud',
-  'x-loud'
+  'x-loud',
+  'inherit'
 ]
 
 suggest_values['white-space']=
@@ -679,24 +1000,36 @@ suggest_values['white-space']=
   'pre',
   'nowrap',
   'pre-wrap',
-  'pre-line'
+  'pre-line',
+  'inherit'
 ]
 
 suggest_values['widows']=
 [
+  'inherit'
 ]
 
 suggest_values['width']=
 [
-  'auto'
+  'auto',
+  'inherit'
 ]
 
 suggest_values['word-spacing']=
 [
-  'normal'
+  'normal',
+  'inherit'
+]
+
+suggest_values['word-wrap']=
+[
+  'normal',
+  'break-word',
+  'inherit'
 ]
 
 suggest_values['z-index']=
 [
-  'auto'
+  'auto',
+  'inherit'
 ]
