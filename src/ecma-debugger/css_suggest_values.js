@@ -748,11 +748,15 @@ suggest_values['outline']=
 ]
 
 suggest_values['overflow']=
+suggest_values['overflow-x']=
+suggest_values['overflow-y']=
 [
   'visible',
   'hidden',
   'scroll',
   'auto',
+  'no-display',
+  'no-content',
   'inherit'
 ]
 
