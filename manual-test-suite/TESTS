@@ -1,0 +1,552 @@
+#  /projectLabel/specs/test-suite/
+# /projectLabel/specs/test-suite/readme.txt
+# /projectLabel/specs/test-suite/test-cases/[dir]|[files]
+
+
+DOM.DOM
+*******
+
+url: 
+  http://dev.opera.com
+
+label: 
+  Expand all nodes
+desc: 
+  - Press the Expand button.
+  - Verify that the whole document tree is displayed.
+
+label: Export 
+desc: 
+  - Press the Export button.
+  - Verify that the current view is displayed in a new tab.
+
+label: Find with click
+desc: 
+  - Turn the 'Find element' switch on.
+  - Click some elements in the host. 
+  - Verify that the DOM view is updated with the clicked element as target. 
+  - Verify that the feature can be turned off.
+
+label: Highlight elements
+desc: 
+  - Turn the 'Highlight 'switch on.
+  - Hover over some elements in the host. 
+  - Verify that the element is highlighted. 
+  - Hover some elements in the DOM view.
+  - Verify that the according element is highlighted in the host.
+  - Verify that the feature can be turned off.
+
+label: Update DOM on node remove
+desc: 
+  - Turn the 'Update DOM' switch on.
+  - Remove a node, e.g. do javascript:(function(){document.body.innerHTML=""})(). 
+  - Verify that the DOM view is updated. 
+  - Verify that the feature can be turned off.
+
+label: Select multiple elements
+desc: 
+  - Turn the 'Draw border' switch on.
+  - Click some elements in the host. 
+  - Verify that all clicked elements keep a border. 
+  - Verify that the feature can be turned off.
+
+label: Dropdown settings, comment nodes
+desc: 
+  - Select and unselect 'Show comment nodes'.
+  - Verify that the DOM view is updated accordingly.
+
+label: Dropdown settings, white space nodes
+desc:
+  - Select 'Show DOM tree view'
+  - Select and unselect 'Show white space nodes'.
+  - Verify that the DOM view is updated accordingly 
+  (pure white space nodes are escaped, e.g. a space is dispaled as \u0020).
+
+label: Dropdown settings, tree view
+desc: 
+  - Select and unselect 'Show DOM tree view'.
+  - Verify that the view displays the DOM accordingly.
+
+url: http://nzz.ch
+label: Document select
+desc:
+  - Select a document with (i)frames
+  - Verify that you can select each document in the dropdown.
+
+url: http://dev.opera.com
+label: Search document
+desc:
+  - Search for a term in the search box
+  - Verify that the count of all hits is displayed in the status bar.
+  - Verify that the view navigates to the next hit on enter.
+
+label: Edit attributes
+desc:
+  - Double click an attribute
+  - Verify that the attribute is displayed in a edit field.
+  - Change the value and verify that the change applies instatntly in the host document.
+  - Verify that escape reverts the changes
+  - Verify that enter does keep the changes an leaves the edit mode.
+  - Verify that tab moves to the next attribute
+  - Verify that at the end of a tag an empty field is shown to add a new attribute.
+
+label: Edit markup
+desc:
+  - Double click a tag name
+  - Change the content 
+  - Verify that the changes apply instantly in the host.
+  - Verify that you can remove and edit also the body and html element.
+
+label: Keyboard navigation
+desc:
+  - Click somewhere in the DOM view to focus the pane.
+  - Verify that you can navigate with arrow keys and expand and close nodes with enter.
+  - Click an element or attribute.
+  - Verify that the click target is also the navigation target.
+
+
+DOM.Styles
+**********
+
+url: http://dev.opera.com
+
+label: Matching style rules
+desc: 
+  - unfold Computed Styles and Styles
+  - select some elements in the DOM
+  - Verify that the styles are updated
+
+label: Hide initial value
+desc:
+  - Select and unselect the 'Hide initila value' switch
+  - Verify that the Computed Style section is updated accordingly
+
+label: Hide shorthands
+desc:
+  - Select and unselect the 'Hide shorthands' switch
+  - Verify that the Computed Style section is updated accordingly, 
+    e.g. if the swich is unchecked there must be an additional 
+    border, border-left, border-top, border-right and border-bottom rule.
+
+label: Search
+desc:
+  - Expand both sections, Computed Styles and Styles
+  - Search for a property, e.g. margin
+  - Verify that both section collaps to only contain the matching properties
+
+
+
+DOM.Properties
+**************
+
+url: http://dev.opera.com
+
+label: Update view
+desc: 
+  - Select some elements in the DOM
+  - Verify that the view is updated accordingly
+
+label: Unfold properties
+desc:
+  - Select an element in the DOM
+  - Verify that properties can be folded and unfolded
+
+label: Hide empty strings
+desc:
+  - Sewlect and unselect the 'Hide empty strings' switch
+  - Verify that the view is updated accordingly, e.g. that values which are empty strings, 0 or null are displayed or hidden.
+  
+label: Search
+desc:
+  - Search for some term
+  - Verify that the matches are highlighted
+  - Verify that on enter the next natch is scrolled into view.
+
+DOM.Layout
+**********
+
+label: Highlight boxes
+desc:
+  - Select an elemnt in the DOM
+  - Hover the differnt boxes in the Metrics view
+  - Verify that the according box is highlighted on the lement in the host
+
+label: Parent Offsets
+desc:
+  - Select some elements in the DOM
+  - Verify the the parent offsey chain is updated accordingly. 
+    Each parent offset must stand out in the parent node chain. 
+  - Verify that also the offset values are updated accordingly
+
+label: Parent Offsets hover
+desc:
+  - Select some elemnts in the DOM
+  - Hover over the different bnodes in the parent node chain.
+  - Verify that the according elements are highlighted in the host
+
+Statusbar
+*********
+
+url: http://aleto.ch
+
+label: Status info
+desc:
+  - Select some elemnts in the DOM
+  - Verify that the statusbar is updated with an according breadcrumb
+  - Serach for some tokens.
+  - Verify that the statusbar is updted with the matching count
+
+label: Breadcrumb navigation
+desc:
+  - Select some elements in the DOM
+  - Verify that elemnts are highlighted on hover in the host
+  - Verify that elements are selected on click in the host and in the DOM.
+
+url: http://nzz.ch
+label: Toggle long breadcrumbs
+desc: 
+  - Select a deep nested element in the document so that the breadcrumb is shortened, 
+    e.g. starts with 3 dots.
+  - Verify taht you can expand and collaps the breadcrump with the small toggle icon 
+    to the right of the status icon.
+
+label: Connection status
+desc:
+  - Set a breakpoint on line 18 oo scrollFolders.js
+  - Hover over the titles in the documnet
+  - Verify that the status icon updates while stepping into the code
+
+
+Scripts.Source
+**************
+
+url: http://dragonfly.opera.com/app/tests/scripts-source/index.html
+label: Reload button
+desc:
+  - Go to the above url
+  - Open or connect the debugger after that
+  - Switch to the Scripts
+  - Press the reload button in the info box "Click the reload button above to fetch the scripts for the selected window".
+  - Verify that you get 3 scripts in the dropdown and that you can select each of them.
+
+url: http://dragonfly.opera.com/app/tests/scripts-source/callstack.html
+label: Set breakpoint
+desc: 
+  - Set a breakpoint on line 4, 'var aa = 1;'.
+  - Verify that a breakpoint is diaplayed on the clicked line.
+  - Press the 'e()' button
+  - Verify that the engine stops on line 4, e.g that the script is displayed 
+    and that an arrow points to the breakpoint
+
+label: Remove breakpoint
+desc: 
+  - Remove the previous set breakpoint on line 4, 'var aa = 1;'.
+  - Verify that a breakpoint is disappears on the clicked line.
+  - Press the 'e()' button
+  - Verify that the engine does not stops on line 4 and that no arrow is displayed on that line.
+
+label: Breakpoint, Continue
+desc: 
+  - Set a breakpoint on line 4, 'var aa = 1;'.
+  - Press the 'e()' button
+  - Verify that the 'Continue' button changes from disabled to enabled.
+  - Press the 'Continue' button.
+  - Verify that that the stopped pointer arrow disapears and that the button gets disabled.
+  - Repeat several times and verify that it always works as described above.
+
+label: Breakpoint, Continue with keyboard
+desc: 
+  - The same as the previous test, but use the F8 key instead the mouse.
+
+label: Breakpoint, Step into
+desc: 
+  - Set a breakpoint on line 23, 'var ee = 1;'.
+  - Press the 'e()' button.
+  - Verify that the engine stops on that line
+  - Press the 'Step Into' button continously.
+  - Verify that the stop arrow follows the execution flow, 
+    e.g. arrives at some point at 'var aa = 1;' and 
+    finishes one call after the other.
+
+label: Breakpoint, Step into with keyboard
+desc: 
+  - The same as the previous test, but use the F11 key instead the mouse.
+
+label: Breakpoint, Step Over
+desc: 
+  - Set a breakpoint on line 23, 'var ee = 1;'.
+  - Press the 'e()' button.
+  - Verify that the engine stops on that line
+  - Pressing the 'Step Into' button continousli till yo get to the line 'c();'.
+  - Now press the 'Step Over' button.
+  - Verify that engine stops right after 'c()' and does not follow the exection flow of 'c()'.
+
+label: Breakpoint, Step Over with keyboard
+desc: 
+  - The same as the previous test, but use the F11 and F10 key instead the mouse.
+
+
+label: Breakpoint, Step Out
+desc: 
+  - Set a breakpoint on line 4, 'var aa = 1;'.
+  - Press the 'e()' button
+  - Press the 'Step Into' button continously till you get to 'var cc = 1;'.
+  - Now press the 'Step Out' button continously.
+  - Verify that the engine stops at 'c()', then 'd()' and then finishes.
+
+label: Breakpoint, Step Out with keyboard
+desc: 
+  - The same as the previous test, but use the F11 and Shift-F11 key instead the mouse.
+
+url: http://dragonfly.opera.com/app/tests/scripts-source/index.html
+label: Stop at new script
+desc:
+  - Open Dragonfly
+  - Turn the 'Stop at new script' switch on.
+  - Load the test url.
+  - Verify that the engine stops for each new script (use the continue button), e.g. three times 
+  - Verify that the setting can be turned off.
+
+url: http://dragonfly.opera.com/app/tests/scripts-source/parse-error.html
+label: Parse error
+desc:
+  - Open Dragonfly
+  - Turn the 'Stop at error' switch on.
+  - Go tho the test url
+  - Verify that the Script Source pane opens, 
+    the first unparsable token is highlighted, 
+    e.g. the dot in 'var aa.a = 1;',
+    any following code is greyd out and
+    an info box with a hint for the cause of the error is displayed.
+  - Verify that the setting can be turned off.
+
+url: http://aleto.ch
+label: Log threads
+desc:
+  - Turn the 'Log threads' switch on.
+  - Open 'Thread Log' view
+  - Hover over the document of the above url
+  - Verify that all threads are logged.
+
+label: Search
+desc:
+  - Search for e.g. 'default'.
+  - Verify that you 5 hits and that the view scrolls on enter to each of them.
+
+
+
+Scripts.Call Stack
+******************
+
+label: Set breakpoint, Callstack
+url: http://dragonfly.opera.com/app/tests/scripts-source/callstack.html
+desc: 
+  - Set a breakpoint on line 4, 'var aa = 1;'.
+  - Press the 'e()' button.
+  - Verify that the Call Stack view dispalys the call stack.
+  - Verify that each entry can be selected in the callstack.
+  - Verify that the source view is updated on selecting an entry in the callstack.
+  - Verify that the Inspection view is updated with the accordingscope. 
+
+Scripts.Inspection
+******************
+
+label: Hide default properties
+desc:
+  - Do 'dir(window)' in the command line.
+  - Select and unslect the *hide default properties' switch.
+  - Verify that the according properties are shown or hidden in the view.
+
+Scripts.Command Line
+********************
+
+
+# clear, dir
+
+url: http://dragonfly.opera.com/app/tests/scripts-source/callstack.html
+label: Autosuggest
+desc:
+  - Set a brakpoint on line 23, 'var ee = 1;'.
+  - Press the 'e()' button.
+  - Hit tab.
+  - Verify that you get the variables of the scope
+  - Use 'Step Into' and verify for each scope that you get the correct variables.
+  - Type 'this.'.
+  - Hit tab repeatatly.
+  - Verifiy that you get all properties of the window.
+  - Start to write something after the dot and hit tab again.
+  - Verify that the property gets completed with all matches.
+
+label: History navigation.
+desc:
+  - Use the up and down arrows.
+  - Verify that you get all previous subbmited lines. 
+
+label: Object links.
+desc:
+  - Type e.g. 'this' and hit enter.
+  - Verify that the result is the correct object displayed as link.
+  - Click the link.
+  - Verify that 
+
+label: Built-in commands
+desc:
+  - Create some entries and type clear().
+  - Verify that the view gets cleared.
+  - Type e.g. 'dir(this)'
+  - Verify that the according object is displayed in thee Inspection view.
+
+Network.Request Log
+*******************
+
+url: http://dev.opera.com
+
+label: Request table
+desc:
+  - Go to the url above
+  - Verify that the request table makes sense
+  - Reload the document
+  - Verify that the table still makes sense
+
+label: Request and response detail
+desc:
+  - Expand some of the entries
+  - Verify that the info in 'Summary', 'Headers' and 'Raw' makes sense
+
+label: Clear log
+desc:
+  - Press the 'Clear log' button
+  - Verify that the view gets cleared.
+
+Storage.Cookies
+***************
+
+url: http://dragonfly.opera.com/app/tests/storages/create-storages.html
+
+url: http://dragonfly.opera.com/app/tests/storages/check-storages.html
+
+label: Inspect cookies
+desc:
+  - Go to the above url in the above order
+  - Verify that you see cookie a - j
+
+label: Delete cookies
+desc:
+  - Delete some of the cookies
+  - Reload the document
+  - Verify that the deleted cokies are gone.
+
+label: Edit cookies
+desc:
+  - Double click some of the cookie values.
+  - Change the value and save.
+  - Reload the document
+  - Verify that the values still are changed
+
+label: Delete all cookies
+desc:
+  - Press the 'Delete all' button
+  - Reload the document.
+  - Verify that all cookies are gone.
+
+label: Add new cookies
+desc:
+  - Press the add button
+  - Add some key and value
+  - Reload the document
+  - Verify that there is a new created cookie with the according key and value.
+
+Storage.Local Storage
+*********************
+
+label: Inspect local storage
+desc:
+  - Go to the above url in the above order
+  - Verify that you see local storage item a - j
+
+label: Delete local storage items
+desc:
+  - Delete some of the local storage items
+  - Reload the document
+  - Verify that the deleted items are gone.
+
+label: Edit local storage items
+desc:
+  - Double click some of the item values.
+  - Change the value and save.
+  - Reload the document
+  - Verify that the values still are changed
+
+label: Delete all local storage items
+desc:
+  - Press the 'Delete all' button
+  - Reload the document.
+  - Verify that all local storage items are gone.
+
+label: Add new local storage items
+desc:
+  - Press the add button
+  - Add some key and value
+  - Reload the document
+  - Verify that there is a new created item with the according key and value.
+
+Storage.Session Storage
+*********************
+
+label: Inspect session storage
+desc:
+  - Go to the above url in the above order
+  - Verify that you see session storage item a - j
+
+label: Delete session storage items
+desc:
+  - Delete some of the session storage items
+  - Reload the document
+  - Verify that the deleted items are gone.
+
+label: Edit session storage items
+desc:
+  - Double click some of the item values.
+  - Change the value and save.
+  - Reload the document
+  - Verify that the values still are changed
+
+label: Delete all session storage items
+desc:
+  - Press the 'Delete all' button
+  - Reload the document.
+  - Verify that all session storage items are gone.
+
+label: Add new session storage items
+desc:
+  - Press the add button
+  - Add some key and value
+  - Reload the document
+  - Verify that there is a new created item with the according key and value.
+
+# TODO create a W3C widget with storage items
+
+Error Console.All Console.JavaScript Console.CSS
+************************************************
+
+url: http://dragonfly.opera.com/app/tests/error-console/error.html
+
+label: Inspect errors
+desc:
+  - Go to the url above
+  - Verify that there is a js and a css error
+  - Verify that the entries can be expanded to see the details
+  - Verify that only the js error is in the JavaScript pane 
+  - Verify that only the css error is in the CSS pane 
+
+label: Clear log
+desc:
+  - Press the 'Clear Log' button
+  - Verify that the log is cleared
+  - Verify that in the 'All', 'JavaScript' and 'CSS' pane.
+
+label: Expand all
+desc:
+  - Select and unselect the 'Expand all' switch
+  - Verify that the enries are expanded and collapse accordingly
+  - Verift\y that in the 'All', 'JavaScript' and 'CSS' pane.

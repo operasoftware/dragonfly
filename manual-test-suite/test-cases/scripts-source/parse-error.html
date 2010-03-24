@@ -1,0 +1,28 @@
+<!doctype HTML>
+<script>
+var a = function()
+{
+  var aa = 1;
+}
+var aa.a = 1;
+var b = function()
+{
+  var bb = 1;
+  a();
+}
+var c = function()
+{
+  var cc = 1;
+  b();
+}
+var d = function()
+{
+  var dd = 1;
+  c();
+}
+var e = function()
+{
+  var ee = 1;
+  d();
+}
+</script>
