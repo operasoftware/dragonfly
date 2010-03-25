@@ -181,7 +181,7 @@ var DOM_tree_style = function(id, name, container_class)
                       ( /^href|src$/i.test(attr[ATTR_KEY])
                         ? " handler='dom-resource-link'"
                         : "" ) + ">\"" + 
-                      attr[ATTR_VALUE].replace(/</g, '&lt;') +
+                      attr[ATTR_VALUE].replace(/</g, '&lt;').replace(/"/g, '&amp;quot;') +
                   "\"</value>";
               }
             }

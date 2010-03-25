@@ -615,13 +615,15 @@ cls.Stylesheets = function()
     STYLESHEETRULE_RULE_LIST = 9;
 
     var ret = '', _rule = null, header = null, i = 0;
-    for( ; _rule = rule[STYLESHEETRULE_RULE_LIST][i]; i++)
-    {
-      ret += prettyPrintRule[_rule[TYPE]](_rule, do_shortcuts, is_style_sheet);
+    if (rule[STYLESHEETRULE_RULE_LIST]) {
+      for( ; _rule = rule[STYLESHEETRULE_RULE_LIST][i]; i++)
+      {
+        ret += prettyPrintRule[_rule[TYPE]](_rule, do_shortcuts, is_style_sheet);
+      }
     }
     return "<media-rule rule-id='" + rule[RULE_ID] + "'>" +
               "<at>@media " + rule[MEDIA_LIST].join(', ') + " </at>{" +
-              "<rules>" + ret + "</rules>" +
+              (ret ? "<rules>" + ret + "</rules>" : " ") +
             "}</media-rule>";
   }
 
