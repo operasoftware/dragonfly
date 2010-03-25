@@ -409,7 +409,8 @@ cls.EcmascriptDebugger["5.0"].ObjectDataBase = function()
 
       if (typeof val == 'string')
       {
-        val = helpers.escapeTextHtml(val);
+        // The escape of ' is for not messing up innerHTML down the line
+        val = helpers.escapeTextHtml(val).replace(/'/g, '&#39;');
       }
 
       // FIXME: this is a but problematic if it breaks in an entity/character reference.
