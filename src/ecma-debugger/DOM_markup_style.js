@@ -188,7 +188,7 @@ var DOM_markup_style = function(id, name, container_class)
                     ( /^href|src$/i.test(attr[ATTR_KEY])
                       ? " handler='dom-resource-link'"
                       : "" ) + ">\"" + 
-                    attr[ATTR_VALUE].replace(/</g, '&lt;') + 
+                    attr[ATTR_VALUE].replace(/</g, '&lt;').replace(/"/g, '&amp;quot;') + 
                     "\"</value>";
               }
             }
@@ -332,7 +332,7 @@ var DOM_markup_style = function(id, name, container_class)
                 "<div style='margin-left:" + ( 16 * node[ DEPTH ] )  + "px;'>" + 
                   "<text" + 
                       ( is_not_script_node ? " ref-id='"+ node[ID] + "' " : "" ) + 
-                      ">" + node[ VALUE ] + "</text>" +
+                      ">" + node[ VALUE ].replace(/</g, '&lt;') + "</text>" +
                 "</div>";
             }
           }

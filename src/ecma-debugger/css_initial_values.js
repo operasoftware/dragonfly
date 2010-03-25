@@ -228,4 +228,4 @@ css_initial_values =
 "word-wrap": "normal",
 "writing-mode": "",
 "z-index": "auto"
-}
+};
