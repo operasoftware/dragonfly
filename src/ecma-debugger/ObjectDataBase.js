@@ -406,17 +406,21 @@ cls.EcmascriptDebugger["5.0"].ObjectDataBase = function()
           continue;
         }
       }
-      if( val.length > MAX_VALUE_LENGTH )
+
+      if (typeof val == 'string')
       {
-        val = val.replace(/</g, '&lt;').replace(/'/g, '&#39;');
+        // The escape of ' is for not messing up innerHTML down the line
+        val = helpers.escapeTextHtml(val).replace(/'/g, '&#39;');
+      }
+
+      // FIXME: this is a but problematic if it breaks in an entity/character reference.
+      // Should be done with text-overflow: ellipsis
+      // DFL-1037
+      if (val.length > MAX_VALUE_LENGTH)
+      {
         short_val = val.slice(0, MAX_VALUE_LENGTH) + "...";
-        
       }
-      if(typeof val == 'string')
-      {
-        val = val.replace(/</g, "&lt;");
-      }
-      
+
       depth = forced_depth || prop[DEPTH];
 
       if( prop[TYPE] == 'object')
