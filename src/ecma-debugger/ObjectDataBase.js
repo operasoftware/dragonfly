@@ -409,8 +409,7 @@ cls.EcmascriptDebugger["5.0"].ObjectDataBase = function()
 
       if (typeof val == 'string')
       {
-        // XXX: is the replacement of ' needed? It was there before,
-        // so better keep it for now.
+        // The escape of ' is for not messing up innerHTML down the line
         val = helpers.escapeTextHtml(val).replace(/'/g, '&#39;');
       }
 
