@@ -402,8 +402,9 @@ cls.DOMView = function(id, name, container_class)
           }
           else // is closed
           {
-          tree +=  LINEBREAK  + getIndent(node[ DEPTH ] ) +
-                  "&lt;" + node_name + attrs + "&gt;" + "&lt;/" + node_name + "&gt;" ;
+              // TODO: only output "/>" if it's XML, otherwise ">"
+              tree += LINEBREAK + getIndent(node[DEPTH]) +
+                      "&lt;" + node_name + attrs + (node_name in VOID_ELEMNTS ? "/>" : ">&lt;/" + node_name + ">");
           }
           break;
         }
