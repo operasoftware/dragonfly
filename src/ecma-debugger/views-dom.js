@@ -27,7 +27,7 @@ cls.DOMView = function(id, name, container_class)
   SYSTEM_ID = 9,
   INDENT = "  ",
   LINEBREAK = '\n',
-  VOID_ELEMNTS = 
+  VOID_ELEMENTS =
   {
     'area': 1,
     'base': 1,
@@ -48,7 +48,7 @@ cls.DOMView = function(id, name, container_class)
     'command': 1,
     'event-source': 1,
     'source': 1,
-  }
+  };
 
   var getIndent = function(count)
   {
@@ -236,7 +236,7 @@ cls.DOMView = function(id, name, container_class)
               {
                 tree += LINEBREAK  + getIndent(node[DEPTH] - start_depth) + 
                         "<" + node_name + attrs + ">";
-                if( !(node_name in VOID_ELEMNTS) ) // TODO: why?
+                if( !(node_name in VOID_ELEMENTS) ) // TODO: why?
                 {
                   closing_tags.push
                   ( 
@@ -248,7 +248,7 @@ cls.DOMView = function(id, name, container_class)
             else // is closed or empty
             {
               tree +=  LINEBREAK  + getIndent(node[DEPTH] - start_depth) + "<" + node_name + attrs +
-                ( is_xml && "/>" || ">" +  ( node_name in VOID_ELEMNTS ? "" : "</" + node_name + ">" ) );
+                ( is_xml && "/>" || ">" +  ( node_name in VOID_ELEMENTS ? "" : "</" + node_name + ">" ) );
             }
             break;
           }
@@ -404,7 +404,7 @@ cls.DOMView = function(id, name, container_class)
           {
               // TODO: only output "/>" if it's XML, otherwise ">"
               tree += LINEBREAK + getIndent(node[DEPTH]) +
-                      "&lt;" + node_name + attrs + (node_name in VOID_ELEMNTS ? "/>" : ">&lt;/" + node_name + ">");
+                      "&lt;" + node_name + attrs + (node_name in VOID_ELEMENTS ? "/>" : ">&lt;/" + node_name + ">");
           }
           break;
         }
