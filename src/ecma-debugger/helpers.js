@@ -115,7 +115,7 @@ window.cls.Helpers = function()
 
   this.escapeTextHtml = function(str)
   {
-    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;");
   }
 
   this.setCookie = function(key, value, time) 
