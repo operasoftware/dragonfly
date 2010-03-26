@@ -50,7 +50,7 @@ cls.HttpLogger["2.0"].ParseMessges = function(name)
           time: Math.round(parseFloat(message[2])),
           raw: message[3],
         });
-    }
+    };
 
     /**
      * Parse a response. Returns an object with the shape:
@@ -81,9 +81,9 @@ cls.HttpLogger["2.0"].ParseMessges = function(name)
           "request-id": message[0],
           "window-id": message[1],
           time: Math.round(parseFloat(message[2])),
-          raw: message[3],
+          raw: message[3]
         });
-    }
+    };
 
     /**
      * Parse a request header, returns an object with the shape:
@@ -130,11 +130,11 @@ cls.HttpLogger["2.0"].ParseMessges = function(name)
                 retval.query.substr(1).split("&").forEach(function(e)
                 {
                     var offset = e.indexOf("=");
-                    if (offset<1) { return }
+                    if (offset<1) { return; }
                     var key = e.substr(0, offset);
                     var val = e.substr(offset+1);
                     retval.queryDict[key] = val;
-                })
+                });
 
                 retval.path = retval.path.slice(0, i);
             }
@@ -146,7 +146,7 @@ cls.HttpLogger["2.0"].ParseMessges = function(name)
         }
 
         return retval;
-    }
+    };
 
     /**
      * Parse a response header into a dictionary of the shape
@@ -176,7 +176,7 @@ cls.HttpLogger["2.0"].ParseMessges = function(name)
             retval.statusClass = retval.status ? retval.status.charAt(0) : "0";
         }
         return retval;
-    }
+    };
 
     /**
      * Parse the raw request block, including method, path and headers
@@ -191,20 +191,20 @@ cls.HttpLogger["2.0"].ParseMessges = function(name)
             if (line.indexOf(" ") == 0 || line.indexOf("\t") == 0) {
                 // this is a continuation from the previous line
                 // Replace all leading whitespace with a single space
-                value = "line".replace(/^[ \t]+/, " ");
+                var value = "line".replace(/^[ \t]+/, " ");
 
                 if (headerList.length) {
-                    old = headerList.pop();
+                    var old = headerList.pop();
                     headerList.push([old[0], old[1]+value]);
                 } else { // should never happen with well formed headers
-                    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + "this header is malformed\n" + line)
+                    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + "this header is malformed\n" + line);
                 }
             }
             else
             {
                 var parts = line.match(/([\w-]*?): (.*)/);
                 if (!parts || parts.length!=3) {
-                    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + "Could not parse header!:\n" + line)
+                    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + "Could not parse header!:\n" + line);
                     continue;
                 }
                 var name = parts[1];
@@ -238,7 +238,7 @@ cls.HttpLogger["2.0"].ParseMessges = function(name)
         }
 
         return headers;
-    }
+    };
 
   this.bind = function()
   {
@@ -251,12 +251,11 @@ cls.HttpLogger["2.0"].ParseMessges = function(name)
     http_logger.onRequest = function(status, msg)
     {
       window.HTTPLoggerData.addRequest(self.parseRequest(msg));
-    }
+    };
     http_logger.onResponse = function(status, msg)
     {
       window.HTTPLoggerData.addResponse(self.parseResponse(msg));
-    }
-  }
-}
-
+    };
+  };
+};
 

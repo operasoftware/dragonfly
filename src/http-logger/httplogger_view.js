@@ -50,7 +50,7 @@ cls.RequestListView = function(id, name, container_class)
         }
         lastUpdateTime = new Date().getTime();
         this.doCreateView(container);
-    }
+    };
 
     /**
      * Check if the current view represents reality. This is
@@ -71,7 +71,7 @@ cls.RequestListView = function(id, name, container_class)
             if (log.length) { keyEntryId = log[0].id }
             return false;
         }
-    }
+    };
 
     /**
      * Do the actual rendering of the request table, including expanded and
@@ -91,11 +91,11 @@ cls.RequestListView = function(id, name, container_class)
         if (log.length) {
             var times = log.map(function(e) {
                 return e.response ? e.response.time : e.request.time
-            })
+            });
             var times = times.sort();
-            lastTime = times[times.length-1];
+            var lastTime = times[times.length-1];
         } else {
-            lastTime = new Date().getTime();
+            var lastTime = new Date().getTime();
         }
 
         var firstTime = log.length ? log[0].request.time : lastTime;
@@ -110,12 +110,12 @@ cls.RequestListView = function(id, name, container_class)
                                                          isFirst&log.length>1);
             isFirst = false;
             return data;
-        }
+        };
 
         var tpls = log.slice(nextToRendereIndex).map(fun);
         tableBodyEle.render(tpls);
         nextToRendereIndex = log.length;
-    }
+    };
 
     this._getRowForId = function(id) {
         if (!tableBodyEle) { return null }
@@ -127,7 +127,7 @@ cls.RequestListView = function(id, name, container_class)
             }
         }
         return null;
-    }
+    };
 
     /**
      * Collapse the detail view of an entry in the log.
@@ -146,7 +146,7 @@ cls.RequestListView = function(id, name, container_class)
                 return
             }
         }
-    }
+    };
 
     /**
      * Show the detail view of an entry in the log.
@@ -172,7 +172,7 @@ cls.RequestListView = function(id, name, container_class)
                 return; // or loop forever since you just made list longer.
             }
         }
-    }
+    };
 
     /**
      * Called to toggle request with id. If it's expanded it gets collapsed
@@ -189,11 +189,11 @@ cls.RequestListView = function(id, name, container_class)
         }
         this.update();
         if (dirty) {
-            var row = this._getRowForId(id).nextSibling
+            var row = this._getRowForId(id).nextSibling;
             row.scrollSoftIntoContainerView();
         }
 
-    }
+    };
 
     this.selectDetailView = function(id, name) {
         viewMap[id] = name;
@@ -210,15 +210,15 @@ cls.RequestListView = function(id, name, container_class)
         var req = HTTPLoggerData.getRequestById(id);
         var div = row.getElementsByTagName("div")[0];
         div.clearAndRender(window.templates.parsed_request_headers(req, "headers"));
-    }
+    };
 
     this.ondestroy = function()
     {
         keyEntryId = null;
-    }
+    };
 
     this.init(id, name, container_class);
-}
+};
 
 cls.RequestListView.create_ui_widgets = function()
 {
@@ -275,7 +275,7 @@ eventHandlers.click['clear-request-list'] = function(event, target)
             textSearch.setContainer(msg.container);
             textSearch.setFormInput(views.request_list.getToolbarControl(msg.container, 'http-text-search'));
         }
-    }
+    };
 
     var onViewDestroyed = function(msg)
     {
@@ -283,7 +283,7 @@ eventHandlers.click['clear-request-list'] = function(event, target)
             textSearch.cleanup();
             topCell.statusbar.updateInfo();
         }
-    }
+    };
 
     messages.addListener('view-created', onViewCreated);
     messages.addListener('view-destroyed', onViewDestroyed);
@@ -291,14 +291,14 @@ eventHandlers.click['clear-request-list'] = function(event, target)
     eventHandlers.input['http-text-search'] = function(event, target)
     {
         textSearch.searchDelayed(target.value);
-    }
+    };
 
     eventHandlers.keypress['http-text-search'] = function(event, target)
     {
         if (event.keyCode == 13) {
             textSearch.highlight();
         }
-    }
+    };
 
 })();
 

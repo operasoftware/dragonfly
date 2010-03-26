@@ -61,7 +61,7 @@ window.http_header_specification_urls = {
     "Cookie2": "http://www.ietf.org/rfc/rfc2965.txt",
     "Set-Cookie2": "http://www.ietf.org/rfc/rfc2965.txt"
 
-}
+};
 
 window.http_method_specification_urls = {
     "options": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.2",
@@ -72,7 +72,7 @@ window.http_method_specification_urls = {
     "delete": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.7",
     "trace": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.8",
     "connect": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.9"
-}
+};
 
 function http_map_mime_to_type(mime)
 {
@@ -109,7 +109,7 @@ window.http_mime_type_map = {
     "application/pdf": "pdf",
     "application/x-shockwave-flash": "flash",
     "application/xml": "xml"
-}
+};
 
 /**
  * This one will be deprecated when we get mime types straight from core.
@@ -125,7 +125,7 @@ window.http_file_extension_map = {
     "jpg": "image/jpeg", "jpeg": "image/jpeg", "jpe": "image/jpeg",
     "css": "text/css",
     "js":  "application/x-javascript"
-}
+};
 
 function http_get_mime_from_extension(path)
 {
