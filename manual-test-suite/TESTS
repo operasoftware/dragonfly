@@ -217,7 +217,7 @@ desc:
 Scripts.Source
 **************
 
-url: http://dragonfly.opera.com/app/tests/scripts-source/index.html
+url: ./test-cases/scripts-source/index.html
 label: Reload button
 desc:
   - Go to the above url
@@ -226,7 +226,7 @@ desc:
   - Press the reload button in the info box "Click the reload button above to fetch the scripts for the selected window".
   - Verify that you get 3 scripts in the dropdown and that you can select each of them.
 
-url: http://dragonfly.opera.com/app/tests/scripts-source/callstack.html
+url: ./test-cases/scripts-source/callstack.html
 label: Set breakpoint
 desc: 
   - Set a breakpoint on line 4, 'var aa = 1;'.
@@ -295,7 +295,7 @@ label: Breakpoint, Step Out with keyboard
 desc: 
   - The same as the previous test, but use the F11 and Shift-F11 key instead the mouse.
 
-url: http://dragonfly.opera.com/app/tests/scripts-source/index.html
+url: ./test-cases/scripts-source/index.html
 label: Stop at new script
 desc:
   - Open Dragonfly
@@ -304,7 +304,7 @@ desc:
   - Verify that the engine stops for each new script (use the continue button), e.g. three times 
   - Verify that the setting can be turned off.
 
-url: http://dragonfly.opera.com/app/tests/scripts-source/parse-error.html
+url: ./test-cases/scripts-source/parse-error.html
 label: Parse error
 desc:
   - Open Dragonfly
@@ -336,7 +336,7 @@ Scripts.Call Stack
 ******************
 
 label: Set breakpoint, Callstack
-url: http://dragonfly.opera.com/app/tests/scripts-source/callstack.html
+url: ./test-cases/scripts-source/callstack.html
 desc: 
   - Set a breakpoint on line 4, 'var aa = 1;'.
   - Press the 'e()' button.
@@ -357,10 +357,7 @@ desc:
 Scripts.Command Line
 ********************
 
-
-# clear, dir
-
-url: http://dragonfly.opera.com/app/tests/scripts-source/callstack.html
+url: ./test-cases/scripts-source/callstack.html
 label: Autosuggest
 desc:
   - Set a breakpoint on line 23, 'var ee = 1;'.
@@ -396,7 +393,7 @@ desc:
 Network.Request Log
 *******************
 
-url: http://dev.opera.com
+url: ./test-cases/network/index.html
 
 label: Request table
 desc:
@@ -418,9 +415,9 @@ desc:
 Storage.Cookies
 ***************
 
-url: http://dragonfly.opera.com/app/tests/storages/create-storages.html
+url: ./test-cases/storages/create-storages.html
 
-url: http://dragonfly.opera.com/app/tests/storages/check-storages.html
+url: ./test-cases/storages/check-storages.html
 
 label: Inspect cookies
 desc:
@@ -526,7 +523,7 @@ desc:
 Error Console.All Console.JavaScript Console.CSS
 ************************************************
 
-url: http://dragonfly.opera.com/app/tests/error-console/error.html
+url: ./test-cases/error-console/error.html
 
 label: Inspect errors
 desc:
