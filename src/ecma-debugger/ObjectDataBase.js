@@ -439,13 +439,13 @@ cls.EcmascriptDebugger["5.0"].ObjectDataBase = function()
       {
         if( short_val )
         {
-            var item = document.createElement("item");
-            item.innerHTML =
+        ret += "<item>" +
                   "<input type='button' handler='expand-value'  class='folder-key'/>" +
                   "<key>" + prop[KEY] + "</key>" +
-                  "<value class='" + prop[TYPE] + "' data-value='" + val + "'/>";
-            item.querySelector("value").textContent = short_val;
-            ret += item.outerHTML;
+                  "<value class='" + prop[TYPE] + "' data-value='" + val + "'>" +
+                    helpers.escapeTextHtml(short_val) +
+                  "</value>" +
+              "</item>";
         }
         else
         {
