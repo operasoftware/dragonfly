@@ -34,7 +34,7 @@ window.HTTPLoggerData = new function()
     {
         return requestList;
     }
-    
+
     /**
      * Get a specific request
      * @argument {string} id the id of the request
@@ -45,7 +45,7 @@ window.HTTPLoggerData = new function()
         if (id in requestMap) { return requestMap[id] }
         else { return null }
     }
-    
+
     /**
      * Clear the log data
      *
@@ -57,7 +57,7 @@ window.HTTPLoggerData = new function()
         selectedRequestId = null;
         _updateViews();
     }
-    
+
     this.clearLogAllButLast = function()
     {
         if (requestList.length) {
@@ -84,7 +84,7 @@ window.HTTPLoggerData = new function()
         lastModifiedRequestId = r.id;
         _updateViews();
     }
-    
+
     /**
      * Add a response object to an existing request
      * fixme: now we silently ignore repsonses to non-exstant requests
@@ -107,7 +107,7 @@ window.HTTPLoggerData = new function()
             _updateViews();
         }
     }
-    
+
     /**
      * Set the currently selected request, that is, the request that is being
      * inspected
@@ -117,7 +117,7 @@ window.HTTPLoggerData = new function()
         selectedRequestId = id;
         _updateViews();
     }
-    
+
     /**
      * Clear the selected request
      */
@@ -126,7 +126,7 @@ window.HTTPLoggerData = new function()
         selectedRequestId = null;
         _updateViews();
     }
-    
+
     /**
      * Get the selected request
      */
@@ -140,7 +140,7 @@ window.HTTPLoggerData = new function()
         {
             return null;
         }
-    }    
+    }
 
     /**
      * Get the ID of the selected request
@@ -149,7 +149,7 @@ window.HTTPLoggerData = new function()
     {
         return selectedRequestId;
     }
-    
+
     this.getLastModifiedRequestId = function()
     {
         return lastModifiedRequestId;

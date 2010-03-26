@@ -5,7 +5,7 @@
  */
 
 /**
-  * @constructor 
+  * @constructor
   * @extends ViewBase
   * This view implements update chocking. It will not do the update more often
   * than every minUpdateInterval milliseconds
@@ -251,7 +251,7 @@ eventHandlers.click['request-list-expand-collapse'] = function(event, target)
 
 eventHandlers.click['select-http-detail-view'] = function(event, target)
 {
-    window.views['request_list'].selectDetailView(parseInt(target.getAttribute("data-requestid")), 
+    window.views['request_list'].selectDetailView(parseInt(target.getAttribute("data-requestid")),
       target.getAttribute("data-viewname"));
 };
 

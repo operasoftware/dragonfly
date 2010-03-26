@@ -55,12 +55,12 @@ window.http_header_specification_urls = {
     "Via": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.45",
     "Warning": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.46",
     "WWW-Authenticate": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.47",
-    
+
     // from Cookie spec (rfc2965)
     "Cookie": "http://www.ietf.org/rfc/rfc2965.txt",
     "Cookie2": "http://www.ietf.org/rfc/rfc2965.txt",
     "Set-Cookie2": "http://www.ietf.org/rfc/rfc2965.txt"
-    
+
 }
 
 window.http_method_specification_urls = {
@@ -92,12 +92,12 @@ function http_map_mime_to_type(mime)
     {
         return "video";
     }
-    
+
     if (mime.indexOf("audio/") == 0)
     {
         return "audio";
     }
-    
+
     return "unknown";
 }
 

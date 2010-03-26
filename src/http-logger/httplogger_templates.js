@@ -14,9 +14,9 @@ window.templates = window.templates || ( window.templates = {} );
     var alphaheaders = [];
     for (name in headers) {alphaheaders.push(name)}
     alphaheaders = alphaheaders.sort();
-    
+
     var dlbody = [];
-    
+
     for (var i=0, name; name=alphaheaders[i]; i++)
     {
         var value = headers[name];
@@ -25,9 +25,9 @@ window.templates = window.templates || ( window.templates = {} );
         {
             dt.push(templates.reference_link(http_header_specification_urls[name]));
         }
-        
+
         dlbody.push(dt);
-        
+
         if (typeof value == "string")
         {
             var dd = ['dd', value]
@@ -45,7 +45,7 @@ window.templates = window.templates || ( window.templates = {} );
     var dl = ['dl', dlbody,
               'class', 'headerlist'
              ];
-    
+
     return dl;
 }
 
@@ -97,7 +97,7 @@ window.templates.request_list_row = function(r, expandList, firstTime, lastTime,
                   , 'class', 'time-cell'],
             'data-requestid', r.id.toString(),
             "handler", "request-list-expand-collapse",
-            'class', 'typeicon mime-' + 
+            'class', 'typeicon mime-' +
                     http_map_mime_to_type(http_get_mime_from_extension(r.request.path)) +
                     (expanded ? " expanded" : " collapsed") +
                     (r.duration==undefined ? " in-progress" : "") +
@@ -108,18 +108,18 @@ window.templates.request_list_row = function(r, expandList, firstTime, lastTime,
     {
         a.push(window.templates.request_details_box(r, viewMap[r.id]));
     }
-    
+
     return a;
 }
 
 window.templates.request_details_box = function(r, aw)
 {
     aw = aw || "summary";
-    
+
     var content = {"summary": window.templates.request_summary,
                    "headers": window.templates.headers_view,
                    "raw": window.templates.response_raw}[aw]||window.templates.request_summary;
-    
+
     return [ 'tr',
               ['td',
                ['button', ui_strings.S_BUTTON_SHOW_REQUEST_SUMMARY, "type", "button", "data-viewname", "summary", "data-requestid", r.id.toString(), "handler", "select-http-detail-view"],
@@ -168,7 +168,7 @@ window.templates.parsed_response_headers = function(req)
     return [
             ["h2", ui_strings.M_VIEW_LABEL_RESPONSE_HEADERS],
             req.response ? window.templates.header_definition_list(req.response.headers) : ["span", ui_strings.S_HTTP_REQUEST_IN_PROGRESS]
-    ]    
+    ]
 }
 
 window.templates.request_summary = function(req)
@@ -184,7 +184,7 @@ window.templates.request_summary = function(req)
                       ["dt", ui_strings.S_HTTP_LABEL_RESPONSE],
                       ["dd", (req.response ? req.response.status + ": " + req.response.reason : "-")],
                       ["dt", ui_strings.S_HTTP_LABEL_METHOD],
-                      ["dd",  req.request.method + " ", [window.templates.method_spec_link(req) || ""]], 
+                      ["dd",  req.request.method + " ", [window.templates.method_spec_link(req) || ""]],
                       ["dt", ui_strings.S_HTTP_LABEL_HOST],
                       ["dd", req.request.headers["Host" || "?" ]],
                       ["dt", ui_strings.S_HTTP_LABEL_PATH],

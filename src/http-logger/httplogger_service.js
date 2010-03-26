@@ -9,7 +9,7 @@ cls.HttpLogger["2.0"] || (cls.HttpLogger["2.0"] = {});
 
 /**
   * HTTP logger class
-  * @constructor 
+  * @constructor
   * @extends ServiceBase
   */
 cls.HttpLogger["2.0"].ParseMessges = function(name)
@@ -49,7 +49,7 @@ cls.HttpLogger["2.0"].ParseMessges = function(name)
           "window-id": message[1],
           time: Math.round(parseFloat(message[2])),
           raw: message[3],
-        });        
+        });
     }
 
     /**
@@ -76,7 +76,7 @@ cls.HttpLogger["2.0"].ParseMessges = function(name)
         WINDOW_ID = 1,
         TIME = 2,
         HEADER = 3;
-        */ 
+        */
         return this.parseResponseHeader({
           "request-id": message[0],
           "window-id": message[1],
@@ -89,7 +89,7 @@ cls.HttpLogger["2.0"].ParseMessges = function(name)
      * Parse a request header, returns an object with the shape:
      *
      * requst was GET http://example.com/foo?bar=baz&meh=flabaten
-     * 
+     *
      * header = {
      *            method: "GET",
      *            path: "/foo",
@@ -103,7 +103,7 @@ cls.HttpLogger["2.0"].ParseMessges = function(name)
      *                  name2: "value2
      *            }
      *  }
-     *  
+     *
      *
      */
     this.parseRequestHeader = function(retval)
@@ -121,7 +121,7 @@ cls.HttpLogger["2.0"].ParseMessges = function(name)
             retval.method = reqparts[1];
             retval.query = "";
             retval.path = reqparts[2];
-            
+
             var i;
             if ((i = retval.path.indexOf("?")) > 0)
             {
@@ -135,16 +135,16 @@ cls.HttpLogger["2.0"].ParseMessges = function(name)
                     var val = e.substr(offset+1);
                     retval.queryDict[key] = val;
                 })
-                
+
                 retval.path = retval.path.slice(0, i);
             }
-            
+
             retval.protocol = reqparts[3];
             retval.headers = this.parseHeaders(lines);
             retval.host = retval.headers.Host;
             retval.url = retval.headers.Host + retval.path;
         }
-        
+
         return retval;
     }
 
@@ -177,7 +177,7 @@ cls.HttpLogger["2.0"].ParseMessges = function(name)
         }
         return retval;
     }
-    
+
     /**
      * Parse the raw request block, including method, path and headers
      * @argument {Element}
@@ -209,7 +209,7 @@ cls.HttpLogger["2.0"].ParseMessges = function(name)
                 }
                 var name = parts[1];
                 var value = parts[2];
-                
+
                 headerList.push([name, value]);
             }
         }
@@ -242,11 +242,11 @@ cls.HttpLogger["2.0"].ParseMessges = function(name)
 
   this.bind = function()
   {
-    var 
+    var
     self = this,
     http_logger = window.services['http-logger'];
 
-    
+
 
     http_logger.onRequest = function(status, msg)
     {
