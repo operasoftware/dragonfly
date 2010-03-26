@@ -143,6 +143,7 @@ button[handler="clear-request-list"]:before {
     background-position: right;
     border-left: solid 1px #9EADC4;
     min-width: 10px;
+    text-align: left; /* needed so we get left align with direction:rtl */
 }
 
 /* Style for the graph cell of the first row, with the summary */
