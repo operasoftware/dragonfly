@@ -407,18 +407,18 @@ cls.EcmascriptDebugger["5.0"].ObjectDataBase = function()
         }
       }
 
-      if (typeof val == 'string')
-      {
-        // The escape of ' is for not messing up innerHTML down the line
-        val = helpers.escapeTextHtml(val).replace(/'/g, '&#39;');
-      }
-
-      // FIXME: this is a but problematic if it breaks in an entity/character reference.
+      // FIXME: this is a bit problematic if it breaks in an entity/character reference.
       // Should be done with text-overflow: ellipsis
       // DFL-1037
       if (val.length > MAX_VALUE_LENGTH)
       {
         short_val = val.slice(0, MAX_VALUE_LENGTH) + "...";
+      }
+
+      if (typeof val == 'string')
+      {
+        // The escape of ' is for not messing up innerHTML down the line
+        val = helpers.escapeTextHtml(val).replace(/'/g, '&#39;');
       }
 
       depth = forced_depth || prop[DEPTH];
@@ -439,13 +439,13 @@ cls.EcmascriptDebugger["5.0"].ObjectDataBase = function()
       {
         if( short_val )
         {
-        ret += "<item>" + 
+            var item = document.createElement("item");
+            item.innerHTML =
                   "<input type='button' handler='expand-value'  class='folder-key'/>" +
                   "<key>" + prop[KEY] + "</key>" +
-                  "<value class='" + prop[TYPE] + "' data-value='" + val + "' >" + 
-                      short_val + 
-                  "</value>" + 
-                "</item>";
+                  "<value class='" + prop[TYPE] + "' data-value='" + val + "'/>";
+            item.querySelector("value").textContent = short_val;
+            ret += item.outerHTML;
         }
         else
         {
