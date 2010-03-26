@@ -173,11 +173,14 @@ window.templates.parsed_response_headers = function(req)
 window.templates.request_summary = function(req)
 {
     var pairs = [];
-    for (key in req.request.queryDict) { pairs.push([key, req.request.queryDict[key]]) }
-
+    for (key in req.request.queryDict) { pairs.push([key, req.request.queryDict[key]]);}
     var ret = [
               ["h2", ui_strings.M_VIEW_LABEL_REQUEST_SUMMARY],
               ["dl", [
+                   (window.ini.debug ? [
+                          ["dt", "Request id"],
+                          ["dd", ""+req.id]
+                   ] : [] ),
                       ["dt", ui_strings.S_HTTP_LABEL_URL],
                       ["dd", (req.request.url + req.request.query)],
                       ["dt", ui_strings.S_HTTP_LABEL_RESPONSE],
