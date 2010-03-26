@@ -648,7 +648,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
     
   }
 
-  var postElementSeleceted = function(obj_id, rt_id)
+  var postElementSelected = function(obj_id, rt_id)
   {
     messages.post("element-selected", {obj_id: obj_id, rt_id: rt_id});
   }

@@ -990,7 +990,7 @@ cls.JsSourceView.create_ui_widgets = function()
     }
   }
   
-  var onScriptSeleceted = function(msg)
+  var onScriptSelected = function(msg)
   {
     textSearch.setScript(msg.script);
   }
@@ -1007,7 +1007,7 @@ cls.JsSourceView.create_ui_widgets = function()
 
   messages.addListener('view-created', onViewCreated);
   messages.addListener('view-destroyed', onViewDestroyed);
-  messages.addListener('script-selected', onScriptSeleceted);
+  messages.addListener('script-selected', onScriptSelected);
   messages.addListener('view-scrolled', onViewScrolled);
   
   
