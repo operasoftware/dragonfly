@@ -10,7 +10,7 @@ cls.ConsoleLogger["2.0"] || (cls.ConsoleLogger["2.0"] = {});
 
 /**
  * Data class for console logger
- * @constructor 
+ * @constructor
  */
 cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
 {
@@ -29,12 +29,12 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     {
       views[view].update();
     }
-  }
+  };
 
   this.addView = function(view_id)
   {
     __views[__views.length] = view_id;
-  }
+  };
 
   /**
    * Adds a log entry to the data model.
@@ -52,7 +52,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
 
     messages.post('console-message', entry);
     updateViews();
-  }
+  };
 
   /**
    * Clear the log. If source is set, clear only the entries with that source
@@ -68,7 +68,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
           toggled = [];
       }
       updateViews();
-  }
+  };
 
   /**
    * Toggle an entry. This is context sensitive.
@@ -84,7 +84,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
       else {
           toggled.splice(toggled.indexOf(logid), 1);
       }
-  }
+  };
 
   /**
    * Return all the messages. If souce is set, return only messages for
@@ -97,7 +97,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
         return msgs.filter(fun)
     }
     return msgs;
-  }
+  };
 
   /**
    * Return all the messages whose uri is the same as __selected_rt_url.
@@ -106,17 +106,17 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
   var getMessagesWithFilter = function(source)
   {
       var fun = function(e) { return e.uri == __selected_rt_url &&
-                              (!source || e.source==source)
-      }
-      return msgs.filter(fun)
-  }
+                       (!source || e.source==source);
+                     };
+      return msgs.filter(fun);
+  };
 
   this.getMessages = function(source, filter)
   {
-    return filter || settings.console.get('use-selected-runtime-as-filter') 
+    return filter || settings.console.get('use-selected-runtime-as-filter')
       ? getMessagesWithFilter(source, filter)
       : getMessagesWithoutFilter(source);
-  }
+  };
 
   this.getMessage = function(id)
   {
@@ -128,26 +128,26 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     {
       var filterFun = function(e) {
         return e.id == id;
-      }
+      };
       return msgs.filter(filterFun)[0] || null;
     }
-  }
+  };
 
   this.clearDragonflyMessages = function()
   {
     dragonfly_msgs = [];
     updateViews();
-  }
+  };
 
   this.getDragonflyMessages = function()
   {
     return dragonfly_msgs;
-  }
+  };
 
   this.getToggled = function()
   {
     return toggled;
-  }
+  };
 
   var onSettingChange = function(msg)
   {
@@ -172,26 +172,26 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
       }
 
     }
-  }
+  };
 
   var extract_title = function(description)
   {
     var parts = description.split("\n");
-    if (parts.length) 
+    if (parts.length)
     {
       return parts[0] == "Error:" ? parts[1].substr(6) : parts[0];
     }
     return "";
-  }
+  };
 
   var extract_line = function(description)
   {
-    var 
+    var
     matcher = /[lL]ine (\d*)/,
     linematch = matcher.exec(description);
 
     return linematch ? linematch[1] : null;
-  }
+  };
 
   this.bind = function()
   {
@@ -220,7 +220,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
         source: message[5],
         severity: message[6]
         });
-    }
+    };
   };
 
   messages.addListener('setting-changed', onSettingChange);
@@ -229,7 +229,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
   {
     var rt = runtimes.getRuntime(msg.id);
     __selected_rt_url = rt && rt.uri || '';
-  }
+  };
 
   messages.addListener('runtime-selected', onRuntimeSelecetd);
 };
@@ -244,7 +244,7 @@ var ErrorConsoleView = function(id, name, container_class, source)
 {
   container_class = container_class ? container_class : 'scroll error-console';
   name = name ? name : 'missing name ' + id;
-  
+
   var _expand_all_state = null;
   var _table_ele = null;
 
@@ -255,7 +255,7 @@ var ErrorConsoleView = function(id, name, container_class, source)
     var entries = error_console_data.getMessages(source);
     var expand_all = settings.console.get('expand-all-entries');
 
-    // Under these conditions, we re-render the whole thing:
+    // If there is no table, it's empty or expand state changed, render all
     if (! _table_ele || ! entries.length || expand_all != _expand_all_state)
     {
         // The expand all state thingy is to make sure we handle switching
@@ -263,12 +263,14 @@ var ErrorConsoleView = function(id, name, container_class, source)
         _expand_all_state = expand_all;
         this.renderFull(container, entries, expand_all);
     }
-    else
+    // but if not, check if there are new entries to show and just
+    // update the list with them
+    else if (_table_ele.childNodes.length-1 < entries.length)
     {
         this.renderUpdate(entries.slice(-1), expand_all);
     }
-    this.renderFull
-  }
+  };
+
 
   this.renderFull = function(container, messages, expand_all)
   {
@@ -279,7 +281,7 @@ var ErrorConsoleView = function(id, name, container_class, source)
                              );
     _table_ele = container.getElementsByTagName("table")[0];
     //container.scrollTop = container.scrollHeight;
-  }
+  };
 
   this.renderUpdate = function(entries, expandAll)
   {
@@ -287,19 +289,19 @@ var ErrorConsoleView = function(id, name, container_class, source)
     {
         _table_ele.render(templates.error_log_row(cur, expandAll, error_console_data.getToggled(), this.id));
     }
-  }
+  };
 
   this.ondestroy = function() {
     delete _table_ele;
     _table_ele = null;
-  }
+  };
 
   this.init(id, name, container_class );
-}
+};
 
 ErrorConsoleView.prototype = ViewBase;
 
-ErrorConsoleView.roughViews = 
+ErrorConsoleView.roughViews =
 [
   {
     id: 'console-all',
@@ -372,7 +374,7 @@ ErrorConsoleView.roughViews.bindClearSource = function(source)
   return function(event, target)
   {
     error_console_data.clear(source);
-  }
+  };
 }
 
 ErrorConsoleView.roughViews.createViews = function()
@@ -424,31 +426,31 @@ ErrorConsoleView.roughViews.createViews = function()
           textSearch.setContainer(msg.container);
           textSearch.setFormInput(views.console.getToolbarControl( msg.container, 'console-text-search-' + view_id));
         }
-      }
-    
+      };
+
       var onViewDestroyed = function(msg)
       {
         if( msg.id == view_id )
         {
           textSearch.cleanup();
         }
-      }
-    
+      };
+
       messages.addListener('view-created', onViewCreated);
       messages.addListener('view-destroyed', onViewDestroyed);
-    
+
       eventHandlers.input['console-text-search-'+ view_id] = function(event, target)
       {
         textSearch.searchDelayed(target.value);
-      }
-    
+      };
+
       eventHandlers.keypress['console-text-search-'+ view_id] = function(event, target)
       {
         if( event.keyCode == 13 )
         {
           textSearch.highlight();
         }
-      }
+      };
     })();
 
   }
@@ -458,7 +460,7 @@ ErrorConsoleView.roughViews.createViews = function()
 
 /**
  * View class for the error console
- * @constructor 
+ * @constructor
  * @extends ViewBase
  */
 cls.ConsoleDragonflyView = function(id, name, container_class)
@@ -467,9 +469,9 @@ cls.ConsoleDragonflyView = function(id, name, container_class)
   {
     container.clearAndRender(templates.error_log_messages(error_console_data.getDragonflyMessages()));
     container.scrollTop = container.scrollHeight;
-  }
+  };
   this.init(id, name, container_class );
-}
+};
 
 cls.ConsoleDragonflyView.prototype = ViewBase;
 
@@ -501,7 +503,7 @@ eventHandlers.click['error-log-list-expand-collapse'] = function(event, target)
         target.swapClass("expanded", "collapsed");
     }
     else
-    {   
+    {
         var entry = error_console_data.getMessage(logid);
         var row = document.render(templates.error_log_detail_row(entry));
         target.parentNode.insertAfter(row, target);
@@ -512,7 +514,7 @@ eventHandlers.click['error-log-list-expand-collapse'] = function(event, target)
 
 
 /**
-  * @constructor 
+  * @constructor
   * @extends ViewBase
   * General view to get general console setting.
   */
@@ -521,9 +523,9 @@ cls.ConsoleView = function(id, name, container_class)
   this.ishidden_in_menu = true;
   this.createView = function(container)
   {
-  }
+  };
   this.init(id, name, container_class);
-}
+};
 
 cls.ConsoleView.prototype = ViewBase;
 
@@ -531,13 +533,13 @@ new cls.ConsoleView('console', ui_strings.M_VIEW_LABEL_CONSOLE, 'scroll');
 
 new Settings
 (
-  // id 
-  'console', 
+  // id
+  'console',
   // key-value map
   {
-    'console-all': true, 
-    'console-script': true, 
-    'console-css': true, 
+    'console-all': true,
+    'console-script': true,
+    'console-css': true,
     'console-xml': false,
     'console-java': false,
     'console-m2': false,
@@ -551,12 +553,12 @@ new Settings
     'console-dragonfly': false,
     'use-selected-runtime-as-filter': false,
     'expand-all-entries': false
-  }, 
+  },
   // key-label map
   {
-    'console-all': ui_strings.S_SWITCH_SHOW_TAB_ALL, 
-    'console-script': ui_strings.S_SWITCH_SHOW_TAB_SCRIPT, 
-    'console-css': ui_strings.S_SWITCH_SHOW_TAB_CSS, 
+    'console-all': ui_strings.S_SWITCH_SHOW_TAB_ALL,
+    'console-script': ui_strings.S_SWITCH_SHOW_TAB_SCRIPT,
+    'console-css': ui_strings.S_SWITCH_SHOW_TAB_CSS,
     'console-xml': ui_strings.S_SWITCH_SHOW_TAB_XML,
     'console-java': ui_strings.S_SWITCH_SHOW_TAB_JAVA,
     'console-m2': ui_strings.S_SWITCH_SHOW_TAB_M2,
@@ -570,14 +572,14 @@ new Settings
     'console-dragonfly': ui_strings.S_SWITCH_SHOW_TAB_DRAGONFLY,
     'use-selected-runtime-as-filter': ' use selected runtime as filter', // Not in use!
     'expand-all-entries': ui_strings.S_SWITCH_EXPAND_ALL
-}, 
+},
   // settings map
   {
     checkboxes:
     [
-      'console-all', 
-      'console-script', 
-      'console-css', 
+      'console-all',
+      'console-script',
+      'console-css',
       'console-xml',
       'console-java',
       'console-m2',

@@ -14,6 +14,7 @@ cls.ColorPicker = function(id, name, container_class)
   this.display_screenshot = function(){};
   this.set_screenshot_dimension = function(json_object){};
   this.set_scale = function(scale){};
+  this.reset_default_values = function(){};
   this.pick_color = function(event, target){};
   this.set_average_dimension = function(average){};
   this.get_average_dimension = function(){};
@@ -240,6 +241,11 @@ cls.ColorPicker = function(id, name, container_class)
       this._container.innerHTML = "";
       this.createView(this._container);
     }
+  }
+
+  this.reset_default_values = function()
+  {
+    this.set_scale(15);
   }
 
   this.pick_color = function(event, target)

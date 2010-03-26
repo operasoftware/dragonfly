@@ -17,7 +17,10 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
   HTML_FRAME_PATH = 1,
   WINDOW_ID = 2,
   OBJECT_ID = 3,
-  URI = 4;
+  URI = 4,
+  THREAD_STARTED = 0,
+  THREAD_STOPPED_AT = 1,
+  THREAD_FINISHED = 2;
 
   var __runtimes = {};
 
@@ -434,33 +437,60 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     return ( script_count++ ).toString();
   }
 
-  var log_thread = function(xml, rt_id, thread_id)
+  var log_thread = function(type, message, rt_id, thread_id)
   {
-    var event_map =
+
+    const 
+    THREAD_TYPE = 3, 
+    PARENT_THREAD_ID = 2,
+    STATUS = 2,
+    SCRIPT_ID = 2,
+    LINE_NUMBER = 3,
+    STOPPED_REASON = 4,
+    INDENT = "  ",
+    NL = '\n',
+    EVENT_TYPES = ['thread started', 'thread stopped', 'thread finished'];
+
+    var log = [EVENT_TYPES[type], ':', NL];
+
+    if (runtime_stoped_queue.length)
     {
-       'thread-started': ['thread-type', 'parent-thread-id'],
-       'thread-finished': ['status'],
-       'thread-stopped-at': ['script-id', 'line-number', 'stopped-reason']
-    };
-    var thread = __threads[__threads.length] = 
-    {
-      stoped_at_queue: runtime_stoped_queue.slice(0),
-      rt_id: rt_id,
-      thread_id: thread_id
-    };
-    var type = thread.event_type = xml.documentElement.nodeName, key = '', i = 0;
-    for( ; key = event_map[type][i]; i++)
-    {
-      thread[key] = xml.getNodeData(key);
+      log.push(INDENT, runtime_stoped_queue.join(' '));
     }
+    log.push(INDENT, 'runtime id: ', rt_id, NL);
+    log.push(INDENT, 'thread id: ', thread_id, NL);
+    /*
     thread.threads = [];
     for( i = 0; key = __runtimes_arr[i]; i++ )
     {
-      if( key in current_threads && current_threads[key].length )
+      if (cur in current_threads && current_threads[cur].length )
       {
-        thread.threads[thread.threads.length] = [key].concat( current_threads[key] );
+        thread.threads[thread.threads.length] = [cur].concat(current_threads[cur]);
       }
     }
+    */
+    switch (type)
+    {
+      case THREAD_STARTED:
+      {
+        log.push(INDENT, 'parent thread id: ', message[PARENT_THREAD_ID], NL);
+        log.push(INDENT, 'thread type: ', message[THREAD_TYPE], NL);
+        break;
+      }
+      case THREAD_STOPPED_AT:
+      {
+        log.push(INDENT, 'script id: ', message[SCRIPT_ID], NL);
+        log.push(INDENT, 'line number: ', message[LINE_NUMBER], NL);
+        log.push(INDENT, 'stopped reason: ', message[STOPPED_REASON], NL);
+        break;
+      }
+      case THREAD_FINISHED:
+      {
+        log.push(INDENT, 'status: ', message[STATUS], NL);
+        break;
+      }
+    }
+    __threads.push(log.join(''));
   }
 
   var onSettingChange = function(msg)
@@ -485,10 +515,9 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
 
   }
 
-  var onApplicationSetup = function(msg)
+  var on_services_created = function(msg)
   {
-    __old_selected_window = settings.runtimes.get('selected-window');
-
+    __log_threads = window.settings['threads'].get('log-threads');
   }
 
   this.setActiveWindowId = function(window_id)
@@ -770,7 +799,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       }
       if( __log_threads )
       {
-        log_thread(xml, rt_id, id);
+        log_thread(THREAD_STARTED, message, rt_id, id);
         views.threads.update();
       }
     }
@@ -814,15 +843,15 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
         stoped_threads[rt_id] = message;
         runtime_stoped_queue[runtime_stoped_queue.length] = rt_id;
       }
-      if( __log_threads )
-      {
-        log_thread(xml, rt_id, thread_id);
-        views.threads.update();
-      }
     }
     else
     {
       services['ecmascript-debugger'].continue_run(rt_id, thread_id);
+    }
+    if (__log_threads)
+    {
+      log_thread(THREAD_STOPPED_AT, message, rt_id, thread_id);
+      views.threads.update();
     }
   }
 
@@ -852,7 +881,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       }
       if( __log_threads )
       {
-        log_thread(message, rt_id, thread_id);
+        log_thread(THREAD_FINISHED, message, rt_id, thread_id);
         views.threads.update();
       }
     }
@@ -1246,11 +1275,13 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
   messages.addListener('host-state', onHostStateChange);
   messages.addListener('setting-changed', onSettingChange);
   messages.addListener('active-tab', onActiveTab);
-  messages.addListener('application-setup', onApplicationSetup);
+  
 
   messages.addListener('reset-state', onResetState);
 
-  messages.addListener('window-updated', _on_window_updated)
+  messages.addListener('window-updated', _on_window_updated);
+
+  window.app.addListener('services-created', on_services_created);
 
   this.bind = function(ecma_debugger)
   {
