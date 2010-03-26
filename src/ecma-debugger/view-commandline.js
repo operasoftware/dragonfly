@@ -133,7 +133,15 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
           {
             case 'string':
             {
-              value = '"' + value + '"';
+              var delimiter = "\"";
+              // Escape ' and " Python command line interpreter style
+              if (value.indexOf("\"") != -1) {
+                delimiter = "'";
+                if (value.indexOf("'") != -1) {
+                  value = value.replace(/'/g, "\\'");
+                }
+              }
+              value = delimiter + value + delimiter;
               break;
             }
             case 'null':
