@@ -32,7 +32,6 @@ cls.RequestListView = function(id, name, container_class)
      **/
     this.createView = function(container)
     {
-//        opera.postError("rawr")
         if (lastUpdateTime &&
             (new Date().getTime() - lastUpdateTime) < this.minUpdateInterval) {
             // Haven't waited long enough, so do nothing, but queue it for
@@ -40,7 +39,8 @@ cls.RequestListView = function(id, name, container_class)
             if (!updateTimer) {
                 updateTimer = window.setTimeout(
                         function() { self.createView(container) },
-                        this.minUpdateInterval);
+                        this.minUpdateInterval
+		);
             }
             return;
         }
@@ -108,7 +108,8 @@ cls.RequestListView = function(id, name, container_class)
             var data = window.templates.request_list_row(e, expandedItems,
                                                          firstTime, lastTime,
                                                          viewMap,
-                                                         isFirst&log.length>1);
+                                                         isFirst&log.length>1,
+                                                         settings.request_list.get('clear-log-on-runtime-switch'));
             isFirst = false;
             return data;
         };
@@ -193,7 +194,6 @@ cls.RequestListView = function(id, name, container_class)
             var row = this._getRowForId(id).nextSibling;
             row.scrollSoftIntoContainerView();
         }
-
     };
 
     this.selectDetailView = function(id, name) {
