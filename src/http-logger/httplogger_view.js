@@ -32,6 +32,7 @@ cls.RequestListView = function(id, name, container_class)
      **/
     this.createView = function(container)
     {
+//        opera.postError("rawr")
         if (lastUpdateTime &&
             (new Date().getTime() - lastUpdateTime) < this.minUpdateInterval) {
             // Haven't waited long enough, so do nothing, but queue it for
@@ -238,6 +239,35 @@ cls.RequestListView.create_ui_widgets = function()
         }
       ]
     );
+
+    new Settings
+    (
+        // id
+        'request_list',
+        // key-value map
+        {
+            'clear-log-on-runtime-switch': true
+        },
+        // key-label map
+        {
+            'clear-log-on-runtime-switch': ui_strings.S_SWITCH_CLEAR_REQUESTS_ON_NEW_CONTEXT
+        },
+        // settings map
+        {
+            checkboxes:
+            [
+                'clear-log-on-runtime-switch'
+            ]
+        }
+    );
+
+    new Switches
+    (
+        'request_list',
+        [
+            'clear-log-on-runtime-switch'
+        ]
+    );
 };
 
 cls.RequestListView.prototype = ViewBase;
@@ -252,7 +282,7 @@ eventHandlers.click['request-list-expand-collapse'] = function(event, target)
 eventHandlers.click['select-http-detail-view'] = function(event, target)
 {
     window.views['request_list'].selectDetailView(parseInt(target.getAttribute("data-requestid")),
-      target.getAttribute("data-viewname"));
+    target.getAttribute("data-viewname"));
 };
 
 eventHandlers.click['clear-request-list'] = function(event, target)

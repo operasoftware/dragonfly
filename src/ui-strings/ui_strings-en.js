@@ -216,6 +216,8 @@ ui_strings.S_SWITCH_SHOW_ECMA_ERRORS_IN_COMMAND_LINE = "Show ECMA Script Errors 
 ui_strings.S_SWITCH_EXPAND_ALL = 'Expand all';
 /* DESC: Draw a border on to selected DOM elements */
 ui_strings.S_SWITCH_LOCK_SELECTED_ELEMENTS = "Draw a border on to selected elements";
+/* DESC: Switch for controlling if the request log is cleared whenever a new site is loaded */
+ui_strings.S_SWITCH_CLEAR_REQUESTS_ON_NEW_CONTEXT = "Clear request log when loading a new site";
 
 
 /*
