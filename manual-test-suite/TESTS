@@ -6,8 +6,7 @@ DOM.DOM
 url: 
   http://dev.opera.com
 
-label: 
-  Expand all nodes
+label: Expand all nodes
 desc: 
   - Press the Expand button.
   - Verify that the whole document tree is displayed.

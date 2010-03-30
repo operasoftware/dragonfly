@@ -4,9 +4,10 @@ import os, sys
 import cgitb
 cgitb.enable()
 
-sys.path.insert(0, "test.py")
+# set the path to the app repo
+# sys.path.insert(0, "<path tpo app repo>")
 
-from test import application
+from dftests import application
 
 def run_with_cgi(application):
 
@@ -28,7 +29,7 @@ def run_with_cgi(application):
 
     def write(data):
         if not headers_set:
-             raise AssertionError("write() before start_response()")
+             raise AssertionError("write() before start_response()\n data: " + data)
 
         elif not headers_sent:
              # Before the first output, send the stored headers
