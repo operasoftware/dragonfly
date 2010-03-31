@@ -6,16 +6,19 @@ DOM.DOM
 url: 
   http://dev.opera.com
 
+id: 1
 label: Expand all nodes
 desc: 
   - Press the Expand button.
   - Verify that the whole document tree is displayed.
 
+id: 2
 label: Export 
 desc: 
   - Press the Export button.
   - Verify that the current view is displayed in a new tab.
 
+id: 3
 label: Find with click
 desc: 
   - Turn the 'Find element' switch on.
@@ -23,6 +26,7 @@ desc:
   - Verify that the DOM view is updated with the clicked element as target. 
   - Verify that the feature can be turned off.
 
+id: 4
 label: Highlight elements
 desc: 
   - Turn the 'Highlight 'switch on.
@@ -32,6 +36,7 @@ desc:
   - Verify that the according element is highlighted in the host.
   - Verify that the feature can be turned off.
 
+id: 5
 label: Update DOM on node remove
 desc: 
   - Turn the 'Update DOM' switch on.
@@ -39,6 +44,7 @@ desc:
   - Verify that the DOM view is updated. 
   - Verify that the feature can be turned off.
 
+id: 6
 label: Select multiple elements
 desc: 
   - Turn the 'Draw border' switch on.
@@ -46,11 +52,13 @@ desc:
   - Verify that all clicked elements keep a border. 
   - Verify that the feature can be turned off.
 
+id: 7
 label: Dropdown settings, comment nodes
 desc: 
   - Select and unselect 'Show comment nodes'.
   - Verify that the DOM view is updated accordingly.
 
+id: 8
 label: Dropdown settings, white space nodes
 desc:
   - Select 'Show DOM tree view'
@@ -58,24 +66,28 @@ desc:
   - Verify that the DOM view is updated accordingly 
   (pure white space nodes are escaped, e.g. a space is dispaled as \u0020).
 
+id: 9
 label: Dropdown settings, tree view
 desc: 
   - Select and unselect 'Show DOM tree view'.
   - Verify that the view displays the DOM accordingly.
 
 url: http://nzz.ch
+id: 10
 label: Document select
 desc:
   - Select a document with (i)frames
   - Verify that you can select each document in the dropdown.
 
 url: http://dev.opera.com
+id: 11
 label: Search document
 desc:
   - Search for a term in the search box
   - Verify that the count of all hits is displayed in the status bar.
   - Verify that the view navigates to the next hit on enter.
 
+id: 12
 label: Edit attributes
 desc:
   - Double click an attribute
@@ -86,6 +98,7 @@ desc:
   - Verify that tab moves to the next attribute
   - Verify that at the end of a tag an empty field is shown to add a new attribute.
 
+id: 13
 label: Edit markup
 desc:
   - Double click a tag name
@@ -93,6 +106,7 @@ desc:
   - Verify that the changes apply instantly in the host.
   - Verify that you can remove and edit also the body and html element.
 
+id: 14
 label: Keyboard navigation
 desc:
   - Click somewhere in the DOM view to focus the pane.
@@ -106,17 +120,20 @@ DOM.Styles
 
 url: http://dev.opera.com
 
+id: 15
 label: Matching style rules
 desc: 
   - unfold Computed Styles and Styles
   - select some elements in the DOM
   - Verify that the styles are updated
 
+id: 16
 label: Hide initial value
 desc:
   - Select and unselect the 'Hide initial value' switch
   - Verify that the Computed Style section is updated accordingly
 
+id: 17
 label: Hide shorthands
 desc:
   - Select and unselect the 'Hide shorthands' switch
@@ -124,6 +141,7 @@ desc:
     e.g. if the switch is unchecked there must be an additional 
     border, border-left, border-top, border-right and border-bottom rule.
 
+id: 18
 label: Search
 desc:
   - Expand both sections, Computed Styles and Styles
@@ -137,21 +155,25 @@ DOM.Properties
 
 url: http://dev.opera.com
 
+id: 19
 label: Update view
 desc: 
   - Select some elements in the DOM
   - Verify that the view is updated accordingly
 
+id: 20
 label: Unfold properties
 desc:
   - Select an element in the DOM
   - Verify that properties can be folded and unfolded
 
+id: 21
 label: Hide empty strings
 desc:
   - Select and unselect the 'Hide empty strings' switch
   - Verify that the view is updated accordingly, e.g. that values which are empty strings, 0 or null are displayed or hidden.
   
+id: 22
 label: Search
 desc:
   - Search for some term
@@ -161,12 +183,14 @@ desc:
 DOM.Layout
 **********
 
+id: 23
 label: Highlight boxes
 desc:
   - Select an element in the DOM
   - Hover the different boxes in the Metrics view
   - Verify that the according box is highlighted on the lement in the host
 
+id: 24
 label: Parent Offsets
 desc:
   - Select some elements in the DOM
@@ -174,6 +198,7 @@ desc:
     Each parent offset must stand out in the parent node chain. 
   - Verify that also the offset values are updated accordingly
 
+id: 25
 label: Parent Offsets hover
 desc:
   - Select some elements in the DOM
@@ -185,6 +210,7 @@ Statusbar
 
 url: http://aleto.ch
 
+id: 26
 label: Status info
 desc:
   - Select some elements in the DOM
@@ -192,6 +218,7 @@ desc:
   - Serach for some tokens.
   - Verify that the statusbar is updated with the matching count
 
+id: 27
 label: Breadcrumb navigation
 desc:
   - Select some elements in the DOM
@@ -199,6 +226,7 @@ desc:
   - Verify that elements are selected on click in the host and in the DOM.
 
 url: http://nzz.ch
+id: 28
 label: Toggle long breadcrumbs
 desc: 
   - Select a deep nested element in the document so that the breadcrumb is shortened, 
@@ -206,6 +234,7 @@ desc:
   - Verify taht you can expand and collaps the breadcrump with the small toggle icon 
     to the right of the status icon.
 
+id: 29
 label: Connection status
 desc:
   - Set a breakpoint on line 18 oo scrollFolders.js
@@ -217,6 +246,7 @@ Scripts.Source
 **************
 
 url: ./test-cases/scripts-source/index.html
+id: 30
 label: Reload button
 desc:
   - Go to the above url
@@ -226,6 +256,7 @@ desc:
   - Verify that you get 3 scripts in the dropdown and that you can select each of them.
 
 url: ./test-cases/scripts-source/callstack.html
+id: 31
 label: Set breakpoint
 desc: 
   - Set a breakpoint on line 4, 'var aa = 1;'.
@@ -234,6 +265,7 @@ desc:
   - Verify that the engine stops on line 4, e.g that the script is displayed 
     and that an arrow points to the breakpoint
 
+id: 32
 label: Remove breakpoint
 desc: 
   - Remove the previous set breakpoint on line 4, 'var aa = 1;'.
@@ -241,6 +273,7 @@ desc:
   - Press the 'e()' button
   - Verify that the engine does not stops on line 4 and that no arrow is displayed on that line.
 
+id: 33
 label: Breakpoint, Continue
 desc: 
   - Set a breakpoint on line 4, 'var aa = 1;'.
@@ -250,10 +283,12 @@ desc:
   - Verify that that the stopped pointer arrow disappears and that the button gets disabled.
   - Repeat several times and verify that it always works as described above.
 
+id: 34
 label: Breakpoint, Continue with keyboard
 desc: 
   - The same as the previous test, but use the F8 key instead the mouse.
 
+id: 35
 label: Breakpoint, Step into
 desc: 
   - Set a breakpoint on line 23, 'var ee = 1;'.
@@ -264,10 +299,12 @@ desc:
     e.g. arrives at some point at 'var aa = 1;' and 
     finishes one call after the other.
 
+id: 36
 label: Breakpoint, Step into with keyboard
 desc: 
   - The same as the previous test, but use the F11 key instead the mouse.
 
+id: 37
 label: Breakpoint, Step Over
 desc: 
   - Set a breakpoint on line 23, 'var ee = 1;'.
@@ -277,11 +314,13 @@ desc:
   - Now press the 'Step Over' button.
   - Verify that engine stops right after 'c()' and does not follow the execution flow of 'c()'.
 
+id: 38
 label: Breakpoint, Step Over with keyboard
 desc: 
   - The same as the previous test, but use the F11 and F10 key instead the mouse.
 
 
+id: 39
 label: Breakpoint, Step Out
 desc: 
   - Set a breakpoint on line 4, 'var aa = 1;'.
@@ -290,11 +329,13 @@ desc:
   - Now press the 'Step Out' button continuously.
   - Verify that the engine stops at 'c()', then 'd()' and then finishes.
 
+id: 40
 label: Breakpoint, Step Out with keyboard
 desc: 
   - The same as the previous test, but use the F11 and Shift-F11 key instead the mouse.
 
 url: ./test-cases/scripts-source/index.html
+id: 41
 label: Stop at new script
 desc:
   - Open Dragonfly
@@ -304,6 +345,7 @@ desc:
   - Verify that the setting can be turned off.
 
 url: ./test-cases/scripts-source/parse-error.html
+id: 42
 label: Parse error
 desc:
   - Open Dragonfly
@@ -317,6 +359,7 @@ desc:
   - Verify that the setting can be turned off.
 
 url: http://aleto.ch
+id: 43
 label: Log threads
 desc:
   - Turn the 'Log threads' switch on.
@@ -324,6 +367,7 @@ desc:
   - Hover over the document of the above url
   - Verify that all threads are logged.
 
+id: 44
 label: Search
 desc:
   - Search for e.g. 'default'.
@@ -334,6 +378,7 @@ desc:
 Scripts.Call Stack
 ******************
 
+id: 45
 label: Set breakpoint, Callstack
 url: ./test-cases/scripts-source/callstack.html
 desc: 
@@ -347,6 +392,7 @@ desc:
 Scripts.Inspection
 ******************
 
+id: 46
 label: Hide default properties
 desc:
   - Do 'dir(window)' in the command line.
@@ -357,6 +403,7 @@ Scripts.Command Line
 ********************
 
 url: ./test-cases/scripts-source/callstack.html
+id: 47
 label: Autosuggest
 desc:
   - Set a breakpoint on line 23, 'var ee = 1;'.
@@ -370,11 +417,13 @@ desc:
   - Start to write something after the dot and hit tab again.
   - Verify that the property gets completed with all matches.
 
+id: 48
 label: History navigation.
 desc:
   - Use the up and down arrows.
   - Verify that you get all previous submitted lines. 
 
+id: 49
 label: Object links.
 desc:
   - Type e.g. 'this' and hit enter.
@@ -382,6 +431,7 @@ desc:
   - Click the link.
   - Verify that 
 
+id: 50
 label: Built-in commands
 desc:
   - Create some entries and type clear().
@@ -394,6 +444,7 @@ Network.Request Log
 
 url: ./test-cases/network/index.html
 
+id: 51
 label: Request table
 desc:
   - Go to the url above
@@ -401,11 +452,13 @@ desc:
   - Reload the document
   - Verify that the table still makes sense
 
+id: 52
 label: Request and response detail
 desc:
   - Expand some of the entries
   - Verify that the info in 'Summary', 'Headers' and 'Raw' makes sense
 
+id: 53
 label: Clear log
 desc:
   - Press the 'Clear log' button
@@ -418,17 +471,20 @@ url: ./test-cases/storages/create-storages.html
 
 url: ./test-cases/storages/check-storages.html
 
+id: 54
 label: Inspect cookies
 desc:
   - Go to the above url in the above order
   - Verify that you see cookie a - j
 
+id: 55
 label: Delete cookies
 desc:
   - Delete some of the cookies
   - Reload the document
   - Verify that the deleted cookies are gone.
 
+id: 56
 label: Edit cookies
 desc:
   - Double click some of the cookie values.
@@ -436,12 +492,14 @@ desc:
   - Reload the document
   - Verify that the values still are changed
 
+id: 57
 label: Delete all cookies
 desc:
   - Press the 'Delete all' button
   - Reload the document.
   - Verify that all cookies are gone.
 
+id: 58
 label: Add new cookies
 desc:
   - Press the add button
@@ -452,17 +510,20 @@ desc:
 Storage.Local Storage
 *********************
 
+id: 59
 label: Inspect local storage
 desc:
   - Go to the above url in the above order
   - Verify that you see local storage item a - j
 
+id: 60
 label: Delete local storage items
 desc:
   - Delete some of the local storage items
   - Reload the document
   - Verify that the deleted items are gone.
 
+id: 61
 label: Edit local storage items
 desc:
   - Double click some of the item values.
@@ -470,12 +531,14 @@ desc:
   - Reload the document
   - Verify that the values still are changed
 
+id: 62
 label: Delete all local storage items
 desc:
   - Press the 'Delete all' button
   - Reload the document.
   - Verify that all local storage items are gone.
 
+id: 63
 label: Add new local storage items
 desc:
   - Press the add button
@@ -486,17 +549,20 @@ desc:
 Storage.Session Storage
 *********************
 
+id: 64
 label: Inspect session storage
 desc:
   - Go to the above url in the above order
   - Verify that you see session storage item a - j
 
+id: 65
 label: Delete session storage items
 desc:
   - Delete some of the session storage items
   - Reload the document
   - Verify that the deleted items are gone.
 
+id: 66
 label: Edit session storage items
 desc:
   - Double click some of the item values.
@@ -504,12 +570,14 @@ desc:
   - Reload the document
   - Verify that the values still are changed
 
+id: 67
 label: Delete all session storage items
 desc:
   - Press the 'Delete all' button
   - Reload the document.
   - Verify that all session storage items are gone.
 
+id: 68
 label: Add new session storage items
 desc:
   - Press the add button
@@ -524,6 +592,7 @@ Error Console.All Console.JavaScript Console.CSS
 
 url: ./test-cases/error-console/error.html
 
+id: 69
 label: Inspect errors
 desc:
   - Go to the url above
@@ -532,12 +601,14 @@ desc:
   - Verify that only the js error is in the JavaScript pane 
   - Verify that only the css error is in the CSS pane 
 
+id: 70
 label: Clear log
 desc:
   - Press the 'Clear Log' button
   - Verify that the log is cleared
   - Verify that in the 'All', 'JavaScript' and 'CSS' pane.
 
+id: 71
 label: Expand all
 desc:
   - Select and unselect the 'Expand all' switch
@@ -549,6 +620,7 @@ Utilities.Color Picker
 
 url: http://www.nzz.ch
 
+id: 72
 label: Pixel Magnifier
 desc:
   - Hover over the page
@@ -562,6 +634,7 @@ desc:
   - Press the 'Reset default values' button.
   - Verify that the values and the screenshot area are reset.
 
+id: 73
 label: Color Picker
 desc: 
   - Select an image
@@ -571,6 +644,7 @@ desc:
   - Click again in the screenshot.
   - Verify that the average color is updated accordingly.
 
+id: 74
 label: Store colors
 desc:
   - Select some colors and store them.
@@ -583,12 +657,14 @@ desc:
 Settings.Settings
 *****************
 
+id: 75
 label: Expand sections
 desc:
   - Expand all the sections
   - Verify that the sections display additional info and settings
 
 
+id: 76
 label: Remote debug
 desc:
   - Start Dragonfly with the Opera built-in proxy
@@ -602,6 +678,7 @@ desc:
   - Verify that reconnecting to a remote Opera instance always works.
 
 
+id: 77
 label: Host highlight
 desc:
   - Expand 'Spotlight' and expand 'Advanced'
@@ -615,11 +692,13 @@ desc:
 General
 *******
 
+id: 78
 label: Dock and undock
 desc:
   - Dock and undock the Dragonfly window
   - Verify that all views have still the same information.
 
+id: 79
 label: Dragonfly menu
 desc:
   - Verify that 'Reload Debug Context' works

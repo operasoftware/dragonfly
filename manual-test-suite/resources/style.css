@@ -7,6 +7,17 @@ h1
 {
   font-weight: normal;
 }
+.legend-missing:before
+{
+  content: "";
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  margin-right: 8px;
+  background-color: hsl(0, 100%, 85%);
+  vertical-align: middle;
+
+}
 table
 {
   border-collapse: collapse;
@@ -14,6 +25,22 @@ table
 tr:nth-child(odd)
 {
   background-color: hsl(0, 0%, 95%);
+}
+.submitted td
+{
+  opacity: .3;
+}
+.missing td:nth-child(2)
+{
+  background-color: hsl(0, 100%, 85%);
+}
+.pass td:nth-child(2)
+{
+  background-color: hsl(120, 100%, 85%);
+}
+.fail td:nth-child(2)
+{
+  background-color: hsl(0, 100%, 85%);
 }
 th
 {
