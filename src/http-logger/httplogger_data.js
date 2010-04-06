@@ -166,9 +166,9 @@ window.HTTPLoggerData = new function()
             activeRuntime=id;
         } else if (id != activeRuntime) {
             activeRuntime=id;
-	    if (settings.request_list.get('clear-log-on-runtime-switch')) {
-		this.clearLogAllButLast();
-	    }
+          if (settings.request_list.get('clear-log-on-runtime-switch')) {
+            this.clearLogAllButLast();
+          }
         } else {
             //All is well. Same runtime as last time we checked.
         }
