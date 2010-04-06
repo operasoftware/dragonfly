@@ -5,7 +5,7 @@ import cgitb
 cgitb.enable()
 
 # set the path to the app repo
-# sys.path.insert(0, "<path tpo app repo>")
+# sys.path.insert(0, "<path to app repo>")
 
 from dftests import application
 

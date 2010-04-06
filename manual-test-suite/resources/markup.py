@@ -29,10 +29,7 @@ TEST_FORM = """\
 
 FORM = """<form method="POST" action="./submit-form">"""
 
-
-LEGEND_MISSING = """
-<p class="legend-missing"> missing entries
-"""
+LEGEND_MISSING = """<p class="legend-missing"> missing entries"""
 
 TR_TESTER_AND_CHANGESET_FORM = """
 <tr><td><td>tester: <td colspan="2" class="input"><input name="tester"></tr>
@@ -45,7 +42,11 @@ TR_TESTER_AND_CHANGESET = """
 """
 
 TR_VALUE_CHECK = """
-<tr class="%s"><td><td>%s: <td colspan="2" class="input"><input name="%s"%s>%s</tr>
+<tr class="%s">
+    <td>
+    <td>%s: 
+    <td colspan="2" class="input"><input name="%s"%s>%s
+</tr>
 """
 
 VALUE_DISABLED = """ value="%s" disabled"""

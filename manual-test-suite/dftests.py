@@ -13,11 +13,13 @@ TESTS = os.path.join(APP_ROOT, "TESTS")
 ID_COUNT = os.path.join(APP_ROOT, 'storage', 'ID_COUNT')
 IDS = os.path.join(APP_ROOT, 'storage', 'IDS')
 
-# debug_log = open('debug.log', 'a')
+debug_log = open('D:\\bitbucket\\dragonfly-manual-test-suite\\debug.log', 'a')
+
 
 if sys.platform == "win32":
     import os, msvcrt
     msvcrt.setmode(sys.stdout.fileno(), os.O_BINARY)
+    msvcrt.setmode(sys.stderr.fileno(), os.O_BINARY)
 
 class Entry(object):
     def __init__(self):
@@ -77,13 +79,13 @@ def write_tester_changeset(missing, submitted):
                 key, 
                 VALUE_DISABLED % submitted[key],
                 INPUT_HIDDEN % (key, submitted[key])
-            ))
+                )
+            )
         else:
             ret.append(TR_VALUE_CHECK % ("missing", key, key, "", ""))
 
     return "".join(ret)
     
-
 def write_index_missing(missing, submitted):
     entries = []
     tests = parse_tests()
@@ -185,23 +187,26 @@ def serve_test_form(environ, start_response):
     start_response(status, response_headers)
     if not check_test_index():
         add_ids_test_index()
-    script_repo = environ['SCRIPT_NAME'][0:environ['SCRIPT_NAME'].rfind("/")]
+    
+    script_repo = environ['SCRIPT_NAME'] 
     doc = [TEST_FORM % (script_repo, script_repo, "", FORM), TR_TESTER_AND_CHANGESET_FORM]
     doc.extend(write_index())
     doc.append(TEST_FORM_END)
     return doc
 
-def submit_form(environ, start_response):
+def check_submitted_form(environ, start_response):
     raw_content = environ["wsgi.input"].read()
     submitted = dict([item.split('=') for item in raw_content.split('&')])
     missing = filter(lambda id: not id in submitted or not submitted[id], get_ids())
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
     start_response(status, response_headers)
-    script_repo = environ['SCRIPT_NAME'][0:environ['SCRIPT_NAME'].rfind("/")]
+    script_repo = environ['SCRIPT_NAME']
     if missing:
-        doc = [TEST_FORM % (script_repo, script_repo, LEGEND_MISSING, FORM), 
-                    write_tester_changeset(missing, submitted)]
+        doc = [
+            TEST_FORM % (script_repo, script_repo, LEGEND_MISSING, FORM), 
+            write_tester_changeset(missing, submitted)
+        ]
         doc.extend(write_index_missing(missing, submitted))
         doc.append(TEST_FORM_END)
     else:
@@ -209,7 +214,7 @@ def submit_form(environ, start_response):
         doc = [
             TEST_FORM % (script_repo, script_repo, "", ""), 
             TR_TESTER_AND_CHANGESET % (submitted["tester"], submitted["changeset"])
-            ]
+        ]
         doc.extend(write_protocol(protocol))
         doc.append(TEST_END)
     return doc
@@ -264,41 +269,34 @@ def serve_protocol(environ, start_response):
     start_response(status, response_headers)
     protocol_path = os.path.join(APP_ROOT, 'storage', environ['PATH_INFO'].split("/")[2])
     protocol = parse_protocol(protocol_path)
-    script_repo = environ['SCRIPT_NAME'][0:environ['SCRIPT_NAME'].rfind("/")]
+    script_repo = environ['SCRIPT_NAME']
     doc = [
         TEST_FORM % (script_repo, script_repo, "", ""), 
         TR_TESTER_AND_CHANGESET % (protocol["tester"], protocol["changeset"])
-        ]
+    ]
     doc.extend(write_protocol(protocol))
     doc.append(TEST_END)
     return doc
 
-
-def not_supported(environ, start_response):
+def not_supported_method(environ, start_response):
     status = '200 OK'
     response_headers = [('Content-type', 'text/plain')]
     start_response(status, response_headers)
     return ['not a supported method: %s' % environ['PATH_INFO']]
 
-handlers = {
-    "/": serve_index,
-    "/test-form": serve_test_form,
-    "/submit-form": submit_form,
-    "/protocols": serve_protocols,
-    "/show_protocol": serve_protocol
-}
-
 def application(environ, start_response):
-    if not "PATH_INFO" in environ:
-        return redirect_with_trilling_slash(environ, start_response)
-    handler = environ['PATH_INFO']
-    if handler.count("/") > 1:
-        handler = handler[0: handler.find("/", 1)]
-    if handler in handlers: 
-        return handlers[handler](environ, start_response)
-    if '/resources/' in environ['PATH_INFO']:
-        return serve_resource(environ, start_response)
-    return not_supported(environ, start_response)
+    path_info = environ.get("PATH_INFO", "")
+    pos = path_info.find("/", 1)
+    handler = pos > -1 and path_info[0:pos] or path_info
+    return {
+        "": redirect_with_trilling_slash,
+        "/": serve_index,
+        "/test-form": serve_test_form,
+        "/protocols": serve_protocols,
+        "/show_protocol": serve_protocol,
+        "/resources": serve_resource,
+        "/submit-form": check_submitted_form, 
+    }.get(handler, not_supported_method)(environ, start_response)
 
 def store_protocol(submitted): 
     dd_mm_yy = time.strftime("%d.%m.%y", time.gmtime(time.time()))
