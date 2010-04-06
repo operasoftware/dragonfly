@@ -117,7 +117,7 @@ ui_strings.M_VIEW_LABEL_RESPONSE_BODY = 'Response body';
 ui_strings.M_VIEW_LABEL_REQUEST_SUMMARY = 'Request summary';
 
 /* DESC: view for the local storage */
-ui_strings.M_VIEW_LABEL_LOCAL_STOARGE = 'Local Storage';
+ui_strings.M_VIEW_LABEL_LOCAL_STORAGE = 'Local Storage';
 /* DESC: view for the session storage */
 ui_strings.M_VIEW_LABEL_SESSION_STORAGE = 'Session Storage';
 /* DESC: view for cookies */
@@ -374,7 +374,7 @@ ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_HOVER = "hover";
 /* DESC: */
 ui_strings.S_LABEL_SPOTLIGHT_TITLE_LOCKED_ELEMENTS = "Spotlight Locked Elements";
 /* DESC: */
-ui_strings.S_LABEL_STOARGE_ADD = "Add";
+ui_strings.S_LABEL_STORAGE_ADD = "Add";
 /* DESC: */
 ui_strings.S_LABEL_STORAGE_UPDATE = "Update";
 /* DESC: */
@@ -403,7 +403,7 @@ ui_strings.S_INFO_DOCUMNENT_LOADING = 'Opera Dragonfly is loading ...';
 ui_strings.M_SETTING_LABEL_GENERAL = 'General';
 /* DESC: Dragonfly is waiting for host connection */
 ui_strings.S_INFO_WAITING_FORHOST_CONNECTION = "Waiting for a host connection on port %s.";
-/* DESC: the given stoarge type doesn't exist, e.g. a widget without the w3 widget namespace
+/* DESC: the given storage type doesn't exist, e.g. a widget without the w3 widget namespace
  * will not have a widget.preferences storage object.
  */
 ui_strings.S_INFO_STORAGE_TYPE_DOES_NOT_EXIST = "%s does not exist.";

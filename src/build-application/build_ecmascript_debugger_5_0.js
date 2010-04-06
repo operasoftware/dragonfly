@@ -21,7 +21,7 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
     namespace.Object_inspection_data.prototype = ObjectDataBase;
     window.object_inspection_data = new namespace.Object_inspection_data();
 
-    var service_interface = service_interface
+    var service_interface = service_interface;
     window.runtimes = new namespace.Runtimes();
     window.runtimes.bind(service_interface);
 
@@ -44,13 +44,13 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
     new namespace.DOMAttrsView('dom_attrs', ui_strings.M_VIEW_LABEL_DOM_ATTR, 'scroll dom-attrs');
     namespace.DOMAttrsView.create_ui_widgets();
 
-    /* 
-      a namespace for all the followindg classes will only be created 
+    /*
+      a namespace for all the followindg classes will only be created
       if needed to adjust them for an updated service version
     */
 
     window.runtime_onload_handler = new cls.RuntimeOnloadHandler();
-    
+
     /* temporary export view */
     window.export_data = new cls.ExportData();
     new cls.ExportDataView('export_data', ui_strings.M_VIEW_LABEL_EXPORT, 'scroll export-data');
@@ -76,7 +76,7 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
     cls.ThreadsView.prototype = ViewBase;
     new cls.ThreadsView('threads', ui_strings.M_VIEW_LABEL_THREAD_LOG, 'scroll threads');
     cls.ThreadsView.create_ui_widgets();
-    
+
     /* DOM */
     new cls.DOMInspectorActions('dom'); // the view id
     new cls.DOMInspectorKeyhandler('dom');
@@ -112,25 +112,25 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
     /* storage objects and cookies */
     new cls.Namespace("storages");
     window.storages.add(new cls.LocalStorageData(
-      'local_storage', 
-      'local-storage', 
-      ui_strings.M_VIEW_LABEL_LOCAL_STOARGE, 
+      'local_storage',
+      'local-storage',
+      ui_strings.M_VIEW_LABEL_LOCAL_STORAGE,
       'localStorage'));
     window.storages.add(new cls.LocalStorageData(
-      'session_storage', 
-      'session-storage', 
-      ui_strings.M_VIEW_LABEL_SESSION_STORAGE, 
+      'session_storage',
+      'session-storage',
+      ui_strings.M_VIEW_LABEL_SESSION_STORAGE,
       'sessionStorage'));
     window.storages.add(new cls.LocalStorageData(
-      'widget_preferences', 
-      'widget-preferences', 
-      ui_strings.M_VIEW_LABEL_WIDGET_PREFERNCES, 
+      'widget_preferences',
+      'widget-preferences',
+      ui_strings.M_VIEW_LABEL_WIDGET_PREFERNCES,
       'widget.preferences'));
     window.storages.add(new cls.CookiesData(
-      'cookies', 
-      'cookies', 
+      'cookies',
+      'cookies',
       ui_strings.M_VIEW_LABEL_COOKIES));
-    new cls.StorageView('local_storage', ui_strings.M_VIEW_LABEL_LOCAL_STOARGE, 'scroll');
+    new cls.StorageView('local_storage', ui_strings.M_VIEW_LABEL_LOCAL_STORAGE, 'scroll');
     new cls.StorageView('session_storage', ui_strings.M_VIEW_LABEL_SESSION_STORAGE, 'scroll');
     new cls.StorageView('cookies', ui_strings.M_VIEW_LABEL_COOKIES, 'scroll');
     new cls.StorageView('widget_preferences', ui_strings.M_VIEW_LABEL_WIDGET_PREFERNCES, 'scroll');
@@ -158,4 +158,3 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
   }
 
 }
-
