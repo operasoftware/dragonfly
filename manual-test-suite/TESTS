@@ -1,4 +1,33 @@
-# comment
+#
+# This list gets parsed to a list of entries.
+# An entry can be a title, an url or a test.
+# Entries are separated by blank lines.
+# A line starting with '#' is a comment and will be disregarded.
+# 
+# Titles are underlined with '*', the syntax is <Main Tab>.<Sub Tab>, e.g.
+# 
+#   DOM.Layout
+#   **********
+# 
+# An url starts with 'url:' followed by the url, on a new or on the same line, e.g.
+# 
+#   url: http://opera.com
+# 
+# A test entry must have a label and a description, it can have an optional url.
+# The label starts with 'label:' followed by the label, on the same or on a new line.
+# The description must describe the condition to define if a given test fails or passes. 
+# It starts with 'desc:' followed by a list of steps to iterate through the test. 
+# Each step can start with a '-' or a '*'.
+# Ids are added automatically and shall never be changed manually. 
+# Adding a new test looks e.g.:
+# 
+#   label: A new Test
+#   desc: 
+#     - Step 1.
+#     - Step 2.
+#     - Step 3.
+#
+
 
 DOM.DOM
 *******
