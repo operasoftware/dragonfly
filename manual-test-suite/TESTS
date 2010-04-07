@@ -245,7 +245,7 @@ desc:
 Scripts.Source
 **************
 
-url: ./test-cases/scripts-source/index.html
+url: ./test-cases/scripts-source/scripts.html
 id: 30
 label: Reload button
 desc:
@@ -334,7 +334,7 @@ label: Breakpoint, Step Out with keyboard
 desc: 
   - The same as the previous test, but use the F11 and Shift-F11 key instead the mouse.
 
-url: ./test-cases/scripts-source/index.html
+url: ./test-cases/scripts-source/scripts.html
 id: 41
 label: Stop at new script
 desc:
@@ -442,7 +442,7 @@ desc:
 Network.Request Log
 *******************
 
-url: ./test-cases/network/index.html
+url: ./test-cases/network/img-js-css.html
 
 id: 51
 label: Request table
