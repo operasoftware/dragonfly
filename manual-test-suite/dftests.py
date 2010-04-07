@@ -14,9 +14,6 @@ TESTS = os.path.join(APP_ROOT, "TESTS")
 ID_COUNT = os.path.join(APP_ROOT, 'storage', 'ID_COUNT')
 IDS = os.path.join(APP_ROOT, 'storage', 'IDS')
 
-debug_log = open('D:\\bitbucket\\dragonfly-manual-test-suite\\debug.log', 'a')
-
-
 if sys.platform == "win32":
     import os, msvcrt
     msvcrt.setmode(sys.stdout.fileno(), os.O_BINARY)
