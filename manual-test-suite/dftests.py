@@ -1,3 +1,4 @@
+
 import sys
 import os
 import time
@@ -31,13 +32,23 @@ class Entry(object):
         self.buffer = []
 
 def get_ids():
+    """Parse the IDS file.
+    
+    Parse the IDS file and return a list of the id's. 
+    Includes all tests and other attributes 
+    of a protocol like tester and changeset 
+    to check if a new submitted protocol is complete.
+    """
     f_ids = open(IDS, 'r')
     ids = [id.strip() for id in f_ids.readlines()]
     f_ids.close()
     return ids
     
+def get_tests():
+    """Parse the TESTS file.
 
-def parse_tests():
+    Parse the TESTS file and return a list of Entry objects
+    """
     in_file = open(TESTS, 'r')
     entries = []
     entry = Entry()
@@ -69,7 +80,21 @@ def parse_tests():
     in_file.close()
     return entries
 
+def get_protocol(path):
+    """Parse the given protocol.
+
+    Parse the given protocol and return a dictonary with all test ids 
+    and there 'PASS' 'FAIL' values.
+    """
+    f = open(path, 'r')
+    lines = f.readlines()
+    f.close
+    return dict((line.strip().split(': ') for line in lines if line.strip()))
+
 def write_tester_changeset(missing, submitted):
+    """Create markup for incomplete form submit response 
+    for the 'tester' and 'cangeset' inputs.
+    """
     ret = []
     for key in ["tester", "changeset"]:
         if key in submitted and submitted[key]:
@@ -87,8 +112,10 @@ def write_tester_changeset(missing, submitted):
     return "".join(ret)
     
 def write_index_missing(missing, submitted):
+    """Create markup for incomplete form submit response with all tests.
+    """
     entries = []
-    tests = parse_tests()
+    tests = get_tests()
     for entry in tests:
         if entry.title:
             title = "".join(entry.title)
@@ -119,8 +146,10 @@ def write_index_missing(missing, submitted):
     return entries
 
 def write_index():
+    """Create markup for a new form submit with all tests.
+    """
     entries = []
-    for entry in parse_tests():
+    for entry in get_tests():
         if entry.title:
             title = "".join(entry.title)
             entries.append(TR_TD_COLS_4 % title)
@@ -139,16 +168,12 @@ def write_index():
             entries.append(TR_TEST % (desc, label, id, id))
     return entries
 
-def parse_protocol(path):
-    f = open(path, 'r')
-    lines = f.readlines()
-    f.close
-    return dict((line.strip().split(': ') for line in lines if line.strip()))
-
 
 def write_protocol(protocol):
+    """Create markup for a given protocol with all tests.
+    """
     entries = []
-    for entry in parse_tests():
+    for entry in get_tests():
         if entry.title:
             title = "".join(entry.title)
             entries.append(TR_TD_COLS_4 % title)
@@ -168,137 +193,19 @@ def write_protocol(protocol):
             entries.append(TR_TEST_PROTOCOL % (desc, class_name, label, protocol[id]))
     return entries
 
-
-def redirect_with_trilling_slash(environ, start_response):  
-    status = "301 Moved Permanently"
-    url = "".join([
-        environ["wsgi.url_scheme"],
-        "://",
-        environ["SERVER_NAME"], 
-        ("SERVER_PORT" in environ and ":" + environ["SERVER_PORT"] or ""),
-        environ["REQUEST_URI"],
-        "/"])
-    start_response(status, [("Location", url)])
-    return []
-            
-def serve_test_form(environ, start_response):
-    status = '200 OK'
-    response_headers = [('Content-type', 'text/html')]
-    start_response(status, response_headers)
-    if not check_test_index():
-        add_ids_test_index()
-    
-    script_repo = environ['SCRIPT_NAME'] 
-    doc = [TEST_FORM % (script_repo, script_repo, "", FORM), TR_TESTER_AND_CHANGESET_FORM]
-    doc.extend(write_index())
-    doc.append(TEST_FORM_END)
-    return doc
-
-def check_submitted_form(environ, start_response):
-    raw_content = environ["wsgi.input"].read()
-    submitted = dict([item.split('=') for item in raw_content.split('&')])
-    missing = filter(lambda id: not id in submitted or not submitted[id], get_ids())
-    status = '200 OK'
-    response_headers = [('Content-type', 'text/html')]
-    start_response(status, response_headers)
-    script_repo = environ['SCRIPT_NAME']
-    if missing:
-        doc = [
-            TEST_FORM % (script_repo, script_repo, LEGEND_MISSING, FORM), 
-            write_tester_changeset(missing, submitted)
-        ]
-        doc.extend(write_index_missing(missing, submitted))
-        doc.append(TEST_FORM_END)
-    else:
-        protocol = parse_protocol(store_protocol(submitted))
-        doc = [
-            TEST_FORM % (script_repo, script_repo, "", ""), 
-            TR_TESTER_AND_CHANGESET % (submitted["tester"], submitted["changeset"])
-        ]
-        doc.extend(write_protocol(protocol))
-        doc.append(TEST_END)
-    return doc
-
-def serve_index(environ, start_response):
-    status = '200 OK'
-    response_headers = [('Content-type', 'text/html')]
-    start_response(status, response_headers)
-    return [INDEX]
-
-def serve_resource(environ, start_response):
-    path = environ['PATH_INFO']
-    sys_path = os.path.join(APP_ROOT, os.path.normpath(path.lstrip('/')))
-    content = ""
-    mime = "text/plain"
-    if os.path.isfile(sys_path):
-        ending = "." in path and path[path.rfind("."):] or "no-ending"
-        mime = ending in types_map and types_map[ending] or 'text/plain'
-        content = ""
-        try:
-            f = open(sys_path, 'rb')
-            content = f.read()
-            f.close()
-        except:
-            pass
-    status = '200 OK'
-    response_headers = [('Content-type', mime)]
-    start_response(status, response_headers)
-    return [content]
-
-def list_protocols(protocols):
+def write_protocols(protocols):
+    """Create markup with a list of all protocols.
+    """
     ret = []
     for f_name in protocols:
         ret.append(LIST_LINK % ("./show_protocol/" + f_name, f_name))
     return "".join(ret)
 
-def serve_protocols(environ, start_response):
-    status = '200 OK'
-    response_headers = [('Content-type', 'text/html')]
-    start_response(status, response_headers)
-    repo = os.path.join(APP_ROOT, 'storage')
-    protocols = [f_name for f_name in os.listdir(repo) if f_name.endswith('.protocol')]
-
-    if not check_test_index():
-        add_ids_test_index()
-    doc = [PROTOCOL_LIST % list_protocols(protocols)]
-    return doc
-
-def serve_protocol(environ, start_response):
-    status = '200 OK'
-    response_headers = [('Content-type', 'text/html')]
-    start_response(status, response_headers)
-    protocol_path = os.path.join(APP_ROOT, 'storage', environ['PATH_INFO'].split("/")[2])
-    protocol = parse_protocol(protocol_path)
-    script_repo = environ['SCRIPT_NAME']
-    doc = [
-        TEST_FORM % (script_repo, script_repo, "", ""), 
-        TR_TESTER_AND_CHANGESET % (protocol["tester"], protocol["changeset"])
-    ]
-    doc.extend(write_protocol(protocol))
-    doc.append(TEST_END)
-    return doc
-
-def not_supported_method(environ, start_response):
-    status = '200 OK'
-    response_headers = [('Content-type', 'text/plain')]
-    start_response(status, response_headers)
-    return ['not a supported method: %s' % environ['PATH_INFO']]
-
-def application(environ, start_response):
-    path_info = environ.get("PATH_INFO", "")
-    pos = path_info.find("/", 1)
-    handler = pos > -1 and path_info[0:pos] or path_info
-    return {
-        "": redirect_with_trilling_slash,
-        "/": serve_index,
-        "/test-form": serve_test_form,
-        "/protocols": serve_protocols,
-        "/show_protocol": serve_protocol,
-        "/resources": serve_resource,
-        "/submit-form": check_submitted_form, 
-    }.get(handler, not_supported_method)(environ, start_response)
-
 def store_protocol(submitted): 
+    """Store a complete protocol.
+
+    The file of the stored protocol is <dd>.<mm>.<yy>.<changeset-id>.protocol.
+    """
     dd_mm_yy = time.strftime("%d.%m.%y", time.gmtime(time.time()))
     f_name = "%s.%s.protocol" % (dd_mm_yy, submitted["changeset"])
     path = os.path.join(APP_ROOT, 'storage', f_name)
@@ -309,6 +216,8 @@ def store_protocol(submitted):
     return path
 
 def check_test_index():
+    """Verify that all tests in the TESTS file have a unique id.
+    """
     ID = 1
     LABEL = 2
     DESC = 3
@@ -337,6 +246,8 @@ def check_test_index():
 
 
 def add_ids_test_index():
+    """Add an id to all tests which ware missing one.
+    """
     import shutil
     import tempfile
     ID = 1
@@ -384,6 +295,148 @@ def add_ids_test_index():
     f_id_count = open(ID_COUNT, 'w')
     f_id_count.write(str(id_count))
     f_id_count.close()
+
+def redirect_with_trilling_slash(environ, start_response):  
+    """Response if the trilling slash is missing 
+    after the cgi script file name.
+    """
+    status = "301 Moved Permanently"
+    url = "".join([
+        environ["wsgi.url_scheme"],
+        "://",
+        environ["SERVER_NAME"], 
+        ("SERVER_PORT" in environ and ":" + environ["SERVER_PORT"] or ""),
+        environ["REQUEST_URI"],
+        "/"])
+    start_response(status, [("Location", url)])
+    return []
+
+def serve_index(environ, start_response):
+    """Serve the entry point of the application.
+    """
+    status = '200 OK'
+    response_headers = [('Content-type', 'text/html')]
+    start_response(status, response_headers)
+    return [INDEX]
+
+def serve_test_form(environ, start_response):
+    """Serve a new test form to submit test results.
+    """
+    status = '200 OK'
+    response_headers = [('Content-type', 'text/html')]
+    start_response(status, response_headers)
+    if not check_test_index():
+        add_ids_test_index()
+    
+    script_repo = environ['SCRIPT_NAME'] 
+    doc = [TEST_FORM % (script_repo, script_repo, "", FORM), TR_TESTER_AND_CHANGESET_FORM]
+    doc.extend(write_index())
+    doc.append(TEST_FORM_END)
+    return doc
+
+def serve_protocols(environ, start_response):
+    """Serve a list of all protocols.
+    """
+    status = '200 OK'
+    response_headers = [('Content-type', 'text/html')]
+    start_response(status, response_headers)
+    repo = os.path.join(APP_ROOT, 'storage')
+    protocols = [f_name for f_name in os.listdir(repo) if f_name.endswith('.protocol')]
+
+    if not check_test_index():
+        add_ids_test_index()
+    doc = [PROTOCOL_LIST % write_protocols(protocols)]
+    return doc
+
+def serve_protocol(environ, start_response):
+    """Serve a stored protocol with all test results of a previous test.
+    """
+    status = '200 OK'
+    response_headers = [('Content-type', 'text/html')]
+    start_response(status, response_headers)
+    protocol_path = os.path.join(APP_ROOT, 'storage', environ['PATH_INFO'].split("/")[2])
+    protocol = get_protocol(protocol_path)
+    script_repo = environ['SCRIPT_NAME']
+    doc = [
+        TEST_FORM % (script_repo, script_repo, "", ""), 
+        TR_TESTER_AND_CHANGESET % (protocol["tester"], protocol["changeset"])
+    ]
+    doc.extend(write_protocol(protocol))
+    doc.append(TEST_END)
+    return doc
+
+def serve_resource(environ, start_response):
+    """Serve other resources like css and js files.
+    """
+    path = environ['PATH_INFO']
+    sys_path = os.path.join(APP_ROOT, os.path.normpath(path.lstrip('/')))
+    content = ""
+    mime = "text/plain"
+    if os.path.isfile(sys_path):
+        ending = "." in path and path[path.rfind("."):] or "no-ending"
+        mime = ending in types_map and types_map[ending] or 'text/plain'
+        content = ""
+        try:
+            f = open(sys_path, 'rb')
+            content = f.read()
+            f.close()
+        except:
+            pass
+    status = '200 OK'
+    response_headers = [('Content-type', mime)]
+    start_response(status, response_headers)
+    return [content]
+            
+def check_submitted_form(environ, start_response):
+    """Check if the submitted test results are complete.
+    """
+    raw_content = environ["wsgi.input"].read()
+    submitted = dict([item.split('=') for item in raw_content.split('&')])
+    missing = filter(lambda id: not id in submitted or not submitted[id], get_ids())
+    status = '200 OK'
+    response_headers = [('Content-type', 'text/html')]
+    start_response(status, response_headers)
+    script_repo = environ['SCRIPT_NAME']
+    if missing:
+        doc = [
+            TEST_FORM % (script_repo, script_repo, LEGEND_MISSING, FORM), 
+            write_tester_changeset(missing, submitted)
+        ]
+        doc.extend(write_index_missing(missing, submitted))
+        doc.append(TEST_FORM_END)
+    else:
+        protocol = get_protocol(store_protocol(submitted))
+        doc = [
+            TEST_FORM % (script_repo, script_repo, "", ""), 
+            TR_TESTER_AND_CHANGESET % (submitted["tester"], submitted["changeset"])
+        ]
+        doc.extend(write_protocol(protocol))
+        doc.append(TEST_END)
+    return doc
+
+def not_supported_method(environ, start_response):
+    """Response for a wrong or missing command.
+    """
+    status = '200 OK'
+    response_headers = [('Content-type', 'text/plain')]
+    start_response(status, response_headers)
+    return ['not a supported method: %s' % environ['PATH_INFO']]
+
+def application(environ, start_response):
+    """The main function of the cgi application.
+    """
+    path_info = environ.get("PATH_INFO", "")
+    pos = path_info.find("/", 1)
+    handler = pos > -1 and path_info[0:pos] or path_info
+    return {
+        "": redirect_with_trilling_slash,
+        "/": serve_index,
+        "/test-form": serve_test_form,
+        "/protocols": serve_protocols,
+        "/show_protocol": serve_protocol,
+        "/resources": serve_resource,
+        "/submit-form": check_submitted_form, 
+    }.get(handler, not_supported_method)(environ, start_response)
         
 if __name__ == '__main__':
     print "".join(serve_test_form(None, lambda status, response_headers: 0))
