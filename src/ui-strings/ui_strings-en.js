@@ -138,33 +138,33 @@ ui_strings.M_VIEW_LABEL_VIEWS = 'Views';
  */
 
 /* DESC: Switch display of 'All' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_ALL = 'Show Tab All';
+ui_strings.S_SWITCH_SHOW_TAB_ALL = 'Show all messages tab';
 /* DESC: Switch display of 'Script' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_SCRIPT = 'Show Tab Script';
+ui_strings.S_SWITCH_SHOW_TAB_SCRIPT = 'Show script tab';
 /* DESC: Switch display of 'Java' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_JAVA = 'Show Tab Java';
+ui_strings.S_SWITCH_SHOW_TAB_JAVA = 'Show Java tab';
 /* DESC: Switch display of 'Mail' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_M2 = 'Show Tab Mail';
+ui_strings.S_SWITCH_SHOW_TAB_M2 = 'Show mail tab';
 /* DESC: Switch display of 'Network' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_NETWORK = 'Show Tab Network';
+ui_strings.S_SWITCH_SHOW_TAB_NETWORK = 'Show network tab';
 /* DESC: Switch display of 'XML' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_XML = 'Show Tab XML';
+ui_strings.S_SWITCH_SHOW_TAB_XML = 'Show XML tab';
 /* DESC: Switch display of 'HTML' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_HTML = 'Show Tab HTML';
+ui_strings.S_SWITCH_SHOW_TAB_HTML = 'Show HTML tab';
 /* DESC: Switch display of 'CSS' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_CSS = 'Show Tab CSS';
+ui_strings.S_SWITCH_SHOW_TAB_CSS = 'Show CSS tab';
 /* DESC: Switch display of 'XSLT' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_XSLT = 'Show Tab XSLT';
+ui_strings.S_SWITCH_SHOW_TAB_XSLT = 'Show XSLT tab';
 /* DESC: Switch display of 'SVG' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_SVG = 'Show Tab SVG';
+ui_strings.S_SWITCH_SHOW_TAB_SVG = 'Show SVG tab';
 /* DESC: Switch display of 'Bittorrent' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_BITTORRENT = 'Show Tab Bittorrent';
+ui_strings.S_SWITCH_SHOW_TAB_BITTORRENT = 'Show BitTorrent tab';
 /* DESC: Switch display of 'Voice' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_VOICE = 'Show Tab Voice';
+ui_strings.S_SWITCH_SHOW_TAB_VOICE = 'Show voice tab';
 /* DESC: Switch display of 'Widget' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_WIDGET = 'Show Tab Widget';
+ui_strings.S_SWITCH_SHOW_TAB_WIDGET = 'Show widget tab';
 /* DESC: Switch display of 'Opera Dragonfly' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_DRAGONFLY = 'Show Tab Opera Dragonfly';
+ui_strings.S_SWITCH_SHOW_TAB_DRAGONFLY = 'Show Opera Dragonfly tab';
 /* DESC: TODO. */
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE = 'Automatically update global scope';
 /* DESC: Will select the element when clicked. */
