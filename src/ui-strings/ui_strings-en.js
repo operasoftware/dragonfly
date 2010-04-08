@@ -299,7 +299,7 @@ ui_strings.S_MENU_RELOAD_DEBUG_CONTEXT = 'Reload Debug Context';
 
 
 /*
- * Labels. Many of these tool tips, not button labels.
+ * Labels. Many of these are tool tips, not button labels.
  * FIXME: The DESCs needs to reflect this
  */
 
