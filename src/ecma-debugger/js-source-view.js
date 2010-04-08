@@ -971,14 +971,15 @@ cls.JsSourceView.create_ui_widgets = function()
   );
 
 
+
   var textSearch = new VirtualTextSearch();
 
   var onViewCreated = function(msg)
   {
     if( msg.id == 'js_source' )
     {
-      textSearch.setContainer(msg.container);
-      textSearch.setFormInput(views.js_source.getToolbarControl( msg.container, 'js-source-text-search'));
+      textSearch.set_container(msg.container);
+      textSearch.set_form_input(views.js_source.getToolbarControl(msg.container, 'js-source-text-search'));
     }
   }
 
@@ -992,14 +993,14 @@ cls.JsSourceView.create_ui_widgets = function()
   
   var onScriptSelected = function(msg)
   {
-    textSearch.setScript(msg.script);
+    textSearch.set_script(msg.script);
   }
 
   var onViewScrolled = function(msg)
   {
     if( msg.id == 'js_source' )
     {
-      textSearch.checkHit(msg.top_line, msg.bottom_line);
+      textSearch.update_hits(msg.top_line, msg.bottom_line);
     }
   }
 
@@ -1015,14 +1016,14 @@ cls.JsSourceView.create_ui_widgets = function()
 
   eventHandlers.input['js-source-text-search'] = function(event, target)
   {
-    textSearch.searchDelayed(target.value);
+    textSearch.search_delayed(target.value);
   }
 
   eventHandlers.keypress['js-source-text-search'] = function(event, target)
   {
-    if( event.keyCode == 13 )
+    if (event.keyCode == 13)
     {
-      textSearch.highlight();
+      textSearch[event.shiftKey && 'highligh_previous' || 'highligh_next']();
     }
   }
 

@@ -187,3 +187,14 @@ media, at {
 .stylesheets .import-rule {
   color: #279;
   }
+
+.serach-highlight
+{
+  background-color: #ff0; 
+  color: #000;
+}
+.serach-highlight-selected
+{
+  background-color: #0f0; 
+  color: #000;
+}
