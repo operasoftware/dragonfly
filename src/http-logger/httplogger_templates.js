@@ -70,7 +70,7 @@ window.templates.sanitize_url = function(req)
 /**
  * Renders a single row of request data in the request list
  */
-window.templates.request_list_row = function(r, expandList, firstTime, lastTime, viewMap, isFirst)
+window.templates.request_list_row = function(r, expandList, firstTime, lastTime, viewMap, isFirst, withGraph)
 {
     var expanded = expandList.indexOf(r.id) != -1;
     var range = lastTime - firstTime;
@@ -91,7 +91,7 @@ window.templates.request_list_row = function(r, expandList, firstTime, lastTime,
             ['td', templates.sanitize_url(r) ],
             ['td', (r.response ? r.response.status : "-"), 'class', 'status-cell'],
             ['td', (r.response ? r.response.reason: "-"), 'class', 'reason-cell'],
-            ['td', (r.duration!=undefined ? ["span", "" + r.duration + "ms", "style", "margin-left: " + Math.floor(curP) + "%; width: " + (dur!=null ? dur : 50 ) + "%;" + (curP>50 ? "direction:rtl;" : ""), "class", "graph-box"] : ""),
+            ['td', ((r.duration!=undefined && withGraph) ? ["span", "" + r.duration + "ms", "style", "margin-left: " + Math.floor(curP) + "%; width: " + (dur!=null ? dur : 50 ) + "%;" + (curP>50 ? "direction:rtl;" : ""), "class", "graph-box"] : ""),
                         (isFirst ? ["span", "" + (lastTime-firstTime) + "ms", "class", "totaltime"] : []),
                   , 'class', 'time-cell'],
             'data-requestid', r.id.toString(),

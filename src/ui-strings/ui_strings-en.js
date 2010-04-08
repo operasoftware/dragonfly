@@ -2,6 +2,9 @@
 window.ui_strings.lang_code = "en";
 
 /**
+ * Capitalization guidelines:
+ * http://library.gnome.org/devel/hig-book/stable/design-text-labels.html.en#layout-capitalization
+ *
  * Prefix -> use mapping for strings:
  * Prefix   Use
  * D        Dialog titles and components
@@ -104,20 +107,20 @@ ui_strings.M_VIEW_LABEL_REQUEST_LOG = 'Request log';
 /* DESC: DEPRECATED Name of raw request tab */
 ui_strings.M_VIEW_LABEL_RAW_REQUEST_INFO = 'Raw request';
 /* DESC: Name of raw response tab */
-ui_strings.M_VIEW_LABEL_RAW_RESPONSE_INFO = 'Raw response';
+ui_strings.M_VIEW_LABEL_RAW_RESPONSE_INFO = 'Raw Response';
 /* DESC: Name of request headers tab */
-ui_strings.M_VIEW_LABEL_REQUEST_HEADERS = 'Request headers';
+ui_strings.M_VIEW_LABEL_REQUEST_HEADERS = 'Request Headers';
 /* DESC: Name of response headers tab */
-ui_strings.M_VIEW_LABEL_RESPONSE_HEADERS = 'Response headers';
+ui_strings.M_VIEW_LABEL_RESPONSE_HEADERS = 'Response Headers';
 /* DESC: Name of request info view */
-ui_strings.M_VIEW_LABEL_REQUEST_INFO = 'Request info';
+ui_strings.M_VIEW_LABEL_REQUEST_INFO = 'Request Info';
 /* DESC: Name of response body view */
-ui_strings.M_VIEW_LABEL_RESPONSE_BODY = 'Response body';
+ui_strings.M_VIEW_LABEL_RESPONSE_BODY = 'Response Body';
 /* DESC: Name of request summary view */
-ui_strings.M_VIEW_LABEL_REQUEST_SUMMARY = 'Request summary';
+ui_strings.M_VIEW_LABEL_REQUEST_SUMMARY = 'Request Summary';
 
 /* DESC: view for the local storage */
-ui_strings.M_VIEW_LABEL_LOCAL_STOARGE = 'Local Storage';
+ui_strings.M_VIEW_LABEL_LOCAL_STORAGE = 'Local Storage';
 /* DESC: view for the session storage */
 ui_strings.M_VIEW_LABEL_SESSION_STORAGE = 'Session Storage';
 /* DESC: view for cookies */
@@ -129,37 +132,39 @@ ui_strings.M_VIEW_LABEL_WIDGET_PREFERNCES = 'Widget Preferences';
 ui_strings.M_VIEW_LABEL_VIEWS = 'Views';
 
 /*
- * Settings dialogue entries
+ * Settings dialogue entries. All the S_SWITCH_<something> strings are
+ * used as check box labels and tool tips. Both these use sentence
+ * capitalization.
  */
 
 /* DESC: Switch display of 'All' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_ALL = 'Show Tab All';
+ui_strings.S_SWITCH_SHOW_TAB_ALL = 'Show all messages tab';
 /* DESC: Switch display of 'Script' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_SCRIPT = 'Show Tab Script';
+ui_strings.S_SWITCH_SHOW_TAB_SCRIPT = 'Show script tab';
 /* DESC: Switch display of 'Java' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_JAVA = 'Show Tab Java';
+ui_strings.S_SWITCH_SHOW_TAB_JAVA = 'Show Java tab';
 /* DESC: Switch display of 'Mail' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_M2 = 'Show Tab Mail';
+ui_strings.S_SWITCH_SHOW_TAB_M2 = 'Show mail tab';
 /* DESC: Switch display of 'Network' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_NETWORK = 'Show Tab Network';
+ui_strings.S_SWITCH_SHOW_TAB_NETWORK = 'Show network tab';
 /* DESC: Switch display of 'XML' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_XML = 'Show Tab XML';
+ui_strings.S_SWITCH_SHOW_TAB_XML = 'Show XML tab';
 /* DESC: Switch display of 'HTML' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_HTML = 'Show Tab HTML';
+ui_strings.S_SWITCH_SHOW_TAB_HTML = 'Show HTML tab';
 /* DESC: Switch display of 'CSS' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_CSS = 'Show Tab CSS';
+ui_strings.S_SWITCH_SHOW_TAB_CSS = 'Show CSS tab';
 /* DESC: Switch display of 'XSLT' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_XSLT = 'Show Tab XSLT';
+ui_strings.S_SWITCH_SHOW_TAB_XSLT = 'Show XSLT tab';
 /* DESC: Switch display of 'SVG' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_SVG = 'Show Tab SVG';
+ui_strings.S_SWITCH_SHOW_TAB_SVG = 'Show SVG tab';
 /* DESC: Switch display of 'Bittorrent' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_BITTORRENT = 'Show Tab Bittorrent';
+ui_strings.S_SWITCH_SHOW_TAB_BITTORRENT = 'Show BitTorrent tab';
 /* DESC: Switch display of 'Voice' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_VOICE = 'Show Tab Voice';
+ui_strings.S_SWITCH_SHOW_TAB_VOICE = 'Show voice tab';
 /* DESC: Switch display of 'Widget' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_WIDGET = 'Show Tab Widget';
+ui_strings.S_SWITCH_SHOW_TAB_WIDGET = 'Show widget tab';
 /* DESC: Switch display of 'Opera Dragonfly' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_DRAGONFLY = 'Show Tab Opera Dragonfly';
+ui_strings.S_SWITCH_SHOW_TAB_DRAGONFLY = 'Show Opera Dragonfly tab';
 /* DESC: TODO. */
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE = 'Automatically update global scope';
 /* DESC: Will select the element when clicked. */
@@ -177,7 +182,7 @@ ui_strings.S_SWITCH_SHOW_ATTRIBUTES = 'Show attributes';
 /* DESC: Shows or hides white space nodes in DOM. */
 ui_strings.S_SWITCH_SHOW_WHITE_SPACE_NODES = 'Show white space nodes';
 /* DESC: Shows DOM in tree or mark-up mode. */
-ui_strings.S_SWITCH_SHOW_DOM_INTREE_VIEW = 'Show DOM in tree view';
+ui_strings.S_SWITCH_SHOW_DOM_INTREE_VIEW = 'Show DOM in Tree View';
 /* DESC: Shows CSS properties as shorthands or in full effect. */
 ui_strings.S_SWITCH_USE_SHORTHAND_PROPERTIES = 'Use shorthand for properties';
 /* DESC: Show or hide initial values in computed style. */
@@ -187,11 +192,11 @@ ui_strings.S_SWITCH_HIDE_SHORTHANDS = 'Hide shorthand for computed styles';
 /* DESC: Shows or hides empty strings and null values. */
 ui_strings.S_SWITCH_HIDE_EMPTY_STRINGS = 'Hide empty strings and null values';
 /* DESC: Route debugging traffic trough proxy to enable debugging devices */
-ui_strings.S_SWITCH_REMOTE_DEBUG = 'Remote Debug';
+ui_strings.S_SWITCH_REMOTE_DEBUG = 'Remote debug';
 /* DESC: Show or hide Views menu. */
 ui_strings.S_SWITCH_SHOW_VIEWS_MENU = "Show Views menu";
 /* DESC: Switch toggeling if the debugger should automatically reload the page when the user changes the window to debug. */
-ui_strings.S_SWITCH_RELOAD_SCRIPTS_AUTOMATICALLY = "Reload documents automatically on selecting a window"
+ui_strings.S_SWITCH_RELOAD_SCRIPTS_AUTOMATICALLY = "Reload documents automatically when selecting a window";
 /* DESC: Undocks Opera Dragonfly into an own window. */
 ui_strings.S_SWITCH_DETACH_WINDOW = "Undock into separate window"  ;
 /* DESC: Attaches Opera Dragonfly to the main browser window. */
@@ -203,19 +208,21 @@ ui_strings.S_SWITCH_SHOW_SHORTHANDS = 'Hide shorthands in computed styles view';
 /* DESC: Showing shorthands in style properties on or off. */
 ui_strings.S_SWITCH_CREATE_SHORTHANDS = 'Use shorthands for properties';
 /* DESC: Showing the siblings in the breadcrumb in the statusbar. */
-ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB = 'Show Siblings in Breadcrumb';
+ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB = 'Show siblings in breadcrumb';
 /* DESC: Showing the id's and class names in the breadcrumb in the statusbar. */
-ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB = "Show id's and classes in Breadcrumb";
-/* */
-ui_strings.S_SWITCH_SHOW_ONLY_NORMAL_AND_GADGETS_TYPE_WINDOWS = "Show only normal windows and widgets ( unchecked Dragonfly will show any type of Opera window )";
+ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB = "Show id's and classes in breadcrumb";
+/* DESC: There are a lot of window types in Opera. This switch toggles if we show only the useful ones, or all of them. */
+ui_strings.S_SWITCH_SHOW_ONLY_NORMAL_AND_GADGETS_TYPE_WINDOWS = "Show only browser windows and widget windows in window list ( uncheck to also show mail and feed windows etc. )";
 /* DESC: Scroll an element in the host into view when selecting it in the DOM. */
 ui_strings.S_SWITCH_SCROLL_INTO_VIEW_ON_FIRST_SPOTLIGHT = 'Scroll into View on first Spotlight';
-/* DESC: Show ECMA error message of the error console in the command line */
-ui_strings.S_SWITCH_SHOW_ECMA_ERRORS_IN_COMMAND_LINE = "Show ECMA Script Errors of the Error Console";
+/* DESC: Show ECMAScript errors in the command line. */
+ui_strings.S_SWITCH_SHOW_ECMA_ERRORS_IN_COMMAND_LINE = "Show ECMAScript errors in the command line view";
 /* DESC: Expand all (entries in a list) */
 ui_strings.S_SWITCH_EXPAND_ALL = 'Expand all';
 /* DESC: Draw a border on to selected DOM elements */
 ui_strings.S_SWITCH_LOCK_SELECTED_ELEMENTS = "Draw a border on to selected elements";
+/* DESC: Switch for controlling if the request log is cleared whenever a new site is loaded */
+ui_strings.S_SWITCH_CLEAR_REQUESTS_ON_NEW_CONTEXT = "Clear request log when loading a new site";
 
 
 /*
@@ -225,11 +232,11 @@ ui_strings.S_SWITCH_LOCK_SELECTED_ELEMENTS = "Draw a border on to selected eleme
 /* DESC: Debugger continues debugging. */
 ui_strings.S_BUTTON_LABEL_CONTINUE = 'Continue (F8)';
 /* DESC: Debugger step over current statement. */
-ui_strings.S_BUTTON_LABEL_STEP_OVER = 'Step Over (F10)';
+ui_strings.S_BUTTON_LABEL_STEP_OVER = 'Step over (F10)';
 /* DESC: Debugger step into current statement. */
-ui_strings.S_BUTTON_LABEL_STEP_INTO = 'Step Into (F11)';
+ui_strings.S_BUTTON_LABEL_STEP_INTO = 'Step into (F11)';
 /* DESC: Debugger step out from current statement. */
-ui_strings.S_BUTTON_LABEL_STEP_OUT = 'Step Out (Shift F11)';
+ui_strings.S_BUTTON_LABEL_STEP_OUT = 'Step out (Shift F11)';
 /* DESC: Execution stops when a new script is encountered. */
 ui_strings.S_BUTTON_LABEL_STOP_AT_THREAD = 'Stop at new script';
 /* DESC: Execution stops when encountering an exception. */
@@ -257,9 +264,9 @@ ui_strings.S_BUTTON_LABEL_EXPORT_LOG = 'Export thread log';
 /* DESC: Launches the Settings view. */
 ui_strings.S_BUTTON_LABEL_SETTINGS = 'Settings';
 /* DESC: Empties the log entries. */
-ui_strings.S_BUTTON_LABEL_CLEAR_LOG = 'Clear Log';
+ui_strings.S_BUTTON_LABEL_CLEAR_LOG = 'Clear log';
 /* DESC: Closes the window. */
-ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW = 'Close Window';
+ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW = 'Close window';
 /* DESC: Applies the changes. */
 ui_strings.S_BUTTON_TEXT_APPLY = 'Apply';
 /* DESC: DEPRECATED Clear request log. */
@@ -277,9 +284,9 @@ ui_strings.S_BUTTON_SHOW_REQUEST_HEADERS = 'Headers';
 /* DESC: Show raw request. */
 ui_strings.S_BUTTON_SHOW_REQUEST_RAW = 'Raw';
 /* DESC: Cancel button while the client is waiting for a host connection. */
-ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG = "Cancel remote debug";
+ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG = "Cancel Remote Debug";
 /* DESC: */
-ui_strings.S_BUTTON_STORAGE_DELETE_ALL = "Delete all";
+ui_strings.S_BUTTON_STORAGE_DELETE_ALL = "Delete All";
 
 /*
   * Menus
@@ -292,7 +299,8 @@ ui_strings.S_MENU_RELOAD_DEBUG_CONTEXT = 'Reload Debug Context';
 
 
 /*
- * Labels
+ * Labels. Many of these are tool tips, not button labels.
+ * FIXME: The DESCs needs to reflect this
  */
 
 /* DESC: Tooltip for a status indicator in the bottom left corner showing is the debugger is connected, busy, etc.. */
@@ -312,7 +320,7 @@ ui_strings.S_COLUMN_LABEL_LINE = "Line";
 /* DESC: Table heading for column showing error descriptions */
 ui_strings.S_COLUMN_LABEL_ERROR = "Error";
 /* DESC: label for link to the specification for something */
-ui_strings.S_SPEC_LINK_LABEL = "spec";
+ui_strings.S_SPEC_LINK_LABEL = "Spec";
 /* DESC: label for url in http request details */
 ui_strings.S_HTTP_LABEL_URL = "URL";
 /* DESC: label for response in http request details */
@@ -342,11 +350,11 @@ ui_strings.S_LABEL_SPOTLIGHT_TITLE = "Spotlight";
 /* DESC: */
 ui_strings.S_LABEL_SPOTLIGHT_COLOR_THEME = "Color Theme";
 /* DESC: */
-ui_strings.S_LABEL_SPOTLIGHT_PROPERTY_FILL = "fill";
+ui_strings.S_LABEL_SPOTLIGHT_PROPERTY_FILL = "Fill";
 /* DESC: */
-ui_strings.S_LABEL_SPOTLIGHT_PROPERTY_FRAME = "frame";
+ui_strings.S_LABEL_SPOTLIGHT_PROPERTY_FRAME = "Frame";
 /* DESC: */
-ui_strings.S_LABEL_SPOTLIGHT_PROPERTY_GRID = "grid";
+ui_strings.S_LABEL_SPOTLIGHT_PROPERTY_GRID = "Grid";
 /* DESC: */
 ui_strings.S_BUTTON_SPOTLIGHT_RESET_DEFAULT_COLORS = "Reset Default Colors";
 /* DESC: */
@@ -354,13 +362,13 @@ ui_strings.S_BUTTON_SPOTLIGHT_ADVANCED = "Advanced";
 /* DESC: */
 ui_strings.S_LABEL_SPOTLIGHT_TITLE_DEFAULT = "Default Spotlight";
 /* DESC: */
-ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_DIMENSION = "dimension";
+ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_DIMENSION = "Dimension";
 /* DESC: */
-ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_PADDING = "padding";
+ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_PADDING = "Padding";
 /* DESC: */
-ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_BORDER = "border";
+ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_BORDER = "Border";
 /* DESC: */
-ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_MARGIN = "margin";
+ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_MARGIN = "Margin";
 /* DESC: */
 ui_strings.S_LABEL_SPOTLIGHT_TITLE_METRICS = "Spotlight Metrics";
 /* DESC: */
@@ -372,7 +380,7 @@ ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_HOVER = "hover";
 /* DESC: */
 ui_strings.S_LABEL_SPOTLIGHT_TITLE_LOCKED_ELEMENTS = "Spotlight Locked Elements";
 /* DESC: */
-ui_strings.S_LABEL_STOARGE_ADD = "Add";
+ui_strings.S_LABEL_STORAGE_ADD = "Add";
 /* DESC: */
 ui_strings.S_LABEL_STORAGE_UPDATE = "Update";
 /* DESC: */
@@ -401,7 +409,7 @@ ui_strings.S_INFO_DOCUMNENT_LOADING = 'Opera Dragonfly is loading ...';
 ui_strings.M_SETTING_LABEL_GENERAL = 'General';
 /* DESC: Dragonfly is waiting for host connection */
 ui_strings.S_INFO_WAITING_FORHOST_CONNECTION = "Waiting for a host connection on port %s.";
-/* DESC: the given stoarge type doesn't exist, e.g. a widget without the w3 widget namespace
+/* DESC: the given storage type doesn't exist, e.g. a widget without the w3 widget namespace
  * will not have a widget.preferences storage object.
  */
 ui_strings.S_INFO_STORAGE_TYPE_DOES_NOT_EXIST = "%s does not exist.";

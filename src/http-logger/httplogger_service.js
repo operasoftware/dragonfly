@@ -166,7 +166,7 @@ cls.HttpLogger["2.0"].ParseMessges = function(name)
 
         if (!respparts || respparts.length != 4) {
             opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
-              "could not parse response header");
+              "could not parse response header: " + retval.raw);
         }
         else {
             retval.protocol = respparts[1];
