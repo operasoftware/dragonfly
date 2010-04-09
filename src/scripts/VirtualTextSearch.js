@@ -1,7 +1,10 @@
-﻿/**
- * Generic search/higlight component that uses a backing store for its data
+﻿
+/**
+ * Generic search/highlight component that uses a backing store for its data
  * instead of the actual DOM. Used in the various code views where the DOM
- * content is generated on demand based on the view.
+ * content is generated on demand based on the view, e.g. where only the 
+ * visible lines of a given script are created in the DOM.
+ * Use case is basically where the DOM view is only a slice of the actual data.
  * @see TextSearch
  * @see ListTextSearch
  * @constructor 
@@ -11,13 +14,52 @@ var VirtualTextSearch = function()
 
   /* interface */
 
+  /**
+    * Initiate the search of a new search term.
+    *
+    * @param {String} new_search_term 
+    */
   this.search_delayed = function(new_search_term){};
+  /**
+    * Highlight the next match if any.
+    */
   this.highligh_next = function(){};
+  /**
+    * Highlight the previous match if any.
+    */
   this.highligh_previous = function(){};
+  /**
+    * Update the a new create view.
+    *
+    * @param {Number} top_line The start of the visible slice in line count
+    * @param {Number} bottom_line The end of the visible slice in line count
+    */
   this.update_hits = function(top_line, bottom_line){};
+  /**
+    * Register the DOM element of the view.
+    *
+    * @param {Element} The DOM element with the visible view.
+    */
   this.set_container = function(container){};
+  /**
+    * Register the DOM input to enter a search.
+    * This is not used to trigger the serach, 
+    * but to update a view and it's search box 
+    * if a given view is re-created, e.g. on switching tabs.
+    *
+    * @param {HTMLInputElement}
+    */
   this.set_form_input = function(input){};
+  /**
+    * To register the script data.
+    * the script object must have at least the following properties:
+    *  - source, the script source string
+    *  - line_arr, a list of character offsets for all new lines
+    */
   this.set_script = function(script_obj){};
+  /**
+    * To reset any state.
+    */
   this.cleanup = function(){};
 
   /* constants */
@@ -45,11 +87,14 @@ var VirtualTextSearch = function()
   __search_hits_valid = false,
   __top_line = 0,
   __bottom_line = 0,
-  __hits = [],
-  __hit = [],
+  __hits = [], // list of DOM highlight elements for all matches
+  __hit = [],  // list of DOM highlight elements for a single match
   __input = null,
   __last_match_cursor = 0;
 
+  /**
+    * Starts a new search.
+    */
   var search = function(new_search_term)
   {    
     var pos = -1, source = '', line_arr = null, line_arr_length = 0, line_cur = 0;
@@ -65,7 +110,7 @@ var VirtualTextSearch = function()
           serach_source();
           if (__script.line_matches.length)
           {
-            highlight(true, new_search_term);
+            highlight(true);
             scroll_selected_hit_in_to_view();
           }
           else
@@ -88,6 +133,16 @@ var VirtualTextSearch = function()
     }
   }
 
+  /**
+    * Searches the actual data.
+    * Updates the __script object with the following properties for all matches:
+    *   - line_matches, a list of all matches in the source, 
+    *     the values are the lines numbers of a given match
+    *   - line_offsets, a list of all matches in the source,
+    *     the values are the character offset in the line of the match
+    *   - match_cursor, pointing to the selected match
+    *   _ match_length, the length of the search term
+    */
   var serach_source = function()
   {
     __script.line_matches = [];
@@ -123,11 +178,16 @@ var VirtualTextSearch = function()
     }
   }
 
-  var highlight = function(set_match_cursor, new_search_term)
+  /**
+    * Initiate the search in the actual DOM.
+    * Scroll the view to the correct slice if needed.
+    * 
+    * @param {Boolean} set_match_cursor 
+    *     If true the match cursor is set starting from the current top line
+    *     (so that the view doesn't scroll if there is a match in the visible slice).
+    */
+  var highlight = function(set_match_cursor)
   {
-    // new_search_term is passed to know the arguments.callee.caller context
-    // highlight is called at the end of a succesful search and
-    // on keyup if it was the enter key to highlight the next tolken
     if (views.js_source.isvisible() &&
           __script && __script.line_matches && __script.line_matches.length)
     {
@@ -179,17 +239,17 @@ var VirtualTextSearch = function()
         replace("%(SEARCH_COUNT_INDEX)s", __script.match_cursor + 1) );
       __last_match_cursor = __script.match_cursor;
     }
-    // if the view was switched and the search tolken is still there
-    // but no search was done jet for that new view 
-    // keyup event callback, so new_search_term will be 'undefined'
-    else if (new_search_term != search_term)
-    {
-      var new_search_term = search_term;
-      search_term = '';
-      search(new_search_term);
-    }
   }
 
+  /**
+    * Create the highlight spans in a DOM element 
+    * which represents a line of the source file.
+    * __offset and __length are variables of the scope of the class.
+    * The function is called recursively on all nodes in there flow 
+    * of the containing line node till the two values are consumed.
+    *
+    * @param {Element} node The DOM element which represents a line of the source file.
+    */
   var search_node = function(node) 
   {
     var cur_node = node && node.firstChild, pos = 0, hit = null, span = null, length = 0;
@@ -235,6 +295,9 @@ var VirtualTextSearch = function()
     }
   }
 
+  /**
+    * Helper to initiate the search in a single line.
+    */
   var set_hit = function(line, index)
   {
     if (__top_line <= line && line <= __bottom_line)
@@ -247,6 +310,9 @@ var VirtualTextSearch = function()
     }
   }
 
+  /**
+    * Helper to scroll the view vertically if the selected match is not in the view.
+    */
   var scroll_selected_hit_in_to_view = function()
   {
     source_container.parentNode.scrollLeft = 0;
@@ -258,6 +324,9 @@ var VirtualTextSearch = function()
     }
   }
 
+  /**
+    * Helper to update the match cursor.
+    */
   var move_match_cursor = function(dir)
   {
     if (__script && __script.line_matches && __script.line_matches.length)
@@ -281,21 +350,41 @@ var VirtualTextSearch = function()
     }
   }
 
+  /**
+    * Helper to update the css style in list of matches.
+    */
   var update_hit = function(hit_arr, index)
   {
     hit_arr.forEach(index == __script.match_cursor && set_highlight_style || set_default_style);
   }
 
+  /**
+    * Helper to update the css style of a single DOM element.
+    */
   var set_highlight_style = function(ele)
   {
     ele.style.cssText = HIGHLIGHT_STYLE;
   }
 
+  /**
+    * Helper to update the css style of a single DOM element.
+    */
   var set_default_style = function(ele)
   {
     ele.style.cssText = DEFAULT_STYLE;
   }
 
+  /**
+    * Helper to remove a list of highlight elements from the DOM.
+    */
+  var clear_highlight_spans = function(hit)
+  {
+    hit.forEach(clear_highlight_span);
+  }
+
+  /**
+    * Helper to remove a highlight element from the DOM.
+    */
   var clear_highlight_span = function(ele)
   {
     var parent = ele.parentNode;
@@ -303,11 +392,10 @@ var VirtualTextSearch = function()
     parent.normalize();
   }
 
-  var clear_highlight_spans = function(hit)
-  {
-    hit.forEach(clear_highlight_span);
-  }
 
+  /**
+    * Helper to reset the list of highlight elements.
+    */
   var clear_hits = function()
   {
     __hits.forEach(clear_highlight_spans);
@@ -316,6 +404,9 @@ var VirtualTextSearch = function()
     __search_hits_valid = false;
   }
 
+  /**
+    * Helper to reset the search data.
+    */
   var clear_script_context = function()
   {
     if(__script)
@@ -327,7 +418,7 @@ var VirtualTextSearch = function()
     }
   }
 
-  /* interface implemantation */
+  /* interface implementation */
 
   this.search_delayed = function(new_search_term)
   {
