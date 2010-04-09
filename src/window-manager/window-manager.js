@@ -341,7 +341,7 @@ cls.WindowManager["2.0"].WindowsDropDown = function()
         {
           markup += '<option value="' + win.window_id + '"' + 
             ( win.window_id == debug_context ? ' selected="selected"' : '' ) + '>' + 
-            win.title + 
+            helpers.escapeTextHtml(win.title) + 
             '</option>';
         }
         select.innerHTML = markup;
