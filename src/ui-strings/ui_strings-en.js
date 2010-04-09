@@ -223,6 +223,8 @@ ui_strings.S_SWITCH_EXPAND_ALL = 'Expand all';
 ui_strings.S_SWITCH_LOCK_SELECTED_ELEMENTS = "Draw a border on to selected elements";
 /* DESC: Switch for controlling if the request log is cleared whenever a new site is loaded */
 ui_strings.S_SWITCH_CLEAR_REQUESTS_ON_NEW_CONTEXT = "Clear request log when loading a new site";
+/* DESC: When enabled, the request log always scroll to the bottom on new requests */
+ui_strings.S_SWITCH_AUTO_SCROLL_REQUEST_LIST = "Auto scroll request log";
 
 
 /*
