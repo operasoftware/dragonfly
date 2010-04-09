@@ -117,6 +117,9 @@ cls.RequestListView = function(id, name, container_class)
         var tpls = log.slice(nextToRendereIndex).map(fun);
         tableBodyEle.render(tpls);
         nextToRendereIndex = log.length;
+        if (settings.request_list.get('auto-scroll-request-list')) {
+            container.scrollTop = container.scrollHeight;
+        }
     };
 
     this._getRowForId = function(id) {
@@ -246,17 +249,20 @@ cls.RequestListView.create_ui_widgets = function()
         'request_list',
         // key-value map
         {
-            'clear-log-on-runtime-switch': true
+            'clear-log-on-runtime-switch': true,
+            'auto-scroll-request-list': true
         },
         // key-label map
         {
-            'clear-log-on-runtime-switch': ui_strings.S_SWITCH_CLEAR_REQUESTS_ON_NEW_CONTEXT
+            'clear-log-on-runtime-switch': ui_strings.S_SWITCH_CLEAR_REQUESTS_ON_NEW_CONTEXT,
+            'auto-scroll-request-list': ui_strings.S_SWITCH_AUTO_SCROLL_REQUEST_LIST
         },
         // settings map
         {
             checkboxes:
             [
-                'clear-log-on-runtime-switch'
+                'clear-log-on-runtime-switch',
+                'auto-scroll-request-list'
             ]
         }
     );
@@ -265,7 +271,8 @@ cls.RequestListView.create_ui_widgets = function()
     (
         'request_list',
         [
-            'clear-log-on-runtime-switch'
+            'clear-log-on-runtime-switch',
+            'auto-scroll-request-list'
         ]
     );
 };
