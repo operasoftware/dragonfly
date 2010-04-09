@@ -43,7 +43,7 @@ var VirtualTextSearch = function()
   this.set_container = function(container){};
   /**
     * Register the DOM input to enter a search.
-    * This is not used to trigger the serach, 
+    * This is not used to trigger the search, 
     * but to update a view and it's search box 
     * if a given view is re-created, e.g. on switching tabs.
     *
@@ -65,8 +65,8 @@ var VirtualTextSearch = function()
   /* constants */
 
   const 
-  DEFAULT_STYLE = document.styleSheets.getDeclaration ('.serach-highlight').cssText,
-  HIGHLIGHT_STYLE = document.styleSheets.getDeclaration ('.serach-highlight-selected').cssText,
+  DEFAULT_STYLE = document.styleSheets.getDeclaration ('.search-highlight').cssText,
+  HIGHLIGHT_STYLE = document.styleSheets.getDeclaration ('.search-highlight-selected').cssText,
   DEFAULT_SCROLL_MARGIN = 50,
   SEARCH_DELAY = 50; // in ms
 
@@ -107,7 +107,7 @@ var VirtualTextSearch = function()
         clear_hits();
         if (__script)
         {
-          serach_source();
+          search_source();
           if (__script.line_matches.length)
           {
             highlight(true);
@@ -143,7 +143,7 @@ var VirtualTextSearch = function()
     *   - match_cursor, pointing to the selected match
     *   _ match_length, the length of the search term
     */
-  var serach_source = function()
+  var search_source = function()
   {
     __script.line_matches = [];
     __script.line_offsets = [];
@@ -221,7 +221,7 @@ var VirtualTextSearch = function()
       // views.js_source.showLine can invalidate the current script source
       if (!__script.line_offsets) 
       {
-        serach_source();
+        search_source();
       }
       if (__search_hits_valid)
       {
@@ -304,7 +304,7 @@ var VirtualTextSearch = function()
     {
       __offset = __script.line_offsets[index];
       __length = __script.match_length;
-      __highlight_style = index == __script.match_cursor && HIGHLIGHT_STYLE || DEFAULT_STYLE
+      __highlight_style = index == __script.match_cursor && HIGHLIGHT_STYLE || DEFAULT_STYLE;
       __hits[index] = __hit = [];
       search_node(source_container.getElementsByTagName('div')[line - __top_line]);
     }
@@ -317,8 +317,8 @@ var VirtualTextSearch = function()
   {
     source_container.parentNode.scrollLeft = 0;
     __hit = __hits[__script.match_cursor];
-    if( __hit.length
-       && __hit[0].offsetLeft > source_container_parent.scrollLeft + source_container_parent.offsetWidth )
+    if (__hit.length
+       && __hit[0].offsetLeft > source_container_parent.scrollLeft + source_container_parent.offsetWidth)
     {
       source_container.parentNode.scrollLeft = __hit[0].offsetLeft - 50;
     }
