@@ -209,7 +209,7 @@ cls.WindowManager["2.0"].WindowManagerData = function()
   this.get_debug_context_title = function()
   {
     var cursor = null, i = 0;
-   if( this._window_list )
+    if( this._window_list )
     {
       for( ; ( cursor = this._window_list[i] ) && cursor.window_id != this._debug_context; i++);
     }
@@ -322,7 +322,7 @@ cls.WindowManager["2.0"].WindowsDropDown = function()
   this.init = function()
   {
     var self = this;
-    window.messages.addListener('debug-context-selected', function(msg) {self.update(msg)});
+    window.messages.addListener('debug-context-selected', self.update);
   };
 
   this.update = function()
