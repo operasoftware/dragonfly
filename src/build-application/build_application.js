@@ -188,15 +188,7 @@ window.app.build_application = function(on_services_created, on_services_enabled
   */
 window.app.builders = {};
 
-window.app.builders.Exec || ( window.app.builders.Exec = {} );
-/**
-  * @param {Object} service the service description of the according service on the host side
-  */
-window.app.builders.Exec["2.0"] = function(service)
-{
-  var namespace = cls.Exec && cls.Exec["2.0"];
-  window.app.helpers.implement_service(namespace);
-}
+
 
 
 window.app.builders.WindowManager || ( window.app.builders.WindowManager = {} );

@@ -1,11 +1,13 @@
-﻿var cls = window.cls || ( window.cls = {} );
+﻿window.cls || ( window.cls = {} );
+cls.Exec || (cls.Exec = {});
+cls.Exec["2.0"] || (cls.Exec["2.0"] = {});
 
 /**
   * @constructor
   * @extends ViewBase
   */
 
-cls.ColorPicker = function(id, name, container_class)
+cls.Exec["2.0"].ColorPicker = function(id, name, container_class)
 {
   /* interface */
 
@@ -331,27 +333,28 @@ cls.ColorPicker = function(id, name, container_class)
   this.init(id, name, container_class);
 }
 
-new Settings
-(
-  // id
-  'color_picker',
-  // kel-value map
-  {
+cls.Exec["2.0"].ColorPicker.create_ui_widget = function()
+{
+  new Settings
+  (
+    // id
+    'color_picker',
+    // kel-value map
+    {
 
-    'color-picker-scale': 15,
-  },
-  // key-label map
-  {
+      'color-picker-scale': 15,
+    },
+    // key-label map
+    {
 
-  },
-  // settings map
-  {
-    checkboxes:
-    [
+    },
+    // settings map
+    {
+      checkboxes:
+      [
 
-    ]
-  }
-);
+      ]
+    }
+  );
+}
 
-cls.ColorPicker.prototype = ViewBase;
-new cls.ColorPicker('color_picker', 'Color Picker', 'scroll');
