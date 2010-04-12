@@ -17,7 +17,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
   var msgs = [];
   var toggled = [];
   var dragonfly_msgs = [];
-  var __views = ['console-dragonfly'];
+  var __views = [];
   var __selected_rt_url = '';
   var url_self = location.host + location.pathname;
   var lastId = 0;
@@ -456,43 +456,6 @@ ErrorConsoleView.roughViews.createViews = function()
   }
 };
 
-//ErrorConsoleView.roughViews.createViews();
-
-/**
- * View class for the error console
- * @constructor
- * @extends ViewBase
- */
-cls.ConsoleDragonflyView = function(id, name, container_class)
-{
-  this.createView = function(container)
-  {
-    container.clearAndRender(templates.error_log_messages(error_console_data.getDragonflyMessages()));
-    container.scrollTop = container.scrollHeight;
-  };
-  this.init(id, name, container_class );
-};
-
-cls.ConsoleDragonflyView.prototype = ViewBase;
-
-new cls.ConsoleDragonflyView('console-dragonfly', ui_strings.M_VIEW_LABEL_ERROR_DRAGONFLY, 'scroll error-console');
-
-new ToolbarConfig
-(
-  'console-dragonfly',
-  [
-    {
-      handler: 'clear-error-console-dragonfly',
-      title: ui_strings.S_BUTTON_LABEL_CLEAR_LOG
-    }
-  ]
-);
-
-eventHandlers.click['clear-error-console-dragonfly'] = function()
-{
-  error_console_data.clearDragonflyMessages();
-};
-
 eventHandlers.click['error-log-list-expand-collapse'] = function(event, target)
 {
     var logid = target.getAttribute("data-logid");
@@ -518,80 +481,75 @@ eventHandlers.click['error-log-list-expand-collapse'] = function(event, target)
   * @extends ViewBase
   * General view to get general console setting.
   */
-cls.ConsoleView = function(id, name, container_class)
+cls.ConsoleLogger["2.0"].ConsoleView = function(id, name, container_class)
 {
   this.ishidden_in_menu = true;
-  this.createView = function(container)
-  {
-  };
+  this.createView = function(container){};
   this.init(id, name, container_class);
 };
 
-cls.ConsoleView.prototype = ViewBase;
+cls.ConsoleLogger["2.0"].ConsoleView.create_ui_widgets = function()
+{
 
-new cls.ConsoleView('console', ui_strings.M_VIEW_LABEL_CONSOLE, 'scroll');
-
-new Settings
-(
-  // id
-  'console',
-  // key-value map
-  {
-    'console-all': true,
-    'console-script': true,
-    'console-css': true,
-    'console-xml': false,
-    'console-java': false,
-    'console-m2': false,
-    'console-network': false,
-    'console-html': false,
-    'console-xslt': false,
-    'console-svg': false,
-    'console-bittorrent': false,
-    'console-voice': false,
-    'console-widget': false,
-    'console-dragonfly': false,
-    'use-selected-runtime-as-filter': false,
-    'expand-all-entries': false
+  new Settings
+  (
+    // id
+    'console',
+    // key-value map
+    {
+      'console-all': true,
+      'console-script': true,
+      'console-css': true,
+      'console-xml': false,
+      'console-java': false,
+      'console-m2': false,
+      'console-network': false,
+      'console-html': false,
+      'console-xslt': false,
+      'console-svg': false,
+      'console-bittorrent': false,
+      'console-voice': false,
+      'console-widget': false,
+      'use-selected-runtime-as-filter': false,
+      'expand-all-entries': false
+    },
+    // key-label map
+    {
+      'console-all': ui_strings.S_SWITCH_SHOW_TAB_ALL,
+      'console-script': ui_strings.S_SWITCH_SHOW_TAB_SCRIPT,
+      'console-css': ui_strings.S_SWITCH_SHOW_TAB_CSS,
+      'console-xml': ui_strings.S_SWITCH_SHOW_TAB_XML,
+      'console-java': ui_strings.S_SWITCH_SHOW_TAB_JAVA,
+      'console-m2': ui_strings.S_SWITCH_SHOW_TAB_M2,
+      'console-network': ui_strings.S_SWITCH_SHOW_TAB_NETWORK,
+      'console-html': ui_strings.S_SWITCH_SHOW_TAB_HTML,
+      'console-xslt': ui_strings.S_SWITCH_SHOW_TAB_XSLT,
+      'console-svg': ui_strings.S_SWITCH_SHOW_TAB_SVG,
+      'console-bittorrent': ui_strings.S_SWITCH_SHOW_TAB_BITTORRENT,
+      'console-voice': ui_strings.S_SWITCH_SHOW_TAB_VOICE,
+      'console-widget': ui_strings.S_SWITCH_SHOW_TAB_WIDGET,
+      'use-selected-runtime-as-filter': ' use selected runtime as filter', // Not in use!
+      'expand-all-entries': ui_strings.S_SWITCH_EXPAND_ALL
   },
-  // key-label map
-  {
-    'console-all': ui_strings.S_SWITCH_SHOW_TAB_ALL,
-    'console-script': ui_strings.S_SWITCH_SHOW_TAB_SCRIPT,
-    'console-css': ui_strings.S_SWITCH_SHOW_TAB_CSS,
-    'console-xml': ui_strings.S_SWITCH_SHOW_TAB_XML,
-    'console-java': ui_strings.S_SWITCH_SHOW_TAB_JAVA,
-    'console-m2': ui_strings.S_SWITCH_SHOW_TAB_M2,
-    'console-network': ui_strings.S_SWITCH_SHOW_TAB_NETWORK,
-    'console-html': ui_strings.S_SWITCH_SHOW_TAB_HTML,
-    'console-xslt': ui_strings.S_SWITCH_SHOW_TAB_XSLT,
-    'console-svg': ui_strings.S_SWITCH_SHOW_TAB_SVG,
-    'console-bittorrent': ui_strings.S_SWITCH_SHOW_TAB_BITTORRENT,
-    'console-voice': ui_strings.S_SWITCH_SHOW_TAB_VOICE,
-    'console-widget': ui_strings.S_SWITCH_SHOW_TAB_WIDGET,
-    'console-dragonfly': ui_strings.S_SWITCH_SHOW_TAB_DRAGONFLY,
-    'use-selected-runtime-as-filter': ' use selected runtime as filter', // Not in use!
-    'expand-all-entries': ui_strings.S_SWITCH_EXPAND_ALL
-},
-  // settings map
-  {
-    checkboxes:
-    [
-      'console-all',
-      'console-script',
-      'console-css',
-      'console-xml',
-      'console-java',
-      'console-m2',
-      'console-network',
-      'console-html',
-      'console-xslt',
-      'console-svg',
-      'console-bittorrent',
-      'console-voice',
-      'console-widget',
-      'console-dragonfly'
-    ]
-  }
-);
+    // settings map
+    {
+      checkboxes:
+      [
+        'console-all',
+        'console-script',
+        'console-css',
+        'console-xml',
+        'console-java',
+        'console-m2',
+        'console-network',
+        'console-html',
+        'console-xslt',
+        'console-svg',
+        'console-bittorrent',
+        'console-voice',
+        'console-widget'
+      ]
+    }
+  );
 
+};

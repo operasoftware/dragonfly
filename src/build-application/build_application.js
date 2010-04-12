@@ -199,6 +199,9 @@ window.app.builders.ConsoleLogger["2.0"] = function(service)
     window.app.helpers.implement_service(namespace);
     window.error_console_data = new namespace.ErrorConsoleData();
     window.error_console_data.bind();
+    namespace.ConsoleView.prototype = ViewBase;
+    new namespace.ConsoleView('console', ui_strings.M_VIEW_LABEL_CONSOLE, 'scroll');
+    namespace.ConsoleView.create_ui_widgets();
     // TODO proper namespace handling for views
     ErrorConsoleView.roughViews.createViews();
   }
