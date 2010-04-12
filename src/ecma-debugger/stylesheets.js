@@ -543,7 +543,7 @@ cls.Stylesheets = function()
         {
           ret += ( ret ? MARKUP_PROP_NL : MARKUP_EMPTY ) +
             INDENT +
-            MARKUP_KEY + helpers.escapeTextHtml(__indexMap[index]) + MARKUP_KEY_CLOSE +
+            MARKUP_KEY + __indexMap[index] + MARKUP_KEY_CLOSE +
             MARKUP_VALUE + helpers.escapeTextHtml(value_list[i]) + ( priority_list[i] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE; 
   
         }
@@ -551,7 +551,7 @@ cls.Stylesheets = function()
         {
           ret += ( ret ? MARKUP_PROP_NL : MARKUP_EMPTY ) +
             INDENT +
-            MARKUP_KEY_OW + helpers.escapeTextHtml(__indexMap[index]) + MARKUP_KEY_CLOSE +
+            MARKUP_KEY_OW + __indexMap[index] + MARKUP_KEY_CLOSE +
             MARKUP_VALUE_OW + helpers.escapeTextHtml(value_list[i]) + ( priority_list[i] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE;   
         }
       }
@@ -779,7 +779,7 @@ cls.Stylesheets = function()
     {
       return "<rule>" +
               "<stylesheet-link class='pseudo'>default values</stylesheet-link>" +
-        "<selector>" + helpers.escapeTextHtml(element_name) + "</selector>" + 
+        "<selector>" + element_name + "</selector>" + 
         " {\n" + 
             prettyPrintRule[COMMON](style_dec, false, search_active) +
         "\n}</rule>";
