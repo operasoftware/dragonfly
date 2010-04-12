@@ -8,18 +8,18 @@ var DOM_markup_style = function(id, name, container_class)
 {
   var self = this;
 
-  const 
-  ID = 0, 
-  TYPE = 1, 
-  NAME = 2, 
+  const
+  ID = 0,
+  TYPE = 1,
+  NAME = 2,
   DEPTH = 3,
-  NAMESPACE = 4, 
-  VALUE = 7, 
+  NAMESPACE = 4,
+  VALUE = 7,
   ATTRS = 5,
   ATTR_PREFIX = 0,
-  ATTR_KEY = 1, 
+  ATTR_KEY = 1,
   ATTR_VALUE = 2,
-  CHILDREN_LENGTH = 6, 
+  CHILDREN_LENGTH = 6,
   PUBLIC_ID = 8,
   SYSTEM_ID = 9,
   INDENT = "  ",
@@ -49,30 +49,30 @@ var DOM_markup_style = function(id, name, container_class)
 
   this.updateTarget = function(ele, obj_id)
   {
-    if(ele)
+    if (ele)
     {
       var target = document.getElementById('target-element');
-      if(target)
+      if (target)
       {
         target.removeAttribute('id');
       }
-      if(/<\//.test(ele.firstChild.nodeValue))
+      if (/<\//.test(ele.firstChild.nodeValue))
       {
-        while( ( ele = ele.previousSibling ) && ele.getAttribute('ref-id') != obj_id );
+        while (( ele = ele.previousSibling) && ele.getAttribute('ref-id') != obj_id);
       }
       topCell.statusbar.updateInfo
       (
         // the same template is used with inner html
-        templates.breadcrumb(dom_data.getCSSPath())  
+        templates.breadcrumb(dom_data.getCSSPath())
       );
     }
-    if(ele || ( ele = document.getElementById('target-element') ) )
+    if (ele || (ele = document.getElementById('target-element')))
     {
       ele.id = 'target-element';
     }
     else
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
         "missing implementation in updateTarget in views['dom-inspector']");
       // TODO
     }
@@ -80,18 +80,17 @@ var DOM_markup_style = function(id, name, container_class)
 
   var formatProcessingInstructionValue = function(str, force_lower_case)
   {
-    
     var r_attrs = str.split(' '), r_attr = '', i=0, attrs = '', attr = null;
-    
-    for( ; i < r_attrs.length; i++)
+
+    for ( ; i < r_attrs.length; i++)
     {
-      if(r_attr = r_attrs[i])
+      if (r_attr = r_attrs[i])
       {
         attr = r_attr.split('=');
-        attrs += " <key>" + 
-          ( force_lower_case ? attr[0].toLowerCase() : attr[0] ) + 
-          "</key>=<value>" + 
-          attr[1] + 
+        attrs += " <key>" +
+          (force_lower_case ? attr[0].toLowerCase() : attr[0]) +
+          "</key>=<value>" +
+          attr[1] +
           "</value>";
       }
     }
@@ -100,23 +99,23 @@ var DOM_markup_style = function(id, name, container_class)
 
   this.createView = function(container)
   {
-    if(this._create_view_no_data_timeout)
+    if (this._create_view_no_data_timeout)
     {
       clearTimeout(this._create_view_no_data_timeout);
       this._create_view_no_data_timeout = 0;
     }
-    if( container.hasClass('tree-style') )
+    if (container.hasClass('tree-style'))
     {
       container.removeClass('tree-style');
     }
     var data = dom_data.getData();
 
-    var 
-    tree = "<div class='padding table-cell' edit-handler='edit-dom' rt-id='" + dom_data.getDataRuntimeId() + "'>", 
-    i = 0, 
-    node = null, 
+    var
+    tree = "<div class='padding table-cell' edit-handler='edit-dom' rt-id='" + dom_data.getDataRuntimeId() + "'>",
+    i = 0,
+    node = null,
     length = data.length;
-    
+
     var target = dom_data.getCurrentTarget();
 
     var attrs = null, attr = null, k = 0, key = '';
@@ -129,11 +128,7 @@ var DOM_markup_style = function(id, name, container_class)
     var child_level = 0;
     var j = 0;
     var children_length = 0;
-
     var closing_tags = [];
-
-    
-
     var force_lower_case = dom_data.isTextHtml() && settings[this.id].get('force-lowercase');
     var show_comments = settings[this.id].get('show-comments');
     var show_attrs = settings[this.id].get('show-attributes');
@@ -147,47 +142,47 @@ var DOM_markup_style = function(id, name, container_class)
     var style = null;
     var is_not_script_node = true;
     var is_debug = ini.debug;
-    
-    if(!data.length)
+
+    if (!data.length)
     {
       this._create_view_no_data_timeout = setTimeout(this._create_view_no_data, 100, container);
     }
     else
     {
-      for( ; node = data[i]; i += 1 )
+      for ( ; node = data[i]; i += 1)
       {
-        while( current_depth > node[DEPTH] )
+        while(current_depth > node[DEPTH])
         {
           tree += closing_tags.pop();
           current_depth--;
         }
-        current_depth = node[ DEPTH ];
-        children_length = node[ CHILDREN_LENGTH ];
+        current_depth = node[DEPTH];
+        children_length = node[CHILDREN_LENGTH];
         child_pointer = 0;
-        node_name =  ( node[NAMESPACE] ? node[NAMESPACE] + ':': '' ) +  node[NAME];
-        if( force_lower_case )
+        node_name = (node[NAMESPACE] ? node[NAMESPACE] + ':': '') + node[NAME];
+        if (force_lower_case)
         {
           node_name = node_name.toLowerCase();
         }
-        switch ( node[TYPE] )
+        switch (node[TYPE])
         {
           case 1:  // elements
           {
             is_not_script_node = node[NAME].toLowerCase() != 'script';
-            if( show_attrs )
+            if (show_attrs)
             {
               attrs = '';
-              for( k = 0; attr = node[ATTRS][k]; k++ )
+              for (k = 0; attr = node[ATTRS][k]; k++)
               {
-                attrs += " <key>" + 
-                  (( attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '' ) + 
+                attrs += " <key>" +
+                  ((attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '') +
                   /* regarding escaping "<". it happens that there are very starnge keys in broken html.
                       perhaps we will have to extend the escaping to other data tokens as well */
-                  ( force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] )).replace(/</g, '&lt;') +
-                  "</key>=<value" + 
-                    ( /^href|src$/i.test(attr[ATTR_KEY])
+                  (force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY])).replace(/</g, '&lt;') +
+                  "</key>=<value" +
+                    (/^href|src$/i.test(attr[ATTR_KEY])
                       ? " handler='dom-resource-link'"
-                      : "" ) + ">\"" + 
+                      : "") + ">\"" +
                     helpers.escapeTextHtml(attr[ATTR_VALUE]).replace(/"/g, '&amp;quot;') +
                     "\"</value>";
               }
@@ -198,12 +193,12 @@ var DOM_markup_style = function(id, name, container_class)
             }
             child_pointer = i + 1;
             is_open = (data[child_pointer] && (node[DEPTH] < data[child_pointer][DEPTH]));
-            if( is_open ) 
+            if (is_open)
             {
               has_only_one_child = 1;
               one_child_text_content = '';
               child_level = data[child_pointer][DEPTH];
-              for( ; data[child_pointer] &&  data[child_pointer][DEPTH] == child_level; child_pointer += 1 )
+              for ( ; data[child_pointer] && data[child_pointer][DEPTH] == child_level; child_pointer += 1)
               {
                 if (data[child_pointer][TYPE] != 3)
                 {
@@ -222,65 +217,64 @@ var DOM_markup_style = function(id, name, container_class)
                 if (!one_child_text_content || !/^\s*$/.test(data[child_pointer][VALUE]))
                 {
                   one_child_text_content += "<text" +
-                    ( is_not_script_node ? " ref-id='" + data[child_pointer][ID] + "' " : "" ) +
+                    (is_not_script_node ? " ref-id='" + data[child_pointer][ID] + "' " : "") +
                     ">" + helpers.escapeTextHtml(data[child_pointer][VALUE]) + "</text>";
                 }
               }
             }
 
-            if( is_open )
+            if (is_open)
             {
-              if( has_only_one_child )
+              if (has_only_one_child)
               {
                 class_name = re_formatted.test(node_name) ? " class='pre-wrap'" : '';
-                tree += "<div " + ( node[ ID ] == target ? "id='target-element'" : '' ) + 
+                tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                         " style='margin-left:" + 16 * node[DEPTH] + "px;' "+
-                        "ref-id='" + node[ ID ] + "' handler='spotlight-node' " +
+                        "ref-id='" + node[ID] + "' handler='spotlight-node' " +
                         class_name + ">"+
-                        "<node>&lt;" + node_name +  attrs + "&gt;</node>" +
-                        one_child_text_content +
-                        "<node>&lt;/" + node_name + "&gt;</node>" +
-                        ( is_debug && ( " <d>[" + node[ ID ] +  "]</d>" ) || "" ) +
+                            "<node>&lt;" + node_name + attrs + "&gt;</node>" +
+                                one_child_text_content +
+                            "<node>&lt;/" + node_name + "&gt;</node>" +
+                            (is_debug && (" <d>[" + node[ID] + "]</d>" ) || "") +
                         "</div>";
                 i = child_pointer - 1;
               }
               else
               {
-                tree += "<div " + ( node[ ID ] == target ? "id='target-element'" : '' ) + 
-                        " style='margin-left:" + 16 * node[ DEPTH ] + "px;' "+
-                        "ref-id='"+node[ ID ] + "' handler='spotlight-node'>"+
-                        ( node[ CHILDREN_LENGTH ] ? 
-                          "<input handler='get-children' type='button' class='open'>" : '' ) +
-                        "<node>&lt;" + node_name + attrs + "&gt;</node>" +
-                        ( is_debug && ( " <d>[" + node[ ID ] +  "]</d>" ) || "" ) +
+                tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
+                        " style='margin-left:" + 16 * node[DEPTH] + "px;' " +
+                        "ref-id='" + node[ID] + "' handler='spotlight-node'>" +
+                        (node[CHILDREN_LENGTH] ?
+                            "<input handler='get-children' type='button' class='open'>" : '') +
+                            "<node>&lt;" + node_name + attrs + "&gt;</node>" +
+                        (is_debug && (" <d>[" + node[ID] + "]</d>" ) || "") +
                         "</div>";
 
-                closing_tags.push("<div style='margin-left:" + 
-                                  ( 16 * node[ DEPTH ] ) + "px;' " +
-                                  "ref-id='"+node[ ID ] + "' handler='spotlight-node'><node>" +
+                closing_tags.push("<div style='margin-left:" +
+                                  (16 * node[DEPTH]) + "px;' " +
+                                  "ref-id='" + node[ID] + "' handler='spotlight-node'><node>" +
                                   "&lt;/" + node_name + "&gt;" +
                                   "</node></div>");
               }
-
             }
             else
             {
-            tree += "<div " + ( node[ ID ] == target ? "id='target-element'" : '' ) + 
-                    " style='margin-left:" + 16 * node[ DEPTH ] + "px;' "+
-                    "ref-id='"+ node[ ID ] + "' handler='spotlight-node'>"+
-                    ( children_length ? 
-                      "<input handler='get-children' type='button' class='close'>" : '' ) +
-                    "<node>&lt;" + node_name + attrs + ( children_length ? '' : '/' ) + "&gt;</node>" +
-                    ( is_debug && ( " <d>[" + node[ ID ] +  "]</d>" ) || "" ) +
-                    "</div>";
+                tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
+                        " style='margin-left:" + 16 * node[DEPTH] + "px;' "+
+                        "ref-id='" + node[ID] + "' handler='spotlight-node'>"+
+                        (children_length ?
+                            "<input handler='get-children' type='button' class='close'>" : '') +
+                            "<node>&lt;" + node_name + attrs + (children_length ? '' : '/') + "&gt;</node>" +
+                        (is_debug && (" <d>[" + node[ID] + "]</d>" ) || "") +
+                        "</div>";
             }
             break;
           }
 
           case 7:  // processing instruction
           {
-            tree += "<div style='margin-left:" + 16 * node[ DEPTH ] + "px;' " +      
-              "class='processing-instruction'>&lt;?" + node[NAME] + ' ' + 
+            tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;' " +
+              "class='processing-instruction'>&lt;?" + node[NAME] + ' ' +
               formatProcessingInstructionValue(node[VALUE], force_lower_case) + "?&gt;</div>";
             break;
 
@@ -288,11 +282,11 @@ var DOM_markup_style = function(id, name, container_class)
 
           case 8:  // comments
           {
-            if( show_comments )
+            if (show_comments)
             {
-              if( !/^\s*$/.test(node[ VALUE ] ) )
+              if (!/^\s*$/.test(node[VALUE]))
               {
-                tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;' " +      
+                tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;' " +
                         "class='comment pre-wrap'>&lt;!--" + helpers.escapeTextHtml(node[VALUE]) + "--&gt;</div>";
               }
             }
@@ -326,14 +320,13 @@ var DOM_markup_style = function(id, name, container_class)
 
           default:
           {
-            if( !/^\s*$/.test(node[ VALUE ] ) )
+            if (!/^\s*$/.test(node[ VALUE ]))
             {
-              tree += 
-                "<div style='margin-left:" + ( 16 * node[ DEPTH ] )  + "px;'>" + 
-                  "<text" + 
-                      ( is_not_script_node ? " ref-id='"+ node[ID] + "' " : "" ) + 
-                      ">" + helpers.escapeTextHtml(node[ VALUE ]) + "</text>" +
-                "</div>";
+              tree += "<div style='margin-left:" + (16 * node[DEPTH])  + "px;'>" +
+                      "<text" +
+                      (is_not_script_node ? " ref-id='"+ node[ID] + "' " : "") +
+                      ">" + helpers.escapeTextHtml(node[VALUE]) + "</text>" +
+                      "</div>";
             }
           }
 
@@ -356,5 +349,4 @@ var DOM_markup_style = function(id, name, container_class)
     }
   }
 }
-
 
