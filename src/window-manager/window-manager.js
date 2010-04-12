@@ -161,7 +161,7 @@ cls.WindowManager["2.0"].WindowManagerData = function()
           {
             if (this._window_list.length)
             {
-              this.set_debug_context(this._window_list[0].window_id)
+              this.set_debug_context(this._window_list[0].window_id);
             }
           }
           break;
@@ -209,7 +209,7 @@ cls.WindowManager["2.0"].WindowManagerData = function()
   this.get_debug_context_title = function()
   {
     var cursor = null, i = 0;
-    if( this._window_list )
+   if( this._window_list )
     {
       for( ; ( cursor = this._window_list[i] ) && cursor.window_id != this._debug_context; i++);
     }
@@ -223,6 +223,8 @@ cls.WindowManager["2.0"].WindowManagerData = function()
     // TODO cleanup, the active window id should just be at one place
     runtimes.setActiveWindowId(win_id);
     window.windowsDropDown.update();
+    window.messages.post('debug-context-selected', {window_id: win_id});
+
     /*
     // workaround as long as we don't have a command confirmation. see bug 361876
     setTimeout
@@ -298,7 +300,7 @@ eventHandlers.click['list-windows'] = function(event, target)
 
 eventHandlers.click['set-filter-active-window'] = function(event, target)
 {
-  alert("not implemented eventHandlers.click['set-filter-active-window'] in window-manager.js")
+  alert("not implemented eventHandlers.click['set-filter-active-window'] in window-manager.js");
   // services['window-manager'].setFilterActiveWindow();
 };
 
