@@ -1,7 +1,7 @@
 ﻿var cls = window.cls || ( window.cls = {} );
 
 /**
-  * @constructor 
+  * @constructor
   * @extends ViewBase
   */
 
@@ -26,14 +26,14 @@ cls.ColorPicker = function(id, name, container_class)
 
   /* constants */
 
-  const 
+  const
   DELTA_SCALE = 5,
   SCALE = 15,
   MAX_DIMENSION = 350,
   AVERAGE_PIXEL_COUNT = 3,
   COLOR_MASK_ALPHA = 0.5;
 
-  /* private */  
+  /* private */
 
   var self = this;
 
@@ -53,7 +53,7 @@ cls.ColorPicker = function(id, name, container_class)
 
   this._setup_canvas = function()
   {
-    var 
+    var
     w = this._width,
     h = this._height,
     canvases = this._container.getElementsByTagName('canvas'),
@@ -62,7 +62,7 @@ cls.ColorPicker = function(id, name, container_class)
 
     for( ; canvas = canvases[i]; i++)
     {
-      
+
       canvas.style.height = ( canvas.height = h ) + 'px';
       canvas.style.width =  ( canvas.width = w ) + 'px';
       this[i && '_ctx_color_mask' || '_ctx'] = canvas.getContext('2d');
@@ -74,16 +74,16 @@ cls.ColorPicker = function(id, name, container_class)
   {
     if(this.isvisible())
     {
-      var 
+      var
       is_index = typeof x == "number" && typeof y == "number",
       index = 0,
       scale = this._scale,
       w = this._average,
       h = this._average,
       color = null,
-      r = 0, 
-      g = 0, 
-      b = 0, 
+      r = 0,
+      g = 0,
+      b = 0,
       i = 0;
 
       if(!is_index)
@@ -122,13 +122,13 @@ cls.ColorPicker = function(id, name, container_class)
       i /= 4;
       this._colors.setRGB([r / i >> 0, g / i >> 0, b / i >> 0]);
       this._update_selected_color();
-      this._ctx_color_mask.clearRect(0, 0, this._screenshot_width * scale, this._screenshot_height * scale);  
+      this._ctx_color_mask.clearRect(0, 0, this._screenshot_width * scale, this._screenshot_height * scale);
       if(is_index && index !== this._last_index)
       {
-        this._ctx_color_mask.fillRect(0, 0, this._screenshot_width * scale, this._screenshot_height * scale); 
-        this._ctx_color_mask.clearRect(x * scale, y * scale, w * scale, h * scale); 
+        this._ctx_color_mask.fillRect(0, 0, this._screenshot_width * scale, this._screenshot_height * scale);
+        this._ctx_color_mask.clearRect(x * scale, y * scale, w * scale, h * scale);
       }
-      this._last_index = is_index && index !== this._last_index ? index : -1; 
+      this._last_index = is_index && index !== this._last_index ? index : -1;
     }
   }
 
@@ -141,7 +141,7 @@ cls.ColorPicker = function(id, name, container_class)
     if(this.isvisible() && document.getElementById('center-color'))
     {
       document.getElementById('center-color').style.backgroundColor = "#" + hex;
-      document.getElementById('center-color-values').textContent = 
+      document.getElementById('center-color-values').textContent =
         "rgb: " + rgb.join(", ") + "\n" +
         "hsl: " + hsl[0] + ", " + hsl[1] + "%, " + hsl[2] + "%\n" +
         "hex: " + "#" + hex;
@@ -177,9 +177,9 @@ cls.ColorPicker = function(id, name, container_class)
     scale != this._scale && ( this._scale = scale);
     this._set_dimesions(container);
     container.render(window.templates.color_picker(
-      this._screenshot_width, 
-      this._screenshot_height, 
-      this._scale, 
+      this._screenshot_width,
+      this._screenshot_height,
+      this._scale,
       DELTA_SCALE
       )
     );
@@ -190,18 +190,18 @@ cls.ColorPicker = function(id, name, container_class)
   this.ondestroy = function()
   {
     window.color_picker_data.set_active_state(false);
-    this._container = 
-    this._ctx = 
+    this._container =
+    this._ctx =
     this._ctx_color_mask = null;
   }
 
   this.display_screenshot = function()
   {
-    var 
+    var
     pixel_count = this._screenshot_width * this._screenshot_height,
-    img_data = window.color_picker_data.get_data(),  
+    img_data = window.color_picker_data.get_data(),
     x = 0,
-    i = 0, 
+    i = 0,
     cur = 0,
     scale = this._scale;
 
@@ -210,12 +210,12 @@ cls.ColorPicker = function(id, name, container_class)
       for( ; i < pixel_count; i++)
       {
         cur = 4 * i;
-        this._ctx.fillStyle = "rgb(" + 
-            img_data[cur + 0] + "," + 
-            img_data[cur + 1] + "," + 
+        this._ctx.fillStyle = "rgb(" +
+            img_data[cur + 0] + "," +
+            img_data[cur + 1] + "," +
             img_data[cur + 2] +")";
         x = i % this._screenshot_width;
-        this._ctx.fillRect(x * scale, ( i - x ) / this._screenshot_width * scale, scale, scale); 
+        this._ctx.fillRect(x * scale, ( i - x ) / this._screenshot_width * scale, scale, scale);
       }
       this._update_center_color();
     }
@@ -270,7 +270,7 @@ cls.ColorPicker = function(id, name, container_class)
     this._average_delta = average/2 >> 0;
     if(this._last_index > -1)
     {
-      var 
+      var
       x = this._last_index % this._screenshot_width,
       y = (this._last_index - x) / this._screenshot_width;
 
@@ -334,15 +334,15 @@ cls.ColorPicker = function(id, name, container_class)
 new Settings
 (
   // id
-  'color_picker', 
+  'color_picker',
   // kel-value map
   {
 
     'color-picker-scale': 15,
-  }, 
+  },
   // key-label map
   {
-  
+
   },
   // settings map
   {

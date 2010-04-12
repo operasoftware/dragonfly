@@ -1,7 +1,7 @@
 ﻿window.templates = window.templates || {};
 
 // TODO create text strings
-      
+
 window.templates.color_picker = function(
     screenshot_width, screenshot_height, scale, delta_scale)
 {
@@ -9,36 +9,36 @@ window.templates.color_picker = function(
     ['div',
         ['div',
           ['h2', 'Pixel Magnifier and Color Picker'],
-          ['p', 
-            ['label', 
+          ['p',
+            ['label',
               'Area' + ': ',
-              ['select', 
+              ['select',
                 this.color_picker_create_dimesion_select(screenshot_width, screenshot_height),
-                'id', 'color-picker-area', 
+                'id', 'color-picker-area',
                 'handler', 'update-area']
             ],
             ' ',
-            ['label', 
+            ['label',
               'Scale' + ': ',
-              ['select', 
+              ['select',
                 this.color_picker_create_scale_select(scale, delta_scale),
-                'id', 'color-picker-scale', 
+                'id', 'color-picker-scale',
                 'handler', 'set-color-picker-scale']
             ],
           'class', 'controls'],
-          ['p', 
-            ['input', 
-              'type', 'button', 
-              'value', 'Reset default values', 
+          ['p',
+            ['input',
+              'type', 'button',
+              'value', 'Reset default values',
               'handler', 'color-picker-reset-default-values'],
             'class', 'color-picker-button-controls'
           ],
           ['h2', 'Stored colors'],
           this.color_picker_stored_colors(),
-          ['p', 
-            ['input', 
-              'type', 'button', 
-              'value', 'Manage stored colors', 
+          ['p',
+            ['input',
+              'type', 'button',
+              'value', 'Manage stored colors',
               'handler', 'color-picker-manage-stored-colors'],
             'class', 'color-picker-button-controls'
           ],
@@ -59,10 +59,10 @@ window.templates.color_picker = function(
           this.color_picker_average_select(),
           ['div', 'id', 'center-color'],
           ['pre', 'id', 'center-color-values'],
-          ['p', 
-            ['input', 
-              'type', 'button', 
-              'value', 'Store color', 
+          ['p',
+            ['input',
+              'type', 'button',
+              'value', 'Store color',
               'handler', 'color-picker-store-color'],
             'class', 'color-picker-button-controls'
           ],
@@ -78,13 +78,13 @@ window.templates.color_picker_stored_colors = function()
     'class', 'color-picker-stored-colors',
     'handler', 'color-picker-set-stored-color'
   ]);
-      
+
 }
 
 window.templates.color_picker_stored_color = function(color)
 {
   return (
-  ['li', 
+  ['li',
     'style', 'background-color: #'+ color,
     'data-stored-color', color
   ]);
@@ -98,12 +98,12 @@ window.templates.manage_stored_colors = function()
       ['h2', 'Manage stored colors'],
       ['ul',
         (window.settings.color_picker.get('color-picker-stored-colors') || []).map(this.color_picker_manage_stored_color, this),
-      
+
       ],
-      ['p', 
-        ['input', 
-        'type', 'button', 
-        'value', 'Done', 
+      ['p',
+        ['input',
+        'type', 'button',
+        'value', 'Done',
         'handler', 'color-picker-manage-stored-colors-done'],
         'class', 'color-picker-button-controls'
       ],
@@ -115,9 +115,9 @@ window.templates.manage_stored_colors = function()
 window.templates.color_picker_manage_stored_color = function(color, index)
 {
   return (
-  ['li', 
+  ['li',
     ['span', 'style', 'background-color: #'+ color],
-    ['input', 
+    ['input',
       'type', 'button',
       'value', 'delete',
       'handler', 'delete-stored-color'],
@@ -130,12 +130,12 @@ window.templates.color_picker_average_select = function()
   var ret = [], i = 1, average = window.views.color_picker.get_average_dimension();
   for( ; i < 10; i+=2)
   {
-    ret[ret.length] = 
+    ret[ret.length] =
       ['option', i + ' x ' + i, 'value', i.toString()].
         concat(average == i ? ['selected', 'selected'] : []);
   }
   return (
-    ['p', 
+    ['p',
       ['label', 'Average color of ',
         ['select', ret, 'handler', 'update-average'],
         ' pixels'],
@@ -145,9 +145,9 @@ window.templates.color_picker_average_select = function()
 window.templates.color_picker_create_dimesion_select = function(width, height)
 {
   // width and height are the actual pixel values of the screenshot
-  var 
-  ret = [], 
-  delta = 3, 
+  var
+  ret = [],
+  delta = 3,
   steps = 4,
   lower_lim = steps,
   min = Math.min(width, height),
@@ -164,7 +164,7 @@ window.templates.color_picker_create_dimesion_select = function(width, height)
     // i is either of type width or height
     w = i * (min == width ? 1 : width / height)  >> 0;
     h = i * (min == width ? height / width : 1)  >> 0;
-    ret[ret.length] = 
+    ret[ret.length] =
       ['option', w + " x " + h , 'value', JSON.stringify({w: w, h: h})].
       concat(i == min ? ['selected', 'selected'] : []);
   }
@@ -173,8 +173,8 @@ window.templates.color_picker_create_dimesion_select = function(width, height)
 
 window.templates.color_picker_create_scale_select = function(scale, delta)
 {
-  var 
-  ret = [], 
+  var
+  ret = [],
   steps = 3,
   lower_lim = steps,
   i = delta;
@@ -185,7 +185,7 @@ window.templates.color_picker_create_scale_select = function(scale, delta)
   }
   for( ; i <= scale + steps * delta; i += delta)
   {
-    ret[ret.length] = 
+    ret[ret.length] =
       ['option', i.toString()].
       concat(i == scale ? ['selected', 'selected'] : []);
   }

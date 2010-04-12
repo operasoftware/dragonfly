@@ -59,15 +59,15 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
    */
   this.clear = function(source)
   {
-      if( source ) {
-          var fun = function(e) {return e.source!=source}
-          msgs = msgs.filter(fun)
-      }
-      else {
-          msgs = [];
-          toggled = [];
-      }
-      updateViews();
+    if( source ) {
+      var fun = function(e) {return e.source!=source;};
+      msgs = msgs.filter(fun);
+    }
+    else {
+      msgs = [];
+      toggled = [];
+    }
+    updateViews();
   };
 
   /**
@@ -78,12 +78,12 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
    */
   this.toggleEntry = function(logid)
   {
-      if (toggled.indexOf(logid) == -1) {
-          toggled.push(logid);
-      }
-      else {
-          toggled.splice(toggled.indexOf(logid), 1);
-      }
+    if (toggled.indexOf(logid) == -1) {
+      toggled.push(logid);
+    }
+    else {
+      toggled.splice(toggled.indexOf(logid), 1);
+    }
   };
 
   /**
@@ -93,8 +93,8 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
   var getMessagesWithoutFilter = function(source)
   {
     if( source ) {
-        var fun = function(e) {return e.source==source}
-        return msgs.filter(fun)
+        var fun = function(e) {return e.source==source;};
+        return msgs.filter(fun);
     }
     return msgs;
   };
@@ -105,10 +105,10 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
    */
   var getMessagesWithFilter = function(source)
   {
-      var fun = function(e) { return e.uri == __selected_rt_url &&
-                       (!source || e.source==source);
-                     };
-      return msgs.filter(fun);
+    var fun = function(e) { return e.uri == __selected_rt_url &&
+                            (!source || e.source==source);
+    };
+  return msgs.filter(fun);
   };
 
   this.getMessages = function(source, filter)
@@ -122,7 +122,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
   {
     if (! msgs)
     {
-        return null
+      return null;
     }
     else
     {
@@ -287,7 +287,7 @@ var ErrorConsoleView = function(id, name, container_class, source)
   {
     for (var n=0, cur; cur=entries[n]; n++)
     {
-        _table_ele.render(templates.error_log_row(cur, expandAll, error_console_data.getToggled(), this.id));
+      _table_ele.render(templates.error_log_row(cur, expandAll, error_console_data.getToggled(), this.id));
     }
   };
 
@@ -367,7 +367,7 @@ ErrorConsoleView.roughViews =
     name: ui_strings.M_VIEW_LABEL_ERROR_WIDGET,
     source: 'widget'
   }
-]
+];
 
 ErrorConsoleView.roughViews.bindClearSource = function(source)
 {
@@ -375,7 +375,7 @@ ErrorConsoleView.roughViews.bindClearSource = function(source)
   {
     error_console_data.clear(source);
   };
-}
+};
 
 ErrorConsoleView.roughViews.createViews = function()
 {
@@ -454,7 +454,7 @@ ErrorConsoleView.roughViews.createViews = function()
     })();
 
   }
-}
+};
 
 //ErrorConsoleView.roughViews.createViews();
 
@@ -491,7 +491,7 @@ new ToolbarConfig
 eventHandlers.click['clear-error-console-dragonfly'] = function()
 {
   error_console_data.clearDragonflyMessages();
-}
+};
 
 eventHandlers.click['error-log-list-expand-collapse'] = function(event, target)
 {
@@ -510,7 +510,7 @@ eventHandlers.click['error-log-list-expand-collapse'] = function(event, target)
         target.swapClass("collapsed", "expanded");
         row.scrollSoftIntoContainerView();
     }
-}
+};
 
 
 /**

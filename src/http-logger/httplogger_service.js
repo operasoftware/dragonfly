@@ -12,7 +12,7 @@ cls.HttpLogger["2.0"] || (cls.HttpLogger["2.0"] = {});
   * @constructor
   * @extends ServiceBase
   */
-cls.HttpLogger["2.0"].ParseMessges = function(name)
+cls.HttpLogger["2.0"].ParseMessages = function(name)
 {
     var self = this;
     var view = "http_logger";
