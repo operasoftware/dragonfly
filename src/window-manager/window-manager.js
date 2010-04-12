@@ -221,8 +221,6 @@ cls.WindowManager["2.0"].WindowManagerData = function()
     window_manager.requestModifyFilter(0, [1, [win_id]]);
     this._debug_context = win_id;
     // TODO cleanup, the active window id should just be at one place
-    runtimes.setActiveWindowId(win_id);
-    window.windowsDropDown.update();
     window.messages.post('debug-context-selected', {window_id: win_id});
 
     /*
@@ -321,6 +319,11 @@ eventHandlers.click['set-debug-context'] = function(event, target)
 
 cls.WindowManager["2.0"].WindowsDropDown = function()
 {
+  this.init = function()
+  {
+    var self = this;
+    window.messages.addListener('debug-context-selected', function(msg) {self.update(msg)});
+  };
 
   this.update = function()
   {
@@ -349,6 +352,8 @@ cls.WindowManager["2.0"].WindowsDropDown = function()
       }
     }
   };
+
+  this.init();
 }
 
 eventHandlers.change['select-window'] = function(event, target)

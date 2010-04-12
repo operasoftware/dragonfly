@@ -84,6 +84,10 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     }
   }
 
+  var _on_debug_context_selected = function(msg) {
+    self.setActiveWindowId(msg.window_id);
+  }
+
   var onResetState = function()
   {
     __runtimes = {};
@@ -1280,6 +1284,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
   messages.addListener('reset-state', onResetState);
 
   messages.addListener('window-updated', _on_window_updated);
+  messages.addListener('debug-context-selected', _on_debug_context_selected);
 
   window.app.addListener('services-created', on_services_created);
 
