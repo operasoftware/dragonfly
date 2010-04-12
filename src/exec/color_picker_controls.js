@@ -22,12 +22,12 @@ eventHandlers.change["update-average"] = function(event, target)
 
 eventHandlers.click["color-picker-picked"] = function(event, target)
 {
-  window.views.color_picker.pick_color(event, target); 
+  window.views.color_picker.pick_color(event, target);
 }
 
 eventHandlers.click["color-picker-store-color"] = function(event, target)
 {
-  window.views.color_picker.store_selected_color(); 
+  window.views.color_picker.store_selected_color();
 }
 
 eventHandlers.click["color-picker-set-stored-color"] = function(event, target)
@@ -59,10 +59,4 @@ eventHandlers.click["color-picker-reset-default-values"] = function(event, targe
 {
   window.views.color_picker.reset_default_values();
 }
-
-
-
-
-
-
 

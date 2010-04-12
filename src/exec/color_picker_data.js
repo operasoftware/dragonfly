@@ -9,7 +9,7 @@ var color_picker_data = new function()
   // to set the width and height of the screenshot
   // returns a canvas pixel array of the specified area
   this.get_area_data = function(x, y, w, h){};
-  // returns the dimension of the screenshot 
+  // returns the dimension of the screenshot
   // as an object with width and height properties
   this.get_dimensions = function(){};
   // to set the pixel dimensions of the screenshot
@@ -17,17 +17,17 @@ var color_picker_data = new function()
   this.set_screenshot_dimension = function(width, height){};
   // to start and stop the color picker
   this.set_active_state = function(bool){};
-  this.get_active_state = function(){}; 
+  this.get_active_state = function(){};
 
   /* constants */
 
-  const 
+  const
   INTERVAL = 50,
   INTERVAL_SLEEP = 500,
   STATUS = 0,
   VALUE = 2,
   OBJECT_VALUE = 3,
-  // sub message ObjectValue 
+  // sub message ObjectValue
   OBJECT_ID = 0;
 
   /* private */
@@ -45,8 +45,8 @@ var color_picker_data = new function()
   this._count_no_change = 0;
   this._intervall = INTERVAL;
   this._data = null;
-  this._screenshot_element = null; 
-  this._canvas_source = null; 
+  this._screenshot_element = null;
+  this._canvas_source = null;
   this._ctx_source =  null;
 
   var self = this;
@@ -77,7 +77,7 @@ var color_picker_data = new function()
     }
     else
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
         "failed register_color_picker in ColorPicker");
     }
   }
@@ -92,7 +92,7 @@ var color_picker_data = new function()
   {
     var script = "color_picker.stop()";
     var tag = tagManager.set_callback(this, this._handle_stop);
-    services['ecmascript-debugger'].requestEval(tag, 
+    services['ecmascript-debugger'].requestEval(tag,
       [this._color_picker_rt_id, 0, 0, script, [["color_picker", this._color_picker]]]);
     this._is_active = false;
     this._color_picker = "";
@@ -102,7 +102,7 @@ var color_picker_data = new function()
   {
     if(message[STATUS] != 'completed')
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
         "failed handle_stop in ColorPicker");
     }
   }
@@ -268,7 +268,7 @@ var color_picker_data = new function()
         return "({" +
             "x:" + mousemove_event.pageX + "," +
             "y:" + mousemove_event.pageY +
-          "})"
+          "})";
       };
       return "null";
     };
@@ -276,14 +276,14 @@ var color_picker_data = new function()
     {
       if(!is_setup)
       {
-        /* this is hack to be able to stop the mosemove on click. 
+        /* this is hack to be able to stop the mosemove on click.
            we have an interface to attache an event listener.
            that would require a round trip to the client for each click event.
            also it would not work with e.g. flash videos.
            if this will not work we will have to try that. */
         click_catcher = (document.body || document.documentElement).
           appendChild(document.createElement('click-catcher'));
-        click_catcher.style.cssText = 
+        click_catcher.style.cssText =
           "display: block !important;" +
           "margin: 0 !important;" +
           "padding: 0 !important;" +
@@ -319,15 +319,15 @@ var color_picker_data = new function()
     };
     this.setup();
   };
-  
+
 
   this._init = function()
   {
-    this["return new ColorPicer()"] = 
+    this["return new ColorPicer()"] =
       "return new (" + this._ColorPicker.toString() + ")()";
-    this._screenshot_element = document.createElement('img'); 
+    this._screenshot_element = document.createElement('img');
     this._screenshot_element.onload = this._handle_screen_shot_data_bound;
-    this._canvas_source = document.createElement('canvas'); 
+    this._canvas_source = document.createElement('canvas');
     this._ctx_source =  this._canvas_source.getContext('2d');
     this._set_canavas_dimensions();
     window.messages.addListener('new-top-runtime', this._on_new_top_runtime_bound);
@@ -383,6 +383,6 @@ var color_picker_data = new function()
   }
 
   /* constructor calls */
-  
+
   this._init();
 }
