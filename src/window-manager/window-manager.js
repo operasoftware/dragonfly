@@ -32,8 +32,7 @@ cls.WindowManager["2.0"].WindowManagerData = function()
   this._get_context = function()
   {
     window_manager.requestListWindows();
-
-  }
+  };
 
   this._parse_window = function(win)
   {
@@ -44,7 +43,7 @@ cls.WindowManager["2.0"].WindowManagerData = function()
     OPENER_ID = 3;
     */
     return {window_id: win[0], title: win[1], window_type: win[2], opener_id: win[3]};
-  }
+  };
 
   this._set_active_window_as_debug_context = function()
   {
@@ -53,7 +52,7 @@ cls.WindowManager["2.0"].WindowManagerData = function()
       this.set_debug_context(this._active_window);
       window.windowsDropDown.update();
     }
-  }
+  };
 
   this._set_active_window = function(win_id)
   {
@@ -63,7 +62,7 @@ cls.WindowManager["2.0"].WindowManagerData = function()
     }
     else
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
           'active window id does not exist, trying to select the first window instead');
       if(this._window_list.length)
       {
@@ -75,7 +74,7 @@ cls.WindowManager["2.0"].WindowManagerData = function()
       this.set_debug_context(this._active_window);
     }
     window.windowsDropDown.update();
-  }
+  };
 
   this._has_window_id_in_list = function(id)
   {
@@ -85,11 +84,11 @@ cls.WindowManager["2.0"].WindowManagerData = function()
       for( ; ( cursor = this._window_list[i] ) && ! (cursor.window_id == id ); i++);
     }
     return cursor && true || false;
-  }
+  };
 
   this._set_window_list = function(window_list)
   {
-    this._window_list = 
+    this._window_list =
       !settings.general.get('show-only-normal-and-gadget-type-windows') && window_list
       || window_list.filter(this._window_filter);
 
@@ -100,24 +99,24 @@ cls.WindowManager["2.0"].WindowManagerData = function()
 
     if( this._active_window && !this._has_window_id_in_list(this._active_window) )
     {
-      // TODO 
+      // TODO
       // workaround for wrong active window id. must be removed
       this._active_window = 0;
       this.set_debug_context(this._window_list[0].window_id);
       opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'active window id does not exist');
     }
     window.windowsDropDown.update();
-  }
+  };
 
   this._window_filter = function(win)
   {
     return win.window_type in {"normal": 1, "gadget": 1};
-  }
+  };
 
   this._update_list = function(win_obj)
   {
     var id = win_obj.window_id, win = null, i = 0;
-    if( !settings.general.get('show-only-normal-and-gadget-type-windows') 
+    if( !settings.general.get('show-only-normal-and-gadget-type-windows')
         || this._window_filter(win_obj) )
     {
       if( this._window_list )
@@ -137,16 +136,16 @@ cls.WindowManager["2.0"].WindowManagerData = function()
     }
     if(win)
     {
-      window.messages.post('window-updated', 
+      window.messages.post('window-updated',
         {
-          window_id: win.window_id, 
-          title: win.title, 
-          window_type: win.window_type, 
+          window_id: win.window_id,
+          title: win.title,
+          window_type: win.window_type,
           opener_id: win.opener_id
         }
       );
     }
-  }
+  };
 
   this._remove_window = function(win_id)
   {
@@ -170,7 +169,7 @@ cls.WindowManager["2.0"].WindowManagerData = function()
       }
     }
     window.windowsDropDown.update();
-  }
+  };
 
   this._reset_state_handler = function(msg)
   {
@@ -178,19 +177,19 @@ cls.WindowManager["2.0"].WindowManagerData = function()
     this._window_list = null;
     this._debug_context = 0;
     this._check_counter = 0;
-  }
+  };
 
   /* implementation */
 
   this.get_active_window_id = function()
   {
     return this._active_window;
-  }
+  };
 
   this.get_window_list = function()
   {
     return this._window_list;
-  }
+  };
 
   this.get_window = function(win_id)
   {
@@ -205,7 +204,7 @@ cls.WindowManager["2.0"].WindowManagerData = function()
   this.get_debug_context = function()
   {
     return this._debug_context;
-  }
+  };
 
   this.get_debug_context_title = function()
   {
@@ -215,7 +214,7 @@ cls.WindowManager["2.0"].WindowManagerData = function()
       for( ; ( cursor = this._window_list[i] ) && cursor.window_id != this._debug_context; i++);
     }
     return cursor && cursor.title || '';
-  }
+  };
 
   this.set_debug_context = function(win_id)
   {
@@ -228,14 +227,14 @@ cls.WindowManager["2.0"].WindowManagerData = function()
     // workaround as long as we don't have a command confirmation. see bug 361876
     setTimeout
     (
-      function() 
+      function()
       {
         runtimes.createAllRuntimesOnDebugContextChange(win_id);
-      }, 
+      },
       100
     )
     */
-  }
+  };
 
   this.clear_debug_context = function()
   {
@@ -245,29 +244,29 @@ cls.WindowManager["2.0"].WindowManagerData = function()
     this._check_counter = 0;
     window.host_tabs.setActiveTab(0);
     window.windowsDropDown.update();
-  }
+  };
 
   this.bind = function(window_manager)
   {
     var self = this;
 
-    window_manager.handleGetActiveWindow = 
+    window_manager.handleGetActiveWindow =
     window_manager.onWindowActivated = function(status, msg)
     {
       self._set_active_window(msg[0]);
-    }
+    };
     window_manager.handleListWindows = function(status, message)
     {
       self._set_window_list(message[0].map(self._parse_window));
-    }
+    };
     window_manager.onWindowUpdated = function(status, message)
     {
       self._update_list(self._parse_window(message));
-    }
+    };
     window_manager.onWindowClosed = function(status, message)
     {
       self._remove_window(message[0]);
-    }
+    };
     window.app.addListener('services-enabled', function()
     {
       window_manager.requestListWindows();
@@ -275,7 +274,7 @@ cls.WindowManager["2.0"].WindowManagerData = function()
     window_manager.onWindowLoaded = function(status, message)
     {
       // do nothing
-    }
+    };
   };
 
   window.messages.addListener('reset-state', function(msg)
@@ -283,31 +282,31 @@ cls.WindowManager["2.0"].WindowManagerData = function()
     self._reset_state_handler(msg);
   });
 
-}
+};
 
 // TODO use the action class
 
 eventHandlers.click['get-active-window'] = function(event, target)
 {
   services['window-manager'].requestGetActiveWindow();
-}
+};
 
 eventHandlers.click['list-windows'] = function(event, target)
 {
   services['window-manager'].requestListWindows();
-}
+};
 
 eventHandlers.click['set-filter-active-window'] = function(event, target)
 {
   alert("not implemented eventHandlers.click['set-filter-active-window'] in window-manager.js")
   // services['window-manager'].setFilterActiveWindow();
-}
+};
 
 eventHandlers.click['set-debug-context'] = function(event, target)
 {
   if( /input/i.test(event.target.nodeName) )
   {
-    var 
+    var
     container = event.target.parentElement.parentElement,
     win_id = parseInt(container.getAttribute('window-id'));
 
@@ -316,7 +315,7 @@ eventHandlers.click['set-debug-context'] = function(event, target)
       window_manager_data.set_debug_context(win_id);
     }
   }
-}
+};
 
 cls.WindowManager["2.0"].WindowsDropDown = function()
 {
@@ -326,7 +325,7 @@ cls.WindowManager["2.0"].WindowsDropDown = function()
     var toolbar = topCell.toolbar.getElement();
     if(toolbar)
     {
-      var 
+      var
       select = toolbar.getElementsByTagName('select')[0],
       win_list = window_manager_data.get_window_list(),
       active_window = window_manager_data.get_active_window_id(),
@@ -339,17 +338,17 @@ cls.WindowManager["2.0"].WindowsDropDown = function()
       {
         for( ; win = win_list[i]; i++ )
         {
-          markup += '<option value="' + win.window_id + '"' + 
-            ( win.window_id == debug_context ? ' selected="selected"' : '' ) + '>' + 
-            win.title + 
+          markup += '<option value="' + win.window_id + '"' +
+            ( win.window_id == debug_context ? ' selected="selected"' : '' ) + '>' +
+            win.title +
             '</option>';
         }
         select.innerHTML = markup;
       }
-    }   
-  }
+    }
+  };
 }
- 
+
 eventHandlers.change['select-window'] = function(event, target)
 {
   if(target.value)
@@ -366,10 +365,10 @@ cls.WindowManager["2.0"].DebuggerMenu = function(id, class_name)
 
   var selected_value = "";
 
-  this._action_entries =   
+  this._action_entries =
   [
     {
-      handler: 'reload-window',  
+      handler: 'reload-window',
       text: ui_strings.S_MENU_RELOAD_DEBUG_CONTEXT
     }
   ];
@@ -377,17 +376,17 @@ cls.WindowManager["2.0"].DebuggerMenu = function(id, class_name)
   this.getSelectedOptionValue = function()
   {
 
-  }
+  };
 
   this.templateOptionList = function(select_obj)
   {
-    var 
+    var
     win_list = window_manager_data.get_window_list(),
     active_window = window_manager_data.get_active_window_id(),
     debug_context = window_manager_data.get_debug_context(),
     win = null,
     ret = [],
-    opt = null, 
+    opt = null,
     i = 0;
 
     if( active_window && active_window != debug_context )
@@ -398,7 +397,7 @@ cls.WindowManager["2.0"].DebuggerMenu = function(id, class_name)
           "opt-index", i,
           "value", active_window.toString(),
           "unselectable", "on"
-        ]
+      ];
     }
     ret = ret.concat(select_obj._action_entries.map(this._action_entry));
     ret[ret.length] = ["hr"];
@@ -411,11 +410,11 @@ cls.WindowManager["2.0"].DebuggerMenu = function(id, class_name)
           "value", win.window_id.toString(),
           "class", win.window_id == debug_context ? "selected" : "",
           "unselectable", "on"
-        ]
+      ];
     }
     return ret;
-  }
-  
+  };
+
   this.checkChange = function(target_ele)
   {
     var win_id = parseInt(target_ele.getAttribute('value'));
@@ -425,7 +424,7 @@ cls.WindowManager["2.0"].DebuggerMenu = function(id, class_name)
       return true;
     }
     return false;
-  }
+  };
 
   // this.updateElement
 
@@ -441,12 +440,10 @@ cls.WindowManager["2.0"].DebuggerMenu = function(id, class_name)
           "handler", select.getId(),
           "unselectable", "on",
           "class", select.class_name
-        ]
-    }
-  }
+      ];
+    };
+  };
 
   this.init(id, class_name);
   this.select_template = this.getTemplate();
-}
-
-
+};
