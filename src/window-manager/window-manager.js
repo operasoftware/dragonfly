@@ -319,11 +319,6 @@ eventHandlers.click['set-debug-context'] = function(event, target)
 
 cls.WindowManager["2.0"].WindowsDropDown = function()
 {
-  this.init = function()
-  {
-    var self = this;
-    window.messages.addListener('debug-context-selected', self.update);
-  };
 
   this.update = function()
   {
@@ -351,6 +346,11 @@ cls.WindowManager["2.0"].WindowsDropDown = function()
         select.innerHTML = markup;
       }
     }
+  };
+
+  this.init = function()
+  {
+    window.messages.addListener('debug-context-selected', this.update.bind(this));
   };
 
   this.init();
