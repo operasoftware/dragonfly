@@ -188,7 +188,7 @@ var DOM_markup_style = function(id, name, container_class)
                     ( /^href|src$/i.test(attr[ATTR_KEY])
                       ? " handler='dom-resource-link'"
                       : "" ) + ">\"" + 
-                    attr[ATTR_VALUE].replace(/</g, '&lt;').replace(/"/g, '&amp;quot;') +
+                    helpers.escapeTextHtml(attr[ATTR_VALUE]).replace(/"/g, '&amp;quot;') +
                     "\"</value>";
               }
             }
@@ -223,7 +223,7 @@ var DOM_markup_style = function(id, name, container_class)
                 {
                   one_child_text_content += "<text" +
                     ( is_not_script_node ? " ref-id='" + data[child_pointer][ID] + "' " : "" ) +
-                    ">" + data[child_pointer][VALUE].replace(/</g, '&lt;') + "</text>";
+                    ">" + helpers.escapeTextHtml(data[child_pointer][VALUE]) + "</text>";
                 }
               }
             }
@@ -293,7 +293,7 @@ var DOM_markup_style = function(id, name, container_class)
               if( !/^\s*$/.test(node[ VALUE ] ) )
               {
                 tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;' " +      
-                        "class='comment pre-wrap'>&lt;!--" + node[VALUE].replace(/</g, '&lt;') + "--&gt;</div>";
+                        "class='comment pre-wrap'>&lt;!--" + helpers.escapeTextHtml(node[VALUE]) + "--&gt;</div>";
               }
             }
             break;
@@ -332,7 +332,7 @@ var DOM_markup_style = function(id, name, container_class)
                 "<div style='margin-left:" + ( 16 * node[ DEPTH ] )  + "px;'>" + 
                   "<text" + 
                       ( is_not_script_node ? " ref-id='"+ node[ID] + "' " : "" ) + 
-                      ">" + node[ VALUE ].replace(/</g, '&lt;') + "</text>" +
+                      ">" + helpers.escapeTextHtml(node[ VALUE ]) + "</text>" +
                 "</div>";
             }
           }

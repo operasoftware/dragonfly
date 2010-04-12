@@ -181,7 +181,7 @@ var DOM_tree_style = function(id, name, container_class)
                       ( /^href|src$/i.test(attr[ATTR_KEY])
                         ? " handler='dom-resource-link'"
                         : "" ) + ">\"" + 
-                      attr[ATTR_VALUE].replace(/</g, '&lt;').replace(/"/g, '&amp;quot;') +
+                      helpers.escapeTextHtml(attr[ATTR_VALUE]).replace(/"/g, '&amp;quot;') +
                   "\"</value>";
               }
             }
@@ -242,7 +242,7 @@ var DOM_tree_style = function(id, name, container_class)
             {
               tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;' " +      
                       "class='comment pre-wrap'><span class='comment-node'>#comment</span>" + 
-                node[VALUE].replace(/</, '&lt;') + "</div>";
+                helpers.escapeTextHtml(node[VALUE]) + "</div>";
 
 
 
@@ -286,7 +286,7 @@ var DOM_tree_style = function(id, name, container_class)
                    current_formatting + ">" +
                   ( node[NAME] ? node[NAME] :  nodeNameMap[node[TYPE]] ) + 
                   "<text" + ( is_not_script_node ? " ref-id='" + node[ID]+  "' " : "" ) + ">" + 
-                    node[VALUE].replace(/</, '&lt;') + "</text>" +
+                    helpers.escapeTextHtml(node[VALUE]) + "</text>" +
                   "</div>";
               }
             }
@@ -298,7 +298,7 @@ var DOM_tree_style = function(id, name, container_class)
                 current_formatting + ">" +
                 ( node[NAME] ? node[NAME] :  nodeNameMap[node[TYPE]] ) + 
                 "<text" + (is_not_script_node ? " ref-id='" + node[ID]+  "' " : "") + ">" + 
-                  ( /^\s*$/.test(node[VALUE]) ? _escape(node[VALUE]) : node[VALUE].replace(/</g, '&lt;') ) + 
+                  ( /^\s*$/.test(node[VALUE]) ? _escape(node[VALUE]) : helpers.escapeTextHtml(node[VALUE]) ) + 
                 "</text>" +
                 "</div>";
             }

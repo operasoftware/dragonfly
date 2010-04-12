@@ -476,12 +476,12 @@ cls.Stylesheets = function()
     const
     HEADER = 0,
     INDEX_LIST = is_style_sheet && 3 || 1,
-    VALUE_LSIT = is_style_sheet && 4 || 2,
+    VALUE_LIST = is_style_sheet && 4 || 2,
     PROPERTY_LIST = is_style_sheet && 5 || 3;
     
     var ret = '',
     index_list = rule[INDEX_LIST] || [], // the built-in proxy returns empty repeated values as null
-    value_list = rule[VALUE_LSIT],
+    value_list = rule[VALUE_LIST],
     priority_list = rule[PROPERTY_LIST],
     overwrittenlist = rule[OVERWRITTEN_LIST],
     search_list = rule[SEARCH_LIST],
@@ -524,7 +524,7 @@ cls.Stylesheets = function()
             s_h_prop = __shorthandIndexMap[index];
           }
           s_h_index[SHORTHAND[index]] = index;
-          s_h_value[SHORTHAND[index]] = value_list[i];
+          s_h_value[SHORTHAND[index]] = helpers.escapeTextHtml(value_list[i]);
           s_h_priority[SHORTHAND[index]] = priority_list[i];
           index = index_list[i + 1];
         }
@@ -543,16 +543,16 @@ cls.Stylesheets = function()
         {
           ret += ( ret ? MARKUP_PROP_NL : MARKUP_EMPTY ) +
             INDENT +
-            MARKUP_KEY + __indexMap[index] + MARKUP_KEY_CLOSE +
-            MARKUP_VALUE + value_list[i] + ( priority_list[i] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE; 
+            MARKUP_KEY + helpers.escapeTextHtml(__indexMap[index]) + MARKUP_KEY_CLOSE +
+            MARKUP_VALUE + helpers.escapeTextHtml(value_list[i]) + ( priority_list[i] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE; 
   
         }
         else
         {
           ret += ( ret ? MARKUP_PROP_NL : MARKUP_EMPTY ) +
             INDENT +
-            MARKUP_KEY_OW + __indexMap[index] + MARKUP_KEY_CLOSE +
-            MARKUP_VALUE_OW + value_list[i] + ( priority_list[i] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE;   
+            MARKUP_KEY_OW + helpers.escapeTextHtml(__indexMap[index]) + MARKUP_KEY_CLOSE +
+            MARKUP_VALUE_OW + helpers.escapeTextHtml(value_list[i]) + ( priority_list[i] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE;   
         }
       }
     }
@@ -572,7 +572,7 @@ cls.Stylesheets = function()
     SELECTOR_LIST = 6;
 
     return "<rule rule-id='" + rule[RULE_ID] + "'>" + 
-      "<selector>" + rule[SELECTOR_LIST].join(', ') + "</selector>" + 
+      "<selector>" + helpers.escapeTextHtml(rule[SELECTOR_LIST].join(', ')) + "</selector>" + 
       " {\n" + 
       prettyPrintRule[COMMON](rule, do_shortcuts, 0, is_style_sheet) +
       "\n}</rule>";
@@ -585,7 +585,7 @@ cls.Stylesheets = function()
     CHARSET = 13; // Actually the encoding
 
     return "<charset-rule rule-id='" + rule[RULE_ID] + "'>" +
-               "<at>@charset</at> \"" + rule[CHARSET] + "\";" +
+               "<at>@charset</at> \"" + helpers.escapeTextHtml(rule[CHARSET]) + "\";" +
            "</charset-rule>";
   }
   
@@ -779,7 +779,7 @@ cls.Stylesheets = function()
     {
       return "<rule>" +
               "<stylesheet-link class='pseudo'>default values</stylesheet-link>" +
-        "<selector>" + element_name + "</selector>" + 
+        "<selector>" + helpers.escapeTextHtml(element_name) + "</selector>" + 
         " {\n" + 
             prettyPrintRule[COMMON](style_dec, false, search_active) +
         "\n}</rule>";
@@ -794,7 +794,7 @@ cls.Stylesheets = function()
     {
       return "<rule>" +
               "<stylesheet-link class='pseudo'>local user stylesheet</stylesheet-link>" +
-        "<selector>" + style_dec[SELECTOR] + "</selector>" +  
+        "<selector>" + helpers.escapeTextHtml(style_dec[SELECTOR]) + "</selector>" +  
         " {\n" + 
             prettyPrintRule[COMMON](style_dec, false, search_active) +
         "\n}</rule>";
@@ -819,7 +819,7 @@ cls.Stylesheets = function()
           "<stylesheet-link rt-id='" + rt_id + "'"+
             " index='" + sheet.index + "' handler='display-rule-in-stylesheet'>" + sheet.name + 
           "</stylesheet-link>" +
-          "<selector>" + style_dec[SELECTOR] + "</selector>" + 
+          "<selector>" + helpers.escapeTextHtml(style_dec[SELECTOR]) + "</selector>" + 
           " {\n" + 
               prettyPrintRule[COMMON](style_dec, false, search_active) +
           "\n}</rule>";

@@ -355,7 +355,7 @@ cls.DOMView = function(id, name, container_class)
                 ( attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '' ) + 
                 ( force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ) + 
                 "=\"" + 
-                attr[ATTR_VALUE].replace(/</, '&lt;') +
+                helpers.escapeTextHtml(attr[ATTR_VALUE]) +
                 "\"";
             }
           }
@@ -386,7 +386,7 @@ cls.DOMView = function(id, name, container_class)
             {
               tree += LINEBREAK  + getIndent(node[ DEPTH ] ) +
                       "&lt;" + node_name +  attrs + "&gt;" +
-                      one_child_value.replace(/</, '&lt;') +
+                      helpers.escapeTextHtml(one_child_value) +
                       "&lt;/" + node_name + "&gt;";
               i = child_pointer - 1;
             }
@@ -424,7 +424,7 @@ cls.DOMView = function(id, name, container_class)
             if( !/^\s*$/.test(node[ VALUE ] ) )
             {
               tree += LINEBREAK  + getIndent(node[ DEPTH ] ) +      
-                      "&lt;!--" + node[VALUE].replace(/</, '&lt;') + "--&gt;";
+                      "&lt;!--" + helpers.escapeTextHtml(node[VALUE]) + "--&gt;";
             }
           }
           break;
@@ -460,7 +460,7 @@ cls.DOMView = function(id, name, container_class)
           if( !/^\s*$/.test(node[ VALUE ] ) )
           {
             tree += LINEBREAK  + getIndent(node[ DEPTH ] ) + 
-                    node[VALUE].replace(/</, '&lt;');
+                    helpers.escapeTextHtml(node[VALUE]);
           }
         }
 
