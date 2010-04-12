@@ -127,9 +127,18 @@ ui_strings.M_VIEW_LABEL_SESSION_STORAGE = 'Session Storage';
 ui_strings.M_VIEW_LABEL_COOKIES = 'Cookies';
 /* DESC: view for widget prefernces */
 ui_strings.M_VIEW_LABEL_WIDGET_PREFERNCES = 'Widget Preferences';
-
 /* DESC: Label of the Views menu */
 ui_strings.M_VIEW_LABEL_VIEWS = 'Views';
+
+/* DESC: Label of the stored colors view */
+ui_strings.M_VIEW_LABEL_STORED_COLORS = 'Stored Colors';
+/* DESC: Label of the pixel magnifier and color picker view */
+ui_strings.M_VIEW_LABEL_COLOR_MAGNIFIER_AND_PICKER = 'Pixel Magnifier and Color Picker';
+/* DESC: Label of the section for selecting a color in color picker */
+ui_strings.M_VIEW_LABEL_COLOR_SELECT = 'Color Select';
+
+
+
 
 /*
  * Settings dialogue entries. All the S_SWITCH_<something> strings are
@@ -290,6 +299,14 @@ ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG = "Cancel Remote Debug";
 /* DESC: */
 ui_strings.S_BUTTON_STORAGE_DELETE_ALL = "Delete All";
 
+/* DESC:  Reset all the values to their default state */
+ui_strings.S_BUTTON_COLOR_RESTORE_DEFAULTS = "Restore defaults";
+/* DESC: */
+ui_strings.S_BUTTON_COLOR_MANAGE_STORED = "Manage stored colors";
+/* DESC: */
+ui_strings.S_BUTTON_COLOR_STORE_COLOR = "Store color";
+
+
 /*
   * Menus
   */
@@ -389,6 +406,10 @@ ui_strings.S_LABEL_STORAGE_UPDATE = "Update";
 ui_strings.S_LABEL_STORAGE_DELETE = "Delete";
 /* DESC: */
 ui_strings.S_LABEL_STORAGE_DOUBLE_CLICK_TO_EDIT = "Double click to edit";
+/* DESC: Area as in size. choices are 10 x 10, and so on. */
+ui_strings.S_LABEL_UTIL_AREA = 'Area';
+/* DESC: Scale */
+ui_strings.S_LABEL_UTIL_SCALE = 'Scale';
 
 /*
  * Information strings in the UI
