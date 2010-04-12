@@ -3,7 +3,7 @@ cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
 cls.EcmascriptDebugger["5.0"] || (cls.EcmascriptDebugger["5.0"] = {});
 
 /**
-  * @constructor 
+  * @constructor
   */
 
 // TODO clean up in regard of protocol 4
@@ -12,7 +12,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
 
   const
   RUNTIME_LIST = 0,
-  // sub message RuntimeInfo 
+  // sub message RuntimeInfo
   RUNTIME_ID = 0,
   HTML_FRAME_PATH = 1,
   WINDOW_ID = 2,
@@ -38,7 +38,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
 
   var __windowsFolding = {};
 
-  var __old_selected_window = ''; 
+  var __old_selected_window = '';
 
 
   var view_ids = ['threads'];
@@ -55,7 +55,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
 
   var _is_first_call_create_all_runtimes_on_debug_context_change = true;
 
-  // used to set the top runtime automatically 
+  // used to set the top runtime automatically
   // on start or on debug context change
   var debug_context_frame_path = '';
 
@@ -68,14 +68,14 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       views[rt].update();
     }
   }
-  
+
   var self = this;
   var ecma_debugger = window.services['ecmascript-debugger'];
 
   var _on_window_updated = function(msg)
   {
     for( var r in __runtimes )
-    { 
+    {
       if (__runtimes[r] &&  __runtimes[r].window_id == msg.window_id && __runtimes[r].is_top)
       {
         __runtimes[r].title = msg.title;
@@ -95,7 +95,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     __threads = [];
     __log_threads = false;
     __windowsFolding = {};
-    __old_selected_window = ''; 
+    __old_selected_window = '';
     __selected_runtime_id = '';
     __next_runtime_id_to_select = '';
     __selected_script = '';
@@ -103,19 +103,19 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
   }
 
   var registerRuntime = function(id)
-  { 
+  {
     if( !(id in __runtimes) )
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
-        'runtime id does not exist')
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+                      'runtime id does not exist');
       __runtimes[id] = null;
       services['ecmascript-debugger'].getRuntime( tagManager.set_callback(null, parseRuntime), id );
     }
   }
 
   var removeRuntime = function(id)
-  { 
-    
+  {
+
     var sc = null , cur = '', i = 0;
     for( ; cur = __runtimes_arr[i] && cur != id; i++);
     if(cur)
@@ -206,7 +206,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     message[RUNTIME_LIST].forEach(this.handleRuntime, this);
   }
 
-  this.onRuntimeStarted = function(status, message) 
+  this.onRuntimeStarted = function(status, message)
   {
     this.handleRuntime(message);
   }
@@ -217,7 +217,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     /*
     const
     RUNTIME_LIST = 0,
-    // sub message RuntimeInfo 
+    // sub message RuntimeInfo
     RUNTIME_ID = 0,
     HTML_FRAME_PATH = 1,
     WINDOW_ID = 2,
@@ -226,12 +226,12 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     */
     var i=0;
     var length = 0, k = 0;
-    var 
-    runtimeId = r_t[RUNTIME_ID], 
-    prop = '', 
+    var
+    runtimeId = r_t[RUNTIME_ID],
+    prop = '',
     window_id = '',
-    children = null, 
-    child = null, 
+    children = null,
+    child = null,
     j = 0;
     var cur = '';
     var runtime = null;
@@ -246,9 +246,9 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       for( k = 0; k < length && runtimeId != __runtimes_arr[k]; k++);
       if( k == length )
       {
-        __runtimes_arr[k] = runtimeId;  
+        __runtimes_arr[k] = runtimeId;
       }
-      runtime = 
+      runtime =
       {
         runtime_id: r_t[RUNTIME_ID],
         html_frame_path: r_t[HTML_FRAME_PATH],
@@ -269,30 +269,30 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
         {
           __window_ids[win_id] = true;
         }
-        /* 
+        /*
            pop-ups are top runtimes but part of the debug context.
-           right now we don't get the correct info in the message 
+           right now we don't get the correct info in the message
            stream to know that directly. ( see bug CORE-17782 and CORE-17775 )
-           for now we trust the window manager and our 
+           for now we trust the window manager and our
            setting to just use one window-id as filter.
-           that basically means that a top runtime with a differnt window id 
-           than __selected_window must actually be a pop-up 
+           that basically means that a top runtime with a differnt window id
+           than __selected_window must actually be a pop-up
         */
         if( __selected_window && win_id != __selected_window )
         {
           /*
-            it is a pop-up, but the id of the opener 
-            window is an assumption here, 
-            certainly not true in all cases. 
+            it is a pop-up, but the id of the opener
+            window is an assumption here,
+            certainly not true in all cases.
           */
           runtime.opener_window_id = __selected_window;
         }
         if (!debug_context_frame_path)
         {
           debug_context_frame_path = runtime.html_frame_path;
-        }   
+        }
         __selected_script = '';
-      } 
+      }
       runtime.title = (window.window_manager_data.get_window(win_id) || {}).title;
       __runtimes[runtimeId] = runtime;
       // TODO check if that is still needed
@@ -317,8 +317,8 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       {
         __windows_reloaded[runtime.window_id] = 2;
       }
-      if( debug_context_frame_path == runtime.html_frame_path && 
-            __selected_window == runtime.window_id && 
+      if( debug_context_frame_path == runtime.html_frame_path &&
+            __selected_window == runtime.window_id &&
             runtimeId != __selected_runtime_id )
       {
         self.setSelectedRuntimeId(runtimeId);
@@ -343,13 +343,13 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     {
       host_tabs.updateActiveTab();
     }
-    
+
   }
-  
+
   var __scripts = {};
 
 /** checks if that script is already known from a previous runtime
-  * checks first for the url and the for the script data. 
+  * checks first for the url and the for the script data.
   * Both checks are not really reliable.
   * TODO we need a better logic to handle this
   */
@@ -366,13 +366,13 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     {
       old_rt = __runtimes[__scripts[sc].runtime_id] || __old_runtimes[__scripts[sc].runtime_id] || {};
       // TODO check for script-type as well?
-      if( ( 
-            ( __scripts[sc].uri && __scripts[sc].uri == script.uri ) 
-            || __scripts[sc].script_data == script.script_data 
+      if( (
+            ( __scripts[sc].uri && __scripts[sc].uri == script.uri )
+            || __scripts[sc].script_data == script.script_data
           ) &&
           old_rt.uri == new_rt.uri &&
           ( old_rt.window_id == new_rt.window_id ||
-            ( new_rt.opener_window_id && 
+            ( new_rt.opener_window_id &&
               old_rt.opener_window_id == new_rt.opener_window_id  ) ) &&
           old_rt.html_frame_path == new_rt.html_frame_path )
       {
@@ -410,15 +410,15 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
 
     }
   }
-  
+
 /*
-"<new-script>" 
+"<new-script>"
    "<runtime-id>" UNSIGNED "</runtime-id>"
-   "<script-id>" UNSIGNED "</script-id>" 
-   "<script-type>" 
-      ( "inline" | "event" | "linked" | "timeout" | "java" | "unknown" ) 
+   "<script-id>" UNSIGNED "</script-id>"
+   "<script-type>"
+      ( "inline" | "event" | "linked" | "timeout" | "java" | "unknown" )
    "</script-type>"
-   "<script-data>" TEXT "</script-data>" 
+   "<script-data>" TEXT "</script-data>"
    "<uri>" TEXT "</uri>"             ; present if SCRIPT-TYPE is "linked"
  "</new-script>" ;
 */
@@ -440,8 +440,8 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
   var log_thread = function(type, message, rt_id, thread_id)
   {
 
-    const 
-    THREAD_TYPE = 3, 
+    const
+    THREAD_TYPE = 3,
     PARENT_THREAD_ID = 2,
     STATUS = 2,
     SCRIPT_ID = 2,
@@ -605,7 +605,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     SCRIPT_DATA = 3,
     URI = 4;
 
-    var script = 
+    var script =
     {
       runtime_id: message[RUNTIME_ID],
       script_id: message[SCRIPT_ID],
@@ -618,7 +618,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     {
       script.script_data = '';
     }
-    
+
     if( is_runtime_of_debug_context(script.runtime_id))
     {
       script.breakpoints = {};
@@ -652,15 +652,15 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
         description: message[DESCRIPTION],
         reason: reason && reason[0] || '',
         expected_token: expected_token && expected_token[0] || ''
-      };      
+      };
       if(settings['js_source'].get('error'))
       {
         if(  !views['js_source'].isvisible())
         {
           window.topCell.showView('js_source');
         }
-        var plus_lines = views.js_source.getMaxLines() <= 10 
-          ? views.js_source.getMaxLines() / 2 >> 0 
+        var plus_lines = views.js_source.getMaxLines() <= 10
+          ? views.js_source.getMaxLines() / 2 >> 0
           : 10;
         runtimes.setSelectedScript(error.script_id);
         views.js_source.showLine(error.script_id, error.line_nr - plus_lines, false, true);
@@ -668,7 +668,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     }
     else
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
         "script source is missing in onParseError handler in runtimes");
     }
 
@@ -678,7 +678,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
 
   var thread_queues = {};
   var current_threads = {};
-  
+
   var runtime_stoped_queue = [];
   var stoped_threads = {};
 
@@ -707,7 +707,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       everything which passes the window manager filter
       is part of the debug context
     */
-    return __runtimes[rt_id] && 
+    return __runtimes[rt_id] &&
               ( __runtimes[rt_id].window_id == __selected_window ||
                 __runtimes[rt_id].opener_window_id == __selected_window );
 
@@ -718,8 +718,8 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     var cur = '', i = 0;
     var thread_queue = thread_queues[rt_id];
     var current_thread = current_threads[rt_id];
-    // it seems that the order of the thread-finished events can get reversed 
-    // TODO this is a temporary fix for situations where a threads 
+    // it seems that the order of the thread-finished events can get reversed
+    // TODO this is a temporary fix for situations where a threads
     // finishes in a runtime whre it has never started
     if(current_thread)
     {
@@ -743,10 +743,10 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     }
     else
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
         'got a thread finished event \n' +
         'in a runtime where the thread \n'+
-        'has never started: '+ rt_id+' '+thread_id)
+        'has never started: '+ rt_id+' '+thread_id);
     }
     return false;
   }
@@ -769,12 +769,12 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
 
   */
 
- 
+
 
 
   this.onThreadStarted = function(status, message)
   {
-        
+
     const
     RUNTIME_ID = 0,
     THREAD_ID = 1,
@@ -782,7 +782,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     THREAD_TYPE = 3,
     EVENT_NAMESPACE = 4,
     EVENT_TYPE = 5;
-    
+
     var rt_id = message[RUNTIME_ID];
     // workaround for missing filtering
     if( is_runtime_of_debug_context(rt_id) )
@@ -792,7 +792,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
       var thread_queue = thread_queues[rt_id] || ( thread_queues[rt_id] = [] );
       var current_thread = current_threads[rt_id] || ( current_threads[rt_id] = [] );
       thread_queue[thread_queue.length] = id;
-      if( !current_thread.length || 
+      if( !current_thread.length ||
         ( parent_thread_id !== 0 && parent_thread_id == current_thread[ current_thread.length - 1 ] ) )
       {
         current_thread[current_thread.length] = id;
@@ -815,20 +815,20 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     LINE_NUMBER = 3,
     STOPPED_REASON = 4,
     BREAKPOINT_ID = 5;
-    
+
     var rt_id = message[RUNTIME_ID];
     var thread_id = message[THREAD_ID];
 
-    // TODO clean up workaround for missing filtering 
+    // TODO clean up workaround for missing filtering
     if( is_runtime_of_debug_context(rt_id) )
     {
-      
+
       var current_thread = current_threads[rt_id];
 
       // the current thread id must be set in 'thread-started' event
       // TODO thread logic
-      if( !stop_at.getControlsEnabled ()  
-          && ( !current_thread // in case the window was switched 
+      if( !stop_at.getControlsEnabled ()
+          && ( !current_thread // in case the window was switched
               || thread_id == current_thread[ current_thread.length - 1 ] ) )
       {
         stop_at.handle(message);
@@ -839,7 +839,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
         if( ! stoped_threads[rt_id] )
         {
           stoped_threads[rt_id] = {};
-        } 
+        }
         stoped_threads[rt_id] = message;
         runtime_stoped_queue[runtime_stoped_queue.length] = rt_id;
       }
@@ -870,7 +870,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     BREAKPOINT_ID = 5;
 
     var rt_id = message[RUNTIME_ID];
-    // workaround for missing filtering 
+    // workaround for missing filtering
     if( is_runtime_of_debug_context(rt_id) )
     {
       var thread_id = message[THREAD_ID];
@@ -889,7 +889,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
 
     // messages.post('host-state', {state: 'ready'});
     // fires when stop_at releases the control to the host
-    // if there is already a <thread-stoped> event in the queue 
+    // if there is already a <thread-stoped> event in the queue
     // it has to be handled here
     var onHostStateChange = function(msg)
     {
@@ -912,7 +912,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     {
       removeRuntime(rt_id);
       updateRuntimeViews();
-      
+
       messages.post('runtime-stopped', {id: rt_id} );
     }
   }
@@ -931,7 +931,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
         {
           is_unfolded = false;
         }
-        ret[ret.length] = 
+        ret[ret.length] =
         {
           id: __runtimes[r].window_id,
           uri: __runtimes[r].uri,
@@ -951,14 +951,14 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     return __selected_window;
   }
 
- 
+
 
   this.getRuntimes = function(window_id)
   {
     var ret = [], r = '';
     for( r in __runtimes )
-    { 
-      if ( __runtimes[r] && __runtimes[r].window_id &&  
+    {
+      if ( __runtimes[r] && __runtimes[r].window_id &&
             ( __runtimes[r].window_id == window_id ||
               __runtimes[r].opener_window_id == window_id ) )
       {
@@ -978,7 +978,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     // first member is the top runtime
     var ret = [], r = '';
     for( r in __runtimes )
-    { 
+    {
       if ( __runtimes[r] && __runtimes[r].window_id &&
             ( __runtimes[r].window_id == window_id ||
               __runtimes[r].opener_window_id == window_id )
@@ -992,14 +992,14 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
         {
           ret[ret.length] = __runtimes[r].runtime_id;
         }
-        
+
       }
     }
     return ret;
   }
 
 
- 
+
   this.getRuntimeIdWithURL = function(url)
   {
     var r = '';
@@ -1045,7 +1045,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     // script_data can be an empty string
     if( __scripts[scriptId] )
     {
-      return  __scripts[scriptId].script_data 
+      return  __scripts[scriptId].script_data
     }
     return null;
   }
@@ -1079,7 +1079,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
 
   this.removeBreakpoint = function(script_id, line_nr)
   {
-    services['ecmascript-debugger'].requestRemoveBreakpoint(0, 
+    services['ecmascript-debugger'].requestRemoveBreakpoint(0,
       [__scripts[script_id].breakpoints[line_nr]] );
     delete __scripts[script_id].breakpoints[line_nr];
   }
@@ -1092,7 +1092,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
 
   this.setUnfolded = function(runtime_id, view, is_unfolded)
   {
-    
+
     if( __runtimes[runtime_id] )
     {
       __runtimes[runtime_id]['unfolded-' + view] = is_unfolded;
@@ -1147,7 +1147,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     __selected_script = script_id;
     window['cst-selects']['js-script-select'].updateElement();
 
-    
+
     /*
     don't understand why this was done in this way
     var scripts = this.getScripts(rt_id), script = null, i = 0;
@@ -1197,12 +1197,12 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
 
   this.getRuntimeIdWithScriptId = function(scriptId)
   {
-    return  __scripts[scriptId] && __scripts[scriptId].runtime_id || null; 
+    return  __scripts[scriptId] && __scripts[scriptId].runtime_id || null;
   }
 
   this.reloadWindow = function()
   {
-    
+
     if( __selected_window )
     {
       if( !__windows_reloaded[__selected_window] )
@@ -1215,7 +1215,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
         if(services.exec && services.exec.is_implemented)
         {
           // tag 1 is a resreved tag for callbacks to be ignored
-          services.exec.requestExec(1, 
+          services.exec.requestExec(1,
               [[["reload", null, window.window_manager_data.get_debug_context()]]]);
         }
         else
@@ -1251,7 +1251,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     stop_ats = __scripts[script_id] && __scripts[script_id].stop_ats,
     stop_at = null,
     i = 0;
- 
+
     if( stop_ats )
     {
       for( ; stop_at = stop_ats[i]; i++ )
@@ -1271,11 +1271,11 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
 
   messages.addListener("thread-stopped-event", onThreadStopped);
   messages.addListener("thread-continue-event", onThreadContinue);
-  
+
   messages.addListener('host-state', onHostStateChange);
   messages.addListener('setting-changed', onSettingChange);
   messages.addListener('active-tab', onActiveTab);
-  
+
 
   messages.addListener('reset-state', onResetState);
 
@@ -1331,9 +1331,8 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
 
     ecma_debugger.addListener('window-filter-change', function(msg)
     {
-      self.createAllRuntimesOnDebugContextChange(msg.filter[1][0])
+      self.createAllRuntimesOnDebugContextChange(msg.filter[1][0]);
     });
   }
-  
-}
 
+}
