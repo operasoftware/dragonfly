@@ -198,19 +198,6 @@ window.app.builders.Exec["2.0"] = function(service)
   window.app.helpers.implement_service(namespace);
 }
 
-window.app.builders.HttpLogger || ( window.app.builders.HttpLogger = {} );
-/**
-  * @param {Object} service the service description of the according service on the host side
-  */
-window.app.builders.HttpLogger["2.0"] = function(service)
-{
-  var namespace = cls.HttpLogger && cls.HttpLogger["2.0"];
-  if(namespace)
-  {
-    window.app.helpers.implement_service(namespace);
-    (new namespace.ParseMessages()).bind();
-  }
-}
 
 window.app.builders.WindowManager || ( window.app.builders.WindowManager = {} );
 /**

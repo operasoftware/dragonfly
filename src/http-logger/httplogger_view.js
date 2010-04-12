@@ -4,13 +4,17 @@
  * Defines views for request list, header info etc.
  */
 
+window.cls || (window.cls = {});
+cls.HttpLogger || (cls.HttpLogger = {});
+cls.HttpLogger["2.0"] || (cls.HttpLogger["2.0"] = {});
+
 /**
   * @constructor
   * @extends ViewBase
   * This view implements update chocking. It will not do the update more often
   * than every minUpdateInterval milliseconds
   */
-cls.RequestListView = function(id, name, container_class)
+cls.HttpLogger["2.0"].RequestListView = function(id, name, container_class)
 {
     var self = this;
 
@@ -224,7 +228,7 @@ cls.RequestListView = function(id, name, container_class)
     this.init(id, name, container_class);
 };
 
-cls.RequestListView.create_ui_widgets = function()
+cls.HttpLogger["2.0"].RequestListView.create_ui_widgets = function()
 {
     new ToolbarConfig
     (
@@ -276,10 +280,6 @@ cls.RequestListView.create_ui_widgets = function()
         ]
     );
 };
-
-cls.RequestListView.prototype = ViewBase;
-new cls.RequestListView('request_list', ui_strings.M_VIEW_LABEL_REQUEST_LOG, 'scroll');
-cls.RequestListView.create_ui_widgets();
 
 eventHandlers.click['request-list-expand-collapse'] = function(event, target)
 {

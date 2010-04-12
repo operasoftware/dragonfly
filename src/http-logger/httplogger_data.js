@@ -3,13 +3,15 @@
  * Data objects and classes for the http logger
  *
  */
-
+window.cls || (window.cls = {});
+cls.HttpLogger || (cls.HttpLogger = {});
+cls.HttpLogger["2.0"] || (cls.HttpLogger["2.0"] = {});
 
 /**
  * @class
  * Data class for http logger
  */
-window.HTTPLoggerData = new function()
+cls.HttpLogger["2.0"].HTTPLoggerData = function()
 {
     var requestList = [];
     var requestMap = {};

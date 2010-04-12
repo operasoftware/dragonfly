@@ -35,7 +35,7 @@ cls.HttpLogger["2.0"].ParseMessages = function(name)
      * }
      *
      */
-    this.parseRequest = function(message)
+    this.parseRequest = function(status, message)
     {
         /*
         const
@@ -68,7 +68,7 @@ cls.HttpLogger["2.0"].ParseMessages = function(name)
      * }
      *
      */
-    this.parseResponse = function(message)
+    this.parseResponse = function(status, message)
     {
         /*
         const
@@ -240,21 +240,19 @@ cls.HttpLogger["2.0"].ParseMessages = function(name)
         return headers;
     };
 
-  this.bind = function()
+  this.bind = function(http_logger)
   {
-    var
-    self = this,
-    http_logger = window.services['http-logger'];
-
-
+    var 
+    parse_request = this.parseRequest.bind(this),
+    parse_response = self.parseResponse.bind(this);
 
     http_logger.onRequest = function(status, msg)
     {
-      window.HTTPLoggerData.addRequest(self.parseRequest(msg));
+      window.HTTPLoggerData.addRequest(parse_request(status, msg));
     };
     http_logger.onResponse = function(status, msg)
     {
-      window.HTTPLoggerData.addResponse(self.parseResponse(msg));
+      window.HTTPLoggerData.addResponse(parse_response(status, msg));
     };
   };
 };
