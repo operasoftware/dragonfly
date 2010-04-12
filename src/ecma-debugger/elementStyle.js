@@ -369,7 +369,7 @@ cls.ElementStyle = function()
     if(status == 0)
     {
       categories_data[COMP_STYLE] = message[COMPUTED_STYLE_LIST]; 
-      categories_data[CSS] = message[NODE_STYLE_LIST];
+      categories_data[CSS] = message[NODE_STYLE_LIST] || [];
       categories_data[CSS].rt_id = categories_data[COMP_STYLE].rt_id = rt_id;
       categories_data[IS_VALID] = true;
 
