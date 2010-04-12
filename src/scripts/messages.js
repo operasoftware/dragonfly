@@ -89,13 +89,18 @@
  *
  *     <dt>view-initialized</dt>
  *     <dd>a view was initialized. Payload: msg.view_id</dd>
+ *
+ *     <dt>debug-context-selected</dt>
+ *     <dd>A window was selected as the context for the debugging session. Happens when a tab is selected. Payload: msg.window_id</dd>
+ *
+ *
  * </dl>
- *  
+ *
  */
 var messages = new function()
 {
   var __listeners = {};
-  
+
   /**
    * Add a message listener
    * @param key {String} The name of the message to listen for
@@ -112,7 +117,7 @@ var messages = new function()
       __listeners[ key ] = [ cb ];
     }
   }
-  
+
   /**
    * Remove a listener for a specific message.
    * @param key {String} the name of the message to dispatch

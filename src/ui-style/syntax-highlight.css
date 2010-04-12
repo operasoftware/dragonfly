@@ -188,12 +188,12 @@ media, at {
   color: #279;
   }
 
-.serach-highlight
+.search-highlight
 {
   background-color: #ff0; 
   color: #000;
 }
-.serach-highlight-selected
+.search-highlight-selected
 {
   background-color: #0f0; 
   color: #000;
