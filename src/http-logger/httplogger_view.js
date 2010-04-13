@@ -81,6 +81,7 @@ cls.RequestListView = function(id, name, container_class)
     this.doCreateView = function(container)
     {
         var log = HTTPLoggerData.getLog();
+        topCell.statusbar.updateInfo(ui_strings.S_HTTP_TOOLBAR_REQUEST_COUNT.replace("%s", log.length));
 
         if (!this.viewIsValid(log)) {
             container.clearAndRender(['table',['tbody'], 'class',

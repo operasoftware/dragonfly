@@ -352,6 +352,10 @@ ui_strings.S_HTTP_LABEL_HOST = "Host";
 ui_strings.S_HTTP_LABEL_PATH = "Path";
 /* DESC: label for query arguments in http request details */
 ui_strings.S_HTTP_LABEL_QUERY_ARGS = "Query arguments";
+/* DESC: Toolbar text telling how many requests are in http the log */
+ui_strings.S_HTTP_TOOLBAR_REQUEST_COUNT = "%s requests";
+/* DESC: Toolbar text telling how many messages are in the error console */
+ui_strings.S_CONSOLE_TOOLBAR_MESSAGES_COUNT = "%s messages";
 
 /* DESC: Tab size in source view. */
 ui_strings.S_LABEL_TAB_SIZE = 'Tab Size';
