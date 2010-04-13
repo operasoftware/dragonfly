@@ -80,13 +80,20 @@ window.cls.TestFramework = function()
         item));
   }
 
-  this._get_recursiv_messge = function(definitions, definition)
+  this._get_recursiv_message = function _get_recursiv_message(definitions, definition)
   {
-    for (var def = null, i = 0; def = definitions[i]; i++)
+    for (var def = null, i = 0, ret = null; def = definitions[i]; i++)
     {
       if (def.name == definition.name)
       {
         return def.message;
+      }
+      if (def.message && typeof def.message == 'object')
+      {
+        if (ret = _get_recursiv_message(def.message, definition))
+        {
+          return ret;
+        }
       }
     }
     return null;
@@ -118,7 +125,7 @@ window.cls.TestFramework = function()
         definition = definitions[i];
         if (definition && (definition.message == "self"))
         {
-          definition.message = this._get_recursiv_messge(this._definitions, definition);
+          definition.message = this._get_recursiv_message(this._definitions, definition);
         }
         if (definition["q"] == "repeated")
         {
