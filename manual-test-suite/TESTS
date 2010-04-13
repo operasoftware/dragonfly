@@ -217,7 +217,7 @@ label: Highlight boxes
 desc:
   - Select an element in the DOM
   - Hover the different boxes in the Metrics view
-  - Verify that the according box is highlighted on the lement in the host
+  - Verify that the according box is highlighted on the element in the host
 
 id: 24
 label: Parent Offsets
@@ -260,7 +260,7 @@ label: Toggle long breadcrumbs
 desc: 
   - Select a deep nested element in the document so that the breadcrumb is shortened, 
     e.g. starts with 3 dots.
-  - Verify taht you can expand and collaps the breadcrump with the small toggle icon 
+  - Verify that you can expand and collaps the breadcrump with the small toggle icon 
     to the right of the status icon.
 
 id: 29
@@ -339,7 +339,7 @@ desc:
   - Set a breakpoint on line 23, 'var ee = 1;'.
   - Press the 'e()' button.
   - Verify that the engine stops on that line
-  - Pressing the 'Step Into' button continuously till yo get to the line 'c();'.
+  - Pressing the 'Step Into' button continuously till you get to the line 'c();'.
   - Now press the 'Step Over' button.
   - Verify that engine stops right after 'c()' and does not follow the execution flow of 'c()'.
 
@@ -352,7 +352,7 @@ desc:
 id: 39
 label: Breakpoint, Step Out
 desc: 
-  - Set a breakpoint on line 4, 'var aa = 1;'.
+  - Set a breakpoint on line 23, 'var ee = 1;'.
   - Press the 'e()' button
   - Press the 'Step Into' button continuously till you get to 'var cc = 1;'.
   - Now press the 'Step Out' button continuously.
@@ -437,6 +437,7 @@ label: Autosuggest
 desc:
   - Set a breakpoint on line 23, 'var ee = 1;'.
   - Press the 'e()' button.
+  - Focus the command line.
   - Hit tab.
   - Verify that you get the variables of the scope
   - Use 'Step Into' and verify for each scope that you get the correct variables.
