@@ -122,11 +122,15 @@ window.cls.Helpers = function()
     }
   })();
 
-  this.escapeAttributeHtml = function(str)
+  this.escapeAttributeHtml = (function()
   {
-    return this.escapeTextHtml(str).replace(/"/g, "&amp;quot;");
-  }
-
+    var re_amp = /&/g, re_lt = /</g, re_quot = /"/g;
+    return function(str)
+    {
+      return str.replace(re_amp, "&amp;").replace(re_lt, "&lt;").replace(re_quot, "&amp;quot;");
+    }
+  })();
+  
   this.setCookie = function(key, value, time) 
   {
     document.cookie = (
