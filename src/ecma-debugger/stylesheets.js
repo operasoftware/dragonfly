@@ -714,7 +714,7 @@ cls.Stylesheets = function()
       {
         ret += ( ret ? MARKUP_PROP_NL : "" ) +
               MARKUP_KEY + prop + MARKUP_KEY_CLOSE + 
-              MARKUP_VALUE + value + MARKUP_VALUE_CLOSE;
+              MARKUP_VALUE + helpers.escapeTextHtml(value) + MARKUP_VALUE_CLOSE;
       }
       
     } 
