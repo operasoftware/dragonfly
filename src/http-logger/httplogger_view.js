@@ -38,8 +38,8 @@ cls.RequestListView = function(id, name, container_class)
             // later if it isn't allready so.
             if (!updateTimer) {
                 updateTimer = window.setTimeout(
-                        function() { self.createView(container) },
-                        this.minUpdateInterval
+                    function() { self.createView(container); },
+                    this.minUpdateInterval
 		);
             }
             return;
@@ -69,7 +69,7 @@ cls.RequestListView = function(id, name, container_class)
         if (log.length && log[0].id==keyEntryId) {
             return true;
         } else {
-            if (log.length) { keyEntryId = log[0].id }
+            if (log.length) { keyEntryId = log[0].id; }
             return false;
         }
     };
@@ -91,9 +91,9 @@ cls.RequestListView = function(id, name, container_class)
 
         if (log.length) {
             var times = log.map(function(e) {
-                return e.response ? e.response.time : e.request.time
+                return e.response ? e.response.time : e.request.time;
             });
-            var times = times.sort();
+            times = times.sort();
             var lastTime = times[times.length-1];
         } else {
             var lastTime = new Date().getTime();
@@ -148,7 +148,7 @@ cls.RequestListView = function(id, name, container_class)
             {
                 e.className = e.className.replace("expanded", "collapsed");
                 tableBodyEle.removeChild(e.nextSibling);
-                return
+                return;
             }
         }
     };
