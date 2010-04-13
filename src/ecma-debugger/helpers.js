@@ -122,6 +122,11 @@ window.cls.Helpers = function()
     }
   })();
 
+  this.escapeAttributeHtml = function(str)
+  {
+    return this.escapeTextHtml(str).replace(/"/g, "&amp;quot;");
+  }
+
   this.setCookie = function(key, value, time) 
   {
     document.cookie = (

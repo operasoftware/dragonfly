@@ -355,7 +355,7 @@ cls.DOMView = function(id, name, container_class)
                 ( attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '' ) + 
                 ( force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ) + 
                 "=\"" + 
-                helpers.escapeTextHtml(attr[ATTR_VALUE]) +
+                helpers.escapeAttributeHtml(attr[ATTR_VALUE]) +
                 "\"";
             }
           }

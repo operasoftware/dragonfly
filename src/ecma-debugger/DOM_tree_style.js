@@ -182,7 +182,7 @@ var DOM_tree_style = function(id, name, container_class)
                       (/^href|src$/i.test(attr[ATTR_KEY])
                         ? " handler='dom-resource-link'"
                         : "" ) + ">\"" +
-                      helpers.escapeTextHtml(attr[ATTR_VALUE]).replace(/"/g, '&amp;quot;') +
+                      helpers.escapeAttributeHtml(attr[ATTR_VALUE]) +
                   "\"</value>";
               }
             }
