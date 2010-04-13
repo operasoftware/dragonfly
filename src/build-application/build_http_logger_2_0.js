@@ -1,4 +1,4 @@
-/* load after build_application.js */
+﻿/* load after build_application.js */
 
 window.app.builders.HttpLogger || ( window.app.builders.HttpLogger = {} );
 /**
