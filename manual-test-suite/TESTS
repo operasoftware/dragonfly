@@ -459,7 +459,7 @@ desc:
   - Type e.g. 'this' and hit enter.
   - Verify that the result is the correct object displayed as link.
   - Click the link.
-  - Verify that 
+  - Verify that the according object is displayed in the Inspection view. 
 
 id: 50
 label: Built-in commands
