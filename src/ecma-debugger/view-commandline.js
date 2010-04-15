@@ -119,71 +119,85 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     PROTOTYPE_ID = 4,
     NAME = 5;
 
-    var value_type = message[TYPE];
-
-    if( message[STATUS] == 'completed' )
+    if (status)
     {
-      var return_value = message[VALUE];
-      if(return_value || /null|undefined/.test(value_type) )
-      {
-        var value = return_value || '';
-        if( !obj_id )
+      cons_out_render_return_val
+      (
+        console_output_data[console_output_data.length] =
         {
-          switch (value_type)
-          {
-            case 'string':
-            {
-              var delimiter = "\"";
-              // Escape ' and " Python command line interpreter style
-              if (value.indexOf("\"") != -1) {
-                delimiter = "'";
-                if (value.indexOf("'") != -1) {
-                  value = value.replace(/'/g, "\\'");
-                }
-              }
-              value = delimiter + value + delimiter;
-              break;
-            }
-            case 'null':
-            case 'undefined':
-            {
-              value = value_type;
-              break;
-            }
-          }
+          type: "return-value",
+          value: ui_strings.S_INFO_NO_JAVASCRIPT_IN_CONTEXT
         }
-        if(callback)
-        {
-          callback(runtime_id, obj_id);
-        }
-        cons_out_render_return_val
-        (
-          console_output_data[console_output_data.length] =
-          {
-            type: "return-value",
-            obj_id: obj_id,
-            runtime_id: runtime_id,
-            value: value
-          }
-        );
-        __container.scrollTop = __container.scrollHeight;
-      }
-      else if (return_value = message[OBJECT_VALUE])
-      {
-        var object_id = return_value[OBJECT_ID];
-        var tag = tagManager.set_callback(null, handleEval, [runtime_id, object_id, callback] );
-        var script_string  = "return Object.prototype.toString.call(obj)";
-        services['ecmascript-debugger'].requestEval(tag,
-              [runtime_id, 0, 0, script_string, [['obj', object_id]]]);
-      }
+      );
     }
     else
     {
-      var error_id = message[OBJECT_VALUE][OBJECT_ID];
-      if( error_id )
+      var value_type = message[TYPE];
+
+      if( message[STATUS] == 'completed' )
       {
-        var tag = tagManager.set_callback(null, handleError, [message[STATUS]]);
-        services['ecmascript-debugger'].requestExamineObjects(tag, [runtime_id, [error_id]]);
+        var return_value = message[VALUE];
+        if(return_value || /null|undefined/.test(value_type) )
+        {
+          var value = return_value || '';
+          if( !obj_id )
+          {
+            switch (value_type)
+            {
+              case 'string':
+              {
+                var delimiter = "\"";
+                // Escape ' and " Python command line interpreter style
+                if (value.indexOf("\"") != -1) {
+                  delimiter = "'";
+                  if (value.indexOf("'") != -1) {
+                    value = value.replace(/'/g, "\\'");
+                  }
+                }
+                value = delimiter + value + delimiter;
+                break;
+              }
+              case 'null':
+              case 'undefined':
+              {
+                value = value_type;
+                break;
+              }
+            }
+          }
+          if(callback)
+          {
+            callback(runtime_id, obj_id);
+          }
+          cons_out_render_return_val
+          (
+            console_output_data[console_output_data.length] =
+            {
+              type: "return-value",
+              obj_id: obj_id,
+              runtime_id: runtime_id,
+              value: value
+            }
+          );
+          __container.scrollTop = __container.scrollHeight;
+        }
+        else if (return_value = message[OBJECT_VALUE])
+        {
+          var object_id = return_value[OBJECT_ID];
+          var tag = tagManager.set_callback(null, handleEval, [runtime_id, object_id, callback] );
+          var script_string  = "return Object.prototype.toString.call(obj)";
+          services['ecmascript-debugger'].requestEval(tag,
+            [runtime_id, 0, 0, script_string, [['obj', object_id]]]);
+        }
+      }
+      else
+      {
+        var error_id = message[OBJECT_VALUE][OBJECT_ID];
+        if( error_id )
+        {
+          var tag = tagManager.set_callback(null, handleError, [message[STATUS]]);
+            services['ecmascript-debugger'].requestExamineObjects(tag, [runtime_id, [error_id]]);
+        }
       }
     }
   }
@@ -312,10 +326,9 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     }
     else
     {
-      alert(ui_strings.S_INFO_NO_RUNTIME_SELECTED);
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + " This should never happen");
     }
   }
-
 
 
   var line_buffer_push = function(line)
@@ -539,7 +552,14 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
       }
       else
       {
-        alert('select a window');
+        cons_out_render_return_val
+        (
+          console_output_data[console_output_data.length] =
+          {
+            type: "return-value",
+            value: "Select a window"
+          }
+        )
       }
       return null;
     }

@@ -456,8 +456,10 @@ ui_strings.S_INFO_WAITING_FOR_CONNECTION =
   "Please enter opera:debug in your device's URL field to connect.";
 /* DESC: Information shown if the service is not available. */
 ui_strings.S_INFO_SERVICE_NOT_AVAILABLE =  "Service is not available: %s";
-/* DESC: Information shown when the user needs to select a runtime. */
+/* DESC: DEPRECATED Information shown when the user needs to select a runtime. */
 ui_strings.S_INFO_NO_RUNTIME_SELECTED =  "Select a runtime";
+/* DESC: Shown when entering something on the command line while there is no javascript running in the window being debugged */
+ui_strings.S_INFO_NO_JAVASCRIPT_IN_CONTEXT =  "There is no JavaScript environment in the active window";
 
 ui_strings.S_INFO_NO_COMPATIBLE_VERSION =  "There is no compatible Opera Dragonfly version.";
 
