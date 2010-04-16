@@ -41,7 +41,7 @@ window.eventHandlers.click['storage-edit-cancel'] = function(event, target, is_s
   tr = event.target.parentNode.parentNode.parentNode,
   rt_id = tr.parentNode.getAttribute('data-rt-id'),
   storage_id = tr.parentNode.getAttribute('data-storage-id'),
-  key = tr.getAttribute('data-storage-key') ||
+  key = tr.getAttribute('data-storage-key') != undefined ? tr.getAttribute('data-storage-key') :
         (tr.getElementsByTagName('input')[0] && tr.getElementsByTagName('input')[0].value),
   item = window.storages[storage_id].get_item(rt_id, key);
 
