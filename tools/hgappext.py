@@ -18,6 +18,7 @@ if sys.platform == "win32":
 INI_JS = "ini.js"
 BUILD_CONFIG = "D:\\hg\\build\\build_config"
 
+
 def parse_config(path):
     try:
         f = open(path, 'r')
@@ -90,7 +91,7 @@ def app_revision(ui, repo, **kwargs):
 def create_path(path):
     if not os.path.exists(path): os.makedirs(path)  
 
-def run_build_script(ui, repo, core_version=0, type=None, **opts):
+def run_build_script(ui, repo, core_version=0, type=None, tag="tip", **opts):
     """
     make a build from a configuration file.
     usage: hg build-app [-l <log range> <core version> <type, e.g. nightly>
@@ -200,9 +201,13 @@ def run_build_script(ui, repo, core_version=0, type=None, **opts):
     if mercurial.commands.update(ui, repo, rev="default") != 0: 
         print "abort. hg update failed"
         return
-    rev = repo.changelog.rev(head)
-    sort_hash = short(head)
-    revision = "%d:%s, %s" % (rev, sort_hash, core_version["branch"])
+    if mercurial.commands.update(ui, repo, rev=tag) != 0: 
+        print "abort. hg update failed"
+        return
+    ctx = repo[tag] 
+    rev = ctx.rev()
+    short_hash = short(ctx.node())    
+    revision = "%s:%s, %s, %s" % (rev, short_hash, core_version["branch"], tag)
 
     if not 'id' in type:
         print "each entriy in the build config must have an id"
@@ -210,7 +215,7 @@ def run_build_script(ui, repo, core_version=0, type=None, **opts):
 
     if not type['id'] in build_log: 
         build_log[type['id']] = [] 
-    build_log[type['id']].append(sort_hash)
+    build_log[type['id']].append(short_hash)
 
     print "make build, revision:", revision
     try:
@@ -233,7 +238,7 @@ def run_build_script(ui, repo, core_version=0, type=None, **opts):
         return
     print "build created"
     print "make zip"
-    path = type["local-zip"] % (rev, sort_hash)
+    path = type["local-zip"] % (rev, short_hash)
     create_path(os.path.split(path)[0])
     try:
         sys.argv = \
@@ -259,7 +264,7 @@ def run_build_script(ui, repo, core_version=0, type=None, **opts):
 
     if opts['log']:
         print "log", opts['log']
-        path = type["local-log"] % (rev, sort_hash)
+        path = type["local-log"] % (rev, short_hash)
         create_path(os.path.split(path)[0])
         f = open(path, 'w')
         store_stdout = sys.stdout
@@ -317,102 +322,3 @@ cmdtable = \
     "make a build, a zip and a log file"
   )
 }
-
-
-
-"""
-def app_test_node(ui, repo):
-    pass
-
-    import os, sys 
-
-    import mercurial.commands
-    from mercurial.node import short
-    
-
-    heads = repo.heads()
-    if len(heads) != 1:
-        print "abort. ensure that there is only one head in the repository"
-        return
-
-
-    head = heads[0]
-
-    rev = repo.changelog.rev(head)
-    sort_hash = short(head)
-    changes = repo.changelog.read(head)
-
-    print rev, short_hash, changes
-
-    import os, sys 
-    
-    from mercurial.node import short
-
-    heads = repo.heads()
-    root = repo.root
-
-    rev = repo.changelog.rev(heads[0])
-
-    changes = repo.changelog.read(heads[0])
-
-    print rev, changes
-
-
-
-def decon_path(path):
-    path = os.path.normpath(path)
-    ret = []
-    while os.path.sep in path:
-        path, part = os.path.split(path)
-        path = path.rstrip(os.path.sep)
-        ret.append(part)
-    ret.append(path)
-    return ret[::-1]
-
-def get_relative_path(path_1, path_2):
-    path_1_dec = decon_path(path_1)
-    path_2_dec = decon_path(path_2)
-    match = 0
-    while len(path_1_dec) > match \
-        and len(path_2_dec) > match \
-        and path_1_dec[match] == path_2_dec[match]: match += 1
-    if match:
-        delta = len(path_1_dec) - match
-        prefix = delta and ( delta * "../" ) or "./"
-        return prefix + "/".join(path_2_dec[match:])
-    return None
-
-
-
-def app_test(ui, repo, core_version = 0, type = None, **opts):
-    
-    print 'core_version: ', core_version, 'type: ', type, 'opts: ', opts
-    print repo.root, os.getcwd()
-    os.chdir(repo.root)
-    print repo.root, os.getcwd()
-    print get_relative_path(os.getcwd(), CUTTING_EDGE_BUILD)
-
-
-
-
-class file_obj(object):
-
-    def __init__(self):
-        self.content = ""
-        self.closed = False
-        self.cursor = 0
-        
-    def write(self, data):
-        self.content += data
-        return None
-        
-    def read(self):
-        pos = self.cursor
-        self.cursor = len(self.content)
-        return self.content[pos:]
-        
-    def flush(self):
-        pass
-
-"""
-  
