@@ -21,7 +21,6 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
     namespace.Object_inspection_data.prototype = ObjectDataBase;
     window.object_inspection_data = new namespace.Object_inspection_data();
 
-    var service_interface = service_interface;
     window.runtimes = new namespace.Runtimes();
     window.runtimes.bind(service_interface);
 

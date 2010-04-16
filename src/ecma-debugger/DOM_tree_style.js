@@ -1,5 +1,5 @@
 ﻿/**
-  * @constructor 
+  * @constructor
   * @extends ViewBase
   * @see DOM_markup_style this class can be dynamically exchanged with DOM_markup_style
   */
@@ -40,18 +40,18 @@ var DOM_tree_style = function(id, name, container_class)
   {
     string = new String(string);
     var _char = '', i = 0, ret = '';
-    for( ; _char = string.charAt(i); i++ )
+    for ( ; _char = string.charAt(i); i++)
     {
       ret += map[_char];
     }
     return ret;
-  }
+  };
 
   var nodeNameMap =
   {
     3: "<span class='text-node'>#text</span>",
     4: "<span class='cdata-node'>#cdata-section</span>"
-  }
+  };
 
   var div_padding_value = 0;
 
@@ -73,7 +73,7 @@ var DOM_tree_style = function(id, name, container_class)
         "missing implementation in updateTarget in views['dom-inspector']");
       // TODO
     }
-  }
+  };
 
   this.createView = function(container)
   {
@@ -82,6 +82,7 @@ var DOM_tree_style = function(id, name, container_class)
       clearTimeout(this._create_view_no_data_timeout);
       this._create_view_no_data_timeout = 0;
     }
+
     if (!container.hasClass('tree-style'))
     {
       container.addClass('tree-style');
@@ -195,7 +196,7 @@ var DOM_tree_style = function(id, name, container_class)
               has_only_one_child = 1;
               one_child_value = '';
               child_level = data[child_pointer][DEPTH];
-              for( ; data[child_pointer] && data[child_pointer][DEPTH] == child_level; child_pointer += 1 )
+              for ( ; data[child_pointer] && data[child_pointer][DEPTH] == child_level; child_pointer += 1)
               {
                 one_child_value += data[child_pointer][VALUE];
                 if (data[child_pointer][TYPE] != 3)
@@ -219,13 +220,13 @@ var DOM_tree_style = function(id, name, container_class)
             }
             else
             {
-                tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
-                        " style='margin-left:" + 16 * node[DEPTH] + "px;' " +
-                        "ref-id='"+node[ID] + "' handler='spotlight-node'>" +
-                        (node[CHILDREN_LENGTH] ?
-                          "<input handler='get-children' type='button' class='close'>" : '') +
-                        "<node>" + node_name + attrs + "</node>" +
-                        "</div>";
+              tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
+                      " style='margin-left:" + 16 * node[DEPTH] + "px;' " +
+                      "ref-id='"+node[ID] + "' handler='spotlight-node'>" +
+                      (node[CHILDREN_LENGTH] ?
+                        "<input handler='get-children' type='button' class='close'>" : '') +
+                      "<node>" + node_name + attrs + "</node>" +
+                      "</div>";
             }
             current_formatting = re_formatted.test(node_name) &&  " class='pre-wrap'" || "";
             break;
@@ -244,7 +245,7 @@ var DOM_tree_style = function(id, name, container_class)
 
           case 9:  // comments
           {
-              tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;' " +
+            tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;' " +
                       "><span class='document-node'>#document</span></div>";
             break;
           }
@@ -293,12 +294,12 @@ var DOM_tree_style = function(id, name, container_class)
       container.innerHTML = tree;
       container_scroll_width = container.scrollWidth;
       container_first_child = container.firstChild;
-      if(!this.scrollTargetIntoView())
+      if (!this.scrollTargetIntoView())
       {
         container.scrollTop = scrollTop;
       }
       topCell.statusbar.updateInfo(templates.breadcrumb(dom_data.getCSSPath()));
     }
-  }
+  };
 }
 

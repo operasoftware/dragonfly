@@ -27,6 +27,7 @@ cls.HttpLogger["2.0"].RequestListView = function(id, name, container_class)
     var expandedItems = []; // IDs of items that are expanded
     var tableBodyEle = null;
     var viewMap = {}; // mapping between ID and active part of detail view
+    var scroll = true; // whether or not to auto-scroll for this update
 
     /**
      *  Called by the framework through update()
@@ -42,8 +43,8 @@ cls.HttpLogger["2.0"].RequestListView = function(id, name, container_class)
             // later if it isn't allready so.
             if (!updateTimer) {
                 updateTimer = window.setTimeout(
-                        function() { self.createView(container) },
-                        this.minUpdateInterval
+                    function() { self.createView(container); },
+                    this.minUpdateInterval
 		);
             }
             return;
@@ -55,6 +56,11 @@ cls.HttpLogger["2.0"].RequestListView = function(id, name, container_class)
         }
         lastUpdateTime = new Date().getTime();
         this.doCreateView(container);
+
+        if (settings.request_list.get('auto-scroll-request-list') && scroll) {
+            container.scrollTop = container.scrollHeight;
+            scroll = true;
+        }
     };
 
     /**
@@ -73,7 +79,7 @@ cls.HttpLogger["2.0"].RequestListView = function(id, name, container_class)
         if (log.length && log[0].id==keyEntryId) {
             return true;
         } else {
-            if (log.length) { keyEntryId = log[0].id }
+            if (log.length) { keyEntryId = log[0].id; }
             return false;
         }
     };
@@ -85,6 +91,7 @@ cls.HttpLogger["2.0"].RequestListView = function(id, name, container_class)
     this.doCreateView = function(container)
     {
         var log = HTTPLoggerData.getLog();
+        topCell.statusbar.updateInfo(ui_strings.S_HTTP_TOOLBAR_REQUEST_COUNT.replace("%s", log.length));
 
         if (!this.viewIsValid(log)) {
             container.clearAndRender(['table',['tbody'], 'class',
@@ -95,9 +102,9 @@ cls.HttpLogger["2.0"].RequestListView = function(id, name, container_class)
 
         if (log.length) {
             var times = log.map(function(e) {
-                return e.response ? e.response.time : e.request.time
+                return e.response ? e.response.time : e.request.time;
             });
-            var times = times.sort();
+            times = times.sort();
             var lastTime = times[times.length-1];
         } else {
             var lastTime = new Date().getTime();
@@ -121,9 +128,6 @@ cls.HttpLogger["2.0"].RequestListView = function(id, name, container_class)
         var tpls = log.slice(nextToRendereIndex).map(fun);
         tableBodyEle.render(tpls);
         nextToRendereIndex = log.length;
-        if (settings.request_list.get('auto-scroll-request-list')) {
-            container.scrollTop = container.scrollHeight;
-        }
     };
 
     this._getRowForId = function(id) {
@@ -152,7 +156,7 @@ cls.HttpLogger["2.0"].RequestListView = function(id, name, container_class)
             {
                 e.className = e.className.replace("expanded", "collapsed");
                 tableBodyEle.removeChild(e.nextSibling);
-                return
+                return;
             }
         }
     };
@@ -196,10 +200,11 @@ cls.HttpLogger["2.0"].RequestListView = function(id, name, container_class)
         } else {
             expandedItems.splice(expandedItems.indexOf(id), 1);
         }
+        scroll = false;
         this.update();
+        scroll = true;
         if (dirty) {
             var row = this._getRowForId(id).nextSibling;
-            row.scrollSoftIntoContainerView();
         }
     };
 

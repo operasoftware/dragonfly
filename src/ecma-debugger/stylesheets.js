@@ -42,7 +42,6 @@ cls.Stylesheets = function()
     __new_rts = null;
     __top_rt_id = '';
     __on_new_stylesheets_cbs = {};
-
   };
 
   const
@@ -190,17 +189,20 @@ cls.Stylesheets = function()
         return INDENT + MARKUP_KEY + prop + MARKUP_KEY_CLOSE +
                MARKUP_VALUE + value_list[1] + priority_flag + MARKUP_VALUE_CLOSE;
       }
+
       if (top_bottom && left_right)
       {
         return INDENT + MARKUP_KEY + prop + MARKUP_KEY_CLOSE +
                MARKUP_VALUE + value_list[1] + MARKUP_SPACE + value_list[2] + priority_flag + MARKUP_VALUE_CLOSE;
       }
+
       if (left_right)
       {
         return INDENT + MARKUP_KEY + prop + MARKUP_KEY_CLOSE +
                MARKUP_VALUE + value_list[1] + MARKUP_SPACE + value_list[2] + MARKUP_SPACE +
                value_list[3] +  priority_flag + MARKUP_VALUE_CLOSE;
       }
+
       return INDENT + MARKUP_KEY + prop + MARKUP_KEY_CLOSE +
              MARKUP_VALUE + value_list[1] + MARKUP_SPACE + value_list[2] + MARKUP_SPACE +
              value_list[3] + MARKUP_SPACE + value_list[4] + priority_flag + MARKUP_VALUE_CLOSE;
@@ -221,7 +223,7 @@ cls.Stylesheets = function()
       }
       return ret;
     }
-  }
+  };
 
   shorthands.fallback = function(index, value, priority_flag)
   {
@@ -331,6 +333,7 @@ cls.Stylesheets = function()
         previous_value = short_value_list[index_short];
         index_short++;
       }
+
       if (is_short_short)
       {
         ret = INDENT + MARKUP_KEY + prop + MARKUP_KEY_CLOSE +
@@ -354,12 +357,12 @@ cls.Stylesheets = function()
           ret = INDENT + MARKUP_KEY + prop + MARKUP_KEY_CLOSE +
                 MARKUP_VALUE +
                 (i
-                  ? short_value_list[0] + short_priority_list[0]
-                  : short_value_list[1] + short_priority_list[1]) +
-                MARKUP_VALUE_CLOSE +
-                MARKUP_PROP_NL +
-                INDENT + MARKUP_KEY + key_list[i] + MARKUP_KEY_CLOSE +
-                MARKUP_VALUE + short_value_list[i] + short_priority_list[i] + MARKUP_VALUE_CLOSE;
+                ? short_value_list[0] + short_priority_list[0]
+                : short_value_list[1] + short_priority_list[1]) +
+                  MARKUP_VALUE_CLOSE +
+                  MARKUP_PROP_NL +
+                  INDENT + MARKUP_KEY + key_list[i] + MARKUP_KEY_CLOSE +
+                  MARKUP_VALUE + short_value_list[i] + short_priority_list[i] + MARKUP_VALUE_CLOSE;
         }
       }
     }
@@ -398,7 +401,7 @@ cls.Stylesheets = function()
       }
     }
     return ret;
-  }
+  };
 
   shorthands.font =
   shorthands['list-style'] =
@@ -458,7 +461,7 @@ cls.Stylesheets = function()
       }
     }
     return ret;
-  }
+  };
 
   var prettyPrintRule = [];
 
@@ -493,6 +496,7 @@ cls.Stylesheets = function()
       {
         continue;
       }
+
       if (do_shortcuts && SHORTHAND[index])
       {
         if (__shorthandIndexMap[index] == 'font')
@@ -549,7 +553,7 @@ cls.Stylesheets = function()
       }
     }
     return ret;
-  }
+  };
 
   /* to print the stylesheets */
   /****************************/
@@ -641,8 +645,8 @@ cls.Stylesheets = function()
     return "<page-rule rule-id='" + rule[RULE_ID] + "'>" +
               "<at>@page</at>" +
               ( rule[PSEUDO_CLASS]
-                ? "<selector> " + pseudo_class_map[rule[PSEUDO_CLASS]] + "</selector>"
-                : "" ) + " {\n" +
+              ? "<selector> " + pseudo_class_map[rule[PSEUDO_CLASS]] + "</selector>"
+              : "" ) + " {\n" +
               prettyPrintRule[COMMON](rule, do_shortcuts, 0, is_style_sheet) +
             "\n}</page-rule>";
   };
@@ -838,12 +842,14 @@ cls.Stylesheets = function()
       services['ecmascript-debugger'].requestCssGetAllStylesheets(tag, [data.rt_id]);
       return '';
     }
+
     if (!__indexMap)
     {
       var tag = tagManager.set_callback(null, handleGetIndexMap, [org_args]);
       services['ecmascript-debugger'].requestCssGetIndexMap(tag);
       return '';
     }
+
     return _pretty_print_cat[cat_index](data, search_active);
   };
 
@@ -853,6 +859,7 @@ cls.Stylesheets = function()
     {
       return __sheets[rt_id];
     }
+
     if (org_args && runtime_onload_handler.check(rt_id, org_args))
     {
       if (!__indexMap)
@@ -919,6 +926,7 @@ cls.Stylesheets = function()
       {
         return __rules[rt_id][index];
       }
+
       if (__sheets[rt_id][index])
       {
         var tag = tagManager.set_callback(null, handleGetRulesWithIndex, [rt_id, index, org_args]);
@@ -947,6 +955,7 @@ cls.Stylesheets = function()
     {
       return __selectedRules;
     }
+
     if (org_args)
     {
       onNewStylesheets(__top_rt_id, [null, selectFirstSheet, __top_rt_id, 0, org_args]);
@@ -1217,12 +1226,16 @@ cls.Stylesheets = function()
         }
       }
     }
+
     temp.sort(function(a,b){return a.key < b.key ? -1 : a.key > b.key ? 1 : 0});
+
     for (i = 0; prop = temp[i]; i++)
     {
       __sortedIndexMap[i] = prop.index;
     }
+
     __indexMapLength = __indexMap.length;
+
     if (org_args && (!org_args[0].__call_count || org_args[0].__call_count == 1))
     {
       org_args[0].__call_count = org_args[0].__call_count ? org_args[0].__call_count + 1 : 1;
@@ -1296,6 +1309,7 @@ cls.Stylesheets = function()
         delete __on_new_stylesheets_cbs[rt_id_c_1];
       }
     }
+
     for (i = 0; rt_id_c_1 = rt_ids[i]; i++)
     {
       if (!(rt_id_c_1 in __on_new_stylesheets_cbs))
@@ -1303,7 +1317,9 @@ cls.Stylesheets = function()
         __on_new_stylesheets_cbs[rt_id_c_1] = [];
       }
     }
+
     __new_rts = rt_ids;
+
     if (rt_ids[0] != __top_rt_id)
     {
       __top_rt_id = rt_ids[0] || 0;
@@ -1353,6 +1369,7 @@ cls.Stylesheets = function()
         views.stylesheets.clearAllContainers();
       }
     }
+
     if (!msg.activeTab.length)
     {
       __sheets = {};
@@ -1398,5 +1415,5 @@ cls.Stylesheets = function()
   messages.addListener('runtime-destroyed', onRuntimeDestroyed);
   messages.addListener('active-tab', onActiveTab);
   messages.addListener('reset-state', onResetState);
-}
+};
 

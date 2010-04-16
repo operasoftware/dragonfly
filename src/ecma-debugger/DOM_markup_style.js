@@ -45,7 +45,7 @@ var DOM_markup_style = function(id, name, container_class)
   var clearSpotlightElement = function()
   {
     hostspotlighter.clearSpotlight();
-  }
+  };
 
   this.updateTarget = function(ele, obj_id)
   {
@@ -66,6 +66,7 @@ var DOM_markup_style = function(id, name, container_class)
         templates.breadcrumb(dom_data.getCSSPath())
       );
     }
+
     if (ele || (ele = document.getElementById('target-element')))
     {
       ele.id = 'target-element';
@@ -76,7 +77,7 @@ var DOM_markup_style = function(id, name, container_class)
         "missing implementation in updateTarget in views['dom-inspector']");
       // TODO
     }
-  }
+  };
 
   var formatProcessingInstructionValue = function(str, force_lower_case)
   {
@@ -95,7 +96,7 @@ var DOM_markup_style = function(id, name, container_class)
       }
     }
     return attrs;
-  }
+  };
 
   this.createView = function(container)
   {
@@ -206,12 +207,12 @@ var DOM_markup_style = function(id, name, container_class)
                   one_child_text_content = '';
                   break;
                 }
-                // perhaps this needs to be adjusted. a non-closed (e.g. p) tag 
-                // will create an additional CRLF text node, that means the text nodes are not normalized. 
+                // perhaps this needs to be adjusted. a non-closed (e.g. p) tag
+                // will create an additional CRLF text node, that means the text nodes are not normalized.
                 // in markup view it doesn't make sense to display such a node, still we have to ensure
-                // that there is at least one text node. 
-                // perhaps there are other situation with not-normalized text nodes, 
-                // with the following code each of them will be a single text node, 
+                // that there is at least one text node.
+                // perhaps there are other situation with not-normalized text nodes,
+                // with the following code each of them will be a single text node,
                 // if they contain more than just white space.
                 // for exact DOM representation it is anyway better to use the DOM tree style.
                 if (!one_child_text_content || !/^\s*$/.test(data[child_pointer][VALUE]))
@@ -297,11 +298,10 @@ var DOM_markup_style = function(id, name, container_class)
           case 9:  // document node
           {
             /* makes not too much sense in the markup view
-            tree += "<div style='margin-left:" + 16 * node[ DEPTH ] + "px;' " +      
+            tree += "<div style='margin-left:" + 16 * node[ DEPTH ] + "px;' " +
               ">#document</div>";
             */
             break;
-
           }
 
           case 10:  // doctype
@@ -329,10 +329,10 @@ var DOM_markup_style = function(id, name, container_class)
                       "</div>";
             }
           }
-
         }
       }
-      while( closing_tags.length )
+
+      while (closing_tags.length)
       {
         tree += closing_tags.pop();
       }
@@ -341,12 +341,12 @@ var DOM_markup_style = function(id, name, container_class)
       container.innerHTML = tree;
       container_scroll_width = container.scrollWidth;
       container_first_child = container.firstChild;
-      if(!this.scrollTargetIntoView())
+      if (!this.scrollTargetIntoView())
       {
         container.scrollTop = scrollTop;
       }
       topCell.statusbar.updateInfo(templates.breadcrumb(dom_data.getCSSPath()));
     }
-  }
+  };
 }
 
