@@ -26,7 +26,7 @@ window.eventHandlers.click['storage-save'] = function(event, target)
   {
     if (success)
     {
-      window.eventHandlers.click['storage-edit-cancel'](event, target);
+      window.eventHandlers.click['storage-edit-cancel'](event, target, true);
     }
     else
     {
@@ -35,7 +35,7 @@ window.eventHandlers.click['storage-save'] = function(event, target)
   });
 };
 
-window.eventHandlers.click['storage-edit-cancel'] = function(event, target)
+window.eventHandlers.click['storage-edit-cancel'] = function(event, target, is_success)
 {
   var
   tr = event.target.parentNode.parentNode.parentNode,
@@ -45,10 +45,10 @@ window.eventHandlers.click['storage-edit-cancel'] = function(event, target)
         (tr.getElementsByTagName('input')[0] && tr.getElementsByTagName('input')[0].value),
   item = window.storages[storage_id].get_item(rt_id, key);
 
-  window.storages[storage_id].set_item_edit(rt_id, key, false);
-  if (item)
+  if (tr.hasAttribute('data-storage-key') || is_success)
   {
     tr.parentNode.replaceChild(document.render(window.templates.storage_item(item)), tr);
+    window.storages[storage_id].set_item_edit(rt_id, key, false);
   }
   else
   {
