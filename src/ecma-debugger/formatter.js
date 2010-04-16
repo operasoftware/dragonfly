@@ -592,7 +592,7 @@ window.cls.SimpleJSParser = function()
       {
 
         __parse_error_line_buffer += __buffer;
-        if(__parse_error_line_offset > __parse_error_line_buffer.length) 
+        if(__parse_error_line_offset >= __parse_error_line_buffer.length) 
         {
           read_buffer_default();
            
@@ -737,8 +737,7 @@ window.cls.SimpleJSParser = function()
       __parse_error_line_offset = script.parse_error.error_line_offset; 
       __parse_error_line_buffer ='';
       __parse_error_first_token = true;
-      __parse_error_description = 
-          script.parse_error.reason + '\n' + script.parse_error.expected_token;
+      __parse_error_description = script.parse_error.description;
     }
     else
     {

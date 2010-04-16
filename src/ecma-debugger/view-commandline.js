@@ -1,7 +1,7 @@
 ﻿cls = window.cls || (window.cls = {});
 
 /**
-  * @constructor
+  * @constructor 
   * @extends ViewBase
   */
 
@@ -494,10 +494,10 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     var match_cur = 0;
     var local_frame_index = 0;
     var _shift_key = false;
-
-
-    const
-    SCRIPT = "var a = '', b= ''; for( a in %s ){ b += a + '_,_'; }; return b;",
+   
+    
+    const 
+    SCRIPT = "(function(){var a = '', b= ''; for( a in %s ){ b += a + '_,_'; }; return b;})()",
     KEY = 0,
     DEPTH = 3;
 
@@ -837,7 +837,7 @@ cls.CndRtSelect = function(id, class_name)
   this.templateOptionList = function(select_obj)
   {
     // TODO this is a relict of protocol 3, needs cleanup
-
+    
     var active_window_id = runtimes.getActiveWindowId();
 
     if( active_window_id )
@@ -855,7 +855,7 @@ cls.CndRtSelect = function(id, class_name)
       }
       return templates.runtimes(_runtimes, 'runtime');
     }
-
+    
   }
 
   this.checkChange = function(target_ele)

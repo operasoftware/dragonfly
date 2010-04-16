@@ -1,6 +1,10 @@
-﻿/* color picker data class */
+﻿window.cls || (window.cls = {});
+cls.Exec || (cls.Exec = {});
+cls.Exec["2.0"] || (cls.Exec["2.0"] = {});
 
-var color_picker_data = new function()
+/* color picker data class */
+
+cls.Exec["2.0"].ColorPickerDate = function()
 {
   /* interface */
 

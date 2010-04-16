@@ -113,11 +113,24 @@ window.cls.Helpers = function()
         || top_url.replace(/\?.*$/, '').replace(/#.*$/, '').replace(/\/[^/]*$/, "/") + url );
   }
 
-  this.escapeTextHtml = function(str)
+  this.escapeTextHtml = (function()
   {
-    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;");
-  }
+    var re_amp = /&/g, re_lt = /</g;
+    return function(str)
+    {
+      return str.replace(re_amp, "&amp;").replace(re_lt, "&lt;");
+    }
+  })();
 
+  this.escapeAttributeHtml = (function()
+  {
+    var re_amp = /&/g, re_lt = /</g, re_quot = /"/g;
+    return function(str)
+    {
+      return str.replace(re_amp, "&amp;").replace(re_lt, "&lt;").replace(re_quot, "&amp;quot;");
+    }
+  })();
+  
   this.setCookie = function(key, value, time) 
   {
     document.cookie = (

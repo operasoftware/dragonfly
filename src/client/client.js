@@ -355,8 +355,7 @@ ui_framework.layouts.console_rough_layout =
         'console-svg',
         'console-bittorrent',
         'console-voice',
-        'console-widget',
-        'console-dragonfly'
+        'console-widget'
       ] 
     }
   ]

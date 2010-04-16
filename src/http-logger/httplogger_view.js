@@ -4,13 +4,17 @@
  * Defines views for request list, header info etc.
  */
 
+window.cls || (window.cls = {});
+cls.HttpLogger || (cls.HttpLogger = {});
+cls.HttpLogger["2.0"] || (cls.HttpLogger["2.0"] = {});
+
 /**
   * @constructor
   * @extends ViewBase
   * This view implements update chocking. It will not do the update more often
   * than every minUpdateInterval milliseconds
   */
-cls.RequestListView = function(id, name, container_class)
+cls.HttpLogger["2.0"].RequestListView = function(id, name, container_class)
 {
     var self = this;
 
@@ -23,6 +27,7 @@ cls.RequestListView = function(id, name, container_class)
     var expandedItems = []; // IDs of items that are expanded
     var tableBodyEle = null;
     var viewMap = {}; // mapping between ID and active part of detail view
+    var scroll = true; // whether or not to auto-scroll for this update
 
     /**
      *  Called by the framework through update()
@@ -51,6 +56,11 @@ cls.RequestListView = function(id, name, container_class)
         }
         lastUpdateTime = new Date().getTime();
         this.doCreateView(container);
+
+        if (settings.request_list.get('auto-scroll-request-list') && scroll) {
+            container.scrollTop = container.scrollHeight;
+            scroll = true;
+        }
     };
 
     /**
@@ -118,9 +128,6 @@ cls.RequestListView = function(id, name, container_class)
         var tpls = log.slice(nextToRendereIndex).map(fun);
         tableBodyEle.render(tpls);
         nextToRendereIndex = log.length;
-        if (settings.request_list.get('auto-scroll-request-list')) {
-            container.scrollTop = container.scrollHeight;
-        }
     };
 
     this._getRowForId = function(id) {
@@ -193,10 +200,11 @@ cls.RequestListView = function(id, name, container_class)
         } else {
             expandedItems.splice(expandedItems.indexOf(id), 1);
         }
+        scroll = false;
         this.update();
+        scroll = true;
         if (dirty) {
             var row = this._getRowForId(id).nextSibling;
-            row.scrollSoftIntoContainerView();
         }
     };
 
@@ -225,7 +233,7 @@ cls.RequestListView = function(id, name, container_class)
     this.init(id, name, container_class);
 };
 
-cls.RequestListView.create_ui_widgets = function()
+cls.HttpLogger["2.0"].RequestListView.create_ui_widgets = function()
 {
     new ToolbarConfig
     (
@@ -277,10 +285,6 @@ cls.RequestListView.create_ui_widgets = function()
         ]
     );
 };
-
-cls.RequestListView.prototype = ViewBase;
-new cls.RequestListView('request_list', ui_strings.M_VIEW_LABEL_REQUEST_LOG, 'scroll');
-cls.RequestListView.create_ui_widgets();
 
 eventHandlers.click['request-list-expand-collapse'] = function(event, target)
 {
