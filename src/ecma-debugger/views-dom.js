@@ -85,21 +85,18 @@ cls.DOMView = function(id, name, container_class)
 
   this.scrollTargetIntoView = function()
   {
-    var target = document.getElementById('target-element');
-    var container = target;
-    while( container && !/container/i.test(container.nodeName) && 
-              ( container = container.parentElement) );
-    if(target && container)
+    var target = document.getElementById('target-element'), container = target;
+    while (container && !/container/i.test(container.nodeName))
     {
-      // if there are no scrollbars scrollIntoView 
-      // causes a 'jump' of the whole viewport
-      if (container.scrollHeight > container.offsetHeight)
-      {
-        target.scrollIntoView();
-      }
-      container.scrollTop -= 
-          ( container.offsetHeight < 100 ? container.offsetHeight * .7 : 100 ) - 
-          ( target.offsetTop - container.scrollTop );
+      container = container.parentElement;
+    }
+    if (target && container)
+    {
+      container.scrollTop -= (
+        container.getBoundingClientRect().top - 
+        target.getBoundingClientRect().top +
+        Math.min(container.offsetHeight * .5, 100)
+      );
       container.scrollLeft = 0;
     }
     return target && container;
