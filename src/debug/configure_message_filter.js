@@ -1,7 +1,7 @@
 ﻿window.cls || (window.cls = {});
 cls.debug || (cls.debug = {});
 
-cls.debug.ConfigureMessgeFilters = function(id, name, container_class)
+cls.debug.ConfigureMessageFilters = function(id, name, container_class)
 {
   /* interface */
   this.createView = function(container){};
@@ -134,4 +134,4 @@ cls.debug.ConfigureMessgeFilters = function(id, name, container_class)
   this.init(id, name, container_class);
 
 }
-cls.debug.ConfigureMessgeFilters.prototype = ViewBase;
+cls.debug.ConfigureMessageFilters.prototype = ViewBase;

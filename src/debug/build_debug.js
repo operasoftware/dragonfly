@@ -50,7 +50,7 @@ cls.debug.create_debug_environment = function(params)
   window.cls.debug.TestScopeMessages.prototype =
   new window.cls.TestFramework();
   window.debug = new cls.debug.Debug('debug', 'Debug', 'scroll debug-container');
-  new cls.debug.ConfigureMessgeFilters(
+  new cls.debug.ConfigureMessageFilters(
     'configure-message-filters', 'Message Filters', 'scroll filter-container');
   var test_messages = new cls.debug.TestScopeMessages(
     'test-messages', 'Test Messages', 'scroll test-messages');
