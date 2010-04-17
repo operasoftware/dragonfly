@@ -1,18 +1,18 @@
 ﻿/**
-  * @constructor 
+  * @constructor
   */
 
 var SlideViews = function(container)
 {
   const VER = 'v', HOR = 'h';
-  var self = this; 
+  var self = this;
   var focus_catcher = null;
 
   var mousedownevents = null;
 
   var resizehandler = function()
   {
-    if( !self.checkDimesions() )
+    if( !self.checkDimensions() )
     {
       self.cell.update(self.cell.left, self.cell.top, true);
     }
@@ -29,8 +29,8 @@ var SlideViews = function(container)
   var intervaled_mousemovehandler = function(event)
   {
     _target.handleResizeEvent(_event, _delta);
-    
-  } 
+
+  }
 
   var mousemovehandler = function(event)
   {
@@ -69,7 +69,7 @@ var SlideViews = function(container)
       }
       else
       {
-        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
           'missing target in mousedownhandler in slideViews');
       }
 
@@ -77,10 +77,10 @@ var SlideViews = function(container)
       {
         focus_catcher = UIBase.getFocusCatcher();
       }
-      
+
     }
   }
 
-  container.addEventListener('mousedown', mousedownhandler, false); 
+  container.addEventListener('mousedown', mousedownhandler, false);
 
 }

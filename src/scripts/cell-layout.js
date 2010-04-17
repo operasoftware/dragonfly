@@ -17,10 +17,10 @@
 
   this.init = function(rough_cell, dir, parent, container)
   {
-    this.width = 
+    this.width =
       rough_cell.width && rough_cell.width > defaults.min_width ?
       rough_cell.width : defaults.min_width;
-    this.height = 
+    this.height =
       rough_cell.height && rough_cell.height > defaults.min_height ?
       rough_cell.height : defaults.min_height;
     this.id = rough_cell.id || getId();
@@ -110,13 +110,13 @@
         }
         else
         {
-          opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+          opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
             'missing container in cell.update');
         }
       }
       if(this.is_dirty)
       {
-        ele.style.cssText = 
+        ele.style.cssText =
         'left:' + ( this.left = left ) + 'px;' +
         'top:' + ( this.top = top ) + 'px;' +
         'width:' + this.width + 'px;' +
@@ -125,7 +125,7 @@
         this.is_dirty = false;
       }
     }
-    
+
 
     // create sliders
 
@@ -143,16 +143,16 @@
         }
         else
         {
-          opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+          opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
             'missing container in cell.update');
         }
       }
       if( is_dirty )
       {
-        
+
         if( this.dir == HOR )
         {
-          ele.style.cssText = 
+          ele.style.cssText =
             'left:' + left + 'px;' +
             'top:' + ( 2 * defaults.view_border_width + top + this.height ) + 'px;' +
             'width:' + ( 2 * defaults.view_border_width + this.width ) + 'px;' +
@@ -160,7 +160,7 @@
         }
         else
         {
-          ele.style.cssText = 
+          ele.style.cssText =
             'left:' + ( 2 * defaults.view_border_width + left + this.width ) + 'px;' +
             'top:' + top + 'px;' +
             'width:' + defaults.border_width + 'px;' +
@@ -169,10 +169,10 @@
       }
     }
 
-    return ( this.dir == VER ? this.width : this.height ) + 
+    return ( this.dir == VER ? this.width : this.height ) +
           2 * defaults.view_border_width + defaults.border_width;
   }
-  // helper to get the totalised dimesion
+  // helper to get the totalised dimension
   this.checkChildren = function(dim)
   {
     var child = null, i = 0, sum = 0, length = this.children.length;
@@ -209,11 +209,11 @@
         }
         else
         {
-          this.children[length][dim] = defaults['min_' + dim ]; 
+          this.children[length][dim] = defaults['min_' + dim ];
         }
       }
 
-      // min_width is to big 
+      // min_width is to big
 
       if( !length )
       {
@@ -224,10 +224,10 @@
         {
           this.children[i][dim] = average_width;
         }
-        this.children[length - 1][dim] = sum - ( length - 1 ) * average_width;       
+        this.children[length - 1][dim] = sum - ( length - 1 ) * average_width;
       }
 
-      // inherit one dimesion from the parent
+      // inherit one dimension from the parent
 
       dim = this.dir == HOR ? 'height' : 'width';
       for( i = 0 ; child = this.children[i]; i++)
@@ -238,7 +238,7 @@
     }
   }
 
-  
+
   this.getCellById = function(id)
   {
     var child = null, i = 0, ret = null;
@@ -256,9 +256,9 @@
     return null;
   }
 
-  // confirme the tested dimesions
+  // confirme the tested dimensions
 
-  this.setCheckedDimesions = function()
+  this.setCheckedDimensions = function()
   {
     if( this.checked_height )
     {
@@ -273,20 +273,20 @@
     var child = null, i = 0;
     for( ; ( child = this.children[i] ) ; i++)
     {
-      child.setCheckedDimesions();
+      child.setCheckedDimensions();
     }
   }
 
   // clear the tested dimensions
 
-  this.clearCheckedDimesions = function()
+  this.clearCheckedDimensions = function()
   {
     this.checked_height = this.checked_width = 0;
     this.is_dirty = false;
     var child = null, i = 0;
     for( ; ( child = this.children[i] ) ; i++)
     {
-      child.clearCheckedDimesions();
+      child.clearCheckedDimensions();
     }
   }
 
@@ -351,7 +351,7 @@
         {
           this['checked_' + dim] = defaults['min_' + dim]
         }
-        delta_applied = delta - ( this['checked_' + dim] - this[dim] ); 
+        delta_applied = delta - ( this['checked_' + dim] - this[dim] );
       }
       else // clear
       {
@@ -360,13 +360,13 @@
     }
     return delta_applied;
   }
-  
+
   this.getCapTarget = function(dim, target)
   {
     if( !this.children.length ) return 0;
-    var child = null, i = 0, length = this.children.length - 1, 
+    var child = null, i = 0, length = this.children.length - 1,
       sum = length * 2 * defaults.view_border_width + ( length ) * defaults.border_width;
-    
+
     for( ; ( child = this.children[i] ) ; i++)
     {
       if( child != target )
@@ -376,7 +376,7 @@
     }
     return this[dim] - sum;
   }
-  
+
   this.handleResizeEvent = function(event, _delta)
   {
     var dim = this.dir == HOR ? 'height' : 'width';
@@ -400,21 +400,21 @@
         }
         while (sibling && consumed);
         cap_holder = this;
-        
+
         //cap = this.parent.getCapTarget(dim, this) - this[dim];
         /*
         if( cap = delta + consumed  )
         {
           this.checkDelta(dim, cap, 'next');
-          this.parent.setCheckedDimesions();
+          this.parent.setCheckedDimensions();
           this.parent.update(this.parent.left, this.parent.top);
         }
         else
         {
-          this.parent.clearCheckedDimesions();
+          this.parent.clearCheckedDimensions();
         }
         */
-        
+
       }
       else
       {
@@ -429,28 +429,28 @@
         if( cap = delta + consumed )
         {
           this.next.checkDelta(dim, cap, 'next');
-          this.parent.setCheckedDimesions();
+          this.parent.setCheckedDimensions();
           this.parent.update(this.parent.left, this.parent.top);
         }
         else
         {
-          this.parent.clearCheckedDimesions();
+          this.parent.clearCheckedDimensions();
         }
         */
-        
+
       }
-      
+
       if( cap = delta + consumed  )
       {
         cap_holder.checkDelta(dim, cap, 'next');
-        this.parent.setCheckedDimesions();
+        this.parent.setCheckedDimensions();
         this.parent.update(this.parent.left, this.parent.top);
       }
       else
       {
-        this.parent.clearCheckedDimesions();
+        this.parent.clearCheckedDimensions();
       }
-      
+
     }
   }
 }
