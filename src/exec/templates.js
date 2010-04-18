@@ -13,7 +13,7 @@ window.templates.color_picker = function(
             ['label',
               ui_strings.S_LABEL_UTIL_SCALE + ': ',
               ['select',
-                this.color_picker_create_dimesion_select(screenshot_width, screenshot_height),
+                this.color_picker_create_dimension_select(screenshot_width, screenshot_height),
                 'id', 'color-picker-area',
                 'handler', 'update-area']
             ],
@@ -38,7 +38,7 @@ window.templates.color_picker = function(
           ['p',
             ['input',
               'type', 'button',
-             'value', ui_strings.S_BUTTON_COLOR_MANAGE_STORED,
+              'value', ui_strings.S_BUTTON_COLOR_MANAGE_STORED,
               'handler', 'color-picker-manage-stored-colors'],
             'class', 'color-picker-button-controls'
           ],
@@ -142,7 +142,7 @@ window.templates.color_picker_average_select = function()
     ]);
 }
 
-window.templates.color_picker_create_dimesion_select = function(width, height)
+window.templates.color_picker_create_dimension_select = function(width, height)
 {
   // width and height are the actual pixel values of the screenshot
   var
