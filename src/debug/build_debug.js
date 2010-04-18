@@ -92,11 +92,15 @@ cls.debug.create_debug_environment = function(params)
     [
       {
         handler: 'debug-clear-log',
-        title: 'clear debug log'
+        title: 'Clear debug log'
       },
       {
         handler: 'configure-message-filters',
         title: 'Configure Message Filters'
+      },
+      {
+        handler: 'reload-dragonfly',
+        title: 'Reload Dragonfly'
       }
     ]
   )
@@ -106,7 +110,13 @@ cls.debug.create_debug_environment = function(params)
     [
       'pretty-print-messages',
     ]
-  )
+  );
+
+  eventHandlers.click['reload-dragonfly'] = function(event, target)
+  {
+    window.location.reload();
+  }
+
   eventHandlers.click['debug-clear-log'] = function(event, target)
   {
     window.debug.clear_log();
