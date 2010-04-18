@@ -414,7 +414,7 @@ var UIWindowBase = new function()
     {
       ref_obj = ui_windows[win.id];
       ref_obj.container.onclose();
-      messages.post("hide-view", {id: win.getAttribute('ref_id')});
+      messages.post("hide-view", {id: win.getAttribute('view_id')});
       win.parentElement.removeChild(win);
     }
   }
