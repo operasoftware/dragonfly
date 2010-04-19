@@ -286,7 +286,7 @@ cls.Exec["2.0"].ColorPickerDate = function()
            also it would not work with e.g. flash videos.
            if this will not work we will have to try that. */
         click_catcher = (document.body || document.documentElement).
-          appendChild(document.createElement('click-catcher'));
+          appendChild(document.createElementNS('http://www.w3.org/1999/xhtml', 'click-catcher'));
         click_catcher.style.cssText =
           "display: block !important;" +
           "margin: 0 !important;" +
