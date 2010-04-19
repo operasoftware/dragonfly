@@ -39,7 +39,7 @@ Options:
   -h, --help            show this help message and exit
   -c, --no-concat       Do NOT concatenate script and css
   -l, --no-license      Do NOT append license file to js and css. (license is
-                        taken from $cwd/license.txt
+                        taken from $cwd/include-license.txt
   -k key=value, --keyword=key=value
                         A key/value pair. All instances of key will be
                         replaced by value in all files. More than one
@@ -68,7 +68,7 @@ Options:
 
 Suitable command line for release builds
 
-pyhton tools/dfbuild.py -l license.txt -m -t -k "$dfversion$=Dragonfly testversion" -k "$revdate$=<todays datetime>" src build
+pyhton tools/dfbuild.py -l include-license.txt -m -t -k "$dfversion$=Dragonfly testversion" -k "$revdate$=<todays datetime>" src build
 
 
 
