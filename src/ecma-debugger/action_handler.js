@@ -1,50 +1,46 @@
-﻿
-window.eventHandlers.click['show-frame'] = function(event)
+﻿window.eventHandlers.click['show-frame'] = function(event)
 {
   var frame = stop_at.getFrame(event.target['ref-id']);
-  if(frame)
+  if (frame)
   {
     topCell.showView(views['inspection'].id);
     messages.post('active-inspection-type', {inspection_type: 'frame'});
     messages.post('frame-selected', {frame_index: event.target['ref-id']});
-    if( event.type == 'click' )
+    if (event.type == 'click')
     {
       helpers.setSelected(event);
-      if( views.js_source.isvisible() )
+      if (views.js_source.isvisible())
       {
-        if( frame.script_id )
-        { 
-          var plus_lines = views.js_source.getMaxLines() <= 10 
-            ? views.js_source.getMaxLines() / 2 >> 0 
+        if (frame.script_id)
+        {
+          var plus_lines = views.js_source.getMaxLines() <= 10
+            ? views.js_source.getMaxLines() / 2 >> 0
             : 10;
-          views.js_source.showLine( frame.script_id, frame.line - plus_lines );
-          views.js_source.showLinePointer( frame.line, frame.id == 0 );
+          views.js_source.showLine(frame.script_id, frame.line - plus_lines);
+          views.js_source.showLinePointer(frame.line, frame.id == 0);
         }
         else
         {
           views.js_source.clearView();
         }
       }
-      
     }
   }
   else
   {
     opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + "missing frame in 'show-frame' handler");
   }
-
-  
-}
+};
 
 window.eventHandlers.click['expand-value'] = function(event, target)
 {
-  var 
+  var
   val = target.parentNode.getElementsByTagName('value')[0],
   text_content = val.textContent;
 
   val.textContent = val.getAttribute('data-value');
   val.setAttribute('data-value', text_content);
-  if(target.style.backgroundPosition)
+  if (target.style.backgroundPosition)
   {
     target.style.removeProperty('background-position');
   }
@@ -52,7 +48,7 @@ window.eventHandlers.click['expand-value'] = function(event, target)
   {
     target.style.backgroundPosition = '0px -11px';
   }
-}
+};
 
 window.eventHandlers.click['examine-object-2'] = function(event, target)
 {
@@ -66,11 +62,11 @@ window.eventHandlers.click['examine-object-2'] = function(event, target)
   data = null,
   examine_object = parent.getElementsByTagName('examine-objects')[0];
 
-  if( window[data_id] )
+  if (window[data_id])
   {
-    if(examine_object) // is unfolded
+    if (examine_object) // is unfolded
     {
-      if( !target.disabled )
+      if (!target.disabled)
       {
         window[data_id].clearData(rt_id, obj_id, depth, parent.getElementsByTagName('key')[0].textContent);
         parent.removeChild(examine_object);
@@ -84,7 +80,7 @@ window.eventHandlers.click['examine-object-2'] = function(event, target)
         if (data.length)
         {
           examine_object = parent_parent.cloneNode(false);
-          examine_object.innerHTML = window[data_id].prettyPrint(data, depth, 
+          examine_object.innerHTML = window[data_id].prettyPrint(data, depth,
             settings['inspection'].get("hide-default-properties"), window[data_id].filter_type);
           parent.appendChild(examine_object);
           target.style.backgroundPosition = "0px -11px";
@@ -96,13 +92,13 @@ window.eventHandlers.click['examine-object-2'] = function(event, target)
       }
     }
   }
-}
+};
 
 window.eventHandlers.click['show-global-scope'] = function(event) // and select runtime
 {
   var ele = event.target;
-  var runtime = runtimes.getRuntime( ele.previousSibling && ele.previousSibling.getAttribute('runtime_id') || '' );
-  if( runtime )
+  var runtime = runtimes.getRuntime(ele.previousSibling && ele.previousSibling.getAttribute('runtime_id') || '');
+  if (runtime)
   {
     topCell.showView(views.inspection.id);
     messages.post('active-inspection-type', {inspection_type: 'object'});
@@ -110,15 +106,16 @@ window.eventHandlers.click['show-global-scope'] = function(event) // and select 
     runtimes.setSelectedRuntime(runtime);
     views.runtimes.update();
   }
-}
+};
 
-window.eventHandlers.click['show-scripts'] = function(event)  
+window.eventHandlers.click['show-scripts'] = function(event)
 {
   var runtime_id = event.target.getAttribute('runtime_id');
   var scripts = runtimes.getScripts(runtime_id);
   var scripts_container = event.target.parentNode.getElementsByTagName('ul')[0];
-  var script = null, i=0;
-  if(scripts_container)
+  var script = null, i = 0;
+
+  if (scripts_container)
   {
     event.target.parentNode.removeChild(scripts_container);
     event.target.style.removeProperty('background-position');
@@ -126,8 +123,8 @@ window.eventHandlers.click['show-scripts'] = function(event)
   }
   else
   {
-    scripts_container =['ul'];
-    for( ; script = scripts[i]; i++)
+    scripts_container = ['ul'];
+    for ( ; script = scripts[i]; i++)
     {
       scripts_container.push(templates.scriptLink(script));
     }
@@ -136,20 +133,20 @@ window.eventHandlers.click['show-scripts'] = function(event)
     event.target.style.backgroundPosition = '0 -11px';
     runtimes.setUnfolded(runtime_id, 'script', true);
   }
-}
+};
 
 window.eventHandlers.click['show-stylesheets'] = function(event, target)
 {
   var rt_id = target.getAttribute('runtime_id');
   // stylesheets.getStylesheets will call this function again if data is not avaible
-  // handleGetAllStylesheets in stylesheets will 
+  // handleGetAllStylesheets in stylesheets will
   // set for this reason __call_count on the event object
   var sheets = stylesheets.getStylesheets(rt_id, arguments);
-  if(sheets)
+  if (sheets)
   {
     var container = event.target.parentNode.getElementsByTagName('ul')[0];
     var sheet = null, i = 0;
-    if(container)
+    if (container)
     {
       target.parentNode.removeChild(container);
       target.style.removeProperty('background-position');
@@ -158,7 +155,7 @@ window.eventHandlers.click['show-stylesheets'] = function(event, target)
     else
     {
       container = ['ul'];
-      for( ; sheet = sheets[i]; i++)
+      for ( ; sheet = sheets[i]; i++)
       {
         container.push(templates.sheetLink(sheet, i));
       }
@@ -167,39 +164,35 @@ window.eventHandlers.click['show-stylesheets'] = function(event, target)
       event.target.style.backgroundPosition = '0 -11px';
       runtimes.setUnfolded(rt_id, 'css', true);
     }
-    
   }
-
-  
-}
+};
 
 window.eventHandlers.click['display-stylesheet'] = function(event, target)
 {
   var index = parseInt(target.getAttribute('index'));
   var rt_id = target.parentNode.getAttribute('runtime-id');
   // stylesheets.getRulesWithSheetIndex will call this function again if data is not avaible
-  // handleGetRulesWithIndex in stylesheets will 
+  // handleGetRulesWithIndex in stylesheets will
   // set for this reason __call_count on the event object
   var rules = stylesheets.getRulesWithSheetIndex(rt_id, index, arguments);
 
-  if(rules)
+  if (rules)
   {
     stylesheets.setSelectedSheet(rt_id, index, rules);
     topCell.showView(views.stylesheets.id);
     helpers.setSelected(event);
   }
-}
+};
 
-
-
-window.eventHandlers.click['show-runtimes'] = function(event)  
+window.eventHandlers.click['show-runtimes'] = function(event)
 {
   var window_id = event.target.parentNode.getAttribute('window_id');
   var rts = runtimes.getRuntimes(window_id);
   var runtime_container = event.target.parentNode.getElementsByTagName('ul')[0];
-  var rt = null, i=0;
+  var rt = null, i = 0;
   var template_type = event.target.parentNode.parentNode.getAttribute('template-type');
-  if(runtime_container)
+
+  if (runtime_container)
   {
     event.target.parentNode.removeChild(runtime_container);
     event.target.style.removeProperty('background-position');
@@ -211,24 +204,24 @@ window.eventHandlers.click['show-runtimes'] = function(event)
     event.target.style.backgroundPosition = '0 -11px';
     runtimes.setWindowUnfolded(window_id, true);
   }
-}
+};
 
 window.eventHandlers.click['display-script'] = function(event)
 {
-  var script_id  = event.target.getAttribute('script-id');
+  var script_id = event.target.getAttribute('script-id');
 
-  if(script_id)
+  if (script_id)
   {
-    runtimes.setSelectedScript( script_id );
+    runtimes.setSelectedScript(script_id);
     views.runtimes.updateSelectedScript(event.target, script_id);
     topCell.showView(views.js_source.id);
   }
   else
   {
-    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
       "missing script id in window.eventHandlers.click['display-script']")
   }
-}
+};
 
 window.eventHandlers.click['continue'] = function(event)
 {
@@ -236,20 +229,21 @@ window.eventHandlers.click['continue'] = function(event)
   views.callstack.clearView();
   views.inspection.clearView();
   stop_at.__continue(event.target.id.slice(9));
-}
+};
 
 window.eventHandlers.click['set-stop-at'] = function(event)
 {
   stop_at.setUserStopAt(event.target.value, event.target.checked);
-}
+};
 
 window.eventHandlers.click['set-break-point'] = function(event)
 {
   var line = parseInt(event.target.parentElement.children[0].value);
   var script_id = views.js_source.getCurrentScriptId();
-  if( line )
+
+  if (line)
   {
-    if( runtimes.hasBreakpoint(script_id, line) )
+    if (runtimes.hasBreakpoint(script_id, line))
     {
       runtimes.removeBreakpoint(script_id, line);
       views.js_source.removeBreakpoint(line);
@@ -260,52 +254,52 @@ window.eventHandlers.click['set-break-point'] = function(event)
       views.js_source.addBreakpoint(line);
     }
   }
-}
+};
 
 window.eventHandlers.click['get-children'] = function(event)
 {
   var container = event.target.parentNode;
-  var level = ( parseInt(container.style.marginLeft) || 0 ) / 16;
-  var level_next = ( container.nextSibling && parseInt(container.nextSibling.style.marginLeft) || 0 ) / 16;
+  var level = (parseInt(container.style.marginLeft) || 0) / 16;
+  var level_next = (container.nextSibling && parseInt(container.nextSibling.style.marginLeft) || 0) / 16;
   var ref_id = parseInt(container.getAttribute('ref-id'));
-  if(level_next > level)
+
+  if (level_next > level)
   {
     dom_data.closeNode(ref_id);
   }
   else
   {
-    dom_data.getChildernFromNode(ref_id, event.ctrlKey ? 'subtree' : 'children' );
+    dom_data.getChildernFromNode(ref_id, event.ctrlKey ? 'subtree' : 'children');
   }
-  
-}
+};
 
 window.eventHandlers.click['spotlight-node'] = function(event, current_target)
 {
   var obj_id = parseInt(current_target.getAttribute('ref-id'));
-  if(obj_id)
+  if (obj_id)
   {
-    hostspotlighter.spotlight(obj_id, 
+    hostspotlighter.spotlight(obj_id,
       settings.dom.get('scroll-into-view-on-spotlight') && obj_id != dom_data.getCurrentTarget());
     dom_data.setCurrentTarget(obj_id);
     views['dom'].updateTarget(current_target, obj_id);
   }
-}
+};
 
 window.eventHandlers.click['create-all-runtimes'] = function()
 {
   services['ecmascript-debugger'].createAllRuntimes();
-}
+};
 
 window.eventHandlers.click['update-global-scope'] = function(event)
 {
   window.eventHandlers.click['show-frame']({'target': { 'ref-id': 0 } });
-}
+};
 
 window.eventHandlers.click['dom-inspection-export'] = function(event)
 {
   export_data.data = views['dom'].exportMarkup();
   topCell.showView('export_data');
-}
+};
 
 window.eventHandlers.click['inspect-object-link'] = function(event, target)
 {
@@ -315,24 +309,21 @@ window.eventHandlers.click['inspect-object-link'] = function(event, target)
   // if that works it should be just inspection
   topCell.showView(views.inspection.id);
   messages.post('object-selected', {rt_id: rt_id, obj_id: obj_id});
-}
+};
 
 window.eventHandlers.click['dom-resource-link'] = function(event, target)
 {
   window.eventHandlers.dblclick['edit-dom'].delay(arguments.callee.execute, event, target);
-}
+};
 
 window.eventHandlers.click['dom-resource-link'].execute = function(event, target)
 {
-  var 
+  var
   url = target.textContent,
-  rt_id = target.parentNode.parentNode.parentNode.getAttribute('rt-id') 
+  rt_id = target.parentNode.parentNode.parentNode.getAttribute('rt-id')
     // for the case of dom tree-style
     || target.parentNode.parentNode.parentNode.parentNode.getAttribute('rt-id');
   // TODO use the exec service to open new link when it's ready
-  window.open(helpers.resolveURLS( runtimes.getURI(rt_id), url.slice(1, url.length - 1 ) ), "_blank");
-}
-
-
-
+  window.open(helpers.resolveURLS(runtimes.getURI(rt_id), url.slice(1, url.length - 1)), "_blank");
+};
 

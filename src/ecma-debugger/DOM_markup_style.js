@@ -261,8 +261,8 @@ var DOM_markup_style = function(id, name, container_class)
             else
             {
                 tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
-                        " style='margin-left:" + 16 * node[DEPTH] + "px;' "+
-                        "ref-id='" + node[ID] + "' handler='spotlight-node'>"+
+                        " style='margin-left:" + 16 * node[DEPTH] + "px;' " +
+                        "ref-id='" + node[ID] + "' handler='spotlight-node'>" +
                         (children_length ?
                             "<input handler='get-children' type='button' class='close'>" : '') +
                             "<node>&lt;" + node_name + attrs + (children_length ? '' : '/') + "&gt;</node>" +
