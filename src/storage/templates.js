@@ -37,7 +37,7 @@ window.templates.storage = function(storages, storage_id, storage_title)
   var rt_id = '', storage = null, rt = null, ret = [];
   for (rt_id in storages)
   {
-    if((storage = storages[rt_id]) && (rt = window.runtimes.getRuntime(storage.rt_id)))
+    if ((storage = storages[rt_id]) && (rt = window.runtimes.getRuntime(storage.rt_id)))
     {
       ret.push(
       ['div',
@@ -62,7 +62,7 @@ window.templates.storage = function(storages, storage_id, storage_title)
     }
   }
   return  ['div', ret, 'class', 'padding'];
-}
+};
 
 window.templates.storage_domain_header = function(rt)
 {
@@ -134,10 +134,17 @@ window.templates.storage_button = function(action)
     'type', 'button',
     'handler', action.handler
   ];
+
   if (action.label)
+  {
     templ.push('value', action.label);
+  }
+
   if (action.title)
+  {
     templ.push('title', action.title);
+  }
+
   return templ;
 };
 
@@ -152,3 +159,4 @@ window.templates.storage_not_existing = function(storage_id)
     'class', 'padding'
   ]);
 };
+

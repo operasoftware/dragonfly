@@ -45,7 +45,7 @@ cls.HttpLogger["2.0"].RequestListView = function(id, name, container_class)
                 updateTimer = window.setTimeout(
                         function() { self.createView(container) },
                         this.minUpdateInterval
-		);
+		        );
             }
             return;
         }
@@ -76,7 +76,7 @@ cls.HttpLogger["2.0"].RequestListView = function(id, name, container_class)
         // no chance of a ginourmous list of requests. Hence this optimization
         // is probably not needed
 
-        if (log.length && log[0].id==keyEntryId) {
+        if (log.length && log[0].id == keyEntryId) {
             return true;
         } else {
             if (log.length) { keyEntryId = log[0].id }
@@ -118,7 +118,7 @@ cls.HttpLogger["2.0"].RequestListView = function(id, name, container_class)
             var data = window.templates.request_list_row(e, expandedItems,
                                                          firstTime, lastTime,
                                                          viewMap,
-                                                         isFirst&log.length>1,
+                                                         isFirst & (log.length > 1),
                                                          settings.request_list.get('clear-log-on-runtime-switch'));
             isFirst = false;
             return data;
@@ -131,7 +131,7 @@ cls.HttpLogger["2.0"].RequestListView = function(id, name, container_class)
 
     this._getRowForId = function(id) {
         if (!tableBodyEle) { return null }
-        for (var n=0,e; e=tableBodyEle.childNodes[n]; n++)
+        for (var n = 0, e; e = tableBodyEle.childNodes[n]; n++)
         {
             if (e.getAttribute('data-requestid') == id)
             {
@@ -149,7 +149,7 @@ cls.HttpLogger["2.0"].RequestListView = function(id, name, container_class)
     this.collapseEntry = function(id)
     {
         if (!tableBodyEle) { return }
-        for (var n=0,e; e=tableBodyEle.childNodes[n]; n++)
+        for (var n = 0, e; e = tableBodyEle.childNodes[n]; n++)
         {
             if (e.getAttribute('data-requestid') == id)
             {
@@ -167,7 +167,7 @@ cls.HttpLogger["2.0"].RequestListView = function(id, name, container_class)
      */
     this.expandEntry = function(id) {
         if (!tableBodyEle) { return }
-        for (var n=0,e; e=tableBodyEle.childNodes[n]; n++)
+        for (var n = 0, e; e = tableBodyEle.childNodes[n]; n++)
         {
             if (e.getAttribute('data-requestid') == id)
             {
@@ -193,7 +193,7 @@ cls.HttpLogger["2.0"].RequestListView = function(id, name, container_class)
     this.toggleDetails = function(id)
     {
         var dirty = false;
-        if (expandedItems.indexOf(id)==-1) {
+        if (expandedItems.indexOf(id) == -1) {
             expandedItems.push(id);
             dirty = true;
         } else {
@@ -216,7 +216,7 @@ cls.HttpLogger["2.0"].RequestListView = function(id, name, container_class)
          //smarter than just invalidating the view and redrawing.
 
         var row = this._getRowForId(id);
-        if (!row) { return }
+        if (!row) { return; }
 
         row = row.nextSibling;
         var req = HTTPLoggerData.getRequestById(id);
