@@ -10,8 +10,6 @@ cls.StorageDataBase = new function()
   this.clear = function(rt_id){};
   this.set_item_edit = function(rt_id, key, is_edit){};
 
-
-
   this.get_storages = function()
   {
     if (this.is_setup)
@@ -20,38 +18,38 @@ cls.StorageDataBase = new function()
     }
     else
     {
-      for(var rt_id in this._rts)
+      for (var rt_id in this._rts)
       {
-        if(this._rts[rt_id])
+        if (this._rts[rt_id])
         {
           this._setup_local_storage(this._rts[rt_id].rt_id);
         }
       }
       return null;
     }
-  }
+  };
 
   this.update = function()
   {
-    for(var rt_id in this._rts)
+    for (var rt_id in this._rts)
     {
-      if(this._rts[rt_id])
+      if (this._rts[rt_id])
       {
         this._get_key_value_pairs(this._rts[rt_id].rt_id);
       }
     }
-  }
+  };
 
   this.get_item = function(rt_id, key)
   {
-    var 
+    var
     storage = this._rts[rt_id] &&  this._rts[rt_id].storage,
-    item = null, 
+    item = null,
     i = 0;
 
-    for( ; (item = storage[i]) && ( item.key != key); i++);
+    for ( ; (item = storage[i]) && (item.key != key); i++);
     return item;
-  } 
+  };
 
   this._encode_new_line_chars = (function()
   {
@@ -61,7 +59,7 @@ cls.StorageDataBase = new function()
       \u2028 Line separator <LS>
       \u2029 Paragraph separator <PS>
     */
-    var 
+    var
     re = /(\u000A)|(\u000D)|(\u2028)|(\u2029)/g,
     fn = function(match, NL, CR, LS, PS)
     {
@@ -77,14 +75,14 @@ cls.StorageDataBase = new function()
   this.set_item = function(rt_id, key, value, success_callback)
   {
     var item = this.get_item(rt_id, key);
-    if(item)
+    if (item)
     {
       item.value = value;
     }
-    else if(this._rts[rt_id])
+    else if (this._rts[rt_id])
     {
       this._rts[rt_id].storage.push(
-        item = 
+        item =
         {
           key: key,
           value: value,
@@ -92,56 +90,56 @@ cls.StorageDataBase = new function()
         }
       );
     }
-    var script = "local_storage.set_item(\"" + item.key + "\",\"" + 
+    var script = "local_storage.set_item(\"" + item.key + "\",\"" +
       this._encode_new_line_chars(value) + "\",\"" + item.type + "\")";
     var tag = tagManager.set_callback(this, this._handle_default,
       [success_callback, "failed set_item in LocalStorageData"]);
-    services['ecmascript-debugger'].requestEval(tag, 
-      [this._rts[rt_id].rt_id, 0, 0, script, 
+    services['ecmascript-debugger'].requestEval(tag,
+      [this._rts[rt_id].rt_id, 0, 0, script,
         [["local_storage", this._host_objects[rt_id]]]]);
     return item;
-  }
+  };
 
   this.remove_item = function(rt_id, key, success_callback)
   {
     var item = this.get_item(rt_id, key);
-    if(item)
+    if (item)
     {
       var script = "local_storage.remove_item(\"" + item.key + "\")";
       var tag = tagManager.set_callback(this, this._handle_remove,
         [success_callback, "failed remove_item in LocalStorageData", rt_id, item.key]);
-      services['ecmascript-debugger'].requestEval(tag, 
-        [this._rts[rt_id].rt_id, 0, 0, script, 
+      services['ecmascript-debugger'].requestEval(tag,
+        [this._rts[rt_id].rt_id, 0, 0, script,
           [["local_storage", this._host_objects[rt_id]]]]);
     }
-  }
+  };
 
   this.clear = function(rt_id)
   {
-    var stoarge = this._rts[rt_id];
-    if(stoarge)
+    var storage = this._rts[rt_id];
+    if (storage)
     {
       var script = "local_storage.clear()";
       var tag = tagManager.set_callback(this, this._handle_clear, [this._rts[rt_id].rt_id]);
-      services['ecmascript-debugger'].requestEval(tag, 
-        [this._rts[rt_id].rt_id, 0, 0, script, 
+      services['ecmascript-debugger'].requestEval(tag,
+        [this._rts[rt_id].rt_id, 0, 0, script,
           [["local_storage", this._host_objects[rt_id]]]]);
     }
-  }
+  };
 
   this.set_item_edit = function(rt_id, key, is_edit)
   {
     var item = this.get_item(rt_id, key);
-    if(item)
+    if (item)
     {
       item.is_edit = is_edit;
     }
-  }
+  };
 
   this._handle_clear = function(status, message, rt_id)
   {
     this._get_key_value_pairs(rt_id);
-  }
+  };
 
   this._handle_remove = function(status, message, success_callback, info, rt_id, key)
   {
@@ -149,7 +147,7 @@ cls.StorageDataBase = new function()
       return item.key != key;
     });
     this._handle_default(status, message, success_callback, info)
-  }
+  };
 
   this._handle_default = function(status, message, success_callback, info)
   {
@@ -159,12 +157,12 @@ cls.StorageDataBase = new function()
     {
       opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + info);
     }
-  }
+  };
 
   this._on_active_tab = function(msg)
   {
     var i = 0, rt_id = 0, active_tab = msg.activeTab;
-    for( ; i < active_tab.length; i++)
+    for ( ; i < active_tab.length; i++)
     {
       if (!this._rts[active_tab[i]])
       {
@@ -175,37 +173,39 @@ cls.StorageDataBase = new function()
         }
       }
     }
-    for(i in this._rts)
+
+    for (i in this._rts)
     {
       if (active_tab.indexOf(parseInt(i)) == -1)
       {
         this._rts[i] = null;
       }
     }
+
     this.post('storage-update', {storage_id: this.id});
-  }
+  };
 
   this._setup_local_storage = function(rt_id)
   {
-    var script = this["return new _StorageHost()"]; 
+    var script = this["return new _StorageHost()"];
     var tag = tagManager.set_callback(this, this._register_loacal_storage, [rt_id]);
     services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, script]);
-  }
+  };
 
   this._register_loacal_storage = function(staus, message, rt_id)
   {
-    const 
+    const
     STATUS = 0,
     TYPE = 1,
     VALUE = 2,
     OBJECT_VALUE = 3,
-    // sub message ObjectValue 
+    // sub message ObjectValue
     OBJECT_ID = 0;
 
     if (message[STATUS] == 'completed')
     {
       this.is_setup = true;
-      if(message[TYPE] == "object")
+      if (message[TYPE] == "object")
       {
         this.exists = true;
         this._host_objects[rt_id] = message[OBJECT_VALUE][OBJECT_ID];
@@ -219,26 +219,26 @@ cls.StorageDataBase = new function()
     }
     else
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
         "failed register_loacal_storage in LocalStorageData");
     }
-  }
+  };
 
   this._get_key_value_pairs = function(rt_id)
   {
     var script = "local_storage.get_key_value_pairs()";
     var tag = tagManager.set_callback(this, this._handle_get_key_value_pairs, [rt_id]);
-    services['ecmascript-debugger'].requestEval(tag, 
+    services['ecmascript-debugger'].requestEval(tag,
       [rt_id, 0, 0, script, [["local_storage", this._host_objects[rt_id]]]]);
-  }
+  };
 
   this._handle_get_key_value_pairs = function(status, message, rt_id)
   {
-    const 
+    const
     STATUS = 0,
     VALUE = 2,
     OBJECT_VALUE = 3,
-    // sub message ObjectValue 
+    // sub message ObjectValue
     OBJECT_ID = 0;
 
     if (message[STATUS] == 'completed')
@@ -246,14 +246,13 @@ cls.StorageDataBase = new function()
       var return_arr = message[OBJECT_VALUE][OBJECT_ID];
       var tag = tagManager.set_callback(this, this._finalize_get_key_value_pairs, [rt_id]);
       services['ecmascript-debugger'].requestExamineObjects(tag, [rt_id, [return_arr]]);
-
     }
     else
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
         "failed handle_get_key_value_pairs in LocalStorageData");
     }
-  }
+  };
 
   this._is_digit = (function()
   {
@@ -266,31 +265,31 @@ cls.StorageDataBase = new function()
 
   this._sort_keys = function(a, b)
   {
-    return a.key > b.key && 1 || a.key < b.key && -1 || 0; 
-  }
+    return a.key > b.key && 1 || a.key < b.key && -1 || 0;
+  };
 
   this._finalize_get_key_value_pairs = function(status, message, rt_id)
   {
     const
     OBJECT_LIST = 0,
-    // sub message ObjectInfo 
+    // sub message ObjectInfo
     PROPERTY_LIST = 1,
-    // sub message Property 
+    // sub message Property
     PROPERTY_NAME = 0,
     PROPERTY_VALUE = 2;
 
-    var 
-    prop_list = {}, 
-    prop = null, 
-    i = 0, 
+    var
+    prop_list = {},
+    prop = null,
+    i = 0,
     storage = [];
 
     if (status === 0 && message[OBJECT_LIST])
     {
-      if(message[OBJECT_LIST][0] && (prop_list = message[OBJECT_LIST][0][PROPERTY_LIST]))
+      if (message[OBJECT_LIST][0] && (prop_list = message[OBJECT_LIST][0][PROPERTY_LIST]))
       {
         prop_list = prop_list.filter(this._is_digit);
-        for( ; i < prop_list.length; i += 3)
+        for ( ; i < prop_list.length; i += 3)
         {
           storage.push(
           {
@@ -305,10 +304,10 @@ cls.StorageDataBase = new function()
     }
     else
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
         "failed finalize_get_key_value_pairs in LocalStorageData");
     }
-  }
+  };
 
   this._on_reset_state = function()
   {
@@ -316,7 +315,7 @@ cls.StorageDataBase = new function()
     this._host_objects = {};
     this.is_setup = false;
     this.post('storage-update', {storage_id: this.id});
-  }
+  };
 
   this.init = function(id, update_event_name, title, storage_object)
   {
@@ -327,24 +326,22 @@ cls.StorageDataBase = new function()
     this._rts = {};
     this._host_objects = {};
     this.is_setup = false;
-    this["return new _StorageHost()"] = 
+    this["return new _StorageHost()"] =
       "return new " + this._StorageHost.toString() + "(\"" + storage_object + "\").check_storage_object()";
     window.cls.Messages.apply(this);
     window.messages.addListener('active-tab', this._on_active_tab.bind(this));
     messages.addListener('reset-state', this._on_reset_state.bind(this));
-  }
-
-
+  };
 }
 
 
 cls.LocalStorageData = function(id, update_event_name, title, storage_object)
 {
   /**
-    * _StorageHost is the class on the host side to 
+    * _StorageHost is the class on the host side to
     * expose a storage interface for a given storage type
-    * it must implement 
-    *    this.get_key_value_pairs() returns Array {key, value, type} 
+    * it must implement
+    *    this.get_key_value_pairs() returns Array {key, value, type}
     *    this.set_item(key, value, type)
     *    this.remove_item(key)
     *    this.clear()
@@ -354,7 +351,7 @@ cls.LocalStorageData = function(id, update_event_name, title, storage_object)
   {
     this.get_key_value_pairs = function()
     {
-      var 
+      var
       length = this._storage_object.length,
       ret = [],
       key = '',
@@ -377,6 +374,7 @@ cls.LocalStorageData = function(id, update_event_name, title, storage_object)
       }
       return ret;
     };
+
     this.set_item = function(key, value, type)
     {
       if (type == 'object')
@@ -385,35 +383,38 @@ cls.LocalStorageData = function(id, update_event_name, title, storage_object)
       };
       this._storage_object.setItem(key, value);
     };
+
     this.remove_item = function(key)
     {
       this._storage_object.removeItem(key);
     };
+
     this.clear = function()
     {
       this._storage_object.clear();
     };
+
     this.check_storage_object = function()
     {
       var nss = storage_object.split('.'), ns = '', i = 0;
       this._storage_object = window;
-      for( ; (ns = nss[i]) && (this._storage_object = this._storage_object[ns]); i++);
+      for ( ; (ns = nss[i]) && (this._storage_object = this._storage_object[ns]); i++);
       return this._storage_object && this || null;
     };
   };
 
   this.init(id, update_event_name, title, storage_object);
-}
+};
 
 cls.LocalStorageData.prototype = cls.StorageDataBase;
 
 cls.CookiesData = function(id, update_event_name, title)
 {
   /**
-    * _StorageHost is the class on the host side to 
+    * _StorageHost is the class on the host side to
     * expose a storage interface for a given storage type
-    * it must implement 
-    *    this.get_key_value_pairs() returns Array {key, value, type} 
+    * it must implement
+    *    this.get_key_value_pairs() returns Array {key, value, type}
     *    this.set_item(key, value, type)
     *    this.remove_item(key)
     *    this.clear()
@@ -428,7 +429,7 @@ cls.CookiesData = function(id, update_event_name, title)
   {
     this.get_key_value_pairs = function()
     {
-      var 
+      var
       cookies = document.cookie.split(';'),
       cookie = null,
       length = cookies.length,
@@ -460,8 +461,8 @@ cls.CookiesData = function(id, update_event_name, title)
     {
       document.cookie = (
         key + "=" + encodeURIComponent(value) +
-        "; expires=" + 
-        (new Date(new Date().getTime() + 360*24*60*60*1000)).toGMTString() + 
+        "; expires=" +
+        (new Date(new Date().getTime() + 360*24*60*60*1000)).toGMTString() +
         "; path=/");
     };
 
@@ -478,6 +479,7 @@ cls.CookiesData = function(id, update_event_name, title)
         this.remove_item(cookies[i]);
       };
     };
+
     this.check_storage_object = function()
     {
       return this;
