@@ -108,8 +108,8 @@ cls.StorageDataBase = new function()
     if(item)
     {
       var script = "local_storage.remove_item(\"" + item.key + "\")";
-      var tag = tagManager.set_callback(this, this._handle_default,
-        [success_callback, "failed remove_item in LocalStorageData"]);
+      var tag = tagManager.set_callback(this, this._handle_remove,
+        [success_callback, "failed remove_item in LocalStorageData", rt_id, item.key]);
       services['ecmascript-debugger'].requestEval(tag, 
         [this._rts[rt_id].rt_id, 0, 0, script, 
           [["local_storage", this._host_objects[rt_id]]]]);
@@ -141,6 +141,14 @@ cls.StorageDataBase = new function()
   this._handle_clear = function(status, message, rt_id)
   {
     this._get_key_value_pairs(rt_id);
+  }
+
+  this._handle_remove = function(status, message, success_callback, info, rt_id, key)
+  {
+    this._rts[rt_id].storage = this._rts[rt_id].storage.filter(function(item) {
+      return item.key != key;
+    });
+    this._handle_default(status, message, success_callback, info)
   }
 
   this._handle_default = function(status, message, success_callback, info)
