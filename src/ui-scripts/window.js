@@ -189,7 +189,7 @@ var UIWindowBase = new function()
         "<window-shadow class='bottom'></window-shadow>" +
         "<window-shadow class='bottom-right'></window-shadow>";
     }
-  }
+  },
 
   mousedown = function(event)
   {
