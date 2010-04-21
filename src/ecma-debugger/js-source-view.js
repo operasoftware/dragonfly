@@ -524,7 +524,7 @@ cls.JsSourceView = function(id, name, container_class)
       }
       if(script.parse_error)
       {
-        views.js_source.showLinePointer(script.parse_error.error_line, true )
+        views.js_source.showLinePointer(script.parse_error.error_line + 1, true )
       }
     }
     __current_line = line_nr;

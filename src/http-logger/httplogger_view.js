@@ -43,7 +43,7 @@ cls.HttpLogger["2.0"].RequestListView = function(id, name, container_class)
             // later if it isn't allready so.
             if (!updateTimer) {
                 updateTimer = window.setTimeout(
-                        function() { self.createView(container) },
+                        function() { self.createView(container); },
                         this.minUpdateInterval
 		        );
             }
@@ -79,7 +79,7 @@ cls.HttpLogger["2.0"].RequestListView = function(id, name, container_class)
         if (log.length && log[0].id == keyEntryId) {
             return true;
         } else {
-            if (log.length) { keyEntryId = log[0].id }
+            if (log.length) { keyEntryId = log[0].id; }
             return false;
         }
     };
@@ -91,6 +91,7 @@ cls.HttpLogger["2.0"].RequestListView = function(id, name, container_class)
     this.doCreateView = function(container)
     {
         var log = HTTPLoggerData.getLog();
+        topCell.statusbar.updateInfo(ui_strings.S_HTTP_TOOLBAR_REQUEST_COUNT.replace("%s", log.length));
 
         if (!this.viewIsValid(log)) {
             container.clearAndRender(['table',['tbody'], 'class',
@@ -101,9 +102,9 @@ cls.HttpLogger["2.0"].RequestListView = function(id, name, container_class)
 
         if (log.length) {
             var times = log.map(function(e) {
-                return e.response ? e.response.time : e.request.time
+                return e.response ? e.response.time : e.request.time;
             });
-            var times = times.sort();
+            times = times.sort();
             var lastTime = times[times.length-1];
         } else {
             var lastTime = new Date().getTime();
@@ -155,7 +156,7 @@ cls.HttpLogger["2.0"].RequestListView = function(id, name, container_class)
             {
                 e.className = e.className.replace("expanded", "collapsed");
                 tableBodyEle.removeChild(e.nextSibling);
-                return
+                return;
             }
         }
     };

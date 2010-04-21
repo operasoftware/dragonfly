@@ -151,7 +151,7 @@ cls.Exec["2.0"].ColorPicker = function(id, name, container_class)
     this._selected_color = hex;
   }
 
-  this._set_dimesions = function(container, screenshot_width, screenshot_height)
+  this._set_dimensions = function(container, screenshot_width, screenshot_height)
   {
     this._width = container.offsetWidth - (2 * 280);
     this._height = container.offsetHeight - (2* 12);
@@ -177,7 +177,7 @@ cls.Exec["2.0"].ColorPicker = function(id, name, container_class)
     this._container = container;
     var scale = window.settings['color_picker'].get('color-picker-scale');
     scale != this._scale && ( this._scale = scale);
-    this._set_dimesions(container);
+    this._set_dimensions(container);
     container.render(window.templates.color_picker(
       this._screenshot_width,
       this._screenshot_height,
@@ -228,7 +228,7 @@ cls.Exec["2.0"].ColorPicker = function(id, name, container_class)
     var area = JSON.parse(json_obj);
     if (this.isvisible())
     {
-      this._set_dimesions (this._container, area.w, area.h);
+      this._set_dimensions (this._container, area.w, area.h);
       this._container.innerHTML = "";
       this.createView(this._container);
     }

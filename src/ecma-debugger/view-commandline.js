@@ -42,11 +42,11 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
         __console_output.render
         (
           [
-            'pre', 
-            entry.value, 
+            'pre',
+            entry.value,
             ['d', ' [' + entry.obj_id + ']'],
-            'handler', 'inspect-object-link', 
-            'rt-id', entry.runtime_id.toString(), 
+            'handler', 'inspect-object-link',
+            'rt-id', entry.runtime_id.toString(),
             'obj-id', entry.obj_id.toString()
           ]
         );
@@ -56,14 +56,14 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
         __console_output.render
         (
           ['pre', entry.value ].concat
-          ( 
-            entry.obj_id 
+          (
+            entry.obj_id
             ? [
-                'handler', 'inspect-object-link', 
-                'rt-id', entry.runtime_id.toString(), 
+                'handler', 'inspect-object-link',
+                'rt-id', entry.runtime_id.toString(),
                 'obj-id', entry.obj_id.toString()
               ]
-            : [] 
+            : []
           )
         );
       }
@@ -119,71 +119,85 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     PROTOTYPE_ID = 4,
     NAME = 5;
 
-    var value_type = message[TYPE];
-
-    if( message[STATUS] == 'completed' )
+    if (status)
     {
-      var return_value = message[VALUE];
-      if(return_value || /null|undefined/.test(value_type) )
-      {
-        var value = return_value || ''; 
-        if( !obj_id )
+      cons_out_render_return_val
+      (
+        console_output_data[console_output_data.length] =
         {
-          switch (value_type)
-          {
-            case 'string':
-            {
-              var delimiter = "\"";
-              // Escape ' and " Python command line interpreter style
-              if (value.indexOf("\"") != -1) {
-                delimiter = "'";
-                if (value.indexOf("'") != -1) {
-                  value = value.replace(/'/g, "\\'");
-                }
-              }
-              value = delimiter + value + delimiter;
-              break;
-            }
-            case 'null':
-            case 'undefined':
-            {
-              value = value_type;
-              break;
-            }
-          }
+          type: "return-value",
+          value: ui_strings.S_INFO_NO_JAVASCRIPT_IN_CONTEXT
         }
-        if(callback)
-        {
-          callback(runtime_id, obj_id);
-        }
-        cons_out_render_return_val
-        (
-          console_output_data[console_output_data.length] =
-          {
-            type: "return-value",
-            obj_id: obj_id,
-            runtime_id: runtime_id,
-            value: value
-          }
-        );
-        __container.scrollTop = __container.scrollHeight;
-      }
-      else if (return_value = message[OBJECT_VALUE])
-      {
-        var object_id = return_value[OBJECT_ID];
-        var tag = tagManager.set_callback(null, handleEval, [runtime_id, object_id, callback] );
-        var script_string  = "return Object.prototype.toString.call(obj)";
-        services['ecmascript-debugger'].requestEval(tag, 
-              [runtime_id, 0, 0, script_string, [['obj', object_id]]]);
-      }
+      );
     }
     else
     {
-      var error_id = message[OBJECT_VALUE][OBJECT_ID];
-      if( error_id )
+      var value_type = message[TYPE];
+
+      if( message[STATUS] == 'completed' )
       {
-        var tag = tagManager.set_callback(null, handleError, [message[STATUS]]);
-        services['ecmascript-debugger'].requestExamineObjects(tag, [runtime_id, [error_id]]);
+        var return_value = message[VALUE];
+        if(return_value || /null|undefined/.test(value_type) )
+        {
+          var value = return_value || '';
+          if( !obj_id )
+          {
+            switch (value_type)
+            {
+              case 'string':
+              {
+                var delimiter = "\"";
+                // Escape ' and " Python command line interpreter style
+                if (value.indexOf("\"") != -1) {
+                  delimiter = "'";
+                  if (value.indexOf("'") != -1) {
+                    value = value.replace(/'/g, "\\'");
+                  }
+                }
+                value = delimiter + value + delimiter;
+                break;
+              }
+              case 'null':
+              case 'undefined':
+              {
+                value = value_type;
+                break;
+              }
+            }
+          }
+          if(callback)
+          {
+            callback(runtime_id, obj_id);
+          }
+          cons_out_render_return_val
+          (
+            console_output_data[console_output_data.length] =
+            {
+              type: "return-value",
+              obj_id: obj_id,
+              runtime_id: runtime_id,
+              value: value
+            }
+          );
+          __container.scrollTop = __container.scrollHeight;
+        }
+        else if (return_value = message[OBJECT_VALUE])
+        {
+          var object_id = return_value[OBJECT_ID];
+          var tag = tagManager.set_callback(null, handleEval, [runtime_id, object_id, callback] );
+          var script_string  = "return Object.prototype.toString.call(obj)";
+          services['ecmascript-debugger'].requestEval(tag,
+            [runtime_id, 0, 0, script_string, [['obj', object_id]]]);
+        }
+      }
+      else
+      {
+        var error_id = message[OBJECT_VALUE][OBJECT_ID];
+        if( error_id )
+        {
+          var tag = tagManager.set_callback(null, handleError, [message[STATUS]]);
+            services['ecmascript-debugger'].requestExamineObjects(tag, [runtime_id, [error_id]]);
+        }
       }
     }
   }
@@ -192,14 +206,14 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
   {
     const
     OBJECT_LIST = 0,
-    // sub message ObjectInfo 
+    // sub message ObjectInfo
     PROPERTY_LIST = 1,
-    // sub message Property 
+    // sub message Property
     PROPERTY_NAME = 0,
     PROPERTY_VALUE = 2;
 
-    var 
-    obj = message[OBJECT_LIST][0], 
+    var
+    obj = message[OBJECT_LIST][0],
     props = obj && obj[PROPERTY_LIST] || [],
     prop = null,
     i = 0,
@@ -277,9 +291,9 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
 
   var submit = function(input)
   {
-    var 
+    var
     rt_id = runtimes.getSelectedRuntimeId(),
-    frame_id = 0, 
+    frame_id = 0,
     thread_id = 0,
     script_string  = '',
     command = '',
@@ -312,10 +326,9 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     }
     else
     {
-      alert(ui_strings.S_INFO_NO_RUNTIME_SELECTED);
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + " This should never happen");
     }
   }
-
 
 
   var line_buffer_push = function(line)
@@ -339,7 +352,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
   {
     /*
       TODO use the Keyhandler Classes
-    */ 
+    */
     switch(event.keyCode)
     {
       case 46: // delete
@@ -349,7 +362,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
       }
       // modifier keys shall not change the autocomplete state
       case 16: // shift
-      case 17: // ctrl 
+      case 17: // ctrl
       case 18: // alt
       {
         break;
@@ -378,7 +391,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
   {
     /*
       TODO use the Keyhandler Classes
-    */  
+    */
     if(event.keyCode == 38 || event.keyCode == 40)
     {
       event.preventDefault();
@@ -415,12 +428,12 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
 
   }
 
-  
+
   eventHandlers.keypress['commandline'] = function(event)
   {
     /*
       TODO use the Keyhandler Classes
-    */  
+    */
     var target = event.target, key_code = event.keyCode;
     if( !(event.shiftKey || event.ctrlKey || event.altKey ) )
     {
@@ -431,12 +444,12 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
         {
           // workaround as long as we don't have support for keyIdentifier
           // event.which is 0 in a keypress event for function keys
-          if( !event.which ) 
+          if( !event.which )
           {
             line_buffer_cursor += key_code == 38 ? -1 : 1;
-            line_buffer_cursor = 
+            line_buffer_cursor =
               line_buffer_cursor < 0 ? line_buffer.length-1 : line_buffer_cursor > line_buffer.length-1 ? 0 : line_buffer_cursor;
-            __textarea_value = event.target.value = (line_buffer.length ? line_buffer[line_buffer_cursor] : '').replace(/\r\n/g, ''); 
+            __textarea_value = event.target.value = (line_buffer.length ? line_buffer[line_buffer_cursor] : '').replace(/\r\n/g, '');
             event.preventDefault();
             break;
           }
@@ -484,15 +497,15 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
    
     
     const 
-    SCRIPT = "var a = '', b= ''; for( a in %s ){ b += a + '_,_'; }; return b;",
+    SCRIPT = "(function(){var a = '', b= ''; for( a in %s ){ b += a + '_,_'; }; return b;})()",
     KEY = 0,
     DEPTH = 3;
 
     var get_scope = function(path, old_args)
     {
-      var 
+      var
       rt_id = runtimes.getSelectedRuntimeId(),
-      frame_id = 0, 
+      frame_id = 0,
       thread_id = 0;
 
       if(rt_id)
@@ -534,12 +547,19 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
           }
         }
         var tag = tagManager.set_callback(null, handleEvalScope, [__frame_index, rt_id, path, old_args] );
-        services['ecmascript-debugger'].requestEval(tag, [rt_id, thread_id, 
+        services['ecmascript-debugger'].requestEval(tag, [rt_id, thread_id,
           frame_id, SCRIPT.replace(/%s/, path)]);
       }
       else
       {
-        alert('select a window');
+        cons_out_render_return_val
+        (
+          console_output_data[console_output_data.length] =
+          {
+            type: "return-value",
+            value: "Select a window"
+          }
+        )
       }
       return null;
     }
@@ -607,14 +627,14 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
         last_brace = str.lastIndexOf(')') <= last_brace ? last_brace : -1;
         last_bracket = str.lastIndexOf(']') <= last_bracket ? last_bracket : -1;
         str = str.slice( Math.max(
-                  last_brace, 
-                  last_bracket, 
-                  str.lastIndexOf('=') ) + 1 
+                  last_brace,
+                  last_bracket,
+                  str.lastIndexOf('=') ) + 1
                 ).replace(/^ +/, '').replace(/ $/, '');
 
-        var         
-        last_dot = str.lastIndexOf('.'), 
-        new_path = '', 
+        var
+        last_dot = str.lastIndexOf('.'),
+        new_path = '',
         new_id = '',
         ret = '';
 
@@ -662,7 +682,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     {
       // it could be that this check is too simple
       // basically the global scope is invalided with a new thread
-      // but the tab completion feature is not very helpfull 
+      // but the tab completion feature is not very helpfull
       // with sites with intervals or timeouts
       if( frame_index > -1 || frame_index != local_frame_index )
       {
@@ -727,7 +747,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
   }
 
   var checkToolbarVisibility = function(msg)
-  { 
+  {
     var isMultiRuntime = host_tabs.isMultiRuntime();
     if( toolbar_visibility != isMultiRuntime )
     {
@@ -749,11 +769,11 @@ cls.CommandLineView.create_ui_widgets = function()
   new Settings
   (
     // id
-    'command_line', 
+    'command_line',
     // key-value map
     {
       "show-ecma-errors": true,
-    }, 
+    },
     // key-label map
     {
       "show-ecma-errors": ui_strings.S_SWITCH_SHOW_ECMA_ERRORS_IN_COMMAND_LINE
@@ -803,7 +823,7 @@ cls.CndRtSelect = function(id, class_name)
       var rt = runtimes.getRuntime(selected_rt_id);
       if( rt )
       {
-        return rt['title'] || helpers.shortenURI(rt.uri).uri; 
+        return rt['title'] || helpers.shortenURI(rt.uri).uri;
       }
     }
     return '';
@@ -822,9 +842,9 @@ cls.CndRtSelect = function(id, class_name)
 
     if( active_window_id )
     {
-      var 
+      var
       _runtimes = runtimes.getRuntimes(active_window_id),
-      rt = null, 
+      rt = null,
       i = 0;
 
       for( ; ( rt = _runtimes[i] ) && !rt['selected']; i++);
@@ -843,7 +863,7 @@ cls.CndRtSelect = function(id, class_name)
     var rt_id = parseInt(target_ele.getAttribute('rt-id'));
     if( rt_id && rt_id != runtimes.getSelectedRuntimeId() )
     {
-      runtimes.setSelectedRuntimeId(rt_id)
+      runtimes.setSelectedRuntimeId(rt_id);
     }
     return true;
   }

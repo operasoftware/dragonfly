@@ -14,11 +14,11 @@ cls.debug.wrap_transmit = function()
 
 cls.debug.guess_message_map = function()
 {
-  var 
-  service = '', 
-  versions = null, 
-  version_arr = null, 
-  version = '', 
+  var
+  service = '',
+  versions = null,
+  version_arr = null,
+  version = '',
   re_version = /^\d+\.\d+$/;
 
   for(service in window.message_maps)
@@ -45,12 +45,12 @@ cls.debug.create_debug_environment = function(params)
 {
   window.ini.debug = true;
   cls.debug.guess_message_map();
-  window.cls.TestFramework.prototype = ViewBase; 
-  cls.debug.Debug.prototype = 
-  window.cls.debug.TestScopeMessages.prototype = 
+  window.cls.TestFramework.prototype = ViewBase;
+  cls.debug.Debug.prototype =
+  window.cls.debug.TestScopeMessages.prototype =
   new window.cls.TestFramework();
   window.debug = new cls.debug.Debug('debug', 'Debug', 'scroll debug-container');
-  new cls.debug.ConfigureMessgeFilters(
+  new cls.debug.ConfigureMessageFilters(
     'configure-message-filters', 'Message Filters', 'scroll filter-container');
   var test_messages = new cls.debug.TestScopeMessages(
     'test-messages', 'Test Messages', 'scroll test-messages');
@@ -58,21 +58,21 @@ cls.debug.create_debug_environment = function(params)
   eventHandlers.change['test-messages'] = test_messages.get_bound_change_handler();
   new CompositeView('debug_new', 'Debug', {
       dir: 'v', width: 700, height: 700,
-      children: 
+      children:
       [
         { height: 200, tabs: ['debug', 'test-messages'] }
       ]
     });
-  
+
   new Settings
   (
     // id
-    'debug', 
+    'debug',
     // kel-value map
     {
       'show-as-tab': true,
       'pretty-print-messages': true
-    }, 
+    },
     // key-label map
     {
       'show-as-tab': 'Show view in a tab',
@@ -92,11 +92,15 @@ cls.debug.create_debug_environment = function(params)
     [
       {
         handler: 'debug-clear-log',
-        title: 'clear debug log'
+        title: 'Clear debug log'
       },
       {
         handler: 'configure-message-filters',
         title: 'Configure Message Filters'
+      },
+      {
+        handler: 'reload-dragonfly',
+        title: 'Reload Dragonfly'
       }
     ]
   )
@@ -106,7 +110,13 @@ cls.debug.create_debug_environment = function(params)
     [
       'pretty-print-messages',
     ]
-  )
+  );
+
+  eventHandlers.click['reload-dragonfly'] = function(event, target)
+  {
+    window.location.reload();
+  }
+
   eventHandlers.click['debug-clear-log'] = function(event, target)
   {
     window.debug.clear_log();
@@ -140,7 +150,7 @@ cls.debug.create_debug_environment = function(params)
 
   eventHandlers.change['config-filter-msg'] = function(event, target)
   {
-    var 
+    var
     parent = event.target.parentNode.parentNode.parentNode,
     msg = event.target.getAttribute('data-filter-target'),
     type = parent.getAttribute('data-filter-type'),
@@ -174,12 +184,12 @@ cls.debug.create_debug_environment = function(params)
      * Set a cookie named "key" to the value "value" with expiry in "time "
      * seconds. If time is not set, time out after a year
      */
-    this.set = function(key, value, time) 
+    this.set = function(key, value, time)
     {
       document.cookie = (
         key + "=" + encodeURIComponent(value) +
-        "; expires=" + 
-        ( new Date( new Date().getTime() + ( time || 360*24*60*60*1000 ) ) ).toGMTString() + 
+        "; expires=" +
+        ( new Date( new Date().getTime() + ( time || 360*24*60*60*1000 ) ) ).toGMTString() +
         "; path=/");
       return value;
     }
@@ -187,7 +197,7 @@ cls.debug.create_debug_environment = function(params)
     /**
      * Get a cookie with name "key"
      */
-    this.get = function(key) 
+    this.get = function(key)
     {
       var value = new RegExp(key + "=([^;]*)").exec(document.cookie);
       return value && decodeURIComponent(value[1]);

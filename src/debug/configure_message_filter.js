@@ -1,7 +1,7 @@
 ﻿window.cls || (window.cls = {});
 cls.debug || (cls.debug = {});
 
-cls.debug.ConfigureMessgeFilters = function(id, name, container_class)
+cls.debug.ConfigureMessageFilters = function(id, name, container_class)
 {
   /* interface */
   this.createView = function(container){};
@@ -29,15 +29,15 @@ cls.debug.ConfigureMessgeFilters = function(id, name, container_class)
       ['label',
         ['input',
           'type', 'checkbox',
-          'data-filter-target', msg, 
+          'data-filter-target', msg,
           'handler', 'config-filter-msg'
-        ].concat(is_disabled ? ['disabled', 'disabled'] : []). 
+        ].concat(is_disabled ? ['disabled', 'disabled'] : []).
          concat(this[msg] ? ['checked', 'checked'] : []),
         ' '+ (label && typeof label == 'string' ? label : msg)
       ]
     ].concat(is_disabled ? ['class', 'disabled'] : []));
   }
-  
+
   this._template_messages = function(service, title, type, messages, filter)
   {
     return (
@@ -53,37 +53,37 @@ cls.debug.ConfigureMessgeFilters = function(id, name, container_class)
 
   this._template_service_config = function(service)
   {
-    var 
+    var
     ret = ['div'],
     event_map_service = this._event_map[service],
     messages = event_map_service.filter(this._filter_command),
     filter = window.debug.get_log_filter()[service];
-    
+
     if (messages.length)
     {
-      ret.push(this._template_messages(service, 'Commands', 'commands', 
+      ret.push(this._template_messages(service, 'Commands', 'commands',
                       ['all'].concat(messages.map(this._get_message_class)), filter.commands));
     }
     messages = event_map_service.filter(this._filter_event);
     if (messages.length)
     {
-      ret.push(this._template_messages(service, 'Events', 'events', 
+      ret.push(this._template_messages(service, 'Events', 'events',
                       ['all'].concat(messages.map(this._get_message_class)), filter.events));
     }
     return ret;
   }
-  
+
   this._template_service = function(service)
   {
     // this is a temporary object with a view and a filter property
     // to pass context to map
     return (
-    ['li', 
+    ['li',
       ['input',
         'type', 'button',
         'handler', 'toggle-filter-messages',
         'data-service-name', service
-      ].concat(this.filter.all ? ['disabled', 'disabled'] : []), 
+      ].concat(this.filter.all ? ['disabled', 'disabled'] : []),
       ['h3', window.helpers.service_class_name(service)],
       (this.view._unfolded[service] ? this.view._template_service_config(service) : [])
     ].concat(this.view._unfolded[service] ? ['class', 'open']: []));
@@ -107,7 +107,7 @@ cls.debug.ConfigureMessgeFilters = function(id, name, container_class)
         'data-filter-type', 'all',
         'data-service-name', 'all',
       ],
-      ['ul', 
+      ['ul',
         services.map(this._template_service, {view: this, filter: filter})
       ].concat(filter.all ? ['class', 'disabled'] : []),
     'class', 'padding'
@@ -134,4 +134,4 @@ cls.debug.ConfigureMessgeFilters = function(id, name, container_class)
   this.init(id, name, container_class);
 
 }
-cls.debug.ConfigureMessgeFilters.prototype = ViewBase;
+cls.debug.ConfigureMessageFilters.prototype = ViewBase;

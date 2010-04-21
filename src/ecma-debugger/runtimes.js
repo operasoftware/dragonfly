@@ -644,8 +644,6 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
 
     if(__scripts[message[SCRIPT_ID]])
     {
-      var reason = /^[^:]*/.exec(message[DESCRIPTION]);
-      var expected_token = /Expected token: '[^']*'/i.exec(message[DESCRIPTION]);
       var error = __scripts[message[SCRIPT_ID]].parse_error =
       {
         runtime_id: message[RUNTIME_ID],
@@ -653,9 +651,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
         line_nr: message[LINE_NUMBER],
         offset: message[OFFSET],
         context: message[CONTEXT],
-        description: message[DESCRIPTION],
-        reason: reason && reason[0] || '',
-        expected_token: expected_token && expected_token[0] || ''
+        description: message[DESCRIPTION]
       };
       if(settings['js_source'].get('error'))
       {

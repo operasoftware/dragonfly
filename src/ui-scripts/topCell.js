@@ -1,6 +1,6 @@
 ﻿
 /**
-  * @constructor 
+  * @constructor
   * @extends CellBase
   * a bit different from a normal cell, it holds the main view ui elements but also the main conatiner
   */
@@ -9,7 +9,7 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, TopStatusbar
 {
   var self = this;
   var resize_timeout = new Timeouts();
-  this.setStartDimesions = setDimensions || function()
+  this.setStartDimensions = setDimensions || function()
   {
     this.top = 0;
     this.left = 0;
@@ -18,7 +18,7 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, TopStatusbar
   };
   this.onresize = onresize || function()
   {
-    this.setStartDimesions();
+    this.setStartDimensions();
     this.update();
     var view_id = this.tab && this.tab.activeTab;
     if( view_id )
@@ -33,7 +33,7 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, TopStatusbar
     self.onresize();
     messages.post('resize');
   }
-  
+
   var setDelayedResize = function()
   {
     resize_timeout.set(delayed_resize, 32);
@@ -83,7 +83,7 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, TopStatusbar
 
   }
 
-  
+
 
   this.showView = function(view_id)
   {
@@ -147,9 +147,9 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, TopStatusbar
 
   this.addTemporaryTabs = function()
   {
-    var 
+    var
     store = global_state.ui_framework.temporary_tabs,
-    view_id = '', 
+    view_id = '',
     i = 0;
 
     for( ; view_id = store[i]; i++)
@@ -166,7 +166,7 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, TopStatusbar
   // constructor calls
   window.topCell = this;
   this.init(layout);
-  this.setStartDimesions();
+  this.setStartDimensions();
   if(this.toolbar)
   {
   this.toolbar.setup(this.id);
@@ -177,11 +177,11 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, TopStatusbar
   }
   this.addTemporaryTabs();
   this.tab.setActiveTab
-  ( 
-    global_state 
+  (
+    global_state
     && global_state.ui_framework.last_selected_top_tab
     && composite_view_convert_table[opera.attached.toString()][global_state.ui_framework.last_selected_top_tab]
-    || this.tab.tabs[0].ref_id 
+    || this.tab.tabs[0].ref_id
   );
   this.container.setup(this.id);
   this.update(this.left, this.top, true);

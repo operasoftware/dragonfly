@@ -8,18 +8,18 @@ window.templates.color_picker = function(
   return (
     ['div',
         ['div',
-          ['h2', 'Pixel Magnifier and Color Picker'],
+          ['h2', ui_strings.M_VIEW_LABEL_COLOR_MAGNIFIER_AND_PICKER],
           ['p',
             ['label',
-              'Area' + ': ',
+              ui_strings.S_LABEL_UTIL_SCALE + ': ',
               ['select',
-                this.color_picker_create_dimesion_select(screenshot_width, screenshot_height),
+                this.color_picker_create_dimension_select(screenshot_width, screenshot_height),
                 'id', 'color-picker-area',
                 'handler', 'update-area']
             ],
             ' ',
             ['label',
-              'Scale' + ': ',
+             ui_strings.S_LABEL_UTIL_SCALE + ': ',
               ['select',
                 this.color_picker_create_scale_select(scale, delta_scale),
                 'id', 'color-picker-scale',
@@ -29,16 +29,16 @@ window.templates.color_picker = function(
           ['p',
             ['input',
               'type', 'button',
-              'value', 'Reset default values',
+              'value', ui_strings.S_BUTTON_COLOR_RESTORE_DEFAULTS,
               'handler', 'color-picker-reset-default-values'],
             'class', 'color-picker-button-controls'
           ],
-          ['h2', 'Stored colors'],
+          ['h2', ui_strings.M_VIEW_LABEL_STORED_COLORS],
           this.color_picker_stored_colors(),
           ['p',
             ['input',
               'type', 'button',
-              'value', 'Manage stored colors',
+              'value', ui_strings.S_BUTTON_COLOR_MANAGE_STORED,
               'handler', 'color-picker-manage-stored-colors'],
             'class', 'color-picker-button-controls'
           ],
@@ -55,14 +55,14 @@ window.templates.color_picker = function(
             'handler', 'color-picker-picked'],
         'class', 'color-picker'],
         ['div',
-          ['h2', 'Color Select'],
+          ['h2', ui_strings.M_VIEW_LABEL_COLOR_SELECT],
           this.color_picker_average_select(),
           ['div', 'id', 'center-color'],
           ['pre', 'id', 'center-color-values'],
           ['p',
             ['input',
               'type', 'button',
-              'value', 'Store color',
+              'value', ui_strings.S_BUTTON_COLOR_STORE_COLOR,
               'handler', 'color-picker-store-color'],
             'class', 'color-picker-button-controls'
           ],
@@ -95,7 +95,7 @@ window.templates.manage_stored_colors = function()
   return (
   ['div',
     ['div',
-      ['h2', 'Manage stored colors'],
+      ['h2', ui_strings.S_BUTTON_COLOR_MANAGE_STORED],
       ['ul',
         (window.settings.color_picker.get('color-picker-stored-colors') || []).map(this.color_picker_manage_stored_color, this),
 
@@ -136,13 +136,13 @@ window.templates.color_picker_average_select = function()
   }
   return (
     ['p',
-      ['label', 'Average color of ',
+      ['label', 'FIXMEAverage color of ',
         ['select', ret, 'handler', 'update-average'],
         ' pixels'],
     ]);
 }
 
-window.templates.color_picker_create_dimesion_select = function(width, height)
+window.templates.color_picker_create_dimension_select = function(width, height)
 {
   // width and height are the actual pixel values of the screenshot
   var

@@ -1,5 +1,5 @@
 ﻿/**
-  * @constructor 
+  * @constructor
   */
 
 var UIWindowBase = new function()
@@ -14,14 +14,14 @@ var UIWindowBase = new function()
   }
 
   this.default_width = 500;
-  this.default_height = 300; 
+  this.default_height = 300;
   this.default_top = 100;
   this.default_left = 100;
-  
-  
 
-  var 
-  min_width = 200, 
+
+
+  var
+  min_width = 200,
   min_height = 100,
   min_z_index = 100;
 
@@ -54,13 +54,13 @@ var UIWindowBase = new function()
   {
     var win = viewport.render(templates._window(this));
 
-    
+
     if( this.toolbar )
     {
       this.toolbar.setDimensions();
       this.toolbar.setup(this.view_id);
     }
-    
+
     this.container.setup(this.view_id);
     this.statusbar.setup(this.view_id);
 
@@ -70,8 +70,8 @@ var UIWindowBase = new function()
 
   this._delete = function(id)
   {
-    var 
-    _id = '', 
+    var
+    _id = '',
     i = 0;
     for( ; ( _id = ids[i] ) && _id != id; i++);
     if(_id)
@@ -89,7 +89,7 @@ var UIWindowBase = new function()
     for( ; id = ids[i]; i++)
     {
       win = document.getElementById( id );
-      if( win ) 
+      if( win )
       {
         if( ( z = parseInt( win.style.zIndex ) ) && z > min_z_index )
         win.style.zIndex = z - 1;
@@ -102,7 +102,7 @@ var UIWindowBase = new function()
     var win = null, id = '', i = 0;
     for( ; id = ids[i]; i++)
     {
-      if( ui_windows[id].view_id == view_id ) 
+      if( ui_windows[id].view_id == view_id )
       {
         return ui_windows[id];
       }
@@ -141,8 +141,8 @@ var UIWindowBase = new function()
 
  /* event handling */
 
-  var 
-  handlers = 
+  var
+  handlers =
   {
     'window-scale-top-left': true,
     'window-scale-top': true,
@@ -160,7 +160,7 @@ var UIWindowBase = new function()
   current_target = null,
   __event = null,
   interval = 0,
-  current_style = null, 
+  current_style = null,
   update_handler = null,
   left_delta = 0,
   top_delta = 0,
@@ -174,7 +174,7 @@ var UIWindowBase = new function()
     __event = event;
     focus_catcher.focus();
   },
-  
+
   force_reflow_shadows = function()
   {
     if(window_shadows)
@@ -189,7 +189,7 @@ var UIWindowBase = new function()
         "<window-shadow class='bottom'></window-shadow>" +
         "<window-shadow class='bottom-right'></window-shadow>";
     }
-  }
+  },
 
   mousedown = function(event)
   {
@@ -292,7 +292,7 @@ var UIWindowBase = new function()
       {
         current_style.height = ( current_target.height = height ) + 'px';
         current_style.top = ( current_target.top = top ) + 'px';
-        current_target.update();  
+        current_target.update();
         focus_catcher.focus();
       }
     }
@@ -311,7 +311,7 @@ var UIWindowBase = new function()
       if( width > min_width )
       {
         current_style.width = ( current_target.width = width ) + 'px';
-        current_target.update(); 
+        current_target.update();
         focus_catcher.focus();
       }
     }
@@ -333,7 +333,7 @@ var UIWindowBase = new function()
       {
         current_style.width = ( current_target.width = width ) + 'px';
         current_style.left = ( current_target.left = left ) + 'px';
-        current_target.update(); 
+        current_target.update();
         focus_catcher.focus();
       }
     }
@@ -352,7 +352,7 @@ var UIWindowBase = new function()
       if( height > min_height )
       {
         current_style.height = ( current_target.height = height ) + 'px';
-        current_target.update(); 
+        current_target.update();
         focus_catcher.focus();
         force_reflow_shadows();
       }
@@ -414,7 +414,7 @@ var UIWindowBase = new function()
     {
       ref_obj = ui_windows[win.id];
       ref_obj.container.onclose();
-      messages.post("hide-view", {id: win.getAttribute('ref_id')});
+      messages.post("hide-view", {id: win.getAttribute('view_id')});
       win.parentElement.removeChild(win);
     }
   }
@@ -426,7 +426,7 @@ var UIWindowBase = new function()
     if(!viewport)
     {
       self.showWindow = function(){};
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +  
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
         'missing view port in init in windows');
     }
   }
@@ -434,11 +434,11 @@ var UIWindowBase = new function()
   document.addEventListener('mousedown', mousedown, false);
   document.addEventListener('click', mouseclick, false);
   window.addEventListener('load', init, false);
-  
+
 }
 
 /**
-  * @constructor 
+  * @constructor
   * @extends UIWindowBase
   */
 

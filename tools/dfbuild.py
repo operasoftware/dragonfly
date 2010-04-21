@@ -161,7 +161,7 @@ def _clean_dir(root, exclude_dirs, exclude_files):
             os.rmdir(base)
 
 
-def _add_license(root, license_path="license.txt"):
+def _add_license(root, license_path="include-license.txt"):
     """
     Read a license from license_path and append it to all files under root
     whose extension is in _license_exts.
@@ -556,7 +556,7 @@ Destination can be either a directory or a zip file"""
                       help="Do NOT concatenate script and css")
     parser.add_option("-l", "--no-license", dest="license",
                       default=True, action="store_false",
-                      help="Do NOT append license file to js and css. (license is taken from $cwd/license.txt")
+                      help="Do NOT append license file to js and css. (license is taken from $cwd/include-license.txt")
     parser.add_option("-k", "--keyword", dest="kwlist",
                       default=None, type="string", action="append",
                       help="A key/value pair. All instances of key will be replaced by value in all files. More than one key/value is allowed by adding more -k switches", metavar="key=value")
