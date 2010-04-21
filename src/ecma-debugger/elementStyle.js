@@ -22,7 +22,7 @@ cls.ElementStyle = function()
   SEARCH_LIST = 10,
   HAS_MATCHING_SEARCH_PROPS = 11,
   SEARCH_DELAY = 50,
-  MIN_SEARCH_THERM_LENGTH = 1,
+  MIN_SEARCH_TERM_LENGTH = 1,
 
   // new scope messages
   COMPUTED_STYLE_LIST = 0,
@@ -47,7 +47,7 @@ cls.ElementStyle = function()
   var __selectedElement = null;
   var __searchMap = [];
   var __search_is_active = false;
-  var __old_search_therm = '';
+  var __old_search_term = '';
   var __setProps = [];
 
   var onResetState = function()
@@ -57,7 +57,7 @@ cls.ElementStyle = function()
     __setPriorities = [];
     __searchMap = [];
     __search_is_active = false;
-    __old_search_therm = '';
+    __old_search_term = '';
   }
 
   var default_styles_pointer = 0;
@@ -93,34 +93,34 @@ cls.ElementStyle = function()
     searchtimeout.set(search, SEARCH_DELAY, value);
   }
 
-  var search = function(search_therm)
+  var search = function(search_term)
   {
-    if( __old_search_therm != search_therm 
-        && ( __search_is_active || search_therm.length >= MIN_SEARCH_THERM_LENGTH ) )
+    if( __old_search_term != search_term 
+        && ( __search_is_active || search_term.length >= MIN_SEARCH_TERM_LENGTH ) )
     {
-      doSearch(search_therm);
+      doSearch(search_term);
       for ( i = 0; view_id = __views[i]; i++)
       {
         views[view_id].updateCategories({}, getUnfoldedKey());
       }
-      __old_search_therm = search_therm;
+      __old_search_term = search_term;
     }
   }
 
   this.getSearchTerm = function()
   {
-    return __old_search_therm;
+    return __old_search_term;
   }
   
-  var doSearch = function(search_therm)
+  var doSearch = function(search_term)
   {
-    if( search_therm.length >= MIN_SEARCH_THERM_LENGTH )
+    if( search_term.length >= MIN_SEARCH_TERM_LENGTH )
     {
       __searchMap = [];
       var i = 0, length = css_index_map.length;
       for( ; i < length; i++)
       {
-        __searchMap[i] = css_index_map[i].indexOf(search_therm) != -1;
+        __searchMap[i] = css_index_map[i].indexOf(search_term) != -1;
       }    
       for( i = 0, length = categories_data[CSS].length; i < length; i++)
       {
@@ -134,7 +134,7 @@ cls.ElementStyle = function()
       {
         clearNodeCascade(categories_data[CSS][i], __searchMap);
       }
-      __old_search_therm  = "";
+      __old_search_term  = "";
       __search_is_active = false;
     }
   }
@@ -394,9 +394,9 @@ cls.ElementStyle = function()
         }
       }
 
-      if( __old_search_therm )
+      if( __old_search_term )
       {
-        doSearch(__old_search_therm);
+        doSearch(__old_search_term);
       }
       
       for ( i = 0; view_id = __views[i]; i++)
