@@ -230,7 +230,7 @@ var Editor = function()
     var
     re_str = /(?:"(?:[^"]|\\")*")|(?:'(?:[^']|\\')*')/g,
     re_token = /(;)|($)/g,
-    re_important = / *!important/,
+    re_important = /\s*!\s*important/,
     value = this.textarea.value,
     last_pos = 0,
     cur_pos = 0,
