@@ -722,14 +722,11 @@ var Editor = function()
   {
     var 
     props = this.getProperties(), 
-    i = 0,
     inner = '';
     
-    if( props[i+1] )
+    if( props[1] )
     {
-      this.textarea_container.parentElement.innerHTML =
-        "<key>" + props[i] + "</key>: " +
-        "<value>"  + props[i+1] +  ( props[i+2] ? " !important" : "" ) + "</value>;";
+      this.textarea_container.parentElement.innerHTML = create_declaration(props[0], props[1], props[2]);
     }
     else
     {
@@ -754,8 +751,7 @@ var Editor = function()
       prop = this.textarea_container.parentElement.parentElement.
         insertBefore(document.createElement('property'), this.textarea_container.parentElement);
 
-      prop.innerHTML = "<key>" + props[0] + "</key>: " +
-          "<value>"  + props[1] +  ( props[2] ? " !important" : "" ) + "</value>;";
+      prop.innerHTML = create_declaration(props[0], props[1], props[2]);
       props.splice(0, 3);
 
     }
@@ -805,8 +801,7 @@ var Editor = function()
       {
         prop = this.textarea_container.parentElement.parentElement.
           insertBefore(document.createElement('property'), this.textarea_container.parentElement);
-        prop.innerHTML = "<key>" + props[0] + "</key>: " +
-          "<value>"  + props[1] +  ( props[2] ? " !important" : "" ) + "</value>;";
+        prop.innerHTML = create_declaration(props[0], props[1], props[2]);
         this.textarea.value =
         this.context_cur_text_content =
         this.context_cur_prop =
@@ -816,8 +811,7 @@ var Editor = function()
       }
       else
       {
-        this.textarea_container.parentElement.innerHTML = "<key>" + props[0] + "</key>: " +
-          "<value>"  + props[1] +  ( props[2] ? " !important" : "" ) + "</value>;";
+        this.textarea_container.parentElement.innerHTML = create_declaration(props[0], props[1], props[2]);
       }
     }
     else
@@ -836,11 +830,8 @@ var Editor = function()
     {
       this.textarea.value = this.context_cur_text_content;
       this.textarea_container.parentElement.innerHTML =
-        "<key>" + this.context_cur_prop + "</key>: " +
-        "<value>"  + this.context_cur_value +  
-        ( this.context_cur_priority ? " !important" : "" ) + 
-        "</value>;";
-        return true;
+        create_declaration(this.context_cur_prop, this.context_cur_value, this.context_cur_priority);
+      return true;
     }
     else
     {
@@ -855,5 +846,10 @@ var Editor = function()
   {
     this.style.height = this.scrollHeight + 'px';
     self.commit();
+  }
+
+  var create_declaration = function(prop, value, is_important) {
+    return "<key>" + prop + "</key>: " +
+           "<value>" + helpers.escapeTextHtml(value) + (is_important ? " !important" : "") + "</value>;";
   }
 }
