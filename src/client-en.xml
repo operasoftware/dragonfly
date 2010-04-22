@@ -263,15 +263,15 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ecma-debugger/actions_dom.js"/>
 <script src="./ecma-debugger/hostspotlighter.js"/>
 
-<script src="./style/css-initial-values.js"/>
-<script src="./style/css-inheritable-properties.js"/>
-<script src="./style/css-suggest-values.js"/>
-<script src="./style/element-style.js"/>
+<script src="./style/css_initial_values.js"/>
+<script src="./style/css_inheritable_properties.js"/>
+<script src="./style/css_suggest_values.js"/>
+<script src="./style/element_style.js"/>
 <script src="./style/stylesheets.js"/>
-<script src="./style/views-css-inspector.js"/>
-<script src="./style/views-css-layout.js"/>
-<script src="./style/views-stylesheets.js"/>
-<script src="./style/css-inspector-actions.js"/>
+<script src="./style/views_css_inspector.js"/>
+<script src="./style/views_css_layout.js"/>
+<script src="./style/views_stylesheets.js"/>
+<script src="./style/css_inspector_actions.js"/>
 
 <script src="./exec/color_picker_data.js"/>
 <script src="./exec/color_picker_view.js"/>
