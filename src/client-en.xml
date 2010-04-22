@@ -271,6 +271,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./style/views-css-inspector.js"/>
 <script src="./style/views-css-layout.js"/>
 <script src="./style/views-stylesheets.js"/>
+<script src="./style/css-inspector-actions.js"/>
 
 <script src="./exec/color_picker_data.js"/>
 <script src="./exec/color_picker_view.js"/>
