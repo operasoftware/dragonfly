@@ -372,7 +372,7 @@ window.cls.SimpleJSParser = function()
         group = c;
         c = __source.charAt(++__pointer);
         group_count = 2;
-        while (true)
+        while (c)
         {
           if (group in PUNCTUATOR_GROUPS[group_count].start &&
                 (group += c) in PUNCTUATOR_GROUPS[group_count].groups)
