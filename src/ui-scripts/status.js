@@ -64,7 +64,7 @@ var StatusbarBase = function()
     {
       if( typeof info == "string" )
       {
-        info_container.innerHTML = info;
+        info_container.textContent = info;
       }
       else if(typeof info == "object")
       {
