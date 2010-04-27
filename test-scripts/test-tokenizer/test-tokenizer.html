@@ -4,6 +4,7 @@ table {border-collapse: collapse;}
 td {border: 1px solid #ccc; padding: 1px 3px;}
 </style>
 <script src="../../src/ecma-debugger/formatter.js"></script>
+<script src="../../src/ecma-debugger/helpers.js"></script>
 <script>
 
 var test = function(script)
@@ -28,7 +29,13 @@ var test = function(script)
   p.parse(script, tokens, types);
   tokens.forEach(function(tok, index)
   {
-    this.push("<tr><td>", token_enums[types[index]], "</td><td>", tok, "</td></tr>")
+    this.push(
+      "<tr><td>", 
+      token_enums[types[index]], 
+      "</td><td>", 
+      window.helpers.escapeTextHtml(tok), 
+      "</td></tr>"
+    );
   }, markup);
   markup.push("</table>");
   document.body.innerHTML = markup.join("");
@@ -36,6 +43,7 @@ var test = function(script)
 
 window.onload = function()
 {
+  window.helpers = new cls.Helpers();
   var xhr = new XMLHttpRequest();
   xhr.onload = function()
   {
