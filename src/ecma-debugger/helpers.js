@@ -127,7 +127,7 @@ window.cls.Helpers = function()
     var re_amp = /&/g, re_lt = /</g, re_quot = /"/g;
     return function(str)
     {
-      return str.replace(re_amp, "&amp;").replace(re_lt, "&lt;").replace(re_quot, "&amp;quot;");
+      return str.replace(re_amp, "&amp;").replace(re_lt, "&lt;").replace(re_quot, "&quot;");
     }
   })();
   
