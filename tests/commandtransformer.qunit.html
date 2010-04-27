@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dragonfly - Command Processor</title>
+    <link rel="stylesheet" href="qunit/qunit.css" media="screen">
+    <script src="qunit/qunit.js"></script>
+    <script src="../src/ecma-debugger/syntax.js"></script>
+    <script src="../src/ecma-debugger/formatter.js"></script>
+    <script src="../src/console/commandprocessor.js"></script>
+
+<script>
+
+window.transformer = new HostCommandTransformer();
+  
+function t(s) {
+    return window.transformer.transform(s);
+}
+  
+test("Smoketest", function() {
+    expect(3);
+    equal(t("$(foo)"), "document.getElementById(foo)");
+    equal(t("dir(foo)"), "console.dir(foo)");
+    equal(t("dirxml(foo)"), "console.dirxml(foo)");
+});
+
+
+</script>
+
+</head>
+<body>
+    <h1 id="qunit-header">Dragonfly - Command Processor</h1>
+    <h2 id="qunit-banner"></h2>
+    <div id="qunit-testrunner-toolbar"></div>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
+</body>
+</html>
