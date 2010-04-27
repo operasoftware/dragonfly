@@ -400,7 +400,7 @@ cls.EcmascriptDebugger["5.0"].ObjectDataBase = function()
       // Should be done with text-overflow: ellipsis
       if (val.length > MAX_VALUE_LENGTH)
       {
-        short_val = val.slice(0, MAX_VALUE_LENGTH) + "...";
+        short_val = val.slice(0, MAX_VALUE_LENGTH) + "…\"";
       }
 
       if (typeof val == 'string')
@@ -415,7 +415,7 @@ cls.EcmascriptDebugger["5.0"].ObjectDataBase = function()
       {
         ret += "<item obj-id='" + prop[VALUE] + "' depth='" + depth + "'>" +
                  "<input type='button' handler='examine-object-2'  class='folder-key'/>" +
-                 "<key>" + prop[KEY] + "</key>" +
+                 "<key>" + helpers.escapeTextHtml(prop[KEY]) + "</key>" +
                  "<value class='object'>" + prop[CONSTRUCTOR] + "</value>" +
                 "</item>";
       }
@@ -425,7 +425,7 @@ cls.EcmascriptDebugger["5.0"].ObjectDataBase = function()
         {
           ret += "<item>" +
                    "<input type='button' handler='expand-value'  class='folder-key'/>" +
-                   "<key>" + prop[KEY] + "</key>" +
+                   "<key>" + helpers.escapeTextHtml(prop[KEY]) + "</key>" +
                    "<value class='" + prop[TYPE] + "' data-value='" + val + "'>" +
                      helpers.escapeTextHtml(short_val) +
                    "</value>" +
@@ -434,7 +434,7 @@ cls.EcmascriptDebugger["5.0"].ObjectDataBase = function()
         else
         {
           ret += "<item>" +
-                   "<key class='no-expander'>" + prop[KEY] + "</key>" +
+                   "<key class='no-expander'>" + helpers.escapeTextHtml(prop[KEY]) + "</key>" +
                    "<value class='" + prop[TYPE] + "'>" + val + "</value>" +
                  "</item>";
         }
@@ -443,3 +443,4 @@ cls.EcmascriptDebugger["5.0"].ObjectDataBase = function()
     return ret;
   };
 };
+

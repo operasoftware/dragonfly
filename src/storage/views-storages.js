@@ -5,11 +5,11 @@ cls.StorageView = function(id, name, container_class, storage_name)
   this.createView = function(container)
   {
     var storage = window.storages[id];
-    if(storage.is_setup)
+    if (storage.is_setup)
     {
-      if(storage.exists)
+      if (storage.exists)
       {
-        container.clearAndRender(window.templates.storage(storage.get_storages(), storage.id, storage.title)); 
+        container.clearAndRender(window.templates.storage(storage.get_storages(), storage.id, storage.title));
       }
       else
       {
@@ -21,15 +21,15 @@ cls.StorageView = function(id, name, container_class, storage_name)
       container.innerHTML = "";
       storage.get_storages();
     }
-  }
+  };
 
   this.on_storage_update = function(msg)
   {
-    if(msg.storage_id == this.id)
+    if (msg.storage_id == this.id)
     {
       this.update();
     }
-  }
+  };
 
   window.storages[id].addListener('storage-update', this.on_storage_update.bind(this));
   this.init(id, name, container_class);

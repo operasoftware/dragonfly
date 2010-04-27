@@ -47,6 +47,7 @@ window.eventHandlers.click['storage-edit-cancel'] = function(event, target, is_s
 
   if (tr.hasAttribute('data-storage-key') || is_success)
   {
+    window.storages[storage_id].update();
     tr.parentNode.replaceChild(document.render(window.templates.storage_item(item)), tr);
     window.storages[storage_id].set_item_edit(rt_id, key, false);
   }

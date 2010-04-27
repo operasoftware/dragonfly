@@ -3,7 +3,7 @@
  * Templates used by the http logger views
  */
 
-window.templates = window.templates || ( window.templates = {} );
+window.templates = window.templates || (window.templates = {});
 
 /**
  * Render the a definition list with a dt for each header and the dd with
@@ -12,12 +12,12 @@ window.templates = window.templates || ( window.templates = {} );
  window.templates.header_definition_list = function(headers)
 {
     var alphaheaders = [];
-    for (name in headers) {alphaheaders.push(name)}
+    for (var name in headers) { alphaheaders.push(name); }
     alphaheaders = alphaheaders.sort();
 
     var dlbody = [];
 
-    for (var i=0, name; name=alphaheaders[i]; i++)
+    for (var i = 0, name; name = alphaheaders[i]; i++)
     {
         var value = headers[name];
         var dt = ['dt', name + ": "];
@@ -35,7 +35,7 @@ window.templates = window.templates || ( window.templates = {} );
         else
         {
             var dd = [];
-            for (var n=0, e; e=value[n]; n++)
+            for (var n = 0, e; e = value[n]; n++)
             {
                 dd.push(['dd', e]);
             }
@@ -53,14 +53,13 @@ window.templates.sanitize_url = function(req)
 {
     var s = req.request.path;
 
-    if (s=="" || s=="/") {
+    if (s == "" || s == "/") {
         return req.request.host;
     }
 
     var pos = s.lastIndexOf("/");
     if (pos == s.length-1) { //  only query part
         return s;
-
     }
     else {
         return s.slice(pos+1);
@@ -91,7 +90,7 @@ window.templates.request_list_row = function(r, expandList, firstTime, lastTime,
             ['td', templates.sanitize_url(r) ],
             ['td', (r.response ? r.response.status : "-"), 'class', 'status-cell'],
             ['td', (r.response ? r.response.reason: "-"), 'class', 'reason-cell'],
-            ['td', ((r.duration!=undefined && withGraph) ? ["span", "" + r.duration + "ms", "style", "margin-left: " + Math.floor(curP) + "%; width: " + (dur!=null ? dur : 50 ) + "%;" + (curP>50 ? "direction:rtl;" : ""), "class", "graph-box"] : ""),
+            ['td', ((r.duration != undefined && withGraph) ? ["span", "" + r.duration + "ms", "style", "margin-left: " + Math.floor(curP) + "%; width: " + (dur!=null ? dur : 50 ) + "%;" + (curP>50 ? "direction:rtl;" : ""), "class", "graph-box"] : ""),
                         (isFirst ? ["span", "" + (lastTime-firstTime) + "ms", "class", "totaltime"] : []),
                   , 'class', 'time-cell'],
             'data-requestid', r.id.toString(),
@@ -99,7 +98,7 @@ window.templates.request_list_row = function(r, expandList, firstTime, lastTime,
             'class', 'typeicon mime-' +
                     http_map_mime_to_type(http_get_mime_from_extension(r.request.path)) +
                     (expanded ? " expanded" : " collapsed") +
-                    (r.duration==undefined ? " in-progress" : "") +
+                    (r.duration == undefined ? " in-progress" : "") +
                     (r.response ? " http-status-"+r.response.statusClass : "")
         ]
     ];
@@ -173,7 +172,7 @@ window.templates.parsed_response_headers = function(req)
 window.templates.request_summary = function(req)
 {
     var pairs = [];
-    for (key in req.request.queryDict) { pairs.push([key, req.request.queryDict[key]]);}
+    for (var key in req.request.queryDict) { pairs.push([key, req.request.queryDict[key]]); }
     var ret = [
               ["h2", ui_strings.M_VIEW_LABEL_REQUEST_SUMMARY],
               ["dl", [
@@ -222,3 +221,4 @@ window.templates.reference_link = function(href, title)
             "title", title||""
            ];
 };
+
