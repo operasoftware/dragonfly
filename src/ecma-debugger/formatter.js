@@ -74,6 +74,8 @@ window.cls.SimpleJSParser = function()
   var __parse_error_first_token = true;
   var __parse_error_description = "";
 
+  var __escape = null;
+
   var __token_arr = null;
   var __token_type_arr = null;
   var __read_buffer_with_arrs = function()
@@ -162,6 +164,14 @@ window.cls.SimpleJSParser = function()
     '&': '&',
     '|': '|'
   }
+  /*
+  var PUNCTUATOR_GROUPS = 
+  {
+    "<=", ">=", "==", "!=", "===", "!==", "++", "--", 
+    "<<", ">>", ">>>", "&&", "||", "+=", "-=", "*=", 
+    "%=", "<<=", ">>=", ">>>=", "&=", "|=", "^="
+  };
+   */
   var STRING_DELIMITER_CHARS =
   {
     '"': 1,
@@ -306,12 +316,15 @@ window.cls.SimpleJSParser = function()
       {
         read_buffer();
         __type=PUNCTUATOR;
+        var group = __buffer
+        
         do
         {
           __buffer+=PUNCTUATOR_CHARS[c];
           c=__source.charAt(++__pointer);
         }
         while (c in PUNCTUATOR_2_CHARS);
+        
         __previous_value=__buffer;
         read_buffer();
         __previous_type=__type;
@@ -373,7 +386,7 @@ window.cls.SimpleJSParser = function()
       // numbers can be part of identifier
       while(true)
       {
-        __buffer+=c in ESCAPE ? ESCAPE[c] : c;
+        __buffer+=c in __escape ? __escape[c] : c;
         c=__source.charAt(++__pointer);
         if (!c 
             || c in PUNCTUATOR_CHARS  
@@ -460,7 +473,7 @@ window.cls.SimpleJSParser = function()
         }
         else
         {
-        __buffer+=c in ESCAPE ? ESCAPE[c] : c;
+        __buffer+=c in __escape ? __escape[c] : c;
         c=__source.charAt(++__pointer);
         continue;
         }
@@ -475,7 +488,7 @@ window.cls.SimpleJSParser = function()
         __type=IDENTIFIER;
         break;
       }
-      __buffer+=c in ESCAPE ? ESCAPE[c] : c;
+      __buffer+=c in __escape ? __escape[c] : c;
       c=__source.charAt(++__pointer);
     }
   }
@@ -514,7 +527,7 @@ window.cls.SimpleJSParser = function()
         }
         continue;
       }
-      __buffer+=c in ESCAPE ? ESCAPE[c] : c;
+      __buffer+=c in __escape ? __escape[c] : c;
       c=__source.charAt(++__pointer);
     }
   }
@@ -541,7 +554,7 @@ window.cls.SimpleJSParser = function()
         }
         break;
       }
-      __buffer+=c in ESCAPE ? ESCAPE[c] : c;
+      __buffer+=c in __escape ? __escape[c] : c;
       c=__source.charAt(++__pointer);
     }
   }
@@ -564,7 +577,7 @@ window.cls.SimpleJSParser = function()
       {
         __buffer+=c;
         c=__source.charAt(++__pointer);
-        __buffer+=c in ESCAPE ? ESCAPE[c] : c;
+        __buffer+=c in __escape ? __escape[c] : c;
         c=__source.charAt(++__pointer);
         continue;
       }
@@ -590,7 +603,7 @@ window.cls.SimpleJSParser = function()
         __type=IDENTIFIER;
         return c;
       }
-      __buffer+=c in ESCAPE ? ESCAPE[c] : c;
+      __buffer+=c in __escape ? __escape[c] : c;
       c=__source.charAt(++__pointer);
     }
   }
@@ -801,6 +814,7 @@ window.cls.SimpleJSParser = function()
     __previous_type='';
     __type=IDENTIFIER;
     __source = script.source;
+    __escape = ESCAPE;
     var length=__source.length;
     __pointer = script.line_arr[line];
 
@@ -844,6 +858,7 @@ window.cls.SimpleJSParser = function()
     parser = default_parser;
     __previous_type = '';
     __type = IDENTIFIER;
+    __escape = {};
     __source = script;
     __pointer = 0;
     __token_arr = token_arr;
