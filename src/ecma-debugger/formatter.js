@@ -130,48 +130,100 @@ window.cls.SimpleJSParser = function()
   }
   var PUNCTUATOR_CHARS =
   {
-    '{': '{',
-    '}': '}',
-    '(': '(',
-    ')': ')',
-    '[': '[',
-    ']': ']',
-    ';': ';',
-    ',': ',',
-    '<': '&lt;',
-    '>': '>',
-    '=': '=',
-    '!': '!',
-    '+': '+',
-    '-': '-',
-    '*': '*',
-    '%': '%',
-    '&': '&',
-    '|': '|',
-    '^': '^',
-    '~': '~',
-    '?': '?',
-    ':': ':',
-    '.': '.'
+    '{': 1,
+    '}': 1,
+    '(': 1,
+    ')': 1,
+    '[': 1,
+    ']': 1,
+    ';': 1,
+    ',': 1,
+    '<': 1,
+    '>': 1,
+    '=': 1,
+    '!': 1,
+    '+': 1,
+    '-': 1,
+    '*': 1,
+    '%': 1,
+    '&': 1,
+    '|': 1,
+    '^': 1,
+    '~': 1,
+    '?': 1,
+    ':': 1,
+    '.': 1,
   }
-  var PUNCTUATOR_2_CHARS =
+  var PUNCTUATOR_GROUPS = {};
+  PUNCTUATOR_GROUPS[2] =
   {
-    '=': '=',
-    '+': '+',
-    '-': '-',
-    '<': '&lt;',
-    '>': '>',
-    '&': '&',
-    '|': '|'
-  }
-  /*
-  var PUNCTUATOR_GROUPS = 
-  {
-    "<=", ">=", "==", "!=", "===", "!==", "++", "--", 
-    "<<", ">>", ">>>", "&&", "||", "+=", "-=", "*=", 
-    "%=", "<<=", ">>=", ">>>=", "&=", "|=", "^="
+    start:
+    {
+      "<": 1,
+      ">": 1,
+      "=": 1,
+      "!": 1,
+      "+": 1,
+      "-": 1,
+      "&": 1,
+      "|": 1,
+      "*": 1,
+      "%": 1,
+      "&": 1,
+      "|": 1,
+      "^": 1,
+    },
+    groups:
+    {
+      "<=": 1,
+      ">=": 1,
+      "==": 1,
+      "!=": 1,
+      "++": 1,
+      "--": 1,
+      "<<": 1,
+      ">>": 1,
+      "&&": 1,
+      "||": 1,
+      "+=": 1,
+      "-=": 1,
+      "*=": 1,
+      "%=": 1,
+      "&=": 1,
+      "|=": 1,
+      "^=": 1,
+    }
   };
-   */
+  PUNCTUATOR_GROUPS[3] =
+  {
+    start:
+    {
+      "==": 1,
+      "!=": 1,
+      ">>": 1,
+      "<<": 1,
+    },
+    groups:
+    {
+      "===": 1,
+      "!==": 1,
+      ">>>": 1,
+      "<<=": 1,
+      ">>=": 1,
+    }
+  };
+  PUNCTUATOR_GROUPS[4] =
+  {
+    start:
+    {
+      ">>>": 1,
+    },
+    groups:
+    {
+      ">>>=": 1,
+    }
+  };
+
   var STRING_DELIMITER_CHARS =
   {
     '"': 1,
@@ -225,7 +277,7 @@ window.cls.SimpleJSParser = function()
   }
   var default_parser=function(c)
   {
-    var CRLF = '';
+    var CRLF = '', group = '', group_count = 0;
     __previous_value='';
     while(c)
     {
@@ -243,7 +295,7 @@ window.cls.SimpleJSParser = function()
         __type=IDENTIFIER;
       }
 
-      if(c in LINETERMINATOR_CHARS)
+      if (c in LINETERMINATOR_CHARS)
       {
         read_buffer();
         __buffer = CRLF = c;
@@ -315,20 +367,29 @@ window.cls.SimpleJSParser = function()
       if(c in PUNCTUATOR_CHARS)
       {
         read_buffer();
-        __type=PUNCTUATOR;
-        var group = __buffer
-        
-        do
+        __type = PUNCTUATOR;
+        __buffer += c in __escape ? __escape[c] : c;
+        group = c;
+        c = __source.charAt(++__pointer);
+        group_count = 2;
+        while (true)
         {
-          __buffer+=PUNCTUATOR_CHARS[c];
-          c=__source.charAt(++__pointer);
+          if (group in PUNCTUATOR_GROUPS[group_count].start &&
+                (group += c) in PUNCTUATOR_GROUPS[group_count].groups)
+          {
+            __buffer += c in __escape ? __escape[c] : c;
+            c = __source.charAt(++__pointer); 
+            group_count++;
+          }
+          else
+          {
+            break;
+          }
         }
-        while (c in PUNCTUATOR_2_CHARS);
-        
-        __previous_value=__buffer;
+        __previous_value = __buffer;
         read_buffer();
-        __previous_type=__type;
-        __type=IDENTIFIER;
+        __previous_type = __type;
+        __type = IDENTIFIER;
         continue;
       }
 
@@ -498,14 +559,15 @@ window.cls.SimpleJSParser = function()
     var CRLF='';
     while(c)
     {
-      if(c in LINETERMINATOR_CHARS)
+      if (c in LINETERMINATOR_CHARS)
       {
         read_buffer();
-        CRLF=c;
-        CRLF+=c=__source.charAt(++__pointer);
-        if(CRLF in LINETERMINATOR_CHARS)
+        __buffer = CRLF = c;
+        CRLF += c =__source.charAt(++__pointer);
+        if (CRLF in LINETERMINATOR_CHARS)
         {
-          c=__source.charAt(++__pointer);
+          __buffer = CRLF;
+          c = __source.charAt(++__pointer);
         }
         if(__online && __online())
         {
@@ -542,13 +604,14 @@ window.cls.SimpleJSParser = function()
         read_buffer();
         // don't change the previous type
         __type = IDENTIFIER;
-        CRLF = c;
-        CRLF += c = __source.charAt(++__pointer);
-        if( CRLF in LINETERMINATOR_CHARS )
+        __buffer = CRLF = c;
+        CRLF += c =__source.charAt(++__pointer);
+        if (CRLF in LINETERMINATOR_CHARS)
         {
+          __buffer = CRLF;
           __pointer++;
         }
-        if(__online && __online())
+        if (__online && __online())
         {
           return __ret;
         }
@@ -854,7 +917,6 @@ window.cls.SimpleJSParser = function()
 
   this.parse = function(script, token_arr, type_arr)
   {
-
     parser = default_parser;
     __previous_type = '';
     __type = IDENTIFIER;
@@ -863,13 +925,7 @@ window.cls.SimpleJSParser = function()
     __pointer = 0;
     __token_arr = token_arr;
     __token_type_arr = type_arr;
-
-    __online = function()
-    {
-      token_arr.push('\n');
-      type_arr.push(LINETERMINATOR);
-    }
-
+    __online = __online_with_arrs;
     read_buffer = __read_buffer_with_arrs;
     parser(__source.charAt(__pointer));
   } 

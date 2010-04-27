@@ -1,10 +1,12 @@
-<!doctype HTML>
+﻿<!doctype HTML>
+<meta http-equiv="Content-Type" content="text/html; utf-8">
 <style>
 table {border-collapse: collapse;}
 td {border: 1px solid #ccc; padding: 1px 3px;}
 </style>
 <script src="../../src/ecma-debugger/formatter.js"></script>
 <script src="../../src/ecma-debugger/helpers.js"></script>
+<script src="./test.js"></script>
 <script>
 
 var test = function(script)
@@ -38,7 +40,13 @@ var test = function(script)
     );
   }, markup);
   markup.push("</table>");
+  markup.push("<pre>tokens.join('') === script: ", tokens.join('') === script, "</pre>");
+  markup.push("<h2>tokens join</h2>");
+  markup.push("<pre>", window.helpers.escapeTextHtml(tokens.join('')), "</pre>");
+  markup.push("<h2>script</h2>");
+  markup.push("<pre>", window.helpers.escapeTextHtml(script), "</pre>");
   document.body.innerHTML = markup.join("");
+  
 }
 
 window.onload = function()
@@ -49,7 +57,9 @@ window.onload = function()
   {
     test(this.responseText);
   }
-  xhr.open("GET", "../../src/ecma-debugger/formatter.js");
+  // xhr.open("GET", "../../src/ecma-debugger/formatter.js");
+  xhr.open("GET", "./test.js");
+ 
   xhr.send(null);
 }
 
