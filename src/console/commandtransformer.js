@@ -114,6 +114,8 @@ function HostCommandTransformer() {
 
   this.hostcommand_dir = function(token, tokenlist) {
     var index = tokenlist.indexOf(token);
+    if (! this.is_call(tokenlist, index)) { return; }
+
     var prev = tokenlist[index-2];
 
     if (!prev || (prev && prev.type == IDENTIFIER && prev.value != "console")) {
@@ -123,6 +125,8 @@ function HostCommandTransformer() {
 
   this.hostcommand_dirxml = function(token, tokenlist) {
     var index = tokenlist.indexOf(token);
+    if (! this.is_call(tokenlist, index)) { return; }
+
     var prev = tokenlist[index-2];
     if (!prev || (prev && prev.type == IDENTIFIER && prev.value != "console")) {
       token.value = "console.dirxml";
