@@ -168,11 +168,19 @@ function HostCommandTransformer() {
   };
 
   this.hostcommand_$ = function(token, tokenlist) {
-    token.value = "document.getElementById";
+    var index = tokenlist.indexOf(token);
+
+    if (this.is_call(tokenlist, index)) {
+      token.value = "document.getElementById";
+    }
   };
 
   this.hostcommand_$$ = function(token, tokenlist) {
-    token.value = "document.querySelectorAll";
+    var index = tokenlist.indexOf(token);
+
+    if (this.is_call(tokenlist, index)) {
+      token.value = "document.querySelectorAll";
+    }
   };
 
   this.hostcommand_$x = function(token, tokenlist) {

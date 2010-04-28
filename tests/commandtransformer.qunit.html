@@ -78,12 +78,19 @@ test("dir/dirxml", function() {
 });
 
 test("$", function() {
+    equal(transform("$"), "$");
     equal(transform("$(foo)"), "document.getElementById(foo)");
     equal(transform("var x=$(foo)"), "var x=document.getElementById(foo)");
     equal(transform("var x= $(foo)"), "var x= document.getElementById(foo)");
     equal(transform("var x =$(foo)"), "var x =document.getElementById(foo)");
     equal(transform("var x = $(foo)"), "var x = document.getElementById(foo)");
+
 });
+
+test("$$", function() {
+    equal(transform("$$"), "$$");
+});
+
 
 </script>
 
