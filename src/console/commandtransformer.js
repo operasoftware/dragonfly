@@ -64,9 +64,7 @@ function HostCommandTransformer() {
 
     // make a more straightforward representation of tokens. Command line
     // stuff is small, so the cost of this doesn't matter much.
-    for (var n=0; n<types.length; n++) {
-      tokens.push({type: types[n], value: values[n]});
-    }
+    tokens = this.zip_tokens(types, values);
 
     dirty: // we jump back here if we need to re-process all tokens
     for (var n=0, token; token=tokens[n]; n++) {
@@ -79,6 +77,40 @@ function HostCommandTransformer() {
     }
     return tokens.map(function(e) {return e.value;}).join("");
   };
+
+  this.zip_tokens = function(types, values) {
+    var tokens = [];
+    for (var n=0; n<types.length; n++) {
+      tokens.push({type: types[n], value: values[n]});
+    }
+    return tokens;
+  };
+
+  /**
+   * Check if the token at index looks like it's a function/method being
+   * called by looking at the following tokens.
+   */
+  this.is_call = function(tokens, index) {
+    if (!tokens[index] || tokens[index].type != IDENTIFIER) {
+      return false;
+    }
+
+    for (var n=index+1, token; token=tokens[n]; n++) {
+      switch (token.type) {
+        case WHITESPACE:
+          continue;
+        case PUNCTUATOR:
+        if (token.value == "(") { return true; }
+        default:
+          return false;
+      }
+    }
+    return false;
+  };
+
+
+
+  // Host commands:
 
   this.hostcommand_dir = function(token, tokenlist) {
     var index = tokenlist.indexOf(token);

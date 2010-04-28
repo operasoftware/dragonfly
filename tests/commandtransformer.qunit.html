@@ -13,33 +13,71 @@
 <script>
 window.transformer = new HostCommandTransformer();
   
-function t(s) {
+function transform(s) {
     return window.transformer.transform(s);
 }
-  
+
+function iscall(t, i) {
+    return window.transformer.is_call(t, i);
+}
+
+// helper that parses and returns the token array
+function parse(source) {
+    var parser = new window.cls.SimpleJSParser();
+    var types = [];
+    var values = [];
+    parser.parse(source, values, types);
+    return window.transformer.zip_tokens(types, values);
+}
+
+test("is_call smoketest", function() {
+    var tokens;
+
+    tokens = parse("foo()");
+    ok(iscall(tokens, 0));
+    ok(!iscall(tokens, 1));
+
+    tokens = parse("foo   ()");
+    ok(iscall(tokens, 0));
+
+    tokens = parse("foo   (    )");
+    ok(iscall(tokens, 0));
+
+    tokens = parse("foo   (3)");
+    ok(iscall(tokens, 0));
+
+    tokens = parse("foo=(3)");
+    ok(!iscall(tokens, 0));
+
+    tokens = parse("bar;foo()");
+    ok(iscall(tokens, 2));
+
+
+})
+
 test("dir/dirxml", function() {
-    equal(t("dir(foo)"), "console.dir(foo)");
-    equal(t("dirxml(foo)"), "console.dirxml(foo)");
+    equal(transform("dir(foo)"), "console.dir(foo)");
+    equal(transform("dirxml(foo)"), "console.dirxml(foo)");
 
-    equal(t("var x=dir(foo)"), "var x=console.dir(foo)");
-    equal(t("var x=dirxml(foo)"), "var x=console.dirxml(foo)");
+    equal(transform("var x=dir(foo)"), "var x=console.dir(foo)");
+    equal(transform("var x=dirxml(foo)"), "var x=console.dirxml(foo)");
 
-    equal(t("var x= dir(foo)"), "var x= console.dir(foo)");
-    equal(t("var x= dirxml(foo)"), "var x= console.dirxml(foo)");
+    equal(transform("var x= dir(foo)"), "var x= console.dir(foo)");
+    equal(transform("var x= dirxml(foo)"), "var x= console.dirxml(foo)");
 
-    equal(t("var x =dir(foo)"), "var x =console.dir(foo)");
-    equal(t("var x =dirxml(foo)"), "var x =console.dirxml(foo)");
+    equal(transform("var x =dir(foo)"), "var x =console.dir(foo)");
+    equal(transform("var x =dirxml(foo)"), "var x =console.dirxml(foo)");
 
-    equal(t("var x = dir(foo)"), "var x = console.dir(foo)");
-    equal(t("var x = dirxml(foo)"), "var x = console.dirxml(foo)");
+    equal(transform("var x = dir(foo)"), "var x = console.dir(foo)");
+    equal(transform("var x = dirxml(foo)"), "var x = console.dirxml(foo)");
 });
 
 test("$", function() {
-    equal(t("$(foo)"), "document.getElementById(foo)");
-    equal(t("var x=$(foo)"), "var x=document.getElementById(foo)");
-    equal(t("var x= $(foo)"), "var x= document.getElementById(foo)");
-    equal(t("var x =$(foo)"), "var x =document.getElementById(foo)");
-    equal(t("var x = $(foo)"), "var x = document.getElementById(foo)");
+    equal(transform("$(foo)"), "document.getElementById(foo)");
+    equal(transform("var x=$(foo)"), "var x=document.getElementById(foo)");
+    equal(transform("var x= $(foo)"), "var x= document.getElementById(foo)");
+    equal(transform("var x =$(foo)"), "var x =document.getElementById(foo)");
+    equal(transform("var x = $(foo)"), "var x = document.getElementById(foo)");
 });
 
 </script>
