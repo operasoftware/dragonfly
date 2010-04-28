@@ -30,6 +30,23 @@ function HostCommandTransformer() {
   this.parser = null;
   this.commandTable = {};
 
+  const
+  DEFAULT_STATE = 0,
+  SINGLE_QUOTE_STATE = 1,
+  DOUBLE_QUOTE_STATE = 2,
+  REG_EXP_STATE = 3,
+  COMMENT_STATE = 4,
+  WHITESPACE = 1,
+  LINETERMINATOR = 2,
+  IDENTIFIER = 3,
+  NUMBER = 4,
+  STRING = 5,
+  PUNCTUATOR = 6,
+  IDENTIFIER = 7,
+  DIV_PUNCTUIATOR = 8,
+  REG_EXP = 9,
+  COMMENT = 10;
+
   this.init = function() {
     // window.simple_js_parser is default location for the parser instance
     // in dragonfly. Use it if it exists.
@@ -47,17 +64,17 @@ function HostCommandTransformer() {
     var types = [];
     var values = [];
     var tokens = [];
-    this.parser.parse(types, values, source);
+    this.parser.parse(source, values, types);
 
     // make a more straightforward representation of tokens. Command line
     // stuff is small, so the cost of this doesn't matter much.
     for (var n=0; n<types.length; n++) {
-      tokens.push({type: types[0], value: values[0]});
+      tokens.push({type: types[n], value: values[n]});
     }
 
     dirty: // we jump back here if we need to re-process all tokens
     for (var n=0, token; token=tokens[n]; n++) {
-      if (token.type == "IDENTIFIER" && token.value in this.commandTable) {
+      if (token.type == IDENTIFIER && token.value in this.commandTable) {
         var fun = this.commandTable[token.value];
         if (fun.call(this, token, tokens)) {
           break dirty;
@@ -70,7 +87,7 @@ function HostCommandTransformer() {
   this.hostcommand_dir = function(token, tokenlist) {
     var index = tokenlist.indexOf(token);
     var prev = tokenlist[index-2];
-    if (prev && prev.type == "IDENTIFIER" && prev.value != "console") {
+    if (prev && prev.type == IDENTIFIER && prev.value != "console") {
       token.value = "console.dir";
     }
   };
@@ -78,7 +95,7 @@ function HostCommandTransformer() {
   this.hostcommand_dirxml = function(token, tokenlist) {
     var index = tokenlist.indexOf(token);
     var prev = tokenlist[index-2];
-    if (prev && prev.type == "IDENTIFIER" && prev.value != "console") {
+    if (prev && prev.type == IDENTIFIER && prev.value != "console") {
       token.value = "console.dirxml";
     }
   };
