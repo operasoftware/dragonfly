@@ -17,13 +17,30 @@ function t(s) {
     return window.transformer.transform(s);
 }
   
-test("Smoketest", function() {
-    expect(3);
-    equal(t("$(foo)"), "document.getElementById(foo)");
+test("dir/dirxml", function() {
     equal(t("dir(foo)"), "console.dir(foo)");
     equal(t("dirxml(foo)"), "console.dirxml(foo)");
+
+    equal(t("var x=dir(foo)"), "var x=console.dir(foo)");
+    equal(t("var x=dirxml(foo)"), "var x=console.dirxml(foo)");
+
+    equal(t("var x= dir(foo)"), "var x= console.dir(foo)");
+    equal(t("var x= dirxml(foo)"), "var x= console.dirxml(foo)");
+
+    equal(t("var x =dir(foo)"), "var x =console.dir(foo)");
+    equal(t("var x =dirxml(foo)"), "var x =console.dirxml(foo)");
+
+    equal(t("var x = dir(foo)"), "var x = console.dir(foo)");
+    equal(t("var x = dirxml(foo)"), "var x = console.dirxml(foo)");
 });
 
+test("$", function() {
+    equal(t("$(foo)"), "document.getElementById(foo)");
+    equal(t("var x=$(foo)"), "var x=document.getElementById(foo)");
+    equal(t("var x= $(foo)"), "var x= document.getElementById(foo)");
+    equal(t("var x =$(foo)"), "var x =document.getElementById(foo)");
+    equal(t("var x = $(foo)"), "var x = document.getElementById(foo)");
+});
 
 </script>
 
