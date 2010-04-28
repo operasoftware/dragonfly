@@ -30,22 +30,17 @@ function HostCommandTransformer() {
   this.parser = null;
   this.commandTable = {};
 
+  //local copy of token types, local vars have better performance. :
   const
-  DEFAULT_STATE = 0,
-  SINGLE_QUOTE_STATE = 1,
-  DOUBLE_QUOTE_STATE = 2,
-  REG_EXP_STATE = 3,
-  COMMENT_STATE = 4,
-  WHITESPACE = 1,
-  LINETERMINATOR = 2,
-  IDENTIFIER = 3,
-  NUMBER = 4,
-  STRING = 5,
-  PUNCTUATOR = 6,
-  IDENTIFIER = 7,
-  DIV_PUNCTUIATOR = 8,
-  REG_EXP = 9,
-  COMMENT = 10;
+  WHITESPACE = window.cls.SimpleJSParser.WHITESPACE,
+  LINETERMINATOR = window.cls.SimpleJSParser.LINETERMINATOR,
+  IDENTIFIER = window.cls.SimpleJSParser.IDENTIFIER,
+  NUMBER = window.cls.SimpleJSParser.NUMBER,
+  STRING = window.cls.SimpleJSParser.STRING,
+  PUNCTUATOR = window.cls.SimpleJSParser.PUNCTUATOR,
+  DIV_PUNCTUATOR = window.cls.SimpleJSParser.DIV_PUNCTUATOR,
+  REG_EXP = window.cls.SimpleJSParser.REG_EXP,
+  COMMENT = window.cls.SimpleJSParser.COMMENT;
 
   this.init = function() {
     // window.simple_js_parser is default location for the parser instance
@@ -54,8 +49,9 @@ function HostCommandTransformer() {
 
     for (name in this) {
       var commandName = name.split("hostcommand_")[1];
+
       if (commandName) {
-        this.commandTable[name] = this[name];
+        this.commandTable[commandName] = this[name];
       }
     }
   };
@@ -87,7 +83,8 @@ function HostCommandTransformer() {
   this.hostcommand_dir = function(token, tokenlist) {
     var index = tokenlist.indexOf(token);
     var prev = tokenlist[index-2];
-    if (prev && prev.type == IDENTIFIER && prev.value != "console") {
+
+    if (!prev || (prev && prev.type == IDENTIFIER && prev.value != "console")) {
       token.value = "console.dir";
     }
   };
@@ -95,7 +92,7 @@ function HostCommandTransformer() {
   this.hostcommand_dirxml = function(token, tokenlist) {
     var index = tokenlist.indexOf(token);
     var prev = tokenlist[index-2];
-    if (prev && prev.type == IDENTIFIER && prev.value != "console") {
+    if (!prev || (prev && prev.type == IDENTIFIER && prev.value != "console")) {
       token.value = "console.dirxml";
     }
   };
