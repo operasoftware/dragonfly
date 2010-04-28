@@ -56,6 +56,11 @@ test("is_call smoketest", function() {
 })
 
 test("dir/dirxml", function() {
+    equal(transform("dir"), "dir");
+    equal(transform("dir;foo"), "dir;foo");
+    equal(transform("bar; dir;foo"), "bar; dir;foo");
+
+
     equal(transform("dir(foo)"), "console.dir(foo)");
     equal(transform("dirxml(foo)"), "console.dirxml(foo)");
 
