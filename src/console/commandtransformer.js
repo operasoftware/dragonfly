@@ -108,29 +108,63 @@ function HostCommandTransformer() {
     return false;
   };
 
+  /**
+   * Check if the token at index is a property of name
+   */
+  this.is_property_of = function(name, tokens, index) {
+    if (!tokens[index] || tokens[index].type != IDENTIFIER) {
+      return false;
+    }
+
+    var n = index-1;
+
+    for (var token; token=tokens[n]; n--) {
+      switch (token.type) {
+        case WHITESPACE:
+          continue;
+        case PUNCTUATOR:
+          if (token.value == ".") { break; }
+        default:
+          return false;
+      }
+    }
+
+    for (var token; token=tokens[n]; n--) {
+      switch (token.type) {
+        case WHITESPACE:
+          continue;
+        case IDENTIFIER:
+          if (token.value == name) { return true; }
+        default:
+          return false;
+      }
+    }
+
+    return false;
+  };
 
 
   // Host commands:
 
   this.hostcommand_dir = function(token, tokenlist) {
     var index = tokenlist.indexOf(token);
-    if (! this.is_call(tokenlist, index)) { return; }
-
-    var prev = tokenlist[index-2];
-
-    if (!prev || (prev && prev.type == IDENTIFIER && prev.value != "console")) {
-      token.value = "console.dir";
+    if (!this.is_call(tokenlist, index) ||
+         this.is_property_of("console", tokenlist, index)) {
+      return;
     }
+
+    token.value = "console.dir";
   };
 
   this.hostcommand_dirxml = function(token, tokenlist) {
     var index = tokenlist.indexOf(token);
-    if (! this.is_call(tokenlist, index)) { return; }
 
-    var prev = tokenlist[index-2];
-    if (!prev || (prev && prev.type == IDENTIFIER && prev.value != "console")) {
-      token.value = "console.dirxml";
+    if (!this.is_call(tokenlist, index) ||
+         this.is_property_of("console", tokenlist, index)) {
+      return;
     }
+
+    token.value = "console.dirxml";
   };
 
   this.hostcommand_$ = function(token, tokenlist) {
