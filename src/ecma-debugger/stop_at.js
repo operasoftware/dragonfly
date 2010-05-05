@@ -132,6 +132,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
 
   var parseBacktrace = function(status, message, runtime_id, thread_id)
   {
+
     const
     FRAME_LIST = 0,
     // sub message BacktraceFrame 
@@ -144,10 +145,6 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     LINE_NUMBER = 6,
     // sub message ObjectValue 
     OBJECT_ID = 0,
-    IS_CALLABLE = 1,
-    IS_FUNCTION = 2,
-    TYPE = 3,
-    PROTOTYPE_ID = 4,
     NAME = 5;
 
     var _frames = message[FRAME_LIST], frame = null, i = 0;
