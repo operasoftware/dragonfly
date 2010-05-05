@@ -9,7 +9,7 @@ cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
 
 // TODO clean up in regard of protocol 4
 cls.EcmascriptDebugger["6.0"].Runtimes =
-cls.EcmascriptDebugger["5.0"].Runtimes = function()
+cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
 {
 
   const
@@ -1072,11 +1072,27 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function()
     return __scripts[script_id] && (line_nr in __scripts[script_id].breakpoints);
   }
 
-  this.setBreakpoint = function(script_id, line_nr)
+
+
+  if (service_version == "6.0")
   {
-    if (!__scripts[script_id]) { return; }
-    var b_p_id = __scripts[script_id].breakpoints[line_nr] = getBreakpointId();
-    services['ecmascript-debugger'].requestAddBreakpoint(0, [b_p_id, "line", script_id, line_nr]);
+    this.setBreakpoint = function(script_id, line_nr)
+    {
+      if (!__scripts[script_id]) { return; }
+      var b_p_id = __scripts[script_id].breakpoints[line_nr] = getBreakpointId();
+      // message signature has changes, AddBreakpoint means always to a source line
+      // for events it's now AddEventBreakpoint
+      services['ecmascript-debugger'].requestAddBreakpoint(0, [b_p_id, script_id, line_nr]);
+    }
+  }
+  else
+  {
+    this.setBreakpoint = function(script_id, line_nr)
+    {
+      if (!__scripts[script_id]) { return; }
+      var b_p_id = __scripts[script_id].breakpoints[line_nr] = getBreakpointId();
+      services['ecmascript-debugger'].requestAddBreakpoint(0, [b_p_id, "line", script_id, line_nr]);
+    }
   }
 
   this.removeBreakpoint = function(script_id, line_nr)
