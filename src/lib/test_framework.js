@@ -122,30 +122,37 @@ window.cls.TestFramework = function()
         {
           item = [];
         }
-        definition = definitions[i];
-        if (definition && (definition.message == "self"))
+        if (definition = definitions[i])
         {
-          definition.message = this._get_recursiv_message(this._definitions, definition);
-        }
-        if (definition["q"] == "repeated")
-        {
-          ret.push(this._get_indent(indent) + definition['name'] + ':');
-          for( j = 0; j < item.length; j++)
+          if (definition.message == "self")
+          {
+            definition.message = this._get_recursiv_message(this._definitions, definition);
+          }
+          if (definition["q"] == "repeated")
+          {
+            ret.push(this._get_indent(indent) + definition['name'] + ':');
+            for( j = 0; j < item.length; j++)
+            {
+              ret.push(this._pretty_print_payload_item(
+                indent + 1,
+                definition['name'].replace("List", ""),
+                definition,
+                item[j]));
+            }
+          }
+          else
           {
             ret.push(this._pretty_print_payload_item(
-              indent + 1,
-              definition['name'].replace("List", ""),
+              indent,
+              definition['name'],
               definition,
-              item[j]));
+              item))
           }
         }
         else
         {
-          ret.push(this._pretty_print_payload_item(
-            indent,
-            definition['name'],
-            definition,
-            item))
+          throw Error("PrettyPrintError. Probably invalid message. " +
+                        "payload: " + JSON.stringify(payload));
         }
       }
     }
