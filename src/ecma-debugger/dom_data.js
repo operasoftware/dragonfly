@@ -1,11 +1,13 @@
 ﻿window.cls || (window.cls = {});
 cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
 cls.EcmascriptDebugger["5.0"] || (cls.EcmascriptDebugger["5.0"] = {});
+cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
 
 /**
   * @constructor 
   */
 
+cls.EcmascriptDebugger["6.0"].DOMData =
 cls.EcmascriptDebugger["5.0"].DOMData = function()
 {
   var self = this;

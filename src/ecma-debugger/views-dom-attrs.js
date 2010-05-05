@@ -1,12 +1,14 @@
 ﻿window.cls || (window.cls = {});
 cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
 cls.EcmascriptDebugger["5.0"] || (cls.EcmascriptDebugger["5.0"] = {});
+cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
 
 /**
   * @constructor 
   * @extends ViewBase
   */
 
+cls.EcmascriptDebugger["6.0"].DOMAttrsView =
 cls.EcmascriptDebugger["5.0"].DOMAttrsView = function(id, name, container_class)
 {
   var self = this;

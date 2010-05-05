@@ -160,6 +160,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="lib/exec_2_0.js"></script>
 <script src="lib/window_manager_2_0.js"></script>
 <script src="lib/ecmascript_debugger_5_0.js"></script>
+<script src="lib/ecmascript_debugger_6_0.js"></script>
 <script src="lib/http_logger_2_0.js"></script>
 <script src="lib/scope_1_0.js"></script>
 
@@ -167,6 +168,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="lib/message-maps/message_map_exec_2_0.js"></script>
 <script src="lib/message-maps/message_map_window_manager_2_0.js"></script>
 <script src="lib/message-maps/message_map_ecmascript_debugger_5_0.js"></script>
+<script src="lib/message-maps/message_map_ecmascript_debugger_6_0.js"></script>
 <script src="lib/message-maps/message_map_http_logger_2_0.js"></script>
 <script src="lib/message-maps/message_map_scope_1_0.js"></script>
 <script src="lib/message-maps/message_map_url_player_2_0.js"></script>
@@ -214,6 +216,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./build-application/build_http_logger_2_0.js"></script>
 <script src="./build-application/build_exec_2_0.js"></script>
 <script src="./build-application/build_ecmascript_debugger_5_0.js"></script>
+<script src="./build-application/build_ecmascript_debugger_6_0.js"></script>
 
 
 <script src="./debug/debug.js"/>
