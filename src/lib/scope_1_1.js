@@ -1,7 +1,7 @@
 ﻿window.cls || (window.cls = {});
 cls.Scope || (cls.Scope = {});
-cls.Scope["1.0"] || (cls.Scope["1.0"] = {});
-cls.Scope["1.0"].name = 'scope';
+cls.Scope["1.1"] || (cls.Scope["1.1"] = {});
+cls.Scope["1.1"].name = 'scope';
 
 /**
   * @constructor 
@@ -9,13 +9,13 @@ cls.Scope["1.0"].name = 'scope';
   * generated with hob from the service definitions
   */
 
-cls.Scope["1.0"].Service = function()
+cls.Scope["1.1"].Service = function()
 {
   /**
     * The name of the service used in scope in ScopeTransferProtocol
     */
   this.name = 'scope';
-  this.version = '1.0';
+  this.version = '1.1';
 
 
   // see http://dragonfly.opera.com/app/scope-interface/Scope.html#connect
@@ -58,8 +58,11 @@ cls.Scope["1.0"].Service = function()
 
     if(status == 0)
     {
-      services[service].post('enable-success');
-      services[service].on_enable_success();
+      if (services && services[service])
+      {
+        services[service].post('enable-success');
+        services[service].on_enable_success();
+      };
       this._enable_requests[service] = true;
       for(service_name in this._enable_requests)
       {
@@ -172,19 +175,6 @@ cls.Scope["1.0"].Service = function()
       }
     }
     this._onHostInfoCallback(service_descriptions);
-    for( i = 0; service = _services[i]; i++)
-    {
-      // ensure that the window-manager is the last service to get enabled
-      if(service[NAME] in window.services && window.services[service[NAME]].is_implemented &&
-        !(service[NAME] == "scope" || service[NAME] == "window-manager") )
-      {
-        window.services['scope'].requestEnable(0,[service[NAME]]);
-      }
-    }
-    if ("window-manager" in services)
-    {
-      window.services['scope'].requestEnable(0,["window-manager"]);
-    }
     hello_message.services = service_descriptions;    
   }
 
@@ -208,9 +198,31 @@ cls.Scope["1.0"].Service = function()
     TYPE = 1,
     NUMBER = 2,
     QUANTIFIER = 3,
-    MESSAGE_ID = 4;
+    MESSAGE_ID = 4,
+    ENUM_ID = 5;
     */
     opera.postError("NotBoundWarning: Scope, MessageInfo");
+  }
+
+  // see http://dragonfly.opera.com/app/scope-interface/Scope.html#enuminfo
+  this.requestEnumInfo = function(tag, message)
+  {
+    opera.scopeTransmit('scope', message || [], 12, tag || 0);
+  }
+  this.handleEnumInfo = function(status, message)
+  {
+    /*
+    const
+    ENUM_LIST = 0,
+    // sub message Enum 
+    ID = 0,
+    NAME = 1,
+    VALUE_LIST = 2,
+    // sub message Value 
+    VALUE_NAME = 0,
+    NUMBER = 1;
+    */
+    opera.postError("NotBoundWarning: Scope, EnumInfo");
   }
 
   // see http://dragonfly.opera.com/app/scope-interface/Scope.html#onservices
