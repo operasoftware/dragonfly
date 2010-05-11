@@ -73,30 +73,13 @@ window.cls.TestFramework = function()
     return (
       this._get_indent(indent) +
       name + ': ' + (
+        item === null && "null" || 
         "message" in definition && "\n" + 
             this._pretty_print_payload(item, definition["message"], indent + 1) ||
-        !item && item === null &&  "null" || 
+        "enum" in definition && item in definition["enum"]["numbers"] && (definition["enum"]["numbers"][item] + " (" + item + ")") ||
+        "type" in definition && definition["type"] == 11 /*bool*/ && (item ? "true" : "false") ||
         typeof item == "string" && "\"" + item + "\"" || 
         item));
-  }
-
-  this._get_recursiv_message = function _get_recursiv_message(definitions, definition)
-  {
-    for (var def = null, i = 0, ret = null; def = definitions[i]; i++)
-    {
-      if (def.name == definition.name)
-      {
-        return def.message;
-      }
-      if (def.message && typeof def.message == 'object')
-      {
-        if (ret = _get_recursiv_message(def.message, definition))
-        {
-          return ret;
-        }
-      }
-    }
-    return null;
   }
 
   this._pretty_print_payload = function(payload, definitions, indent)
@@ -108,11 +91,7 @@ window.cls.TestFramework = function()
     definition = null,
     j = 0;
 
-    if (!this._definitions)
-    {
-      this._definitions = definitions;
-    }
-
+    //# TODO message: self
     if (definitions)
     {
       for (; i < payload.length; i++)
@@ -123,10 +102,6 @@ window.cls.TestFramework = function()
           item = [];
         }
         definition = definitions[i];
-        if (definition && (definition.message == "self"))
-        {
-          definition.message = this._get_recursiv_message(this._definitions, definition);
-        }
         if (definition["q"] == "repeated")
         {
           ret.push(this._get_indent(indent) + definition['name'] + ':');
@@ -148,9 +123,9 @@ window.cls.TestFramework = function()
             item))
         }
       }
+      return ret.join("\n")
     }
-    this._definitions = null;
-    return ret.join("\n")
+    return "";
   }
 
   // handle a command response
@@ -175,13 +150,22 @@ window.cls.TestFramework = function()
       null;
     if (status != 0) // Use the error structure if we received an error response
         definitions = window.package_map["com.opera.stp"]["Error"];
+    var payload = "";
+    try
+    {
+      payload = (cookies.get('pretty-print-message') == 'true' && definitions ?
+          this._pretty_print_payload(message, definitions, 2) :
+          JSON.stringify(message));
+    }
+    catch (e)
+    {
+      payload = JSON.stringify(message);
+    }
     response.textContent = 
       "response:\n  status: " + 
       this._status_map[status] + "\n" +
       "  payload: \n" + 
-      (cookies.get('pretty-print-message') == 'true' && definitions ?
-        this._pretty_print_payload(message, definitions, 2) :
-        JSON.stringify(message));
+      payload;
   }
 
   // to highlight the selected element in a list
@@ -313,17 +297,21 @@ window.cls.TestFramework = function()
                   " id='pretty-print-message'>" +
                 "</label></p>";
           var pres = message_container.getElementsByTagName('pre');
-
-          new XMLHttpRequest().loadResource(
-              this._doc_base_uri + 'defs/' + this._selected_service + '.commands.' + event.target.textContent + '.def',
-              this._show_def,
-              {'pre': pres[0]}
-            )
-          new XMLHttpRequest().loadResource(
-              this._doc_base_uri + 'defs/' + this._selected_service + '.responses.' + event.target.textContent + '.def',
-              this._show_def,
-              {'pre': pres[1]}
-            )
+          var service = window.services[this._dashed_name(this._selected_service)];
+          if (service)
+          {
+            service = this._selected_service + '.' + service.version;
+            new XMLHttpRequest().loadResource(
+                this._doc_base_uri + 'defs/' + service + '.commands.' + event.target.textContent + '.def',
+                this._show_def,
+                {'pre': pres[0]}
+              )
+            new XMLHttpRequest().loadResource(
+                this._doc_base_uri + 'defs/' + service + '.responses.' + event.target.textContent + '.def',
+                this._show_def,
+                {'pre': pres[1]}
+              )
+          }
           cookies.set('command-list', event.target.textContent, 2*60*60*1000);
           break;
         }
@@ -336,11 +324,16 @@ window.cls.TestFramework = function()
             "<h2>Event " + event.target.textContent + "</h2>" +
             "<pre class='definition'></pre>";
           var pres = message_container.getElementsByTagName('pre');
-          new XMLHttpRequest().loadResource(
-              this._doc_base_uri + 'defs/' + this._selected_service + '.events.' + event.target.textContent + '.def',
-              this._show_def,
-              {'pre': pres[0]}
-            );
+          var service = window.services[this._dashed_name(this._selected_service)];
+          if (service)
+          {
+            service = this._selected_service + '.' + service.version;
+            new XMLHttpRequest().loadResource(
+                this._doc_base_uri + 'defs/' + service + '.events.' + event.target.textContent + '.def',
+                this._show_def,
+                {'pre': pres[0]}
+              );
+          }
           break;
         }
         case 'test-send-command':
