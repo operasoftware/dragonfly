@@ -12,39 +12,9 @@ cls.debug.wrap_transmit = function()
   cls.debug.wrap_transmit = function(){};
 }
 
-cls.debug.guess_message_map = function()
-{
-  var
-  service = '',
-  versions = null,
-  version_arr = null,
-  version = '',
-  re_version = /^\d+\.\d+$/;
-
-  for(service in window.message_maps)
-  {
-    version_arr = [];
-    versions = window.message_maps[service];
-    for(version in versions)
-    {
-      if(re_version.test(version))
-      {
-        version_arr.push(version);
-      }
-    }
-    version_arr = version_arr.sort();
-    if(version_arr.length)
-    {
-      window.message_maps[service] = versions[version_arr[version_arr.length - 1]];
-      window.message_maps[service].versions = versions;
-    }
-  }
-}
-
 cls.debug.create_debug_environment = function(params)
 {
   window.ini.debug = true;
-  cls.debug.guess_message_map();
   window.cls.TestFramework.prototype = ViewBase;
   cls.debug.Debug.prototype =
   window.cls.debug.TestScopeMessages.prototype =
