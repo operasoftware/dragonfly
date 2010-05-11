@@ -54,10 +54,99 @@ window.app.build_application = function(on_services_created, on_services_enabled
     return name.replace(/(^|-)[a-z]/g, re_replace_first_and_dash);
   }
 
+  var _find_compatible_version = function(version, version_list)
+  {
+    var
+    numbers = version.split(".").map(Number),
+    match = null,
+    ver, nums;
+     // Find the best match for the current version
+    for (ver in version_list)
+    {
+      nums = ver.split(".").map(Number);
+      if (nums[0] != numbers[0])
+        continue;
+      if (!match || nums[1] > match[1][1])
+        match = [ver, nums];
+    }
+    return match && match[0];
+  }
+
+  var on_host_info_callback = function(service_descriptions)
+  {
+    if (window.ini.debug)
+    {
+      new window.cls.GetMessageMaps().get_maps(service_descriptions, 
+        function(map)
+        {
+          window.message_maps = map;
+          build_and_enable_services(service_descriptions);
+        }, 
+        function(error)
+        {
+          opera.postError(error.message);
+        }
+      );
+    }
+    else
+    {
+      build_and_enable_services(service_descriptions);
+    }
+  };
+
   /**
    * This callback is invoked when host info is received from the debuggee.
    *
    */
+  var build_and_enable_services = function(service_descriptions)
+  {
+    var 
+    service_name = '',
+    service = null,
+    class_name = '',
+    re_version = /(^\d+\.\d+)(?:\.\d+)?$/,
+    version = null,
+    i = 0,
+    builder = null,
+    numbers = null;
+
+    for (service_name in service_descriptions)
+    {
+      service = service_descriptions[service_name];
+      version = re_version.exec(service.version);
+      version = version && version[1] || "0";
+      class_name = get_class_name(service_name);
+      if (service_name != "scope")
+      {
+        var
+        match_version = _find_compatible_version(version, window.app.builders[class_name]),
+        builder = window.app.builders[class_name] && window.app.builders[class_name][match_version];
+        if (builder) 
+        {
+          builder(service);
+        }
+      }
+    }
+    window.app.post('services-created', {'service_description': service_descriptions});
+    if (window.app.on_services_created)
+    {
+      window.app.on_services_created(service_descriptions);
+    }
+    if (on_services_created)
+    {
+      on_services_created(service_descriptions);
+    }
+    for (service_name in service_descriptions)
+    {
+      if(service_name in window.services && 
+            window.services[service_name].is_implemented &&
+            service_name != "scope")
+      {
+        window.services['scope'].requestEnable(0,[service_name]);
+      }
+    }
+  }
+  /*
   var on_host_info_callback = function(service_descriptions)
   {
     var
@@ -103,6 +192,7 @@ window.app.build_application = function(on_services_created, on_services_enabled
       on_services_created(service_descriptions);
     }
   }
+  */
 
   var create_raw_interface = function(service_name)
   {
@@ -147,7 +237,7 @@ window.app.build_application = function(on_services_created, on_services_enabled
   {
     cls.debug.create_debug_environment(params);
   }
-  var namespace = cls.Scope && cls.Scope["1.0"];
+  var namespace = cls.Scope && cls.Scope["1.1"];
   window.app.helpers.implement_service(namespace);
   window.services.scope.set_host_info_callback(on_host_info_callback);
   window.services.scope.set_services_enabled_callback(on_services_enabled);
