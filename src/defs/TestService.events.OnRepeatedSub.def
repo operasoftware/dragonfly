@@ -1,8 +1,0 @@
-message <span class="message">RepeatedSub</span>
-{
-  message <span class="message">RepeatedSubInner</span>
-  {
-    required <span class="number">int32</span> value = 1; 
-  }
-  repeated <span class="message">RepeatedSubInner</span> itemList = 1; 
-}

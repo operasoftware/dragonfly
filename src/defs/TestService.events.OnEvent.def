@@ -1,4 +1,0 @@
-message <span class="message">Event</span>
-{
-  required <span class="number">uint32</span> currentID = 1; 
-}
