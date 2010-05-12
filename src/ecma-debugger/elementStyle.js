@@ -406,6 +406,57 @@ cls.ElementStyle = function()
     }
   }
 
+  this.update_categories = function()
+  {
+    var rt_id = __selectedElement.rt_id;
+    var obj_id = __selectedElement.obj_id;
+    var tag = tagManager.set_callback(null, handle_update_categories, [rt_id, obj_id]);
+    services['ecmascript-debugger'].requestCssGetStyleDeclarations(tag, [rt_id, obj_id]);
+
+    function handle_update_categories(status, message, rt_id, obj_id)
+    {
+      // TODO: these can be removed if the stuff under isn't necessary
+      var
+      declarations = null,
+      i = 0,
+      view_id = '',
+      node_style_cascade = null,
+      style_dec = null,
+      j = 0,
+      length = 0,
+      k = 0;
+
+      if (status == 0)
+      {
+        categories_data[COMP_STYLE] = message[COMPUTED_STYLE_LIST];
+        categories_data[CSS] = message[NODE_STYLE_LIST] || [];
+        categories_data[CSS].rt_id = categories_data[COMP_STYLE].rt_id = rt_id;
+        categories_data[IS_VALID] = true;
+
+        //// this is to ensure that a set property is always displayed in computed style,
+        //// also if it maps the initial value and the setting "Hide Initial Values" is set to true.
+        //__setProps = [];
+        //for (i = 0; node_style_cascade = categories_data[CSS][i]; i++)
+        //{
+        //  for (j = 0; style_dec = node_style_cascade[STYLE_LIST][j]; j++)
+        //  {
+        //    if (style_dec[ORIGIN] != 1) // any other rule except browser default rules
+        //    {
+        //      length = style_dec[INDEX_LIST].length;
+        //      for (k = 0; k < length; k++)
+        //      {
+        //        if (style_dec[STATUS_LIST][k])
+        //        {
+        //          __setProps[style_dec[INDEX_LIST][k]] = 1;
+        //        }
+        //      }
+        //    }
+        //  }
+        //}
+      }
+    }
+  };
+
   /* */
   messages.addListener('element-selected', onElementSelected);
   messages.addListener('reset-state', onResetState);

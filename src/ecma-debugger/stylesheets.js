@@ -482,6 +482,7 @@ cls.Stylesheets = function()
     overwrittenlist = rule[OVERWRITTEN_LIST],
     search_list = rule[SEARCH_LIST],
     length = index_list.length, i = 0,
+    prop_index = 0,
     index = 0,
     s_h_index = [],
     s_h_value = [],
@@ -489,43 +490,53 @@ cls.Stylesheets = function()
     s_h_prop = '',
     s_h_count = 0;
 
+    var properties = index_list.map(function(index) {
+      return [window.css_index_map[index], index];
+    });
+
+    // Sort in alphabetical order
+    properties.sort(function(a, b) {
+      return a[0] > b[0] ? 1 : -1; // The same property can never happen
+    });
+
     for ( ; i < length; i++)
     {
-      index = index_list[i];
-      if (search_active && !search_list[i])
+      prop_index = properties[i][1];
+      index = index_list.indexOf(prop_index);
+      if (search_active && !search_list[index])
       {
         continue;
       }
 
-      if (do_shortcuts && SHORTHAND[index])
+      if (do_shortcuts && SHORTHAND[prop_index])
       {
-        if (__shorthandIndexMap[index] == 'font')
+        if (__shorthandIndexMap[prop_index] == 'font')
         {
           SHORTHAND[line_height_index] = 5;
         }
         s_h_index = [];
         s_h_value = [];
         s_h_priority = [];
-        s_h_prop = __shorthandIndexMap[index];
+        s_h_prop = __shorthandIndexMap[prop_index];
         do
         {
-          if (__shorthandIndexMap[index] != 'line-height' &&
-              __shorthandIndexMap[index] != s_h_prop)
+          if (__shorthandIndexMap[prop_index] != 'line-height' &&
+              __shorthandIndexMap[prop_index] != s_h_prop)
           {
             ret += (ret ? MARKUP_PROP_NL : "") +
               shorthands[s_h_prop](s_h_prop, s_h_index, s_h_value, s_h_priority);
-            SHORTHAND[line_height_index] = __shorthandIndexMap[index] == 'font' ? 5 : 0;
+            SHORTHAND[line_height_index] = __shorthandIndexMap[prop_index] == 'font' ? 5 : 0;
             s_h_index = [];
             s_h_value = [];
             s_h_priority = [];
-            s_h_prop = __shorthandIndexMap[index];
+            s_h_prop = __shorthandIndexMap[prop_index];
           }
-          s_h_index[SHORTHAND[index]] = index;
-          s_h_value[SHORTHAND[index]] = helpers.escapeTextHtml(value_list[i]);
-          s_h_priority[SHORTHAND[index]] = priority_list[i];
-          index = index_list[i + 1];
+          s_h_index[SHORTHAND[prop_index]] = prop_index;
+          s_h_value[SHORTHAND[prop_index]] = helpers.escapeTextHtml(value_list[index]);
+          s_h_priority[SHORTHAND[prop_index]] = priority_list[index];
+          prop_index = index_list[index + 1];
         }
-        while (SHORTHAND[index] && ++i);
+        while (SHORTHAND[prop_index] && ++index);
 
         ret += (ret ? MARKUP_PROP_NL : MARKUP_EMPTY) +
                 shorthands[s_h_prop](s_h_prop, s_h_index, s_h_value, s_h_priority);
@@ -536,19 +547,19 @@ cls.Stylesheets = function()
         // css inspector does not shorthand properties
         // perhaps later
         // protocol-4: overwrittenlist is now the STATUS, the meaning is inverted, 1 means applied
-        if (overwrittenlist && overwrittenlist[i])
+        if (overwrittenlist && overwrittenlist[index])
         {
           ret += (ret ? MARKUP_PROP_NL : MARKUP_EMPTY) +
                   INDENT +
-                  MARKUP_KEY + __indexMap[index] + MARKUP_KEY_CLOSE +
-                  MARKUP_VALUE + helpers.escapeTextHtml(value_list[i]) + (priority_list[i] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE;
+                  MARKUP_KEY + __indexMap[prop_index] + MARKUP_KEY_CLOSE +
+                  MARKUP_VALUE + helpers.escapeTextHtml(value_list[index]) + (priority_list[index] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE;
         }
         else
         {
           ret += (ret ? MARKUP_PROP_NL : MARKUP_EMPTY) +
                   INDENT +
-                  MARKUP_KEY_OW + __indexMap[index] + MARKUP_KEY_CLOSE +
-                  MARKUP_VALUE_OW + helpers.escapeTextHtml(value_list[i]) + ( priority_list[i] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE;
+                  MARKUP_KEY_OW + __indexMap[prop_index] + MARKUP_KEY_CLOSE +
+                  MARKUP_VALUE_OW + helpers.escapeTextHtml(value_list[index]) + ( priority_list[index] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE;
         }
       }
     }
