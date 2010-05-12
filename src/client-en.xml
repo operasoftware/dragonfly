@@ -165,9 +165,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="lib/http_logger_2_0.js"></script>
 <script src="lib/scope_1_1.js"></script>
 
-<script src="lib/message-maps/message_map_ecmascript_debugger_6_0.js"></script>
 <script src="./lib/message_maps.js"/>
-<script src="./lib/service_descriptions.js"/>
 <script src="./lib/test_framework.js"/>
 
 
