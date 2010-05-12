@@ -1,4 +1,0 @@
-message <span class="message">RepeatedString</span>
-{
-  repeated <span class="string">string</span> descriptionList = 1; 
-}

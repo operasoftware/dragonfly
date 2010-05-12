@@ -1,5 +1,0 @@
-message <span class="message">OnesAndZeroes</span>
-{
-  required <span class="bytes">bytes</span> first = 1; 
-  required <span class="bytes">bytes</span> empty = 2; 
-}

@@ -1,4 +1,0 @@
-message <span class="message">RepeatedBinary</span>
-{
-  repeated <span class="bytes">bytes</span> moccaList = 1; 
-}
