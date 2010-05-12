@@ -146,53 +146,6 @@ window.app.build_application = function(on_services_created, on_services_enabled
       }
     }
   }
-  /*
-  var on_host_info_callback = function(service_descriptions)
-  {
-    var
-    service_name = '',
-    service = null,
-    class_name = '',
-    re_version = /(^\d+\.\d+)(?:\.\d+)?$/,
-    version = null,
-    i = 0,
-    builder = null;
-
-    for (service_name in service_descriptions)
-    {
-      if (service_name != "scope")
-      {
-        service = service_descriptions[service_name];
-        version = re_version.exec(service.version);
-        version = version && version[1] || 0;
-        class_name = get_class_name(service_name);
-        // the initial message map is set in cls.debug.guess_message_map
-        if(window.ini.debug &&
-            window.message_maps[service_name] &&
-            window.message_maps[service_name].versions &&
-            window.message_maps[service_name].versions[version])
-        {
-          window.message_maps[service_name] = window.message_maps[service_name].versions[version];
-          window.message_maps[service_name].versions = null;
-        }
-        builder = window.app.builders[class_name] && window.app.builders[class_name][version];
-        if (builder)
-        {
-          builder(service);
-        }
-      }
-    }
-    window.app.post('services-created', {'service_description': service_descriptions});
-    if (window.app.on_services_created)
-    {
-      window.app.on_services_created(service_descriptions);
-    }
-    if (on_services_created)
-    {
-      on_services_created(service_descriptions);
-    }
-  }
-  */
 
   var create_raw_interface = function(service_name)
   {
