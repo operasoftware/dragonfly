@@ -283,7 +283,9 @@ window.cls.TestFramework = function()
       commands = this._service_descriptions.commands[service_name] = [];
       events = this._service_descriptions.events[service_name] = [];
       for (command_id in service)
-      (1 in service[command_id] && commands || events).push(service[command_id].name);    
+        (1 in service[command_id] && commands || events).push(service[command_id].name);
+      commands.sort();
+      events.sort();
     }
   }
 
