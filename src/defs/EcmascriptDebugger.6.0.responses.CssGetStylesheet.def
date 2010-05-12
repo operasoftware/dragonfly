@@ -1,0 +1,64 @@
+message <span class="message">CssStylesheetRules</span>
+{
+  <span class="comment">/** 
+   * Common to FONT_FACE, PAGE and STYLE is:
+   * - indexList
+   * - valueList
+   * - priorityList
+   * 
+   * Common to STYLE and PAGE is:
+   * - selectorList
+   * - specificityList
+   * 
+   * Common to MEDIA and IMPORT
+   * - mediaList
+   * 
+   * For MEDIA
+   * - ruleList
+   * 
+   * For IMPORT
+   * - href
+   * - importStylesheetID
+   * 
+   * For PAGE
+   * - pseudoClass
+   * 
+   * For CHARSET
+   * - charset
+   */</span>
+  message <span class="message">StylesheetRule</span>
+  {
+    <span class="comment">/** 
+     * Type values:
+     * 0 - UNKNOWN
+     * 1 - STYLE
+     * 2 - CHARSET
+     * 3 - IMPORT
+     * 4 - MEDIA
+     * 5 - FONT_FACE
+     * 6 - PAGE
+     * 7 - NAMESPACE // Not supported
+     */</span>
+    required <span class="number">uint32                           </span> type               =  1; 
+    required <span class="number">uint32                           </span> stylesheetID       =  2; 
+    required <span class="number">uint32                           </span> ruleID             =  3; 
+    repeated <span class="number">uint32                           </span> indexList          =  4; 
+    repeated <span class="string">string                           </span> valueList          =  5; 
+    repeated <span class="bool">bool                             </span> priorityList       =  6; 
+    <span class="comment">/** 
+     * 0..1 for PAGE and 0.. for STYLE
+     */</span>
+    repeated <span class="string">string                           </span> selectorList       =  7; 
+    <span class="comment">/** 
+     * 1..1 for PAGE and 0.. for STYLE
+     */</span>
+    repeated <span class="number">uint32                           </span> specificityList    =  8; 
+    repeated <span class="string">string                           </span> mediaList          =  9; 
+    repeated <span class="message">CssStylesheetRules.StylesheetRule</span> ruleList           = 10; 
+    optional <span class="string">string                           </span> href               = 11; 
+    optional <span class="number">uint32                           </span> importStylesheetID = 12; 
+    optional <span class="number">uint32                           </span> pseudoClass        = 13; 
+    optional <span class="string">string                           </span> charset            = 14; 
+  }
+  repeated <span class="message">StylesheetRule</span> ruleList = 1; 
+}

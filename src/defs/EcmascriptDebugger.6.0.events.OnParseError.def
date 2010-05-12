@@ -1,0 +1,18 @@
+message <span class="message">DomParseError</span>
+{
+  required <span class="number">uint32</span> runtimeID   = 1; 
+  required <span class="number">uint32</span> scriptID    = 2; 
+  required <span class="number">uint32</span> lineNumber  = 3; 
+  <span class="comment">/** 
+   * Represents the character offset in the script where the parse error occured.
+   */</span>
+  required <span class="number">uint32</span> offset      = 4; 
+  <span class="comment">/** 
+   * Describes in what context the error occured.
+   */</span>
+  required <span class="string">string</span> context     = 5; 
+  <span class="comment">/** 
+   * Contains the human-readable description of the parse error.
+   */</span>
+  required <span class="string">string</span> description = 6; 
+}
