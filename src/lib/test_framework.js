@@ -249,16 +249,6 @@ window.cls.TestFramework = function()
     return ret;
   }
 
-  this._class_name = (function()
-  {
-    // cache the reg exp and the replace function
-    var 
-    re = /(?:^|-)([a-z])/g,
-    match_fn = function(match, _char) {return _char.toUpperCase();};
-
-    return function(name) {return name.replace(re, match_fn);};
-  })();
-
   this._make_service_descriptions = function()
   {
     var 
@@ -273,7 +263,7 @@ window.cls.TestFramework = function()
     for (service_name in map)
     {
       service = map[service_name];
-      service_name = this._class_name(service_name);
+      service_name = window.app.helpers.dash_to_class_name(service_name);
       commands = this._service_descriptions.commands[service_name] = [];
       events = this._service_descriptions.events[service_name] = [];
       for (command_id in service)

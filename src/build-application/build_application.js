@@ -38,21 +38,6 @@ window.cls.Messages.apply(window.app);
 
 window.app.build_application = function(on_services_created, on_services_enabled)
 {
-  /**
-   * A callback helper for String.prototype.replace for the reg exp /(^|-)[a-z]/
-   */
-  var re_replace_first_and_dash = function(match)
-  {
-    return match[match.length-1].toUpperCase();
-  }
-
-  /**
-   * Make an appropriate class name based on name
-   */
-  var get_class_name = function(name)
-  {
-    return name.replace(/(^|-)[a-z]/g, re_replace_first_and_dash);
-  }
 
   var _find_compatible_version = function(version, version_list)
   {
@@ -115,7 +100,7 @@ window.app.build_application = function(on_services_created, on_services_enabled
       service = service_descriptions[service_name];
       version = re_version.exec(service.version);
       version = version && version[1] || "0";
-      class_name = get_class_name(service_name);
+      class_name = window.app.helpers.dash_to_class_name(service_name);
       if (service_name != "scope")
       {
         var
@@ -264,6 +249,21 @@ window.app.helpers.parse_url_arguments = function()
       arg[1] && arg[1].replace(/^ +/, '').replace(/ +$/, '') || true;
   }
   return params;
+}
+
+window.app.helpers.dash_to_class_name = function(name)
+{
+  for ( var cur = '', i = 0, ret = '', do_upper = true; cur = name[i]; i++)
+  {
+    if(cur == '-')
+    {
+      do_upper = true;
+      continue;
+    }
+    ret += do_upper && cur.toUpperCase() || cur;
+    do_upper = false;
+  }
+  return ret;
 }
 
 

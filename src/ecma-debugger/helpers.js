@@ -174,20 +174,7 @@ window.cls.Helpers = function()
     return ret;
   }
 
-  this.service_class_name = function(name)
-  {
-    for ( var cur = '', i = 0, ret = '', do_upper = true; cur = name[i]; i++)
-    {
-      if(cur == '-')
-      {
-        do_upper = true;
-        continue;
-      }
-      ret += do_upper && cur.toUpperCase() || cur;
-      do_upper = false;
-    }
-    return ret;
-  }
+  this.service_class_name = window.app.helpers.dash_to_class_name;
 
   document.addEventListener('keypress', keypressListener, true);
 
