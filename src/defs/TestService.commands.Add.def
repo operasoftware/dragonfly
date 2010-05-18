@@ -1,4 +1,0 @@
-message <span class="message">InAdd</span>
-{
-  repeated <span class="number">uint32</span> valueList = 1; 
-}

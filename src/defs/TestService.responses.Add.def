@@ -1,4 +1,0 @@
-message <span class="message">OutAdd</span>
-{
-  required <span class="number">uint32</span> result = 1; 
-}

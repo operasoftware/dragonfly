@@ -1,4 +1,0 @@
-message <span class="message">StringAccess</span>
-{
-  required <span class="string">string</span> a = 1; 
-}
