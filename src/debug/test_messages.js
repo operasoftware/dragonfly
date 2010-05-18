@@ -118,7 +118,7 @@ cls.debug.TestScopeMessages = function(id, name, container_class)
   this.createView = function(container)
   {
     container.clearAndRender(this._main_template());
-    this._rebuild_last_state();
+    this.rebuild_last_state();
   }
 
   this._on_active_tab = function(msg)
