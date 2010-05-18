@@ -49,11 +49,14 @@ window.cls.TestFramework = function()
     */
   this.clear_log = function(){};
 
+  this.rebuild_last_state = function(){};
+
   /* privat */
   
   this._selected_service = "";
   this._status_map = cls.ServiceBase.get_status_map();
   this._event_map = cls.ServiceBase.get_event_map();
+  this._service_descriptions = null;
 
   const INDENT = "  ", RESPONSE = 2;
 
@@ -225,7 +228,7 @@ window.cls.TestFramework = function()
 
   // to re-select the last selected service and command or event
   // and display the according message definitions
-  this._rebuild_last_state = function()
+  this.rebuild_last_state = function()
   {
     this._reselect_element('service-list', 'command-list');
   }
@@ -246,10 +249,47 @@ window.cls.TestFramework = function()
     return ret;
   }
 
+  this._class_name = (function()
+  {
+    var 
+    re = /(?:^|-)([a-z])/g,
+    match_fn = function(match, _char) {return _char.toUpperCase();};
+
+    return function(name) {return name.replace(re, match_fn);};
+  })();
+
+  this._make_service_descriptions = function()
+  {
+    var 
+    map = window.message_maps,
+    service_name = '', 
+    command_id = '', 
+    servive = null, 
+    commands = null, 
+    events = null;
+
+    this._service_descriptions = {commands:{}, events: {}};
+    for (service_name in map)
+    {
+      service = map[service_name];
+      service_name = this._class_name(service_name);
+      commands = this._service_descriptions.commands[service_name] = [];
+      events = this._service_descriptions.events[service_name] = [];
+      for (command_id in service)
+        (1 in service[command_id] && commands || events).push(service[command_id].name); 
+      commands.sort();
+      events.sort();
+    }
+  }
+
   // generic click event handler
   this._click_handler = function(event)
   {
     var target = event.target;
+    if (!this._service_descriptions)
+    {
+      this._make_service_descriptions();
+    }
     if(!this._doc_base_uri)
     {
       this._doc_base_uri = 
@@ -273,8 +313,8 @@ window.cls.TestFramework = function()
           this._update_selected(target, event.target);
           document.getElementById('message-container').innerHTML = "";
           this._selected_service = event.target.textContent
-          this._update_list('Command', service_descriptions.commands[this._selected_service], target);
-          this._update_list('Event', service_descriptions.events[this._selected_service], target);
+          this._update_list('Command', this._service_descriptions.commands[this._selected_service], target);
+          this._update_list('Event', this._service_descriptions.events[this._selected_service], target);
           cookies.set('service-list', this._selected_service, 2*60*60*1000);
           break;
         }
