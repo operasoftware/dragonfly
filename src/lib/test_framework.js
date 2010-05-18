@@ -251,6 +251,7 @@ window.cls.TestFramework = function()
 
   this._class_name = (function()
   {
+    // cache the reg exp and the replace function
     var 
     re = /(?:^|-)([a-z])/g,
     match_fn = function(match, _char) {return _char.toUpperCase();};
