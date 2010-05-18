@@ -38,21 +38,46 @@ window.cls.Messages.apply(window.app);
 
 window.app.build_application = function(on_services_created, on_services_enabled)
 {
-  /**
-   * A callback helper for String.prototype.replace for the reg exp /(^|-)[a-z]/
-   */
-  var re_replace_first_and_dash = function(match)
+
+  var _find_compatible_version = function(version, version_list)
   {
-    return match[match.length-1].toUpperCase();
+    var
+    numbers = version.split(".").map(Number),
+    match = null,
+    ver, nums;
+     // Find the best match for the current version
+    for (ver in version_list)
+    {
+      nums = ver.split(".").map(Number);
+      if (nums[0] != numbers[0])
+        continue;
+      if (!match || nums[1] > match[1][1])
+        match = [ver, nums];
+    }
+    return match && match[0];
   }
 
-  /**
-   * Make an appropriate class name based on name
-   */
-  var get_class_name = function(name)
+  var on_host_info_callback = function(service_descriptions)
   {
-    return name.replace(/(^|-)[a-z]/g, re_replace_first_and_dash);
-  }
+    if (window.ini.debug)
+    {
+      new window.cls.GetMessageMaps().get_maps(service_descriptions, 
+        function(map)
+        {
+          window.message_maps = map;
+          build_and_enable_services(service_descriptions);
+        }, 
+        function(error)
+        {
+          opera.postError(error.message);
+        }
+      );
+    }
+    else
+    {
+      build_and_enable_services(service_descriptions);
+    }
+  };
 
   var _find_compatible_version = function(version, version_list)
   {
@@ -115,7 +140,7 @@ window.app.build_application = function(on_services_created, on_services_enabled
       service = service_descriptions[service_name];
       version = re_version.exec(service.version);
       version = version && version[1] || "0";
-      class_name = get_class_name(service_name);
+      class_name = window.app.helpers.dash_to_class_name(service_name);
       if (service_name != "scope")
       {
         var
@@ -264,6 +289,21 @@ window.app.helpers.parse_url_arguments = function()
       arg[1] && arg[1].replace(/^ +/, '').replace(/ +$/, '') || true;
   }
   return params;
+}
+
+window.app.helpers.dash_to_class_name = function(name)
+{
+  for ( var cur = '', i = 0, ret = '', do_upper = true; cur = name[i]; i++)
+  {
+    if(cur == '-')
+    {
+      do_upper = true;
+      continue;
+    }
+    ret += do_upper && cur.toUpperCase() || cur;
+    do_upper = false;
+  }
+  return ret;
 }
 
 
