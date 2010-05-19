@@ -64,7 +64,7 @@ window.cls.TestFramework = function()
   this._get_indent = function(count)
   {
     var ret = "";
-    while(count && count-- > 0)
+    while(count-- > 0)
     {
       ret += INDENT;
     }

@@ -1,13 +1,320 @@
 ﻿window.cls || (window.cls = {});
 cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
-cls.EcmascriptDebugger["5.0"] || (cls.EcmascriptDebugger["5.0"] = {});
+cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
 
 /**
   * @constructor
   */
 
-cls.EcmascriptDebugger["5.0"].ObjectDataBase = function()
+/*
+  status: OK
+  payload: 
+    objectChainList:
+      objectChain: 
+        objectList:
+
+          object: 
+            value: 
+              objectID: 2
+              isCallable: 0
+              type: "object"
+              prototypeID: 3
+              className: "HTMLDocument"
+
+            propertyList:
+
+              property: 
+                name: "URL"
+                type: "string"
+                value: "opera:debug"
+
+              property: 
+                name: "activeElement"
+                type: "object"
+                value: 
+                objectValue: 
+                  objectID: 22
+                  isCallable: 0
+                  type: "object"
+                  prototypeID: 37
+                  className: "HTMLButtonElement"
+
+*/
+
+cls.EcmascriptDebugger["6.0"].ObjectDataBase = function()
 {
+
+  /* interface */
+
+
+
+  
+  this.setObject = function(rt_id, obj_id, virtualProperties){};
+  this.getData = function(rt_id, obj_id, depth, org_args){};
+  this.prettyPrint = function(data, target_depth, use_filter, filter_type){};
+  this.clearData = function(rt_id, obj_id, depth, key){};
+
+  /* private */
+  this.parseXML = function(status, message, rt_id, obj_id, org_args){};
+  this.getObject = function(obj_id, depth, key){};
+  this.getCountVirtualProperties = function(index){};
+  
+  this.__getData = function(index, target_depth){};
+
+  /* constants */
+
+  const
+  OBJECT_CHAIN_LIST = 0,
+  // sub message ObjectList 
+  OBJECT_LIST = 0,
+  // sub message ObjectInfo 
+  VALUE = 0,
+  PROPERTY_LIST = 1,
+  // sub message ObjectValue 
+  OBJECT_ID = 0,
+  IS_CALLABLE = 1,
+  TYPE = 2,
+  PROTOTYPE_ID = 3,
+  CLASS_NAME = 4,
+  FUNCTION_NAME = 5;
+  // sub message Property 
+  NAME = 0,
+  PROPERTY_TYPE = 1,
+  PROPERTY_VALUE = 2,
+  OBJECT_VALUE = 3,
+  // added fields
+  PROPERTY_ITEM = 4,
+  MAX_VALUE_LENGTH = 30;
+
+  
+
+  this._obj_map = {};
+  this._queried_map = {};
+
+  this.setObject = function(rt_id, obj_id, virtual_props)
+  {
+    this._rt_id = rt_id;
+    this._obj_id = obj_id;
+    // TODO sync format
+    this._virtual_props = virtual_props;
+  }
+
+  this.getData = function(rt_id, obj_id, path, org_args)
+  {
+    if (this._obj_map[obj_id])
+    {
+      return this._obj_map[obj_id];
+    }
+    var tag = window.tag_manager.set_callback(this, this._handle_examine_object, [rt_id, obj_id, org_args]);
+    window.services['ecmascript-debugger'].requestExamineObjects(tag, [rt_id, [obj_id], 1]); 
+  }
+
+  this._handle_examine_object = function(status, message, rt_id, obj_id, org_args)
+  {
+    var 
+    proto_chain = null,
+    property_list = null,
+    i = 0,
+    class_name = '',
+    items = null,
+    attributes = null,
+    cursor = null,
+    i = 0,
+    re_d = /^\d+$/;
+
+    if (status)
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + ' failed to examine object');
+    else
+    {
+      proto_chain = message[OBJECT_CHAIN_LIST][0][OBJECT_LIST];
+      // opera.postError(proto_chain.map(function(proto){return proto[0][4]}).join(', '));
+      for (; proto = proto_chain[i]; i++)
+      {
+        class_name = proto[VALUE][CLASS_NAME];
+        property_list = proto[PROPERTY_LIST];
+        if (class_name == "Array")
+        {
+          items = [];
+          attributes = [];
+          for (i = 0; cursor = property_list[i]; i++)
+          {
+            if (re_d.test(cursor[KEY]))
+            {
+              cursor[ITEM] = parseInt(cursor[KEY]);
+              items[items.length] = cursor;
+            }
+            else
+              attributes[attributes.length] = cursor;
+          }
+          items.sort(this._sort_item);
+          attributes.sort(sort_key);
+          proto[PROPERTY_LIST] = items.concat(attributes);
+        }
+        else
+          proto[PROPERTY_LIST].sort(this._sort_name);
+      }
+
+      this._obj_map[obj_id] = proto_chain;
+      if (org_args && !this._queried_map[obj_id])
+      {
+        this._queried_map[obj_id] = true;
+        org_args.callee.apply(null, org_args);
+      }
+
+      //opera.postError(proto_chain[0][1].map(function(prop){return prop[0]}).join(', '));
+    }
+
+
+
+
+    
+  }
+
+  this._sort_name = function(a, b)
+  {
+    return a[NAME] < b[NAME] ? -1 : a[NAME] > b[NAME] ? 1 : 0;
+  };
+
+  this._sort_item = function(a, b)
+  {
+    return a[ITEM] < b[ITEM] ? -1 : a[ITEM] > b[ITEM] ? 1 : 0;
+  };
+
+  this.prettyPrint = function(data, path, use_filter, filter_type)
+  {
+    var ret = [], proto = null, i = 0;
+    
+    for (; proto = data[i]; i++)
+    {
+      // skip the first object description
+      // if (i)
+      ret.push("<div class='prototype-chain-object'>", proto[VALUE][CLASS_NAME], "</div>");
+      this._pretty_print_properties(proto[PROPERTY_LIST], ret);
+    }
+    return ret.join('');
+  }
+
+  this._pretty_print_properties = function(property_list, ret)
+  {
+    var prop = null, i = 0, value = '', type = '', short_val = '';
+    for (; prop = property_list[i]; i++)
+    {
+      value = prop[PROPERTY_VALUE];
+      switch (type = prop[PROPERTY_TYPE])
+      {
+        case "number":
+        case "boolean":
+        {
+          ret.push(
+            "<item>" +
+              "<key class='no-expander'>" + helpers.escapeTextHtml(prop[NAME]) + "</key>" +
+              "<value class='" + type + "'>" + value + "</value>" +
+            "</item>"
+          );
+          break;
+        }
+        case "string":
+        {
+          short_val = value.length > MAX_VALUE_LENGTH ? 
+                        value.slice(0, MAX_VALUE_LENGTH) + '…"' : '';
+          value = helpers.escapeTextHtml(value).replace(/'/g, '&#39;');
+          if (short_val)
+          {
+            ret.push(
+              "<item>" +
+                "<input type='button' handler='expand-value'  class='folder-key'/>" +
+                "<key>" + helpers.escapeTextHtml(prop[NAME]) + "</key>" +
+                "<value class='" + type + "' data-value='" + value + "'>" +
+                  "\"" + helpers.escapeTextHtml(short_val) +
+                "</value>" +
+              "</item>"
+            );
+          }
+          else
+          {
+            ret.push(
+              "<item>" +
+                "<key class='no-expander'>" + helpers.escapeTextHtml(prop[NAME]) + "</key>" +
+                "<value class='" + type + "'>\"" + value + "\"</value>" +
+              "</item>"
+            );
+          }
+          break;
+        }
+        case "null":
+        case "undefined":
+        {
+          ret.push(
+            "<item>" +
+              "<key class='no-expander'>" + helpers.escapeTextHtml(prop[NAME]) + "</key>" +
+              "<value class='" + type + "'>" + type + "</value>" +
+            "</item>"
+          );
+          break;
+        }
+        case "object":
+        {
+          ret.push(
+            "<item obj-id='" + prop[OBJECT_VALUE][OBJECT_ID] + "'>" +
+              "<input type='button' handler='examine-object'  class='folder-key'/>" +
+              "<key>" + helpers.escapeTextHtml(prop[NAME]) + "</key>" +
+              "<value class='object'>" + prop[OBJECT_VALUE][CLASS_NAME] + "</value>" +
+            "</item>"
+          );
+          break;
+        }
+      }
+
+    }
+  }
+
+/*
+
+      if (typeof val == 'string')
+      {
+        // The escape of ' is for not messing up innerHTML down the line
+        val = helpers.escapeTextHtml(val).replace(/'/g, '&#39;');
+      }
+
+      depth = forced_depth || prop[DEPTH];
+
+      if (prop[TYPE] == 'object')
+      {
+        ret += "<item obj-id='" + prop[VALUE] + "' depth='" + depth + "'>" +
+                 "<input type='button' handler='examine-object-2'  class='folder-key'/>" +
+                 "<key>" + helpers.escapeTextHtml(prop[KEY]) + "</key>" +
+                 "<value class='object'>" + prop[CONSTRUCTOR] + "</value>" +
+                "</item>";
+      }
+      else
+      {
+        if (short_val)
+        {
+          ret += "<item>" +
+                   "<input type='button' handler='expand-value'  class='folder-key'/>" +
+                   "<key>" + helpers.escapeTextHtml(prop[KEY]) + "</key>" +
+                   "<value class='" + prop[TYPE] + "' data-value='" + val + "'>" +
+                     helpers.escapeTextHtml(short_val) +
+                   "</value>" +
+                 "</item>";
+        }
+        else
+        {
+          ret += "<item>" +
+                   "<key class='no-expander'>" + helpers.escapeTextHtml(prop[KEY]) + "</key>" +
+                   "<value class='" + prop[TYPE] + "'>" + val + "</value>" +
+                 "</item>";
+        }
+      }
+    }
+    
+  };
+
+
+  
+  
+  
+/*
   const
   KEY = 0,
   VALUE = 1,
@@ -250,12 +557,7 @@ cls.EcmascriptDebugger["5.0"].ObjectDataBase = function()
 
   this.__getData = function(index, target_depth)
   {
-    /* TODO test if this works and if it's needed
-    if( this.__cached_index == index && this.__cache )
-    {
-      return this.__cache;
-    }
-    */
+
     var ret = [], i = index + 1, depth = this.data[index][DEPTH], prop = null;
     ret.object_index = index;
     // it's a back refernce, return only the properties from the current level
@@ -442,5 +744,7 @@ cls.EcmascriptDebugger["5.0"].ObjectDataBase = function()
     }
     return ret;
   };
+
+  */
 };
 

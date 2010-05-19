@@ -522,6 +522,13 @@ examine-objects key.no-expander
 {
   margin-left: 18px;
 }
+.prototype-chain-object
+{
+  background-color: #666;
+  color: #fff;
+  font-weight: bold;
+  padding: 2px 16px;
+}
 .css-layout layout-container
 {
   display: table;

@@ -232,6 +232,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ecma-debugger/stop_at.js"/>
 <script src="./ecma-debugger/runtime_onload_handler.js"/>
 <script src="./ecma-debugger/ObjectDataBase.js"/>
+<script src="./ecma-debugger/ObjectDataBase_6_0.js"/>
 <script src="./ecma-debugger/frame_inspection_data.js"/>
 <script src="./ecma-debugger/object_inspection_data.js"/>
 <script src="./ecma-debugger/views-runtimes.js"/>
