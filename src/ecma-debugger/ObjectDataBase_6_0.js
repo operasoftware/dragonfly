@@ -143,28 +143,31 @@ cls.EcmascriptDebugger["6.0"].ObjectDataBase = function()
       {
         class_name = proto[VALUE][CLASS_NAME];
         property_list = proto[PROPERTY_LIST];
-        if (class_name == "Array" || /Collection/.test(class_name))
+        if (property_list)
         {
-          items = [];
-          attributes = [];
-          for (i = 0; cursor = property_list[i]; i++)
+          if (class_name == "Array" || /Collection/.test(class_name))
           {
-            if (re_d.test(cursor[NAME]))
+            items = [];
+            attributes = [];
+            for (i = 0; cursor = property_list[i]; i++)
             {
-              cursor[PROPERTY_ITEM] = parseInt(cursor[NAME]);
-              items.push(cursor);
+              if (re_d.test(cursor[NAME]))
+              {
+                cursor[PROPERTY_ITEM] = parseInt(cursor[NAME]);
+                items.push(cursor);
+              }
+              else
+                attributes.push(cursor);
             }
-            else
-              attributes.push(cursor);
+            items.sort(this._sort_item);
+            attributes.sort(this._sort_name);
+            proto[PROPERTY_LIST] = items.concat(attributes);
           }
-          items.sort(this._sort_item);
-          attributes.sort(this._sort_name);
-          proto[PROPERTY_LIST] = items.concat(attributes);
+          else
+            proto[PROPERTY_LIST].sort(this._sort_name);
         }
-        else
-          proto[PROPERTY_LIST].sort(this._sort_name);
         if (i == 0 && obj_id == this._obj_id && this._virtual_props)
-          proto[PROPERTY_LIST] = this._virtual_props.concat(proto[PROPERTY_LIST]);
+          proto[PROPERTY_LIST] = this._virtual_props.concat(proto[PROPERTY_LIST] || []);
           
       }
 
@@ -285,7 +288,7 @@ cls.EcmascriptDebugger["6.0"].ObjectDataBase = function()
       // skip the first object description
       if (i)
         ret.push("<div class='prototype-chain-object'>", proto[VALUE][CLASS_NAME], "</div>");
-      this._pretty_print_properties(proto[PROPERTY_LIST], ret, tree);
+      this._pretty_print_properties(proto[PROPERTY_LIST] || [], ret, tree);
     }
   }
 
