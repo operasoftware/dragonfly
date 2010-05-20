@@ -124,18 +124,30 @@ window.cls.ServiceBase = function()
 
   var _handle_scope_message = function(service, message, command, status, tag)
   {
-    if( !tagManager.handle_message(tag, status, message) )
+    var msg_name = _event_map[service][command], service_obj = _services[service];
+    if (msg_name.slice(0, 2) == 'on')
     {
-      _services[service][_event_map[service][command]](status, message);
+      service_obj[msg_name](status, message);
+      service_obj.post(msg_name.slice(2).toLowerCase(), {status: status, message: message});
+    }
+    else if (!tagManager.handle_message(tag, status, message))
+    {
+      service_obj[msg_name](status, message);
     }
   }
 
   var _handle_scope_message_debug = function(service, message, command, status, tag)
   {
     window.debug.log_message(service, message, command, status, tag);
-    if( !tagManager.handle_message(tag, status, message) )
+    var msg_name = _event_map[service][command], service_obj = _services[service];
+    if (msg_name.slice(0, 2) == 'on')
     {
-      _services[service][_event_map[service][command]](status, message);
+      service_obj[msg_name](status, message);
+      service_obj.post(msg_name.slice(2).toLowerCase(), {status: status, message: message});
+    }
+    else if (!tagManager.handle_message(tag, status, message))
+    {
+      service_obj[msg_name](status, message);
     }
   }
 

@@ -528,6 +528,7 @@ examine-objects key.no-expander
   color: #fff;
   font-weight: bold;
   padding: 2px 16px;
+  margin: 2px 0;
 }
 .css-layout layout-container
 {

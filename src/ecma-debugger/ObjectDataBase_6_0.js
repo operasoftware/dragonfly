@@ -97,12 +97,21 @@ cls.EcmascriptDebugger["6.0"].ObjectDataBase = function()
     this._obj_id = obj_id;
     // TODO sync format
     this._virtual_props = virtual_props;
+    this._expand_tree = {};
   }
 
   this.getData = function(rt_id, obj_id, path, org_args)
   {
     if (this._obj_map[obj_id])
     {
+      // TODO ensure that the argument is allways an array or undefined
+      if (Object.prototype.toString.call(path) == "[object Array]")
+      {
+        for (var i = 0, cur = null, tree = this._expand_tree; cur = path[i]; i++)
+          tree = tree[cur] || (tree[cur] = {});
+      }
+      else if (obj_id == this._obj_id && !this._expand_tree[obj_id])
+        this._expand_tree[obj_id] = {};
       return this._obj_map[obj_id];
     }
     var tag = window.tag_manager.set_callback(this, this._handle_examine_object, [rt_id, obj_id, org_args]);
@@ -127,27 +136,26 @@ cls.EcmascriptDebugger["6.0"].ObjectDataBase = function()
     else
     {
       proto_chain = message[OBJECT_CHAIN_LIST][0][OBJECT_LIST];
-      // opera.postError(proto_chain.map(function(proto){return proto[0][4]}).join(', '));
       for (; proto = proto_chain[i]; i++)
       {
         class_name = proto[VALUE][CLASS_NAME];
         property_list = proto[PROPERTY_LIST];
-        if (class_name == "Array")
+        if (class_name == "Array" || /Collection/.test(class_name))
         {
           items = [];
           attributes = [];
           for (i = 0; cursor = property_list[i]; i++)
           {
-            if (re_d.test(cursor[KEY]))
+            if (re_d.test(cursor[NAME]))
             {
-              cursor[ITEM] = parseInt(cursor[KEY]);
-              items[items.length] = cursor;
+              cursor[PROPERTY_ITEM] = parseInt(cursor[NAME]);
+              items.push(cursor);
             }
             else
-              attributes[attributes.length] = cursor;
+              attributes.push(cursor);
           }
           items.sort(this._sort_item);
-          attributes.sort(sort_key);
+          attributes.sort(this._sort_name);
           proto[PROPERTY_LIST] = items.concat(attributes);
         }
         else
@@ -160,14 +168,7 @@ cls.EcmascriptDebugger["6.0"].ObjectDataBase = function()
         this._queried_map[obj_id] = true;
         org_args.callee.apply(null, org_args);
       }
-
-      //opera.postError(proto_chain[0][1].map(function(prop){return prop[0]}).join(', '));
     }
-
-
-
-
-    
   }
 
   this._sort_name = function(a, b)
@@ -175,28 +176,107 @@ cls.EcmascriptDebugger["6.0"].ObjectDataBase = function()
     return a[NAME] < b[NAME] ? -1 : a[NAME] > b[NAME] ? 1 : 0;
   };
 
+
   this._sort_item = function(a, b)
   {
-    return a[ITEM] < b[ITEM] ? -1 : a[ITEM] > b[ITEM] ? 1 : 0;
+    return a[PROPERTY_ITEM] < b[PROPERTY_ITEM] ? -1 : a[PROPERTY_ITEM] > b[PROPERTY_ITEM] ? 1 : 0;
   };
+
+  this.clearData = function(rt_id, obj_id, path)
+  {
+    var i = 0, cur = '', tree = this._expand_tree, dead_ids = null, ids = null;
+    for (; cur = path[i]; i++)
+    {
+      if (i == path.length -1)
+      {
+        dead_ids = [cur].concat(this._get_all_ids(tree[cur]));
+        tree[cur] = null;
+      }
+      else
+      {
+        tree = tree[cur];
+        if (!tree)
+          throw 'not valid path in ObjectDataBase.clearData';
+      }
+    }
+    ids = this._get_all_ids(this._expand_tree);
+    for (i = 0; cur = dead_ids[i]; i++)
+    {
+      if (ids.indexOf(cur) == -1)
+        this._obj_map[cur] = this._queried_map[cur] = null;
+    }    
+  }
+
+  this._get_all_ids = function get_all_ids(tree, ret)
+  {
+    ret || (ret = []);
+    for (var id in tree)
+    {
+      if (tree[id])
+      {
+        ret.push(id);
+        get_all_ids(tree[id], ret);
+      }
+    }
+    return ret;
+  }
+
+
+
+
+
+
 
   this.prettyPrint = function(data, path, use_filter, filter_type)
   {
-    var ret = [], proto = null, i = 0;
-    
-    for (; proto = data[i]; i++)
+    var ret = [], tree = this._expand_tree;
+    // TODO try to ensure that path is either an array or null
+    if (Object.prototype.toString.call(path) == "[object Array]")
     {
-      // skip the first object description
-      // if (i)
-      ret.push("<div class='prototype-chain-object'>", proto[VALUE][CLASS_NAME], "</div>");
-      this._pretty_print_properties(proto[PROPERTY_LIST], ret);
+      for (var i = 0, cur = null; cur = path[i]; i++)
+      {
+        tree = tree[cur];
+        if (!tree)
+          throw 'not valid path in ObjectDataBase.prettyPrint';
+      }
     }
+    else if (path == -1)
+      tree = tree[this._obj_id];
+    this._pretty_print_protos(data, ret, tree);
     return ret.join('');
   }
 
-  this._pretty_print_properties = function(property_list, ret)
+  this._pretty_print_object = function(obj_id, ret, tree)
   {
-    var prop = null, i = 0, value = '', type = '', short_val = '';
+    var data = this._obj_map[obj_id];
+    if (data)
+    {
+      ret.push(
+        "<examine-objects " +
+          "rt-id='" + this._rt_id + "' " +
+          "data-id=" + this.id + "' " +
+          "obj-id='" + this._obj_id + "' " +
+          ">"
+      );
+      this._pretty_print_protos(data, ret, tree);
+      ret.push("</examine-objects>");
+    }
+  }
+
+  this._pretty_print_protos = function(data, ret, tree)
+  {
+    for (var proto = null, i = 0; proto = data[i]; i++)
+    {
+      // skip the first object description
+      if (i)
+        ret.push("<div class='prototype-chain-object'>", proto[VALUE][CLASS_NAME], "</div>");
+      this._pretty_print_properties(proto[PROPERTY_LIST], ret, tree);
+    }
+  }
+
+  this._pretty_print_properties = function(property_list, ret, tree)
+  {
+    var prop = null, i = 0, value = '', type = '', short_val = '', obj_id = 0;
     for (; prop = property_list[i]; i++)
     {
       value = prop[PROPERTY_VALUE];
@@ -254,17 +334,27 @@ cls.EcmascriptDebugger["6.0"].ObjectDataBase = function()
         }
         case "object":
         {
+          obj_id = prop[OBJECT_VALUE][OBJECT_ID];
           ret.push(
-            "<item obj-id='" + prop[OBJECT_VALUE][OBJECT_ID] + "'>" +
-              "<input type='button' handler='examine-object'  class='folder-key'/>" +
-              "<key>" + helpers.escapeTextHtml(prop[NAME]) + "</key>" +
-              "<value class='object'>" + prop[OBJECT_VALUE][CLASS_NAME] + "</value>" +
-            "</item>"
+            "<item obj-id='" + obj_id + "'>" +
+            "<input " +
+              "type='button' " +
+              "handler='examine-object'  " +
+              "class='folder-key' "
           );
+          if (obj_id in tree)
+            ret.push("style='background-position: 0px -11px') ");
+          ret.push(
+            "/>" +
+            "<key>" + helpers.escapeTextHtml(prop[NAME]) + "</key>" +
+            "<value class='object'>" + prop[OBJECT_VALUE][CLASS_NAME] + "</value>"
+          );
+          if (obj_id in tree)
+            this._pretty_print_object(obj_id, ret, tree[obj_id]);
+          ret.push("</item>");
           break;
         }
       }
-
     }
   }
 
