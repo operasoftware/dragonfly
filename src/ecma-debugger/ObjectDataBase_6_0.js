@@ -88,16 +88,19 @@ cls.EcmascriptDebugger["6.0"].ObjectDataBase = function()
 
   
 
-  this._obj_map = {};
-  this._queried_map = {};
+  //this._obj_map = {};
+  //this._queried_map = {};
 
   this.setObject = function(rt_id, obj_id, virtual_props)
   {
+    this._obj_map = {};
+    this._queried_map = {};
+    this._expand_tree = {};
     this._rt_id = rt_id;
     this._obj_id = obj_id;
     // TODO sync format
     this._virtual_props = virtual_props;
-    this._expand_tree = {};
+    
   }
 
   this.getData = function(rt_id, obj_id, path, org_args)
@@ -160,6 +163,9 @@ cls.EcmascriptDebugger["6.0"].ObjectDataBase = function()
         }
         else
           proto[PROPERTY_LIST].sort(this._sort_name);
+        if (i == 0 && obj_id == this._obj_id && this._virtual_props)
+          proto[PROPERTY_LIST] = this._virtual_props.concat(proto[PROPERTY_LIST]);
+          
       }
 
       this._obj_map[obj_id] = proto_chain;
@@ -185,26 +191,35 @@ cls.EcmascriptDebugger["6.0"].ObjectDataBase = function()
   this.clearData = function(rt_id, obj_id, path)
   {
     var i = 0, cur = '', tree = this._expand_tree, dead_ids = null, ids = null;
-    for (; cur = path[i]; i++)
+    if (path)
     {
-      if (i == path.length -1)
+      for (; cur = path[i]; i++)
       {
-        dead_ids = [cur].concat(this._get_all_ids(tree[cur]));
-        tree[cur] = null;
+        if (i == path.length -1)
+        {
+          dead_ids = [cur].concat(this._get_all_ids(tree[cur]));
+          tree[cur] = null;
+        }
+        else
+        {
+          tree = tree[cur];
+          if (!tree)
+            throw 'not valid path in ObjectDataBase.clearData';
+        }
       }
-      else
+      ids = this._get_all_ids(this._expand_tree);
+      for (i = 0; cur = dead_ids[i]; i++)
       {
-        tree = tree[cur];
-        if (!tree)
-          throw 'not valid path in ObjectDataBase.clearData';
+        if (ids.indexOf(cur) == -1)
+          this._obj_map[cur] = this._queried_map[cur] = null;
       }
     }
-    ids = this._get_all_ids(this._expand_tree);
-    for (i = 0; cur = dead_ids[i]; i++)
+    else
     {
-      if (ids.indexOf(cur) == -1)
-        this._obj_map[cur] = this._queried_map[cur] = null;
-    }    
+      this._obj_map =
+      this._queried_map =
+      this._expand_tree = null;
+    }
   }
 
   this._get_all_ids = function get_all_ids(tree, ret)
