@@ -100,11 +100,11 @@
           do
           {
             s_quote_cur = string.indexOf(s_quote_val, s_quote_cur + 1);
-            if (nl_cur > 0 && nl_cur < s_quote_cur)
+            if (nl_cur > -1 && nl_cur < s_quote_cur)
             {
               s_quote_cur = nl_cur;
             }
-            if (cr_cur > 0 && cr_cur < s_quote_cur)
+            if (cr_cur > -1 && cr_cur < s_quote_cur)
             {
               s_quote_cur = cr_cur;
             }
@@ -144,11 +144,11 @@
           do
           {
             d_quote_cur = string.indexOf(d_quote_val, d_quote_cur + 1);
-            if (nl_cur > 0 && nl_cur < d_quote_cur)
+            if (nl_cur > -1 && nl_cur < d_quote_cur)
             {
               d_quote_cur = nl_cur;
             }
-            if (cr_cur > 0 && cr_cur < d_quote_cur)
+            if (cr_cur > -1 && cr_cur < d_quote_cur)
             {
               d_quote_cur = cr_cur;
             }
