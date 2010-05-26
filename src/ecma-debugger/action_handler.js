@@ -147,20 +147,6 @@ window.eventHandlers.click['examine-object'] = function(event, target)
   }
 };
 
-window.eventHandlers.click['show-global-scope'] = function(event) // and select runtime
-{
-  var ele = event.target;
-  var runtime = runtimes.getRuntime(ele.previousSibling && ele.previousSibling.getAttribute('runtime_id') || '');
-  if (runtime)
-  {
-    topCell.showView(views.inspection.id);
-    messages.post('active-inspection-type', {inspection_type: 'object'});
-    object_inspection_data.showGlobalScope(runtime.runtime_id);
-    runtimes.setSelectedRuntime(runtime);
-    views.runtimes.update();
-  }
-};
-
 window.eventHandlers.click['show-scripts'] = function(event)
 {
   var runtime_id = event.target.getAttribute('runtime_id');

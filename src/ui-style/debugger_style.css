@@ -189,7 +189,7 @@ input[type="text"] {
   padding:.5em;
 }
 
-[handler="select-window"], [handler="display-script"], [handler="show-global-scope"] {
+[handler="select-window"], [handler="display-script"] {
   cursor:pointer;
   }
 

@@ -221,7 +221,10 @@ cls.EcmascriptDebugger["6.0"].ObjectDataBase = function()
     {
       this._obj_map =
       this._queried_map =
-      this._expand_tree = null;
+      this._expand_tree = 
+      this._virtual_props = null;
+      this._rt_id =
+      this._obj_id = 0;
     }
   }
 

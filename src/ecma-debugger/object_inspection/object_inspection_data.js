@@ -1,14 +1,12 @@
 ﻿window.cls || (window.cls = {});
 cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
 cls.EcmascriptDebugger["5.0"] || (cls.EcmascriptDebugger["5.0"] = {});
-cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
 
 /**
   * @constructor 
   * @extends ObjectDataBase
   */
 
-cls.EcmascriptDebugger["6.0"].Object_inspection_data =
 cls.EcmascriptDebugger["5.0"].Object_inspection_data = function()
 {
 
