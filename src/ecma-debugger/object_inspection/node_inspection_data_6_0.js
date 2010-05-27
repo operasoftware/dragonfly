@@ -7,47 +7,30 @@ cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
   * @extends ObjectDataBase
   */
 
-cls.EcmascriptDebugger["6.0"].NodeDOMAttrs = function()
+cls.EcmascriptDebugger["6.0"].NodeDOMAttrs = function(id)
 {
 
-  const 
-  KEY = 0,
-  VALUE = 1;
+  const KEY = 0, VALUE = 1;
 
-  var __selectedElement = null;
-  var __views = ['dom_attrs'];
-
-  this.rt_id = '';
-  this.data = [];
-
-  var self = this;
-
+  this._views = ['dom_attrs'];
   this.filter_type = VALUE;
+  this.id = id;
 
-  this.getSelectedNode = function()
+  this.getSelectedNode =
+  this.getSelectedObject = function()
   {
-    return __selectedElement;
-  }
+    return this._obj_id && {rt_id: this._rt_id, obj_id: this._obj_id} || null;
+  };
 
-  this.getSelectedNodeData = function()
+  this._on_element_selected = function(msg)
   {
-    if(__selectedElement)
-    {
-      return this.getData(__selectedElement.rt_id, __selectedElement.obj_id);
-    }
-  }
-
-  var onElementSelected = function(msg)
-  {
-    __selectedElement = {rt_id: msg.rt_id,  obj_id: msg.obj_id};
-    self.setObject(msg.rt_id, msg.obj_id);
-    var view_id = '', i = 0;
-    for ( ; view_id = __views[i] ; i++)
+    this.setObject(msg.rt_id, msg.obj_id);
+    for (var view_id = '', i = 0; view_id = this._views[i] ; i++)
     {
       views[view_id].update();
     }
-  }
+  };
 
-  messages.addListener('element-selected', onElementSelected);
+  messages.addListener('element-selected', this._on_element_selected.bind(this));
 }
 

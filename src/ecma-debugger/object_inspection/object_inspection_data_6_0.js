@@ -7,7 +7,7 @@ cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
   * @extends InspectionBaseData
   */
 
-cls.EcmascriptDebugger["6.0"].Object_inspection_data = function(id)
+cls.EcmascriptDebugger["6.0"].ObjectInspectionData = function(id)
 {
   const KEY = 0, VALUE = 1;
 

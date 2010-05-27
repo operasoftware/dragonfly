@@ -11,20 +11,22 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
   // see diff to %.0 version: hg diff -c 9d4f82a72900
   var namespace = cls.EcmascriptDebugger && cls.EcmascriptDebugger["6.0"];
   var service_interface = window.app.helpers.implement_service(namespace);
-  var obj = null;
+
+  const NAME = 0, ID = 1;
 
   if(service_interface)
   {
-    window.InspectionBaseData = new namespace.InspectionBaseData();
-    namespace.FrameInspectionData.prototype = InspectionBaseData;
-    obj = new namespace.FrameInspectionData('frame_inspection_data');
-    window[obj.id] = obj;
-    namespace.NodeDOMAttrs.prototype = InspectionBaseData;
-    window.node_dom_attrs = new namespace.NodeDOMAttrs();
-    window.node_dom_attrs.id = 'node_dom_attrs';
-    namespace.Object_inspection_data.prototype = InspectionBaseData;
-    obj = new namespace.Object_inspection_data('object_inspection_data');
-    window[obj.id] = obj;
+    var InspectionBaseData = new namespace.InspectionBaseData();
+    [
+      ['FrameInspectionData', 'frame_inspection_data'],
+      ['ObjectInspectionData', 'object_inspection_data'],
+      ['NodeDOMAttrs', 'node_dom_attrs'],
+    ].forEach(function(item)
+    {
+      namespace[item[NAME]].prototype = InspectionBaseData;
+      var obj = new namespace[item[NAME]](item[ID]);
+      window[obj.id] = obj;
+    });
 
     window.runtimes = new namespace.Runtimes("6.0");
     window.runtimes.bind(service_interface);
