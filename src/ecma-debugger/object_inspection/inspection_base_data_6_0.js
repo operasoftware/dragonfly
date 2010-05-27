@@ -50,6 +50,7 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseData = function()
 
   
   this.setObject = function(rt_id, obj_id, virtualProperties){};
+  this.getSelectedObject = function(){};
   this.getData = function(rt_id, obj_id, depth, org_args){};
   this.prettyPrint = function(data, target_depth, use_filter, filter_type){};
   this.clearData = function(rt_id, obj_id, depth, key){};
@@ -101,6 +102,28 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseData = function()
     // TODO sync format
     this._virtual_props = virtual_props;
     
+  }
+
+  this.getSelectedObject = function()
+  {
+    return this._obj_id && {rt_id: this._rt_id, obj_id: this._obj_id} || null;
+  }
+
+  this._init = function(id, views)
+  {
+    this.id = id;
+    this._views = views;
+  }
+
+  this._update_views = function()
+  {
+    for (var view_id = '', i = 0; view_id = this._views[i]; i++)
+    {
+      if (window.views[view_id])
+      {
+        window.views[view_id].update();
+      }
+    }
   }
 
   this.getData = function(rt_id, obj_id, path, org_args)

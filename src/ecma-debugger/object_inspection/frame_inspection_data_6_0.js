@@ -6,27 +6,20 @@ cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
   * @constructor 
   * @extends InspectionBaseData
   */
-cls.EcmascriptDebugger["6.0"].FrameInspectionData = function(id)
+cls.EcmascriptDebugger["6.0"].FrameInspectionData = function(id, views)
 {
 
   const KEY = 0, VALUE = 1;
 
-  this._views = ['inspection'];
   this._is_active_inspection = true;
   this.filter_type = KEY;
-  this.id = id;
-
-  this.getSelectedObject = function()
-  {
-    return this._obj_id && {rt_id: this._rt_id, obj_id: this._obj_id} || null;
-  }
 
   this._on_frame_selected = function(msg)
   { 
     var frame = stop_at.getFrame(msg.frame_index);
     if (frame)
     {
-      var virtualProperties =
+      var virtual_properties =
       [
         [
           'arguments',
@@ -41,7 +34,7 @@ cls.EcmascriptDebugger["6.0"].FrameInspectionData = function(id)
           [frame.this_id == '0' ? frame.rt_id : frame.this_id, 0, 'object', , '']
         ]
       ];
-      this.setObject(frame.rt_id, frame.scope_id, virtualProperties);
+      this.setObject(frame.rt_id, frame.scope_id, virtual_properties);
     }
     else
     {
@@ -50,10 +43,7 @@ cls.EcmascriptDebugger["6.0"].FrameInspectionData = function(id)
     
     if (this._is_active_inspection)
     {
-      for (var view_id = '', i = 0; view_id = this._views[i]; i++)
-      {
-        views[view_id].update();
-      }
+      this._update_views();
     }
   };
 
@@ -62,7 +52,8 @@ cls.EcmascriptDebugger["6.0"].FrameInspectionData = function(id)
     this._is_active_inspection = msg.inspection_type == 'frame';
   }
 
-  messages.addListener('frame-selected', this._on_frame_selected.bind(this));
-  messages.addListener('active-inspection-type', this._on_active_inspection_type.bind(this));
+  this._init(id, views);
+  window.messages.addListener('frame-selected', this._on_frame_selected.bind(this));
+  window.messages.addListener('active-inspection-type', this._on_active_inspection_type.bind(this));
   
 }

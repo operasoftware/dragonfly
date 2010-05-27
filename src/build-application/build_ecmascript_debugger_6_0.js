@@ -12,19 +12,19 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
   var namespace = cls.EcmascriptDebugger && cls.EcmascriptDebugger["6.0"];
   var service_interface = window.app.helpers.implement_service(namespace);
 
-  const NAME = 0, ID = 1;
+  const NAME = 0, ID = 1, VIEWS = 2;
 
   if(service_interface)
   {
     var InspectionBaseData = new namespace.InspectionBaseData();
     [
-      ['FrameInspectionData', 'frame_inspection_data'],
-      ['ObjectInspectionData', 'object_inspection_data'],
-      ['NodeDOMAttrs', 'node_dom_attrs'],
+      ['FrameInspectionData', 'frame_inspection_data', ['inspection']],
+      ['ObjectInspectionData', 'object_inspection_data', ['inspection']],
+      ['NodeDOMAttrs', 'node_dom_attrs', ['dom_attrs']],
     ].forEach(function(item)
     {
       namespace[item[NAME]].prototype = InspectionBaseData;
-      var obj = new namespace[item[NAME]](item[ID]);
+      var obj = new namespace[item[NAME]](item[ID], item[VIEWS]);
       window[obj.id] = obj;
     });
 
