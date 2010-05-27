@@ -41,7 +41,7 @@ cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
 
 */
 
-cls.EcmascriptDebugger["6.0"].ObjectDataBase = function()
+cls.EcmascriptDebugger["6.0"].InspectionBaseData = function()
 {
 
   /* interface */
@@ -207,7 +207,7 @@ cls.EcmascriptDebugger["6.0"].ObjectDataBase = function()
         {
           tree = tree[cur];
           if (!tree)
-            throw 'not valid path in ObjectDataBase.clearData';
+            throw 'not valid path in InspectionBaseData.clearData';
         }
       }
       ids = this._get_all_ids(this._expand_tree);
@@ -258,7 +258,7 @@ cls.EcmascriptDebugger["6.0"].ObjectDataBase = function()
       {
         tree = tree[cur];
         if (!tree)
-          throw 'not valid path in ObjectDataBase.prettyPrint';
+          throw 'not valid path in InspectionBaseData.prettyPrint';
       }
     }
     else if (path == -1)
