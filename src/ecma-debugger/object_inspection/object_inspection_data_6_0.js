@@ -7,7 +7,7 @@ cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
   * @extends InspectionBaseData
   */
 
-cls.EcmascriptDebugger["6.0"].Object_inspection_data = function()
+cls.EcmascriptDebugger["6.0"].Object_inspection_data = function(id)
 {
   const KEY = 0, VALUE = 1;
 
@@ -15,6 +15,7 @@ cls.EcmascriptDebugger["6.0"].Object_inspection_data = function()
   this._views = ['inspection'];
   this._is_active_inspection = false;
   this.filter_type = KEY;
+  this.id = id;
 
   this.getSelectedObject = function()
   {

@@ -19,12 +19,12 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     namespace.FrameInspectionData.prototype = InspectionBaseData;
     obj = new namespace.FrameInspectionData('frame_inspection_data');
     window[obj.id] = obj;
-    namespace.Node_dom_attrs.prototype = InspectionBaseData;
-    window.node_dom_attrs = new namespace.Node_dom_attrs();
+    namespace.NodeDOMAttrs.prototype = InspectionBaseData;
+    window.node_dom_attrs = new namespace.NodeDOMAttrs();
     window.node_dom_attrs.id = 'node_dom_attrs';
     namespace.Object_inspection_data.prototype = InspectionBaseData;
-    window.object_inspection_data = new namespace.Object_inspection_data();
-    window.object_inspection_data.id = 'object_inspection_data';
+    obj = new namespace.Object_inspection_data('object_inspection_data');
+    window[obj.id] = obj;
 
     window.runtimes = new namespace.Runtimes("6.0");
     window.runtimes.bind(service_interface);
