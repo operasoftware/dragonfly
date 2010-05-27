@@ -91,10 +91,53 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseData = function()
 
   //this._obj_map = {};
   //this._queried_map = {};
+  /*
+          object: 
+            value: 
+              objectID: 2
+              isCallable: 0
+              type: "object"
+              prototypeID: 3
+              className: "HTMLDocument"
+
+            propertyList:
+
+              property: 
+                name: "URL"
+                type: "string"
+                value: "opera:debug"
+
+              property: 
+                name: "activeElement"
+                type: "object"
+                value: 
+                objectValue: 
+                  objectID: 22
+                  isCallable: 0
+                  type: "object"
+                  prototypeID: 37
+                  className: "HTMLButtonElement"
+                  */
 
   this.setObject = function(rt_id, obj_id, virtual_props)
   {
-    this._obj_map = {};
+    this._obj_map = 
+    {
+      0:
+      [
+        [
+          [obj_id, , , , 'Test 1'],
+          [
+            [
+              'test',
+              'object',
+              ,
+              [obj_id, , , , 'Test']
+            ]
+          ]
+        ]
+      ]
+    };
     this._queried_map = {};
     this._expand_tree = {};
     this._rt_id = rt_id;
@@ -104,6 +147,7 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseData = function()
     
   }
 
+  this.get_object =
   this.getSelectedObject = function()
   {
     return this._obj_id && {rt_id: this._rt_id, obj_id: this._obj_id} || null;
@@ -265,12 +309,6 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseData = function()
     return ret;
   }
 
-
-
-
-
-
-
   this.prettyPrint = function(data, path, use_filter, filter_type)
   {
     var ret = [], tree = this._expand_tree;
@@ -290,6 +328,19 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseData = function()
     return ret.join('');
   }
 
+  this.pretty_print = function(path)
+  {
+    var ret = [], tree = this._expand_tree, obj_id = 0, i = 0;
+    for (; path && path[i]; i++)
+    {
+      tree = tree[obj_id = path[i]];
+      if (!tree)
+        throw 'not valid path in InspectionBaseData.pretty_print';
+    }
+    this._pretty_print_object(obj_id, ret, tree);
+    return ret.join('');
+  }
+
   this._pretty_print_object = function(obj_id, ret, tree)
   {
     var data = this._obj_map[obj_id];
@@ -298,7 +349,7 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseData = function()
       ret.push(
         "<examine-objects " +
           "rt-id='" + this._rt_id + "' " +
-          "data-id=" + this.id + "' " +
+          "data-id='" + this.id + "' " +
           "obj-id='" + this._obj_id + "' " +
           ">"
       );

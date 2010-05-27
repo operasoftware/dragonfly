@@ -69,9 +69,7 @@ cls.EcmascriptDebugger["5.0"].InspectionView = function(id, name, container_clas
   messages.addListener('active-inspection-type', onActiveInspectionType);
 };
 
-cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets =
-cls.EcmascriptDebugger["5.0"].InspectionView.create_ui_widgets = 
-function()
+cls.EcmascriptDebugger["5.0"].InspectionView.create_ui_widgets = function()
 {
   new Settings
   (

@@ -17,7 +17,7 @@ cls.EcmascriptDebugger["6.0"].InspectionView = function(id, name, container_clas
   {
     var
     data_model = window[cur_data],
-    selectedObject = data_model.getSelectedObject(),
+    selectedObject = data_model.get_object(),
     data = null,
     use_filter = settings['inspection'].get("hide-default-properties");
 
@@ -26,15 +26,7 @@ cls.EcmascriptDebugger["6.0"].InspectionView = function(id, name, container_clas
       data = data_model.getData(selectedObject.rt_id, selectedObject.obj_id, -1, arguments);
       if (data)
       {
-        delete container.__call_count;
-        container.innerHTML =
-          "<examine-objects rt-id='" + selectedObject.rt_id + "' " +
-                "data-id=" + cur_data + " " +
-                "obj-id='" + selectedObject.obj_id + "' >" +
-              "<start-search-scope></start-search-scope>" +
-              data_model.prettyPrint(data, -1, use_filter, data_model.filter_type) +
-              "<end-search-scope></end-search-scope>" +
-          "</examine-objects>";
+        container.innerHTML = data_model.pretty_print();
 
         messages.post
         (
@@ -69,9 +61,7 @@ cls.EcmascriptDebugger["6.0"].InspectionView = function(id, name, container_clas
   messages.addListener('active-inspection-type', onActiveInspectionType);
 };
 
-cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets =
-cls.EcmascriptDebugger["5.0"].InspectionView.create_ui_widgets = 
-function()
+cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
 {
   new Settings
   (
