@@ -11,14 +11,14 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
   // see diff to %.0 version: hg diff -c 9d4f82a72900
   var namespace = cls.EcmascriptDebugger && cls.EcmascriptDebugger["6.0"];
   var service_interface = window.app.helpers.implement_service(namespace);
+  var obj = null;
 
   if(service_interface)
   {
-    //namespace = cls.EcmascriptDebugger["5.0"];
     window.ObjectDataBase = new namespace.ObjectDataBase();
-    namespace.Frame_inspection_data.prototype = ObjectDataBase;
-    window.frame_inspection_data = new namespace.Frame_inspection_data();
-    window.frame_inspection_data.id = 'frame_inspection_data';
+    namespace.FrameInspectionData.prototype = ObjectDataBase;
+    obj = new namespace.FrameInspectionData('frame_inspection_data');
+    window[obj.id] = obj;
     namespace.Node_dom_attrs.prototype = ObjectDataBase;
     window.node_dom_attrs = new namespace.Node_dom_attrs();
     window.node_dom_attrs.id = 'node_dom_attrs';
