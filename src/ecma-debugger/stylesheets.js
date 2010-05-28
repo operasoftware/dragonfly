@@ -145,7 +145,8 @@ cls.Stylesheets = function()
     'border-style': 1,
     'border-color': 1,
     'background': 1,
-    'outline': 1
+    'outline': 1,
+    'overflow': 1
   };
 
   var special_default_values = {};
@@ -479,9 +480,9 @@ cls.Stylesheets = function()
     index_list = rule[INDEX_LIST] || [], // the built-in proxy returns empty repeated values as null
     value_list = rule[VALUE_LIST],
     priority_list = rule[PROPERTY_LIST],
-    overwrittenlist = rule[OVERWRITTEN_LIST],
+    overwritten_list = rule[OVERWRITTEN_LIST],
     search_list = rule[SEARCH_LIST],
-    length = index_list.length, i = 0,
+    disabled_list = [],
     prop_index = 0,
     index = 0,
     s_h_index = [],
@@ -490,8 +491,45 @@ cls.Stylesheets = function()
     s_h_prop = '',
     s_h_count = 0;
 
+    // Turn everything back to the literal properties that the user used
+    if (window.elementStyle.literal_declarations && window.elementStyle.literal_declarations[rule[RULE_ID]])
+    {
+      index_list = [];
+      value_list = [];
+      priority_list = [];
+      overwritten_list = [];
+
+      // Create an object with property:value with the values we get from Scope
+      var declarations = {};
+      var len = rule[PROP_LIST].length;
+      for (var i = 0; i < len; i++)
+      {
+        declarations[window.css_index_map[rule[PROP_LIST][i]]] = rule[VAL_LIST][i];
+      }
+
+      var literal_declarations = window.elementStyle.literal_declarations[rule[RULE_ID]];
+
+      for (var prop in literal_declarations)
+      {
+        // Get the value or re-construct a shorthand
+        var value = short_hand_props[prop]
+                  ? self.get_shorthand_from_declarations(prop, declarations, literal_declarations)
+                  : declarations[prop];
+
+        // If there is no value at this point it's most likely a non-inheritable property
+        if (value)
+        {
+          index_list.push(window.css_index_map.indexOf(prop));
+          value_list.push(value);
+          priority_list.push(literal_declarations[prop][1]);
+          overwritten_list.push(literal_declarations[prop][2]);
+          disabled_list.push(literal_declarations[prop][3]);
+        }
+      }
+    }
+
     var properties = index_list.map(function(index) {
-      return [window.css_index_map[index], index];
+      return [__indexMap[index], index];
     });
 
     // Sort in alphabetical order
@@ -499,10 +537,12 @@ cls.Stylesheets = function()
       return a[0] > b[0] ? 1 : -1; // The same property can never happen
     });
 
-    for ( ; i < length; i++)
+    var length = index_list.length;
+    for (var i = 0; i < length; i++)
     {
       prop_index = properties[i][1];
       index = index_list.indexOf(prop_index);
+
       if (search_active && !search_list[index])
       {
         continue;
@@ -544,10 +584,8 @@ cls.Stylesheets = function()
       }
       else
       {
-        // css inspector does not shorthand properties
-        // perhaps later
-        // protocol-4: overwrittenlist is now the STATUS, the meaning is inverted, 1 means applied
-        if (overwrittenlist && overwrittenlist[index])
+        // protocol-4: overwritten_list is now the STATUS, the meaning is inverted, 1 means applied
+        if (overwritten_list && overwritten_list[index])
         {
           ret += (ret ? MARKUP_PROP_NL : MARKUP_EMPTY) +
                   INDENT +
@@ -1421,6 +1459,287 @@ cls.Stylesheets = function()
       }
     }
     return ret.concat(dashs);
+  };
+
+  /**
+   * Return the shorthand property from a set of declarations.
+   * E.g. returns "1px 3px 2px", for {"padding-top": "1px",
+   *                                  "padding-right": "3px",
+   *                                  "padding-bottom": "2px"}
+   *
+   * Note that this function does not do any error handling, proper data is
+   * assumed. It also assumes that all properties needed for the shorthand
+   * are provided. In short, sending in the declarations that are provided by
+   * Scope is safe, and is the way this methods is supposed to be used.
+   *
+   * @param {String} prop The shorthand value for which the shorthand should be returned from,
+   *                      e.g. "margin"
+   * @param {Object} declarations An object with property:value's. If a property cannot be
+   *                             part of the specified shorthand, it is discarded.
+   * @param {Object} literal_declarations The literal declarations the user typed in, with property:value
+   */
+  this.get_shorthand_from_declarations = function get_shorthand_from_properties(prop, declarations, literal_declarations)
+  {
+    var values = [];
+    var ret = "";
+    var length = 1;
+
+    switch (prop)
+    {
+    case "background":
+        values = [declarations["background-color"],
+                  declarations["background-image"],
+                  declarations["background-repeat"],
+                  declarations["background-attachment"],
+                  declarations["background-position"]];
+
+        ret = values.join(" ");
+        break;
+
+    case "border":
+        for (var prop in declarations)
+        {
+          switch (prop)
+          {
+          case "border-top-width":
+          case "border-right-width":
+          case "border-bottom-width":
+          case "border-left-width":
+            if (!values[0] && !literal_declarations[prop] && !literal_declarations["border-width"])
+            {
+              values[0] = declarations[prop];
+            }
+            break;
+          case "border-top-style":
+          case "border-right-style":
+          case "border-bottom-style":
+          case "border-left-style":
+            if (!values[1] && !literal_declarations[prop] && !literal_declarations["border-style"])
+            {
+              values[1] = declarations[prop];
+            }
+            break;
+          case "border-top-color":
+          case "border-right-color":
+          case "border-bottom-color":
+          case "border-left-color":
+            if (!values[2] && !literal_declarations[prop] && !literal_declarations["border-color"])
+            {
+              values[2] = declarations[prop];
+            }
+            break;
+          }
+        }
+
+        // TODO(hzr): discard any value that is blank
+        ret = values.join(" ");
+        break;
+
+    case "border-top":
+        values = [declarations["border-top-width"],
+                  declarations["border-top-style"],
+                  declarations["border-top-color"]];
+
+        ret = values.join(" ");
+        break;
+
+    case "border-right":
+        values = [declarations["border-right-width"],
+                  declarations["border-right-style"],
+                  declarations["border-right-color"]];
+
+        ret = values.join(" ");
+        break;
+
+    case "border-bottom":
+        values = [declarations["border-bottom-width"],
+                  declarations["border-bottom-style"],
+                  declarations["border-bottom-color"]];
+
+        ret = values.join(" ");
+        break;
+
+    case "border-left":
+        values = [declarations["border-left-width"],
+                  declarations["border-left-style"],
+                  declarations["border-left-color"]];
+
+        ret = values.join(" ");
+        break;
+
+    case "border-width":
+        values = [declarations["border-top-width"],
+                  declarations["border-right-width"],
+                  declarations["border-bottom-width"],
+                  declarations["border-left-width"]];
+
+        if (values[0] == values[2] &&
+            values[1] == values[3] &&
+            values[0] != values[1])
+        {
+          length = 2;
+        }
+
+        if (values[0] != values[2])
+        {
+          length = 3;
+        }
+
+        if (values[1] != values[3])
+        {
+          length = 4;
+        }
+
+        ret = values.splice(0, length).join(" ");
+        break;
+
+    case "border-style":
+        values = [declarations["border-top-style"],
+                  declarations["border-right-style"],
+                  declarations["border-bottom-style"],
+                  declarations["border-left-style"]];
+
+        if (values[0] == values[2] &&
+            values[1] == values[3] &&
+            values[0] != values[1])
+        {
+          length = 2;
+        }
+
+        if (values[0] != values[2])
+        {
+          length = 3;
+        }
+
+        if (values[1] != values[3])
+        {
+          length = 4;
+        }
+
+        ret = values.splice(0, length).join(" ");
+        break;
+
+    case "border-color":
+        values = [declarations["border-top-color"],
+                  declarations["border-right-color"],
+                  declarations["border-bottom-color"],
+                  declarations["border-left-color"]];
+
+        if (values[0] == values[2] &&
+            values[1] == values[3] &&
+            values[0] != values[1])
+        {
+          length = 2;
+        }
+
+        if (values[0] != values[2])
+        {
+          length = 3;
+        }
+
+        if (values[1] != values[3])
+        {
+          length = 4;
+        }
+
+        ret = values.splice(0, length).join(" ");
+        break;
+
+    case "font":
+        values = [declarations["font-style"],
+                  declarations["font-variant"],
+                  declarations["font-weight"],
+                  declarations["font-size"],
+                  declarations["line-height"],
+                  declarations["line-height"],
+                  declarations["font-family"]];
+
+        // Construct with "/" between font-size and line-height
+        ret = values.slice(0, 4).join(" ") + "/" + values.slice(4).join(" ");
+        break;
+
+    case "list-style":
+        values = [declarations["list-style-type"],
+                  declarations["list-style-position"],
+                  declarations["list-style-image"]];
+
+        ret = values.join(" ");
+        break;
+
+    case "margin":
+        values = [declarations["margin-top"],
+                  declarations["margin-right"],
+                  declarations["margin-bottom"],
+                  declarations["margin-left"]];
+
+        if (values[0] == values[2] &&
+            values[1] == values[3] &&
+            values[0] != values[1])
+        {
+          length = 2;
+        }
+
+        if (values[0] != values[2])
+        {
+          length = 3;
+        }
+
+        if (values[1] != values[3])
+        {
+          length = 4;
+        }
+
+        ret = values.splice(0, length).join(" ");
+        break;
+
+    case "padding":
+        values = [declarations["padding-top"],
+                  declarations["padding-right"],
+                  declarations["padding-bottom"],
+                  declarations["padding-left"]];
+
+        if (values[0] == values[2] &&
+            values[1] == values[3] &&
+            values[0] != values[1])
+        {
+          length = 2;
+        }
+
+        if (values[0] != values[2])
+        {
+          length = 3;
+        }
+
+        if (values[1] != values[3])
+        {
+          length = 4;
+        }
+
+        ret = values.splice(0, length).join(" ");
+        break;
+
+    case "outline":
+        values = [declarations["outline-color"],
+                  declarations["outline-style"],
+                  declarations["outline-width"]];
+
+        ret = values.join(" ");
+        break;
+
+    case "overflow":
+        values = [declarations["overflow-x"],
+                  declarations["overflow-y"]];
+
+        if (values[0] != values[1])
+        {
+          length = 2;
+        }
+
+        ret = values.splice(0, length).join(" ");
+        break;
+    }
+
+    return ret;
   };
 
   messages.addListener('runtime-destroyed', onRuntimeDestroyed);

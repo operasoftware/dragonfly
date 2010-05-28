@@ -19,6 +19,7 @@ cls.ElementStyle = function()
   PROP_LIST = 1,
   VAL_LIST = 2,
   PRIORITY_LIST = 3,
+  OVERWRITTEN_LIST = 4,
   SEARCH_LIST = 10,
   HAS_MATCHING_SEARCH_PROPS = 11,
   SEARCH_DELAY = 50,
@@ -406,55 +407,116 @@ cls.ElementStyle = function()
     }
   }
 
-  this.update_categories = function()
+  this.update_categories = function update_categories(rule_id, declaration)
   {
     var rt_id = __selectedElement.rt_id;
     var obj_id = __selectedElement.obj_id;
-    var tag = tagManager.set_callback(null, handle_update_categories, [rt_id, obj_id]);
+    var tag = tagManager.set_callback(this, this.handle_update_categories, [rt_id, rule_id, declaration]);
     services['ecmascript-debugger'].requestCssGetStyleDeclarations(tag, [rt_id, obj_id]);
+  };
 
-    function handle_update_categories(status, message, rt_id, obj_id)
+  this.handle_update_categories = function handle_update_categories(status, message, rt_id, rule_id, declaration)
+  {
+    if (status == 0)
     {
-      // TODO: these can be removed if the stuff under isn't necessary
-      var
-      declarations = null,
-      i = 0,
-      view_id = '',
-      node_style_cascade = null,
-      style_dec = null,
-      j = 0,
-      length = 0,
-      k = 0;
-
-      if (status == 0)
+      var rule;
+      for (var i = 0; rule = message[NODE_STYLE_LIST][0/**/][STYLE_LIST][i]; i++)
       {
-        categories_data[COMP_STYLE] = message[COMPUTED_STYLE_LIST];
-        categories_data[CSS] = message[NODE_STYLE_LIST] || [];
-        categories_data[CSS].rt_id = categories_data[COMP_STYLE].rt_id = rt_id;
-        categories_data[IS_VALID] = true;
+        if (rule[RULE_ID] == rule_id)
+        {
+          break;
+        }
+      }
 
-        //// this is to ensure that a set property is always displayed in computed style,
-        //// also if it maps the initial value and the setting "Hide Initial Values" is set to true.
-        //__setProps = [];
-        //for (i = 0; node_style_cascade = categories_data[CSS][i]; i++)
-        //{
-        //  for (j = 0; style_dec = node_style_cascade[STYLE_LIST][j]; j++)
-        //  {
-        //    if (style_dec[ORIGIN] != 1) // any other rule except browser default rules
-        //    {
-        //      length = style_dec[INDEX_LIST].length;
-        //      for (k = 0; k < length; k++)
-        //      {
-        //        if (style_dec[STATUS_LIST][k])
-        //        {
-        //          __setProps[style_dec[INDEX_LIST][k]] = 1;
-        //        }
-        //      }
-        //    }
-        //  }
-        //}
+      var index_list = rule[INDEX_LIST];
+      var len = this.get_rule_by_id(rule_id)[INDEX_LIST].length;
+      categories_data[COMP_STYLE] = message[COMPUTED_STYLE_LIST];
+      categories_data[CSS] = message[NODE_STYLE_LIST] || [];
+      categories_data[CSS].rt_id = categories_data[COMP_STYLE].rt_id = rt_id;
+      categories_data[IS_VALID] = true;
+
+      // TODO(hzr): update overwritten value on removal of property
+
+      if (declaration)
+      {
+        var index = index_list.indexOf(window.css_index_map.indexOf(declaration[0]));
+        var status = 1; // 1 = applied, 0 = overwritten
+        var decl_is_valid = false;
+        if (index != -1) // If the property exists in the message, it was valid
+        {
+          status = rule[OVERWRITTEN_LIST][index];
+          decl_is_valid = true;
+        }
+        else if (this.shorthand_map[declaration[0]]) // if it's a shorthand
+        {
+          // To figure out if the shorthand has been overwritten, loop through all expanded
+          // properties. If one of them doesn't exist in the literal declarations, we can
+          // use its overwritten value.
+          this.shorthand_map[declaration[0]].some(function(prop) {
+            index = index_list.indexOf(window.css_index_map.indexOf(prop))
+            status = rule[OVERWRITTEN_LIST][index];
+            if (!this.literal_declarations[rule_id][prop])
+            {
+              return true;
+            }
+          }, this);
+          decl_is_valid = true; // FIXME(hzr): this is not really true here
+        }
+
+        if (decl_is_valid)
+        {
+          this.literal_declarations[rule_id][declaration[0]] =
+            [declaration[1], declaration[2], status];
+        }
       }
     }
+  };
+
+  this.literal_declarations = [];
+
+  this.save_literal_declarations = function save_literal_declarations(rule_id)
+  {
+    if (this.literal_declarations[rule_id])
+    {
+      return;
+    }
+
+    this.literal_declarations[rule_id] = {};
+
+    var rule = this.get_rule_by_id(rule_id);
+    var len = rule[PROP_LIST].length;
+    for (var i = 0; i < len; i++)
+    {
+      this.literal_declarations[rule_id][window.css_index_map[rule[PROP_LIST][i]]] =
+        [rule[VAL_LIST][i], rule[PRIORITY_LIST][i], rule[OVERWRITTEN_LIST][i]];
+    }
+  };
+
+  this.get_rule_by_id = function get_rule_by_id(id)
+  {
+    for (var i = 0, rule; rule = categories_data[CSS][0/**/][STYLE_LIST][i]; i++)
+    {
+      if (rule[RULE_ID] == id)
+      {
+        return rule;
+      }
+    }
+  };
+
+  // TODO(hzr): move this when the CSS stuff is refactored
+  this.shorthand_map = {
+    "border": ["border-width", "border-style", "border-color", "border-top", "border-right", "border-bottom", "border-left"],
+    "border-top": ["border-top-width", "border-top-style", "border-top-color"],
+    "border-right": ["border-right-width", "border-right-style", "border-right-color"],
+    "border-bottom": ["border-bottom-width", "border-bottom-style", "border-bottom-color"],
+    "border-left": ["border-left-width", "border-left-style", "border-left-color"],
+    "background": ["background-attachment", "background-color", "background-image", "background-position", "background-repeat"],
+    "font": ["font-style", "font-variant", "font-weight", "font-size", "line-height", "font-family"],
+    "list-style": ["list-style-type", "list-style-position", "list-style-image"],
+    "margin": ["margin-top", "margin-right", "margin-bottom", "margin-left"],
+    "padding": ["padding-top", "padding-right", "padding-bottom", "padding-left"],
+    "outline": ["outline-style", "outline-color", "outline-width"],
+    "overflow": ["overflow-x", "overflow-y"]
   };
 
   /* */

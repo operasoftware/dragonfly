@@ -363,6 +363,8 @@ var Editor = function()
         sheet_link ? parseInt(sheet_link.getAttribute('index')) : -1;
     var textContent = ele.textContent;
 
+    window.elementStyle.save_literal_declarations(this.context_rule_id);
+
     this.context_cur_text_content = this.textarea.value = ele.textContent;
 
     var props = this.getProperties();
@@ -724,7 +726,13 @@ var Editor = function()
 
     if (props[1])
     {
+      this.add_property(props, this.context_cur_prop)
       this.textarea_container.parentElement.innerHTML = create_declaration(props[0], props[1], props[2]);
+      // TODO(hzr): update the view at this point
+    }
+    else if (props[1] === "") // If someone deletes the value and then submits, just re-display it
+    {
+      this.textarea_container.parentElement.innerHTML = create_declaration(props[0], this.context_cur_value, this.context_cur_priority);
     }
     else
     {
@@ -764,15 +772,14 @@ var Editor = function()
 
     if (props[1])
     {
+      //this.add_property(props);
       script = "rule.style.setProperty(\"" + props[0] + "\", \"" + props[1].replace(/"/g, "'") + "\", " + (props[2] ? "\"important\"" : null)+ ")";
       services['ecmascript-debugger'].requestEval(0,
           [this.context_rt_id, 0, 0, script, [["rule", this.context_rule_id]]]);
     }
-    else if (!props[0])
+    else if ((!props[0] || props[0] != this.context_cur_prop) && this.context_cur_prop) // if it's overwritten
     {
-      script = "rule.style.removeProperty(\"" + this.context_cur_prop + "\")";
-      services['ecmascript-debugger'].requestEval(0,
-        [this.context_rt_id, 0, 0, script, [["rule", this.context_rule_id]]]);
+      this.remove_property(this.context_cur_prop);
     }
 
     if (this.context_stylesheet_index > -1)
@@ -789,19 +796,33 @@ var Editor = function()
     keep_edit = false,
     prop = null,
     old_prop,
-    old_value;
+    old_value,
+    old_priority;
 
     this.last_suggets_type = '';
     if (props && props.length == 3)
     {
-      if (this.textarea.selectionEnd == this.textarea.value.length ||
-          this.textarea.selectionEnd >= this.textarea.value.indexOf(';'))
+      old_prop = this.context_cur_prop;
+      old_value = this.context_cur_value;
+      old_priority = this.context_cur_priority;
+
+      if (props[1] === "") // If someone deletes the value and then presses enter, just re-display it
       {
+        this.textarea_container.parentElement.innerHTML = create_declaration(props[0], this.context_cur_value, this.context_cur_priority);
+        return false;
+      }
+      else if (this.textarea.selectionEnd == this.textarea.value.length ||
+               this.textarea.selectionEnd >= this.textarea.value.indexOf(';'))
+      {
+        var propertyEle = document.createElement('property');
+        if (this.textarea_container.parentNode.className.indexOf("overwritten") != -1)
+        {
+          propertyEle.addClass("overwritten");
+        }
+        this.textarea_container.parentNode.removeClass("overwritten");
         prop = this.textarea_container.parentElement.parentElement.
-          insertBefore(document.createElement('property'), this.textarea_container.parentElement);
+          insertBefore(propertyEle, this.textarea_container.parentElement);
         prop.innerHTML = create_declaration(props[0], props[1], props[2]);
-        old_prop = this.context_cur_prop;
-        old_value = this.context_cur_value;
         this.textarea.value =
         this.context_cur_text_content =
         this.context_cur_prop =
@@ -814,15 +835,17 @@ var Editor = function()
         this.textarea_container.parentElement.innerHTML = create_declaration(props[0], props[1], props[2]);
       }
 
-      // Don't save if we're just done editing
-      if (!(old_prop == props[0] && old_value == props[1]))
+      // Only add property if something has changed (new or updated value)
+      if (!(old_prop == props[0] && old_value == props[1] && old_priority == props[2]))
       {
-        this.save_property(props, old_prop);
+        this.add_property(props, old_prop);
       }
     }
     else
     {
       this.textarea_container.parentElement.innerHTML = "";
+      delete window.elementStyle.literal_declarations[this.context_rule_id][this.normalize_property(this.context_cur_prop)];
+      // TODO(hzr): update view here
     }
 
     return keep_edit;
@@ -831,7 +854,7 @@ var Editor = function()
   this.escape = function()
   {
     this.last_suggets_type = '';
-    this.remove_property(this.getProperties()[0]);
+    this.restore_properties();
     if (this.context_cur_prop)
     {
       this.textarea.value = this.context_cur_text_content;
@@ -847,36 +870,96 @@ var Editor = function()
     }
   };
 
-  this.save_property = function save_new_property(declaration, prop_to_remove)
+  /**
+   * Adds a single property.
+   *
+   * @param {Array} declaration An array according to [prop, value, is_important]
+   * @param {String} prop_to_remove An optional property to remove
+   */
+  // TODO(hzr): maybe no need to submit property here again, since it's done in commit()?
+  this.add_property = function add_property(declaration, prop_to_remove)
   {
+    var prop = this.normalize_property(declaration[0]);
+    var rule_id = this.context_rule_id;
     var script = "rule.style.setProperty(\"" +
-                   declaration[0] + "\", \"" +
+                   prop + "\", \"" +
                    declaration[1].replace(/"/g, "'") + "\", " +
                    (declaration[2] ? "\"important\"" : null) +
                  ");";
 
+    if (prop_to_remove)
+    {
+      prop_to_remove = this.normalize_property(prop_to_remove);
+    }
+
     // if a property is added by overwriting an old one, remove the old property
-    if (prop_to_remove && declaration[0] != prop_to_remove)
+    if (prop_to_remove && prop != prop_to_remove)
     {
       script += "rule.style.removeProperty(\"" + prop_to_remove + "\");";
+      delete window.elementStyle.literal_declarations[rule_id][prop_to_remove];
+    }
+
+    var tag = tagManager.set_callback(null, function() {
+      window.elementStyle.update_categories(rule_id, [prop, declaration[1], declaration[2]]);
+    });
+    services['ecmascript-debugger'].requestEval(tag,
+      [this.context_rt_id, 0, 0, script, [["rule", rule_id]]]);
+  };
+
+  /**
+   * Removes a single property.
+   *
+   * @param {String} prop_to_remove The property to remove
+   */
+  this.remove_property = function remove_property(prop_to_remove)
+  {
+    prop_to_remove = this.normalize_property(prop_to_remove);
+    var rule_id = this.context_rule_id;
+    var script = "rule.style.removeProperty(\"" + prop_to_remove + "\");";
+
+    delete window.elementStyle.literal_declarations[rule_id][prop_to_remove];
+
+    var tag = tagManager.set_callback(null, function() {
+      window.elementStyle.update_categories();
+    });
+    services['ecmascript-debugger'].requestEval(tag,
+      [this.context_rt_id, 0, 0, script, [["rule", rule_id]]]);
+  };
+
+  /**
+   * Restores all properties to the last saved state.
+   */
+  this.restore_properties = function restore_properties()
+  {
+    var rule_id = this.context_rule_id;
+    var script = "rule.style.cssText=\"\";";
+    var literal_declarations = window.elementStyle.literal_declarations[rule_id];
+
+    for (var prop in literal_declarations)
+    {
+      script += "rule.style.setProperty(\"" +
+                   prop + "\", \"" +
+                   literal_declarations[prop][0].replace(/"/g, "'") + "\", " +
+                   (literal_declarations[prop][1] ? "\"important\"" : null) +
+                 ");";
     }
 
     var tag = tagManager.set_callback(null, function() {
       window.elementStyle.update_categories();
     });
     services['ecmascript-debugger'].requestEval(tag,
-      [this.context_rt_id, 0, 0, script, [["rule", this.context_rule_id]]]);
+      [this.context_rt_id, 0, 0, script, [["rule", rule_id]]]);
   };
 
-  this.remove_property = function remove_property(prop_to_remove)
+  /**
+   * Normalize a property by trimming whitespace and converting to lowercase
+   *
+   * @param {String} prop The property to normalize
+   * @returns {String} A normalized property
+   */
+  this.normalize_property = function normalize_property(prop)
   {
-    var script = "rule.style.removeProperty(\"" + prop_to_remove + "\");";
-
-    var tag = tagManager.set_callback(null, function() {
-      window.elementStyle.update_categories();
-    });
-    services['ecmascript-debugger'].requestEval(tag,
-      [this.context_rt_id, 0, 0, script, [["rule", this.context_rule_id]]]);
+    return (prop || "").replace(/^\s*|\s*$/g, "").toLowerCase();
   };
 
   var input_handler = function(event)
