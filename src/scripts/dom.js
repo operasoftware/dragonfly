@@ -19,7 +19,8 @@ Element.prototype.render = Document.prototype.render = function(args)
   i = 0,
   ele = this,
   first_arg = args[0],
-  arg = null;
+  arg = null,
+  node_string_properties = ['innerHTML'];
 
   if (args.length)
   {
@@ -54,7 +55,7 @@ Element.prototype.render = Document.prototype.render = function(args)
         {
           throw "TemplateSyntaxError";
         }
-        if (typeof args[i + 1] == 'string')
+        if (typeof args[i + 1] == 'string' && node_string_properties.indexOf(args[i]) == -1)
         {
           ele.setAttribute(args[i], args[i + 1]);
         }
