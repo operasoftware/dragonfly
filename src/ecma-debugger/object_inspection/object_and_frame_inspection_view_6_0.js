@@ -23,10 +23,11 @@ cls.EcmascriptDebugger["6.0"].InspectionView = function(id, name, container_clas
 
     if (selectedObject)
     {
-      data = data_model.getData(selectedObject.rt_id, selectedObject.obj_id, -1, arguments);
+      data = data_model.get_data([selectedObject.obj_id], arguments);
       if (data)
       {
-        container.innerHTML = data_model.pretty_print();
+        container.clearAndRender(
+          window.templates.inspect_object(data_model, [selectedObject.obj_id]));
 
         messages.post
         (

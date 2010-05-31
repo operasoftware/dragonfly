@@ -119,20 +119,20 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseData = function()
                   className: "HTMLButtonElement"
                   */
 
-  this.setObject = function(rt_id, obj_id, virtual_props)
+  this.setObject = function(rt_id, obj_id, virtual_props, identifier, _class)
   {
     this._obj_map = 
     {
       0:
       [
         [
-          [obj_id, , , , 'Test 1'],
+          [obj_id],
           [
             [
-              'test',
+              identifier || '',
               'object',
               ,
-              [obj_id, , , , 'Test']
+              [obj_id, , , , _class || '']
             ]
           ]
         ]
@@ -170,27 +170,27 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseData = function()
     }
   }
 
-  this.getData = function(rt_id, obj_id, path, org_args)
+  
+  this.get_data = function(path, org_args)
   {
-    if (this._obj_map[obj_id])
-    {
-      // TODO ensure that the argument is allways an array or undefined
-      if (Object.prototype.toString.call(path) == "[object Array]")
+    if (path)
+    { 
+      var obj_id = path[path.length - 1];
+      if (this._obj_map[obj_id])
       {
-        for (var i = 0, cur = null, tree = this._expand_tree; cur = path[i]; i++)
-          tree = tree[cur] || (tree[cur] = {});
+        return this._obj_map[obj_id];
       }
-      else if (obj_id == this._obj_id && !this._expand_tree[obj_id])
-        this._expand_tree[obj_id] = {};
-      return this._obj_map[obj_id];
+      var tag = window.tag_manager.set_callback(this, this._handle_examine_object, [path, org_args]);
+      window.services['ecmascript-debugger'].requestExamineObjects(tag, [this._rt_id, [obj_id], 1]);
+      return null;
     }
-    var tag = window.tag_manager.set_callback(this, this._handle_examine_object, [rt_id, obj_id, org_args]);
-    window.services['ecmascript-debugger'].requestExamineObjects(tag, [rt_id, [obj_id], 1]); 
   }
 
-  this._handle_examine_object = function(status, message, rt_id, obj_id, org_args)
+  this._handle_examine_object = function(status, message, path, org_args)
   {
     var 
+    obj_id = 0,
+    tree = this._expand_tree,
     proto_chain = null,
     property_list = null,
     i = 0,
@@ -205,8 +205,17 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseData = function()
       opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + ' failed to examine object');
     else
     {
+      for ( ; path[i]; i++)
+      {
+        obj_id = path[i];
+        if (i < path.length - 1 && !tree[obj_id])
+        {
+          throw 'not valid path in InspectionBaseData._handle_examine_object';
+        }
+        tree = tree[obj_id] || (tree[obj_id] = {});
+      }
       proto_chain = message[OBJECT_CHAIN_LIST][0][OBJECT_LIST];
-      for (; proto = proto_chain[i]; i++)
+      for (i = 0; proto = proto_chain[i]; i++)
       {
         class_name = proto[VALUE][CLASS_NAME];
         property_list = proto[PROPERTY_LIST];
@@ -239,6 +248,7 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseData = function()
       }
 
       this._obj_map[obj_id] = proto_chain;
+
       if (org_args && !this._queried_map[obj_id])
       {
         this._queried_map[obj_id] = true;
@@ -337,7 +347,11 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseData = function()
       if (!tree)
         throw 'not valid path in InspectionBaseData.pretty_print';
     }
-    this._pretty_print_object(obj_id, ret, tree);
+    var data = this._obj_map[obj_id];
+    //opera.postError(path+', '+obj_id +', '+JSON.stringify(tree))
+    if (data)
+      this._pretty_print_protos(data, ret, tree);
+    //this._pretty_print_object(obj_id, ret, tree);
     return ret.join('');
   }
 
