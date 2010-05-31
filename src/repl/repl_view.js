@@ -6,8 +6,9 @@ window.cls = window.cls || (window.cls = {});
   */
 
 cls.ReplView = function(id, name, container_class, html, default_handler) {
-
+  new cls.ReplService();
   this._resolver = new PropertyFinder();
+  this._service = window.services['ecmascript-debugger'];
 
   this.createView = function(container)
   {
