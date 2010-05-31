@@ -19,7 +19,8 @@ cls.EcmascriptDebugger["6.0"].FrameInspectionData = function(id, views)
     var frame = stop_at.getFrame(msg.frame_index);
     if (frame)
     {
-      var virtual_properties =
+      var virtual_properties = 
+      frame.argument_id &&
       [
         [
           'arguments',
@@ -33,7 +34,7 @@ cls.EcmascriptDebugger["6.0"].FrameInspectionData = function(id, views)
           ,
           [frame.this_id == '0' ? frame.rt_id : frame.this_id, 0, 'object', , '']
         ]
-      ];
+      ] || null;
       this.setObject(frame.rt_id, frame.scope_id, virtual_properties);
     }
     else
