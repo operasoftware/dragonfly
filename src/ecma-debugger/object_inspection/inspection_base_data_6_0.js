@@ -153,10 +153,23 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseData = function()
     return this._obj_id && {rt_id: this._rt_id, obj_id: this._obj_id} || null;
   }
 
+  this._id_counter = 0;
+  this._get_id = function()
+  {
+    this._id_counter++;
+    return "inspection-id-" + this._id_counter.toString();
+  }
+
+
   this._init = function(id, views)
   {
-    this.id = id;
-    this._views = views;
+    this.id = id || this._get_id();
+    this._views = views || [];
+    if (!window.inspections)
+    {
+      new cls.Namespace("inspections");
+    }
+    window.inspections.add(this);
   }
 
   this._update_views = function()
@@ -208,7 +221,11 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseData = function()
       for ( ; path[i]; i++)
       {
         obj_id = path[i];
-        if (i < path.length - 1 && !tree[obj_id])
+        // TODO
+        
+          //alert((path[i + 1] == obj_id) +' '+(i < (path.length - 1) && !tree[obj_id]))
+
+        if (i < (path.length - 1) && !tree[obj_id])
         {
           throw 'not valid path in InspectionBaseData._handle_examine_object';
         }
@@ -275,6 +292,7 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseData = function()
     {
       for (; cur = path[i]; i++)
       {
+
         if (i == path.length -1)
         {
           dead_ids = [cur].concat(this._get_all_ids(tree[cur]));
@@ -327,6 +345,7 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseData = function()
     {
       for (var i = 0, cur = null; cur = path[i]; i++)
       {
+
         tree = tree[cur];
         if (!tree)
           throw 'not valid path in InspectionBaseData.prettyPrint';
@@ -343,12 +362,12 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseData = function()
     var ret = [], tree = this._expand_tree, obj_id = 0, i = 0;
     for (; path && path[i]; i++)
     {
+
       tree = tree[obj_id = path[i]];
       if (!tree)
         throw 'not valid path in InspectionBaseData.pretty_print';
     }
     var data = this._obj_map[obj_id];
-    //opera.postError(path+', '+obj_id +', '+JSON.stringify(tree))
     if (data)
       this._pretty_print_protos(data, ret, tree);
     //this._pretty_print_object(obj_id, ret, tree);

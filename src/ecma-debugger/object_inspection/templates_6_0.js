@@ -12,6 +12,7 @@
   */
   this.inspect_object = function(data_model, path)
   {
+    
     var obj = data_model.get_object();
     return ( 
     [

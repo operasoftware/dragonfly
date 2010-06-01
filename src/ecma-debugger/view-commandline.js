@@ -53,19 +53,15 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
       }
       else
       {
-        __console_output.render
-        (
-          ['pre', entry.value ].concat
-          (
-            entry.obj_id
-            ? [
-                'handler', 'inspect-object-link',
-                'rt-id', entry.runtime_id.toString(),
-                'obj-id', entry.obj_id.toString()
-              ]
-            : []
-          )
-        );
+        if (entry.model)
+        {
+          __console_output.render(window.templates.inspect_object(entry.model));
+        }
+        else
+        {
+          __console_output.render (['pre', entry.value ]);
+        }
+
       }
     }
   }
@@ -167,19 +163,23 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
           }
           if(callback)
           {
-            callback(runtime_id, obj_id);
+            callback(runtime_id, obj_id, message);
           }
-          cons_out_render_return_val
-          (
-            console_output_data[console_output_data.length] =
-            {
-              type: "return-value",
-              obj_id: obj_id,
-              runtime_id: runtime_id,
-              value: value
-            }
-          );
-          __container.scrollTop = __container.scrollHeight;
+          else
+          {
+            cons_out_render_return_val
+            (
+              console_output_data[console_output_data.length] =
+              {
+                type: "return-value",
+                obj_id: obj_id,
+                runtime_id: runtime_id,
+                value: value,
+                model: new cls.Inspection(runtime_id, obj_id, value)
+              }
+            );
+            __container.scrollTop = __container.scrollHeight;
+          }
         }
         else if (return_value = message[OBJECT_VALUE])
         {
@@ -267,7 +267,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     ele.getElementsByTagName('textarea')[0].focus();
   }
 
-  var dir_obj = function(rt_id, obj_id)
+  var dir_obj = function(rt_id, obj_id, message)
   {
     messages.post('active-inspection-type', {inspection_type: 'object'});
     // if that works it should be just inspection
