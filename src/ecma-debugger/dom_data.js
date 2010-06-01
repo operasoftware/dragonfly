@@ -750,3 +750,6 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
 
 };
 
+// Disable forced lowercase for some elements
+cls.EcmascriptDebugger["5.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST = ["svg", "math"];
+

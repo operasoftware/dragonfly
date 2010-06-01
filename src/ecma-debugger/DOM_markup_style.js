@@ -143,6 +143,8 @@ var DOM_markup_style = function(id, name, container_class)
     var style = null;
     var is_not_script_node = true;
     var is_debug = ini.debug;
+    var disregard_force_lower_case_whitelist = cls.EcmascriptDebugger["5.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST;
+    var disregard_force_lower_case_depth = 0;
 
     if (!data.length)
     {
@@ -161,10 +163,23 @@ var DOM_markup_style = function(id, name, container_class)
         children_length = node[CHILDREN_LENGTH];
         child_pointer = 0;
         node_name = (node[NAMESPACE] ? node[NAMESPACE] + ':': '') + node[NAME];
+
+        if (force_lower_case && disregard_force_lower_case_whitelist.indexOf(node[NAME].toLowerCase()) != -1)
+        {
+          disregard_force_lower_case_depth = node[DEPTH];
+          force_lower_case = false;
+        }
+        else if (disregard_force_lower_case_depth && disregard_force_lower_case_depth == node[DEPTH])
+        {
+          disregard_force_lower_case_depth = 0;
+          force_lower_case = dom_data.isTextHtml() && settings[this.id].get('force-lowercase');
+        }
+
         if (force_lower_case)
         {
           node_name = node_name.toLowerCase();
         }
+
         switch (node[TYPE])
         {
           case 1:  // elements
