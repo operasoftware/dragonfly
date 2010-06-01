@@ -7,45 +7,38 @@ cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
   * @extends ViewBase
   */
 
-cls.EcmascriptDebugger["6.0"].DOMAttrsView = function(id, name, container_class)
+cls.EcmascriptDebugger["6.0"].InspectionBaseView = function()
 {
-  var self = this;
 
   this.createView = function(container)
   {
     var 
-    selectedNode = node_dom_attrs.getSelectedNode(),
-    data = null,
-    use_filter = settings['dom_attrs'].get("hide-null-values");
-    
-    if( selectedNode )
+    data_model = window.inspections[this._cur_data],
+    object = data_model.get_object(),
+    path = null,
+    cb = null;
+
+    container.innerHTML = "";
+    if (object)
     {
-      delete container.__call_count;
-      data = node_dom_attrs.get_data([selectedNode.obj_id], arguments);
-      if(data)
-      {
-        container.innerHTML = 
-          "<examine-objects rt-id='" + selectedNode.rt_id + "' " + 
-                "data-id='node_dom_attrs' " +
-                "obj-id='" + selectedNode.obj_id + "' class='search-scope-inspection'>" +
-              node_dom_attrs.pretty_print([selectedNode.obj_id], use_filter, 1) + 
-          "</examine-objects>";
-        messages.post( 'list-search-context', 
-          {
-            'data_id': 'node_dom_attrs', 
-            'rt_id': selectedNode.rt_id,
-            'obj_id': selectedNode.obj_id, 
-            'depth': '-1'
-          });
-      }
-  
-    }
+      path = [object.obj_id];
+      cb = this._create_view.bind(this, container, data_model, path);
+      data_model.inspect(path, cb);
+    };
     
-  }
+  };
 
+  this._create_view = function(container, data_model, path)
+  {
+    container.render(window.templates.inspect_object(data_model, path));
+  };
 
-  
+}
 
+cls.EcmascriptDebugger["6.0"].DOMAttrsView = function(id, name, container_class)
+{
+
+  this._cur_data = 'node_dom_attrs'; // or object_inspection_data
   this.init(id, name, container_class);
 }
 

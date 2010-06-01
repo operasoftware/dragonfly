@@ -55,7 +55,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
       {
         if (entry.model)
         {
-          __console_output.render(window.templates.inspect_object(entry.model));
+          __console_output.render(window.templates.inspect_object(entry.model, entry.path));
         }
         else
         {
@@ -161,6 +161,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
               }
             }
           }
+          /*
           if(callback)
           {
             callback(runtime_id, obj_id, message);
@@ -180,14 +181,37 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
             );
             __container.scrollTop = __container.scrollHeight;
           }
+          */
         }
         else if (return_value = message[OBJECT_VALUE])
         {
           var object_id = return_value[OBJECT_ID];
+          if(callback)
+          {
+            callback(runtime_id, object_id, message);
+          }
+          else
+          {
+            cons_out_render_return_val
+            (
+              console_output_data[console_output_data.length] =
+              {
+                type: "return-value",
+                obj_id: object_id,
+                runtime_id: runtime_id,
+                value: return_value[4],
+                model: new cls.Inspection(runtime_id, object_id, return_value[4]),
+                path: null
+              }
+            );
+            __container.scrollTop = __container.scrollHeight;
+          }
+          /*
           var tag = tagManager.set_callback(null, handleEval, [runtime_id, object_id, callback] );
           var script_string  = "return Object.prototype.toString.call(obj)";
           services['ecmascript-debugger'].requestEval(tag,
             [runtime_id, 0, 0, script_string, [['obj', object_id]]]);
+          */
         }
       }
       else
@@ -267,12 +291,48 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     ele.getElementsByTagName('textarea')[0].focus();
   }
 
+  /*
+  cons_out_render_return_val
+  (
+    console_output_data[console_output_data.length] =
+    {
+      type: "return-value",
+      obj_id: object_id,
+      runtime_id: runtime_id,
+      value: return_value[4],
+      model: new cls.Inspection(runtime_id, object_id, return_value[4]),
+      path: null
+    }
+  );
+  */
+
+  var _dir_object = function(entry)
+  {
+    cons_out_render_return_val(console_output_data[console_output_data.length] = entry);
+  }
+
   var dir_obj = function(rt_id, obj_id, message)
   {
+    //alert(JSON.stringify(message))
+
+    var entry =
+    {
+      type: "return-value",
+      obj_id: obj_id,
+      runtime_id: rt_id,
+      value: message[3][4],
+      model: new cls.Inspection(rt_id, obj_id, message[3][4]),
+      path: [obj_id]
+    };
+    var cb = _dir_object.bind(null, entry);
+    entry.model.inspect(entry.path, cb);
+
+    /*
     messages.post('active-inspection-type', {inspection_type: 'object'});
     // if that works it should be just inspection
     topCell.showView(views.inspection.id);
     messages.post('object-selected', {rt_id: rt_id, obj_id: obj_id});
+    */
   }
 
   var command_map =

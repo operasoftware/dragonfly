@@ -14,14 +14,18 @@
   {
     
     var obj = data_model.get_object();
-    return ( 
-    [
-      'examine-objects',
-      'data-id', data_model.id,
-      'rt-id', obj.rt_id.toString(),
-      'obj-id', obj.obj_id.toString(),
-      'innerHTML', data_model.pretty_print(path)
-    ]);
+    if (obj)
+    {
+      return ( 
+      [
+        'examine-objects',
+        'data-id', data_model.id,
+        'rt-id', obj.rt_id.toString(),
+        'obj-id', obj.obj_id.toString(),
+        'innerHTML', data_model.pretty_print(path)
+      ]);
+    };
+    return [];
   }
 
 }).apply(window.templates || (window.templates = {}));

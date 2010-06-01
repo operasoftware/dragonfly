@@ -9,57 +9,22 @@ cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
 
 cls.EcmascriptDebugger["6.0"].InspectionView = function(id, name, container_class)
 {
-  var self = this;
 
-  var cur_data = 'frame_inspection_data'; // or object_inspection_data
-
-  this.createView = function(container)
-  {
-    var
-    data_model = window[cur_data],
-    selectedObject = data_model.get_object(),
-    data = null,
-    use_filter = settings['inspection'].get("hide-default-properties");
-
-    if (selectedObject)
-    {
-      data = data_model.get_data([selectedObject.obj_id], arguments);
-      if (data)
-      {
-        container.clearAndRender(
-          window.templates.inspect_object(data_model, [selectedObject.obj_id]));
-
-        messages.post
-        (
-          'list-search-context',
-          {
-            'data_id': cur_data,
-            'rt_id': selectedObject.rt_id,
-            'obj_id': selectedObject.obj_id,
-            'depth': '-1'
-          }
-        );
-      }
-    }
-    else
-    {
-      container.innerHTML = "";
-    }
-  };
+  this._cur_data = 'frame_inspection_data'; // or object_inspection_data
 
   this.clearView = function()
   {
     // TODO
   };
 
+  this._on_active_inspection_type = function(msg)
+  {
+    this._cur_data = msg.inspection_type + '_inspection_data';
+  };
+
+  messages.addListener('active-inspection-type', this._on_active_inspection_type.bind(this));
   this.init(id, name, container_class);
 
-  var onActiveInspectionType = function(msg)
-  {
-    cur_data = msg.inspection_type + '_inspection_data';
-  }
-
-  messages.addListener('active-inspection-type', onActiveInspectionType);
 };
 
 cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()

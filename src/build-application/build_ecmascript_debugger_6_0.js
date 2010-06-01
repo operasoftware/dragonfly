@@ -44,12 +44,14 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     window.hostspotlighter.bind(service_interface);
 
     /* ECMA object inspection */
-    namespace.InspectionView.prototype = ViewBase;
+    namespace.InspectionBaseView.prototype = ViewBase;
+    var BaseView = new namespace.InspectionBaseView();
+    namespace.InspectionView.prototype = BaseView;
     new namespace.InspectionView('inspection', ui_strings.M_VIEW_LABEL_FRAME_INSPECTION, 'scroll');
     namespace.InspectionView.create_ui_widgets();
 
     /* DOM object inspection */
-    namespace.DOMAttrsView.prototype = ViewBase;
+    namespace.DOMAttrsView.prototype = BaseView;
     new namespace.DOMAttrsView('dom_attrs', ui_strings.M_VIEW_LABEL_DOM_ATTR, 'scroll dom-attrs');
     namespace.DOMAttrsView.create_ui_widgets();
 

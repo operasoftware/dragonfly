@@ -183,23 +183,25 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseData = function()
     }
   }
 
-  
-  this.get_data = function(path, org_args)
+  this.inspect =
+  this.get_data = function(path, cb)
   {
     if (path)
     { 
       var obj_id = path[path.length - 1];
       if (this._obj_map[obj_id])
       {
-        return this._obj_map[obj_id];
+        cb();
       }
-      var tag = window.tag_manager.set_callback(this, this._handle_examine_object, [path, org_args]);
-      window.services['ecmascript-debugger'].requestExamineObjects(tag, [this._rt_id, [obj_id], 1]);
-      return null;
+      else
+      {
+        var tag = window.tag_manager.set_callback(this, this._handle_examine_object, [path, cb]);
+        window.services['ecmascript-debugger'].requestExamineObjects(tag, [this._rt_id, [obj_id], 1]);
+      }
     }
   }
 
-  this._handle_examine_object = function(status, message, path, org_args)
+  this._handle_examine_object = function(status, message, path, cb)
   {
     var 
     obj_id = 0,
@@ -266,10 +268,9 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseData = function()
 
       this._obj_map[obj_id] = proto_chain;
 
-      if (org_args && !this._queried_map[obj_id])
+      if (cb)
       {
-        this._queried_map[obj_id] = true;
-        org_args.callee.apply(null, org_args);
+        cb();
       }
     }
   }
@@ -285,7 +286,8 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseData = function()
     return a[PROPERTY_ITEM] < b[PROPERTY_ITEM] ? -1 : a[PROPERTY_ITEM] > b[PROPERTY_ITEM] ? 1 : 0;
   };
 
-  this.clearData = function(rt_id, obj_id, path)
+  this.clear_data =
+  this.clearData = function(path)
   {
     var i = 0, cur = '', tree = this._expand_tree, dead_ids = null, ids = null;
     if (path)
