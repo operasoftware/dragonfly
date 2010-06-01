@@ -572,13 +572,16 @@ StyleSheetList.prototype.getPropertyValue = function(selector, property)
   }
 })();
 
-Function.prototype.bind = function(object)
+if (!(function(){}).bind)
 {
-  var method = this;
-  return function()
+  Function.prototype.bind = function (context) 
   {
-    return method.apply(object, arguments);
-  }
+    var method = this, args = Array.prototype.slice.call(arguments, 1);
+    return function() 
+    {
+      return method.apply(context, args.concat(Array.prototype.slice.call(arguments)));
+    }
+  };
 };
 
 /**
