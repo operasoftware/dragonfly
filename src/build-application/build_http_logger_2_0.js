@@ -7,7 +7,7 @@ window.app.builders.HttpLogger || ( window.app.builders.HttpLogger = {} );
 window.app.builders.HttpLogger["2.0"] = function(service)
 {
   var namespace = cls.HttpLogger && cls.HttpLogger["2.0"];
-  var service_interface = window.app.helpers.implement_service(namespace);
+  var service_interface = window.services['http-logger'];
   if(service_interface)
   {
     (new namespace.ParseMessages()).bind(service_interface);

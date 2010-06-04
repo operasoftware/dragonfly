@@ -9,79 +9,56 @@ window.cls || ( window.cls = {} );
   * @constructor 
   */
 
-window.cls.ServiceBase = function()
+window.cls.ServiceBase = function ()
 {
   // singleton
-  if(arguments.callee.instance)
+  if(cls.ServiceBase.instance)
   {
-    return arguments.callee.instance;
+    return cls.ServiceBase.instance;
   }
-  arguments.callee.instance = this;
+  cls.ServiceBase.instance = this;
+
+  window.cls.MessageMixin.apply(this); // mix in message handler behaviour.
 
   this.on_enable_success = function(){};
   this.on_window_filter_change = function(filter){};
   this.on_quit = function(){};
   this.is_implemented = false;
 
+  this.create_and_expose_interface = function(version, map)
+  {
+    if (map)
+    {
+      this.version = version;
+      for (var cmd_id in map)
+      {
+        this._expose_method(parseInt(cmd_id), map[cmd_id].name);
+      };
+      this.is_implemented = true;
+      return true;
+    }
+    return false;
+  };
+
+  this._expose_method = function(id, name)
+  {
+    if (name.slice(0, 2) == 'On')
+    {
+      this['on' + name.slice(2)] = function(status, message){};
+    }
+    else
+    {
+      this['handle' + name] = function(status, message){};
+      this['request' + name] = function(tag, message)
+      {
+        opera.scopeTransmit(this.name, message || [], id, tag || 0);
+      };
+    }
+  };
+
   var _services = null;
   var _event_map = {};
-  _event_map['console-logger'] = [];
-  _event_map['console-logger'][1] = 'onConsoleMessage';
-  _event_map['exec'] = [];
-  _event_map['exec'][1] = 'handleExec';
-  _event_map['exec'][2] = 'handleGetActionInfoList';
-  _event_map['exec'][3] = 'handleSetupScreenWatcher';
-  _event_map['exec'][5] = 'handleSendMouseAction';
-  _event_map['window-manager'] = [];
-  _event_map['window-manager'][1] = 'handleGetActiveWindow';
-  _event_map['window-manager'][2] = 'handleListWindows';
-  _event_map['window-manager'][3] = 'handleModifyFilter';
-  _event_map['window-manager'][4] = 'onWindowUpdated';
-  _event_map['window-manager'][5] = 'onWindowClosed';
-  _event_map['window-manager'][6] = 'onWindowActivated';
-  _event_map['window-manager'][7] = 'onWindowLoaded';
-  _event_map['ecmascript-debugger'] = [];
-  _event_map['ecmascript-debugger'][1] = 'handleListRuntimes';
-  _event_map['ecmascript-debugger'][2] = 'handleContinueThread';
-  _event_map['ecmascript-debugger'][3] = 'handleEval';
-  _event_map['ecmascript-debugger'][4] = 'handleExamineObjects';
-  _event_map['ecmascript-debugger'][5] = 'handleSpotlightObject';
-  _event_map['ecmascript-debugger'][6] = 'handleAddBreakpoint';
-  _event_map['ecmascript-debugger'][7] = 'handleRemoveBreakpoint';
-  _event_map['ecmascript-debugger'][8] = 'handleAddEventHandler';
-  _event_map['ecmascript-debugger'][9] = 'handleRemoveEventHandler';
-  _event_map['ecmascript-debugger'][10] = 'handleSetConfiguration';
-  _event_map['ecmascript-debugger'][11] = 'handleGetBacktrace';
-  _event_map['ecmascript-debugger'][12] = 'handleBreak';
-  _event_map['ecmascript-debugger'][13] = 'handleInspectDom';
-  _event_map['ecmascript-debugger'][22] = 'handleCssGetIndexMap';
-  _event_map['ecmascript-debugger'][23] = 'handleCssGetAllStylesheets';
-  _event_map['ecmascript-debugger'][24] = 'handleCssGetStylesheet';
-  _event_map['ecmascript-debugger'][25] = 'handleCssGetStyleDeclarations';
-  _event_map['ecmascript-debugger'][26] = 'handleGetSelectedObject';
-  _event_map['ecmascript-debugger'][27] = 'handleSpotlightObjects';
-  _event_map['ecmascript-debugger'][29] = 'handleReleaseObjects';
-  _event_map['ecmascript-debugger'][30] = 'handleSetPropertyFilter';
-  _event_map['ecmascript-debugger'][38] = 'handleAddEventBreakpoint';
-  _event_map['ecmascript-debugger'][14] = 'onRuntimeStarted';
-  _event_map['ecmascript-debugger'][15] = 'onRuntimeStopped';
-  _event_map['ecmascript-debugger'][16] = 'onNewScript';
-  _event_map['ecmascript-debugger'][17] = 'onThreadStarted';
-  _event_map['ecmascript-debugger'][18] = 'onThreadFinished';
-  _event_map['ecmascript-debugger'][19] = 'onThreadStoppedAt';
-  _event_map['ecmascript-debugger'][20] = 'onHandleEvent';
-  _event_map['ecmascript-debugger'][21] = 'onObjectSelected';
-  _event_map['ecmascript-debugger'][28] = 'onParseError';
-  _event_map['ecmascript-debugger'][31] = 'onReadyStateChanged';
-  _event_map['ecmascript-debugger'][32] = 'onConsoleLog';
-  _event_map['ecmascript-debugger'][33] = 'onConsoleTime';
-  _event_map['ecmascript-debugger'][34] = 'onConsoleTimeEnd';
-  _event_map['ecmascript-debugger'][35] = 'onConsoleTrace';
-  _event_map['ecmascript-debugger'][36] = 'onConsoleProfile';
-  _event_map['ecmascript-debugger'][37] = 'onConsoleProfileEnd';
-  _event_map['http-logger'] = [];
-  _event_map['http-logger'][1] = 'onRequest';
-  _event_map['http-logger'][2] = 'onResponse';
+  
   _event_map['scope'] = [];
   _event_map['scope'][3] = 'handleConnect';
   _event_map['scope'][4] = 'handleDisconnect';
@@ -91,18 +68,12 @@ window.cls.ServiceBase = function()
   _event_map['scope'][8] = 'handleQuit';
   _event_map['scope'][10] = 'handleHostInfo';
   _event_map['scope'][11] = 'handleMessageInfo';
+  _event_map['scope'][12] = 'handleEnumInfo';
   _event_map['scope'][0] = 'onServices';
   _event_map['scope'][1] = 'onQuit';
   _event_map['scope'][2] = 'onConnectionLost';
   _event_map['scope'][9] = 'onError';
-  _event_map['url-player'] = [];
-  _event_map['url-player'][1] = 'handleCreateWindows';
-  _event_map['url-player'][2] = 'handleLoadUrl';
-  _event_map['url-player'][3] = 'onUrlLoaded';
-  _event_map['url-player'][4] = 'onConnectionFailed';
-  _event_map['ecmascript-logger'] = [];
-  _event_map['ecmascript-logger'][1] = 'handleConfigure';
-  _event_map['ecmascript-logger'][2] = 'onNewScript';
+
 
   var _status_map = [];
   _status_map[0] = "OK";
@@ -124,46 +95,71 @@ window.cls.ServiceBase = function()
 
   var _handle_scope_message = function(service, message, command, status, tag)
   {
-    if( !tagManager.handle_message(tag, status, message) )
+    var msg_name = _event_map[service][command], service_obj = _services[service];
+    if (msg_name.indexOf('on') == 0)
     {
-      _services[service][_event_map[service][command]](status, message);
+      service_obj[msg_name](status, message);
+      service_obj.post_message(msg_name.slice(2).toLowerCase(), message);
     }
-  }
+    else if (!tagManager.handle_message(tag, status, message))
+    {
+      service_obj[msg_name](status, message);
+    }
+  };
 
   var _handle_scope_message_debug = function(service, message, command, status, tag)
   {
     window.debug.log_message(service, message, command, status, tag);
-    if( !tagManager.handle_message(tag, status, message) )
-    {
-      _services[service][_event_map[service][command]](status, message);
-    }
-  }
+    _handle_scope_message(service, message, command, status, tag);
+  };
 
   // static methods
 
-  arguments.callee.get_event_map = function()
+  (function()
   {
-    return _event_map;
-  }
 
-  arguments.callee.get_status_map = function()
-  {
-    return _status_map;
-  }
+    this.get_event_map = function()
+    {
+      return _event_map;
+    };
 
-  arguments.callee.get_type_map = function()
-  {
-    return _type_map;
-  }
+    this.get_status_map = function()
+    {
+      return _status_map;
+    };
 
-  arguments.callee.get_generic_message_handler = function()
-  {
-    return window.ini && window.ini.debug && _handle_scope_message_debug || _handle_scope_message;
-  }
+    this.get_type_map = function()
+    {
+      return _type_map;
+    };
 
-  arguments.callee.register_services = function(namespace)
-  {
-    _services = namespace;
-  }
+    this.get_generic_message_handler = function()
+    {
+      return window.ini && window.ini.debug && _handle_scope_message_debug || _handle_scope_message;
+    };
 
-}
+    this.register_services = function(namespace)
+    {
+      _services = namespace;
+    };
+
+    this.populate_map = function(map)
+    {
+      for (var service in map)
+      {
+        if (service == "scope")
+          continue;
+        var cmd_map = _event_map[service] = [];
+        for (var cmd_id in map[service])
+        {
+          if (map[service][cmd_id].name.slice(0, 2) == "On")
+            cmd_map[cmd_id] = "on" + map[service][cmd_id].name.slice(2);
+          else
+            cmd_map[cmd_id] = "handle" + map[service][cmd_id].name;
+        }
+      }
+    };
+
+  }).apply(cls.ServiceBase);
+
+};

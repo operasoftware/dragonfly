@@ -179,6 +179,25 @@ cls.WindowManager["2.0"].WindowManagerData = function()
     this._check_counter = 0;
   };
 
+  this._handle_modify_filter = function(status, message, filter)
+  {
+    if(status == 0)
+    {
+      for( var service in services )
+      {
+        if(services[service].is_implemented)
+        {
+          services[service].post('window-filter-change', {filter: filter});
+          services[service].on_window_filter_change(filter);
+        }
+      }
+    }
+    else
+    {
+      // TODO
+    }
+  }
+
   /* implementation */
 
   this.get_active_window_id = function()
@@ -218,7 +237,9 @@ cls.WindowManager["2.0"].WindowManagerData = function()
 
   this.set_debug_context = function(win_id)
   {
-    window_manager.requestModifyFilter(0, [1, [win_id]]);
+    var filter = [1, [win_id]];
+    var tag = window.tagManager.set_callback(this, this._handle_modify_filter, [filter]);
+    window_manager.requestModifyFilter(tag, filter);
     this._debug_context = win_id;
     // TODO cleanup, the active window id should just be at one place
     window.messages.post('debug-context-selected', {window_id: win_id});

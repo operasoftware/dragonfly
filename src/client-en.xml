@@ -149,7 +149,8 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./lib/json.js"/>
 <script src="./lib/clientlib_async.js"/>
 <script src="./lib/tag_manager.js"/>
-<script src="./lib/messages.js"/>
+<script src="./lib/messagebroker.js"/>
+<script src="./lib/messagemixin.js"/>
 <script src="./lib/get_message_maps.js"/>
 
 <script src="./lib/service_base.js"/>
@@ -157,11 +158,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./lib/stp_0_wrapper.js"></script>
 <script src="./lib/http_interface.js"></script>
 
-<script src="lib/console_logger_2_0.js"></script>
-<script src="lib/exec_2_0.js"></script>
-<script src="lib/window_manager_2_0.js"></script>
-<script src="lib/ecmascript_debugger_5_0.js"></script>
-<script src="lib/http_logger_2_0.js"></script>
+
 <script src="lib/scope_1_1.js"></script>
 
 <script src="./lib/message_maps.js"/>

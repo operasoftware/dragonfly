@@ -1,14 +1,14 @@
 window.cls || (window.cls = {});
-window.cls.GetMessageMaps = function (){};
+window.cls.ScopeInterfaceGenerator = function (){};
 
 /* static interface */
-window.cls.GetMessageMaps.pretty_print_map = function(map){};
+window.cls.ScopeInterfaceGenerator.pretty_print_interface = function(map){};
 
-window.cls.GetMessageMaps = function ()
+window.cls.ScopeInterfaceGenerator = function ()
 {
 
   /* interface */
-  this.get_maps = function(service_descriptions, onsuccess, onerror){};
+  this.get_interface = function(service_descriptions, onsuccess, onerror, should_get_messages){};
   
   /* constants */
   const 
@@ -47,20 +47,6 @@ window.cls.GetMessageMaps = function ()
   // ===========================
   // get the messages from scope
   // ===========================
-  this._get_maps = function()     
-  {
-    if (this._service_descriptions.scope)
-    {
-      var version = this._service_descriptions.scope.version.split('.').map(Number);
-      if (version[1] >= 1) 
-        this._request_enums();
-      else 
-        this._request_infos();
-    }
-    else 
-      this._onerror({message: "failed to get maps, no scope in  service descriptions"});
-
-  };
   
   this._request_enums = function()
   {
@@ -77,14 +63,14 @@ window.cls.GetMessageMaps = function ()
     if (!status)
     {
       this._service_infos[service]['raw_enums'] = msg;
-      if (this._check_map_complete('raw_enums'))
-        this._request_infos();
+      if (this._is_map_complete('raw_enums'))
+        this._request_info();
     }
     else
       this._onerror({message: "failed to get enums for " + service + " in _handle_enums"});
   };
 
-  this._request_infos = function()
+  this._request_info = function()
   {
     var service = '', tag = 0;
     for (service in this._service_infos)
@@ -99,8 +85,14 @@ window.cls.GetMessageMaps = function ()
     if (!status)
     {
       this._service_infos[service]['raw_infos'] = msg;
-      var tag = tagManager.set_callback(this, this._handle_messages, [service]);
-      services["scope"].requestMessageInfo(tag, [service, [], 1, 1]);
+      if (this._should_get_messages)
+      {
+        var tag = tagManager.set_callback(this, this._handle_messages, [service]);
+        services["scope"].requestMessageInfo(tag, [service, [], 1, 1]);
+      }
+      else
+        this._handle_messages(status, [], service);
+
     }
     else
       this._onerror({message: "failed to get infos for " + service + " in _handle_infos"});
@@ -120,14 +112,14 @@ window.cls.GetMessageMaps = function ()
         this._service_infos[service]['raw_messages'] = null;
         this._onerror({message: "failed to build the message maps for " + service});
       }
-      if (this._check_map_complete('raw_messages'))
+      if (this._is_map_complete('raw_messages'))
         this._finalize();
     }
     else
       this._onerror({message: "failed to get infos for " + service + " in _handle_infos"});
   };
 
-  this._check_map_complete = function(prop)
+  this._is_map_complete = function(prop)
   {
     for (var service in this._service_infos)
       if (!this._service_infos[service][prop])
@@ -210,8 +202,9 @@ window.cls.GetMessageMaps = function ()
   {
     var 
     map = this._map[service] = {},
-    command_list = this._service_infos[service].raw_infos[COMMAND_LIST]
-    msgs = this._service_infos[service].raw_messages[MSG_LIST]
+    command_list = this._service_infos[service].raw_infos[COMMAND_LIST],
+    msgs = this._service_infos[service].raw_messages &&
+        this._service_infos[service].raw_messages[MSG_LIST] || [],
     enums = this._service_infos[service].raw_enums && 
         this._service_infos[service].raw_enums[MSG_LIST] || [],
     command = '',
@@ -227,10 +220,13 @@ window.cls.GetMessageMaps = function ()
       command = command_list[i];
       command_obj = map[command[NUMBER]] = {};
       command_obj.name = command[MSG_NAME];
-      msg = this._get_msg(msgs, command[MESSAGE_ID]);
-      command_obj[MSG_TYPE_COMMAND] = this._parse_msg(msg, msgs, {}, enums, []);
-      msg = this._get_msg(msgs, command[RESPONSE_ID]);
-      command_obj[MSG_TYPE_RESPONSE] = this._parse_msg(msg, msgs, {}, enums, []);
+      if (this._should_get_messages)
+      {
+        msg = this._get_msg(msgs, command[MESSAGE_ID]);
+        command_obj[MSG_TYPE_COMMAND] = this._parse_msg(msg, msgs, {}, enums, []);
+        msg = this._get_msg(msgs, command[RESPONSE_ID]);
+        command_obj[MSG_TYPE_RESPONSE] = this._parse_msg(msg, msgs, {}, enums, []);
+      }
     };
     if (event_list)
       for (i = 0; i < event_list.length; i++)
@@ -238,15 +234,17 @@ window.cls.GetMessageMaps = function ()
         event = event_list[i];
         event_obj = map[event[NUMBER]] = {};
         event_obj.name = event[MSG_NAME];
-        msg = this._get_msg(msgs, event[MESSAGE_ID]);
-        event_obj[MSG_TYPE_EVENT] = this._parse_msg(msg, msgs, {}, enums, []);
+        if (this._should_get_messages)
+        {
+          msg = this._get_msg(msgs, event[MESSAGE_ID]);
+          event_obj[MSG_TYPE_EVENT] = this._parse_msg(msg, msgs, {}, enums, []);
+        }
       }
   };
 
   this._finalize = function()
   {
     this._onsuccess(this._map);
-    this._service_descriptions = null; 
     this._onsuccess = null;
     this._onerror = null;
     this._service_infos = null;
@@ -255,17 +253,22 @@ window.cls.GetMessageMaps = function ()
 
   /* implementation */
   
-  this.get_maps = function(service_descriptions, onsuccess, onerror)
+  this.get_interface = function(service_descriptions, onsuccess, onerror, should_get_messages)
   {
-    if (!onsuccess || !onerror)
-    {
-      throw new Error("get_maps must be called with an onsuccess and an onerror callback");
-    }
-    this._service_descriptions = service_descriptions;
+    /**
+      * service_descriptions must be a dictonary of services. 
+      * Each service must have a name and a version.  
+      * service_descriptions is typically created with the 
+      * respond message of the HostInfo command of the scope service.
+      */
+    if (!service_descriptions || !onsuccess || !onerror)
+      throw new Error("get_maps must be called with a service_descriptions dictionary and " +
+          "an onsuccess and an onerror callback");
     this._onsuccess = onsuccess;
     this._onerror = onerror;
     this._service_infos = {};
     this._map = {};
+    this._should_get_messages = should_get_messages === false ? false : true;
     for (var service in service_descriptions)
     {
       if (!/^stp-|^core-/.test(service))
@@ -278,7 +281,16 @@ window.cls.GetMessageMaps = function ()
         }
       }
     }
-    this._get_maps(service_descriptions);
+    if (service_descriptions.scope)
+    {
+      var version = service_descriptions.scope.version.split('.').map(Number);
+      if (version[1] >= 1) 
+        this._request_enums();
+      else 
+        this._request_info();
+    }
+    else 
+      this._onerror({message: "failed to get maps, no scope in  service descriptions"});
   }
 };
 
@@ -286,14 +298,14 @@ window.cls.GetMessageMaps = function ()
 // pretty print message maps
 // =========================
   
-window.cls.GetMessageMaps.pretty_print_map = function(map)
+window.cls.ScopeInterfaceGenerator.pretty_print_interface = function(map)
 {
   var pp_map = this._pretty_print_object('', map, 0, ['message map =']);
   window.open("data:text/plain," + encodeURIComponent(pp_map.join('\n')));
 };
 
-window.cls.GetMessageMaps._pretty_print_object = 
-function(name, obj, indent, print_list, circular_check_list)
+window.cls.ScopeInterfaceGenerator._pretty_print_object = 
+function(name, obj, level, print_list, circular_check_list)
 {
   circular_check_list = circular_check_list && circular_check_list.slice(0) || [];
   const
@@ -322,24 +334,24 @@ function(name, obj, indent, print_list, circular_check_list)
     2: "Response",
     3: "Event",
   };
-  print_list.push(this._get_indent(indent) + this._quote(name, ': ') + '{');
-  indent++;
+  print_list.push(this._get_indent_string(level) + this._quote(name, ': ') + '{');
+  level++;
   for (var key in obj)
   {
     if (typeof obj[key] == 'string' || typeof obj[key] == 'number')
     {
       if (key == 'type' && /^\d+$/.test(obj[key]))
-        print_list.push(this._get_indent(indent) + 
+        print_list.push(this._get_indent_string(level) + 
             this._quote(key) + ': "' + TYPE[obj[key]] + '", // ' + obj[key]);
       else
-        print_list.push(this._get_indent(indent) + 
+        print_list.push(this._get_indent_string(level) + 
             this._quote(key) + ': ' + this._quote(obj[key]) +',');
     }
   }
   for (key in obj)
   {
     if (Object.prototype.toString.call(obj[key]) == '[object Object]')
-      this._pretty_print_object(key, obj[key], indent, print_list, circular_check_list || []);
+      this._pretty_print_object(key, obj[key], level, print_list, circular_check_list || []);
   }
   for (key in obj)
   {
@@ -349,38 +361,36 @@ function(name, obj, indent, print_list, circular_check_list)
       {
         if (circular_check_list.indexOf(obj.message_name) != -1)
         {
-          print_list.push(this._get_indent(indent) + '"message": <circular reference>,');
+          print_list.push(this._get_indent_string(level) + '"message": <circular reference>,');
           continue;
         }
         else
           circular_check_list.push(obj.message_name);
       }
-      if (indent == 3)
-        print_list.push(this._get_indent(indent) + '// ' + MSG_TYPE[key]);
+      if (level == 3)
+        print_list.push(this._get_indent_string(level) + '// ' + MSG_TYPE[key]);
       if (obj[key].length)
       {
-        print_list.push(this._get_indent(indent) + this._quote(key) + ': [');
+        print_list.push(this._get_indent_string(level) + this._quote(key) + ': [');
         for (var i = 0; i < obj[key].length; i++)
-          this._pretty_print_object('', obj[key][i], indent + 1, print_list, circular_check_list);
-        print_list.push(this._get_indent(indent) + '],');
+          this._pretty_print_object('', obj[key][i], level + 1, print_list, circular_check_list);
+        print_list.push(this._get_indent_string(level) + '],');
       }
       else
-        print_list.push(this._get_indent(indent) + this._quote(key) + ': [],');
+        print_list.push(this._get_indent_string(level) + this._quote(key) + ': [],');
     }
   }
-  indent--;
-  print_list.push(this._get_indent(indent) + '},');
+  level--;
+  print_list.push(this._get_indent_string(level) + '},');
   return print_list;
 };
 
-window.cls.GetMessageMaps._get_indent = function(indent)
+window.cls.ScopeInterfaceGenerator._get_indent_string = function(level, indent)
 {
-  const INDENT = '  ';
-  for (var ret = ''; indent-- && (ret += INDENT); );
-  return ret;
+  return new Array(level).join(indent || '  ');
 };
 
-window.cls.GetMessageMaps._quote = function(value, token)
+window.cls.ScopeInterfaceGenerator._quote = function(value, token)
 {
   return value ? (/^\d+$/.test(value) ?  value : '"' + value + '"') + (token || '') : '';
 }

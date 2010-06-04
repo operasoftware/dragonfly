@@ -328,7 +328,7 @@ cls.StorageDataBase = new function()
     this.is_setup = false;
     this["return new _StorageHost()"] =
       "return new " + this._StorageHost.toString() + "(\"" + storage_object + "\").check_storage_object()";
-    window.cls.Messages.apply(this);
+    window.cls.MessageMixin.apply(this);
     window.messages.addListener('active-tab', this._on_active_tab.bind(this));
     messages.addListener('reset-state', this._on_reset_state.bind(this));
   };

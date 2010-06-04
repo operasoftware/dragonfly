@@ -9,7 +9,7 @@ window.app.builders.EcmascriptDebugger || ( window.app.builders.EcmascriptDebugg
 window.app.builders.EcmascriptDebugger["5.0"] = function(service)
 {
   var namespace = cls.EcmascriptDebugger && cls.EcmascriptDebugger["5.0"];
-  var service_interface = window.app.helpers.implement_service(namespace);
+  var service_interface = window.services['ecmascript-debugger'];
 
   if(service_interface)
   {

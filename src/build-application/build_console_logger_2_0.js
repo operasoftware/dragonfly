@@ -9,7 +9,6 @@ window.app.builders.ConsoleLogger["2.0"] = function(service)
   var namespace = cls.ConsoleLogger && cls.ConsoleLogger["2.0"];
   if(namespace)
   {
-    window.app.helpers.implement_service(namespace);
     window.error_console_data = new namespace.ErrorConsoleData();
     window.error_console_data.bind();
     namespace.ConsoleView.prototype = ViewBase;
