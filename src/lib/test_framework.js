@@ -48,6 +48,7 @@ window.cls.TestFramework = function()
     * to clear the log entries
     */
   this.clear_log = function(){};
+  this.rebuild_last_state = function(){};
 
   this.rebuild_last_state = function(){};
 
@@ -63,7 +64,7 @@ window.cls.TestFramework = function()
   this._get_indent = function(count)
   {
     var ret = "";
-    while(count && count-- > 0)
+    while(count-- > 0)
     {
       ret += INDENT;
     }
@@ -104,26 +105,33 @@ window.cls.TestFramework = function()
         {
           item = [];
         }
-        definition = definitions[i];
-        if (definition["q"] == "repeated")
+        if (definition = definitions[i])
         {
-          ret.push(this._get_indent(indent) + definition['name'] + ':');
-          for( j = 0; j < item.length; j++)
+          if (definition["q"] == "repeated")
+          {
+            ret.push(this._get_indent(indent) + definition['name'] + ':');
+            for( j = 0; j < item.length; j++)
+            {
+              ret.push(this._pretty_print_payload_item(
+                indent + 1,
+                definition['name'].replace("List", ""),
+                definition,
+                item[j]));
+            }
+          }
+          else
           {
             ret.push(this._pretty_print_payload_item(
-              indent + 1,
-              definition['name'].replace("List", ""),
+              indent,
+              definition['name'],
               definition,
-              item[j]));
+              item))
           }
         }
         else
         {
-          ret.push(this._pretty_print_payload_item(
-            indent,
-            definition['name'],
-            definition,
-            item))
+          throw Error("PrettyPrintError. Probably invalid message. " +
+                        "payload: " + JSON.stringify(payload));
         }
       }
       return ret.join("\n")

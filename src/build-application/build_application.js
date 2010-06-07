@@ -153,7 +153,7 @@ window.app.build_application = function(on_services_created, on_services_enabled
 
 
   // global objects
-  window.tagManager = new window.cls.TagManager();
+  window.tagManager = window.tag_manager = new window.cls.TagManager();
   window.helpers = new cls.Helpers();
 
   // create window.services namespace and register it.

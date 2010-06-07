@@ -1,0 +1,23 @@
+message <span class="message">EvalData</span>
+{
+  message <span class="message">Variable</span>
+  {
+    required <span class="string">string</span> name     = 1; 
+    required <span class="number">uint32</span> objectID = 2; 
+  }
+  required <span class="number">uint32  </span> runtimeID    = 1; 
+  <span class="comment">/** 
+   * The ID of the thread to use for executing the script data, or 0
+   * to use the global scope.
+   */</span>
+  required <span class="number">uint32  </span> threadID     = 2; 
+  required <span class="number">uint32  </span> frameIndex   = 3; 
+  <span class="comment">/** 
+   * Represents a script to be executed.
+   */</span>
+  required <span class="string">string  </span> scriptData   = 4; 
+  <span class="comment">/** 
+   * Represent variables to set.
+   */</span>
+  repeated <span class="message">Variable</span> variableList = 5; 
+}

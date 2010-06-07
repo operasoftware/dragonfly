@@ -6,7 +6,6 @@ cls.EcmascriptDebugger["5.0"] || (cls.EcmascriptDebugger["5.0"] = {});
   * @constructor 
   * @extends ObjectDataBase
   */
-
 cls.EcmascriptDebugger["5.0"].Frame_inspection_data = function()
 {
 

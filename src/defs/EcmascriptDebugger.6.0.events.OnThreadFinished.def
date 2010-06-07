@@ -1,0 +1,13 @@
+message <span class="message">ThreadResult</span>
+{
+  required <span class="number">uint32</span> runtimeID = 1; 
+  required <span class="number">uint32</span> threadID  = 2; 
+  <span class="comment">/** 
+   * One of:
+   * - `"completed"`
+   * - `"unhandled-exception"`
+   * - `"aborted"`
+   * - `"cancelled-by-scheduler"`
+   */</span>
+  required <span class="string">string</span> status    = 3; 
+}

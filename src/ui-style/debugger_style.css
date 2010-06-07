@@ -189,7 +189,7 @@ input[type="text"] {
   padding:.5em;
 }
 
-[handler="select-window"], [handler="display-script"], [handler="show-global-scope"] {
+[handler="select-window"], [handler="display-script"] {
   cursor:pointer;
   }
 
@@ -521,6 +521,14 @@ examine-objects key
 examine-objects key.no-expander
 {
   margin-left: 18px;
+}
+.prototype-chain-object
+{
+  background-color: #666;
+  color: #fff;
+  font-weight: bold;
+  padding: 2px 16px;
+  margin: 2px 0;
 }
 .css-layout layout-container
 {

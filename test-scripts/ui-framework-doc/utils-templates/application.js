@@ -62,11 +62,11 @@ cls.HelloWorldViewTemplatesCode = function(id, name, container_class)
       <div class='padding'>\
       <h1>Code</h1>\
       <h2>Data</h2>\
-      <pre>" + simple_js_parser.parse(script_obj, 101, 143 - 101 ).join('') + "</pre>\
+      <pre>" + simple_js_parser.format(script_obj, 101, 143 - 101 ).join('') + "</pre>\
       <h2>Templates</h2>\
-      <pre>" + simple_js_parser.parse(script_obj, 144, 168 - 144 ).join('') + "</pre>\
+      <pre>" + simple_js_parser.format(script_obj, 144, 168 - 144 ).join('') + "</pre>\
       <h2>Call</h2>\
-      <pre>" + simple_js_parser.parse(script_obj, 83, 93 - 83 ).join('') + "</pre>\
+      <pre>" + simple_js_parser.format(script_obj, 83, 93 - 83 ).join('') + "</pre>\
       </div>";
     }
   }
