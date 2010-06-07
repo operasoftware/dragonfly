@@ -358,6 +358,14 @@ property  {
   padding-left: 2em;
   padding-right: 3px;
   }
+property.disabled {
+  text-decoration: line-through;
+  }
+.enable-disable {
+  position: absolute;
+  right: 5px;
+  }
+
 
 rule, font-face-rule, page-rule, import-rule, charset-rule, media-rule {
   font-family:monospace;

@@ -420,16 +420,18 @@ cls.ElementStyle = function()
     if (status == 0)
     {
       var rule;
-      for (var i = 0; rule = message[NODE_STYLE_LIST][0/**/][STYLE_LIST][i]; i++)
+      for (var i = 0, decl; decl = message[NODE_STYLE_LIST][i]; i++)
       {
-        if (rule[RULE_ID] == rule_id)
+        for (var j = 0, rule; rule = decl[STYLE_LIST][j]; j++)
         {
-          break;
+          if (rule[RULE_ID] == rule_id)
+          {
+            break;
+          }
         }
       }
 
       var index_list = rule[INDEX_LIST];
-      var len = this.get_rule_by_id(rule_id)[INDEX_LIST].length;
       categories_data[COMP_STYLE] = message[COMPUTED_STYLE_LIST];
       categories_data[CSS] = message[NODE_STYLE_LIST] || [];
       categories_data[CSS].rt_id = categories_data[COMP_STYLE].rt_id = rt_id;
@@ -466,7 +468,7 @@ cls.ElementStyle = function()
         if (decl_is_valid)
         {
           this.literal_declarations[rule_id][declaration[0]] =
-            [declaration[1], declaration[2], status];
+            [declaration[1], declaration[2], status, declaration[3]];
         }
       }
     }
@@ -481,6 +483,7 @@ cls.ElementStyle = function()
       return;
     }
 
+    // property: [value, is_important, status (overwritten=0, else 1), is_disabled]
     this.literal_declarations[rule_id] = {};
 
     var rule = this.get_rule_by_id(rule_id);
@@ -488,19 +491,23 @@ cls.ElementStyle = function()
     for (var i = 0; i < len; i++)
     {
       this.literal_declarations[rule_id][window.css_index_map[rule[PROP_LIST][i]]] =
-        [rule[VAL_LIST][i], rule[PRIORITY_LIST][i], rule[OVERWRITTEN_LIST][i]];
+        [rule[VAL_LIST][i], rule[PRIORITY_LIST][i], rule[OVERWRITTEN_LIST][i], 0];
     }
   };
 
   this.get_rule_by_id = function get_rule_by_id(id)
   {
-    for (var i = 0, rule; rule = categories_data[CSS][0/**/][STYLE_LIST][i]; i++)
+    for (var i = 0, decl; decl = categories_data[CSS][i]; i++)
     {
-      if (rule[RULE_ID] == id)
+      for (var j = 0, rule; rule = decl[STYLE_LIST][j]; j++)
       {
-        return rule;
+        if (rule[RULE_ID] == id)
+        {
+          return rule;
+        }
       }
     }
+    return null;
   };
 
   // TODO(hzr): move this when the CSS stuff is refactored
@@ -514,9 +521,9 @@ cls.ElementStyle = function()
     "font": ["font-style", "font-variant", "font-weight", "font-size", "line-height", "font-family"],
     "list-style": ["list-style-type", "list-style-position", "list-style-image"],
     "margin": ["margin-top", "margin-right", "margin-bottom", "margin-left"],
-    "padding": ["padding-top", "padding-right", "padding-bottom", "padding-left"],
     "outline": ["outline-style", "outline-color", "outline-width"],
-    "overflow": ["overflow-x", "overflow-y"]
+    "overflow": ["overflow-x", "overflow-y"],
+    "padding": ["padding-top", "padding-right", "padding-bottom", "padding-left"]
   };
 
   /* */

@@ -516,8 +516,13 @@ cls.Stylesheets = function()
                   ? self.get_shorthand_from_declarations(prop, declarations, literal_declarations)
                   : declarations[prop];
 
+        // TODO(hzr): this is only temp
+        if (value == undefined) {
+          value = literal_declarations[prop][0];
+        }
+
         // If there is no value at this point it's most likely a non-inheritable property
-        if (value)
+        if (value != undefined)
         {
           index_list.push(window.css_index_map.indexOf(prop));
           value_list.push(value);
@@ -584,21 +589,19 @@ cls.Stylesheets = function()
       }
       else
       {
-        // protocol-4: overwritten_list is now the STATUS, the meaning is inverted, 1 means applied
-        if (overwritten_list && overwritten_list[index])
-        {
-          ret += (ret ? MARKUP_PROP_NL : MARKUP_EMPTY) +
-                  INDENT +
-                  MARKUP_KEY + __indexMap[prop_index] + MARKUP_KEY_CLOSE +
-                  MARKUP_VALUE + helpers.escapeTextHtml(value_list[index]) + (priority_list[index] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE;
-        }
-        else
-        {
-          ret += (ret ? MARKUP_PROP_NL : MARKUP_EMPTY) +
-                  INDENT +
-                  MARKUP_KEY_OW + __indexMap[prop_index] + MARKUP_KEY_CLOSE +
-                  MARKUP_VALUE_OW + helpers.escapeTextHtml(value_list[index]) + ( priority_list[index] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE;
-        }
+        ret += (ret ? MARKUP_PROP_NL : MARKUP_EMPTY) +
+                INDENT +
+                "<property " + (overwritten_list && overwritten_list[index] ? "" : "class='overwritten'") + ">" +
+                  "<key>" + __indexMap[prop_index] + "</key>: " +
+                  "<value>" + helpers.escapeTextHtml(value_list[index]) + (priority_list[index] ? MARKUP_IMPORTANT : "") + "</value>;" +
+                  (rule[ORIGIN] != ORIGIN_USER_AGENT ?
+                  "<input type='checkbox'" +
+                        " class='enable-disable'" +
+                        (!disabled_list[index] ? " checked='checked'" : "") +
+                        " handler='enable-disable'" +
+                        " data-property='" + __indexMap[prop_index] + "'" +
+                        " data-rule-id='" + rule[RULE_ID] + "'>" : "") +
+                "</property>";
       }
     }
     return ret;
@@ -1692,6 +1695,26 @@ cls.Stylesheets = function()
         ret = values.splice(0, length).join(" ");
         break;
 
+    case "outline":
+        values = [declarations["outline-color"],
+                  declarations["outline-style"],
+                  declarations["outline-width"]];
+
+        ret = values.join(" ");
+        break;
+
+    case "overflow":
+        values = [declarations["overflow-x"],
+                  declarations["overflow-y"]];
+
+        if (values[0] != values[1])
+        {
+          length = 2;
+        }
+
+        ret = values.splice(0, length).join(" ");
+        break;
+
     case "padding":
         values = [declarations["padding-top"],
                   declarations["padding-right"],
@@ -1713,26 +1736,6 @@ cls.Stylesheets = function()
         if (values[1] != values[3])
         {
           length = 4;
-        }
-
-        ret = values.splice(0, length).join(" ");
-        break;
-
-    case "outline":
-        values = [declarations["outline-color"],
-                  declarations["outline-style"],
-                  declarations["outline-width"]];
-
-        ret = values.join(" ");
-        break;
-
-    case "overflow":
-        values = [declarations["overflow-x"],
-                  declarations["overflow-y"]];
-
-        if (values[0] != values[1])
-        {
-          length = 2;
         }
 
         ret = values.splice(0, length).join(" ");

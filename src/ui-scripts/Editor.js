@@ -727,12 +727,12 @@ var Editor = function()
     if (props[1])
     {
       this.add_property(props, this.context_cur_prop)
-      this.textarea_container.parentElement.innerHTML = create_declaration(props[0], props[1], props[2]);
+      this.textarea_container.parentElement.innerHTML = create_declaration(props[0], props[1], props[2], this.context_rule_id);
       // TODO(hzr): update the view at this point
     }
     else if (props[1] === "") // If someone deletes the value and then submits, just re-display it
     {
-      this.textarea_container.parentElement.innerHTML = create_declaration(props[0], this.context_cur_value, this.context_cur_priority);
+      this.textarea_container.parentElement.innerHTML = create_declaration(props[0], this.context_cur_value, this.context_cur_priority, this.context_rule_id);
     }
     else
     {
@@ -755,7 +755,7 @@ var Editor = function()
       prop = this.textarea_container.parentElement.parentElement.
         insertBefore(document.createElement('property'), this.textarea_container.parentElement);
 
-      prop.innerHTML = create_declaration(props[0], props[1], props[2]);
+      prop.innerHTML = create_declaration(props[0], props[1], props[2], this.context_rule_id);
       props.splice(0, 3);
     }
 
@@ -808,21 +808,21 @@ var Editor = function()
 
       if (props[1] === "") // If someone deletes the value and then presses enter, just re-display it
       {
-        this.textarea_container.parentElement.innerHTML = create_declaration(props[0], this.context_cur_value, this.context_cur_priority);
+        this.textarea_container.parentElement.innerHTML = create_declaration(props[0], this.context_cur_value, this.context_cur_priority, this.context_rule_id);
         return false;
       }
       else if (this.textarea.selectionEnd == this.textarea.value.length ||
                this.textarea.selectionEnd >= this.textarea.value.indexOf(';'))
       {
         var propertyEle = document.createElement('property');
-        if (this.textarea_container.parentNode.className.indexOf("overwritten") != -1)
+        if (this.textarea_container.parentNode.hasClass("overwritten"))
         {
           propertyEle.addClass("overwritten");
         }
         this.textarea_container.parentNode.removeClass("overwritten");
         prop = this.textarea_container.parentElement.parentElement.
           insertBefore(propertyEle, this.textarea_container.parentElement);
-        prop.innerHTML = create_declaration(props[0], props[1], props[2]);
+        prop.innerHTML = create_declaration(props[0], props[1], props[2], this.context_rule_id);
         this.textarea.value =
         this.context_cur_text_content =
         this.context_cur_prop =
@@ -832,7 +832,7 @@ var Editor = function()
       }
       else
       {
-        this.textarea_container.parentElement.innerHTML = create_declaration(props[0], props[1], props[2]);
+        this.textarea_container.parentElement.innerHTML = create_declaration(props[0], props[1], props[2], this.context_rule_id);
       }
 
       // Only add property if something has changed (new or updated value)
@@ -859,7 +859,7 @@ var Editor = function()
     {
       this.textarea.value = this.context_cur_text_content;
       this.textarea_container.parentElement.innerHTML =
-        create_declaration(this.context_cur_prop, this.context_cur_value, this.context_cur_priority);
+        create_declaration(this.context_cur_prop, this.context_cur_value, this.context_cur_priority, this.context_rule_id);
       return true;
     }
     else
@@ -876,11 +876,10 @@ var Editor = function()
    * @param {Array} declaration An array according to [prop, value, is_important]
    * @param {String} prop_to_remove An optional property to remove
    */
-  // TODO(hzr): maybe no need to submit property here again, since it's done in commit()?
   this.add_property = function add_property(declaration, prop_to_remove)
   {
     var prop = this.normalize_property(declaration[0]);
-    var rule_id = this.context_rule_id;
+    var rule_id =  this.context_rule_id;
     var script = "rule.style.setProperty(\"" +
                    prop + "\", \"" +
                    declaration[1].replace(/"/g, "'") + "\", " +
@@ -900,7 +899,8 @@ var Editor = function()
     }
 
     var tag = tagManager.set_callback(null, function() {
-      window.elementStyle.update_categories(rule_id, [prop, declaration[1], declaration[2]]);
+      window.elementStyle.update_categories(rule_id,
+        [prop, declaration[1], declaration[2], declaration[3] || 0]);
     });
     services['ecmascript-debugger'].requestEval(tag,
       [this.context_rt_id, 0, 0, script, [["rule", rule_id]]]);
@@ -941,7 +941,7 @@ var Editor = function()
                    prop + "\", \"" +
                    literal_declarations[prop][0].replace(/"/g, "'") + "\", " +
                    (literal_declarations[prop][1] ? "\"important\"" : null) +
-                 ");";
+                ");";
     }
 
     var tag = tagManager.set_callback(null, function() {
@@ -952,7 +952,44 @@ var Editor = function()
   };
 
   /**
-   * Normalize a property by trimming whitespace and converting to lowercase
+   * Disables one property.
+   *
+   * @param {String} property The property to disable
+   */
+  this.disable_property = function disable_property(rt_id, rule_id, property)
+  {
+    const IS_DISABLED = 3;
+    var script = "rule.style.removeProperty(\"" + property + "\");";
+    if (!window.elementStyle.literal_declarations[rule_id])
+    {
+      window.elementStyle.save_literal_declarations(rule_id);
+    }
+    var literal_declarations = window.elementStyle.literal_declarations[rule_id];
+    literal_declarations[property][IS_DISABLED] = 1;
+    //var tag = tagManager.set_callback(null, function() {
+    //  window.elementStyle.update_categories();
+    //});
+    services['ecmascript-debugger'].requestEval(null,
+      [rt_id, 0, 0, script, [["rule", rule_id]]]);
+  };
+
+  /**
+   * Enables one property.
+   *
+   * @param {String} property The property to disable
+   */
+  this.enable_property = function enable_property(rt_id, rule_id, property)
+  {
+    var declaration = window.elementStyle.literal_declarations[rule_id][property];
+
+    this.context_rt_id = rt_id;
+    this.context_rule_id = rule_id;
+
+    this.add_property([property, declaration[0], declaration[1], 0]);
+  };
+
+  /**
+   * Normalize a property by trimming whitespace and converting to lowercase.
    *
    * @param {String} prop The property to normalize
    * @returns {String} A normalized property
@@ -968,9 +1005,16 @@ var Editor = function()
     self.commit();
   };
 
-  var create_declaration = function(prop, value, is_important) {
+  var create_declaration = function(prop, value, is_important, rule_id) {
+    // TODO: take disabled value into account
     return "<key>" + prop + "</key>: " +
-           "<value>" + helpers.escapeTextHtml(value) + (is_important ? " !important" : "") + "</value>;";
+           "<value>" + helpers.escapeTextHtml(value) + (is_important ? " !important" : "") + "</value>;" +
+           "<input type='checkbox'" +
+                 " class='enable-disable'" +
+                 " checked='checked'" +
+                 " handler='enable-disable'" +
+                 " data-property='" + prop + "'" +
+                 " data-rule-id='" + rule_id + "'>"; // TODO: really make sure rule_id always exists here
   };
 };
 

@@ -603,16 +603,32 @@ cls.CSSInspectorActions = function(id)
     self.clearSelected();
   }
 
+  //this.editCSS = function(event, target)
+  //{
+  //  var target = event.target;
+
+  //  while (!target.hasClass("declaration"))
+  //  {
+  //    target = target.parentNode;
+  //  }
+
+  //  if (target.parentNode.parentNode.hasAttribute('rule-id'))
+  //  {
+  //    key_identifier.setModeEdit(self);
+  //    self.setSelected(target.parentNode);
+  //    self.editor.edit(event, target.parentNode);
+  //  }
+  //}
+
   this.editCSS = function(event, target)
   {
     var cat = event.target;
-    
+
     switch(event.target.nodeName.toLowerCase())
     {
       case 'key':
       case 'value':
       {
-        
         if(event.target.parentElement.parentElement.hasAttribute('rule-id'))
         {
           key_identifier.setModeEdit(self);
@@ -634,6 +650,22 @@ cls.CSSInspectorActions = function(id)
       }
     }
   }
+
+  this.enable_disable_property = function enable_disable_property(event, target)
+  {
+    var is_disabled = target.checked;
+    var rule_id = parseInt(target.getAttribute("data-rule-id"));
+    var rt_id = parseInt(target.parentNode.parentNode.firstChild.getAttribute("rt-id")); // FIXME: don't traverse the DOM like this
+    target.parentNode[is_disabled ? "removeClass" : "addClass"]("disabled");
+    if (is_disabled)
+    {
+      self.editor.enable_property(rt_id, rule_id, target.getAttribute("data-property"));
+    }
+    else
+    {
+      self.editor.disable_property(rt_id, rule_id, target.getAttribute("data-property"));
+    }
+  };
 
   this['css-toggle-category'] = function(event, target)
   {
@@ -911,4 +943,6 @@ eventHandlers.click['display-rule-in-stylesheet'] = actions['css-inspector']['di
 
 
 
+
+eventHandlers.click['enable-disable'] = actions['css-inspector'].enable_disable_property;
 
