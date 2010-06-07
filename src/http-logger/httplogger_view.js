@@ -45,7 +45,7 @@ cls.HttpLogger["2.0"].RequestListView = function(id, name, container_class)
                 updateTimer = window.setTimeout(
                         function() { self.createView(container); },
                         this.minUpdateInterval
-		        );
+                        );
             }
             return;
         }
@@ -343,4 +343,3 @@ eventHandlers.click['clear-request-list'] = function(event, target)
     };
 
 })();
-

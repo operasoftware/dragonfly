@@ -242,7 +242,7 @@ cls.HttpLogger["2.0"].ParseMessages = function(name)
 
   this.bind = function(http_logger)
   {
-    var 
+    var
     parse_request = this.parseRequest.bind(this),
     parse_response = self.parseResponse.bind(this);
 
@@ -256,4 +256,3 @@ cls.HttpLogger["2.0"].ParseMessages = function(name)
     };
   };
 };
-

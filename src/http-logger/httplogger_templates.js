@@ -191,7 +191,7 @@ window.templates.request_summary = function(req)
                       ["dt", ui_strings.S_HTTP_LABEL_PATH],
                       ["dd", req.request.path],
                       ["dt", ui_strings.S_HTTP_LABEL_QUERY_ARGS],
-                      ["dd", (pairs.length ? ["ul", pairs.sort().map(function(e) { return ["li", e.join(" = ")] } )] : ui_strings.S_NONE ) ]
+                      ["dd", (pairs.length ? ["ul", pairs.sort().map(function(e) { return ["li", e.join(" = ")]; } )] : ui_strings.S_NONE ) ]
                     ]
                ]
     ];
@@ -221,4 +221,3 @@ window.templates.reference_link = function(href, title)
             "title", title||""
            ];
 };
-
