@@ -23,7 +23,7 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseView = function()
     {
       path = [object.obj_id];
       cb = this._create_view.bind(this, container, data_model, path);
-      data_model.inspect(path, cb);
+      data_model.inspect(cb, path);
     };
     
   };

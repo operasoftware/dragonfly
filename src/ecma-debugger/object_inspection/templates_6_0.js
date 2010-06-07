@@ -26,6 +26,16 @@
       ]);
     };
     return [];
+  };
+
+  this.inspected_js_object = function(model, show_root, path)
+  {
+    if (typeof show_root === 'boolean' && model.get_object())
+    {
+      path = show_root ? null : [model.get_object().obj_id];
+    };
+    return this.inspect_object(model, path);
   }
+
 
 }).apply(window.templates || (window.templates = {}));

@@ -29,7 +29,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     });
 
     namespace.FixObjectInspectionData.prototype = InspectionBaseData;
-    cls.Inspection = namespace.FixObjectInspectionData;
+    cls.InspectableJSObject = namespace.FixObjectInspectionData;
 
     window.runtimes = new namespace.Runtimes("6.0");
     window.runtimes.bind(service_interface);

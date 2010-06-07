@@ -32,7 +32,7 @@ window.eventHandlers.click['examine-object'] = function examine_objects(event, t
     else
     {
       var cb = examine_objects.callback.bind(null, target, parent, data_model, path);
-      data_model.inspect(path, cb);
+      data_model.inspect(cb, path);
     }
   }
 };

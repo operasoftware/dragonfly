@@ -55,7 +55,7 @@ cls.CommandLineViewTest = function(id, name, container_class, html, default_hand
       {
         if (entry.model)
         {
-          __console_output.render(window.templates.inspect_object(entry.model, entry.path));
+          __console_output.render(window.templates.inspected_js_object(entry.model, entry.show_root));
         }
         else
         {
@@ -180,8 +180,8 @@ cls.CommandLineViewTest = function(id, name, container_class, html, default_hand
                 obj_id: object_id,
                 runtime_id: runtime_id,
                 value: return_value[4],
-                model: new cls.Inspection(runtime_id, object_id, return_value[4]),
-                path: null
+                model: new cls.InspectableJSObject(runtime_id, object_id, return_value[4]),
+                shwo_root: true
               }
             );
             __container.scrollTop = __container.scrollHeight;
@@ -282,11 +282,11 @@ cls.CommandLineViewTest = function(id, name, container_class, html, default_hand
       obj_id: obj_id,
       runtime_id: rt_id,
       value: message[3][4],
-      model: new cls.Inspection(rt_id, obj_id, message[3][4]),
-      path: [obj_id]
+      model: new cls.InspectableJSObject(rt_id, obj_id),
+      show_root: false
     };
     var cb = _dir_object.bind(null, entry);
-    entry.model.inspect(entry.path, cb);
+    entry.model.expand(cb);
 
     /*
     messages.post('active-inspection-type', {inspection_type: 'object'});

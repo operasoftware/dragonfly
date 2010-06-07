@@ -46,7 +46,7 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseData = function()
 
   /* interface */
 
-
+  // expand and collapse.
 
   
   this.setObject = function(rt_id, obj_id, virtualProperties){};
@@ -183,9 +183,16 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseData = function()
     }
   }
 
+  this.collapse = this.clear = function(){};
+
+  this.expand = 
   this.inspect =
-  this.get_data = function(path, cb)
+  this.get_data = function(cb, path)
   {
+    if (path === undefined)
+    {
+      path = [this._obj_id];
+    }
     if (path)
     { 
       var obj_id = path[path.length - 1];
