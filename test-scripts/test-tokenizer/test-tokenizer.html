@@ -1,0 +1,67 @@
+﻿<!doctype HTML>
+<meta http-equiv="Content-Type" content="text/html; utf-8">
+<style>
+table {border-collapse: collapse;}
+td {border: 1px solid #ccc; padding: 1px 3px;}
+</style>
+<script src="../../src/ecma-debugger/formatter.js"></script>
+<script src="../../src/ecma-debugger/helpers.js"></script>
+<script src="./test.js"></script>
+<script>
+
+var test = function(script)
+{
+  var token_enums =
+  {
+    1: 'WHITESPACE',
+    2: 'LINETERMINATOR',
+    3: 'IDENTIFIER',
+    4: 'NUMBER',
+    5: 'STRING',
+    6: 'PUNCTUATOR',
+    7: 'IDENTIFIER',
+    8: 'DIV_PUNCTUIATOR',
+    9: 'REG_EXP',
+    10: 'COMMENT'
+  };
+  var p = new window.cls.SimpleJSParser();
+  var tokens = [];
+  var types = [];
+  var markup = ["<table>"];
+  p.parse(script, tokens, types);
+  tokens.forEach(function(tok, index)
+  {
+    this.push(
+      "<tr><td>", 
+      token_enums[types[index]], 
+      "</td><td>", 
+      window.helpers.escapeTextHtml(tok), 
+      "</td></tr>"
+    );
+  }, markup);
+  markup.push("</table>");
+  markup.push("<pre>tokens.join('') === script: ", tokens.join('') === script, "</pre>");
+  markup.push("<h2>tokens join</h2>");
+  markup.push("<pre>", window.helpers.escapeTextHtml(tokens.join('')), "</pre>");
+  markup.push("<h2>script</h2>");
+  markup.push("<pre>", window.helpers.escapeTextHtml(script), "</pre>");
+  document.body.innerHTML = markup.join("");
+  
+}
+
+window.onload = function()
+{
+  window.helpers = new cls.Helpers();
+  var xhr = new XMLHttpRequest();
+  xhr.onload = function()
+  {
+    test(this.responseText);
+  }
+  // xhr.open("GET", "../../src/ecma-debugger/formatter.js");
+  xhr.open("GET", "./test.js");
+ 
+  xhr.send(null);
+}
+
+</script>
+

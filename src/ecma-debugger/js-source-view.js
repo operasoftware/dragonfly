@@ -347,7 +347,7 @@ cls.JsSourceView = function(id, name, container_class)
   var setScriptContext = function(script_id, line_nr)
   {
     source_content.innerHTML = "<div style='visibility:hidden'>" +
-      simple_js_parser.parse(script, getMaxLineLength() - 1, 1).join('') + "</div>";
+      simple_js_parser.format(script, getMaxLineLength() - 1, 1).join('') + "</div>";
     var scrollWidth = script.scrollWidth = source_content.firstChild.firstChild.scrollWidth + 7;
     var offsetWidth = script.offsetWidth = source_content.firstChild.firstChild.offsetWidth;
     // ensure that a scrollbar is also displayed with very long one-liner scripts
@@ -507,7 +507,7 @@ cls.JsSourceView = function(id, name, container_class)
       {
 
         source_content.innerHTML = 
-          simple_js_parser.parse(script, line_nr - 1, max_lines - 1).join('');
+          simple_js_parser.format(script, line_nr - 1, max_lines - 1).join('');
         
         __current_line = line_nr;
         __view_is_destroyed = false;

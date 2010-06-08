@@ -276,7 +276,7 @@ eventHandlers.click['js-source-view'] = function(event)
     script_obj.line_arr = [];
     script_obj.state_arr = [];
     pre_lexer(script_obj);
-    export_data.data = simple_js_parser.parse(script_obj, 0, script_obj.line_arr.length ).join('');
+    export_data.data = simple_js_parser.format(script_obj, 0, script_obj.line_arr.length ).join('');
     export_data.type = 'templates-code';
     if(!topCell.tab.hasTab('export_new'))
     {
