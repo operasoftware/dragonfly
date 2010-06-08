@@ -346,6 +346,9 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseData = function()
     return ret;
   }
 
+
+
+
   this.prettyPrint = function(data, path, use_filter, filter_type)
   {
     var ret = [], tree = this._expand_tree;
@@ -365,6 +368,8 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseData = function()
     this._pretty_print_protos(data, ret, tree);
     return ret.join('');
   }
+
+
 
   this.pretty_print = function(path)
   {
@@ -413,6 +418,7 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseData = function()
 
   this._pretty_print_properties = function(property_list, ret, tree)
   {
+    
     var prop = null, i = 0, value = '', type = '', short_val = '', obj_id = 0;
     for (; prop = property_list[i]; i++)
     {

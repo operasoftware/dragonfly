@@ -108,7 +108,7 @@ Element.prototype.renderInner = Document.prototype.renderInner = function callee
       }
       else if (typeof arg == 'string' && ((template.length - i) % 2 || template[i + 1] instanceof Array))
       {
-        content.push(arg.replace(/</g, "&lt;").replace(/>/g, "&gt;"), " ");
+        content.push(arg.replace(/&/g, "&amp;").replace(/</g, "&lt;"));
         arg = template[++i];
       }
       else
@@ -119,7 +119,7 @@ Element.prototype.renderInner = Document.prototype.renderInner = function callee
     content.push("</", tag_name, ">");
     for ( ; template[i]; i += 2)
     {
-      attrs.push(template[i], "=\u0022", template[i + 1], "\u0022");
+      attrs.push(template[i], "=\u0022", template[i + 1].replace(/"/g, "&quot"), "\u0022");
     }
     attrs.push(">");
     ret = attrs.join("") + content.join("");

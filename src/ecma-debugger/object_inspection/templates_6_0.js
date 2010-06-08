@@ -16,13 +16,15 @@
     var obj = data_model.get_object();
     if (obj)
     {
+      var inner = data_model.pretty_print(path);
+      window.__t_2 = Date.now();
       return ( 
       [
         'examine-objects',
         'data-id', data_model.id,
         'rt-id', obj.rt_id.toString(),
         'obj-id', obj.obj_id.toString(),
-        'innerHTML', data_model.pretty_print(path)
+        'innerHTML', inner
       ]);
     };
     return [];
@@ -34,6 +36,7 @@
     {
       path = show_root ? null : [model.get_object().obj_id];
     };
+    
     return this.inspect_object(model, path);
   }
 

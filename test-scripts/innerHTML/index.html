@@ -1,0 +1,105 @@
+<!doctype html>
+<html>
+ <head>
+  <title> new document </title>
+<link rel="stylesheet" href="../../src/ui-style/style.css">
+<link rel="stylesheet" href="../../src/ui-style/debugger_style.css">
+<link rel="stylesheet" href="../../src/ui-style/syntax-highlight.css">
+
+<script src="../../src/scripts/dom.js"/>
+<script src="../../src/lib/namespace.js"/>
+<script src="../../src/ui-scripts/ui-actions.js"/>
+<script src="../../src/ecma-debugger/helpers.js"/>
+<script src="../../src/ecma-debugger/object_inspection/inspection_base_data_6_0.js"/>
+<script src="../../src/ecma-debugger/object_inspection/object_inspection_data_6_0.js"/>
+<script src="../../src/ecma-debugger/object_inspection/templates_6_0.js"/>
+<script src="../../src/ecma-debugger/object_inspection/actions_6_0.js"/>
+<script src="../../src/ecma-debugger/object_inspection/fix_object_inspection_6_0.js"/>
+
+<script src="data.js"/>
+
+
+
+<script>
+window.onload = function()
+{
+  window.app = {};
+
+  window.app.helpers = {};
+
+  window.app.helpers.parse_url_arguments = function()
+  {
+    /*
+      supported arguments:
+        - debug
+        - log-filter
+    */
+    var
+    args = location.search.slice(1).split(';'),
+    params = {},
+    arg = '',
+    i = 0;
+
+    for( ; arg = args[i]; i++)
+    {
+      arg = arg.split('=');
+      params[arg[0].replace(/^ +/, '').replace(/ +$/, '')] =
+        arg[1] && arg[1].replace(/^ +/, '').replace(/ +$/, '') || true;
+    }
+    return params;
+  }
+
+  window.app.helpers.dash_to_class_name = function(name)
+  {
+    for ( var cur = '', i = 0, ret = '', do_upper = true; cur = name[i]; i++)
+    {
+      if(cur == '-')
+      {
+        do_upper = true;
+        continue;
+      }
+      ret += do_upper && cur.toUpperCase() || cur;
+      do_upper = false;
+    }
+    return ret;
+  }
+  window.helpers = new cls.Helpers();
+  var namespace = cls.EcmascriptDebugger && cls.EcmascriptDebugger["6.0"];
+  var InspectionBaseData = new namespace.InspectionBaseData();
+
+  namespace.FixObjectInspectionData.prototype = InspectionBaseData;
+  cls.InspectableJSObject = namespace.FixObjectInspectionData;
+
+  var model = window.model = new cls.InspectableJSObject();
+  model.setObject(1, 1);
+  model._obj_map = __obj_map;
+  model._expand_tree = __expand_tree;
+
+  
+
+
+}
+
+var test = function()
+{
+  var c = document.getElementById('test');
+  c.innerHTML = "";
+  setTimeout(function(){
+    var t_1 = Date.now();
+    c.render(window.templates.inspected_js_object(window.model, true));
+    var o = c.offsetHeight + c.offsetWidth;
+    var now = Date.now();
+    alert("build innerHTML string: " + (window.__t_2 - t_1) +"\n" + "rendering: " +  (now - window.__t_2) );
+  }, 10);
+}
+
+
+</script>
+
+ </head>
+
+ <body>
+ <p><input type="button" onclick="test()" value="test">
+<div id='test'></div>
+ </body>
+</html>
