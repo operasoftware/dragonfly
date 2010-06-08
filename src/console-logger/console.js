@@ -16,7 +16,6 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
 {
   this._msgs = [];
   this._toggled = [];
-  this._dragonfly_msgs = [];
   this._views = [];
   this._selected_rt_url = '';
   this._url_self = location.host + location.pathname;
@@ -44,10 +43,6 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     if( !entry.uri || entry.uri.indexOf(this._url_self) == -1 )
     {
       this._msgs.push(entry);
-    }
-    else
-    {
-      this._dragonfly_msgs.push(entry);
     }
 
     window.messages.post('console-message', entry);
@@ -131,17 +126,6 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
       };
       return this._msgs.filter(fun)[0] || null;
     }
-  };
-
-  this.clear_dragonfly_messages = function()
-  {
-    this._dragonfly_msgs = [];
-    this._updateviews();
-  };
-
-  this.get_dragonfly_messages = function()
-  {
-    return this._dragonfly_msgs;
   };
 
   this.get_toggled = function()
