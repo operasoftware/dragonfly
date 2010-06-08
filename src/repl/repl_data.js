@@ -1,7 +1,5 @@
 window.cls = window.cls || (window.cls = {});
 
-
-
 cls.ReplData = function()
 {
   this._repllog = [];
