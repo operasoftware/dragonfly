@@ -30,6 +30,18 @@ function HostCommandTransformer() {
   this.parser = null;
   this.commandTable = {};
 
+  //local copy of token types, local vars have better performance. :
+  const
+  WHITESPACE = window.cls.SimpleJSParser.WHITESPACE,
+  LINETERMINATOR = window.cls.SimpleJSParser.LINETERMINATOR,
+  IDENTIFIER = window.cls.SimpleJSParser.IDENTIFIER,
+  NUMBER = window.cls.SimpleJSParser.NUMBER,
+  STRING = window.cls.SimpleJSParser.STRING,
+  PUNCTUATOR = window.cls.SimpleJSParser.PUNCTUATOR,
+  DIV_PUNCTUATOR = window.cls.SimpleJSParser.DIV_PUNCTUATOR,
+  REG_EXP = window.cls.SimpleJSParser.REG_EXP,
+  COMMENT = window.cls.SimpleJSParser.COMMENT;
+
   this.init = function() {
     // window.simple_js_parser is default location for the parser instance
     // in dragonfly. Use it if it exists.
@@ -37,8 +49,9 @@ function HostCommandTransformer() {
 
     for (name in this) {
       var commandName = name.split("hostcommand_")[1];
+
       if (commandName) {
-        this.commandTable[name] = this[name];
+        this.commandTable[commandName] = this[name];
       }
     }
   };
@@ -47,17 +60,15 @@ function HostCommandTransformer() {
     var types = [];
     var values = [];
     var tokens = [];
-    this.parser.parse(types, values, source);
+    this.parser.parse(source, values, types);
 
     // make a more straightforward representation of tokens. Command line
     // stuff is small, so the cost of this doesn't matter much.
-    for (var n=0; n<types.length; n++) {
-      tokens.push({type: types[0], value: values[0]});
-    }
+    tokens = this.zip_tokens(types, values);
 
     dirty: // we jump back here if we need to re-process all tokens
     for (var n=0, token; token=tokens[n]; n++) {
-      if (token.type == "IDENTIFIER" && token.value in this.commandTable) {
+      if (token.type == IDENTIFIER && token.value in this.commandTable) {
         var fun = this.commandTable[token.value];
         if (fun.call(this, token, tokens)) {
           break dirty;
@@ -67,28 +78,109 @@ function HostCommandTransformer() {
     return tokens.map(function(e) {return e.value;}).join("");
   };
 
+  this.zip_tokens = function(types, values) {
+    var tokens = [];
+    for (var n=0; n<types.length; n++) {
+      tokens.push({type: types[n], value: values[n]});
+    }
+    return tokens;
+  };
+
+  /**
+   * Check if the token at index looks like it's a function/method being
+   * called by looking at the following tokens.
+   */
+  this.is_call = function(tokens, index) {
+    if (!tokens[index] || tokens[index].type != IDENTIFIER) {
+      return false;
+    }
+
+    for (var n=index+1, token; token=tokens[n]; n++) {
+      switch (token.type) {
+        case WHITESPACE:
+          continue;
+        case PUNCTUATOR:
+        if (token.value == "(") { return true; }
+        default:
+          return false;
+      }
+    }
+    return false;
+  };
+
+  /**
+   * Check if the token at index is a property of name
+   */
+  this.is_property_of = function(name, tokens, index) {
+    if (!tokens[index] || tokens[index].type != IDENTIFIER) {
+      return false;
+    }
+
+    var n = index-1;
+
+    for (var token; token=tokens[n]; n--) {
+      switch (token.type) {
+        case WHITESPACE:
+          continue;
+        case PUNCTUATOR:
+          if (token.value == ".") { break; }
+        default:
+          return false;
+      }
+    }
+
+    for (var token; token=tokens[n]; n--) {
+      switch (token.type) {
+        case WHITESPACE:
+          continue;
+        case IDENTIFIER:
+          if (token.value == name) { return true; }
+        default:
+          return false;
+      }
+    }
+
+    return false;
+  };
+
+
+  // Host commands:
+
   this.hostcommand_dir = function(token, tokenlist) {
     var index = tokenlist.indexOf(token);
-    var prev = tokenlist[index-2];
-    if (prev && prev.type == "IDENTIFIER" && prev.value != "console") {
-      token.value = "console.dir";
+    if (!this.is_call(tokenlist, index) ||
+         this.is_property_of("console", tokenlist, index)) {
+      return;
     }
+
+    token.value = "console.dir";
   };
 
   this.hostcommand_dirxml = function(token, tokenlist) {
     var index = tokenlist.indexOf(token);
-    var prev = tokenlist[index-2];
-    if (prev && prev.type == "IDENTIFIER" && prev.value != "console") {
-      token.value = "console.dirxml";
+
+    if (!this.is_call(tokenlist, index) ||
+         this.is_property_of("console", tokenlist, index)) {
+      return;
     }
+
+    token.value = "console.dirxml";
   };
 
   this.hostcommand_$ = function(token, tokenlist) {
-    token.value = "document.getElementById";
+    var index = tokenlist.indexOf(token);
+
+    if (this.is_call(tokenlist, index)) {
+      token.value = "document.getElementById";
+    }
   };
 
   this.hostcommand_$$ = function(token, tokenlist) {
-    token.value = "document.querySelectorAll";
+    var index = tokenlist.indexOf(token);
+
+    if (this.is_call(tokenlist, index)) {
+      token.value = "document.querySelectorAll";
+    }
   };
 
   this.hostcommand_$x = function(token, tokenlist) {
