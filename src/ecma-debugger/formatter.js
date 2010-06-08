@@ -108,7 +108,7 @@ window.cls.SimpleJSParser = function()
     '\u0020': 1, //  Space <SP>
     '\u00A0': 1  //  No-break space <NBSP>
   }
-  var LINETERMINATOR=
+  var LINETERMINATOR_CHARS =
   {
     '\u000A': 1, //  Line Feed <LF>
     '\u000D': 1, //  Carriage Return <CR>
@@ -116,7 +116,7 @@ window.cls.SimpleJSParser = function()
     '\u2028': 1, //  Line separator <LS>
     '\u2029': 1 //  Paragraph separator <PS>
   }
-  var NUMBER=
+  var NUMBER_CHARS =
   {
     '0': 1,
     '1': 1,
