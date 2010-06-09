@@ -109,6 +109,7 @@ function PropertyFinder(rt_id) {
 
   this._cache_key = function(scope, rt_id, thread_id, frame_id) {
     var key = "" + scope + "." + rt_id + "." + thread_id + "." + frame_id;
+    return key;
   };
 
   this._cache_put = function(result)
