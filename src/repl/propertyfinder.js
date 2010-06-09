@@ -12,9 +12,8 @@ function PropertyFinder(rt_id) {
     window.PropertyFinder.instance = this;
   }
 
-  this._service = ""; // fixme get service or raise
-  this._property_cache = {};
-
+  this._service = services['ecmascript-debugger'];
+  this._cache = {};
 
   /**
    * Method that does The Right Thing with regards to what method is
@@ -24,19 +23,38 @@ function PropertyFinder(rt_id) {
    * override this method
    *
    */
-  this._requestEval = function(callback, js, input, rt_id, thread_id, frame_id) {
+  this._requestEval = function(callback, js, scope, input, rt_id, thread_id, frame_id) {
     var tag = tagManager.set_callback(this, this._onRequestEval,
-                                      [callback, input, rt_id, thread_id, frame_id]);
+                                      [callback, scope, input, rt_id, thread_id, frame_id]);
 
-    services['ecmascript-debugger'].requestEval(
+    this._service.requestEval(
       tag, [rt_id, thread_id, frame_id, js]
     );
   };
 
-  this._onRequestEval = function(status, message, callback, input, rt_id, thread_id, frame_id) {
+  /**
+   * Figure out the object to which input belongs.
+   * foo.bar -> foo
+   * window.bleh.meh -> window.bleh
+   * phlebotinum -> this
+   * phlebotinum. -> phlebotinum
+   */
+  this._find_input_scope = function(input)
+  {
+    var scope = "";
+    var index = input.lastIndexOf(".");
+
+    if (index > 0) {
+      scope = input.substring(0, index);
+    }
+
+    return scope;
+  };
+
+  this._onRequestEval = function(status, message, callback, scope, input, rt_id, thread_id, frame_id) {
     var ret = {
       props: [],
-      input: input,
+      scope: scope,
       rt_id: rt_id,
       thread_id: thread_id,
       frame_id: frame_id
@@ -53,9 +71,10 @@ function PropertyFinder(rt_id) {
       }
     }
 
-    // fixme : add caching.
-    callback(ret);
+    this._cache_put(ret);
 
+    ret.input = input;
+    callback(ret);
   };
 
   /**
@@ -66,18 +85,18 @@ function PropertyFinder(rt_id) {
   this.find_props = function(callback, input, rt_id, thread_id, frame_id) {
     thread_id = thread_id || 0;
     rt_id = rt_id || runtimes.getSelectedRuntimeId();
-    frame_id = frame_id ||0;
+    frame_id = frame_id || 0;
+    var scope = this._find_input_scope(input);
 
-    var props = this._cache_get(input, rt_id, thread_id, frame_id);
+    var props = this._cache_get(scope, rt_id, thread_id, frame_id);
     if (props) {
+      props.input = input;
       callback(props);
     }
     else {
-      this._get_scope_contents(callback, input, rt_id, thread_id, frame_id);
+      this._get_scope_contents(callback, scope, input, rt_id, thread_id, frame_id);
     }
-
   };
-
 
   /**
    * Tell the caching mechanism that it need no longer keep track of data
@@ -85,32 +104,34 @@ function PropertyFinder(rt_id) {
    * tabs/runtimes
    */
   this.forget_runtime = function(rt_id) {
-
+    // fixme
   };
 
-  this._cache_key = function(input, rt_id, thread_id, frame_id) {
-    var key = "" + input + "." + rt_id + "." + thread_id + "." + frame_id;
+  this._cache_key = function(scope, rt_id, thread_id, frame_id) {
+    var key = "" + scope + "." + rt_id + "." + thread_id + "." + frame_id;
   };
 
-  this._cache_put = function(input, matches, rt_id, frame_id, values) {
-    var key = this._cache_key(input, matches, rt_id, frame_id);
+  this._cache_put = function(result)
+  {
+    var key = this._cache_key(result.scope, result.rt_id, result.thread_id, result.frame_id);
+    this._cache[key] = result;
   };
 
-  this._cache_get = function(input, rt_id, thread_id, frame_id) {
-    return null;
+  this._cache_get = function(scope, rt_id, thread_id, frame_id) {
+    var key = this._cache_key(scope, rt_id, thread_id, frame_id);
+    return this._cache[key];
   };
 
-  this._get_scope_contents = function(callback, input, rt_id, thread_id, frame_id) {
+  this._get_scope_contents = function(callback, scope, input, rt_id, thread_id, frame_id) {
     var script = "(function(){var a = '', b= ''; for( a in %s ){ b += a + '_,_'; }; return b;})()";
-    var eval_str = script.replace("%s", input);
+    var eval_str = script.replace("%s", scope||"this");
 
     if (frame_id !== undefined) {
-      this._requestEval(callback, eval_str, input, rt_id, thread_id, frame_id);
+      this._requestEval(callback, eval_str, scope, input, rt_id, thread_id, frame_id);
     }
   };
 
   this.toString = function() {
     return "[PropertyFinder singleton instance]";
   };
-
 };
