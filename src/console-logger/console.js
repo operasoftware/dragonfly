@@ -45,7 +45,6 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
       this._msgs.push(entry);
     }
 
-    window.messages.post('console-message', entry);
     this._updateviews();
   };
 
