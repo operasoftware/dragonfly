@@ -39,6 +39,6 @@ window.eventHandlers.click['examine-object'] = function examine_objects(event, t
 
 window.eventHandlers.click['examine-object'].callback = function(target, container, data_model, path)
 {
-  container.render(window.templates.inspect_object(data_model, path));
+  container.render(window.templates.inspected_js_object(data_model, null, path));
   target.style.backgroundPosition = "0px -11px";
 };
