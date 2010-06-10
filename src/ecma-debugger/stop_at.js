@@ -61,6 +61,8 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
 
   var __stopAtId = 1;
 
+  var __selected_frame_index = -1;
+
   var cur_inspection_type = '';
 
   var getStopAtId = function()
@@ -128,6 +130,18 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
   this.getThreadId = function()
   {
     return stopAt && stopAt['thread-id'] || '';
+  }
+
+  /**
+    * To get the selected frame index.
+    * It can return -1 which means that no frame is selected.
+    * Be aware that -1 is not a valid value in e.g. the Eval command.
+    * 0 for frame index has an overloaded meaning: if the thread id is not 0 
+    * it means the top frame, otherwise it means no frame.
+    */
+  this.getSelectedFrameIndex = function()
+  {
+    return __selected_frame_index;
   }
 
   var parseBacktrace = function(status, message, runtime_id, thread_id)
@@ -349,11 +363,17 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     cur_inspection_type = msg.inspection_type;
   }
 
+  var onFrameSelected = function(msg)
+  {
+    __selected_frame_index = msg.frame_index;
+  }
+
   messages.addListener('active-inspection-type', onActiveInspectionType);
 
 
 
   messages.addListener('setting-changed', onSettingChange);
+  messages.addListener('frame-selected', onFrameSelected);
 
   this.bind = function(ecma_debugger)
   {
