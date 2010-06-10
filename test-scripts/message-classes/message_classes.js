@@ -1,9 +1,7 @@
 var NodeList = function(message)
 {
-  this.nodeList = message[0] && message[0].map(newNodeInfo) || [];
+  this.nodeList = message[0] && message[0].map(function(node){return new NodeInfo(node)}) || [];
 }
-
-var newNodeInfo = function(node){return new NodeInfo(node)};
 
 var NodeInfo = function(node)
 {
@@ -12,16 +10,11 @@ var NodeInfo = function(node)
   this.name = node[2];
   this.depth = node[3];
   this.namespacePrefix = node[4];
-  this.attributeList = node[5] && node[5].map(newAttribute) || [];
+  this.attributeList = node[5] && node[5].map(function(attr){return new Attribute(attr);}) || [];
   this.childrenLength = node[6];
   this.value = node[7];
   this.publicID = node[8];
   this.systemID = node[9];
-}
-
-var newAttribute = function(attr)
-{
-  return attr && new Attribute(attr) || {};
 }
 
 var Attribute = function(attr)

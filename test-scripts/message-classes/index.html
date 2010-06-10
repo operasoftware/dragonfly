@@ -55,7 +55,7 @@ var pretty_print_json_object = (function()
 
   return  function(map)
   {
-    var pp_map = _pretty_print_object('', map, 0, []);
+    var pp_map = _pretty_print_object(undefined, map, 0, []);
     return pp_map.join('\n');
   };
 
