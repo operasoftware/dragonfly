@@ -729,7 +729,6 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
 
   var onConsoleMessage = function(msg)
   {
-  opera.postError(msg.join(", "))
     const DESCRIPTION = 2,
           CONTEXT = 4,
           SOURCE = 5;
@@ -761,7 +760,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
 
   messages.addListener('frame-selected', onFrameSelected);
   messages.addListener('active-tab', checkToolbarVisibility);
-  window.services['console-logger'].add_listener("consolemessage", onConsoleMessage); 
+  window.services['console-logger'].add_listener("consolemessage", onConsoleMessage);
   this.init(id, name, container_class, html, default_handler);
 }
 
