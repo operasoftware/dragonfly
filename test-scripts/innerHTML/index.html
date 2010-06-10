@@ -3,8 +3,168 @@
  <head>
   <title> new document </title>
 
-<link rel="stylesheet" href="../../src/ui-style/debugger_style.css">
-<link rel="stylesheet" href="../../src/ui-style/syntax-highlight.css">
+<!--<link rel="stylesheet" href="../../src/ui-style/debugger_style.css">-->
+<!--<link rel="stylesheet" href="../../src/ui-style/syntax-highlight.css">-->
+<style>
+/* debugger style */
+.folder-key {
+  border:none;
+  margin:0;
+  margin-right:7px;
+  padding:0;
+  font-size:10px;
+  line-height:11px;
+  height:11px;
+  width:11px;
+  background: transparent url('data:image/png;charset=utf-8;base64,R0lGODlhCwAhAKIAAAAAAP///8zMzGZmZv///wAAAAAAAAAAACH5BAEAAAQALAAAAAALACEAAAM9KLqs8RA6OOJ8VYqYnxtgWF1BF5Amam3R2rww066zVnts/Yngmc+kVpB2izEIyKRyyWw6n1BmaRqtWq/LBAA7') scroll no-repeat 0 0;
+  cursor:pointer;
+  }
+
+examine-objects, 
+examine-objects item 
+{
+  display:block;
+}
+examine-objects
+{
+  padding: 0 9px;
+}
+examine-objects examine-objects
+{
+  padding: 0 0 0 16px;
+}
+examine-objects key 
+{
+  margin-right:7px;
+}
+examine-objects key.no-expander
+{
+  margin-left: 18px;
+}
+.prototype-chain-object
+{
+  background-color: #666;
+  color: #fff;
+  font-weight: bold;
+  padding: 2px 16px;
+  margin: 2px 0;
+}
+
+ 
+
+
+
+</style>
+
+<style>
+/* ecma object tree */
+
+
+
+
+examine-objects key {
+  color: #111;
+  }
+
+examine-objects .string {
+  color:#742;
+  }
+
+examine-objects .number, offsets value {
+  color:#920;
+  }
+
+examine-objects .undefined {
+  color:#c00;
+  font-style: italic;
+  }
+
+examine-objects .null {
+  color:#c00;
+  font-style: italic;
+  }
+
+examine-objects .boolean {
+  color:#920;
+  }
+
+examine-objects .object {
+  color:#18a;
+  }
+
+</style>
+<style>
+/* html 5 markup */
+/* debugger style */
+
+
+
+.examine-objects
+{
+  padding: 0 9px;
+}
+.examine-objects .examine-objects
+{
+  padding: 0 0 0 16px;
+}
+.key 
+{
+  margin-right:7px;
+}
+.key.no-expander
+{
+  margin-left: 18px;
+}
+.prototype-chain-object
+{
+  background-color: #666;
+  color: #fff;
+  font-weight: bold;
+  padding: 2px 16px;
+  margin: 2px 0;
+}
+
+ 
+
+
+
+
+/* ecma object tree */
+
+
+
+
+.key {
+  color: #111;
+  }
+
+.string {
+  color:#742;
+  }
+
+.number {
+  color:#920;
+  }
+
+.undefined {
+  color:#c00;
+  font-style: italic;
+  }
+
+.null {
+  color:#c00;
+  font-style: italic;
+  }
+
+.boolean {
+  color:#920;
+  }
+
+.object {
+  color:#18a;
+  }
+
+</style>
 <style>
 body
 {
@@ -23,6 +183,8 @@ body
 <script src="../../src/ecma-debugger/object_inspection/fix_object_inspection_6_0.js"/>
 
 <script src="templates_6_0_test.js"/>
+<script src="templates_6_0_test_2.js"/>
+
 <script src="data.js"/>
 
 
@@ -87,13 +249,13 @@ window.onload = function()
 
 }
 
-var test = function()
+var test = function(use_html_5)
 {
   var container = document.getElementById('test');
   container.innerHTML = "";
   setTimeout(function(){
     var t_1 = Date.now();
-    var template = window.templates.inspected_js_object(window.model, true);
+    var template = window.templates[use_html_5 ? 'inspected_js_object_3' : 'inspected_js_object'](window.model, true);
     var t_2 = Date.now();
     container.render(template);
     var t_3 = Date.now();
@@ -137,9 +299,11 @@ var test_template = function(use_dom)
  <body>
  <p>
   <input type="button" onclick="test()" value="test direct innerHTML">
-  
+  <input type="button" onclick="test(true)" value="test direct innerHTML HTML5">
   <input type="button" onclick="test_template(true)" value="test template DOM methods">
   <input type="button" onclick="test_template()" value="test template innerHTML">
+
+  
 <div id='test'></div>
  </body>
 </html>
