@@ -1,0 +1,1312 @@
+<!doctype html>
+<html>
+ <head>
+  <title> new document </title>
+
+
+<style>
+/* debugger style */
+.folder-key {
+  border:none;
+  margin:0;
+  margin-right:7px;
+  padding:0;
+  font-size:10px;
+  line-height:11px;
+  height:11px;
+  width:11px;
+  background: transparent url('data:image/png;charset=utf-8;base64,R0lGODlhCwAhAKIAAAAAAP///8zMzGZmZv///wAAAAAAAAAAACH5BAEAAAQALAAAAAALACEAAAM9KLqs8RA6OOJ8VYqYnxtgWF1BF5Amam3R2rww066zVnts/Yngmc+kVpB2izEIyKRyyWw6n1BmaRqtWq/LBAA7') scroll no-repeat 0 0;
+  cursor:pointer;
+  }
+
+examine-objects, 
+examine-objects item 
+{
+  display:block;
+}
+examine-objects
+{
+  padding: 0 9px;
+}
+examine-objects examine-objects
+{
+  padding: 0 0 0 16px;
+}
+examine-objects key 
+{
+  margin-right:7px;
+}
+examine-objects key.no-expander
+{
+  margin-left: 18px;
+}
+.prototype-chain-object
+{
+  background-color: #666;
+  color: #fff;
+  font-weight: bold;
+  padding: 2px 16px;
+  margin: 2px 0;
+}
+
+ 
+
+
+
+</style>
+
+<style>
+/* ecma object tree */
+
+
+
+
+examine-objects key {
+  color: #111;
+  }
+
+examine-objects .string {
+  color:#742;
+  }
+
+examine-objects .number, offsets value {
+  color:#920;
+  }
+
+examine-objects .undefined {
+  color:#c00;
+  font-style: italic;
+  }
+
+examine-objects .null {
+  color:#c00;
+  font-style: italic;
+  }
+
+examine-objects .boolean {
+  color:#920;
+  }
+
+examine-objects .object {
+  color:#18a;
+  }
+
+</style>
+<style>
+body
+{
+  font-family: sans-serif;
+}
+</style>
+
+
+<script>
+// dom.js
+/**
+ * @fileoverview
+ * Helper function prototypes related to DOM objects and the DOM
+ * <strong>fixme: Christian should document the template syntax</strong>
+ *
+ * TEMPLATE :: =
+ *     "[" [NODENAME | "null"]
+ *         {"," TEXT | "," TEMPLATE}
+ *         {"," KEY "," VALUE}
+ *      "]"
+ *
+ * where NODENAME, TEXT and KEY are DOM strings and VALUE can be everything except an array
+ */
+
+Element.prototype.render = Document.prototype.render = function(args)
+{
+  
+  if (typeof args == 'string' && this.nodeType == 1)
+  {
+    this.insertAdjacentHTML('beforeend', args);
+    return this.firstElementChild;
+  }
+  
+  var
+  doc = this.nodeType == 9 ? this : this.ownerDocument,
+  i = 0,
+  ele = this,
+  first_arg = args[0],
+  arg = null,
+  node_string_properties = ['innerHTML'];
+
+  if (args.length)
+  {
+    if (first_arg)
+    {
+      if (typeof first_arg == 'string')
+      {
+        ele = first_arg in CustomElements ? CustomElements[first_arg].create() : doc.createElement(first_arg);
+        i++;
+      }
+      arg = args[i];
+      while (true)
+      {
+        if (arg instanceof Array)
+        {
+          ele.render(arg);
+          arg = args[++i];
+        }
+        else if (typeof arg == 'string' && ((args.length - i) % 2 || args[i + 1] instanceof Array))
+        {
+          ele.appendChild(doc.createTextNode(arg));
+          arg = args[++i];
+        }
+        else
+        {
+          break;
+        }
+      }
+      for ( ; args[i]; i += 2)
+      {
+        if (typeof args[i] != 'string')
+        {
+          throw "TemplateSyntaxError";
+        }
+        if (typeof args[i + 1] == 'string' && node_string_properties.indexOf(args[i]) == -1)
+        {
+          ele.setAttribute(args[i], args[i + 1]);
+        }
+        else
+        {
+          ele[args[i]] = args[i + 1];
+        }
+      }
+      if (this.nodeType == 1 && (this != ele))
+      {
+        this.appendChild(ele);
+      }
+      return ele;
+    }
+    else
+    {
+      return this.appendChild(doc.createTextNode(args[1]));
+    }
+  }
+  return null;
+};
+
+</script>
+<script>
+// namespaces
+window.cls || ( window.cls = {} );
+
+/**
+  * @constructor 
+  * A simple class to create a namespace on the window object.
+  * It has one methode to add new created objects to it.
+  */
+
+window.cls.Namespace = function(namespace)
+{
+  if( window[namespace] instanceof this.constructor )
+  {
+    return window[namespace];
+  }
+  this.init(namespace);
+}
+
+window.cls.Namespace.prototype = new function()
+{
+  this.add = function(obj)
+  {
+    if( !(obj.id || obj.name) )
+    {
+      throw "to add an object to a namespace it must have either an id or a name";
+    }
+    return ( this[obj.id || obj.name] = obj );
+  }
+  this.init = function(namespace)
+  {
+    if( !( window[namespace] instanceof this.constructor ) )
+    {
+      window[namespace] = this;
+    }
+  }
+  this.toString = function()
+  {
+    return "[object Namespace]";
+  }
+
+}
+</script>
+
+
+<script>
+// actions
+/**
+  * @constructor 
+  */
+
+var EventHandler = function(type, is_capturing, handler_key)
+{
+  handler_key = handler_key ? handler_key : 'handler';
+  if(!window.eventHandlers)
+  {
+    window.eventHandlers = {};
+  }
+  if(window.eventHandlers[type])
+  {
+    return;
+  }
+
+  window.eventHandlers[type] = {};
+
+  var handler = function(event)
+  {
+
+    var ele = event.target, handler = null, container = null;
+
+    if( ele.nodeType != 1 )
+    {
+      return;
+    }
+    if(event.which == 3)
+    {
+      // right click
+      event.stopPropagation();
+      event.preventDefault();
+      return;
+    }
+    handler = ele.getAttribute(handler_key);
+    while( !handler && ( ele = ele.parentElement ) )
+    {
+      handler = ele.getAttribute(handler_key);
+    }
+    if( handler && eventHandlers[type][handler] )
+    {
+      if( type == 'click' && /toolbar-buttons/i.test(ele.parentNode.nodeName) )
+      {
+        container = 
+          document.getElementById(ele.parentNode.parentNode.id.replace('toolbar', 'container'));
+      }
+      eventHandlers[type][handler](event, ele, container);
+    }
+  }
+
+  this.post = function(handler, event)
+  {
+    if(eventHandlers[type][handler])
+    {
+      eventHandlers[type][handler](event);
+    }
+  }
+
+  document.addEventListener(type, handler, is_capturing ? is_capturing : false);
+}
+
+new EventHandler('click');
+new EventHandler('dblclick', false, 'edit-handler');
+new EventHandler('change');
+new EventHandler('input');
+new EventHandler('keyup', true);
+new EventHandler('keydown', true);
+new EventHandler('keypress', true);
+new EventHandler('mousedown');
+new EventHandler('mouseover');
+new EventHandler('focus', true, 'focus-handler');
+new EventHandler('blur', true, 'blur-handler');
+
+
+
+</script>
+<script>
+// helpers
+var cls = window.cls || ( window.cls = {} );
+
+/**
+ * @fileoverview
+ * <strong>fixme: Deprecated. marked for removal</strong>
+ */
+
+/**
+  * @constructor 
+  * @deprecated
+  * use EventHandler and BaseActions
+  */
+
+window.cls.Helpers = function()
+{
+  var self = this;
+
+
+  var handleKeypress = function(event, id)
+  {
+    event.preventDefault();
+    event.stopPropagation();
+    var button = document.getElementById(id);
+    if(button && !button.disabled)
+    {
+      button.click();
+    }
+  }
+
+  // TODO this should be handled with the Keyhandler class
+  var keypressListener = function(event)
+  {
+    if( event.which == 0 )
+    {
+      switch(event.keyCode)
+      {
+        case 119: // F8
+        {
+          event.preventDefault();
+          handleKeypress(event, 'continue-run');
+          break;
+        }
+        case 121: // F10
+        {
+          event.preventDefault();
+          handleKeypress(event, 'continue-step-next-line');
+          break;
+        }
+        case 122: // F11
+        {
+          event.preventDefault();
+          if(event.shiftKey)
+          {
+            handleKeypress(event, 'continue-step-out-of-call');
+          }
+          else
+          {
+            handleKeypress(event, 'continue-step-into-call');
+          }
+          break;
+        }
+      }
+    }
+  }
+
+  this.setSelected = function(event)
+  {
+    var ele=event.target;
+    var parent = ele.parentNode;
+    var siblings = parent.getElementsByTagName(ele.nodeName), sibling = null, i=0;
+    for( ; sibling = siblings[i]; i++)
+    {
+      if( sibling.parentElement == parent )
+      {
+        if(sibling == ele) 
+        {
+          sibling.addClass('selected'); 
+        }
+        else
+        {
+          sibling.removeClass('selected'); 
+        }
+      }
+    }
+  }
+
+  this.shortenURI = function(uri)
+  {
+    var ret_uri = uri;
+    var title = '';
+    var max_length = 40;
+    if( ret_uri && ret_uri.length > max_length )
+    {
+      title = uri;
+      ret_uri = uri.split('?')[0];
+      if( ret_uri.length > max_length )
+      {
+        var temp = /\/([^/]+)$/.exec(ret_uri);
+        if( temp )
+        {
+          ret_uri = temp[1];
+        }
+      }
+    }
+    return {uri: ret_uri, title: title};
+  }
+
+  this.resolveURLS = function(top_url, url)
+  {
+    return (
+        /^.{4,5}:\/\//.test(url) && url
+        || /^\//.test(url) && /^.{4,5}:\/\/[^/]*/.exec(top_url)[0] + url
+        || top_url.replace(/\?.*$/, '').replace(/#.*$/, '').replace(/\/[^/]*$/, "/") + url );
+  }
+
+  this.escapeTextHtml = (function()
+  {
+    var re_amp = /&/g, re_lt = /</g;
+    return function(str)
+    {
+      return str.replace(re_amp, "&amp;").replace(re_lt, "&lt;");
+    }
+  })();
+
+  this.escapeAttributeHtml = (function()
+  {
+    var re_amp = /&/g, re_lt = /</g, re_quot = /"/g;
+    return function(str)
+    {
+      return str.replace(re_amp, "&amp;").replace(re_lt, "&lt;").replace(re_quot, "&quot;");
+    }
+  })();
+  
+  this.setCookie = function(key, value, time) 
+  {
+    document.cookie = (
+      key + "=" + encodeURIComponent(value) +
+      "; expires=" + 
+      ( new Date( new Date().getTime() + ( time || 360*24*60*60*1000 ) ) ).toGMTString() + 
+      "; path=/");
+  }
+
+  this.getCookie = function(key) 
+  {
+    var value = new RegExp(key + "=([^;]*)").exec(document.cookie);
+    return value && decodeURIComponent(value[1]);
+  }
+
+  // mouseover handler in the breadcrumb
+  this.breadcrumbSpotlight = function(event)
+  {
+    var obj_id = parseInt(event.target.getAttribute('obj-id'));
+    if(obj_id && /^breadcrumb$/i.test(event.target.parentNode.nodeName))
+    {
+      hostspotlighter.soft_spotlight(obj_id);
+    }
+  }
+  // mouseover handler in the breadcrumb
+  this.breadcrumbClearSpotlight = function(event)
+  {
+    var obj_id = event.target.getAttribute('obj-id');
+    if( obj_id )
+    {
+      //hostspotlighter.clearSpotlight();
+    }
+  }
+
+  this.service_dashed_name = function(name)
+  {
+    for ( var cur = '', i = 0, ret = ''; cur = name[i]; i++)
+    {
+      ret += /[A-Z]/.test(cur) && ( i ? '-' : '' ) + cur.toLowerCase() || cur;
+    }
+    return ret;
+  }
+
+  this.service_class_name = window.app.helpers.dash_to_class_name;
+
+  document.addEventListener('keypress', keypressListener, true);
+
+}
+</script>
+<script>
+// inspection
+window.cls || (window.cls = {});
+cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
+cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
+
+/**
+  * @constructor
+  */
+
+/*
+  status: OK
+  payload: 
+    objectChainList:
+      objectChain: 
+        objectList:
+
+          object: 
+            value: 
+              objectID: 2
+              isCallable: 0
+              type: "object"
+              prototypeID: 3
+              className: "HTMLDocument"
+
+            propertyList:
+
+              property: 
+                name: "URL"
+                type: "string"
+                value: "opera:debug"
+
+              property: 
+                name: "activeElement"
+                type: "object"
+                value: 
+                objectValue: 
+                  objectID: 22
+                  isCallable: 0
+                  type: "object"
+                  prototypeID: 37
+                  className: "HTMLButtonElement"
+
+*/
+
+cls.EcmascriptDebugger["6.0"].InspectionBaseData = function()
+{
+
+  /* interface */
+
+  // expand and collapse.
+
+  
+  this.setObject = function(rt_id, obj_id, virtualProperties){};
+  this.getSelectedObject = function(){};
+  this.getData = function(rt_id, obj_id, depth, org_args){};
+  this.prettyPrint = function(data, target_depth, use_filter, filter_type){};
+  this.clearData = function(rt_id, obj_id, depth, key){};
+
+  /* private */
+  this.parseXML = function(status, message, rt_id, obj_id, org_args){};
+  this.getObject = function(obj_id, depth, key){};
+  this.getCountVirtualProperties = function(index){};
+  
+  this.__getData = function(index, target_depth){};
+
+  /* constants */
+
+  const
+  OBJECT_CHAIN_LIST = 0,
+  // sub message ObjectList 
+  OBJECT_LIST = 0,
+  // sub message ObjectInfo 
+  VALUE = 0,
+  PROPERTY_LIST = 1,
+  // sub message ObjectValue 
+  OBJECT_ID = 0,
+  IS_CALLABLE = 1,
+  TYPE = 2,
+  PROTOTYPE_ID = 3,
+  CLASS_NAME = 4,
+  FUNCTION_NAME = 5;
+  // sub message Property 
+  NAME = 0,
+  PROPERTY_TYPE = 1,
+  PROPERTY_VALUE = 2,
+  OBJECT_VALUE = 3,
+  // added fields
+  PROPERTY_ITEM = 4,
+  MAX_VALUE_LENGTH = 30;
+
+  
+
+  //this._obj_map = {};
+  //this._queried_map = {};
+  /*
+          object: 
+            value: 
+              objectID: 2
+              isCallable: 0
+              type: "object"
+              prototypeID: 3
+              className: "HTMLDocument"
+
+            propertyList:
+
+              property: 
+                name: "URL"
+                type: "string"
+                value: "opera:debug"
+
+              property: 
+                name: "activeElement"
+                type: "object"
+                value: 
+                objectValue: 
+                  objectID: 22
+                  isCallable: 0
+                  type: "object"
+                  prototypeID: 37
+                  className: "HTMLButtonElement"
+                  */
+
+  this.setObject = function(rt_id, obj_id, virtual_props, identifier, _class)
+  {
+    this._obj_map = 
+    {
+      0:
+      [
+        [
+          [obj_id],
+          [
+            [
+              identifier || '',
+              'object',
+              ,
+              [obj_id, , , , _class || '']
+            ]
+          ]
+        ]
+      ]
+    };
+    this._queried_map = {};
+    this._expand_tree = {};
+    this._rt_id = rt_id;
+    this._obj_id = obj_id;
+    // TODO sync format
+    this._virtual_props = virtual_props;
+    
+  }
+
+  this.get_object =
+  this.getSelectedObject = function()
+  {
+    return this._obj_id && {rt_id: this._rt_id, obj_id: this._obj_id} || null;
+  }
+
+  this._id_counter = 0;
+  this._get_id = function()
+  {
+    this._id_counter++;
+    return "inspection-id-" + this._id_counter.toString();
+  }
+
+
+  this._init = function(id, views)
+  {
+    this.id = id || this._get_id();
+    this._views = views || [];
+    if (!window.inspections)
+    {
+      new cls.Namespace("inspections");
+    }
+    window.inspections.add(this);
+  }
+
+  this._update_views = function()
+  {
+    for (var view_id = '', i = 0; view_id = this._views[i]; i++)
+    {
+      if (window.views[view_id])
+      {
+        window.views[view_id].update();
+      }
+    }
+  }
+
+  this.collapse = this.clear = function(){};
+
+  this.expand = 
+  this.inspect =
+  this.get_data = function(cb, path)
+  {
+    if (path === undefined)
+    {
+      path = [this._obj_id];
+    }
+    if (path)
+    { 
+      var obj_id = path[path.length - 1];
+      if (this._obj_map[obj_id])
+      {
+        cb();
+      }
+      else
+      {
+        var tag = window.tag_manager.set_callback(this, this._handle_examine_object, [path, cb]);
+        window.services['ecmascript-debugger'].requestExamineObjects(tag, [this._rt_id, [obj_id], 1]);
+      }
+    }
+  }
+
+  this._handle_examine_object = function(status, message, path, cb)
+  {
+    var 
+    obj_id = 0,
+    tree = this._expand_tree,
+    proto_chain = null,
+    property_list = null,
+    i = 0,
+    class_name = '',
+    items = null,
+    attributes = null,
+    cursor = null,
+    i = 0,
+    re_d = /^\d+$/;
+
+    if (status)
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + ' failed to examine object');
+    else
+    {
+      for ( ; path[i]; i++)
+      {
+        obj_id = path[i];
+        // TODO
+        
+          //alert((path[i + 1] == obj_id) +' '+(i < (path.length - 1) && !tree[obj_id]))
+
+        if (i < (path.length - 1) && !tree[obj_id])
+        {
+          throw 'not valid path in InspectionBaseData._handle_examine_object';
+        }
+        tree = tree[obj_id] || (tree[obj_id] = {});
+      }
+      proto_chain = message[OBJECT_CHAIN_LIST][0][OBJECT_LIST];
+      for (i = 0; proto = proto_chain[i]; i++)
+      {
+        class_name = proto[VALUE][CLASS_NAME];
+        property_list = proto[PROPERTY_LIST];
+        if (property_list)
+        {
+          if (class_name == "Array" || /Collection/.test(class_name))
+          {
+            items = [];
+            attributes = [];
+            for (i = 0; cursor = property_list[i]; i++)
+            {
+              if (re_d.test(cursor[NAME]))
+              {
+                cursor[PROPERTY_ITEM] = parseInt(cursor[NAME]);
+                items.push(cursor);
+              }
+              else
+                attributes.push(cursor);
+            }
+            items.sort(this._sort_item);
+            attributes.sort(this._sort_name);
+            proto[PROPERTY_LIST] = items.concat(attributes);
+          }
+          else
+            proto[PROPERTY_LIST].sort(this._sort_name);
+        }
+        if (i == 0 && obj_id == this._obj_id && this._virtual_props)
+          proto[PROPERTY_LIST] = this._virtual_props.concat(proto[PROPERTY_LIST] || []);
+          
+      }
+
+      this._obj_map[obj_id] = proto_chain;
+
+      if (cb)
+      {
+        cb();
+      }
+    }
+  }
+
+  this._sort_name = function(a, b)
+  {
+    return a[NAME] < b[NAME] ? -1 : a[NAME] > b[NAME] ? 1 : 0;
+  };
+
+
+  this._sort_item = function(a, b)
+  {
+    return a[PROPERTY_ITEM] < b[PROPERTY_ITEM] ? -1 : a[PROPERTY_ITEM] > b[PROPERTY_ITEM] ? 1 : 0;
+  };
+
+  this.clear_data =
+  this.clearData = function(path)
+  {
+    var i = 0, cur = '', tree = this._expand_tree, dead_ids = null, ids = null;
+    if (path)
+    {
+      for (; cur = path[i]; i++)
+      {
+
+        if (i == path.length -1)
+        {
+          dead_ids = [cur].concat(this._get_all_ids(tree[cur]));
+          tree[cur] = null;
+        }
+        else
+        {
+          tree = tree[cur];
+          if (!tree)
+            throw 'not valid path in InspectionBaseData.clearData';
+        }
+      }
+      ids = this._get_all_ids(this._expand_tree);
+      for (i = 0; cur = dead_ids[i]; i++)
+      {
+        if (ids.indexOf(cur) == -1)
+          this._obj_map[cur] = this._queried_map[cur] = null;
+      }
+    }
+    else
+    {
+      this._obj_map =
+      this._queried_map =
+      this._expand_tree = 
+      this._virtual_props = null;
+      this._rt_id =
+      this._obj_id = 0;
+    }
+  }
+
+  this._get_all_ids = function get_all_ids(tree, ret)
+  {
+    ret || (ret = []);
+    for (var id in tree)
+    {
+      if (tree[id])
+      {
+        ret.push(id);
+        get_all_ids(tree[id], ret);
+      }
+    }
+    return ret;
+  }
+
+  this.get_expand_tree = function()
+  {
+    return this._expand_tree;
+  }
+
+  this.get_data = function(obj_id)
+  {
+    return this._obj_map[obj_id];
+  }
+
+};
+
+</script>
+<script>
+window.cls || (window.cls = {});
+cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
+cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
+
+/**
+  * @constructor 
+  * @extends InspectionBaseData
+  */
+
+cls.EcmascriptDebugger["6.0"].FixObjectInspectionData = function(rt_id, obj_id, identifier, _class)
+{
+  this._init();
+  this.setObject(rt_id, obj_id, null, identifier, _class)
+}
+</script>
+<script>
+(function()
+{
+  const
+  // sub message ObjectInfo 
+  VALUE = 0,
+  PROPERTY_LIST = 1,
+  // sub message ObjectValue 
+  OBJECT_ID = 0,
+  CLASS_NAME = 4,
+  // sub message Property 
+  NAME = 0,
+  PROPERTY_TYPE = 1,
+  PROPERTY_VALUE = 2,
+  OBJECT_VALUE = 3,
+  // added fields
+  MAX_VALUE_LENGTH = 30;
+
+  var _pretty_print_object = function(model, tree, obj_id, ret)
+  {
+    ret || (ret = []);
+    var data = model.get_data(obj_id), obj = model.get_object();
+    if (obj && data)
+    {
+      ret.push(
+        "<examine-objects " +
+          "rt-id='" + obj.rt_id + "' " +
+          "data-id='" + model.id + "' " +
+          "obj-id='" + obj.obj_id + "' " +
+          ">"
+      );
+      for (var proto = null, i = 0; proto = data[i]; i++)
+      {
+        // skip the first object description
+        if (i)
+          ret.push("<div class='prototype-chain-object'>", proto[VALUE][CLASS_NAME], "</div>");
+        _pretty_print_properties(model, tree, proto[PROPERTY_LIST] || [], ret);
+      }
+      ret.push("</examine-objects>");
+    };
+    return ret;
+  };
+
+  var _pretty_print_properties = function(model, tree, property_list, ret)
+  {
+    var value = '', type = '', short_val = '', obj_id = 0;
+    for (var prop = null, i = 0; prop = property_list[i]; i++)
+    {
+      value = prop[PROPERTY_VALUE];
+      switch (type = prop[PROPERTY_TYPE])
+      {
+        case "number":
+        case "boolean":
+        {
+          ret.push(
+            "<item>" +
+              "<key class='no-expander'>" + helpers.escapeTextHtml(prop[NAME]) + "</key>" +
+              "<value class='" + type + "'>" + value + "</value>" +
+            "</item>"
+          );
+          break;
+        }
+        case "string":
+        {
+          short_val = value.length > MAX_VALUE_LENGTH ? 
+                        value.slice(0, MAX_VALUE_LENGTH) + '…"' : '';
+          value = helpers.escapeTextHtml(value).replace(/'/g, '&#39;');
+          if (short_val)
+          {
+            ret.push(
+              "<item>" +
+                "<input type='button' handler='expand-value'  class='folder-key'/>" +
+                "<key>" + helpers.escapeTextHtml(prop[NAME]) + "</key>" +
+                "<value class='" + type + "' data-value='" + value + "'>" +
+                  "\"" + helpers.escapeTextHtml(short_val) +
+                "</value>" +
+              "</item>"
+            );
+          }
+          else
+          {
+            ret.push(
+              "<item>" +
+                "<key class='no-expander'>" + helpers.escapeTextHtml(prop[NAME]) + "</key>" +
+                "<value class='" + type + "'>\"" + value + "\"</value>" +
+              "</item>"
+            );
+          }
+          break;
+        }
+        case "null":
+        case "undefined":
+        {
+          ret.push(
+            "<item>" +
+              "<key class='no-expander'>" + helpers.escapeTextHtml(prop[NAME]) + "</key>" +
+              "<value class='" + type + "'>" + type + "</value>" +
+            "</item>"
+          );
+          break;
+        }
+        case "object":
+        {
+          obj_id = prop[OBJECT_VALUE][OBJECT_ID];
+          ret.push(
+            "<item obj-id='" + obj_id + "'>" +
+            "<input " +
+              "type='button' " +
+              "handler='examine-object'  " +
+              "class='folder-key' "
+          );
+          if (obj_id in tree)
+            ret.push("style='background-position: 0px -11px') ");
+          ret.push(
+            "/>" +
+            "<key>" + helpers.escapeTextHtml(prop[NAME]) + "</key>" +
+            "<value class='object'>" + prop[OBJECT_VALUE][CLASS_NAME] + "</value>"
+          );
+          if (obj_id in tree)
+            _pretty_print_object(model, tree[obj_id], obj_id, ret);
+          ret.push("</item>");
+          break;
+        }
+      }
+    }
+  };
+
+  this.inspected_js_object_2 = function(model, show_root, path)
+  {
+    var tree = model.get_expand_tree();
+    if (typeof show_root === 'boolean' && model.get_object())
+      path = show_root ? null : [model.get_object().obj_id];
+    for (var obj_id = 0, i = 0; path && path[i]; i++)
+    {
+      tree = tree[obj_id = path[i]];
+      if (!tree)
+        throw 'not valid path in templates.inspected_js_object';
+    }
+    return _pretty_print_object(model, tree, obj_id).join('');
+  }
+
+}).apply(window.templates || (window.templates = {}));
+
+
+</script>
+<script>
+// template 2
+(function()
+{
+  const
+  // sub message ObjectInfo 
+  VALUE = 0,
+  PROPERTY_LIST = 1,
+  // sub message ObjectValue 
+  OBJECT_ID = 0,
+  CLASS_NAME = 4,
+  // sub message Property 
+  NAME = 0,
+  PROPERTY_TYPE = 1,
+  PROPERTY_VALUE = 2,
+  OBJECT_VALUE = 3,
+  // added fields
+  MAX_VALUE_LENGTH = 30;
+
+  var _pretty_print_object = function(model, tree, obj_id)
+  {
+    var ret = [];
+    var obj = model.get_object();
+    var data = model.get_data(obj_id);
+    if (obj && data)
+    {
+      for (var proto = null, i = 0; proto = data[i]; i++)
+      {
+        // skip the first object description
+        if (i)
+          ret.push(['div', proto[VALUE][CLASS_NAME], 'class', 'prototype-chain-object']);
+        ret.push(_pretty_print_properties(model, tree, proto[PROPERTY_LIST] || []));
+      }
+
+    }
+    return (
+    ['examine-objects', 
+      ret, 
+      'rt-id', obj.rt_id.toString(),
+      'data-id', model.id,
+      'obj-id', obj.obj_id.toString()
+    ]);
+  };
+
+  var _pretty_print_properties = function(model, tree, property_list)
+  {
+    var ret = [], value = '', type = '', short_val = '', obj_id = 0;
+    for (var prop = null, i = 0; prop = property_list[i]; i++)
+    {
+      value = prop[PROPERTY_VALUE];
+      switch (type = prop[PROPERTY_TYPE])
+      {
+        case "number":
+        case "boolean":
+        {
+          ret.push(
+          ['item',
+            ['key', helpers.escapeTextHtml(prop[NAME]),  'class', 'no-expander'],
+            ['value', value.toString(), 'class', type]
+          ]);
+          break;
+        }
+        case "string":
+        {
+          short_val = value.length > MAX_VALUE_LENGTH ? 
+                        value.slice(0, MAX_VALUE_LENGTH) + '…"' : '';
+          value = helpers.escapeTextHtml(value).replace(/'/g, '&#39;');
+          if (short_val)
+          {
+            ret.push(
+            ['item',
+              ['input', 'type', 'button', 'handler', 'expand-value', 'class', 'folder-key'],
+              ['key', helpers.escapeTextHtml(prop[NAME])],
+              ['value', helpers.escapeTextHtml(short_val), 'class', type, 'data-value', value]
+            ]);
+          }
+          else
+          {
+            ret.push(
+            ['item',
+              ['key', helpers.escapeTextHtml(prop[NAME]), 'class', 'no-expander'],
+              ['value', value, 'class', type]
+            ]);
+          }
+          break;
+        }
+        case "null":
+        case "undefined":
+        {
+          ret.push(
+            ['item',
+              ['key', helpers.escapeTextHtml(prop[NAME]), 'class', 'no-expander'],
+              ['value', type, 'class', type]
+          ]);
+          break;
+        }
+        case "object":
+        {
+          obj_id = prop[OBJECT_VALUE][OBJECT_ID];
+          ret.push(
+          ['item', 
+            ['input', 
+              'type', 'button', 
+              'handler', 'examine-object', 
+              'class', 'folder-key'
+            ].concat(obj_id in tree ? ['style', 'background-position: 0px -11px'] : []),
+            ['key', helpers.escapeTextHtml(prop[NAME])],
+            ['value', prop[OBJECT_VALUE][CLASS_NAME], 'class', 'object'],
+            obj_id in tree ? _pretty_print_object(model, tree[obj_id], obj_id) : [],
+            'obj-id', obj_id.toString()
+          ]);
+          break;
+        }
+      }
+    }
+    return ret;
+  };
+
+  this.inspected_js_object = function(model, show_root, path)
+  {
+    var tree = model.get_expand_tree();
+    if (typeof show_root === 'boolean' && model.get_object())
+      path = show_root ? null : [model.get_object().obj_id];
+    for (var obj_id = 0, i = 0; path && path[i]; i++)
+    {
+      tree = tree[obj_id = path[i]];
+      if (!tree)
+        throw 'not valid path in InspectionBaseData.pretty_print';
+    }
+    return _pretty_print_object(model, tree, obj_id);
+  }
+
+
+}).apply(window.templates || (window.templates = {}));
+
+
+</script>
+
+
+
+<script>
+//static data
+
+var __obj_map = {"0":[[[1],[["Window","object",null,[1,null,null,null,""]]]]],"1":[[[1,1,"object",6,"Window"],[["Array","object",null,[34,1,"function",321,"Function","Array"]],["Attr","object",null,[134,1,"object",6,"Attr"]],["Audio","object",null,[106,1,"object",321,"Audio"]],["Boolean","object",null,[37,1,"function",321,"Function","Boolean"]],["ByteArray","object",null,[111,1,"object",321,"ByteArray"]],["CDATASection","object",null,[137,1,"object",6,"CDATASection"]],["CSSMediaRule","object",null,[156,1,"object",6,"CSSMediaRule"]],["CSSPrimitiveValue","object",null,[304,1,"object",321,"CSSPrimitiveValue"]],["CSSRule","object",null,[88,0,"object",6,"CSSRule"]],["CSSRuleList","object",null,[155,1,"object",6,"CSSRuleList"]],["CSSStyleDeclaration","object",null,[153,1,"object",6,"CSSStyleDeclaration"]],["CSSStyleSheet","object",null,[154,1,"object",6,"CSSStyleSheet"]],["CanvasGradient","object",null,[169,1,"object",6,"CanvasGradient"]],["CanvasPattern","object",null,[170,1,"object",6,"CanvasPattern"]],["CanvasRenderingContext2D","object",null,[167,1,"object",6,"CanvasRenderingContext2D"]],["CanvasRenderingContext2DGame","object",null,[168,1,"object",6,"CanvasRenderingContext2DGame"]],["ClientRect","object",null,[150,1,"object",6,"ClientRect"]],["ClientRectList","object",null,[151,1,"object",6,"ClientRectList"]],["Comment","object",null,[136,1,"object",6,"Comment"]],["ConnectionCallback","object",null,[116,1,"function",321,"Function","ConnectionCallback"]],["DOMError","object",null,[92,0,"object",6,"DOMError"]],["DOMException","object",null,[91,0,"object",6,"DOMException"]],["DOMImplementationLS","object",null,[96,0,"object",6,"DOMImplementationLS"]],["DOMParser","object",null,[94,1,"object",321,"DOMParser"]],["Database","object",null,[172,1,"object",6,"Database"]],["Date","object",null,[39,1,"function",321,"Function","Date"]],["Document","object",null,[132,1,"object",6,"Document"]],["DocumentFragment","object",null,[133,1,"object",6,"DocumentFragment"]],["DocumentType","object",null,[138,1,"object",6,"DocumentType"]],["Element","object",null,[131,1,"object",6,"Element"]],["Entity","object",null,[140,1,"object",6,"Entity"]],["EntityReference","object",null,[141,1,"object",6,"EntityReference"]],["Error","object",null,[42,1,"function",321,"Function","Error"]],["EvalError","object",null,[43,1,"function",321,"Function","EvalError"]],["Event","object",null,[119,1,"object",6,"Event"]],["Function","object",null,[33,1,"function",321,"Function","Function"]],["HTMLAnchorElement","object",null,[207,1,"object",321,"HTMLAnchorElement"]],["HTMLAppletElement","object",null,[211,1,"object",321,"HTMLAppletElement"]],["HTMLAreaElement","object",null,[214,1,"object",321,"HTMLAreaElement"]],["HTMLAudioElement","object",null,[225,1,"object",321,"HTMLAudioElement"]],["HTMLBRElement","object",null,[202,1,"object",321,"HTMLBRElement"]],["HTMLBaseElement","object",null,[182,1,"object",321,"HTMLBaseElement"]],["HTMLBaseFontElement","object",null,[203,1,"object",321,"HTMLBaseFontElement"]],["HTMLBodyElement","object",null,[117,1,"object",321,"HTMLBodyElement"]],["HTMLButtonElement","object",null,[118,1,"object",321,"HTMLButtonElement"]],["HTMLCanvasElement","object",null,[228,1,"object",321,"HTMLCanvasElement"]],["HTMLCollection","object",null,[146,1,"object",6,"HTMLCollection"]],["HTMLDListElement","object",null,[129,1,"object",321,"HTMLDListElement"]],["HTMLDataListElement","object",null,[194,1,"object",321,"HTMLDataListElement"]],["HTMLDirectoryElement","object",null,[197,1,"object",321,"HTMLDirectoryElement"]],["HTMLDivElement","object",null,[122,1,"object",321,"HTMLDivElement"]],["HTMLDocument","object",null,[148,1,"object",6,"HTMLDocument"]],["HTMLElement","object",null,[149,1,"object",6,"HTMLElement"]],["HTMLEmbedElement","object",null,[212,1,"object",321,"HTMLEmbedElement"]],["HTMLFieldSetElement","object",null,[191,1,"object",321,"HTMLFieldSetElement"]],["HTMLFontElement","object",null,[204,1,"object",321,"HTMLFontElement"]],["HTMLFormElement","object",null,[185,1,"object",321,"HTMLFormElement"]],["HTMLFrameElement","object",null,[222,1,"object",321,"HTMLFrameElement"]],["HTMLFrameSetElement","object",null,[221,1,"object",321,"HTMLFrameSetElement"]],["HTMLHRElement","object",null,[205,1,"object",321,"HTMLHRElement"]],["HTMLHeadElement","object",null,[126,1,"object",321,"HTMLHeadElement"]],["HTMLHeadingElement","object",null,[128,1,"object",321,"HTMLHeadingElement"]],["HTMLHtmlElement","object",null,[112,1,"object",321,"HTMLHtmlElement"]],["HTMLIFrameElement","object",null,[223,1,"object",321,"HTMLIFrameElement"]],["HTMLImageElement","object",null,[208,1,"object",321,"HTMLImageElement"]],["HTMLInputElement","object",null,[123,1,"object",321,"HTMLInputElement"]],["HTMLIsIndexElement","object",null,[183,1,"object",321,"HTMLIsIndexElement"]],["HTMLLIElement","object",null,[199,1,"object",321,"HTMLLIElement"]],["HTMLLabelElement","object",null,[190,1,"object",321,"HTMLLabelElement"]],["HTMLLegendElement","object",null,[192,1,"object",321,"HTMLLegendElement"]],["HTMLLinkElement","object",null,[125,1,"object",321,"HTMLLinkElement"]],["HTMLMapElement","object",null,[213,1,"object",321,"HTMLMapElement"]],["HTMLMarqueeElement","object",null,[229,1,"object",321,"HTMLMarqueeElement"]],["HTMLMediaElement","object",null,[224,1,"object",321,"HTMLMediaElement"]],["HTMLMenuElement","object",null,[198,1,"object",321,"HTMLMenuElement"]],["HTMLMetaElement","object",null,[181,1,"object",321,"HTMLMetaElement"]],["HTMLModElement","object",null,[206,1,"object",321,"HTMLModElement"]],["HTMLOListElement","object",null,[196,1,"object",321,"HTMLOListElement"]],["HTMLObjectElement","object",null,[209,1,"object",321,"HTMLObjectElement"]],["HTMLOptGroupElement","object",null,[187,1,"object",321,"HTMLOptGroupElement"]],["HTMLOptionElement","object",null,[188,1,"object",321,"HTMLOptionElement"]],["HTMLOptionsCollection","object",null,[147,1,"object",6,"HTMLOptionsCollection"]],["HTMLOutputElement","object",null,[193,1,"object",321,"HTMLOutputElement"]],["HTMLParagraphElement","object",null,[124,1,"object",321,"HTMLParagraphElement"]],["HTMLParamElement","object",null,[210,1,"object",321,"HTMLParamElement"]],["HTMLPreElement","object",null,[201,1,"object",321,"HTMLPreElement"]],["HTMLQuoteElement","object",null,[200,1,"object",321,"HTMLQuoteElement"]],["HTMLScriptElement","object",null,[113,1,"object",321,"HTMLScriptElement"]],["HTMLSelectElement","object",null,[186,1,"object",321,"HTMLSelectElement"]],["HTMLSourceElement","object",null,[227,1,"object",321,"HTMLSourceElement"]],["HTMLStyleElement","object",null,[184,1,"object",321,"HTMLStyleElement"]],["HTMLTableCaptionElement","object",null,[216,1,"object",321,"HTMLTableCaptionElement"]],["HTMLTableCellElement","object",null,[220,1,"object",321,"HTMLTableCellElement"]],["HTMLTableColElement","object",null,[217,1,"object",321,"HTMLTableColElement"]],["HTMLTableElement","object",null,[215,1,"object",321,"HTMLTableElement"]],["HTMLTableRowElement","object",null,[219,1,"object",321,"HTMLTableRowElement"]],["HTMLTableSectionElement","object",null,[218,1,"object",321,"HTMLTableSectionElement"]],["HTMLTextAreaElement","object",null,[189,1,"object",321,"HTMLTextAreaElement"]],["HTMLTitleElement","object",null,[127,1,"object",321,"HTMLTitleElement"]],["HTMLUListElement","object",null,[195,1,"object",321,"HTMLUListElement"]],["HTMLUnknownElement","object",null,[180,1,"object",321,"HTMLUnknownElement"]],["HTMLVideoElement","object",null,[226,1,"object",321,"HTMLVideoElement"]],["Image","object",null,[104,1,"object",321,"Image"]],["ImageData","object",null,[110,1,"object",321,"ImageData"]],["Infinity","number","Infinity"],["JSON","object",null,[41,0,"object",6,"JSON"]],["LSException","object",null,[93,0,"object",6,"LSException"]],["LSParser","object",null,[160,1,"object",6,"LSParser"]],["LSParserFilter","object",null,[95,0,"object",6,"LSParserFilter"]],["Math","object",null,[40,0,"object",6,"Math"]],["MediaError","object",null,[165,1,"object",6,"MediaError"]],["MediaList","object",null,[158,1,"object",6,"MediaList"]],["MouseEvent","object",null,[121,1,"object",6,"MouseEvent"]],["MutationEvent","object",null,[152,1,"object",6,"MutationEvent"]],["NaN","number","NaN"],["NamedNodeMap","object",null,[144,1,"object",6,"NamedNodeMap"]],["Node","object",null,[130,1,"object",6,"Node"]],["NodeFilter","object",null,[89,0,"object",6,"NodeFilter"]],["NodeList","object",null,[143,1,"object",6,"NodeList"]],["Notation","object",null,[139,1,"object",6,"Notation"]],["Number","object",null,[36,1,"function",321,"Function","Number"]],["Object","object",null,[32,1,"function",321,"Function","Object"]],["Option","object",null,[105,1,"object",321,"Option"]],["ProcessingInstruction","object",null,[142,1,"object",6,"ProcessingInstruction"]],["RGBColor","object",null,[305,1,"object",321,"RGBColor"]],["Range","object",null,[159,1,"object",6,"Range"]],["RangeError","object",null,[44,1,"function",321,"Function","RangeError"]],["RangeException","object",null,[90,0,"object",6,"RangeException"]],["ReferenceError","object",null,[45,1,"function",321,"Function","ReferenceError"]],["RegExp","object",null,[38,1,"function",321,"Function","RegExp"]],["SQLError","object",null,[176,1,"object",6,"SQLError"]],["SQLResultSet","object",null,[174,1,"object",6,"SQLResultSet"]],["SQLResultSetRowList","object",null,[175,1,"object",6,"SQLResultSetRowList"]],["SQLTransaction","object",null,[173,1,"object",6,"SQLTransaction"]],["SVGAElement","object",null,[257,1,"object",321,"SVGAElement"]],["SVGAngle","object",null,[308,1,"object",321,"SVGAngle"]],["SVGAnimateColorElement","object",null,[231,1,"object",321,"SVGAnimateColorElement"]],["SVGAnimateElement","object",null,[230,1,"object",321,"SVGAnimateElement"]],["SVGAnimateMotionElement","object",null,[234,1,"object",321,"SVGAnimateMotionElement"]],["SVGAnimateTransformElement","object",null,[232,1,"object",321,"SVGAnimateTransformElement"]],["SVGAnimationElement","object",null,[299,1,"object",321,"SVGAnimationElement"]],["SVGAudioElement","object",null,[297,1,"object",321,"SVGAudioElement"]],["SVGCircleElement","object",null,[235,1,"object",321,"SVGCircleElement"]],["SVGClipPathElement","object",null,[265,1,"object",321,"SVGClipPathElement"]],["SVGDefsElement","object",null,[236,1,"object",321,"SVGDefsElement"]],["SVGDescElement","object",null,[237,1,"object",321,"SVGDescElement"]],["SVGDocument","object",null,[166,1,"object",6,"SVGDocument"]],["SVGEllipseElement","object",null,[238,1,"object",321,"SVGEllipseElement"]],["SVGException","object",null,[107,0,"object",6,"SVGException"]],["SVGFEBlendElement","object",null,[266,1,"object",321,"SVGFEBlendElement"]],["SVGFEColorMatrixElement","object",null,[267,1,"object",321,"SVGFEColorMatrixElement"]],["SVGFEComponentTransferElement","object",null,[268,1,"object",321,"SVGFEComponentTransferElement"]],["SVGFECompositeElement","object",null,[273,1,"object",321,"SVGFECompositeElement"]],["SVGFEConvolveMatrixElement","object",null,[274,1,"object",321,"SVGFEConvolveMatrixElement"]],["SVGFEDiffuseLightingElement","object",null,[275,1,"object",321,"SVGFEDiffuseLightingElement"]],["SVGFEDisplacementMapElement","object",null,[279,1,"object",321,"SVGFEDisplacementMapElement"]],["SVGFEDistantLightElement","object",null,[276,1,"object",321,"SVGFEDistantLightElement"]],["SVGFEFloodElement","object",null,[280,1,"object",321,"SVGFEFloodElement"]],["SVGFEFuncAElement","object",null,[272,1,"object",321,"SVGFEFuncAElement"]],["SVGFEFuncBElement","object",null,[271,1,"object",321,"SVGFEFuncBElement"]],["SVGFEFuncGElement","object",null,[270,1,"object",321,"SVGFEFuncGElement"]],["SVGFEFuncRElement","object",null,[269,1,"object",321,"SVGFEFuncRElement"]],["SVGFEGaussianBlurElement","object",null,[281,1,"object",321,"SVGFEGaussianBlurElement"]],["SVGFEImageElement","object",null,[282,1,"object",321,"SVGFEImageElement"]],["SVGFEMergeElement","object",null,[283,1,"object",321,"SVGFEMergeElement"]],["SVGFEMergeNodeElement","object",null,[284,1,"object",321,"SVGFEMergeNodeElement"]],["SVGFEMorphologyElement","object",null,[285,1,"object",321,"SVGFEMorphologyElement"]],["SVGFEOffsetElement","object",null,[286,1,"object",321,"SVGFEOffsetElement"]],["SVGFEPointLightElement","object",null,[277,1,"object",321,"SVGFEPointLightElement"]],["SVGFESpecularLightingElement","object",null,[287,1,"object",321,"SVGFESpecularLightingElement"]],["SVGFESpotLightElement","object",null,[278,1,"object",321,"SVGFESpotLightElement"]],["SVGFETileElement","object",null,[288,1,"object",321,"SVGFETileElement"]],["SVGFETurbulenceElement","object",null,[289,1,"object",321,"SVGFETurbulenceElement"]],["SVGFilterElement","object",null,[290,1,"object",321,"SVGFilterElement"]],["SVGFontElement","object",null,[260,1,"object",321,"SVGFontElement"]],["SVGForeignObjectElement","object",null,[263,1,"object",321,"SVGForeignObjectElement"]],["SVGGElement","object",null,[239,1,"object",321,"SVGGElement"]],["SVGGlyphElement","object",null,[261,1,"object",321,"SVGGlyphElement"]],["SVGImageElement","object",null,[240,1,"object",321,"SVGImageElement"]],["SVGLength","object",null,[307,1,"object",321,"SVGLength"]],["SVGLineElement","object",null,[241,1,"object",321,"SVGLineElement"]],["SVGLinearGradientElement","object",null,[242,1,"object",321,"SVGLinearGradientElement"]],["SVGMPathElement","object",null,[259,1,"object",321,"SVGMPathElement"]],["SVGMarkerElement","object",null,[291,1,"object",321,"SVGMarkerElement"]],["SVGMaskElement","object",null,[292,1,"object",321,"SVGMaskElement"]],["SVGMatrix","object",null,[302,1,"object",321,"SVGMatrix"]],["SVGMissingGlyphElement","object",null,[262,1,"object",321,"SVGMissingGlyphElement"]],["SVGNumber","object",null,[306,1,"object",321,"SVGNumber"]],["SVGPaint","object",null,[310,1,"object",321,"SVGPaint"]],["SVGPath","object",null,[314,1,"object",321,"SVGPath"]],["SVGPathElement","object",null,[243,1,"object",321,"SVGPathElement"]],["SVGPathSeg","object",null,[312,1,"object",321,"SVGPathSeg"]],["SVGPatternElement","object",null,[293,1,"object",321,"SVGPatternElement"]],["SVGPoint","object",null,[301,1,"object",321,"SVGPoint"]],["SVGPolygonElement","object",null,[244,1,"object",321,"SVGPolygonElement"]],["SVGPolylineElement","object",null,[245,1,"object",321,"SVGPolylineElement"]],["SVGPreserveAspectRatio","object",null,[311,1,"object",321,"SVGPreserveAspectRatio"]],["SVGRGBColor","object",null,[313,1,"object",321,"SVGRGBColor"]],["SVGRadialGradientElement","object",null,[246,1,"object",321,"SVGRadialGradientElement"]],["SVGRect","object",null,[303,1,"object",321,"SVGRect"]],["SVGRectElement","object",null,[247,1,"object",321,"SVGRectElement"]],["SVGSVGElement","object",null,[264,1,"object",321,"SVGSVGElement"]],["SVGScriptElement","object",null,[258,1,"object",321,"SVGScriptElement"]],["SVGSetElement","object",null,[233,1,"object",321,"SVGSetElement"]],["SVGStopElement","object",null,[248,1,"object",321,"SVGStopElement"]],["SVGStyleElement","object",null,[294,1,"object",321,"SVGStyleElement"]],["SVGSwitchElement","object",null,[250,1,"object",321,"SVGSwitchElement"]],["SVGSymbolElement","object",null,[249,1,"object",321,"SVGSymbolElement"]],["SVGTRefElement","object",null,[255,1,"object",321,"SVGTRefElement"]],["SVGTSpanElement","object",null,[254,1,"object",321,"SVGTSpanElement"]],["SVGTextAreaElement","object",null,[300,1,"object",321,"SVGTextAreaElement"]],["SVGTextContentElement","object",null,[252,1,"object",321,"SVGTextContentElement"]],["SVGTextElement","object",null,[251,1,"object",321,"SVGTextElement"]],["SVGTextPathElement","object",null,[295,1,"object",321,"SVGTextPathElement"]],["SVGTitleElement","object",null,[253,1,"object",321,"SVGTitleElement"]],["SVGTransform","object",null,[309,1,"object",321,"SVGTransform"]],["SVGUnitTypes","object",null,[108,1,"object",321,"SVGUnitTypes"]],["SVGUseElement","object",null,[256,1,"object",321,"SVGUseElement"]],["SVGVideoElement","object",null,[298,1,"object",321,"SVGVideoElement"]],["SVGViewElement","object",null,[296,1,"object",321,"SVGViewElement"]],["SVGZoomAndPan","object",null,[109,1,"object",321,"SVGZoomAndPan"]],["Selection","object",null,[179,1,"object",6,"Selection"]],["SetConnected","object",null,[115,1,"function",321,"Function","SetConnected"]],["SetDisconnected","object",null,[114,1,"function",321,"Function","SetDisconnected"]],["Storage","object",null,[177,1,"object",6,"Storage"]],["StorageEvent","object",null,[178,1,"object",6,"StorageEvent"]],["String","object",null,[35,1,"function",321,"Function","String"]],["StyleSheetList","object",null,[157,1,"object",6,"StyleSheetList"]],["SyntaxError","object",null,[46,1,"function",321,"Function","SyntaxError"]],["Text","object",null,[135,1,"object",6,"Text"]],["TextMetrics","object",null,[171,1,"object",6,"TextMetrics"]],["TypeError","object",null,[47,1,"function",321,"Function","TypeError"]],["UIEvent","object",null,[120,1,"object",6,"UIEvent"]],["URIError","object",null,[48,1,"function",321,"Function","URIError"]],["XMLDocument","object",null,[145,1,"object",6,"XMLDocument"]],["XMLHttpRequest","object",null,[97,1,"object",321,"XMLHttpRequest"]],["XMLSerializer","object",null,[98,1,"object",321,"XMLSerializer"]],["XPathEvaluator","object",null,[99,1,"object",321,"XPathEvaluator"]],["XPathException","object",null,[100,0,"object",6,"XPathException"]],["XPathExpression","object",null,[161,1,"object",6,"XPathExpression"]],["XPathNSResolver","object",null,[162,1,"object",6,"XPathNSResolver"]],["XPathNamespace","object",null,[163,1,"object",6,"XPathNamespace"]],["XPathResult","object",null,[164,1,"object",6,"XPathResult"]],["XSLTProcessor","object",null,[101,1,"object",321,"XSLTProcessor"]],["addEventListener","object",null,[85,1,"function",321,"Function","addEventListener"]],["addEventStream","object",null,[77,1,"function",321,"Function","addEventStream"]],["alert","object",null,[71,1,"function",321,"Function","alert"]],["atob","object",null,[69,1,"function",321,"Function","atob"]],["attachEvent","object",null,[83,1,"function",321,"Function","attachEvent"]],["back","object",null,[81,1,"function",321,"Function","back"]],["btoa","object",null,[70,1,"function",321,"Function","btoa"]],["captureEvents","object",null,[67,1,"function",321,"Function","captureEvents"]],["clearInterval","object",null,[79,1,"function",321,"Function","clearInterval"]],["clearTimeout","object",null,[80,1,"function",321,"Function","clearTimeout"]],["closed","boolean","false"],["confirm","object",null,[72,1,"function",321,"Function","confirm"]],["console","object",null,[102,0,"object",322,"Console"]],["decodeURI","object",null,[53,1,"function",321,"Function","decodeURI"]],["decodeURIComponent","object",null,[54,1,"function",321,"Function","decodeURIComponent"]],["defaultStatus","string",""],["detachEvent","object",null,[84,1,"function",321,"Function","detachEvent"]],["dispatchEvent","object",null,[68,1,"function",321,"Function","dispatchEvent"]],["document","object",null,[2,0,"object",3,"HTMLDocument"]],["encodeURI","object",null,[55,1,"function",321,"Function","encodeURI"]],["encodeURIComponent","object",null,[56,1,"function",321,"Function","encodeURIComponent"]],["escape","object",null,[58,1,"function",321,"Function","escape"]],["eval","object",null,[57,1,"function",321,"Function","eval"]],["event","null",""],["forward","object",null,[82,1,"function",321,"Function","forward"]],["frameElement","null",""],["getComputedStyle","object",null,[63,1,"function",321,"Function","getComputedStyle"]],["getSelection","object",null,[64,1,"function",321,"Function","getSelection"]],["history","object",null,[22,0,"object",315,"History"]],["innerHeight","number","728"],["innerWidth","number","1024"],["ip","object",null,[29,0,"object",319,"HTMLInputElement"]],["isFinite","object",null,[52,1,"function",321,"Function","isFinite"]],["isNaN","object",null,[51,1,"function",321,"Function","isNaN"]],["length","number","0"],["localStorage","object",null,[23,0,"object",316,"Storage"]],["location","object",null,[24,0,"object",317,"Location"]],["m","object",null,[31,0,"object",320,"HTMLParagraphElement"]],["name","string",""],["navigate","object",null,[87,1,"function",321,"Function","navigate"]],["navigator","object",null,[25,0,"object",318,"Navigator"]],["open","object",null,[60,1,"function",321,"Function","open"]],["openDatabase","object",null,[65,1,"function",321,"Function","openDatabase"]],["opener","null",""],["opera","object",null,[103,0,"object",6,"Opera"]],["outerHeight","number","728"],["outerWidth","number","1024"],["pageXOffset","number","0"],["pageYOffset","number","0"],["parent","object",null,[26,1,"object",6,"Window"]],["parseFloat","object",null,[50,1,"function",321,"Function","parseFloat"]],["parseInt","object",null,[49,1,"function",321,"Function","parseInt"]],["port","object",null,[30,0,"object",319,"HTMLInputElement"]],["print","object",null,[61,1,"function",321,"Function","print"]],["prompt","object",null,[73,1,"function",321,"Function","prompt"]],["releaseEvents","object",null,[66,1,"function",321,"Function","releaseEvents"]],["removeEventListener","object",null,[86,1,"function",321,"Function","removeEventListener"]],["removeEventStream","object",null,[78,1,"function",321,"Function","removeEventStream"]],["screen","object",null,[27,0,"object",6,"Screen"]],["screenLeft","number","0"],["screenTop","number","40"],["screenX","number","0"],["screenY","number","40"],["scrollX","number","0"],["scrollY","number","0"],["self","object",null,[26,1,"object",6,"Window"]],["sessionStorage","object",null,[28,0,"object",316,"Storage"]],["setInterval","object",null,[76,1,"function",321,"Function","setInterval"]],["setTimeout","object",null,[75,1,"function",321,"Function","setTimeout"]],["showModalDialog","object",null,[74,1,"function",321,"Function","showModalDialog"]],["status","string",""],["stop","object",null,[62,1,"function",321,"Function","stop"]],["top","object",null,[26,1,"object",6,"Window"]],["undefined","undefined",""],["unescape","object",null,[59,1,"function",321,"Function","unescape"]],["window","object",null,[26,1,"object",6,"Window"]]]],[[6,0,"object",0,"Object"],[["__defineGetter__","object",null,[329,1,"function",321,"Function","__defineGetter__"]],["__defineSetter__","object",null,[330,1,"function",321,"Function","__defineSetter__"]],["__lookupGetter__","object",null,[331,1,"function",321,"Function","__lookupGetter__"]],["__lookupSetter__","object",null,[332,1,"function",321,"Function","__lookupSetter__"]],["constructor","object",null,[32,1,"function",321,"Function","Object"]],["hasOwnProperty","object",null,[326,1,"function",321,"Function","hasOwnProperty"]],["isPrototypeOf","object",null,[327,1,"function",321,"Function","isPrototypeOf"]],["propertyIsEnumerable","object",null,[328,1,"function",321,"Function","propertyIsEnumerable"]],["toLocaleString","object",null,[324,1,"function",321,"Function","toLocaleString"]],["toString","object",null,[323,1,"function",321,"Function","toString"]],["valueOf","object",null,[325,1,"function",321,"Function","valueOf"]]]]],"2":[[[2,0,"object",3,"HTMLDocument"],[["URL","string","opera:debug"],["activeElement","object",null,[333,0,"object",346,"HTMLButtonElement"]],["alinkColor","string",""],["all","object",null,[334,1,"object",347,"HTMLCollection"]],["anchors","object",null,[335,1,"object",347,"HTMLCollection"]],["applets","object",null,[336,1,"object",347,"HTMLCollection"]],["attributes","null",""],["baseURI","string","opera:debug"],["bgColor","string",""],["body","object",null,[7,0,"object",8,"HTMLBodyElement"]],["characterSet","string","utf-16"],["charset","string","utf-16"],["childNodes","object",null,[337,1,"object",348,"NodeList"]],["compatMode","string","CSS1Compat"],["cookie","string",""],["defaultView","object",null,[26,1,"object",6,"Window"]],["designMode","string","off"],["dir","string","ltr"],["doctype","object",null,[16,0,"object",5,"DocumentType"]],["document","object",null,[15,0,"object",3,"HTMLDocument"]],["documentElement","object",null,[17,0,"object",349,"HTMLHtmlElement"]],["documentURI","string","opera:debug"],["domain","string",""],["embeds","object",null,[338,1,"object",347,"HTMLCollection"]],["fgColor","string",""],["firstChild","object",null,[16,0,"object",5,"DocumentType"]],["forms","object",null,[339,1,"object",347,"HTMLCollection"]],["frames","object",null,[1,1,"object",6,"Window"]],["images","object",null,[340,1,"object",347,"HTMLCollection"]],["implementation","object",null,[341,0,"object",6,"DOMImplementation"]],["lastChild","object",null,[17,0,"object",349,"HTMLHtmlElement"]],["lastModified","string","January 1, 1970 GMT"],["linkColor","string",""],["links","object",null,[342,1,"object",347,"HTMLCollection"]],["localName","null",""],["location","object",null,[24,0,"object",317,"Location"]],["namespaceURI","null",""],["nextSibling","null",""],["nodeName","string","#document"],["nodeType","number","9"],["nodeValue","null",""],["onhashchange","null",""],["onload","null",""],["onstorage","null",""],["onunload","null",""],["ownerDocument","null",""],["parentNode","null",""],["parentWindow","object",null,[26,1,"object",6,"Window"]],["plugins","object",null,[343,1,"object",347,"HTMLCollection"]],["prefix","null",""],["previousSibling","null",""],["readyState","string","complete"],["referrer","string",""],["scripts","object",null,[344,1,"object",347,"HTMLCollection"]],["styleSheets","object",null,[345,0,"object",350,"StyleSheetList"]],["textContent","null",""],["title","string","Connect to Debugger"],["vlinkColor","string",""]]],[[3,0,"object",4,"HTMLDocumentPrototype"],[["captureEvents","object",null,[356,1,"function",321,"Function","captureEvents"]],["clear","object",null,[352,1,"function",321,"Function","clear"]],["close","object",null,[353,1,"function",321,"Function","close"]],["elementFromPoint","object",null,[355,1,"function",321,"Function","elementFromPoint"]],["getElementsByName","object",null,[354,1,"function",321,"Function","getElementsByName"]],["getSelection","object",null,[358,1,"function",321,"Function","getSelection"]],["moveFocusDown","object",null,[362,1,"function",321,"Function","moveFocusDown"]],["moveFocusLeft","object",null,[363,1,"function",321,"Function","moveFocusLeft"]],["moveFocusRight","object",null,[364,1,"function",321,"Function","moveFocusRight"]],["moveFocusUp","object",null,[361,1,"function",321,"Function","moveFocusUp"]],["open","object",null,[351,1,"function",321,"Function","open"]],["releaseEvents","object",null,[357,1,"function",321,"Function","releaseEvents"]],["write","object",null,[359,1,"function",321,"Function","write"]],["writeln","object",null,[360,1,"function",321,"Function","writeln"]]]],[[4,0,"object",5,"DocumentPrototype"],[["adoptNode","object",null,[370,1,"function",321,"Function","adoptNode"]],["createAttribute","object",null,[375,1,"function",321,"Function","createAttribute"]],["createAttributeNS","object",null,[376,1,"function",321,"Function","createAttributeNS"]],["createCDATASection","object",null,[379,1,"function",321,"Function","createCDATASection"]],["createComment","object",null,[378,1,"function",321,"Function","createComment"]],["createDocumentFragment","object",null,[365,1,"function",321,"Function","createDocumentFragment"]],["createElement","object",null,[373,1,"function",321,"Function","createElement"]],["createElementNS","object",null,[374,1,"function",321,"Function","createElementNS"]],["createEvent","object",null,[366,1,"function",321,"Function","createEvent"]],["createExpression","object",null,[391,1,"function",321,"Function","createExpression"]],["createNSResolver","object",null,[371,1,"function",321,"Function","createNSResolver"]],["createNodeIterator","object",null,[382,1,"function",321,"Function","createNodeIterator"]],["createProcessingInstruction","object",null,[368,1,"function",321,"Function","createProcessingInstruction"]],["createRange","object",null,[367,1,"function",321,"Function","createRange"]],["createTextNode","object",null,[377,1,"function",321,"Function","createTextNode"]],["createTreeWalker","object",null,[383,1,"function",321,"Function","createTreeWalker"]],["evaluate","object",null,[392,1,"function",321,"Function","evaluate"]],["evaluate0","object",null,[372,1,"function",321,"Function","evaluate0"]],["execCommand","object",null,[386,1,"function",321,"Function","execCommand"]],["getElementById","object",null,[380,1,"function",321,"Function","getElementById"]],["getElementsByClassName","object",null,[381,1,"function",321,"Function","getElementsByClassName"]],["getElementsByTagName","object",null,[384,1,"function",321,"Function","getElementsByTagName"]],["getElementsByTagNameNS","object",null,[385,1,"function",321,"Function","getElementsByTagNameNS"]],["importNode","object",null,[369,1,"function",321,"Function","importNode"]],["queryCommandEnabled","object",null,[387,1,"function",321,"Function","queryCommandEnabled"]],["queryCommandState","object",null,[388,1,"function",321,"Function","queryCommandState"]],["queryCommandSupported","object",null,[389,1,"function",321,"Function","queryCommandSupported"]],["queryCommandValue","object",null,[390,1,"function",321,"Function","queryCommandValue"]],["querySelector","object",null,[393,1,"function",321,"Function","querySelector"]],["querySelectorAll","object",null,[394,1,"function",321,"Function","querySelectorAll"]]]],[[5,0,"object",6,"NodePrototype"],[["ATTRIBUTE_NODE","number","2"],["CDATA_SECTION_NODE","number","4"],["COMMENT_NODE","number","8"],["DOCUMENT_FRAGMENT_NODE","number","11"],["DOCUMENT_NODE","number","9"],["DOCUMENT_POSITION_CONTAINED_BY","number","16"],["DOCUMENT_POSITION_CONTAINS","number","8"],["DOCUMENT_POSITION_DISCONNECTED","number","1"],["DOCUMENT_POSITION_FOLLOWING","number","4"],["DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC","number","32"],["DOCUMENT_POSITION_PRECEDING","number","2"],["DOCUMENT_TYPE_NODE","number","10"],["ELEMENT_NODE","number","1"],["ENTITY_NODE","number","6"],["ENTITY_REFERENCE_NODE","number","5"],["NOTATION_NODE","number","12"],["PROCESSING_INSTRUCTION_NODE","number","7"],["TEXT_NODE","number","3"],["addEventListener","object",null,[408,1,"function",321,"Function","addEventListener"]],["addEventSource","object",null,[417,1,"function",321,"Function","addEventSource"]],["appendChild","object",null,[399,1,"function",321,"Function","appendChild"]],["attachEvent","object",null,[410,1,"function",321,"Function","attachEvent"]],["cloneNode","object",null,[401,1,"function",321,"Function","cloneNode"]],["compareDocumentPosition","object",null,[407,1,"function",321,"Function","compareDocumentPosition"]],["detachEvent","object",null,[411,1,"function",321,"Function","detachEvent"]],["dispatchEvent","object",null,[395,1,"function",321,"Function","dispatchEvent"]],["getFeature","object",null,[406,1,"function",321,"Function","getFeature"]],["hasAttributes","object",null,[404,1,"function",321,"Function","hasAttributes"]],["hasChildNodes","object",null,[400,1,"function",321,"Function","hasChildNodes"]],["insertBefore","object",null,[396,1,"function",321,"Function","insertBefore"]],["isDefaultNamespace","object",null,[413,1,"function",321,"Function","isDefaultNamespace"]],["isSameNode","object",null,[405,1,"function",321,"Function","isSameNode"]],["isSupported","object",null,[403,1,"function",321,"Function","isSupported"]],["lookupNamespaceURI","object",null,[414,1,"function",321,"Function","lookupNamespaceURI"]],["lookupPrefix","object",null,[412,1,"function",321,"Function","lookupPrefix"]],["normalize","object",null,[402,1,"function",321,"Function","normalize"]],["removeChild","object",null,[398,1,"function",321,"Function","removeChild"]],["removeEventListener","object",null,[409,1,"function",321,"Function","removeEventListener"]],["removeEventSource","object",null,[418,1,"function",321,"Function","removeEventSource"]],["replaceChild","object",null,[397,1,"function",321,"Function","replaceChild"]],["selectNodes","object",null,[415,1,"function",321,"Function","selectNodes"]],["selectSingleNode","object",null,[416,1,"function",321,"Function","selectSingleNode"]]]],[[6,0,"object",0,"Object"],[["__defineGetter__","object",null,[329,1,"function",321,"Function","__defineGetter__"]],["__defineSetter__","object",null,[330,1,"function",321,"Function","__defineSetter__"]],["__lookupGetter__","object",null,[331,1,"function",321,"Function","__lookupGetter__"]],["__lookupSetter__","object",null,[332,1,"function",321,"Function","__lookupSetter__"]],["constructor","object",null,[32,1,"function",321,"Function","Object"]],["hasOwnProperty","object",null,[326,1,"function",321,"Function","hasOwnProperty"]],["isPrototypeOf","object",null,[327,1,"function",321,"Function","isPrototypeOf"]],["propertyIsEnumerable","object",null,[328,1,"function",321,"Function","propertyIsEnumerable"]],["toLocaleString","object",null,[324,1,"function",321,"Function","toLocaleString"]],["toString","object",null,[323,1,"function",321,"Function","toString"]],["valueOf","object",null,[325,1,"function",321,"Function","valueOf"]]]]],"34":[[[34,1,"function",321,"Function","Array"],[["isArray","object",null,[473,1,"function",321,"Function","isArray"]],["length","number","1"],["name","string","Array"],["prototype","object",null,[472,0,"object",6,"Array"]]]],[[321,1,"function",6,"Function"],[["apply","object",null,[475,1,"function",321,"Function","apply"]],["call","object",null,[476,1,"function",321,"Function","call"]],["constructor","object",null,[33,1,"function",321,"Function","Function"]],["length","number","0"],["name","string","Function.prototype"],["toString","object",null,[474,1,"function",321,"Function","toString"]]]],[[6,0,"object",0,"Object"],[["__defineGetter__","object",null,[329,1,"function",321,"Function","__defineGetter__"]],["__defineSetter__","object",null,[330,1,"function",321,"Function","__defineSetter__"]],["__lookupGetter__","object",null,[331,1,"function",321,"Function","__lookupGetter__"]],["__lookupSetter__","object",null,[332,1,"function",321,"Function","__lookupSetter__"]],["constructor","object",null,[32,1,"function",321,"Function","Object"]],["hasOwnProperty","object",null,[326,1,"function",321,"Function","hasOwnProperty"]],["isPrototypeOf","object",null,[327,1,"function",321,"Function","isPrototypeOf"]],["propertyIsEnumerable","object",null,[328,1,"function",321,"Function","propertyIsEnumerable"]],["toLocaleString","object",null,[324,1,"function",321,"Function","toLocaleString"]],["toString","object",null,[323,1,"function",321,"Function","toString"]],["valueOf","object",null,[325,1,"function",321,"Function","valueOf"]]]]],"333":[[[333,0,"object",346,"HTMLButtonElement"],[["accessKey","string",""],["all","object",null,[419,1,"object",347,"HTMLCollection"]],["attributes","object",null,[420,0,"object",432,"NamedNodeMap"]],["autofocus","boolean","false"],["baseURI","string","opera:debug"],["childElementCount","number","0"],["childNodes","object",null,[421,1,"object",348,"NodeList"]],["children","object",null,[422,1,"object",347,"HTMLCollection"]],["className","string",""],["clientHeight","number","24"],["clientLeft","number","2"],["clientTop","number","2"],["clientWidth","number","77"],["contentEditable","string","inherit"],["currentStyle","object",null,[423,0,"object",433,"CSSStyleDeclaration"]],["dir","string",""],["disabled","boolean","false"],["document","object",null,[15,0,"object",3,"HTMLDocument"]],["firstChild","object",null,[424,0,"object",434,"Text"]],["firstElementChild","null",""],["form","null",""],["formAction","string",""],["formEnctype","string",""],["formMethod","string",""],["formNoValidate","boolean","false"],["formTarget","string",""],["forms","object",null,[425,0,"object",348,"NodeList"]],["id","string",""],["innerHTML","string","Connect"],["innerText","string","Connect"],["isContentEditable","boolean","false"],["labels","object",null,[426,1,"object",347,"HTMLCollection"]],["lang","string",""],["lastChild","object",null,[424,0,"object",434,"Text"]],["lastElementChild","null",""],["localName","string","BUTTON"],["name","string",""],["namespaceURI","null",""],["nextElementSibling","object",null,[427,0,"object",346,"HTMLButtonElement"]],["nextSibling","object",null,[427,0,"object",346,"HTMLButtonElement"]],["nodeName","string","BUTTON"],["nodeType","number","1"],["nodeValue","null",""],["offsetHeight","number","28"],["offsetLeft","number","61"],["offsetParent","object",null,[7,0,"object",8,"HTMLBodyElement"]],["offsetTop","number","304"],["offsetWidth","number","81"],["onblur","null",""],["oncanplay","null",""],["oncanplaythrough","null",""],["onchange","null",""],["onclick","object",null,[431,1,"function",321,"Function"]],["oncontextmenu","null",""],["ondblclick","null",""],["ondurationchange","null",""],["onemptied","null",""],["onended","null",""],["onfocus","null",""],["onformchange","null",""],["onforminput","null",""],["oninput","null",""],["onkeydown","null",""],["onkeypress","null",""],["onkeyup","null",""],["onload","null",""],["onloadeddata","null",""],["onloadedmetadata","null",""],["onloadend","null",""],["onloadstart","null",""],["onmousedown","null",""],["onmousemove","null",""],["onmouseout","null",""],["onmouseover","null",""],["onmouseup","null",""],["onpause","null",""],["onplay","null",""],["onplaying","null",""],["onprogress","null",""],["onratechange","null",""],["onreset","null",""],["onseeked","null",""],["onseeking","null",""],["onselect","null",""],["onstalled","null",""],["onsubmit","null",""],["onsuspend","null",""],["ontimeupdate","null",""],["onunload","null",""],["onvolumechange","null",""],["onwaiting","null",""],["outerHTML","string","<BUTTON onclick=\"var p=document.getElementById('port').value; if (p >= 0 &amp;&amp; p < 65536 &amp;&amp; p.match('[0-9]+')) opera.connect(document.getElementById('ip').value, p, ConnectionCallback);\">Connect</BUTTON>"],["outerText","string","Connect"],["ownerDocument","object",null,[15,0,"object",3,"HTMLDocument"]],["parentElement","object",null,[428,0,"object",435,"HTMLDivElement"]],["parentNode","object",null,[428,0,"object",435,"HTMLDivElement"]],["prefix","null",""],["previousElementSibling","null",""],["previousSibling","null",""],["scrollHeight","number","28"],["scrollLeft","number","0"],["scrollTop","number","0"],["scrollWidth","number","81"],["selectionEnd","number","0"],["selectionStart","number","0"],["sourceIndex","number","17"],["spellcheck","boolean","true"],["style","object",null,[429,0,"object",433,"CSSStyleDeclaration"]],["tabIndex","number","0"],["tagName","string","BUTTON"],["textContent","string","Connect"],["textLength","number","0"],["title","string",""],["type","string","submit"],["unselectable","string",""],["validationMessage","string",""],["validity","object",null,[430,0,"object",6,"ValidityState"]],["value","string",""],["willValidate","boolean","false"]]],[[346,0,"object",9,"HTMLButtonElementPrototype"],[["blur","object",null,[437,1,"function",321,"Function","blur"]],["checkValidity","object",null,[441,1,"function",321,"Function","checkValidity"]],["constructor","object",null,[118,1,"object",321,"HTMLButtonElement"]],["dispatchChange","object",null,[438,1,"function",321,"Function","dispatchChange"]],["dispatchFormChange","object",null,[439,1,"function",321,"Function","dispatchFormChange"]],["focus","object",null,[436,1,"function",321,"Function","focus"]],["setCustomValidity","object",null,[440,1,"function",321,"Function","setCustomValidity"]]]],[[9,0,"object",10,"HTMLElementPrototype"],[["blur","object",null,[442,1,"function",321,"Function","blur"]],["click","object",null,[446,1,"function",321,"Function","click"]],["focus","object",null,[445,1,"function",321,"Function","focus"]],["insertAdjacentElement","object",null,[447,1,"function",321,"Function","insertAdjacentElement"]],["insertAdjacentHTML","object",null,[448,1,"function",321,"Function","insertAdjacentHTML"]],["insertAdjacentText","object",null,[449,1,"function",321,"Function","insertAdjacentText"]],["removeNode","object",null,[444,1,"function",321,"Function","removeNode"]],["toString","object",null,[443,1,"function",321,"Function","toString"]]]],[[10,0,"object",5,"ElementPrototype"],[["contains","object",null,[451,1,"function",321,"Function","contains"]],["getAttribute","object",null,[455,1,"function",321,"Function","getAttribute"]],["getAttributeNS","object",null,[456,1,"function",321,"Function","getAttributeNS"]],["getAttributeNode","object",null,[463,1,"function",321,"Function","getAttributeNode"]],["getAttributeNodeNS","object",null,[464,1,"function",321,"Function","getAttributeNodeNS"]],["getBoundingClientRect","object",null,[453,1,"function",321,"Function","getBoundingClientRect"]],["getClientRects","object",null,[454,1,"function",321,"Function","getClientRects"]],["getElementsByClassName","object",null,[469,1,"function",321,"Function","getElementsByClassName"]],["getElementsByTagName","object",null,[467,1,"function",321,"Function","getElementsByTagName"]],["getElementsByTagNameNS","object",null,[468,1,"function",321,"Function","getElementsByTagNameNS"]],["hasAttribute","object",null,[457,1,"function",321,"Function","hasAttribute"]],["hasAttributeNS","object",null,[458,1,"function",321,"Function","hasAttributeNS"]],["querySelector","object",null,[470,1,"function",321,"Function","querySelector"]],["querySelectorAll","object",null,[471,1,"function",321,"Function","querySelectorAll"]],["removeAttribute","object",null,[461,1,"function",321,"Function","removeAttribute"]],["removeAttributeNS","object",null,[462,1,"function",321,"Function","removeAttributeNS"]],["removeAttributeNode","object",null,[450,1,"function",321,"Function","removeAttributeNode"]],["scrollIntoView","object",null,[452,1,"function",321,"Function","scrollIntoView"]],["setAttribute","object",null,[459,1,"function",321,"Function","setAttribute"]],["setAttributeNS","object",null,[460,1,"function",321,"Function","setAttributeNS"]],["setAttributeNode","object",null,[465,1,"function",321,"Function","setAttributeNode"]],["setAttributeNodeNS","object",null,[466,1,"function",321,"Function","setAttributeNodeNS"]]]],[[5,0,"object",6,"NodePrototype"],[["ATTRIBUTE_NODE","number","2"],["CDATA_SECTION_NODE","number","4"],["COMMENT_NODE","number","8"],["DOCUMENT_FRAGMENT_NODE","number","11"],["DOCUMENT_NODE","number","9"],["DOCUMENT_POSITION_CONTAINED_BY","number","16"],["DOCUMENT_POSITION_CONTAINS","number","8"],["DOCUMENT_POSITION_DISCONNECTED","number","1"],["DOCUMENT_POSITION_FOLLOWING","number","4"],["DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC","number","32"],["DOCUMENT_POSITION_PRECEDING","number","2"],["DOCUMENT_TYPE_NODE","number","10"],["ELEMENT_NODE","number","1"],["ENTITY_NODE","number","6"],["ENTITY_REFERENCE_NODE","number","5"],["NOTATION_NODE","number","12"],["PROCESSING_INSTRUCTION_NODE","number","7"],["TEXT_NODE","number","3"],["addEventListener","object",null,[408,1,"function",321,"Function","addEventListener"]],["addEventSource","object",null,[417,1,"function",321,"Function","addEventSource"]],["appendChild","object",null,[399,1,"function",321,"Function","appendChild"]],["attachEvent","object",null,[410,1,"function",321,"Function","attachEvent"]],["cloneNode","object",null,[401,1,"function",321,"Function","cloneNode"]],["compareDocumentPosition","object",null,[407,1,"function",321,"Function","compareDocumentPosition"]],["detachEvent","object",null,[411,1,"function",321,"Function","detachEvent"]],["dispatchEvent","object",null,[395,1,"function",321,"Function","dispatchEvent"]],["getFeature","object",null,[406,1,"function",321,"Function","getFeature"]],["hasAttributes","object",null,[404,1,"function",321,"Function","hasAttributes"]],["hasChildNodes","object",null,[400,1,"function",321,"Function","hasChildNodes"]],["insertBefore","object",null,[396,1,"function",321,"Function","insertBefore"]],["isDefaultNamespace","object",null,[413,1,"function",321,"Function","isDefaultNamespace"]],["isSameNode","object",null,[405,1,"function",321,"Function","isSameNode"]],["isSupported","object",null,[403,1,"function",321,"Function","isSupported"]],["lookupNamespaceURI","object",null,[414,1,"function",321,"Function","lookupNamespaceURI"]],["lookupPrefix","object",null,[412,1,"function",321,"Function","lookupPrefix"]],["normalize","object",null,[402,1,"function",321,"Function","normalize"]],["removeChild","object",null,[398,1,"function",321,"Function","removeChild"]],["removeEventListener","object",null,[409,1,"function",321,"Function","removeEventListener"]],["removeEventSource","object",null,[418,1,"function",321,"Function","removeEventSource"]],["replaceChild","object",null,[397,1,"function",321,"Function","replaceChild"]],["selectNodes","object",null,[415,1,"function",321,"Function","selectNodes"]],["selectSingleNode","object",null,[416,1,"function",321,"Function","selectSingleNode"]]]],[[6,0,"object",0,"Object"],[["__defineGetter__","object",null,[329,1,"function",321,"Function","__defineGetter__"]],["__defineSetter__","object",null,[330,1,"function",321,"Function","__defineSetter__"]],["__lookupGetter__","object",null,[331,1,"function",321,"Function","__lookupGetter__"]],["__lookupSetter__","object",null,[332,1,"function",321,"Function","__lookupSetter__"]],["constructor","object",null,[32,1,"function",321,"Function","Object"]],["hasOwnProperty","object",null,[326,1,"function",321,"Function","hasOwnProperty"]],["isPrototypeOf","object",null,[327,1,"function",321,"Function","isPrototypeOf"]],["propertyIsEnumerable","object",null,[328,1,"function",321,"Function","propertyIsEnumerable"]],["toLocaleString","object",null,[324,1,"function",321,"Function","toLocaleString"]],["toString","object",null,[323,1,"function",321,"Function","toString"]],["valueOf","object",null,[325,1,"function",321,"Function","valueOf"]]]]],"472":[[[472,0,"object",6,"Array"],[["concat","object",null,[495,1,"function",321,"Function","concat"]],["constructor","object",null,[34,1,"function",321,"Function","Array"]],["every","object",null,[481,1,"function",321,"Function","every"]],["filter","object",null,[484,1,"function",321,"Function","filter"]],["forEach","object",null,[480,1,"function",321,"Function","forEach"]],["indexOf","object",null,[491,1,"function",321,"Function","indexOf"]],["join","object",null,[479,1,"function",321,"Function","join"]],["lastIndexOf","object",null,[492,1,"function",321,"Function","lastIndexOf"]],["length","number","0"],["map","object",null,[483,1,"function",321,"Function","map"]],["pop","object",null,[488,1,"function",321,"Function","pop"]],["push","object",null,[487,1,"function",321,"Function","push"]],["reduce","object",null,[485,1,"function",321,"Function","reduce"]],["reduceRight","object",null,[486,1,"function",321,"Function","reduceRight"]],["reverse","object",null,[496,1,"function",321,"Function","reverse"]],["shift","object",null,[489,1,"function",321,"Function","shift"]],["slice","object",null,[493,1,"function",321,"Function","slice"]],["some","object",null,[482,1,"function",321,"Function","some"]],["sort","object",null,[497,1,"function",321,"Function","sort"]],["splice","object",null,[494,1,"function",321,"Function","splice"]],["toLocaleString","object",null,[478,1,"function",321,"Function","toLocaleString"]],["toString","object",null,[477,1,"function",321,"Function","toString"]],["unshift","object",null,[490,1,"function",321,"Function","unshift"]]]],[[6,0,"object",0,"Object"],[["constructor","object",null,[32,1,"function",321,"Function","Object"]],["toString","object",null,[323,1,"function",321,"Function","toString"]],["toLocaleString","object",null,[324,1,"function",321,"Function","toLocaleString"]],["valueOf","object",null,[325,1,"function",321,"Function","valueOf"]],["hasOwnProperty","object",null,[326,1,"function",321,"Function","hasOwnProperty"]],["isPrototypeOf","object",null,[327,1,"function",321,"Function","isPrototypeOf"]],["propertyIsEnumerable","object",null,[328,1,"function",321,"Function","propertyIsEnumerable"]],["__defineGetter__","object",null,[329,1,"function",321,"Function","__defineGetter__"]],["__defineSetter__","object",null,[330,1,"function",321,"Function","__defineSetter__"]],["__lookupGetter__","object",null,[331,1,"function",321,"Function","__lookupGetter__"]],["__lookupSetter__","object",null,[332,1,"function",321,"Function","__lookupSetter__"]]]]]}
+
+
+var __expand_tree = {"1":{"2":{"333":{}},"34":{"472":{}}}}
+</script>
+
+
+
+<script>
+window.onload = function()
+{
+  window.CustomElements = {};
+  window.app = {};
+
+  window.app.helpers = {};
+
+  window.app.helpers.parse_url_arguments = function()
+  {
+    /*
+      supported arguments:
+        - debug
+        - log-filter
+    */
+    var
+    args = location.search.slice(1).split(';'),
+    params = {},
+    arg = '',
+    i = 0;
+
+    for( ; arg = args[i]; i++)
+    {
+      arg = arg.split('=');
+      params[arg[0].replace(/^ +/, '').replace(/ +$/, '')] =
+        arg[1] && arg[1].replace(/^ +/, '').replace(/ +$/, '') || true;
+    }
+    return params;
+  }
+
+  window.app.helpers.dash_to_class_name = function(name)
+  {
+    for ( var cur = '', i = 0, ret = '', do_upper = true; cur = name[i]; i++)
+    {
+      if(cur == '-')
+      {
+        do_upper = true;
+        continue;
+      }
+      ret += do_upper && cur.toUpperCase() || cur;
+      do_upper = false;
+    }
+    return ret;
+  }
+  window.helpers = new cls.Helpers();
+  var namespace = cls.EcmascriptDebugger && cls.EcmascriptDebugger["6.0"];
+  var InspectionBaseData = new namespace.InspectionBaseData();
+
+  namespace.FixObjectInspectionData.prototype = InspectionBaseData;
+  cls.InspectableJSObject = namespace.FixObjectInspectionData;
+
+  var model = window.model = new cls.InspectableJSObject();
+  model.setObject(1, 1);
+  model._obj_map = __obj_map;
+  model._expand_tree = __expand_tree;
+
+  window.start_time = Date.now();
+  window.count = 0;
+  test_template_auto();
+
+  
+
+
+}
+
+var test = function()
+{
+  var container = document.getElementById('test');
+  container.innerHTML = "";
+  setTimeout(function(){
+    var t_1 = Date.now();
+    var template = window.templates.inspected_js_object_2(window.model, true);
+    var t_2 = Date.now();
+    container.render(template);
+    var t_3 = Date.now();
+    var o = container.offsetHeight + container.offsetWidth;
+    var t_4 = Date.now();
+    alert(
+      "build template: " + (t_2 - t_1) +
+      "\nbuild DOM: " + (t_3 - t_2) + 
+      "\nrendering: " +  (t_4 - t_3) +
+      "\ntotal: " +(t_4 - t_1));
+  }, 10);
+}
+
+
+
+var test_template = function(use_dom)
+{
+  var container = document.getElementById('test');
+  container.innerHTML = "";
+  setTimeout(function(){
+    var t_1 = Date.now();
+    var template = window.templates.inspected_js_object(window.model, true);
+    var t_2 = Date.now();
+    container[use_dom ? 'render' : 'renderInner'](template);
+    var t_3 = Date.now();
+    var o = container.offsetHeight + container.offsetWidth;
+    var t_4 = Date.now();
+    alert(
+      "build template: " + (t_2 - t_1) +
+      "\nparse build DOM: " + (t_3 - t_2) + 
+      "\nrendering: " +  (t_4 - t_3) +
+      "\ntotal: " +(t_4 - t_1));
+  }, 10);
+}
+
+
+
+var test_template_auto = function()
+{
+  var container = document.getElementById('test');
+  container.innerHTML = "";
+  var layout = container.offsetHeight + container.offsetWidth;
+  setTimeout(function(){
+    var template = window.templates.inspected_js_object(window.model, true);
+    container.render(template);
+    layout = container.offsetHeight + container.offsetWidth;
+    if (window.count++ < 20)
+      setTimeout(test_template_auto, 1);
+    else
+      alert(Date.now() - window.start_time);
+  }, 1);
+}
+
+
+</script>
+
+ </head>
+
+ <body>
+ <p>
+  <input type="button" onclick="test()" value="test direct innerHTML">
+  
+  <input type="button" onclick="test_template(true)" value="test template DOM methods">
+<div id='test'></div>
+ </body>
+</html>

@@ -5,17 +5,24 @@
 
 <link rel="stylesheet" href="../../src/ui-style/debugger_style.css">
 <link rel="stylesheet" href="../../src/ui-style/syntax-highlight.css">
+<style>
+body
+{
+  font-family: sans-serif;
+}
+</style>
+
 
 <script src="../../src/scripts/dom.js"/>
 <script src="../../src/lib/namespace.js"/>
 <script src="../../src/ui-scripts/ui-actions.js"/>
 <script src="../../src/ecma-debugger/helpers.js"/>
 <script src="../../src/ecma-debugger/object_inspection/inspection_base_data_6_0.js"/>
-<script src="../../src/ecma-debugger/object_inspection/object_inspection_data_6_0.js"/>
 <script src="../../src/ecma-debugger/object_inspection/templates_6_0.js"/>
 <script src="../../src/ecma-debugger/object_inspection/actions_6_0.js"/>
 <script src="../../src/ecma-debugger/object_inspection/fix_object_inspection_6_0.js"/>
 
+<script src="templates_6_0_test.js"/>
 <script src="data.js"/>
 
 
@@ -82,14 +89,43 @@ window.onload = function()
 
 var test = function()
 {
-  var c = document.getElementById('test');
-  c.innerHTML = "";
+  var container = document.getElementById('test');
+  container.innerHTML = "";
   setTimeout(function(){
     var t_1 = Date.now();
-    c.render(window.templates.inspected_js_object(window.model, true));
-    var o = c.offsetHeight + c.offsetWidth;
-    var now = Date.now();
-    alert("build innerHTML string: " + (window.__t_2 - t_1) +"\n" + "rendering: " +  (now - window.__t_2) );
+    var template = window.templates.inspected_js_object(window.model, true);
+    var t_2 = Date.now();
+    container.render(template);
+    var t_3 = Date.now();
+    var o = container.offsetHeight + container.offsetWidth;
+    var t_4 = Date.now();
+    alert(
+      "concatenate innerHTML string: " + (t_2 - t_1) +
+      "\nbuild DOM: " + (t_3 - t_2) + 
+      "\nlayout: " +  (t_4 - t_3) +
+      "\ntotal: " +(t_4 - t_1));
+  }, 10);
+}
+
+
+
+var test_template = function(use_dom)
+{
+  var container = document.getElementById('test');
+  container.innerHTML = "";
+  setTimeout(function(){
+    var t_1 = Date.now();
+    var template = window.templates.inspected_js_object_test(window.model, true);
+    var t_2 = Date.now();
+    container[use_dom ? 'render' : 'renderInner'](template);
+    var t_3 = Date.now();
+    var o = container.offsetHeight + container.offsetWidth;
+    var t_4 = Date.now();
+    alert(
+      "build template: " + (t_2 - t_1) +
+      "\nbuild DOM: " + (t_3 - t_2) + 
+      "\nlayout: " +  (t_4 - t_3) +
+      "\ntotal: " +(t_4 - t_1));
   }, 10);
 }
 
@@ -99,7 +135,11 @@ var test = function()
  </head>
 
  <body>
- <p><input type="button" onclick="test()" value="test">
+ <p>
+  <input type="button" onclick="test()" value="test direct innerHTML">
+  
+  <input type="button" onclick="test_template(true)" value="test template DOM methods">
+  <input type="button" onclick="test_template()" value="test template innerHTML">
 <div id='test'></div>
  </body>
 </html>
