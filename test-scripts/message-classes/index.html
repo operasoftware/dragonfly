@@ -1,6 +1,6 @@
 <!doctype html>
 <script src="data.js"></script>
-<script src="message_classes.js"></script>
+<script src="EcmascriptDebugger.6.0.responses.InspectDom.js"></script>
 <script>
 // JSON pretty printer
 
@@ -64,6 +64,7 @@ var pretty_print_json_object = (function()
 <script>
 window.onload = function()
 {
+  window.NodeList = cls.EcmascriptDebugger["6.0"].NodeList;
   var t = Date.now();
   var obj = new NodeList(test_message_2);
   alert((Date.now() - t) + " millsisecondes to convert scope mesage to object notation\n" +
