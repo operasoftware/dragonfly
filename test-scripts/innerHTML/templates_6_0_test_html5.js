@@ -22,10 +22,10 @@
     if (obj && data)
     {
       ret.push(
-        "<examine-objects " +
-          "rt-id='" + obj.rt_id + "' " +
-          "data-id='" + model.id + "' " +
-          "obj-id='" + obj.obj_id + "' " +
+        "<div class='examine-objects' " +
+          "data-rt-id='" + obj.rt_id + "' " +
+          "data-data-id='" + model.id + "' " +
+          "data-obj-id='" + obj.obj_id + "' " +
           ">"
       );
       for (var proto = null, i = 0; proto = data[i]; i++)
@@ -35,7 +35,7 @@
           ret.push("<div class='prototype-chain-object'>", proto[VALUE][CLASS_NAME], "</div>");
         _pretty_print_properties(model, tree, proto[PROPERTY_LIST] || [], ret);
       }
-      ret.push("</examine-objects>");
+      ret.push("</div>");
     };
     return ret;
   };
@@ -52,10 +52,10 @@
         case "boolean":
         {
           ret.push(
-            "<item>" +
-              "<key class='no-expander'>" + helpers.escapeTextHtml(prop[NAME]) + "</key>" +
-              "<value class='" + type + "'>" + value + "</value>" +
-            "</item>"
+            "<div class='item'>" +
+              "<span class='key no-expander'>" + helpers.escapeTextHtml(prop[NAME]) + "</span>" +
+              "<span class='value " + type + "'>" + value + "</span>" +
+            "</div>"
           );
           break;
         }
@@ -67,22 +67,22 @@
           if (short_val)
           {
             ret.push(
-              "<item>" +
-                "<input type='button' handler='expand-value'  class='folder-key'/>" +
-                "<key>" + helpers.escapeTextHtml(prop[NAME]) + "</key>" +
-                "<value class='" + type + "' data-value='" + value + "'>" +
+              "<div class='item'>" +
+                "<input type='button' data-handler='expand-value'  class='folder-key'/>" +
+                "<span class='key'>" + helpers.escapeTextHtml(prop[NAME]) + "</span>" +
+                "<span class='value " + type + "' data-value='" + value + "'>" +
                   "\"" + helpers.escapeTextHtml(short_val) +
-                "</value>" +
-              "</item>"
+                "</span>" +
+              "</div>"
             );
           }
           else
           {
             ret.push(
-              "<item>" +
-                "<key class='no-expander'>" + helpers.escapeTextHtml(prop[NAME]) + "</key>" +
-                "<value class='" + type + "'>\"" + value + "\"</value>" +
-              "</item>"
+              "<div class='item'>" +
+                "<span class='key no-expander'>" + helpers.escapeTextHtml(prop[NAME]) + "</span>" +
+                "<span class='value " + type + "'>\"" + value + "\"</span>" +
+              "</div>"
             );
           }
           break;
@@ -91,10 +91,10 @@
         case "undefined":
         {
           ret.push(
-            "<item>" +
-              "<key class='no-expander'>" + helpers.escapeTextHtml(prop[NAME]) + "</key>" +
-              "<value class='" + type + "'>" + type + "</value>" +
-            "</item>"
+            "<div class='item'>" +
+              "<span class='key no-expander'>" + helpers.escapeTextHtml(prop[NAME]) + "</span>" +
+              "<span class='value " + type + "'>" + type + "</span>" +
+            "</div>"
           );
           break;
         }
@@ -102,29 +102,29 @@
         {
           obj_id = prop[OBJECT_VALUE][OBJECT_ID];
           ret.push(
-            "<item obj-id='" + obj_id + "'>" +
+            "<div class='item' data-obj-id='" + obj_id + "'>" +
             "<input " +
               "type='button' " +
-              "handler='examine-object'  " +
+              "data-handler='examine-object'  " +
               "class='folder-key' "
           );
           if (obj_id in tree)
             ret.push("style='background-position: 0px -11px') ");
           ret.push(
             "/>" +
-            "<key>" + helpers.escapeTextHtml(prop[NAME]) + "</key>" +
-            "<value class='object'>" + prop[OBJECT_VALUE][CLASS_NAME] + "</value>"
+            "<span class='key'>" + helpers.escapeTextHtml(prop[NAME]) + "</span>" +
+            "<span class='value object'>" + prop[OBJECT_VALUE][CLASS_NAME] + "</span>"
           );
           if (obj_id in tree)
             _pretty_print_object(model, tree[obj_id], obj_id, ret);
-          ret.push("</item>");
+          ret.push("</div>");
           break;
         }
       }
     }
   };
 
-  this.inspected_js_object = function(model, show_root, path)
+  this.inspected_js_object_3 = function(model, show_root, path)
   {
     var tree = model.get_expand_tree();
     if (typeof show_root === 'boolean' && model.get_object())
