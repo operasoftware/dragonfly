@@ -200,7 +200,81 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
 
   };
 
-  this._on_runtime_selecetd = function(msg)
+  this._exctract_console_args = function(msg)
+  {
+    var args = msg[2];
+    var ret = [];
+
+    for (var n=0, e; e=args[n]; n++)
+    {
+      if (e.length == 1)
+      {
+        ret.push({type: "native", value: e[0]});
+      }
+      else
+      {
+        ret.push({obj_id: e[1][0],
+                  callable: !!e[1][1],
+                  type: e[1][2],
+                  proto_id: e[1][3],
+                  class_name: e[1][4]
+        });
+      }
+    }
+    return ret;
+  };
+
+  this._on_consolelog = function(msg)
+  {
+    const TYPE = 1;
+
+    var severities = {
+      1: "information",
+      2: "debug",
+      3: "information",
+      4: "information",
+      5: "error",
+      6: "debug"
+    };
+
+    var method_names = {
+      1: "console.log",
+      2: "console.debug",
+      3: "console.info",
+      4: "console.error",
+      5: "console.assert"
+    };
+
+    if (! (msg[TYPE] in method_names)) {
+      return;
+    }
+
+    var args = this._exctract_console_args(msg);
+    var argstr = args.map(function(e) {
+                            if (e.type == "native") {
+                              return e.value;
+                            }
+                            else {
+                              return "[" + e.class_name + "]";
+                            }
+                          }).join(", ");
+
+    this.addentry({
+      id: "" + (++this._lastid),
+      window_id: "",
+      time: new Date(),
+      description: argstr,
+      title:  method_names[msg[TYPE]],
+      line: "" + msg[msg.length-1][1],
+      uri: "",
+      context: method_names[msg[TYPE]],
+      source: "ecmascript",
+      severity: severities[msg[TYPE]] || "information"
+    });
+
+  };
+
+  this._on_runtime_selected = function(msg)
   {
     var rt = window.runtimes.getRuntime(msg.id);
     this._selected_rt_url = rt && rt.uri || '';
@@ -209,9 +283,14 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
   this.init = function()
   {
     window.messages.addListener('setting-changed', this._on_setting_change.bind(this));
-    window.messages.addListener('runtime-selected', this._on_runtime_selecetd.bind(this));
-    var service = window.services['console-logger'];
-    service.add_listener("consolemessage", this._on_console_message.bind(this));
+    window.messages.addListener('runtime-selected', this._on_runtime_selected.bind(this));
+
+    var logger = window.services['console-logger'];
+    logger.add_listener("consolemessage", this._on_console_message.bind(this));
+
+    var esdebug = window.services['ecmascript-debugger'];
+    esdebug.add_listener("consolelog", this._on_consolelog.bind(this));
+
   };
 
   this.init();
