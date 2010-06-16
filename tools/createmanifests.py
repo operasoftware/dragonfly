@@ -7,7 +7,7 @@ from time import gmtime, strftime, mktime, strptime, time
 
 MANIFEST_DIR = "manifests"
 _re_client = re.compile("client-(?P<lang>[^.]+)\.xml")
-_re_resource = re.compile("(?:<script[^>]*src=\"([^\"]*))|(?:<link[^>]*href=\"([^\"]*))")
+_re_resource = re.compile("(?:<script[^>]*?src=\"([^\"]*))|(?:<link[^>]*?href=\"([^\"]*))")
 
 def get_timestamp(path = None):
     return strftime("%a, %d %b %Y %H:%M:%S GMT", gmtime(path and stat(path).st_mtime or None))
