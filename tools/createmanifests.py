@@ -19,7 +19,7 @@
 #
 # are all pointing to the same resource. 
 # All these possible entry paths are added to the mainifest.
-# Additionally all linked resources are added. All paths are absolut do to 
+# Additionally all linked resources are added. All paths are absolut due to 
 # all the rewrites.
 
 
