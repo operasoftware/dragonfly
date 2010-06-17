@@ -7,7 +7,7 @@ from time import gmtime, strftime, mktime, strptime, time
 
 MANIFEST_DIR = "manifests"
 _re_client = re.compile("client-(?P<lang>[^.]+)\.xml")
-_re_resource = re.compile("(?:<script[^>]*?src=\"([^\"]*))|(?:<link[^>]*?href=\"([^\"]*))")
+_re_resource = re.compile("(?:<script[^>]*src=\"([^\"]*))|(?:<link[^>]*href=\"([^\"]*))")
 
 def get_timestamp(path = None):
     return strftime("%a, %d %b %Y %H:%M:%S GMT", gmtime(path and stat(path).st_mtime or None))
@@ -22,13 +22,7 @@ def get_resources(os_path, web_path, file_name):
                 pass
             elif resource.startswith("./"):
                 resource = web_path + resource[1:]
-            elif resource.startswidth("../"):
-                while resource.startswith("../"):
-                    pos = resource.find("/", 3)
-                    if pos > -1:
-                        resource = resource[pos:]
-                    else:
-                        resource = ""
+            # everything else resolved by the browser
             else:
                 resourc = web_path + "/" + resource
             resources.append(resource)
