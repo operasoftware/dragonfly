@@ -7,15 +7,15 @@
 # If the language cookie is set the version with the correct core version
 # (depending on the user agent string) is returned. That means
 #
-#     /app/
-#     /app/<core version>/
-#     /app/<core version>/client-<language code>.xml
+#   /app/
+#   /app/<core version>/
+#   /app/<core version>/client-<language code>.xml
 #
 # or
 #
-#     /app/cutting-edge/
-#     /app/<core version>/cutting-edge/
-#     /app/<core version>/cutting-edge/client-<language code>.xml
+#   /app/cutting-edge/
+#   /app/<core version>/cutting-edge/
+#   /app/<core version>/cutting-edge/client-<language code>.xml
 #
 # are all pointing to the same resource. 
 # All these possible entry paths are added to the mainifest.
