@@ -1,4 +1,29 @@
-﻿from __future__ import with_statement
+﻿# Script to create app cache manifest files for the Dragonfly project.
+# Takes very much in regard how the dragonfly.opera.com server works.
+# There are two main paths on https://dragonfly.opera.com, 
+# /app/ and /app/cutting-edge/.
+# If the request has no language cookie then a small document to 
+# set the language cookie is served. 
+# If the language cookie is set the version with the correct core version
+# (depending on the user agent string) is returned. That means
+#
+#     /app/
+#     /app/<core version>/
+#     /app/<core version>/client-<language code>.xml
+#
+# or
+#
+#     /app/cutting-edge/
+#     /app/<core version>/cutting-edge/
+#     /app/<core version>/cutting-edge/client-<language code>.xml
+#
+# are all pointing to the same resource. 
+# All these possible entry paths are added to the mainifest.
+# Additionally all linked resources are added. All paths are absolut do to 
+# all the rewrites.
+
+
+from __future__ import with_statement
 import re
 import os
 import sys
@@ -45,9 +70,6 @@ def add_manifest(os_path, web_path, client_file, manifest):
             f.write(content.replace(">", ' manifest="%s">' % manifest_path, 1))
 
 def main(argv=sys.argv):
-    """
-
-    """
     import optparse
     usage = """%prog [options] [path]
     
@@ -55,7 +77,8 @@ def main(argv=sys.argv):
     """
     parser = optparse.OptionParser(usage)
     parser.add_option("-d", "--domain", type="string", dest="domain",
-                      default=None, help="The domain token of the.")
+                      default=None, 
+                      help="The domain token of the url.")
     parser.add_option("-t", "--tag", dest="tag", default="", 
                       help="A tag to be used in the manifest comment.")
     options, args = parser.parse_args()
