@@ -341,8 +341,21 @@ cls.ElementStyle = function()
     
   }
 
+  var _rt_id;
+  var _obj_id;
+
+  this.update_view = function update_view()
+  {
+    if (_rt_id && _obj_id)
+    {
+      getData(_rt_id, _obj_id);
+    }
+  };
+
   var getData = function(rt_id, obj_id)
   {
+    _rt_id = rt_id;
+    _obj_id = obj_id;
     if( stylesheets.hasStylesheetsRuntime(rt_id) )
     {
       var tag = tagManager.set_callback(null, handleGetData, [rt_id, obj_id]);
@@ -407,29 +420,43 @@ cls.ElementStyle = function()
     }
   }
 
-  this.update_categories = function update_categories(rule_id, declaration)
+  this.get_categories = function()
+  {
+    return categories_data;
+  };
+
+  this.update_categories = function update_categories(rule_id, declaration, callback)
   {
     var rt_id = __selectedElement.rt_id;
     var obj_id = __selectedElement.obj_id;
-    var tag = tagManager.set_callback(this, this.handle_update_categories, [rt_id, rule_id, declaration]);
+    var tag = tagManager.set_callback(this, this.handle_update_categories, [rt_id, rule_id, declaration, callback]);
     services['ecmascript-debugger'].requestCssGetStyleDeclarations(tag, [rt_id, obj_id]);
   };
 
-  this.handle_update_categories = function handle_update_categories(status, message, rt_id, rule_id, declaration)
+  this.handle_update_categories = function handle_update_categories(status, message, rt_id, rule_id, declaration, callback)
   {
     if (status == 0)
     {
       var rule;
+
+      out:
       for (var i = 0, decl; decl = message[NODE_STYLE_LIST][i]; i++)
       {
         for (var j = 0, rule; rule = decl[STYLE_LIST][j]; j++)
         {
           if (rule[RULE_ID] == rule_id)
           {
-            break;
+            //  ▃▃▃▃▃▃▃▃
+            //  ▃▃▃▃  ▃▃
+            //
+            //   _·
+            break out;
           }
         }
       }
+
+      // TEMP: remove when empty rules are returned correctly (CORE-30351)
+      if (!rule) return;
 
       var index_list = rule[INDEX_LIST];
       categories_data[COMP_STYLE] = message[COMPUTED_STYLE_LIST];
@@ -457,7 +484,7 @@ cls.ElementStyle = function()
           this.shorthand_map[declaration[0]].some(function(prop) {
             index = index_list.indexOf(window.css_index_map.indexOf(prop))
             status = rule[OVERWRITTEN_LIST][index];
-            if (!this.literal_declarations[rule_id][prop])
+            if (!this.literal_declaration_list[rule_id][prop])
             {
               return true;
             }
@@ -467,30 +494,35 @@ cls.ElementStyle = function()
 
         if (decl_is_valid)
         {
-          this.literal_declarations[rule_id][declaration[0]] =
+          this.literal_declaration_list[rule_id][declaration[0]] =
             [declaration[1], declaration[2], status, declaration[3]];
         }
       }
     }
+
+    if (typeof callback == "function")
+    {
+      callback();
+    }
   };
 
-  this.literal_declarations = [];
+  this.literal_declaration_list = {};
 
   this.save_literal_declarations = function save_literal_declarations(rule_id)
   {
-    if (this.literal_declarations[rule_id])
+    if (this.literal_declaration_list[rule_id])
     {
       return;
     }
 
     // property: [value, is_important, status (overwritten=0, else 1), is_disabled]
-    this.literal_declarations[rule_id] = {};
+    this.literal_declaration_list[rule_id] = {};
 
     var rule = this.get_rule_by_id(rule_id);
     var len = rule[PROP_LIST].length;
     for (var i = 0; i < len; i++)
     {
-      this.literal_declarations[rule_id][window.css_index_map[rule[PROP_LIST][i]]] =
+      this.literal_declaration_list[rule_id][window.css_index_map[rule[PROP_LIST][i]]] =
         [rule[VAL_LIST][i], rule[PRIORITY_LIST][i], rule[OVERWRITTEN_LIST][i], 0];
     }
   };
@@ -517,6 +549,9 @@ cls.ElementStyle = function()
     "border-right": ["border-right-width", "border-right-style", "border-right-color"],
     "border-bottom": ["border-bottom-width", "border-bottom-style", "border-bottom-color"],
     "border-left": ["border-left-width", "border-left-style", "border-left-color"],
+    "border-width": [],
+    "border-style": [],
+    "border-color": [],
     "background": ["background-attachment", "background-color", "background-image", "background-position", "background-repeat"],
     "font": ["font-style", "font-variant", "font-weight", "font-size", "line-height", "font-family"],
     "list-style": ["list-style-type", "list-style-position", "list-style-image"],
@@ -525,6 +560,66 @@ cls.ElementStyle = function()
     "overflow": ["overflow-x", "overflow-y"],
     "padding": ["padding-top", "padding-right", "padding-bottom", "padding-left"]
   };
+
+  this.reverse_shorthand_map = {
+    "border-width": "border",
+    "border-style": "border",
+    "border-color": "border",
+    //"border-top-width": "border-top",
+    //"border-top-style": "border-top",
+    //"border-top-color": "border-top",
+    //"border-right-width": "border-right",
+    //"border-right-style": "border-right",
+    //"border-right-color": "border-right",
+    //"border-bottom-width": "border-bottom",
+    //"border-bottom-style": "border-bottom",
+    //"border-bottom-color": "border-bottom",
+    //"border-left-width": "border-left",
+    //"border-left-style": "border-left",
+    //"border-left-color": "border-left",
+    "border-top-width": "border-width",
+    "border-right-width": "border-width",
+    "border-bottom-width": "border-width",
+    "border-left-width": "border-width",
+    "border-top-style": "border-style",
+    "border-right-style": "border-style",
+    "border-bottom-style": "border-style",
+    "border-left-style": "border-style",
+    "border-top-color": "border-color",
+    "border-right-color": "border-color",
+    "border-bottom-color": "border-color",
+    "border-left-color": "border-color",
+    "background-attachment": "background",
+    "background-color": "background",
+    "background-image": "background",
+    "background-position": "background",
+    "background-repeat": "background",
+    "font-style": "font",
+    "font-variant": "font",
+    "font-weight": "font",
+    "font-size": "font",
+    "line-height": "font",
+    "font-family": "font",
+    "list-style-type": "list-style",
+    "list-style-position": "list-style",
+    "list-style-image": "list-style",
+    "margin-top": "margin",
+    "margin-right": "margin",
+    "margin-top": "margin",
+    "margin-right": "margin",
+    "margin-bottom": "margin",
+    "margin-left": "margin",
+    "outline-color": "outline",
+    "outline-style": "outline",
+    "outline-width": "outline",
+    "overflow-x": "overflow",
+    "overflow-y": "overflow",
+    "padding-top": "padding",
+    "padding-right": "padding",
+    "padding-bottom": "padding",
+    "padding-left": "padding"
+  };
+
 
   /* */
   messages.addListener('element-selected', onElementSelected);

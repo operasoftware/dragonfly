@@ -355,15 +355,23 @@ stylesheet, import-rule, media-rule, rules, property {
   }
 
 property  {
+  position: relative;
   padding-left: 2em;
   padding-right: 3px;
+  line-height: 15px;
   }
-property.disabled {
-  text-decoration: line-through;
+property.disabled, .disabled key, .disabled value {
+  color: #ccc !important;
   }
 .enable-disable {
   position: absolute;
-  right: 5px;
+  top: -2px;
+  left: 2px;
+  opacity: 0; /* This is a hack (instead of visibility: hidden) to make sure the checkbox is always clickable */
+  }
+property:hover .enable-disable,
+.disabled .enable-disable {
+  opacity: 1;
   }
 
 
@@ -468,11 +476,12 @@ category.unfolded + category header {
   }
 
 .css-inspector .overwritten, .css-inspector .overwritten key, .css-inspector .overwritten value  {
-  color: #ccc;
+  text-decoration: line-through;
+  /*color: #ccc;*/
   }
 
 .css-inspector .overwritten value:after {
-  content: " [overridden]";
+  /*content: " [overridden]";*/
   color: #c90;
   }
   

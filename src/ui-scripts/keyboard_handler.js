@@ -656,7 +656,6 @@ cls.CSSInspectorActions = function(id)
     var is_disabled = target.checked;
     var rule_id = parseInt(target.getAttribute("data-rule-id"));
     var rt_id = parseInt(target.parentNode.parentNode.firstChild.getAttribute("rt-id")); // FIXME: don't traverse the DOM like this
-    target.parentNode[is_disabled ? "removeClass" : "addClass"]("disabled");
     if (is_disabled)
     {
       self.editor.enable_property(rt_id, rule_id, target.getAttribute("data-property"));
@@ -665,6 +664,8 @@ cls.CSSInspectorActions = function(id)
     {
       self.editor.disable_property(rt_id, rule_id, target.getAttribute("data-property"));
     }
+    //target.title = is_disabled ? "Disable" : "Enable"; // FIXME: shouldn't be hard-coded here
+    //target.parentNode[is_disabled ? "removeClass" : "addClass"]("disabled");
   };
 
   this['css-toggle-category'] = function(event, target)
@@ -938,11 +939,5 @@ new cls.CSSInspectorEditKeyhandler('css-inspector');
 eventHandlers.click['edit-css'] = actions['css-inspector'].editCSS;
 eventHandlers.click['css-toggle-category'] = actions['css-inspector']['css-toggle-category'];
 eventHandlers.click['display-rule-in-stylesheet'] = actions['css-inspector']['display-rule-in-stylesheet'];
-
-
-
-
-
-
 eventHandlers.click['enable-disable'] = actions['css-inspector'].enable_disable_property;
 

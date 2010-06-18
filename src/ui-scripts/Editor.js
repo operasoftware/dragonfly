@@ -722,23 +722,32 @@ var Editor = function()
   {
     var
     props = this.getProperties(),
-    inner = '';
+    inner = '',
+    disabled = this.textarea_container.parentNode.hasClass("disabled");
 
     if (props[1])
     {
-      this.add_property(props, this.context_cur_prop)
-      this.textarea_container.parentElement.innerHTML = create_declaration(props[0], props[1], props[2], this.context_rule_id);
-      // TODO(hzr): update the view at this point
+      // Only add property if something has changed (new or updated value)
+      if (!(this.context_cur_prop == props[0] &&
+            this.context_cur_value == props[1] &&
+            this.context_cur_priority == props[2]))
+      {
+        this.add_property(props, this.context_cur_prop, window.elementStyle.update_view);
+      }
+      this.textarea_container.parentElement.innerHTML = create_declaration(props[0],
+        props[1], props[2], this.context_rule_id, disabled);
     }
-    else if (props[1] === "") // If someone deletes the value and then submits, just re-display it
+    else if (props[1] === "") // If someone deletes just the value and then submits, just re-display it
     {
-      this.textarea_container.parentElement.innerHTML = create_declaration(props[0], this.context_cur_value, this.context_cur_priority, this.context_rule_id);
+      this.textarea_container.parentElement.innerHTML = create_declaration(props[0],
+        this.context_cur_value, this.context_cur_priority, this.context_rule_id, disabled);
     }
     else
     {
       this.textarea_container.parentElement.parentElement.
         removeChild(this.textarea_container.parentElement);
       this.textarea_container.parentElement.innerHTML = "";
+      window.elementStyle.update_view();
     }
   };
 
@@ -755,7 +764,8 @@ var Editor = function()
       prop = this.textarea_container.parentElement.parentElement.
         insertBefore(document.createElement('property'), this.textarea_container.parentElement);
 
-      prop.innerHTML = create_declaration(props[0], props[1], props[2], this.context_rule_id);
+      prop.innerHTML = create_declaration(props[0], props[1], props[2], this.context_rule_id,
+        this.textarea_container.parentNode.hasClass("disabled"));
       props.splice(0, 3);
     }
 
@@ -797,7 +807,8 @@ var Editor = function()
     prop = null,
     old_prop,
     old_value,
-    old_priority;
+    old_priority,
+    is_disabled = this.textarea_container.parentNode.hasClass("disabled");
 
     this.last_suggets_type = '';
     if (props && props.length == 3)
@@ -808,7 +819,8 @@ var Editor = function()
 
       if (props[1] === "") // If someone deletes the value and then presses enter, just re-display it
       {
-        this.textarea_container.parentElement.innerHTML = create_declaration(props[0], this.context_cur_value, this.context_cur_priority, this.context_rule_id);
+        this.textarea_container.parentElement.innerHTML = create_declaration(props[0],
+          this.context_cur_value, this.context_cur_priority, this.context_rule_id, is_disabled);
         return false;
       }
       else if (this.textarea.selectionEnd == this.textarea.value.length ||
@@ -822,7 +834,7 @@ var Editor = function()
         this.textarea_container.parentNode.removeClass("overwritten");
         prop = this.textarea_container.parentElement.parentElement.
           insertBefore(propertyEle, this.textarea_container.parentElement);
-        prop.innerHTML = create_declaration(props[0], props[1], props[2], this.context_rule_id);
+        prop.innerHTML = create_declaration(props[0], props[1], props[2], this.context_rule_id, is_disabled);
         this.textarea.value =
         this.context_cur_text_content =
         this.context_cur_prop =
@@ -832,7 +844,7 @@ var Editor = function()
       }
       else
       {
-        this.textarea_container.parentElement.innerHTML = create_declaration(props[0], props[1], props[2], this.context_rule_id);
+        this.textarea_container.parentElement.innerHTML = create_declaration(props[0], props[1], props[2], this.context_rule_id, is_disabled);
       }
 
       // Only add property if something has changed (new or updated value)
@@ -844,8 +856,8 @@ var Editor = function()
     else
     {
       this.textarea_container.parentElement.innerHTML = "";
-      delete window.elementStyle.literal_declarations[this.context_rule_id][this.normalize_property(this.context_cur_prop)];
-      // TODO(hzr): update view here
+      delete window.elementStyle.literal_declaration_list[this.context_rule_id][this.normalize_property(this.context_cur_prop)];
+      window.elementStyle.update_view();
     }
 
     return keep_edit;
@@ -859,7 +871,7 @@ var Editor = function()
     {
       this.textarea.value = this.context_cur_text_content;
       this.textarea_container.parentElement.innerHTML =
-        create_declaration(this.context_cur_prop, this.context_cur_value, this.context_cur_priority, this.context_rule_id);
+        create_declaration(this.context_cur_prop, this.context_cur_value, this.context_cur_priority, this.context_rule_id, this.textarea_container.parentNode.hasClass("disabled"));
       return true;
     }
     else
@@ -871,12 +883,13 @@ var Editor = function()
   };
 
   /**
-   * Adds a single property.
+   * Adds a single property (and optionally removes another one, resulting in an overwrite).
    *
    * @param {Array} declaration An array according to [prop, value, is_important]
    * @param {String} prop_to_remove An optional property to remove
+   * @param {Function} callback Callback to execute when the proeprty has been added
    */
-  this.add_property = function add_property(declaration, prop_to_remove)
+  this.add_property = function add_property(declaration, prop_to_remove, callback)
   {
     var prop = this.normalize_property(declaration[0]);
     var rule_id =  this.context_rule_id;
@@ -895,12 +908,12 @@ var Editor = function()
     if (prop_to_remove && prop != prop_to_remove)
     {
       script += "rule.style.removeProperty(\"" + prop_to_remove + "\");";
-      delete window.elementStyle.literal_declarations[rule_id][prop_to_remove];
+      delete window.elementStyle.literal_declaration_list[rule_id][prop_to_remove];
     }
 
     var tag = tagManager.set_callback(null, function() {
       window.elementStyle.update_categories(rule_id,
-        [prop, declaration[1], declaration[2], declaration[3] || 0]);
+        [prop, declaration[1], declaration[2], declaration[3] || 0], callback);
     });
     services['ecmascript-debugger'].requestEval(tag,
       [this.context_rt_id, 0, 0, script, [["rule", rule_id]]]);
@@ -910,17 +923,18 @@ var Editor = function()
    * Removes a single property.
    *
    * @param {String} prop_to_remove The property to remove
+   * @param {Function} callback Callback to execute when the proeprty has been added
    */
-  this.remove_property = function remove_property(prop_to_remove)
+  this.remove_property = function remove_property(prop_to_remove, callback)
   {
     prop_to_remove = this.normalize_property(prop_to_remove);
     var rule_id = this.context_rule_id;
     var script = "rule.style.removeProperty(\"" + prop_to_remove + "\");";
 
-    delete window.elementStyle.literal_declarations[rule_id][prop_to_remove];
+    delete window.elementStyle.literal_declaration_list[rule_id][prop_to_remove];
 
     var tag = tagManager.set_callback(null, function() {
-      window.elementStyle.update_categories();
+      window.elementStyle.update_categories(rule_id, null, callback);
     });
     services['ecmascript-debugger'].requestEval(tag,
       [this.context_rt_id, 0, 0, script, [["rule", rule_id]]]);
@@ -933,7 +947,7 @@ var Editor = function()
   {
     var rule_id = this.context_rule_id;
     var script = "rule.style.cssText=\"\";";
-    var literal_declarations = window.elementStyle.literal_declarations[rule_id];
+    var literal_declarations = window.elementStyle.literal_declaration_list[rule_id];
 
     for (var prop in literal_declarations)
     {
@@ -945,7 +959,7 @@ var Editor = function()
     }
 
     var tag = tagManager.set_callback(null, function() {
-      window.elementStyle.update_categories();
+      window.elementStyle.update_categories(rule_id);
     });
     services['ecmascript-debugger'].requestEval(tag,
       [this.context_rt_id, 0, 0, script, [["rule", rule_id]]]);
@@ -960,16 +974,18 @@ var Editor = function()
   {
     const IS_DISABLED = 3;
     var script = "rule.style.removeProperty(\"" + property + "\");";
-    if (!window.elementStyle.literal_declarations[rule_id])
+
+    if (!window.elementStyle.literal_declaration_list[rule_id])
     {
       window.elementStyle.save_literal_declarations(rule_id);
     }
-    var literal_declarations = window.elementStyle.literal_declarations[rule_id];
+    var literal_declarations = window.elementStyle.literal_declaration_list[rule_id];
     literal_declarations[property][IS_DISABLED] = 1;
-    //var tag = tagManager.set_callback(null, function() {
-    //  window.elementStyle.update_categories();
-    //});
-    services['ecmascript-debugger'].requestEval(null,
+
+    var tag = tagManager.set_callback(null, function() {
+      window.elementStyle.update_view();
+    });
+    services['ecmascript-debugger'].requestEval(tag,
       [rt_id, 0, 0, script, [["rule", rule_id]]]);
   };
 
@@ -980,12 +996,15 @@ var Editor = function()
    */
   this.enable_property = function enable_property(rt_id, rule_id, property)
   {
-    var declaration = window.elementStyle.literal_declarations[rule_id][property];
+    const IS_DISABLED = 3;
+    var literal_declarations = window.elementStyle.literal_declaration_list[rule_id];
+    var declaration = literal_declarations[property];
 
     this.context_rt_id = rt_id;
     this.context_rule_id = rule_id;
 
-    this.add_property([property, declaration[0], declaration[1], 0]);
+    this.add_property([property, declaration[0], declaration[1], 0], null, window.elementStyle.update_view);
+    literal_declarations[property][IS_DISABLED] = 0;
   };
 
   /**
@@ -1005,16 +1024,17 @@ var Editor = function()
     self.commit();
   };
 
-  var create_declaration = function(prop, value, is_important, rule_id) {
+  var create_declaration = function(prop, value, is_important, rule_id, is_disabled) {
     // TODO: take disabled value into account
-    return "<key>" + prop + "</key>: " +
-           "<value>" + helpers.escapeTextHtml(value) + (is_important ? " !important" : "") + "</value>;" +
-           "<input type='checkbox'" +
+    return "<input type='checkbox'" +
+                 " title='Disable'" +
                  " class='enable-disable'" +
-                 " checked='checked'" +
+                 (!is_disabled ? " checked='checked'" : "") +
                  " handler='enable-disable'" +
                  " data-property='" + prop + "'" +
-                 " data-rule-id='" + rule_id + "'>"; // TODO: really make sure rule_id always exists here
+                 " data-rule-id='" + rule_id + "'>" + // TODO: really make sure rule_id always exists here
+           "<key>" + prop + "</key>: " +
+           "<value>" + helpers.escapeTextHtml(value) + (is_important ? " !important" : "") + "</value>;";
   };
 };
 

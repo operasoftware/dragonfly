@@ -466,15 +466,17 @@ cls.Stylesheets = function()
 
   var prettyPrintRule = [];
 
-  prettyPrintRule[COMMON] = function(rule, do_shortcuts, search_active, is_style_sheet)
+  prettyPrintRule[COMMON] = function(rule, do_shortcuts, search_active, is_inherited, is_style_sheet)
   {
-    // TODO is creating shorthands a good idea?
-
     const
     HEADER = 0,
     INDEX_LIST = is_style_sheet && 3 || 1,
     VALUE_LIST = is_style_sheet && 4 || 2,
-    PROPERTY_LIST = is_style_sheet && 5 || 3;
+    PROPERTY_LIST = is_style_sheet && 5 || 3,
+    VALUE = 0,
+    PRIORITY = 1,
+    STATUS = 2,
+    IS_DISABLED = 3;
 
     var ret = '',
     index_list = rule[INDEX_LIST] || [], // the built-in proxy returns empty repeated values as null
@@ -489,17 +491,23 @@ cls.Stylesheets = function()
     s_h_value = [],
     s_h_priority = [],
     s_h_prop = '',
-    s_h_count = 0;
+    s_h_count = 0,
+    rule_id = rule[RULE_ID];
+
+    var literal_declaration_list = window.elementStyle.literal_declaration_list;
 
     // Turn everything back to the literal properties that the user used
-    if (window.elementStyle.literal_declarations && window.elementStyle.literal_declarations[rule[RULE_ID]])
+    if (literal_declaration_list && literal_declaration_list[rule_id])
     {
+      var literal_declarations = literal_declaration_list[rule_id];
+      var synced_declarations = self.sync_declarations(rule, literal_declarations, is_inherited);
+
       index_list = [];
       value_list = [];
       priority_list = [];
       overwritten_list = [];
 
-      // Create an object with property:value with the values we get from Scope
+      // Create object with `property: value`
       var declarations = {};
       var len = rule[PROP_LIST].length;
       for (var i = 0; i < len; i++)
@@ -507,28 +515,36 @@ cls.Stylesheets = function()
         declarations[window.css_index_map[rule[PROP_LIST][i]]] = rule[VAL_LIST][i];
       }
 
-      var literal_declarations = window.elementStyle.literal_declarations[rule[RULE_ID]];
-
-      for (var prop in literal_declarations)
+      for (var prop in synced_declarations)
       {
-        // Get the value or re-construct a shorthand
-        var value = short_hand_props[prop]
-                  ? self.get_shorthand_from_declarations(prop, declarations, literal_declarations)
-                  : declarations[prop];
+        var value;
 
-        // TODO(hzr): this is only temp
-        if (value == undefined) {
+        // If this is a shorthand, and it has been disabled, use cached value
+        if (prop in window.elementStyle.shorthand_map &&
+            !(window.elementStyle.shorthand_map[prop][0] in declarations) &&
+            literal_declarations[prop][0])
+        {
           value = literal_declarations[prop][0];
+        }
+        else
+        {
+          // Get the value or re-construct a shorthand
+          value = short_hand_props[prop]
+                ? self.get_shorthand_from_declarations(prop, declarations, literal_declarations)
+                : synced_declarations[prop] && synced_declarations[prop][VALUE];
         }
 
         // If there is no value at this point it's most likely a non-inheritable property
         if (value != undefined)
         {
-          index_list.push(window.css_index_map.indexOf(prop));
+          literal_declarations[prop] = synced_declarations[prop];
+          literal_declarations[prop][0] = value; // Cache value
+
+          index_list.push(__indexMap.indexOf(prop));
           value_list.push(value);
-          priority_list.push(literal_declarations[prop][1]);
-          overwritten_list.push(literal_declarations[prop][2]);
-          disabled_list.push(literal_declarations[prop][3]);
+          priority_list.push(synced_declarations[prop][PRIORITY]);
+          overwritten_list.push(synced_declarations[prop][STATUS]);
+          disabled_list.push(synced_declarations[prop][IS_DISABLED]);
         }
       }
     }
@@ -553,54 +569,56 @@ cls.Stylesheets = function()
         continue;
       }
 
-      if (do_shortcuts && SHORTHAND[prop_index])
-      {
-        if (__shorthandIndexMap[prop_index] == 'font')
-        {
-          SHORTHAND[line_height_index] = 5;
-        }
-        s_h_index = [];
-        s_h_value = [];
-        s_h_priority = [];
-        s_h_prop = __shorthandIndexMap[prop_index];
-        do
-        {
-          if (__shorthandIndexMap[prop_index] != 'line-height' &&
-              __shorthandIndexMap[prop_index] != s_h_prop)
-          {
-            ret += (ret ? MARKUP_PROP_NL : "") +
-              shorthands[s_h_prop](s_h_prop, s_h_index, s_h_value, s_h_priority);
-            SHORTHAND[line_height_index] = __shorthandIndexMap[prop_index] == 'font' ? 5 : 0;
-            s_h_index = [];
-            s_h_value = [];
-            s_h_priority = [];
-            s_h_prop = __shorthandIndexMap[prop_index];
-          }
-          s_h_index[SHORTHAND[prop_index]] = prop_index;
-          s_h_value[SHORTHAND[prop_index]] = helpers.escapeTextHtml(value_list[index]);
-          s_h_priority[SHORTHAND[prop_index]] = priority_list[index];
-          prop_index = index_list[index + 1];
-        }
-        while (SHORTHAND[prop_index] && ++index);
+      //if (do_shortcuts && SHORTHAND[prop_index])
+      //{
+      //  if (__shorthandIndexMap[prop_index] == 'font')
+      //  {
+      //    SHORTHAND[line_height_index] = 5;
+      //  }
+      //  s_h_index = [];
+      //  s_h_value = [];
+      //  s_h_priority = [];
+      //  s_h_prop = __shorthandIndexMap[prop_index];
+      //  do
+      //  {
+      //    if (__shorthandIndexMap[prop_index] != 'line-height' &&
+      //        __shorthandIndexMap[prop_index] != s_h_prop)
+      //    {
+      //      ret += (ret ? MARKUP_PROP_NL : "") +
+      //        shorthands[s_h_prop](s_h_prop, s_h_index, s_h_value, s_h_priority);
+      //      SHORTHAND[line_height_index] = __shorthandIndexMap[prop_index] == 'font' ? 5 : 0;
+      //      s_h_index = [];
+      //      s_h_value = [];
+      //      s_h_priority = [];
+      //      s_h_prop = __shorthandIndexMap[prop_index];
+      //    }
+      //    s_h_index[SHORTHAND[prop_index]] = prop_index;
+      //    s_h_value[SHORTHAND[prop_index]] = helpers.escapeTextHtml(value_list[index]);
+      //    s_h_priority[SHORTHAND[prop_index]] = priority_list[index];
+      //    prop_index = index_list[index + 1];
+      //  }
+      //  while (SHORTHAND[prop_index] && ++index);
 
-        ret += (ret ? MARKUP_PROP_NL : MARKUP_EMPTY) +
-                shorthands[s_h_prop](s_h_prop, s_h_index, s_h_value, s_h_priority);
-        SHORTHAND[line_height_index] = 0;
-      }
+      //  ret += (ret ? MARKUP_PROP_NL : MARKUP_EMPTY) +
+      //          shorthands[s_h_prop](s_h_prop, s_h_index, s_h_value, s_h_priority);
+      //  SHORTHAND[line_height_index] = 0;
+      //}
       else
       {
         ret += (ret ? MARKUP_PROP_NL : MARKUP_EMPTY) +
                 INDENT +
-                "<property " + (overwritten_list && overwritten_list[index] ? "" : "class='overwritten'") + ">" +
-                  "<key>" + __indexMap[prop_index] + "</key>: " +
-                  "<value>" + helpers.escapeTextHtml(value_list[index]) + (priority_list[index] ? MARKUP_IMPORTANT : "") + "</value>;" +
+                "<property class='" + (overwritten_list[index] ? "" : "overwritten") +
+                                      (disabled_list[index] ? " disabled" : "") + "'>" +
                   (rule[ORIGIN] != ORIGIN_USER_AGENT ?
                   "<input type='checkbox'" +
+                        " title='" + (disabled_list[index] ? "Enable" : "Disable") + "'" +
                         " class='enable-disable'" +
                         (!disabled_list[index] ? " checked='checked'" : "") +
                         " handler='enable-disable'" +
                         " data-property='" + __indexMap[prop_index] + "'" +
-                        " data-rule-id='" + rule[RULE_ID] + "'>" : "") +
+                        " data-rule-id='" + rule_id + "'>" : "") +
+                  "<key>" + __indexMap[prop_index] + "</key>: " +
+                  "<value>" + helpers.escapeTextHtml(value_list[index]) + (priority_list[index] ? MARKUP_IMPORTANT : "") + "</value>;" +
                 "</property>";
       }
     }
@@ -774,7 +792,8 @@ cls.Stylesheets = function()
     rt_id = data.rt_id,
     element_name = null,
     style_dec_list = null,
-    style_dec = null;
+    style_dec = null,
+    is_inherited = false;
 
     for ( ; node_casc = data[i]; i++)
     {
@@ -786,6 +805,7 @@ cls.Stylesheets = function()
       if (i)
       {
         ret += "<h2>inherited from <b>" + node_casc[ELEMENT_NAME] + "</b></h2>";
+        is_inherited = true;
       }
 
       // TODO
@@ -793,7 +813,7 @@ cls.Stylesheets = function()
       style_dec_list = node_casc[STYLE_LIST];
       for (j = 0; style_dec = style_dec_list[j]; j++)
       {
-        ret += prettyPrintStyleDec[style_dec[ORIGIN]](rt_id, element_name, style_dec, search_active);
+        ret += prettyPrintStyleDec[style_dec[ORIGIN]](rt_id, element_name, style_dec, search_active, is_inherited);
       }
     }
     return ret;
@@ -811,7 +831,7 @@ cls.Stylesheets = function()
   var prettyPrintStyleDec = [];
 
   prettyPrintStyleDec[ORIGIN_USER_AGENT] =
-  function(rt_id, element_name, style_dec, search_active)
+  function(rt_id, element_name, style_dec, search_active, is_inherited)
   {
     if (!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS])
     {
@@ -819,14 +839,14 @@ cls.Stylesheets = function()
               "<stylesheet-link class='pseudo'>default values</stylesheet-link>" +
         "<selector>" + element_name + "</selector>" +
         " {\n" +
-            prettyPrintRule[COMMON](style_dec, false, search_active) +
+            prettyPrintRule[COMMON](style_dec, false, search_active, is_inherited) +
         "\n}</rule>";
     }
     return "";
   };
 
   prettyPrintStyleDec[ORIGIN_LOCAL] =
-  function(rt_id, element_name, style_dec, search_active)
+  function(rt_id, element_name, style_dec, search_active, is_inherited)
   {
     if (!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS])
     {
@@ -834,14 +854,14 @@ cls.Stylesheets = function()
               "<stylesheet-link class='pseudo'>local user stylesheet</stylesheet-link>" +
         "<selector>" + helpers.escapeTextHtml(style_dec[SELECTOR]) + "</selector>" +
         " {\n" +
-            prettyPrintRule[COMMON](style_dec, false, search_active) +
+            prettyPrintRule[COMMON](style_dec, false, search_active, is_inherited) +
         "\n}</rule>";
     }
     return "";
   };
 
   prettyPrintStyleDec[ORIGIN_AUTHOR] =
-  function(rt_id, element_name, style_dec, search_active)
+  function(rt_id, element_name, style_dec, search_active, is_inherited)
   {
     var
     ret = '',
@@ -859,7 +879,7 @@ cls.Stylesheets = function()
           "</stylesheet-link>" +
           "<selector>" + helpers.escapeTextHtml(style_dec[SELECTOR]) + "</selector>" +
           " {\n" +
-              prettyPrintRule[COMMON](style_dec, false, search_active) +
+              prettyPrintRule[COMMON](style_dec, false, search_active, is_inherited) +
           "\n}</rule>";
       }
     }
@@ -873,14 +893,14 @@ cls.Stylesheets = function()
   };
 
   prettyPrintStyleDec[ORIGIN_ELEMENT] =
-  function(rt_id, element_name, style_dec, search_active)
+  function(rt_id, element_name, style_dec, search_active, is_inherited)
   {
     if (!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS])
     {
       return "<rule>" +
         "<inline-style>element.style</inline-style>" +
         " {\n" +
-            prettyPrintRule[COMMON](style_dec, false, search_active) +
+            prettyPrintRule[COMMON](style_dec, false, search_active, is_inherited) +
         "\n}</rule>";
     }
     return "";
@@ -1743,6 +1763,118 @@ cls.Stylesheets = function()
     }
 
     return ret;
+  };
+
+  /**
+   * Syncs the declarations returned from Scope with the literal declarations (the ones that the user has typed in)
+   * to get the right status and disabled value
+   */
+  this.sync_declarations = function sync_declarations(expanded_declarations, literal_declarations, is_inherited)
+  {
+    const
+    VALUE = 0,
+    PRIORITY = 1,
+    STATUS = 2,
+    IS_DISABLED = 3;
+
+    // First, convert expanded_declarations to the same format as literal_declarations
+    var rule_id = expanded_declarations[RULE_ID];
+    var synced_declarations = {};
+    expanded_declarations = this.convert_format(expanded_declarations);
+
+    // Always set this to 1 (applied), we will manually check later if it's overwritten or not
+    for (var prop in literal_declarations)
+    {
+      literal_declarations[prop][STATUS] = 1;
+    }
+
+    // Get the rule index
+    var categories = window.elementStyle.get_categories();
+    var node_style_list_index = 0;
+    var style_list_index = 0;
+    out:
+    for (var i = 0, node_style_list; node_style_list = categories[CSS][i]; i++)
+    {
+      node_style_list_index = i;
+      for (var j = 0, style_list; style_list = node_style_list[STYLE_LIST][j]; j++)
+      {
+        style_list_index = j;
+        if (style_list[RULE_ID] == rule_id)
+        {
+          break out;
+        }
+      }
+    }
+
+    for (var i = 0; i <= node_style_list_index; i++)
+    {
+      var style_list = categories[CSS][i][STYLE_LIST];
+      var list_index = (i == node_style_list_index) ? style_list_index : style_list.length;
+      while (list_index--)
+      {
+        for (var k = 0, index; index = style_list[list_index][INDEX_LIST][k]; k++)
+        {
+          var prop = window.css_index_map[index];
+          if (prop in literal_declarations)
+          {
+            literal_declarations[prop][STATUS] = 0;
+          }
+          else if (literal_declarations[window.elementStyle.reverse_shorthand_map[prop]])
+          {
+            literal_declarations[window.elementStyle.reverse_shorthand_map[prop]][STATUS] = 0;
+          }
+        }
+      }
+    }
+
+    // Now do the syncing
+    for (var prop in expanded_declarations)
+    {
+      if (is_inherited && !(prop in window.css_inheritable_properties) ||
+          window.elementStyle.reverse_shorthand_map[prop] in literal_declarations)
+      {
+        continue;
+      }
+
+      synced_declarations[prop] =
+        [expanded_declarations[prop][VALUE],
+         expanded_declarations[prop][PRIORITY],
+         expanded_declarations[prop][STATUS],
+         0];
+    }
+
+    for (var prop in literal_declarations)
+    {
+      if (is_inherited && !(prop in window.css_inheritable_properties))
+      {
+        continue;
+      }
+
+      synced_declarations[prop] =
+        [expanded_declarations[prop] && expanded_declarations[prop][VALUE] || literal_declarations[prop][VALUE],
+         literal_declarations[prop][PRIORITY],
+         literal_declarations[prop][STATUS],
+         literal_declarations[prop][IS_DISABLED]];
+    }
+
+    return synced_declarations;
+  };
+
+  /**
+   * Convert the Scope format to an object with property: [value, priority, status]
+   */
+  this.convert_format = function convert_format(expanded_declarations)
+  {
+    var declarations = {};
+    var len = expanded_declarations[INDEX_LIST].length;
+    for (var i = 0; i < len; i++)
+    {
+      declarations[window.css_index_map[expanded_declarations[INDEX_LIST][i]]] =
+        [expanded_declarations[VALUE_LIST][i],
+         expanded_declarations[PRIORITY_LIST][i],
+         expanded_declarations[STATUS_LIST][i]];
+    }
+    return declarations;
   };
 
   messages.addListener('runtime-destroyed', onRuntimeDestroyed);
