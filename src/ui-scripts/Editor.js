@@ -40,9 +40,9 @@ var Editor = function()
   this.context_cur_priority = '';
   this.context_cur_text_content = '';
 
-  this.last_suggets_type = null;
-  this.suggets_count = 0;
-  this.suggets_iterate = false;
+  this.last_suggest_type = null;
+  this.suggest_count = 0;
+  this.suggest_iterate = false;
   this.property_list_length = 0;
 
   this.colors = new Colors();
@@ -373,7 +373,7 @@ var Editor = function()
     this.context_cur_value = props[1] || '';
     this.context_cur_priority = props[2] || 0;
 
-    this.last_suggets_type = '';
+    this.last_suggest_type = '';
 
     this.textarea.style.height = (ele.offsetHeight) + 'px';
     ele.textContent = '';
@@ -572,13 +572,13 @@ var Editor = function()
 
     suggest_handler.cursor = this.setCursor
     (
-      this.suggets_iterate = this.last_suggets_type == suggest_type,
+      this.suggest_iterate = this.last_suggest_type == suggest_type,
       suggest_handler.cursor,
       suggest_handler.matches = this[suggest_type](token, cur_start, cur_end, action_id, match),
       action_id
     );
 
-    this.last_suggets_type = suggest_type;
+    this.last_suggest_type = suggest_type;
 
     suggest = suggest_handler.matches && suggest_handler.matches[suggest_handler.cursor];
     return suggest && {value: suggest, replace_type: suggest_handler.replace_type} || null;
@@ -810,7 +810,7 @@ var Editor = function()
     old_priority,
     is_disabled = this.textarea_container.parentNode.hasClass("disabled");
 
-    this.last_suggets_type = '';
+    this.last_suggest_type = '';
     if (props && props.length == 3)
     {
       old_prop = this.context_cur_prop;
@@ -865,7 +865,7 @@ var Editor = function()
 
   this.escape = function()
   {
-    this.last_suggets_type = '';
+    this.last_suggest_type = '';
     this.restore_properties();
     if (this.context_cur_prop)
     {
