@@ -93,6 +93,78 @@ examine-objects .object {
 
 </style>
 <style>
+/* html 5 markup */
+/* debugger style */
+
+
+
+.examine-objects
+{
+  padding: 0 9px;
+}
+.examine-objects .examine-objects
+{
+  padding: 0 0 0 16px;
+}
+.key 
+{
+  margin-right:7px;
+}
+.key.no-expander
+{
+  margin-left: 18px;
+}
+.prototype-chain-object
+{
+  background-color: #666;
+  color: #fff;
+  font-weight: bold;
+  padding: 2px 16px;
+  margin: 2px 0;
+}
+
+ 
+
+
+
+
+/* ecma object tree */
+
+
+
+
+.key {
+  color: #111;
+  }
+
+.string {
+  color:#742;
+  }
+
+.number {
+  color:#920;
+  }
+
+.undefined {
+  color:#c00;
+  font-style: italic;
+  }
+
+.null {
+  color:#c00;
+  font-style: italic;
+  }
+
+.boolean {
+  color:#920;
+  }
+
+.object {
+  color:#18a;
+  }
+
+</style>
+<style>
 body
 {
   font-family: sans-serif;
@@ -187,6 +259,54 @@ Element.prototype.render = Document.prototype.render = function(args)
     }
   }
   return null;
+};
+
+Element.prototype.renderInner = Document.prototype.renderInner = function callee(template)
+{
+  var
+  i = template[0] && template[0] instanceof Array ? 0 : 1,
+  arg = template[i],
+  tag_name = template[0],
+  ret = "",
+  content = [],
+  attrs = i && ["<", tag_name, " "] || [];
+
+  if (tag_name)
+  {
+    while (true)
+    {
+      if (arg instanceof Array)
+      {
+        content.push(callee.call(null, arg));
+        arg = template[++i];
+      }
+      else if (typeof arg == 'string' && ((template.length - i) % 2 || template[i + 1] instanceof Array))
+      {
+        content.push(arg.replace(/&/g, "&amp;").replace(/</g, "&lt;"));
+        arg = template[++i];
+      }
+      else
+      {
+        break;
+      }
+    }
+    if (attrs.length)
+      content.push("</", tag_name, ">");
+    for ( ; template[i]; i += 2)
+    {
+      attrs.push(template[i], "=\u0022", template[i + 1].replace(/"/g, "&quot"), "\u0022", " ");
+    }
+    if (attrs.length)
+      attrs.push(">");
+    ret = attrs.join("") + content.join("");
+    if (this && this.nodeType == 1)
+    {
+      window.__t_3 = Date.now();
+      this.innerHTML += ret;
+    }
+    
+  }
+  return ret;
 };
 
 </script>
@@ -877,6 +997,8 @@ cls.EcmascriptDebugger["6.0"].FixObjectInspectionData = function(rt_id, obj_id, 
 }
 </script>
 <script>
+
+// direct creation of innerHTML string
 (function()
 {
   const
@@ -1003,7 +1125,7 @@ cls.EcmascriptDebugger["6.0"].FixObjectInspectionData = function(rt_id, obj_id, 
     }
   };
 
-  this.inspected_js_object_2 = function(model, show_root, path)
+  this.inspected_js_object = function(model, show_root, path)
   {
     var tree = model.get_expand_tree();
     if (typeof show_root === 'boolean' && model.get_object())
@@ -1022,7 +1144,7 @@ cls.EcmascriptDebugger["6.0"].FixObjectInspectionData = function(rt_id, obj_id, 
 
 </script>
 <script>
-// template 2
+// template 
 (function()
 {
   const
@@ -1139,7 +1261,7 @@ cls.EcmascriptDebugger["6.0"].FixObjectInspectionData = function(rt_id, obj_id, 
     return ret;
   };
 
-  this.inspected_js_object = function(model, show_root, path)
+  this.inspected_js_object_test = function(model, show_root, path)
   {
     var tree = model.get_expand_tree();
     if (typeof show_root === 'boolean' && model.get_object())
@@ -1156,6 +1278,153 @@ cls.EcmascriptDebugger["6.0"].FixObjectInspectionData = function(rt_id, obj_id, 
 
 }).apply(window.templates || (window.templates = {}));
 
+
+
+</script>
+<script>
+
+// creating valid HTML5 innerHTML string
+(function()
+{
+  const
+  // sub message ObjectInfo 
+  VALUE = 0,
+  PROPERTY_LIST = 1,
+  // sub message ObjectValue 
+  OBJECT_ID = 0,
+  CLASS_NAME = 4,
+  // sub message Property 
+  NAME = 0,
+  PROPERTY_TYPE = 1,
+  PROPERTY_VALUE = 2,
+  OBJECT_VALUE = 3,
+  // added fields
+  MAX_VALUE_LENGTH = 30;
+
+  var _pretty_print_object = function(model, tree, obj_id, ret)
+  {
+    ret || (ret = []);
+    var data = model.get_data(obj_id), obj = model.get_object();
+    if (obj && data)
+    {
+      ret.push(
+        "<div class='examine-objects' " +
+          "data-rt-id='" + obj.rt_id + "' " +
+          "data-data-id='" + model.id + "' " +
+          "data-obj-id='" + obj.obj_id + "' " +
+          ">"
+      );
+      for (var proto = null, i = 0; proto = data[i]; i++)
+      {
+        // skip the first object description
+        if (i)
+          ret.push("<div class='prototype-chain-object'>", proto[VALUE][CLASS_NAME], "</div>");
+        _pretty_print_properties(model, tree, proto[PROPERTY_LIST] || [], ret);
+      }
+      ret.push("</div>");
+    };
+    return ret;
+  };
+
+  var _pretty_print_properties = function(model, tree, property_list, ret)
+  {
+    var value = '', type = '', short_val = '', obj_id = 0;
+    for (var prop = null, i = 0; prop = property_list[i]; i++)
+    {
+      value = prop[PROPERTY_VALUE];
+      switch (type = prop[PROPERTY_TYPE])
+      {
+        case "number":
+        case "boolean":
+        {
+          ret.push(
+            "<div class='item'>" +
+              "<span class='key no-expander'>" + helpers.escapeTextHtml(prop[NAME]) + "</span>" +
+              "<span class='value " + type + "'>" + value + "</span>" +
+            "</div>"
+          );
+          break;
+        }
+        case "string":
+        {
+          short_val = value.length > MAX_VALUE_LENGTH ? 
+                        value.slice(0, MAX_VALUE_LENGTH) + '…"' : '';
+          value = helpers.escapeTextHtml(value).replace(/'/g, '&#39;');
+          if (short_val)
+          {
+            ret.push(
+              "<div class='item'>" +
+                "<input type='button' data-handler='expand-value'  class='folder-key'/>" +
+                "<span class='key'>" + helpers.escapeTextHtml(prop[NAME]) + "</span>" +
+                "<span class='value " + type + "' data-value='" + value + "'>" +
+                  "\"" + helpers.escapeTextHtml(short_val) +
+                "</span>" +
+              "</div>"
+            );
+          }
+          else
+          {
+            ret.push(
+              "<div class='item'>" +
+                "<span class='key no-expander'>" + helpers.escapeTextHtml(prop[NAME]) + "</span>" +
+                "<span class='value " + type + "'>\"" + value + "\"</span>" +
+              "</div>"
+            );
+          }
+          break;
+        }
+        case "null":
+        case "undefined":
+        {
+          ret.push(
+            "<div class='item'>" +
+              "<span class='key no-expander'>" + helpers.escapeTextHtml(prop[NAME]) + "</span>" +
+              "<span class='value " + type + "'>" + type + "</span>" +
+            "</div>"
+          );
+          break;
+        }
+        case "object":
+        {
+          obj_id = prop[OBJECT_VALUE][OBJECT_ID];
+          ret.push(
+            "<div class='item' data-obj-id='" + obj_id + "'>" +
+            "<input " +
+              "type='button' " +
+              "data-handler='examine-object'  " +
+              "class='folder-key' "
+          );
+          if (obj_id in tree)
+            ret.push("style='background-position: 0px -11px') ");
+          ret.push(
+            "/>" +
+            "<span class='key'>" + helpers.escapeTextHtml(prop[NAME]) + "</span>" +
+            "<span class='value object'>" + prop[OBJECT_VALUE][CLASS_NAME] + "</span>"
+          );
+          if (obj_id in tree)
+            _pretty_print_object(model, tree[obj_id], obj_id, ret);
+          ret.push("</div>");
+          break;
+        }
+      }
+    }
+  };
+
+  this.inspected_js_object_3 = function(model, show_root, path)
+  {
+    var tree = model.get_expand_tree();
+    if (typeof show_root === 'boolean' && model.get_object())
+      path = show_root ? null : [model.get_object().obj_id];
+    for (var obj_id = 0, i = 0; path && path[i]; i++)
+    {
+      tree = tree[obj_id = path[i]];
+      if (!tree)
+        throw 'not valid path in templates.inspected_js_object';
+    }
+    return _pretty_print_object(model, tree, obj_id).join('');
+  }
+
+}).apply(window.templates || (window.templates = {}));
 
 </script>
 
@@ -1237,22 +1506,22 @@ window.onload = function()
 
 }
 
-var test = function()
+var test = function(use_html_5)
 {
   var container = document.getElementById('test');
   container.innerHTML = "";
   setTimeout(function(){
     var t_1 = Date.now();
-    var template = window.templates.inspected_js_object_2(window.model, true);
+    var template = window.templates[use_html_5 ? 'inspected_js_object_3' : 'inspected_js_object'](window.model, true);
     var t_2 = Date.now();
     container.render(template);
     var t_3 = Date.now();
     var o = container.offsetHeight + container.offsetWidth;
     var t_4 = Date.now();
     alert(
-      "build template: " + (t_2 - t_1) +
+      "concatenate innerHTML string: " + (t_2 - t_1) +
       "\nbuild DOM: " + (t_3 - t_2) + 
-      "\nrendering: " +  (t_4 - t_3) +
+      "\nlayout: " +  (t_4 - t_3) +
       "\ntotal: " +(t_4 - t_1));
   }, 10);
 }
@@ -1265,7 +1534,7 @@ var test_template = function(use_dom)
   container.innerHTML = "";
   setTimeout(function(){
     var t_1 = Date.now();
-    var template = window.templates.inspected_js_object(window.model, true);
+    var template = window.templates.inspected_js_object_test(window.model, true);
     var t_2 = Date.now();
     container[use_dom ? 'render' : 'renderInner'](template);
     var t_3 = Date.now();
@@ -1273,8 +1542,8 @@ var test_template = function(use_dom)
     var t_4 = Date.now();
     alert(
       "build template: " + (t_2 - t_1) +
-      "\nparse build DOM: " + (t_3 - t_2) + 
-      "\nrendering: " +  (t_4 - t_3) +
+      "\nbuild DOM: " + (t_3 - t_2) + 
+      "\nlayout: " +  (t_4 - t_3) +
       "\ntotal: " +(t_4 - t_1));
   }, 10);
 }
@@ -1293,7 +1562,8 @@ var test_template_auto = function()
     if (window.count++ < 20)
       setTimeout(test_template_auto, 1);
     else
-      alert(Date.now() - window.start_time);
+      alert("Automatic test with 'test template DOM methods'\n" + 
+              (Date.now() - window.start_time));
   }, 1);
 }
 
@@ -1305,8 +1575,9 @@ var test_template_auto = function()
  <body>
  <p>
   <input type="button" onclick="test()" value="test direct innerHTML">
-  
+  <input type="button" onclick="test(true)" value="test direct innerHTML HTML5">
   <input type="button" onclick="test_template(true)" value="test template DOM methods">
-<div id='test'></div>
+  <input type="button" onclick="test_template()" value="test template innerHTML">
+ <div id='test'></div>
  </body>
 </html>
