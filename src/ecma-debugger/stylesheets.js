@@ -514,40 +514,40 @@ cls.Stylesheets = function()
         continue;
       }
 
-      if (do_shortcuts && SHORTHAND[prop_index])
-      {
-        if (__shorthandIndexMap[prop_index] == 'font')
-        {
-          SHORTHAND[line_height_index] = 5;
-        }
-        s_h_index = [];
-        s_h_value = [];
-        s_h_priority = [];
-        s_h_prop = __shorthandIndexMap[prop_index];
-        do
-        {
-          if (__shorthandIndexMap[prop_index] != 'line-height' &&
-              __shorthandIndexMap[prop_index] != s_h_prop)
-          {
-            ret += (ret ? MARKUP_PROP_NL : "") +
-              shorthands[s_h_prop](s_h_prop, s_h_index, s_h_value, s_h_priority);
-            SHORTHAND[line_height_index] = __shorthandIndexMap[prop_index] == 'font' ? 5 : 0;
-            s_h_index = [];
-            s_h_value = [];
-            s_h_priority = [];
-            s_h_prop = __shorthandIndexMap[prop_index];
-          }
-          s_h_index[SHORTHAND[prop_index]] = prop_index;
-          s_h_value[SHORTHAND[prop_index]] = helpers.escapeTextHtml(value_list[index]);
-          s_h_priority[SHORTHAND[prop_index]] = priority_list[index];
-          prop_index = index_list[index + 1];
-        }
-        while (SHORTHAND[prop_index] && ++index);
+      //if (do_shortcuts && SHORTHAND[prop_index])
+      //{
+      //  if (__shorthandIndexMap[prop_index] == 'font')
+      //  {
+      //    SHORTHAND[line_height_index] = 5;
+      //  }
+      //  s_h_index = [];
+      //  s_h_value = [];
+      //  s_h_priority = [];
+      //  s_h_prop = __shorthandIndexMap[prop_index];
+      //  do
+      //  {
+      //    if (__shorthandIndexMap[prop_index] != 'line-height' &&
+      //        __shorthandIndexMap[prop_index] != s_h_prop)
+      //    {
+      //      ret += (ret ? MARKUP_PROP_NL : "") +
+      //        shorthands[s_h_prop](s_h_prop, s_h_index, s_h_value, s_h_priority);
+      //      SHORTHAND[line_height_index] = __shorthandIndexMap[prop_index] == 'font' ? 5 : 0;
+      //      s_h_index = [];
+      //      s_h_value = [];
+      //      s_h_priority = [];
+      //      s_h_prop = __shorthandIndexMap[prop_index];
+      //    }
+      //    s_h_index[SHORTHAND[prop_index]] = prop_index;
+      //    s_h_value[SHORTHAND[prop_index]] = helpers.escapeTextHtml(value_list[index]);
+      //    s_h_priority[SHORTHAND[prop_index]] = priority_list[index];
+      //    prop_index = index_list[index + 1];
+      //  }
+      //  while (SHORTHAND[prop_index] && ++index);
 
-        ret += (ret ? MARKUP_PROP_NL : MARKUP_EMPTY) +
-                shorthands[s_h_prop](s_h_prop, s_h_index, s_h_value, s_h_priority);
-        SHORTHAND[line_height_index] = 0;
-      }
+      //  ret += (ret ? MARKUP_PROP_NL : MARKUP_EMPTY) +
+      //          shorthands[s_h_prop](s_h_prop, s_h_index, s_h_value, s_h_priority);
+      //  SHORTHAND[line_height_index] = 0;
+      //}
       else
       {
         ret += (ret ? MARKUP_PROP_NL : MARKUP_EMPTY) +

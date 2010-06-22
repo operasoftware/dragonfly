@@ -451,9 +451,6 @@ cls.ElementStyle = function()
 
     var rule_id = expanded_declarations[RULE_ID];
     var synced_declarations = JSON.parse(JSON.stringify(expanded_declarations)); // Deep copy. TODO: is this nice?
-    //synced_declarations[VALUE_LIST   ] = [];
-    //synced_declarations[PRIORITY_LIST] = [];
-    //synced_declarations[STATUS_LIST  ] = [];
     synced_declarations[DISABLED_LIST] = [];
 
     // Always set this to 1 (applied), we will manually check later if it's overwritten or not
@@ -480,6 +477,7 @@ cls.ElementStyle = function()
       }
     }
 
+    // Loop thorugh and set the status (the overwritten value)
     for (var i = 0; i <= node_style_list_index; i++)
     {
       var style_list = categories_data[CSS][i][STYLE_LIST];
@@ -495,23 +493,25 @@ cls.ElementStyle = function()
           {
             literal_declarations[prop][STATUS] = 0;
           }
-          else if (literal_declarations[window.elementStyle.reverse_shorthand_map[prop]] /* TODO: take disabled value into account */)
+          else if (literal_declarations[this.reverse_shorthand_map[prop]] /* TODO: take disabled value into account */)
           {
-            literal_declarations[window.elementStyle.reverse_shorthand_map[prop]][STATUS] = 0;
+            literal_declarations[this.reverse_shorthand_map[prop]][STATUS] = 0;
           }
         }
       }
     }
 
     // Now do the syncing
-    var len = expanded_declarations[INDEX_LIST].length;
-    for (var i = len; i--; )
+
+    // First the values from Scope...
+    for (var i = expanded_declarations[INDEX_LIST].length; i--; )
     {
       var prop = window.css_index_map[expanded_declarations[INDEX_LIST][i]];
 
       synced_declarations[DISABLED_LIST][i] = 0;
 
-      if (!(prop in literal_declarations))
+      // Remove any property that the user hasn't added literally
+      if (!(prop in literal_declarations) && (this.reverse_shorthand_map[prop] in literal_declarations))
       {
         synced_declarations[INDEX_LIST   ].splice(i, 1);
         synced_declarations[VALUE_LIST   ].splice(i, 1);
@@ -521,6 +521,7 @@ cls.ElementStyle = function()
       }
     }
 
+    // ... then the literal values
     for (var prop in literal_declarations)
     {
       if (is_inherited && !(prop in window.css_inheritable_properties))
@@ -558,9 +559,7 @@ cls.ElementStyle = function()
       var value;
 
       // If this is a shorthand, and it has been disabled, use cached value
-      if (prop in window.elementStyle.shorthand_map &&
-          !(window.elementStyle.shorthand_map[prop][0] in declarations) &&
-          literal_declarations[prop][0])
+      if (prop in this.shorthand_map && !(this.shorthand_map[prop][0] in declarations) && literal_declarations[prop][0])
       {
         value = literal_declarations[prop][0];
       }
@@ -572,17 +571,11 @@ cls.ElementStyle = function()
               : synced_declarations[VALUE_LIST] && synced_declarations[VALUE_LIST][i];
       }
 
-      // If there is no value at this point it's most likely a non-inheritable property
-      if (value != undefined)
-      {
-        // Cache
-        literal_declarations[prop] = [value,
-                                      synced_declarations[PRIORITY_LIST][i],
-                                      synced_declarations[STATUS_LIST][i],
-                                      synced_declarations[DISABLED_LIST][i]];
-
-        synced_declarations[VALUE_LIST][i] = value;
-      }
+      synced_declarations[VALUE_LIST][i] = value;
+      literal_declarations[prop] = [value, // Cache
+                                    synced_declarations[PRIORITY_LIST][i],
+                                    synced_declarations[STATUS_LIST][i],
+                                    synced_declarations[DISABLED_LIST][i]];
     }
 
     return synced_declarations;
@@ -632,11 +625,7 @@ cls.ElementStyle = function()
       if (declaration)
       {
         var index = index_list.indexOf(window.css_index_map.indexOf(declaration[0]));
-        var decl_is_valid = false;
-        if (index != -1 || this.shorthand_map[declaration[0]]) // If the property exists in the message, it was valid
-        {
-          decl_is_valid = true;
-        }
+        var decl_is_valid = index != -1 || this.shorthand_map[declaration[0]]; // If the property exists in the message, it was valid
 
         if (decl_is_valid)
         {
@@ -675,9 +664,9 @@ cls.ElementStyle = function()
 
   this.get_rule_by_id = function get_rule_by_id(id)
   {
-    for (var i = 0, decl; decl = categories_data[CSS][i]; i++)
+    for (var i = 0, decl; decl = (categories_data[CSS] && categories_data[CSS][i]); i++)
     {
-      for (var j = 0, rule; rule = decl[STYLE_LIST][j]; j++)
+      for (var j = 0, rule; rule = (decl[STYLE_LIST] && decl[STYLE_LIST][j]); j++)
       {
         if (rule[RULE_ID] == id)
         {
@@ -711,30 +700,18 @@ cls.ElementStyle = function()
     "border-width": "border",
     "border-style": "border",
     "border-color": "border",
-    //"border-top-width": "border-top",
-    //"border-top-style": "border-top",
-    //"border-top-color": "border-top",
-    //"border-right-width": "border-right",
-    //"border-right-style": "border-right",
-    //"border-right-color": "border-right",
-    //"border-bottom-width": "border-bottom",
-    //"border-bottom-style": "border-bottom",
-    //"border-bottom-color": "border-bottom",
-    //"border-left-width": "border-left",
-    //"border-left-style": "border-left",
-    //"border-left-color": "border-left",
-    "border-top-width": "border-width",
-    "border-right-width": "border-width",
-    "border-bottom-width": "border-width",
-    "border-left-width": "border-width",
-    "border-top-style": "border-style",
-    "border-right-style": "border-style",
-    "border-bottom-style": "border-style",
-    "border-left-style": "border-style",
-    "border-top-color": "border-color",
-    "border-right-color": "border-color",
-    "border-bottom-color": "border-color",
-    "border-left-color": "border-color",
+    "border-top-width": "border",
+    "border-right-width": "border",
+    "border-bottom-width": "border",
+    "border-left-width": "border",
+    "border-top-style": "border",
+    "border-right-style": "border",
+    "border-bottom-style": "border",
+    "border-left-style": "border",
+    "border-top-color": "border",
+    "border-right-color": "border",
+    "border-bottom-color": "border",
+    "border-left-color": "border",
     "background-attachment": "background",
     "background-color": "background",
     "background-image": "background",
