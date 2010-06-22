@@ -341,6 +341,7 @@ cls.ElementStyle = function()
     
   }
 
+  // TODO: move
   var _rt_id;
   var _obj_id;
 
@@ -366,7 +367,10 @@ cls.ElementStyle = function()
       stylesheets.getStylesheets(rt_id, arguments);
     }
   }
-var self = this;
+
+  // TODO: move
+  var self = this;
+
   var handleGetData = function(status, message, rt_id, obj_id)
   {
 
@@ -383,7 +387,7 @@ var self = this;
 
     if(status == 0)
     {
-      categories_data[COMP_STYLE] = message[COMPUTED_STYLE_LIST]; 
+      categories_data[COMP_STYLE] = message[COMPUTED_STYLE_LIST];
       categories_data[CSS] = message[NODE_STYLE_LIST] || [];
       categories_data[CSS].rt_id = categories_data[COMP_STYLE].rt_id = rt_id;
       categories_data[IS_VALID] = true;
@@ -485,11 +489,13 @@ var self = this;
         for (var k = 0, index; index = style_list[list_index][INDEX_LIST][k]; k++)
         {
           var prop = window.css_index_map[index];
-          if (prop in literal_declarations /* TODO: take disabled value into account */)
+          if (prop in literal_declarations &&
+              ((style_list[list_index][DISABLED_LIST] && style_list[list_index][DISABLED_LIST][k] == 0) ||
+               !style_list[list_index][DISABLED_LIST])) // TODO: add it instead before this, to make sure it's always there?
           {
             literal_declarations[prop][STATUS] = 0;
           }
-          else if (literal_declarations[window.elementStyle.reverse_shorthand_map[prop]])
+          else if (literal_declarations[window.elementStyle.reverse_shorthand_map[prop]] /* TODO: take disabled value into account */)
           {
             literal_declarations[window.elementStyle.reverse_shorthand_map[prop]][STATUS] = 0;
           }
@@ -499,9 +505,20 @@ var self = this;
 
     // Now do the syncing
     var len = expanded_declarations[INDEX_LIST].length;
-    for (var i = 0; i < len; i++)
+    for (var i = len; i--; )
     {
+      var prop = window.css_index_map[expanded_declarations[INDEX_LIST][i]];
+
       synced_declarations[DISABLED_LIST][i] = 0;
+
+      if (!(prop in literal_declarations))
+      {
+        synced_declarations[INDEX_LIST   ].splice(i, 1);
+        synced_declarations[VALUE_LIST   ].splice(i, 1);
+        synced_declarations[PRIORITY_LIST].splice(i, 1);
+        synced_declarations[STATUS_LIST  ].splice(i, 1);
+        synced_declarations[DISABLED_LIST].splice(i, 1);
+      }
     }
 
     for (var prop in literal_declarations)
@@ -510,15 +527,17 @@ var self = this;
       {
         continue;
       }
+
       var prop_index = window.css_index_map.indexOf(prop);
       var index = synced_declarations[INDEX_LIST].indexOf(prop_index);
+      var expanded_index = expanded_declarations[INDEX_LIST].indexOf(prop_index);
       if (index == -1)
       {
-        index = expanded_declarations[INDEX_LIST].length;
+        index = synced_declarations[INDEX_LIST].length;
       }
 
       synced_declarations[INDEX_LIST   ][index] = prop_index;
-      synced_declarations[VALUE_LIST   ][index] = expanded_declarations[prop_index] && expanded_declarations[prop_index][VALUE] || literal_declarations[prop][VALUE];
+      synced_declarations[VALUE_LIST   ][index] = expanded_declarations[VALUE_LIST][expanded_index] || literal_declarations[prop][VALUE];
       synced_declarations[PRIORITY_LIST][index] = literal_declarations[prop][PRIORITY];
       synced_declarations[STATUS_LIST  ][index] = literal_declarations[prop][STATUS];
       synced_declarations[DISABLED_LIST][index] = literal_declarations[prop][IS_DISABLED];
@@ -532,9 +551,10 @@ var self = this;
       declarations[window.css_index_map[expanded_declarations[INDEX_LIST][i]]] = expanded_declarations[VAL_LIST][i];
     }
 
+    var len = synced_declarations[INDEX_LIST].length;
     for (var i = 0; i < len; i++)
     {
-      var prop = window.css_index_map[expanded_declarations[INDEX_LIST][i]];
+      var prop = window.css_index_map[synced_declarations[INDEX_LIST][i]];
       var value;
 
       // If this is a shorthand, and it has been disabled, use cached value
@@ -548,18 +568,18 @@ var self = this;
       {
         // Get the value or re-construct a shorthand
         value = this.shorthand_map[prop]
-              ? window.styleSheets.get_shorthand_from_declarations(prop, declarations, literal_declarations)
+              ? window.stylesheets.get_shorthand_from_declarations(prop, declarations, literal_declarations)
               : synced_declarations[VALUE_LIST] && synced_declarations[VALUE_LIST][i];
       }
 
       // If there is no value at this point it's most likely a non-inheritable property
       if (value != undefined)
       {
-       //literal_declarations[prop] = [window.css_index_map[synced_declarations[INDEX_LIST][i]],
-       //                              synced_declarations[VALUE_LIST][i],
-       //                              synced_declarations[PRIORITY_LIST][i],
-       //                              synced_declarations[STATUS_LIST][i]];
-       //literal_declarations[prop][VALUE] = value; // Cache value
+        // Cache
+        literal_declarations[prop] = [value,
+                                      synced_declarations[PRIORITY_LIST][i],
+                                      synced_declarations[STATUS_LIST][i],
+                                      synced_declarations[DISABLED_LIST][i]];
 
         synced_declarations[VALUE_LIST][i] = value;
       }
