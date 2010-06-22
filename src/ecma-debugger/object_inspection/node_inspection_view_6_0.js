@@ -30,7 +30,7 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseView = function()
 
   this._create_view = function(container, data_model, path)
   {
-    container.render(window.templates.inspect_object(data_model, path));
+    container.render(window.templates.inspected_js_object(data_model, false, path));
   };
 
 }
