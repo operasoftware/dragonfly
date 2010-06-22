@@ -55,8 +55,26 @@ cls.CommandLineViewTest = function(id, name, container_class, html, default_hand
       {
         if (entry.model)
         {
+          if (entry.show_inline)
+          {
           __console_output.render(window.templates.inspected_js_object(entry.model, entry.show_root));
+          }
+          else
+          {
+            __console_output.render
+            (
+              [
+                'pre',
+                entry.value,
+                // ['d', ' [' + entry.obj_id + ']'],
+                'handler', 'inspect-object-link',
+                'rt-id', entry.runtime_id.toString(),
+                'obj-id', entry.obj_id.toString()
+              ]
+            );
+          }
         }
+
         else
         {
           __console_output.render (['pre', entry.value ]);
@@ -283,7 +301,8 @@ cls.CommandLineViewTest = function(id, name, container_class, html, default_hand
       runtime_id: rt_id,
       value: message[3][4],
       model: new cls.InspectableJSObject(rt_id, obj_id),
-      show_root: false
+      show_root: false,
+      show_inline: true,
     };
     var cb = _dir_object.bind(null, entry);
     entry.model.expand(cb);
