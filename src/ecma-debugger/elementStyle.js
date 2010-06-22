@@ -366,7 +366,7 @@ cls.ElementStyle = function()
       stylesheets.getStylesheets(rt_id, arguments);
     }
   }
-
+var self = this;
   var handleGetData = function(status, message, rt_id, obj_id)
   {
 
@@ -378,7 +378,8 @@ cls.ElementStyle = function()
     style_dec = null, 
     j = 0, 
     length = 0, 
-    k = 0;
+    k = 0,
+    is_inherited = false;
 
     if(status == 0)
     {
@@ -387,15 +388,26 @@ cls.ElementStyle = function()
       categories_data[CSS].rt_id = categories_data[COMP_STYLE].rt_id = rt_id;
       categories_data[IS_VALID] = true;
 
+      var literal_declaration_list = window.elementStyle.literal_declaration_list;
+
       // this is to ensure that a set property is always displayed in computed style,
       // also if it maps the initial value and the setting "Hide Initial Values" is set to true.
       __setProps = [];
       for ( i = 0; node_style_cascade = categories_data[CSS][i]; i++)
       {
+        if (i > 0)
+        {
+          is_inherited = true;
+        }
         for( j = 0; style_dec = node_style_cascade[STYLE_LIST][j]; j++)
         {
           if( style_dec[ORIGIN] != 1 ) // any other rule except browser default rules
           {
+            if (literal_declaration_list && literal_declaration_list[style_dec[RULE_ID]])
+            {
+              // TODO: set style_dec doesn't work?
+              categories_data[CSS][i][STYLE_LIST][j] = self.sync_declarations(style_dec, literal_declaration_list[style_dec[RULE_ID]], is_inherited);
+            }
             length = style_dec[INDEX_LIST].length;
             for( k = 0; k < length; k++)
             {
@@ -407,7 +419,6 @@ cls.ElementStyle = function()
           }
         }
       }
-
       if( __old_search_therm )
       {
         doSearch(__old_search_therm);
@@ -420,9 +431,141 @@ cls.ElementStyle = function()
     }
   }
 
-  this.get_categories = function()
+  /**
+   * Syncs the declarations returned from Scope with the literal declarations (the ones that the user has typed in)
+   * to get the right status and disabled value
+   */
+  this.sync_declarations = function sync_declarations(expanded_declarations, literal_declarations, is_inherited)
   {
-    return categories_data;
+    // TODO: consider moving some of these
+    const
+    VALUE = 0,
+    PRIORITY = 1,
+    STATUS = 2,
+    IS_DISABLED = 3,
+    DISABLED_LIST = 12;
+
+    var rule_id = expanded_declarations[RULE_ID];
+    var synced_declarations = JSON.parse(JSON.stringify(expanded_declarations)); // Deep copy. TODO: is this nice?
+    //synced_declarations[VALUE_LIST   ] = [];
+    //synced_declarations[PRIORITY_LIST] = [];
+    //synced_declarations[STATUS_LIST  ] = [];
+    synced_declarations[DISABLED_LIST] = [];
+
+    // Always set this to 1 (applied), we will manually check later if it's overwritten or not
+    // TODO: never set this to 0 in the first place?
+    for (var prop in literal_declarations)
+    {
+      literal_declarations[prop][STATUS] = 1;
+    }
+
+    // Get the rule index
+    var node_style_list_index = 0;
+    var style_list_index = 0;
+    out:
+    for (var i = 0, node_style_list; node_style_list = categories_data[CSS][i]; i++)
+    {
+      node_style_list_index = i;
+      for (var j = 0, style_list; style_list = node_style_list[STYLE_LIST][j]; j++)
+      {
+        style_list_index = j;
+        if (style_list[RULE_ID] == rule_id)
+        {
+          break out;
+        }
+      }
+    }
+
+    for (var i = 0; i <= node_style_list_index; i++)
+    {
+      var style_list = categories_data[CSS][i][STYLE_LIST];
+      var list_index = (i == node_style_list_index) ? style_list_index : style_list.length;
+      while (list_index--)
+      {
+        for (var k = 0, index; index = style_list[list_index][INDEX_LIST][k]; k++)
+        {
+          var prop = window.css_index_map[index];
+          if (prop in literal_declarations /* TODO: take disabled value into account */)
+          {
+            literal_declarations[prop][STATUS] = 0;
+          }
+          else if (literal_declarations[window.elementStyle.reverse_shorthand_map[prop]])
+          {
+            literal_declarations[window.elementStyle.reverse_shorthand_map[prop]][STATUS] = 0;
+          }
+        }
+      }
+    }
+
+    // Now do the syncing
+    var len = expanded_declarations[INDEX_LIST].length;
+    for (var i = 0; i < len; i++)
+    {
+      synced_declarations[DISABLED_LIST][i] = 0;
+    }
+
+    for (var prop in literal_declarations)
+    {
+      if (is_inherited && !(prop in window.css_inheritable_properties))
+      {
+        continue;
+      }
+      var prop_index = window.css_index_map.indexOf(prop);
+      var index = synced_declarations[INDEX_LIST].indexOf(prop_index);
+      if (index == -1)
+      {
+        index = expanded_declarations[INDEX_LIST].length;
+      }
+
+      synced_declarations[INDEX_LIST   ][index] = prop_index;
+      synced_declarations[VALUE_LIST   ][index] = expanded_declarations[prop_index] && expanded_declarations[prop_index][VALUE] || literal_declarations[prop][VALUE];
+      synced_declarations[PRIORITY_LIST][index] = literal_declarations[prop][PRIORITY];
+      synced_declarations[STATUS_LIST  ][index] = literal_declarations[prop][STATUS];
+      synced_declarations[DISABLED_LIST][index] = literal_declarations[prop][IS_DISABLED];
+    }
+
+    // Create object with `property: value`
+    var declarations = {};
+    var len = expanded_declarations[PROP_LIST].length;
+    for (var i = 0; i < len; i++)
+    {
+      declarations[window.css_index_map[expanded_declarations[INDEX_LIST][i]]] = expanded_declarations[VAL_LIST][i];
+    }
+
+    for (var i = 0; i < len; i++)
+    {
+      var prop = window.css_index_map[expanded_declarations[INDEX_LIST][i]];
+      var value;
+
+      // If this is a shorthand, and it has been disabled, use cached value
+      if (prop in window.elementStyle.shorthand_map &&
+          !(window.elementStyle.shorthand_map[prop][0] in declarations) &&
+          literal_declarations[prop][0])
+      {
+        value = literal_declarations[prop][0];
+      }
+      else
+      {
+        // Get the value or re-construct a shorthand
+        value = this.shorthand_map[prop]
+              ? window.styleSheets.get_shorthand_from_declarations(prop, declarations, literal_declarations)
+              : synced_declarations[VALUE_LIST] && synced_declarations[VALUE_LIST][i];
+      }
+
+      // If there is no value at this point it's most likely a non-inheritable property
+      if (value != undefined)
+      {
+       //literal_declarations[prop] = [window.css_index_map[synced_declarations[INDEX_LIST][i]],
+       //                              synced_declarations[VALUE_LIST][i],
+       //                              synced_declarations[PRIORITY_LIST][i],
+       //                              synced_declarations[STATUS_LIST][i]];
+       //literal_declarations[prop][VALUE] = value; // Cache value
+
+        synced_declarations[VALUE_LIST][i] = value;
+      }
+    }
+
+    return synced_declarations;
   };
 
   this.update_categories = function update_categories(rule_id, declaration, callback)
@@ -469,27 +612,10 @@ cls.ElementStyle = function()
       if (declaration)
       {
         var index = index_list.indexOf(window.css_index_map.indexOf(declaration[0]));
-        var status = 1; // 1 = applied, 0 = overwritten
         var decl_is_valid = false;
-        if (index != -1) // If the property exists in the message, it was valid
+        if (index != -1 || this.shorthand_map[declaration[0]]) // If the property exists in the message, it was valid
         {
-          status = rule[OVERWRITTEN_LIST][index];
           decl_is_valid = true;
-        }
-        else if (this.shorthand_map[declaration[0]]) // if it's a shorthand
-        {
-          // To figure out if the shorthand has been overwritten, loop through all expanded
-          // properties. If one of them doesn't exist in the literal declarations, we can
-          // use its overwritten value.
-          this.shorthand_map[declaration[0]].some(function(prop) {
-            index = index_list.indexOf(window.css_index_map.indexOf(prop))
-            status = rule[OVERWRITTEN_LIST][index];
-            if (!this.literal_declaration_list[rule_id][prop])
-            {
-              return true;
-            }
-          }, this);
-          decl_is_valid = true; // FIXME(hzr): this is not really true here
         }
 
         if (decl_is_valid)
