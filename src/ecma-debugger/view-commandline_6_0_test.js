@@ -10,8 +10,6 @@ cls.CommandLineViewTest = function(id, name, container_class, html, default_hand
 
   var self = this;
 
-  var __frame_index = -1;
-
   var __container = null;
   var __console_output = null;
   var __console_input = null;
@@ -151,7 +149,7 @@ cls.CommandLineViewTest = function(id, name, container_class, html, default_hand
       if( message[STATUS] == 'completed' )
       {
         var return_value = message[VALUE];
-        if(return_value || /null|undefined/.test(value_type) )
+        if(return_value || /null|undefined|string/.test(value_type) )
         {
           var value = return_value || '';
           if( !obj_id )
@@ -160,6 +158,7 @@ cls.CommandLineViewTest = function(id, name, container_class, html, default_hand
             {
               case 'string':
               {
+                
                 var delimiter = "\"";
                 // Escape ' and " Python command line interpreter style
                 if (value.indexOf("\"") != -1) {
@@ -178,6 +177,14 @@ cls.CommandLineViewTest = function(id, name, container_class, html, default_hand
                 break;
               }
             }
+            cons_out_render_return_val
+            (
+              console_output_data[console_output_data.length] =
+              {
+                type: "return-value",
+                value: value
+              }
+            );
           }
 
         }
@@ -333,8 +340,9 @@ cls.CommandLineViewTest = function(id, name, container_class, html, default_hand
   {
     var
     rt_id = runtimes.getSelectedRuntimeId(),
-    frame_id = 0,
-    thread_id = 0,
+    frame = window.stop_at.getSelectedFrame(),
+    frame_id = frame ? frame.index : 0,
+    thread_id = frame ? frame.thread_id : 0,
     script_string  = '',
     command = '',
     opening_brace = 0,
@@ -343,11 +351,6 @@ cls.CommandLineViewTest = function(id, name, container_class, html, default_hand
 
     if(rt_id)
     {
-      if( __frame_index > -1 )
-      {
-        frame_id = __frame_index;
-        thread_id = stop_at.getThreadId();
-      }
       script_string  = submit_buffer.join('');
       opening_brace = script_string.indexOf('(');
       command = ( opening_brace != -1 && script_string.slice(0, opening_brace) || '' ).
@@ -540,55 +543,60 @@ cls.CommandLineViewTest = function(id, name, container_class, html, default_hand
     SCRIPT = "(function(path){var a = '', b= ''; for (a in path){b += a + '_,_';}; return b;})(%s)",
     KEY = 0,
     DEPTH = 3;
+    
+    var make_path_hash = function(rt_id, frame, path)
+    {
+      return "path_hash_" + (frame ? frame.index : -1) + rt_id + path;
+    }
 
-    var get_scope = function(path, old_args)
+    var handle_stopped_scope = function(status, message, org_args, path_hash)
+    {
+      // only testing code
+      const OBJECT_CHAIN_LIST = 0, OBJECT_LIST = 0, PROPERTY_LIST = 1, NAME = 0;
+      scope = (message && 
+        (message = message[OBJECT_CHAIN_LIST]) &&
+        (message = message[0]) &&
+        (message = message[OBJECT_LIST]) &&
+        (message = message[0]) &&
+        (message = message[PROPERTY_LIST]) ||
+        []).map(function(prop){return prop[NAME]});
+      current_path = path_hash;
+      org_args.callee.apply(null, org_args);
+      
+    }
+
+    var get_scope = function get_scope(path, old_args, stopped_scope)
     {
       var
       rt_id = runtimes.getSelectedRuntimeId(),
-      frame_id = 0,
-      thread_id = 0;
+      frame = window.stop_at.getSelectedFrame(),
+      frame_id = frame ? frame.index : 0,
+      thread_id = frame ? frame.thread_id : 0;
 
-      if(rt_id)
+      if (rt_id)
       {
-        if( !path && __frame_index == -1 )
+        if (!path && frame === null)
         {
           path = 'this';
         }
-        if( __frame_index.toString() + rt_id + path == current_path )
+        if (make_path_hash(rt_id, frame, path) == current_path)
         {
           return scope;
         }
-        if( __frame_index > -1 )
+        if (frame)
         {
-          frame_id = __frame_index;
-          thread_id = stop_at.getThreadId();
-          if( !path )
+          if (!path) // we have to inspected the stopped scope
           {
-            var selectedObject = frame_inspection_data.getSelectedObject()
-            var data = frame_inspection_data.getData(selectedObject.rt_id, selectedObject.obj_id, -1, arguments);
-            if( data )
-            {
-              var i = 2, prop = null;
-              scope = [];
-              for( ; prop = data[i]; i++ )
-              {
-                if( prop[DEPTH] == 0 )
-                {
-                  scope[scope.length] = prop[KEY];
-                }
-              }
-              current_path = __frame_index.toString() + rt_id + path;
-              return scope;
-            }
-            else
-            {
-              return null;
-            }
+            // org_args, rt_id, frame_index, path
+            var tag = tagManager.set_callback(null, handle_stopped_scope, 
+                                              [old_args, make_path_hash(rt_id, frame, path)]);
+            services['ecmascript-debugger'].requestExamineObjects(tag, 
+                                                                  [rt_id, [frame.scope_id], 0, 1]);
+            return null;
           }
-        }
-        var tag = tagManager.set_callback(null, handleEvalScope, [__frame_index, rt_id, path, old_args] );
-        services['ecmascript-debugger'].requestEval(tag, [rt_id, thread_id,
-          frame_id, SCRIPT.replace(/%s/, path)]);
+        } 
+        var tag = tagManager.set_callback(null, handleEvalScope, [make_path_hash(rt_id, frame, path), old_args] );
+        services['ecmascript-debugger'].requestEval(tag, [rt_id, thread_id, frame_id, SCRIPT.replace(/%s/, path)]);
       }
       else
       {
@@ -604,7 +612,7 @@ cls.CommandLineViewTest = function(id, name, container_class, html, default_hand
       return null;
     }
 
-    var handleEvalScope = function(status, message, __frame_index, rt_id, path, old_args)
+    var handleEvalScope = function(status, message, path_hash, old_args)
     {
       const
       STATUS = 0,
@@ -618,7 +626,7 @@ cls.CommandLineViewTest = function(id, name, container_class, html, default_hand
         if(message[VALUE])
         {
           scope = message[VALUE].split('_,_');
-          current_path = __frame_index.toString() + rt_id + path;
+          current_path = path_hash;
           if( !old_args[0].__call_count )
           {
             old_args[0].__call_count = 1;
@@ -726,7 +734,7 @@ cls.CommandLineViewTest = function(id, name, container_class, html, default_hand
       // with sites with intervals or timeouts
       if( frame_index > -1 || frame_index != local_frame_index )
       {
-        local_frame_index = -1;
+        local_frame_index = frame_index;
         str_input = '';
         path = '';
         id = '';
@@ -763,8 +771,7 @@ cls.CommandLineViewTest = function(id, name, container_class, html, default_hand
 
   var onFrameSelected = function(msg)
   {
-    __frame_index = msg.frame_index;
-    autocomplete.clear(__frame_index);
+    autocomplete.clear(msg.frame_index);
   }
 
   var onConsoleMessage = function(msg)

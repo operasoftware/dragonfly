@@ -144,6 +144,26 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     return __selected_frame_index;
   }
 
+  /**
+    * To get the selected frame.
+    * @returns null or an object with runtime_id, scope_id, thread_id and index.
+    */
+  this.getSelectedFrame = function()
+  {
+    if (__selected_frame_index > -1)
+    {
+      var frame = callstack[__selected_frame_index];
+      return (
+      {
+        runtime_id: frame.rt_id, 
+        scope_id: frame.scope_id, 
+        thread_id: stopAt['thread-id'],
+        index: __selected_frame_index
+      });
+    }
+    return null;
+  }
+
   var parseBacktrace = function(status, message, runtime_id, thread_id)
   {
 
