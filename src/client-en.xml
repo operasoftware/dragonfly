@@ -232,18 +232,14 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ecma-debugger/object_inspection/inspection_base_data.js"/>
 <script src="./ecma-debugger/object_inspection/inspection_base_data_6_0.js"/>
 <script src="./ecma-debugger/object_inspection/frame_inspection_data.js"/>
-<script src="./ecma-debugger/object_inspection/frame_inspection_data_6_0.js"/>
 <script src="./ecma-debugger/object_inspection/object_inspection_data.js"/>
-<script src="./ecma-debugger/object_inspection/object_inspection_data_6_0.js"/>
 <script src="./ecma-debugger/object_inspection/object_and_frame_inspection_view.js"/>
 <script src="./ecma-debugger/object_inspection/object_and_frame_inspection_view_6_0.js"/>
 <script src="./ecma-debugger/object_inspection/node_inspection_data.js"/>
-<script src="./ecma-debugger/object_inspection/node_inspection_data_6_0.js"/>
 <script src="./ecma-debugger/object_inspection/node_inspection_view.js"/>
 <script src="./ecma-debugger/object_inspection/node_inspection_view_6_0.js"/>
 <script src="./ecma-debugger/object_inspection/templates_6_0.js"/>
 <script src="./ecma-debugger/object_inspection/actions_6_0.js"/>
-<script src="./ecma-debugger/object_inspection/fix_object_inspection_6_0.js"/>
 <script src="./ecma-debugger/view-commandline_6_0_test.js"/>
 
 
