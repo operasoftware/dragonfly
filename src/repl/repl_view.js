@@ -177,10 +177,8 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     if (evt.keyCode == 9)
     {
       evt.preventDefault();
-
       var partial = new PropertyFinder();
       partial.find_props(this._handle_completer.bind(this), this._textarea.value);
-
     }
   };
 
@@ -195,14 +193,56 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       var localpart = props.input;
     }
 
-    //opera.postError("Local part is " + localpart)
-
     var matches = props.props.filter(function(e) {
       return e.indexOf(localpart) == 0;
     });
 
-    this.render_string(matches.sort().join(", "));
+    if (! matches.length) {
+      return;
+    }
+
+    var match = this._longest_common_prefix(matches.slice(0));
+    if (match.length > localpart.length)
+    {
+      var pos = this._textarea.value.lastIndexOf(localpart);
+      this._textarea.value = this._textarea.value.slice(0, pos) + match;
+    }
+    else
+    {
+      this.render_input(this._textarea.value);
+      this.render_string(matches.sort().join(", "));
+    }
+
   };
+
+  /**
+   * Return the longest common prefix of all the strings in the array
+   * of strings. For example ["foobar", "foobaz", "foomatic"] -> "foo"
+   */
+  this._longest_common_prefix = function(strings)
+  {
+    if (strings.length == 0)
+    {
+      return "";
+    }
+    else if (strings.length == 1)
+    {
+      return strings[0];
+    }
+    else
+    {
+      var sorted = strings.slice(0).sort();
+      var first = sorted.shift();
+      var last = sorted.pop();
+
+      for (var n=last.length; n; n--)
+      {
+        if (first.indexOf(last.slice(0,n)) == 0) { return last.slice(0, n); }
+      }
+    }
+    return "";
+  };
+
 
   this.init(id, name, container_class, html, default_handler);
 };
