@@ -28,10 +28,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     {
       var markup = "" +
         "<div class='padding'>" +
-          "<div class='console-output'><ul id='repl-lines'></ul></div>" +
-          "<div class='console-input'>" +
-            "<span class='commandline-prefix'>&gt;&gt;&gt; </span>" +
-            "<div><textarea handler='commrrandline' rows='1' title='hold shift to add a new line'></textarea></div>" +
+          "<div class='repl-output' handler='focus-repl'><ul id='repl-lines'></ul></div>" +
+          "<div class='repl-input'>" +
+            "<span class='repl-prefix'>&gt;&gt;&gt; </span>" +
+            "<div><textarea rows='1' title='hold shift to add a new line'></textarea></div>" +
           "</div>" +
         "</div>";
 
@@ -43,6 +43,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       this._textarea.addEventListener("keypress", this._handle_keypress.bind(this), false);
       this._textarea.value = this._current_input;
       this._container = container;
+      this._container.addEventListener("click", this._focus_input.bind(this), false);
     }
 
 
@@ -77,6 +78,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
           this.render_string("unknown");
       }
     }
+  };
+
+  this._focus_input = function()
+  {
+    this._textarea.focus();
   };
 
   this.render_object = function(rt_id, obj_id)
@@ -201,3 +207,5 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this.init(id, name, container_class, html, default_handler);
 };
 cls.ReplView.prototype = ViewBase;
+
+
