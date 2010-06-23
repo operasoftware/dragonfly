@@ -158,7 +158,6 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./lib/stp_0_wrapper.js"></script>
 <script src="./lib/http_interface.js"></script>
 
-
 <script src="lib/scope_1_1.js"></script>
 
 <script src="./lib/message_maps.js"/>
@@ -202,6 +201,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./build-application/build_http_logger_2_0.js"></script>
 <script src="./build-application/build_exec_2_0.js"></script>
 <script src="./build-application/build_ecmascript_debugger_5_0.js"></script>
+<script src="./build-application/build_ecmascript_debugger_6_0.js"></script>
 
 
 <script src="./debug/debug.js"/>
@@ -226,23 +226,39 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ecma-debugger/runtimes.js"/>
 <script src="./ecma-debugger/stop_at.js"/>
 <script src="./ecma-debugger/runtime_onload_handler.js"/>
-<script src="./ecma-debugger/ObjectDataBase.js"/>
-<script src="./ecma-debugger/frame_inspection_data.js"/>
-<script src="./ecma-debugger/object_inspection_data.js"/>
 <script src="./ecma-debugger/views-runtimes.js"/>
 <script src="./ecma-debugger/views.js"/>
 
+<script src="./ecma-debugger/object_inspection/inspection_base_data.js"/>
+<script src="./ecma-debugger/object_inspection/inspection_base_data_6_0.js"/>
+<script src="./ecma-debugger/object_inspection/frame_inspection_data.js"/>
+<script src="./ecma-debugger/object_inspection/frame_inspection_data_6_0.js"/>
+<script src="./ecma-debugger/object_inspection/object_inspection_data.js"/>
+<script src="./ecma-debugger/object_inspection/object_inspection_data_6_0.js"/>
+<script src="./ecma-debugger/object_inspection/object_and_frame_inspection_view.js"/>
+<script src="./ecma-debugger/object_inspection/object_and_frame_inspection_view_6_0.js"/>
+<script src="./ecma-debugger/object_inspection/node_inspection_data.js"/>
+<script src="./ecma-debugger/object_inspection/node_inspection_data_6_0.js"/>
+<script src="./ecma-debugger/object_inspection/node_inspection_view.js"/>
+<script src="./ecma-debugger/object_inspection/node_inspection_view_6_0.js"/>
+<script src="./ecma-debugger/object_inspection/templates_6_0.js"/>
+<script src="./ecma-debugger/object_inspection/actions_6_0.js"/>
+<script src="./ecma-debugger/object_inspection/fix_object_inspection_6_0.js"/>
+<script src="./ecma-debugger/view-commandline_6_0_test.js"/>
+
+
+
 <script src="./ecma-debugger/dom_data.js"/>
 <script src="./ecma-debugger/js_object_filters.js"/>
-<script src="./ecma-debugger/node_dom_attrs.js"/>
+
 <script src="./ecma-debugger/elementLayout.js"/>
 <script src="./ecma-debugger/js-source-view.js"/>
 <script src="./ecma-debugger/view-commandline.js"/>
-<script src="./ecma-debugger/views-inspection.js"/>
+
 <script src="./ecma-debugger/DOM_markup_style.js"/>
 <script src="./ecma-debugger/DOM_tree_style.js"/>
 <script src="./ecma-debugger/views-dom.js"/>
-<script src="./ecma-debugger/views-dom-attrs.js"/>
+
 <script src="./ecma-debugger/views-threads.js"/>
 <script src="./ecma-debugger/export_data.js"/>
 <script src="./ecma-debugger/action_handler.js"/>

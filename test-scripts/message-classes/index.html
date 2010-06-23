@@ -1,0 +1,78 @@
+<!doctype html>
+<script src="data.js"></script>
+<script src="EcmascriptDebugger.6.0.responses.InspectDom.js"></script>
+<script>
+// JSON pretty printer
+
+var pretty_print_json_object = (function()
+{
+  var _pretty_print_object = function(name, obj, level, print_list)
+  {
+    print_list.push(_get_indent_string(level) + _quote(name, ': ') + '{');
+    level++;
+    for (var key in obj)
+    {
+      if (typeof obj[key] == 'string' || typeof obj[key] == 'number')
+      {
+        print_list.push(_get_indent_string(level) + 
+            _quote(key) + ': ' + _quote(obj[key]) +',');
+      }
+    }
+    for (key in obj)
+    {
+      if (Object.prototype.toString.call(obj[key]) == '[object Object]')
+        _pretty_print_object(key, obj[key], level, print_list);
+    }
+    for (key in obj)
+    {
+      if (Object.prototype.toString.call(obj[key]) == '[object Array]')
+      {
+        if (obj[key].length)
+        {
+          print_list.push(_get_indent_string(level) + _quote(key) + ': [');
+          for (var i = 0; i < obj[key].length; i++)
+            _pretty_print_object(undefined, obj[key][i], level + 1, print_list);
+          print_list.push(_get_indent_string(level) + '],');
+        }
+        else
+          print_list.push(_get_indent_string(level) + _quote(key) + ': [],');
+      }
+    }
+    level--;
+    print_list.push(_get_indent_string(level) + '},');
+    return print_list;
+  };
+
+  var _get_indent_string = function(level, indent)
+  {
+    return new Array(level).join(indent || '  ');
+  };
+
+  var _quote = function(value, token)
+  {
+    return value !== undefined ? (/^\d+$/.test(value) ?  value : '"' + value + '"') + (token || '') : '';
+  };
+
+  return  function(map)
+  {
+    var pp_map = _pretty_print_object(undefined, map, 0, []);
+    return pp_map.join('\n');
+  };
+
+})();
+</script>
+<script>
+window.onload = function()
+{
+  window.NodeList = cls.EcmascriptDebugger["6.0"].NodeList;
+  var t = Date.now();
+  var obj = new NodeList(test_message_2);
+  alert((Date.now() - t) + " millsisecondes to convert scope mesage to object notation\n" +
+    "for a message with " + obj.nodeList.length + " nodes.");
+  var t = Date.now();
+  var obj = new NodeList(test_message);
+  alert((Date.now() - t) + " millsisecondes to convert scope mesage to object notation\n" +
+    "for a message with " + obj.nodeList.length + " nodes.");
+  document.body.innerHTML = "<pre>" + pretty_print_json_object(obj) + "</pre>";
+}
+</script>

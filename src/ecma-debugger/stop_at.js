@@ -1,11 +1,13 @@
 ﻿window.cls || (window.cls = {});
 cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
 cls.EcmascriptDebugger["5.0"] || (cls.EcmascriptDebugger["5.0"] = {});
+cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
 
 /**
   * @constructor 
   */
 
+cls.EcmascriptDebugger["6.0"].StopAt =
 cls.EcmascriptDebugger["5.0"].StopAt = function()
 {
 
@@ -58,6 +60,8 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
   var __controls_enabled = false;
 
   var __stopAtId = 1;
+
+  var __selected_frame_index = -1;
 
   var cur_inspection_type = '';
 
@@ -128,8 +132,41 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     return stopAt && stopAt['thread-id'] || '';
   }
 
+  /**
+    * To get the selected frame index.
+    * It can return -1 which means that no frame is selected.
+    * Be aware that -1 is not a valid value in e.g. the Eval command.
+    * 0 for frame index has an overloaded meaning: if the thread id is not 0 
+    * it means the top frame, otherwise it means no frame.
+    */
+  this.getSelectedFrameIndex = function()
+  {
+    return __selected_frame_index;
+  }
+
+  /**
+    * To get the selected frame.
+    * @returns null or an object with runtime_id, scope_id, thread_id and index.
+    */
+  this.getSelectedFrame = function()
+  {
+    if (__selected_frame_index > -1)
+    {
+      var frame = callstack[__selected_frame_index];
+      return (
+      {
+        runtime_id: frame.rt_id, 
+        scope_id: frame.scope_id, 
+        thread_id: stopAt['thread-id'],
+        index: __selected_frame_index
+      });
+    }
+    return null;
+  }
+
   var parseBacktrace = function(status, message, runtime_id, thread_id)
   {
+
     const
     FRAME_LIST = 0,
     // sub message BacktraceFrame 
@@ -142,10 +179,6 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     LINE_NUMBER = 6,
     // sub message ObjectValue 
     OBJECT_ID = 0,
-    IS_CALLABLE = 1,
-    IS_FUNCTION = 2,
-    TYPE = 3,
-    PROTOTYPE_ID = 4,
     NAME = 5;
 
     var _frames = message[FRAME_LIST], frame = null, i = 0;
@@ -350,11 +383,17 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     cur_inspection_type = msg.inspection_type;
   }
 
+  var onFrameSelected = function(msg)
+  {
+    __selected_frame_index = msg.frame_index;
+  }
+
   messages.addListener('active-inspection-type', onActiveInspectionType);
 
 
 
   messages.addListener('setting-changed', onSettingChange);
+  messages.addListener('frame-selected', onFrameSelected);
 
   this.bind = function(ecma_debugger)
   {

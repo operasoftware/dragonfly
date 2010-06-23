@@ -1,0 +1,38 @@
+<span class="comment">/** 
+ * Contains a list of enums.
+ * @since 1.1
+ */</span>
+message <span class="message">EnumList</span>
+{
+  <span class="comment">/** 
+   * Introspection result for a given enum.
+   * 
+   * An enum is defined as::
+   *   enum Type
+   *   {
+   *      TYPE1 = 1;
+   *      TYPE2 = 2;
+   *   }
+   * @since 1.1
+   */</span>
+  message <span class="message">Enum</span>
+  {
+    <span class="comment">/** 
+     * Unique ID for this enum.
+     */</span>
+    required <span class="number">uint32</span> id        = 1; 
+    required <span class="string">string</span> name      = 2; 
+    repeated <span class="message">Value </span> valueList = 3; 
+  }
+  <span class="comment">/** 
+   * Represents a value in an enum.
+   * e.g. TYPE1 = 1;
+   * TYPE1 would then be the name and 1 the number.
+   */</span>
+  message <span class="message">Value</span>
+  {
+    required <span class="string">string</span> name   = 1; 
+    required <span class="number">uint32</span> number = 2; 
+  }
+  repeated <span class="message">Enum</span> enumList = 1; 
+}

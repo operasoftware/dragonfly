@@ -1,0 +1,34 @@
+message <span class="message">HostInfo</span>
+{
+  message <span class="message">Service</span>
+  {
+    required <span class="string">string</span> name    = 1; 
+    <span class="comment">/** 
+     * This field contains the major and minor version number of the service.
+     * The first number is the major version, the second is the minor, and any additional
+     * numbers/strings are not of relevance but can be shown to the end-user if wanted.
+     * 
+     * The major version determines major changes (ie. compatibility breaks), while
+     * the minor version determines incremental changes (ie. backwards compatible).
+     * The client must check these two numbers to ensure it is able to communicate
+     * properly with the service. If the major version is different from the
+     * versions the client is compatible with, or the minor version is less than
+     * the required version, it must disconnect.
+     * 
+     * Let us say a client supports version 1.6 and up and also version 2.0 and up.
+     * It would do::
+     * 
+     *   if major == 1 and minor >= 6 or major == 2:
+     *     print "We support service version %d.%d" % (major, minor)
+     *   else:
+     *     print "We do not support service version %d.%d" % (major, minor)
+     */</span>
+    required <span class="string">string</span> version = 2; 
+  }
+  required <span class="number">uint32 </span> stpVersion      = 1; 
+  required <span class="string">string </span> coreVersion     = 2; 
+  required <span class="string">string </span> platform        = 3; 
+  required <span class="string">string </span> operatingSystem = 4; 
+  required <span class="string">string </span> userAgent       = 5; 
+  repeated <span class="message">Service</span> serviceList     = 6; 
+}

@@ -1,0 +1,4 @@
+message <span class="message">ClientInfo</span>
+{
+  required <span class="string">string</span> format = 1; 
+}

@@ -1,0 +1,18 @@
+message <span class="message">ServiceInfo</span>
+{
+  message <span class="message">CommandInfo</span>
+  {
+    required <span class="string">string</span> name       = 1; 
+    required <span class="number">uint32</span> number     = 2; 
+    required <span class="number">uint32</span> messageID  = 3; 
+    required <span class="number">uint32</span> responseID = 4; 
+  }
+  message <span class="message">EventInfo</span>
+  {
+    required <span class="string">string</span> name      = 1; 
+    required <span class="number">uint32</span> number    = 2; 
+    required <span class="number">uint32</span> messageID = 3; 
+  }
+  repeated <span class="message">CommandInfo</span> commandList = 1; 
+  repeated <span class="message">EventInfo  </span> eventList   = 2; 
+}
