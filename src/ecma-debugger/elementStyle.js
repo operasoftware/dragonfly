@@ -409,7 +409,6 @@ cls.ElementStyle = function()
           {
             if (literal_declaration_list && literal_declaration_list[style_dec[RULE_ID]])
             {
-              // TODO: set style_dec doesn't work?
               categories_data[CSS][i][STYLE_LIST][j] = self.sync_declarations(style_dec, literal_declaration_list[style_dec[RULE_ID]], is_inherited);
             }
             length = style_dec[INDEX_LIST].length;
@@ -676,6 +675,8 @@ cls.ElementStyle = function()
     }
     return null;
   };
+
+  // TODO: border-*-radius
 
   // TODO(hzr): move this when the CSS stuff is refactored
   this.shorthand_map = {
