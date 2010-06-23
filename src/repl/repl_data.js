@@ -48,8 +48,9 @@ cls.ReplData = function(view)
   /**
    * Pointer to object, like when evaluating an object without using dir etc.
    */
-  this.add_output_pobj = function(obj) {
-    this._add_entry("string", str);
+  this.add_output_pobj = function(rt, objid, rootname)
+  {
+    this._add_entry("pobj", {rt_id: rt, obj_id: objid, rootname: rootname});
   };
 
   this.add_output_exception = function(message, trace)

@@ -8,7 +8,6 @@ cls.ReplService = function(view, data)
 
   this._on_consolelog = function(msg)
   {
-    opera.postError("Got console log " + msg);
     var type = msg[1];
     /**
      * This value indicates which function was called:
@@ -50,15 +49,13 @@ cls.ReplService = function(view, data)
 
   this._handle_dir = function(msg)
   {
-    opera.postError(JSON.stringify(msg));
     var rt = msg[0];
     var obj = msg[2][0][1][0];
-    this._data.add_output_iobj(rt, obj, "fixme");
+     this._data.add_output_iobj(rt, obj, "fixme");
   };
 
   this._on_eval_done = function(status, msg, rt_id, thread_id, frame_id)
   {
-    //opera.postError("aa " + JSON.stringify(arguments.length));
     const STATUS = 0, TYPE = 1;
 
     if (msg[STATUS] == "unhandled-exception")
@@ -67,7 +64,7 @@ cls.ReplService = function(view, data)
     }
     else if (msg[TYPE] == "object")
     {
-      this._handle_object(msg);
+      this._handle_object(msg, rt_id);
     }
     else
     {
@@ -81,16 +78,13 @@ cls.ReplService = function(view, data)
     this._get_exception_info(rt_id, msg[3][0]);
   };
 
-  this._handle_object = function(msg)
+  this._handle_object = function(msg, rt_id)
   {
-    const TYPE = 1;
-    const OBJVALUE = 3;
+    const TYPE = 1, OBJVALUE = 3;
+    const OBJID = 0, CLASS = 4; FUNCTION = 5;
 
-    ["completed","object",null,[17,1,"object",9,"Window"]]
-
-    opera.postError(JSON.stringify(msg));
-    //this._data.add_object_pointer();
-    this._data.add_output_str(msg[2]);
+    var obj = msg[OBJVALUE];
+    this._data.add_output_pobj(rt_id, obj[OBJID], obj[FUNCTION] || obj[CLASS]);
   };
 
   this._handle_native = function(msg)

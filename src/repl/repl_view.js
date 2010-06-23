@@ -70,7 +70,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         case "iobj":
           this.render_inspectable_object(e.data);
           break;
-        default:
+        case "pobj":
+          this.render_pointer_to_object(e.data);
+          break;
+      default:
           this.render_string("unknown");
       }
     }
@@ -79,6 +82,18 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this.render_object = function(rt_id, obj_id)
   {
 
+  };
+
+  this.render_pointer_to_object = function(data)
+  {
+    this._add_line([
+                     'pre',
+                     data.rootname,
+                     'handler', 'inspect-object-link',
+                     'rt-id', data.rt_id.toString(),
+                     'obj-id', data.obj_id.toString()
+          ]
+    );
   };
 
   this.render_inspectable_object = function(data)
@@ -115,10 +130,19 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   };
 
-  this._add_line = function(elem)
+  this._add_line = function(elem_or_template)
   {
     var line = document.createElement("li");
-    line.appendChild(elem);
+
+    if (elem_or_template.nodeType === undefined)
+    {
+      line.render(elem_or_template);
+    }
+    else
+    {
+      line.appendChild(elem_or_template);
+    }
+
     this._linelist.appendChild(line);
     this._container.scrollTop = this._container.scrollHeight;
   };
@@ -156,7 +180,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._handle_completer = function(props)
   {
-    opera.postError("Props for " + props.scope + " : " + props.props);
     if (props.scope)
     {
       var localpart = props.input.slice(props.scope.length+1);
