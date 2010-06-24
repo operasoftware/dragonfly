@@ -188,12 +188,12 @@ function HostCommandTransformer() {
   };
 
   this.hostcommand_keys = function(token, tokenlist) {
-    var funstr = "function(o) {var arr=[]; for (key in o) {arr.push(key)}; return arr}";
+    var funstr = "(function(o) {var arr=[]; for (key in o) {arr.push(key)}; return arr})";
     token.value = funstr;
   };
 
   this.hostcommand_values = function(token, tokenlist) {
-    var funstr = "function(o) {var arr=[]; for (key in o) {arr.push(o[key])}; return arr}";
+    var funstr = "(function(o) {var arr=[]; for (key in o) {arr.push(o[key])}; return arr})";
     token.value = funstr;
   };
 
