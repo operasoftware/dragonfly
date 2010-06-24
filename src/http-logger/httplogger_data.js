@@ -45,7 +45,7 @@ cls.HttpLogger["2.0"].HTTPLoggerData = function()
     this.getRequestById = function(id)
     {
         if (id in requestMap) { return requestMap[id] }
-        else { return null }
+        else { return null; }
     };
 
     /**
@@ -189,4 +189,4 @@ cls.HttpLogger["2.0"].HTTPLoggerData = function()
 
 }
 
-messages.addListener("active-tab", function(msg) { HTTPLoggerData.onActiveTab(msg) });
+messages.addListener("active-tab", function(msg) { HTTPLoggerData.onActiveTab(msg); });

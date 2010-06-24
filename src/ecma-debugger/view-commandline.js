@@ -1,7 +1,7 @@
 ﻿cls = window.cls || (window.cls = {});
 
 /**
-  * @constructor 
+  * @constructor
   * @extends ViewBase
   */
 
@@ -494,9 +494,9 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     var match_cur = 0;
     var local_frame_index = 0;
     var _shift_key = false;
-   
-    
-    const 
+
+
+    const
     SCRIPT = "(function(path){var a = '', b= ''; for (a in path){b += a + '_,_';}; return b;})(%s)",
     KEY = 0,
     DEPTH = 3;
@@ -729,14 +729,17 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
 
   var onConsoleMessage = function(msg)
   {
-    if( settings['command_line'].get('show-ecma-errors') && msg['source'] == 'ecmascript')
+    const DESCRIPTION = 2,
+          CONTEXT = 4,
+          SOURCE = 5;
+    if( settings['command_line'].get('show-ecma-errors') && msg[SOURCE] == 'ecmascript')
     {
       cons_out_render_return_val
       (
         console_output_data[console_output_data.length] =
         {
           type: "return-value",
-          value: msg['context'] + '\n' + msg['description']
+          value: msg[CONTEXT] + '\n' + msg[DESCRIPTION]
         }
       );
       if(__container)
@@ -756,11 +759,9 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
   }
 
   messages.addListener('frame-selected', onFrameSelected);
-  messages.addListener('console-message', onConsoleMessage);
   messages.addListener('active-tab', checkToolbarVisibility);
-
+  window.services['console-logger'].add_listener("consolemessage", onConsoleMessage);
   this.init(id, name, container_class, html, default_handler);
-
 }
 
 cls.CommandLineView.create_ui_widgets = function()
@@ -837,7 +838,7 @@ cls.CndRtSelect = function(id, class_name)
   this.templateOptionList = function(select_obj)
   {
     // TODO this is a relict of protocol 3, needs cleanup
-    
+
     var active_window_id = runtimes.getActiveWindowId();
 
     if( active_window_id )
@@ -855,7 +856,7 @@ cls.CndRtSelect = function(id, class_name)
       }
       return templates.runtimes(_runtimes, 'runtime');
     }
-    
+
   }
 
   this.checkChange = function(target_ele)
@@ -870,6 +871,3 @@ cls.CndRtSelect = function(id, class_name)
 
   this.init(id, class_name);
 }
-
-
-

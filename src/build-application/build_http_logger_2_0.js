@@ -10,7 +10,7 @@ window.app.builders.HttpLogger["2.0"] = function(service)
   var service_interface = window.services['http-logger'];
   if(service_interface)
   {
-    (new namespace.ParseMessages()).bind(service_interface);
+    new namespace.HTTPLoggerService();
     window.HTTPLoggerData = new namespace.HTTPLoggerData();
     namespace.RequestListView.prototype = ViewBase;
     new namespace.RequestListView('request_list', ui_strings.M_VIEW_LABEL_REQUEST_LOG, 'scroll');

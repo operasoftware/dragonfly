@@ -41,7 +41,8 @@ cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
 
 */
 
-cls.EcmascriptDebugger["6.0"].InspectionBaseData = function()
+cls.EcmascriptDebugger["6.0"].InspectionBaseData = 
+function(rt_id, obj_id, identifier, _class, virtual_properties)
 {
 
   /* interface */
@@ -355,6 +356,9 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseData = function()
   {
     return this._obj_map[obj_id];
   }
+
+  this._init();
+  this.setObject(rt_id, obj_id, virtual_properties || null, identifier, _class)
 
 };
 

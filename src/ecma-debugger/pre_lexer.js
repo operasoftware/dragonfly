@@ -94,11 +94,18 @@
         {
           // ensure that a string never exceeds the current 
           // line if the newline is not escaped 
+          temp_count = 0;
           cr_cur = nl_cur = s_quote_cur;
           nl_cur = string.indexOf(NL, nl_cur + 1);
           cr_cur = string.indexOf(CR, cr_cur + 1);
           do
           {
+            if (temp_count && (nl_cur == s_quote_cur || cr_cur == s_quote_cur))
+            {
+              // newline was escaped
+              nl_cur = string.indexOf(NL, nl_cur + 1);
+              cr_cur = string.indexOf(CR, cr_cur + 1);
+            }
             s_quote_cur = string.indexOf(s_quote_val, s_quote_cur + 1);
             if (nl_cur > -1 && nl_cur < s_quote_cur)
             {
@@ -138,11 +145,18 @@
         {
           // ensure that a string never exceeds the current 
           // line if the newline is not escaped
+          temp_count = 0;
           cr_cur = nl_cur = d_quote_cur; 
           nl_cur = string.indexOf(NL, nl_cur + 1);
           cr_cur = string.indexOf(CR, cr_cur + 1);
           do
           {
+            if (temp_count && (nl_cur == d_quote_cur || cr_cur == d_quote_cur))
+            {
+              // newline was escaped
+              nl_cur = string.indexOf(NL, nl_cur + 1);
+              cr_cur = string.indexOf(CR, cr_cur + 1);
+            }
             d_quote_cur = string.indexOf(d_quote_val, d_quote_cur + 1);
             if (nl_cur > -1 && nl_cur < d_quote_cur)
             {

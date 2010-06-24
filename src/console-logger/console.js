@@ -14,44 +14,38 @@ cls.ConsoleLogger["2.0"] || (cls.ConsoleLogger["2.0"] = {});
  */
 cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
 {
-  var msgs = [];
-  var toggled = [];
-  var dragonfly_msgs = [];
-  var __views = [];
-  var __selected_rt_url = '';
-  var url_self = location.host + location.pathname;
-  var lastId = 0;
+  this._msgs = [];
+  this._toggled = [];
+  this._views = [];
+  this._selected_rt_url = '';
+  this._url_self = location.host + location.pathname;
+  this._lastid = 0;
 
-  var updateViews = function()
+  this._updateviews = function()
   {
     var view = '', i = 0;
-    for( ; view = __views[i]; i++)
+    for( ; view = this._views[i]; i++)
     {
-      views[view].update();
+      window.views[view].update();
     }
   };
 
-  this.addView = function(view_id)
+  this.addview = function(view_id)
   {
-    __views[__views.length] = view_id;
+    this._views.push(view_id);
   };
 
   /**
    * Adds a log entry to the data model.
    */
-  this.addEntry = function(entry)
+  this.addentry = function(entry)
   {
-    if( !entry.uri || entry.uri.indexOf(url_self) == -1 )
+    if( !entry.uri || entry.uri.indexOf(this._url_self) == -1 )
     {
-      msgs.push(entry);
-    }
-    else
-    {
-      dragonfly_msgs.push(entry);
+      this._msgs.push(entry);
     }
 
-    messages.post('console-message', entry);
-    updateViews();
+    this._updateviews();
   };
 
   /**
@@ -61,13 +55,13 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
   {
     if( source ) {
       var fun = function(e) {return e.source!=source;};
-      msgs = msgs.filter(fun);
+      this._msgs = this._msgs.filter(fun);
     }
     else {
-      msgs = [];
-      toggled = [];
+      this._msgs = [];
+      this._toggled = [];
     }
-    updateViews();
+    this._updateviews();
   };
 
   /**
@@ -76,13 +70,13 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
    * when items are expanded by default, items in the toggled list are not
    * expanded and vice-versa.
    */
-  this.toggleEntry = function(logid)
+  this.toggle_entry = function(logid)
   {
-    if (toggled.indexOf(logid) == -1) {
-      toggled.push(logid);
+    if (this._toggled.indexOf(logid) == -1) {
+      this._toggled.push(logid);
     }
     else {
-      toggled.splice(toggled.indexOf(logid), 1);
+      this._toggled.splice(this._toggled.indexOf(logid), 1);
     }
   };
 
@@ -90,66 +84,55 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
    * Return all the messages. If souce is set, return only messages for
    * that source.
    */
-  var getMessagesWithoutFilter = function(source)
+  this._get_msgs_without_filter = function(source)
   {
     if( source ) {
         var fun = function(e) {return e.source==source;};
-        return msgs.filter(fun);
+        return this._msgs.filter(fun);
     }
-    return msgs;
+    return this._msgs;
   };
 
   /**
    * Return all the messages whose uri is the same as __selected_rt_url.
    * If souce is set, return only messages for that source.
    */
-  var getMessagesWithFilter = function(source)
+  this._get_msgs_with_filter = function(source)
   {
-    var fun = function(e) { return e.uri == __selected_rt_url &&
+    var fun = function(e) { return e.uri == this._selected_rt_url &&
                             (!source || e.source==source);
     };
-  return msgs.filter(fun);
+  return this._msgs.filter(fun);
   };
 
-  this.getMessages = function(source, filter)
+  this.get_messages = function(source, filter)
   {
     return filter || settings.console.get('use-selected-runtime-as-filter')
-      ? getMessagesWithFilter(source, filter)
-      : getMessagesWithoutFilter(source);
+      ? this._get_msgs_with_filter(source, filter)
+      : this._get_msgs_without_filter(source);
   };
 
-  this.getMessage = function(id)
+  this.get_message = function(id)
   {
-    if (! msgs)
+    if (! this._msgs)
     {
       return null;
     }
     else
     {
-      var filterFun = function(e) {
+      var fun = function(e) {
         return e.id == id;
       };
-      return msgs.filter(filterFun)[0] || null;
+      return this._msgs.filter(fun)[0] || null;
     }
   };
 
-  this.clearDragonflyMessages = function()
+  this.get_toggled = function()
   {
-    dragonfly_msgs = [];
-    updateViews();
+    return this._toggled;
   };
 
-  this.getDragonflyMessages = function()
-  {
-    return dragonfly_msgs;
-  };
-
-  this.getToggled = function()
-  {
-    return toggled;
-  };
-
-  var onSettingChange = function(msg)
+  this._on_setting_change = function(msg)
   {
     if( msg.id == 'console' )
     {
@@ -157,11 +140,11 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
       {
         case 'expand-all-entries': {
           toggled = [];
-          updateViews();
+          this._updateviews();
           break;
         }
         case 'use-selected-runtime-as-filter': {
-          updateViews();
+          this._updateviews();
           break;
         }
         default: { // these settings are names of tabs to show.
@@ -170,11 +153,10 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
           topCell.disableTab(msg.key, is_disabled);
         }
       }
-
     }
   };
 
-  var extract_title = function(description)
+  this._extract_title = function(description)
   {
     var parts = description.split("\n");
     if (parts.length)
@@ -184,54 +166,134 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     return "";
   };
 
-  var extract_line = function(description)
+  this._extract_line = function(description)
   {
-    var
-    matcher = /[lL]ine (\d*)/,
-    linematch = matcher.exec(description);
-
+    var matcher = /[lL]ine (\d*)/;
+    var linematch = matcher.exec(description);
     return linematch ? linematch[1] : null;
   };
 
-  this.bind = function()
+  this._on_console_message = function(message)
   {
-    var self = this;
-    window.services['console-logger'].onConsoleMessage = function(status, message)
+    /*
+     const
+     WINDOW_ID = 0,
+     TIME = 1,
+     DESCRIPTION = 2,
+     URI = 3,
+     CONTEXT = 4,
+     SOURCE = 5,
+     SEVERITY = 6;
+     */
+    this.addentry({
+      id: "" + (++this._lastid),
+      window_id: message[0],
+      time: new Date(parseInt(message[1])),
+      description: message[2],
+      title: this._extract_title(message[2]),
+      line: this._extract_line(message[2]),
+      uri: message[3],
+      context: message[4],
+      source: message[5],
+      severity: message[6]
+    });
+
+  };
+
+  this._exctract_console_args = function(msg)
+  {
+    var args = msg[2];
+    var ret = [];
+
+    for (var n=0, e; e=args[n]; n++)
     {
-      /*
-      const
-      WINDOW_ID = 0,
-      TIME = 1,
-      DESCRIPTION = 2,
-      URI = 3,
-      CONTEXT = 4,
-      SOURCE = 5,
-      SEVERITY = 6;
-      */
-      self.addEntry({
-        id: "" + (++lastId),
-        window_id: message[0],
-        time: new Date(parseInt(message[1])),
-        description: message[2],
-        title: extract_title(message[2]),
-        line: extract_line(message[2]),
-        uri: message[3],
-        context: message[4],
-        source: message[5],
-        severity: message[6]
+      if (e.length == 1)
+      {
+        ret.push({type: "native", value: e[0]});
+      }
+      else
+      {
+        ret.push({obj_id: e[1][0],
+                  callable: !!e[1][1],
+                  type: e[1][2],
+                  proto_id: e[1][3],
+                  class_name: e[1][4]
         });
-    };
+      }
+    }
+    return ret;
   };
 
-  messages.addListener('setting-changed', onSettingChange);
-
-  var onRuntimeSelecetd = function(msg)
+  this._on_consolelog = function(msg)
   {
-    var rt = runtimes.getRuntime(msg.id);
-    __selected_rt_url = rt && rt.uri || '';
+    const TYPE = 1;
+
+    var severities = {
+      1: "information",
+      2: "debug",
+      3: "information",
+      4: "information",
+      5: "error",
+      6: "debug"
+    };
+
+    var method_names = {
+      1: "console.log",
+      2: "console.debug",
+      3: "console.info",
+      4: "console.error",
+      5: "console.assert"
+    };
+
+    if (! (msg[TYPE] in method_names)) {
+      return;
+    }
+
+    var args = this._exctract_console_args(msg);
+    var argstr = args.map(function(e) {
+                            if (e.type == "native") {
+                              return e.value;
+                            }
+                            else {
+                              return "[" + e.class_name + "]";
+                            }
+                          }).join(", ");
+
+    this.addentry({
+      id: "" + (++this._lastid),
+      window_id: "",
+      time: new Date(),
+      description: argstr,
+      title:  method_names[msg[TYPE]],
+      line: "" + msg[msg.length-1][1],
+      uri: "",
+      context: method_names[msg[TYPE]],
+      source: "ecmascript",
+      severity: severities[msg[TYPE]] || "information"
+    });
+
   };
 
-  messages.addListener('runtime-selected', onRuntimeSelecetd);
+  this._on_runtime_selected = function(msg)
+  {
+    var rt = window.runtimes.getRuntime(msg.id);
+    this._selected_rt_url = rt && rt.uri || '';
+  };
+
+  this.init = function()
+  {
+    window.messages.addListener('setting-changed', this._on_setting_change.bind(this));
+    window.messages.addListener('runtime-selected', this._on_runtime_selected.bind(this));
+
+    var logger = window.services['console-logger'];
+    logger.add_listener("consolemessage", this._on_console_message.bind(this));
+
+    var esdebug = window.services['ecmascript-debugger'];
+    esdebug.add_listener("consolelog", this._on_consolelog.bind(this));
+
+  };
+
+  this.init();
 };
 
 /**
@@ -252,23 +314,23 @@ var ErrorConsoleView = function(id, name, container_class, source)
   {
     // Switch on whether we have a table element allready. If we do, just
     // render the latest log entry
-    var entries = error_console_data.getMessages(source);
+    var entries = window.error_console_data.get_messages(source);
     topCell.statusbar.updateInfo(ui_strings.S_CONSOLE_TOOLBAR_MESSAGES_COUNT.replace("%s", entries.length));
     var expand_all = settings.console.get('expand-all-entries');
 
     // If there is no table, it's empty or expand state changed, render all
     if (! _table_ele || ! entries.length || expand_all != _expand_all_state)
     {
-        // The expand all state thingy is to make sure we handle switching
-        // between expand all/collapse all properly.
-        _expand_all_state = expand_all;
-        this.renderFull(container, entries, expand_all);
+      // The expand all state thingy is to make sure we handle switching
+      // between expand all/collapse all properly.
+      _expand_all_state = expand_all;
+      this.renderFull(container, entries, expand_all);
     }
     // but if not, check if there are new entries to show and just
     // update the list with them
     else if (_table_ele.childNodes.length-1 < entries.length)
     {
-        this.renderUpdate(entries.slice(-1), expand_all);
+      this.renderUpdate(entries.slice(-1), expand_all);
     }
   };
 
@@ -277,7 +339,7 @@ var ErrorConsoleView = function(id, name, container_class, source)
   {
     container.clearAndRender(templates.error_log_table(messages,
                                                        expand_all,
-                                                       error_console_data.getToggled(),
+                                                       window.error_console_data.get_toggled(),
                                                        this.id)
                              );
     _table_ele = container.getElementsByTagName("table")[0];
@@ -288,7 +350,7 @@ var ErrorConsoleView = function(id, name, container_class, source)
   {
     for (var n=0, cur; cur=entries[n]; n++)
     {
-      _table_ele.render(templates.error_log_row(cur, expandAll, error_console_data.getToggled(), this.id));
+      _table_ele.render(templates.error_log_row(cur, expandAll, window.error_console_data.get_toggled(), this.id));
     }
   };
 
@@ -299,7 +361,6 @@ var ErrorConsoleView = function(id, name, container_class, source)
 
   this.init(id, name, container_class );
 };
-
 ErrorConsoleView.prototype = ViewBase;
 
 ErrorConsoleView.roughViews =
@@ -374,7 +435,7 @@ ErrorConsoleView.roughViews.bindClearSource = function(source)
 {
   return function(event, target)
   {
-    error_console_data.clear(source);
+    window.error_console_data.clear(source);
   };
 };
 
@@ -384,7 +445,7 @@ ErrorConsoleView.roughViews.createViews = function()
   for( ; r_v = this[i]; i++)
   {
     new ErrorConsoleView(r_v.id, r_v.name, r_v.container_class, r_v.source);
-    error_console_data.addView(r_v.id);
+    window.error_console_data.addview(r_v.id);
     handler_id = 'clear-error-console' + ( r_v.source ? '-' + r_v.source : '' );
     new ToolbarConfig
     (
@@ -408,7 +469,7 @@ ErrorConsoleView.roughViews.createViews = function()
     (
       r_v.id,
       [
-        'console.expand-all-entries',
+        'console.expand-all-entries'
         //'console.use-selected-runtime-as-filter' // Not in use
       ]
     );
@@ -459,21 +520,21 @@ ErrorConsoleView.roughViews.createViews = function()
 
 eventHandlers.click['error-log-list-expand-collapse'] = function(event, target)
 {
-    var logid = target.getAttribute("data-logid");
-    error_console_data.toggleEntry(logid);
-    if (target.hasClass("expanded"))
-    {
-        target.parentNode.removeChild(target.nextSibling);
-        target.swapClass("expanded", "collapsed");
-    }
-    else
-    {
-        var entry = error_console_data.getMessage(logid);
-        var row = document.render(templates.error_log_detail_row(entry));
-        target.parentNode.insertAfter(row, target);
-        target.swapClass("collapsed", "expanded");
-        row.scrollSoftIntoContainerView();
-    }
+  var logid = target.getAttribute("data-logid");
+  window.error_console_data.toggle_entry(logid);
+  if (target.hasClass("expanded"))
+  {
+    target.parentNode.removeChild(target.nextSibling);
+    target.swapClass("expanded", "collapsed");
+  }
+  else
+  {
+    var entry = window.error_console_data.get_message(logid);
+    var row = document.render(templates.error_log_detail_row(entry));
+    target.parentNode.insertAfter(row, target);
+    target.swapClass("collapsed", "expanded");
+    row.scrollSoftIntoContainerView();
+  }
 };
 
 
@@ -552,5 +613,4 @@ cls.ConsoleLogger["2.0"].ConsoleView.create_ui_widgets = function()
       ]
     }
   );
-
 };

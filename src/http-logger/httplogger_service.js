@@ -12,9 +12,8 @@ cls.HttpLogger["2.0"] || (cls.HttpLogger["2.0"] = {});
   * @constructor
   * @extends ServiceBase
   */
-cls.HttpLogger["2.0"].ParseMessages = function(name)
+cls.HttpLogger["2.0"].HTTPLoggerService = function(name)
 {
-    var self = this;
     var view = "http_logger";
 
     /**
@@ -35,7 +34,7 @@ cls.HttpLogger["2.0"].ParseMessages = function(name)
      * }
      *
      */
-    this.parseRequest = function(status, message)
+    this.parseRequest = function(message)
     {
         /*
         const
@@ -48,7 +47,7 @@ cls.HttpLogger["2.0"].ParseMessages = function(name)
           "request-id": message[0],
           "window-id": message[1],
           time: Math.round(parseFloat(message[2])),
-          raw: message[3],
+          raw: message[3]
         });
     };
 
@@ -68,7 +67,7 @@ cls.HttpLogger["2.0"].ParseMessages = function(name)
      * }
      *
      */
-    this.parseResponse = function(status, message)
+    this.parseResponse = function(message)
     {
         /*
         const
@@ -240,20 +239,22 @@ cls.HttpLogger["2.0"].ParseMessages = function(name)
         return headers;
     };
 
-  this.bind = function(http_logger)
+  this.onRequest = function(msg)
   {
-    var 
-    parse_request = this.parseRequest.bind(this),
-    parse_response = self.parseResponse.bind(this);
-
-    http_logger.onRequest = function(status, msg)
-    {
-      window.HTTPLoggerData.addRequest(parse_request(status, msg));
-    };
-    http_logger.onResponse = function(status, msg)
-    {
-      window.HTTPLoggerData.addResponse(parse_response(status, msg));
-    };
+    window.HTTPLoggerData.addRequest(this.parseRequest(msg));
   };
-};
 
+  this.onResponse = function(msg)
+  {
+    window.HTTPLoggerData.addResponse(this.parseResponse(msg));
+  };
+
+  this.init = function()
+  {
+    var service = window.services['http-logger'];
+    service.addListener("request", this.onRequest.bind(this));
+    service.addListener("response", this.onResponse.bind(this));
+  };
+
+  this.init();
+};

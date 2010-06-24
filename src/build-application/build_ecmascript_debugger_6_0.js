@@ -16,20 +16,9 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
 
   if(service_interface)
   {
-    var InspectionBaseData = new namespace.InspectionBaseData();
-    [
-      ['FrameInspectionData', 'frame_inspection_data', ['inspection']],
-      ['ObjectInspectionData', 'object_inspection_data', ['inspection']],
-      ['NodeDOMAttrs', 'node_dom_attrs', ['dom_attrs']],
-    ].forEach(function(item)
-    {
-      namespace[item[NAME]].prototype = InspectionBaseData;
-      var obj = new namespace[item[NAME]](item[ID], item[VIEWS]);
-      window[obj.id] = obj;
-    });
 
-    namespace.FixObjectInspectionData.prototype = InspectionBaseData;
-    cls.InspectableJSObject = namespace.FixObjectInspectionData;
+
+    cls.InspectableJSObject = namespace.InspectionBaseData;
 
     window.runtimes = new namespace.Runtimes("6.0");
     window.runtimes.bind(service_interface);
