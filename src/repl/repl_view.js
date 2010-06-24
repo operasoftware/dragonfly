@@ -46,7 +46,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       this._container.addEventListener("click", this._focus_input.bind(this), false);
     }
 
-
     this._update();
   };
 
@@ -113,13 +112,16 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this.render_error = function(data)
   {
-    this.render_string(data.message + ".\n" + data.stacktrace);
+    this.render_string(data.message, data.stacktrace);
   };
 
-  this.render_string = function(str)
+  this.render_string = function()
   {
-    var ele = document.createTextNode(str);
-    this._add_line(ele);
+    for (var n=0; n<arguments.length; n++)
+    {
+      var ele = document.createTextNode(arguments[n]);
+      this._add_line(ele);
+    }
   };
 
   this.render_input = function(str)
