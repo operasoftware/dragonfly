@@ -84,11 +84,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._textarea.focus();
   };
 
-  this.render_object = function(rt_id, obj_id)
-  {
-
-  };
-
   this.render_pointer_to_object = function(data)
   {
     this._add_line([
@@ -97,8 +92,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
                      'handler', 'inspect-object-link',
                      'rt-id', data.rt_id.toString(),
                      'obj-id', data.obj_id.toString()
-          ]
-    );
+                   ]);
   };
 
   this.render_inspectable_object = function(data)
@@ -249,5 +243,3 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this.init(id, name, container_class, html, default_handler);
 };
 cls.ReplView.prototype = ViewBase;
-
-
