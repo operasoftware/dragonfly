@@ -126,6 +126,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <link rel="stylesheet" href="./ui-style/syntax-highlight.css"/>
 <link rel="stylesheet" href="./http-logger/httplogger_style.css"/>
 <link rel="stylesheet" href="./console-logger/consolelogger_style.css"/>
+<link rel="stylesheet" href="./repl/repl_style.css"/>
 
 <!-- This will turn off including of the UI strings if the exclude_uistrings var is set -->
 <!-- command concat_js off if exclude_uistrings -->
@@ -295,5 +296,11 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./http-logger/httplogger_resources.js"/>
 <script src="./http-logger/httplogger_templates.js"/>
 
+<script src="./repl/commandtransformer.js"/>
+<script src="./repl/propertyfinder.js"/>
+<script src="./repl/inspectableobject.js"/>
+<script src="./repl/repl_service.js"/>
+<script src="./repl/repl_view.js"/>
+<script src="./repl/repl_data.js"/>
 <body/>
 </viewport>
