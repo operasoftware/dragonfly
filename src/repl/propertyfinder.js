@@ -66,7 +66,9 @@ function PropertyFinder(rt_id) {
       {
         if(message[VALUE])
         {
-          ret.props = message[VALUE].split('_,_');
+          ret.props = message[VALUE].split('_,_').filter(
+                        function(e) { return e != ""; }
+          );
         }
       }
     }
