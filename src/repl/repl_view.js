@@ -15,10 +15,12 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._current_input = "";
   this._current_scroll = 0;
   this._container = null;
+  this._backlog_index = -1;
 
   this.ondestroy = function()
   {
     this._lastupdate = 0;
+    this._backlog_index = -1;
     this._current_input = this._textarea.value;
   };
 
@@ -151,19 +153,42 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._handle_input = function(evt)
   {
+
+//    opera.postError(evt.keyCode);
+
     if (evt.keyCode == 13)
     {
       var input = this._textarea.value;
       // trim leading and trailing whitespace
       input = input.replace(/^\s*/, "").replace(/$\s*/, "");
       this._textarea.value = "";
+      this._backlog_index = -1;
+      this._current_input = "";
+
+      if (input == "") {
+        this.render_input("");
+        return;
+      }
+
       this._service.handle_input(input);
-    }
-    else if (evt.keyCode == 9)
+   }
+    else if (evt.keyCode == 38 || evt.keyCode == 40) // up / down
     {
-
+      evt.preventDefault();
+      this._handle_backlog(evt.keyCode == 38 ? 1 : -1);
     }
-
+    else if ( evt.keyCode == 82 && evt.ctrlKey) // ctrl-r
+    {
+      opera.postError("reverse search");
+    }
+    else if (evt.keyCode == 75 && evt.ctrlKey) // ctrk-k
+    {
+      opera.postError("kill to end of line");
+    }
+    else if (evt.keyCode == 87 && evt.ctrlKey) // ctrk-w
+    {
+      opera.postError("reverse kill word");
+    }
 
   }.bind(this);
 
@@ -175,6 +200,35 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       evt.preventDefault();
       var partial = new PropertyFinder();
       partial.find_props(this._handle_completer.bind(this), this._textarea.value);
+    }
+  };
+
+  this._handle_backlog = function(delta)
+  {
+    this._set_input_from_backlog(this._backlog_index + delta);
+  };
+
+  this._set_input_from_backlog = function(index)
+  {
+    if (index <= -1)
+    {
+      this._backlog_index = -1;
+      this._textarea.value = this._current_input;
+      return;
+    }
+
+    if (this._backlog_index == -1)
+    {
+      this._current_input = this._textarea.value;
+    }
+
+    var log = this._data.get_typed_log();
+    this._backlog_index = Math.min(index, log.length-1);
+    var entry = log[this._backlog_index];
+
+    if (entry != undefined)
+    {
+      this._textarea.value = entry;
     }
   };
 

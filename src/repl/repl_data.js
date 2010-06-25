@@ -58,11 +58,40 @@ cls.ReplData = function(view)
     this._add_entry("exception", {message:message, stacktrace:trace});
   };
 
-  this.get_log = function(after) {
+  /**
+   * Return a n array of entry objects for the repl input/output history.
+   */
+  this.get_log = function(after)
+  {
     after = after || 0;
     var filterfun = function(e) { return e.time > after; };
     return this._repllog.filter(filterfun);
   };
 
+  /**
+   * Return an array of strings that have been typed into to repl.
+   * Optionally limit to entries later than the after arg.
+   * Adjacent duplicates are removed, so [1,2,3,3,2] would become
+   * [1,2,3,2]
+   */
+  this.get_typed_log = function(after)
+  {
+    var log = this.get_log(after).filter(function(e) {
+                                        return e.type == "input";
+                                      }).map(function(e) {
+                                        return e.data;
+                                      }).reverse();
+
+    if (log.length)
+    {
+      for (var n=1; n<log.length; n++)
+      {
+        if (log[n] == log[n-1]) {
+          log.splice(n--, 1); // yes really. roll back n so we don't skip an item.
+        }
+      }
+    }
+    return log;
+  };
 
 };
