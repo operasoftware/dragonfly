@@ -158,6 +158,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
     if (evt.keyCode == 13)
     {
+      evt.preventDefault();
       var input = this._textarea.value;
       // trim leading and trailing whitespace
       input = input.replace(/^\s*/, "").replace(/$\s*/, "");
@@ -200,6 +201,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       evt.preventDefault();
       var partial = new PropertyFinder();
       partial.find_props(this._handle_completer.bind(this), this._textarea.value);
+    }
+    else if (evt.keyCode == 13)
+    {
+      evt.preventDefault();
     }
   };
 
