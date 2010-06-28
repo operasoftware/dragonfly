@@ -3,6 +3,7 @@ window.cls = window.cls || (window.cls = {});
 cls.ReplData = function(view)
 {
   this._repllog = [];
+  this._typed_history = [];
   this._view = view;
 
   this._add_entry = function(type, data)
@@ -27,6 +28,7 @@ cls.ReplData = function(view)
    */
   this.add_input = function(str)
   {
+    this._add_typed_history(str);
     this._add_entry("input", str);
   };
 
@@ -70,28 +72,20 @@ cls.ReplData = function(view)
 
   /**
    * Return an array of strings that have been typed into to repl.
-   * Optionally limit to entries later than the after arg.
    * Adjacent duplicates are removed, so [1,2,3,3,2] would become
    * [1,2,3,2]
    */
-  this.get_typed_log = function(after)
+  this.get_typed_history = function()
   {
-    var log = this.get_log(after).filter(function(e) {
-                                        return e.type == "input";
-                                      }).map(function(e) {
-                                        return e.data;
-                                      }).reverse();
+    return this._typed_history;
+  };
 
-    if (log.length)
+  this._add_typed_history = function(str)
+  {
+    if (this._typed_history[0] != str)
     {
-      for (var n=1; n<log.length; n++)
-      {
-        if (log[n] == log[n-1]) {
-          log.splice(n--, 1); // yes really. roll back n so we don't skip an item.
-        }
-      }
+      this._typed_history.unshift(str);
     }
-    return log;
   };
 
 };

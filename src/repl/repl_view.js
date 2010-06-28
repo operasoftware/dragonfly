@@ -227,7 +227,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       this._current_input = this._textarea.value;
     }
 
-    var log = this._data.get_typed_log();
+    var log = this._data.get_typed_history();
     this._backlog_index = Math.min(index, log.length-1);
     var entry = log[this._backlog_index];
 
