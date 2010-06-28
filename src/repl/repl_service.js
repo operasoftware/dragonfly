@@ -26,6 +26,8 @@ cls.ReplService = function(view, data)
      * 12 - console.count
      */
 
+
+
     switch(type)
     {
       case 1:
@@ -41,6 +43,21 @@ cls.ReplService = function(view, data)
         break;
     }
   };
+
+  this._on_consoletime = function(msg)
+  {
+    const TITLE = 1;
+    this._data.add_output_str("Started: " + msg[TITLE]);
+  };
+
+  this._on_consoletimeend = function(msg)
+  {
+    const TITLE = 1, DURATION = 2;
+    var dur = msg[DURATION];
+    var ms = Math.round(dur / 1000);
+    this._data.add_output_str(msg[TITLE] + ": " + ms + "ms (" + dur + "µsec)" );
+  };
+
 
   this._handle_log = function(msg)
   {
@@ -156,6 +173,8 @@ cls.ReplService = function(view, data)
     this._tagman = window.tagManager; //TagManager.getInstance(); <- fixme: use singleton
     this._service = window.services['ecmascript-debugger'];
     this._service.addListener("consolelog", this._on_consolelog.bind(this));
+    this._service.addListener("consoletime", this._on_consoletime.bind(this));
+    this._service.addListener("consoletimeend", this._on_consoletimeend.bind(this));
   };
 
   this.init(view, data);
