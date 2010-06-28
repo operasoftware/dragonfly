@@ -1,0 +1,35 @@
+
+
+
+/* command line */
+
+.repl-output,
+.repl-output pre,
+.repl-input, 
+.repl-input textarea {
+  line-height:16px;
+  font-size:14px !important;
+  font-family:monospace;
+  padding:0;
+  margin:0;
+}
+
+.repl-output pre {
+  white-space: pre-wrap;
+}
+
+.repl-input span {
+  float:left;
+}
+
+.repl-input span + div {
+  margin-left: 4ex;
+}
+  
+.repl-input textarea {
+  width:100%;
+  border:0px solid;
+  margin:0;
+  padding:0;
+  overflow:hidden;
+}
