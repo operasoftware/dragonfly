@@ -58,6 +58,15 @@ cls.ReplService = function(view, data)
     this._data.add_output_str(msg[TITLE] + ": " + ms + "ms (" + dur + "µsec)" );
   };
 
+  this._on_consoleprofile = function(msg)
+  {
+    this._data.add_output_str("console.profile called. Profiling is not yet supported.");
+  };
+
+  this._on_consoleprofileend = function(msg)
+  {
+    this._data.add_output_str("console.profileEnd called. Profiling is not yet supported.");
+  };
 
   this._handle_log = function(msg)
   {
@@ -175,6 +184,9 @@ cls.ReplService = function(view, data)
     this._service.addListener("consolelog", this._on_consolelog.bind(this));
     this._service.addListener("consoletime", this._on_consoletime.bind(this));
     this._service.addListener("consoletimeend", this._on_consoletimeend.bind(this));
+    this._service.addListener("consoleprofile", this._on_consoleprofile.bind(this));
+    this._service.addListener("consoleprofileend", this._on_consoleprofileend.bind(this));
+
   };
 
   this.init(view, data);
