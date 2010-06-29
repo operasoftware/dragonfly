@@ -26,7 +26,8 @@
  * useful if a handler inserts something that is itself a host command.
  *
  */
-function HostCommandTransformer() {
+window.cls = window.cls || {};
+cls.HostCommandTransformer = function() {
   this.parser = null;
   this.commandTable = {};
 
@@ -195,6 +196,12 @@ function HostCommandTransformer() {
   this.hostcommand_values = function(token, tokenlist) {
     var funstr = "(function(o) {var arr=[]; for (key in o) {arr.push(o[key])}; return arr})";
     token.value = funstr;
+  };
+
+  this.replcommand_clear = function(token, tokenlist, data)
+  {
+    data.clear_log();
+    return true;
   };
 
   this.init();

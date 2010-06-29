@@ -7,11 +7,11 @@
     <script src="../src/ecma-debugger/syntax.js"></script>
     <script src="../src/ecma-debugger/formatter.js"></script>
     <script src="../src/lib/json.js"></script>
-    <script src="../src/console/commandtransformer.js"></script>
+    <script src="../src/repl/commandtransformer.js"></script>
 
 
 <script>
-window.transformer = new HostCommandTransformer();
+window.transformer = new cls.HostCommandTransformer();
   
 function transform(s) {
     return window.transformer.transform(s);
