@@ -6,7 +6,7 @@ window.cls = window.cls || (window.cls = {});
  */
 
 cls.ReplView = function(id, name, container_class, html, default_handler) {
-  this._resolver = new PropertyFinder();
+  this._resolver = new cls.PropertyFinder();
   this._data = new cls.ReplData(this);
   this._service = new cls.ReplService(this, this._data);
   this._linelist = null;
@@ -199,8 +199,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     if (evt.keyCode == 9)
     {
       evt.preventDefault();
-      var partial = new PropertyFinder();
-      partial.find_props(this._handle_completer.bind(this), this._textarea.value);
+      this._resolver.find_props(this._handle_completer.bind(this), this._textarea.value);
     }
     else if (evt.keyCode == 13)
     {
@@ -239,14 +238,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._handle_completer = function(props)
   {
-    if (props.scope)
-    {
-      var localpart = props.input.slice(props.scope.length+1);
-    }
-    else
-    {
-      var localpart = props.input;
-    }
+    var localpart = props.identifier;
 
     var matches = props.props.filter(function(e) {
       return e.indexOf(localpart) == 0;

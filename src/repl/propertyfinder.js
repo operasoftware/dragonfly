@@ -4,15 +4,24 @@
  * Singleton. Every instanciation will return the same instance. Contains
  * no state apart from the caching, which should be shared.
  */
-function PropertyFinder(rt_id) {
-  if (window.PropertyFinder.instance) {
+
+window.cls = window.cls || {};
+window.cls.PropertyFinder = function(rt_id) {
+  if (window.cls.PropertyFinder.instance) {
     return window.PropertyFinder.instance;
   }
   else {
-    window.PropertyFinder.instance = this;
+    window.cls.PropertyFinder.instance = this;
   }
 
-  this._service = services['ecmascript-debugger'];
+  // this cond is here so we can instanciate the class even without running
+  // with scope. Means we can run tests on functions that don't require
+  // scope.
+  if (window.services)
+  {
+    this._service = window.services['ecmascript-debugger'];
+  }
+
   this._cache = {};
 
   /**
@@ -23,9 +32,9 @@ function PropertyFinder(rt_id) {
    * override this method
    *
    */
-  this._requestEval = function(callback, js, scope, input, rt_id, thread_id, frame_id) {
+  this._requestEval = function(callback, js, scope, identifier, input, rt_id, thread_id, frame_id) {
     var tag = tagManager.set_callback(this, this._onRequestEval,
-                                      [callback, scope, input, rt_id, thread_id, frame_id]);
+                                      [callback, scope, identifier, input, rt_id, thread_id, frame_id]);
 
     this._service.requestEval(
       tag, [rt_id, thread_id, frame_id, js]
@@ -38,9 +47,41 @@ function PropertyFinder(rt_id) {
    * window.bleh.meh -> window.bleh
    * phlebotinum -> this
    * phlebotinum. -> phlebotinum
+   * foo(bar.bleh -> bar
+   * foo[window -> window
+   * foo[bar].a -> foo[bar]
    */
-  this._find_input_scope = function(input)
+  this._find_input_parts = function(input)
   {
+    var last_bracket = input.lastIndexOf('[');
+    var last_brace = input.lastIndexOf('(');
+
+    last_brace = input.lastIndexOf(')') <= last_brace ? last_brace : -1;
+    last_bracket = input.lastIndexOf(']') <= last_bracket ? last_bracket : -1;
+    input = input.slice( Math.max(
+                  last_brace,
+                  last_bracket,
+                  input.lastIndexOf('=') ) + 1
+                ).replace(/^ +/, '').replace(/ $/, '');
+
+    var last_dot = input.lastIndexOf('.');
+    var new_path = '';
+    var new_id = '';
+    var ret = '';
+
+    if(last_dot > -1)
+    {
+      new_path = input.slice(0, last_dot);
+      new_id = input.slice(last_dot + 1);
+    }
+    else
+    {
+      new_id = input;
+    }
+
+    return {scope: new_path, identifier: new_id};
+
+//    return
     var scope = "";
     var index = input.lastIndexOf(".");
 
@@ -51,10 +92,12 @@ function PropertyFinder(rt_id) {
     return scope;
   };
 
-  this._onRequestEval = function(status, message, callback, scope, input, rt_id, thread_id, frame_id) {
+  this._onRequestEval = function(status, message, callback, scope, identifier, input, rt_id, thread_id, frame_id) {
     var ret = {
       props: [],
       scope: scope,
+      input: input,
+      identifier: identifier,
       rt_id: rt_id,
       thread_id: thread_id,
       frame_id: frame_id
@@ -74,7 +117,6 @@ function PropertyFinder(rt_id) {
     }
 
     this._cache_put(ret);
-
     ret.input = input;
     callback(ret);
   };
@@ -88,15 +130,16 @@ function PropertyFinder(rt_id) {
     thread_id = thread_id || 0;
     rt_id = rt_id || runtimes.getSelectedRuntimeId();
     frame_id = frame_id || 0;
-    var scope = this._find_input_scope(input);
+    var parts = this._find_input_parts(input);
 
-    var props = this._cache_get(scope, rt_id, thread_id, frame_id);
+    var props = this._cache_get(parts.scope, rt_id, thread_id, frame_id);
     if (props) {
       props.input = input;
+      props.identifier = parts.identifier;
       callback(props);
     }
     else {
-      this._get_scope_contents(callback, scope, input, rt_id, thread_id, frame_id);
+      this._get_scope_contents(callback, parts.scope, parts.identifier, input, rt_id, thread_id, frame_id);
     }
   };
 
@@ -125,12 +168,12 @@ function PropertyFinder(rt_id) {
     return this._cache[key];
   };
 
-  this._get_scope_contents = function(callback, scope, input, rt_id, thread_id, frame_id) {
+  this._get_scope_contents = function(callback, scope, identifier, input, rt_id, thread_id, frame_id) {
     var script = "(function(){var a = '', b= ''; for( a in %s ){ b += a + '_,_'; }; return b;})()";
     var eval_str = script.replace("%s", scope||"this");
 
     if (frame_id !== undefined) {
-      this._requestEval(callback, eval_str, scope, input, rt_id, thread_id, frame_id);
+      this._requestEval(callback, eval_str, scope, identifier, input, rt_id, thread_id, frame_id);
     }
   };
 
