@@ -169,7 +169,7 @@ cls.ReplService = function(view, data)
   {
     this._view = view;
     this._data = data;
-    this._transformer = new HostCommandTransformer();
+    this._transformer = new cls.HostCommandTransformer();
     this._tagman = window.tagManager; //TagManager.getInstance(); <- fixme: use singleton
     this._service = window.services['ecmascript-debugger'];
     this._service.addListener("consolelog", this._on_consolelog.bind(this));
