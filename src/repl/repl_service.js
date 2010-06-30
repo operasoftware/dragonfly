@@ -8,6 +8,7 @@ cls.ReplService = function(view, data)
 
   this._on_consolelog = function(msg)
   {
+    var rt_id = msg[0];
     var type = msg[1];
     /**
      * This value indicates which function was called:
@@ -26,8 +27,6 @@ cls.ReplService = function(view, data)
      * 12 - console.count
      */
 
-
-
     switch(type)
     {
       case 1:
@@ -36,10 +35,10 @@ cls.ReplService = function(view, data)
       case 4:
       case 5:
       case 6:
-        this._handle_log(msg);
+      this._handle_log(msg, rt_id);
         break;
       case 7:
-        this._handle_dir(msg);
+        this._handle_dir(msg, rt_id);
         break;
     }
   };
@@ -68,16 +67,53 @@ cls.ReplService = function(view, data)
     this._data.add_output_str("console.profileEnd called. Profiling is not yet supported.");
   };
 
-  this._handle_log = function(msg)
+  this._handle_log = function(msg, rt_id)
   {
+    const VALUELIST = 2;
+    //opera.postError(JSON.stringify(msg));
+    var values = this._parse_value_list(msg[VALUELIST]);
+  //  opera.postError(JSON.stringify(values));
+
+
+//    this._data.add_output_objectlist(rt)
 
   };
 
-  this._handle_dir = function(msg)
+  this._parse_value = function(value, rt_id)
   {
-    var rt = msg[0];
-    var obj = msg[2][0][1][0];
-     this._data.add_output_iobj(rt, obj, "fixme");
+      var ret = {
+        type: value[0] === null ? "object" : "native"
+      };
+
+      if (ret.type == "object") {
+        var object = value[1];
+        ret.obj_id = object[0];
+        ret.type = object[2];
+        ret.name = object[4] || object[5];
+        ret.rt_id = rt_id;
+      }
+      else
+      {
+        ret.value = value[0];
+      }
+      return ret;
+  };
+
+  this._parse_value_list = function(valuelist, rt_id)
+  {
+    var pv = this._parse_value;
+    var fun = function(v) { return pv(v, rt_id); }; // partial invocation wrapping rt_id
+    return valuelist.map(fun);
+  };
+
+  this._handle_dir = function(msg, rt_id)
+  {
+    const VALUELIST = 2;
+    var values = this._parse_value_list(msg[VALUELIST], rt_id);
+    for (var n=0, e; e=values[n]; n++)
+    {
+      this._data.add_output_iobj(rt_id, e.obj_id, e.name);
+    }
   };
 
   this._on_eval_done = function(status, msg, rt_id, thread_id, frame_id)
