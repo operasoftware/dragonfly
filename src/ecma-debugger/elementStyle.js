@@ -453,7 +453,6 @@ cls.ElementStyle = function()
     synced_declarations[DISABLED_LIST] = [];
 
     // Always set this to 1 (applied), we will manually check later if it's overwritten or not
-    // TODO: never set this to 0 in the first place?
     for (var prop in literal_declarations)
     {
       literal_declarations[prop][STATUS] = 1;
@@ -510,14 +509,15 @@ cls.ElementStyle = function()
       synced_declarations[DISABLED_LIST][i] = 0;
 
       // Remove any property that the user hasn't added literally
-      if (!(prop in literal_declarations) && (this.reverse_shorthand_map[prop] in literal_declarations))
-      {
-        synced_declarations[INDEX_LIST   ].splice(i, 1);
-        synced_declarations[VALUE_LIST   ].splice(i, 1);
-        synced_declarations[PRIORITY_LIST].splice(i, 1);
-        synced_declarations[STATUS_LIST  ].splice(i, 1);
-        synced_declarations[DISABLED_LIST].splice(i, 1);
-      }
+      // XXX: This is commented out until we preserve shorthands
+      //if (!(prop in literal_declarations) && (this.reverse_shorthand_map[prop] in literal_declarations))
+      //{
+      //  synced_declarations[INDEX_LIST   ].splice(i, 1);
+      //  synced_declarations[VALUE_LIST   ].splice(i, 1);
+      //  synced_declarations[PRIORITY_LIST].splice(i, 1);
+      //  synced_declarations[STATUS_LIST  ].splice(i, 1);
+      //  synced_declarations[DISABLED_LIST].splice(i, 1);
+      //}
     }
 
     // ... then the literal values
@@ -619,17 +619,27 @@ cls.ElementStyle = function()
       categories_data[CSS].rt_id = categories_data[COMP_STYLE].rt_id = rt_id;
       categories_data[IS_VALID] = true;
 
-      // TODO(hzr): update overwritten value on removal of property
-
       if (declaration)
       {
-        var index = index_list.indexOf(window.css_index_map.indexOf(declaration[0]));
-        var decl_is_valid = index != -1 || this.shorthand_map[declaration[0]]; // If the property exists in the message, it was valid
+        // XXX: This is commented out until we preserve shorthands
+        //var index = index_list.indexOf(window.css_index_map.indexOf(declaration[0]));
+        //var decl_is_valid = index != -1 || this.shorthand_map[declaration[0]]; // If the property exists in the message, it was valid
 
-        if (decl_is_valid)
+        //if (decl_is_valid)
+        //{
+        //  this.literal_declaration_list[rule_id][declaration[0]] =
+        //    [declaration[1], declaration[2], status, declaration[3]];
+        //}
+
+        var len = rule[PROP_LIST].length;
+        for (var i = 0; i < len; i++)
         {
-          this.literal_declaration_list[rule_id][declaration[0]] =
-            [declaration[1], declaration[2], status, declaration[3]];
+          var prop = window.css_index_map[rule[PROP_LIST][i]];
+          if (!(prop in this.literal_declaration_list[rule_id]))
+          {
+            this.literal_declaration_list[rule_id][prop] =
+              [rule[VAL_LIST][i], rule[PRIORITY_LIST][i], rule[OVERWRITTEN_LIST][i], 0];
+          }
         }
       }
     }
@@ -653,11 +663,14 @@ cls.ElementStyle = function()
     this.literal_declaration_list[rule_id] = {};
 
     var rule = this.get_rule_by_id(rule_id);
-    var len = rule[PROP_LIST].length;
-    for (var i = 0; i < len; i++)
+    if (rule)
     {
-      this.literal_declaration_list[rule_id][window.css_index_map[rule[PROP_LIST][i]]] =
-        [rule[VAL_LIST][i], rule[PRIORITY_LIST][i], rule[OVERWRITTEN_LIST][i], 0];
+      var len = rule[PROP_LIST].length;
+      for (var i = 0; i < len; i++)
+      {
+        this.literal_declaration_list[rule_id][window.css_index_map[rule[PROP_LIST][i]]] =
+          [rule[VAL_LIST][i], rule[PRIORITY_LIST][i], rule[OVERWRITTEN_LIST][i], 0];
+      }
     }
   };
 

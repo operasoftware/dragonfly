@@ -569,7 +569,7 @@ cls.Stylesheets = function()
 
   this.create_declaration = function create_declaration(prop, value, is_important, rule_id, is_disabled, origin)
   {
-    return (origin != ORIGIN_USER_AGENT ? "<input type='checkbox'" +
+    return (!(origin == ORIGIN_USER_AGENT || rule_id == undefined) ? "<input type='checkbox'" +
                  " title='" + (!is_disabled ? "Enable" : "Disable") + "'" +
                  " class='enable-disable'" +
                  (!is_disabled ? " checked='checked'" : "") +
