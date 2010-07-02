@@ -14,8 +14,13 @@
   margin:0;
 }
 
-.repl-output pre {
-  white-space: pre-wrap;
+.repl-output .repl-pobj {
+    color: blue;
+}
+
+.repl-output .repl-pobj:hover {
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 .repl-input span {

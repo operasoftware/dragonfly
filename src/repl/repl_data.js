@@ -43,16 +43,24 @@ cls.ReplData = function(view)
   /**
    * Inspectableobject, as used by dir() and dirxml()
    */
-  this.add_output_iobj = function(rt, objid, rootname) {
-    this._add_entry("iobj", {rt_id: rt, obj_id: objid, rootname: rootname});
+  this.add_output_iobj = function(rt, objid, name) {
+    this._add_entry("iobj", {rt_id: rt, obj_id: objid, name: name});
   };
 
   /**
    * Pointer to object, like when evaluating an object without using dir etc.
    */
-  this.add_output_pobj = function(rt, objid, rootname)
+  this.add_output_pobj = function(rt, objid, name)
   {
-    this._add_entry("pobj", {rt_id: rt, obj_id: objid, rootname: rootname});
+    this._add_entry("pobj", {rt_id: rt, obj_id: objid, name: name});
+  };
+
+  this.add_output_valuelist = function(rt, values)
+  {
+    values.forEach(function(e) {
+      e.rt_id = rt;
+    });
+    this._add_entry("valuelist", values);
   };
 
   this.add_output_exception = function(message, trace)

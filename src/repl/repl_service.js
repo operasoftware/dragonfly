@@ -35,7 +35,7 @@ cls.ReplService = function(view, data)
       case 4:
       case 5:
       case 6:
-      this._handle_log(msg, rt_id);
+        this._handle_log(msg, rt_id);
         break;
       case 7:
         this._handle_dir(msg, rt_id);
@@ -70,13 +70,8 @@ cls.ReplService = function(view, data)
   this._handle_log = function(msg, rt_id)
   {
     const VALUELIST = 2;
-    //opera.postError(JSON.stringify(msg));
     var values = this._parse_value_list(msg[VALUELIST]);
-  //  opera.postError(JSON.stringify(values));
-
-
-//    this._data.add_output_objectlist(rt)
-
+    this._data.add_output_valuelist(rt_id, values);
   };
 
   this._parse_value = function(value, rt_id)

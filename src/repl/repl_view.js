@@ -75,6 +75,9 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         case "pobj":
           this.render_pointer_to_object(e.data);
           break;
+        case "valuelist":
+          this.render_value_list(e.data);
+          break;
       default:
           this.render_string("unknown");
       }
@@ -88,18 +91,12 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this.render_pointer_to_object = function(data)
   {
-    this._add_line([
-                     'pre',
-                     data.rootname,
-                     'handler', 'inspect-object-link',
-                     'rt-id', data.rt_id.toString(),
-                     'obj-id', data.obj_id.toString()
-                   ]);
+    this._add_line(templates.repl_output_pobj(data));
   };
 
   this.render_inspectable_object = function(data)
   {
-    var rt_id = data.rt_id, obj_id=data.obj_id, name=data.rootname;
+    var rt_id = data.rt_id, obj_id=data.obj_id, name=data.name;
     var v = new cls.InspectableObjectView(rt_id, obj_id, name);
     var div = document.createElement("div");
     div.render(v.render()); // fixme: superflous div.
@@ -111,12 +108,23 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this.render_string(data.message, data.stacktrace);
   };
 
+  this.render_value_list = function(values) {
+    var tpl = values.map(templates.repl_output_native_or_pobj);
+    var separated = [];
+    separated.push(tpl.shift());
+    while (tpl.length)
+    {
+      separated.push(["span", ", "]);
+      separated.push(tpl.shift());
+    }
+    this._add_line(separated);
+  };
+
   this.render_string = function()
   {
     for (var n=0; n<arguments.length; n++)
     {
-      var ele = document.createTextNode(arguments[n]);
-      this._add_line(ele);
+      this._add_line(templates.repl_output_native(arguments[n]));
     }
   };
 
@@ -128,10 +136,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this.set_current_input = function(str)
   {
     this._textarea.textContent = str;
-  };
-
-  this.display_completion = function() {
-
   };
 
   this._add_line = function(elem_or_template)

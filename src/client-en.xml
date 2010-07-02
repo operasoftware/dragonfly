@@ -302,5 +302,6 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./repl/repl_service.js"/>
 <script src="./repl/repl_view.js"/>
 <script src="./repl/repl_data.js"/>
+<script src="./repl/repl_templates.js"/>
 <body/>
 </viewport>
