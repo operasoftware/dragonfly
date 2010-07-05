@@ -285,6 +285,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./console-logger/console.js"/>
 <script src="./console-logger/console_templates.js"/>
 <script src="./console-logger/consolelogger.2.0.events.onconsolemessage.js"/>
+<script src="./console-logger/ecmascriptdebugger.6.0.events.onconsolelog.js"/>
 
 <script src="./storage/data-storages.js"/>
 <script src="./storage/actions-stoarges.js"/>

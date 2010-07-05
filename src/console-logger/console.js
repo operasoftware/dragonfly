@@ -182,33 +182,18 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     this.addentry(message);
   };
 
-  this._exctract_console_args = function(msg)
+  this._stringify_log_args = function(message)
   {
-    var args = msg[2];
-    var ret = [];
+    var strings = message.valueList.map(function(e) {
+      return (e.objectValue ? ("[" + (e.objectValue.functionName || e.objectValue.className) + "]") : e.value);
+    });
 
-    for (var n=0, e; e=args[n]; n++)
-    {
-      if (e.length == 1)
-      {
-        ret.push({type: "native", value: e[0]});
-      }
-      else
-      {
-        ret.push({obj_id: e[1][0],
-                  callable: !!e[1][1],
-                  type: e[1][2],
-                  proto_id: e[1][3],
-                  class_name: e[1][4]
-        });
-      }
-    }
-    return ret;
+    return strings.join(", ");
   };
 
-  this._on_consolelog = function(msg)
+  this._on_consolelog = function(data)
   {
-    const TYPE = 1;
+    var message = new cls.EcmascriptDebugger["6.0"].ConsoleLogInfo(data);
 
     var severities = {
       1: "information",
@@ -227,33 +212,24 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
       5: "console.assert"
     };
 
-    if (! (msg[TYPE] in method_names)) {
+    if (! (message.type in method_names)) {
       return;
     }
 
-    var args = this._exctract_console_args(msg);
-    var argstr = args.map(function(e) {
-                            if (e.type == "native") {
-                              return e.value;
-                            }
-                            else {
-                              return "[" + e.class_name + "]";
-                            }
-                          }).join(", ");
+    var args = this._stringify_log_args(message);
 
     this.addentry({
       id: "" + (++this._lastid),
-      window_id: "",
+      windowID: message.windowID,
       time: new Date(),
-      description: argstr,
-      title:  method_names[msg[TYPE]],
-      line: "" + msg[msg.length-1][1],
-      uri: "",
-      context: method_names[msg[TYPE]],
+      description: args,
+      title:  args,
+      line: "" + (message.position ? message.position.lineNumber : ""),
+      uri: method_names[message.type],
+      context: "",
       source: "ecmascript",
-      severity: severities[msg[TYPE]] || "information"
+      severity: severities[message.type] || "information"
     });
-
   };
 
   this._on_runtime_selected = function(msg)
