@@ -437,6 +437,9 @@ cls.ElementStyle = function()
   /**
    * Syncs the declarations returned from Scope with the literal declarations (the ones that the user has typed in)
    * to get the right status and disabled value
+   *
+   * NOTE: some of the code in this method is currently not used, but is left for now since it will before
+   * used in the future
    */
   this.sync_declarations = function sync_declarations(expanded_declarations, literal_declarations, is_inherited)
   {
@@ -449,7 +452,7 @@ cls.ElementStyle = function()
     DISABLED_LIST = 12;
 
     var rule_id = expanded_declarations[RULE_ID];
-    var synced_declarations = JSON.parse(JSON.stringify(expanded_declarations)); // Deep copy. TODO: is this nice?
+    var synced_declarations = JSON.parse(JSON.stringify(expanded_declarations)); // Deep copy
     synced_declarations[DISABLED_LIST] = [];
 
     // Always set this to 1 (applied), we will manually check later if it's overwritten or not
@@ -462,14 +465,18 @@ cls.ElementStyle = function()
     var node_style_list_index = 0;
     var style_list_index = 0;
     out:
-    for (var i = 0, node_style_list; node_style_list = categories_data[CSS][i]; i++)
+    for (var i = 0, node_style_list; node_style_list = (categories_data[NODE_STYLE_LIST] || [])[i]; i++)
     {
-      node_style_list_index = i;
-      for (var j = 0, style_list; style_list = node_style_list[STYLE_LIST][j]; j++)
+      for (var j = 0, style_list; style_list = (node_style_list[STYLE_LIST] || [])[j]; j++)
       {
-        style_list_index = j;
         if (style_list[RULE_ID] == rule_id)
         {
+          node_style_list_index = i;
+          style_list_index = j;
+          //  ▃▃▃▃▃▃▃▃
+          //  ▃▃▃▃  ▃▃
+          //
+          //   _·
           break out;
         }
       }
@@ -538,7 +545,7 @@ cls.ElementStyle = function()
 
       synced_declarations[INDEX_LIST   ][index] = prop_index;
       synced_declarations[VALUE_LIST   ][index] = expanded_declarations[VALUE_LIST][expanded_index] || literal_declarations[prop][VALUE];
-      synced_declarations[PRIORITY_LIST][index] = literal_declarations[prop][PRIORITY];
+      synced_declarations[PRIORITY_LIST][index] = expanded_declarations[PRIORITY_LIST][expanded_index] || literal_declarations[prop][PRIORITY];
       synced_declarations[STATUS_LIST  ][index] = literal_declarations[prop][STATUS];
       synced_declarations[DISABLED_LIST][index] = literal_declarations[prop][IS_DISABLED];
     }
@@ -580,66 +587,30 @@ cls.ElementStyle = function()
     return synced_declarations;
   };
 
-  this.update_categories = function update_categories(rule_id, declaration, callback)
+  this.update_literal_declarations = function update_literal_declarations(rule_id, declaration, callback)
   {
     var rt_id = __selectedElement.rt_id;
     var obj_id = __selectedElement.obj_id;
-    var tag = tagManager.set_callback(this, this.handle_update_categories, [rt_id, rule_id, declaration, callback]);
+    var tag = tagManager.set_callback(this, this.handle_update_literal_declarations, [rule_id, declaration, callback]);
     services['ecmascript-debugger'].requestCssGetStyleDeclarations(tag, [rt_id, obj_id]);
   };
 
-  this.handle_update_categories = function handle_update_categories(status, message, rt_id, rule_id, declaration, callback)
+  this.handle_update_literal_declarations = function handle_update_literal_declarations(status, message, rule_id, declaration, callback)
   {
     if (status == 0)
     {
-      var rule;
-
-      out:
-      for (var i = 0, decl; decl = message[NODE_STYLE_LIST][i]; i++)
-      {
-        for (var j = 0, rule; rule = decl[STYLE_LIST][j]; j++)
-        {
-          if (rule[RULE_ID] == rule_id)
-          {
-            //  ▃▃▃▃▃▃▃▃
-            //  ▃▃▃▃  ▃▃
-            //
-            //   _·
-            break out;
-          }
-        }
-      }
+      var rule = this.get_rule_by_id(rule_id, message);
 
       // TEMP: remove when empty rules are returned correctly (CORE-30351)
       if (!rule) return;
 
-      var index_list = rule[INDEX_LIST];
-      categories_data[COMP_STYLE] = message[COMPUTED_STYLE_LIST];
-      categories_data[CSS] = message[NODE_STYLE_LIST] || [];
-      categories_data[CSS].rt_id = categories_data[COMP_STYLE].rt_id = rt_id;
-      categories_data[IS_VALID] = true;
-
       if (declaration)
       {
-        // XXX: This is commented out until we preserve shorthands
-        //var index = index_list.indexOf(window.css_index_map.indexOf(declaration[0]));
-        //var decl_is_valid = index != -1 || this.shorthand_map[declaration[0]]; // If the property exists in the message, it was valid
-
-        //if (decl_is_valid)
-        //{
-        //  this.literal_declaration_list[rule_id][declaration[0]] =
-        //    [declaration[1], declaration[2], status, declaration[3]];
-        //}
-
-        var len = rule[PROP_LIST].length;
-        for (var i = 0; i < len; i++)
+        var prop_list = rule[PROP_LIST];
+        for (var i = 0, prop; prop = window.css_index_map[prop_list[i]]; i++)
         {
-          var prop = window.css_index_map[rule[PROP_LIST][i]];
-          if (!(prop in this.literal_declaration_list[rule_id]))
-          {
-            this.literal_declaration_list[rule_id][prop] =
-              [rule[VAL_LIST][i], rule[PRIORITY_LIST][i], rule[OVERWRITTEN_LIST][i], 0];
-          }
+          this.literal_declaration_list[rule_id][prop] =
+            [rule[VAL_LIST][i], rule[PRIORITY_LIST][i], rule[OVERWRITTEN_LIST][i], 0];
         }
       }
     }
@@ -662,7 +633,7 @@ cls.ElementStyle = function()
     // property: [value, is_important, status (overwritten=0, else 1), is_disabled]
     this.literal_declaration_list[rule_id] = {};
 
-    var rule = this.get_rule_by_id(rule_id);
+    var rule = this.get_rule_by_id(rule_id, categories_data);
     if (rule)
     {
       var len = rule[PROP_LIST].length;
@@ -674,15 +645,15 @@ cls.ElementStyle = function()
     }
   };
 
-  this.get_rule_by_id = function get_rule_by_id(id)
+  this.get_rule_by_id = function get_rule_by_id(id, categories)
   {
-    for (var i = 0, decl; decl = (categories_data[CSS] && categories_data[CSS][i]); i++)
+    for (var i = 0, node_style_list; node_style_list = (categories[NODE_STYLE_LIST] || [])[i]; i++)
     {
-      for (var j = 0, rule; rule = (decl[STYLE_LIST] && decl[STYLE_LIST][j]); j++)
+      for (var j = 0, style_list; style_list = (node_style_list[STYLE_LIST] || [])[j]; j++)
       {
-        if (rule[RULE_ID] == id)
+        if (style_list[RULE_ID] == id)
         {
-          return rule;
+          return style_list;
         }
       }
     }

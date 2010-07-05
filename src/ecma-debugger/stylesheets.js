@@ -473,19 +473,15 @@ cls.Stylesheets = function()
     HEADER = 0,
     INDEX_LIST = is_style_sheet && 3 || 1,
     VALUE_LIST = is_style_sheet && 4 || 2,
-    PROPERTY_LIST = is_style_sheet && 5 || 3,
-    VALUE = 0,
-    PRIORITY = 1,
-    STATUS = 2;
+    PROPERTY_LIST = is_style_sheet && 5 || 3;
 
     var ret = '',
     index_list = rule[INDEX_LIST] || [], // the built-in proxy returns empty repeated values as null
     value_list = rule[VALUE_LIST],
     priority_list = rule[PROPERTY_LIST],
-    overwritten_list = rule[OVERWRITTEN_LIST] || [],
-    search_list = rule[SEARCH_LIST] || [],
-    disabled_list = rule[DISABLED_LIST] || [],
-    prop_index = 0,
+    overwrittenlist = rule[OVERWRITTEN_LIST],
+    search_list = rule[SEARCH_LIST],
+    length = index_list.length, i = 0,
     index = 0,
     s_h_index = [],
     s_h_value = [],
@@ -493,75 +489,64 @@ cls.Stylesheets = function()
     s_h_prop = '',
     s_h_count = 0;
 
-    // Create an array of [prop, prop_index] for sorting
-    var properties = index_list.map(function(index) {
-      return [__indexMap[index], index];
-    });
-
-    // Sort in alphabetical order
-    properties.sort(function(a, b) {
-      return a[0] > b[0] ? 1 : -1; // The same property can never happen
-    });
-
-    var length = index_list.length;
-    for (var i = 0; i < length; i++)
+    for ( ; i < length; i++)
     {
-      prop_index = properties[i][1];
-      index = index_list.indexOf(prop_index);
-
-      if (search_active && !search_list[index])
+      index = index_list[i];
+      if (search_active && !search_list[i])
       {
         continue;
       }
 
-      //if (do_shortcuts && SHORTHAND[prop_index])
-      //{
-      //  if (__shorthandIndexMap[prop_index] == 'font')
-      //  {
-      //    SHORTHAND[line_height_index] = 5;
-      //  }
-      //  s_h_index = [];
-      //  s_h_value = [];
-      //  s_h_priority = [];
-      //  s_h_prop = __shorthandIndexMap[prop_index];
-      //  do
-      //  {
-      //    if (__shorthandIndexMap[prop_index] != 'line-height' &&
-      //        __shorthandIndexMap[prop_index] != s_h_prop)
-      //    {
-      //      ret += (ret ? MARKUP_PROP_NL : "") +
-      //        shorthands[s_h_prop](s_h_prop, s_h_index, s_h_value, s_h_priority);
-      //      SHORTHAND[line_height_index] = __shorthandIndexMap[prop_index] == 'font' ? 5 : 0;
-      //      s_h_index = [];
-      //      s_h_value = [];
-      //      s_h_priority = [];
-      //      s_h_prop = __shorthandIndexMap[prop_index];
-      //    }
-      //    s_h_index[SHORTHAND[prop_index]] = prop_index;
-      //    s_h_value[SHORTHAND[prop_index]] = helpers.escapeTextHtml(value_list[index]);
-      //    s_h_priority[SHORTHAND[prop_index]] = priority_list[index];
-      //    prop_index = index_list[index + 1];
-      //  }
-      //  while (SHORTHAND[prop_index] && ++index);
-
-      //  ret += (ret ? MARKUP_PROP_NL : MARKUP_EMPTY) +
-      //          shorthands[s_h_prop](s_h_prop, s_h_index, s_h_value, s_h_priority);
-      //  SHORTHAND[line_height_index] = 0;
-      //}
-      //else
+      if (do_shortcuts && SHORTHAND[index])
       {
+        if (__shorthandIndexMap[index] == 'font')
+        {
+          SHORTHAND[line_height_index] = 5;
+        }
+        s_h_index = [];
+        s_h_value = [];
+        s_h_priority = [];
+        s_h_prop = __shorthandIndexMap[index];
+        do
+        {
+          if (__shorthandIndexMap[index] != 'line-height' &&
+              __shorthandIndexMap[index] != s_h_prop)
+          {
+            ret += (ret ? MARKUP_PROP_NL : "") +
+              shorthands[s_h_prop](s_h_prop, s_h_index, s_h_value, s_h_priority);
+            SHORTHAND[line_height_index] = __shorthandIndexMap[index] == 'font' ? 5 : 0;
+            s_h_index = [];
+            s_h_value = [];
+            s_h_priority = [];
+            s_h_prop = __shorthandIndexMap[index];
+          }
+          s_h_index[SHORTHAND[index]] = index;
+          s_h_value[SHORTHAND[index]] = helpers.escapeTextHtml(value_list[i]);
+          s_h_priority[SHORTHAND[index]] = priority_list[i];
+          index = index_list[i + 1];
+        }
+        while (SHORTHAND[index] && ++i);
+
         ret += (ret ? MARKUP_PROP_NL : MARKUP_EMPTY) +
-                INDENT +
-                // TODO: rename "property" to "declaration"
-                "<property class='" + (overwritten_list[index] ? "" : "overwritten") +
-                                      (disabled_list[index] ? " disabled" : "") + "'>" +
-                  self.create_declaration(__indexMap[prop_index],
-                                          helpers.escapeTextHtml(value_list[index]),
-                                          priority_list[index],
-                                          rule[RULE_ID],
-                                          disabled_list[index],
-                                          rule[ORIGIN]) +
-                "</property>";
+                shorthands[s_h_prop](s_h_prop, s_h_index, s_h_value, s_h_priority);
+        SHORTHAND[line_height_index] = 0;
+      }
+      else
+      {
+        if (overwrittenlist && overwrittenlist[i])
+        {
+          ret += (ret ? MARKUP_PROP_NL : MARKUP_EMPTY) +
+                  INDENT +
+                  MARKUP_KEY + __indexMap[index] + MARKUP_KEY_CLOSE +
+                  MARKUP_VALUE + helpers.escapeTextHtml(value_list[i]) + (priority_list[i] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE;
+        }
+        else
+        {
+          ret += (ret ? MARKUP_PROP_NL : MARKUP_EMPTY) +
+                  INDENT +
+                  MARKUP_KEY_OW + __indexMap[index] + MARKUP_KEY_CLOSE +
+                  MARKUP_VALUE_OW + helpers.escapeTextHtml(value_list[i]) + ( priority_list[i] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE;
+        }
       }
     }
     return ret;
@@ -784,6 +769,69 @@ cls.Stylesheets = function()
 
   var prettyPrintStyleDec = [];
 
+  function prettyPrintRuleInInspector(rule, do_shortcuts, search_active)
+  {
+    const
+    HEADER = 0,
+    INDEX_LIST = 1,
+    VALUE_LIST = 2,
+    PROPERTY_LIST = 3,
+    VALUE = 0,
+    PRIORITY = 1,
+    STATUS = 2;
+
+    var ret = '',
+    index_list = rule[INDEX_LIST] || [], // the built-in proxy returns empty repeated values as null
+    value_list = rule[VALUE_LIST],
+    priority_list = rule[PROPERTY_LIST],
+    overwritten_list = rule[OVERWRITTEN_LIST] || [],
+    search_list = rule[SEARCH_LIST] || [],
+    disabled_list = rule[DISABLED_LIST] || [],
+    prop_index = 0,
+    index = 0,
+    s_h_index = [],
+    s_h_value = [],
+    s_h_priority = [],
+    s_h_prop = '',
+    s_h_count = 0;
+
+    // Create an array of [prop, prop_index] for sorting
+    var properties = index_list.map(function(index) {
+      return [__indexMap[index], index];
+    });
+
+    // Sort in alphabetical order
+    properties.sort(function(a, b) {
+      return a[0] > b[0] ? 1 : -1; // The same property can never happen
+    });
+
+    var length = index_list.length;
+    for (var i = 0; i < length; i++)
+    {
+      prop_index = properties[i][1];
+      index = index_list.indexOf(prop_index);
+
+      if (search_active && !search_list[index])
+      {
+        continue;
+      }
+
+      ret += (ret ? MARKUP_PROP_NL : MARKUP_EMPTY) +
+              INDENT +
+              // TODO: rename "property" to "declaration"
+              "<property class='" + (overwritten_list[index] ? "" : "overwritten") +
+                                    (disabled_list[index] ? " disabled" : "") + "'>" +
+                self.create_declaration(__indexMap[prop_index],
+                                        helpers.escapeTextHtml(value_list[index]),
+                                        priority_list[index],
+                                        rule[RULE_ID],
+                                        disabled_list[index],
+                                        rule[ORIGIN]) +
+              "</property>";
+    }
+    return ret;
+  }
+
   prettyPrintStyleDec[ORIGIN_USER_AGENT] =
   function(rt_id, element_name, style_dec, search_active)
   {
@@ -793,7 +841,7 @@ cls.Stylesheets = function()
               "<stylesheet-link class='pseudo'>default values</stylesheet-link>" +
         "<selector>" + element_name + "</selector>" +
         " {\n" +
-            prettyPrintRule[COMMON](style_dec, false, search_active) +
+            prettyPrintRuleInInspector(style_dec, false, search_active) +
         "\n}</rule>";
     }
     return "";
@@ -808,7 +856,7 @@ cls.Stylesheets = function()
               "<stylesheet-link class='pseudo'>local user stylesheet</stylesheet-link>" +
         "<selector>" + helpers.escapeTextHtml(style_dec[SELECTOR]) + "</selector>" +
         " {\n" +
-            prettyPrintRule[COMMON](style_dec, false, search_active) +
+            prettyPrintRuleInInspector(style_dec, false, search_active) +
         "\n}</rule>";
     }
     return "";
@@ -833,7 +881,7 @@ cls.Stylesheets = function()
           "</stylesheet-link>" +
           "<selector>" + helpers.escapeTextHtml(style_dec[SELECTOR]) + "</selector>" +
           " {\n" +
-              prettyPrintRule[COMMON](style_dec, false, search_active) +
+              prettyPrintRuleInInspector(style_dec, false, search_active) +
           "\n}</rule>";
       }
     }
@@ -854,7 +902,7 @@ cls.Stylesheets = function()
       return "<rule>" +
         "<inline-style>element.style</inline-style>" +
         " {\n" +
-            prettyPrintRule[COMMON](style_dec, false, search_active) +
+            prettyPrintRuleInInspector(style_dec, false, search_active) +
         "\n}</rule>";
     }
     return "";

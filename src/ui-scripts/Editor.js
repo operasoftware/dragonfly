@@ -732,7 +732,7 @@ var Editor = function()
             this.context_cur_value == props[1] &&
             this.context_cur_priority == props[2]))
       {
-        this.set_property(props, this.context_cur_prop, window.elementStyle.update_view);
+        this.set_property(props, this.context_cur_prop);
       }
       this.textarea_container.parentElement.innerHTML = window.stylesheets.create_declaration(props[0],
         props[1], props[2], this.context_rule_id, disabled);
@@ -747,7 +747,6 @@ var Editor = function()
       this.textarea_container.parentElement.parentElement.
         removeChild(this.textarea_container.parentElement);
       this.textarea_container.parentElement.innerHTML = "";
-      window.elementStyle.update_view();
     }
   };
 
@@ -829,7 +828,12 @@ var Editor = function()
         {
           propertyEle.addClass("overwritten");
         }
+        if (is_disabled)
+        {
+          propertyEle.addClass("disabled");
+        }
         this.textarea_container.parentNode.removeClass("overwritten");
+        this.textarea_container.parentNode.removeClass("disabled");
         prop = this.textarea_container.parentElement.parentElement.
           insertBefore(propertyEle, this.textarea_container.parentElement);
         prop.innerHTML = window.stylesheets.create_declaration(props[0], props[1], props[2], this.context_rule_id, is_disabled);
@@ -855,7 +859,6 @@ var Editor = function()
     {
       this.textarea_container.parentElement.innerHTML = "";
       delete window.elementStyle.literal_declaration_list[this.context_rule_id][this.normalize_property(this.context_cur_prop)];
-      window.elementStyle.update_view();
     }
 
     return keep_edit;
@@ -914,7 +917,7 @@ var Editor = function()
     }
 
     var tag = tagManager.set_callback(null, function() {
-      window.elementStyle.update_categories(rule_id,
+      window.elementStyle.update_literal_declarations(rule_id,
         [prop, declaration[1], declaration[2], declaration[3] || 0], callback);
     });
     services['ecmascript-debugger'].requestEval(tag,
@@ -936,7 +939,7 @@ var Editor = function()
     delete window.elementStyle.literal_declaration_list[rule_id][prop_to_remove];
 
     var tag = tagManager.set_callback(null, function() {
-      window.elementStyle.update_categories(rule_id, null, callback);
+      window.elementStyle.update_literal_declarations(rule_id, null, callback);
     });
     services['ecmascript-debugger'].requestEval(tag,
       [this.context_rt_id, 0, 0, script, [["rule", rule_id]]]);
@@ -961,7 +964,7 @@ var Editor = function()
     }
 
     var tag = tagManager.set_callback(null, function() {
-      window.elementStyle.update_categories(rule_id);
+      window.elementStyle.update_literal_declarations(rule_id);
     });
     services['ecmascript-debugger'].requestEval(tag,
       [this.context_rt_id, 0, 0, script, [["rule", rule_id]]]);

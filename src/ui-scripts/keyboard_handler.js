@@ -775,6 +775,7 @@ cls.CSSInspectorActions = function(id)
       cur_target.parentElement.removeChild(cur_target);
     }
     key_identifier.setModeDefault(self);
+    window.elementStyle.update_view();
 
     return false;
   }
@@ -790,6 +791,7 @@ cls.CSSInspectorActions = function(id)
     if( !this.editor.enter(event, action_id) )
     {
       key_identifier.setModeDefault(self);
+      window.elementStyle.update_view();
       if( !this.__target.textContent )
       {
         var cur_target = this.__target;
@@ -811,6 +813,7 @@ cls.CSSInspectorActions = function(id)
       else
       {
         key_identifier.setModeDefault(self);
+        window.elementStyle.update_view();
       }
     }
   }
