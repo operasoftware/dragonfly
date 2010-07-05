@@ -173,31 +173,13 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     return linematch ? linematch[1] : null;
   };
 
-  this._on_console_message = function(message)
+  this._on_console_message = function(data)
   {
-    /*
-     const
-     WINDOW_ID = 0,
-     TIME = 1,
-     DESCRIPTION = 2,
-     URI = 3,
-     CONTEXT = 4,
-     SOURCE = 5,
-     SEVERITY = 6;
-     */
-    this.addentry({
-      id: "" + (++this._lastid),
-      window_id: message[0],
-      time: new Date(parseInt(message[1])),
-      description: message[2],
-      title: this._extract_title(message[2]),
-      line: this._extract_line(message[2]),
-      uri: message[3],
-      context: message[4],
-      source: message[5],
-      severity: message[6]
-    });
-
+    var message = new cls.ConsoleLogger["2.0"].ConsoleMessage(data);
+    message.id = "" + (++this._lastid);
+    message.title =  this._extract_title(message.description);
+    message.line = this._extract_line(message.description);
+    this.addentry(message);
   };
 
   this._exctract_console_args = function(msg)
