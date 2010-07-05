@@ -21,7 +21,7 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseView = function()
     container.innerHTML = "";
     if (object)
     {
-      path = [object.obj_id];
+      path = [[data_model.get_identifier(), object.obj_id, 0]];
       cb = this._create_view.bind(this, container, data_model, path);
       data_model.inspect(cb, path);
     };

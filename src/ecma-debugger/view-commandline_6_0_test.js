@@ -206,7 +206,8 @@ cls.CommandLineViewTest = function(id, name, container_class, html, default_hand
                 runtime_id: runtime_id,
                 value: return_value[4],
                 model: new cls.InspectableJSObject(runtime_id, object_id, return_value[4]),
-                shwo_root: true
+                shwo_root: true,
+                show_inline: true 
               }
             );
             __container.scrollTop = __container.scrollHeight;

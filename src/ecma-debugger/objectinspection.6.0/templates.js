@@ -30,10 +30,12 @@
       );
       for (var proto = null, i = 0; proto = data[i]; i++)
       {
+        ret.push("<div class='prototype' data-proto-index='" + i + "'>");
         // skip the first object description
         if (i)
           ret.push("<div class='prototype-chain-object'>", proto[VALUE][CLASS_NAME], "</div>");
-        _pretty_print_properties(model, tree, proto[PROPERTY_LIST] || [], ret);
+        _pretty_print_properties(model, tree.protos && tree.protos[i] || {}, proto[PROPERTY_LIST] || [], ret);
+        ret.push("</div>");
       }
       ret.push("</examine-objects>");
     };
@@ -108,15 +110,15 @@
               "handler='examine-object'  " +
               "class='folder-key' "
           );
-          if (obj_id in tree)
+          if (tree.hasOwnProperty(prop[NAME])) // 'in' is true for all non enumarables
             ret.push("style='background-position: 0px -11px') ");
           ret.push(
             "/>" +
             "<key>" + helpers.escapeTextHtml(prop[NAME]) + "</key>" +
             "<value class='object'>" + prop[OBJECT_VALUE][CLASS_NAME] + "</value>"
           );
-          if (obj_id in tree)
-            _pretty_print_object(model, tree[obj_id], obj_id, ret);
+          if (tree.hasOwnProperty(prop[NAME]))
+            _pretty_print_object(model, tree[prop[NAME]], obj_id, ret);
           ret.push("</item>");
           break;
         }
@@ -126,16 +128,10 @@
 
   this.inspected_js_object = function(model, show_root, path)
   {
-    var tree = model.get_expand_tree();
     if (typeof show_root === 'boolean' && model.get_object())
-      path = show_root ? null : [model.get_object().obj_id];
-    for (var obj_id = 0, i = 0; path && path[i]; i++)
-    {
-      tree = tree[obj_id = path[i]];
-      if (!tree)
-        throw 'not valid path in templates.inspected_js_object';
-    }
-    return _pretty_print_object(model, tree, obj_id).join('');
+      path = show_root ? null : [[model.get_identifier(), model.get_object().obj_id, 0]];
+    var tree = model.get_subtree(path);
+    return _pretty_print_object(model, tree, tree.object_id).join('');
   }
 
 }).apply(window.templates || (window.templates = {}));

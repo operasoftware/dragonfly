@@ -86,7 +86,26 @@ function(rt_id, obj_id, identifier, _class, virtual_properties)
   OBJECT_VALUE = 3,
   // added fields
   PROPERTY_ITEM = 4,
-  MAX_VALUE_LENGTH = 30;
+  MAX_VALUE_LENGTH = 30,
+  // path
+  PATH_KEY = 0,
+  PATH_OBJ_ID = 1,
+  PATH_PROTO_INDEX = 2;
+
+  /*
+    TODO syntax?
+    path format: 
+      [[key, obj_id, proto_index]*]
+    expand_tree :: =
+    {
+      "object_id": <int>,
+      "protos":
+      {
+        (<index>: {<key>: expand_tree}) *
+      }
+    }
+
+  */
 
   
 
@@ -140,9 +159,10 @@ function(rt_id, obj_id, identifier, _class, virtual_properties)
       ]
     };
     this._queried_map = {};
-    this._expand_tree = {};
+    this._expand_tree = {object_id: 0, protos: {}};
     this._rt_id = rt_id;
     this._obj_id = obj_id;
+    this._identifier = identifier || '';
     // TODO sync format
     this._virtual_props = virtual_props;
     
@@ -152,6 +172,11 @@ function(rt_id, obj_id, identifier, _class, virtual_properties)
   this.getSelectedObject = function()
   {
     return this._obj_id && {rt_id: this._rt_id, obj_id: this._obj_id} || null;
+  }
+
+  this.get_identifier = function()
+  {
+    return this._identifier;
   }
 
   this._id_counter = 0;
@@ -190,13 +215,14 @@ function(rt_id, obj_id, identifier, _class, virtual_properties)
   this.inspect =
   this.get_data = function(cb, path)
   {
+
     if (path === undefined)
     {
-      path = [this._obj_id];
+      path = [[this._identifier, this._obj_id, 0]];
     }
     if (path)
     { 
-      var obj_id = path[path.length - 1];
+      var obj_id = path[path.length - 1][PATH_OBJ_ID];
       if (this._obj_map[obj_id])
       {
         cb();
@@ -209,10 +235,58 @@ function(rt_id, obj_id, identifier, _class, virtual_properties)
     }
   }
 
+  this.get_subtree = function(path)
+  {
+    var key = '', obj_id = 0, proto_index = 0, i = 0, tree = this._expand_tree;
+    for ( ; path && path[i]; i++)
+    {
+      key = path[i][PATH_KEY];
+      obj_id = path[i][PATH_OBJ_ID];
+      index = path[i][PATH_PROTO_INDEX];
+      if (i < (path.length - 1) && !(tree.protos[index] && tree.protos[index][key]))
+      {
+        throw 'not valid path in InspectionBaseData._handle_examine_object';
+      }
+      if (!tree.protos)
+        tree.protos = {};
+      if (!tree.protos[index])
+        tree.protos[index] = {};
+      if (!tree.protos[index][key])
+        tree.protos[index][key] = {object_id: obj_id, protos: {}};
+      tree = tree.protos[index][key];
+    }
+    return tree;
+  }
+
+  this._remove_subtree = function(path)
+  {
+    var key = '', obj_id = 0, proto_index = 0, i = 0, tree = this._expand_tree, ret = null;
+    for ( ; path && path[i]; i++)
+    {
+      key = path[i][PATH_KEY];
+      obj_id = path[i][PATH_OBJ_ID];
+      index = path[i][PATH_PROTO_INDEX];
+      if (!(tree.protos[index] && tree.protos[index][key]))
+      {
+        throw 'not valid path in InspectionBaseData._remove_subtree';
+      }
+      if (i == path.length - 1)
+      {
+        ret = tree.protos[index][key];
+        tree.protos[index][key] = null;
+        break;
+      }
+      tree = tree.protos[index][key];
+    }
+    return ret;
+  }
+
   this._handle_examine_object = function(status, message, path, cb)
   {
     var 
+    
     obj_id = 0,
+    
     tree = this._expand_tree,
     proto_chain = null,
     property_list = null,
@@ -228,19 +302,6 @@ function(rt_id, obj_id, identifier, _class, virtual_properties)
       opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + ' failed to examine object');
     else
     {
-      for ( ; path[i]; i++)
-      {
-        obj_id = path[i];
-        // TODO
-        
-          //alert((path[i + 1] == obj_id) +' '+(i < (path.length - 1) && !tree[obj_id]))
-
-        if (i < (path.length - 1) && !tree[obj_id])
-        {
-          throw 'not valid path in InspectionBaseData._handle_examine_object';
-        }
-        tree = tree[obj_id] || (tree[obj_id] = {});
-      }
       proto_chain = message[OBJECT_CHAIN_LIST][0][OBJECT_LIST];
       for (i = 0; proto = proto_chain[i]; i++)
       {
@@ -273,9 +334,7 @@ function(rt_id, obj_id, identifier, _class, virtual_properties)
           proto[PROPERTY_LIST] = this._virtual_props.concat(proto[PROPERTY_LIST] || []);
           
       }
-
-      this._obj_map[obj_id] = proto_chain;
-
+      this._obj_map[this.get_subtree(path).object_id] = proto_chain;
       if (cb)
       {
         cb();
@@ -297,33 +356,19 @@ function(rt_id, obj_id, identifier, _class, virtual_properties)
   this.clear_data =
   this.clearData = function(path)
   {
-    var i = 0, cur = '', tree = this._expand_tree, dead_ids = null, ids = null;
     if (path)
     {
-      for (; cur = path[i]; i++)
+      var dead_ids = this._get_all_ids(this._remove_subtree(path));
+      var ids = this._get_all_ids(this._expand_tree);
+      for (var i = 0; dead_ids[i]; i++)
       {
-
-        if (i == path.length -1)
-        {
-          dead_ids = [cur].concat(this._get_all_ids(tree[cur]));
-          tree[cur] = null;
-        }
-        else
-        {
-          tree = tree[cur];
-          if (!tree)
-            throw 'not valid path in InspectionBaseData.clearData';
-        }
-      }
-      ids = this._get_all_ids(this._expand_tree);
-      for (i = 0; cur = dead_ids[i]; i++)
-      {
-        if (ids.indexOf(cur) == -1)
-          this._obj_map[cur] = this._queried_map[cur] = null;
+        if (ids.indexOf(dead_ids[i]) == -1)
+          this._obj_map[dead_ids[i]] = this._queried_map[dead_ids[i]] = null;
       }
     }
     else
     {
+      // TODO this should not be needed anymore
       this._obj_map =
       this._queried_map =
       this._expand_tree = 
@@ -336,12 +381,15 @@ function(rt_id, obj_id, identifier, _class, virtual_properties)
   this._get_all_ids = function get_all_ids(tree, ret)
   {
     ret || (ret = []);
-    for (var id in tree)
+    ret.push(tree.object_id);
+    for (var index in tree.protos)
     {
-      if (tree[id])
+      for (var key in tree.protos[index])
       {
-        ret.push(id);
-        get_all_ids(tree[id], ret);
+        if (tree.protos[index][key])
+        {
+          get_all_ids(tree.protos[index][key], ret);
+        }
       }
     }
     return ret;
