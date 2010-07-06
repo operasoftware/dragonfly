@@ -53,7 +53,8 @@ cls.EcmascriptDebugger["6.0"].InspectionView = function(id, name, container_clas
     }
     else if(this._data)
     {
-      this._data.clearData();
+      this._data.collapse();
+      this._data = null;
     }
     if (this._last_selected == "frame")
     {
@@ -66,7 +67,8 @@ cls.EcmascriptDebugger["6.0"].InspectionView = function(id, name, container_clas
     // TODO
     if (this._data && this._data._rt_id == msg.id )
     {
-      this._data.clearData();
+      this._data.collapse();
+      this._data = null;
       this.clearAllContainers();
     }
   }

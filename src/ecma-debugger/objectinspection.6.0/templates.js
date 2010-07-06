@@ -18,16 +18,10 @@
   var _pretty_print_object = function(model, tree, obj_id, ret)
   {
     ret || (ret = []);
-    var data = model.get_data(obj_id), obj = model.get_object();
-    if (obj && data)
+    var data = model.get_data(obj_id);
+    if (data)
     {
-      ret.push(
-        "<examine-objects " +
-          "rt-id='" + obj.rt_id + "' " +
-          "data-id='" + model.id + "' " +
-          "obj-id='" + obj.obj_id + "' " +
-          ">"
-      );
+      ret.push("<examine-objects data-id='" + model.id + "' >");
       for (var proto = null, i = 0; proto = data[i]; i++)
       {
         ret.push("<div class='prototype' data-proto-index='" + i + "'>");
@@ -128,8 +122,8 @@
 
   this.inspected_js_object = function(model, show_root, path)
   {
-    if (typeof show_root === 'boolean' && model.get_object())
-      path = show_root ? null : [[model.get_identifier(), model.get_object().obj_id, 0]];
+    if (typeof show_root === 'boolean')
+      path = show_root ? null : [model.get_root_path()];
     var tree = model.get_subtree(path);
     return _pretty_print_object(model, tree, tree.object_id).join('');
   }

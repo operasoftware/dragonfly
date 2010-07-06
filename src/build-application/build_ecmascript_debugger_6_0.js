@@ -18,7 +18,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
   {
 
 
-    cls.InspectableJSObject = namespace.InspectionBaseData;
+    cls.InspectableJSObject = namespace.InspectableJSObject;
 
     window.runtimes = new namespace.Runtimes("6.0");
     window.runtimes.bind(service_interface);

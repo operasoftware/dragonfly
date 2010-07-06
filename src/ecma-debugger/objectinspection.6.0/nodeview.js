@@ -12,37 +12,24 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseView = function()
 
   this.createView = function(container)
   {
-    var 
-    data_model = this._data || window.inspections[this._cur_data],
-    object = data_model && data_model.get_object(),
-    path = null,
-    cb = null;
-
+    var data_model = this._data || window.inspections[this._cur_data];
     container.innerHTML = "";
-    if (object)
-    {
-      path = [[data_model.get_identifier(), object.obj_id, 0]];
-      cb = this._create_view.bind(this, container, data_model, path);
-      data_model.inspect(cb, path);
-    };
-    
+    if (data_model)
+      data_model.expand(this._create_view.bind(this, container, data_model));
   };
 
-  this._create_view = function(container, data_model, path)
+  this._create_view = function(container, data_model)
   {
-    container.render(window.templates.inspected_js_object(data_model, false, path));
+    container.render(window.templates.inspected_js_object(data_model, false));
   };
 
 }
 
 cls.EcmascriptDebugger["6.0"].DOMAttrsView = function(id, name, container_class)
 {
-
-  //this._cur_data = 'node_dom_attrs'; // or object_inspection_data
   this._data = null;
   this._on_element_selected = function(msg)
   {
-    // this.setObject(msg.rt_id, msg.obj_id);
     this._data = new cls.InspectableJSObject(msg.rt_id, msg.obj_id);
     this.update();
   };

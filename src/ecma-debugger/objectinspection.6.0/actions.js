@@ -15,40 +15,32 @@ window.eventHandlers.click['examine-object'] = function examine_objects(event, t
   parent = target.parentNode,
   cur = parent,
   cur_proto = null,
-  cur_examine = cur.parentNode.parentNode,
-  obj_id = parseInt(cur_examine.getAttribute('obj-id')),
-  data_model = window.inspections[cur_examine.getAttribute('data-id')],  
+  data_model = window.inspections[cur.parentNode.parentNode.getAttribute('data-id')],  
   examine_object = parent.getElementsByTagName('examine-objects')[0],
   path = [];
 
   if (data_model)
   {
-    while (cur && 
-      (cur_proto = cur.parentNode) && 
-      (cur_examine = cur_proto.parentNode) &&
-      cur_examine.nodeName.toLowerCase() == 'examine-objects')
+    while (cur && (cur_proto = cur.parentNode) && 
+        cur_proto.parentNode.nodeName.toLowerCase() == 'examine-objects')
     {
       path.push([
         cur.getElementsByTagName('key')[0].textContent,
         parseInt(cur.getAttribute('obj-id')),
         parseInt(cur_proto.getAttribute('data-proto-index'))
       ]);
-      cur = cur_examine.parentNode;
+      cur = cur_proto.parentNode.parentNode;
     }
-    if (obj_id !== path[path.length - 1][PATH_OBJ_ID])
+    if (data_model.get_root_path().join() != path[path.length - 1].join())
     {
-      path.push([
-        data_model.get_identifier(),
-        obj_id,
-        0
-      ]);
+      path.push(data_model.get_root_path());
     }
     path.reverse();
     if (examine_object) // is unfolded
     {
       if (!target.disabled)
       {
-        data_model.clear_data(path);
+        data_model.collapse(path);
         parent.removeChild(examine_object);
         target.style.removeProperty("background-position");
       }
@@ -56,7 +48,7 @@ window.eventHandlers.click['examine-object'] = function examine_objects(event, t
     else
     {
       var cb = examine_objects.callback.bind(null, target, parent, data_model, path);
-      data_model.inspect(cb, path);
+      data_model.expand(cb, path);
     }
   }
 };
