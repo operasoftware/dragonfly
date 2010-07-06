@@ -238,12 +238,11 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ecma-debugger/object_inspection/node_inspection_view.js"/>
 <script src="./ecma-debugger/objectinspection.6.0/inspectablejsobject.js"/>
 <script src="./ecma-debugger/objectinspection.6.0/objectandframeview.js"/>
+<script src="./ecma-debugger/objectinspection.6.0/baseview.js"/>
 <script src="./ecma-debugger/objectinspection.6.0/nodeview.js"/>
 <script src="./ecma-debugger/objectinspection.6.0/templates.js"/>
 <script src="./ecma-debugger/objectinspection.6.0/actions.js"/>
 <script src="./ecma-debugger/view-commandline_6_0_test.js"/>
-
-
 
 <script src="./ecma-debugger/dom_data.js"/>
 <script src="./ecma-debugger/js_object_filters.js"/>
