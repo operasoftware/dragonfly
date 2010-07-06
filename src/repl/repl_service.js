@@ -40,6 +40,15 @@ cls.ReplService = function(view, data)
       case 7:
         this._handle_dir(msg, rt_id);
         break;
+      case 9:
+        this._handle_group(msg);
+        break;
+      case 10:
+        this._handle_group(msg, "collapsed");
+        break;
+      case 11:
+        this._handle_groupend(msg);
+        break;
     }
   };
 
@@ -87,6 +96,16 @@ cls.ReplService = function(view, data)
     const VALUELIST = 2;
     var values = this._parse_value_list(msg[VALUELIST]);
     this._data.add_output_valuelist(rt_id, values);
+  };
+
+  this._handle_group = function(msg, collapsed)
+  {
+    this._data.add_output_groupstart({name: msg[2][0][0], collapsed: Boolean(collapsed)});
+  };
+
+  this._handle_groupend = function(msg)
+  {
+    this._data.add_output_groupend();
   };
 
   this._parse_value = function(value, rt_id)

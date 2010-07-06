@@ -73,6 +73,17 @@ cls.ReplData = function(view)
     this._add_entry("trace", trace);
   };
 
+  this.add_output_groupstart = function(data)
+  {
+    this._add_entry("groupstart", data);
+  };
+
+  this.add_output_groupend = function(data)
+  {
+    this._add_entry("groupend", data);
+  };
+
+
   /**
    * Return a n array of entry objects for the repl input/output history.
    */

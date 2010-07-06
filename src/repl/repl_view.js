@@ -16,6 +16,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._current_scroll = 0;
   this._container = null;
   this._backlog_index = -1;
+  this._groupstack = [];
 
   this.ondestroy = function()
   {
@@ -81,6 +82,14 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         case "trace":
           this.render_trace(e.data);
           break;
+        case "groupstart":
+          this.render_groupstart(e.data);
+          this._groupstack.push(e.data);
+          break;
+        case "groupend":
+          this.render_groupend();
+          this._groupstack.pop();
+          break;
       default:
           this.render_string("unknown");
       }
@@ -90,6 +99,16 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._focus_input = function()
   {
     this._textarea.focus();
+  };
+
+  this.render_groupstart = function(data)
+  {
+    this.render_string("group started: " + data.name);
+  };
+
+  this.render_groupend = function()
+  {
+    this.render_string("group ended");
   };
 
   this.render_pointer_to_object = function(data)
