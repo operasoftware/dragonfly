@@ -23,6 +23,38 @@
     cursor: pointer;
 }
 
+.repl-output-trace li {
+    margin-left: 7em;
+}
+
+.repl-output-trace li:nth-of-type(1) {
+    margin-left: 0em;
+}
+
+.repl-output-trace li:nth-of-type(2) {
+    margin-left: 1em;
+}
+
+.repl-output-trace li:nth-of-type(3) {
+    margin-left: 2em;
+}
+
+.repl-output-trace li:nth-of-type(4) {
+    margin-left: 3em;
+}
+
+.repl-output-trace li:nth-of-type(5) {
+    margin-left: 4em;
+}
+
+.repl-output-trace li:nth-of-type(6) {
+    margin-left: 5em;
+}
+
+.repl-output-trace li:nth-of-type(7) {
+    margin-left: 6em;
+}
+
 .repl-input span {
   float:left;
 }

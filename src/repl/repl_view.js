@@ -78,6 +78,9 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         case "valuelist":
           this.render_value_list(e.data);
           break;
+        case "trace":
+          this.render_trace(e.data);
+          break;
       default:
           this.render_string("unknown");
       }
@@ -106,6 +109,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this.render_error = function(data)
   {
     this.render_string(data.message, data.stacktrace);
+  };
+
+  this.render_trace = function(data)
+  {
+    this._add_line(templates.repl_output_trace(data));
   };
 
   this.render_value_list = function(values) {

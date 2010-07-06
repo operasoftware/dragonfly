@@ -67,6 +67,21 @@ cls.ReplService = function(view, data)
     this._data.add_output_str("console.profileEnd called. Profiling is not yet supported.");
   };
 
+  this._on_consoletrace = function(data)
+  {
+    var message = new cls.EcmascriptDebugger["6.0"].ConsoleTraceInfo(data);
+
+    for (var n=0, frame; frame = message.frameList[n]; n++)
+    {
+      var script = window.runtimes.getScript(frame.scriptID);
+      if (!script) { continue; };
+      frame.script_type = script.script_type;
+      frame.uri = script.uri;
+    }
+
+    this._data.add_output_trace(message);
+  };
+
   this._handle_log = function(msg, rt_id)
   {
     const VALUELIST = 2;
@@ -217,7 +232,7 @@ cls.ReplService = function(view, data)
     this._service.addListener("consoletimeend", this._on_consoletimeend.bind(this));
     this._service.addListener("consoleprofile", this._on_consoleprofile.bind(this));
     this._service.addListener("consoleprofileend", this._on_consoleprofileend.bind(this));
-
+    this._service.addListener("consoletrace", this._on_consoletrace.bind(this));
   };
 
   this.init(view, data);

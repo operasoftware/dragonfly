@@ -30,3 +30,17 @@ templates.repl_output_pobj = function(data)
   ];
 };
 
+templates.repl_output_trace = function(trace)
+{
+  // the slice is so we reverse a copy, not touching the original
+  return ["ul",
+          trace.frameList.slice(0).reverse().map(function(frame) {
+            var uri = frame.uri || "<unknown source>";
+            var name = frame.objectValue ? frame.objectValue.functionName || frame.objectValue.className : "<unknown function>";
+            var line = frame.lineNumber == undefined ? "<unknown line>" : frame.lineNumber;
+            return ["li", uri + ":" + name + ":" + line];
+            //  + (window.ini.debug ? " " + JSON.stringify(frame) : "" )
+          }),
+          'class', 'repl-output-trace'
+  ];
+};

@@ -68,6 +68,11 @@ cls.ReplData = function(view)
     this._add_entry("exception", {message:message, stacktrace:trace});
   };
 
+  this.add_output_trace = function(trace)
+  {
+    this._add_entry("trace", trace);
+  };
+
   /**
    * Return a n array of entry objects for the repl input/output history.
    */
