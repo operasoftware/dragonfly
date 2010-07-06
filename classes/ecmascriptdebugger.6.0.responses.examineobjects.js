@@ -21,7 +21,7 @@ cls.EcmascriptDebugger["6.0"].ObjectList = function(arr)
 
 cls.EcmascriptDebugger["6.0"].ObjectInfo = function(arr)
 {
-  this.value = arr[0] ? new cls.EcmascriptDebugger["6.0"].ObjectValue(arr[0]) || null;
+  this.value = arr[0] ? new cls.EcmascriptDebugger["6.0"].ObjectValue(arr[0]) : null;
   this.propertyList = (arr[1] || []).map(function(item)
   {
     return new cls.EcmascriptDebugger["6.0"].Property(item);
@@ -76,6 +76,6 @@ cls.EcmascriptDebugger["6.0"].Property = function(arr)
   /** 
     * Only present for `"object"`
     */
-  this.objectValue = arr[3] ? new cls.EcmascriptDebugger["6.0"].ObjectValue(arr[3]) || null;
+  this.objectValue = arr[3] ? new cls.EcmascriptDebugger["6.0"].ObjectValue(arr[3]) : null;
 };
 

@@ -85,7 +85,7 @@ cls.Ecmascript["1.0"].Object.ObjectType =
 cls.Ecmascript["1.0"].Property = function(arr)
 {
   this.name = arr[0];
-  this.value = arr[1] ? new cls.Ecmascript["1.0"].Value(arr[1]) || null;
+  this.value = arr[1] ? new cls.Ecmascript["1.0"].Value(arr[1]) : null;
 };
 
 /** 
@@ -113,7 +113,7 @@ cls.Ecmascript["1.0"].Value = function(arr)
   /** 
     * Object information, set if type = OBJECT.
     */
-  this.object = arr[3] ? new cls.Ecmascript["1.0"].Object(arr[3]) || null;
+  this.object = arr[3] ? new cls.Ecmascript["1.0"].Object(arr[3]) : null;
 };
 cls.Ecmascript["1.0"].Value.Type =
 {

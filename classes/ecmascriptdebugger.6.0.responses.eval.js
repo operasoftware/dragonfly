@@ -26,7 +26,7 @@ cls.EcmascriptDebugger["6.0"].EvalResult = function(arr)
   /** 
     * Only present when `type` is `"object"`
     */
-  this.objectValue = arr[3] ? new cls.EcmascriptDebugger["6.0"].ObjectValue(arr[3]) || null;
+  this.objectValue = arr[3] ? new cls.EcmascriptDebugger["6.0"].ObjectValue(arr[3]) : null;
 };
 
 cls.EcmascriptDebugger["6.0"].ObjectValue = function(arr)

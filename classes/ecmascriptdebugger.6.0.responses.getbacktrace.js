@@ -23,7 +23,7 @@ cls.EcmascriptDebugger["6.0"].BacktraceFrame = function(arr)
   /** 
     * TODO: Spec says repeated, while the code only assumes one (optional)
     */
-  this.objectValue = arr[4] ? new cls.EcmascriptDebugger["6.0"].ObjectValue(arr[4]) || null;
+  this.objectValue = arr[4] ? new cls.EcmascriptDebugger["6.0"].ObjectValue(arr[4]) : null;
   this.scriptID = arr[5];
   this.lineNumber = arr[6];
 };

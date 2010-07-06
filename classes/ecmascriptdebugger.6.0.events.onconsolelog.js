@@ -33,13 +33,13 @@ cls.EcmascriptDebugger["6.0"].ConsoleLogInfo = function(arr)
   /** 
     * The position the function was called.
     */
-  this.position = arr[3] ? new cls.EcmascriptDebugger["6.0"].Position(arr[3]) || null;
+  this.position = arr[3] ? new cls.EcmascriptDebugger["6.0"].Position(arr[3]) : null;
 };
 
 cls.EcmascriptDebugger["6.0"].Value = function(arr)
 {
   this.value = arr[0];
-  this.objectValue = arr[1] ? new cls.EcmascriptDebugger["6.0"].ObjectValue(arr[1]) || null;
+  this.objectValue = arr[1] ? new cls.EcmascriptDebugger["6.0"].ObjectValue(arr[1]) : null;
 };
 
 cls.EcmascriptDebugger["6.0"].ObjectValue = function(arr)
