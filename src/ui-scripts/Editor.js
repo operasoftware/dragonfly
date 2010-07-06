@@ -898,7 +898,15 @@ var Editor = function()
   {
     var prop = this.normalize_property(declaration[0]);
     var rule_id =  this.context_rule_id;
-    var script = "rule.style.setProperty(\"" +
+    var script = "";
+
+    // TEMP: workaround for CORE-31191
+    if (declaration[0] in window.elementStyle.literal_declaration_list[rule_id])
+    {
+      script += "rule.style.removeProperty(\"" + declaration[0] + "\");";
+    }
+
+    script += "rule.style.setProperty(\"" +
                    prop + "\", \"" +
                    declaration[1].replace(/"/g, "'") + "\", " +
                    (declaration[2] ? "\"important\"" : null) +

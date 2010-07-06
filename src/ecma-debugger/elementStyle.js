@@ -482,7 +482,11 @@ cls.ElementStyle = function()
       }
     }
 
-    // Loop thorugh and set the status (the overwritten value)
+    // Here we manually loop through the whole shebang and set the status (the overwritten vale)
+    // manually. We have to do this since we're dealing with disabled values (which in reality does not
+    // exist for the node, only the copy). This is a bit complicated.
+    //
+    // TODO: remember to special case shorthands later
     for (var i = 0; i <= node_style_list_index; i++)
     {
       var style_list = categories_data[CSS][i][STYLE_LIST];
@@ -493,14 +497,19 @@ cls.ElementStyle = function()
         {
           var prop = window.css_index_map[index];
           if (prop in literal_declarations &&
-              ((style_list[list_index][DISABLED_LIST] && style_list[list_index][DISABLED_LIST][k] == 0) ||
-               !style_list[list_index][DISABLED_LIST])) // TODO: add it instead before this, to make sure it's always there?
+              ((style_list[list_index][DISABLED_LIST] && style_list[list_index][DISABLED_LIST][k] == 0) || !style_list[list_index][DISABLED_LIST]))
           {
-            literal_declarations[prop][STATUS] = 0;
-          }
-          else if (literal_declarations[this.reverse_shorthand_map[prop]] /* TODO: take disabled value into account */)
-          {
-            literal_declarations[this.reverse_shorthand_map[prop]][STATUS] = 0;
+            // If the property has an "!important" declaration, is not disabled, and the current value in the loop
+            // is not "!important", set the status of the current value to 0 (i.e. overwritten)
+            if (literal_declarations[prop][PRIORITY] && !literal_declarations[prop][IS_DISABLED] && !style_list[list_index][PRIORITY_LIST][k])
+            {
+              categories_data[CSS][i][STYLE_LIST][list_index][STATUS_LIST][k] = 0;
+            }
+            // ... otherwise, set the property's value to disabled
+            else
+            {
+              literal_declarations[prop][STATUS] = 0;
+            }
           }
         }
       }
