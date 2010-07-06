@@ -1,5 +1,11 @@
 (function()
 {
+  /* extends window.templates interface */
+
+  this.inspected_js_object = function(model, show_root, path){};
+
+  /* constants */
+
   const
   // sub message ObjectInfo 
   VALUE = 0,
@@ -14,6 +20,8 @@
   OBJECT_VALUE = 3,
   // added fields
   MAX_VALUE_LENGTH = 30;
+
+  /* private */
 
   var _pretty_print_object = function(model, tree, obj_id, ret)
   {
@@ -119,6 +127,8 @@
       }
     }
   };
+
+  /* implementation */
 
   this.inspected_js_object = function(model, show_root, path)
   {

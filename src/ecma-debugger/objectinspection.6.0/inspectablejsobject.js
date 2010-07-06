@@ -3,25 +3,55 @@ cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
 cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
 
 /**
+  * A data model to inspect objects to any depth.
   * @constructor
+  * @param {Int} rt_id runtime id
+  * @param {Int} obj_id object id
+  * @param {String} identifier a identifief for the object, e.g. "document", optional
+  * @param {String} _class the class of the object, e.g. "HTMLDocument", optional
+  * @param {PropertyList} pseudo_properties properties which are shown like 
+  * any other property a given object, but are not real properties, like e.g. 
+  * 'this' or 'arguments' of a given scope of a stopped at event, optional 
   */
 
 cls.EcmascriptDebugger["6.0"].InspectableJSObject = 
-function(rt_id, obj_id, identifier, _class, virtual_properties)
+function(rt_id, obj_id, identifier, _class, pseudo_properties)
 {
-  this._init(rt_id, obj_id, virtual_properties || null, identifier, _class);
+  this._init(rt_id, obj_id, pseudo_properties || null, identifier, _class);
 }
 
 cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
 {
   /* interface */
+
+  /**
+    * To expand a given level of the inspected object.
+    * @param {Function} cb callback called when the properties are retrieved.
+    * @param {PATH} path a unique path in the expanded property tree of the object, optional.
+    * without a path argument the first level will be expanded.
+    */
   this.expand = function(cb, path){};
+  /**
+    * To collapse a given level of the inspected object.
+    * @param {PATH} path, optional.
+    * without path argument it will erase any data.
+    */
   this.collapse = function(path){};
+  /**
+    * To get the properties of a given object.
+    * @param {Int} obj_id the id of the object
+    */
   this.get_data = function(obj_id){};
+  /**
+    * To get the root path of the object.
+    */
   this.get_root_path = function(){};
+  /**
+    * To get a sub tree of the expandad property tree of the object.
+    */
   this.get_subtree = function(path){};
 
-  
+  /* private */
 
   /*
     format for path and expand_tree:
@@ -33,9 +63,6 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
       "protos: {" { PROTO_INDEX ": {" { KEY ": " EXPAND_TREE ", " } "}, " } "}"
     "}"
   */
-
-
-  /* private */
   
   this._init = function(rt_id, obj_id, virtual_props, identifier, _class)
   {
@@ -71,6 +98,8 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     this._root_path = [this._identifier, this._obj_id, 0];
   }
 
+  // removes the subtree given by the path in the expanded tree
+  // returns the removed tree
   this._remove_subtree = function(path)
   {
     const PATH_KEY = 0, PATH_OBJ_ID = 1, PATH_PROTO_INDEX = 2;
@@ -199,9 +228,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
       }
       this._obj_map[this.get_subtree(path).object_id] = proto_chain;
       if (cb)
-      {
         cb();
-      }
     }
   }
 

@@ -4,7 +4,7 @@ cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
 
 /**
   * @constructor
-  * @extends ViewBase
+  * @extends InspectionBaseView
   */
 
 cls.EcmascriptDebugger["6.0"].InspectionView = function(id, name, container_class)
