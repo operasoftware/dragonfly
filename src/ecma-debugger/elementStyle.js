@@ -399,17 +399,13 @@ cls.ElementStyle = function()
       __setProps = [];
       for ( i = 0; node_style_cascade = categories_data[CSS][i]; i++)
       {
-        if (i > 0)
-        {
-          is_inherited = true;
-        }
         for( j = 0; style_dec = node_style_cascade[STYLE_LIST][j]; j++)
         {
           if( style_dec[ORIGIN] != 1 ) // any other rule except browser default rules
           {
             if (literal_declaration_list && literal_declaration_list[style_dec[RULE_ID]])
             {
-              categories_data[CSS][i][STYLE_LIST][j] = self.sync_declarations(style_dec, literal_declaration_list[style_dec[RULE_ID]], is_inherited);
+              categories_data[CSS][i][STYLE_LIST][j] = self.sync_declarations(style_dec, literal_declaration_list[style_dec[RULE_ID]], i);
             }
             length = style_dec[INDEX_LIST].length;
             for( k = 0; k < length; k++)
@@ -441,7 +437,7 @@ cls.ElementStyle = function()
    * NOTE: some of the code in this method is currently not used, but is left for now since it will before
    * used in the future
    */
-  this.sync_declarations = function sync_declarations(expanded_declarations, literal_declarations, is_inherited)
+  this.sync_declarations = function sync_declarations(expanded_declarations, literal_declarations, node_index/*TODO: rename*/)
   {
     // TODO: consider moving some of these
     const
@@ -450,6 +446,8 @@ cls.ElementStyle = function()
     STATUS = 2,
     IS_DISABLED = 3,
     DISABLED_LIST = 12;
+
+    var is_inherited = node_index > 0;
 
     var rule_id = expanded_declarations[RULE_ID];
     var synced_declarations = JSON.parse(JSON.stringify(expanded_declarations)); // Deep copy
@@ -497,7 +495,7 @@ cls.ElementStyle = function()
         {
           var prop = window.css_index_map[index];
           if (prop in literal_declarations &&
-              ((style_list[list_index][DISABLED_LIST] && style_list[list_index][DISABLED_LIST][k] == 0) || !style_list[list_index][DISABLED_LIST]))
+             ((style_list[list_index][DISABLED_LIST] && style_list[list_index][DISABLED_LIST][k] == 0) || !style_list[list_index][DISABLED_LIST]))
           {
             // If the property has an "!important" declaration, is not disabled, and the current value in the loop
             // is not "!important", set the status of the current value to 0 (i.e. overwritten)
@@ -555,7 +553,8 @@ cls.ElementStyle = function()
       synced_declarations[INDEX_LIST   ][index] = prop_index;
       synced_declarations[VALUE_LIST   ][index] = expanded_declarations[VALUE_LIST][expanded_index] || literal_declarations[prop][VALUE];
       synced_declarations[PRIORITY_LIST][index] = expanded_declarations[PRIORITY_LIST][expanded_index] || literal_declarations[prop][PRIORITY];
-      synced_declarations[STATUS_LIST  ][index] = literal_declarations[prop][STATUS];
+      // Use the STATUS from Scope if this is inherited, otherwise, use the saved value (literal_declarations)
+      synced_declarations[STATUS_LIST  ][index] = node_index > node_style_list_index ? expanded_declarations[STATUS_LIST][expanded_index] : literal_declarations[prop][STATUS];
       synced_declarations[DISABLED_LIST][index] = literal_declarations[prop][IS_DISABLED];
     }
 
