@@ -14,10 +14,8 @@ cls.EcmascriptDebugger["6.0"].InspectionView = function(id, name, container_clas
 
   this._last_selected = "";  //object or frame
 
-  this.clearView = function()
-  {
-    // TODO
-  };
+  // To keep backward compatibility with old code.
+  this.clearView = function(){};
 
   this._on_object_selected = function(msg)
   { 
@@ -64,7 +62,6 @@ cls.EcmascriptDebugger["6.0"].InspectionView = function(id, name, container_clas
 
   this._on_runtime_destroyed = function(msg)
   {
-    // TODO
     if (this._data && this._data._rt_id == msg.id )
     {
       this._data.collapse();
@@ -81,7 +78,7 @@ cls.EcmascriptDebugger["6.0"].InspectionView = function(id, name, container_clas
   window.messages.addListener('object-selected', this._on_object_selected.bind(this));
   window.messages.addListener('frame-selected', this._on_frame_selected.bind(this));
   window.messages.addListener('runtime-destroyed', this._on_runtime_destroyed.bind(this));
-  messages.addListener('active-inspection-type', this._on_active_inspection_type.bind(this));
+  window.messages.addListener('active-inspection-type', this._on_active_inspection_type.bind(this));
   this.init(id, name, container_class);
 
 };

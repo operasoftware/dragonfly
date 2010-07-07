@@ -43,13 +43,12 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     */
   this.get_data = function(obj_id){};
   /**
-    * To get the root path of the object.
+    * To get the expanded property tree.
+    * @param {Boolean} with_root, optional. If set, 
+    * it will overwrite path and either return the whole tree or the whole tree without the root object.
+    * @param {PATH} path to return the subtree of the given path, optional.
     */
-  this.get_root_path = function(){};
-  /**
-    * To get a sub tree of the expandad property tree of the object.
-    */
-  this.get_subtree = function(path){};
+  this.get_expanded_tree = function(with_root, path){};
 
   /* private */
 
@@ -96,6 +95,31 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     this._identifier = identifier || '';
     this._virtual_props = virtual_props;
     this._root_path = [this._identifier, this._obj_id, 0];
+    this._root_path_joined = this._root_path.join();
+  }
+
+  this._get_subtree = function(path)
+  {
+    const PATH_KEY = 0, PATH_OBJ_ID = 1, PATH_PROTO_INDEX = 2;
+    var key = '', obj_id = 0, proto_index = 0, i = 0, tree = this._expand_tree;
+    for ( ; path && path[i]; i++)
+    {
+      key = path[i][PATH_KEY];
+      obj_id = path[i][PATH_OBJ_ID];
+      index = path[i][PATH_PROTO_INDEX];
+      if (i < (path.length - 1) && !(tree.protos[index] && tree.protos[index][key]))
+      {
+        throw 'not valid path in InspectionBaseData._handle_examine_object';
+      }
+      if (!tree.protos)
+        tree.protos = {};
+      if (!tree.protos[index])
+        tree.protos[index] = {};
+      if (!tree.protos[index][key])
+        tree.protos[index][key] = {object_id: obj_id, protos: {}};
+      tree = tree.protos[index][key];
+    }
+    return tree;
   }
 
   // removes the subtree given by the path in the expanded tree
@@ -226,7 +250,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
         }
           
       }
-      this._obj_map[this.get_subtree(path).object_id] = proto_chain;
+      this._obj_map[this._get_subtree(path).object_id] = proto_chain;
       if (cb)
         cb();
     }
@@ -270,6 +294,12 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     return "inspection-id-" + this._id_counter.toString();
   }
 
+  this._norm_path = function(path)
+  {
+    if (path[0] && path[0].join() != this._root_path_joined)
+      path.splice(0, 0, this._root_path);
+  }
+
   /* implementation */
 
   this.expand = function(cb, path)
@@ -281,6 +311,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     }
     if (path)
     { 
+      this._norm_path(path);
       var obj_id = path[path.length - 1][PATH_OBJ_ID];
       if (this._obj_map[obj_id])
       {
@@ -298,6 +329,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
   {
     if (path)
     {
+      this._norm_path(path);
       var dead_ids = this._get_all_ids(this._remove_subtree(path));
       var ids = this._get_all_ids(this._expand_tree);
       for (var i = 0; dead_ids[i]; i++)
@@ -308,48 +340,26 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     }
     else
     {
-      this._obj_map =
-      this._queried_map =
-      this._expand_tree = 
-      this._virtual_props = 
-      null;
-      this._rt_id = this._obj_id = 0;
+      this._obj_map = null;
+      this._queried_map = null;
+      this._expand_tree = null;
+      this._virtual_props = null;
+      this._rt_id = 0; 
+      this._obj_id = 0;
     }
   }
-
 
   this.get_data = function(obj_id)
   {
     return this._obj_map[obj_id];
   }
 
-  this.get_root_path = function()
+  this.get_expanded_tree = function(with_root, path)
   {
-    return this._root_path;
+    if (typeof with_root === 'boolean')
+      path = with_root ? null : [this._root_path];
+    return this._get_subtree(path);
   }
 
-  this.get_subtree = function(path)
-  {
-    const PATH_KEY = 0, PATH_OBJ_ID = 1, PATH_PROTO_INDEX = 2;
-    var key = '', obj_id = 0, proto_index = 0, i = 0, tree = this._expand_tree;
-    for ( ; path && path[i]; i++)
-    {
-      key = path[i][PATH_KEY];
-      obj_id = path[i][PATH_OBJ_ID];
-      index = path[i][PATH_PROTO_INDEX];
-      if (i < (path.length - 1) && !(tree.protos[index] && tree.protos[index][key]))
-      {
-        throw 'not valid path in InspectionBaseData._handle_examine_object';
-      }
-      if (!tree.protos)
-        tree.protos = {};
-      if (!tree.protos[index])
-        tree.protos[index] = {};
-      if (!tree.protos[index][key])
-        tree.protos[index][key] = {object_id: obj_id, protos: {}};
-      tree = tree.protos[index][key];
-    }
-    return tree;
-  }
 };
 

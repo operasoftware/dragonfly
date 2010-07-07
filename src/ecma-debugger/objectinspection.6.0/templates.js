@@ -132,9 +132,7 @@
 
   this.inspected_js_object = function(model, show_root, path)
   {
-    if (typeof show_root === 'boolean')
-      path = show_root ? null : [model.get_root_path()];
-    var tree = model.get_subtree(path);
+    var tree = model.get_expanded_tree(show_root, path);
     return _pretty_print_object(model, tree, tree.object_id).join('');
   }
 

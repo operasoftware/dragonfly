@@ -32,8 +32,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     window.hostspotlighter = new namespace.Hostspotlighter();
     window.hostspotlighter.bind(service_interface);
 
-    /* ECMA object inspection */
-    namespace.InspectionBaseView.prototype = ViewBase;
+    /* ECMA object inspection */    
     var BaseView = new namespace.InspectionBaseView();
     namespace.InspectionView.prototype = BaseView;
     new namespace.InspectionView('inspection', ui_strings.M_VIEW_LABEL_FRAME_INSPECTION, 'scroll');

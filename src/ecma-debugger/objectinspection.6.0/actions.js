@@ -31,10 +31,6 @@ window.eventHandlers.click['examine-object'] = function examine_objects(event, t
       ]);
       cur = cur_proto.parentNode.parentNode;
     }
-    if (data_model.get_root_path().join() != path[path.length - 1].join())
-    {
-      path.push(data_model.get_root_path());
-    }
     path.reverse();
     if (examine_object) // is unfolded
     {
@@ -56,5 +52,6 @@ window.eventHandlers.click['examine-object'] = function examine_objects(event, t
 window.eventHandlers.click['examine-object'].callback = function(target, container, data_model, path)
 {
   container.render(window.templates.inspected_js_object(data_model, null, path));
+  // update the icon
   target.style.backgroundPosition = "0px -11px";
 };

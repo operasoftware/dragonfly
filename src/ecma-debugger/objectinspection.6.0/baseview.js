@@ -24,3 +24,5 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseView = function()
   };
 
 }
+
+cls.EcmascriptDebugger["6.0"].InspectionBaseView.prototype = ViewBase;
