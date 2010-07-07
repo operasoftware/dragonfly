@@ -6,21 +6,89 @@
     <script src="qunit/qunit.js"></script>
     <script src="../src/ecma-debugger/syntax.js"></script>
     <script src="../src/ecma-debugger/formatter.js"></script>
-    <script src="../src/console/commandprocessor.js"></script>
+    <script src="../src/lib/json.js"></script>
+    <script src="../src/repl/commandtransformer.js"></script>
+
 
 <script>
-
-window.transformer = new HostCommandTransformer();
+window.transformer = new cls.HostCommandTransformer();
   
-function t(s) {
+function transform(s) {
     return window.transformer.transform(s);
 }
-  
-test("Smoketest", function() {
-    expect(3);
-    equal(t("$(foo)"), "document.getElementById(foo)");
-    equal(t("dir(foo)"), "console.dir(foo)");
-    equal(t("dirxml(foo)"), "console.dirxml(foo)");
+
+function iscall(t, i) {
+    return window.transformer.is_call(t, i);
+}
+
+// helper that parses and returns the token array
+function parse(source) {
+    var parser = new window.cls.SimpleJSParser();
+    var types = [];
+    var values = [];
+    parser.parse(source, values, types);
+    return window.transformer.zip_tokens(types, values);
+}
+
+test("is_call smoketest", function() {
+    var tokens;
+
+    tokens = parse("foo()");
+    ok(iscall(tokens, 0));
+    ok(!iscall(tokens, 1));
+
+    tokens = parse("foo   ()");
+    ok(iscall(tokens, 0));
+
+    tokens = parse("foo   (    )");
+    ok(iscall(tokens, 0));
+
+    tokens = parse("foo   (3)");
+    ok(iscall(tokens, 0));
+
+    tokens = parse("foo=(3)");
+    ok(!iscall(tokens, 0));
+
+    tokens = parse("bar;foo()");
+    ok(iscall(tokens, 2));
+
+
+})
+
+test("dir/dirxml", function() {
+    equal(transform("dir"), "dir");
+    equal(transform("dir;foo"), "dir;foo");
+    equal(transform("bar; dir;foo"), "bar; dir;foo");
+
+
+    equal(transform("dir(foo)"), "console.dir(foo)");
+    equal(transform("dirxml(foo)"), "console.dirxml(foo)");
+
+    equal(transform("var x=dir(foo)"), "var x=console.dir(foo)");
+    equal(transform("var x=dirxml(foo)"), "var x=console.dirxml(foo)");
+
+    equal(transform("var x= dir(foo)"), "var x= console.dir(foo)");
+    equal(transform("var x= dirxml(foo)"), "var x= console.dirxml(foo)");
+
+    equal(transform("var x =dir(foo)"), "var x =console.dir(foo)");
+    equal(transform("var x =dirxml(foo)"), "var x =console.dirxml(foo)");
+
+    equal(transform("var x = dir(foo)"), "var x = console.dir(foo)");
+    equal(transform("var x = dirxml(foo)"), "var x = console.dirxml(foo)");
+});
+
+test("$", function() {
+    equal(transform("$"), "$");
+    equal(transform("$(foo)"), "document.getElementById(foo)");
+    equal(transform("var x=$(foo)"), "var x=document.getElementById(foo)");
+    equal(transform("var x= $(foo)"), "var x= document.getElementById(foo)");
+    equal(transform("var x =$(foo)"), "var x =document.getElementById(foo)");
+    equal(transform("var x = $(foo)"), "var x = document.getElementById(foo)");
+
+});
+
+test("$$", function() {
+    equal(transform("$$"), "$$");
 });
 
 
