@@ -1,4 +1,4 @@
-#!C:/Python25/python.exe
+#!C:/Python26/python.exe
 import os, sys
 
 import cgitb

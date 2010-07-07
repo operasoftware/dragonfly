@@ -93,7 +93,7 @@ def write_tester_changeset(missing, submitted):
     for the 'tester' and 'cangeset' inputs.
     """
     ret = []
-    for key in ["tester", "changeset"]:
+    for key in ["tester", "changeset", "browser"]:
         if key in submitted and submitted[key]:
             ret.append(TR_VALUE_CHECK % (
                 "submitted",
@@ -201,7 +201,7 @@ def store_protocol(submitted):
     The file of the stored protocol is <dd>.<mm>.<yy>.<changeset-id>.protocol.
     """
     dd_mm_yy = time.strftime("%d.%m.%y", time.gmtime(time.time()))
-    f_name = "%s.%s.protocol" % (dd_mm_yy, submitted["changeset"])
+    f_name = "%s.%s.%s.protocol" % (dd_mm_yy, submitted["changeset"], submitted["browser"])
     path = os.path.join(APP_ROOT, 'storage', f_name)
     f = open(path, 'w')
     for key in get_ids():
@@ -353,7 +353,7 @@ def serve_protocol(environ, start_response):
     script_repo = environ['SCRIPT_NAME']
     doc = [
         TEST_FORM % (script_repo, script_repo, "", ""), 
-        TR_TESTER_AND_CHANGESET % (protocol["tester"], protocol["changeset"])
+        TR_TESTER_AND_CHANGESET % (protocol["tester"], protocol["changeset"], protocol.get("browser", "-"))
     ]
     doc.extend(write_protocol(protocol))
     doc.append(TEST_END)

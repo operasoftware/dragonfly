@@ -34,11 +34,13 @@ LEGEND_MISSING = """<p class="legend-missing"> missing entries"""
 TR_TESTER_AND_CHANGESET_FORM = """
 <tr><td><td>tester: <td colspan="2" class="input"><input name="tester"></tr>
 <tr><td><td>changeset: <td colspan="2" class="input"><input name="changeset"></tr>
+<tr><td><td>browser: <td colspan="2" class="input"><input name="browser"></tr>
 """
 
 TR_TESTER_AND_CHANGESET = """
 <tr><td><td>tester: <td colspan="2">%s</tr>
 <tr><td><td>changeset: <td colspan="2">%s</tr>
+<tr><td><td>browser: <td colspan="2">%s</tr>
 """
 
 TR_VALUE_CHECK = """
