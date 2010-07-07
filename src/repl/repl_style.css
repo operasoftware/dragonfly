@@ -14,6 +14,16 @@
   margin:0;
 }
 
+.repl-lines {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+li > .repl-lines {
+    padding-left: 2em;
+}
+
 .repl-output .repl-pobj {
     color: blue;
 }

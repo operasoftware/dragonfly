@@ -31,7 +31,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     {
       var markup = "" +
         "<div class='padding'>" +
-          "<div class='repl-output' handler='focus-repl'><ul id='repl-lines'></ul></div>" +
+          "<div class='repl-output' handler='focus-repl'><ol class='repl-lines'></ol></div>" +
           "<div class='repl-input'>" +
             "<span class='repl-prefix'>&gt;&gt;&gt; </span>" +
             "<div><textarea rows='1' title='hold shift to add a new line'></textarea></div>" +
@@ -40,7 +40,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
       container.innerHTML = markup;
 
-      this._linelist = container.querySelector("#repl-lines");
+      this._linelist = container.querySelector("ol");
       this._textarea = container.querySelector("textarea");
       this._textarea.addEventListener("keydown", this._handle_input.bind(this), false);
       this._textarea.addEventListener("keypress", this._handle_keypress.bind(this), false);
@@ -103,12 +103,19 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this.render_groupstart = function(data)
   {
-    this.render_string("group started: " + data.name);
+    // fixme: add expand/collapse control.
+    var ol = document.createElement("ol");
+    ol.className="repl-lines";
+    this._add_line(ol);
+    this._linelist = ol;
   };
 
   this.render_groupend = function()
   {
-    this.render_string("group ended");
+    if (this._linelist.parentNode.parentNode.nodeName.toLowerCase() == "ol")
+    {
+      this._linelist = this._linelist.parentNode.parentNode;
+    }
   };
 
   this.render_pointer_to_object = function(data)
