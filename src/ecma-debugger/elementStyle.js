@@ -552,9 +552,13 @@ cls.ElementStyle = function()
 
       synced_declarations[INDEX_LIST   ][index] = prop_index;
       synced_declarations[VALUE_LIST   ][index] = expanded_declarations[VALUE_LIST][expanded_index] || literal_declarations[prop][VALUE];
-      synced_declarations[PRIORITY_LIST][index] = expanded_declarations[PRIORITY_LIST][expanded_index] || literal_declarations[prop][PRIORITY];
+      synced_declarations[PRIORITY_LIST][index] = expanded_declarations[PRIORITY_LIST][expanded_index] !== undefined
+                                                ? expanded_declarations[PRIORITY_LIST][expanded_index]
+                                                : literal_declarations[prop][PRIORITY];
       // Use the STATUS from Scope if this is inherited, otherwise, use the saved value (literal_declarations)
-      synced_declarations[STATUS_LIST  ][index] = node_index > node_style_list_index ? expanded_declarations[STATUS_LIST][expanded_index] : literal_declarations[prop][STATUS];
+      synced_declarations[STATUS_LIST  ][index] = node_index > node_style_list_index
+                                                ? expanded_declarations[STATUS_LIST][expanded_index]
+                                                : literal_declarations[prop][STATUS];
       synced_declarations[DISABLED_LIST][index] = literal_declarations[prop][IS_DISABLED];
     }
 

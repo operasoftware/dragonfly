@@ -544,7 +544,7 @@ var Editor = function()
         {
           new_start = this.tab_context_tokens[2] + 2;
           this.textarea.value =
-            this.tab_context_tokens[0] + ': ' + suggest.value;
+            this.tab_context_tokens[0] + ': ' + suggest.value + (this.context_cur_priority ? " !important" : "") + ";";
           this.textarea.selectionStart = new_start;
           this.textarea.selectionEnd = new_start + suggest.value.length;
           break;
@@ -732,7 +732,7 @@ var Editor = function()
             this.context_cur_value == props[1] &&
             this.context_cur_priority == props[2]))
       {
-        this.set_property(props, this.context_cur_prop);
+        window.actions["css-inspector"].set_property(props, this.context_cur_prop);
       }
       this.textarea_container.parentElement.innerHTML = window.stylesheets.create_declaration(props[0],
         props[1], props[2], this.context_rule_id, disabled);
@@ -782,11 +782,11 @@ var Editor = function()
     if (props[1])
     {
       // TODO: should remove previously commited value here, in case of looping through properties
-      this.set_property(props);
+      window.actions["css-inspector"].set_property(props, null, null, true);
     }
     else if ((!props[0] || props[0] != this.context_cur_prop) && this.context_cur_prop) // if it's overwritten
     {
-      this.remove_property(this.context_cur_prop);
+      window.actions["css-inspector"].remove_property(this.context_cur_prop);
     }
 
     if (this.context_stylesheet_index > -1)
@@ -802,9 +802,9 @@ var Editor = function()
     props = self.getProperties(),
     keep_edit = false,
     prop = null,
-    old_prop,
-    old_value,
-    old_priority,
+    old_prop = "",
+    old_value = "",
+    old_priority = "",
     is_disabled = this.textarea_container.parentNode.hasClass("disabled");
 
     this.last_suggest_type = '';
@@ -852,13 +852,13 @@ var Editor = function()
       // Only add property if something has changed (new or updated value)
       if (!(old_prop == props[0] && old_value == props[1] && old_priority == props[2]))
       {
-        this.set_property(props, old_prop);
+        window.actions["css-inspector"].set_property(props, old_prop);
       }
     }
     else
     {
       this.textarea_container.parentElement.innerHTML = "";
-      delete window.elementStyle.literal_declaration_list[this.context_rule_id][this.normalize_property(this.context_cur_prop)];
+      delete window.elementStyle.literal_declaration_list[this.context_rule_id][window.actions["css-inspector"].normalize_property(this.context_cur_prop)];
     }
 
     return keep_edit;
@@ -867,7 +867,7 @@ var Editor = function()
   this.escape = function()
   {
     this.last_suggest_type = '';
-    this.restore_properties();
+    window.actions["css-inspector"].restore_properties();
     if (this.context_cur_prop)
     {
       this.textarea.value = this.context_cur_text_content;
@@ -885,150 +885,6 @@ var Editor = function()
       this.textarea_container.parentElement.innerHTML = '';
       return false;
     }
-  };
-
-  /**
-   * Sets a single property (and optionally removes another one, resulting in an overwrite).
-   *
-   * @param {Array} declaration An array according to [prop, value, is_important]
-   * @param {String} prop_to_remove An optional property to remove
-   * @param {Function} callback Callback to execute when the proeprty has been added
-   */
-  this.set_property = function set_property(declaration, prop_to_remove, callback)
-  {
-    var prop = this.normalize_property(declaration[0]);
-    var rule_id =  this.context_rule_id;
-    var script = "";
-
-    // TEMP: workaround for CORE-31191
-    if (declaration[0] in window.elementStyle.literal_declaration_list[rule_id])
-    {
-      script += "rule.style.removeProperty(\"" + declaration[0] + "\");";
-    }
-
-    script += "rule.style.setProperty(\"" +
-                   prop + "\", \"" +
-                   declaration[1].replace(/"/g, "'") + "\", " +
-                   (declaration[2] ? "\"important\"" : null) +
-                 ");";
-
-    if (prop_to_remove)
-    {
-      prop_to_remove = this.normalize_property(prop_to_remove);
-    }
-
-    // if a property is added by overwriting an old one, remove the old property
-    if (prop_to_remove && prop != prop_to_remove)
-    {
-      script += "rule.style.removeProperty(\"" + prop_to_remove + "\");";
-      delete window.elementStyle.literal_declaration_list[rule_id][prop_to_remove];
-    }
-
-    var tag = tagManager.set_callback(null, function() {
-      window.elementStyle.update_literal_declarations(rule_id,
-        [prop, declaration[1], declaration[2], declaration[3] || 0], callback);
-    });
-    services['ecmascript-debugger'].requestEval(tag,
-      [this.context_rt_id, 0, 0, script, [["rule", rule_id]]]);
-  };
-
-  /**
-   * Removes a single property.
-   *
-   * @param {String} prop_to_remove The property to remove
-   * @param {Function} callback Callback to execute when the proeprty has been added
-   */
-  this.remove_property = function remove_property(prop_to_remove, callback)
-  {
-    prop_to_remove = this.normalize_property(prop_to_remove);
-    var rule_id = this.context_rule_id;
-    var script = "rule.style.removeProperty(\"" + prop_to_remove + "\");";
-
-    delete window.elementStyle.literal_declaration_list[rule_id][prop_to_remove];
-
-    var tag = tagManager.set_callback(null, function() {
-      window.elementStyle.update_literal_declarations(rule_id, null, callback);
-    });
-    services['ecmascript-debugger'].requestEval(tag,
-      [this.context_rt_id, 0, 0, script, [["rule", rule_id]]]);
-  };
-
-  /**
-   * Restores all properties to the last saved state.
-   */
-  this.restore_properties = function restore_properties()
-  {
-    var rule_id = this.context_rule_id;
-    var script = "rule.style.cssText=\"\";";
-    var literal_declarations = window.elementStyle.literal_declaration_list[rule_id];
-
-    for (var prop in literal_declarations)
-    {
-      script += "rule.style.setProperty(\"" +
-                   prop + "\", \"" +
-                   literal_declarations[prop][0].replace(/"/g, "'") + "\", " +
-                   (literal_declarations[prop][1] ? "\"important\"" : null) +
-                ");";
-    }
-
-    var tag = tagManager.set_callback(null, function() {
-      window.elementStyle.update_literal_declarations(rule_id);
-    });
-    services['ecmascript-debugger'].requestEval(tag,
-      [this.context_rt_id, 0, 0, script, [["rule", rule_id]]]);
-  };
-
-  /**
-   * Disables one property.
-   *
-   * @param {String} property The property to disable
-   */
-  this.disable_property = function disable_property(rt_id, rule_id, property)
-  {
-    const IS_DISABLED = 3;
-    var script = "rule.style.removeProperty(\"" + property + "\");";
-
-    if (!window.elementStyle.literal_declaration_list[rule_id])
-    {
-      window.elementStyle.save_literal_declarations(rule_id);
-    }
-    var literal_declarations = window.elementStyle.literal_declaration_list[rule_id];
-    literal_declarations[property][IS_DISABLED] = 1;
-
-    var tag = tagManager.set_callback(null, function() {
-      window.elementStyle.update_view();
-    });
-    services['ecmascript-debugger'].requestEval(tag,
-      [rt_id, 0, 0, script, [["rule", rule_id]]]);
-  };
-
-  /**
-   * Enables one property.
-   *
-   * @param {String} property The property to disable
-   */
-  this.enable_property = function enable_property(rt_id, rule_id, property)
-  {
-    const IS_DISABLED = 3;
-    var literal_declarations = window.elementStyle.literal_declaration_list[rule_id];
-    var declaration = literal_declarations[property];
-
-    this.context_rt_id = rt_id;
-    this.context_rule_id = rule_id;
-
-    this.set_property([property, declaration[0], declaration[1], 0], null, window.elementStyle.update_view);
-    literal_declarations[property][IS_DISABLED] = 0;
-  };
-
-  /**
-   * Normalize a property by trimming whitespace and converting to lowercase.
-   *
-   * @param {String} prop The property to normalize
-   * @returns {String} A normalized property
-   */
-  this.normalize_property = function normalize_property(prop)
-  {
-    return (prop || "").replace(/^\s*|\s*$/g, "").toLowerCase();
   };
 
   var input_handler = function(event)
