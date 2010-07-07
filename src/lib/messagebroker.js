@@ -1,4 +1,4 @@
-/**
+﻿/**
  * The message broker is a singleton used for loosely coupled communication
  * between bits of code. The message broker is a singleton, anywhere a
  * message broker instance is used it is guaranteed to be the One True

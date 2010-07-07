@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Mix in class that lets arbitrary classes act as message sources. The
  * mixin adds the public methods add_listener, remove_listener and post_message.
  * There are aliases, called post, addListener and removeListener, these are
