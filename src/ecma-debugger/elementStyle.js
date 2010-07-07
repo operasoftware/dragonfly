@@ -521,17 +521,6 @@ cls.ElementStyle = function()
       var prop = window.css_index_map[expanded_declarations[INDEX_LIST][i]];
 
       synced_declarations[DISABLED_LIST][i] = 0;
-
-      // Remove any property that the user hasn't added literally
-      // XXX: This is commented out until we preserve shorthands
-      //if (!(prop in literal_declarations) && (this.reverse_shorthand_map[prop] in literal_declarations))
-      //{
-      //  synced_declarations[INDEX_LIST   ].splice(i, 1);
-      //  synced_declarations[VALUE_LIST   ].splice(i, 1);
-      //  synced_declarations[PRIORITY_LIST].splice(i, 1);
-      //  synced_declarations[STATUS_LIST  ].splice(i, 1);
-      //  synced_declarations[DISABLED_LIST].splice(i, 1);
-      //}
     }
 
     // ... then the literal values
@@ -574,20 +563,7 @@ cls.ElementStyle = function()
     for (var i = 0; i < len; i++)
     {
       var prop = window.css_index_map[synced_declarations[INDEX_LIST][i]];
-      var value;
-
-      // If this is a shorthand, and it has been disabled, use cached value
-      if (prop in this.shorthand_map && !(this.shorthand_map[prop][0] in declarations) && literal_declarations[prop][0])
-      {
-        value = literal_declarations[prop][0];
-      }
-      else
-      {
-        // Get the value or re-construct a shorthand
-        value = this.shorthand_map[prop]
-              ? window.stylesheets.get_shorthand_from_declarations(prop, declarations, literal_declarations)
-              : synced_declarations[VALUE_LIST] && synced_declarations[VALUE_LIST][i];
-      }
+      var value =  synced_declarations[VALUE_LIST] && synced_declarations[VALUE_LIST][i];
 
       synced_declarations[VALUE_LIST][i] = value;
       literal_declarations[prop] = [value, // Cache
@@ -671,75 +647,6 @@ cls.ElementStyle = function()
     }
     return null;
   };
-
-  // TODO: border-*-radius
-
-  // TODO(hzr): move this when the CSS stuff is refactored
-  this.shorthand_map = {
-    "border": ["border-width", "border-style", "border-color", "border-top", "border-right", "border-bottom", "border-left"],
-    "border-top": ["border-top-width", "border-top-style", "border-top-color"],
-    "border-right": ["border-right-width", "border-right-style", "border-right-color"],
-    "border-bottom": ["border-bottom-width", "border-bottom-style", "border-bottom-color"],
-    "border-left": ["border-left-width", "border-left-style", "border-left-color"],
-    "border-width": [],
-    "border-style": [],
-    "border-color": [],
-    "background": ["background-attachment", "background-color", "background-image", "background-position", "background-repeat"],
-    "font": ["font-style", "font-variant", "font-weight", "font-size", "line-height", "font-family"],
-    "list-style": ["list-style-type", "list-style-position", "list-style-image"],
-    "margin": ["margin-top", "margin-right", "margin-bottom", "margin-left"],
-    "outline": ["outline-style", "outline-color", "outline-width"],
-    "overflow": ["overflow-x", "overflow-y"],
-    "padding": ["padding-top", "padding-right", "padding-bottom", "padding-left"]
-  };
-
-  this.reverse_shorthand_map = {
-    "border-width": "border",
-    "border-style": "border",
-    "border-color": "border",
-    "border-top-width": "border",
-    "border-right-width": "border",
-    "border-bottom-width": "border",
-    "border-left-width": "border",
-    "border-top-style": "border",
-    "border-right-style": "border",
-    "border-bottom-style": "border",
-    "border-left-style": "border",
-    "border-top-color": "border",
-    "border-right-color": "border",
-    "border-bottom-color": "border",
-    "border-left-color": "border",
-    "background-attachment": "background",
-    "background-color": "background",
-    "background-image": "background",
-    "background-position": "background",
-    "background-repeat": "background",
-    "font-style": "font",
-    "font-variant": "font",
-    "font-weight": "font",
-    "font-size": "font",
-    "line-height": "font",
-    "font-family": "font",
-    "list-style-type": "list-style",
-    "list-style-position": "list-style",
-    "list-style-image": "list-style",
-    "margin-top": "margin",
-    "margin-right": "margin",
-    "margin-top": "margin",
-    "margin-right": "margin",
-    "margin-bottom": "margin",
-    "margin-left": "margin",
-    "outline-color": "outline",
-    "outline-style": "outline",
-    "outline-width": "outline",
-    "overflow-x": "overflow",
-    "overflow-y": "overflow",
-    "padding-top": "padding",
-    "padding-right": "padding",
-    "padding-bottom": "padding",
-    "padding-left": "padding"
-  };
-
 
   /* */
   messages.addListener('element-selected', onElementSelected);
