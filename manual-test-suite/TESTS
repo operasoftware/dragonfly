@@ -266,7 +266,7 @@ desc:
 id: 29
 label: Connection status
 desc:
-  - Set a breakpoint on line 18 oo scrollFolders.js
+  - Set a breakpoint on line 18 scrollFolders.js
   - Hover over the titles in the document
   - Verify that the status icon updates while stepping into the code
 

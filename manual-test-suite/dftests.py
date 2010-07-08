@@ -156,8 +156,18 @@ def write_index():
         if entry.label:
             id = "id-%s" % entry.id[0].strip()
             label = "".join(entry.label)
-            items = re.split("\-|\*", 
-                        " ".join([item.strip() for item in entry.desc if item]))
+            raw_items = [item.strip().replace('"', '&quot;') for item in entry.desc if item]
+            string = ""
+            items = []
+            for item in raw_items:
+                if item.startswith('-') or item.startswith('*'):
+                    if string:
+                        items.append(string)
+                    string = item.lstrip('-* ')
+                else:
+                    string += item
+            if string:
+                items.append(string)
             desc = "\n    ".join([""] + items + [""])   
             entries.append(TR_TEST % (desc, label, id, id))
     return entries
