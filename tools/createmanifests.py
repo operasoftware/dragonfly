@@ -55,7 +55,11 @@ def get_resources(os_path, web_path, file_name):
 
 def write_maifest(os_path, file_name, resources, tag=""):
     with open(os.path.join(os_path, MANIFEST_DIR, file_name), "wb") as f:
-        content = ["CACHE MANIFEST", "# created %s %s" % (get_timestamp(), tag)]
+        content = [
+            "CACHE MANIFEST", 
+            "# created %s %s" % (get_timestamp(), tag),
+            "/app/fall-back-urls.json"
+        ]
         content.extend(resources)
         content.append("")
         f.write("\n".join(content))
@@ -94,7 +98,7 @@ def main(argv=sys.argv):
     for name in os.listdir(os_path):
          match = _re_client.search(name)
          if match:
-            resources = [web_path + "/", web_path + "/" + name]
+            resources = [web_path + "/", web_path + "/" + name, web_path + "/AUTHORS"]
             manifest = "dragonfly-%s.manifest" % match.group("lang")
             if web_path.startswith("/app"):
                 if "cutting-edge" in web_path:
