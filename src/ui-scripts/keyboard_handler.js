@@ -784,7 +784,7 @@ cls.CSSInspectorActions = function(id)
 
     script += "rule.style.setProperty(\"" +
                    prop + "\", \"" +
-                   declaration[1].replace(/"/g, "'") + "\", " +
+                   declaration[1].replace(/"/g, "\\\"") + "\", " +
                    (declaration[2] ? "\"important\"" : null) +
                  ");";
 
