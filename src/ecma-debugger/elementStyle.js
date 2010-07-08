@@ -1,19 +1,19 @@
 ﻿window.cls || (window.cls = {});
 
 /**
-  * @constructor 
-  */
+ * @constructor
+ */
 
 
 cls.ElementStyle = function()
 {
-  // TODO 
+  // TODO
   // cleanup code history
   // categories and everything related needs to be removed completely
-  
-  const 
+
+  const
   COMP_STYLE = 0,
-  CSS = 1, 
+  CSS = 1,
   IS_VALID = 2,
   REQ_TYPE_CSS = 2,
   PROP_LIST = 1,
@@ -23,16 +23,16 @@ cls.ElementStyle = function()
   SEARCH_LIST = 10,
   HAS_MATCHING_SEARCH_PROPS = 11,
   SEARCH_DELAY = 50,
-  MIN_SEARCH_THERM_LENGTH = 1,
+  MIN_SEARCH_TERM_LENGTH = 1,
 
   // new scope messages
   COMPUTED_STYLE_LIST = 0,
   NODE_STYLE_LIST = 1,
-  // sub message NodeStyle 
+  // sub message NodeStyle
   OBJECT_ID = 0,
   ELEMENT_NAME = 1,
   STYLE_LIST = 2,
-  // sub message StyleDeclaration 
+  // sub message StyleDeclaration
   ORIGIN = 0,
   INDEX_LIST = 1,
   VALUE_LIST = 2,
@@ -49,7 +49,7 @@ cls.ElementStyle = function()
   var __selectedElement = null;
   var __searchMap = [];
   var __search_is_active = false;
-  var __old_search_therm = '';
+  var __old_search_term = '';
   var __setProps = [];
   var _rt_id;
   var _obj_id;
@@ -61,7 +61,7 @@ cls.ElementStyle = function()
     __setPriorities = [];
     __searchMap = [];
     __search_is_active = false;
-    __old_search_therm = '';
+    __old_search_term = '';
   }
 
   var default_styles_pointer = 0;
@@ -70,7 +70,7 @@ cls.ElementStyle = function()
 
   var __views = ['css-inspector'];
 
-  var id_index_map = 
+  var id_index_map =
   {
     'computedStyle': COMP_STYLE,
     'css': CSS
@@ -79,10 +79,10 @@ cls.ElementStyle = function()
   var setCategories = function(id, name, handler)
   {
     return {
-        id: id,
-        name: name,
-        is_unfolded: function(){return settings['css-inspector'].get(id)},
-        handler: handler || null 
+      id: id,
+      name: name,
+      is_unfolded: function() { return settings['css-inspector'].get(id); },
+      handler: handler || null
     }
   }
 
@@ -95,53 +95,53 @@ cls.ElementStyle = function()
   var searchDelayed = function(value)
   {
     searchtimeout.set(search, SEARCH_DELAY, value);
-  }
+  };
 
-  var search = function(search_therm)
+  var search = function(search_term)
   {
-    if( __old_search_therm != search_therm 
-        && ( __search_is_active || search_therm.length >= MIN_SEARCH_THERM_LENGTH ) )
+    if (__old_search_term != search_term
+        && (__search_is_active || search_term.length >= MIN_SEARCH_TERM_LENGTH))
     {
-      doSearch(search_therm);
-      for ( i = 0; view_id = __views[i]; i++)
+      doSearch(search_term);
+      for (i = 0; view_id = __views[i]; i++)
       {
         views[view_id].updateCategories({}, getUnfoldedKey());
       }
-      __old_search_therm = search_therm;
+      __old_search_term = search_term;
     }
-  }
+  };
 
   this.getSearchTerm = function()
   {
-    return __old_search_therm;
-  }
-  
-  var doSearch = function(search_therm)
+    return __old_search_term;
+  };
+
+  var doSearch = function(search_term)
   {
-    if( search_therm.length >= MIN_SEARCH_THERM_LENGTH )
+    if (search_term.length >= MIN_SEARCH_TERM_LENGTH)
     {
       __searchMap = [];
       var i = 0, length = css_index_map.length;
-      for( ; i < length; i++)
+      for ( ; i < length; i++)
       {
-        __searchMap[i] = css_index_map[i].indexOf(search_therm) != -1;
-      }    
-      for( i = 0, length = categories_data[CSS].length; i < length; i++)
+        __searchMap[i] = css_index_map[i].indexOf(search_term) != -1;
+      }
+      for (i = 0, length = categories_data[CSS].length; i < length; i++)
       {
         searchNodeCascade(categories_data[CSS][i], __searchMap);
       }
       __search_is_active = true;
-    } 
+    }
     else
     {
-      for( i = 0, length = categories_data[CSS].length; i < length; i++)
+      for (i = 0, length = categories_data[CSS].length; i < length; i++)
       {
         clearNodeCascade(categories_data[CSS][i], __searchMap);
       }
-      __old_search_therm  = "";
+      __old_search_term  = "";
       __search_is_active = false;
     }
-  }
+  };
 
   /*
 
@@ -159,7 +159,7 @@ cls.ElementStyle = function()
                        | "2" ; local (ie. user)
                        | "3" ; author (ie. stylesheet)
                        | "4" ; element (ie. in-line)
-                       
+
     ; Common property list for style declarations
     PROPERTIES ::= "[" INDEX-LIST "],"
                    "[" VALUE-LIST "],"
@@ -179,7 +179,7 @@ cls.ElementStyle = function()
     LOCAL-HEADER     ::= RULE-HEADER "," SPECIFICITY "," SELECTOR-TEXT
 
   */
-  
+
   var searchNodeCascade = function(node_cascade, search_list)
   {
     // search_list is an array which has either 0 or 1 for the whole index_ map
@@ -188,18 +188,16 @@ cls.ElementStyle = function()
     i = 0,
     declaration_list = node_cascade[STYLE_LIST],
     has_matching_search_props = false;
-    
-    for( ; dec = declaration_list[i]; i++)
+
+    for ( ; dec = declaration_list[i]; i++)
     {
       searchStyleDeclaration(dec, search_list);
       has_matching_search_props =
         has_matching_search_props || dec[HAS_MATCHING_SEARCH_PROPS];
     }
-      
     node_cascade[HAS_MATCHING_SEARCH_PROPS] = has_matching_search_props;
-  
-  }
-  
+  };
+
   var searchStyleDeclaration = function(declaration, search_list)
   {
     // updates a styleDeclaration
@@ -212,108 +210,105 @@ cls.ElementStyle = function()
     has_matching_search_props = false;
 
     declaration[SEARCH_LIST] = [];
-    for( ; i < length; i++ )
+    for ( ; i < length; i++)
     {
-      if( search_list[declaration[PROP_LIST][i]] )
+      if (search_list[declaration[PROP_LIST][i]])
       {
         declaration[SEARCH_LIST][i] = 1;
         has_matching_search_props = true;
       };
     }
     declaration[HAS_MATCHING_SEARCH_PROPS] = has_matching_search_props;
-  }
-  
+  };
+
   var clearNodeCascade = function(node_cascade, search_list)
   {
-    
     var
     dec = null,
     i = 0,
     declaration_list = node_cascade[1];
 
     delete node_cascade[0][HAS_MATCHING_SEARCH_PROPS];
-    for( ; dec = declaration_list[i]; i++)
+    for ( ; dec = declaration_list[i]; i++)
     {
       delete dec[HAS_MATCHING_SEARCH_PROPS];
     }
-    delete node_cascade[2][HAS_MATCHING_SEARCH_PROPS];  
-  }
-
+    delete node_cascade[2][HAS_MATCHING_SEARCH_PROPS];
+  };
 
   this.getSearchActive = function()
   {
     return __search_is_active;
-  }
+  };
 
   this.getSearchMap = function()
   {
     return __searchMap.slice(0);
-  }
+  };
 
   this.getCategories = function()
   {
     return categories;
-  }
+  };
 
   this.getCategoryData = function(index)
   {
-    if(categories_data[IS_VALID])
+    if (categories_data[IS_VALID])
     {
       return categories_data[index];
     }
-    if(__selectedElement)
+    if (__selectedElement)
     {
       getData(__selectedElement.rt_id, __selectedElement.obj_id);
     }
     return null;
-  }
+  };
 
   this.getSetProps = function()
   {
     return __setProps.slice(0);
-  }
-
+  };
 
   var getRequestType = function()
   {
-    return ( categories[COMP_STYLE].is_unfolded()  || categories[CSS].is_unfolded() ) && REQ_TYPE_CSS || 0;
-  }
+    return (categories[COMP_STYLE].is_unfolded() || categories[CSS].is_unfolded()) && REQ_TYPE_CSS || 0;
+  };
 
   var getUnfoldedKey = function()
   {
     var ret = '', i = 0;
-    for( ; i < 2; i++)
+    for ( ; i < 2; i++)
     {
       ret += categories[i].is_unfolded() ? '1' : '0';
     }
     return ret;
-  }
+  };
 
   // TODO
   // replace with a listener for setting change
-  this.setUnfoldedCat = function( cat_id , unfolded)
+  this.setUnfoldedCat = function(cat_id , unfolded)
   {
-    var 
-    cat = categories[id_index_map[cat_id]], 
+    var
+    cat = categories[id_index_map[cat_id]],
     req_type = 0,
     request_key = '',
     i = 0,
     view_id = '';
 
-    if(cat)
+    if (cat)
     {
-      if(unfolded)
+      if (unfolded)
       {
-        if( __selectedElement )
+        if (__selectedElement)
         {
-          if( ( req_type = getRequestType() ) != __selectedElement.req_type )
+          if ((req_type = getRequestType()) != __selectedElement.req_type)
           {
             __selectedElement.req_type = req_type;
             getData(__selectedElement.rt_id, __selectedElement.obj_id);
           }
           else
           {
-            for ( i = 0; view_id = __views[i]; i++)
+            for (i = 0; view_id = __views[i]; i++)
             {
               views[view_id].updateCategories({}, getUnfoldedKey());
             }
@@ -326,14 +321,14 @@ cls.ElementStyle = function()
       opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
         'elementStyle, cat id does not return a cat');
     }
-  }
+  };
 
   var onElementSelected = function(msg)
   {
-    __selectedElement = {rt_id: msg.rt_id,  obj_id: msg.obj_id, req_type: getRequestType() };
+    __selectedElement = { rt_id: msg.rt_id, obj_id: msg.obj_id, req_type: getRequestType() };
     var view_id = '', i = 0, get_data = false;
-    for ( ; ( view_id = __views[i] ) && !( get_data = views[view_id].isvisible() ); i++);
-    if( get_data && __selectedElement.req_type )
+    for ( ; (view_id = __views[i]) && !(get_data = views[view_id].isvisible()); i++);
+    if (get_data && __selectedElement.req_type)
     {
       getData(msg.rt_id, msg.obj_id);
     }
@@ -341,8 +336,7 @@ cls.ElementStyle = function()
     {
       categories_data[IS_VALID] = false;
     }
-    
-  }
+  };
 
   this.update_view = function update_view()
   {
@@ -356,7 +350,7 @@ cls.ElementStyle = function()
   {
     _rt_id = rt_id;
     _obj_id = obj_id;
-    if( stylesheets.hasStylesheetsRuntime(rt_id) )
+    if (stylesheets.hasStylesheetsRuntime(rt_id))
     {
       var tag = tagManager.set_callback(null, handleGetData, [rt_id, obj_id]);
       services['ecmascript-debugger'].requestCssGetStyleDeclarations(tag, [rt_id, obj_id]);
@@ -365,23 +359,22 @@ cls.ElementStyle = function()
     {
       stylesheets.getStylesheets(rt_id, arguments);
     }
-  }
+  };
 
   var handleGetData = function(status, message, rt_id, obj_id)
   {
-
-    var  
-    declarations = null, 
-    i = 0, 
+    var
+    declarations = null,
+    i = 0,
     view_id = '',
-    node_style_cascade = null, 
-    style_dec = null, 
-    j = 0, 
-    length = 0, 
+    node_style_cascade = null,
+    style_dec = null,
+    j = 0,
+    length = 0,
     k = 0,
     is_inherited = false;
 
-    if(status == 0)
+    if (status == 0)
     {
       categories_data[COMP_STYLE] = message[COMPUTED_STYLE_LIST];
       categories_data[CSS] = message[NODE_STYLE_LIST] || [];
@@ -393,20 +386,20 @@ cls.ElementStyle = function()
       // this is to ensure that a set property is always displayed in computed style,
       // also if it maps the initial value and the setting "Hide Initial Values" is set to true.
       __setProps = [];
-      for ( i = 0; node_style_cascade = categories_data[CSS][i]; i++)
+      for (i = 0; node_style_cascade = categories_data[CSS][i]; i++)
       {
-        for( j = 0; style_dec = node_style_cascade[STYLE_LIST][j]; j++)
+        for (j = 0; style_dec = node_style_cascade[STYLE_LIST][j]; j++)
         {
-          if( style_dec[ORIGIN] != 1 ) // any other rule except browser default rules
+          if (style_dec[ORIGIN] != 1) // any other rule except browser default rules
           {
             if (literal_declaration_list && literal_declaration_list[style_dec[RULE_ID]])
             {
               categories_data[CSS][i][STYLE_LIST][j] = self.sync_declarations(style_dec, literal_declaration_list[style_dec[RULE_ID]], i);
             }
             length = style_dec[INDEX_LIST].length;
-            for( k = 0; k < length; k++)
+            for (k = 0; k < length; k++)
             {
-              if( style_dec[STATUS_LIST][k] )
+              if (style_dec[STATUS_LIST][k])
               {
                 __setProps[style_dec[INDEX_LIST][k]] = 1;
               }
@@ -414,17 +407,18 @@ cls.ElementStyle = function()
           }
         }
       }
-      if( __old_search_therm )
+
+      if (__old_search_term)
       {
-        doSearch(__old_search_therm);
+        doSearch(__old_search_term);
       }
-      
-      for ( i = 0; view_id = __views[i]; i++)
+
+      for (i = 0; view_id = __views[i]; i++)
       {
         views[view_id].updateCategories({}, getUnfoldedKey());
       }
     }
-  }
+  };
 
   /**
    * Syncs the declarations returned from Scope with the literal declarations (the ones that the user has typed in)
@@ -651,5 +645,5 @@ cls.ElementStyle = function()
   eventHandlers.input['css-inspector-text-search'] = function(event, target)
   {
     searchDelayed(target.value);
-  }
+  };
 }
