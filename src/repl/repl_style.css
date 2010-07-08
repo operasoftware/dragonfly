@@ -21,7 +21,9 @@
 }
 
 li > .repl-lines {
-    padding-left: 2em;
+    margin-left: 2em;
+    padding-left: 9px;
+    border-left: dotted thin black;
 }
 
 .repl-output .repl-pobj {
@@ -79,4 +81,12 @@ li > .repl-lines {
   margin:0;
   padding:0;
   overflow:hidden;
+}
+
+.folder-key {
+  background-position: 0 -11px;
+}
+
+.folder-key.collapsed {
+  background-position: 0 0;
 }

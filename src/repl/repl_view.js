@@ -102,12 +102,17 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this.render_groupstart = function(data)
   {
-    // fixme: add expand/collapse control.
-
-    this._add_line([["button", "", "class", "folder-key", "handler", "repl-toggle-group"], data.name]);
+    this._add_line([["button", "", "class", "folder-key "+(data.collapsed ? "collapsed" : "" ),
+                                   "handler", "repl-toggle-group"
+                    ],
+                    data.name]);
     var ol = document.createElement("ol");
     ol.className="repl-lines";
     this._add_line(ol);
+    if (data.collapsed) {
+      ol.parentNode.style.display = "none";
+    }
+
     this._linelist = ol;
   };
 
@@ -338,21 +343,23 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     return "";
   };
 
-  eventHandlers.click["repl-toggle-group"] = function(event, target)
+  this._handle_repl_toggle_group = function(event, target)
   {
     var li = target.parentNode;
-    if (li.nextSibling)
+    if (target.hasClass("collapsed"))
     {
-      if (li.nextSibling.style.display == "none") {
-        li.nextSibling.style.display = "";
-        target.style.backgroundPosition = "0 -11px";
-      }
-      else {
-        li.nextSibling.style.display = "none";
-        target.style.backgroundPosition = "0 0";
-      }
+      target.removeClass("collapsed");
+      li.nextSibling.style.display = "";
+    }
+    else
+    {
+      target.addClass("collapsed");
+      li.nextSibling.style.display = "none";
     }
   };
+
+  eventHandlers.click["repl-toggle-group"] = this._handle_repl_toggle_group;
+
 
   this.init(id, name, container_class, html, default_handler);
 };
