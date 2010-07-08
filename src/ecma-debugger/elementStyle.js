@@ -44,12 +44,15 @@ cls.ElementStyle = function()
   RULE_ID = 8,
   RULE_TYPE = 9;
 
+  var self = this;
   var categories_data = [];
   var __selectedElement = null;
   var __searchMap = [];
   var __search_is_active = false;
   var __old_search_therm = '';
   var __setProps = [];
+  var _rt_id;
+  var _obj_id;
 
   var onResetState = function()
   {
@@ -341,10 +344,6 @@ cls.ElementStyle = function()
     
   }
 
-  // TODO: move
-  var _rt_id;
-  var _obj_id;
-
   this.update_view = function update_view()
   {
     if (_rt_id && _obj_id)
@@ -367,9 +366,6 @@ cls.ElementStyle = function()
       stylesheets.getStylesheets(rt_id, arguments);
     }
   }
-
-  // TODO: move
-  var self = this;
 
   var handleGetData = function(status, message, rt_id, obj_id)
   {
@@ -437,9 +433,8 @@ cls.ElementStyle = function()
    * NOTE: some of the code in this method is currently not used, but is left for now since it will before
    * used in the future
    */
-  this.sync_declarations = function sync_declarations(expanded_declarations, literal_declarations, node_index/*TODO: rename*/)
+  this.sync_declarations = function sync_declarations(expanded_declarations, literal_declarations, node_index)
   {
-    // TODO: consider moving some of these
     const
     VALUE = 0,
     PRIORITY = 1,
@@ -448,9 +443,10 @@ cls.ElementStyle = function()
     DISABLED_LIST = 12;
 
     var is_inherited = node_index > 0;
-
+    var index_map = window.css_index_map;
     var rule_id = expanded_declarations[RULE_ID];
     var synced_declarations = JSON.parse(JSON.stringify(expanded_declarations)); // Deep copy
+
     synced_declarations[DISABLED_LIST] = [];
 
     // Always set this to 1 (applied), we will manually check later if it's overwritten or not
@@ -480,9 +476,9 @@ cls.ElementStyle = function()
       }
     }
 
-    // Here we manually loop through the whole shebang and set the status (the overwritten vale)
+    // Here we manually loop through the whole shebang and set the status (the overwritten value)
     // manually. We have to do this since we're dealing with disabled values (which in reality does not
-    // exist for the node, only the copy). This is a bit complicated.
+    // exist for the node, only a copy). This is a bit complicated.
     //
     // TODO: remember to special case shorthands later
     for (var i = 0; i <= node_style_list_index; i++)
@@ -493,7 +489,7 @@ cls.ElementStyle = function()
       {
         for (var k = 0, index; index = style_list[list_index][INDEX_LIST][k]; k++)
         {
-          var prop = window.css_index_map[index];
+          var prop = index_map[index];
           if (prop in literal_declarations &&
              ((style_list[list_index][DISABLED_LIST] && style_list[list_index][DISABLED_LIST][k] == 0) || !style_list[list_index][DISABLED_LIST]))
           {
@@ -518,7 +514,7 @@ cls.ElementStyle = function()
     // First the values from Scope...
     for (var i = expanded_declarations[INDEX_LIST].length; i--; )
     {
-      var prop = window.css_index_map[expanded_declarations[INDEX_LIST][i]];
+      var prop = index_map[expanded_declarations[INDEX_LIST][i]];
 
       synced_declarations[DISABLED_LIST][i] = 0;
     }
@@ -531,7 +527,7 @@ cls.ElementStyle = function()
         continue;
       }
 
-      var prop_index = window.css_index_map.indexOf(prop);
+      var prop_index = index_map.indexOf(prop);
       var index = synced_declarations[INDEX_LIST].indexOf(prop_index);
       var expanded_index = expanded_declarations[INDEX_LIST].indexOf(prop_index);
       if (index == -1)
@@ -556,13 +552,13 @@ cls.ElementStyle = function()
     var len = expanded_declarations[PROP_LIST].length;
     for (var i = 0; i < len; i++)
     {
-      declarations[window.css_index_map[expanded_declarations[INDEX_LIST][i]]] = expanded_declarations[VAL_LIST][i];
+      declarations[index_map[expanded_declarations[INDEX_LIST][i]]] = expanded_declarations[VAL_LIST][i];
     }
 
     var len = synced_declarations[INDEX_LIST].length;
     for (var i = 0; i < len; i++)
     {
-      var prop = window.css_index_map[synced_declarations[INDEX_LIST][i]];
+      var prop = index_map[synced_declarations[INDEX_LIST][i]];
       var value =  synced_declarations[VALUE_LIST] && synced_declarations[VALUE_LIST][i];
 
       synced_declarations[VALUE_LIST][i] = value;
