@@ -1,4 +1,4 @@
-(function()
+﻿(function()
 {
   /* extends window.templates interface */
 
@@ -66,7 +66,7 @@
         case "string":
         {
           short_val = value.length > MAX_VALUE_LENGTH ? 
-                        value.slice(0, MAX_VALUE_LENGTH) + '�"' : '';
+                        value.slice(0, MAX_VALUE_LENGTH) + '…"' : '';
           value = helpers.escapeTextHtml(value).replace(/'/g, '&#39;');
           if (short_val)
           {
