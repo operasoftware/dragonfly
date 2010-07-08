@@ -125,11 +125,20 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this.render_inspectable_object = function(data)
   {
-    var rt_id = data.rt_id, obj_id=data.obj_id, name=data.name;
-    var v = new cls.InspectableObjectView(rt_id, obj_id, name);
+    if (!data.view) {
+      var rt_id = data.rt_id, obj_id=data.obj_id, name=data.name;
+      data.view = new cls.InspectableObjectView(rt_id, obj_id, name, false);
+    }
+
+    if (data.view && !data.view.expanded)
+    {
+      // re-enter once we have the data.
+      data.view.expand(this.render_inspectable_object.bind(this, data));
+      return;
+    }
+
     var div = document.createElement("div");
-    div.render(v.render()); // fixme: superflous div.
-    this._add_line(div);
+     this._add_line(data.view.render());
   };
 
   this.render_error = function(data)
