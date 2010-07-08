@@ -1,4 +1,4 @@
-﻿FIXME: the should not be global
+﻿// FIXME: the should not be global
 
 // add here the combinations which will be handled
 // format shiftKey 0 | 1, ctrlKey 0 | 1, altKey 0 | 1, keyCode
@@ -573,7 +573,7 @@ cls.CSSInspectorActions = function(id)
     self.clearSelected();
   };
 
-  this.editCSS = function(event, target)
+  this.edit_css = function(event, target)
   {
     var cat = event.target;
 
@@ -619,7 +619,7 @@ cls.CSSInspectorActions = function(id)
     }
   };
 
-  this['css-toggle-category'] = function(event, target)
+  this.css_toggle_category = function(event, target)
   {
     if (/header/i.test(target.nodeName))
     {
@@ -647,7 +647,7 @@ cls.CSSInspectorActions = function(id)
     elementStyle.setUnfoldedCat(cat, !value);
   };
 
-  this['display-rule-in-stylesheet'] = function(event, target)
+  this.display_rule_in_stylesheet = function(event, target)
   {
     var index = parseInt(target.getAttribute('index'));
     var rt_id = target.getAttribute('rt-id');
@@ -1023,8 +1023,8 @@ cls.CSSInspectorEditKeyhandler.prototype = BaseEditKeyhandler;
 
 new cls.CSSInspectorEditKeyhandler('css-inspector');
 
-eventHandlers.click['edit-css'] = actions['css-inspector'].editCSS;
-eventHandlers.click['css-toggle-category'] = actions['css-inspector']['css-toggle-category'];
-eventHandlers.click['display-rule-in-stylesheet'] = actions['css-inspector']['display-rule-in-stylesheet'];
+eventHandlers.click['edit-css'] = actions['css-inspector'].edit_css;
+eventHandlers.click['css-toggle-category'] = actions['css-inspector'].css_toggle_category;
+eventHandlers.click['display-rule-in-stylesheet'] = actions['css-inspector'].display_rule_in_stylesheet;
 eventHandlers.click['enable-disable'] = actions['css-inspector'].enable_disable_property;
 
