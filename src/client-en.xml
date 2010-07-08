@@ -299,7 +299,7 @@ window.load_screen_timeout = window.setTimeout(function()
 
 <script src="./repl/commandtransformer.js"/>
 <script src="./repl/propertyfinder.js"/>
-<script src="./repl/inspectableobject.js"/>
+<script src="./repl/inspectableobjectview.js"/>
 <script src="./repl/repl_service.js"/>
 <script src="./repl/repl_view.js"/>
 <script src="./repl/repl_data.js"/>
