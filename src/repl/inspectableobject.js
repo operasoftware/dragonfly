@@ -1,14 +1,25 @@
 
 
 
-window.cls.InspectableObjectView = function(rt_id, obj_id, name)
+window.cls.InspectableObjectView = function(rt_id, obj_id, name, root)
 {
   this.model = new cls.InspectableJSObject(rt_id, obj_id, name);
+  this.show_root = root == undefined ? true : false;
+  this.expanded = false;
+
   this.render = function()
   {
-    return window.templates.inspected_js_object(this.model);
+    var tpl = window.templates.inspected_js_object(this.model, this.show_root);
+    if (!tpl)
+    {
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + " Inspectable object template yielded no data");
+    }
+    return tpl;
+  };
+
+  this.expand = function(cb)
+  {
+    this.model.expand(function(){this.expanded = true; cb();}.bind(this));
   };
 };
-
-
 
