@@ -557,7 +557,6 @@ var Editor = function()
     return false;
   };
 
-
   this.getSuggest = function(prop_name, is_prop, token, cur_start, cur_end, action_id)
   {
     var
@@ -565,9 +564,9 @@ var Editor = function()
     match = null,
     suggest = null,
     suggest_type =
-      (is_prop && 'suggest-property') ||
-      ((match = re_num.exec(token)) && 'suggest-number') ||
-      ('suggest-value'),
+      (is_prop && 'suggest_property') ||
+      ((match = re_num.exec(token)) && 'suggest_number') ||
+      ('suggest_value'),
     suggest_handler = this[suggest_type];
 
     suggest_handler.cursor = this.setCursor
@@ -646,7 +645,7 @@ var Editor = function()
     return true;
   };
 
-  this['suggest-property'] = function(token, cur_start, cur_end, action_id, match)
+  this.suggest_property = function(token, cur_start, cur_end, action_id, match)
   {
     if (!this.property_list)
     {
@@ -656,11 +655,11 @@ var Editor = function()
     return this.getMatchesFromList(this.property_list, this.textarea.value.slice(this.tab_context_tokens[1], cur_start));
   };
 
-  this['suggest-property'].replace_type = SELECTION;
-  this['suggest-property'].cursor = 0;
-  this['suggest-property'].matches = null;
+  this.suggest_property.replace_type = SELECTION;
+  this.suggest_property.cursor = 0;
+  this.suggest_property.matches = null;
 
-  this['suggest-number'] = function(token, cur_start, cur_end, action_id, match)
+  this.suggest_number = function(token, cur_start, cur_end, action_id, match)
   {
     var is_float = /\.(\d+)/.exec(match[2]);
     if (is_float)
@@ -670,11 +669,11 @@ var Editor = function()
     return [(parseInt(match[1] + match[2]) + (action_id == action_ids.NAV_UP ? 1 : -1)).toString() + match[3]];
   };
 
-  this['suggest-number'].replace_type = TOKEN;
-  this['suggest-number'].cursor = 0;
-  this['suggest-number'].matches = null;
+  this.suggest_number.replace_type = TOKEN;
+  this.suggest_number.cursor = 0;
+  this.suggest_number.matches = null;
 
-  this['suggest-value'] = function(token, cur_start, cur_end, action_id, match)
+  this.suggest_value = function(token, cur_start, cur_end, action_id, match)
   {
     var
     prop = this.tab_context_tokens[0],
@@ -686,12 +685,12 @@ var Editor = function()
     hsl = null,
     rgb = null;
 
-    if (set == this['suggest-value'].last_set && prop == this['suggest-value'].last_prop)
+    if (set == this.suggest_value.last_set && prop == this.suggest_value.last_prop)
     {
-      return this['suggest-value'].matches;
+      return this.suggest_value.matches;
     }
-    this['suggest-value'].last_set = set;
-    this['suggest-value'].last_prop = prop;
+    this.suggest_value.last_set = set;
+    this.suggest_value.last_prop = prop;
 
     if (/color/.test(prop) && token && (match = re_hex.exec(token)))
     {
@@ -712,11 +711,11 @@ var Editor = function()
     return null;
   }
 
-  this['suggest-value'].replace_type = VALUE;
-  this['suggest-value'].cursor = 0;
-  this['suggest-value'].matches = null;
-  this['suggest-value'].last_set = '';
-  this['suggest-value'].last_prop = '';
+  this.suggest_value.replace_type = VALUE;
+  this.suggest_value.cursor = 0;
+  this.suggest_value.matches = null;
+  this.suggest_value.last_set = '';
+  this.suggest_value.last_prop = '';
 
   this.submit = function()
   {

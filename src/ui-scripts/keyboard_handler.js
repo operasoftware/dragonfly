@@ -1,7 +1,8 @@
-﻿
+﻿FIXME: the should not be global
+
 // add here the combinations which will be handled
 // format shiftKey 0 | 1, ctrlKey 0 | 1, altKey 0 | 1, keyCode
-var key_ids = 
+var key_ids =
 {
   TAB: '0009',
   SHIFT_TAB: '1009',
@@ -29,7 +30,7 @@ var key_ids =
   CTRL_A: '01065',
   CTRL_I: '01073',
   CTRL_SHIFT_S: '11083'
-}
+};
 
 var action_ids =
 {
@@ -54,7 +55,7 @@ var action_ids =
   CTRL_I: 'invert',
   CTRL_SHIFT_S: 'action-df-snapshot'
 
-}
+};
 
 var action_map_win = {};
 
@@ -83,66 +84,56 @@ action_map_win[key_ids.CTRL_SHIFT_S] = action_ids.CTRL_SHIFT_S;
 var action_map = action_map_win;
 
 /**
-  * @constructor 
-  */
+ * @constructor
+ */
 
 var BaseActions = new function()
 {
   this.init = function(id)
   {
-    if( !window.actions )
+    if (!window.actions)
     {
       window.actions = {};
     }
     window.actions[this.id = id] = this;
-  }
-}
+  };
+};
 
 /**
-  * @constructor 
-  */
+ * @constructor
+ */
 
 var BaseKeyhandler = new function()
 {
-  var 
-  key = '',
+  var key = '',
 
   // return true to stop the default action and propagation
   default_handler = function(event, id)
   {
     var _id = '';
-    for( _id in action_ids )
+    for (_id in action_ids)
     {
-      if( action_ids[_id] == id )
+      if (action_ids[_id] == id)
       {
         // return false to stop propagation and prevent default action
-        return /input|textarea/i.test(event.target.nodeName); 
+        return /input|textarea/i.test(event.target.nodeName);
       }
     }
   };
 
-
-  for( key in action_map )
+  for (key in action_map)
   {
     this[action_map[key]] = default_handler;
   }
 
-  for( key in action_ids )
+  for (key in action_ids)
   {
     this[key] = action_ids[key];
   }
 
-  
+  this.focus = function(container) { };
 
-  this.focus = function(container)
-  {
-
-  }
-
-  this.blur = function()
-  {
-
-  }
+  this.blur = function() { };
 
   this.onclick = function(event)
   {
@@ -152,17 +143,18 @@ var BaseKeyhandler = new function()
   this[this.CTRL_I] = function(event, action_id)
   {
     hostspotlighter.invertColors();
-  }
+  };
+
   //BaseKeyhandler["action-df-snapshot"]()
   this[this.CTRL_SHIFT_S] = function(event, action_id)
   {
-    if(window.client.scope_proxy == "dragonkeeper")
+    if (window.client.scope_proxy == "dragonkeeper")
     {
       var style = document.documentElement.style;
       style.cssText = "width:" + window.innerWidth + "px;height:" + window.innerHeight + "px;";
       var snapshot = new XMLSerializer().serializeToString(document);
       var title = prompt("file name for the snapshot");
-      if(title)
+      if (title)
       {
         title = title.replace(/ /g, '-');
         window.proxy.POST("/snapshot", title + "\r\n" + snapshot);
@@ -170,64 +162,52 @@ var BaseKeyhandler = new function()
       //window.open("data:text/plain," + encodeURIComponent(new XMLSerializer().serializeToString(document)))
       style.cssText = "";
     }
-  }
+  };
 
   this.init = function(id)
   {
-    if( !window.keyhandlers )
+    if (!window.keyhandlers)
     {
       window.keyhandlers = {};
     }
     window.keyhandlers[this.id = id] = this;
-  }
-  
-
-}
+  };
+};
 
 /**
-  * @constructor 
-  */
+ * @constructor
+ */
 
 var BaseEditKeyhandler = new function()
 {
-  var 
-  key = '',
+  var key = '',
 
   // return false to stop the default action and propagation
   default_handler = function(event, id)
   {
     var _id = '';
-    for( _id in action_ids )
+    for (_id in action_ids)
     {
-      if( action_ids[_id] == id )
+      if (action_ids[_id] == id)
       {
         return true; // perform default action
       }
     }
   };
 
-
-  for( key in action_map )
+  for (key in action_map)
   {
     this[action_map[key]] = default_handler;
   }
 
-  for( key in action_ids )
+  for (key in action_ids)
   {
     this[key] = action_ids[key];
   }
 
-  
+  this.focus = function(container) { };
 
-  this.focus = function(container)
-  {
-
-  }
-
-  this.blur = function()
-  {
-
-  }
+  this.blur = function() { };
 
   this.onclick = function(event)
   {
@@ -236,20 +216,18 @@ var BaseEditKeyhandler = new function()
 
   this.init = function(id)
   {
-    if( !window.edit_keyhandlers )
+    if (!window.edit_keyhandlers)
     {
       window.edit_keyhandlers = {};
     }
     window.edit_keyhandlers[this.id = id] = this;
-  }
-  
-
-}
+  };
+};
 
 /**
-  * @constructor 
-  * @extends BaseKeyhandler
-  */
+ * @constructor 
+ * @extends BaseKeyhandler
+ */
 
 var DefaultKeyhandler = function(id)
 {
@@ -261,16 +239,16 @@ DefaultKeyhandler.prototype = BaseKeyhandler;
 new DefaultKeyhandler('default_keyhandler');
 
 /**
-  * @constructor 
-  */
+ * @constructor
+ */
 
 var key_identifier = new function()
 {
   var self = this;
 
   var __container = null;
- 
-  const 
+
+  const
   TAB = 9,
   ENTER = 13,
   ESC = 27,
@@ -297,8 +275,7 @@ var key_identifier = new function()
 
   var empty_keyhandler = new function()
   {
-    var 
-    key = '',
+    var key = '',
 
     // return false to stop the default action and propagation
     empty_handler = function(event, id)
@@ -306,8 +283,7 @@ var key_identifier = new function()
       return /input|textarea|button/i.test(event.target.nodeName);
     };
 
-
-    for( key in action_map )
+    for (key in action_map)
     {
       this[action_map[key]] = empty_handler;
     }
@@ -315,21 +291,18 @@ var key_identifier = new function()
     this[action_map[key_ids.CTRL_I]] = function(event, action_id)
     {
       hostspotlighter.invertColors();
-    }
+    };
 
-    this.focus = function(container) {};
+    this.focus = function(container) { };
 
+    this.blur = function() { };
 
-    this.blur = function() {};
-
-    this.setTarget = function(){};
+    this.setTarget = function() { };
 
     this.onclick = function(event){return true;};
+  };
 
-
-  }
-
-  for( id in key_ids )
+  for (id in key_ids)
   {
     key_handler_ids[key_ids[id]] = true;
   }
@@ -339,36 +312,36 @@ var key_identifier = new function()
   this.setKeyHandler = function(key_handler)
   {
     __key_handler = key_handler;
-  }
+  };
 
   this.setModeEdit = function(actions)
   {
-    if(__key_handler.id == actions.id && window.edit_keyhandlers && edit_keyhandlers[actions.id] )
+    if (__key_handler.id == actions.id && window.edit_keyhandlers && edit_keyhandlers[actions.id])
     {
       __key_handler = edit_keyhandlers[actions.id];
       __container.addClass('edit-mode');
       messages.post('action-mode-changed', {mode: 'edit', id: actions.id});
     }
-  }
+  };
 
   this.setModeDefault = function(actions)
   {
-    if( __key_handler.id == actions.id  )
+    if (__key_handler.id == actions.id)
     {
       __key_handler = keyhandlers[actions.id];
       __container.removeClass('edit-mode');
       messages.post('action-mode-changed', {mode: 'default', id: actions.id});
     }
-  }
+  };
 
   this.handle = function(event)
   {
-    var 
-    keyCode = event.keyCode, 
+    var
+    keyCode = event.keyCode,
     key_id = '',
     action_id = 0;
     // TODO switch for the key_id
-    switch(keyCode)
+    switch (keyCode)
     {
       case ARROW_LEFT:
       case ARROW_UP:
@@ -379,7 +352,7 @@ var key_identifier = new function()
       case F10:
       case F11:
       {
-        // in the keypress events the which property for function keys is set to 0 
+        // in the keypress events the which property for function keys is set to 0
         // this check lets pass e.g. '(' on a AZERTY keyboard
         if( event.which != 0 /* && event.which < 0xE000 */ )
         {
@@ -400,56 +373,54 @@ var key_identifier = new function()
             ( event.ctrlKey ? '1' : '0' ) +
             ( event.altKey ? '1' : '0' ) +
             keyCode.toString();
-        if( key_id in action_map 
-            && !__key_handler[action_id = action_map[key_id]](event, action_id) )
+        if (key_id in action_map
+            && !__key_handler[action_id = action_map[key_id]](event, action_id))
         {
           event.preventDefault();
           event.stopPropagation();
         }
-        
         break;
       }
     }
-  }
+  };
 
   var clear_current_handler = function()
   {
-    if(__key_handler)
+    if (__key_handler)
     {
       __key_handler.blur();
     }
-    if( __container && __container.hasClass('edit-mode') )
+    if (__container && __container.hasClass('edit-mode'))
     {
       __container.removeClass('edit-mode');
     }
     __current_view_id = '';
     __container = null;
     __key_handler = empty_keyhandler;
-  }
+  };
 
   this.setView = function(event)
   {
-    if( !( __key_handler && __key_handler.onclick(event) === false ) )
+    if (!( __key_handler && __key_handler.onclick(event) === false))
     {
       var container = event.target;
-      while( container && !/^(?:top-)?(?:container|toolbar|tabs)$/i.test(container.nodeName) 
-        && ( container = container.parentElement ) );
-      
-      if( container )
+      while (container && !/^(?:top-)?(?:container|toolbar|tabs)$/i.test(container.nodeName)
+             && (container = container.parentElement));
+
+      if (container)
       {
         switch (container.nodeName.toLowerCase())
         {
           case 'container':
           {
             var ui_obj = UIBase.getUIById(container.getAttribute('ui-id'));
-            if( ui_obj && ui_obj.view_id != __current_view_id )
+            if (ui_obj && ui_obj.view_id != __current_view_id)
             {
               clear_current_handler();
               // TODO check if it has already focus
               __key_handler = keyhandlers[__current_view_id = ui_obj.view_id] || empty_keyhandler;
               __key_handler.focus(event, container);
               __container = container;
-
             }
             break;
           }
@@ -465,19 +436,19 @@ var key_identifier = new function()
         clear_current_handler();
       }
     }
-  }
+  };
+
   document.addEventListener('keypress', this.handle, true);
   document.addEventListener('click', this.setView, true);
-  
 };
 
 var cls = window.cls || ( window.cls = {} );
 // this should go in a own file
 
 /**
-  * @constructor 
-  * @extends BaseActions
-  */
+ * @constructor 
+ * @extends BaseActions
+ */
 
 cls.CSSInspectorActions = function(id)
 {
@@ -486,122 +457,121 @@ cls.CSSInspectorActions = function(id)
   this.__active_container = null;
   this.__target = null;
 
-
-
   this.editor = new Editor();
 
   this.getFirstTarget = function()
   {
     return self.__active_container && self.__active_container.getElementsByTagName('styles')[1].getElementsByTagName('property')[0];
-  }
+  };
 
   this.clearSelected = function()
   {
-    if( self.__target )
+    if (self.__target)
     {
       self.__target.removeClass('selected');
     }
-  }
+  };
 
   this.setSelected = function(new_target)
   {
-    if(new_target)
+    if (new_target)
     {
-      if( self.__target )
+      if (self.__target)
       {
         self.__target.removeClass('selected');
-      }       
-      ( self.__target = new_target ).addClass('selected');
+      }
+      (self.__target = new_target).addClass('selected');
       self.__target.scrollSoftIntoView();
     }
-  }
+  };
 
   this.resetTarget = function(new_container)
   {
-    if( self.__active_container && self.__target && !self.__active_container.parentNode )
+    if (self.__active_container && self.__target && !self.__active_container.parentNode)
     {
-      var 
+      var
       targets = self.__active_container.getElementsByTagName(self.__target.nodeName),
-      target = null, 
+      target = null,
       i = 0;
-      for( ; ( target = targets[i] ) && target != self.__target; i++ );
-      if( target && ( target = new_container.getElementsByTagName(self.__target.nodeName)[i] ) )
+      for ( ; (target = targets[i]) && target != self.__target; i++);
+      if (target && (target = new_container.getElementsByTagName(self.__target.nodeName)[i]))
       {
         self.__active_container = new_container;
         self.setSelected(target);
       }
     }
-  }
+  };
 
   this.moveFocusUp = function(event, target)
   {
-    if( self.__target )
+    if (self.__target)
     {
-      self.setSelected( self.__target.getPreviousWithFilter( self.__active_container,
-        self.__target.nodeName.toLowerCase() == 'header' && self.__target.parentElement.getAttribute('handler') 
-        ? nav_filter.header 
-        : nav_filter._default ) );
+      self.setSelected(self.__target.getPreviousWithFilter(self.__active_container,
+        self.__target.nodeName.toLowerCase() == 'header' && self.__target.parentElement.getAttribute('handler')
+        ? nav_filter.header
+        : nav_filter._default));
     }
     else
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
         'keyboard_handler: no target to move');
     }
-  }
+  };
 
-  var nav_filter = 
+  var nav_filter =
   {
     _default: function(ele)
     {
-      return ( ( ele.nodeName.toLowerCase() == 'property' && ele.parentElement.hasAttribute('rule-id') )
-               || ele.nodeName.toLowerCase() == 'header' 
-               || ele.getAttribute('handler') == 'display-rule-in-stylesheet' );
+      return ((ele.nodeName.toLowerCase() == 'property' && ele.parentElement.hasAttribute('rule-id'))
+               || ele.nodeName.toLowerCase() == 'header'
+               || ele.getAttribute('handler') == 'display-rule-in-stylesheet');
     },
+
     header: function(ele)
     {
       return ele.nodeName.toLowerCase() == 'header';
     },
+
     property_editable: function(ele)
     {
       return ele.nodeName.toLowerCase() == 'property' && ele.parentElement.hasAttribute('rule-id');
     }
-  }
+  };
 
   this.moveFocusDown = function(event, target)
   {
-    if( self.__target )
+    if (self.__target)
     {
-      self.setSelected( self.__target.getNextWithFilter( self.__active_container,
-        self.__target.nodeName.toLowerCase() == 'header' && !self.__target.parentElement.getAttribute('handler') 
-        ? nav_filter.header 
-        : nav_filter._default ) );
+      self.setSelected(self.__target.getNextWithFilter( self.__active_container,
+        self.__target.nodeName.toLowerCase() == 'header' && !self.__target.parentElement.getAttribute('handler')
+        ? nav_filter.header
+        : nav_filter._default));
     }
     else
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
         'keyboard_handler: no target to move');
     }
-  }
+  };
 
   this.setActiveContainer = function(event, container)
   {
     self.resetTarget(container);
     self.__active_container = container;
-    if ( !self.__target || !self.__target.parentElement )
+    if (!self.__target || !self.__target.parentElement)
     {
       self.__target = self.getFirstTarget()
     }
-    if( self.__target && !self.__target.hasClass('selected') )
+    if (self.__target && !self.__target.hasClass('selected'))
     {
       self.setSelected(self.__target);
     }
-
-  }
+  };
 
   this.clearActiveContainer = function()
   {
     self.clearSelected();
-  }
+  };
 
   this.editCSS = function(event, target)
   {
@@ -612,7 +582,7 @@ cls.CSSInspectorActions = function(id)
       case 'key':
       case 'value':
       {
-        if(event.target.parentElement.parentElement.hasAttribute('rule-id'))
+        if (event.target.parentElement.parentElement.hasAttribute('rule-id'))
         {
           key_identifier.setModeEdit(self);
           self.setSelected(event.target.parentNode);
@@ -622,7 +592,7 @@ cls.CSSInspectorActions = function(id)
       }
       case 'property':
       {
-        if(event.target.parentElement.hasAttribute('rule-id'))
+        if (event.target.parentElement.hasAttribute('rule-id'))
         {
           key_identifier.setModeEdit(self);
           self.setSelected(event.target);
@@ -632,7 +602,7 @@ cls.CSSInspectorActions = function(id)
         break;
       }
     }
-  }
+  };
 
   this.enable_disable_property = function enable_disable_property(event, target)
   {
@@ -651,18 +621,18 @@ cls.CSSInspectorActions = function(id)
 
   this['css-toggle-category'] = function(event, target)
   {
-    if(/header/i.test(target.nodeName))
+    if (/header/i.test(target.nodeName))
     {
       target = target.firstChild;
     }
     var cat = target.getAttribute('cat-id'), value = target.hasClass('unfolded');
     var cat_container = target.parentNode.parentNode;
-    if( value )
+    if (value)
     {
       target.removeClass('unfolded');
       cat_container.removeClass('unfolded');
       var styles = cat_container.getElementsByTagName('styles')[0];
-      if( styles )
+      if (styles)
       {
         styles.innerHTML = "";
       }
@@ -674,8 +644,8 @@ cls.CSSInspectorActions = function(id)
     }
     self.setSelected(target.parentNode);
     settings['css-inspector'].set(cat, !value);
-    elementStyle.setUnfoldedCat( cat , !value);
-  }
+    elementStyle.setUnfoldedCat(cat, !value);
+  };
 
   this['display-rule-in-stylesheet'] = function(event, target)
   {
@@ -683,33 +653,32 @@ cls.CSSInspectorActions = function(id)
     var rt_id = target.getAttribute('rt-id');
     var rule_id = target.parentNode.getAttribute('rule-id');
     // stylesheets.getRulesWithSheetIndex will call this function again if data is not avaible
-    // handleGetRulesWithIndex in stylesheets will 
+    // handleGetRulesWithIndex in stylesheets will
     // set for this reason __call_count on the event object
     var rules = stylesheets.getRulesWithSheetIndex(rt_id, index, arguments);
-    if(rules)
+    if (rules)
     {
       self.setSelected(target);
       stylesheets.setSelectedSheet(rt_id, index, rules, rule_id);
       topCell.showView(views.stylesheets.id);
     }
-  }
-  
+  };
+
   this.target_enter = function(event, action_id)
   {
-    if(this.__target)
+    if (this.__target)
     {
       this.__target.releaseEvent('click');
     }
-  }
-
+  };
 
   this.nav_previous_edit_mode = function(event, action_id)
   {
-    if( !this.editor.nav_previous(event, action_id) )
+    if (!this.editor.nav_previous(event, action_id))
     {
-      var new_target = 
-        this.__target.getPreviousWithFilter( this.__active_container, nav_filter.property_editable );
-      if(new_target)
+      var new_target =
+        this.__target.getPreviousWithFilter(this.__active_container, nav_filter.property_editable);
+      if (new_target)
       {
         this.setSelected(new_target);
         this.editor.edit(null, this.__target);
@@ -719,15 +688,15 @@ cls.CSSInspectorActions = function(id)
 
     // to stop default action
     return false;
-  }
+  };
 
   this.nav_next_edit_mode = function(event, action_id)
   {
-    if( !this.editor.nav_next(event, action_id) )
+    if (!this.editor.nav_next(event, action_id))
     {
-      var new_target = 
-        this.__target.getNextWithFilter( this.__active_container, nav_filter.property_editable );
-      if(new_target)
+      var new_target =
+        this.__target.getNextWithFilter(this.__active_container, nav_filter.property_editable);
+      if (new_target)
       {
         this.setSelected(new_target);
         this.editor.edit(null, this.__target);
@@ -735,21 +704,19 @@ cls.CSSInspectorActions = function(id)
       }
     }
 
-
     // to stop default action
     return false;
-  }
+  };
 
   this.autocomplete = function(event, action_id)
   {
     this.editor.autocomplete(event, action_id);
     return false;
-  }
+  };
 
   this.escape_edit_mode = function(event, action_id)
   {
-    
-    if(!this.editor.escape())
+    if (!this.editor.escape())
     {
       var cur_target = this.__target;
       this.moveFocusUp();
@@ -759,21 +726,21 @@ cls.CSSInspectorActions = function(id)
     window.elementStyle.update_view();
 
     return false;
-  }
+  };
 
   this.blur_edit_mode = function()
   {
     this.escape_edit_mode();
     this.clearActiveContainer();
-  }
+  };
 
   this.enter_edit_mode = function(event, action_id)
   {
-    if( !this.editor.enter(event, action_id) )
+    if (!this.editor.enter(event, action_id))
     {
       key_identifier.setModeDefault(self);
       window.elementStyle.update_view();
-      if( !this.__target.textContent )
+      if (!this.__target.textContent)
       {
         var cur_target = this.__target;
         this.moveFocusUp();
@@ -781,23 +748,19 @@ cls.CSSInspectorActions = function(id)
       }
     }
     return false;
-  }
+  };
 
   this.edit_onclick = function(event)
   {
-    if( this.editor )
+    if (this.editor)
     {
-      if( this.editor.onclick(event) )
-      {
-
-      }
-      else
+      if (!this.editor.onclick(event))
       {
         key_identifier.setModeDefault(self);
         window.elementStyle.update_view();
       }
     }
-  }
+  };
 
   /**
    * Sets a single property (and optionally removes another one, resulting in an overwrite).
@@ -961,8 +924,6 @@ cls.CSSInspectorActions = function(id)
     */
   }
   messages.addListener('view-created', onViewCreated)
-
-
 };
 
 cls.CSSInspectorActions.prototype = BaseActions;
@@ -971,23 +932,22 @@ new cls.CSSInspectorActions('css-inspector');
 
 
 /**
-  * @constructor 
-  * @extends BaseKeyhandler
-  */
+ * @constructor
+ * @extends BaseKeyhandler
+ */
 
 cls.CSSInspectorKeyhandler = function(id)
 {
-
   var __actions = actions[id]
 
   this[this.NAV_LEFT] = this[this.NAV_UP] = __actions.moveFocusUp;
 
   this[this.NAV_RIGHT] = this[this.NAV_DOWN] = __actions.moveFocusDown;
-  
+
   this[this.ENTER] = function(event, action_id)
   {
     __actions.target_enter(event, action_id);
-  }
+  };
 
 
   this.focus = __actions.setActiveContainer;/*function(event, container)
@@ -1011,47 +971,45 @@ cls.CSSInspectorKeyhandler.prototype = BaseKeyhandler;
 new cls.CSSInspectorKeyhandler('css-inspector');
 
 /**
-  * @constructor 
-  * @extends BaseEditKeyhandler
-  */
+ * @constructor
+ * @extends BaseEditKeyhandler
+ */
 
 cls.CSSInspectorEditKeyhandler = function(id)
 {
-
   var __actions = actions[id]
-
 
   this[this.NAV_UP] = this[this.NAV_DOWN] = function(event, action_id)
   {
     __actions.autocomplete(event, action_id);
-  }
+  };
 
   this[this.NAV_NEXT] = function(event, action_id)
   {
     __actions.nav_next_edit_mode(event, action_id);
-  }
+  };
 
   this[this.NAV_PREVIOUS] = function(event, action_id)
   {
     __actions.nav_previous_edit_mode(event, action_id);
-  }
+  };
 
   this[this.ESCAPE] = function(event, action_id)
   {
     __actions.escape_edit_mode(event, action_id);
-  }
+  };
 
   this[this.ENTER] = function(event, action_id)
   {
     __actions.enter_edit_mode(event, action_id);
-  }
+  };
 
   this.focus = __actions.test;
 
   this.blur = function()
   {
     __actions.blur_edit_mode();
-  }
+  };
 
   this.onclick = function(event)
   {
@@ -1064,7 +1022,6 @@ cls.CSSInspectorEditKeyhandler = function(id)
 cls.CSSInspectorEditKeyhandler.prototype = BaseEditKeyhandler;
 
 new cls.CSSInspectorEditKeyhandler('css-inspector');
-
 
 eventHandlers.click['edit-css'] = actions['css-inspector'].editCSS;
 eventHandlers.click['css-toggle-category'] = actions['css-inspector']['css-toggle-category'];
