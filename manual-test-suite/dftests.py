@@ -402,7 +402,7 @@ def check_submitted_form(environ, start_response):
         protocol = get_protocol(store_protocol(submitted))
         doc = [
             TEST_FORM % (script_repo, script_repo, "", ""), 
-            TR_TESTER_AND_CHANGESET % (submitted["tester"], submitted["changeset"])
+            TR_TESTER_AND_CHANGESET % (submitted["tester"], submitted["changeset"], submitted["browser"])
         ]
         doc.extend(write_protocol(protocol))
         doc.append(TEST_END)
