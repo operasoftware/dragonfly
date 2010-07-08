@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Takes a command line and converts it to something that can
  * be evaluated on the host side.
  *

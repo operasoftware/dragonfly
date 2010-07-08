@@ -1,4 +1,4 @@
-window.eventHandlers.click['examine-object'] = function examine_objects(event, target)
+﻿window.eventHandlers.click['examine-object'] = function examine_objects(event, target)
 {
   /*
   <EXAMINE-OBJECTS rt-id="1" data-id="inspection-id-1" obj-id="1">
