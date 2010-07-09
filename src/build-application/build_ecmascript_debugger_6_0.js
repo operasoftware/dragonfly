@@ -32,7 +32,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     window.hostspotlighter = new namespace.Hostspotlighter();
     window.hostspotlighter.bind(service_interface);
 
-    /* ECMA object inspection */    
+    /* ECMA object inspection */
     var BaseView = new namespace.InspectionBaseView();
     namespace.InspectionView.prototype = BaseView;
     new namespace.InspectionView('inspection', ui_strings.M_VIEW_LABEL_FRAME_INSPECTION, 'scroll');
@@ -60,6 +60,8 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     cls.CndRtSelect.prototype = new CstSelect();
     new cls.CndRtSelect('cmd-runtime-select', 'cmd-line-runtimes');
     cls.CommandLineViewTest.create_ui_widgets();
+
+    new cls.ReplView('repl', "REPL", 'scroll', '', '');
 
     /* JS source */
     window.simple_js_parser = new window.cls.SimpleJSParser();
