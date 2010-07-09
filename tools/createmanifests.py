@@ -56,8 +56,11 @@ def get_resources(os_path, web_path, file_name):
 def write_maifest(os_path, file_name, resources, tag=""):
     with open(os.path.join(os_path, MANIFEST_DIR, file_name), "wb") as f:
         content = [
-            "CACHE MANIFEST", 
+            "CACHE MANIFEST",
             "# created %s %s" % (get_timestamp(), tag),
+            "NETWORK:",
+            "*",
+            "CACHE:",    
             "/app/fall-back-urls.json"
         ]
         content.extend(resources)
