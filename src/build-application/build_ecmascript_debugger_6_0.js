@@ -108,6 +108,12 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     cls.CSSLayoutView.prototype = ViewBase;
     new cls.CSSLayoutView('css-layout', ui_strings.M_VIEW_LABEL_LAYOUT, 'scroll css-layout');
 
+    /* adjust the base class */
+
+    var StorageDataBase = new namespace.StorageDataBase();
+    cls.CookiesData.prototype = StorageDataBase;
+    cls.LocalStorageData.prototype = StorageDataBase;
+
     /* storage objects and cookies */
     new cls.Namespace("storages");
     window.storages.add(new cls.LocalStorageData(
