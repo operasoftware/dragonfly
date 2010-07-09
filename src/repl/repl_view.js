@@ -252,7 +252,9 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     if (evt.keyCode == 9)
     {
       evt.preventDefault();
-      this._resolver.find_props(this._handle_completer.bind(this), this._textarea.value);
+      this._resolver.find_props(this._handle_completer.bind(this),
+                                this._textarea.value,
+                                window.stop_at.getSelectedFrame());
     }
     else if (evt.keyCode == 13)
     {

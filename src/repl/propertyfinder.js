@@ -32,12 +32,12 @@ window.cls.PropertyFinder = function(rt_id) {
    * override this method
    *
    */
-  this._requestEval = function(callback, js, scope, identifier, input, rt_id, thread_id, frame_id) {
+  this._requestEval = function(callback, js, scope, identifier, input, frameinfo) {
     var tag = tagManager.set_callback(this, this._onRequestEval,
-                                      [callback, scope, identifier, input, rt_id, thread_id, frame_id]);
+                                      [callback, scope, identifier, input, frameinfo]);
 
     this._service.requestEval(
-      tag, [rt_id, thread_id, frame_id, js]
+      tag, [frameinfo.runtime_id, frameinfo.thread_id, frameinfo.index, js]
     );
   };
 
@@ -92,15 +92,13 @@ window.cls.PropertyFinder = function(rt_id) {
     return scope;
   };
 
-  this._onRequestEval = function(status, message, callback, scope, identifier, input, rt_id, thread_id, frame_id) {
+  this._onRequestEval = function(status, message, callback, scope, identifier, input, frameinfo) {
     var ret = {
       props: [],
       scope: scope,
       input: input,
       identifier: identifier,
-      rt_id: rt_id,
-      thread_id: thread_id,
-      frame_id: frame_id
+      frameinfo: frameinfo
     };
 
     if (status == 0) {
@@ -126,20 +124,27 @@ window.cls.PropertyFinder = function(rt_id) {
    * runtime.
    *
    */
-  this.find_props = function(callback, input, rt_id, thread_id, frame_id) {
-    thread_id = thread_id || 0;
-    rt_id = rt_id || runtimes.getSelectedRuntimeId();
-    frame_id = frame_id || 0;
+  this.find_props = function(callback, input, frameinfo) {
+      frameinfo = frameinfo || {
+        runtime_id: runtimes.getSelectedRuntimeId(),
+        thread_id: 0,
+        scope_id: null,
+        index: 0
+      };
+
+
+    //rt_id, thread_id, frame_id) {
+
     var parts = this._find_input_parts(input);
 
-    var props = this._cache_get(parts.scope, rt_id, thread_id, frame_id);
+    var props = this._cache_get(parts.scope, frameinfo);
     if (props) {
       props.input = input;
       props.identifier = parts.identifier;
       callback(props);
     }
     else {
-      this._get_scope_contents(callback, parts.scope, parts.identifier, input, rt_id, thread_id, frame_id);
+      this._get_scope_contents(callback, parts.scope, parts.identifier, input, frameinfo);
     }
   };
 
@@ -152,29 +157,29 @@ window.cls.PropertyFinder = function(rt_id) {
     // fixme
   };
 
-  this._cache_key = function(scope, rt_id, thread_id, frame_id) {
-    var key = "" + scope + "." + rt_id + "." + thread_id + "." + frame_id;
-    return key;
+  this._cache_key = function(scope, frameinfo) {
+    return "" + frameinfo.scope_id + "." + frameinfo.runtime_id + "." + frameinfo.thread_id + "." + frameinfo.index;
   };
 
   this._cache_put = function(result)
   {
-    var key = this._cache_key(result.scope, result.rt_id, result.thread_id, result.frame_id);
+    var key = this._cache_key(result.scope, result.frameinfo);
     this._cache[key] = result;
   };
 
-  this._cache_get = function(scope, rt_id, thread_id, frame_id) {
-    var key = this._cache_key(scope, rt_id, thread_id, frame_id);
+  this._cache_get = function(scope, frameinfo) {
+    var key = this._cache_key(scope, frameinfo);
     return this._cache[key];
   };
 
-  this._get_scope_contents = function(callback, scope, identifier, input, rt_id, thread_id, frame_id) {
+  this._get_scope_contents = function(callback, scope, identifier, input, frameinfo) {
     var script = "(function(){var a = '', b= ''; for( a in %s ){ b += a + '_,_'; }; return b;})()";
     var eval_str = script.replace("%s", scope||"this");
 
-    if (frame_id !== undefined) {
-      this._requestEval(callback, eval_str, scope, identifier, input, rt_id, thread_id, frame_id);
+    if (frameinfo.index !== undefined) {
+      this._requestEval(callback, eval_str, scope, identifier, input, frameinfo);
     }
+    // fixme: use inspectobject if we're in a stopped state
   };
 
   this.toString = function() {
