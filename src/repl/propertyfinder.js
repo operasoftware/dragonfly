@@ -158,7 +158,7 @@ window.cls.PropertyFinder = function(rt_id) {
   };
 
   this._cache_key = function(scope, frameinfo) {
-    return "" + frameinfo.scope_id + "." + frameinfo.runtime_id + "." + frameinfo.thread_id + "." + frameinfo.index;
+    return "" + scope + "." + frameinfo.runtime_id + "." + frameinfo.thread_id + "." + frameinfo.index;
   };
 
   this._cache_put = function(result)
@@ -173,7 +173,7 @@ window.cls.PropertyFinder = function(rt_id) {
   };
 
   this._get_scope_contents = function(callback, scope, identifier, input, frameinfo) {
-    var script = "(function(){var a = '', b= ''; for( a in %s ){ b += a + '_,_'; }; return b;})()";
+    var script = "(function(scope){var a = '', b= ''; for( a in scope ){ b += a + '_,_'; }; return b;})(%s)";
     var eval_str = script.replace("%s", scope||"this");
 
     if (frameinfo.index !== undefined) {
