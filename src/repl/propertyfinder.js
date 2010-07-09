@@ -41,6 +41,15 @@ window.cls.PropertyFinder = function(rt_id) {
     );
   };
 
+  this._requestExamineObjects = function(callback, scope, identifier, input, frameinfo) {
+    var tag = tagManager.set_callback(this, this._onRequestExamineObjects,
+                                      [callback, scope, identifier, input, frameinfo]);
+
+    this._service.requestExamineObjects(
+      tag, [frameinfo.runtime_id, [frameinfo.scope_id], 0, 1]
+    );
+  };
+
   /**
    * Figure out the object to which input belongs.
    * foo.bar -> foo
@@ -115,7 +124,31 @@ window.cls.PropertyFinder = function(rt_id) {
     }
 
     this._cache_put(ret);
-    ret.input = input;
+    callback(ret);
+  };
+
+  this._onRequestExamineObjects = function(status, message, callback, scope, identifier, input, frameinfo) {
+    var ret = {
+      props: [],
+      scope: scope,
+      input: input,
+      identifier: identifier,
+      frameinfo: frameinfo
+    };
+
+    if (status == 0) {
+      const OBJECT_CHAIN_LIST = 0, OBJECT_LIST = 0, PROPERTY_LIST = 1, NAME = 0;
+      scope = (message &&
+        (message = message[OBJECT_CHAIN_LIST]) &&
+        (message = message[0]) &&
+        (message = message[OBJECT_LIST]) &&
+        (message = message[0]) &&
+        (message = message[PROPERTY_LIST]) ||
+        []).map(function(prop){return prop[NAME];});
+      ret.props = scope;
+    }
+
+    this._cache_put(ret);
     callback(ret);
   };
 
@@ -173,13 +206,17 @@ window.cls.PropertyFinder = function(rt_id) {
   };
 
   this._get_scope_contents = function(callback, scope, identifier, input, frameinfo) {
-    var script = "(function(scope){var a = '', b= ''; for( a in scope ){ b += a + '_,_'; }; return b;})(%s)";
-    var eval_str = script.replace("%s", scope||"this");
-
-    if (frameinfo.index !== undefined) {
-      this._requestEval(callback, eval_str, scope, identifier, input, frameinfo);
+    if (!scope && frameinfo.index !== null) { // we're stopped and there is no scope
+      this._requestExamineObjects(callback, scope, identifier, input, frameinfo);
     }
-    // fixme: use inspectobject if we're in a stopped state
+    else
+    {
+      var script = "(function(scope){var a = '', b= ''; for( a in scope ){ b += a + '_,_'; }; return b;})(%s)";
+      var eval_str = script.replace("%s", scope || "this");
+      if (frameinfo.index !== undefined) {
+        this._requestEval(callback, eval_str, scope, identifier, input, frameinfo);
+      }
+    }
   };
 
   this.toString = function() {
