@@ -438,72 +438,9 @@ cls.ElementStyle = function()
 
     var is_inherited = node_index > 0;
     var index_map = window.css_index_map;
-    var rule_id = expanded_declarations[RULE_ID];
     var synced_declarations = JSON.parse(JSON.stringify(expanded_declarations)); // Deep copy
 
     synced_declarations[DISABLED_LIST] = [];
-
-    // Always set this to 1 (applied), we will manually check later if it's overwritten or not
-    for (var prop in literal_declarations)
-    {
-      literal_declarations[prop][STATUS] = 1;
-    }
-
-    // Get the rule index
-    var node_style_list_index = 0;
-    var style_list_index = 0;
-    out:
-    for (var i = 0, node_style_list; node_style_list = (categories_data[NODE_STYLE_LIST] || [])[i]; i++)
-    {
-      for (var j = 0, style_list; style_list = (node_style_list[STYLE_LIST] || [])[j]; j++)
-      {
-        if (style_list[RULE_ID] == rule_id)
-        {
-          node_style_list_index = i;
-          style_list_index = j;
-          //  ▃▃▃▃▃▃▃▃
-          //  ▃▃▃▃  ▃▃
-          //
-          //   _·
-          break out;
-        }
-      }
-    }
-
-    // Here we manually loop through the whole shebang and set the status (the overwritten value)
-    // manually. We have to do this since we're dealing with disabled values (which in reality does not
-    // exist for the node, only a copy). This is a bit complicated.
-    //
-    // TODO: remember to special case shorthands later
-    for (var i = 0; i <= node_style_list_index; i++)
-    {
-      var style_list = categories_data[CSS][i][STYLE_LIST];
-      var list_index = (i == node_style_list_index) ? style_list_index : style_list.length;
-      while (list_index--)
-      {
-        for (var k = 0, index; index = style_list[list_index][INDEX_LIST][k]; k++)
-        {
-          var prop = index_map[index];
-          if (prop in literal_declarations &&
-             ((style_list[list_index][DISABLED_LIST] && style_list[list_index][DISABLED_LIST][k] == 0) || !style_list[list_index][DISABLED_LIST]))
-          {
-            // If the property has an "!important" declaration, is not disabled, and the current value in the loop
-            // is not "!important", set the status of the current value to 0 (i.e. overwritten)
-            if (literal_declarations[prop][PRIORITY] && !literal_declarations[prop][IS_DISABLED] && !style_list[list_index][PRIORITY_LIST][k])
-            {
-              categories_data[CSS][i][STYLE_LIST][list_index][STATUS_LIST][k] = 0;
-            }
-            // ... otherwise, set the property's value to disabled
-            else
-            {
-              literal_declarations[prop][STATUS] = 0;
-            }
-          }
-        }
-      }
-    }
-
-    // Now do the syncing
 
     // First the values from Scope...
     for (var i = expanded_declarations[INDEX_LIST].length; i--; )
@@ -534,32 +471,7 @@ cls.ElementStyle = function()
       synced_declarations[PRIORITY_LIST][index] = expanded_declarations[PRIORITY_LIST][expanded_index] !== undefined
                                                 ? expanded_declarations[PRIORITY_LIST][expanded_index]
                                                 : literal_declarations[prop][PRIORITY];
-      // Use the STATUS from Scope if this is inherited, otherwise, use the saved value (literal_declarations)
-      synced_declarations[STATUS_LIST  ][index] = node_index > node_style_list_index
-                                                ? expanded_declarations[STATUS_LIST][expanded_index]
-                                                : literal_declarations[prop][STATUS];
       synced_declarations[DISABLED_LIST][index] = literal_declarations[prop][IS_DISABLED];
-    }
-
-    // Create object with `property: value`
-    var declarations = {};
-    var len = expanded_declarations[PROP_LIST].length;
-    for (var i = 0; i < len; i++)
-    {
-      declarations[index_map[expanded_declarations[INDEX_LIST][i]]] = expanded_declarations[VAL_LIST][i];
-    }
-
-    var len = synced_declarations[INDEX_LIST].length;
-    for (var i = 0; i < len; i++)
-    {
-      var prop = index_map[synced_declarations[INDEX_LIST][i]];
-      var value =  synced_declarations[VALUE_LIST] && synced_declarations[VALUE_LIST][i];
-
-      synced_declarations[VALUE_LIST][i] = value;
-      literal_declarations[prop] = [value, // Cache
-                                    synced_declarations[PRIORITY_LIST][i],
-                                    synced_declarations[STATUS_LIST][i],
-                                    synced_declarations[DISABLED_LIST][i]];
     }
 
     return synced_declarations;
