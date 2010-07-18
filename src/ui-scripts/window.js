@@ -30,14 +30,17 @@ var UIWindowBase = new function()
   this.init = function(view_id, left, top, width, height)
   {
     var view = window.views[view_id];
+    var has_statusbar = 
+      typeof view.window_statusbar == 'boolean' ? view.window_statusbar : true;
     ids[ids.length] = this.id = getId();
     this.view_id = view_id;
-    this.top = top || this.default_top;
-    this.left = left || this.default_left;
+    this.top = top || view && view.window_top || this.default_top;
+    this.left = left || view && view.window_left || this.default_left;
     this.width = width || view && view.window_width || this.default_width;
     this.height = height || view && view.window_height || this.default_height;
     this.container = new WindowContainer(this);
-    this.statusbar = new WindowStatusbar(this);
+    if (has_statusbar)
+      this.statusbar = new WindowStatusbar(this);
     if(toolbars[view_id])
     {
       this.toolbar = new WindowToolbar(this, toolbars[view_id].buttons, toolbars[view_id].filters );
@@ -47,12 +50,14 @@ var UIWindowBase = new function()
       window.ui_windows = {};
     }
     window.ui_windows[this.id] = this;
-    this.render();
+    this.render(view && view.window_resizable);
   }
 
-  this.render = function()
+  this.render = function(resizable)
   {
-    var win = viewport.render(templates._window(this));
+    if (typeof resizable != 'boolean')
+      resizable = true;
+    var win = viewport.render(templates._window(this, resizable));
 
 
     if( this.toolbar )
@@ -62,7 +67,9 @@ var UIWindowBase = new function()
     }
 
     this.container.setup(this.view_id);
-    this.statusbar.setup(this.view_id);
+
+    if (this.statusbar)
+      this.statusbar.setup(this.view_id);
 
     this.setZIndex();
     win.style.zIndex = 200;

@@ -338,19 +338,22 @@
     return ['checkbox', ['label', input, label ] ];
   }
 
-  this._window = function(win)
+  this._window = function(win, resizable)
   {
     return ['window',
         this.window_header(views[win.view_id].name),
         this.window_shadows(),
-        ['window-control', 'handler', 'window-scale-top-left'],
-        ['window-control', 'handler', 'window-scale-top'],
-        ['window-control', 'handler', 'window-scale-top-right'],
-        ['window-control', 'handler', 'window-scale-right'],
-        ['window-control', 'handler', 'window-scale-bottom'],
-        ['window-control', 'handler', 'window-scale-bottom-right'],
-        ['window-control', 'handler', 'window-scale-bottom-left'],
-        ['window-control', 'handler', 'window-scale-left'],
+        resizable ?
+        [
+          ['window-control', 'handler', 'window-scale-top-left'],
+          ['window-control', 'handler', 'window-scale-top'],
+          ['window-control', 'handler', 'window-scale-top-right'],
+          ['window-control', 'handler', 'window-scale-right'],
+          ['window-control', 'handler', 'window-scale-bottom'],
+          ['window-control', 'handler', 'window-scale-bottom-right'],
+          ['window-control', 'handler', 'window-scale-bottom-left'],
+          ['window-control', 'handler', 'window-scale-left'],
+        ] : [],
       'id', win.id, 
       'style', 
       'top:' + win.top + 'px;' +

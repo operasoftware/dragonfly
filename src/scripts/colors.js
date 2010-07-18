@@ -14,64 +14,13 @@
 */
 var Colors = function()
 {
-  const 
-  RED = 0, 
-  GREEN = 1, 
-  BLUE = 2,
-  HUE = 0, 
-  SAT = 1, 
-  LUM = 2;
+  this.__rgb = [0, 0, 0];
+  this.__hsl = [0, 50, 50];
+  this.__hsv = [0, 50, 50]; 
+}
 
-  var rgb = [0, 0, 0];
-  var hsl = [0, 50, 50];
-  var hsv = [0, 50, 50];
-  
-  /**
-   * return val bounded to upper or lower if it over/underflows
-   * @private
-   * @param val {number} value to bound
-   * @param upper {number} upper bound
-   * @param lower {number} lower bound
-   * @returns {number}
-   */
-  var fixRange = function( val, upper, lower)
-  {
-    if( typeof val == 'string')
-    {
-      val = parseFloat(val);
-    }
-    return val > upper ? upper : val < lower ? lower : val;
-  }
-  
-  /**
-   * rounds off val and bounds it to upper and lower
-   * @see Colors#fixRange
-   * @private
-   * @returns {number}
-   * @param val {number} value to bound
-   * @param upper {number} upper bound
-   * @param lower {number} lower bound
-   */
-  var roundVal = function( val, upper, lower)
-  {
-    val = Math.round(val);
-    return val > upper ? upper : val < lower ? lower : val;
-  }
-  
-  /**
-   * turns val into a fixed number and bounds it to upper and lower
-   * @see Colors#fixRange
-   * @private
-   * @returns {number}
-   * @param val {number} value to bound
-   * @param upper {number} upper bound
-   * @param lower {number} lower bound
-   */
-  var toFixed = function( val, upper, lower)
-  {
-    val = val.toFixed(2);
-    return val > upper ? upper : val < lower ? lower : val;
-  }
+Colors.prototype = new function()
+{
 
   /**
    * Set the hue component of the color
@@ -80,10 +29,10 @@ var Colors = function()
    */
   this.setHue = function(h)
   {
-    h = fixRange(h, 360, 0);
-    hsl[HUE] = parseInt(h);
-    rgb = this.hsl_to_rgb( hsl[HUE], hsl[SAT], hsl[LUM] );
-    hsv = this.rgb_to_hsv( rgb[RED], rgb[GREEN], rgb[BLUE] );
+    h = this._fix_range(h, 360, 0);
+    this.__hsl[HUE] = parseInt(h);
+    this.__rgb = this.hsl_to_rgb( this.__hsl[HUE], this.__hsl[SAT], this.__hsl[LUM] );
+    this.__hsv = this.rgb_to_hsv( this.__rgb[RED], this.__rgb[GREEN], this.__rgb[BLUE] );
     return this;
   }
 
@@ -94,10 +43,10 @@ var Colors = function()
    */
   this.setSaturation = function(s)
   {
-    s = fixRange(s, 100, 0);
-    hsl[SAT] = parseFloat(s);
-    rgb = this.hsl_to_rgb( hsl[HUE], hsl[SAT], hsl[LUM] );
-    hsv = this.rgb_to_hsv( rgb[RED], rgb[GREEN], rgb[BLUE] );
+    s = this._fix_range(s, 100, 0);
+    this.__hsl[SAT] = parseFloat(s);
+    this.__rgb = this.hsl_to_rgb( this.__hsl[HUE], this.__hsl[SAT], this.__hsl[LUM] );
+    this.__hsv = this.rgb_to_hsv( this.__rgb[RED], this.__rgb[GREEN], this.__rgb[BLUE] );
     return this;
   }
   
@@ -108,10 +57,10 @@ var Colors = function()
    */
   this.setLuminosity = function(l)
   {
-    l = fixRange(l, 100, 0);
-    hsl[LUM] = parseFloat(l);
-    rgb = this.hsl_to_rgb( hsl[HUE], hsl[SAT], hsl[LUM] );
-    hsv = this.rgb_to_hsv( rgb[RED], rgb[GREEN], rgb[BLUE] );
+    l = this._fix_range(l, 100, 0);
+    this.__hsl[LUM] = parseFloat(l);
+    this.__rgb = this.hsl_to_rgb( this.__hsl[HUE], this.__hsl[SAT], this.__hsl[LUM] );
+    this.__hsv = this.rgb_to_hsv( this.__rgb[RED], this.__rgb[GREEN], this.__rgb[BLUE] );
     return this;
   }
 
@@ -123,10 +72,10 @@ var Colors = function()
    */
   this.setHueV = function(h)
   {
-    h = fixRange(h, 360, 0);
-    hsv[HUE] = parseInt(h);
-    rgb = this.hsv_to_rgb( hsv[HUE], hsv[SAT], hsv[LUM] );
-    hsl = this.rgb_to_hsl( rgb[RED], rgb[GREEN], rgb[BLUE] );
+    h = this._fix_range(h, 360, 0);
+    this.__hsv[HUE] = parseInt(h);
+    this.__rgb = this.hsv_to_rgb( this.__hsv[HUE], this.__hsv[SAT], this.__hsv[LUM] );
+    this.__hsl = this.rgb_to_hsl( this.__rgb[RED], this.__rgb[GREEN], this.__rgb[BLUE] );
     return this;
   }
 
@@ -137,10 +86,10 @@ var Colors = function()
    */
   this.setSaturationV = function(s)
   {
-    s = fixRange(s, 100, 0);
-    hsv[SAT] = parseFloat(s);
-    rgb = this.hsv_to_rgb( hsv[HUE], hsv[SAT], hsv[LUM] );
-    hsl = this.rgb_to_hsl( rgb[RED], rgb[GREEN], rgb[BLUE] );
+    s = this._fix_range(s, 100, 0);
+    this.__hsv[SAT] = parseFloat(s);
+    this.__rgb = this.hsv_to_rgb( this.__hsv[HUE], this.__hsv[SAT], this.__hsv[LUM] );
+    this.__hsl = this.rgb_to_hsl( this.__rgb[RED], this.__rgb[GREEN], this.__rgb[BLUE] );
     return this;
   }
 
@@ -151,10 +100,10 @@ var Colors = function()
    */
   this.setValue = function(l)
   {
-    l = fixRange(l, 100, 0);
-    hsv[LUM] = parseFloat(l);
-    rgb = this.hsv_to_rgb( hsv[HUE], hsv[SAT], hsv[LUM] );
-    hsl = this.rgb_to_hsl( rgb[RED], rgb[GREEN], rgb[BLUE] );
+    l = this._fix_range(l, 100, 0);
+    this.__hsv[LUM] = parseFloat(l);
+    this.__rgb = this.hsv_to_rgb( this.__hsv[HUE], this.__hsv[SAT], this.__hsv[LUM] );
+    this.__hsl = this.rgb_to_hsl( this.__rgb[RED], this.__rgb[GREEN], this.__rgb[BLUE] );
     return this;
   }
 
@@ -165,10 +114,10 @@ var Colors = function()
    */
   this.setRed = function(r)
   {
-    r = fixRange(r, 255, 0);
-    rgb[RED] = parseInt(r);
-    hsv = this.rgb_to_hsv( rgb[RED], rgb[GREEN], rgb[BLUE] );
-    hsl = this.rgb_to_hsl( rgb[RED], rgb[GREEN], rgb[BLUE] );
+    r = this._fix_range(r, 255, 0);
+    this.__rgb[RED] = parseInt(r);
+    this.__hsv = this.rgb_to_hsv( this.__rgb[RED], this.__rgb[GREEN], this.__rgb[BLUE] );
+    this.__hsl = this.rgb_to_hsl( this.__rgb[RED], this.__rgb[GREEN], this.__rgb[BLUE] );
     return this;
   }
 
@@ -179,10 +128,10 @@ var Colors = function()
    */
   this.setGreen = function(g)
   {
-    g = fixRange(g, 255, 0);
-    rgb[GREEN] = parseInt(g);
-    hsv = this.rgb_to_hsv( rgb[RED], rgb[GREEN], rgb[BLUE] );
-    hsl = this.rgb_to_hsl( rgb[RED], rgb[GREEN], rgb[BLUE] );
+    g = this._fix_range(g, 255, 0);
+    this.__rgb[GREEN] = parseInt(g);
+    this.__hsv = this.rgb_to_hsv( this.__rgb[RED], this.__rgb[GREEN], this.__rgb[BLUE] );
+    this.__hsl = this.rgb_to_hsl( this.__rgb[RED], this.__rgb[GREEN], this.__rgb[BLUE] );
     return this;
   }
   
@@ -195,13 +144,13 @@ var Colors = function()
     var i = 0;
     for( ; i < 3; i++)
     {
-      rgb[i] = c_arr[i] > 255 ? 255 : c_arr[i];
+      this.__rgb[i] = c_arr[i] > 255 ? 255 : c_arr[i];
     }
-    hsv = this.rgb_to_hsv( rgb[RED], rgb[GREEN], rgb[BLUE] );
-    hsl = this.rgb_to_hsl( rgb[RED], rgb[GREEN], rgb[BLUE] );
+    this.__hsv = this.rgb_to_hsv( this.__rgb[RED], this.__rgb[GREEN], this.__rgb[BLUE] );
+    this.__hsl = this.rgb_to_hsl( this.__rgb[RED], this.__rgb[GREEN], this.__rgb[BLUE] );
     return this;
   }
-
+  
   /**
    * Set the blue component of the color
    * @param b {int} value of blue component
@@ -209,10 +158,10 @@ var Colors = function()
    */
   this.setBlue = function(b)
   {
-    b = fixRange(b, 255, 0);
-    rgb[BLUE] = parseInt(b);
-    hsv = this.rgb_to_hsv( rgb[RED], rgb[GREEN], rgb[BLUE] );
-    hsl = this.rgb_to_hsl( rgb[RED], rgb[GREEN], rgb[BLUE] );
+    b = this._fix_range(b, 255, 0);
+    this.__rgb[BLUE] = parseInt(b);
+    this.__hsv = this.rgb_to_hsv( this.__rgb[RED], this.__rgb[GREEN], this.__rgb[BLUE] );
+    this.__hsl = this.rgb_to_hsl( this.__rgb[RED], this.__rgb[GREEN], this.__rgb[BLUE] );
     return this;
   }
 
@@ -228,25 +177,23 @@ var Colors = function()
     {
       hex = hex.slice(0,6);
       var temp = parseInt(hex, 16);
-      rgb = [ temp >> 16, ( temp >> 8 ) & 0xff, temp & 0xff ];
-      hsv = this.rgb_to_hsv( rgb[RED], rgb[GREEN], rgb[BLUE] );
-      hsl = this.rgb_to_hsl( rgb[RED], rgb[GREEN], rgb[BLUE] );
+      this.__rgb = [ temp >> 16, ( temp >> 8 ) & 0xff, temp & 0xff ];
+      this.__hsv = this.rgb_to_hsv( this.__rgb[RED], this.__rgb[GREEN], this.__rgb[BLUE] );
+      this.__hsl = this.rgb_to_hsl( this.__rgb[RED], this.__rgb[GREEN], this.__rgb[BLUE] );
     }
     return this;
   }
 
   this.invert = function()
   {
-    this.setHue( (hsl[HUE] + 180 ) % 360 );
+    this.setHue( (this.__hsl[HUE] + 180 ) % 360 );
     return this;
   }
 
   this.getGrayValue = function()
   {
-    return 0.2126 * rgb[RED] + 0.7152 * rgb[GREEN] + 0.0722 * rgb[BLUE];
+    return 0.2126 * this.__rgb[RED] + 0.7152 * this.__rgb[GREEN] + 0.0722 * this.__rgb[BLUE];
   }
-
-
 
   /**
    * Get hue component of color
@@ -254,7 +201,7 @@ var Colors = function()
    */
   this.getHue = function()
   {
-    return roundVal(hsl[HUE], 360, 0);
+    return this._round_val(this.__hsl[HUE], 360, 0);
   }
 
   /**
@@ -263,7 +210,7 @@ var Colors = function()
    */
   this.getSaturation = function()
   {
-    return toFixed(hsl[SAT], 100, 0);
+    return this._round_val(this.__hsl[SAT], 100, 0);
   }
 
   /**
@@ -272,7 +219,7 @@ var Colors = function()
    */
   this.getLuminosity = function()
   {
-    return toFixed(hsl[LUM], 100, 0);
+    return this._round_val(this.__hsl[LUM], 100, 0);
   }
 
   /**
@@ -281,7 +228,7 @@ var Colors = function()
    */
   this.getHSL = function()
   {
-    return [roundVal(hsl[0], 360, 0), toFixed(hsl[1], 100, 0), toFixed(hsl[2], 100, 0)];
+    return [this._round_val(this.__hsl[0], 360, 0), this._round_val(this.__hsl[1], 100, 0), this._round_val(this.__hsl[2], 100, 0)];
   }
 
   /**
@@ -290,7 +237,7 @@ var Colors = function()
    */
   this.getHueV = function()
   {
-    return roundVal(hsv[HUE], 360, 0);
+    return this._round_val(this.__hsv[HUE], 360, 0);
   }
 
   /**
@@ -299,7 +246,7 @@ var Colors = function()
    */
   this.getSaturationV = function()
   {
-    return toFixed(hsv[SAT], 100, 0);
+    return this._round_val(this.__hsv[SAT], 100, 0);
   }
 
   /**
@@ -308,7 +255,7 @@ var Colors = function()
    */
   this.getValue = function()
   {
-    return toFixed(hsv[LUM], 100, 0);
+    return this._round_val(this.__hsv[LUM], 100, 0);
   }
 
   /**
@@ -317,7 +264,7 @@ var Colors = function()
    */
   this.getRed = function()
   {
-    return roundVal(rgb[RED], 255, 0);
+    return this._round_val(this.__rgb[RED], 255, 0);
   }
 
   /**
@@ -326,7 +273,7 @@ var Colors = function()
    */
   this.getGreen = function()
   {
-    return roundVal(rgb[GREEN], 255, 0);
+    return this._round_val(this.__rgb[GREEN], 255, 0);
   }
 
   /**
@@ -335,7 +282,7 @@ var Colors = function()
    */
   this.getBlue = function()
   {
-    return roundVal(rgb[BLUE], 255, 0);
+    return this._round_val(this.__rgb[BLUE], 255, 0);
   }
 
   /**
@@ -344,7 +291,23 @@ var Colors = function()
    */
   this.getRGB = function()
   {
-    return [roundVal(rgb[0], 255, 0), roundVal(rgb[1], 255, 0), roundVal(rgb[2], 255, 0)];
+    return [this._round_val(this.__rgb[0], 255, 0), this._round_val(this.__rgb[1], 255, 0), this._round_val(this.__rgb[2], 255, 0)];
+  }
+  
+  this.copyColor = function(color)
+  {
+    if(color instanceof this.constructor)
+    {
+      this.__rgb[0] = color.__rgb[0];
+      this.__rgb[1] = color.__rgb[1];
+      this.__rgb[2] = color.__rgb[2];
+      this.__hsl[0] = color.__hsl[0];
+      this.__hsl[1] = color.__hsl[1];
+      this.__hsl[2] = color.__hsl[2];
+      this.__hsv[0] = color.__hsv[0]; 
+      this.__hsv[1] = color.__hsv[1]; 
+      this.__hsv[2] = color.__hsv[2]; 
+    }
   }
 
   /**
@@ -353,45 +316,141 @@ var Colors = function()
    */
   this.getHex = function()
   {
-    return this.rgb_to_hex_c(rgb);
+    return this.rgb_to_hex_c(this.__rgb);
   }
-
-}
-
-Colors.prototype = new function()
-{
-  var self = this;
   
-  var roundVal = function( val, upper, lower)
+  // convenience 
+  
+  this.__property = function(name, setter, getter)
+  {
+    this.__defineGetter__(name, function()
+    {
+      return this[getter]();
+    });
+    this.__defineSetter__(name, function(val)
+    {
+      this[setter](val);
+    });
+  };
+  
+  this.__defineGetter__('hsl', function()
+  {
+    return (
+      "hsl(" + 
+      this.getHue() + ', ' +
+      this.getSaturation() + '%, ' +
+      this.getLuminosity() + '%' +
+      ")");
+  });
+  this.__defineSetter__('hsl', function(val){}); // parse hsl?
+  
+  this.__defineGetter__('hsv', function()
+  {
+    return (
+      "hsv(" + 
+      this.getHue() + ', ' +
+      this.getSaturationV() + '%, ' +
+      this.getValue() + '%' +
+      ")");
+  });
+  this.__defineSetter__('hsv', function(val){}); // parse hsv?
+  
+  this.__defineGetter__('rgb', function()
+  {
+    return (
+      "rgb(" + 
+      this.getRed() + ', ' +
+      this.getGreen() + ', ' +
+      this.getBlue() + 
+      ")");
+  });
+  this.__defineSetter__('rgb', function(val){}); // parse rgb?
+  
+  this.__defineGetter__('hhex', function()
+  {
+    return "#" + this.getHex();
+  });
+  this.__defineSetter__('hhex', function(val){});
+
+  [
+    ['h', 'setHueV', 'getHueV'],
+    ['s', 'setSaturationV', 'getSaturationV'],
+    ['v', 'setValue', 'getValue'],
+    ['r', 'setRed', 'getRed'],
+    ['g', 'setGreen', 'getGreen'],
+    ['b', 'setBlue', 'getBlue'],
+    ['hex', 'setHex', 'getHex'],
+    ['l', 'setLuminosity', 'getLuminosity']
+  ].forEach(function(property)
+  {
+    const NAME = 0, SETTER = 1, GETTER = 2;
+    this.__property(property[NAME], property[SETTER], property[GETTER]);
+  }, this);
+  
+  const 
+  RED = 0, 
+  GREEN = 1, 
+  BLUE = 2,
+  HUE = 0, 
+  SAT = 1, 
+  LUM = 2;
+  
+  /**
+   * return val bounded to upper or lower if it over/underflows
+   * @private
+   * @param val {number} value to bound
+   * @param upper {number} upper bound
+   * @param lower {number} lower bound
+   * @returns {number}
+   */
+  this._fix_range = function( val, upper, lower)
+  {
+    if( typeof val == 'string')
+    {
+      val = parseFloat(val);
+    }
+    return val > upper ? upper : val < lower ? lower : val;
+  }
+  
+  /**
+   * rounds off val and bounds it to upper and lower
+   * @see Colors#this._fix_range
+   * @private
+   * @returns {number}
+   * @param val {number} value to bound
+   * @param upper {number} upper bound
+   * @param lower {number} lower bound
+   */
+  this._round_val = function( val, upper, lower)
   {
     val = Math.round(val);
     return val > upper ? upper : val < lower ? lower : val;
   }
-
-  var hsl_or_hsv_to_rgb = function ( h, s, l, is_hsl ) 
+  
+  this._hsl_or_hsv_to_rgb = function ( h, s, l, is_hsl ) 
   {
-    var ret = self.hue_to_rgb(h), i = 0;
+    var ret = this.hue_to_rgb(h), i = 0;
     if( is_hsl)
     {
-      ret = self.mix_rgb(ret, [127.5, 127.5, 127.5], 1 - s / 100);
+      ret = this.mix_rgb(ret, [127.5, 127.5, 127.5], 1 - s / 100);
       if( l <= 50 )
       {
-        ret = self.mix_rgb([0, 0, 0], ret, l/50);
+        ret = this.mix_rgb([0, 0, 0], ret, l/50);
       }
       else
       {
-        ret = self.mix_rgb(ret, [0xff, 0xff, 0xff], ( l - 50 ) / 50);
+        ret = this.mix_rgb(ret, [0xff, 0xff, 0xff], ( l - 50 ) / 50);
       }
     }
     else
     {
-      ret = self.mix_rgb(ret, [0xff, 0xff, 0xff], 1 - s / 100);
-      ret = self.mix_rgb([0, 0, 0], ret, l/100);
+      ret = this.mix_rgb(ret, [0xff, 0xff, 0xff], 1 - s / 100);
+      ret = this.mix_rgb([0, 0, 0], ret, l/100);
     }
     return ret;
   }
 
-  var rgb_to_hsl_or_hsv = function ( r, g, b, is_to_hsl ) 
+  this._rgb_to_hsl_or_hsv = function ( r, g, b, is_to_hsl ) 
   {
     r /= 255;
     g /= 255;
@@ -475,7 +534,7 @@ Colors.prototype = new function()
   
   this.rgb_c_to_hex_c = function(c)
   {
-    c = roundVal(c, 255, 0);
+    c = this._round_val(c, 255, 0);
     return ( c < 16 ? '0' : '' ) + c.toString(16);
   }
   
@@ -484,7 +543,7 @@ Colors.prototype = new function()
     var ret = '', i = 0, c = 0;
     for( ; i < 3; i++ )
     {
-      c = roundVal(c_arr[i], 255, 0);
+      c = this._round_val(c_arr[i], 255, 0);
       if( c > 255 ) c = 255;
       ret +=  ( c < 16 ? '0' : '' ) + c.toString(16);
     }
@@ -517,28 +576,23 @@ Colors.prototype = new function()
 
   this.hsl_to_rgb = function ( h, s, l ) 
   {
-    return hsl_or_hsv_to_rgb( h, s, l, true);
+    return this._hsl_or_hsv_to_rgb( h, s, l, true);
   }
 
   this.hsv_to_rgb = function ( h, s, v ) 
   {
-    return hsl_or_hsv_to_rgb( h, s, v, false);
+    return this._hsl_or_hsv_to_rgb( h, s, v, false);
   }
 
   this.rgb_to_hsv = function ( r, g, b ) 
   {
-    return rgb_to_hsl_or_hsv ( r, g, b, false );
+    return this._rgb_to_hsl_or_hsv ( r, g, b, false );
   }
 
   this.rgb_to_hsl = function ( r, g, b ) 
   {
-    return rgb_to_hsl_or_hsv ( r, g, b, true );
-  }
-
-  this.toGrayScale = function()
-  {
-    
-
+    return this._rgb_to_hsl_or_hsv ( r, g, b, true );
   }
 
 }
+Colors.prototype.constructor = Colors;

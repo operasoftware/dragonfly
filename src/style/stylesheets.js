@@ -18,6 +18,7 @@ cls.Stylesheets = function()
   var __sortedIndexMap = [];
   var __initialValues = [];
   var __shorthandIndexMap = [];
+  var __colorIndexMap = [];
   var __selectedRules = null;
   var __colorIndex = 0;
 
@@ -541,14 +542,24 @@ cls.Stylesheets = function()
           ret += (ret ? MARKUP_PROP_NL : MARKUP_EMPTY) +
                   INDENT +
                   MARKUP_KEY + __indexMap[index] + MARKUP_KEY_CLOSE +
-                  MARKUP_VALUE + helpers.escapeTextHtml(value_list[i]) + (priority_list[i] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE;
+                  MARKUP_VALUE + 
+                  helpers.escapeTextHtml(value_list[i]) + (priority_list[i] ? MARKUP_IMPORTANT : "") + 
+                  (!is_style_sheet && __colorIndexMap[index] ?
+                    "<color-sample handler='show-color-picker' style='background-color:" + value_list[i] +"'/>" : 
+                    "") +
+                  MARKUP_VALUE_CLOSE;
         }
         else
         {
           ret += (ret ? MARKUP_PROP_NL : MARKUP_EMPTY) +
                   INDENT +
                   MARKUP_KEY_OW + __indexMap[index] + MARKUP_KEY_CLOSE +
-                  MARKUP_VALUE_OW + helpers.escapeTextHtml(value_list[i]) + ( priority_list[i] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE;
+                  MARKUP_VALUE_OW + 
+                  helpers.escapeTextHtml(value_list[i]) + ( priority_list[i] ? MARKUP_IMPORTANT : "") + 
+                  (!is_style_sheet && __colorIndexMap[index] ?
+                    "<color-sample handler='show-color-picker' style='background-color:" + value_list[i] +"'/>" : 
+                    "") +
+                  MARKUP_VALUE_CLOSE;
         }
       }
     }
@@ -1005,6 +1016,7 @@ cls.Stylesheets = function()
         case 'color':
         {
           __colorIndex = i;
+          __colorIndexMap[i] = true;
           break;
         }
         // margin
@@ -1074,6 +1086,7 @@ cls.Stylesheets = function()
         {
           SHORTHAND[i] = 3;
           __shorthandIndexMap[i] = 'border';
+          __colorIndexMap[i] = true;
           break;
         }
         // border rigth
@@ -1093,6 +1106,7 @@ cls.Stylesheets = function()
         {
           SHORTHAND[i] = 6;
           __shorthandIndexMap[i] = 'border';
+          __colorIndexMap[i] = true;
           break;
         }
         // border bottom
@@ -1112,6 +1126,7 @@ cls.Stylesheets = function()
         {
           SHORTHAND[i] = 9;
           __shorthandIndexMap[i] = 'border';
+          __colorIndexMap[i] = true;
           break;
         }
         // border left
@@ -1131,6 +1146,7 @@ cls.Stylesheets = function()
         {
           SHORTHAND[i] = 12;
           __shorthandIndexMap[i] = 'border';
+          __colorIndexMap[i] = true;
           break;
         }
         // background
@@ -1138,6 +1154,7 @@ cls.Stylesheets = function()
         {
           SHORTHAND[i] = 1;
           __shorthandIndexMap[i] = 'background';
+          __colorIndexMap[i] = true;
           break;
         }
         case 'background-image':

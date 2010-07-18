@@ -23,7 +23,7 @@ var WindowContainerBase = function()
       this.vertical_delta = 
         defaults.window_header_offsetHeight + 
         (this.cell.toolbar && this.cell.toolbar.offsetHeight || 0 ) +
-        defaults.window_statusbar_offsetHeight +
+        (this.cell.statusbar && defaults.window_statusbar_offsetHeight || 0) +
         this.vertical_border_padding;
     }
 

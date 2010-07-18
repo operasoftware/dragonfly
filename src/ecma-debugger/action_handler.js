@@ -313,3 +313,61 @@ window.eventHandlers.click['dom-resource-link'].execute = function(event, target
   window.open(helpers.resolveURLS(runtimes.getURI(rt_id), url.slice(1, url.length - 1)), "_blank");
 };
 
+window.eventHandlers.click['show-color-picker'] = function(event, target)
+{
+  window.views['color-selector'].show_color_picker(event);
+  
+};
+
+var ColorPickerView = function(id, name, container_class)
+{
+
+  this.createView = function(container){};
+  this.show_in_views_menu = true;
+  this.window_top = 20;
+  this.window_left = 20;
+  this.window_width = 386;
+  this.window_height = 240;
+  this.window_resizable = false;
+  this.window_statusbar = false;
+  this.cp_old_color = '';
+  this.cp_style_prop = '';
+  this.cp_rt_id = 0;
+  this.cp_rule_id = 0;
+  this.cp_color_sample = null;
+  this.cp_value_container = null;
+  
+  this.cp_cb = function(color)
+  {
+    this.cp_value_container.firstChild.nodeValue = color.hhex;
+    this.cp_color_sample.style.backgroundColor = color.hhex;
+    var script = 
+      "rule.style.setProperty(\"" + this.cp_style_prop + "\", \"" + color.hhex + "\", null)";
+      services['ecmascript-debugger'].requestEval(0,
+          [this.cp_rt_id, 0, 0, script, [["rule", this.cp_rule_id]]]);
+  }
+  this.cp_cb_bound = this.cp_cb.bind(this);
+  
+  this.createView = function(container)
+  {
+    var color_picker = new ColorPicker(this.cp_cb_bound, this.cp_old_color);
+    container.render(color_picker.render());
+  }
+  this.show_color_picker = function(event)
+  {
+    var target = event.target, cur_ele = target.parentNode;
+    this.cp_color_sample = target;
+    this.cp_old_color = target.style.backgroundColor;
+    this.cp_value_container = cur_ele;
+    this.cp_style_prop = cur_ele.parentNode.getElementsByTagName('key')[0].textContent;
+    cur_ele = cur_ele .parentNode.parentNode;
+    this.cp_rule_id = parseInt(cur_ele.getAttribute('rule-id'));
+    this.cp_rt_id = parseInt(cur_ele.parentNode.getAttribute('rt-id'));
+    UIWindowBase.showWindow(this.id);
+  }
+  this.init(id, name, container_class);
+}
+ColorPickerView.prototype = ViewBase;
+new ColorPickerView('color-selector', 'Color Picker', 'color-selector');
+
+

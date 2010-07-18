@@ -1,0 +1,56 @@
+<html xmlns='http://www.w3.org/1999/xhtml'
+      xmlns:xlink="http://www.w3.org/1999/xlink" 
+      xmlns:svg="http://www.w3.org/2000/svg">
+<link rel="stylesheet" href="style.css"/>
+<script src="dom.js"/>
+<script src="templates.js"/>
+<script src="slider.js"/>
+<script><![CDATA[ 
+
+
+  
+]]></script>
+<script><![CDATA[ 
+var SLIDER_BASE_ID = 'color-picker-slider-base', SLIDER_ID = 'color-picker-slider';
+var test  = function()
+{
+  
+  var out = document.getElementsByTagName('pre')[0];
+  
+  var slider = new Slider(document.getElementById('test'), SLIDER_BASE_ID, SLIDER_ID, 0, 1);
+  var count = 0;
+  slider.onz = function(z){out.textContent = z.toFixed(4) +", " + (count++)};
+  window.slider = slider;
+};
+
+var remove_slider = function()
+{
+  var slider_ele = document.getElementsByClassName(SLIDER_BASE_ID)[0];
+  slider_ele.parentNode.removeChild(slider_ele);
+} 
+
+var oninput = function(event)
+{
+  if (window.slider)
+  {
+    window.slider.z = parseFloat(event.target.value);
+  }
+}
+
+window.onload = function()
+{
+  document.documentElement.render( 
+  ['body', 
+    ['p', 
+      ['input', 'type', 'button', 'value', 'slider', 'onclick', test],
+      ['input', 'type', 'button', 'value', 'remove slider', 'onclick', remove_slider],
+      ['input', 'oninput', oninput],
+      ['div', 'id', 'test', 'style', 'position:absolute;top:50px;left:100px;width:20px;height:250px;background-color:#0f0']
+    ],
+    ['pre']
+  ]);
+
+}; 
+  
+]]></script>
+</html>

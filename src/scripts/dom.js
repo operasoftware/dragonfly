@@ -26,7 +26,9 @@ Element.prototype.render = Document.prototype.render = function(args)
   i = 0,
   ele = this,
   first_arg = args[0],
-  arg = null;
+  arg = null,
+  prefix_pos = -1,
+  ns = '';
 
   if (args.length)
   {
@@ -34,7 +36,17 @@ Element.prototype.render = Document.prototype.render = function(args)
     {
       if (typeof first_arg == 'string')
       {
-        ele = first_arg in CustomElements ? CustomElements[first_arg].create() : doc.createElement(first_arg);
+        if ((prefix_pos = first_arg.indexOf(':')) != -1)
+        {
+          ns = doc.lookupNamespaceURI(first_arg.slice(0, prefix_pos));
+          if (!ns)
+          {
+            throw('namespace not defined in call Node.prototype.___add')
+          }
+          ele = doc.createElementNS(ns, first_arg.slice(prefix_pos + 1));
+        }
+        else
+          ele = first_arg in CustomElements ? CustomElements[first_arg].create() : doc.createElement(first_arg);
         i++;
       }
       arg = args[i];
