@@ -40,7 +40,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
   PUBLIC_ID = 4,
   SYSTEM_ID = 5; 
 
-  var onResetState = function()
+  this._on_reset_state = function()
   {
     data = []; 
     mime = '';
@@ -83,7 +83,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
       // TODO this will fail on inspecting a popup which is part of the debug context
       if(message[WINDOW_ID] == window.window_manager_data.get_debug_context())
       {
-        clickHandlerHost({runtime_id: message[RUNTIME_ID], object_id: message[OBJECT_ID]});
+        this._click_handler_host({runtime_id: message[RUNTIME_ID], object_id: message[OBJECT_ID]});
       }
       else
       {
@@ -93,11 +93,11 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
     }
     else if (show_initial_view)
     {
-      getInitialView(rt_id);
+      this._get_initial_view(rt_id);
     }
   }
 
-  var onActiveTab = function(msg)
+  this._on_active_tab = function(msg)
   {
     // TODO clean up old tab
     data = []; 
@@ -112,24 +112,24 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
     {
       if(views[view_id].isvisible())
       {
-        onShowView({id: view_id})
+        this._on_show_view({id: view_id})
       }
     }
   }
 
-  var clickHandlerHost = function(event)
+  this._click_handler_host = function(event)
   {
     var rt_id = event.runtime_id, obj_id = event.object_id;
     current_target = obj_id;
     data = [];
     mime = '';
-    var tag = tagManager.set_callback(null, handleGetDOM, [rt_id, obj_id, event.highlight === false ? false : true]);
+    var tag = tagManager.set_callback(this, this._handle_get_dom, [rt_id, obj_id, event.highlight === false ? false : true]);
     services['ecmascript-debugger'].requestInspectDom(tag, 
       [obj_id, 'parent-node-chain-with-children']);
   }
 
 
-  var domNodeRemovedHandler = function(event)
+  this._dom_node_removed_handler = function(event)
   {
     // if the node is in the current data handle it otherwise not.
     var rt_id = event.runtime_id, obj_id = event.object_id;
@@ -151,7 +151,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
     }
   }
 
-  var set_mime = function()
+  this._set_mime = function()
   {
     var 
     node = null, 
@@ -172,13 +172,13 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
     return data.length && mime == "text/html" || false;
   }
 
-  var handleGetDOM = function(status, message, rt_id, obj_id, highlight_target)
+  this._handle_get_dom = function(status, message, rt_id, obj_id, highlight_target)
   {
     const NODE_LIST = 0;
     var view_id = '', i = 0;
 
     data = message[NODE_LIST];
-    mime = set_mime();
+    mime = this._set_mime();
     
     // handle text nodes as target in get selected element
     for( i = 0; data[i] && data[i][ID] != obj_id; i++);
@@ -215,7 +215,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
         
   }
 
-  var onSettingChange = function(msg)
+  this._on_setting_change = function(msg)
   {
     if( msg.id == settings_id )
     {
@@ -243,11 +243,11 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
           {
             if(settings[settings_id].get(msg.key))
             {
-              host_tabs.activeTab.addEventListener('click', clickHandlerHost);
+              host_tabs.activeTab.addEventListener('click', this._click_handler_host_bound);
             }
             else
             {
-              host_tabs.activeTab.removeEventListener('click', clickHandlerHost);
+              host_tabs.activeTab.removeEventListener('click', this._click_handler_host_bound);
             }
             break;
           }
@@ -256,11 +256,11 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
           {
             if(settings[settings_id].get(msg.key))
             {
-              host_tabs.activeTab.addEventListener('DOMNodeRemoved', domNodeRemovedHandler);
+              host_tabs.activeTab.addEventListener('DOMNodeRemoved', this._dom_node_removed_handler_bound);
             }
             else
             {
-              host_tabs.activeTab.removeEventListener('DOMNodeRemoved', domNodeRemovedHandler);
+              host_tabs.activeTab.removeEventListener('DOMNodeRemoved', this._dom_node_removed_handler_bound);
             }
             break;
           }
@@ -270,7 +270,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
   }
 
 
-  var onShowView = function(msg)
+  this._on_show_view = function(msg)
   {
     
     var msg_id = msg.id, id = '', i = 0;
@@ -287,7 +287,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
         }
         if(settings[settings_id].get('find-with-click'))
         {
-          host_tabs.activeTab.addEventListener('click', clickHandlerHost);
+          host_tabs.activeTab.addEventListener('click', this._click_handler_host_bound);
         }
         if(settings[settings_id].get('highlight-on-hover'))
         {
@@ -296,13 +296,13 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
         } 
         if(settings[settings_id].get('update-on-dom-node-inserted'))
         {
-          host_tabs.activeTab.addEventListener('DOMNodeRemoved', domNodeRemovedHandler);
+          host_tabs.activeTab.addEventListener('DOMNodeRemoved', this._dom_node_removed_handler_bound);
         }
         if(!data.length)
         {
           if(_is_element_selected_checked)
           {
-            getInitialView(data_runtime_id);
+            this._get_initial_view(data_runtime_id);
           }
           else
           {
@@ -319,21 +319,21 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
 
 
 
-  var onHideView = function(msg)
+  this._on_hide_view = function(msg)
   {
     var msg_id = msg.id, id = '', i = 0;
     for( ; ( id = view_ids[i] ) && id != msg_id; i++);
     if( id )
     {
-      host_tabs.activeTab.removeEventListener('click', clickHandlerHost);
+      host_tabs.activeTab.removeEventListener('click', this._click_handler_host_bound);
       host_tabs.activeTab.removeEventListener('mouseover', spotlight);
       host_tabs.activeTab.removeEventListener('mouseout', set_reset_spotlight);
-      host_tabs.activeTab.removeEventListener('DOMNodeRemoved', domNodeRemovedHandler);
+      host_tabs.activeTab.removeEventListener('DOMNodeRemoved', this._dom_node_removed_handler_bound);
       // switching between dom style and markup style data = [];
     }
   }
 
-  var onRuntimeStopped = function(msg)
+  this._on_runtime_stopped = function(msg)
   {
     
     if( msg.id == data_runtime_id )
@@ -350,9 +350,9 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
     }
   }
 
-  var getInitialView = function(rt_id)
+  this._get_initial_view = function(rt_id)
   {
-    var tag = tagManager.set_callback(null, handleInitialView, [rt_id]);
+    var tag = tagManager.set_callback(this, this._handle_initial_view, [rt_id]);
     var script_data = "return ( document.body || document.documentElement )";
     services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, script_data]);
   }
@@ -361,7 +361,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
   {
     if( !(rt_id == data_runtime_id && data.length) && runtime_onload_handler.check(rt_id, arguments) )
     {
-      getInitialView(rt_id);
+      this._get_initial_view(rt_id);
     }
   }
 
@@ -383,7 +383,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
     __next_rt_id = rt_id;
   }
 
-  var handleInitialView = function(status, message, rt_id)
+  this._handle_initial_view = function(status, message, rt_id)
   {
     
     const
@@ -394,16 +394,16 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
     
     if(message[STATUS] == 'completed' )
     {
-      clickHandlerHost({runtime_id: rt_id, object_id: message[OBJECT_VALUE][OBJECT_ID], highlight: false})
+      this._click_handler_host({runtime_id: rt_id, object_id: message[OBJECT_VALUE][OBJECT_ID], highlight: false})
     }
     else
     {
       opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
-        'handleInitialView failed in dom_data\n');
+        'this._handle_initial_view failed in dom_data\n');
     }
   }
 
-  var handleGetChildren = function(status, message, runtime_id, object_id)
+  this._handle_get_children = function(status, message, runtime_id, object_id)
   {
     const NODE_LIST = 0;
     var _data = message[NODE_LIST], i = 0, view_id = '';
@@ -433,7 +433,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
 
   this.getChildernFromNode = function(object_id, traversal)
   {
-    var tag = tagManager.set_callback(null, handleGetChildren, [data_runtime_id, object_id]);
+    var tag = tagManager.set_callback(this, this._handle_get_children, [data_runtime_id, object_id]);
     services['ecmascript-debugger'].requestInspectDom(tag, [object_id, traversal]);
   }
 
@@ -465,12 +465,12 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
 
   this.getSnapshot = function()
   {
-    var tag = tagManager.set_callback(null, handleSnapshot, [data_runtime_id]);
+    var tag = tagManager.set_callback(this, this._handle_snapshot, [data_runtime_id]);
     var script_data = 'return document.document';
     services['ecmascript-debugger'].requestEval(tag, [data_runtime_id, 0, 0, script_data]);
   }
 
-  var handleSnapshot = function(status, message, runtime_id)
+  this._handle_snapshot = function(status, message, runtime_id)
   {
     const
     STATUS = 0,
@@ -480,14 +480,14 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
 
     if(message[STATUS] == 'completed' )
     {
-      var tag = tagManager.set_callback(null, handleGetDOM, [runtime_id]);
+      var tag = tagManager.set_callback(this, this._handle_get_dom, [runtime_id]);
       services['ecmascript-debugger'].requestInspectDom(tag,
           [message[OBJECT_VALUE][OBJECT_ID], 'subtree']);
     }
     else
     {
       opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
-        'handleSnapshot in dom_data has failed');
+        'this._handle_snapshot in dom_data has failed');
     }
   }
 
@@ -659,11 +659,11 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
   {
     if(event.target.checked)
     {
-      host_tabs.activeTab.addEventListener('click', clickHandlerHost);
+      host_tabs.activeTab.addEventListener('click', this._click_handler_host_bound);
     }
     else
     {
-      host_tabs.activeTab.removeEventListener('click', clickHandlerHost);
+      host_tabs.activeTab.removeEventListener('click', this._click_handler_host_bound);
     }
   }
 
@@ -741,14 +741,23 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
     ecma_debugger.handleGetSelectedObject = 
     this.on_element_selected.bind(this);
   }
+
+  this._on_reset_state_bound = this._on_reset_state.bind(this);
+  this._on_active_tab_bound = this._on_active_tab.bind(this);
+  this._click_handler_host_bound = this._click_handler_host.bind(this);
+  this._on_setting_change_bound = this._on_setting_change.bind(this);
+  this._on_show_view_bound = this._on_show_view.bind(this);
+  this._on_hide_view_bound = this._on_hide_view.bind(this);
+  this._dom_node_removed_handler_bound = this._dom_node_removed_handler.bind(this);
+  this._on_runtime_stopped_bound = this._on_runtime_stopped.bind(this);
   
-  messages.addListener('active-tab', onActiveTab);
-  messages.addListener('show-view', onShowView);
-  messages.addListener('hide-view', onHideView);
-  messages.addListener('setting-changed', onSettingChange);
-  messages.addListener('runtime-stopped', onRuntimeStopped);
-  messages.addListener('runtime-destroyed', onRuntimeStopped);
-  messages.addListener('reset-state', onResetState);
+  messages.addListener('active-tab', this._on_active_tab_bound);
+  messages.addListener('show-view', this._on_show_view_bound);
+  messages.addListener('hide-view', this._on_hide_view_bound);
+  messages.addListener('setting-changed', this._on_setting_change_bound);
+  messages.addListener('runtime-stopped', this._on_runtime_stopped_bound);
+  messages.addListener('runtime-destroyed', this._on_runtime_stopped_bound);
+  messages.addListener('reset-state', this._on_reset_state_bound);
 
 };
 
