@@ -10,20 +10,21 @@ cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
 cls.EcmascriptDebugger["6.0"].DOMData =
 cls.EcmascriptDebugger["5.0"].DOMData = function()
 {
-  var self = this;
 
-  var view_ids = ['dom'];  // this needs to be handled in a more general and sytematic way.
-  var settings_id = 'dom';
+  this._view_ids = ['dom'];  // this needs to be handled in a more general and sytematic way.
+  this._settings_id = 'dom';
 
-  var data = []; // TODO seperated for all runtimes off the active tab
-  var mime = '';
-  var data_runtime_id = '';  // data of a dom tree has always just one runtime
-  var current_target = '';
-  var __next_rt_id = '';
+  this._data = []; // TODO seperated for all runtimes off the active tab
+  this._mime = '';
+  this._data_runtime_id = '';  // data of a dom tree has always just one runtime
+  this._current_target = '';
+  this._next_rt_id = '';
 
-  var reset_spotlight_timeouts = new Timeouts();
+  this._reset_spotlight_timeouts = new Timeouts();
 
-  var activeWindow = [];
+  this._active_window = [];
+
+  this._is_element_selected_checked = false;
 
   const 
   ID = 0, 
@@ -42,26 +43,24 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
 
   this._on_reset_state = function()
   {
-    data = []; 
-    mime = '';
-    data_runtime_id = ''; 
-    current_target = '';
-    __next_rt_id = '';
-    activeWindow = [];
+    this._data = []; 
+    this._mime = '';
+    this._data_runtime_id = ''; 
+    this._current_target = '';
+    this._next_rt_id = '';
+    this._active_window = [];
   }
 
-  var is_view_visible = function()
+  this._is_view_visible = function()
   {
     var id = '', i = 0;
-    for( ; ( id = view_ids[i] ) && !views[id].isvisible(); i++);
-    return i < view_ids.length;
+    for( ; ( id = this._view_ids[i] ) && !views[id].isvisible(); i++);
+    return i < this._view_ids.length;
   }
 
-  var _is_element_selected_checked = false;
-
-  var get_selected_element = function(rt_id)
+  this._get_selected_element = function(rt_id)
   {
-    var tag = tagManager.set_callback(self, self.on_element_selected, [rt_id, true]);
+    var tag = tagManager.set_callback(this, this.on_element_selected, [rt_id, true]);
     window.services['ecmascript-debugger'].requestGetSelectedObject(tag);
   }
 
@@ -72,7 +71,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
     WINDOW_ID = 1,
     RUNTIME_ID = 2;
 
-    _is_element_selected_checked = true;
+    this._is_element_selected_checked = true;
 
     if(message[OBJECT_ID])
     {
@@ -87,7 +86,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
       }
       else
       {
-        _is_element_selected_checked = false;
+        this._is_element_selected_checked = false;
         window.window_manager_data.set_debug_context(message[WINDOW_ID]);
       }
     }
@@ -100,15 +99,15 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
   this._on_active_tab = function(msg)
   {
     // TODO clean up old tab
-    data = []; 
-    mime = '';
+    this._data = []; 
+    this._mime = '';
     var view_id = '', i = 0;
     // the top frame is per default the active tab
-    data_runtime_id = __next_rt_id || msg.activeTab[0];
-    messages.post("runtime-selected", {id: data_runtime_id});
+    this._data_runtime_id = this._next_rt_id || msg.activeTab[0];
+    messages.post("runtime-selected", {id: this._data_runtime_id});
     window['cst-selects']['document-select'].updateElement();
-    activeWindow = msg.activeTab.slice(0);
-    for( ; view_id = view_ids[i]; i++)
+    this._active_window = msg.activeTab.slice(0);
+    for( ; view_id = this._view_ids[i]; i++)
     {
       if(views[view_id].isvisible())
       {
@@ -120,30 +119,29 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
   this._click_handler_host = function(event)
   {
     var rt_id = event.runtime_id, obj_id = event.object_id;
-    current_target = obj_id;
-    data = [];
-    mime = '';
+    this._current_target = obj_id;
+    this._data = [];
+    this._mime = '';
     var tag = tagManager.set_callback(this, this._handle_get_dom, [rt_id, obj_id, event.highlight === false ? false : true]);
     services['ecmascript-debugger'].requestInspectDom(tag, 
       [obj_id, 'parent-node-chain-with-children']);
   }
-
 
   this._dom_node_removed_handler = function(event)
   {
     // if the node is in the current data handle it otherwise not.
     var rt_id = event.runtime_id, obj_id = event.object_id;
     var node = null, i = 0, j = 0, level = 0, k = 0, view_id = '';
-    if( !( actions['dom'].editor && actions['dom'].editor.is_active ) && data_runtime_id == rt_id )
+    if( !( actions['dom'].editor && actions['dom'].editor.is_active ) && this._data_runtime_id == rt_id )
     {
-      for( ; ( node = data[i] ) && obj_id != node[ID]; i++ );
+      for( ; ( node = this._data[i] ) && obj_id != node[ID]; i++ );
       if( node  && node[TYPE] == 1 ) // don't update the dom if it's only a text node
       {
         level = node[ DEPTH ];
         j = i + 1 ;
-        while( data[j] && data[j][ DEPTH ] > level ) j++;
-        data.splice(i, j - i);
-        for( ; view_id = view_ids[k]; k++)
+        while( this._data[j] && this._data[j][ DEPTH ] > level ) j++;
+        this._data.splice(i, j - i);
+        for( ; view_id = this._view_ids[k]; k++)
         {
           views[view_id].update();
         }
@@ -157,7 +155,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
     node = null, 
     i = 0;
 
-    for( ; node = data[i]; i++)
+    for( ; node = this._data[i]; i++)
     {
       if(node[TYPE] == 1 )
       {
@@ -169,7 +167,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
 
   this.isTextHtml = function()
   {
-    return data.length && mime == "text/html" || false;
+    return this._data.length && this._mime == "text/html" || false;
   }
 
   this._handle_get_dom = function(status, message, rt_id, obj_id, highlight_target)
@@ -177,33 +175,33 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
     const NODE_LIST = 0;
     var view_id = '', i = 0;
 
-    data = message[NODE_LIST];
-    mime = this._set_mime();
+    this._data = message[NODE_LIST];
+    this._mime = this._set_mime();
     
     // handle text nodes as target in get selected element
-    for( i = 0; data[i] && data[i][ID] != obj_id; i++);
-    while(data[i] && data[i][TYPE] != 1) 
+    for( i = 0; this._data[i] && this._data[i][ID] != obj_id; i++);
+    while(this._data[i] && this._data[i][TYPE] != 1) 
     {
       i--;
     }
-    if(data[i] && data[i][ID] != obj_id)
+    if(this._data[i] && this._data[i][ID] != obj_id)
     {
-      current_target = obj_id = data[i][ID];
+      this._current_target = obj_id = this._data[i][ID];
     }
     if(highlight_target)
     {
-      hostspotlighter.spotlight(current_target);
+      hostspotlighter.spotlight(this._current_target);
     }
 
-    if( rt_id != data_runtime_id || __next_rt_id )
+    if( rt_id != this._data_runtime_id || this._next_rt_id )
     {
-      data_runtime_id = rt_id;
-      messages.post("runtime-selected", {id: data_runtime_id});
+      this._data_runtime_id = rt_id;
+      messages.post("runtime-selected", {id: this._data_runtime_id});
       window['cst-selects']['document-select'].updateElement();
-      __next_rt_id = '';
+      this._next_rt_id = '';
     }
     
-    for( i = 0; view_id = view_ids[i]; i++)
+    for( i = 0; view_id = this._view_ids[i]; i++)
     {
       views[view_id].update();
       //views[view_id].scrollTargetIntoView();
@@ -217,31 +215,31 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
 
   this._on_setting_change = function(msg)
   {
-    if( msg.id == settings_id )
+    if( msg.id == this._settings_id )
     {
-      if( is_view_visible() )
+      if( this._is_view_visible() )
       {
         switch (msg.key)
         {
           case 'highlight-on-hover':
           {
-            if(settings[settings_id].get(msg.key))
+            if(settings[this._settings_id].get(msg.key))
             {
-              host_tabs.activeTab.addEventListener('mouseover', spotlight);
-              host_tabs.activeTab.addEventListener('mouseout', set_reset_spotlight);
+              host_tabs.activeTab.addEventListener('mouseover', this._spotlight_bound);
+              host_tabs.activeTab.addEventListener('mouseout', this._set_reset_spotlight_bound);
             }
             else
             {
               hostspotlighter.clearSpotlight();
-              host_tabs.activeTab.removeEventListener('mouseover', spotlight);
-              host_tabs.activeTab.removeEventListener('mouseout', set_reset_spotlight);
+              host_tabs.activeTab.removeEventListener('mouseover', this._spotlight_bound);
+              host_tabs.activeTab.removeEventListener('mouseout', this._set_reset_spotlight_bound);
             }
             break;
           }
 
           case 'find-with-click':
           {
-            if(settings[settings_id].get(msg.key))
+            if(settings[this._settings_id].get(msg.key))
             {
               host_tabs.activeTab.addEventListener('click', this._click_handler_host_bound);
             }
@@ -254,7 +252,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
 
           case 'update-on-dom-node-inserted':
           {
-            if(settings[settings_id].get(msg.key))
+            if(settings[this._settings_id].get(msg.key))
             {
               host_tabs.activeTab.addEventListener('DOMNodeRemoved', this._dom_node_removed_handler_bound);
             }
@@ -274,39 +272,39 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
   {
     
     var msg_id = msg.id, id = '', i = 0;
-    for( ; (id = view_ids[i]) && id != msg_id; i++);
+    for( ; (id = this._view_ids[i]) && id != msg_id; i++);
     if (id)
     {
-      if(activeWindow.length)
+      if(this._active_window.length)
       {
         // in the case there is no runtime selected 
         // set the top window to the active runtime
-        if (!data_runtime_id)
+        if (!this._data_runtime_id)
         {
-          data_runtime_id = activeWindow[0];
+          this._data_runtime_id = this._active_window[0];
         }
-        if(settings[settings_id].get('find-with-click'))
+        if(settings[this._settings_id].get('find-with-click'))
         {
           host_tabs.activeTab.addEventListener('click', this._click_handler_host_bound);
         }
-        if(settings[settings_id].get('highlight-on-hover'))
+        if(settings[this._settings_id].get('highlight-on-hover'))
         {
-          host_tabs.activeTab.addEventListener('mouseover', spotlight);
-          host_tabs.activeTab.addEventListener('mouseout', set_reset_spotlight);
+          host_tabs.activeTab.addEventListener('mouseover', this._spotlight_bound);
+          host_tabs.activeTab.addEventListener('mouseout', this._set_reset_spotlight_bound);
         } 
-        if(settings[settings_id].get('update-on-dom-node-inserted'))
+        if(settings[this._settings_id].get('update-on-dom-node-inserted'))
         {
           host_tabs.activeTab.addEventListener('DOMNodeRemoved', this._dom_node_removed_handler_bound);
         }
-        if(!data.length)
+        if(!this._data.length)
         {
-          if(_is_element_selected_checked)
+          if(this._is_element_selected_checked)
           {
-            this._get_initial_view(data_runtime_id);
+            this._get_initial_view(this._data_runtime_id);
           }
           else
           {
-            get_selected_element(data_runtime_id);
+            this._get_selected_element(this._data_runtime_id);
           }
         }
       }
@@ -322,28 +320,28 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
   this._on_hide_view = function(msg)
   {
     var msg_id = msg.id, id = '', i = 0;
-    for( ; ( id = view_ids[i] ) && id != msg_id; i++);
+    for( ; ( id = this._view_ids[i] ) && id != msg_id; i++);
     if( id )
     {
       host_tabs.activeTab.removeEventListener('click', this._click_handler_host_bound);
-      host_tabs.activeTab.removeEventListener('mouseover', spotlight);
-      host_tabs.activeTab.removeEventListener('mouseout', set_reset_spotlight);
+      host_tabs.activeTab.removeEventListener('mouseover', this._spotlight_bound);
+      host_tabs.activeTab.removeEventListener('mouseout', this._set_reset_spotlight_bound);
       host_tabs.activeTab.removeEventListener('DOMNodeRemoved', this._dom_node_removed_handler_bound);
-      // switching between dom style and markup style data = [];
+      // switching between dom style and markup style this._data = [];
     }
   }
 
   this._on_runtime_stopped = function(msg)
   {
     
-    if( msg.id == data_runtime_id )
+    if( msg.id == this._data_runtime_id )
     {
       
-      data = [];
-      mime = "";
-      data_runtime_id = '';
+      this._data = [];
+      this._mime = "";
+      this._data_runtime_id = '';
       var id = '', i = 0;
-      for( ; id = view_ids[i] ; i++)
+      for( ; id = this._view_ids[i] ; i++)
       {
         views[id].clearAllContainers();
       }
@@ -359,7 +357,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
 
   this.getDOM = function(rt_id)
   {
-    if( !(rt_id == data_runtime_id && data.length) && runtime_onload_handler.check(rt_id, arguments) )
+    if( !(rt_id == this._data_runtime_id && this._data.length) && runtime_onload_handler.check(rt_id, arguments) )
     {
       this._get_initial_view(rt_id);
     }
@@ -369,18 +367,18 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
 
   this.getData = function()
   {
-    return data;
+    return this._data;
   }
 
   this.getDataRuntimeId = function()
   {
     
-    return data_runtime_id;
+    return this._data_runtime_id;
   }
 
   this.setActiveRuntime = function(rt_id)
   {
-    __next_rt_id = rt_id;
+    this._next_rt_id = rt_id;
   }
 
   this._handle_initial_view = function(status, message, rt_id)
@@ -407,19 +405,19 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
   {
     const NODE_LIST = 0;
     var _data = message[NODE_LIST], i = 0, view_id = '';
-    for( ; data[i] && data[i][ID] != object_id; i += 1 );
-    if( data[i] )
+    for( ; this._data[i] && this._data[i][ID] != object_id; i += 1 );
+    if( this._data[i] )
     {
       // the traversal was subtree
       if(object_id == _data[0][ID]) 
       {
-        Array.prototype.splice.apply( data, [i, 1].concat(_data) );
+        Array.prototype.splice.apply( this._data, [i, 1].concat(_data) );
       }
       else
       {
-        Array.prototype.splice.apply( data, [i + 1, 0].concat(_data) );
+        Array.prototype.splice.apply( this._data, [i + 1, 0].concat(_data) );
       }
-      for(i = 0 ; view_id = view_ids[i]; i++)
+      for(i = 0 ; view_id = this._view_ids[i]; i++)
       {
         views[view_id].update();
       }
@@ -433,25 +431,25 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
 
   this.getChildernFromNode = function(object_id, traversal)
   {
-    var tag = tagManager.set_callback(this, this._handle_get_children, [data_runtime_id, object_id]);
+    var tag = tagManager.set_callback(this, this._handle_get_children, [this._data_runtime_id, object_id]);
     services['ecmascript-debugger'].requestInspectDom(tag, [object_id, traversal]);
   }
 
   this.closeNode = function(object_id, do_not_update)
   {
     var i = 0, j = 0, level = 0, k = 0, view_id = '';
-    for( ; data[i] && data[i][ID] != object_id; i++ );
-    if( data[i] )
+    for( ; this._data[i] && this._data[i][ID] != object_id; i++ );
+    if( this._data[i] )
     {
-      level = data[ i ][ DEPTH ];
+      level = this._data[ i ][ DEPTH ];
       i += 1;
       j = i;
-      while( data[j] && data[j][ DEPTH ] > level ) j++;
-      data.splice(i, j - i);
+      while( this._data[j] && this._data[j][ DEPTH ] > level ) j++;
+      this._data.splice(i, j - i);
       
       if(!do_not_update)
       {
-        for( ; view_id = view_ids[k]; k++)
+        for( ; view_id = this._view_ids[k]; k++)
         {
           views[view_id].update();
         }
@@ -465,9 +463,9 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
 
   this.getSnapshot = function()
   {
-    var tag = tagManager.set_callback(this, this._handle_snapshot, [data_runtime_id]);
+    var tag = tagManager.set_callback(this, this._handle_snapshot, [this._data_runtime_id]);
     var script_data = 'return document.document';
-    services['ecmascript-debugger'].requestEval(tag, [data_runtime_id, 0, 0, script_data]);
+    services['ecmascript-debugger'].requestEval(tag, [this._data_runtime_id, 0, 0, script_data]);
   }
 
   this._handle_snapshot = function(status, message, runtime_id)
@@ -491,37 +489,37 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
     }
   }
 
-  var spotlight = function(event)
+  this._spotlight = function(event)
   {
-    reset_spotlight_timeouts.clear();
+    this._reset_spotlight_timeouts.clear();
     hostspotlighter.soft_spotlight(event.object_id);
   }
 
-  var reset_spotlight = function()
+  this._reset_spotlight = function()
   {
-    if(current_target)
+    if(this._current_target)
     {
-      hostspotlighter.spotlight(current_target);
+      hostspotlighter.spotlight(this._current_target);
     }
   }
 
-  var set_reset_spotlight = function(event)
+  this._set_reset_spotlight = function(event)
   {
-    reset_spotlight_timeouts.set(reset_spotlight, 70);
+    this._reset_spotlight_timeouts.set(this._reset_spotlight_bound, 70);
   }
 
   this.setCurrentTarget = function(obj_id)
   {
-    messages.post("element-selected", {obj_id: obj_id, rt_id: data_runtime_id});
-    current_target = obj_id;
+    messages.post("element-selected", {obj_id: obj_id, rt_id: this._data_runtime_id});
+    this._current_target = obj_id;
   }
 
   this.getCurrentTarget = function(obj_id)
   {
-    return current_target;
+    return this._current_target;
   }
 
-  var get_element_name = function(data_entry, with_ids_and_classes)
+  this._get_element_name = function(data_entry, with_ids_and_classes)
   {
     var 
     name = data_entry[NAME],
@@ -552,7 +550,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
     return name + id + class_name;
   }
 
-  var parse_parent_offset = function(chain)
+  this._parse_parent_offset = function(chain)
   {
     var 
     ret = false,
@@ -567,7 +565,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
       else
       {
         opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
-          "failed in parse_parent_offset in dom_data");
+          "failed in this._parse_parent_offset in dom_data");
       }
     }
     return ret;
@@ -585,39 +583,39 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
 
     // TODO make new settings
 
-    if( current_target )
+    if( this._current_target )
     {
-      for( ; data[i] && data[i][ID] != current_target; i ++);
-      if( data[i] )
+      for( ; this._data[i] && this._data[i][ID] != this._current_target; i ++);
+      if( this._data[i] )
       {
         path = 
         [ 
           {
-            name: get_element_name(data[i], show_id_and_classes), 
-            id: data[i][ID],
+            name: this._get_element_name(this._data[i], show_id_and_classes), 
+            id: this._data[i][ID],
             combinator: "", 
-            is_parent_offset: parse_parent_offset(parent_offset_chain) 
+            is_parent_offset: this._parse_parent_offset(parent_offset_chain) 
           }
         ];
         j = i;
         i --;
-        for(  ; data[i]; i --)
+        for(  ; this._data[i]; i --)
         {
-          if(data[i][TYPE] == 1)
+          if(this._data[i][TYPE] == 1)
           {
-            if(data[i][ DEPTH] <= data[j][DEPTH])
+            if(this._data[i][ DEPTH] <= this._data[j][DEPTH])
             {
-              if ( data[i][DEPTH] < data[j][DEPTH] )
+              if ( this._data[i][DEPTH] < this._data[j][DEPTH] )
               {
                 path.splice
                 (
                   0, 
                   0, 
                   {
-                    name: get_element_name(data[i], show_id_and_classes), 
-                    id: data[i][ID], 
+                    name: this._get_element_name(this._data[i], show_id_and_classes), 
+                    id: this._data[i][ID], 
                     combinator: ">" ,
-                    is_parent_offset: parse_parent_offset(parent_offset_chain) 
+                    is_parent_offset: this._parse_parent_offset(parent_offset_chain) 
                   }
                 );
               }
@@ -629,8 +627,8 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
                   0, 
                   0, 
                   {
-                    name: get_element_name(data[i], show_id_and_classes), 
-                    id: data[i][ID], 
+                    name: this._get_element_name(this._data[i], show_id_and_classes), 
+                    id: this._data[i][ID], 
                     combinator: "+",
                     is_parent_offset: false
                   }
@@ -643,16 +641,11 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
       }
       else
       {
-        current_target = '';
+        this._current_target = '';
       }
       return path;
     }
     
-  }
-
-  var postElementSelected = function(obj_id, rt_id)
-  {
-    messages.post("element-selected", {obj_id: obj_id, rt_id: rt_id});
   }
 
   this.set_click_handler = function(event)
@@ -670,7 +663,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
   // to be update from a editor
   this.update = function(state)
   {
-    if( state.rt_id == data_runtime_id )
+    if( state.rt_id == this._data_runtime_id )
     {
       var 
       entry = null, 
@@ -680,8 +673,8 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
       attr = null, 
       j = 0;
       
-      for( ; data[i] && data[i][ID] != obj_id; i++ );
-      if( data[i] )
+      for( ; this._data[i] && this._data[i][ID] != obj_id; i++ );
+      if( this._data[i] )
       {
         switch(state.type)
         {
@@ -690,7 +683,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
           {
             if( state.key )
             {
-              attrs = data[i][ATTRS];
+              attrs = this._data[i][ATTRS];
               for( ; ( attr = attrs[j] ) && attr[ATTR_KEY] != state.key; j++ );
               attr || ( attr = attrs[j] = ["", state.key, ""] );
               if( state.value )
@@ -706,7 +699,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
           }
           case "text":
           {
-            data[i][VALUE] = state.text;
+            this._data[i][VALUE] = state.text;
             break;
           }
         }
@@ -720,19 +713,19 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
     i = 0,
     depth = 0;
     
-    for( ; data[i] && data[i][ID] != obj_id; i++ );
-    if( data[i] )
+    for( ; this._data[i] && this._data[i][ID] != obj_id; i++ );
+    if( this._data[i] )
     {
-      depth = data[i][DEPTH];
-      for( ; data[i] && !( ( data[i][TYPE] == 1 || data[i][TYPE] == 9 ) && data[i][DEPTH] < depth ); i-- );
-      return data[i] && data[i][ID] || '';
+      depth = this._data[i][DEPTH];
+      for( ; this._data[i] && !( ( this._data[i][TYPE] == 1 || this._data[i][TYPE] == 9 ) && this._data[i][DEPTH] < depth ); i-- );
+      return this._data[i] && this._data[i][ID] || '';
     }
   }
 
   this.getRootElement = function()
   {
-    for( var i = 0; data[i] && data[i][TYPE] != 1; i++);
-    return data[i] && data[i][ID] || 0;
+    for( var i = 0; this._data[i] && this._data[i][TYPE] != 1; i++);
+    return this._data[i] && this._data[i][ID] || 0;
   }
 
   this.bind = function(ecma_debugger)
@@ -750,6 +743,9 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
   this._on_hide_view_bound = this._on_hide_view.bind(this);
   this._dom_node_removed_handler_bound = this._dom_node_removed_handler.bind(this);
   this._on_runtime_stopped_bound = this._on_runtime_stopped.bind(this);
+  this._spotlight_bound = this._spotlight.bind(this);
+  this._reset_spotlight_bound = this._reset_spotlight.bind(this);
+  this._set_reset_spotlight_bound = this._set_reset_spotlight.bind(this)
   
   messages.addListener('active-tab', this._on_active_tab_bound);
   messages.addListener('show-view', this._on_show_view_bound);
