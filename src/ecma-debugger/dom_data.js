@@ -16,9 +16,8 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
 
   this._data = []; // TODO seperated for all runtimes off the active tab
   this._mime = '';
-  this._data_runtime_id = '';  // data of a dom tree has always just one runtime
-  this._current_target = '';
-  this._next_rt_id = '';
+  this._data_runtime_id = 0;  // data of a dom tree has always just one runtime
+  this._current_target = 0;
 
   this._reset_spotlight_timeouts = new Timeouts();
 
@@ -45,9 +44,8 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
   {
     this._data = []; 
     this._mime = '';
-    this._data_runtime_id = ''; 
-    this._current_target = '';
-    this._next_rt_id = '';
+    this._data_runtime_id = 0; 
+    this._current_target = 0;
     this._active_window = [];
   }
 
@@ -103,7 +101,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
     this._mime = '';
     var view_id = '', i = 0;
     // the top frame is per default the active tab
-    this._data_runtime_id = this._next_rt_id || msg.activeTab[0];
+    this._data_runtime_id = msg.activeTab[0];
     messages.post("runtime-selected", {id: this._data_runtime_id});
     window['cst-selects']['document-select'].updateElement();
     this._active_window = msg.activeTab.slice(0);
@@ -193,12 +191,11 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
       hostspotlighter.spotlight(this._current_target);
     }
 
-    if( rt_id != this._data_runtime_id || this._next_rt_id )
+    if (rt_id != this._data_runtime_id)
     {
       this._data_runtime_id = rt_id;
       messages.post("runtime-selected", {id: this._data_runtime_id});
       window['cst-selects']['document-select'].updateElement();
-      this._next_rt_id = '';
     }
     
     for( i = 0; view_id = this._view_ids[i]; i++)
@@ -339,7 +336,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
       
       this._data = [];
       this._mime = "";
-      this._data_runtime_id = '';
+      this._data_runtime_id = 0;
       var id = '', i = 0;
       for( ; id = this._view_ids[i] ; i++)
       {
@@ -374,11 +371,6 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
   {
     
     return this._data_runtime_id;
-  }
-
-  this.setActiveRuntime = function(rt_id)
-  {
-    this._next_rt_id = rt_id;
   }
 
   this._handle_initial_view = function(status, message, rt_id)
@@ -641,7 +633,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
       }
       else
       {
-        this._current_target = '';
+        this._current_target = 0;
       }
       return path;
     }
