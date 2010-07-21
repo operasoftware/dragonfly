@@ -59,8 +59,8 @@ cls.DOMInspectorActions = function(id)
             return true;
           }
           case 'node':
-          {
-            return !ele.getElementsByTagName('key')[0];
+          { 
+            return !(ele.getElementsByTagName('key')[0] || /<\//.test(ele.textContent));
           }
         }
       }
