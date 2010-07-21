@@ -44,6 +44,19 @@ cls.EcmascriptDebugger["5.0"].DOMBaseData = new function()
     return this._data.length && this._mime == "text/html" || false;
   };
 
+  // workaround for bug CORE-16147
+  this.getDoctypeName = function()
+  {
+    var node = null, i = 0;
+    for( ; node = this._data[i]; i++)
+    {
+      if( node[TYPE] == 1 )
+      {
+        return node[NAME];
+      }
+    }
+  }
+
   this._get_dom = function(object_id, traverse_type, cb)
   {
     var tag = window.tag_manager.set_callback(this, this.__handle_dom, [object_id, traverse_type, cb]);
@@ -190,6 +203,11 @@ cls.EcmascriptDebugger["5.0"].DOMBaseData = new function()
       }
     }
     return path.reverse();
+  }
+
+  this.has_data = function()
+  {
+    return Boolean(this._data.length);
   }
 
   this.getData = function()

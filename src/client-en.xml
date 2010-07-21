@@ -252,8 +252,8 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ecma-debugger/js-source-view.js"/>
 <script src="./ecma-debugger/view-commandline.js"/>
 
-<script src="./ecma-debugger/dominspection/dom_markup_style.js"/>
-<script src="./ecma-debugger/dominspection/dom_tree_style.js"/>
+<script src="./ecma-debugger/dominspection/templates.js"/>
+<script src="./ecma-debugger/dominspection/domserializer.js"/>
 <script src="./ecma-debugger/dominspection/domview.js"/>
 
 <script src="./ecma-debugger/views-threads.js"/>

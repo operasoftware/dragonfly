@@ -61,11 +61,11 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
 
   this._get_selected_element = function(rt_id)
   {
-    var tag = tagManager.set_callback(this, this.on_element_selected, [rt_id, true]);
+    var tag = tagManager.set_callback(this, this._on_element_selected, [rt_id, true]);
     window.services['ecmascript-debugger'].requestGetSelectedObject(tag);
   }
 
-  this.on_element_selected = function(status, message, rt_id, show_initial_view)
+  this._on_element_selected = function(status, message, rt_id, show_initial_view)
   {
     const
     OBJECT_ID = 0,
@@ -122,7 +122,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
     var 
     rt_id = event.runtime_id,
     obj_id = event.object_id,
-    do_highlight = event.highlight === false ? false : true
+    do_highlight = event.highlight === false ? false : true,
     cb = this._handle_get_dom.bind(this, rt_id, obj_id, do_highlight);
 
     this._current_target = obj_id;
@@ -478,7 +478,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
   {
     ecma_debugger.onObjectSelected =
     ecma_debugger.handleGetSelectedObject = 
-    this.on_element_selected.bind(this);
+    this._on_element_selected.bind(this);
   }
 
   this._init();

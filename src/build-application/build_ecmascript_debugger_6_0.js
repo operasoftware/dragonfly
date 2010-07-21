@@ -83,11 +83,9 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     cls.DOMView.prototype = ViewBase;
     new cls.DOMView('dom', ui_strings.M_VIEW_LABEL_DOM, 'scroll dom');
     cls.DOMView.prototype.constructor = cls.DOMView;
-    DOM_markup_style.apply(cls.DOMView.prototype);
     cls.DocumentSelect.prototype = new CstSelect();
     new cls.DocumentSelect('document-select', 'document-options');
     cls.DOMView.create_ui_widgets();
-    messages.post('setting-changed', {id: 'dom', key: 'dom-tree-style'});
 
     /* Stylesheets */
     window.stylesheets = new cls.Stylesheets();
