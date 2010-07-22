@@ -47,14 +47,17 @@ cls.EcmascriptDebugger["5.0"].DOMBaseData = new function()
   // workaround for bug CORE-16147
   this.getDoctypeName = function()
   {
-    var node = null, i = 0;
-    for( ; node = this._data[i]; i++)
+    for (var node = null, i = 0; node = this._data[i]; i++)
     {
-      if( node[TYPE] == 1 )
-      {
+      if (node[TYPE] == 1)
         return node[NAME];
-      }
     }
+    return null;
+  }
+
+  this.expand = function(cb, object_id, traverse_type)
+  {
+    this._get_dom(object_id, traverse_type || "children", cb);
   }
 
   this._get_dom = function(object_id, traverse_type, cb)
@@ -100,13 +103,14 @@ cls.EcmascriptDebugger["5.0"].DOMBaseData = new function()
         }
       }
       this._mime = this._set_mime();
-      cb();
+      if (cb)
+        cb();
     }
     else
       opera.postError(error_ms);
   };
 
-  this.collapse_node = function(object_id)
+  this.collapse = function(object_id)
   {
     var i = 0, j = 0, level = 0;
     for (; this._data[i] && this._data[i][ID] != object_id; i++ );
@@ -233,22 +237,39 @@ cls.EcmascriptDebugger["5.0"].DOMBaseData = new function()
     return this._data[i] && this._data[i][ID] || 0;
   }
 
-  this._id_counter = 0;
-  this._get_id = function()
+  this.getDataRuntimeId = function()
   {
-    this._id_counter++;
-    return "dom-inspection-id-" + this._id_counter.toString();
-  };
+    return this._data_runtime_id;
+  }
 
-  this._init = function(id)
+  this._get_id = (function()
   {
-    this.id = id || this._get_id();
+    var id_counter = 0;
+    return function()
+    {
+      id_counter++;
+      return "dom-inspection-id-" + id_counter.toString();
+    };
+  })();
+
+  this._init = function(rt_id, obj_id)
+  {
+    this.id = this._get_id();
+    this._data_runtime_id = 0;  // data of a dom tree has always just one runtime
+    this._root_obj_id = obj_id;
+    this._data = [];
     if (!window.dominspections)
     {
       new cls.Namespace("dominspections");
     }
     window.dominspections.add(this);
-    this._data = [];
   };
 
 };
+
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode = function(rt_id, obj_id)
+{
+  this._init(rt_id, obj_id);
+}
+
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = cls.EcmascriptDebugger["6.0"].DOMBaseData;

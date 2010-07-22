@@ -39,20 +39,23 @@
 
 
 
-  this._inspected_dom_node_markup_style= function(model, target, editable)
+  this._inspected_dom_node_markup_style= function(model, target, editable, with_root)
   {
 
 
     var data = model.getData();
 
 
-    var
-    tree = "<div class='padding table-cell' edit-handler='edit-dom' rt-id='" + model.getDataRuntimeId() + "'>",
-    i = 0,
-    node = null,
-    length = data.length;
 
-    
+    var tree = with_root ?
+              ("<div class='padding table-cell dom'" +
+              (editable ? " edit-handler='edit-dom'" : "") + 
+              " rt-id='" + model.getDataRuntimeId() + "'" +
+              " data-model-id='" + model.id + "'" +
+              ">") : "";
+    var i = 0;
+    var node = null;
+    var length = data.length;
 
     var attrs = null, attr = null, k = 0, key = '';
 
@@ -321,6 +324,8 @@
 
     var data = model.getData();
 
+    
+
     var force_lower_case = model.isTextHtml() && window.settings.dom.get('force-lowercase');
     var show_comments = window.settings.dom.get('show-comments');
     var show_attrs = window.settings.dom.get('show-attributes');
@@ -521,11 +526,14 @@
     return tree;
   }
 
-  this.inspected_dom_node = function(model, target, editable)
+  this.inspected_dom_node = function(model, target, editable, with_root)
   {
+    
+    if (typeof with_root != "boolean")
+        with_root = true;
     if (window.settings.dom.get('dom-tree-style'))
-      return this._inspected_dom_node_tree_style(model, target, editable);
-    return this._inspected_dom_node_markup_style(model, target, editable);
+      return this._inspected_dom_node_tree_style(model, target, editable, with_root);
+    return this._inspected_dom_node_markup_style(model, target, editable, with_root);
   }
 
 

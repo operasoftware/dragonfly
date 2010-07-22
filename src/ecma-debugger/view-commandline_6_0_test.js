@@ -53,9 +53,17 @@ cls.CommandLineViewTest = function(id, name, container_class, html, default_hand
       {
         if (entry.model)
         {
-          if (entry.show_inline)
+          if (entry.object_type)
           {
-          __console_output.render(window.templates.inspected_js_object(entry.model, entry.show_root));
+            switch (entry.object_type)
+            {
+              case 'jsobject':
+                __console_output.render(window.templates.inspected_js_object(entry.model, entry.show_root));
+                break;
+              case 'domenode':
+                __console_output.render(window.templates.inspected_dom_node(entry.model));
+                break;
+            }
           }
           else
           {
@@ -207,7 +215,8 @@ cls.CommandLineViewTest = function(id, name, container_class, html, default_hand
                 value: return_value[4],
                 model: new cls.InspectableJSObject(runtime_id, object_id, return_value[4]),
                 shwo_root: true,
-                show_inline: true 
+                show_inline: true,
+                object_type: 'jsobject'
               }
             );
             __container.scrollTop = __container.scrollHeight;
@@ -298,6 +307,11 @@ cls.CommandLineViewTest = function(id, name, container_class, html, default_hand
     cons_out_render_return_val(console_output_data[console_output_data.length] = entry);
   }
 
+  var _dir_node = function(entry)
+  {
+    cons_out_render_return_val(console_output_data[console_output_data.length] = entry);
+  }
+
   var dir_obj = function(rt_id, obj_id, message)
   {
 
@@ -311,6 +325,7 @@ cls.CommandLineViewTest = function(id, name, container_class, html, default_hand
       model: new cls.InspectableJSObject(rt_id, obj_id),
       show_root: false,
       show_inline: true,
+      object_type: 'jsobject'
     };
     var cb = _dir_object.bind(null, entry);
     entry.model.expand(cb);
@@ -323,16 +338,38 @@ cls.CommandLineViewTest = function(id, name, container_class, html, default_hand
     */
   }
 
+  var dir_node = function(rt_id, obj_id, message)
+  {
+    var entry =
+    {
+      type: "return-value",
+      obj_id: obj_id,
+      runtime_id: rt_id,
+      value: message[3][4],
+      model: new cls.InspectableDOMNode(rt_id, obj_id),
+      show_root: false,
+      show_inline: true,
+      object_type: 'domenode'
+    };
+    var cb = _dir_node.bind(null, entry);
+    entry.model.expand(cb, obj_id, "subtree");
+  }
+
   var command_map =
   {
-    "clear": function(rt_id, frame_id, thread_id, script_string)
+    clear: function(rt_id, frame_id, thread_id, script_string)
     {
       console_output_data = [];
       cons_out_update();
     },
-    "dir": function(rt_id, frame_id, thread_id, script_string)
+    dir: function(rt_id, frame_id, thread_id, script_string)
     {
       var tag = tagManager.set_callback(null, handleEval, [rt_id, null, dir_obj] );
+      services['ecmascript-debugger'].requestEval(tag, [rt_id, thread_id, frame_id, script_string]);
+    },
+    dirxml: function(rt_id, frame_id, thread_id, script_string)
+    {
+      var tag = tagManager.set_callback(null, handleEval, [rt_id, null, dir_node] );
       services['ecmascript-debugger'].requestEval(tag, [rt_id, thread_id, frame_id, script_string]);
     }
   };

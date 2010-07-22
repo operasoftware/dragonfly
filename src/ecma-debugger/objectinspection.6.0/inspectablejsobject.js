@@ -287,12 +287,16 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     return ret;
   }
 
-  this._id_counter = 0;
-  this._get_id = function()
+  
+  this._get_id = (function()
   {
-    this._id_counter++;
-    return "inspection-id-" + this._id_counter.toString();
-  }
+    var id_counter = 0;
+    return function()
+    {
+      id_counter++;
+      return "inspection-id-" + id_counter.toString();
+    }
+  })();
 
   this._norm_path = function(path)
   {

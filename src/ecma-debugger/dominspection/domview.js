@@ -7,9 +7,6 @@
 
 cls.DOMView = function(id, name, container_class)
 {
-  var self = this;
-  // this was a quick fix to merge DOM tree style and DOM markup style
-  // should be cleand up to prevent code duplication ( no private members )
 
   this.updateTarget = function(ele, obj_id)
   {
@@ -142,27 +139,22 @@ cls.DOMView = function(id, name, container_class)
     hostspotlighter.clearSpotlight();
   }
 
-  var onSettingChange = function(msg)
+  this.on_setting_change = function(msg)
   {
-    if( msg.id == self.id )
+    if( msg.id == this.id )
     {
       switch (msg.key)
       {
         case 'dom-tree-style':
         {
-          /*
-          ( settings.dom.get('dom-tree-style') 
-            ? DOM_tree_style 
-            : DOM_markup_style ).apply(self.constructor.prototype);
-          */
-          self.update();
+          this.update();
           break;
         }
       }
     }
   }
 
-  messages.addListener('setting-changed', onSettingChange);
+  messages.addListener('setting-changed', this.on_setting_change.bind(this));
 
 
 

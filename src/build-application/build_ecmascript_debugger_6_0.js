@@ -77,6 +77,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     cls.ThreadsView.create_ui_widgets();
 
     /* DOM */
+    cls.InspectableDOMNode = namespace.InspectableDOMNode;
     new cls.DOMInspectorActions('dom'); // the view id
     new cls.DOMInspectorKeyhandler('dom');
     new cls.DOMInspectorEditKeyhandler('dom');

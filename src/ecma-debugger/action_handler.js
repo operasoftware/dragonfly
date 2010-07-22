@@ -242,23 +242,6 @@ window.eventHandlers.click['set-break-point'] = function(event)
   }
 };
 
-window.eventHandlers.click['get-children'] = function(event)
-{
-  var container = event.target.parentNode;
-  var level = (parseInt(container.style.marginLeft) || 0) / 16;
-  var level_next = (container.nextSibling && parseInt(container.nextSibling.style.marginLeft) || 0) / 16;
-  var ref_id = parseInt(container.getAttribute('ref-id'));
-
-  if (level_next > level)
-  {
-    dom_data.closeNode(ref_id);
-  }
-  else
-  {
-    dom_data.getChildernFromNode(ref_id, event.ctrlKey ? 'subtree' : 'children');
-  }
-};
-
 window.eventHandlers.click['spotlight-node'] = function(event, current_target)
 {
   var obj_id = parseInt(current_target.getAttribute('ref-id'));

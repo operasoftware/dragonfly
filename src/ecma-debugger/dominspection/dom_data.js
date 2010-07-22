@@ -14,7 +14,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
   this._view_ids = ['dom'];  // this needs to be handled in a more general and sytematic way.
   this._settings_id = 'dom';
   this._mime = '';
-  this._data_runtime_id = 0;  // data of a dom tree has always just one runtime
+  
   this._current_target = 0;
   this._reset_spotlight_timeouts = new Timeouts();
   this._active_window = [];
@@ -324,11 +324,6 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
     }
   }
 
-  this.getDataRuntimeId = function()
-  {
-    return this._data_runtime_id;
-  }
-
   this.getCSSPath = function(parent_node_chain)
   {
     return this._get_css_path(this._current_target, parent_node_chain,
@@ -364,7 +359,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
 
   this.closeNode = function(object_id, do_not_update)
   {
-    this.collapse_node(object_id);
+    this.collapse(object_id);
     if (!do_not_update)
       this._update_views();
   }
