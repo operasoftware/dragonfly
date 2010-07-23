@@ -86,6 +86,7 @@ cls.EcmascriptDebugger["5.0"].DOMBaseData = new function()
         }
         case "subtree":
         case "children":
+        case "node":
         {
           for (; this._data[i] && this._data[i][ID] != object_id; i++);
           if (this._data[i])
@@ -107,7 +108,7 @@ cls.EcmascriptDebugger["5.0"].DOMBaseData = new function()
         cb();
     }
     else
-      opera.postError(error_ms);
+      opera.postError(error_ms + ' ' + JSON.stringify(message));
   };
 
   this.collapse = function(object_id)
