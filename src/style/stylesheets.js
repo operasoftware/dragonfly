@@ -1013,6 +1013,15 @@ cls.Stylesheets = function()
       }
       switch (prop)
       {
+        case 'fill':
+        case 'stroke':
+        case 'stop-color':
+        case 'flood-color':
+        case 'lighting-color':
+        {
+          __colorIndexMap[i] = true;
+          break;
+        }
         case 'color':
         {
           __colorIndex = i;
