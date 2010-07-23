@@ -5,19 +5,51 @@
 
 ColorPicker.prototype = new function()
 {
-
+  this._verify_inputs =
+  {
+    h: {min:0, max: 360, last: 0, base: 10},
+    s: {min:0, max: 100, last: 0, base: 10},
+    v: {min:0, max: 100, last: 0, base: 10},
+    r: {min:0, max: 255, last: 0, base: 10},
+    g: {min:0, max: 255, last: 0, base: 10},
+    b: {min:0, max: 255, last: 0, base: 10},
+    hex: {min:0, max: 0xFFFFFF, last: 0, base: 16},
+  }
+  
+  this._verify = function(input, check)
+  {
+    var ret = parseInt(input, check.base);
+    if (typeof ret == 'number' && !isNaN(ret) && 
+        ret >= check.min && ret <= check.max)
+    {
+      if (check.base == 16)
+      {
+        if (/^[0-9a-fA-F]{0,6}$/.test(input))
+          check.last = input;
+      }
+      else
+        check.last = ret;
+    }
+    return check.last;
+  }
+ 
   this._oninput = function(event)
   {
-    this._cs[event.target.name] = event.target.value; 
-    this._set_coordinates();
-    this._set_cs_coordinates();
-    this._cs_cb.copyColor(this._cs);
-    this._update_inputs(event.target.name);
-    this._update_xy();
-    this._update_z();
-    this._update_new_color();
-    this._update_slider();
-    this._cb(this._cs_cb);
+    if (event.target.value)
+    {
+      event.target.value = 
+        this._cs[event.target.name] = 
+        this._verify(event.target.value, this._verify_inputs[event.target.name]);
+      this._set_coordinates();
+      this._set_cs_coordinates();
+      this._cs_cb.copyColor(this._cs);
+      this._update_inputs(event.target.name);
+      this._update_xy();
+      this._update_z();
+      this._update_new_color();
+      this._update_slider();
+      this._cb(this._cs_cb);
+    }
   }
   
   this._onclick = function(event)
@@ -91,7 +123,8 @@ ColorPicker.prototype = new function()
   {
     for (var input = null, i = 0; input = this._inputs[i]; i++)
       if (input.name != setter)
-        input.value = this._cs[input.name];
+        input.value = this._verify(this._cs[input.name], 
+                                   this._verify_inputs[input.name]);
   }
   
   this._update_slider = function()
