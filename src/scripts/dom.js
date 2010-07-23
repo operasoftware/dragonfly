@@ -84,6 +84,16 @@ Element.prototype.render = Document.prototype.render = function(args)
   return null;
 };
 
+Element.prototype.re_render = function(args)
+{
+  var div = document.createElement('div');
+  var doc_frag = document.createDocumentFragment();
+  div.render(args);
+  while (div.firstChild)
+    doc_frag.appendChild(div.firstChild);
+  this.parentNode.replaceChild(doc_frag, this);
+}
+
 /**
  * Clear the element and render the template into it
  */
