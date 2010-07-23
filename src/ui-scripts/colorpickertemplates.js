@@ -122,6 +122,41 @@
   
   this.color_picker_inputs = function()
   { 
+
+    
+    var 
+    shv_inputs = 
+    [
+      ['s-v-h', 'h', 'H:', 'number', '°', '0', '360'],
+      ['h-v-s', 's', 'S:', 'number', '%', '0', '100'],
+      ['h-s-v', 'v', 'V:', 'number', '%', '0', '100'],
+    ],
+    rgb_inputs = 
+    [
+      ['b-g-r', 'r', 'R:', 'number', null, '0', '255'],
+      ['b-r-g', 'g', 'G:', 'number', null, '0', '255'],
+      ['r-g-b', 'b', 'B:', 'number', null, '0', '255'],
+    ],
+    hex_inputs =
+    [
+      [null, 'hex', '#', 'text'],
+    ];
+    
+    return (
+    ['form', 
+      ['table', 
+        shv_inputs.map(this.color_picker_inputs_row, this),
+        ['tr', ['td', 'class', 'color-picker-spacer', 'colspan', '4']],
+        rgb_inputs.map(this.color_picker_inputs_row, this),
+        ['tr', ['td', 'class', 'color-picker-spacer', 'colspan', '4']],
+        hex_inputs.map(this.color_picker_inputs_row, this),
+        'id', 'color-picker-inputs'
+      ]
+    ]);
+  };
+  
+  this.color_picker_inputs_row = function(input, index)
+  {
     const 
     COLOR_SPACE = 0, 
     METHOD = 1, 
@@ -131,43 +166,29 @@
     MIN = 5, 
     MAX = 6;
     
-    var inputs = 
-    [
-      ['s-v-h', 'h', 'H:', 'number', '°', '0', '360'],
-      ['h-v-s', 's', 'S:', 'number', '%', '0', '100'],
-      ['h-s-v', 'v', 'V:', 'number', '%', '0', '100'],
-      ['b-g-r', 'r', 'R:', 'number', null, '0', '255'],
-      ['b-r-g', 'g', 'G:', 'number', null, '0', '255'],
-      ['r-g-b', 'b', 'B:', 'number', null, '0', '255'],
-      [null, 'hex', '#', 'text'],
-    ].map(function(input, index)
-    {
-      return (
-      
-      ['tr', 
-        ['td',
-          input[COLOR_SPACE] ? 
-          ['input', 
-            'type', 'radio', 
-            'name', 'color-space', 
-            'value', input[COLOR_SPACE],
-            'checked', !Boolean(index)
-          ] :
-          []
-        ],
-        ['td', input[LABEL]], 
-        ['td',
-          ['input', 
-            'name', input[METHOD], 
-            'type', input[TYPE],
-            'class', 'color-picker-' + input[TYPE], 
-          ].concat(input[MIN] ? ['min', input[MIN], 'max', input[MAX]] : []),
-        ].concat(input[UNITS] ? [] : ['colspan', '2']),
-        input[UNITS] ? ['td', input[UNITS]] : []
-      ]);
-    });
-    return ['form', ['table', inputs, 'id', 'color-picker-inputs']];
-  };
+    return (
+    ['tr', 
+      ['td',
+        input[COLOR_SPACE] ? 
+        ['input', 
+          'type', 'radio', 
+          'name', 'color-space', 
+          'value', input[COLOR_SPACE],
+          'checked', !Boolean(index)
+        ] :
+        []
+      ],
+      ['td', input[LABEL]], 
+      ['td',
+        ['input', 
+          'name', input[METHOD], 
+          'type', input[TYPE],
+          'class', 'color-picker-' + input[TYPE], 
+        ].concat(input[MIN] ? ['min', input[MIN], 'max', input[MAX]] : []),
+      ].concat(input[UNITS] ? [] : ['colspan', '2']),
+      input[UNITS] ? ['td', input[UNITS]] : []
+    ])
+  }
   
   this.color_picker_2 = function(existing_color, cp_class, cp_2d_class, 
                                cp_1d_class, cp_old_class, cp_new_class)
