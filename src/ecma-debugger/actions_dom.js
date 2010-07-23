@@ -114,39 +114,52 @@ cls.DOMInspectorActions = function(id)
   }
 
 
-  this.resetTarget = function(new_container)
+  this.resetTarget = function()
   {
-    if( view_container && nav_target )
+    if (view_container && nav_target)
     {
       /*
         the logic to reset the target must be improved
       */
-      var 
-      tag_name = nav_target.nodeName.toLowerCase(),
-      count = 0,
-      new_container_elements = new_container.firstChild.getElementsByTagName(tag_name),
-      old_container_elements = view_container_first_child.getElementsByTagName(tag_name),
-      index = old_container_elements.indexOf(nav_target);
+      var new_container = view_container;
+      if (!document.documentElement.contains(new_container))
+        new_container = document.getElementById(new_container.id);
+      if (new_container)
+      {
+        var 
+        tag_name = nav_target.nodeName.toLowerCase(),
+        count = 0,
+        new_container_elements = new_container.firstChild.getElementsByTagName(tag_name),
+        old_container_elements = view_container_first_child.getElementsByTagName(tag_name),
+        index = old_container_elements.indexOf(nav_target),
+        cur = null;
 
-      while( !( nav_target = new_container_elements[index - count] ) && count++ < index );
-      view_container = new_container;
-      view_container_first_child = new_container.firstChild;
-      this.setSelected(nav_target || ( nav_target = this.getFirstTarget() ) );
+        while ( !(nav_target = new_container_elements[index - count]) && count++ < index);
+        view_container = new_container;
+        view_container_first_child = new_container.firstChild;
+        cur = view_container.firstElementChild;
+        cur = cur && cur.firstElementChild;
+        this.is_dom_type_tree = cur && cur.hasClass('tree-style');
+        this.setSelected(nav_target || ( nav_target = this.getFirstTarget() ) );
+      }
+      else
+        this.blur();
     }
+    else
+      this.blur();
   }
 
-  var onViewCreated = function(msg)
+  var ondomnodeinserted = function(event)
   {
-    if(msg.id == self.view_id)
+    if(event.target.nodeType == 1 && nav_target && !document.documentElement.contains(nav_target))
     {
-      self.resetTarget(msg.container);
-      self.is_dom_type_tree = msg.container.hasClass('tree-style');
+      self.resetTarget();
     }
   }
 
   this.setContainer = function(event, container)
   {
-    messages.addListener('view-created', onViewCreated);
+    document.addEventListener('DOMNodeInserted', ondomnodeinserted, false);
     view_container = container;
     view_container_first_child = container.firstChild;
     selection = getSelection();
@@ -267,13 +280,14 @@ cls.DOMInspectorActions = function(id)
 
   this.blur = function(event)
   {
-    selection.collapse(document.documentElement, 0);
+    if (selection)
+      selection.collapse(document.documentElement, 0);
     view_container = null;
     view_container_first_child = null;
     nav_target = null;
     selection = null;
     range = null;
-    messages.removeListener('view-created', onViewCreated);
+    document.removeEventListener('DOMNodeInserted', ondomnodeinserted, false);
   }
 
   this.nav_up = function(event, action_id)
@@ -312,7 +326,7 @@ cls.DOMInspectorActions = function(id)
 
   this.editDOM = function(event, target)
   {
-    if( !_is_script_node(event.target) )
+    if (!_is_script_node(event.target))
     {
       switch(event.target.nodeName.toLowerCase())
       {
