@@ -5,7 +5,7 @@
 .color-picker-popup
 {
   position: relative;
-  border: 1px solid #333;
+  border: 1px solid #000;
   width: 374px;
   height: 222px;
   background-color: hsl(0, 0%, 30%);
@@ -42,7 +42,7 @@
   left: 264px;
   top: 10px;
   width: 49px;
-  height: 35px;
+  height: 36px;
   border: 1px solid #000;
   margin: 0;
 }
@@ -60,7 +60,7 @@
 {
   position: absolute;
   left: 259px;
-  top: 53px;
+  top: 58px;
   margin: 0;
   padding: 0;
   border-collapse: collapse;
@@ -68,12 +68,17 @@
 
 #color-picker-inputs td
 {
-  padding: 2px;
+  padding: 0px 2px;
   text-align: left;
 }
 #color-picker-inputs td:first-child
 {
   text-align: right;
+}
+
+.color-picker-spacer
+{
+  height: 10px;
 }
 .color-picker-number
 {
