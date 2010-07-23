@@ -332,11 +332,11 @@
     var show_white_space_nodes = window.settings.dom.get('show-whitespace-nodes');
 
     var
-    tree = "<div " +
-      "class='padding table-cell' " +
-      "edit-handler='edit-dom' " +
-      "rt-id='" + model.getDataRuntimeId() + "'" +
-      "><div class='tree-style'>",
+    tree = "<div class='padding table-cell dom'" +
+               (editable ? " edit-handler='edit-dom'" : "") + 
+               " rt-id='" + model.getDataRuntimeId() + "'" +
+               " data-model-id='" + model.id + "'" +
+               "><div class='tree-style'>";
     i = 0,
     node = null,
     length = data.length;
@@ -525,7 +525,7 @@
     tree += "</div></div>";
     return tree;
   }
-
+  // TODO remove with root
   this.inspected_dom_node = function(model, target, editable, with_root)
   {
     
