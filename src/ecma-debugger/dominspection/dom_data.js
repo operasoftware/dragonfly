@@ -16,8 +16,32 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
   this._mime = '';
   
   this._current_target = 0;
+
+  // spotlight
   this._reset_spotlight_timeouts = new Timeouts();
+
+  this._spotlight = function(event)
+  {
+    this._reset_spotlight_timeouts.clear();
+    hostspotlighter.soft_spotlight(event.object_id);
+  }
+
+  this._reset_spotlight = function()
+  {
+    if (this._current_target)
+    {
+      hostspotlighter.spotlight(this._current_target);
+    }
+  }
+
+  this._set_reset_spotlight = function(event)
+  {
+    this._reset_spotlight_timeouts.set(this._reset_spotlight_bound, 70);
+  }
+
+  // ?
   this._active_window = [];
+
   this._is_element_selected_checked = false;
 
   const 
@@ -35,21 +59,13 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
   PUBLIC_ID = 4,
   SYSTEM_ID = 5; 
 
+  // view
   this._update_views = function()
   {
     for (var view_id, i = 0; view_id = this._view_ids[i]; i++)
     {
       window.views[view_id].update();
     }
-  }
-
-  this._on_reset_state = function()
-  {
-    this._data = []; 
-    this._mime = '';
-    this._data_runtime_id = 0; 
-    this._current_target = 0;
-    this._active_window = [];
   }
 
   this._is_view_visible = function()
@@ -59,125 +75,52 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
     return i < this._view_ids.length;
   }
 
-  this._get_selected_element = function(rt_id)
+  this._on_setting_change = function(msg)
   {
-    var tag = tagManager.set_callback(this, this._on_element_selected, [rt_id, true]);
-    window.services['ecmascript-debugger'].requestGetSelectedObject(tag);
+    if (msg.id == this._settings_id && this._is_view_visible() && msg.key in this._settings)
+      this._handle_setting(msg.key);
   }
 
-  this._on_element_selected = function(status, message, rt_id, show_initial_view)
+  this._on_show_view = function(msg)
   {
-    const
-    OBJECT_ID = 0,
-    WINDOW_ID = 1,
-    RUNTIME_ID = 2;
-
-    this._is_element_selected_checked = true;
-
-    if(message[OBJECT_ID])
+    var msg_id = msg.id, id = '', i = 0, key = '';
+    for( ; (id = this._view_ids[i]) && id != msg_id; i++);
+    if (id)
     {
-      if(!window.views.dom.isvisible())
+      if (this._active_window.length)
       {
-        window.topCell.showView('dom');
-      }
-      // TODO this will fail on inspecting a popup which is part of the debug context
-      if(message[WINDOW_ID] == window.window_manager_data.get_debug_context())
-      {
-        this._click_handler_host({runtime_id: message[RUNTIME_ID], object_id: message[OBJECT_ID]});
+        // in the case there is no runtime selected 
+        // set the top window to the active runtime
+        if (!this._data_runtime_id)
+          this._data_runtime_id = this._active_window[0];
+        for (key in this._settings)
+        {
+          if (window.settings[this._settings_id].get(key))
+            this._handle_setting(key);
+        }
+        if (!this._data.length)
+        {
+          if(this._is_element_selected_checked)
+            this._get_initial_view(this._data_runtime_id);
+          else
+            this._get_selected_element(this._data_runtime_id);
+        }
       }
       else
       {
-        this._is_element_selected_checked = false;
-        window.window_manager_data.set_debug_context(message[WINDOW_ID]);
-      }
-    }
-    else if (show_initial_view)
-    {
-      this._get_initial_view(rt_id);
-    }
-  }
-
-  this._on_active_tab = function(msg)
-  {
-    // TODO clean up old tab
-    this._data = []; 
-    this._mime = '';
-    var view_id = '', i = 0;
-    // the top frame is per default the active tab
-    this._data_runtime_id = msg.activeTab[0];
-    messages.post("runtime-selected", {id: this._data_runtime_id});
-    window['cst-selects']['document-select'].updateElement();
-    this._active_window = msg.activeTab.slice(0);
-    for( ; view_id = this._view_ids[i]; i++)
-    {
-      if(views[view_id].isvisible())
-      {
-        this._on_show_view({id: view_id})
+        views[id].update();
       }
     }
   }
 
-  this._click_handler_host = function(event)
+  this._on_hide_view = function(msg)
   {
-    var 
-    rt_id = event.runtime_id,
-    obj_id = event.object_id,
-    do_highlight = event.highlight === false ? false : true,
-    cb = this._handle_get_dom.bind(this, rt_id, obj_id, do_highlight);
-
-    this._current_target = obj_id;
-    this._data = [];
-    this._mime = '';
-    this._get_dom(obj_id, 'parent-node-chain-with-children', cb);
-  }
-
-  this._dom_node_removed_handler = function(event)
-  {
-    // if the node is in the current data handle it otherwise not.
-    var rt_id = event.runtime_id, obj_id = event.object_id;
-    var node = null, i = 0, j = 0, level = 0, k = 0, view_id = '';
-    if( !( actions['dom'].editor && actions['dom'].editor.is_active ) && this._data_runtime_id == rt_id )
+    var msg_id = msg.id, id = '', i = 0;
+    for ( ; ( id = this._view_ids[i] ) && id != msg_id; i++);
+    if (id)
     {
-      for( ; ( node = this._data[i] ) && obj_id != node[ID]; i++ );
-      if( node  && node[TYPE] == 1 ) // don't update the dom if it's only a text node
-      {
-        level = node[ DEPTH ];
-        j = i + 1 ;
-        while( this._data[j] && this._data[j][ DEPTH ] > level ) j++;
-        this._data.splice(i, j - i);
-        this._update_views();
-      }
+      this._remove_all_active_window_listeners();
     }
-  }
-
-  this._handle_get_dom = function(rt_id, obj_id, highlight_target)
-  {
-    var view_id = '', i = 0;
-    // handle text nodes as target in get selected element
-    for( i = 0; this._data[i] && this._data[i][ID] != obj_id; i++);
-    while(this._data[i] && this._data[i][TYPE] != 1) 
-    {
-      i--;
-    }
-    if(this._data[i] && this._data[i][ID] != obj_id)
-    {
-      this._current_target = obj_id = this._data[i][ID];
-    }
-    if(highlight_target)
-    {
-      hostspotlighter.spotlight(this._current_target);
-    }
-    if (rt_id != this._data_runtime_id)
-    {
-      this._data_runtime_id = rt_id;
-      messages.post("runtime-selected", {id: this._data_runtime_id});
-      window['cst-selects']['document-select'].updateElement();
-    }
-    this._update_views();
-    if(obj_id)
-    {
-      messages.post("element-selected", {obj_id: obj_id, rt_id: rt_id});
-    } 
   }
 
   this._settings = 
@@ -246,53 +189,115 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
     }
   }
 
-  this._on_setting_change = function(msg)
+
+
+
+
+
+  // startup
+
+  this._get_selected_element = function(rt_id)
   {
-    if (msg.id == this._settings_id && this._is_view_visible() && msg.key in this._settings)
-      this._handle_setting(msg.key);
+    var tag = tagManager.set_callback(this, this._on_element_selected, [rt_id, true]);
+    window.services['ecmascript-debugger'].requestGetSelectedObject(tag);
   }
 
-  this._on_show_view = function(msg)
+  this._on_element_selected = function(status, message, rt_id, show_initial_view)
   {
-    var msg_id = msg.id, id = '', i = 0, key = '';
-    for( ; (id = this._view_ids[i]) && id != msg_id; i++);
-    if (id)
+    const
+    OBJECT_ID = 0,
+    WINDOW_ID = 1,
+    RUNTIME_ID = 2;
+
+    this._is_element_selected_checked = true;
+
+    if(message[OBJECT_ID])
     {
-      if (this._active_window.length)
+      if(!window.views.dom.isvisible())
       {
-        // in the case there is no runtime selected 
-        // set the top window to the active runtime
-        if (!this._data_runtime_id)
-          this._data_runtime_id = this._active_window[0];
-        for (key in this._settings)
-        {
-          if (window.settings[this._settings_id].get(key))
-            this._handle_setting(key);
-        }
-        if (!this._data.length)
-        {
-          if(this._is_element_selected_checked)
-            this._get_initial_view(this._data_runtime_id);
-          else
-            this._get_selected_element(this._data_runtime_id);
-        }
+        window.topCell.showView('dom');
+      }
+      // TODO this will fail on inspecting a popup which is part of the debug context
+      if(message[WINDOW_ID] == window.window_manager_data.get_debug_context())
+      {
+        this._click_handler_host({runtime_id: message[RUNTIME_ID], object_id: message[OBJECT_ID]});
       }
       else
       {
-        views[id].update();
+        this._is_element_selected_checked = false;
+        window.window_manager_data.set_debug_context(message[WINDOW_ID]);
+      }
+    }
+    else if (show_initial_view)
+    {
+      this._get_initial_view(rt_id);
+    }
+  }
+
+  // event handlers
+
+  this._on_reset_state = function()
+  {
+    this._data = []; 
+    this._mime = '';
+    this._data_runtime_id = 0; 
+    this._current_target = 0;
+    this._active_window = [];
+  }
+
+  this._on_active_tab = function(msg)
+  {
+    // TODO clean up old tab
+    this._data = []; 
+    this._mime = '';
+    var view_id = '', i = 0;
+    // the top frame is per default the active tab
+    this._data_runtime_id = msg.activeTab[0];
+    messages.post("runtime-selected", {id: this._data_runtime_id});
+    window['cst-selects']['document-select'].updateElement();
+    this._active_window = msg.activeTab.slice(0);
+    for( ; view_id = this._view_ids[i]; i++)
+    {
+      if(views[view_id].isvisible())
+      {
+        this._on_show_view({id: view_id})
       }
     }
   }
 
-  this._on_hide_view = function(msg)
+  this._click_handler_host = function(event)
   {
-    var msg_id = msg.id, id = '', i = 0;
-    for ( ; ( id = this._view_ids[i] ) && id != msg_id; i++);
-    if (id)
+    var 
+    rt_id = event.runtime_id,
+    obj_id = event.object_id,
+    do_highlight = event.highlight === false ? false : true,
+    cb = this._handle_get_dom.bind(this, rt_id, obj_id, do_highlight);
+
+    this._current_target = obj_id;
+    this._data = [];
+    this._mime = '';
+    this._get_dom(obj_id, 'parent-node-chain-with-children', cb);
+  }
+
+  this._dom_node_removed_handler = function(event)
+  {
+    // if the node is in the current data handle it otherwise not.
+    var rt_id = event.runtime_id, obj_id = event.object_id;
+    var node = null, i = 0, j = 0, level = 0, k = 0, view_id = '';
+    if( !( actions['dom'].editor && actions['dom'].editor.is_active ) && this._data_runtime_id == rt_id )
     {
-      this._remove_all_active_window_listeners();
+      for( ; ( node = this._data[i] ) && obj_id != node[ID]; i++ );
+      if( node  && node[TYPE] == 1 ) // don't update the dom if it's only a text node
+      {
+        level = node[ DEPTH ];
+        j = i + 1 ;
+        while( this._data[j] && this._data[j][ DEPTH ] > level ) j++;
+        this._data.splice(i, j - i);
+        this._update_views();
+      }
     }
   }
+
 
   this._on_runtime_stopped = function(msg)
   {
@@ -309,6 +314,36 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
     }
   }
 
+  this._handle_get_dom = function(rt_id, obj_id, highlight_target)
+  {
+    var view_id = '', i = 0;
+    // handle text nodes as target in get selected element
+    for( i = 0; this._data[i] && this._data[i][ID] != obj_id; i++);
+    while(this._data[i] && this._data[i][TYPE] != 1) 
+    {
+      i--;
+    }
+    if(this._data[i] && this._data[i][ID] != obj_id)
+    {
+      this._current_target = obj_id = this._data[i][ID];
+    }
+    if(highlight_target)
+    {
+      hostspotlighter.spotlight(this._current_target);
+    }
+    if (rt_id != this._data_runtime_id)
+    {
+      this._data_runtime_id = rt_id;
+      messages.post("runtime-selected", {id: this._data_runtime_id});
+      window['cst-selects']['document-select'].updateElement();
+    }
+    this._update_views();
+    if(obj_id)
+    {
+      messages.post("element-selected", {obj_id: obj_id, rt_id: rt_id});
+    } 
+  }
+
   this._get_initial_view = function(rt_id)
   {
     var tag = tagManager.set_callback(this, this._handle_initial_view, [rt_id]);
@@ -316,21 +351,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
     services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, script_data]);
   }
 
-  this.getDOM = function(rt_id)
-  {
-    if( !(rt_id == this._data_runtime_id && this._data.length) && runtime_onload_handler.check(rt_id, arguments) )
-    {
-      this._get_initial_view(rt_id);
-    }
-  }
 
-  this.getCSSPath = function(parent_node_chain)
-  {
-    return this._get_css_path(this._current_target, parent_node_chain,
-                              window.settings.dom.get('force-lowercase'),
-                              window.settings.dom.get('show-id_and_classes-in-breadcrumb'),
-                              window.settings.dom.get('show-siblings-in-breadcrumb'));
-  }
 
   this._handle_initial_view = function(status, message, rt_id)
   {
@@ -350,25 +371,6 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
       opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
         'this._handle_initial_view failed in dom_data\n');
     }
-  }
-
-  this.getChildernFromNode = function(object_id, traversal)
-  {
-    this._get_dom(object_id, traversal, this._update_views_bound);
-  }
-
-  this.closeNode = function(object_id, do_not_update)
-  {
-    this.collapse(object_id);
-    if (!do_not_update)
-      this._update_views();
-  }
-
-  this.getSnapshot = function()
-  {
-    var tag = tagManager.set_callback(this, this._handle_snapshot, [this._data_runtime_id]);
-    var script_data = 'return document.document';
-    services['ecmascript-debugger'].requestEval(tag, [this._data_runtime_id, 0, 0, script_data]);
   }
 
   this._handle_snapshot = function(status, message, runtime_id)
@@ -392,83 +394,62 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
     }
   }
 
-  this._spotlight = function(event)
-  {
-    this._reset_spotlight_timeouts.clear();
-    hostspotlighter.soft_spotlight(event.object_id);
-  }
 
-  this._reset_spotlight = function()
+
+  // caller view
+  this.getDOM = function(rt_id)
   {
-    if (this._current_target)
+    if( !(rt_id == this._data_runtime_id && this._data.length) && runtime_onload_handler.check(rt_id, arguments) )
     {
-      hostspotlighter.spotlight(this._current_target);
+      this._get_initial_view(rt_id);
     }
   }
 
-  this._set_reset_spotlight = function(event)
+  // caller view and elementLayout
+  this.getCSSPath = function(parent_node_chain)
   {
-    this._reset_spotlight_timeouts.set(this._reset_spotlight_bound, 70);
+    return this._get_css_path(this._current_target, parent_node_chain,
+                              window.settings.dom.get('force-lowercase'),
+                              window.settings.dom.get('show-id_and_classes-in-breadcrumb'),
+                              window.settings.dom.get('show-siblings-in-breadcrumb'));
   }
 
+  // caller action_handler; DomMarkupEditor, this.on_exit_edit
+  this.getChildernFromNode = function(object_id, traversal)
+  {
+    this._get_dom(object_id, traversal, this._update_views_bound);
+  }
+
+  // caller DomMarkupEditor, this.on_exit_edit
+  this.closeNode = function(object_id, do_not_update)
+  {
+    this.collapse(object_id);
+    if (!do_not_update)
+      this._update_views();
+  }
+
+  // caller view
+  this.getSnapshot = function()
+  {
+    var tag = tagManager.set_callback(this, this._handle_snapshot, [this._data_runtime_id]);
+    var script_data = 'return document.document';
+    services['ecmascript-debugger'].requestEval(tag, [this._data_runtime_id, 0, 0, script_data]);
+  }
+
+  // TODO caller action_handler; view
   this.setCurrentTarget = function(obj_id)
   {
     messages.post("element-selected", {obj_id: obj_id, rt_id: this._data_runtime_id});
     this._current_target = obj_id;
   }
 
+  // TODO caller action_handler; hostspotlighter; view
   this.getCurrentTarget = function(obj_id)
   {
     return this._current_target;
   }
 
-  // to be update from a editor
-  this.update = function(state)
-  {
-    if( state.rt_id == this._data_runtime_id )
-    {
-      var 
-      entry = null, 
-      i = 0,
-      obj_id = state.obj_id,
-      attrs = null,
-      attr = null, 
-      j = 0;
-      
-      for( ; this._data[i] && this._data[i][ID] != obj_id; i++ );
-      if( this._data[i] )
-      {
-        switch(state.type)
-        {
-          case "key":
-          case "value":
-          {
-            if( state.key )
-            {
-              attrs = this._data[i][ATTRS];
-              for( ; ( attr = attrs[j] ) && attr[ATTR_KEY] != state.key; j++ );
-              attr || ( attr = attrs[j] = ["", state.key, ""] );
-              if( state.value )
-              {
-                attr[ATTR_VALUE] = state.value;
-              }
-              else
-              {
-                attrs.splice(j, 1);
-              }
-            }
-            break;
-          }
-          case "text":
-          {
-            this._data[i][VALUE] = state.text;
-            break;
-          }
-        }
-      }
-    }
-  }
-
+  // TODO use event listeners
   this.bind = function(ecma_debugger)
   {
     ecma_debugger.onObjectSelected =
