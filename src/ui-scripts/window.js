@@ -39,6 +39,8 @@ var UIWindowBase = new function()
     this.width = width || view && view.window_width || this.default_width;
     this.height = height || view && view.window_height || this.default_height;
     this.container = new WindowContainer(this);
+    this.is_resizable = 
+      typeof view.window_resizable == 'boolean' ? view.window_resizable : true;
     if (has_statusbar)
       this.statusbar = new WindowStatusbar(this);
     if(toolbars[view_id])
@@ -50,14 +52,12 @@ var UIWindowBase = new function()
       window.ui_windows = {};
     }
     window.ui_windows[this.id] = this;
-    this.render(view && view.window_resizable);
+    this.render();
   }
 
   this.render = function(resizable)
   {
-    if (typeof resizable != 'boolean')
-      resizable = true;
-    var win = viewport.render(templates._window(this, resizable));
+    var win = viewport.render(templates._window(this));
 
 
     if( this.toolbar )

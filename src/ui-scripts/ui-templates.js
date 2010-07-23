@@ -338,12 +338,12 @@
     return ['checkbox', ['label', input, label ] ];
   }
 
-  this._window = function(win, resizable)
+  this._window = function(win)
   {
     return ['window',
         this.window_header(views[win.view_id].name),
         this.window_shadows(),
-        resizable ?
+        win.is_resizable ?
         [
           ['window-control', 'handler', 'window-scale-top-left'],
           ['window-control', 'handler', 'window-scale-top'],
