@@ -1,4 +1,4 @@
-var Slider = function(container, slider_base_id, slider_id, min, max)
+﻿var Slider = function(container, slider_base_id, slider_id, min, max)
 {  
   /* interface */
   this.onz = function(z){};
@@ -7,7 +7,7 @@ var Slider = function(container, slider_base_id, slider_id, min, max)
   
   /* constructor */
   this._init(container, slider_base_id, slider_id, min, max);
-}
+};
 
 Slider.prototype = new function()
 {
@@ -119,4 +119,4 @@ Slider.prototype = new function()
   {
     return this.__z;
   });
-}
+};

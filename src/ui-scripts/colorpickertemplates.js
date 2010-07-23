@@ -1,4 +1,4 @@
-(function()
+﻿(function()
 {
   var id_count = 0;
   
@@ -133,7 +133,7 @@
     
     var inputs = 
     [
-      ['s-v-h', 'h', 'H:', 'number', '�', '0', '360'],
+      ['s-v-h', 'h', 'H:', 'number', '°', '0', '360'],
       ['h-v-s', 's', 'S:', 'number', '%', '0', '100'],
       ['h-s-v', 'v', 'V:', 'number', '%', '0', '100'],
       ['b-g-r', 'r', 'R:', 'number', null, '0', '255'],

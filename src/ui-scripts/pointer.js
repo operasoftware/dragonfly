@@ -1,7 +1,7 @@
-var Pointer = function(ref_ele, pointer_class)
+﻿var Pointer = function(ref_ele, pointer_class)
 {
   this._init(ref_ele, pointer_class);
-}
+};
 
 Pointer.prototype = new function()
 {
@@ -51,4 +51,4 @@ Pointer.prototype = new function()
     this._circle.setAttribute('stroke', luminosity > 25 ? 'hsl(0, 0%, 20%)' : 'hsl(0, 0%, 80%)'); 
   }
 
-}
+};

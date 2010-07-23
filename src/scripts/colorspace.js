@@ -1,4 +1,4 @@
-var ColorSpace = function()
+﻿var ColorSpace = function()
 {
   this.__rgb = [0, 0, 0];
   this.__hsl = [0, 50, 50];

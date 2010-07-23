@@ -1,4 +1,4 @@
-var ColorPicker = function(cb, color)
+﻿var ColorPicker = function(cb, color)
 {
   this._init(cb, color);
 }
@@ -295,4 +295,4 @@ ColorPicker.prototype = new function()
     this._onremove_bound = this._onremove.bind(this);
   }
   
-}
+};
