@@ -287,7 +287,6 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     return ret;
   }
 
-  
   this._get_id = (function()
   {
     var id_counter = 0;
