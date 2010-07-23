@@ -214,11 +214,21 @@ var DOMAttrAndTextEditor = function(nav_filters)
     
     // this should never be needed
     
-    if( this.textarea_container.parentElement )
+    if (this.textarea_container.parentElement)
     {
       opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
         "this.textarea_container.parentElement is not null in submit");
     } 
+
+    parent_parent = ele.parentNode;
+    while (parent_parent && parent_parent.nodeType == 1 && !parent_parent.hasAttribute('data-model-id'))
+      parent_parent = parent_parent.parentNode;
+    if (parent_parent && parent_parent.hasAttribute('data-model-id'))
+      enter_state.model = window.dominspections[parent_parent.getAttribute('data-model-id')];
+    // TODO else throw?
+      
+    
+  
     
     
     switch( enter_state.type = ele.nodeName.toLowerCase() )
@@ -361,7 +371,8 @@ var DOMAttrAndTextEditor = function(nav_filters)
         {
           if(state.key && ( !check_value || state.value ) )
           {
-            dom_data.update(state); 
+            if ( !(state.key == this.context_enter.key && state.value == this.context_enter.value))
+              this.context_enter.model.expand(null, state.obj_id, "node");
             nav_target.textContent = state.key;
           }
           else 
@@ -374,7 +385,8 @@ var DOMAttrAndTextEditor = function(nav_filters)
         {
           if(state.key && state.value)
           {
-            dom_data.update(state); 
+            if ( !(state.key == this.context_enter.key && state.value == this.context_enter.value))
+              this.context_enter.model.expand(null, state.obj_id, "node");
             nav_target.textContent = '"' + state.value+ '"';
           }
           else 
@@ -385,7 +397,8 @@ var DOMAttrAndTextEditor = function(nav_filters)
         }
         case "text":
         {
-          dom_data.update(state); 
+          if ( !(state.text == this.context_enter.text))
+            this.context_enter.model.expand(null, state.obj_id, "node");
           if( settings.dom.get('dom-tree-style') && /^\s*$/.test( state.text) ) 
           {
             nav_target.textContent = _escape(state.text);
@@ -566,7 +579,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
     var 
     max_content_length = 
       Math.max.apply(null, this.textarea.value.split('\r\n').map(function(item){return item.length})),
-    width = this.char_width * ( max_content_length + 1 );
+    width = this.char_width * max_content_length;
 
     //this.textarea.style.height = '0px';
     this.textarea.style.width = ( width < this.max_width ? width : this.max_width )+ "px";
@@ -604,7 +617,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
       [state.rt_id, 0, 0, script, [["node", state.obj_id]]]);
       state.key = this.context_enter.key;
       delete state.value;
-      dom_data.update(state);
+      this.context_enter.model.expand(null, state.obj_id, "node");
     }
     // to clear the context of the textarea container
     nav_target.textContent = "";
