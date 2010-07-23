@@ -1,8 +1,8 @@
-﻿.color-picker svg 
+﻿.color-picker-popup svg 
 {
   display: block;
 }
-.color-picker
+.color-picker-popup
 {
   position: relative;
   border: 1px solid #333;

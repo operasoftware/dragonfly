@@ -224,7 +224,7 @@ ColorPicker.prototype = new function()
   }
   
   const
-  CP_CLASS = "color-picker",
+  CP_CLASS = "color-picker-popup",
   CP_2D_CLASS = "color-picker-2-d-graphic",
   CP_1D_CLASS = "color-picker-1-d-graphic",
   CP_OLD_CLASS = "color-picker-color-old",
