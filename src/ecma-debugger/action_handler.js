@@ -359,12 +359,21 @@ var ColorPickerView = function(id, name, container_class)
     this.cp_color_sample = target;
     this.cp_old_color = target.style.backgroundColor;
     this.cp_value_container = cur_ele;
+    this.cp_target_container = cur_ele.parentNode;
     this.cp_style_prop = cur_ele.parentNode.getElementsByTagName('key')[0].textContent;
     cur_ele = cur_ele .parentNode.parentNode;
     this.cp_rule_id = parseInt(cur_ele.getAttribute('rule-id'));
     this.cp_rt_id = parseInt(cur_ele.parentNode.getAttribute('rt-id'));
+    this.cp_fade_ele = viewport.render(['div', 'class', 'black-50']);
+    this.cp_target_container.addClass('color-picker-target-element');
     UIWindowBase.showWindow(this.id);
   }
+  
+  this.ondestroy = function()
+  {
+    this.cp_fade_ele.parentNode.removeChild(this.cp_fade_ele);
+    this.cp_target_container.removeClass('color-picker-target-element');
+  };
   this.init(id, name, container_class);
 }
 ColorPickerView.prototype = ViewBase;
