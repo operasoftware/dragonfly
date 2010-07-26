@@ -159,15 +159,34 @@ cls.DOMInspectorActions = function(id)
 
   this.setContainer = function(event, container)
   {
+    
     document.addEventListener('DOMNodeInserted', ondomnodeinserted, false);
     view_container = container;
     view_container_first_child = container.firstChild;
     selection = getSelection();
     range = document.createRange();
     this.is_dom_type_tree = container.hasClass('tree-style');
-    if( event.type == 'click' && /^node|key|value|text|input$/i.test(event.target.nodeName) )
+    opera.postError('set view, '+ event.type +', '+event.target.nodeName)
+    if (event.type == 'click')
     {
-      nav_target = event.target;
+      switch (event.target.nodeName.toLowerCase())
+      {
+        case 'node':
+        case 'key':
+        case 'value':
+        case 'text':
+        case 'input':
+        {
+          nav_target = event.target;
+          break;
+        }
+        case 'div':
+        {
+          if (event.target.getElementsByTagName('node')[0])
+            nav_target = event.target.getElementsByTagName('node')[0];
+          break;
+        }
+      }
     }
     if (!nav_target)
     {
