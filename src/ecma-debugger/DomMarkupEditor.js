@@ -186,8 +186,8 @@ var DOMMarkupEditor = function()
       // to remove the textarea_container from the dom
       nav_target.textContent = "";
       this.context_cur = this.context_enter = null;
-      dom_data.closeNode(state.parent_obj_id, true);
-      dom_data.getChildernFromNode(state.parent_obj_id, 'children');
+      dom_data.collapse(state.parent_obj_id);
+      dom_data.expand(function(){window.views.dom.update()}, state.parent_obj_id, 'children');
     }
     else
     {

@@ -408,48 +408,12 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
     }
   }
 
-  // caller view and elementLayout
-  this.getCSSPath = function(parent_node_chain)
-  {
-    return this._get_css_path(this._current_target, parent_node_chain,
-                              window.settings.dom.get('force-lowercase'),
-                              window.settings.dom.get('show-id_and_classes-in-breadcrumb'),
-                              window.settings.dom.get('show-siblings-in-breadcrumb'));
-  }
-
-  // caller action_handler; DomMarkupEditor, this.on_exit_edit
-  this.getChildernFromNode = function(object_id, traversal)
-  {
-    this._get_dom(object_id, traversal, this._update_views_bound);
-  }
-
-  // caller DomMarkupEditor, this.on_exit_edit
-  this.closeNode = function(object_id, do_not_update)
-  {
-    this.collapse(object_id);
-    if (!do_not_update)
-      this._update_views();
-  }
-
   // caller view
   this.getSnapshot = function()
   {
     var tag = tagManager.set_callback(this, this._handle_snapshot, [this._data_runtime_id]);
     var script_data = 'return document.document';
     services['ecmascript-debugger'].requestEval(tag, [this._data_runtime_id, 0, 0, script_data]);
-  }
-
-  // TODO caller action_handler; view
-  this.setCurrentTarget = function(obj_id)
-  {
-    messages.post("element-selected", {obj_id: obj_id, rt_id: this._data_runtime_id});
-    this._current_target = obj_id;
-  }
-
-  // TODO caller action_handler; hostspotlighter; view
-  this.getCurrentTarget = function(obj_id)
-  {
-    return this._current_target;
   }
 
   // TODO use event listeners

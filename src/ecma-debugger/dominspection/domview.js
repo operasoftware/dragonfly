@@ -26,7 +26,7 @@ cls.DOMView = function(id, name, container_class)
       {
         container.scrollTop = scrollTop;
       }
-      if (model == this)
+      if (model == window.dom_data)
       {
         window.topCell.statusbar.updateInfo(templates.breadcrumb(model, model.target));
       }
@@ -55,6 +55,7 @@ cls.DOMView = function(id, name, container_class)
     topCell.statusbar.updateInfo('');
   }
 
+  // TODO move this out
   this.serializer = new cls.DOMSerializer();
 
   this.serializeToOuterHTML = function(data)
@@ -67,6 +68,10 @@ cls.DOMView = function(id, name, container_class)
   {
     return this.serializeToOuterHTML(dom_data.getData());
   }
+
+
+
+
 
   this.ondestroy = function()
   {
@@ -93,6 +98,8 @@ cls.DOMView = function(id, name, container_class)
   this.init(id, name, container_class);
 
 }
+
+
 
 
 cls.DocumentSelect = function(id)
