@@ -8,31 +8,6 @@
 cls.DOMView = function(id, name, container_class)
 {
 
-  this.updateTarget = function(ele, obj_id)
-  {
-    if (ele)
-    {
-      var target = document.getElementById('target-element');
-      if (target)
-        target.removeAttribute('id');
-      if (!window.settings.dom.get('dom-tree-style') && /<\//.test(ele.firstChild.textContent))
-      {
-        while ((ele = ele.previousSibling) && ele.getAttribute('ref-id') != obj_id);
-      }
-      topCell.statusbar.updateInfo(templates.breadcrumb(dom_data.getCSSPath()));
-    }
-    if (ele || (ele = document.getElementById('target-element')))
-    {
-      ele.id = 'target-element';
-    }
-    else
-    {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
-        "missing implementation in updateTarget in views['dom-inspector']");
-      // TODO
-    }
-  };
-
   this.createView = function(container)
   {
     if (this._create_view_no_data_timeout)
@@ -42,14 +17,19 @@ cls.DOMView = function(id, name, container_class)
     }
     if (dom_data.has_data())
     {
-      var target = dom_data.getCurrentTarget();
+      var model = window.dominspections.active;
       var scrollTop = container.scrollTop;      
-      container.clearAndRender(window.templates.inspected_dom_node(window.dom_data, target, true));
-      if (!this.scrollTargetIntoView())
+      container.clearAndRender(window.templates.inspected_dom_node(window.dom_data, 
+                                                                   model && model.target, 
+                                                                   true));
+      if (!window.helpers.scroll_dom_target_into_view())
       {
         container.scrollTop = scrollTop;
       }
-      window.topCell.statusbar.updateInfo(templates.breadcrumb(dom_data.getCSSPath()));
+      if (model == this)
+      {
+        window.topCell.statusbar.updateInfo(templates.breadcrumb(model, model.target));
+      }
     }
     else
     {
@@ -75,56 +55,6 @@ cls.DOMView = function(id, name, container_class)
     topCell.statusbar.updateInfo('');
   }
 
-  this.scrollTargetIntoView = function()
-  {
-    var target = document.getElementById('target-element'), container = target;
-    while (container && !/container/i.test(container.nodeName))
-    {
-      container = container.parentElement;
-    }
-    if (target && container)
-    {
-      container.scrollTop -= (
-        container.getBoundingClientRect().top - 
-        target.getBoundingClientRect().top +
-        Math.min(container.offsetHeight * .5, 100)
-      );
-      container.scrollLeft = 0;
-    }
-    return target && container;
-  }
-
-
-
-  this.updateBreadcrumbLink = function(obj_id)
-  {
-
-    var target = document.getElementById('target-element');
-    if(target)
-    {
-      target.removeAttribute('id');
-      while( target && !/container/i.test(target.nodeName) && ( target = target.parentElement ) );
-      if( target )
-      {
-        var 
-        divs = target.getElementsByTagName('div'),
-        div = null,
-        i = 0;
-
-        for( ; ( div = divs[i] ) && div.getAttribute('ref-id') != obj_id; i++ );
-        if( div )
-        {
-          div.id = 'target-element';
-          this.scrollTargetIntoView();
-          if(!this.updateBreadcrumbLink.timeout )
-          {
-            hostspotlighter.spotlight(obj_id, true);
-          }
-        }
-      }
-    }
-  }
-
   this.serializer = new cls.DOMSerializer();
 
   this.serializeToOuterHTML = function(data)
@@ -133,14 +63,17 @@ cls.DOMView = function(id, name, container_class)
     return this.serializer[dom_data.isTextHtml() && 'text/html' || 'application/xml'](data);
   }
 
-
+  this.exportMarkup = function()
+  {
+    return this.serializeToOuterHTML(dom_data.getData());
+  }
 
   this.ondestroy = function()
   {
     hostspotlighter.clearSpotlight();
   }
 
-  this.on_setting_change = function(msg)
+  this._on_setting_change = function(msg)
   {
     if( msg.id == this.id )
     {
@@ -155,19 +88,9 @@ cls.DOMView = function(id, name, container_class)
     }
   }
 
-  messages.addListener('setting-changed', this.on_setting_change.bind(this));
-
-
+  messages.addListener('setting-changed', this._on_setting_change.bind(this));
 
   this.init(id, name, container_class);
-
-
-
-
-  this.exportMarkup = function()
-  {
-    return this.serializeToOuterHTML(dom_data.getData());
-  }
 
 }
 
@@ -419,23 +342,7 @@ cls.DOMView.create_ui_widgets = function()
     }
   }
 
-  eventHandlers.click['breadcrumb-link'] = function(event, target)
-  {
-    var obj_id = parseInt(target.getAttribute('obj-id')); 
-    if( obj_id )
-    {
-      dom_data.setCurrentTarget(obj_id);
-      views['dom'].updateBreadcrumbLink(obj_id);
-    }
-  };
 
-  eventHandlers.mouseover['spotlight-node'] = function(event, target)
-  {
-    if(settings['dom'].get('highlight-on-hover'))
-    {
-      hostspotlighter.soft_spotlight(parseInt(target.getAttribute('ref-id')));
-    }
-  }
 
 }
 

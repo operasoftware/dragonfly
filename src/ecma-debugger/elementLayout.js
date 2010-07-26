@@ -184,7 +184,7 @@ cls.ElementLayout = function()
   {
     __comp_style = null;
     __offsets_values = "";
-    __selectedElement = {rt_id: msg.rt_id,  obj_id: msg.obj_id};
+    __selectedElement = {rt_id: msg.rt_id,  obj_id: msg.obj_id, model: msg.model};
 
     var i = 0, view_id = '';
     for ( i = 0; view_id = __views[i]; i++)
@@ -265,13 +265,16 @@ cls.ElementLayout = function()
     ret = '<h2>' +  ui_strings.M_VIEW_SUB_LABEL_PARENT_OFFSETS + '</h2><parent-node-chain>',
     i = 0,
     chain = data[0].split(','),
-    cur = '';
+    cur = '',
+    model = __selectedElement && __selectedElement.model,
+    target = __selectedElement && __selectedElement.obj_id,
+    css_path = null;
 
     for( i = 0; cur = chain[i]; i++)
     {
       chain[i] = cur.split('|');
     }
-    ret += document.renderInner(templates.breadcrumb(dom_data.getCSSPath(chain)));
+    ret += document.renderInner(templates.breadcrumb(model, target, chain));
     ret += "</parent-node-chain><h2>" +  ui_strings.M_VIEW_SUB_LABEL_OFFSET_VALUES + "</h2><offsets>";
     for( i = 1; data[i]; i++ )
     {

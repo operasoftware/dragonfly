@@ -164,6 +164,7 @@ cls.EcmascriptDebugger["5.0"].DOMBaseData = new function()
     return ret;
   }
 
+  this.get_css_path =
   this._get_css_path = function(object_id, parent_offset_chain, 
                                 force_lower_case, show_id_and_classes, show_siblings)
   {
@@ -256,7 +257,7 @@ cls.EcmascriptDebugger["5.0"].DOMBaseData = new function()
   this._init = function(rt_id, obj_id)
   {
     this.id = this._get_id();
-    this._data_runtime_id = 0;  // data of a dom tree has always just one runtime
+    this._data_runtime_id = rt_id;  // data of a dom tree has always just one runtime
     this._root_obj_id = obj_id;
     this._data = [];
     if (!window.dominspections)

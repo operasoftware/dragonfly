@@ -388,12 +388,18 @@ MODE ::= "<mode>"
     return self['cst-select'](ui_obj.script_select);
   }
 
-  this.breadcrumb = function(css_path)
+  this.breadcrumb = function(model, obj_id, parent_node_chain)
   {
+          
     var
+    css_path = model._get_css_path(obj_id, parent_node_chain,
+                                   window.settings.dom.get('force-lowercase'),
+                                   window.settings.dom.get('show-id_and_classes-in-breadcrumb'),
+                                   window.settings.dom.get('show-siblings-in-breadcrumb'));
     ret = ["breadcrumb"],
     i = 0;
-    if( css_path )
+
+    if (css_path)
     {
       for( ; i < css_path.length; i++ )
       {
@@ -407,6 +413,7 @@ MODE ::= "<mode>"
         ret[ret.length] = css_path[i].combinator;
       }
     }
+    ret.push('data-model-id', model.id);
     return ret;
   }
 

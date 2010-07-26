@@ -337,11 +337,14 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
       messages.post("runtime-selected", {id: this._data_runtime_id});
       window['cst-selects']['document-select'].updateElement();
     }
-    this._update_views();
+    
     if(obj_id)
     {
-      messages.post("element-selected", {obj_id: obj_id, rt_id: rt_id});
+      this.target = obj_id;
+      window.dominspections.active = this;
+      messages.post("element-selected", {obj_id: obj_id, rt_id: rt_id, model: this});
     } 
+    this._update_views();
   }
 
   this._get_initial_view = function(rt_id)

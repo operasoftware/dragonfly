@@ -242,18 +242,6 @@ window.eventHandlers.click['set-break-point'] = function(event)
   }
 };
 
-window.eventHandlers.click['spotlight-node'] = function(event, current_target)
-{
-  var obj_id = parseInt(current_target.getAttribute('ref-id'));
-  if (obj_id)
-  {
-    hostspotlighter.spotlight(obj_id,
-      settings.dom.get('scroll-into-view-on-spotlight') && obj_id != dom_data.getCurrentTarget());
-    dom_data.setCurrentTarget(obj_id);
-    views['dom'].updateTarget(current_target, obj_id);
-  }
-};
-
 window.eventHandlers.click['create-all-runtimes'] = function()
 {
   services['ecmascript-debugger'].createAllRuntimes();

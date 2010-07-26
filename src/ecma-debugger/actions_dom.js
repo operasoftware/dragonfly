@@ -166,7 +166,6 @@ cls.DOMInspectorActions = function(id)
     selection = getSelection();
     range = document.createRange();
     this.is_dom_type_tree = container.hasClass('tree-style');
-    opera.postError('set view, '+ event.type +', '+event.target.nodeName)
     if (event.type == 'click')
     {
       switch (event.target.nodeName.toLowerCase())
