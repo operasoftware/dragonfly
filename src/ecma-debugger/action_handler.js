@@ -266,7 +266,7 @@ window.eventHandlers.click['update-global-scope'] = function(event)
 
 window.eventHandlers.click['dom-inspection-export'] = function(event)
 {
-  export_data.data = views['dom'].exportMarkup();
+  export_data.data = window.helpers.escapeTextHtml(views['dom'].exportMarkup());
   topCell.showView('export_data');
 };
 

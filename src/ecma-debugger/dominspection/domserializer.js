@@ -1,6 +1,8 @@
 window.cls || (window.cls = {});
 
-window.cls.DOMSerializer = function()
+window.cls.DOMSerializer = function(){};
+
+window.cls.DOMSerializer.prototype = new function()
 {
 
   const 
@@ -56,6 +58,16 @@ window.cls.DOMSerializer = function()
     }
     return ret;
   };
+
+  var getDoctypeName = function(data)
+  {
+    for (var node = null, i = 0; node = data[i]; i++)
+    {
+      if (node[TYPE] == 1)
+        return node[NAME];
+    }
+    return null;
+  }
 
   this['text/html'] = function(data, is_xml)
   {
@@ -122,6 +134,7 @@ window.cls.DOMSerializer = function()
           for( k = 0; attr = node[ATTRS][k]; k++ )
           {
             attrs += " " + 
+              (attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '') +
               ( force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ) + 
               "=\"" + 
               attr[ATTR_VALUE].replace(/"/g, "&quot") + 
@@ -194,7 +207,7 @@ window.cls.DOMSerializer = function()
         case 10:  // doctype
         {
           tree += LINEBREAK + getIndent(node[DEPTH] - start_depth) +
-                  "<!DOCTYPE " + this.getDoctypeName(data) +
+                  "<!DOCTYPE " + getDoctypeName(data) +
                   (node[PUBLIC_ID] ?
                     (" PUBLIC " + "\"" + node[PUBLIC_ID] + "\"") : "") +
                   (!node[PUBLIC_ID] && node[SYSTEM_ID] ?

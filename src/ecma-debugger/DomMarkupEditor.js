@@ -518,7 +518,6 @@ var DOMMarkupEditor = function()
   // complete the edit call
   this.handle_get_outer_html = function(status, message, rt_id, obj_id, ele, event)
   {
-    //var json = xml.getNodeData('jsondata');
     if(status == 0)
     {
       var 
@@ -527,8 +526,6 @@ var DOMMarkupEditor = function()
       parent_parent = parent.parentElement,
       margin = parseInt(parent.style.marginLeft),
       next = null;
-      //window.open('data:text/plain,' + encodeURIComponent(json))
-      //window.open('data:text/plain,' + encodeURIComponent(outerHTML))
       this.context_enter.outerHTML = this.context_cur.outerHTML = outerHTML;
       if( !this.base_style['font-size'] )
       {
