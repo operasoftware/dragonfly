@@ -2,7 +2,7 @@
   * @constructor
   */
 
-var Editor = function()
+var Editor = function(actions)
 {
   // assert: a element wich is editable has a monospace font
 
@@ -364,6 +364,7 @@ var Editor = function()
     var textContent = ele.textContent;
 
     window.elementStyle.save_literal_declarations(this.context_rule_id);
+    this.saved_rule = window.elementStyle.get_rule_by_id(this.context_rule_id);
 
     this.context_cur_text_content = this.textarea.value = ele.textContent;
 
@@ -731,7 +732,7 @@ var Editor = function()
             this.context_cur_value == props[1] &&
             this.context_cur_priority == props[2]))
       {
-        window.actions["css-inspector"].set_property(props, this.context_cur_prop);
+        actions.set_property(props, this.context_cur_prop);
       }
       this.textarea_container.parentElement.innerHTML = window.stylesheets.create_declaration(props[0],
         props[1], props[2], this.context_rule_id, disabled);
@@ -781,11 +782,11 @@ var Editor = function()
     if (props[1])
     {
       // TODO: should remove previously commited value here, in case of looping through properties
-      window.actions["css-inspector"].set_property(props, null, null, true);
+      actions.set_property(props, null, null, true);
     }
     else if ((!props[0] || props[0] != this.context_cur_prop) && this.context_cur_prop) // if it's overwritten
     {
-      window.actions["css-inspector"].remove_property(this.context_cur_prop);
+      actions.remove_property(this.context_cur_prop);
     }
 
     if (this.context_stylesheet_index > -1)
@@ -851,13 +852,13 @@ var Editor = function()
       // Only add property if something has changed (new or updated value)
       if (!(old_prop == props[0] && old_value == props[1] && old_priority == props[2]))
       {
-        window.actions["css-inspector"].set_property(props, old_prop);
+        actions.set_property(props, old_prop);
       }
     }
     else
     {
       this.textarea_container.parentElement.innerHTML = "";
-      delete window.elementStyle.literal_declaration_list[this.context_rule_id][window.actions["css-inspector"].normalize_property(this.context_cur_prop)];
+      delete window.elementStyle.literal_declaration_list[this.context_rule_id][actions.normalize_property(this.context_cur_prop)];
     }
 
     return keep_edit;
@@ -866,7 +867,7 @@ var Editor = function()
   this.escape = function()
   {
     this.last_suggest_type = '';
-    window.actions["css-inspector"].restore_properties();
+    actions.restore_properties(this.saved_rule);
     if (this.context_cur_prop)
     {
       this.textarea.value = this.context_cur_text_content;

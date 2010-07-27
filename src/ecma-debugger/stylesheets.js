@@ -555,7 +555,7 @@ cls.Stylesheets = function()
   this.create_declaration = function create_declaration(prop, value, is_important, rule_id, is_disabled, origin)
   {
     return (!(origin == ORIGIN_USER_AGENT || rule_id == undefined) ? "<input type='checkbox'" +
-                 " title='" + (!is_disabled ? "Enable" : "Disable") + "'" +
+                 " title='" + (is_disabled ? "Enable" : "Disable") + "'" +
                  " class='enable-disable'" +
                  (!is_disabled ? " checked='checked'" : "") +
                  " handler='enable-disable'" +
@@ -769,7 +769,7 @@ cls.Stylesheets = function()
 
   var prettyPrintStyleDec = [];
 
-  function prettyPrintRuleInInspector(rule, do_shortcuts, search_active)
+  var prettyPrintRuleInInspector = function prettyPrintRuleInInspector(rule, do_shortcuts, search_active)
   {
     const
     HEADER = 0,
@@ -788,12 +788,7 @@ cls.Stylesheets = function()
     search_list = rule[SEARCH_LIST] || [],
     disabled_list = rule[DISABLED_LIST] || [],
     prop_index = 0,
-    index = 0,
-    s_h_index = [],
-    s_h_value = [],
-    s_h_priority = [],
-    s_h_prop = '',
-    s_h_count = 0;
+    index = 0;
 
     // Create an array of [prop, prop_index] for sorting
     var properties = index_list.map(function(index) {
@@ -822,7 +817,7 @@ cls.Stylesheets = function()
               "<property class='" + (overwritten_list[index] ? "" : "overwritten") +
                                     (disabled_list[index] ? " disabled" : "") + "'>" +
                 self.create_declaration(__indexMap[prop_index],
-                                        helpers.escapeTextHtml(value_list[index]),
+                                        value_list[index],
                                         priority_list[index],
                                         rule[RULE_ID],
                                         disabled_list[index],

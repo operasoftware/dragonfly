@@ -457,7 +457,7 @@ cls.CSSInspectorActions = function(id)
   this.__active_container = null;
   this.__target = null;
 
-  this.editor = new Editor();
+  this.editor = new Editor(this);
 
   this.getFirstTarget = function()
   {
@@ -723,7 +723,7 @@ cls.CSSInspectorActions = function(id)
       cur_target.parentElement.removeChild(cur_target);
     }
     key_identifier.setModeDefault(self);
-    window.elementStyle.update_view();
+    window.elementStyle.update();
 
     return false;
   };
@@ -739,7 +739,7 @@ cls.CSSInspectorActions = function(id)
     if (!this.editor.enter(event, action_id))
     {
       key_identifier.setModeDefault(self);
-      window.elementStyle.update_view();
+      window.elementStyle.update();
       if (!this.__target.textContent)
       {
         var cur_target = this.__target;
@@ -757,7 +757,7 @@ cls.CSSInspectorActions = function(id)
       if (!this.editor.onclick(event))
       {
         key_identifier.setModeDefault(self);
-        window.elementStyle.update_view();
+        window.elementStyle.update();
       }
     }
   };
@@ -835,18 +835,20 @@ cls.CSSInspectorActions = function(id)
   /**
    * Restores all properties to the last saved state.
    */
-  this.restore_properties = function restore_properties()
+  this.restore_properties = function restore_properties(rule) // TODO: parameter or just this.editor.saved_rule in the method?
   {
+    const INDEX_LIST = 1;
+    const VALUE_LIST = 2;
+    const PRIORITY_LIST = 3;
     var rule_id = this.editor.context_rule_id;
     var script = "rule.style.cssText=\"\";";
-    var literal_declarations = window.elementStyle.literal_declaration_list[rule_id];
 
-    for (var prop in literal_declarations)
-    {
+    var len = rule[INDEX_LIST].length;
+    for (var i = 0; i < len; i++) {
       script += "rule.style.setProperty(\"" +
-                   prop + "\", \"" +
-                   literal_declarations[prop][0].replace(/"/g, "'") + "\", " +
-                   (literal_declarations[prop][1] ? "\"important\"" : null) +
+                   window.css_index_map[rule[INDEX_LIST][i]] + "\", \"" +
+                   rule[VALUE_LIST][i].replace(/"/g, "'") + "\", " +
+                   (rule[PRIORITY_LIST][i] ? "\"important\"" : null) +
                 ");";
     }
 
@@ -871,7 +873,7 @@ cls.CSSInspectorActions = function(id)
     this.editor.context_rt_id = rt_id;
     this.editor.context_rule_id = rule_id;
 
-    this.set_property([property, declaration[0], declaration[1], 0], null, window.elementStyle.update_view);
+    this.set_property([property, declaration[0], declaration[1], 0], null, window.elementStyle.update);
     literal_declarations[property][IS_DISABLED] = 0;
   };
 
@@ -893,7 +895,7 @@ cls.CSSInspectorActions = function(id)
     literal_declarations[property][IS_DISABLED] = 1;
 
     var tag = tagManager.set_callback(null, function() {
-      window.elementStyle.update_view();
+      window.elementStyle.update();
     });
     services['ecmascript-debugger'].requestEval(tag,
       [rt_id, 0, 0, script, [["rule", rule_id]]]);

@@ -338,7 +338,7 @@ cls.ElementStyle = function()
     }
   };
 
-  this.update_view = function update_view()
+  this.update = function update()
   {
     if (_rt_id && _obj_id)
     {
@@ -381,7 +381,7 @@ cls.ElementStyle = function()
       categories_data[CSS].rt_id = categories_data[COMP_STYLE].rt_id = rt_id;
       categories_data[IS_VALID] = true;
 
-      var literal_declaration_list = window.elementStyle.literal_declaration_list;
+      var literal_declaration_list = self.literal_declaration_list;
 
       // this is to ensure that a set property is always displayed in computed style,
       // also if it maps the initial value and the setting "Hide Initial Values" is set to true.
@@ -438,7 +438,7 @@ cls.ElementStyle = function()
 
     var is_inherited = node_index > 0;
     var index_map = window.css_index_map;
-    var synced_declarations = JSON.parse(JSON.stringify(expanded_declarations)); // Deep copy
+    var synced_declarations = window.helpers.copy_array(expanded_declarations);
 
     synced_declarations[DISABLED_LIST] = [];
 
@@ -459,8 +459,8 @@ cls.ElementStyle = function()
       }
 
       var prop_index = index_map.indexOf(prop);
-      var index = synced_declarations[INDEX_LIST].indexOf(prop_index);
       var expanded_index = expanded_declarations[INDEX_LIST].indexOf(prop_index);
+      var index = synced_declarations[INDEX_LIST].indexOf(prop_index);
       if (index == -1)
       {
         index = synced_declarations[INDEX_LIST].length;
@@ -471,6 +471,9 @@ cls.ElementStyle = function()
       synced_declarations[PRIORITY_LIST][index] = expanded_declarations[PRIORITY_LIST][expanded_index] !== undefined
                                                 ? expanded_declarations[PRIORITY_LIST][expanded_index]
                                                 : literal_declarations[prop][PRIORITY];
+      synced_declarations[STATUS_LIST  ][index] = expanded_declarations[STATUS_LIST][expanded_index] !== undefined
+                                                ? expanded_declarations[STATUS_LIST][expanded_index]
+                                                : literal_declarations[prop][STATUS];
       synced_declarations[DISABLED_LIST][index] = literal_declarations[prop][IS_DISABLED];
     }
 
@@ -537,6 +540,7 @@ cls.ElementStyle = function()
 
   this.get_rule_by_id = function get_rule_by_id(id, categories)
   {
+    categories = categories || categories_data;
     for (var i = 0, node_style_list; node_style_list = (categories[NODE_STYLE_LIST] || [])[i]; i++)
     {
       for (var j = 0, style_list; style_list = (node_style_list[STYLE_LIST] || [])[j]; j++)

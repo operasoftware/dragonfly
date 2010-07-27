@@ -189,6 +189,18 @@ window.cls.Helpers = function()
     return ret;
   }
 
+  this.copy_array = function copy_array(item)
+  {
+    if (Array.isArray(item))
+    {
+      return item.map(copy_array);
+    }
+    else
+    {
+      return item;
+    }
+  };
+
   document.addEventListener('keypress', keypressListener, true);
 
 }
