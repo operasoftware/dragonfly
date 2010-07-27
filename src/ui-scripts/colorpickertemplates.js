@@ -120,23 +120,30 @@
     ]);
   };
   
-  this.color_picker_inputs = function()
+  this.color_picker_inputs = function(z_axis)
   { 
 
-    
+    const COLORSPACE = 0, Z = 4;
+
     var 
+    set_checked = function(colorspace)
+    {
+      if (colorspace[COLORSPACE][Z] == z_axis)
+        colorspace.push('checked')
+      return colorspace;
+    },
     shv_inputs = 
     [
       ['s-v-h', 'h', 'H:', 'number', '°', '0', '360'],
       ['h-v-s', 's', 'S:', 'number', '%', '0', '100'],
       ['h-s-v', 'v', 'V:', 'number', '%', '0', '100'],
-    ],
+    ].map(set_checked),
     rgb_inputs = 
     [
       ['b-g-r', 'r', 'R:', 'number', null, '0', '255'],
       ['b-r-g', 'g', 'G:', 'number', null, '0', '255'],
       ['r-g-b', 'b', 'B:', 'number', null, '0', '255'],
-    ],
+    ].map(set_checked),
     hex_inputs =
     [
       [null, 'hex', '#', 'text'],
@@ -164,7 +171,8 @@
     TYPE = 3, 
     UNITS = 4, 
     MIN = 5, 
-    MAX = 6;
+    MAX = 6,
+    CHECKED = 7;
     
     return (
     ['tr', 
@@ -173,9 +181,8 @@
         ['input', 
           'type', 'radio', 
           'name', 'color-space', 
-          'value', input[COLOR_SPACE],
-          'checked', !Boolean(index)
-        ] :
+          'value', input[COLOR_SPACE]
+        ].concat(input[CHECKED] ? ['checked', 'checked'] : []) :
         []
       ],
       ['td', input[LABEL]], 
@@ -191,7 +198,7 @@
   }
   
   this.color_picker_2 = function(existing_color, cp_class, cp_2d_class, 
-                               cp_1d_class, cp_old_class, cp_new_class)
+                               cp_1d_class, cp_old_class, cp_new_class, z_axis)
   {
     return (
     ['div',
@@ -205,7 +212,7 @@
         'data-handler', 'onz',
         'class', cp_1d_class
       ],
-      window.templates.color_picker_inputs(), 
+      window.templates.color_picker_inputs(z_axis), 
       ['p', 'class', cp_old_class, 'style', 'background-color:' + existing_color],
       ['p', 'class', cp_new_class],
       'class', cp_class

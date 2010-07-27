@@ -35,7 +35,7 @@ ColorPicker.prototype = new function()
  
   this._oninput = function(event)
   {
-    if (event.target.value)
+    if (event.target.name in this._verify_inputs && event.target.value)
     {
       event.target.value = 
         this._cs[event.target.name] = 
@@ -309,7 +309,7 @@ ColorPicker.prototype = new function()
   {
     document.addEventListener('DOMNodeInserted', this._setup_bound, false);
     return window.templates.color_picker_2(this._old_color, CP_CLASS, CP_2D_CLASS, 
-                                         CP_1D_CLASS, CP_OLD_CLASS, CP_NEW_CLASS)
+                                         CP_1D_CLASS, CP_OLD_CLASS, CP_NEW_CLASS, 'h')
   }
   
   this._init = function(cb, color)
