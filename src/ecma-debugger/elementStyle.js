@@ -395,7 +395,7 @@ cls.ElementStyle = function()
           {
             if (disabled_declarations_list && disabled_declarations_list[style_dec[RULE_ID]])
             {
-              categories_data[CSS][i][STYLE_LIST][j] = self.sync_declarations(style_dec, disabled_declarations_list[style_dec[RULE_ID]], i > 0);
+              style_dec = self.sync_declarations(style_dec, disabled_declarations_list[style_dec[RULE_ID]], i > 0);
             }
             length = style_dec[INDEX_LIST].length;
             for (k = 0; k < length; k++)
@@ -437,11 +437,9 @@ cls.ElementStyle = function()
       if (this.has_property(declarations, prop)) {
         this.remove_property(disabled_declarations, prop);
       }
-      else {
-        if (!(is_inherited && !(prop in window.css_inheritable_properties))) {
-          var index = this.copy_property(disabled_declarations, declarations, prop);
-          declarations[DISABLED_LIST][index] = 1; // TODO: should this be set here or earlier?
-        }
+      else if (!(is_inherited && !(prop in window.css_inheritable_properties))) {
+        var index = this.copy_property(disabled_declarations, declarations, prop);
+        declarations[DISABLED_LIST][index] = 1;
       }
     }
 
