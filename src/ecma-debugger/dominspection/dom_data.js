@@ -4,20 +4,50 @@ cls.EcmascriptDebugger["5.0"] || (cls.EcmascriptDebugger["5.0"] = {});
 cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
 
 /**
-  * @constructor 
+  * @constructor
+  * @extends InspectableDOMNode
   */
 
 cls.EcmascriptDebugger["6.0"].DOMData =
-cls.EcmascriptDebugger["5.0"].DOMData = function()
+cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
 {
 
-  this._view_ids = ['dom'];  // this needs to be handled in a more general and sytematic way.
-  this._settings_id = 'dom';
-  this._mime = '';
-  
-  this._current_target = 0;
+  /* interface */
 
-  // spotlight
+  /**
+    * To get an initial DOM of the given runtime.
+    * Selects either the body or the root element in that oreder.
+    * Displays a travesal 'parent-node-chain-with-children' for the selected node.
+    * @param {Number} rt_id. The runtime id of the given runtime.
+    */
+  this.get_dom = function(rt_id){};
+
+  /**
+    * To get a fully expanded DOM of the current selected runtime (document).
+    */
+  this.get_snapshot = function(){};
+
+  /**
+    * To bind the instantiated object to the service interface.
+    */
+  this.bind = function(ecma_debugger){};
+
+  /* constants */
+
+  const
+  ID = 0,
+  TYPE = 1,
+  DEPTH = 3;
+
+  /* private */
+
+  this._view_id = view_id;
+  this._settings_id = view_id;
+  this._current_target = 0;
+  // to select a runtime if none is selected
+  this._active_window = [];
+  this._is_element_selected_checked = false;
+  // spotlight on hover on the host side
   this._reset_spotlight_timeouts = new Timeouts();
 
   this._spotlight = function(event)
@@ -39,95 +69,48 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
     this._reset_spotlight_timeouts.set(this._reset_spotlight_bound, 70);
   }
 
-  // ?
-  this._active_window = [];
-
-  this._is_element_selected_checked = false;
-
-  const 
-  ID = 0, 
-  TYPE = 1, 
-  NAME = 2, 
-  DEPTH = 3,
-  NAMESPACE = 4, 
-  VALUE = 4, 
-  ATTRS = 5,
-  ATTR_PREFIX = 0,
-  ATTR_KEY = 1, 
-  ATTR_VALUE = 2,
-  CHILDREN_LENGTH = 6, 
-  PUBLIC_ID = 4,
-  SYSTEM_ID = 5; 
-
-  // view
-  this._update_views = function()
-  {
-    for (var view_id, i = 0; view_id = this._view_ids[i]; i++)
-    {
-      window.views[view_id].update();
-    }
-  }
-
-  this._is_view_visible = function()
-  {
-    var id = '', i = 0;
-    for ( ; ( id = this._view_ids[i] ) && !views[id].isvisible(); i++);
-    return i < this._view_ids.length;
-  }
-
   this._on_setting_change = function(msg)
   {
-    if (msg.id == this._settings_id && this._is_view_visible() && msg.key in this._settings)
+    if (msg.id == this._settings_id &&
+        window.views[this._view_id].isvisible() &&
+        msg.key in this._settings)
       this._handle_setting(msg.key);
   }
 
   this._on_show_view = function(msg)
   {
-    var msg_id = msg.id, id = '', i = 0, key = '';
-    for( ; (id = this._view_ids[i]) && id != msg_id; i++);
-    if (id)
+    if (msg.id == this._view_id && this._active_window.length)
     {
-      if (this._active_window.length)
+      // in the case there is no runtime selected
+      // set the top window to the active runtime
+      if (!this._data_runtime_id)
+        this._data_runtime_id = this._active_window[0];
+      for (key in this._settings)
       {
-        // in the case there is no runtime selected 
-        // set the top window to the active runtime
-        if (!this._data_runtime_id)
-          this._data_runtime_id = this._active_window[0];
-        for (key in this._settings)
-        {
-          if (window.settings[this._settings_id].get(key))
-            this._handle_setting(key);
-        }
-        if (!this._data.length)
-        {
-          if(this._is_element_selected_checked)
-            this._get_initial_view(this._data_runtime_id);
-          else
-            this._get_selected_element(this._data_runtime_id);
-        }
+        if (window.settings[this._settings_id].get(key))
+          this._handle_setting(key);
       }
-      else
+      if (!this._data.length)
       {
-        views[id].update();
+        if(this._is_element_selected_checked)
+          this._get_initial_view(this._data_runtime_id);
+        else
+          this._get_selected_element(this._data_runtime_id);
       }
     }
   }
 
   this._on_hide_view = function(msg)
   {
-    var msg_id = msg.id, id = '', i = 0;
-    for ( ; ( id = this._view_ids[i] ) && id != msg_id; i++);
-    if (id)
-    {
+    if (msg.id == this._view_id)
       this._remove_all_active_window_listeners();
-    }
   }
 
-  this._settings = 
+  this._settings =
   {
     'highlight-on-hover':
     {
-      events: 
+      events:
       [
         ['mouseover', '_spotlight_bound'],
         ['mouseout', '_set_reset_spotlight_bound']
@@ -152,7 +135,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
 
   this._handle_setting = function(key)
   {
-    var 
+    var
     EVENT = 0,
     HANDLER = 1,
     active_window = window.host_tabs.activeTab,
@@ -172,7 +155,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
 
   this._remove_all_active_window_listeners = function()
   {
-    var 
+    var
     EVENT = 0,
     HANDLER = 1,
     active_window = window.host_tabs.activeTab,
@@ -189,13 +172,6 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
     }
   }
 
-
-
-
-
-
-  // startup
-
   this._get_selected_element = function(rt_id)
   {
     var tag = tagManager.set_callback(this, this._on_element_selected, [rt_id, true]);
@@ -204,18 +180,13 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
 
   this._on_element_selected = function(status, message, rt_id, show_initial_view)
   {
-    const
-    OBJECT_ID = 0,
-    WINDOW_ID = 1,
-    RUNTIME_ID = 2;
-
+    const OBJECT_ID = 0, WINDOW_ID = 1, RUNTIME_ID = 2;
     this._is_element_selected_checked = true;
-
     if(message[OBJECT_ID])
     {
-      if(!window.views.dom.isvisible())
+      if(!window.views[this._view_id].isvisible())
       {
-        window.topCell.showView('dom');
+        window.topCell.showView(this._view_id);
       }
       // TODO this will fail on inspecting a popup which is part of the debug context
       if(message[WINDOW_ID] == window.window_manager_data.get_debug_context())
@@ -234,40 +205,30 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
     }
   }
 
-  // event handlers
-
   this._on_reset_state = function()
   {
-    this._data = []; 
+    this._data = [];
     this._mime = '';
-    this._data_runtime_id = 0; 
+    this._data_runtime_id = 0;
     this._current_target = 0;
     this._active_window = [];
   }
 
   this._on_active_tab = function(msg)
   {
-    // TODO clean up old tab
-    this._data = []; 
-    this._mime = '';
-    var view_id = '', i = 0;
+    this._on_reset_state();
     // the top frame is per default the active tab
     this._data_runtime_id = msg.activeTab[0];
     messages.post("runtime-selected", {id: this._data_runtime_id});
     window['cst-selects']['document-select'].updateElement();
-    this._active_window = msg.activeTab.slice(0);
-    for( ; view_id = this._view_ids[i]; i++)
-    {
-      if(views[view_id].isvisible())
-      {
-        this._on_show_view({id: view_id})
-      }
-    }
+    this._active_window = msg.activeTab.slice();
+    if (window.views[this._view_id].isvisible())
+      this._on_show_view({id: this._view_id})
   }
 
   this._click_handler_host = function(event)
   {
-    var 
+    var
     rt_id = event.runtime_id,
     obj_id = event.object_id,
     do_highlight = event.highlight === false ? false : true,
@@ -284,20 +245,21 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
     // if the node is in the current data handle it otherwise not.
     var rt_id = event.runtime_id, obj_id = event.object_id;
     var node = null, i = 0, j = 0, level = 0, k = 0, view_id = '';
-    if( !( actions['dom'].editor && actions['dom'].editor.is_active ) && this._data_runtime_id == rt_id )
+    if ( !(actions[this._view_id].editor && actions[this._view_id].editor.is_active) &&
+          this._data_runtime_id == rt_id)
     {
-      for( ; ( node = this._data[i] ) && obj_id != node[ID]; i++ );
-      if( node  && node[TYPE] == 1 ) // don't update the dom if it's only a text node
+      for ( ; (node = this._data[i]) && obj_id != node[ID]; i++);
+      if (node && node[TYPE] == 1) // don't update the dom if it's only a text node
       {
-        level = node[ DEPTH ];
+        level = node[DEPTH];
         j = i + 1 ;
-        while( this._data[j] && this._data[j][ DEPTH ] > level ) j++;
+        while (this._data[j] && this._data[j][DEPTH] > level)
+          j++;
         this._data.splice(i, j - i);
-        this._update_views();
+        window.views[this._view_id].update();
       }
     }
   }
-
 
   this._on_runtime_stopped = function(msg)
   {
@@ -306,30 +268,25 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
       this._data = [];
       this._mime = "";
       this._data_runtime_id = 0;
-      var id = '', i = 0;
-      for( ; id = this._view_ids[i] ; i++)
-      {
-        views[id].clearAllContainers();
-      }
+      window.views[this._view_id].clearAllContainers();
     }
   }
 
   this._handle_get_dom = function(rt_id, obj_id, highlight_target)
   {
-    var view_id = '', i = 0;
     // handle text nodes as target in get selected element
-    for( i = 0; this._data[i] && this._data[i][ID] != obj_id; i++);
-    while(this._data[i] && this._data[i][TYPE] != 1) 
+    for (var i = 0; this._data[i] && this._data[i][ID] != obj_id; i++);
+    while(this._data[i] && this._data[i][TYPE] != 1)
     {
       i--;
     }
-    if(this._data[i] && this._data[i][ID] != obj_id)
+    if (this._data[i] && this._data[i][ID] != obj_id)
     {
       this._current_target = obj_id = this._data[i][ID];
     }
-    if(highlight_target)
+    if (highlight_target)
     {
-      hostspotlighter.spotlight(this._current_target);
+      window.hostspotlighter.spotlight(this._current_target);
     }
     if (rt_id != this._data_runtime_id)
     {
@@ -337,14 +294,13 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
       messages.post("runtime-selected", {id: this._data_runtime_id});
       window['cst-selects']['document-select'].updateElement();
     }
-    
-    if(obj_id)
+    if (obj_id)
     {
       this.target = obj_id;
       window.dominspections.active = this;
       messages.post("element-selected", {obj_id: obj_id, rt_id: rt_id, model: this});
-    } 
-    this._update_views();
+    }
+    window.views[this._view_id].update();
   }
 
   this._get_initial_view = function(rt_id)
@@ -354,77 +310,56 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
     services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, script_data]);
   }
 
-
-
   this._handle_initial_view = function(status, message, rt_id)
   {
-    
-    const
-    STATUS = 0,
-    OBJECT_VALUE = 3,
-    // sub message ObjectValue 
-    OBJECT_ID = 0;
-    
+    const STATUS = 0, OBJECT_VALUE = 3, OBJECT_ID = 0;
     if(message[STATUS] == 'completed' )
-    {
-      this._click_handler_host({runtime_id: rt_id, object_id: message[OBJECT_VALUE][OBJECT_ID], highlight: false})
-    }
+      this._click_handler_host({runtime_id: rt_id,
+                                object_id: message[OBJECT_VALUE][OBJECT_ID],
+                                highlight: false});
     else
-    {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
         'this._handle_initial_view failed in dom_data\n');
-    }
   }
 
   this._handle_snapshot = function(status, message, runtime_id)
   {
-    const
-    STATUS = 0,
-    OBJECT_VALUE = 3,
-    // sub message ObjectValue 
-    OBJECT_ID = 0;
-
+    const STATUS = 0, OBJECT_VALUE = 3, OBJECT_ID = 0;
     if(message[STATUS] == 'completed' )
     {
       this._data = [];
-      this._get_dom(message[OBJECT_VALUE][OBJECT_ID], 'subtree', 
+      this._get_dom(message[OBJECT_VALUE][OBJECT_ID], 'subtree',
                     this._handle_get_dom.bind(this, runtime_id));
     }
     else
-    {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
         'this._handle_snapshot in dom_data has failed');
-    }
   }
 
+  /* implementation */
 
-
-  // caller view
-  this.getDOM = function(rt_id)
+  this.get_dom = function(rt_id)
   {
-    if( !(rt_id == this._data_runtime_id && this._data.length) && runtime_onload_handler.check(rt_id, arguments) )
-    {
+    if ( !(rt_id == this._data_runtime_id && this._data.length) &&
+          runtime_onload_handler.check(rt_id, arguments))
       this._get_initial_view(rt_id);
-    }
   }
 
-  // caller view
-  this.getSnapshot = function()
+  this.get_snapshot = function()
   {
     var tag = tagManager.set_callback(this, this._handle_snapshot, [this._data_runtime_id]);
     var script_data = 'return document.document';
     services['ecmascript-debugger'].requestEval(tag, [this._data_runtime_id, 0, 0, script_data]);
   }
 
-  // TODO use event listeners
   this.bind = function(ecma_debugger)
   {
     ecma_debugger.onObjectSelected =
-    ecma_debugger.handleGetSelectedObject = 
+    ecma_debugger.handleGetSelectedObject =
     this._on_element_selected.bind(this);
   }
 
-  this._init();
+  /* initialisation */
 
   this._on_reset_state_bound = this._on_reset_state.bind(this);
   this._on_active_tab_bound = this._on_active_tab.bind(this);
@@ -437,8 +372,9 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
   this._spotlight_bound = this._spotlight.bind(this);
   this._reset_spotlight_bound = this._reset_spotlight.bind(this);
   this._set_reset_spotlight_bound = this._set_reset_spotlight.bind(this);
-  this._update_views_bound = this._update_views.bind(this);
-  
+
+  this._init(0, 0);
+
   messages.addListener('active-tab', this._on_active_tab_bound);
   messages.addListener('show-view', this._on_show_view_bound);
   messages.addListener('hide-view', this._on_hide_view_bound);
@@ -449,8 +385,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
 
 };
 
-cls.EcmascriptDebugger["5.0"].DOMData.prototype = cls.EcmascriptDebugger["5.0"].DOMBaseData;
+cls.EcmascriptDebugger["5.0"].DOMData.prototype = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype;
 
 // Disable forced lowercase for some elements
 cls.EcmascriptDebugger["5.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST = ["svg", "math"];
-
