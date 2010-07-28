@@ -69,11 +69,12 @@ window.cls.DOMSerializer.prototype = new function()
     return null;
   }
 
-  this['text/html'] = function(data, is_xml)
+  this['text/html'] = function(model, is_xml)
   {
     const LINEBREAK = '\r\n';
 
     var 
+    data = model.getData(),
     tree = '', 
     i = 0, 
     node = null, 
@@ -119,7 +120,7 @@ window.cls.DOMSerializer.prototype = new function()
       else if (disregard_force_lower_case_depth && disregard_force_lower_case_depth == node[DEPTH])
       {
         disregard_force_lower_case_depth = 0;
-        force_lower_case = dom_data.isTextHtml() && window.settings.dom.get('force-lowercase');
+        force_lower_case = model.isTextHtml() && window.settings.dom.get('force-lowercase');
       }
 
       if( force_lower_case )
@@ -233,9 +234,14 @@ window.cls.DOMSerializer.prototype = new function()
     return tree.replace(/^(?:\r\n)+/, '');
   };
 
-  this['application/xml'] = function(data)
+  this['application/xml'] = function(model)
   {
     // TODO
-    return this['text/html'](data, true);
+    return this['text/html'](model, true);
   };
+
+  this.serialize = function(model /* of type InspectableDOMNode */)
+  {
+    return this[model.get_mime()](model);
+  }
 };
