@@ -514,7 +514,7 @@ Element.prototype.get_attr = function(traverse_type, name)
       var ele = this;
       while (ele && !ele.hasAttribute(name))
         ele = ele.parentElement;
-      return ele.hasAttribute(name) ? ele.getAttribute(name) : null;
+      return ele && ele.hasAttribute(name) ? ele.getAttribute(name) : null;
       break;
     }
   }
