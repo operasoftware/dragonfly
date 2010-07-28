@@ -55,22 +55,9 @@ cls.DOMView = function(id, name, container_class)
     topCell.statusbar.updateInfo('');
   }
 
-  // TODO move this out
-  this.serializer = new cls.DOMSerializer();
-
-
-  this.export_markup = function()
-  {
-    return this.serializer.serialize(dom_data);
-  }
-
-
-
-
-
   this.ondestroy = function()
   {
-    hostspotlighter.clearSpotlight();
+    window.hostspotlighter.clearSpotlight();
   }
 
   this._on_setting_change = function(msg)
@@ -89,13 +76,9 @@ cls.DOMView = function(id, name, container_class)
   }
 
   messages.addListener('setting-changed', this._on_setting_change.bind(this));
-
   this.init(id, name, container_class);
 
 }
-
-
-
 
 cls.DocumentSelect = function(id)
 {
@@ -331,11 +314,4 @@ cls.DOMView.create_ui_widgets = function()
     }
   }
 
-
-
 }
-
-
-
-
-

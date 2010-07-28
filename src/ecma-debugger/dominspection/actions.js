@@ -17,6 +17,8 @@ cls.DOMInspectorActions = function(id)
   var selection = null;
   var range = null;
 
+  this.serializer = new cls.DOMSerializer();
+
   const SCROLL_IN_PADDING = 30;
 
   this.get_children = function (event)
@@ -50,7 +52,7 @@ cls.DOMInspectorActions = function(id)
 
   this._get_children_callback = function(container, model, target_id, is_editable)
   {
-    var tmpl = window.templates.inspected_dom_node(model, target_id, is_editable, true);
+    var tmpl = window.templates.inspected_dom_node(model, target_id, is_editable);
     container.re_render(tmpl);
   }
 
@@ -121,6 +123,13 @@ cls.DOMInspectorActions = function(id)
         }
       }
     }
+  }
+    
+  this.export_markup = function(event, target)
+  {
+    window.export_data.data = 
+      window.helpers.escapeTextHtml(this.serializer.serialize(window.dom_data));
+    window.topCell.showView('export_data');
   }
 
 
@@ -785,10 +794,9 @@ window.eventHandlers.mouseover['spotlight-node'] = function(event, target)
   }
 }
 
-window.eventHandlers.click['dom-inspection-export'] = function(event)
+window.eventHandlers.click['dom-inspection-export'] = function(event, target)
 {
-  window.export_data.data = window.helpers.escapeTextHtml(views['dom'].export_markup());
-  window.topCell.showView('export_data');
+  window.actions['dom'].export_markup(event, target);
 };
 
 window.eventHandlers.click['dom-inspection-snapshot'] = function(event, target)
