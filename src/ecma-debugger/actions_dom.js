@@ -657,22 +657,3 @@ cls.DOMInspectorEditKeyhandler = function(id)
 };
 
 cls.DOMInspectorEditKeyhandler.prototype = BaseEditKeyhandler;
-
-
-
-eventHandlers.dblclick['edit-dom'] = (function(event, target)
-{
-  var click_timeouts = new Timeouts();
-  var handler = function(event, target)
-  {
-    click_timeouts.clear();
-    actions['dom'].editDOM(event, target);
-  };
-  handler.delay = function()
-  {
-    click_timeouts.set.apply(click_timeouts, [arguments[0], 200, arguments[1], arguments[2]]);
-  }
-  return handler;
-})();
-
-

@@ -126,3 +126,34 @@ window.eventHandlers.click['df-show-live-source'] = function(event, target)
 {
   debug_helpers.liveSource.open();
 };
+
+window.eventHandlers.click['dom-resource-link'] = function(event, target)
+{
+  window.eventHandlers.dblclick['edit-dom'].delay(arguments.callee.execute, event, target);
+};
+
+window.eventHandlers.click['dom-resource-link'].execute = function(event, target)
+{
+  var
+  url = target.textContent,
+  rt_id = target.parentNode.parentNode.parentNode.getAttribute('rt-id')
+    // for the case of dom tree-style
+    || target.parentNode.parentNode.parentNode.parentNode.getAttribute('rt-id');
+  // TODO use the exec service to open new link when it's ready
+  window.open(helpers.resolveURLS(runtimes.getURI(rt_id), url.slice(1, url.length - 1)), "_blank");
+};
+
+window.eventHandlers.dblclick['edit-dom'] = (function(event, target)
+{
+  var click_timeouts = new Timeouts();
+  var handler = function(event, target)
+  {
+    click_timeouts.clear();
+    actions['dom'].editDOM(event, target);
+  };
+  handler.delay = function()
+  {
+    click_timeouts.set.apply(click_timeouts, [arguments[0], 300, arguments[1], arguments[2]]);
+  }
+  return handler;
+})();
