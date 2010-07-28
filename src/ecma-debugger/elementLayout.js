@@ -33,7 +33,9 @@ cls.ElementLayout = function()
   CLIENT_LEFT= 10,
   CLIENT_WIDTH= 11,
   CLIENT_HEIGHT= 12,
-  OFFSETS =
+  OFFSETS = cls.ElementLayout.OFFSETS,
+  /*
+  cls.ElementLayout.OFFSETS =
   [
     '',
     'offsetTop',
@@ -48,7 +50,8 @@ cls.ElementLayout = function()
     'clientLeft',
     'clientWidth',
     'clientHeight'
-  ],
+  ];
+  */
   GET_OFFSETS_SCRIPT = "\
     (function(ele)\
     {\
@@ -238,66 +241,42 @@ cls.ElementLayout = function()
     }
   }
   
-  this.getOffsetsValues = function(org_args)
+  this.getOffsetsValues = function(cb)
   {
-    if( !__selectedElement)
+    if (!__selectedElement)
+      cb(null);
+    else if(__offsets_values)
+      cb(__offsets_values);
+    else
     {
-      return null;
+      var
+      rt_id = __selectedElement.rt_id,
+      obj_id = __selectedElement.obj_id,
+      tag = tagManager.set_callback(null, handleGetOffsetsData, [rt_id, obj_id, cb] );
+      
+      services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, GET_OFFSETS_SCRIPT, [['ele', obj_id]]]);
     }
-    if(__offsets_values)
-    {
-      return __offsets_values;
-    }
-    
-    var
-    rt_id = __selectedElement.rt_id,
-    obj_id = __selectedElement.obj_id,
-    tag = tagManager.set_callback(null, handleGetOffsetsData, [rt_id, obj_id, org_args] );
-    
-    services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, GET_OFFSETS_SCRIPT, [['ele', obj_id]]]);
-    return null;
   }
-  
-  this.prettyprintOffsetValues = function()
-  {
-    var
-    data = __offsets_values.split(';'),
-    ret = '<h2>' +  ui_strings.M_VIEW_SUB_LABEL_PARENT_OFFSETS + '</h2><parent-node-chain>',
-    i = 0,
-    chain = data[0].split(','),
-    cur = '',
-    model = __selectedElement && __selectedElement.model,
-    target = __selectedElement && __selectedElement.obj_id,
-    css_path = null;
 
-    for( i = 0; cur = chain[i]; i++)
-    {
-      chain[i] = cur.split('|');
-    }
-    ret += document.renderInner(templates.breadcrumb(model, target, chain));
-    ret += "</parent-node-chain><h2>" +  ui_strings.M_VIEW_SUB_LABEL_OFFSET_VALUES + "</h2><offsets>";
-    for( i = 1; data[i]; i++ )
-    {
-      ret += "<item>" +
-        "<key>" + OFFSETS[i] + "</key>" +
-        "<value>" + data[i] + "</value>" +
-        "</item>";
-    }
-    ret += "</offsets>";
-    return ret;
+  var parse_offset_values = function(offset_values)
+  {
+    // HTML|0,BODY|1,DIV|0,DIV|0,DIV|0,DIV|0,P|0;234;39;640;95;0;0;640;95;0;0;640;95;
+    var data = offset_values.split(';');
+    data[0] = data[0].split(',').map(function(item){return item.split('|');});
+    return data;  
   }
     
-  var handleGetOffsetsData = function(status, message, rt_id, obj_id, org_args)
+  var handleGetOffsetsData = function(status, message, rt_id, obj_id, cb)
   {
     const STATUS = 0, VALUE = 2;
-    if( message[STATUS] == 'completed' )
+    if (message[STATUS] == 'completed')
     {
-      __offsets_values = message[VALUE]
-      if( org_args && !org_args[0].__call_count )
-      {
-        org_args[0].__call_count = 1;
-        org_args.callee.apply(null, org_args)
-      }
+      __offsets_values = parse_offset_values(message[VALUE]);
+      
+      //__offsets_values = message[VALUE];
+      //opera.postError(__offsets_values);
+      if (cb)
+        cb(__offsets_values);
     }
     else
     {
@@ -346,5 +325,22 @@ cls.ElementLayout = function()
 
   messages.addListener('element-selected', onElementSelected);
 }
+
+cls.ElementLayout.OFFSETS =
+[
+  '',
+  'offsetTop',
+  'offsetLeft',
+  'offsetWidth',
+  'offsetHeight',
+  'scrollTop',
+  'scrollLeft',
+  'scrollWidth',
+  'scrollHeight',
+  'clientTop',
+  'clientLeft',
+  'clientWidth',
+  'clientHeight'
+];
 
 

@@ -37,28 +37,19 @@
     return attrs;
   };
 
-
-
-  this._inspected_dom_node_markup_style= function(model, target, editable, with_root)
+  this._inspected_dom_node_markup_style= function(model, target, editable)
   {
 
-
     var data = model.getData();
-
-
-
-    var tree = with_root ?
-              ("<div class='padding table-cell dom'" +
-              (editable ? " edit-handler='edit-dom'" : "") + 
-              " rt-id='" + model.getDataRuntimeId() + "'" +
-              " data-model-id='" + model.id + "'" +
-              ">") : "";
+    var tree = "<div class='padding table-cell dom'" +
+               (editable ? " edit-handler='edit-dom'" : "") + 
+               " rt-id='" + model.getDataRuntimeId() + "'" +
+               " data-model-id='" + model.id + "'" +
+               ">";
     var i = 0;
     var node = null;
     var length = data.length;
-
     var attrs = null, attr = null, k = 0, key = '';
-
     var is_open = 0;
     var has_only_one_child = 0;
     var one_child_text_content = '';
@@ -293,8 +284,6 @@
     4: "<span class='cdata-node'>#cdata-section</span>"
   };
 
-
-
   var _escape = function(string)
   {
     var 
@@ -323,28 +312,18 @@
   {
 
     var data = model.getData();
-
-    
-
     var force_lower_case = model.isTextHtml() && window.settings.dom.get('force-lowercase');
     var show_comments = window.settings.dom.get('show-comments');
     var show_attrs = window.settings.dom.get('show-attributes');
     var show_white_space_nodes = window.settings.dom.get('show-whitespace-nodes');
-
-    var
-    tree = "<div class='padding table-cell dom'" +
+    var tree = "<div class='padding table-cell dom'" +
                (editable ? " edit-handler='edit-dom'" : "") + 
                " rt-id='" + model.getDataRuntimeId() + "'" +
                " data-model-id='" + model.id + "'" +
                "><div class='tree-style'>";
-    i = 0,
-    node = null,
-    length = data.length;
-
+    var i = 0, node = null, length = data.length;
     var scrollTop = 0;
-
     var attrs = null, key = '';
-
     var is_open = 0;
     var has_only_one_child = 0;
     var one_child_value = ''
@@ -353,15 +332,10 @@
     var child_level = 0;
     var j = 0;
     var k = 0;
-
     var children_length = 0;
-
     var closing_tags = [];
-
-
     var node_name = '';
     var tag_head = '';
-
     var current_formatting = '';
     var re_formatted = /script|style/i;
     var scrollTop = 0;
@@ -371,7 +345,6 @@
     var is_not_script_node = true;
     var disregard_force_lower_case_whitelist = cls.EcmascriptDebugger["5.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST;
     var disregard_force_lower_case_depth = 0;
-
     var graphic_arr = [];
 
     for ( ; node = data[i]; i += 1)
@@ -525,16 +498,43 @@
     tree += "</div></div>";
     return tree;
   }
-  // TODO remove with root
-  this.inspected_dom_node = function(model, target, editable, with_root)
+
+  this.inspected_dom_node = function(model, target, editable)
   {
-    
-    if (typeof with_root != "boolean")
-        with_root = true;
-    if (window.settings.dom.get('dom-tree-style'))
-      return this._inspected_dom_node_tree_style(model, target, editable, with_root);
-    return this._inspected_dom_node_markup_style(model, target, editable, with_root);
+    return (window.settings.dom.get('dom-tree-style') ?
+           this._inspected_dom_node_tree_style(model, target, editable) :
+           this._inspected_dom_node_markup_style(model, target, editable));
   }
 
+  this._offsets = function(value, index)
+  {
+    if (!this._OFFSETS)
+      this._OFFSETS = cls.ElementLayout.OFFSETS
+    return (Boolean(index) ?
+    ['item',
+      ['key', this._OFFSETS[index]],
+      ['value', value]
+    ] : []);
+  }
+  
+  this.offset_values = function(offsets_values)
+  {
+    var model = window.dominspections.active, ret = [];
+    if (model)
+    {
+      ret =
+      [
+        ['h2', ui_strings.M_VIEW_SUB_LABEL_PARENT_OFFSETS],
+        ['parent-node-chain', 
+          this.breadcrumb(model, model.target, offsets_values[0]),
+          'onmouseover', helpers.breadcrumbSpotlight, 
+          'onmouseout', helpers.breadcrumbClearSpotlight
+        ],
+        ['h2', ui_strings.M_VIEW_SUB_LABEL_OFFSET_VALUES],
+        ['offsets', offsets_values.map(this._offsets)]
+      ];
+    }
+    return ret;
+  }
 
 }).apply(window.templates || (window.templates = {}))
