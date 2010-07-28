@@ -395,7 +395,7 @@ cls.ElementStyle = function()
           {
             if (disabled_properties_list && disabled_properties_list[style_dec[RULE_ID]])
             {
-              categories_data[CSS][i][STYLE_LIST][j] = self.sync_declarations(style_dec, disabled_properties_list[style_dec[RULE_ID]], i);
+              categories_data[CSS][i][STYLE_LIST][j] = self.sync_declarations(style_dec, disabled_properties_list[style_dec[RULE_ID]], i > 0);
             }
             length = style_dec[INDEX_LIST].length;
             for (k = 0; k < length; k++)
@@ -424,24 +424,28 @@ cls.ElementStyle = function()
   /**
    * Syncs the declarations returned from Scope with the disabled properties
    */
-  this.sync_declarations = function sync_declarations(expanded_declarations, disabled_properties, node_index)
+  this.sync_declarations = function sync_declarations(declarations, disabled_declarations, is_inherited)
   {
-    var is_inherited = node_index > 0;
     var index_map = window.css_index_map;
 
-    expanded_declarations[DISABLED_LIST] = [];
+    declarations[DISABLED_LIST] = [];
 
-    var len = disabled_properties[INDEX_LIST].length;
+    var len = disabled_declarations[INDEX_LIST].length;
     for (var i = 0; i < len; i++) {
-      var prop_index = disabled_properties[INDEX_LIST][i];
-      if (!(prop_index in expanded_declarations[INDEX_LIST])) {
-        // TODO: check for inheritence
-        var index = this.copy_property(disabled_properties, expanded_declarations, index_map[prop_index]);
-        expanded_declarations[DISABLED_LIST][index] = 1; // TODO: should this be set here or earlier?
+      var prop = index_map[disabled_declarations[INDEX_LIST][i]];
+
+      if (this.has_property(declarations, prop)) {
+        this.remove_property(disabled_declarations, prop);
+      }
+      else {
+        if (!(is_inherited && !(prop in window.css_inheritable_properties))) {
+          var index = this.copy_property(disabled_declarations, declarations, prop);
+          declarations[DISABLED_LIST][index] = 1; // TODO: should this be set here or earlier?
+        }
       }
     }
 
-    return expanded_declarations;
+    return declarations;
   };
 
   this.get_rule_by_id = function get_rule_by_id(id, categories)
@@ -463,7 +467,7 @@ cls.ElementStyle = function()
   this.disabled_properties_list = {};
 
   this.get_new_style_dec = function get_new_style_dec() {
-    return [null, [], [], [], []];
+    return [3, [], [], [], []];
   };
 
   this.copy_property = function copy_property(source, target, property) {
@@ -497,6 +501,10 @@ cls.ElementStyle = function()
         return new_style_dec;
       }
     }
+  };
+
+  this.has_property = function has_property(style_dec, property) {
+    return style_dec[INDEX_LIST].indexOf(window.css_index_map.indexOf(property)) != -1;
   };
 
   /* */

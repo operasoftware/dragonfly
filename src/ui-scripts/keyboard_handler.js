@@ -775,16 +775,14 @@ cls.CSSInspectorActions = function(id)
     var rule_id = this.editor.context_rule_id;
     var script = "";
 
-    // TEMP: workaround for CORE-31191
+    // TEMP: workaround for CORE-31191: updating a property with !important is discarded
     var rule = window.elementStyle.get_rule_by_id(rule_id);
-    var properties = [];
-    var len = rule[1].length;
-    for (var i = 0; i < len; i++) {
-      properties.push(window.css_index_map[rule[1][i]]);
-    }
-    if (properties.indexOf(declaration[0]) != -1)
-    {
-      script += "rule.style.removeProperty(\"" + declaration[0] + "\");";
+    for (var i = rule[1].length; i--; ) {
+      if (window.css_index_map[rule[1][i]] == declaration[0])
+      {
+        script += "rule.style.removeProperty(\"" + declaration[0] + "\");";
+        break;
+      }
     }
 
     script += "rule.style.setProperty(\"" +
@@ -793,15 +791,10 @@ cls.CSSInspectorActions = function(id)
                    (declaration[2] ? "\"important\"" : null) +
                  ");";
 
-    if (prop_to_remove)
-    {
-      prop_to_remove = this.normalize_property(prop_to_remove);
-    }
-
-    // if a property is added by overwriting an old one, remove the old property
+    // If a property is added by overwriting another one, remove the other property
     if (prop_to_remove && prop != prop_to_remove)
     {
-      script += "rule.style.removeProperty(\"" + prop_to_remove + "\");";
+      script += "rule.style.removeProperty(\"" + this.normalize_property(prop_to_remove) + "\");";
     }
 
     var tag = tagManager.set_callback(null, function() {
@@ -818,7 +811,7 @@ cls.CSSInspectorActions = function(id)
    * Removes a single property.
    *
    * @param {String} prop_to_remove The property to remove
-   * @param {Function} callback Callback to execute when the proeprty has been added
+   * @param {Function} callback Callback to execute when the property has been added
    */
   this.remove_property = function remove_property(prop_to_remove, callback)
   {
@@ -826,7 +819,12 @@ cls.CSSInspectorActions = function(id)
     var rule_id = this.editor.context_rule_id;
     var script = "rule.style.removeProperty(\"" + prop_to_remove + "\");";
 
-    var tag = tagManager.set_callback(null, callback);
+    var tag = tagManager.set_callback(null, function() {
+      if (typeof callback == "function")
+      {
+        callback();
+      }
+    });
     services['ecmascript-debugger'].requestEval(tag,
       [this.editor.context_rt_id, 0, 0, script, [["rule", rule_id]]]);
   };
@@ -834,21 +832,25 @@ cls.CSSInspectorActions = function(id)
   /**
    * Restores all properties to the last saved state.
    */
-  this.restore_properties = function restore_properties(rule) // TODO: parameter or just this.editor.saved_rule in the method?
+  this.restore_properties = function restore_properties()
   {
     const INDEX_LIST = 1;
     const VALUE_LIST = 2;
     const PRIORITY_LIST = 3;
+    var rule = this.editor.saved_rule;
     var rule_id = this.editor.context_rule_id;
     var script = "rule.style.cssText=\"\";";
 
     var len = rule[INDEX_LIST].length;
     for (var i = 0; i < len; i++) {
-      script += "rule.style.setProperty(\"" +
-                   window.css_index_map[rule[INDEX_LIST][i]] + "\", \"" +
-                   rule[VALUE_LIST][i].replace(/"/g, "'") + "\", " +
-                   (rule[PRIORITY_LIST][i] ? "\"important\"" : null) +
-                ");";
+      var prop = window.css_index_map[rule[INDEX_LIST][i]];
+      if (!window.elementStyle.has_property(window.elementStyle.disabled_properties_list[rule_id], prop)) {
+        script += "rule.style.setProperty(\"" +
+                     prop + "\", \"" +
+                     rule[VALUE_LIST][i].replace(/"/g, "'") + "\", " +
+                     (rule[PRIORITY_LIST][i] ? "\"important\"" : null) +
+                  ");";
+      }
     }
 
     services['ecmascript-debugger'].requestEval(null,
@@ -871,7 +873,9 @@ cls.CSSInspectorActions = function(id)
 
     var disabled_properties = window.elementStyle.disabled_properties_list[rule_id];
     var style_dec = window.elementStyle.remove_property(disabled_properties, property);
-    this.set_property([window.css_index_map[style_dec[INDEX_LIST][0]], style_dec[VALUE_LIST][0], style_dec[PRIORITY_LIST][0]], null, window.elementStyle.update);
+    this.set_property([window.css_index_map[style_dec[INDEX_LIST][0]],
+                       style_dec[VALUE_LIST][0],
+                       style_dec[PRIORITY_LIST][0]], null, window.elementStyle.update);
   };
 
   /**
@@ -884,11 +888,13 @@ cls.CSSInspectorActions = function(id)
     this.editor.context_rt_id = rt_id;
     this.editor.context_rule_id = rule_id;
 
-    if (!window.elementStyle.disabled_properties_list[rule_id]) {
-        window.elementStyle.disabled_properties_list[rule_id] = window.elementStyle.get_new_style_dec();
+    var disabled_properties_list = window.elementStyle.disabled_properties_list;
+
+    if (!disabled_properties_list[rule_id]) {
+        disabled_properties_list[rule_id] = window.elementStyle.get_new_style_dec();
     }
     var style_dec = window.elementStyle.get_rule_by_id(rule_id);
-    window.elementStyle.copy_property(style_dec, window.elementStyle.disabled_properties_list[rule_id], property);
+    window.elementStyle.copy_property(style_dec, disabled_properties_list[rule_id], property);
     window.elementStyle.remove_property(style_dec, property);
     this.remove_property(property, window.elementStyle.update);
   };
