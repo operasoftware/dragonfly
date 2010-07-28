@@ -252,12 +252,6 @@ window.eventHandlers.click['update-global-scope'] = function(event)
   window.eventHandlers.click['show-frame']({'target': { 'ref-id': 0 } });
 };
 
-window.eventHandlers.click['dom-inspection-export'] = function(event)
-{
-  export_data.data = window.helpers.escapeTextHtml(views['dom'].exportMarkup());
-  topCell.showView('export_data');
-};
-
 window.eventHandlers.click['inspect-object-link'] = function(event, target)
 {
   var rt_id = parseInt(target.getAttribute('rt-id'));

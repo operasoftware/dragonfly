@@ -23,7 +23,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     window.runtimes = new namespace.Runtimes("6.0");
     window.runtimes.bind(service_interface);
 
-    window.dom_data = new namespace.DOMData();
+    window.dom_data = new namespace.DOMData('dom');
     window.dom_data.bind(service_interface);
     window.stop_at = new namespace.StopAt();
     window.stop_at.bind(service_interface);

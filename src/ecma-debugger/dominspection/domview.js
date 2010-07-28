@@ -58,15 +58,10 @@ cls.DOMView = function(id, name, container_class)
   // TODO move this out
   this.serializer = new cls.DOMSerializer();
 
-  this.serializeToOuterHTML = function(data)
-  {
-    // TODO should take a data model as argument
-    return this.serializer[dom_data.isTextHtml() && 'text/html' || 'application/xml'](data);
-  }
 
-  this.exportMarkup = function()
+  this.export_markup = function()
   {
-    return this.serializeToOuterHTML(dom_data.getData());
+    return this.serializer.serialize(dom_data);
   }
 
 
@@ -158,7 +153,7 @@ cls.DocumentSelect = function(id)
     {
       if(rt_id)
       {
-        dom_data.getDOM(rt_id);
+        dom_data.get_dom(rt_id);
       }
       else
       {
@@ -290,19 +285,6 @@ cls.DOMView.create_ui_widgets = function()
       'lock-selecked-elements'
     ]
   );
-
-  // button handlers
-  eventHandlers.click['dom-inspection-snapshot'] = function(event, target)
-  {
-    dom_data.getSnapshot();
-  };
-
-  eventHandlers.click['df-show-live-source'] = function(event, target)
-  {
-    debug_helpers.liveSource.open();
-  };
-
-
 
   var textSearch = new TextSearch();
 

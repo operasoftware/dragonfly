@@ -109,3 +109,20 @@ window.eventHandlers.mouseover['spotlight-node'] = function(event, target)
     hostspotlighter.soft_spotlight(parseInt(target.getAttribute('ref-id')));
   }
 }
+
+window.eventHandlers.click['dom-inspection-export'] = function(event)
+{
+  export_data.data = window.helpers.escapeTextHtml(views['dom'].export_markup());
+  topCell.showView('export_data');
+};
+
+// button handlers
+window.eventHandlers.click['dom-inspection-snapshot'] = function(event, target)
+{
+  dom_data.get_snapshot();
+};
+
+window.eventHandlers.click['df-show-live-source'] = function(event, target)
+{
+  debug_helpers.liveSource.open();
+};
