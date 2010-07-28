@@ -7,6 +7,7 @@ var DOMMarkupEditor = function()
 {
   this.base_init(this);
   this.type = "dom-markup-editor";
+  this.domnodeserializer = new cls.DOMSerializer();
   // specific context 
   this.context_enter =
   {
@@ -36,29 +37,35 @@ var DOMMarkupEditor = function()
   {
     var 
     ele = ref_ele || event.target,
-    rt_id = parseInt(ele.parentElement.parentElement.getAttribute('rt-id')
-      // for DOM tree style
-      || ele.parentElement.parentElement.parentElement.getAttribute('rt-id')),
+    rt_id = parseInt(ele.get_attr('parent-node-chain', 'rt-id')),
     obj_id = parseInt(ele.parentElement.getAttribute('ref-id')),
+    model_id = ele.get_attr('parent-node-chain', 'data-model-id'),
     script = '',
     tag = '',
     prop = '',
-    container = ele;
+    container = ele,
+    model = null,
+    dom = null,
+    cb = null;
+
+
 
     while( container 
             && !/container/i.test(container.nodeName) 
             && ( container = container.parentElement ) );
-    if(container)
+    if(container && model_id)
     {
+      model = window.dominspections[model_id];
       container.firstChild.style.position = 'relative';
       container.firstChild.render(['fade-out']);
       this.context_enter =
       {
         rt_id: rt_id,
         obj_id: obj_id,
-        parent_obj_id: dom_data.getParentElement(obj_id),
+        parent_obj_id: model.getParentElement(obj_id),
         outerHTML: '',
-        host_target: ''
+        host_target: '',
+        model: model
       };
       this.context_cur = {};
       for( prop in this.context_enter )
@@ -68,8 +75,9 @@ var DOMMarkupEditor = function()
       script = this["return new Host_updater(target)"];
       tag = tagManager.set_callback(this, this.register_host_updater, [rt_id]);
       services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, script, [['target', obj_id]]]);
-      tag = tagManager.set_callback(this, this.handle_get_outer_html, [rt_id, obj_id, ele, event])
-      services['ecmascript-debugger'].requestInspectDom(tag, [obj_id, 'subtree']);
+      dom = new cls.InspectableDOMNode(rt_id, obj_id);
+      cb = this.handle_get_outer_html.bind(this, dom, rt_id, obj_id, ele, event);
+      dom.expand(cb, obj_id, "subtree");
     }
   }
 
@@ -185,9 +193,9 @@ var DOMMarkupEditor = function()
     {
       // to remove the textarea_container from the dom
       nav_target.textContent = "";
+      this.context_enter.model.collapse(state.parent_obj_id);
+      this.context_enter.model.expand(function(){window.views.dom.update()}, state.parent_obj_id, 'children');
       this.context_cur = this.context_enter = null;
-      dom_data.collapse(state.parent_obj_id);
-      dom_data.expand(function(){window.views.dom.update()}, state.parent_obj_id, 'children');
     }
     else
     {
@@ -516,51 +524,43 @@ var DOMMarkupEditor = function()
   }
 
   // complete the edit call
-  this.handle_get_outer_html = function(status, message, rt_id, obj_id, ele, event)
+  this.handle_get_outer_html = function(dom, rt_id, obj_id, ele, event)
   {
-    if(status == 0)
+    var 
+    outerHTML = this.domnodeserializer.serialize(dom),
+    parent = ele.parentNode,
+    parent_parent = parent.parentElement,
+    margin = parseInt(parent.style.marginLeft),
+    next = null;
+    this.context_enter.outerHTML = this.context_cur.outerHTML = outerHTML;
+    if( !this.base_style['font-size'] )
     {
-      var 
-      outerHTML = views['dom'].serializeToOuterHTML(message[NODE_LIST]),
-      parent = ele.parentNode,
-      parent_parent = parent.parentElement,
-      margin = parseInt(parent.style.marginLeft),
-      next = null;
-      this.context_enter.outerHTML = this.context_cur.outerHTML = outerHTML;
-      if( !this.base_style['font-size'] )
-      {
-        this.get_base_style(ele);
-      }
-      // this should never be needed
-      if( this.textarea_container.parentElement )
-      {
-        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
-          "this.textarea_container.parentElement is not null in submit");
-      }
-      this.textarea.value = outerHTML;
-      parent.innerHTML = "";
-      parent.appendChild(this.textarea_container);
-      while( ( next = parent.nextElementSibling ) && parseInt(next.style.marginLeft) > margin )
-      {
-        parent_parent.removeChild(next);
-      };
-      if( next && parseInt(next.style.marginLeft) == margin && /<\//.test(next.textContent) )
-      {
-        parent_parent.removeChild(next);
-      }
-      this.set_textarea_dimensions();
-      // only for click events
-      if( event )
-      {
-        this.textarea.focus();
-      }
-      this.textarea.selectionEnd = this.textarea.selectionStart = 0;
+      this.get_base_style(ele);
     }
-    else
+    // this should never be needed
+    if( this.textarea_container.parentElement )
     {
       opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
-        "get subtree failed in DOMMarkupEditor handleGetSubtree")
+        "this.textarea_container.parentElement is not null in submit");
     }
+    this.textarea.value = outerHTML;
+    parent.innerHTML = "";
+    parent.appendChild(this.textarea_container);
+    while( ( next = parent.nextElementSibling ) && parseInt(next.style.marginLeft) > margin )
+    {
+      parent_parent.removeChild(next);
+    };
+    if( next && parseInt(next.style.marginLeft) == margin && /<\//.test(next.textContent) )
+    {
+      parent_parent.removeChild(next);
+    }
+    this.set_textarea_dimensions();
+    // only for click events
+    if( event )
+    {
+      this.textarea.focus();
+    }
+    this.textarea.selectionEnd = this.textarea.selectionStart = 0;
   }
 }
 
