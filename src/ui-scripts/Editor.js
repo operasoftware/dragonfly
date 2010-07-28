@@ -363,7 +363,6 @@ var Editor = function(actions)
         sheet_link ? parseInt(sheet_link.getAttribute('index')) : -1;
     var textContent = ele.textContent;
 
-    window.elementStyle.save_literal_declarations(this.context_rule_id);
     this.saved_rule = window.elementStyle.get_rule_by_id(this.context_rule_id);
 
     this.context_cur_text_content = this.textarea.value = ele.textContent;
@@ -782,7 +781,7 @@ var Editor = function(actions)
     if (props[1])
     {
       // TODO: should remove previously commited value here, in case of looping through properties
-      actions.set_property(props, null, null, true);
+      actions.set_property(props);
     }
     else if ((!props[0] || props[0] != this.context_cur_prop) && this.context_cur_prop) // if it's overwritten
     {
@@ -858,7 +857,6 @@ var Editor = function(actions)
     else
     {
       this.textarea_container.parentElement.innerHTML = "";
-      delete window.elementStyle.literal_declaration_list[this.context_rule_id][actions.normalize_property(this.context_cur_prop)];
     }
 
     return keep_edit;

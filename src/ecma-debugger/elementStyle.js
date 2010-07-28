@@ -24,6 +24,7 @@ cls.ElementStyle = function()
   HAS_MATCHING_SEARCH_PROPS = 11,
   SEARCH_DELAY = 50,
   MIN_SEARCH_TERM_LENGTH = 1,
+  DISABLED_LIST = 12,
 
   // new scope messages
   COMPUTED_STYLE_LIST = 0,
@@ -381,7 +382,7 @@ cls.ElementStyle = function()
       categories_data[CSS].rt_id = categories_data[COMP_STYLE].rt_id = rt_id;
       categories_data[IS_VALID] = true;
 
-      var literal_declaration_list = self.literal_declaration_list;
+      var disabled_properties_list = self.disabled_properties_list;
 
       // this is to ensure that a set property is always displayed in computed style,
       // also if it maps the initial value and the setting "Hide Initial Values" is set to true.
@@ -392,9 +393,9 @@ cls.ElementStyle = function()
         {
           if (style_dec[ORIGIN] != 1) // any other rule except browser default rules
           {
-            if (literal_declaration_list && literal_declaration_list[style_dec[RULE_ID]])
+            if (disabled_properties_list && disabled_properties_list[style_dec[RULE_ID]])
             {
-              categories_data[CSS][i][STYLE_LIST][j] = self.sync_declarations(style_dec, literal_declaration_list[style_dec[RULE_ID]], i);
+              categories_data[CSS][i][STYLE_LIST][j] = self.sync_declarations(style_dec, disabled_properties_list[style_dec[RULE_ID]], i);
             }
             length = style_dec[INDEX_LIST].length;
             for (k = 0; k < length; k++)
@@ -421,121 +422,26 @@ cls.ElementStyle = function()
   };
 
   /**
-   * Syncs the declarations returned from Scope with the literal declarations (the ones that the user has typed in)
-   * to get the right status and disabled value
-   *
-   * NOTE: some of the code in this method is currently not used, but is left for now since it will before
-   * used in the future
+   * Syncs the declarations returned from Scope with the disabled properties
    */
-  this.sync_declarations = function sync_declarations(expanded_declarations, literal_declarations, node_index)
+  this.sync_declarations = function sync_declarations(expanded_declarations, disabled_properties, node_index)
   {
-    const
-    VALUE = 0,
-    PRIORITY = 1,
-    STATUS = 2,
-    IS_DISABLED = 3,
-    DISABLED_LIST = 12;
-
     var is_inherited = node_index > 0;
     var index_map = window.css_index_map;
-    var synced_declarations = window.helpers.copy_array(expanded_declarations);
 
-    synced_declarations[DISABLED_LIST] = [];
+    expanded_declarations[DISABLED_LIST] = [];
 
-    // First the values from Scope...
-    for (var i = expanded_declarations[INDEX_LIST].length; i--; )
-    {
-      var prop = index_map[expanded_declarations[INDEX_LIST][i]];
-
-      synced_declarations[DISABLED_LIST][i] = 0;
-    }
-
-    // ... then the literal values
-    for (var prop in literal_declarations)
-    {
-      if (is_inherited && !(prop in window.css_inheritable_properties))
-      {
-        continue;
-      }
-
-      var prop_index = index_map.indexOf(prop);
-      var expanded_index = expanded_declarations[INDEX_LIST].indexOf(prop_index);
-      var index = synced_declarations[INDEX_LIST].indexOf(prop_index);
-      if (index == -1)
-      {
-        index = synced_declarations[INDEX_LIST].length;
-      }
-
-      synced_declarations[INDEX_LIST   ][index] = prop_index;
-      synced_declarations[VALUE_LIST   ][index] = expanded_declarations[VALUE_LIST][expanded_index] || literal_declarations[prop][VALUE];
-      synced_declarations[PRIORITY_LIST][index] = expanded_declarations[PRIORITY_LIST][expanded_index] !== undefined
-                                                ? expanded_declarations[PRIORITY_LIST][expanded_index]
-                                                : literal_declarations[prop][PRIORITY];
-      synced_declarations[STATUS_LIST  ][index] = expanded_declarations[STATUS_LIST][expanded_index] !== undefined
-                                                ? expanded_declarations[STATUS_LIST][expanded_index]
-                                                : literal_declarations[prop][STATUS];
-      synced_declarations[DISABLED_LIST][index] = literal_declarations[prop][IS_DISABLED];
-    }
-
-    return synced_declarations;
-  };
-
-  this.update_literal_declarations = function update_literal_declarations(rule_id, declaration, callback)
-  {
-    var rt_id = __selectedElement.rt_id;
-    var obj_id = __selectedElement.obj_id;
-    var tag = tagManager.set_callback(this, this.handle_update_literal_declarations, [rule_id, declaration, callback]);
-    services['ecmascript-debugger'].requestCssGetStyleDeclarations(tag, [rt_id, obj_id]);
-  };
-
-  this.handle_update_literal_declarations = function handle_update_literal_declarations(status, message, rule_id, declaration, callback)
-  {
-    if (status == 0)
-    {
-      var rule = this.get_rule_by_id(rule_id, message);
-
-      // TEMP: remove when empty rules are returned correctly (CORE-30351)
-      if (!rule) return;
-
-      if (declaration)
-      {
-        var prop_list = rule[PROP_LIST];
-        for (var i = 0, prop; prop = window.css_index_map[prop_list[i]]; i++)
-        {
-          this.literal_declaration_list[rule_id][prop] =
-            [rule[VAL_LIST][i], rule[PRIORITY_LIST][i], rule[OVERWRITTEN_LIST][i], 0];
-        }
+    var len = disabled_properties[INDEX_LIST].length;
+    for (var i = 0; i < len; i++) {
+      var prop_index = disabled_properties[INDEX_LIST][i];
+      if (!(prop_index in expanded_declarations[INDEX_LIST])) {
+        // TODO: check for inheritence
+        var index = this.copy_property(disabled_properties, expanded_declarations, index_map[prop_index]);
+        expanded_declarations[DISABLED_LIST][index] = 1; // TODO: should this be set here or earlier?
       }
     }
 
-    if (typeof callback == "function")
-    {
-      callback();
-    }
-  };
-
-  this.literal_declaration_list = {};
-
-  this.save_literal_declarations = function save_literal_declarations(rule_id)
-  {
-    if (this.literal_declaration_list[rule_id])
-    {
-      return;
-    }
-
-    // property: [value, is_important, status (overwritten=0, else 1), is_disabled]
-    this.literal_declaration_list[rule_id] = {};
-
-    var rule = this.get_rule_by_id(rule_id, categories_data);
-    if (rule)
-    {
-      var len = rule[PROP_LIST].length;
-      for (var i = 0; i < len; i++)
-      {
-        this.literal_declaration_list[rule_id][window.css_index_map[rule[PROP_LIST][i]]] =
-          [rule[VAL_LIST][i], rule[PRIORITY_LIST][i], rule[OVERWRITTEN_LIST][i], 0];
-      }
-    }
+    return expanded_declarations;
   };
 
   this.get_rule_by_id = function get_rule_by_id(id, categories)
@@ -552,6 +458,45 @@ cls.ElementStyle = function()
       }
     }
     return null;
+  };
+
+  this.disabled_properties_list = {};
+
+  this.get_new_style_dec = function get_new_style_dec() {
+    return [null, [], [], [], []];
+  };
+
+  this.copy_property = function copy_property(source, target, property) {
+    var index_list = source[INDEX_LIST];
+    var len = index_list.length;
+    for (var i = 0; i < len; i++) {
+      if (window.css_index_map[index_list[i]] == property) {
+         target[INDEX_LIST].push(source[INDEX_LIST][i]);
+         target[VALUE_LIST].push(source[VALUE_LIST][i]);
+         target[PRIORITY_LIST].push(source[PRIORITY_LIST][i]);
+         target[OVERWRITTEN_LIST].push(source[OVERWRITTEN_LIST][i]);
+         target[STATUS_LIST].push(source[STATUS_LIST][i]);
+         break;
+      }
+    }
+    return target[INDEX_LIST].length-1;
+  };
+
+  this.remove_property = function remove_property(style_dec, property) {
+    var new_style_dec = this.get_new_style_dec();
+    var index_list = style_dec[INDEX_LIST];
+    var len = index_list.length;
+    for (var i = 0; i < len; i++) {
+      if (window.css_index_map[index_list[i]] == property) {
+        this.copy_property(style_dec, new_style_dec, property)
+        style_dec[INDEX_LIST].splice(i, 1);
+        style_dec[VALUE_LIST].splice(i, 1);
+        style_dec[PRIORITY_LIST].splice(i, 1);
+        style_dec[OVERWRITTEN_LIST].splice(i, 1);
+        style_dec[STATUS_LIST].splice(i, 1);
+        return new_style_dec;
+      }
+    }
   };
 
   /* */

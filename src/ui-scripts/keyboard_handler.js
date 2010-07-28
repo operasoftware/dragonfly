@@ -644,7 +644,7 @@ cls.CSSInspectorActions = function(id)
     }
     self.setSelected(target.parentNode);
     settings['css-inspector'].set(cat, !value);
-    elementStyle.setUnfoldedCat(cat, !value);
+    window.elementStyle.setUnfoldedCat(cat, !value);
   };
 
   this.display_rule_in_stylesheet = function(event, target)
@@ -768,16 +768,21 @@ cls.CSSInspectorActions = function(id)
    * @param {Array} declaration An array according to [prop, value, is_important]
    * @param {String} prop_to_remove An optional property to remove
    * @param {Function} callback Callback to execute when the proeprty has been added
-   * @param {Boolean} skip_update_literals Whether or not to skip updating the literal values
    */
-  this.set_property = function set_property(declaration, prop_to_remove, callback, skip_update_literals)
+  this.set_property = function set_property(declaration, prop_to_remove, callback)
   {
     var prop = this.normalize_property(declaration[0]);
     var rule_id = this.editor.context_rule_id;
     var script = "";
 
     // TEMP: workaround for CORE-31191
-    if (declaration[0] in window.elementStyle.literal_declaration_list[rule_id])
+    var rule = window.elementStyle.get_rule_by_id(rule_id);
+    var properties = [];
+    var len = rule[1].length;
+    for (var i = 0; i < len; i++) {
+      properties.push(window.css_index_map[rule[1][i]]);
+    }
+    if (properties.indexOf(declaration[0]) != -1)
     {
       script += "rule.style.removeProperty(\"" + declaration[0] + "\");";
     }
@@ -797,14 +802,12 @@ cls.CSSInspectorActions = function(id)
     if (prop_to_remove && prop != prop_to_remove)
     {
       script += "rule.style.removeProperty(\"" + prop_to_remove + "\");";
-      delete window.elementStyle.literal_declaration_list[rule_id][prop_to_remove];
     }
 
     var tag = tagManager.set_callback(null, function() {
-      if (!skip_update_literals)
+      if (typeof callback == "function")
       {
-        window.elementStyle.update_literal_declarations(rule_id,
-          [prop, declaration[1], declaration[2], declaration[3] || 0], callback);
+        callback();
       }
     });
     services['ecmascript-debugger'].requestEval(tag,
@@ -823,11 +826,7 @@ cls.CSSInspectorActions = function(id)
     var rule_id = this.editor.context_rule_id;
     var script = "rule.style.removeProperty(\"" + prop_to_remove + "\");";
 
-    delete window.elementStyle.literal_declaration_list[rule_id][prop_to_remove];
-
-    var tag = tagManager.set_callback(null, function() {
-      window.elementStyle.update_literal_declarations(rule_id, null, callback);
-    });
+    var tag = tagManager.set_callback(null, callback);
     services['ecmascript-debugger'].requestEval(tag,
       [this.editor.context_rt_id, 0, 0, script, [["rule", rule_id]]]);
   };
@@ -852,10 +851,7 @@ cls.CSSInspectorActions = function(id)
                 ");";
     }
 
-    var tag = tagManager.set_callback(null, function() {
-      window.elementStyle.update_literal_declarations(rule_id);
-    });
-    services['ecmascript-debugger'].requestEval(tag,
+    services['ecmascript-debugger'].requestEval(null,
       [this.editor.context_rt_id, 0, 0, script, [["rule", rule_id]]]);
   };
 
@@ -866,15 +862,16 @@ cls.CSSInspectorActions = function(id)
    */
   this.enable_property = function enable_property(rt_id, rule_id, property)
   {
-    const IS_DISABLED = 3;
-    var literal_declarations = window.elementStyle.literal_declaration_list[rule_id];
-    var declaration = literal_declarations[property];
+    const INDEX_LIST = 1;
+    const VALUE_LIST = 2;
+    const PRIORITY_LIST = 3;
 
     this.editor.context_rt_id = rt_id;
     this.editor.context_rule_id = rule_id;
 
-    this.set_property([property, declaration[0], declaration[1], 0], null, window.elementStyle.update);
-    literal_declarations[property][IS_DISABLED] = 0;
+    var disabled_properties = window.elementStyle.disabled_properties_list[rule_id];
+    var style_dec = window.elementStyle.remove_property(disabled_properties, property);
+    this.set_property([window.css_index_map[style_dec[INDEX_LIST][0]], style_dec[VALUE_LIST][0], style_dec[PRIORITY_LIST][0]], null, window.elementStyle.update);
   };
 
   /**
@@ -884,21 +881,16 @@ cls.CSSInspectorActions = function(id)
    */
   this.disable_property = function disable_property(rt_id, rule_id, property)
   {
-    const IS_DISABLED = 3;
-    var script = "rule.style.removeProperty(\"" + property + "\");";
+    this.editor.context_rt_id = rt_id;
+    this.editor.context_rule_id = rule_id;
 
-    if (!window.elementStyle.literal_declaration_list[rule_id])
-    {
-      window.elementStyle.save_literal_declarations(rule_id);
+    if (!window.elementStyle.disabled_properties_list[rule_id]) {
+        window.elementStyle.disabled_properties_list[rule_id] = window.elementStyle.get_new_style_dec();
     }
-    var literal_declarations = window.elementStyle.literal_declaration_list[rule_id];
-    literal_declarations[property][IS_DISABLED] = 1;
-
-    var tag = tagManager.set_callback(null, function() {
-      window.elementStyle.update();
-    });
-    services['ecmascript-debugger'].requestEval(tag,
-      [rt_id, 0, 0, script, [["rule", rule_id]]]);
+    var style_dec = window.elementStyle.get_rule_by_id(rule_id);
+    window.elementStyle.copy_property(style_dec, window.elementStyle.disabled_properties_list[rule_id], property);
+    window.elementStyle.remove_property(style_dec, property);
+    this.remove_property(property, window.elementStyle.update);
   };
 
   /**
