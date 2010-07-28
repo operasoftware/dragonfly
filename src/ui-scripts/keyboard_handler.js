@@ -844,7 +844,7 @@ cls.CSSInspectorActions = function(id)
     var len = rule[INDEX_LIST].length;
     for (var i = 0; i < len; i++) {
       var prop = window.css_index_map[rule[INDEX_LIST][i]];
-      if (!window.elementStyle.has_property(window.elementStyle.disabled_properties_list[rule_id], prop)) {
+      if (!window.elementStyle.has_property(window.elementStyle.disabled_declarations_list[rule_id], prop)) {
         script += "rule.style.setProperty(\"" +
                      prop + "\", \"" +
                      rule[VALUE_LIST][i].replace(/"/g, "'") + "\", " +
@@ -871,8 +871,8 @@ cls.CSSInspectorActions = function(id)
     this.editor.context_rt_id = rt_id;
     this.editor.context_rule_id = rule_id;
 
-    var disabled_properties = window.elementStyle.disabled_properties_list[rule_id];
-    var style_dec = window.elementStyle.remove_property(disabled_properties, property);
+    var disabled_declarations = window.elementStyle.disabled_declarations_list[rule_id];
+    var style_dec = window.elementStyle.remove_property(disabled_declarations, property);
     this.set_property([window.css_index_map[style_dec[INDEX_LIST][0]],
                        style_dec[VALUE_LIST][0],
                        style_dec[PRIORITY_LIST][0]], null, window.elementStyle.update);
@@ -888,13 +888,13 @@ cls.CSSInspectorActions = function(id)
     this.editor.context_rt_id = rt_id;
     this.editor.context_rule_id = rule_id;
 
-    var disabled_properties_list = window.elementStyle.disabled_properties_list;
+    var disabled_declarations_list = window.elementStyle.disabled_declarations_list;
 
-    if (!disabled_properties_list[rule_id]) {
-        disabled_properties_list[rule_id] = window.elementStyle.get_new_style_dec();
+    if (!disabled_declarations_list[rule_id]) {
+        disabled_declarations_list[rule_id] = window.elementStyle.get_new_style_dec();
     }
     var style_dec = window.elementStyle.get_rule_by_id(rule_id);
-    window.elementStyle.copy_property(style_dec, disabled_properties_list[rule_id], property);
+    window.elementStyle.copy_property(style_dec, disabled_declarations_list[rule_id], property);
     window.elementStyle.remove_property(style_dec, property);
     this.remove_property(property, window.elementStyle.update);
   };

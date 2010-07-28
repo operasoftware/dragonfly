@@ -382,7 +382,7 @@ cls.ElementStyle = function()
       categories_data[CSS].rt_id = categories_data[COMP_STYLE].rt_id = rt_id;
       categories_data[IS_VALID] = true;
 
-      var disabled_properties_list = self.disabled_properties_list;
+      var disabled_declarations_list = self.disabled_declarations_list;
 
       // this is to ensure that a set property is always displayed in computed style,
       // also if it maps the initial value and the setting "Hide Initial Values" is set to true.
@@ -393,9 +393,9 @@ cls.ElementStyle = function()
         {
           if (style_dec[ORIGIN] != 1) // any other rule except browser default rules
           {
-            if (disabled_properties_list && disabled_properties_list[style_dec[RULE_ID]])
+            if (disabled_declarations_list && disabled_declarations_list[style_dec[RULE_ID]])
             {
-              categories_data[CSS][i][STYLE_LIST][j] = self.sync_declarations(style_dec, disabled_properties_list[style_dec[RULE_ID]], i > 0);
+              categories_data[CSS][i][STYLE_LIST][j] = self.sync_declarations(style_dec, disabled_declarations_list[style_dec[RULE_ID]], i > 0);
             }
             length = style_dec[INDEX_LIST].length;
             for (k = 0; k < length; k++)
@@ -464,12 +464,25 @@ cls.ElementStyle = function()
     return null;
   };
 
-  this.disabled_properties_list = {};
+  /**
+   *  A StyleDeclaration with disabled properties
+   */
+  this.disabled_declarations_list = {};
 
+  /**
+   *  Returns an empty StyleDeclaration
+   */
   this.get_new_style_dec = function get_new_style_dec() {
     return [3, [], [], [], []];
   };
 
+  /**
+   *  Copies a property from one StyleDeclaration to another
+   *
+   *  @param {Array} source The source StyleDeclaration
+   *  @param {Array} target The target StyleDeclaration
+   *  @param {String} property The property to copy
+   */
   this.copy_property = function copy_property(source, target, property) {
     var index_list = source[INDEX_LIST];
     var len = index_list.length;
@@ -486,6 +499,12 @@ cls.ElementStyle = function()
     return target[INDEX_LIST].length-1;
   };
 
+  /**
+   *  Removes a property from `style_dec`
+   *
+   *  @param {Array} style_dec The StyleDeclaration to remove the property from
+   *  @param {String} property The property to remove
+   */
   this.remove_property = function remove_property(style_dec, property) {
     var new_style_dec = this.get_new_style_dec();
     var index_list = style_dec[INDEX_LIST];
@@ -503,6 +522,12 @@ cls.ElementStyle = function()
     }
   };
 
+  /**
+   *  Checks if a certain StyleDeclaration has a property
+   *
+   *  @param {Array} style_dec The StyleDeclaration to check
+   *  @param {String} property The property to check for
+   */
   this.has_property = function has_property(style_dec, property) {
     return style_dec[INDEX_LIST].indexOf(window.css_index_map.indexOf(property)) != -1;
   };
