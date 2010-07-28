@@ -7,8 +7,13 @@ cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
   * @constructor 
   */
 
-cls.EcmascriptDebugger["6.0"].DOMBaseData =
-cls.EcmascriptDebugger["5.0"].DOMBaseData = new function()
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode =
+cls.EcmascriptDebugger["5.0"].InspectableDOMNode = function(rt_id, obj_id)
+{
+  this._init(rt_id, obj_id);
+}
+
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
 {
   
   const 
@@ -38,6 +43,11 @@ cls.EcmascriptDebugger["5.0"].DOMBaseData = new function()
       }
     }
   };
+
+  this.get_mime = function()
+  {
+    return this._mime;
+  }
 
   this.isTextHtml = function()
   {
@@ -159,7 +169,7 @@ cls.EcmascriptDebugger["5.0"].DOMBaseData = new function()
         ret = cur[1] == '1';
       else
         opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
-                        "failed in this._parse_parent_offset in dom_data");
+                        "failed in this._parse_parent_offset in InspectableDOMNode");
     }
     return ret;
   }
@@ -257,9 +267,10 @@ cls.EcmascriptDebugger["5.0"].DOMBaseData = new function()
   this._init = function(rt_id, obj_id)
   {
     this.id = this._get_id();
-    this._data_runtime_id = rt_id;  // data of a dom tree has always just one runtime
-    this._root_obj_id = obj_id;
+    this._data_runtime_id = rt_id || 0;  // data of a dom tree has always just one runtime
+    this._root_obj_id = obj_id || 0;
     this._data = [];
+    this._mime = '';
     if (!window.dominspections)
     {
       new cls.Namespace("dominspections");
@@ -269,9 +280,3 @@ cls.EcmascriptDebugger["5.0"].DOMBaseData = new function()
 
 };
 
-cls.EcmascriptDebugger["6.0"].InspectableDOMNode = function(rt_id, obj_id)
-{
-  this._init(rt_id, obj_id);
-}
-
-cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = cls.EcmascriptDebugger["6.0"].DOMBaseData;
