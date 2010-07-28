@@ -427,6 +427,7 @@ cls.ElementStyle = function()
    * @param {Array} style_dec The style declaration from Scope
    * @param {Array} disabled_style_dec The disabled style declaration
    * @param {Boolean} is_inherited Whether or not the style declaration is inherited
+   * @returns {Array} The synced StyleDeclarations
    */
   this.sync_declarations = function sync_declarations(style_dec, disabled_style_dec, is_inherited)
   {
