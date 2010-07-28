@@ -776,9 +776,9 @@ cls.CSSInspectorActions = function(id)
     var script = "";
 
     // TEMP: workaround for CORE-31191: updating a property with !important is discarded
-    var rule = window.elementStyle.get_rule_by_id(rule_id);
-    for (var i = rule[1].length; i--; ) {
-      if (window.css_index_map[rule[1][i]] == declaration[0])
+    var style_dec = window.elementStyle.get_style_dec_by_id(rule_id);
+    for (var i = style_dec[1].length; i--; ) {
+      if (window.css_index_map[style_dec[1][i]] == declaration[0])
       {
         script += "rule.style.removeProperty(\"" + declaration[0] + "\");";
         break;
@@ -837,14 +837,15 @@ cls.CSSInspectorActions = function(id)
     const INDEX_LIST = 1;
     const VALUE_LIST = 2;
     const PRIORITY_LIST = 3;
-    var rule = this.editor.saved_rule;
+    var rule = this.editor.saved_style_dec;
     var rule_id = this.editor.context_rule_id;
     var script = "rule.style.cssText=\"\";";
 
     var len = rule[INDEX_LIST].length;
     for (var i = 0; i < len; i++) {
       var prop = window.css_index_map[rule[INDEX_LIST][i]];
-      if (!window.elementStyle.has_property(window.elementStyle.disabled_declarations_list[rule_id], prop)) {
+      if (!window.elementStyle.disabled_style_dec_list[rule_id] ||
+          !window.elementStyle.has_property(window.elementStyle.disabled_style_dec_list[rule_id], prop)) {
         script += "rule.style.setProperty(\"" +
                      prop + "\", \"" +
                      rule[VALUE_LIST][i].replace(/"/g, "'") + "\", " +
@@ -871,8 +872,8 @@ cls.CSSInspectorActions = function(id)
     this.editor.context_rt_id = rt_id;
     this.editor.context_rule_id = rule_id;
 
-    var disabled_declarations = window.elementStyle.disabled_declarations_list[rule_id];
-    var style_dec = window.elementStyle.remove_property(disabled_declarations, property);
+    var disabled_style_dec = window.elementStyle.disabled_style_dec_list[rule_id];
+    var style_dec = window.elementStyle.remove_property(disabled_style_dec, property);
     this.set_property([window.css_index_map[style_dec[INDEX_LIST][0]],
                        style_dec[VALUE_LIST][0],
                        style_dec[PRIORITY_LIST][0]], null, window.elementStyle.update);
@@ -888,13 +889,13 @@ cls.CSSInspectorActions = function(id)
     this.editor.context_rt_id = rt_id;
     this.editor.context_rule_id = rule_id;
 
-    var disabled_declarations_list = window.elementStyle.disabled_declarations_list;
+    var disabled_style_dec_list = window.elementStyle.disabled_style_dec_list;
 
-    if (!disabled_declarations_list[rule_id]) {
-        disabled_declarations_list[rule_id] = window.elementStyle.get_new_style_dec();
+    if (!disabled_style_dec_list[rule_id]) {
+        disabled_style_dec_list[rule_id] = window.elementStyle.get_new_style_dec();
     }
-    var style_dec = window.elementStyle.get_rule_by_id(rule_id);
-    window.elementStyle.copy_property(style_dec, disabled_declarations_list[rule_id], property);
+    var style_dec = window.elementStyle.get_style_dec_by_id(rule_id);
+    window.elementStyle.copy_property(style_dec, disabled_style_dec_list[rule_id], property);
     window.elementStyle.remove_property(style_dec, property);
     this.remove_property(property, window.elementStyle.update);
   };
@@ -909,7 +910,6 @@ cls.CSSInspectorActions = function(id)
   {
     return (prop || "").replace(/^\s*|\s*$/g, "").toLowerCase();
   };
-
 
   this.init(id);
 

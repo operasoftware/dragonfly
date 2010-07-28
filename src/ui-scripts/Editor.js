@@ -363,7 +363,7 @@ var Editor = function(actions)
         sheet_link ? parseInt(sheet_link.getAttribute('index')) : -1;
     var textContent = ele.textContent;
 
-    this.saved_rule = window.elementStyle.get_rule_by_id(this.context_rule_id);
+    this.saved_style_dec = window.elementStyle.get_style_dec_by_id(this.context_rule_id);
 
     this.context_cur_text_content = this.textarea.value = ele.textContent;
 
@@ -801,18 +801,11 @@ var Editor = function(actions)
     props = self.getProperties(),
     keep_edit = false,
     prop = null,
-    old_prop = "",
-    old_value = "",
-    old_priority = "",
     is_disabled = this.textarea_container.parentNode.hasClass("disabled");
 
     this.last_suggest_type = '';
     if (props && props.length == 3)
     {
-      old_prop = this.context_cur_prop;
-      old_value = this.context_cur_value;
-      old_priority = this.context_cur_priority;
-
       if (props[1] === "") // If someone deletes the value and then presses enter, just re-display it
       {
         this.textarea_container.parentElement.innerHTML = window.stylesheets.create_declaration(props[0],
@@ -846,12 +839,6 @@ var Editor = function(actions)
       else
       {
         this.textarea_container.parentElement.innerHTML = window.stylesheets.create_declaration(props[0], props[1], props[2], this.context_rule_id, is_disabled);
-      }
-
-      // Only add property if something has changed (new or updated value)
-      if (!(old_prop == props[0] && old_value == props[1] && old_priority == props[2]))
-      {
-        actions.set_property(props, old_prop);
       }
     }
     else
