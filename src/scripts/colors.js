@@ -184,6 +184,57 @@ Colors.prototype = new function()
     return this;
   }
 
+  this._pc_3hex = function(c){return c + c};
+  this._pc_trim_int = function(c){return parseInt(c.trim())};
+
+  this.parseCSSColor = function(in_str)
+  {
+    var str = in_str.trim(), color = null, alpha = 0;
+    if (/^#[0-9a-fA-F]{6}$/.test(str))
+    {
+      return {cssvalue: in_str, type: 'hex', color: str.replace('#', '')};
+    }
+    if (/^#[0-9a-fA-F]{3}$/.test(str))
+    {
+      color = Array.prototype.slice.call(str.replace('#', '')).map(this._pc_3hex).join('');
+      this.setHex(color);
+      return {cssvalue: in_str, type: 'hex', color: color};
+    }
+    if (/^rgb\(.*\)$/.test(str))
+    {
+      color = str.slice(4, str.length - 1).split(',').map(this._pc_trim_int);
+      this.setRGB(color);
+      return {cssvalue: in_str, type: 'rgb', color: color};
+    }
+    if (/^rgba\(.*\)$/.test(str))
+    {
+      color = str.slice(5, str.length - 1).split(',');
+      alpha = parseFloat(color.pop().trim());
+      color = color.map(this._pc_trim_int);
+      this.setRGB(color);
+      return {cssvalue: in_str, type: 'rgba', color: color, alpha: alpha};
+    }
+    if (/^hsl\(\s*\d{1,3}\s*,\s*\d{1,3}%\s*,\s*\d{1,3}%\s*\)$/.test(str))
+    {
+      color = str.slice(4, str.length - 1).split(',').map(this._pc_trim_int);
+      this.setHue(color[0]);
+      this.setSaturation(color[1]);
+      this.setLuminosity(color[2]);
+      return {cssvalue: in_str, type: 'hsl', color: color};
+    }
+    if (/^hsla\(\s*\d{1,3}\s*,\s*\d{1,3}%\s*,\s*\d{1,3}%\s*,\s*(?:0?\.\d+|1)\s*\)$/.test(str))
+    {
+      color = str.slice(5, str.length - 1).split(',');
+      alpha = parseFloat(color.pop().trim());
+      color = [parseInt(color[0].trim()), parseFloat(color[1].trim()), parseFloat(color[2].trim())];
+      this.setHue(color[0]);
+      this.setSaturation(color[1]);
+      this.setLuminosity(color[2]);
+      return {cssvalue: in_str, type: 'hsla', color: color, alpha: alpha};
+    }
+    return null;
+  }
+
   this.invert = function()
   {
     this.setHue( (this.__hsl[HUE] + 180 ) % 360 );
