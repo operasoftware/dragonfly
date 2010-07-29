@@ -786,10 +786,10 @@ cls.CSSInspectorActions = function(id)
     }
 
     script += "rule.style.setProperty(\"" +
-                   prop + "\", \"" +
-                   declaration[1].replace(/"/g, "\\\"") + "\", " +
-                   (declaration[2] ? "\"important\"" : null) +
-                 ");";
+                  prop + "\", \"" +
+                  declaration[1].replace(/"/g, "\\\"") + "\", " +
+                  (declaration[2] ? "\"important\"" : null) +
+              ");";
 
     // If a property is added by overwriting another one, remove the other property
     if (prop_to_remove && prop != prop_to_remove)
@@ -797,12 +797,7 @@ cls.CSSInspectorActions = function(id)
       script += "rule.style.removeProperty(\"" + this.normalize_property(prop_to_remove) + "\");";
     }
 
-    var tag = tagManager.set_callback(null, function() {
-      if (typeof callback == "function")
-      {
-        callback();
-      }
-    });
+    var tag = (typeof callback == "function") ? tagManager.set_callback(null, callback) : 1;
     services['ecmascript-debugger'].requestEval(tag,
       [this.editor.context_rt_id, 0, 0, script, [["rule", rule_id]]]);
   };
@@ -819,12 +814,7 @@ cls.CSSInspectorActions = function(id)
     var rule_id = this.editor.context_rule_id;
     var script = "rule.style.removeProperty(\"" + prop_to_remove + "\");";
 
-    var tag = tagManager.set_callback(null, function() {
-      if (typeof callback == "function")
-      {
-        callback();
-      }
-    });
+    var tag = (typeof callback == "function") ? tagManager.set_callback(null, callback) : 1;
     services['ecmascript-debugger'].requestEval(tag,
       [this.editor.context_rt_id, 0, 0, script, [["rule", rule_id]]]);
   };
@@ -861,7 +851,7 @@ cls.CSSInspectorActions = function(id)
   /**
    * Enables one property.
    *
-   * @param {String} property The property to disable
+   * @param {String} property The property to enable
    */
   this.enable_property = function enable_property(rt_id, rule_id, property)
   {
