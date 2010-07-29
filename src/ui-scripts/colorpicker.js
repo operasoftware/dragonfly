@@ -1,6 +1,6 @@
-﻿var ColorPicker = function(cb, color)
+﻿var ColorPicker = function(cb, alphacb, color)
 {
-  this._init(cb, color);
+  this._init(cb, alphacb, color);
 }
 
 ColorPicker.prototype = new function()
@@ -54,17 +54,26 @@ ColorPicker.prototype = new function()
   
   this._onclick = function(event)
   {
-    if (event.target.nodeName == 'rect')
+    switch (event.target.nodeName)
     {
-      var box = event.target.getBoundingClientRect();
-      var x = (event.clientX - box.left) / box.width;
-      var y = 1 - (event.clientY - box.top) / box.height;
-      var z = y;
-      var ele = event.target, handler = '';
-      while (ele && !(handler = ele.getAttribute('data-handler')))
-        ele = ele.parentNode;
-      if (handler && ('_' + handler) in this)
-        this['_' + handler](x, y, z);
+      case 'rect':
+      {
+        var box = event.target.getBoundingClientRect();
+        var x = (event.clientX - box.left) / box.width;
+        var y = 1 - (event.clientY - box.top) / box.height;
+        var z = y;
+        var ele = event.target, handler = '';
+        while (ele && !(handler = ele.getAttribute('data-handler')))
+          ele = ele.parentNode;
+        if (handler && ('_' + handler) in this)
+          this['_' + handler](x, y, z);
+        break;
+      }
+      case 'p':
+      {
+        alert(88)
+        break;
+      }
     }
   }
   
@@ -99,6 +108,11 @@ ColorPicker.prototype = new function()
       this._slider.z = 1 - z;
     this._cb(this._cs_cb);
   }
+
+  this._onalpha = function(alpha)
+  {
+    this._cb_alpha(alpha); 
+  };
   
   this._onremove = function(event)
   {
@@ -264,7 +278,10 @@ ColorPicker.prototype = new function()
   CP_NEW_CLASS = "color-picker-color",
   SLIDER_BASE_CLASS = 'color-picker-slider-base', 
   SLIDER_CLASS = 'color-picker-slider',
-  POINTER_CLASS = 'color-picker-pointer';
+  POINTER_CLASS = 'color-picker-pointer',
+  CP_ALPHA_CLASS = "color-picker-alpha";
+
+
   
   this._setup = function(event)
   {
@@ -293,10 +310,18 @@ ColorPicker.prototype = new function()
       this._pointer = new Pointer(graphic_2d_container, POINTER_CLASS);
       this._graphic_2d = graphic_2d_container.getElementsByTagName('div')[0];
       this._graphic_1d = graphic_1d_container.getElementsByTagName('div')[0];
-      var old_color = document.getElementsByClassName(CP_OLD_CLASS)[0];
-      var style_dec = window.getComputedStyle(old_color, null);
-      var old_color_value = style_dec.getPropertyValue('background-color');
-      this._cs.hex = old_color_value.slice(1);
+      if (this._old_color.alpha)
+      {
+        graphic_1d_container = document.getElementsByClassName(CP_ALPHA_CLASS)[0];
+        this._alpha_slider = new Slider(graphic_1d_container, SLIDER_BASE_CLASS, 
+                                        SLIDER_CLASS, 0, 1);
+        this._alpha_slider.onz = (function(z)
+        {
+          this._onalpha(1 -z);
+        }).bind(this);
+
+      }
+      this._cs.parseCSSColor(this._old_color.cssvalue);
       this._set_color_space('s-v-h');
       this._color_picker.addEventListener('input', this._oninput_bound, false);
       this._color_picker.addEventListener('click', this._onclick_bound, false);
@@ -308,13 +333,15 @@ ColorPicker.prototype = new function()
   this.render = function()
   {
     document.addEventListener('DOMNodeInserted', this._setup_bound, false);
-    return window.templates.color_picker_2(this._old_color, CP_CLASS, CP_2D_CLASS, 
-                                         CP_1D_CLASS, CP_OLD_CLASS, CP_NEW_CLASS, 'h')
+    return window.templates.color_picker_2(this._old_color.cssvalue, CP_CLASS, CP_2D_CLASS, 
+                                           CP_1D_CLASS, CP_OLD_CLASS, CP_NEW_CLASS, 'h', 
+                                           CP_ALPHA_CLASS, this._old_color.alpha)
   }
   
-  this._init = function(cb, color)
+  this._init = function(cb, cb_alpha, color)
   {
     this._cb = cb;
+    this._cb_alpha = cb_alpha;
     this._old_color = color;
     this._cs = new ColorSpace();
     this._cs_cb = new Colors();

@@ -196,9 +196,14 @@
       input[UNITS] ? ['td', input[UNITS]] : []
     ])
   }
+
+  this.slider_focus_catcher = function()
+  {
+    return ['input', 'style', 'display: block; position:absolute; left: -1000px; top:0; with: 10px;']
+  }
   
   this.color_picker_2 = function(existing_color, cp_class, cp_2d_class, 
-                               cp_1d_class, cp_old_class, cp_new_class, z_axis)
+                               cp_1d_class, cp_old_class, cp_new_class, z_axis, cp_alpha_class, with_alpha)
   {
     return (
     ['div',
@@ -215,6 +220,12 @@
       window.templates.color_picker_inputs(z_axis), 
       ['p', 'class', cp_old_class, 'style', 'background-color:' + existing_color],
       ['p', 'class', cp_new_class],
+      with_alpha ?
+      ['div',
+        ['div', 'class', 'height-100'],
+        'data-handler', 'onalpha',
+        'class', cp_alpha_class
+      ] : [],
       'class', cp_class
     ]);
   }

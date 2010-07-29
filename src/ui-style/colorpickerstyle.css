@@ -35,6 +35,15 @@
   height: 200px;
   border: 1px solid #333;
 }
+.color-picker-alpha
+{
+  position: absolute;
+  left: 390px;
+  top: 10px;
+  width: 20px;
+  height: 200px;
+  border: 1px solid red;
+}
 .color-picker-color-old,
 .color-picker-color
 {
