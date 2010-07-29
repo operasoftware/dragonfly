@@ -201,6 +201,12 @@ window.cls.Helpers = function()
     }
   };
 
+  if (!Array.isArray) {
+    Array.isArray = function(obj) {
+      return Object.prototype.toString.call(o) == "[object Array]";
+    };
+  }
+
   document.addEventListener('keypress', keypressListener, true);
 
 }
