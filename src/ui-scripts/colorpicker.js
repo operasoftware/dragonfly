@@ -333,9 +333,9 @@ ColorPicker.prototype = new function()
   this.render = function()
   {
     document.addEventListener('DOMNodeInserted', this._setup_bound, false);
-    return window.templates.color_picker_2(this._old_color.cssvalue, CP_CLASS, CP_2D_CLASS, 
+    return window.templates.color_picker_2(this._old_color, CP_CLASS, CP_2D_CLASS, 
                                            CP_1D_CLASS, CP_OLD_CLASS, CP_NEW_CLASS, 'h', 
-                                           CP_ALPHA_CLASS, this._old_color.alpha)
+                                           CP_ALPHA_CLASS)
   }
   
   this._init = function(cb, cb_alpha, color)

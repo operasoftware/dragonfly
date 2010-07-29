@@ -203,7 +203,7 @@
   }
   
   this.color_picker_2 = function(existing_color, cp_class, cp_2d_class, 
-                               cp_1d_class, cp_old_class, cp_new_class, z_axis, cp_alpha_class, with_alpha)
+                               cp_1d_class, cp_old_class, cp_new_class, z_axis, cp_alpha_class)
   {
     return (
     ['div',
@@ -218,9 +218,16 @@
         'class', cp_1d_class
       ],
       window.templates.color_picker_inputs(z_axis), 
-      ['p', 'class', cp_old_class, 'style', 'background-color:' + existing_color],
-      ['p', 'class', cp_new_class],
-      with_alpha ?
+      ['div', 
+        existing_color.alpha ? 
+        ['div', 
+          'style', 'border-left-color: ' + existing_color.hhex + '; border-top-color: ' + existing_color.hhex +';'
+        ] : [], 
+        'class', cp_old_class, 
+        'style', 'background-color:' + existing_color.cssvalue
+      ],
+      ['div', 'class', cp_new_class],
+      existing_color.alpha ?
       ['div',
         ['div', 'class', 'height-100'],
         'data-handler', 'onalpha',

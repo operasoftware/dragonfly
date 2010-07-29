@@ -192,19 +192,21 @@ Colors.prototype = new function()
     var str = in_str.trim(), color = null, alpha = 0;
     if (/^#[0-9a-fA-F]{6}$/.test(str))
     {
-      return {cssvalue: in_str, type: 'hex', color: str.replace('#', '')};
+      color =  str.replace('#', '');
+      this.setHex(color);
+      return {cssvalue: in_str, type: 'hex', color: color, hhex: this.hhex};
     }
     if (/^#[0-9a-fA-F]{3}$/.test(str))
     {
       color = Array.prototype.slice.call(str.replace('#', '')).map(this._pc_3hex).join('');
       this.setHex(color);
-      return {cssvalue: in_str, type: 'hex', color: color};
+      return {cssvalue: in_str, type: 'hex', color: color, hhex: this.hhex};
     }
     if (/^rgb\(.*\)$/.test(str))
     {
       color = str.slice(4, str.length - 1).split(',').map(this._pc_trim_int);
       this.setRGB(color);
-      return {cssvalue: in_str, type: 'rgb', color: color};
+      return {cssvalue: in_str, type: 'rgb', color: color, hhex: this.hhex};
     }
     if (/^rgba\(.*\)$/.test(str))
     {
@@ -212,7 +214,7 @@ Colors.prototype = new function()
       alpha = parseFloat(color.pop().trim());
       color = color.map(this._pc_trim_int);
       this.setRGB(color);
-      return {cssvalue: in_str, type: 'rgba', color: color, alpha: alpha};
+      return {cssvalue: in_str, type: 'rgba', color: color, alpha: alpha, hhex: this.hhex};
     }
     if (/^hsl\(\s*\d{1,3}\s*,\s*\d{1,3}%\s*,\s*\d{1,3}%\s*\)$/.test(str))
     {
@@ -220,7 +222,7 @@ Colors.prototype = new function()
       this.setHue(color[0]);
       this.setSaturation(color[1]);
       this.setLuminosity(color[2]);
-      return {cssvalue: in_str, type: 'hsl', color: color};
+      return {cssvalue: in_str, type: 'hsl', color: color, hhex: this.hhex};
     }
     if (/^hsla\(\s*\d{1,3}\s*,\s*\d{1,3}%\s*,\s*\d{1,3}%\s*,\s*(?:0?\.\d+|1)\s*\)$/.test(str))
     {
@@ -230,7 +232,7 @@ Colors.prototype = new function()
       this.setHue(color[0]);
       this.setSaturation(color[1]);
       this.setLuminosity(color[2]);
-      return {cssvalue: in_str, type: 'hsla', color: color, alpha: alpha};
+      return {cssvalue: in_str, type: 'hsla', color: color, alpha: alpha, hhex: this.hhex};
     }
     return null;
   }

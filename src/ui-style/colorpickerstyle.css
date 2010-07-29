@@ -50,10 +50,17 @@
   position: absolute;
   left: 264px;
   top: 10px;
-  width: 49px;
+  width: 50px;
   height: 36px;
   border: 1px solid #000;
   margin: 0;
+}
+.color-picker-color-old div,
+.color-picker-color div
+{
+  border-width: 18px 25px;
+  border-style: solid;
+  border-color: black transparent transparent black;
 }
 .color-picker-color-old
 {
@@ -61,7 +68,7 @@
 }
 .color-picker-color
 {
-  left: 314px;
+  left: 315px;
   border-left-width: 0;
 }
 
