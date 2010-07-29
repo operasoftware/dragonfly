@@ -656,6 +656,14 @@ if (!(function(){}).bind)
   };
 };
 
+if (!"".trim)
+{
+  String.prototype.trim = function()
+  {
+    return this.replace(/^\s+/, '').replace(/\s+$/, '');
+  }
+}
+
 /**
  * Convenience function for loading a resource with XHR using the get method.
  * Will automatically append a "time" guery argument to avoid caching.
