@@ -7,7 +7,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
   this.show_in_views_menu = true;
   this.window_top = 20;
   this.window_left = 20;
-  this.window_width = 570; // 376;
+  this.window_width = 523; // 376;
   this.window_height = 242;
   this.window_resizable = false;
   this.window_statusbar = false;
@@ -54,14 +54,14 @@ window.cls.ColorPickerView = function(id, name, container_class)
         return "rgba(" + this.cp_current_color.r + ', ' + 
                          this.cp_current_color.g + ', ' + 
                          this.cp_current_color.b + ', ' +
-                         this.cp_current_alpha.toFixed(4) + ')';
+                         this.cp_current_alpha.toFixed(3) + ')';
       case 'hsl':
         return this.cp_current_color.hsl;
       case 'hsla':
         return "hsla(" + this.cp_current_color.h + ', ' + 
                          this.cp_current_color.getSaturation() + ', ' + 
                          this.cp_current_color.l + ', ' +
-                         this.cp_current_alpha + ')';                 
+                         this.cp_current_alpha.toFixed(3) + ')';                 
     }
   }
 

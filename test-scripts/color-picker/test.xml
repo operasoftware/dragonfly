@@ -1,9 +1,17 @@
 <html xmlns='http://www.w3.org/1999/xhtml'
       xmlns:xlink="http://www.w3.org/1999/xlink" 
       xmlns:svg="http://www.w3.org/2000/svg">
-<link rel="stylesheet" href="style.css"/>
+<link rel="stylesheet" href="colorpickerstyle.css"/>
+<style><![CDATA[
+.test
+{
+  margin: 20px;
+  float: left;
+  height: 250px;
+}
+]]></style>
 <script src="dom.js"/>
-<script src="templates.js"/>
+<script src="colorpickertemplates.js"/>
 <script src="slider.js"/>
 <script><![CDATA[ 
 
@@ -11,46 +19,246 @@
   
 ]]></script>
 <script><![CDATA[ 
-var SLIDER_BASE_ID = 'color-picker-slider-base', SLIDER_ID = 'color-picker-slider';
-var test  = function()
-{
-  
-  var out = document.getElementsByTagName('pre')[0];
-  
-  var slider = new Slider(document.getElementById('test'), SLIDER_BASE_ID, SLIDER_ID, 0, 1);
-  var count = 0;
-  slider.onz = function(z){out.textContent = z.toFixed(4) +", " + (count++)};
-  window.slider = slider;
-};
+var SLIDER_BASE_CLASS = 'color-picker-slider-base', SLIDER_CLASS = 'color-picker-slider';
 
-var remove_slider = function()
+var test_2_d_slider = function()
 {
-  var slider_ele = document.getElementsByClassName(SLIDER_BASE_ID)[0];
-  slider_ele.parentNode.removeChild(slider_ele);
-} 
-
-var oninput = function(event)
-{
-  if (window.slider)
+  var test = 
+  ['div',
+    [
+      'div',  
+      'style', 'position:relative; width:140px; height:140px; background-color:#0f0'
+    ],
+    ['p',
+      ['label', 'x: ', 
+        ['input', 
+          'type', 'number',
+          'step', '0.01',
+          'oninput', function(){slider.x = parseFloat(this.value)}
+        ]
+      ]
+    ],
+    ['p',
+      ['label', 'y: ', 
+        ['input', 
+          'type', 'number',
+          'step', '0.01',
+          'oninput', function(){slider.y = parseFloat(this.value)}
+        ]
+      ]
+    ],
+    'class', 'test'
+  ];
+  var container = document.documentElement.render(test);
+  var slider_config =
   {
-    window.slider.z = parseFloat(event.target.value);
+    container: container.firstElementChild,
+    slider_base_class: SLIDER_BASE_CLASS,
+    slider_class: 'color-picker-pointer',
+    slider_template: window.templates.svg_slider_circle(),
+    onx: function(x){container.getElementsByTagName('input')[0].value =  x;},
+    ony: function(y){container.getElementsByTagName('input')[1].value =  y;},
+    min_x: 0,
+    max_x: 1,
+    min_y: 0,
+    max_y: 1
   }
+  var slider = new Slider(slider_config);
+}
+
+var test_x_slider = function()
+{
+  var test = 
+  ['div',
+    [
+      'div',  
+      'style', 'position:relative; width:140px; height:20px; margin-top: 145px; background-color:#0f0'
+    ],
+    ['p',
+      ['label', 'x: ', 
+        ['input', 
+          'type', 'number',
+          'step', '0.01',
+          'oninput', function(){slider.x = parseFloat(this.value)}
+        ]
+      ]
+    ],
+    'class', 'test'
+  ];
+  var container = document.documentElement.render(test);
+  var slider_config =
+  {
+    container: container.firstElementChild,
+    slider_base_class: SLIDER_BASE_CLASS,
+    slider_class: 'color-picker-pointer',
+    slider_template: window.templates.svg_slider_circle(),
+    onx: function(x){container.getElementsByTagName('input')[0].value =  x;},
+    min_x: 0,
+    max_x: 1,
+  }
+  var slider = new Slider(slider_config);
+}
+
+var test_y_slider = function()
+{
+  var test = 
+  ['div',
+    [
+      'div',  
+      'style', 'position:relative; width:20px; height:140px; background-color:#0f0'
+    ],
+    ['p',
+      ['label', 'y: ', 
+        ['input', 
+          'type', 'number',
+          'step', '0.01',
+          'oninput', function(){slider.y = parseFloat(this.value)}
+        ]
+      ]
+    ],
+    'class', 'test'
+  ];
+  var container = document.documentElement.render(test);
+  var slider_config =
+  {
+    container: container.firstElementChild,
+    slider_base_class: SLIDER_BASE_CLASS,
+    slider_class: 'color-picker-slider',
+    slider_template: window.templates.svg_slider_z(),
+    ony: function(y){container.getElementsByTagName('input')[0].value =  y;},
+    min_y: 0,
+    max_y: 1
+  }
+  var slider = new Slider(slider_config);
+}
+
+var test_y_slider_2 = function()
+{
+  var test = 
+  ['div',
+    [
+      'div',  
+      'style', 'position:relative; width:20px; height:140px; background-color:#0f0'
+    ],
+    ['p',
+      ['label', 'y: ', 
+        ['input', 
+          'type', 'number',
+          'step', '0.01',
+          'oninput', function(){slider.y = parseFloat(this.value)}
+        ]
+      ]
+    ],
+    'class', 'test'
+  ];
+  var container = document.documentElement.render(test);
+  var slider_config =
+  {
+    container: container.firstElementChild,
+    slider_base_class: SLIDER_BASE_CLASS,
+    slider_class: 'color-picker-slider',
+    slider_template: window.templates.svg_slider_z(),
+    ony: function(y){container.getElementsByTagName('input')[0].value =  y;},
+    min_y: 3,
+    max_y: 15
+  }
+  var slider = new Slider(slider_config);
+}
+var test_y_slider_3 = function()
+{
+  var test = 
+  ['div',
+    [
+      'div',  
+      'style', 'position:relative; width:20px; height:140px; background-color:#0f0'
+    ],
+    ['p',
+      ['label', 'y: ', 
+        ['input', 
+          'type', 'number',
+          'step', '0.01',
+          'oninput', function(){slider.y = parseFloat(this.value)}
+        ]
+      ]
+    ],
+    'class', 'test'
+  ];
+  var container = document.documentElement.render(test);
+  var slider_config =
+  {
+    container: container.firstElementChild,
+    slider_base_class: SLIDER_BASE_CLASS,
+    slider_class: 'color-picker-slider',
+    slider_template: window.templates.svg_slider_z(),
+    ony: function(y){container.getElementsByTagName('input')[0].value =  y;},
+    min_y: 15,
+    max_y: 3
+  }
+  var slider = new Slider(slider_config);
+}
+
+var test_2_d_slider_2 = function()
+{
+  var test = 
+  ['div',
+    [
+      'div',  
+      'style', 'position:relative; width:140px; height:140px; background-color:#0f0'
+    ],
+    ['p',
+      ['label', 'x: ', 
+        ['input', 
+          'type', 'number',
+          'step', '0.01',
+          'oninput', function(){slider.x = parseFloat(this.value)}
+        ]
+      ]
+    ],
+    ['p',
+      ['label', 'y: ', 
+        ['input', 
+          'type', 'number',
+          'step', '0.01',
+          'oninput', function(){slider.y = parseFloat(this.value)}
+        ]
+      ]
+    ],
+    'class', 'test'
+  ];
+  var container = document.documentElement.render(test);
+  var slider_config =
+  {
+    container: container.firstElementChild,
+    slider_base_class: SLIDER_BASE_CLASS,
+    slider_class: 'color-picker-pointer',
+    slider_template: window.templates.svg_slider_circle(),
+    onx: function(x){container.getElementsByTagName('input')[0].value =  x;},
+    ony: function(y){container.getElementsByTagName('input')[1].value =  y;},
+    min_x: 20,
+    max_x: 7,
+    min_y: 50,
+    max_y: 12
+  }
+  var slider = new Slider(slider_config);
 }
 
 window.onload = function()
 {
-  document.documentElement.render( 
-  ['body', 
-    ['p', 
-      ['input', 'type', 'button', 'value', 'slider', 'onclick', test],
-      ['input', 'type', 'button', 'value', 'remove slider', 'onclick', remove_slider],
-      ['input', 'oninput', oninput],
-      ['div', 'id', 'test', 'style', 'position:absolute;top:50px;left:100px;width:20px;height:250px;background-color:#0f0']
-    ],
-    ['pre']
-  ]);
+  test_2_d_slider();
+  test_y_slider();
+  test_x_slider();
+  test_y_slider_2();
+  test_y_slider_3();
+  test_2_d_slider_2()
 
-}; 
+
+};
+
+
+
+
+
+
   
 ]]></script>
 </html>

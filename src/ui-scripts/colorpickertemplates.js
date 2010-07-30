@@ -157,7 +157,7 @@
         rgb_inputs.map(this.color_picker_inputs_row, this),
         ['tr', ['td', 'class', 'color-picker-spacer', 'colspan', '4']],
         hex_inputs.map(this.color_picker_inputs_row, this),
-        'id', 'color-picker-inputs'
+        'class', 'color-picker-inputs'
       ]
     ]);
   };
@@ -226,14 +226,31 @@
         'class', cp_old_class, 
         'style', 'background-color:' + existing_color.cssvalue
       ],
-      ['div', 'class', cp_new_class],
+      ['div', 
+        existing_color.alpha ? ['div'] : [], 
+        'class', cp_new_class
+      ],
       existing_color.alpha ?
       ['div',
         ['div', 'class', 'height-100'],
         'data-handler', 'onalpha',
         'class', cp_alpha_class
       ] : [],
-      'class', cp_class
+      existing_color.alpha ?
+      ['div',
+        ['label',
+          'alpha: ',
+          ['input', 
+            'name', 'alpha', 
+            'type', 'number', 
+            'min', '0', 
+            'max', '1',
+            'class', 'color-picker-number alpha'
+          ],
+        ],
+        'class', 'color-picker-input-alpha'
+      ]: [],
+      'class', cp_class + (existing_color.alpha ? ' alpha' : '')
     ]);
   }
   

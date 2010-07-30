@@ -14,11 +14,12 @@ ColorPicker.prototype = new function()
     g: {min:0, max: 255, last: 0, base: 10},
     b: {min:0, max: 255, last: 0, base: 10},
     hex: {min:0, max: 0xFFFFFF, last: 0, base: 16},
+    alpha: {min:0, max: 1, last: 0, base: 10},
   }
   
   this._verify = function(input, check)
   {
-    var ret = parseInt(input, check.base);
+    var ret = (check.max == 1 ? parseFloat : parseInt)(input, check.base);
     if (typeof ret == 'number' && !isNaN(ret) && 
         ret >= check.min && ret <= check.max)
     {
@@ -28,7 +29,7 @@ ColorPicker.prototype = new function()
           check.last = input;
       }
       else
-        check.last = ret;
+        check.last = check.max == 1 ? ret.toFixed(3) : ret;
     }
     return check.last;
   }
@@ -47,6 +48,7 @@ ColorPicker.prototype = new function()
       this._update_xy();
       this._update_z();
       this._update_new_color();
+      this._update_alpha();
       this._update_slider();
       this._cb(this._cs_cb);
     }
@@ -92,6 +94,7 @@ ColorPicker.prototype = new function()
     this._update_inputs();
     this._update_z();
     this._update_new_color();
+    this._update_alpha();
     this._update_pointer();
     this._cb(this._cs_cb);
   }
@@ -104,6 +107,7 @@ ColorPicker.prototype = new function()
     this._update_inputs();
     this._update_xy();
     this._update_new_color();
+    this._update_alpha();
     if (setter != this._slider)
       this._slider.z = 1 - z;
     this._cb(this._cs_cb);
@@ -111,6 +115,9 @@ ColorPicker.prototype = new function()
 
   this._onalpha = function(alpha)
   {
+    this._cs.alpha = alpha
+    this._update_new_color();
+    this._update_inputs(null, ['alpha']);
     this._cb_alpha(alpha); 
   };
   
@@ -133,12 +140,14 @@ ColorPicker.prototype = new function()
     }
   }
   
-  this._update_inputs = function(setter)
+  this._update_inputs = function(setter, inputs_to_update)
   {
     for (var input = null, i = 0; input = this._inputs[i]; i++)
-      if (input.name != setter)
+    {
+      if (input.name != setter && (!inputs_to_update || inputs_to_update.indexOf(input.name) > -1))
         input.value = this._verify(this._cs[input.name], 
                                    this._verify_inputs[input.name]);
+    }
   }
   
   this._update_slider = function()
@@ -216,8 +225,35 @@ ColorPicker.prototype = new function()
     
   this._update_new_color = function()
   {
-    this._new_color.style.backgroundColor = 
-      this._cs.xyz(this._cur_x, this._cur_y, this._cur_z).hhex;
+    var color = this._cs.xyz(this._cur_x, this._cur_y, this._cur_z).hhex;
+    if (this._old_color.alpha)
+    {
+      this._new_color_solid.style.borderLeftColor = 
+      this._new_color_solid.style.borderTopColor = color;
+      this._new_color.style.backgroundColor = 
+        "rgba(" + this._cs.getRGB().join(", ") + ", " + this._cs.alpha + ")";;
+    }
+    else
+      this._new_color.style.backgroundColor = color;
+
+  }
+
+  this._update_alpha_slider = function()
+  {
+    if (this._old_color.alpha)
+    {
+      this._alpha_slider.z = 1 - this._cs.alpha;
+    }
+  }
+
+  this._update_alpha = function()
+  {
+    if (this._old_color.alpha)
+    {
+      var rgb = this._cs.xyz(this._cur_x, this._cur_y, this._cur_z).getRGB().join(',');
+      this._graphics_1d_alpha.clearAndRender(window.templates.gradient(
+      ['rgba(' + rgb + ', 0)', 'rgba(' + rgb + ', 1)'], true));
+    }
   }
   
   this._update = function()
@@ -225,9 +261,11 @@ ColorPicker.prototype = new function()
     this._set_coordinates();
     this._update_xy();
     this._update_z();
-    this._update_new_color();  
+    this._update_new_color(); 
+    this._update_alpha();
     this._update_inputs();
     this._update_slider();
+    this._update_alpha_slider();
   }
     
   this._color_properties =
@@ -296,11 +334,11 @@ ColorPicker.prototype = new function()
       this._inputs = Array.prototype.slice.call
       (this._color_picker.getElementsByTagName('input')).filter(function(input)
       {
-        return ['h', 's', 'v', 'r', 'g', 'b', 'hex'].indexOf(input.name) != -1;
+        return ['h', 's', 'v', 'r', 'g', 'b', 'hex', 'alpha'].indexOf(input.name) != -1;
       });
-      this._new_color = document.getElementsByClassName(CP_NEW_CLASS)[0];
-      var graphic_2d_container = document.getElementsByClassName(CP_2D_CLASS)[0];
-      var graphic_1d_container = document.getElementsByClassName(CP_1D_CLASS)[0];
+      this._new_color = colorpicker.getElementsByClassName(CP_NEW_CLASS)[0];
+      var graphic_2d_container = colorpicker.getElementsByClassName(CP_2D_CLASS)[0];
+      var graphic_1d_container = colorpicker.getElementsByClassName(CP_1D_CLASS)[0];
       this._slider = new Slider(graphic_1d_container, SLIDER_BASE_CLASS, 
                                 SLIDER_CLASS, 0, 1);
       this._slider.onz = (function(z)
@@ -310,16 +348,18 @@ ColorPicker.prototype = new function()
       this._pointer = new Pointer(graphic_2d_container, POINTER_CLASS);
       this._graphic_2d = graphic_2d_container.getElementsByTagName('div')[0];
       this._graphic_1d = graphic_1d_container.getElementsByTagName('div')[0];
-      if (this._old_color.alpha)
+      if (typeof this._old_color.alpha == 'number')
       {
-        graphic_1d_container = document.getElementsByClassName(CP_ALPHA_CLASS)[0];
+        graphic_1d_container = colorpicker.getElementsByClassName(CP_ALPHA_CLASS)[0];
+        this._graphics_1d_alpha = graphic_1d_container.getElementsByTagName('div')[0];
         this._alpha_slider = new Slider(graphic_1d_container, SLIDER_BASE_CLASS, 
                                         SLIDER_CLASS, 0, 1);
         this._alpha_slider.onz = (function(z)
         {
           this._onalpha(1 -z);
         }).bind(this);
-
+        this._new_color_solid = this._new_color.getElementsByTagName('div')[0];
+        this._cs.alpha = this._old_color.alpha;
       }
       this._cs.parseCSSColor(this._old_color.cssvalue);
       this._set_color_space('s-v-h');
