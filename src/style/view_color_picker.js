@@ -54,23 +54,23 @@ window.cls.ColorPickerView = function(id, name, container_class)
         return "rgba(" + this.cp_current_color.r + ', ' + 
                          this.cp_current_color.g + ', ' + 
                          this.cp_current_color.b + ', ' +
-                         this.cp_current_alpha.toFixed(3) + ')';
+                         this.cp_current_color.alpha.toFixed(3) + ')';
       case 'hsl':
         return this.cp_current_color.hsl;
       case 'hsla':
         return "hsla(" + this.cp_current_color.h + ', ' + 
                          this.cp_current_color.getSaturation() + ', ' + 
                          this.cp_current_color.l + ', ' +
-                         this.cp_current_alpha.toFixed(3) + ')';                 
+                         this.cp_current_color.alpha.toFixed(3) + ')';                 
     }
   }
 
   this.cp_cb_bound = this.cp_cb.bind(this);
   this.cp_alpha_cb_bound = this.cp_alpha_cb.bind(this);
-  
+  // TODO remove this.cp_alpha_cb_bound, 
   this.createView = function(container)
   {
-    var color_picker = new ColorPicker(this.cp_cb_bound, this.cp_alpha_cb_bound, this.cp_old_color);
+    var color_picker = new ColorPicker(this.cp_cb_bound, this.cp_old_color);
     container.render(color_picker.render());
   }
 
@@ -78,6 +78,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
   {
     var target = event.target, cur_ele = target.parentNode;
     this.cp_color_sample = target;
+    // TODO transparent
     this.cp_old_color = this.colors.parseCSSColor(target.style.backgroundColor);
     this.cp_current_color = this.colors;
     this.cp_current_alpha = this.cp_old_color.alpha || 0;

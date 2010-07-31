@@ -199,12 +199,13 @@
 
   this.slider_focus_catcher = function()
   {
-    return ['input', 'style', 'display: block; position:absolute; left: -1000px; top:0; with: 10px;']
+    return ['input', 'style', 'display: block; position:absolute; left: -1000px; top:0; width: 10px;']
   }
   
   this.color_picker_2 = function(existing_color, cp_class, cp_2d_class, 
                                cp_1d_class, cp_old_class, cp_new_class, z_axis, cp_alpha_class)
   {
+    var has_alpha = typeof existing_color.alpha == "number";
     return (
     ['div',
       ['div',
@@ -219,7 +220,7 @@
       ],
       window.templates.color_picker_inputs(z_axis), 
       ['div', 
-        existing_color.alpha ? 
+        has_alpha ? 
         ['div', 
           'style', 'border-left-color: ' + existing_color.hhex + '; border-top-color: ' + existing_color.hhex +';'
         ] : [], 
@@ -227,16 +228,16 @@
         'style', 'background-color:' + existing_color.cssvalue
       ],
       ['div', 
-        existing_color.alpha ? ['div'] : [], 
+        has_alpha ? ['div'] : [], 
         'class', cp_new_class
       ],
-      existing_color.alpha ?
+      has_alpha ?
       ['div',
         ['div', 'class', 'height-100'],
         'data-handler', 'onalpha',
         'class', cp_alpha_class
       ] : [],
-      existing_color.alpha ?
+      has_alpha ?
       ['div',
         ['label',
           'alpha: ',
@@ -245,30 +246,62 @@
             'type', 'number', 
             'min', '0', 
             'max', '1',
+            'step', '0.01',
             'class', 'color-picker-number alpha'
           ],
         ],
         'class', 'color-picker-input-alpha'
       ]: [],
-      'class', cp_class + (existing_color.alpha ? ' alpha' : '')
+      'class', cp_class + (has_alpha ? ' alpha' : '')
+    ]);
+  }
+
+  this.svg_slider_z = function()
+  {
+    return (
+    ['svg:svg',
+      ['svg:path', 
+        'd', 'M 0.5 0.5 l 0 18 l 6 0 l 12 -9 l -12 -9 z', 
+        'fill', 'hsl(0, 0%, 70%)', 
+        'stroke', '#000', 
+        'stroke-width', '1'
+      ],
+      ['svg:path', 
+        'd', 'M 79.5 0.5 l 0 18 l -6 0 l -12 -9 l 12 -9 z', 
+        'fill', 'hsl(0, 0%, 70%)', 
+        'stroke', '#000', 
+        'stroke-width', '1'
+      ], 
+      'viewBox', '0 0 80 20'
     ]);
   }
   
-  this.slider = function(slider_base_id, slider_id)
+  this.slider = function(slider_base_class, slider_class, slider_template)
   {
     return (
     ['div',
       ['div',
-        ['svg:svg',
-          ['svg:path', 'd', 'M 0.5 0.5 l 0 18 l 6 0 l 12 -9 l -12 -9 z', 'fill', 'hsl(0, 0%, 70%)', 'stroke', '#000', 'stroke-width', '1'],
-          ['svg:path', 'd', 'M 79.5 0.5 l 0 18 l -6 0 l -12 -9 l 12 -9 z', 'fill', 'hsl(0, 0%, 70%)', 'stroke', '#000', 'stroke-width', '1'],
-          //this.svg_rect(0, 12.5, 40, 3, 1.5, 1.5, "#000"), 
-          //this.svg_rect(60, 12.5, 40, 3, 1.5, 1.5, "#000"), 
-          'viewBox', '0 0 80 20'
-        ],
-        'class', slider_id
+        slider_template || this.svg_slider_z(),
+        'class', slider_class
       ],
-      'class', slider_base_id
+      'class', slider_base_class
+    ]);
+  }
+
+  this.svg_slider_circle = function()
+  {
+    return (
+    ['svg:svg',
+      ['svg:circle', 
+        'cx', '10', 
+        'cy', '10', 
+        'r', '9.5', 
+        'fill', 'none', 
+        'stroke', 
+        'hsl(0, 0%, 20%)', 
+        'stroke-width', '1'
+      ],
+      'viewBox', '0 0 20 20'
     ]);
   }
   
@@ -276,10 +309,7 @@
   {
     return (
     ['div',
-      ['svg:svg',
-        ['svg:circle', 'cx', '10', 'cy', '10', 'r', '9.5', 'fill', 'none', 'stroke', 'hsl(0, 0%, 20%)', 'stroke-width', '1'],
-        'viewBox', '0 0 20 20'
-      ],
+      this.svg_slider_circle(),
       'class', pointer_class
     ]);
   }

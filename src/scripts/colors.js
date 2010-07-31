@@ -190,6 +190,11 @@ Colors.prototype = new function()
   this.parseCSSColor = function(in_str)
   {
     var str = in_str.trim(), color = null, alpha = 0;
+    if (str == "transparent")
+    {
+      this.setHex("000000");
+      return {cssvalue: in_str, type: 'rgba', color: color, alpha: 0, hhex: this.hhex};
+    }
     if (/^#[0-9a-fA-F]{6}$/.test(str))
     {
       color =  str.replace('#', '');
@@ -347,7 +352,7 @@ Colors.prototype = new function()
     return [this._round_val(this.__rgb[0], 255, 0), this._round_val(this.__rgb[1], 255, 0), this._round_val(this.__rgb[2], 255, 0)];
   }
   
-  this.copyColor = function(color)
+  this.clone = function(color)
   {
     if(color instanceof this.constructor)
     {
@@ -360,6 +365,7 @@ Colors.prototype = new function()
       this.__hsv[0] = color.__hsv[0]; 
       this.__hsv[1] = color.__hsv[1]; 
       this.__hsv[2] = color.__hsv[2]; 
+      this.alpha = color.alpha;
     }
   }
 

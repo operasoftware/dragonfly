@@ -11,7 +11,7 @@
  *
  * where NODENAME, TEXT and KEY are DOM strings and VALUE can be everything except an array
  */
-
+  
 Element.prototype.render = Document.prototype.render = function(args)
 {
   
