@@ -460,7 +460,7 @@ Colors.prototype = new function()
       this.__hsv[2] = color.__hsv[2]; 
       this.alpha = color.alpha;
       this.type = color.type; // hex, rgb, rgba, hsl, hsla, keyword
-      this.cssvalue = clor.cssvalue;
+      this.cssvalue = color.cssvalue;
     }
   }
 

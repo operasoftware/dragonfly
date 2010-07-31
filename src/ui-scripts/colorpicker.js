@@ -396,7 +396,6 @@ ColorPicker.prototype = new function()
           max_y: 0
         });
       }
-      this._cs.parseCSSColor(this._initial_color.cssvalue);
       this._set_color_space('s-v-h');
       this._ele.addEventListener('input', this._oninput_bound, false);
       this._ele.addEventListener('click', this._onclick_bound, false);
@@ -419,7 +418,10 @@ ColorPicker.prototype = new function()
     this._cb = cb;
     this._initial_color = color;
     this._cs = new ColorSpace();
+    this._cs.clone(color);
     this._cb_color = new Colors();
+    if (color.type == color.KEYWORD)
+      this._cs.type = color.cssvalue == 'transparent' ? color.RGBA : color.HEX;
     this._cur_x = 0;
     this._cur_y = 0;
     this._cur_z = 0;

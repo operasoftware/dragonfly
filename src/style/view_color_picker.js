@@ -44,7 +44,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
 
   this.get_color_value = function()
   {
-    switch (this.cp_old_color.type)
+    switch (this.cp_current_color.type)
     {
       case 'hex':
         return this.cp_current_color.hhex;
