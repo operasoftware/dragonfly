@@ -131,6 +131,14 @@ var UIWindowBase = new function()
 
     if(win)
     {
+      if (!win.is_resizable)
+      {
+        if (typeof width == 'number')
+          win.width = width;
+        if (typeof height == 'number')
+          win.height = height;
+      }
+        
       if(document.getElementById(win.id))
       {
         self.setZIndex();
@@ -507,9 +515,9 @@ var UIWindowBase = new function()
   * @extends UIWindowBase
   */
 
-var UIWindow = function(view_id)
+var UIWindow = function(view_id, top, left, width, height)
 {
-  this.init(view_id);
+  this.init(view_id, top, left, width, height);
 }
 
 UIWindow.prototype = UIWindowBase;

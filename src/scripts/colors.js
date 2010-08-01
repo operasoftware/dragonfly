@@ -447,7 +447,7 @@ Colors.prototype = new function()
   
   this.clone = function(color)
   {
-    if(color instanceof this.constructor)
+    if(color instanceof Colors)
     {
       this.__rgb[0] = color.__rgb[0];
       this.__rgb[1] = color.__rgb[1];
