@@ -1,11 +1,14 @@
 ﻿(function()
 {
-  var id_count = 0;
-  
-  var get_id = function()
+
+  var get_id = (function()
   {
-    return "svg-uid-" + (++id_count);
-  };
+    var id_count = 0;
+    return function()
+    {
+      return "svg-uid-" + (++id_count);
+    };
+  })();
   
   this.svg_stop = function(offset, stop_color, stop_opacity)
   {
@@ -199,11 +202,18 @@
 
   this.slider_focus_catcher = function()
   {
-    return ['input', 'style', 'display: block; position:absolute; left: -1000px; top:0; width: 10px;']
+    return (
+    ['input', 'style', 'display: block; ' +
+                       'position:absolute; ' +
+                       'left: -1000px; ' +
+                       'top:0; ' +
+                       'width: 10px;'
+    ]);
   }
   
   this.color_picker_2 = function(existing_color, cp_class, cp_2d_class, 
-                               cp_1d_class, cp_old_class, cp_new_class, z_axis, cp_alpha_class)
+                                 cp_1d_class, cp_old_class, cp_new_class, 
+                                 z_axis, cp_alpha_class)
   {
     var has_alpha = typeof existing_color.alpha == "number";
     return (
@@ -222,7 +232,8 @@
       ['div', 
         has_alpha ? 
         ['div', 
-          'style', 'border-left-color: ' + existing_color.hhex + '; border-top-color: ' + existing_color.hhex +';'
+          'style', 'border-left-color: ' + existing_color.hhex + ';' +
+                   'border-top-color: ' + existing_color.hhex +';'
         ] : [], 
         'class', cp_old_class, 
         'style', 'background-color:' + existing_color.cssvalue
@@ -256,23 +267,27 @@
     ]);
   }
 
-  this.svg_slider_z = function()
+  this.svg_slider_z = function(rotate)
   {
     return (
     ['svg:svg',
-      ['svg:path', 
-        'd', 'M 0.5 0.5 l 0 18 l 6 0 l 12 -9 l -12 -9 z', 
-        'fill', 'hsl(0, 0%, 70%)', 
-        'stroke', '#000', 
-        'stroke-width', '1'
-      ],
-      ['svg:path', 
-        'd', 'M 79.5 0.5 l 0 18 l -6 0 l -12 -9 l 12 -9 z', 
-        'fill', 'hsl(0, 0%, 70%)', 
-        'stroke', '#000', 
-        'stroke-width', '1'
-      ], 
-      'viewBox', '0 0 80 20'
+        ['svg:path', 
+          'd', rotate ? 
+               'M 0.5 0.5 l 18 0 l 0 6 l -9 12 l -9 -12 z' :
+               'M 0.5 0.5 l 0 18 l 6 0 l 12 -9 l -12 -9 z',
+          'fill', 'hsl(0, 0%, 70%)', 
+          'stroke', '#000', 
+          'stroke-width', '1'
+        ],
+        ['svg:path', 
+          'd', rotate ?
+               'M 0.5 79.5 l 18 0 l 0 -6 l -9 -12 l -9 12 z' : 
+               'M 79.5 0.5 l 0 18 l -6 0 l -12 -9 l 12 -9 z', 
+          'fill', 'hsl(0, 0%, 70%)', 
+          'stroke', '#000', 
+          'stroke-width', '1'
+        ],
+      'viewBox', rotate ? '0 0 20 80' : '0 0 80 20'
     ]);
   }
   

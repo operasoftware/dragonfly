@@ -26,8 +26,8 @@
   top: 0px;
 }
 ]]></style>
-<script src="dom.js"/>
-<script src="colorpickertemplates.js"/>
+<script src="../../src/scripts/dom.js"/>
+<script src="../../src/ui-scripts/colorpickertemplates.js"/>
 <script src="../../src/ui-scripts/slider.js"/>
 <script><![CDATA[ 
 
