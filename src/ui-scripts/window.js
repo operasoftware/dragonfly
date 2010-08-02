@@ -157,6 +157,16 @@ var UIWindowBase = new function()
 
   }
 
+  this.closeWindow = function(view_id)
+  {
+    var win = this.getWindowByViewId(view_id), win_ele = null;
+    if(win && (win_ele = document.getElementById(win.id)))
+    {
+      win.container.onclose();
+      win_ele.parentNode.removeChild(win_ele);
+    }
+  }
+
  /* event handling */
 
   var
