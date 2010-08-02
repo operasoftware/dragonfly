@@ -162,7 +162,8 @@ window.cls.PropertyFinder = function(rt_id) {
         runtime_id: runtimes.getSelectedRuntimeId(),
         thread_id: 0,
         scope_id: null,
-        index: 0
+        index: 0,
+        stopped: true
       };
 
 
@@ -206,7 +207,7 @@ window.cls.PropertyFinder = function(rt_id) {
   };
 
   this._get_scope_contents = function(callback, scope, identifier, input, frameinfo) {
-    if (!scope && frameinfo.index !== null) { // we're stopped and there is no scope
+    if (!scope && frameinfo.stopped) { // we're stopped and there is no scope
       this._requestExamineObjects(callback, scope, identifier, input, frameinfo);
     }
     else
