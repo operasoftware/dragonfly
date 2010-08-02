@@ -248,6 +248,7 @@ Colors.prototype = new function()
   this._trim_int = function(c){return parseInt(c.trim())};
   this._re_hex6 = /^#[0-9a-fA-F]{6}$/;
   this._re_hex3 = /^#[0-9a-fA-F]{3}$/;
+
   // helper call to construct reg exps to verify css color tokens
   (function()
   {
@@ -255,7 +256,7 @@ Colors.prototype = new function()
     // rgb component
     c = "\\s*(?:[0-1]?\\d{1,2}|2[0-4]\\d|25[0-5])\\s*",
     // alpha
-    a = "\\s*0?\\.\\d+\\s*",
+    a = "\\s*(?:0|0?\\.\\d+|1(?:\\.0+)?)\\s*",
     // optional float
     of = "(?:\\.\\d+)?",
     // hue
@@ -268,6 +269,7 @@ Colors.prototype = new function()
     this._re_hsl = new RegExp("^hsl\\(" + [h, sl, sl].join(',') + "\\)$");   
     this._re_hsla = new RegExp("^hsla\\(" + [h, sl, sl, a].join(',') + "\\)$"); 
   }).apply(this);
+
   this.parseCSSColor = function(in_str)
   {
     var str = in_str.trim(), color = null;
