@@ -359,13 +359,13 @@ property {
   padding-right: 3px;
   line-height: 15px;
   }
-styles property { /* This is in the inspector */
-  padding-left: 1em;
-}
 property.disabled, .disabled key, .disabled value {
   color: #ccc !important;
   }
 .enable-disable {
+  float: left;
+  margin-left: -20px;
+  margin-bottom: -10px;
   opacity: 0; /* This is a hack (instead of visibility: hidden) to make sure the checkbox is always clickable */
   }
 .enable-disable.hidden { visibility: hidden; }

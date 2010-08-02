@@ -554,14 +554,14 @@ cls.Stylesheets = function()
 
   this.create_declaration = function create_declaration(prop, value, is_important, rule_id, is_disabled, origin)
   {
-    return ("<input type='checkbox'" +
+    return (!(origin == ORIGIN_USER_AGENT || rule_id == undefined) ? "<input type='checkbox'" +
                  " title='" + (is_disabled ? "Enable" : "Disable") + "'" +
-                 " class='enable-disable " + ((origin == ORIGIN_USER_AGENT || rule_id == undefined) ? "hidden" : "")  + "'" +
+                 " class='enable-disable'" +
                  (!is_disabled ? " checked='checked'" : "") +
                  " handler='enable-disable'" +
                  " data-property='" + prop + "'" +
                  " data-rule-id='" + rule_id + "'>"
-           ) +
+               : "") +
            "<key>" + prop + "</key>: " + // TODO: rename "key" to "property"
            "<value>" + helpers.escapeTextHtml(value) + (is_important ? MARKUP_IMPORTANT : "") + "</value>;";
   };
