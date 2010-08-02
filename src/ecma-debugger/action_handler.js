@@ -242,35 +242,6 @@ window.eventHandlers.click['set-break-point'] = function(event)
   }
 };
 
-window.eventHandlers.click['get-children'] = function(event)
-{
-  var container = event.target.parentNode;
-  var level = (parseInt(container.style.marginLeft) || 0) / 16;
-  var level_next = (container.nextSibling && parseInt(container.nextSibling.style.marginLeft) || 0) / 16;
-  var ref_id = parseInt(container.getAttribute('ref-id'));
-
-  if (level_next > level)
-  {
-    dom_data.closeNode(ref_id);
-  }
-  else
-  {
-    dom_data.getChildernFromNode(ref_id, event.ctrlKey ? 'subtree' : 'children');
-  }
-};
-
-window.eventHandlers.click['spotlight-node'] = function(event, current_target)
-{
-  var obj_id = parseInt(current_target.getAttribute('ref-id'));
-  if (obj_id)
-  {
-    hostspotlighter.spotlight(obj_id,
-      settings.dom.get('scroll-into-view-on-spotlight') && obj_id != dom_data.getCurrentTarget());
-    dom_data.setCurrentTarget(obj_id);
-    views['dom'].updateTarget(current_target, obj_id);
-  }
-};
-
 window.eventHandlers.click['create-all-runtimes'] = function()
 {
   services['ecmascript-debugger'].createAllRuntimes();
@@ -279,12 +250,6 @@ window.eventHandlers.click['create-all-runtimes'] = function()
 window.eventHandlers.click['update-global-scope'] = function(event)
 {
   window.eventHandlers.click['show-frame']({'target': { 'ref-id': 0 } });
-};
-
-window.eventHandlers.click['dom-inspection-export'] = function(event)
-{
-  export_data.data = views['dom'].exportMarkup();
-  topCell.showView('export_data');
 };
 
 window.eventHandlers.click['inspect-object-link'] = function(event, target)
@@ -296,20 +261,3 @@ window.eventHandlers.click['inspect-object-link'] = function(event, target)
   topCell.showView(views.inspection.id);
   messages.post('object-selected', {rt_id: rt_id, obj_id: obj_id});
 };
-
-window.eventHandlers.click['dom-resource-link'] = function(event, target)
-{
-  window.eventHandlers.dblclick['edit-dom'].delay(arguments.callee.execute, event, target);
-};
-
-window.eventHandlers.click['dom-resource-link'].execute = function(event, target)
-{
-  var
-  url = target.textContent,
-  rt_id = target.parentNode.parentNode.parentNode.getAttribute('rt-id')
-    // for the case of dom tree-style
-    || target.parentNode.parentNode.parentNode.parentNode.getAttribute('rt-id');
-  // TODO use the exec service to open new link when it's ready
-  window.open(helpers.resolveURLS(runtimes.getURI(rt_id), url.slice(1, url.length - 1)), "_blank");
-};
-

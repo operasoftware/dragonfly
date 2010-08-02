@@ -245,23 +245,25 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ecma-debugger/objectinspection.6.0/actions.js"/>
 <script src="./ecma-debugger/view-commandline_6_0_test.js"/>
 
-<script src="./ecma-debugger/dom_data.js"/>
+<script src="./ecma-debugger/dominspection/inspectabledomnode.js"/>
+<script src="./ecma-debugger/dominspection/domdata.js"/>
 <script src="./ecma-debugger/js_object_filters.js"/>
 
 <script src="./ecma-debugger/elementLayout.js"/>
 <script src="./ecma-debugger/js-source-view.js"/>
 <script src="./ecma-debugger/view-commandline.js"/>
 
-<script src="./ecma-debugger/DOM_markup_style.js"/>
-<script src="./ecma-debugger/DOM_tree_style.js"/>
-<script src="./ecma-debugger/views-dom.js"/>
+<script src="./ecma-debugger/dominspection/templates.js"/>
+<script src="./ecma-debugger/dominspection/domserializer.js"/>
+<script src="./ecma-debugger/dominspection/domview.js"/>
+<script src="./ecma-debugger/dominspection/actions.js"/>
+<script src="./ecma-debugger/dominspection/attrandtextditor.js"/>
+<script src="./ecma-debugger/dominspection/markupeditor.js"/>
 
 <script src="./ecma-debugger/views-threads.js"/>
 <script src="./ecma-debugger/export_data.js"/>
 <script src="./ecma-debugger/action_handler.js"/>
-<script src="./ecma-debugger/DOMEditor.js"/>
-<script src="./ecma-debugger/DomMarkupEditor.js"/>
-<script src="./ecma-debugger/actions_dom.js"/>
+
 <script src="./ecma-debugger/hostspotlighter.js"/>
 
 <script src="./style/css_initial_values.js"/>

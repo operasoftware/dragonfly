@@ -16,7 +16,7 @@ if sys.platform == "win32":
     msvcrt.setmode(sys.stdout.fileno(), os.O_BINARY)
 
 INI_JS = "ini.js"
-BUILD_CONFIG = "D:\\hg\\build\\build_config"
+BUILD_CONFIG = "C:\\docs\\build-df\\build_config"
 
 
 def parse_config(path):
@@ -237,6 +237,18 @@ def run_build_script(ui, repo, core_version=0, type=None, tag="tip", **opts):
         print "abort. making build failed. ", msg
         return
     print "build created"
+    try:
+        import createmanifests
+        sys.argv = [
+            createmanifests.__file__, 
+            '-d', 'dragonfly.opera.com', 
+            '-t', tag, 
+            type["local-repo"]
+        ]
+        createmanifests.main()
+        print "app cache manifests created."
+    except Exception, msg:
+        print "creating app cache mainfests failed.", msg
     print "make zip"
     path = type["local-zip"] % (rev, short_hash)
     create_path(os.path.split(path)[0])

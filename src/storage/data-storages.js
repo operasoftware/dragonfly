@@ -268,7 +268,7 @@ cls.StorageDataBase = new function()
     return a.key > b.key && 1 || a.key < b.key && -1 || 0;
   };
 
-  this._finalize_get_key_value_pairs = function(status, message, rt_id)
+  this._get_storage_items = function(message)
   {
     const
     OBJECT_LIST = 0,
@@ -277,28 +277,32 @@ cls.StorageDataBase = new function()
     // sub message Property
     PROPERTY_NAME = 0,
     PROPERTY_VALUE = 2;
+ 
+    var prop_list = null, i = 0, storage = [];
 
-    var
-    prop_list = {},
-    prop = null,
-    i = 0,
-    storage = [];
-
-    if (status === 0 && message[OBJECT_LIST])
+    if (message[OBJECT_LIST] &&
+        message[OBJECT_LIST][0] && 
+        (prop_list = message[OBJECT_LIST][0][PROPERTY_LIST]))
     {
-      if (message[OBJECT_LIST][0] && (prop_list = message[OBJECT_LIST][0][PROPERTY_LIST]))
+      prop_list = prop_list.filter(this._is_digit);
+      for ( ; i < prop_list.length; i += 3)
       {
-        prop_list = prop_list.filter(this._is_digit);
-        for ( ; i < prop_list.length; i += 3)
+        storage.push(
         {
-          storage.push(
-          {
-            key: prop_list[i][PROPERTY_VALUE],
-            value: prop_list[i + 1][PROPERTY_VALUE],
-            type: prop_list[i + 2][PROPERTY_VALUE]
-          });
-        }
+          key: prop_list[i][PROPERTY_VALUE],
+          value: prop_list[i + 1][PROPERTY_VALUE],
+          type: prop_list[i + 2][PROPERTY_VALUE]
+        });
       }
+    }
+    return storage;
+  }
+
+  this._finalize_get_key_value_pairs = function(status, message, rt_id)
+  {
+    if (status === 0)
+    {
+      var storage = this._get_storage_items(message);
       this._rts[rt_id].storage = storage.sort(this._sort_keys);
       this.post('storage-update', {storage_id: this.id});
     }
@@ -333,6 +337,8 @@ cls.StorageDataBase = new function()
     messages.addListener('reset-state', this._on_reset_state.bind(this));
   };
 }
+
+
 
 
 cls.LocalStorageData = function(id, update_event_name, title, storage_object)
@@ -491,3 +497,43 @@ cls.CookiesData = function(id, update_event_name, title)
 
 cls.CookiesData.prototype = cls.StorageDataBase;
 
+cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
+cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
+
+cls.EcmascriptDebugger["6.0"].StorageDataBase =  function()
+{
+  this._get_storage_items = function(message)
+  {
+    const
+    OBJECT_CHAIN_LIST = 0,
+    // sub message ObjectList 
+    OBJECT_LIST = 0,
+    // sub message ObjectInfo 
+    PROPERTY_LIST = 1,
+    // sub message Property
+    PROPERTY_VALUE = 2;
+
+    var prop_list = null, i = 0, storage = [];
+
+    if (message[OBJECT_CHAIN_LIST] &&
+        message[OBJECT_CHAIN_LIST][0] && 
+        message[OBJECT_CHAIN_LIST][0][OBJECT_LIST] &&
+        message[OBJECT_CHAIN_LIST][0][OBJECT_LIST][0] && 
+        (prop_list = message[OBJECT_CHAIN_LIST][0][OBJECT_LIST][0][PROPERTY_LIST]))
+    {
+      prop_list = prop_list.filter(this._is_digit);
+      for ( ; i < prop_list.length; i += 3)
+      {
+        storage.push(
+        {
+          key: prop_list[i][PROPERTY_VALUE],
+          value: prop_list[i + 1][PROPERTY_VALUE],
+          type: prop_list[i + 2][PROPERTY_VALUE]
+        });
+      }
+    }
+    return storage;
+  }
+}
+
+cls.EcmascriptDebugger["6.0"].StorageDataBase.prototype = cls.StorageDataBase;

@@ -1067,14 +1067,14 @@ textarea-container-inline textarea-inner-container
   display: inline-block;
   background-image: -o-skin('Speed Dial Configuration Dialog Skin');
   padding: 7px 8px 9px 8px;
-  margin: -8px -9px -10px -9px;
+  margin: -8px -10px -10px -10px;
 }
  
 textarea-container-inline textarea
 {
   border: none;
   margin: 0;
-  padding: 0;
+  padding: 0 1px;
   vertical-align: text-top;
   overflow: hidden;
   height: 0px;
