@@ -1,11 +1,13 @@
 ﻿window.cls || (window.cls = {});
 cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
 cls.EcmascriptDebugger["5.0"] || (cls.EcmascriptDebugger["5.0"] = {});
+cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
 
 /**
   * @constructor 
   */
 
+cls.EcmascriptDebugger["6.0"].DOMData =
 cls.EcmascriptDebugger["5.0"].DOMData = function()
 {
   var self = this;
@@ -749,4 +751,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function()
   messages.addListener('reset-state', onResetState);
 
 };
+
+// Disable forced lowercase for some elements
+cls.EcmascriptDebugger["5.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST = ["svg", "math"];
 

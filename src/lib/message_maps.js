@@ -32,18 +32,22 @@ package_map = {
     [
             {
                 "name": "description",
+                "type": 14,
                 "q": "optional",
             },
             {
                 "name": "line",
+                "type": 1,
                 "q": "optional",
             },
             {
                 "name": "column",
+                "type": 1,
                 "q": "optional",
             },
             {
                 "name": "offset",
+                "type": 1,
                 "q": "optional",
             },
         ],

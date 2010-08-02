@@ -878,4 +878,3 @@ var Editor = function(actions)
     self.commit();
   };
 };
-

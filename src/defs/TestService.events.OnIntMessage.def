@@ -1,9 +1,0 @@
-message <span class="message">IntegerMessage</span>
-{
-  required <span class="number">uint32  </span> runtimeID = 1; 
-  required <span class="number">fixed32 </span> objectID  = 2; 
-  required <span class="number">int32   </span> windowID  = 3; 
-  required <span class="number">sint32  </span> scriptID  = 4; 
-  required <span class="number">sfixed32</span> htmlID    = 5; 
-  required <span class="bool">bool    </span> isActive  = 6; 
-}

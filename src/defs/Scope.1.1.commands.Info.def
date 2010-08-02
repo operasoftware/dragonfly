@@ -1,0 +1,4 @@
+message <span class="message">ServiceSelection</span>
+{
+  required <span class="string">string</span> name = 1; 
+}

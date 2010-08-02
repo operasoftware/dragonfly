@@ -69,7 +69,6 @@ def _po_parser(path):
                 if cpos != -1: entry["jsname"] = line[3:cpos]
                 else: entry["jsname"] = line[3:]
             elif line.startswith("msgid"):
-                print line
                 pos = line.index("::")
                 entry["msgid"] = line[6:pos]
                 entry["idstring"] = line[pos:-1]
@@ -138,7 +137,7 @@ def get_po_strings(path):
         cur = {
             "desc": u"",
             "jsname": e.occurrences[0][0].decode(e.encoding),
-            "msgstr": (e.msgstr or e.msgid[e.msgid.index("::")+2:]).replace("\n", "\\n"),
+            "msgstr": (e.msgstr or e.msgid).replace("\n", "\\n"),
             "scope": []
         }
         if e.comment:
@@ -147,9 +146,7 @@ def get_po_strings(path):
             cur["scope"] = ",".join(commentlines).split(",")
             lines = lines - commentlines
             cur["desc"] = u"\\n".join(lines)
-
         ret.append(cur)
-        
     return ret
 
 def get_po_strings_old(path):

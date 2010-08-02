@@ -48,19 +48,23 @@ window.cls.TestFramework = function()
     * to clear the log entries
     */
   this.clear_log = function(){};
+  this.rebuild_last_state = function(){};
+
+  this.rebuild_last_state = function(){};
 
   /* privat */
   
   this._selected_service = "";
   this._status_map = cls.ServiceBase.get_status_map();
   this._event_map = cls.ServiceBase.get_event_map();
+  this._service_descriptions = null;
 
   const INDENT = "  ", RESPONSE = 2;
 
   this._get_indent = function(count)
   {
     var ret = "";
-    while(count && count-- > 0)
+    while(count-- > 0)
     {
       ret += INDENT;
     }
@@ -73,30 +77,13 @@ window.cls.TestFramework = function()
     return (
       this._get_indent(indent) +
       name + ': ' + (
+        item === null && "null" || 
         "message" in definition && "\n" + 
             this._pretty_print_payload(item, definition["message"], indent + 1) ||
-        !item && item === null &&  "null" || 
+        "enum" in definition && item in definition["enum"]["numbers"] && (definition["enum"]["numbers"][item] + " (" + item + ")") ||
+        "type" in definition && definition["type"] == 11 /*bool*/ && (item ? "true" : "false") ||
         typeof item == "string" && "\"" + item + "\"" || 
         item));
-  }
-
-  this._get_recursiv_message = function _get_recursiv_message(definitions, definition)
-  {
-    for (var def = null, i = 0, ret = null; def = definitions[i]; i++)
-    {
-      if (def.name == definition.name)
-      {
-        return def.message;
-      }
-      if (def.message && typeof def.message == 'object')
-      {
-        if (ret = _get_recursiv_message(def.message, definition))
-        {
-          return ret;
-        }
-      }
-    }
-    return null;
   }
 
   this._pretty_print_payload = function(payload, definitions, indent)
@@ -108,11 +95,7 @@ window.cls.TestFramework = function()
     definition = null,
     j = 0;
 
-    if (!this._definitions)
-    {
-      this._definitions = definitions;
-    }
-
+    //# TODO message: self
     if (definitions)
     {
       for (; i < payload.length; i++)
@@ -122,35 +105,38 @@ window.cls.TestFramework = function()
         {
           item = [];
         }
-        definition = definitions[i];
-        if (definition && (definition.message == "self"))
+        if (definition = definitions[i])
         {
-          definition.message = this._get_recursiv_message(this._definitions, definition);
-        }
-        if (definition["q"] == "repeated")
-        {
-          ret.push(this._get_indent(indent) + definition['name'] + ':');
-          for( j = 0; j < item.length; j++)
+          if (definition["q"] == "repeated")
+          {
+            ret.push(this._get_indent(indent) + definition['name'] + ':');
+            for( j = 0; j < item.length; j++)
+            {
+              ret.push(this._pretty_print_payload_item(
+                indent + 1,
+                definition['name'].replace("List", ""),
+                definition,
+                item[j]));
+            }
+          }
+          else
           {
             ret.push(this._pretty_print_payload_item(
-              indent + 1,
-              definition['name'].replace("List", ""),
+              indent,
+              definition['name'],
               definition,
-              item[j]));
+              item))
           }
         }
         else
         {
-          ret.push(this._pretty_print_payload_item(
-            indent,
-            definition['name'],
-            definition,
-            item))
+          throw Error("PrettyPrintError. Probably invalid message. " +
+                        "payload: " + JSON.stringify(payload));
         }
       }
+      return ret.join("\n")
     }
-    this._definitions = null;
-    return ret.join("\n")
+    return "";
   }
 
   // handle a command response
@@ -175,13 +161,22 @@ window.cls.TestFramework = function()
       null;
     if (status != 0) // Use the error structure if we received an error response
         definitions = window.package_map["com.opera.stp"]["Error"];
+    var payload = "";
+    try
+    {
+      payload = (cookies.get('pretty-print-message') == 'true' && definitions ?
+          this._pretty_print_payload(message, definitions, 2) :
+          JSON.stringify(message));
+    }
+    catch (e)
+    {
+      payload = JSON.stringify(message);
+    }
     response.textContent = 
       "response:\n  status: " + 
       this._status_map[status] + "\n" +
       "  payload: \n" + 
-      (cookies.get('pretty-print-message') == 'true' && definitions ?
-        this._pretty_print_payload(message, definitions, 2) :
-        JSON.stringify(message));
+      payload;
   }
 
   // to highlight the selected element in a list
@@ -241,7 +236,7 @@ window.cls.TestFramework = function()
 
   // to re-select the last selected service and command or event
   // and display the according message definitions
-  this._rebuild_last_state = function()
+  this.rebuild_last_state = function()
   {
     this._reselect_element('service-list', 'command-list');
   }
@@ -262,10 +257,38 @@ window.cls.TestFramework = function()
     return ret;
   }
 
+  this._make_service_descriptions = function()
+  {
+    var 
+    map = window.message_maps,
+    service_name = '', 
+    command_id = '', 
+    servive = null, 
+    commands = null, 
+    events = null;
+
+    this._service_descriptions = {commands:{}, events: {}};
+    for (service_name in map)
+    {
+      service = map[service_name];
+      service_name = window.app.helpers.dash_to_class_name(service_name);
+      commands = this._service_descriptions.commands[service_name] = [];
+      events = this._service_descriptions.events[service_name] = [];
+      for (command_id in service)
+        (1 in service[command_id] && commands || events).push(service[command_id].name); 
+      commands.sort();
+      events.sort();
+    }
+  }
+
   // generic click event handler
   this._click_handler = function(event)
   {
     var target = event.target;
+    if (!this._service_descriptions)
+    {
+      this._make_service_descriptions();
+    }
     if(!this._doc_base_uri)
     {
       this._doc_base_uri = 
@@ -289,8 +312,8 @@ window.cls.TestFramework = function()
           this._update_selected(target, event.target);
           document.getElementById('message-container').innerHTML = "";
           this._selected_service = event.target.textContent
-          this._update_list('Command', service_descriptions.commands[this._selected_service], target);
-          this._update_list('Event', service_descriptions.events[this._selected_service], target);
+          this._update_list('Command', this._service_descriptions.commands[this._selected_service], target);
+          this._update_list('Event', this._service_descriptions.events[this._selected_service], target);
           cookies.set('service-list', this._selected_service, 2*60*60*1000);
           break;
         }
@@ -313,17 +336,21 @@ window.cls.TestFramework = function()
                   " id='pretty-print-message'>" +
                 "</label></p>";
           var pres = message_container.getElementsByTagName('pre');
-
-          new XMLHttpRequest().loadResource(
-              this._doc_base_uri + 'defs/' + this._selected_service + '.commands.' + event.target.textContent + '.def',
-              this._show_def,
-              {'pre': pres[0]}
-            )
-          new XMLHttpRequest().loadResource(
-              this._doc_base_uri + 'defs/' + this._selected_service + '.responses.' + event.target.textContent + '.def',
-              this._show_def,
-              {'pre': pres[1]}
-            )
+          var service = window.services[this._dashed_name(this._selected_service)];
+          if (service)
+          {
+            service = this._selected_service + '.' + service.version;
+            new XMLHttpRequest().loadResource(
+                this._doc_base_uri + 'defs/' + service + '.commands.' + event.target.textContent + '.def',
+                this._show_def,
+                {'pre': pres[0]}
+              )
+            new XMLHttpRequest().loadResource(
+                this._doc_base_uri + 'defs/' + service + '.responses.' + event.target.textContent + '.def',
+                this._show_def,
+                {'pre': pres[1]}
+              )
+          }
           cookies.set('command-list', event.target.textContent, 2*60*60*1000);
           break;
         }
@@ -336,11 +363,16 @@ window.cls.TestFramework = function()
             "<h2>Event " + event.target.textContent + "</h2>" +
             "<pre class='definition'></pre>";
           var pres = message_container.getElementsByTagName('pre');
-          new XMLHttpRequest().loadResource(
-              this._doc_base_uri + 'defs/' + this._selected_service + '.events.' + event.target.textContent + '.def',
-              this._show_def,
-              {'pre': pres[0]}
-            );
+          var service = window.services[this._dashed_name(this._selected_service)];
+          if (service)
+          {
+            service = this._selected_service + '.' + service.version;
+            new XMLHttpRequest().loadResource(
+                this._doc_base_uri + 'defs/' + service + '.events.' + event.target.textContent + '.def',
+                this._show_def,
+                {'pre': pres[0]}
+              );
+          }
           break;
         }
         case 'test-send-command':

@@ -1,7 +1,9 @@
 ﻿window.cls || (window.cls = {});
 cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
 cls.EcmascriptDebugger["5.0"] || (cls.EcmascriptDebugger["5.0"] = {});
+cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
 
+cls.EcmascriptDebugger["6.0"].Hostspotlighter =
 cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
 {
   /* interface */

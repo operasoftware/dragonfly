@@ -68,7 +68,7 @@ Options:
 
 Suitable command line for release builds
 
-pyhton tools/dfbuild.py -l include-license.txt -m -t -k "$dfversion$=Dragonfly testversion" -k "$revdate$=<todays datetime>" src build
+pyhton tools/dfbuild.py -l include-license.txt -m -t -s -k "$dfversion$=Dragonfly testversion" -k "$revdate$=<todays datetime>" src build
 
 
 

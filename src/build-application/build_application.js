@@ -33,63 +33,83 @@ if( window.app )
   throw "window.app does already exist";
 }
 window.app = {};
-window.cls.Messages.apply(window.app);
+window.cls.MessageMixin.apply(window.app); // Give the app object message handling powers
 
 
 window.app.build_application = function(on_services_created, on_services_enabled)
 {
-  /**
-   * A callback helper for String.prototype.replace for the reg exp /(^|-)[a-z]/
-   */
-  var re_replace_first_and_dash = function(match)
+
+  var _find_compatible_version = function(version, version_list)
   {
-    return match[match.length-1].toUpperCase();
+    var
+    numbers = version.split(".").map(Number),
+    match = null,
+    ver, nums;
+     // Find the best match for the current version
+    for (ver in version_list)
+    {
+      nums = ver.split(".").map(Number);
+      if (nums[0] != numbers[0])
+        continue;
+      if (!match || nums[1] > match[1][1])
+        match = [ver, nums];
+    }
+    return match && match[0];
   }
 
-  /**
-   * Make an appropriate class name based on name
-   */
-  var get_class_name = function(name)
+  var on_host_info_callback = function(service_descriptions)
   {
-    return name.replace(/(^|-)[a-z]/g, re_replace_first_and_dash);
-  }
+
+      new window.cls.ScopeInterfaceGenerator().get_interface(service_descriptions, 
+        function(map)
+        {
+          window.message_maps = map;
+          window.cls.ServiceBase.populate_map(map);
+          build_and_enable_services(service_descriptions, map);
+        }, 
+        function(error)
+        {
+          opera.postError(error.message);
+        },
+        Boolean(window.ini.debug)
+      );
+    
+  };
 
   /**
    * This callback is invoked when host info is received from the debuggee.
    *
    */
-  var on_host_info_callback = function(service_descriptions)
+  var build_and_enable_services = function(service_descriptions, map)
   {
-    var
+    var 
     service_name = '',
     service = null,
     class_name = '',
     re_version = /(^\d+\.\d+)(?:\.\d+)?$/,
     version = null,
     i = 0,
-    builder = null;
+    builder = null,
+    numbers = null;
 
     for (service_name in service_descriptions)
     {
+      service = service_descriptions[service_name];
+      version = re_version.exec(service.version);
+      version = version && version[1] || "0";
+      class_name = window.app.helpers.dash_to_class_name(service_name);
       if (service_name != "scope")
       {
-        service = service_descriptions[service_name];
-        version = re_version.exec(service.version);
-        version = version && version[1] || 0;
-        class_name = get_class_name(service_name);
-        // the initial message map is set in cls.debug.guess_message_map
-        if(window.ini.debug &&
-            window.message_maps[service_name] &&
-            window.message_maps[service_name].versions &&
-            window.message_maps[service_name].versions[version])
+        if (window.services[service_name] && 
+          window.services[service_name].create_and_expose_interface(version, map[service_name]))
         {
-          window.message_maps[service_name] = window.message_maps[service_name].versions[version];
-          window.message_maps[service_name].versions = null;
-        }
-        builder = window.app.builders[class_name] && window.app.builders[class_name][version];
-        if (builder)
-        {
-          builder(service);
+          var
+          match_version = _find_compatible_version(version, window.app.builders[class_name]),
+          builder = window.app.builders[class_name] && window.app.builders[class_name][match_version];
+          if (builder) 
+          {
+            builder(service);
+          }
         }
       }
     }
@@ -102,21 +122,27 @@ window.app.build_application = function(on_services_created, on_services_enabled
     {
       on_services_created(service_descriptions);
     }
+    for (service_name in service_descriptions)
+    {
+      if(service_name in window.services && 
+            window.services[service_name].is_implemented &&
+            service_name != "scope")
+      {
+        window.services['scope'].requestEnable(0,[service_name]);
+      }
+    }
   }
 
   var create_raw_interface = function(service_name)
   {
-    var service_class = function()
+    var ServiceClass = function()
     {
       this.name = service_name;
       this.is_implemented = false;
     }
-    var service_implementation = function(){};
-    service_implementation.prototype = new cls.ServiceBase();
-    service_class.prototype = new service_implementation();
-    service_class.prototype.constructor = service_class;
-    window.cls.Messages.apply(service_class.prototype);
-    window.services.add(new service_class());
+    ServiceClass.prototype = new cls.ServiceBase();
+    ServiceClass.prototype.constructor = ServiceClass;  // this is not really needed
+    window.services.add(new ServiceClass());
   }
 
   // ensure that the static methods on cls.ServiceBase exist.
@@ -127,7 +153,7 @@ window.app.build_application = function(on_services_created, on_services_enabled
 
 
   // global objects
-  window.tagManager = new window.cls.TagManager();
+  window.tagManager = window.tag_manager = new window.cls.TagManager();
   window.helpers = new cls.Helpers();
 
   // create window.services namespace and register it.
@@ -135,11 +161,9 @@ window.app.build_application = function(on_services_created, on_services_enabled
   [
     'scope',
     'console-logger',
-    'ecmascript-logger',
     'http-logger',
     'exec',
     'window-manager',
-    'url-player',
     'ecmascript-debugger'
   ].forEach(create_raw_interface);
   var params = this.helpers.parse_url_arguments();
@@ -147,8 +171,9 @@ window.app.build_application = function(on_services_created, on_services_enabled
   {
     cls.debug.create_debug_environment(params);
   }
-  var namespace = cls.Scope && cls.Scope["1.0"];
-  window.app.helpers.implement_service(namespace);
+  var namespace = cls.Scope && cls.Scope["1.1"];
+  namespace.Service.apply(window.services.scope.constructor.prototype);
+  window.services.scope.is_implemented = true;
   window.services.scope.set_host_info_callback(on_host_info_callback);
   window.services.scope.set_services_enabled_callback(on_services_enabled);
 
@@ -190,17 +215,6 @@ window.app.builders = {};
 
 window.app.helpers = {};
 
-window.app.helpers.implement_service = function(namespace)
-{
-  if(namespace && namespace.Service && window.services[namespace.name])
-  {
-    namespace.Service.apply(window.services[namespace.name].constructor.prototype);
-    window.services[namespace.name].is_implemented = true;
-    return window.services[namespace.name];
-  }
-  return null;
-}
-
 window.app.helpers.parse_url_arguments = function()
 {
   /*
@@ -221,6 +235,21 @@ window.app.helpers.parse_url_arguments = function()
       arg[1] && arg[1].replace(/^ +/, '').replace(/ +$/, '') || true;
   }
   return params;
+}
+
+window.app.helpers.dash_to_class_name = function(name)
+{
+  for ( var cur = '', i = 0, ret = '', do_upper = true; cur = name[i]; i++)
+  {
+    if(cur == '-')
+    {
+      do_upper = true;
+      continue;
+    }
+    ret += do_upper && cur.toUpperCase() || cur;
+    do_upper = false;
+  }
+  return ret;
 }
 
 

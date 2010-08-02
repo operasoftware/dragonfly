@@ -1,0 +1,309 @@
+<!doctype html>
+<html>
+ <head>
+  <title> new document </title>
+
+<!--<link rel="stylesheet" href="../../src/ui-style/debugger_style.css">-->
+<!--<link rel="stylesheet" href="../../src/ui-style/syntax-highlight.css">-->
+<style>
+/* debugger style */
+.folder-key {
+  border:none;
+  margin:0;
+  margin-right:7px;
+  padding:0;
+  font-size:10px;
+  line-height:11px;
+  height:11px;
+  width:11px;
+  background: transparent url('data:image/png;charset=utf-8;base64,R0lGODlhCwAhAKIAAAAAAP///8zMzGZmZv///wAAAAAAAAAAACH5BAEAAAQALAAAAAALACEAAAM9KLqs8RA6OOJ8VYqYnxtgWF1BF5Amam3R2rww066zVnts/Yngmc+kVpB2izEIyKRyyWw6n1BmaRqtWq/LBAA7') scroll no-repeat 0 0;
+  cursor:pointer;
+  }
+
+examine-objects, 
+examine-objects item 
+{
+  display:block;
+}
+examine-objects
+{
+  padding: 0 9px;
+}
+examine-objects examine-objects
+{
+  padding: 0 0 0 16px;
+}
+examine-objects key 
+{
+  margin-right:7px;
+}
+examine-objects key.no-expander
+{
+  margin-left: 18px;
+}
+.prototype-chain-object
+{
+  background-color: #666;
+  color: #fff;
+  font-weight: bold;
+  padding: 2px 16px;
+  margin: 2px 0;
+}
+
+ 
+
+
+
+</style>
+
+<style>
+/* ecma object tree */
+
+
+
+
+examine-objects key {
+  color: #111;
+  }
+
+examine-objects .string {
+  color:#742;
+  }
+
+examine-objects .number, offsets value {
+  color:#920;
+  }
+
+examine-objects .undefined {
+  color:#c00;
+  font-style: italic;
+  }
+
+examine-objects .null {
+  color:#c00;
+  font-style: italic;
+  }
+
+examine-objects .boolean {
+  color:#920;
+  }
+
+examine-objects .object {
+  color:#18a;
+  }
+
+</style>
+<style>
+/* html 5 markup */
+/* debugger style */
+
+
+
+.examine-objects
+{
+  padding: 0 9px;
+}
+.examine-objects .examine-objects
+{
+  padding: 0 0 0 16px;
+}
+.key 
+{
+  margin-right:7px;
+}
+.key.no-expander
+{
+  margin-left: 18px;
+}
+.prototype-chain-object
+{
+  background-color: #666;
+  color: #fff;
+  font-weight: bold;
+  padding: 2px 16px;
+  margin: 2px 0;
+}
+
+ 
+
+
+
+
+/* ecma object tree */
+
+
+
+
+.key {
+  color: #111;
+  }
+
+.string {
+  color:#742;
+  }
+
+.number {
+  color:#920;
+  }
+
+.undefined {
+  color:#c00;
+  font-style: italic;
+  }
+
+.null {
+  color:#c00;
+  font-style: italic;
+  }
+
+.boolean {
+  color:#920;
+  }
+
+.object {
+  color:#18a;
+  }
+
+</style>
+<style>
+body
+{
+  font-family: sans-serif;
+}
+</style>
+
+
+<script src="../../src/scripts/dom.js"/>
+<script src="../../src/lib/namespace.js"/>
+<script src="../../src/ui-scripts/ui-actions.js"/>
+<script src="../../src/ecma-debugger/helpers.js"/>
+<script src="../../src/ecma-debugger/object_inspection/inspection_base_data_6_0.js"/>
+<script src="../../src/ecma-debugger/object_inspection/templates_6_0.js"/>
+<script src="../../src/ecma-debugger/object_inspection/actions_6_0.js"/>
+<script src="../../src/ecma-debugger/object_inspection/fix_object_inspection_6_0.js"/>
+
+<script src="templates_6_0_test.js"/>
+<script src="templates_6_0_test_html5.js"/>
+
+<script src="data.js"/>
+
+
+
+<script>
+window.onload = function()
+{
+  window.app = {};
+
+  window.app.helpers = {};
+
+  window.app.helpers.parse_url_arguments = function()
+  {
+    /*
+      supported arguments:
+        - debug
+        - log-filter
+    */
+    var
+    args = location.search.slice(1).split(';'),
+    params = {},
+    arg = '',
+    i = 0;
+
+    for( ; arg = args[i]; i++)
+    {
+      arg = arg.split('=');
+      params[arg[0].replace(/^ +/, '').replace(/ +$/, '')] =
+        arg[1] && arg[1].replace(/^ +/, '').replace(/ +$/, '') || true;
+    }
+    return params;
+  }
+
+  window.app.helpers.dash_to_class_name = function(name)
+  {
+    for ( var cur = '', i = 0, ret = '', do_upper = true; cur = name[i]; i++)
+    {
+      if(cur == '-')
+      {
+        do_upper = true;
+        continue;
+      }
+      ret += do_upper && cur.toUpperCase() || cur;
+      do_upper = false;
+    }
+    return ret;
+  }
+  window.helpers = new cls.Helpers();
+  var namespace = cls.EcmascriptDebugger && cls.EcmascriptDebugger["6.0"];
+  var InspectionBaseData = new namespace.InspectionBaseData();
+
+  namespace.FixObjectInspectionData.prototype = InspectionBaseData;
+  cls.InspectableJSObject = namespace.FixObjectInspectionData;
+
+  var model = window.model = new cls.InspectableJSObject();
+  model.setObject(1, 1);
+  model._obj_map = __obj_map;
+  model._expand_tree = __expand_tree;
+
+  
+
+
+}
+
+var test = function(use_html_5)
+{
+  var container = document.getElementById('test');
+  container.innerHTML = "";
+  setTimeout(function(){
+    var t_1 = Date.now();
+    var template = window.templates[use_html_5 ? 'inspected_js_object_3' : 'inspected_js_object'](window.model, true);
+    var t_2 = Date.now();
+    container.render(template);
+    var t_3 = Date.now();
+    var o = container.offsetHeight + container.offsetWidth;
+    var t_4 = Date.now();
+    alert(
+      "concatenate innerHTML string: " + (t_2 - t_1) +
+      "\nbuild DOM: " + (t_3 - t_2) + 
+      "\nlayout: " +  (t_4 - t_3) +
+      "\ntotal: " +(t_4 - t_1));
+  }, 10);
+}
+
+
+
+var test_template = function(use_dom)
+{
+  var container = document.getElementById('test');
+  container.innerHTML = "";
+  setTimeout(function(){
+    var t_1 = Date.now();
+    var template = window.templates.inspected_js_object_test(window.model, true);
+    var t_2 = Date.now();
+    container[use_dom ? 'render' : 'renderInner'](template);
+    var t_3 = Date.now();
+    var o = container.offsetHeight + container.offsetWidth;
+    var t_4 = Date.now();
+    alert(
+      "build template: " + (t_2 - t_1) +
+      "\nbuild DOM: " + (t_3 - t_2) + 
+      "\nlayout: " +  (t_4 - t_3) +
+      "\ntotal: " +(t_4 - t_1));
+  }, 10);
+}
+
+
+</script>
+
+ </head>
+
+ <body>
+ <p>
+  <input type="button" onclick="test()" value="test direct innerHTML">
+  <input type="button" onclick="test(true)" value="test direct innerHTML HTML5">
+  <input type="button" onclick="test_template(true)" value="test template DOM methods">
+  <input type="button" onclick="test_template()" value="test template innerHTML">
+
+  
+<div id='test'></div>
+ </body>
+</html>

@@ -171,7 +171,9 @@ cls.DOMView = function(id, name, container_class)
       force_lower_case = settings[self.id].get('force-lowercase'),
       node_name = '',
       tag_head = '',
-      start_depth = data[0][DEPTH] - 1;
+      start_depth = data[0][DEPTH] - 1,
+      disregard_force_lower_case_whitelist = cls.EcmascriptDebugger["5.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST,
+      disregard_force_lower_case_depth = 0;
 
       for( ; node = data[i]; i++ )
       {
@@ -184,6 +186,18 @@ cls.DOMView = function(id, name, container_class)
         children_length = node[CHILDREN_LENGTH];
         child_pointer = 0;
         node_name =  node[NAME];
+
+        if (force_lower_case && disregard_force_lower_case_whitelist.indexOf(node[NAME].toLowerCase()) != -1)
+        {
+          disregard_force_lower_case_depth = node[DEPTH];
+          force_lower_case = false;
+        }
+        else if (disregard_force_lower_case_depth && disregard_force_lower_case_depth == node[DEPTH])
+        {
+          disregard_force_lower_case_depth = 0;
+          force_lower_case = dom_data.isTextHtml() && settings[this.id].get('force-lowercase');
+        }
+
         if( force_lower_case )
         {
           node_name = node_name.toLowerCase();
@@ -323,6 +337,8 @@ cls.DOMView = function(id, name, container_class)
     var show_attrs = settings[this.id].get('show-attributes');
     var node_name = '';
     var tag_head = '';
+    var disregard_force_lower_case_whitelist = cls.EcmascriptDebugger["5.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST;
+    var disregard_force_lower_case_depth = 0;
 
     for( ; node = data[i]; i += 1 )
     {
@@ -335,6 +351,18 @@ cls.DOMView = function(id, name, container_class)
       children_length = node[ CHILDREN_LENGTH ];
       child_pointer = 0;
       node_name =  ( node[NAMESPACE] ? node[NAMESPACE] + ':': '' ) +  node[ NAME ];
+
+      if (force_lower_case && disregard_force_lower_case_whitelist.indexOf(node[NAME].toLowerCase()) != -1)
+      {
+        disregard_force_lower_case_depth = node[DEPTH];
+        force_lower_case = false;
+      }
+      else if (disregard_force_lower_case_depth && disregard_force_lower_case_depth == node[DEPTH])
+      {
+        disregard_force_lower_case_depth = 0;
+        force_lower_case = dom_data.isTextHtml() && settings[this.id].get('force-lowercase');
+      }
+
       if( force_lower_case )
       {
         node_name = node_name.toLowerCase();

@@ -1,0 +1,4 @@
+message <span class="message">ErrorInfo</span>
+{
+  required <span class="string">string</span> description = 1; 
+}
