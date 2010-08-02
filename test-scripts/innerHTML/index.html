@@ -177,10 +177,10 @@ body
 <script src="../../src/lib/namespace.js"/>
 <script src="../../src/ui-scripts/ui-actions.js"/>
 <script src="../../src/ecma-debugger/helpers.js"/>
-<script src="../../src/ecma-debugger/object_inspection/inspection_base_data_6_0.js"/>
-<script src="../../src/ecma-debugger/object_inspection/templates_6_0.js"/>
-<script src="../../src/ecma-debugger/object_inspection/actions_6_0.js"/>
-<script src="../../src/ecma-debugger/object_inspection/fix_object_inspection_6_0.js"/>
+<script src="../../src/ecma-debugger/objectinspection.6.0/inspectablejsobject.js"/>
+<script src="../../src/ecma-debugger/objectinspection.6.0/templates.js"/>
+<script src="../../src/ecma-debugger/objectinspection.6.0/actions.js"/>
+
 
 <script src="templates_6_0_test.js"/>
 <script src="templates_6_0_test_html5.js"/>
@@ -234,13 +234,11 @@ window.onload = function()
   }
   window.helpers = new cls.Helpers();
   var namespace = cls.EcmascriptDebugger && cls.EcmascriptDebugger["6.0"];
-  var InspectionBaseData = new namespace.InspectionBaseData();
 
-  namespace.FixObjectInspectionData.prototype = InspectionBaseData;
-  cls.InspectableJSObject = namespace.FixObjectInspectionData;
+  cls.InspectableJSObject = namespace.InspectableJSObject;
 
-  var model = window.model = new cls.InspectableJSObject();
-  model.setObject(1, 1);
+  var model = window.model = new cls.InspectableJSObject(1,1);
+
   model._obj_map = __obj_map;
   model._expand_tree = __expand_tree;
 
