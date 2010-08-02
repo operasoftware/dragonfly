@@ -489,6 +489,41 @@ Element.prototype.getPreviousInFlow = function(root_context)
   return cursor || previous || parent != root_context && parent || null;
 };
 
+
+/* Check elements of a DOM traversal for an attribute. */ 
+Element.prototype.has_attr = function(traverse_type, name)
+{
+  switch (traverse_type)
+  {
+    case "parent-node-chain":
+    {
+      var ele = this;
+      while (ele && !ele.hasAttribute(name))
+        ele = ele.parentElement;
+      return ele;
+      break;
+    }
+  }
+  return null;
+}
+
+/* Get an attribute of the first hit of a DOM traversal. */
+Element.prototype.get_attr = function(traverse_type, name)
+{
+  switch (traverse_type)
+  {
+    case "parent-node-chain":
+    {
+      var ele = this;
+      while (ele && !ele.hasAttribute(name))
+        ele = ele.parentElement;
+      return ele && ele.hasAttribute(name) ? ele.getAttribute(name) : null;
+      break;
+    }
+  }
+  return null;
+}
+
 /**
  * Make sure the element is visible in its scoll context.
  * @see Element.prototype.scrollSoftIntoContainerView
