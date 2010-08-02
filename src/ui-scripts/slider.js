@@ -31,7 +31,7 @@ var Slider = function(config)
 
 Slider.prototype = new function()
 {
-  const UPDATE_INTERVAL = 80;
+  const UPDATE_INTERVAL = 80, MAX = Math.max, MIN = Math.min;
   this._onmousemoveinterval = function(event)
   {
     if (this._is_active)
@@ -58,14 +58,14 @@ Slider.prototype = new function()
     {
       value = (event.clientX - this._delta_x - box.left) /
               this._pixel_range_x * this._range_x + this._min_x;
-      value = value > this._max_x ? this._max_x : value < this._min_x ? this._min_x : value;
+      value = MAX(MIN(value, this._max_x), this._min_x);
       this.x = this._is_invers_x ? this._max_x - value + this._min_x : value;
     }
     if (this._has_y)
     {
       value = (event.clientY - this._delta_y - box.top) /
               this._pixel_range_y * this._range_y + this._min_y;
-      value = value > this._max_y ? this._max_y : value < this._min_y ? this._min_y : value;
+      value = MAX(MIN(value, this._max_y), this._min_y);
       this.y = this._is_invers_y ? this._max_y - value + this._min_y : value;
     }
   }
