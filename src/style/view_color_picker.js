@@ -1,4 +1,4 @@
-window.cls || (window.cls = {});
+﻿window.cls || (window.cls = {});
 
 window.cls.ColorPickerView = function(id, name, container_class)
 {
