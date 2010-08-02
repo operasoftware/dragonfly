@@ -208,7 +208,7 @@ ColorPicker.prototype = new function()
   
   this._update_sv = function()
   {
-    this._ele_xy_graphic.clearAndRender(window.templates.gradient_2
+    this._ele_xy_graphic.clearAndRender(window.templates.gradient_2d
     (
       ['#fff', this._cs.xyz(1, 1, this._cur_z).hhex], 
       ['#000']
@@ -218,7 +218,7 @@ ColorPicker.prototype = new function()
   this._update_hs = 
   this._update_hv = function()
   {
-    this._ele_xy_graphic.clearAndRender(window.templates.gradient_2
+    this._ele_xy_graphic.clearAndRender(window.templates.gradient_2d
     (
       [
         this._cs.xyz(0/6, 1, this._cur_z).hhex,
@@ -237,7 +237,7 @@ ColorPicker.prototype = new function()
   this._update_br =
   this._update_bg = function()
   {
-    this._ele_xy_graphic.clearAndRender(window.templates.gradient_2
+    this._ele_xy_graphic.clearAndRender(window.templates.gradient_2d
     (
       [
         this._cs.xyz(0, 1, this._cur_z).hhex, 

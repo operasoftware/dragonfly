@@ -108,7 +108,7 @@
     ]);
   };
   
-  this.gradient_2 = function(top_colors, bottom_colors, x, y, width, height)
+  this.gradient_2d = function(top_colors, bottom_colors, x, y, width, height)
   {
     x || (x = 0);
     y || (y = 0);
@@ -211,7 +211,7 @@
     ]);
   }
   
-  this.color_picker_2 = function(existing_color, cp_class, cp_2d_class, 
+  this.color_picker_popup = function(existing_color, cp_class, cp_2d_class, 
                                  cp_1d_class, cp_old_class, cp_new_class, 
                                  z_axis, cp_alpha_class)
   {
@@ -236,6 +236,7 @@
                    'border-top-color: ' + existing_color.hhex +';'
         ] : [], 
         'class', cp_old_class, 
+        'data-color', 'cancel',
         'style', 'background-color:' + existing_color.cssvalue
       ],
       ['div', 
