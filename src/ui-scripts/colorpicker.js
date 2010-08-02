@@ -61,7 +61,15 @@ ColorPicker.prototype = new function()
   
   this._onclick = function(event)
   {
-
+    // TODO implement the stored color samples.
+    var color = event.target.get_attr('parent-node-chain', 'data-color');
+    if (color == 'cancel')
+    {
+      this._cs.clone(this._initial_color);
+      this._cb_color.clone(this._initial_color);
+      this._update();
+      this._cb(this._cb_color);
+    }
   }
   
   this._onchange = function(event)
@@ -154,13 +162,12 @@ ColorPicker.prototype = new function()
   }
   
   this._update_xy_slider_color = function()
-  {
-    var cs = this._cs.xyz(this._cur_x, this._cur_y, this._cur_z);
-    var luminosity = (cs.r / 2.55 * 0.2125) + 
-                     (cs.g / 2.55 * 0.7154) + 
-                     (cs.b / 2.55 * 0.0721);
+  { 
+    var gray_value = this._cs.xyz(this._cur_x, 
+                                  this._cur_y, 
+                                  this._cur_z).getGrayValue() / 255;
     this._ele_xy_slider.setAttribute('stroke', 
-                                     luminosity > 25 ? 
+                                      gray_value > .3 ? 
                                      'hsl(0, 0%, 20%)' : 
                                      'hsl(0, 0%, 80%)'); 
   }
@@ -407,10 +414,10 @@ ColorPicker.prototype = new function()
   this.render = function()
   {
     document.addEventListener('DOMNodeInserted', this._setup_bound, false);
-    return window.templates.color_picker_2(this._initial_color, 
-                                           CP_CLASS, CP_2D_CLASS, 
-                                           CP_1D_CLASS, CP_OLD_CLASS, 
-                                           CP_NEW_CLASS, 'h', CP_ALPHA_CLASS)
+    return window.templates.color_picker_popup(this._initial_color, 
+                                               CP_CLASS, CP_2D_CLASS, 
+                                               CP_1D_CLASS, CP_OLD_CLASS, 
+                                               CP_NEW_CLASS, 'h', CP_ALPHA_CLASS)
   }
   
   this._init = function(cb, color)
