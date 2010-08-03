@@ -1,6 +1,10 @@
 ﻿(function()
 {
 
+  /**
+    * Templates with svg_ prefix are meant to be used as part 
+    * of an other svg template, e.g. the svg root element must already exist.
+    */
   var get_id = (function()
   {
     var id_count = 0;
@@ -72,7 +76,7 @@
     ]);
   };
   
-  this._gradient = function(x, y, width, height, colors, rotate, mask)
+  this.svg_gradient = function(x, y, width, height, colors, rotate, mask)
   {
     var svg_defs = ['svg:defs'];
     if (colors.length > 1)
@@ -94,6 +98,18 @@
     ]); 
   };
   
+  /**
+    * To create an svg gradient.
+    * @param {Array} colors. An array of css color values.
+    * @param {Boolean} rotate. If turned on, the gradient will be 
+    * turned by 90 degrees.
+    * @param  {Boolean} mask. If turned on the gradient will be masked with 
+    * an alpha gradient 0 - 1, turned by 90 degrees.
+    * @param {Number} x. The x position. Defaults to 0.
+    * @param {Number} y. The y position. Defaults to 0.
+    * @param {Number} width. The width. Defaults to 100%.
+    * @param {Number} height. The height. Defaults to 100%.
+    */
   this.gradient = function(colors, rotate, mask, x, y, width, height)
   {
     x || (x = 0);
@@ -103,11 +119,22 @@
     
     return (
     ['svg:svg',
-      this._gradient(x, y, width, height, colors, rotate, mask),
+      this.svg_gradient(x, y, width, height, colors, rotate, mask),
       'viewBox', '0 0 100% 100%'
     ]);
   };
   
+  /**
+    * To create an 2d svg gradient, e.g a layer in a rgb color space.
+    * @param {Array} top_colors. An array of css color values 
+    * for top-left to top-right.
+    * @param {Array} bottom_colors. An array of css color values 
+    * for bottom-left to bottom-right.
+    * @param {Number} x. The x position. Defaults to 0.
+    * @param {Number} y. The y position. Defaults to 0.
+    * @param {Number} width. The width. Defaults to 100%.
+    * @param {Number} height. The height. Defaults to 100%.
+    */
   this.gradient_2d = function(top_colors, bottom_colors, x, y, width, height)
   {
     x || (x = 0);
@@ -117,8 +144,8 @@
     
     return (
     ['svg:svg',
-      this._gradient(x, y, width, height, top_colors),
-      this._gradient(x, y, width, height, bottom_colors, false, true),
+      this.svg_gradient(x, y, width, height, top_colors),
+      this.svg_gradient(x, y, width, height, bottom_colors, false, true),
       'viewBox', '0 0 100% 100%'
     ]);
   };

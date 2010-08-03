@@ -1,10 +1,42 @@
-﻿var ColorPicker = function(cb, color)
+﻿/**
+  * To create a color picker.
+  * The class has a single method render which returns a template
+  * to be render with Element.render. The call of that method will also add 
+  * an event listener for DOMNodeInserted to setup the color picker (checked 
+  * with the class name of the container element). The setup call will add 
+  * an according listener for DOMNodeRemoved which will clean up any state 
+  * and listeners, that means removing the color picker from the DOM will 
+  * clean up automatically.
+  * @param {Function} cb. A callback called for each new color selection
+  * with an instance of Color as argument.
+  * @param {Color} color. The initial color.
+  * @constructor
+  */
+
+var ColorPicker = function(cb, color)
 {
   this._init(cb, color);
 }
 
 ColorPicker.prototype = new function()
 {
+  /* interface */
+  this.render = function(){};
+
+  /* constants */
+  const
+  CP_CLASS = "color-picker-popup",
+  CP_2D_CLASS = "color-picker-2-d-graphic",
+  CP_1D_CLASS = "color-picker-1-d-graphic",
+  CP_OLD_CLASS = "color-picker-color-old",
+  CP_NEW_CLASS = "color-picker-color",
+  SLIDER_BASE_CLASS = 'color-picker-slider-base', 
+  SLIDER_CLASS = 'color-picker-slider',
+  POINTER_CLASS = 'color-picker-pointer',
+  CP_ALPHA_CLASS = "color-picker-alpha",
+  CP_ALPHA_BG = "color-picker-number alpha";
+
+  /* private */
   this._verify_inputs =
   {
     h: {min:0, max: 360, last: 0, base: 10},
@@ -34,6 +66,7 @@ ColorPicker.prototype = new function()
     return check.last;
   }
  
+  // generic DOM input event handler on the container element of the color picker
   this._oninput = function(event)
   {
     if (event.target.name in this._verify_inputs && event.target.value)
@@ -59,6 +92,7 @@ ColorPicker.prototype = new function()
     }
   }
   
+  // generic DOM click event handler on the container element of the color picker
   this._onclick = function(event)
   {
     // TODO implement the stored color samples.
@@ -72,12 +106,14 @@ ColorPicker.prototype = new function()
     }
   }
   
+  // generic DOM change event handler on the container element of the color picker
   this._onchange = function(event)
   {
     if (event.target.name == 'color-space')
       this._set_color_space(event.target.value);
   }
   
+  // callback for the x-y axes slider.
   this._onxy = function(x, y)
   {
     this._cur_x = x;
@@ -92,6 +128,7 @@ ColorPicker.prototype = new function()
     this._cb(this._cb_color);
   }
   
+  // callback for the z axis slider.
   this._onz = function(z)
   {
     this._cur_z = z;
@@ -105,6 +142,7 @@ ColorPicker.prototype = new function()
     this._cb(this._cb_color);
   }
 
+  // callback for the alpha slider
   this._onalpha = function(alpha)
   {
     this._cs.alpha = alpha;
@@ -114,6 +152,7 @@ ColorPicker.prototype = new function()
     this._cb(this._cb_color); 
   };
   
+  // DOMNodeRemoved event handler
   this._onremove = function(event)
   {
     if (event.target.nodeType == 1 && event.target.contains(this._ele))
@@ -136,6 +175,9 @@ ColorPicker.prototype = new function()
     }
   }
   
+  // methods to upadte parts of the view
+
+  // update all the inputs
   this._update_inputs = function(setter, inputs_to_update)
   {
     for (var input = null, i = 0; input = this._ele_inputs[i]; i++)
@@ -150,17 +192,20 @@ ColorPicker.prototype = new function()
     }
   }
   
+  // update the position of the slider for the z-axis
   this._update_z_slider = function()
   {
     this._z_slider.y = this._cur_z;
   }
   
+  // update the position of the slider foe the x-y axes
   this._update_xy_slider = function()
   {
     this._xy_slider.x = this._cur_x;
     this._xy_slider.y = this._cur_y;
   }
   
+  // update the color of the slider for the x-y axes
   this._update_xy_slider_color = function()
   { 
     var gray_value = this._cs.xyz(this._cur_x, 
@@ -172,6 +217,7 @@ ColorPicker.prototype = new function()
                                      'hsl(0, 0%, 80%)'); 
   }
   
+  // update the sample color
   this._update_sample_color = function()
   {
     var color = this._cs.xyz(this._cur_x, this._cur_y, this._cur_z);
@@ -179,12 +225,14 @@ ColorPicker.prototype = new function()
       this._has_alpha ? color.rgba : color.hex;
   }
 
+  // update the position of the slider foe the lpha value
   this._update_alpha_slider = function()
   {
     if (this._has_alpha)
       this._alpha_slider.y = this._cs.alpha;
   }
   
+  // update everything
   this._update = function()
   {
     this._set_coordinates();
@@ -199,6 +247,14 @@ ColorPicker.prototype = new function()
     this._update_sample_color(); 
   }
   
+  /**
+    * Update methods for the graphics of a given color cube.
+    * The color picker supports one of the following color spaces:
+    * 's-v-h', 'h-v-s', 'h-s-v', 'b-g-r', 'b-r-g' or 'r-g-b'. 
+    * Each token has its update method, e.g. 's-v-h' will match 
+    * an '_update_sv' and an '_update_h' method.
+  */
+
   this._update_sv = function()
   {
     this._ele_xy_graphic.clearAndRender(window.templates.gradient_2d
@@ -293,6 +349,8 @@ ColorPicker.prototype = new function()
     'b': [255, 'setBlue', 'getBlue']
   }
     
+  // To set a color space.
+  // color_space is one of 's-v-h', 'h-v-s', 'h-s-v', 'b-g-r', 'b-r-g' or 'r-g-b'.
   this._set_color_space = function(color_space)
   {
     var color = this._cs.hex;
@@ -323,18 +381,7 @@ ColorPicker.prototype = new function()
     this._cur_z = this._cs.z;
   }
   
-  const
-  CP_CLASS = "color-picker-popup",
-  CP_2D_CLASS = "color-picker-2-d-graphic",
-  CP_1D_CLASS = "color-picker-1-d-graphic",
-  CP_OLD_CLASS = "color-picker-color-old",
-  CP_NEW_CLASS = "color-picker-color",
-  SLIDER_BASE_CLASS = 'color-picker-slider-base', 
-  SLIDER_CLASS = 'color-picker-slider',
-  POINTER_CLASS = 'color-picker-pointer',
-  CP_ALPHA_CLASS = "color-picker-alpha",
-  CP_ALPHA_BG = "color-picker-number alpha";
-
+  // DOMNodeInserted event handler.
   this._setup = function(event)
   {
     this._ele = event.target.getElementsByClassName(CP_CLASS)[0] ||
@@ -404,6 +451,8 @@ ColorPicker.prototype = new function()
       document.addEventListener('DOMNodeRemoved', this._onremove_bound, false);
     }
   }
+
+  /* implementation */
   
   this.render = function()
   {
@@ -415,10 +464,11 @@ ColorPicker.prototype = new function()
                                                CP_ALPHA_BG)
   }
   
+  /* instatiation */
   this._init = function(cb, color)
   {
     this._cb = cb;
-    this._initial_color = color;
+    this._initial_color = color || new Color().parseCSSColor("#f00");
     this._cs = new ColorSpace();
     this._cs.clone(color);
     this._cb_color = new Color();

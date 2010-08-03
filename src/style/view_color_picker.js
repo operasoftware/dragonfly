@@ -2,8 +2,15 @@
 
 window.cls.ColorPickerView = function(id, name, container_class)
 {
-
+  /* interface */
   this.createView = function(container){};
+  /**
+    * To show the color picker.
+    * @param {Event} event. The event target is the color sample to be edited.
+    */
+  this.show_color_picker = function(event){};
+
+  /* settings */
   this.show_in_views_menu = true;  
   this.window_top = 20;
   this.window_left = 20;
@@ -12,17 +19,15 @@ window.cls.ColorPickerView = function(id, name, container_class)
   this.window_height = 242;
   this.window_resizable = false;
   this.window_statusbar = false;
-  this.cp_old_color = '';
-  this.cp_style_prop = '';
-  this.cp_rt_id = 0;
-  this.cp_rule_id = 0;
-  this.cp_color_sample = null;
-  this.cp_value_container = null;
-  this.colors = new Color();
-  
-  this.cp_cb = function(color)
+
+  /* private */
+  const CSS_CLASS_TARGET = 'color-picker-target-element';
+
+  this._edit_context = null;
+
+  this._color_cb = function(color)
   {
-    var color_value = '';
+    var color_value = '', context = this._edit_context;
     switch (color.type)
     {
       case color.HEX:
@@ -38,40 +43,44 @@ window.cls.ColorPickerView = function(id, name, container_class)
         color_value = color.cssvalue;
         break;
     }
-    this.cp_value_container.firstChild.nodeValue = color_value;
-    this.cp_color_sample.style.backgroundColor = color_value;
-    var script = "rule.style.setProperty(\"" + this.cp_style_prop + "\", " +
+    context.ele_value.firstChild.nodeValue = color_value;
+    context.ele_color_sample.style.backgroundColor = color_value;
+    var script = "rule.style.setProperty(\"" + context.property_name + "\", " +
                                         "\"" + color_value + "\", null)";
-    var msg = [this.cp_rt_id, 0, 0, script, [["rule", this.cp_rule_id]]];
+    var msg = [context.rt_id, 0, 0, script, [["rule", context.rule_id]]];
     services['ecmascript-debugger'].requestEval(1, msg);
   }
 
-  this.cp_cb_bound = this.cp_cb.bind(this);
+  this._color_cb_bound = this._color_cb.bind(this);
 
+
+
+  /* implementation */
   this.createView = function(container)
   {
-    var color_picker = new ColorPicker(this.cp_cb_bound, this.cp_old_color);
+    var color_picker = new ColorPicker(this._color_cb_bound, 
+                                       this._edit_context.initial_color);
     container.render(color_picker.render());
   }
 
   this.show_color_picker = function(event)
   {
-    var target = event.target, cur_ele = target.parentNode;
-    this.cp_color_sample = target;
-    this.cp_old_color = this.colors.parseCSSColor(target.style.backgroundColor);
-    this.cp_current_color = this.colors;
-    this.cp_current_alpha = this.cp_old_color.alpha || 0;
-    this.cp_value_container = cur_ele;
-    this.cp_target_container = cur_ele.parentNode;
-    this.cp_style_prop = cur_ele.parentNode.getElementsByTagName('key')[0].textContent;
-    cur_ele = cur_ele.parentNode.parentNode;
-    this.cp_rule_id = parseInt(cur_ele.getAttribute('rule-id'));
-    this.cp_rt_id = parseInt(cur_ele.parentNode.getAttribute('rt-id'));
-    this.cp_target_container.addClass('color-picker-target-element');
+    var target = event.target, parent = target.parentNode;
+    this._edit_context =
+    {
+      initial_color: new Color().parseCSSColor(target.style.backgroundColor),
+      ele_value: parent,
+      ele_color_sample: target,
+      ele_container: parent.parentNode,
+      property_name: parent.parentNode.getElementsByTagName('key')[0].textContent,
+      rt_id: parseInt(parent.get_attr('parent-node-chain', 'rt-id')),
+      rule_id: parseInt(parent.get_attr('parent-node-chain', 'rule-id')),
+    }
+    this._edit_context.ele_container.addClass(CSS_CLASS_TARGET);
     UIWindowBase.showWindow(this.id, 
                             this.window_top, 
                             this.window_left, 
-                            typeof this.cp_old_color.alpha == 'number' ?
+                            typeof this._edit_context.initial_color.alpha == 'number' ?
                             this.window_width_with_alpha :
                             this.window_width,
                             this.window_height);
@@ -79,17 +88,13 @@ window.cls.ColorPickerView = function(id, name, container_class)
   
   this.ondestroy = function()
   {
-    this.cp_target_container.removeClass('color-picker-target-element');
-    this.cp_color_sample  = null;
-    this.cp_old_color  = null;
-    this.cp_value_container  = null;
-    this.cp_target_container  = null;
-    this.cp_style_prop  = null;
-    this.cp_rule_id  = null;
-    this.cp_rt_id  = null;
-  };
+    this._edit_context.ele_container.removeClass(CSS_CLASS_TARGET);
+    this._edit_context = null;
+  }
 
+  /* initialistaion */
   this.init(id, name, container_class);
+
 }
 
 window.cls.ColorPickerView.prototype = ViewBase;
@@ -97,5 +102,4 @@ window.cls.ColorPickerView.prototype = ViewBase;
 window.eventHandlers.click['show-color-picker'] = function(event, target)
 {
   window.views['color-selector'].show_color_picker(event);
-  
 };
