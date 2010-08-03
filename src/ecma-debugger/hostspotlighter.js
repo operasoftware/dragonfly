@@ -633,7 +633,7 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
   /* Metrics mouse event handlers */
   this.metricsMouseoverHandler = function(event)
   {
-    var target = event.target, class_name = '';
+    var target = event.target, class_name = '', active_model = null;
     while(target && target != this 
             && !(class_name = target.className) &&  ( target = target.parentNode ) );
     if( target && class_name )
@@ -641,7 +641,8 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
       mouse_handler_timeouts.clear();
       self.clearMouseHandlerTarget();
       setStyleMouseHandlerTarget(target, class_name);
-      self.spotlight(dom_data.getCurrentTarget(), 0, class_name);
+      if (active_model = window.dominspections && window.dominspections.active)
+        self.spotlight(active_model.target, 0, class_name);
     }
   }
 
