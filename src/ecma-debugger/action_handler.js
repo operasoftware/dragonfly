@@ -313,3 +313,6 @@ window.eventHandlers.click['dom-resource-link'].execute = function(event, target
   window.open(helpers.resolveURLS(runtimes.getURI(rt_id), url.slice(1, url.length - 1)), "_blank");
 };
 
+
+
+

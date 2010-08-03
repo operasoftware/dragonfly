@@ -497,7 +497,7 @@ var CstSelectColorBase = function(id, rgba_arr, handler, option)
   // this is only valid during modal state
   var new_value = [];
 
-  var colors = new Colors();
+  var colors = new Color();
 
   var extract_rgba = function(ele)
   {

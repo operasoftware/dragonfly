@@ -1337,6 +1337,14 @@ d
   padding: 0 2em;
 }
 
+color-sample
+{
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border: 1px solid #333;
+  margin-left: 5px;
+}
 
 
  

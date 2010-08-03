@@ -1,0 +1,46 @@
+<html xmlns='http://www.w3.org/1999/xhtml'
+      xmlns:xlink="http://www.w3.org/1999/xlink" 
+      xmlns:svg="http://www.w3.org/2000/svg">
+<link rel="stylesheet" href="style.css"/>
+<script src="dom.js"/>
+<script src="templates.js"/>
+<script src="pointer.js"/>
+<script><![CDATA[ 
+
+
+  
+]]></script>
+<script><![CDATA[ 
+var SLIDER_BASE_ID = 'color-picker-slider-base', SLIDER_ID = 'color-picker-slider';
+
+const POINTER_CLASS = 'color-picker-pointer';
+
+window.onload = function()
+{
+  document.documentElement.render( 
+  ['body', 
+    ['div', 
+      //['input', 'type', 'button', 'value', 'slider', 'onclick', test],
+      //['input', 'type', 'button', 'value', 'remove slider', 'onclick', remove_slider],
+      //['input', 'oninput', oninput],
+      
+    ],
+    ['div', 'id', 'test', 'style', 'position:absolute;top:100px;left:100px;width:250px;height:250px;background-color:#0f0'],
+    ['pre']
+  ]);
+  var test = document.getElementById('test');
+
+  var pointer = new Pointer(document.getElementById('test'), POINTER_CLASS);
+  test.onclick = function(event)
+  {
+    var box = this.getBoundingClientRect();
+    var x = (event.clientX - box.left) / box.width;
+    var y = (event.clientY - box.top) / box.height;
+    pointer.x = x;
+    pointer.y = y;
+  }
+
+}; 
+  
+]]></script>
+</html>
