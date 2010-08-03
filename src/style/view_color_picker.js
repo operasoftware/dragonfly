@@ -18,7 +18,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
   this.cp_rule_id = 0;
   this.cp_color_sample = null;
   this.cp_value_container = null;
-  this.colors = new Colors();
+  this.colors = new Color();
   
   this.cp_cb = function(color)
   {
@@ -67,7 +67,6 @@ window.cls.ColorPickerView = function(id, name, container_class)
     cur_ele = cur_ele.parentNode.parentNode;
     this.cp_rule_id = parseInt(cur_ele.getAttribute('rule-id'));
     this.cp_rt_id = parseInt(cur_ele.parentNode.getAttribute('rt-id'));
-    this.cp_fade_ele = viewport.render(['div', 'class', 'black-50']);
     this.cp_target_container.addClass('color-picker-target-element');
     UIWindowBase.showWindow(this.id, 
                             this.window_top, 
@@ -80,7 +79,6 @@ window.cls.ColorPickerView = function(id, name, container_class)
   
   this.ondestroy = function()
   {
-    this.cp_fade_ele.parentNode.removeChild(this.cp_fade_ele);
     this.cp_target_container.removeClass('color-picker-target-element');
     this.cp_color_sample  = null;
     this.cp_old_color  = null;

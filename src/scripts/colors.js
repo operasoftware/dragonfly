@@ -12,14 +12,14 @@
 * on RGV, HSV and HSL color spaces.
 * See also http://en.wikipedia.org/wiki/Color_space
 */
-var Colors = function()
+var Color = function()
 {
   this.__rgb = [0, 0, 0];
   this.__hsl = [0, 50, 50];
   this.__hsv = [0, 50, 50]; 
 }
 
-Colors.prototype = new function()
+Color.prototype = new function()
 {
 
   /**
@@ -449,7 +449,7 @@ Colors.prototype = new function()
   
   this.clone = function(color)
   {
-    if(color instanceof Colors)
+    if(color instanceof Color)
     {
       this.__rgb[0] = color.__rgb[0];
       this.__rgb[1] = color.__rgb[1];
@@ -594,7 +594,7 @@ Colors.prototype = new function()
   
   /**
    * rounds off val and bounds it to upper and lower
-   * @see Colors#this._fix_range
+   * @see Color#this._fix_range
    * @private
    * @returns {number}
    * @param val {number} value to bound
@@ -775,4 +775,4 @@ Colors.prototype = new function()
   }
 
 }
-Colors.prototype.constructor = Colors;
+Color.prototype.constructor = Color;

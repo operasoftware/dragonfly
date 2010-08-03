@@ -33,6 +33,6 @@ ColorSpacePrototype = function()
 
 };
 
-ColorSpacePrototype.prototype = Colors.prototype;
+ColorSpacePrototype.prototype = Color.prototype;
 ColorSpace.prototype = new ColorSpacePrototype();
 ColorSpace.prototype.constructor = ColorSpace;
