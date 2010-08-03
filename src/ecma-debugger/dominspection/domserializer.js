@@ -138,7 +138,7 @@ window.cls.DOMSerializer.prototype = new function()
               (attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '') +
               ( force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ) + 
               "=\"" + 
-              attr[ATTR_VALUE].replace(/"/g, "&quot") + 
+              attr[ATTR_VALUE].replace(/"/g, "&quot;") + 
               "\"";
           }
           child_pointer = i + 1;
