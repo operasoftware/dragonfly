@@ -28,6 +28,21 @@ cls.Stylesheets = function()
 
   var line_height_index = 0;
 
+  var __color_properties = 
+  {
+    'fill': true,
+    'stroke': true,
+    'stop-color': true,
+    'flood-color': true,
+    'lighting-color': true,
+    'color': true,
+    'border-top-color': true,
+    'border-right-color': true,
+    'border-bottom-color': true,
+    'border-left-color': true,
+    'background-color': true,
+  };
+
   var onResetState = function()
   {
     __sheets = {};
@@ -541,9 +556,6 @@ cls.Stylesheets = function()
                   MARKUP_KEY + __indexMap[index] + MARKUP_KEY_CLOSE +
                   MARKUP_VALUE + 
                   helpers.escapeTextHtml(value_list[i]) + (priority_list[i] ? MARKUP_IMPORTANT : "") + 
-                  (!is_style_sheet && __colorIndexMap[index] ?
-                    "<color-sample handler='show-color-picker' style='background-color:" + value_list[i] +"'/>" : 
-                    "") +
                   MARKUP_VALUE_CLOSE;
         }
         else
@@ -553,9 +565,6 @@ cls.Stylesheets = function()
                   MARKUP_KEY_OW + __indexMap[index] + MARKUP_KEY_CLOSE +
                   MARKUP_VALUE_OW + 
                   helpers.escapeTextHtml(value_list[i]) + ( priority_list[i] ? MARKUP_IMPORTANT : "") + 
-                  (!is_style_sheet && __colorIndexMap[index] ?
-                    "<color-sample handler='show-color-picker' style='background-color:" + value_list[i] +"'/>" : 
-                    "") +
                   MARKUP_VALUE_CLOSE;
         }
       }
@@ -565,6 +574,7 @@ cls.Stylesheets = function()
 
   this.create_declaration = function create_declaration(prop, value, is_important, rule_id, is_disabled, origin)
   {
+    value = helpers.escapeTextHtml(value);
     return (!(origin == ORIGIN_USER_AGENT || rule_id == undefined) ? "<input type='checkbox'" +
                  " title='" + (is_disabled ? "Enable" : "Disable") + "'" +
                  " class='enable-disable'" +
@@ -574,7 +584,12 @@ cls.Stylesheets = function()
                  " data-rule-id='" + rule_id + "'>"
                : "") +
            "<key>" + prop + "</key>: " + // TODO: rename "key" to "property"
-           "<value>" + helpers.escapeTextHtml(value) + (is_important ? MARKUP_IMPORTANT : "") + "</value>;";
+           "<value>" + value + (is_important ? MARKUP_IMPORTANT : "") + 
+              (prop in __color_properties ? 
+                  "<color-sample handler='show-color-picker' " +
+                      "style='background-color:" + value +"'/>" : "") +
+           "</value>;";
+
   };
 
   /* to print the stylesheets */
