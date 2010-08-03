@@ -498,8 +498,8 @@ Element.prototype.has_attr = function(traverse_type, name)
     case "parent-node-chain":
     {
       var ele = this;
-      while (ele && !ele.hasAttribute(name))
-        ele = ele.parentElement;
+      while (ele && ele.nodeType == 1 && !ele.hasAttribute(name))
+        ele = ele.parentNode;
       return ele;
       break;
     }
@@ -515,8 +515,8 @@ Element.prototype.get_attr = function(traverse_type, name)
     case "parent-node-chain":
     {
       var ele = this;
-      while (ele && !ele.hasAttribute(name))
-        ele = ele.parentElement;
+      while (ele && ele.nodeType == 1 && !ele.hasAttribute(name))
+        ele = ele.parentNode;
       return ele && ele.hasAttribute(name) ? ele.getAttribute(name) : null;
       break;
     }
