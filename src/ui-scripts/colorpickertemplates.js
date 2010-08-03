@@ -212,8 +212,8 @@
   }
   
   this.color_picker_popup = function(existing_color, cp_class, cp_2d_class, 
-                                 cp_1d_class, cp_old_class, cp_new_class, 
-                                 z_axis, cp_alpha_class)
+                                     cp_1d_class, cp_old_class, cp_new_class,
+                                     z_axis, cp_alpha_class, cp_alpha_bg)
   {
     var has_alpha = typeof existing_color.alpha == "number";
     return (
@@ -229,20 +229,22 @@
         'class', cp_1d_class
       ],
       window.templates.color_picker_inputs(z_axis), 
+      has_alpha ? 
+      ['svg:svg',
+        this.svg_rect(0, 0, 100, 36, 0, 0, "#000"), 
+        ['svg:path', 
+          'd', 'M 50 0 l -50 0 l 0 36 l 50 -36 l 50 0 l -50 36 z',
+          'fill', '#fff', 
+        ],
+        'viewBox', '0 0 100px 36px',
+        'class', 'color-sample-alpha-bg'
+      ] : [],
       ['div', 
-        has_alpha ? 
-        ['div', 
-          'style', 'border-left-color: ' + existing_color.hhex + ';' +
-                   'border-top-color: ' + existing_color.hhex +';'
-        ] : [], 
         'class', cp_old_class, 
         'data-color', 'cancel',
         'style', 'background-color:' + existing_color.cssvalue
       ],
-      ['div', 
-        has_alpha ? ['div'] : [], 
-        'class', cp_new_class
-      ],
+      ['div', 'class', cp_new_class],
       has_alpha ?
       ['div',
         ['div', 'class', 'height-100'],
@@ -259,7 +261,7 @@
             'min', '0', 
             'max', '1',
             'step', '0.01',
-            'class', 'color-picker-number alpha'
+            'class', cp_alpha_bg, 
           ],
         ],
         'class', 'color-picker-input-alpha'

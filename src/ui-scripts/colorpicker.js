@@ -174,16 +174,9 @@ ColorPicker.prototype = new function()
   
   this._update_sample_color = function()
   {
-    var color = this._cs.xyz(this._cur_x, this._cur_y, this._cur_z).hhex;
-    if (this._has_alpha)
-    {
-      this._ele_sample_color_solid.style.borderLeftColor = 
-      this._ele_sample_color_solid.style.borderTopColor = color;
-      this._ele_sample_color.style.backgroundColor = 
-        "rgba(" + this._cs.getRGB().join(", ") + ", " + this._cs.alpha + ")";
-    }
-    else
-      this._ele_sample_color.style.backgroundColor = color;
+    var color = this._cs.xyz(this._cur_x, this._cur_y, this._cur_z);
+    this._ele_sample_color.style.backgroundColor = 
+      this._has_alpha ? color.rgba : color.hex;
   }
 
   this._update_alpha_slider = function()
@@ -339,7 +332,8 @@ ColorPicker.prototype = new function()
   SLIDER_BASE_CLASS = 'color-picker-slider-base', 
   SLIDER_CLASS = 'color-picker-slider',
   POINTER_CLASS = 'color-picker-pointer',
-  CP_ALPHA_CLASS = "color-picker-alpha";
+  CP_ALPHA_CLASS = "color-picker-alpha",
+  CP_ALPHA_BG = "color-picker-number alpha";
 
   this._setup = function(event)
   {
@@ -385,7 +379,7 @@ ColorPicker.prototype = new function()
         min_y: 1,
         max_y: 0
       });
-      if (this._has_alpha = typeof this._initial_color.alpha == 'number')
+      if (this._has_alpha = (typeof this._initial_color.alpha == 'number'))
       {
         this._cs.alpha = this._initial_color.alpha;
         ele_z = this._ele.getElementsByClassName(CP_ALPHA_CLASS)[0];
@@ -417,7 +411,8 @@ ColorPicker.prototype = new function()
     return window.templates.color_picker_popup(this._initial_color, 
                                                CP_CLASS, CP_2D_CLASS, 
                                                CP_1D_CLASS, CP_OLD_CLASS, 
-                                               CP_NEW_CLASS, 'h', CP_ALPHA_CLASS)
+                                               CP_NEW_CLASS, 'h', CP_ALPHA_CLASS,
+                                               CP_ALPHA_BG)
   }
   
   this._init = function(cb, color)
@@ -426,7 +421,7 @@ ColorPicker.prototype = new function()
     this._initial_color = color;
     this._cs = new ColorSpace();
     this._cs.clone(color);
-    this._cb_color = new Colors();
+    this._cb_color = new Color();
     if (color.type == color.KEYWORD)
       this._cs.type = color.cssvalue == 'transparent' ? color.RGBA : color.HEX;
     this._cur_x = 0;
