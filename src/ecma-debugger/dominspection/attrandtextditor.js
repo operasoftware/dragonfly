@@ -187,7 +187,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
 
   var crlf_encode = function(str)
   {
-    return str.replace(/\r\n/g, "\\n");
+    return str.replace(/\r\n/g, "\\n").replace(/"/g, "\\\"");
   }
 
   this.edit = function(event, ref_ele)
