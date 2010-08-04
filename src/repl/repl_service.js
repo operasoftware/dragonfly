@@ -176,6 +176,12 @@ cls.ReplService = function(view, data)
     }
   };
 
+  this._on_element_selected = function(msg)
+  {
+    this._prev_selected = this._cur_selected;
+    this._cur_selected = msg.obj_id;
+  };
+
   this._handle_exception = function(msg, rt_id)
   {
     const VALUE = 2;
@@ -256,6 +262,8 @@ cls.ReplService = function(view, data)
   {
     this._view = view;
     this._data = data;
+    this._cur_selected = null;
+    this._prev_selected = null;
     this._transformer = new cls.HostCommandTransformer();
     this._tagman = window.tagManager; //TagManager.getInstance(); <- fixme: use singleton
     this._service = window.services['ecmascript-debugger'];
@@ -265,6 +273,7 @@ cls.ReplService = function(view, data)
     this._service.addListener("consoleprofile", this._on_consoleprofile.bind(this));
     this._service.addListener("consoleprofileend", this._on_consoleprofileend.bind(this));
     this._service.addListener("consoletrace", this._on_consoletrace.bind(this));
+    window.messages.addListener("element-selected", this._on_element_selected.bind(this));
   };
 
   this.init(view, data);
