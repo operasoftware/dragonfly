@@ -239,7 +239,7 @@ cls.DOMInspectorActions = function(id)
       var new_container = view_container;
       if (!document.documentElement.contains(new_container))
         new_container = document.getElementById(new_container.id);
-      if (new_container)
+      if (new_container && new_container.firstChild)
       {
         var 
         tag_name = nav_target.nodeName.toLowerCase(),

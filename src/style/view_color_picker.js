@@ -45,7 +45,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
     }
     context.ele_value.firstChild.nodeValue = color_value;
     context.ele_color_sample.style.backgroundColor = color_value;
-    var script = "rule.style.setProperty(\"" + context.property_name + "\", " +
+    var script = "rule.style.setProperty(\"" + context.prop_name + "\", " +
                                         "\"" + color_value + "\", null)";
     var msg = [context.rt_id, 0, 0, script, [["rule", context.rule_id]]];
     services['ecmascript-debugger'].requestEval(1, msg);
@@ -72,10 +72,46 @@ window.cls.ColorPickerView = function(id, name, container_class)
       ele_value: parent,
       ele_color_sample: target,
       ele_container: parent.parentNode,
-      property_name: parent.parentNode.getElementsByTagName('key')[0].textContent,
+      prop_name: parent.parentNode.getElementsByTagName('key')[0].textContent,
       rt_id: parseInt(parent.get_attr('parent-node-chain', 'rt-id')),
       rule_id: parseInt(parent.get_attr('parent-node-chain', 'rule-id')),
     }
+    if (this._edit_context.initial_color)
+      this._finalize_show_color_picker();
+    else
+    {
+      if (target.style.backgroundColor == 'inherit')
+      {
+        var obj_id = parseInt(parent.get_attr('parent-node-chain', 'obj-id'));
+        var script = "window.getComputedStyle(ele, null)." +
+                     "getPropertyValue(\"" + this._edit_context.prop_name+ "\");";
+        var tag = tag_manager.set_callback(this, this._handle_get_color);
+        var msg = [this._edit_context.rt_id, 0, 0, script, [["ele", obj_id]]];
+        window.services['ecmascript-debugger'].requestEval(tag, msg);
+      }
+    }
+  }
+
+  this._handle_get_color = function(status, message)
+  {
+    const TYPE = 1, VALUE = 2;
+    var context = this._edit_context;
+    if (!status && message[TYPE] == 'string')
+    {
+      if (context.initial_color = new Color().parseCSSColor(message[VALUE]))
+      {
+        context.initial_color.cssvalue = 'inherit';
+        context.initial_color.type = context.initial_color.KEYWORD;
+        this._finalize_show_color_picker();
+      }
+    }
+    else
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+                      '_handle_get_color failed in ColorPickerView');
+  }
+
+  this._finalize_show_color_picker = function()
+  {
     this._edit_context.ele_container.addClass(CSS_CLASS_TARGET);
     UIWindowBase.showWindow(this.id, 
                             this.window_top, 

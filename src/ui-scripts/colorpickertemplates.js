@@ -269,7 +269,7 @@
       ['div', 
         'class', cp_old_class, 
         'data-color', 'cancel',
-        'style', 'background-color:' + existing_color.cssvalue
+        'style', 'background-color:' + existing_color.rgba
       ],
       ['div', 'class', cp_new_class],
       has_alpha ?

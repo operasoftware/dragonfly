@@ -96,13 +96,19 @@ ColorPicker.prototype = new function()
   this._onclick = function(event)
   {
     // TODO implement the stored color samples.
-    var color = event.target.get_attr('parent-node-chain', 'data-color');
-    if (color == 'cancel')
+    var color_value = event.target.get_attr('parent-node-chain', 'data-color');
+    var color = null;
+    if (color_value)
     {
-      this._cs.clone(this._initial_color);
-      this._cb_color.clone(this._initial_color);
+      if (color_value == 'cancel')
+        color = this._initial_color;
+      this._cs.clone(color);
+      this._cb_color.clone(color);
+      if (color.type == color.KEYWORD)
+        this._cs.type = typeof color.alpha == 'number' ? color.RGBA : color.HEX;
       this._update();
       this._cb(this._cb_color);
+
     }
   }
   
@@ -473,7 +479,7 @@ ColorPicker.prototype = new function()
     this._cs.clone(color);
     this._cb_color = new Color();
     if (color.type == color.KEYWORD)
-      this._cs.type = color.cssvalue == 'transparent' ? color.RGBA : color.HEX;
+      this._cs.type = typeof color.alpha == 'number' ? color.RGBA : color.HEX;
     this._cur_x = 0;
     this._cur_y = 0;
     this._cur_z = 0;
