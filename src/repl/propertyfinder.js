@@ -158,13 +158,20 @@ window.cls.PropertyFinder = function(rt_id) {
    *
    */
   this.find_props = function(callback, input, frameinfo) {
+    if (frameinfo)
+    {
+      frameinfo.stopped = true;
+    }
+    else
+    {
       frameinfo = frameinfo || {
         runtime_id: runtimes.getSelectedRuntimeId(),
         thread_id: 0,
         scope_id: null,
         index: 0,
-        stopped: true
+        stopped: false
       };
+    }
 
 
     //rt_id, thread_id, frame_id) {
