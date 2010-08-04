@@ -255,7 +255,14 @@ cls.ReplService = function(view, data)
 
     var cooked = this._transformer.transform(input);
     var tag = this._tagman.set_callback(this, this._on_eval_done.bind(this), [rt_id, thread, frame]);
-    this._service.requestEval(tag, [rt_id, thread, frame, cooked]);
+    var magicvars = [];
+    if (this._cur_selected) {
+      magicvars.push(["$0", this._cur_selected]);
+    }
+    if (this._prev_selected) {
+      magicvars.push(["$1", this._prev_selected]);
+    }
+    this._service.requestEval(tag, [rt_id, thread, frame, cooked, magicvars]);
   };
 
   this.init = function(view, data)
