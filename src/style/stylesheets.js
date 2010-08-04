@@ -752,7 +752,7 @@ cls.Stylesheets = function()
       style_dec_list = node_casc[STYLE_LIST];
       for (j = 0; style_dec = style_dec_list[j]; j++)
       {
-        ret += prettyPrintStyleDec[style_dec[ORIGIN]](rt_id, element_name, style_dec, search_active);
+        ret += prettyPrintStyleDec[style_dec[ORIGIN]](rt_id, node_casc[OBJECT_ID], element_name, style_dec, search_active);
       }
     }
     return ret;
@@ -828,11 +828,11 @@ cls.Stylesheets = function()
   }
 
   prettyPrintStyleDec[ORIGIN_USER_AGENT] =
-  function(rt_id, element_name, style_dec, search_active)
+  function(rt_id, obj_id, element_name, style_dec, search_active)
   {
     if (!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS])
     {
-      return "<rule>" +
+      return "<rule obj-id='" + obj_id + "'>" +
               "<stylesheet-link class='pseudo'>default values</stylesheet-link>" +
         "<selector>" + element_name + "</selector>" +
         " {\n" +
@@ -843,11 +843,11 @@ cls.Stylesheets = function()
   };
 
   prettyPrintStyleDec[ORIGIN_LOCAL] =
-  function(rt_id, element_name, style_dec, search_active)
+  function(rt_id, obj_id, element_name, style_dec, search_active)
   {
     if (!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS])
     {
-      return "<rule>" +
+      return "<rule obj-id='" + obj_id + "'>" +
               "<stylesheet-link class='pseudo'>local user stylesheet</stylesheet-link>" +
         "<selector>" + helpers.escapeTextHtml(style_dec[SELECTOR]) + "</selector>" +
         " {\n" +
@@ -858,7 +858,7 @@ cls.Stylesheets = function()
   };
 
   prettyPrintStyleDec[ORIGIN_AUTHOR] =
-  function(rt_id, element_name, style_dec, search_active)
+  function(rt_id, obj_id, element_name, style_dec, search_active)
   {
     var
     ret = '',
@@ -870,7 +870,7 @@ cls.Stylesheets = function()
     {
       if (!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS])
       {
-        ret += "<rule rule-id='" + style_dec[RULE_ID] + "'>" +
+        ret += "<rule rule-id='" + style_dec[RULE_ID] + "' obj-id='" + obj_id + "'>" +
           "<stylesheet-link rt-id='" + rt_id + "'"+
             " index='" + sheet.index + "' handler='display-rule-in-stylesheet'>" + sheet.name +
           "</stylesheet-link>" +
@@ -890,11 +890,11 @@ cls.Stylesheets = function()
   };
 
   prettyPrintStyleDec[ORIGIN_ELEMENT] =
-  function(rt_id, element_name, style_dec, search_active)
+  function(rt_id, obj_id, element_name, style_dec, search_active)
   {
     if (!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS])
     {
-      return "<rule>" +
+      return "<rule rule-id='change-this' rt-id='" + rt_id + "' obj-id='" + obj_id + "'>" +
         "<inline-style>element.style</inline-style>" +
         " {\n" +
             prettyPrintRuleInInspector(style_dec, false, search_active) +
