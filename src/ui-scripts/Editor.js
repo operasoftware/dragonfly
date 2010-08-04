@@ -363,7 +363,12 @@ var Editor = function(actions)
         sheet_link ? parseInt(sheet_link.getAttribute('index')) : -1;
     var textContent = ele.textContent;
 
-    this.saved_style_dec = window.elementStyle.get_style_dec_by_id(this.context_rule_id);
+    if (this.context_rule_id) {
+      this.saved_style_dec = window.elementStyle.get_style_dec_by_id(this.context_rule_id);
+    }
+    else {
+      this.context_rule_id = parseInt(ele.parentElement.getAttribute('obj-id'));
+    }
 
     this.context_cur_text_content = this.textarea.value = ele.textContent;
 

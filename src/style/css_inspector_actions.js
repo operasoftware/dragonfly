@@ -333,15 +333,17 @@ cls.CSSInspectorActions = function(id)
 
     // TEMP: workaround for CORE-31191: updating a property with !important is discarded
     var style_dec = window.elementStyle.get_style_dec_by_id(rule_id);
-    for (var i = style_dec[1].length; i--; ) {
-      if (window.css_index_map[style_dec[1][i]] == declaration[0])
-      {
-        script += "rule.style.removeProperty(\"" + declaration[0] + "\");";
-        break;
+    if (style_dec) {
+      for (var i = style_dec[1].length; i--; ) {
+        if (window.css_index_map[style_dec[1][i]] == declaration[0])
+        {
+          script += "object.style.removeProperty(\"" + declaration[0] + "\");";
+          break;
+        }
       }
     }
 
-    script += "rule.style.setProperty(\"" +
+    script += "object.style.setProperty(\"" +
                   prop + "\", \"" +
                   declaration[1].replace(/"/g, "\\\"") + "\", " +
                   (declaration[2] ? "\"important\"" : null) +
@@ -350,12 +352,12 @@ cls.CSSInspectorActions = function(id)
     // If a property is added by overwriting another one, remove the other property
     if (prop_to_remove && prop != prop_to_remove)
     {
-      script += "rule.style.removeProperty(\"" + this.normalize_property(prop_to_remove) + "\");";
+      script += "object.style.removeProperty(\"" + this.normalize_property(prop_to_remove) + "\");";
     }
 
     var tag = (typeof callback == "function") ? tagManager.set_callback(null, callback) : 1;
     services['ecmascript-debugger'].requestEval(tag,
-      [this.editor.context_rt_id, 0, 0, script, [["rule", rule_id]]]);
+      [this.editor.context_rt_id, 0, 0, script, [["object", rule_id]]]);
   };
 
   /**
@@ -368,11 +370,11 @@ cls.CSSInspectorActions = function(id)
   {
     prop_to_remove = this.normalize_property(prop_to_remove);
     var rule_id = this.editor.context_rule_id;
-    var script = "rule.style.removeProperty(\"" + prop_to_remove + "\");";
+    var script = "object.style.removeProperty(\"" + prop_to_remove + "\");";
 
     var tag = (typeof callback == "function") ? tagManager.set_callback(null, callback) : 1;
     services['ecmascript-debugger'].requestEval(tag,
-      [this.editor.context_rt_id, 0, 0, script, [["rule", rule_id]]]);
+      [this.editor.context_rt_id, 0, 0, script, [["object", rule_id]]]);
   };
 
   /**
@@ -385,14 +387,14 @@ cls.CSSInspectorActions = function(id)
     const PRIORITY_LIST = 3;
     var rule = this.editor.saved_style_dec;
     var rule_id = this.editor.context_rule_id;
-    var script = "rule.style.cssText=\"\";";
+    var script = "object.style.cssText=\"\";";
 
     var len = rule[INDEX_LIST].length;
     for (var i = 0; i < len; i++) {
       var prop = window.css_index_map[rule[INDEX_LIST][i]];
       if (!window.elementStyle.disabled_style_dec_list[rule_id] ||
           !window.elementStyle.has_property(window.elementStyle.disabled_style_dec_list[rule_id], prop)) {
-        script += "rule.style.setProperty(\"" +
+        script += "object.style.setProperty(\"" +
                      prop + "\", \"" +
                      rule[VALUE_LIST][i].replace(/"/g, "'") + "\", " +
                      (rule[PRIORITY_LIST][i] ? "\"important\"" : null) +
@@ -401,7 +403,7 @@ cls.CSSInspectorActions = function(id)
     }
 
     services['ecmascript-debugger'].requestEval(null,
-      [this.editor.context_rt_id, 0, 0, script, [["rule", rule_id]]]);
+      [this.editor.context_rt_id, 0, 0, script, [["object", rule_id]]]);
   };
 
   /**
