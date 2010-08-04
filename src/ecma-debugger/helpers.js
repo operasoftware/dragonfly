@@ -152,7 +152,8 @@ window.cls.Helpers = function()
     var obj_id = parseInt(event.target.getAttribute('obj-id'));
     if(obj_id && /^breadcrumb$/i.test(event.target.parentNode.nodeName))
     {
-      hostspotlighter.soft_spotlight(obj_id);
+      if (window.settings.dom.get('highlight-on-hover'))
+        hostspotlighter.soft_spotlight(obj_id);
     }
   }
   // mouseover handler in the breadcrumb

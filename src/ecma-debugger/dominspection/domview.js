@@ -180,7 +180,8 @@ cls.DOMView.create_ui_widgets = function()
     // key-label map
     {
       'find-with-click': ui_strings.S_SWITCH_FIND_ELEMENT_BY_CLICKING,
-      'highlight-on-hover': ui_strings.S_SWITCH_HIGHLIGHT_BY_MOUSE_OVER,
+      // TODO change to highlight
+      'highlight-on-hover': ui_strings.S_SWITCH_HIGHLIGHT_SELECTED_OR_HOVERED_ELEMENT,
       'update-on-dom-node-inserted': ui_strings.S_SWITCH_UPDATE_DOM_ON_NODE_REMOVE,
       'force-lowercase': ui_strings.S_SWITCH_USE_LOWER_CASE_TAG_NAMES, 
       'show-comments': ui_strings.S_SWITCH_SHOW_COMMENT_NODES, 

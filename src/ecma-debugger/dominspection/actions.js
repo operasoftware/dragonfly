@@ -69,9 +69,10 @@ cls.DOMInspectorActions = function(id)
     if (model_id && obj_id)
     {
       model = inspections[model_id];
-      hostspotlighter.spotlight(obj_id,
-                                settings.dom.get('scroll-into-view-on-spotlight') && 
-                                obj_id != (inspections.active && inspections.active.target));
+      if (window.settings.dom.get('highlight-on-hover'))
+        hostspotlighter.spotlight(obj_id,
+                                  settings.dom.get('scroll-into-view-on-spotlight') && 
+                                  obj_id != (inspections.active && inspections.active.target));
       model.target = obj_id;
       inspections.active = model;
       window.messages.post("element-selected", {model: model, obj_id: obj_id, rt_id: model.getDataRuntimeId()});
@@ -118,7 +119,8 @@ cls.DOMInspectorActions = function(id)
           {
             div.id = 'target-element';
             window.helpers.scroll_dom_target_into_view();
-            hostspotlighter.spotlight(obj_id, true);
+            if (window.settings.dom.get('highlight-on-hover'))
+              hostspotlighter.spotlight(obj_id, true);
           }
         }
       }

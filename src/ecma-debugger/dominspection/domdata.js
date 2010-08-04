@@ -53,14 +53,16 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
   this._spotlight = function(event)
   {
     this._reset_spotlight_timeouts.clear();
-    hostspotlighter.soft_spotlight(event.object_id);
+    if (window.settings.dom.get('highlight-on-hover'))
+      hostspotlighter.soft_spotlight(event.object_id);
   }
 
   this._reset_spotlight = function()
   {
     if (this._current_target)
     {
-      hostspotlighter.spotlight(this._current_target);
+      if (window.settings.dom.get('highlight-on-hover'))
+        hostspotlighter.spotlight(this._current_target);
     }
   }
 
@@ -286,7 +288,8 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
     }
     if (highlight_target)
     {
-      window.hostspotlighter.spotlight(this._current_target);
+      if (window.settings.dom.get('highlight-on-hover'))
+        window.hostspotlighter.spotlight(this._current_target);
     }
     if (rt_id != this._data_runtime_id)
     {
