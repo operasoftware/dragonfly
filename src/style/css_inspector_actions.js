@@ -37,7 +37,8 @@ cls.CSSInspectorActions = function(id)
         self.__target.removeClass('selected');
       }
       (self.__target = new_target).addClass('selected');
-      self.__target.scrollSoftIntoView();
+      // TODO setting the navigation must be done more carefully and more generic
+      //self.__target.scrollSoftIntoView();
     }
   };
 
