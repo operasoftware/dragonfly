@@ -412,7 +412,7 @@ Element.prototype.has_attr = function(traverse_type, name)
       var ele = this;
       while (ele && ele.nodeType == 1 && !ele.hasAttribute(name))
         ele = ele.parentNode;
-      return ele;
+      return ele && ele.nodeType == 1 && ele || null;
       break;
     }
   }
@@ -429,7 +429,7 @@ Element.prototype.get_attr = function(traverse_type, name)
       var ele = this;
       while (ele && ele.nodeType == 1 && !ele.hasAttribute(name))
         ele = ele.parentNode;
-      return ele && ele.hasAttribute(name) ? ele.getAttribute(name) : null;
+      return ele && ele.nodeType == 1 && ele.hasAttribute(name) ? ele.getAttribute(name) : null;
       break;
     }
   }

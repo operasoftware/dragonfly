@@ -73,22 +73,31 @@ ColorPicker.prototype = new function()
     {
       var target = event.target;
       var verifier = this._verify_inputs[target.name];
-      var value = this._verify(target.value, verifier);
-      this._cs[target.name] = value;
-      target.value = verifier.max == 1 ? value.toFixed(3) : value;
-      this._set_coordinates();
-      this._set_cs_coordinates();
-      this._cb_color.clone(this._cs);
-      this._update_inputs(event.target.name);
-      this._update_xy_graphic();
-      this._update_xy_slider();
-      this._update_xy_slider_color();
-      this._update_z_graphic();
-      this._update_z_slider();
-      this._update_alpha_graphic();
-      this._update_alpha_slider();
-      this._update_sample_color();
-      this._cb(this._cb_color);
+      if (target.value)
+      {
+        var value = this._verify(target.value, verifier);
+        this._cs[target.name] = value;
+        if (verifier.max == 1)
+        {
+          if (value.toString().length > 5 || value != target.value)
+            target.value = value.toFixed(3)
+        }
+        else
+          target.value = value;
+        this._set_coordinates();
+        this._set_cs_coordinates();
+        this._cb_color.clone(this._cs);
+        this._update_inputs(event.target.name);
+        this._update_xy_graphic();
+        this._update_xy_slider();
+        this._update_xy_slider_color();
+        this._update_z_graphic();
+        this._update_z_slider();
+        this._update_alpha_graphic();
+        this._update_alpha_slider();
+        this._update_sample_color();
+        this._cb(this._cb_color);
+      }
     }
   }
   
@@ -108,7 +117,18 @@ ColorPicker.prototype = new function()
         this._cs.type = typeof color.alpha == 'number' ? color.RGBA : color.HEX;
       this._update();
       this._cb(this._cb_color);
+    }
+  }
 
+  this._onblur = function(event)
+  {
+    if (event.target.name in this._verify_inputs)
+    {
+      var target = event.target;
+      var verifier = this._verify_inputs[target.name];
+      var value = this._verify(target.value, verifier);
+      if (value != target.value || !target.value)
+        target.value = verifier.max == 1 ? value.toFixed(3) : value;
     }
   }
   
@@ -167,6 +187,7 @@ ColorPicker.prototype = new function()
       this._ele.removeEventListener('input', this._oninput_bound, false);
       this._ele.removeEventListener('click', this._onclick_bound, false);
       this._ele.removeEventListener('change', this._onchange_bound, false);
+      this._ele.removeEventListener('blur', this._onblur_bound, true);
       this._ele = null; 
       this._ele_inputs = null;
       this._ele_sample_color = null;
@@ -454,6 +475,7 @@ ColorPicker.prototype = new function()
       this._ele.addEventListener('input', this._oninput_bound, false);
       this._ele.addEventListener('click', this._onclick_bound, false);
       this._ele.addEventListener('change', this._onchange_bound, false);
+      this._ele.addEventListener('blur', this._onblur_bound, true);
       document.addEventListener('DOMNodeRemoved', this._onremove_bound, false);
     }
   }
@@ -487,6 +509,7 @@ ColorPicker.prototype = new function()
     this._oninput_bound = this._oninput.bind(this);
     this._onclick_bound = this._onclick.bind(this);
     this._onchange_bound = this._onchange.bind(this);
+    this._onblur_bound = this._onblur.bind(this);
     this._onremove_bound = this._onremove.bind(this);
   }
   
