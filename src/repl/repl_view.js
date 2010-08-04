@@ -74,6 +74,9 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         case "iobj":
           this.render_inspectable_object(e.data);
           break;
+        case "iele":
+          this.render_inspectable_element(e.data);
+          break;
         case "pobj":
           this.render_pointer_to_object(e.data);
           break;
@@ -129,6 +132,24 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._add_line(templates.repl_output_pobj(data));
   };
 
+  this.render_inspectable_element = function(data)
+  {
+    if (!data.view) {
+      var rt_id = data.rt_id, obj_id=data.obj_id, name=data.name;
+      data.view = new cls.InspectableDomNodeView(rt_id, obj_id, name, false);
+    }
+
+    if (data.view && !data.view.expanded)
+    {
+      // re-enter once we have the data.
+      data.view.expand(this.render_inspectable_element.bind(this, data));
+      return;
+    }
+
+    var div = document.createElement("div");
+    this._add_line(data.view.render());
+  };
+
   this.render_inspectable_object = function(data)
   {
     if (!data.view) {
@@ -144,8 +165,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
 
     var div = document.createElement("div");
-     this._add_line(data.view.render());
+    this._add_line(data.view.render());
   };
+
+
 
   this.render_error = function(data)
   {

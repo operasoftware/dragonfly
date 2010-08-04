@@ -41,7 +41,15 @@ cls.ReplData = function(view)
   };
 
   /**
-   * Inspectableobject, as used by dir() and dirxml()
+   * Inspectable element, as used by dirxml()
+   */
+  this.add_output_iele = function(rt, objid, name)
+  {
+    this._add_entry("iele", {rt_id: rt, obj_id: objid, name: name});
+  };
+
+  /**
+   * Inspectableobject, as used by dir()
    */
   this.add_output_iobj = function(rt, objid, name) {
     this._add_entry("iobj", {rt_id: rt, obj_id: objid, name: name});

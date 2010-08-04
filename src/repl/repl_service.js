@@ -40,6 +40,9 @@ cls.ReplService = function(view, data)
       case 7:
         this._handle_dir(msg, rt_id);
         break;
+      case 8:
+        this._handle_dirxml(msg, rt_id);
+        break;
       case 9:
         this._handle_group(msg);
         break;
@@ -133,6 +136,16 @@ cls.ReplService = function(view, data)
     var pv = this._parse_value;
     var fun = function(v) { return pv(v, rt_id); }; // partial invocation wrapping rt_id
     return valuelist.map(fun);
+  };
+
+  this._handle_dirxml = function(msg, rt_id)
+  {
+    const VALUELIST = 2;
+    var values = this._parse_value_list(msg[VALUELIST], rt_id);
+    for (var n=0, e; e=values[n]; n++)
+    {
+      this._data.add_output_iele(rt_id, e.obj_id, e.name);
+    }
   };
 
   this._handle_dir = function(msg, rt_id)
