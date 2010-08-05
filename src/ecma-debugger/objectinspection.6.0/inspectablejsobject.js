@@ -50,6 +50,9 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     */
   this.get_expanded_tree = function(with_root, path){};
 
+  this.expand_prototype = function(path){};
+  this.collapse_prototype = function(path){};
+
   /* private */
 
   /*
@@ -115,7 +118,8 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
         tree.protos = {};
       if (!tree.protos[index])
         tree.protos[index] = {};
-      if (!tree.protos[index][key])
+      /* the last element of a prototype path has no object id */
+      if (!tree.protos[index][key] && !isNaN(obj_id))
         tree.protos[index][key] = {object_id: obj_id, protos: {}};
       tree = tree.protos[index][key];
     }
@@ -127,7 +131,14 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
   this._remove_subtree = function(path)
   {
     const PATH_KEY = 0, PATH_OBJ_ID = 1, PATH_PROTO_INDEX = 2;
-    var key = '', obj_id = 0, proto_index = 0, i = 0, tree = this._expand_tree, ret = null;
+    var 
+    key = '', 
+    obj_id = 0, 
+    proto_index = 0, 
+    i = 0, 
+    tree = this._expand_tree, 
+    ret = null;
+
     for ( ; path && path[i]; i++)
     {
       key = path[i][PATH_KEY];
@@ -301,6 +312,18 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
   {
     if (path[0] && path[0].join() != this._root_path_joined)
       path.splice(0, 0, this._root_path);
+    return path;
+  }
+
+  this._cleanup_maps = function(removed_tree)
+  {
+    var dead_ids = this._get_all_ids(removed_tree);
+    var ids = this._get_all_ids(this._expand_tree);
+    for (var i = 0; dead_ids[i]; i++)
+    {
+      if (ids.indexOf(dead_ids[i]) == -1)
+        this._obj_map[dead_ids[i]] = this._queried_map[dead_ids[i]] = null;
+    }
   }
 
   /* implementation */
@@ -333,13 +356,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     if (path)
     {
       this._norm_path(path);
-      var dead_ids = this._get_all_ids(this._remove_subtree(path));
-      var ids = this._get_all_ids(this._expand_tree);
-      for (var i = 0; dead_ids[i]; i++)
-      {
-        if (ids.indexOf(dead_ids[i]) == -1)
-          this._obj_map[dead_ids[i]] = this._queried_map[dead_ids[i]] = null;
-      }
+      this._cleanup_maps(this._remove_subtree(path));
     }
     else
     {
@@ -351,6 +368,23 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
       this._obj_id = 0;
     }
   }
+
+  this.expand_prototype = function(path)
+  {
+    this._norm_path(path);
+    this._get_subtree(path);
+  };
+
+  this.collapse_prototype = function(path)
+  {
+    const PATH_PROTO_INDEX = 2;
+    path = this._norm_path(path).slice(0);
+    var index = path.pop()[PATH_PROTO_INDEX];
+    var top = this._get_subtree(path);
+    var removed = top.protos[index];
+    top.protos[index] = null;
+    this._cleanup_maps(removed);
+  };
 
   this.get_data = function(obj_id)
   {
