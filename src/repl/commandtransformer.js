@@ -120,20 +120,26 @@ cls.HostCommandTransformer = function() {
     var n = index-1;
 
     for (var token; token=tokens[n]; n--) {
-      switch (token.type) {
-        case WHITESPACE:
-          continue;
-        case PUNCTUATOR:
-          if (token.value == ".") { break; }
-        default:
-          return false;
+      if (token.type == WHITESPACE)
+      {
+        continue;
+      }
+      else if (token.type == PUNCTUATOR && token.value == ".")
+      {
+        break;
+      }
+      else
+      {
+        return false;
       }
     }
+
+    n--; // if the break triggered n didn't decr
 
     for (var token; token=tokens[n]; n--) {
       switch (token.type) {
         case WHITESPACE:
-          continue;
+          break;
         case IDENTIFIER:
           if (token.value == name) { return true; }
         default:
