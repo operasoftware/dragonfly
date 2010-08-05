@@ -83,10 +83,6 @@ li > .repl-lines {
   overflow:hidden;
 }
 
-.folder-key {
-  background-position: 0 -11px;
-}
-
-.folder-key.collapsed {
-  background-position: 0 0;
+.repl-lines .open {
+    background-position: 0 -11px;
 }

@@ -50,6 +50,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._update();
   };
 
+  /**
+   * Pulls all the available, non-rendered, events from the data
+   * object and renders them
+   */
   this._update = function()
   {
     var now = new Date().getTime();
@@ -102,7 +106,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this.render_groupstart = function(data)
   {
-    this._add_line([["button", "", "class", "folder-key "+(data.collapsed ? "collapsed" : "" ),
+    this._add_line([["button", "", "class", "folder-key"+(data.collapsed ? "" : " open" ),
                                    "handler", "repl-toggle-group"
                     ],
                     data.name]);
@@ -165,8 +169,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._add_line(data.view.render());
   };
 
-
-
   this.render_error = function(data)
   {
     this.render_string(data.message, data.stacktrace);
@@ -189,6 +191,9 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._add_line(separated);
   };
 
+  /**
+   * Render an arbitrary numver of string arguments
+   */
   this.render_string = function()
   {
     for (var n=0; n<arguments.length; n++)
@@ -226,8 +231,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._handle_input = function(evt)
   {
-
-//    opera.postError(evt.keyCode);
+    // opera.postError(evt.keyCode);
 
     if (evt.keyCode == 13)
     {
@@ -368,19 +372,20 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._handle_repl_toggle_group = function(event, target)
   {
     var li = target.parentNode;
-    if (target.hasClass("collapsed"))
+    if (target.hasClass("open"))
     {
-      target.removeClass("collapsed");
-      li.nextSibling.style.display = "";
+      target.removeClass("open");
+      li.nextSibling.style.display = "none";
     }
     else
     {
-      target.addClass("collapsed");
-      li.nextSibling.style.display = "none";
+      target.addClass("open");
+      li.nextSibling.style.display = "";
     }
   };
 
-  var eh = window.eventhandlers;
+
+  var eh = window.eventHandlers;
   eh.click["repl-toggle-group"] = this._handle_repl_toggle_group;
   eh.click['focus-repl'] = this._focus_input.bind(this);
   eh.keydown['repl-textarea'] = this._handle_input.bind(this);
