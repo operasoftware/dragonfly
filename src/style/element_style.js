@@ -500,7 +500,7 @@ cls.ElementStyle = function()
     {
       for (var j = 0, style_dec; style_dec = (node_style[STYLE_LIST] || [])[j]; j++)
       {
-        if (node_style[OBJECT_ID] == id)
+        if (style_dec[ORIGIN] == ORIGIN_ELEMENT && node_style[OBJECT_ID] == id)
         {
           return style_dec;
         }
