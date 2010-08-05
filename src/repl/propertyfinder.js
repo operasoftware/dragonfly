@@ -89,16 +89,6 @@ window.cls.PropertyFinder = function(rt_id) {
     }
 
     return {scope: new_path, identifier: new_id};
-
-//    return
-    var scope = "";
-    var index = input.lastIndexOf(".");
-
-    if (index > 0) {
-      scope = input.substring(0, index);
-    }
-
-    return scope;
   };
 
   this._onRequestEval = function(status, message, callback, scope, identifier, input, frameinfo) {
@@ -172,9 +162,6 @@ window.cls.PropertyFinder = function(rt_id) {
         stopped: false
       };
     }
-
-
-    //rt_id, thread_id, frame_id) {
 
     var parts = this._find_input_parts(input);
 
