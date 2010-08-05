@@ -1,0 +1,48 @@
+<html xmlns='http://www.w3.org/1999/xhtml'
+      xmlns:xlink="http://www.w3.org/1999/xlink" 
+      xmlns:svg="http://www.w3.org/2000/svg">
+<link rel="stylesheet" href="../../src/ui-style/colorpickerstyle.css"/>
+<script src="../../src/scripts/dom.js"/>
+<script src="../../src/scripts/colors.js"/>
+<script src="../../src/scripts/colorspace.js"/>
+<script src="../../src/ui-scripts/colorpickertemplates.js"/>
+<script src="../../src/ui-scripts/colorpicker.js"/>
+<script src="../../src/ui-scripts/slider.js"/>
+<script src="../../src/ui-scripts/pointer.js"/>
+<script><![CDATA[ 
+
+var show_picker = function()
+{
+  var count = 0;
+  var color_picker = new ColorPicker(function(color)
+  {
+    document.getElementsByTagName('pre')[0].textContent = 
+    "count: " + (count++) + "\n" +
+    "hex: " + color.hex + "\n" +
+    "rgb: " + color.rgb + "\n" +
+    "hsv: " + color.hsv + "\n" +
+    "hsl: " + color.hsl;
+  }, "#00ff00");
+  document.getElementsByTagName('body')[0].render(
+  ['div', 
+    color_picker.render(),
+    'id', 'color-picker-container',
+    'style', 'position:absolute;top:65px;left:50px;'
+  ]);
+}
+
+var remove_picker = function()
+{
+  var container = document.getElementById('color-picker-container');
+  container.parentNode.removeChild(container);
+}
+
+]]></script>
+<body>
+  <p>
+    <input type='button' value='show color picker' onclick='show_picker()'/>
+    <input type='button' value='remove color picker' onclick='remove_picker()'/>
+  </p>
+  <pre style="position:absolute;top: 300px;left:20px"/>
+</body>
+</html>

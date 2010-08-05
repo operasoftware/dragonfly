@@ -18,6 +18,7 @@ cls.Stylesheets = function()
   var __sortedIndexMap = [];
   var __initialValues = [];
   var __shorthandIndexMap = [];
+  var __colorIndexMap = [];
   var __selectedRules = null;
   var __colorIndex = 0;
 
@@ -26,6 +27,21 @@ cls.Stylesheets = function()
   var __on_new_stylesheets_cbs = {};
 
   var line_height_index = 0;
+
+  var __color_properties = 
+  {
+    'fill': true,
+    'stroke': true,
+    'stop-color': true,
+    'flood-color': true,
+    'lighting-color': true,
+    'color': true,
+    'border-top-color': true,
+    'border-right-color': true,
+    'border-bottom-color': true,
+    'border-left-color': true,
+    'background-color': true,
+  };
 
   var onResetState = function()
   {
@@ -538,14 +554,18 @@ cls.Stylesheets = function()
           ret += (ret ? MARKUP_PROP_NL : MARKUP_EMPTY) +
                   INDENT +
                   MARKUP_KEY + __indexMap[index] + MARKUP_KEY_CLOSE +
-                  MARKUP_VALUE + helpers.escapeTextHtml(value_list[i]) + (priority_list[i] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE;
+                  MARKUP_VALUE + 
+                  helpers.escapeTextHtml(value_list[i]) + (priority_list[i] ? MARKUP_IMPORTANT : "") + 
+                  MARKUP_VALUE_CLOSE;
         }
         else
         {
           ret += (ret ? MARKUP_PROP_NL : MARKUP_EMPTY) +
                   INDENT +
                   MARKUP_KEY_OW + __indexMap[index] + MARKUP_KEY_CLOSE +
-                  MARKUP_VALUE_OW + helpers.escapeTextHtml(value_list[i]) + ( priority_list[i] ? MARKUP_IMPORTANT : "") + MARKUP_VALUE_CLOSE;
+                  MARKUP_VALUE_OW + 
+                  helpers.escapeTextHtml(value_list[i]) + ( priority_list[i] ? MARKUP_IMPORTANT : "") + 
+                  MARKUP_VALUE_CLOSE;
         }
       }
     }
@@ -554,7 +574,8 @@ cls.Stylesheets = function()
 
   this.create_declaration = function create_declaration(prop, value, is_important, rule_id, is_disabled, origin)
   {
-    return (!(origin == ORIGIN_USER_AGENT || origin == ORIGIN_LOCAL) ? "<input type='checkbox'" +
+    value = helpers.escapeTextHtml(value);
+    return (!(origin == ORIGIN_USER_AGENT || rule_id == undefined) ? "<input type='checkbox'" +
                  " title='" + (is_disabled ? "Enable" : "Disable") + "'" +
                  " class='enable-disable'" +
                  (!is_disabled ? " checked='checked'" : "") +
@@ -563,7 +584,12 @@ cls.Stylesheets = function()
                  " data-rule-id='" + rule_id + "'>"
                : "") +
            "<key>" + prop + "</key>: " + // TODO: rename "key" to "property"
-           "<value>" + helpers.escapeTextHtml(value) + (is_important ? MARKUP_IMPORTANT : "") + "</value>;";
+           "<value>" + value + (is_important ? MARKUP_IMPORTANT : "") + 
+              (prop in __color_properties ? 
+                  "<color-sample handler='show-color-picker' " +
+                      "style='background-color:" + value +"'/>" : "") +
+           "</value>;";
+
   };
 
   /* to print the stylesheets */
@@ -1071,9 +1097,19 @@ cls.Stylesheets = function()
       }
       switch (prop)
       {
+        case 'fill':
+        case 'stroke':
+        case 'stop-color':
+        case 'flood-color':
+        case 'lighting-color':
+        {
+          __colorIndexMap[i] = true;
+          break;
+        }
         case 'color':
         {
           __colorIndex = i;
+          __colorIndexMap[i] = true;
           break;
         }
         // margin
@@ -1143,6 +1179,7 @@ cls.Stylesheets = function()
         {
           SHORTHAND[i] = 3;
           __shorthandIndexMap[i] = 'border';
+          __colorIndexMap[i] = true;
           break;
         }
         // border rigth
@@ -1162,6 +1199,7 @@ cls.Stylesheets = function()
         {
           SHORTHAND[i] = 6;
           __shorthandIndexMap[i] = 'border';
+          __colorIndexMap[i] = true;
           break;
         }
         // border bottom
@@ -1181,6 +1219,7 @@ cls.Stylesheets = function()
         {
           SHORTHAND[i] = 9;
           __shorthandIndexMap[i] = 'border';
+          __colorIndexMap[i] = true;
           break;
         }
         // border left
@@ -1200,6 +1239,7 @@ cls.Stylesheets = function()
         {
           SHORTHAND[i] = 12;
           __shorthandIndexMap[i] = 'border';
+          __colorIndexMap[i] = true;
           break;
         }
         // background
@@ -1207,6 +1247,7 @@ cls.Stylesheets = function()
         {
           SHORTHAND[i] = 1;
           __shorthandIndexMap[i] = 'background';
+          __colorIndexMap[i] = true;
           break;
         }
         case 'background-image':

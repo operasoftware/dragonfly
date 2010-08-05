@@ -71,6 +71,12 @@ cls.CSSInspectorView = function(id, name, container_class)
       }
     }
   }
+
+  this.ondestroy = function()
+  {
+    UIWindowBase.closeWindow('color-selector');
+  }
+
   this.init(id, name, container_class);
 }
 

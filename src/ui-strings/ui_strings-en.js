@@ -179,6 +179,8 @@ ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE = 'Automatically update global scope';
 /* DESC: Will select the element when clicked. */
 ui_strings.S_SWITCH_FIND_ELEMENT_BY_CLICKING = 'Find element by clicking';
 /* DESC: Highlights page elements when thet mouse hovers. */
+ui_strings.S_SWITCH_HIGHLIGHT_SELECTED_OR_HOVERED_ELEMENT = 'Highlight selected or hovered element';
+/* DESC: Highlights page elements when thet mouse hovers. */
 ui_strings.S_SWITCH_HIGHLIGHT_BY_MOUSE_OVER = 'Highlight by mouse hover';
 /* DESC: Updates the DOM model automatically when a node is being removed. */
 ui_strings.S_SWITCH_UPDATE_DOM_ON_NODE_REMOVE = 'Update DOM when a node is removed';

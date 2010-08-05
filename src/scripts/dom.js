@@ -11,7 +11,7 @@
  *
  * where NODENAME, TEXT and KEY are DOM strings and VALUE can be everything except an array
  */
-
+  
 Element.prototype.render = Document.prototype.render = function(args)
 {
   
@@ -26,7 +26,9 @@ Element.prototype.render = Document.prototype.render = function(args)
   i = 0,
   ele = this,
   first_arg = args[0],
-  arg = null;
+  arg = null,
+  prefix_pos = -1,
+  ns = '';
 
   if (args.length)
   {
@@ -34,7 +36,17 @@ Element.prototype.render = Document.prototype.render = function(args)
     {
       if (typeof first_arg == 'string')
       {
-        ele = first_arg in CustomElements ? CustomElements[first_arg].create() : doc.createElement(first_arg);
+        if ((prefix_pos = first_arg.indexOf(':')) != -1)
+        {
+          ns = doc.lookupNamespaceURI(first_arg.slice(0, prefix_pos));
+          if (!ns)
+          {
+            throw('namespace not defined in call Node.prototype.___add')
+          }
+          ele = doc.createElementNS(ns, first_arg.slice(prefix_pos + 1));
+        }
+        else
+          ele = first_arg in CustomElements ? CustomElements[first_arg].create() : doc.createElement(first_arg);
         i++;
       }
       arg = args[i];
@@ -84,6 +96,16 @@ Element.prototype.render = Document.prototype.render = function(args)
   return null;
 };
 
+Element.prototype.re_render = function(args)
+{
+  var div = document.createElement('div');
+  var doc_frag = document.createDocumentFragment();
+  div.render(args);
+  while (div.firstChild)
+    doc_frag.appendChild(div.firstChild);
+  this.parentNode.replaceChild(doc_frag, this);
+}
+
 /**
  * Clear the element and render the template into it
  */
@@ -93,104 +115,6 @@ Element.prototype.clearAndRender = function(template)
   return this.render(template);
 };
 
-/*
-Element.prototype.renderInner = Document.prototype.renderInner = function callee(template)
-{
-  var
-  i = template[0] && template[0] instanceof Array ? 0 : 1,
-  arg = template[i],
-  tag_name = template[0],
-  ret = "",
-  content = [],
-  attrs = i && ["<", tag_name, " "] || [];
-
-  if (tag_name)
-  {
-    while (true)
-    {
-      if (arg instanceof Array)
-      {
-        content.push(callee.call(null, arg));
-        arg = template[++i];
-      }
-      else if (typeof arg == 'string' && ((template.length - i) % 2 || template[i + 1] instanceof Array))
-      {
-        content.push(arg.replace(/&/g, "&amp;").replace(/</g, "&lt;"));
-        arg = template[++i];
-      }
-      else
-      {
-        break;
-      }
-    }
-    if (attrs.length)
-      content.push("</", tag_name, ">");
-    for ( ; template[i]; i += 2)
-    {
-      attrs.push(template[i], "=\u0022", template[i + 1].replace(/"/g, "&quot"), "\u0022", " ");
-    }
-    if (attrs.length)
-      attrs.push(">");
-    ret = attrs.join("") + content.join("");
-    if (this && this.nodeType == 1)
-    {
-      window.__t_3 = Date.now();
-      this.innerHTML += ret;
-    }
-    
-  }
-  return ret;
-};
-
-*/
-
-Element.prototype.renderInner = Document.prototype.renderInner = function callee(template)
-{
-  var
-  i = template[0] && template[0] instanceof Array ? 0 : 1,
-  arg = template[i],
-  tag_name = template[0],
-  ret = "",
-  content = "",
-  attrs = i && ("<" + tag_name + " ")|| "";
-
-  if (tag_name)
-  {
-    while (true)
-    {
-      if (arg instanceof Array)
-      {
-        content += callee.call(null, arg);
-        arg = template[++i];
-      }
-      else if (typeof arg == 'string' && ((template.length - i) % 2 || template[i + 1] instanceof Array))
-      {
-        content += arg.replace(/&/g, "&amp;").replace(/</g, "&lt;");
-        arg = template[++i];
-      }
-      else
-      {
-        break;
-      }
-    }
-    if (attrs)
-      content += "</" + tag_name + ">";
-    for ( ; template[i]; i += 2)
-    {
-      attrs += template[i] + "=\u0022" + template[i + 1].replace(/"/g, "&quot") + "\u0022" + " ";
-    }
-    if (attrs.length)
-      attrs += ">";
-    ret = attrs + content;
-    if (this && this.nodeType == 1)
-    {
-      window.__t_3 = Date.now();
-      this.insertAdjacentHTML('beforeend', ret);
-    }
-    
-  }
-  return ret;
-};
 /**
  * Add the css class "name" to the element's list of classes
  * fixme: Does not work with dashes in the name!
@@ -477,6 +401,42 @@ Element.prototype.getPreviousInFlow = function(root_context)
   return cursor || previous || parent != root_context && parent || null;
 };
 
+
+/* Check elements of a DOM traversal for an attribute. */ 
+Element.prototype.has_attr = function(traverse_type, name)
+{
+  switch (traverse_type)
+  {
+    case "parent-node-chain":
+    {
+      var ele = this;
+      while (ele && ele.nodeType == 1 && !ele.hasAttribute(name))
+        ele = ele.parentNode;
+      return ele && ele.nodeType == 1 && ele || null;
+      break;
+    }
+  }
+  return null;
+}
+
+/* Get an attribute of the first hit of a DOM traversal. */
+Element.prototype.get_attr = function(traverse_type, name)
+{
+  switch (traverse_type)
+  {
+    case "parent-node-chain":
+    {
+      var ele = this;
+      while (ele && ele.nodeType == 1 && !ele.hasAttribute(name))
+        ele = ele.parentNode;
+      return ele && ele.nodeType == 1 && ele.hasAttribute(name) ? ele.getAttribute(name) : null;
+      break;
+    }
+  }
+  return null;
+}
+
+
 /**
  * Make sure the element is visible in its scoll context.
  * @see Element.prototype.scrollSoftIntoContainerView
@@ -643,6 +603,14 @@ if (!(function(){}).bind)
     }
   };
 };
+
+if (!"".trim)
+{
+  String.prototype.trim = function()
+  {
+    return this.replace(/^\s+/, '').replace(/\s+$/, '');
+  }
+}
 
 /**
  * Convenience function for loading a resource with XHR using the get method.

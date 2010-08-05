@@ -152,7 +152,8 @@ window.cls.Helpers = function()
     var obj_id = parseInt(event.target.getAttribute('obj-id'));
     if(obj_id && /^breadcrumb$/i.test(event.target.parentNode.nodeName))
     {
-      hostspotlighter.soft_spotlight(obj_id);
+      if (window.settings.dom.get('highlight-on-hover'))
+        hostspotlighter.soft_spotlight(obj_id);
     }
   }
   // mouseover handler in the breadcrumb
@@ -175,6 +176,23 @@ window.cls.Helpers = function()
   }
 
   this.service_class_name = window.app.helpers.dash_to_class_name;
+
+  this.scroll_dom_target_into_view = function()
+  {
+    var target = document.getElementById('target-element'), container = target;
+    while (container && !/container/i.test(container.nodeName))
+      container = container.parentElement;
+    if (target && container)
+    {
+      container.scrollTop -= (
+        container.getBoundingClientRect().top - 
+        target.getBoundingClientRect().top +
+        Math.min(container.offsetHeight * .5, 100)
+      );
+      container.scrollLeft = 0;
+    }
+    return target && container;
+  }
 
   this.copy_array = function copy_array(item)
   {

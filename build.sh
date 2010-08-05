@@ -1,1 +1,1 @@
-python tools/dfbuild.py -dsm src build
+python tools/dfbuild.py -detsm src build

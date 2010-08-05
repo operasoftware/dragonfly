@@ -42,7 +42,7 @@ cls.Exec["2.0"].ColorPicker = function(id, name, container_class)
   this._container = null;
   this._ctx = null;
   this._ctx_color_mask = null;
-  this._colors = new Colors();
+  this._colors = new Color();
 
   this._width = 0;
   this._height = 0;

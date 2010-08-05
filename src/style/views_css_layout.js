@@ -29,7 +29,7 @@ cls.CSSLayoutView = function(id, name, container_class)
       }
     }
     this.updateLayout({});
-    this.updateOffsets({});
+    window.elementLayout.getOffsetsValues(this.updateOffsets.bind(this, container));
   }
 
   this.updateLayout = function(ev)
@@ -46,21 +46,11 @@ cls.CSSLayoutView = function(id, name, container_class)
     }
   }
   
-  this.updateOffsets = function(ev)
+  this.updateOffsets = function(container, offset_values)
   {
-    var containers = self.getAllContainers(), c = null , i = 0, data = '';
-    // TODO not good logic
-    for( ; c = containers[i]; i++)
-    {
-      c = c.getElementsByTagName('offsets-container')[0];
-      if( elementLayout.getOffsetsValues(arguments) )
-      {
-        c.innerHTML = elementLayout.prettyprintOffsetValues();
-        c = c.getElementsByTagName('breadcrumb')[0];
-        c.onmouseover = helpers.breadcrumbSpotlight;
-        c.onmouseout = helpers.breadcrumbClearSpotlight;
-      }
-    }
+    var offsets = container.getElementsByTagName('offsets-container')[0];
+    if (offsets)
+      offsets.clearAndRender(window.templates.offset_values(offset_values));
   }
   
   this.init(id, name, container_class);

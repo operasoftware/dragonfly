@@ -45,7 +45,7 @@ var Editor = function(actions)
   this.suggest_iterate = false;
   this.property_list_length = 0;
 
-  this.colors = new Colors();
+  this.colors = new Color();
 
   this.get_base_style = function(ele)
   {

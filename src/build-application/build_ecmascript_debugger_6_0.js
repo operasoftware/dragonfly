@@ -23,7 +23,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     window.runtimes = new namespace.Runtimes("6.0");
     window.runtimes.bind(service_interface);
 
-    window.dom_data = new namespace.DOMData();
+    window.dom_data = new namespace.DOMData('dom');
     window.dom_data.bind(service_interface);
     window.stop_at = new namespace.StopAt();
     window.stop_at.bind(service_interface);
@@ -77,17 +77,16 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     cls.ThreadsView.create_ui_widgets();
 
     /* DOM */
+    cls.InspectableDOMNode = namespace.InspectableDOMNode;
     new cls.DOMInspectorActions('dom'); // the view id
     new cls.DOMInspectorKeyhandler('dom');
     new cls.DOMInspectorEditKeyhandler('dom');
     cls.DOMView.prototype = ViewBase;
     new cls.DOMView('dom', ui_strings.M_VIEW_LABEL_DOM, 'scroll dom');
     cls.DOMView.prototype.constructor = cls.DOMView;
-    DOM_markup_style.apply(cls.DOMView.prototype);
     cls.DocumentSelect.prototype = new CstSelect();
     new cls.DocumentSelect('document-select', 'document-options');
     cls.DOMView.create_ui_widgets();
-    messages.post('setting-changed', {id: 'dom', key: 'dom-tree-style'});
 
     /* Stylesheets */
     window.stylesheets = new cls.Stylesheets();
@@ -102,6 +101,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     cls.CSSInspectorView.prototype = ViewBase;
     new cls.CSSInspectorView('css-inspector', ui_strings.M_VIEW_LABEL_STYLES, 'scroll css-inspector');
     cls.CSSInspectorView.create_ui_widgets();
+    new cls.ColorPickerView('color-selector', 'Color Picker', 'color-selector');
 
     /* Layout */
     window.elementLayout = new cls.ElementLayout();
