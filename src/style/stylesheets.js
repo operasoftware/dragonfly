@@ -575,7 +575,7 @@ cls.Stylesheets = function()
   this.create_declaration = function create_declaration(prop, value, is_important, rule_id, is_disabled, origin)
   {
     value = helpers.escapeTextHtml(value);
-    return (!(origin == ORIGIN_USER_AGENT || rule_id == undefined) ? "<input type='checkbox'" +
+    return (!(origin == ORIGIN_USER_AGENT || origin == ORIGIN_LOCAL) ? "<input type='checkbox'" +
                  " title='" + (is_disabled ? "Enable" : "Disable") + "'" +
                  " class='enable-disable'" +
                  (!is_disabled ? " checked='checked'" : "") +

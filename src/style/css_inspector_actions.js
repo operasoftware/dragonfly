@@ -165,8 +165,8 @@ cls.CSSInspectorActions = function(id)
   {
     var is_disabled = target.checked;
     var rule_id = parseInt(target.getAttribute("data-rule-id"));
-    var rt_id = parseInt(target.parentNode.parentNode.parentNode.getAttribute("rt-id"));
-    var obj_id = parseInt(target.parentNode.parentNode.getAttribute("obj-id"));
+    var rt_id = parseInt(target.get_attr("parent-node-chain", "rt-id"));
+    var obj_id = parseInt(target.get_attr("parent-node-chain", "obj-id"));
 
     if (is_disabled)
     {
