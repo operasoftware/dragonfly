@@ -18,7 +18,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._backlog_index = -1;
 
 
-
   this.ondestroy = function()
   {
     this._lastupdate = 0;
@@ -35,7 +34,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
           "<div class='repl-output' handler='focus-repl'><ol class='repl-lines'></ol></div>" +
           "<div class='repl-input'>" +
             "<span class='repl-prefix'>&gt;&gt;&gt; </span>" +
-            "<div><textarea rows='1' title='hold shift to add a new line'></textarea></div>" +
+            "<div><textarea handler='repl-textarea' rows='1' title='hold shift to add a new line'></textarea></div>" +
           "</div>" +
         "</div>";
 
@@ -43,11 +42,9 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
       this._linelist = container.querySelector("ol");
       this._textarea = container.querySelector("textarea");
-      this._textarea.addEventListener("keydown", this._handle_input.bind(this), false);
-      this._textarea.addEventListener("keypress", this._handle_keypress.bind(this), false);
       this._textarea.value = this._current_input;
       this._container = container;
-      this._container.addEventListener("click", this._focus_input.bind(this), false);
+      // note: events are bound to handlers at the bottom of this class
     }
 
     this._update();
@@ -383,8 +380,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
   };
 
-  eventHandlers.click["repl-toggle-group"] = this._handle_repl_toggle_group;
-
+  var eh = window.eventhandlers;
+  eh.click["repl-toggle-group"] = this._handle_repl_toggle_group;
+  eh.click['focus-repl'] = this._focus_input.bind(this);
+  eh.keydown['repl-textarea'] = this._handle_input.bind(this);
+  eh.keypress['repl-textarea'] = this._handle_keypress.bind(this);
 
   this.init(id, name, container_class, html, default_handler);
 };
