@@ -1042,4 +1042,4 @@ cls.JsSourceView.create_ui_widgets = function()
     }
   }
 
-}
+};

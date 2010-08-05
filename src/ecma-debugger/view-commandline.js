@@ -870,4 +870,4 @@ cls.CndRtSelect = function(id, class_name)
   }
 
   this.init(id, class_name);
-}
+};
