@@ -162,7 +162,11 @@ cls.ReplService = function(view, data)
   {
     const STATUS = 0, TYPE = 1;
 
-    if (msg[STATUS] == "unhandled-exception")
+    if (status == 4)
+    {
+      this._handle_raw(msg[0]);
+    }
+    else if (msg[STATUS] == "unhandled-exception")
     {
       this._handle_exception(msg, rt_id);
     }
@@ -215,6 +219,11 @@ cls.ReplService = function(view, data)
         break;
     }
 
+    this._data.add_output_str(val);
+  };
+
+  this._handle_raw = function(val)
+  {
     this._data.add_output_str(val);
   };
 
