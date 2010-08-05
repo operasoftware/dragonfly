@@ -164,14 +164,16 @@ cls.CSSInspectorActions = function(id)
   {
     var is_disabled = target.checked;
     var rule_id = parseInt(target.getAttribute("data-rule-id"));
-    var rt_id = parseInt(target.parentNode.parentNode.firstChild.getAttribute("rt-id"));
+    var rt_id = parseInt(target.parentNode.parentNode.parentNode.getAttribute("rt-id"));
+    var obj_id = parseInt(target.parentNode.parentNode.getAttribute("obj-id"));
+
     if (is_disabled)
     {
-      self.enable_property(rt_id, rule_id, target.getAttribute("data-property"));
+      self.enable_property(rt_id, rule_id, obj_id, target.getAttribute("data-property"));
     }
     else
     {
-      self.disable_property(rt_id, rule_id, target.getAttribute("data-property"));
+      self.disable_property(rt_id, rule_id, obj_id, target.getAttribute("data-property"));
     }
   };
 
@@ -325,10 +327,9 @@ cls.CSSInspectorActions = function(id)
    * @param {String} prop_to_remove An optional property to remove
    * @param {Function} callback Callback to execute when the proeprty has been added
    */
-  this.set_property = function set_property(declaration, prop_to_remove, callback)
+  this.set_property = function set_property(rt_id, rule_id, declaration, prop_to_remove, callback)
   {
     var prop = this.normalize_property(declaration[0]);
-    var rule_id = this.editor.context_rule_id;
     var script = "";
 
     // TEMP: workaround for CORE-31191: updating a property with !important is discarded
@@ -357,7 +358,7 @@ cls.CSSInspectorActions = function(id)
 
     var tag = (typeof callback == "function") ? tagManager.set_callback(null, callback) : 1;
     services['ecmascript-debugger'].requestEval(tag,
-      [this.editor.context_rt_id, 0, 0, script, [["object", rule_id]]]);
+      [rt_id, 0, 0, script, [["object", rule_id]]]);
   };
 
   /**
@@ -366,15 +367,14 @@ cls.CSSInspectorActions = function(id)
    * @param {String} prop_to_remove The property to remove
    * @param {Function} callback Callback to execute when the property has been added
    */
-  this.remove_property = function remove_property(prop_to_remove, callback)
+  this.remove_property = function remove_property(rt_id, rule_id, prop_to_remove, callback)
   {
     prop_to_remove = this.normalize_property(prop_to_remove);
-    var rule_id = this.editor.context_rule_id;
     var script = "object.style.removeProperty(\"" + prop_to_remove + "\");";
 
     var tag = (typeof callback == "function") ? tagManager.set_callback(null, callback) : 1;
     services['ecmascript-debugger'].requestEval(tag,
-      [this.editor.context_rt_id, 0, 0, script, [["object", rule_id]]]);
+      [rt_id, 0, 0, script, [["object", rule_id]]]);
   };
 
   /**
@@ -411,18 +411,16 @@ cls.CSSInspectorActions = function(id)
    *
    * @param {String} property The property to enable
    */
-  this.enable_property = function enable_property(rt_id, rule_id, property)
+  this.enable_property = function enable_property(rt_id, rule_id, obj_id, property)
   {
     const INDEX_LIST = 1;
     const VALUE_LIST = 2;
     const PRIORITY_LIST = 3;
 
-    this.editor.context_rt_id = rt_id;
-    this.editor.context_rule_id = rule_id;
-
-    var disabled_style_dec = window.elementStyle.disabled_style_dec_list[rule_id];
+    var id = rule_id || window.elementStyle.get_inline_obj_id(obj_id);
+    var disabled_style_dec = window.elementStyle.disabled_style_dec_list[id];
     var style_dec = window.elementStyle.remove_property(disabled_style_dec, property);
-    this.set_property([window.css_index_map[style_dec[INDEX_LIST][0]],
+    this.set_property(rt_id, rule_id || obj_id, [window.css_index_map[style_dec[INDEX_LIST][0]],
                        style_dec[VALUE_LIST][0],
                        style_dec[PRIORITY_LIST][0]], null, window.elementStyle.update);
   };
@@ -432,20 +430,23 @@ cls.CSSInspectorActions = function(id)
    *
    * @param {String} property The property to disable
    */
-  this.disable_property = function disable_property(rt_id, rule_id, property)
+  this.disable_property = function disable_property(rt_id, rule_id, obj_id, property)
   {
-    this.editor.context_rt_id = rt_id;
-    this.editor.context_rule_id = rule_id;
-
     var disabled_style_dec_list = window.elementStyle.disabled_style_dec_list;
 
-    if (!disabled_style_dec_list[rule_id]) {
-        disabled_style_dec_list[rule_id] = window.elementStyle.get_new_style_dec();
+    var id = rule_id || window.elementStyle.get_inline_obj_id(obj_id);
+    var style_dec = rule_id
+                  ? window.elementStyle.get_style_dec_by_id(rule_id)
+                  : window.elementStyle.get_inline_style_dec_by_id(obj_id);
+
+    if (!disabled_style_dec_list[id])
+    {
+      disabled_style_dec_list[id] = window.elementStyle.get_new_style_dec();
     }
-    var style_dec = window.elementStyle.get_style_dec_by_id(rule_id);
-    window.elementStyle.copy_property(style_dec, disabled_style_dec_list[rule_id], property);
+
+    window.elementStyle.copy_property(style_dec, disabled_style_dec_list[id], property);
     window.elementStyle.remove_property(style_dec, property);
-    this.remove_property(property, window.elementStyle.update);
+    this.remove_property(rt_id, rule_id || obj_id, property, window.elementStyle.update);
   };
 
   /**
