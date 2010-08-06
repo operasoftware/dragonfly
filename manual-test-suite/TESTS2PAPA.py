@@ -5,14 +5,16 @@ import time
 import string
 import re
 import time
+import shutil
 from mimetypes import types_map
 from urllib import quote, unquote
 from resources.markup import *
 
 APP_ROOT, file_name = os.path.split(os.path.abspath(__file__))
+TEMPLATES = os.path.join(APP_ROOT, "resources", "TEMPLATES")
 TESTS = os.path.join(APP_ROOT, "TESTS")
-ID_COUNT = os.path.join(APP_ROOT, 'storage', 'ID_COUNT')
-IDS = os.path.join(APP_ROOT, 'storage', 'IDS')
+PAPA = "PAPA"
+TESTCASES = 'test-cases'
 
 if sys.platform == "win32":
     import os, msvcrt
@@ -37,18 +39,21 @@ class Entry(object):
 
     def __str__(self):
         ret = []
-        for p in ['title', 'url', 'desc', 'label']:
+        for p in ['label', 
+                  'mode', 
+                  'tabs', 
+                  'urls', 
+                  'repo', 
+                  'index', 
+                  'file_name', 
+                  'desc']:
             value = getattr(self, p)
             if value:
-                ret.append("%s: %s\n" % (p, "".join(value)))
-        for p in ['mode', 'tabs', 'urls', 'repo', 'index', 'file_name']:
-            value = getattr(self, p)
-            if value:
-                ret.append("%s: %s\n" % (p, value))
-
-        return '-----------------\n' + "".join(ret)
-
-
+                if type(value) == type([]):
+                    ret.append("%s: %s" % (p, "".join(value)))
+                else:
+                    ret.append("%s: %s" % (p, value))
+        return '-----------------\n' + "\n".join(ret)
 
     def normalize(self):
         for prop in ['title', 'url', 'desc', 'label']:
@@ -57,9 +62,6 @@ class Entry(object):
     def is_empty(self):
         return bool(self.title or self.url or self.desc or self.label)
         
-            
-            
-
 def get_ids():
     """Parse the IDS file.
     
@@ -126,19 +128,28 @@ def parse_title(title):
                 st.pop()
             sub_tabs.append(' '.join(st))
     return top_tab, sub_tabs
+    
+def load_templates():
+    with open(TEMPLATES, 'rb') as f:
+        cur_key = ""
+        cur_value = []
+        for line in f.readlines():
+            if line.startswith('HTML_'):
+                if cur_value:
+                    globals()[cur_key] = "".join(cur_value)
+                    cur_value = []
+                cur_key = line.strip()
+            elif not line.startswith('#'):
+                cur_value.append(line)
+        if cur_value:
+            globals()[cur_key] = "".join(cur_value)
             
-def test():
+def tests2singledocs():
     entries = get_tests()
-    for e in entries: e.normalize()
+    for e in entries: 
+      e.normalize()
     entries = filter(lambda e: e.is_empty(), entries)
     cur = Entry()
-    """
-    mode = ''
-    repo = ''
-    tabs = ''
-    urls = []
-
-    """
     type = ''
     index = 0
     for entry in entries:
@@ -153,6 +164,7 @@ def test():
                 cur.urls.extend(entry.url)
             else:
                 cur.urls = entry.url[:]
+            type = 'url'
         if entry.label:
             type = 'label'
             entry.mode = cur.mode
@@ -160,12 +172,82 @@ def test():
             entry.urls = entry.url or cur.urls
             entry.repo = cur.repo
             entry.index = "%#04i" % index
-            entry.file_name = "%s.%s.html" % (entry.index, ''.join(entry.label).strip().replace(' ', '-').lower())
+            file_name = ''.join(entry.label).strip().replace(' ', '-').replace(',', '').lower()
+            entry.file_name = "%s.%s.html" % (entry.index, file_name)
             index += 1
-    entries = filter(lambda e: e.label , entries)
-    for entry in entries:
-        print entry
-
+    return filter(lambda e: e.label , entries)
+    
+def print_index(index):
+    content = [HTML_HEAD, HTML_MAIN_TITLE]
+    sections = []
+    links = None
+    cur_mode = ''
+    for mode, label, path in index:
+        if not mode == cur_mode:
+            cur_mode = mode
+            links = []
+            sections.append((mode, links))
+        links.append(HTML_URL % (path, label)) 
+    for title, links in sections:
+      content.append(HTML_SECTION % (title, "".join(links)))
+    with open(os.path.join(PAPA, 'index.html'), 'w') as f:
+        f.write("".join(content))
+    
+        
+    
+def test():
+    load_templates()
+    entries = tests2singledocs()
+    
+    """
+    label:  Export
+    mode: DOM
+    tabs: DOM
+    urls: http://dev.opera.com
+    repo: dom
+    index: 0002
+    file_name: 0002.export.html
+    desc: - Press the Export button.- Verify that the current view is displayed in a new tab.
+    """
+    if not os.path.exists(PAPA):
+        os.makedirs(PAPA)
+    index = []
+    for e in entries:
+        content = [HTML_HEAD]
+        urls = []
+        for u in e.urls:
+            u = u.replace('./', '../')
+            urls.append(HTML_URL % (u, u))
+        raw_items = [item.strip().replace('"', '&quot;') for item in e.desc if item]
+        string = ""
+        items = []
+        for item in raw_items:
+            if item.startswith('-') or item.startswith('*'):
+                if string:
+                    items.append(string)
+                string = item.lstrip('-* ')
+            else:
+                string += ' ' + item
+        if string:
+            items.append(string)
+            
+        content.append(HTML_TITLE % ("".join(e.label),
+                                     e.mode,
+                                     e.tabs,
+                                     "".join(urls),
+                                     e.index,
+                                     "".join([HTML_ITEM % item for item in items])))
+        repo = os.path.join(PAPA, e.repo)
+        if not os.path.exists(repo):
+          os.makedirs(repo)
+        
+        with open(os.path.join(repo, e.file_name), 'w') as f:
+            f.write("".join(content))
+        index.append((e.mode, "".join(e.label), "./%s/%s" % (e.repo, e.file_name)))
+    print_index(index)
+    if not os.path.exists(os.path.join(PAPA, TESTCASES)):
+        shutil.copytree(TESTCASES, os.path.join(PAPA, TESTCASES))
+        
         
 if __name__ == '__main__':
     test()

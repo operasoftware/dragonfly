@@ -506,6 +506,8 @@ label: Inspect cookies
 desc:
   - Go to the above url in the above order
   - Verify that you see cookie a - j
+  
+url: ./test-cases/storages/check-storages.html
 
 id: 55
 label: Delete cookies
@@ -540,11 +542,17 @@ desc:
 Storage.Local Storage
 *********************
 
+url: ./test-cases/storages/create-storages.html
+
+url: ./test-cases/storages/check-storages.html
+
 id: 59
 label: Inspect local storage
 desc:
   - Go to the above url in the above order
   - Verify that you see local storage item a - j
+  
+url: ./test-cases/storages/check-storages.html
 
 id: 60
 label: Delete local storage items
@@ -579,11 +587,17 @@ desc:
 Storage.Session Storage
 *********************
 
+url: ./test-cases/storages/create-storages.html
+
+url: ./test-cases/storages/check-storages.html
+
 id: 64
 label: Inspect session storage
 desc:
   - Go to the above url in the above order
   - Verify that you see session storage item a - j
+  
+url: ./test-cases/storages/check-storages.html
 
 id: 65
 label: Delete session storage items
