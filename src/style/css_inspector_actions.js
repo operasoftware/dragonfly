@@ -12,6 +12,7 @@ cls.CSSInspectorActions = function(id)
 
   this.__active_container = null;
   this.__target = null;
+  const CSS_CLASS_CP_TARGET = window.cls.ColorPickerView.CSS_CLASS_TARGET;
 
   this.editor = new Editor(this);
 
@@ -139,7 +140,8 @@ cls.CSSInspectorActions = function(id)
       case 'key':
       case 'value':
       {
-        if (event.target.parentElement.parentElement.hasAttribute('rule-id'))
+        if (event.target.parentElement.parentElement.hasAttribute('rule-id') &&
+            !event.target.parentNode.hasClass(CSS_CLASS_CP_TARGET))
         {
           key_identifier.setModeEdit(self);
           self.setSelected(event.target.parentNode);
@@ -149,7 +151,8 @@ cls.CSSInspectorActions = function(id)
       }
       case 'property':
       {
-        if (event.target.parentElement.hasAttribute('rule-id'))
+        if (event.target.parentElement.hasAttribute('rule-id') &&
+            !event.target.hasClass(CSS_CLASS_CP_TARGET))
         {
           key_identifier.setModeEdit(self);
           self.setSelected(event.target);

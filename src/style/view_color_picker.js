@@ -11,7 +11,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
   this.show_color_picker = function(event){};
 
   /* settings */
-  this.show_in_views_menu = true;  
+  this.show_in_views_menu = true;
   this.window_top = 20;
   this.window_left = 20;
   this.window_width_with_alpha = 523;
@@ -21,7 +21,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
   this.window_statusbar = false;
 
   /* private */
-  const CSS_CLASS_TARGET = 'color-picker-target-element';
+  const CSS_CLASS_TARGET = window.cls.ColorPickerView.CSS_CLASS_TARGET;
 
   this._edit_context = null;
 
@@ -58,14 +58,16 @@ window.cls.ColorPickerView = function(id, name, container_class)
   /* implementation */
   this.createView = function(container)
   {
-    var color_picker = new ColorPicker(this._color_cb_bound, 
+    var color_picker = new ColorPicker(this._color_cb_bound,
                                        this._edit_context.initial_color);
-    container.render(color_picker.render());
+    container.clearAndRender(color_picker.render());
   }
 
   this.show_color_picker = function(event)
   {
     var target = event.target, parent = target.parentNode;
+    if (this._edit_context)
+      this._edit_context.ele_container.removeClass(CSS_CLASS_TARGET);
     this._edit_context =
     {
       initial_color: new Color().parseCSSColor(target.style.backgroundColor),
@@ -113,15 +115,15 @@ window.cls.ColorPickerView = function(id, name, container_class)
   this._finalize_show_color_picker = function()
   {
     this._edit_context.ele_container.addClass(CSS_CLASS_TARGET);
-    UIWindowBase.showWindow(this.id, 
-                            this.window_top, 
-                            this.window_left, 
+    UIWindowBase.showWindow(this.id,
+                            this.window_top,
+                            this.window_left,
                             typeof this._edit_context.initial_color.alpha == 'number' ?
                             this.window_width_with_alpha :
                             this.window_width,
                             this.window_height);
   }
-  
+
   this.ondestroy = function()
   {
     this._edit_context.ele_container.removeClass(CSS_CLASS_TARGET);
@@ -132,6 +134,8 @@ window.cls.ColorPickerView = function(id, name, container_class)
   this.init(id, name, container_class);
 
 }
+
+window.cls.ColorPickerView.CSS_CLASS_TARGET = 'color-picker-target-element';
 
 window.cls.ColorPickerView.prototype = ViewBase;
 
