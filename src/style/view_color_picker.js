@@ -66,30 +66,33 @@ window.cls.ColorPickerView = function(id, name, container_class)
   this.show_color_picker = function(event)
   {
     var target = event.target, parent = target.parentNode;
-    if (this._edit_context)
-      this._edit_context.ele_container.removeClass(CSS_CLASS_TARGET);
-    this._edit_context =
+    if (!parent.parentNode.hasClass('disabled'))
     {
-      initial_color: new Color().parseCSSColor(target.style.backgroundColor),
-      ele_value: parent,
-      ele_color_sample: target,
-      ele_container: parent.parentNode,
-      prop_name: parent.parentNode.getElementsByTagName('key')[0].textContent,
-      rt_id: parseInt(parent.get_attr('parent-node-chain', 'rt-id')),
-      rule_id: parseInt(parent.get_attr('parent-node-chain', 'rule-id')),
-    }
-    if (this._edit_context.initial_color)
-      this._finalize_show_color_picker();
-    else
-    {
-      if (target.style.backgroundColor == 'inherit')
+      if (this._edit_context)
+        this._edit_context.ele_container.removeClass(CSS_CLASS_TARGET);
+      this._edit_context =
       {
-        var obj_id = parseInt(parent.get_attr('parent-node-chain', 'obj-id'));
-        var script = "window.getComputedStyle(ele, null)." +
-                     "getPropertyValue(\"" + this._edit_context.prop_name+ "\");";
-        var tag = tag_manager.set_callback(this, this._handle_get_color);
-        var msg = [this._edit_context.rt_id, 0, 0, script, [["ele", obj_id]]];
-        window.services['ecmascript-debugger'].requestEval(tag, msg);
+        initial_color: new Color().parseCSSColor(target.style.backgroundColor),
+        ele_value: parent,
+        ele_color_sample: target,
+        ele_container: parent.parentNode,
+        prop_name: parent.parentNode.getElementsByTagName('key')[0].textContent,
+        rt_id: parseInt(parent.get_attr('parent-node-chain', 'rt-id')),
+        rule_id: parseInt(parent.get_attr('parent-node-chain', 'rule-id')),
+      }
+      if (this._edit_context.initial_color)
+        this._finalize_show_color_picker();
+      else
+      {
+        if (target.style.backgroundColor == 'inherit')
+        {
+          var obj_id = parseInt(parent.get_attr('parent-node-chain', 'obj-id'));
+          var script = "window.getComputedStyle(ele, null)." +
+                       "getPropertyValue(\"" + this._edit_context.prop_name+ "\");";
+          var tag = tag_manager.set_callback(this, this._handle_get_color);
+          var msg = [this._edit_context.rt_id, 0, 0, script, [["ele", obj_id]]];
+          window.services['ecmascript-debugger'].requestEval(tag, msg);
+        }
       }
     }
   }

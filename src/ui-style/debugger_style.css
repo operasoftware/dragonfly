@@ -1346,6 +1346,11 @@ color-sample
   margin-left: 5px;
 }
 
+property.disabled color-sample
+{
+  opacity: .35;
+}
+
 
  
 
