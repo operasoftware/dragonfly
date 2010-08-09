@@ -34,7 +34,7 @@ class Entry(object):
         self.tabs = ''
         self.urls = ''
         self.repo = ''
-        self.index = ''
+        self.index_count = 0
         self.file_name = ''
 
     def __str__(self):
@@ -61,20 +61,7 @@ class Entry(object):
 
     def is_empty(self):
         return bool(self.title or self.url or self.desc or self.label)
-        
-def get_ids():
-    """Parse the IDS file.
-    
-    Parse the IDS file and return a list of the id's. 
-    Includes all tests and other attributes 
-    of a protocol like tester and changeset 
-    to check if a new submitted protocol is complete.
-    """
-    f_ids = open(IDS, 'r')
-    ids = [id.strip() for id in f_ids.readlines()]
-    f_ids.close()
-    return ids
-    
+            
 def get_tests():
     """Parse the TESTS file.
 
@@ -151,7 +138,6 @@ def tests2singledocs():
     entries = filter(lambda e: e.is_empty(), entries)
     cur = Entry()
     type = ''
-    index = 0
     for entry in entries:
         if entry.title:
             cur.mode, ts = parse_title(''.join(entry.title))
@@ -167,11 +153,12 @@ def tests2singledocs():
             type = 'url'
         if entry.label:
             type = 'label'
+            cur.index_count += 1
             entry.mode = cur.mode
             entry.tabs = cur.tabs
             entry.urls = entry.url or cur.urls
             entry.repo = cur.repo
-            entry.index = "%#04i" % index
+            entry.index = "%#04i" % cur.index_count
             file_name = ''.join(entry.label).strip().replace(' ', '-').replace(',', '').lower()
             entry.file_name = "%s.%s.html" % (entry.index, file_name)
             index += 1

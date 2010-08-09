@@ -23,7 +23,7 @@ HTML_ITEM
 <li>%s</li>
 #
 HTML_TITLE
-<h3>Opera Dragonfly Manual Smoke Test Suit</h3>
+<h3>Opera Dragonfly Manual Smoke Test Suite</h3>
 <h2>%s</h2>
 <table>
 <tr><td>Mode:<td>%s</tr>
@@ -37,9 +37,11 @@ HTML_TITLE
 </ol>
 #
 HTML_MAIN_TITLE
-<h1>Opera Dragonfly Manual Smoke Test Suit</h1>
+<h1>Opera Dragonfly Manual Smoke Test Suite</h1>
 #
 HTML_SECTION
 <h2>%s</h2>
-<ul>%s</ul>
+<ul>
+%s
+</ul>
   
