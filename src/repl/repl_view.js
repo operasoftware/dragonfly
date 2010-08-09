@@ -44,10 +44,19 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       this._textarea = container.querySelector("textarea");
       this._textarea.value = this._current_input;
       this._container = container;
+      this._textarea.focus();
+
       // note: events are bound to handlers at the bottom of this class
     }
 
     this._update();
+  };
+
+
+  this.clear = function()
+  {
+    this._linelist.innerHTML = "";
+    this.ondestroy();
   };
 
   /**

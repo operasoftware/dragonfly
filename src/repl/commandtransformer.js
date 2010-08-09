@@ -29,7 +29,9 @@
 window.cls = window.cls || {};
 cls.HostCommandTransformer = function() {
   this.parser = null;
-  this.commandTable = {};
+  this.command_map = {};
+  this.transform_map = {};
+
 
   //local copy of token types, local vars have better performance. :
   const
@@ -48,16 +50,23 @@ cls.HostCommandTransformer = function() {
     // in dragonfly. Use it if it exists.
     this.parser = window.simple_js_parser || new window.cls.SimpleJSParser();
 
-    for (name in this) {
-      var commandName = name.split("hostcommand_")[1];
-
-      if (commandName) {
-        this.commandTable[commandName] = this[name];
+    for (methodname in this) {
+      var type = methodname.split("_", 1)[0];
+      if (type == "hostcommand")
+      {
+        var name = methodname.split("hostcommand_")[1];
+        this.transform_map[name] = this[methodname];
+      }
+      else if (type == "clientcommand")
+      {
+        var name = methodname.split("clientcommand_")[1];
+        this.command_map[name] = this[methodname];
       }
     }
   };
 
-  this.transform = function(source) {
+  this.transform = function(source)
+  {
     var types = [];
     var values = [];
     var tokens = [];
@@ -69,14 +78,33 @@ cls.HostCommandTransformer = function() {
 
     dirty: // we jump back here if we need to re-process all tokens
     for (var n=0, token; token=tokens[n]; n++) {
-      if (token.type == IDENTIFIER && token.value in this.commandTable) {
-        var fun = this.commandTable[token.value];
+      if (token.type == IDENTIFIER && token.value in this.transform_map) {
+        var fun = this.transform_map[token.value];
         if (fun.call(this, token, tokens)) {
           break dirty;
         }
       }
     }
     return tokens.map(function(e) {return e.value;}).join("");
+  };
+
+  this.get_command = function(source)
+  {
+
+    var types = [];
+    var values = [];
+    var tokens = [];
+    this.parser.parse(source, values, types);
+
+    // make a more straightforward representation of tokens. Command line
+    // stuff is small, so the cost of this doesn't matter much.
+    tokens = this.zip_tokens(types, values);
+
+    if (this.is_call(tokens, 0) && tokens[0].value in this.command_map)
+    {
+      return this.command_map[tokens[0].value];
+    }
+    return null;
   };
 
   this.zip_tokens = function(types, values) {
@@ -204,11 +232,11 @@ cls.HostCommandTransformer = function() {
     token.value = funstr;
   };
 
-  this.replcommand_clear = function(token, tokenlist, data)
+  this.clientcommand_clear = function(view, data, input)
   {
-    data.clear_log();
-    return true;
+    view.clear();
+    data.clear();
   };
 
   this.init();
-}
+};

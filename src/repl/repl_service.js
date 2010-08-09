@@ -253,6 +253,27 @@ cls.ReplService = function(view, data)
 
   this._evaluate_input = function(input)
   {
+    var cooked = this._transformer.transform(input);
+    var command = this._transformer.get_command(cooked);
+
+    if (command)
+    {
+      this._handle_clientcommand(command);
+    }
+    else
+    {
+      this._handle_hostcommand(cooked);
+    }
+
+  };
+
+  this._handle_clientcommand = function(command, cooked)
+  {
+    command(this._view, this._data, cooked);
+  };
+
+  this._handle_hostcommand = function(cooked)
+  {
     var rt_id = runtimes.getSelectedRuntimeId();
     var thread = window.stop_at.getThreadId();
     var frame = window.stop_at.getSelectedFrameIndex();
@@ -262,7 +283,6 @@ cls.ReplService = function(view, data)
       frame = 0;
     }
 
-    var cooked = this._transformer.transform(input);
     var tag = this._tagman.set_callback(this, this._on_eval_done.bind(this), [rt_id, thread, frame]);
     var magicvars = [];
     if (this._cur_selected) {
@@ -272,6 +292,7 @@ cls.ReplService = function(view, data)
       magicvars.push(["$1", this._prev_selected]);
     }
     this._service.requestEval(tag, [rt_id, thread, frame, cooked, magicvars]);
+
   };
 
   this.init = function(view, data)

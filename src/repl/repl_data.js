@@ -6,6 +6,13 @@ cls.ReplData = function(view)
   this._typed_history = [];
   this._view = view;
 
+  this.clear = function()
+  {
+    this._repllog = [];
+    // leave the typed history alone.
+    this._view.update();
+  };
+
   this._add_entry = function(type, data)
   {
     var entry = {
