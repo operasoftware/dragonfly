@@ -146,7 +146,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       return;
     }
 
-    var div = document.createElement("div");
     this._add_line(data.view.render());
   };
 
@@ -164,7 +163,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       return;
     }
 
-    var div = document.createElement("div");
     this._add_line(data.view.render());
   };
 
