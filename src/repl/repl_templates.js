@@ -1,6 +1,20 @@
 
 window.templates || (window.templates = {});
 
+templates.repl_main = function()
+{
+  return [
+    "div", [[
+      ["div", [
+         "ol", "", "class", "repl-lines"
+         ], "class", "repl-output", "handler", "focus-repl"],
+      ["div", [[
+        ["span", ">>> ", "class", "repl-prefix"],
+        ["div", ["textarea", "", "handler", "repl-textarea", "rows", "1"]]
+      ]], "class", "repl-input"]
+    ]], "class", "padding"
+  ];
+};
 
 templates.repl_output_native = function(s)
 {

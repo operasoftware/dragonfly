@@ -29,17 +29,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   {
     if (!this._lastupdate)
     {
-      var markup = "" +
-        "<div class='padding'>" +
-          "<div class='repl-output' handler='focus-repl'><ol class='repl-lines'></ol></div>" +
-          "<div class='repl-input'>" +
-            "<span class='repl-prefix'>&gt;&gt;&gt; </span>" +
-            "<div><textarea handler='repl-textarea' rows='1' title='hold shift to add a new line'></textarea></div>" +
-          "</div>" +
-        "</div>";
-
-      container.innerHTML = markup;
-
+      container.render(templates.repl_main());
       this._linelist = container.querySelector("ol");
       this._textarea = container.querySelector("textarea");
       this._textarea.value = this._current_input;
