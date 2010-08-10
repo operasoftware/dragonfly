@@ -236,8 +236,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     {
       evt.preventDefault();
       var input = this._textarea.value;
-      // trim leading and trailing whitespace
-      input = input.replace(/^\s*/, "").replace(/$\s*/, "");
+      input = input.trim();
       this._textarea.value = "";
       this._backlog_index = -1;
       this._current_input = "";
