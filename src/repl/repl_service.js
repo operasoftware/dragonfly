@@ -158,7 +158,7 @@ cls.ReplService = function(view, data)
     }
   };
 
-  this._on_eval_done = function(status, msg, rt_id, thread_id, frame_id)
+  this._on_eval_done_bound = function(status, msg, rt_id, thread_id, frame_id)
   {
     const STATUS = 0, TYPE = 1;
 
@@ -178,7 +178,7 @@ cls.ReplService = function(view, data)
     {
       this._handle_native(msg);
     }
-  };
+  }.bind(this);
 
   this._on_element_selected = function(msg)
   {
@@ -283,7 +283,7 @@ cls.ReplService = function(view, data)
       frame = 0;
     }
 
-    var tag = this._tagman.set_callback(this, this._on_eval_done.bind(this), [rt_id, thread, frame]);
+    var tag = this._tagman.set_callback(this, this._on_eval_done_bound, [rt_id, thread, frame]);
     var magicvars = [];
     if (this._cur_selected) {
       magicvars.push(["$0", this._cur_selected]);
