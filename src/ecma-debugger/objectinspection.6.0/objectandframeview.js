@@ -83,6 +83,9 @@ cls.EcmascriptDebugger["6.0"].InspectionView = function(id, name, container_clas
 
 };
 
+cls.EcmascriptDebugger["6.0"].InspectionView.DEFAULT_COLLAPSED_PROTOS = 
+  ['Object', 'Function', 'Array', 'String', 'Number'];
+
 cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
 {
   new Settings
@@ -92,7 +95,8 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
     // key-value map
     {
       'automatic-update-global-scope': false,
-      'hide-default-properties': true
+      'hide-default-properties': true,
+      'collapsed-prototypes': this.DEFAULT_COLLAPSED_PROTOS,
     },
     // key-label map
     {
@@ -104,9 +108,77 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
       checkboxes:
       [
         'hide-default-properties'
+      ],
+      customSettings:
+      [
+        'collapsed_protos'
       ]
+    },
+    // template
+    {
+      collapsed_protos:
+      function(setting)
+      {
+        return [
+          ['setting-composite',
+            ['label',
+              "Default collapsed prototype objects: ",
+              ['input',
+                'type', 'text',
+                'handler', 'update-collapsed-prototypes',
+                'class', 'collapsed-prototypes',
+                'value', setting.get('collapsed-prototypes').join(', ')
+              ],
+            ],
+            ['span', ' (\'*\' will collapse all) '],
+            ['input',
+              'type', 'button',
+              // 'disabled', 'disabled',
+              'value', ui_strings.S_BUTTON_TEXT_APPLY,
+              'handler', 'apply-collapsed-prototypes'
+            ],
+            ['input',
+              'type', 'button',
+              // 'disabled', 'disabled',
+              'value', 'Set default value.',
+              'handler', 'default-collapsed-prototypes'
+            ],
+            'class', ' '
+          ]
+        ];
+      }
     }
   );
+
+  window.eventHandlers.input['update-collapsed-prototypes'] = function(event, target)
+  {
+    // target.parentNode.parentNode.getElementsByTagName('input')[1].disabled = false;
+  }
+
+
+
+  window.eventHandlers.click['apply-collapsed-prototypes'] = function(event, target)
+  {
+    var protos = target.parentNode.getElementsByTagName('input')[0].value;
+    try
+    {
+      protos = JSON.parse("[\"" + protos.split(',').join("\", \"") + "\"]");
+    }
+    catch(e)
+    {
+      alert("Not a valid input.")
+      protos = null;
+    };
+    if(protos)
+        window.settings.inspection.set('collapsed-prototypes', protos);
+  }
+
+  window.eventHandlers.click['default-collapsed-prototypes'] = function(event, target)
+  {
+    var defaults = cls.EcmascriptDebugger["6.0"].InspectionView.DEFAULT_COLLAPSED_PROTOS;
+    target.parentNode.getElementsByTagName('input')[0].value = defaults.join(', ');
+    window.settings.inspection.set('collapsed-prototypes', defaults);
+  }
 
   new ToolbarConfig
   (

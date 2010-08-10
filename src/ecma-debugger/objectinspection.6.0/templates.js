@@ -5,9 +5,6 @@
   this.inspected_js_object = function(model, show_root, path){};
   this.inspected_js_prototype = function(model, path, index){};
 
-  // TODO make this editable
-  const CLOSED_LIST = ['Object', 'Function', 'Array', 'String', 'Number'];
-
   /* constants */
 
   const
@@ -28,18 +25,21 @@
 
   /* private */
 
-  var _is_unfolded = function(tree, index, name)
+  var _is_unfolded = function(tree, index, name, collapsed_protos)
   {
     if (!index) // the properties of the object itself
       return true;
+    if (collapsed_protos[0] == '*')
+      return false;
     if (!tree.protos.hasOwnProperty(index.toString()))
-      return CLOSED_LIST.indexOf(name) == -1;
+      return collapsed_protos.indexOf(name) == -1;
     return Boolean(tree.protos[index]);
   }
 
-  var _pretty_print_object = function(model, tree, obj_id, ret)
+  var _pretty_print_object = function(model, tree, obj_id, ret, collapsed_protos)
   {
     ret || (ret = []);
+    collapsed_protos || (collapsed_protos = window.settings.inspection.get('collapsed-prototypes'));
     var data = model.get_data(obj_id);
     if (data)
     {
@@ -51,11 +51,12 @@
     return ret;
   };
 
-  var _pretty_print_proto = function(model, tree, proto, index, ret)
+  var _pretty_print_proto = function(model, tree, proto, index, ret, collapsed_protos)
   {
     ret || (ret = []);
+    collapsed_protos || (collapsed_protos = window.settings.inspection.get('collapsed-prototypes'));
     var name = proto[VALUE][CLASS_NAME];
-    var is_unfolded = _is_unfolded(tree, index, name);
+    var is_unfolded = _is_unfolded(tree, index, name, collapsed_protos);
     ret.push("<div class='prototype' data-proto-index='" + index + "'>");
     // skip the first object description
     if (index)
@@ -77,7 +78,7 @@
 
 
 
-  var _pretty_print_properties = function(model, tree, property_list, ret)
+  var _pretty_print_properties = function(model, tree, property_list, ret, collapsed_protos)
   {
     var value = '', type = '', short_val = '', obj_id = 0;
     for (var prop = null, i = 0; prop = property_list[i]; i++)
