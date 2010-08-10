@@ -393,13 +393,108 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
   };
 
+  this._handle_option_change = function(event, target)
+  {
+    settings.repl.set('max-typed-history-length', target.value);
+  };
+
+
+  this._init_settings = function()
+  {
+/*
+    new Settings(
+      'repl',
+      { // key/value
+        'max-typed-history-length': 8,
+        'typed-history': []
+      },
+      { // key/label
+        'max-typed-history-length': "Max items in typed history to remember"
+      },
+
+
+
+    { // settings map
+      customSettings:
+      [
+        'max-typed-history-length'
+      ]
+    },
+
+
+    {  // custom templates
+      'max-typed-history-length':
+      function(setting)
+      {
+        return (
+        [
+          'setting-composite',
+          ['label',
+            setting.label_map['max-typed-history-length'] + ': ',
+            ['input',
+              'type', 'number',
+              'handler', 'set-typed-history-length',
+              'max', '1000',
+              'min', '0',
+              'value', setting.get('max-typed-history-length')
+            ]
+          ]
+        ] );
+      }
+    });
+*/
+  };
+
 
   var eh = window.eventHandlers;
   eh.click["repl-toggle-group"] = this._handle_repl_toggle_group;
   eh.click['focus-repl'] = this._focus_input.bind(this);
   eh.keydown['repl-textarea'] = this._handle_input.bind(this);
   eh.keypress['repl-textarea'] = this._handle_keypress.bind(this);
+  eh.change['set-typed-history-length'] = this._handle_option_change.bind(this);
 
+//  window.messages.addListener("setting-changed")
+
+  this._init_settings();
   this.init(id, name, container_class, html, default_handler);
 };
 cls.ReplView.prototype = ViewBase;
+
+
+
+// fixme: move settings initialization back into class
+new Settings(
+  'repl',
+  { // key/value
+    'max-typed-history-length': 8,
+    'typed-history': []
+  },
+  { // key/label
+    'max-typed-history-length': "Max items in typed history to remember"
+  },
+  { // settings map
+    customSettings:
+    [
+      'max-typed-history-length'
+    ]
+  },
+  {  // custom templates
+    'max-typed-history-length':
+    function(setting)
+    {
+      return (
+      [
+        'setting-composite',
+        ['label',
+        setting.label_map['max-typed-history-length'] + ': ',
+        ['input',
+        'type', 'number',
+        'handler', 'set-typed-history-length',
+        'max', '1000',
+        'min', '0',
+        'value', setting.get('max-typed-history-length')
+        ]
+      ]
+    ] );
+  }
+});

@@ -3,7 +3,8 @@ window.cls = window.cls || (window.cls = {});
 cls.ReplData = function(view)
 {
   this._repllog = [];
-  this._typed_history = [];
+  this._typed_history = settings.repl.get("typed-history") || [];
+  this._max_typed = settings.repl.get('max-typed-history-length') || 0;
   this._view = view;
 
   this.clear = function()
@@ -124,6 +125,11 @@ cls.ReplData = function(view)
     if (this._typed_history[0] != str)
     {
       this._typed_history.unshift(str);
+      settings.repl.set("typed-history", this._typed_history);
+      if (this._max_typed && this._typed_history.length > this._max_typed)
+      {
+        this._typed_history = this._typed_history.slice(0, this._max_typed);
+      }
     }
   };
 
