@@ -93,6 +93,8 @@
  *     <dt>debug-context-selected</dt>
  *     <dd>A window was selected as the context for the debugging session. Happens when a tab is selected. Payload: msg.window_id</dd>
  *
+ *     <dt>top-runtime-updated</dt>
+ *     <dd>Meta data of a top runtime has been updated, e.g. the title. Payload: msg.rt</dd>
  *
  * </dl>
  *
