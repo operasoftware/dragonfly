@@ -8,8 +8,9 @@ cls.ReplService = function(view, data)
 
   this._on_consolelog = function(msg)
   {
-    var rt_id = msg[0];
-    var type = msg[1];
+    const RUNTIME = 0, TYPE = 1;
+    var rt_id = msg[RUNTIME];
+    var type = msg[TYPE];
     /**
      * This value indicates which function was called:
      *
@@ -103,7 +104,8 @@ cls.ReplService = function(view, data)
 
   this._handle_group = function(msg, collapsed)
   {
-    this._data.add_output_groupstart({name: msg[2][0][0], collapsed: Boolean(collapsed)});
+    const VALUE=0, VALUELIST=2;
+    this._data.add_output_groupstart({name: msg[VALUELIST][0][VALUE], collapsed: Boolean(collapsed)});
   };
 
   this._handle_groupend = function(msg)
@@ -113,22 +115,25 @@ cls.ReplService = function(view, data)
 
   this._parse_value = function(value, rt_id)
   {
-      var ret = {
-        type: value[0] === null ? "object" : "native"
-      };
+    const TYPE = 0;
+    const VALUE = 0, OBJECTVALUE = 1;
+    const ID = 0, OTYPE = 2, CLASSNAME = 4, FUNCTIONNAME = 5;
+    var ret = {
+      type: value[0] === null ? "object" : "native"
+    };
 
-      if (ret.type == "object") {
-        var object = value[1];
-        ret.obj_id = object[0];
-        ret.type = object[2];
-        ret.name = object[4] || object[5];
-        ret.rt_id = rt_id;
-      }
-      else
-      {
-        ret.value = value[0];
-      }
-      return ret;
+    if (ret.type == "object") {
+      var object = value[OBJECTVALUE];
+      ret.obj_id = object[ID];
+      ret.type = object[OTYPE];
+      ret.name = object[CLASSNAME] || object[FUNCTIONNAME];
+      ret.rt_id = rt_id;
+    }
+    else
+    {
+      ret.value = value[VALUE];
+    }
+    return ret;
   };
 
   this._parse_value_list = function(valuelist, rt_id)
@@ -235,11 +240,15 @@ cls.ReplService = function(view, data)
 
   this._on_get_exception_info = function(status, msg)
   {
+    const NAME = 0, VALUE = 2;
     var props = {};
+
+    // the following line looks up
+    // msg -> objectchainlist -> objectchain -> objectlist -> objectinfo -> propertylist
     var propslist = msg[0][0][0][0][1];
     for (var n=0, e; e=propslist[n]; n++)
     {
-      props[e[0]] = e[2];
+      props[e[NAME]] = e[VALUE];
     }
 
     this._data.add_output_exception(props.message, props.stacktrace);
