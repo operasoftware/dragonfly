@@ -143,6 +143,7 @@ var UIWindowBase = new function()
       {
         self.setZIndex();
         document.getElementById(win.id).style.zIndex = 200;
+        window.views[view_id].update();
       }
       else
       {

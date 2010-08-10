@@ -363,11 +363,14 @@ var Editor = function(actions)
         sheet_link ? parseInt(sheet_link.getAttribute('index')) : -1;
     var textContent = ele.textContent;
 
-    if (this.context_rule_id) {
+    if (this.context_rule_id)
+    {
       this.saved_style_dec = window.elementStyle.get_style_dec_by_id(this.context_rule_id);
     }
-    else {
+    else
+    {
       this.context_rule_id = parseInt(ele.parentElement.getAttribute('obj-id'));
+      this.saved_style_dec = window.elementStyle.get_inline_style_dec_by_id(this.context_rule_id);
     }
 
     this.context_cur_text_content = this.textarea.value = ele.textContent;
@@ -736,7 +739,7 @@ var Editor = function(actions)
             this.context_cur_value == props[1] &&
             this.context_cur_priority == props[2]))
       {
-        actions.set_property(props, this.context_cur_prop);
+        actions.set_property(this.context_rt_id, this.context_rule_id, props, this.context_cur_prop);
       }
       this.textarea_container.parentElement.innerHTML = window.stylesheets.create_declaration(props[0],
         props[1], props[2], this.context_rule_id, disabled);
@@ -786,11 +789,11 @@ var Editor = function(actions)
     if (props[1])
     {
       // TODO: should remove previously commited value here, in case of looping through properties
-      actions.set_property(props);
+      actions.set_property(this.context_rt_id, this.context_rule_id, props);
     }
     else if ((!props[0] || props[0] != this.context_cur_prop) && this.context_cur_prop) // if it's overwritten
     {
-      actions.remove_property(this.context_cur_prop);
+      actions.remove_property(this.context_rt_id, this.context_rule_id, this.context_cur_prop);
     }
 
     if (this.context_stylesheet_index > -1)

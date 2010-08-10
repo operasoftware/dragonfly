@@ -1359,3 +1359,8 @@ color-sample
 {
   width: 24em;
 }
+
+property.disabled color-sample
+{
+  opacity: .35;
+}

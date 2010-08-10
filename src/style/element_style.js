@@ -42,7 +42,12 @@ cls.ElementStyle = function()
   SPECIFICITY = 6,
   STYLESHEET_ID = 7,
   RULE_ID = 8,
-  RULE_TYPE = 9;
+  RULE_TYPE = 9,
+
+  ORIGIN_USER_AGENT = 1,
+  ORIGIN_LOCAL = 2,
+  ORIGIN_AUTHOR = 3,
+  ORIGIN_ELEMENT = 4;
 
   var self = this;
   var categories_data = [];
@@ -396,11 +401,17 @@ cls.ElementStyle = function()
       {
         for (j = 0; style_dec = node_style_cascade[STYLE_LIST][j]; j++)
         {
-          if (style_dec[ORIGIN] != 1) // any other rule except browser default rules
+          if (style_dec[ORIGIN] != ORIGIN_USER_AGENT)
           {
-            if (disabled_style_dec_list && disabled_style_dec_list[style_dec[RULE_ID]])
+            if (disabled_style_dec_list)
             {
-              style_dec = self.sync_declarations(style_dec, disabled_style_dec_list[style_dec[RULE_ID]], i > 0);
+              var disabled_style_dec = style_dec[ORIGIN] != ORIGIN_ELEMENT
+                                     ? disabled_style_dec_list[style_dec[RULE_ID]]
+                                     : disabled_style_dec_list[self.get_inline_obj_id(node_style_cascade[0])];
+              if (disabled_style_dec)
+              {
+                style_dec = self.sync_declarations(style_dec, disabled_style_dec, i > 0);
+              }
             }
             length = style_dec[INDEX_LIST].length;
             for (k = 0; k < length; k++)
@@ -469,6 +480,27 @@ cls.ElementStyle = function()
       for (var j = 0, style_dec; style_dec = (node_style[STYLE_LIST] || [])[j]; j++)
       {
         if (style_dec[RULE_ID] == id)
+        {
+          return style_dec;
+        }
+      }
+    }
+    return null;
+  };
+
+  /**
+   * Get an inline StyleDeclaration based on the object ID.
+   *
+   * @param {Integer} id The object id
+   * @returns {Array|null} The StyleDeclaration if it was found, otherwise null
+   */
+  this.get_inline_style_dec_by_id = function get_style_dec_by_id(id)
+  {
+    for (var i = 0, node_style; node_style = (categories_data[NODE_STYLE_LIST] || [])[i]; i++)
+    {
+      for (var j = 0, style_dec; style_dec = (node_style[STYLE_LIST] || [])[j]; j++)
+      {
+        if (style_dec[ORIGIN] == ORIGIN_ELEMENT && node_style[OBJECT_ID] == id)
         {
           return style_dec;
         }
@@ -549,6 +581,11 @@ cls.ElementStyle = function()
    */
   this.has_property = function has_property(style_dec, property) {
     return style_dec[INDEX_LIST].indexOf(window.css_index_map.indexOf(property)) != -1;
+  };
+
+  this.get_inline_obj_id = function get_inline_obj_id(obj_id)
+  {
+    return "inline-obj-id-" + obj_id;
   };
 
   /* */

@@ -315,4 +315,4 @@ cls.DOMView.create_ui_widgets = function()
     }
   }
 
-}
+};
