@@ -686,7 +686,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
       // with sites with intervals or timeouts
       if( frame_index > -1 || frame_index != local_frame_index )
       {
-        local_frame_index = -1;
+        local_frame_index = frame_index;
         str_input = '';
         path = '';
         id = '';
