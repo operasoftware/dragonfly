@@ -98,10 +98,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
   };
 
-  this._focus_input = function()
+  this._focus_input_bound = function()
   {
     this._textarea.focus();
-  };
+  }.bind(this);
 
   this.render_groupstart = function(data)
   {
@@ -226,7 +226,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._container.scrollTop = this._container.scrollHeight;
   };
 
-  this._handle_input = function(evt)
+  this._handle_keydown_bound = function(evt)
   {
     // opera.postError(evt.keyCode);
 
@@ -266,7 +266,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   }.bind(this);
 
-  this._handle_keypress = function(evt)
+  this._handle_keypress_bound = function(evt)
   {
 
     if (evt.keyCode == 9)
@@ -280,7 +280,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     {
       evt.preventDefault();
     }
-  };
+  }.bind(this);
 
   this._handle_backlog = function(delta)
   {
@@ -380,10 +380,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
   };
 
-  this._handle_option_change = function(event, target)
+  this._handle_option_change_bound = function(event, target)
   {
     settings.repl.set('max-typed-history-length', target.value);
-  };
+  }.bind(this);
 
 
   this._init_settings = function()
@@ -435,10 +435,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   var eh = window.eventHandlers;
   eh.click["repl-toggle-group"] = this._handle_repl_toggle_group;
-  eh.click['focus-repl'] = this._focus_input.bind(this);
-  eh.keydown['repl-textarea'] = this._handle_input.bind(this);
-  eh.keypress['repl-textarea'] = this._handle_keypress.bind(this);
-  eh.change['set-typed-history-length'] = this._handle_option_change.bind(this);
+  eh.click['focus-repl'] = this._focus_input_bound;
+  eh.keydown['repl-textarea'] = this._handle_keydown_bound;
+  eh.keypress['repl-textarea'] = this._handle_keypress_bound;
+  eh.change['set-typed-history-length'] = this._handle_option_change_bound;
 
 //  window.messages.addListener("setting-changed")
 
