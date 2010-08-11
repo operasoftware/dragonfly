@@ -6,7 +6,7 @@ cls.ReplService = function(view, data)
   }
   cls.ReplService.instance = this;
 
-  this._on_consolelog = function(msg)
+  this._on_consolelog_bound = function(msg)
   {
     const RUNTIME = 0, TYPE = 1;
     var rt_id = msg[RUNTIME];
@@ -54,33 +54,33 @@ cls.ReplService = function(view, data)
         this._handle_groupend(msg);
         break;
     }
-  };
+  }.bind(this);
 
-  this._on_consoletime = function(msg)
+  this._on_consoletime_bound = function(msg)
   {
     const TITLE = 1;
     this._data.add_output_str("Started: " + msg[TITLE]);
-  };
+  }.bind(this);
 
-  this._on_consoletimeend = function(msg)
+  this._on_consoletimeend_bound = function(msg)
   {
     const TITLE = 1, DURATION = 2;
     var dur = msg[DURATION];
     var ms = Math.round(dur / 1000);
     this._data.add_output_str(msg[TITLE] + ": " + ms + "ms (" + dur + "µsec)" );
-  };
+  }.bind(this);
 
-  this._on_consoleprofile = function(msg)
+  this._on_consoleprofile_bound = function(msg)
   {
     this._data.add_output_str("console.profile called. Profiling is not yet supported.");
-  };
+  }.bind(this);
 
-  this._on_consoleprofileend = function(msg)
+  this._on_consoleprofileend_bound = function(msg)
   {
     this._data.add_output_str("console.profileEnd called. Profiling is not yet supported.");
-  };
+  }.bind(this);
 
-  this._on_consoletrace = function(data)
+  this._on_consoletrace_bound = function(data)
   {
     var message = new cls.EcmascriptDebugger["6.0"].ConsoleTraceInfo(data);
 
@@ -93,7 +93,7 @@ cls.ReplService = function(view, data)
     }
 
     this._data.add_output_trace(message);
-  };
+  }.bind(this);
 
   this._handle_log = function(msg, rt_id)
   {
@@ -185,11 +185,11 @@ cls.ReplService = function(view, data)
     }
   }.bind(this);
 
-  this._on_element_selected = function(msg)
+  this._on_element_selected_bound = function(msg)
   {
     this._prev_selected = this._cur_selected;
     this._cur_selected = msg.obj_id;
-  };
+  }.bind(this);
 
   this._handle_exception = function(msg, rt_id)
   {
@@ -313,13 +313,13 @@ cls.ReplService = function(view, data)
     this._transformer = new cls.HostCommandTransformer();
     this._tagman = window.tagManager; //TagManager.getInstance(); <- fixme: use singleton
     this._service = window.services['ecmascript-debugger'];
-    this._service.addListener("consolelog", this._on_consolelog.bind(this));
-    this._service.addListener("consoletime", this._on_consoletime.bind(this));
-    this._service.addListener("consoletimeend", this._on_consoletimeend.bind(this));
-    this._service.addListener("consoleprofile", this._on_consoleprofile.bind(this));
-    this._service.addListener("consoleprofileend", this._on_consoleprofileend.bind(this));
-    this._service.addListener("consoletrace", this._on_consoletrace.bind(this));
-    window.messages.addListener("element-selected", this._on_element_selected.bind(this));
+    this._service.addListener("consolelog", this._on_consolelog_bound);
+    this._service.addListener("consoletime", this._on_consoletime_bound);
+    this._service.addListener("consoletimeend", this._on_consoletimeend_bound);
+    this._service.addListener("consoleprofile", this._on_consoleprofile_bound);
+    this._service.addListener("consoleprofileend", this._on_consoleprofileend_bound);
+    this._service.addListener("consoletrace", this._on_consoletrace_bound);
+    window.messages.addListener("element-selected", this._on_element_selected_bound);
   };
 
   this.init(view, data);
