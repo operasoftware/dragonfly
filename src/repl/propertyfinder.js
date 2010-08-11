@@ -148,20 +148,15 @@ window.cls.PropertyFinder = function(rt_id) {
    *
    */
   this.find_props = function(callback, input, frameinfo) {
-    if (frameinfo)
+    frameinfo = frameinfo ||
     {
-      frameinfo.stopped = true;
-    }
-    else
-    {
-      frameinfo = frameinfo || {
-        runtime_id: runtimes.getSelectedRuntimeId(),
-        thread_id: 0,
-        scope_id: null,
-        index: 0,
-        stopped: false
-      };
-    }
+      runtime_id: runtimes.getSelectedRuntimeId(),
+      thread_id: 0,
+      scope_id: null,
+      index: 0
+    };
+
+    frameinfo.stopped = Boolean(frameinfo.thread_id);
 
     var parts = this._find_input_parts(input);
 
