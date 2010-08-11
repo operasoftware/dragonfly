@@ -42,7 +42,8 @@
     var 
     ele = event.target,
     target = event.target, 
-    index = 0;
+    index = 0,
+    select = null;
 
     event.stopPropagation();
     event.preventDefault();
@@ -66,8 +67,8 @@
           }
           else
           {
-            var select = select_obj.updateElement();
-            if( select )
+            select = select_obj.updateElement();
+            if(select )
             {
               select.releaseEvent('change');
             }
@@ -175,17 +176,19 @@
     select = null, 
     id = this.getId(),
     i = 0,
-    ret = null;
+    ret_val = 0;
 
     for( ; select = selects[i]; i++)
     {
+      
       if( select.getAttribute('cst-id') == id )
       {
         this.setNewValues(select, checkbox_value);
-        ret = select;
+        ret_val = i;
       }
     }
-    return ret;
+    
+    return selects[ret_val]; 
   }
 
   this.init = function(id, class_name, type, handler)
