@@ -29,6 +29,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   {
     if (!this._lastupdate)
     {
+      container.innerHTML = "";
       container.render(templates.repl_main());
       this._linelist = container.querySelector("ol");
       this._textarea = container.querySelector("textarea");
@@ -45,7 +46,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this.clear = function()
   {
-    this._linelist.innerHTML = "";
     this.ondestroy();
   };
 
