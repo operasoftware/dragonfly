@@ -63,37 +63,37 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     {
       switch(e.type) {
         case "input":
-          this.render_input(e.data);
+          this._render_input(e.data);
           break;
         case "string":
-          this.render_string(e.data);
+          this._render_string(e.data);
           break;
         case "exception":
-          this.render_error(e.data);
+          this._render_error(e.data);
           break;
         case "iobj":
-          this.render_inspectable_object(e.data);
+          this._render_inspectable_object(e.data);
           break;
         case "iele":
-          this.render_inspectable_element(e.data);
+          this._render_inspectable_element(e.data);
           break;
         case "pobj":
-          this.render_pointer_to_object(e.data);
+          this._render_pointer_to_object(e.data);
           break;
         case "valuelist":
-          this.render_value_list(e.data);
+          this._render_value_list(e.data);
           break;
         case "trace":
-          this.render_trace(e.data);
+          this._render_trace(e.data);
           break;
         case "groupstart":
-          this.render_groupstart(e.data);
+          this._render_groupstart(e.data);
           break;
         case "groupend":
-          this.render_groupend();
+          this._render_groupend();
           break;
       default:
-          this.render_string("unknown");
+          this._render_string("unknown");
       }
     }
   };
@@ -103,7 +103,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._textarea.focus();
   }.bind(this);
 
-  this.render_groupstart = function(data)
+  this._render_groupstart = function(data)
   {
     this._add_line([["button", "", "class", "folder-key"+(data.collapsed ? "" : " open" ),
                                    "handler", "repl-toggle-group"
@@ -119,7 +119,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._linelist = ol;
   };
 
-  this.render_groupend = function()
+  this._render_groupend = function()
   {
     if (this._linelist.parentNode.parentNode.nodeName.toLowerCase() == "ol")
     {
@@ -127,12 +127,12 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
   };
 
-  this.render_pointer_to_object = function(data)
+  this._render_pointer_to_object = function(data)
   {
     this._add_line(templates.repl_output_pobj(data));
   };
 
-  this.render_inspectable_element = function(data)
+  this._render_inspectable_element = function(data)
   {
     if (!data.view) {
       var rt_id = data.rt_id, obj_id=data.obj_id, name=data.name;
@@ -142,14 +142,14 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     if (data.view && !data.view.expanded)
     {
       // re-enter once we have the data.
-      data.view.expand(this.render_inspectable_element.bind(this, data));
+      data.view.expand(this._render_inspectable_element.bind(this, data));
       return;
     }
 
     this._add_line(data.view.render());
   };
 
-  this.render_inspectable_object = function(data)
+  this._render_inspectable_object = function(data)
   {
     if (!data.view) {
       var rt_id = data.rt_id, obj_id=data.obj_id, name=data.name;
@@ -159,24 +159,24 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     if (data.view && !data.view.expanded)
     {
       // re-enter once we have the data.
-      data.view.expand(this.render_inspectable_object.bind(this, data));
+      data.view.expand(this._render_inspectable_object.bind(this, data));
       return;
     }
 
     this._add_line(data.view.render());
   };
 
-  this.render_error = function(data)
+  this._render_error = function(data)
   {
-    this.render_string(data.message, data.stacktrace);
+    this._render_string(data.message, data.stacktrace);
   };
 
-  this.render_trace = function(data)
+  this._render_trace = function(data)
   {
     this._add_line(templates.repl_output_trace(data));
   };
 
-  this.render_value_list = function(values) {
+  this._render_value_list = function(values) {
     var tpl = values.map(templates.repl_output_native_or_pobj);
     var separated = [];
     separated.push(tpl.shift());
@@ -191,7 +191,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   /**
    * Render an arbitrary numver of string arguments
    */
-  this.render_string = function()
+  this._render_string = function()
   {
     for (var n=0; n<arguments.length; n++)
     {
@@ -199,9 +199,9 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
   };
 
-  this.render_input = function(str)
+  this._render_input = function(str)
   {
-    this.render_string(">>> " + str);
+    this._render_string(">>> " + str);
   };
 
   this.set_current_input = function(str)
@@ -223,7 +223,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
 
     this._linelist.appendChild(line);
-    this._container.scrollTop = this._container.scrollHeight;
+
+    if (this._scroll_on_update) // fixme: or is scorlleddd
+    {
+      this._container.scrollTop = this._container.scrollHeight;
+    }
   };
 
   this._handle_keypress_bound = function(evt)
@@ -248,7 +252,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         this._current_input = "";
 
         if (input == "") {
-          this.render_input("");
+          this._render_input("");
           return;
         }
 
@@ -319,8 +323,8 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
     else
     {
-      this.render_input(this._textarea.value);
-      this.render_string(matches.sort().join(", "));
+      this._render_input(this._textarea.value);
+      this._render_string(matches.sort().join(", "));
     }
 
   };
