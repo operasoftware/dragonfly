@@ -260,11 +260,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       {
         // workaround as long as we don't have support for keyIdentifier
         // event.which is 0 in a keypress event for function keys
-        if( evt.which || event.shiftKey || event.ctrlKey || event.altKey )
-        {
-          // ignore this
-        }
-        else
+        if( !evt.which )
         {
           evt.preventDefault();
           this._handle_backlog(evt.keyCode == 38 ? 1 : -1);
