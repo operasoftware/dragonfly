@@ -226,59 +226,51 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._container.scrollTop = this._container.scrollHeight;
   };
 
-  this._handle_keydown_bound = function(evt)
-  {
-    // opera.postError(evt.keyCode);
-
-    if (evt.keyCode == 13)
-    {
-      evt.preventDefault();
-      var input = this._textarea.value;
-      input = input.trim();
-      this._textarea.value = "";
-      this._backlog_index = -1;
-      this._current_input = "";
-
-      if (input == "") {
-        this.render_input("");
-        return;
-      }
-
-      this._service.handle_input(input);
-   }
-    else if (evt.keyCode == 38 || evt.keyCode == 40) // up / down
-    {
-      evt.preventDefault();
-      this._handle_backlog(evt.keyCode == 38 ? 1 : -1);
-    }
-    else if ( evt.keyCode == 82 && evt.ctrlKey) // ctrl-r
-    {
-      opera.postError("reverse search");
-    }
-    else if (evt.keyCode == 75 && evt.ctrlKey) // ctrk-k
-    {
-      opera.postError("kill to end of line");
-    }
-    else if (evt.keyCode == 87 && evt.ctrlKey) // ctrk-w
-    {
-      opera.postError("reverse kill word");
-    }
-
-  }.bind(this);
-
   this._handle_keypress_bound = function(evt)
   {
+    switch (evt.keyCode) {
+      case 9: // tab
+      {
+        evt.preventDefault();
+        this._resolver.find_props(this._handle_completer.bind(this),
+                                  this._textarea.value,
+                                  window.stop_at.getSelectedFrame());
+        break;
+      }
+      case 13: // enter
+      {
+        // stop it from adding a newline just before processing. Looks strange
+        evt.preventDefault();
+        var input = this._textarea.value;
+        input = input.trim();
+        this._textarea.value = "";
+        this._backlog_index = -1;
+        this._current_input = "";
 
-    if (evt.keyCode == 9)
-    {
-      evt.preventDefault();
-      this._resolver.find_props(this._handle_completer.bind(this),
-                                this._textarea.value,
-                                window.stop_at.getSelectedFrame());
-    }
-    else if (evt.keyCode == 13)
-    {
-      evt.preventDefault();
+        if (input == "") {
+          this.render_input("");
+          return;
+        }
+
+        this._service.handle_input(input);
+        break;
+      }
+      case 38: // up and down. maybe. See DSK-246193
+      case 40:
+      {
+        // workaround as long as we don't have support for keyIdentifier
+        // event.which is 0 in a keypress event for function keys
+        if( evt.which || event.shiftKey || event.ctrlKey || event.altKey )
+        {
+          // ignore this
+        }
+        else
+        {
+          evt.preventDefault();
+          this._handle_backlog(evt.keyCode == 38 ? 1 : -1);
+        }
+        break;
+      }
     }
   }.bind(this);
 
@@ -389,7 +381,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   var eh = window.eventHandlers;
   eh.click["repl-toggle-group"] = this._handle_repl_toggle_group;
   eh.click['focus-repl'] = this._focus_input_bound;
-  eh.keydown['repl-textarea'] = this._handle_keydown_bound;
   eh.keypress['repl-textarea'] = this._handle_keypress_bound;
   eh.change['set-typed-history-length'] = this._handle_option_change_bound;
 
