@@ -43,6 +43,7 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, TopStatusbar
   {
     this.container = new TopContainer(this); // actually just a cell
     this.tab = new TopTabs(this);
+    this.modebar = new Modebar(this);
     this.toolbar = TopToolbar && new TopToolbar(this) || null;
     if(this.toolbar)
     {
@@ -69,6 +70,7 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, TopStatusbar
         this.toolbar.setDimensions();
         }
         this.tab.setDimensions();
+        this.modebar.setDimensions();
         if(this.statusbar)
         {
         this.statusbar.setDimensions();
@@ -171,6 +173,12 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, TopStatusbar
   {
   this.toolbar.setup(this.id);
   }
+
+  if (this.modebar)
+  {
+    this.modebar.setup(this.id);
+  }
+
   if(this.statusbar)
   {
   this.statusbar.setup(this.id);

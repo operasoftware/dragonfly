@@ -6,10 +6,10 @@
 
   this.tab = function(obj, is_active_tab)
   {
-    return ['tab', 
-      ['input', 'type', 'button', 'value', obj.name, 'handler', 'tab', ],
-      ( obj.has_close_button ? ['input', 'type', 'button', 'handler', 'close-tab', ] : [] ), 
-      'ref-id', obj.ref_id
+    return ['tab', obj.name,
+            'handler', 'tab',
+            'ref-id', obj.ref_id
+      //( obj.has_close_button ? ['input', 'type', 'button', 'handler', 'close-tab', ] : [] ),
     ].concat(is_active_tab ? ['class', 'active'] : [] );
   }
 

@@ -182,6 +182,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/TopUIBase.js"/>
 <script src="./ui-scripts/toolbar.js"/>
 <script src="./ui-scripts/toolbarConfig.js"/>
+<script src="./ui-scripts/modebar.js"/>
 <script src="./ui-scripts/tabs.js"/>
 <script src="./ui-scripts/topTabs.js"/>
 <script src="./ui-scripts/containers.js"/>

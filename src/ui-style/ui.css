@@ -18,6 +18,7 @@ main-view { /**/
 
 windows-container, 
 toolbar, 
+modebar,
 tabs, 
 container, 
 top-tabs, 
@@ -32,10 +33,6 @@ top-toolbar {
 /* set with css. height, border and padding are supported */
 
 top-container { /**/
-  border-bottom: 1px solid #c9cdd0;
-  border-left: 1px solid #c9cdd0;
-  border-right: 1px solid #c9cdd0;
-  padding: 4px 4px;
   background-color: #e1e4e9;
   }
 
@@ -324,6 +321,14 @@ toolbar-filters filter.focus input {
   color: #000;
   }
 
+modebar {
+  height: 20px;
+  line-height: 20px;
+  padding: 13px;
+  background: #c1c1c1;
+  border: 15px solid red;
+}
+
 window-select {
   display: block;
   position: relative;
@@ -344,17 +349,17 @@ window-select select option[value="-1"]  {
 /* set with css. height, border and padding are supported */
 
 tabs { /* The bottom tabs containers */
-  height: 17px;
+  height: 23px;
   background: #e1e4e9 url('../ui-images/tab-border.png') scroll repeat-x 0 0;
   }
 
 tab { /**/
   display:block;
   float:left;
-  background: transparent url('../ui-images/tab.png') scroll no-repeat 0 0;
+  background: salmon;
   height: 17px;
-  line-height: 17px;	
-  margin: 0 5px 0 0;
+  line-height: 17px;
+  padding: 3px;
   }
 
 tab:hover {
@@ -404,19 +409,8 @@ top-tabs { /* The top tabs container, replaced with, placed into or merged with 
   z-index: 1;
   top: 0;
   left: 0;
-  background: url('../ui-images/tabcontainer.png') no-repeat 100% 0;
-  height: 20px;
-  padding: 7px 60px 0px 7px;
-  }
-		
-top-tabs:before {
-  position: absolute;
-  content: '';
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 3px;
-  background: url('../ui-images/tabcontainer-left.png') no-repeat 0 0;
+  background: #eee;
+  height: 30px;
   }
 
 /* this is a quick hack to get the runtime button in the tabs bar */
@@ -425,37 +419,17 @@ top-tabs toolbar-buttons {
   }
 
 top-tabs tab {  /**/
-  float: left;
-  background: transparent url('../ui-images/top-tab.png') scroll no-repeat 100% 0;
-  height: 19px;
-  line-height: 19px;	
-  margin: 1px 0 0 9px;
+  background: #9ab;
+  height: 30px;
+  line-height: 30px;
+  border-right: 1px solid #444;
+  padding: 0 4px;
   }
 
 top-tabs tab:hover {
-  background-position: 100% -19px;
   }
 
 top-tabs tab.active {
-  background-position: 100% -38px;
-  }
-
-top-tabs input[handler="tab"] {  /**/
-  background: transparent url('../ui-images/top-tab-left.png') scroll no-repeat 0 0;
-  margin: 0 8px 0 -8px;
-  padding-left: 8px;
-  padding-right: 0px; /* to be removed when the close buttons are activated */
-  height: 19px;
-  line-height: 19px;
-  }
-
-top-tabs tab:hover input[handler="tab"] {
-  background-position: 0 -19px;
-  }
-
-top-tabs tab.active input[handler="tab"] {
-  background-position: 0 -38px;
-  font-weight: bold;
   }
 
 input[handler="close-tab"] { /* Currently not in use? Now it is :) */ 
@@ -1132,7 +1106,6 @@ cst-value
   display: inline-block;
   margin-top: 1px;
   overflow: hidden;
-  -o-text-overflow: ellipsis;
   padding: 0 8px;
   height: 22px;
 }
@@ -1387,7 +1360,6 @@ pin-label span
   padding-right: 5px;
   margin: 0px;
   overflow: hidden;
-  -o-text-overflow: ellipsis;
   white-space: nowrap;
 }
 

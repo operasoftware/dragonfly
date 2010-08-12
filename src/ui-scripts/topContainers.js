@@ -25,9 +25,9 @@ var TopContainerBase = function()
     }
 
     var toolbar_and_tabs_height =  ( this.cell.toolbar && this.cell.toolbar.offsetHeight || 0 ) + this.cell.tab.offsetHeight;
+    var modebar_height = (this.cell.modebar ? this.cell.modebar.offsetHeight : 0);
 
-
-    dim = this.cell.top + toolbar_and_tabs_height;
+    dim = this.cell.top + toolbar_and_tabs_height + modebar_height;
     if( dim != this.top)
     {
       this.is_dirty = true;
@@ -48,7 +48,7 @@ var TopContainerBase = function()
       this.width = dim;
     }
 
-    dim = this.cell.height - toolbar_and_tabs_height - ( this.cell.statusbar && this.cell.statusbar.offsetHeight || 0 ) - this.vertical_border_padding;;
+    dim = this.cell.height - toolbar_and_tabs_height - this.vertical_border_padding - modebar_height;
     if( dim != this.height)
     {
       this.is_dirty = true;

@@ -75,9 +75,8 @@ new EventHandler('blur', true, 'blur-handler');
 
 eventHandlers.mousedown['tab'] = function(event, target)
 {
-  target = target.parentElement;
-  var tabs = UIBase.getUIById(target.parentElement.getAttribute('ui-id'));
-  var view_id = target.getAttribute('ref-id');
+  var tabs = UIBase.getUIById(target.get_attr('parent-node-chain', 'ui-id'));
+  var view_id = target.get_attr('parent-node-chain', 'ref-id');
   if( tabs )
   {
     tabs.setActiveTab(view_id);

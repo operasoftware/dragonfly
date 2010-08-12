@@ -40,7 +40,7 @@ var ToolbarBase = function()
       this.setCSSProperties()
     }
 
-    dim = this.cell.top;
+    dim = this.cell.top + this.cell.tab.height;
     if( dim != this.top)
     {
       this.is_dirty = true;
