@@ -383,8 +383,8 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._handle_option_change_bound = function(event, target)
   {
     settings.repl.set('max-typed-history-length', target.value);
+    messages.post("setting-changed", {id: "repl", key: "max-typed-history-length"});
   }.bind(this);
-
 
   var eh = window.eventHandlers;
   eh.click["repl-toggle-group"] = this._handle_repl_toggle_group;

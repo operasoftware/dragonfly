@@ -125,12 +125,21 @@ cls.ReplData = function(view)
     if (this._typed_history[0] != str)
     {
       this._typed_history.unshift(str);
-      settings.repl.set("typed-history", this._typed_history);
       if (this._max_typed && this._typed_history.length > this._max_typed)
       {
         this._typed_history = this._typed_history.slice(0, this._max_typed);
       }
+      settings.repl.set("typed-history", this._typed_history);
     }
   };
 
+  this._on_setting_change_bound = function(msg)
+  {
+    if (msg.id == "repl" && msg.key == "max-typed-history-length")
+    {
+      this._max_typed = settings.repl.get(msg.key);
+    }
+  }.bind(this);
+
+  messages.addListener("setting-changed", this._on_setting_change_bound);
 };
