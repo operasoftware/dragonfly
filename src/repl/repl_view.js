@@ -386,29 +386,37 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   }.bind(this);
 
 
-  this._init_settings = function()
-  {
-/*
-    new Settings(
-      'repl',
-      { // key/value
-        'max-typed-history-length': 8,
-        'typed-history': []
-      },
-      { // key/label
-        'max-typed-history-length': "Max items in typed history to remember"
-      },
+  var eh = window.eventHandlers;
+  eh.click["repl-toggle-group"] = this._handle_repl_toggle_group;
+  eh.click['focus-repl'] = this._focus_input_bound;
+  eh.keydown['repl-textarea'] = this._handle_keydown_bound;
+  eh.keypress['repl-textarea'] = this._handle_keypress_bound;
+  eh.change['set-typed-history-length'] = this._handle_option_change_bound;
+
+  this.init(id, name, container_class, html, default_handler);
+};
+cls.ReplView.prototype = ViewBase;
 
 
 
+cls.ReplView.create_ui_widgets = function()
+{
+
+  new Settings(
+    'repl',
+    { // key/value
+      'max-typed-history-length': 8,
+      'typed-history': []
+    },
+    { // key/label
+      'max-typed-history-length': "Max items in typed history to remember"
+    },
     { // settings map
       customSettings:
       [
         'max-typed-history-length'
       ]
     },
-
-
     {  // custom templates
       'max-typed-history-length':
       function(setting)
@@ -417,71 +425,17 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         [
           'setting-composite',
           ['label',
-            setting.label_map['max-typed-history-length'] + ': ',
-            ['input',
-              'type', 'number',
-              'handler', 'set-typed-history-length',
-              'max', '1000',
-              'min', '0',
-              'value', setting.get('max-typed-history-length')
-            ]
+           setting.label_map['max-typed-history-length'] + ': ',
+           ['input',
+            'type', 'number',
+            'handler', 'set-typed-history-length',
+            'max', '1000',
+            'min', '0',
+            'value', setting.get('max-typed-history-length')
+           ]
           ]
-        ] );
+        ]);
       }
-    });
-*/
-  };
-
-
-  var eh = window.eventHandlers;
-  eh.click["repl-toggle-group"] = this._handle_repl_toggle_group;
-  eh.click['focus-repl'] = this._focus_input_bound;
-  eh.keydown['repl-textarea'] = this._handle_keydown_bound;
-  eh.keypress['repl-textarea'] = this._handle_keypress_bound;
-  eh.change['set-typed-history-length'] = this._handle_option_change_bound;
-
-//  window.messages.addListener("setting-changed")
-
-  this._init_settings();
-  this.init(id, name, container_class, html, default_handler);
+    }
+  );
 };
-cls.ReplView.prototype = ViewBase;
-
-
-
-// fixme: move settings initialization back into class
-new Settings(
-  'repl',
-  { // key/value
-    'max-typed-history-length': 8,
-    'typed-history': []
-  },
-  { // key/label
-    'max-typed-history-length': "Max items in typed history to remember"
-  },
-  { // settings map
-    customSettings:
-    [
-      'max-typed-history-length'
-    ]
-  },
-  {  // custom templates
-    'max-typed-history-length':
-    function(setting)
-    {
-      return (
-      [
-        'setting-composite',
-        ['label',
-        setting.label_map['max-typed-history-length'] + ': ',
-        ['input',
-        'type', 'number',
-        'handler', 'set-typed-history-length',
-        'max', '1000',
-        'min', '0',
-        'value', setting.get('max-typed-history-length')
-        ]
-      ]
-    ] );
-  }
-});
