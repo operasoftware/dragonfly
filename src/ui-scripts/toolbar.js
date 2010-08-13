@@ -27,7 +27,10 @@ var ToolbarBase = function()
     'blur-handler': 'blur'
   }
 
-
+  this.getTopPosition = function()
+  {
+    return this.cell.top + this.cell.tab.height;
+  };
 
   this.setDimensions = function(force_redraw)
   {
@@ -40,7 +43,7 @@ var ToolbarBase = function()
       this.setCSSProperties()
     }
 
-    dim = this.cell.top + this.cell.tab.height;
+    dim = this.getTopPosition();
     if( dim != this.top)
     {
       this.is_dirty = true;
@@ -213,6 +216,10 @@ var Toolbar = function(cell, buttons, filters, specials, customs)
 var TopToolbar = function(cell, buttons, filters, specials, customs)
 {
   this.type = 'top-toolbar';
+  this.getTopPosition = function()
+  {
+    return this.cell.top;
+  };
   this.init(cell, buttons, filters, specials, customs);
 }
 
