@@ -12,7 +12,7 @@
  * where NODENAME, TEXT and KEY are DOM strings and VALUE can be everything except an array
  */
   
-Element.prototype.render = Document.prototype.render = function(args)
+Element.prototype.render = Document.prototype.render = function(args, namespace)
 {
   
   if (typeof args == 'string' && this.nodeType == 1)
@@ -20,15 +20,14 @@ Element.prototype.render = Document.prototype.render = function(args)
     this.insertAdjacentHTML('beforeend', args);
     return this.firstElementChild;
   }
-  
+
   var
   doc = this.nodeType == 9 ? this : this.ownerDocument,
   i = 0,
   ele = this,
   first_arg = args[0],
   arg = null,
-  prefix_pos = -1,
-  ns = '';
+  prefix_pos = -1;
 
   if (args.length)
   {
@@ -38,13 +37,15 @@ Element.prototype.render = Document.prototype.render = function(args)
       {
         if ((prefix_pos = first_arg.indexOf(':')) != -1)
         {
-          ns = doc.lookupNamespaceURI(first_arg.slice(0, prefix_pos));
-          if (!ns)
+          namespace = doc.lookupNamespaceURI(first_arg.slice(0, prefix_pos));
+          if (!namespace)
           {
             throw('namespace not defined in call Node.prototype.___add')
           }
-          ele = doc.createElementNS(ns, first_arg.slice(prefix_pos + 1));
+          ele = doc.createElementNS(namespace, first_arg.slice(prefix_pos + 1));
         }
+        else if (namespace)
+          ele = doc.createElementNS(namespace, first_arg.slice(prefix_pos + 1));
         else
           ele = first_arg in CustomElements ? CustomElements[first_arg].create() : doc.createElement(first_arg);
         i++;
@@ -54,7 +55,7 @@ Element.prototype.render = Document.prototype.render = function(args)
       {
         if (arg instanceof Array)
         {
-          ele.render(arg);
+          ele.render(arg, namespace);
           arg = args[++i];
         }
         else if (typeof arg == 'string' && ((args.length - i) % 2 || args[i + 1] instanceof Array))

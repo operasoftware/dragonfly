@@ -8,7 +8,6 @@
 <script src="../../src/ui-scripts/colorpickertemplates.js"/>
 <script src="../../src/ui-scripts/colorpicker.js"/>
 <script src="../../src/ui-scripts/slider.js"/>
-<script src="../../src/ui-scripts/pointer.js"/>
 <script><![CDATA[ 
 
 var show_picker = function()
