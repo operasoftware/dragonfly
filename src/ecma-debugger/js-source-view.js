@@ -905,7 +905,7 @@ cls.JsSourceView.create_ui_widgets = function()
     {
       script: 0, 
       exception: 0, 
-      error: 1, 
+      error: 0, 
       abort: 0,
       'tab-size': 4
     }, 
