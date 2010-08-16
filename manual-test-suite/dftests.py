@@ -394,13 +394,15 @@ def serve_resource(environ, start_response):
 def check_submitted_form(environ, start_response):
     """Check if the submitted test results are complete.
     """
-    raw_content = environ["wsgi.input"].read()
+    request_body_size = int(environ['CONTENT_LENGTH'])
+    raw_content = environ["wsgi.input"].read(request_body_size)
     submitted = dict([item.split('=') for item in raw_content.split('&')])
     missing = filter(lambda id: not id in submitted or not submitted[id], get_ids())
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
     start_response(status, response_headers)
     script_repo = environ['SCRIPT_NAME']
+
     if missing:
         doc = [
             TEST_FORM % (script_repo, script_repo, LEGEND_MISSING, FORM), 
@@ -432,6 +434,7 @@ def application(environ, start_response):
     path_info = environ.get("PATH_INFO", "")
     pos = path_info.find("/", 1)
     handler = pos > -1 and path_info[0:pos] or path_info
+
     return {
         "": redirect_with_trilling_slash,
         "/": serve_index,
@@ -443,4 +446,7 @@ def application(environ, start_response):
     }.get(handler, not_supported_method)(environ, start_response)
         
 if __name__ == '__main__':
-    print "".join(serve_test_form(None, lambda status, response_headers: 0))
+    from wsgiref.simple_server import make_server
+    httpd = make_server('', 8002, application)
+    print "Serving on port 8002..."
+    httpd.serve_forever()
