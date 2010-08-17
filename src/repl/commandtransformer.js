@@ -219,7 +219,15 @@ cls.HostCommandTransformer = function() {
   };
 
   this.hostcommand_$x = function(token, tokenlist) {
-    //xpath thingy
+    var funstr = "(function(e)\
+                  {\
+                    var res = document.evaluate(e, document, null, XPathResult.ANY_TYPE, null);\
+                    var ret = [];\
+                    var ele = res.iterateNext();\
+                    while (ele) { ret.push(ele); ele=res.iterateNext() };\
+                    return ret;\
+                  })";
+    token.value = funstr;
   };
 
   this.hostcommand_keys = function(token, tokenlist) {
