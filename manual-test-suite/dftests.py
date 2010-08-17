@@ -186,15 +186,16 @@ def write_protocol(protocol):
             entries.append(TR_TD_URL % (url, url))
         if entry.label:
             id = "id-%s" % entry.id[0].strip()
-            label = "".join(entry.label)
-            class_name = protocol[id] == "PASS" and "pass" or "fail"
-            desc = "\n    ".join(
-                [""] + 
-                [item.strip(' -*').replace("\"", "&quot;") 
-                            for item in entry.desc if item] +
-                [""]
-            )   
-            entries.append(TR_TEST_PROTOCOL % (desc, class_name, label, protocol[id]))
+            if id in protocol:
+                label = "".join(entry.label)
+                class_name = protocol[id] == "PASS" and "pass" or "fail"
+                desc = "\n    ".join(
+                    [""] + 
+                    [item.strip(' -*').replace("\"", "&quot;") 
+                                for item in entry.desc if item] +
+                    [""]
+                )   
+                entries.append(TR_TEST_PROTOCOL % (desc, class_name, label, protocol[id]))
     return entries
 
 def write_protocols(protocols):
