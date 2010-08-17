@@ -5,7 +5,7 @@ import time
 import string
 import re
 import time
-from mimetypes import types_map
+from mimetypes import types_map, guess_type
 from urllib import quote, unquote
 from resources.markup import *
 
@@ -300,7 +300,7 @@ def add_ids_test_index():
     f_id_count.write(str(id_count))
     f_id_count.close()
 
-def redirect_with_trilling_slash(environ, start_response):  
+def redirect_with_trailing_slash(environ, start_response):
     """Response if the trilling slash is missing 
     after the cgi script file name.
     """
@@ -420,13 +420,30 @@ def check_submitted_form(environ, start_response):
         doc.append(TEST_END)
     return doc
 
-def not_supported_method(environ, start_response):
-    """Response for a wrong or missing command.
-    """
-    status = '200 OK'
-    response_headers = [('Content-type', 'text/plain')]
+def serve_file(environ, start_response):
+    path_info = environ.get("PATH_INFO", "")
+    localpath = os.path.join(APP_ROOT, path_info[1:]) # snip off leading / so join doesn't break
+
+    if not os.path.isfile(localpath):
+        return not_found(environ, start_response)
+
+    mime = guess_type(localpath)[0] or 'text/plain'
+    fp = open(localpath, "rb")
+    size = os.fstat(fp.fileno())[6]
+    response_headers = [
+        ('Content-Type', mime),
+        ('Content-Length', str(size)),
+    ]
+    start_response('200 OK', response_headers)
+    return [fp.read()]
+
+
+def not_found(environ, start_response, msg=None):
+    status = '404 Not Found'
+    response_headers = [('Content-Type', 'text/plain')]
     start_response(status, response_headers)
-    return ['not a supported method: %s' % environ['PATH_INFO']]
+    return [msg or 'File not found: %s' % environ['PATH_INFO']]
+
 
 def application(environ, start_response):
     """The main function of the cgi application.
@@ -436,14 +453,15 @@ def application(environ, start_response):
     handler = pos > -1 and path_info[0:pos] or path_info
 
     return {
-        "": redirect_with_trilling_slash,
+        "": redirect_with_trailing_slash,
         "/": serve_index,
         "/test-form": serve_test_form,
         "/protocols": serve_protocols,
         "/show_protocol": serve_protocol,
         "/resources": serve_resource,
         "/submit-form": check_submitted_form, 
-    }.get(handler, not_supported_method)(environ, start_response)
+        "/test-cases": serve_file,
+    }.get(handler, not_found)(environ, start_response)
         
 if __name__ == '__main__':
     from wsgiref.simple_server import make_server
