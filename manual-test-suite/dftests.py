@@ -5,7 +5,7 @@ import time
 import string
 import re
 import time
-from mimetypes import types_map, guess_type
+from mimetypes import guess_type
 from urllib import quote, unquote
 from resources.markup import *
 
@@ -369,28 +369,6 @@ def serve_protocol(environ, start_response):
     doc.append(TEST_END)
     return doc
 
-def serve_resource(environ, start_response):
-    """Serve other resources like css and js files.
-    """
-    path = environ['PATH_INFO']
-    sys_path = os.path.join(APP_ROOT, os.path.normpath(path.lstrip('/')))
-    content = ""
-    mime = "text/plain"
-    if os.path.isfile(sys_path):
-        ending = "." in path and path[path.rfind("."):] or "no-ending"
-        mime = ending in types_map and types_map[ending] or 'text/plain'
-        content = ""
-        try:
-            f = open(sys_path, 'rb')
-            content = f.read()
-            f.close()
-        except:
-            pass
-    status = '200 OK'
-    response_headers = [('Content-type', mime)]
-    start_response(status, response_headers)
-    return [content]
-            
 def check_submitted_form(environ, start_response):
     """Check if the submitted test results are complete.
     """
@@ -420,9 +398,9 @@ def check_submitted_form(environ, start_response):
         doc.append(TEST_END)
     return doc
 
-def serve_file(environ, start_response):
+def serve_static(environ, start_response):
     path_info = environ.get("PATH_INFO", "")
-    localpath = os.path.join(APP_ROOT, path_info[1:]) # snip off leading / so join doesn't break
+    localpath = os.path.join(APP_ROOT, os.path.normpath(path_info.lstrip('/')))
 
     if not os.path.isfile(localpath):
         return not_found(environ, start_response)
@@ -458,9 +436,9 @@ def application(environ, start_response):
         "/test-form": serve_test_form,
         "/protocols": serve_protocols,
         "/show_protocol": serve_protocol,
-        "/resources": serve_resource,
+        "/resources": serve_static,
         "/submit-form": check_submitted_form, 
-        "/test-cases": serve_file,
+        "/test-cases": serve_static,
     }.get(handler, not_found)(environ, start_response)
         
 if __name__ == '__main__':
