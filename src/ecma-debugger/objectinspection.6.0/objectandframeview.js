@@ -104,14 +104,12 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
     {
       'automatic-update-global-scope': ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE,
       'hide-default-properties': ui_strings.S_BUTTON_LABEL_HIDE_DEFAULT_PROPS_IN_GLOBAL_SCOPE,
-      // TODO create ui string
-      'show-non-enumerables': "Show non enumerable properties"
+      'show-non-enumerables': ui_strings.S_SWITCH_SHOW_NON_ENUMERABLES
     },
     // settings map
     {
       checkboxes:
       [
-        'hide-default-properties',
         'show-non-enumerables'
       ],
       customSettings:
@@ -128,7 +126,7 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
           ['setting-composite',
             ['label',
               // TODO create ui string
-              "Default collapsed prototype objects (a list of prototypes, e.g. Object, Array, etc., \'*\' will collapse all): ",
+              ui_strings.S_LABEL_COLLAPSED_INSPECTED_PROTOTYPES,
               ['input',
                 'type', 'text',
                 'handler', 'update-collapsed-prototypes',
@@ -139,13 +137,11 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
             ['span', '  '],
             ['input',
               'type', 'button',
-              // 'disabled', 'disabled',
               'value', ui_strings.S_BUTTON_TEXT_APPLY,
               'handler', 'apply-collapsed-prototypes'
             ],
             ['input',
               'type', 'button',
-              // 'disabled', 'disabled',
               'value', 'Set default value.',
               'handler', 'default-collapsed-prototypes'
             ],
@@ -160,8 +156,6 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
   {
     // target.parentNode.parentNode.getElementsByTagName('input')[1].disabled = false;
   }
-
-
 
   window.eventHandlers.click['apply-collapsed-prototypes'] = function(event, target)
   {
