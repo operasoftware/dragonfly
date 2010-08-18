@@ -83,8 +83,9 @@ cls.EcmascriptDebugger["6.0"].InspectionView = function(id, name, container_clas
 
 };
 
-cls.EcmascriptDebugger["6.0"].InspectionView.DEFAULT_COLLAPSED_PROTOS = 
-  ['Object', 'Function', 'Array', 'String', 'Number'];
+// e.g. ['Object', 'Function', 'Array', 'String', 'Number'];
+cls.EcmascriptDebugger["6.0"].InspectionView.DEFAULT_COLLAPSED_PROTOS = ['*'];
+  
 
 cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
 {
@@ -96,18 +97,22 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
     {
       'automatic-update-global-scope': false,
       'hide-default-properties': true,
+      'show-non-enumerables': true,
       'collapsed-prototypes': this.DEFAULT_COLLAPSED_PROTOS,
     },
     // key-label map
     {
       'automatic-update-global-scope': ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE,
-      'hide-default-properties': ui_strings.S_BUTTON_LABEL_HIDE_DEFAULT_PROPS_IN_GLOBAL_SCOPE
+      'hide-default-properties': ui_strings.S_BUTTON_LABEL_HIDE_DEFAULT_PROPS_IN_GLOBAL_SCOPE,
+      // TODO create ui string
+      'show-non-enumerables': "Show non enumerable properties"
     },
     // settings map
     {
       checkboxes:
       [
-        'hide-default-properties'
+        'hide-default-properties',
+        'show-non-enumerables'
       ],
       customSettings:
       [
@@ -122,7 +127,8 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
         return [
           ['setting-composite',
             ['label',
-              "Default collapsed prototype objects: ",
+              // TODO create ui string
+              "Default collapsed prototype objects (a list of prototypes, e.g. Object, Array, etc., \'*\' will collapse all): ",
               ['input',
                 'type', 'text',
                 'handler', 'update-collapsed-prototypes',
@@ -130,7 +136,7 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
                 'value', setting.get('collapsed-prototypes').join(', ')
               ],
             ],
-            ['span', ' (\'*\' will collapse all) '],
+            ['span', '  '],
             ['input',
               'type', 'button',
               // 'disabled', 'disabled',

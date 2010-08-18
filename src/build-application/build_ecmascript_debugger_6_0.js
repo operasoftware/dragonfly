@@ -19,6 +19,8 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
 
 
     cls.InspectableJSObject = namespace.InspectableJSObject;
+    // disabled for now. see CORE-32113
+    // cls.InspectableJSObject.register_enabled_listener();
 
     window.runtimes = new namespace.Runtimes("6.0");
     window.runtimes.bind(service_interface);
@@ -159,6 +161,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
 
     /* main view doesn't really exist */
     cls.MainView.create_ui_widgets();
+
 
   }
 

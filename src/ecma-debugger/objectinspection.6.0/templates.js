@@ -29,10 +29,8 @@
   {
     if (!index) // the properties of the object itself
       return true;
-    if (collapsed_protos[0] == '*')
-      return false;
     if (!tree.protos.hasOwnProperty(index.toString()))
-      return collapsed_protos.indexOf(name) == -1;
+      return collapsed_protos[0] == '*' ? false : (collapsed_protos.indexOf(name) == -1);
     return Boolean(tree.protos[index]);
   }
 

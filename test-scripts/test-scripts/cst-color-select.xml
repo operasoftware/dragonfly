@@ -16,7 +16,7 @@ var test_select_2 = new CstSelectColor("test-2", [0, 255, 0, 1 * 255]);
 
 onload = function()
 {
-  var tmpl = \
+  var tmpl = 
   [
     [
       "div",

@@ -9,12 +9,12 @@ cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
   * @param {Int} obj_id object id
   * @param {String} identifier a identifief for the object, e.g. "document", optional
   * @param {String} _class the class of the object, e.g. "HTMLDocument", optional
-  * @param {PropertyList} pseudo_properties properties which are shown like 
-  * any other property a given object, but are not real properties, like e.g. 
-  * 'this' or 'arguments' of a given scope of a stopped at event, optional 
+  * @param {PropertyList} pseudo_properties properties which are shown like
+  * any other property a given object, but are not real properties, like e.g.
+  * 'this' or 'arguments' of a given scope of a stopped at event, optional
   */
 
-cls.EcmascriptDebugger["6.0"].InspectableJSObject = 
+cls.EcmascriptDebugger["6.0"].InspectableJSObject =
 function(rt_id, obj_id, identifier, _class, pseudo_properties)
 {
   this._init(rt_id, obj_id, pseudo_properties || null, identifier, _class);
@@ -44,7 +44,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
   this.get_data = function(obj_id){};
   /**
     * To get the expanded property tree.
-    * @param {Boolean} with_root, optional. If set, 
+    * @param {Boolean} with_root, optional. If set,
     * it will overwrite path and either return the whole tree or the whole tree without the root object.
     * @param {PATH} path to return the subtree of the given path, optional.
     */
@@ -65,7 +65,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
       "protos: {" { PROTO_INDEX ": {" { KEY ": " EXPAND_TREE ", " } "}, " } "}"
     "}"
   */
-  
+
   this._init = function(rt_id, obj_id, virtual_props, identifier, _class)
   {
     this.id = this._get_id();
@@ -74,7 +74,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
       new cls.Namespace("inspections");
     }
     window.inspections.add(this);
-    this._obj_map = 
+    this._obj_map =
     {
       0:
       [
@@ -131,12 +131,12 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
   this._remove_subtree = function(path)
   {
     const PATH_KEY = 0, PATH_OBJ_ID = 1, PATH_PROTO_INDEX = 2;
-    var 
-    key = '', 
-    obj_id = 0, 
-    proto_index = 0, 
-    i = 0, 
-    tree = this._expand_tree, 
+    var
+    key = '',
+    obj_id = 0,
+    proto_index = 0,
+    i = 0,
+    tree = this._expand_tree,
     ret = null;
 
     for ( ; path && path[i]; i++)
@@ -163,13 +163,13 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
   pretty printed example data for ExamineObjects
 
   status: OK
-  payload: 
+  payload:
     objectChainList:
-      objectChain: 
+      objectChain:
         objectList:
 
-          object: 
-            value: 
+          object:
+            value:
               objectID: 2
               isCallable: 0
               type: "object"
@@ -178,16 +178,16 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
 
             propertyList:
 
-              property: 
+              property:
                 name: "URL"
                 type: "string"
                 value: "opera:debug"
 
-              property: 
+              property:
                 name: "activeElement"
                 type: "object"
-                value: 
-                objectValue: 
+                value:
+                objectValue:
                   objectID: 22
                   isCallable: 0
                   type: "object"
@@ -199,9 +199,9 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
   {
     const
     OBJECT_CHAIN_LIST = 0,
-    // sub message ObjectList 
+    // sub message ObjectList
     OBJECT_LIST = 0,
-    // sub message ObjectInfo 
+    // sub message ObjectInfo
     VALUE = 0,
     PROPERTY_LIST = 1,
     // sub message ObjectValue
@@ -211,7 +211,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     // added fields
     PROPERTY_ITEM = 4;
 
-    var 
+    var
     tree = this._expand_tree,
     proto_chain = null,
     property_list = null,
@@ -259,7 +259,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
         {
           proto[PROPERTY_LIST] = this._virtual_props.concat(proto[PROPERTY_LIST] || []);
         }
-          
+
       }
       this._obj_map[this._get_subtree(path).object_id] = proto_chain;
       if (cb)
@@ -336,7 +336,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
       path = [this._root_path];
     }
     if (path)
-    { 
+    {
       this._norm_path(path);
       var obj_id = path[path.length - 1][PATH_OBJ_ID];
       if (this._obj_map[obj_id])
@@ -345,8 +345,15 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
       }
       else
       {
-        var tag = window.tag_manager.set_callback(this, this._handle_examine_object, [path, obj_id, cb]);
-        window.services['ecmascript-debugger'].requestExamineObjects(tag, [this._rt_id, [obj_id], 1]);
+        var tag = window.tag_manager.set_callback(this,
+                                                  this._handle_examine_object,
+                                                  [path, obj_id, cb]);
+        var skip_nonenumerables =
+          window.settings.inspection.get('show-non-enumerables') ? 0 : 1;
+        // TODO add a setting to use the property filter
+        // filter feature is currently blocked by CORE-32113 bug
+        var msg = [this._rt_id, [obj_id], 1, skip_nonenumerables /*, use filter flag */];
+        window.services['ecmascript-debugger'].requestExamineObjects(tag, msg);
       }
     }
   }
@@ -364,7 +371,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
       this._queried_map = null;
       this._expand_tree = null;
       this._virtual_props = null;
-      this._rt_id = 0; 
+      this._rt_id = 0;
       this._obj_id = 0;
     }
   }
@@ -400,3 +407,309 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
 
 };
 
+/* static methods of cls.EcmascriptDebugger["6.0"].InspectableJSObject */
+(function()
+{
+  this.register_enabled_listener = function()
+  {
+    window.services['ecmascript-debugger'].addListener('enable-success',
+                                                       this.set_property_filter);
+  };
+
+  this.set_property_filter = function(filter)
+  {
+    var tag = window.tag_manager.set_callback(this, function(status, message)
+    {
+      if (status)
+        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+                        'static method InspectableJSObject.set_property_filter failed, ' +
+                        JSON.stringify(message));
+    });
+    var msg = [[cls.EcmascriptDebugger["6.0"].property_filter]];
+    window.services['ecmascript-debugger'].requestSetPropertyFilter(tag, msg);
+  };
+
+  /* the following methods are to print a message filter and store it as js file */
+
+  this.create_filter = function()
+  {
+    var script = "[" +
+    [
+      "this",
+      "document.createElement('test')",
+      "document.implementation.createDocument('', 'test', null)",
+      "document.implementation.createHTMLDocument('')",
+      "document.createAttribute('foo')",
+      "document.createTextNode('')",
+      "document.createCDATASection('')",
+      "document.createComment('')",
+      "document.createDocumentFragment()",
+      "document.createElement('div').getElementsByTagName('*')",
+      "document.createElement('div').attributes",
+      "document.createEvent('Events')",
+      "document.createElement('html')",
+      "document.createElement('head')",
+      "document.createElement('link')",
+      "document.createElement('title')",
+      "document.createElement('meta')",
+      "document.createElement('base')",
+      "document.createElement('style')",
+      "document.createElement('body')",
+      "document.createElement('foo')",
+      "document.createElement('input')",
+      "document.createElement('isindex')",
+      "document.createElement('form')",
+      "document.createElement('select')",
+      "document.createElement('optgroup')",
+      "document.createElement('option')",
+      "document.createElement('textarea')",
+      "document.createElement('button')",
+      "document.createElement('label')",
+      "document.createElement('fieldset')",
+      "document.createElement('legend')",
+      "document.createElement('ul')",
+      "document.createElement('ol')",
+      "document.createElement('dl')",
+      "document.createElement('dir')",
+      "document.createElement('menu')",
+      "document.createElement('li')",
+      "document.createElement('div')",
+      "document.createElement('p')",
+      "document.createElement('h1')",
+      "document.createElement('q')",
+      "document.createElement('blockquote')",
+      "document.createElement('pre')",
+      "document.createElement('br')",
+      "document.createElement('basefont')",
+      "document.createElement('font')",
+      "document.createElement('ins')",
+      "document.createElement('a')",
+      "document.createElement('image')",
+      "document.createElement('object')",
+      "document.createElement('param')",
+      "document.createElement('applet')",
+      "document.createElement('map')",
+      "document.createElement('area')",
+      "document.createElement('script')",
+      "document.createElement('table')",
+      "document.createElement('caption')",
+      "document.createElement('col')",
+      "document.createElement('thead')",
+      "document.createElement('tbody')",
+      "document.createElement('tr')",
+      "document.createElement('td')",
+      "document.createElement('frameset')",
+      "document.createElement('frame')",
+      "document.createElement('iframe')",
+    ].join(',') + "]";
+    var rt_id = window.runtimes.getSelectedRuntimeId();
+    var tag = window.tag_manager.set_callback(this, this.handle_create_filter, [rt_id]);
+    window.services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, script]);
+  };
+
+  this.handle_create_filter = function(status, message, rt_id)
+  {
+    const STATUS = 0, OBJECT_VALUE = 3, OBJECT_ID = 0;
+    if (status || !(message[STATUS] == "completed" && message[OBJECT_VALUE]))
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+                      "static method InspectableJSObject.create_filter failed, " +
+                      status + ', ' + JSON.stringify(message));
+    else
+    {
+      var obj_id = message[OBJECT_VALUE][OBJECT_ID];
+      var tag = window.tag_manager.set_callback(this, this.handle_get_objects, [rt_id]);
+      var msg = [rt_id, [obj_id], 0, 1, 0];
+      window.services['ecmascript-debugger'].requestExamineObjects(tag, msg);
+    }
+  };
+
+  this.handle_get_objects = function(status, message, rt_id)
+  {
+    const STATUS = 0, OBJECT_VALUE = 3, OBJECT_ID = 0;
+    if (status)
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+                      "static method InspectableJSObject.handle_create_filter failed, " +
+                      status + ', ' + JSON.stringify(message));
+    else
+    {
+      const
+      OBJECT_CHAIN_LIST = 0,
+      OBJECT_LIST = 0,
+      PROPERTY_LIST = 1,
+      OBJECT_VALUE = 3,
+      OBJECT_ID = 0;
+
+      var obj_list = (message &&
+        (message = message[OBJECT_CHAIN_LIST]) &&
+        (message = message[0]) &&
+        (message = message[OBJECT_LIST]) &&
+        (message = message[0]) &&
+        (message = message[PROPERTY_LIST]) ||
+        []).map(function(prop)
+        {
+          return prop[OBJECT_VALUE] ? prop[OBJECT_VALUE][OBJECT_ID] : 0;
+        });
+
+      var obj_id = message[OBJECT_VALUE][OBJECT_ID];
+      var tag = window.tag_manager.set_callback(this, this.print_filter);
+      var msg = [rt_id, obj_list, 0, 1, 0];
+      window.services['ecmascript-debugger'].requestExamineObjects(tag, msg);
+    }
+  };
+
+
+  this.print_filter = function(status, message)
+  {
+
+    const
+    OBJECT_CHAIN_LIST = 0,
+    // sub message ObjectList
+    OBJECT_LIST = 0,
+    // sub message ObjectInfo
+    VALUE = 0,
+    PROPERTY_LIST = 1,
+    // sub message ObjectValue
+    CLASS_NAME = 4,
+    // sub message Property
+    NAME = 0,
+    PROPERTY_TYPE = 1,
+    PROPERTY_VALUE = 2,
+    OBJECT_VALUE = 3;
+
+    var
+    object = null,
+    proto_chain = null,
+    property_list = null,
+    i = 0,
+    j = 0,
+    class_name = '',
+    proto = null,
+    filters = [],
+    filter = null,
+    print = [];
+
+    if (status)
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+                      "static method InspectableJSObject.handle_get_objects " +
+                      status + ', ' + JSON.stringify(message));
+    else
+    {
+      for ( ; object = message[OBJECT_CHAIN_LIST][i]; i++)
+      {
+        proto_chain = object[OBJECT_LIST];
+        proto = proto_chain && proto_chain[0];
+        filter = [];
+        if (proto)
+        {
+
+          class_name = proto[VALUE][CLASS_NAME];
+          property_list = proto[PROPERTY_LIST];
+          if (property_list)
+          {
+            for (j = 0; prop = property_list[j]; j++)
+            {
+              if (prop[PROPERTY_TYPE] == "null")
+                filter.push([prop[NAME], 1])
+              else if (prop[PROPERTY_TYPE] == "string" && prop[PROPERTY_VALUE] == "")
+                filter.push([prop[NAME], 5, null, null, ""])
+            }
+          }
+        }
+        if (filter.length)
+          filters.push([class_name, filter]);
+      }
+    }
+    const NAME = 0, FILTERED_PROPS = 1;
+    // filter out Element
+    var is_equal = function(a, b)
+    {
+      if (a.length != b.length)
+        return false;
+      for (var i = 0; i < a.length && (a[i] == b[i]); i++);
+      return i == a.length;
+    };
+    var is_normal_element = function(class_name)
+    {
+      var black_list = ["HTMLObjectElement", "HTMLAppletElement"];
+      return class_name.indexOf("Element") > -1 && black_list.indexOf(class_name) == -1;
+    };
+    var Element = null;
+    for (i = 0; filter = filters[i]; i++)
+    {
+      if (is_normal_element(filter[NAME]))
+      {
+        if (Element)
+          Element = Element.filter(function(prop)
+          {
+            for (var prop_2, j = 0; prop_2 = filter[FILTERED_PROPS][j]; j++)
+            {
+              if (is_equal(prop, prop_2))
+                return true;
+            }
+            return false;
+          });
+        else
+          Element = filter[FILTERED_PROPS];
+      }
+    }
+    // remove properties which are in Element
+    for (i = 0; filter = filters[i]; i++)
+    {
+      if (is_normal_element(filter[NAME]))
+      {
+        filter[FILTERED_PROPS] = filter[FILTERED_PROPS].filter(function(prop)
+        {
+          for (var prop_2, j = 0; prop_2 = Element[j]; j++)
+          {
+            if (is_equal(prop, prop_2))
+              return false;
+          }
+          return true;
+        });
+      }
+    }
+    // pretty print
+    const INDENT = "  ", NL = '\n', Q = "\"", NS = "cls.EcmascriptDebugger[\"6.0\"]";
+
+    var indent = function(indent_count)
+    {
+      return (new Array(indent_count + 1)).join(INDENT);
+    };
+
+    var props_to_string = function(prop)
+    {
+      return indent(this) + JSON.stringify(prop) + ',';
+    };
+
+    print.push("/**\n" +
+               "  * created with cls.EcmascriptDebugger[\"6.0\"].InspectableJSObject.create_filter()\n" +
+               "  * documentation of the filter see\n" +
+               "  *   http://dragonfly.opera.com/app/scope-interface/services/EcmascriptDebugger/EcmascriptDebugger_6_0.html#setpropertyfilter\n" +
+               "  *\n" +
+               "  * 1: // null\n" +
+               "  * 2: // undefined\n" +
+               "  * 3: // boolean\n" +
+               "  * 4: // number\n" +
+               "  * 5: // string\n" +
+               "  * 6: // object\n" +
+               "  */", NL, NL, NL);
+    print.push("window.cls || (window.cls = {});", NL);
+    print.push("cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});", NL);
+    print.push(NS, " || (", NS, " = {});", NL);
+    print.push(NS, ".ElementFilter =", NL);
+    print.push("[", NL, Element.map(props_to_string, 1).join(NL), NL, "]", NL, NL);
+    print.push(NS, ".property_filter =", NL);
+    print.push("[", NL);
+    for (i = 0; filter = filters[i]; i++)
+      print.push(indent(1), "[",  Q, filter[NAME], Q, ",", NL,
+                 indent(2), "[", NL,
+                 filter[FILTERED_PROPS].map(props_to_string, 3).join(NL), NL,
+                 indent(2), "]", is_normal_element(filter[NAME]) ?
+                                 ".concat(" + NS + ".ElementFilter)" :
+                                 "", NL,
+                 indent(1), "],", NL);
+    print.push("];", NL, NL);
+    window.open("data:text/plain," + encodeURIComponent(print.join('')));
+  };
+
+}).apply(cls.EcmascriptDebugger["6.0"].InspectableJSObject);
