@@ -306,6 +306,20 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         }
         break;
       }
+      case 119: // w key. ctrl-w == kill word backwards
+      {
+        if (evt.ctrlKey) {
+          evt.preventDefault();
+          var s = this._textarea.value.slice(0, this._textarea.selectionStart-1);
+          var pos = s.lastIndexOf(" ");
+          pos++;
+
+          this._textarea.value = this._textarea.value.slice(0, pos) + this._textarea.value.slice(this._textarea.selectionStart);
+          this._textarea.selectionStart = pos;
+          this._textarea.selectionEnd = pos;
+        }
+        break;
+      }
     }
   }.bind(this);
 
