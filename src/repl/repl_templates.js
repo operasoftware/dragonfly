@@ -7,7 +7,7 @@ templates.repl_main = function()
     "div", [[
       ["div", [
          "ol", "", "class", "repl-lines"
-         ], "class", "repl-output", "handler", "focus-repl"],
+         ], "class", "repl-output"],
       ["div", [[
         ["span", ">>> ", "class", "repl-prefix"],
         ["div", ["textarea", "", "handler", "repl-textarea", "rows", "1"]]

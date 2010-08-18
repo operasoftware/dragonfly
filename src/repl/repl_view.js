@@ -22,11 +22,13 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   {
     this._lastupdate = 0;
     this._backlog_index = -1;
+    this._current_scroll = this._container.scrollTop;
     this._current_input = this._textarea.value;
   };
 
   this.createView = function(container)
   {
+    var switched_to_view = false;
     if (!this._lastupdate)
     {
       container.innerHTML = "";
@@ -35,12 +37,29 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       this._textarea = container.querySelector("textarea");
       this._textarea.value = this._current_input;
       this._container = container;
-      this._textarea.focus();
-
+      switched_to_view = true;
       // note: events are bound to handlers at the bottom of this class
     }
 
+
+    var scroll_at_bottom = this._container.scrollTop + this._container.offsetHeight >= this._container.scrollHeight;
     this._update();
+
+    opera.postError(scroll_at_bottom)
+    if (this._current_scroll)
+    {
+      this._container.scrollTop = this._current_scroll;
+      this._current_scroll = null;
+    }
+    else if (scroll_at_bottom)
+    {
+      this._container.scrollTop = 9999999; this._container.scrollHeight;
+      if (switched_to_view) {
+        window.setTimeout(function() {this._textarea.focus();}.bind(this), 100);
+      }
+    }
+
+    return;
   };
 
 
@@ -97,11 +116,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       }
     }
   };
-
-  this._focus_input_bound = function()
-  {
-    this._textarea.focus();
-  }.bind(this);
 
   this._render_groupstart = function(data)
   {
@@ -221,13 +235,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     {
       line.appendChild(elem_or_template);
     }
-
     this._linelist.appendChild(line);
-
-    if (this._scroll_on_update) // fixme: or is scorlleddd
-    {
-      this._container.scrollTop = this._container.scrollHeight;
-    }
   };
 
   this._handle_keypress_bound = function(evt)
@@ -380,7 +388,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   var eh = window.eventHandlers;
   eh.click["repl-toggle-group"] = this._handle_repl_toggle_group;
-  eh.click['focus-repl'] = this._focus_input_bound;
   eh.keypress['repl-textarea'] = this._handle_keypress_bound;
   eh.change['set-typed-history-length'] = this._handle_option_change_bound;
 
