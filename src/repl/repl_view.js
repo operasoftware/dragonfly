@@ -45,7 +45,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     var scroll_at_bottom = this._container.scrollTop + this._container.offsetHeight >= this._container.scrollHeight;
     this._update();
 
-    opera.postError(scroll_at_bottom)
     if (this._current_scroll)
     {
       this._container.scrollTop = this._current_scroll;
@@ -240,6 +239,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._handle_keypress_bound = function(evt)
   {
+    //opera.postError("" + evt.keyCode + " " + evt.which )
     switch (evt.keyCode) {
       case 9: // tab
       {
@@ -276,6 +276,15 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         {
           evt.preventDefault();
           this._handle_backlog(evt.keyCode == 38 ? 1 : -1);
+        }
+        break;
+      }
+      case 108: // l key
+      {
+        if (evt.ctrlKey) {
+          evt.preventDefault();
+          this.clear();
+          this._data.clear();
         }
         break;
       }
