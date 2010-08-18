@@ -239,7 +239,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._handle_keypress_bound = function(evt)
   {
-    //opera.postError("" + evt.keyCode + " " + evt.which )
+    //opera.postError("" + evt.keyCode + " " + evt.which );
     switch (evt.keyCode) {
       case 9: // tab
       {
@@ -276,6 +276,15 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         {
           evt.preventDefault();
           this._handle_backlog(evt.keyCode == 38 ? 1 : -1);
+        }
+        break;
+      }
+      case 107: // k key. ctrl-k == kill to en of line
+      {
+        if (evt.ctrlKey) {
+          evt.preventDefault();
+          var pos = this._textarea.selectionStart;
+          this._textarea.value = this._textarea.value.slice(0, pos);
         }
         break;
       }
