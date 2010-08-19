@@ -469,6 +469,245 @@ desc:
   - Type e.g. 'dir(this)'
   - Verify that the according object is displayed in the Inspection view.
 
+
+Scripts.REPL (command line version 2)
+*************************************
+url: ./test-cases/repl/console_api.html
+
+
+label: Console API: console.log
+desc:
+  - Click "console.log" button.
+  - Verify that "Phlebotinum" is printed on the command line
+
+
+label: Console API: console.log command line
+desc:
+  - Type 'console.log("hello")' on the command line
+  - Verify that "hello" is printed on the command line
+
+
+label: Console API: console.debug
+desc:
+  - Click "console.debug" button.
+  - Verify that "Phlebotinum" is printed on the command line
+
+
+
+label: Console API: console.info
+desc:
+  - Click "console.info" button.
+  - Verify that "Phlebotinum" is printed on the command line
+
+  
+
+label: Console API: console.warn
+desc:
+  - Click "console.warn" button.
+  - Verify that "Phlebotinum" is printed on the command line
+
+
+label: Console API: console.error
+desc:
+  - Click "console.error" button.
+  - Verify that "Phlebotinum" is printed on the command line
+
+
+label: Console API: console.assert
+desc:
+  - Click "console.assert" button.
+  - Verify that "false, Phlebotinum" is printed on the command line
+  - Verify that "ERROR" is NOT printed on the command line
+
+  
+
+label: Console API: console.dir
+desc:
+  - Click "console.dir" button.
+  - Verify that an expanded list of properties on the body object is shown
+
+
+label: Console API: console.dir command line
+desc:
+  - Type "console.dir(document.body)" on the command line
+  - Verify that an expanded list of properties on the body object is shown
+
+
+label: Console API: console.dir alias
+desc:
+  - Type "dir(document.body)" on the command line
+  - Verify that an expanded list of properties on the body object is shown
+  
+
+label: Console API: console.dirxml
+desc:
+  - Click "console.dirxml" button.
+  - Verify that an expanded dom tree representing the body of the document is shown.
+
+
+label: Console API: console.dirxml command line
+desc:
+  - Type "console.dirxml(document.body)" on the command line
+  - Verify that an expanded dom tree representing the body of the document is shown.
+
+
+label: Console API: console.dirxml alias
+desc:
+  - Type "dirxml(document.body)" on the command line
+  - Verify that an expanded dom tree representing the body of the document is shown.
+
+
+label: Console API: console.group
+desc:
+  - Click the "console.group" button
+  - Verify that a group was added to the command line and that the text "Phlebotinum" is in the group
+  - Enter some text
+  - Verify that the text appears at the root level, not inside the group
+  - Verify that clicking the +/- button expands and collapses the group.
+
+label: Console API: console.time
+desc:
+  - Click the "console.time" button
+  - Verify that "test: 1000ms (1000308µsec)" is printed in the console. The numbers will be slightly different but should be close to 1000ms.
+
+id: 251
+label: Console API: console.trace
+desc:
+  - Click the "console.trace" button
+  - Verify that a stack trace is printed in the console
+
+
+label: Command line API: clear
+desc:
+  - Create some entries and type clear().
+  - Verify that the view gets cleared.
+  - Verify that the typed history was NOT cleared.
+
+
+url: ./test-cases/repl/keys_values.html
+
+label: Command line API: keys
+desc:
+  - Load the page
+  - Type "keys(dict)"
+  - Verify that "Array" is added to the console
+  - Click the Array link
+  - Verify that the array is of length 2 and contains the values "foo" and "bar"
+
+  
+label: Command line API: values
+desc:
+  - Load the page
+  - Type "values(dict)"
+  - Verify that "Array" is added to the console
+  - Click the Array link
+  - Verify that the array is of length 2 and contains the values "1" and "1"
+
+  
+label: Command line API: keys
+desc:
+  - Click the "console.trace" button
+  - Verify that a stack trace is printed in the console
+
+label: Command line API: keys
+desc:
+  - Click the "console.trace" button
+  - Verify that a stack trace is printed in the console
+
+url: ./test-cases/repl/misc_selection.html
+
+label: Command line API: $1 $2
+desc:
+  - Load the page
+  - Click on the "<p>" element in the dom view
+  - Type $0 in the REPL view
+  - Verify that HTMLParagraphElement is printed in the view
+  - Click on the "<h1>" element in the dom view
+  - Type $0 in the REPL view
+  - Verify that HTMLHeadingElement is printed in the view
+  - Type $1 in the REPL view
+  - Verify that HTMLParagraphElement is printed in the view
+
+label: Command line API: $()
+desc:
+  - Enter $("i") in th command line
+  - Verify that HTMLElement is printed in the view
+
+label: Command line API: $$()
+desc:
+  - Enter $$(".c") in the command line
+  - Verify that NodeList is printed in the view
+  - Verify that the NodeList has a single item
+
+label: Command line API: $x()
+desc:
+  - Enter $x("//body") in the command line
+  - Verify that Array is printed in the view
+  - Verify that the Array has a single item
+
+  
+label: Autocomplete, not stopped
+desc:
+  - Type "docu"
+  - Press tab
+  - Verify that the input is expanded to "document"
+  - Continue typing "b", so input is "document.b"
+  - Press tab
+  - Verify that the input is the same and that the expansions "baseURI, bgColor, body" are shown above the input
+  - Continue typying "o"
+  - Press tab
+  - Verify that the input is expanded to "document.body"
+
+
+url: ./test-cases/repl/autocomplete_stopped.html
+
+label: Autocomplete, stopped
+desc:
+  - Navigate to url
+  - Verify that debugger has stopped
+  - Type "f"
+  - Press tab
+  - Verify that input is expanded to "foo"
+  - Clear input
+  - Type "b"
+  - Press tab
+  - Verify that the input is the same and that the expansions "bar, baz" are shown above the input
+
+label: History navigation
+desc:
+  - Use the up and down arrows.
+  - Verify that you get all previous submitted lines.
+  - Verify that the history contains no more entries than the repl -> Max items in typed history to remember setting
+
+
+label: ctrl-w
+desc:
+  - Enter some text.
+  - Press ctrl-w
+  - Verify that all text up to the closest whitespace is deleted
+
+label: ctrl-k
+desc:
+  - Enter some text.
+  - Move the cursor to the middle of the line
+  - Press ctrl-l
+  - Verify that all text after the cursor is deleted
+
+label: ctrl-a
+desc:
+  - Enter some text.
+  - Press ctrl-a
+  - Verify that the cursor moved to the start of the line
+
+label: ctrl-l
+desc:
+  - Create some entries
+  - Press ctrl-l
+  - Verify that the view gets cleared.
+  - Verify that the typed history was NOT cleared.
+
+
+  
 Network.Request Log
 *******************
 
