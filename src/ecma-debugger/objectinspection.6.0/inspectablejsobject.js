@@ -429,9 +429,21 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     window.services['ecmascript-debugger'].requestSetPropertyFilter(tag, msg);
   };
 
+  this.create_filters = function()
+  {
+    // client side filters, a temporary workaround for CORE-32113
+    var filters = cls.EcmascriptDebugger["6.0"].inspection_filters;
+    window.inspectionfilters = {};
+    for (var _class in filters)
+    {
+      if (_class.indexOf('_') != 0)
+        window.inspectionfilters[_class] = new filters[_class]();
+    }
+  }
+
   /* the following methods are to print a message filter and store it as js file */
 
-  this.create_filter = function()
+  this.create_filter = function(type) // type "scope" or "js"
   {
     var script = "[" +
     [
@@ -503,11 +515,11 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
       "document.createElement('iframe')",
     ].join(',') + "]";
     var rt_id = window.runtimes.getSelectedRuntimeId();
-    var tag = window.tag_manager.set_callback(this, this.handle_create_filter, [rt_id]);
+    var tag = window.tag_manager.set_callback(this, this.handle_create_filter, [rt_id, type]);
     window.services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, script]);
   };
 
-  this.handle_create_filter = function(status, message, rt_id)
+  this.handle_create_filter = function(status, message, rt_id, type)
   {
     const STATUS = 0, OBJECT_VALUE = 3, OBJECT_ID = 0;
     if (status || !(message[STATUS] == "completed" && message[OBJECT_VALUE]))
@@ -517,13 +529,13 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     else
     {
       var obj_id = message[OBJECT_VALUE][OBJECT_ID];
-      var tag = window.tag_manager.set_callback(this, this.handle_get_objects, [rt_id]);
+      var tag = window.tag_manager.set_callback(this, this.handle_get_objects, [rt_id, type]);
       var msg = [rt_id, [obj_id], 0, 1, 0];
       window.services['ecmascript-debugger'].requestExamineObjects(tag, msg);
     }
   };
 
-  this.handle_get_objects = function(status, message, rt_id)
+  this.handle_get_objects = function(status, message, rt_id, type)
   {
     const STATUS = 0, OBJECT_VALUE = 3, OBJECT_ID = 0;
     if (status)
@@ -551,14 +563,14 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
         });
 
       var obj_id = message[OBJECT_VALUE][OBJECT_ID];
-      var tag = window.tag_manager.set_callback(this, this.print_filter);
+      var tag = window.tag_manager.set_callback(this, this.print_filter, [rt_id, type]);
       var msg = [rt_id, obj_list, 0, 1, 0];
       window.services['ecmascript-debugger'].requestExamineObjects(tag, msg);
     }
   };
 
 
-  this.print_filter = function(status, message)
+  this.print_filter = function(status, message, rt_id, type)
   {
 
     const
@@ -669,7 +681,12 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
       }
     }
     // pretty print
-    const INDENT = "  ", NL = '\n', Q = "\"", NS = "cls.EcmascriptDebugger[\"6.0\"]";
+    const 
+    INDENT = "  ", 
+      NL = '\n', 
+      Q = "\"", 
+      NS = "cls.EcmascriptDebugger[\"6.0\"]",
+      NSF = "cls.EcmascriptDebugger[\"6.0\"].inspection_filters" ;
 
     var indent = function(indent_count)
     {
@@ -681,34 +698,80 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
       return indent(this) + JSON.stringify(prop) + ',';
     };
 
-    print.push("/**\n" +
-               "  * created with cls.EcmascriptDebugger[\"6.0\"].InspectableJSObject.create_filter()\n" +
-               "  * documentation of the filter see\n" +
-               "  *   http://dragonfly.opera.com/app/scope-interface/services/EcmascriptDebugger/EcmascriptDebugger_6_0.html#setpropertyfilter\n" +
-               "  *\n" +
-               "  * 1: // null\n" +
-               "  * 2: // undefined\n" +
-               "  * 3: // boolean\n" +
-               "  * 4: // number\n" +
-               "  * 5: // string\n" +
-               "  * 6: // object\n" +
-               "  */", NL, NL, NL);
-    print.push("window.cls || (window.cls = {});", NL);
-    print.push("cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});", NL);
-    print.push(NS, " || (", NS, " = {});", NL);
-    print.push(NS, ".ElementFilter =", NL);
-    print.push("[", NL, Element.map(props_to_string, 1).join(NL), NL, "]", NL, NL);
-    print.push(NS, ".property_filter =", NL);
-    print.push("[", NL);
-    for (i = 0; filter = filters[i]; i++)
-      print.push(indent(1), "[",  Q, filter[NAME], Q, ",", NL,
-                 indent(2), "[", NL,
-                 filter[FILTERED_PROPS].map(props_to_string, 3).join(NL), NL,
-                 indent(2), "]", is_normal_element(filter[NAME]) ?
-                                 ".concat(" + NS + ".ElementFilter)" :
-                                 "", NL,
-                 indent(1), "],", NL);
-    print.push("];", NL, NL);
+    var props_to_js_string = function(prop)
+    {
+      const NAME = 0, TYPE = 1, NULL = 1, STRING = 5, STRING_VAL = 4;
+      // types in ExamineObjects are strings, not enums
+      if (prop[TYPE] == NULL)
+        return indent(this) + "this." + prop[NAME] + " = {type: \"null\"};";
+      if (prop[TYPE] == STRING)
+        return indent(this) + "this." + prop[NAME] + 
+               " = {type: \"string\", value: \"" + prop[STRING_VAL] + "\"};";
+    };
+
+    if (type == "js")
+    {
+      print.push("/**\n" +
+                 "  * created with cls.EcmascriptDebugger[\"6.0\"].InspectableJSObject.create_filter(\"js\")\n" +
+                 "  * filters work the same way as the according scope filters:\n" +
+                 "  * if a property has the same type and optionally the same value\n" +
+                 "  * as the one in the filter, it will not be displayed.\n" +
+                 "  * documentation of the scope filters:\n" +
+                 "  *   http://dragonfly.opera.com/app/scope-interface/services/EcmascriptDebugger/EcmascriptDebugger_6_0.html#setpropertyfilter\n" +
+                 "  *\n" +
+                 "  * 1: // null\n" +
+                 "  * 2: // undefined\n" +
+                 "  * 3: // boolean\n" +
+                 "  * 4: // number\n" +
+                 "  * 5: // string\n" +
+                 "  * 6: // object\n" +
+                 "  */", NL, NL, NL);
+      print.push("window.cls || (window.cls = {});", NL);
+      print.push("cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});", NL);
+      print.push(NS, " || (", NS, " = {});", NL);
+      print.push(NSF, " = {};", NL, NL);
+      print.push(NSF, "._Element = new function()", NL, "{", NL);
+      print.push(Element.map(props_to_js_string, 1).join(NL), NL, "};", NL, NL);
+      for (i = 0; filter = filters[i]; i++)
+        print.push(NSF, ".", filter[NAME], " = function()", NL, 
+                   "{", NL,
+                   filter[FILTERED_PROPS].map(props_to_js_string, 1).join(NL), NL,
+                   "};", NL, NL,
+                   is_normal_element(filter[NAME]) ?
+                   (NSF + "." + filter[NAME] + ".prototype = " + NL +
+                   indent(2) + NSF + "._Element;" + NL + NL) : "");
+    }
+    else
+    {
+      print.push("/**\n" +
+                 "  * created with cls.EcmascriptDebugger[\"6.0\"].InspectableJSObject.create_filter()\n" +
+                 "  * documentation of the filter see\n" +
+                 "  *   http://dragonfly.opera.com/app/scope-interface/services/EcmascriptDebugger/EcmascriptDebugger_6_0.html#setpropertyfilter\n" +
+                 "  *\n" +
+                 "  * 1: // null\n" +
+                 "  * 2: // undefined\n" +
+                 "  * 3: // boolean\n" +
+                 "  * 4: // number\n" +
+                 "  * 5: // string\n" +
+                 "  * 6: // object\n" +
+                 "  */", NL, NL, NL);
+      print.push("window.cls || (window.cls = {});", NL);
+      print.push("cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});", NL);
+      print.push(NS, " || (", NS, " = {});", NL);
+      print.push(NS, ".ElementFilter =", NL);
+      print.push("[", NL, Element.map(props_to_string, 1).join(NL), NL, "]", NL, NL);
+      print.push(NS, ".property_filter =", NL);
+      print.push("[", NL);
+      for (i = 0; filter = filters[i]; i++)
+        print.push(indent(1), "[",  Q, filter[NAME], Q, ",", NL,
+                   indent(2), "[", NL,
+                   filter[FILTERED_PROPS].map(props_to_string, 3).join(NL), NL,
+                   indent(2), "]", is_normal_element(filter[NAME]) ?
+                                   ".concat(" + NS + ".ElementFilter)" :
+                                   "", NL,
+                   indent(1), "],", NL);
+      print.push("];", NL, NL);
+    }
     window.open("data:text/plain," + encodeURIComponent(print.join('')));
   };
 

@@ -1,6 +1,9 @@
 /**
-  * created with cls.EcmascriptDebugger["6.0"].InspectableJSObject.create_filter()
-  * documentation of the filter see
+  * created with cls.EcmascriptDebugger["6.0"].InspectableJSObject.create_filter("js")
+  * filters work the same way as the according scope filters:
+  * if a property has the same type and optionally the same value
+  * as the one in the filter, it will not be displayed.
+  * documentation of the scope filters:
   *   http://dragonfly.opera.com/app/scope-interface/services/EcmascriptDebugger/EcmascriptDebugger_6_0.html#setpropertyfilter
   *
   * 1: // null
@@ -15,819 +18,976 @@
 window.cls || (window.cls = {});
 cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
 cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
-cls.EcmascriptDebugger["6.0"].ElementFilter =
-[
-  ["className",5,null,null,""],
-  ["dir",5,null,null,""],
-  ["firstChild",1],
-  ["firstElementChild",1],
-  ["id",5,null,null,""],
-  ["innerHTML",5,null,null,""],
-  ["innerText",5,null,null,""],
-  ["lang",5,null,null,""],
-  ["lastChild",1],
-  ["lastElementChild",1],
-  ["namespaceURI",1],
-  ["nextElementSibling",1],
-  ["nextSibling",1],
-  ["nodeValue",1],
-  ["offsetParent",1],
-  ["parentElement",1],
-  ["parentNode",1],
-  ["prefix",1],
-  ["previousElementSibling",1],
-  ["previousSibling",1],
-  ["textContent",5,null,null,""],
-  ["title",5,null,null,""],
-  ["unselectable",5,null,null,""],
-  ["onclick",1],
-  ["onmousedown",1],
-  ["onmouseup",1],
-  ["onmouseover",1],
-  ["onmousemove",1],
-  ["onmouseout",1],
-  ["onkeypress",1],
-  ["onkeydown",1],
-  ["onkeyup",1],
-  ["onload",1],
-  ["onunload",1],
-  ["onfocus",1],
-  ["onblur",1],
-  ["ondblclick",1],
-  ["oncontextmenu",1],
-  ["onloadstart",1],
-  ["onprogress",1],
-  ["onsuspend",1],
-  ["onstalled",1],
-  ["onloadend",1],
-  ["onemptied",1],
-  ["onplay",1],
-  ["onpause",1],
-  ["onloadedmetadata",1],
-  ["onloadeddata",1],
-  ["onwaiting",1],
-  ["onplaying",1],
-  ["onseeking",1],
-  ["onseeked",1],
-  ["ontimeupdate",1],
-  ["onended",1],
-  ["oncanplay",1],
-  ["oncanplaythrough",1],
-  ["onratechange",1],
-  ["ondurationchange",1],
-  ["onvolumechange",1],
-]
+cls.EcmascriptDebugger["6.0"].inspection_filters = {};
 
-cls.EcmascriptDebugger["6.0"].property_filter =
-[
-  ["Window",
-    [
-      ["defaultStatus",5,null,null,""],
-      ["event",1],
-      ["frameElement",1],
-      ["name",5,null,null,""],
-      ["opener",1],
-      ["status",5,null,null,""],
-    ]
-  ],
-  ["HTMLUnknownElement",
-    [
-      ["outerText",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["XMLDocument",
-    [
-      ["attributes",1],
-      ["baseURI",1],
-      ["cookie",5,null,null,""],
-      ["defaultView",1],
-      ["doctype",1],
-      ["documentURI",1],
-      ["localName",1],
-      ["location",1],
-      ["namespaceURI",1],
-      ["nextSibling",1],
-      ["nodeValue",1],
-      ["ownerDocument",1],
-      ["parentNode",1],
-      ["parentWindow",1],
-      ["prefix",1],
-      ["previousSibling",1],
-      ["referrer",5,null,null,""],
-      ["textContent",1],
-    ]
-  ],
-  ["HTMLDocument",
-    [
-      ["alinkColor",5,null,null,""],
-      ["attributes",1],
-      ["baseURI",1],
-      ["bgColor",5,null,null,""],
-      ["cookie",5,null,null,""],
-      ["defaultView",1],
-      ["dir",5,null,null,""],
-      ["doctype",1],
-      ["documentURI",1],
-      ["domain",5,null,null,""],
-      ["fgColor",5,null,null,""],
-      ["linkColor",5,null,null,""],
-      ["localName",1],
-      ["location",1],
-      ["namespaceURI",1],
-      ["nextSibling",1],
-      ["nodeValue",1],
-      ["ownerDocument",1],
-      ["parentNode",1],
-      ["parentWindow",1],
-      ["prefix",1],
-      ["previousSibling",1],
-      ["referrer",5,null,null,""],
-      ["textContent",1],
-      ["title",5,null,null,""],
-      ["vlinkColor",5,null,null,""],
-      ["onload",1],
-      ["onunload",1],
-      ["onhashchange",1],
-      ["onstorage",1],
-    ]
-  ],
-  ["Attr",
-    [
-      ["attributes",1],
-      ["firstChild",1],
-      ["lastChild",1],
-      ["localName",1],
-      ["namespaceURI",1],
-      ["nextSibling",1],
-      ["nodeValue",5,null,null,""],
-      ["ownerElement",1],
-      ["parentNode",1],
-      ["prefix",1],
-      ["previousSibling",1],
-      ["text",5,null,null,""],
-      ["textContent",5,null,null,""],
-      ["value",5,null,null,""],
-    ]
-  ],
-  ["Text",
-    [
-      ["attributes",1],
-      ["data",5,null,null,""],
-      ["firstChild",1],
-      ["lastChild",1],
-      ["localName",1],
-      ["namespaceURI",1],
-      ["nextSibling",1],
-      ["nodeValue",5,null,null,""],
-      ["parentNode",1],
-      ["prefix",1],
-      ["previousSibling",1],
-      ["textContent",5,null,null,""],
-      ["wholeText",5,null,null,""],
-    ]
-  ],
-  ["CDATASection",
-    [
-      ["attributes",1],
-      ["data",5,null,null,""],
-      ["firstChild",1],
-      ["lastChild",1],
-      ["localName",1],
-      ["namespaceURI",1],
-      ["nextSibling",1],
-      ["nodeValue",5,null,null,""],
-      ["parentNode",1],
-      ["prefix",1],
-      ["previousSibling",1],
-      ["textContent",5,null,null,""],
-      ["wholeText",5,null,null,""],
-    ]
-  ],
-  ["Comment",
-    [
-      ["attributes",1],
-      ["data",5,null,null,""],
-      ["firstChild",1],
-      ["lastChild",1],
-      ["localName",1],
-      ["namespaceURI",1],
-      ["nextSibling",1],
-      ["nodeValue",5,null,null,""],
-      ["parentNode",1],
-      ["prefix",1],
-      ["previousSibling",1],
-      ["textContent",5,null,null,""],
-    ]
-  ],
-  ["DocumentFragment",
-    [
-      ["attributes",1],
-      ["firstChild",1],
-      ["lastChild",1],
-      ["localName",1],
-      ["namespaceURI",1],
-      ["nextSibling",1],
-      ["nodeValue",1],
-      ["parentNode",1],
-      ["prefix",1],
-      ["previousSibling",1],
-      ["textContent",5,null,null,""],
-    ]
-  ],
-  ["Event",
-    [
-      ["currentTarget",1],
-      ["srcElement",1],
-      ["target",1],
-      ["type",5,null,null,""],
-    ]
-  ],
-  ["HTMLHtmlElement",
-    [
-      ["outerText",5,null,null,""],
-      ["version",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLHeadElement",
-    [
-      ["outerText",5,null,null,""],
-      ["profile",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLLinkElement",
-    [
-      ["charset",5,null,null,""],
-      ["href",5,null,null,""],
-      ["hreflang",5,null,null,""],
-      ["media",5,null,null,""],
-      ["outerText",5,null,null,""],
-      ["rel",5,null,null,""],
-      ["rev",5,null,null,""],
-      ["target",5,null,null,""],
-      ["type",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLTitleElement",
-    [
-      ["outerText",5,null,null,""],
-      ["text",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLMetaElement",
-    [
-      ["content",5,null,null,""],
-      ["httpEquiv",5,null,null,""],
-      ["name",5,null,null,""],
-      ["outerText",5,null,null,""],
-      ["scheme",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLBaseElement",
-    [
-      ["href",5,null,null,""],
-      ["outerText",5,null,null,""],
-      ["target",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLStyleElement",
-    [
-      ["media",5,null,null,""],
-      ["outerText",5,null,null,""],
-      ["type",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLBodyElement",
-    [
-      ["aLink",5,null,null,""],
-      ["background",5,null,null,""],
-      ["bgColor",5,null,null,""],
-      ["link",5,null,null,""],
-      ["outerText",5,null,null,""],
-      ["text",5,null,null,""],
-      ["vLink",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLUnknownElement",
-    [
-      ["outerText",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLInputElement",
-    [
-      ["accept",5,null,null,""],
-      ["accessKey",5,null,null,""],
-      ["align",5,null,null,""],
-      ["alt",5,null,null,""],
-      ["autocomplete",5,null,null,""],
-      ["defaultValue",5,null,null,""],
-      ["form",1],
-      ["formAction",5,null,null,""],
-      ["formEnctype",5,null,null,""],
-      ["formMethod",5,null,null,""],
-      ["formTarget",5,null,null,""],
-      ["inputmode",5,null,null,""],
-      ["list",1],
-      ["max",5,null,null,""],
-      ["min",5,null,null,""],
-      ["name",5,null,null,""],
-      ["outerText",5,null,null,""],
-      ["pattern",5,null,null,""],
-      ["selectedOption",1],
-      ["src",5,null,null,""],
-      ["step",5,null,null,""],
-      ["useMap",5,null,null,""],
-      ["validationMessage",5,null,null,""],
-      ["value",5,null,null,""],
-      ["valueAsDate",1],
-      ["onselect",1],
-      ["onchange",1],
-      ["onsubmit",1],
-      ["onreset",1],
-      ["oninput",1],
-      ["onforminput",1],
-      ["onformchange",1],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLIsIndexElement",
-    [
-      ["form",1],
-      ["outerText",5,null,null,""],
-      ["prompt",5,null,null,""],
-      ["validationMessage",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLFormElement",
-    [
-      ["acceptCharset",5,null,null,""],
-      ["action",5,null,null,""],
-      ["encoding",5,null,null,""],
-      ["enctype",5,null,null,""],
-      ["method",5,null,null,""],
-      ["name",5,null,null,""],
-      ["outerText",5,null,null,""],
-      ["target",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLSelectElement",
-    [
-      ["accessKey",5,null,null,""],
-      ["autocomplete",5,null,null,""],
-      ["form",1],
-      ["name",5,null,null,""],
-      ["outerText",5,null,null,""],
-      ["validationMessage",5,null,null,""],
-      ["value",5,null,null,""],
-      ["onselect",1],
-      ["onchange",1],
-      ["onsubmit",1],
-      ["onreset",1],
-      ["oninput",1],
-      ["onforminput",1],
-      ["onformchange",1],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLOptGroupElement",
-    [
-      ["label",5,null,null,""],
-      ["outerText",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLOptionElement",
-    [
-      ["form",1],
-      ["label",5,null,null,""],
-      ["outerText",5,null,null,""],
-      ["text",5,null,null,""],
-      ["validationMessage",5,null,null,""],
-      ["value",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLTextAreaElement",
-    [
-      ["accessKey",5,null,null,""],
-      ["defaultValue",5,null,null,""],
-      ["form",1],
-      ["inputmode",5,null,null,""],
-      ["name",5,null,null,""],
-      ["outerText",5,null,null,""],
-      ["pattern",5,null,null,""],
-      ["validationMessage",5,null,null,""],
-      ["value",5,null,null,""],
-      ["wrap",5,null,null,""],
-      ["onselect",1],
-      ["onchange",1],
-      ["onsubmit",1],
-      ["onreset",1],
-      ["oninput",1],
-      ["onforminput",1],
-      ["onformchange",1],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLButtonElement",
-    [
-      ["accessKey",5,null,null,""],
-      ["form",1],
-      ["formAction",5,null,null,""],
-      ["formEnctype",5,null,null,""],
-      ["formMethod",5,null,null,""],
-      ["formTarget",5,null,null,""],
-      ["name",5,null,null,""],
-      ["outerText",5,null,null,""],
-      ["validationMessage",5,null,null,""],
-      ["value",5,null,null,""],
-      ["onselect",1],
-      ["onchange",1],
-      ["onsubmit",1],
-      ["onreset",1],
-      ["oninput",1],
-      ["onforminput",1],
-      ["onformchange",1],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLLabelElement",
-    [
-      ["accessKey",5,null,null,""],
-      ["control",1],
-      ["form",1],
-      ["htmlFor",5,null,null,""],
-      ["outerText",5,null,null,""],
-      ["validationMessage",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLFieldSetElement",
-    [
-      ["form",1],
-      ["outerText",5,null,null,""],
-      ["validationMessage",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLLegendElement",
-    [
-      ["accessKey",5,null,null,""],
-      ["align",5,null,null,""],
-      ["form",1],
-      ["outerText",5,null,null,""],
-      ["validationMessage",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLUListElement",
-    [
-      ["outerText",5,null,null,""],
-      ["type",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLOListElement",
-    [
-      ["outerText",5,null,null,""],
-      ["type",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLDListElement",
-    [
-      ["outerText",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLDirectoryElement",
-    [
-      ["outerText",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLMenuElement",
-    [
-      ["outerText",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLLIElement",
-    [
-      ["outerText",5,null,null,""],
-      ["type",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLDivElement",
-    [
-      ["align",5,null,null,""],
-      ["outerText",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLParagraphElement",
-    [
-      ["align",5,null,null,""],
-      ["outerText",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLHeadingElement",
-    [
-      ["align",5,null,null,""],
-      ["outerText",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLQuoteElement",
-    [
-      ["cite",5,null,null,""],
-      ["outerText",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLQuoteElement",
-    [
-      ["cite",5,null,null,""],
-      ["outerText",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLPreElement",
-    [
-      ["outerText",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLBRElement",
-    [
-      ["clear",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLBaseFontElement",
-    [
-      ["color",5,null,null,""],
-      ["face",5,null,null,""],
-      ["outerText",5,null,null,""],
-      ["size",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLFontElement",
-    [
-      ["color",5,null,null,""],
-      ["face",5,null,null,""],
-      ["outerText",5,null,null,""],
-      ["size",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLModElement",
-    [
-      ["cite",5,null,null,""],
-      ["dateTime",5,null,null,""],
-      ["outerText",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLAnchorElement",
-    [
-      ["accessKey",5,null,null,""],
-      ["charset",5,null,null,""],
-      ["coords",5,null,null,""],
-      ["href",5,null,null,""],
-      ["hreflang",5,null,null,""],
-      ["name",5,null,null,""],
-      ["outerText",5,null,null,""],
-      ["rel",5,null,null,""],
-      ["rev",5,null,null,""],
-      ["shape",5,null,null,""],
-      ["target",5,null,null,""],
-      ["text",5,null,null,""],
-      ["type",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLImageElement",
-    [
-      ["align",5,null,null,""],
-      ["alt",5,null,null,""],
-      ["border",5,null,null,""],
-      ["longDesc",5,null,null,""],
-      ["lowsrc",5,null,null,""],
-      ["name",5,null,null,""],
-      ["outerText",5,null,null,""],
-      ["src",5,null,null,""],
-      ["useMap",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLObjectElement",
-    [
-      ["align",5,null,null,""],
-      ["archive",5,null,null,""],
-      ["border",5,null,null,""],
-      ["classId",5,null,null,""],
-      ["className",5,null,null,""],
-      ["code",5,null,null,""],
-      ["codeBase",5,null,null,""],
-      ["codeType",5,null,null,""],
-      ["contentDocument",1],
-      ["contentWindow",1],
-      ["data",5,null,null,""],
-      ["dir",5,null,null,""],
-      ["firstChild",1],
-      ["firstElementChild",1],
-      ["form",1],
-      ["height",5,null,null,""],
-      ["id",5,null,null,""],
-      ["innerHTML",5,null,null,""],
-      ["innerText",5,null,null,""],
-      ["lang",5,null,null,""],
-      ["lastChild",1],
-      ["lastElementChild",1],
-      ["name",5,null,null,""],
-      ["namespaceURI",1],
-      ["nextElementSibling",1],
-      ["nextSibling",1],
-      ["nodeValue",1],
-      ["offsetParent",1],
-      ["outerText",5,null,null,""],
-      ["parentElement",1],
-      ["parentNode",1],
-      ["prefix",1],
-      ["previousElementSibling",1],
-      ["previousSibling",1],
-      ["standby",5,null,null,""],
-      ["textContent",5,null,null,""],
-      ["title",5,null,null,""],
-      ["type",5,null,null,""],
-      ["unselectable",5,null,null,""],
-      ["useMap",5,null,null,""],
-      ["width",5,null,null,""],
-    ]
-  ],
-  ["HTMLParamElement",
-    [
-      ["name",5,null,null,""],
-      ["outerText",5,null,null,""],
-      ["type",5,null,null,""],
-      ["value",5,null,null,""],
-      ["valueType",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLAppletElement",
-    [
-      ["align",5,null,null,""],
-      ["alt",5,null,null,""],
-      ["archive",5,null,null,""],
-      ["className",5,null,null,""],
-      ["code",5,null,null,""],
-      ["codeBase",5,null,null,""],
-      ["dir",5,null,null,""],
-      ["firstChild",1],
-      ["firstElementChild",1],
-      ["height",5,null,null,""],
-      ["id",5,null,null,""],
-      ["innerHTML",5,null,null,""],
-      ["innerText",5,null,null,""],
-      ["lang",5,null,null,""],
-      ["lastChild",1],
-      ["lastElementChild",1],
-      ["name",5,null,null,""],
-      ["namespaceURI",1],
-      ["nextElementSibling",1],
-      ["nextSibling",1],
-      ["nodeValue",1],
-      ["object",5,null,null,""],
-      ["offsetParent",1],
-      ["outerText",5,null,null,""],
-      ["parentElement",1],
-      ["parentNode",1],
-      ["prefix",1],
-      ["previousElementSibling",1],
-      ["previousSibling",1],
-      ["textContent",5,null,null,""],
-      ["title",5,null,null,""],
-      ["unselectable",5,null,null,""],
-      ["width",5,null,null,""],
-    ]
-  ],
-  ["HTMLMapElement",
-    [
-      ["name",5,null,null,""],
-      ["outerText",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLAreaElement",
-    [
-      ["accessKey",5,null,null,""],
-      ["alt",5,null,null,""],
-      ["coords",5,null,null,""],
-      ["href",5,null,null,""],
-      ["outerText",5,null,null,""],
-      ["shape",5,null,null,""],
-      ["target",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLScriptElement",
-    [
-      ["charset",5,null,null,""],
-      ["outerText",5,null,null,""],
-      ["src",5,null,null,""],
-      ["text",5,null,null,""],
-      ["type",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLTableElement",
-    [
-      ["align",5,null,null,""],
-      ["bgColor",5,null,null,""],
-      ["border",5,null,null,""],
-      ["caption",1],
-      ["cellPadding",5,null,null,""],
-      ["cellSpacing",5,null,null,""],
-      ["frame",5,null,null,""],
-      ["outerText",5,null,null,""],
-      ["rules",5,null,null,""],
-      ["summary",5,null,null,""],
-      ["tFoot",1],
-      ["tHead",1],
-      ["width",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLTableCaptionElement",
-    [
-      ["align",5,null,null,""],
-      ["outerText",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLTableColElement",
-    [
-      ["align",5,null,null,""],
-      ["ch",5,null,null,""],
-      ["chOff",5,null,null,""],
-      ["outerText",5,null,null,""],
-      ["vAlign",5,null,null,""],
-      ["width",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLTableSectionElement",
-    [
-      ["align",5,null,null,""],
-      ["ch",5,null,null,""],
-      ["chOff",5,null,null,""],
-      ["outerText",5,null,null,""],
-      ["vAlign",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLTableSectionElement",
-    [
-      ["align",5,null,null,""],
-      ["ch",5,null,null,""],
-      ["chOff",5,null,null,""],
-      ["outerText",5,null,null,""],
-      ["vAlign",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLTableRowElement",
-    [
-      ["align",5,null,null,""],
-      ["bgColor",5,null,null,""],
-      ["ch",5,null,null,""],
-      ["chOff",5,null,null,""],
-      ["height",5,null,null,""],
-      ["outerText",5,null,null,""],
-      ["vAlign",5,null,null,""],
-      ["width",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLTableCellElement",
-    [
-      ["abbr",5,null,null,""],
-      ["align",5,null,null,""],
-      ["axis",5,null,null,""],
-      ["bgColor",5,null,null,""],
-      ["ch",5,null,null,""],
-      ["chOff",5,null,null,""],
-      ["headers",5,null,null,""],
-      ["height",5,null,null,""],
-      ["outerText",5,null,null,""],
-      ["scope",5,null,null,""],
-      ["vAlign",5,null,null,""],
-      ["width",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLFrameSetElement",
-    [
-      ["cols",5,null,null,""],
-      ["outerText",5,null,null,""],
-      ["rows",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLFrameElement",
-    [
-      ["contentDocument",1],
-      ["contentWindow",1],
-      ["frameBorder",5,null,null,""],
-      ["longDesc",5,null,null,""],
-      ["marginHeight",5,null,null,""],
-      ["marginWidth",5,null,null,""],
-      ["name",5,null,null,""],
-      ["outerText",5,null,null,""],
-      ["scrolling",5,null,null,""],
-      ["src",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-  ["HTMLIFrameElement",
-    [
-      ["align",5,null,null,""],
-      ["contentDocument",1],
-      ["contentWindow",1],
-      ["frameBorder",5,null,null,""],
-      ["height",5,null,null,""],
-      ["longDesc",5,null,null,""],
-      ["marginHeight",5,null,null,""],
-      ["marginWidth",5,null,null,""],
-      ["name",5,null,null,""],
-      ["outerText",5,null,null,""],
-      ["scrolling",5,null,null,""],
-      ["src",5,null,null,""],
-      ["width",5,null,null,""],
-    ].concat(cls.EcmascriptDebugger["6.0"].ElementFilter)
-  ],
-];
+cls.EcmascriptDebugger["6.0"].inspection_filters._Element = new function()
+{
+  this.className = {type: "string", value: ""};
+  this.dir = {type: "string", value: ""};
+  this.firstChild = {type: "null"};
+  this.firstElementChild = {type: "null"};
+  this.id = {type: "string", value: ""};
+  this.innerHTML = {type: "string", value: ""};
+  this.innerText = {type: "string", value: ""};
+  this.lang = {type: "string", value: ""};
+  this.lastChild = {type: "null"};
+  this.lastElementChild = {type: "null"};
+  this.namespaceURI = {type: "null"};
+  this.nextElementSibling = {type: "null"};
+  this.nextSibling = {type: "null"};
+  this.nodeValue = {type: "null"};
+  this.offsetParent = {type: "null"};
+  this.parentElement = {type: "null"};
+  this.parentNode = {type: "null"};
+  this.prefix = {type: "null"};
+  this.previousElementSibling = {type: "null"};
+  this.previousSibling = {type: "null"};
+  this.textContent = {type: "string", value: ""};
+  this.title = {type: "string", value: ""};
+  this.unselectable = {type: "string", value: ""};
+  this.onclick = {type: "null"};
+  this.onmousedown = {type: "null"};
+  this.onmouseup = {type: "null"};
+  this.onmouseover = {type: "null"};
+  this.onmousemove = {type: "null"};
+  this.onmouseout = {type: "null"};
+  this.onkeypress = {type: "null"};
+  this.onkeydown = {type: "null"};
+  this.onkeyup = {type: "null"};
+  this.onload = {type: "null"};
+  this.onunload = {type: "null"};
+  this.onfocus = {type: "null"};
+  this.onblur = {type: "null"};
+  this.ondblclick = {type: "null"};
+  this.oncontextmenu = {type: "null"};
+  this.onloadstart = {type: "null"};
+  this.onprogress = {type: "null"};
+  this.onsuspend = {type: "null"};
+  this.onstalled = {type: "null"};
+  this.onloadend = {type: "null"};
+  this.onemptied = {type: "null"};
+  this.onplay = {type: "null"};
+  this.onpause = {type: "null"};
+  this.onloadedmetadata = {type: "null"};
+  this.onloadeddata = {type: "null"};
+  this.onwaiting = {type: "null"};
+  this.onplaying = {type: "null"};
+  this.onseeking = {type: "null"};
+  this.onseeked = {type: "null"};
+  this.ontimeupdate = {type: "null"};
+  this.onended = {type: "null"};
+  this.oncanplay = {type: "null"};
+  this.oncanplaythrough = {type: "null"};
+  this.onratechange = {type: "null"};
+  this.ondurationchange = {type: "null"};
+  this.onvolumechange = {type: "null"};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.Window = function()
+{
+  this.defaultStatus = {type: "string", value: ""};
+  this.event = {type: "null"};
+  this.frameElement = {type: "null"};
+  this.name = {type: "string", value: ""};
+  this.opener = {type: "null"};
+  this.status = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLUnknownElement = function()
+{
+  this.outerText = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLUnknownElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.XMLDocument = function()
+{
+  this.attributes = {type: "null"};
+  this.baseURI = {type: "null"};
+  this.cookie = {type: "string", value: ""};
+  this.defaultView = {type: "null"};
+  this.doctype = {type: "null"};
+  this.documentURI = {type: "null"};
+  this.localName = {type: "null"};
+  this.location = {type: "null"};
+  this.namespaceURI = {type: "null"};
+  this.nextSibling = {type: "null"};
+  this.nodeValue = {type: "null"};
+  this.ownerDocument = {type: "null"};
+  this.parentNode = {type: "null"};
+  this.parentWindow = {type: "null"};
+  this.prefix = {type: "null"};
+  this.previousSibling = {type: "null"};
+  this.referrer = {type: "string", value: ""};
+  this.textContent = {type: "null"};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLDocument = function()
+{
+  this.alinkColor = {type: "string", value: ""};
+  this.attributes = {type: "null"};
+  this.baseURI = {type: "null"};
+  this.bgColor = {type: "string", value: ""};
+  this.cookie = {type: "string", value: ""};
+  this.defaultView = {type: "null"};
+  this.dir = {type: "string", value: ""};
+  this.doctype = {type: "null"};
+  this.documentURI = {type: "null"};
+  this.domain = {type: "string", value: ""};
+  this.fgColor = {type: "string", value: ""};
+  this.linkColor = {type: "string", value: ""};
+  this.localName = {type: "null"};
+  this.location = {type: "null"};
+  this.namespaceURI = {type: "null"};
+  this.nextSibling = {type: "null"};
+  this.nodeValue = {type: "null"};
+  this.ownerDocument = {type: "null"};
+  this.parentNode = {type: "null"};
+  this.parentWindow = {type: "null"};
+  this.prefix = {type: "null"};
+  this.previousSibling = {type: "null"};
+  this.referrer = {type: "string", value: ""};
+  this.textContent = {type: "null"};
+  this.title = {type: "string", value: ""};
+  this.vlinkColor = {type: "string", value: ""};
+  this.onload = {type: "null"};
+  this.onunload = {type: "null"};
+  this.onhashchange = {type: "null"};
+  this.onstorage = {type: "null"};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.Attr = function()
+{
+  this.attributes = {type: "null"};
+  this.firstChild = {type: "null"};
+  this.lastChild = {type: "null"};
+  this.localName = {type: "null"};
+  this.namespaceURI = {type: "null"};
+  this.nextSibling = {type: "null"};
+  this.nodeValue = {type: "string", value: ""};
+  this.ownerElement = {type: "null"};
+  this.parentNode = {type: "null"};
+  this.prefix = {type: "null"};
+  this.previousSibling = {type: "null"};
+  this.text = {type: "string", value: ""};
+  this.textContent = {type: "string", value: ""};
+  this.value = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.Text = function()
+{
+  this.attributes = {type: "null"};
+  this.data = {type: "string", value: ""};
+  this.firstChild = {type: "null"};
+  this.lastChild = {type: "null"};
+  this.localName = {type: "null"};
+  this.namespaceURI = {type: "null"};
+  this.nextSibling = {type: "null"};
+  this.nodeValue = {type: "string", value: ""};
+  this.parentNode = {type: "null"};
+  this.prefix = {type: "null"};
+  this.previousSibling = {type: "null"};
+  this.textContent = {type: "string", value: ""};
+  this.wholeText = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.CDATASection = function()
+{
+  this.attributes = {type: "null"};
+  this.data = {type: "string", value: ""};
+  this.firstChild = {type: "null"};
+  this.lastChild = {type: "null"};
+  this.localName = {type: "null"};
+  this.namespaceURI = {type: "null"};
+  this.nextSibling = {type: "null"};
+  this.nodeValue = {type: "string", value: ""};
+  this.parentNode = {type: "null"};
+  this.prefix = {type: "null"};
+  this.previousSibling = {type: "null"};
+  this.textContent = {type: "string", value: ""};
+  this.wholeText = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.Comment = function()
+{
+  this.attributes = {type: "null"};
+  this.data = {type: "string", value: ""};
+  this.firstChild = {type: "null"};
+  this.lastChild = {type: "null"};
+  this.localName = {type: "null"};
+  this.namespaceURI = {type: "null"};
+  this.nextSibling = {type: "null"};
+  this.nodeValue = {type: "string", value: ""};
+  this.parentNode = {type: "null"};
+  this.prefix = {type: "null"};
+  this.previousSibling = {type: "null"};
+  this.textContent = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.DocumentFragment = function()
+{
+  this.attributes = {type: "null"};
+  this.firstChild = {type: "null"};
+  this.lastChild = {type: "null"};
+  this.localName = {type: "null"};
+  this.namespaceURI = {type: "null"};
+  this.nextSibling = {type: "null"};
+  this.nodeValue = {type: "null"};
+  this.parentNode = {type: "null"};
+  this.prefix = {type: "null"};
+  this.previousSibling = {type: "null"};
+  this.textContent = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.Event = function()
+{
+  this.currentTarget = {type: "null"};
+  this.srcElement = {type: "null"};
+  this.target = {type: "null"};
+  this.type = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLHtmlElement = function()
+{
+  this.outerText = {type: "string", value: ""};
+  this.version = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLHtmlElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLHeadElement = function()
+{
+  this.outerText = {type: "string", value: ""};
+  this.profile = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLHeadElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLLinkElement = function()
+{
+  this.charset = {type: "string", value: ""};
+  this.href = {type: "string", value: ""};
+  this.hreflang = {type: "string", value: ""};
+  this.media = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+  this.rel = {type: "string", value: ""};
+  this.rev = {type: "string", value: ""};
+  this.target = {type: "string", value: ""};
+  this.type = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLLinkElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTitleElement = function()
+{
+  this.outerText = {type: "string", value: ""};
+  this.text = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTitleElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLMetaElement = function()
+{
+  this.content = {type: "string", value: ""};
+  this.httpEquiv = {type: "string", value: ""};
+  this.name = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+  this.scheme = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLMetaElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLBaseElement = function()
+{
+  this.href = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+  this.target = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLBaseElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLStyleElement = function()
+{
+  this.media = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+  this.type = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLStyleElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLBodyElement = function()
+{
+  this.aLink = {type: "string", value: ""};
+  this.background = {type: "string", value: ""};
+  this.bgColor = {type: "string", value: ""};
+  this.link = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+  this.text = {type: "string", value: ""};
+  this.vLink = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLBodyElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLUnknownElement = function()
+{
+  this.outerText = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLUnknownElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLInputElement = function()
+{
+  this.accept = {type: "string", value: ""};
+  this.accessKey = {type: "string", value: ""};
+  this.align = {type: "string", value: ""};
+  this.alt = {type: "string", value: ""};
+  this.autocomplete = {type: "string", value: ""};
+  this.defaultValue = {type: "string", value: ""};
+  this.form = {type: "null"};
+  this.formAction = {type: "string", value: ""};
+  this.formEnctype = {type: "string", value: ""};
+  this.formMethod = {type: "string", value: ""};
+  this.formTarget = {type: "string", value: ""};
+  this.inputmode = {type: "string", value: ""};
+  this.list = {type: "null"};
+  this.max = {type: "string", value: ""};
+  this.min = {type: "string", value: ""};
+  this.name = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+  this.pattern = {type: "string", value: ""};
+  this.selectedOption = {type: "null"};
+  this.src = {type: "string", value: ""};
+  this.step = {type: "string", value: ""};
+  this.useMap = {type: "string", value: ""};
+  this.validationMessage = {type: "string", value: ""};
+  this.value = {type: "string", value: ""};
+  this.valueAsDate = {type: "null"};
+  this.onselect = {type: "null"};
+  this.onchange = {type: "null"};
+  this.onsubmit = {type: "null"};
+  this.onreset = {type: "null"};
+  this.oninput = {type: "null"};
+  this.onforminput = {type: "null"};
+  this.onformchange = {type: "null"};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLInputElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLIsIndexElement = function()
+{
+  this.form = {type: "null"};
+  this.outerText = {type: "string", value: ""};
+  this.prompt = {type: "string", value: ""};
+  this.validationMessage = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLIsIndexElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLFormElement = function()
+{
+  this.acceptCharset = {type: "string", value: ""};
+  this.action = {type: "string", value: ""};
+  this.encoding = {type: "string", value: ""};
+  this.enctype = {type: "string", value: ""};
+  this.method = {type: "string", value: ""};
+  this.name = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+  this.target = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLFormElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLSelectElement = function()
+{
+  this.accessKey = {type: "string", value: ""};
+  this.autocomplete = {type: "string", value: ""};
+  this.form = {type: "null"};
+  this.name = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+  this.validationMessage = {type: "string", value: ""};
+  this.value = {type: "string", value: ""};
+  this.onselect = {type: "null"};
+  this.onchange = {type: "null"};
+  this.onsubmit = {type: "null"};
+  this.onreset = {type: "null"};
+  this.oninput = {type: "null"};
+  this.onforminput = {type: "null"};
+  this.onformchange = {type: "null"};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLSelectElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLOptGroupElement = function()
+{
+  this.label = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLOptGroupElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLOptionElement = function()
+{
+  this.form = {type: "null"};
+  this.label = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+  this.text = {type: "string", value: ""};
+  this.validationMessage = {type: "string", value: ""};
+  this.value = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLOptionElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTextAreaElement = function()
+{
+  this.accessKey = {type: "string", value: ""};
+  this.defaultValue = {type: "string", value: ""};
+  this.form = {type: "null"};
+  this.inputmode = {type: "string", value: ""};
+  this.name = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+  this.pattern = {type: "string", value: ""};
+  this.validationMessage = {type: "string", value: ""};
+  this.value = {type: "string", value: ""};
+  this.wrap = {type: "string", value: ""};
+  this.onselect = {type: "null"};
+  this.onchange = {type: "null"};
+  this.onsubmit = {type: "null"};
+  this.onreset = {type: "null"};
+  this.oninput = {type: "null"};
+  this.onforminput = {type: "null"};
+  this.onformchange = {type: "null"};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTextAreaElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLButtonElement = function()
+{
+  this.accessKey = {type: "string", value: ""};
+  this.form = {type: "null"};
+  this.formAction = {type: "string", value: ""};
+  this.formEnctype = {type: "string", value: ""};
+  this.formMethod = {type: "string", value: ""};
+  this.formTarget = {type: "string", value: ""};
+  this.name = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+  this.validationMessage = {type: "string", value: ""};
+  this.value = {type: "string", value: ""};
+  this.onselect = {type: "null"};
+  this.onchange = {type: "null"};
+  this.onsubmit = {type: "null"};
+  this.onreset = {type: "null"};
+  this.oninput = {type: "null"};
+  this.onforminput = {type: "null"};
+  this.onformchange = {type: "null"};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLButtonElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLLabelElement = function()
+{
+  this.accessKey = {type: "string", value: ""};
+  this.control = {type: "null"};
+  this.form = {type: "null"};
+  this.htmlFor = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+  this.validationMessage = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLLabelElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLFieldSetElement = function()
+{
+  this.form = {type: "null"};
+  this.outerText = {type: "string", value: ""};
+  this.validationMessage = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLFieldSetElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLLegendElement = function()
+{
+  this.accessKey = {type: "string", value: ""};
+  this.align = {type: "string", value: ""};
+  this.form = {type: "null"};
+  this.outerText = {type: "string", value: ""};
+  this.validationMessage = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLLegendElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLUListElement = function()
+{
+  this.outerText = {type: "string", value: ""};
+  this.type = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLUListElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLOListElement = function()
+{
+  this.outerText = {type: "string", value: ""};
+  this.type = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLOListElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLDListElement = function()
+{
+  this.outerText = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLDListElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLDirectoryElement = function()
+{
+  this.outerText = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLDirectoryElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLMenuElement = function()
+{
+  this.outerText = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLMenuElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLLIElement = function()
+{
+  this.outerText = {type: "string", value: ""};
+  this.type = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLLIElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLDivElement = function()
+{
+  this.align = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLDivElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLParagraphElement = function()
+{
+  this.align = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLParagraphElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLHeadingElement = function()
+{
+  this.align = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLHeadingElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLQuoteElement = function()
+{
+  this.cite = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLQuoteElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLQuoteElement = function()
+{
+  this.cite = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLQuoteElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLPreElement = function()
+{
+  this.outerText = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLPreElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLBRElement = function()
+{
+  this.clear = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLBRElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLBaseFontElement = function()
+{
+  this.color = {type: "string", value: ""};
+  this.face = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+  this.size = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLBaseFontElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLFontElement = function()
+{
+  this.color = {type: "string", value: ""};
+  this.face = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+  this.size = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLFontElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLModElement = function()
+{
+  this.cite = {type: "string", value: ""};
+  this.dateTime = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLModElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLAnchorElement = function()
+{
+  this.accessKey = {type: "string", value: ""};
+  this.charset = {type: "string", value: ""};
+  this.coords = {type: "string", value: ""};
+  this.href = {type: "string", value: ""};
+  this.hreflang = {type: "string", value: ""};
+  this.name = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+  this.rel = {type: "string", value: ""};
+  this.rev = {type: "string", value: ""};
+  this.shape = {type: "string", value: ""};
+  this.target = {type: "string", value: ""};
+  this.text = {type: "string", value: ""};
+  this.type = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLAnchorElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLImageElement = function()
+{
+  this.align = {type: "string", value: ""};
+  this.alt = {type: "string", value: ""};
+  this.border = {type: "string", value: ""};
+  this.longDesc = {type: "string", value: ""};
+  this.lowsrc = {type: "string", value: ""};
+  this.name = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+  this.src = {type: "string", value: ""};
+  this.useMap = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLImageElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLObjectElement = function()
+{
+  this.align = {type: "string", value: ""};
+  this.archive = {type: "string", value: ""};
+  this.border = {type: "string", value: ""};
+  this.classId = {type: "string", value: ""};
+  this.className = {type: "string", value: ""};
+  this.code = {type: "string", value: ""};
+  this.codeBase = {type: "string", value: ""};
+  this.codeType = {type: "string", value: ""};
+  this.contentDocument = {type: "null"};
+  this.contentWindow = {type: "null"};
+  this.data = {type: "string", value: ""};
+  this.dir = {type: "string", value: ""};
+  this.firstChild = {type: "null"};
+  this.firstElementChild = {type: "null"};
+  this.form = {type: "null"};
+  this.height = {type: "string", value: ""};
+  this.id = {type: "string", value: ""};
+  this.innerHTML = {type: "string", value: ""};
+  this.innerText = {type: "string", value: ""};
+  this.lang = {type: "string", value: ""};
+  this.lastChild = {type: "null"};
+  this.lastElementChild = {type: "null"};
+  this.name = {type: "string", value: ""};
+  this.namespaceURI = {type: "null"};
+  this.nextElementSibling = {type: "null"};
+  this.nextSibling = {type: "null"};
+  this.nodeValue = {type: "null"};
+  this.offsetParent = {type: "null"};
+  this.outerText = {type: "string", value: ""};
+  this.parentElement = {type: "null"};
+  this.parentNode = {type: "null"};
+  this.prefix = {type: "null"};
+  this.previousElementSibling = {type: "null"};
+  this.previousSibling = {type: "null"};
+  this.standby = {type: "string", value: ""};
+  this.textContent = {type: "string", value: ""};
+  this.title = {type: "string", value: ""};
+  this.type = {type: "string", value: ""};
+  this.unselectable = {type: "string", value: ""};
+  this.useMap = {type: "string", value: ""};
+  this.width = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLParamElement = function()
+{
+  this.name = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+  this.type = {type: "string", value: ""};
+  this.value = {type: "string", value: ""};
+  this.valueType = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLParamElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLAppletElement = function()
+{
+  this.align = {type: "string", value: ""};
+  this.alt = {type: "string", value: ""};
+  this.archive = {type: "string", value: ""};
+  this.className = {type: "string", value: ""};
+  this.code = {type: "string", value: ""};
+  this.codeBase = {type: "string", value: ""};
+  this.dir = {type: "string", value: ""};
+  this.firstChild = {type: "null"};
+  this.firstElementChild = {type: "null"};
+  this.height = {type: "string", value: ""};
+  this.id = {type: "string", value: ""};
+  this.innerHTML = {type: "string", value: ""};
+  this.innerText = {type: "string", value: ""};
+  this.lang = {type: "string", value: ""};
+  this.lastChild = {type: "null"};
+  this.lastElementChild = {type: "null"};
+  this.name = {type: "string", value: ""};
+  this.namespaceURI = {type: "null"};
+  this.nextElementSibling = {type: "null"};
+  this.nextSibling = {type: "null"};
+  this.nodeValue = {type: "null"};
+  this.object = {type: "string", value: ""};
+  this.offsetParent = {type: "null"};
+  this.outerText = {type: "string", value: ""};
+  this.parentElement = {type: "null"};
+  this.parentNode = {type: "null"};
+  this.prefix = {type: "null"};
+  this.previousElementSibling = {type: "null"};
+  this.previousSibling = {type: "null"};
+  this.textContent = {type: "string", value: ""};
+  this.title = {type: "string", value: ""};
+  this.unselectable = {type: "string", value: ""};
+  this.width = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLMapElement = function()
+{
+  this.name = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLMapElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLAreaElement = function()
+{
+  this.accessKey = {type: "string", value: ""};
+  this.alt = {type: "string", value: ""};
+  this.coords = {type: "string", value: ""};
+  this.href = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+  this.shape = {type: "string", value: ""};
+  this.target = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLAreaElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLScriptElement = function()
+{
+  this.charset = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+  this.src = {type: "string", value: ""};
+  this.text = {type: "string", value: ""};
+  this.type = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLScriptElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableElement = function()
+{
+  this.align = {type: "string", value: ""};
+  this.bgColor = {type: "string", value: ""};
+  this.border = {type: "string", value: ""};
+  this.caption = {type: "null"};
+  this.cellPadding = {type: "string", value: ""};
+  this.cellSpacing = {type: "string", value: ""};
+  this.frame = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+  this.rules = {type: "string", value: ""};
+  this.summary = {type: "string", value: ""};
+  this.tFoot = {type: "null"};
+  this.tHead = {type: "null"};
+  this.width = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableCaptionElement = function()
+{
+  this.align = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableCaptionElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableColElement = function()
+{
+  this.align = {type: "string", value: ""};
+  this.ch = {type: "string", value: ""};
+  this.chOff = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+  this.vAlign = {type: "string", value: ""};
+  this.width = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableColElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableSectionElement = function()
+{
+  this.align = {type: "string", value: ""};
+  this.ch = {type: "string", value: ""};
+  this.chOff = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+  this.vAlign = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableSectionElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableSectionElement = function()
+{
+  this.align = {type: "string", value: ""};
+  this.ch = {type: "string", value: ""};
+  this.chOff = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+  this.vAlign = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableSectionElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableRowElement = function()
+{
+  this.align = {type: "string", value: ""};
+  this.bgColor = {type: "string", value: ""};
+  this.ch = {type: "string", value: ""};
+  this.chOff = {type: "string", value: ""};
+  this.height = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+  this.vAlign = {type: "string", value: ""};
+  this.width = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableRowElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableCellElement = function()
+{
+  this.abbr = {type: "string", value: ""};
+  this.align = {type: "string", value: ""};
+  this.axis = {type: "string", value: ""};
+  this.bgColor = {type: "string", value: ""};
+  this.ch = {type: "string", value: ""};
+  this.chOff = {type: "string", value: ""};
+  this.headers = {type: "string", value: ""};
+  this.height = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+  this.scope = {type: "string", value: ""};
+  this.vAlign = {type: "string", value: ""};
+  this.width = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableCellElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLFrameSetElement = function()
+{
+  this.cols = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+  this.rows = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLFrameSetElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLFrameElement = function()
+{
+  this.contentDocument = {type: "null"};
+  this.contentWindow = {type: "null"};
+  this.frameBorder = {type: "string", value: ""};
+  this.longDesc = {type: "string", value: ""};
+  this.marginHeight = {type: "string", value: ""};
+  this.marginWidth = {type: "string", value: ""};
+  this.name = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+  this.scrolling = {type: "string", value: ""};
+  this.src = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLFrameElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLIFrameElement = function()
+{
+  this.align = {type: "string", value: ""};
+  this.contentDocument = {type: "null"};
+  this.contentWindow = {type: "null"};
+  this.frameBorder = {type: "string", value: ""};
+  this.height = {type: "string", value: ""};
+  this.longDesc = {type: "string", value: ""};
+  this.marginHeight = {type: "string", value: ""};
+  this.marginWidth = {type: "string", value: ""};
+  this.name = {type: "string", value: ""};
+  this.outerText = {type: "string", value: ""};
+  this.scrolling = {type: "string", value: ""};
+  this.src = {type: "string", value: ""};
+  this.width = {type: "string", value: ""};
+};
+
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLIFrameElement.prototype = 
+    cls.EcmascriptDebugger["6.0"].inspection_filters._Element;

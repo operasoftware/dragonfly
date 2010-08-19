@@ -97,6 +97,7 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
     {
       'automatic-update-global-scope': false,
       'hide-default-properties': true,
+      'use-property-filter': true,
       'show-non-enumerables': true,
       'collapsed-prototypes': this.DEFAULT_COLLAPSED_PROTOS,
     },
@@ -104,6 +105,7 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
     {
       'automatic-update-global-scope': ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE,
       'hide-default-properties': ui_strings.S_BUTTON_LABEL_HIDE_DEFAULT_PROPS_IN_GLOBAL_SCOPE,
+      'use-property-filter': "Hide the properties defined in the property filter",
       'show-non-enumerables': ui_strings.S_SWITCH_SHOW_NON_ENUMERABLES
     },
     // settings map
