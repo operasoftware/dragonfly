@@ -244,6 +244,13 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       case 9: // tab
       {
         evt.preventDefault();
+        if (this._multiediting) {
+          var pos = this._textarea.selectionStart;
+          this._textarea.value = this._textarea.value.slice(0, pos) + "\t" + this._textarea.value.slice(pos);
+
+          break; // tab should be off when in a multiline box.
+        }
+
         this._resolver.find_props(this._handle_completer.bind(this),
                                   this._textarea.value,
                                   window.stop_at.getSelectedFrame());
@@ -251,25 +258,42 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       }
       case 13: // enter
       {
-        // stop it from adding a newline just before processing. Looks strange
-        evt.preventDefault();
-        var input = this._textarea.value;
-        input = input.trim();
-        this._textarea.value = "";
-        this._backlog_index = -1;
-        this._current_input = "";
 
-        if (input == "") {
-          this._render_input("");
-          return;
+        if (evt.ctrlKey)
+        {
+          this._multiediting = true;
+          this._textarea.rows = this._textarea.rows + 1;
+          this._textarea.value = this._textarea.value + "\n";
+
         }
+        else
+        {
+          // stop it from adding a newline just before processing. Looks strange
 
-        this._service.handle_input(input);
+          evt.preventDefault();
+
+          var input = this._textarea.value;
+          input = input.trim();
+          this._textarea.value = "";
+          this._textarea.rows = 1;
+          this._multiediting = false;
+          this._backlog_index = -1;
+          this._current_input = "";
+
+          if (input == "") {
+            this._render_input("");
+            return;
+          }
+          this._service.handle_input(input);
+        }
         break;
       }
       case 38: // up and down. maybe. See DSK-246193
       case 40:
       {
+        if (this._multiediting) {
+          break; // history editing should be off when in a multiline box.
+        }
         // workaround as long as we don't have support for keyIdentifier
         // event.which is 0 in a keypress event for function keys
         if( !evt.which )
