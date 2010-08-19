@@ -314,7 +314,8 @@ var DOMAttrAndTextEditor = function(nav_filters)
   {
     var 
     script = "",
-    state = this.context_cur;
+    state = this.context_cur,
+    pos = 0;
 
     if( this.textarea_container.parentElement )
     {
@@ -324,12 +325,19 @@ var DOMAttrAndTextEditor = function(nav_filters)
         case "key":
         {
           state.key = this.textarea.value
+          pos = state.key.indexOf('=');
           if(state.value)
           {
             script = 'node.setAttribute("' + crlf_encode(state.key) + '","' + 
                       crlf_encode(state.value) + '")';
             services['ecmascript-debugger'].requestEval(0, 
                 [state.rt_id, 0, 0, script, [["node", state.obj_id]]]);
+          }
+          if (pos > -1)
+          {
+            state.value = state.key.slice(pos + 1);
+            state.key = state.key.slice(0, pos);
+            this.nav_next();
           }
           break;
         }
