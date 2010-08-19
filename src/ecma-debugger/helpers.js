@@ -152,7 +152,8 @@ window.cls.Helpers = function()
     var obj_id = parseInt(event.target.getAttribute('obj-id'));
     if(obj_id && /^breadcrumb$/i.test(event.target.parentNode.nodeName))
     {
-      hostspotlighter.soft_spotlight(obj_id);
+      if (window.settings.dom.get('highlight-on-hover'))
+        hostspotlighter.soft_spotlight(obj_id);
     }
   }
   // mouseover handler in the breadcrumb
@@ -191,6 +192,24 @@ window.cls.Helpers = function()
       container.scrollLeft = 0;
     }
     return target && container;
+  }
+
+  this.copy_array = function copy_array(item)
+  {
+    if (Array.isArray(item))
+    {
+      return item.map(copy_array);
+    }
+    else
+    {
+      return item;
+    }
+  };
+
+  if (!Array.isArray) {
+    Array.isArray = function(obj) {
+      return Object.prototype.toString.call(o) == "[object Array]";
+    };
   }
 
   document.addEventListener('keypress', keypressListener, true);

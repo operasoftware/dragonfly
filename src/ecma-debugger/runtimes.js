@@ -81,6 +81,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
       if (__runtimes[r] &&  __runtimes[r].window_id == msg.window_id && __runtimes[r].is_top)
       {
         __runtimes[r].title = msg.title;
+        window.messages.post('top-runtime-updated', {rt: __runtimes[r]});
         break;
       }
     }
@@ -219,7 +220,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
 
   this.handleRuntime = function(r_t)
   {
-
+ 
     /*
     const
     RUNTIME_LIST = 0,

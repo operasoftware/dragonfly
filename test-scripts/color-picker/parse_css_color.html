@@ -1,0 +1,62 @@
+<!doctype html>
+<style>
+body
+{
+  font-size: 12px;
+  background-color: hsl(90.78, 30.567%, 44.676%);
+  color: #fff;
+}
+th
+{
+  text-align: left;
+}
+td
+{
+  font-family: monospace;
+  padding: 0 5px;
+}
+</style>
+<script src="../../src/scripts/colors.js"></script>
+<script>
+var c = new Colors().parseCSSColor("transparent");
+window.onload = function()
+{
+  document.body.innerHTML = 
+  "<table><tr><th>input<th>hex<th>rgba<th>hsla</tr><tr>" +
+  [
+    "transparent",
+    "green",
+    "pink",
+    "schabernack",
+    "#bbb",
+    "#efg",
+    "#aaaaaa",
+    "#56agbf",
+    "rgb(15, 20, 15)",
+    "rgb(150, 209, 249)",
+    "rgb(150, 209, 259)",
+    "rgba(15, 20, 15, .82)",
+    "rgb(15, 20, 315)",
+    "hsl(8, 9%, 10%)",
+    "hsl(359, 9%, 10%)",
+    "hsl(359, 9%, 101%)",
+    "hsl(361, 9%, 10%)",
+    "hsl(299, 9.789%, 10%)",
+    "hsla(250, 85%, 70%, .6754)",
+    "hsl(250.789, 85%, 100.000%)",
+    "hsl(250.789, 85%, 100.001%)",
+    "hsla(250, 85.67%, 70.6778%, .6754)",
+    "rgba(24, 22, 22, 0)",
+  ].map(function(token)
+  {
+    var color = new Colors().parseCSSColor(token);
+    return color ? 
+           [token, color.hhex, color.rgba, color.hsla] : 
+           [token, 'failed'];
+  }).map(function(row)
+  {
+    return "<td>" + row.join("<td>");
+  }).join("</tr><tr>") + 
+  "</tr></table>";
+}
+</script>

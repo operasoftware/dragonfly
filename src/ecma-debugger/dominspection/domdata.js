@@ -53,14 +53,16 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
   this._spotlight = function(event)
   {
     this._reset_spotlight_timeouts.clear();
-    hostspotlighter.soft_spotlight(event.object_id);
+    if (window.settings.dom.get('highlight-on-hover'))
+      hostspotlighter.soft_spotlight(event.object_id);
   }
 
   this._reset_spotlight = function()
   {
     if (this._current_target)
     {
-      hostspotlighter.spotlight(this._current_target);
+      if (window.settings.dom.get('highlight-on-hover'))
+        hostspotlighter.spotlight(this._current_target);
     }
   }
 
@@ -225,6 +227,11 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
     if (window.views[this._view_id].isvisible())
       this._on_show_view({id: this._view_id})
   }
+  
+  this._on_top_runtime_update = function()
+  {
+    window['cst-selects']['document-select'].updateElement();
+  }
 
   this._click_handler_host = function(event)
   {
@@ -286,7 +293,8 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
     }
     if (highlight_target)
     {
-      window.hostspotlighter.spotlight(this._current_target);
+      if (window.settings.dom.get('highlight-on-hover'))
+        window.hostspotlighter.spotlight(this._current_target);
     }
     if (rt_id != this._data_runtime_id)
     {
@@ -372,6 +380,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
   this._spotlight_bound = this._spotlight.bind(this);
   this._reset_spotlight_bound = this._reset_spotlight.bind(this);
   this._set_reset_spotlight_bound = this._set_reset_spotlight.bind(this);
+  this._on_top_runtime_update_bound = this._on_top_runtime_update.bind(this);
 
   this._init(0, 0);
 
@@ -382,6 +391,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
   messages.addListener('runtime-stopped', this._on_runtime_stopped_bound);
   messages.addListener('runtime-destroyed', this._on_runtime_stopped_bound);
   messages.addListener('reset-state', this._on_reset_state_bound);
+  messages.addListener('top-runtime-updated', this._on_top_runtime_update_bound);
 
 };
 

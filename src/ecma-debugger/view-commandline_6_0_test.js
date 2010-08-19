@@ -377,8 +377,8 @@ cls.CommandLineViewTest = function(id, name, container_class, html, default_hand
   var submit = function(input)
   {
     var
-    rt_id = runtimes.getSelectedRuntimeId(),
     frame = window.stop_at.getSelectedFrame(),
+    rt_id = frame ? frame.runtime_id : runtimes.getSelectedRuntimeId(),
     frame_id = frame ? frame.index : 0,
     thread_id = frame ? frame.thread_id : 0,
     script_string  = '',
@@ -954,7 +954,4 @@ cls.CndRtSelect = function(id, class_name)
   }
 
   this.init(id, class_name);
-}
-
-
-
+};

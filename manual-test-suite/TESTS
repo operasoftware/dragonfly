@@ -1,0 +1,1022 @@
+#
+# This list gets parsed to a list of entries.
+# An entry can be a title, an url or a test.
+# Entries are separated by blank lines.
+# A line starting with '#' is a comment and will be disregarded.
+# 
+# Titles are underlined with '*', the syntax is <Main Tab>.<Sub Tab>, e.g.
+# 
+#   DOM.Layout
+#   **********
+# 
+# An url starts with 'url:' followed by the url, on a new or on the same line, e.g.
+# 
+#   url: http://opera.com
+# 
+# A test entry must have a label and a description, it can have an optional url.
+# The label starts with 'label:' followed by the label, on the same or on a new line.
+# The description must describe the condition to define if a given test fails or passes. 
+# It starts with 'desc:' followed by a list of steps to iterate through the test. 
+# Each step can start with a '-' or a '*'.
+# Ids are added automatically and shall never be changed manually. 
+# Adding a new test looks e.g.:
+# 
+#   label: A new Test
+#   desc: 
+#     - Step 1.
+#     - Step 2.
+#     - Step 3.
+#
+
+
+DOM.DOM
+*******
+
+url: 
+  http://dev.opera.com
+
+id: 1
+label: Expand all nodes
+desc: 
+  - Press the Expand button.
+  - Verify that the whole document tree is displayed.
+
+id: 2
+label: Export 
+desc: 
+  - Press the Export button.
+  - Verify that the current view is displayed in a new tab.
+
+id: 3
+label: Find with click
+desc: 
+  - Turn the 'Find element' switch on.
+  - Click some elements in the host. 
+  - Verify that the DOM view is updated with the clicked element as target. 
+  - Verify that the feature can be turned off.
+
+id: 4
+label: Highlight elements
+desc: 
+  - Turn the 'Highlight 'switch on.
+  - Hover over some elements in the host. 
+  - Verify that the element is highlighted. 
+  - Hover some elements in the DOM view.
+  - Verify that the according element is highlighted in the host.
+  - Verify that the feature can be turned off.
+
+id: 5
+label: Update DOM on node remove
+desc: 
+  - Turn the 'Update DOM' switch on.
+  - Remove a node, e.g. do javascript:(function(){document.body.innerHTML=""})(). 
+  - Verify that the DOM view is updated. 
+  - Verify that the feature can be turned off.
+
+id: 6
+label: Select multiple elements
+desc: 
+  - Turn the 'Draw border' switch on.
+  - Click some elements in the host. 
+  - Verify that all clicked elements keep a border. 
+  - Verify that the feature can be turned off.
+
+id: 7
+label: Dropdown settings, comment nodes
+desc: 
+  - Select and unselect 'Show comment nodes'.
+  - Verify that the DOM view is updated accordingly.
+
+id: 8
+label: Dropdown settings, white space nodes
+desc:
+  - Select 'Show DOM tree view'
+  - Select and unselect 'Show white space nodes'.
+  - Verify that the DOM view is updated accordingly 
+  (pure white space nodes are escaped, e.g. a space is dispaled as \u0020).
+
+id: 9
+label: Dropdown settings, tree view
+desc: 
+  - Select and unselect 'Show DOM tree view'.
+  - Verify that the view displays the DOM accordingly.
+
+url: http://nzz.ch
+id: 10
+label: Document select
+desc:
+  - Select a document with (i)frames
+  - Verify that you can select each document in the dropdown.
+
+url: http://dev.opera.com
+id: 11
+label: Search document
+desc:
+  - Search for a term in the search box
+  - Verify that the count of all hits is displayed in the status bar.
+  - Verify that the view navigates to the next hit on enter.
+
+id: 12
+label: Edit attributes
+desc:
+  - Double click an attribute
+  - Verify that the attribute is displayed in a edit field.
+  - Change the value and verify that the change applies instantly in the host document.
+  - Verify that escape reverts the changes
+  - Verify that enter does keep the changes an leaves the edit mode.
+  - Verify that tab moves to the next attribute
+  - Verify that at the end of a tag an empty field is shown to add a new attribute.
+
+id: 13
+label: Edit markup
+desc:
+  - Double click a tag name
+  - Change the content 
+  - Verify that the changes apply instantly in the host.
+  - Verify that you can remove and edit also the body and html element.
+
+id: 14
+label: Keyboard navigation
+desc:
+  - Click somewhere in the DOM view to focus the pane.
+  - Verify that you can navigate with arrow keys and expand and close nodes with enter.
+  - Click an element or attribute.
+  - Verify that the click target is also the navigation target.
+
+
+DOM.Styles
+**********
+
+url: http://dev.opera.com
+
+id: 15
+label: Matching style rules
+desc: 
+  - unfold Computed Styles and Styles
+  - select some elements in the DOM
+  - Verify that the styles are updated
+
+id: 16
+label: Hide initial value
+desc:
+  - Select and unselect the 'Hide initial value' switch
+  - Verify that the Computed Style section is updated accordingly
+
+id: 17
+label: Hide shorthands
+desc:
+  - Select and unselect the 'Hide shorthands' switch
+  - Verify that the Computed Style section is updated accordingly, 
+    e.g. if the switch is unchecked there must be an additional 
+    border, border-left, border-top, border-right and border-bottom rule.
+
+id: 18
+label: Search
+desc:
+  - Expand both sections, Computed Styles and Styles
+  - Search for a property, e.g. margin
+  - Verify that both section collapse to only contain the matching properties
+
+
+
+DOM.Properties
+**************
+
+url: http://dev.opera.com
+
+id: 19
+label: Update view
+desc: 
+  - Select some elements in the DOM
+  - Verify that the view is updated accordingly
+
+id: 20
+label: Unfold properties
+desc:
+  - Select an element in the DOM
+  - Verify that properties can be folded and unfolded
+
+id: 21
+label: Hide empty strings
+desc:
+  - Select and unselect the 'Hide empty strings' switch
+  - Verify that the view is updated accordingly, e.g. that values which are empty strings, 0 or null are displayed or hidden.
+  
+id: 22
+label: Search
+desc:
+  - Search for some term
+  - Verify that the matches are highlighted
+  - Verify that on enter the next natch is scrolled into view.
+
+DOM.Layout
+**********
+
+id: 23
+label: Highlight boxes
+desc:
+  - Select an element in the DOM
+  - Hover the different boxes in the Metrics view
+  - Verify that the according box is highlighted on the element in the host
+
+id: 24
+label: Parent Offsets
+desc:
+  - Select some elements in the DOM
+  - Verify the the parent offset chain is updated accordingly. 
+    Each parent offset must stand out in the parent node chain. 
+  - Verify that also the offset values are updated accordingly
+
+id: 25
+label: Parent Offsets hover
+desc:
+  - Select some elements in the DOM
+  - Hover over the different nodes in the parent node chain.
+  - Verify that the according elements are highlighted in the host
+
+Statusbar
+*********
+
+url: http://aleto.ch
+
+id: 26
+label: Status info
+desc:
+  - Select some elements in the DOM
+  - Verify that the statusbar is updated with an according breadcrumb
+  - Serach for some tokens.
+  - Verify that the statusbar is updated with the matching count
+
+id: 27
+label: Breadcrumb navigation
+desc:
+  - Select some elements in the DOM
+  - Verify that elements are highlighted on hover in the host
+  - Verify that elements are selected on click in the host and in the DOM.
+
+url: http://nzz.ch
+id: 28
+label: Toggle long breadcrumbs
+desc: 
+  - Select a deep nested element in the document so that the breadcrumb is shortened, 
+    e.g. starts with 3 dots.
+  - Verify that you can expand and collaps the breadcrump with the small toggle icon 
+    to the right of the status icon.
+
+id: 29
+label: Connection status
+desc:
+  - Set a breakpoint on line 18 scrollFolders.js
+  - Hover over the titles in the document
+  - Verify that the status icon updates while stepping into the code
+
+
+Scripts.Source
+**************
+
+url: ./test-cases/scripts-source/scripts.html
+id: 30
+label: Reload button
+desc:
+  - Go to the above url
+  - Open or connect the debugger after that
+  - Switch to the Scripts
+  - Press the reload button in the info box "Click the reload button above to fetch the scripts for the selected window".
+  - Verify that you get 3 scripts in the dropdown and that you can select each of them.
+
+url: ./test-cases/scripts-source/callstack.html
+id: 31
+label: Set breakpoint
+desc: 
+  - Set a breakpoint on line 4, 'var aa = 1;'.
+  - Verify that a breakpoint is displayed on the clicked line.
+  - Press the 'e()' button
+  - Verify that the engine stops on line 4, e.g that the script is displayed 
+    and that an arrow points to the breakpoint
+
+id: 32
+label: Remove breakpoint
+desc: 
+  - Remove the previous set breakpoint on line 4, 'var aa = 1;'.
+  - Verify that a breakpoint is disappears on the clicked line.
+  - Press the 'e()' button
+  - Verify that the engine does not stops on line 4 and that no arrow is displayed on that line.
+
+id: 33
+label: Breakpoint, Continue
+desc: 
+  - Set a breakpoint on line 4, 'var aa = 1;'.
+  - Press the 'e()' button
+  - Verify that the 'Continue' button changes from disabled to enabled.
+  - Press the 'Continue' button.
+  - Verify that that the stopped pointer arrow disappears and that the button gets disabled.
+  - Repeat several times and verify that it always works as described above.
+
+id: 34
+label: Breakpoint, Continue with keyboard
+desc: 
+  - The same as the previous test, but use the F8 key instead the mouse.
+
+id: 35
+label: Breakpoint, Step into
+desc: 
+  - Set a breakpoint on line 23, 'var ee = 1;'.
+  - Press the 'e()' button.
+  - Verify that the engine stops on that line
+  - Press the 'Step Into' button continuously.
+  - Verify that the stop arrow follows the execution flow, 
+    e.g. arrives at some point at 'var aa = 1;' and 
+    finishes one call after the other.
+
+id: 36
+label: Breakpoint, Step into with keyboard
+desc: 
+  - The same as the previous test, but use the F11 key instead the mouse.
+
+id: 37
+label: Breakpoint, Step Over
+desc: 
+  - Set a breakpoint on line 23, 'var ee = 1;'.
+  - Press the 'e()' button.
+  - Verify that the engine stops on that line
+  - Pressing the 'Step Into' button continuously till you get to the line 'c();'.
+  - Now press the 'Step Over' button.
+  - Verify that engine stops right after 'c()' and does not follow the execution flow of 'c()'.
+
+id: 38
+label: Breakpoint, Step Over with keyboard
+desc: 
+  - The same as the previous test, but use the F11 and F10 key instead the mouse.
+
+
+id: 39
+label: Breakpoint, Step Out
+desc: 
+  - Set a breakpoint on line 23, 'var ee = 1;'.
+  - Press the 'e()' button
+  - Press the 'Step Into' button continuously till you get to 'var cc = 1;'.
+  - Now press the 'Step Out' button continuously.
+  - Verify that the engine stops at 'c()', then 'd()' and then finishes.
+
+id: 40
+label: Breakpoint, Step Out with keyboard
+desc: 
+  - The same as the previous test, but use the F11 and Shift-F11 key instead the mouse.
+
+url: ./test-cases/scripts-source/scripts.html
+id: 41
+label: Stop at new script
+desc:
+  - Open Dragonfly
+  - Turn the 'Stop at new script' switch on.
+  - Load the test url.
+  - Verify that the engine stops for each new script (use the continue button), e.g. three times 
+  - Verify that the setting can be turned off.
+
+url: ./test-cases/scripts-source/parse-error.html
+id: 42
+label: Parse error
+desc:
+  - Open Dragonfly
+  - Turn the 'Stop at error' switch on.
+  - Go tho the test url
+  - Verify that the Script Source pane opens, 
+    the first non parsable token is highlighted, 
+    e.g. the dot in 'var aa.a = 1;',
+    any following code is greyed out and
+    an info box with a hint for the cause of the error is displayed.
+  - Verify that the setting can be turned off.
+
+url: http://aleto.ch
+id: 43
+label: Log threads
+desc:
+  - Turn the 'Log threads' switch on.
+  - Open 'Thread Log' view
+  - Hover over the document of the above url
+  - Verify that all threads are logged.
+
+id: 44
+label: Search
+desc:
+  - Search for e.g. 'default'.
+  - Verify that you 5 hits and that the view scrolls on enter to each of them.
+
+
+
+Scripts.Call Stack
+******************
+
+id: 45
+label: Set breakpoint, Callstack
+url: ./test-cases/scripts-source/callstack.html
+desc: 
+  - Set a breakpoint on line 4, 'var aa = 1;'.
+  - Press the 'e()' button.
+  - Verify that the Call Stack view displays the call stack.
+  - Verify that each entry can be selected in the callstack.
+  - Verify that the source view is updated on selecting an entry in the callstack.
+  - Verify that the Inspection view is updated with the according scope. 
+
+Scripts.Inspection
+******************
+
+id: 46
+label: Hide default properties
+desc:
+  - Do 'dir(window)' in the command line.
+  - Select and unselect the *hide default properties' switch.
+  - Verify that the according properties are shown or hidden in the view.
+
+Scripts.Command Line
+********************
+
+url: ./test-cases/scripts-source/callstack.html
+id: 47
+label: Autosuggest
+desc:
+  - Set a breakpoint on line 23, 'var ee = 1;'.
+  - Press the 'e()' button.
+  - Focus the command line.
+  - Hit tab.
+  - Verify that you get the variables of the scope
+  - Use 'Step Into' and verify for each scope that you get the correct variables.
+  - Type 'this.'.
+  - Hit tab repeatedly.
+  - Verify that you get all properties of the window.
+  - Start to write something after the dot and hit tab again.
+  - Verify that the property gets completed with all matches.
+
+id: 48
+label: History navigation.
+desc:
+  - Use the up and down arrows.
+  - Verify that you get all previous submitted lines. 
+
+id: 49
+label: Object links.
+desc:
+  - Type e.g. 'this' and hit enter.
+  - Verify that the result is the correct object displayed as link.
+  - Click the link.
+  - Verify that the according object is displayed in the Inspection view. 
+
+id: 50
+label: Built-in commands
+desc:
+  - Create some entries and type clear().
+  - Verify that the view gets cleared.
+  - Type e.g. 'dir(this)'
+  - Verify that the according object is displayed in the Inspection view.
+
+
+Scripts.REPL (command line version 2)
+*************************************
+url: ./test-cases/repl/console_api.html
+
+
+id: 80
+label: Console API: console.log
+desc:
+  - Click "console.log" button.
+  - Verify that "Phlebotinum" is printed on the command line
+
+
+id: 81
+label: Console API: console.log command line
+desc:
+  - Type 'console.log("hello")' on the command line
+  - Verify that "hello" is printed on the command line
+
+
+id: 82
+label: Console API: console.debug
+desc:
+  - Click "console.debug" button.
+  - Verify that "Phlebotinum" is printed on the command line
+
+
+
+id: 83
+label: Console API: console.info
+desc:
+  - Click "console.info" button.
+  - Verify that "Phlebotinum" is printed on the command line
+
+  
+
+id: 84
+label: Console API: console.warn
+desc:
+  - Click "console.warn" button.
+  - Verify that "Phlebotinum" is printed on the command line
+
+
+id: 85
+label: Console API: console.error
+desc:
+  - Click "console.error" button.
+  - Verify that "Phlebotinum" is printed on the command line
+
+
+id: 86
+label: Console API: console.assert
+desc:
+  - Click "console.assert" button.
+  - Verify that "false, Phlebotinum" is printed on the command line
+  - Verify that "ERROR" is NOT printed on the command line
+
+  
+
+id: 87
+label: Console API: console.dir
+desc:
+  - Click "console.dir" button.
+  - Verify that an expanded list of properties on the body object is shown
+
+
+id: 88
+label: Console API: console.dir command line
+desc:
+  - Type "console.dir(document.body)" on the command line
+  - Verify that an expanded list of properties on the body object is shown
+
+
+id: 89
+label: Console API: console.dir alias
+desc:
+  - Type "dir(document.body)" on the command line
+  - Verify that an expanded list of properties on the body object is shown
+  
+
+id: 90
+label: Console API: console.dirxml
+desc:
+  - Click "console.dirxml" button.
+  - Verify that an expanded dom tree representing the body of the document is shown.
+
+
+id: 91
+label: Console API: console.dirxml command line
+desc:
+  - Type "console.dirxml(document.body)" on the command line
+  - Verify that an expanded dom tree representing the body of the document is shown.
+
+
+id: 92
+label: Console API: console.dirxml alias
+desc:
+  - Type "dirxml(document.body)" on the command line
+  - Verify that an expanded dom tree representing the body of the document is shown.
+
+
+id: 93
+label: Console API: console.group
+desc:
+  - Click the "console.group" button
+  - Verify that a group was added to the command line and that the text "Phlebotinum" is in the group
+  - Enter some text
+  - Verify that the text appears at the root level, not inside the group
+  - Verify that clicking the +/- button expands and collapses the group.
+
+id: 94
+label: Console API: console.time
+desc:
+  - Click the "console.time" button
+  - Verify that "test: 1000ms (1000308µsec)" is printed in the console. The numbers will be slightly different but should be close to 1000ms.
+
+id: 251
+label: Console API: console.trace
+desc:
+  - Click the "console.trace" button
+  - Verify that a stack trace is printed in the console
+
+
+id: 95
+label: Command line API: clear
+desc:
+  - Create some entries and type clear().
+  - Verify that the view gets cleared.
+  - Verify that the typed history was NOT cleared.
+
+
+url: ./test-cases/repl/keys_values.html
+
+id: 96
+label: Command line API: keys
+desc:
+  - Load the page
+  - Type "keys(dict)"
+  - Verify that "Array" is added to the console
+  - Click the Array link
+  - Verify that the array is of length 2 and contains the values "foo" and "bar"
+
+  
+id: 97
+label: Command line API: values
+desc:
+  - Load the page
+  - Type "values(dict)"
+  - Verify that "Array" is added to the console
+  - Click the Array link
+  - Verify that the array is of length 2 and contains the values "1" and "1"
+
+  
+id: 98
+label: Command line API: keys
+desc:
+  - Click the "console.trace" button
+  - Verify that a stack trace is printed in the console
+
+id: 99
+label: Command line API: keys
+desc:
+  - Click the "console.trace" button
+  - Verify that a stack trace is printed in the console
+
+url: ./test-cases/repl/misc_selection.html
+
+id: 100
+label: Command line API: $1 $2
+desc:
+  - Load the page
+  - Click on the "<p>" element in the dom view
+  - Type $0 in the REPL view
+  - Verify that HTMLParagraphElement is printed in the view
+  - Click on the "<h1>" element in the dom view
+  - Type $0 in the REPL view
+  - Verify that HTMLHeadingElement is printed in the view
+  - Type $1 in the REPL view
+  - Verify that HTMLParagraphElement is printed in the view
+
+id: 101
+label: Command line API: $()
+desc:
+  - Enter $("i") in th command line
+  - Verify that HTMLElement is printed in the view
+
+id: 102
+label: Command line API: $$()
+desc:
+  - Enter $$(".c") in the command line
+  - Verify that NodeList is printed in the view
+  - Verify that the NodeList has a single item
+
+id: 103
+label: Command line API: $x()
+desc:
+  - Enter $x("//body") in the command line
+  - Verify that Array is printed in the view
+  - Verify that the Array has a single item
+
+  
+id: 104
+label: Autocomplete, not stopped
+desc:
+  - Type "docu"
+  - Press tab
+  - Verify that the input is expanded to "document"
+  - Continue typing "b", so input is "document.b"
+  - Press tab
+  - Verify that the input is the same and that the expansions "baseURI, bgColor, body" are shown above the input
+  - Continue typying "o"
+  - Press tab
+  - Verify that the input is expanded to "document.body"
+
+
+url: ./test-cases/repl/autocomplete_stopped.html
+
+id: 105
+label: Autocomplete, stopped
+desc:
+  - Navigate to url
+  - Verify that debugger has stopped
+  - Type "f"
+  - Press tab
+  - Verify that input is expanded to "foo"
+  - Clear input
+  - Type "b"
+  - Press tab
+  - Verify that the input is the same and that the expansions "bar, baz" are shown above the input
+
+id: 106
+label: History navigation
+desc:
+  - Use the up and down arrows.
+  - Verify that you get all previous submitted lines.
+  - Verify that the history contains no more entries than the repl -> Max items in typed history to remember setting
+
+
+id: 107
+label: ctrl-w
+desc:
+  - Enter some text.
+  - Press ctrl-w
+  - Verify that all text up to the closest whitespace is deleted
+
+id: 108
+label: ctrl-k
+desc:
+  - Enter some text.
+  - Move the cursor to the middle of the line
+  - Press ctrl-l
+  - Verify that all text after the cursor is deleted
+
+id: 109
+label: ctrl-a
+desc:
+  - Enter some text.
+  - Press ctrl-a
+  - Verify that the cursor moved to the start of the line
+
+id: 110
+label: ctrl-l
+desc:
+  - Create some entries
+  - Press ctrl-l
+  - Verify that the view gets cleared.
+  - Verify that the typed history was NOT cleared.
+
+
+  
+Network.Request Log
+*******************
+
+url: ./test-cases/network/img-js-css.html
+
+id: 51
+label: Request table
+desc:
+  - Go to the url above
+  - Verify that the request table makes sense
+  - Reload the document
+  - Verify that the table still makes sense
+
+id: 52
+label: Request and response detail
+desc:
+  - Expand some of the entries
+  - Verify that the info in 'Summary', 'Headers' and 'Raw' makes sense
+
+id: 53
+label: Clear log
+desc:
+  - Press the 'Clear log' button
+  - Verify that the view gets cleared.
+
+Storage.Cookies
+***************
+
+url: ./test-cases/storages/create-storages.html
+
+url: ./test-cases/storages/check-storages.html
+
+id: 54
+label: Inspect cookies
+desc:
+  - Go to the above url in the above order
+  - Verify that you see cookie a - j
+  
+url: ./test-cases/storages/check-storages.html
+
+id: 55
+label: Delete cookies
+desc:
+  - Delete some of the cookies
+  - Reload the document
+  - Verify that the deleted cookies are gone.
+
+id: 56
+label: Edit cookies
+desc:
+  - Double click some of the cookie values.
+  - Change the value and save.
+  - Reload the document
+  - Verify that the values still are changed
+
+id: 57
+label: Delete all cookies
+desc:
+  - Press the 'Delete all' button
+  - Reload the document.
+  - Verify that all cookies are gone.
+
+id: 58
+label: Add new cookies
+desc:
+  - Press the add button
+  - Add some key and value
+  - Reload the document
+  - Verify that there is a new created cookie with the according key and value.
+
+Storage.Local Storage
+*********************
+
+url: ./test-cases/storages/create-storages.html
+
+url: ./test-cases/storages/check-storages.html
+
+id: 59
+label: Inspect local storage
+desc:
+  - Go to the above url in the above order
+  - Verify that you see local storage item a - j
+  
+url: ./test-cases/storages/check-storages.html
+
+id: 60
+label: Delete local storage items
+desc:
+  - Delete some of the local storage items
+  - Reload the document
+  - Verify that the deleted items are gone.
+
+id: 61
+label: Edit local storage items
+desc:
+  - Double click some of the item values.
+  - Change the value and save.
+  - Reload the document
+  - Verify that the values still are changed
+
+id: 62
+label: Delete all local storage items
+desc:
+  - Press the 'Delete all' button
+  - Reload the document.
+  - Verify that all local storage items are gone.
+
+id: 63
+label: Add new local storage items
+desc:
+  - Press the add button
+  - Add some key and value
+  - Reload the document
+  - Verify that there is a new created item with the according key and value.
+
+Storage.Session Storage
+*********************
+
+url: ./test-cases/storages/create-storages.html
+
+url: ./test-cases/storages/check-storages.html
+
+id: 64
+label: Inspect session storage
+desc:
+  - Go to the above url in the above order
+  - Verify that you see session storage item a - j
+  
+url: ./test-cases/storages/check-storages.html
+
+id: 65
+label: Delete session storage items
+desc:
+  - Delete some of the session storage items
+  - Reload the document
+  - Verify that the deleted items are gone.
+
+id: 66
+label: Edit session storage items
+desc:
+  - Double click some of the item values.
+  - Change the value and save.
+  - Reload the document
+  - Verify that the values still are changed
+
+id: 67
+label: Delete all session storage items
+desc:
+  - Press the 'Delete all' button
+  - Reload the document.
+  - Verify that all session storage items are gone.
+
+id: 68
+label: Add new session storage items
+desc:
+  - Press the add button
+  - Add some key and value
+  - Reload the document
+  - Verify that there is a new created item with the according key and value.
+
+# TODO create a W3C widget with storage items
+
+Error Console.All Console.JavaScript Console.CSS
+************************************************
+
+url: ./test-cases/error-console/error.html
+
+id: 69
+label: Inspect errors
+desc:
+  - Go to the url above
+  - Verify that there is a js and a css error
+  - Verify that the entries can be expanded to see the details
+  - Verify that only the js error is in the JavaScript pane 
+  - Verify that only the css error is in the CSS pane 
+
+id: 70
+label: Clear log
+desc:
+  - Press the 'Clear Log' button
+  - Verify that the log is cleared
+  - Verify that in the 'All', 'JavaScript' and 'CSS' pane.
+
+id: 71
+label: Expand all
+desc:
+  - Select and unselect the 'Expand all' switch
+  - Verify that the entries are expanded and collapse accordingly
+  - Verify that in the 'All', 'JavaScript' and 'CSS' pane.
+
+Utilities.Color Picker
+**********************
+
+url: http://www.nzz.ch
+
+id: 72
+label: Pixel Magnifier
+desc:
+  - Hover over the page
+  - Verify that the screenshot area is updated accordingly
+  - Click some where on a image
+  - Verify that the updating of the screenshot area stops.
+  - Change the Area in the dropdown
+  - Verify that the screenshot area is updated accordingly
+  - Change the scale
+  - Verify that the screenshot area is update accordingly
+  - Press the 'Reset default values' button.
+  - Verify that the values and the screenshot area are reset.
+
+id: 73
+label: Color Picker
+desc: 
+  - Select an image
+  - Click in the screenshot area.
+  - Verify that the screenshot highlights the selected area and updates the average color of the selected area.
+  - Change the 'Average color' in the dropdown.
+  - Click again in the screenshot.
+  - Verify that the average color is updated accordingly.
+
+id: 74
+label: Store colors
+desc:
+  - Select some colors and store them.
+  - Verify that they are displayed as 'stored colors'.
+  - Press 'Manage stored colors'.
+  - Delete some of the store colors.
+  - Press 'Done'.
+  - Verify that the colors are removed.
+
+Settings.Settings
+*****************
+
+id: 75
+label: Expand sections
+desc:
+  - Expand all the sections
+  - Verify that the sections display additional info and settings
+
+
+id: 76
+label: Remote debug
+desc:
+  - Start Dragonfly with the Opera built-in proxy
+  - Unfold 'Remote Debug'
+  - Select 'Remote Debug' and press 'Apply'
+  - Connect an other Opera instance to Dragonfly
+  - Verify that the connection succeeds and that Dragonfly seems to work.
+  - Uncheck 'Remote Debug' and press 'Apply'
+  - Verify that Dragonfly debugs the client instance.
+  - Repeat several times the above steps.
+  - Verify that reconnecting to a remote Opera instance always works.
+
+
+id: 77
+label: Host highlight
+desc:
+  - Expand 'Spotlight' and expand 'Advanced'
+  - Change some colors
+  - Switch back to DOM
+  - Verify that the colors for the highlight have changed accordingly.
+  - Go back to 'Spotlight' and press 'Reset Default Colors'
+  - Verify that the colors have changed back.
+  
+
+General
+*******
+
+id: 78
+label: Dock and undock
+desc:
+  - Dock and undock the Dragonfly window
+  - Verify that all views have still the same information.
+
+id: 79
+label: Dragonfly menu
+desc:
+  - Verify that 'Reload Debug Context' works
+  - Focus an other window than the current debug context.
+  - Verify that 'Select Active Window' works 
+  - Verify that each open tab can be selected as debug context.
+

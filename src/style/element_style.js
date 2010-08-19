@@ -1,8 +1,8 @@
 ﻿window.cls || (window.cls = {});
 
 /**
-  * @constructor
-  */
+ * @constructor
+ */
 
 
 cls.ElementStyle = function()
@@ -23,6 +23,7 @@ cls.ElementStyle = function()
   HAS_MATCHING_SEARCH_PROPS = 11,
   SEARCH_DELAY = 50,
   MIN_SEARCH_TERM_LENGTH = 1,
+  DISABLED_LIST = 12,
 
   // new scope messages
   COMPUTED_STYLE_LIST = 0,
@@ -41,14 +42,22 @@ cls.ElementStyle = function()
   SPECIFICITY = 6,
   STYLESHEET_ID = 7,
   RULE_ID = 8,
-  RULE_TYPE = 9;
+  RULE_TYPE = 9,
 
+  ORIGIN_USER_AGENT = 1,
+  ORIGIN_LOCAL = 2,
+  ORIGIN_AUTHOR = 3,
+  ORIGIN_ELEMENT = 4;
+
+  var self = this;
   var categories_data = [];
   var __selectedElement = null;
   var __searchMap = [];
   var __search_is_active = false;
   var __old_search_term = '';
   var __setProps = [];
+  var _rt_id;
+  var _obj_id;
 
   var onResetState = function()
   {
@@ -75,10 +84,10 @@ cls.ElementStyle = function()
   var setCategories = function(id, name, handler)
   {
     return {
-        id: id,
-        name: name,
-        is_unfolded: function(){return settings['css-inspector'].get(id)},
-        handler: handler || null
+      id: id,
+      name: name,
+      is_unfolded: function() { return settings['css-inspector'].get(id); },
+      handler: handler || null
     }
   };
 
@@ -210,7 +219,7 @@ cls.ElementStyle = function()
     has_matching_search_props = false;
 
     declaration[SEARCH_LIST] = [];
-    for ( ; i < length; i++ )
+    for ( ; i < length; i++)
     {
       if (search_list[declaration[PROP_LIST][i]])
       {
@@ -301,7 +310,7 @@ cls.ElementStyle = function()
     {
       if (unfolded)
       {
-        if ( __selectedElement )
+        if (__selectedElement)
         {
           if ((req_type = getRequestType()) != __selectedElement.req_type)
           {
@@ -340,8 +349,18 @@ cls.ElementStyle = function()
     }
   };
 
+  this.update = function update()
+  {
+    if (_rt_id && _obj_id)
+    {
+      getData(_rt_id, _obj_id);
+    }
+  };
+
   var getData = function(rt_id, obj_id)
   {
+    _rt_id = rt_id;
+    _obj_id = obj_id;
     if (stylesheets.hasStylesheetsRuntime(rt_id))
     {
       var tag = tagManager.set_callback(null, handleGetData, [rt_id, obj_id]);
@@ -363,7 +382,8 @@ cls.ElementStyle = function()
     style_dec = null,
     j = 0,
     length = 0,
-    k = 0;
+    k = 0,
+    is_inherited = false;
 
     if (status == 0)
     {
@@ -372,6 +392,8 @@ cls.ElementStyle = function()
       categories_data[CSS].rt_id = categories_data[COMP_STYLE].rt_id = rt_id;
       categories_data[IS_VALID] = true;
 
+      var disabled_style_dec_list = self.disabled_style_dec_list;
+
       // this is to ensure that a set property is always displayed in computed style,
       // also if it maps the initial value and the setting "Hide Initial Values" is set to true.
       __setProps = [];
@@ -379,8 +401,18 @@ cls.ElementStyle = function()
       {
         for (j = 0; style_dec = node_style_cascade[STYLE_LIST][j]; j++)
         {
-          if (style_dec[ORIGIN] != 1) // any other rule except browser default rules
+          if (style_dec[ORIGIN] != ORIGIN_USER_AGENT)
           {
+            if (disabled_style_dec_list)
+            {
+              var disabled_style_dec = style_dec[ORIGIN] != ORIGIN_ELEMENT
+                                     ? disabled_style_dec_list[style_dec[RULE_ID]]
+                                     : disabled_style_dec_list[self.get_inline_obj_id(node_style_cascade[0])];
+              if (disabled_style_dec)
+              {
+                style_dec = self.sync_declarations(style_dec, disabled_style_dec, i > 0);
+              }
+            }
             length = style_dec[INDEX_LIST].length;
             for (k = 0; k < length; k++)
             {
@@ -405,6 +437,157 @@ cls.ElementStyle = function()
     }
   };
 
+  /**
+   * Syncs the declarations returned from Scope with the disabled properties
+   *
+   * @param {Array} style_dec The style declaration from Scope
+   * @param {Array} disabled_style_dec The disabled style declaration
+   * @param {Boolean} is_inherited Whether or not the style declaration is inherited
+   * @returns {Array} The synced StyleDeclarations
+   */
+  this.sync_declarations = function sync_declarations(style_dec, disabled_style_dec, is_inherited)
+  {
+    var index_map = window.css_index_map;
+
+    style_dec[DISABLED_LIST] = [];
+
+    var len = disabled_style_dec[INDEX_LIST].length;
+    for (var i = 0; i < len; i++) {
+      var prop = index_map[disabled_style_dec[INDEX_LIST][i]];
+
+      if (this.has_property(style_dec, prop)) {
+        this.remove_property(disabled_style_dec, prop);
+      }
+      else if (!(is_inherited && !(prop in window.css_inheritable_properties))) {
+        var index = this.copy_property(disabled_style_dec, style_dec, prop);
+        style_dec[DISABLED_LIST][index] = 1;
+      }
+    }
+
+    return style_dec;
+  };
+
+  /**
+   * Get a StyleDeclaration based on the rule ID.
+   *
+   * @param {Integer} id The rule id
+   * @returns {Array|null} The StyleDeclaration if it was found, otherwise null
+   */
+  this.get_style_dec_by_id = function get_style_dec_by_id(id)
+  {
+    for (var i = 0, node_style; node_style = (categories_data[NODE_STYLE_LIST] || [])[i]; i++)
+    {
+      for (var j = 0, style_dec; style_dec = (node_style[STYLE_LIST] || [])[j]; j++)
+      {
+        if (style_dec[RULE_ID] == id)
+        {
+          return style_dec;
+        }
+      }
+    }
+    return null;
+  };
+
+  /**
+   * Get an inline StyleDeclaration based on the object ID.
+   *
+   * @param {Integer} id The object id
+   * @returns {Array|null} The StyleDeclaration if it was found, otherwise null
+   */
+  this.get_inline_style_dec_by_id = function get_style_dec_by_id(id)
+  {
+    for (var i = 0, node_style; node_style = (categories_data[NODE_STYLE_LIST] || [])[i]; i++)
+    {
+      for (var j = 0, style_dec; style_dec = (node_style[STYLE_LIST] || [])[j]; j++)
+      {
+        if (style_dec[ORIGIN] == ORIGIN_ELEMENT && node_style[OBJECT_ID] == id)
+        {
+          return style_dec;
+        }
+      }
+    }
+    return null;
+  };
+
+  /**
+   * An object with rule IDs as keys and values as StyleDeclarations with the disabled
+   * properties for that rule
+   */
+  this.disabled_style_dec_list = {};
+
+  /**
+   * Returns an empty StyleDeclaration
+   *
+   * @returns {Array} An empty StyleDeclaration
+   */
+  this.get_new_style_dec = function get_new_style_dec() {
+    return [3, [/*INDEX_LIST*/], [/*VALUE_LIST*/], [/*PRIORITY_LIST*/], [/*STATUS_LIST*/]];
+  };
+
+  /**
+   * Copies a property from one StyleDeclaration to another
+   *
+   * @param {Array} source The source StyleDeclaration
+   * @param {Array} target The target StyleDeclaration
+   * @param {String} property The property to copy
+   * @returns {Integer} The index where the property was inserted (the last index)
+   */
+  this.copy_property = function copy_property(source, target, property) {
+    var index_list = source[INDEX_LIST];
+    var len = index_list.length;
+    for (var i = 0; i < len; i++) {
+      if (window.css_index_map[index_list[i]] == property) {
+         target[INDEX_LIST].push(source[INDEX_LIST][i]);
+         target[VALUE_LIST].push(source[VALUE_LIST][i]);
+         target[PRIORITY_LIST].push(source[PRIORITY_LIST][i]);
+         target[STATUS_LIST].push(source[STATUS_LIST][i]);
+         break;
+      }
+    }
+    return target[INDEX_LIST].length-1;
+  };
+
+  /**
+   * Removes a property from `style_dec`
+   *
+   * @param {Array} style_dec The StyleDeclaration to remove the property from
+   * @param {String} property The property to remove
+   * @returns {Array|null} A StyleDeclaration with the removed property if it was
+   *                       removed, otherwise null
+   */
+  this.remove_property = function remove_property(style_dec, property) {
+    var new_style_dec = this.get_new_style_dec();
+    var index_list = style_dec[INDEX_LIST];
+    var len = index_list.length;
+    for (var i = 0; i < len; i++) {
+      if (window.css_index_map[index_list[i]] == property) {
+        this.copy_property(style_dec, new_style_dec, property)
+        style_dec[INDEX_LIST].splice(i, 1);
+        style_dec[VALUE_LIST].splice(i, 1);
+        style_dec[PRIORITY_LIST].splice(i, 1);
+        style_dec[STATUS_LIST].splice(i, 1);
+        return new_style_dec;
+      }
+    }
+    return null;
+  };
+
+  /**
+   * Checks if a certain StyleDeclaration has a property
+   *
+   * @param {Array} style_dec The StyleDeclaration to check
+   * @param {String} property The property to check for
+   * @returns {Boolean} True if the StyleDeclaration has the property, false otherwise
+   */
+  this.has_property = function has_property(style_dec, property) {
+    return style_dec[INDEX_LIST].indexOf(window.css_index_map.indexOf(property)) != -1;
+  };
+
+  this.get_inline_obj_id = function get_inline_obj_id(obj_id)
+  {
+    return "inline-obj-id-" + obj_id;
+  };
+
   /* */
   messages.addListener('element-selected', onElementSelected);
   messages.addListener('reset-state', onResetState);
@@ -412,6 +595,5 @@ cls.ElementStyle = function()
   eventHandlers.input['css-inspector-text-search'] = function(event, target)
   {
     searchDelayed(target.value);
-  }
+  };
 };
-

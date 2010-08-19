@@ -210,7 +210,9 @@ cls.HttpLogger["2.0"].RequestListView = function(id, name, container_class)
 
     this.selectDetailView = function(id, name) {
         viewMap[id] = name;
+        scroll = false;
         this.update();
+        scroll = true;
         return;
 
          //the bits under here could be used if we decide to do something

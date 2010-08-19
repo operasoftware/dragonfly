@@ -1,8 +1,8 @@
-﻿/**
+﻿ /**
   * @constructor
   */
 
-var Editor = function()
+var Editor = function(actions)
 {
   // assert: a element wich is editable has a monospace font
 
@@ -40,12 +40,12 @@ var Editor = function()
   this.context_cur_priority = '';
   this.context_cur_text_content = '';
 
-  this.last_suggets_type = null;
-  this.suggets_count = 0;
-  this.suggets_iterate = false;
+  this.last_suggest_type = null;
+  this.suggest_count = 0;
+  this.suggest_iterate = false;
   this.property_list_length = 0;
 
-  this.colors = new Colors();
+  this.colors = new Color();
 
   this.get_base_style = function(ele)
   {
@@ -363,6 +363,16 @@ var Editor = function()
         sheet_link ? parseInt(sheet_link.getAttribute('index')) : -1;
     var textContent = ele.textContent;
 
+    if (this.context_rule_id)
+    {
+      this.saved_style_dec = window.elementStyle.get_style_dec_by_id(this.context_rule_id);
+    }
+    else
+    {
+      this.context_rule_id = parseInt(ele.parentElement.getAttribute('obj-id'));
+      this.saved_style_dec = window.elementStyle.get_inline_style_dec_by_id(this.context_rule_id);
+    }
+
     this.context_cur_text_content = this.textarea.value = ele.textContent;
 
     var props = this.getProperties();
@@ -371,7 +381,7 @@ var Editor = function()
     this.context_cur_value = props[1] || '';
     this.context_cur_priority = props[2] || 0;
 
-    this.last_suggets_type = '';
+    this.last_suggest_type = '';
 
     this.textarea.style.height = (ele.offsetHeight) + 'px';
     ele.textContent = '';
@@ -542,7 +552,7 @@ var Editor = function()
         {
           new_start = this.tab_context_tokens[2] + 2;
           this.textarea.value =
-            this.tab_context_tokens[0] + ': ' + suggest.value;
+            this.tab_context_tokens[0] + ': ' + suggest.value + (this.context_cur_priority ? " !important" : "") + ";";
           this.textarea.selectionStart = new_start;
           this.textarea.selectionEnd = new_start + suggest.value.length;
           break;
@@ -555,7 +565,6 @@ var Editor = function()
     return false;
   };
 
-
   this.getSuggest = function(prop_name, is_prop, token, cur_start, cur_end, action_id)
   {
     var
@@ -563,20 +572,20 @@ var Editor = function()
     match = null,
     suggest = null,
     suggest_type =
-      (is_prop && 'suggest-property') ||
-      ((match = re_num.exec(token)) && 'suggest-number') ||
-      ('suggest-value'),
+      (is_prop && 'suggest_property') ||
+      ((match = re_num.exec(token)) && 'suggest_number') ||
+      ('suggest_value'),
     suggest_handler = this[suggest_type];
 
     suggest_handler.cursor = this.setCursor
     (
-      this.suggets_iterate = this.last_suggets_type == suggest_type,
+      this.suggest_iterate = this.last_suggest_type == suggest_type,
       suggest_handler.cursor,
       suggest_handler.matches = this[suggest_type](token, cur_start, cur_end, action_id, match),
       action_id
     );
 
-    this.last_suggets_type = suggest_type;
+    this.last_suggest_type = suggest_type;
 
     suggest = suggest_handler.matches && suggest_handler.matches[suggest_handler.cursor];
     return suggest && {value: suggest, replace_type: suggest_handler.replace_type} || null;
@@ -644,7 +653,7 @@ var Editor = function()
     return true;
   };
 
-  this['suggest-property'] = function(token, cur_start, cur_end, action_id, match)
+  this.suggest_property = function(token, cur_start, cur_end, action_id, match)
   {
     if (!this.property_list)
     {
@@ -654,11 +663,11 @@ var Editor = function()
     return this.getMatchesFromList(this.property_list, this.textarea.value.slice(this.tab_context_tokens[1], cur_start));
   };
 
-  this['suggest-property'].replace_type = SELECTION;
-  this['suggest-property'].cursor = 0;
-  this['suggest-property'].matches = null;
+  this.suggest_property.replace_type = SELECTION;
+  this.suggest_property.cursor = 0;
+  this.suggest_property.matches = null;
 
-  this['suggest-number'] = function(token, cur_start, cur_end, action_id, match)
+  this.suggest_number = function(token, cur_start, cur_end, action_id, match)
   {
     var is_float = /\.(\d+)/.exec(match[2]);
     if (is_float)
@@ -668,11 +677,11 @@ var Editor = function()
     return [(parseInt(match[1] + match[2]) + (action_id == action_ids.NAV_UP ? 1 : -1)).toString() + match[3]];
   };
 
-  this['suggest-number'].replace_type = TOKEN;
-  this['suggest-number'].cursor = 0;
-  this['suggest-number'].matches = null;
+  this.suggest_number.replace_type = TOKEN;
+  this.suggest_number.cursor = 0;
+  this.suggest_number.matches = null;
 
-  this['suggest-value'] = function(token, cur_start, cur_end, action_id, match)
+  this.suggest_value = function(token, cur_start, cur_end, action_id, match)
   {
     var
     prop = this.tab_context_tokens[0],
@@ -684,12 +693,12 @@ var Editor = function()
     hsl = null,
     rgb = null;
 
-    if (set == this['suggest-value'].last_set && prop == this['suggest-value'].last_prop)
+    if (set == this.suggest_value.last_set && prop == this.suggest_value.last_prop)
     {
-      return this['suggest-value'].matches;
+      return this.suggest_value.matches;
     }
-    this['suggest-value'].last_set = set;
-    this['suggest-value'].last_prop = prop;
+    this.suggest_value.last_set = set;
+    this.suggest_value.last_prop = prop;
 
     if (/color/.test(prop) && token && (match = re_hex.exec(token)))
     {
@@ -710,21 +719,35 @@ var Editor = function()
     return null;
   }
 
-  this['suggest-value'].replace_type = VALUE;
-  this['suggest-value'].cursor = 0;
-  this['suggest-value'].matches = null;
-  this['suggest-value'].last_set = '';
-  this['suggest-value'].last_prop = '';
+  this.suggest_value.replace_type = VALUE;
+  this.suggest_value.cursor = 0;
+  this.suggest_value.matches = null;
+  this.suggest_value.last_set = '';
+  this.suggest_value.last_prop = '';
 
   this.submit = function()
   {
     var
     props = this.getProperties(),
-    inner = '';
+    inner = '',
+    disabled = this.textarea_container.parentNode.hasClass("disabled");
 
     if (props[1])
     {
-      this.textarea_container.parentElement.innerHTML = create_declaration(props[0], props[1], props[2]);
+      // Only add property if something has changed (new or updated value)
+      if (!(this.context_cur_prop == props[0] &&
+            this.context_cur_value == props[1] &&
+            this.context_cur_priority == props[2]))
+      {
+        actions.set_property(this.context_rt_id, this.context_rule_id, props, this.context_cur_prop);
+      }
+      this.textarea_container.parentElement.innerHTML = window.stylesheets.create_declaration(props[0],
+        props[1], props[2], this.context_rule_id, disabled);
+    }
+    else if (props[1] === "") // If someone deletes just the value and then submits, just re-display it
+    {
+      this.textarea_container.parentElement.innerHTML = window.stylesheets.create_declaration(props[0],
+        this.context_cur_value, this.context_cur_priority, this.context_rule_id, disabled);
     }
     else
     {
@@ -737,7 +760,6 @@ var Editor = function()
   this.commit = function()
   {
     var props = self.getProperties(),
-    i = 0,
     script = "",
     prop = null,
     reset = false;
@@ -748,7 +770,8 @@ var Editor = function()
       prop = this.textarea_container.parentElement.parentElement.
         insertBefore(document.createElement('property'), this.textarea_container.parentElement);
 
-      prop.innerHTML = create_declaration(props[0], props[1], props[2]);
+      prop.innerHTML = window.stylesheets.create_declaration(props[0], props[1], props[2], this.context_rule_id,
+        this.textarea_container.parentNode.hasClass("disabled"));
       props.splice(0, 3);
     }
 
@@ -763,17 +786,14 @@ var Editor = function()
       this.context_cur_priority = 0;
     }
 
-    if (props[i+1])
+    if (props[1])
     {
-      script = "rule.style.setProperty(\"" + props[i] + "\", \"" + props[i+1].replace(/"/g, "'") + "\", " + (props[i+2] ? "\"important\"" : null)+ ")";
-      services['ecmascript-debugger'].requestEval(0,
-          [this.context_rt_id, 0, 0, script, [["rule", this.context_rule_id]]]);
+      // TODO: should remove previously commited value here, in case of looping through properties
+      actions.set_property(this.context_rt_id, this.context_rule_id, props);
     }
-    else if (!props[i])
+    else if ((!props[0] || props[0] != this.context_cur_prop) && this.context_cur_prop) // if it's overwritten
     {
-      script = "rule.style.removeProperty(\"" + this.context_cur_prop + "\")";
-      services['ecmascript-debugger'].requestEval(0,
-        [this.context_rt_id, 0, 0, script, [["rule", this.context_rule_id]]]);
+      actions.remove_property(this.context_rt_id, this.context_rule_id, this.context_cur_prop);
     }
 
     if (this.context_stylesheet_index > -1)
@@ -788,17 +808,35 @@ var Editor = function()
     var
     props = self.getProperties(),
     keep_edit = false,
-    prop = null;
+    prop = null,
+    is_disabled = this.textarea_container.parentNode.hasClass("disabled");
 
-    this.last_suggets_type = '';
+    this.last_suggest_type = '';
     if (props && props.length == 3)
     {
-      if (this.textarea.selectionEnd == this.textarea.value.length ||
-          this.textarea.selectionEnd >= this.textarea.value.indexOf(';'))
+      if (props[1] === "") // If someone deletes the value and then presses enter, just re-display it
       {
+        this.textarea_container.parentElement.innerHTML = window.stylesheets.create_declaration(props[0],
+          this.context_cur_value, this.context_cur_priority, this.context_rule_id, is_disabled);
+        return false;
+      }
+      else if (this.textarea.selectionEnd == this.textarea.value.length ||
+               this.textarea.selectionEnd >= this.textarea.value.indexOf(';'))
+      {
+        var propertyEle = document.createElement('property');
+        if (this.textarea_container.parentNode.hasClass("overwritten"))
+        {
+          propertyEle.addClass("overwritten");
+        }
+        if (is_disabled)
+        {
+          propertyEle.addClass("disabled");
+        }
+        this.textarea_container.parentNode.removeClass("overwritten");
+        this.textarea_container.parentNode.removeClass("disabled");
         prop = this.textarea_container.parentElement.parentElement.
-          insertBefore(document.createElement('property'), this.textarea_container.parentElement);
-        prop.innerHTML = create_declaration(props[0], props[1], props[2]);
+          insertBefore(propertyEle, this.textarea_container.parentElement);
+        prop.innerHTML = window.stylesheets.create_declaration(props[0], props[1], props[2], this.context_rule_id, is_disabled);
         this.textarea.value =
         this.context_cur_text_content =
         this.context_cur_prop =
@@ -808,7 +846,7 @@ var Editor = function()
       }
       else
       {
-        this.textarea_container.parentElement.innerHTML = create_declaration(props[0], props[1], props[2]);
+        this.textarea_container.parentElement.innerHTML = window.stylesheets.create_declaration(props[0], props[1], props[2], this.context_rule_id, is_disabled);
       }
     }
     else
@@ -821,12 +859,17 @@ var Editor = function()
 
   this.escape = function()
   {
-    this.last_suggets_type = '';
+    this.last_suggest_type = '';
+    actions.restore_properties();
     if (this.context_cur_prop)
     {
       this.textarea.value = this.context_cur_text_content;
       this.textarea_container.parentElement.innerHTML =
-        create_declaration(this.context_cur_prop, this.context_cur_value, this.context_cur_priority);
+        window.stylesheets.create_declaration(this.context_cur_prop,
+                                              this.context_cur_value,
+                                              this.context_cur_priority,
+                                              this.context_rule_id,
+                                              this.textarea_container.parentNode.hasClass("disabled"));
       return true;
     }
     else
@@ -842,10 +885,4 @@ var Editor = function()
     this.style.height = this.scrollHeight + 'px';
     self.commit();
   };
-
-  var create_declaration = function(prop, value, is_important) {
-    return "<key>" + prop + "</key>: " +
-           "<value>" + helpers.escapeTextHtml(value) + (is_important ? " !important" : "") + "</value>;";
-  };
 };
-

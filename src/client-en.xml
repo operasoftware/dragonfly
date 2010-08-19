@@ -1,4 +1,6 @@
-﻿<viewport xmlns="http://www.w3.org/1999/xhtml">
+﻿<viewport xmlns='http://www.w3.org/1999/xhtml'
+          xmlns:xlink="http://www.w3.org/1999/xlink" 
+          xmlns:svg="http://www.w3.org/2000/svg">
 <link rel="icon" href="/favicon.ico" />
 <!-- command set_rel_base_url -->
 <script><![CDATA[
@@ -126,6 +128,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <link rel="stylesheet" href="./ui-style/syntax-highlight.css"/>
 <link rel="stylesheet" href="./http-logger/httplogger_style.css"/>
 <link rel="stylesheet" href="./console-logger/consolelogger_style.css"/>
+<link rel="stylesheet" href="./ui-style/colorpickerstyle.css"/>
 <link rel="stylesheet" href="./repl/repl_style.css"/>
 
 <!-- This will turn off including of the UI strings if the exclude_uistrings var is set -->
@@ -143,7 +146,11 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./scripts/TextSearch.js"/>
 <script src="./scripts/VirtualTextSearch.js"/>
 <script src="./scripts/colors.js"/>
+<script src="./scripts/colorspace.js"/>
 <script src="./scripts/messages.js"/>
+
+
+
 
 <script src="./scripts/debug-helpers-liveSource.js"/>
 
@@ -195,6 +202,11 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/cst-select.js"/>
 <script src="./ui-scripts/toolbarcstselect.js"/>
 <script src="./ui-scripts/ui_framework.js"/>
+<script src="./ui-scripts/colorpickertemplates.js"/>
+<script src="./ui-scripts/colorpicker.js"/>
+<script src="./ui-scripts/slider.js"/>
+
+
 
 <script src="./build-application/build_application.js"></script>
 <script src="./build-application/build_window_manager_2_0.js"></script>
@@ -274,7 +286,9 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./style/views_css_inspector.js"/>
 <script src="./style/views_css_layout.js"/>
 <script src="./style/views_stylesheets.js"/>
+<script src="./style/view_color_picker.js"/>
 <script src="./style/css_inspector_actions.js"/>
+
 
 <script src="./exec/color_picker_data.js"/>
 <script src="./exec/color_picker_view.js"/>

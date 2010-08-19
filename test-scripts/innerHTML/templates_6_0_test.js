@@ -15,32 +15,34 @@
   // added fields
   MAX_VALUE_LENGTH = 30;
 
-  var _pretty_print_object = function(model, tree, obj_id)
+  var _pretty_print_object = function(model, tree, obj_id, ret)
   {
-    var ret = [];
-    var obj = model.get_object();
+    if (!ret)
+      ret = []
+    else
+      ret = ret.slice(0);
     var data = model.get_data(obj_id);
-    if (obj && data)
+    if (data)
     {
       for (var proto = null, i = 0; proto = data[i]; i++)
       {
         // skip the first object description
         if (i)
           ret.push(['div', proto[VALUE][CLASS_NAME], 'class', 'prototype-chain-object']);
-        ret.push(_pretty_print_properties(model, tree, proto[PROPERTY_LIST] || []));
+        ret.push(_pretty_print_properties(model, tree.protos && tree.protos[i] || {}, proto[PROPERTY_LIST] || [], ret));
       }
 
     }
     return (
     ['examine-objects', 
       ret, 
-      'rt-id', obj.rt_id.toString(),
+      //'rt-id', obj.rt_id.toString(),
       'data-id', model.id,
-      'obj-id', obj.obj_id.toString()
+      //'obj-id', obj.obj_id.toString()
     ]);
   };
 
-  var _pretty_print_properties = function(model, tree, property_list)
+  var _pretty_print_properties = function(model, tree, property_list, ret)
   {
     var ret = [], value = '', type = '', short_val = '', obj_id = 0;
     for (var prop = null, i = 0; prop = property_list[i]; i++)
@@ -101,10 +103,10 @@
               'type', 'button', 
               'handler', 'examine-object', 
               'class', 'folder-key'
-            ].concat(obj_id in tree ? ['style', 'background-position: 0px -11px'] : []),
+            ].concat(tree.hasOwnProperty(prop[NAME]) ? ['style', 'background-position: 0px -11px'] : []),
             ['key', helpers.escapeTextHtml(prop[NAME])],
             ['value', prop[OBJECT_VALUE][CLASS_NAME], 'class', 'object'],
-            obj_id in tree ? _pretty_print_object(model, tree[obj_id], obj_id) : [],
+            tree.hasOwnProperty(prop[NAME]) ? _pretty_print_object(model, tree[prop[NAME]], obj_id, ret) : [],
             'obj-id', obj_id.toString()
           ]);
           break;
@@ -116,16 +118,12 @@
 
   this.inspected_js_object_test = function(model, show_root, path)
   {
-    var tree = model.get_expand_tree();
-    if (typeof show_root === 'boolean' && model.get_object())
-      path = show_root ? null : [model.get_object().obj_id];
-    for (var obj_id = 0, i = 0; path && path[i]; i++)
-    {
-      tree = tree[obj_id = path[i]];
-      if (!tree)
-        throw 'not valid path in InspectionBaseData.pretty_print';
-    }
-    return _pretty_print_object(model, tree, obj_id);
+    var tree = model.get_expanded_tree(show_root, path);
+       
+
+    return  _pretty_print_object(model, tree, tree.object_id);
+
+
   }
 
 

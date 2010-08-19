@@ -77,6 +77,7 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
     cls.ThreadsView.create_ui_widgets();
 
     /* DOM */
+    cls.InspectableDOMNode = namespace.InspectableDOMNode;
     new cls.DOMInspectorActions('dom'); // the view id
     new cls.DOMInspectorKeyhandler('dom');
     new cls.DOMInspectorEditKeyhandler('dom');
@@ -100,6 +101,7 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
     cls.CSSInspectorView.prototype = ViewBase;
     new cls.CSSInspectorView('css-inspector', ui_strings.M_VIEW_LABEL_STYLES, 'scroll css-inspector');
     cls.CSSInspectorView.create_ui_widgets();
+    new cls.ColorPickerView('color-selector', 'Color Picker', 'color-selector');
 
     /* Layout */
     window.elementLayout = new cls.ElementLayout();

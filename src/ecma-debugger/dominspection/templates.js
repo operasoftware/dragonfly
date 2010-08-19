@@ -1,4 +1,4 @@
-(function()
+﻿(function()
 {
 
   const
@@ -537,4 +537,4 @@
     return ret;
   }
 
-}).apply(window.templates || (window.templates = {}))
+}).apply(window.templates || (window.templates = {}));
