@@ -475,18 +475,21 @@ Scripts.REPL (command line version 2)
 url: ./test-cases/repl/console_api.html
 
 
+id: 80
 label: Console API: console.log
 desc:
   - Click "console.log" button.
   - Verify that "Phlebotinum" is printed on the command line
 
 
+id: 81
 label: Console API: console.log command line
 desc:
   - Type 'console.log("hello")' on the command line
   - Verify that "hello" is printed on the command line
 
 
+id: 82
 label: Console API: console.debug
 desc:
   - Click "console.debug" button.
@@ -494,6 +497,7 @@ desc:
 
 
 
+id: 83
 label: Console API: console.info
 desc:
   - Click "console.info" button.
@@ -501,18 +505,21 @@ desc:
 
   
 
+id: 84
 label: Console API: console.warn
 desc:
   - Click "console.warn" button.
   - Verify that "Phlebotinum" is printed on the command line
 
 
+id: 85
 label: Console API: console.error
 desc:
   - Click "console.error" button.
   - Verify that "Phlebotinum" is printed on the command line
 
 
+id: 86
 label: Console API: console.assert
 desc:
   - Click "console.assert" button.
@@ -521,42 +528,49 @@ desc:
 
   
 
+id: 87
 label: Console API: console.dir
 desc:
   - Click "console.dir" button.
   - Verify that an expanded list of properties on the body object is shown
 
 
+id: 88
 label: Console API: console.dir command line
 desc:
   - Type "console.dir(document.body)" on the command line
   - Verify that an expanded list of properties on the body object is shown
 
 
+id: 89
 label: Console API: console.dir alias
 desc:
   - Type "dir(document.body)" on the command line
   - Verify that an expanded list of properties on the body object is shown
   
 
+id: 90
 label: Console API: console.dirxml
 desc:
   - Click "console.dirxml" button.
   - Verify that an expanded dom tree representing the body of the document is shown.
 
 
+id: 91
 label: Console API: console.dirxml command line
 desc:
   - Type "console.dirxml(document.body)" on the command line
   - Verify that an expanded dom tree representing the body of the document is shown.
 
 
+id: 92
 label: Console API: console.dirxml alias
 desc:
   - Type "dirxml(document.body)" on the command line
   - Verify that an expanded dom tree representing the body of the document is shown.
 
 
+id: 93
 label: Console API: console.group
 desc:
   - Click the "console.group" button
@@ -565,6 +579,7 @@ desc:
   - Verify that the text appears at the root level, not inside the group
   - Verify that clicking the +/- button expands and collapses the group.
 
+id: 94
 label: Console API: console.time
 desc:
   - Click the "console.time" button
@@ -577,6 +592,7 @@ desc:
   - Verify that a stack trace is printed in the console
 
 
+id: 95
 label: Command line API: clear
 desc:
   - Create some entries and type clear().
@@ -586,6 +602,7 @@ desc:
 
 url: ./test-cases/repl/keys_values.html
 
+id: 96
 label: Command line API: keys
 desc:
   - Load the page
@@ -595,6 +612,7 @@ desc:
   - Verify that the array is of length 2 and contains the values "foo" and "bar"
 
   
+id: 97
 label: Command line API: values
 desc:
   - Load the page
@@ -604,11 +622,13 @@ desc:
   - Verify that the array is of length 2 and contains the values "1" and "1"
 
   
+id: 98
 label: Command line API: keys
 desc:
   - Click the "console.trace" button
   - Verify that a stack trace is printed in the console
 
+id: 99
 label: Command line API: keys
 desc:
   - Click the "console.trace" button
@@ -616,6 +636,7 @@ desc:
 
 url: ./test-cases/repl/misc_selection.html
 
+id: 100
 label: Command line API: $1 $2
 desc:
   - Load the page
@@ -628,17 +649,20 @@ desc:
   - Type $1 in the REPL view
   - Verify that HTMLParagraphElement is printed in the view
 
+id: 101
 label: Command line API: $()
 desc:
   - Enter $("i") in th command line
   - Verify that HTMLElement is printed in the view
 
+id: 102
 label: Command line API: $$()
 desc:
   - Enter $$(".c") in the command line
   - Verify that NodeList is printed in the view
   - Verify that the NodeList has a single item
 
+id: 103
 label: Command line API: $x()
 desc:
   - Enter $x("//body") in the command line
@@ -646,6 +670,7 @@ desc:
   - Verify that the Array has a single item
 
   
+id: 104
 label: Autocomplete, not stopped
 desc:
   - Type "docu"
@@ -661,6 +686,7 @@ desc:
 
 url: ./test-cases/repl/autocomplete_stopped.html
 
+id: 105
 label: Autocomplete, stopped
 desc:
   - Navigate to url
@@ -673,6 +699,7 @@ desc:
   - Press tab
   - Verify that the input is the same and that the expansions "bar, baz" are shown above the input
 
+id: 106
 label: History navigation
 desc:
   - Use the up and down arrows.
@@ -680,12 +707,14 @@ desc:
   - Verify that the history contains no more entries than the repl -> Max items in typed history to remember setting
 
 
+id: 107
 label: ctrl-w
 desc:
   - Enter some text.
   - Press ctrl-w
   - Verify that all text up to the closest whitespace is deleted
 
+id: 108
 label: ctrl-k
 desc:
   - Enter some text.
@@ -693,12 +722,14 @@ desc:
   - Press ctrl-l
   - Verify that all text after the cursor is deleted
 
+id: 109
 label: ctrl-a
 desc:
   - Enter some text.
   - Press ctrl-a
   - Verify that the cursor moved to the start of the line
 
+id: 110
 label: ctrl-l
 desc:
   - Create some entries
