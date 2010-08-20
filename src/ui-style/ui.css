@@ -1439,7 +1439,7 @@ nav {
     text-align: center;
     z-index: 1;
     background: #ccc;
-    -display: none;
+    display: none;
     cursor: pointer;
 }
 nav:active {

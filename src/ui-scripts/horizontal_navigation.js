@@ -12,6 +12,7 @@ var HorizontalNavigation = function(cell)
   this.setContent = function(template_list, focus_end)
   {
     this.breadcrumbs.clearAndRender(template_list);
+    this.checkWidth();
     if (focus_end)
     {
         //
@@ -22,25 +23,47 @@ var HorizontalNavigation = function(cell)
   {
       var left = 0;
       var breadcrumbsDim = this.breadcrumbs.getBoundingClientRect();
-debugger
+
       if (lastDir != dir) element = null;
       lastDir = dir;
 
       if (dir == "back")
       {
-          element = element || document.elementFromPoint(this.nav_back.getBoundingClientRect().right + 1, breadcrumbsDim.top);
-          var leftEdge = element.getBoundingClientRect().left;
-          left = this.nav_back.getBoundingClientRect().right - leftEdge;
-          element = element.previousElementSibling;
+          //element = element || document.elementFromPoint(this.nav_back.getBoundingClientRect().right + 1, breadcrumbsDim.top);
+          if (!element)
+          {
+              element = this.breadcrumbs.querySelectorAll("breadcrumb")[0];
+              while (element && element.getBoundingClientRect().right < this.nav_back.offsetWidth) {
+                  element = element.nextElementSibling;
+              }
+          }
+
+          if (element)
+          {
+              var leftEdge = element.getBoundingClientRect().left;
+              left = this.nav_back.getBoundingClientRect().right - leftEdge;
+              element = element.previousElementSibling;
+          }
       }
       else
       {
-          element = element || document.elementFromPoint(this.nav_forward.getBoundingClientRect().left - 1, breadcrumbsDim.top);
-          var rightEdge = element.getBoundingClientRect().right - breadcrumbsDim.left; //element.offsetLeft + element.offsetWidth;
-          left = breadcrumbsDim.width - rightEdge;
-          element = element.nextElementSibling;
+          //element = element || document.elementFromPoint(this.nav_forward.getBoundingClientRect().left - 1, breadcrumbsDim.top);
+          if (!element)
+          {
+              element = this.breadcrumbs.querySelectorAll("breadcrumb")[0];
+              while (element && element.getBoundingClientRect().left < this.nav_forward.offsetLeft) {
+                  element = element.nextElementSibling;
+              }
+          }
+
+          if (element)
+          {
+              var rightEdge = element.getBoundingClientRect().right - breadcrumbsDim.left; //element.offsetLeft + element.offsetWidth;
+              left = breadcrumbsDim.width - rightEdge;
+              element = element.nextElementSibling;
+          }
       }
-      var pos = parseInt(getComputedStyle(breadcrumbs, null).getPropertyValue("left"));
+      var pos = parseInt(getComputedStyle(this.breadcrumbs, null).getPropertyValue("left"));
       this.breadcrumbs.style.OTransitionDuration = Math.min(Math.abs(left) / 200, .2) + "s";
       this.breadcrumbs.style.left = pos + left + "px";
   };
