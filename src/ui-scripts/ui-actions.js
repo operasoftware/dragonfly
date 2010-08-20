@@ -109,12 +109,40 @@ eventHandlers.click['close-tab'] = function(event, target)
 
 eventHandlers.mousedown['horizontal-nav'] = function(event, target)
 {
- //var tabs = UIBase.getUIById(target.get_attr('parent-node-chain', 'ui-id'));
+ //var tabs = uibase.getuibyid(target.get_attr('parent-node-chain', 'ui-id'));
  //var view_id = target.get_attr('parent-node-chain', 'ref-id');
   var horizontal_nav = UIBase.getUIById(target.get_attr('parent-node-chain', 'ui-id'));
   var dir = target.get_attr('parent-node-chain', 'dir');
   horizontal_nav.nav(dir);
-}
+};
+
+eventHandlers.mousedown['breadcrumbs-drag'] = function(event, target)
+{
+    var breadcrumbs = target;
+    breadcrumbs.style.OTransitionDuration = 0;
+    var pos = parseInt(getComputedStyle(breadcrumbs, null).getPropertyValue("left"));
+
+    document.addEventListener("mousemove", mouse_move, false);
+
+    document.addEventListener("mouseup", mouse_up, false);
+
+    function mouse_move(e) {
+        dragBreadcrumbs(e, event.clientX, pos);
+    }
+
+    function mouse_up() {
+        breadcrumbs.className = "";
+        document.removeEventListener("mousemove", mouse_move, false);
+        document.removeEventListener("mouseup", mouse_up, false);
+    }
+
+    function dragBreadcrumbs(e, mouseStart, pos) {
+        breadcrumbs.className = "drag";
+        var left = pos + e.clientX - mouseStart;
+        // TODO: check boundaries
+        breadcrumbs.style.left = left + "px";
+    }
+};
 
 eventHandlers.click['settings-tabs'] = function(event, target)
 {

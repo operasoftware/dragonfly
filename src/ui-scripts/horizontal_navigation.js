@@ -89,6 +89,7 @@ var HorizontalNavigation = function(cell)
 
     this.element = document.getElementById(this.type + '-to-' + this.cell.id) || this.update();
     this.breadcrumbs = document.createElement("breadcrumbs");
+    this.breadcrumbs.setAttribute("handler", "breadcrumbs-drag");
     this.nav_back = document.createElement("nav");
     this.nav_back.textContent = "◀";
     this.nav_back.setAttribute("dir", "back");
