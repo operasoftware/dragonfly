@@ -428,6 +428,103 @@ desc:
   - Select and unselect the *hide default properties' switch.
   - Verify that the according properties are shown or hidden in the view.
 
+url: ./test-cases/js-inspection/inspectable-js-objects.html
+
+id: 111
+label: Inspectable js objects
+desc: 
+  - Go to the url above.
+  - Verify that three entries appear, 'arguments', 'this' and 'ele',
+
+id: 112
+label: Expand inspectable objects
+desc:
+  - Go to the url above.
+  - Expand 'this'.
+  - Verify that all properties of the window object are expanded.
+  - Expand 'this.document'.
+  - Verify that all propeties of the document are expanded.
+
+id: 113
+label: Expand inspectable objects and change the view.
+desc:
+  - Go to the url above.
+  - Expand 'this'.
+  - Verify that all properties of the window object are expanded.
+  - Expand 'this.document'.
+  - Verify that all properties of the document are expanded.
+  - Change to an other view, e.g. Error Console.
+  - Switch back to Scripts.
+  - Verify that all expanded properties are still expanded.
+
+id: 114
+label: Collapse inspectable objects
+desc:
+  - Go to the url above.
+  - Expand 'this'.
+  - Collapse 'this'.
+  - Verify that all expanded properties are removed.
+  - Expand 'this'.
+  - Expand 'this.document'.
+  - Collapse 'this'.
+  - Verify that all expanded properties are removed.
+  - Expand 'this'.
+  - Expand 'this.document'.
+  - Collapse 'this.document'.
+  - Verify that all properties of document are removed.
+
+id: 115
+label: Setting 'Show the prototypes'.
+desc:
+  - Go to the url above.
+  - Ensure that 'Show the prototypes' is on.
+  - Expand 'ele'.
+  - Verify that the whole prototype chain is displayed 
+    (HTMLHtmlElementPrototype, HTMLElementPrototype, ElementPrototype, NodePrototype, Object)
+  - Collapse 'ele'.
+  - Turn the setting off.
+  - Expand 'ele'.
+  - Verify that there is no prototype displayed.
+
+id: 116
+label: Setting 'Show non enumerable properties'.
+desc:
+  - Go to the url above.
+  - Ensure that 'Show non enumerable properties' is on.
+  - Expand 'this'.
+  - Verify that all non enumerable properties are displayed, e.g. a lot of 
+    HTML<some element name>Element interfaces.
+  - Collapse 'this'.
+  - Turn the setting off.
+  - Expand 'this'.
+  - Verify that all the non enumerables are not displayed.
+
+id: 117
+label: Setting 'Show default null and empty string values'.
+desc:
+  - Go to the url above.
+  - Ensure that 'Show default null and empty string values' is on.
+  - Expand 'ele'.
+  - Verify that all default values, which are either null or an empty string, are displayed.
+    (onclick and friends, title).
+  - Turn the setting off.
+  - Verify that they now all disappear. 
+
+id: 118
+label: Setting Inspection 'Default collapsed prototype objects' in Settings
+desc:
+  - Go to the url above.
+  - Ensure that 'Show the prototypes' is on.
+  - Ensure that Settings Inspection 'Default collapsed prototype objects' is '*'.
+  - Expand 'this'.
+  - Verify that the 'Object' prototype is displayed and 
+    that none of its properties is shown.
+  - Delete Settings Inspection 'Default collapsed prototype objects' and confirm with 'Apply'.
+  - Collapse 'this'.
+  - Expand 'this'.
+  - Verify that the 'Object' prototype is displayed and all its properties are expanded.
+
+
 Scripts.Command Line
 ********************
 
@@ -585,7 +682,7 @@ desc:
   - Click the "console.time" button
   - Verify that "test: 1000ms (1000308µsec)" is printed in the console. The numbers will be slightly different but should be close to 1000ms.
 
-id: 251
+id: 119
 label: Console API: console.trace
 desc:
   - Click the "console.trace" button

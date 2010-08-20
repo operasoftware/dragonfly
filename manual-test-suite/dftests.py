@@ -5,14 +5,19 @@ import time
 import string
 import re
 import time
+import webbrowser
 from mimetypes import guess_type
 from urllib import quote, unquote
+from urllib2 import urlopen, URLError
 from resources.markup import *
 
 APP_ROOT, file_name = os.path.split(os.path.abspath(__file__))
 TESTS = os.path.join(APP_ROOT, "TESTS")
 ID_COUNT = os.path.join(APP_ROOT, 'storage', 'ID_COUNT')
+ID_COUNT_URL = "http://bitbucket.org/scope/dragonfly-stp-1/raw/tip/manual-test-suite/storage/ID_COUNT"
+ID_COUNT_URL_TIMEOUT  = 5
 IDS = os.path.join(APP_ROOT, 'storage', 'IDS')
+
 
 if sys.platform == "win32":
     import os, msvcrt
@@ -264,6 +269,14 @@ def add_ids_test_index():
     f_id_count = open(ID_COUNT, 'r')
     id_count = int(f_id_count.readline().strip())
     f_id_count.close()
+    # try to get the id count from the bitbucket master repo 
+    try:
+        resource = urlopen(ID_COUNT_URL, None, ID_COUNT_URL_TIMEOUT)
+        master_id_count = int(resource.readline().strip())
+        if master_id_count > id_count:
+            id_count = master_id_count
+    except URLError:
+        pass
     f_ids = open(IDS, 'a')
     tmpfd, tmppath = tempfile.mkstemp(".tmp", "dftests.")
     tmpfile = os.fdopen(tmpfd, "w")
@@ -443,7 +456,14 @@ def application(environ, start_response):
     }.get(handler, not_found)(environ, start_response)
         
 if __name__ == '__main__':
-    from wsgiref.simple_server import make_server
-    httpd = make_server('', 8002, application)
-    print "Serving on port 8002..."
-    httpd.serve_forever()
+    try:
+        from wsgiref.simple_server import make_server
+        host = 'localhost'
+        port = 8002
+        httpd = make_server(host, port, application)
+        print "Serving on %s:%s..." % (host, port)
+        webbrowser.open("http://%s:%s/" % (host, port))
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        pass 
+    
