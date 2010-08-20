@@ -54,10 +54,9 @@ var ModebarBase = function()
     this.update(force_redraw)
   };
 
-  this.setContent = function(content)
+  this.setContent = function(template_list, focus_end)
   {
-    var modebar = document.getElementById(this.type + '-to-' + this.cell.id) || this.update();
-    modebar.innerHTML = content;
+    this.horizontal_nav.setContent(template_list, focus_end);
   };
 
   this.setVisibility = function(is_visible)
@@ -72,7 +71,7 @@ var ModebarBase = function()
   this.setup = function(view_id)
   {
     var modebar = document.getElementById(this.type + '-to-' + this.cell.id) || this.update();
-    modebar.innerHTML = 'modebar';
+    modebar.appendChild(this.horizontal_nav.element);
     this._view_id = view_id;
   };
 
@@ -84,6 +83,7 @@ var ModebarBase = function()
     this.left = 0;
     this.is_dirty = true;
     this._is_visible = true;
+    this.horizontal_nav = new HorizontalNavigation(cell);
     this.initBase();
   };
 };

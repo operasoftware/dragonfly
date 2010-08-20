@@ -107,6 +107,15 @@ eventHandlers.click['close-tab'] = function(event, target)
   }
 }
 
+eventHandlers.mousedown['horizontal-nav'] = function(event, target)
+{
+ //var tabs = UIBase.getUIById(target.get_attr('parent-node-chain', 'ui-id'));
+ //var view_id = target.get_attr('parent-node-chain', 'ref-id');
+  var horizontal_nav = UIBase.getUIById(target.get_attr('parent-node-chain', 'ui-id'));
+  var dir = target.get_attr('parent-node-chain', 'dir');
+  horizontal_nav.nav(dir);
+}
+
 eventHandlers.click['settings-tabs'] = function(event, target)
 {
   var tabs = UIBase.getUIById(target.parentElement.getAttribute('ui-id'));

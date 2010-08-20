@@ -43,7 +43,7 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, TopStatusbar
   {
     this.container = new TopContainer(this); // actually just a cell
     this.tab = new TopTabs(this);
-    this.modebar = new Modebar(this);
+    this.modebar = window.modebar = new Modebar(this);
     this.toolbar = TopToolbar && new TopToolbar(this) || null;
     if(this.toolbar)
     {

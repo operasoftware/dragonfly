@@ -324,9 +324,7 @@ toolbar-filters filter.focus input {
 modebar {
   height: 20px;
   line-height: 20px;
-  padding: 13px;
   background: #c1c1c1;
-  border: 15px solid red;
 }
 
 window-select {
@@ -367,7 +365,7 @@ tab:hover {
   }
 
 tab.active {
-  background-position: 0 -34px;
+  background: papayawhip;
   }
 
 .modal tab:hover,
@@ -410,7 +408,7 @@ top-tabs { /* The top tabs container, replaced with, placed into or merged with 
   top: 0;
   left: 0;
   background: #eee;
-  height: 30px;
+  height: 32px;
   }
 
 /* this is a quick hack to get the runtime button in the tabs bar */
@@ -419,18 +417,47 @@ top-tabs toolbar-buttons {
   }
 
 top-tabs tab {  /**/
-  background: #9ab;
-  height: 30px;
-  line-height: 30px;
+  background: #def;
+  height: 24px;
+  line-height: 24px;
   border-right: 1px solid #444;
-  padding: 0 4px;
+  padding: 4px;
   }
 
 top-tabs tab:hover {
   }
 
 top-tabs tab.active {
-  }
+  background: #ace;
+}
+
+top-tabs .icon {
+  display: inline-block;
+  height: 16px;
+  width: 16px;
+  vertical-align: middle;
+  margin-right: 3px;
+  box-shadow: inset 0px 0px 10px rgba(0, 0, 50, .6);
+}
+
+top-tabs.detached {
+  height: 48px;
+}
+top-tabs.detached tab {
+  height: 40px;
+  line-height: normal;
+  width: 50px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  text-align: center;
+}
+top-tabs.detached .icon {
+  display: block;
+  height: 24px;
+  width: 24px;
+  margin: auto;
+}
 
 input[handler="close-tab"] { /* Currently not in use? Now it is :) */ 
   background: transparent url('../ui-images/close.png') scroll no-repeat 50% 0;
@@ -1387,4 +1414,81 @@ pin-label.pinned
 .placeholder
 {
   color: #999;
+}
+
+
+
+
+
+
+
+
+
+
+horizontal-navigation {
+    height: 20px;
+    line-height: 20px;
+    display: block;
+    position: relative;
+    overflow: hidden;
+}
+nav {
+    position: absolute;
+    border: 0 solid #999;
+    width: 20px;
+    text-align: center;
+    z-index: 1;
+    background: #ccc;
+    -display: none;
+    cursor: pointer;
+}
+nav:active {
+    color: red;
+}
+nav::selection {
+    background: inherit;
+}
+.navs nav {
+    display: inline;
+}
+nav[dir="back"] {
+    border-right-width: 1px;
+}
+nav[dir="forward"] {
+    right: 0;
+    border-left-width: 1px;
+}
+nav.disabled {
+    color: #aaa;
+    cursor: default;
+}
+breadcrumbs {
+    box-sizing: border-box;
+    position: absolute;
+    overflow: hidden;
+    white-space: nowrap;
+    left: 0;
+    right: 0;
+    -o-transition: left .4s ease-out;
+}
+.navs breadcrumbs {
+    left: 20px;
+    right: 20px;
+}
+breadcrumb {
+    border-right: 1px solid #999;
+    height: 20px;
+    line-height: 20px;
+    display: inline-block;
+    padding: 0 4px;
+    cursor: pointer;
+}
+breadcrumb:hover {
+    background: #bbb;
+}
+breadcrumbs::selection {
+    background: transparent;
+}
+.drag breadcrumb {
+    cursor: move;
 }

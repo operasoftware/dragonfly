@@ -13,6 +13,19 @@
     ].concat(is_active_tab ? ['class', 'active'] : [] );
   }
 
+  this.top_tab = function(obj, is_active_tab)
+  {
+    return ['tab', [['span', "", "class", "icon"], obj.name],
+            'handler', 'tab',
+            'ref-id', obj.ref_id
+    ].concat(is_active_tab ? ['class', 'active'] : [] );
+  };
+
+  this.horizontal_navigation = function()
+  {
+    return ['horizontal_navigation'];
+  };
+
   this.filters = function(filters)
   {
     var ret = ['toolbar-filters'], filter = '', i = 0, default_text = '';
@@ -175,7 +188,7 @@
     // ret[ret.length] =  this.window_controls();
     for( ; tab = obj.tabs[i]; i++)
     {
-      ret[ret.length] = this.tab(tab, obj.activeTab == tab.ref_id)
+      ret[ret.length] = this.top_tab(tab, obj.activeTab == tab.ref_id)
     }
     return ret;
   }
