@@ -95,24 +95,25 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
     'inspection',
     // key-value map
     {
-      'automatic-update-global-scope': false,
-      'hide-default-properties': true,
-      'use-property-filter': true,
       'show-non-enumerables': true,
+      'show-prototypes': true,
+      'show-default-nulls-and-empty-strings': true,
       'collapsed-prototypes': this.DEFAULT_COLLAPSED_PROTOS,
     },
     // key-label map
     {
-      'automatic-update-global-scope': ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE,
-      'hide-default-properties': ui_strings.S_BUTTON_LABEL_HIDE_DEFAULT_PROPS_IN_GLOBAL_SCOPE,
-      'use-property-filter': "Hide the properties defined in the property filter",
+      'show-prototypes': ui_strings.S_SWITCH_SHOW_PROTOTYPES,
+      'show-default-nulls-and-empty-strings': 
+        ui_strings.S_SWITCH_SHOW_FEFAULT_NULLS_AND_EMPTY_STRINGS,
       'show-non-enumerables': ui_strings.S_SWITCH_SHOW_NON_ENUMERABLES
     },
     // settings map
     {
       checkboxes:
       [
-        'show-non-enumerables'
+        'show-prototypes', 
+        'show-non-enumerables',
+        'show-default-nulls-and-empty-strings',
       ],
       customSettings:
       [
@@ -199,7 +200,9 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
   (
     'inspection',
     [
-      "hide-default-properties"
+      'show-prototypes', 
+      'show-non-enumerables',
+      'show-default-nulls-and-empty-strings',
     ]
   );
 

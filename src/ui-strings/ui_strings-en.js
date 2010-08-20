@@ -176,6 +176,10 @@ ui_strings.S_SWITCH_SHOW_TAB_WIDGET = 'Show widget tab';
 ui_strings.S_SWITCH_SHOW_TAB_DRAGONFLY = 'Show Opera Dragonfly tab';
 /* DESC: TODO. */
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE = 'Automatically update global scope';
+/* DESC: Show prototpe objects when inspecting a js object. */
+ui_strings.S_SWITCH_SHOW_PROTOTYPES = 'Show the prototypes';
+/* DESC: Show default null and empty string values when inspecting a js object. */
+ui_strings.S_SWITCH_SHOW_FEFAULT_NULLS_AND_EMPTY_STRINGS = 'Show default null and empty strings values';
 /* DESC: Show non enumerale properties when inspecting a js object. */
 ui_strings.S_SWITCH_SHOW_NON_ENUMERABLES = 'Show non enumerable properties';
 /* DESC: Will select the element when clicked. */

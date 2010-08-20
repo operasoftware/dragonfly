@@ -348,11 +348,16 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
         var tag = window.tag_manager.set_callback(this,
                                                   this._handle_examine_object,
                                                   [path, obj_id, cb]);
-        var skip_nonenumerables =
-          window.settings.inspection.get('show-non-enumerables') ? 0 : 1;
+        var setting = window.settings.inspection;
+        var examine_prototypes = setting.get('show-prototypes') ? 1 : 0;
+        var skip_nonenumerables = setting.get('show-non-enumerables') ? 0 : 1;
+
         // TODO add a setting to use the property filter
         // filter feature is currently blocked by CORE-32113 bug
-        var msg = [this._rt_id, [obj_id], 1, skip_nonenumerables /*, use filter flag */];
+        var msg = [this._rt_id, 
+                   [obj_id], 
+                   examine_prototypes, 
+                   skip_nonenumerables /*, use filter flag */];
         window.services['ecmascript-debugger'].requestExamineObjects(tag, msg);
       }
     }
