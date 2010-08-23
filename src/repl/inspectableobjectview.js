@@ -1,4 +1,4 @@
-
+﻿
 
 
 window.cls.InspectableObjectView = function(rt_id, obj_id, name, root)

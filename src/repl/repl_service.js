@@ -1,4 +1,4 @@
-cls.ReplService = function(view, data)
+﻿cls.ReplService = function(view, data)
 {
   if (cls.ReplService.instance)
   {

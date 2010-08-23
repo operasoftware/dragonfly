@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Resolve the properties of an object in a runtime.
  *
  * Singleton. Every instanciation will return the same instance. Contains
