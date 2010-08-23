@@ -31,8 +31,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     var switched_to_view = false;
     if (!this._lastupdate)
     {
-      container.innerHTML = "";
-      container.render(templates.repl_main());
+      container.clearAndRender(templates.repl_main());
       this._linelist = container.querySelector("ol");
       this._textarea = container.querySelector("textarea");
       this._textarea.value = this._current_input;
@@ -52,9 +51,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
     else if (scroll_at_bottom)
     {
-      this._container.scrollTop = 9999999; this._container.scrollHeight;
+      this._container.scrollTop = 9999999;
       if (switched_to_view) {
-        window.setTimeout(function() {this._textarea.focus();}.bind(this), 100);
+        // timer use here is a workaround for some DOM issue where focus()
+        // fails if called immediately.
+        window.setTimeout(function() {this._textarea.focus();}.bind(this), 0);
       }
     }
 
