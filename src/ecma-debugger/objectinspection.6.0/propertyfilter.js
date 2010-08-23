@@ -1,4 +1,4 @@
-/**
+﻿/**
   * created with cls.EcmascriptDebugger["6.0"].InspectableJSObject.create_filter("js")
   * filters work the same way as the according scope filters:
   * if a property has the same type and optionally the same value

@@ -251,6 +251,7 @@
     return data ? _pretty_print_proto(model,
                                       tree,
                                       data[index],
+                                      index,
                                       [],
                                       collapsed_protos,
                                       filter,
