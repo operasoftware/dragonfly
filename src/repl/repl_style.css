@@ -1,0 +1,88 @@
+
+
+
+/* command line */
+
+.repl-output,
+.repl-output pre,
+.repl-input, 
+.repl-input textarea {
+  line-height:16px;
+  font-size:14px !important;
+  font-family:monospace;
+  padding:0;
+  margin:0;
+}
+
+.repl-lines {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+li > .repl-lines {
+    margin-left: 2em;
+    padding-left: 9px;
+    border-left: dotted thin black;
+}
+
+.repl-output .repl-pobj {
+    color: blue;
+}
+
+.repl-output .repl-pobj:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.repl-output-trace li {
+    margin-left: 7em;
+}
+
+.repl-output-trace li:nth-of-type(1) {
+    margin-left: 0em;
+}
+
+.repl-output-trace li:nth-of-type(2) {
+    margin-left: 1em;
+}
+
+.repl-output-trace li:nth-of-type(3) {
+    margin-left: 2em;
+}
+
+.repl-output-trace li:nth-of-type(4) {
+    margin-left: 3em;
+}
+
+.repl-output-trace li:nth-of-type(5) {
+    margin-left: 4em;
+}
+
+.repl-output-trace li:nth-of-type(6) {
+    margin-left: 5em;
+}
+
+.repl-output-trace li:nth-of-type(7) {
+    margin-left: 6em;
+}
+
+.repl-input span {
+  float:left;
+}
+
+.repl-input span + div {
+  margin-left: 4ex;
+}
+  
+.repl-input textarea {
+  width:100%;
+  border:0px solid;
+  margin:0;
+  padding:0;
+  overflow:hidden;
+}
+
+.repl-lines .open {
+    background-position: 0 -11px;
+}

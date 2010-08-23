@@ -428,7 +428,7 @@ ui_framework.layouts.js_rough_layout =
       children: 
       [
         { height: 350, tabs: ['js_source']},
-        { height: 250, tabs:['command_line']}
+        { height: 250, tabs:['repl', 'command_line']}
       ] 
     },
     { 
