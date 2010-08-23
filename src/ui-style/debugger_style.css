@@ -108,6 +108,11 @@ li[hanler] {
   cursor:pointer;
   }
 
+.folder-key.inverted
+{
+  background-image: url("../ui-images/expand-collapse-inverted.gif");
+}
+
 .folder-key[disabled="true"] {
   opacity: .3;
   }
@@ -548,8 +553,12 @@ examine-objects key.no-expander
   background-color: #666;
   color: #fff;
   font-weight: bold;
-  padding: 2px 16px;
-  margin: 2px 0;
+  padding: 1px 2px;
+  margin: 2px -2px;
+}
+.prototype-chain-object key
+{
+  color: #fff;
 }
 .css-layout layout-container
 {
@@ -1346,12 +1355,12 @@ color-sample
   margin-left: 5px;
 }
 
+.collapsed-prototypes
+{
+  width: 24em;
+}
+
 property.disabled color-sample
 {
   opacity: .35;
 }
-
-
- 
-
-
