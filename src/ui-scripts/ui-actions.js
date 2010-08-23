@@ -118,30 +118,37 @@ eventHandlers.mousedown['horizontal-nav'] = function(event, target)
 
 eventHandlers.mousedown['breadcrumbs-drag'] = function(event, target)
 {
-    var breadcrumbs = target;
-    breadcrumbs.style.OTransitionDuration = 0;
-    var pos = parseInt(getComputedStyle(breadcrumbs, null).getPropertyValue("left"));
+  var horizontal_nav = UIBase.getUIById(target.get_attr('parent-node-chain', 'ui-id'));
+  var breadcrumbs = target;
+  breadcrumbs.style.OTransitionDuration = 0;
+  var pos = parseInt(getComputedStyle(breadcrumbs, null).getPropertyValue("left"));
 
-    document.addEventListener("mousemove", mouse_move, false);
+  document.addEventListener("mousemove", mouse_move, false);
+  document.addEventListener("mouseup", mouse_up, false);
 
-    document.addEventListener("mouseup", mouse_up, false);
+  function mouse_move(e) {
+    dragBreadcrumbs(e, event.clientX, pos);
+  }
 
-    function mouse_move(e) {
-        dragBreadcrumbs(e, event.clientX, pos);
-    }
+  function mouse_up() {
+    breadcrumbs.removeClass("drag");
+    horizontal_nav.currentBreadcrumbEl = null;
+    document.removeEventListener("mousemove", mouse_move, false);
+    document.removeEventListener("mouseup", mouse_up, false);
+  }
 
-    function mouse_up() {
-        breadcrumbs.className = "";
-        document.removeEventListener("mousemove", mouse_move, false);
-        document.removeEventListener("mouseup", mouse_up, false);
-    }
+  function dragBreadcrumbs(e, mouseStart, pos) {
+    breadcrumbs.addClass("drag")
+    var left = pos + e.clientX - mouseStart;
+    // TODO: check boundaries
+    breadcrumbs.style.left = left + "px";
+  }
+};
 
-    function dragBreadcrumbs(e, mouseStart, pos) {
-        breadcrumbs.className = "drag";
-        var left = pos + e.clientX - mouseStart;
-        // TODO: check boundaries
-        breadcrumbs.style.left = left + "px";
-    }
+eventHandlers.click['breadcrumb'] = function(event, target)
+{
+  var id = target.getAttribute("id");
+  alert(id);
 };
 
 eventHandlers.click['settings-tabs'] = function(event, target)

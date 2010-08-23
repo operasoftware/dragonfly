@@ -324,7 +324,7 @@ toolbar-filters filter.focus input {
 modebar {
   height: 20px;
   line-height: 20px;
-  background: #c1c1c1;
+  background: #ddd;
 }
 
 window-select {
