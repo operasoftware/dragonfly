@@ -396,24 +396,24 @@ MODE ::= "<mode>"
                                    window.settings.dom.get('force-lowercase'),
                                    window.settings.dom.get('show-id_and_classes-in-breadcrumb'),
                                    window.settings.dom.get('show-siblings-in-breadcrumb'));
-    ret = ["breadcrumb"],
+    ret = [],
     i = 0;
 
     if (css_path)
     {
       for( ; i < css_path.length; i++ )
       {
-        ret[ret.length] = 
+        ret[ret.length] =
         [
-          "span", css_path[i].name, 
-          'obj-id', css_path[i].id.toString(), 
+          "breadcrumb", css_path[i].name,
+          'obj-id', css_path[i].id.toString(),
           'handler', 'breadcrumb-link',
-          'class', css_path[i].is_parent_offset ? 'parent-offset' : '', 
+          'class', css_path[i].is_parent_offset ? 'parent-offset' : '',
         ];
-        ret[ret.length] = css_path[i].combinator;
+        //ret[ret.length] = css_path[i].combinator;
       }
     }
-    ret.push('data-model-id', model.id);
+    //ret.push('data-model-id', model.id);
     return ret;
   }
 

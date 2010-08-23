@@ -54,9 +54,9 @@ var ModebarBase = function()
     this.update(force_redraw)
   };
 
-  this.setContent = function(breadcrumbs, focus_end)
+  this.setContent = function(template_list, focus_end)
   {
-    this.horizontal_nav.setContent(breadcrumbs, focus_end);
+    this.horizontal_nav.setContent(template_list, focus_end);
   };
 
   this.setVisibility = function(is_visible)

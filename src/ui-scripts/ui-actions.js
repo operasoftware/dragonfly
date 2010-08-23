@@ -147,8 +147,7 @@ eventHandlers.mousedown['breadcrumbs-drag'] = function(event, target)
 
 eventHandlers.click['breadcrumb'] = function(event, target)
 {
-  var id = target.getAttribute("id");
-  alert(id);
+  window.actions['dom'].breadcrumb_link(event, target);
 };
 
 eventHandlers.click['settings-tabs'] = function(event, target)

@@ -8,15 +8,9 @@ var HorizontalNavigation = function(cell)
 
   var lastDir = null;
 
-  this.setContent = function(breadcrumbs, focus_end)
+  this.setContent = function(template_list, focus_end)
   {
-    var template = breadcrumbs.map(function(breadcrumb) {
-        return ["breadcrumb",
-                breadcrumb.label,
-                "handler", "breadcrumb",
-                "id", breadcrumb.id];
-    });
-    this.breadcrumbs.clearAndRender(template);
+    this.breadcrumbs.clearAndRender(template_list);
     this.checkWidth();
     if (focus_end)
     {
@@ -35,7 +29,6 @@ var HorizontalNavigation = function(cell)
 
       if (dir == "back")
       {
-          //element = element || document.elementFromPoint(this.nav_back.getBoundingClientRect().right + 1, breadcrumbsDim.top);
           if (!element)
           {
               element = this.breadcrumbs.querySelectorAll("breadcrumb")[0];
@@ -53,7 +46,6 @@ var HorizontalNavigation = function(cell)
       }
       else
       {
-          //element = element || document.elementFromPoint(this.nav_forward.getBoundingClientRect().left - 1, breadcrumbsDim.top);
           if (!element)
           {
               element = this.breadcrumbs.querySelectorAll("breadcrumb")[0];
@@ -69,6 +61,7 @@ var HorizontalNavigation = function(cell)
               element = element.nextElementSibling;
           }
       }
+
       var pos = parseInt(getComputedStyle(this.breadcrumbs, null).getPropertyValue("left"));
       this.breadcrumbs.style.OTransitionDuration = Math.min(Math.abs(left) / 200, .2) + "s";
       this.breadcrumbs.style.left = pos + left + "px";
@@ -96,6 +89,7 @@ var HorizontalNavigation = function(cell)
     this.element = document.getElementById(this.type + '-to-' + this.cell.id) || this.update();
     this.breadcrumbs = document.createElement("breadcrumbs");
     this.breadcrumbs.setAttribute("handler", "breadcrumbs-drag");
+    this.breadcrumbs.setAttribute("data-model-id", "dom-inspection-id-1"); // should not be hard-coded I guess
     this.nav_back = document.createElement("nav");
     this.nav_back.textContent = "◀";
     this.nav_back.setAttribute("dir", "back");

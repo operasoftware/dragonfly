@@ -85,7 +85,8 @@ cls.DOMInspectorActions = function(id)
           while ((current_target = current_target.previousSibling) && 
                   current_target.getAttribute('ref-id') != obj_id);
         }
-        topCell.statusbar.updateInfo(templates.breadcrumb(model, obj_id));
+        //topCell.statusbar.updateInfo(templates.breadcrumb(model, obj_id));
+        window.modebar.setContent(templates.breadcrumb(model, obj_id));
       }
       if (current_target)
         current_target.id = 'target-element';
