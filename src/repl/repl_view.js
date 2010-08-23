@@ -448,7 +448,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._handle_option_change_bound = function(event, target)
   {
-    settings.repl.set('max-typed-history-length', target.value);
+    settings.command_line.set('max-typed-history-length', target.value);
     messages.post("setting-changed", {id: "repl", key: "max-typed-history-length"});
   }.bind(this);
 
@@ -467,7 +467,7 @@ cls.ReplView.create_ui_widgets = function()
 {
 
   new Settings(
-    'repl',
+    'command_line',
     { // key/value
       'max-typed-history-length': 8,
       'typed-history': []
@@ -502,4 +502,22 @@ cls.ReplView.create_ui_widgets = function()
       }
     }
   );
+
+  new ToolbarConfig
+  (
+    'command_line',
+    null,
+    null,
+    null,
+    [
+      {
+        handler: 'select-window',
+        title: ui_strings.S_BUTTON_LABEL_SELECT_WINDOW,
+        type: 'dropdown',
+        class: 'window-select-dropdown',
+        template: window['cst-selects']['cmd-runtime-select'].getTemplate()
+      }
+    ]
+  );
+
 };

@@ -3,8 +3,8 @@
 cls.ReplData = function(view)
 {
   this._repllog = [];
-  this._typed_history = settings.repl.get("typed-history") || [];
-  this._max_typed = settings.repl.get('max-typed-history-length') || 0;
+  this._typed_history = settings.command_line.get("typed-history") || [];
+  this._max_typed = settings.command_line.get('max-typed-history-length') || 0;
   this._view = view;
 
   this.clear = function()
@@ -129,7 +129,7 @@ cls.ReplData = function(view)
       {
         this._typed_history = this._typed_history.slice(0, this._max_typed);
       }
-      settings.repl.set("typed-history", this._typed_history);
+      settings.command_line.set("typed-history", this._typed_history);
     }
   };
 
@@ -137,7 +137,7 @@ cls.ReplData = function(view)
   {
     if (msg.id == "repl" && msg.key == "max-typed-history-length")
     {
-      this._max_typed = settings.repl.get(msg.key);
+      this._max_typed = settings.command_line.get(msg.key);
     }
   }.bind(this);
 

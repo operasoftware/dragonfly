@@ -1,11 +1,11 @@
 ﻿/**
-  * @constructor 
+  * @constructor
   */
 
-var composite_view_convert_table = 
+var composite_view_convert_table =
 {
   // opera.attached.toString()
-  "true": 
+  "true":
   {
     'console_new': 'console_new',
     'settings_new': 'settings_new',
@@ -18,7 +18,7 @@ var composite_view_convert_table =
     'utils': 'utils',
     'storage': 'storage'
   },
-  "false": 
+  "false":
   {
     'console_new': 'console_new',
     'settings_new': 'settings_new',
@@ -64,9 +64,9 @@ window.cls.Client = function()
     }
     else
     {
-      var 
-      has_window_manager = servicelist.indexOf('window-manager') != -1, 
-      i = 0, 
+      var
+      has_window_manager = servicelist.indexOf('window-manager') != -1,
+      i = 0,
       core_version = '',
       fallback_version = !has_window_manager && 'protocol-3' || '';
 
@@ -106,7 +106,7 @@ window.cls.Client = function()
   var get_quit_callback = function(client_id)
   {
     // workaround for bug CORE-25389
-    // onQuit() callback is called twice when 
+    // onQuit() callback is called twice when
     // creating new client with addScopeClient
     return function()
     {
@@ -120,15 +120,15 @@ window.cls.Client = function()
   var _get_port_number = function()
   {
     // TODO
-    // port 0 means debugging to current Opera instance, 
+    // port 0 means debugging to current Opera instance,
     // any other port means remote debugging.
-    var is_remote_debug = 
+    var is_remote_debug =
       settings.debug_remote_setting.get('debug-remote') ||
-      JSON.parse(window.helpers.getCookie('debug-remote')) || 
+      JSON.parse(window.helpers.getCookie('debug-remote')) ||
       false;
-    
-    return ( 
-      is_remote_debug && 
+
+    return (
+      is_remote_debug &&
       (settings.debug_remote_setting.get('port') ||
       JSON.parse(window.helpers.getCookie('port'))) ||
       0);
@@ -154,9 +154,9 @@ window.cls.Client = function()
     var port = _get_port_number();
     var cb_index = cbs.push(get_quit_callback(_client_id)) - 1;
     opera.scopeAddClient(
-        _on_host_connected, 
-        cls.ServiceBase.get_generic_message_handler(), 
-        cbs[cb_index], 
+        _on_host_connected,
+        cls.ServiceBase.get_generic_message_handler(),
+        cbs[cb_index],
         port
       );
     if(window.ini.debug && !opera.scopeHTTPInterface)
@@ -171,7 +171,7 @@ window.cls.Client = function()
     {
       _first_setup = false;
       _waiting_screen_timeout = setTimeout(show_waiting_screen, 250, port);
-      
+
     }
     else
     {
@@ -181,7 +181,7 @@ window.cls.Client = function()
 
   var show_waiting_screen = function(port)
   {
-    viewport.innerHTML = 
+    viewport.innerHTML =
     "<div class='padding'>" +
       "<div class='info-box'>" + ui_strings.S_INFO_WAITING_FORHOST_CONNECTION.replace(/%s/, port) +
           ( port ? "<p><input type='button' value='" + ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG + "'" +
@@ -198,7 +198,7 @@ window.cls.Client = function()
 
   var handle_fallback = function(version)
   {
-    var 
+    var
     href = location.href,
     protocol = location.protocol + '//',
     hostname = location.hostname,
@@ -285,9 +285,9 @@ window.cls.Client = function()
         }
       }
       // a short workwround to hide some tabs as long as we don't have the dynamic tabs
-      var 
-      is_disbaled = null, 
-      tabs = ui_framework.layouts.console_rough_layout.children[0].tabs, 
+      var
+      is_disbaled = null,
+      tabs = ui_framework.layouts.console_rough_layout.children[0].tabs,
       tab = '',
       i = 0;
 
@@ -315,9 +315,9 @@ window.cls.Client = function()
     new TopCell
     (
       window.opera.attached ? ui_framework.layouts.panel_layout : ui_framework.layouts.main_layout,
-      null, 
-      null, 
-      TopToolbar, 
+      null,
+      null,
+      TopToolbar,
       TopStatusbar
     );
     windowsDropDown.update();
@@ -325,7 +325,7 @@ window.cls.Client = function()
     if(  view_id && views[view_id] && !views[view_id].isvisible())
     {
       window.topCell.showView(view_id);
-    } 
+    }
     if(global_state.ui_framework.spin_state)
     {
       messages.post("host-state", {state: global_state.ui_framework.spin_state});
@@ -339,13 +339,13 @@ window.cls.Client = function()
 ui_framework.layouts.console_rough_layout =
 {
   dir: 'v', width: 700, height: 700,
-  children: 
+  children:
   [
-    { height: 200, tabs: 
+    { height: 200, tabs:
       [
-        'console-all', 
-        'console-script', 
-        'console-css', 
+        'console-all',
+        'console-script',
+        'console-css',
         'console-xml',
         'console-java',
         'console-m2',
@@ -356,7 +356,7 @@ ui_framework.layouts.console_rough_layout =
         'console-bittorrent',
         'console-voice',
         'console-widget'
-      ] 
+      ]
     }
   ]
 }
@@ -364,7 +364,7 @@ ui_framework.layouts.console_rough_layout =
 ui_framework.layouts.environment_rough_layout =
 {
   dir: 'v', width: 700, height: 700,
-  children: 
+  children:
   [
     { height: 200, tabs: ['environment'] }
   ]
@@ -373,7 +373,7 @@ ui_framework.layouts.environment_rough_layout =
 ui_framework.layouts.export_rough_layout =
 {
   dir: 'v', width: 700, height: 700,
-  children: 
+  children:
   [
     { height: 200, tabs: ['export_data'] }
   ]
@@ -382,24 +382,24 @@ ui_framework.layouts.export_rough_layout =
 ui_framework.layouts.settings_rough_layout =
 {
   dir: 'v', width: 700, height: 700,
-  children: 
+  children:
   [
     { height: 200, tabs: ['settings_view'] }
   ]
 }
 
-  
+
 
 ui_framework.layouts.dom_rough_layout =
 {
   dir: 'h', width: 700, height: 700,
-  children: 
+  children:
   [
-    { 
+    {
       width: 700, tabs: ['dom', 'stylesheets']
     },
-    { 
-      width: 250, tabs: ['css-inspector', 'dom_attrs', 'css-layout'] 
+    {
+      width: 250, tabs: ['css-inspector', 'dom_attrs', 'css-layout']
     }
   ]
 }
@@ -407,13 +407,13 @@ ui_framework.layouts.dom_rough_layout =
 ui_framework.layouts.dom_rough_layout_panel =
 {
   dir: 'h', width: 700, height: 700,
-  children: 
+  children:
   [
-    { 
+    {
       width: 700, tabs: ['dom', 'stylesheets']
     },
-    { 
-      width: 250, tabs: ['css-inspector', 'dom_attrs', 'css-layout'] 
+    {
+      width: 250, tabs: ['css-inspector', 'dom_attrs', 'css-layout']
     }
   ]
 }
@@ -421,23 +421,23 @@ ui_framework.layouts.dom_rough_layout_panel =
 ui_framework.layouts.js_rough_layout =
 {
   dir: 'h', width: 700, height: 700,
-  children: 
+  children:
   [
-    { 
-      width: 700, 
-      children: 
+    {
+      width: 700,
+      children:
       [
         { height: 350, tabs: ['js_source']},
-        { height: 250, tabs:['repl', 'command_line']}
-      ] 
+        { height: 250, tabs:['command_line']}
+      ]
     },
-    { 
-      width: 250, 
-      children: 
+    {
+      width: 250,
+      children:
       [
         { height: 250, tabs: ['callstack', 'threads'] },
         { height: 1000, tabs: ['inspection'] }
-      ] 
+      ]
     }
   ]
 }
@@ -445,21 +445,21 @@ ui_framework.layouts.js_rough_layout =
 ui_framework.layouts.js_rough_layout_panel =
 {
   dir: 'h', width: 700, height: 700,
-  children: 
+  children:
   [
-    { 
-      width: 700, 
-      children: 
+    {
+      width: 700,
+      children:
       [
         { height: 150, tabs: [/*'runtimes', */'js_source', 'command_line'] }
-      ] 
+      ]
     },
-    { 
-      width: 250, 
-      children: 
+    {
+      width: 250,
+      children:
       [
         { height: 250, tabs: ['callstack', 'inspection', 'threads'] }
-      ] 
+      ]
     }
   ]
 }
@@ -469,7 +469,7 @@ ui_framework.layouts.network_rough_layout =
     dir: 'v',
     width: 1000,
     height: 1000,
-    children: [ { height: 1000, tabs: ['request_list'] } ] 
+    children: [ { height: 1000, tabs: ['request_list'] } ]
 }
 
 ui_framework.layouts.utils_rough_layout =
@@ -477,7 +477,7 @@ ui_framework.layouts.utils_rough_layout =
     dir: 'v',
     width: 1000,
     height: 1000,
-    children: [ { height: 1000, tabs: ['color_picker'] } ] 
+    children: [ { height: 1000, tabs: ['color_picker'] } ]
 }
 
 ui_framework.layouts.storage_rough_layout =
@@ -485,17 +485,17 @@ ui_framework.layouts.storage_rough_layout =
     dir: 'v',
     width: 1000,
     height: 1000,
-    children: [ { height: 1000, tabs: ['cookies', 'local_storage', 'session_storage', 'widget_preferences'] } ] 
+    children: [ { height: 1000, tabs: ['cookies', 'local_storage', 'session_storage', 'widget_preferences'] } ]
 }
 
 ui_framework.layouts.main_layout =
 {
-  id: 'main-view', 
+  id: 'main-view',
   tabs: ['dom_new', 'js_new', 'network_panel', 'storage', 'console_new', 'utils', 'settings_new']
 }
 
 ui_framework.layouts.panel_layout =
 {
-  id: 'main-view', 
+  id: 'main-view',
   tabs: ['dom_panel', 'js_panel', 'network_panel', 'storage', 'console_new', 'utils', 'settings_new']
 }

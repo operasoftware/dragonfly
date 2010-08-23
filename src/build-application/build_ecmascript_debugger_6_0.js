@@ -59,14 +59,13 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     new cls.ExportDataView('export_data', ui_strings.M_VIEW_LABEL_EXPORT, 'scroll export-data');
 
     /* commandline */
-    cls.CommandLineViewTest.prototype = ViewBase;
-    new cls.CommandLineViewTest('command_line', ui_strings.M_VIEW_LABEL_COMMAND_LINE, 'scroll', '', 'cmd-focus');
+
     cls.CndRtSelect.prototype = new CstSelect();
     new cls.CndRtSelect('cmd-runtime-select', 'cmd-line-runtimes');
     cls.CommandLineViewTest.create_ui_widgets();
 
     cls.ReplView.create_ui_widgets();
-    new cls.ReplView('repl', "REPL", 'scroll', '', '');
+    new cls.ReplView('command_line', "REPL", 'scroll', '', '');
 
     /* JS source */
     window.simple_js_parser = new window.cls.SimpleJSParser();
