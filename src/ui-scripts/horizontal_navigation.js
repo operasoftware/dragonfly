@@ -14,7 +14,8 @@ var HorizontalNavigation = function(cell)
     this.checkWidth();
     if (focus_end)
     {
-        this.breadcrumbs.scrollLeft = this.breadcrumbs.scrollWidth;
+      // TODO: make sure the animation doesn't happen here
+      this.breadcrumbs.scrollLeft = this.breadcrumbs.scrollWidth;
     }
   };
 

@@ -137,17 +137,17 @@ eventHandlers.mousedown['breadcrumbs-drag'] = function(event, target)
     document.removeEventListener("mouseup", mouse_up, false);
   }
 
+  // TODO: this method can be cleaned up a bit
   function dragBreadcrumbs(e, mouseStart, pos) {
     breadcrumbs.addClass("drag")
-    var left = pos + e.clientX - mouseStart;
-    // TODO: check boundaries
-    breadcrumbs.style.left = left + "px";
+    var left = Math.min(breadcrumbs.previousElementSibling.offsetWidth, pos + e.clientX - mouseStart);
+    var breadcrumb_eles = breadcrumbs.querySelectorAll("breadcrumb");
+    var last = breadcrumb_eles[breadcrumb_eles.length-1];
+    if (last.getBoundingClientRect().right > breadcrumbs.nextElementSibling.offsetLeft)
+    {
+      breadcrumbs.style.left = Math.max(left, breadcrumbs.nextElementSibling.offsetLeft - breadcrumbs.scrollWidth + 1) + "px";
+    }
   }
-};
-
-eventHandlers.click['breadcrumb'] = function(event, target)
-{
-  window.actions['dom'].breadcrumb_link(event, target);
 };
 
 eventHandlers.click['settings-tabs'] = function(event, target)
