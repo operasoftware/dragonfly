@@ -323,5 +323,16 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./repl/repl_data.js"/>
 <script src="./repl/repl_templates.js"/>
 <script src="./repl/ecmascriptdebugger.6.0.events.onconsoletrace.js"/>
+
+<script src="./resource-manager/resource_service.js"/>
+<script src="./resource-manager/resourcemanager.1.0.events.onurlload.js"/>
+<script src="./resource-manager/resourcemanager.1.0.events.onurlfinished.js"/>
+<script src="./resource-manager/resourcemanager.1.0.events.onrequest.js"/>
+<script src="./resource-manager/resourcemanager.1.0.events.onrequestheader.js"/>
+<script src="./resource-manager/resourcemanager.1.0.events.onrequestfinished.js"/>
+<script src="./resource-manager/resourcemanager.1.0.events.onresponse.js"/>
+<script src="./resource-manager/resourcemanager.1.0.events.onresponseheader.js"/>
+<script src="./resource-manager/resourcemanager.1.0.events.onresponsefinished.js"/>
+
 <body/>
 </viewport>
