@@ -25,7 +25,7 @@
  *
  */
 
-function ResourceManagerService()
+cls.ResourceManagerService = function(view, data)
 {
   this._seen_doc_ids = [];
   this._document_contexts = {}; // mapping document id -> list of requests
@@ -35,7 +35,6 @@ function ResourceManagerService()
   {
     var data = new cls.ResourceManager["1.0"].UrlLoad(msg);
 
-    opera.postError("seen IDS " + this._seen_doc_ids )
     if (this._seen_doc_ids.indexOf(data.documentID) == -1 ) // not seen id before!
     {
       this._seen_doc_ids.unshift(data.documentID);
@@ -143,12 +142,11 @@ function ResourceManagerService()
 
   };
 
+  this.get_current_document = function()
+  {
+    return this._current_document;
+  };
+
   this.init();
-}
-
-window.setTimeout(function() {
-
-
-                    window.flargh = new ResourceManagerService();
-                  }, 1000);
+};
 

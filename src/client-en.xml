@@ -215,6 +215,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./build-application/build_exec_2_0.js"></script>
 <script src="./build-application/build_ecmascript_debugger_5_0.js"></script>
 <script src="./build-application/build_ecmascript_debugger_6_0.js"></script>
+<script src="./build-application/build_resource_manager_1_0.js"></script>
 
 
 <script src="./debug/debug.js"/>
@@ -325,6 +326,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./repl/ecmascriptdebugger.6.0.events.onconsoletrace.js"/>
 
 <script src="./resource-manager/resource_service.js"/>
+<script src="./resource-manager/resource_view.js"/>
 <script src="./resource-manager/resourcemanager.1.0.events.onurlload.js"/>
 <script src="./resource-manager/resourcemanager.1.0.events.onurlfinished.js"/>
 <script src="./resource-manager/resourcemanager.1.0.events.onrequest.js"/>
