@@ -241,11 +241,11 @@ window.cls.Client = function()
     var layouts = ui_framework.layouts;
     new CompositeView('network_panel', ui_strings.M_VIEW_LABEL_NETWORK, layouts.network_rough_layout);
     new CompositeView('console_new', ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE, layouts.console_rough_layout);
-    new CompositeView('js_new', ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS, layouts.js_rough_layout);
-    new CompositeView('dom_new', ui_strings.M_VIEW_LABEL_COMPOSITE_DOM, layouts.dom_rough_layout);
+    new CompositeView('js_new', ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS, layouts.js_rough_layout, true);
+    new CompositeView('dom_new', ui_strings.M_VIEW_LABEL_COMPOSITE_DOM, layouts.dom_rough_layout, true);
     new CompositeView('export_new', ui_strings.M_VIEW_LABEL_COMPOSITE_EXPORTS, layouts.export_rough_layout);
-    new CompositeView('js_panel', ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS, layouts.js_rough_layout_panel);
-    new CompositeView('dom_panel', ui_strings.M_VIEW_LABEL_COMPOSITE_DOM, layouts.dom_rough_layout_panel);
+    new CompositeView('js_panel', ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS, layouts.js_rough_layout_panel, true);
+    new CompositeView('dom_panel', ui_strings.M_VIEW_LABEL_COMPOSITE_DOM, layouts.dom_rough_layout_panel, true);
     new CompositeView('settings_new', ui_strings.S_BUTTON_LABEL_SETTINGS, layouts.settings_rough_layout);
     new CompositeView('utils', ui_strings.M_VIEW_LABEL_UTILITIES, layouts.utils_rough_layout);
     new CompositeView('storage', ui_strings.M_VIEW_LABEL_STORAGE, layouts.storage_rough_layout);

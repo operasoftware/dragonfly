@@ -29,7 +29,7 @@ var ToolbarBase = function()
 
   this.getTopPosition = function()
   {
-    return this.cell.top + this.cell.tab.height;
+    return this.cell.top + this.cell.tab.offsetHeight;
   };
 
   this.setDimensions = function(force_redraw)

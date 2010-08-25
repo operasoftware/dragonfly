@@ -86,6 +86,7 @@ cls.DOMInspectorActions = function(id)
                   current_target.getAttribute('ref-id') != obj_id);
         }
         window.modebar.setContent(window.templates.breadcrumb(model, obj_id), true);
+        window.modebar.setVisibility(false);
       }
       if (current_target)
         current_target.id = 'target-element';

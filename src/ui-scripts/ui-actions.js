@@ -33,11 +33,11 @@ var EventHandler = function(type, is_capturing, handler_key)
       return;
     }
     handler = ele.getAttribute(handler_key);
-    while( !handler && ( ele = ele.parentElement ) )
+    while( !(handler && eventHandlers[type][handler]) && ( ele = ele.parentElement ) )
     {
       handler = ele.getAttribute(handler_key);
     }
-    if( handler && eventHandlers[type][handler] )
+    if( handler )
     {
       if( type == 'click' && /toolbar-buttons/i.test(ele.parentNode.nodeName) )
       {
@@ -67,6 +67,7 @@ new EventHandler('keyup', true);
 new EventHandler('keydown', true);
 new EventHandler('keypress', true);
 new EventHandler('mousedown');
+new EventHandler('mouseup');
 new EventHandler('mouseover');
 new EventHandler('focus', true, 'focus-handler');
 new EventHandler('blur', true, 'blur-handler');
@@ -107,13 +108,20 @@ eventHandlers.click['close-tab'] = function(event, target)
   }
 }
 
+var navTimeout = null;
 eventHandlers.mousedown['horizontal-nav'] = function(event, target)
 {
- //var tabs = uibase.getuibyid(target.get_attr('parent-node-chain', 'ui-id'));
- //var view_id = target.get_attr('parent-node-chain', 'ref-id');
   var horizontal_nav = UIBase.getUIById(target.get_attr('parent-node-chain', 'ui-id'));
   var dir = target.get_attr('parent-node-chain', 'dir');
-  horizontal_nav.nav(dir);
+  (function nav() {
+    horizontal_nav.nav(dir);
+    navTimeout = setTimeout(nav, 400);
+  })();
+};
+
+eventHandlers.mouseup['horizontal-nav'] = function(event, target)
+{
+  clearTimeout(navTimeout);
 };
 
 eventHandlers.mousedown['breadcrumbs-drag'] = function(event, target)
@@ -123,8 +131,10 @@ eventHandlers.mousedown['breadcrumbs-drag'] = function(event, target)
   breadcrumbs.style.OTransitionDuration = 0;
   var pos = parseInt(getComputedStyle(breadcrumbs, null).getPropertyValue("left"));
 
-  document.addEventListener("mousemove", mouse_move, false);
-  document.addEventListener("mouseup", mouse_up, false);
+  if (breadcrumbs.previousElementSibling.offsetWidth > 0) {
+    document.addEventListener("mousemove", mouse_move, false);
+    document.addEventListener("mouseup", mouse_up, false);
+  }
 
   function mouse_move(e) {
     dragBreadcrumbs(e, event.clientX, pos);

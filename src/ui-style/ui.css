@@ -30,18 +30,22 @@ top-toolbar {
   position: absolute;
   }
 
+/*top-toolbar,*/ top-tabs, modebar, tabs {
+    border-bottom: 1px solid #aaa;
+}
+
 /* set with css. height, border and padding are supported */
 
 top-container { /**/
-  background-color: #e1e4e9;
+  background-color: #eee;
   }
 
 /* set with css. height, border and padding are supported */
 
 container { /**/
-  border-top: 1px solid #ccc;
-  border-left: 1px solid #ccc;
-  border-right: 1px solid #ccc;
+  border-top: 1px solid #aaa;
+  border-left: 1px solid #aaa;
+  border-right: 1px solid #aaa;
   background-color: #fff;
   overflow: hidden;
   } 
@@ -130,11 +134,10 @@ window-toolbar { /**/
 /* set with css. height, border and padding are supported */
 
 toolbar { /**/
-  border-top: 1px solid #ccc;
-  border-left: 1px solid #ccc;
-  border-right: 1px solid #ccc;
-  background-color: #f5f7fa;
-	padding: 0 1px;
+  border-left: 1px solid #aaa;
+  border-right: 1px solid #aaa;
+  background-color: #fff;
+  padding: 0 1px;
   height: 26px;
   }
 
@@ -347,25 +350,31 @@ window-select select option[value="-1"]  {
 /* set with css. height, border and padding are supported */
 
 tabs { /* The bottom tabs containers */
-  height: 23px;
-  background: #e1e4e9 url('../ui-images/tab-border.png') scroll repeat-x 0 0;
+  height: 22px;
+  padding: 1px 2px 0; /* Tab will be pushed down one pixel, hence only 1 pixel at the top */
+  color: #444;
   }
 
 tab { /**/
   display:block;
   float:left;
-  background: salmon;
-  height: 17px;
-  line-height: 17px;
-  padding: 3px;
+  height: 15px;
+  line-height: 15px;
+  padding: 3px 6px;
+  border: 0 transparent solid;
+  border-width: 1px 1px 0 1px;
+  position: relative;
+  top: 1px; /* Push down one pixel to hide the border */
   }
 
 tab:hover {
   background-position: 0 -17px;
   }
 
-tab.active {
-  background: papayawhip;
+tabs tab.active {
+  background: #fff;
+  border-color: #aaa;
+  color: #000;
   }
 
 .modal tab:hover,
@@ -417,18 +426,19 @@ top-tabs toolbar-buttons {
   }
 
 top-tabs tab {  /**/
-  background: #def;
+  background: #eee;
   height: 24px;
   line-height: 24px;
-  border-right: 1px solid #444;
+  border-right: 1px solid #aaa;
   padding: 4px;
+  position: static;
   }
 
 top-tabs tab:hover {
   }
 
 top-tabs tab.active {
-  background: #ace;
+  background: #ddd;
 }
 
 top-tabs .icon {
@@ -437,7 +447,7 @@ top-tabs .icon {
   width: 16px;
   vertical-align: middle;
   margin-right: 3px;
-  box-shadow: inset 0px 0px 10px rgba(0, 0, 50, .6);
+  box-shadow: inset 0px 0px 10px rgba(0, 0, 0, .6);
 }
 
 top-tabs.detached {
@@ -1434,7 +1444,8 @@ horizontal-navigation {
 }
 nav {
     position: absolute;
-    border: 0 solid #999;
+    border: 0 solid #aaa;
+    color: #444;
     width: 20px;
     text-align: center;
     z-index: 1;
@@ -1443,7 +1454,7 @@ nav {
     cursor: pointer;
 }
 nav:active {
-    color: red;
+    color: #000;
 }
 nav::selection {
     background: inherit;

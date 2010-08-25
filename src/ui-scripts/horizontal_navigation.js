@@ -15,7 +15,7 @@ var HorizontalNavigation = function(cell)
     if (focus_end)
     {
       // TODO: make sure the animation doesn't happen here
-      this.breadcrumbs.scrollLeft = this.breadcrumbs.scrollWidth;
+     // this.breadcrumbs.scrollLeft = this.breadcrumbs.scrollWidth;
     }
   };
 
@@ -33,7 +33,8 @@ var HorizontalNavigation = function(cell)
           if (!element)
           {
               element = this.breadcrumbs.querySelectorAll("breadcrumb")[0];
-              while (element && element.getBoundingClientRect().right < this.nav_back.offsetWidth) {
+              while (element && element.getBoundingClientRect().right < this.nav_back.offsetWidth)
+              {
                   element = element.nextElementSibling;
               }
           }
@@ -50,7 +51,8 @@ var HorizontalNavigation = function(cell)
           if (!element)
           {
               element = this.breadcrumbs.querySelectorAll("breadcrumb")[0];
-              while (element && element.getBoundingClientRect().right - 1 <= this.nav_forward.offsetLeft) {
+              while (element && element.getBoundingClientRect().right - 1 <= this.nav_forward.offsetLeft)
+              {
                   element = element.nextElementSibling;
               }
           }
