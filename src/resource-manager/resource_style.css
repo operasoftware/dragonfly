@@ -1,0 +1,54 @@
+.resource-main {
+    padding: 0;
+    margin: 0;
+}
+
+.request-list {
+    margin: 0;
+    width: 190px;
+    font-family: sans-serif;
+    font-size: 10px;
+    table-style: none;
+    display: table;
+    table-layout: fixed;
+    padding-left: 0;
+    background-color: #e6e6e6;
+}
+
+.request-list li {
+    height: 30px;
+    line-height: 30px;
+    vertical-align: middle;
+    display: table-row;
+}
+
+.request-list li:nth-child(odd) {
+    background-color: #d9d9d9;
+}
+
+.request-list li > * {
+    display: table-cell;
+}
+
+.request-list li > *:nth-child(1) {
+    width: 28px;
+}
+
+.request-list li > *:nth-child(2) {
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.request-list li > *:nth-child(3) {
+    width: 20px;
+    text-align: right;
+    padding-right: 6px;
+    color: #999999;
+}
+
+.resource-detail {
+  
+}
+

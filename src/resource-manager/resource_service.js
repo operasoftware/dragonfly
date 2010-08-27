@@ -92,6 +92,7 @@ cls.ResourceManagerService = function(view, data)
   this._on_response_bound = function(msg)
   {
     var data = new cls.ResourceManager["1.0"].Response(msg);
+
     var resource = this._current_document.resourcemap[data.resourceID];
     if (resource) {
       resource.response = data;
@@ -123,7 +124,7 @@ cls.ResourceManagerService = function(view, data)
     if (resource) {
       resource.urlfinished = data;
     }
-    opera.postError(JSON.stringify(this._current_document, null, 2));
+    //opera.postError(JSON.stringify(this._current_document, null, 2));
   }.bind(this);
 
   this.init = function()
