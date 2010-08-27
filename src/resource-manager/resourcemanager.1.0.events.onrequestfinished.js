@@ -14,15 +14,16 @@ cls.ResourceManager["1.0"].RequestFinished = function(arr)
 cls.ResourceManager["1.0"].RequestData = function(arr)
 {
   this.requestID = arr[0];
-  this.mimeType = arr[1];
-  this.characterEncoding = arr[2];
-  this.contentLength = arr[3];
-  this.content = arr[4] ? new cls.ResourceManager["1.0"].Content(arr[4]) : null;
+  this.resourceID = arr[1];
+  this.mimeType = arr[2];
+  this.characterEncoding = arr[3];
+  this.contentLength = arr[4];
+  this.content = arr[5] ? new cls.ResourceManager["1.0"].Content(arr[5]) : null;
   /** 
     * If the payload is multipart, this list contains the
     * individual parts.
     */
-  this.partList = (arr[5] || []).map(function(item)
+  this.partList = (arr[6] || []).map(function(item)
   {
     return new cls.ResourceManager["1.0"].Part(item);
   });
