@@ -419,21 +419,13 @@ stylesheet-link:hover {
   color: #666;
   }
 
-styles {
+styles rule {
   /*xxwhite-space: pre-wrap;*/
   font-family:monospace;
-  }
-
-.unfolded styles {
-  padding: 5px;
-  }
-
-category {
-
+  padding:  0 5px;
   }
 
 category header {
-  font-size: 1.2em;
   border: 1px solid #ccc;
   border-width: 0 0 1px;
   background-color: hsl( 0, 0% , 95%);
@@ -503,14 +495,13 @@ category.unfolded + category header {
   }
 
 .css-inspector h2 {
-  font-size: 12px;
+  font-size: 1em;
   font-weight: normal;
-  border: 1px solid #ccc;
-  border-width:1px 0;
-  background-color: hsl( 0, 0%, 95%);
-  text-align: center;
-  margin: 10px -5px;
-  color: hsl(0, 0%, 50%)
+  border: 0 solid #aaa;
+  border-width: 1px 0;
+  background-color: #eee;
+  margin: 10px 0;
+  padding-left: 3px;
   }
   
 .css-inspector h2 b 
@@ -522,6 +513,7 @@ examine-objects,
 examine-objects item 
 {
   display:block;
+  font-family: monospace;
 }
 examine-objects
 {
@@ -671,10 +663,10 @@ stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
   background: transparent url('../ui-images/expand-collapse.png') 6px 2px no-repeat;
 }
 
-.dom input:focus
+/*.dom input:focus
 {
   background-color: Highlight;
-}
+}*/
 
 .dom input.open {
   background-position: 6px -13px;
@@ -696,7 +688,7 @@ stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
 
 
 .css-layout h2 {
-  font-size: 1.2em;
+  font-size: 1em;
   border: 1px solid #ccc;
   border-width: 1px 0;
   background-color: hsl( 0, 0% , 95%);

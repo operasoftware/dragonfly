@@ -30,7 +30,7 @@ top-toolbar {
   position: absolute;
   }
 
-/*top-toolbar,*/ top-tabs, modebar, tabs {
+top-toolbar, top-tabs, modebar, tabs {
     border-bottom: 1px solid #aaa;
 }
 
@@ -43,7 +43,6 @@ top-container { /**/
 /* set with css. height, border and padding are supported */
 
 container { /**/
-  border-top: 1px solid #aaa;
   border-left: 1px solid #aaa;
   border-right: 1px solid #aaa;
   background-color: #fff;
@@ -134,8 +133,8 @@ window-toolbar { /**/
 /* set with css. height, border and padding are supported */
 
 toolbar { /**/
-  border-left: 1px solid #aaa;
-  border-right: 1px solid #aaa;
+  border: 0 solid #aaa;
+  border-width: 0 1px 1px;
   background-color: #fff;
   padding: 0 1px;
   height: 26px;
@@ -338,7 +337,8 @@ window-select {
   }
 
 window-select select {
-  width:100%;
+  width: 100%;
+  max-width: 400px;
   margin:0;
   height: 22px;
   }
@@ -1480,11 +1480,11 @@ breadcrumbs {
     white-space: nowrap;
     left: 0;
     right: 0;
-    -o-transition: left .4s ease-out;
+    -o-transition: left 0 ease-out;
 }
 .navs breadcrumbs {
-    left: 20px;
-    right: 20px;
+    left: 21px;
+    right: 20px; /* minus one pixel to hide the right border of the last breadcrumb */
 }
 breadcrumb {
     border-right: 1px solid #999;

@@ -105,34 +105,38 @@
 
 #target-element
 {
-	background-color:#eec;
+  background-color: #cce5f3;
   margin-top: -1px;
   margin-right: -1px;
   margin-bottom: -1px;
-  border: 1px solid hsl(60, 30%, 60%); 
+  border: 1px solid #78bae0;
   position: relative;
   z-index: 1;
 }
 
 .dom [handler="spotlight-node"]:hover
 {
-  background-color: #f5f5e0;
+  background-color: #eee;
 }
-
+.dom ::selection {
+  /* TEMP */
+  background-color: lime;
+  color: #000;
+}
 .dom .comment{
 	color:#888;
   }
 
 .dom node, selector {
-  color: #279;
+  color: #952598;
   }
 
 .dom key, .stylesheets key, .css-inspector key {
-	color:#229;
+	color: #c4663a;
   }
 
 .dom value, .doctype-value, .stylesheets value, .css-inspector value {
-	color:#742;
+	color: #1c2897;
   }
 
 .dom .text-node, .dom .comment-node, .dom .cdata-node {

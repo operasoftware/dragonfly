@@ -157,6 +157,7 @@ eventHandlers.mousedown['breadcrumbs-drag'] = function(event, target)
     {
       breadcrumbs.style.left = Math.max(left, breadcrumbs.nextElementSibling.offsetLeft - breadcrumbs.scrollWidth + 1) + "px";
     }
+    horizontal_nav.check_position(); // TODO: consider moving this to mouse_up
   }
 };
 

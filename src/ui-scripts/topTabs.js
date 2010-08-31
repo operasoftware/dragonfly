@@ -8,7 +8,7 @@ var TopTabsBase = function()
   this.type = 'top-tabs';
   this.getTopPosition = function()
   {
-    return this.cell.top + (this.cell.toolbar ? this.cell.toolbar.offsetHeight : 0);
+    return this.cell.top + (this.cell.toolbar && this.cell.toolbar.height ? this.cell.toolbar.offsetHeight : 0);
   }
 
   this.setDimensions = function(force_redraw)
@@ -22,7 +22,6 @@ var TopTabsBase = function()
     }
 
     dim = this.getTopPosition();
-
     if( dim != this.top)
     {
       this.is_dirty = true;
@@ -44,11 +43,12 @@ var TopTabsBase = function()
     }
 
     dim = document.querySelector("tab").offsetHeight; // FIXME: this is abviously not final
+    //dim = this.cell.tab.offsetHeight;
     if( dim != this.height)
     {
       this.is_dirty = true;
       this.height = dim;
-      this.offsetHeight = dim;
+      this.offsetHeight = dim + this.vertical_border_padding;
     }
 
     this.update(force_redraw);

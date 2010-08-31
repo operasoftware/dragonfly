@@ -22,7 +22,7 @@ var ModebarBase = function()
       this.setCSSProperties()
     }
 
-    dim = this.cell.tab.offsetHeight + this.cell.tab.vertical_border_padding + (this.cell.toolbar ? this.cell.toolbar.offsetHeight : 0);
+    dim = this.cell.tab.top + this.cell.tab.offsetHeight;
     if (dim != this.top)
     {
       this.is_dirty = true;
