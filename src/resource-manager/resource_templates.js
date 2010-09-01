@@ -1,6 +1,6 @@
 window.templates = window.templates || {};
 
-templates.resource_main = function(doc)
+templates.resource_main = function(doc, duration_to_render)
 {
   return [
     "div",
@@ -70,11 +70,9 @@ templates.resource_details = function(resource)
   return tpl;
 };
 
-
-
-
-templates.resource_graph = function(doc, contwidth, lineheight)
+templates.resource_graph = function(doc, duration, contwidth, lineheight)
 {
+  duration = duration || 3000;
   lineheight = lineheight || 30;
   contwidth = contwidth || 800;
   var bars = [];
@@ -89,7 +87,7 @@ templates.resource_graph = function(doc, contwidth, lineheight)
   }
 
   var defs = templates.bar_defs();
-  var grid = templates.grid_lines(3000, contwidth, n*lineheight);
+  var grid = templates.grid_lines(duration, contwidth, n*lineheight);
 
   var tpl = ["svg:svg", defs, bars, grid, "viewBox", "0 0 " + contwidth + " 1000", "xmlns", "http://www.w3.org/2000/svg", "class", "resource-graph"];
   return tpl;
@@ -156,17 +154,42 @@ templates.bar_gradient = function(id, c1, c2, c3, c4)
 templates.grid_lines = function(millis, width, height)
 {
   var ret = [];
-  var seconds = Math.floor(millis / 1000);
   var secondwidth = width / (millis / 1000);
-  var n = 0;
-  while ((++n) <= seconds-1)
+  var multiplier = width / millis;
+
+
+  // Thresholds for whether or not to render grid for every 100 and 500ms.
+  // The number is how many pixels per second. So if every second is
+  // alloted more than 200px, render the 100ms bars
+  const THRESH_100MS = 200;
+  const THRESH_500MS = 100;
+
+
+  for (var n=100; n<millis; n+=100)
   {
-    ret.push(["line", "x1", String(n*secondwidth), "y1", "0",
-                      "x2", String(n*secondwidth), "y2", String(height),
-                      "stroke", "gray",
-                      "stroke-width", "1",
-                      "opacity", "0.7"
-    ]);
+    var color = null;
+    if (!(n % 1000))
+    {
+      color = "black";
+    }
+    else if (secondwidth > THRESH_500MS && !(n % 500))
+    {
+      color = "gray";
+    }
+    else if (secondwidth > THRESH_100MS && !(n % 100)) {
+      color = "silver";
+    }
+
+    if (color) {
+      ret.push(["line", "x1", String(n*multiplier), "y1", "0",
+                "x2", String(n*multiplier), "y2", String(height),
+                "stroke", color,
+                "stroke-width", "1",
+                "opacity", "0.7"
+      ]);
+    }
+
+
   }
 
   return ret;
