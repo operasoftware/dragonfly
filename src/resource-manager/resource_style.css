@@ -3,6 +3,19 @@
     margin: 0;
 }
 
+.resource-listwrapper {
+    vertical-align: top;
+    width: 190px;
+    display: inline-block;
+}
+
+.resource-graphwrapper {
+    vertical-align: top;
+    width: 800px;
+    display: inline-block;
+}
+
+
 .request-list {
     margin: 0;
     width: 190px;
@@ -47,6 +60,7 @@
     padding-right: 6px;
     color: #999999;
 }
+
 
 .resource-detail {
   

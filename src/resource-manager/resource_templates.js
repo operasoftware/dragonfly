@@ -4,11 +4,11 @@ templates.resource_main = function(doc)
 {
   return [
     "div",
-    templates.resource_list(doc), ["img", "src", "css.png"],
+    ["div", templates.resource_list(doc), "class", "resource-listwrapper"],
+    ["div", templates.resource_graph(doc), "class", "resource-graphwrapper"],
     "class", "resource-main"
   ];
 };
-
 
 templates.resource_item = function(resource)
 {
@@ -16,7 +16,8 @@ templates.resource_item = function(resource)
     "li",
       ["span", ["img", "src", "css.png"]],
       ["span", resource.urlload.url],
-      ["span", resource.response ?  resource.response.responseCode : "aa"]
+      ["span", resource.response && resource.response.responseCode
+                           ? String(resource.response.responseCode) : "n/a"]
   ];
 
   return tpl;
@@ -68,4 +69,107 @@ templates.resource_details = function(resource)
 
   return tpl;
 };
+
+
+
+
+templates.resource_graph = function(doc, contwidth, lineheight)
+{
+  lineheight = lineheight || 30;
+  contwidth = contwidth || 800;
+  var bars = [];
+
+  var requests = doc.resourcelist.map(function(r) { return doc.resourcemap[r]; });
+
+  var basetime = requests[0].request.time;
+  for (var n=0, req; req=requests[n]; n++)
+  {
+    var bar = templates.resource_bar(n, req, basetime, 3000, contwidth, lineheight);
+    bars.push(bar);
+  }
+
+  var defs = templates.bar_defs();
+  var grid = templates.grid_lines(3000, contwidth, n*lineheight);
+
+  var tpl = ["svg:svg", defs, bars, grid, "viewBox", "0 0 " + contwidth + " 1000", "xmlns", "http://www.w3.org/2000/svg", "class", "resource-graph"];
+  return tpl;
+};
+
+templates.resource_bar = function(offset, entry, basetime, totaltime, contwidth, lineheight)
+{
+  var y = lineheight * offset;
+  var bary = (lineheight/2 - 16/2) + y;
+  var multiplier = contwidth / totaltime;
+
+  var reqstart = entry.request.time;
+  var reqwidth = (entry.responsefinished.time - entry.request.time);
+  var resstart = reqstart + (reqwidth / 3); // HACKHACK! fixme: fake data until onrequestfinished works
+  var reswidth = reqwidth - (resstart - reqstart);
+
+  var gid = Math.floor(Math.random() * 3);
+  var texture = ["gradient-css", "gradient-img", "gradient-js"][gid];
+
+  var tpl = [
+    ["rect", "x", "0", "y", String(y),
+             "width", String(contwidth), "height", String(lineheight),
+             "stroke-width", "0", "fill", (offset%2 ? "white" : "#f2f2f2")],
+    ["rect", "x", String((reqstart-basetime)*multiplier), "y", String(bary),
+     "width", String(reqwidth*multiplier), "height", "16",
+             "rx", "4", "ry", "4",
+             "fill", "#e5e5e5", "stroke", "#969696", "stroke-width", "1"],
+    ["rect", "x", String((resstart-basetime)*multiplier), "y", String(bary),
+             "width", String(reswidth*multiplier), "height", "16",
+             "rx", "4", "ry", "4",
+             "fill", "url(#" + texture + ")", "stroke", "#4a507d", "stroke-width", "1"]
+
+  ];
+  return tpl;
+};
+
+templates.bar_defs = function()
+{
+  return ["defs",
+    templates.bar_gradient("img", "#e3ffff", "#92c5ff", "#70a5f0", "#8db8f2"),
+    templates.bar_gradient("js", "#d9dfff", "#828bbf", "#6269a0", "#7f88b4"),
+    templates.bar_gradient("css", "#ff7d7d", "#d21a1a", "#b40000", "#c32121")
+  ];
+
+};
+
+templates.bar_gradient = function(id, c1, c2, c3, c4)
+{
+
+  return ["linearGradient",
+           ["stop", "offset", "5%", "stop-color", c1],
+           ["stop", "offset", "50%", "stop-color", c2],
+           ["stop", "offset", "50%", "stop-color", c3],
+           ["stop", "offset", "100%", "stop-color", c4],
+            "x1", "0",
+            "x2", "0",
+            "y1", "0",
+            "y2", "100%",
+            "id", "gradient-" + id
+         ];
+};
+
+
+templates.grid_lines = function(millis, width, height)
+{
+  var ret = [];
+  var seconds = Math.floor(millis / 1000);
+  var secondwidth = width / (millis / 1000);
+  var n = 0;
+  while ((++n) <= seconds-1)
+  {
+    ret.push(["line", "x1", String(n*secondwidth), "y1", "0",
+                      "x2", String(n*secondwidth), "y2", String(height),
+                      "stroke", "gray",
+                      "stroke-width", "1",
+                      "opacity", "0.7"
+    ]);
+  }
+
+  return ret;
+};
+
 
