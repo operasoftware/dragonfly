@@ -24,8 +24,8 @@ cls.DOMInspectorActions = function(id)
   this.get_children = function (event)
   {
     var container = event.target.parentNode;
-    var level = parseInt(container.style.marginLeft) || 0;
-    var level_next = container.nextSibling && parseInt(container.nextSibling.style.marginLeft) || 0;
+    var level = parseInt(container.style.paddingLeft) || 0;
+    var level_next = container.nextSibling && parseInt(container.nextSibling.style.paddingLeft) || 0;
     var ref_id = parseInt(container.getAttribute('ref-id'));
     if (container = container.has_attr("parent-node-chain", "data-model-id"))
     {
@@ -629,13 +629,13 @@ cls.DOMInspectorActions = function(id)
   this.makeFilterGetStartTag = function(start_node)
   {
     var start_tag = start_node.textContent.replace(/[\/>]/g, '');
-    var margin_left = start_node.parentElement.style.marginLeft;
+    var padding_left = start_node.parentElement.style.paddingLeft;
     return function(node)
     {
       return (
         node.nodeName.toLowerCase() == 'node' 
         && node.textContent.indexOf(start_tag) ==  0
-        && node.parentElement.style.marginLeft == margin_left
+        && node.parentElement.style.paddingLeft == padding_left
         );
     }
   }

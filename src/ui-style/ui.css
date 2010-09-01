@@ -367,22 +367,12 @@ tab { /**/
   top: 1px; /* Push down one pixel to hide the border */
   }
 
-tab:hover {
-  background-position: 0 -17px;
-  }
-
 tabs tab.active {
   background: #fff;
   border-color: #aaa;
   color: #000;
   }
 
-.modal tab:hover,
-.modal tab.active
-{
-  background-position: 0 0;
-}
-	
 input[handler="tab"] { /**/
   font-size: 11px;
   background: transparent url('../ui-images/tab.png') scroll no-repeat 100% 0;
@@ -395,21 +385,6 @@ input[handler="tab"] { /**/
   vertical-align: top;
   cursor: pointer;
   }
-
-tab:hover input[handler="tab"] {
-  background-position: 100% -17px;
-  }
-
-tab.active input[handler="tab"] {
-  background-position: 100% -34px;
-  font-weight: bold;
-  }
-
-.modal tab:hover input[handler="tab"],
-.modal tab.active input[handler="tab"] 
-{
-  background-position: 100% 0;
-}
 
 top-tabs { /* The top tabs container, replaced with, placed into or merged with top-toolbar */
   position: absolute;
@@ -432,9 +407,6 @@ top-tabs tab {  /**/
   border-right: 1px solid #aaa;
   padding: 4px;
   position: static;
-  }
-
-top-tabs tab:hover {
   }
 
 top-tabs tab.active {
@@ -468,26 +440,6 @@ top-tabs.detached .icon {
   width: 24px;
   margin: auto;
 }
-
-input[handler="close-tab"] { /* Currently not in use? Now it is :) */ 
-  background: transparent url('../ui-images/close.png') scroll no-repeat 50% 0;
-  padding: 0;
-  margin: 0 6px 0 -4px;
-  border: none;
-  width: 12px;
-  height: 12px;
-  line-height: 12px;
-  vertical-align: -1px;
-  cursor: pointer;
-  }
-
-input[handler="close-tab"]:hover { 
-  background-position: 50% -12px;
-  }
-
-input[handler="close-tab"]:active { 
-  background-position: 50% -24px;
-  }
 
 button[handler="top-settings"]
 {
@@ -524,7 +476,7 @@ window-controls {
   position: absolute;
   top: 0;
   right: 2px;
-  z-index:1000;
+  z-index:2;
   }
 
 
@@ -637,7 +589,7 @@ ui-menu { /**/
   position: absolute;
   right:30px;
   top: 0px;
-  z-index:1000;
+  z-index:10;
   }
 
 ui-menu.attached { /**/
@@ -1013,6 +965,10 @@ button[handler="top-window-toggle-attach"]:before
 {
   background-image: url('../ui-images/btn-toggle-attach.png');
 }
+button[handler="show-settings-overlay"]:before 
+{
+  background-image: url('../ui-images/btn-toggle-attach.png');
+}
 button[handler="configure-message-filters"]:before
 {
   background-image: url('../ui-images/btn-message-filter.png');
@@ -1204,7 +1160,7 @@ cst-select-option-list-container
   /* don't add here any border, padding or margin */
   display: block;
   position:absolute;
-  z-index: 100;
+  z-index: 10;
 }
 
 cst-select[disabled] cst-drop-down
@@ -1503,3 +1459,80 @@ breadcrumbs::selection {
 .drag breadcrumb {
     cursor: move;
 }
+
+
+
+
+
+overlay {
+    background: rgba(0, 0, 0, .5);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    z-index: 30;
+      display: block;
+}
+overlay-window {
+    color: #fff;
+    border-radius: 7px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, .6);
+    background: rgba(40, 40, 40, .9);
+    width: 700px;
+    margin: 50px auto;
+    border: 2px solid #b1b1b1;
+    display: block;
+}
+overlay-window h2 {
+    font-size: 1em;
+}
+overlay-tabs, overlay-content {
+    display: block;
+    border: 1px solid #000;
+}
+overlay-tabs {
+    border-radius: 7px 7px 0 0;
+    border-bottom: none;
+    padding: 5px 5px 0;
+}
+overlay-tabs tab {
+    border-radius: 3px 3px 0 0;
+    padding: 0 15px;
+    height: 25px;
+    line-height: 25px;
+    margin-right: 5px;
+    cursor: pointer;
+    color: #bbb;
+    display: inline-block;
+    float: none;
+    position: static;
+    border: none;
+}
+overlay-tabs tab.active {
+    color: #fff;
+    border-color: #000;
+    background: rgba(0, 0, 0, .4);
+    cursor: auto;
+}
+overlay-content {
+    background: rgba(0, 0, 0, .4);
+    border-radius: 0 0 7px 7px;
+    border-top: none;
+    padding: 10px;
+    position: relative;
+}
+#options {
+    margin-right: 210px;
+}
+#info {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 200px;
+    border: 0 solid #3e3e3e;
+    padding: 10px;
+    border-left-width: 1px;
+}
+

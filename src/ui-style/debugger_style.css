@@ -467,7 +467,7 @@ category.unfolded + category header {
   background-position: -14px -28px;
   }
 
-.css-inspector .overwritten, .css-inspector .overwritten key, .css-inspector .overwritten value  {
+.overwritten {
   text-decoration: line-through;
   /*color: #ccc;*/
   }

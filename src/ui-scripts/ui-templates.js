@@ -197,6 +197,10 @@
   {
     var is_attached = window.opera.attached;
     return ['window-controls',
+      ['button',
+        'handler', 'show-settings-overlay',
+        'class', 'switch' + ( is_attached ? ' attached' : '')
+      ],
       is_attached
       ? window['cst-selects']['debugger-menu'].select_template()
       : [],

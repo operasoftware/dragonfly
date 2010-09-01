@@ -112,6 +112,7 @@
   border: 1px solid #78bae0;
   position: relative;
   z-index: 1;
+  border-radius: 3px;
 }
 
 .dom [handler="spotlight-node"]:hover

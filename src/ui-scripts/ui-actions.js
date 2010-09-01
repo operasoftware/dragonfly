@@ -234,6 +234,11 @@ eventHandlers.click['top-window-toggle-attach'] = function(event)
   setTimeout(client.setupTopCell, 0);
 }
 
+eventHandlers.click['show-settings-overlay'] = function(event)
+{
+  alert("show")
+}
+
 eventHandlers.click['toolbar-switch'] = function(event)
 {
   var target = event.target;
