@@ -13,7 +13,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._textarea = null;
   this._lastupdate = null;
   this._current_input = "";
-  this._current_scroll = 0;
+  this._current_scroll = null;
   this._container = null;
   this._backlog_index = -1;
 
@@ -22,7 +22,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   {
     this._lastupdate = 0;
     this._backlog_index = -1;
-    this._current_scroll = this._container.scrollTop;
     this._current_input = this._textarea.value;
   };
 
@@ -40,33 +39,47 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       // note: events are bound to handlers at the bottom of this class
     }
 
-
-    var scroll_at_bottom = this._container.scrollTop + this._container.offsetHeight >= this._container.scrollHeight;
     this._update();
 
-    if (this._current_scroll)
+    if (switched_to_view)
     {
-      this._container.scrollTop = this._current_scroll;
-      this._current_scroll = null;
-    }
-    else if (scroll_at_bottom)
-    {
-      this._container.scrollTop = 9999999;
-      if (switched_to_view) {
-        // timer use here is a workaround for some DOM issue where focus()
-        // fails if called immediately.
+      // defer adding listeners until after update
+      this._container.addEventListener("scroll", this._save_scroll_bound, false);
+      this._container.addEventListener("DOMAttrModified", this._update_scroll_bound, false);
+      this._container.addEventListener("DOMNodeInserted", this._update_scroll_bound, false);
+
+      if(this._current_scroll === null)
+      {
+        this._container.scrollTop = 999999;
+        // timer works around issue where element is unfocusable when created
         window.setTimeout(function() {this._textarea.focus();}.bind(this), 0);
+      }
+      else
+      {
+        this._container.scrollTop = this._current_scroll;
       }
     }
 
-    return;
   };
-
 
   this.clear = function()
   {
     this.ondestroy();
   };
+
+  this._save_scroll_bound = function()
+  {
+    var at_bottom = (this._container.scrollTop + this._container.offsetHeight >= this._container.scrollHeight);
+    this._current_scroll = at_bottom ? null : this._container.scrollTop;
+  }.bind(this);
+
+  this._update_scroll_bound = function()
+  {
+    if (this._current_scroll === null)
+    {
+      this._container.scrollTop = 9999999;
+    }
+  }.bind(this);
 
   /**
    * Pulls all the available, non-rendered, events from the data
