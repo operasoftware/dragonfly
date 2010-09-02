@@ -25,10 +25,6 @@ ul {
   list-style:none;
   }
 
-li[hanler] {
-  cursor:pointer;
-  }
-
 #debug-container {
   /*background-color:#ccc;*/
   /*overflow: hidden;*/
@@ -105,7 +101,6 @@ li[hanler] {
   height:11px;
   width:11px;
   background: transparent url('../ui-images/expand-collapse.gif') scroll no-repeat 0 0;
-  cursor:pointer;
   }
 
 .folder-key[disabled="true"] {
@@ -127,7 +122,6 @@ li[hanler] {
   padding-left: 20px;
   line-height:16px;
   background: transparent url('../ui-images/selected-frame.png') scroll no-repeat -20px 0;
-  cursor:pointer;
   }
 
 #backtrace-container li:first-child {
@@ -171,7 +165,6 @@ input[type="text"] {
   float:left;
   padding:0;
   margin:0 5px;
-  cursor:pointer;
   position:relative;
   z-index:1;
   }
@@ -184,10 +177,6 @@ input[type="text"] {
   background-color:#fff;
   padding:.5em;
 }
-
-[handler="select-window"], [handler="display-script"] {
-  cursor:pointer;
-  }
 
 
 [window_id].selected > span {
@@ -363,6 +352,7 @@ property.disabled, .disabled key, .disabled value {
   margin-left: -20px;
   margin-bottom: -10px;
   opacity: 0; /* This is a hack (instead of visibility: hidden) to make sure the checkbox is always clickable */
+  cursor: default;
   }
 .enable-disable.hidden { visibility: hidden; }
 property:hover .enable-disable,
@@ -440,7 +430,6 @@ category.unfolded + category header {
   margin:0px 5px;
   width:14px;
   height:14px;
-  cursor: pointer;
   }
 
 .css-inspector header input:hover {
@@ -560,7 +549,6 @@ examine-objects key.no-expander
   text-align: center;
   vertical-align: middle;
   padding: 1px;
-  cursor: pointer;
 }
 .css-layout layout-container p 
 {
@@ -652,7 +640,6 @@ stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
   margin: 0;
   padding: 0;
   margin-left: -21px;
-  cursor: pointer;
   height: 15px;
   width: 22px;
   color: #666;
@@ -666,10 +653,6 @@ stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
 
 .dom input.open {
   background-position: 6px -13px;
-  }
-
-.dom .node {
-  cursor:pointer;
   }
 
 .table-cell
@@ -1026,7 +1009,6 @@ d
   border: 0;
   margin: 0;
   padding-right:4px;
-  cursor: pointer;
   height: 15px;
   width: 19px;
   color: #666;
@@ -1206,7 +1188,6 @@ d
 .storage-table .value
 {
   border-right: 0px;
-  cursor: pointer;
 }
 
 .storage-table .control
