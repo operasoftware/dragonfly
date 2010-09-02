@@ -114,11 +114,11 @@ templates.resource_bar = function(offset, entry, basetime, totaltime, contwidth,
     ["rect", "x", String((reqstart-basetime)*multiplier), "y", String(bary),
      "width", String(reqwidth*multiplier), "height", "16",
              "rx", "4", "ry", "4",
-             "fill", "#e5e5e5", "stroke", "#969696", "stroke-width", "1"],
+             "fill", "#e5e5e5", "stroke", "#969696", "stroke-width", "0.5"],
     ["rect", "x", String((resstart-basetime)*multiplier), "y", String(bary),
              "width", String(reswidth*multiplier), "height", "16",
              "rx", "4", "ry", "4",
-             "fill", "url(#" + texture + ")", "stroke", "#4a507d", "stroke-width", "1"]
+             "fill", "url(#" + texture + ")", "stroke", "#4a507d", "stroke-width", "0.5"]
 
   ];
   return tpl;
@@ -184,7 +184,7 @@ templates.grid_lines = function(millis, width, height)
       ret.push(["line", "x1", String(n*multiplier), "y1", "0",
                 "x2", String(n*multiplier), "y2", String(height),
                 "stroke", color,
-                "stroke-width", "1",
+                "stroke-width", "0.5",
                 "opacity", "0.7"
       ]);
     }
