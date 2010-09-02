@@ -5,24 +5,34 @@
 var Overlay = function(cell)
 {
     this.type = "overlay";
+    this._is_visible = false;
 
     this.show = function()
     {
-      //
+      if (this._is_visible)
+      {
+        this.element.removeClass("active");
+      }
+      else
+      {
+        this.element.addClass("active");
+      }
+      this._is_visible = !this._is_visible;
     };
 
-    this.setup = function()
+    this.setup = function(id)
     {
       this.element = document.getElementById(this.type + '-to-' + this.cell.id) || this.update();
+      this.element.setAttribute("type", id);
       var template = ["overlay-window",
                        [
                          ["overlay-tabs",
                            [
-                             ["tab", "test", "class", "active"],
-                             ["tab", "test2"]
+                             ["tab", "test", "class", "active", "handler", "overlay-tab"],
+                             ["tab", "test2", "handler", "overlay-tab"]
                            ]
                          ],
-                         ["overlay-content", "test"]
+                         ["overlay-content", [["p", "test"], ["p", "test"], ["p", "test"]]]
                        ]
                      ];
       this.element.render(template);

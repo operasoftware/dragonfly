@@ -5,6 +5,7 @@
   font-family: sans-serif;
   font-size: 12px;
   overflow: hidden;
+  color: #333;
   }
 
 main-view { /**/
@@ -31,7 +32,7 @@ top-toolbar {
   }
 
 top-toolbar, top-tabs, modebar, tabs {
-    border-bottom: 1px solid #aaa;
+    border-bottom: 1px solid #b3b3b3;
 }
 
 /* set with css. height, border and padding are supported */
@@ -135,7 +136,7 @@ window-toolbar { /**/
 toolbar { /**/
   border: 0 solid #aaa;
   border-width: 0 1px 1px;
-  background-color: #fff;
+  background-color: #f3f3f3;
   padding: 0 1px;
   height: 26px;
   }
@@ -324,9 +325,9 @@ toolbar-filters filter.focus input {
   }
 
 modebar {
-  height: 20px;
-  line-height: 20px;
-  background: #ddd;
+  height: 21px;
+  line-height: 21px;
+  background: #d9d9d9;
 }
 
 window-select {
@@ -350,7 +351,7 @@ window-select select option[value="-1"]  {
 /* set with css. height, border and padding are supported */
 
 tabs { /* The bottom tabs containers */
-  height: 22px;
+  height: 21px;
   padding: 1px 2px 0; /* Tab will be pushed down one pixel, hence only 1 pixel at the top */
   color: #444;
   }
@@ -360,7 +361,7 @@ tab { /**/
   float:left;
   height: 15px;
   line-height: 15px;
-  padding: 3px 6px;
+  padding: 2px 6px 4px;
   border: 0 transparent solid;
   border-width: 1px 1px 0 1px;
   position: relative;
@@ -391,8 +392,8 @@ top-tabs { /* The top tabs container, replaced with, placed into or merged with 
   z-index: 1;
   top: 0;
   left: 0;
-  background: #eee;
-  height: 32px;
+  background: #e6e6e6;
+  height: 30px;
   }
 
 /* this is a quick hack to get the runtime button in the tabs bar */
@@ -405,7 +406,7 @@ top-tabs tab {  /**/
   height: 24px;
   line-height: 24px;
   border-right: 1px solid #aaa;
-  padding: 4px;
+  padding: 3px;
   position: static;
   }
 
@@ -1392,8 +1393,8 @@ pin-label.pinned
 
 
 horizontal-navigation {
-    height: 20px;
-    line-height: 20px;
+    height: 21px;
+    line-height: 21px;
     display: block;
     position: relative;
     overflow: hidden;
@@ -1444,8 +1445,8 @@ breadcrumbs {
 }
 breadcrumb {
     border-right: 1px solid #999;
-    height: 20px;
-    line-height: 20px;
+    height: 21px;
+    line-height: 21px;
     display: inline-block;
     padding: 0 4px;
     cursor: pointer;
@@ -1472,17 +1473,22 @@ overlay {
     right: 0;
     left: 0;
     z-index: 30;
-      display: block;
+    padding: 0 30px;
+    display: none;
+}
+overlay.active {
+    display: block;
 }
 overlay-window {
     color: #fff;
     border-radius: 7px;
     box-shadow: 0 1px 6px rgba(0, 0, 0, .6);
     background: rgba(40, 40, 40, .9);
-    width: 700px;
-    margin: 50px auto;
+    width: 100%;
+    max-width: 600px;
     border: 2px solid #b1b1b1;
     display: block;
+    position: absolute;
 }
 overlay-window h2 {
     font-size: 1em;

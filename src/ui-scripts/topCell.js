@@ -180,7 +180,7 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, TopStatusbar
     this.modebar.setup(this.id);
   }
 
-  this.settingsOverlay.setup();
+  this.settingsOverlay.setup("settings-overlay");
 
   if(this.statusbar)
   {
