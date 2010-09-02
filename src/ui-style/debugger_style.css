@@ -157,10 +157,6 @@ li[hanler] {
 #continues {
   margin-left:5px;
   }
-
-[handler] {
-  cursor: pointer;
-  }
   
 input[type="text"] {
   cursor: text;

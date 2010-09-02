@@ -43,7 +43,7 @@ var TopTabsBase = function()
     }
 
     //dim = document.querySelector("tab").offsetHeight; // FIXME: this is abviously not final
-    dim = this.cell.tab.offsetHeight;
+    dim = this.cell.tab.height;
     if( dim != this.height)
     {
       this.is_dirty = true;

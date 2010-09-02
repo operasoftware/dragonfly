@@ -38,14 +38,14 @@ top-toolbar, top-tabs, modebar, tabs {
 /* set with css. height, border and padding are supported */
 
 top-container { /**/
-  background-color: #eee;
+  background-color: #e6e6e6;
   }
 
 /* set with css. height, border and padding are supported */
 
 container { /**/
-  border-left: 1px solid #aaa;
-  border-right: 1px solid #aaa;
+  border-left: 1px solid #b3b3b3;
+  border-right: 1px solid #b3b3b3;
   background-color: #fff;
   overflow: hidden;
   } 
@@ -134,11 +134,11 @@ window-toolbar { /**/
 /* set with css. height, border and padding are supported */
 
 toolbar { /**/
-  border: 0 solid #aaa;
+  border: 0 solid #b3b3b3;
   border-width: 0 1px 1px;
-  background-color: #f3f3f3;
   padding: 0 1px;
   height: 26px;
+  background: #f3f3f3 url("../ui-images/shine_2.png") 0 0 repeat-x;
   }
 
 toolbar-buttons, toolbar-switches {
@@ -161,7 +161,6 @@ window-controls button
   background: transparent none;
   border-color: transparent;
   border-style: solid;
-  cursor: pointer;
   /* default padding values */
   padding: 3px 11px;
   margin: 0;
@@ -369,8 +368,8 @@ tab { /**/
   }
 
 tabs tab.active {
-  background: #fff;
-  border-color: #aaa;
+  background: #fdfdfd;
+  border-color: #b3b3b3;
   color: #000;
   }
 
@@ -384,7 +383,6 @@ input[handler="tab"] { /**/
   height: 17px;
   line-height: 17px;
   vertical-align: top;
-  cursor: pointer;
   }
 
 top-tabs { /* The top tabs container, replaced with, placed into or merged with top-toolbar */
@@ -392,8 +390,8 @@ top-tabs { /* The top tabs container, replaced with, placed into or merged with 
   z-index: 1;
   top: 0;
   left: 0;
-  background: #e6e6e6;
   height: 30px;
+  background: #e6e6e6 url("../ui-images/shine_1_attached.png") repeat-x;
   }
 
 /* this is a quick hack to get the runtime button in the tabs bar */
@@ -402,26 +400,43 @@ top-tabs toolbar-buttons {
   }
 
 top-tabs tab {  /**/
-  background: #eee;
-  height: 24px;
-  line-height: 24px;
-  border-right: 1px solid #aaa;
-  padding: 3px;
+  height: 26px;
+  line-height: 26px;
+  border: 0;
+  border-right: 1px solid #b3b3b3;
+  padding: 2px 6px;
   position: static;
   }
-
 top-tabs tab.active {
-  background: #ddd;
+  background: #cecece url("../ui-images/shine_1_attached.png") repeat-x;
 }
-
 top-tabs .icon {
   display: inline-block;
-  height: 16px;
-  width: 16px;
+  height: 26px;
+  width: 26px;
   vertical-align: middle;
   margin-right: 3px;
-  box-shadow: inset 0px 0px 10px rgba(0, 0, 0, .6);
 }
+
+top-tabs [ref-id="dom_panel"] .icon {
+    content: url("../ui-images/documents_attached.png");
+}
+top-tabs [ref-id="js_panel"] .icon {
+    content: url("../ui-images/scripts_attached.png");
+}
+top-tabs [ref-id="network_panel"] .icon {
+    content: url("../ui-images/network_attached.png");
+}
+top-tabs [ref-id="storage"] .icon {
+    content: url("../ui-images/storage_attached.png");
+}
+top-tabs [ref-id="console_new"] .icon {
+    content: url("../ui-images/errorlog_attached.png");
+}
+top-tabs [ref-id="utils"] .icon {
+    content: url("../ui-images/utilities_attached.png");
+}
+
 
 top-tabs.detached {
   height: 48px;
@@ -447,7 +462,6 @@ button[handler="top-settings"]
   background: transparent none;
   border-color: transparent;
   border-style: solid;
-  cursor: pointer;
   padding: 1px 8px;
   margin: 2px 4px;
   float: right;
@@ -508,7 +522,6 @@ settings-header input { /**/
   margin: 0px 5px;
   width: 14px;
   height: 14px;
-  cursor: pointer;
   }
 
 settings-header input:hover {
@@ -586,7 +599,6 @@ view-slider.horizontal {
 ui-menu { /**/
   display: block;
   width: 180px;
-  cursor: pointer;
   position: absolute;
   right:30px;
   top: 0px;
@@ -689,7 +701,6 @@ windows-container [handler='window-close'] { /**/
   height: 20px;
   margin: -3px -3px 0 0;
   position: relative;
-  cursor: pointer;
   background: transparent url('../ui-images/btn-window-close.png') scroll no-repeat 0 0;
 	z-index:11;
   }
@@ -1076,7 +1087,6 @@ cst-select
   padding: 0;
   padding-right: 20px;
   margin-left: 5px;
-  cursor: pointer;
   vertical-align: middle;
 }
 
@@ -1182,7 +1192,6 @@ cst-select-option-list
 cst-option
 {
   display: block;
-  cursor: pointer;
   padding: .2em .5em;
   white-space: nowrap;
 }
@@ -1401,14 +1410,13 @@ horizontal-navigation {
 }
 nav {
     position: absolute;
-    border: 0 solid #aaa;
+    border: 0 solid #b3b3b3;
     color: #444;
     width: 20px;
     text-align: center;
     z-index: 1;
     background: #ccc;
     display: none;
-    cursor: pointer;
 }
 nav:active {
     color: #000;
@@ -1438,6 +1446,7 @@ breadcrumbs {
     left: 0;
     right: 0;
     -o-transition: left 0 ease-out;
+    background: transparent url("../ui-images/shadow_0.png")
 }
 .navs breadcrumbs {
     left: 21px;
@@ -1449,10 +1458,9 @@ breadcrumb {
     line-height: 21px;
     display: inline-block;
     padding: 0 4px;
-    cursor: pointer;
 }
 breadcrumb:hover {
-    background: #bbb;
+    background: #cecece;
 }
 breadcrumbs::selection {
     background: transparent;
@@ -1508,7 +1516,6 @@ overlay-tabs tab {
     height: 25px;
     line-height: 25px;
     margin-right: 5px;
-    cursor: pointer;
     color: #bbb;
     display: inline-block;
     float: none;
