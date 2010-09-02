@@ -99,6 +99,10 @@ cls.ReplData = function(view)
     this._add_entry("groupend", data);
   };
 
+  this.add_output_count = function(count, label)
+  {
+    this._add_entry("count", {count: count, label: label});
+  };
 
   /**
    * Return a n array of entry objects for the repl input/output history.

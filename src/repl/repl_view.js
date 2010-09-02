@@ -111,10 +111,18 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         case "groupend":
           this._render_groupend();
           break;
+        case "count":
+        this._render_count(e.data);
+          break;
       default:
           this._render_string("unknown");
       }
     }
+  };
+
+  this._render_count = function(data)
+  {
+    this._render_string((data.label ? data.label + ": " : "") + data.count);
   };
 
   this._render_groupstart = function(data)
