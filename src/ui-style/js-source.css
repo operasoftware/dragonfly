@@ -67,9 +67,9 @@ ul {
   left:0;
   top:0;
   bottom:0;
-  background-color:#f5f5f5;
+  background-color: #f3f3f3;
   width:40px;
-  border-right:1px solid #ccc;
+  border-right:1px solid #e6e6e6;
   }
 
 #break-point-container {
@@ -101,6 +101,7 @@ ul {
   height:16px; /* should be the same as the line height #js-source-content li */ 
   font-size:12px;
   vertical-align:middle;
+  color: #b3b3b3;
   }
 
 #js-source-line-numbers input:hover {

@@ -136,8 +136,8 @@ window-toolbar { /**/
 toolbar { /**/
   border: 0 solid #b3b3b3;
   border-width: 0 1px 1px;
-  padding: 0 1px;
-  height: 26px;
+  padding: 2px;
+  height: 22px; /* 22 + 2*2 (padding) = 26 */
   background: #f3f3f3 url("../ui-images/shine_2.png") 0 0 repeat-x;
   }
 
@@ -156,15 +156,17 @@ toolbar-buttons, toolbar-switches {
 
 toolbar button, 
 top-toolbar button, 
-window-controls button
+window-controls button,
+cst-select-toolbar-setting
 {
-  background: transparent none;
-  border-color: transparent;
-  border-style: solid;
-  /* default padding values */
-  padding: 3px 11px;
-  margin: 0;
-  vertical-align: top;
+  background: transparent;
+  border: 1px solid #8e8e8e;
+  border-radius: 3px;
+  height: 22px;
+  width: 22px;
+  margin: 0 2px;
+  padding: 0;
+  box-shadow: 0 1px #fff;
 }
 window-controls cst-select
 {
@@ -173,6 +175,7 @@ window-controls cst-select
   padding: 0;
   vertical-align: top;
 }
+/*
 toolbar button:before, 
 top-toolbar button:before, 
 window-controls button:before, 
@@ -213,7 +216,7 @@ window-toolbar button:hover:before
 {
   background-position: 0px -48px;
 }
-/* switches */
+/* switches /
 toolbar button.switch[is-active="true"]:before,
 window-toolbar button.switch[is-active="true"]:before
 {
@@ -229,6 +232,7 @@ window-toolbar button.switch[is-active="true"]:active:before
 {
   background-position: -26px -48px;
 }
+*/
 .attached:before 
 {
   background-position: -26px 0;
@@ -287,12 +291,14 @@ toolbar-filters {
 
 toolbar-filters filter {
   display: inline-block;
-  margin: 1px;
-  padding-left:20px;
-  height: 24px;
-  line-height: 24px;
-  background: url('../ui-images/filter-bg.png') no-repeat;
-  
+  padding-left: 20px;
+  height: 22px;
+  line-height: 22px;
+  border: 1px solid #8e8e8e;
+  border-radius: 3px;
+  box-sizing: border-box;
+  background: #fff;
+  box-shadow: 0 1px #fff;
   }
 
 toolbar-filters filter.focus {
@@ -310,7 +316,6 @@ toolbar-filters em {
 toolbar-filters filter input {
   width: 138px;
   height: 20px;
-  margin: 1px;
   margin-left: -141px;
   background: none;
   border: none;
@@ -352,7 +357,6 @@ window-select select option[value="-1"]  {
 tabs { /* The bottom tabs containers */
   height: 21px;
   padding: 1px 2px 0; /* Tab will be pushed down one pixel, hence only 1 pixel at the top */
-  color: #444;
   }
 
 tab { /**/
@@ -370,8 +374,11 @@ tab { /**/
 tabs tab.active {
   background: #fdfdfd;
   border-color: #b3b3b3;
-  color: #000;
   }
+
+tabs tab:not(.active) {
+    color: #666;
+}
 
 input[handler="tab"] { /**/
   font-size: 11px;
@@ -406,6 +413,7 @@ top-tabs tab {  /**/
   border-right: 1px solid #b3b3b3;
   padding: 2px 6px;
   position: static;
+  text-shadow: 0 1px #fff;
   }
 top-tabs tab.active {
   background: #cecece url("../ui-images/shine_1_attached.png") repeat-x;
@@ -876,152 +884,22 @@ window-shadow.left {
   background: transparent url('../ui-images/spin.png') scroll no-repeat 0 0;
   }
 
-button[handler="threads-clear-log"]:before,
-button[handler="debug-clear-log"]:before
-{
-  background-image: url('../ui-images/btn-clear-error-console.png');
-}
-button[handler="threads-export-log"]:before
-{
-  background-image: url('../ui-images/btn-export-log.png');
-}
-button[handler="dom-inspection-snapshot"]:before 
-{
-  background-image: url('../ui-images/btn-get-dom-tree.png');
-}
-button[key="dom.find-with-click"]:before 
-{
-  background-image: url('../ui-images/btn-find-onclick.png');
-}
-button[key="dom.highlight-on-hover"]:before 
-{
-  background-image: url('../ui-images/btn-highlight.png');
-}
-button[key="dom.show-comments"]:before 
-{
-  background-image: url('../ui-images/btn-show-comments.png');
-}
-button[key="dom.show-whitespace-nodes"]:before 
-{
-  background-image: url('../ui-images/btn-show-whitespace.png');
-}
-button[key="dom.update-on-dom-node-inserted"]:before 
-{
-  background-image: url('../ui-images/btn-update-onchange.png');
-}
-button[key="dom.lock-selecked-elements"]:before 
-{
-  background-image: url('../ui-images/btn-multiple-selected-elements.png');
-}
-button[key="js_source.script"]:before 
-{
-  background-image: url('../ui-images/btn-stop-at-new-thread.png');
-}
-button[key="js_source.error"]:before 
-{
-  background-image: url('../ui-images/btn-stop-on-error.png');
-}
-button[key$="hide-default-properties"]:before 
-{
-  background-image: url('../ui-images/btn-hide-global-scope.png');
-}
-button[key="css-inspector.hide-initial-values"]:before 
-{
-  background-image: url('../ui-images/btn-initial-values.png');
-}
-button[key="css-inspector.hide-shorthands"]:before 
-{
-  background-image: url('../ui-images/btn-shorthand.png');
-}
-button[key="dom.dom-tree-style"]:before 
-{
-  background-image: url('../ui-images/btn-tree-style.png');
-}
-button[key="dom_attrs.hide-null-values"]:before 
-{
-  background-image: url('../ui-images/btn-hide-empty-values.png');
-}
-button[key="stylesheets.shortcuts"]:before 
-{
-  background-image: url('../ui-images/btn-shorthand.png'); /* Duplicate of 'css-inspector.hide-shorthands' */
-}
-button[key="console.use-selected-runtime-as-filter"]:before 
-{
-  background-image: url('../ui-images/btn-use-as-filter.png');
-}
-button[key="threads.log-threads"]:before
-{
-  background-image: url('../ui-images/btn-log-threads.png');
-}
-button[handler="documentation"]:before 
-{
-  background-image: url('../ui-images/btn-documentation.png');
-}
-button.clear-log:before
-{
-  background-image: url('../ui-images/btn-delete.png');
-}
-button[handler="dom-inspection-export"]:before 
-{
-  background-image: url('../ui-images/btn-export-current-view.png');
-}
-button[handler="reload-window"]:before 
-{
-  background-image: url('../ui-images/btn-reload-host.png');
-}
-button[handler="top-window-close"]:before 
-{
-  background-image: url('../ui-images/btn-top-close.png');
-}
-button[handler="top-window-toggle-attach"]:before 
-{
-  background-image: url('../ui-images/btn-toggle-attach.png');
-}
-button[handler="show-settings-overlay"]:before 
-{
-  background-image: url('../ui-images/btn-toggle-attach.png');
-}
-button[handler="configure-message-filters"]:before
-{
-  background-image: url('../ui-images/btn-message-filter.png');
-}
-#continue-run:before 
-{
-  background-image:url('../ui-images/btn-run.png');
-}
-#continue-step-into-call:before 
-{
-  background-image:url('../ui-images/btn-step-into-call.png');
-}
-#continue-step-next-line:before 
-{
-  background-image:url('../ui-images/btn-step-next-line.png');
-}
-#continue-step-out-of-call:before 
-{
-  background-image:url('../ui-images/btn-step-out-call.png');
-}
-.ui-button[handler="reload-window"]
-{
-  background-image: url('../ui-images/btn-reload-host.png');
-}
 
 /* editing */
 
 textarea-container {
   display: block;
   padding: 1px;
+  margin: -2px -4px -2px -2px;
   position:relative;
   z-index: 10;
+  background: #fff;
+  border: 1px solid #808080;
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, .3);
   }
- 
-textarea-container textarea-inner-container {
-  display: block;
-  background-image: -o-skin('Speed Dial Configuration Dialog Skin');
-  padding: 7px 8px 9px 8px;
-  margin: -8px -9px -10px -9px;
-  }
- 
+textarea-container, textarea-container-inline, textarea-inner-container, textarea {
+    border-radius: 3px;
+}
 textarea-container textarea{
   display: block;
   width: 100%;
@@ -1036,17 +914,17 @@ textarea-container-inline
 {
   display: inline-block;
   padding: 1px;
-  line-height: 0px;
+  margin: -2px -3px;
   position:relative;
-  z-index: 2;
+  z-index: 10;
+  background: #fff;
+  border: 1px solid #808080;
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, .3);
 }
  
 textarea-container-inline textarea-inner-container 
 {
   display: inline-block;
-  background-image: -o-skin('Speed Dial Configuration Dialog Skin');
-  padding: 7px 8px 9px 8px;
-  margin: -8px -10px -10px -10px;
 }
  
 textarea-container-inline textarea
@@ -1081,23 +959,19 @@ cst-select
   display: inline-block;
   position: relative;
   background-image:-o-skin('Dropdown Skin');
-  height: 24px;
-  line-height: 24px;
-  margin: 1px 0;
+  height: 22px;
+  line-height: 22px;
   padding: 0;
   padding-right: 20px;
   margin-left: 5px;
-  vertical-align: middle;
 }
 
 cst-select-toolbar-setting
 {
-  display: inline-block;
-  background: transparent url('../ui-images/btn-config.png') no-repeat 0 0;
-  height: 24px;
-  width: 26px;
-  vertical-align: middle;
-  margin: 1px;
+    display: inline-block;
+    width: 26px;
+    height: 22px;
+    box-sizing: border-box;
 }
 
 cst-select-toolbar-setting:hover
@@ -1108,7 +982,6 @@ cst-select-toolbar-setting:hover
 cst-value
 {
   display: inline-block;
-  margin-top: 1px;
   overflow: hidden;
   padding: 0 8px;
   height: 22px;
@@ -1209,13 +1082,12 @@ cst-select-option-list hr
 
 cst-option.selected
 {
-  background-color: #eec;
+  background-color: #cce5f3;
 }
 
 cst-option:hover
 {
-  background-color: #009;
-  color: #fff;
+    background-color: #cecece;
 }
 
 .debugger-menu cst-option
@@ -1460,7 +1332,7 @@ breadcrumb {
     padding: 0 4px;
 }
 breadcrumb:hover {
-    background: #cecece;
+    background: #cecece url("../ui-images/shadow_0.png")
 }
 breadcrumbs::selection {
     background: transparent;

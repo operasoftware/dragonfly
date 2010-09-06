@@ -84,7 +84,7 @@ cls.JsSourceView = function(id, name, container_class)
   templates.line_nummer = function()
   {
     return ['li',
-      ['input', 'disabled', 'disabled'],
+      ['input'],
       ['span', 'handler', 'set-break-point'],
     ];
   }
