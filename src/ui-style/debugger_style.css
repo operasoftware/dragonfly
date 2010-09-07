@@ -240,8 +240,7 @@ input[type="text"] {
 }
 
 .selected-runtime {
-  font-weight:bold;
-  color:#09f;
+  background-color: #cce5f3;
 }
 
 .thread-stopped-event {
@@ -385,7 +384,7 @@ media-rule rules {
 
 .css-inspector rule {
   cursor: default;
-  margin:0;
+  margin:0 0 1em;
   }
 
 .css-inspector rule[rule-id] {
@@ -401,6 +400,8 @@ stylesheet-link {
   color: #ccc;
   text-decoration: underline;
   cursor: pointer;
+  float: right;
+  margin-left: 10px;
   }
 
 stylesheet-link:hover {
@@ -624,11 +625,13 @@ stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
   border: 1px solid #ccc;
   color: #666;
   }
-
+div.dom {
+    display: table;
+}
 .dom .pre-wrap {
   white-space: pre-wrap;
   }
-
+.dom { width: 100%; }
 .dom div
 {
   padding-left: 1px;
@@ -657,11 +660,6 @@ stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
 .dom input.open {
   background-position: 6px -13px;
   }
-
-.table-cell
-{
-  display: table-cell;
-}
 
 .tree-style .text-node
 {
@@ -734,6 +732,7 @@ breadcrumb span
 .script-options h2:first-child, .stylesheet-options h2:first-child
 {
   border-top: 0px solid;
+  font-size: 1em;
 }
 
 .script-options cst-option, .stylesheet-options cst-option

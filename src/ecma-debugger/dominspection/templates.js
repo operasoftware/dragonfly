@@ -168,7 +168,7 @@
             {
               class_name = re_formatted.test(node_name) ? " class='pre-wrap'" : '';
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
-                      " style='padding-left:" + 16 * node[DEPTH] + "px;' "+
+                      " style='margin-left:" + 16 * node[DEPTH] + "px;' "+
                       "ref-id='" + node[ID] + "' handler='spotlight-node' " +
                       class_name + ">"+
                           "<node>&lt;" + node_name + attrs + "&gt;</node>" +
@@ -181,7 +181,7 @@
             else
             {
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
-                      " style='padding-left:" + 16 * node[DEPTH] + "px;' " +
+                      " style='margin-left:" + 16 * node[DEPTH] + "px;' " +
                       "ref-id='" + node[ID] + "' handler='spotlight-node'>" +
                       (node[CHILDREN_LENGTH] ?
                           "<input handler='get-children' type='button' class='open'>" : '') +
@@ -189,7 +189,7 @@
                       (is_debug && (" <d>[" + node[ID] + "]</d>" ) || "") +
                       "</div>";
 
-              closing_tags.push("<div style='padding-left:" +
+              closing_tags.push("<div style='margin-left:" +
                                 (16 * node[DEPTH]) + "px;' " +
                                 "ref-id='" + node[ID] + "' handler='spotlight-node'><node>" +
                                 "&lt;/" + node_name + "&gt;" +
@@ -199,7 +199,7 @@
           else
           {
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
-                      " style='padding-left:" + 16 * node[DEPTH] + "px;' " +
+                      " style='margin-left:" + 16 * node[DEPTH] + "px;' " +
                       "ref-id='" + node[ID] + "' handler='spotlight-node'>" +
                       (children_length ?
                           "<input handler='get-children' type='button' class='close'>" : '') +
@@ -212,7 +212,7 @@
 
         case 7:  // processing instruction
         {
-          tree += "<div style='padding-left:" + 16 * node[DEPTH] + "px;' " +
+          tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;' " +
             "class='processing-instruction'>&lt;?" + node[NAME] + ' ' +
             formatProcessingInstructionValue(node[VALUE], force_lower_case) + "?&gt;</div>";
           break;
@@ -225,7 +225,7 @@
           {
             if (!/^\s*$/.test(node[VALUE]))
             {
-              tree += "<div style='padding-left:" + 16 * node[DEPTH] + "px;' " +
+              tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;' " +
                       "class='comment pre-wrap'>&lt;!--" + helpers.escapeTextHtml(node[VALUE]) + "--&gt;</div>";
             }
           }
@@ -236,7 +236,7 @@
         case 9:  // document node
         {
           /* makes not too much sense in the markup view
-          tree += "<div style='padding-left:" + 16 * node[ DEPTH ] + "px;' " +
+          tree += "<div style='margin-left:" + 16 * node[ DEPTH ] + "px;' " +
             ">#document</div>";
           */
           break;
@@ -244,7 +244,7 @@
 
         case 10:  // doctype
         {
-          tree += "<div style='padding-left:" + 16 * node[DEPTH] + "px;' class='doctype'>" +
+          tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;' class='doctype'>" +
                   "&lt;!DOCTYPE <doctype-attrs>" + node[NAME] +
                   (node[PUBLIC_ID] ?
                     (" PUBLIC " + "\"" + node[PUBLIC_ID] + "\"") : "") +
@@ -260,7 +260,7 @@
         {
           if (!/^\s*$/.test(node[ VALUE ]))
           {
-            tree += "<div style='padding-left:" + (16 * node[DEPTH])  + "px;'>" +
+            tree += "<div style='margin-left:" + (16 * node[DEPTH])  + "px;'>" +
                     "<text" +
                     (is_not_script_node ? " ref-id='"+ node[ID] + "' " : "") +
                     ">" + helpers.escapeTextHtml(node[VALUE]) + "</text>" +
@@ -417,7 +417,7 @@
           if (is_open)
           {
             tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
-                    " style='padding-left:" + 16 * node[DEPTH] + "px;' " +
+                    " style='margin-left:" + 16 * node[DEPTH] + "px;' " +
                     "ref-id='"+node[ID] + "' handler='spotlight-node'>" +
                     (children_length && !has_only_one_child ?
                       "<input handler='get-children' type='button' class='open'>" : '') +
@@ -427,7 +427,7 @@
           else
           {
             tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
-                    " style='padding-left:" + 16 * node[DEPTH] + "px;' " +
+                    " style='margin-left:" + 16 * node[DEPTH] + "px;' " +
                     "ref-id='"+node[ID] + "' handler='spotlight-node'>" +
                     (node[CHILDREN_LENGTH] ?
                       "<input handler='get-children' type='button' class='close'>" : '') +
@@ -442,7 +442,7 @@
         {
           if (show_comments)
           {
-            tree += "<div style='padding-left:" + 16 * node[DEPTH] + "px;' " +
+            tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;' " +
                     "class='comment pre-wrap'><span class='comment-node'>#comment</span>" +
                     helpers.escapeTextHtml(node[VALUE]) + "</div>";
           }
@@ -451,14 +451,14 @@
 
         case 9:  // comments
         {
-          tree += "<div style='padding-left:" + 16 * node[DEPTH] + "px;' " +
+          tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;' " +
                     "><span class='document-node'>#document</span></div>";
           break;
         }
 
         case 10:  // doctype
         {
-          tree += "<div style='padding-left:" + 16 * node[DEPTH] + "px;' class='doctype'>" +
+          tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;' class='doctype'>" +
                     "<span class='doctype-value'>" + model.getDoctypeName(data) + " " +
                     (node[PUBLIC_ID] ?
                       (" PUBLIC " + "\"" + node[PUBLIC_ID] + "\"") : "") +
@@ -474,7 +474,7 @@
           {
             if (!/^\s*$/.test(node[VALUE]))
             {
-               tree += "<div style='padding-left:" + 16 * node[DEPTH] + "px;'" +
+               tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;'" +
                        current_formatting + ">" +
                        (node[NAME] ? node[NAME] : nodeNameMap[node[TYPE]]) +
                        "<text" + (is_not_script_node ? " ref-id='" + node[ID] + "' " : "") + ">" +
@@ -484,7 +484,7 @@
           }
           else
           {
-            tree += "<div style='padding-left:" + 16 * node[DEPTH] + "px;'" +
+            tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;'" +
                     current_formatting + ">" +
                     (node[NAME] ? node[NAME] : nodeNameMap[node[TYPE]]) +
                       "<text" + (is_not_script_node ? " ref-id='" + node[ID]+  "' " : "") + ">" +
