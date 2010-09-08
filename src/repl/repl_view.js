@@ -16,7 +16,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._current_scroll = null;
   this._container = null;
   this._backlog_index = -1;
-
+  this._input_row_height = null;
 
   this.ondestroy = function()
   {
@@ -35,6 +35,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       this._textarea = container.querySelector("textarea");
       this._textarea.value = this._current_input;
       this._container = container;
+      this._input_row_height = this._textarea.scrollHeight;
       switched_to_view = true;
       // note: events are bound to handlers at the bottom of this class
     }
@@ -66,6 +67,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   {
     this.ondestroy();
   };
+
+  this._update_input_height_bound = function()
+  {
+    this._textarea.rows = Math.max(1, Math.ceil(this._textarea.scrollHeight / this._input_row_height));
+  }.bind(this);
 
   this._save_scroll_bound = function()
   {
@@ -280,13 +286,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       }
       case 13: // enter
       {
-
         if (evt.ctrlKey)
         {
           this._multiediting = true;
           this._textarea.rows = this._textarea.rows + 1;
           this._textarea.value = this._textarea.value + "\n";
-
         }
         else
         {
@@ -297,7 +301,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
           var input = this._textarea.value;
           input = input.trim();
           this._textarea.value = "";
-          this._textarea.rows = 1;
           this._multiediting = false;
           this._backlog_index = -1;
           this._current_input = "";
@@ -366,7 +369,13 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         }
         break;
       }
+
+
     }
+
+    // timeout makes sure we do this after all events have fired to update box
+    window.setTimeout(this._update_input_height_bound, 0);
+
   }.bind(this);
 
   this._handle_backlog = function(delta)
