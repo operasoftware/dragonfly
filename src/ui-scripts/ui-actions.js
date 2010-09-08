@@ -241,12 +241,14 @@ eventHandlers.click['overlay-tab'] = function(event, target)
 
 eventHandlers.click['show-settings-overlay'] = function(event, target)
 {
-  var overlay = UIBase.getUIById(document.querySelector("overlay[type=settings-overlay]").get_attr("parent-node-chain", "ui-id"));
+  var settingsOverlay = UIBase.getUIById(document.querySelector("overlay[type=settings-overlay]")
+                              .get_attr("parent-node-chain", "ui-id"));
   var buttonDims = target.getBoundingClientRect();
-  var element = overlay.element.querySelector("overlay-window");
+  var element = settingsOverlay.element.querySelector("overlay-window");
   element.style.top = buttonDims.bottom + 10 + "px";
   element.style.right = document.documentElement.clientWidth - buttonDims.right - 10 + "px";
-  overlay.show();
+  target.setAttribute("is-active", target.getAttribute("is-active") != "true");
+  settingsOverlay.toggleVisibility();
 };
 
 eventHandlers.click['toolbar-switch'] = function(event)

@@ -343,15 +343,15 @@ property {
   padding-left: 2em;
   padding-right: 3px;
   line-height: 15px;
+  font-family:monospace;
   }
 property.disabled, .disabled key, .disabled value {
-  color: #ccc !important;
+  color: #999 !important;
   }
 .enable-disable {
   float: left;
-  margin-left: -20px;
-  margin-bottom: -10px;
   opacity: 0; /* This is a hack (instead of visibility: hidden) to make sure the checkbox is always clickable */
+  margin: 1px 0 -10px -20px; /* This is rather hackish too */
   cursor: default;
   }
 .enable-disable.hidden { visibility: hidden; }
@@ -384,7 +384,7 @@ media-rule rules {
 
 .css-inspector rule {
   cursor: default;
-  margin:0 0 1em;
+  margin: 1em 0;
   }
 
 .css-inspector rule[rule-id] {
@@ -410,12 +410,11 @@ stylesheet-link:hover {
 
 styles rule {
   /*xxwhite-space: pre-wrap;*/
-  font-family:monospace;
   padding:  0 5px;
   }
 
 category header {
-  border: 1px solid #ccc;
+  border: 1px solid #b3b3b3;
   border-width: 0 0 1px;
   background-color: hsl( 0, 0% , 95%);
   padding: 2px;
@@ -475,7 +474,7 @@ category.unfolded + category header {
   }
 
 .css-inspector .selected {
-  background-color: hsl(210, 70%, 80%);
+  background-color: #cce5f3;
   }
 
 .css-inspector.edit-mode .selected {
@@ -485,7 +484,7 @@ category.unfolded + category header {
 .css-inspector h2 {
   font-size: 1em;
   font-weight: normal;
-  border: 0 solid #aaa;
+  border: 0 solid #b3b3b3;
   border-width: 1px 0;
   background-color: #eee;
   margin: 10px 0;
@@ -632,7 +631,7 @@ div.dom {
   white-space: pre-wrap;
   }
 .dom { width: 100%; }
-.dom div
+.dom div:not(.tree-style)
 {
   padding-left: 1px;
   padding-right: 3px;
@@ -1287,19 +1286,22 @@ d
   background-color: #fff;
 }
 
-.storage-table input[handler="storage-add-key"],
-.storage-table input[handler="storage-update"]
-{
-  background: transparent -o-skin('New item menu');;
-  border: 0px;
-  margin: 0 3px;
-  width: -o-skin;
-  height: -o-skin;
+.single-control input {
+    border: 0;
+    padding: 0;
+    margin: 0 2px;
 }
-
+.storage-table input[handler="storage-add-key"]
+{
+    content: url("../ui-images/icons/add.png");
+}
 .storage-table input[handler="storage-update"]
 {
-  background: transparent -o-skin('Reload');
+    content: url("../ui-images/icons/reload.png");
+}
+.storage-table input[handler="storage-delete-all"]
+{
+    content: url("../ui-images/icons/trash.png");
 }
 
 #about-authors pre

@@ -7,7 +7,7 @@ var Overlay = function(cell)
     this.type = "overlay";
     this._is_visible = false;
 
-    this.show = function()
+    this.toggleVisibility = function()
     {
       if (this._is_visible)
       {

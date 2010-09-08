@@ -145,14 +145,6 @@ toolbar-buttons, toolbar-switches {
   display: block;
   float: left;
   }
-/* real buttons do make too much trouble */
-.ui-button
-{
-  display: inline-block;
-  background: transparent url('../ui-images/btn-test.png') scroll no-repeat 0 0;
-  height: 24px;
-  width: 26px; 
-}
 
 [handler="reload-window"] {
     content: url("../ui-images/icons/reload.png");
@@ -236,10 +228,11 @@ cst-select-toolbar-setting {
     content: url("../ui-images/icons/select_tab.png");
 }
 
-toolbar button, 
-top-toolbar button, 
+toolbar button,
+top-toolbar button,
 window-controls button,
-cst-select-toolbar-setting
+cst-select-toolbar-setting,
+.ui-button
 {
   background: #e6e6e6 url("../ui-images/shine_button.png") repeat-x;
   border: 1px solid #8e8e8e;
@@ -250,12 +243,22 @@ cst-select-toolbar-setting
   padding: 0;
   box-shadow: 0 1px #fff;
   box-sizing: content-box;
+  display: inline-block;
 }
-toolbar button:hover, 
-top-toolbar button:hover, 
-window-controls button:hover,
-cst-select-toolbar-setting:hover {
-    background-color: #cecece;
+toolbar button:active,
+top-toolbar button:active,
+window-controls button:active,
+cst-select-toolbar-setting:active,
+.ui-button:active {
+    box-shadow: inset 0 2px 2px rgba(0, 0, 0, .2);
+    border-color: #777;
+}
+toolbar button[is-active="true"],
+top-toolbar button[is-active="true"],
+window-controls button[is-active="true"] {
+    box-shadow: inset 0 2px 2px rgba(0, 0, 0, .2);
+    border-color: #777;
+    background-color: #b3b3b3;
 }
 window-controls cst-select
 {
@@ -386,13 +389,12 @@ toolbar-filters filter {
   border: 1px solid #8e8e8e;
   border-radius: 3px;
   background: #fff url("../ui-images/icons/search.png") 0 50% no-repeat;
-  box-shadow: 0 1px #fff, inset 1px 2px 2px rgba(0, 0, 0, .1);
+  box-shadow: 0 1px #fff, inset 0 1px 1px #d5d5d5;
   }
 
 toolbar-filters em {
   display: inline-block;
-  padding-left: 5px;
-  width:135px;
+  width: 140px;
   color: #999;
   vertical-align: top;
   }
@@ -1159,11 +1161,14 @@ cst-option
   padding: .2em .5em;
   white-space: nowrap;
 }
-cst-option:first-of-type {
+cst-select-option-list :first-child {
     border-radius: 3px 3px 0 0;
 }
-cst-option:last-of-type {
+cst-select-option-list :last-child {
     border-radius: 0 0 3px 3px;
+}
+cst-select-option-list :only-child {
+    border-radius: 3px;
 }
 
 cst-select-option-list hr
@@ -1342,13 +1347,15 @@ pin-label.pinned
 
 .info-box
 {
-  background-image:-o-skin('Speed Dial Configuration Dialog No Alpha Skin') !important;
   font-size: 22px;
   color: #999 !important;
   margin: 30px 50px 0 50px;
   text-align: center;
-  padding: 18px 20px 24px 14px;
+  padding: 1em;
   font-family: sans-serif !important;
+  border: 1px solid #b3b3b3;
+  border-radius: 8px;
+  background: #f3f3f3;
 }
 .info-box p 
 {
