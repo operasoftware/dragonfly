@@ -119,7 +119,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
       if (!tree.protos[index])
         tree.protos[index] = {};
       /* the last element of a prototype path has no object id */
-      if (!tree.protos[index][key] && !isNaN(obj_id))
+      if (!tree.protos[index].hasOwnProperty(key) && !isNaN(obj_id))
         tree.protos[index][key] = {object_id: obj_id, protos: {}};
       tree = tree.protos[index][key];
     }
