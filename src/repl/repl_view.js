@@ -461,6 +461,20 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     return "";
   };
 
+  this._handle_repl_frame_select_bound = function(event, target)
+  {
+    var sourceview = window.views.js_source;
+    sourceview.showLine(parseInt(event.srcElement.getAttribute("script-id")),
+                        parseInt(event.srcElement.getAttribute("line-number")));
+
+    messages.post("trace-frame-selected", {rt_id: parseInt(target.getAttribute("runtime-id")),
+                                           obj_id: parseInt(event.srcElement.getAttribute("scope-variable-object-id")),
+                                           this_id: parseInt(event.srcElement.getAttribute("this-object-id")),
+                                           arg_id: parseInt(event.srcElement.getAttribute("arguments-object-id"))
+                                          }
+                 );
+  }.bind(this);
+
   this._handle_repl_toggle_group = function(event, target)
   {
     var li = target.parentNode;
@@ -484,6 +498,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   var eh = window.eventHandlers;
   eh.click["repl-toggle-group"] = this._handle_repl_toggle_group;
+  eh.click["select-trace-frame"] = this._handle_repl_frame_select_bound;
   eh.keypress['repl-textarea'] = this._handle_keypress_bound;
   eh.change['set-typed-history-length'] = this._handle_option_change_bound;
 
