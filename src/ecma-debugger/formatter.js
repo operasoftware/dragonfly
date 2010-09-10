@@ -18,9 +18,8 @@ window.cls.SimpleJSParser = function()
     *     satte_arr is the according list with the state for each line
     * @param {Number} line The line number to start the formatting.
     * @param {Number} max_line The count of maxium lines to create.
-    * @param {Number} state The start state.
     */
-  this.format = function(script, line, max_line, state){};
+  this.format = function(script, line, max_line, highlight_start, highlight_end){};
 
   /**
     * Tokenize a give script string.
@@ -79,6 +78,10 @@ window.cls.SimpleJSParser = function()
 
   var __token_arr = null;
   var __token_type_arr = null;
+  
+  var __highlight_line_start = -1;
+  var __highlight_line_end = -1;
+  
   var __read_buffer_with_arrs = function()
   {
     if (__buffer)
@@ -780,7 +783,10 @@ window.cls.SimpleJSParser = function()
     {
       __line += '\u00A0';
     }
-    __ret[__ret.length] = "<div>" + __line + "</div>";
+    __ret[__ret.length] = __line_number >=  __highlight_line_start && 
+                          __line_number <=  __highlight_line_end ?
+                          "<div class='highlight-source'>" + __line + "</div>" :
+                          "<div>" + __line + "</div>";
     __line='';
     __buffer = '';
     return (++__line_number) > __max_line_number;
@@ -870,8 +876,19 @@ window.cls.SimpleJSParser = function()
       'state parsing not implemented in formatter.js for REG_EXP');
   };
 
-  this.format = function(script, line, max_line, state)
+  this.format = function(script, line, max_line, highlight_start, highlight_end)
   {
+    if (typeof highlight_start == "number" && typeof highlight_end == "number")
+    {
+      __highlight_line_start = highlight_start;
+      __highlight_line_end = highlight_end;
+    }
+    else
+    {
+      __highlight_line_start = -1;
+      __highlight_line_end = -1;
+    }
+
     __reset(line, max_line);
 
     parser=default_parser;
