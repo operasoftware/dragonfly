@@ -17,6 +17,7 @@ if sys.platform == "win32":
 
 INI_JS = "ini.js"
 BUILD_CONFIG = "C:\\docs\\build-df\\build_config"
+APACHE_ROOT_DIRECTORY = 'dragonfly.opera.com'
 
 
 def parse_config(path):
@@ -241,7 +242,7 @@ def run_build_script(ui, repo, core_version=0, type=None, tag="tip", **opts):
         import createmanifests
         sys.argv = [
             createmanifests.__file__, 
-            '-d', 'dragonfly.opera.com', 
+            '-d', APACHE_ROOT_DIRECTORY, 
             '-t', tag, 
             type["local-repo"]
         ]
