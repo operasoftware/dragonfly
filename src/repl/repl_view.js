@@ -214,6 +214,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._render_trace = function(data)
   {
+    this._add_line("console.trace:");
     this._add_line(templates.repl_output_trace(data));
   };
 
