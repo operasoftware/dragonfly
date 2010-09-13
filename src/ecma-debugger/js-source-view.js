@@ -407,6 +407,8 @@ cls.JsSourceView = function(id, name, container_class)
       __highlight_line_end = typeof highlight_line_end == "number" ?
                               highlight_line_end - 1:
                               __highlight_line_start;
+      // Reset the stored current line to ensure that the view gets updated
+      __current_line = 0;
       this.showLine(script_id, line_nr, null, null, null, true);
     }
   }
