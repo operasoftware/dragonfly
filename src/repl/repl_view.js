@@ -464,8 +464,9 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._handle_repl_frame_select_bound = function(event, target)
   {
     var sourceview = window.views.js_source;
-    sourceview.showLine(parseInt(event.srcElement.getAttribute("script-id")),
-                        parseInt(event.srcElement.getAttribute("line-number")));
+    sourceview.highlight(parseInt(event.srcElement.getAttribute("script-id")),
+                         parseInt(event.srcElement.getAttribute("line-number")),
+                         parseInt(event.srcElement.getAttribute("line-number")));
 
     messages.post("trace-frame-selected", {rt_id: parseInt(target.getAttribute("runtime-id")),
                                            obj_id: parseInt(event.srcElement.getAttribute("scope-variable-object-id")),
