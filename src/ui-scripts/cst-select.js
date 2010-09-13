@@ -126,7 +126,7 @@
       }
       else
       {
-        style += "top: " + bottom + "px;";
+        style += "top: " + (bottom - 1) + "px;";
         modal_box.firstElementChild.style.cssText = "max-height: " + max_height + "px;"
       };
       if (modal_box_width > max_width && max_width_2 > max_width)

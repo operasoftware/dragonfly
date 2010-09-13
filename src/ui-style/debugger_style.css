@@ -122,6 +122,7 @@ ul {
   padding-left: 20px;
   line-height:16px;
   background: transparent url('../ui-images/selected-frame.png') scroll no-repeat -20px 0;
+  cursor: pointer;
   }
 
 #backtrace-container li:first-child {
@@ -631,7 +632,7 @@ div.dom {
   white-space: pre-wrap;
   }
 .dom { width: 100%; }
-.dom div:not(.tree-style)
+.dom div:not(.tree-style):not(.info-box)
 {
   padding-left: 1px;
   padding-right: 3px;
@@ -642,22 +643,20 @@ div.dom {
 .dom input 
 {
   border: 0;
-  margin: 0;
   padding: 0;
-  margin-left: -20px;
-  height: 15px;
-  width: 20px;
+  margin: 0 2px 0 -17px;
+  height: 15px; /* Make space for outline to appear outside the control */
+  width: 15px;
   color: #666;
-  background: transparent url('../ui-images/expand-collapse.png') 6px 2px no-repeat;
+  background: transparent url('../ui-images/expand-collapse.png') 2px 2px no-repeat;
 }
 
-/*.dom input:focus
-{
-  background-color: Highlight;
-}*/
-
 .dom input.open {
-  background-position: 6px -13px;
+  background-position: 2px -13px;
+  }
+.dom input:focus {
+  outline: 1px solid #78bae0;
+  outline-offset: -2px; /* Hides the normal (dotted) outline when pressing Enter on the expand/collapse button */
   }
 
 .tree-style .text-node
@@ -720,11 +719,10 @@ breadcrumb span
 
 .script-options h2, .stylesheet-options h2
 {
-  padding: .1em .2em;
-  font-size: 1.3em;
-  border-top: 1px solid hsl(0, 0%, 80%);
-  border-bottom: 1px solid hsl(0, 0%, 80%);
-  background-color: hsl(0, 0%, 90%);
+  padding: 2px 4px;
+  border: 0 solid #b3b3b3;
+  border-width: 1px 0;
+  background-color: #e6e6e6;
   white-space: nowrap;
 }
 

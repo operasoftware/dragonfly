@@ -47,15 +47,15 @@
   }
 
 #js-source-content .comment {
-  color: #888;
+  color: #999;
   }
 
 #js-source-content .js_builtins {
-  color: #18a;
+  color: #ac35a9;
   }
 
 #js-source-content .js_keywords {
-  color: #01c;
+  color: #da7948;
   }
 
 #js-source-content .number {
@@ -71,7 +71,7 @@
   }
 
 #js-source-content .string {
-  color: #a31;
+  color: #003c9c;
   }
 
 #js-source-content .not-error
