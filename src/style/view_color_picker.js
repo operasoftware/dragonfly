@@ -84,14 +84,19 @@ window.cls.ColorPickerView = function(id, name, container_class)
         this._finalize_show_color_picker();
       else
       {
-        if (target.style.backgroundColor == 'inherit')
+        switch (target.style.backgroundColor)
         {
-          var obj_id = parseInt(parent.get_attr('parent-node-chain', 'obj-id'));
-          var script = "window.getComputedStyle(ele, null)." +
-                       "getPropertyValue(\"" + this._edit_context.prop_name+ "\");";
-          var tag = tag_manager.set_callback(this, this._handle_get_color);
-          var msg = [this._edit_context.rt_id, 0, 0, script, [["ele", obj_id]]];
-          window.services['ecmascript-debugger'].requestEval(tag, msg);
+          case 'inherit':
+          case 'currentColor':
+          {
+            var obj_id = parseInt(parent.get_attr('parent-node-chain', 'obj-id'));
+            var script = "window.getComputedStyle(ele, null)." +
+                         "getPropertyValue(\"" + this._edit_context.prop_name+ "\");";
+            var tag = tag_manager.set_callback(this, this._handle_get_color);
+            var msg = [this._edit_context.rt_id, 0, 0, script, [["ele", obj_id]]];
+            window.services['ecmascript-debugger'].requestEval(tag, msg);
+            break;
+          }
         }
       }
     }
