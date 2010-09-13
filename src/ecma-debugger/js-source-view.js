@@ -403,6 +403,7 @@ cls.JsSourceView = function(id, name, container_class)
   {
     if (this.isvisible())
     {
+      highlight_line_start = highlight_line_start === undefined ? line_nr : highlight_line_start;
       __highlight_line_start = highlight_line_start - 1;
       __highlight_line_end = typeof highlight_line_end == "number" ?
                               highlight_line_end - 1:

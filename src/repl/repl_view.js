@@ -465,7 +465,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   {
     var sourceview = window.views.js_source;
     sourceview.highlight(parseInt(event.srcElement.getAttribute("script-id")),
-                         parseInt(event.srcElement.getAttribute("line-number")),
                          parseInt(event.srcElement.getAttribute("line-number")));
 
     messages.post("trace-frame-selected", {rt_id: parseInt(target.getAttribute("runtime-id")),
