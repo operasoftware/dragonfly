@@ -65,6 +65,9 @@ cls.JsSourceView = function(id, name, container_class)
 
   var __timeoutUpdateLayout = 0;
 
+  var __highlight_line_start = -1;
+  var __highlight_line_end = -1;
+
   var templates = {};
 
   var __timeout_clear_view = 0;
@@ -396,11 +399,33 @@ cls.JsSourceView = function(id, name, container_class)
     document.getElementById(horizontal_scoller).style.right = '0px';
   }
 
+  this.highlight = function(script_id, line_nr, highlight_line_start, highlight_line_end)
+  {
+    if (this.isvisible())
+    {
+       __highlight_line_start = highlight_line_start - 1;
+       __highlight_line_end = typeof highlight_line_end == "number" ? 
+                              highlight_line_end - 1: 
+                              __highlight_line_start;
+       this.showLine(script_id, line_nr, null, null, null, true) 
+    }
+  }
 
-
-  this.showLine = function(script_id, line_nr, clear_scroll, is_parse_error, update_scroll_height) // return boolean for the visibility of this view
+  // return boolean for the visibility of this view
+  this.showLine = function(script_id, 
+                           line_nr, 
+                           clear_scroll, 
+                           is_parse_error, 
+                           update_scroll_height, 
+                           keep_line_highlight) 
   {
     // too often called?
+
+    if (!keep_line_highlight)
+    {
+      __highlight_line_start = -1;
+      __highlight_line_end = -1;
+    }
 
     if( __timeout_clear_view )
     {
@@ -505,9 +530,12 @@ cls.JsSourceView = function(id, name, container_class)
       // TODO check if __current_line != line_nr makes any sense
       if(__current_line != line_nr || __view_is_destroyed || !source_content.innerHTML)
       {
-
         source_content.innerHTML = 
-          simple_js_parser.format(script, line_nr - 1, max_lines - 1).join('');
+          simple_js_parser.format(script, 
+                                  line_nr - 1, 
+                                  max_lines - 1, 
+                                  __highlight_line_start, 
+                                  __highlight_line_end).join('');
         
         __current_line = line_nr;
         __view_is_destroyed = false;
@@ -640,13 +668,13 @@ cls.JsSourceView = function(id, name, container_class)
       __scroll_interval = clearInterval(__scroll_interval);
       if(__current_line != target_line)
       {
-        self.showLine(script.id, target_line, null, null, false);
+        self.showLine(script.id, target_line, null, null, false, true);
       }
       __keyEvent = 0;
     }
     else
     {
-      self.showLine( script.id, Math.round((__current_line + target_line) / 2), null, null, false);
+      self.showLine( script.id, Math.round((__current_line + target_line) / 2), null, null, false, true);
     }
   }
   
