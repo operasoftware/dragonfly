@@ -18,20 +18,45 @@ cls.EcmascriptDebugger["6.0"].InspectionView = function(id, name, container_clas
   this.clearView = function(){};
 
   this._on_object_selected = function(msg)
-  { 
+  {
     this._data = new cls.InspectableJSObject(msg.rt_id, msg.obj_id);
+
     if (this._last_selected == "object")
     {
       this.update();
     }
+  };
+
+  this._on_trace_frame_selected = function(msg)
+  {
+    var virtual_properties =
+    [
+      [
+        'arguments',
+        'object',
+        ,
+        [msg.arg_id, 0, 'object', ,'']
+      ],
+      [
+        'this',
+        'object',
+        ,
+        [msg.rt_id == '0' ? msg.rt_id : msg.this_id, 0, 'object', , '']
+      ]
+    ];
+
+    this._data = new cls.InspectableJSObject(msg.rt_id,
+                                             msg.obj_id,
+                                             null, null, virtual_properties);
+    this.update();
   }
 
   this._on_frame_selected = function(msg)
-  { 
+  {
     var frame = stop_at.getFrame(msg.frame_index);
     if (frame)
     {
-      var virtual_properties = 
+      var virtual_properties =
       frame.argument_id &&
       [
         [
@@ -77,6 +102,7 @@ cls.EcmascriptDebugger["6.0"].InspectionView = function(id, name, container_clas
 
   window.messages.addListener('object-selected', this._on_object_selected.bind(this));
   window.messages.addListener('frame-selected', this._on_frame_selected.bind(this));
+  window.messages.addListener('trace-frame-selected', this._on_trace_frame_selected.bind(this));
   window.messages.addListener('runtime-destroyed', this._on_runtime_destroyed.bind(this));
   window.messages.addListener('active-inspection-type', this._on_active_inspection_type.bind(this));
   this.init(id, name, container_class);
@@ -85,7 +111,7 @@ cls.EcmascriptDebugger["6.0"].InspectionView = function(id, name, container_clas
 
 // e.g. ['Object', 'Function', 'Array', 'String', 'Number'];
 cls.EcmascriptDebugger["6.0"].InspectionView.DEFAULT_COLLAPSED_PROTOS = ['*'];
-  
+
 
 cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
 {
@@ -103,7 +129,7 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
     // key-label map
     {
       'show-prototypes': ui_strings.S_SWITCH_SHOW_PROTOTYPES,
-      'show-default-nulls-and-empty-strings': 
+      'show-default-nulls-and-empty-strings':
         ui_strings.S_SWITCH_SHOW_FEFAULT_NULLS_AND_EMPTY_STRINGS,
       'show-non-enumerables': ui_strings.S_SWITCH_SHOW_NON_ENUMERABLES
     },
@@ -111,7 +137,7 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
     {
       checkboxes:
       [
-        'show-prototypes', 
+        'show-prototypes',
         'show-non-enumerables',
         'show-default-nulls-and-empty-strings',
       ],
@@ -169,7 +195,7 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
     }
     catch(e)
     {
-      alert("Not a valid input.")
+      alert("Not a valid input.");
       protos = null;
     };
     if(protos)
@@ -200,7 +226,7 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
   (
     'inspection',
     [
-      'show-prototypes', 
+      'show-prototypes',
       'show-non-enumerables',
       'show-default-nulls-and-empty-strings',
     ]

@@ -44,17 +44,33 @@ templates.repl_output_pobj = function(data)
   ];
 };
 
+templates.repl_output_traceentry = function(frame, index)
+{
+    var tpl = ['li',
+      ui_strings.S_TEXT_CALL_STACK_FRAME_LINE.
+        replace("%(FUNCTION_NAME)s", ( frame.objectValue ? frame.objectValue.functionName : ui_strings.ANONYMOUS_FUNCTION_NAME ) ).
+        replace("%(LINE_NUMBER)s", ( frame.lineNumber || '-' ) ).
+        replace("%(SCRIPT_ID)s", ( frame.scriptID || '-' ) ),
+      'ref-id', index.toString(),
+      'script-id', String(frame.scriptID), //.toString(),
+      'line-number', String(frame.lineNumber),
+      'scope-variable-object-id', String(frame.variableObject),
+      'this-object-id', String(frame.thisObject),
+      'arguments-object-id', String(frame.argumentObject)
+    ];
+  return tpl;
+};
+
 templates.repl_output_trace = function(trace)
 {
-  // the slice is so we reverse a copy, not touching the original
-  return ["ul",
-          trace.frameList.slice(0).reverse().map(function(frame) {
-            var uri = frame.uri || "<unknown source>";
-            var name = frame.objectValue ? frame.objectValue.functionName || frame.objectValue.className : "<unknown function>";
-            var line = frame.lineNumber == undefined ? "<unknown line>" : frame.lineNumber;
-            return ["li", uri + ":" + name + ":" + line];
-            //  + (window.ini.debug ? " " + JSON.stringify(frame) : "" )
-          }),
-          'class', 'repl-output-trace'
-  ];
+  var fun = function(f) {
+    return templates.repl_output_traceentry(f, trace.frameList.indexOf(f));
+  };
+  var lis = trace.frameList.map(fun);
+  var tpl = ["div", ["ol", lis, "class", "console-trace",
+                     'handler', 'select-trace-frame',
+                     'runtime-id', trace.runtimeID.toString()
+                    ],
+                    "class", "console-trace-container"];
+  return tpl;
 };
