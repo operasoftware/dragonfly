@@ -243,7 +243,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._render_input = function(str)
   {
-    this._render_string(">>> " + str);
+    var lines = str.split("\n");
+    this._render_string(">>> " + lines[0]);
+    lines.slice(1).forEach(function(l) {
+      this._render_string("... " + l);
+    }, this);
   };
 
   this.set_current_input = function(str)
