@@ -6,7 +6,7 @@ templates.repl_main = function()
   return [
     "div", [[
       ["div", [
-         "ol", "", "class", "repl-lines"
+         "ol", "", "class", "repl-lines js-source"
          ], "class", "repl-output"],
       ["div", [[
         ["span", ">>> ", "class", "repl-prefix"],

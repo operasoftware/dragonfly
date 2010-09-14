@@ -244,11 +244,15 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._render_input = function(str)
   {
-    var lines = str.split("\n");
-    this._render_string(">>> " + lines[0]);
-    lines.slice(1).forEach(function(l) {
-      this._render_string("... " + l);
-    }, this);
+    var markup = window.simple_js_parser.format_source(str, "dummyspan");
+    for (var n=0, l; l=markup[n]; n++)
+    {
+      l = l.replace("<dummyspan>", "").replace("</dummyspan>", "");
+      var filler = document.createElement("span");
+      var src = '<span class="repl-line-marker">' + (n ? "... " : "&gt&gt&gt ") + "</span>" + l;
+      filler.innerHTML = src;
+      this._add_line(filler);
+    }
   };
 
   this.set_current_input = function(str)
