@@ -19,7 +19,7 @@ window.cls.SimpleJSParser = function()
     * @param {Number} line The line number to start the formatting.
     * @param {Number} max_line The count of maxium lines to create.
     */
-  this.format = function(script, line, max_line, highlight_start, highlight_end){};
+  this.format = function(script, line, max_line, highlight_start, highlight_end, line_ele_name){};
 
   /**
     * Tokenize a give script string.
@@ -78,13 +78,13 @@ window.cls.SimpleJSParser = function()
 
   var __token_arr = null;
   var __token_type_arr = null;
-  
+
   var __highlight_line_start = -1;
   var __highlight_line_end = -1;
 
   var __default_line_ele = "div";
   var __current_line_ele = "";
-  
+
   var __read_buffer_with_arrs = function()
   {
     if (__buffer)
@@ -786,7 +786,7 @@ window.cls.SimpleJSParser = function()
     {
       __line += '\u00A0';
     }
-    __ret[__ret.length] = __line_number >=  __highlight_line_start && 
+    __ret[__ret.length] = __line_number >=  __highlight_line_start &&
                           __line_number <=  __highlight_line_end ?
                           "<" + __current_line_ele + " class='highlight-source'>" + __line + "</" + __current_line_ele + ">" :
                           "<" + __current_line_ele + ">" + __line + "</" + __current_line_ele + ">";
