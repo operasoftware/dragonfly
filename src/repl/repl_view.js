@@ -71,6 +71,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._update_input_height_bound = function()
   {
     this._textarea.rows = Math.max(1, Math.ceil(this._textarea.scrollHeight / this._input_row_height));
+    this._multiediting = Boolean(this._textarea.rows-1);
   }.bind(this);
 
   this._save_scroll_bound = function()
@@ -293,7 +294,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       {
         if (evt.ctrlKey)
         {
-          this._multiediting = true;
           this._textarea.rows = this._textarea.rows + 1;
           this._textarea.value = this._textarea.value + "\n";
         }
@@ -306,7 +306,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
           var input = this._textarea.value;
           input = input.trim();
           this._textarea.value = "";
-          this._multiediting = false;
           this._backlog_index = -1;
           this._current_input = "";
 
