@@ -324,13 +324,23 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       case 38: // up and down. maybe. See DSK-246193
       case 40:
       {
-        if (this._multiediting) {
-          break; // history editing should be off when in a multiline box.
-        }
         // workaround as long as we don't have support for keyIdentifier
         // event.which is 0 in a keypress event for function keys
         if( !evt.which )
         {
+          // the multiediting stuff here makes sure we can navigate inside
+          // multiline blocks from the typed history. Moving cursor to the
+          // 0th position of the textare and pressing up resumes backwards
+          // history navigation. The same applies when navigating forward
+          // and positioning the cursor at the end of the input.
+          if (this._multiediting)
+          {
+            if ((evt.keyCode==38 && this._textarea.selectionStart > 0) ||
+                (evt.keyCode==40 && this._textarea.selectionStart < this._textarea.value.length))
+              {
+                break;
+              }
+          }
           evt.preventDefault();
           this._handle_backlog(evt.keyCode == 38 ? 1 : -1);
         }
