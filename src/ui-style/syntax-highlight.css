@@ -103,15 +103,13 @@
 	color: #111;
   }
 
-#target-element
+#target-element, .dom [handler="spotlight-node"]:hover
 {
   background-color: #cce5f3;
-  margin-top: -1px;
-  margin-right: -1px;
-  margin-bottom: -1px;
+  /*margin: -1px;
   border: 1px solid #78bae0;
   position: relative;
-  z-index: 1;
+  z-index: 1;*/
   border-radius: 3px;
 }
 
@@ -156,7 +154,7 @@
 
 .tree-style 
 {
-  background:transparent url('../ui-images/dom-tree-style.gif') scroll repeat 10px 0;
+  background:transparent url('../ui-images/dom-tree-style.gif') scroll repeat 8px 0;
 }
 
 .tree-style > div 

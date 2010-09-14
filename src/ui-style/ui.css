@@ -12,7 +12,7 @@ main-view { /**/
   width: 100%;
   height: 100%;
   display: block;
-  position: relative;
+  position: fixed;
   z-index: 1;
   overflow: hidden;
   }
@@ -144,6 +144,7 @@ toolbar { /**/
 toolbar-buttons, toolbar-switches {
   display: block;
   float: left;
+  height: 100%;
   }
 
 button[handler="reload-window"] {
@@ -329,7 +330,6 @@ window-toolbar button.switch[is-active="true"]:active:before
 {
   background-position: -26px -48px;
 }
-*/
 .attached:before 
 {
   background-position: -26px 0;
@@ -343,7 +343,7 @@ window-toolbar button.switch[is-active="true"]:active:before
   background-position: -26px -48px;
 }
 
-/* mode modal */
+/* mode modal /
 .modal toolbar button[disabled]:before,
 .modal toolbar button[disabled]:hover:before,
 .modal toolbar button[disabled]:active:before,
@@ -373,12 +373,14 @@ window-toolbar button.switch[is-active="true"]:active:before
   background-position: -26px 0;
 }
 
+*/
 toolbar-separator {
   display: block;
   float: left;
-  width: 1px;
-  height: 27px;
+  height: 21px;
   margin: 0 3px;
+  /*border-left: 1px solid #fff;
+  border-right: 1px solid #8e8e8e;*/
   }
 	
 toolbar-filters {

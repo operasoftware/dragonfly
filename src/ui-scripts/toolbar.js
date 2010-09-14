@@ -100,7 +100,7 @@ var ToolbarBase = function()
         }
         if( previousEle )
         {
-          width -= ( previousEle.offsetLeft + previousEle.offsetWidth );
+          width -= (previousEle.offsetLeft + previousEle.offsetWidth); // TODO: take margin into account
         }
         cst_select.style.width = ( width - defaults['cst-select-margin-border-padding'] ) + 'px';
       }
