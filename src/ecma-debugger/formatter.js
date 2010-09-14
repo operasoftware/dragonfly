@@ -81,6 +81,9 @@ window.cls.SimpleJSParser = function()
   
   var __highlight_line_start = -1;
   var __highlight_line_end = -1;
+
+  var __default_line_ele = "div";
+  var __current_line_ele = "";
   
   var __read_buffer_with_arrs = function()
   {
@@ -785,8 +788,8 @@ window.cls.SimpleJSParser = function()
     }
     __ret[__ret.length] = __line_number >=  __highlight_line_start && 
                           __line_number <=  __highlight_line_end ?
-                          "<div class='highlight-source'>" + __line + "</div>" :
-                          "<div>" + __line + "</div>";
+                          "<" + __current_line_ele + " class='highlight-source'>" + __line + "</" + __current_line_ele + ">" :
+                          "<" + __current_line_ele + ">" + __line + "</" + __current_line_ele + ">";
     __line='';
     __buffer = '';
     return (++__line_number) > __max_line_number;
@@ -800,15 +803,15 @@ window.cls.SimpleJSParser = function()
     }
     if(__line_number < __parse_error_line)
     {
-      __ret[__ret.length] = "<div>" + __line + "</div>";
+      __ret[__ret.length] = "<" + __current_line_ele + ">" + __line + "</" + __current_line_ele + ">";
     }
     else if(__line_number == __parse_error_line)
     {
-      __ret[__ret.length] = "<div class='first-error-line'>" + __line + "</div>";
+      __ret[__ret.length] = "<" + __current_line_ele + " class='first-error-line'>" + __line + "</" + __current_line_ele + ">";
     }
     else
     {
-      __ret[__ret.length] = "<div class='error-line error'>" + __line + "</div>";
+      __ret[__ret.length] = "<" + __current_line_ele + " class='error-line error'>" + __line + "</" + __current_line_ele + ">";
     }
     __line='';
     __buffer = '';
@@ -876,7 +879,7 @@ window.cls.SimpleJSParser = function()
       'state parsing not implemented in formatter.js for REG_EXP');
   };
 
-  this.format = function(script, line, max_line, highlight_start, highlight_end)
+  this.format = function(script, line, max_line, highlight_start, highlight_end, line_ele_name)
   {
     if (typeof highlight_start == "number" && typeof highlight_end == "number")
     {
@@ -887,6 +890,15 @@ window.cls.SimpleJSParser = function()
     {
       __highlight_line_start = -1;
       __highlight_line_end = -1;
+    }
+
+    if (typeof line_ele_name == 'string')
+    {
+      __current_line_ele = line_ele_name;
+    }
+    else
+    {
+      __current_line_ele = __default_line_ele;
     }
 
     __reset(line, max_line);

@@ -178,7 +178,7 @@ cls.JsSourceView = function(id, name, container_class)
     frame_id = container.id;
     container.innerHTML = "" +
       "<div id='js-source-scroll-content'>"+
-        "<div id='js-source-content'></div>"+
+        "<div id='js-source-content' class='js-source'></div>"+
       "</div>"+
       "<div id='js-source-scroll-container' handler='scroll-js-source'>"+
         "<div id='js-source-scroller'></div>"+

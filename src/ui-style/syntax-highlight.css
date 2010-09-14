@@ -41,55 +41,55 @@
 
 /* ecma script source */
 
-#js-source-content div {
+.js-source div {
 	font-family: monospace;
 	color: #111;
   }
 
-#js-source-content .comment {
+.js-source .comment {
   color: #888;
   }
 
-#js-source-content .js_builtins {
+.js-source .js_builtins {
   color: #18a;
   }
 
-#js-source-content .js_keywords {
+.js-source .js_keywords {
   color: #01c;
   }
 
-#js-source-content .number {
+.js-source .number {
   color: #920;
   }
 
-#js-source-content .punctuator {
+.js-source .punctuator {
   color: #000;
   }
 
-#js-source-content .reg_exp {
+.js-source .reg_exp {
   color: #c71;
   }
 
-#js-source-content .string {
+.js-source .string {
   color: #a31;
   }
 
-#js-source-content .not-error
+.js-source .not-error
 {
   background-color: #fff;
 }
 
-#js-source-content .first-error {
+.js-source .first-error {
   color: #333;
   background-color: #f90;
   }
 
-#js-source-content .error {
+.js-source .error {
   color: #999;
   }
 
-#js-source-content  .first-error-line,
-#js-source-content  .error-line
+.js-source  .first-error-line,
+.js-source  .error-line
 {
   background-color: #e6e6e6;
 }
