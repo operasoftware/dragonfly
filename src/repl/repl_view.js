@@ -526,10 +526,18 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
   }.bind(this);
 
+  this._handle_repl_focus_bound = function()
+  {
+    if (this._current_scroll === null)
+    {
+      this._textarea.focus();
+    }
+  }.bind(this);
 
   var eh = window.eventHandlers;
   eh.click["repl-toggle-group"] = this._handle_repl_toggle_group;
   eh.click["select-trace-frame"] = this._handle_repl_frame_select_bound;
+  eh.click["repl-focus"] = this._handle_repl_focus_bound;
   eh.keypress['repl-textarea'] = this._handle_keypress_bound;
   eh.change['set-typed-history-length'] = this._handle_option_change_bound;
   messages.addListener('active-tab', this._update_runtime_selector_bound);
