@@ -17,6 +17,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._container = null;
   this._backlog_index = -1;
   this._input_row_height = null;
+  this._toolbar_visibility = null;
 
   this.ondestroy = function()
   {
@@ -40,6 +41,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       // note: events are bound to handlers at the bottom of this class
     }
 
+    this._update_runtime_selector_bound();
     this._update();
 
     if (switched_to_view)
@@ -514,11 +516,23 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     messages.post("setting-changed", {id: "repl", key: "max-typed-history-length"});
   }.bind(this);
 
+  this._update_runtime_selector_bound = function(msg)
+  {
+    var is_multi = host_tabs.isMultiRuntime();
+    if( this._toolbar_visibility !== is_multi )
+    {
+      this._toolbar_visibility = is_multi;
+      topCell.setTooolbarVisibility('command_line', is_multi);
+    }
+  }.bind(this);
+
+
   var eh = window.eventHandlers;
   eh.click["repl-toggle-group"] = this._handle_repl_toggle_group;
   eh.click["select-trace-frame"] = this._handle_repl_frame_select_bound;
   eh.keypress['repl-textarea'] = this._handle_keypress_bound;
   eh.change['set-typed-history-length'] = this._handle_option_change_bound;
+  messages.addListener('active-tab', this._update_runtime_selector_bound);
 
   this.init(id, name, container_class, html, default_handler);
 };
