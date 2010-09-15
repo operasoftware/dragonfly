@@ -123,7 +123,7 @@
   color: #000;
 }
 
-.dom node, selector {
+.dom node, selector, .element-name {
   color: #952598;
   }
 
