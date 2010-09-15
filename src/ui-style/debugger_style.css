@@ -366,8 +366,11 @@ rule, font-face-rule, page-rule, import-rule, charset-rule, media-rule {
   font-family:monospace;
   display:block;
   /*xxwhite-space: pre-wrap;*/
-  margin: 1em 0;
+  margin: 0 0 1em;
   }
+rule:last-of-type, stylesheet :last-child {
+    margin-bottom: 0;
+}
 
 .stylesheets pre {
   background:red;
@@ -477,6 +480,9 @@ category.unfolded + category header {
 .css-inspector .selected {
   background-color: #cce5f3;
   }
+.css-inspector property.selected {
+    border-radius: 3px;
+}
 
 .css-inspector.edit-mode .selected {
   background-color: transparent;
