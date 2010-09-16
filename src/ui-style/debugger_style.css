@@ -409,7 +409,7 @@ stylesheet-link:hover {
 
 styles {
   /*xxwhite-space: pre-wrap;*/
-  padding:  0 5px;
+  padding:  0 4px;
   }
 
 category header {
@@ -489,8 +489,8 @@ category.unfolded + category header {
   border: 0 solid #b3b3b3;
   border-width: 1px 0;
   background-color: #eee;
-  margin: 10px -5px;
-  padding-left: 3px;
+  margin: 10px -4px;
+  padding-left: 4px;
   }
   
 
@@ -502,7 +502,7 @@ examine-objects item
 }
 examine-objects
 {
-  padding: 0 9px;
+  padding: 4px;
 }
 examine-objects examine-objects
 {

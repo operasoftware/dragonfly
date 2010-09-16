@@ -225,7 +225,7 @@ button[handler="reload-window"] {
 [key="console.expand-all-entries"] {
     content: url("../ui-images/icons/expand.png");
 }
-[cst-id="debugger-menu"] {
+cst-icon[class="debugger-menu"] {
     content: url("../ui-images/icons/select_tab.png");
 }
 
@@ -271,7 +271,11 @@ window-controls button[is-active="true"]:active {
 }
 
 cst-select[cst-id="debugger-menu"] {
-    width: 29px;
+    width: 33px;
+}
+cst-icon {
+    display: inline-block;
+    height: 100%;
 }
 /*
 toolbar button:before, 
@@ -727,6 +731,7 @@ view-slider.vertical {
 
 view-slider.horizontal {
   cursor: s-resize;
+  border-top: 1px solid #b3b3b3;
   }
 
 ui-menu { /**/
