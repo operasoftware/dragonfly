@@ -24,6 +24,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._lastupdate = 0;
     this._backlog_index = -1;
     this._current_input = this._textarea.value;
+    this._container.removeEventListener("scroll", this._save_scroll_bound, false);
   };
 
   this.createView = function(container)
@@ -46,10 +47,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
     if (switched_to_view)
     {
+      var padder = this._container.querySelector(".padding");
       // defer adding listeners until after update
       this._container.addEventListener("scroll", this._save_scroll_bound, false);
-      this._container.addEventListener("DOMAttrModified", this._update_scroll_bound, false);
-      this._container.addEventListener("DOMNodeInserted", this._update_scroll_bound, false);
+      padder.addEventListener("DOMAttrModified", this._update_scroll_bound, false);
+      padder.addEventListener("DOMNodeInserted", this._update_scroll_bound, false);
 
       if(this._current_scroll === null)
       {
