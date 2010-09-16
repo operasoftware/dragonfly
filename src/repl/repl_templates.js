@@ -63,10 +63,7 @@ templates.repl_output_traceentry = function(frame, index)
 
 templates.repl_output_trace = function(trace)
 {
-  var fun = function(f) {
-    return templates.repl_output_traceentry(f, trace.frameList.indexOf(f));
-  };
-  var lis = trace.frameList.map(fun);
+  var lis = trace.frameList.map(templates.repl_output_traceentry);
   var tpl = ["div", ["ol", lis, "class", "console-trace",
                      'handler', 'select-trace-frame',
                      'runtime-id', trace.runtimeID.toString()
