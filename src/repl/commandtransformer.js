@@ -104,6 +104,14 @@ cls.HostCommandTransformer = function() {
     {
       return this.command_map[tokens[0].value];
     }
+
+    if (tokens[0].type == COMMENT)
+    {
+      var hashbang = tokens[0].value.indexOf("#!");
+      if (hashbang) {
+        return this.get_command((tokens[0].value.slice(hashbang+2).trim()));
+      }
+    }
     return null;
   };
 
