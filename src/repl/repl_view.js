@@ -248,15 +248,9 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._render_input = function(str)
   {
-    var markup = window.simple_js_parser.format_source(str, "dummyspan");
-    for (var n=0, l; l=markup[n]; n++)
-    {
-      l = l.replace("<dummyspan>", "").replace("</dummyspan>", "");
-      var filler = document.createElement("span");
-      var src = '<span class="repl-line-marker">' + (n ? "... " : "&gt&gt&gt ") + "</span>" + l;
-      filler.innerHTML = src;
-      this._add_line(filler);
-    }
+    window.simple_js_parser.format_source(str).forEach(function(line, index) {
+      this._add_line('<span class="repl-line-marker">' + (index ? "... " : "&gt&gt&gt ") + "</span>" + line);
+    }, this);
   };
 
   this.set_current_input = function(str)

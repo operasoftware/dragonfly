@@ -23,9 +23,9 @@ window.cls.SimpleJSParser = function()
 
   /**
    * Helper method that formats source code the same way as format but takes a
-   * simple string as input. Supports optional line_ele_name arg
+   * simple string as input.
    */
-  this.format_source = function(source, line_ele_name){};
+  this.format_source = function(source){};
 
   /**
     * Tokenize a give script string.
@@ -966,11 +966,29 @@ window.cls.SimpleJSParser = function()
     parser(__source.charAt(__pointer));
   }
 
-  this.format_source = function(source, line_ele_name)
+  var __online_raw = function(c)
   {
-    var script_obj = {source_data: source, source: source, line_arr: [], state_arr: []};
-    window.pre_lexer(script_obj);
-    return this.format(script_obj, 0, script_obj.line_arr.length, null, null, line_ele_name);
+    __ret.push(__line);
+    __line = '';
+    __buffer = '';
+    return false;
+  }
+
+  this.format_source = function(source)
+  {
+    __reset(0, 0);
+    parser = default_parser;
+    __previous_type = '';
+    __type = IDENTIFIER;
+    __source = source;
+    __escape = ESCAPE;
+    __pointer = 0;
+    read_buffer = read_buffer_default;
+    __online = __online_raw;
+    parser(__source.charAt(__pointer));
+    // empty the buffer in case the source does not end with a line ending
+    __online();
+    return __ret;
   }
 
 }
