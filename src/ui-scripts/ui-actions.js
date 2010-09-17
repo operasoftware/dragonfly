@@ -236,19 +236,22 @@ eventHandlers.click['top-window-toggle-attach'] = function(event)
 
 eventHandlers.click['overlay-tab'] = function(event, target)
 {
-    alert("switch tab")
+  var settings_overlay = UIBase.getUIById(document.querySelector("overlay[type=settings-overlay]")
+                                                  .get_attr("parent-node-chain", "ui-id"));
+  settings_overlay.show_group(target.getAttribute("group"));
 };
 
 eventHandlers.click['show-settings-overlay'] = function(event, target)
 {
-  var settingsOverlay = UIBase.getUIById(document.querySelector("overlay[type=settings-overlay]")
-                              .get_attr("parent-node-chain", "ui-id"));
-  var buttonDims = target.getBoundingClientRect();
-  var element = settingsOverlay.element.querySelector("overlay-window");
-  element.style.top = buttonDims.bottom + 10 + "px";
-  element.style.right = document.documentElement.clientWidth - buttonDims.right - 10 + "px";
+  var settings_overlay = UIBase.getUIById(document.querySelector("overlay[type=settings-overlay]")
+                                                  .get_attr("parent-node-chain", "ui-id"));
+  var button_dims = target.getBoundingClientRect();
+  var element = settings_overlay.element.querySelector("overlay-window");
+  element.style.top = button_dims.bottom + 10 + "px";
+  element.style.right = document.documentElement.clientWidth - button_dims.right - 10 + "px";
   target.setAttribute("is-active", target.getAttribute("is-active") != "true");
-  settingsOverlay.toggleVisibility();
+  settings_overlay.show_group("general");
+  settings_overlay.toggle_visibility();
 };
 
 eventHandlers.click['toolbar-switch'] = function(event)

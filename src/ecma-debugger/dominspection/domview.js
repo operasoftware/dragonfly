@@ -210,7 +210,9 @@ cls.DOMView.create_ui_widgets = function()
         'scroll-into-view-on-spotlight',
         'lock-selecked-elements'
       ]
-    }
+    },
+    null,
+    "document"
   );
 
   new ToolbarConfig

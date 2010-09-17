@@ -40,7 +40,9 @@ cls.EcmascriptDebugger["6.0"].DOMAttrsView.create_ui_widgets = function()
       [
         "hide-null-values"
       ]
-    }
+    },
+    null,
+    "document"
   );
 
   new ToolbarConfig

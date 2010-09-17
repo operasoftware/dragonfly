@@ -276,6 +276,7 @@ cst-select[cst-id="debugger-menu"] {
 cst-icon {
     display: inline-block;
     height: 100%;
+    width: 19px;
 }
 /*
 toolbar button:before, 
@@ -1103,6 +1104,8 @@ cst-value
   white-space: nowrap;
   -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
+  width: 95%; /* TODO: this is ugly, might push down the dropdown */
+  box-sizing: border-box;
 }
 
 cst-drop-down
@@ -1464,6 +1467,7 @@ overlay-window {
     border: 2px solid #b1b1b1;
     display: block;
     position: absolute;
+    height: 90%;
 }
 overlay-window h2 {
     font-size: 1em;
@@ -1500,7 +1504,12 @@ overlay-content {
     border-radius: 0 0 7px 7px;
     border-top: none;
     padding: 10px;
-    position: relative;
+    position: absolute;
+    top: 31px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow: auto;
 }
 #options {
     margin-right: 210px;

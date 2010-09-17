@@ -259,16 +259,13 @@
   {
     
     var ret = ['settings', self.settingsHeader(view_id, view_name, is_unfolded)];
-    if( is_unfolded )
+    var setting = settings[view_id];
+    var settings_map = setting.setting_map;
+    var cat_name = '';
+    // so far checkboxes, customSettings
+    for( cat_name in settings_map ) 
     {
-      var setting = settings[view_id];
-      var settings_map = setting.setting_map;
-      var cat_name = '';
-      // so far checkboxes, customSettings
-      for( cat_name in settings_map ) 
-      {
-        ret[ret.length] = this[cat_name](setting, settings_map[cat_name]); 
-      }
+      ret[ret.length] = this[cat_name](setting, settings_map[cat_name]); 
     }
     return ret;
   }
@@ -276,10 +273,6 @@
   this.settingsHeader = function(view_id, view_name, is_unfolded)
   {
     return ['settings-header', 
-        ['input', 
-          'type', 'button', 
-          'tab-id', view_id  
-        ].concat(is_unfolded ? ['class', 'unfolded'] : []), 
       view_name, 'handler', 'toggle-setting', 'view-id', view_id];
   }
 

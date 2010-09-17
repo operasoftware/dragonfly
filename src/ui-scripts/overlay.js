@@ -7,7 +7,7 @@ var Overlay = function(cell)
     this.type = "overlay";
     this._is_visible = false;
 
-    this.toggleVisibility = function()
+    this.toggle_visibility = function()
     {
       if (this._is_visible)
       {
@@ -20,6 +20,21 @@ var Overlay = function(cell)
       this._is_visible = !this._is_visible;
     };
 
+    this.show_group = function(group)
+    {
+        var by_group = Settings.get_settings_by_group(group);
+        var tabs = this.element.querySelectorAll("tab");
+        for (var i = 0; tab = tabs[i]; i++)
+        {
+            tab.removeClass("active");
+            if (tab.getAttribute("group") == group)
+            {
+                tab.addClass("active");
+            }
+        }
+        this.element.querySelector("overlay-content").clearAndRender(templates.settings(by_group));
+    };
+
     this.setup = function(id)
     {
       this.element = document.getElementById(this.type + '-to-' + this.cell.id) || this.update();
@@ -28,11 +43,13 @@ var Overlay = function(cell)
                        [
                          ["overlay-tabs",
                            [
-                             ["tab", "test", "class", "active", "handler", "overlay-tab"],
-                             ["tab", "test2", "handler", "overlay-tab"]
+                             ["tab", "General", "group", "general", "handler", "overlay-tab"],
+                             ["tab", "Document", "group", "document", "handler", "overlay-tab"],
+                             ["tab", "Script", "group", "script", "handler", "overlay-tab"],
+                             ["tab", "Resource Manager", "group", "resource_manager", "handler", "overlay-tab"]
                            ]
                          ],
-                         ["overlay-content", [["p", "test"], ["p", "test"], ["p", "test"]]]
+                         ["overlay-content"]
                        ]
                      ];
       this.element.render(template);

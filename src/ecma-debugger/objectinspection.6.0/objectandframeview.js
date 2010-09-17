@@ -105,7 +105,9 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
       [
         'hide-default-properties'
       ]
-    }
+    },
+    null,
+    "script"
   );
 
   new ToolbarConfig
