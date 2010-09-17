@@ -130,6 +130,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <link rel="stylesheet" href="./console-logger/consolelogger_style.css"/>
 <link rel="stylesheet" href="./ui-style/colorpickerstyle.css"/>
 <link rel="stylesheet" href="./repl/repl_style.css"/>
+<link rel="stylesheet" href="./resource-manager/resource_style.css"/>
 
 <!-- This will turn off including of the UI strings if the exclude_uistrings var is set -->
 <!-- command concat_js off if exclude_uistrings -->
@@ -215,6 +216,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./build-application/build_exec_2_0.js"></script>
 <script src="./build-application/build_ecmascript_debugger_5_0.js"></script>
 <script src="./build-application/build_ecmascript_debugger_6_0.js"></script>
+<script src="./build-application/build_resource_manager_1_0.js"></script>
 
 
 <script src="./debug/debug.js"/>
@@ -323,5 +325,18 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./repl/repl_data.js"/>
 <script src="./repl/repl_templates.js"/>
 <script src="./repl/ecmascriptdebugger.6.0.events.onconsoletrace.js"/>
+
+<script src="./resource-manager/resource_service.js"/>
+<script src="./resource-manager/resource_view.js"/>
+<script src="./resource-manager/resource_templates.js"/>
+<script src="./resource-manager/resourcemanager.1.0.events.onurlload.js"/>
+<script src="./resource-manager/resourcemanager.1.0.events.onurlfinished.js"/>
+<script src="./resource-manager/resourcemanager.1.0.events.onrequest.js"/>
+<script src="./resource-manager/resourcemanager.1.0.events.onrequestheader.js"/>
+<script src="./resource-manager/resourcemanager.1.0.events.onrequestfinished.js"/>
+<script src="./resource-manager/resourcemanager.1.0.events.onresponse.js"/>
+<script src="./resource-manager/resourcemanager.1.0.events.onresponseheader.js"/>
+<script src="./resource-manager/resourcemanager.1.0.events.onresponsefinished.js"/>
+
 <body/>
 </viewport>

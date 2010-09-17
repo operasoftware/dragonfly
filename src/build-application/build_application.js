@@ -60,20 +60,20 @@ window.app.build_application = function(on_services_created, on_services_enabled
   var on_host_info_callback = function(service_descriptions)
   {
 
-      new window.cls.ScopeInterfaceGenerator().get_interface(service_descriptions, 
+      new window.cls.ScopeInterfaceGenerator().get_interface(service_descriptions,
         function(map)
         {
           window.message_maps = map;
           window.cls.ServiceBase.populate_map(map);
           build_and_enable_services(service_descriptions, map);
-        }, 
+        },
         function(error)
         {
           opera.postError(error.message);
         },
         Boolean(window.ini.debug)
       );
-    
+
   };
 
   /**
@@ -82,7 +82,7 @@ window.app.build_application = function(on_services_created, on_services_enabled
    */
   var build_and_enable_services = function(service_descriptions, map)
   {
-    var 
+    var
     service_name = '',
     service = null,
     class_name = '',
@@ -100,13 +100,13 @@ window.app.build_application = function(on_services_created, on_services_enabled
       class_name = window.app.helpers.dash_to_class_name(service_name);
       if (service_name != "scope")
       {
-        if (window.services[service_name] && 
+        if (window.services[service_name] &&
           window.services[service_name].create_and_expose_interface(version, map[service_name]))
         {
           var
           match_version = _find_compatible_version(version, window.app.builders[class_name]),
           builder = window.app.builders[class_name] && window.app.builders[class_name][match_version];
-          if (builder) 
+          if (builder)
           {
             builder(service);
           }
@@ -124,7 +124,7 @@ window.app.build_application = function(on_services_created, on_services_enabled
     }
     for (service_name in service_descriptions)
     {
-      if(service_name in window.services && 
+      if(service_name in window.services &&
             window.services[service_name].is_implemented &&
             service_name != "scope")
       {
@@ -164,7 +164,8 @@ window.app.build_application = function(on_services_created, on_services_enabled
     'http-logger',
     'exec',
     'window-manager',
-    'ecmascript-debugger'
+    'ecmascript-debugger',
+    'resource-manager'
   ].forEach(create_raw_interface);
   var params = this.helpers.parse_url_arguments();
   if(params.debug)
