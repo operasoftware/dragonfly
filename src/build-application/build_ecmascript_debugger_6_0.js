@@ -114,6 +114,12 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     cls.CSSLayoutView.prototype = ViewBase;
     new cls.CSSLayoutView('css-layout', ui_strings.M_VIEW_LABEL_LAYOUT, 'scroll css-layout');
 
+    /* Event breakpoint config */
+    window.event_breakpoints = new cls.EventBreakpoints();
+    cls.EventBreakpointsView.prototype = ViewBase;
+    new cls.EventBreakpointsView('event-breakpoint-config', "Event Breakpoint Configuration", 'scroll event-breakpoint-config');
+
+
     /* adjust the base class */
 
     var StorageDataBase = new namespace.StorageDataBase();

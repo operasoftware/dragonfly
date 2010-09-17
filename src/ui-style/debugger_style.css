@@ -433,24 +433,16 @@ styles {
   padding: 5px;
   }
 
-category {
-
-  }
-
-category header {
+header {
   font-size: 1.2em;
   border: 1px solid #ccc;
-  border-width: 0 0 1px;
+  border-width: 1px 0;
   background-color: hsl( 0, 0% , 95%);
   padding: 2px;
+  margin-bottom: -1px;
   }
 
-category.unfolded + category header {
-  border-top-width: 1px;
-}
-
-
-.css-inspector header input {
+header input {
   background:transparent url('../ui-images/toggle.png') scroll no-repeat 0 0;
   border:none;
   padding:0;
@@ -460,19 +452,19 @@ category.unfolded + category header {
   cursor: pointer;
   }
 
-.css-inspector header input:hover {
+header input:hover {
   background-position: 0 -14px;
   }
 
-.css-inspector header input:active {
+header input:active {
   background-position: 0 -28px;
   }
 
-.css-inspector header input.unfolded {
+header input.unfolded {
   background-position: -14px 0;
   }
 
-.css-inspector header input.unfolded:hover {
+header input.unfolded:hover {
   background-position: -14px -14px;
   }
 
@@ -1363,4 +1355,9 @@ color-sample
 property.disabled color-sample
 {
   opacity: .35;
+}
+
+.event-list
+{
+  padding: 3px 0 3px 24px;
 }

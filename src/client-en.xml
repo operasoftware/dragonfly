@@ -280,6 +280,10 @@ window.load_screen_timeout = window.setTimeout(function()
 
 <script src="./ecma-debugger/hostspotlighter.js"/>
 
+<script src="./ecma-debugger/eventbreakpoints/data.js"/>
+<script src="./ecma-debugger/eventbreakpoints/view.js"/>
+<script src="./ecma-debugger/eventbreakpoints/templates.js"/>
+
 <script src="./style/css_initial_values.js"/>
 <script src="./style/css_inheritable_properties.js"/>
 <script src="./style/css_suggest_values.js"/>

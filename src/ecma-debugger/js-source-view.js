@@ -905,6 +905,10 @@ cls.JsSourceView.create_ui_widgets = function()
         title: ui_strings.S_BUTTON_LABEL_STEP_OUT,
         id: 'continue-step-out-of-call',
         disabled: true
+      },
+      {
+        handler: 'show-event-breakpoint-view',
+        title: "Configure event breakpoints",
       }
     ],
     [
@@ -1071,6 +1075,16 @@ cls.JsSourceView.create_ui_widgets = function()
       style.setProperty('-o-tab-size', tab_size, 0);
       settings.js_source.set('tab-size', tab_size);
     }
+  }
+
+  eventHandlers.click['show-event-breakpoint-view'] = function(event, target)
+  {
+    var view = window.views['event-breakpoint-config'];
+    UIWindowBase.showWindow(view.id,
+                            view.window_top,
+                            view.window_left,
+                            view.window_width,
+                            view.window_height);
   }
 
 };
