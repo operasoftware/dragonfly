@@ -323,5 +323,6 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./repl/repl_data.js"/>
 <script src="./repl/repl_templates.js"/>
 <script src="./repl/ecmascriptdebugger.6.0.events.onconsoletrace.js"/>
+<script src="./repl/scope.1.0.responses.hostinfo.js"/>
 <body/>
 </viewport>

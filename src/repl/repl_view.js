@@ -18,6 +18,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._backlog_index = -1;
   this._input_row_height = null;
   this._toolbar_visibility = null;
+  this._is_first_showing = true;
 
   this.ondestroy = function()
   {
@@ -52,6 +53,15 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       this._container.addEventListener("scroll", this._save_scroll_bound, false);
       padder.addEventListener("DOMAttrModified", this._update_scroll_bound, false);
       padder.addEventListener("DOMNodeInserted", this._update_scroll_bound, false);
+
+      if (this._is_first_showing)
+      {
+        this._is_first_showing = false;
+        var hostinfo = this._service.hostinfo;
+        if (hostinfo) {
+          this._render_string(hostinfo.userAgent + " (Core " + hostinfo.coreVersion + ")");
+        }
+      }
 
       if(this._current_scroll === null)
       {
@@ -236,7 +246,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   };
 
   /**
-   * Render an arbitrary numver of string arguments
+   * Render an arbitrary number of string arguments
    */
   this._render_string = function()
   {

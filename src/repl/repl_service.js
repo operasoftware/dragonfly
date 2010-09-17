@@ -325,6 +325,17 @@
 
   };
 
+  this._get_host_info = function()
+  {
+    var tag = this._tagman.set_callback(this, this._on_host_info_bound);
+    services.scope.requestHostInfo(tag);
+  };
+
+  this._on_host_info_bound = function(status, msg)
+  {
+    this.hostinfo = new cls.Scope["1.0"].HostInfo(msg);
+  }.bind(this);
+
   this.init = function(view, data)
   {
     this._view = view;
@@ -341,6 +352,7 @@
     this._service.addListener("consoleprofileend", this._on_consoleprofileend_bound);
     this._service.addListener("consoletrace", this._on_consoletrace_bound);
     window.messages.addListener("element-selected", this._on_element_selected_bound);
+    this._get_host_info();
   };
 
   this.init(view, data);
