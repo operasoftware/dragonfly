@@ -1026,6 +1026,12 @@ button[handler="configure-message-filters"]:before
 {
   background-image: url('../ui-images/btn-reload-host.png');
 }
+button[handler="show-event-breakpoint-view"]:before
+{
+  background-image: url('../ui-images/btn-event-breakpoint.png');
+}
+
+
 
 /* editing */
 
