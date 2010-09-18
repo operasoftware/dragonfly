@@ -1357,7 +1357,19 @@ property.disabled color-sample
   opacity: .35;
 }
 
+/* Event Breakpoints */
+
 .event-list
 {
   padding: 3px 0 3px 24px;
+}
+
+.spec-link,
+.spec-link:visited
+{
+  float: right;
+  text-decoration: none;
+  color: #6cf;
+  font-size: 10px;
+  margin: 3px 5px 0 0;
 }

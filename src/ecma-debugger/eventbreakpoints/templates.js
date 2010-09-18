@@ -19,6 +19,7 @@
         ['header', 
           ['input', 'type', 'button'],
           section.title, 
+          ['a', 'spec', 'href', section.spec, 'target', '_blank', 'class', 'spec-link'],
           'handler', 'ev-brp-expand-section', 
           'class', section.is_unfolded ? '' : ''
         ],

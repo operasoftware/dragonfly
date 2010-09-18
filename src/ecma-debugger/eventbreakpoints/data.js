@@ -40,7 +40,7 @@ cls.EventBreakpoints = function()
   [
     {
       title: 'DOM Level 3',
-      spec: "",
+      spec: "http://www.w3.org/TR/2010/WD-DOM-Level-3-Events-20100907/#event-types-list",
       events: 
       [
         ['abort', 0],
@@ -85,11 +85,10 @@ cls.EventBreakpoints = function()
         ['wheel', 0],
       ],
       is_unfolded: false,
-      events_set: []
     },
     {
       title: 'HTML5',
-      spec: "",
+      spec: "http://dev.w3.org/html5/spec/index.html#events-0",
       events:
       [
         ['DOMActivate', 0],
@@ -124,11 +123,10 @@ cls.EventBreakpoints = function()
         ['unload', 0],
       ],
       is_unfolded: false,
-      events_set: []
     },
     {
       title: 'HTML5 media elements',
-      spec: "",
+      spec: "http://dev.w3.org/html5/spec/video.html#mediaevents",
       events:
       [
         ['loadstart', 0],
@@ -155,11 +153,10 @@ cls.EventBreakpoints = function()
         ['volumechange', 0],
       ],
       is_unfolded: false,
-      events_set: []
     },
     {
       title: 'HTML5 application cache events',
-      spec: "",
+      spec: "http://dev.w3.org/html5/spec/offline.html#appcacheevents",
       events:
       [
         ['checking', 0],
@@ -172,11 +169,10 @@ cls.EventBreakpoints = function()
         ['error', 0],
       ],
       is_unfolded: false,
-      events_set: []
     },
     {
       title: 'HTML5 drag-and-drop events',
-      spec: "",
+      spec: "http://dev.w3.org/html5/spec/dnd.html#dndevents",
       events:
       [
         ['dragstart', 0],
@@ -186,7 +182,30 @@ cls.EventBreakpoints = function()
         ['dragover', 0],
         ['drop', 0],
         ['dragend', 0],
-      ]
+      ],
+      is_unfolded: false,
+    },
+    {
+      title: "Opera User JavaScript",
+      spec: "http://www.opera.com/docs/userjs/specs/#evlistener",
+      events:
+      [
+        ['BeforeExternalScript', 0],
+        ['BeforeScript', 0],
+        ['AfterScript', 0],
+        ['BeforeEvent', 0],
+        ['BeforeEvent.type', 0],
+        ['AfterEvent', 0],
+        ['AfterEvent.type', 0],
+        ['BeforeEventListener', 0],
+        ['BeforeEventListener.type', 0],
+        ['AfterEventListener', 0],
+        ['AfterEventListener.type', 0],
+        ['BeforeJavascriptURL', 0],
+        ['AfterJavascriptURL', 0],
+        ['pluginInitialized', 0],
+      ],
+      is_unfolded: false,
     }
   ];
 

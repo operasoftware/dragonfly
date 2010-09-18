@@ -117,7 +117,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     /* Event breakpoint config */
     window.event_breakpoints = new cls.EventBreakpoints();
     cls.EventBreakpointsView.prototype = ViewBase;
-    new cls.EventBreakpointsView('event-breakpoint-config', "Event Breakpoint Configuration", 'scroll event-breakpoint-config');
+    new cls.EventBreakpointsView('event-breakpoint-config', "Event Breakpoints", 'scroll event-breakpoint-config');
 
 
     /* adjust the base class */

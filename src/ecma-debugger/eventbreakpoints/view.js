@@ -44,7 +44,7 @@ cls.EventBreakpointsView = function(id, name, container_class)
       if (section)
       {
         parent.render(window.templates.ev_brp_event_list(section.events));
-        input.removeClass('unfolded');
+        input.addClass('unfolded');
       }
     }
     window.event_breakpoints.set_unfold(index, !event_list);
