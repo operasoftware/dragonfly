@@ -108,6 +108,7 @@ var TabsBase = function()
       tabs = this.update();
     }
     tabs.innerHTML = '';
+    tabs.className = window.opera.attached ? "attached" : "detached"; // TODO: Do this with `.attributes` in topTabs?
     tabs.render(templates[this.type](this));
     return tabs;
   }
@@ -209,7 +210,7 @@ var TabsBase = function()
 
   this.getTopPosition = function()
   {
-    return this.cell.top + this.cell.height - this.offsetHeight;
+    return this.cell.top;
   }
 
   this.setDimensions = function(force_redraw)

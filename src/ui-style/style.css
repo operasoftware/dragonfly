@@ -33,10 +33,6 @@ ul {
   list-style:none;
   }
 
-li[hanler] {
-  cursor:pointer;
-  }
-
 #debug-container {
   background-color:#ccc;
   overflow: hidden;

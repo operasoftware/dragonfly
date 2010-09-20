@@ -238,8 +238,8 @@
         else
         {
 
-          this.toolbar.setDimensions(force_redraw);
           this.tab.setDimensions(force_redraw);
+          this.toolbar.setDimensions(force_redraw);
           this.container.setDimensions(force_redraw, is_resize);
         }
 

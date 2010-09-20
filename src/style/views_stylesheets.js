@@ -152,7 +152,9 @@ cls.StylesheetsView.create_ui_widgets = function()
       [
         'shortcuts'
       ]
-    }
+    },
+    null,
+    "document"
   );
 
   new ToolbarConfig

@@ -28,7 +28,7 @@ cls.DOMView = function(id, name, container_class)
       }
       if (model == window.dom_data)
       {
-        window.topCell.statusbar.updateInfo(templates.breadcrumb(model, model.target));
+        window.modebar.setContent(window.templates.breadcrumb(model, model.target));
       }
     }
     else
@@ -210,7 +210,9 @@ cls.DOMView.create_ui_widgets = function()
         'scroll-into-view-on-spotlight',
         'lock-selecked-elements'
       ]
-    }
+    },
+    null,
+    "document"
   );
 
   new ToolbarConfig

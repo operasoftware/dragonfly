@@ -43,8 +43,8 @@ cls.EnvironmentView.create_ui_widgets = function()
       {
         return templates.hello(window.services['scope'].get_hello_message());
       }
-    }
-
+    },
+    "general"
 
   );
 };
@@ -91,7 +91,8 @@ cls.AboutView.create_ui_widgets = function()
         });
         return ['ul', ['li', 'id', 'about-authors']];
       }
-    }
+    },
+    "about"
   );
 }
 
@@ -211,7 +212,8 @@ cls.GeneralView.create_ui_widgets = function()
           ]
         ];
       }
-    }
+    },
+    "general"
   );
 
   eventHandlers.change['set-ui-language'] = function(event)
@@ -272,7 +274,8 @@ cls.HostSpotlightView.create_ui_widgets = function()
       {
         return hostspotlighter.colorSelectsTemplate();
       }
-    }
+    },
+    "document"
   );
 }
 

@@ -33,11 +33,11 @@ var EventHandler = function(type, is_capturing, handler_key)
       return;
     }
     handler = ele.getAttribute(handler_key);
-    while( !handler && ( ele = ele.parentElement ) )
+    while( !(handler && eventHandlers[type][handler]) && ( ele = ele.parentElement ) )
     {
       handler = ele.getAttribute(handler_key);
     }
-    if( handler && eventHandlers[type][handler] )
+    if( handler )
     {
       if( type == 'click' && /toolbar-buttons/i.test(ele.parentNode.nodeName) )
       {
@@ -67,6 +67,7 @@ new EventHandler('keyup', true);
 new EventHandler('keydown', true);
 new EventHandler('keypress', true);
 new EventHandler('mousedown');
+new EventHandler('mouseup');
 new EventHandler('mouseover');
 new EventHandler('focus', true, 'focus-handler');
 new EventHandler('blur', true, 'blur-handler');
@@ -75,9 +76,8 @@ new EventHandler('blur', true, 'blur-handler');
 
 eventHandlers.mousedown['tab'] = function(event, target)
 {
-  target = target.parentElement;
-  var tabs = UIBase.getUIById(target.parentElement.getAttribute('ui-id'));
-  var view_id = target.getAttribute('ref-id');
+  var tabs = UIBase.getUIById(target.get_attr('parent-node-chain', 'ui-id'));
+  var view_id = target.get_attr('parent-node-chain', 'ref-id');
   if( tabs )
   {
     tabs.setActiveTab(view_id);
@@ -107,6 +107,59 @@ eventHandlers.click['close-tab'] = function(event, target)
     store.splice(i, 1);
   }
 }
+
+var navTimeout = null;
+eventHandlers.mousedown['horizontal-nav'] = function(event, target)
+{
+  var horizontal_nav = UIBase.getUIById(target.get_attr('parent-node-chain', 'ui-id'));
+  var dir = target.get_attr('parent-node-chain', 'dir');
+  (function nav() {
+    horizontal_nav.nav(dir);
+    navTimeout = setTimeout(nav, 400);
+  })();
+};
+
+eventHandlers.mouseup['horizontal-nav'] = function(event, target)
+{
+  clearTimeout(navTimeout);
+};
+
+eventHandlers.mousedown['breadcrumbs-drag'] = function(event, target)
+{
+  var horizontal_nav = UIBase.getUIById(target.get_attr('parent-node-chain', 'ui-id'));
+  var breadcrumbs = target;
+  breadcrumbs.style.OTransitionDuration = 0;
+  var pos = parseInt(getComputedStyle(breadcrumbs, null).getPropertyValue("left"));
+
+  if (breadcrumbs.previousElementSibling.offsetWidth > 0) {
+    document.addEventListener("mousemove", mouse_move, false);
+    document.addEventListener("mouseup", mouse_up, false);
+  }
+
+  function mouse_move(e) {
+    dragBreadcrumbs(e, event.clientX, pos);
+  }
+
+  function mouse_up() {
+    breadcrumbs.removeClass("drag");
+    horizontal_nav.currentBreadcrumbEl = null;
+    document.removeEventListener("mousemove", mouse_move, false);
+    document.removeEventListener("mouseup", mouse_up, false);
+  }
+
+  // TODO: this method can be cleaned up a bit
+  function dragBreadcrumbs(e, mouseStart, pos) {
+    breadcrumbs.addClass("drag")
+    var left = Math.min(breadcrumbs.previousElementSibling.offsetWidth, pos + e.clientX - mouseStart);
+    var breadcrumb_eles = breadcrumbs.querySelectorAll("breadcrumb");
+    var last = breadcrumb_eles[breadcrumb_eles.length-1];
+    if (last.getBoundingClientRect().right > breadcrumbs.nextElementSibling.offsetLeft)
+    {
+      breadcrumbs.style.left = Math.max(left, breadcrumbs.nextElementSibling.offsetLeft - breadcrumbs.scrollWidth + 1) + "px";
+    }
+    horizontal_nav.check_position(); // TODO: consider moving this to mouse_up
+  }
+};
 
 eventHandlers.click['settings-tabs'] = function(event, target)
 {
@@ -180,6 +233,30 @@ eventHandlers.click['top-window-toggle-attach'] = function(event)
   }
   setTimeout(client.setupTopCell, 0);
 }
+
+eventHandlers.click['overlay-tab'] = function(event, target)
+{
+  var settings_overlay = UIBase.getUIById(document.querySelector("overlay[type=settings-overlay]")
+                                                  .get_attr("parent-node-chain", "ui-id"));
+  var group_name = event.target.getAttribute("group");
+  var settings_by_group = Settings.get_settings_by_group(group_name);
+  settings_overlay.show_group(group_name, window.templates.settings(settings_by_group));
+};
+
+eventHandlers.click['show-settings-overlay'] = function(event, target)
+{
+  var settings_overlay = UIBase.getUIById(document.querySelector("overlay[type=settings-overlay]")
+                                                  .get_attr("parent-node-chain", "ui-id"));
+  var button_dims = target.getBoundingClientRect();
+  var element = settings_overlay.element.querySelector("overlay-window");
+  element.style.top = button_dims.bottom + 10 + "px";
+  element.style.right = document.documentElement.clientWidth - button_dims.right - 10 + "px";
+  target.setAttribute("is-active", target.getAttribute("is-active") != "true");
+
+  var settings_by_group = Settings.get_settings_by_group("general");
+  settings_overlay.show_group("general", window.templates.settings(settings_by_group));
+  settings_overlay.toggle_visibility();
+};
 
 eventHandlers.click['toolbar-switch'] = function(event)
 {

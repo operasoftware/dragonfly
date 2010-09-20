@@ -7,6 +7,7 @@ var CompositeViewBase = function()
   this.type = 'composite-view';
   this.update = function(cell, is_resize) // for testing
   {
+    window.modebar.setVisibility(this.has_modebar);
     // copie from the container cell to the view cell
 
     var id = '', i = 0, virtual_container = null;
@@ -28,10 +29,11 @@ var CompositeViewBase = function()
     }
   }
 
-  this.initCompositeView = function(id, name, layout_rough)
+  this.initCompositeView = function(id, name, layout_rough, has_modebar)
   {
     this._layout_rough = layout_rough;
     this.cell = new Cell(layout_rough, layout_rough.dir);
+    this.has_modebar = !!has_modebar;
     this.init(id, name);
   }
 
@@ -47,9 +49,9 @@ var CompositeViewBase = function()
   * @extends CompositeViewBase
   */
 
-var CompositeView = function(id, name, rough_layout)
+var CompositeView = function(id, name, rough_layout, has_modebar)
 {
-  this.initCompositeView(id, name, rough_layout);
+  this.initCompositeView(id, name, rough_layout, has_modebar);
 }
 
 CompositeViewBase.prototype = ViewBase;

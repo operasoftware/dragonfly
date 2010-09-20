@@ -47,15 +47,15 @@
   }
 
 .js-source .comment {
-  color: #888;
+  color: #999;
   }
 
 .js-source .js_builtins {
-  color: #18a;
+  color: #ac35a9;
   }
 
 .js-source .js_keywords {
-  color: #01c;
+  color: #da7948;
   }
 
 .js-source .number {
@@ -71,7 +71,7 @@
   }
 
 .js-source .string {
-  color: #a31;
+  color: #003c9c;
   }
 
 .js-source .not-error
@@ -88,8 +88,8 @@
   color: #999;
   }
 
-.js-source  .first-error-line,
-.js-source  .error-line
+.js-source .first-error-line,
+.js-source .error-line
 {
   background-color: #e6e6e6;
 }
@@ -108,36 +108,36 @@
 	color: #111;
   }
 
-#target-element
+#target-element, .dom [handler="spotlight-node"]:hover
 {
-	background-color:#eec;
-  margin-top: -1px;
-  margin-right: -1px;
-  margin-bottom: -1px;
-  border: 1px solid hsl(60, 30%, 60%); 
+  background-color: #cce5f3;
+  /*margin: -1px;
+  border: 1px solid #78bae0;
   position: relative;
-  z-index: 1;
+  z-index: 1;*/
+  border-radius: 3px;
 }
 
 .dom [handler="spotlight-node"]:hover
 {
-  background-color: #f5f5e0;
+  background-color: #eee;
+}
+.dom ::selection {
+  /* TEMP */
+  background-color: #78bae0;
+  color: #000;
 }
 
-.dom .comment{
-	color:#888;
-  }
-
-.dom node, selector {
-  color: #279;
+.dom node, selector, .element-name {
+  color: #952598;
   }
 
 .dom key, .stylesheets key, .css-inspector key {
-	color:#229;
+	color: #c4663a;
   }
 
-.dom value, .doctype-value, .stylesheets value, .css-inspector value {
-	color:#742;
+.dom value, .stylesheets value, .css-inspector value {
+	color: #1c2897;
   }
 
 .dom .text-node, .dom .comment-node, .dom .cdata-node {
@@ -152,19 +152,14 @@
 	color: #294556;
   }
 
-.dom .doctype
+.dom .doctype, .dom .comment
 {
-	color: #1a5c75;
-}
-
-.dom doctype-attrs
-{
-	color: #1a1a75;
+    color: #999;
 }
 
 .tree-style 
 {
-  background:transparent url('../ui-images/dom-tree-style.gif') scroll repeat 10px 0;
+  background:transparent url('../ui-images/dom-tree-style.gif') scroll repeat 8px 0;
 }
 
 .tree-style > div 
@@ -180,7 +175,7 @@
   width: 7px;
   height: 1px;
   background:transparent url('../ui-images/dom-tree-style-h.gif') scroll no-repeat 0 0;
-  margin-left: -7px;
+  margin-left: -8px;
   margin-right: 1px;
 }
 

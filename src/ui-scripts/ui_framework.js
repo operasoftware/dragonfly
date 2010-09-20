@@ -33,6 +33,11 @@ var ui_framework = new function()
       properties: resolve_map_properties
     },
     {
+      source: 'modebar',
+      target: Modebar.prototype,
+      properties: resolve_map_properties
+    },
+    {
       source: 'tabs',
       target: Tabs.prototype,
       properties: resolve_map_properties

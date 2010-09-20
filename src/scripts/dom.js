@@ -418,7 +418,7 @@ Element.prototype.has_attr = function(traverse_type, name)
     }
   }
   return null;
-}
+};
 
 /* Get an attribute of the first hit of a DOM traversal. */
 Element.prototype.get_attr = function(traverse_type, name)
@@ -435,7 +435,7 @@ Element.prototype.get_attr = function(traverse_type, name)
     }
   }
   return null;
-}
+};
 
 
 /**

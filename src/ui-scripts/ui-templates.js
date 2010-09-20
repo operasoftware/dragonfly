@@ -6,12 +6,25 @@
 
   this.tab = function(obj, is_active_tab)
   {
-    return ['tab', 
-      ['input', 'type', 'button', 'value', obj.name, 'handler', 'tab', ],
-      ( obj.has_close_button ? ['input', 'type', 'button', 'handler', 'close-tab', ] : [] ), 
-      'ref-id', obj.ref_id
+    return ['tab', obj.name,
+            'handler', 'tab',
+            'ref-id', obj.ref_id
+      //( obj.has_close_button ? ['input', 'type', 'button', 'handler', 'close-tab', ] : [] ),
     ].concat(is_active_tab ? ['class', 'active'] : [] );
   }
+
+  this.top_tab = function(obj, is_active_tab)
+  {
+    return ['tab', [['span', "", "class", "icon"], obj.name],
+            'handler', 'tab',
+            'ref-id', obj.ref_id
+    ].concat(is_active_tab ? ['class', 'active'] : [] );
+  };
+
+  this.horizontal_navigation = function()
+  {
+    return ['horizontal_navigation'];
+  };
 
   this.filters = function(filters)
   {
@@ -175,7 +188,7 @@
     // ret[ret.length] =  this.window_controls();
     for( ; tab = obj.tabs[i]; i++)
     {
-      ret[ret.length] = this.tab(tab, obj.activeTab == tab.ref_id)
+      ret[ret.length] = this.top_tab(tab, obj.activeTab == tab.ref_id)
     }
     return ret;
   }
@@ -184,6 +197,10 @@
   {
     var is_attached = window.opera.attached;
     return ['window-controls',
+      ['button',
+        'handler', 'show-settings-overlay',
+        'class', 'switch' + ( is_attached ? ' attached' : '')
+      ],
       is_attached
       ? window['cst-selects']['debugger-menu'].select_template()
       : [],
@@ -241,30 +258,45 @@
   this.setting = function(view_id, view_name, is_unfolded)
   {
     
-    var ret = ['settings', self.settingsHeader(view_id, view_name, is_unfolded)];
-    if( is_unfolded )
+    var ret = ['fieldset', self.settingsHeader(view_id, view_name, is_unfolded)];
+    var setting = settings[view_id];
+    var settings_map = setting.setting_map;
+    var cat_name = '';
+    // so far checkboxes, customSettings
+    for( cat_name in settings_map ) 
     {
-      var setting = settings[view_id];
-      var settings_map = setting.setting_map;
-      var cat_name = '';
-      // so far checkboxes, customSettings
-      for( cat_name in settings_map ) 
-      {
-        ret[ret.length] = this[cat_name](setting, settings_map[cat_name]); 
-      }
+      ret[ret.length] = this[cat_name](setting, settings_map[cat_name]); 
     }
     return ret;
   }
 
   this.settingsHeader = function(view_id, view_name, is_unfolded)
   {
-    return ['settings-header', 
-        ['input', 
-          'type', 'button', 
-          'tab-id', view_id  
-        ].concat(is_unfolded ? ['class', 'unfolded'] : []), 
+    return ['legend',
       view_name, 'handler', 'toggle-setting', 'view-id', view_id];
   }
+
+  this.overlay = function()
+  {
+    var groups = this.settings_groups(SettingsGroup.groups);
+    return ["overlay-window",
+             [
+               groups.length ? groups : [],
+               ["overlay-content"]
+             ]
+           ];
+  };
+
+  this.settings_groups = function(groups)
+  {
+    var tabs = [];
+    var ret = ["overlay-tabs", tabs];
+    for (var i = 0, group; group = groups[i]; i++)
+    {
+      tabs.push(["tab", group.label, "group", group.group_name, "handler", "overlay-tab"]);
+    }
+    return ret;
+  };
 
   this.checkboxes = function(setting, checkbox_arr)
   {
