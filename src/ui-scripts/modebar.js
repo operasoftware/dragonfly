@@ -61,14 +61,10 @@ var ModebarBase = function()
 
   this.setVisibility = function(is_visible)
   {
-    if (this.is_visible != is_visible)
+    this.is_visible = is_visible;
+    if(toolbars[this._view_id])
     {
-      this.is_visible = is_visible;
-      if(toolbars[this._view_id])
-      {
-        toolbars[this._view_id].setVisibility(is_visible);
-      }
-      window.topCell.container.setDimensions();
+      toolbars[this._view_id].setVisibility(is_visible);
     }
   };
 
