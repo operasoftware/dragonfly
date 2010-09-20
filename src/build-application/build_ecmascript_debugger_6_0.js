@@ -52,7 +52,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
       if needed to adjust them for an updated service version
     */
 
-    window.runtime_onload_handler = new cls.RuntimeOnloadHandler();
+    window.runtime_onload_handler = new namespace.RuntimeOnloadHandler();
 
     /* temporary export view */
     window.export_data = new cls.ExportData();
