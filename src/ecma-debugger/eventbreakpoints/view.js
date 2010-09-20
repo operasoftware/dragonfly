@@ -59,42 +59,6 @@ cls.EventBreakpointsView = function(id, name, container_class)
     this._container = null;
   }
 
-  window.eventHandlers.click['ev-brp-expand-section'] = function(event, target)
-  {
-    var 
-    parent = target.parentNode, 
-    index = parseInt(parent.getAttribute('index')),
-    event_list = parent.getElementsByTagName('ul')[0],
-    input = target.getElementsByTagName('input')[0];
-
-    if (event_list)
-    {
-      parent.removeChild(event_list);
-      input.removeClass('unfolded');
-    }
-    else
-    {
-      var section = window.event_breakpoints.events[index];
-      if (section)
-      {
-        parent.render(window.templates.ev_brp_event_list(section.events));
-        input.addClass('unfolded');
-      }
-    }
-    window.event_breakpoints.set_unfold(index, !event_list);
-  }
-
-  window.eventHandlers.click['event-breakpoint'] = function(event, target)
-  {
-    var 
-    event_index = parseInt(target.getAttribute('index')),
-    section_index = parseInt(target.parentNode.get_attr('parent-node-chain', 'index')),
-    checked = target.checked;
-
-    window.event_breakpoints.handle_breakpoint(section_index, event_index, checked);
-  }
-
-
   this.init(id, name, container_class);
 }
 
@@ -152,6 +116,49 @@ cls.EventBreakpointsView.create_ui_widgets = function()
     // custom templates
 
   );
+
+  window.eventHandlers.click['ev-brp-expand-all-sections'] = function(event, target)
+  {
+    window.event_breakpoints.expand_all_sections();
+    window.views['event-breakpoints'].update();
+
+  }
+  
+
+  window.eventHandlers.click['ev-brp-expand-section'] = function(event, target)
+  {
+    var 
+    parent = target.parentNode, 
+    index = parseInt(parent.getAttribute('index')),
+    event_list = parent.getElementsByTagName('ul')[0],
+    input = target.getElementsByTagName('input')[0];
+
+    if (event_list)
+    {
+      parent.removeChild(event_list);
+      input.removeClass('unfolded');
+    }
+    else
+    {
+      var section = window.event_breakpoints.events[index];
+      if (section)
+      {
+        parent.render(window.templates.ev_brp_event_list(section.events));
+        input.addClass('unfolded');
+      }
+    }
+    window.event_breakpoints.set_unfold(index, !event_list);
+  }
+
+  window.eventHandlers.click['event-breakpoint'] = function(event, target)
+  {
+    var 
+    event_index = parseInt(target.getAttribute('index')),
+    section_index = parseInt(target.parentNode.get_attr('parent-node-chain', 'index')),
+    checked = target.checked;
+
+    window.event_breakpoints.handle_breakpoint(section_index, event_index, checked);
+  }
 
   window.eventHandlers.input['ev-brp-filter'] = function(event, target)
   {

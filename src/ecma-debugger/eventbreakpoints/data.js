@@ -50,6 +50,12 @@ cls.EventBreakpoints = function()
     return false;
   }
 
+  this.expand_all_sections = function()
+  {
+    for (var i =0, section = null; section = this.events[i]; i++)
+      section.is_unfolded = true;
+  }
+
   this.events =
   [
     {
