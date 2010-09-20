@@ -9,16 +9,26 @@ cls.EventBreakpoints = function()
 {
   const NAME = 0, CHECKED = 1;
 
+  this._is_synced = false;
+
   this.set_unfold = function(index, is_unfolded)
   {
-    this.events[index].is_unfolded = is_unfolded;
+    this._events[index].is_unfolded = is_unfolded;
+    this._store_unfolded_flags();
   };
+
+  this._store_unfolded_flags = function()
+  {
+    window.settings['event-breakpoints'].set('expanded-sections', this._events.map(this._get_unfolded_flags));
+  }
+
+  this._get_unfolded_flags = function(section){return section.is_unfolded ? 1 : 0;}
 
   this._breakpoints = {};
 
   this.handle_breakpoint = function(section_index, event_index, checked)
   {
-    var event = this.events[section_index] && this.events[section_index].events[event_index];
+    var event = this._events[section_index] && this._events[section_index].events[event_index];
     if (event)
     {
       if (checked)
@@ -43,7 +53,7 @@ cls.EventBreakpoints = function()
   this.has_breakpoints = function()
   {
     var i =0, j = 0, section = null, events = null, event = null;
-    for (; section = this.events[i]; i++)
+    for (; section = this._events[i]; i++)
       for (j = 0, events = section.events; event = events[j]; j++)
         if (event[CHECKED])
           return true;
@@ -52,11 +62,27 @@ cls.EventBreakpoints = function()
 
   this.expand_all_sections = function()
   {
-    for (var i =0, section = null; section = this.events[i]; i++)
+    for (var i =0, section = null; section = this._events[i]; i++)
       section.is_unfolded = true;
   }
 
-  this.events =
+  this.get_events = function()
+  {
+    if (!this._is_synced)
+    {
+      var 
+      unfolded_flags = window.settings['event-breakpoints'].get('expanded-sections'), 
+      i = 0, 
+      section = null;
+      
+      for (; section = this._events[i]; i++)
+        section.is_unfolded = unfolded_flags[i];
+      this._is_synced = true;
+    }
+    return this._events;
+  }
+
+  this._events =
   [
     {
       title: 'DOM Level 3',
@@ -228,6 +254,8 @@ cls.EventBreakpoints = function()
       is_unfolded: false,
     }
   ];
+
+  
 
 }
 

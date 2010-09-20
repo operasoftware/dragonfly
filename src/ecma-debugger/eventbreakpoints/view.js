@@ -21,7 +21,7 @@ cls.EventBreakpointsView = function(id, name, container_class)
   this.createView = function(container)
   {
     this._container = container;
-    container.clearAndRender(window.templates.ev_brp_config(window.event_breakpoints.events));
+    container.clearAndRender(window.templates.ev_brp_config(window.event_breakpoints.get_events()));
   }
 
   this.show_filtered_view = function(filter_str)
@@ -29,7 +29,7 @@ cls.EventBreakpointsView = function(id, name, container_class)
     if (this._container && this.isvisible())
     {
       const NAME = 0, CHECKED = 1;
-      var events = window.event_breakpoints.events;
+      var events = window.event_breakpoints.get_events();
       var event_list = null;
       var filter = function(event)
       {
@@ -96,7 +96,7 @@ cls.EventBreakpointsView.create_ui_widgets = function()
     'event-breakpoints',
     // key-value map
     {
-      expanded_sections: [],
+      'expanded-sections': [],
     },
     // key-label map
     {
@@ -140,7 +140,7 @@ cls.EventBreakpointsView.create_ui_widgets = function()
     }
     else
     {
-      var section = window.event_breakpoints.events[index];
+      var section = window.event_breakpoints.get_events()[index];
       if (section)
       {
         parent.render(window.templates.ev_brp_event_list(section.events));
