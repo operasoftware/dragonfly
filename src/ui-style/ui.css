@@ -156,7 +156,8 @@ toolbar-buttons, toolbar-switches {
 
 toolbar button, 
 top-toolbar button, 
-window-controls button
+window-controls button,
+window-toolbar button
 {
   background: transparent none;
   border-color: transparent;

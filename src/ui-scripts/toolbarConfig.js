@@ -37,9 +37,11 @@ var ToolbarConfigBase = new function()
     buttons = null,
     button = null,
     j = 0;
+
     for( ; id = this.container_ids[i]; i++)
     {
       container = document.getElementById(id);
+      
       if( container )
       {
         buttons = container.getElementsByTagName('toolbar-buttons')[0].getElementsByTagName('button');

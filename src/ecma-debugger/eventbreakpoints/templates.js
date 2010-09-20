@@ -17,16 +17,16 @@
     [
       'li',
         ['header', 
-          ['input', 'type', 'button'],
+          ['input', 'type', 'button', 'class', section.is_unfolded ? 'unfolded' : ''],
           section.title, 
           ['a', 'spec', 'href', section.spec, 'target', '_blank', 'class', 'spec-link'],
-          'handler', 'ev-brp-expand-section', 
-          'class', section.is_unfolded ? '' : ''
+          'handler', 'ev-brp-expand-section',
         ],
         section.is_unfolded ?
         ['ul', this.ev_brp_event_list(section.events)] :
         [],
       'index', index.toString(),
+      'class', section.is_search && !section.is_unfolded ? 'search-no-match' : ''
     ]);
       
   }

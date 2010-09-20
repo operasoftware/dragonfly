@@ -30,10 +30,24 @@ cls.EventBreakpoints = function()
       else
       { 
         window.services['ecmascript-debugger'].requestRemoveBreakpoint(0, [event[CHECKED]]);
-        this._breakpoints[event[CHECKED]] = null;
+        this._breakpoints[event[CHECKED]] = 0;
         event[CHECKED] = 0;
       }
+      if (this.has_breakpoints())
+        window.toolbars['event-breakpoints'].enableButtons('ev-brp-remove-all-breakpoints');
+      else
+        window.toolbars['event-breakpoints'].disableButtons('ev-brp-remove-all-breakpoints');
     }
+  }
+
+  this.has_breakpoints = function()
+  {
+    var i =0, j = 0, section = null, events = null, event = null;
+    for (; section = this.events[i]; i++)
+      for (j = 0, events = section.events; event = events[j]; j++)
+        if (event[CHECKED])
+          return true;
+    return false;
   }
 
   this.events =

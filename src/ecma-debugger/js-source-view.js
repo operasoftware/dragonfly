@@ -1079,7 +1079,7 @@ cls.JsSourceView.create_ui_widgets = function()
 
   eventHandlers.click['show-event-breakpoint-view'] = function(event, target)
   {
-    var view = window.views['event-breakpoint-config'];
+    var view = window.views['event-breakpoints'];
     UIWindowBase.showWindow(view.id,
                             view.window_top,
                             view.window_left,

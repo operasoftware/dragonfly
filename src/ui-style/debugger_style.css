@@ -1373,3 +1373,13 @@ property.disabled color-sample
   font-size: 10px;
   margin: 3px 5px 0 0;
 }
+
+.event-breakpoint-config li:first-child header
+{
+  border-top-width: 0;
+}
+
+.search-no-match
+{
+  opacity: .3;
+}

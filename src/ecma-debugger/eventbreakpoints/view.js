@@ -14,15 +14,49 @@ cls.EventBreakpointsView = function(id, name, container_class)
   this.window_width = 300;
   this.window_height = 300;
   this.window_statusbar = false;
+  this._container = null;
+
+  
 
   this.createView = function(container)
   {
-    container.render(window.templates.ev_brp_config(window.event_breakpoints.events));
+    this._container = container;
+    container.clearAndRender(window.templates.ev_brp_config(window.event_breakpoints.events));
+  }
+
+  this.show_filtered_view = function(filter_str)
+  {
+    if (this._container && this.isvisible())
+    {
+      const NAME = 0, CHECKED = 1;
+      var events = window.event_breakpoints.events;
+      var event_list = null;
+      var filter = function(event)
+      {
+        return event[NAME].indexOf(filter_str) > -1;
+      };
+      if (filter_str)
+      {
+        events = events.map(function(section, index)
+        {
+          event_list = section.events.filter(filter);
+          return (
+          {
+            title: section.title,
+            spec: section.spec,
+            events: event_list,
+            is_unfolded: Boolean(event_list.length),
+            is_search: true
+          });
+        });
+      }
+      this._container.clearAndRender(window.templates.ev_brp_config(events));
+    }
   }
 
   this.ondestroy = function()
   {
-
+    this._container = null;
   }
 
   window.eventHandlers.click['ev-brp-expand-section'] = function(event, target)
@@ -63,3 +97,65 @@ cls.EventBreakpointsView = function(id, name, container_class)
 
   this.init(id, name, container_class);
 }
+
+cls.EventBreakpointsView.create_ui_widgets = function()
+{
+
+  new ToolbarConfig
+  (
+    'event-breakpoints',
+    [
+      {
+        handler: 'ev-brp-expand-all-sections',
+        title: "Expand all sections",
+      },
+      {
+        handler: 'ev-brp-remove-all-breakpoints',
+        title: 'Remove all event breakpoints',
+        disabled: true
+      },
+    ],
+    [
+      {
+        handler: 'ev-brp-filter',
+        title: 'Search event',
+        label: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER
+      }
+    ]
+  );
+
+
+
+  new Settings
+  (
+    // id
+    'event-breakpoints',
+    // key-value map
+    {
+      expanded_sections: [],
+    },
+    // key-label map
+    {
+
+    },
+    // settings map
+    {
+      checkboxes:
+      [
+
+      ],
+      customSettings:
+      [
+
+      ]
+    }
+    // custom templates
+
+  );
+
+  window.eventHandlers.input['ev-brp-filter'] = function(event, target)
+  {
+    window.views['event-breakpoints'].show_filtered_view(target.value);
+  }
+
+};
