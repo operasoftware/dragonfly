@@ -20,9 +20,8 @@ var Overlay = function(cell)
       this._is_visible = !this._is_visible;
     };
 
-    this.show_group = function(group)
+    this.show_group = function(group, content)
     {
-        var by_group = Settings.get_settings_by_group(group);
         var tabs = this.element.querySelectorAll("tab");
         for (var i = 0; tab = tabs[i]; i++)
         {
@@ -32,27 +31,16 @@ var Overlay = function(cell)
                 tab.addClass("active");
             }
         }
-        this.element.querySelector("overlay-content").clearAndRender(templates.settings(by_group));
+        this.content_element.clearAndRender(content);
+        this.content_element.scrollTop = 0;
     };
 
     this.setup = function(id)
     {
       this.element = document.getElementById(this.type + '-to-' + this.cell.id) || this.update();
       this.element.setAttribute("type", id);
-      var template = ["overlay-window",
-                       [
-                         ["overlay-tabs",
-                           [
-                             ["tab", "General", "group", "general", "handler", "overlay-tab"],
-                             ["tab", "Document", "group", "document", "handler", "overlay-tab"],
-                             ["tab", "Script", "group", "script", "handler", "overlay-tab"],
-                             ["tab", "Resource Manager", "group", "resource_manager", "handler", "overlay-tab"]
-                           ]
-                         ],
-                         ["overlay-content"]
-                       ]
-                     ];
-      this.element.render(template);
+      this.element.render(window.templates.overlay());
+      this.content_element = this.element.querySelector("overlay-content");
     };
 
     this.init = function(cell) {

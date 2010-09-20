@@ -168,3 +168,19 @@ Settings.get_settings_by_group = function(group)
 
 Settings.prototype = new SettingsBase();
 
+/**
+ * A group for settings.
+ *
+ * @param label The visible label for this group
+ * @param group_name The name of the group that a Setting can be added to
+ */
+var SettingsGroup = function(label, group_name)
+{
+    this.label = label;
+    this.group_name = group_name;
+
+    SettingsGroup.groups.push(this);
+}
+
+SettingsGroup.groups = [];
+

@@ -613,6 +613,6 @@ cls.ConsoleLogger["2.0"].ConsoleView.create_ui_widgets = function()
       ]
     },
     null,
-    "global"
+    "console"
   );
 };

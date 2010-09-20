@@ -645,51 +645,12 @@ settings-container, settings, settings-header, checkboxes, checkbox, setting-com
 settings { /**/
   margin: 12px 0;
   padding: 3px 0;
-  border: 1px solid #ccc;
   }
 
 settings-header { /**/
   font-size: 1.2em;
   clear: both;
   }
-
-settings-header input { /**/
-  background: transparent url('../ui-images/toggle.png') scroll no-repeat 0 0;
-  border: none;
-  padding: 0;
-  margin: 0px 5px;
-  width: 14px;
-  height: 14px;
-  }
-
-settings-header input:hover {
-  background-position: 0 -14px;
-  }
-
-settings-header input:active {
-  background-position: 0 -28px;
-  }
-
-settings-header input.unfolded {
-  background-position: -14px 0;
-  }
-
-settings-header input.unfolded:hover {
-  background-position: -14px -14px;
-  }
-
-settings-header input.unfolded:active {
-  background-position: -14px -28px;
-  }
-
-checkboxes, setting-composite { /**/
-  padding-left: 26px;
-  }
-  
-setting-composite label + label {
-  margin-left: 20px;
-}
-
 
 
 .apply-button input[type="button"] 
@@ -1467,7 +1428,8 @@ overlay-window {
     border: 2px solid #b1b1b1;
     display: block;
     position: absolute;
-    height: 90%;
+    height: 80%;
+    max-height: 400px;
 }
 overlay-window h2 {
     font-size: 1em;
@@ -1501,27 +1463,22 @@ overlay-tabs tab.active {
 }
 overlay-content {
     background: rgba(0, 0, 0, .4);
-    border-radius: 0 0 7px 7px;
-    border-top: none;
+    border-radius: 7px;
+    border-top-width: 1px;
     padding: 10px;
     position: absolute;
-    top: 31px;
+    top: 0;
     bottom: 0;
     left: 0;
     right: 0;
     overflow: auto;
 }
-#options {
-    margin-right: 210px;
+overlay-tabs + overlay-content { /* Need to style a bit differently in case there are tabs */
+    top: 31px;
+    border-top-width: 0;
+    border-radius: 0 0 7px 7px;
 }
-#info {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 200px;
-    border: 0 solid #3e3e3e;
-    padding: 10px;
-    border-left-width: 1px;
+overlay fieldset {
+    border: 2px ridge rgba(255, 255, 255, .2);
 }
 

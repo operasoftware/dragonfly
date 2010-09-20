@@ -238,7 +238,9 @@ eventHandlers.click['overlay-tab'] = function(event, target)
 {
   var settings_overlay = UIBase.getUIById(document.querySelector("overlay[type=settings-overlay]")
                                                   .get_attr("parent-node-chain", "ui-id"));
-  settings_overlay.show_group(target.getAttribute("group"));
+  var group_name = event.target.getAttribute("group");
+  var settings_by_group = Settings.get_settings_by_group(group_name);
+  settings_overlay.show_group(group_name, window.templates.settings(settings_by_group));
 };
 
 eventHandlers.click['show-settings-overlay'] = function(event, target)
@@ -250,7 +252,9 @@ eventHandlers.click['show-settings-overlay'] = function(event, target)
   element.style.top = button_dims.bottom + 10 + "px";
   element.style.right = document.documentElement.clientWidth - button_dims.right - 10 + "px";
   target.setAttribute("is-active", target.getAttribute("is-active") != "true");
-  settings_overlay.show_group("general");
+
+  var settings_by_group = Settings.get_settings_by_group("general");
+  settings_overlay.show_group("general", window.templates.settings(settings_by_group));
   settings_overlay.toggle_visibility();
 };
 

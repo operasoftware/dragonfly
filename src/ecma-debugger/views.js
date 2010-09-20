@@ -92,7 +92,7 @@ cls.AboutView.create_ui_widgets = function()
         return ['ul', ['li', 'id', 'about-authors']];
       }
     },
-    "general"
+    "about"
   );
 }
 

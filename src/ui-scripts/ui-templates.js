@@ -258,7 +258,7 @@
   this.setting = function(view_id, view_name, is_unfolded)
   {
     
-    var ret = ['settings', self.settingsHeader(view_id, view_name, is_unfolded)];
+    var ret = ['fieldset', self.settingsHeader(view_id, view_name, is_unfolded)];
     var setting = settings[view_id];
     var settings_map = setting.setting_map;
     var cat_name = '';
@@ -272,9 +272,31 @@
 
   this.settingsHeader = function(view_id, view_name, is_unfolded)
   {
-    return ['settings-header', 
+    return ['legend',
       view_name, 'handler', 'toggle-setting', 'view-id', view_id];
   }
+
+  this.overlay = function()
+  {
+    var groups = this.settings_groups(SettingsGroup.groups);
+    return ["overlay-window",
+             [
+               groups.length ? groups : [],
+               ["overlay-content"]
+             ]
+           ];
+  };
+
+  this.settings_groups = function(groups)
+  {
+    var tabs = [];
+    var ret = ["overlay-tabs", tabs];
+    for (var i = 0, group; group = groups[i]; i++)
+    {
+      tabs.push(["tab", group.label, "group", group.group_name, "handler", "overlay-tab"]);
+    }
+    return ret;
+  };
 
   this.checkboxes = function(setting, checkbox_arr)
   {
