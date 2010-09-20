@@ -9,8 +9,8 @@ cls.EventBreakpointsView = function(id, name, container_class)
 {
 
   /* settings */
-  this.window_top = 20;
-  this.window_left = 20;
+  this.window_top = 40;
+  this.window_left = 40;
   this.window_width = 300;
   this.window_height = 300;
   this.window_statusbar = false;

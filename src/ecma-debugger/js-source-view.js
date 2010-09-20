@@ -1084,7 +1084,9 @@ cls.JsSourceView.create_ui_widgets = function()
                             view.window_top,
                             view.window_left,
                             view.window_width,
-                            view.window_height);
+                            window.innerHeight >= view.window_height + 80 ? 
+                            view.window_height :
+                            window.innerHeight - 80);
   }
 
 };
