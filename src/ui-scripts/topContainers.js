@@ -25,7 +25,7 @@ var TopContainerBase = function()
     }
 
     var toolbar_and_tabs_height = (this.cell.toolbar && this.cell.toolbar.height ? this.cell.toolbar.offsetHeight : 0) + this.cell.tab.offsetHeight;
-    var modebar_height = (this.cell.modebar ? this.cell.modebar.offsetHeight : 0);
+    var modebar_height = (this.cell.modebar.is_visible ? this.cell.modebar.offsetHeight : 0);
 
     dim = this.cell.top + toolbar_and_tabs_height + modebar_height;
     if( dim != this.top)

@@ -43,7 +43,7 @@ var ModebarBase = function()
       this.width = dim;
     }
 
-    dim = this._is_visible ? this.default_height : 0;
+    dim = this.default_height;
     if (dim != this.height)
     {
       this.is_dirty = true;
@@ -61,10 +61,14 @@ var ModebarBase = function()
 
   this.setVisibility = function(is_visible)
   {
-    this._is_visible = is_visible;
-    if(toolbars[this._view_id])
+    if (this.is_visible != is_visible)
     {
-      toolbars[this._view_id].setVisibility(is_visible);
+      this.is_visible = is_visible;
+      if(toolbars[this._view_id])
+      {
+        toolbars[this._view_id].setVisibility(is_visible);
+      }
+      window.topCell.container.setDimensions();
     }
   };
 
@@ -82,7 +86,7 @@ var ModebarBase = function()
     this.top = 0;
     this.left = 0;
     this.is_dirty = true;
-    this._is_visible = true;
+    this.is_visible = true;
     this.horizontal_nav = new HorizontalNavigation(cell);
     this.initBase();
   };
