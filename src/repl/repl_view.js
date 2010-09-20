@@ -581,7 +581,8 @@ cls.ReplView.create_ui_widgets = function()
           ]
         ]);
       }
-    }
+    },
+    "general"
   );
 
   new ToolbarConfig
