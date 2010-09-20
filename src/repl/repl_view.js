@@ -19,6 +19,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._input_row_height = null;
   this._toolbar_visibility = null;
   this._is_first_showing = true;
+  this._recent_autocompletion = null;
+  this._autocompletion_index = null;
+  this._autocompletion_elem = null;
+
 
   this.ondestroy = function()
   {
@@ -246,13 +250,21 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   };
 
   /**
+   * Render a string. Return the element that was rendered.
+   */
+  this._render_string = function(s)
+  {
+      return this._add_line(templates.repl_output_native(s));
+  };
+
+  /**
    * Render an arbitrary number of string arguments
    */
-  this._render_string = function()
+  this._render_strings = function()
   {
     for (var n=0; n<arguments.length; n++)
     {
-      this._add_line(templates.repl_output_native(arguments[n]));
+      this._render_string(arguments[n]);
     }
   };
 
@@ -281,6 +293,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       line.appendChild(elem_or_template);
     }
     this._linelist.appendChild(line);
+    return line;
   };
 
   this._handle_keypress_bound = function(evt)
@@ -293,14 +306,13 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         if (this._multiediting) {
           var pos = this._textarea.selectionStart;
           this._textarea.value = this._textarea.value.slice(0, pos) + "\t" + this._textarea.value.slice(pos);
-
           break; // tab should be off when in a multiline box.
         }
-
-        this._resolver.find_props(this._handle_completer.bind(this),
-                                  this._textarea.value,
-                                  window.stop_at.getSelectedFrame());
-        break;
+        else
+        {
+          this._handle_completer();
+          return;
+        }
       }
       case 13: // enter
       {
@@ -308,6 +320,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         {
           this._textarea.rows = this._textarea.rows + 1;
           this._textarea.value = this._textarea.value + "\n";
+        }
+        else if (this._recent_autocompletion)
+        {
+          evt.preventDefault();
+          this._commit_selection();
         }
         else
         {
@@ -396,8 +413,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         break;
       }
 
-
     }
+
+    this._recent_autocompletion = null;
+    this._highlight_completion();
 
     // timeout makes sure we do this after all events have fired to update box
     window.setTimeout(this._update_input_height_bound, 0);
@@ -433,30 +452,101 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
   };
 
-  this._handle_completer = function(props)
+  this._commit_selection = function()
   {
-    var localpart = props.identifier;
+    var localpos = this._textarea.value.lastIndexOf(this._autocompletion_localpart);
+    if (localpos!=-1)
+    {
+      var pre = this._textarea.value.slice(0, localpos);
+      var post = this._textarea.value.slice(localpos+this._autocompletion_localpart.length);
+      this._textarea.value = pre + this._recent_autocompletion[this._autocompletion_index] + post;
+    }
+  };
 
-    var matches = props.props.filter(function(e) {
-      return e.indexOf(localpart) == 0;
-    });
+  this._highlight_completion = function(index)
+  {
 
-    if (! matches.length) {
+    var sel = window.getSelection();
+    sel.collapseToStart();
+
+    // with no arg, clear the selection.
+    if (index === null || index === undefined) {
       return;
     }
 
-    var match = this._longest_common_prefix(matches.slice(0));
-    if (match.length > localpart.length)
+    var word = this._recent_autocompletion[this._autocompletion_index];
+    var start = this._autocompletion_elem.textContent.indexOf(word);
+    var end = start+word.length;
+
+    var range = document.createRange();
+    var ele = this._autocompletion_elem.firstChild; // get TextNode
+
+    range.setStart(ele, start);
+    range.setEnd(ele, end);
+
+    sel.addRange(range);
+  };
+
+  this._handle_completer = function(props)
+  {
+    if (this._recent_autocompletion)
     {
-      var pos = this._textarea.value.lastIndexOf(localpart);
-      this._textarea.value = this._textarea.value.slice(0, pos) + match;
+      this._autocompletion_index++;
+      if (this._autocompletion_index >= this._recent_autocompletion.length) {
+        this._autocompletion_index = 0;
+      }
+
+      if (this._autocompletion_index >= 0)
+      {
+        this._highlight_completion(this._autocompletion_index);
+      }
+      else
+      {
+        // nothing. first tabbing just shows list with no complete highlight
+      }
+    }
+    else if (props)
+    {
+      var localpart = props.identifier;
+      this._autocompletion_localpart = localpart;
+      var matches = props.props.filter(function(e) {
+        return e.indexOf(localpart) == 0;
+      });
+
+      if (! matches.length) {
+        return;
+      }
+
+      var match = this._longest_common_prefix(matches.slice(0));
+      if (match.length > localpart.length)
+      {
+        var pos = this._textarea.value.lastIndexOf(localpart);
+        this._textarea.value = this._textarea.value.slice(0, pos) + match;
+      }
+      else
+      {
+        this._render_input(this._textarea.value);
+        this._recent_autocompletion = matches.sort();
+        this._autocompletion_elem = this._render_string(matches.sort().join(", "));
+
+        // fixme: this should not rely as much on the inards of the markup
+        this._autocompletion_elem = this._autocompletion_elem.firstChild;
+        this._autocompletion_index = -1;
+      }
+
     }
     else
     {
-      this._render_input(this._textarea.value);
-      this._render_string(matches.sort().join(", "));
+      this._resolver.find_props(this._on_completer.bind(this),
+                                this._textarea.value,
+                                window.stop_at.getSelectedFrame());
     }
 
+  };
+
+  this._on_completer = function(props)
+  {
+    this._handle_completer(props);
   };
 
   /**
