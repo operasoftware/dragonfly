@@ -44,7 +44,7 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, TopStatusbar
     this.container = new TopContainer(this); // actually just a cell
     this.tab = new TopTabs(this);
     this.modebar = window.modebar = new Modebar(this);
-    this.settingsOverlay = new Overlay(this);
+    this.overlay = new Overlay(this);
     this.toolbar = TopToolbar && new TopToolbar(this) || null;
     if(this.toolbar)
     {
@@ -180,7 +180,20 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, TopStatusbar
     this.modebar.setup(this.id);
   }
 
-  this.settingsOverlay.setup("settings-overlay");
+  this.overlay.add_window("settings-overlay",
+      [
+        new SettingsGroup("General", "general"),
+        new SettingsGroup("Document", "document"),
+        new SettingsGroup("Script", "script"),
+        new SettingsGroup("Network", "resource_manager"),
+        new SettingsGroup("Console", "console"),
+        new SettingsGroup("About", "about")
+      ]);
+
+  this.overlay.add_window("remote-debug-overlay",
+      [
+        new SettingsGroup("Remote debug", "remote_debug")
+      ]);
 
   if(this.statusbar)
   {

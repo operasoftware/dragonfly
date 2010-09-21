@@ -236,26 +236,48 @@ eventHandlers.click['top-window-toggle-attach'] = function(event)
 
 eventHandlers.click['overlay-tab'] = function(event, target)
 {
-  var settings_overlay = UIBase.getUIById(document.querySelector("overlay[type=settings-overlay]")
-                                                  .get_attr("parent-node-chain", "ui-id"));
+  var overlay = UIBase.getUIById(document.querySelector("overlay")
+                                         .get_attr("parent-node-chain", "ui-id"));
   var group_name = event.target.getAttribute("group");
   var settings_by_group = Settings.get_settings_by_group(group_name);
-  settings_overlay.show_group(group_name, window.templates.settings(settings_by_group));
+  overlay.show_group(group_name, window.templates.settings(settings_by_group));
 };
 
-eventHandlers.click['show-settings-overlay'] = function(event, target)
+eventHandlers.click['toggle-settings-overlay'] = function(event, target)
 {
-  var settings_overlay = UIBase.getUIById(document.querySelector("overlay[type=settings-overlay]")
-                                                  .get_attr("parent-node-chain", "ui-id"));
+  var overlay = UIBase.getUIById(document.querySelector("overlay")
+                                         .get_attr("parent-node-chain", "ui-id"));
   var button_dims = target.getBoundingClientRect();
-  var element = settings_overlay.element.querySelector("overlay-window");
+  var element = overlay.element.querySelector("overlay-window");
   element.style.top = button_dims.bottom + 10 + "px";
   element.style.right = document.documentElement.clientWidth - button_dims.right - 10 + "px";
   target.setAttribute("is-active", target.getAttribute("is-active") != "true");
 
   var settings_by_group = Settings.get_settings_by_group("general");
-  settings_overlay.show_group("general", window.templates.settings(settings_by_group));
-  settings_overlay.toggle_visibility();
+  overlay.set_window("settings-overlay");
+  overlay.show_group("general", window.templates.settings(settings_by_group));
+  overlay.toggle_visibility();
+};
+
+eventHandlers.click['toggle-remote-debug-config-overlay'] = function(event, target)
+{
+  var overlay = UIBase.getUIById(document.querySelector("overlay")
+                                         .get_attr("parent-node-chain", "ui-id"));
+  var button_dims = target.getBoundingClientRect();
+  var element = overlay.element.querySelector("overlay-window");
+  element.style.top = button_dims.bottom + 10 + "px";
+  element.style.right = document.documentElement.clientWidth - button_dims.right - 10 + "px";
+  target.setAttribute("is-active", target.getAttribute("is-active") != "true");
+
+  var settings_by_group = Settings.get_settings_by_group("remote_debug");
+  overlay.set_window("remote-debug-overlay");
+  overlay.show_group("remote_debug", window.templates.settings(settings_by_group));
+  overlay.toggle_visibility();
+};
+
+eventHandlers.click['toggle-console'] = function(event, target)
+{
+    alert("Command line.");
 };
 
 eventHandlers.click['toolbar-switch'] = function(event)

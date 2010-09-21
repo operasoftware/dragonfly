@@ -140,7 +140,6 @@ window.cls.Client = function()
     window.ini || ( window.ini = {debug: false} );
     window.messages.post('reset-state');
     this.create_top_level_views();
-    this.create_settings_groups();
     if (!opera.scopeAddClient)
     {
       // implement the scope DOM API
@@ -255,17 +254,6 @@ window.cls.Client = function()
       window.opera.attached = settings.general.get('window-attached') || false;
     }
   }
-
-  this.create_settings_groups = function()
-  {
-    // TODO: these should be ui_strings
-    new SettingsGroup("General", "general");
-    new SettingsGroup("Document", "document");
-    new SettingsGroup("Script", "script");
-    new SettingsGroup("Network", "resource_manager");
-    new SettingsGroup("Console", "console");
-    new SettingsGroup("About", "about");
-  };
 
   this.on_services_created =  function()
   {

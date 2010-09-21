@@ -153,8 +153,14 @@ button[handler="reload-window"] {
 [handler="top-window-close"] {
     content: url("../ui-images/icons/close.png");
 }
-[handler="show-settings-overlay"] {
+[handler="toggle-console"] {
+    content: url("../ui-images/icons/console.png");
+}
+[handler="toggle-settings-overlay"] {
     content: url("../ui-images/icons/settings.png");
+}
+[handler="toggle-remote-debug-config-overlay"] {
+    content: url("../ui-images/icons/remote.png");
 }
 [handler="top-window-toggle-attach"] {
     content: url("../ui-images/icons/attach.png");
@@ -629,6 +635,11 @@ window-controls {
   }
 window-controls.attached {
   border-left: 1px solid #b3b3b3;
+}
+window-controls toolbar-separator {
+    display: inline-block;
+    float: none;
+    height: auto;
 }
 
 

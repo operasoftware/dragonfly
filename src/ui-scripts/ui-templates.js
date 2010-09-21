@@ -198,11 +198,25 @@
     var is_attached = window.opera.attached;
     return ['window-controls',
       ['button',
-        'handler', 'show-settings-overlay',
+        'handler', 'toggle-console',
         'class', 'switch' + ( is_attached ? ' attached' : '')
       ],
-      is_attached
-      ? window['cst-selects']['debugger-menu'].select_template()
+      ['toolbar-separator'],
+      ['button',
+        'handler', 'toggle-settings-overlay',
+        'class', 'switch' + ( is_attached ? ' attached' : '')
+      ],
+      ['button',
+        'handler', 'toggle-remote-debug-config-overlay',
+        'class', 'switch' + ( is_attached ? ' attached' : '')
+      ],
+      ['toolbar-separator'],
+      window['cst-selects']['debugger-menu'].select_template(),
+      !is_attached
+      ? ['button',
+          'handler', 'reload-window',
+          'title', ui_strings.S_BUTTON_LABEL_RELOAD_HOST
+        ]
       : [],
       ['button', 
         'handler', 'top-window-toggle-attach', 
@@ -276,12 +290,11 @@
       view_name, 'handler', 'toggle-setting', 'view-id', view_id];
   }
 
-  this.overlay = function()
+  this.overlay = function(id)
   {
-    var groups = this.settings_groups(SettingsGroup.groups);
     return ["overlay-window",
              [
-               groups.length ? groups : [],
+               ["overlay-tabs"],
                ["overlay-content"]
              ]
            ];
@@ -290,12 +303,11 @@
   this.settings_groups = function(groups)
   {
     var tabs = [];
-    var ret = ["overlay-tabs", tabs];
     for (var i = 0, group; group = groups[i]; i++)
     {
       tabs.push(["tab", group.label, "group", group.group_name, "handler", "overlay-tab"]);
     }
-    return ret;
+    return tabs;
   };
 
   this.checkboxes = function(setting, checkbox_arr)

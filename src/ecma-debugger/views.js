@@ -384,7 +384,8 @@ cls.DebugRemoteSettingView.create_ui_widgets = function()
           ]
         ];
       }
-    }
+    },
+    "remote_debug"
   );
 
   eventHandlers.change['change-port-number-remote-debug'] = function(event, target)
@@ -448,8 +449,13 @@ cls.MainView .create_ui_widgets = function()
     'main-view',
     [
       {
-        handler: 'reload-window',
-        title: ui_strings.S_BUTTON_LABEL_RELOAD_HOST
+        handler: 'toggle-console'
+      },
+      {
+        handler: 'toggle-settings-overlay'
+      },
+      {
+        handler: 'toggle-remote-debug-config-overlay'
       }
     ],
     null,
