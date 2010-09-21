@@ -4,7 +4,7 @@
 
   /* constants */
 
-  const NAME = 0, CHECKED = 1;
+  const NAME = 0, CHECKED = 1, INDEX = 2;
 
   this.ev_brp_config = function(events)
   {
@@ -36,14 +36,14 @@
     return ['ul', event_list.map(this.ev_brp_event, this), 'class', 'event-list'];
   }
 
-  this.ev_brp_event = function(event, index)
+  this.ev_brp_event = function(event)
   {
     return (
     ['li',
       ['label',
         ['input',
           'type', 'checkbox',
-          'index', index.toString(),
+          'index', event[INDEX].toString(), // the index of the map callback is wrong with a search
           'handler', 'event-breakpoint',
         ].concat(event[CHECKED] ? ['checked', 'checked'] : []),
         event[NAME]

@@ -221,6 +221,14 @@ cls.EventBreakpoints = function()
     }
   ];
 
+  this._set_indexes = function(arr, index)
+  {
+    var i =0, j = 0, section = null, events = null, event = null;
+    for (; section = this._events[i]; i++)
+      for (j = 0, events = section.events; event = events[j]; j++)
+        event.push(j)
+  }
+
   this._store_unfolded_flags = function()
   {
     window.settings['event-breakpoints'].set('expanded-sections', this._events.map(this._get_unfolded_flags));
@@ -289,6 +297,8 @@ cls.EventBreakpoints = function()
   };
 
   /* constructor calls */
+
+  this._set_indexes();
 
 
 
