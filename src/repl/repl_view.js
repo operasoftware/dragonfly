@@ -23,6 +23,8 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._autocompletion_index = null;
   this._autocompletion_elem = null;
   this._use_autocomplete_highlight = true; // fixme: turn this in to a setting
+  this._textarea_handler = null;
+
 
   this.ondestroy = function()
   {
@@ -40,6 +42,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       container.clearAndRender(templates.repl_main());
       this._linelist = container.querySelector("ol");
       this._textarea = container.querySelector("textarea");
+      this._textarea_handler = new BufferManager(this._textarea);
       this._textarea.value = this._current_input;
       this._container = container;
       this._input_row_height = this._textarea.scrollHeight;
@@ -299,6 +302,12 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._handle_keypress_bound = function(evt)
   {
     //opera.postError("" + evt.keyCode + " " + evt.which );
+
+    if (this._textarea_handler.handle(evt)) {
+      evt.preventDefault();
+      return;
+    }
+
     switch (evt.keyCode) {
       case 9: // tab
       {
@@ -387,33 +396,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         }
         break;
       }
-      case 97: // a key. ctrl-a == move to start of line
-      {
-        if (evt.ctrlKey) {
-          evt.preventDefault();
-          this._textarea.selectionStart = 0;
-          this._textarea.selectionEnd = 0;
-        }
-        break;
-      }
-      case 101: // e key. ctrl-e == move to end of line
-      {
-        if (evt.ctrlKey) {
-          evt.preventDefault();
-          this._textarea.selectionStart = this._textarea.value.length;
-          this._textarea.selectionEnd = this._textarea.value.length;
-        }
-        break;
-      }
-      case 107: // k key. ctrl-k == kill to end of line
-      {
-        if (evt.ctrlKey) {
-          evt.preventDefault();
-          var pos = this._textarea.selectionStart;
-          this._textarea.value = this._textarea.value.slice(0, pos);
-        }
-        break;
-      }
       case 108: // l key
       {
         if (evt.ctrlKey) {
@@ -423,21 +405,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         }
         break;
       }
-      case 119: // w key. ctrl-w == kill word backwards
-      {
-        if (evt.ctrlKey) {
-          evt.preventDefault();
-          var s = this._textarea.value.slice(0, this._textarea.selectionStart-1);
-          var pos = s.lastIndexOf(" ");
-          pos++;
-
-          this._textarea.value = this._textarea.value.slice(0, pos) + this._textarea.value.slice(this._textarea.selectionStart);
-          this._textarea.selectionStart = pos;
-          this._textarea.selectionEnd = pos;
-        }
-        break;
-      }
-
     }
 
     this._recent_autocompletion = null;
