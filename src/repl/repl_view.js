@@ -298,7 +298,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._handle_keypress_bound = function(evt)
   {
-    // opera.postError("" + evt.keyCode + " " + evt.which );
+    //opera.postError("" + evt.keyCode + " " + evt.which );
     switch (evt.keyCode) {
       case 9: // tab
       {
@@ -310,7 +310,8 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         }
         else
         {
-          this._handle_completer();
+          this._on_invoke_completer(evt.shiftKey ? -1 : +1);
+          //this._handle_completer(evt.shiftKey);
           return;
         }
       }
@@ -487,29 +488,40 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     sel.addRange(range);
   };
 
-  this._handle_completer = function(props)
+  this._on_invoke_completer = function(direction)
   {
+    // tab/arrows was pressed while the completer is showing something
     if (this._recent_autocompletion)
     {
-      this._autocompletion_index++;
-      if (this._autocompletion_index >= this._recent_autocompletion.length) {
-        this._autocompletion_index = 0;
-      }
-
-      if (this._use_autocomplete_highlight)
-      {
-        if (this._autocompletion_index >= 0)
-        {
-          this._highlight_completion(this._autocompletion_index);
-        }
-        else
-        {
-          // nothing. first tabbing just shows list with no complete highlight
-        }
-
-      }
+      this._update_highlight(direction);
     }
-    else if (props)
+    else
+    {
+      this._handle_completer();
+    }
+  };
+
+  this._update_highlight = function(direction)
+  {
+    direction = direction === undefined ? 1 : direction;
+    if (!this._use_autocomplete_highlight) { return; }
+
+    this._autocompletion_index += direction;
+    if (this._autocompletion_index >= this._recent_autocompletion.length)
+    {
+      this._autocompletion_index = 0;
+    }
+    else if (this._autocompletion_index < 0)
+    {
+      this._autocompletion_index = this._recent_autocompletion.length-1;
+    }
+
+    this._highlight_completion(this._autocompletion_index);
+  };
+
+  this._handle_completer = function(props)
+  {
+    if (props)
     {
       var localpart = props.identifier;
       this._autocompletion_localpart = localpart;
@@ -536,8 +548,8 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         // fixme: this should not rely as much on the inards of the markup
         this._autocompletion_elem = this._autocompletion_elem.firstChild;
         this._autocompletion_index = -1;
+        this._update_highlight();
       }
-
     }
     else
     {
