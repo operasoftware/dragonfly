@@ -1,0 +1,15 @@
+<!doctype HTML>
+<script>
+var a = function(event)
+{
+  var type = event.type;
+  var b = 1;
+}
+document.addEventListener('DomNodeRemoved', a, false);
+var test = function()
+{
+  document.body.innerHTML += "<div>test</div>";
+  document.body.removeChild(document.getElementsByTagName('div')[0]);
+}
+</script>
+<p><input type="button" onclick="test()" value="test">
