@@ -8,10 +8,38 @@ window.cls || (window.cls = {});
 cls.EventBreakpoints = function()
 {
   /* interface */
+
+  /**
+    * Get all events. The events are organized in sections.
+    * Each section with:
+    *   - title
+    *   - spec, a URL to the according W#C spec
+    *   - events, the list with all events as tuple event-name, breakpoint-id
+    *   - is_unfolded, a state flag for the section
+    * @return {Array} events
+    */
   this.get_events = function(){};
+  /**
+    * To set or remove a breakpoint.
+    * @param {Number} section_index. The index of the section in the events list.
+    * @param {Number} event_index. The index of the event in the event list of the given section.
+    * @param {Boolean} checked. A flag to set or remove the breakpoint.
+    */
   this.handle_breakpoint = function(section_index, event_index, checked){};
+  /**
+    * To check if there is any breakpoint.
+    * @return {Boolean}. true if there is any breakpoint.
+    */
   this.has_breakpoints = function(){};
+  /**
+    * To set the is_unfolded flag for all sections to true.
+    */
   this.expand_all_sections = function(){};
+  /**
+    * To update the is_unfolded flag for a section.
+    * @param {Number} index. The index of the section in the events list.
+    * @param {Boolean} is_unfolded. The state of the flag.
+    */
   this.set_unfold = function(index, is_unfolded){};
 
   /* constants */
