@@ -460,13 +460,12 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     {
       var pre = this._textarea.value.slice(0, localpos);
       var post = this._textarea.value.slice(localpos+this._autocompletion_localpart.length);
-      this._textarea.value = pre + this._recent_autocompletion[this._autocompletion_index] + post;
+      this._textarea.value = pre + this._recent_autocompletion[this._autocompletion_index][0] + post;
     }
   };
 
   this._highlight_completion = function(index)
   {
-
     var sel = window.getSelection();
     sel.collapseToStart();
 
@@ -475,15 +474,12 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       return;
     }
 
-    var word = this._recent_autocompletion[this._autocompletion_index];
-    var start = this._autocompletion_elem.textContent.indexOf(word);
-    var end = start+word.length;
-
+    var entry = this._recent_autocompletion[this._autocompletion_index];
     var range = document.createRange();
     var ele = this._autocompletion_elem.firstChild; // get TextNode
 
-    range.setStart(ele, start);
-    range.setEnd(ele, end);
+    range.setStart(ele, entry[1]);
+    range.setEnd(ele, entry[2]);
 
     sel.addRange(range);
   };
@@ -542,8 +538,16 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       else
       {
         this._render_input(this._textarea.value);
-        this._recent_autocompletion = matches.sort();
         this._autocompletion_elem = this._render_string(matches.sort().join(", "));
+
+        // the recent autocomplete array contains tuples, (word, start, end)
+        // that can be used when selecting a range.
+        var offset = 0;
+        this._recent_autocompletion = matches.sort().map(function(word) {
+          var ret = [word, offset, offset+word.length];
+          offset += word.length + 2; // +2 accounts for ", "
+          return ret;
+        });
 
         // fixme: this should not rely as much on the inards of the markup
         this._autocompletion_elem = this._autocompletion_elem.firstChild;
