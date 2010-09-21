@@ -396,7 +396,16 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         }
         break;
       }
-      case 107: // k key. ctrl-k == kill to en of line
+      case 101: // e key. ctrl-e == move to end of line
+      {
+        if (evt.ctrlKey) {
+          evt.preventDefault();
+          this._textarea.selectionStart = this._textarea.value.length;
+          this._textarea.selectionEnd = this._textarea.value.length;
+        }
+        break;
+      }
+      case 107: // k key. ctrl-k == kill to end of line
       {
         if (evt.ctrlKey) {
           evt.preventDefault();
