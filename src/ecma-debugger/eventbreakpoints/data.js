@@ -27,6 +27,10 @@ cls.EventBreakpoints = function()
     */
   this.handle_breakpoint = function(section_index, event_index, checked){};
   /**
+    * To remove all breakpoints.
+    */
+  this.remove_all_breakpoints = function(){};
+  /**
     * To check if there is any breakpoint.
     * @return {Boolean}. true if there is any breakpoint.
     */
@@ -272,6 +276,15 @@ cls.EventBreakpoints = function()
       else
         window.toolbars['event-breakpoints'].disableButtons('ev-brp-remove-all-breakpoints');
     }
+  }
+
+  this.remove_all_breakpoints = function()
+  {
+    var i =0, j = 0, section = null, events = null, event = null;
+    for (; section = this._events[i]; i++)
+      for (j = 0, events = section.events; event = events[j]; j++)
+        if (event[CHECKED])
+          this.handle_breakpoint (i, j, false)
   }
 
   this.has_breakpoints = function()

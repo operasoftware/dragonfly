@@ -26,12 +26,13 @@ cls.EventBreakpointsView = function(id, name, container_class)
   {
     if (this._container && this.isvisible())
     {
+      filter_str = filter_str.toLowerCase();
       const NAME = 0, CHECKED = 1;
       var events = window.event_breakpoints.get_events();
       var event_list = null;
       var filter = function(event)
       {
-        return event[NAME].indexOf(filter_str) > -1;
+        return event[NAME].toLowerCase().indexOf(filter_str) > -1;
       };
 
       if (filter_str)
@@ -137,6 +138,14 @@ cls.EventBreakpointsView.create_ui_widgets = function()
 
     window.event_breakpoints.handle_breakpoint(section_index, event_index, checked);
   }
+
+  window.eventHandlers.click['ev-brp-remove-all-breakpoints'] = function(event, target)
+  {
+    window.event_breakpoints.remove_all_breakpoints();
+    window.views['event-breakpoints'].update();
+  }
+
+  
 
   window.eventHandlers.input['ev-brp-filter'] = function(event, target)
   {
