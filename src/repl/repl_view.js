@@ -22,7 +22,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._recent_autocompletion = null;
   this._autocompletion_index = null;
   this._autocompletion_elem = null;
-
+  this._use_autocomplete_highlight = true; // fixme: turn this in to a setting
 
   this.ondestroy = function()
   {
@@ -321,7 +321,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
           this._textarea.rows = this._textarea.rows + 1;
           this._textarea.value = this._textarea.value + "\n";
         }
-        else if (this._recent_autocompletion)
+        else if (this._use_autocomplete_highlight && this._recent_autocompletion)
         {
           evt.preventDefault();
           this._commit_selection();
@@ -496,13 +496,17 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         this._autocompletion_index = 0;
       }
 
-      if (this._autocompletion_index >= 0)
+      if (this._use_autocomplete_highlight)
       {
-        this._highlight_completion(this._autocompletion_index);
-      }
-      else
-      {
-        // nothing. first tabbing just shows list with no complete highlight
+        if (this._autocompletion_index >= 0)
+        {
+          this._highlight_completion(this._autocompletion_index);
+        }
+        else
+        {
+          // nothing. first tabbing just shows list with no complete highlight
+        }
+
       }
     }
     else if (props)
