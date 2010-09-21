@@ -43,13 +43,13 @@ var ModebarBase = function()
       this.width = dim;
     }
 
-    dim = this.default_height;
-    if (dim != this.height)
-    {
-      this.is_dirty = true;
-      this.height = dim;
-      this.offsetHeight = dim + this.vertical_border_padding;
-    }
+    //dim = this.default_height;
+    //if (dim != this.height)
+    //{
+    //  this.is_dirty = true;
+    //  this.height = dim;
+    //  this.offsetHeight = dim + this.vertical_border_padding;
+    //}
 
     this.update(force_redraw)
   };
@@ -61,10 +61,14 @@ var ModebarBase = function()
 
   this.setVisibility = function(is_visible)
   {
-    this.is_visible = is_visible;
-    if(toolbars[this._view_id])
+    if (this.is_visible != is_visible)
     {
-      toolbars[this._view_id].setVisibility(is_visible);
+      this.is_visible = is_visible;
+      if(toolbars[this._view_id])
+      {
+        toolbars[this._view_id].setVisibility(is_visible);
+      }
+      window.topCell.container.setDimensions();
     }
   };
 

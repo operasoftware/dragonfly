@@ -730,12 +730,17 @@ breadcrumb span
   border-width: 1px 0;
   background-color: #e6e6e6;
   white-space: nowrap;
+  font-size: 1em;
 }
 
-.script-options h2:first-child, .stylesheet-options h2:first-child
+.script-options h2:first-child, .stylesheet-options h2:first-child,
+.script-options h2 + h2, .stylesheet-options h2 + h2
 {
-  border-top: 0px solid;
-  font-size: 1em;
+  border-top: none;
+}
+.script-options h2:last-child, .stylesheet-options h2:last-child
+{
+  border-bottom: none;
 }
 
 .script-options cst-option, .stylesheet-options cst-option
