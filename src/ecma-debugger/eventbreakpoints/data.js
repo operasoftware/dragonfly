@@ -1,93 +1,31 @@
 window.cls || (window.cls = {});
 
 /**
-  * @constructor 
+  * @constructor
   * @extends ViewBase
   */
 
 cls.EventBreakpoints = function()
 {
+  /* interface */
+  this.get_events = function(){};
+  this.handle_breakpoint = function(section_index, event_index, checked){};
+  this.has_breakpoints = function(){};
+  this.expand_all_sections = function(){};
+  this.set_unfold = function(index, is_unfolded){};
+
+  /* constants */
   const NAME = 0, CHECKED = 1;
 
+  /* private */
   this._is_synced = false;
-
-  this.set_unfold = function(index, is_unfolded)
-  {
-    this._events[index].is_unfolded = is_unfolded;
-    this._store_unfolded_flags();
-  };
-
-  this._store_unfolded_flags = function()
-  {
-    window.settings['event-breakpoints'].set('expanded-sections', this._events.map(this._get_unfolded_flags));
-  }
-
-  this._get_unfolded_flags = function(section){return section.is_unfolded ? 1 : 0;}
-
   this._breakpoints = {};
-
-  this.handle_breakpoint = function(section_index, event_index, checked)
-  {
-    var event = this._events[section_index] && this._events[section_index].events[event_index];
-    if (event)
-    {
-      if (checked)
-      {
-        event[CHECKED] = window.runtimes.getBreakpointId();
-        this._breakpoints[event[CHECKED]] = event;
-        window.services['ecmascript-debugger'].requestAddEventBreakpoint(0, [event[CHECKED], event[NAME]]);
-      }
-      else
-      { 
-        window.services['ecmascript-debugger'].requestRemoveBreakpoint(0, [event[CHECKED]]);
-        this._breakpoints[event[CHECKED]] = 0;
-        event[CHECKED] = 0;
-      }
-      if (this.has_breakpoints())
-        window.toolbars['event-breakpoints'].enableButtons('ev-brp-remove-all-breakpoints');
-      else
-        window.toolbars['event-breakpoints'].disableButtons('ev-brp-remove-all-breakpoints');
-    }
-  }
-
-  this.has_breakpoints = function()
-  {
-    var i =0, j = 0, section = null, events = null, event = null;
-    for (; section = this._events[i]; i++)
-      for (j = 0, events = section.events; event = events[j]; j++)
-        if (event[CHECKED])
-          return true;
-    return false;
-  }
-
-  this.expand_all_sections = function()
-  {
-    for (var i =0, section = null; section = this._events[i]; i++)
-      section.is_unfolded = true;
-  }
-
-  this.get_events = function()
-  {
-    if (!this._is_synced)
-    {
-      var 
-      unfolded_flags = window.settings['event-breakpoints'].get('expanded-sections'), 
-      i = 0, 
-      section = null;
-      
-      for (; section = this._events[i]; i++)
-        section.is_unfolded = unfolded_flags[i];
-      this._is_synced = true;
-    }
-    return this._events;
-  }
-
   this._events =
   [
     {
       title: 'DOM Level 3',
       spec: "http://www.w3.org/TR/2010/WD-DOM-Level-3-Events-20100907/#event-types-list",
-      events: 
+      events:
       [
         ['abort', 0],
         ['blur', 0],
@@ -255,7 +193,76 @@ cls.EventBreakpoints = function()
     }
   ];
 
-  
+  this._store_unfolded_flags = function()
+  {
+    window.settings['event-breakpoints'].set('expanded-sections', this._events.map(this._get_unfolded_flags));
+  }
+
+  this._get_unfolded_flags = function(section){return section.is_unfolded ? 1 : 0;};
+
+  /* implementation */
+
+  this.get_events = function()
+  {
+    if (!this._is_synced)
+    {
+      var unfolded_flags = window.settings['event-breakpoints'].get('expanded-sections');
+      for (var i = 0, section = null; section = this._events[i]; i++)
+        section.is_unfolded = unfolded_flags[i];
+      this._is_synced = true;
+    }
+    return this._events;
+  }
+
+  this.handle_breakpoint = function(section_index, event_index, checked)
+  {
+    var event = this._events[section_index] && this._events[section_index].events[event_index];
+    if (event)
+    {
+      if (checked)
+      {
+        event[CHECKED] = window.runtimes.getBreakpointId();
+        this._breakpoints[event[CHECKED]] = event;
+        window.services['ecmascript-debugger'].requestAddEventBreakpoint(0, [event[CHECKED], event[NAME]]);
+      }
+      else
+      {
+        window.services['ecmascript-debugger'].requestRemoveBreakpoint(0, [event[CHECKED]]);
+        this._breakpoints[event[CHECKED]] = 0;
+        event[CHECKED] = 0;
+      }
+      if (this.has_breakpoints())
+        window.toolbars['event-breakpoints'].enableButtons('ev-brp-remove-all-breakpoints');
+      else
+        window.toolbars['event-breakpoints'].disableButtons('ev-brp-remove-all-breakpoints');
+    }
+  }
+
+  this.has_breakpoints = function()
+  {
+    var i =0, j = 0, section = null, events = null, event = null;
+    for (; section = this._events[i]; i++)
+      for (j = 0, events = section.events; event = events[j]; j++)
+        if (event[CHECKED])
+          return true;
+    return false;
+  }
+
+  this.expand_all_sections = function()
+  {
+    for (var i =0, section = null; section = this._events[i]; i++)
+      section.is_unfolded = true;
+  }
+
+  this.set_unfold = function(index, is_unfolded)
+  {
+    this._events[index].is_unfolded = is_unfolded;
+    this._store_unfolded_flags();
+  };
+
+  /* constructor calls */
+
+
 
 }
 

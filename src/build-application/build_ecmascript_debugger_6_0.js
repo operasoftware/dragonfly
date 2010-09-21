@@ -114,10 +114,10 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     cls.CSSLayoutView.prototype = ViewBase;
     new cls.CSSLayoutView('css-layout', ui_strings.M_VIEW_LABEL_LAYOUT, 'scroll css-layout');
 
-    /* Event breakpoint config */
+    /* Event Breakpoints */
     window.event_breakpoints = new cls.EventBreakpoints();
     cls.EventBreakpointsView.prototype = ViewBase;
-    new cls.EventBreakpointsView('event-breakpoints', "Event Breakpoints", 'scroll event-breakpoint-config');
+    new cls.EventBreakpointsView('event-breakpoints', ui_strings.M_VIEW_LABEL_EVENT_BREAKPOINTS, 'scroll event-breakpoints');
     cls.EventBreakpointsView.create_ui_widgets();
 
 

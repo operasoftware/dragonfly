@@ -16,9 +16,9 @@
     return (
     [
       'li',
-        ['header', 
+        ['header',
           ['input', 'type', 'button', 'class', section.is_unfolded ? 'unfolded' : ''],
-          section.title, 
+          section.title,
           ['a', 'spec', 'href', section.spec, 'target', '_blank', 'class', 'spec-link'],
           'handler', 'ev-brp-expand-section',
         ],
@@ -28,7 +28,7 @@
       'index', index.toString(),
       'class', section.is_search && !section.is_unfolded ? 'search-no-match' : ''
     ]);
-      
+
   }
 
   this.ev_brp_event_list = function(event_list)
@@ -50,9 +50,5 @@
       ]
     ]);
   }
-
-
-
-
 
 }).apply(window.templates || (window.templates = {}));

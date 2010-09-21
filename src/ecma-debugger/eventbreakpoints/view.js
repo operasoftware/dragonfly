@@ -1,7 +1,7 @@
 window.cls || (window.cls = {});
 
 /**
-  * @constructor 
+  * @constructor
   * @extends ViewBase
   */
 
@@ -15,8 +15,6 @@ cls.EventBreakpointsView = function(id, name, container_class)
   this.window_height = 300;
   this.window_statusbar = false;
   this._container = null;
-
-  
 
   this.createView = function(container)
   {
@@ -35,6 +33,7 @@ cls.EventBreakpointsView = function(id, name, container_class)
       {
         return event[NAME].indexOf(filter_str) > -1;
       };
+
       if (filter_str)
       {
         events = events.map(function(section, index)
@@ -71,24 +70,22 @@ cls.EventBreakpointsView.create_ui_widgets = function()
     [
       {
         handler: 'ev-brp-expand-all-sections',
-        title: "Expand all sections",
+        title: ui_strings.S_BUTTON_EXPAND_ALL_SECTIONS,
       },
       {
         handler: 'ev-brp-remove-all-breakpoints',
-        title: 'Remove all event breakpoints',
+        title: ui_strings.S_BUTTON_REMOVE_ALL_BREAKPOINTS,
         disabled: true
       },
     ],
     [
       {
         handler: 'ev-brp-filter',
-        title: 'Search event',
+        title: ui_strings.S_BUTTON_SEARCH_EVENT,
         label: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER
       }
     ]
   );
-
-
 
   new Settings
   (
@@ -97,38 +94,19 @@ cls.EventBreakpointsView.create_ui_widgets = function()
     // key-value map
     {
       'expanded-sections': [],
-    },
-    // key-label map
-    {
-
-    },
-    // settings map
-    {
-      checkboxes:
-      [
-
-      ],
-      customSettings:
-      [
-
-      ]
     }
-    // custom templates
-
   );
 
   window.eventHandlers.click['ev-brp-expand-all-sections'] = function(event, target)
   {
     window.event_breakpoints.expand_all_sections();
     window.views['event-breakpoints'].update();
-
   }
-  
 
   window.eventHandlers.click['ev-brp-expand-section'] = function(event, target)
   {
-    var 
-    parent = target.parentNode, 
+    var
+    parent = target.parentNode,
     index = parseInt(parent.getAttribute('index')),
     event_list = parent.getElementsByTagName('ul')[0],
     input = target.getElementsByTagName('input')[0];
@@ -152,7 +130,7 @@ cls.EventBreakpointsView.create_ui_widgets = function()
 
   window.eventHandlers.click['event-breakpoint'] = function(event, target)
   {
-    var 
+    var
     event_index = parseInt(target.getAttribute('index')),
     section_index = parseInt(target.parentNode.get_attr('parent-node-chain', 'index')),
     checked = target.checked;
