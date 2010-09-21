@@ -311,7 +311,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         else
         {
           this._on_invoke_completer(evt.shiftKey ? -1 : +1);
-          //this._handle_completer(evt.shiftKey);
           return;
         }
       }
@@ -344,6 +343,22 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
             return;
           }
           this._service.handle_input(input);
+        }
+        break;
+      }
+      case 37: // left
+      case 39: // right
+      {
+        // workaround as long as we don't have support for keyIdentifier
+        // event.which is 0 in a keypress event for function keys
+        if( !evt.which )
+        {
+          if (this._recent_autocompletion)
+          {
+            evt.preventDefault();
+            this._update_highlight(evt.keyCode==37 ? -1 : 1);
+            return;
+          }
         }
         break;
       }
