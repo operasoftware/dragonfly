@@ -196,7 +196,7 @@
   this.window_controls = function()
   {
     var is_attached = window.opera.attached;
-    return ['window-controls',
+    var controls = [
       ['button',
         'handler', 'toggle-console',
         'class', 'switch' + ( is_attached ? ' attached' : '')
@@ -210,26 +210,29 @@
         'handler', 'toggle-remote-debug-config-overlay',
         'class', 'switch' + ( is_attached ? ' attached' : '')
       ],
-      ['toolbar-separator'],
-      window['cst-selects']['debugger-menu'].select_template(),
-      !is_attached
-      ? ['button',
-          'handler', 'reload-window',
-          'title', ui_strings.S_BUTTON_LABEL_RELOAD_HOST
-        ]
-      : [],
-      ['button', 
-        'handler', 'top-window-toggle-attach', 
-        'class', 'switch' + ( is_attached ? ' attached' : '') ,
-        'title', is_attached ? ui_strings.S_SWITCH_DETACH_WINDOW : ui_strings.S_SWITCH_ATTACH_WINDOW
-      ],
-      is_attached
-      ? ['button', 
-          'handler', 'top-window-close',
-          'title', ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW
-        ]
-      : []
-      ].concat( is_attached ? ['class', 'attached'] : [] )
+      ['toolbar-separator']
+    ];
+    return ['window-controls'].concat(is_attached ? controls : []).concat(
+      [
+        window['cst-selects']['debugger-menu'].select_template(),
+        !is_attached
+        ? ['button',
+            'handler', 'reload-window',
+            'title', ui_strings.S_BUTTON_LABEL_RELOAD_HOST
+          ]
+        : [],
+        ['button',
+          'handler', 'top-window-toggle-attach',
+          'class', 'switch' + ( is_attached ? ' attached' : '') ,
+          'title', is_attached ? ui_strings.S_SWITCH_DETACH_WINDOW : ui_strings.S_SWITCH_ATTACH_WINDOW
+        ],
+        is_attached
+        ? ['button',
+            'handler', 'top-window-close',
+            'title', ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW
+          ]
+        : []
+      ]).concat( is_attached ? ['class', 'attached'] : [] )
   }
 
   this.window_controls_close = function()

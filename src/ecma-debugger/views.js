@@ -461,22 +461,22 @@ cls.MainView .create_ui_widgets = function()
     null,
     null,
     [
-      {
-        handler: 'select-window',
-        title: ui_strings.S_BUTTON_LABEL_SELECT_WINDOW,
-        type: 'dropdown',
-        class: 'window-select-dropdown',
-        template: function()
-        {
-          return (
-          ['window-select',
-            [
-              'select',
-              'handler', this.handler
-            ]
-          ]);
-        }
-      }
+      //{
+      //  handler: 'select-window',
+      //  title: ui_strings.S_BUTTON_LABEL_SELECT_WINDOW,
+      //  type: 'dropdown',
+      //  class: 'window-select-dropdown',
+      //  template: function()
+      //  {
+      //    return (
+      //    ['window-select',
+      //      [
+      //        'select',
+      //        'handler', this.handler
+      //      ]
+      //    ]);
+      //  }
+      //}
     ]
   )
 
