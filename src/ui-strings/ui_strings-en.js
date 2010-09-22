@@ -20,9 +20,9 @@ window.ui_strings.lang_code = "en";
 /* DESC: View for script debugging. */
 ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS = 'Scripts';
 /* DESC: View for DOM debugging. */
-ui_strings.M_VIEW_LABEL_COMPOSITE_DOM = 'DOM';
+ui_strings.M_VIEW_LABEL_COMPOSITE_DOM = 'Document';
 /* DESC: View for error log. */
-ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE = 'Error Console';
+ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE = 'Errors';
 /* DESC: View for exported code. */
 ui_strings.M_VIEW_LABEL_COMPOSITE_EXPORTS = 'Export';
 /* DESC: View for network debugging (and http logger) */
