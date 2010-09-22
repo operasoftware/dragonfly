@@ -1,14 +1,14 @@
 ﻿/**
  * Resolve the properties of an object in a runtime.
  *
- * Singleton. Every instanciation will return the same instance. Contains
+ * Singleton. Every instantiation will return the same instance. Contains
  * no state apart from the caching, which should be shared.
  */
 
 window.cls = window.cls || {};
 window.cls.PropertyFinder = function(rt_id) {
   if (window.cls.PropertyFinder.instance) {
-    return window.PropertyFinder.instance;
+    return window.cls.PropertyFinder.instance;
   }
   else {
     window.cls.PropertyFinder.instance = this;
