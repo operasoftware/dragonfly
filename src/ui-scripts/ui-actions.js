@@ -90,9 +90,13 @@ eventHandlers.mousedown['tab'] = function(event, target)
   }
 }
 
-eventHandlers.mousewheel['tab'] = function(event, target)
+eventHandlers.mousewheel['change-on-scroll'] = function(event, target)
 {
-  var active_tab = target.parentNode.querySelector(".active")
+  if (target.nodeName == "tab")
+  {
+    target = target.parentNode;
+  }
+  var active_tab = target.querySelector(".active")
   if (event.detail < 0) {
       if (active_tab.previousElementSibling)
       {

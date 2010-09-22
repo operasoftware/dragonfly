@@ -109,6 +109,7 @@ var TabsBase = function()
     }
     tabs.innerHTML = '';
     tabs.className = window.opera.attached ? "attached" : "detached"; // TODO: Do this with `.attributes` in topTabs?
+    tabs.setAttribute("handler", "change-on-scroll");
     tabs.render(templates[this.type](this));
     return tabs;
   }
