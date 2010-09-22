@@ -71,6 +71,7 @@ new EventHandler('mouseup');
 new EventHandler('mouseover');
 new EventHandler('focus', true, 'focus-handler');
 new EventHandler('blur', true, 'blur-handler');
+new EventHandler('mousewheel');
 
 /***** general ui click handler *****/
 
@@ -86,6 +87,23 @@ eventHandlers.mousedown['tab'] = function(event, target)
   {
     opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
       "tabs is missing in eventHandlers.click['tab'] in ui-actions");
+  }
+}
+
+eventHandlers.mousewheel['tab'] = function(event, target)
+{
+  var active_tab = target.parentNode.querySelector(".active")
+  if (event.detail < 0) {
+      if (active_tab.previousElementSibling)
+      {
+        eventHandlers.mousedown['tab'](null, active_tab.previousElementSibling);
+      }
+  }
+  else {
+      if (active_tab.nextElementSibling)
+      {
+        eventHandlers.mousedown['tab'](null, active_tab.nextElementSibling);
+      }
   }
 }
 
@@ -123,6 +141,13 @@ eventHandlers.mouseup['horizontal-nav'] = function(event, target)
 {
   clearTimeout(navTimeout);
 };
+
+//eventHandlers.mousewheel['breadcrumbs-drag'] = function(event, target)
+//{
+//  var horizontal_nav = UIBase.getUIById(target.get_attr('parent-node-chain', 'ui-id'));
+//  var dir = target.get_attr('parent-node-chain', 'dir');
+//  horizontal_nav.nav(event.detail < 0 ? "back" : "forward");
+//};
 
 eventHandlers.mousedown['breadcrumbs-drag'] = function(event, target)
 {
