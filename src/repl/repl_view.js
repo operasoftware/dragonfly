@@ -42,7 +42,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       container.clearAndRender(templates.repl_main());
       this._linelist = container.querySelector("ol");
       this._textarea = container.querySelector("textarea");
-      this._textarea_handler = new BufferManager(this._textarea);
+      this._textarea_handler = new cls.BufferManager(this._textarea);
       this._textarea.value = this._current_input;
       this._container = container;
       this._input_row_height = this._textarea.scrollHeight;

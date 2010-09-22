@@ -1,8 +1,10 @@
+﻿window.cls = window.cls || (window.cls = {});
+
 /**
  * Escape Meta Alt Control Shift
  *
  */
-function BufferManager(textarea)
+cls.BufferManager = function(textarea)
 {
   this._textarea = textarea;
 
