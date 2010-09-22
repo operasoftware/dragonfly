@@ -250,7 +250,14 @@ eventHandlers.click['toggle-settings-overlay'] = function(event, target)
   var button_dims = target.getBoundingClientRect();
   var element = overlay.element.querySelector("overlay-window");
   element.style.top = button_dims.bottom + 10 + "px";
-  element.style.right = document.documentElement.clientWidth - button_dims.right - 10 + "px";
+  if (window.opera.attached)
+  {
+      element.style.right = document.documentElement.clientWidth - button_dims.right - 10 + "px";
+  }
+  else
+  {
+      element.style.left = button_dims.left - 10 + "px";
+  }
   target.setAttribute("is-active", target.getAttribute("is-active") != "true");
 
   var settings_by_group = Settings.get_settings_by_group("general");
@@ -259,6 +266,7 @@ eventHandlers.click['toggle-settings-overlay'] = function(event, target)
   overlay.toggle_visibility();
 };
 
+// TODO: merge this with the one above
 eventHandlers.click['toggle-remote-debug-config-overlay'] = function(event, target)
 {
   var overlay = UIBase.getUIById(document.querySelector("overlay")
@@ -266,7 +274,14 @@ eventHandlers.click['toggle-remote-debug-config-overlay'] = function(event, targ
   var button_dims = target.getBoundingClientRect();
   var element = overlay.element.querySelector("overlay-window");
   element.style.top = button_dims.bottom + 10 + "px";
-  element.style.right = document.documentElement.clientWidth - button_dims.right - 10 + "px";
+  if (window.opera.attached)
+  {
+      element.style.right = document.documentElement.clientWidth - button_dims.right - 10 + "px";
+  }
+  else
+  {
+      element.style.left = button_dims.left - 10 + "px";
+  }
   target.setAttribute("is-active", target.getAttribute("is-active") != "true");
 
   var settings_by_group = Settings.get_settings_by_group("remote_debug");

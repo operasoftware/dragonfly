@@ -243,7 +243,7 @@ cst-select-toolbar-setting,
 cst-select
 {
   background: #e6e6e6 url("../ui-images/shine_button.png") repeat-x;
-  border: 1px solid #8e8e8e;
+  border: 1px solid rgba(0, 0, 0, .5);
   border-radius: 3px;
   height: 19px;
   width: 19px;
@@ -252,6 +252,7 @@ cst-select
   box-shadow: 0 1px #fff;
   box-sizing: content-box;
   display: inline-block;
+  box-shadow: 0 1px #fff, inset 0 1px 1px #fff;
 }
 toolbar button:active,
 top-toolbar button:active,
@@ -259,21 +260,30 @@ window-controls button:active,
 cst-select-toolbar-setting:active,
 .ui-button:active,
 cst-select:active {
-    box-shadow: 0 1px #fff, inset 0 2px 2px rgba(0, 0, 0, .2);
-    border-color: #777;
+    box-shadow: 0 1px #fff, inset 0 1px 2px rgba(0, 0, 0, .5);
 }
 toolbar button[is-active="true"],
 top-toolbar button[is-active="true"],
 window-controls button[is-active="true"],
 cst-select[is-active="true"] {
-    box-shadow: 0 1px #fff, inset 0 2px 2px rgba(0, 0, 0, .2);
-    border-color: #777;
+    box-shadow: 0 1px #fff, inset 0 1px 2px rgba(0, 0, 0, .5);
     background-color: #b3b3b3;
+}
+/* Show the button topmost when the overlay is visible */
+top-toolbar button[is-active="true"] {
+    position: relative;
+    z-index: 3;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, .5);
+    border-color: #000;
 }
 toolbar button[is-active="true"]:active,
 top-toolbar button[is-active="true"]:active,
 window-controls button[is-active="true"]:active {
+    box-shadow: 0 1px #fff, inset 0 1px 3px rgba(0, 0, 0, .5);
     background-color: #999;
+}
+top-toolbar button[is-active="true"]:active {
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, .5);
 }
 
 cst-select[cst-id="debugger-menu"] {
@@ -652,6 +662,13 @@ window-controls toolbar-separator {
 settings-container, settings, settings-header, checkboxes, checkbox, setting-composite {
   display: block;
   }
+settings-container label {
+    display: block;
+}
+settings-container input {
+    margin-left: 0;
+    margin-right: 5px;
+}
 
 settings { /**/
   margin: 12px 0;
@@ -1422,7 +1439,7 @@ overlay {
     bottom: 0;
     right: 0;
     left: 0;
-    z-index: 30;
+    z-index: 2;
     padding: 0 30px;
     display: none;
 }
