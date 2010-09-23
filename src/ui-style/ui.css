@@ -449,6 +449,9 @@ modebar {
   line-height: 21px;
   background: #d9d9d9;
 }
+modebar.hidden {
+  display: none;
+}
 
 window-select {
   position: relative;

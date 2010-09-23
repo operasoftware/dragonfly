@@ -43,14 +43,6 @@ var ModebarBase = function()
       this.width = dim;
     }
 
-    //dim = this.default_height;
-    //if (dim != this.height)
-    //{
-    //  this.is_dirty = true;
-    //  this.height = dim;
-    //  this.offsetHeight = dim + this.vertical_border_padding;
-    //}
-
     this.update(force_redraw)
   };
 
@@ -64,19 +56,15 @@ var ModebarBase = function()
     if (this.is_visible != is_visible)
     {
       this.is_visible = is_visible;
-      if(toolbars[this._view_id])
-      {
-        toolbars[this._view_id].setVisibility(is_visible);
-      }
+      this.element[is_visible ? "removeClass" : "addClass"]("hidden");
       window.topCell.container.setDimensions();
     }
   };
 
   this.setup = function(view_id)
   {
-    var modebar = document.getElementById(this.type + '-to-' + this.cell.id) || this.update();
-    modebar.appendChild(this.horizontal_nav.element);
-    this._view_id = view_id;
+    this.element = document.getElementById(this.type + '-to-' + this.cell.id) || this.update();
+    this.element.appendChild(this.horizontal_nav.element);
   };
 
   this.init = function(cell)
