@@ -233,6 +233,7 @@
           ]
         : []
       ]).concat( is_attached ? ['class', 'attached'] : [] )
+        .concat(["id", "window-controls-to-main-view"]); // HACK: Hard-code id to avoid it being removed when the viewport is updated
   }
 
   this.window_controls_close = function()

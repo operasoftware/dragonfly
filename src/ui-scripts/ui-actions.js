@@ -236,8 +236,7 @@ eventHandlers.click['top-window-toggle-attach'] = function(event)
   viewsMenu.remove();
   window.topCell.onresize = function(){};
   var is_attached = ( window.opera.attached = !window.opera.attached );
-  document.documentElement.removeChild(event.target.parentNode);
-  var win_controls = document.documentElement.render(templates.window_controls(is_attached));
+  event.target.parentNode.parentNode.removeChild(event.target.parentNode);
 
   // TODO active window must be set correct
   // then the window dropdown will be removed in the attached view
@@ -260,7 +259,11 @@ eventHandlers.click['top-window-toggle-attach'] = function(event)
   {
     viewsMenu.create();
   }
-  setTimeout(client.setupTopCell, 0);
+
+  setTimeout(function() {
+    client.setupTopCell();
+    document.querySelector("main-view").render(templates.window_controls(is_attached));
+  }, 0);
 }
 
 eventHandlers.click['overlay-tab'] = function(event, target)

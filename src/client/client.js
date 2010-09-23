@@ -262,8 +262,8 @@ window.cls.Client = function()
     {
       window_controls.parentNode.removeChild(window_controls);
     };
-    document.documentElement.render(templates.window_controls());
     this.setupTopCell();
+    document.querySelector("main-view").render(templates.window_controls());
     if(!arguments.callee._called_once)
     {
       if( window.opera.attached )
