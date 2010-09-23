@@ -91,6 +91,7 @@ cls.ReplData = function(view)
 
   this.add_output_groupstart = function(data)
   {
+    data.id = String(new Date().getTime());
     this._add_entry("groupstart", data);
   };
 
@@ -112,6 +113,22 @@ cls.ReplData = function(view)
     after = after || 0;
     var filterfun = function(e) { return e.time > after; };
     return this._repllog.filter(filterfun);
+  };
+
+  /**
+   * Return the entry for the groupopen with a particular id
+   */
+  this.get_group = function(id)
+  {
+    var match = this._repllog.filter(function(e) {return e.data && e.data.id == id; });
+    if (match.length)
+    {
+      return match[0].data;
+    }
+    else
+    {
+      return null;
+    }
   };
 
   /**

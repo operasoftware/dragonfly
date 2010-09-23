@@ -24,7 +24,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._autocompletion_elem = null;
   this._use_autocomplete_highlight = true; // fixme: turn this in to a setting
   this._textarea_handler = null;
-
+  this._closed_group_nesting_level = 0;
 
   this.ondestroy = function()
   {
@@ -46,6 +46,8 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       this._textarea.value = this._current_input;
       this._container = container;
       this._input_row_height = this._textarea.scrollHeight;
+      this._closed_group_nesting_level = 0;
+
       switched_to_view = true;
       // note: events are bound to handlers at the bottom of this class
     }
@@ -168,13 +170,25 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._render_groupstart = function(data)
   {
+    if (this._closed_group_nesting_level) {
+      // don't do anything if we're in a closed group
+      this._closed_group_nesting_level++;
+      return;
+    }
+    else if (data.collapsed)
+    {
+      // if not nested but this group is closed, render the button for it
+      this._closed_group_nesting_level++;
+    }
+
     this._add_line([["button", "", "class", "folder-key"+(data.collapsed ? "" : " open" ),
-                                   "handler", "repl-toggle-group"
+                     "handler", "repl-toggle-group", "group-id", data.id
                     ],
                     data.name]);
     var ol = document.createElement("ol");
     ol.className="repl-lines";
     this._add_line(ol);
+
     if (data.collapsed) {
       ol.parentNode.style.display = "none";
     }
@@ -184,6 +198,14 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._render_groupend = function()
   {
+    this._closed_group_nesting_level--;
+    this._closed_group_nesting_level = Math.max(0, this._closed_group_nesting_level);
+
+    if (this._closed_group_nesting_level)
+    {
+      return;
+    }
+
     if (this._linelist.parentNode.parentNode.nodeName.toLowerCase() == "ol")
     {
       this._linelist = this._linelist.parentNode.parentNode;
@@ -285,6 +307,8 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._add_line = function(elem_or_template)
   {
+
+
     var line = document.createElement("li");
 
     if (elem_or_template.nodeType === undefined)
@@ -602,20 +626,13 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
                  );
   }.bind(this);
 
-  this._handle_repl_toggle_group = function(event, target)
+  this._handle_repl_toggle_group_bound = function(event, target)
   {
-    var li = target.parentNode;
-    if (target.hasClass("open"))
-    {
-      target.removeClass("open");
-      li.nextSibling.style.display = "none";
-    }
-    else
-    {
-      target.addClass("open");
-      li.nextSibling.style.display = "";
-    }
-  };
+    var group = this._data.get_group(target.getAttribute("group-id"));
+    group.collapsed = group.collapsed ? false : true;
+    this.clear();
+    this.update();
+  }.bind(this);
 
   this._handle_option_change_bound = function(event, target)
   {
@@ -642,7 +659,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   }.bind(this);
 
   var eh = window.eventHandlers;
-  eh.click["repl-toggle-group"] = this._handle_repl_toggle_group;
+  eh.click["repl-toggle-group"] = this._handle_repl_toggle_group_bound;
   eh.click["select-trace-frame"] = this._handle_repl_frame_select_bound;
   eh.click["repl-focus"] = this._handle_repl_focus_bound;
   eh.keypress['repl-textarea'] = this._handle_keypress_bound;
