@@ -281,11 +281,11 @@ eventHandlers.click['toggle-settings-overlay'] = function(event, target)
   element.style.top = button_dims.bottom + 10 + "px";
   if (window.opera.attached)
   {
-      element.style.right = document.documentElement.clientWidth - button_dims.right - 10 + "px";
+      element.style.right = document.documentElement.clientWidth - button_dims.right - 20 + "px";
   }
   else
   {
-      element.style.left = button_dims.left - 10 + "px";
+      element.style.left = button_dims.left - 20 + "px";
   }
   target.setAttribute("is-active", target.getAttribute("is-active") != "true");
 
@@ -305,11 +305,11 @@ eventHandlers.click['toggle-remote-debug-config-overlay'] = function(event, targ
   element.style.top = button_dims.bottom + 10 + "px";
   if (window.opera.attached)
   {
-      element.style.right = document.documentElement.clientWidth - button_dims.right - 10 + "px";
+      element.style.right = document.documentElement.clientWidth - button_dims.right - 20 + "px";
   }
   else
   {
-      element.style.left = button_dims.left - 10 + "px";
+      element.style.left = button_dims.left - 20 + "px";
   }
   target.setAttribute("is-active", target.getAttribute("is-active") != "true");
 

@@ -19,6 +19,16 @@ var Overlay = function(cell)
       {
         this.element.addClass("active");
       }
+
+      if (window.opera.attached && !this.element.hasClass("attached"))
+      {
+        this.element.addClass("attached");
+      }
+      else
+      {
+        this.element.removeClass("attached");
+      }
+
       this._is_visible = !this._is_visible;
     };
 

@@ -1459,6 +1459,15 @@ overlay-window {
     height: 80%;
     max-height: 400px;
 }
+overlay-window::before {
+  content: url("../ui-images/overlay_arrow.png");
+  position: absolute;
+  top: -12px;
+  left: 20px;
+}
+.attached overlay-window::before {
+  left: 564px;
+}
 overlay-window h2 {
     font-size: 1em;
 }
