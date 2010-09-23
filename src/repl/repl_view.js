@@ -181,10 +181,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       this._closed_group_nesting_level++;
     }
 
-    this._add_line([["button", "", "class", "folder-key"+(data.collapsed ? "" : " open" ),
-                     "handler", "repl-toggle-group", "group-id", data.id
-                    ],
-                    data.name]);
+    this._add_line(templates.repl_group_line(data));
     var ol = document.createElement("ol");
     ol.className="repl-lines";
     this._add_line(ol);
