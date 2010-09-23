@@ -304,6 +304,11 @@
 
   this._handle_hostcommand = function(cooked)
   {
+    // ignore all whitespace commands
+    if (cooked.trim() == "") {
+      return;
+    }
+
     var rt_id = runtimes.getSelectedRuntimeId();
     var thread = window.stop_at.getThreadId();
     var frame = window.stop_at.getSelectedFrameIndex();
