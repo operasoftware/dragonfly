@@ -90,7 +90,6 @@ cls.HostCommandTransformer = function() {
 
   this.get_command = function(source)
   {
-
     var types = [];
     var values = [];
     var tokens = [];
@@ -100,7 +99,11 @@ cls.HostCommandTransformer = function() {
     // stuff is small, so the cost of this doesn't matter much.
     tokens = this.zip_tokens(types, values);
 
-    if (this.is_call(tokens, 0) && tokens[0].value in this.command_map)
+    if (!tokens.length)
+    {
+      return null;
+    }
+    else if (this.is_call(tokens, 0) && tokens[0].value in this.command_map)
     {
       return this.command_map[tokens[0].value];
     }
