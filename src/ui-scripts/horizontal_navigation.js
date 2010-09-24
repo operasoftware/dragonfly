@@ -6,9 +6,10 @@ var HorizontalNavigation = function(cell)
 {
   this.type = 'horizontal-navigation';
 
-  var lastDir = null;
+  var last_dir = null;
+  var current_breadcrumb_el = null;
 
-  this.setContent = function(template_list, focus_end)
+  this.set_content = function(template_list, focus_end)
   {
     this.breadcrumbs.clearAndRender(template_list);
     this.check_width();
@@ -25,11 +26,9 @@ var HorizontalNavigation = function(cell)
   this.nav = function(dir)
   {
     var left = 0;
-    var breadcrumbsDim = this.breadcrumbs.getBoundingClientRect();
-    var element = this.currentBreadcrumbEl;
-
-    if (lastDir != dir) element = null;
-    lastDir = dir;
+    var breadcrumbs_dim = this.breadcrumbs.getBoundingClientRect();
+    var element = (last_dir == dir) ? current_breadcrumb_el : null;
+    last_dir = dir;
 
     if (dir == "back")
     {
@@ -44,8 +43,8 @@ var HorizontalNavigation = function(cell)
 
       if (element)
       {
-        var leftEdge = element.getBoundingClientRect().left;
-        left = this.nav_back.getBoundingClientRect().right - leftEdge;
+        var left_edge = element.getBoundingClientRect().left;
+        left = this.nav_back.getBoundingClientRect().right - left_edge;
         element = element.previousElementSibling;
       }
     }
@@ -62,20 +61,20 @@ var HorizontalNavigation = function(cell)
 
       if (element)
       {
-        var rightEdge = element.getBoundingClientRect().right - breadcrumbsDim.left; //element.offsetLeft + element.offsetWidth;
-        left = breadcrumbsDim.width - rightEdge;
+        var right_edge = element.getBoundingClientRect().right - breadcrumbs_dim.left; //element.offsetLeft + element.offsetWidth;
+        left = breadcrumbs_dim.width - right_edge;
         element = element.nextElementSibling;
       }
     }
 
-    var pos = parseInt(getComputedStyle(this.breadcrumbs, null).getPropertyValue("left"));
+    var pos = parseInt(getComputedStyle(this.breadcrumbs, null).left);
     this.breadcrumbs.style.OTransitionDuration = Math.min(Math.abs(left) / 200, .2) + "s";
     this.breadcrumbs.style.left = pos + left + "px";
   };
 
   this.check_width = function()
   {
-    this.currentBreadcrumbEl = null;
+    current_breadcrumb_el = null;
     if (this.breadcrumbs.scrollWidth > this.breadcrumbs.offsetWidth)
     {
       this.element.addClass("navs");
@@ -122,7 +121,6 @@ var HorizontalNavigation = function(cell)
     this.breadcrumbs.addEventListener("OTransitionEnd", this.check_position.bind(this), false);
     this.nav_back = this.element.querySelector("nav[dir='back']");
     this.nav_forward = this.element.querySelector("nav[dir='forward']");
-    this.currentBreadcrumbEl = null;
   };
 
   this.init(cell);

@@ -47,11 +47,6 @@ var ModebarBase = function()
     this.horizontal_nav.check_width();
   };
 
-  this.setContent = function(template_list, focus_end)
-  {
-    this.horizontal_nav.setContent(template_list, focus_end);
-  };
-
   this.setVisibility = function(is_visible)
   {
     if (this.is_visible != is_visible)
@@ -60,6 +55,11 @@ var ModebarBase = function()
       this.element[is_visible ? "removeClass" : "addClass"]("hidden");
       window.topCell.container.setDimensions();
     }
+  };
+
+  this.set_content = function(template_list, focus_end)
+  {
+    this.horizontal_nav.set_content(template_list, focus_end);
   };
 
   this.setup = function(view_id)
