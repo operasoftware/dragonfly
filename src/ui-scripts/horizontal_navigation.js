@@ -71,8 +71,6 @@ var HorizontalNavigation = function(cell)
     var pos = parseInt(getComputedStyle(this.breadcrumbs, null).getPropertyValue("left"));
     this.breadcrumbs.style.OTransitionDuration = Math.min(Math.abs(left) / 200, .2) + "s";
     this.breadcrumbs.style.left = pos + left + "px";
-
-    this.check_position();
   };
 
   this.check_width = function()
@@ -120,6 +118,7 @@ var HorizontalNavigation = function(cell)
     this.element = document.getElementById(this.type + '-to-' + this.cell.id) || this.update();
     this.element.render(window.templates.horizontal_navigation_content());
     this.breadcrumbs = this.element.querySelector("breadcrumbs");
+    this.breadcrumbs.addEventListener("OTransitionEnd", this.check_position.bind(this), false);
     this.nav_back = this.element.querySelector("nav[dir='back']");
     this.nav_forward = this.element.querySelector("nav[dir='forward']");
     this.currentBreadcrumbEl = null;
