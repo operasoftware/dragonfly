@@ -44,6 +44,7 @@ var ModebarBase = function()
     }
 
     this.update(force_redraw)
+    this.horizontal_nav.check_width();
   };
 
   this.setContent = function(template_list, focus_end)

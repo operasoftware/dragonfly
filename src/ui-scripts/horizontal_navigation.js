@@ -76,13 +76,14 @@ var HorizontalNavigation = function(cell)
   this.check_width = function()
   {
     this.currentBreadcrumbEl = null;
-    if (this.breadcrumbs.scrollWidth > this.breadcrumbs.offsetWidth + this.breadcrumbs.offsetLeft)
+    if (this.breadcrumbs.scrollWidth > this.breadcrumbs.offsetWidth)
     {
       this.element.addClass("navs");
     }
     else
     {
       this.element.removeClass("navs");
+      this.breadcrumbs.style.removeProperty("left");
     }
 
     this.check_position();
@@ -122,8 +123,6 @@ var HorizontalNavigation = function(cell)
     this.nav_back = this.element.querySelector("nav[dir='back']");
     this.nav_forward = this.element.querySelector("nav[dir='forward']");
     this.currentBreadcrumbEl = null;
-
-    window.addEventListener("resize", this.check_width.bind(this), false);
   };
 
   this.init(cell);
