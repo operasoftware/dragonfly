@@ -118,20 +118,10 @@ var HorizontalNavigation = function(cell)
     this.initBase();
 
     this.element = document.getElementById(this.type + '-to-' + this.cell.id) || this.update();
-    this.breadcrumbs = document.createElement("breadcrumbs");
-    this.breadcrumbs.setAttribute("handler", "breadcrumbs-drag");
-    this.breadcrumbs.setAttribute("data-model-id", "dom-inspection-id-1"); // should not be hard-coded I guess
-    this.nav_back = document.createElement("nav");
-    this.nav_back.textContent = "◀";
-    this.nav_back.setAttribute("dir", "back");
-    this.nav_back.setAttribute("handler", "horizontal-nav");
-    this.nav_forward = document.createElement("nav");
-    this.nav_forward.setAttribute("dir", "forward");
-    this.nav_forward.setAttribute("handler", "horizontal-nav");
-    this.nav_forward.textContent = "▶";
-    this.element.appendChild(this.nav_back);
-    this.element.appendChild(this.breadcrumbs);
-    this.element.appendChild(this.nav_forward);
+    this.element.render(window.templates.horizontal_navigation_content());
+    this.breadcrumbs = this.element.querySelector("breadcrumbs");
+    this.nav_back = this.element.querySelector("nav[dir='back']");
+    this.nav_forward = this.element.querySelector("nav[dir='forward']");
     this.currentBreadcrumbEl = null;
 
     window.addEventListener("resize", this.check_width.bind(this), false);

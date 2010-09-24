@@ -21,9 +21,21 @@
     ].concat(is_active_tab ? ['class', 'active'] : [] );
   };
 
-  this.horizontal_navigation = function()
+  this.horizontal_navigation_content = function()
   {
-    return ['horizontal_navigation'];
+    return [
+        ["nav",
+          "◀",
+          "dir", "back",
+          "handler", "horizontal-nav"],
+        ["breadcrumbs",
+         "handler", "breadcrumbs-drag",
+         "data-model-id", "dom-inspection-id-1"],
+        ["nav",
+          "▶",
+          "dir", "forward",
+          "handler", "horizontal-nav"]
+      ];
   };
 
   this.filters = function(filters)
