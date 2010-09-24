@@ -115,8 +115,8 @@ window.templates.storage_item_add = function()
   return (
   ['tr',
     ['td',
-      ['h4', ['_html5_input', 'data-placeholder', '<new key>', 'class', 'new-key']],
-      ['_auto_height_textarea', 'data-placeholder', '<new value>'],
+      ['h4', ['_html5_input', 'data-placeholder', 'New key', 'class', 'new-key']],
+      ['_auto_height_textarea', 'data-placeholder', 'New value'],
       ['p',
         this.storage_button({label: ui_strings.S_BUTTON_SAVE, handler: 'storage-save'}),
         this.storage_button({label: ui_strings.S_BUTTON_CANCEL, handler: 'storage-edit-cancel'}),

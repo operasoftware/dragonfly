@@ -1352,6 +1352,7 @@ pin-label.pinned
 .placeholder
 {
   color: #999;
+  font-style: italic;
 }
 
 
@@ -1469,7 +1470,7 @@ overlay-window::before {
   left: 20px;
 }
 .attached overlay-window::before {
-  left: 564px;
+  left: 563px;
 }
 overlay-window h2 {
     font-size: 1em;
