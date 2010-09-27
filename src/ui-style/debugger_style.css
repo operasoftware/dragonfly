@@ -1207,25 +1207,6 @@ d
   width: 30px;
 }
 
-.storage-table .control input
-{
-  background: transparent none;
-  border: 0px;
-  margin: 0 3px;
-  width: -o-skin;
-  height: -o-skin;
-}
-
-.storage-table .control input[handler="storage-delete"]
-{
-  background-image: -o-skin('Search Close History Item');
-}
-
-.storage-table .control input[handler="storage-delete"]:hover
-{
-  background-image: -o-skin('Search Close History Item.hover');
-}
-
 .storage-table .storage-edit
 {
   padding: 0;
@@ -1299,18 +1280,6 @@ d
     border: 0;
     padding: 0;
     margin: 0 2px;
-}
-.storage-table input[handler="storage-add-key"]
-{
-    content: url("../ui-images/icons/add.png");
-}
-.storage-table input[handler="storage-update"]
-{
-    content: url("../ui-images/icons/reload.png");
-}
-.storage-table input[handler="storage-delete-all"]
-{
-    content: url("../ui-images/icons/trash.png");
 }
 
 #about-authors pre

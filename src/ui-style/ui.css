@@ -148,93 +148,119 @@ toolbar-buttons, toolbar-switches {
   }
 
 button[handler="reload-window"] {
-    content: url("../ui-images/icons/reload.png");
+    content: url("../ui-images/icons/icon_reload.png");
 }
 [handler="top-window-close"] {
-    content: url("../ui-images/icons/close.png");
+    content: url("../ui-images/icons/icon_close.png");
 }
 [handler="toggle-console"] {
-    content: url("../ui-images/icons/console.png");
+    content: url("../ui-images/icons/icon_console.png");
 }
 [handler="toggle-settings-overlay"] {
-    content: url("../ui-images/icons/settings.png");
+    content: url("../ui-images/icons/icon_settings.png");
 }
 [handler="toggle-remote-debug-config-overlay"] {
-    content: url("../ui-images/icons/remote.png");
+    content: url("../ui-images/icons/icon_remote.png");
 }
 [handler="top-window-toggle-attach"] {
-    content: url("../ui-images/icons/attach.png");
+    content: url("../ui-images/icons/icon_attach.png");
 }
 .attached [handler="top-window-toggle-attach"] {
-    content: url("../ui-images/icons/detach.png");
+    content: url("../ui-images/icons/icon_detach.png");
 }
 [handler="dom-inspection-snapshot"] {
-    content: url("../ui-images/icons/expand.png");
+    content: url("../ui-images/icons/icon_expand.png");
 }
 [handler="dom-inspection-export"] {
-    content: url("../ui-images/icons/export.png");
+    content: url("../ui-images/icons/icon_export.png");
 }
 [key="dom.find-with-click"] {
-    content: url("../ui-images/icons/mouse_click.png");
+    content: url("../ui-images/icons/icon_click.png");
 }
 [key="dom.highlight-on-hover"] {
-    content: url("../ui-images/icons/mouse_highlight.png");
-}
-[key="dom.update-on-dom-node-inserted"] {
-    content: url("../ui-images/icons/mouse_highlight.png");
+    content: url("../ui-images/icons/icon_hover.png");
 }
 [key="dom.lock-selecked-elements"] {
-    content: url("../ui-images/icons/border.png");
+    content: url("../ui-images/icons/icon_border.png");
 }
 [key="stylesheets.shortcuts"] {
-    content: url("../ui-images/icons/mouse_highlight.png");
+    content: url("../ui-images/icons/icon_shorthand.png");
+}
+[key="css-inspector.hide-initial-values"] {
+    content: url("../ui-images/icons/icon_hidedefaults.png");
+}
+[key="css-inspector.hide-shorthands"] {
+    content: url("../ui-images/icons/icon_shorthands.png");
+}
+[key="dom_attrs.hide-null-values"] {
+    content: url("../ui-images/icons/icon_empty.png");
 }
 [id="continue-run"] {
-    content: url("../ui-images/icons/run.png");
+    content: url("../ui-images/icons/icon_play.png");
 }
 [id="continue-step-into-call"] {
-    content: url("../ui-images/icons/step_into.png");
+    content: url("../ui-images/icons/icon_stepinto.png");
 }
 [id="continue-step-next-line"] {
-    content: url("../ui-images/icons/step_over.png");
+    content: url("../ui-images/icons/icon_stepover.png");
 }
 [id="continue-step-out-of-call"] {
-    content: url("../ui-images/icons/step_out.png");
+    content: url("../ui-images/icons/icon_stepout.png");
 }
 [key="js_source.script"] {
-    content: url("../ui-images/icons/stopon_code.png");
+    content: url("../ui-images/icons/icon_haltonscript.png");
 }
 [key="js_source.error"] {
-    content: url("../ui-images/icons/stopon_error.png");
+    content: url("../ui-images/icons/icon_haltonerror.png");
 }
 [key="threads.log-threads"] {
-    content: url("../ui-images/icons/step_out.png");
+    content: url("../ui-images/icons/icon_threads.png");
+}
+[key="inspection.show-prototypes"] {
+    content: url("../ui-images/icons/icon_prototype.png");
+}
+[key="inspection.show-non-enumerables"] {
+    content: url("../ui-images/icons/icon_hidedefaults.png"); /* temporarily using this icon */
+}
+[key="inspection.show-default-nulls-and-empty-strings"] {
+    content: url("../ui-images/icons/icon_empty.png");
 }
 [handler="threads-clear-log"] {
-    content: url("../ui-images/icons/trash.png");
+    content: url("../ui-images/icons/icon_clear.png");
 }
 [handler="threads-export-log"] {
-    content: url("../ui-images/icons/export.png");
+    content: url("../ui-images/icons/icon_export.png");
 }
 [handler="clear-request-list"] {
-    content: url("../ui-images/icons/trash.png");
+    content: url("../ui-images/icons/icon_clear.png");
 }
 [key="request_list.clear-log-on-runtime-switch"] {
-    content: url("../ui-images/icons/trash.png");
+    content: url("../ui-images/icons/icon_clearonreload.png");
 }
 [key="request_list.auto-scroll-request-list"] {
-    content: url("../ui-images/icons/autoscroll.png");
+    content: url("../ui-images/icons/icon_autoscroll.png");
+}
+[handler="storage-add-key"] {
+    content: url("../ui-images/icons/icon_add.png");
+}
+[handler="storage-update"] {
+    content: url("../ui-images/icons/icon_reload.png");
+}
+[handler="storage-delete-all"] {
+    content: url("../ui-images/icons/icon_clear.png");
+}
+[handler="storage-delete"] {
+    content: url("../ui-images/icons/icon_delete.png");
 }
 [handler^="clear-error-console"] {
-    content: url("../ui-images/icons/trash.png");
+    content: url("../ui-images/icons/icon_clear.png");
 }
 [key="console.expand-all-entries"] {
-    content: url("../ui-images/icons/expand.png");
+    content: url("../ui-images/icons/icon_expand.png");
 }
 cst-icon[class="debugger-menu"] {
-    content: url("../ui-images/icons/select_tab.png");
+    content: url("../ui-images/icons/icon_tabs.png");
 }
-
 toolbar button,
 top-toolbar button,
 window-controls button,
@@ -245,10 +271,10 @@ cst-select
   background: #e6e6e6 url("../ui-images/shine_button.png") repeat-x;
   border: 1px solid rgba(0, 0, 0, .5);
   border-radius: 3px;
-  height: 19px;
-  width: 19px;
+  height: 17px;
+  width: 17px;
   margin: 0 2px;
-  padding: 0;
+  padding: 1px;
   box-shadow: 0 1px #fff;
   box-sizing: content-box;
   display: inline-block;
@@ -1082,7 +1108,7 @@ cst-select-toolbar-setting
 {
     display: inline-block;
     width: 26px;
-    height: 19px;
+    height: 17px;
     float: left;
 }
 
@@ -1109,6 +1135,8 @@ cst-drop-down
   float: right;
   padding: 0 2px;
   border-left: 1px solid #8e8e8e;
+  position: relative;
+  top: -1px;
 }
 
 cst-select[disabled]

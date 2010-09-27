@@ -128,8 +128,8 @@ cls.CSSInspectorView.create_ui_widgets = function()
   (
     'css-inspector',
     [
-      'hide-initial-values',
-      'hide-shorthands',
+      'hide-initial-values'/*,
+      'hide-shorthands',*/
     ]
   );
 
