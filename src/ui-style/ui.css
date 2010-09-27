@@ -1122,8 +1122,8 @@ cst-value
   display: inline-block;
   overflow: hidden;
   padding: 0 8px;
-  height: 19px;
-  line-height: 19px;
+  height: 17px;
+  line-height: 17px;
   white-space: nowrap;
   -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
@@ -1569,3 +1569,7 @@ overlay hr {
     border-width: 0 0 2px;
 }
 
+/* Temporary fix for flickering */
+tabs, toolbar {
+  top: -1000px;
+}
