@@ -31,28 +31,26 @@ cls.ResourceManagerService = function(view, data)
   this._document_contexts = {}; // mapping document id -> list of requests
   this._current_document = {};
 
-  this._on_urlload_bound = function(msg)
+  this._on_loaddocument_bound = function(msg)
   {
-    var data = new cls.ResourceManager["1.0"].UrlLoad(msg);
+    var data = new cls.DocumentManager["1.0"].DocumentLoadInfo(msg);
 
-    if (this._seen_doc_ids.indexOf(data.documentID) == -1 ) // not seen id before!
+    if (data.frameID == 1) // new document load
     {
-      this._seen_doc_ids.unshift(data.documentID);
+      this._seen_doc_ids.unshift = [];
       this._current_document = {
-        id: data.documentID,
+        id: null,
         topresource: data.resourceID,
         resourcelist: [],
         resourcemap: {}
       };
-    }
+    };
+  }.bind(this);
 
-    // at this point, _current_document and seen list is up to date.
 
-    if (data.documentID != this._current_document.id)
-    {
-      opera.postError("this shouldn't happen. Old documentID encountered");
-      return;
-    }
+  this._on_urlload_bound = function(msg)
+  {
+    var data = new cls.ResourceManager["1.0"].UrlLoad(msg);
 
     this._current_document.resourcelist.push(data.resourceID);
     this._current_document.resourcemap[data.resourceID] = {urlload: data};
@@ -65,9 +63,10 @@ cls.ResourceManagerService = function(view, data)
   {
     var data = new cls.ResourceManager["1.0"].Request(msg);
     var resource = this._current_document.resourcemap[data.resourceID];
-    if (resource) {
-      resource.request = data;
+    if (!resource) {
+      opera.postError("No exist! " + JSON.stringify(data));
     }
+    resource.request = data;
 
   }.bind(this);
 
@@ -129,18 +128,18 @@ cls.ResourceManagerService = function(view, data)
 
   this.init = function()
   {
-    this._service = window.services['resource-manager'];
-    this._service.addListener("urlload", this._on_urlload_bound);
-    this._service.addListener("request", this._on_request_bound);
-    this._service.addListener("requestheader", this._on_requestheader_bound);
-    this._service.addListener("requestfinished", this._on_requestfinished_bound);
-    this._service.addListener("response", this._on_response_bound);
-    this._service.addListener("responseheader", this._on_responseheader_bound);
-    this._service.addListener("responsefinished", this._on_responsefinished_bound);
-    this._service.addListener("urlfinished", this._on_urlfinished_bound);
+    this._res_service = window.services['resource-manager'];
+    this._res_service.addListener("urlload", this._on_urlload_bound);
+    this._res_service.addListener("request", this._on_request_bound);
+    this._res_service.addListener("requestheader", this._on_requestheader_bound);
+    this._res_service.addListener("requestfinished", this._on_requestfinished_bound);
+    this._res_service.addListener("response", this._on_response_bound);
+    this._res_service.addListener("responseheader", this._on_responseheader_bound);
+    this._res_service.addListener("responsefinished", this._on_responsefinished_bound);
+    this._res_service.addListener("urlfinished", this._on_urlfinished_bound);
 
-//    this._service.addListener("urlload", this._on_urlload_bound);
-
+    this._doc_service = window.services['document-manager'];
+    this._doc_service.addListener("loaddocument", this._on_loaddocument_bound);
   };
 
   this.get_current_document = function()
