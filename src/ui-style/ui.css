@@ -279,6 +279,7 @@ cst-select
   box-sizing: content-box;
   display: inline-block;
   box-shadow: 0 1px #fff, inset 0 1px 1px #fff;
+  vertical-align: top;
 }
 toolbar button:active,
 top-toolbar button:active,
@@ -286,7 +287,11 @@ window-controls button:active,
 cst-select-toolbar-setting:active,
 .ui-button:active,
 cst-select:active {
+    padding: 2px 1px 0;
     box-shadow: 0 1px #fff, inset 0 1px 2px rgba(0, 0, 0, .5);
+}
+cst-select:active {
+    padding: 1px;
 }
 toolbar button[is-active="true"],
 top-toolbar button[is-active="true"],
@@ -444,7 +449,7 @@ toolbar-filters filter {
   line-height: 19px;
   border: 1px solid #8e8e8e;
   border-radius: 3px;
-  background: #fff url("../ui-images/icons/search.png") 0 50% no-repeat;
+  background: #fff url("../ui-images/icons/icon_search.png") 1px 50% no-repeat;
   box-shadow: 0 1px #fff, inset 0 1px 1px #d5d5d5;
   }
 
@@ -1131,7 +1136,7 @@ cst-drop-down
   display: block;
   width: 9px;
   height: 19px;
-  background: transparent url("../ui-images/icons/dropdown.png") 50% 50% no-repeat;
+  background: transparent url("../ui-images/dropdown.png") 50% 50% no-repeat;
   float: right;
   padding: 0 2px;
   border-left: 1px solid #8e8e8e;
@@ -1403,11 +1408,11 @@ nav {
     position: absolute;
     border: 0 solid #b3b3b3;
     color: #444;
-    width: 20px;
+    width: 15px;
     text-align: center;
     z-index: 1;
-    background: #ccc;
     display: none;
+    background: #d9d9d9 url("../ui-images/shadow_0.png")
 }
 nav:active {
     color: #000;
@@ -1419,14 +1424,24 @@ nav::selection {
     display: inline;
 }
 nav[dir="back"] {
+    content: url("../ui-images/nav_back.png");
     border-right-width: 1px;
 }
 nav[dir="forward"] {
+    content: url("../ui-images/nav_forward.png");
     right: 0;
     border-left-width: 1px;
 }
+nav[dir="back"].disabled {
+    content: url("../ui-images/nav_back_disabled.png");
+}
+nav[dir="forward"].disabled {
+    content: url("../ui-images/nav_forward_disabled.png");
+}
+nav:not(.disabled):hover {
+  background-color: #cecece;
+}
 nav.disabled {
-    color: #aaa;
     cursor: default;
 }
 breadcrumbs {
@@ -1440,8 +1455,8 @@ breadcrumbs {
     background: transparent url("../ui-images/shadow_0.png")
 }
 .navs breadcrumbs {
-    left: 21px;
-    right: 20px; /* minus one pixel to hide the right border of the last breadcrumb */
+    left: 16px;
+    right: 15px; /* minus one pixel to hide the right border of the last breadcrumb */
 }
 breadcrumb {
     border-right: 1px solid #b3b3b3;
