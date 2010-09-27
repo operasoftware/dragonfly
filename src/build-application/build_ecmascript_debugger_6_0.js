@@ -65,7 +65,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     cls.CommandLineViewTest.create_ui_widgets();
 
     cls.ReplView.create_ui_widgets();
-    new cls.ReplView('command_line', "REPL", 'scroll', '', '');
+    new cls.ReplView('command_line', "REPL", 'scroll', '', 'repl-focus');
 
     /* JS source */
     window.simple_js_parser = new window.cls.SimpleJSParser();

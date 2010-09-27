@@ -75,6 +75,9 @@
  *     <dt>active-inspection-type</dt>
  *     <dd>Payload: msg.inspection_type</dd>
  *
+ *     <dt>frame-selecteed</dt>
+ *     <dd>Payload: msg.frame_index</dd>
+ *
  *     <dt>resize</dt>
  *     <dd>Payload: None</dd>
  *

@@ -8,6 +8,8 @@ cls.ReplService = function(view, data)
   }
   cls.ReplService.instance = this;
 
+  this._count_map = {};
+
   this._on_consolelog_bound = function(msg)
   {
     const RUNTIME = 0, TYPE = 1;
@@ -54,6 +56,9 @@ cls.ReplService = function(view, data)
         break;
       case 11:
         this._handle_groupend(msg);
+        break;
+      case 12:
+        this._handle_count(msg);
         break;
     }
   }.bind(this);
@@ -102,6 +107,22 @@ cls.ReplService = function(view, data)
     const VALUELIST = 2;
     var values = this._parse_value_list(msg[VALUELIST]);
     this._data.add_output_valuelist(rt_id, values);
+  };
+
+  this._handle_count = function(msg)
+  {
+    const VALUELIST=2, POSITION=3, SCRIPTID=0, LINE=1;
+    var key = String(msg[POSITION][SCRIPTID]) + "_" + msg[POSITION][LINE];
+    if (!(key in this._count_map)) { this._count_map[key] = 0; }
+
+    var label = null;
+    if (msg[VALUELIST].length)
+    {
+      label = msg[VALUELIST][0][0];
+    }
+
+    this._count_map[key] += 1;
+    this._data.add_output_count(this._count_map[key], label);
   };
 
   this._handle_group = function(msg, collapsed)

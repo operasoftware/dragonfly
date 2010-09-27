@@ -18,9 +18,14 @@ window.cls.SimpleJSParser = function()
     *     satte_arr is the according list with the state for each line
     * @param {Number} line The line number to start the formatting.
     * @param {Number} max_line The count of maxium lines to create.
-    * @param {Number} state The start state.
     */
-  this.format = function(script, line, max_line, state){};
+  this.format = function(script, line, max_line, highlight_start, highlight_end, line_ele_name){};
+
+  /**
+   * Helper method that formats source code the same way as format but takes a
+   * simple string as input.
+   */
+  this.format_source = function(source){};
 
   /**
     * Tokenize a give script string.
@@ -79,6 +84,13 @@ window.cls.SimpleJSParser = function()
 
   var __token_arr = null;
   var __token_type_arr = null;
+
+  var __highlight_line_start = -1;
+  var __highlight_line_end = -1;
+
+  var __default_line_ele = "div";
+  var __current_line_ele = "";
+
   var __read_buffer_with_arrs = function()
   {
     if (__buffer)
@@ -780,7 +792,10 @@ window.cls.SimpleJSParser = function()
     {
       __line += '\u00A0';
     }
-    __ret[__ret.length] = "<div>" + __line + "</div>";
+    __ret[__ret.length] = __line_number >=  __highlight_line_start &&
+                          __line_number <=  __highlight_line_end ?
+                          "<" + __current_line_ele + " class='highlight-source'>" + __line + "</" + __current_line_ele + ">" :
+                          "<" + __current_line_ele + ">" + __line + "</" + __current_line_ele + ">";
     __line='';
     __buffer = '';
     return (++__line_number) > __max_line_number;
@@ -794,15 +809,15 @@ window.cls.SimpleJSParser = function()
     }
     if(__line_number < __parse_error_line)
     {
-      __ret[__ret.length] = "<div>" + __line + "</div>";
+      __ret[__ret.length] = "<" + __current_line_ele + ">" + __line + "</" + __current_line_ele + ">";
     }
     else if(__line_number == __parse_error_line)
     {
-      __ret[__ret.length] = "<div class='first-error-line'>" + __line + "</div>";
+      __ret[__ret.length] = "<" + __current_line_ele + " class='first-error-line'>" + __line + "</" + __current_line_ele + ">";
     }
     else
     {
-      __ret[__ret.length] = "<div class='error-line error'>" + __line + "</div>";
+      __ret[__ret.length] = "<" + __current_line_ele + " class='error-line error'>" + __line + "</" + __current_line_ele + ">";
     }
     __line='';
     __buffer = '';
@@ -870,8 +885,28 @@ window.cls.SimpleJSParser = function()
       'state parsing not implemented in formatter.js for REG_EXP');
   };
 
-  this.format = function(script, line, max_line, state)
+  this.format = function(script, line, max_line, highlight_start, highlight_end, line_ele_name)
   {
+    if (typeof highlight_start == "number" && typeof highlight_end == "number")
+    {
+      __highlight_line_start = highlight_start;
+      __highlight_line_end = highlight_end;
+    }
+    else
+    {
+      __highlight_line_start = -1;
+      __highlight_line_end = -1;
+    }
+
+    if (typeof line_ele_name == 'string')
+    {
+      __current_line_ele = line_ele_name;
+    }
+    else
+    {
+      __current_line_ele = __default_line_ele;
+    }
+
     __reset(line, max_line);
 
     parser=default_parser;
@@ -929,6 +964,31 @@ window.cls.SimpleJSParser = function()
     __online = __online_with_arrs;
     read_buffer = __read_buffer_with_arrs;
     parser(__source.charAt(__pointer));
+  }
+
+  var __online_raw = function(c)
+  {
+    __ret.push(__line);
+    __line = '';
+    __buffer = '';
+    return false;
+  }
+
+  this.format_source = function(source)
+  {
+    __reset(0, 0);
+    parser = default_parser;
+    __previous_type = '';
+    __type = IDENTIFIER;
+    __source = source;
+    __escape = ESCAPE;
+    __pointer = 0;
+    read_buffer = read_buffer_default;
+    __online = __online_raw;
+    parser(__source.charAt(__pointer));
+    // empty the buffer in case the source does not end with a line ending
+    __online();
+    return __ret;
   }
 
 }
