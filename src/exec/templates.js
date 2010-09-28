@@ -136,7 +136,7 @@ window.templates.color_picker_average_select = function()
   }
   return (
     ['p',
-      ['label', 'FIXMEAverage color of ',
+      ['label', 'Average color of ',
         ['select', ret, 'handler', 'update-average'],
         ' pixels'],
     ]);
