@@ -449,13 +449,16 @@ cls.MainView .create_ui_widgets = function()
     'main-view',
     [
       {
-        handler: 'toggle-console'
+        handler: 'toggle-console',
+        title: ''
       },
       {
-        handler: 'toggle-settings-overlay'
+        handler: 'toggle-settings-overlay',
+        title: ''
       },
       {
-        handler: 'toggle-remote-debug-config-overlay'
+        handler: 'toggle-remote-debug-config-overlay',
+        title: ''
       }
     ],
     null,
