@@ -326,8 +326,6 @@ cls.DebugRemoteSettingView = function(id, name, container_class)
 
 cls.DebugRemoteSettingView.create_ui_widgets = function()
 {
-  const PORT_MIN = 1; // TODO: this should probably be 1024
-  const PORT_MAX = 65535;
 
   new Settings
   (
@@ -357,17 +355,28 @@ cls.DebugRemoteSettingView.create_ui_widgets = function()
         return [
           ['setting-composite',
             ['label',
+              ['input',
+                'type', 'checkbox',
+                'checked', setting.get('debug-remote'),
+                'handler', 'toggle-remote-debug'
+              ],
+              setting.label_map['debug-remote']
+            ],
+            ['label',
               ui_strings.S_LABEL_PORT + ': ',
               ['input',
                 'type', 'number',
-                'min', PORT_MIN,
-                'max', PORT_MAX,
+                'min', '1',
+                'max', '65535',
                 'value', setting.get('port'),
+                'disabled', !setting.get('debug-remote'),
+                'handler', 'change-port-number-remote-debug',
                 'current-port', setting.get('port').toString()
               ]
             ],
             ['input',
               'type', 'button',
+              'disabled', 'disabled',
               'value', ui_strings.S_BUTTON_TEXT_APPLY,
               'handler', 'apply-remote-debugging'
             ],
@@ -379,23 +388,41 @@ cls.DebugRemoteSettingView.create_ui_widgets = function()
     "remote_debug"
   );
 
+  eventHandlers.change['change-port-number-remote-debug'] = function(event, target)
+  {
+    target.parentNode.nextSibling.disabled = target.getAttribute('current-port') == target.value;
+  }
+
+  eventHandlers.change['toggle-remote-debug'] = function(event, target)
+  {
+    target.parentNode.nextSibling.childNodes[1].disabled = !event.target.checked; 
+    target.parentNode.nextSibling.nextSibling.disabled = 
+      event.target.checked == settings.debug_remote_setting.get('debug-remote') 
+  }
+
   eventHandlers.click['apply-remote-debugging'] = function(event, target)
   {
-    var port = parseInt(target.parentNode.getElementsByTagName('input')[0].value);
+    var is_debug_remote = target.parentNode.getElementsByTagName('input')[0].checked;
+    var port = parseInt(target.parentNode.getElementsByTagName('input')[1].value);
     if (typeof port == 'number')
     {
-      if(PORT_MIN < port && port <= PORT_MAX)
+      if(0 < port && port <= 0xffff)
       {
+        settings.debug_remote_setting.set('debug-remote', is_debug_remote);
         settings.debug_remote_setting.set('port', port);  
         // for older clients
+        window.helpers.setCookie('debug-remote', JSON.stringify(is_debug_remote));
         window.helpers.setCookie('port', JSON.stringify(port));
         window.topCell.showView('dom');
         client.setup();
+        target.disabled = (
+          target.previousSibling.previousSibling.firstChild.checked == 
+                        settings.debug_remote_setting.get('debug-remote'));
       }
       else
       {
         alert(ui_strings.S_INFO_NO_VALID_PORT_NUMBER);
-        target.parentNode.getElementsByTagName('input')[0].value = port < PORT_MIN ? PORT_MIN : PORT_MAX;
+        target.parentNode.getElementsByTagName('input')[1].value = port < 1 && 1 || 0xffff;
       }
     }
 
@@ -422,16 +449,13 @@ cls.MainView .create_ui_widgets = function()
     'main-view',
     [
       {
-        handler: 'toggle-console',
-        title: ""
+        handler: 'toggle-console'
       },
       {
-        handler: 'toggle-settings-overlay',
-        title: ""
+        handler: 'toggle-settings-overlay'
       },
       {
-        handler: 'toggle-remote-debug-config-overlay',
-        title: ""
+        handler: 'toggle-remote-debug-config-overlay'
       }
     ],
     null,
