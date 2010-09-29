@@ -27,13 +27,19 @@
 
 cls.ResourceManagerService = function(view, data)
 {
+  if (cls.ResourceManagerService.instance)
+  {
+    return cls.ResourceManagerService.instance;
+  }
+  cls.ResourceManagerService.instance = this;
+
   this._seen_doc_ids = [];
   this._document_contexts = {}; // mapping document id -> list of requests
   this._current_document = {};
 
   this._on_documentload_bound = function(msg)
   {
-    var data = new cls.DocumentManager["1.0"].DocumentLoad(msg)
+    var data = new cls.DocumentManager["1.0"].DocumentLoad(msg);
 
     if (data.parentDocumentID === undefined) // new document load
     {
@@ -67,6 +73,7 @@ cls.ResourceManagerService = function(view, data)
   this._on_request_bound = function(msg)
   {
     var data = new cls.ResourceManager["1.0"].Request(msg);
+
     var resource = this._current_document.resourcemap[data.resourceID];
     if (!resource) {
       opera.postError("No exist! " + JSON.stringify(data));
@@ -133,7 +140,7 @@ cls.ResourceManagerService = function(view, data)
 
   this.init = function()
   {
-    /*
+
     this._res_service = window.services['resource-manager'];
     this._res_service.addListener("urlload", this._on_urlload_bound);
     this._res_service.addListener("request", this._on_request_bound);
@@ -143,7 +150,7 @@ cls.ResourceManagerService = function(view, data)
     this._res_service.addListener("responseheader", this._on_responseheader_bound);
     this._res_service.addListener("responsefinished", this._on_responsefinished_bound);
     this._res_service.addListener("urlfinished", this._on_urlfinished_bound);
-*/
+
     this._doc_service = window.services['document-manager'];
     this._doc_service.addListener("documentload", this._on_documentload_bound);
   };
