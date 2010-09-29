@@ -289,38 +289,43 @@ cls.ElementLayout = function()
   {
     return (
     ['ul', ['li',
-    ['ul', 
+    ['ul',
       ['li',['p','\u00a0',['span', 'margin']]],
-      ['li', __comp_style[layout_map[MARGIN_TOP]]],
+      ['li', convert_to_unitless(__comp_style[layout_map[MARGIN_TOP]])],
       ['li']
     ],
-    ['ul', ['li', __comp_style[layout_map[MARGIN_LEFT]]], ['li', 
-      ['ul', 
-        ['li',['p','\u00a0',['span', 'border']]], 
-        ['li', __comp_style[layout_map[BORDER_TOP_WIDTH]]],
+    ['ul', ['li', convert_to_unitless(__comp_style[layout_map[MARGIN_LEFT]])], ['li',
+      ['ul',
+        ['li',['p','\u00a0',['span', 'border']]],
+        ['li', convert_to_unitless(__comp_style[layout_map[BORDER_TOP_WIDTH]])],
         ['li']
       ],
-      ['ul', ['li', __comp_style[layout_map[BORDER_LEFT_WIDTH]]], ['li',
-        ['ul', 
-          ['li',['p','\u00a0',['span', 'padding']]], 
-          ['li', __comp_style[layout_map[PADDING_TOP]]], 
+      ['ul', ['li', convert_to_unitless(__comp_style[layout_map[BORDER_LEFT_WIDTH]])], ['li',
+        ['ul',
+          ['li',['p','\u00a0',['span', 'padding']]],
+          ['li', convert_to_unitless(__comp_style[layout_map[PADDING_TOP]])],
           ['li']
         ],
-        ['ul', 
-          ['li', __comp_style[layout_map[PADDING_LEFT]]], 
-          ['li', 
-            ['ul', ['li', __comp_style[layout_map[WIDTH]]]],
-            ['ul', ['li', __comp_style[layout_map[HEIGHT]]]],
+        ['ul',
+          ['li', convert_to_unitless(__comp_style[layout_map[PADDING_LEFT]])],
+          ['li',
             ['ul', ['li', '\u00a0']],
-            'class', 'dimension'], 
-          ['li', __comp_style[layout_map[PADDING_RIGHT]]]
+            ['ul', ['li', convert_to_unitless(__comp_style[layout_map[WIDTH]]) + " × " + convert_to_unitless(__comp_style[layout_map[HEIGHT]])]],
+            ['ul', ['li', '\u00a0']],
+            'class', 'dimension'],
+          ['li', convert_to_unitless(__comp_style[layout_map[PADDING_RIGHT]])]
         ],
-        ['ul', ['li', __comp_style[layout_map[PADDING_BOTTOM]], 'colspan', '3']],
-        'class', 'padding'], ['li', __comp_style[layout_map[BORDER_RIGHT_WIDTH]]]],
-      ['ul', ['li', __comp_style[layout_map[BORDER_BOTTOM_WIDTH]], 'colspan', '3']],
-      'class', 'border'], ['li', __comp_style[layout_map[MARGIN_RIGHT]]]],
-    ['ul', ['li', __comp_style[layout_map[MARGIN_BOTTOM]], 'colspan', '3']],
+        ['ul', ['li', convert_to_unitless(__comp_style[layout_map[PADDING_BOTTOM]]), 'colspan', '3']],
+        'class', 'padding'], ['li', convert_to_unitless(__comp_style[layout_map[BORDER_RIGHT_WIDTH]])]],
+      ['ul', ['li', convert_to_unitless(__comp_style[layout_map[BORDER_BOTTOM_WIDTH]]), 'colspan', '3']],
+      'class', 'border'], ['li', convert_to_unitless(__comp_style[layout_map[MARGIN_RIGHT]])]],
+    ['ul', ['li', convert_to_unitless(__comp_style[layout_map[MARGIN_BOTTOM]]), 'colspan', '3']],
     'class', 'margin']] );
+
+    function convert_to_unitless(value)
+    {
+      return value != "0px" ? "" + parseInt(value) : "–";
+    }
   }
 
   messages.addListener('element-selected', onElementSelected);

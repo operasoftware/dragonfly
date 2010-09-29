@@ -558,6 +558,7 @@ examine-objects key.no-expander
   text-align: center;
   vertical-align: middle;
   padding: 1px;
+  min-width: 15px;
 }
 .css-layout layout-container p 
 {
@@ -575,11 +576,7 @@ examine-objects key.no-expander
 
 .css-layout layout-container .dimension li 
 {
-  width: 300px
-}
-.css-layout layout-container .dimension ul + ul li
-{
-  text-align:left
+  min-width: 80px;
 }
 .css-layout layout-container .dimension,
 .css-layout layout-container .padding,
@@ -587,6 +584,10 @@ examine-objects key.no-expander
 .css-layout layout-container .border 
 {
   border-color: #324c74;
+}
+.css-layout layout-container .padding,
+.css-layout layout-container .margin {
+    border-style: dashed;
 }
 
   
