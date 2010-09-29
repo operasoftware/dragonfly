@@ -9,13 +9,19 @@ var HorizontalNavigation = function(cell)
   var last_dir = null;
   var current_breadcrumb_el = null;
 
+  /**
+   * Updates the list of breadcrumbs.
+   *
+   * @param {Array} template_list A list of breadcrumbs as a template
+   * @param {Boolean} focus_end Whether or not to focus the last item
+   */
   this.set_content = function(template_list, focus_end)
   {
     this.breadcrumbs.clearAndRender(template_list);
     this.check_width();
     if (focus_end)
     {
-      //this.breadcrumbs.style.left = -(this.breadcrumbs.scrollWidth - this.breadcrumbs.offsetWidth - this.nav_forward.offsetWidth) + "px";
+      //this.set_position(TODO);
     }
     else
     {
@@ -23,9 +29,19 @@ var HorizontalNavigation = function(cell)
     }
   };
 
+  /**
+   * Navigates in the given direction.
+   *
+   * @param {String|int} dir One of the following:
+   *                         - "back": Navigates one breadcrumb back
+   *                         - "forward": Navigates one breadcrumb forward
+   *                         - An integer: Navigates this many pixels
+   *
+   */
   this.nav = function(dir)
   {
     var left = 0;
+    var pos = parseInt(getComputedStyle(this.breadcrumbs, null).left);
     var breadcrumbs_dim = this.breadcrumbs.getBoundingClientRect();
     var element = (last_dir == dir) ? current_breadcrumb_el : null;
     last_dir = dir;
@@ -48,7 +64,7 @@ var HorizontalNavigation = function(cell)
         element = element.previousElementSibling;
       }
     }
-    else
+    else if (dir == "forward")
     {
       if (!element)
       {
@@ -61,17 +77,42 @@ var HorizontalNavigation = function(cell)
 
       if (element)
       {
-        var right_edge = element.getBoundingClientRect().right - breadcrumbs_dim.left; //element.offsetLeft + element.offsetWidth;
+        var right_edge = element.getBoundingClientRect().right - breadcrumbs_dim.left;
         left = breadcrumbs_dim.width - right_edge;
         element = element.nextElementSibling;
       }
     }
+    else if (typeof dir == "number")
+    {
+      left += dir;
+    }
 
-    var pos = parseInt(getComputedStyle(this.breadcrumbs, null).left);
     this.breadcrumbs.style.OTransitionDuration = Math.min(Math.abs(left) / 200, .2) + "s";
-    this.breadcrumbs.style.left = pos + left + "px";
+    this.set_position(pos + left);
   };
 
+  /**
+   * Sets the left position of the breadcrumbs. This method does boundary checking,
+   * so the breadcrumbs never overflow on any direction.
+   *
+   * @param {int} left The left position of the breadcrumbs
+   */
+  this.set_position = function(left)
+  {
+    if (this.element.hasClass("navs"))
+    {
+      var breadcrumb_eles = this.breadcrumbs.querySelectorAll("breadcrumb");
+      var last = breadcrumb_eles[breadcrumb_eles.length-1];
+      //if (last.getBoundingClientRect().right > this.breadcrumbs.nextElementSibling.offsetLeft) {
+      this.breadcrumbs.style.left = Math.max(Math.min(this.nav_back.offsetWidth, left), this.nav_forward.offsetLeft - this.breadcrumbs.scrollWidth + 1) + "px";
+      //}
+    }
+  };
+
+  /**
+   * Checks the width of the breadcrumbs, and if necessary shows the navigation
+   * buttons.
+   */
   this.check_width = function()
   {
     current_breadcrumb_el = null;
@@ -88,6 +129,10 @@ var HorizontalNavigation = function(cell)
     this.check_position();
   };
 
+  /**
+   * Checks the position of the breadcrumbs, and if necessary, disables a navigation
+   * button if it's not possible to go further in that direction.
+   */
   this.check_position = function()
   {
     var left = parseInt(this.breadcrumbs.style.left);

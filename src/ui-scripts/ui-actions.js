@@ -68,6 +68,7 @@ new EventHandler('keydown', true);
 new EventHandler('keypress', true);
 new EventHandler('mousedown');
 new EventHandler('mouseup');
+new EventHandler('mouseout');
 new EventHandler('mouseover');
 new EventHandler('focus', true, 'focus-handler');
 new EventHandler('blur', true, 'blur-handler');
@@ -141,24 +142,25 @@ eventHandlers.mousedown['horizontal-nav'] = function(event, target)
   })();
 };
 
-eventHandlers.mouseup['horizontal-nav'] = function(event, target)
+eventHandlers.mouseup['horizontal-nav'] =
+eventHandlers.mouseout['horizontal-nav'] = function(event, target)
 {
   clearTimeout(navTimeout);
 };
 
-//eventHandlers.mousewheel['breadcrumbs-drag'] = function(event, target)
-//{
-//  var horizontal_nav = UIBase.getUIById(target.get_attr('parent-node-chain', 'ui-id'));
-//  var dir = target.get_attr('parent-node-chain', 'dir');
-//  horizontal_nav.nav(event.detail < 0 ? "back" : "forward");
-//};
+eventHandlers.mousewheel['breadcrumbs-drag'] = function(event, target)
+{
+  var horizontal_nav = UIBase.getUIById(target.get_attr('parent-node-chain', 'ui-id'));
+  var dir = target.get_attr('parent-node-chain', 'dir');
+  horizontal_nav.nav(event.detail < 0 ? 100 : -100);
+};
 
 eventHandlers.mousedown['breadcrumbs-drag'] = function(event, target)
 {
   var horizontal_nav = UIBase.getUIById(target.get_attr('parent-node-chain', 'ui-id'));
   var breadcrumbs = target;
-  breadcrumbs.style.OTransitionDuration = 0;
   var pos = parseInt(getComputedStyle(breadcrumbs, null).getPropertyValue("left"));
+  breadcrumbs.style.OTransitionDuration = 0;
 
   if (breadcrumbs.previousElementSibling.offsetWidth > 0) {
     document.addEventListener("mousemove", mouse_move, false);
@@ -171,22 +173,14 @@ eventHandlers.mousedown['breadcrumbs-drag'] = function(event, target)
 
   function mouse_up() {
     breadcrumbs.removeClass("drag");
-    horizontal_nav.currentBreadcrumbEl = null;
     document.removeEventListener("mousemove", mouse_move, false);
     document.removeEventListener("mouseup", mouse_up, false);
   }
 
-  // TODO: this method can be cleaned up a bit
-  function dragBreadcrumbs(e, mouseStart, pos) {
+  function dragBreadcrumbs(e, mouse_start, pos) {
     breadcrumbs.addClass("drag")
-    var left = Math.min(breadcrumbs.previousElementSibling.offsetWidth, pos + e.clientX - mouseStart);
-    var breadcrumb_eles = breadcrumbs.querySelectorAll("breadcrumb");
-    var last = breadcrumb_eles[breadcrumb_eles.length-1];
-    if (last.getBoundingClientRect().right > breadcrumbs.nextElementSibling.offsetLeft)
-    {
-      breadcrumbs.style.left = Math.max(left, breadcrumbs.nextElementSibling.offsetLeft - breadcrumbs.scrollWidth + 1) + "px";
-    }
-    horizontal_nav.check_position(); // TODO: consider moving this to mouse_up
+    horizontal_nav.set_position(pos + e.clientX - mouse_start);
+    horizontal_nav.check_position();
   }
 };
 
