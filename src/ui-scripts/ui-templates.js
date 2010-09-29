@@ -211,16 +211,19 @@
     var controls = [
       ['button',
         'handler', 'toggle-console',
-        'class', 'switch' + ( is_attached ? ' attached' : '')
+        'class', 'switch' + ( is_attached ? ' attached' : ''),
+        'title', ui_strings.S_BUTTON_TOGGLE_CONSOLE
       ],
       ['toolbar-separator'],
       ['button',
         'handler', 'toggle-settings-overlay',
-        'class', 'switch' + ( is_attached ? ' attached' : '')
+        'class', 'switch' + ( is_attached ? ' attached' : ''),
+        'title', ui_strings.S_BUTTON_TOGGLE_SETTINGS
       ],
       ['button',
         'handler', 'toggle-remote-debug-config-overlay',
-        'class', 'switch' + ( is_attached ? ' attached' : '')
+        'class', 'switch' + ( is_attached ? ' attached' : ''),
+        'title', ui_strings.S_BUTTON_TOGGLE_REMOTE_DEBUG
       ],
       ['toolbar-separator']
     ];
