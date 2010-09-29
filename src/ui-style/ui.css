@@ -449,11 +449,11 @@ toolbar-filters filter {
   line-height: 19px;
   border: 1px solid #8e8e8e;
   border-radius: 3px;
-  background: #fff url("../ui-images/icon_search.png") 1px 50% no-repeat;
+  background: #fff url("../ui-images/icon_search.png") 2px 50% no-repeat;
   box-shadow: 0 1px #fff, inset 0 1px 1px #d5d5d5;
   }
 
-toolbar-filters em {
+toolbar-filters span {
   display: inline-block;
   width: 140px;
   color: #999;
@@ -463,7 +463,7 @@ toolbar-filters em {
 toolbar-filters filter input {
   width: 138px;
   height: 19px;
-  margin-left: -141px;
+  margin-left: -140px;
   background: none;
   border: none;
   padding: 0;
@@ -565,7 +565,7 @@ top-tabs tab {  /**/
   border-width: 0 1px;
   padding: 2px 6px;
   position: static;
-  text-shadow: 0 1px #fff;
+  text-shadow: 0 1px rgba(255, 255, 255, .5);
   }
 top-tabs.detached tab {
   height: 60px;
@@ -1142,6 +1142,10 @@ cst-drop-down
   border-left: 1px solid #8e8e8e;
   position: relative;
   top: -1px;
+}
+
+cst-select cst-value {
+  text-shadow: 0 1px rgba(255, 255, 255, .5);
 }
 
 cst-select[disabled]

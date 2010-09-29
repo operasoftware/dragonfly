@@ -50,7 +50,7 @@
       else
       {
         ret[ret.length] = ['filter', 
-          ['em', ( default_text = filter.label ? filter.label : ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH ) ],
+          ['span', ( default_text = filter.label ? filter.label : ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH ) ],
           [
             'input', 
             'autocomplete', 'off', 
