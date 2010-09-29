@@ -3,7 +3,7 @@ window.cls || (window.cls = {});
 cls.DocumentManager || (cls.DocumentManager = {});
 cls.DocumentManager["1.0"] || (cls.DocumentManager["1.0"] = {});
 
-cls.DocumentManager["1.0"].DocumentLoadInfo = function(arr)
+cls.DocumentManager["1.0"].DocumentLoad = function(arr)
 {
   this.windowID = arr[0];
   this.frameID = arr[1];
@@ -12,5 +12,15 @@ cls.DocumentManager["1.0"].DocumentLoadInfo = function(arr)
     */
   this.resourceID = arr[2];
   this.time = arr[3];
+  /** 
+    * The parent document, present only if the frame is not the
+    * top level frame.
+    */
+  this.parentDocumentID = arr[4];
+  /** 
+    * The parent frame, present only if the frame is not the
+    * top level frame.
+    */
+  this.parentFrameID = arr[5];
 };
 

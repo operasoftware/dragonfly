@@ -31,20 +31,25 @@ cls.ResourceManagerService = function(view, data)
   this._document_contexts = {}; // mapping document id -> list of requests
   this._current_document = {};
 
-  this._on_loaddocument_bound = function(msg)
+  this._on_documentload_bound = function(msg)
   {
-    var data = new cls.DocumentManager["1.0"].DocumentLoadInfo(msg);
+    var data = new cls.DocumentManager["1.0"].DocumentLoad(msg)
 
-    if (data.frameID == 1) // new document load
+    if (data.parentDocumentID === undefined) // new document load
     {
-      this._seen_doc_ids.unshift = [];
+      this._seen_doc_ids = [];
       this._current_document = {
         id: null,
         topresource: data.resourceID,
         resourcelist: [],
         resourcemap: {}
       };
-    };
+    }
+    else
+    {
+
+    }
+
   }.bind(this);
 
 
@@ -128,6 +133,7 @@ cls.ResourceManagerService = function(view, data)
 
   this.init = function()
   {
+    /*
     this._res_service = window.services['resource-manager'];
     this._res_service.addListener("urlload", this._on_urlload_bound);
     this._res_service.addListener("request", this._on_request_bound);
@@ -137,9 +143,9 @@ cls.ResourceManagerService = function(view, data)
     this._res_service.addListener("responseheader", this._on_responseheader_bound);
     this._res_service.addListener("responsefinished", this._on_responsefinished_bound);
     this._res_service.addListener("urlfinished", this._on_urlfinished_bound);
-
+*/
     this._doc_service = window.services['document-manager'];
-    this._doc_service.addListener("loaddocument", this._on_loaddocument_bound);
+    this._doc_service.addListener("documentload", this._on_documentload_bound);
   };
 
   this.get_current_document = function()
