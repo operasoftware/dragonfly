@@ -168,7 +168,7 @@ eventHandlers.mousedown['breadcrumbs-drag'] = function(event, target)
   }
 
   function mouse_move(e) {
-    dragBreadcrumbs(e, event.clientX, pos);
+    drag_breadcrumbs(e, event.clientX, pos);
   }
 
   function mouse_up() {
@@ -177,7 +177,7 @@ eventHandlers.mousedown['breadcrumbs-drag'] = function(event, target)
     document.removeEventListener("mouseup", mouse_up, false);
   }
 
-  function dragBreadcrumbs(e, mouse_start, pos) {
+  function drag_breadcrumbs(e, mouse_start, pos) {
     breadcrumbs.addClass("drag")
     horizontal_nav.set_position(pos + e.clientX - mouse_start);
     horizontal_nav.check_position();

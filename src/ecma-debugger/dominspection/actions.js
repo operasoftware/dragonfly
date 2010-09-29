@@ -100,6 +100,9 @@ cls.DOMInspectorActions = function(id)
     inspections = window.dominspections,
     model = null;
 
+    target.parentNode.querySelector(".active").removeClass("active");
+    target.addClass("active");
+
     if (model_id && obj_id)
     {
       model = inspections[model_id];

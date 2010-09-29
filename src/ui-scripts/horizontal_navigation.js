@@ -21,7 +21,7 @@ var HorizontalNavigation = function(cell)
     this.check_width();
     if (focus_end)
     {
-      //this.set_position(TODO);
+      this.set_position(-this.breadcrumbs.scrollWidth); // Not exact, but large enough
     }
     else
     {
@@ -101,11 +101,11 @@ var HorizontalNavigation = function(cell)
   {
     if (this.element.hasClass("navs"))
     {
-      var breadcrumb_eles = this.breadcrumbs.querySelectorAll("breadcrumb");
-      var last = breadcrumb_eles[breadcrumb_eles.length-1];
-      //if (last.getBoundingClientRect().right > this.breadcrumbs.nextElementSibling.offsetLeft) {
-      this.breadcrumbs.style.left = Math.max(Math.min(this.nav_back.offsetWidth, left), this.nav_forward.offsetLeft - this.breadcrumbs.scrollWidth + 1) + "px";
-      //}
+      this.breadcrumbs.style.left =
+        Math.max(
+          Math.min(this.nav_back.offsetWidth, left),
+          this.nav_forward.offsetLeft - this.breadcrumbs.scrollWidth + 1 /* 1 == right border on last element, which should be covered */
+        ) + "px";
     }
   };
 
@@ -116,7 +116,7 @@ var HorizontalNavigation = function(cell)
   this.check_width = function()
   {
     current_breadcrumb_el = null;
-    if (this.breadcrumbs.scrollWidth > this.breadcrumbs.offsetWidth)
+    if (this.breadcrumbs.scrollWidth > this.breadcrumbs.offsetWidth + this.breadcrumbs.offsetLeft)
     {
       this.element.addClass("navs");
     }

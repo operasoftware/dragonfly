@@ -1469,6 +1469,9 @@ breadcrumb {
     display: inline-block;
     padding: 0 4px;
 }
+breadcrumb.active {
+    background: #ccc url("../ui-images/shadow_0.png");
+}
 breadcrumb:hover {
     background: #cecece url("../ui-images/shadow_0.png")
 }
