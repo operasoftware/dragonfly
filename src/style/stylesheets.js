@@ -633,8 +633,8 @@ cls.Stylesheets = function()
 
     return "<import-rule rule-id='" + rule[RULE_ID] +
                   "' imported-sheet='" + rule[IMPORT_STYLESHEET_ID] + "'>" +
-              "<span class='import-rule'>@import url(\"" + rule[HREF] + "\") " +
-              rule[MEDIA_LIST].join(', ') + "</span>" +
+              "<at>@import</at> url(\"" + rule[HREF] + "\") " +
+              rule[MEDIA_LIST].join(', ') + "</span>;" +
            "</import-rule>";
   };
 
@@ -654,7 +654,7 @@ cls.Stylesheets = function()
       }
     }
     return "<media-rule rule-id='" + rule[RULE_ID] + "'>" +
-              "<at>@media " + rule[MEDIA_LIST].join(', ') + " </at>{" +
+              "<at>@media</at> " + rule[MEDIA_LIST].join(', ') + " {" +
               (ret ? "<rules>" + ret + "</rules>" : " ") +
             "}</media-rule>";
   };
