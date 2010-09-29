@@ -673,12 +673,16 @@ window-controls {
   position: absolute;
   top: 0;
   right: 0;
-  padding: 5px 4px 3px;
+  padding: 5px 4px 3px 0;
   height: 22px;
   background: #f3f3f3 url("../ui-images/shine_1_attached.png") repeat-x;
-  }
-window-controls.attached {
-  border-left: 1px solid #b3b3b3;
+}
+window-controls.attached::before {
+    content: url("../ui-images/window_controls_border.png");
+    height: 30px;
+    position: relative;
+    left: -2px; /* width of the image */
+    top: -5px; /* adjust for top padding */
 }
 window-controls toolbar-separator {
     display: inline-block;
