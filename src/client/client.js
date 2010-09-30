@@ -469,7 +469,7 @@ ui_framework.layouts.network_rough_layout =
     dir: 'v',
     width: 1000,
     height: 1000,
-  children: [ { height: 1000, tabs: ['request_list', 'resource_manager', 'resource_fonts'] } ]
+  children: [ { height: 1000, tabs: ['request_list', 'resource_manager', 'resource_fonts', 'resource_images'] } ]
 }
 
 ui_framework.layouts.utils_rough_layout =
