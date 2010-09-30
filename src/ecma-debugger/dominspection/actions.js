@@ -791,6 +791,14 @@ window.eventHandlers.click['breadcrumb-link'] = function(event, target)
   window.actions['dom'].breadcrumb_link(event, target);
 }
 
+window.eventHandlers.mouseover['breadcrumb-link'] = function(event, target)
+{
+  if(window.settings['dom'].get('highlight-on-hover'))
+  {
+    window.hostspotlighter.soft_spotlight(parseInt(target.getAttribute('obj-id')));
+  }
+}
+
 window.eventHandlers.mouseover['spotlight-node'] = function(event, target)
 {
   if(window.settings['dom'].get('highlight-on-hover'))
