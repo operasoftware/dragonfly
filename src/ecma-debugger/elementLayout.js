@@ -310,7 +310,7 @@ cls.ElementLayout = function()
           ['li', convert_to_unitless(__comp_style[layout_map[PADDING_LEFT]])],
           ['li',
             ['ul', ['li', '\u00a0']],
-            ['ul', ['li', convert_to_unitless(__comp_style[layout_map[WIDTH]]) + " × " + convert_to_unitless(__comp_style[layout_map[HEIGHT]])]],
+            ['ul', ['li', convert_to_unitless(__comp_style[layout_map[WIDTH]], true) + " × " + convert_to_unitless(__comp_style[layout_map[HEIGHT]], true)]],
             ['ul', ['li', '\u00a0']],
             'class', 'dimension'],
           ['li', convert_to_unitless(__comp_style[layout_map[PADDING_RIGHT]])]
@@ -322,9 +322,9 @@ cls.ElementLayout = function()
     ['ul', ['li', convert_to_unitless(__comp_style[layout_map[MARGIN_BOTTOM]]), 'colspan', '3']],
     'class', 'margin']] );
 
-    function convert_to_unitless(value)
+    function convert_to_unitless(value, no_replace)
     {
-      return value != "0px" ? "" + parseInt(value) : "–";
+      return (value != "0px" || no_replace) ? "" + parseInt(value) : "–";
     }
   }
 
