@@ -46,7 +46,7 @@ top-container { /**/
 container { /**/
   border-left: 1px solid #b3b3b3;
   border-right: 1px solid #b3b3b3;
-  background-color: #fff;
+  background-color: #fefefe;
   overflow: hidden;
   } 
 
@@ -520,7 +520,7 @@ tab { /**/
   }
 
 tabs tab.active {
-  background: #f6f6f6;
+  background: #fefefe;
   border-color: #b3b3b3;
   }
 

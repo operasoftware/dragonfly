@@ -543,6 +543,7 @@ examine-objects key.no-expander
   margin: 0 auto;
   padding: 15px;
   max-width: 250px;
+  font-size: 11px;
 }
 .css-layout layout-container ul 
 {
@@ -571,7 +572,6 @@ examine-objects key.no-expander
   position:absolute;
   top:0;
   left:0;
-  font-size: 11px;
 }
 
 .css-layout layout-container .dimension li 
