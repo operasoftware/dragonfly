@@ -160,24 +160,53 @@ cls.ResourceManagerService = function(view, data)
     return this._current_document;
   };
 
+  /**
+   * Grab stuff based on mime type, ignoring subtype
+   */
+  this.get_resources_for_type = function()
+  {
+    // FIXME: this will change, as it will be using urlfinished not responsefinished
+    var types = Array.prototype.slice.call(arguments, 0);
+
+    var filterfun = function(e)
+    {
+      if (! e.responsefinished) { return false; }
+      var type = e.responsefinished.data.mimeType.split("/")[0];
+      opera.postError("looking at " + type)
+      return types.indexOf(type) > -1;
+    };
+
+    return this._get_resource_list().filter(filterfun);
+  };
+
   this.get_resources_for_mime = function()
   {
     // FIXME: this will change, as it will be using urlfinished not responsefinished
     var mimes = Array.prototype.slice.call(arguments, 0);
-
-    var mapfun = function(e)
-    {
-      return this._current_document.resourcemap[e];
-    };
 
     var filterfun = function(e)
     {
       return e.responsefinished && mimes.indexOf(e.responsefinished.data.mimeType) > -1;
     };
 
-    var step = this._current_document.resourcelist.map(mapfun, this);
-    return step.filter(filterfun);
+    return this._get_resource_list().filter(filterfun);
   };
+
+  /**
+   * Returns an array of resource objects. The internal representation is to
+   * keep separate lists of seen resources and a map of id/resource.
+   */
+  this._get_resource_list = function()
+  {
+    if (! this._current_document) { return []; }
+    var mapfun = function(e)
+    {
+      return this._current_document.resourcemap[e];
+    };
+
+    return this._current_document.resourcelist.map(mapfun, this);
+  };
+
   this.init();
 };
 
