@@ -160,6 +160,24 @@ cls.ResourceManagerService = function(view, data)
     return this._current_document;
   };
 
+  this.get_resources_for_mime = function()
+  {
+    // FIXME: this will change, as it will be using urlfinished not responsefinished
+    var mimes = Array.prototype.slice.call(arguments, 0);
+
+    var mapfun = function(e)
+    {
+      return this._current_document.resourcemap[e];
+    };
+
+    var filterfun = function(e)
+    {
+      return e.responsefinished && mimes.indexOf(e.responsefinished.data.mimeType) > -1;
+    };
+
+    var step = this._current_document.resourcelist.map(mapfun, this);
+    return step.filter(filterfun);
+  };
   this.init();
 };
 
