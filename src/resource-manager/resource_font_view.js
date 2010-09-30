@@ -19,7 +19,8 @@ cls.ResourceManagerFontView = function(id, name, container_class, html, default_
 
   this._render_main_view = function(container)
   {
-    var fonts = this._service.get_resources_for_mime("font/ttf");
+    var fonts = this._service.get_resources_for_type("font");
+    fonts = fonts.concat(this._service.get_resources_for_mime("application/x-font-otf"));
     container.clearAndRender(templates.font_list(fonts));
   };
 
@@ -32,7 +33,7 @@ window.templates = window.templates || {};
 
 window.templates.font_list = function(fonts)
 {
-  var t= ["div", ["h1", "External fonts referenced in document"], ["div", templates.font_style(fonts),
+  var t = ["div", ["h1", "External fonts referenced in document"], ["div", templates.font_style(fonts),
                       ["ul", fonts.map(templates.font_entry)],
                   "class", "resource-font-view"
                  ],
