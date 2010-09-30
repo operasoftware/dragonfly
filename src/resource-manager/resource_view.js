@@ -23,6 +23,11 @@ cls.ResourceManagerView = function(id, name, container_class, html, default_hand
   this._render_main_view = function(container)
   {
     var document = this._service.get_current_document();
+    //opera.postError(JSON.stringify(document))
+    container.innerHTML = "<pre>" + JSON.stringify(document, null, "    ") + "</pre>";
+
+    templates.resource_main(document);
+    return
     container.clearAndRender(templates.resource_main(document));
   };
 

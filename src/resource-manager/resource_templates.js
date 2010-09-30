@@ -99,6 +99,11 @@ templates.resource_bar = function(offset, entry, basetime, totaltime, contwidth,
   var bary = (lineheight/2 - 16/2) + y;
   var multiplier = contwidth / totaltime;
 
+  if (!entry.request || !entry.responsefinished) {
+//  opera.postError("Brokan! " + entry.urlload.resourceID);
+    return []
+  }
+
   var reqstart = entry.request.time;
   var reqwidth = (entry.responsefinished.time - entry.request.time);
   var resstart = reqstart + (reqwidth / 3); // HACKHACK! fixme: fake data until onrequestfinished works

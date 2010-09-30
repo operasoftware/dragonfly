@@ -328,6 +328,7 @@ window.load_screen_timeout = window.setTimeout(function()
 
 <script src="./resource-manager/resource_service.js"/>
 <script src="./resource-manager/resource_view.js"/>
+<script src="./resource-manager/resource_font_view.js"/>
 <script src="./resource-manager/resource_templates.js"/>
 <script src="./resource-manager/resourcemanager.1.0.events.onurlload.js"/>
 <script src="./resource-manager/resourcemanager.1.0.events.onurlfinished.js"/>
