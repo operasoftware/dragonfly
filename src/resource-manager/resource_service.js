@@ -207,6 +207,15 @@ cls.ResourceManagerService = function(view, data)
     return this._current_document.resourcelist.map(mapfun, this);
   };
 
+  this.get_resource_for_id = function(id)
+  {
+    if (this._current_document && id in this._current_document.resourcemap)
+    {
+        return this._current_document.resourcemap[id];
+    }
+    return null;
+  };
+
   this.init();
 };
 
