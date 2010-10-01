@@ -50,13 +50,6 @@ container { /**/
   overflow: hidden;
   } 
 
-window container { /**/
-  display: block;
-  position: relative;
-  border-width: 0;
-  background-color: #eff2f7;
-  }
-
 /* set with css. height, border and padding are supported */
 
 top-statusbar { /**/
@@ -846,16 +839,16 @@ window-control {
   position: absolute;
   }
 
-window-header { /**/
+window-header {
   display: block;
-  background-color: #d4d8dd;
-  border-bottom: 1px solid #ccc;
-	font-weight: bold;
-  color: #000;
-  padding-left: .5em;
-  height: 17px;
-  line-height: 17px;
-  }
+  color: #bbb;
+  height: 21px;
+  line-height: 21px;
+  padding-left: 5px;
+  border: 0 solid #000;
+  border-width: 1px 1px 0;
+  border-radius: 7px 7px 0 0;
+}
 
 windows-container [handler="window-move"] { /**/
   cursor: move;
@@ -942,9 +935,6 @@ windows-container [handler='window-scale-bottom-left'] { /**/
   left: -5px;
   cursor: sw-resize;
   }
-
-/* perhaps we could do this with svg's */
-
 windows-container { /**/
   width: 100%;
   height: 100%;
@@ -953,86 +943,26 @@ windows-container { /**/
   left: 0;
   top: 0;
   }
-
 window {
   display: block;
   position: absolute;
-  background-color: #eff2f7;
   height: 300px;
   left: 20px;
-  }
-window-shadows {
-    display:block;
+  color: #fff;
+  border-radius: 7px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, .6);
+  background: rgba(40, 40, 40, .9);
+  border: 2px solid #b1b1b1;
 }
-window-shadow {
+window container {
+  border: 1px solid #000;
+  border-width: 0 1px 1px;
+  border-radius: 0 0 7px 7px;
   display: block;
-  position: absolute;
-  }
+  position: relative;
+  background-color: rgba(0, 0, 0, .4);
+}
 
-window-shadow.top-left {
-  left: -5px;
-  top: -5px;
-  width: 5px;
-  height: 5px;
-  background: transparent url('../ui-images/shadow-top-left.png') scroll repeat-x 0 0;
-  }
-
-window-shadow.top {
-  left: 0px;
-  top: -5px;
-  right: 0px;
-  height: 6px;
-  background: transparent url('../ui-images/shadow-top.png') scroll repeat-x 0 0;
-  }
-
-window-shadow.top-right {
-  right: -5px;
-  top: -5px;
-  height: 5px;
-  width: 5px;
-  background: transparent url('../ui-images/shadow-top-right.png') scroll no-repeat 0 0;
-  }
-
-window-shadow.right {
-  right: -5px;
-  top: 0px;
-  bottom: 0px;
-  width: 5px;
-  height: auto;
-  background: transparent url('../ui-images/shadow-right.png') scroll repeat-y 0 0;
-  }
-
-window-shadow.bottom {
-  right: 0px;
-  bottom: -5px;
-  left: 0px;
-  height: 5px;
-  background: transparent url('../ui-images/shadow-bottom.png') scroll repeat-x 0 0;
-  }
-
-window-shadow.bottom-right {
-  right: -5px;
-  bottom: -5px;
-  height: 5px;
-  width: 5px;
-  background: transparent url('../ui-images/shadow-bottom-right.png') scroll no-repeat 0 0;
-  }
-
-window-shadow.bottom-left {
-  left: -5px;
-  bottom: -5px;
-  height: 5px;
-  width: 5px;
-  background: transparent url('../ui-images/shadow-bottom-left.png') scroll no-repeat 0 0;
-  }
-
-window-shadow.left {
-  left: -5px;
-  top: 0px;
-  bottom: 0px;
-  width: 5px;
-  background: transparent url('../ui-images/shadow-left.png') scroll repeat-y 0 0;
-  }
 
 #spin-button { /**/
   float: left;
@@ -1509,22 +1439,23 @@ overlay-window {
     border-radius: 7px;
     box-shadow: 0 1px 6px rgba(0, 0, 0, .6);
     background: rgba(40, 40, 40, .9);
-    width: 100%;
-    max-width: 600px;
+    width: 70%;
+    min-width: 600px;
     border: 2px solid #b1b1b1;
     display: block;
     position: absolute;
     height: 80%;
-    max-height: 400px;
+    max-height: 600px;
+    left: 10px;
 }
-overlay-window::before {
+overlay-arrow {
   content: url("../ui-images/overlay_arrow.png");
   position: absolute;
   top: -12px;
-  left: 20px;
 }
-.attached overlay-window::before {
-  left: 563px;
+.attached overlay-window {
+  left: auto;
+  right: 20px;
 }
 overlay-window h2 {
     font-size: 1em;

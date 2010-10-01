@@ -269,20 +269,22 @@ eventHandlers.click['overlay-tab'] = function(event, target)
   overlay.show_group(group_name, window.templates.settings(settings_by_group));
 };
 
+// TODO: clean up hardcoded values
 eventHandlers.click['toggle-settings-overlay'] = function(event, target)
 {
   var overlay = UIBase.getUIById(document.querySelector("overlay")
                                          .get_attr("parent-node-chain", "ui-id"));
   var button_dims = target.getBoundingClientRect();
   var element = overlay.element.querySelector("overlay-window");
+  var arrow = overlay.element.querySelector("overlay-arrow");
   element.style.top = button_dims.bottom + 10 + "px";
   if (window.opera.attached)
   {
-      element.style.right = document.documentElement.clientWidth - button_dims.right - 20 + "px";
+      arrow.style.right = document.documentElement.clientWidth - button_dims.right - 20 + "px"; // 20 = padding on overlay
   }
   else
   {
-      element.style.left = button_dims.left - 20 + "px";
+      arrow.style.left = button_dims.left - 10 + "px"; // 10 = padding on overlay
   }
   target.setAttribute("is-active", target.getAttribute("is-active") != "true");
 
@@ -299,14 +301,15 @@ eventHandlers.click['toggle-remote-debug-config-overlay'] = function(event, targ
                                          .get_attr("parent-node-chain", "ui-id"));
   var button_dims = target.getBoundingClientRect();
   var element = overlay.element.querySelector("overlay-window");
+  var arrow = overlay.element.querySelector("overlay-arrow");
   element.style.top = button_dims.bottom + 10 + "px";
   if (window.opera.attached)
   {
-      element.style.right = document.documentElement.clientWidth - button_dims.right - 20 + "px";
+      arrow.style.right = document.documentElement.clientWidth - button_dims.right - 20 + "px";
   }
   else
   {
-      element.style.left = button_dims.left - 20 + "px";
+      arrow.style.left = button_dims.left - 10 + "px";
   }
   target.setAttribute("is-active", target.getAttribute("is-active") != "true");
 

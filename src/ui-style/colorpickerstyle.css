@@ -5,13 +5,10 @@
 .color-picker-popup
 {
   position: relative;
-  border: 1px solid #000;
   width: 374px;
   height: 222px;
-  background-color: hsl(0, 0%, 30%);
   color: #fff;
-  font-family: sans-serif;
-  font-size: 12px;
+  border-radius: 0 0 7px 7px;
 }
 .color-picker-2-d-graphic
 {

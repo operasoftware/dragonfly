@@ -313,6 +313,7 @@
   {
     return ["overlay-window",
              [
+               ["overlay-arrow"],
                ["overlay-tabs"],
                ["overlay-content"]
              ]
@@ -405,7 +406,6 @@
   {
     return ['window',
         this.window_header(views[win.view_id].name),
-        this.window_shadows(),
         win.is_resizable ?
         [
           ['window-control', 'handler', 'window-scale-top-left'],
@@ -435,19 +435,4 @@
       'handler', 'window-move'
     ]
   }
-
-  this.window_shadows = function()
-  {
-    return ['window-shadows',
-      ['window-shadow', 'class', 'top-left'],
-      ['window-shadow', 'class', 'top'],
-      ['window-shadow', 'class', 'top-right'],
-      ['window-shadow', 'class', 'left'],
-      ['window-shadow', 'class', 'right'],
-      ['window-shadow', 'class', 'bottom-left'],
-      ['window-shadow', 'class', 'bottom'],
-      ['window-shadow', 'class', 'bottom-right']
-      ];
-  }
-
 }).apply(window.templates);
