@@ -17,7 +17,9 @@ templates.resource_item = function(resource)
       ["span", ["img", "src", "css.png"]],
       ["span", resource.urlload.url],
       ["span", resource.response && resource.response.responseCode
-                           ? String(resource.response.responseCode) : "n/a"]
+                    ? String(resource.response.responseCode) : "n/a"],
+      "resource-id", String(resource.urlload.resourceID),
+      "handler", "resource-select-resource"
   ];
 
   return tpl;
@@ -39,7 +41,7 @@ templates.resource_details = function(resource)
   var tpl = [
   ["h1", "Request"],
   ["ul",
-    ["li", ["strong", "URL:"], "foo bar baz"],
+    ["li", ["strong", "URL:"], resource.urlload.url],
     ["li", ["strong", "Method"], "GET", ["a", "spec", "href", "#"]],
     ["li", ["strong", "Status"], "200 OK", ["a", "spec", "href", "#"]],
     "class", "resource-detail"
@@ -63,8 +65,7 @@ templates.resource_details = function(resource)
     ["li", ["strong", "avcd:"], "adsf"],
     ["li", ["strong", "gers:"], "adsf"],
     "class", "resource-detail"
-  ],
-
+  ]
   ];
 
   return tpl;
