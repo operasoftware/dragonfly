@@ -259,7 +259,8 @@ top-toolbar button,
 window-controls button,
 cst-select-toolbar-setting,
 .ui-button,
-cst-select
+cst-select,
+toolbar button[disabled]
 {
   background: #e6e6e6 url("../ui-images/shine_button.png") repeat-x;
   border: 1px solid rgba(0, 0, 0, .5);
@@ -274,7 +275,11 @@ cst-select
   box-shadow: 0 1px #fff, inset 0 1px 1px #fff;
   vertical-align: top;
 }
-toolbar button:active,
+toolbar button[disabled] { /* :disabled seems to be buggy */
+  background: #e0e0e0;
+  opacity: 0.75
+}
+toolbar button:not([disabled]):active,
 top-toolbar button:active,
 window-controls button:active,
 cst-select-toolbar-setting:active,
