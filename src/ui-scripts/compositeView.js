@@ -7,7 +7,7 @@ var CompositeViewBase = function()
   this.type = 'composite-view';
   this.update = function(cell, is_resize) // for testing
   {
-    window.modebar.setVisibility(this.has_modebar);
+    window.modebar.setVisibility(settings.modebar.get("show-modebar") ? this.has_modebar : false);
     // copie from the container cell to the view cell
 
     var id = '', i = 0, virtual_container = null;

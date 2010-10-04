@@ -436,6 +436,46 @@ cls.DebugRemoteSettingView.create_ui_widgets = function()
   }
 };
 
+/**
+  * @constructor
+  * @extends ViewBase
+  * Settings are bound to a view. This class it only to have 'General Settings'.
+  */
+
+cls.ModebarView = function(id, name, container_class)
+{
+  this.ishidden_in_menu = true;
+  this.createView = function(container) {};
+  this.init(id, name, container_class);
+};
+
+cls.ModebarView.create_ui_widgets = function()
+{
+  new Settings
+  (
+    // id
+    'modebar',
+    // key-value map
+    {
+      "show-modebar": true
+    },
+    // key-label map
+    {
+      "show-modebar": "Show modebar"
+    },
+    // settings map
+    {
+      checkboxes:
+      [
+        "show-modebar"
+      ]
+    },
+    // custom templates
+    null,
+    "general"
+  );
+};
+
 
 cls.MainView = function(){};
 
