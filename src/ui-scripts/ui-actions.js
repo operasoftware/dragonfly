@@ -172,6 +172,7 @@ eventHandlers.mousedown['breadcrumbs-drag'] = function(event, target)
   }
 
   function mouse_up() {
+    horizontal_nav.current_breadcrumb_el = null;
     breadcrumbs.removeClass("drag");
     document.removeEventListener("mousemove", mouse_move, false);
     document.removeEventListener("mouseup", mouse_up, false);

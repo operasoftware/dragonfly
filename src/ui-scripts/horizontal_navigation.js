@@ -5,9 +5,9 @@
 var HorizontalNavigation = function(cell)
 {
   this.type = 'horizontal-navigation';
+  this.current_breadcrumb_el = null;
 
   var last_dir = null;
-  var current_breadcrumb_el = null;
 
   /**
    * Updates the list of breadcrumbs.
@@ -43,14 +43,14 @@ var HorizontalNavigation = function(cell)
     var left = 0;
     var pos = parseInt(getComputedStyle(this.breadcrumbs, null).left);
     var breadcrumbs_dim = this.breadcrumbs.getBoundingClientRect();
-    var element = (last_dir == dir) ? current_breadcrumb_el : null;
+    var element = (last_dir == dir) ? this.current_breadcrumb_el : null;
     last_dir = dir;
 
     if (dir == "back")
     {
       if (!element)
       {
-        element = this.breadcrumbs.querySelectorAll("breadcrumb")[0];
+        element = this.breadcrumbs.firstElementChild;
         while (element && element.getBoundingClientRect().right < this.nav_back.offsetWidth)
         {
             element = element.nextElementSibling;
@@ -68,7 +68,7 @@ var HorizontalNavigation = function(cell)
     {
       if (!element)
       {
-        element = this.breadcrumbs.querySelectorAll("breadcrumb")[0];
+        element = this.breadcrumbs.firstElementChild;
         while (element && element.getBoundingClientRect().right - 1 <= this.nav_forward.offsetLeft)
         {
             element = element.nextElementSibling;
@@ -87,6 +87,7 @@ var HorizontalNavigation = function(cell)
       left += dir;
     }
 
+    this.current_breadcrumb_el = element;
     this.breadcrumbs.style.OTransitionDuration = Math.min(Math.abs(left) / 200, .2) + "s";
     this.set_position(pos + left);
   };
@@ -115,7 +116,7 @@ var HorizontalNavigation = function(cell)
    */
   this.check_width = function()
   {
-    current_breadcrumb_el = null;
+    this.current_breadcrumb_el = null;
     if (this.breadcrumbs.scrollWidth > this.breadcrumbs.offsetWidth + this.breadcrumbs.offsetLeft)
     {
       this.element.addClass("navs");
