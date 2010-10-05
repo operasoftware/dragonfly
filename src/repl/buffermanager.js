@@ -55,20 +55,20 @@ cls.BufferManager = function(textarea)
   {
     var textarea = this._textarea;
     var str_before_cursor = textarea.value.slice(0, textarea.selectionStart)
-    var letter_before_cursor = str_before_cursor[str_before_cursor.length-1];
+    var char_before_cursor = str_before_cursor[str_before_cursor.length-1];
     var new_str_before_cursor = "";
     var replace_regexp = "";
 
     // Somewhat VIM inspired
-    if (/\s/.test(letter_before_cursor))
+    if (/\s/.test(char_before_cursor))
     {
       replace_regexp = /[\w]*\s+$/;
     }
-    else if (/\w$/.test(letter_before_cursor))
+    else if (/\w$/.test(char_before_cursor))
     {
       replace_regexp = /\w+$/;
     }
-    else if (/\W$/.test(letter_before_cursor))
+    else if (/\W$/.test(char_before_cursor))
     {
       replace_regexp = /\W+$/;
     }
