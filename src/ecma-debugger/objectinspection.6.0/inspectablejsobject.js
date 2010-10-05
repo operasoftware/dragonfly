@@ -234,7 +234,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
         property_list = proto[PROPERTY_LIST];
         if (property_list)
         {
-          if (class_name == "Array" || /Collection|List/.test(class_name))
+          if (/Array|Collection|List/.test(class_name))
           {
             items = [];
             attributes = [];
