@@ -53,11 +53,30 @@ cls.BufferManager = function(textarea)
 
   this._kill_word_backwards = function()
   {
-    var s = this._textarea.value.slice(0, this._textarea.selectionStart-1);
-    var pos = s.lastIndexOf(" ") + 1;
-    this._textarea.value = this._textarea.value.slice(0, pos) + this._textarea.value.slice(this._textarea.selectionStart);
-    this._textarea.selectionStart = pos;
-    this._textarea.selectionEnd = pos;
+    var textarea = this._textarea;
+    var str_before_cursor = textarea.value.slice(0, textarea.selectionStart)
+    var letter_before_cursor = str_before_cursor[str_before_cursor.length-1];
+    var new_str_before_cursor = "";
+    var replace_regexp = "";
+
+    // Somewhat VIM inspired
+    if (/\s/.test(letter_before_cursor))
+    {
+      replace_regexp = /[\w]*\s+$/;
+    }
+    else if (/\w$/.test(letter_before_cursor))
+    {
+      replace_regexp = /\w+$/;
+    }
+    else if (/\W$/.test(letter_before_cursor))
+    {
+      replace_regexp = /\W+$/;
+    }
+
+    new_str_before_cursor = str_before_cursor.replace(replace_regexp, "");
+    textarea.value = new_str_before_cursor +
+                     textarea.value.slice(textarea.selectionStart);
+    this._put_cursor(new_str_before_cursor.length);
   };
 
   this._put_cursor = function(offset)
