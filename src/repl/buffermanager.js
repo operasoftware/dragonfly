@@ -62,7 +62,7 @@ cls.BufferManager = function(textarea)
     // Somewhat VIM inspired
     if (/\s/.test(char_before_cursor))
     {
-      replace_regexp = /[\w]*\s+$/;
+      replace_regexp = /\w*\s+$/;
     }
     else if (/\w$/.test(char_before_cursor))
     {
