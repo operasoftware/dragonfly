@@ -527,8 +527,14 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     {
       var localpart = props.identifier;
       this._autocompletion_localpart = localpart;
-      var matches = props.props.filter(function(e) {
-        return e.indexOf(localpart) == 0;
+      var has_uppercase_letter = /[A-Z]/.test(localpart);
+      var matches = props.props.filter(function(candidate) {
+        // If only lowercase letters are used, make the autocompletion case-insensitive
+        if (!has_uppercase_letter)
+        {
+            candidate = candidate.toLowerCase();
+        }
+        return candidate.indexOf(localpart) == 0;
       });
 
       if (! matches.length) {
