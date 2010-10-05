@@ -25,7 +25,7 @@ var EventHandler = function(type, is_capturing, handler_key)
     {
       return;
     }
-    if(event.which == 3)
+    if (event.which == 3 && event.type in {"click": 1, "mousedown": 1, "mouseup": 1})
     {
       // right click
       event.stopPropagation();
