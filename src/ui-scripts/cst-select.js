@@ -233,7 +233,7 @@
         "cst-option",
         opt.text,
         "opt-index", i,
-        "title", opt.title,
+        "title", opt.title || "",
         "unselectable", "on"
       ]
     }
@@ -591,7 +591,7 @@ var CstSelectWithActionBase = function(id, class_name, type)
       "cst-option",
       action.text,
       "handler", action.handler,
-      "title", action.title,
+      "title", action.title || "",
       "unselectable", "on"
     ]
   }
