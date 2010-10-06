@@ -403,10 +403,12 @@ stylesheet-link {
   text-align:right;
   color: #ccc;
   text-decoration: underline;
-  cursor: pointer;
   float: right;
   margin-left: 10px;
   }
+stylesheet-link[handler], [handler="dom-resource-link"] {
+    cursor: pointer;
+}
 
 stylesheet-link:hover {
   color: #666;
@@ -460,21 +462,10 @@ category.unfolded + category header {
 
 .overwritten {
   text-decoration: line-through;
-  /*color: #ccc;*/
   }
 
 .css-inspector .overwritten value:after {
-  /*content: " [overridden]";*/
   color: #c90;
-  }
-  
-.css-inspector .inherited {
-  color: #ccc;
-  }
-
-.css-inspector .inherited value:after {
-  content: " [inherited]";
-  color: #09c;
   }
 
 .css-inspector .selected {
@@ -1151,13 +1142,6 @@ d
   table-layout: fixed;
 }
 
-.storage-table td
-{
-  overflow: hidden;
-  white-space: nowrap;
-  -o-text-overflow: ellipsis;
-}
-
 .storage-table caption
 {
   text-align: left;
@@ -1175,13 +1159,13 @@ d
 
 .storage-table td
 {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
   border: 1px solid #ccc;
   padding: 0px 5px;
   line-height: 16px;
-}
-
-.storage-table td
-{
   font-family: monospace;
 }
 
