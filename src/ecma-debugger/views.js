@@ -355,29 +355,41 @@ cls.DebugRemoteSettingView.create_ui_widgets = function()
       'debug-remote':
       function(setting)
       {
-        return [
-          ['setting-composite',
-            ['label',
-              ui_strings.S_LABEL_PORT + ': ',
-              ['input',
-                'type', 'number',
-                'min', PORT_MIN,
-                'max', PORT_MAX,
-                'value', setting.get('port'),
-                'current-port', setting.get('port').toString()
+        return (
+            !settings.debug_remote_setting.get('debug-remote')
+            ?
+              [
+                ['setting-composite',
+                  ['label',
+                    ui_strings.S_LABEL_PORT + ': ',
+                    ['input',
+                      'type', 'number',
+                      'min', PORT_MIN,
+                      'max', PORT_MAX,
+                      'value', setting.get('port'),
+                      'current-port', setting.get('port').toString()
+                    ]
+                  ],
+                  ['input',
+                    'type', 'button',
+                    'value', ui_strings.S_BUTTON_TEXT_APPLY,
+                    'handler', 'apply-remote-debugging'
+                  ],
+                  ['p',
+                   'id', 'remote-debug-info'
+                  ],
+                  'class', 'apply-button'
+                ]
               ]
-            ],
-            ['input',
-              'type', 'button',
-              'value', ui_strings.S_BUTTON_TEXT_APPLY,
-              'handler', 'apply-remote-debugging'
-            ],
-            ['p',
-             'id', 'remote-debug-info'
-            ],
-            'class', 'apply-button'
-          ]
-        ];
+            :
+              ['setting-composite',
+                ['input',
+                  'type', 'button',
+                  'value', "Cancel",
+                  'handler', 'cancel-remote-debug'
+                ]
+              ]
+        );
       }
     },
     "remote_debug"
