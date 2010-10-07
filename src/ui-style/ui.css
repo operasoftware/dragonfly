@@ -1126,12 +1126,13 @@ cst-option
 cst-select-option-list :first-child {
     border-radius: 3px 3px 0 0;
 }
+/* These selectors are super slow, find replacement
 cst-select-option-list :last-child {
     border-radius: 0 0 3px 3px;
 }
 cst-select-option-list :only-child {
     border-radius: 3px;
-}
+}*/
 
 cst-select-option-list hr
 {
