@@ -23,7 +23,7 @@
           'handler', 'ev-brp-expand-section',
         ],
         section.is_unfolded ?
-        ['ul', this.ev_brp_event_list(section.events)] :
+        this.ev_brp_event_list(section) :
         [],
       'index', index.toString(),
       'class', section.is_search && !section.is_unfolded ? 'search-no-match' : ''
@@ -31,9 +31,14 @@
 
   }
 
-  this.ev_brp_event_list = function(event_list)
+  this.ev_brp_event_list = function(section)
   {
-    return ['ul', event_list.map(this.ev_brp_event, this), 'class', 'event-list'];
+    return (
+    ['ul', 
+      section.events.map(this.ev_brp_event, this),
+      section.editable ? this.ev_brp_edit() : [],
+      'class', 'event-list'
+    ]);
   }
 
   this.ev_brp_event = function(event)
@@ -48,6 +53,48 @@
         ].concat(event[CHECKED] ? ['checked', 'checked'] : []),
         event[NAME]
       ]
+    ]);
+  }
+
+  this.ev_brp_edit = function()
+  {
+    return (
+    ['li', 
+      ['input', 
+        'type', 'button', 
+        'value', 'Edit', 
+        'handler', 'ev-brp-edit-custom-events'
+      ],
+      'class', 'controls'
+    ]);
+  }
+
+  this.ev_brp_edit_section = function(section)
+  {
+    var event_list = section.events.map(function(event){return event[NAME];}, this);
+    return (
+    ['ul',
+      ['li', 
+        ['_auto_height_textarea', 
+          event_list.join('\r\n'), 
+          'data-placeholder', '<list of custom events>',
+          'title', 'Comma, space or new line separated list of custom events'
+        ]
+      ],
+      ['li', 
+        ['input', 
+          'type', 'button', 
+          'value', ui_strings.S_BUTTON_SAVE, 
+          'handler', 'ev-brp-edit-custom-events-save'
+        ],
+        ['input', 
+          'type', 'button', 
+          'value', ui_strings.S_BUTTON_CANCEL, 
+          'handler', 'ev-brp-edit-custom-events-cancel'
+        ],
+        'class', 'controls'
+      ],
+      'class', 'event-list'
     ]);
   }
 

@@ -1286,7 +1286,8 @@ d
   text-align: right;
 }
 
-.storage-table textarea
+.storage-table textarea,
+.event-list textarea
 {
   box-sizing: border-box;
   display: block;
@@ -1382,4 +1383,12 @@ property.disabled color-sample
 .search-no-match
 {
   opacity: .3;
+}
+
+.controls
+{
+  text-align: right;
+  border-bottom: 1px solid #ccc;
+  margin-left: -24px;
+  padding-left: 24px;
 }

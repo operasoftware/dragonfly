@@ -222,6 +222,13 @@ cls.EventBreakpoints = function()
         ['pluginInitialized', 0],
       ],
       is_unfolded: false,
+    },
+    {
+      title: "Custom Events",
+      spec: "http://www.w3.org/TR/2010/WD-DOM-Level-3-Events-20100907/#interface-CustomEvent",
+      events: [],
+      is_unfolded: false,
+      editable: true
     }
   ];
 
@@ -249,6 +256,12 @@ cls.EventBreakpoints = function()
       var unfolded_flags = window.settings['event-breakpoints'].get('expanded-sections');
       for (var i = 0, section = null; section = this._events[i]; i++)
         section.is_unfolded = unfolded_flags[i];
+      var stored_events = window.settings['event-breakpoints'].get('edited-events');
+      for (i in stored_events)
+      {
+        section = this._events[i];
+        section.events = stored_events[i].map(function(name, index){return [name, 0, index];});
+      }
       this._is_synced = true;
     }
     return this._events;
@@ -308,6 +321,36 @@ cls.EventBreakpoints = function()
     this._events[index].is_unfolded = is_unfolded;
     this._store_unfolded_flags();
   };
+
+  this.update_section = function(index, event_list)
+  {
+    var 
+    section = this._events[index], 
+    old_events = {}, 
+    i = 0, 
+    event = null,
+    event_name = '';
+
+    for (; event = section.events[i]; i++)
+      old_events[event[NAME]] = event[CHECKED]; 
+    section.events = event_list.map(function(event_name, index)
+    {
+      var ret = [event_name, old_events[event_name] || 0, index];
+      old_events[event_name] = 0;
+      return ret;
+    });
+    for (event_name in old_events)
+    {
+      if (old_events[event_name])
+      {
+        window.services['ecmascript-debugger'].requestRemoveBreakpoint(0, [old_events[event_name]]);
+        this._breakpoints[old_events[event_name]] = 0;
+      }
+    }
+    var stored_events = window.settings['event-breakpoints'].get('edited-events');
+    stored_events[index] = section.events.map(function(event){return event[NAME];});
+    window.settings['event-breakpoints'].set('edited-events', stored_events);
+  }
 
   /* constructor calls */
 

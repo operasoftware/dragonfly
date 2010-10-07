@@ -95,6 +95,7 @@ cls.EventBreakpointsView.create_ui_widgets = function()
     // key-value map
     {
       'expanded-sections': [],
+      'edited-events': {},
     }
   );
 
@@ -122,7 +123,7 @@ cls.EventBreakpointsView.create_ui_widgets = function()
       var section = window.event_breakpoints.get_events()[index];
       if (section)
       {
-        parent.render(window.templates.ev_brp_event_list(section.events));
+        parent.render(window.templates.ev_brp_event_list(section));
         input.addClass('unfolded');
       }
     }
@@ -145,11 +146,42 @@ cls.EventBreakpointsView.create_ui_widgets = function()
     window.views['event-breakpoints'].update();
   }
 
-  
-
   window.eventHandlers.input['ev-brp-filter'] = function(event, target)
   {
     window.views['event-breakpoints'].show_filtered_view(target.value);
+  }
+
+  var update_section = function(event, target, template_name)
+  {
+    var li = target.parentNode.has_attr('parent-node-chain', 'index');
+    if (li)
+    {
+      var section = window.event_breakpoints.get_events()[parseInt(li.getAttribute('index'))];
+      li.removeChild(li.getElementsByTagName('ul')[0]);
+      li.render(window.templates[template_name](section));
+    }
+  }
+
+  window.eventHandlers.click['ev-brp-edit-custom-events'] = function(event, target)
+  {
+    update_section(event, target, 'ev_brp_edit_section'); 
+  }
+
+  window.eventHandlers.click['ev-brp-edit-custom-events-cancel'] = function(event, target)
+  {
+    update_section(event, target, 'ev_brp_event_list'); 
+  }
+
+  window.eventHandlers.click['ev-brp-edit-custom-events-save'] = function(event, target)
+  {
+    var li = target.parentNode.has_attr('parent-node-chain', 'index');
+    if (li)
+    {
+      var index = parseInt(li.getAttribute('index'));
+      var event_list = li.getElementsByTagName('textarea')[0].value.split(/,?\s+/);
+      window.event_breakpoints.update_section(index, event_list);
+      update_section(event, target, 'ev_brp_event_list'); 
+    }
   }
 
 };
