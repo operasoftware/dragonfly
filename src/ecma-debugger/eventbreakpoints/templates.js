@@ -1,4 +1,4 @@
-(function()
+﻿(function()
 {
   /* extends window.templates interface */
 
