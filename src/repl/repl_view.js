@@ -18,6 +18,13 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._backlog_index = -1;
   this._input_row_height = null;
   this._toolbar_visibility = null;
+  this._is_first_showing = true;
+  this._recent_autocompletion = null;
+  this._autocompletion_index = null;
+  this._autocompletion_elem = null;
+  this._use_autocomplete_highlight = true; // fixme: turn this in to a setting
+  this._textarea_handler = null;
+  this._closed_group_nesting_level = 0;
 
   this.ondestroy = function()
   {
@@ -35,9 +42,12 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       container.clearAndRender(templates.repl_main());
       this._linelist = container.querySelector("ol");
       this._textarea = container.querySelector("textarea");
+      this._textarea_handler = new cls.BufferManager(this._textarea);
       this._textarea.value = this._current_input;
       this._container = container;
       this._input_row_height = this._textarea.scrollHeight;
+      this._closed_group_nesting_level = 0;
+
       switched_to_view = true;
       // note: events are bound to handlers at the bottom of this class
     }
@@ -52,6 +62,15 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       this._container.addEventListener("scroll", this._save_scroll_bound, false);
       padder.addEventListener("DOMAttrModified", this._update_scroll_bound, false);
       padder.addEventListener("DOMNodeInserted", this._update_scroll_bound, false);
+
+      if (this._is_first_showing)
+      {
+        this._is_first_showing = false;
+        var hostinfo = this._service.hostinfo;
+        if (hostinfo) {
+          this._render_string(hostinfo.userAgent + " (Core " + hostinfo.coreVersion + ")");
+        }
+      }
 
       if(this._current_scroll === null)
       {
@@ -151,13 +170,22 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._render_groupstart = function(data)
   {
-    this._add_line([["button", "", "class", "folder-key"+(data.collapsed ? "" : " open" ),
-                                   "handler", "repl-toggle-group"
-                    ],
-                    data.name]);
+    if (this._closed_group_nesting_level) {
+      // don't do anything if we're in a closed group
+      this._closed_group_nesting_level++;
+      return;
+    }
+    else if (data.collapsed)
+    {
+      // if not nested but this group is closed, render the button for it
+      this._closed_group_nesting_level++;
+    }
+
+    this._add_line(templates.repl_group_line(data));
     var ol = document.createElement("ol");
     ol.className="repl-lines";
     this._add_line(ol);
+
     if (data.collapsed) {
       ol.parentNode.style.display = "none";
     }
@@ -167,6 +195,14 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._render_groupend = function()
   {
+    this._closed_group_nesting_level--;
+    this._closed_group_nesting_level = Math.max(0, this._closed_group_nesting_level);
+
+    if (this._closed_group_nesting_level)
+    {
+      return;
+    }
+
     if (this._linelist.parentNode.parentNode.nodeName.toLowerCase() == "ol")
     {
       this._linelist = this._linelist.parentNode.parentNode;
@@ -236,13 +272,21 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   };
 
   /**
-   * Render an arbitrary numver of string arguments
+   * Render a string. Return the element that was rendered.
    */
-  this._render_string = function()
+  this._render_string = function(s)
+  {
+      return this._add_line(templates.repl_output_native(s));
+  };
+
+  /**
+   * Render an arbitrary number of string arguments
+   */
+  this._render_strings = function()
   {
     for (var n=0; n<arguments.length; n++)
     {
-      this._add_line(templates.repl_output_native(arguments[n]));
+      this._render_string(arguments[n]);
     }
   };
 
@@ -260,6 +304,8 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._add_line = function(elem_or_template)
   {
+
+
     var line = document.createElement("li");
 
     if (elem_or_template.nodeType === undefined)
@@ -271,11 +317,18 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       line.appendChild(elem_or_template);
     }
     this._linelist.appendChild(line);
+    return line;
   };
 
   this._handle_keypress_bound = function(evt)
   {
-    // opera.postError("" + evt.keyCode + " " + evt.which );
+    //opera.postError("" + evt.keyCode + " " + evt.which );
+
+    if (this._textarea_handler.handle(evt)) {
+      evt.preventDefault();
+      return;
+    }
+
     switch (evt.keyCode) {
       case 9: // tab
       {
@@ -283,14 +336,13 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         if (this._multiediting) {
           var pos = this._textarea.selectionStart;
           this._textarea.value = this._textarea.value.slice(0, pos) + "\t" + this._textarea.value.slice(pos);
-
           break; // tab should be off when in a multiline box.
         }
-
-        this._resolver.find_props(this._handle_completer.bind(this),
-                                  this._textarea.value,
-                                  window.stop_at.getSelectedFrame());
-        break;
+        else
+        {
+          this._on_invoke_completer(evt.shiftKey ? -1 : +1);
+          return;
+        }
       }
       case 13: // enter
       {
@@ -299,10 +351,14 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
           this._textarea.rows = this._textarea.rows + 1;
           this._textarea.value = this._textarea.value + "\n";
         }
+        else if (this._use_autocomplete_highlight && this._recent_autocompletion)
+        {
+          evt.preventDefault();
+          this._commit_selection();
+        }
         else
         {
           // stop it from adding a newline just before processing. Looks strange
-
           evt.preventDefault();
 
           var input = this._textarea.value;
@@ -310,12 +366,23 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
           this._textarea.value = "";
           this._backlog_index = -1;
           this._current_input = "";
-
-          if (input == "") {
-            this._render_input("");
+          this._service.handle_input(input);
+        }
+        break;
+      }
+      case 37: // left
+      case 39: // right
+      {
+        // workaround as long as we don't have support for keyIdentifier
+        // event.which is 0 in a keypress event for function keys
+        if( !evt.which )
+        {
+          if (this._recent_autocompletion)
+          {
+            evt.preventDefault();
+            this._update_highlight(evt.keyCode==37 ? -1 : 1);
             return;
           }
-          this._service.handle_input(input);
         }
         break;
       }
@@ -344,24 +411,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         }
         break;
       }
-      case 97: // a key. ctrl-a == move to start of line
-      {
-        if (evt.ctrlKey) {
-          evt.preventDefault();
-          this._textarea.selectionStart = 0;
-          this._textarea.selectionEnd = 0;
-        }
-        break;
-      }
-      case 107: // k key. ctrl-k == kill to en of line
-      {
-        if (evt.ctrlKey) {
-          evt.preventDefault();
-          var pos = this._textarea.selectionStart;
-          this._textarea.value = this._textarea.value.slice(0, pos);
-        }
-        break;
-      }
       case 108: // l key
       {
         if (evt.ctrlKey) {
@@ -371,23 +420,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         }
         break;
       }
-      case 119: // w key. ctrl-w == kill word backwards
-      {
-        if (evt.ctrlKey) {
-          evt.preventDefault();
-          var s = this._textarea.value.slice(0, this._textarea.selectionStart-1);
-          var pos = s.lastIndexOf(" ");
-          pos++;
-
-          this._textarea.value = this._textarea.value.slice(0, pos) + this._textarea.value.slice(this._textarea.selectionStart);
-          this._textarea.selectionStart = pos;
-          this._textarea.selectionEnd = pos;
-        }
-        break;
-      }
-
-
     }
+
+    this._recent_autocompletion = null;
+    this._highlight_completion();
 
     // timeout makes sure we do this after all events have fired to update box
     window.setTimeout(this._update_input_height_bound, 0);
@@ -423,30 +459,126 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
   };
 
-  this._handle_completer = function(props)
+  this._commit_selection = function()
   {
-    var localpart = props.identifier;
+    var localpos = this._textarea.value.lastIndexOf(this._autocompletion_localpart);
+    if (localpos!=-1)
+    {
+      var pre = this._textarea.value.slice(0, localpos);
+      var post = this._textarea.value.slice(localpos+this._autocompletion_localpart.length);
+      this._textarea.value = pre + this._recent_autocompletion[this._autocompletion_index][0] + post;
+    }
+  };
 
-    var matches = props.props.filter(function(e) {
-      return e.indexOf(localpart) == 0;
-    });
+  this._highlight_completion = function(index)
+  {
+    var sel = window.getSelection();
+    sel.collapseToStart();
 
-    if (! matches.length) {
+    // with no arg, clear the selection.
+    if (index === null || index === undefined) {
       return;
     }
 
-    var match = this._longest_common_prefix(matches.slice(0));
-    if (match.length > localpart.length)
+    var entry = this._recent_autocompletion[this._autocompletion_index];
+    var range = document.createRange();
+    var ele = this._autocompletion_elem.firstChild; // get TextNode
+
+    range.setStart(ele, entry[1]);
+    range.setEnd(ele, entry[2]);
+
+    sel.addRange(range);
+  };
+
+  this._on_invoke_completer = function(direction)
+  {
+    // tab/arrows was pressed while the completer is showing something
+    if (this._recent_autocompletion)
     {
-      var pos = this._textarea.value.lastIndexOf(localpart);
-      this._textarea.value = this._textarea.value.slice(0, pos) + match;
+      this._update_highlight(direction);
     }
     else
     {
-      this._render_input(this._textarea.value);
-      this._render_string(matches.sort().join(", "));
+      this._handle_completer();
+    }
+  };
+
+  this._update_highlight = function(direction)
+  {
+    direction = direction === undefined ? 1 : direction;
+    if (!this._use_autocomplete_highlight) { return; }
+
+    this._autocompletion_index += direction;
+    if (this._autocompletion_index >= this._recent_autocompletion.length)
+    {
+      this._autocompletion_index = 0;
+    }
+    else if (this._autocompletion_index < 0)
+    {
+      this._autocompletion_index = this._recent_autocompletion.length-1;
     }
 
+    this._highlight_completion(this._autocompletion_index);
+  };
+
+  this._handle_completer = function(props)
+  {
+    if (props)
+    {
+      var localpart = props.identifier;
+      this._autocompletion_localpart = localpart;
+      var has_uppercase_letter = /[A-Z]/.test(localpart);
+      var matches = props.props.filter(function(candidate) {
+        // If only lowercase letters are used, make the autocompletion case-insensitive
+        if (!has_uppercase_letter)
+        {
+            candidate = candidate.toLowerCase();
+        }
+        return candidate.indexOf(localpart) == 0;
+      });
+
+      if (! matches.length) {
+        return;
+      }
+
+      var match = this._longest_common_prefix(matches.slice(0));
+      if (match.length > localpart.length)
+      {
+        var pos = this._textarea.value.lastIndexOf(localpart);
+        this._textarea.value = this._textarea.value.slice(0, pos) + match;
+      }
+      else
+      {
+        this._render_input(this._textarea.value);
+        this._autocompletion_elem = this._render_string(matches.sort().join(", "));
+
+        // the recent autocomplete array contains tuples, (word, start, end)
+        // that can be used when selecting a range.
+        var offset = 0;
+        this._recent_autocompletion = matches.sort().map(function(word) {
+          var ret = [word, offset, offset+word.length];
+          offset += word.length + 2; // +2 accounts for ", "
+          return ret;
+        });
+
+        // fixme: this should not rely as much on the inards of the markup
+        this._autocompletion_elem = this._autocompletion_elem.firstChild;
+        this._autocompletion_index = -1;
+        this._update_highlight();
+      }
+    }
+    else
+    {
+      this._resolver.find_props(this._on_completer.bind(this),
+                                this._textarea.value,
+                                window.stop_at.getSelectedFrame());
+    }
+
+  };
+
+  this._on_completer = function(props)
+  {
+    this._handle_completer(props);
   };
 
   /**
@@ -491,20 +623,13 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
                  );
   }.bind(this);
 
-  this._handle_repl_toggle_group = function(event, target)
+  this._handle_repl_toggle_group_bound = function(event, target)
   {
-    var li = target.parentNode;
-    if (target.hasClass("open"))
-    {
-      target.removeClass("open");
-      li.nextSibling.style.display = "none";
-    }
-    else
-    {
-      target.addClass("open");
-      li.nextSibling.style.display = "";
-    }
-  };
+    var group = this._data.get_group(target.getAttribute("group-id"));
+    group.collapsed = group.collapsed ? false : true;
+    this.clear();
+    this.update();
+  }.bind(this);
 
   this._handle_option_change_bound = function(event, target)
   {
@@ -531,7 +656,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   }.bind(this);
 
   var eh = window.eventHandlers;
-  eh.click["repl-toggle-group"] = this._handle_repl_toggle_group;
+  eh.click["repl-toggle-group"] = this._handle_repl_toggle_group_bound;
   eh.click["select-trace-frame"] = this._handle_repl_frame_select_bound;
   eh.click["repl-focus"] = this._handle_repl_focus_bound;
   eh.keypress['repl-textarea'] = this._handle_keypress_bound;
