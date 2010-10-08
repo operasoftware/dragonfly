@@ -71,7 +71,7 @@ window.cls.PropertyFinder = function(rt_id) {
                   last_brace,
                   last_bracket,
                   input.lastIndexOf('=') ) + 1
-                ).replace(/^ +/, '').replace(/ $/, '');
+                ).replace(/^\s+/, '');
 
     var last_dot = input.lastIndexOf('.');
     var new_path = '';
@@ -81,7 +81,7 @@ window.cls.PropertyFinder = function(rt_id) {
     if(last_dot > -1)
     {
       new_path = input.slice(0, last_dot);
-      new_id = input.slice(last_dot + 1);
+      new_id = input.slice(last_dot + 1).replace(/^\s+/, '');
     }
     else
     {
