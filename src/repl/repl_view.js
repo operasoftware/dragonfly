@@ -26,6 +26,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._textarea_handler = null;
   this._closed_group_nesting_level = 0;
 
+  var keywords = ["break", "do", "instanceof", "typeof", "case", "else", "new", "var",
+    "catch", "finally", "return", "void", "continue", "for", "switch", "while", "debugger",
+    "function", "this", "with", "default", "if", "throw", "delete", "in", "try"];
+
   this.ondestroy = function()
   {
     this._lastupdate = 0;
@@ -466,7 +470,13 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     {
       var pre = this._textarea.value.slice(0, localpos);
       var post = this._textarea.value.slice(localpos+this._autocompletion_localpart.length);
-      this._textarea.value = pre + this._recent_autocompletion[this._autocompletion_index][0] + post;
+      var prop = this._recent_autocompletion[this._autocompletion_index][0];
+      // This doesn't cover every allowed character, but should be fine most of the time
+      if (!/^[a-z$_]$|^[a-z$_][a-z$_0-9]/i.test(prop) || keywords.indexOf(prop) != -1) {
+          pre = pre.slice(0, -1) + "[\"";
+          post = "\"]" + post;
+      }
+      this._textarea.value = pre + prop + post;
     }
   };
 
