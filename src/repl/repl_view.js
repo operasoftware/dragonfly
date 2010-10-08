@@ -477,6 +477,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
           post = "\"]" + post;
       }
       this._textarea.value = pre + prop + post;
+      this._textarea_handler.put_cursor((pre + prop).length);
     }
   };
 
@@ -555,7 +556,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       if (match.length > localpart.length)
       {
         var pos = this._textarea.value.lastIndexOf(localpart);
-        this._textarea.value = this._textarea.value.slice(0, pos) + match;
+        var post = this._textarea.value.slice(this._textarea.selectionStart);
+        var autocompletion = this._textarea.value.slice(0, pos) + match;
+        this._textarea.value = autocompletion + post;
+        this._textarea_handler.put_cursor(autocompletion.length);
       }
       else
       {
@@ -580,7 +584,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     else
     {
       this._resolver.find_props(this._on_completer.bind(this),
-                                this._textarea.value,
+                                this._textarea.value.slice(0, this._textarea.selectionStart),
                                 window.stop_at.getSelectedFrame());
     }
 
