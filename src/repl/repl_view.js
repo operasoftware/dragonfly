@@ -465,11 +465,14 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._commit_selection = function()
   {
-    var localpos = this._textarea.value.lastIndexOf(this._autocompletion_localpart);
+    var localpos = this._textarea.value
+                       .slice(0, this._textarea.selectionStart)
+                       .lastIndexOf(this._autocompletion_localpart);
     if (localpos!=-1)
     {
       var pre = this._textarea.value.slice(0, localpos);
-      var post = this._textarea.value.slice(localpos+this._autocompletion_localpart.length);
+      var post = this._textarea.value.slice(this._textarea.selectionStart);
+      var post_length = post.length;
       var prop = this._recent_autocompletion[this._autocompletion_index][0];
       // This doesn't cover every allowed character, but should be fine most of the time
       if (!/^[a-z$_]$|^[a-z$_][a-z$_0-9]/i.test(prop) || keywords.indexOf(prop) != -1) {
@@ -477,7 +480,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
           post = "\"]" + post;
       }
       this._textarea.value = pre + prop + post;
-      this._textarea_handler.put_cursor((pre + prop).length);
+      this._textarea_handler.put_cursor(this._textarea.value.length - post_length);
     }
   };
 
