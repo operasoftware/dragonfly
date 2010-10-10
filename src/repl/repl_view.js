@@ -26,9 +26,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._textarea_handler = null;
   this._closed_group_nesting_level = 0;
 
-  var keywords = ["break", "do", "instanceof", "typeof", "case", "else", "new", "var",
-    "catch", "finally", "return", "void", "continue", "for", "switch", "while", "debugger",
-    "function", "this", "with", "default", "if", "throw", "delete", "in", "try"];
+  var keywords = ["break", "case", "catch", "continue", "debugger",
+      "default", "delete", "do", "else", "finally", "for", "function",
+      "if", "in", "instanceof", "new", "return", "switch", "this",
+      "throw", "try", "typeof", "var", "void", "while", "with"];
 
   this.ondestroy = function()
   {
