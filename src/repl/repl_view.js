@@ -413,6 +413,14 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
           evt.preventDefault();
           this._handle_backlog(evt.keyCode == 38 ? 1 : -1);
         }
+        // TEMP: this should be handled at the same place as '.' and '['
+        else if (evt.keyCode == 40)
+        {
+          if (this._use_autocomplete_highlight && this._recent_autocompletion)
+          {
+            this._commit_selection();
+          }
+        }
         break;
       }
       case 108: // l key
@@ -423,6 +431,16 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
           this._data.clear();
         }
         break;
+      }
+      case 46: // '.'
+      case 91: // '['
+      // this should have '(' too, but that clashes with down arrow,
+      // see above
+      {
+        if (this._use_autocomplete_highlight && this._recent_autocompletion)
+        {
+          this._commit_selection();
+        }
       }
     }
 
