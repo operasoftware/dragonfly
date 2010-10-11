@@ -37,24 +37,17 @@ cls.ResourceManagerService = function(view, data)
   this._document_contexts = {}; // mapping document id -> list of requests
   this._current_document = {};
 
-  this._on_documentload_bound = function(msg)
+  this._on_abouttoloaddocument_bound = function(msg)
   {
-    var data = new cls.DocumentManager["1.0"].DocumentLoad(msg);
+    var data = new cls.DocumentManager["1.0"].AboutToLoadDocument(msg);
 
-    if (data.parentDocumentID === undefined) // new document load
-    {
-      this._seen_doc_ids = [];
-      this._current_document = {
-        id: null,
-        topresource: data.resourceID,
-        resourcelist: [],
-        resourcemap: {}
-      };
-    }
-    else
-    {
-
-    }
+    this._seen_doc_ids = [];
+    this._current_document = {
+      id: null,
+      topresource: data.resourceID,
+      resourcelist: [],
+      resourcemap: {}
+    };
 
   }.bind(this);
 
@@ -152,7 +145,7 @@ cls.ResourceManagerService = function(view, data)
     this._res_service.addListener("urlfinished", this._on_urlfinished_bound);
 
     this._doc_service = window.services['document-manager'];
-    this._doc_service.addListener("documentload", this._on_documentload_bound);
+    this._doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
   };
 
   this.get_current_document = function()
@@ -172,7 +165,6 @@ cls.ResourceManagerService = function(view, data)
     {
       if (! e.responsefinished) { return false; }
       var type = e.responsefinished.data.mimeType.split("/")[0];
-      opera.postError("looking at " + type)
       return types.indexOf(type) > -1;
     };
 
