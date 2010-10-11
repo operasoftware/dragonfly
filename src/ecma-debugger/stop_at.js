@@ -158,7 +158,8 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
         runtime_id: frame.rt_id,
         scope_id: frame.scope_id,
         thread_id: stopAt['thread-id'],
-        index: __selected_frame_index
+        index: __selected_frame_index,
+        argument_id: frame.argument_id
       });
     }
     return null;

@@ -110,6 +110,11 @@ window.cls.PropertyFinder = function(rt_id) {
                         function(e) { return e != ""; }
           );
         }
+
+        if (ret.props.indexOf("this") == -1)
+        {
+          ret.props.push("this");
+        }
       }
     }
 
@@ -136,6 +141,16 @@ window.cls.PropertyFinder = function(rt_id) {
         (message = message[PROPERTY_LIST]) ||
         []).map(function(prop){return prop[NAME];});
       ret.props = scope;
+
+      if (ret.props.indexOf("this") == -1)
+      {
+        ret.props.push("this");
+      }
+
+      if (ret.frameinfo.argument_id !== undefined && ret.props.indexOf("arguments"))
+      {
+        ret.props.push("arguments");
+      }
     }
 
     this._cache_put(ret);
