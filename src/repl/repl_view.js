@@ -27,9 +27,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._closed_group_nesting_level = 0;
 
   var keywords = ["break", "case", "catch", "continue", "debugger",
-      "default", "delete", "do", "else", "finally", "for", "function",
-      "if", "in", "instanceof", "new", "return", "switch", "this",
-      "throw", "try", "typeof", "var", "void", "while", "with"];
+                  "default", "delete", "do", "else", "finally", "for",
+                  "function", "if", "in", "instanceof", "new", "return",
+                  "switch", "this", "throw", "try", "typeof", "var",
+                  "void", "while", "with"];
 
   this.ondestroy = function()
   {
@@ -88,7 +89,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         this._container.scrollTop = this._current_scroll;
       }
     }
-
   };
 
   this.clear = function()
@@ -309,8 +309,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._add_line = function(elem_or_template)
   {
-
-
     var line = document.createElement("li");
 
     if (elem_or_template.nodeType === undefined)
@@ -498,12 +496,12 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       var prop = this._recent_autocompletion[this._autocompletion_index][0];
       // This doesn't cover every allowed character, but should be fine most of the time
       if (!/^[a-z$_]$|^[a-z$_][a-z$_0-9]/i.test(prop) || keywords.indexOf(prop) != -1) {
-          if (isNaN(prop))
-          {
-            prop = '"' + prop + '"';
-          }
-          pre = pre.slice(0, -1) + "[";
-          post = "]" + post;
+        if (isNaN(prop))
+        {
+          prop = '"' + prop + '"';
+        }
+        pre = pre.slice(0, -1) + "[";
+        post = "]" + post;
       }
       this._textarea.value = pre + prop + post;
       this._textarea_handler.put_cursor(this._textarea.value.length - post_length);
@@ -616,7 +614,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
                                 this._textarea.value.slice(0, this._textarea.selectionStart),
                                 window.stop_at.getSelectedFrame());
     }
-
   };
 
   this._on_completer = function(props)
@@ -768,5 +765,4 @@ cls.ReplView.create_ui_widgets = function()
       }
     ]
   );
-
 };
