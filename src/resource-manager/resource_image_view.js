@@ -44,7 +44,7 @@ window.templates.image_entry = function(image)
 {
   return ["div", ["img", "src", image.urlload.url, "style", "width:100px"],
                  ["a", image.urlload.url, "href", image.urlload.url],
-          "style", "display:inline-block; width:128px; height: 128px; border: solid thin red;"
+          "class", "resource-image-box"
          ];
 
 };

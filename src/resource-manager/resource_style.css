@@ -63,6 +63,26 @@
 
 
 .resource-detail {
-  
+
 }
 
+.resource-image-view {
+
+}
+
+.resource-image-box {
+    padding: 8px;
+    margin: 8px;
+    vertical-align: top;
+    display: inline-block;
+    width: 100px;
+    height: 120px;
+    border: solid thin black;
+    text-align: center;
+    overflow: hidden;
+}
+
+.resource-image-box img {
+    max-width: 70px;
+    max-height: 70px;
+}
