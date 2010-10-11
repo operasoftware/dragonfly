@@ -498,8 +498,12 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       var prop = this._recent_autocompletion[this._autocompletion_index][0];
       // This doesn't cover every allowed character, but should be fine most of the time
       if (!/^[a-z$_]$|^[a-z$_][a-z$_0-9]/i.test(prop) || keywords.indexOf(prop) != -1) {
-          pre = pre.slice(0, -1) + "[\"";
-          post = "\"]" + post;
+          if (isNaN(prop))
+          {
+            prop = '"' + prop + '"';
+          }
+          pre = pre.slice(0, -1) + "[";
+          post = "]" + post;
       }
       this._textarea.value = pre + prop + post;
       this._textarea_handler.put_cursor(this._textarea.value.length - post_length);
