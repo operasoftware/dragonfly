@@ -1100,7 +1100,6 @@ fade-out
 cst-select
 {
   display: inline-block;
-  position: relative;
   background-image:-o-skin('Dropdown Skin');
   height: 24px;
   line-height: 24px;

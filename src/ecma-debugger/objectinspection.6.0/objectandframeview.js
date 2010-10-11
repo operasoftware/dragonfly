@@ -74,7 +74,7 @@ cls.EcmascriptDebugger["6.0"].InspectionView = function(id, name, container_clas
       ] || null;
       this._data = new cls.InspectableJSObject(frame.rt_id, frame.scope_id, null, null, virtual_properties);
     }
-    else if(this._data)
+    else if(this._data && this._last_selected == "frame")
     {
       this._data.collapse();
       this._data = null;
