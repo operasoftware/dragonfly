@@ -353,8 +353,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       {
         if (evt.ctrlKey)
         {
-          this._textarea.rows = this._textarea.rows + 1;
-          this._textarea.value = this._textarea.value + "\n";
+          var pos = this._textarea.selectionStart;
+          this._textarea.value = this._textarea.value.slice(0, pos) + "\n" + this._textarea.value.slice(pos);
+          evt.preventDefault();
+          this._textarea.selectionStart = pos+2; // put cursor after the newline
+          this._textarea.selectionEnd = pos+2;
         }
         else if (this._use_autocomplete_highlight && this._recent_autocompletion)
         {
