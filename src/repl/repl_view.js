@@ -578,7 +578,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       }
 
       var match = this._longest_common_prefix(matches.slice(0));
-      if (match.length > localpart.length)
+      if (match.length > localpart.length || matches.length == 1)
       {
         var pos = this._textarea.value.lastIndexOf(localpart);
         var post = this._textarea.value.slice(this._textarea.selectionStart);
