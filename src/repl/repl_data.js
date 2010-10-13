@@ -26,11 +26,6 @@ cls.ReplData = function(view)
     this._view.update();
   };
 
-  this.add_message = function(msg)
-  {
-    this._add_entry("consolelog", msg);
-  };
-
   /**
    * Input, what was typed, always a string
    */
@@ -47,6 +42,8 @@ cls.ReplData = function(view)
   this.add_output_str = function(str) {
     this._add_entry("string", str);
   };
+
+  this.add_message = this.add_output_str; // for now, just emit strings
 
   /**
    * Inspectable element, as used by dirxml()
