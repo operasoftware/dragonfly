@@ -55,6 +55,18 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
       switched_to_view = true;
       // note: events are bound to handlers at the bottom of this class
+
+      if (this._is_first_showing)
+      {
+        // This happens here instead of constructor because the service grabs
+        // hostinfo async. If we did it on construction there is a chance the
+        // service hasn't gotten around to fetching it yet.
+        this._is_first_showing = false;
+        var hostinfo = this._service.hostinfo;
+        if (hostinfo) {
+          this._data.add_message(hostinfo.userAgent + " (Core " + hostinfo.coreVersion + ")");
+        }
+      }
     }
 
     this._update_runtime_selector_bound();
@@ -67,15 +79,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       this._container.addEventListener("scroll", this._save_scroll_bound, false);
       padder.addEventListener("DOMAttrModified", this._update_scroll_bound, false);
       padder.addEventListener("DOMNodeInserted", this._update_scroll_bound, false);
-
-      if (this._is_first_showing)
-      {
-        this._is_first_showing = false;
-        var hostinfo = this._service.hostinfo;
-        if (hostinfo) {
-          this._render_string(hostinfo.userAgent + " (Core " + hostinfo.coreVersion + ")");
-        }
-      }
 
       if(this._current_scroll === null)
       {
