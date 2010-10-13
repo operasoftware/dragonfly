@@ -11,10 +11,10 @@
  *
  * where NODENAME, TEXT and KEY are DOM strings and VALUE can be everything except an array
  */
-  
+
 Element.prototype.render = Document.prototype.render = function(args, namespace)
 {
-  
+
   if (typeof args == 'string' && this.nodeType == 1)
   {
     this.insertAdjacentHTML('beforeend', args);
@@ -403,7 +403,7 @@ Element.prototype.getPreviousInFlow = function(root_context)
 };
 
 
-/* Check elements of a DOM traversal for an attribute. */ 
+/* Check elements of a DOM traversal for an attribute. */
 Element.prototype.has_attr = function(traverse_type, name)
 {
   switch (traverse_type)
@@ -595,10 +595,10 @@ StyleSheetList.prototype.getPropertyValue = function(selector, property)
 
 if (!(function(){}).bind)
 {
-  Function.prototype.bind = function (context) 
+  Function.prototype.bind = function (context)
   {
     var method = this, args = Array.prototype.slice.call(arguments, 1);
-    return function() 
+    return function()
     {
       return method.apply(context, args.concat(Array.prototype.slice.call(arguments)));
     }
@@ -612,6 +612,16 @@ if (!"".trim)
     return this.replace(/^\s+/, '').replace(/\s+$/, '');
   }
 }
+
+/**
+ * Check if a string appears to be a number, that is, all letters in the
+ * string are numbers. Does not take in to account decimals. Clones the
+ * behaviour of str.isdigit in python
+ */
+String.prototype.isdigit = function()
+{
+  return !(/\D/.test(this));
+};
 
 /**
  * Convenience function for loading a resource with XHR using the get method.
