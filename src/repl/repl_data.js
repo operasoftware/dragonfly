@@ -45,6 +45,11 @@ cls.ReplData = function(view)
 
   this.add_message = this.add_output_str; // for now, just emit strings
 
+  this.add_output_completion = function(str)
+  {
+    this._add_entry("completion", str);
+  };
+
   /**
    * Inspectable element, as used by dirxml()
    */

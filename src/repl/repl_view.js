@@ -160,7 +160,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
           this._render_groupend();
           break;
         case "count":
-        this._render_count(e.data);
+          this._render_count(e.data);
+          break;
+        case "completion":
+          this._render_completion(e.data);
           break;
       default:
           this._render_string("unknown");
@@ -276,12 +279,17 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._add_line(separated);
   };
 
+  this._render_completion = function(s)
+  {
+    this._add_line(["span", s, "class", "repl-completion"]);
+  };
+
   /**
    * Render a string. Return the element that was rendered.
    */
   this._render_string = function(s)
   {
-      return this._add_line(templates.repl_output_native(s));
+    return this._add_line(templates.repl_output_native(s));
   };
 
   /**
@@ -588,8 +596,13 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       }
       else
       {
-        this._render_input(this._textarea.value);
-        this._autocompletion_elem = this._render_string(matches.sort().join(", "));
+        this._data.add_input(this._textarea.value);
+        this._data.add_output_completion(matches.sort().join(", "));
+
+        var completions = this._linelist.querySelectorAll(".repl-completion");
+        this._autocompletion_elem = completions[completions.length-1];
+        this._autocompletion_elem = this._autocompletion_elem.parentNode;
+
 
         // the recent autocomplete array contains tuples, (word, start, end)
         // that can be used when selecting a range.
