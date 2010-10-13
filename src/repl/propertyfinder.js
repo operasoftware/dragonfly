@@ -111,7 +111,7 @@ window.cls.PropertyFinder = function(rt_id) {
           );
         }
 
-        if (ret.props.indexOf("this") == -1)
+        if (!ret.scope && ret.props.indexOf("this") == -1)
         {
           ret.props.push("this");
         }
