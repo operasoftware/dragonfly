@@ -498,27 +498,31 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     var localpos = this._textarea.value
                        .slice(0, this._textarea.selectionStart)
                        .lastIndexOf(this._autocompletion_localpart);
-    if (localpos!=-1)
+    if (localpos != -1)
     {
       var pre = this._textarea.value.slice(0, localpos);
       var post = this._textarea.value.slice(this._textarea.selectionStart);
-      var post_length = post.length;
       var prop = this._recent_autocompletion[this._autocompletion_index][0];
-      // This doesn't cover every allowed character, but should be fine most of the time
-      var isidentifier = !/^[a-z$_]$|^[a-z$_][a-z$_0-9]/i.test(prop);
-      if ((isidentifier || this._keywords.indexOf(prop) != -1)
-           && this._autocompletion_scope ) {
-        if (isNaN(prop))
-        {
-          prop = '"' + prop + '"';
-        }
-        pre = pre.slice(0, -1) + "[";
-        post = "]" + post;
-
-      }
-      this._textarea.value = pre + prop + post;
-      this._textarea_handler.put_cursor(this._textarea.value.length - post_length);
+      var line = this._construct_line(pre, prop, post);
+      this._textarea.value = line;
+      this._textarea_handler.put_cursor(line.length - post.length);
     }
+  };
+
+  this._construct_line = function(pre, prop, post)
+  {
+    // This doesn't cover every allowed character, but should be fine most of the time
+    var is_valid_identifier = /^[a-z$_]$|^[a-z$_][a-z$_0-9]/i.test(prop);
+    if ((!is_valid_identifier || this._keywords.indexOf(prop) != -1)
+         && this._autocompletion_scope) {
+      if (/\D/.test(prop))
+      {
+        prop = '"' + prop + '"';
+      }
+      pre = pre.slice(0, -1) + "[";
+      post = "]" + post;
+    }
+    return pre + prop + post;
   };
 
   this._highlight_completion = function(index)
@@ -596,11 +600,14 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       var match = this._longest_common_prefix(matches.slice(0));
       if (match.length > localpart.length || matches.length == 1)
       {
-        var pos = this._textarea.value.lastIndexOf(localpart);
+        var pos = this._textarea.value
+                       .slice(0, this._textarea.selectionStart)
+                       .lastIndexOf(localpart);
+        var pre = this._textarea.value.slice(0, pos);
         var post = this._textarea.value.slice(this._textarea.selectionStart);
-        var autocompletion = this._textarea.value.slice(0, pos) + match;
-        this._textarea.value = autocompletion + post;
-        this._textarea_handler.put_cursor(autocompletion.length);
+        var line = this._construct_line(pre, match, post)
+        this._textarea.value = line;
+        this._textarea_handler.put_cursor(line.length - post.length);
       }
       else
       {
