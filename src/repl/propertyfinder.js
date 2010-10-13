@@ -228,3 +228,23 @@ window.cls.PropertyFinder = function(rt_id) {
     return "[PropertyFinder singleton instance]";
   };
 };
+
+cls.PropertyFinder.prop_sorter = function(a, b)
+{
+  a = a.toLowerCase();
+  b = b.toLowerCase();
+
+  if (a.isdigit() && b.isdigit())
+  {
+    return parseInt(a, 10) - parseInt(b, 10);
+  }
+  else if (a>b)
+  {
+    return 1;
+  }
+  else if (a<b)
+  {
+    return -1;
+  }
+  return 0;
+};

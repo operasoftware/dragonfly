@@ -602,7 +602,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       else
       {
         this._data.add_input(this._textarea.value);
-        this._data.add_output_completion(matches.sort().join(", "));
+        this._data.add_output_completion(matches.sort(cls.PropertyFinder.prop_sorter).join(", "));
 
         var completions = this._linelist.querySelectorAll(".repl-completion");
         this._autocompletion_elem = completions[completions.length-1];
@@ -612,7 +612,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         // the recent autocomplete array contains tuples, (word, start, end)
         // that can be used when selecting a range.
         var offset = 0;
-        this._recent_autocompletion = matches.sort().map(function(word) {
+        this._recent_autocompletion = matches.sort(cls.PropertyFinder.prop_sorter).map(function(word) {
           var ret = [word, offset, offset+word.length];
           offset += word.length + 2; // +2 accounts for ", "
           return ret;
