@@ -22,11 +22,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._recent_autocompletion = null;
   this._autocompletion_index = null;
   this._autocompletion_elem = null;
+  this._autocompletion_scope = null;
   this._use_autocomplete_highlight = true; // fixme: turn this in to a setting
   this._textarea_handler = null;
   this._closed_group_nesting_level = 0;
-
-  var keywords = ["break", "case", "catch", "continue", "debugger",
+  this._keywords = ["break", "case", "catch", "continue", "debugger",
       "default", "delete", "do", "else", "finally", "for", "function",
       "if", "in", "instanceof", "new", "return", "switch", "this",
       "throw", "try", "typeof", "var", "void", "while", "with"];
@@ -505,9 +505,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       var post_length = post.length;
       var prop = this._recent_autocompletion[this._autocompletion_index][0];
       // This doesn't cover every allowed character, but should be fine most of the time
-      if (!/^[a-z$_]$|^[a-z$_][a-z$_0-9]/i.test(prop) || keywords.indexOf(prop) != -1) {
-          pre = pre.slice(0, -1) + "[\"";
-          post = "\"]" + post;
+      var isidentifier = !/^[a-z$_]$|^[a-z$_][a-z$_0-9]/i.test(prop);
+      if ((isidentifier || this._keywords.indexOf(prop) != -1)
+           && this._autocompletion_scope ) {
+        pre = pre.slice(0, -1) + "[\"";
+        post = "\"]" + post;
       }
       this._textarea.value = pre + prop + post;
       this._textarea_handler.put_cursor(this._textarea.value.length - post_length);
@@ -571,6 +573,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     {
       var localpart = props.identifier;
       this._autocompletion_localpart = localpart;
+      this._autocompletion_scope = props.scope;
       var has_uppercase_letter = /[A-Z]/.test(localpart);
       var matches = props.props.filter(function(candidate) {
         // If only lowercase letters are used, make the autocompletion case-insensitive
