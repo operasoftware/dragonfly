@@ -88,7 +88,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         this._container.scrollTop = this._current_scroll;
       }
     }
-
   };
 
   this.clear = function()
@@ -317,8 +316,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._add_line = function(elem_or_template)
   {
-
-
     var line = document.createElement("li");
 
     if (elem_or_template.nodeType === undefined)
@@ -508,8 +505,13 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       var isidentifier = !/^[a-z$_]$|^[a-z$_][a-z$_0-9]/i.test(prop);
       if ((isidentifier || this._keywords.indexOf(prop) != -1)
            && this._autocompletion_scope ) {
-        pre = pre.slice(0, -1) + "[\"";
-        post = "\"]" + post;
+        if (isNaN(prop))
+        {
+          prop = '"' + prop + '"';
+        }
+        pre = pre.slice(0, -1) + "[";
+        post = "]" + post;
+
       }
       this._textarea.value = pre + prop + post;
       this._textarea_handler.put_cursor(this._textarea.value.length - post_length);
@@ -628,7 +630,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
                                 this._textarea.value.slice(0, this._textarea.selectionStart),
                                 window.stop_at.getSelectedFrame());
     }
-
   };
 
   this._on_completer = function(props)
@@ -780,5 +781,4 @@ cls.ReplView.create_ui_widgets = function()
       }
     ]
   );
-
 };
