@@ -69,7 +69,7 @@ cls.BufferManager = function(textarea)
     }
     else if (/\w$/.test(char_before_cursor))
     {
-      replace_regexp = /\w+$/;
+      replace_regexp = /[\w\s]+$/;
     }
     else if (/\W$/.test(char_before_cursor))
     {
