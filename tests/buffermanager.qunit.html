@@ -42,11 +42,8 @@ test("cursor positioning", function() {
 test("kill word backwards", function() {
   var man = new cls.BufferManager(window.testarea);
   man.set_value("hello world(foo*bar[baz]asdf {123} bbb", 9999);
-  equals(man.get_cursor(), 38);
-  man.kill_word_backwards();
-  equals(man.get_value(), "hello world(foo*bar[baz]asdf {123} ");
-  equals(man.get_cursor(), 35);
 
+equals(man.get_cursor(), 38);
   man.kill_word_backwards();
   equals(man.get_value(), "hello world(foo*bar[baz]asdf {123}");
   equals(man.get_cursor(), 34);
@@ -58,6 +55,7 @@ test("kill word backwards", function() {
   man.kill_word_backwards();
   equals(man.get_value(), "hello world(foo*bar[baz]asdf {");
   equals(man.get_cursor(), 30);
+
 
   man.kill_word_backwards();
   equals(man.get_value(), "hello world(foo*bar[baz]asdf");
@@ -96,12 +94,8 @@ test("kill word backwards", function() {
   equals(man.get_cursor(), 11);
 
   man.kill_word_backwards();
-  equals(man.get_value(), "hello ");
+  equals(man.get_value(), "hello");
   equals(man.get_cursor(), 6);
-
-  man.kill_word_backwards();
-  equals(man.get_value(), "");
-  equals(man.get_cursor(), 0);
 })
 
 
