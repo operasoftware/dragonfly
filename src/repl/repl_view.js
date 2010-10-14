@@ -364,8 +364,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
           var pos = this._textarea.selectionStart;
           this._textarea.value = this._textarea.value.slice(0, pos) + "\n" + this._textarea.value.slice(pos);
           evt.preventDefault();
-          this._textarea.selectionStart = pos+2; // put cursor after the newline
-          this._textarea.selectionEnd = pos+2;
+          this._textarea_handler.put_cursor(pos+2); // put cursor after the newline
         }
         else if (this._use_autocomplete_highlight && this._recent_autocompletion)
         {
@@ -495,14 +494,18 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._commit_selection = function()
   {
-    var localpos = this._textarea.value
-                       .slice(0, this._textarea.selectionStart)
-                       .lastIndexOf(this._autocompletion_localpart);
-    if (localpos != -1)
+    this._update_textarea_value(this._recent_autocompletion[this._autocompletion_index][0]);
+  };
+
+  this._update_textarea_value = function(prop)
+  {
+    var pos = this._textarea.value
+                  .slice(0, this._textarea.selectionStart)
+                  .lastIndexOf(this._autocompletion_localpart);
+    if (pos != -1)
     {
-      var pre = this._textarea.value.slice(0, localpos);
+      var pre = this._textarea.value.slice(0, pos);
       var post = this._textarea.value.slice(this._textarea.selectionStart);
-      var prop = this._recent_autocompletion[this._autocompletion_index][0];
       var line = this._construct_line(pre, prop, post);
       this._textarea.value = line;
       this._textarea_handler.put_cursor(line.length - post.length);
@@ -600,14 +603,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       var match = this._longest_common_prefix(matches.slice(0));
       if (match.length > localpart.length || matches.length == 1)
       {
-        var pos = this._textarea.value
-                       .slice(0, this._textarea.selectionStart)
-                       .lastIndexOf(localpart);
-        var pre = this._textarea.value.slice(0, pos);
-        var post = this._textarea.value.slice(this._textarea.selectionStart);
-        var line = this._construct_line(pre, match, post)
-        this._textarea.value = line;
-        this._textarea_handler.put_cursor(line.length - post.length);
+        this._update_textarea_value(match);
       }
       else
       {
