@@ -698,6 +698,11 @@ Color.prototype = new function()
     {
       h += 360;
     }
+    else if (h == 0 && ((is_to_hsl && this.__hsv[HUE] == 360) || 
+                        (!is_to_hsl && this.__hsl[HUE] == 360)))
+    {
+      h = 360; 
+    }
     s *= 100;
     if( s > 100 )
     {

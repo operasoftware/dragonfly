@@ -176,6 +176,12 @@ ui_strings.S_SWITCH_SHOW_TAB_WIDGET = 'Show widget tab';
 ui_strings.S_SWITCH_SHOW_TAB_DRAGONFLY = 'Show Opera Dragonfly tab';
 /* DESC: TODO. */
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE = 'Automatically update global scope';
+/* DESC: Show prototpe objects when inspecting a js object. */
+ui_strings.S_SWITCH_SHOW_PROTOTYPES = 'Show the prototypes';
+/* DESC: Show default null and empty string values when inspecting a js object. */
+ui_strings.S_SWITCH_SHOW_FEFAULT_NULLS_AND_EMPTY_STRINGS = 'Show default null and empty strings values';
+/* DESC: Show non enumerale properties when inspecting a js object. */
+ui_strings.S_SWITCH_SHOW_NON_ENUMERABLES = 'Show non enumerable properties';
 /* DESC: Will select the element when clicked. */
 ui_strings.S_SWITCH_FIND_ELEMENT_BY_CLICKING = 'Find element by clicking';
 /* DESC: Highlights page elements when thet mouse hovers. */
@@ -416,6 +422,8 @@ ui_strings.S_LABEL_STORAGE_DOUBLE_CLICK_TO_EDIT = "Double click to edit";
 ui_strings.S_LABEL_UTIL_AREA = 'Area';
 /* DESC: Scale */
 ui_strings.S_LABEL_UTIL_SCALE = 'Scale';
+/* DESC: A setting to define which prototypes of inspected js objects should be collapsed by default. */
+ui_strings.S_LABEL_COLLAPSED_INSPECTED_PROTOTYPES ="Default collapsed prototype objects (a list of prototypes, e.g. Object, Array, etc. * will collapse all): ";
 
 /*
  * Information strings in the UI

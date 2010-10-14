@@ -180,6 +180,7 @@ body
 <script src="../../src/ecma-debugger/objectinspection.6.0/inspectablejsobject.js"/>
 <script src="../../src/ecma-debugger/objectinspection.6.0/templates.js"/>
 <script src="../../src/ecma-debugger/objectinspection.6.0/actions.js"/>
+<script src="../../src/ecma-debugger/objectinspection.6.0/propertyfilter.js"/>
 
 
 <script src="templates_6_0_test.js"/>
@@ -190,8 +191,27 @@ body
 
 
 <script>
+window.settings = 
+{
+  inspection: 
+  {
+    get: function(key)
+    {
+      switch (key)
+      {
+        case 'collapsed-prototypes':
+          return [];
+        case 'use-property-filter':
+          return true;
+      }
+    }
+  }
+};
+
 window.onload = function()
 {
+  cls.EcmascriptDebugger["6.0"].InspectableJSObject.create_filters();
+
   window.app = {};
 
   window.app.helpers = {};

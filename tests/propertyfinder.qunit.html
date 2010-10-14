@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dragonfly - Command Processor</title>
+    <link rel="stylesheet" href="qunit/qunit.css" media="screen">
+    <script src="qunit/qunit.js"></script>
+    <script src="../src/lib/json.js"></script>
+    <script src="../src/repl/propertyfinder.js"></script>
+<script>
+
+test("Input scope smoketest", function() {
+    var fp = new cls.PropertyFinder()._find_input_parts;
+    var parts;
+
+    parts = fp("foo");
+    equal(parts.scope, "");
+    equal(parts.identifier, "foo");
+
+    parts = fp("foo.");
+    equal(parts.scope, "foo");
+    equal(parts.identifier, "");
+
+    parts = fp("foo.bar");
+    equal(parts.scope, "foo");
+    equal(parts.identifier, "bar");
+
+    parts = fp("foo(bar");
+    equal(parts.scope, "");
+    equal(parts.identifier, "bar");
+
+    parts = fp("foo(bar.baz");
+    equal(parts.scope, "bar");
+    equal(parts.identifier, "baz");
+
+    parts = fp("foo[bar");
+    equal(parts.scope, "");
+    equal(parts.identifier, "bar");
+
+    parts = fp("foo[bar.baz");
+    equal(parts.scope, "bar");
+    equal(parts.identifier, "baz");
+
+});
+
+</script>
+
+</head>
+<body>
+    <h1 id="qunit-header">Dragonfly - Command Processor</h1>
+    <h2 id="qunit-banner"></h2>
+    <div id="qunit-testrunner-toolbar"></div>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
+</body>
+</html>

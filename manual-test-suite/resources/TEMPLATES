@@ -1,0 +1,47 @@
+HTML_HEAD
+<!doctype html>
+<head>
+<style>
+td ul
+{
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+</style>
+</head>
+<body>
+#
+HTML_FOOT
+</body>
+</html>
+#
+HTML_URL
+<li><a href="%s">%s</a></li>
+#
+HTML_ITEM
+<li>%s</li>
+#
+HTML_TITLE
+<h3>Opera Dragonfly Manual Smoke Test Suite</h3>
+<h2>%s</h2>
+<table>
+<tr><td>Mode:<td>%s</tr>
+<tr><td>Tab:<td>%s</tr>
+<tr><td>URL:<td><ul>%s</ul></tr>
+<tr><td>Index:<td>%s</tr>
+</table>
+<h3>Test</h3>
+<ol>
+%s
+</ol>
+#
+HTML_MAIN_TITLE
+<h1>Opera Dragonfly Manual Smoke Test Suite</h1>
+#
+HTML_SECTION
+<h2>%s</h2>
+<ul>
+%s
+</ul>
+  

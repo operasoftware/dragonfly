@@ -2,7 +2,7 @@
 
 (function()
 {
-  var self = this; 
+  var self = this;
   this.hello = function(enviroment)
   {
     var ret = ['ul'];
@@ -12,7 +12,7 @@
       "stpVersion": ui_strings.S_TEXT_ENVIRONMENT_PROTOCOL_VERSION,
       "coreVersion": "Core Version",
       "operatingSystem": ui_strings.S_TEXT_ENVIRONMENT_OPERATING_SYSTEM,
-      "platform": ui_strings.S_TEXT_ENVIRONMENT_PLATFORM, 
+      "platform": ui_strings.S_TEXT_ENVIRONMENT_PLATFORM,
       "userAgent": ui_strings.S_TEXT_ENVIRONMENT_USER_AGENT
     }
     for( prop in prop_dict)
@@ -35,7 +35,7 @@
     {
       ret[ret.length] = self['runtime-' + type](rt, arg_list);
     }
-    return ret; 
+    return ret;
   }
 
   this['runtime-runtime'] = function(runtime, arg_list)
@@ -43,7 +43,7 @@
     var display_uri = helpers.shortenURI(runtime.uri);
 
     return [
-      'cst-option', 
+      'cst-option',
       runtime['title'] || display_uri.uri,
       'rt-id', runtime.runtime_id.toString()
     ].concat( display_uri.title ? ['title', display_uri.title] : [] )
@@ -52,16 +52,16 @@
 
   this['runtime-script'] = function(runtime, arg_list)
   {
-    var 
+    var
     display_uri = helpers.shortenURI(runtime.uri),
     is_reloaded_window = runtimes.isReloadedWindow(runtime.window_id),
     ret = [
       ['h2', runtime['title'] || display_uri.uri].
       concat( runtime.selected ? ['class', 'selected-runtime'] : [] ).
       concat( display_uri.title ? ['title', display_uri.title] : [] )
-    ], 
+    ],
     scripts = runtimes.getScripts(runtime.runtime_id),
-    script = null, 
+    script = null,
     i=0,
     stopped_script_id = arg_list[0],
     selected_script_id = arg_list[1];
@@ -71,7 +71,7 @@
     {
       for( ; script = scripts[i]; i++)
       {
-        
+
         ret[ret.length] = templates.scriptOption(script, selected_script_id, stopped_script_id);
       }
     }
@@ -79,10 +79,10 @@
     TODO handle runtimes with no scripts
     else
     {
-      scripts_container = ['p', 
-        settings.runtimes.get('reload-runtime-automatically') || is_reloaded_window 
+      scripts_container = ['p',
+        settings.runtimes.get('reload-runtime-automatically') || is_reloaded_window
         ? ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS
-        : ui_strings.S_INFO_RELOAD_FOR_SCRIPT, 
+        : ui_strings.S_INFO_RELOAD_FOR_SCRIPT,
         'class', 'info-text'];
     }
     */
@@ -92,9 +92,9 @@
 
   this.scriptOption = function(script, selected_script_id, stopped_script_id)
   {
-    var 
+    var
     display_uri = helpers.shortenURI(script.uri),
-    /* script types in the protocol: 
+    /* script types in the protocol:
        "inline" | "event" | "linked" | "timeout" | "java" | "generated" | "unknown" */
     type_dict =
     {
@@ -105,11 +105,11 @@
     script_type = script.script_type,
     ret = [
       'cst-option',
-      ( type_dict[script_type] || script_type ) + ' - ' + 
-      ( 
+      ( type_dict[script_type] || script_type ) + ' - ' +
+      (
         display_uri.uri
         ? display_uri.uri
-        : ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script.script_id 
+        : ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script.script_id
       ),
       'script-id', script.script_id.toString()
     ],
@@ -119,25 +119,25 @@
     {
       class_name += ( class_name && ' ' || '' ) + 'stopped';
     }
-      
+
     if( display_uri.title )
     {
-      ret.splice(ret.length, 0, 'title', display_uri.title); 
+      ret.splice(ret.length, 0, 'title', display_uri.title);
     }
-    
+
     if( class_name )
     {
-      ret.splice(ret.length, 0, 'class', class_name); 
+      ret.splice(ret.length, 0, 'class', class_name);
     }
     /*
     if( script.stop_ats.length )
     {
-      ret.splice(ret.length, 0, 'style', 'background-position: 0 0'); 
+      ret.splice(ret.length, 0, 'style', 'background-position: 0 0');
     }
     */
     return ret;
   }
-  
+
   this['runtime-css'] = function(runtime, org_args)
   {
     const
@@ -145,16 +145,16 @@
     HREF = 2,
     TITLE = 7;
 
-    var 
+    var
     display_uri = helpers.shortenURI(runtime.uri),
-    ret = 
+    ret =
     [
       ['h2', runtime['title'] || display_uri.uri].
       concat( display_uri.title ? ['title', display_uri.title] : [] )
     ],
     sheets = stylesheets.getStylesheets(runtime.runtime_id),
-    sheet = null, 
-    i = 0, 
+    sheet = null,
+    i = 0,
     container = [],
     rt_id = runtime.runtime_id,
     title = '';
@@ -164,7 +164,7 @@
       for( ; sheet = sheets[i]; i++)
       {
         title = sheet[HREF] ? sheet[HREF] : 'inline stylesheet ' + ( i + 1 ) ;
-        container[container.length] = 
+        container[container.length] =
         [
           'cst-option',
           title,
@@ -181,7 +181,7 @@
     */
     //container.splice(container.length, 0, 'runtime-id', runtime.runtime_id);
     ret = ret.concat([container])
-    
+
     return ret;
   }
 
@@ -192,7 +192,7 @@
     return (
     [
       'cst-option',
-       runtime['title'] || runtime.uri, 
+       runtime['title'] || runtime.uri,
       'runtime-id', runtime.runtime_id.toString()
     ].concat( dom_data.getDataRuntimeId() == runtime.runtime_id ? ['class', 'selected-runtime'] : [] ).
       concat( display_uri != runtime.uri ? ['title', runtime.uri] : [] ) )
@@ -202,8 +202,8 @@
   {
     return ['li',
       ['label',
-        ['input', 
-        'type', 'checkbox', 
+        ['input',
+        'type', 'checkbox',
         'value', settingName,
         'checked', settingValue ?  true : false,
         'handler', 'set-stop-at'
@@ -233,13 +233,13 @@
     var arr = ["script", "exception", "error", "abort"], n='', i=0;
     for( ; n = arr[i]; i++)
     {
-      ret[ret.length] = this.checkbox(n, config[n]); 
+      ret[ret.length] = this.checkbox(n, config[n]);
     }
     return ['div'].concat([ret]);
   }
 /*
 
-MODE ::= "<mode>" 
+MODE ::= "<mode>"
              ( "run" | "step-into-call" | "step-next-line" | "step-out-of-call" )
            "</mode>" ;
 
@@ -269,8 +269,8 @@ MODE ::= "<mode>"
 
   this.examineObject = function( data )
   {
-    var prop = null, 
-    i = 0, 
+    var prop = null,
+    i = 0,
     ret = ['ul'];
 
 
@@ -297,7 +297,7 @@ MODE ::= "<mode>"
       }
     }
 
-    if( window.__profiling__ ) 
+    if( window.__profiling__ )
     {
       window.__times__[4] =  new Date().getTime(); // creating markup
     }
@@ -309,8 +309,8 @@ MODE ::= "<mode>"
 
   this.key_value = function(key, value, value_class, ref_index)
   {
-    return ['li', 
-        ['span', key, 'class', 'key'], 
+    return ['li',
+        ['span', key, 'class', 'key'],
         ['span', value].concat( value_class ? ['class', value_class] : []),
       'ref_index', ref_index
     ];
@@ -318,9 +318,9 @@ MODE ::= "<mode>"
 
   this.key_value_folder = function(key, ref_index)
   {
-    return ['li', 
+    return ['li',
       ['input', 'type', 'button', 'handler', 'examine-object', 'class', 'folder-key'],
-      ['span', key, 'class', 'key'], 
+      ['span', key, 'class', 'key'],
       ['span', 'object', 'class', 'object'],
       'ref_index', ref_index
     ];
@@ -378,7 +378,7 @@ MODE ::= "<mode>"
     }
 
     return ret;
-             
+
 
   }
 
@@ -390,7 +390,7 @@ MODE ::= "<mode>"
 
   this.breadcrumb = function(model, obj_id, parent_node_chain)
   {
-          
+
     var
     css_path = model._get_css_path(obj_id, parent_node_chain,
                                    window.settings.dom.get('force-lowercase'),
@@ -403,12 +403,12 @@ MODE ::= "<mode>"
     {
       for( ; i < css_path.length; i++ )
       {
-        ret[ret.length] = 
+        ret[ret.length] =
         [
-          "span", css_path[i].name, 
-          'obj-id', css_path[i].id.toString(), 
+          "span", css_path[i].name,
+          'obj-id', css_path[i].id.toString(),
           'handler', 'breadcrumb-link',
-          'class', css_path[i].is_parent_offset ? 'parent-offset' : '', 
+          'class', css_path[i].is_parent_offset ? 'parent-offset' : '',
         ];
         ret[ret.length] = css_path[i].combinator;
       }
@@ -615,7 +615,7 @@ MODE ::= "<mode>"
     for( ; lang = dict[i]; i++)
     {
       ret[ret.length] = ['option', lang.name, 'value', lang.key].
-        concat( selected_lang == lang.key ? ['selected', 'selected'] : [] ); 
+        concat( selected_lang == lang.key ? ['selected', 'selected'] : [] );
     }
     return ret;
   }

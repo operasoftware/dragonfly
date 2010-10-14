@@ -17,7 +17,7 @@
   this.svg_stop = function(offset, stop_color, stop_opacity)
   {
     return (
-    ['svg:stop', 
+    ['stop', 
       'offset', offset, 
       'stop-color', stop_color
     ].concat( stop_opacity ? ['stop-opacity', stop_opacity] : [] ));
@@ -25,7 +25,7 @@
 
   this.svg_liner_gradient = function(id, colors, rotate)
   {
-    var ret = ['svg:linearGradient'];
+    var ret = ['linearGradient'];
     var count = colors.length - 1;
     ret.push(colors.map(function(color, index, colors)
     {
@@ -39,7 +39,7 @@
   this.svg_rect = function(x, y, width, height, rx, ry, fill, mask, id)
   {
     var ret = 
-    ['svg:rect', 
+    ['rect', 
       'x', x.toString(), 
       'y', y.toString(), 
       'width', width.toString(), 
@@ -64,7 +64,7 @@
     return ( 
     [
       this.svg_liner_gradient(grad_id, ['#fff', '#000'], rotate),
-      ['svg:mask',
+      ['mask',
         this.svg_rect(0, 0, '100%', '100%', 0, 0, 'url(#' + grad_id + ')'),
         'maskUnits', 'objectBoundingBox',
         'x', '0', 
@@ -78,7 +78,7 @@
   
   this.svg_gradient = function(x, y, width, height, colors, rotate, mask)
   {
-    var svg_defs = ['svg:defs'];
+    var svg_defs = ['defs'];
     if (colors.length > 1)
     {
       var grad_id = get_id();
@@ -259,7 +259,7 @@
       has_alpha ? 
       ['svg:svg',
         this.svg_rect(0, 0, 100, 36, 0, 0, "#000"), 
-        ['svg:path', 
+        ['path', 
           'd', 'M 50 0 l -50 0 l 0 36 l 50 -36 l 50 0 l -50 36 z',
           'fill', '#fff', 
         ],
@@ -301,7 +301,7 @@
   {
     return (
     ['svg:svg',
-        ['svg:path', 
+        ['path', 
           'd', rotate ? 
                'M 0.5 0.5 l 18 0 l 0 6 l -9 12 l -9 -12 z' :
                'M 0.5 0.5 l 0 18 l 6 0 l 12 -9 l -12 -9 z',
@@ -309,7 +309,7 @@
           'stroke', '#000', 
           'stroke-width', '1'
         ],
-        ['svg:path', 
+        ['path', 
           'd', rotate ?
                'M 0.5 79.5 l 18 0 l 0 -6 l -9 -12 l -9 12 z' : 
                'M 79.5 0.5 l 0 18 l -6 0 l -12 -9 l 12 -9 z', 
@@ -337,7 +337,7 @@
   {
     return (
     ['svg:svg',
-      ['svg:circle', 
+      ['circle', 
         'cx', '10', 
         'cy', '10', 
         'r', '9.5', 

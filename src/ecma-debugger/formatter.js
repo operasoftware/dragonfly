@@ -11,24 +11,29 @@ window.cls.SimpleJSParser = function()
 
   /**
     * Creates html markup to syntax highlight a slice of a js scource file.
-    * @param {Object} script 
+    * @param {Object} script
     *     An object with the properties source_data, line_arr, state_arr.
     *     source_data is the whole source file.
     *     line_arr is a list with offset for each new line
     *     satte_arr is the according list with the state for each line
     * @param {Number} line The line number to start the formatting.
     * @param {Number} max_line The count of maxium lines to create.
-    * @param {Number} state The start state.
     */
-  this.format = function(script, line, max_line, state){};
+  this.format = function(script, line, max_line, highlight_start, highlight_end, line_ele_name){};
+
+  /**
+   * Helper method that formats source code the same way as format but takes a
+   * simple string as input.
+   */
+  this.format_source = function(source){};
 
   /**
     * Tokenize a give script string.
     * @param {String} script_source The script string.
     * @param {Array} token_arr The list of tokens.
     * @param {Array} type_arr The list of token types.
-    * token_arr and type_arr must be passed as empty arrays. 
-    * This is a workaround for a missing standard destruction in js, 
+    * token_arr and type_arr must be passed as empty arrays.
+    * This is a workaround for a missing standard destruction in js,
     * e.g. something like: tokens, token_types = parser.parse(script_source);
     */
   this.parse = function(script_source, token_arr, type_arr){};
@@ -37,29 +42,30 @@ window.cls.SimpleJSParser = function()
 
   /* optimized to return fotmatted HTML */
 
-  const 
-  DEFAULT_STATE = 0, 
-  SINGLE_QUOTE_STATE = 1, 
-  DOUBLE_QUOTE_STATE = 2, 
-  REG_EXP_STATE = 3, 
+  const
+  DEFAULT_STATE = 0,
+  SINGLE_QUOTE_STATE = 1,
+  DOUBLE_QUOTE_STATE = 2,
+  REG_EXP_STATE = 3,
   COMMENT_STATE = 4,
-  WHITESPACE = 1,
-  LINETERMINATOR = 2,
-  IDENTIFIER = 3,
-  NUMBER = 4,
-  STRING = 5,
-  PUNCTUATOR = 6,
-  IDENTIFIER = 7,
-  DIV_PUNCTUIATOR = 8,
-  REG_EXP = 9,
-  COMMENT = 10;
+
+  //local copy of token types, local vars have better performance. :
+  WHITESPACE = window.cls.SimpleJSParser.WHITESPACE,
+  LINETERMINATOR = window.cls.SimpleJSParser.LINETERMINATOR,
+  IDENTIFIER = window.cls.SimpleJSParser.IDENTIFIER,
+  NUMBER = window.cls.SimpleJSParser.NUMBER,
+  STRING = window.cls.SimpleJSParser.STRING,
+  PUNCTUATOR = window.cls.SimpleJSParser.PUNCTUATOR,
+  DIV_PUNCTUATOR = window.cls.SimpleJSParser.DIV_PUNCTUATOR,
+  REG_EXP = window.cls.SimpleJSParser.REG_EXP,
+  COMMENT = window.cls.SimpleJSParser.COMMENT;
 
   var parser=null;
   var __source=null;
   var __buffer='';
   var __pointer=0;
-  var __char=String.fromCharCode
-  var __type=''; // WHITESPACE, LINE_TERMINATOR, NUMBER, STRING, PUNCTUATOR, DIV_PUNCTUIATOR, IDENTIFIER, REG_EXP
+  var __char=String.fromCharCode;
+  var __type=''; // WHITESPACE, LINE_TERMINATOR, NUMBER, STRING, PUNCTUATOR, DIV_PUNCTUATOR, IDENTIFIER, REG_EXP
   var __previous_type='';
   var __previous_value='';
   var __string_delimiter=0;
@@ -67,7 +73,7 @@ window.cls.SimpleJSParser = function()
   var __line='';
   var __line_number = 1;
   var __max_line_number = 0;
-  
+
   var __parse_error_line = 0;
   var __parse_error_line_offset = 0;
   var __parse_error_line_buffer ='';
@@ -78,12 +84,19 @@ window.cls.SimpleJSParser = function()
 
   var __token_arr = null;
   var __token_type_arr = null;
+
+  var __highlight_line_start = -1;
+  var __highlight_line_end = -1;
+
+  var __default_line_ele = "div";
+  var __current_line_ele = "";
+
   var __read_buffer_with_arrs = function()
   {
     if (__buffer)
     {
       __token_arr.push(__buffer);
-      __token_type_arr.push(__type)
+      __token_type_arr.push(__type);
       if (__type==IDENTIFIER)
       {
         __previous_type=__type;
@@ -311,14 +324,14 @@ window.cls.SimpleJSParser = function()
         }
         continue;
       }
-    
+
       if(c in NUMBER_CHARS)
       {
         read_buffer();
         __buffer+=c;
         __type=NUMBER;
         c=__source.charAt(++__pointer);
-        if(c=='x' || c=='X') 
+        if(c=='x' || c=='X')
         {
           __buffer+=c;
           c=number_hex_parser(__source.charAt(++__pointer));
@@ -342,8 +355,8 @@ window.cls.SimpleJSParser = function()
         }
         c=__source.charAt(++__pointer);
         continue;
-      }  
-      
+      }
+
       if(c=='.')
       {
         read_buffer();
@@ -363,7 +376,7 @@ window.cls.SimpleJSParser = function()
           continue;
         }
       }
-      
+
       if(c in PUNCTUATOR_CHARS)
       {
         read_buffer();
@@ -378,7 +391,7 @@ window.cls.SimpleJSParser = function()
                 (group += c) in PUNCTUATOR_GROUPS[group_count].groups)
           {
             __buffer += c in __escape ? __escape[c] : c;
-            c = __source.charAt(++__pointer); 
+            c = __source.charAt(++__pointer);
             group_count++;
           }
           else
@@ -393,12 +406,12 @@ window.cls.SimpleJSParser = function()
         continue;
       }
 
-      if(c=='/') 
+      if(c=='/')
       {
         read_buffer();
         __buffer+=c;
         c=__source.charAt(++__pointer);
-        if(c=='*')  
+        if(c=='*')
         {
           __buffer+=c;
           __type=COMMENT;
@@ -406,11 +419,11 @@ window.cls.SimpleJSParser = function()
           {
             return __ret;
           }
-          c=__source.charAt(++__pointer)
-          
+          c=__source.charAt(++__pointer);
+
           continue;
         }
-        if(c=='/')  
+        if(c=='/')
         {
           __buffer+=c;
           __type=COMMENT;
@@ -421,12 +434,12 @@ window.cls.SimpleJSParser = function()
           c = __source.charAt(__pointer);
           continue;
         }
-        if ((__previous_type==IDENTIFIER && !(__previous_value in REG_EXP_PREDECESSOR)) || 
-              __previous_type==NUMBER || 
+        if ((__previous_type==IDENTIFIER && !(__previous_value in REG_EXP_PREDECESSOR)) ||
+              __previous_type==NUMBER ||
               (__previous_type==PUNCTUATOR && __previous_value in PUNCTUATOR_DIV_PREDECESSOR_CHARS))
         {
-          __type=DIV_PUNCTUIATOR;
-          if(c=='=') 
+          __type=DIV_PUNCTUATOR;
+          if(c=='=')
           {
             __buffer+=c;
             read_buffer();
@@ -449,11 +462,11 @@ window.cls.SimpleJSParser = function()
       {
         __buffer+=c in __escape ? __escape[c] : c;
         c=__source.charAt(++__pointer);
-        if (!c 
-            || c in PUNCTUATOR_CHARS  
-            || c=='/' 
-            || c in LINETERMINATOR_CHARS  
-            || c in WHITESPACE_CHARS 
+        if (!c
+            || c in PUNCTUATOR_CHARS
+            || c=='/'
+            || c in LINETERMINATOR_CHARS
+            || c in WHITESPACE_CHARS
             || c in STRING_DELIMITER_CHARS)
         {
           break;
@@ -487,11 +500,11 @@ window.cls.SimpleJSParser = function()
       __buffer+=c;
       c=__source.charAt(++__pointer);
     }
-    if(c=='e' || c=='E')  
+    if(c=='e' || c=='E')
     {
       __buffer+=c;
       c=__source.charAt(++__pointer);
-      if(c=='+' || c=='-') 
+      if(c=='+' || c=='-')
       {
         __buffer+=c;
         c=__source.charAt(++__pointer);
@@ -539,9 +552,9 @@ window.cls.SimpleJSParser = function()
         continue;
         }
       }
-      if(c==__string_delimiter || 
+      if(c==__string_delimiter ||
         /* abort string parsing on a new line */
-        c in LINETERMINATOR_CHARS) 
+        c in LINETERMINATOR_CHARS)
       {
         __buffer+=c;
         read_buffer();
@@ -579,7 +592,7 @@ window.cls.SimpleJSParser = function()
       {
         __buffer+=c;
         c=__source.charAt(++__pointer);
-        if(c=='/')  
+        if(c=='/')
         {
           __buffer+=c;
           read_buffer();
@@ -599,7 +612,7 @@ window.cls.SimpleJSParser = function()
     var CRLF='';
     while(c)
     {
-      if(c in LINETERMINATOR_CHARS) 
+      if(c in LINETERMINATOR_CHARS)
       {
         read_buffer();
         // don't change the previous type
@@ -636,7 +649,7 @@ window.cls.SimpleJSParser = function()
       {
         is_in_brackets = false;
       }
-      if(c=='\\') 
+      if(c=='\\')
       {
         __buffer+=c;
         c=__source.charAt(++__pointer);
@@ -644,7 +657,7 @@ window.cls.SimpleJSParser = function()
         c=__source.charAt(++__pointer);
         continue;
       }
-      if( !is_in_brackets && c=='/' ) 
+      if( !is_in_brackets && c=='/' )
       {
         __buffer+=c;
         c=__source.charAt(++__pointer);
@@ -659,7 +672,7 @@ window.cls.SimpleJSParser = function()
         return c;
       }
       /* abort string parsing on a new line */
-      if(c in LINETERMINATOR_CHARS) 
+      if(c in LINETERMINATOR_CHARS)
       {
         read_buffer();
         __previous_type=REG_EXP;
@@ -741,10 +754,10 @@ window.cls.SimpleJSParser = function()
       {
 
         __parse_error_line_buffer += __buffer;
-        if(__parse_error_line_offset >= __parse_error_line_buffer.length) 
+        if(__parse_error_line_offset >= __parse_error_line_buffer.length)
         {
           read_buffer_default();
-           
+
         }
         else
         {
@@ -759,9 +772,9 @@ window.cls.SimpleJSParser = function()
           {
             __line += "<span class='error'>" +  __buffer + "</span>";
           }
-          
+
         }
-        
+
       }
       else
       {
@@ -775,11 +788,14 @@ window.cls.SimpleJSParser = function()
 
   var __online_default=function(c)
   {
-    if( !__line ) 
+    if( !__line )
     {
       __line += '\u00A0';
     }
-    __ret[__ret.length] = "<div>" + __line + "</div>";
+    __ret[__ret.length] = __line_number >=  __highlight_line_start &&
+                          __line_number <=  __highlight_line_end ?
+                          "<" + __current_line_ele + " class='highlight-source'>" + __line + "</" + __current_line_ele + ">" :
+                          "<" + __current_line_ele + ">" + __line + "</" + __current_line_ele + ">";
     __line='';
     __buffer = '';
     return (++__line_number) > __max_line_number;
@@ -787,21 +803,21 @@ window.cls.SimpleJSParser = function()
 
   var __online_parse_error=function(c)
   {
-    if( !__line ) 
+    if( !__line )
     {
       __line += '\u00A0';
     }
     if(__line_number < __parse_error_line)
     {
-      __ret[__ret.length] = "<div>" + __line + "</div>";
+      __ret[__ret.length] = "<" + __current_line_ele + ">" + __line + "</" + __current_line_ele + ">";
     }
     else if(__line_number == __parse_error_line)
     {
-      __ret[__ret.length] = "<div class='first-error-line'>" + __line + "</div>";
+      __ret[__ret.length] = "<" + __current_line_ele + " class='first-error-line'>" + __line + "</" + __current_line_ele + ">";
     }
     else
     {
-      __ret[__ret.length] = "<div class='error-line error'>" + __line + "</div>";
+      __ret[__ret.length] = "<" + __current_line_ele + " class='error-line error'>" + __line + "</" + __current_line_ele + ">";
     }
     __line='';
     __buffer = '';
@@ -836,7 +852,7 @@ window.cls.SimpleJSParser = function()
   // const DEFAULT_STATE = 0, SINGLE_QUOTE_STATE = 1, DOUBLE_QUOTE_STATE = 2, REG_EXP_STATE = 3, COMMENT_STATE = 4;
   states[SINGLE_QUOTE_STATE] = function()
   {
-    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
       'state parsing not implemented in formatter.js for SINGLE_QUOTE');
   };
 
@@ -865,12 +881,32 @@ window.cls.SimpleJSParser = function()
 
   states[REG_EXP_STATE] = function()
   {
-    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
       'state parsing not implemented in formatter.js for REG_EXP');
   };
 
-  this.format = function(script, line, max_line, state)
+  this.format = function(script, line, max_line, highlight_start, highlight_end, line_ele_name)
   {
+    if (typeof highlight_start == "number" && typeof highlight_end == "number")
+    {
+      __highlight_line_start = highlight_start;
+      __highlight_line_end = highlight_end;
+    }
+    else
+    {
+      __highlight_line_start = -1;
+      __highlight_line_end = -1;
+    }
+
+    if (typeof line_ele_name == 'string')
+    {
+      __current_line_ele = line_ele_name;
+    }
+    else
+    {
+      __current_line_ele = __default_line_ele;
+    }
+
     __reset(line, max_line);
 
     parser=default_parser;
@@ -881,12 +917,12 @@ window.cls.SimpleJSParser = function()
     var length=__source.length;
     __pointer = script.line_arr[line];
 
-    if(script.parse_error) 
+    if(script.parse_error)
     {
       read_buffer = read_buffer_with_parse_error;
       __online = __online_parse_error;
       __parse_error_line = script.parse_error.error_line;
-      __parse_error_line_offset = script.parse_error.error_line_offset; 
+      __parse_error_line_offset = script.parse_error.error_line_offset;
       __parse_error_line_buffer ='';
       __parse_error_first_token = true;
       __parse_error_description = script.parse_error.description;
@@ -928,6 +964,42 @@ window.cls.SimpleJSParser = function()
     __online = __online_with_arrs;
     read_buffer = __read_buffer_with_arrs;
     parser(__source.charAt(__pointer));
-  } 
-  
+  }
+
+  var __online_raw = function(c)
+  {
+    __ret.push(__line);
+    __line = '';
+    __buffer = '';
+    return false;
+  }
+
+  this.format_source = function(source)
+  {
+    __reset(0, 0);
+    parser = default_parser;
+    __previous_type = '';
+    __type = IDENTIFIER;
+    __source = source;
+    __escape = ESCAPE;
+    __pointer = 0;
+    read_buffer = read_buffer_default;
+    __online = __online_raw;
+    parser(__source.charAt(__pointer));
+    // empty the buffer in case the source does not end with a line ending
+    __online();
+    return __ret;
+  }
+
 }
+
+// CONSTS for external code that needs to know about token types
+window.cls.SimpleJSParser.WHITESPACE = 1,
+window.cls.SimpleJSParser.LINETERMINATOR = 2,
+window.cls.SimpleJSParser.IDENTIFIER = 3,
+window.cls.SimpleJSParser.NUMBER = 4,
+window.cls.SimpleJSParser.STRING = 5,
+window.cls.SimpleJSParser.PUNCTUATOR = 6,
+window.cls.SimpleJSParser.DIV_PUNCTUATOR = 7,
+window.cls.SimpleJSParser.REG_EXP = 8,
+window.cls.SimpleJSParser.COMMENT = 9;

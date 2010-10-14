@@ -18,20 +18,45 @@ cls.EcmascriptDebugger["6.0"].InspectionView = function(id, name, container_clas
   this.clearView = function(){};
 
   this._on_object_selected = function(msg)
-  { 
+  {
     this._data = new cls.InspectableJSObject(msg.rt_id, msg.obj_id);
+
     if (this._last_selected == "object")
     {
       this.update();
     }
+  };
+
+  this._on_trace_frame_selected = function(msg)
+  {
+    var virtual_properties =
+    [
+      [
+        'arguments',
+        'object',
+        ,
+        [msg.arg_id, 0, 'object', ,'']
+      ],
+      [
+        'this',
+        'object',
+        ,
+        [msg.rt_id == '0' ? msg.rt_id : msg.this_id, 0, 'object', , '']
+      ]
+    ];
+
+    this._data = new cls.InspectableJSObject(msg.rt_id,
+                                             msg.obj_id,
+                                             null, null, virtual_properties);
+    this.update();
   }
 
   this._on_frame_selected = function(msg)
-  { 
+  {
     var frame = stop_at.getFrame(msg.frame_index);
     if (frame)
     {
-      var virtual_properties = 
+      var virtual_properties =
       frame.argument_id &&
       [
         [
@@ -49,7 +74,7 @@ cls.EcmascriptDebugger["6.0"].InspectionView = function(id, name, container_clas
       ] || null;
       this._data = new cls.InspectableJSObject(frame.rt_id, frame.scope_id, null, null, virtual_properties);
     }
-    else if(this._data)
+    else if(this._data && this._last_selected == "frame")
     {
       this._data.collapse();
       this._data = null;
@@ -77,11 +102,16 @@ cls.EcmascriptDebugger["6.0"].InspectionView = function(id, name, container_clas
 
   window.messages.addListener('object-selected', this._on_object_selected.bind(this));
   window.messages.addListener('frame-selected', this._on_frame_selected.bind(this));
+  window.messages.addListener('trace-frame-selected', this._on_trace_frame_selected.bind(this));
   window.messages.addListener('runtime-destroyed', this._on_runtime_destroyed.bind(this));
   window.messages.addListener('active-inspection-type', this._on_active_inspection_type.bind(this));
   this.init(id, name, container_class);
 
 };
+
+// e.g. ['Object', 'Function', 'Array', 'String', 'Number'];
+cls.EcmascriptDebugger["6.0"].InspectionView.DEFAULT_COLLAPSED_PROTOS = ['*'];
+
 
 cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
 {
@@ -91,22 +121,93 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
     'inspection',
     // key-value map
     {
-      'automatic-update-global-scope': false,
-      'hide-default-properties': true
+      'show-non-enumerables': true,
+      'show-prototypes': true,
+      'show-default-nulls-and-empty-strings': true,
+      'collapsed-prototypes': this.DEFAULT_COLLAPSED_PROTOS,
     },
     // key-label map
     {
-      'automatic-update-global-scope': ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE,
-      'hide-default-properties': ui_strings.S_BUTTON_LABEL_HIDE_DEFAULT_PROPS_IN_GLOBAL_SCOPE
+      'show-prototypes': ui_strings.S_SWITCH_SHOW_PROTOTYPES,
+      'show-default-nulls-and-empty-strings':
+        ui_strings.S_SWITCH_SHOW_FEFAULT_NULLS_AND_EMPTY_STRINGS,
+      'show-non-enumerables': ui_strings.S_SWITCH_SHOW_NON_ENUMERABLES
     },
     // settings map
     {
       checkboxes:
       [
-        'hide-default-properties'
+        'show-prototypes',
+        'show-non-enumerables',
+        'show-default-nulls-and-empty-strings',
+      ],
+      customSettings:
+      [
+        'collapsed_protos'
       ]
+    },
+    // template
+    {
+      collapsed_protos:
+      function(setting)
+      {
+        return [
+          ['setting-composite',
+            ['label',
+              // TODO create ui string
+              ui_strings.S_LABEL_COLLAPSED_INSPECTED_PROTOTYPES,
+              ['input',
+                'type', 'text',
+                'handler', 'update-collapsed-prototypes',
+                'class', 'collapsed-prototypes',
+                'value', setting.get('collapsed-prototypes').join(', ')
+              ],
+            ],
+            ['span', '  '],
+            ['input',
+              'type', 'button',
+              'value', ui_strings.S_BUTTON_TEXT_APPLY,
+              'handler', 'apply-collapsed-prototypes'
+            ],
+            ['input',
+              'type', 'button',
+              'value', 'Set default value.',
+              'handler', 'default-collapsed-prototypes'
+            ],
+            'class', ' '
+          ]
+        ];
+      }
     }
   );
+
+  window.eventHandlers.input['update-collapsed-prototypes'] = function(event, target)
+  {
+    // target.parentNode.parentNode.getElementsByTagName('input')[1].disabled = false;
+  }
+
+  window.eventHandlers.click['apply-collapsed-prototypes'] = function(event, target)
+  {
+    var protos = target.parentNode.getElementsByTagName('input')[0].value;
+    try
+    {
+      protos = JSON.parse("[\"" + protos.split(',').join("\", \"") + "\"]");
+    }
+    catch(e)
+    {
+      alert("Not a valid input.");
+      protos = null;
+    };
+    if(protos)
+        window.settings.inspection.set('collapsed-prototypes', protos);
+  }
+
+  window.eventHandlers.click['default-collapsed-prototypes'] = function(event, target)
+  {
+    var defaults = cls.EcmascriptDebugger["6.0"].InspectionView.DEFAULT_COLLAPSED_PROTOS;
+    target.parentNode.getElementsByTagName('input')[0].value = defaults.join(', ');
+    window.settings.inspection.set('collapsed-prototypes', defaults);
+  }
 
   new ToolbarConfig
   (
@@ -125,7 +226,9 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
   (
     'inspection',
     [
-      "hide-default-properties"
+      'show-prototypes',
+      'show-non-enumerables',
+      'show-default-nulls-and-empty-strings',
     ]
   );
 

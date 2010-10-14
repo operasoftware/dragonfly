@@ -1,0 +1,14 @@
+<!doctype HTML>
+<script>
+(function()
+{
+  for( var i = 97, char = ''; i < 107; i++)
+  {
+    char = String.fromCharCode(i);
+    document.cookie = 
+      char + "=" + char + "; expires=" + new Date(new Date().getTime() + 60*60*1000) + "; path=/";
+    window.localStorage.setItem(char, char);
+    window.sessionStorage.setItem(char, char);
+  };
+})();
+</script>
