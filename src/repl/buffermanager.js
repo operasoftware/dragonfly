@@ -59,7 +59,7 @@ cls.BufferManager = function(textarea)
     var replace_regexp = "";
 
     /**
-     * Word boundries are whitespace and non-alphanumeric characters
+     * Word boundaries are whitespace and non-alphanumeric characters
      */
 
     // Somewhat VIM inspired
