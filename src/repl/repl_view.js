@@ -439,7 +439,9 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         if (evt.ctrlKey) {
           evt.preventDefault();
           this.clear();
+          var cursor_pos = this._textarea_handler.get_cursor();
           this._data.clear();
+          this._textarea_handler.put_cursor(cursor_pos);
         }
         break;
       }
