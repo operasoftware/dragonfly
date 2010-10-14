@@ -4,12 +4,6 @@
 <link rel="icon" href="/favicon.ico" />
 <!-- command set_rel_base_url -->
 <script><![CDATA[
-if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()) <= 4789  )
-{
-  location.href = "https://dragonfly.opera.com/error.html";
-}
-]]></script>
-<script><![CDATA[
 (function()
 {
   // this code was added 10.02.2009
