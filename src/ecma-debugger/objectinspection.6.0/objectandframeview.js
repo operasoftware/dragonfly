@@ -72,7 +72,12 @@ cls.EcmascriptDebugger["6.0"].InspectionView = function(id, name, container_clas
           [frame.this_id == '0' ? frame.rt_id : frame.this_id, 0, 'object', , '']
         ]
       ] || null;
-      this._data = new cls.InspectableJSObject(frame.rt_id, frame.scope_id, null, null, virtual_properties);
+      this._data = new cls.InspectableJSObject(frame.rt_id, 
+                                               frame.scope_id, 
+                                               null, 
+                                               null, 
+                                               virtual_properties,
+                                               frame.scope_list);
     }
     else if(this._data)
     {

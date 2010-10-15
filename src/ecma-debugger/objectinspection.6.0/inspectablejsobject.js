@@ -15,9 +15,9 @@ cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
   */
 
 cls.EcmascriptDebugger["6.0"].InspectableJSObject =
-function(rt_id, obj_id, identifier, _class, pseudo_properties)
+function(rt_id, obj_id, identifier, _class, pseudo_properties, scope_list)
 {
-  this._init(rt_id, obj_id, pseudo_properties || null, identifier, _class);
+  this._init(rt_id, obj_id, pseudo_properties || null, identifier, _class, scope_list);
 }
 
 cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
@@ -66,7 +66,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     "}"
   */
 
-  this._init = function(rt_id, obj_id, virtual_props, identifier, _class)
+  this._init = function(rt_id, obj_id, virtual_props, identifier, _class, scope_list)
   {
     this.id = this._get_id();
     if (!window.inspections)
@@ -99,6 +99,9 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     this._virtual_props = virtual_props;
     this._root_path = [this._identifier, this._obj_id, 0];
     this._root_path_joined = this._root_path.join();
+    this.scope_list = scope_list && scope_list.map(function(scope_id, index){
+      return new cls.InspectableJSObject(rt_id, scope_id, "scope " + index);
+    });
   }
 
   this._get_subtree = function(path)
