@@ -89,7 +89,7 @@
       }
       else
       {
-        var cb = examine_object_cb.bind(null, target, parent, data_model, path);
+        var cb = examine_object_cb.bind(this, target, parent, data_model, path);
         data_model.expand(cb, path);
       }
     }

@@ -179,7 +179,8 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     LINE_NUMBER = 6,
     // sub message ObjectValue 
     OBJECT_ID = 0,
-    NAME = 5;
+    NAME = 5,
+    SCOPE_LIST = 7;
 
     var _frames = message[FRAME_LIST], frame = null, i = 0;
     var fn_name = '', line = '', script_id = '', argument_id = '', scope_id = '';
@@ -200,7 +201,8 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
         scope_id : frame[VARIABLE_OBJECT],
         this_id : frame[THIS_OBJECT],
         id: i,
-        rt_id: runtime_id
+        rt_id: runtime_id,
+        scope_list: frame[SCOPE_LIST]
       }
     }
 

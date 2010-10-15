@@ -136,6 +136,8 @@ ui_strings.M_VIEW_LABEL_STORED_COLORS = 'Stored Colors';
 ui_strings.M_VIEW_LABEL_COLOR_MAGNIFIER_AND_PICKER = 'Pixel Magnifier and Color Picker';
 /* DESC: Label of the section for selecting a color in color picker */
 ui_strings.M_VIEW_LABEL_COLOR_SELECT = 'Color Select';
+/* DESC: view to set and remove event breakpoints */
+ui_strings.M_VIEW_LABEL_EVENT_BREAKPOINTS = 'Event Breakpoints';
 
 
 
@@ -313,6 +315,12 @@ ui_strings.S_BUTTON_COLOR_RESTORE_DEFAULTS = "Restore defaults";
 ui_strings.S_BUTTON_COLOR_MANAGE_STORED = "Manage stored colors";
 /* DESC: */
 ui_strings.S_BUTTON_COLOR_STORE_COLOR = "Store color";
+/* DESC: Expand all sections in the event breakpoints view */
+ui_strings.S_BUTTON_EXPAND_ALL_SECTIONS = "Expand all sections";
+/* DESC: Remove all event breakpoints */
+ui_strings.S_BUTTON_REMOVE_ALL_BREAKPOINTS = "Remove all event breakpoints";
+/* DESC: Search for an event in the event breakpoints view */
+ui_strings.S_BUTTON_SEARCH_EVENT = "Search for an event";
 
 
 /*
