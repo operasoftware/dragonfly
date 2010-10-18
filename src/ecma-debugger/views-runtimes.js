@@ -27,5 +27,7 @@ new Settings
     [
       'reload-runtime-automatically'
     ]
-  }
+  },
+  null,
+  "script"
 );

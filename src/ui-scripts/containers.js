@@ -27,7 +27,7 @@ var ContainerBase = function()
     var toolbar_height =  this.cell.toolbar.height ? this.cell.toolbar.offsetHeight : 0;
 
 
-    dim = this.cell.top + toolbar_height;
+    dim = this.cell.top + toolbar_height + this.cell.tab.offsetHeight;
     if( dim != this.top)
     {
       this.is_dirty = true;

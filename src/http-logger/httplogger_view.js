@@ -275,7 +275,9 @@ cls.HttpLogger["2.0"].RequestListView.create_ui_widgets = function()
                 'clear-log-on-runtime-switch',
                 'auto-scroll-request-list'
             ]
-        }
+        },
+        null,
+        "resource_manager"
     );
 
     new Switches

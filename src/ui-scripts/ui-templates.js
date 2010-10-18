@@ -6,12 +6,57 @@
 
   this.tab = function(obj, is_active_tab)
   {
-    return ['tab', 
-      ['input', 'type', 'button', 'value', obj.name, 'handler', 'tab', ],
-      ( obj.has_close_button ? ['input', 'type', 'button', 'handler', 'close-tab', ] : [] ), 
-      'ref-id', obj.ref_id
+    return ['tab', obj.name,
+            'handler', 'tab',
+            'ref-id', obj.ref_id
+      //( obj.has_close_button ? ['input', 'type', 'button', 'handler', 'close-tab', ] : [] ),
     ].concat(is_active_tab ? ['class', 'active'] : [] );
   }
+
+  this.top_tab = function(obj, is_active_tab)
+  {
+    return ['tab', [['span', "", "class", "icon"], obj.name],
+            'handler', 'tab',
+            'ref-id', obj.ref_id
+    ].concat(is_active_tab ? ['class', 'active'] : [] );
+  };
+
+  this.horizontal_navigation_content = function()
+  {
+    return [
+        ["nav",
+          "◀",
+          "dir", "back",
+          "handler", "horizontal-nav"],
+        ["breadcrumbs",
+         "handler", "breadcrumbs-drag",
+         "data-model-id", "dom-inspection-id-1"],
+        ["nav",
+          "▶",
+          "dir", "forward",
+          "handler", "horizontal-nav"]
+      ];
+  };
+
+  this.contextmenu_items = function(items)
+  {
+    var ret = [];
+    for (var i = 0, item; item = items[i]; i++)
+    {
+      if (item.label)
+      {
+        ret.push(["li",
+            item.label,
+            "data-handler-id", item.id
+        ]);
+      }
+      else
+      {
+        ret.push(["li", ["hr"], "class", "separator"]);
+      }
+    }
+    return ["menu", ret, "id", "contextmenu"];
+  };
 
   this.filters = function(filters)
   {
@@ -25,7 +70,7 @@
       else
       {
         ret[ret.length] = ['filter', 
-          ['em', ( default_text = filter.label ? filter.label : ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH ) ],
+          ['span', ( default_text = filter.label ? filter.label : ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH ) ],
           [
             'input', 
             'autocomplete', 'off', 
@@ -175,7 +220,7 @@
     // ret[ret.length] =  this.window_controls();
     for( ; tab = obj.tabs[i]; i++)
     {
-      ret[ret.length] = this.tab(tab, obj.activeTab == tab.ref_id)
+      ret[ret.length] = this.top_tab(tab, obj.activeTab == tab.ref_id)
     }
     return ret;
   }
@@ -183,22 +228,47 @@
   this.window_controls = function()
   {
     var is_attached = window.opera.attached;
-    return ['window-controls',
-      is_attached
-      ? window['cst-selects']['debugger-menu'].select_template()
-      : [],
-      ['button', 
-        'handler', 'top-window-toggle-attach', 
-        'class', 'switch' + ( is_attached ? ' attached' : '') ,
-        'title', is_attached ? ui_strings.S_SWITCH_DETACH_WINDOW : ui_strings.S_SWITCH_ATTACH_WINDOW
+    var controls = [
+      ['button',
+        'handler', 'toggle-console',
+        'class', 'switch' + ( is_attached ? ' attached' : ''),
+        'title', ui_strings.S_BUTTON_TOGGLE_CONSOLE
       ],
-      is_attached
-      ? ['button', 
-          'handler', 'top-window-close',
-          'title', ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW
-        ]
-      : []
-      ].concat( is_attached ? ['class', 'attached'] : [] )
+      ['toolbar-separator'],
+      ['button',
+        'handler', 'toggle-settings-overlay',
+        'class', 'switch' + ( is_attached ? ' attached' : ''),
+        'title', ui_strings.S_BUTTON_TOGGLE_SETTINGS
+      ],
+      ['button',
+        'handler', 'toggle-remote-debug-config-overlay',
+        'class', 'switch' + ( is_attached ? ' attached' : ''),
+        'title', ui_strings.S_BUTTON_TOGGLE_REMOTE_DEBUG
+      ],
+      ['toolbar-separator']
+    ];
+    return ['window-controls'].concat(is_attached ? controls : []).concat(
+      [
+        window['cst-selects']['debugger-menu'].select_template(),
+        !is_attached
+        ? ['button',
+            'handler', 'reload-window',
+            'title', ui_strings.S_BUTTON_LABEL_RELOAD_HOST
+          ]
+        : [],
+        ['button',
+          'handler', 'top-window-toggle-attach',
+          'class', 'switch' + ( is_attached ? ' attached' : '') ,
+          'title', is_attached ? ui_strings.S_SWITCH_DETACH_WINDOW : ui_strings.S_SWITCH_ATTACH_WINDOW
+        ],
+        is_attached
+        ? ['button',
+            'handler', 'top-window-close',
+            'title', ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW
+          ]
+        : []
+      ]).concat( is_attached ? ['class', 'attached'] : [] )
+        .concat(["id", "window-controls-to-main-view"]); // HACK: Hard-code id to avoid it being removed when the viewport is updated
   }
 
   this.window_controls_close = function()
@@ -241,30 +311,44 @@
   this.setting = function(view_id, view_name, is_unfolded)
   {
     
-    var ret = ['settings', self.settingsHeader(view_id, view_name, is_unfolded)];
-    if( is_unfolded )
+    var ret = ['fieldset', self.settingsHeader(view_id, view_name, is_unfolded)];
+    var setting = settings[view_id];
+    var settings_map = setting.setting_map;
+    var cat_name = '';
+    // so far checkboxes, customSettings
+    for( cat_name in settings_map ) 
     {
-      var setting = settings[view_id];
-      var settings_map = setting.setting_map;
-      var cat_name = '';
-      // so far checkboxes, customSettings
-      for( cat_name in settings_map ) 
-      {
-        ret[ret.length] = this[cat_name](setting, settings_map[cat_name]); 
-      }
+      ret[ret.length] = this[cat_name](setting, settings_map[cat_name]); 
     }
     return ret;
   }
 
   this.settingsHeader = function(view_id, view_name, is_unfolded)
   {
-    return ['settings-header', 
-        ['input', 
-          'type', 'button', 
-          'tab-id', view_id  
-        ].concat(is_unfolded ? ['class', 'unfolded'] : []), 
+    return ['legend',
       view_name, 'handler', 'toggle-setting', 'view-id', view_id];
   }
+
+  this.overlay = function(id)
+  {
+    return ["overlay-window",
+             [
+               ["overlay-arrow"],
+               ["overlay-tabs"],
+               ["overlay-content"]
+             ]
+           ];
+  };
+
+  this.settings_groups = function(groups)
+  {
+    var tabs = [];
+    for (var i = 0, group; group = groups[i]; i++)
+    {
+      tabs.push(["tab", group.label, "group", group.group_name, "handler", "overlay-tab"]);
+    }
+    return tabs;
+  };
 
   this.checkboxes = function(setting, checkbox_arr)
   {
@@ -342,7 +426,6 @@
   {
     return ['window',
         this.window_header(views[win.view_id].name),
-        this.window_shadows(),
         win.is_resizable ?
         [
           ['window-control', 'handler', 'window-scale-top-left'],
@@ -372,19 +455,4 @@
       'handler', 'window-move'
     ]
   }
-
-  this.window_shadows = function()
-  {
-    return ['window-shadows',
-      ['window-shadow', 'class', 'top-left'],
-      ['window-shadow', 'class', 'top'],
-      ['window-shadow', 'class', 'top-right'],
-      ['window-shadow', 'class', 'left'],
-      ['window-shadow', 'class', 'right'],
-      ['window-shadow', 'class', 'bottom-left'],
-      ['window-shadow', 'class', 'bottom'],
-      ['window-shadow', 'class', 'bottom-right']
-      ];
-  }
-
 }).apply(window.templates);

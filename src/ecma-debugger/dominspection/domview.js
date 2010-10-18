@@ -28,7 +28,7 @@ cls.DOMView = function(id, name, container_class)
       }
       if (model == window.dom_data)
       {
-        window.topCell.statusbar.updateInfo(templates.breadcrumb(model, model.target));
+        window.modebar.set_content(window.templates.breadcrumb(model, model.target), true);
       }
     }
     else
@@ -199,6 +199,7 @@ cls.DOMView.create_ui_widgets = function()
       checkboxes:
       [
         'force-lowercase',
+        'dom-tree-style',
         'show-comments',
         'show-attributes',
         'show-whitespace-nodes',
@@ -210,7 +211,9 @@ cls.DOMView.create_ui_widgets = function()
         'scroll-into-view-on-spotlight',
         'lock-selecked-elements'
       ]
-    }
+    },
+    null,
+    "document"
   );
 
   new ToolbarConfig
@@ -251,12 +254,12 @@ cls.DOMView.create_ui_widgets = function()
 
   new CstSelectToolbarSettings
   (
-    'dom', 
-    [
-      'show-comments',
-      'show-whitespace-nodes',
-      'dom-tree-style'
-    ]
+   //'dom', 
+   //[
+   //  'show-comments',
+   //  'show-whitespace-nodes',
+   //  'dom-tree-style'
+   //]
   );
 
   new Switches
@@ -265,7 +268,7 @@ cls.DOMView.create_ui_widgets = function()
     [
       'find-with-click',
       'highlight-on-hover',
-      'update-on-dom-node-inserted',
+      //'update-on-dom-node-inserted',
       'lock-selecked-elements'
     ]
   );

@@ -85,7 +85,7 @@ cls.DOMInspectorActions = function(id)
           while ((current_target = current_target.previousSibling) && 
                   current_target.getAttribute('ref-id') != obj_id);
         }
-        topCell.statusbar.updateInfo(templates.breadcrumb(model, obj_id));
+        window.modebar.set_content(window.templates.breadcrumb(model, obj_id), true);
       }
       if (current_target)
         current_target.id = 'target-element';
@@ -99,6 +99,9 @@ cls.DOMInspectorActions = function(id)
     model_id = target.get_attr("parent-node-chain", "data-model-id"),
     inspections = window.dominspections,
     model = null;
+
+    target.parentNode.querySelector(".active").removeClass("active");
+    target.addClass("active");
 
     if (model_id && obj_id)
     {
@@ -786,6 +789,14 @@ window.eventHandlers.click['spotlight-node'] = function(event, target)
 window.eventHandlers.click['breadcrumb-link'] = function(event, target)
 {
   window.actions['dom'].breadcrumb_link(event, target);
+}
+
+window.eventHandlers.mouseover['breadcrumb-link'] = function(event, target)
+{
+  if(window.settings['dom'].get('highlight-on-hover'))
+  {
+    window.hostspotlighter.soft_spotlight(parseInt(target.getAttribute('obj-id')));
+  }
 }
 
 window.eventHandlers.mouseover['spotlight-node'] = function(event, target)

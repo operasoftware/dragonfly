@@ -5,19 +5,21 @@
   font-family: sans-serif;
   font-size: 12px;
   overflow: hidden;
+  color: #333;
   }
 
 main-view { /**/
   width: 100%;
   height: 100%;
   display: block;
-  position: relative;
+  position: fixed;
   z-index: 1;
   overflow: hidden;
   }
 
 windows-container, 
 toolbar, 
+modebar,
 tabs, 
 container, 
 top-tabs, 
@@ -29,32 +31,24 @@ top-toolbar {
   position: absolute;
   }
 
+top-toolbar, top-tabs, modebar, tabs {
+    border-bottom: 1px solid #b3b3b3;
+}
+
 /* set with css. height, border and padding are supported */
 
 top-container { /**/
-  border-bottom: 1px solid #c9cdd0;
-  border-left: 1px solid #c9cdd0;
-  border-right: 1px solid #c9cdd0;
-  padding: 4px 4px;
-  background-color: #e1e4e9;
+  background-color: #e6e6e6;
   }
 
 /* set with css. height, border and padding are supported */
 
 container { /**/
-  border-top: 1px solid #ccc;
-  border-left: 1px solid #ccc;
-  border-right: 1px solid #ccc;
-  background-color: #fff;
+  border-left: 1px solid #b3b3b3;
+  border-right: 1px solid #b3b3b3;
+  background-color: #fefefe;
   overflow: hidden;
   } 
-
-window container { /**/
-  display: block;
-  position: relative;
-  border-width: 0;
-  background-color: #eff2f7;
-  }
 
 /* set with css. height, border and padding are supported */
 
@@ -116,9 +110,9 @@ info { /**/
   }
 	
 top-toolbar { /**/
-  height: 26px;
-  padding-right: 0px;
-  background-color: #f5f7fa;
+  height: 22px;
+  padding: 5px 4px 3px 4px;
+  background: #f3f3f3 url("../ui-images/shine_1_attached.png") repeat-x;
   }
 
 
@@ -133,47 +127,205 @@ window-toolbar { /**/
 /* set with css. height, border and padding are supported */
 
 toolbar { /**/
-  border-top: 1px solid #ccc;
-  border-left: 1px solid #ccc;
-  border-right: 1px solid #ccc;
-  background-color: #f5f7fa;
-	padding: 0 1px;
-  height: 26px;
+  border: 0 solid #b3b3b3;
+  border-width: 0 1px 1px;
+  padding: 3px 2px 2px;
+  height: 21px; /* 21 + 3 + 2 (padding) = 26 */
+  background: #f3f3f3 url("../ui-images/shine_2.png") 0 0 repeat-x;
   }
 
 toolbar-buttons, toolbar-switches {
   display: block;
   float: left;
+  height: 100%;
   }
-/* real buttons do make too much trouble */
-.ui-button
+
+button[handler="reload-window"] {
+    content: url("../ui-images/icons/icon_reload.png");
+}
+[handler="top-window-close"] {
+    content: url("../ui-images/icons/icon_close.png");
+}
+[handler="toggle-console"] {
+    content: url("../ui-images/icons/icon_console.png");
+}
+[handler="toggle-settings-overlay"] {
+    content: url("../ui-images/icons/icon_settings.png");
+}
+[handler="toggle-remote-debug-config-overlay"] {
+    content: url("../ui-images/icons/icon_remote.png");
+}
+[handler="top-window-toggle-attach"] {
+    content: url("../ui-images/icons/icon_attach.png");
+}
+.attached [handler="top-window-toggle-attach"] {
+    content: url("../ui-images/icons/icon_detach.png");
+}
+[handler="dom-inspection-snapshot"] {
+    content: url("../ui-images/icons/icon_expand.png");
+}
+[handler="dom-inspection-export"] {
+    content: url("../ui-images/icons/icon_export.png");
+}
+[key="dom.find-with-click"] {
+    content: url("../ui-images/icons/icon_click.png");
+}
+[key="dom.highlight-on-hover"] {
+    content: url("../ui-images/icons/icon_hover.png");
+}
+[key="dom.lock-selecked-elements"] {
+    content: url("../ui-images/icons/icon_border.png");
+}
+[key="stylesheets.shortcuts"] {
+    content: url("../ui-images/icons/icon_shorthand.png");
+}
+[key="css-inspector.hide-initial-values"] {
+    content: url("../ui-images/icons/icon_hidedefaults.png");
+}
+[key="css-inspector.hide-shorthands"] {
+    content: url("../ui-images/icons/icon_shorthands.png");
+}
+[key="dom_attrs.hide-null-values"] {
+    content: url("../ui-images/icons/icon_empty.png");
+}
+[id="continue-run"] {
+    content: url("../ui-images/icons/icon_play.png");
+}
+[id="continue-step-into-call"] {
+    content: url("../ui-images/icons/icon_stepinto.png");
+}
+[id="continue-step-next-line"] {
+    content: url("../ui-images/icons/icon_stepover.png");
+}
+[id="continue-step-out-of-call"] {
+    content: url("../ui-images/icons/icon_stepout.png");
+}
+[key="js_source.script"] {
+    content: url("../ui-images/icons/icon_haltonscript.png");
+}
+[key="js_source.error"] {
+    content: url("../ui-images/icons/icon_haltonerror.png");
+}
+[key="threads.log-threads"] {
+    content: url("../ui-images/icons/icon_threads.png");
+}
+[key="inspection.show-prototypes"] {
+    content: url("../ui-images/icons/icon_prototype.png");
+}
+[key="inspection.show-non-enumerables"] {
+    content: url("../ui-images/icons/icon_hidedefaults.png"); /* temporarily using this icon */
+}
+[key="inspection.show-default-nulls-and-empty-strings"] {
+    content: url("../ui-images/icons/icon_empty.png");
+}
+[handler="threads-clear-log"] {
+    content: url("../ui-images/icons/icon_clear.png");
+}
+[handler="threads-export-log"] {
+    content: url("../ui-images/icons/icon_export.png");
+}
+[handler="clear-request-list"] {
+    content: url("../ui-images/icons/icon_clear.png");
+}
+[key="request_list.clear-log-on-runtime-switch"] {
+    content: url("../ui-images/icons/icon_clearonreload.png");
+}
+[key="request_list.auto-scroll-request-list"] {
+    content: url("../ui-images/icons/icon_autoscroll.png");
+}
+[handler="storage-add-key"] {
+    content: url("../ui-images/icons/icon_add.png");
+}
+[handler="storage-update"] {
+    content: url("../ui-images/icons/icon_reload.png");
+}
+[handler="storage-delete-all"] {
+    content: url("../ui-images/icons/icon_clear.png");
+}
+[handler="storage-delete"] {
+    content: url("../ui-images/icons/icon_delete.png");
+}
+[handler^="clear-error-console"] {
+    content: url("../ui-images/icons/icon_clear.png");
+}
+[key="console.expand-all-entries"] {
+    content: url("../ui-images/icons/icon_expand.png");
+}
+cst-icon[class="debugger-menu"] {
+    content: url("../ui-images/icons/icon_tabs.png");
+}
+toolbar button,
+top-toolbar button,
+window-controls button,
+cst-select-toolbar-setting,
+.ui-button,
+cst-select,
+toolbar button[disabled]
 {
+  background: #e6e6e6 url("../ui-images/shine_button.png") repeat-x;
+  border: 1px solid rgba(0, 0, 0, .5);
+  border-radius: 3px;
+  height: 17px;
+  width: 17px;
+  margin: 0 2px;
+  padding: 1px;
+  box-shadow: 0 1px #fff;
+  box-sizing: content-box;
   display: inline-block;
-  background: transparent url('../ui-images/btn-test.png') scroll no-repeat 0 0;
-  height: 24px;
-  width: 26px; 
+  box-shadow: 0 1px #fff, inset 0 1px 1px #fff;
+  vertical-align: top;
+}
+toolbar button[disabled] { /* :disabled seems to be buggy */
+  background: #e0e0e0;
+  opacity: 0.75
+}
+toolbar button:not([disabled]):active,
+top-toolbar button:active,
+window-controls button:active,
+cst-select-toolbar-setting:active,
+.ui-button:active,
+cst-select:active {
+    padding: 2px 1px 0;
+    box-shadow: 0 1px #fff, inset 0 1px 2px rgba(0, 0, 0, .5);
+}
+cst-select:active {
+    padding: 1px;
+}
+toolbar button[is-active="true"],
+top-toolbar button[is-active="true"],
+window-controls button[is-active="true"],
+cst-select[is-active="true"] {
+    box-shadow: 0 1px #fff, inset 0 1px 2px rgba(0, 0, 0, .5);
+    background-color: #b3b3b3;
+}
+toolbar button[is-active="true"]:active,
+top-toolbar button[is-active="true"]:active,
+window-controls button[is-active="true"]:active {
+    box-shadow: 0 1px #fff, inset 0 1px 3px rgba(0, 0, 0, .5);
+    background-color: #999;
+}
+/* Show the button topmost when the overlay is visible */
+[handler="toggle-settings-overlay"][is-active="true"],
+[handler="toggle-remote-debug-config-overlay"][is-active="true"] {
+    position: relative;
+    z-index: 4;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, .5);
+    border-color: #000;
+}
+[handler="toggle-settings-overlay"][is-active="true"]:active,
+[handler="toggle-remote-debug-config-overlay"][is-active="true"]:active {
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, .5);
 }
 
-toolbar button, 
-top-toolbar button, 
-window-controls button
-{
-  background: transparent none;
-  border-color: transparent;
-  border-style: solid;
-  cursor: pointer;
-  /* default padding values */
-  padding: 3px 11px;
-  margin: 0;
-  vertical-align: top;
+cst-select[cst-id="debugger-menu"] {
+    width: 33px;
 }
-window-controls cst-select
-{
-  position: static;
-  margin: 0;
-  padding: 0;
-  vertical-align: top;
+cst-icon {
+    display: inline-block;
+    height: 100%;
+    width: 19px;
 }
+/*
 toolbar button:before, 
 top-toolbar button:before, 
 window-controls button:before, 
@@ -214,7 +366,7 @@ window-toolbar button:hover:before
 {
   background-position: 0px -48px;
 }
-/* switches */
+/* switches /
 toolbar button.switch[is-active="true"]:before,
 window-toolbar button.switch[is-active="true"]:before
 {
@@ -243,7 +395,7 @@ window-toolbar button.switch[is-active="true"]:active:before
   background-position: -26px -48px;
 }
 
-/* mode modal */
+/* mode modal /
 .modal toolbar button[disabled]:before,
 .modal toolbar button[disabled]:hover:before,
 .modal toolbar button[disabled]:active:before,
@@ -273,12 +425,14 @@ window-toolbar button.switch[is-active="true"]:active:before
   background-position: -26px 0;
 }
 
+*/
 toolbar-separator {
   display: block;
   float: left;
-  width: 1px;
-  height: 27px;
+  height: 21px;
   margin: 0 3px;
+  /*border-left: 1px solid #fff;
+  border-right: 1px solid #8e8e8e;*/
   }
 	
 toolbar-filters {
@@ -288,31 +442,26 @@ toolbar-filters {
 
 toolbar-filters filter {
   display: inline-block;
-  margin: 1px;
-  padding-left:20px;
-  height: 24px;
-  line-height: 24px;
-  background: url('../ui-images/filter-bg.png') no-repeat;
-  
+  padding-left: 20px;
+  height: 19px;
+  line-height: 19px;
+  border: 1px solid #8e8e8e;
+  border-radius: 3px;
+  background: #fff url("../ui-images/icon_search.png") 2px 50% no-repeat;
+  box-shadow: 0 1px #fff, inset 0 1px 1px #d5d5d5;
   }
 
-toolbar-filters filter.focus {
-  background-position: 0 -24px;
-  }
-
-toolbar-filters em {
+toolbar-filters span {
   display: inline-block;
-  padding-left: 5px;
-  width:135px;
+  width: 140px;
   color: #999;
   vertical-align: top;
   }
 
 toolbar-filters filter input {
   width: 138px;
-  height: 20px;
-  margin: 1px;
-  margin-left: -141px;
+  height: 19px;
+  margin-left: -140px;
   background: none;
   border: none;
   padding: 0;
@@ -324,15 +473,23 @@ toolbar-filters filter.focus input {
   color: #000;
   }
 
+modebar {
+  height: 21px;
+  line-height: 21px;
+  background: #d9d9d9;
+}
+modebar.hidden {
+  display: none;
+}
+
 window-select {
-  display: block;
   position: relative;
-  margin: 0px 1px 0px 30px;
   padding: 2px 0;
   }
 
 window-select select {
-  width:100%;
+  width: 100%;
+  max-width: 400px;
   margin:0;
   height: 22px;
   }
@@ -344,33 +501,31 @@ window-select select option[value="-1"]  {
 /* set with css. height, border and padding are supported */
 
 tabs { /* The bottom tabs containers */
-  height: 17px;
-  background: #e1e4e9 url('../ui-images/tab-border.png') scroll repeat-x 0 0;
+  height: 21px;
+  padding: 1px 2px 0; /* Tab will be pushed down one pixel, hence only 1 pixel at the top */
   }
 
 tab { /**/
   display:block;
   float:left;
-  background: transparent url('../ui-images/tab.png') scroll no-repeat 0 0;
-  height: 17px;
-  line-height: 17px;	
-  margin: 0 5px 0 0;
+  height: 15px;
+  line-height: 15px;
+  padding: 2px 6px 4px;
+  border: 0 transparent solid;
+  border-width: 1px 1px 0 1px;
+  position: relative;
+  top: 1px; /* Push down one pixel to hide the border */
   }
 
-tab:hover {
-  background-position: 0 -17px;
+tabs tab.active {
+  background: #fefefe;
+  border-color: #b3b3b3;
   }
 
-tab.active {
-  background-position: 0 -34px;
-  }
-
-.modal tab:hover,
-.modal tab.active
-{
-  background-position: 0 0;
+tabs tab:not(.active) {
+    color: #666;
 }
-	
+
 input[handler="tab"] { /**/
   font-size: 11px;
   background: transparent url('../ui-images/tab.png') scroll no-repeat 100% 0;
@@ -381,43 +536,19 @@ input[handler="tab"] { /**/
   height: 17px;
   line-height: 17px;
   vertical-align: top;
-  cursor: pointer;
   }
-
-tab:hover input[handler="tab"] {
-  background-position: 100% -17px;
-  }
-
-tab.active input[handler="tab"] {
-  background-position: 100% -34px;
-  font-weight: bold;
-  }
-
-.modal tab:hover input[handler="tab"],
-.modal tab.active input[handler="tab"] 
-{
-  background-position: 100% 0;
-}
 
 top-tabs { /* The top tabs container, replaced with, placed into or merged with top-toolbar */
   position: absolute;
-  z-index: 1;
   top: 0;
   left: 0;
-  background: url('../ui-images/tabcontainer.png') no-repeat 100% 0;
-  height: 20px;
-  padding: 7px 60px 0px 7px;
+  height: 30px;
+  background: #e6e6e6 url("../ui-images/shine_1_attached.png") repeat-x;
   }
-		
-top-tabs:before {
-  position: absolute;
-  content: '';
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 3px;
-  background: url('../ui-images/tabcontainer-left.png') no-repeat 0 0;
-  }
+top-tabs.detached {
+  height: 60px;
+  background-image: url("../ui-images/shine_1_detached.png");
+}
 
 /* this is a quick hack to get the runtime button in the tabs bar */
 top-tabs toolbar-buttons { 
@@ -425,65 +556,92 @@ top-tabs toolbar-buttons {
   }
 
 top-tabs tab {  /**/
-  float: left;
-  background: transparent url('../ui-images/top-tab.png') scroll no-repeat 100% 0;
-  height: 19px;
-  line-height: 19px;	
-  margin: 1px 0 0 9px;
+  height: 26px;
+  line-height: 26px;
+  border: 0;
+  border: 0 solid transparent;
+  border-width: 0 1px;
+  padding: 2px 6px;
+  position: static;
+  text-shadow: 0 1px rgba(255, 255, 255, .5);
   }
-
-top-tabs tab:hover {
-  background-position: 100% -19px;
-  }
-
+top-tabs.detached tab {
+  height: 60px;
+  min-width: 60px;
+  line-height: normal;
+  text-align: center;
+  padding: 0 5px;
+  line-height: .4;
+}
 top-tabs tab.active {
-  background-position: 100% -38px;
-  }
+  border-color: #b3b3b3;
+  background: #cecece url("../ui-images/shine_1_attached.png") repeat-x;
+}
+top-tabs tab.active:first-of-type {
+  border-left-color: transparent;
+}
+top-tabs.detached tab.active {
+  background-image: url("../ui-images/shine_1_detached.png");
+}
+top-tabs .icon {
+  display: inline-block;
+  height: 26px;
+  width: 26px;
+  vertical-align: middle;
+  margin-right: 3px;
+}
+top-tabs.detached .icon {
+  display: block;
+  height: 48px;
+  width: 48px;
+  margin: auto;
+}
 
-top-tabs input[handler="tab"] {  /**/
-  background: transparent url('../ui-images/top-tab-left.png') scroll no-repeat 0 0;
-  margin: 0 8px 0 -8px;
-  padding-left: 8px;
-  padding-right: 0px; /* to be removed when the close buttons are activated */
-  height: 19px;
-  line-height: 19px;
-  }
-
-top-tabs tab:hover input[handler="tab"] {
-  background-position: 0 -19px;
-  }
-
-top-tabs tab.active input[handler="tab"] {
-  background-position: 0 -38px;
-  font-weight: bold;
-  }
-
-input[handler="close-tab"] { /* Currently not in use? Now it is :) */ 
-  background: transparent url('../ui-images/close.png') scroll no-repeat 50% 0;
-  padding: 0;
-  margin: 0 6px 0 -4px;
-  border: none;
-  width: 12px;
-  height: 12px;
-  line-height: 12px;
-  vertical-align: -1px;
-  cursor: pointer;
-  }
-
-input[handler="close-tab"]:hover { 
-  background-position: 50% -12px;
-  }
-
-input[handler="close-tab"]:active { 
-  background-position: 50% -24px;
-  }
+top-tabs [ref-id="dom_panel"] .icon {
+    content: url("../ui-images/documents_attached.png");
+}
+top-tabs [ref-id="js_panel"] .icon {
+    content: url("../ui-images/scripts_attached.png");
+}
+top-tabs [ref-id="network_panel"] .icon {
+    content: url("../ui-images/network_attached.png");
+}
+top-tabs [ref-id="storage"] .icon {
+    content: url("../ui-images/storage_attached.png");
+}
+top-tabs [ref-id="console_new"] .icon {
+    content: url("../ui-images/errorlog_attached.png");
+}
+top-tabs [ref-id="utils"] .icon {
+    content: url("../ui-images/utilities_attached.png");
+}
+top-tabs [ref-id="dom_panel"] .icon {
+    content: url("../ui-images/documents_attached.png");
+}
+top-tabs.detached [ref-id="dom_new"] .icon {
+    content: url("../ui-images/documents_detached.png");
+}
+top-tabs.detached [ref-id="js_new"] .icon {
+    content: url("../ui-images/scripts_detached.png");
+}
+top-tabs.detached [ref-id="network_panel"] .icon {
+    content: url("../ui-images/network_detached.png");
+}
+top-tabs.detached [ref-id="storage"] .icon {
+    content: url("../ui-images/storage_detached.png");
+}
+top-tabs.detached [ref-id="console_new"] .icon {
+    content: url("../ui-images/errorlog_detached.png");
+}
+top-tabs.detached [ref-id="utils"] .icon {
+    content: url("../ui-images/utilities_detached.png");
+}
 
 button[handler="top-settings"]
 {
   background: transparent none;
   border-color: transparent;
   border-style: solid;
-  cursor: pointer;
   padding: 1px 8px;
   margin: 2px 4px;
   float: right;
@@ -512,9 +670,24 @@ window-controls {
   display: block;
   position: absolute;
   top: 0;
-  right: 2px;
-  z-index:1000;
-  }
+  right: 0;
+  padding: 5px 4px 3px 0;
+  height: 22px;
+  background: #f3f3f3 url("../ui-images/shine_1_attached.png") repeat-x;
+}
+window-controls.attached::before {
+    content: url("../ui-images/window_controls_border.png");
+    height: 30px;
+    position: relative;
+    left: -2px; /* width of the image */
+    top: -5px; /* adjust for top padding */
+}
+window-controls toolbar-separator {
+    display: inline-block;
+    float: none;
+    height: auto;
+}
+
 
 
 
@@ -525,56 +698,23 @@ window-controls {
 settings-container, settings, settings-header, checkboxes, checkbox, setting-composite {
   display: block;
   }
+settings-container label {
+    display: block;
+}
+settings-container input {
+    margin-left: 0;
+    margin-right: 5px;
+}
 
 settings { /**/
   margin: 12px 0;
   padding: 3px 0;
-  border: 1px solid #ccc;
   }
 
 settings-header { /**/
   font-size: 1.2em;
   clear: both;
   }
-
-settings-header input { /**/
-  background: transparent url('../ui-images/toggle.png') scroll no-repeat 0 0;
-  border: none;
-  padding: 0;
-  margin: 0px 5px;
-  width: 14px;
-  height: 14px;
-  cursor: pointer;
-  }
-
-settings-header input:hover {
-  background-position: 0 -14px;
-  }
-
-settings-header input:active {
-  background-position: 0 -28px;
-  }
-
-settings-header input.unfolded {
-  background-position: -14px 0;
-  }
-
-settings-header input.unfolded:hover {
-  background-position: -14px -14px;
-  }
-
-settings-header input.unfolded:active {
-  background-position: -14px -28px;
-  }
-
-checkboxes, setting-composite { /**/
-  padding-left: 26px;
-  }
-  
-setting-composite label + label {
-  margin-left: 20px;
-}
-
 
 
 .apply-button input[type="button"] 
@@ -617,16 +757,16 @@ view-slider.vertical {
 
 view-slider.horizontal {
   cursor: s-resize;
+  border-top: 1px solid #b3b3b3;
   }
 
 ui-menu { /**/
   display: block;
   width: 180px;
-  cursor: pointer;
   position: absolute;
   right:30px;
   top: 0px;
-  z-index:1000;
+  z-index:10;
   }
 
 ui-menu.attached { /**/
@@ -704,16 +844,16 @@ window-control {
   position: absolute;
   }
 
-window-header { /**/
+window-header {
   display: block;
-  background-color: #d4d8dd;
-  border-bottom: 1px solid #ccc;
-	font-weight: bold;
-  color: #000;
-  padding-left: .5em;
-  height: 17px;
-  line-height: 17px;
-  }
+  color: #bbb;
+  height: 21px;
+  line-height: 21px;
+  padding-left: 5px;
+  border: 0 solid #000;
+  border-width: 1px 1px 0;
+  border-radius: 7px 7px 0 0;
+}
 
 windows-container [handler="window-move"] { /**/
   cursor: move;
@@ -725,7 +865,6 @@ windows-container [handler='window-close'] { /**/
   height: 20px;
   margin: -3px -3px 0 0;
   position: relative;
-  cursor: pointer;
   background: transparent url('../ui-images/btn-window-close.png') scroll no-repeat 0 0;
 	z-index:11;
   }
@@ -801,9 +940,6 @@ windows-container [handler='window-scale-bottom-left'] { /**/
   left: -5px;
   cursor: sw-resize;
   }
-
-/* perhaps we could do this with svg's */
-
 windows-container { /**/
   width: 100%;
   height: 100%;
@@ -812,86 +948,26 @@ windows-container { /**/
   left: 0;
   top: 0;
   }
-
 window {
   display: block;
   position: absolute;
-  background-color: #eff2f7;
   height: 300px;
   left: 20px;
-  }
-window-shadows {
-    display:block;
+  color: #fff;
+  border-radius: 7px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, .6);
+  background: rgba(40, 40, 40, .9);
+  border: 2px solid #b1b1b1;
 }
-window-shadow {
+window container {
+  border: 1px solid #000;
+  border-width: 0 1px 1px;
+  border-radius: 0 0 7px 7px;
   display: block;
-  position: absolute;
-  }
+  position: relative;
+  background-color: rgba(0, 0, 0, .4);
+}
 
-window-shadow.top-left {
-  left: -5px;
-  top: -5px;
-  width: 5px;
-  height: 5px;
-  background: transparent url('../ui-images/shadow-top-left.png') scroll repeat-x 0 0;
-  }
-
-window-shadow.top {
-  left: 0px;
-  top: -5px;
-  right: 0px;
-  height: 6px;
-  background: transparent url('../ui-images/shadow-top.png') scroll repeat-x 0 0;
-  }
-
-window-shadow.top-right {
-  right: -5px;
-  top: -5px;
-  height: 5px;
-  width: 5px;
-  background: transparent url('../ui-images/shadow-top-right.png') scroll no-repeat 0 0;
-  }
-
-window-shadow.right {
-  right: -5px;
-  top: 0px;
-  bottom: 0px;
-  width: 5px;
-  height: auto;
-  background: transparent url('../ui-images/shadow-right.png') scroll repeat-y 0 0;
-  }
-
-window-shadow.bottom {
-  right: 0px;
-  bottom: -5px;
-  left: 0px;
-  height: 5px;
-  background: transparent url('../ui-images/shadow-bottom.png') scroll repeat-x 0 0;
-  }
-
-window-shadow.bottom-right {
-  right: -5px;
-  bottom: -5px;
-  height: 5px;
-  width: 5px;
-  background: transparent url('../ui-images/shadow-bottom-right.png') scroll no-repeat 0 0;
-  }
-
-window-shadow.bottom-left {
-  left: -5px;
-  bottom: -5px;
-  height: 5px;
-  width: 5px;
-  background: transparent url('../ui-images/shadow-bottom-left.png') scroll no-repeat 0 0;
-  }
-
-window-shadow.left {
-  left: -5px;
-  top: 0px;
-  bottom: 0px;
-  width: 5px;
-  background: transparent url('../ui-images/shadow-left.png') scroll repeat-y 0 0;
-  }
 
 #spin-button { /**/
   float: left;
@@ -901,148 +977,22 @@ window-shadow.left {
   background: transparent url('../ui-images/spin.png') scroll no-repeat 0 0;
   }
 
-button[handler="threads-clear-log"]:before,
-button[handler="debug-clear-log"]:before
-{
-  background-image: url('../ui-images/btn-clear-error-console.png');
-}
-button[handler="threads-export-log"]:before
-{
-  background-image: url('../ui-images/btn-export-log.png');
-}
-button[handler="dom-inspection-snapshot"]:before 
-{
-  background-image: url('../ui-images/btn-get-dom-tree.png');
-}
-button[key="dom.find-with-click"]:before 
-{
-  background-image: url('../ui-images/btn-find-onclick.png');
-}
-button[key="dom.highlight-on-hover"]:before 
-{
-  background-image: url('../ui-images/btn-highlight.png');
-}
-button[key="dom.show-comments"]:before 
-{
-  background-image: url('../ui-images/btn-show-comments.png');
-}
-button[key="dom.show-whitespace-nodes"]:before 
-{
-  background-image: url('../ui-images/btn-show-whitespace.png');
-}
-button[key="dom.update-on-dom-node-inserted"]:before 
-{
-  background-image: url('../ui-images/btn-update-onchange.png');
-}
-button[key="dom.lock-selecked-elements"]:before 
-{
-  background-image: url('../ui-images/btn-multiple-selected-elements.png');
-}
-button[key="js_source.script"]:before 
-{
-  background-image: url('../ui-images/btn-stop-at-new-thread.png');
-}
-button[key="js_source.error"]:before 
-{
-  background-image: url('../ui-images/btn-stop-on-error.png');
-}
-button[key$="hide-default-properties"]:before 
-{
-  background-image: url('../ui-images/btn-hide-global-scope.png');
-}
-button[key="css-inspector.hide-initial-values"]:before 
-{
-  background-image: url('../ui-images/btn-initial-values.png');
-}
-button[key="css-inspector.hide-shorthands"]:before 
-{
-  background-image: url('../ui-images/btn-shorthand.png');
-}
-button[key="dom.dom-tree-style"]:before 
-{
-  background-image: url('../ui-images/btn-tree-style.png');
-}
-button[key="dom_attrs.hide-null-values"]:before 
-{
-  background-image: url('../ui-images/btn-hide-empty-values.png');
-}
-button[key="stylesheets.shortcuts"]:before 
-{
-  background-image: url('../ui-images/btn-shorthand.png'); /* Duplicate of 'css-inspector.hide-shorthands' */
-}
-button[key="console.use-selected-runtime-as-filter"]:before 
-{
-  background-image: url('../ui-images/btn-use-as-filter.png');
-}
-button[key="threads.log-threads"]:before
-{
-  background-image: url('../ui-images/btn-log-threads.png');
-}
-button[handler="documentation"]:before 
-{
-  background-image: url('../ui-images/btn-documentation.png');
-}
-button.clear-log:before
-{
-  background-image: url('../ui-images/btn-delete.png');
-}
-button[handler="dom-inspection-export"]:before 
-{
-  background-image: url('../ui-images/btn-export-current-view.png');
-}
-button[handler="reload-window"]:before 
-{
-  background-image: url('../ui-images/btn-reload-host.png');
-}
-button[handler="top-window-close"]:before 
-{
-  background-image: url('../ui-images/btn-top-close.png');
-}
-button[handler="top-window-toggle-attach"]:before 
-{
-  background-image: url('../ui-images/btn-toggle-attach.png');
-}
-button[handler="configure-message-filters"]:before
-{
-  background-image: url('../ui-images/btn-message-filter.png');
-}
-#continue-run:before 
-{
-  background-image:url('../ui-images/btn-run.png');
-}
-#continue-step-into-call:before 
-{
-  background-image:url('../ui-images/btn-step-into-call.png');
-}
-#continue-step-next-line:before 
-{
-  background-image:url('../ui-images/btn-step-next-line.png');
-}
-#continue-step-out-of-call:before 
-{
-  background-image:url('../ui-images/btn-step-out-call.png');
-}
-.ui-button[handler="reload-window"]
-{
-  background-image: url('../ui-images/btn-reload-host.png');
-}
 
 /* editing */
 
 textarea-container {
   display: block;
   padding: 1px;
+  margin: -2px -4px -2px -2px;
   position:relative;
   z-index: 10;
+  background: #fff;
+  border: 1px solid #808080;
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, .3);
   }
- 
-textarea-container textarea-inner-container {
-  display: block;
-  background-image: -o-skin('Speed Dial Configuration Dialog Skin');
-  padding: 7px 8px 9px 8px;
-  margin: -8px -9px -10px -9px;
-  }
- 
+textarea-container, textarea-container-inline, textarea-inner-container, textarea {
+    border-radius: 3px;
+}
 textarea-container textarea{
   display: block;
   width: 100%;
@@ -1057,17 +1007,17 @@ textarea-container-inline
 {
   display: inline-block;
   padding: 1px;
-  line-height: 0px;
+  margin: -2px -3px;
   position:relative;
-  z-index: 2;
+  z-index: 10;
+  background: #fff;
+  border: 1px solid #808080;
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, .3);
 }
  
 textarea-container-inline textarea-inner-container 
 {
   display: inline-block;
-  background-image: -o-skin('Speed Dial Configuration Dialog Skin');
-  padding: 7px 8px 9px 8px;
-  margin: -8px -10px -10px -10px;
 }
  
 textarea-container-inline textarea
@@ -1088,7 +1038,7 @@ fade-out
   left:0;
   width:100%;
   height: 100%;
-  background:url('../ui-images/black-20.png');
+  background: rgba(0, 0, 0, .2);
 }
   
 /*
@@ -1097,90 +1047,44 @@ fade-out
   margin: 1px;
   padding: 0;
   */
-cst-select
-{
-  display: inline-block;
-  background-image:-o-skin('Dropdown Skin');
-  height: 24px;
-  line-height: 24px;
-  margin: 1px 0;
-  padding: 0;
-  padding-right: 20px;
-  margin-left: 5px;
-  cursor: pointer;
-  vertical-align: middle;
-}
 
 cst-select-toolbar-setting
 {
-  display: inline-block;
-  background: transparent url('../ui-images/btn-config.png') no-repeat 0 0;
-  height: 24px;
-  width: 26px;
-  vertical-align: middle;
-  margin: 1px;
-}
-
-cst-select-toolbar-setting:hover
-{
-  background-position: 0 -24px;
+    display: inline-block;
+    width: 26px;
+    height: 17px;
+    float: left;
 }
 
 cst-value
 {
   display: inline-block;
-  margin-top: 1px;
   overflow: hidden;
-  -o-text-overflow: ellipsis;
   padding: 0 8px;
-  height: 22px;
+  height: 17px;
+  line-height: 17px;
+  white-space: nowrap;
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  width: 95%; /* TODO: this is ugly, might push down the dropdown */
+  box-sizing: border-box;
 }
 
 cst-drop-down
 {
   display: block;
-  width: 16px;
-  height: 20px;
-  background-image: -o-skin('Dropdown Button Skin');
-  margin-right: -18px;
-  margin-top: 2px;
-  vertical-align: top;
+  width: 9px;
+  height: 19px;
+  background: transparent url("../ui-images/dropdown.png") 50% 50% no-repeat;
   float: right;
+  padding: 0 2px;
+  border-left: 1px solid #8e8e8e;
+  position: relative;
+  top: -1px;
 }
 
-/* cst-select */.debugger-menu 
-{
-  padding-right: 0;
-  background-image: none;
-}
-
-.debugger-menu cst-drop-down
-{
-  width: 40px;
-  background: url('../ui-images/btn-debugger-menu.png');
-  background-position: 0 -1px;
-  margin-right: 0;
-}
-
-.debugger-menu cst-drop-down:hover
-{
-  background-position: 0px -25px;
-  opacity: 1;
-}
-.debugger-menu cst-drop-down:active
-{
-  background-position: 0px -49px;
-}
-
-.debugger-menu cst-drop-down:before
-{
-  display: none;
-}
-
-cst-drop-down:hover
-{
-  opacity: .7;
-
+cst-select cst-value {
+  text-shadow: 0 1px rgba(255, 255, 255, .5);
 }
 
 cst-select[disabled]
@@ -1193,7 +1097,7 @@ cst-select-option-list-container
   /* don't add here any border, padding or margin */
   display: block;
   position:absolute;
-  z-index: 100;
+  z-index: 10;
 }
 
 cst-select[disabled] cst-drop-down
@@ -1204,20 +1108,31 @@ cst-select[disabled] cst-drop-down
 cst-select-option-list
 {
   display: block;
-  border: 1px solid hsl(0, 0%, 60%);
+  border: 1px solid #8e8e8e;
   background-color: hsl(0, 0%, 97%);
   max-height: 200px;
   overflow: auto;
   width: auto;
+  border-radius: 3px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .3);
 }
 
 cst-option
 {
   display: block;
-  cursor: pointer;
-  padding: .2em .5em;
+  padding:  2px 8px;
   white-space: nowrap;
 }
+cst-select-option-list :first-child {
+    border-radius: 3px 3px 0 0;
+}
+/* These selectors are super slow, find replacement
+cst-select-option-list :last-child {
+    border-radius: 0 0 3px 3px;
+}
+cst-select-option-list :only-child {
+    border-radius: 3px;
+}*/
 
 cst-select-option-list hr
 {
@@ -1232,13 +1147,12 @@ cst-select-option-list hr
 
 cst-option.selected
 {
-  background-color: #eec;
+  background-color: #cce5f3;
 }
 
 cst-option:hover
 {
-  background-color: #009;
-  color: #fff;
+    background-color: #cecece;
 }
 
 .debugger-menu cst-option
@@ -1397,13 +1311,15 @@ pin-label.pinned
 
 .info-box
 {
-  background-image:-o-skin('Speed Dial Configuration Dialog No Alpha Skin') !important;
   font-size: 22px;
   color: #999 !important;
   margin: 30px 50px 0 50px;
   text-align: center;
-  padding: 18px 20px 24px 14px;
+  padding: 1em;
   font-family: sans-serif !important;
+  border: 1px solid #b3b3b3;
+  border-radius: 8px;
+  background: #f3f3f3;
 }
 .info-box p 
 {
@@ -1414,4 +1330,228 @@ pin-label.pinned
 .placeholder
 {
   color: #999;
+  font-style: italic;
+}
+
+
+
+
+
+
+
+
+
+
+horizontal-navigation {
+    height: 21px;
+    line-height: 21px;
+    display: block;
+    position: relative;
+    overflow: hidden;
+}
+nav {
+    position: absolute;
+    border: 0 solid #b3b3b3;
+    color: #444;
+    width: 15px;
+    text-align: center;
+    z-index: 1;
+    display: none;
+    background: #d9d9d9 url("../ui-images/shadow_0.png")
+}
+nav:active {
+    color: #000;
+}
+nav::selection {
+    background: inherit;
+}
+.navs nav {
+    display: inline;
+}
+nav[dir="back"] {
+    content: url("../ui-images/nav_back.png");
+    border-right-width: 1px;
+}
+nav[dir="forward"] {
+    content: url("../ui-images/nav_forward.png");
+    right: 0;
+    border-left-width: 1px;
+}
+nav[dir="back"].disabled {
+    content: url("../ui-images/nav_back_disabled.png");
+}
+nav[dir="forward"].disabled {
+    content: url("../ui-images/nav_forward_disabled.png");
+}
+nav:not(.disabled):hover {
+  background-color: #cecece;
+}
+nav.disabled {
+    cursor: default;
+}
+breadcrumbs {
+    box-sizing: border-box;
+    position: absolute;
+    overflow: hidden;
+    white-space: nowrap;
+    left: 0;
+    right: 0;
+    -o-transition: left 0 ease-out;
+    background: transparent url("../ui-images/shadow_0.png")
+}
+.navs breadcrumbs {
+    left: 16px;
+    right: 15px; /* minus one pixel to hide the right border of the last breadcrumb */
+}
+breadcrumb {
+    border-right: 1px solid #b3b3b3;
+    height: 21px;
+    line-height: 21px;
+    display: inline-block;
+    padding: 0 4px;
+}
+breadcrumb.active {
+    background: #ccc url("../ui-images/shadow_0.png");
+}
+breadcrumb:hover {
+    background: #cecece url("../ui-images/shadow_0.png")
+}
+breadcrumbs::selection {
+    background: transparent;
+}
+.drag breadcrumb {
+    cursor: move;
+}
+
+
+
+
+
+overlay {
+    background: rgba(0, 0, 0, .5);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    z-index: 3;
+    padding: 0 30px;
+    display: none;
+}
+overlay.active {
+    display: block;
+}
+overlay-window {
+    color: #fff;
+    border-radius: 7px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, .6);
+    background: rgba(40, 40, 40, .9);
+    width: 70%;
+    min-width: 600px;
+    border: 2px solid #b1b1b1;
+    display: block;
+    position: absolute;
+    height: 80%;
+    max-height: 600px;
+    left: 10px;
+}
+overlay-arrow {
+  content: url("../ui-images/overlay_arrow.png");
+  position: absolute;
+  top: -12px;
+}
+.attached overlay-window {
+  left: auto;
+  right: 20px;
+}
+overlay-window h2 {
+    font-size: 1em;
+}
+overlay-tabs, overlay-content {
+    display: block;
+    border: 1px solid #000;
+}
+overlay-tabs {
+    border-radius: 7px 7px 0 0;
+    border-bottom: none;
+    padding: 5px 5px 0;
+}
+overlay-tabs tab {
+    border-radius: 3px 3px 0 0;
+    padding: 0 15px;
+    height: 25px;
+    line-height: 25px;
+    margin-right: 5px;
+    color: #bbb;
+    display: inline-block;
+    float: none;
+    position: static;
+    border: none;
+}
+overlay-tabs tab.active {
+    color: #fff;
+    border-color: #000;
+    background: rgba(0, 0, 0, .4);
+    cursor: auto;
+}
+overlay-content {
+    background: rgba(0, 0, 0, .4);
+    border-radius: 7px;
+    border-top-width: 1px;
+    padding: 10px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow: auto;
+}
+overlay-tabs + overlay-content { /* Need to style a bit differently in case there are tabs */
+    top: 31px;
+    border-top-width: 0;
+    border-radius: 0 0 7px 7px;
+}
+overlay fieldset, overlay hr {
+    border: 2px ridge rgba(255, 255, 255, .2);
+}
+overlay hr {
+    border-width: 0 0 2px;
+}
+
+/* Temporary fix for flickering */
+tabs, toolbar {
+  top: -1000px;
+}
+
+#contextmenu {
+  position: absolute;
+  z-index: 10;
+  display: none;
+  background: #f7f7f7;
+  border: 1px solid #8e8e8e;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .3);
+  padding: 0px;
+  min-width: 100px;
+  max-width: 200px;
+  display: inline-block;
+  visibility: hidden;
+  list-style-type: none;
+  margin: 0;
+  overflow: auto;
+}
+#contextmenu li {
+  padding: 1px 2px;
+}
+#contextmenu li.separator {
+  padding: 0;
+}
+#contextmenu li:not(.separator):hover {
+  background: #cecece
+}
+#contextmenu hr {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  height: 1px;
+  background: #8e8e8e;
 }

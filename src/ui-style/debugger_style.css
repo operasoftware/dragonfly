@@ -25,10 +25,6 @@ ul {
   list-style:none;
   }
 
-li[hanler] {
-  cursor:pointer;
-  }
-
 #debug-container {
   /*background-color:#ccc;*/
   /*overflow: hidden;*/
@@ -105,7 +101,6 @@ li[hanler] {
   height:11px;
   width:11px;
   background: transparent url('../ui-images/expand-collapse.gif') scroll no-repeat 0 0;
-  cursor:pointer;
   }
 
 .folder-key.inverted
@@ -132,7 +127,7 @@ li[hanler] {
   padding-left: 20px;
   line-height:16px;
   background: transparent url('../ui-images/selected-frame.png') scroll no-repeat -20px 0;
-  cursor:pointer;
+  cursor: pointer;
   }
 
 #backtrace-container li:first-child {
@@ -162,10 +157,6 @@ li[hanler] {
 #continues {
   margin-left:5px;
   }
-
-[handler] {
-  cursor: pointer;
-  }
   
 input[type="text"] {
   cursor: text;
@@ -180,7 +171,6 @@ input[type="text"] {
   float:left;
   padding:0;
   margin:0 5px;
-  cursor:pointer;
   position:relative;
   z-index:1;
   }
@@ -193,10 +183,6 @@ input[type="text"] {
   background-color:#fff;
   padding:.5em;
 }
-
-[handler="select-window"], [handler="display-script"] {
-  cursor:pointer;
-  }
 
 
 [window_id].selected > span {
@@ -249,6 +235,7 @@ input[type="text"] {
 
 .padding {
   padding:9px;
+  box-sizing: border-box;
   }
 
 /*** view debug ***/
@@ -259,8 +246,7 @@ input[type="text"] {
 }
 
 .selected-runtime {
-  font-weight:bold;
-  color:#09f;
+  background-color: #cce5f3;
 }
 
 .thread-stopped-event {
@@ -363,15 +349,16 @@ property {
   padding-left: 2em;
   padding-right: 3px;
   line-height: 15px;
+  font-family:monospace;
   }
 property.disabled, .disabled key, .disabled value {
-  color: #ccc !important;
+  color: #999 !important;
   }
 .enable-disable {
   float: left;
-  margin-left: -20px;
-  margin-bottom: -10px;
   opacity: 0; /* This is a hack (instead of visibility: hidden) to make sure the checkbox is always clickable */
+  margin: 1px 0 -10px -20px; /* This is rather hackish too */
+  cursor: default;
   }
 .enable-disable.hidden { visibility: hidden; }
 property:hover .enable-disable,
@@ -384,8 +371,14 @@ rule, font-face-rule, page-rule, import-rule, charset-rule, media-rule {
   font-family:monospace;
   display:block;
   /*xxwhite-space: pre-wrap;*/
-  margin: 1em 0;
+  margin: 0 0 1em;
   }
+
+/* This selectors are super slow, find replacement
+stylesheet :last-child {
+    margin-bottom: 0;
+}
+*/
 
 .stylesheets pre {
   background:red;
@@ -401,12 +394,7 @@ media-rule rules {
 
 /* css inspector class css-inspector */
 
-.css-inspector rule {
-  cursor: default;
-  margin:0;
-  }
-
-.css-inspector rule[rule-id] {
+.css-inspector rule[rule-id] property {
   cursor: text;
   }
 
@@ -418,7 +406,12 @@ stylesheet-link {
   text-align:right;
   color: #ccc;
   text-decoration: underline;
+  float: right;
+  margin-left: 10px;
   }
+stylesheet-link[handler], [handler="dom-resource-link"] {
+    cursor: pointer;
+}
 
 stylesheet-link:hover {
   color: #666;
@@ -426,20 +419,11 @@ stylesheet-link:hover {
 
 styles {
   /*xxwhite-space: pre-wrap;*/
-  font-family:monospace;
-  }
-
-.unfolded styles {
-  padding: 5px;
-  }
-
-category {
-
+  padding:  0 4px;
   }
 
 category header {
-  font-size: 1.2em;
-  border: 1px solid #ccc;
+  border: 1px solid #b3b3b3;
   border-width: 0 0 1px;
   background-color: hsl( 0, 0% , 95%);
   padding: 2px;
@@ -457,7 +441,6 @@ category.unfolded + category header {
   margin:0px 5px;
   width:14px;
   height:14px;
-  cursor: pointer;
   }
 
 .css-inspector header input:hover {
@@ -480,57 +463,45 @@ category.unfolded + category header {
   background-position: -14px -28px;
   }
 
-.css-inspector .overwritten, .css-inspector .overwritten key, .css-inspector .overwritten value  {
+.overwritten {
   text-decoration: line-through;
-  /*color: #ccc;*/
   }
 
 .css-inspector .overwritten value:after {
-  /*content: " [overridden]";*/
   color: #c90;
-  }
-  
-.css-inspector .inherited {
-  color: #ccc;
-  }
-
-.css-inspector .inherited value:after {
-  content: " [inherited]";
-  color: #09c;
   }
 
 .css-inspector .selected {
-  background-color: hsl(210, 70%, 80%);
+  background-color: #cce5f3;
   }
+.css-inspector property.selected {
+    border-radius: 3px;
+}
 
 .css-inspector.edit-mode .selected {
   background-color: transparent;
   }
 
 .css-inspector h2 {
-  font-size: 12px;
+  font-size: 1em;
   font-weight: normal;
-  border: 1px solid #ccc;
-  border-width:1px 0;
-  background-color: hsl( 0, 0%, 95%);
-  text-align: center;
-  margin: 10px -5px;
-  color: hsl(0, 0%, 50%)
+  border: 0 solid #b3b3b3;
+  border-width: 1px 0;
+  background-color: #eee;
+  margin: 10px -4px;
+  padding-left: 4px;
   }
   
-.css-inspector h2 b 
-{
-  color: #279;
-}
 
 examine-objects, 
 examine-objects item 
 {
   display:block;
+  font-family: monospace;
 }
 examine-objects
 {
-  padding: 0 9px;
+  padding: 4px;
 }
 examine-objects examine-objects
 {
@@ -566,6 +537,7 @@ examine-objects key.no-expander
   margin: 0 auto;
   padding: 15px;
   max-width: 250px;
+  font-size: 11px;
 }
 .css-layout layout-container ul 
 {
@@ -581,7 +553,7 @@ examine-objects key.no-expander
   text-align: center;
   vertical-align: middle;
   padding: 1px;
-  cursor: pointer;
+  min-width: 15px;
 }
 .css-layout layout-container p 
 {
@@ -594,16 +566,11 @@ examine-objects key.no-expander
   position:absolute;
   top:0;
   left:0;
-  font-size: 11px;
 }
 
 .css-layout layout-container .dimension li 
 {
-  width: 300px
-}
-.css-layout layout-container .dimension ul + ul li
-{
-  text-align:left
+  min-width: 80px;
 }
 .css-layout layout-container .dimension,
 .css-layout layout-container .padding,
@@ -611,6 +578,10 @@ examine-objects key.no-expander
 .css-layout layout-container .border 
 {
   border-color: #324c74;
+}
+.css-layout layout-container .padding,
+.css-layout layout-container .margin {
+    border-style: dashed;
 }
 
   
@@ -655,48 +626,39 @@ stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
   border: 1px solid #ccc;
   color: #666;
   }
-
+div.dom {
+    display: table;
+}
 .dom .pre-wrap {
   white-space: pre-wrap;
   }
-
-.dom div
+.dom { width: 100%; }
+.dom div:not(.tree-style):not(.info-box)
 {
   padding-left: 1px;
-  border-left: 1px solid transparent;
+  padding-right: 3px;
+  border-left: 1px solid transparent; /* TODO: why this instead of padding? */
 }
 
 
 .dom input 
 {
   border: 0;
-  margin: 0;
   padding: 0;
-  margin-left: -21px;
-  cursor: pointer;
-  height: 15px;
-  width: 22px;
+  margin: 0 2px 0 -17px;
+  height: 15px; /* Make space for outline to appear outside the control */
+  width: 15px;
   color: #666;
-  background: transparent url('../ui-images/expand-collapse.png') 6px 2px no-repeat;
-}
-
-.dom input:focus
-{
-  background-color: Highlight;
+  background: transparent url('../ui-images/expand-collapse.png') 2px 2px no-repeat;
 }
 
 .dom input.open {
-  background-position: 6px -13px;
+  background-position: 2px -13px;
   }
-
-.dom .node {
-  cursor:pointer;
+.dom input:focus {
+  outline: 1px solid #78bae0;
+  outline-offset: -2px; /* Hides the normal (dotted) outline when pressing Enter on the expand/collapse button */
   }
-
-.table-cell
-{
-  display: table-cell;
-}
 
 .tree-style .text-node
 {
@@ -705,7 +667,7 @@ stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
 
 
 .css-layout h2 {
-  font-size: 1.2em;
+  font-size: 1em;
   border: 1px solid #ccc;
   border-width: 1px 0;
   background-color: hsl( 0, 0% , 95%);
@@ -758,17 +720,22 @@ breadcrumb span
 
 .script-options h2, .stylesheet-options h2
 {
-  padding: .1em .2em;
-  font-size: 1.3em;
-  border-top: 1px solid hsl(0, 0%, 80%);
-  border-bottom: 1px solid hsl(0, 0%, 80%);
-  background-color: hsl(0, 0%, 90%);
+  padding: 2px 4px;
+  border: 0 solid #b3b3b3;
+  border-width: 1px 0;
+  background-color: #e6e6e6;
   white-space: nowrap;
+  font-size: 1em;
 }
 
-.script-options h2:first-child, .stylesheet-options h2:first-child
+.script-options h2:first-child, .stylesheet-options h2:first-child,
+.script-options h2 + h2, .stylesheet-options h2 + h2
 {
-  border-top: 0px solid;
+  border-top: none;
+}
+.script-options h2:last-child, .stylesheet-options h2:last-child
+{
+  border-bottom: none;
 }
 
 .script-options cst-option, .stylesheet-options cst-option
@@ -1047,7 +1014,6 @@ d
   border: 0;
   margin: 0;
   padding-right:4px;
-  cursor: pointer;
   height: 15px;
   width: 19px;
   color: #666;
@@ -1179,13 +1145,6 @@ d
   table-layout: fixed;
 }
 
-.storage-table td
-{
-  overflow: hidden;
-  white-space: nowrap;
-  -o-text-overflow: ellipsis;
-}
-
 .storage-table caption
 {
   text-align: left;
@@ -1203,13 +1162,13 @@ d
 
 .storage-table td
 {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
   border: 1px solid #ccc;
   padding: 0px 5px;
   line-height: 16px;
-}
-
-.storage-table td
-{
   font-family: monospace;
 }
 
@@ -1227,7 +1186,6 @@ d
 .storage-table .value
 {
   border-right: 0px;
-  cursor: pointer;
 }
 
 .storage-table .control
@@ -1235,25 +1193,6 @@ d
   text-align: right;
   border-left: 0px;
   width: 30px;
-}
-
-.storage-table .control input
-{
-  background: transparent none;
-  border: 0px;
-  margin: 0 3px;
-  width: -o-skin;
-  height: -o-skin;
-}
-
-.storage-table .control input[handler="storage-delete"]
-{
-  background-image: -o-skin('Search Close History Item');
-}
-
-.storage-table .control input[handler="storage-delete"]:hover
-{
-  background-image: -o-skin('Search Close History Item.hover');
 }
 
 .storage-table .storage-edit
@@ -1325,19 +1264,10 @@ d
   background-color: #fff;
 }
 
-.storage-table input[handler="storage-add-key"],
-.storage-table input[handler="storage-update"]
-{
-  background: transparent -o-skin('New item menu');;
-  border: 0px;
-  margin: 0 3px;
-  width: -o-skin;
-  height: -o-skin;
-}
-
-.storage-table input[handler="storage-update"]
-{
-  background: transparent -o-skin('Reload');
+.single-control input {
+    border: 0;
+    padding: 0;
+    margin: 0 2px;
 }
 
 #about-authors pre
@@ -1353,6 +1283,7 @@ color-sample
   height: 7px;
   border: 1px solid #333;
   margin-left: 5px;
+  cursor: pointer;
 }
 
 .collapsed-prototypes

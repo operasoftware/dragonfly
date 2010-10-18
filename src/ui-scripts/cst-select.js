@@ -127,7 +127,7 @@
       }
       else
       {
-        style += "top: " + bottom + "px;";
+        style += "top: " + (bottom - 1) + "px;";
         modal_box.firstElementChild.style.cssText = "max-height: " + max_height + "px;"
       };
       if (modal_box_width > max_width && max_width_2 > max_width)
@@ -233,7 +233,7 @@
         "cst-option",
         opt.text,
         "opt-index", i,
-        "title", opt.title,
+        "title", opt.title || "",
         "unselectable", "on"
       ]
     }
@@ -591,7 +591,7 @@ var CstSelectWithActionBase = function(id, class_name, type)
       "cst-option",
       action.text,
       "handler", action.handler,
-      "title", action.title,
+      "title", action.title || "",
       "unselectable", "on"
     ]
   }

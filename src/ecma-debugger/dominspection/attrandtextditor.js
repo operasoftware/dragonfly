@@ -85,7 +85,6 @@ var BaseEditor = new function()
     }
     this.textarea_container = document.createElement(this.textarea_container_name);
     this.textarea = this.textarea_container.
-      appendChild(document.createElement('textarea-inner-container')).
       appendChild(document.createElement('textarea'));
     this.textarea.style.cssText = cssText;
     this.textarea.oninput = this.getInputHandler();

@@ -20,9 +20,9 @@ window.ui_strings.lang_code = "en";
 /* DESC: View for script debugging. */
 ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS = 'Scripts';
 /* DESC: View for DOM debugging. */
-ui_strings.M_VIEW_LABEL_COMPOSITE_DOM = 'DOM';
+ui_strings.M_VIEW_LABEL_COMPOSITE_DOM = 'Document';
 /* DESC: View for error log. */
-ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE = 'Error Console';
+ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE = 'Errors';
 /* DESC: View for exported code. */
 ui_strings.M_VIEW_LABEL_COMPOSITE_EXPORTS = 'Export';
 /* DESC: View for network debugging (and http logger) */
@@ -313,6 +313,12 @@ ui_strings.S_BUTTON_COLOR_RESTORE_DEFAULTS = "Restore defaults";
 ui_strings.S_BUTTON_COLOR_MANAGE_STORED = "Manage stored colors";
 /* DESC: */
 ui_strings.S_BUTTON_COLOR_STORE_COLOR = "Store color";
+/* DESC: Global console toggle */
+ui_strings.S_BUTTON_TOGGLE_CONSOLE = "Toggle console";
+/* DESC: Global settings toggle */
+ui_strings.S_BUTTON_TOGGLE_SETTINGS = "Settings";
+/* DESC: Global remote debug toggle */
+ui_strings.S_BUTTON_TOGGLE_REMOTE_DEBUG = "Remote debug configuration";
 
 
 /*
@@ -323,6 +329,8 @@ ui_strings.S_BUTTON_COLOR_STORE_COLOR = "Store color";
 ui_strings.S_MENU_SELECT_ACTIVE_WINDOW = 'Select Active Window';
 /* DESC: Reload the debug context. */
 ui_strings.S_MENU_RELOAD_DEBUG_CONTEXT = 'Reload Debug Context';
+/* DESC: Debug context menu */
+ui_strings.S_MENU_DEBUG_CONTEXT = 'Debug context';
 
 
 /*

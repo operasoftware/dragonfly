@@ -463,11 +463,13 @@ cls.WindowManager["2.0"].DebuggerMenu = function(id, class_name)
     {
       return [
           "cst-select",
-          ["cst-drop-down"],
+          [["cst-icon", "class", select.getId()],
+           ["cst-drop-down"]],
           "cst-id", select.getId(),
           "handler", select.getId(),
           "unselectable", "on",
-          "class", select.class_name
+          "class", select.class_name,
+          "title", ui_strings.S_MENU_DEBUG_CONTEXT
       ];
     };
   };

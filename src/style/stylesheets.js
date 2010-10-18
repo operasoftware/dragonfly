@@ -633,8 +633,8 @@ cls.Stylesheets = function()
 
     return "<import-rule rule-id='" + rule[RULE_ID] +
                   "' imported-sheet='" + rule[IMPORT_STYLESHEET_ID] + "'>" +
-              "<span class='import-rule'>@import url(\"" + rule[HREF] + "\") " +
-              rule[MEDIA_LIST].join(', ') + "</span>" +
+              "<at>@import</at> url(\"" + rule[HREF] + "\") " +
+              rule[MEDIA_LIST].join(', ') + "</span>;" +
            "</import-rule>";
   };
 
@@ -654,7 +654,7 @@ cls.Stylesheets = function()
       }
     }
     return "<media-rule rule-id='" + rule[RULE_ID] + "'>" +
-              "<at>@media " + rule[MEDIA_LIST].join(', ') + " </at>{" +
+              "<at>@media</at> " + rule[MEDIA_LIST].join(', ') + " {" +
               (ret ? "<rules>" + ret + "</rules>" : " ") +
             "}</media-rule>";
   };
@@ -770,7 +770,7 @@ cls.Stylesheets = function()
 
       if (i)
       {
-        ret += "<h2>inherited from <b>" + node_casc[ELEMENT_NAME] + "</b></h2>";
+        ret += "<h2>Inherited from <code class='element-name'>" + node_casc[ELEMENT_NAME] + "</code></h2>";
       }
 
       // TODO

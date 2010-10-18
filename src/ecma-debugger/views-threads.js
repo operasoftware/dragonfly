@@ -70,7 +70,9 @@ cls.ThreadsView.create_ui_widgets = function()
       [
         'log-threads'
       ]
-    }
+    },
+    null,
+    "script"
   );
 
   new ToolbarConfig

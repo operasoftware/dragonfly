@@ -25,7 +25,7 @@ var EventHandler = function(type, is_capturing, handler_key)
     {
       return;
     }
-    if(event.which == 3)
+    if (event.which == 3 && event.type in {"click": 1, "mousedown": 1, "mouseup": 1})
     {
       // right click
       event.stopPropagation();
@@ -33,11 +33,11 @@ var EventHandler = function(type, is_capturing, handler_key)
       return;
     }
     handler = ele.getAttribute(handler_key);
-    while( !handler && ( ele = ele.parentElement ) )
+    while( !(handler && eventHandlers[type][handler]) && ( ele = ele.parentElement ) )
     {
       handler = ele.getAttribute(handler_key);
     }
-    if( handler && eventHandlers[type][handler] )
+    if( handler )
     {
       if( type == 'click' && /toolbar-buttons/i.test(ele.parentNode.nodeName) )
       {
@@ -67,17 +67,19 @@ new EventHandler('keyup', true);
 new EventHandler('keydown', true);
 new EventHandler('keypress', true);
 new EventHandler('mousedown');
+new EventHandler('mouseup');
+new EventHandler('mouseout');
 new EventHandler('mouseover');
 new EventHandler('focus', true, 'focus-handler');
 new EventHandler('blur', true, 'blur-handler');
+new EventHandler('mousewheel');
 
 /***** general ui click handler *****/
 
 eventHandlers.mousedown['tab'] = function(event, target)
 {
-  target = target.parentElement;
-  var tabs = UIBase.getUIById(target.parentElement.getAttribute('ui-id'));
-  var view_id = target.getAttribute('ref-id');
+  var tabs = UIBase.getUIById(target.get_attr('parent-node-chain', 'ui-id'));
+  var view_id = target.get_attr('parent-node-chain', 'ref-id');
   if( tabs )
   {
     tabs.setActiveTab(view_id);
@@ -86,6 +88,27 @@ eventHandlers.mousedown['tab'] = function(event, target)
   {
     opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
       "tabs is missing in eventHandlers.click['tab'] in ui-actions");
+  }
+}
+
+eventHandlers.mousewheel['change-on-scroll'] = function(event, target)
+{
+  if (target.nodeName == "tab")
+  {
+    target = target.parentNode;
+  }
+  var active_tab = target.querySelector(".active")
+  if (event.detail < 0) {
+      if (active_tab.previousElementSibling)
+      {
+        eventHandlers.mousedown['tab'](null, active_tab.previousElementSibling);
+      }
+  }
+  else {
+      if (active_tab.nextElementSibling)
+      {
+        eventHandlers.mousedown['tab'](null, active_tab.nextElementSibling);
+      }
   }
 }
 
@@ -107,6 +130,60 @@ eventHandlers.click['close-tab'] = function(event, target)
     store.splice(i, 1);
   }
 }
+
+var navTimeout = null;
+eventHandlers.mousedown['horizontal-nav'] = function(event, target)
+{
+  var horizontal_nav = UIBase.getUIById(target.get_attr('parent-node-chain', 'ui-id'));
+  var dir = target.get_attr('parent-node-chain', 'dir');
+  (function nav() {
+    horizontal_nav.nav(dir);
+    navTimeout = setTimeout(nav, 400);
+  })();
+};
+
+eventHandlers.mouseup['horizontal-nav'] =
+eventHandlers.mouseout['horizontal-nav'] = function(event, target)
+{
+  clearTimeout(navTimeout);
+};
+
+eventHandlers.mousewheel['breadcrumbs-drag'] = function(event, target)
+{
+  var horizontal_nav = UIBase.getUIById(target.get_attr('parent-node-chain', 'ui-id'));
+  var dir = target.get_attr('parent-node-chain', 'dir');
+  horizontal_nav.nav(event.detail < 0 ? 100 : -100);
+};
+
+eventHandlers.mousedown['breadcrumbs-drag'] = function(event, target)
+{
+  var horizontal_nav = UIBase.getUIById(target.get_attr('parent-node-chain', 'ui-id'));
+  var breadcrumbs = target;
+  var pos = parseInt(getComputedStyle(breadcrumbs, null).getPropertyValue("left"));
+  breadcrumbs.style.OTransitionDuration = 0;
+
+  if (breadcrumbs.previousElementSibling.offsetWidth > 0) {
+    document.addEventListener("mousemove", mouse_move, false);
+    document.addEventListener("mouseup", mouse_up, false);
+  }
+
+  function mouse_move(e) {
+    drag_breadcrumbs(e, event.clientX, pos);
+  }
+
+  function mouse_up() {
+    horizontal_nav.current_breadcrumb_el = null;
+    breadcrumbs.removeClass("drag");
+    document.removeEventListener("mousemove", mouse_move, false);
+    document.removeEventListener("mouseup", mouse_up, false);
+  }
+
+  function drag_breadcrumbs(e, mouse_start, pos) {
+    breadcrumbs.addClass("drag")
+    horizontal_nav.set_position(pos + e.clientX - mouse_start);
+    horizontal_nav.check_position();
+  }
+};
 
 eventHandlers.click['settings-tabs'] = function(event, target)
 {
@@ -154,8 +231,7 @@ eventHandlers.click['top-window-toggle-attach'] = function(event)
   viewsMenu.remove();
   window.topCell.onresize = function(){};
   var is_attached = ( window.opera.attached = !window.opera.attached );
-  document.documentElement.removeChild(event.target.parentNode);
-  var win_controls = document.documentElement.render(templates.window_controls(is_attached));
+  event.target.parentNode.parentNode.removeChild(event.target.parentNode);
 
   // TODO active window must be set correct
   // then the window dropdown will be removed in the attached view
@@ -178,8 +254,76 @@ eventHandlers.click['top-window-toggle-attach'] = function(event)
   {
     viewsMenu.create();
   }
-  setTimeout(client.setupTopCell, 0);
+
+  setTimeout(function() {
+    client.setupTopCell();
+    document.querySelector("main-view").render(templates.window_controls(is_attached));
+  }, 0);
 }
+
+eventHandlers.click['overlay-tab'] = function(event, target)
+{
+  var overlay = UIBase.getUIById(document.querySelector("overlay")
+                                         .get_attr("parent-node-chain", "ui-id"));
+  var group_name = event.target.getAttribute("group");
+  var settings_by_group = Settings.get_settings_by_group(group_name);
+  overlay.show_group(group_name, window.templates.settings(settings_by_group));
+};
+
+// TODO: clean up hardcoded values
+eventHandlers.click['toggle-settings-overlay'] = function(event, target)
+{
+  var overlay = UIBase.getUIById(document.querySelector("overlay")
+                                         .get_attr("parent-node-chain", "ui-id"));
+  var button_dims = target.getBoundingClientRect();
+  var element = overlay.element.querySelector("overlay-window");
+  var arrow = overlay.element.querySelector("overlay-arrow");
+  element.style.top = button_dims.bottom + 10 + "px";
+  if (window.opera.attached)
+  {
+      arrow.style.right = document.documentElement.clientWidth - button_dims.right - 20 + "px"; // 20 = padding on overlay
+  }
+  else
+  {
+      arrow.style.left = button_dims.left - 10 + "px"; // 10 = padding on overlay
+  }
+  target.setAttribute("is-active", target.getAttribute("is-active") != "true");
+
+  var settings_by_group = Settings.get_settings_by_group("general");
+  overlay.set_window("settings-overlay");
+  overlay.show_group("general", window.templates.settings(settings_by_group));
+  overlay.toggle_visibility();
+};
+
+// TODO: merge this with the one above
+eventHandlers.click['toggle-remote-debug-config-overlay'] = function(event, target)
+{
+  var overlay = UIBase.getUIById(document.querySelector("overlay")
+                                         .get_attr("parent-node-chain", "ui-id"));
+  var button_dims = target.getBoundingClientRect();
+  var element = overlay.element.querySelector("overlay-window");
+  var arrow = overlay.element.querySelector("overlay-arrow");
+  element.style.top = button_dims.bottom + 10 + "px";
+  if (window.opera.attached)
+  {
+      arrow.style.right = document.documentElement.clientWidth - button_dims.right - 20 + "px";
+  }
+  else
+  {
+      arrow.style.left = button_dims.left - 10 + "px";
+  }
+  target.setAttribute("is-active", target.getAttribute("is-active") != "true");
+
+  var settings_by_group = Settings.get_settings_by_group("remote_debug");
+  overlay.set_window("remote-debug-overlay");
+  overlay.show_group("remote_debug", window.templates.settings(settings_by_group));
+  overlay.toggle_visibility();
+};
+
+eventHandlers.click['toggle-console'] = function(event, target)
+{
+    alert("Command line.");
+};
 
 eventHandlers.click['toolbar-switch'] = function(event)
 {

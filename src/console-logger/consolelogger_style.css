@@ -4,7 +4,7 @@
 }
 
 .error-console tr.collapsed:hover, .error-console tr.expanded:hover {
-    background-color: #ffeeee;
+    background-color: #cce5f3;
 }
 
 /* Expander cell */
@@ -15,9 +15,9 @@
 /* File cell */
 .error-console td:nth-child(2) {
     width: 30%;
-    font-weight: bold;
     overflow: hidden;
     -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
     white-space: nowrap;
     max-width: 500px;
 }

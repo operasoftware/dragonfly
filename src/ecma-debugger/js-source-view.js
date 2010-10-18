@@ -87,7 +87,7 @@ cls.JsSourceView = function(id, name, container_class)
   templates.line_nummer = function()
   {
     return ['li',
-      ['input', 'disabled', 'disabled'],
+      ['input'],
       ['span', 'handler', 'set-break-point'],
     ];
   }
@@ -241,7 +241,7 @@ cls.JsSourceView = function(id, name, container_class)
                 'class', 'info-box'
               ] :
               ['div',
-                ['span',
+                ['button',
                   'class', 'ui-button',
                   'handler', 'reload-window'],
                 ['p', ui_strings.S_INFO_RELOAD_FOR_SCRIPT],
@@ -988,7 +988,8 @@ cls.JsSourceView.create_ui_widgets = function()
           ]
         ] );
       }
-    }
+    },
+    "script"
   );
 
   new Switches
