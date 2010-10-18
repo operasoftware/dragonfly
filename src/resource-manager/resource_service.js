@@ -46,7 +46,9 @@ cls.ResourceManagerService = function(view, data)
       id: null,
       topresource: data.resourceID,
       resourcelist: [],
-      resourcemap: {}
+      resourcemap: {},
+      firsttime: data.time,
+      lasttime: null
     };
 
   }.bind(this);
@@ -66,6 +68,7 @@ cls.ResourceManagerService = function(view, data)
   this._on_request_bound = function(msg)
   {
     var data = new cls.ResourceManager["1.0"].Request(msg);
+//    opera.postError(JSON.stringify(data));
 
     var resource = this._current_document.resourcemap[data.resourceID];
     if (!resource) {
@@ -127,6 +130,7 @@ cls.ResourceManagerService = function(view, data)
     var resource = this._current_document.resourcemap[data.resourceID];
     if (resource) {
       resource.urlfinished = data;
+      this._current_document.lasttime = data.time;
     }
     //opera.postError(JSON.stringify(this._current_document, null, 2));
   }.bind(this);

@@ -24,10 +24,9 @@ cls.ResourceManagerView = function(id, name, container_class, html, default_hand
 
   this._render_main_view = function(container)
   {
+    var width = container.clientWidth;
     var document = this._service.get_current_document();
-    container.clearAndRender(templates.resource_main(document));
-    return;
-    container.innerHTML = "<pre>" + JSON.stringify(document, null, "    ") + "</pre>";
+    container.clearAndRender(templates.resource_main(document, width));
   };
 
   this._handle_resource_select_bound = function(evt, target)

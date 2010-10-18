@@ -1,11 +1,14 @@
 window.templates = window.templates || {};
 
-templates.resource_main = function(doc, duration_to_render)
+templates.resource_main = function(doc, width, duration_to_render)
 {
+  var graphwidth = width - 190; // fixme <- hardcoded
+  var seconds = Math.ceil((doc.lasttime - doc.firsttime) / 1000) * 1000 ;
+
   return [
     "div",
     ["div", templates.resource_list(doc), "class", "resource-listwrapper"],
-    ["div", templates.resource_graph(doc), "class", "resource-graphwrapper"],
+    ["div", templates.resource_graph(doc, seconds, graphwidth), "class", "resource-graphwrapper"],
     "class", "resource-main"
   ];
 };
@@ -76,22 +79,33 @@ templates.resource_graph = function(doc, duration, contwidth, lineheight)
   duration = duration || 3000;
   lineheight = lineheight || 30;
   contwidth = contwidth || 800;
+
+
   var bars = [];
 
   var requests = doc.resourcelist.map(function(r) { return doc.resourcemap[r]; });
 
-  var basetime = requests[0].request.time;
+  var basetime = doc.firsttime;
   for (var n=0, req; req=requests[n]; n++)
   {
-    var bar = templates.resource_bar(n, req, basetime, 3000, contwidth, lineheight);
+    var bar = templates.resource_bar(n, req, basetime, duration, contwidth, lineheight);
     bars.push(bar);
   }
 
   var defs = templates.bar_defs();
+  var background = templates.graph_background(doc.resourcelist.length, lineheight);
   var grid = templates.grid_lines(duration, contwidth, n*lineheight);
 
-  var tpl = ["svg:svg", defs, bars, grid, "viewBox", "0 0 " + contwidth + " 1000", "xmlns", "http://www.w3.org/2000/svg", "class", "resource-graph"];
-  return tpl;
+    var tpl = ["svg:svg", defs, bars, grid, "viewBox", "0 0 " + contwidth + " " + (n*lineheight), "xmlns", "http://www.w3.org/2000/svg", "class", "resource-graph"];
+
+    var tpl = ["svg:svg", defs, background, bars, grid, "xmlns", "http://www.w3.org/2000/svg",
+                          "class", "resource-graph",
+                          "width", "" + contwidth + "px",
+                          "height", "" + n*lineheight + "px",
+                          "style", "border:solid thin red; background-color: blue"];
+
+
+    return tpl;
 };
 
 templates.resource_bar = function(offset, entry, basetime, totaltime, contwidth, lineheight)
@@ -102,32 +116,49 @@ templates.resource_bar = function(offset, entry, basetime, totaltime, contwidth,
 
   if (!entry.request || !entry.responsefinished) {
 //  opera.postError("Brokan! " + entry.urlload.resourceID);
-    return []
+    return [];
   }
 
-  var reqstart = entry.request.time;
+
+  var reqstart = entry.urlload.time;
+
+
   var reqwidth = (entry.responsefinished.time - entry.request.time);
-  var resstart = reqstart + (reqwidth / 3); // HACKHACK! fixme: fake data until onrequestfinished works
+  var resstart = entry.requestfinished.time;
   var reswidth = reqwidth - (resstart - reqstart);
 
   var gid = Math.floor(Math.random() * 3);
   var texture = ["gradient-css", "gradient-img", "gradient-js"][gid];
 
   var tpl = [
-    ["rect", "x", "0", "y", String(y),
-             "width", String(contwidth), "height", String(lineheight),
-             "stroke-width", "0", "fill", (offset%2 ? "white" : "#f2f2f2")],
     ["rect", "x", String((reqstart-basetime)*multiplier), "y", String(bary),
      "width", String(reqwidth*multiplier), "height", "16",
              "rx", "4", "ry", "4",
              "fill", "#e5e5e5", "stroke", "#969696", "stroke-width", "0.5"],
-    ["rect", "x", String((resstart-basetime)*multiplier), "y", String(bary),
+
+      ["rect", "x", String((resstart-basetime)*multiplier), "y", String(bary),
              "width", String(reswidth*multiplier), "height", "16",
              "rx", "4", "ry", "4",
              "fill", "url(#" + texture + ")", "stroke", "#4a507d", "stroke-width", "0.5"]
 
+
+
   ];
   return tpl;
+};
+
+templates.graph_background = function(cnt, lineheight)
+{
+  var tpls = [];
+  while (cnt--)
+  {
+    tpls.push(["rect", "x", "0",
+                       "y", String(cnt*lineheight),
+                       "width", "100%",
+                       "height", String(lineheight),
+                       "stroke-width", "0", "fill", (cnt%2 ? "white" : "#f2f2f2")]);
+  }
+  return tpls;
 };
 
 templates.bar_defs = function()
@@ -163,13 +194,11 @@ templates.grid_lines = function(millis, width, height)
   var secondwidth = width / (millis / 1000);
   var multiplier = width / millis;
 
-
   // Thresholds for whether or not to render grid for every 100 and 500ms.
   // The number is how many pixels per second. So if every second is
   // alloted more than 200px, render the 100ms bars
   const THRESH_100MS = 200;
   const THRESH_500MS = 100;
-
 
   for (var n=100; n<millis; n+=100)
   {
@@ -194,8 +223,6 @@ templates.grid_lines = function(millis, width, height)
                 "opacity", "0.7"
       ]);
     }
-
-
   }
 
   return ret;

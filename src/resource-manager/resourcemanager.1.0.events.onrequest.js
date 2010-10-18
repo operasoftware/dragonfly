@@ -11,8 +11,7 @@ cls.ResourceManager["1.0"].Request = function(arr)
   this.frameID = arr[3];
   this.documentID = arr[4];
   this.url = arr[5];
-  this.raw = arr[6];
-  this.time = arr[7];
-  this.method = arr[8];
+  this.time = arr[6];
+  this.method = arr[7];
 };
 
