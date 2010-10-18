@@ -38,6 +38,26 @@
       ];
   };
 
+  this.contextmenu_items = function(items)
+  {
+    var ret = [];
+    for (var i = 0, item; item = items[i]; i++)
+    {
+      if (item.label)
+      {
+        ret.push(["li",
+            item.label,
+            "data-handler-id", item.id
+        ]);
+      }
+      else
+      {
+        ret.push(["li", ["hr"], "class", "separator"]);
+      }
+    }
+    return ["menu", ret, "id", "contextmenu"];
+  };
+
   this.filters = function(filters)
   {
     var ret = ['toolbar-filters'], filter = '', i = 0, default_text = '';

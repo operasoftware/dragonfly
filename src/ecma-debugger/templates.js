@@ -408,6 +408,7 @@ MODE ::= "<mode>"
           "breadcrumb", css_path[i].name,
           'obj-id', css_path[i].id.toString(),
           'handler', 'breadcrumb-link',
+          'data-menu', 'breadcrumb',
           'class', (css_path[i].is_parent_offset ? 'parent-offset' : '') + (css_path[i].id == obj_id ? ' active' : ''),
         ];
         //ret[ret.length] = css_path[i].combinator;

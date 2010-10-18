@@ -167,6 +167,15 @@ var HorizontalNavigation = function(cell)
     this.breadcrumbs.addEventListener("OTransitionEnd", this.check_position.bind(this), false);
     this.nav_back = this.element.querySelector("nav[dir='back']");
     this.nav_forward = this.element.querySelector("nav[dir='forward']");
+
+    ContextMenu.register("breadcrumb", [
+      {label: "Copy XPath", id: "copy_xpath", handler: function(event, target) {
+          alert("Not implemented")
+        }
+      },
+      {},
+      {label: "Test", handler: function(){}}
+    ]);
   };
 
   this.init(cell);
