@@ -53,6 +53,9 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
   this.expand_prototype = function(path){};
   this.collapse_prototype = function(path){};
 
+  this.expand_scope_chain = function(){};
+  this.collapse_scope_chain = function(){};
+
   /* private */
 
   /*
@@ -99,9 +102,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     this._virtual_props = virtual_props;
     this._root_path = [this._identifier, this._obj_id, 0];
     this._root_path_joined = this._root_path.join();
-    this.scope_list = scope_list && scope_list.map(function(scope_id, index){
-      return new cls.InspectableJSObject(rt_id, scope_id, "scope " + index);
-    });
+    this.scope_list = scope_list;
   }
 
   this._get_subtree = function(path)
@@ -411,6 +412,23 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     if (typeof with_root === 'boolean')
       path = with_root ? null : [this._root_path];
     return this._get_subtree(path);
+  }
+
+  this.expand_scope_chain = function()
+  {
+    if (this.scope_list)
+      this.scope_list_models = this.scope_list.map(function(scope_id, index){
+        return new cls.InspectableJSObject(this._rt_id, scope_id, "scope " + index);
+      }, this);
+    return this.scope_list_models || [];
+  }
+
+  this.collapse_scope_chain = function()
+  {
+    this.scope_list_models.forEach(function(model){
+      model.collapse();
+    });
+    this.scope_list_models = null;
   }
 
 };

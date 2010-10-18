@@ -239,11 +239,7 @@
                                 filter
                                 ).join('');
     if (model.scope_list)
-    {
-      ret += "<header>Scope Chain</header>";
-      for (var i = 0, scope = null; scope = model.scope_list[i]; i++)
-        ret += this.inspected_js_object(scope, true);
-    }
+      ret += this.inspected_js_scope_chain(model);
     return ret;
   }
 
@@ -264,6 +260,24 @@
                                       filter,
                                       name,
                                       index).join('') : '';
+  }
+
+  this.inspected_js_scope_chain = function(model)
+  {
+    var ret = [];
+    ret.push(
+      "<div class='scope-chain'>" +
+          "<header handler='expand-scope-chain' data-id='" + model.id + "' >" +
+            "<input type='button' " +
+              "class='" + (model.scope_list_models ? "unfolded" : "") + "' >" +
+            "Scope Chain" +
+          "</header>"
+    );
+    if (model.scope_list_models)
+      for (var i = 0, scope = null; scope = model.scope_list_models[i]; i++)
+        ret.push(this.inspected_js_object(scope, true));
+    ret.push("</div>");
+    return ret.join('');
   }
 
 }).apply(window.templates || (window.templates = {}));
