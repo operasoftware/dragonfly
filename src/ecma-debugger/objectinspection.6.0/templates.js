@@ -231,13 +231,20 @@
     var collapsed_protos = setting.get('collapsed-prototypes');
     var filter = !setting.get('show-default-nulls-and-empty-strings') && 
                  window.inspectionfilters;
-    return _pretty_print_object(model,
+    var ret = _pretty_print_object(model,
                                 tree,
                                 tree.object_id,
                                 [],
                                 collapsed_protos,
                                 filter
                                 ).join('');
+    if (model.scope_list)
+    {
+      ret += "<header>Scope Chain</header>";
+      for (var i = 0, scope = null; scope = model.scope_list[i]; i++)
+        ret += this.inspected_js_object(scope, true);
+    }
+    return ret;
   }
 
   this.inspected_js_prototype = function(model, path, index, name)
