@@ -34,12 +34,12 @@ cls.BufferManager = function(textarea)
     return false;
   };
 
-  this._move_to_beginning_of_line = function()
+  this.move_to_beginning_of_line = function()
   {
     this.put_cursor(0);
   };
 
-  this._move_to_end_of_line = function()
+  this.move_to_end_of_line = function()
   {
     this.put_cursor(this._textarea.value.length);
   };
@@ -121,5 +121,5 @@ cls.BufferManager = function(textarea)
   this.clear = function()
   {
     this.set_value("");
-  }
+  };
 }
