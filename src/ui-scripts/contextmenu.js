@@ -12,20 +12,26 @@ var ContextMenu = function() {};
 ContextMenu.registered_menus = {};
 
 /**
- * Registers a new context menu.
+ * Registers a new context menu, or adds items to an already registered context menu.
  *
  * @param {String} menu_id An id correspoding to an id specified with a data-menu
- *                         attribute in the markup.
+ *                         attribute in the markup. May be an already existing
+ *                         menu, in which case the items are added.
  * @param {Array} item_list An array of objects with 'id', 'label' and 'handler'
- *                          (string corresponding to a handler or function).
+ *                          (function).
  *
  */
 ContextMenu.register = function(menu_id, item_list)
 {
-  if (menu_id && item_list)
+  var menu = ContextMenu.registered_menus[menu_id];
+  // If it already is registered, merge it
+  if (menu)
+  {
+    ContextMenu.registered_menus[menu_id] = menu.concat(item_list);
+  }
+  else if (menu_id && item_list)
   {
     ContextMenu.registered_menus[menu_id] = item_list;
-    ContextMenu.registered_menus[menu_id].markup = window.templates.contextmenu_items(item_list);
   }
 };
 
@@ -38,10 +44,10 @@ ContextMenu.register = function(menu_id, item_list)
  */
 ContextMenu.show = function(menu_id, x, y)
 {
-  var menu = ContextMenu.registered_menus[menu_id].markup;
+  var menu = ContextMenu.registered_menus[menu_id];
   if (menu)
   {
-    var contextmenu = document.documentElement.render(menu);
+    var contextmenu = document.documentElement.render(window.templates.contextmenu(menu_id, menu));
 
     const DEFAULT_MARGIN = 5;
     var max_height = 0;

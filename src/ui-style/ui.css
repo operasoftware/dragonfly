@@ -1532,20 +1532,31 @@ tabs, toolbar {
   box-shadow: 0 1px 2px rgba(0, 0, 0, .3);
   padding: 0px;
   min-width: 100px;
-  max-width: 200px;
   display: inline-block;
   visibility: hidden;
   list-style-type: none;
   margin: 0;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 #contextmenu li {
-  padding: 1px 2px;
+  padding: 2px 20px 2px 0;
 }
 #contextmenu li.separator {
   padding: 0;
 }
-#contextmenu li:not(.separator):hover {
+#contextmenu li.disabled {
+  color: #888;
+  text-shadow: 1px solid #eee;
+}
+#contextmenu .checkbox {
+  display: inline-block;
+  vertical-align: middle;
+  width: 12px;
+  margin: 0 4px;
+  overflow: hidden;
+}
+#contextmenu li:not(.separator):not(.disabled):hover {
   background: #cecece
 }
 #contextmenu hr {

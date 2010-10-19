@@ -169,12 +169,22 @@ var HorizontalNavigation = function(cell)
     this.nav_forward = this.element.querySelector("nav[dir='forward']");
 
     ContextMenu.register("breadcrumb", [
-      {label: "Copy XPath", id: "copy_xpath", handler: function(event, target) {
-          alert("Not implemented")
+      {
+        label: "Copy XPath",
+        id: "copy_xpath",
+        handler: function(event, target) {
+          alert("Not implemented");
         }
       },
-      {},
-      {label: "Test", handler: function(){}}
+      {
+        separator: true
+      },
+      {
+        label: "Test",
+        id: "",
+        disabled: true,
+        handler: function() {}
+      }
     ]);
   };
 

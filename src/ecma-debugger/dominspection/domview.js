@@ -210,6 +210,10 @@ cls.DOMView.create_ui_widgets = function()
         'show-id_and_classes-in-breadcrumb',
         'scroll-into-view-on-spotlight',
         'lock-selecked-elements'
+      ],
+      contextmenu:
+      [
+        'dom-tree-style'
       ]
     },
     null,

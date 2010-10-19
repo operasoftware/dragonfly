@@ -100,6 +100,27 @@ var SettingsBase = function()
       window.settings = {};
     }
     window.settings[arguments[0]] = this;
+
+    // Add a context menu
+    var contextmenu = setting_map.contextmenu;
+    if (contextmenu)
+    {
+      var items = [];
+      for (var i = 0, item; item = contextmenu[i]; i++)
+      {
+        items.push({
+          label: label_map[item],
+          id: item,
+          setting: true,
+          handler: function(event, target) {
+            var item = target.getAttribute("data-handler-id");
+            settings[view_id].set(item, !settings[view_id].get(item), true);
+            views[view_id].update();
+          }
+        });
+      }
+      ContextMenu.register(view_id, items);
+    }
   }
 
   if(!window.localStorage)

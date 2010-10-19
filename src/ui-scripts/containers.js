@@ -78,6 +78,7 @@ var ContainerBase = function()
         container.removeAttribute('handler');
       }
       container.className = view.container_class || '';
+      container.setAttribute('data-menu', view_id || '');
       container.innerHTML = '';
       view.update();
     }

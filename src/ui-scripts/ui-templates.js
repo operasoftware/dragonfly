@@ -38,16 +38,22 @@
       ];
   };
 
-  this.contextmenu_items = function(items)
+  this.contextmenu = function(menu_id, items)
   {
     var ret = [];
     for (var i = 0, item; item = items[i]; i++)
     {
-      if (item.label)
+      var checked = false;
+      if (item.setting)
+      {
+        checked = settings[menu_id].get(item.id);
+      }
+      if (!item.separator)
       {
         ret.push(["li",
-            item.label,
-            "data-handler-id", item.id
+            [["span", checked ? "✔" : "", "class", "checkbox"], ["span", item.label]],
+            "data-handler-id", item.id,
+            "class", item.disabled ? "disabled" : ""
         ]);
       }
       else
