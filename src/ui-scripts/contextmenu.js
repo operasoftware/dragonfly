@@ -49,31 +49,31 @@ ContextMenu.show = function(menu_id, x, y)
   {
     var contextmenu = document.documentElement.render(window.templates.contextmenu(menu_id, menu));
 
-    const DEFAULT_MARGIN = 5;
+    const DEFAULT_MARGIN = 2;
     var max_height = 0;
     var box = contextmenu.getBoundingClientRect();
     var box_width = box.width;
     var box_height = box.height;
     var window_height = window.innerHeight;
     var window_width = window.innerWidth;
-    var double_margin = DEFAULT_MARGIN * 2;
 
     // Check if the menu height fits within the window
-    if (box_height + double_margin > window_height)
+    if (box_height + (DEFAULT_MARGIN * 2) > window_height)
     {
       // It doesn't fit, apply max-height to make it scroll
       y = DEFAULT_MARGIN;
-      max_height = window_height - double_margin - 2; // 2 = border-width (top+bottom)
+      max_height = window_height - (DEFAULT_MARGIN * 2) - 2; // 2 = border-width (top+bottom)
     }
-    // It doesn't fit downwards, flip it or reposition it
-    else if (y + box_height + double_margin > window_height)
+    // It fits within the window, check if it fits downwards or not. If it
+    // doesn't, we have to adjust the position.
+    else if (y + box_height + DEFAULT_MARGIN > window_height)
     {
       // Check if we can just flip it upwards
       if (box_height + DEFAULT_MARGIN < y)
       {
         y -= box_height;
       }
-      // Reposition it upwards as much as needed
+      // It doesn't fit upwards, reposition it upwards as much as needed
       else
       {
         var overflow = window.innerHeight - y - box_height;
@@ -82,7 +82,7 @@ ContextMenu.show = function(menu_id, x, y)
     }
 
     // It doesn't fit to the right, flip it
-    if (x + box_width + double_margin > window_width)
+    if (x + box_width + DEFAULT_MARGIN > window_width)
     {
       x -= box_width;
     }
