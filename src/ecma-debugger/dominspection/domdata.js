@@ -184,21 +184,25 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
   {
     const OBJECT_ID = 0, WINDOW_ID = 1, RUNTIME_ID = 2;
     this._is_element_selected_checked = true;
-    if(message[OBJECT_ID])
+    if (message[OBJECT_ID])
     {
-      if(!window.views[this._view_id].isvisible())
+      if (!window.views[this._view_id].isvisible())
       {
+        this._is_element_selected_checked = false;
         window.topCell.showView(this._view_id);
-      }
-      // TODO this will fail on inspecting a popup which is part of the debug context
-      if(message[WINDOW_ID] == window.window_manager_data.get_debug_context())
-      {
-        this._click_handler_host({runtime_id: message[RUNTIME_ID], object_id: message[OBJECT_ID]});
       }
       else
       {
-        this._is_element_selected_checked = false;
-        window.window_manager_data.set_debug_context(message[WINDOW_ID]);
+        // TODO this will fail on inspecting a popup which is part of the debug context
+        if (message[WINDOW_ID] == window.window_manager_data.get_debug_context())
+        {
+          this._click_handler_host({runtime_id: message[RUNTIME_ID], object_id: message[OBJECT_ID]});
+        }
+        else
+        {
+          this._is_element_selected_checked = false;
+          window.window_manager_data.set_debug_context(message[WINDOW_ID]);
+        }
       }
     }
     else if (show_initial_view)
