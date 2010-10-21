@@ -340,6 +340,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./resource-manager/documentmanager.1.0.events.onabouttoloaddocument.js"/>
 
 <script src="./network/network_request_crafting_view.js"/>
+<script src="./network/network_global_options_view.js"/>
 
 <body/>
 </viewport>
