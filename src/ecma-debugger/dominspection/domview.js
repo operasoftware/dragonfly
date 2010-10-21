@@ -255,6 +255,36 @@ cls.DOMView.create_ui_widgets = function()
     ]
   )
 
+  ContextMenu.register("dom-node", [
+    {
+      label: "Remove node",
+      id: "remove_node",
+      handler: function(event, target)
+      {
+        var ele = event.target.has_attr("parent-node-chain", "ref-id");
+        var rt_id = parseInt(ele.get_attr("parent-node-chain", "rt-id"));
+        var ref_id = parseInt(ele.get_attr("parent-node-chain", "ref-id"));
+        var tag = !settings.dom.get("update-on-dom-node-inserted")
+                ? tag_manager.set_callback(this, function() {
+                    // Fake an event
+                    dom_data._dom_node_removed_handler({"object_id": ref_id, "runtime_id": rt_id});
+                  })
+                : null;
+        services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, "el.parentNode.removeChild(el)", [["el", ref_id]]]);
+      }
+    }
+  ]);
+
+  //ContextMenu.register("dom-attribute", [
+  //  {
+  //    label: "Edit attribute",
+  //    id: "edit_attribute",
+  //    handler: function(event, target)
+  //    {
+  //      window.actions['dom'].editDOM(event, event.target);
+  //    }
+  //  }
+  //]);
 
   new CstSelectToolbarSettings
   (

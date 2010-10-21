@@ -113,7 +113,7 @@
             attrs = '';
             for (k = 0; attr = node[ATTRS][k]; k++)
             {
-              attrs += " <key>" +
+              attrs += " <key data-menu='dom-attribute'>" +
                 ((attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '') +
                 /* regarding escaping "<". it happens that there are very starnge keys in broken html.
                     perhaps we will have to extend the escaping to other data tokens as well */
@@ -169,7 +169,7 @@
               class_name = re_formatted.test(node_name) ? " class='pre-wrap'" : '';
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                       " style='margin-left:" + 16 * node[DEPTH] + "px;' "+
-                      "ref-id='" + node[ID] + "' handler='spotlight-node' " +
+                      "ref-id='" + node[ID] + "' handler='spotlight-node' data-menu='dom-node'" +
                       class_name + ">"+
                           "<node>&lt;" + node_name + attrs + "&gt;</node>" +
                               one_child_text_content +
@@ -182,7 +182,7 @@
             {
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                       " style='margin-left:" + 16 * node[DEPTH] + "px;' " +
-                      "ref-id='" + node[ID] + "' handler='spotlight-node'>" +
+                      "ref-id='" + node[ID] + "' handler='spotlight-node' data-menu='dom-node'>" +
                       (node[CHILDREN_LENGTH] ?
                           "<input handler='get-children' type='button' class='open'>" : '') +
                           "<node>&lt;" + node_name + attrs + "&gt;</node>" +
@@ -200,7 +200,7 @@
           {
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                       " style='margin-left:" + 16 * node[DEPTH] + "px;' " +
-                      "ref-id='" + node[ID] + "' handler='spotlight-node'>" +
+                      "ref-id='" + node[ID] + "' handler='spotlight-node' data-menu='dom-node'>" +
                       (children_length ?
                           "<input handler='get-children' type='button' class='close'>" : '') +
                           "<node>&lt;" + node_name + attrs + (children_length ? '' : '/') + "&gt;</node>" +
@@ -418,7 +418,7 @@
           {
             tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                     " style='margin-left:" + 16 * node[DEPTH] + "px;' " +
-                    "ref-id='"+node[ID] + "' handler='spotlight-node'>" +
+                    "ref-id='"+node[ID] + "' handler='spotlight-node' data-menu='dom-node'>" +
                     (children_length && !has_only_one_child ?
                       "<input handler='get-children' type='button' class='open'>" : '') +
                     "<node>" + node_name + attrs + "</node>" +
@@ -428,7 +428,7 @@
           {
             tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                     " style='margin-left:" + 16 * node[DEPTH] + "px;' " +
-                    "ref-id='"+node[ID] + "' handler='spotlight-node'>" +
+                    "ref-id='"+node[ID] + "' handler='spotlight-node' data-menu='dom-node'>" +
                     (node[CHILDREN_LENGTH] ?
                       "<input handler='get-children' type='button' class='close'>" : '') +
                     "<node>" + node_name + attrs + "</node>" +
