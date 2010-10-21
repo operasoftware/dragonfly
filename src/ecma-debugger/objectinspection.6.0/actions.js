@@ -89,10 +89,29 @@
       }
       else
       {
-        var cb = examine_object_cb.bind(null, target, parent, data_model, path);
+        var cb = examine_object_cb.bind(this, target, parent, data_model, path);
         data_model.expand(cb, path);
       }
     }
   };
+
+  window.eventHandlers.click['expand-scope-chain'] = function(event, target)
+  {
+    var
+    parent = target.parentNode,
+    data_model = window.inspections[target.getAttribute('data-id')],  
+    examine_object = parent.getElementsByTagName('examine-objects')[0];
+
+    if (examine_object) // is unfolded
+    {
+      data_model.collapse_scope_chain();
+      parent.re_render(window.templates.inspected_js_scope_chain(data_model));
+    }
+    else
+    {
+      data_model.expand_scope_chain();
+      parent.re_render(window.templates.inspected_js_scope_chain(data_model));
+    }
+  }
 
 })();

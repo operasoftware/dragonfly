@@ -87,7 +87,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
       // set the top window to the active runtime
       if (!this._data_runtime_id)
         this._data_runtime_id = this._active_window[0];
-      for (key in this._settings)
+      for (var key in this._settings)
       {
         if (window.settings[this._settings_id].get(key))
           this._handle_setting(key);

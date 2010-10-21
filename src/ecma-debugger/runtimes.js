@@ -432,7 +432,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
 
   var breakpoint_count = 1;
 
-  var getBreakpointId = function()
+  this.getBreakpointId = function()
   {
     return ( breakpoint_count++ );
   }
@@ -1080,7 +1080,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
     this.setBreakpoint = function(script_id, line_nr)
     {
       if (!__scripts[script_id]) { return; }
-      var b_p_id = __scripts[script_id].breakpoints[line_nr] = getBreakpointId();
+      var b_p_id = __scripts[script_id].breakpoints[line_nr] = this.getBreakpointId();
       // message signature has changes, AddBreakpoint means always to a source line
       // for events it's now AddEventBreakpoint
       services['ecmascript-debugger'].requestAddBreakpoint(0, [b_p_id, script_id, line_nr]);
@@ -1091,7 +1091,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
     this.setBreakpoint = function(script_id, line_nr)
     {
       if (!__scripts[script_id]) { return; }
-      var b_p_id = __scripts[script_id].breakpoints[line_nr] = getBreakpointId();
+      var b_p_id = __scripts[script_id].breakpoints[line_nr] = this.getBreakpointId();
       services['ecmascript-debugger'].requestAddBreakpoint(0, [b_p_id, "line", script_id, line_nr]);
     }
   }

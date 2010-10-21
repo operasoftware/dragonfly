@@ -877,36 +877,46 @@ cls.ScriptSelect.prototype = new CstSelect();
 
 cls.JsSourceView.create_ui_widgets = function()
 {
+  var major_ecma_service_version = parseInt(window.services['ecmascript-debugger'].version.split('.')[0]);
+  var toolbar_buttons = 
+  [
+    {
+      handler: 'continue',
+      title: ui_strings.S_BUTTON_LABEL_CONTINUE,
+      id: 'continue-run',
+      disabled: true
+    },
+    {
+      handler: 'continue',
+      title: ui_strings.S_BUTTON_LABEL_STEP_INTO,
+      id: 'continue-step-into-call',
+      disabled: true
+    },
+    {
+      handler: 'continue',
+      title: ui_strings.S_BUTTON_LABEL_STEP_OVER,
+      id: 'continue-step-next-line',
+      disabled: true
+    },
+    {
+      handler: 'continue',
+      title: ui_strings.S_BUTTON_LABEL_STEP_OUT,
+      id: 'continue-step-out-of-call',
+      disabled: true
+    }
+  ];
+
+  if (major_ecma_service_version > 5)
+    toolbar_buttons.push(
+    {
+      handler: 'show-event-breakpoint-view',
+      title: "Show event breakpoints",
+    });
 
   new ToolbarConfig
   (
     'js_source',
-    [
-      {
-        handler: 'continue',
-        title: ui_strings.S_BUTTON_LABEL_CONTINUE,
-        id: 'continue-run',
-        disabled: true
-      },
-      {
-        handler: 'continue',
-        title: ui_strings.S_BUTTON_LABEL_STEP_INTO,
-        id: 'continue-step-into-call',
-        disabled: true
-      },
-      {
-        handler: 'continue',
-        title: ui_strings.S_BUTTON_LABEL_STEP_OVER,
-        id: 'continue-step-next-line',
-        disabled: true
-      },
-      {
-        handler: 'continue',
-        title: ui_strings.S_BUTTON_LABEL_STEP_OUT,
-        id: 'continue-step-out-of-call',
-        disabled: true
-      }
-    ],
+    toolbar_buttons,
     [
       {
         handler: 'js-source-text-search',
@@ -925,8 +935,6 @@ cls.JsSourceView.create_ui_widgets = function()
       }
     ]
   );
-
-
 
   new Settings
   (
@@ -1035,15 +1043,10 @@ cls.JsSourceView.create_ui_widgets = function()
     }
   }
 
-
-
   messages.addListener('view-created', onViewCreated);
   messages.addListener('view-destroyed', onViewDestroyed);
   messages.addListener('script-selected', onScriptSelected);
   messages.addListener('view-scrolled', onViewScrolled);
-
-
-
 
   eventHandlers.input['js-source-text-search'] = function(event, target)
   {
@@ -1058,8 +1061,6 @@ cls.JsSourceView.create_ui_widgets = function()
     }
   }
 
-
-
   eventHandlers.change['set-tab-size'] = function(event, target)
   {
     var
@@ -1071,6 +1072,18 @@ cls.JsSourceView.create_ui_widgets = function()
       style.setProperty('-o-tab-size', tab_size, 0);
       settings.js_source.set('tab-size', tab_size);
     }
+  }
+
+  eventHandlers.click['show-event-breakpoint-view'] = function(event, target)
+  {
+    var view = window.views['event-breakpoints'];
+    UIWindowBase.showWindow(view.id,
+                            view.window_top,
+                            view.window_left,
+                            view.window_width,
+                            window.innerHeight >= view.window_height + 80 ? 
+                            view.window_height :
+                            window.innerHeight - 80);
   }
 
 };
