@@ -36,25 +36,16 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
 
   this._render_main_view = function(container)
   {
-    var t = ["div",
-              ["div", ["textarea", this._prev_request]],
-              ["button", "Send request", "handler", "request-crafter-send"],
-              ["hr"],
-              ["div", ["pre", ["code", this._prev_response]]],
-              "class", "padding request-crafter"
-            ];
-
-    container.clearAndRender(t);
+    container.clearAndRender(templates.network_request_crafter_main(this._prev_request,
+                                                                    this._prev_response));
     this._input = new cls.BufferManager(container.querySelector("textarea"));
     this._output = container.querySelector("code");
   };
-
 
   this._check_raw_request = function()
   {
 
   };
-
 
   this._parse_request = function(requeststr)
   {
@@ -83,7 +74,6 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
     retval.url = this._protocol + retval.host + retval.path;
     return retval;
   };
-
 
   this._parse_headers = function(lines)
   {
@@ -139,8 +129,6 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
   {
     var data = this._input.get_value();
     var requestdata = this._parse_request(data);
-      //opera.postError(JSON.stringify(requestdata, null, "    "))
-    //opera.postError("send");
     this._send_request(requestdata);
   }.bind(this);
 
@@ -151,5 +139,4 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
   this.init(id, name, container_class, html, default_handler);
 };
 cls.RequestCraftingView.prototype = ViewBase;
-
 

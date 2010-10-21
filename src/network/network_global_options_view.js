@@ -20,19 +20,7 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
 
   this._render_main_view = function(container)
   {
-    var t = ["div",
-              ["button", "Clear cache", "handler", "network-options-clear-cache"],
-              ["hr"],
-              ["label", "disable caching:", ["input", "", "type", "checkbox",
-                                             "handler", "network-options-toggle-caching"]],
-              ["hr"],
-             ["fieldset", ["legend", "Global header rewrites"],
-                          ["table", ["tr", ["th", "Name"], ["th", "Value"]]]
-             ],
-              "class", "padding network-options"
-            ];
-
-    container.clearAndRender(t);
+    container.clearAndRender(templates.network_options_main());
     this._input = new cls.BufferManager(container.querySelector("textarea"));
     this._output = container.querySelector("code");
   };
