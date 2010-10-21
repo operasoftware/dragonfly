@@ -29,7 +29,8 @@
 window.cls = window.cls || {};
 cls.HostCommandTransformer = function() {
   this.parser = null;
-  this.command_map = {};
+  this.client_command_map = {};
+  this.df_command_map = {};
   this.transform_map = {};
 
 
@@ -60,7 +61,12 @@ cls.HostCommandTransformer = function() {
       else if (type == "clientcommand")
       {
         var name = methodname.split("clientcommand_")[1];
-        this.command_map[name] = this[methodname];
+        this.client_command_map[name] = this[methodname];
+      }
+      else if (type == "dfcommand")
+      {
+        var name = methodname.split("dfcommand_")[1];
+        this.df_command_map[name] = this[methodname];
       }
     }
   };
@@ -90,7 +96,6 @@ cls.HostCommandTransformer = function() {
 
   this.get_command = function(source)
   {
-
     var types = [];
     var values = [];
     var tokens = [];
@@ -100,9 +105,26 @@ cls.HostCommandTransformer = function() {
     // stuff is small, so the cost of this doesn't matter much.
     tokens = this.zip_tokens(types, values);
 
-    if (this.is_call(tokens, 0) && tokens[0].value in this.command_map)
+    if (!tokens.length)
     {
-      return this.command_map[tokens[0].value];
+      return null;
+    }
+    else if (this.is_call(tokens, 0) && tokens[0].value in this.client_command_map)
+    {
+      return this.client_command_map[tokens[0].value];
+    }
+
+    if (tokens[0].type == COMMENT)
+    {
+      var match = tokens[0].value.match(/\s*\/\/\s*#!\s+(\w+)\s*\(\s*\)\s*/);
+      if (match)
+      {
+        var command = match[1];
+        if (command in this.df_command_map)
+        {
+          return this.df_command_map[command];
+        }
+      }
     }
     return null;
   };
@@ -245,6 +267,14 @@ cls.HostCommandTransformer = function() {
     view.clear();
     data.clear();
   };
+
+  this.dfcommand_help = function(view, data, input)
+  {
+    data.add_message("Use the clear() command to clear the console");
+    data.add_message("Type \"//#! help()\" for more information");
+  };
+
+  this.dfcommand_man = this.dfcommand_help; // man is alias for help
 
   this.init();
 };

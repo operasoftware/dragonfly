@@ -71,3 +71,10 @@ templates.repl_output_trace = function(trace)
                     "class", "console-trace-container"];
   return tpl;
 };
+
+templates.repl_group_line = function(group)
+{
+  return [["button", "", "class", "folder-key"+(group.collapsed ? "" : " open" ),
+                     "handler", "repl-toggle-group", "group-id", group.id
+          ], group.name];
+};

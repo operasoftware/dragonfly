@@ -524,7 +524,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
     {
       if( next.nodeName.toLowerCase() == 'node' )
       {
-        next.firstChild.splitText(next.firstChild.nodeValue.length - 1);
+        next.firstChild.splitText(next.firstChild.nodeValue.replace(/\/?>$/,'').length);
         next = this.create_new_edit(next.firstChild);
       }
       else if( next.parentElement != nav_target_parent 
@@ -572,7 +572,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
     {
       if( next.nodeName.toLowerCase() == 'node' )
       {
-        next.firstChild.splitText(next.firstChild.nodeValue.length - 1);
+        next.firstChild.splitText(next.firstChild.nodeValue.replace(/\/?>$/,'').length);
         next = this.create_new_edit(next.firstChild);
       }
       this.edit({}, next);

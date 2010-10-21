@@ -62,7 +62,6 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
 
     cls.CndRtSelect.prototype = new CstSelect();
     new cls.CndRtSelect('cmd-runtime-select', 'cmd-line-runtimes');
-    cls.CommandLineViewTest.create_ui_widgets();
 
     cls.ReplView.create_ui_widgets();
     new cls.ReplView('command_line', "REPL", 'scroll', '', 'repl-focus');

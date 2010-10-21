@@ -71,7 +71,7 @@ window.cls.PropertyFinder = function(rt_id) {
                   last_brace,
                   last_bracket,
                   input.lastIndexOf('=') ) + 1
-                ).replace(/^ +/, '').replace(/ $/, '');
+                ).replace(/^\s+/, '');
 
     var last_dot = input.lastIndexOf('.');
     var new_path = '';
@@ -81,7 +81,7 @@ window.cls.PropertyFinder = function(rt_id) {
     if(last_dot > -1)
     {
       new_path = input.slice(0, last_dot);
-      new_id = input.slice(last_dot + 1);
+      new_id = input.slice(last_dot + 1).replace(/^\s+/, '');
     }
     else
     {
@@ -110,6 +110,11 @@ window.cls.PropertyFinder = function(rt_id) {
                         function(e) { return e != ""; }
           );
         }
+
+        if (!ret.scope && ret.props.indexOf("this") == -1)
+        {
+          ret.props.push("this");
+        }
       }
     }
 
@@ -136,6 +141,16 @@ window.cls.PropertyFinder = function(rt_id) {
         (message = message[PROPERTY_LIST]) ||
         []).map(function(prop){return prop[NAME];});
       ret.props = scope;
+
+      if (ret.props.indexOf("this") == -1)
+      {
+        ret.props.push("this");
+      }
+
+      if (ret.frameinfo.argument_id !== undefined && ret.props.indexOf("arguments"))
+      {
+        ret.props.push("arguments");
+      }
     }
 
     this._cache_put(ret);
@@ -212,4 +227,24 @@ window.cls.PropertyFinder = function(rt_id) {
   this.toString = function() {
     return "[PropertyFinder singleton instance]";
   };
+};
+
+cls.PropertyFinder.prop_sorter = function(a, b)
+{
+  a = a.toLowerCase();
+  b = b.toLowerCase();
+
+  if (a.isdigit() && b.isdigit())
+  {
+    return parseInt(a, 10) - parseInt(b, 10);
+  }
+  else if (a>b)
+  {
+    return 1;
+  }
+  else if (a<b)
+  {
+    return -1;
+  }
+  return 0;
 };

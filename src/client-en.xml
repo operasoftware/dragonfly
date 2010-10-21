@@ -1,14 +1,9 @@
 ﻿<viewport xmlns='http://www.w3.org/1999/xhtml'
           xmlns:xlink="http://www.w3.org/1999/xlink" 
-          xmlns:svg="http://www.w3.org/2000/svg">
+          xmlns:svg="http://www.w3.org/2000/svg"
+          spellcheck="false">
 <link rel="icon" href="/favicon.ico" />
 <!-- command set_rel_base_url -->
-<script><![CDATA[
-if( navigator.userAgent.indexOf('Macintosh') != -1 && Number(opera.buildNumber()) <= 4789  )
-{
-  location.href = "https://dragonfly.opera.com/error.html";
-}
-]]></script>
 <script><![CDATA[
 (function()
 {
@@ -320,11 +315,13 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./repl/commandtransformer.js"/>
 <script src="./repl/propertyfinder.js"/>
 <script src="./repl/inspectableobjectview.js"/>
+<script src="./repl/buffermanager.js"/>
 <script src="./repl/repl_service.js"/>
 <script src="./repl/repl_view.js"/>
 <script src="./repl/repl_data.js"/>
 <script src="./repl/repl_templates.js"/>
 <script src="./repl/ecmascriptdebugger.6.0.events.onconsoletrace.js"/>
+<script src="./repl/scope.1.0.responses.hostinfo.js"/>
 
 <script src="./resource-manager/resource_service.js"/>
 <script src="./resource-manager/resource_view.js"/>
@@ -342,7 +339,6 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./resource-manager/documentmanager.1.0.events.onabouttoloaddocument.js"/>
 
 <script src="./network/network_request_crafting_view.js"/>
-
 
 <body/>
 </viewport>
