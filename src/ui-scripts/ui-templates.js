@@ -38,7 +38,7 @@
       ];
   };
 
-  this.contextmenu = function(menu_id, items)
+  this.contextmenu = function(items)
   {
     var ret = [];
     for (var i = 0, item; item = items[i]; i++)
@@ -46,13 +46,14 @@
       var checked = false;
       if (item.setting)
       {
-        checked = settings[menu_id].get(item.id);
+        checked = settings[item.menu_id].get(item.id);
       }
       if (!item.separator)
       {
         ret.push(["li",
             [["span", checked ? "✔" : "", "class", "checkbox"], ["span", item.label]],
             "data-handler-id", item.id,
+            "data-menu-id", item.menu_id,
             "class", item.disabled ? "disabled" : ""
         ]);
       }

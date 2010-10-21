@@ -23,31 +23,27 @@ ContextMenu.registered_menus = {};
  */
 ContextMenu.register = function(menu_id, item_list)
 {
-  var menu = ContextMenu.registered_menus[menu_id];
-  // If it already is registered, merge it
-  if (menu)
+  var menu = ContextMenu.registered_menus[menu_id] || [];
+  if (item_list)
   {
+    // If it already is registered, merge it
     ContextMenu.registered_menus[menu_id] = menu.concat(item_list);
-  }
-  else if (menu_id && item_list)
-  {
-    ContextMenu.registered_menus[menu_id] = item_list;
   }
 };
 
 /**
  * Show and position a context menu.
  *
- * @param {String} menu_id Id of a registered context menu.
+ * @param {Array} items The items to show, see ContextMenu.register for how to
+ *                      specify items.
  * @param {Int} x The left position of the menu, relative to the viewport.
  * @param {Int} y The top position of the menu, relative to the viewport.
  */
-ContextMenu.show = function(menu_id, x, y)
+ContextMenu.show = function(items, x, y)
 {
-  var menu = ContextMenu.registered_menus[menu_id];
-  if (menu)
+  if (items)
   {
-    var contextmenu = document.documentElement.render(window.templates.contextmenu(menu_id, menu));
+    var contextmenu = document.documentElement.render(window.templates.contextmenu(items));
 
     const DEFAULT_MARGIN = 2;
     var max_height = 0;
@@ -111,7 +107,6 @@ ContextMenu.dismiss = function()
 ContextMenu.modal_click_handler = function(event)
 {
   var target = event.target;
-  var menu = ContextMenu._current_menu;
   var contextmenu = document.getElementById("contextmenu");
 
   event.stopPropagation();
@@ -123,8 +118,8 @@ ContextMenu.modal_click_handler = function(event)
   {
     if (target.getAttribute("data-handler-id"))
     {
-      var item = null;
-      for (var i = 0; item = menu[i]; i++)
+      var menu = ContextMenu.registered_menus[target.getAttribute("data-menu-id")];
+      for (var i = 0, item; item = menu[i]; i++)
       {
         if (item.id == target.getAttribute("data-handler-id"))
         {
@@ -142,7 +137,7 @@ ContextMenu.modal_click_handler = function(event)
 /**
  * Global context menu event handler.
  */
-ContextMenu.oncontextmenu = function(contextmenuevent)
+ContextMenu.oncontextmenu = function(event)
 {
   document.removeEventListener("click", ContextMenu.modal_click_handler, true);
 
@@ -163,13 +158,36 @@ ContextMenu.oncontextmenu = function(contextmenuevent)
     return;
   }
 
-  var menu_id = event.target.get_attr("parent-node-chain", "data-menu");
-  if (menu_id)
+  var ele = event.target;
+  var all_items = [];
+  var menu_id = null;
+  // This traverses up the tree and collects all menus it finds, and
+  // concatenates them with a separator between each menu. It stops if it
+  // finds a data-menu attribute with a blank value.
+  while (ele != document && (menu_id = ele.getAttribute("data-menu")) !== "")
   {
-    ContextMenu._current_menu = ContextMenu.registered_menus[menu_id];
-    ContextMenu._current_event = contextmenuevent;
+    if (menu_id)
+    {
+      if (all_items.length)
+      {
+        all_items.push({separator: true});
+      }
 
-    ContextMenu.show(menu_id, contextmenuevent.clientX, contextmenuevent.clientY);
+      var items = ContextMenu.registered_menus[menu_id];
+      for (var i = 0, item; item = items[i]; i++)
+      {
+        item.menu_id = menu_id;
+        all_items.push(item);
+      }
+    }
+    ele = ele.parentNode;
+  }
+
+  if (all_items.length)
+  {
+    ContextMenu._current_event = event;
+
+    ContextMenu.show(all_items, event.clientX, event.clientY);
     document.addEventListener("click", ContextMenu.modal_click_handler, true);
     EventHandler.__modal_mode = true;
   }
