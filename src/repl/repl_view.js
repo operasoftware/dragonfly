@@ -18,7 +18,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._backlog_index = -1;
   this._input_row_height = null;
   this._toolbar_visibility = null;
-  this._is_first_showing = true;
   this._recent_autocompletion = null;
   this._autocompletion_index = null;
   this._autocompletion_elem = null;
@@ -30,6 +29,8 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       "default", "delete", "do", "else", "finally", "for", "function",
       "if", "in", "instanceof", "new", "return", "switch", "this",
       "throw", "try", "typeof", "var", "void", "while", "with"];
+
+
 
   this.ondestroy = function()
   {
@@ -52,21 +53,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       this._container = container;
       this._input_row_height = this._textarea.scrollHeight;
       this._closed_group_nesting_level = 0;
-
-      switched_to_view = true;
-      // note: events are bound to handlers at the bottom of this class
-
-      if (this._is_first_showing)
-      {
-        // This happens here instead of constructor because the service grabs
-        // hostinfo async. If we did it on construction there is a chance the
-        // service hasn't gotten around to fetching it yet.
-        this._is_first_showing = false;
-        var hostinfo = this._service.hostinfo;
-        if (hostinfo) {
-          this._data.add_message(hostinfo.userAgent + " (Core " + hostinfo.coreVersion + ")");
-        }
-      }
     }
 
     this._update_runtime_selector_bound();
@@ -720,6 +706,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
   }.bind(this);
 
+
   var eh = window.eventHandlers;
   eh.click["repl-toggle-group"] = this._handle_repl_toggle_group_bound;
   eh.click["select-trace-frame"] = this._handle_repl_frame_select_bound;
@@ -729,6 +716,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   messages.addListener('active-tab', this._update_runtime_selector_bound);
 
   this.init(id, name, container_class, html, default_handler);
+  // Happens after base class init or else the call to .update that happens in
+  // when adding stuff to data will fail.
+  var hostinfo =  window.services['scope'].get_hello_message();
+  this._data.add_message(hostinfo.userAgent + " (Core " + hostinfo.coreVersion + ")");
 };
 cls.ReplView.prototype = ViewBase;
 
