@@ -224,7 +224,7 @@
     const OBJID = 0, CLASS = 4; FUNCTION = 5;
 
     var obj = msg[OBJVALUE];
-    this._data.add_output_pobj(rt_id, obj[OBJID], obj[FUNCTION] || obj[CLASS]);
+    this._data.add_output_pobj(rt_id, obj[OBJID], obj[CLASS] || obj[FUNCTION]);
   };
 
   this._handle_native = function(msg)
