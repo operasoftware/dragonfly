@@ -1229,9 +1229,10 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
         __windows_reloaded[__selected_window] = 1;
       }
       var rt_id = this.getRuntimeIdsFromWindow(__selected_window)[0];
-      if( rt_id )
+      if (rt_id)
       {
-        if(services.exec && services.exec.is_implemented)
+        if(services.exec && services.exec.is_implemented && 
+           __runtimes[rt_id].uri.indexOf("widget://") != 0)
         {
           // tag 1 is a resreved tag for callbacks to be ignored
           services.exec.requestExec(1,
