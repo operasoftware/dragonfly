@@ -8,11 +8,6 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
 
   this._service = window.services["resource-manager"];
 
-  this.ondestroy = function()
-  {
-
-  };
-
   this.createView = function(container)
   {
     this._render_main_view(container);
@@ -20,9 +15,36 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
 
   this._render_main_view = function(container)
   {
-    container.clearAndRender(templates.network_options_main());
+
+    var headers = [{name:"foo", value:"bar"}];
+    container.clearAndRender(templates.network_options_main(headers));
     this._input = new cls.BufferManager(container.querySelector("textarea"));
     this._output = container.querySelector("code");
+    this._headertable = container.querySelector("table");
+  };
+
+  /**
+   * Make sure there is always one blank entry for adding stuff
+   */
+  this._update_header_table = function()
+  {
+    var rows = this._headertable.querySelectorAll("tr");
+    var emptyrows = [];
+    for (var n=1, row; row=this._headertable[n]; n++)
+    {
+        if (!row.childNodes[0].textContent.trim() &&
+            !row.childNodes[1].textContent.trim())
+          {
+            emptyrows.push(row);
+          }
+    }
+
+    if (emptyrows.length &&
+        emptyrows[emptyrows.length-1] == this._headertable.lastChild )
+      {
+
+      }
+
   };
 
   this._handle_clear_cache_bound = function(evt, target)
