@@ -1,0 +1,14 @@
+.request-crafter {
+    
+}
+
+.request-crafter textarea {
+    width: 100%;
+    height: 200px;
+}
+
+.request-crafter pre {
+    width: 100%;
+    height: 200px;
+    border: solid thin black;
+}
