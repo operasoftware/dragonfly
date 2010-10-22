@@ -45,8 +45,16 @@ window.cls.PropertyFinder = function(rt_id) {
     var tag = tagManager.set_callback(this, this._onRequestExamineObjects,
                                       [callback, scope, identifier, input, frameinfo]);
 
+    var scopes = [frameinfo.scope_id];
+    if (frameinfo.scope_list)
+    {
+      // Skip last scope in list, it's t global one which
+      // isn't in completer (for now. should be an option)
+      scopes = frameinfo.scope_list.slice(0, -1);
+    }
+
     this._service.requestExamineObjects(
-      tag, [frameinfo.runtime_id, [frameinfo.scope_id], 0, 1]
+      tag, [frameinfo.runtime_id, scopes, 0, 1]
     );
   };
 
@@ -133,14 +141,17 @@ window.cls.PropertyFinder = function(rt_id) {
 
     if (status == 0) {
       const OBJECT_CHAIN_LIST = 0, OBJECT_LIST = 0, PROPERTY_LIST = 1, NAME = 0;
-      scope = (message &&
-        (message = message[OBJECT_CHAIN_LIST]) &&
-        (message = message[0]) &&
-        (message = message[OBJECT_LIST]) &&
-        (message = message[0]) &&
-        (message = message[PROPERTY_LIST]) ||
-        []).map(function(prop){return prop[NAME];});
-      ret.props = scope;
+      var names = [];
+      message[OBJECT_CHAIN_LIST].forEach(function(chain){
+        var objectlist = chain[OBJECT_LIST];
+        objectlist.forEach(function(obj) {
+          names = names.concat(obj[PROPERTY_LIST].map(function(prop) {
+            return prop[NAME];
+          }));
+        });
+      });
+
+      ret.props = names;
 
       if (ret.props.indexOf("this") == -1)
       {
@@ -152,7 +163,6 @@ window.cls.PropertyFinder = function(rt_id) {
         ret.props.push("arguments");
       }
     }
-
     this._cache_put(ret);
     callback(ret);
   };
