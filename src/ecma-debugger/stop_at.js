@@ -4,7 +4,7 @@ cls.EcmascriptDebugger["5.0"] || (cls.EcmascriptDebugger["5.0"] = {});
 cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
 
 /**
-  * @constructor 
+  * @constructor
   */
 
 cls.EcmascriptDebugger["6.0"].StopAt =
@@ -12,9 +12,9 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
 {
 
   /**
-  * two layers are needed. 
-  * stop_at script must be enabled allways to be able to reasign breakpoints. 
-  */ 
+  * two layers are needed.
+  * stop_at script must be enabled allways to be able to reasign breakpoints.
+  */
 
   var stop_at_settings =
   {
@@ -102,8 +102,8 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
   this.setUserStopAt = function(key, value)
   {
     //stop_at_user_settings[key] = value; // true or false;
-    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
-      'clean up. this should no longer be called. stop_at.setUserStopAt'); 
+    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+      'clean up. this should no longer be called. stop_at.setUserStopAt');
 
   }
 
@@ -136,7 +136,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     * To get the selected frame index.
     * It can return -1 which means that no frame is selected.
     * Be aware that -1 is not a valid value in e.g. the Eval command.
-    * 0 for frame index has an overloaded meaning: if the thread id is not 0 
+    * 0 for frame index has an overloaded meaning: if the thread id is not 0
     * it means the top frame, otherwise it means no frame.
     */
   this.getSelectedFrameIndex = function()
@@ -155,10 +155,11 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
       var frame = callstack[__selected_frame_index];
       return (
       {
-        runtime_id: frame.rt_id, 
-        scope_id: frame.scope_id, 
+        runtime_id: frame.rt_id,
+        scope_id: frame.scope_id,
         thread_id: stopAt['thread-id'],
-        index: __selected_frame_index
+        index: __selected_frame_index,
+        argument_id: frame.argument_id
       });
     }
     return null;
@@ -169,7 +170,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
 
     const
     FRAME_LIST = 0,
-    // sub message BacktraceFrame 
+    // sub message BacktraceFrame
     FUNCTION_ID = 0,
     ARGUMENT_OBJECT = 1,
     VARIABLE_OBJECT = 2,
@@ -177,7 +178,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     OBJECT_VALUE = 4,
     SCRIPT_ID = 5,
     LINE_NUMBER = 6,
-    // sub message ObjectValue 
+    // sub message ObjectValue
     OBJECT_ID = 0,
     NAME = 5,
     SCOPE_LIST = 7;
@@ -192,10 +193,10 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     {
       callstack[i] =
       {
-        fn_name : is_all_frames && i == _frames_length - 1 
-                  ? 'global scope' 
+        fn_name : is_all_frames && i == _frames_length - 1
+                  ? 'global scope'
                   : frame[OBJECT_VALUE][NAME] || 'anonymous',
-        line : frame[LINE_NUMBER], 
+        line : frame[LINE_NUMBER],
         script_id : frame[SCRIPT_ID],
         argument_id : frame[ARGUMENT_OBJECT],
         scope_id : frame[VARIABLE_OBJECT],
@@ -224,8 +225,8 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
       var config_arr = [], prop = '';
       for ( prop in stop_at_settings )
       {
-        config_arr[stop_at_id_map[prop]] = 
-          ( ( stop_at_user_settings[prop] = settings['js_source'].get(prop) ) 
+        config_arr[stop_at_id_map[prop]] =
+          ( ( stop_at_user_settings[prop] = settings['js_source'].get(prop) )
             || stop_at_settings[prop] ) && 1 || 0;
       }
       ecma_debugger.requestSetConfiguration(0, config_arr);
@@ -240,7 +241,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
 
     runtimes.setObserve(stopAt.runtime_id, mode != 'run');
 
-    services['ecmascript-debugger'].requestContinueThread(0, 
+    services['ecmascript-debugger'].requestContinueThread(0,
         [stopAt.runtime_id, stopAt['thread-id'], mode]);
     messages.post('frame-selected', {frame_index: -1});
     messages.post('thread-continue-event', {stop_at: stopAt});
@@ -273,7 +274,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     BREAKPOINT_ID = 5;
 
 
-    stopAt = 
+    stopAt =
     {
       runtime_id: message[RUNTIME_ID],
       'thread-id': message[THREAD_ID],
@@ -289,7 +290,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     if( typeof line == 'number' )
     {
       /**
-      * This event is enabled by default to reassign breakpoints. 
+      * This event is enabled by default to reassign breakpoints.
       * Here it must be checked if the user likes actually to stop or not.
       * At the moment this is a hack because the stop reason is not set for that case.
       * The check is if the stop reason is 'unknown' ( should be 'new script')
@@ -298,7 +299,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
       {
 
         runtime_id = stopAt.runtime_id;
-        if(  settings['js_source'].get('script') 
+        if(  settings['js_source'].get('script')
              || runtimes.getObserve(runtime_id)
               // this is a workaround for Bug 328220
               // if there is a breakpoint at the first statement of a script
@@ -309,16 +310,16 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
           {
             runtimes.setSelectedRuntimeId(runtime_id);
           }
-          // the runtime id can be different for each frame. 
-          var tag = tagManager.set_callback(null, parseBacktrace, [stopAt.runtime_id]); 
-          services['ecmascript-debugger'].requestGetBacktrace(tag, 
+          // the runtime id can be different for each frame.
+          var tag = tagManager.set_callback(null, parseBacktrace, [stopAt.runtime_id]);
+          services['ecmascript-debugger'].requestGetBacktrace(tag,
               [stopAt.runtime_id, stopAt['thread-id'], ini.max_frames]);
           if( !views.js_source.isvisible() )
           {
             topCell.showView(views.js_source.id);
           }
-          var plus_lines = views.js_source.getMaxLines() <= 10 
-            ? views.js_source.getMaxLines() / 2 >> 0 
+          var plus_lines = views.js_source.getMaxLines() <= 10
+            ? views.js_source.getMaxLines() / 2 >> 0
             : 10;
           if( views.js_source.showLine( stopAt.script_id, line - plus_lines ) )
           {
@@ -338,17 +339,17 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
       else
       {
         runtime_id = stopAt.runtime_id;
-       
+
         // the runtime id can be different for each frame
-        var tag = tagManager.set_callback(null, parseBacktrace, [stopAt.runtime_id]); 
-        services['ecmascript-debugger'].requestGetBacktrace(tag, 
+        var tag = tagManager.set_callback(null, parseBacktrace, [stopAt.runtime_id]);
+        services['ecmascript-debugger'].requestGetBacktrace(tag,
           [stopAt.runtime_id, stopAt['thread-id'], ini.max_frames]);
         if( !views.js_source.isvisible() )
         {
           topCell.showView(views.js_source.id);
         }
-        var plus_lines = views.js_source.getMaxLines() <= 10 
-          ? views.js_source.getMaxLines() / 2 >> 0 
+        var plus_lines = views.js_source.getMaxLines() <= 10
+          ? views.js_source.getMaxLines() / 2 >> 0
           : 10;
         if( views.js_source.showLine( stopAt.script_id, line - plus_lines ) )
         {
@@ -401,8 +402,8 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
   {
     var self = this;
 
-    ecma_debugger.handleSetConfiguration = 
-    ecma_debugger.handleContinueThread = 
+    ecma_debugger.handleSetConfiguration =
+    ecma_debugger.handleContinueThread =
     function(status, message){};
 
 
@@ -412,5 +413,5 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     });
   }
 
-  
+
 }
