@@ -211,7 +211,7 @@ cls.HostCommandTransformer = function() {
       return;
     }
 
-    token.value = "console.dir";
+    token.value = "(window.dir || function(e) { return console.dir(e)})";
   };
 
   this.hostcommand_dirxml = function(token, tokenlist) {
@@ -222,14 +222,14 @@ cls.HostCommandTransformer = function() {
       return;
     }
 
-    token.value = "console.dirxml";
+    token.value = "(window.dirxml || function(e) { return console.dirxml(e)})";
   };
 
   this.hostcommand_$ = function(token, tokenlist) {
     var index = tokenlist.indexOf(token);
 
     if (this.is_call(tokenlist, index)) {
-      token.value = "document.getElementById";
+      token.value = "(window.$ || function(e) { return document.getElementById(e)})";
     }
   };
 
@@ -237,12 +237,12 @@ cls.HostCommandTransformer = function() {
     var index = tokenlist.indexOf(token);
 
     if (this.is_call(tokenlist, index)) {
-      token.value = "document.querySelectorAll";
+      token.value = "(window.$$ || function(e) { return document.querySelectorAll(e)})";
     }
   };
 
   this.hostcommand_$x = function(token, tokenlist) {
-    var funstr = "(function(e)\
+    var funstr = "(window.$x || function(e)\
                   {\
                     var res = document.evaluate(e, document, null, XPathResult.ANY_TYPE, null);\
                     var ret = [];\
@@ -254,12 +254,12 @@ cls.HostCommandTransformer = function() {
   };
 
   this.hostcommand_keys = function(token, tokenlist) {
-    var funstr = "(function(o) {var arr=[]; for (key in o) {arr.push(key)}; return arr})";
+    var funstr = "(window.keys || function(o) {var arr=[]; for (key in o) {arr.push(key)}; return arr})";
     token.value = funstr;
   };
 
   this.hostcommand_values = function(token, tokenlist) {
-    var funstr = "(function(o) {var arr=[]; for (key in o) {arr.push(o[key])}; return arr})";
+    var funstr = "(window.values || function(o) {var arr=[]; for (key in o) {arr.push(o[key])}; return arr})";
     token.value = funstr;
   };
 
