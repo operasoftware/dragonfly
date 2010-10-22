@@ -173,7 +173,7 @@ ContextMenu.oncontextmenu = function(event)
         all_items.push({separator: true});
       }
 
-      var items = ContextMenu.registered_menus[menu_id];
+      var items = ContextMenu.registered_menus[menu_id] || [];
       for (var i = 0, item; item = items[i]; i++)
       {
         item.menu_id = menu_id;
