@@ -142,10 +142,10 @@ window.cls.PropertyFinder = function(rt_id) {
     if (status == 0) {
       const OBJECT_CHAIN_LIST = 0, OBJECT_LIST = 0, PROPERTY_LIST = 1, NAME = 0;
       var names = [];
-      message[OBJECT_CHAIN_LIST].forEach(function(chain){
-        var objectlist = chain[OBJECT_LIST];
+      (message[OBJECT_CHAIN_LIST] || []).forEach(function(chain){
+        var objectlist = chain[OBJECT_LIST] || [];
         objectlist.forEach(function(obj) {
-          names = names.concat(obj[PROPERTY_LIST].map(function(prop) {
+          names = names.concat((obj[PROPERTY_LIST] || []).map(function(prop) {
             return prop[NAME];
           }));
         });
