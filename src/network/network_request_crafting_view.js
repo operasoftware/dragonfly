@@ -8,6 +8,9 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
   this._input = null;
   this._output = null;
   this._protocol = "http://";
+  this._is_listening = false;
+  this._listening_for = null;
+  this._resources = {};
 
   this._request_template = [
     "GET / HTTP/1.1",
@@ -121,8 +124,12 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
       requestdata.method,
       requestdata.headers
     ];
-    var service = window.services["resource-manager"];
-    service.requestCreateRequest(null, request);
+    this._listening_for = null;
+    this._resources = [];
+    this._is_listening = true;
+
+    var tag = window.tagManager.set_callback(null, this._on_send_request_bound)
+    this._service.requestCreateRequest(tag, request);
   };
 
   this._handle_send_request_bound = function()
@@ -132,9 +139,91 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
     this._send_request(requestdata);
   }.bind(this);
 
+  this._on_send_request_bound = function(status, msg)
+  {
+    const RESOURCEID = 0;
+    this._listening_for = msg[RESOURCEID];
+  }.bind(this);
+
+  /**
+   * Since we might get network events before we know what resource we've
+   * requested, we need to keep track of all of them until we figure it out.
+   * This method determines if the event in data is still relevant.
+   */
+  this._is_relevant = function(data)
+  {
+    if (!this._is_listening) { return false; }
+    else if (this._listening_for !== null &&
+             data.resourceID != this._listening_for) { return false; }
+    else if (! (data.resourceID in this._resources)) { return false; }
+    else { return true; }
+  }
+
+  this._on_urlload_bound = function(msg)
+  {
+    var data = new cls.ResourceManager["1.0"].UrlLoad(msg);
+    if (!this._is_listening) { return; }
+    if (this._listening_for !== null && this._listening_for != data.resourceID) { return; }
+    this._resources[data.resourceID] = {urlload: data};
+  }.bind(this);
+
+  this._on_response_bound = function(msg)
+  {
+    var data = new cls.ResourceManager["1.0"].Response(msg);
+    if (!this._is_relevant(data)) { return; }
+    this._resources[data.resourceID].response = data;
+  }.bind(this);
+
+  this._on_responseheader_bound = function(msg)
+  {
+    var data = new cls.ResourceManager["1.0"].ResponseHeader(msg);
+    if (!this._is_relevant(data)) { return; }
+    this._resources[data.resourceID].responseheader = data;
+  }.bind(this);
+
+  this._on_responsefinished_bound = function(msg)
+  {
+    var data = new cls.ResourceManager["1.0"].ResponseFinished(msg);
+    if (!this._is_relevant(data)) { return; }
+    this._resources[data.resourceID].responsefinished = data;
+  }.bind(this);
+
+  this._on_urlfinished_bound = function(msg)
+  {
+    var data = new cls.ResourceManager["1.0"].UrlFinished(msg);
+    if (!this._is_relevant(data)) { return; }
+    this._resources[data.resourceID].urlfinished = data;
+    if (this._listening_for == data.resourceID)
+    {
+      this._on_got_relevant_response(data);
+    }
+  }.bind(this);
+
+  this._on_got_relevant_response = function(data)
+  {
+    this._is_listening = false;
+    var resource = this._resources[this._listening_for]
+    this._listening_for = null;
+    this._resources = {};
+    var response = resource.responseheader.raw + resource.responsefinished.resourceData
+    this._prev_response = response;
+    this.update();
+  };
+
   var eh = window.eventHandlers;
   eh.click["request-crafter-send"] = this._handle_send_request_bound;
 // for onchange and buffermanager  eh.click["request-crafter-send"] = this._handle_send_request_bound;
+
+
+  this._service = window.services['resource-manager'];
+  this._service.addListener("urlload", this._on_urlload_bound);
+  this._service.addListener("request", this._on_request_bound);
+  this._service.addListener("requestheader", this._on_requestheader_bound);
+  this._service.addListener("requestfinished", this._on_requestfinished_bound);
+  this._service.addListener("response", this._on_response_bound);
+  this._service.addListener("responseheader", this._on_responseheader_bound);
+  this._service.addListener("responsefinished", this._on_responsefinished_bound);
+  this._service.addListener("urlfinished", this._on_urlfinished_bound);
 
   this.init(id, name, container_class, html, default_handler);
 };
