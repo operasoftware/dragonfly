@@ -156,7 +156,8 @@ toolbar-buttons, toolbar-switches {
 
 toolbar button, 
 top-toolbar button, 
-window-controls button
+window-controls button,
+window-toolbar button
 {
   background: transparent none;
   border-color: transparent;
@@ -1026,6 +1027,12 @@ button[handler="configure-message-filters"]:before
 {
   background-image: url('../ui-images/btn-reload-host.png');
 }
+button[handler="show-event-breakpoint-view"]:before
+{
+  background-image: url('../ui-images/btn-event-breakpoint.png');
+}
+
+
 
 /* editing */
 textarea

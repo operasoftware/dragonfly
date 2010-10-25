@@ -6,11 +6,11 @@ templates.repl_main = function()
   return [
     "div", [[
       ["div", [
-         "ol", "", "class", "repl-lines js-source"
+         "ol", "class", "repl-lines js-source"
          ], "class", "repl-output"],
       ["div", [[
         ["span", ">>> ", "class", "repl-prefix"],
-        ["div", ["textarea", "", "handler", "repl-textarea", "rows", "1"]]
+        ["div", ["textarea", "handler", "repl-textarea", "rows", "1"]]
       ]], "class", "repl-input"]
     ]], "class", "padding"
   ];
@@ -70,4 +70,11 @@ templates.repl_output_trace = function(trace)
                     ],
                     "class", "console-trace-container"];
   return tpl;
+};
+
+templates.repl_group_line = function(group)
+{
+  return [["button", "class", "folder-key"+(group.collapsed ? "" : " open" ),
+                     "handler", "repl-toggle-group", "group-id", group.id
+          ], group.name];
 };

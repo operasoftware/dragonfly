@@ -29,7 +29,8 @@
 window.cls = window.cls || {};
 cls.HostCommandTransformer = function() {
   this.parser = null;
-  this.command_map = {};
+  this.client_command_map = {};
+  this.df_command_map = {};
   this.transform_map = {};
 
 
@@ -60,7 +61,12 @@ cls.HostCommandTransformer = function() {
       else if (type == "clientcommand")
       {
         var name = methodname.split("clientcommand_")[1];
-        this.command_map[name] = this[methodname];
+        this.client_command_map[name] = this[methodname];
+      }
+      else if (type == "dfcommand")
+      {
+        var name = methodname.split("dfcommand_")[1];
+        this.df_command_map[name] = this[methodname];
       }
     }
   };
@@ -90,7 +96,6 @@ cls.HostCommandTransformer = function() {
 
   this.get_command = function(source)
   {
-
     var types = [];
     var values = [];
     var tokens = [];
@@ -100,9 +105,27 @@ cls.HostCommandTransformer = function() {
     // stuff is small, so the cost of this doesn't matter much.
     tokens = this.zip_tokens(types, values);
 
-    if (this.is_call(tokens, 0) && tokens[0].value in this.command_map)
+    if (!tokens.length)
     {
-      return this.command_map[tokens[0].value];
+      return null;
+    }
+    else if (this.is_call(tokens, 0) && tokens[0].value in this.client_command_map)
+    {
+      return this.client_command_map[tokens[0].value];
+    }
+
+    if (tokens[0].type == COMMENT)
+    {
+      // regex matches "//#! command()" . Whitespace is allowed inbetween most tokens
+      var match = tokens[0].value.match(/\s*\/\/\s*#!\s+(\w+)\s*\(\s*\)\s*/);
+      if (match)
+      {
+        var command = match[1];
+        if (command in this.df_command_map)
+        {
+          return this.df_command_map[command];
+        }
+      }
     }
     return null;
   };
@@ -188,7 +211,7 @@ cls.HostCommandTransformer = function() {
       return;
     }
 
-    token.value = "console.dir";
+    token.value = "(window.dir || function(e) { return console.dir(e)})";
   };
 
   this.hostcommand_dirxml = function(token, tokenlist) {
@@ -199,14 +222,14 @@ cls.HostCommandTransformer = function() {
       return;
     }
 
-    token.value = "console.dirxml";
+    token.value = "(window.dirxml || function(e) { return console.dirxml(e)})";
   };
 
   this.hostcommand_$ = function(token, tokenlist) {
     var index = tokenlist.indexOf(token);
 
     if (this.is_call(tokenlist, index)) {
-      token.value = "document.getElementById";
+      token.value = "(window.$ || function(e) { return document.getElementById(e)})";
     }
   };
 
@@ -214,12 +237,12 @@ cls.HostCommandTransformer = function() {
     var index = tokenlist.indexOf(token);
 
     if (this.is_call(tokenlist, index)) {
-      token.value = "document.querySelectorAll";
+      token.value = "(window.$$ || function(e) { return document.querySelectorAll(e)})";
     }
   };
 
   this.hostcommand_$x = function(token, tokenlist) {
-    var funstr = "(function(e)\
+    var funstr = "(window.$x || function(e)\
                   {\
                     var res = document.evaluate(e, document, null, XPathResult.ANY_TYPE, null);\
                     var ret = [];\
@@ -231,12 +254,12 @@ cls.HostCommandTransformer = function() {
   };
 
   this.hostcommand_keys = function(token, tokenlist) {
-    var funstr = "(function(o) {var arr=[]; for (key in o) {arr.push(key)}; return arr})";
+    var funstr = "(window.keys || function(o) {var arr=[]; for (key in o) {arr.push(key)}; return arr})";
     token.value = funstr;
   };
 
   this.hostcommand_values = function(token, tokenlist) {
-    var funstr = "(function(o) {var arr=[]; for (key in o) {arr.push(o[key])}; return arr})";
+    var funstr = "(window.values || function(o) {var arr=[]; for (key in o) {arr.push(o[key])}; return arr})";
     token.value = funstr;
   };
 
@@ -245,6 +268,14 @@ cls.HostCommandTransformer = function() {
     view.clear();
     data.clear();
   };
+
+  this.dfcommand_help = function(view, data, input)
+  {
+    data.add_message("Use the clear() command to clear the console");
+    data.add_message("Type \"//#! help()\" for more information");
+  };
+
+  this.dfcommand_man = this.dfcommand_help; // man is alias for help
 
   this.init();
 };

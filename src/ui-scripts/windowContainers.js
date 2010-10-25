@@ -42,6 +42,10 @@ var WindowContainerBase = function()
   {
     var view = views[this.view_id = view_id];
     views[this.view_id].addContainerId(this.type + '-to-' + this.cell.id);
+    if(window.toolbars[this.view_id])
+    {
+      window.toolbars[this.view_id].addContainerId('window-toolbar-to-' + this.cell.id);
+    }
     this.setDimensions();
     var container = document.getElementById(this.type + '-to-' + this.cell.id) || this.update(true);
     if( view )
@@ -54,6 +58,10 @@ var WindowContainerBase = function()
   this.onclose = function()
   {
     views[this.view_id].removeContainerId(this.type + '-to-' + this.cell.id);
+    if(window.toolbars[this.view_id])
+    {
+      window.toolbars[this.view_id].removeContainerId('window-toolbar-to-' + this.cell.id);
+    }
   }
 
   this.init = function(cell)

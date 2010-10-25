@@ -52,7 +52,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
       if needed to adjust them for an updated service version
     */
 
-    window.runtime_onload_handler = new cls.RuntimeOnloadHandler();
+    window.runtime_onload_handler = new namespace.RuntimeOnloadHandler();
 
     /* temporary export view */
     window.export_data = new cls.ExportData();
@@ -62,7 +62,6 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
 
     cls.CndRtSelect.prototype = new CstSelect();
     new cls.CndRtSelect('cmd-runtime-select', 'cmd-line-runtimes');
-    cls.CommandLineViewTest.create_ui_widgets();
 
     cls.ReplView.create_ui_widgets();
     new cls.ReplView('command_line', "REPL", 'scroll', '', 'repl-focus');
@@ -113,6 +112,13 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     window.elementLayout = new cls.ElementLayout();
     cls.CSSLayoutView.prototype = ViewBase;
     new cls.CSSLayoutView('css-layout', ui_strings.M_VIEW_LABEL_LAYOUT, 'scroll css-layout');
+
+    /* Event Breakpoints */
+    window.event_breakpoints = new cls.EventBreakpoints();
+    cls.EventBreakpointsView.prototype = ViewBase;
+    new cls.EventBreakpointsView('event-breakpoints', ui_strings.M_VIEW_LABEL_EVENT_BREAKPOINTS, 'scroll event-breakpoints');
+    cls.EventBreakpointsView.create_ui_widgets();
+
 
     /* adjust the base class */
 
