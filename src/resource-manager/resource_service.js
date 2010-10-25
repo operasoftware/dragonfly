@@ -172,7 +172,7 @@ cls.ResourceManagerService = function(view, data)
       return types.indexOf(type) > -1;
     };
 
-    return this._get_resource_list().filter(filterfun);
+    return this.get_resource_list().filter(filterfun);
   };
 
   this.get_resources_for_mime = function()
@@ -185,14 +185,14 @@ cls.ResourceManagerService = function(view, data)
       return e.responsefinished && mimes.indexOf(e.responsefinished.data.mimeType) > -1;
     };
 
-    return this._get_resource_list().filter(filterfun);
+    return this.get_resource_list().filter(filterfun);
   };
 
   /**
    * Returns an array of resource objects. The internal representation is to
    * keep separate lists of seen resources and a map of id/resource.
    */
-  this._get_resource_list = function()
+  this.get_resource_list = function()
   {
     if (! this._current_document) { return []; }
     var mapfun = function(e)
