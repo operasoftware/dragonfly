@@ -1028,6 +1028,10 @@ button[handler="configure-message-filters"]:before
 }
 
 /* editing */
+textarea
+{
+   resize: none;
+}
 
 textarea-container {
   display: block;

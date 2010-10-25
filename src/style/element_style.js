@@ -36,7 +36,6 @@ cls.ElementStyle = function()
   ORIGIN = 0,
   INDEX_LIST = 1,
   VALUE_LIST = 2,
-  PRIORITY_LIST = 3,
   STATUS_LIST = 4,
   SELECTOR = 5,
   SPECIFICITY = 6,

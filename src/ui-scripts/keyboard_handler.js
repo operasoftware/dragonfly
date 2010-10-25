@@ -354,7 +354,7 @@ var key_identifier = new function()
       {
         // in the keypress events the which property for function keys is set to 0
         // this check lets pass e.g. '(' on a AZERTY keyboard
-        if( event.which != 0 /* && event.which < 0xE000 */ )
+        if (!is_function_key(event))
         {
           break;
         }
@@ -373,8 +373,8 @@ var key_identifier = new function()
             ( event.ctrlKey ? '1' : '0' ) +
             ( event.altKey ? '1' : '0' ) +
             keyCode.toString();
-        if (key_id in action_map
-            && !__key_handler[action_id = action_map[key_id]](event, action_id))
+        action_id = action_map[key_id];
+        if (action_id && !__key_handler[action_id](event, action_id))
         {
           event.preventDefault();
           event.stopPropagation();
@@ -383,6 +383,17 @@ var key_identifier = new function()
       }
     }
   };
+  
+  var is_function_key = function(event)
+  {
+    return event.which === 0;
+  };
+  
+  if (window.chrome)
+    is_function_key = function(event)
+    {
+      return event.keyIdentifier.indexOf('U+') != 0;
+    };
 
   var clear_current_handler = function()
   {

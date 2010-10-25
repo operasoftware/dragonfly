@@ -1,4 +1,44 @@
-﻿/**
+﻿if (!window.opera)
+{
+  window.opera = 
+  {
+    postError: function(a){console.log(a);},
+    stpVersion: true
+  };
+  // switch keypress with keydown for other browsers
+  (function(add_event_listener)
+  {
+    Node.prototype.addEventListener = function(name, listener, is_capturing)
+    {
+      add_event_listener.call(this, 
+                              name == 'keypress' ? 'keydown' : name, 
+                              listener, is_capturing);
+    }
+  })(Node.prototype.addEventListener);
+}
+
+if (document.createElementNS && 
+    document.createElement('div').namespaceURI != 'http://www.w3.org/1999/xhtml')
+{  
+  Document.prototype.createElement = document.createElement = function(name)
+  {
+    return this.createElementNS('http://www.w3.org/1999/xhtml', name);
+  };
+}
+
+if (!Element.prototype.contains)
+{
+  Element.prototype.contains = function(ele)
+  {
+    if (ele == this)
+      return true;
+    var all = this.getElementsByTagName('*'), i = 0, cur = null;
+    for (; (cur = all[i]) && cur != ele; i++);
+    return Boolean(cur);
+  }
+}
+
+/**
  * @fileoverview
  * Helper function prototypes related to DOM objects and the DOM
  * <strong>fixme: Christian should document the template syntax</strong>
@@ -854,4 +894,5 @@ CustomElements.add(function()
 },
 'PlaceholderFeature',
 'AutoScrollHeightFeature');
+
 

@@ -542,20 +542,19 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
 
   this.handle_get_objects = function(status, message, rt_id, type)
   {
-    const STATUS = 0, OBJECT_VALUE = 3, OBJECT_ID = 0;
+    const STATUS = 0,
+    OBJECT_CHAIN_LIST = 0,
+    OBJECT_LIST = 0,
+    PROPERTY_LIST = 1,
+    OBJECT_VALUE = 3,
+    OBJECT_ID = 0;
+    
     if (status)
       opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
                       "static method InspectableJSObject.handle_create_filter failed, " +
                       status + ', ' + JSON.stringify(message));
     else
     {
-      const
-      OBJECT_CHAIN_LIST = 0,
-      OBJECT_LIST = 0,
-      PROPERTY_LIST = 1,
-      OBJECT_VALUE = 3,
-      OBJECT_ID = 0;
-
       var obj_list = (message &&
         (message = message[OBJECT_CHAIN_LIST]) &&
         (message = message[0]) &&
@@ -591,7 +590,8 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     NAME = 0,
     PROPERTY_TYPE = 1,
     PROPERTY_VALUE = 2,
-    OBJECT_VALUE = 3;
+    OBJECT_VALUE = 3,
+    FILTERED_PROPS = 1;
 
     var
     object = null,
@@ -636,7 +636,6 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
           filters.push([class_name, filter]);
       }
     }
-    const NAME = 0, FILTERED_PROPS = 1;
     // filter out Element
     var is_equal = function(a, b)
     {

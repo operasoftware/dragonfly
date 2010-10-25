@@ -318,7 +318,7 @@ cls.DOMInspectorActions = function(id)
       {
         nav_target.blur();
       }
-      selection.collapse(view_container, 0);
+      selection.removeAllRanges();
       nav_target = new_target;
       raw_delta = new_target.getBoundingClientRect().top - view_container.getBoundingClientRect().top; 
       // delta positive overflow of the container
@@ -414,7 +414,7 @@ cls.DOMInspectorActions = function(id)
   this.blur = function(event)
   {
     if (selection)
-      selection.collapse(document.documentElement, 0);
+      selection.removeAllRanges();
     view_container = null;
     view_container_first_child = null;
     nav_target = null;
@@ -643,7 +643,7 @@ cls.DOMInspectorActions = function(id)
   {
     var selection = getSelection();
     var range = document.createRange();
-    selection.collapse(view_container, 0);
+    selection.removeAllRanges();
     range.selectNodeContents(view_container);
     selection.addRange(range);
   }

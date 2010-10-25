@@ -30,7 +30,7 @@ cls.JsSourceView = function(id, name, container_class)
       id: 'test-line-height',
       property: 'lineHeight',
       target: 'line-height',
-      getValue: function(){return parseInt(document.getElementById(this.id).currentStyle[this.property])}
+      getValue: function(){return parseInt(window.getComputedStyle(document.getElementById(this.id), null).getPropertyValue(this.property))}
     },
     {
       id: 'test-scrollbar-width',

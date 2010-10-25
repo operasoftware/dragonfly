@@ -1156,6 +1156,7 @@ d
 .test-messages textarea
 {
   box-sizing: border-box;
+  -webkit-box-sizing: border-box;
   display: block;
   width: 100%;
   margin: 0;
