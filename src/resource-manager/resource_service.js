@@ -154,7 +154,13 @@ cls.ResourceManagerService = function(view, data)
 
   this.get_current_document = function()
   {
-    return this._current_document;
+    if (this._current_document &&
+        this._current_document.resourcelist &&
+        this._current_document.resourcelist.length)
+    {
+      return this._current_document;
+    }
+    return null;
   };
 
   /**

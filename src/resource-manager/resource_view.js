@@ -26,7 +26,14 @@ cls.ResourceManagerView = function(id, name, container_class, html, default_hand
   {
     var width = container.clientWidth;
     var document = this._service.get_current_document();
-    container.clearAndRender(templates.resource_main(document, width));
+    if (document)
+    {
+      container.clearAndRender(templates.resource_main(document, width));
+    }
+    else
+    {
+      container.innerHTML = "<div class='padding'><h1>No document loaded</h1></div>";
+    }
   };
 
   this._handle_resource_select_bound = function(evt, target)
