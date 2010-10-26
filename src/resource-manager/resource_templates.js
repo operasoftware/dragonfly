@@ -229,3 +229,46 @@ templates.grid_lines = function(millis, width, height)
 };
 
 
+
+// all resources tab:
+
+templates.all_resources = function(resources)
+{
+  var tpl = [
+    ["div",
+     ["table",
+      ["tr",
+       ["th", "Name"],
+       ["th", "Type"],
+       ["th", "Size"],
+       "handler", "resources-all-sort"
+      ],
+      resources.map(templates.all_resources_row)
+     ],
+     "class", "padding resources-all"
+    ]
+  ];
+  return tpl;
+}
+
+templates.all_resources_row = function(resource)
+{
+  return [
+    ["tr",
+     ["td", templates.url_path(resource.urlload.url)],
+     ["td", resource.urlfinished.mimeType],
+     ["td", "cccc"],
+     "handler", "resources-all-open",
+     "resource-id", String(resource.urlload.resourceID)
+    ]
+  ]
+}
+
+templates.url_path = function(url)
+{
+  var firstslash = url.replace("://", "xxx").indexOf("/");
+  var querystart = url.indexOf("?");
+  if (querystart == -1) { querystart = url.length; }
+  var path = url.slice(firstslash, querystart);
+  return path;
+}
