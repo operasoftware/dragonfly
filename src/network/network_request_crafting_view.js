@@ -124,10 +124,10 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
       requestdata.method,
       requestdata.headers,
       null, // payload
-      3, // header policy. 3 == replace
+      3, // header policy. 2 == overwrite, 3 == replace
       2, // reload policy. 2 == no cache, always reload from network
       null, // request content mode
-      [3, 1]
+      [1, 1]
     ];
     this._listening_for = null;
     this._resources = [];
@@ -210,7 +210,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
     var resource = this._resources[this._listening_for]
     this._listening_for = null;
     this._resources = {};
-    var response = resource.responseheader.raw + resource.responsefinished.resourceData
+    var response = resource.responseheader.raw + resource.responsefinished.data.content.stringData;
     this._prev_response = response;
     this.update();
   };
