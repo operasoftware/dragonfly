@@ -115,11 +115,10 @@ var UIBase = new function()
     if( this.is_dirty )
     {
       this.is_dirty = false;
-      var css_text = this.getCssText();
-      if(css_text != ele.style.cssText ) 
-      {
-        ele.style.cssText = css_text;
-      }
+      var props = ['left', 'top', 'width', 'height'], prop = '', i = 0;
+      for (; prop = props[i]; i++)
+        if (this[prop] !== parseInt(ele.style[prop]))
+          ele.style[prop] = this[prop] + 'px';
       this.update_sub_class();
     }
     return ele;
