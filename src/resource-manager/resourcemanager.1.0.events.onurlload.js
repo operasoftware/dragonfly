@@ -3,8 +3,9 @@ window.cls || (window.cls = {});
 cls.ResourceManager || (cls.ResourceManager = {});
 cls.ResourceManager["1.0"] || (cls.ResourceManager["1.0"] = {});
 
-cls.ResourceManager["1.0"].UrlLoad = function(arr)
+cls.ResourceManager["1.0"].UrlLoad = function(arr, parent)
 {
+  this.parent = parent || null;
   this.windowID = arr[0];
   this.frameID = arr[1];
   this.documentID = arr[2];
@@ -17,11 +18,12 @@ cls.ResourceManager["1.0"].UrlLoad = function(arr)
     * The type of URL that was started, this can referer to a specific protocol
     * or a special URL type.
     * 
-    * Note: More types may be added in the future, make sure the client supports that.
+    * @note More types may be added in the future, make sure the client supports that.
     */
   // cls.ResourceManager["1.0"].UrlLoad.URLType
   this.urlType = arr[5];
   this.time = arr[6];
+  this.toString = function() { return "[message UrlLoad]"; }
 };
 cls.ResourceManager["1.0"].UrlLoad.URLType =
 {

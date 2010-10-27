@@ -3,10 +3,12 @@ window.cls || (window.cls = {});
 cls.ResourceManager || (cls.ResourceManager = {});
 cls.ResourceManager["1.0"] || (cls.ResourceManager["1.0"] = {});
 
-cls.ResourceManager["1.0"].UrlRedirect = function(arr)
+cls.ResourceManager["1.0"].UrlRedirect = function(arr, parent)
 {
+  this.parent = parent || null;
   this.fromResourceID = arr[0];
   this.toResourceID = arr[1];
   this.time = arr[2];
+  this.toString = function() { return "[message UrlRedirect]"; }
 };
 

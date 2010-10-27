@@ -3,9 +3,11 @@ window.cls || (window.cls = {});
 cls.ResourceManager || (cls.ResourceManager = {});
 cls.ResourceManager["1.0"] || (cls.ResourceManager["1.0"] = {});
 
-cls.ResourceManager["1.0"].UrlUnload = function(arr)
+cls.ResourceManager["1.0"].UrlUnload = function(arr, parent)
 {
+  this.parent = parent || null;
   this.resourceID = arr[0];
   this.time = arr[1];
+  this.toString = function() { return "[message UrlUnload]"; }
 };
 

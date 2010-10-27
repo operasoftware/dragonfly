@@ -3,17 +3,20 @@ window.cls || (window.cls = {});
 cls.ResourceManager || (cls.ResourceManager = {});
 cls.ResourceManager["1.0"] || (cls.ResourceManager["1.0"] = {});
 
-cls.ResourceManager["1.0"].ResponseFinished = function(arr)
+cls.ResourceManager["1.0"].ResponseFinished = function(arr, parent)
 {
+  this.parent = parent || null;
   this.requestID = arr[0];
   this.resourceID = arr[1];
   this.time = arr[2];
   this.contentLength = arr[3];
-  this.data = arr[4] ? new cls.ResourceManager["1.0"].ResourceData(arr[4]) : null;
+  this.data = arr[4] ? new cls.ResourceManager["1.0"].ResourceData(arr[4], this) : null;
+  this.toString = function() { return "[message ResponseFinished]"; }
 };
 
-cls.ResourceManager["1.0"].ResourceData = function(arr)
+cls.ResourceManager["1.0"].ResourceData = function(arr, parent)
 {
+  this.parent = parent || null;
   this.resourceID = arr[0];
   this.url = arr[1];
   /** 
@@ -22,17 +25,48 @@ cls.ResourceManager["1.0"].ResourceData = function(arr)
     */
   this.mimeType = arr[2];
   /** 
-    * Original character encoding.
+    * Original character encoding (if applicable).
     */
   this.characterEncoding = arr[3];
+  /** 
+    * Content-Length, as advertised by HTTP headers.
+    */
   this.contentLength = arr[4];
-  this.content = arr[5] ? new cls.ResourceManager["1.0"].Content(arr[5]) : null;
+  this.content = arr[5] ? new cls.ResourceManager["1.0"].Content(arr[5], this) : null;
+  this.toString = function() { return "[message ResourceData]"; }
 };
 
-cls.ResourceManager["1.0"].Content = function(arr)
+cls.ResourceManager["1.0"].Content = function(arr, parent)
 {
+  this.parent = parent || null;
+  /** 
+    * If BYTES or DATA_URI was chosen as the transport mode, this field
+    * contains the size of the data. (If, in addition, decoding was enabled,
+    * the field contains the size of the decoded data).
+    * 
+    * If STRING was chosen as the transport mode, this field contains the
+    * string length (regardless of encoding), i.e. the number of characters,
+    * not including zero terminator.
+    */
   this.length = arr[0];
-  this.byteData = arr[1];
-  this.stringData = arr[2];
+  /** 
+    * The (original) character encoding of the data (if applicable).
+    */
+  this.characterEncoding = arr[1];
+  /** 
+    * This field contains the data if BYTES was chosen as the transport
+    * mode. If other modes were chosen, this field is not set.
+    * 
+    * @see ContentMode::Transport
+    */
+  this.byteData = arr[2];
+  /** 
+    * This field contains the data if either STRING or DATA_URI were chosen
+    * as transport mode. If some other mode was chosen, this field is not set.
+    * 
+    * @ee ContentMode::Transport
+    */
+  this.stringData = arr[3];
+  this.toString = function() { return "[message Content]"; }
 };
 
