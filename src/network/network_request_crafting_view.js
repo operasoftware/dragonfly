@@ -122,7 +122,12 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
       windowid,
       requestdata.url,
       requestdata.method,
-      requestdata.headers
+      requestdata.headers,
+      null, // payload
+      3, // header policy. 3 == replace
+      2, // reload policy. 2 == no cache, always reload from network
+      null, // request content mode
+      [3, 1]
     ];
     this._listening_for = null;
     this._resources = [];
@@ -228,4 +233,11 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
   this.init(id, name, container_class, html, default_handler);
 };
 cls.RequestCraftingView.prototype = ViewBase;
+
+
+
+
+
+
+
 

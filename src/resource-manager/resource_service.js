@@ -35,10 +35,17 @@ cls.ResourceManagerService = function(view, data)
 
   this._seen_doc_ids = [];
   this._document_contexts = {}; // mapping document id -> list of requests
-  this._current_document = {};
+  this._current_document = null;
 
+
+  this._enable_content_tracking = function()
+  {
+    this._res_service.requestSetResponseMode(null, [[3, 1]]);
+  }
+  
   this._on_abouttoloaddocument_bound = function(msg)
   {
+
     var data = new cls.DocumentManager["1.0"].AboutToLoadDocument(msg);
 
     this._seen_doc_ids = [];
@@ -53,9 +60,9 @@ cls.ResourceManagerService = function(view, data)
 
   }.bind(this);
 
-
   this._on_urlload_bound = function(msg)
   {
+    if (!this._current_document) { return; }
     var data = new cls.ResourceManager["1.0"].UrlLoad(msg);
 
     this._current_document.resourcelist.push(data.resourceID);
@@ -67,6 +74,7 @@ cls.ResourceManagerService = function(view, data)
 
   this._on_request_bound = function(msg)
   {
+    if (!this._current_document) { return; }
     var data = new cls.ResourceManager["1.0"].Request(msg);
 //    opera.postError(JSON.stringify(data));
 
@@ -80,6 +88,7 @@ cls.ResourceManagerService = function(view, data)
 
   this._on_requestheader_bound = function(msg)
   {
+    if (!this._current_document) { return; }
     var data = new cls.ResourceManager["1.0"].RequestHeader(msg);
     var resource = this._current_document.resourcemap[data.resourceID];
     if (resource) {
@@ -89,6 +98,7 @@ cls.ResourceManagerService = function(view, data)
 
   this._on_requestfinished_bound = function(msg)
   {
+    if (!this._current_document) { return; }
     var data = new cls.ResourceManager["1.0"].RequestFinished(msg);
     var resource = this._current_document.resourcemap[data.resourceID];
     if (resource) {
@@ -98,6 +108,7 @@ cls.ResourceManagerService = function(view, data)
 
   this._on_response_bound = function(msg)
   {
+    if (!this._current_document) { return; }
     var data = new cls.ResourceManager["1.0"].Response(msg);
 
     var resource = this._current_document.resourcemap[data.resourceID];
@@ -108,6 +119,7 @@ cls.ResourceManagerService = function(view, data)
 
   this._on_responseheader_bound = function(msg)
   {
+    if (!this._current_document) { return; }
     var data = new cls.ResourceManager["1.0"].ResponseHeader(msg);
     var resource = this._current_document.resourcemap[data.resourceID];
     if (resource) {
@@ -117,6 +129,7 @@ cls.ResourceManagerService = function(view, data)
 
   this._on_responsefinished_bound = function(msg)
   {
+    if (!this._current_document) { return; }
     var data = new cls.ResourceManager["1.0"].ResponseFinished(msg);
     var resource = this._current_document.resourcemap[data.resourceID];
     if (resource) {
@@ -126,6 +139,7 @@ cls.ResourceManagerService = function(view, data)
 
   this._on_urlfinished_bound = function(msg)
   {
+    if (!this._current_document) { return; }
     var data = new cls.ResourceManager["1.0"].UrlFinished(msg);
     var resource = this._current_document.resourcemap[data.resourceID];
     if (resource) {
@@ -139,6 +153,8 @@ cls.ResourceManagerService = function(view, data)
   {
 
     this._res_service = window.services['resource-manager'];
+
+
     this._res_service.addListener("urlload", this._on_urlload_bound);
     this._res_service.addListener("request", this._on_request_bound);
     this._res_service.addListener("requestheader", this._on_requestheader_bound);
