@@ -28,7 +28,8 @@ cls.ResourceManagerView = function(id, name, container_class, html, default_hand
     var document = this._service.get_current_document();
     if (document)
     {
-      container.clearAndRender(templates.resource_main(document, width));
+      var duration = document.lasttime - document.firsttime;
+      container.clearAndRender(templates.resource_main(document, width, templates.millis_to_render(duration));
     }
     else
     {

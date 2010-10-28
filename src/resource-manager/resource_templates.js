@@ -3,7 +3,7 @@ window.templates = window.templates || {};
 templates.resource_main = function(doc, width, duration_to_render)
 {
   var graphwidth = width - 190; // fixme <- hardcoded
-  var seconds = Math.ceil((doc.lasttime - doc.firsttime) / 1000) * 1000 ;
+  var seconds = duration_to_render * 1000 ;
 
   return [
     "div",
@@ -271,4 +271,17 @@ templates.url_path = function(url)
   if (querystart == -1) { querystart = url.length; }
   var path = url.slice(firstslash, querystart);
   return path;
+}
+
+
+/**
+ * How many millis should be shown on the screen, as opposed to how many
+ * are in the request list. Currently just rounds up to neares second.
+ * Separated out here in case we want to get smarter. Also, more than
+ * one template needs this information
+ */
+
+templates.millis_to_render = function(millis, width)
+{
+  return Math.ceil(width / 1000) * 1000;
 }
