@@ -34,13 +34,20 @@ templates.network_options_header_table = function(headers)
   return tpl;
 };
 
-templates.network_request_crafter_main = function(prev_request, prev_response)
+templates.network_request_crafter_main = function(url, request, response)
 {
   return ["div",
-           ["div", ["textarea", prev_request]],
-           ["button", "Send request", "handler", "request-crafter-send"],
-           ["hr"],
-           ["div", ["pre", ["code", prev_response]]],
-           "class", "padding request-crafter"
+          ["div",
+           ["label", "URL:", ["input", "type", "text",
+                              "value", url || "",
+                              "handler", "request-crafter-url-change"
+                             ]
+           ],
+           ["textarea", request]
+          ],
+          ["button", "Send request", "handler", "request-crafter-send"],
+          ["hr"],
+          ["div", ["pre", ["code", response]]],
+          "class", "padding request-crafter"
          ];
 };

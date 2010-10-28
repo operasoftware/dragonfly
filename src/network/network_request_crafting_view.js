@@ -7,15 +7,15 @@ window.cls = window.cls || {};
 cls.RequestCraftingView = function(id, name, container_class, html, default_handler) {
   this._input = null;
   this._output = null;
-  this._protocol = "http://";
+  this._urlfield = null;
   this._is_listening = false;
   this._listening_for = null;
   this._resources = {};
 
   this._request_template = [
     "GET / HTTP/1.1",
-    "User-Agent: Opera/9.80 (Windows NT 5.1; U; en) Presto/2.2.15 Version/10.00",
     "Host: www.opera.com",
+    "User-Agent: Opera/9.80 (Windows NT 5.1; U; en) Presto/2.2.15 Version/10.00",
     "Accept: text/html, application/xml;q=0.9, application/xhtml xml, image/png, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1",
     "Accept-Language: nb-NO,nb;q=0.9,no-NO;q=0.8,no;q=0.7,en;q=0.6",
     "Accept-Charset: iso-8859-1, utf-8, utf-16, *;q=0.1",
@@ -26,10 +26,13 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
 
   this._prev_request = this._request_template;
   this._prev_response = "No response";
+  this._prev_url = "";
 
   this.ondestroy = function()
   {
-
+    this._prev_url = this._urlfield.get_value();
+    this._prev_request = this._input.get_value();
+    this._prev_response = this._output.textContent;
   };
 
   this.createView = function(container)
@@ -39,11 +42,26 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
 
   this._render_main_view = function(container)
   {
-    container.clearAndRender(templates.network_request_crafter_main(this._prev_request,
+    container.clearAndRender(templates.network_request_crafter_main(this._prev_url,
+                                                                    this._prev_request,
                                                                     this._prev_response));
+    this._urlfield = new cls.BufferManager(container.querySelector("input"));
     this._input = new cls.BufferManager(container.querySelector("textarea"));
     this._output = container.querySelector("code");
   };
+
+  this._parse_url = function(url)
+  {
+    // Regex! Woo!
+    // this one tries to figure out if url is indeed something like a url.
+    // Pulls out proto, if it's http(s), host and path if there is one.
+    var match = url.match(/^(?:(http(?:s)?):\/\/)(\S*?)(?:\/|$)(?:(.*))/);
+    if (match)
+    {
+      return {protocol: match[1], host: match[2], path: "/" + (match[3] || "")};
+    }
+    return null;
+  }
 
   this._check_raw_request = function()
   {
@@ -117,10 +135,12 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
 
   this._send_request = function(requestdata)
   {
+    var url = this._urlfield.get_value();
+    if (url.lastIndexOf("/") != url.length)
     var windowid = window_manager_data.get_debug_context();
     var request = [
       windowid,
-      requestdata.url,
+      url,
       requestdata.method,
       requestdata.headers,
       null, // payload
@@ -132,6 +152,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
     this._listening_for = null;
     this._resources = [];
     this._is_listening = true;
+    this.ondestroy(); // saves state of in/out
 
     var tag = window.tagManager.set_callback(null, this._on_send_request_bound)
     this._service.requestCreateRequest(tag, request);
@@ -149,6 +170,21 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
     const RESOURCEID = 0;
     this._listening_for = msg[RESOURCEID];
   }.bind(this);
+
+  this._handle_url_change_bound = function(evt, target)
+  {
+    var urlstr = target.value;
+    this._add_url_info_to_request(this._parse_url(urlstr));
+  }.bind(this);
+
+  this._add_url_info_to_request = function(urldata)
+  {
+    if (!urldata) { return; }
+    var current = this._input.get_value();
+    current = current.replace(/^Host: .*$?/m, "Host: " + urldata.host);
+    current = current.replace(/^(\w+? )(.*?)( .*)/, function(s, m1, m2, m3, all) { return m1 + urldata.path + m3; });
+    this._input.set_value(current);
+  }
 
   /**
    * Since we might get network events before we know what resource we've
@@ -215,9 +251,16 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
     this.update();
   };
 
+  
+  
   var eh = window.eventHandlers;
   eh.click["request-crafter-send"] = this._handle_send_request_bound;
-// for onchange and buffermanager  eh.click["request-crafter-send"] = this._handle_send_request_bound;
+  eh.change["request-crafter-url-change"] = this._handle_url_change_bound;
+  eh.keyup["request-crafter-url-change"] = this._handle_url_change_bound;
+  
+
+
+  // for onchange and buffermanager  eh.click["request-crafter-send"] = this._handle_send_request_bound;
 
 
   this._service = window.services['resource-manager'];
