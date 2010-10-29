@@ -44,7 +44,7 @@ cls.DOMInspectorActions = function(id)
       }
       else
       {
-        cb = this._get_children_callback.bind(null, container, model, target_id, is_editable);
+        cb = this._get_children_callback.bind(this, container, model, target_id, is_editable);
         model.expand(cb, ref_id, event.ctrlKey ? 'subtree' : 'children');
       }
     }
