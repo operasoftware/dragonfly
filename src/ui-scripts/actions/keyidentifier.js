@@ -1,76 +1,76 @@
 var KeyIdentifier = function()
 {
-  // key id [CTRL][SHIFT][ALT]CHAR|NAME
   this._key_id_map = {};
-  this._key_id_map[0x09 << 3] = "TAB";
-  this._key_id_map[0x09 << 3 | 2] = "SHIFT_TAB";
-  this._key_id_map[0x0D << 3] = "ENTER";
-  this._key_id_map[0x0D << 3 | 2] = "SHIFT_ENTER";
-  this._key_id_map[0x0D << 3 | 4] = "CTRL_ENTER";
-  this._key_id_map[0x1B << 3] = "ESC";
-  this._key_id_map[0x20 << 3] = "SPACE";
-  this._key_id_map[0x25 << 3] = "LEFT";
-  this._key_id_map[0x26 << 3] = "UP";
-  this._key_id_map[0x27 << 3] = "RIGHT";
-  this._key_id_map[0x28 << 3] = "DOWN";
-  this._key_id_map[0x25 << 3 | 2] = "SHIFT_LEFT";
-  this._key_id_map[0x26 << 3 | 2] = "SHIFT_UP";
-  this._key_id_map[0x27 << 3 | 2] = "SHIFT_RIGHT";
-  this._key_id_map[0x28 << 3 | 2] = "SHIFT_DOWN";
-  this._key_id_map[0x08 << 3] = "BACKSPACE";
-  this._key_id_map[0x08 << 3 | 4] = "CTRL_BACKSPACE";
-  this._key_id_map[0x2E << 3] = "DELETE";
-  this._key_id_map[0x77 << 3] = "F8";
-  this._key_id_map[0x78 << 3] = "F9";
-  this._key_id_map[0x79 << 3] = "F10";
-  this._key_id_map[0x7A << 3] = "F11";
-  this._key_id_map[0x7A << 3 | 2] = "SHIFT_F11";
-  this._key_id_map[0x41 << 3 | 4] = "CTRL_A";
-  this._key_id_map[0x49 << 3 | 4] = "CTRL_I";
-  this._key_id_map[0x53 << 3 | 4 | 2] = "CTRL_SHIFT_S";
   
-  this._handle_keypress_bound = (function()
+  this._key_name_map = 
   {
-    const
-    F8 = 119,
-    F9 = 120,
-    F10 = 121,
-    F11 = 122,
-    LEFT = 37,
-    UP = 38,
-    RIGHT = 39,
-    DOWN = 40;
-
-    var keyCode = event.keyCode, key_id = 0;
-
-    switch (keyCode)
+    "TAB": 9, "ENTER": 13 "ESCAPE": 27, "SPACE": 32, "BACKSPACE": 8,
+    "LEFT": 37, "UP": 38, "RIGHT": 39, "DOWN": 40, "DELETE": 46,
+    "F1": 112, "F2": 113, "F3": 114, "F4": 115, "F5": 116, "F6": 117,
+    "F7": 118, "F8": 119, "F9": 120, "F10": 121, "F11": 122, "F12": 123,
+  };
+  
+  this._function_keys = 
+  [
+    37, 38, 39, 40, 46, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
+  ];
+  
+  this._update_key_id_map = function(shortcuts)
+  {
+    var 
+    i = 0, 
+    shortcut = '', 
+    tokens = null, 
+    key_id = 0, 
+    shift = 0, 
+    ctrl = 0, 
+    alt = 0;
+    
+    this._key_id_map = {};
+    for (; shortcut = shortcuts[i]; i++)
     {
-      case LEFT:
-      case UP:
-      case RIGHT:
-      case DOWN:
-      case F8:
-      case F9:
-      case F10:
-      case F11:
+      tokens = shortcut.split('_').reverse();
+      shift = tokens.indexOf("SHIFT") == -1 ? 0 : 1;
+      ctrl = tokens.indexOf("CTRL") == -1 ? 0 : 1;
+      alt = tokens.indexOf("ALT") == -1 ? 0 : 1;
+      if (tokens[0].length == 1)
       {
-        // in the keypress events the which property for function keys is set to 0
-        // this check lets pass e.g. '(' on a AZERTY keyboard
-        if (event.which != 0)
-          return;
+        if (shift || ctrl)
+          key_id = tokens[0].toUpperCase().charCodeAt(0) << 3;
+        else
+          key_id = tokens[0].charCodeAt(0) << 3;
       }
+      else if (tokens[0] in this._key_name_map)
+          key_id = this._key_name_map[tokens[0]] << 3;
+      else
+          throw "Missing name in key_name_map in KeyIdentifier: " + tokens[0];
+      if (ctrl)
+          key_id |= 4;
+      if (shift)
+          key_id |= 2;        
+      if (alt)
+          key_id |= 1;
+      this._key_id_map[key_id] = shortcut;
     }
-    key_id = keyCode << 3 | 
+  }
+  
+  this._handle_keypress_bound = (function(event)
+  {
+    var keyCode = event.keyCode;
+    if (this._function_keys.indexOf(keyCode) != -1 && event.which != 0)
+      return;
+    var key_id = keyCode << 3 | 
              (event.ctrlKey ? 4 : 0) | 
              (event.shiftKey ? 2 : 0) | 
              (event.altKey ? 1 : 0);
     if (key_id in this._key_id_map)
-      this._broker.dispatch_key_input(this._key_id_map[key_id]);
+      this._broker.dispatch_key_input(this._key_id_map[key_id], event);
   }).bind(this);
 
   this._init = function()
   {
     this._broker = new ActionBroker();
+    this._update_key_id_map(this._broker.get_short_cuts());
     document.addEventListener('keypress', this._handle_keypress_bound, true);
   }
 

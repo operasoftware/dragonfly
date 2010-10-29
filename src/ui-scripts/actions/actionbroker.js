@@ -30,6 +30,8 @@ var ActionBroker = function()
     * To set a list of (key_id, action_id) tuples.
     */
   this.set_keyboard_bindings = function(view_id, mode){};
+  
+  this.get_short_cuts = function(){};
  
   /**
     * To get a list of action implementer ids.
@@ -94,7 +96,7 @@ var ActionBroker = function()
   {
     this._action_context = this._handlers[handler_id] || this._empty_handler;
     this._action_context_id = this._action_context.id;
-    this._current_short_cuts = this._current_short[this._action_context_id] || {};
+    this._current_short_cuts = this._short_cuts[this._action_context_id] || {};
   }
 
   this._clear_current_handler = function()
@@ -106,6 +108,23 @@ var ActionBroker = function()
     this._container = null;
     this._set_current_handler(this._empty_handler.id);
   };
+  
+  this._init = function()
+  {
+    this._empty_handler = new function()
+    {
+      this.id = '';
+      this.handle_action = function(action_id, event, target){};
+      this.get_action_list = function(){return []};
+      this.focus = function(container){};
+      this.blur = function(){};
+      this.onclick = function(event, target){};
+    }
+    this._short_cuts = ActionBroker.default_shortcuts;
+    this._gloabal_short_cuts = this._short_cuts.global;
+    this._set_current_handler(this._empty_handler.id);
+    document.addEventListener('click', this._set_action_context_bound, true);
+  }
 
   /* implementation */
 
@@ -123,25 +142,32 @@ var ActionBroker = function()
 
   this.dispatch_key_input = function(key_id, event, target)
   {
-    
+    opera.postError(key_id);
+    event.stopPropagation();
+    event.preventDefault();
+  }
+  
+  this.get_short_cuts = function()
+  {
+    var ret = [], name = '', handler = null, key = '';
+    for (name in this._short_cuts)
+    {
+      handler = this._short_cuts[name];
+      for (key in handler["default"])
+      {
+        if (ret.indexOf(key) == -1)
+          ret.push(key);
+      }
+      for (key in handler["edit"])
+      {
+        if (ret.indexOf(key) == -1)
+          ret.push(key);
+      }
+    }
+    return ret;
   }
 
-  this._init = function()
-  {
-    this._empty_handler = new function()
-    {
-      this.id = '';
-      this.handle_action = function(action_id, event, target){};
-      this.get_action_list = function(){return []};
-      this.focus = function(container){};
-      this.blur = function(){};
-      this.click = function(event, target){};
-    }
-    this._set_current_handler(this._empty_handler.id);
-    this._short_cuts = ActionBroker.default_shortcuts;
-    this._gloabal_short_cuts = this._short_cuts.global;
-    document.addEventListener('click', this._set_action_context_bound, true);
-  }
+
 
   this._init();
 
