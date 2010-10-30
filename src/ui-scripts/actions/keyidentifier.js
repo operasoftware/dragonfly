@@ -1,22 +1,33 @@
 var KeyIdentifier = function()
 {
+  // TODO valid short cuts
   this._key_id_map = {};
   
+  // TODO naming W3C, unicode
   this._key_name_map = 
   {
-    "TAB": 9, "ENTER": 13, "ESCAPE": 27, "SPACE": 32, "BACKSPACE": 8,
-    "LEFT": 37, "UP": 38, "RIGHT": 39, "DOWN": 40, "DELETE": 46,
+    "BACKSPACE": 8, "TAB": 9, "ENTER": 13, "ESCAPE": 27, "SPACE": 32, 
+    "LEFT": 37, "UP": 38, "RIGHT": 39, "DOWN": 40, 
+    "INSERT": 45, "HOME": 36, "PAGE-UP": 33, 
+    "DELETE": 46, "END": 35, "PAGE-DOWN": 34,
     "F1": 112, "F2": 113, "F3": 114, "F4": 115, "F5": 116, "F6": 117,
     "F7": 118, "F8": 119, "F9": 120, "F10": 121, "F11": 122, "F12": 123,
   };
   
   this._function_keys = 
   [
-    37, 38, 39, 40, 46, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
+    37, 38, 39, 40, // arrows
+    45, 36, 33, // insert, home, page up
+    46, 35, 34, // delete, end, page down
+    112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123 // function keys
   ];
+  
+  this._named_key_codes = [8, 9, 13, 27, 32];
   
   this._update_key_id_map = function(shortcuts)
   {
+    // TODO three maps, named-keys, char-input-a-z-A-Z, char-input-other
+    // TODO validate
     var 
     i = 0, 
     shortcut = '', 
@@ -35,7 +46,7 @@ var KeyIdentifier = function()
       alt = tokens.indexOf("ALT") == -1 ? 0 : 1;
       if (tokens[0].length == 1)
       {
-        if (shift || ctrl)
+        if (shift || ctrl) // TODO only for a-z
           key_id = tokens[0].toUpperCase().charCodeAt(0) << 3;
         else
           key_id = tokens[0].charCodeAt(0) << 3;
@@ -56,8 +67,13 @@ var KeyIdentifier = function()
   
   this._handle_keypress_bound = (function(event)
   {
+    // TODO branch for named and char input
+    // named are function keys plus enter, backspace, space and tab
+    // for chars set the modifier flag only for a-z and A-Z
     var keyCode = event.keyCode;
+    // is char
     if (this._function_keys.indexOf(keyCode) != -1 && event.which != 0)
+      // TODO no, don't return
       return;
     var key_id = keyCode << 3 | 
              (event.ctrlKey ? 4 : 0) | 
