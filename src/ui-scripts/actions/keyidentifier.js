@@ -1,5 +1,9 @@
-var KeyIdentifier = function()
+var KeyIdentifier = function(callback)
 {
+  /* interafce */
+  this.set_shortcuts = function(shortcuts){};
+  
+  /* private */
   // TODO valid short cuts
   this._key_id_map = {};
   
@@ -24,7 +28,7 @@ var KeyIdentifier = function()
   
   this._named_key_codes = [8, 9, 13, 27, 32];
   
-  this._update_key_id_map = function(shortcuts)
+  this.set_shortcuts = function(shortcuts)
   {
     // TODO three maps, named-keys, char-input-a-z-A-Z, char-input-other
     // TODO validate
@@ -80,16 +84,20 @@ var KeyIdentifier = function()
              (event.shiftKey ? 2 : 0) | 
              (event.altKey ? 1 : 0);
     if (key_id in this._key_id_map)
-      this._broker.dispatch_key_input(this._key_id_map[key_id], event);
+      callback(this._key_id_map[key_id], event);
   }).bind(this);
 
+  /*
   this._init = function()
   {
     this._broker = new ActionBroker();
     this._update_key_id_map(this._broker.get_short_cuts());
-    document.addEventListener('keypress', this._handle_keypress_bound, true);
+    
   }
+  
 
   this._init();
+  */
+  document.addEventListener('keypress', this._handle_keypress_bound, true);
   
 };
