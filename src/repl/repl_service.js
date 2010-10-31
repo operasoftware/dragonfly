@@ -100,11 +100,108 @@
     this._data.add_output_trace(message);
   }.bind(this);
 
-  this._handle_log = function(msg, rt_id)
+  this._handle_log = function(msg, rt_id, is_unpacked)
   {
     const VALUELIST = 2;
-    var values = this._parse_value_list(msg[VALUELIST]);
-    this._data.add_output_valuelist(rt_id, values);
+    if (is_unpacked || !settings.command_line.get("unpack-list-alikes"))
+    {
+      var values = this._parse_value_list(msg[VALUELIST], rt_id);
+      this._data.add_output_valuelist(rt_id, values);
+    }
+    else
+      this._unpack_list_alikes(msg, rt_id);
+  };
+  
+  this._unpack_list_alikes = function(msg, rt_id)
+  {
+    const
+    RUNTIME_ID = 0,
+    VALUE_LIST = 2,
+    // sub message Value 
+    OBJECT_VALUE = 1,
+    // sub message ObjectValue 
+    OBJECT_ID = 0,
+    CLASS_NAME = 4;
+    
+    var unpack = [];    
+    var log = (msg[VALUE_LIST] || []).map(function(value, index)
+    {
+      var is_list_alike = 
+        value[OBJECT_VALUE] && 
+        /Array|Collection|List/.test(value[OBJECT_VALUE][CLASS_NAME]) || false;
+      
+      if (is_list_alike)
+        unpack.push(value[OBJECT_VALUE][OBJECT_ID]);
+      return is_list_alike;
+    });
+    if (unpack.length)
+    {
+      var tag = this._tagman.set_callback(this, this._handle_unpacked_list, [msg, rt_id, log]);
+      this._service.requestExamineObjects(tag, [rt_id, unpack]);
+    }
+    else
+      this._handle_log(msg, rt_id, true);
+  }
+  
+  this._handle_unpacked_list = function(status, msg, orig_msg, rt_id, log)
+  {
+    const OBJECT_CHAIN_LIST = 0, VALUE_LIST = 2;
+    if (status)
+    {
+    
+    }
+    else
+    {
+      var object_list = (msg[OBJECT_CHAIN_LIST] || []).
+                        map(this._examin_objects_to_value_list, this);
+      var orig_value_list = orig_msg[VALUE_LIST];
+      orig_msg[VALUE_LIST] = log.reduce(function(list, log_entry, index)
+      {
+        if (log_entry)
+          list.push.apply(list, object_list.shift());
+        else
+          list.push(orig_value_list[index]);
+        return list;
+      }, []);
+      this._handle_log(orig_msg, rt_id, true);    
+    }
+  }
+  
+  this._examin_objects_to_value_list = function(object_chain)
+  {
+    const
+    // message ExamineObjects
+    OBJECT_LIST = 0,
+    // sub message ObjectInfo 
+    VALUE = 0, PROPERTY_LIST = 1,
+    // sub message ObjectValue 
+    CLASS_NAME = 4,
+    // sub message Property 
+    NAME = 0, PROPERTY_TYPE = 1, PROPERTY_VALUE = 2, OBJECT_VALUE = 3;
+    
+    var value_list = [];
+    var object = object_chain[OBJECT_LIST] && object_chain[OBJECT_LIST][0];
+    if (object)
+    {
+      value_list = (object[PROPERTY_LIST] || []).reduce(function(list, prop)
+      {
+        if (prop[NAME].isdigit())
+        {
+          if (prop[PROPERTY_TYPE] == 'object')
+            list.push([null, prop[OBJECT_VALUE], parseInt(prop[NAME])]);
+          else
+            list.push([prop[PROPERTY_VALUE] || prop[PROPERTY_TYPE], ,parseInt(prop[NAME])]);
+        }
+        return list;
+      }, [[null , object[VALUE], -1, "unpack-header"]]);
+      // is this really needed?
+      value_list.sort(function(a, b)
+      {
+        return a[2] < b[2] ? -1 : a[2] > b[2] ? 1 : 0;
+      });
+      value_list.push(["", null, 0, "unpack-footer"]);
+    }      
+    return value_list;
   };
 
   this._handle_count = function(msg)
@@ -139,8 +236,12 @@
     const TYPE = 0;
     const VALUE = 0, OBJECTVALUE = 1;
     const ID = 0, OTYPE = 2, CLASSNAME = 4, FUNCTIONNAME = 5;
+    const DF_INTERN_TYPE = 3;
+
     var ret = {
-      type: value[0] === null ? "object" : "native"
+      df_intern_type: value[DF_INTERN_TYPE] || "",
+      type:  value[0] === null ? "object" : "native",
+      rt_id: rt_id
     };
 
     if (ret.type == "object") {
@@ -148,7 +249,6 @@
       ret.obj_id = object[ID];
       ret.type = object[OTYPE];
       ret.name = object[CLASSNAME] || object[FUNCTIONNAME];
-      ret.rt_id = rt_id;
     }
     else
     {

@@ -255,16 +255,26 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._add_line(templates.repl_output_trace(data));
   };
 
-  this._render_value_list = function(values) {
-    var tpl = values.map(templates.repl_output_native_or_pobj);
-    var separated = [];
-    separated.push(tpl.shift());
-    while (tpl.length)
+  this._render_value_list = function(values) 
+  {
+    var tpl = values.reduce(function(list, value)
     {
-      separated.push(["span", ", "]);
-      separated.push(tpl.shift());
-    }
-    this._add_line(separated);
+      switch (value.df_intern_type)
+      {
+        case "unpack-header":
+          list.push(templates.repl_output_pobj(value), ["span", "["]);
+          break;
+        case "unpack-footer":
+          list.pop();
+          list.push(["span", "]"], ["span", ", "]); 
+          break;
+        default:
+          list.push(templates.repl_output_native_or_pobj(value), ["span", ", "]);
+      }
+      return list;
+    }, []);
+    tpl.pop();
+    this._add_line(tpl);
   };
 
   this._render_completion = function(s)
@@ -736,10 +746,12 @@ cls.ReplView.create_ui_widgets = function()
     'command_line',
     { // key/value
       'max-typed-history-length': 8,
-      'typed-history': []
+      'typed-history': [],
+      'unpack-list-alikes': true,
     },
     { // key/label
-      'max-typed-history-length': "Max items in typed history to remember"
+      'max-typed-history-length': "Max items in typed history to remember",
+      'unpack-list-alikes': "Unpack list alikes"
     },
     { // settings map
       customSettings:

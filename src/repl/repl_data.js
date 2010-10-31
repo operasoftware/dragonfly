@@ -75,9 +75,6 @@ cls.ReplData = function(view)
 
   this.add_output_valuelist = function(rt, values)
   {
-    values.forEach(function(e) {
-      e.rt_id = rt;
-    });
     this._add_entry("valuelist", values);
   };
 
