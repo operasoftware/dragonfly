@@ -110,9 +110,9 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
    */
   this._update = function()
   {
-    var now = new Date().getTime();
     var entries = this._data.get_log(this._lastupdate);
-    this._lastupdate = now;
+    if (entries.length)
+      this._lastupdate = entries[entries.length -1].time;
 
     for (var n=0, e; e=entries[n]; n++)
     {
@@ -754,6 +754,10 @@ cls.ReplView.create_ui_widgets = function()
       'unpack-list-alikes': "Unpack list alikes"
     },
     { // settings map
+      checkboxes:
+      [
+        'unpack-list-alikes',
+      ],
       customSettings:
       [
         'max-typed-history-length'
