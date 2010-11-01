@@ -91,7 +91,6 @@ cls.HttpLogger["2.0"].RequestListView = function(id, name, container_class)
     this.doCreateView = function(container)
     {
         var log = HTTPLoggerData.getLog();
-        topCell.statusbar.updateInfo(ui_strings.S_HTTP_TOOLBAR_REQUEST_COUNT.replace("%s", log.length));
 
         if (!this.viewIsValid(log)) {
             container.clearAndRender(['table',['tbody'], 'class',
@@ -327,7 +326,6 @@ eventHandlers.click['clear-request-list'] = function(event, target)
     {
         if (msg.id == 'request_list') {
             textSearch.cleanup();
-            topCell.statusbar.updateInfo();
         }
     };
 

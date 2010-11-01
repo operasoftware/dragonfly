@@ -113,11 +113,6 @@ var VirtualTextSearch = function()
             highlight(true);
             scroll_selected_hit_in_to_view();
           }
-          else
-          {
-            topCell.statusbar.updateInfo(ui_strings.S_TEXT_STATUS_SEARCH_NO_MATCH.
-              replace("%(SEARCH_TERM)s", new_search_term));
-          }
         }
       }
       else
@@ -127,7 +122,6 @@ var VirtualTextSearch = function()
           clear_hits();
         }
         clear_script_context();
-        topCell.statusbar.updateInfo('');
         search_term = '';
       }
     }
@@ -233,10 +227,6 @@ var VirtualTextSearch = function()
         __script.line_matches.forEach(set_hit);
         __search_hits_valid = true;
       }
-      topCell.statusbar.updateInfo(ui_strings.S_TEXT_STATUS_SEARCH.
-        replace("%(SEARCH_TERM)s", search_term).
-        replace("%(SEARCH_COUNT_TOTAL)s", __script.line_matches.length).
-        replace("%(SEARCH_COUNT_INDEX)s", __script.match_cursor + 1) );
       __last_match_cursor = __script.match_cursor;
     }
   }
@@ -488,7 +478,5 @@ var VirtualTextSearch = function()
     clear_hits();
     container = source_container = source_container_parent = __input = null;
     __offset = -1;
-    topCell.statusbar.updateInfo('');
   }
-  
 };

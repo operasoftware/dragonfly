@@ -110,7 +110,6 @@ cls.EcmascriptDebugger["5.0"].DOMAttrsView.create_ui_widgets = function()
     if( msg.id == 'dom_attrs' )
     {
       text_search.cleanup();
-      topCell.statusbar.updateInfo();
     }
   }
 

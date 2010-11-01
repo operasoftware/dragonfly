@@ -23,8 +23,6 @@ modebar,
 tabs, 
 container, 
 top-tabs, 
-statusbar, 
-top-statusbar, 
 top-container, 
 top-toolbar {
   display: block;
@@ -49,48 +47,6 @@ container { /**/
   background-color: #fefefe;
   overflow: hidden;
   } 
-
-/* set with css. height, border and padding are supported */
-
-top-statusbar { /**/
-  background-color: #f5f7fa;
-  line-height: 27px;
-  height: 27px;
-  overflow: hidden;
-  }
-
-top-statusbar.type-tooltip 
-{
-  overflow: visible;
-  z-index: 20;
-}
-
-top-statusbar.type-tooltip info
-{
-  display: block;
-  position:absolute;
-  bottom: 0;
-  left: 80px;
-  margin: 0px;
-  background-image: -o-skin('Speed Dial Configuration Dialog Skin');
-  padding: 7px 9px 9px 9px;
-  min-height: 22px;
-  min-width: 22px;
-}
-
-top-statusbar .switch-info-type 
-{
-  width: 16px;
-  background-image: url('../ui-images/btn-switch-statusbar-type.png');
-  border: none;
-  background-position: -5px -3px;
-  background-repeat: no-repeat;
-}
-
-top-statusbar.type-tooltip .switch-info-type
-{
-  background-position: -31px -3px;
-}
 
 window-statusbar { /**/
   display: block;

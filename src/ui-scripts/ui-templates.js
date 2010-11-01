@@ -165,26 +165,6 @@
     return ['toolbar-separator'];
   }
 
-  this['top-statusbar'] = function(ui_obj)
-  {
-    return [ 
-      ['div', 
-        'id', ui_obj.spin_animator.getId(),
-        'title', ui_strings.S_LABEL_STATUS_INDICATOR
-      ], 
-      ['input', 
-        'type', 'button', 
-        'handler', 'switch-info-type', 
-        'title', 'switch info type',
-        'class', 'switch-info-type'
-      ],
-      ['info'],
-      'onmouseover', helpers.breadcrumbSpotlight, 
-      'onmouseout', helpers.breadcrumbClearSpotlight
-    ];
-  }
-
-
   this['window-statusbar'] = function()
   {
     return [ ['info']]

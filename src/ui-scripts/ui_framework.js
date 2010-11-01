@@ -58,11 +58,6 @@ var ui_framework = new function()
       properties: resolve_map_properties
     },
     {
-      source: 'top-statusbar',
-      target: TopStatusbar.prototype,
-      properties: resolve_map_properties
-    },
-    {
       source: 'top-toolbar',
       target: TopToolbar.prototype,
       properties: resolve_map_properties
@@ -92,7 +87,7 @@ var ui_framework = new function()
       properties: resolve_map_properties
     },
     {
-      source: 'window-satusbar',
+      source: 'window-statusbar',
       target: WindowStatusbar.prototype,
       properties: resolve_map_properties
     },

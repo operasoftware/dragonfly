@@ -316,8 +316,7 @@ window.cls.Client = function()
       window.opera.attached ? ui_framework.layouts.panel_layout : ui_framework.layouts.main_layout,
       null,
       null,
-      TopToolbar,
-      TopStatusbar
+      TopToolbar
     );
     windowsDropDown.update();
     var view_id = global_state && global_state.ui_framework.last_selected_tab;

@@ -144,13 +144,7 @@ var TabsBase = function()
           {
             toolbars[view_id].addContainerId(toolbar_id);
           }
-          // it's a top level tab with no view associated
-          if(topCell.statusbar && views[view_id].type == 'composite-view')
-          {
-            topCell.statusbar.updateInfo();
-          }
         }
-
       }
       
       var container = document.getElementById(this.type + '-to-' + this.cell.id) || this.render();

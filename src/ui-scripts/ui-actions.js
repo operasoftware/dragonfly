@@ -377,24 +377,3 @@ eventHandlers.blur['blur'] = function(event, target)
   }
 }
 
-eventHandlers.click['switch-info-type'] = function(event, target)
-{
-  var parent = event.target.parentNode;
-  var mode = topCell.statusbar.changeMode();
-  if( mode == "tooltip" )
-  {
-    parent.addClass('type-tooltip');
-  }
-  else
-  {
-    parent.removeClass('type-tooltip');
-  }
-}
-
-
-
-
-
-
-
-

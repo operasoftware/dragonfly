@@ -52,7 +52,6 @@ cls.DOMView = function(id, name, container_class)
     {
       container.innerHTML = "<div class='padding' edit-handler='edit-dom'><p></p></div>";
     }
-    topCell.statusbar.updateInfo('');
   }
 
   this.ondestroy = function()
@@ -323,7 +322,6 @@ cls.DOMView.create_ui_widgets = function()
     if( msg.id == 'dom' )
     {
       textSearch.cleanup();
-      topCell.statusbar.updateInfo();
     }
   }
 
