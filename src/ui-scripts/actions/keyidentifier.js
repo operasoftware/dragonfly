@@ -109,6 +109,9 @@ var KeyIdentifier = function(callback)
   this._handle_char_key = function(event)
   {
     var keyCode = event.keyCode;
+    // to force a common pattern with the ctrl flag set
+    if (event.ctrlKey && (96 < keyCode && keyCode < 123))
+      keyCode &= 0x5f;
     var key_id = event.keyCode << 3;
     console.log(keyCode)
     if (64 < keyCode && keyCode < 91)
