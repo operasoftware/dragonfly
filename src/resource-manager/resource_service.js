@@ -65,16 +65,12 @@ cls.ResourceManagerService = function(view, data)
 
     this._current_document.resourcelist.push(data.resourceID);
     this._current_document.resourcemap[data.resourceID] = {urlload: data};
-
-    //opera.postError(JSON.stringify(data));
-
   }.bind(this);
 
   this._on_request_bound = function(msg)
   {
     if (!this._current_document) { return; }
     var data = new cls.ResourceManager["1.0"].Request(msg);
-//    opera.postError(JSON.stringify(data));
 
     var resource = this._current_document.resourcemap[data.resourceID];
     if (!resource) {
@@ -144,7 +140,6 @@ cls.ResourceManagerService = function(view, data)
       resource.urlfinished = data;
       this._current_document.lasttime = data.time;
     }
-    //opera.postError(JSON.stringify(this._current_document, null, 2));
   }.bind(this);
 
   this.init = function()
@@ -223,7 +218,7 @@ cls.RequestContext = function(reslist)
       return types.indexOf(type) > -1;
     };
 
-    return this.get_resource_list().filter(filterfun);
+    return this.resources.filter(filterfun);
   };
   // alias with plural name
   this.get_resources_for_types = this.get_resources_for_type;
@@ -254,7 +249,7 @@ cls.RequestContext = function(reslist)
 
     var known = [].concat(imgs, stylesheets, markup, scripts);
     var other = this.resources.filter(function(e) {
-      return !(e in known);
+      return known.indexOf(e) == -1;
     });
     return {
       images: imgs, stylesheets: stylesheets, markup: markup,
@@ -262,14 +257,23 @@ cls.RequestContext = function(reslist)
     }
   }
 
-  this.get_resource_percentages = function()
+  this.get_resource_sizes = function()
   {
     var groups = this.get_resource_groups();
+
     var ret = {};
+    var sum = function(list) { var ret = 0; list.forEach(function(e) { ret+=e }); return ret; };
+    var sizefun = function(e) { return e.urlfinished.contentLength; };
+
+    var total = 0;
     for (var key in groups)
     {
-
+      var current = sum(groups[key].map(sizefun));
+      total += current;
+      ret[key] = current;
     }
+    ret.total = total;
+    return ret;
   }
 
   this.get_start_time = function()
