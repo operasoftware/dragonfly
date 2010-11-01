@@ -260,21 +260,36 @@ cls.RequestContext = function(reslist)
   this.get_resource_sizes = function()
   {
     var groups = this.get_resource_groups();
-
     var ret = {};
-    var sum = function(list) { var ret = 0; list.forEach(function(e) { ret+=e }); return ret; };
     var sizefun = function(e) { return e.urlfinished.contentLength; };
-
     var total = 0;
     for (var key in groups)
     {
-      var current = sum(groups[key].map(sizefun));
+      var current = groups[key].sum(sizefun);
       total += current;
       ret[key] = current;
     }
     ret.total = total;
     return ret;
   }
+
+  this.get_resource_times = function()
+  {
+    var groups = this.get_resource_groups();
+    var ret = {};
+    var timefun = function(e) { return e.urlfinished.time - e.urlload.time; };
+
+    var total = 0;
+    for (var key in groups)
+    {
+      var current = groups[key].sum(timefun);
+      total += current;
+      ret[key] = current;
+    }
+    ret.total = total;
+
+    return ret;
+  };
 
   this.get_start_time = function()
   {
@@ -285,11 +300,6 @@ cls.RequestContext = function(reslist)
   {
     return this.resources[this.resources.length-1].urlfinished.time;
   }
-
-  this.get_load_times = function()
-  {
-
-  };
 
   this.get_duration = function()
   {
