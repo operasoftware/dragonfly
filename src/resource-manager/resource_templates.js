@@ -6,7 +6,8 @@ templates.resource_main = function(ctx, width, millis_to_render)
 
   return [
     "div",
-    ["div", templates.resource_list(ctx), "class", "resource-listwrapper"],
+    ["div", templates.pie_chart(ctx.get_resource_sizes(), 100, 100),
+     templates.resource_list(ctx), "class", "resource-listwrapper"],
     ["div", templates.resource_graph(ctx, millis_to_render, graphwidth), "class", "resource-graphwrapper"],
     "class", "resource-main"
   ];
@@ -287,3 +288,55 @@ templates.millis_to_render = function(millis)
 {
   return Math.ceil(millis / 1000) * 1000;
 }
+
+templates.pie_chart = function(categories)
+{
+  var width = 220;
+  var height = 220;
+
+  var values = [];
+  for (var key in categories) {
+    if (key != "total") { values.push(categories[key]) }
+  }
+
+  var sum = function(arr) { return arr.reduce(function(p, c) { return p+c })};
+  var total = sum(values);
+  var radius = 50;
+
+  var circle = ["circle", "cx", String(radius),
+                "cy", String(radius), "r", "50", "fill", "white",
+                "stroke", "black", "stroke-width", "0.5"]
+  var pies = [];
+
+  var colors = ["#777fae", "#85c1f3", "#f94c4c", "#edde37", "#7a9f68"];
+  var colorindex = 0;
+
+  var prev = {x:radius*2, y:radius}
+  var deg = 0;
+  values.forEach(function(pie) {
+    deg = pie / total * 360 + deg;
+    var rad = deg * Math.PI / 180;
+    var cur = {
+      x: (parseInt(Math.cos(rad) * radius)) + radius,
+      y: (parseInt(Math.sin(rad) * radius)) + radius
+    };
+
+    var arc = ((pie/total * 360) > 180) ? 1 : 0;
+
+    pies.push(["path", "d", ["M", radius, radius,
+                            "L", prev.x, prev.y,
+                            "A", radius, radius, 0, arc, 1, cur.x, cur.y,
+                            "Z"].join(" "),
+                      "fill", colors[colorindex++],
+                      "stroke", "black",
+                      "stroke-width", "1"
+    ]);
+    prev = cur;
+
+  })
+
+  return ["svg:svg", circle, pies,
+          "viewBox", "0 0 110 110",
+          "style", "width: 60px; height:60px;"
+         ]
+};
