@@ -32,14 +32,15 @@ var Overlay = function(cell)
       this._is_visible = !this._is_visible;
     };
 
-    this.set_window = function(window_id)
+    this.toggle_overlay = function(overlay_id, group)
     {
-      this.current_window = window_id;
+      this.tab_element.clearAndRender(window.templates.settings_groups(this.groups[overlay_id]));
+      this.change_group(group);
+      this.toggle_visibility();
     };
 
-    this.show_group = function(group, content)
+    this.change_group = function(group)
     {
-      this.tab_element.clearAndRender(window.templates.settings_groups(this.groups[this.current_window]));
       var tabs = this.element.querySelectorAll("tab");
       for (var i = 0; tab = tabs[i]; i++)
       {
@@ -49,19 +50,19 @@ var Overlay = function(cell)
               tab.addClass("active");
           }
       }
-      this.content_element.clearAndRender(content);
+      this.content_element.clearAndRender(window.templates.settings(Settings.get_settings_by_group(group)));
       this.content_element.scrollTop = 0;
     };
 
-    this.add_window = function(window_id, groups)
+    this.add_overlay = function(overlay_id, groups)
     {
-      this.groups[window_id] = groups;
+      this.groups[overlay_id] = groups;
     };
 
     this.init = function(cell) {
       this.cell = cell;
       this.initBase();
-      this.element = document.getElementById(this.type + '-to-' + this.cell.id) || this.update();
+      this.element = this.update();
       this.element.render(window.templates.overlay());
       this.tab_element = this.element.querySelector("overlay-tabs");
       this.content_element = this.element.querySelector("overlay-content");

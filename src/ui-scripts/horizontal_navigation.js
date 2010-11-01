@@ -12,12 +12,14 @@ var HorizontalNavigation = function(cell)
   /**
    * Updates the list of breadcrumbs.
    *
+   * @param {String} id The data model ID
    * @param {Array} template_list A list of breadcrumbs as a template
    * @param {Boolean} focus_end Whether or not to focus the last item
    */
-  this.set_content = function(template_list, focus_end)
+  this.set_content = function(id, template_list, focus_end)
   {
     this.breadcrumbs.clearAndRender(template_list);
+    this.breadcrumbs.setAttribute("data-model-id", id);
     this.check_width();
     if (focus_end)
     {
@@ -161,7 +163,7 @@ var HorizontalNavigation = function(cell)
     this.cell = cell;
     this.initBase();
 
-    this.element = document.getElementById(this.type + '-to-' + this.cell.id) || this.update();
+    this.element = this.update();
     this.element.render(window.templates.horizontal_navigation_content());
     this.breadcrumbs = this.element.querySelector("breadcrumbs");
     this.breadcrumbs.addEventListener("OTransitionEnd", this.check_position.bind(this), false);

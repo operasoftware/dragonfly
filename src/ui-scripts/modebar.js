@@ -57,9 +57,9 @@ var ModebarBase = function()
     }
   };
 
-  this.set_content = function(template_list, focus_end)
+  this.set_content = function(id, template_list, focus_end)
   {
-    this.horizontal_nav.set_content(template_list, focus_end);
+    this.horizontal_nav.set_content(id, template_list, focus_end);
   };
 
   this.setup = function(view_id)

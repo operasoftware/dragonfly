@@ -72,7 +72,7 @@ ContextMenu.show = function(items, x, y)
       // It doesn't fit upwards, reposition it upwards as much as needed
       else
       {
-        var overflow = window.innerHeight - y - box_height;
+        var overflow = window_height - y - box_height;
         y += overflow - DEFAULT_MARGIN;
       }
     }

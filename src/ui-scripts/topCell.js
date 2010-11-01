@@ -180,20 +180,22 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, TopStatusbar
     this.modebar.setup(this.id);
   }
 
-  this.overlay.add_window("settings-overlay",
-      [
-        new SettingsGroup("General", "general"),
-        new SettingsGroup("Document", "document"),
-        new SettingsGroup("Script", "script"),
-        new SettingsGroup("Network", "resource_manager"),
-        new SettingsGroup("Console", "console"),
-        new SettingsGroup("About", "about")
-      ]);
+  this.overlay.add_overlay("settings-overlay",
+    [
+      new SettingsGroup("General", "general"),
+      new SettingsGroup("Document", "document"),
+      new SettingsGroup("Script", "script"),
+      new SettingsGroup("Network", "resource_manager"),
+      new SettingsGroup("Console", "console"),
+      new SettingsGroup("About", "about")
+    ]
+  );
 
-  this.overlay.add_window("remote-debug-overlay",
-      [
-        new SettingsGroup("Remote debug", "remote_debug")
-      ]);
+  this.overlay.add_overlay("remote-debug-overlay",
+    [
+      new SettingsGroup("Remote debug", "remote_debug")
+    ]
+  );
 
   if(this.statusbar)
   {

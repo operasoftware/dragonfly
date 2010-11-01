@@ -321,11 +321,11 @@ cls.ElementLayout = function()
       'class', 'border'], ['li', convert_to_unitless(__comp_style[layout_map[MARGIN_RIGHT]])]],
     ['ul', ['li', convert_to_unitless(__comp_style[layout_map[MARGIN_BOTTOM]]), 'colspan', '3']],
     'class', 'margin']] );
+  }
 
-    function convert_to_unitless(value, no_replace)
-    {
-      return (value != "0px" || no_replace) ? "" + parseInt(value) : "–";
-    }
+  function convert_to_unitless(value, no_replace)
+  {
+    return (value != "0px" || no_replace) ? "" + parseInt(value) : "–";
   }
 
   messages.addListener('element-selected', onElementSelected);

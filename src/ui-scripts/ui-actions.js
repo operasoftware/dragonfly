@@ -131,27 +131,26 @@ eventHandlers.click['close-tab'] = function(event, target)
   }
 }
 
-var navTimeout = null;
+eventHandlers.nav_timeout = null;
 eventHandlers.mousedown['horizontal-nav'] = function(event, target)
 {
   var horizontal_nav = UIBase.getUIById(target.get_attr('parent-node-chain', 'ui-id'));
   var dir = target.get_attr('parent-node-chain', 'dir');
   (function nav() {
     horizontal_nav.nav(dir);
-    navTimeout = setTimeout(nav, 400);
+    eventHandlers.nav_timeout = setTimeout(nav, 400);
   })();
 };
 
 eventHandlers.mouseup['horizontal-nav'] =
 eventHandlers.mouseout['horizontal-nav'] = function(event, target)
 {
-  clearTimeout(navTimeout);
+  clearTimeout(eventHandlers.nav_timeout);
 };
 
 eventHandlers.mousewheel['breadcrumbs-drag'] = function(event, target)
 {
   var horizontal_nav = UIBase.getUIById(target.get_attr('parent-node-chain', 'ui-id'));
-  var dir = target.get_attr('parent-node-chain', 'dir');
   horizontal_nav.nav(event.detail < 0 ? 100 : -100);
 };
 
@@ -265,59 +264,41 @@ eventHandlers.click['overlay-tab'] = function(event, target)
 {
   var overlay = UIBase.getUIById(document.querySelector("overlay")
                                          .get_attr("parent-node-chain", "ui-id"));
-  var group_name = event.target.getAttribute("group");
-  var settings_by_group = Settings.get_settings_by_group(group_name);
-  overlay.show_group(group_name, window.templates.settings(settings_by_group));
+  overlay.change_group(event.target.getAttribute("group"));
 };
 
-// TODO: clean up hardcoded values
-eventHandlers.click['toggle-settings-overlay'] = function(event, target)
-{
-  var overlay = UIBase.getUIById(document.querySelector("overlay")
-                                         .get_attr("parent-node-chain", "ui-id"));
-  var button_dims = target.getBoundingClientRect();
-  var element = overlay.element.querySelector("overlay-window");
-  var arrow = overlay.element.querySelector("overlay-arrow");
-  element.style.top = button_dims.bottom + 10 + "px";
-  if (window.opera.attached)
-  {
-      arrow.style.right = document.documentElement.clientWidth - button_dims.right - 20 + "px"; // 20 = padding on overlay
-  }
-  else
-  {
-      arrow.style.left = button_dims.left - 10 + "px"; // 10 = padding on overlay
-  }
-  target.setAttribute("is-active", target.getAttribute("is-active") != "true");
-
-  var settings_by_group = Settings.get_settings_by_group("general");
-  overlay.set_window("settings-overlay");
-  overlay.show_group("general", window.templates.settings(settings_by_group));
-  overlay.toggle_visibility();
-};
-
-// TODO: merge this with the one above
+eventHandlers.click['toggle-settings-overlay'] =
 eventHandlers.click['toggle-remote-debug-config-overlay'] = function(event, target)
 {
+  const OVERLAY_TOP_MARGIN = 10;
+  const OVERLAY_LEFT_MARGIN = 10;
+  const OVERLAY_RIGHT_MARGIN = 20;
+
   var overlay = UIBase.getUIById(document.querySelector("overlay")
                                          .get_attr("parent-node-chain", "ui-id"));
   var button_dims = target.getBoundingClientRect();
   var element = overlay.element.querySelector("overlay-window");
   var arrow = overlay.element.querySelector("overlay-arrow");
-  element.style.top = button_dims.bottom + 10 + "px";
+  element.style.top = button_dims.bottom + OVERLAY_TOP_MARGIN + "px";
   if (window.opera.attached)
   {
-      arrow.style.right = document.documentElement.clientWidth - button_dims.right - 20 + "px";
+      arrow.style.right = document.documentElement.clientWidth - button_dims.right - OVERLAY_RIGHT_MARGIN + "px";
   }
   else
   {
-      arrow.style.left = button_dims.left - 10 + "px";
+      arrow.style.left = button_dims.left - OVERLAY_LEFT_MARGIN + "px";
   }
   target.setAttribute("is-active", target.getAttribute("is-active") != "true");
 
-  var settings_by_group = Settings.get_settings_by_group("remote_debug");
-  overlay.set_window("remote-debug-overlay");
-  overlay.show_group("remote_debug", window.templates.settings(settings_by_group));
-  overlay.toggle_visibility();
+  switch (target.getAttribute("handler"))
+  {
+  case "toggle-settings-overlay":
+    overlay.toggle_overlay("settings-overlay", "general");
+    break;
+  case "toggle-remote-debug-config-overlay":
+    overlay.toggle_overlay("remote-debug-overlay", "remote_debug");
+    break;
+  }
 };
 
 eventHandlers.click['toggle-console'] = function(event, target)

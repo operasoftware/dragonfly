@@ -29,8 +29,7 @@
           "dir", "back",
           "handler", "horizontal-nav"],
         ["breadcrumbs",
-         "handler", "breadcrumbs-drag",
-         "data-model-id", "dom-inspection-id-1"],
+         "handler", "breadcrumbs-drag"],
         ["nav",
           "▶",
           "dir", "forward",
@@ -234,49 +233,79 @@
 
   this.window_controls = function()
   {
-    var is_attached = window.opera.attached;
-    var controls = [
-      ['button',
-        'handler', 'toggle-console',
-        'class', 'switch' + ( is_attached ? ' attached' : ''),
-        'title', ui_strings.S_BUTTON_TOGGLE_CONSOLE
-      ],
-      ['toolbar-separator'],
-      ['button',
-        'handler', 'toggle-settings-overlay',
-        'class', 'switch' + ( is_attached ? ' attached' : ''),
-        'title', ui_strings.S_BUTTON_TOGGLE_SETTINGS
-      ],
-      ['button',
-        'handler', 'toggle-remote-debug-config-overlay',
-        'class', 'switch' + ( is_attached ? ' attached' : ''),
-        'title', ui_strings.S_BUTTON_TOGGLE_REMOTE_DEBUG
-      ],
-      ['toolbar-separator']
+    return window.opera.attached ?
+      this.window_controls_attached() :
+      this.window_controls_detached();
+  }
+
+  this.window_controls_attached = function()
+  {
+    return [
+      'window-controls',
+      [
+        [
+          'button',
+          'handler', 'toggle-console',
+          'class', 'switch',
+          'title', ui_strings.S_BUTTON_TOGGLE_CONSOLE
+        ],
+        [
+          'toolbar-separator'
+        ],
+        [
+          'button',
+          'handler', 'toggle-settings-overlay',
+          'class', 'switch',
+          'title', ui_strings.S_BUTTON_TOGGLE_SETTINGS
+        ],
+        [
+          'button',
+          'handler', 'toggle-remote-debug-config-overlay',
+          'class', 'switch',
+          'title', ui_strings.S_BUTTON_TOGGLE_REMOTE_DEBUG
+        ],
+        [
+          'toolbar-separator'
+        ],
+        window['cst-selects']['debugger-menu'].select_template(),
+        [
+          'button',
+          'handler', 'top-window-toggle-attach',
+          'class', 'switch attached',
+          'title', ui_strings.S_SWITCH_DETACH_WINDOW
+        ],
+        [
+          'button',
+          'handler', 'top-window-close',
+          'title', ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW
+        ],
+        'class', 'attached',
+        'id', 'window-controls-to-main-view'
+      ]
     ];
-    return ['window-controls'].concat(is_attached ? controls : []).concat(
+  };
+
+  this.window_controls_detached = function()
+  {
+    return [
+      'window-controls',
       [
         window['cst-selects']['debugger-menu'].select_template(),
-        !is_attached
-        ? ['button',
-            'handler', 'reload-window',
-            'title', ui_strings.S_BUTTON_LABEL_RELOAD_HOST
-          ]
-        : [],
-        ['button',
-          'handler', 'top-window-toggle-attach',
-          'class', 'switch' + ( is_attached ? ' attached' : '') ,
-          'title', is_attached ? ui_strings.S_SWITCH_DETACH_WINDOW : ui_strings.S_SWITCH_ATTACH_WINDOW
+        [
+         'button',
+         'handler', 'reload-window',
+         'title', ui_strings.S_BUTTON_LABEL_RELOAD_HOST
         ],
-        is_attached
-        ? ['button',
-            'handler', 'top-window-close',
-            'title', ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW
-          ]
-        : []
-      ]).concat( is_attached ? ['class', 'attached'] : [] )
-        .concat(["id", "window-controls-to-main-view"]); // HACK: Hard-code id to avoid it being removed when the viewport is updated
-  }
+        [
+         'button',
+         'handler', 'top-window-toggle-attach',
+         'class', 'switch',
+         'title', ui_strings.S_SWITCH_ATTACH_WINDOW
+        ],
+      ],
+      'id', 'window-controls-to-main-view'
+    ];
+  };
 
   this.window_controls_close = function()
   {
@@ -338,13 +367,14 @@
 
   this.overlay = function(id)
   {
-    return ["overlay-window",
-             [
-               ["overlay-arrow"],
-               ["overlay-tabs"],
-               ["overlay-content"]
-             ]
-           ];
+    return [
+      "overlay-window",
+        [
+          ["overlay-arrow"],
+          ["overlay-tabs"],
+          ["overlay-content"]
+        ]
+      ];
   };
 
   this.settings_groups = function(groups)

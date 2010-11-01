@@ -634,7 +634,7 @@ cls.Stylesheets = function()
     return "<import-rule rule-id='" + rule[RULE_ID] +
                   "' imported-sheet='" + rule[IMPORT_STYLESHEET_ID] + "'>" +
               "<at>@import</at> url(\"" + rule[HREF] + "\") " +
-              rule[MEDIA_LIST].join(', ') + "</span>;" +
+              rule[MEDIA_LIST].join(', ') + ";" +
            "</import-rule>";
   };
 

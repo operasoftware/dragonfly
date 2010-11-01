@@ -406,7 +406,7 @@ MODE ::= "<mode>"
         ret[ret.length] =
         [
           "breadcrumb", css_path[i].name,
-          'obj-id', css_path[i].id.toString(),
+          'ref-id', css_path[i].id.toString(),
           'handler', 'breadcrumb-link',
           'data-menu', 'breadcrumb',
           'class', (css_path[i].is_parent_offset ? 'parent-offset' : '') + (css_path[i].id == obj_id ? ' active' : ''),
@@ -414,7 +414,6 @@ MODE ::= "<mode>"
         //ret[ret.length] = css_path[i].combinator;
       }
     }
-    //ret.push('data-model-id', model.id);
     return ret;
   }
 
