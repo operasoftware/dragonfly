@@ -1,0 +1,56 @@
+<!doctype html>
+<script>
+if (!(function(){}).bind)
+{
+  Function.prototype.bind = function (context)
+  {
+    var method = this, args = Array.prototype.slice.call(arguments, 1);
+    return function()
+    {
+      return method.apply(context, args.concat(Array.prototype.slice.call(arguments)));
+    }
+  };
+};
+</script>
+
+<script src="../../src/ui-scripts/actions/keyidentifier.js"></script>
+<script>
+
+var onshortcut = function(shortcut, event)
+{
+  document.getElementsByTagName('p')[0].textContent = shortcut;
+  var pre = document.getElementsByTagName('pre')[0];
+  
+  var pos = (', ' + pre.textContent + ',').indexOf(', ' + shortcut + ',');
+  var selection = getSelection();
+  var range = document.createRange();
+  selection.removeAllRanges();
+  if (pos > -1)
+  {
+    range.setStart(pre.firstChild, pos);
+    range.setEnd(pre.firstChild, pos + shortcut.length);
+    selection.addRange(range);
+  }
+  event.stopPropagation();
+  event.preventDefault();
+}
+
+window.onload = function()
+{
+  var sc = 
+  [
+    "ctrl a", "ctrl b", "shift ctrl a", 
+    "up","down","left","right",
+    "enter","ctrl enter",
+    "shift tab","tab", "ctrl tab",
+    "escape", "shift escape",
+    "a", "(", ")", "s", "f6", 
+  ];
+  var ki = new KeyIdentifier(onshortcut, window.chrome ? "chrome" : "opera");
+  document.getElementsByTagName('pre')[0].textContent = sc.join(', ');
+  ki.set_shortcuts(sc);
+}
+
+</script>
+<pre style="width: 200px; margin: auto; white-space: pre-wrap;"></pre>
+<p style="font-family: Garamond, serif; font-size: 5em; text-align: center; color: #666;">

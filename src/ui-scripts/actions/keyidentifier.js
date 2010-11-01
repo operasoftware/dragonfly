@@ -4,21 +4,14 @@ var KeyIdentifier = function(callback)
   this.set_shortcuts = function(shortcuts){};
   
   /* private */
-  // TODO valid short cuts
-  this._key_id_map = {};
-  
-  // TODO naming W3C, unicode
-  this._key_name_map = 
-  {
-    "BACKSPACE": 8, "TAB": 9, "ENTER": 13, "ESCAPE": 27, "SPACE": 32, 
-    "LEFT": 37, "UP": 38, "RIGHT": 39, "DOWN": 40, 
-    "INSERT": 45, "HOME": 36, "PAGE-UP": 33, 
-    "DELETE": 46, "END": 35, "PAGE-DOWN": 34,
-    "F1": 112, "F2": 113, "F3": 114, "F4": 115, "F5": 116, "F6": 117,
-    "F7": 118, "F8": 119, "F9": 120, "F10": 121, "F11": 122, "F12": 123,
-  };
-  
-  this._function_keys = 
+
+  this._named_shortcuts = {};
+  this._char_shortcuts = {};
+  this._name_keycode_map = KeyIdentifier.named_keys;
+
+  // these keys don't have a unicode code point
+  // the which property in the keypress event is allways set to 0 in Opera
+  this._named_keycodes = 
   [
     37, 38, 39, 40, // arrows
     45, 36, 33, // insert, home, page up
@@ -26,12 +19,19 @@ var KeyIdentifier = function(callback)
     112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123 // function keys
   ];
   
-  this._named_key_codes = [8, 9, 13, 27, 32];
+  // named keys with unicode code points
+  // the which property in the keypress event is the same as the keyCode
+  this._named_keycodes_u = 
+  [
+    8, // backspace
+    9, // tab
+    13, // enter (carriage return)
+    27, // escape
+    32  // space
+  ]; 
   
   this.set_shortcuts = function(shortcuts)
   {
-    // TODO three maps, named-keys, char-input-a-z-A-Z, char-input-other
-    // TODO validate
     var 
     i = 0, 
     shortcut = '', 
@@ -39,65 +39,135 @@ var KeyIdentifier = function(callback)
     key_id = 0, 
     shift = 0, 
     ctrl = 0, 
-    alt = 0;
+    alt = 0,
+    is_named_key = false,
+    set_modifiers = false;
     
-    this._key_id_map = {};
+    this._named_shortcuts = {};
+    this._char_shortcuts = {};
+
     for (; shortcut = shortcuts[i]; i++)
     {
-      tokens = shortcut.split('_').reverse();
-      shift = tokens.indexOf("SHIFT") == -1 ? 0 : 1;
-      ctrl = tokens.indexOf("CTRL") == -1 ? 0 : 1;
-      alt = tokens.indexOf("ALT") == -1 ? 0 : 1;
-      if (tokens[0].length == 1)
+      if (!KeyIdentifier.validate_shortcut(shortcut))
+        throw "Invalid shortcut " + shortcut;
+      tokens = shortcut.split(/[ \-,\+]+/).reverse().
+               map(function(t){return t.toLowerCase()});
+      shift = tokens.indexOf("shift") != -1;
+      ctrl = tokens.indexOf("ctrl") != -1;
+      alt = tokens.indexOf("alt") != -1;
+      is_named_key = tokens[0].length > 1;
+      set_modifiers = false;
+      if (is_named_key)
       {
-        if (shift || ctrl) // TODO only for a-z
+        key_id = this._name_keycode_map[tokens[0]] << 3;
+        set_modifiers = true;
+      }
+      else
+      {
+        if ((shift || ctrl) && 
+            96 < tokens[0].charCodeAt(0) && 
+            tokens[0].charCodeAt(0) < 123) 
+        {
           key_id = tokens[0].toUpperCase().charCodeAt(0) << 3;
+          set_modifiers = true;
+        }
         else
           key_id = tokens[0].charCodeAt(0) << 3;
       }
-      else if (tokens[0] in this._key_name_map)
-          key_id = this._key_name_map[tokens[0]] << 3;
+      if (set_modifiers)
+      {
+        key_id |= ctrl ? 4 : 0;
+        key_id |= shift ? 2 : 0;        
+        key_id |= alt ? 1 : 0;
+      }
+      if (is_named_key)
+        this._named_shortcuts[key_id] = shortcut;
       else
-          throw "Missing name in key_name_map in KeyIdentifier: " + tokens[0];
-      if (ctrl)
-          key_id |= 4;
-      if (shift)
-          key_id |= 2;        
-      if (alt)
-          key_id |= 1;
-      this._key_id_map[key_id] = shortcut;
+        this._char_shortcuts[key_id] = shortcut;
     }
   }
   
-  this._handle_keypress_bound = (function(event)
+  this._handle_keypress_bound = function(event)
   {
-    // TODO branch for named and char input
-    // named are function keys plus enter, backspace, space and tab
-    // for chars set the modifier flag only for a-z and A-Z
-    var keyCode = event.keyCode;
-    // is char
-    if (this._function_keys.indexOf(keyCode) != -1 && event.which != 0)
-      // TODO no, don't return
-      return;
-    var key_id = keyCode << 3 | 
+    if ((this._named_keycodes.indexOf(event.keyCode) != -1 && event.which === 0) ||
+        this._named_keycodes_u.indexOf(event.keyCode) != -1)
+      this._handle_named_key(event);
+    else
+      this._handle_char_key(event);
+  }.bind(this);
+
+  this._handle_named_key = function(event)
+  {
+    var key_id = event.keyCode << 3 | 
              (event.ctrlKey ? 4 : 0) | 
              (event.shiftKey ? 2 : 0) | 
              (event.altKey ? 1 : 0);
-    if (key_id in this._key_id_map)
-      callback(this._key_id_map[key_id], event);
-  }).bind(this);
+    if (key_id in this._named_shortcuts)
+      callback(this._named_shortcuts[key_id], event);
+  };
 
-  /*
-  this._init = function()
+  this._handle_char_key = function(event)
   {
-    this._broker = new ActionBroker();
-    this._update_key_id_map(this._broker.get_short_cuts());
-    
-  }
-  
+    var keyCode = event.keyCode;
+    var key_id = event.keyCode << 3;
+    console.log(keyCode)
+    if (64 < keyCode && keyCode < 91)
+    {
+      key_id |= (event.ctrlKey ? 4 : 0) | 
+                (event.shiftKey ? 2 : 0) | 
+                (event.altKey ? 1 : 0);
+    }
+    if (key_id in this._char_shortcuts)
+      callback(this._char_shortcuts[key_id], event);
+  };
 
-  this._init();
-  */
   document.addEventListener('keypress', this._handle_keypress_bound, true);
-  
+
+};
+
+KeyIdentifier.validate_shortcut = function(shortcut)
+{
+  /**
+    * A shortcut has a name or a char, preceeded by maximal three modifiers.
+    * Name must be one of 
+    *   backspace, tab, enter, escape, space, 
+    *   left, up, right, down, 
+    *   insert, home, pageup, 
+    *   delete, end, pagedown, 
+    *   f1 - f12.
+    * Char can be any unicode code point.
+    * Modifiers are only possible for named shortcuts or for chars a-z.
+    * Modifier is one of ctrl, shift, alt.
+    * All tokens of a shortcut are case insensitive.
+    * Separaters of the shortcut tokens can be a space, a comma, '+' or '-'.
+    */
+
+  var tokens = shortcut.split(/[ \-,\+]+/).reverse().
+               map(function(t){return t.toLowerCase()});
+  if (tokens.length == 0 || tokens.length > 3)
+    return false;
+  if (tokens.length > 1)
+    for (var i = 1; i < tokens.length; i++)
+      if (["ctrl", "shift", "alt"].indexOf(tokens[i]) == -1)
+        return false;
+  if (tokens[0].length == 1)
+  {
+    var key_code = tokens[0].charCodeAt(0);
+    if ((key_code < 65 || (90 < key_code && key_code < 97) || 122 < key_code) &&
+       tokens.length > 1)
+      return false;
+  }
+  else if (!(tokens[0] in KeyIdentifier.named_keys))
+      return false;
+  return true;
+};
+
+KeyIdentifier.named_keys =
+{
+  "backspace": 8, "tab": 9, "enter": 13, "escape": 27, "space": 32, 
+  "left": 37, "up": 38, "right": 39, "down": 40, 
+  "insert": 45, "home": 36, "page-up": 33, 
+  "delete": 46, "end": 35, "page-down": 34,
+  "f1": 112, "f2": 113, "f3": 114, "f4": 115, "f5": 116, "f6": 117,
+  "f7": 118, "f8": 119, "f9": 120, "f10": 121, "f11": 122, "f12": 123,
 };
