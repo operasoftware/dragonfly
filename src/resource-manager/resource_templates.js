@@ -1,14 +1,13 @@
 window.templates = window.templates || {};
 
-templates.resource_main = function(doc, width, duration_to_render)
+templates.resource_main = function(ctx, width, millis_to_render)
 {
   var graphwidth = width - 190; // fixme <- hardcoded
-  var seconds = duration_to_render * 1000 ;
 
   return [
     "div",
-    ["div", templates.resource_list(doc), "class", "resource-listwrapper"],
-    ["div", templates.resource_graph(doc, seconds, graphwidth), "class", "resource-graphwrapper"],
+    ["div", templates.resource_list(ctx), "class", "resource-listwrapper"],
+    ["div", templates.resource_graph(ctx, millis_to_render, graphwidth), "class", "resource-graphwrapper"],
     "class", "resource-main"
   ];
 };
@@ -28,15 +27,11 @@ templates.resource_item = function(resource)
   return tpl;
 };
 
-templates.resource_list = function(doc)
+templates.resource_list = function(ctx)
 {
-  var tpl = ["ol"];
-  var ordered_resources = doc.resourcelist.map(function(r) { return doc.resourcemap[r]; });
-  var lis = ordered_resources.map(templates.resource_item);
   return ["ol",
-            ordered_resources.map(templates.resource_item),
+          ctx.resources.map(templates.resource_item),
           "class", "request-list"];
-
 };
 
 templates.resource_details = function(resource)
@@ -74,18 +69,17 @@ templates.resource_details = function(resource)
   return tpl;
 };
 
-templates.resource_graph = function(doc, duration, contwidth, lineheight)
+templates.resource_graph = function(ctx, duration, contwidth, lineheight)
 {
   duration = duration || 3000;
   lineheight = lineheight || 30;
   contwidth = contwidth || 800;
 
-
   var bars = [];
 
-  var requests = doc.resourcelist.map(function(r) { return doc.resourcemap[r]; });
+  var requests = ctx.resources;
+  var basetime = ctx.get_start_time();
 
-  var basetime = doc.firsttime;
   for (var n=0, req; req=requests[n]; n++)
   {
     var bar = templates.resource_bar(n, req, basetime, duration, contwidth, lineheight);
@@ -93,7 +87,7 @@ templates.resource_graph = function(doc, duration, contwidth, lineheight)
   }
 
   var defs = templates.bar_defs();
-  var background = templates.graph_background(doc.resourcelist.length, lineheight);
+  var background = templates.graph_background(ctx.resources.length, lineheight);
   var grid = templates.grid_lines(duration, contwidth, n*lineheight);
 
     var tpl = ["svg:svg", defs, bars, grid, "viewBox", "0 0 " + contwidth + " " + (n*lineheight), "xmlns", "http://www.w3.org/2000/svg", "class", "resource-graph"];
@@ -145,6 +139,15 @@ templates.resource_bar = function(offset, entry, basetime, totaltime, contwidth,
 
   ];
   return tpl;
+};
+
+templates.graph_scale = function(duration, contwidth)
+{
+  var stepcnt = (contwidth / 100);
+
+  return [
+
+  ];
 };
 
 templates.graph_background = function(cnt, lineheight)
@@ -280,8 +283,7 @@ templates.url_path = function(url)
  * Separated out here in case we want to get smarter. Also, more than
  * one template needs this information
  */
-
-templates.millis_to_render = function(millis, width)
+templates.millis_to_render = function(millis)
 {
-  return Math.ceil(width / 1000) * 1000;
+  return Math.ceil(millis / 1000) * 1000;
 }

@@ -18,18 +18,17 @@ cls.ResourceManagerView = function(id, name, container_class, html, default_hand
     this._container = container;
     this._render_main_view(container);
     return;
-    container.clearAndRender(["textarea", JSON.stringify(this._service.get_current_document(), null, 2),
+    container.clearAndRender(["textarea", JSON.stringify(this._service.get_request_context(), null, 2),
                               "style", "width: 90%; height: 90%"]);
   };
 
   this._render_main_view = function(container)
   {
     var width = container.clientWidth;
-    var document = this._service.get_current_document();
-    if (document)
+    var ctx = this._service.get_request_context();
+    if (ctx)
     {
-      var duration = document.lasttime - document.firsttime;
-      container.clearAndRender(templates.resource_main(document, width, templates.millis_to_render(duration));
+      container.clearAndRender(templates.resource_main(ctx, width, templates.millis_to_render(ctx.get_duration())));
     }
     else
     {

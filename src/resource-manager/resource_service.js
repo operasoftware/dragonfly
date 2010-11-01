@@ -1,5 +1,3 @@
-
-
 /**
  *
  * A document as represented here looks like this
@@ -42,7 +40,7 @@ cls.ResourceManagerService = function(view, data)
   {
     this._res_service.requestSetResponseMode(null, [[3, 1]]);
   }
-  
+
   this._on_abouttoloaddocument_bound = function(msg)
   {
 
@@ -151,10 +149,7 @@ cls.ResourceManagerService = function(view, data)
 
   this.init = function()
   {
-
     this._res_service = window.services['resource-manager'];
-
-
     this._res_service.addListener("urlload", this._on_urlload_bound);
     this._res_service.addListener("request", this._on_request_bound);
     this._res_service.addListener("requestheader", this._on_requestheader_bound);
@@ -168,46 +163,15 @@ cls.ResourceManagerService = function(view, data)
     this._doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
   };
 
-  this.get_current_document = function()
+  this.get_request_context = function()
   {
     if (this._current_document &&
         this._current_document.resourcelist &&
         this._current_document.resourcelist.length)
     {
-      return this._current_document;
+      return new cls.RequestContext(this.get_resource_list());
     }
     return null;
-  };
-
-  /**
-   * Grab stuff based on mime type, ignoring subtype
-   */
-  this.get_resources_for_type = function()
-  {
-    // FIXME: this will change, as it will be using urlfinished not responsefinished
-    var types = Array.prototype.slice.call(arguments, 0);
-
-    var filterfun = function(e)
-    {
-      if (! e.responsefinished) { return false; }
-      var type = e.responsefinished.data.mimeType.split("/")[0];
-      return types.indexOf(type) > -1;
-    };
-
-    return this.get_resource_list().filter(filterfun);
-  };
-
-  this.get_resources_for_mime = function()
-  {
-    // FIXME: this will change, as it will be using urlfinished not responsefinished
-    var mimes = Array.prototype.slice.call(arguments, 0);
-
-    var filterfun = function(e)
-    {
-      return e.responsefinished && mimes.indexOf(e.responsefinished.data.mimeType) > -1;
-    };
-
-    return this.get_resource_list().filter(filterfun);
   };
 
   /**
@@ -235,5 +199,97 @@ cls.ResourceManagerService = function(view, data)
   };
 
   this.init();
-};
+  };
 
+
+
+
+cls.RequestContext = function(reslist)
+{
+  this.resources = reslist;
+
+  /**
+   * Grab stuff based on mime type, ignoring subtype
+   */
+  this.get_resources_for_type = function()
+  {
+    // FIXME: this will change, as it will be using urlfinished not responsefinished
+    var types = Array.prototype.slice.call(arguments, 0);
+
+    var filterfun = function(e)
+    {
+      if (! e.responsefinished) { return false; }
+      var type = e.responsefinished.data.mimeType.split("/")[0];
+      return types.indexOf(type) > -1;
+    };
+
+    return this.get_resource_list().filter(filterfun);
+  };
+  // alias with plural name
+  this.get_resources_for_types = this.get_resources_for_type;
+
+
+  this.get_resources_for_mime = function()
+  {
+    // FIXME: this will change, as it will be using urlfinished not responsefinished
+    var mimes = Array.prototype.slice.call(arguments, 0);
+
+    var filterfun = function(e)
+    {
+      return e.responsefinished && mimes.indexOf(e.responsefinished.data.mimeType) > -1;
+    };
+
+    return this.resources.filter(filterfun);
+  };
+
+
+  this.get_resource_groups = function()
+  {
+    var imgs = this.get_resources_for_type("image");
+    var stylesheets = this.get_resources_for_mime("text/css");
+    var markup = this.get_resources_for_mime("text/html",
+                                             "application/xhtml+xml");
+    var scripts = this.get_resources_for_mime("application/javascript",
+                                              "text/javascript");
+
+    var known = [].concat(imgs, stylesheets, markup, scripts);
+    var other = this.resources.filter(function(e) {
+      return !(e in known);
+    });
+    return {
+      images: imgs, stylesheets: stylesheets, markup: markup,
+      scripts: scripts, other: other
+    }
+  }
+
+  this.get_resource_percentages = function()
+  {
+    var groups = this.get_resource_groups();
+    var ret = {};
+    for (var key in groups)
+    {
+
+    }
+  }
+
+  this.get_start_time = function()
+  {
+    return this.resources[0].urlload.time;
+  }
+
+  this.get_end_time = function()
+  {
+    return this.resources[this.resources.length-1].urlfinished.time;
+  }
+
+  this.get_load_times = function()
+  {
+
+  };
+
+  this.get_duration = function()
+  {
+    return this.resources[this.resources.length-1].urlfinished.time - this.resources[0].urlload.time;
+  };
+
+}
