@@ -47,8 +47,15 @@ cls.ResourceManagerView = function(id, name, container_class, html, default_hand
     this.update();
   }.bind(this);
 
+  this._handle_graph_select_bound = function(evt, target)
+  {
+    this._selected_resource = null;
+    this.update();
+  }.bind(this);
+
   var eh = window.eventHandlers;
   eh.click["resource-select-resource"] = this._handle_resource_select_bound;
+  eh.click["resource-select-graph"] = this._handle_graph_select_bound;
 
 
   this.init(id, name, container_class, html, default_handler);

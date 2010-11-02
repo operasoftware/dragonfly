@@ -347,5 +347,6 @@ templates.pie_chart = function(categories)
 
 templates.load_time_overview = function(ctx)
 {
-  return templates.pie_chart(ctx.get_resource_times(), 100, 100)
+  return ["div", templates.pie_chart(ctx.get_resource_times(), 100, 100),
+          "handler", "resource-select-graph"];
 }
