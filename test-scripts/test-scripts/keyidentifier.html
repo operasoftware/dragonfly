@@ -44,9 +44,9 @@ window.onload = function()
     "enter","ctrl enter",
     "shift tab","tab", "ctrl tab",
     "escape", "shift escape",
-    "a", "(", ")", "s", "f6", 
+    "a", "(", ")", "s", "f6", ".", "[", 
   ];
-  var ki = new KeyIdentifier(onshortcut, window.chrome ? "chrome" : "opera");
+  var ki = new KeyIdentifier(onshortcut, window.chrome ? "chrome" : window.opera ?"opera" : "firefox");
   document.getElementsByTagName('pre')[0].textContent = sc.join(', ');
   ki.set_shortcuts(sc);
 }
