@@ -1392,7 +1392,6 @@ overlay {
     left: 0;
     z-index: 3;
     padding: 0 30px;
-    display: none;
 }
 overlay.active {
     display: block;
@@ -1416,7 +1415,7 @@ overlay-arrow {
   position: absolute;
   top: -12px;
 }
-.attached overlay-window {
+overlay-window.attached {
   left: auto;
   right: 20px;
 }

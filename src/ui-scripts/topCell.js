@@ -44,7 +44,7 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar)
     this.container = new TopContainer(this); // actually just a cell
     this.tab = new TopTabs(this);
     this.modebar = window.modebar = new Modebar(this);
-    this.overlay = new Overlay(this);
+    this.overlay = new Overlay();
     this.toolbar = TopToolbar && new TopToolbar(this) || null;
     if(this.toolbar)
     {

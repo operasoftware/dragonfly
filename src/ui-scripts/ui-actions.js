@@ -262,8 +262,7 @@ eventHandlers.click['top-window-toggle-attach'] = function(event)
 
 eventHandlers.click['overlay-tab'] = function(event, target)
 {
-  var overlay = UIBase.getUIById(document.querySelector("overlay")
-                                         .get_attr("parent-node-chain", "ui-id"));
+  var overlay = window.topCell.overlay;
   overlay.change_group(event.target.getAttribute("group"));
 };
 
@@ -274,30 +273,40 @@ eventHandlers.click['toggle-remote-debug-config-overlay'] = function(event, targ
   const OVERLAY_LEFT_MARGIN = 10;
   const OVERLAY_RIGHT_MARGIN = 20;
 
-  var overlay = UIBase.getUIById(document.querySelector("overlay")
-                                         .get_attr("parent-node-chain", "ui-id"));
+  // This should really just be a class, this is just for consistency with
+  // existing stuff
+  target.setAttribute("is-active", target.getAttribute("is-active") != "true");
+
+  var overlay = window.topCell.overlay;
+
+  if (overlay.is_visible())
+  {
+    overlay.hide_overlay();
+    return;
+  }
+
+  switch (target.getAttribute("handler"))
+  {
+  case "toggle-settings-overlay":
+    overlay.show_overlay("settings-overlay");
+    break;
+  case "toggle-remote-debug-config-overlay":
+    overlay.show_overlay("remote-debug-overlay");
+    break;
+  }
+
   var button_dims = target.getBoundingClientRect();
   var element = overlay.element.querySelector("overlay-window");
   var arrow = overlay.element.querySelector("overlay-arrow");
   element.style.top = button_dims.bottom + OVERLAY_TOP_MARGIN + "px";
   if (window.opera.attached)
   {
-      arrow.style.right = document.documentElement.clientWidth - button_dims.right - OVERLAY_RIGHT_MARGIN + "px";
+    element.addClass("attached");
+    arrow.style.right = document.documentElement.clientWidth - button_dims.right - OVERLAY_RIGHT_MARGIN + "px";
   }
   else
   {
-      arrow.style.left = button_dims.left - OVERLAY_LEFT_MARGIN + "px";
-  }
-  target.setAttribute("is-active", target.getAttribute("is-active") != "true");
-
-  switch (target.getAttribute("handler"))
-  {
-  case "toggle-settings-overlay":
-    overlay.toggle_overlay("settings-overlay", "general");
-    break;
-  case "toggle-remote-debug-config-overlay":
-    overlay.toggle_overlay("remote-debug-overlay", "remote_debug");
-    break;
+    arrow.style.left = button_dims.left - OVERLAY_LEFT_MARGIN + "px";
   }
 };
 

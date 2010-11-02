@@ -345,26 +345,25 @@
       view_name, 'handler', 'toggle-setting', 'view-id', view_id];
   }
 
-  this.overlay = function(id)
-  {
-    return [
-      "overlay-window",
-        [
-          ["overlay-arrow"],
-          ["overlay-tabs"],
-          ["overlay-content"]
-        ]
-      ];
-  };
-
-  this.settings_groups = function(groups)
+  this.overlay = function(groups)
   {
     var tabs = [];
     for (var i = 0, group; group = groups[i]; i++)
     {
       tabs.push(["tab", group.label, "group", group.group_name, "handler", "overlay-tab"]);
     }
-    return tabs;
+
+    return [
+      "overlay",
+      [
+        "overlay-window",
+        [
+          ["overlay-arrow"],
+          ["overlay-tabs", tabs],
+          ["overlay-content"]
+        ]
+      ]
+    ];
   };
 
   this.checkboxes = function(setting, checkbox_arr)
