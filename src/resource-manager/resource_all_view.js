@@ -16,8 +16,8 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
 
   this._render_main_view = function(container)
   {
-    resources = this._service.get_resource_list();
-    container.clearAndRender(templates.all_resources(resources));
+    var ctx = this._service.get_request_context();
+    container.clearAndRender(templates.all_resources(ctx));
   };
 
   this._handle_open_resource_bound = function(evt, target)

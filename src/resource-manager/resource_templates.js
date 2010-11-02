@@ -240,18 +240,19 @@ templates.grid_lines = function(millis, width, height)
 
 // all resources tab:
 
-templates.all_resources = function(resources)
+templates.all_resources = function(ctx, sorted_by, columns)
 {
+  columns = columns || ["host", "path", "mime", "size"];
+  resources = ctx.resources;
+
   var tpl = [
     ["div",
      ["table",
       ["tr",
-       ["th", "Name"],
-       ["th", "Type"],
-       ["th", "Size"],
+       columns.map(function(e) { return ["th", e] }),
        "handler", "resources-all-sort"
       ],
-      resources.map(templates.all_resources_row)
+      resources.map(function(e) { return templates.all_resources_row(e, columns)} )
      ],
      "class", "padding resources-all"
     ]
@@ -259,13 +260,18 @@ templates.all_resources = function(resources)
   return tpl;
 }
 
-templates.all_resources_row = function(resource)
+templates.all_resources_row = function(resource, columns)
 {
+  var col_value_getters = {
+    host: function(res) { return templates.url_host(res.urlload.url) },
+    path: function(res) { return templates.url_path(res.urlload.url) },
+    mime: function(res) { return res.urlfinished.mimeType },
+    size: function(res) { return res.urlfinished.contentLength },
+  }
+
   return [
     ["tr",
-     ["td", templates.url_path(resource.urlload.url)],
-     ["td", resource.urlfinished.mimeType],
-     ["td", "cccc"],
+     columns.map(function(e) { return ["td", col_value_getters[e](resource)]}),
      "handler", "resources-all-open",
      "resource-id", String(resource.urlload.resourceID)
     ]
@@ -280,6 +286,15 @@ templates.url_path = function(url)
   var path = url.slice(firstslash, querystart);
   return path;
 }
+
+templates.url_host = function(url)
+{
+  var host = url.replace(/\w+?:\/\//, "");
+  var firstslash = host.indexOf("/");
+  host = host.slice(0, firstslash == -1 ? host.length : firstslash);
+  return host;
+}
+
 
 
 /**
