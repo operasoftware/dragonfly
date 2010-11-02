@@ -203,6 +203,11 @@ cls.RequestContext = function(reslist)
 {
   this.resources = reslist;
 
+  this.get_resource = function(id)
+  {
+    return this.resources.filter(function(e) { return e.urlload.resourceID == id; })[0];
+  };
+
   /**
    * Grab stuff based on mime type, ignoring subtype
    */
@@ -261,7 +266,7 @@ cls.RequestContext = function(reslist)
   {
     var groups = this.get_resource_groups();
     var ret = {};
-    var sizefun = function(e) { return e.urlfinished.contentLength; };
+    var sizefun = function(e) { return e.urlfinished ? e.urlfinished.contentLength : 0; };
     var total = 0;
     for (var key in groups)
     {
@@ -277,7 +282,8 @@ cls.RequestContext = function(reslist)
   {
     var groups = this.get_resource_groups();
     var ret = {};
-    var timefun = function(e) { return e.urlfinished.time - e.urlload.time; };
+    // don't count stuff in progress!
+    var timefun = function(e) { return e.urlfinished ? e.urlfinished.time - e.urlload.time : 0; };
 
     var total = 0;
     for (var key in groups)
@@ -303,7 +309,9 @@ cls.RequestContext = function(reslist)
 
   this.get_duration = function()
   {
-    return this.resources[this.resources.length-1].urlfinished.time - this.resources[0].urlload.time;
+    var last = 0;
+    this.resources.forEach(function(e) { if (e.urlfinished) { last = e.urlfinished.time; }});
+    return last - this.resources[0].urlload.time;
   };
 
 }
