@@ -405,7 +405,7 @@ cls.DebugRemoteSettingView.create_ui_widgets = function()
         settings.debug_remote_setting.set('debug-remote', true);
         settings.debug_remote_setting.set('port', port);
         // for older clients
-        window.helpers.setCookie('debug-remote', JSON.stringify(is_debug_remote));
+        window.helpers.setCookie('debug-remote', "true");
         window.helpers.setCookie('port', JSON.stringify(port));
         window.topCell.showView('dom');
         client.setup();
@@ -422,7 +422,7 @@ cls.DebugRemoteSettingView.create_ui_widgets = function()
   eventHandlers.click['cancel-remote-debug'] = function(event, target)
   {
     settings.debug_remote_setting.set('debug-remote', false);
-    window.helpers.setCookie('debug-remote', false);
+    window.helpers.setCookie('debug-remote', "false");
     client.setup();
   };
 };
