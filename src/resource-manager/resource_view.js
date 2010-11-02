@@ -7,6 +7,7 @@ window.cls = window.cls || {};
 cls.ResourceManagerView = function(id, name, container_class, html, default_handler) {
   this._service = new cls.ResourceManagerService(this, this._data);
   this._container = null;
+  this._selected_resource = null;
 
   this.ondestroy = function()
   {
@@ -28,7 +29,11 @@ cls.ResourceManagerView = function(id, name, container_class, html, default_hand
     var ctx = this._service.get_request_context();
     if (ctx)
     {
-      container.clearAndRender(templates.resource_main(ctx, width, templates.millis_to_render(ctx.get_duration())));
+      ctx.get_resource_sizes();
+      container.clearAndRender(templates.resource_main(ctx,
+                                                       this._selected_resource,
+                                                       width,
+                                                       templates.millis_to_render(ctx.get_duration())));
     }
     else
     {
@@ -38,8 +43,8 @@ cls.ResourceManagerView = function(id, name, container_class, html, default_hand
 
   this._handle_resource_select_bound = function(evt, target)
   {
-    var resource = this._service.get_resource_for_id(target.getAttribute("resource-id"));
-    this._container.clearAndRender(templates.resource_details(resource));
+    this._selected_resource = target.getAttribute("resource-id");
+    this.update();
   }.bind(this);
 
   var eh = window.eventHandlers;

@@ -1,14 +1,16 @@
 window.templates = window.templates || {};
 
-templates.resource_main = function(ctx, width, millis_to_render)
+templates.resource_main = function(ctx, selected, width, millis_to_render)
 {
   var graphwidth = width - 190; // fixme <- hardcoded
 
   return [
     "div",
-    ["div", templates.pie_chart(ctx.get_resource_sizes(), 100, 100),
+    ["div", templates.load_time_overview(ctx),
      templates.resource_list(ctx), "class", "resource-listwrapper"],
-    ["div", templates.resource_graph(ctx, millis_to_render, graphwidth), "class", "resource-graphwrapper"],
+    ["div",
+     selected == null ? templates.resource_graph(ctx, millis_to_render, graphwidth) : templates.resource_details(ctx, selected),
+     "class", "resource-graphwrapper"],
     "class", "resource-main"
   ];
 };
@@ -35,8 +37,10 @@ templates.resource_list = function(ctx)
           "class", "request-list"];
 };
 
-templates.resource_details = function(resource)
+templates.resource_details = function(ctx, resourceid)
 {
+  var resource = ctx.get_resource(resourceid);
+
   var tpl = [
   ["h1", "Request"],
   ["ul",
@@ -340,3 +344,8 @@ templates.pie_chart = function(categories)
           "style", "width: 60px; height:60px;"
          ]
 };
+
+templates.load_time_overview = function(ctx)
+{
+  return templates.pie_chart(ctx.get_resource_times(), 100, 100)
+}
