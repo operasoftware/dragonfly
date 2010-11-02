@@ -285,23 +285,13 @@ cls.DOMView.create_ui_widgets = function()
   //  }
   //]);
 
-  new CstSelectToolbarSettings
-  (
-   //'dom', 
-   //[
-   //  'show-comments',
-   //  'show-whitespace-nodes',
-   //  'dom-tree-style'
-   //]
-  );
-
   new Switches
   (
     'dom',
     [
       'find-with-click',
       'highlight-on-hover',
-      //'update-on-dom-node-inserted',
+      'update-on-dom-node-inserted',
       'lock-selecked-elements'
     ]
   );
