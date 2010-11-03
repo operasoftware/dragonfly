@@ -1,5 +1,18 @@
+
+
 var ActionBroker = function()
 {
+  /*  
+      static constants
+        ActionBroker.MODE_DEFAULT = "default";
+        ActionBroker.MODE_EDIT
+
+      static properties
+        ActionBroker.default_shortcuts_win
+
+      static methods 
+        ActionBroker.get_instance
+  */
 
   if (ActionBroker.instance)
     return ActionBroker.instance;
@@ -242,13 +255,3 @@ ActionBroker.get_instance = function()
 
 ActionBroker.MODE_DEFAULT = "default";
 ActionBroker.MODE_EDIT = "edit";
-
-
-
-
-
-
-
-
-
-
