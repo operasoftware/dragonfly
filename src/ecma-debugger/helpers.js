@@ -13,55 +13,6 @@
 
 window.cls.Helpers = function()
 {
-  var self = this;
-
-
-  var handleKeypress = function(event, id)
-  {
-    event.preventDefault();
-    event.stopPropagation();
-    var button = document.getElementById(id);
-    if(button && !button.disabled)
-    {
-      button.click();
-    }
-  }
-
-  // TODO this should be handled with the Keyhandler class
-  var keypressListener = function(event)
-  {
-    if( event.which == 0 )
-    {
-      switch(event.keyCode)
-      {
-        case 119: // F8
-        {
-          event.preventDefault();
-          handleKeypress(event, 'continue-run');
-          break;
-        }
-        case 121: // F10
-        {
-          event.preventDefault();
-          handleKeypress(event, 'continue-step-next-line');
-          break;
-        }
-        case 122: // F11
-        {
-          event.preventDefault();
-          if(event.shiftKey)
-          {
-            handleKeypress(event, 'continue-step-out-of-call');
-          }
-          else
-          {
-            handleKeypress(event, 'continue-step-into-call');
-          }
-          break;
-        }
-      }
-    }
-  }
 
   this.setSelected = function(event)
   {
@@ -211,7 +162,5 @@ window.cls.Helpers = function()
       return Object.prototype.toString.call(o) == "[object Array]";
     };
   }
-
-  document.addEventListener('keypress', keypressListener, true);
 
 }

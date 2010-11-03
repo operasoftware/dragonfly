@@ -147,6 +147,7 @@ window.app.build_application = function(on_services_created, on_services_enabled
 
   // ensure that the static methods on cls.ServiceBase exist.
   new cls.ServiceBase();
+  new ActionBroker();
 
 
 
