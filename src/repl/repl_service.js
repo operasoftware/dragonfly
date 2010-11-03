@@ -112,35 +112,74 @@
       this._unpack_list_alikes(msg, rt_id);
   };
   
+  // Boolean(document.all) === false
+  this._is_list_alike = "(" + (function(list)
+  {
+    return list.map(function(item)
+    {
+      var _class = item === null ? "" : Object.prototype.toString.call(item);
+      if (/(?:Array|Collection|List|Map)\]$/.test(_class))
+        return 2;
+      if (_class == "[object Object]" && typeof item.length == "number")
+        return 1;
+      return 0;
+    }).join(',');
+  }).toString() + ")([%s])";
+  
   this._unpack_list_alikes = function(msg, rt_id)
   {
-    const
-    RUNTIME_ID = 0,
-    VALUE_LIST = 2,
-    // sub message Value 
-    OBJECT_VALUE = 1,
-    // sub message ObjectValue 
-    OBJECT_ID = 0,
-    CLASS_NAME = 4;
+    const VALUE_LIST = 2, OBJECT_VALUE = 1, OBJECT_ID = 0;
+    var 
+    obj_ids = (msg[VALUE_LIST] || []).map(function(value, index)
+    {
+      return value[OBJECT_VALUE] && value[OBJECT_VALUE][OBJECT_ID] || 0;
+    }),
+    call_list = obj_ids.map(function(object_id)
+    {
+      return object_id && "$_" + object_id || null;
+    }).join(','),
+    arg_list = obj_ids.reduce(function(list, obj_id)
+    {
+      if (obj_id)
+        list.push(["$_" + obj_id, obj_id]);
+      return list;
+    }, []),
+    tag = this._tagman.set_callback(this, this._handle_list_alikes_list, 
+                                    [msg, rt_id, obj_ids]),
+    msg = [rt_id, 0, 0, this._is_list_alike.replace("%s", call_list), arg_list];
     
-    var unpack = [];    
-    var log = (msg[VALUE_LIST] || []).map(function(value, index)
+    this._service.requestEval(tag, msg);
+  }
+  
+  this._handle_list_alikes_list = function(status, msg, orig_msg, rt_id, obj_ids)
+  {
+
+    const VALUE = 2;
+    
+    if (status)
     {
-      var is_list_alike = 
-        value[OBJECT_VALUE] && 
-        /Array|Collection|List/.test(value[OBJECT_VALUE][CLASS_NAME]) || false;
-      
-      if (is_list_alike)
-        unpack.push(value[OBJECT_VALUE][OBJECT_ID]);
-      return is_list_alike;
-    });
-    if (unpack.length)
-    {
-      var tag = this._tagman.set_callback(this, this._handle_unpacked_list, [msg, rt_id, log]);
-      this._service.requestExamineObjects(tag, [rt_id, unpack]);
+    
     }
     else
-      this._handle_log(msg, rt_id, true);
+    {
+      var log = msg[VALUE].split(',').map(Number);
+      if (log.filter(Boolean).length)
+      {
+        var unpack = log.reduce(function(list, entry, index)
+        {
+          if (entry)
+            list.push(obj_ids[index]);
+          return list;
+        }, []);
+        var tag = this._tagman.set_callback(this, this._handle_unpacked_list, 
+                                            [orig_msg, rt_id, log]);
+        this._service.requestExamineObjects(tag, [rt_id, unpack]);
+      }
+      else
+      {
+        this._handle_log(orig_msg, rt_id, true);
+      }
+    }
   }
   
   this._handle_unpacked_list = function(status, msg, orig_msg, rt_id, log)
