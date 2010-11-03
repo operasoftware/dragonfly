@@ -102,7 +102,7 @@ var SettingsBase = function()
     window.settings[arguments[0]] = this;
 
     // Add a context menu
-    var contextmenu = setting_map.contextmenu;
+    var contextmenu = setting_map && setting_map.contextmenu;
     if (contextmenu)
     {
       var items = [];
