@@ -632,18 +632,18 @@ div.dom {
 {
   border: 0;
   padding: 0;
-  margin: 0 2px 0 -17px;
-  height: 15px; /* Make space for outline to appear outside the control */
-  width: 15px;
+  margin: 0 2px 0 -15px;
+  height: 13px; /* Make space for outline to appear outside the control */
+  width: 13px;
   color: #666;
-  background: transparent url('../ui-images/expand-collapse.png') 2px 2px no-repeat;
+  background: transparent url('../ui-images/expand-collapse.png') 1px 1px no-repeat;
 }
 
 .dom input.open {
-  background-position: 2px -13px;
+  background-position: 1px -14px;
   }
 .dom input:focus {
-  outline: 1px solid #78bae0;
+  outline: 2px solid #78bae0;
   outline-offset: -2px; /* Hides the normal (dotted) outline when pressing Enter on the expand/collapse button */
   }
 
