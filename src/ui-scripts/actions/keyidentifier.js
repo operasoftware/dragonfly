@@ -41,6 +41,7 @@ var KeyIdentifier = function(callback, browser)
 
   this.set_shortcuts = function(shortcuts)
   {
+
     var
     i = 0,
     shortcut = '',
@@ -92,6 +93,7 @@ var KeyIdentifier = function(callback, browser)
       else
         this._char_shortcuts[key_id] = shortcut;
     }
+
   }
 
   // One challenge here is to tell apart f1-f12, arrow keys and insert, delete,

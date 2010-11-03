@@ -65,7 +65,7 @@ Interface ActionHandler
     * Returning false will cancel the event (preventDefault and stopPropagation),
     * true will pass it to the next level if any.
     */
-  Boolean handle_action(action_id, event, target)
+  Boolean handle(action_id, event, target)
  
   /**
     * To get a list of supported actions.
@@ -87,7 +87,7 @@ Interface ActionHandler
     * Returning false will cancel the event (preventDefault and stopPropagation),
     * true will pass it to the next level if any.
     */
-  Boolean click(event, target)
+  Boolean onclick(event)
  
  
  
