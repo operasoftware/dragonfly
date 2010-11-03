@@ -159,6 +159,7 @@ ul {
   }
   
 input[type="text"] {
+  font-size: 11px;
   cursor: text;
 }
 
@@ -283,7 +284,6 @@ input[type="text"] {
 .console-input textarea {
   line-height:16px;
   font-size:14px !important;
-  font-family:monospace;
   padding:0;
   margin:0;
   }
@@ -349,7 +349,6 @@ property {
   padding-left: 2em;
   padding-right: 3px;
   line-height: 15px;
-  font-family:monospace;
   }
 property.disabled, .disabled key, .disabled value {
   color: #999 !important;
@@ -368,7 +367,6 @@ property:hover .enable-disable,
 
 
 rule, font-face-rule, page-rule, import-rule, charset-rule, media-rule {
-  font-family:monospace;
   display:block;
   /*xxwhite-space: pre-wrap;*/
   margin: 0 0 1em;
@@ -423,44 +421,34 @@ styles {
   }
 
 category header {
-  border: 1px solid #b3b3b3;
-  border-width: 0 0 1px;
-  background-color: hsl( 0, 0% , 95%);
+  text-transform: uppercase;
+  font-weight: bold;
   padding: 2px;
+  background-color: #fff;
+  border-bottom: 1px solid #fff;
+  border-bottom-color: #ccc;
   }
 
-category.unfolded + category header {
-  border-top-width: 1px;
+category header:hover {
+  background-color: #eee;
+  color: #000;
 }
 
+category header:hover input {
+  opacity: 1;
+}
 
 .css-inspector header input {
-  background:transparent url('../ui-images/toggle.png') scroll no-repeat 0 0;
+  background:transparent url('../ui-images/toggle.png') scroll no-repeat 50% 100%;
   border:none;
-  padding:0;
-  margin:0px 5px;
-  width:14px;
-  height:14px;
-  }
-
-.css-inspector header input:hover {
-  background-position: 0 -14px;
-  }
-
-.css-inspector header input:active {
-  background-position: 0 -28px;
+  width:5px;
+  height:9px;
+  opacity: 0.66;
+  -o-transition: .2s;
   }
 
 .css-inspector header input.unfolded {
-  background-position: -14px 0;
-  }
-
-.css-inspector header input.unfolded:hover {
-  background-position: -14px -14px;
-  }
-
-.css-inspector header input.unfolded:active {
-  background-position: -14px -28px;
+  -o-transform: rotate(90deg);
   }
 
 .overwritten {
@@ -497,7 +485,6 @@ examine-objects,
 examine-objects item 
 {
   display:block;
-  font-family: monospace;
 }
 examine-objects
 {
@@ -1169,7 +1156,6 @@ d
   border: 1px solid #ccc;
   padding: 0px 5px;
   line-height: 16px;
-  font-family: monospace;
 }
 
 .storage-table tr:nth-child(even)  
@@ -1255,7 +1241,6 @@ d
   padding: 0px 5px;
   border: 0px;
   margin-left: -5px;
-  font-family: monospace;
 }
 
 .storage-table .single-control
@@ -1272,7 +1257,6 @@ d
 
 #about-authors pre
 {
-  font-family: sans-serif;
   padding: 0 2em;
 }
 

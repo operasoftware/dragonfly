@@ -1,11 +1,23 @@
-﻿viewport {
+﻿/* Font stack defaults */
+viewport, .info-box, #about-authors pre {
+  font-family: "Dejavu Sans", "Bitstream Vera Sans", "Lucida Grande", "Segoe UI", Tahoma, sans-serif;
+  font-size: 11px;
+  color: #444;
+  }
+
+.dom div, .js-source div, .console-output, .console-output pre, .console-input, .console-input textarea, property, rule, font-face-rule, page-rule, import-rule, charset-rule, media-rule, examine-objects, examine-objects item, .storage-table td, .storage-table .new-key  {
+  font-family: "Menlo", "Dejavu Sans Mono", "Bitstream Vera Sans Mono", "Consolas", "Monaco", "Lucida Console", monospace;
+  font-size: 11px;
+  color: #111;
+}
+
+
+/* UI Style */
+viewport {
   width: 100%;
   height: 100%;
   display: block;
-  font-family: sans-serif;
-  font-size: 12px;
   overflow: hidden;
-  color: #333;
   }
 
 main-view { /**/
@@ -30,7 +42,7 @@ top-toolbar {
   }
 
 top-toolbar, top-tabs, modebar, tabs {
-    border-bottom: 1px solid #b3b3b3;
+    border-bottom: 1px solid #999;
 }
 
 /* set with css. height, border and padding are supported */
@@ -42,8 +54,8 @@ top-container { /**/
 /* set with css. height, border and padding are supported */
 
 container { /**/
-  border-left: 1px solid #b3b3b3;
-  border-right: 1px solid #b3b3b3;
+  border-left: 1px solid #999;
+  border-right: 1px solid #999;
   background-color: #fefefe;
   overflow: hidden;
   } 
@@ -77,13 +89,13 @@ window-toolbar { /**/
   display: block;
   height: 26px;
   background-color: #e1e4e9;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #999;
   }
 
 /* set with css. height, border and padding are supported */
 
 toolbar { /**/
-  border: 0 solid #b3b3b3;
+  border: 0 solid #999;
   border-width: 0 1px 1px;
   padding: 3px 2px 2px;
   height: 21px; /* 21 + 3 + 2 (padding) = 26 */
@@ -225,15 +237,16 @@ toolbar button[disabled]
   width: 17px;
   margin: 0 2px;
   padding: 1px;
-  box-shadow: 0 1px #fff;
   box-sizing: content-box;
   display: inline-block;
-  box-shadow: 0 1px #fff, inset 0 1px 1px #fff;
+  box-shadow: 0 1px rgba(255,255,255,0.5), inset 0 1px 1px #fff;
   vertical-align: top;
+  -o-transition: background-color 0.2s;
 }
 toolbar button[disabled] { /* :disabled seems to be buggy */
-  background: #e0e0e0;
-  opacity: 0.75
+  background: #e0e0e0 !important;
+  opacity: 0.4;
+  border-color: #333;
 }
 toolbar button:not([disabled]):active,
 top-toolbar button:active,
@@ -242,7 +255,8 @@ cst-select-toolbar-setting:active,
 .ui-button:active,
 cst-select:active {
     padding: 2px 1px 0;
-    box-shadow: 0 1px #fff, inset 0 1px 2px rgba(0, 0, 0, .5);
+    box-shadow: 0 1px #fff, inset 0 1px 2px rgba(0, 0, 0, .4);
+    background-position: 0 1px;
 }
 cst-select:active {
     padding: 1px;
@@ -251,14 +265,15 @@ toolbar button[is-active="true"],
 top-toolbar button[is-active="true"],
 window-controls button[is-active="true"],
 cst-select[is-active="true"] {
-    box-shadow: 0 1px #fff, inset 0 1px 2px rgba(0, 0, 0, .5);
-    background-color: #b3b3b3;
+    box-shadow: 0 1px #fff, inset 0 1px 2px rgba(0,0,0,0.1), inset 0 0 7px rgba(0,0,0,0.25);
+    background-color: #bfbfbf;
+    padding: 2px 1px 0;
+    background-position: 0 1px;
 }
 toolbar button[is-active="true"]:active,
 top-toolbar button[is-active="true"]:active,
 window-controls button[is-active="true"]:active {
-    box-shadow: 0 1px #fff, inset 0 1px 3px rgba(0, 0, 0, .5);
-    background-color: #999;
+    background-color: #e6e6e6;
 }
 /* Show the button topmost when the overlay is visible */
 [handler="toggle-settings-overlay"][is-active="true"],
@@ -266,7 +281,7 @@ window-controls button[is-active="true"]:active {
     position: relative;
     z-index: 4;
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, .5);
-    border-color: #000;
+    border-color: #333;
 }
 [handler="toggle-settings-overlay"][is-active="true"]:active,
 [handler="toggle-remote-debug-config-overlay"][is-active="true"]:active {
@@ -432,7 +447,7 @@ toolbar-filters filter.focus input {
 modebar {
   height: 21px;
   line-height: 21px;
-  background: #d9d9d9;
+  background: #d7d7d7;
 }
 modebar.hidden {
   display: none;
@@ -459,24 +474,36 @@ window-select select option[value="-1"]  {
 tabs { /* The bottom tabs containers */
   height: 21px;
   padding: 1px 2px 0; /* Tab will be pushed down one pixel, hence only 1 pixel at the top */
-  }
+}
 
 tab { /**/
   display:block;
   float:left;
   height: 15px;
   line-height: 15px;
-  padding: 2px 6px 4px;
+  padding: 2px 6px 3px;
   border: 0 transparent solid;
-  border-width: 1px 1px 0 1px;
+  border-width: 1px 1px 0;
   position: relative;
   top: 1px; /* Push down one pixel to hide the border */
-  }
+}
+
+tabs tab {
+  border-radius: 3px 3px 0 0;
+  margin-right: 1px;
+}
 
 tabs tab.active {
-  background: #fefefe;
-  border-color: #b3b3b3;
-  }
+  background: #fafafa;
+  border-color: #999;
+  box-shadow: 0 0 3px #ccc;
+}
+
+tabs tab:not(.active):hover {
+  background-color: #eee;
+  border-color: #ccc;
+  padding-bottom: 2px;
+}
 
 tabs tab:not(.active) {
     color: #666;
@@ -505,6 +532,9 @@ top-tabs.detached {
   height: 60px;
   background-image: url("../ui-images/shine_1_detached.png");
 }
+top-tabs.detached tab {
+  background-image: url("../ui-images/shine_1_detached.png");
+}
 
 /* this is a quick hack to get the runtime button in the tabs bar */
 top-tabs toolbar-buttons { 
@@ -515,12 +545,15 @@ top-tabs tab {  /**/
   height: 26px;
   line-height: 26px;
   border: 0;
-  border: 0 solid transparent;
-  border-width: 0 1px;
+  border-right: 1px solid rgba(0,0,0,0.15);
   padding: 2px 6px;
   position: static;
   text-shadow: 0 1px rgba(255, 255, 255, .5);
+  background: #e6e6e6 url("../ui-images/shine_1_attached.png") repeat-x;
+  -o-transition: background-color 0.2s;
+  box-shadow: inset 0 0 1px #fff;
   }
+
 top-tabs.detached tab {
   height: 60px;
   min-width: 60px;
@@ -529,9 +562,11 @@ top-tabs.detached tab {
   padding: 0 5px;
   line-height: .4;
 }
+
 top-tabs tab.active {
-  border-color: #b3b3b3;
-  background: #cecece url("../ui-images/shine_1_attached.png") repeat-x;
+  background-color: #cecece;
+  box-shadow: inset 0 0 15px rgba(0,0,0,0.1);
+
 }
 top-tabs tab.active:first-of-type {
   border-left-color: transparent;
@@ -1061,16 +1096,15 @@ cst-select[disabled] cst-drop-down
   opacity: .3;
 }
 
-cst-select-option-list
-{
+cst-select-option-list {
   display: block;
-  border: 1px solid #8e8e8e;
-  background-color: hsl(0, 0%, 97%);
+  border: 1px solid #666;
+  background-color: rgba(255,255,255,0.85);
   max-height: 200px;
   overflow: auto;
   width: auto;
-  border-radius: 3px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, .3);
+  border-radius: 2px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.5);
 }
 
 cst-option
@@ -1079,52 +1113,37 @@ cst-option
   padding:  2px 8px;
   white-space: nowrap;
 }
-cst-select-option-list :first-child {
-    border-radius: 3px 3px 0 0;
-}
-/* These selectors are super slow, find replacement
-cst-select-option-list :last-child {
-    border-radius: 0 0 3px 3px;
-}
-cst-select-option-list :only-child {
-    border-radius: 3px;
-}*/
 
-cst-select-option-list hr
-{
+cst-select-option-list hr {
   margin: 0;
   padding: 0;
   height: 1px;
   border: none;
-  background-color: hsl(0, 0%, 60%);
+  background-color: #ccc;
 }
 
-
-
-cst-option.selected
-{
-  background-color: #cce5f3;
+cst-option:hover {
+  background-color: #bbcef1;
+  color: #000;
+  -o-transition: background-color 0.2s;
 }
 
-cst-option:hover
-{
-    background-color: #cecece;
+cst-option.selected, cst-option:active {
+  background-color: #598bec;
+  color: #fff;
 }
 
-.debugger-menu cst-option
-{
+.debugger-menu cst-option {
   padding-left: 20px;
 }
 
-.debugger-menu cst-option.selected
-{
+.debugger-menu cst-option.selected {
   background-image: url('../ui-images/dragonfly-favicon.png');
   background-repeat: no-repeat;
   background-position: 2px 50%;
 }
 
-cst-select.color
-{
+cst-select.color {
   background: none;
   width: 22px;
   margin: 0 .2em;
@@ -1272,7 +1291,6 @@ pin-label.pinned
   margin: 30px 50px 0 50px;
   text-align: center;
   padding: 1em;
-  font-family: sans-serif !important;
   border: 1px solid #b3b3b3;
   border-radius: 8px;
   background: #f3f3f3;
@@ -1352,8 +1370,7 @@ breadcrumbs {
     white-space: nowrap;
     left: 0;
     right: 0;
-    -o-transition: left 0 ease-out;
-    background: transparent url("../ui-images/shadow_0.png")
+    background: #d7d7d7 url("../ui-images/shadow_0.png");
 }
 .navs breadcrumbs {
     left: 16px;
@@ -1482,9 +1499,6 @@ tabs, toolbar {
   position: absolute;
   z-index: 10;
   display: none;
-  background: #f7f7f7;
-  border: 1px solid #8e8e8e;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, .3);
   padding: 0px;
   min-width: 100px;
   display: inline-block;
@@ -1493,6 +1507,10 @@ tabs, toolbar {
   margin: 0;
   overflow-y: auto;
   overflow-x: hidden;
+  border: 1px solid #666;
+  background-color: rgba(255,255,255,0.85);
+  border-radius: 2px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.5);
 }
 #contextmenu li {
   padding: 2px 20px 2px 0;
@@ -1512,12 +1530,20 @@ tabs, toolbar {
   overflow: hidden;
 }
 #contextmenu li:not(.separator):not(.disabled):hover {
-  background: #cecece
+  background-color: #bbcef1;
+  color: #000;
+  -o-transition: background-color 0.2s;
 }
+
+#contextmenu li:not(.separator):not(.disabled):active {
+  background-color: #598bec;
+  color: #fff;
+}
+
 #contextmenu hr {
-  padding: 0;
   margin: 0;
-  border: 0;
+  padding: 0;
   height: 1px;
-  background: #8e8e8e;
+  border: none;
+  background-color: #ccc;
 }
