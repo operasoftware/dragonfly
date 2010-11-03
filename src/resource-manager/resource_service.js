@@ -35,7 +35,6 @@ cls.ResourceManagerService = function(view, data)
   this._document_contexts = {}; // mapping document id -> list of requests
   this._current_document = null;
 
-
   this._enable_content_tracking = function()
   {
     this._res_service.requestSetResponseMode(null, [[3, 1]]);
@@ -43,8 +42,10 @@ cls.ResourceManagerService = function(view, data)
 
   this._on_abouttoloaddocument_bound = function(msg)
   {
-
     var data = new cls.DocumentManager["1.0"].AboutToLoadDocument(msg);
+
+    // if not a top resource, just ignore. This usually means it's an iframe
+    if (data.parentDocumentID) { return; }
 
     this._seen_doc_ids = [];
     this._current_document = {
@@ -52,6 +53,7 @@ cls.ResourceManagerService = function(view, data)
       topresource: data.resourceID,
       resourcelist: [],
       resourcemap: {},
+      redirects: {},
       firsttime: data.time,
       lasttime: null
     };
@@ -62,9 +64,10 @@ cls.ResourceManagerService = function(view, data)
   {
     if (!this._current_document) { return; }
     var data = new cls.ResourceManager["1.0"].UrlLoad(msg);
-
     this._current_document.resourcelist.push(data.resourceID);
-    this._current_document.resourcemap[data.resourceID] = {urlload: data};
+    var resource = {urlload: data,
+                    redirected_from: this._current_document.redirects[data.resourceID]};
+    this._current_document.resourcemap[data.resourceID] = resource;
   }.bind(this);
 
   this._on_request_bound = function(msg)
@@ -142,16 +145,34 @@ cls.ResourceManagerService = function(view, data)
     }
   }.bind(this);
 
+  this._on_urlredirect_bound = function(msg)
+  {
+    var data = new cls.ResourceManager["1.0"].UrlRedirect(msg)
+    var old_res = this._current_document.resourcemap[data.fromResourceID];
+    var new_res = {urlload: data, redirect_from: old_res}
+    delete this._current_document.resourcemap[data.fromResourceID];
+    this._current_document.resourcelist.splice(this._current_document.resourcelist.indexOf(data.fromResourceID), 1);
+    this._current_document.redirects[new_res.resourceID] = old_res;
+  }.bind(this);
+
+  this._on_requestretry_bound = function(msg)
+  {
+    opera.postError("got a retry " + JSON.stringify(msg, null, "    "));
+  }.bind(this);
+
+
   this.init = function()
   {
     this._res_service = window.services['resource-manager'];
     this._res_service.addListener("urlload", this._on_urlload_bound);
     this._res_service.addListener("request", this._on_request_bound);
+    this._res_service.addListener("requestretry", this._on_requestretry_bound);
     this._res_service.addListener("requestheader", this._on_requestheader_bound);
     this._res_service.addListener("requestfinished", this._on_requestfinished_bound);
     this._res_service.addListener("response", this._on_response_bound);
     this._res_service.addListener("responseheader", this._on_responseheader_bound);
     this._res_service.addListener("responsefinished", this._on_responsefinished_bound);
+    this._res_service.addListener("urlredirect", this._on_urlredirect_bound);
     this._res_service.addListener("urlfinished", this._on_urlfinished_bound);
 
     this._doc_service = window.services['document-manager'];
