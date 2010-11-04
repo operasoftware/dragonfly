@@ -141,7 +141,7 @@ button[handler="reload-window"] {
 [key="dom.highlight-on-hover"] {
     content: url("../ui-images/icons/icon_hover.png");
 }
-[key="dom.lock-selecked-elements"] {
+[key="dom.lock-selected-elements"] {
     content: url("../ui-images/icons/icon_border.png");
 }
 [key="stylesheets.shortcuts"] {

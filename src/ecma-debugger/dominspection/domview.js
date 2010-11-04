@@ -174,7 +174,7 @@ cls.DOMView.create_ui_widgets = function()
       'show-siblings-in-breadcrumb': false,
       'show-id_and_classes-in-breadcrumb': true,
       'scroll-into-view-on-spotlight': true,
-      'lock-selecked-elements': false
+      'lock-selected-elements': false
     }, 
     // key-label map
     {
@@ -190,7 +190,7 @@ cls.DOMView.create_ui_widgets = function()
       'show-siblings-in-breadcrumb': ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB,
       'show-id_and_classes-in-breadcrumb': ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB,
       'scroll-into-view-on-spotlight': ui_strings.S_SWITCH_SCROLL_INTO_VIEW_ON_FIRST_SPOTLIGHT,
-      'lock-selecked-elements': ui_strings.S_SWITCH_LOCK_SELECTED_ELEMENTS
+      'lock-selected-elements': ui_strings.S_SWITCH_LOCK_SELECTED_ELEMENTS
     
     },
     // settings map
@@ -208,7 +208,7 @@ cls.DOMView.create_ui_widgets = function()
         'show-siblings-in-breadcrumb',
         'show-id_and_classes-in-breadcrumb',
         'scroll-into-view-on-spotlight',
-        'lock-selecked-elements'
+        'lock-selected-elements'
       ],
       contextmenu:
       [
@@ -292,7 +292,7 @@ cls.DOMView.create_ui_widgets = function()
       'find-with-click',
       'highlight-on-hover',
       'update-on-dom-node-inserted',
-      'lock-selecked-elements'
+      'lock-selected-elements'
     ]
   );
 
