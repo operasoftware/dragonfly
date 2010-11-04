@@ -266,7 +266,7 @@ templates.all_resources_row = function(resource, columns)
     host: function(res) { return templates.url_host(res.urlload.url) },
     path: function(res) { return templates.url_path(res.urlload.url) },
     mime: function(res) { return res.urlfinished.mimeType },
-    size: function(res) { return res.urlfinished.contentLength },
+    size: function(res) { return String(res.urlfinished.contentLength) },
   }
 
   return [
