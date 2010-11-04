@@ -9,6 +9,12 @@
 cls.DOMInspectorActions = function(id)
 {
   this.view_id = id;
+  this.id = id;
+
+  const
+  SCROLL_IN_PADDING = 30,
+  MODE_DEFAULT = ActionBroker.MODE_DEFAULT,
+  MODE_EDIT = ActionBroker.MODE_EDIT;
 
   var self = this;
   var view_container = null;
@@ -16,16 +22,20 @@ cls.DOMInspectorActions = function(id)
   var nav_target = null;
   var selection = null;
   var range = null;
+  var mode = MODE_DEFAULT;
+  var broker = ActionBroker.get_instance();
 
   this.serializer = new cls.DOMSerializer();
 
-  const SCROLL_IN_PADDING = 30;
+  this._handlers = {};
 
-  this.get_children = function (event)
+  // traversal 'subtree' or 'children' 
+  this._expand_collapse_node = function(event, target, traversal)
   {
     var container = event.target.parentNode;
     var level = parseInt(container.style.marginLeft) || 0;
-    var level_next = container.nextSibling && parseInt(container.nextSibling.style.marginLeft) || 0;
+    var level_next = container.nextSibling && 
+                     parseInt(container.nextSibling.style.marginLeft) || 0;
     var ref_id = parseInt(container.getAttribute('ref-id'));
     if (container = container.has_attr("parent-node-chain", "data-model-id"))
     {
@@ -44,8 +54,9 @@ cls.DOMInspectorActions = function(id)
       }
       else
       {
-        cb = this._get_children_callback.bind(this, container, model, target_id, is_editable);
-        model.expand(cb, ref_id, event.ctrlKey ? 'subtree' : 'children');
+        cb = this._get_children_callback.bind(this, container, model, 
+                                              target_id, is_editable);
+        model.expand(cb, ref_id, traversal);
       }
     }
   }
@@ -56,84 +67,37 @@ cls.DOMInspectorActions = function(id)
     container.re_render(tmpl);
   }
 
-  this.spotlight_node = function(event, current_target)
+  this._select_node = function(target)
   {
     var 
-    obj_id = parseInt(current_target.getAttribute('ref-id')),
-    model_id = current_target.get_attr("parent-node-chain", "data-model-id"),
+    obj_id = parseInt(target.getAttribute('ref-id')),
+    model_id = target.get_attr("parent-node-chain", "data-model-id"),
     inspections = window.dominspections,
-    model = null,
-    target = null,
-    css_path = null;
+    model = null
+    scroll_into_view = false,
+    current_target_id = 0;
 
     if (model_id && obj_id)
     {
       model = inspections[model_id];
       if (window.settings.dom.get('highlight-on-hover'))
-        hostspotlighter.spotlight(obj_id,
-                                  settings.dom.get('scroll-into-view-on-spotlight') && 
-                                  obj_id != (inspections.active && inspections.active.target));
+      {
+        current_target_id = inspections.active && inspections.active.target;
+        scroll_into_view = settings.dom.get('scroll-into-view-on-spotlight') && 
+                           obj_id != current_target_id;
+        hostspotlighter.spotlight(obj_id, scroll_into_view);                       
+      }
       model.target = obj_id;
       inspections.active = model;
-      window.messages.post("element-selected", {model: model, obj_id: obj_id, rt_id: model.getDataRuntimeId()});
-      if (current_target)
-      {
-        if (target = document.getElementById('target-element'))
-          target.removeAttribute('id');
-        if (!window.settings.dom.get('dom-tree-style') && /<\//.test(current_target.firstChild.textContent))
-        {
-          while ((current_target = current_target.previousSibling) && 
-                  current_target.getAttribute('ref-id') != obj_id);
-        }
-        topCell.statusbar.updateInfo(templates.breadcrumb(model, obj_id));
-      }
-      if (current_target)
-        current_target.id = 'target-element';
+      window.messages.post("element-selected", {model: model, 
+                                                obj_id: obj_id, 
+                                                rt_id: model.getDataRuntimeId()});
+      if (document.getElementById('target-element'))
+        document.getElementById('target-element').removeAttribute('id');
+      target.id = 'target-element';
     }
-  };
-
-  this.breadcrumb_link = function(event, target)
-  {
-    var 
-    obj_id = parseInt(target.getAttribute('obj-id')),
-    model_id = target.get_attr("parent-node-chain", "data-model-id"),
-    inspections = window.dominspections,
-    model = null;
-
-    if (model_id && obj_id)
-    {
-      model = inspections[model_id];
-      model.target = obj_id;
-      inspections.active = model;
-      window.messages.post("element-selected", {model: model, obj_id: obj_id, rt_id: model.getDataRuntimeId()});
-      var target = document.getElementById('target-element');
-      if (target)
-      {
-        target.removeAttribute('id');
-        while (target && !/container/i.test(target.nodeName) && (target = target.parentElement));
-        if (target)
-        {
-          var divs = target.getElementsByTagName('div'), div = null, i = 0;
-          for ( ; (div = divs[i]) && div.getAttribute('ref-id') != obj_id; i++);
-          if (div)
-          {
-            div.id = 'target-element';
-            window.helpers.scroll_dom_target_into_view();
-            if (window.settings.dom.get('highlight-on-hover'))
-              hostspotlighter.spotlight(obj_id, true);
-          }
-        }
-      }
-    }
+    return model;
   }
-    
-  this.export_markup = function(event, target)
-  {
-    window.export_data.data = 
-      window.helpers.escapeTextHtml(this.serializer.serialize(window.dom_data));
-    window.topCell.showView('export_data');
-  }
-
 
   var _is_script_node = function(target)
   {
@@ -363,40 +327,6 @@ cls.DOMInspectorActions = function(id)
     return new_target;
   }
 
-  this.target_enter = function(event, action_id)
-  {
-    if(nav_target)
-    {
-      nav_target.releaseEvent
-      (
-        ( /^input|node$/i.test(nav_target.nodeName)
-          || nav_target.getAttribute('handler') ) && "click" || "dblclick"
-      );
-    }
-    return false;
-  }
-
-  this.target_ctrl_enter = function(event, action_id)
-  {
-    if(nav_target)
-    {
-      switch (nav_target.nodeName.toLowerCase())
-      {
-        case "node":
-        {
-          nav_target.releaseEvent("dblclick");
-          break;
-        }
-        case "input":
-        {
-          nav_target.releaseEvent("click", {ctrlKey: true});
-          break;
-        }
-      } 
-    }
-    return false;
-  }
-
   this.keyhandler_onclick = function(event)
   {
     var target = event.target;
@@ -411,8 +341,16 @@ cls.DOMInspectorActions = function(id)
     return !is_in_container;
   }
 
+  this.focus = function(event, container)
+  {
+    if (mode == MODE_DEFAULT)
+      this.setContainer(event, container);
+  }
+
   this.blur = function(event)
   {
+    if (mode == MODE_EDIT && this.editor)
+      this.editor.submit();
     if (selection)
       selection.collapse(document.documentElement, 0);
     view_container = null;
@@ -423,17 +361,108 @@ cls.DOMInspectorActions = function(id)
     document.removeEventListener('DOMNodeInserted', ondomnodeinserted, false);
   }
 
-  this.nav_up = function(event, action_id)
+  this.onclick = function(event)
+  {
+    if (mode == MODE_DEFAULT)
+      return this.keyhandler_onclick(event);
+    return this.edit_onclick(event);
+  }
+
+  this.handle = function(action_id, event, target)
+  {
+    if (action_id in this._handlers)
+      return this._handlers[action_id](event, target);
+  }
+
+  this._handlers["expand-collapse-node"] = function(event, target)
+  {
+    this._expand_collapse_node(event, target, 'children');
+  }.bind(this);
+
+  this._handlers["expand-collapse-whole-node"] = function(event, target)
+  {
+    this._expand_collapse_node(event, target, 'subtree');
+  }.bind(this);
+
+  this._handlers["spotlight-node"] = function(event, target)
+  {
+    if(window.settings['dom'].get('highlight-on-hover'))
+    {
+      var obj_id = parseInt(target.getAttribute('ref-id'));
+      window.hostspotlighter.soft_spotlight(obj_id);
+    }
+  }.bind(this);
+
+  this._handlers["select-node"] = function(event, target)
+  {
+    var obj_id = parseInt(target.getAttribute('ref-id'));
+    if (!window.settings.dom.get('dom-tree-style') && 
+        /<\//.test(target.firstChild.textContent))
+      while ((target = target.previousSibling) && 
+              target.getAttribute('ref-id') != obj_id);
+    if (target)
+    {
+      var model = this._select_node(target);
+      if (model)
+        topCell.statusbar.updateInfo(templates.breadcrumb(model, obj_id));
+    }
+  }.bind(this);
+
+  this._handlers["select-node-in-breadcrumb"] = function(event, target)
+  {
+    // assuming the breadcrumb is visible together with the dom view
+    var obj_id = parseInt(target.getAttribute('obj-id'));
+    var target = document.getElementById('target-element');
+    if (target)
+    {
+      while (target && !/container/i.test(target.nodeName) && 
+             (target = target.parentElement));
+      if (target)
+      {
+        var divs = target.getElementsByTagName('div'), div = null, i = 0;
+        for ( ; (div = divs[i]) && div.getAttribute('ref-id') != obj_id; i++);
+        if (div)
+          this._select_node(div);
+      }
+    }
+  }.bind(this);
+    
+  this._handlers["export-markup"] = function(event, target)
+  {
+    window.export_data.data = 
+      window.helpers.escapeTextHtml(this.serializer.serialize(window.dom_data));
+    window.topCell.showView('export_data');
+  }.bind(this);
+
+  this._handlers["expand-whole-dom"] = function(event, target)
+  {
+    window.dom_data.get_snapshot();
+  }
+
+  this._handlers["dom-resource-link"] = function(event, target)
+  {
+    var 
+    url = target.textContent, 
+    rt_id = target.get_attr('parent-node-chain', 'rt-id');
+
+    // TODO use the exec service to open new link when it's ready
+    var url = helpers.resolveURLS(runtimes.getURI(rt_id), 
+                                  url.slice(1, url.length - 1));
+    window.open(url, "_blank");
+  }.bind(this);
+
+  this._handlers["nav-up"] = function(event, target)
   {
     // TODO if setting of nav target fails
-    if( ! this.setSelected( nav_target.getPreviousWithFilter(view_container, nav_filters.up_down) ) )
+    if ( !this.setSelected(nav_target.getPreviousWithFilter(view_container, 
+                                                            nav_filters.up_down)))
     {
       view_container.scrollTop = 0;
     }
     return true;
-  }
+  }.bind(this);
 
-  this.nav_down = function(event, action_id)
+  this._handlers["nav-down"] = function(event, target)
   {
     // TODO if setting of nav target fails
     if(!this.setSelected( nav_target.getNextWithFilter(view_container, nav_filters.up_down) ) )
@@ -441,23 +470,67 @@ cls.DOMInspectorActions = function(id)
       view_container.scrollTop = view_container.scrollHeight;
     }
     return true;
-  }
+  }.bind(this);
 
-  this.nav_left = function(event, action_id)
+  this._handlers["nav-left"] = function(event, target)
   {
     // TODO if setting of nav target fails
     this.setSelected(nav_target.getPreviousWithFilter(view_container, nav_filters.left_right));
     return true;
-  }
+  }.bind(this);
 
-  this.nav_right = function(event, action_id)
+  this._handlers["nav-right"] = function(event, target)
   {
+    
     // TODO if setting of nav target fails
     this.setSelected(nav_target.getNextWithFilter(view_container, nav_filters.left_right));
     return true;
-  }
+  }.bind(this);
 
-  this.editDOM = function(event, target)
+  this._handlers["expand-collapse-or-select"] = function(event, target)
+  {
+    if(nav_target)
+    {
+      var handler_target = nav_target.has_attr("parent-node-chain", "handler");
+      switch (nav_target.nodeName.toLowerCase())
+      {
+        case 'input':
+          this._handlers["expand-collapse-node"](event, handler_target);
+          break;
+        case 'value':
+          if (handler_target == nav_target)
+          {
+            this._handlers["dom-resource-link"](event, handler_target);
+            break;
+          }
+        case 'key':
+        case 'node':
+        case 'text':
+          this._handlers["select-node"](event, handler_target);
+          break;
+      }
+    }
+    return false;
+  }.bind(this);
+
+  this._handlers["expand-collapse-all-or-edit"] = function(event, target)
+  {
+    if(nav_target)
+    {
+      var handler_target = nav_target.has_attr("parent-node-chain", "handler");
+      switch (nav_target.nodeName.toLowerCase())
+      {
+        case "input":
+          this._handlers["expand-collapse-whole-node"](event, handler_target);
+          break;
+        default:
+          this._handlers["edit-dom"]({target: nav_target}, handler_target);
+      } 
+    }
+    return false;
+  }.bind(this);
+
+  this._handlers["edit-dom"] = function(event, target)
   {
     if (!_is_script_node(event.target))
     {
@@ -475,15 +548,11 @@ cls.DOMInspectorActions = function(id)
         case 'value':
         case 'text':
         {
-          event.preventDefault();
-          event.stopPropagation();
-          
-          key_identifier.setModeEdit(self);
+          broker.set_mode(this, mode = MODE_EDIT);
           document.documentElement.addClass('modal');
           self.setSelected(event.target.parentNode);
           self.set_editor("dom-attr-text-editor");
           self.editor.edit(event, event.target);
-          
           break;
         }
         case 'node':
@@ -500,83 +569,62 @@ cls.DOMInspectorActions = function(id)
               return;
             }
           }
-          event.preventDefault();
-          event.stopPropagation();
-          key_identifier.setModeEdit(self);
+          broker.set_mode(this, mode = MODE_EDIT);
           document.documentElement.addClass('modal');
           self.setSelected(new_target.parentNode);
           self.set_editor("dom-markup-editor");
           self.editor.edit(event, new_target);
-          /*
-          if(event.target.parentElement.hasAttribute('rule-id'))
-          {
-            key_identifier.setModeEdit(self);
-            self.setSelected(event.target);
-            self.editor.edit(event);
-          }
-          */
-          // execute property click action
           break;
         }
       }
     }
-  }
+  }.bind(this);
 
-  this.enter_edit_mode = function(event, action_id)
+  this._handlers["submit-edit-or-new-line"] = function(event, target)
   {
-    if( this.editor.type == "dom-attr-text-editor" )
+    if (this.editor.type == "dom-attr-text-editor")
     {
       this.setSelected(this.editor.submit() || this.getFirstTarget() );
-      key_identifier.setModeDefault(self);
+      broker.set_mode(this, mode = MODE_DEFAULT);
       document.documentElement.removeClass('modal');
       return false;
     }
-    else
-    {
-      return true;
-    }
-  }
+    return true;
+  }.bind(this);
 
-  this.ctrl_enter_edit_mode = function(event, action_id)
+  this._handlers["ctrl-enter-edit-mode"] = function(event, target)
+  {
+    this.setSelected(this.editor.submit() || this.getFirstTarget());
+    broker.set_mode(this, mode = MODE_DEFAULT);
+    document.documentElement.removeClass('modal');
+    return false;
+  }.bind(this);
+
+  this._handlers["edit-next"] = function(event, target)
   {
     if( this.editor.type == "dom-attr-text-editor" )
     {
-      return false;
-    }
-    else
-    {
-      this.setSelected(this.editor.submit() || this.getFirstTarget() );
-      key_identifier.setModeDefault(self);
-      document.documentElement.removeClass('modal');
-      return false;
-    }
-  }
-
-  this.nav_next_edit_mode = function(event, action_id)
-  {
-    if( this.editor.type == "dom-attr-text-editor" )
-    {
-      if( !this.editor.nav_next(event, action_id) )
+      if( !this.editor.nav_next(event) )
       {
-        key_identifier.setModeDefault(this);
+        broker.set_mode(this, mode = MODE_DEFAULT);
         document.documentElement.removeClass('modal');
       }
       return false;
     }
     else
     {
-      this.editor.nav_next(event, action_id);
+      this.editor.nav_next(event);
     }
     return false;
-  }
+  }.bind(this);
 
-  this.nav_previous_edit_mode = function(event, action_id)
+  this._handlers["edit-previous"] = function(event, target)
   {
     if( this.editor.type == "dom-attr-text-editor" )
     {
-      if( !this.editor.nav_previous(event, action_id) )
+      if( !this.editor.nav_previous(event) )
       {
-        key_identifier.setModeDefault(this);
+        broker.set_mode(this, mode = MODE_DEFAULT);
         document.documentElement.removeClass('modal');
       }
       return false;
@@ -585,9 +633,9 @@ cls.DOMInspectorActions = function(id)
     {
       return true
     }
-  }
+  }.bind(this);
 
-  this.escape_edit_mode = function(event, action_id)
+  this._handlers["exit-edit"] = function(event, target)
   {
     if( this.editor.type == "dom-attr-text-editor" )
     {
@@ -602,10 +650,10 @@ cls.DOMInspectorActions = function(id)
       */
       this.editor.cancel();
     }
-    key_identifier.setModeDefault(this);
+    broker.set_mode(this, mode = MODE_DEFAULT);
     document.documentElement.removeClass('modal');
     return false;
-  }
+  }.bind(this);
 
   this.edit_onclick = function(event)
   {
@@ -617,7 +665,8 @@ cls.DOMInspectorActions = function(id)
       }
       else
       {
-        key_identifier.setModeDefault(self);
+        broker.set_mode(this, mode = MODE_DEFAULT);
+        //key_identifier.setModeDefault(self);
         document.documentElement.removeClass('modal');
       }
     }
@@ -639,202 +688,55 @@ cls.DOMInspectorActions = function(id)
     }
   }
 
-  this.select_all = function(event, action_id)
-  {
-    var selection = getSelection();
-    var range = document.createRange();
-    selection.collapse(view_container, 0);
-    range.selectNodeContents(view_container);
-    selection.addRange(range);
-  }
-
-  this.init(id);
+  ActionBroker.get_instance().register_handler(this);
 
 };
-
-cls.DOMInspectorActions.prototype = BaseActions;
-
-
-
-
-/**
-  * @constructor 
-  * @extends BaseKeyhandler
-  */
-
-cls.DOMInspectorKeyhandler = function(id)
-{
-
-  var __actions = actions[id];
-
-  this[this.NAV_UP] =  function(event, action_id)
-  {
-    return __actions.nav_up(event, action_id);
-  }
-  this[this.NAV_DOWN] = function(event, action_id)
-  {
-    return __actions.nav_down(event, action_id);
-  }
-  this[this.NAV_LEFT] = function(event, action_id)
-  {
-    return __actions.nav_left(event, action_id);
-  }
-
-  this[this.NAV_RIGHT] = function(event, action_id)
-  {
-    return __actions.nav_right(event, action_id);
-  }
-
-  this[this.ENTER] = function(event, action_id)
-  {
-    return __actions.target_enter(event, action_id);
-  }
-
-  this[this.CTRL_ENTER] = function(event, action_id)
-  {
-    return __actions.target_ctrl_enter(event, action_id);
-  }
-
-  this[this.CTRL_A] = function(event, action_id)
-  {
-    return __actions.select_all(event, action_id);
-  }
-
-  this.focus = function(event, container)
-  {
-    __actions.setContainer(event, container);
-  }
-  this.blur = function(event)
-  {
-    __actions.blur(event);
-  }
-  this.onclick = function(event)
-  {
-    return __actions.keyhandler_onclick(event);
-  }
-  
-  this.init(id);
-};
-
-cls.DOMInspectorKeyhandler.prototype = BaseKeyhandler;
-
-
-
-/**
-  * @constructor 
-  * @extends BaseEditKeyhandler
-  */
-
-cls.DOMInspectorEditKeyhandler = function(id)
-{
-
-  var __actions = actions[id]
-
-  this[this.NAV_PREVIOUS] = function(event, action_id)
-  {
-    return __actions.nav_previous_edit_mode(event, action_id);
-  }
-
-  this[this.NAV_NEXT] = function(event, action_id)
-  {
-    return __actions.nav_next_edit_mode(event, action_id);
-  }
-  
-  this[this.ENTER] = function(event, action_id)
-  {
-    return __actions.enter_edit_mode(event, action_id);
-  }
-
-  this[this.CTRL_ENTER] = function(event, action_id)
-  {
-    return __actions.ctrl_enter_edit_mode(event, action_id);
-  }
-  
-  this[this.ESCAPE] = function(event, action_id)
-  {
-    return __actions.escape_edit_mode(event, action_id);
-  }
-
-  this.blur = function(event)
-  {
-    if( __actions.editor )
-    {
-      __actions.editor.submit();
-    }
-  }
-
-  this.onclick = function(event)
-  {
-    return __actions.edit_onclick(event);
-  }
-
-  this.init(id);
-};
-
-cls.DOMInspectorEditKeyhandler.prototype = BaseEditKeyhandler;
 
 window.eventHandlers.click['get-children'] = function(event, target)
 {
-  window.actions['dom'].get_children(event, target);
+  if (event.ctrlKey)
+    this.broker.dispatch_action("dom", "expand-collapse-whole-node", event, target);
+  else
+    this.broker.dispatch_action("dom", "expand-collapse-node", event, target);
 }
 
 window.eventHandlers.click['spotlight-node'] = function(event, target)
 {
-  window.actions['dom'].spotlight_node(event, target);
+  this.broker.dispatch_action("dom", "select-node", event, target);
 }
 
 window.eventHandlers.click['breadcrumb-link'] = function(event, target)
 {
-  window.actions['dom'].breadcrumb_link(event, target);
+  this.broker.dispatch_action("dom", "select-node-in-breadcrumb", event, target);
 }
 
 window.eventHandlers.mouseover['spotlight-node'] = function(event, target)
 {
-  if(window.settings['dom'].get('highlight-on-hover'))
-  {
-    window.hostspotlighter.soft_spotlight(parseInt(target.getAttribute('ref-id')));
-  }
+  this.broker.dispatch_action("dom", "spotlight-node", event, target);
 }
 
 window.eventHandlers.click['dom-inspection-export'] = function(event, target)
 {
-  window.actions['dom'].export_markup(event, target);
+  this.broker.dispatch_action("dom", "export-markup", event, target);
 };
 
 window.eventHandlers.click['dom-inspection-snapshot'] = function(event, target)
 {
-  window.dom_data.get_snapshot();
+  this.broker.dispatch_action("dom", "expand-whole-dom", event, target);
 };
+
+window.eventHandlers.click['dom-resource-link'] = function (event, target)
+{
+  this.broker.delay_action("click", "dom", "dom-resource-link", event, target);
+};
+
+window.eventHandlers.dblclick['edit-dom'] = function(event, target)
+{
+  this.broker.clear_delayed_actions("click");
+  this.broker.dispatch_action("dom", "edit-dom", event, target);
+}
 
 window.eventHandlers.click['df-show-live-source'] = function(event, target)
 {
   window.debug_helpers.liveSource.open();
 };
-
-window.eventHandlers.click['dom-resource-link'] = function dom_resource_link (event, target)
-{
-  window.eventHandlers.dblclick['edit-dom'].delay(dom_resource_link.execute, event, target);
-};
-
-window.eventHandlers.click['dom-resource-link'].execute = function(event, target)
-{
-  var url = target.textContent, rt_id = target.get_attr('parent-node-chain', 'rt-id');
-  // TODO use the exec service to open new link when it's ready
-  window.open(helpers.resolveURLS(runtimes.getURI(rt_id), url.slice(1, url.length - 1)), "_blank");
-};
-
-window.eventHandlers.dblclick['edit-dom'] = (function(event, target)
-{
-  var click_timeouts = new Timeouts();
-  var handler = function(event, target)
-  {
-    click_timeouts.clear();
-    window.actions['dom'].editDOM(event, target);
-  };
-  handler.delay = function(method)
-  {
-    var args = [method, 300].concat(Array.prototype.slice.call(arguments).slice(1));
-    click_timeouts.set.apply(click_timeouts, args);
-  }
-  return handler;
-})();

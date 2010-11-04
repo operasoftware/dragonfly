@@ -75,7 +75,7 @@ Interface ActionHandler
   /**
     * Gets called if an action implementer changes to be the current context.
     */
-  void focus(container)
+  void focus(event, container)
  
   /**
     * Gets called if an action implementer stops to be the current context.

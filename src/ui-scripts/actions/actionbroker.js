@@ -97,19 +97,19 @@ var ActionBroker = function()
         {
           var ui_obj = UIBase.getUIById(container.getAttribute('ui-id'));
           if (ui_obj)
-            this._set_current_handler(ui_obj.view_id, container);
+            this._set_current_handler(ui_obj.view_id, event, container);
           break;
         }
         // TODO set according key handler, e.g. toolbar, tab
         default:
         {
-          this._set_current_handler(GLOBAL_HANDLER, container);
+          this._set_current_handler(GLOBAL_HANDLER, event, container);
         }
       }
     }
   }).bind(this);
 
-  this._set_current_handler = function(handler_id, container)
+  this._set_current_handler = function(handler_id, event, container)
   {
     if (handler_id != this._action_context_id)
     {
@@ -164,21 +164,42 @@ var ActionBroker = function()
     var action = shortcuts && shortcuts[key_id] || '';
     var propagate_event = true;
     if (action)
-    {
       propagate_event = this._action_context.handle(action,
                                                     event,
                                                     this._container);
-      if (!(propagate_event === false) &&
-           this._action_context != this._global_handler)
+    if (!(propagate_event === false) &&
+         this._action_context != this._global_handler)
+    {
+      shortcuts = this._gloabal_shortcuts[this._mode];
+      action = shortcuts && shortcuts[key_id] || '';
+      if (action)
         propagate_event = this._global_handler.handle(action,
                                                       event,
                                                       this._container);
-      if (propagate_event === false)
-      {
-        event.stopPropagation();
-        event.preventDefault();
-      };
     }
+    if (propagate_event === false)
+    {
+      event.stopPropagation();
+      event.preventDefault();
+    };
+  }
+
+  this._delays = {}; 
+
+  this.delay_action = function(type, handler_id, action_id, event, target)
+  {
+    if (!this._delays.hasOwnProperty(type))
+    {
+      this._delays[type] = new Timeouts();
+    }
+    var cb = this.dispatch_action.bind(this, handler_id, action_id, event, target);
+    this._delays[type].set(cb, 300);
+  }
+
+  this.clear_delayed_actions = function(type)
+  {
+    if (this._delays[type])
+      this._delays[type].clear();
   }
 
   this.get_shortcuts = function()
@@ -234,16 +255,16 @@ ActionBroker.default_shortcuts_win =
       "down": "nav-down",
       "left": "nav-left",
       "right": "nav-right",
-      "enter": "target-enter",
-      "ctrl enter": "target-ctrl-enter",
+      "enter": "expand-collapse-or-select",
+      "ctrl enter": "expand-collapse-all-or-edit",
     },
     "edit":
     {
-      "shift tab": "nav-previous-edit-mode",
-      "tab": "nav-next-edit-mode",
-      "enter": "enter-edit-mode",
+      "shift tab": "edit-previous",
+      "tab": "edit-next",
+      "enter": "submit-edit-or-new-line",
       "ctrl enter": "ctrl-enter-edit-mode",
-      "escape": "escape-edit-mode",
+      "escape": "exit-edit",
     }
   }
 };
