@@ -242,7 +242,7 @@ templates.grid_lines = function(millis, width, height)
 
 templates.all_resources = function(ctx, sorted_by, columns)
 {
-  columns = columns || ["host", "path", "mime", "size"];
+  columns = columns || ["host", "path", "mime", "size", "size_h"];
   resources = ctx.resources;
 
   var tpl = [
@@ -267,6 +267,7 @@ templates.all_resources_row = function(resource, columns)
     path: function(res) { return templates.url_path(res.urlload.url) },
     mime: function(res) { return res.urlfinished.mimeType },
     size: function(res) { return String(res.urlfinished.contentLength) },
+    size_h: function(res) { return String(templates.human_readable_size(res.urlfinished.contentLength)) },
   }
 
   return [
@@ -364,4 +365,20 @@ templates.load_time_overview = function(ctx)
 {
   return ["div", templates.pie_chart(ctx.get_resource_times(), 100, 100),
           "handler", "resource-select-graph"];
+}
+
+templates.human_readable_size = function(bytes)
+{
+  if (bytes >= 1048576) // megabytes
+  {
+    return "" + ((bytes / 1048576).toFixed(2)) + "MB";
+  }
+  else if (bytes >= 10240)
+  {
+    return "" + Math.ceil((bytes / 1024)) + "KB";
+  }
+  else
+  {
+    return "" + bytes + "B";
+  }
 }
