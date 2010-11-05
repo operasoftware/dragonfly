@@ -438,7 +438,7 @@ var key_identifier = new function()
     }
   };
 
-  document.addEventListener('keypress', this.handle, true);
-  document.addEventListener('click', this.setView, true);
+  //document.addEventListener('keypress', this.handle, true);
+  //document.addEventListener('click', this.setView, true);
 };
 

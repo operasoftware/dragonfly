@@ -1218,7 +1218,8 @@ cst-select-option-list
   width: auto;
 }
 
-cst-option
+cst-option,
+cst-title
 {
   display: block;
   cursor: pointer;
@@ -1248,7 +1249,8 @@ cst-option:hover
   color: #fff;
 }
 
-.debugger-menu cst-option
+.debugger-menu cst-option,
+.debugger-menu cst-title
 {
   padding-left: 20px;
 }
@@ -1422,3 +1424,14 @@ pin-label.pinned
 {
   color: #999;
 }
+
+.window-select-gadgets,
+cst-title
+{
+  background-color: hsl(0, 0%, 40%);
+  color: #fff;
+  font-style: normal;
+}
+
+
+
