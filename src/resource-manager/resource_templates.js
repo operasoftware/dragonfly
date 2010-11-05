@@ -262,12 +262,13 @@ templates.all_resources = function(ctx, sorted_by, columns)
 
 templates.all_resources_row = function(resource, columns)
 {
+  // fixme: the urlfinished events should always be there, but is buggy atm
   var col_value_getters = {
     host: function(res) { return templates.url_host(res.urlload.url) },
     path: function(res) { return templates.url_path(res.urlload.url) },
-    mime: function(res) { return res.urlfinished.mimeType },
-    size: function(res) { return String(res.urlfinished.contentLength) },
-    size_h: function(res) { return String(templates.human_readable_size(res.urlfinished.contentLength)) },
+    mime: function(res) { return res.urlfinished ? res.urlfinished.mimeType : "n/a" },
+    size: function(res) { return String(res.urlfinished ? res.urlfinished.contentLength : "n/a") },
+    size_h: function(res) { return String(res.urlfinished ? templates.human_readable_size(res.urlfinished.contentLength): "n/a") },
   }
 
   return [
