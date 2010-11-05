@@ -142,6 +142,7 @@ var ContextMenu = function() {
   this._expand_all_items = function(items, event)
   {
     var all_items = [];
+
     for (var i = 0, item; item = items[i]; i++)
     {
       if (typeof item.callback == "function")
@@ -153,6 +154,12 @@ var ContextMenu = function() {
         all_items.push(item);
       }
     }
+
+    for (var i = 0, item; item = all_items[i]; i++)
+    {
+      item.id = item.id || "item_" + i;
+    }
+
     return all_items;
   };
 
@@ -196,10 +203,10 @@ ContextMenu.registered_menus = {};
 /**
  * Registers a new context menu, or adds items to an already registered context menu.
  *
- * @param {String} menu_id An id correspoding to an id specified with a data-menu
+ * @param {String} menu_id An id corresponding to an id specified with a data-menu
  *                         attribute in the markup. May be an already existing
  *                         menu, in which case the items are added.
- * @param {Array} item_list An array of objects with 'id', 'label' and 'handler'
+ * @param {Array} item_list An array of objects with 'label' and 'handler'
  *                          (function).
  */
 ContextMenu.register = function(menu_id, item_list)
