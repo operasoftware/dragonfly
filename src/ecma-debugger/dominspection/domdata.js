@@ -16,11 +16,13 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
 
   /**
     * To get an initial DOM of the given runtime.
-    * Selects either the body or the root element in that oreder.
+    * Selects either the body or the root element in that order, if no optional
+    * obj id is given.
     * Displays a travesal 'parent-node-chain-with-children' for the selected node.
     * @param {Number} rt_id. The runtime id of the given runtime.
+    * @param {Number} obj_id. The optional node to be inspected.
     */
-  this.get_dom = function(rt_id){};
+  this.get_dom = function(rt_id, obj_id){};
 
   /**
     * To get a fully expanded DOM of the current selected runtime (document).
@@ -350,9 +352,11 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
 
   /* implementation */
 
-  this.get_dom = function(rt_id)
+  this.get_dom = function(rt_id, obj_id)
   {
-    if ( !(rt_id == this._data_runtime_id && this._data.length) &&
+    if (obj_id)
+      this._click_handler_host({runtime_id: rt_id, object_id: obj_id});
+    else if ( !(rt_id == this._data_runtime_id && this._data.length) &&
           runtime_onload_handler.check(rt_id, arguments))
       this._get_initial_view(rt_id);
   }

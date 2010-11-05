@@ -388,7 +388,8 @@ cls.DOMInspectorActions = function(id)
   {
     if(window.settings['dom'].get('highlight-on-hover'))
     {
-      var obj_id = parseInt(target.getAttribute('ref-id'));
+      var obj_id = parseInt(target.getAttribute('ref-id') || 
+                            target.getAttribute('obj-id')) ;
       window.hostspotlighter.soft_spotlight(obj_id);
     }
   }.bind(this);
@@ -406,6 +407,15 @@ cls.DOMInspectorActions = function(id)
       if (model)
         topCell.statusbar.updateInfo(templates.breadcrumb(model, obj_id));
     }
+  }.bind(this);
+  
+  this._handlers["inspect-node-link"] = function(event, target)
+  {
+    var obj_id = parseInt(target.getAttribute('obj-id'));
+    var rt_id = parseInt(target.getAttribute('rt-id'));
+    if (!window.views.dom.isvisible())
+      window.topCell.showView('dom');
+    window.dom_data.get_dom(rt_id, obj_id);
   }.bind(this);
 
   this._handlers["select-node-in-breadcrumb"] = function(event, target)
@@ -734,6 +744,16 @@ window.eventHandlers.dblclick['edit-dom'] = function(event, target)
 {
   this.broker.clear_delayed_actions("click");
   this.broker.dispatch_action("dom", "edit-dom", event, target);
+}
+
+window.eventHandlers.click['inspect-node-link'] = function(event, target)
+{
+  this.broker.dispatch_action("dom", "inspect-node-link", event, target);
+}
+
+window.eventHandlers.mouseover['inspect-node-link'] = function(event, target)
+{
+  this.broker.dispatch_action("dom", "spotlight-node", event, target);
 }
 
 window.eventHandlers.click['df-show-live-source'] = function(event, target)

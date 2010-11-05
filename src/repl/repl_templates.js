@@ -38,8 +38,8 @@ templates.repl_output_pobj = function(data)
     'code',
     data.name,
     'handler', /(?:Element)$/.test(data.name) ? 
-               'inspect-object-link' :
-               'inspect-node-link',
+               'inspect-node-link' :
+               'inspect-object-link',
     'rt-id', data.rt_id.toString(),
     'obj-id', data.obj_id.toString(),
     'class', 'repl-pobj'
