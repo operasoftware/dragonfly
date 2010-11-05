@@ -34,10 +34,12 @@ templates.repl_output_native_or_pobj = function(thing)
 
 templates.repl_output_pobj = function(data)
 {
-  return [
+  return [    
     'code',
     data.name,
-    'handler', 'inspect-object-link',
+    'handler', /(?:Element)$/.test(data.name) ? 
+               'inspect-object-link' :
+               'inspect-node-link',
     'rt-id', data.rt_id.toString(),
     'obj-id', data.obj_id.toString(),
     'class', 'repl-pobj'
