@@ -20,6 +20,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
   WINDOW_ID = 2,
   OBJECT_ID = 3,
   URI = 4,
+  DESCRIPTION = 5,
   THREAD_STARTED = 0,
   THREAD_STOPPED_AT = 1,
   THREAD_FINISHED = 2;
@@ -174,7 +175,8 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
 
   var isTopRuntime = function(rt)
   {
-    return rt.html_frame_path.indexOf('[') == -1;
+    return (rt.html_frame_path.indexOf('_top') == 0 && 
+            rt.html_frame_path.indexOf('[') == -1);
   }
 
   /*
@@ -259,9 +261,10 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
       {
         runtime_id: r_t[RUNTIME_ID],
         html_frame_path: r_t[HTML_FRAME_PATH],
-        window_id: r_t[WINDOW_ID],
+        window_id: r_t[WINDOW_ID] || __selected_window,
         object_id: r_t[OBJECT_ID],
         uri: r_t[URI],
+        description: r_t[DESCRIPTION],
       };
 
       checkOldRuntimes(runtime);
@@ -529,7 +532,8 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
 
   this.setActiveWindowId = function(window_id)
   {
-    if( window_id != __selected_window )
+    // set the debug context
+    if (window_id != __selected_window)
     {
       __selected_window = window_id;
       cleanUpThreadOnContextChange();
