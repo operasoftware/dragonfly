@@ -64,6 +64,10 @@ cls.ResourceManagerService = function(view, data)
   {
     if (!this._current_document) { return; }
     var data = new cls.ResourceManager["1.0"].UrlLoad(msg);
+
+    //bail if we get dupes. Why do we get dupes? fixme
+    if (data.resourceID in this._current_document.resourcemap) { return }
+
     this._current_document.resourcelist.push(data.resourceID);
     var resource = {urlload: data,
                     redirected_from: this._current_document.redirects[data.resourceID]};
@@ -157,7 +161,7 @@ cls.ResourceManagerService = function(view, data)
 
   this._on_requestretry_bound = function(msg)
   {
-    opera.postError("got a retry " + JSON.stringify(msg, null, "    "));
+//    opera.postError("got a retry " + JSON.stringify(msg, null, "    "));
   }.bind(this);
 
 
@@ -223,7 +227,6 @@ cls.ResourceManagerService = function(view, data)
 cls.RequestContext = function(reslist)
 {
   this.resources = reslist;
-
   this.get_resource = function(id)
   {
     return this.resources.filter(function(e) { return e.urlload.resourceID == id; })[0];
