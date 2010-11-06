@@ -135,7 +135,7 @@
       return list;
     }, []);
     var tag = this._tagman.set_callback(this, this._handle_list_alikes_list,
-                                        [msg, rt_id, obj_ids, fallback]),
+                                        [msg, rt_id, obj_ids, fallback]);
     var script = this._is_list_alike.replace("%s", call_list);
     var msg = [rt_id, 0, 0, script, arg_list];
     this._service.requestEval(tag, msg);
