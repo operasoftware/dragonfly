@@ -7,6 +7,8 @@
 cls.BufferManager = function(textarea)
 {
   this._textarea = textarea;
+  this._kill_buffer = "";
+
   this.handle = function(evt) {
       return this._handle_event(evt);
   };
@@ -26,8 +28,14 @@ cls.BufferManager = function(textarea)
         case 107: // k key. ctrl-k == kill to end of line
           this.kill_to_end_of_line();
           return true;
+        case 117: // u key. ctrl-u == kill to beginning of line
+          this.kill_to_beginning_of_line();
+          return true;
         case 119: // w key. ctrl-w == kill word backwards
           this.kill_word_backwards();
+          return true;
+        case 121: // y key. ctrl-y == yank, insert the contents of the kill buffer
+          this.yank();
           return true;
       }
     }
@@ -46,15 +54,23 @@ cls.BufferManager = function(textarea)
 
   this.kill_to_end_of_line = function()
   {
-    var pos = this._textarea.selectionStart;
-    this._textarea.value = this._textarea.value.slice(0, pos);
+    var pos = this.get_cursor();
+    this._kill_buffer = this._textarea.value.slice(pos);
+    this.set_value(this._textarea.value.slice(0, pos));
+  };
+
+  this.kill_to_beginning_of_line = function()
+  {
+    var pos = this.get_cursor();
+    this._kill_buffer = this._textarea.value.slice(0, pos);
+    this.set_value(this._textarea.value.slice(pos), 0);
   };
 
   this.kill_word_backwards = function()
   {
     var textarea = this._textarea;
     var str_before_cursor = textarea.value.slice(0, textarea.selectionStart);
-    var char_before_cursor = str_before_cursor[str_before_cursor.length-1];
+    var char_before_cursor = str_before_cursor.slice(-1);
     var new_str_before_cursor = "";
     var replace_regexp = "";
 
@@ -77,9 +93,19 @@ cls.BufferManager = function(textarea)
     }
 
     new_str_before_cursor = str_before_cursor.replace(replace_regexp, "");
-    textarea.value = new_str_before_cursor +
-                     textarea.value.slice(textarea.selectionStart);
-    this.put_cursor(new_str_before_cursor.length);
+    this._kill_buffer = textarea.value.slice(new_str_before_cursor.length,
+                                                   this.get_cursor());
+    this.set_value(new_str_before_cursor + this.get_value(this.get_cursor()),
+                   new_str_before_cursor.length);
+  };
+
+  this.yank = function()
+  {
+    var pos = this.get_cursor();
+    var pre = this.get_value(0, pos);
+    var post = this.get_value(pos);
+    this.set_value(pre + this._kill_buffer + post,
+                   pre.length + this._kill_buffer.length);
   };
 
   this.put_cursor = function(offset)
