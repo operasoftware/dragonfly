@@ -413,9 +413,9 @@ cls.DOMInspectorActions = function(id)
   {
     var obj_id = parseInt(target.getAttribute('obj-id'));
     var rt_id = parseInt(target.getAttribute('rt-id'));
+    window.dom_data.get_dom(rt_id, obj_id);
     if (!window.views.dom.isvisible())
       window.topCell.showView('dom');
-    window.dom_data.get_dom(rt_id, obj_id);
   }.bind(this);
 
   this._handlers["select-node-in-breadcrumb"] = function(event, target)

@@ -51,6 +51,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
   this._is_element_selected_checked = false;
   // spotlight on hover on the host side
   this._reset_spotlight_timeouts = new Timeouts();
+  this._is_waiting = false;
 
   this._spotlight = function(event)
   {
@@ -94,7 +95,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
         if (window.settings[this._settings_id].get(key))
           this._handle_setting(key);
       }
-      if (!this._data.length)
+      if (!(this._is_waiting || this._data.length))
       {
         if(this._is_element_selected_checked)
           this._get_initial_view(this._data_runtime_id);
@@ -315,6 +316,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
       messages.post("element-selected", {obj_id: obj_id, rt_id: rt_id, model: this});
     }
     window.views[this._view_id].update();
+    this._is_waiting = false;
   }
 
   this._get_initial_view = function(rt_id)
@@ -359,6 +361,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
     else if ( !(rt_id == this._data_runtime_id && this._data.length) &&
           runtime_onload_handler.check(rt_id, arguments))
       this._get_initial_view(rt_id);
+    this._is_waiting = true;
   }
 
   this.get_snapshot = function()
