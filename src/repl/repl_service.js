@@ -103,15 +103,44 @@
   this._handle_log = function(msg, rt_id, is_unpacked)
   {
     const VALUELIST = 2;
-    if (is_unpacked || !settings.command_line.get("unpack-list-alikes"))
+    if (is_unpacked ||
+        !settings.command_line.get("unpack-list-alikes") ||
+        !msg[VALUELIST])
     {
       var values = this._parse_value_list(msg[VALUELIST], rt_id);
       this._data.add_output_valuelist(rt_id, values);
     }
     else
-      this._unpack_list_alikes(msg, rt_id);
+    {
+      var fallback = this._handle_log.bind(this, msg, rt_id, true);
+      this._unpack_list_alikes(msg, rt_id, fallback);
+    }
   };
-  
+
+  this._unpack_list_alikes = function(msg, rt_id, fallback)
+  {
+    const VALUE_LIST = 2, OBJECT_VALUE = 1, OBJECT_ID = 0;
+    var obj_ids = (msg[VALUE_LIST]).map(function(value, index)
+    {
+      return value[OBJECT_VALUE] && value[OBJECT_VALUE][OBJECT_ID] || 0;
+    });
+    var call_list = obj_ids.map(function(object_id)
+    {
+      return object_id && "$_" + object_id || null;
+    }).join(',');
+    var arg_list = obj_ids.reduce(function(list, obj_id)
+    {
+      if (obj_id)
+        list.push(["$_" + obj_id, obj_id]);
+      return list;
+    }, []);
+    var tag = this._tagman.set_callback(this, this._handle_list_alikes_list,
+                                        [msg, rt_id, obj_ids, fallback]),
+    var script = this._is_list_alike.replace("%s", call_list);
+    var msg = [rt_id, 0, 0, script, arg_list];
+    this._service.requestEval(tag, msg);
+  }
+
   // Boolean(document.all) === false
   this._is_list_alike = "(" + (function(list)
   {
@@ -125,40 +154,14 @@
       return 0;
     }).join(',');
   }).toString() + ")([%s])";
-  
-  this._unpack_list_alikes = function(msg, rt_id)
-  {
-    const VALUE_LIST = 2, OBJECT_VALUE = 1, OBJECT_ID = 0;
-    var 
-    obj_ids = (msg[VALUE_LIST] || []).map(function(value, index)
-    {
-      return value[OBJECT_VALUE] && value[OBJECT_VALUE][OBJECT_ID] || 0;
-    }),
-    call_list = obj_ids.map(function(object_id)
-    {
-      return object_id && "$_" + object_id || null;
-    }).join(','),
-    arg_list = obj_ids.reduce(function(list, obj_id)
-    {
-      if (obj_id)
-        list.push(["$_" + obj_id, obj_id]);
-      return list;
-    }, []),
-    tag = this._tagman.set_callback(this, this._handle_list_alikes_list, 
-                                    [msg, rt_id, obj_ids]),
-    msg = [rt_id, 0, 0, this._is_list_alike.replace("%s", call_list), arg_list];
-    
-    this._service.requestEval(tag, msg);
-  }
-  
-  this._handle_list_alikes_list = function(status, msg, orig_msg, rt_id, obj_ids)
-  {
 
-    const VALUE = 2;
-    
-    if (status)
+  this._handle_list_alikes_list = function(status, msg, orig_msg,
+                                           rt_id, obj_ids, fallback)
+  {
+    const STATUS = 0, VALUE = 2;
+    if (status || msg[STATUS] != "completed")
     {
-    
+      fallback();
     }
     else
     {
@@ -171,28 +174,29 @@
             list.push(obj_ids[index]);
           return list;
         }, []);
-        var tag = this._tagman.set_callback(this, this._handle_unpacked_list, 
+        var tag = this._tagman.set_callback(this, this._handle_unpacked_list,
                                             [orig_msg, rt_id, log]);
         this._service.requestExamineObjects(tag, [rt_id, unpack]);
       }
       else
       {
-        this._handle_log(orig_msg, rt_id, true);
+        fallback();
       }
     }
   }
-  
+
   this._handle_unpacked_list = function(status, msg, orig_msg, rt_id, log)
   {
     const OBJECT_CHAIN_LIST = 0, VALUE_LIST = 2;
-    if (status)
+    if (status || !msg[OBJECT_CHAIN_LIST])
     {
-    
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+                      " ExamineObjects failed in _handle_unpacked_list in repl_service");
     }
     else
     {
-      var object_list = (msg[OBJECT_CHAIN_LIST] || []).
-                        map(this._examin_objects_to_value_list, this);
+      var object_list = 
+        (msg[OBJECT_CHAIN_LIST]).map(this._examin_objects_to_value_list, this);
       var orig_value_list = orig_msg[VALUE_LIST];
       orig_msg[VALUE_LIST] = log.reduce(function(list, log_entry, index)
       {
@@ -202,44 +206,45 @@
           list.push(orig_value_list[index]);
         return list;
       }, []);
-      this._handle_log(orig_msg, rt_id, true);    
+      this._handle_log(orig_msg, rt_id, true);
     }
   }
-  
+
   this._examin_objects_to_value_list = function(object_chain)
   {
     const
     // message ExamineObjects
     OBJECT_LIST = 0,
-    // sub message ObjectInfo 
+    // sub message ObjectInfo
     VALUE = 0, PROPERTY_LIST = 1,
-    // sub message ObjectValue 
+    // sub message ObjectValue
     CLASS_NAME = 4,
-    // sub message Property 
+    // sub message Property
     NAME = 0, PROPERTY_TYPE = 1, PROPERTY_VALUE = 2, OBJECT_VALUE = 3;
-    
+
     var value_list = [];
     var object = object_chain[OBJECT_LIST] && object_chain[OBJECT_LIST][0];
-    if (object)
+    if (object && object[PROPERTY_LIST])
     {
-      value_list = (object[PROPERTY_LIST] || []).reduce(function(list, prop)
+      value_list = (object[PROPERTY_LIST]).reduce(function(list, prop)
       {
         if (prop[NAME].isdigit())
         {
           if (prop[PROPERTY_TYPE] == 'object')
             list.push([null, prop[OBJECT_VALUE], parseInt(prop[NAME])]);
           else
-            list.push([prop[PROPERTY_VALUE] || prop[PROPERTY_TYPE], ,parseInt(prop[NAME])]);
+            list.push([prop[PROPERTY_VALUE] || prop[PROPERTY_TYPE],
+                      null, parseInt(prop[NAME])]);
         }
         return list;
-      }, [[null , object[VALUE], -1, "unpack-header"]]);
-      // is this really needed?
+      }, []);
       value_list.sort(function(a, b)
       {
         return a[2] < b[2] ? -1 : a[2] > b[2] ? 1 : 0;
       });
+      value_list.unshift([null , object[VALUE], -1, "unpack-header"]);
       value_list.push(["", null, 0, "unpack-footer"]);
-    }      
+    }
     return value_list;
   };
 
@@ -325,7 +330,7 @@
 
   this._on_eval_done_bound = function(status, msg, rt_id, thread_id, frame_id)
   {
-    const STATUS = 0, TYPE = 1;
+    const STATUS = 0, TYPE = 1, OBJECT_VALUE = 3;
 
     if (status == 4)
     {
@@ -337,7 +342,18 @@
     }
     else if (msg[TYPE] == "object")
     {
-      this._handle_object(msg, rt_id);
+      if (settings.command_line.get("unpack-list-alikes"))
+      {
+        var fallback = this._handle_object.bind(this, msg, rt_id);
+        // convert Eval to OnConsoleLog
+        // 1 - console.log
+        var msg = [rt_id, 1, [[null, msg[OBJECT_VALUE]]]];
+        this._unpack_list_alikes(msg, rt_id, fallback);
+      }
+      else
+      {
+        this._handle_object(msg, rt_id);
+      }
     }
     else
     {

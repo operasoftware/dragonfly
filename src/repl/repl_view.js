@@ -113,7 +113,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     var entries = this._data.get_log(this._lastupdate);
     if (entries.length)
       this._lastupdate = entries[entries.length -1].time;
-
     for (var n=0, e; e=entries[n]; n++)
     {
       switch(e.type) {
