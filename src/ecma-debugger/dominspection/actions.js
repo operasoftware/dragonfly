@@ -413,7 +413,7 @@ cls.DOMInspectorActions = function(id)
   {
     var obj_id = parseInt(target.getAttribute('obj-id'));
     var rt_id = parseInt(target.getAttribute('rt-id'));
-    window.dom_data.get_dom(rt_id, obj_id);
+    window.dom_data.get_dom(rt_id, obj_id, true, true);
     if (!window.views.dom.isvisible())
       window.topCell.showView('dom');
   }.bind(this);
