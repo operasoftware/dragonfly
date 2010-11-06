@@ -1,4 +1,4 @@
-var KeyIdentifier = function(callback, browser)
+﻿var KeyIdentifier = function(callback, browser)
 {
   /* interafce */
   this.set_shortcuts = function(shortcuts){};

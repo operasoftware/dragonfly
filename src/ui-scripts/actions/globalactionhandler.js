@@ -1,4 +1,4 @@
-var GlobalActionHandler = function(id)
+﻿var GlobalActionHandler = function(id)
 {
   /* interface */
   /**
