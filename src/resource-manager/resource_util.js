@@ -72,3 +72,20 @@ cls.ResourceUtil.mime_to_type = function(mime)
 {
   return this.mime_type_map[mime] || "unknown";
 }
+
+cls.ResourceUtil.url_path = function(url)
+{
+  var firstslash = url.replace("://", "xxx").indexOf("/");
+  var querystart = url.indexOf("?");
+  if (querystart == -1) { querystart = url.length; }
+  var path = url.slice(firstslash, querystart);
+  return path;
+}
+
+cls.ResourceUtil.url_host = function(url)
+{
+  var host = url.replace(/\w+?:\/\//, "");
+  var firstslash = host.indexOf("/");
+  host = host.slice(0, firstslash == -1 ? host.length : firstslash);
+  return host;
+}

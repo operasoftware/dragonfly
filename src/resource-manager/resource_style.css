@@ -86,3 +86,30 @@
     max-width: 70px;
     max-height: 70px;
 }
+
+.resource-icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background-image: url(../ui-images/filetype_unknown.png);
+}
+
+.resource-type-markup {
+    background-image: url(../ui-images/filetype_html.png);
+}
+
+.resource-type-css {
+    background-image: url(../ui-images/filetype_stylesheet.png);
+}
+
+.resource-type-script {
+    background-image: url(../ui-images/filetype_javascript.png);
+}
+
+.resource-type-flash {
+    background-image: url(../ui-images/filetype_flash.png);
+}
+
+.resource-type-image {
+    background-image: url(../ui-images/filetype_image.png);
+}

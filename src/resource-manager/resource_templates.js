@@ -241,7 +241,7 @@ templates.grid_lines = function(millis, width, height)
 // all resources tab:
 templates.all_resources = function(ctx, columns, sorted_by, reverse)
 {
-  columns = columns && columns.length ? columns : ["host", "path", "mime", "type", "size", "size_h"];
+  columns = columns && columns.length ? columns : ["icon", "host", "path", "mime", "type", "size", "size_h"];
   sorted_by = sorted_by || columns[0];
 
   var cmp = function(a, b) {
@@ -257,10 +257,10 @@ templates.all_resources = function(ctx, columns, sorted_by, reverse)
                                      b.urlfinished ? b.urlfinished.mimeType : "")},
     type: function(a, b) {return cmp(a.urlfinished ? cls.ResourceUtil.mime_to_type(a.urlfinished.mimeType) : "",
                                      b.urlfinished ? cls.ResourceUtil.mime_to_type(b.urlfinished.mimeType) : "")},
-    host: function(a, b) {return cmp(templates.url_host(a.urlload.url),
-                                     templates.url_host(b.urlload.url))},
-    path: function(a, b) {return cmp(templates.url_path(a.urlload.url),
-                                     templates.url_path(b.urlload.url))},
+    host: function(a, b) {return cmp(cls.ResourceUtil.url_host(a.urlload.url),
+                                     cls.ResourceUtil.url_host(b.urlload.url))},
+    path: function(a, b) {return cmp(cls.ResourceUtil.url_path(a.urlload.url),
+                                     cls.ResourceUtil.url_path(b.urlload.url))},
   }
   sorters.size_h = sorters.size;
 
@@ -287,8 +287,9 @@ templates.all_resources_row = function(resource, columns)
 {
   // fixme: the urlfinished events should always be there, but is buggy atm
   var col_value_getters = {
-    host: function(res) { return templates.url_host(res.urlload.url) },
-    path: function(res) { return templates.url_path(res.urlload.url) },
+    icon: function(res) { return templates.resource_icon(res.urlfinished ? res.urlfinished.mimeType : null) },
+    host: function(res) { return cls.ResourceUtil.url_host(res.urlload.url) },
+    path: function(res) { return cls.ResourceUtil.url_path(res.urlload.url) },
     mime: function(res) { return res.urlfinished ? res.urlfinished.mimeType : "n/a" },
     type: function(res) { return res.urlfinished ? cls.ResourceUtil.mime_to_type(res.urlfinished.mimeType) : "n/a" },
     size: function(res) { return String(res.urlfinished ? res.urlfinished.contentLength : "n/a") },
@@ -304,24 +305,12 @@ templates.all_resources_row = function(resource, columns)
   ]
 }
 
-templates.url_path = function(url)
+
+templates.resource_icon = function(mime)
 {
-  var firstslash = url.replace("://", "xxx").indexOf("/");
-  var querystart = url.indexOf("?");
-  if (querystart == -1) { querystart = url.length; }
-  var path = url.slice(firstslash, querystart);
-  return path;
+  var type = cls.ResourceUtil.mime_to_type(mime);
+  return ["span", "class", "resource-icon resource-type-" + type];
 }
-
-templates.url_host = function(url)
-{
-  var host = url.replace(/\w+?:\/\//, "");
-  var firstslash = host.indexOf("/");
-  host = host.slice(0, firstslash == -1 ? host.length : firstslash);
-  return host;
-}
-
-
 
 /**
  * How many millis should be shown on the screen, as opposed to how many
