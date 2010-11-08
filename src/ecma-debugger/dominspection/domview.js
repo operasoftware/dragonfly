@@ -267,18 +267,18 @@ cls.DOMView.create_ui_widgets = function()
         case "node":
           return [
             {
-              label: "Add attribute",
+              label: ui_strings.M_CONTEXTMENU_ADD_ATTRIBUTE,
               handler: contextmenu_add_attribute
             },
             {
               separator: true
             },
             {
-              label: "Edit markup",
+              label: ui_strings.M_CONTEXTMENU_EDIT_MARKUP,
               handler: contextmenu_edit_markup
             },
             {
-              label: "Remove node",
+              label: ui_strings.M_CONTEXTMENU_REMOVE_NODE,
               handler: contextmenu_remove_node
             }
           ];
@@ -287,22 +287,22 @@ cls.DOMView.create_ui_widgets = function()
         case "key":
           return [
             {
-              label: "Edit attribute",
+              label: ui_strings.M_CONTEXTMENU_EDIT_ATTRIBUTE,
               handler: contextmenu_edit_dom
             },
             {
-              label: "Add attribute",
+              label: ui_strings.M_CONTEXTMENU_ADD_ATTRIBUTE,
               handler: contextmenu_add_attribute
             },
             {
               separator: true
             },
             {
-              label: "Edit markup",
+              label: ui_strings.M_CONTEXTMENU_EDIT_MARKUP,
               handler: contextmenu_edit_markup
             },
             {
-              label: "Remove node",
+              label: ui_strings.M_CONTEXTMENU_REMOVE_NODE,
               handler: contextmenu_remove_node
             }
           ];
@@ -311,22 +311,22 @@ cls.DOMView.create_ui_widgets = function()
         case "value":
           return [
             {
-              label: "Edit attribute value",
+              label: ui_strings.M_CONTEXTMENU_EDIT_ATTRIBUTE_VALUE,
               handler: contextmenu_edit_dom
             },
             {
-              label: "Add attribute",
+              label: ui_strings.M_CONTEXTMENU_ADD_ATTRIBUTE,
               handler: contextmenu_add_attribute
             },
             {
               separator: true
             },
             {
-              label: "Edit markup",
+              label: ui_strings.M_CONTEXTMENU_EDIT_MARKUP,
               handler: contextmenu_edit_markup
             },
             {
-              label: "Remove node",
+              label: ui_strings.M_CONTEXTMENU_REMOVE_NODE,
               handler: contextmenu_remove_node
             }
           ];
@@ -335,7 +335,7 @@ cls.DOMView.create_ui_widgets = function()
         case "text":
           return [
             {
-              label: "Edit text",
+              label: ui_strings.M_CONTEXTMENU_EDIT_TEXT,
               handler: contextmenu_edit_dom
             }
           ];

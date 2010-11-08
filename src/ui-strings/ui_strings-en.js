@@ -244,6 +244,23 @@ ui_strings.S_SWITCH_CLEAR_REQUESTS_ON_NEW_CONTEXT = "Clear request log when load
 ui_strings.S_SWITCH_AUTO_SCROLL_REQUEST_LIST = "Auto scroll request log";
 
 
+/**
+ * Context menu items
+ */
+
+/* DESC: Context menu item for adding an attribute in the DOM view. */
+ui_strings.M_CONTEXTMENU_ADD_ATTRIBUTE = 'Add attribute';
+/* DESC: Context menu item for editing some piece of markup in the DOM view. */
+ui_strings.M_CONTEXTMENU_EDIT_MARKUP = 'Edit markup';
+/* DESC: Context menu item for removing a node in the DOM view. */
+ui_strings.M_CONTEXTMENU_REMOVE_NODE = 'Remove node';
+/* DESC: Context menu item for editing an attribute name in the DOM view. */
+ui_strings.M_CONTEXTMENU_EDIT_ATTRIBUTE = 'Edit attribute';
+/* DESC: Context menu item for editing an attribute value in the DOM view. */
+ui_strings.M_CONTEXTMENU_EDIT_ATTRIBUTE_VALUE = 'Edit attribute value';
+/* DESC: Context menu item for editing text in the DOM view. */
+ui_strings.M_CONTEXTMENU_EDIT_TEXT = 'Edit text';
+
 /*
  * Button tool-tips.
  */
