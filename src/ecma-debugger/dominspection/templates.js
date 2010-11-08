@@ -110,7 +110,7 @@
           is_not_script_node = node[NAME].toLowerCase() != 'script';
           if (show_attrs)
           {
-            attrs = '';
+            attrs = '<attrs>';
             for (k = 0; attr = node[ATTRS][k]; k++)
             {
               attrs += " <key>" +
@@ -125,10 +125,11 @@
                   helpers.escapeAttributeHtml(attr[ATTR_VALUE]) +
                   "\"</value>";
             }
+            attrs += "</attrs>"
           }
           else
           {
-            attrs = '';
+            attrs = '<attrs></attrs>';
           }
           child_pointer = i + 1;
           is_open = (data[child_pointer] && (node[DEPTH] < data[child_pointer][DEPTH]));
@@ -375,7 +376,7 @@
         case 1:  // elements
         {
           is_not_script_node = node[NAME].toLowerCase() != 'script';
-          attrs = '';
+          attrs = '<attrs>';
           if (show_attrs)
           {
             for (k = 0; attr = node[ATTRS][k]; k++)
@@ -393,6 +394,7 @@
                 "\"</value>";
             }
           }
+          attrs += "</attrs>"
 
           child_pointer = i + 1;
 

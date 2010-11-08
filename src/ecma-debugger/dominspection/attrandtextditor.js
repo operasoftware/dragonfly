@@ -614,7 +614,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
     var target = container.querySelector("[ref-id='" + ref_id + "'] node");
     if (target)
     {
-      var next = this.create_new_edit(target.lastElementChild);
+      var next = this.create_new_edit(target.firstElementChild);
       this.edit({}, next);
     }
   };
