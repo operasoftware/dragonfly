@@ -5,7 +5,7 @@ window.cls = window.cls || {};
  * @extends ViewBase
  */
 cls.NetworkOptionsView = function(id, name, container_class, html, default_handler) {
-
+  this._clearing_cache = false;
   this._service = window.services["resource-manager"];
 
   this.createView = function(container)
@@ -15,9 +15,8 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
 
   this._render_main_view = function(container)
   {
-
     var headers = [{name:"foo", value:"bar"}];
-    container.clearAndRender(templates.network_options_main(headers));
+    container.clearAndRender(templates.network_options_main(this._clearing_cache, headers));
     this._input = new cls.BufferManager(container.querySelector("textarea"));
     this._output = container.querySelector("code");
     this._headertable = container.querySelector("table");
@@ -49,8 +48,17 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
 
   this._handle_clear_cache_bound = function(evt, target)
   {
-    //fixme: this may take time with loaded cache. Add spinner and callback
-    this._service.requestClearCache(null);
+    var tagman = new cls.TagManager();
+    tag = tagman.set_callback(this, this._on_cleared_cache_bound);
+    this._clearing_cache = true;
+    this.update();
+    this._service.requestClearCache(tag);
+  }.bind(this);
+
+  this._on_cleared_cache_bound = function(msg)
+  {
+    this._clearing_cache = false;
+    this.update();
   }.bind(this);
 
   this._handle_toggle_caching_bound = function(evt, target)

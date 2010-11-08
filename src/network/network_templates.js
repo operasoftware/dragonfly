@@ -1,17 +1,18 @@
 window.templates || (window.templates = {});
 
-templates.network_options_main = function(headers)
+templates.network_options_main = function(clearing_cache, headers)
 {
   return ["div",
-           ["button", "Clear cache", "handler", "network-options-clear-cache"],
-           ["hr"],
-           ["label", "Disable caching:", ["input", "", "type", "checkbox",
-                                           "handler", "network-options-toggle-caching"]],
-           ["hr"],
-           ["fieldset", ["legend", "Global header rewrites"],
-               templates.network_options_header_table(headers)
-           ],
-           "class", "padding network-options"
+          ["button", "Clear cache", "handler", "network-options-clear-cache"],
+          clearing_cache ? ["span", "CLEARING"] : [],
+          ["hr"],
+          ["label", "Disable caching:", ["input", "", "type", "checkbox",
+                                         "handler", "network-options-toggle-caching"]],
+          ["hr"],
+          ["fieldset", ["legend", "Global header rewrites"],
+           templates.network_options_header_table(headers)
+          ],
+          "class", "padding network-options"
          ];
 };
 
