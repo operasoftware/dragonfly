@@ -8,7 +8,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
   this._service = new cls.ResourceManagerService();
   this._sort_by = "name";
   this._reverse = false;
-  this._fields = [];
+  this._columns = [];
 
   this.createView = function(container)
   {
@@ -18,7 +18,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
   this._render_main_view = function(container)
   {
     var ctx = this._service.get_request_context();
-    container.clearAndRender(templates.all_resources(ctx, this._fields, this._sort_by, this._reverse));
+    container.clearAndRender(templates.all_resources(ctx, this._columns, this._sort_by, this._reverse));
   };
 
   this._handle_open_resource_bound = function(evt, target)
@@ -38,6 +38,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
     else
     {
       this._sort_by = col;
+      this._reverse = false; // show unrevered when chosing new col.
     }
     this.update();
   }.bind(this);
