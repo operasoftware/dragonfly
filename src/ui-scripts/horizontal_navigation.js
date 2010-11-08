@@ -170,7 +170,8 @@ var HorizontalNavigation = function(cell)
     this.nav_back = this.element.querySelector("nav[dir='back']");
     this.nav_forward = this.element.querySelector("nav[dir='forward']");
 
-    ContextMenu.register("breadcrumb", [
+    var contextmenu = new ContextMenu();
+    contextmenu.register("breadcrumb", [
       {
         label: "Copy XPath",
         id: "copy_xpath",

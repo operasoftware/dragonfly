@@ -102,11 +102,12 @@ var SettingsBase = function()
     window.settings[arguments[0]] = this;
 
     // Add a context menu
-    var contextmenu = setting_map && setting_map.contextmenu;
-    if (contextmenu)
+    var contextmenu = new ContextMenu();
+    var menu = setting_map && setting_map.contextmenu;
+    if (menu)
     {
       var items = [];
-      for (var i = 0, item; item = contextmenu[i]; i++)
+      for (var i = 0, item; item = menu[i]; i++)
       {
         items.push({
           label: label_map[item],
@@ -119,7 +120,7 @@ var SettingsBase = function()
           }
         });
       }
-      ContextMenu.register(view_id, items);
+      contextmenu.register(view_id, items);
     }
   }
 

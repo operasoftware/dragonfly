@@ -252,7 +252,9 @@ cls.DOMView.create_ui_widgets = function()
     ]
   )
 
-  ContextMenu.register("dom-node", [
+  var contextmenu = new ContextMenu();
+
+  contextmenu.register("dom-node", [
     {
       callback: function(event, target)
       {

@@ -12,6 +12,30 @@ var ContextMenu = function() {
   }
 
   /**
+   * Holds all registered context menus.
+   */
+  this.registered_menus = {};
+
+  /**
+   * Registers a new context menu, or adds items to an already registered context menu.
+   *
+   * @param {String} menu_id An id corresponding to an id specified with a data-menu
+   *                         attribute in the markup. May be an already existing
+   *                         menu, in which case the items are added.
+   * @param {Array} item_list An array of objects with 'label' and 'handler'
+   *                          (function).
+   */
+  this.register = function(menu_id, item_list)
+  {
+    var menu = this.registered_menus[menu_id] || [];
+    if (item_list)
+    {
+      // If it already is registered, merge it
+      this.registered_menus[menu_id] = menu.concat(item_list);
+    }
+  };
+
+  /**
    * Global context menu event handler.
    */
   this.oncontextmenu = function(event)
@@ -50,7 +74,7 @@ var ContextMenu = function() {
           all_items.push({separator: true});
         }
 
-        var items = ContextMenu.registered_menus[menu_id] || [];
+        var items = this.registered_menus[menu_id] || [];
         items = this._expand_all_items(items, event);
         for (var i = 0, item; item = items[i]; i++)
         {
@@ -139,6 +163,10 @@ var ContextMenu = function() {
     }
   };
 
+  this.get_menus = function(menus)
+  {
+  };
+
   this._expand_all_items = function(items, event)
   {
     var all_items = [];
@@ -177,7 +205,7 @@ var ContextMenu = function() {
     {
       if (target.getAttribute("data-handler-id"))
       {
-        var items = ContextMenu.registered_menus[target.getAttribute("data-menu-id")];
+        var items = this.registered_menus[target.getAttribute("data-menu-id")];
         items = this._expand_all_items(items, this._current_event);
         for (var i = 0, item; item = items[i]; i++)
         {
@@ -193,30 +221,6 @@ var ContextMenu = function() {
     document.removeEventListener("click", this._modal_click_handler, true);
     EventHandler.__modal_mode = false;
   }.bind(this);
-};
-
-/**
- * Holds all registered context menus.
- */
-ContextMenu.registered_menus = {};
-
-/**
- * Registers a new context menu, or adds items to an already registered context menu.
- *
- * @param {String} menu_id An id corresponding to an id specified with a data-menu
- *                         attribute in the markup. May be an already existing
- *                         menu, in which case the items are added.
- * @param {Array} item_list An array of objects with 'label' and 'handler'
- *                          (function).
- */
-ContextMenu.register = function(menu_id, item_list)
-{
-  var menu = ContextMenu.registered_menus[menu_id] || [];
-  if (item_list)
-  {
-    // If it already is registered, merge it
-    ContextMenu.registered_menus[menu_id] = menu.concat(item_list);
-  }
 };
 
 window.contextmenu = new ContextMenu();
