@@ -1,13 +1,31 @@
 window.templates || (window.templates = {});
 
-templates.network_options_main = function(clearing_cache, headers)
+templates.network_options_main = function(clearing_cache, caching, headers)
 {
+  var checked = true;
   return ["div",
           ["button", "Clear cache", "handler", "network-options-clear-cache"],
           clearing_cache ? ["span", "CLEARING"] : [],
           ["hr"],
-          ["label", "Disable caching:", ["input", "", "type", "checkbox",
-                                         "handler", "network-options-toggle-caching"]],
+          ["div", "Caching behaviour:",
+           ["br"],
+           ["label", "Standard browser caching behaviour",
+            ["input", "type", "radio",
+             "name", "network-options-caching",
+             "value", "default",
+             "handler", "network-options-toggle-caching",
+             caching == "default" ? "checked" : "non-checked", "true"
+            ]],
+
+           ["br"],
+           ["label", "Disable all caching",
+            ["input", "type", "radio",
+             "name", "network-options-caching",
+             "value", "disabled",
+             "handler", "network-options-toggle-caching",
+             caching == "disabled" ? "checked" : "non-checked", "true"
+            ]]
+          ],
           ["hr"],
           ["fieldset", ["legend", "Global header rewrites"],
            templates.network_options_header_table(headers)
