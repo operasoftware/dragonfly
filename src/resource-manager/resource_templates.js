@@ -241,7 +241,7 @@ templates.grid_lines = function(millis, width, height)
 // all resources tab:
 templates.all_resources = function(ctx, columns, sorted_by, reverse)
 {
-  columns = columns && columns.length ? columns : ["host", "path", "mime", "size", "size_h"];
+  columns = columns && columns.length ? columns : ["host", "path", "mime", "type", "size", "size_h"];
   sorted_by = sorted_by || columns[0];
 
   var cmp = function(a, b) {
@@ -255,6 +255,8 @@ templates.all_resources = function(ctx, columns, sorted_by, reverse)
                                      b.urlfinished ? b.urlfinished.contentLength : 0)},
     mime: function(a, b) {return cmp(a.urlfinished ? a.urlfinished.mimeType : "",
                                      b.urlfinished ? b.urlfinished.mimeType : "")},
+    type: function(a, b) {return cmp(a.urlfinished ? cls.ResourceUtil.mime_to_type(a.urlfinished.mimeType) : "",
+                                     b.urlfinished ? cls.ResourceUtil.mime_to_type(b.urlfinished.mimeType) : "")},
     host: function(a, b) {return cmp(templates.url_host(a.urlload.url),
                                      templates.url_host(b.urlload.url))},
     path: function(a, b) {return cmp(templates.url_path(a.urlload.url),
@@ -288,8 +290,9 @@ templates.all_resources_row = function(resource, columns)
     host: function(res) { return templates.url_host(res.urlload.url) },
     path: function(res) { return templates.url_path(res.urlload.url) },
     mime: function(res) { return res.urlfinished ? res.urlfinished.mimeType : "n/a" },
+    type: function(res) { return res.urlfinished ? cls.ResourceUtil.mime_to_type(res.urlfinished.mimeType) : "n/a" },
     size: function(res) { return String(res.urlfinished ? res.urlfinished.contentLength : "n/a") },
-    size_h: function(res) { return String(res.urlfinished ? templates.human_readable_size(res.urlfinished.contentLength): "n/a") },
+    size_h: function(res) { return String(res.urlfinished ? cls.ResourceUtil.bytes_to_human_readable(res.urlfinished.contentLength): "n/a") },
   }
 
   return [
@@ -389,18 +392,3 @@ templates.load_time_overview = function(ctx)
           "handler", "resource-select-graph"];
 }
 
-templates.human_readable_size = function(bytes)
-{
-  if (bytes >= 1048576) // megabytes
-  {
-    return "" + ((bytes / 1048576).toFixed(2)) + "MB";
-  }
-  else if (bytes >= 10240)
-  {
-    return "" + Math.ceil((bytes / 1024)) + "KB";
-  }
-  else
-  {
-    return "" + bytes + "B";
-  }
-}
