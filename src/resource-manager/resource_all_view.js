@@ -7,7 +7,8 @@ window.cls = window.cls || {};
 cls.ResourceManagerAllView = function(id, name, container_class, html, default_handler) {
   this._service = new cls.ResourceManagerService();
   this._sort_by = "name";
-  this._show_fields = [];
+  this._reverse = false;
+  this._fields = [];
 
   this.createView = function(container)
   {
@@ -17,7 +18,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
   this._render_main_view = function(container)
   {
     var ctx = this._service.get_request_context();
-    container.clearAndRender(templates.all_resources(ctx));
+    container.clearAndRender(templates.all_resources(ctx, this._fields, this._sort_by, this._reverse));
   };
 
   this._handle_open_resource_bound = function(evt, target)
@@ -27,8 +28,23 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
     opera.postError("Should show " + rid);
   }.bind(this);
 
+  this._handle_sort_resources = function(evt, target)
+  {
+    var col = target.getAttribute("column-name");
+    if (this._sort_by == col)
+    {
+      this._reverse = !this._reverse;
+    }
+    else
+    {
+      this._sort_by = col;
+    }
+    this.update();
+  }.bind(this);
+
   var eh = window.eventHandlers;
-  eh.click["resources-all-open"] = this._handle_open_resource_bound
+  eh.click["resources-all-open"] = this._handle_open_resource_bound;
+  eh.click["resources-all-sort"] = this._handle_sort_resources;
 
   this.init(id, name, container_class, html, default_handler);
 };

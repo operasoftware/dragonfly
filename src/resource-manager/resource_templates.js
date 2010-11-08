@@ -239,18 +239,39 @@ templates.grid_lines = function(millis, width, height)
 
 
 // all resources tab:
-
-templates.all_resources = function(ctx, sorted_by, columns)
+templates.all_resources = function(ctx, columns, sorted_by, reverse)
 {
-  columns = columns || ["host", "path", "mime", "size", "size_h"];
-  resources = ctx.resources;
+  columns = columns && columns.length ? columns : ["host", "path", "mime", "size", "size_h"];
+  sorted_by = sorted_by || columns[0];
+
+  var cmp = function(a, b) {
+    if (a>b) { return 1 }
+    else if (a<b) { return -1 }
+    else { return 0 }
+  }
+
+  var sorters = {
+    size: function(a, b) {return cmp(a.urlfinished ? a.urlfinished.contentLength : 0,
+                                     b.urlfinished ? b.urlfinished.contentLength : 0)},
+    mime: function(a, b) {return cmp(a.urlfinished ? a.urlfinished.mimeType : "",
+                                     b.urlfinished ? b.urlfinished.mimeType : "")},
+    host: function(a, b) {return cmp(templates.url_host(a.urlload.url),
+                                     templates.url_host(b.urlload.url))},
+    path: function(a, b) {return cmp(templates.url_path(a.urlload.url),
+                                     templates.url_path(b.urlload.url))},
+  }
+  sorters.size_h = sorters.size;
+
+
+  var resources = ctx.resources.slice(0);
+  resources.sort(sorters[sorted_by] || cmp);
+  if (reverse) { resources.reverse() }
 
   var tpl = [
     ["div",
      ["table",
       ["tr",
-       columns.map(function(e) { return ["th", e] }),
-       "handler", "resources-all-sort"
+       columns.map(function(e) { return ["th", e, "column-name", e, "handler", "resources-all-sort"] })
       ],
       resources.map(function(e) { return templates.all_resources_row(e, columns)} )
      ],
