@@ -818,7 +818,9 @@ cls.ScriptSelect = function(id, class_name)
         opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'no runtime selected')
         return;
       }
-      return templates.runtimes(_runtimes, 'script', [stopped_script_id, runtimes.getSelectedScript()]);
+      return templates.script_dropdown(_runtimes, 
+                                 stopped_script_id, 
+                                 runtimes.getSelectedScript());
     }
   }
 

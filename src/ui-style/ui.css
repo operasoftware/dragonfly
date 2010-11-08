@@ -1433,5 +1433,17 @@ cst-title
   font-style: normal;
 }
 
+.script-options cst-title
+{
+  margin-left: 2em;
+}
+cst-group
+{
+  display: block;
+  margin-left: 2em;
+  background-color: hsl(0, 0%, 90%);
+  border-left: 1px solid hsl(0, 0%, 80%);
+}
+
 
 

@@ -50,43 +50,145 @@
     ;
   }
 
-  this['runtime-script'] = function(runtime, arg_list)
+  this.script_dropdown = function(runtimes, stopped_script_id, selected_script_id)
   {
-    var
-    display_uri = helpers.shortenURI(runtime.uri),
-    is_reloaded_window = runtimes.isReloadedWindow(runtime.window_id),
-    ret = [
-      ['h2', runtime['title'] || display_uri.uri].
-      concat( runtime.selected ? ['class', 'selected-runtime'] : [] ).
-      concat( display_uri.title ? ['title', display_uri.title] : [] )
-    ],
-    scripts = runtimes.getScripts(runtime.runtime_id),
-    script = null,
-    i=0,
-    stopped_script_id = arg_list[0],
-    selected_script_id = arg_list[1];
-
-
-    if( scripts.length )
-    {
-      for( ; script = scripts[i]; i++)
-      {
-
-        ret[ret.length] = templates.scriptOption(script, selected_script_id, stopped_script_id);
-      }
-    }
     /*
-    TODO handle runtimes with no scripts
-    else
-    {
-      scripts_container = ['p',
-        settings.runtimes.get('reload-runtime-automatically') || is_reloaded_window
-        ? ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS
-        : ui_strings.S_INFO_RELOAD_FOR_SCRIPT,
-        'class', 'info-text'];
-    }
+      runtime =
+      {
+        runtime_id: r_t[RUNTIME_ID],
+        html_frame_path: r_t[HTML_FRAME_PATH],
+        window_id: r_t[WINDOW_ID] || __selected_window,
+        object_id: r_t[OBJECT_ID],
+        uri: r_t[URI],
+        description: r_t[DESCRIPTION],
+      };
+
+      script =
+      {
+        runtime_id: message[RUNTIME_ID],
+        script_id: message[SCRIPT_ID],
+        script_type: message[SCRIPT_TYPE],
+        script_data: message[SCRIPT_DATA],
+        uri: message[URI]
+      };
     */
 
+    var 
+    rts = [],
+    rt_map = {},
+    rt = null, 
+    rt_obj = null,
+    i = 0,
+    display_uri = null,
+    rt_id = 0,
+    scripts = null,
+    script = null,
+    j = 0,
+    browser_js = null,
+    user_js_s = null;
+    
+    for( ; rt = runtimes[i]; i++)
+    {
+      rt_id = rt.runtime_id;
+      switch (rt.description)
+      {
+        case "extensionjs":
+        {
+          var owner_rt = rt_map[rt.uri];
+          if (owner_rt)
+          {
+            rt_obj =
+            {
+              type: "extension",
+              id: rt_id,
+              uri: rt.uri,
+              title: "Extension Runtime " + rt.runtime_id,
+              scripts: window.runtimes.getScripts(rt_id),
+            };
+            owner_rt.extensions.push(rt_obj);
+            runtimes.splice(i, 1);
+            i--;
+          }
+          else
+            opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+                            'extension rt without owner rt in templates.script_dropdown')
+
+          break
+        }
+        
+        default:
+        {
+          display_uri = helpers.shortenURI(rt.uri);
+          scripts = window.runtimes.getScripts(rt_id);
+          browser_js = null;
+          user_js_s = [];
+          for (j = scripts.length - 1; script = scripts[j]; j--)
+          {
+            switch (script.script_type)
+            {
+              case "Browser JS":
+                browser_js = scripts.splice(j, 1)[0];
+                break;
+
+              case "User JS":
+                user_js_s.push(scripts.splice(j, 1)[0]); 
+                break;
+            }
+          }
+          rt_obj = 
+          {
+            type: "document",
+            id: rt_id,
+            uri: rt.uri,
+            title: rt.title || display_uri.uri,
+            title_attr: display_uri.title,
+            selected: rt.selected,
+            scripts: scripts,
+            browser_js: browser_js,
+            user_js_s: user_js_s, 
+            extensions: [],
+          };
+          rt_map[rt.uri] = rt_obj;
+          rts.push(rt_obj);
+        }
+      }
+    }
+    return rts.map(this.runtime_script, this);
+  }
+
+  this.runtime_script = function(runtime)
+  {
+    var 
+    ret = [], 
+    script_list = null,
+    title = runtime.type == "extension" ?
+            ['cst-title', runtime.title] :
+            ['h2', runtime.title];
+    
+    if (runtime.selected)
+      title.push('class', 'selected-runtime');
+    if (runtime.title_attr)
+      title.push('title', runtime.title_attr);
+    ret.push(title);
+    script_list = runtime.scripts.map(this.scriptOption);
+    if (runtime.type == "extension")
+      ret.push(['cst-group', script_list]);
+    else
+    {
+      ret.push.apply(ret, script_list);
+      if (runtime.browser_js)
+        ret.push(['cst-title', 'Browser JS'], 
+                 this.scriptOption(runtime.browser_js));
+      if (runtime.user_js_s)
+      {
+        ret.push(['cst-title', 'User JS']);
+        ret.push.apply(ret, runtime.user_js_s.map(this.scriptOption));
+      }
+      if (runtime.extensions && runtime.extensions.length)
+      {
+        ret.push.apply(ret, runtime.extensions.map(this.runtime_script, this));
+      }
+    }
     return ret;
   }
 
