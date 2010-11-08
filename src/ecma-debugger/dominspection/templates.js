@@ -113,12 +113,12 @@
             attrs = '';
             for (k = 0; attr = node[ATTRS][k]; k++)
             {
-              attrs += " <key data-menu='dom-attribute'>" +
+              attrs += " <key data-menu='dom-attr-name'>" +
                 ((attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '') +
                 /* regarding escaping "<". it happens that there are very starnge keys in broken html.
                     perhaps we will have to extend the escaping to other data tokens as well */
                 (force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY])).replace(/</g, '&lt;') +
-                "</key>=<value" +
+                "</key>=<value data-menu='dom-attr-value'" +
                   (/^href|src$/i.test(attr[ATTR_KEY])
                     ? " handler='dom-resource-link'"
                     : "") + ">\"" +
@@ -155,7 +155,7 @@
               // for exact DOM representation it is anyway better to use the DOM tree style.
               if (!one_child_text_content || !/^\s*$/.test(data[child_pointer][VALUE]))
               {
-                one_child_text_content += "<text" +
+                one_child_text_content += "<text data-menu='dom-text'" +
                   (is_not_script_node ? " ref-id='" + data[child_pointer][ID] + "' " : "") +
                   ">" + helpers.escapeTextHtml(data[child_pointer][VALUE]) + "</text>";
               }
@@ -191,7 +191,7 @@
 
               closing_tags.push("<div style='margin-left:" +
                                 (16 * node[DEPTH]) + "px;' " +
-                                "ref-id='" + node[ID] + "' handler='spotlight-node'><node>" +
+                                "ref-id='" + node[ID] + "' handler='spotlight-node' data-menu='dom-node'><node>" +
                                 "&lt;/" + node_name + "&gt;" +
                                 "</node></div>");
             }
@@ -261,7 +261,7 @@
           if (!/^\s*$/.test(node[ VALUE ]))
           {
             tree += "<div style='margin-left:" + (16 * node[DEPTH])  + "px;'>" +
-                    "<text" +
+                    "<text data-menu='dom-text'" +
                     (is_not_script_node ? " ref-id='"+ node[ID] + "' " : "") +
                     ">" + helpers.escapeTextHtml(node[VALUE]) + "</text>" +
                     "</div>";
@@ -380,12 +380,12 @@
           {
             for (k = 0; attr = node[ATTRS][k]; k++)
             {
-              attrs += " <key>" +
+              attrs += " <key data-menu='dom-attr-name'>" +
                 (attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '') +
                 /* regarding escaping "<". it happens that there are very starnge keys in broken html.
                    perhaps we will have to extend the escaping to other data tokens as well */
                 (force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ).replace(/</g, '&lt;') +
-                "</key>=<value" +
+                "</key>=<value data-menu='dom-attr-value'" +
                     (/^href|src$/i.test(attr[ATTR_KEY])
                       ? " handler='dom-resource-link'"
                       : "" ) + ">\"" +
@@ -477,7 +477,7 @@
                tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;'" +
                        current_formatting + ">" +
                        (node[NAME] ? node[NAME] : nodeNameMap[node[TYPE]]) +
-                       "<text" + (is_not_script_node ? " ref-id='" + node[ID] + "' " : "") + ">" +
+                       "<text data-menu='dom-text'" + (is_not_script_node ? " ref-id='" + node[ID] + "' " : "") + ">" +
                          helpers.escapeTextHtml(node[VALUE]) + "</text>" +
                        "</div>";
             }
@@ -487,7 +487,7 @@
             tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;'" +
                     current_formatting + ">" +
                     (node[NAME] ? node[NAME] : nodeNameMap[node[TYPE]]) +
-                      "<text" + (is_not_script_node ? " ref-id='" + node[ID]+  "' " : "") + ">" +
+                      "<text data-menu='dom-text'" + (is_not_script_node ? " ref-id='" + node[ID]+  "' " : "") + ">" +
                         (/^\s*$/.test(node[VALUE]) ? _escape(node[VALUE]) : helpers.escapeTextHtml(node[VALUE])) +
                       "</text>" +
                     "</div>";

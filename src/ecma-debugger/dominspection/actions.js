@@ -462,15 +462,15 @@ cls.DOMInspectorActions = function(id)
 
   this.editDOM = function(event, target)
   {
-    if (!_is_script_node(event.target))
+    if (!_is_script_node(target))
     {
-      switch(event.target.nodeName.toLowerCase())
+      switch(target.nodeName.toLowerCase())
       {
         case 'span':
         {
-          if(/^(?:key|value|text|node)$/.test(event.target.parentElement.nodeName.toLowerCase()) )
+          if(/^(?:key|value|text|node)$/.test(target.parentElement.nodeName.toLowerCase()) )
           {
-            event.target.parentElement.releaseEvent('dblclick');
+            target.parentElement.releaseEvent('dblclick');
           }
           break;
         }
@@ -483,19 +483,19 @@ cls.DOMInspectorActions = function(id)
           
           key_identifier.setModeEdit(self);
           document.documentElement.addClass('modal');
-          self.setSelected(event.target.parentNode);
+          self.setSelected(target.parentNode);
           self.set_editor("dom-attr-text-editor");
-          self.editor.edit(event, event.target);
+          self.editor.edit(event, target);
           
           break;
         }
         case 'node':
         {
-          var new_target = event.target;
+          var new_target = target;
           if(/^<\//.test(new_target.textContent))
           {
-            new_target = event.target.getPreviousWithFilter
-              (event.target.parentNode.parentNode, self.makeFilterGetStartTag(event.target));
+            new_target = target.getPreviousWithFilter
+              (target.parentNode.parentNode, self.makeFilterGetStartTag(target));
             if( !new_target )
             {
               opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
@@ -524,6 +524,28 @@ cls.DOMInspectorActions = function(id)
       }
     }
   }
+
+  this.insert_attribute_edit = function(event, target)
+  {
+    if (!_is_script_node(target))
+    {
+      var target = event.target;
+      if (target.nodeName.toLowerCase() != "node")
+      {
+        target = target.parentNode;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      key_identifier.setModeEdit(self);
+      document.documentElement.addClass('modal');
+      self.setSelected(target);
+      self.set_editor("dom-attr-text-editor");
+      self.editor.edit(event, target);
+
+      this.editor.insert_attribute_edit(target.get_attr("parent-node-chain", "ref-id"),
+                                        target.has_attr("parent-node-chain", "ui-id"));
+    }
+  };
 
   this.enter_edit_mode = function(event, action_id)
   {
@@ -833,7 +855,7 @@ window.eventHandlers.dblclick['edit-dom'] = (function(event, target)
   var handler = function(event, target)
   {
     click_timeouts.clear();
-    window.actions['dom'].editDOM(event, target);
+    window.actions['dom'].editDOM(event, event.target);
   };
   handler.delay = function(method)
   {
