@@ -254,93 +254,132 @@ cls.DOMView.create_ui_widgets = function()
 
   ContextMenu.register("dom-node", [
     {
-      label: "Add attribute",
-      handler: function(event, target)
+      callback: function(event, target)
       {
-        key_identifier.setView(event);
-        window.actions['dom'].insert_attribute_edit(event, event.target);
-      }
-    },
-    {
-      separator: true
-    },
-    {
-      label: "Edit markup",
-      handler: function(event, target)
-      {
-        key_identifier.setView(event);
-        target = event.target;
-        while (target.nodeName.toLowerCase() != "node")
+        var target = event.target;
+        while (!/^(?:key|value|text|node)$/.test(target.nodeName.toLowerCase()))
         {
           target = target.parentNode;
         }
-        window.actions['dom'].editDOM(event, target);
-      }
-    },
-    {
-      label: "Remove node",
-      handler: function(event, target)
-      {
-        var ele = event.target.has_attr("parent-node-chain", "ref-id");
-        var rt_id = parseInt(ele.get_attr("parent-node-chain", "rt-id"));
-        var ref_id = parseInt(ele.get_attr("parent-node-chain", "ref-id"));
-        var tag = !settings.dom.get("update-on-dom-node-inserted")
-                ? tag_manager.set_callback(this, function() {
-                    window.dom_data._dom_node_removed_handler({"object_id": ref_id, "runtime_id": rt_id});
-                  })
-                : null;
-        services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, "el.parentNode.removeChild(el)", [["el", ref_id]]]);
-      }
-    }
-    /*,
-    {
-      callback: function()
-      {
-        return [
-          {
-            label: "test",
-            handler: function(event, target)
+
+        switch (target.nodeName.toLowerCase())
+        {
+        case "node":
+          return [
             {
-              alert(event.target.textContent);
+              label: "Add attribute",
+              handler: contextmenu_add_attribute
+            },
+            {
+              separator: true
+            },
+            {
+              label: "Edit markup",
+              handler: contextmenu_edit_markup
+            },
+            {
+              label: "Remove node",
+              handler: contextmenu_remove_node
             }
-          }
-        ];
-      }
-    }*/
-  ]);
+          ];
+          break;
 
-  ContextMenu.register("dom-attr-name", [
-    {
-      label: "Edit attribute",
-      handler: function(event, target)
-      {
-        key_identifier.setView(event);
-        window.actions['dom'].editDOM(event, event.target);
+        case "key":
+          return [
+            {
+              label: "Edit attribute",
+              handler: contextmenu_edit_dom
+            },
+            {
+              label: "Add attribute",
+              handler: contextmenu_add_attribute
+            },
+            {
+              separator: true
+            },
+            {
+              label: "Edit markup",
+              handler: contextmenu_edit_markup
+            },
+            {
+              label: "Remove node",
+              handler: contextmenu_remove_node
+            }
+          ];
+          break;
+
+        case "value":
+          return [
+            {
+              label: "Edit attribute value",
+              handler: contextmenu_edit_dom
+            },
+            {
+              label: "Add attribute",
+              handler: contextmenu_add_attribute
+            },
+            {
+              separator: true
+            },
+            {
+              label: "Edit markup",
+              handler: contextmenu_edit_markup
+            },
+            {
+              label: "Remove node",
+              handler: contextmenu_remove_node
+            }
+          ];
+          break;
+
+        case "text":
+          return [
+            {
+              label: "Edit text",
+              handler: contextmenu_edit_dom
+            }
+          ];
+          break;
+        }
       }
     }
   ]);
 
-  ContextMenu.register("dom-attr-value", [
-    {
-      label: "Edit attribute value",
-      handler: function(event, target)
-      {
-        key_identifier.setView(event);
-        window.actions['dom'].editDOM(event, event.target);
-      }
-    }
-  ]);
+  function contextmenu_edit_dom(event, target)
+  {
+    key_identifier.setView(event);
+    window.actions['dom'].editDOM(event, event.target);
+  }
 
-  ContextMenu.register("dom-text", [
+  function contextmenu_edit_markup(event, target)
+  {
+    key_identifier.setView(event);
+    target = event.target;
+    while (target.nodeName.toLowerCase() != "node")
     {
-      label: "Edit text",
-      handler: function(event, target)
-      {
-        key_identifier.setView(event);
-        window.actions['dom'].editDOM(event, event.target);
-      }
+      target = target.parentNode;
     }
-  ]);
+    window.actions['dom'].editDOM(event, target);
+  }
+
+  function contextmenu_add_attribute(event, target)
+  {
+    key_identifier.setView(event);
+    window.actions['dom'].insert_attribute_edit(event, event.target);
+  }
+
+  function contextmenu_remove_node(event, target)
+  {
+    var ele = event.target.has_attr("parent-node-chain", "ref-id");
+    var rt_id = parseInt(ele.get_attr("parent-node-chain", "rt-id"));
+    var ref_id = parseInt(ele.get_attr("parent-node-chain", "ref-id"));
+    var tag = !settings.dom.get("update-on-dom-node-inserted")
+            ? tag_manager.set_callback(this, function() {
+                window.dom_data._dom_node_removed_handler({"object_id": ref_id, "runtime_id": rt_id});
+              })
+            : null;
+    services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, "el.parentNode.removeChild(el)", [["el", ref_id]]]);
+  }
 
   new Switches
   (
