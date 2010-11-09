@@ -195,8 +195,8 @@
     }
     else
     {
-      var object_list = 
-        (msg[OBJECT_CHAIN_LIST]).map(this._examin_objects_to_value_list, this);
+      var object_list =
+        (msg[OBJECT_CHAIN_LIST]).map(this._examine_objects_to_value_list, this);
       var orig_value_list = orig_msg[VALUE_LIST];
       orig_msg[VALUE_LIST] = log.reduce(function(list, log_entry, index)
       {
@@ -210,7 +210,7 @@
     }
   }
 
-  this._examin_objects_to_value_list = function(object_chain)
+  this._examine_objects_to_value_list = function(object_chain)
   {
     const
     // message ExamineObjects
