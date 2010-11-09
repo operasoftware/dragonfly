@@ -38,6 +38,22 @@
     return ret;
   }
 
+  this.runtime_dropdown = function(runtimes)
+  {
+    return this._group_runtimes(runtimes, false).map(this.runtime, this);
+  }
+
+  this.runtime = function(runtime)
+  {
+    var option = ['cst-option', runtime.title, 'rt-id', String(runtime.id)];
+    if (runtime.title_attr)
+      option.push('title', runtime.title_attr);
+    var ret = [option];
+    if (runtime.extensions && runtime.extensions.length)
+      ret.push(['cst-group', runtime.extensions.map(this.runtime, this)]);
+    return ret;
+  }
+
   this['runtime-runtime'] = function(runtime, arg_list)
   {
     var display_uri = helpers.shortenURI(runtime.uri);
@@ -50,7 +66,11 @@
     ;
   }
 
-  this.script_dropdown = function(runtimes, stopped_script_id, selected_script_id)
+  // to extract the extension runtimes from the runtimes list
+  // and push them to a extension property of the owner runtime
+  // if the get_script flag is set, the scripts of the runtime are sorted to 
+  // scripts, browser_js and user_js_s.
+  this._group_runtimes = function(runtimes, get_scripts)
   {
     /*
       runtime =
@@ -87,7 +107,7 @@
     browser_js = null,
     user_js_s = null;
     
-    for( ; rt = runtimes[i]; i++)
+    for ( ; rt = runtimes[i]; i++)
     {
       rt_id = rt.runtime_id;
       switch (rt.description)
@@ -103,8 +123,9 @@
               id: rt_id,
               uri: rt.uri,
               title: "Extension Runtime " + rt.runtime_id,
-              scripts: window.runtimes.getScripts(rt_id),
             };
+            if (get_scripts)
+              rt_obj.scripts = window.runtimes.getScripts(rt_id);
             owner_rt.extensions.push(rt_obj);
             runtimes.splice(i, 1);
             i--;
@@ -112,29 +133,12 @@
           else
             opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
                             'extension rt without owner rt in templates.script_dropdown')
-
           break
         }
         
         default:
         {
           display_uri = helpers.shortenURI(rt.uri);
-          scripts = window.runtimes.getScripts(rt_id);
-          browser_js = null;
-          user_js_s = [];
-          for (j = scripts.length - 1; script = scripts[j]; j--)
-          {
-            switch (script.script_type)
-            {
-              case "Browser JS":
-                browser_js = scripts.splice(j, 1)[0];
-                break;
-
-              case "User JS":
-                user_js_s.push(scripts.splice(j, 1)[0]); 
-                break;
-            }
-          }
           rt_obj = 
           {
             type: "document",
@@ -143,17 +147,41 @@
             title: rt.title || display_uri.uri,
             title_attr: display_uri.title,
             selected: rt.selected,
-            scripts: scripts,
-            browser_js: browser_js,
-            user_js_s: user_js_s, 
             extensions: [],
           };
+          if (get_scripts)
+          {
+            scripts = window.runtimes.getScripts(rt_id);
+            browser_js = null;
+            user_js_s = [];
+            for (j = scripts.length - 1; script = scripts[j]; j--)
+            {
+              switch (script.script_type)
+              {
+                case "Browser JS":
+                  browser_js = scripts.splice(j, 1)[0];
+                  break;
+
+                case "User JS":
+                  user_js_s.push(scripts.splice(j, 1)[0]); 
+                  break;
+              }
+            }
+            rt_obj.scripts = scripts;
+            rt_obj.browser_js = browser_js;
+            rt_obj.user_js_s = user_js_s;
+          }
           rt_map[rt.uri] = rt_obj;
           rts.push(rt_obj);
         }
       }
     }
-    return rts.map(this.runtime_script, this);
+    return rts;
+  }
+
+  this.script_dropdown = function(runtimes, stopped_script_id, selected_script_id)
+  {
+    return this._group_runtimes(runtimes, true).map(this.runtime_script, this);
   }
 
   this.runtime_script = function(runtime)
