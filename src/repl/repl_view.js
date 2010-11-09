@@ -30,8 +30,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       "if", "in", "instanceof", "new", "return", "switch", "this",
       "throw", "try", "typeof", "var", "void", "while", "with"];
 
-
-
   this.ondestroy = function()
   {
     this._lastupdate = 0;
@@ -40,11 +38,8 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._container.removeEventListener("scroll", this._save_scroll_bound, false);
   };
 
-  this.createView = function(container)
+  this._create_structure = function(container)
   {
-    var switched_to_view = false;
-    if (!this._lastupdate)
-    {
       container.clearAndRender(templates.repl_main());
       this._linelist = container.querySelector("ol");
       this._textarea = container.querySelector("textarea");
@@ -53,13 +48,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       this._container = container;
       this._input_row_height = this._textarea.scrollHeight;
       this._closed_group_nesting_level = 0;
-    }
+  }
 
-    this._update_runtime_selector_bound();
-    this._update();
-
-    if (switched_to_view)
-    {
+  this._init_scroll_handling = function()
+  {
       var padder = this._container.querySelector(".padding");
       // defer adding listeners until after update
       this._container.addEventListener("scroll", this._save_scroll_bound, false);
@@ -76,6 +68,28 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       {
         this._container.scrollTop = this._current_scroll;
       }
+  }
+
+  this.createView = function(container)
+  {
+    var first_update = !this._lastupdate;
+
+    // on first update, render view skeleton stuff
+    if (first_update)
+    {
+      this._create_structure(container);
+    }
+
+    // Always render the lines of data
+    this._update_runtime_selector_bound();
+    this._update();
+
+    // On first update add scroll listeners and update scroll,
+    // but after the view was rendered so we don't trigger a
+    // flood of events when rendering the backlog.
+    if (first_update)
+    {
+      this._init_scroll_handling();
     }
   };
 
