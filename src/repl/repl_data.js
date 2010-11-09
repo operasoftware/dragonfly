@@ -18,7 +18,7 @@ cls.ReplData = function(view)
   this._add_entry = function(type, data)
   {
     var entry = {
-      time: this._entry_count++,
+      time: ++this._entry_count,
       type: type,
       data: data
     };

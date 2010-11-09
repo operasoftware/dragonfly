@@ -111,11 +111,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._update = function()
   {
     var entries = this._data.get_log(this._lastupdate);
-    if (entries.length)
-      this._lastupdate = entries[entries.length -1].time;
+    if (entries.length) { this._lastupdate = entries[entries.length -1].time; }
     for (var n=0, e; e=entries[n]; n++)
     {
-      switch(e.type) {
+      switch(e.type) { // free like a flying demon
         case "input":
           this._render_input(e.data);
           break;
@@ -254,7 +253,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._add_line(templates.repl_output_trace(data));
   };
 
-  this._render_value_list = function(values) 
+  this._render_value_list = function(values)
   {
     var tpl = values.reduce(function(list, value)
     {
@@ -265,7 +264,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
           break;
         case "unpack-footer":
           list.pop();
-          list.push(["span", "]"], ["span", ", "]); 
+          list.push(["span", "]"], ["span", ", "]);
           break;
         default:
           list.push(templates.repl_output_native_or_pobj(value), ["span", ", "]);
