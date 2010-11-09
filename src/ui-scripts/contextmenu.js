@@ -71,7 +71,7 @@ var ContextMenu = function() {
       {
         if (all_items.length)
         {
-          all_items.push({separator: true});
+          all_items.push(ContextMenu.separator);
         }
 
         var items = this.registered_menus[menu_id] || [];
@@ -222,6 +222,8 @@ var ContextMenu = function() {
     EventHandler.__modal_mode = false;
   }.bind(this);
 };
+
+ContextMenu.separator = {separator: true};
 
 window.contextmenu = new ContextMenu();
 document.addEventListener("contextmenu", window.contextmenu.oncontextmenu.bind(window.contextmenu), false);

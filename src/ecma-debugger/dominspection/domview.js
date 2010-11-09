@@ -254,7 +254,18 @@ cls.DOMView.create_ui_widgets = function()
 
   var contextmenu = new ContextMenu();
 
-  contextmenu.register("dom-node", [
+  var dom_element_common_items = [
+    {
+      label: ui_strings.M_CONTEXTMENU_EDIT_MARKUP,
+      handler: contextmenu_edit_markup
+    },
+    {
+      label: ui_strings.M_CONTEXTMENU_REMOVE_NODE,
+      handler: contextmenu_remove_node
+    }
+  ];
+
+  contextmenu.register("dom-element", [
     {
       callback: function(event, target)
       {
@@ -271,19 +282,10 @@ cls.DOMView.create_ui_widgets = function()
             {
               label: ui_strings.M_CONTEXTMENU_ADD_ATTRIBUTE,
               handler: contextmenu_add_attribute
-            },
-            {
-              separator: true
-            },
-            {
-              label: ui_strings.M_CONTEXTMENU_EDIT_MARKUP,
-              handler: contextmenu_edit_markup
-            },
-            {
-              label: ui_strings.M_CONTEXTMENU_REMOVE_NODE,
-              handler: contextmenu_remove_node
             }
-          ];
+          ]
+          .concat(ContextMenu.separator)
+          .concat(dom_element_common_items);
           break;
 
         case "key":
@@ -295,19 +297,10 @@ cls.DOMView.create_ui_widgets = function()
             {
               label: ui_strings.M_CONTEXTMENU_ADD_ATTRIBUTE,
               handler: contextmenu_add_attribute
-            },
-            {
-              separator: true
-            },
-            {
-              label: ui_strings.M_CONTEXTMENU_EDIT_MARKUP,
-              handler: contextmenu_edit_markup
-            },
-            {
-              label: ui_strings.M_CONTEXTMENU_REMOVE_NODE,
-              handler: contextmenu_remove_node
             }
-          ];
+          ]
+          .concat(ContextMenu.separator)
+          .concat(dom_element_common_items);
           break;
 
         case "value":
@@ -319,19 +312,10 @@ cls.DOMView.create_ui_widgets = function()
             {
               label: ui_strings.M_CONTEXTMENU_ADD_ATTRIBUTE,
               handler: contextmenu_add_attribute
-            },
-            {
-              separator: true
-            },
-            {
-              label: ui_strings.M_CONTEXTMENU_EDIT_MARKUP,
-              handler: contextmenu_edit_markup
-            },
-            {
-              label: ui_strings.M_CONTEXTMENU_REMOVE_NODE,
-              handler: contextmenu_remove_node
             }
-          ];
+          ]
+          .concat(ContextMenu.separator)
+          .concat(dom_element_common_items);
           break;
 
         case "text":
