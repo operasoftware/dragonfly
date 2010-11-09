@@ -145,6 +145,11 @@ eventHandlers.mousedown['horizontal-nav'] = function(event, target)
 eventHandlers.mouseup['horizontal-nav'] =
 eventHandlers.mouseout['horizontal-nav'] = function(event, target)
 {
+  var selection = window.getSelection();
+  if (!selection.isCollapsed)
+  {
+    selection.removeAllRanges();
+  }
   clearTimeout(eventHandlers.nav_timeout);
 };
 
@@ -180,7 +185,6 @@ eventHandlers.mousedown['breadcrumbs-drag'] = function(event, target)
   function drag_breadcrumbs(e, mouse_start, pos) {
     breadcrumbs.addClass("drag")
     horizontal_nav.set_position(pos + e.clientX - mouse_start);
-    horizontal_nav.check_position();
   }
 };
 

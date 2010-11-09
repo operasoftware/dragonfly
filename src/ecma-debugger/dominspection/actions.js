@@ -813,6 +813,15 @@ window.eventHandlers.click['breadcrumb-link'] = function(event, target)
   window.actions['dom'].breadcrumb_link(event, target);
 }
 
+window.eventHandlers.mouseup['breadcrumb-link'] = function(event, target)
+{
+  var selection = window.getSelection();
+  if (!selection.isCollapsed)
+  {
+    selection.removeAllRanges();
+  }
+}
+
 window.eventHandlers.mouseover['breadcrumb-link'] =
 window.eventHandlers.mouseover['spotlight-node'] = function(event, target)
 {
