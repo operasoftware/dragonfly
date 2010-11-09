@@ -330,8 +330,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._handle_keypress_bound = function(evt)
   {
-    //opera.postError("" + evt.keyCode + " " + evt.which );
-
     if (this._textarea_handler.handle(evt)) {
       evt.preventDefault();
       return;
@@ -744,13 +742,13 @@ cls.ReplView.create_ui_widgets = function()
   new Settings(
     'command_line',
     { // key/value
-      'max-typed-history-length': 8,
+      'max-typed-history-length': 32,
       'typed-history': [],
       'unpack-list-alikes': true,
     },
     { // key/label
-      'max-typed-history-length': "Max items in typed history to remember",
-      'unpack-list-alikes': "Unpack list alikes"
+      'max-typed-history-length': ui_strings.S_LABEL_REPL_BACKLOG_LENGTH,
+      'unpack-list-alikes': ui_strings.S_SWITCH_LIST_UNPACKING
     },
     { // settings map
       checkboxes:
@@ -801,5 +799,3 @@ cls.ReplView.create_ui_widgets = function()
     ]
   );
 };
-
-

@@ -1,5 +1,4 @@
-﻿
-window.templates || (window.templates = {});
+﻿window.templates || (window.templates = {});
 
 templates.repl_main = function()
 {
@@ -34,10 +33,10 @@ templates.repl_output_native_or_pobj = function(thing)
 
 templates.repl_output_pobj = function(data)
 {
-  return [    
+  return [
     'code',
     data.name,
-    'handler', /(?:Element)$/.test(data.name) ? 
+    'handler', /(?:Element)$/.test(data.name) ?
                'inspect-node-link' :
                'inspect-object-link',
     'rt-id', data.rt_id.toString(),
