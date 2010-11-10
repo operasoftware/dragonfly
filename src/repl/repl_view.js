@@ -393,6 +393,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
           this._textarea.value = "";
           this._backlog_index = -1;
           this._current_input = "";
+          this._resolver.clear_cache(); // evaling js voids the cache.
           this._service.handle_input(input);
         }
         break;
