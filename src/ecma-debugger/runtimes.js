@@ -55,6 +55,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
   var __next_runtime_id_to_select = '';
 
   var __selected_script = '';
+  var __selected_script_type = '';
 
   var _is_first_call_create_all_runtimes_on_debug_context_change = true;
 
@@ -90,6 +91,17 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
 
   var _on_debug_context_selected = function(msg) {
     self.setActiveWindowId(msg.window_id);
+  }
+
+  var is_injected_script = function(script_type)
+  {
+    return (
+    [
+      "Greasemonkey JS", 
+      "Browser JS", 
+      "User JS", 
+      "Extension JS"
+    ].indexOf(script_type) != -1);
   }
 
   var onResetState = function()
@@ -411,9 +423,12 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
       }
     }
 
-    if( !__selected_script )
+    if (!__selected_script ||
+        (is_injected_script(__selected_script_type) && 
+         !is_injected_script(script.script_type)))
     {
       __selected_script = new_script_id;
+      __selected_script_type = script.script_type;
       views['js_source'].update();
       window['cst-selects']['js-script-select'].updateElement();
       window['cst-selects']['cmd-runtime-select'].updateElement();

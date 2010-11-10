@@ -181,8 +181,17 @@
 
   this.script_dropdown = function(runtimes, stopped_script_id, selected_script_id)
   {
-    return this._group_runtimes(runtimes, true).map(this.runtime_script, this);
+    var context = new this._ScriptsContext(stopped_script_id, selected_script_id);
+    return context._group_runtimes(runtimes, true).map(context.runtime_script, context);
   }
+
+  this._ScriptsContext = function(stopped_script_id, selected_script_id)
+  {
+    this.stopped_script_id = stopped_script_id;
+    this.selected_script_id = selected_script_id;
+  }
+
+  this._ScriptsContext.prototype = this;
 
   this.runtime_script = function(runtime)
   {
@@ -198,7 +207,7 @@
     if (runtime.title_attr)
       title.push('title', runtime.title_attr);
     ret.push(title);
-    script_list = runtime.scripts.map(this.scriptOption);
+    script_list = runtime.scripts.map(this.script_option, this);
     if (runtime.type == "extension")
       ret.push(['cst-group', script_list]);
     else
@@ -206,11 +215,11 @@
       ret.push.apply(ret, script_list);
       if (runtime.browser_js)
         ret.push(['cst-title', 'Browser JS'], 
-                 this.scriptOption(runtime.browser_js));
+                 this.script_option(runtime.browser_js));
       if (runtime.user_js_s)
       {
         ret.push(['cst-title', 'User JS']);
-        ret.push.apply(ret, runtime.user_js_s.map(this.scriptOption));
+        ret.push.apply(ret, runtime.user_js_s.map(this.script_option, this));
       }
       if (runtime.extensions && runtime.extensions.length)
       {
@@ -220,51 +229,40 @@
     return ret;
   }
 
-  this.scriptOption = function(script, selected_script_id, stopped_script_id)
+  // script types in the protocol:
+  // "inline", "event", "linked", "timeout",
+  // "java", "generated", "unknown"
+  // "Greasemonkey JS", "Browser JS", "User JS", "Extension JS"
+  this._script_type_map =
   {
-    var
-    display_uri = helpers.shortenURI(script.uri),
-    /* script types in the protocol:
-       "inline" | "event" | "linked" | "timeout" | "java" | "generated" | "unknown" */
-    type_dict =
-    {
-      "inline": ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_INLINE,
-      "linked": ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_LINKED,
-      "unknown": ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_UNKNOWN
-    },
-    script_type = script.script_type,
-    ret = [
+    "inline": ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_INLINE,
+    "linked": ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_LINKED,
+    "unknown": ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_UNKNOWN
+  };
+
+  this.script_option = function(script)
+  {
+    var display_uri = helpers.shortenURI(script.uri);
+    var script_type = script.script_type;
+    var ret = 
+    [
       'cst-option',
-      ( type_dict[script_type] || script_type ) + ' - ' +
+      (this._script_type_map[script_type] || script_type) + ' - ' +
       (
-        display_uri.uri
-        ? display_uri.uri
-        : ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script.script_id
+        display_uri.uri ? 
+        display_uri.uri : 
+        ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script.script_id
       ),
       'script-id', script.script_id.toString()
-    ],
-    class_name = script.script_id == selected_script_id && 'selected' || '';
-
-    if(stopped_script_id == script.script_id)
-    {
+    ];
+    var class_name = script.script_id == this.selected_script_id ? 
+                     'selected' : '';
+    if (this.stopped_script_id == script.script_id)
       class_name += ( class_name && ' ' || '' ) + 'stopped';
-    }
-
-    if( display_uri.title )
-    {
-      ret.splice(ret.length, 0, 'title', display_uri.title);
-    }
-
-    if( class_name )
-    {
-      ret.splice(ret.length, 0, 'class', class_name);
-    }
-    /*
-    if( script.stop_ats.length )
-    {
-      ret.splice(ret.length, 0, 'style', 'background-position: 0 0');
-    }
-    */
+    if (display_uri.title)
+      ret.push('title', display_uri.title);
+    if (class_name)
+      ret.push('class', class_name);
     return ret;
   }
 
