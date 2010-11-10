@@ -841,7 +841,8 @@ cls.Stylesheets = function()
               INDENT +
               // TODO: rename "property" to "declaration"
               "<property class='" + (overwritten_list[index] ? "" : "overwritten") +
-                                    (disabled_list[index] ? " disabled" : "") + "'>" +
+                                    (disabled_list[index] ? " disabled" : "") + "'" +
+                                    "data-spec='css#" + __indexMap[prop_index] + "'>" +
                 self.create_declaration(__indexMap[prop_index],
                                         value_list[index],
                                         priority_list[index],

@@ -69,12 +69,13 @@ var ContextMenu = function() {
     {
       if (menu_id)
       {
-        if (all_items.length)
+        var items = this.registered_menus[menu_id] || [];
+
+        if (all_items.length && items.length)
         {
           all_items.push(ContextMenu.separator);
         }
 
-        var items = this.registered_menus[menu_id] || [];
         items = this._expand_all_items(items, event);
         for (var i = 0, item; item = items[i]; i++)
         {

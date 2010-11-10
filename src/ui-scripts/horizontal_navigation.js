@@ -175,19 +175,9 @@ var HorizontalNavigation = function(cell)
     contextmenu.register("breadcrumb", [
       {
         label: "Copy XPath",
-        id: "copy_xpath",
         handler: function(event, target) {
           alert("Not implemented");
         }
-      },
-      {
-        separator: true
-      },
-      {
-        label: "Test",
-        id: "",
-        disabled: true,
-        handler: function() {}
       }
     ]);
   };

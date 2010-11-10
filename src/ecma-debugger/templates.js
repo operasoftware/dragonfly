@@ -364,7 +364,7 @@ MODE ::= "<mode>"
           cat.name,
           'handler', 'css-toggle-category'
         ],
-        ['styles']
+        ['styles', 'data-menu', 'css-inspector-rules']
       ];
 
     if( cat.is_unfolded() )
