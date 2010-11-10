@@ -125,6 +125,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._update = function()
   {
     var entries = this._data.get_log(this._lastupdate);
+
     if (entries.length) { this._lastupdate = entries[entries.length -1].time; }
     for (var n=0, e; e=entries[n]; n++)
     {
@@ -269,19 +270,24 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._render_value_list = function(values)
   {
+    const SPAN = 1, BRACKET = 2;
+    var type = 0;
     var tpl = values.reduce(function(list, value)
     {
       switch (value.df_intern_type)
       {
         case "unpack-header":
           list.push(templates.repl_output_pobj(value), ["span", "["]);
+          type = BRACKET;
           break;
         case "unpack-footer":
-          list.pop();
+          if (type == SPAN) { list.pop(); }
           list.push(["span", "]"], ["span", ", "]);
+          type = SPAN;
           break;
         default:
           list.push(templates.repl_output_native_or_pobj(value), ["span", ", "]);
+          type = SPAN;
       }
       return list;
     }, []);
@@ -758,15 +764,18 @@ cls.ReplView.create_ui_widgets = function()
       'max-typed-history-length': 32,
       'typed-history': [],
       'unpack-list-alikes': true,
+      'is-element-type-sensitive': true
     },
     { // key/label
       'max-typed-history-length': ui_strings.S_LABEL_REPL_BACKLOG_LENGTH,
-      'unpack-list-alikes': ui_strings.S_SWITCH_LIST_UNPACKING
+      'unpack-list-alikes': ui_strings.S_SWITCH_UNPACK_LIST_ALIKES,
+      'is-element-type-sensitive': ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE
     },
     { // settings map
       checkboxes:
       [
         'unpack-list-alikes',
+        'is-element-type-sensitive'
       ],
       customSettings:
       [
