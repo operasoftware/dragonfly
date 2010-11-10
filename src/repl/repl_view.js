@@ -764,6 +764,7 @@ cls.ReplView.create_ui_widgets = function()
       checkboxes:
       [
         'unpack-list-alikes',
+        'is-element-type-sensitive'
       ],
       customSettings:
       [
