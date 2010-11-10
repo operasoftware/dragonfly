@@ -244,7 +244,10 @@ ui_strings.S_SWITCH_LOCK_SELECTED_ELEMENTS = "Draw a border on to selected eleme
 ui_strings.S_SWITCH_CLEAR_REQUESTS_ON_NEW_CONTEXT = "Clear request log when loading a new site";
 /* DESC: When enabled, the request log always scroll to the bottom on new requests */
 ui_strings.S_SWITCH_AUTO_SCROLL_REQUEST_LIST = "Auto scroll request log";
-
+/* DESC:  When enabled, list alike objects will be unpacked in the command line */
+ui_strings.S_SWITCH_UNPACK_LIST_ALIKES = "Unpack list alikes in the command line";
+/* DESC:  When enabled, objects of type element in the command line will be displayed in the DOM view */
+ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE = "Show objects of type Element in the DOM view";
 
 /*
  * Button tool-tips.

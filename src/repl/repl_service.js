@@ -187,7 +187,7 @@
 
   this._handle_unpacked_list = function(status, msg, orig_msg, rt_id, log)
   {
-    const OBJECT_CHAIN_LIST = 0, VALUE_LIST = 2;
+    const OBJECT_CHAIN_LIST = 0, VALUE_LIST = 2, DF_INTERN_TYPE = 3;
     if (status || !msg[OBJECT_CHAIN_LIST])
     {
       opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
@@ -201,7 +201,13 @@
       orig_msg[VALUE_LIST] = log.reduce(function(list, log_entry, index)
       {
         if (log_entry)
+        {
+          var unpack_header = orig_value_list[index];
+          unpack_header[DF_INTERN_TYPE] = "unpack-header";
+          list.push(unpack_header);
           list.push.apply(list, object_list.shift());
+          list.push(["", null, 0, "unpack-footer"]);
+        }
         else
           list.push(orig_value_list[index]);
         return list;
@@ -242,8 +248,6 @@
       {
         return a[2] < b[2] ? -1 : a[2] > b[2] ? 1 : 0;
       });
-      value_list.unshift([null , object[VALUE], -1, "unpack-header"]);
-      value_list.push(["", null, 0, "unpack-footer"]);
     }
     return value_list;
   };
