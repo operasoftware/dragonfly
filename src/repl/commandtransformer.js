@@ -116,8 +116,8 @@ cls.HostCommandTransformer = function() {
 
     if (tokens[0].type == COMMENT)
     {
-      // regex matches "//#! command()" . Whitespace is allowed inbetween most tokens
-      var match = tokens[0].value.match(/\s*\/\/\s*#!\s+(\w+)\s*\(\s*\)\s*/);
+      // regex matches "// command()" . Whitespace is allowed inbetween most tokens
+      var match = tokens[0].value.match(/\s*\/\/\s*(\w+)\s*\(\s*\)\s*/);
       if (match)
       {
         var command = match[1];
