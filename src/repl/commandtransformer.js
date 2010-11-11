@@ -279,11 +279,18 @@ cls.HostCommandTransformer = function() {
 
   this.dfcommand_jquery = function(input, view, data, service)
   {
-    var url = "https://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js";
-    var code = ["var script = document.createElement('script');",
-                "script.setAttribute('src', '" + url + "');",
-                "script.addEventListener('load', function(){console.log('jquery loaded')}, false);",
-                "document.body.appendChild(script);'Loading jquery'"].join("\n");
+    var url = "http://code.jquery.com/jquery.min.js";
+    var code = ["(function(){",
+                "  var script = document.createElement('script');",
+                "  script.setAttribute('src', '" + url + "');",
+                "  var cb = function() {",
+                "    script.parentNode.removeChild(script);",
+                "    console.log('jquery loaded');",
+                "  };",
+                "  script.addEventListener('load', cb, false);",
+                "  document.body.appendChild(script);",
+                "  return 'Loading jquery'",
+                "})();"].join("\n");
     service.evaluate_input(code);
   }
 
