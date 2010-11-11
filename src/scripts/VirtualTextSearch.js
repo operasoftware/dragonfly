@@ -68,7 +68,8 @@ var VirtualTextSearch = function()
   DEFAULT_STYLE = document.styleSheets.getDeclaration ('.search-highlight').cssText,
   HIGHLIGHT_STYLE = document.styleSheets.getDeclaration ('.search-highlight-selected').cssText,
   DEFAULT_SCROLL_MARGIN = 50,
-  SEARCH_DELAY = 50; // in ms
+  SEARCH_DELAY = 50, // in ms
+  MIN_TERM_LENGTH = 1;
 
   /* private */
 
@@ -102,7 +103,7 @@ var VirtualTextSearch = function()
     if (new_search_term != search_term)
     {
       search_term = new_search_term;
-      if(new_search_term.length > 2)
+      if(new_search_term.length >= MIN_TERM_LENGTH)
       {
         clear_hits();
         if (__script)
