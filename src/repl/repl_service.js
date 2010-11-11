@@ -456,9 +456,9 @@
 
   };
 
-  this._handle_clientcommand = function(command, cooked)
+  this._handle_clientcommand = function(command)
   {
-    command(cooked, this._view, this._data, this);
+    command.call(this._transformer, this._view, this._data, this);
   };
 
   this._handle_hostcommand = function(cooked)
