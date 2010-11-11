@@ -281,7 +281,7 @@ cls.HostCommandTransformer = function() {
       data.add_message(name + (cmd.description ? ": " + cmd.description : ""));
     }
   };
-  this.dfcommand_help.description = "Show a list of available commands";
+  this.dfcommand_help.description = ui_strings.S_REPL_HELP_COMMAND_DESC;
 
   this.dfcommand_man = this.dfcommand_help; // man is alias for help
 
@@ -301,7 +301,7 @@ cls.HostCommandTransformer = function() {
                 "})();"].join("\n");
     service.evaluate_input(code);
   }
-  this.dfcommand_jquery.description = "Load jquery in the active window";
+  this.dfcommand_jquery.description = ui_strings.S_REPL_JQUERY_COMMAND_DESC;
 
   this.init();
 };

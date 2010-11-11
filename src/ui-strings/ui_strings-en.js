@@ -540,3 +540,8 @@ ui_strings.S_NONE = "None";
 /* DESC: Printed in the command line view when it is shown for the first time. */
 ui_strings.S_REPL_WELCOME_TEXT = "Use the clear() command to clear the console.\nType \"// help()\" for more information";
 
+/* DESC: Description of the "help" command in the repl */
+ui_strings.S_REPL_HELP_COMMAND_DESC = "Show a list of all available commands";
+/* DESC: Description of the "jquery" command in the repl */
+ui_strings.S_REPL_JQUERY_COMMAND_DESC = "Load jquery in the active tab";
+
