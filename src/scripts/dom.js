@@ -242,6 +242,21 @@ Element.prototype.releaseEvent = function(name, custom_props)
   this.dispatchEvent(event);
 };
 
+Element.prototype.dispatchMouseEvent = function(type)
+{
+  var event = document.createEvent('MouseEvents');
+  var box = this.getBoundingClientRect();
+  var client_x = box.left + box.width * .5;
+  var client_y = box.top + box.height * .5;
+  event.initMouseEvent(type, true, true, window, 1, 
+                       window.screenLeft + client_x, 
+                       window.screenTop + client_y, 
+                       client_x, client_y, 
+                       false, false, false, false, 
+                       0, null);
+  this.dispatchEvent(event);
+};
+
 /* currently broken in Opera */
 Element.prototype.getWidth = function(e)
 {
