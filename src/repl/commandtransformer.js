@@ -269,13 +269,23 @@ cls.HostCommandTransformer = function() {
     data.clear();
   };
 
-  this.dfcommand_help = function(view, data, input)
+  this.dfcommand_help = function(input, view, data, service)
   {
     data.add_message("Use the clear() command to clear the console");
     data.add_message("Type \"//#! help()\" for more information");
   };
 
   this.dfcommand_man = this.dfcommand_help; // man is alias for help
+
+  this.dfcommand_jquery = function(input, view, data, service)
+  {
+    var url = "https://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js";
+    var code = ["var script = document.createElement('script');",
+                "script.setAttribute('src', '" + url + "');",
+                "script.addEventListener('load', function(){console.log('jquery loaded')}, false);",
+                "document.body.appendChild(script);'Loading jquery'"].join("\n");
+    service.evaluate_input(code);
+  }
 
   this.init();
 };
