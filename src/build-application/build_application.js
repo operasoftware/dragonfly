@@ -59,7 +59,6 @@ window.app.build_application = function(on_services_created, on_services_enabled
 
   var on_host_info_callback = function(service_descriptions)
   {
-
       new window.cls.ScopeInterfaceGenerator().get_interface(service_descriptions, 
         function(map)
         {
@@ -164,7 +163,8 @@ window.app.build_application = function(on_services_created, on_services_enabled
     'http-logger',
     'exec',
     'window-manager',
-    'ecmascript-debugger'
+    'ecmascript-debugger',
+    'cookie-manager'
   ].forEach(create_raw_interface);
   var params = this.helpers.parse_url_arguments();
   if(params.debug)
