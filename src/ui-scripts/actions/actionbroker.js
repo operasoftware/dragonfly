@@ -255,8 +255,8 @@ ActionBroker.default_shortcuts_win =
       "down": "nav-down",
       "left": "nav-left",
       "right": "nav-right",
-      "enter": "expand-collapse-or-select",
-      "ctrl enter": "expand-collapse-all-or-edit",
+      "enter": "dispatch-click",
+      "ctrl enter": "dispatch-dbl-click",
     },
     "edit":
     {
@@ -266,7 +266,27 @@ ActionBroker.default_shortcuts_win =
       "ctrl enter": "ctrl-enter-edit-mode",
       "escape": "exit-edit",
     }
-  }
+  },
+  "css-inspector":
+  {
+    "default":
+    {
+      "up": "nav-up",
+      "down": "nav-down",
+      "left": "nav-up",
+      "right": "nav-down",
+      "ctrl enter": "dispatch-dbl-click",
+    },
+    "edit":
+    {
+      "up": "autocomplete-previous",
+      "down": "autocomplete-next",
+      "shift tab": "edit-previous",
+      "tab": "edit-next",
+      "enter": "submit-edit-and-new-edit",
+      "escape": "exit-edit",
+    }
+  },
 };
 
 ActionBroker.get_instance = function()

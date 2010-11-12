@@ -72,7 +72,8 @@ Element.prototype.render = Document.prototype.render = function(args, namespace)
       {
         if (typeof args[i] != 'string')
         {
-          throw "TemplateSyntaxError";
+          throw "TemplateSyntaxError, expected 'string', got " + 
+                (typeof args[i]) + "for TEXT or KEY";
         }
         if (typeof args[i + 1] == 'string')
         {

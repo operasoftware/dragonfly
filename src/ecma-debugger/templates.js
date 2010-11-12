@@ -502,7 +502,7 @@ MODE ::= "<mode>"
 
     if( cat.handler )
     {
-      ret.splice(ret.length, 0, 'handler', cat.handler);
+      ret.splice(ret.length, 0, 'edit-handler', cat.handler);
     }
 
     return ret;
