@@ -201,8 +201,8 @@ window.cls.PropertyFinder = function(rt_id) {
    * about a particular runtime. Can be hooked up to messages about closed
    * tabs/runtimes
    */
-  this.forget_runtime = function(rt_id) {
-    // fixme
+  this.clear_cache = function(rt_id) {
+    this._cache = {};
   };
 
   this._cache_key = function(scope, frameinfo) {

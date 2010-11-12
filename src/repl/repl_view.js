@@ -393,6 +393,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
           this._textarea.value = "";
           this._backlog_index = -1;
           this._current_input = "";
+          this._resolver.clear_cache(); // evaling js voids the cache.
           this._service.handle_input(input);
         }
         break;
@@ -732,6 +733,14 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
   }.bind(this);
 
+  this._new_repl_context_bound = function(msg)
+  {
+    // This is neccessary so you dont end up with autocomplete date
+    // from the previous runtime/frame when tabbing.
+    this._recent_autocompletion = null;
+    this._resolver.clear_cache();
+  }.bind(this);
+
 
   var eh = window.eventHandlers;
   eh.click["repl-toggle-group"] = this._handle_repl_toggle_group_bound;
@@ -740,6 +749,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   eh.keypress['repl-textarea'] = this._handle_keypress_bound;
   eh.change['set-typed-history-length'] = this._handle_option_change_bound;
   messages.addListener('active-tab', this._update_runtime_selector_bound);
+  messages.addListener('new-top-runtime', this._new_repl_context_bound);
+  messages.addListener('debug-context-selected', this._new_repl_context_bound);
+  messages.addListener('frame-selected', this._new_repl_context_bound);
+
+
 
   this.init(id, name, container_class, html, default_handler);
   // Happens after base class init or else the call to .update that happens in

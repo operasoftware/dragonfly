@@ -437,10 +437,10 @@
   this.handle_input = function(input)
   {
     this._data.add_input(input);
-    this._evaluate_input(input);
+    this.evaluate_input(input);
   }.bind(this);
 
-  this._evaluate_input = function(input)
+  this.evaluate_input = function(input)
   {
     var cooked = this._transformer.transform(input);
     var command = this._transformer.get_command(cooked);
@@ -456,9 +456,9 @@
 
   };
 
-  this._handle_clientcommand = function(command, cooked)
+  this._handle_clientcommand = function(command)
   {
-    command(this._view, this._data, cooked);
+    command.call(this._transformer, this._view, this._data, this);
   };
 
   this._handle_hostcommand = function(cooked)
