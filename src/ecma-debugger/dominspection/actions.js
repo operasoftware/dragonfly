@@ -497,46 +497,17 @@ cls.DOMInspectorActions = function(id)
     return true;
   }.bind(this);
 
-  this._handlers["expand-collapse-or-select"] = function(event, target)
+  this._handlers["dispatch-click"] = function(event, target)
   {
     if(nav_target)
-    {
-      var handler_target = nav_target.has_attr("parent-node-chain", "handler");
-      switch (nav_target.nodeName.toLowerCase())
-      {
-        case 'input':
-          this._handlers["expand-collapse-node"](event, handler_target);
-          break;
-        case 'value':
-          if (handler_target == nav_target)
-          {
-            this._handlers["dom-resource-link"](event, handler_target);
-            break;
-          }
-        case 'key':
-        case 'node':
-        case 'text':
-          this._handlers["select-node"](event, handler_target);
-          break;
-      }
-    }
+      nav_target.dispatchMouseEvent('click');
     return false;
   }.bind(this);
 
-  this._handlers["expand-collapse-all-or-edit"] = function(event, target)
+  this._handlers["dispatch-dbl-click"] = function(event, target)
   {
     if(nav_target)
-    {
-      var handler_target = nav_target.has_attr("parent-node-chain", "handler");
-      switch (nav_target.nodeName.toLowerCase())
-      {
-        case "input":
-          this._handlers["expand-collapse-whole-node"](event, handler_target);
-          break;
-        default:
-          this._handlers["edit-dom"]({target: nav_target}, handler_target);
-      } 
-    }
+      nav_target.dispatchMouseEvent('dblclick');
     return false;
   }.bind(this);
 
