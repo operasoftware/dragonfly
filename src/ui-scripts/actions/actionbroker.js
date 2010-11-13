@@ -61,11 +61,18 @@ var ActionBroker = function()
     * to an action id according to the current context and mode.
     */
   this.dispatch_key_input = function(key_id, event){};
+  
+  this.delay_action = function(type, handler_id, action_id, event, target){};
+
+  this.clear_delayed_actions = function(type){};
+  
+  
+  this.get_actions_with_handler_id = function(handler_id){};
 
   /* constants */
 
   const
-  GLOBAL_HANDLER = "global",
+  GLOBAL_HANDLER = ActionBroker.GLOBAL_HANDLER_ID,
   MODE_DEFAULT = ActionBroker.MODE_DEFAULT,
   MODE_EDIT = ActionBroker.MODE_EDIT;
 
@@ -131,7 +138,7 @@ var ActionBroker = function()
     this._shortcuts = ActionBroker.default_shortcuts_win;
     this._gloabal_shortcuts = this._shortcuts.global;
     this._key_identifier = new KeyIdentifier(this.dispatch_key_input.bind(this));
-    this._key_identifier.set_shortcuts(this.get_shortcuts());
+    this._key_identifier.set_shortcuts(this._get_shortcut_keys());
     this._global_handler = new GlobalActionHandler(GLOBAL_HANDLER);
     this.register_handler(this._global_handler);
     this._set_current_handler(this._global_handler);
@@ -203,6 +210,16 @@ var ActionBroker = function()
   }
 
   this.get_shortcuts = function()
+  {
+    return this._shortcuts;
+  }
+  
+  this.get_actions_with_handler_id = function(handler_id)
+  {
+    return (
+    this._handlers[handler_id] && this._handlers[handler_id].get_action_list());
+  };
+  this._get_shortcut_keys = function()
   {
     var ret = [], name = '', handler = null, key = '';
     for (name in this._shortcuts)
@@ -294,5 +311,6 @@ ActionBroker.get_instance = function()
   return this.instance || new ActionBroker();
 }
 
+ActionBroker.GLOBAL_HANDLER_ID = "global";
 ActionBroker.MODE_DEFAULT = "default";
 ActionBroker.MODE_EDIT = "edit";

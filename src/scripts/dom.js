@@ -639,6 +639,11 @@ String.prototype.isdigit = function()
   return !(/\D/.test(this));
 };
 
+Array.prototype.extend = function(list)
+{
+  this.push.apply(this, list);
+}
+
 /**
  * Convenience function for loading a resource with XHR using the get method.
  * Will automatically append a "time" guery argument to avoid caching.

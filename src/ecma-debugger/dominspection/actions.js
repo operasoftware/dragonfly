@@ -373,6 +373,14 @@ cls.DOMInspectorActions = function(id)
     if (action_id in this._handlers)
       return this._handlers[action_id](event, target);
   }
+  
+  this.get_action_list = function()
+  {
+    var actions = [], key = '';
+    for (key in this._handlers)
+      actions.push(key);
+    return actions;
+  };
 
   this._handlers["expand-collapse-node"] = function(event, target)
   {

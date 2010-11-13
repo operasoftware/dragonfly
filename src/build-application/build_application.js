@@ -189,6 +189,17 @@ window.app.build_application = function(on_services_created, on_services_enabled
   cls.DebugRemoteSettingView.prototype = ViewBase;
   new cls.DebugRemoteSettingView('debug_remote_setting', ui_strings.S_SWITCH_REMOTE_DEBUG, '');
   cls.DebugRemoteSettingView.create_ui_widgets();
+  
+  /* Shortcut config */
+  var GlobalView = function(id, name)
+  {
+    this.init(id, name);
+  };
+  GlobalView.prototype = ViewBase;
+  new GlobalView(ActionBroker.GLOBAL_HANDLER_ID, 'Global');
+  cls.ShortcutConfigView.prototype = ViewBase;
+  new cls.ShortcutConfigView('shortcut_config', 'Shortcut Config', '');
+  cls.ShortcutConfigView.create_ui_widgets();
 
   // create the client
   if(window.services.scope)

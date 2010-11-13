@@ -46,6 +46,14 @@
 
   this._broker = ActionBroker.get_instance();
   this._handlers = {};
+  
+  this.get_action_list = function()
+  {
+    var actions = [], key = '';
+    for (key in this._handlers)
+      actions.push(key);
+    return actions;
+  };
 
   this._handlers['continue-run'] =
   this._handlers['continue-step-next-line'] =
@@ -94,3 +102,5 @@
 
 
 }
+
+

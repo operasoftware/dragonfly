@@ -269,6 +269,14 @@ cls.CSSInspectorActions = function(id)
   this._broker.register_handler(this);
   this._handlers = {};
   this._mode = MODE_DEFAULT;
+  
+  this.get_action_list = function()
+  {
+    var actions = [], key = '';
+    for (key in this._handlers)
+      actions.push(key);
+    return actions;
+  };
 
   this._handlers['nav-up'] = function(event, target)
   {

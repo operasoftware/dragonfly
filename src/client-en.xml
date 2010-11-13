@@ -218,6 +218,10 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./debug/test_messages.js"/>
 <script src="./debug/build_debug.js"/>
 
+<script src="./shortcutconfig/shortcutconfig.js"/>
+<script src="./shortcutconfig/templates.js"/>
+
+
 
 
 
