@@ -62,9 +62,48 @@ cls.ShortcutConfigView.create_ui_widgets = function()
     }
   }
   
-  window.eventHandlers.click['scc-save-shartcuts'] = function(event, target)
+  window.eventHandlers.click['scc-save-shortcuts'] = function(event, target)
   {
-    var table = event.target.has_attr('parent-node-chain', 'handler-id');
+    var
+    shortcuts = {},
+    cur_mode = null,
+    mode = null,
+    select = null,
+    input = null,
+    shortcut = '',
+    invalid_shortcuts = [],
+    table = event.target.has_attr('parent-node-chain', 'handler-id'),
+    handler_id = table && table.getAttribute('handler-id'),
+    trs = table && table.getElementsByTagName('tr'),
+    tr = null,
+    i = 0;
+    
+    if (trs)
+    {
+      for (; tr = trs[i]; i++)
+      {
+        mode = tr.getAttribute('data-mode');
+        if (mode)
+          shortcuts[mode] = cur_mode = {};
+        if (cur_mode && (select = tr.getElementsByTagName('select')[0]))
+        {
+          input = tr.getElementsByTagName('input')[0];
+          shortcut = input && input.value.trim() || '';
+          if (shortcut)
+          {
+            cur_mode[shortcut] = select.value;
+            if (!KeyIdentifier.validate_shortcut(shortcut))
+              invalid_shortcuts.push(shortcut);
+          }
+        }
+      }
+    }
+    
+    table.re_render(window.templates.scc_shortcuts_table (handler_id, 
+                                                          shortcuts, 
+                                                          invalid_shortcuts));
+    if (!invalid_shortcuts.length)
+      alert(JSON.stringify(shortcuts)+'\n'+invalid_shortcuts)
   }
   
   
