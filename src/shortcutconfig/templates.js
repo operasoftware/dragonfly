@@ -125,7 +125,9 @@
     var is_invalid = false;
     for (var shortcut in shortcuts)
     {
-      if (invalid_shortcuts && (invalid_shortcuts.indexOf(shortcut) != -1))
+      is_invalid = invalid_shortcuts && 
+                   invalid_shortcuts.indexOf(shortcut) != -1;
+      if (is_invalid)
         ret.push(this.ssc_invalid_shortcut());
       tr =
       ['tr', 
@@ -134,6 +136,8 @@
         ],
         ['td', action_select(shortcuts[shortcut])]
       ];
+      if (is_invalid)
+        tr.push('class', 'invalid-shortcut');
       if (shortcuts_match && !(shortcut in shortcuts_match))
         tr.push('class', 'scc-no-match');
       ret.push(tr);
@@ -145,7 +149,7 @@
   {
     return (
     ['tr', 
-      ['td', 'Invalid shortcut:', 'colspan', '2'], 
+      ['td', 'Invalid shortcut', 'colspan', '2'], 
       'class', 'invalid-shortcut'
     ]);
   }
