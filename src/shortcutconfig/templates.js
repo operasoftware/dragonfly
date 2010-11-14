@@ -3,10 +3,6 @@
   this.shortcut_config = function()
   {
     var shortcuts = ActionBroker.get_instance().get_shortcuts();
-    var sections = [];
-    for (var key in shortcuts)
-      sections.push({id: key, name: window.views[key].name});
-    //sections.sort(this._scc_sort_by_name);
     return (
     ['setting-composite',
         this.scc_control(['Reset all to defaults', 'scc-reset-all-to-defaults']),
@@ -22,26 +18,51 @@
           'focus-handler', 'focus',
           'blur-handler', 'blur' 
         ],
-      ['ul', sections.map(this.scc_section)],
+      this.scc_sections(shortcuts),
     ]);
   }
   
-  this.scc_section = function(section, index)
+  this.scc_sections = function(shortcuts, shortcuts_match)
+  {
+
+    var sections = [];
+    for (var key in shortcuts)
+      sections.push({id: key, 
+                     name: window.views[key].name,
+                     is_search: Boolean(shortcuts_match),
+                     has_match: shortcuts_match && shortcuts_match[key].has_match});
+    return (
+    ['ul', 
+      sections.map(this.scc_section.bind(this, shortcuts, shortcuts_match)), 
+      'class', 'shortcuts-config'
+    ]);
+  }
+  
+  this.scc_section = function(shortcuts, shortcuts_match, section, index)
   {
     return (
     [
       'li',
         ['header',
-          ['input', 'type', 'button'],
+          ['input', 
+            'type', 'button', 
+            'class', section.has_match ? 'unfolded' : ''
+          ],
           section.name,
-          'handler', 'scc-expand-section',
-        ],
+        ].concat(section.is_search ?
+                 [] :
+                 ['handler', 'scc-expand-section']),
+        section.is_search && section.has_match ?
+        this.scc_shortcuts_table(section.id, 
+                                 shortcuts[section.id], 
+                                 shortcuts_match[section.id]) :
+        [],
       'handler-id', section.id,
-      'class', section.is_search && !section.is_unfolded ? 'search-no-match' : ''
+      'class', section.is_search && !section.has_match ? 'search-no-match' : ''
     ]);
   }
   
-  this.scc_shortcuts_table = function(handler_id, shortcuts, invalid_shortcuts)
+  this.scc_shortcuts_table = function(handler_id, shortcuts, shortcuts_match, invalid_shortcuts)
   {
     var broker = ActionBroker.get_instance();
     var actions = broker.get_actions_with_handler_id(handler_id);
@@ -54,11 +75,14 @@
     {
       var ret = [];
       var action_select = this.scc_action_select.bind(this, actions);
-      var mode = '';
-      for (mode in shortcuts)
+      var modes = ["default", "edit"], mode = '', i = 0;
+      for (; mode = modes[i]; i++)
       {
-        ret.extend(this.scc_shortcuts_mode(handler_id, mode, 
-                                           shortcuts[mode], action_select,
+        ret.extend(this.scc_shortcuts_mode(handler_id, 
+                                           mode, 
+                                           shortcuts[mode], 
+                                           shortcuts_match && shortcuts_match[mode],
+                                           action_select,
                                            invalid_shortcuts));
         ret.push(this.scc_controls([['Add', 'scc-add-shortcut']]));
       }
@@ -68,8 +92,12 @@
     }
   }
   
-  this.scc_shortcuts_mode = function(handler_id, mode, shortcuts, 
-                                     action_select, invalid_shortcuts)
+  this.scc_shortcuts_mode = function(handler_id, 
+                                     mode, 
+                                     shortcuts, 
+                                     shortcuts_match,
+                                     action_select, 
+                                     invalid_shortcuts)
   {
     var labels = 
     {
@@ -87,7 +115,7 @@
       ]
     ];
     var is_invalid = false;
-    var tr = false;
+    var tr = null;
     for (var shortcut in shortcuts)
     {
       is_invalid = invalid_shortcuts && 
@@ -98,10 +126,12 @@
           is_invalid ?
           ['p', 'Invalid shortcut:', 'class', 'invalid-shortcut'] :
           [],
-          ['input', 'value', shortcut]
+          ['input', 'value', shortcut, 'class', 'scc-input'],
         ],
         ['td', action_select(shortcuts[shortcut])]
       ];
+      if (shortcuts_match && !(shortcut in shortcuts_match))
+        tr.push('class', 'scc-no-match');
       ret.push(tr);
     }
     return ret;
@@ -111,8 +141,11 @@
   {
     return (
     ['tr',
-      label_handler_list.map(this.scc_control, this),
-      'colspan', '2'
+      ['td',
+        label_handler_list.map(this.scc_control, this),
+        'colspan', '2',
+        'class', 'controls'
+      ]
     ]);
   };
   
@@ -137,7 +170,7 @@
       else
         ret.push(['option', action])
     }
-    return ['select', ret];
+    return ['select', ret, 'class', 'scc-select'];
   };
   
   this._scc_sort_by_name = function(a, b)

@@ -101,10 +101,71 @@ cls.ShortcutConfigView.create_ui_widgets = function()
     
     table.re_render(window.templates.scc_shortcuts_table (handler_id, 
                                                           shortcuts, 
+                                                          null,
                                                           invalid_shortcuts));
     if (!invalid_shortcuts.length)
       alert(JSON.stringify(shortcuts)+'\n'+invalid_shortcuts)
   }
+  
+  var search_mode = function(mode_source, mode_target, search)
+  {
+    var has_match = false;
+    for (var key in mode_source)
+    {
+      if (search && key.toLowerCase().indexOf(search) != -1) // search value too?
+      {
+        mode_target[key] = mode_source[key];
+        has_match = true;
+      }
+    }
+    return has_match;
+  }
+  
+  window.eventHandlers.input['scc-quick-find'] = function(event, target)
+  {
+    var search = event.target.value.toLowerCase().trim();
+    var broker = ActionBroker.get_instance();
+    var shortcuts = broker.get_shortcuts();
+    var cur_section = null;
+    var cur_mode = null;
+    var shortcuts_match = {};
+    var section = '';
+    var mode = '';
+    var has_match = false;
+    var container = event.target;
+    var ul = null;
+    var tpl = null;
+    
+
+    for (section in shortcuts)
+    {
+      shortcuts_match[section] = 
+      {
+        "default": {}, 
+        "edit": {}, 
+        is_search: Boolean(search)
+      };
+      has_match = search_mode(shortcuts[section]["default"], 
+                              shortcuts_match[section]["default"], 
+                              search)
+      has_match = has_match || search_mode(shortcuts[section]["default"], 
+                                           shortcuts_match[section]["default"], 
+                                           search);
+      shortcuts_match[section].has_match = has_match;
+    }
+    
+    while (container && container.nodeName.toLowerCase() != "setting-composite")
+      container = container.parentNode;
+    
+    if (container)
+    {
+      tpl = templates.scc_sections(shortcuts, shortcuts_match);
+      if (ul = container.getElementsByTagName('ul')[0])
+        container.replaceChild(document.render(tpl), ul);
+    }
+    
+  }
+  
   
   
 };
