@@ -1,0 +1,51 @@
+.shortcuts-config
+{
+  xborder-left: 1px solid #ccc;
+  xborder-right: 1px solid #ccc;
+  width: 360px;
+}
+.shortcuts-config header
+{
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+}
+
+.shortcuts
+{
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed;
+}
+.shortcuts td
+{
+  vertical-align: bottom;
+  border: 1px solid #ccc;
+}
+.shortcuts th
+{
+  background-color: #333;
+  color: #fff;
+  border: 1px solid #333;
+}
+.invalid-shortcut
+{
+  color: red;
+  margin: 0;
+  font-weight: bold;
+  padding: 2px 5px;
+}
+.scc-input,
+.scc-select
+{
+  border: none;
+  background: none;
+  width: 100%;
+  height: 100%;
+  vertical-align: middle;
+  box-sizing: border-box;
+  padding: 2px 5px;
+}
+.scc-no-match
+{
+  display: none;
+}
