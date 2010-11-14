@@ -6,6 +6,7 @@
     return (
     ['setting-composite',
         this.scc_control(['Reset all to defaults', 'scc-reset-all-to-defaults']),
+        // TODO reuse toolbar
         ['filter', 
           ['em', 'Quick find' ],
           ['input', 
@@ -24,7 +25,6 @@
   
   this.scc_sections = function(shortcuts, shortcuts_match)
   {
-
     var sections = [];
     for (var key in shortcuts)
       sections.push({id: key, 
@@ -40,29 +40,34 @@
   
   this.scc_section = function(shortcuts, shortcuts_match, section, index)
   {
-    return (
-    [
-      'li',
-        ['header',
-          ['input', 
-            'type', 'button', 
-            'class', section.has_match ? 'unfolded' : ''
-          ],
-          section.name,
-        ].concat(section.is_search ?
-                 [] :
-                 ['handler', 'scc-expand-section']),
-        section.is_search && section.has_match ?
-        this.scc_shortcuts_table(section.id, 
-                                 shortcuts[section.id], 
-                                 shortcuts_match[section.id]) :
-        [],
-      'handler-id', section.id,
-      'class', section.is_search && !section.has_match ? 'search-no-match' : ''
-    ]);
+    var header = 
+    ['header',
+      ['input', 
+        'type', 'button', 
+        'class', section.has_match ? 'unfolded' : ''
+      ],
+      section.name,
+    ];
+    if (!section.is_search)
+      header.push('handler', 'scc-expand-section');
+    var li = ['li', header];
+    if (section.is_search)
+    {
+      if (section.has_match)
+        li.push(this.scc_shortcuts_table(section.id, 
+                                         shortcuts[section.id], 
+                                         shortcuts_match[section.id]));
+      else
+        li.push('class', 'search-no-match');
+    }
+    li.push('handler-id', section.id);
+    return li;
   }
   
-  this.scc_shortcuts_table = function(handler_id, shortcuts, shortcuts_match, invalid_shortcuts)
+  this.scc_shortcuts_table = function(handler_id, 
+                                      shortcuts, 
+                                      shortcuts_match, 
+                                      invalid_shortcuts)
   {
     var broker = ActionBroker.get_instance();
     var actions = broker.get_actions_with_handler_id(handler_id);
@@ -127,14 +132,11 @@
     var is_invalid = false;
     for (var shortcut in shortcuts)
     {
-      is_invalid = invalid_shortcuts && 
-                   (invalid_shortcuts.indexOf(shortcut) != -1);
+      if (invalid_shortcuts && (invalid_shortcuts.indexOf(shortcut) != -1))
+        ret.push(this.ssc_invalid_shortcut());
       tr =
       ['tr', 
         ['td',
-          is_invalid ?
-          ['p', 'Invalid shortcut:', 'class', 'invalid-shortcut'] :
-          [],
           ['input', 'value', shortcut, 'class', 'scc-input'],
         ],
         ['td', action_select(shortcuts[shortcut])]
@@ -145,6 +147,15 @@
     }
     return ret;
   };
+  
+  this.ssc_invalid_shortcut = function()
+  {
+    return (
+    ['tr', 
+      ['td', 'Invalid shortcut:', 'colspan', '2'], 
+      'class', 'invalid-shortcut'
+    ]);
+  }
   
   this.scc_controls = function(label_handler_list)
   {

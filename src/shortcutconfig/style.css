@@ -27,9 +27,11 @@
   color: #fff;
   border: 1px solid #333;
 }
-.invalid-shortcut
+.invalid-shortcut td
 {
-  color: red;
+  color: #fff;
+  background-color: red;
+  border-color: red;
   margin: 0;
   font-weight: bold;
   padding: 2px 5px;
