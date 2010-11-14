@@ -46,7 +46,7 @@
         'type', 'button', 
         'class', section.has_match ? 'unfolded' : ''
       ],
-      section.name,
+      "Shortcuts " + section.name,
     ];
     if (!section.is_search)
       header.push('handler', 'scc-expand-section');
@@ -115,17 +115,10 @@
   {
     var labels = 
     {
-      "default": "Shortcuts %s in default mode",
-      "edit": "Shortcuts %s in edit mode"
+      "default": "Default mode",
+      "edit": "Edit mode"
     };
-    var tr =
-    ['tr', 
-      ['th', 
-        labels[mode].replace("%s", views[handler_id].name), 
-        'colspan', '2',
-      ],
-      'data-mode', mode
-    ];
+    var tr = ['tr', ['th', labels[mode], 'colspan', '2'], 'data-mode', mode];
     if (shortcuts_match && !shortcuts_match.has_match)
       tr.push('class', 'scc-no-match');
     var ret = [tr];

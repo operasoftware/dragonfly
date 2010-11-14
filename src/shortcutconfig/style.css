@@ -15,6 +15,7 @@
   border-collapse: collapse;
   width: 100%;
   table-layout: fixed;
+  margin-bottom: 15px;
 }
 .shortcuts td
 {
@@ -23,9 +24,17 @@
 }
 .shortcuts th
 {
-  background-color: hsl(0, 0%, 30%);
-  color: #fff;
-  border: 1px solid #333;
+  xbackground-color: hsl(0, 0%, 35%);
+  background-color: hsl(0, 0%, 80%);
+  xcolor: #fff;
+  xborder: 1px solid #333;
+  border: 1px solid #ccc;
+  text-align: left;
+  padding: 2px 5px;
+}
+.shortcuts .controls
+{
+  xbackground-color: hsl(0, 0%, 70%);
 }
 .invalid-shortcut td
 {
