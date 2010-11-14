@@ -76,15 +76,22 @@ cls.ShortcutConfigView.create_ui_widgets = function()
     handler_id = table && table.getAttribute('handler-id'),
     trs = table && table.getElementsByTagName('tr'),
     tr = null,
-    i = 0;
-    
+    i = 0,
+    is_search = table && table.hasClass('is-search'),
+    shortcuts_match = is_search ? {"default": {}, "edit": {}} : null,
+    shortcuts_match_mode = null;
+        
     if (trs)
     {
       for (; tr = trs[i]; i++)
       {
         mode = tr.getAttribute('data-mode');
         if (mode)
+        {
           shortcuts[mode] = cur_mode = {};
+          if (shortcuts_match && shortcuts_match[mode])
+            shortcuts_match_mode = shortcuts_match[mode];
+        }
         if (cur_mode && (select = tr.getElementsByTagName('select')[0]))
         {
           input = tr.getElementsByTagName('input')[0];
@@ -94,6 +101,11 @@ cls.ShortcutConfigView.create_ui_widgets = function()
             cur_mode[shortcut] = select.value;
             if (!KeyIdentifier.validate_shortcut(shortcut))
               invalid_shortcuts.push(shortcut);
+            if (shortcuts_match_mode && !tr.hasClass('scc-no-match'))
+            {
+              shortcuts_match_mode[shortcut] = select.value;
+              shortcuts_match_mode.has_match = true;
+            }
           }
         }
       }
@@ -101,14 +113,15 @@ cls.ShortcutConfigView.create_ui_widgets = function()
     
     table.re_render(window.templates.scc_shortcuts_table (handler_id, 
                                                           shortcuts, 
-                                                          null,
+                                                          shortcuts_match,
                                                           invalid_shortcuts));
     if (!invalid_shortcuts.length)
       alert(JSON.stringify(shortcuts)+'\n'+invalid_shortcuts)
   }
   
-  var search_mode = function(mode_source, mode_target, search)
+  var search_mode = function(mode_source, search)
   {
+    var mode_target = {}; 
     var has_match = false;
     for (var key in mode_source)
     {
@@ -118,7 +131,8 @@ cls.ShortcutConfigView.create_ui_widgets = function()
         has_match = true;
       }
     }
-    return has_match;
+    mode_target.has_match = has_match;
+    return mode_target;
   }
   
   window.eventHandlers.input['scc-quick-find'] = function(event, target)
@@ -128,7 +142,7 @@ cls.ShortcutConfigView.create_ui_widgets = function()
     var shortcuts = broker.get_shortcuts();
     var cur_section = null;
     var cur_mode = null;
-    var shortcuts_match = {};
+    var shortcuts_match = {is_search: Boolean(search)};
     var section = '';
     var mode = '';
     var has_match = false;
@@ -136,7 +150,6 @@ cls.ShortcutConfigView.create_ui_widgets = function()
     var ul = null;
     var tpl = null;
     
-
     for (section in shortcuts)
     {
       shortcuts_match[section] = 
@@ -145,13 +158,13 @@ cls.ShortcutConfigView.create_ui_widgets = function()
         "edit": {}, 
         is_search: Boolean(search)
       };
-      has_match = search_mode(shortcuts[section]["default"], 
-                              shortcuts_match[section]["default"], 
-                              search)
-      has_match = has_match || search_mode(shortcuts[section]["default"], 
-                                           shortcuts_match[section]["default"], 
-                                           search);
-      shortcuts_match[section].has_match = has_match;
+      shortcuts_match[section]["default"] = 
+        search_mode(shortcuts[section]["default"], search);
+      shortcuts_match[section]["edit"] = 
+        search_mode(shortcuts[section]["edit"], search);
+      shortcuts_match[section].has_match = 
+        shortcuts_match[section]["default"].has_match ||
+        shortcuts_match[section]["edit"].has_match;
     }
     
     while (container && container.nodeName.toLowerCase() != "setting-composite")
@@ -159,7 +172,7 @@ cls.ShortcutConfigView.create_ui_widgets = function()
     
     if (container)
     {
-      tpl = templates.scc_sections(shortcuts, shortcuts_match);
+      tpl = templates.scc_sections(shortcuts, search && shortcuts_match);
       if (ul = container.getElementsByTagName('ul')[0])
         container.replaceChild(document.render(tpl), ul);
     }

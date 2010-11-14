@@ -84,11 +84,20 @@
                                            shortcuts_match && shortcuts_match[mode],
                                            action_select,
                                            invalid_shortcuts));
-        ret.push(this.scc_controls([['Add', 'scc-add-shortcut']]));
+        if (!shortcuts_match)
+          ret.push(this.scc_controls([['Add', 'scc-add-shortcut']]));
       }
-      ret.push(this.scc_controls([['Reset to defaults', 'scc-reset-to-defaults'],
-                                  ['Save', 'scc-save-shortcuts']]));
-      return ['table', ret, 'handler-id', handler_id, 'class', 'shortcuts'];
+      if (shortcuts_match)
+        ret.push(this.scc_controls([['Save', 'scc-save-shortcuts']]));
+      else
+        ret.push(this.scc_controls([['Reset to defaults', 'scc-reset-to-defaults'],
+                                    ['Save', 'scc-save-shortcuts']]));
+      return (
+      ['table', 
+        ret, 
+        'handler-id', handler_id, 
+        'class', 'shortcuts' + (shortcuts_match ? ' is-search' : '')
+      ]);
     }
   }
   
@@ -104,18 +113,18 @@
       "default": "Shortcuts %s in default mode",
       "edit": "Shortcuts %s in edit mode"
     };
-    var ret = 
-    [
-      ['tr', 
-        ['th', 
-          labels[mode].replace("%s", views[handler_id].name), 
-          'colspan', '2',
-        ],
-        'data-mode', mode
-      ]
+    var tr =
+    ['tr', 
+      ['th', 
+        labels[mode].replace("%s", views[handler_id].name), 
+        'colspan', '2',
+      ],
+      'data-mode', mode
     ];
+    if (shortcuts_match && !shortcuts_match.has_match)
+      tr.push('class', 'scc-no-match');
+    var ret = [tr];
     var is_invalid = false;
-    var tr = null;
     for (var shortcut in shortcuts)
     {
       is_invalid = invalid_shortcuts && 

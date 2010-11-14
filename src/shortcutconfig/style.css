@@ -23,7 +23,7 @@
 }
 .shortcuts th
 {
-  background-color: #333;
+  background-color: hsl(0, 0%, 30%);
   color: #fff;
   border: 1px solid #333;
 }
