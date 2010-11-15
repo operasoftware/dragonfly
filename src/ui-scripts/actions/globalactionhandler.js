@@ -39,7 +39,14 @@
 
   const
   MODE_DEFAULT = ActionBroker.MODE_DEFAULT,
-  MODE_EDIT = ActionBroker.MODE_EDIT;
+  MODE_EDIT = "edit";
+
+  this.mode = MODE_DEFAULT;
+
+  this.mode_labels =
+  {
+    "edit": "Edit",
+  }
 
   /* privat */
 
@@ -93,9 +100,9 @@
 
   this.onclick = function(event)
   {
-    this._broker.set_mode(this, /input|textarea/i.test(event.target.nodeName) ?
-                                MODE_EDIT :
-                                MODE_DEFAULT);
+    this.mode = /input|textarea/i.test(event.target.nodeName) ?
+                                       MODE_EDIT :
+                                       MODE_DEFAULT;
   };
 
   /* instatiation */

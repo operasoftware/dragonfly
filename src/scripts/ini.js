@@ -41,14 +41,14 @@
           "enter": "dispatch-click",
           "ctrl enter": "dispatch-dbl-click",
         },
-        "edit":
+        "edit-attributes-and-text":
         {
           "shift tab": "edit-previous",
           "tab": "edit-next",
           "enter": "submit-edit",
           "escape": "exit-edit",
         },
-        "edit markup":
+        "edit-markup":
         {
           "shift tab": "edit-previous",
           "tab": "edit-next",

@@ -14,8 +14,14 @@ cls.DOMInspectorActions = function(id)
   const
   SCROLL_IN_PADDING = 30,
   MODE_DEFAULT = ActionBroker.MODE_DEFAULT,
-  MODE_EDIT = ActionBroker.MODE_EDIT,
-  MODE_EDIT_MARKUP = "edit markup";
+  MODE_EDIT_ATTR_TEXT = "edit-attributes-and-text",
+  MODE_EDIT_MARKUP = "edit-markup";
+
+  this.mode_labels =
+  {
+    "edit-attributes-and-text": "Edit Attributes and Text",
+    "edit-markup": "Edit markup"
+  }
 
   var self = this;
   var view_container = null;
@@ -23,9 +29,10 @@ cls.DOMInspectorActions = function(id)
   var nav_target = null;
   var selection = null;
   var range = null;
-  var mode = MODE_DEFAULT;
+  
   var broker = ActionBroker.get_instance();
 
+  this.mode = MODE_DEFAULT;
   this.serializer = new cls.DOMSerializer();
 
   this._handlers = {};
@@ -344,13 +351,13 @@ cls.DOMInspectorActions = function(id)
 
   this.focus = function(event, container)
   {
-    if (mode == MODE_DEFAULT)
+    if (this.mode == MODE_DEFAULT)
       this.setContainer(event, container);
   }
 
   this.blur = function(event)
   {
-    if (mode == MODE_EDIT && this.editor)
+    if (this.mode != MODE_DEFAULT && this.editor)
       this.editor.submit();
     if (selection)
       selection.collapse(document.documentElement, 0);
@@ -364,7 +371,7 @@ cls.DOMInspectorActions = function(id)
 
   this.onclick = function(event)
   {
-    if (mode == MODE_DEFAULT)
+    if (this.mode == MODE_DEFAULT)
       return this.keyhandler_onclick(event);
     return this.edit_onclick(event);
   }
@@ -538,7 +545,7 @@ cls.DOMInspectorActions = function(id)
         case 'value':
         case 'text':
         {
-          broker.set_mode(this, mode = MODE_EDIT);
+          this.mode = MODE_EDIT_ATTR_TEXT;
           document.documentElement.addClass('modal');
           self.setSelected(event.target.parentNode);
           self.set_editor("dom-attr-text-editor");
@@ -559,7 +566,7 @@ cls.DOMInspectorActions = function(id)
               return;
             }
           }
-          broker.set_mode(this, mode = MODE_EDIT_MARKUP);
+          this.mode = MODE_EDIT_MARKUP;
           document.documentElement.addClass('modal');
           self.setSelected(new_target.parentNode);
           self.set_editor("dom-markup-editor");
@@ -575,7 +582,7 @@ cls.DOMInspectorActions = function(id)
     if (this.editor.type == "dom-attr-text-editor")
     {
       this.setSelected(this.editor.submit() || this.getFirstTarget() );
-      broker.set_mode(this, mode = MODE_DEFAULT);
+      this.mode = MODE_DEFAULT;
       document.documentElement.removeClass('modal');
       return false;
     }
@@ -585,7 +592,7 @@ cls.DOMInspectorActions = function(id)
   this._handlers["ctrl-enter-edit-mode"] = function(event, target)
   {
     this.setSelected(this.editor.submit() || this.getFirstTarget());
-    broker.set_mode(this, mode = MODE_DEFAULT);
+    this.mode = MODE_DEFAULT;
     document.documentElement.removeClass('modal');
     return false;
   }.bind(this);
@@ -596,7 +603,7 @@ cls.DOMInspectorActions = function(id)
     {
       if( !this.editor.nav_next(event) )
       {
-        broker.set_mode(this, mode = MODE_DEFAULT);
+        this.mode = MODE_DEFAULT;
         document.documentElement.removeClass('modal');
       }
       return false;
@@ -614,7 +621,7 @@ cls.DOMInspectorActions = function(id)
     {
       if( !this.editor.nav_previous(event) )
       {
-        broker.set_mode(this, mode = MODE_DEFAULT);
+        this.mode = MODE_DEFAULT;
         document.documentElement.removeClass('modal');
       }
       return false;
@@ -640,7 +647,7 @@ cls.DOMInspectorActions = function(id)
       */
       this.editor.cancel();
     }
-    broker.set_mode(this, mode = MODE_DEFAULT);
+    this.mode = MODE_DEFAULT;
     document.documentElement.removeClass('modal');
     return false;
   }.bind(this);
@@ -655,7 +662,7 @@ cls.DOMInspectorActions = function(id)
       }
       else
       {
-        broker.set_mode(this, mode = MODE_DEFAULT);
+        this.mode = MODE_DEFAULT;
         //key_identifier.setModeDefault(self);
         document.documentElement.removeClass('modal');
       }
