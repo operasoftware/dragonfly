@@ -3,23 +3,25 @@
   this.shortcut_config = function()
   {
     var shortcuts = ActionBroker.get_instance().get_shortcuts();
+    var quick_find =
+    {
+      label: 'Quick find', 
+      handler: 'scc-quick-find', 
+      title: 'Find shortcut'
+    };
     return (
     ['setting-composite',
-        this.scc_control(['Reset all to defaults', 'scc-reset-all-to-defaults']),
-        // TODO reuse toolbar
-        ['filter', 
-          ['em', 'Quick find' ],
-          ['input', 
-            'autocomplete', 'off', 
-            'type', 'text', 
-            'handler', 'scc-quick-find', 
-            'title', 'Find shortcut',
-            'default-text', 'Quick find'
-          ],
-          'focus-handler', 'focus',
-          'blur-handler', 'blur' 
+      ['toolbar',
+        ['toolbar-buttons',
+          this.scc_control(['Reset all to defaults', 'scc-reset-all-to-defaults']),
         ],
+        this.filters([quick_find]),
+        'style', 'position: static;',
+        'focus-handler', 'focus',
+        'blur-handler', 'blur'
+      ],
       this.scc_sections(shortcuts),
+      'class', 'shortcuts-config'
     ]);
   }
   
@@ -34,7 +36,7 @@
     return (
     ['ul', 
       sections.map(this.scc_section.bind(this, shortcuts, shortcuts_match)), 
-      'class', 'shortcuts-config'
+      
     ]);
   }
   

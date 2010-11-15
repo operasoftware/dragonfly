@@ -198,7 +198,7 @@ window.app.build_application = function(on_services_created, on_services_enabled
   GlobalView.prototype = ViewBase;
   new GlobalView(ActionBroker.GLOBAL_HANDLER_ID, 'Global');
   cls.ShortcutConfigView.prototype = ViewBase;
-  new cls.ShortcutConfigView('shortcut_config', 'Shortcut Config', '');
+  new cls.ShortcutConfigView('shortcut-config', 'Shortcut Config', '');
   cls.ShortcutConfigView.create_ui_widgets();
 
   // create the client

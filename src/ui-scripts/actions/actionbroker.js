@@ -45,6 +45,7 @@ var ActionBroker = function()
   this.set_keyboard_bindings = function(view_id, mode){};
 
   this.get_shortcuts = function(){};
+  this.set_shortcuts = function(shortcuts, handler_id){};
 
   /**
     * To get a list of action implementer ids.
@@ -135,15 +136,17 @@ var ActionBroker = function()
 
   this._init = function()
   {
-    this._shortcuts = ActionBroker.default_shortcuts_win;
-    this._gloabal_shortcuts = this._shortcuts.global;
     this._key_identifier = new KeyIdentifier(this.dispatch_key_input.bind(this));
-    this._key_identifier.set_shortcuts(this._get_shortcut_keys());
     this._global_handler = new GlobalActionHandler(GLOBAL_HANDLER);
     this.register_handler(this._global_handler);
-    this._set_current_handler(this._global_handler);
+    window.app.addListener('services-created', function()
+    {
+      this.set_shortcuts(window.settings.general.get("shortcuts") ||
+                         window.ini.default_shortcuts.windows);
+      this._set_current_handler(this._global_handler);
+    }.bind(this));
     document.addEventListener('click', this._set_action_context_bound, true);
-  }
+  };
 
   /* implementation */
 
@@ -213,12 +216,26 @@ var ActionBroker = function()
   {
     return this._shortcuts;
   }
+
+  this.set_shortcuts = function(shortcuts, handler_id, clear_setting)
+  {
+    shortcuts = JSON.parse(JSON.stringify(shortcuts));
+    if (handler_id)
+      this._shortcuts[handler_id] = shortcuts;
+    else
+      this._shortcuts = shortcuts;
+    this._gloabal_shortcuts = this._shortcuts.global;
+    window.settings.general.set("shortcuts", 
+                                clear_setting == true ? null : this._shortcuts);
+    this._key_identifier.set_shortcuts(this._get_shortcut_keys());
+  };
   
   this.get_actions_with_handler_id = function(handler_id)
   {
     return (
     this._handlers[handler_id] && this._handlers[handler_id].get_action_list());
   };
+
   this._get_shortcut_keys = function()
   {
     var ret = [], name = '', handler = null, key = '';
@@ -237,74 +254,14 @@ var ActionBroker = function()
       }
     }
     return ret;
-  }
+  };
 
-  this._init();
+  if (document.readyState == "complete")
+    this._init();
+  else
+    document.addEventListener('DOMContentLoaded', this._init.bind(this), false);
 
 }
-
-ActionBroker.default_shortcuts_win =
-{
-  "global":
-  {
-    "default":
-    {
-      "ctrl a": "select-all",
-      "ctrl i": "invert-spotlight-colors",
-      "f8": "continue-run",
-      "f10": "continue-step-next-line",
-      "f11": "continue-step-into-call",
-      "shift f11": "continue-step-out-of-call"
-    },
-    "edit":
-    {
-      "f8": "continue-run",
-      "f10": "continue-step-next-line",
-      "f11": "continue-step-into-call",
-      "shift f11": "continue-step-out-of-call"
-    }
-  },
-  "dom":
-  {
-    "default":
-    {
-      "up": "nav-up",
-      "down": "nav-down",
-      "left": "nav-left",
-      "right": "nav-right",
-      "enter": "dispatch-click",
-      "ctrl enter": "dispatch-dbl-click",
-    },
-    "edit":
-    {
-      "shift tab": "edit-previous",
-      "tab": "edit-next",
-      "enter": "submit-edit-or-new-line",
-      "ctrl enter": "ctrl-enter-edit-mode",
-      "escape": "exit-edit",
-    }
-  },
-  "css-inspector":
-  {
-    "default":
-    {
-      "up": "nav-up",
-      "down": "nav-down",
-      "left": "nav-up",
-      "right": "nav-down",
-      "ctrl enter": "dispatch-dbl-click",
-    },
-    "edit":
-    {
-      "up": "autocomplete-previous",
-      "down": "autocomplete-next",
-      "shift tab": "edit-previous",
-      "tab": "edit-next",
-      "enter": "submit-edit-and-new-edit",
-      "escape": "exit-edit",
-    }
-  },
-};
 
 ActionBroker.get_instance = function()
 {

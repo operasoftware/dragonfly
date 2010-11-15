@@ -8,41 +8,43 @@ window.cls || (window.cls = {});
 cls.ShortcutConfigView = function(id, name, container_class)
 {
   this.init(id, name, container_class);
-}
 
-cls.ShortcutConfigView.create_ui_widgets = function()
-{
-  new Settings
-  (
-    // id
-    'shortcut_config', 
-    // key-value map
-    {
-      'shortcut_config': true
-    }, 
-    // key-label map
-    {
-    },
-    // settings map
-    {
-      customSettings:
-      [
-        'shortcut_config'
-      ]
-    },
-    // template
-    {
-      shortcut_config:
-      function(setting)
-      {
-        return window.templates.shortcut_config();
-      }
-    }
+  /* ActionHandler interface */
 
+  const
+  GLOBAL_HANDLER = "global",
+  MODE_DEFAULT = ActionBroker.MODE_DEFAULT,
+  MODE_EDIT = ActionBroker.MODE_EDIT,
+  MINUS = -1,
+  PLUS = 1;
 
-  );
+  this.id = id;
+  this._broker = ActionBroker.get_instance();
+  this._broker.register_handler(this);
+  this._handlers = {};
+  this._mode = MODE_DEFAULT;
   
-  window.eventHandlers.click['scc-expand-section'] = function(event, target)
+  this.get_action_list = function()
+  {
+    var actions = [], key = '';
+    for (key in this._handlers)
+      actions.push(key);
+    return actions;
+  };
+
+  this.focus = function(event, container){};
+
+  this.blur = function(event){};
+
+  this.onclick = function(event){};
+
+  this.handle = function(action_id, event, target)
+  {
+    if (action_id in this._handlers)
+      return this._handlers[action_id](event, target);
+  }
+
+  this._handlers['expand-section'] = function(event, target)
   {
     var
     parent = target.parentNode,
@@ -60,9 +62,9 @@ cls.ShortcutConfigView.create_ui_widgets = function()
       parent.render(window.templates.scc_shortcuts_table(handler_id));
       input.addClass('unfolded');
     }
-  }
-  
-  window.eventHandlers.click['scc-save-shortcuts'] = function(event, target)
+  }.bind(this);
+
+  this._handlers['save-shortcuts'] = function(event, target)
   {
     var
     shortcuts = {},
@@ -116,30 +118,50 @@ cls.ShortcutConfigView.create_ui_widgets = function()
                                                           shortcuts_match,
                                                           invalid_shortcuts));
     if (!invalid_shortcuts.length)
-      alert(JSON.stringify(shortcuts)+'\n'+invalid_shortcuts)
-  }
-  
-  var search_mode = function(mode_source, search)
+      this._broker.set_shortcuts(shortcuts, handler_id);
+  }.bind(this);
+
+  this._handlers['reset-all-to-defaults'] = function(event, target)
   {
-    var mode_target = {}; 
-    var has_match = false;
-    for (var key in mode_source)
-    {
-      if (search && key.toLowerCase().indexOf(search) != -1) // search value too?
-      {
-        mode_target[key] = mode_source[key];
-        has_match = true;
-      }
-    }
-    mode_target.has_match = has_match;
-    return mode_target;
-  }
-  
-  window.eventHandlers.input['scc-quick-find'] = function(event, target)
+    var shortcuts = window.ini.default_shortcuts.windows; 
+    this._broker.set_shortcuts(shortcuts, null, true);
+  }.bind(this);
+
+  this._handlers['add-shortcut'] = function(event, target)
+  {
+    var 
+    table = event.target.has_attr('parent-node-chain', 'handler-id'),
+    handler_id = table && table.getAttribute('handler-id'),
+    tr = event.target,
+    actions = this._broker.get_actions_with_handler_id(handler_id),
+    tpl = 
+    ['tr', 
+      ['td', ['input', 'class', 'scc-input']],
+      ['td', window.templates.scc_action_select(actions)]
+    ];
+
+    while (tr && tr.nodeName.toLowerCase() != "tr")
+      tr = tr.parentNode;
+    if (tr)
+      tr.parentNode.insertBefore(document.render(tpl), tr);
+  }.bind(this);
+
+  this._handlers['reset-to-defaults'] = function(event, target)
+  {
+    var 
+    shortcuts = window.ini.default_shortcuts.windows,
+    table = event.target.has_attr('parent-node-chain', 'handler-id'),
+    handler_id = table && table.getAttribute('handler-id');
+
+    shortcuts = shortcuts[handler_id];
+    this._broker.set_shortcuts(shortcuts, handler_id);
+    table.re_render(window.templates.scc_shortcuts_table (handler_id, shortcuts));
+  }.bind(this);
+
+  this._handlers['quick-find'] = function(event, target)
   {
     var search = event.target.value.toLowerCase().trim();
-    var broker = ActionBroker.get_instance();
-    var shortcuts = broker.get_shortcuts();
+    var shortcuts = this._broker.get_shortcuts();
     var cur_section = null;
     var cur_mode = null;
     var shortcuts_match = {is_search: Boolean(search)};
@@ -159,17 +181,15 @@ cls.ShortcutConfigView.create_ui_widgets = function()
         is_search: Boolean(search)
       };
       shortcuts_match[section]["default"] = 
-        search_mode(shortcuts[section]["default"], search);
+        this._search_mode(shortcuts[section]["default"], search);
       shortcuts_match[section]["edit"] = 
-        search_mode(shortcuts[section]["edit"], search);
+        this._search_mode(shortcuts[section]["edit"], search);
       shortcuts_match[section].has_match = 
         shortcuts_match[section]["default"].has_match ||
         shortcuts_match[section]["edit"].has_match;
     }
-    
     while (container && container.nodeName.toLowerCase() != "setting-composite")
       container = container.parentNode;
-    
     if (container)
     {
       tpl = templates.scc_sections(shortcuts, search && shortcuts_match);
@@ -177,8 +197,84 @@ cls.ShortcutConfigView.create_ui_widgets = function()
         container.replaceChild(document.render(tpl), ul);
     }
     
+  }.bind(this);
+
+  this._search_mode = function(mode_source, search)
+  {
+    var mode_target = {}; 
+    var has_match = false;
+    for (var key in mode_source)
+    {
+      if (search && key.toLowerCase().indexOf(search) != -1) // search value too?
+      {
+        mode_target[key] = mode_source[key];
+        has_match = true;
+      }
+    }
+    mode_target.has_match = has_match;
+    return mode_target;
   }
+
+}
+
+cls.ShortcutConfigView.create_ui_widgets = function()
+{
+  new Settings
+  (
+    // id
+    'shortcut-config', 
+    // key-value map
+    {
+      'shortcut_config': true
+    }, 
+    // key-label map
+    {
+    },
+    // settings map
+    {
+      customSettings:
+      [
+        'shortcut_config'
+      ]
+    },
+    // template
+    {
+      shortcut_config:
+      function(setting)
+      {
+        return window.templates.shortcut_config();
+      }
+    }
+  );
   
+  window.eventHandlers.click['scc-expand-section'] = function(event, target)
+  {
+    this.broker.dispatch_action('shortcut-config', 'expand-section', event, target);
+  };
   
+  window.eventHandlers.click['scc-save-shortcuts'] = function(event, target)
+  {
+    this.broker.dispatch_action('shortcut-config', 'save-shortcuts', event, target);
+  };
+
+  window.eventHandlers.click["scc-reset-all-to-defaults"] = function(event, target)
+  {
+    this.broker.dispatch_action('shortcut-config', 'reset-all-to-defaults', event, target);
+  };
+
+  window.eventHandlers.click["scc-add-shortcut"] = function(event, target)
+  {
+    this.broker.dispatch_action('shortcut-config', 'add-shortcut', event, target);
+  };
+
+  window.eventHandlers.click["scc-reset-to-defaults"] = function(event, target)
+  {
+    this.broker.dispatch_action('shortcut-config', 'reset-to-defaults', event, target);
+  };
   
+  window.eventHandlers.input['scc-quick-find'] = function(event, target)
+  {
+    this.broker.dispatch_action('shortcut-config', 'quick-find', event, target);
+  };
+ 
 };
