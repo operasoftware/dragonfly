@@ -515,7 +515,8 @@
     return (Boolean(index) ?
     ['item',
       ['key', this._OFFSETS[index]],
-      ['value', value]
+      ['value', value],
+      "data-spec", "dom#" + this._OFFSETS[index]
     ] : []);
   }
   
