@@ -8,57 +8,54 @@ function SpecLinks()
   {
     SpecLinks.__instance__ = this;
   }
+}
 
-  this.get_spec_links = function(spec_notations)
+SpecLinks.prototype.get_spec_links = function(spec_notations)
+{
+  var specs = [];
+  spec_notations = spec_notations.replace(/\s+/g, "").split(",");
+  spec_notations.forEach(function(spec_notation)
   {
-    var specs = [];
-    spec_notations = spec_notations.replace(/\s+/g, "").split(",");
-    spec_notations.forEach(function(spec_notation)
-    {
-      var spec_link = this.get_spec_link(spec_notation);
-      if (spec_link)
-      {
-        specs.push(spec_link);
-      }
-    }, this);
-    return specs;
-  };
-
-  this.get_spec_link = function(spec_notation)
-  {
-    var hash_pos = spec_notation.indexOf("#");
-    if (hash_pos > 0) {
-      var spec = spec_notation.slice(0, hash_pos);
-      var prop = spec_notation.slice(hash_pos + 1);
-      var props = SpecLinks.specs[spec];
-      if (props)
-      {
-        var url = props[prop];
-        if (url)
-        {
-          return {
-            spec: spec,
-            prop: prop,
-            url: url
-          };
-        }
-      }
-    }
-    return null;
-  };
-
-  this.open_spec_link = function(spec_link)
-  {
+    var spec_link = this.get_spec_link(spec_notation);
     if (spec_link)
     {
-      window.open(spec_link);
+      specs.push(spec_link);
     }
-    else
+  }, this);
+  return specs;
+};
+
+SpecLinks.prototype.get_spec_link = function(spec_notation)
+{
+  var hash_pos = spec_notation.indexOf("#");
+  if (hash_pos > 0)
+  {
+    var spec = spec_notation.slice(0, hash_pos);
+    var prop = spec_notation.slice(hash_pos + 1);
+    var props = SpecLinks.specs[spec];
+    if (props && props.propertyIsEnumerable(prop))
     {
-      alert("No specification found.");
+      return {
+        spec: spec,
+        prop: prop,
+        url: props[prop]
+      };
     }
-  };
-}
+  }
+  return null;
+};
+
+SpecLinks.prototype.open_spec_link = function(spec_link)
+{
+  if (spec_link)
+  {
+    window.open(spec_link);
+  }
+  else
+  {
+    alert("No specification found.");
+  }
+};
 
 SpecLinks.specs = {
   "css": {
