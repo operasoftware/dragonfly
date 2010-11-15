@@ -188,6 +188,7 @@ SpecLinks.specs = {
     "NodeList": "http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-536297177",
     "NamedNodeMap": "http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-1780488922",
     "Event": "http://www.w3.org/TR/DOM-Level-2-Events/events.html#Events-Event",
+    "HTMLElement": "http://www.w3.org/TR/DOM-Level-2-HTML/html.html#ID-58190037",
     "HTMLHtmlElement": "http://www.w3.org/TR/DOM-Level-2-HTML/html.html#ID-33759296",
     "HTMLHeadElement": "http://www.w3.org/TR/DOM-Level-2-HTML/html.html#ID-77253168",
     "HTMLLinkElement": "http://www.w3.org/TR/DOM-Level-2-HTML/html.html#ID-35143001",
