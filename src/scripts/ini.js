@@ -45,8 +45,14 @@
         {
           "shift tab": "edit-previous",
           "tab": "edit-next",
-          "enter": "submit-edit-or-new-line",
-          "ctrl enter": "ctrl-enter-edit-mode",
+          "enter": "submit-edit",
+          "escape": "exit-edit",
+        },
+        "edit markup":
+        {
+          "shift tab": "edit-previous",
+          "tab": "edit-next",
+          "ctrl enter": "submit-edit",
           "escape": "exit-edit",
         }
       },

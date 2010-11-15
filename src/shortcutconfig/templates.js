@@ -82,8 +82,7 @@
     {
       var ret = [];
       var action_select = this.scc_action_select.bind(this, actions);
-      var modes = ["default", "edit"], mode = '', i = 0;
-      for (; mode = modes[i]; i++)
+      for (var mode in shortcuts)
       {
         ret.extend(this.scc_shortcuts_mode(handler_id, 
                                            mode, 
@@ -107,6 +106,15 @@
       ]);
     }
   }
+
+  this._mode_label = function(mode)
+  {
+    var label = mode.split(' ').map(function(token)
+                {
+                  return token[0].toUpperCase() + token.slice(1);
+                }).join(' ');
+    return "%s Mode".replace("%s", label);
+  }
   
   this.scc_shortcuts_mode = function(handler_id, 
                                      mode, 
@@ -115,12 +123,7 @@
                                      action_select, 
                                      invalid_shortcuts)
   {
-    var labels = 
-    {
-      "default": "Default mode",
-      "edit": "Edit mode"
-    };
-    var tr = ['tr', ['th', labels[mode], 'colspan', '2'], 'data-mode', mode];
+    var tr = ['tr', ['th', this._mode_label(mode), 'colspan', '2'], 'data-mode', mode];
     if (shortcuts_match && !shortcuts_match.has_match)
       tr.push('class', 'scc-no-match');
     var ret = [tr];

@@ -80,7 +80,7 @@ cls.ShortcutConfigView = function(id, name, container_class)
     tr = null,
     i = 0,
     is_search = table && table.hasClass('is-search'),
-    shortcuts_match = is_search ? {"default": {}, "edit": {}} : null,
+    shortcuts_match = is_search ? {} : null,
     shortcuts_match_mode = null;
         
     if (trs)
@@ -91,8 +91,8 @@ cls.ShortcutConfigView = function(id, name, container_class)
         if (mode)
         {
           shortcuts[mode] = cur_mode = {};
-          if (shortcuts_match && shortcuts_match[mode])
-            shortcuts_match_mode = shortcuts_match[mode];
+          if (shortcuts_match)
+            shortcuts_match_mode = shortcuts_match[mode] = {};
         }
         if (cur_mode && (select = tr.getElementsByTagName('select')[0]))
         {
@@ -166,27 +166,22 @@ cls.ShortcutConfigView = function(id, name, container_class)
     var cur_mode = null;
     var shortcuts_match = {is_search: Boolean(search)};
     var section = '';
+    var modes = null;
     var mode = '';
-    var has_match = false;
     var container = event.target;
     var ul = null;
     var tpl = null;
-    
+    var has_match = false;
+
     for (section in shortcuts)
     {
-      shortcuts_match[section] = 
+      for (mode in shortcuts[section])
       {
-        "default": {}, 
-        "edit": {}, 
-        is_search: Boolean(search)
-      };
-      shortcuts_match[section]["default"] = 
-        this._search_mode(shortcuts[section]["default"], search);
-      shortcuts_match[section]["edit"] = 
-        this._search_mode(shortcuts[section]["edit"], search);
-      shortcuts_match[section].has_match = 
-        shortcuts_match[section]["default"].has_match ||
-        shortcuts_match[section]["edit"].has_match;
+        shortcuts_match[section][mode] = 
+          this._search_mode(shortcuts[section][mode], search);
+        if (shortcuts_match[section][mode].has_match)
+          shortcuts_match[section].has_match = true;
+      }
     }
     while (container && container.nodeName.toLowerCase() != "setting-composite")
       container = container.parentNode;

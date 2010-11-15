@@ -238,19 +238,17 @@ var ActionBroker = function()
 
   this._get_shortcut_keys = function()
   {
-    var ret = [], name = '', handler = null, key = '';
+    var ret = [], name = '', handler = null, mode = '', key = '';
     for (name in this._shortcuts)
     {
       handler = this._shortcuts[name];
-      for (key in handler["default"])
+      for (mode in handler)
       {
-        if (ret.indexOf(key) == -1)
-          ret.push(key);
-      }
-      for (key in handler["edit"])
-      {
-        if (ret.indexOf(key) == -1)
-          ret.push(key);
+        for (key in handler[mode])
+        {
+          if (ret.indexOf(key) == -1)
+            ret.push(key);
+        }
       }
     }
     return ret;

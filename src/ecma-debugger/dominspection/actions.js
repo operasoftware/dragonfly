@@ -14,7 +14,8 @@ cls.DOMInspectorActions = function(id)
   const
   SCROLL_IN_PADDING = 30,
   MODE_DEFAULT = ActionBroker.MODE_DEFAULT,
-  MODE_EDIT = ActionBroker.MODE_EDIT;
+  MODE_EDIT = ActionBroker.MODE_EDIT,
+  MODE_EDIT_MARKUP = "edit markup";
 
   var self = this;
   var view_container = null;
@@ -558,7 +559,7 @@ cls.DOMInspectorActions = function(id)
               return;
             }
           }
-          broker.set_mode(this, mode = MODE_EDIT);
+          broker.set_mode(this, mode = MODE_EDIT_MARKUP);
           document.documentElement.addClass('modal');
           self.setSelected(new_target.parentNode);
           self.set_editor("dom-markup-editor");
@@ -569,7 +570,7 @@ cls.DOMInspectorActions = function(id)
     }
   }.bind(this);
 
-  this._handlers["submit-edit-or-new-line"] = function(event, target)
+  this._handlers["submit-edit"] = function(event, target)
   {
     if (this.editor.type == "dom-attr-text-editor")
     {
