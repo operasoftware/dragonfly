@@ -10,12 +10,8 @@ window.app.builders.CookieManager["1.0"] = function(service)
 {
   var namespace = cls.CookieManager && cls.CookieManager["1.0"];
   var service_interface = window.services['cookie-manager'];
-  // console.log("CookieManager",service_interface);
-  // const NAME = 0, ID = 1, VIEWS = 2;
-
   if(service_interface)
   {
     new cls.CookieManagerView("cookie_manager", "Cookie Manager", "cookie_manager");
   }
-
 }

@@ -16,34 +16,47 @@ cls.CookieManagerView = function(id, name, container_class)
         {
           render_array.push(
             ["tr",
-              ["td", ["h2",domain], "colspan","7"]
+              ["td", ["h2",domain], "colspan", "7"]
             ]
           );
           render_array.push(
             ["tr",
               ["th", "Domain"],
               ["th", "Path"],
-              ["th","Name"],
-              ["th","Value"],
-              ["th","Expires"],
-              ["th","isSecure"],
-              ["th","isHTTPOnly"],
+              ["th", "Name"],
+              ["th", "Value"],
+              ["th", "Expires"],
+              ["th", "isSecure"],
+              ["th", "isHTTPOnly"],
             "handler", "clickfunc"]
           );
+          var toggle_class=true;
           for (var i=0; i < domains_cookies.cookie_list.length ;i++)
           {
             var current_cookie = domains_cookies.cookie_list[i];
-            render_array.push(
-              ["tr",
+            var render_date;
+            if(current_cookie.expires === 0) {
+              render_date = "When session is closed";
+            }
+            else
+            {
+              render_date = new Date(current_cookie.expires*1000).toUTCString()
+            }
+            var row_array=["tr",
                 ["td",String(current_cookie.domain)],
                 ["td",String("/"+current_cookie.path)],
                 ["td",String(current_cookie.name)],
                 ["td",String(current_cookie.value)],
-                ["td",new Date(current_cookie.expires*1000).toUTCString()],
-                ["td",String(current_cookie.isSecure)],
-                ["td",String(current_cookie.isHTTPOnly)]
-              ]
-            )
+                ["td",render_date],
+                ["td",String(Boolean(current_cookie.isSecure))],
+                ["td",String(Boolean(current_cookie.isHTTPOnly))]
+              ];
+            if(toggle_class)
+            {
+              row_array.push("class","odd");
+            }
+            toggle_class=!toggle_class;
+            render_array.push(row_array)
           };
         }
       };
@@ -121,13 +134,10 @@ cls.CookieManagerView = function(id, name, container_class)
   */
   this._init = function(id, update_event_name, title)
   {
-    this.update_event_name = update_event_name;
     this.title = title;
-    this.is_setup = false;
+    // this.is_setup = false;
 
-    window.messages.addListener('active-tab', this._on_active_tab.bind(this));
-    // messages.addListener('reset-state', this._on_reset_state.bind(this));
-    
+    window.messages.addListener('active-tab', this._on_active_tab.bind(this));    
     this.init(id, name, container_class);
   };
   
