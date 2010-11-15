@@ -39,6 +39,7 @@
           "left": "nav-left",
           "right": "nav-right",
           "enter": "dispatch-click",
+          "shift enter": "dispatch-click",
           "ctrl enter": "dispatch-dbl-click",
         },
         "edit-attributes-and-text":

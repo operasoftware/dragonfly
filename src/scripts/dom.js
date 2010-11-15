@@ -243,7 +243,7 @@ Element.prototype.releaseEvent = function(name, custom_props)
   this.dispatchEvent(event);
 };
 
-Element.prototype.dispatchMouseEvent = function(type)
+Element.prototype.dispatchMouseEvent = function(type, ctrl_key, alt_key, shift_key)
 {
   var event = document.createEvent('MouseEvents');
   var box = this.getBoundingClientRect();
@@ -253,7 +253,7 @@ Element.prototype.dispatchMouseEvent = function(type)
                        window.screenLeft + client_x, 
                        window.screenTop + client_y, 
                        client_x, client_y, 
-                       false, false, false, false, 
+                       ctrl_key, alt_key, shift_key, false, 
                        0, null);
   this.dispatchEvent(event);
 };

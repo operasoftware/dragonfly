@@ -516,14 +516,16 @@ cls.DOMInspectorActions = function(id)
   this._handlers["dispatch-click"] = function(event, target)
   {
     if(nav_target)
-      nav_target.dispatchMouseEvent('click');
+      nav_target.dispatchMouseEvent('click', event.ctrlKey, 
+                                    event.altKey, event.shiftKey);
     return false;
   }.bind(this);
 
   this._handlers["dispatch-dbl-click"] = function(event, target)
   {
     if(nav_target)
-      nav_target.dispatchMouseEvent('dblclick');
+      nav_target.dispatchMouseEvent('dblclick', event.ctrlKey, 
+                                    event.altKey, event.shiftKey);
     return false;
   }.bind(this);
 
@@ -691,7 +693,7 @@ cls.DOMInspectorActions = function(id)
 
 window.eventHandlers.click['get-children'] = function(event, target)
 {
-  if (event.ctrlKey)
+  if (event.shiftKey)
     this.broker.dispatch_action("dom", "expand-collapse-whole-node", event, target);
   else
     this.broker.dispatch_action("dom", "expand-collapse-node", event, target);
