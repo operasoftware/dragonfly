@@ -29,6 +29,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       "default", "delete", "do", "else", "finally", "for", "function",
       "if", "in", "instanceof", "new", "return", "switch", "this",
       "throw", "try", "typeof", "var", "void", "while", "with"];
+  this._actionbroker = ActionBroker.get_instance();
 
   this.ondestroy = function()
   {
@@ -349,11 +350,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._handle_keypress_bound = function(evt)
   {
-    if (this._textarea_handler.handle(evt)) {
-      evt.preventDefault();
-      return;
-    }
-
     switch (evt.keyCode) {
       case 9: // tab
       {
@@ -444,17 +440,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
           {
             this._commit_selection();
           }
-        }
-        break;
-      }
-      case 108: // l key
-      {
-        if (evt.ctrlKey) {
-          evt.preventDefault();
-          this.clear();
-          var cursor_pos = this._textarea_handler.get_cursor();
-          this._data.clear();
-          this._textarea_handler.put_cursor(cursor_pos);
         }
         break;
       }
@@ -742,6 +727,76 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   }.bind(this);
 
 
+
+  this._handle_action_clear = function(evt, target)
+  {
+    this.clear();
+    var cursor_pos = this._textarea_handler.get_cursor();
+    this._data.clear();
+    this._textarea_handler.put_cursor(cursor_pos);
+    return false;
+  };
+
+  this["_handle_action_kill-to-end-of-line"] = function(evt, target)
+  {
+    this._textarea_handler.kill_to_end_of_line();
+    return false;
+  };
+
+  this["_handle_action_kill-word-backwards"] = function(evt, target)
+  {
+    this._textarea_handler.kill_word_backwards();
+    return false;
+  };
+
+  this["_handle_action_move-to-beginning-of-line"] = function(evt, target)
+  {
+    this._textarea_handler.move_to_beginning_of_line();
+    return false;
+
+  };
+
+  this["_handle_action_move-to-end-of-line"] = function(evt, target)
+  {
+    this._textarea_handler.move_to_end_of_line();
+    return false;
+  };
+
+  /**
+   * Entry point for the action handling system
+   */
+  this.handle = function(action, evt, target)
+  {
+    var handler = this["_handle_action_" + action];
+
+    if (handler)
+    {
+      opera.postError("handling action in repl:  " + action);
+      return handler.call(this, evt, target);
+    }
+    else
+    {
+      opera.postError("unhandled action in repl: " + action);
+    }
+  };
+
+  /**
+   * action focus
+   */
+  this.focus = function()
+  {
+    this._actionbroker.set_mode(this, "edit");
+  }
+
+  /**
+   * action blur
+   */
+  this.blur = function()
+  {
+  }
+
+
+
   var eh = window.eventHandlers;
   eh.click["repl-toggle-group"] = this._handle_repl_toggle_group_bound;
   eh.click["select-trace-frame"] = this._handle_repl_frame_select_bound;
@@ -755,6 +810,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
 
 
+
   this.init(id, name, container_class, html, default_handler);
   // Happens after base class init or else the call to .update that happens in
   // when adding stuff to data will fail.
@@ -763,6 +819,9 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   ui_strings.S_REPL_WELCOME_TEXT.split("\n").forEach(function(s) {
     this._data.add_message(s);
   }, this);
+
+  this._actionbroker.register_handler(this);
+
 
 };
 cls.ReplView.prototype = ViewBase;
