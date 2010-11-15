@@ -270,7 +270,7 @@ cls.DOMView.create_ui_widgets = function()
       callback: function(event, target)
       {
         var target = event.target;
-        while (!/^(?:key|value|text|node)$/.test(target.nodeName.toLowerCase()))
+        while (target != document && !/^(?:key|value|text|node)$/i.test(target.nodeName))
         {
           target = target.parentNode;
         }
