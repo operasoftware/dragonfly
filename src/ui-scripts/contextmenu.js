@@ -30,8 +30,7 @@ var ContextMenu = function() {
     var menu = this.registered_menus[menu_id] || [];
     if (item_list)
     {
-      // If it already is registered, merge it
-      this.registered_menus[menu_id] = menu.concat(item_list);
+      this.registered_menus[menu_id] = item_list;
     }
   };
 
@@ -67,11 +66,34 @@ var ContextMenu = function() {
     // finds a data-menu attribute with a blank value.
     while (ele != document && (menu_id = ele.getAttribute("data-menu")) !== "")
     {
-      if (menu_id)
+      // This is not super nice, and preferably shouldn't be done inside
+      // ContextMenu.
+      var spec;
+      if (spec = ele.getAttribute("data-spec"))
       {
-        var items = this.registered_menus[menu_id] || [];
+        var speclinks = new SpecLinks();
+        if (speclinks.get_spec_links(spec).length)
+        {
+          menu_id = "spec";
+          var specs = speclinks.get_spec_links(spec);
+          var menu_items = specs.map(function(spec)
+          {
+            return {
+              label: "Specification for " + spec.prop,
+              handler: function(event, target) {
+                speclinks.open_spec_link(spec.url);
+              }
+            };
+          });
+          this.register(menu_id, menu_items);
+        }
+      }
 
-        if (all_items.length && items.length)
+      var items = this.registered_menus[menu_id];
+
+      if (items && items.length)
+      {
+        if (all_items.length)
         {
           all_items.push(ContextMenu.separator);
         }
@@ -162,10 +184,6 @@ var ContextMenu = function() {
     {
       contextmenu.parentElement.removeChild(contextmenu);
     }
-  };
-
-  this.get_menus = function(menus)
-  {
   };
 
   this._expand_all_items = function(items, event)

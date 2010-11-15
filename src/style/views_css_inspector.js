@@ -132,35 +132,5 @@ cls.CSSInspectorView.create_ui_widgets = function()
       'hide-shorthands',*/
     ]
   );
-
-  var contextmenu = new ContextMenu();
-  var speclinks = new SpecLinks();
-  contextmenu.register("css-inspector-rules", [
-    {
-      callback: function(event, target)
-      {
-        var ele = event.target;
-        if (!/^key|value$/i.test(ele.nodeName)) { return; }
-        while (ele.nodeName.toLowerCase() != "property")
-        {
-          ele = ele.parentNode;
-        }
-        return [
-          {
-            label: "Specification for " + ele.querySelector("key").textContent,
-            handler: function(event, target)
-            {
-              speclinks.open_spec_link(ele.getAttribute("data-spec"));
-            }
-          }
-        ];
-      }
-    }
-  ]);
 }
-
-
-
-
-
 
