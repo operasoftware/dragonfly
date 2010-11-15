@@ -175,6 +175,8 @@ SpecLinks.specs = {
     "word-spacing": "http://www.w3.org/TR/CSS2/text.html#propdef-word-spacing",
     "z-index": "http://www.w3.org/TR/CSS2/visuren.html#propdef-z-index"
   },
+
+  // DOM and related
   "dom": {
     // DOM 0-3
     "HTMLDocument": "http://www.w3.org/TR/DOM-Level-2-HTML/html.html#ID-26809268",
@@ -373,6 +375,10 @@ SpecLinks.specs = {
     "lastElementChild": "http://www.w3.org/TR/ElementTraversal/#attribute-lastElementChild",
     "previousElementSibling": "http://www.w3.org/TR/ElementTraversal/#attribute-previousElementSibling",
     "nextElementSibling": "http://www.w3.org/TR/ElementTraversal/#attribute-nextElementSibling",
-    "childElementCount": "http://www.w3.org/TR/ElementTraversal/#attribute-childElementCount"
+    "childElementCount": "http://www.w3.org/TR/ElementTraversal/#attribute-childElementCount",
+
+    // Selectors API
+    "querySelector": "http://www.w3.org/TR/selectors-api/#queryselector",
+    "querySelectorAll": "http://www.w3.org/TR/selectors-api/#queryselectorall"
   }
 };
