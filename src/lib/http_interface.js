@@ -85,28 +85,11 @@ cls.ScopeHTTPInterface = function(force_stp_0)
     // message format: "[" SERVICE "," COMMAND_ID "," STATUS "," TAG "," PAYLOAD "]"
     const SERVICE = 0, COMMAND_ID = 1, STATUS = 2, TAG = 3, PAYLOAD = 4;
     message = JSON.parse(message.data);
-    try
-    {
-      _receive_callback(message[SERVICE], 
-                        message[PAYLOAD], 
-                        message[COMMAND_ID], 
-                        message[STATUS], 
-                        message[TAG]);
-    }
-    catch(e)
-    {
-      opera.postError(
-        'failed to handle message\n' +
-        '  service: ' + message[SERVICE] + '\n' +
-        '  command: ' + message[COMMAND_ID] + '\n' +
-        '  message: ' + JSON.stringify(message[PAYLOAD]) + '\n' +
-        '  ------------------------------------\n' +
-        '  error message: ' + e.message + '\n' +
-        '  ------------------------------------\n' +
-        '  error stacktrace: \n' + e.stacktrace + '\n' +
-        '  ------------------------------------\n'
-        )
-    }
+    _receive_callback(message[SERVICE], 
+                      message[PAYLOAD], 
+                      message[COMMAND_ID], 
+                      message[STATUS], 
+                      message[TAG]);
   }
 
   var _scopeTransmit_STP_0 = function(service, message, command_id, tag)
