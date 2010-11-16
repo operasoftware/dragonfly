@@ -25,6 +25,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._use_autocomplete_highlight = true; // fixme: turn this in to a setting
   this._textarea_handler = null;
   this._closed_group_nesting_level = 0;
+  this._multiediting = false;
   this._keywords = ["break", "case", "catch", "continue", "debugger",
       "default", "delete", "do", "else", "finally", "for", "function",
       "if", "in", "instanceof", "new", "return", "switch", "this",
@@ -103,6 +104,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   {
     this._textarea.rows = Math.max(1, Math.ceil(this._textarea.scrollHeight / this._input_row_height));
     this._multiediting = Boolean(this._textarea.rows-1);
+    // fixme: set mode
   }.bind(this);
 
   this._save_scroll_bound = function()
@@ -350,113 +352,8 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._handle_keypress_bound = function(evt)
   {
-    switch (evt.keyCode) {
-      case 9: // tab
-      {
-        evt.preventDefault();
-        if (this._multiediting) {
-          var pos = this._textarea.selectionStart;
-          this._textarea.value = this._textarea.value.slice(0, pos) + "\t" + this._textarea.value.slice(pos);
-          break; // tab should be off when in a multiline box.
-        }
-        else
-        {
-          this._on_invoke_completer(evt.shiftKey ? -1 : +1);
-          return;
-        }
-      }
-      case 13: // enter
-      {
-        if (evt.ctrlKey)
-        {
-          var pos = this._textarea.selectionStart;
-          this._textarea.value = this._textarea.value.slice(0, pos) + "\n" + this._textarea.value.slice(pos);
-          evt.preventDefault();
-          this._textarea_handler.put_cursor(pos+2); // put cursor after the newline
-        }
-        else if (this._use_autocomplete_highlight && this._recent_autocompletion)
-        {
-          evt.preventDefault();
-          this._commit_selection();
-        }
-        else
-        {
-          // stop it from adding a newline just before processing. Looks strange
-          evt.preventDefault();
-
-          var input = this._textarea.value;
-          input = input.trim();
-          this._textarea.value = "";
-          this._backlog_index = -1;
-          this._current_input = "";
-          this._resolver.clear_cache(); // evaling js voids the cache.
-          this._service.handle_input(input);
-        }
-        break;
-      }
-      case 37: // left
-      case 39: // right
-      {
-        // workaround as long as we don't have support for keyIdentifier
-        // event.which is 0 in a keypress event for function keys
-        if( !evt.which )
-        {
-          if (this._recent_autocompletion)
-          {
-            evt.preventDefault();
-            this._update_highlight(evt.keyCode==37 ? -1 : 1);
-            return;
-          }
-        }
-        break;
-      }
-      case 38: // up and down. maybe. See DSK-246193
-      case 40:
-      {
-        // workaround as long as we don't have support for keyIdentifier
-        // event.which is 0 in a keypress event for function keys
-        if( !evt.which )
-        {
-          // the multiediting stuff here makes sure we can navigate inside
-          // multiline blocks from the typed history. Moving cursor to the
-          // 0th position of the textare and pressing up resumes backwards
-          // history navigation. The same applies when navigating forward
-          // and positioning the cursor at the end of the input.
-          if (this._multiediting)
-          {
-            if ((evt.keyCode==38 && this._textarea.selectionStart > 0) ||
-                (evt.keyCode==40 && this._textarea.selectionStart < this._textarea.value.length))
-              {
-                break;
-              }
-          }
-          evt.preventDefault();
-          this._handle_backlog(evt.keyCode == 38 ? 1 : -1);
-        }
-        // TEMP: this should be handled at the same place as '.' and '['
-        else if (evt.keyCode == 40)
-        {
-          if (this._use_autocomplete_highlight && this._recent_autocompletion)
-          {
-            this._commit_selection();
-          }
-        }
-        break;
-      }
-      case 46: // '.'
-      case 91: // '['
-      // this should have '(' too, but that clashes with down arrow,
-      // see above
-      {
-        if (this._use_autocomplete_highlight && this._recent_autocompletion)
-        {
-          this._commit_selection();
-        }
-      }
-    }
-
-    this._recent_autocompletion = null;
-    this._highlight_completion();
+    //this._recent_autocompletion = null;
+    //this._highlight_completion();
 
     // timeout makes sure we do this after all events have fired to update box
     window.setTimeout(this._update_input_height_bound, 0);
@@ -465,6 +362,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._handle_backlog = function(delta)
   {
+    // fixme: set mode according to backlog entry type
     this._set_input_from_backlog(this._backlog_index + delta);
   };
 
@@ -495,6 +393,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._commit_selection = function()
   {
     this._update_textarea_value(this._recent_autocompletion[this._autocompletion_index][0]);
+    this._actionbroker.set_mode(this, "single-line-edit");
   };
 
   this._update_textarea_value = function(prop)
@@ -554,6 +453,9 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     // tab/arrows was pressed while the completer is showing something
     if (this._recent_autocompletion)
     {
+      // fixme: set mode
+
+      this._actionbroker.set_mode(this, "autocomplete");
       this._update_highlight(direction);
     }
     else
@@ -726,8 +628,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._resolver.clear_cache();
   }.bind(this);
 
-
-
   this._handle_action_clear = function(evt, target)
   {
     this.clear();
@@ -753,7 +653,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   {
     this._textarea_handler.move_to_beginning_of_line();
     return false;
-
   };
 
   this["_handle_action_move-to-end-of-line"] = function(evt, target)
@@ -762,13 +661,95 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     return false;
   };
 
+  this["_handle_action_enter-multiline-mode"] = function(evt, target)
+  {
+    this._multiediting = true;
+    this._actionbroker.set_mode(this, "multi-line-edit");
+    return true; // also add a newline
+  };
+
+  this["_handle_action_exit-multiline-mode"] = function(evt, target)
+  {
+    this._multiediting = false;
+    this._actionbroker.set_mode(this, "single-line-edit", this);
+    return false;
+  };
+
+  this["_handle_action_autocomplete"] = function(evt, target)
+  {
+    this._on_invoke_completer(1);
+    return false;
+  }
+
+  this["_handle_action_next-completion"] = function(evt, target)
+  {
+    this._on_invoke_completer(1);
+    return false;
+  }
+
+  this["_handle_action_prev-completion"] = function(evt, target)
+  {
+    this._on_invoke_completer(-1);
+    return false;
+  }
+
+  this["_handle_action_up-or-backlog-prev"] = function(evt, target)
+  {
+    if (this._textarea.selectionStart == 0) {
+      this._handle_backlog(+1);
+      return false;
+    }
+  }
+
+  this["_handle_action_down-or-backlog-next"] = function(evt, target)
+  {
+    if (this._textarea.selectionStart == this._textarea.value.length) {
+      this._handle_backlog(+1);
+      return false;
+    }
+  }
+
+  this["_handle_action_eval"] = function(evt, target)
+  {
+    var input = this._textarea.value;
+    input = input.trim();
+    this._textarea.value = "";
+    this._backlog_index = -1;
+    this._current_input = "";
+    this._resolver.clear_cache(); // evaling js voids the cache.
+    this._service.handle_input(input);
+    return false;
+  }
+
+  this["_handle_action_commit"] = function(evt, target)
+  {
+    if (this._use_autocomplete_highlight && this._recent_autocompletion)
+    {
+      this._commit_selection();
+      return false;
+    }
+  };
+
+  this["_handle_action_backlog-next"] = function(evt, target)
+  {
+    this._handle_backlog(-1);
+    return false;
+  };
+
+  this["_handle_action_backlog-prev"] = function(evt, target)
+  {
+    this._handle_backlog(+1);
+    return false;
+  };
+
+
   /**
    * Entry point for the action handling system
    */
   this.handle = function(action, evt, target)
   {
     var handler = this["_handle_action_" + action];
-
+//    opera.postError("handle " + "_handle_action_" + action)
     if (handler)
     {
       opera.postError("handling action in repl:  " + action);
@@ -776,7 +757,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
     else
     {
-      opera.postError("unhandled action in repl: " + action);
+      opera.postError("UNHANDLED action in repl: " + action);
     }
   };
 
@@ -785,7 +766,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
    */
   this.focus = function()
   {
-    this._actionbroker.set_mode(this, "edit");
+    this._actionbroker.set_mode(this, "single-line-edit");
   }
 
   /**
@@ -794,8 +775,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this.blur = function()
   {
   }
-
-
 
   var eh = window.eventHandlers;
   eh.click["repl-toggle-group"] = this._handle_repl_toggle_group_bound;
@@ -809,8 +788,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   messages.addListener('frame-selected', this._new_repl_context_bound);
 
 
-
-
   this.init(id, name, container_class, html, default_handler);
   // Happens after base class init or else the call to .update that happens in
   // when adding stuff to data will fail.
@@ -821,7 +798,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   }, this);
 
   this._actionbroker.register_handler(this);
-
 
 };
 cls.ReplView.prototype = ViewBase;
