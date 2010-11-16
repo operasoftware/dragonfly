@@ -23,11 +23,11 @@ var VirtualTextSearch = function()
   /**
     * Highlight the next match if any.
     */
-  this.highligh_next = function(){};
+  this.highlight_next = function(){};
   /**
     * Highlight the previous match if any.
     */
-  this.highligh_previous = function(){};
+  this.highlight_previous = function(){};
   /**
     * Update the a new create view.
     *
@@ -426,12 +426,12 @@ var VirtualTextSearch = function()
     timeouts.set(search, SEARCH_DELAY, new_search_term);
   }
 
-  this.highligh_next = function()
+  this.highlight_next = function()
   {
     move_match_cursor(-1);
   }
 
-  this.highligh_previous = function()
+  this.highlight_previous = function()
   {
     move_match_cursor(1);
   }

@@ -79,7 +79,7 @@ var ActionBroker = function()
 
   this._mode_labels = {};
   this._mode_labels[ActionBroker.MODE_DEFAULT] = "Default";
-
+  this._global_handler = new GlobalActionHandler(GLOBAL_HANDLER);
 
   this._set_action_context_bound = (function(event)
   {
@@ -128,7 +128,6 @@ var ActionBroker = function()
   this._init = function()
   {
     this._key_identifier = new KeyIdentifier(this.dispatch_key_input.bind(this));
-    this._global_handler = new GlobalActionHandler(GLOBAL_HANDLER);
     this.register_handler(this._global_handler);
     window.app.addListener('services-created', function()
     {
