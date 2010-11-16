@@ -79,7 +79,7 @@ var ContextMenu = function() {
           var menu_items = specs.map(function(spec)
           {
             return {
-              label: "Specification for " + spec.prop,
+              label: "Specification for \"" + spec.prop + "\"",
               handler: function(event, target) {
                 speclinks.open_spec_link(spec.url);
               }
