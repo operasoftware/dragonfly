@@ -233,6 +233,7 @@ cls.DOMView.create_ui_widgets = function()
     [
       {
         handler: 'dom-text-search',
+        shortcuts: 'dom-text-search',
         title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
       }
     ],
@@ -307,12 +308,18 @@ cls.DOMView.create_ui_widgets = function()
     textSearch.searchDelayed(target.value);
   }
 
-  eventHandlers.keypress['dom-text-search'] = function(event, target)
+  ActionBroker.get_instance().get_global_handler().
+  register_shortcut_listener('dom-text-search', function(action_id, event, target)
   {
-    if( event.keyCode == 13 )
+    switch (action_id)
     {
-      textSearch.highlight();
+      case 'highlight-next-match':
+        textSearch.highlight_next();
+        return false
+      case 'highlight-previous-match':
+        textSearch.highlight_previous();
+        return false;
     }
-  }
+  });
 
 };

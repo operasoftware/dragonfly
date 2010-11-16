@@ -27,7 +27,11 @@
           "f8": "continue-run",
           "f10": "continue-step-next-line",
           "f11": "continue-step-into-call",
-          "shift f11": "continue-step-out-of-call"
+          "shift f11": "continue-step-out-of-call",
+          "enter": "highlight-next-match",
+          "f3": "highlight-next-match",
+          "shift enter": "highlight-previous-match",
+          "shift f3": "highlight-previous-match",
         }
       },
       "dom":

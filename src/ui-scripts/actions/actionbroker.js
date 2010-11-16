@@ -61,6 +61,8 @@ var ActionBroker = function()
 
   this.get_label_with_handler_id_and_mode = function(hnadler_id, mode){};
 
+  this.get_global_handler = function(){};
+
   /* constants */
 
   const GLOBAL_HANDLER = ActionBroker.GLOBAL_HANDLER_ID;
@@ -246,12 +248,21 @@ var ActionBroker = function()
     return temp && temp.mode_labels[mode] || '';
   };
 
+  this.get_global_handler = function()
+  {
+    return this._global_handler;
+  };
+
   if (document.readyState == "complete")
     this._init();
   else
     document.addEventListener('DOMContentLoaded', this._init.bind(this), false);
 
+
+
 }
+
+
 
 ActionBroker.get_instance = function()
 {
