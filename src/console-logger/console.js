@@ -418,6 +418,7 @@ ErrorConsoleView.roughViews.createViews = function()
       [
         {
           handler: 'console-text-search-' + r_v.id,
+          shortcuts: 'console-text-search-' + r_v.id,
           title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
         }
     ]
@@ -464,13 +465,9 @@ ErrorConsoleView.roughViews.createViews = function()
         textSearch.searchDelayed(target.value);
       };
 
-      eventHandlers.keypress['console-text-search-'+ view_id] = function(event, target)
-      {
-        if( event.keyCode == 13 )
-        {
-          textSearch.highlight();
-        }
-      };
+      ActionBroker.get_instance().get_global_handler().
+      register_shortcut_listener('console-text-search-'+ view_id, 
+                                 cls.Helpers.shortcut_search_cb.bind(textSearch));
     })();
 
   }

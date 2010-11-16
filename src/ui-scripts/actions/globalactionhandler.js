@@ -35,17 +35,28 @@
     */
   this.onclick = function(event){};
 
+  this.register_shortcut_listener = function(listener_id, callback){};
+
   /* constants */
 
   const
   MODE_DEFAULT = ActionBroker.MODE_DEFAULT,
-  MODE_EDIT = ActionBroker.MODE_EDIT;
+  MODE_EDIT = "edit";
+
+  this.mode = MODE_DEFAULT;
+
+  this.mode_labels =
+  {
+    "edit": "Edit",
+  }
 
   /* privat */
 
 
   this._broker = ActionBroker.get_instance();
   this._handlers = {};
+
+  this._sc_listeners = {};
   
   this.get_action_list = function()
   {
@@ -87,15 +98,24 @@
 
   this.handle = function(action_id, event, target)
   {
-    if (action_id in this._handlers)
-      return this._handlers[action_id](action_id, event, target);
+    if (action_id in this._handlers &&
+        this._handlers[action_id](action_id, event, target) == false)
+      return false;
+    var sc_listener = event.target.get_attr('parent-node-chain', 'shortcuts');
+      if (sc_listener && sc_listener in this._sc_listeners)
+        return this._sc_listeners[sc_listener](action_id, event, target);
   }
 
   this.onclick = function(event)
   {
-    this._broker.set_mode(this, /input|textarea/i.test(event.target.nodeName) ?
-                                MODE_EDIT :
-                                MODE_DEFAULT);
+    this.mode = /input|textarea/i.test(event.target.nodeName) ?
+                                       MODE_EDIT :
+                                       MODE_DEFAULT;
+  };
+
+  this.register_shortcut_listener = function(listener_id, callback)
+  {
+    this._sc_listeners[listener_id] = callback;
   };
 
   /* instatiation */

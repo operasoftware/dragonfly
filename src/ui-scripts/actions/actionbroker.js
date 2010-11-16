@@ -5,10 +5,6 @@ var ActionBroker = function()
   /*  
       static constants
         ActionBroker.MODE_DEFAULT = "default";
-        ActionBroker.MODE_EDIT
-
-      static properties
-        ActionBroker.default_shortcuts_win
 
       static methods 
         ActionBroker.get_instance
@@ -26,13 +22,6 @@ var ActionBroker = function()
     * the ActionHandler interface.
     */
   this.register_handler = function(action_handler){};
-
-  /**
-    * To set the mode either to 'default' or 'edit'.
-    * The purpose is to have keyboard short depending on the mode.
-    * The mode can only be set by the current context.
-    */
-  this.set_mode = function(action_handler, mode){};  // "default" or "edit"
 
   /**
     * To get a list of (key_id, action_id) tuples.
@@ -70,12 +59,13 @@ var ActionBroker = function()
   
   this.get_actions_with_handler_id = function(handler_id){};
 
+  this.get_label_with_handler_id_and_mode = function(hnadler_id, mode){};
+
+  this.get_global_handler = function(){};
+
   /* constants */
 
-  const
-  GLOBAL_HANDLER = ActionBroker.GLOBAL_HANDLER_ID,
-  MODE_DEFAULT = ActionBroker.MODE_DEFAULT,
-  MODE_EDIT = ActionBroker.MODE_EDIT;
+  const GLOBAL_HANDLER = ActionBroker.GLOBAL_HANDLER_ID;
 
   /* privat */
 
@@ -86,8 +76,10 @@ var ActionBroker = function()
   this._shortcuts = null;
   this._gloabal_shortcuts = null;
   this._current_shortcuts = null;
-  this._mode = MODE_DEFAULT;
 
+  this._mode_labels = {};
+  this._mode_labels[ActionBroker.MODE_DEFAULT] = "Default";
+  this._global_handler = new GlobalActionHandler(GLOBAL_HANDLER);
 
   this._set_action_context_bound = (function(event)
   {
@@ -128,7 +120,6 @@ var ActionBroker = function()
       this._action_context = this._handlers[handler_id] || this._global_handler;
       this._action_context_id = this._action_context.id;
       this._current_shortcuts = this._shortcuts[this._action_context_id] || {};
-      this._mode = MODE_DEFAULT;
       this._container = container || document.documentElement;
       this._action_context.focus(event, container);
     }
@@ -137,7 +128,6 @@ var ActionBroker = function()
   this._init = function()
   {
     this._key_identifier = new KeyIdentifier(this.dispatch_key_input.bind(this));
-    this._global_handler = new GlobalActionHandler(GLOBAL_HANDLER);
     this.register_handler(this._global_handler);
     window.app.addListener('services-created', function()
     {
@@ -157,12 +147,6 @@ var ActionBroker = function()
     this._handlers[action_handler.id] = action_handler;
   }
 
-  this.set_mode = function(action_handler, mode)
-  {
-    if (action_handler == this._action_context && mode != this._mode)
-      this._mode = mode;
-  };
-
   this.dispatch_action = function(action_handler_id, action_id, event, target)
   {
     this._handlers[action_handler_id].handle(action_id, event, target);
@@ -170,7 +154,7 @@ var ActionBroker = function()
 
   this.dispatch_key_input = function(key_id, event)
   {
-    var shortcuts = this._current_shortcuts[this._mode];
+    var shortcuts = this._current_shortcuts[this._action_context.mode];
     var action = shortcuts && shortcuts[key_id] || '';
     var propagate_event = true;
     if (action)
@@ -180,7 +164,7 @@ var ActionBroker = function()
     if (!(propagate_event === false) &&
          this._action_context != this._global_handler)
     {
-      shortcuts = this._gloabal_shortcuts[this._mode];
+      shortcuts = this._gloabal_shortcuts[this._gloabal_shortcuts.mode];
       action = shortcuts && shortcuts[key_id] || '';
       if (action)
         propagate_event = this._global_handler.handle(action,
@@ -254,12 +238,30 @@ var ActionBroker = function()
     return ret;
   };
 
+  this.get_label_with_handler_id_and_mode = function(handler_id, mode)
+  {
+    var temp = this._mode_labels[mode];
+    if (temp)
+      return temp;
+    temp = this._handlers[handler_id];
+    return temp && temp.mode_labels[mode] || '';
+  };
+
+  this.get_global_handler = function()
+  {
+    return this._global_handler;
+  };
+
   if (document.readyState == "complete")
     this._init();
   else
     document.addEventListener('DOMContentLoaded', this._init.bind(this), false);
 
+
+
 }
+
+
 
 ActionBroker.get_instance = function()
 {
@@ -268,4 +270,3 @@ ActionBroker.get_instance = function()
 
 ActionBroker.GLOBAL_HANDLER_ID = "global";
 ActionBroker.MODE_DEFAULT = "default";
-ActionBroker.MODE_EDIT = "edit";

@@ -221,6 +221,7 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
     [
       {
         handler: 'inspection-text-search',
+        shortcuts: 'inspection-text-search',
         title: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER,
         label: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER
       }
@@ -264,12 +265,9 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
     text_search.searchDelayed(target.value);
   };
 
-  eventHandlers.keypress['inspection-text-search'] = function(event, target)
-  {
-    if (event.keyCode == 13)
-    {
-      text_search.highlight();
-    }
-  };
+  ActionBroker.get_instance().get_global_handler().
+  register_shortcut_listener('inspection-text-search', 
+                             cls.Helpers.shortcut_search_cb.bind(text_search));
+
 };
 

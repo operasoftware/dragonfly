@@ -82,10 +82,13 @@
     {
       var ret = [];
       var action_select = this.scc_action_select.bind(this, actions);
+      var mode_label = '';
       for (var mode in shortcuts)
       {
+        mode_label = broker.get_label_with_handler_id_and_mode(handler_id, mode);
         ret.extend(this.scc_shortcuts_mode(handler_id, 
                                            mode, 
+                                           mode_label,
                                            shortcuts[mode], 
                                            shortcuts_match && shortcuts_match[mode],
                                            action_select,
@@ -106,24 +109,16 @@
       ]);
     }
   }
-
-  this._mode_label = function(mode)
-  {
-    var label = mode.split(' ').map(function(token)
-                {
-                  return token[0].toUpperCase() + token.slice(1);
-                }).join(' ');
-    return "%s Mode".replace("%s", label);
-  }
   
   this.scc_shortcuts_mode = function(handler_id, 
                                      mode, 
+                                     mode_label,
                                      shortcuts, 
                                      shortcuts_match,
                                      action_select, 
                                      invalid_shortcuts)
   {
-    var tr = ['tr', ['th', this._mode_label(mode), 'colspan', '2'], 'data-mode', mode];
+    var tr = ['tr', ['th', mode_label, 'colspan', '2'], 'data-mode', mode];
     if (shortcuts_match && !shortcuts_match.has_match)
       tr.push('class', 'scc-no-match');
     var ret = [tr];

@@ -50,6 +50,7 @@ cls.EcmascriptDebugger["6.0"].DOMAttrsView.create_ui_widgets = function()
     [
       {
         handler: 'dom-attrs-text-search',
+        shortcuts: 'dom-attrs-text-search',
         title: 'text search'
       }
     ]
@@ -91,13 +92,9 @@ cls.EcmascriptDebugger["6.0"].DOMAttrsView.create_ui_widgets = function()
   {
     text_search.searchDelayed(target.value);
   }
-  
-  eventHandlers.keypress['dom-attrs-text-search'] = function(event, target)
-  {
-    if( event.keyCode == 13 )
-    {
-      text_search.highlight();
-    }
-  }
+
+  ActionBroker.get_instance().get_global_handler().
+  register_shortcut_listener('dom-attrs-text-search', 
+                             cls.Helpers.shortcut_search_cb.bind(text_search));
   
 };

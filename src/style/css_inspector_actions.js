@@ -103,7 +103,7 @@ cls.CSSInspectorActions = function(id)
     {
       if (!this.editor.onclick(event))
         return false;
-      this._broker.set_mode(this, this._mode = MODE_DEFAULT);
+      this.mode = MODE_DEFAULT;
       window.elementStyle.update();
     }
     return true;
@@ -258,9 +258,8 @@ cls.CSSInspectorActions = function(id)
   /* ActionHandler interface */
 
   const
-  GLOBAL_HANDLER = "global",
   MODE_DEFAULT = ActionBroker.MODE_DEFAULT,
-  MODE_EDIT = ActionBroker.MODE_EDIT,
+  MODE_EDIT = "edit",
   MINUS = -1,
   PLUS = 1;
 
@@ -268,7 +267,12 @@ cls.CSSInspectorActions = function(id)
   this._broker = ActionBroker.get_instance();
   this._broker.register_handler(this);
   this._handlers = {};
-  this._mode = MODE_DEFAULT;
+  this.mode = MODE_DEFAULT;
+
+  this.mode_labels =
+  {
+    "edit": "Edit",
+  }
   
   this.get_action_list = function()
   {
@@ -333,7 +337,7 @@ cls.CSSInspectorActions = function(id)
         if (event.target.parentElement.parentElement.hasAttribute('rule-id') &&
             !event.target.parentNode.hasClass(CSS_CLASS_CP_TARGET))
         {
-          this._broker.set_mode(this, this._mode = MODE_EDIT);
+          this.mode = MODE_EDIT;
           this.setSelected(event.target.parentNode);
           this.editor.edit(event, event.target.parentNode);
         }
@@ -344,7 +348,7 @@ cls.CSSInspectorActions = function(id)
         if (event.target.parentElement.hasAttribute('rule-id') &&
             !event.target.hasClass(CSS_CLASS_CP_TARGET))
         {
-          this._broker.set_mode(this, this._mode = MODE_EDIT);
+          this.mode = MODE_EDIT;
           this.setSelected(event.target);
           this.editor.edit(event);
         }
@@ -480,7 +484,7 @@ cls.CSSInspectorActions = function(id)
       this.moveFocusUp();
       cur_target.parentElement.removeChild(cur_target);
     }
-    this._broker.set_mode(this, this._mode = MODE_DEFAULT);
+    this.mode = MODE_DEFAULT;
     window.elementStyle.update();
 
     return false;
@@ -490,7 +494,7 @@ cls.CSSInspectorActions = function(id)
   {
     if (!this.editor.enter(event))
     {
-      this._broker.set_mode(this, this._mode = MODE_DEFAULT);
+      this.mode = MODE_DEFAULT;
       window.elementStyle.update();
       if (!this.__target.textContent)
       {
@@ -505,13 +509,13 @@ cls.CSSInspectorActions = function(id)
   this.focus = function(event, container)
   {
     
-    if (this._mode == MODE_DEFAULT)
+    if (this.mode == MODE_DEFAULT)
       this.setContainer(event, container);
   }
 
   this.blur = function(event)
   {
-    if (this._mode == MODE_DEFAULT)
+    if (this.mode == MODE_DEFAULT)
       this.clearSelected();
     else
       this.blur_edit_mode();
@@ -519,7 +523,7 @@ cls.CSSInspectorActions = function(id)
 
   this.onclick = function(event)
   {
-    if (this._mode == MODE_EDIT)
+    if (this.mode == MODE_EDIT)
       return this.edit_onclick(event);
   };
 
