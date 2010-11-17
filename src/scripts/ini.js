@@ -81,6 +81,44 @@
           "escape": "exit-edit",
         }
       },
+      "command_line":
+      {
+        "default":
+        {
+          "ctrl-l": "clear-repl",
+        },
+        "single-line-edit":
+        {
+          "up": "backlog-prev",
+          "down": "backlog-next",
+          "tab": "autocomplete",
+          "enter": "eval",
+          "shift enter": "enter-multiline-mode",
+          "ctrl l": "clear",
+          "ctrl k": "kill-to-end-of-line",
+          "ctrl e": "move-to-end-of-line",
+          "ctrl a": "move-to-beginning-of-line",
+          "ctrl w": "kill-word-backwards"
+        },
+        "multi-line-edit":
+        {
+          "shift enter": "exit-multiline-mode",
+          "up": "up-or-backlog-prev",
+          "down": "down-or-backlog-next",
+          "ctrl enter": "eval"
+        },
+        "autocomplete":
+        {
+          "left": "prev-completion",
+          "right": "next-completion",
+          "tab": "next-completion",
+          "shift tab": "prev-completion",
+          "enter": "commit",
+          "[": "commit",
+          ".": "commit",
+
+        },
+      },
     },
   },
   hostspotlight_matrixes:
