@@ -463,6 +463,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     sel.addRange(range);
   };
 
+
   this._on_invoke_completer = function()
   {
     if (this._recent_autocompletion) {
@@ -509,12 +510,9 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         return candidate.indexOf(localpart) == 0;
       });
 
-
       if (! matches.length) {
         return;
       }
-
-
 
       var match = this._longest_common_prefix(matches.slice(0));
       if (match.length > localpart.length || matches.length == 1)
@@ -744,9 +742,18 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   {
     if (this._use_autocomplete_highlight && this._recent_autocompletion)
     {
+      this._highlight_completion();
       this._commit_selection();
       return false;
     }
+  };
+
+  this["_handle_action_cancel"] = function(evt, target)
+  {
+    this._highlight_completion();
+    this._recent_autocompletion = null;
+    this._be_singleline();
+    return false;
   };
 
   this["_handle_action_backlog-next"] = function(evt, target)

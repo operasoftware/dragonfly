@@ -115,7 +115,7 @@
           "enter": "commit",
           "[": "commit",
           ".": "commit",
-
+          "escape": "cancel",
         },
       },
     },
