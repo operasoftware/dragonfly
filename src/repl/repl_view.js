@@ -31,6 +31,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       "if", "in", "instanceof", "new", "return", "switch", "this",
       "throw", "try", "typeof", "var", "void", "while", "with"];
   this._actionbroker = ActionBroker.get_instance();
+  this.mode = "single-line-edit";
 
   this.ondestroy = function()
   {
@@ -393,7 +394,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._commit_selection = function()
   {
     this._update_textarea_value(this._recent_autocompletion[this._autocompletion_index][0]);
-    this._actionbroker.set_mode(this, "single-line-edit");
+    this.mode = "single-line-edit";
   };
 
   this._update_textarea_value = function(prop)
@@ -454,8 +455,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     if (this._recent_autocompletion)
     {
       // fixme: set mode
-
-      this._actionbroker.set_mode(this, "autocomplete");
+      this.mode = "single-line-edit";
       this._update_highlight(direction);
     }
     else
@@ -664,14 +664,14 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this["_handle_action_enter-multiline-mode"] = function(evt, target)
   {
     this._multiediting = true;
-    this._actionbroker.set_mode(this, "multi-line-edit");
+    this.mode = "multi-line-edit";
     return true; // also add a newline
   };
 
   this["_handle_action_exit-multiline-mode"] = function(evt, target)
   {
     this._multiediting = false;
-    this._actionbroker.set_mode(this, "single-line-edit", this);
+    this.mode = "single-line-edit";
     return false;
   };
 
@@ -766,7 +766,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
    */
   this.focus = function()
   {
-    this._actionbroker.set_mode(this, "single-line-edit");
+    this.mode = "single-line-edit";
   }
 
   /**
