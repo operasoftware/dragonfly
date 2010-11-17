@@ -127,7 +127,8 @@ var ActionBroker = function()
 
   this._init = function()
   {
-    this._key_identifier = new KeyIdentifier(this.dispatch_key_input.bind(this));
+    this._key_identifier = new KeyIdentifier(this.dispatch_key_input.bind(this),
+                                             window.ini.browser);
     this.register_handler(this._global_handler);
     window.app.addListener('services-created', function()
     {

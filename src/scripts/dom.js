@@ -5,16 +5,6 @@
     postError: function(a){console.log(a);},
     stpVersion: true
   };
-  // switch keypress with keydown for other browsers
-  (function(add_event_listener)
-  {
-    Node.prototype.addEventListener = function(name, listener, is_capturing)
-    {
-      add_event_listener.call(this, 
-                              name == 'keypress' ? 'keydown' : name, 
-                              listener, is_capturing);
-    }
-  })(Node.prototype.addEventListener);
 }
 
 if (document.createElementNS && 

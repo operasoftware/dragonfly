@@ -7,6 +7,7 @@
   dragonfly_version: '$dfversion$',
   revision_number: '$revdate$', 
   mercurial_revision: "",
+  browser: window.opera ? 'opera' : window.chrome ? 'chrome' : 'firefox',
   default_shortcuts:
   {
     windows:
