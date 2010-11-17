@@ -665,7 +665,16 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   {
     this._multiediting = true;
     this.mode = "multi-line-edit";
-    return true; // also add a newline
+
+    // Add a newline only if there is content.
+    if (this._textarea_handler.get_value().trim() == "")
+    {
+      return false;
+    }
+    else
+    {
+      return true;
+    }
   };
 
   this["_handle_action_exit-multiline-mode"] = function(evt, target)
