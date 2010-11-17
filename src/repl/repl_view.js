@@ -356,8 +356,22 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   {
     //this._recent_autocompletion = null;
     //this._highlight_completion();
+    this._check_for_multiline();
     this._update_input_height_bound();
   }.bind(this);
+
+  /**
+   * Apply a (somewhat lame) metric to guess if we should really be in
+   * multiline mode.
+   */
+  this._check_for_multiline = function()
+  {
+    if (this.mode == "single-line-edit" &&
+        this._textarea_handler.get_value().indexOf("\n") != -1)
+    {
+      this._be_multiline();
+    }
+  }
 
   this._handle_backlog = function(delta)
   {
@@ -572,6 +586,18 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     return "";
   };
 
+  this._be_multiline = function()
+  {
+    this.mode = "multi-line-edit";
+    this._textarea.addClass("multiline");
+  };
+
+  this._be_singleline = function()
+  {
+    this.mode = "single-line-edit";
+    this._textarea.removeClass("multiline");
+  };
+
   this._handle_repl_frame_select_bound = function(event, target)
   {
     var sourceview = window.views.js_source;
@@ -662,16 +688,14 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this["_handle_action_enter-multiline-mode"] = function(evt, target)
   {
     this._multiediting = true;
-    this.mode = "multi-line-edit";
-    this._textarea.addClass("multiline");
+    this._be_multiline();
     return false;
   };
 
   this["_handle_action_exit-multiline-mode"] = function(evt, target)
   {
     this._multiediting = false;
-    this.mode = "single-line-edit";
-    this._textarea.removeClass("multiline");
+    this._be_singleline();
     return false;
   };
 
@@ -708,8 +732,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._current_input = "";
     this._resolver.clear_cache(); // evaling js voids the cache.
     this._service.handle_input(input);
-    this.mode = "single-line-edit";
-    this._textarea.removeClass("multiline");
+    this._be_singleline();
     return false;
   }
 
@@ -725,15 +748,16 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this["_handle_action_backlog-next"] = function(evt, target)
   {
     this._handle_backlog(-1);
+    this._update_input_height_bound();
     return false;
   };
 
   this["_handle_action_backlog-prev"] = function(evt, target)
   {
     this._handle_backlog(+1);
+    this._update_input_height_bound();
     return false;
   };
-
 
   /**
    * Entry point for the action handling system
