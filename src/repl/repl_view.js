@@ -665,6 +665,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   {
     this._multiediting = true;
     this.mode = "multi-line-edit";
+    this._textarea.addClass("multiline");
 
     // Add a newline only if there is content.
     if (this._textarea_handler.get_value().trim() == "")
@@ -681,6 +682,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   {
     this._multiediting = false;
     this.mode = "single-line-edit";
+    this._textarea.removeClass("multiline");
     return false;
   };
 
@@ -718,6 +720,12 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
   }
 
+  this["_handle_action_insert-tab-at-point"] = function(evt, target)
+  {
+    this._textarea_handler.insert_at_point("    ");
+    return false;
+  }
+
   this["_handle_action_eval"] = function(evt, target)
   {
     var input = this._textarea.value;
@@ -728,6 +736,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._resolver.clear_cache(); // evaling js voids the cache.
     this._service.handle_input(input);
     this.mode = "single-line-edit";
+    this._textarea.removeClass("multiline");
     return false;
   }
 
@@ -776,13 +785,19 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
    */
   this.focus = function()
   {
-    this.mode = "single-line-edit";
   }
 
   /**
    * action blur
    */
   this.blur = function()
+  {
+  }
+
+  /**
+   * action blur
+   */
+  this.onclick = function()
   {
   }
 
