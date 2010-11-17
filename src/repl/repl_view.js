@@ -776,6 +776,25 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   {
   }
 
+  this.get_action_list = function()
+  {
+    var actions = [];
+    for (var methodname in this)
+    {
+      if (methodname.indexOf("_handle_action_") == 0)
+      {
+        actions.push(methodname.slice(15));
+      }
+    }
+    return actions;
+  }
+
+  this.mode_labels = {
+    "single-line-edit": "Single line editing",
+    "multi-line-edit": "Multi line editing",
+    "autocomplete": "Autocompleting",
+  }
+
   var eh = window.eventHandlers;
   eh.click["repl-toggle-group"] = this._handle_repl_toggle_group_bound;
   eh.click["select-trace-frame"] = this._handle_repl_frame_select_bound;
