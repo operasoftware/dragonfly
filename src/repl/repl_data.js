@@ -142,7 +142,7 @@ cls.ReplData = function(view)
 
   this._add_typed_history = function(str)
   {
-    if (this._typed_history[0] != str)
+    if (this._typed_history[0] != str && str.trim() !== "")
     {
       this._typed_history.unshift(str);
       if (this._max_typed && this._typed_history.length > this._max_typed)
