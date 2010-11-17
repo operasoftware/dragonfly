@@ -1,5 +1,4 @@
-﻿
-window.templates || (window.templates = {});
+﻿window.templates || (window.templates = {});
 
 templates.repl_main = function()
 {
@@ -34,10 +33,12 @@ templates.repl_output_native_or_pobj = function(thing)
 
 templates.repl_output_pobj = function(data)
 {
+  var is_element_type = settings.command_line.get("is-element-type-sensitive") && 
+                        /(?:Element)$/.test(data.name)
   return [
     'code',
     data.name,
-    'handler', 'inspect-object-link',
+    'handler', is_element_type ? 'inspect-node-link' : 'inspect-object-link',
     'rt-id', data.rt_id.toString(),
     'obj-id', data.obj_id.toString(),
     'class', 'repl-pobj'

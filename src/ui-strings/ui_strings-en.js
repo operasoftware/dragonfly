@@ -244,6 +244,10 @@ ui_strings.S_SWITCH_LOCK_SELECTED_ELEMENTS = "Draw a border on to selected eleme
 ui_strings.S_SWITCH_CLEAR_REQUESTS_ON_NEW_CONTEXT = "Clear request log when loading a new site";
 /* DESC: When enabled, the request log always scroll to the bottom on new requests */
 ui_strings.S_SWITCH_AUTO_SCROLL_REQUEST_LIST = "Auto scroll request log";
+/* DESC:  When enabled, list alike objects will be unpacked in the command line */
+ui_strings.S_SWITCH_UNPACK_LIST_ALIKES = "Unpack list alikes in the command line";
+/* DESC:  When enabled, objects of type element in the command line will be displayed in the DOM view */
+ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE = "Show objects of type Element in the DOM view";
 
 
 /*
@@ -432,6 +436,9 @@ ui_strings.S_LABEL_UTIL_AREA = 'Area';
 ui_strings.S_LABEL_UTIL_SCALE = 'Scale';
 /* DESC: A setting to define which prototypes of inspected js objects should be collapsed by default. */
 ui_strings.S_LABEL_COLLAPSED_INSPECTED_PROTOTYPES ="Default collapsed prototype objects (a list of prototypes, e.g. Object, Array, etc. * will collapse all): ";
+/* DESC: In the command line, choose the size of the typed history */
+ui_strings.S_LABEL_REPL_BACKLOG_LENGTH = 'Number of lines of history to remember';
+
 
 /*
  * Information strings in the UI
@@ -531,5 +538,10 @@ ui_strings.S_HTTP_REQUEST_IN_PROGRESS = "Request in progress";
 ui_strings.S_NONE = "None";
 
 /* DESC: Printed in the command line view when it is shown for the first time. */
-ui_strings.S_REPL_WELCOME_TEXT = "Use the clear() command to clear the console.\nType \"//#! help()\" for more information";
+ui_strings.S_REPL_WELCOME_TEXT = "Use the clear() command to clear the console.\nType \"// help()\" for more information";
+
+/* DESC: Description of the "help" command in the repl */
+ui_strings.S_REPL_HELP_COMMAND_DESC = "Show a list of all available commands";
+/* DESC: Description of the "jquery" command in the repl */
+ui_strings.S_REPL_JQUERY_COMMAND_DESC = "Load jquery in the active tab";
 

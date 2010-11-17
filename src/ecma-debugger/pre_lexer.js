@@ -39,6 +39,28 @@
   var get_min = Math.min;
   var get_max = Math.max;
 
+  var handle_strings = function(ref_pos, ref_val)
+  {
+    // ensure that a string never exceeds the current 
+    // line if the newline is not escaped 
+    var temp_count = 0;
+    var nl_cur = string.indexOf(NL, ref_pos + 1);
+    do
+    {
+      // newline was escaped
+      if (temp_count && (nl_cur == ref_pos))
+        nl_cur = string.indexOf(NL, nl_cur + 1);
+      ref_pos = string.indexOf(ref_val, ref_pos + 1);
+      if (nl_cur > -1 && nl_cur < ref_pos)
+        ref_pos = string[nl_cur-1] == CR ? nl_cr -1 : nl_cur;
+      temp_count = 0;
+      while (string.charAt(ref_pos - temp_count - 1) == '\\')
+        temp_count++;
+    }
+    while ((temp_count & 1) && ref_pos != -1);
+    return ref_pos;
+  }
+
 
   while( min_cur != -1 )
   {
@@ -92,36 +114,7 @@
       {
         case 'SINGLE_QUOTE':
         {
-          // ensure that a string never exceeds the current 
-          // line if the newline is not escaped 
-          temp_count = 0;
-          cr_cur = nl_cur = s_quote_cur;
-          nl_cur = string.indexOf(NL, nl_cur + 1);
-          cr_cur = string.indexOf(CR, cr_cur + 1);
-          do
-          {
-            if (temp_count && (nl_cur == s_quote_cur || cr_cur == s_quote_cur))
-            {
-              // newline was escaped
-              nl_cur = string.indexOf(NL, nl_cur + 1);
-              cr_cur = string.indexOf(CR, cr_cur + 1);
-            }
-            s_quote_cur = string.indexOf(s_quote_val, s_quote_cur + 1);
-            if (nl_cur > -1 && nl_cur < s_quote_cur)
-            {
-              s_quote_cur = nl_cur;
-            }
-            if (cr_cur > -1 && cr_cur < s_quote_cur)
-            {
-              s_quote_cur = cr_cur;
-            }
-            temp_count = 0;
-            while (string.charAt(s_quote_cur - temp_count - 1) == '\\')
-            {
-              temp_count++;
-            }
-          }
-          while ((temp_count & 1) && s_quote_cur != -1);
+          s_quote_cur = handle_strings(s_quote_cur, s_quote_val);
           if( s_quote_cur != -1 )
           {
             cur_cur = s_quote_cur;
@@ -143,36 +136,7 @@
         }
         case 'DOUBLE_QUOTE':
         {
-          // ensure that a string never exceeds the current 
-          // line if the newline is not escaped
-          temp_count = 0;
-          cr_cur = nl_cur = d_quote_cur; 
-          nl_cur = string.indexOf(NL, nl_cur + 1);
-          cr_cur = string.indexOf(CR, cr_cur + 1);
-          do
-          {
-            if (temp_count && (nl_cur == d_quote_cur || cr_cur == d_quote_cur))
-            {
-              // newline was escaped
-              nl_cur = string.indexOf(NL, nl_cur + 1);
-              cr_cur = string.indexOf(CR, cr_cur + 1);
-            }
-            d_quote_cur = string.indexOf(d_quote_val, d_quote_cur + 1);
-            if (nl_cur > -1 && nl_cur < d_quote_cur)
-            {
-              d_quote_cur = nl_cur;
-            }
-            if (cr_cur > -1 && cr_cur < d_quote_cur)
-            {
-              d_quote_cur = cr_cur;
-            }
-            temp_count = 0;
-            while( string.charAt( d_quote_cur - temp_count - 1 ) == '\\' )
-            {
-              temp_count++;
-            }
-          }
-          while ( ( temp_count&1 ) && d_quote_cur != -1 );
+          d_quote_cur = handle_strings(d_quote_cur, d_quote_val);
           if( d_quote_cur != -1 )
           {
             cur_cur = d_quote_cur;

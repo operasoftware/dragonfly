@@ -177,7 +177,7 @@ window.cls.PropertyFinder = function(rt_id) {
     {
       runtime_id: runtimes.getSelectedRuntimeId(),
       thread_id: 0,
-      scope_id: null,
+      scope_id: runtimes.getRuntime(runtimes.getSelectedRuntimeId()).object_id,
       index: 0
     };
 
@@ -201,8 +201,8 @@ window.cls.PropertyFinder = function(rt_id) {
    * about a particular runtime. Can be hooked up to messages about closed
    * tabs/runtimes
    */
-  this.forget_runtime = function(rt_id) {
-    // fixme
+  this.clear_cache = function(rt_id) {
+    this._cache = {};
   };
 
   this._cache_key = function(scope, frameinfo) {
@@ -221,7 +221,7 @@ window.cls.PropertyFinder = function(rt_id) {
   };
 
   this._get_scope_contents = function(callback, scope, identifier, input, frameinfo) {
-    if (!scope && frameinfo.stopped) { // we're stopped and there is no scope
+    if (!scope) { // if there is no scope, use examineObject call
       this._requestExamineObjects(callback, scope, identifier, input, frameinfo);
     }
     else

@@ -8,9 +8,10 @@ var WindowContainerBase = function()
 
   this.vertical_delta = 0;
 
-  this.getCssText = function()
+  this.update_style = function(style)
   {
-    return 'height:' + this.height + 'px;';
+    if (this.height !== parseInt(style['height']))
+      style.height = this.height + 'px';
   }
 
   this.setDimensions = function(force_redraw)

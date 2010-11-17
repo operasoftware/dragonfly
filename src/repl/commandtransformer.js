@@ -51,7 +51,7 @@ cls.HostCommandTransformer = function() {
     // in dragonfly. Use it if it exists.
     this.parser = window.simple_js_parser || new window.cls.SimpleJSParser();
 
-    for (methodname in this) {
+    for (var methodname in this) {
       var type = methodname.split("_", 1)[0];
       if (type == "hostcommand")
       {
@@ -116,8 +116,8 @@ cls.HostCommandTransformer = function() {
 
     if (tokens[0].type == COMMENT)
     {
-      // regex matches "//#! command()" . Whitespace is allowed inbetween most tokens
-      var match = tokens[0].value.match(/\s*\/\/\s*#!\s+(\w+)\s*\(\s*\)\s*/);
+      // regex matches "// command()" . Whitespace is allowed inbetween most tokens
+      var match = tokens[0].value.match(/\s*\/\/\s*(\w+)\s*\(\s*\)\s*/);
       if (match)
       {
         var command = match[1];
@@ -269,13 +269,39 @@ cls.HostCommandTransformer = function() {
     data.clear();
   };
 
-  this.dfcommand_help = function(view, data, input)
+  this.dfcommand_help = function(view, data, service)
   {
-    data.add_message("Use the clear() command to clear the console");
-    data.add_message("Type \"//#! help()\" for more information");
+    data.add_message("Available commands:");
+    var names = [];
+    for (var key in this.df_command_map) { names.push(key) }
+    names.sort();
+    for (var n=0, name; name=names[n]; n++)
+    {
+      var cmd = this.df_command_map[name];
+      data.add_message(name + (cmd.description ? ": " + cmd.description : ""));
+    }
   };
+  this.dfcommand_help.description = ui_strings.S_REPL_HELP_COMMAND_DESC;
 
   this.dfcommand_man = this.dfcommand_help; // man is alias for help
+
+  this.dfcommand_jquery = function(view, data, service)
+  {
+    var url = "http://code.jquery.com/jquery.min.js";
+    var code = ["(function(){",
+                "  var script = document.createElement('script');",
+                "  script.setAttribute('src', '" + url + "');",
+                "  var cb = function() {",
+                "    script.parentNode.removeChild(script);",
+                "    console.log('jquery loaded');",
+                "  };",
+                "  script.addEventListener('load', cb, false);",
+                "  document.body.appendChild(script);",
+                "  return 'Loading jquery'",
+                "})();"].join("\n");
+    service.evaluate_input(code);
+  }
+  this.dfcommand_jquery.description = ui_strings.S_REPL_JQUERY_COMMAND_DESC;
 
   this.init();
 };

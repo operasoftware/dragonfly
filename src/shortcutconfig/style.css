@@ -1,0 +1,64 @@
+.shortcuts-config
+{
+  width: 360px;
+}
+.shortcuts-config header
+{
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+}
+.shortcuts
+{
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed;
+  margin-bottom: 15px;
+  border: 1px solid hsl(0, 0%, 80%);
+}
+.shortcuts td
+{
+  xvertical-align: bottom;
+  xborder: 1px solid hsl(0, 0%, 80%);
+  xpadding: 2px 5px;
+}
+.shortcuts th
+{
+  xbackground-color: hsl(0, 0%, 35%);
+  background-color: hsl(0, 0%, 80%);
+  xcolor: #fff;
+  xborder: 1px solid #333;
+  border: 1px solid #ccc;
+  text-align: left;
+  padding: 2px 7px;
+}
+.shortcuts .controls
+{
+  xbackground-color: hsl(0, 0%, 70%);
+}
+.invalid-shortcut td
+{
+  color: #fff;
+  background-color: hsl(22, 100%, 50%);
+  border-color: hsl(22, 100%, 50%);;
+}
+.invalid-shortcut td[colspan="2"]
+{
+  font-weight: bold;
+  padding: 2px 7px;
+}
+
+.scc-input,
+.scc-select
+{
+  xborder: none;
+  xbackground: none;
+  width: 100%;
+  height: 100%;
+  vertical-align: middle;
+  box-sizing: border-box;
+  padding: 2px 5px;
+}
+.scc-no-match
+{
+  display: none;
+}

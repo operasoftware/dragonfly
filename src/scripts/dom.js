@@ -112,7 +112,8 @@ Element.prototype.render = Document.prototype.render = function(args, namespace)
       {
         if (typeof args[i] != 'string')
         {
-          throw "TemplateSyntaxError";
+          throw "TemplateSyntaxError, expected 'string', got " + 
+                (typeof args[i]) + "for TEXT or KEY";
         }
         if (typeof args[i + 1] == 'string')
         {
@@ -279,6 +280,21 @@ Element.prototype.releaseEvent = function(name, custom_props)
       event[prop] = custom_props[prop];
     }
   }
+  this.dispatchEvent(event);
+};
+
+Element.prototype.dispatchMouseEvent = function(type, ctrl_key, alt_key, shift_key)
+{
+  var event = document.createEvent('MouseEvents');
+  var box = this.getBoundingClientRect();
+  var client_x = box.left + box.width * .5;
+  var client_y = box.top + box.height * .5;
+  event.initMouseEvent(type, true, true, window, 1, 
+                       window.screenLeft + client_x, 
+                       window.screenTop + client_y, 
+                       client_x, client_y, 
+                       ctrl_key, alt_key, shift_key, false, 
+                       0, null);
   this.dispatchEvent(event);
 };
 
@@ -662,6 +678,11 @@ String.prototype.isdigit = function()
 {
   return !(/\D/.test(this));
 };
+
+Array.prototype.extend = function(list)
+{
+  this.push.apply(this, list);
+}
 
 /**
  * Convenience function for loading a resource with XHR using the get method.

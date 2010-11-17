@@ -14,14 +14,14 @@ cls.ReplData = function(view)
     this._view.update();
   };
 
+  this._entry_count = 0;
   this._add_entry = function(type, data)
   {
     var entry = {
-      time: (new Date()).getTime(),
+      time: ++this._entry_count,
       type: type,
       data: data
     };
-
     this._repllog.push(entry);
     this._view.update();
   };
@@ -75,9 +75,6 @@ cls.ReplData = function(view)
 
   this.add_output_valuelist = function(rt, values)
   {
-    values.forEach(function(e) {
-      e.rt_id = rt;
-    });
     this._add_entry("valuelist", values);
   };
 

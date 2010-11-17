@@ -30,8 +30,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       "if", "in", "instanceof", "new", "return", "switch", "this",
       "throw", "try", "typeof", "var", "void", "while", "with"];
 
-
-
   this.ondestroy = function()
   {
     this._lastupdate = 0;
@@ -40,11 +38,8 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._container.removeEventListener("scroll", this._save_scroll_bound, false);
   };
 
-  this.createView = function(container)
+  this._create_structure = function(container)
   {
-    var switched_to_view = false;
-    if (!this._lastupdate)
-    {
       container.clearAndRender(templates.repl_main());
       this._linelist = container.querySelector("ol");
       this._textarea = container.querySelector("textarea");
@@ -53,13 +48,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       this._container = container;
       this._input_row_height = this._textarea.scrollHeight;
       this._closed_group_nesting_level = 0;
-    }
+  }
 
-    this._update_runtime_selector_bound();
-    this._update();
-
-    if (switched_to_view)
-    {
+  this._init_scroll_handling = function()
+  {
       var padder = this._container.querySelector(".padding");
       // defer adding listeners until after update
       this._container.addEventListener("scroll", this._save_scroll_bound, false);
@@ -76,6 +68,28 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       {
         this._container.scrollTop = this._current_scroll;
       }
+  }
+
+  this.createView = function(container)
+  {
+    var first_update = !this._lastupdate;
+
+    // on first update, render view skeleton stuff
+    if (first_update)
+    {
+      this._create_structure(container);
+    }
+
+    // Always render the lines of data
+    this._update_runtime_selector_bound();
+    this._update();
+
+    // On first update add scroll listeners and update scroll,
+    // but after the view was rendered so we don't trigger a
+    // flood of events when rendering the backlog.
+    if (first_update)
+    {
+      this._init_scroll_handling();
     }
   };
 
@@ -110,13 +124,12 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
    */
   this._update = function()
   {
-    var now = new Date().getTime();
     var entries = this._data.get_log(this._lastupdate);
-    this._lastupdate = now;
 
+    if (entries.length) { this._lastupdate = entries[entries.length -1].time; }
     for (var n=0, e; e=entries[n]; n++)
     {
-      switch(e.type) {
+      switch(e.type) { // free like a flying demon
         case "input":
           this._render_input(e.data);
           break;
@@ -255,16 +268,31 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._add_line(templates.repl_output_trace(data));
   };
 
-  this._render_value_list = function(values) {
-    var tpl = values.map(templates.repl_output_native_or_pobj);
-    var separated = [];
-    separated.push(tpl.shift());
-    while (tpl.length)
+  this._render_value_list = function(values)
+  {
+    const SPAN = 1, BRACKET = 2;
+    var type = 0;
+    var tpl = values.reduce(function(list, value)
     {
-      separated.push(["span", ", "]);
-      separated.push(tpl.shift());
-    }
-    this._add_line(separated);
+      switch (value.df_intern_type)
+      {
+        case "unpack-header":
+          list.push(templates.repl_output_pobj(value), ["span", "["]);
+          type = BRACKET;
+          break;
+        case "unpack-footer":
+          if (type == SPAN) { list.pop(); }
+          list.push(["span", "]"], ["span", ", "]);
+          type = SPAN;
+          break;
+        default:
+          list.push(templates.repl_output_native_or_pobj(value), ["span", ", "]);
+          type = SPAN;
+      }
+      return list;
+    }, []);
+    tpl.pop();
+    this._add_line(tpl);
   };
 
   this._render_completion = function(s)
@@ -321,8 +349,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._handle_keypress_bound = function(evt)
   {
-    //opera.postError("" + evt.keyCode + " " + evt.which );
-
     if (this._textarea_handler.handle(evt)) {
       evt.preventDefault();
       return;
@@ -367,6 +393,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
           this._textarea.value = "";
           this._backlog_index = -1;
           this._current_input = "";
+          this._resolver.clear_cache(); // evaling js voids the cache.
           this._service.handle_input(input);
         }
         break;
@@ -706,6 +733,14 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
   }.bind(this);
 
+  this._new_repl_context_bound = function(msg)
+  {
+    // This is neccessary so you dont end up with autocomplete date
+    // from the previous runtime/frame when tabbing.
+    this._recent_autocompletion = null;
+    this._resolver.clear_cache();
+  }.bind(this);
+
 
   var eh = window.eventHandlers;
   eh.click["repl-toggle-group"] = this._handle_repl_toggle_group_bound;
@@ -714,6 +749,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   eh.keypress['repl-textarea'] = this._handle_keypress_bound;
   eh.change['set-typed-history-length'] = this._handle_option_change_bound;
   messages.addListener('active-tab', this._update_runtime_selector_bound);
+  messages.addListener('new-top-runtime', this._new_repl_context_bound);
+  messages.addListener('debug-context-selected', this._new_repl_context_bound);
+  messages.addListener('frame-selected', this._new_repl_context_bound);
+
+
 
   this.init(id, name, container_class, html, default_handler);
   // Happens after base class init or else the call to .update that happens in
@@ -735,13 +775,22 @@ cls.ReplView.create_ui_widgets = function()
   new Settings(
     'command_line',
     { // key/value
-      'max-typed-history-length': 8,
-      'typed-history': []
+      'max-typed-history-length': 32,
+      'typed-history': [],
+      'unpack-list-alikes': true,
+      'is-element-type-sensitive': true
     },
     { // key/label
-      'max-typed-history-length': "Max items in typed history to remember"
+      'max-typed-history-length': ui_strings.S_LABEL_REPL_BACKLOG_LENGTH,
+      'unpack-list-alikes': ui_strings.S_SWITCH_UNPACK_LIST_ALIKES,
+      'is-element-type-sensitive': ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE
     },
     { // settings map
+      checkboxes:
+      [
+        'unpack-list-alikes',
+        'is-element-type-sensitive'
+      ],
       customSettings:
       [
         'max-typed-history-length'
@@ -786,5 +835,3 @@ cls.ReplView.create_ui_widgets = function()
     ]
   );
 };
-
-

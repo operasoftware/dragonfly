@@ -51,12 +51,14 @@ var UIBase = new function()
 
   this.parent_container_id = '';
 
-  this.getCssText = function()
+  this.update_style = function(style)
   {
-    return 'left:' + this.left + 'px;' +
-      'top:' + this.top + 'px;' +
-      'height:' + this.height + 'px;' +
-      'width:' + this.width + 'px;';
+    var props = ['left', 'top', 'width', 'height'], prop = '', i = 0;
+    for (; prop = props[i]; i++)
+    {
+      if (this[prop] !== parseInt(style[prop]))
+        style[prop] = this[prop] + 'px';
+    }
   }
 
   this.__is_visible = true;
@@ -115,11 +117,7 @@ var UIBase = new function()
     if( this.is_dirty )
     {
       this.is_dirty = false;
-      var css_text = this.getCssText();
-      if(css_text != ele.style.cssText ) 
-      {
-        ele.style.cssText = css_text;
-      }
+      this.update_style(ele.style);
       this.update_sub_class();
     }
     return ele;

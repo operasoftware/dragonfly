@@ -207,7 +207,7 @@ cls.WindowManager["2.0"].WindowManagerData = function()
 
   this.get_window_list = function()
   {
-    return this._window_list;
+    return this._window_list && this._window_list.slice(0) || null;
   };
 
   this.get_window = function(win_id)
@@ -348,26 +348,39 @@ cls.WindowManager["2.0"].WindowsDropDown = function()
     {
       var
       select = toolbar.getElementsByTagName('select')[0],
-      win_list = window_manager_data.get_window_list(),
+      win_list = window_manager_data.get_window_list() || [],
       active_window = window_manager_data.get_active_window_id(),
       debug_context = window_manager_data.get_debug_context(),
       win = null,
       i = 0,
-      markup = "";
+      markup = "",
+      gadget_list = [];
 
-      if(win_list && select)
+      if (select)
       {
-        for( ; win = win_list[i]; i++ )
-        {
-          markup += '<option value="' + win.window_id + '"' + 
-            ( win.window_id == debug_context ? ' selected="selected"' : '' ) + '>' + 
-            helpers.escapeTextHtml(win.title) + 
-            '</option>';
-        }
+        for (i = win_list.length - 1; win = win_list[i]; i--)
+          if (win.window_type == "gadget")
+            gadget_list.push(win_list.splice(i, 1)[0]);
+        markup += win_list.map(this._option).join('');
+        if (gadget_list.length)
+          markup += "<optgroup " +
+                      "label='Opera Extensions and Opera Unite' " +
+                      "class='window-select-gadgets' " +
+                      "></optgroup>" +
+                    gadget_list.map(this._option).join('');
         select.innerHTML = markup;
       }
     }
   };
+
+  this._option = function(win)
+  {
+    return (
+    '<option value="' + win.window_id + '"' + 
+      ( win.window_id == window_manager_data.get_debug_context() ? ' selected="selected"' : '' ) + '>' + 
+      helpers.escapeTextHtml(win.title || "") + 
+    '</option>');
+  }
 
   this.init = function()
   {
@@ -409,13 +422,18 @@ cls.WindowManager["2.0"].DebuggerMenu = function(id, class_name)
   this.templateOptionList = function(select_obj)
   {
     var
-    win_list = window_manager_data.get_window_list(),
+    win_list = window_manager_data.get_window_list() || [],
     active_window = window_manager_data.get_active_window_id(),
     debug_context = window_manager_data.get_debug_context(),
     win = null,
     ret = [],
     opt = null,
-    i = 0;
+    i = 0,
+    gadget_list = [];
+
+    for (i = win_list.length - 1; win = win_list[i]; i--)
+      if (win.window_type == "gadget")
+        gadget_list.push(win_list.splice(i, 1)[0]);
 
     if( active_window && active_window != debug_context )
     {
@@ -429,19 +447,28 @@ cls.WindowManager["2.0"].DebuggerMenu = function(id, class_name)
     }
     ret = ret.concat(select_obj._action_entries.map(this._action_entry));
     ret[ret.length] = ["hr"];
-    for( ; win = win_list[i]; i++ )
+    ret.push.apply(ret, win_list.map(this._option_template));
+    if (gadget_list.length)
     {
-      ret[ret.length] = [
-          "cst-option",
-          win.title || "\u00A0",
-          "opt-index", i,
-          "value", win.window_id.toString(),
-          "class", win.window_id == debug_context ? "selected" : "",
-          "unselectable", "on"
-      ];
+      ret.push(['cst-title', 'Opera Extensions and Opera Unite', ]);
+      ret.push.apply(ret, gadget_list.map(this._option_template));
     }
     return ret;
   };
+
+  this._option_template = function(win, index)
+  {
+    return (
+    ["cst-option",
+        win.title || "\u00A0",
+        "opt-index", index,
+        "value", win.window_id.toString(),
+        "class", win.window_id == window_manager_data.get_debug_context() ? 
+                 "selected" : 
+                 "",
+        "unselectable", "on"
+    ]);
+  }
 
   this.checkChange = function(target_ele)
   {

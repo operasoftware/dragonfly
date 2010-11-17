@@ -16,11 +16,13 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
 
   /**
     * To get an initial DOM of the given runtime.
-    * Selects either the body or the root element in that oreder.
+    * Selects either the body or the root element in that order, if no optional
+    * obj id is given.
     * Displays a travesal 'parent-node-chain-with-children' for the selected node.
     * @param {Number} rt_id. The runtime id of the given runtime.
+    * @param {Number} obj_id. The optional node to be inspected.
     */
-  this.get_dom = function(rt_id){};
+  this.get_dom = function(rt_id, obj_id, do_highlight, scroll_ito_view){};
 
   /**
     * To get a fully expanded DOM of the current selected runtime (document).
@@ -49,6 +51,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
   this._is_element_selected_checked = false;
   // spotlight on hover on the host side
   this._reset_spotlight_timeouts = new Timeouts();
+  this._is_waiting = false;
 
   this._spotlight = function(event)
   {
@@ -92,7 +95,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
         if (window.settings[this._settings_id].get(key))
           this._handle_setting(key);
       }
-      if (!this._data.length)
+      if (!(this._is_waiting || this._data.length))
       {
         if(this._is_element_selected_checked)
           this._get_initial_view(this._data_runtime_id);
@@ -196,7 +199,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
         // TODO this will fail on inspecting a popup which is part of the debug context
         if (message[WINDOW_ID] == window.window_manager_data.get_debug_context())
         {
-          this._click_handler_host({runtime_id: message[RUNTIME_ID], object_id: message[OBJECT_ID]});
+          this._get_dom_sub(message[RUNTIME_ID], message[OBJECT_ID], true);
         }
         else
         {
@@ -239,12 +242,16 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
 
   this._click_handler_host = function(event)
   {
-    var
-    rt_id = event.runtime_id,
-    obj_id = event.object_id,
-    do_highlight = event.highlight === false ? false : true,
-    cb = this._handle_get_dom.bind(this, rt_id, obj_id, do_highlight);
-
+    var rt_id = event.runtime_id
+    var obj_id = event.object_id;
+    var do_highlight = event.highlight === false ? false : true;
+    this._get_dom_sub(rt_id, obj_id, do_highlight);
+  }
+  
+  this._get_dom_sub = function(rt_id, obj_id, do_highlight, scroll_into_view)
+  {
+    var cb = this._handle_get_dom.bind(this, rt_id, obj_id, 
+                                       do_highlight, scroll_into_view);
     this._current_target = obj_id;
     this._data = [];
     this._mime = '';
@@ -283,7 +290,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
     }
   }
 
-  this._handle_get_dom = function(rt_id, obj_id, highlight_target)
+  this._handle_get_dom = function(rt_id, obj_id, highlight_target, scroll_into_view)
   {
     // handle text nodes as target in get selected element
     for (var i = 0; this._data[i] && this._data[i][ID] != obj_id; i++);
@@ -295,10 +302,9 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
     {
       this._current_target = obj_id = this._data[i][ID];
     }
-    if (highlight_target)
+    if (highlight_target && window.settings.dom.get('highlight-on-hover'))
     {
-      if (window.settings.dom.get('highlight-on-hover'))
-        window.hostspotlighter.spotlight(this._current_target);
+      window.hostspotlighter.spotlight(this._current_target, scroll_into_view);
     }
     if (rt_id != this._data_runtime_id)
     {
@@ -313,6 +319,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
       messages.post("element-selected", {obj_id: obj_id, rt_id: rt_id, model: this});
     }
     window.views[this._view_id].update();
+    this._is_waiting = false;
   }
 
   this._get_initial_view = function(rt_id)
@@ -350,11 +357,15 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
 
   /* implementation */
 
-  this.get_dom = function(rt_id)
+  
+  this.get_dom = function(rt_id, obj_id, do_highlight, scroll_into_view)
   {
-    if ( !(rt_id == this._data_runtime_id && this._data.length) &&
+    if (obj_id)
+      this._get_dom_sub(rt_id, obj_id, do_highlight, scroll_into_view);
+    else if ( !(rt_id == this._data_runtime_id && this._data.length) &&
           runtime_onload_handler.check(rt_id, arguments))
       this._get_initial_view(rt_id);
+    this._is_waiting = true;
   }
 
   this.get_snapshot = function()

@@ -287,7 +287,7 @@ toolbar-filters {
   float: right;
   }
 
-toolbar-filters filter {
+filter {
   display: inline-block;
   margin: 1px;
   padding-left:20px;
@@ -297,11 +297,11 @@ toolbar-filters filter {
   
   }
 
-toolbar-filters filter.focus {
+  filter.focus {
   background-position: 0 -24px;
   }
 
-toolbar-filters em {
+filter em {
   display: inline-block;
   padding-left: 5px;
   width:135px;
@@ -309,7 +309,7 @@ toolbar-filters em {
   vertical-align: top;
   }
 
-toolbar-filters filter input {
+filter input {
   width: 138px;
   height: 20px;
   margin: 1px;
@@ -1222,7 +1222,8 @@ cst-select-option-list
   width: auto;
 }
 
-cst-option
+cst-option,
+cst-title
 {
   display: block;
   cursor: pointer;
@@ -1252,7 +1253,8 @@ cst-option:hover
   color: #fff;
 }
 
-.debugger-menu cst-option
+.debugger-menu cst-option,
+.debugger-menu cst-title
 {
   padding-left: 20px;
 }
@@ -1426,3 +1428,26 @@ pin-label.pinned
 {
   color: #999;
 }
+
+.window-select-gadgets,
+cst-title
+{
+  background-color: hsl(0, 0%, 40%);
+  color: #fff;
+  font-style: normal;
+}
+
+.script-options cst-title
+{
+  margin-left: 2em;
+}
+cst-group
+{
+  display: block;
+  margin-left: 2em;
+  background-color: hsl(0, 0%, 90%);
+  border-left: 1px solid hsl(0, 0%, 80%);
+}
+
+
+

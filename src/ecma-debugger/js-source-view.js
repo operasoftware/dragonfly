@@ -818,7 +818,9 @@ cls.ScriptSelect = function(id, class_name)
         opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'no runtime selected')
         return;
       }
-      return templates.runtimes(_runtimes, 'script', [stopped_script_id, runtimes.getSelectedScript()]);
+      return templates.script_dropdown(_runtimes, 
+                                 stopped_script_id, 
+                                 runtimes.getSelectedScript());
     }
   }
 
@@ -920,6 +922,7 @@ cls.JsSourceView.create_ui_widgets = function()
     [
       {
         handler: 'js-source-text-search',
+        shortcuts: 'js-source-text-search',
         title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH,
         label: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
       }
@@ -1053,13 +1056,9 @@ cls.JsSourceView.create_ui_widgets = function()
     textSearch.search_delayed(target.value);
   }
 
-  eventHandlers.keypress['js-source-text-search'] = function(event, target)
-  {
-    if (event.keyCode == 13)
-    {
-      textSearch[event.shiftKey && 'highligh_previous' || 'highligh_next']();
-    }
-  }
+  ActionBroker.get_instance().get_global_handler().
+  register_shortcut_listener('js-source-text-search', 
+                             cls.Helpers.shortcut_search_cb.bind(textSearch));
 
   eventHandlers.change['set-tab-size'] = function(event, target)
   {
