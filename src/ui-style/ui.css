@@ -1496,7 +1496,7 @@ tabs, toolbar {
 }
 
 #contextmenu {
-  position: absolute;
+  position: fixed;
   z-index: 10;
   display: none;
   padding: 0px;
