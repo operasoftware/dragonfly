@@ -25,7 +25,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._use_autocomplete_highlight = true; // fixme: turn this in to a setting
   this._textarea_handler = null;
   this._closed_group_nesting_level = 0;
-  this._multiediting = false;
   this._keywords = ["break", "case", "catch", "continue", "debugger",
       "default", "delete", "do", "else", "finally", "for", "function",
       "if", "in", "instanceof", "new", "return", "switch", "this",
@@ -105,8 +104,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._update_input_height_bound = function()
   {
     this._textarea.rows = Math.max(1, Math.ceil(this._textarea.scrollHeight / this._input_row_height));
-    this._multiediting = Boolean(this._textarea.rows-1);
-    // fixme: set mode
   }.bind(this);
 
   this._save_scroll_bound = function()
@@ -687,7 +684,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this["_handle_action_enter-multiline-mode"] = function(evt, target)
   {
-    this._multiediting = true;
     this._be_multiline();
     return false;
   };
