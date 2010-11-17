@@ -43,14 +43,15 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._create_structure = function(container)
   {
-      container.clearAndRender(templates.repl_main());
-      this._linelist = container.querySelector("ol");
-      this._textarea = container.querySelector("textarea");
-      this._textarea_handler = new cls.BufferManager(this._textarea);
-      this._textarea.value = this._current_input;
-      this._container = container;
-      this._input_row_height = this._textarea.scrollHeight;
-      this._closed_group_nesting_level = 0;
+    container.clearAndRender(templates.repl_main());
+    this._linelist = container.querySelector("ol");
+    this._textarea = container.querySelector("textarea");
+    this._textarea_handler = new cls.BufferManager(this._textarea);
+    this._textarea.value = this._current_input;
+    this._container = container;
+    this._input_row_height = this._textarea.scrollHeight;
+    this._closed_group_nesting_level = 0;
+    this._textarea.addEventListener("input", this._handle_input_bound, false);
   }
 
   this._init_scroll_handling = function()
@@ -351,14 +352,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     return line;
   };
 
-  this._handle_keypress_bound = function(evt)
+  this._handle_input_bound = function(evt)
   {
     //this._recent_autocompletion = null;
     //this._highlight_completion();
-
-    // timeout makes sure we do this after all events have fired to update box
-    window.setTimeout(this._update_input_height_bound, 0);
-
+    this._update_input_height_bound();
   }.bind(this);
 
   this._handle_backlog = function(delta)
@@ -799,7 +797,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   eh.click["repl-toggle-group"] = this._handle_repl_toggle_group_bound;
   eh.click["select-trace-frame"] = this._handle_repl_frame_select_bound;
   eh.click["repl-focus"] = this._handle_repl_focus_bound;
-  eh.keypress['repl-textarea'] = this._handle_keypress_bound;
   eh.change['set-typed-history-length'] = this._handle_option_change_bound;
   messages.addListener('active-tab', this._update_runtime_selector_bound);
   messages.addListener('new-top-runtime', this._new_repl_context_bound);
