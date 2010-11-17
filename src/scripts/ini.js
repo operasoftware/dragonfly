@@ -103,8 +103,6 @@
         "multi-line-edit":
         {
           "shift enter": "exit-multiline-mode",
-          "up": "up-or-backlog-prev",
-          "down": "down-or-backlog-next",
           "ctrl enter": "eval",
           "tab": "insert-tab-at-point",
         },

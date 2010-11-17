@@ -695,22 +695,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     return false;
   }
 
-  this["_handle_action_up-or-backlog-prev"] = function(evt, target)
-  {
-    if (this._textarea.selectionStart == 0) {
-      this._handle_backlog(+1);
-      return false;
-    }
-  }
-
-  this["_handle_action_down-or-backlog-next"] = function(evt, target)
-  {
-    if (this._textarea.selectionStart == this._textarea.value.length) {
-      this._handle_backlog(+1);
-      return false;
-    }
-  }
-
   this["_handle_action_insert-tab-at-point"] = function(evt, target)
   {
     this._textarea_handler.insert_at_point("    ");
