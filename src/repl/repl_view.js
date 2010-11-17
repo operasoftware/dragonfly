@@ -351,8 +351,12 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._handle_input_bound = function(evt)
   {
-    //this._recent_autocompletion = null;
-    //this._highlight_completion();
+    if (this.mode == "autocomplete")
+    {
+      this._recent_autocompletion = null;
+      this._be_singleline();
+    }
+
     this._check_for_multiline();
     this._update_input_height_bound();
   }.bind(this);
@@ -403,7 +407,8 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._commit_selection = function()
   {
     this._update_textarea_value(this._recent_autocompletion[this._autocompletion_index][0]);
-    this.mode = "single-line-edit";
+    this._be_singleline();
+    this._recent_autocompletion = null;
   };
 
   this._update_textarea_value = function(prop)
@@ -458,20 +463,16 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     sel.addRange(range);
   };
 
-  this._on_invoke_completer = function(direction)
+  this._on_invoke_completer = function()
   {
-    // tab/arrows was pressed while the completer is showing something
-    if (this._recent_autocompletion)
-    {
-      // fixme: set mode
-      this.mode = "single-line-edit";
-      this._update_highlight(direction);
+    if (this._recent_autocompletion) {
+      this.mode = "autocomplete";
     }
     else
     {
       this._handle_completer();
     }
-  };
+  }
 
   this._update_highlight = function(direction)
   {
@@ -508,9 +509,12 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         return candidate.indexOf(localpart) == 0;
       });
 
+
       if (! matches.length) {
         return;
       }
+
+
 
       var match = this._longest_common_prefix(matches.slice(0));
       if (match.length > localpart.length || matches.length == 1)
@@ -521,6 +525,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       {
         this._data.add_input(this._textarea.value);
         this._data.add_output_completion(matches.sort(cls.PropertyFinder.prop_sorter).join(", "));
+        this.mode = "autocomplete";
 
         var completions = this._linelist.querySelectorAll(".repl-completion");
         this._autocompletion_elem = completions[completions.length-1];
@@ -643,9 +648,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._new_repl_context_bound = function(msg)
   {
-    // This is neccessary so you dont end up with autocomplete date
+    // This is neccessary so you dont end up with autocomplete data
     // from the previous runtime/frame when tabbing.
-    this._recent_autocompletion = null;
+    // The current tabbing context doesn't change though. Should not
+    // be a problem unless you reload while tabbing or something.
     this._resolver.clear_cache();
   }.bind(this);
 
@@ -697,19 +703,21 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this["_handle_action_autocomplete"] = function(evt, target)
   {
+
     this._on_invoke_completer(1);
+
     return false;
   }
 
   this["_handle_action_next-completion"] = function(evt, target)
   {
-    this._on_invoke_completer(1);
+    this._update_highlight(1);
     return false;
   }
 
   this["_handle_action_prev-completion"] = function(evt, target)
   {
-    this._on_invoke_completer(-1);
+    this._update_highlight(-1);
     return false;
   }
 
@@ -761,15 +769,15 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this.handle = function(action, evt, target)
   {
     var handler = this["_handle_action_" + action];
-//    opera.postError("handle " + "_handle_action_" + action)
+    //opera.postError("handle " + "_handle_action_" + action)
     if (handler)
     {
-      opera.postError("handling action in repl:  " + action);
+      //opera.postError("handling action in repl:  " + action + " (" + this.mode + ")");
       return handler.call(this, evt, target);
     }
     else
     {
-      opera.postError("UNHANDLED action in repl: " + action);
+//      opera.postError("UNHANDLED action in repl: " + action + " (" + this.mode + ")");
     }
   };
 
