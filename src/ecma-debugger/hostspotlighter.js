@@ -369,6 +369,8 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
   /* helper Metrics mouse event handler */
   var setStyleMouseHandlerTarget = function(target, class_name)
   {
+    if (class_name == "position") return;
+
     var 
     index = class_names.indexOf(class_name) + 1, 
     style = target.style,
