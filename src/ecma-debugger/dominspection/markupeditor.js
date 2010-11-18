@@ -56,8 +56,6 @@ var DOMMarkupEditor = function()
     if(container && model_id)
     {
       model = window.dominspections[model_id];
-      container.firstChild.style.position = 'relative';
-      container.firstChild.render(['fade-out']);
       this.context_enter =
       {
         rt_id: rt_id,
@@ -175,9 +173,7 @@ var DOMMarkupEditor = function()
   // could be the default method?
   this.onclick = function(event)
   {
-    event.preventDefault();
-    event.stopPropagation();
-    if(!this.textarea_container.contains(event.target))
+    if (!this.textarea_container.contains(event.target))
     {
       this.submit(true);
       return false;
@@ -191,10 +187,15 @@ var DOMMarkupEditor = function()
   {
     if( message[STATUS] == 'completed' )
     {
-      // to remove the textarea_container from the dom
-      nav_target.textContent = "";
+      var scroll_position = new Element.ScrollPosition(nav_target);
+      var cb = function()
+      {
+        nav_target.textContent = "";
+        window.views.dom.update();
+        scroll_position.reset(document.getElementById('target-element'));
+      }
       this.context_enter.model.collapse(state.parent_obj_id);
-      this.context_enter.model.expand(function(){window.views.dom.update()}, state.parent_obj_id, 'children');
+      this.context_enter.model.expand(cb, state.parent_obj_id, 'children');
       this.context_cur = this.context_enter = null;
     }
     else
@@ -544,6 +545,7 @@ var DOMMarkupEditor = function()
         "this.textarea_container.parentElement is not null in submit");
     }
     this.textarea.value = outerHTML;
+    var scroll_position = new Element.ScrollPosition(parent);
     parent.innerHTML = "";
     parent.appendChild(this.textarea_container);
     while( ( next = parent.nextElementSibling ) && parseInt(next.style.marginLeft) > margin )
@@ -561,6 +563,7 @@ var DOMMarkupEditor = function()
       this.textarea.focus();
     }
     this.textarea.selectionEnd = this.textarea.selectionStart = 0;
+    scroll_position.reset();
   }
 }
 

@@ -103,6 +103,9 @@ cls.DOMInspectorActions = function(id)
       if (document.getElementById('target-element'))
         document.getElementById('target-element').removeAttribute('id');
       target.id = 'target-element';
+      // if the view_container is null the view is not in focus
+      if (!view_container)
+        window.helpers.scroll_dom_target_into_view();
     }
     return model;
   }
@@ -214,20 +217,18 @@ cls.DOMInspectorActions = function(id)
       if (new_container && new_container.firstChild)
       {
         var 
-        tag_name = nav_target.nodeName.toLowerCase(),
-        count = 0,
-        new_container_elements = new_container.firstChild.getElementsByTagName(tag_name),
-        old_container_elements = view_container_first_child.getElementsByTagName(tag_name),
+        new_container_elements = new_container.firstChild.getElementsByTagName('*'),
+        old_container_elements = view_container_first_child.getElementsByTagName('*'),
         index = old_container_elements.indexOf(nav_target),
         cur = null;
 
-        while ( !(nav_target = new_container_elements[index - count]) && count++ < index);
+        nav_target = new_container_elements[index];
         view_container = new_container;
         view_container_first_child = new_container.firstChild;
         cur = view_container.firstElementChild;
         cur = cur && cur.firstElementChild;
         this.is_dom_type_tree = cur && cur.hasClass('tree-style');
-        this.setSelected(nav_target || ( nav_target = this.getFirstTarget() ) );
+        this.setSelected(nav_target || (nav_target = this.getFirstTarget()));
       }
       else
         this.blur();
@@ -281,7 +282,7 @@ cls.DOMInspectorActions = function(id)
     this.setSelected(nav_target);
   }
 
-  this.setSelected = function(new_target)
+  this.setSelected = function(new_target, scroll_into_view)
   {
     var firstChild = null, raw_delta = 0, delta = 0;
     if(new_target)
@@ -292,19 +293,23 @@ cls.DOMInspectorActions = function(id)
       }
       selection.removeAllRanges();
       nav_target = new_target;
-      raw_delta = new_target.getBoundingClientRect().top - view_container.getBoundingClientRect().top; 
-      // delta positive overflow of the container
-      delta = 
-        raw_delta + new_target.offsetHeight + SCROLL_IN_PADDING - view_container.offsetHeight;
- 
-      // if delta is zero or less than zero, there is no positive overflow
-      // check for negative overflow
-      if( delta < 0 && ( delta = raw_delta - SCROLL_IN_PADDING ) > 0 )
+      if (scroll_into_view)
       {
-        // if there is no negative overfow, set the delta to 0, meanig don't scroll
-        delta = 0;
+        raw_delta = new_target.getBoundingClientRect().top - 
+                    view_container.getBoundingClientRect().top; 
+        // delta positive overflow of the container
+        delta = 
+          raw_delta + new_target.offsetHeight + SCROLL_IN_PADDING - view_container.offsetHeight;
+   
+        // if delta is zero or less than zero, there is no positive overflow
+        // check for negative overflow
+        if( delta < 0 && ( delta = raw_delta - SCROLL_IN_PADDING ) > 0 )
+        {
+          // if there is no negative overflow, set the delta to 0, meanig don't scroll
+          delta = 0;
+        }
+        view_container.scrollTop += delta;
       }
-      view_container.scrollTop += delta;
  
       switch (new_target.nodeName.toLowerCase())
       {
@@ -314,7 +319,8 @@ cls.DOMInspectorActions = function(id)
           firstChild = new_target.firstChild;
           range.setStart(firstChild, this.is_dom_type_tree ? 0 : 1);
           range.setEnd(firstChild,
-            firstChild.nodeValue.length - (this.is_dom_type_tree && !firstChild.nextSibling ? 0 : 1) )
+                       firstChild.nodeValue.length - 
+                       (this.is_dom_type_tree && !firstChild.nextSibling ? 0 : 1));
           selection.addRange(range);
           break;
         }
@@ -481,7 +487,8 @@ cls.DOMInspectorActions = function(id)
   {
     // TODO if setting of nav target fails
     if ( !this.setSelected(nav_target.getPreviousWithFilter(view_container, 
-                                                            nav_filters.up_down)))
+                                                            nav_filters.up_down),
+                           true))
     {
       view_container.scrollTop = 0;
     }
@@ -491,7 +498,9 @@ cls.DOMInspectorActions = function(id)
   this._handlers["nav-down"] = function(event, target)
   {
     // TODO if setting of nav target fails
-    if(!this.setSelected( nav_target.getNextWithFilter(view_container, nav_filters.up_down) ) )
+    if(!this.setSelected(nav_target.getNextWithFilter(view_container, 
+                                                      nav_filters.up_down),
+                         true))
     {
       view_container.scrollTop = view_container.scrollHeight;
     }
@@ -501,7 +510,9 @@ cls.DOMInspectorActions = function(id)
   this._handlers["nav-left"] = function(event, target)
   {
     // TODO if setting of nav target fails
-    this.setSelected(nav_target.getPreviousWithFilter(view_container, nav_filters.left_right));
+    this.setSelected(nav_target.getPreviousWithFilter(view_container, 
+                                                      nav_filters.left_right),
+                     true);
     return true;
   }.bind(this);
 
@@ -509,7 +520,9 @@ cls.DOMInspectorActions = function(id)
   {
     
     // TODO if setting of nav target fails
-    this.setSelected(nav_target.getNextWithFilter(view_container, nav_filters.left_right));
+    this.setSelected(nav_target.getNextWithFilter(view_container, 
+                                                  nav_filters.left_right),
+                     true);
     return true;
   }.bind(this);
 
@@ -581,7 +594,7 @@ cls.DOMInspectorActions = function(id)
 
   this._handlers["submit-edit"] = function(event, target)
   {
-    if (this.editor.type == "dom-attr-text-editor")
+    if (this.editor.type)
     {
       this.setSelected(this.editor.submit() || this.getFirstTarget() );
       this.mode = MODE_DEFAULT;
@@ -589,14 +602,6 @@ cls.DOMInspectorActions = function(id)
       return false;
     }
     return true;
-  }.bind(this);
-
-  this._handlers["ctrl-enter-edit-mode"] = function(event, target)
-  {
-    this.setSelected(this.editor.submit() || this.getFirstTarget());
-    this.mode = MODE_DEFAULT;
-    document.documentElement.removeClass('modal');
-    return false;
   }.bind(this);
 
   this._handlers["edit-next"] = function(event, target)

@@ -687,7 +687,7 @@ stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
 
 .table-cell
 {
-  display: table-cell;
+  display: table;
 }
 
 .tree-style .text-node

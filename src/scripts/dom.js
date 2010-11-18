@@ -6,7 +6,24 @@
     stpVersion: true
   };
 }
-
+/*
+(function()
+{
+  var div = document.createElement('div')
+  var setter = div.__lookupSetter__("scrollTop");
+  var getter = div.__lookupGetter__("scrollTop");
+  Element.prototype.__defineSetter__('scrollTop', function(scroll_top)
+  {
+    opera.postError('setter: '+this.nodeName + ', '+scroll_top);
+    setter.call(this, scroll_top);
+  });  
+  Element.prototype.__defineGetter__('scrollTop', function()
+  {
+    var scroll_top = getter.call(this);
+    return scroll_top;
+  });
+})();
+*/
 if (document.createElementNS && 
     document.createElement('div').namespaceURI != 'http://www.w3.org/1999/xhtml')
 {  
@@ -287,6 +304,57 @@ Element.prototype.dispatchMouseEvent = function(type, ctrl_key, alt_key, shift_k
                        0, null);
   this.dispatchEvent(event);
 };
+
+Element.prototype.get_scroll_container = function()
+{
+  var scroll_container = this;
+  while (scroll_container && 
+         scroll_container.scrollHeight <= scroll_container.offsetHeight)
+    scroll_container = scroll_container.parentNode;
+  return (scroll_container == document.documentElement ||
+          scroll_container == document) ? null : scroll_container;
+}
+
+Element.ScrollPosition = function(target)
+{
+  this._scroll_container = target.get_scroll_container();
+  this._scroll_top = 0;
+  this._scroll_left = 0;
+  this._delta_top = 0;
+  this._delta_left = 0;
+  if (this._scroll_container)
+  {
+    this._scroll_top = this._scroll_container.scrollTop;
+    this._scroll_left = this._scroll_container.scrollLeft;
+    var target_box = target.getBoundingClientRect();
+    var scroll_box = this._scroll_container.getBoundingClientRect();
+    this._container_top = scroll_box.top;
+    this._container_left = scroll_box.left;
+    this._delta_top = target_box.top - scroll_box.top;
+    this._delta_left = target_box.left - scroll_box.left;
+  }
+
+}
+
+Element.ScrollPosition.prototype.reset = function(target)
+{
+  if (this._scroll_container)
+  {
+    if (target)
+    {
+      var target_box = target.getBoundingClientRect();
+      this._scroll_container.scrollTop -= this._delta_top - 
+                                          (target_box.top - this._container_top);
+      this._scroll_container.scrollTop -= this._delta_left - 
+                                          (target_box.left - this._container_left);
+    }
+    else
+    {
+      this._scroll_container.scrollTop = this._scroll_top;
+      this._scroll_container.scrollLeft = this._scroll_left; 
+    }
+  }
+}
 
 /* currently broken in Opera */
 Element.prototype.getWidth = function(e)
