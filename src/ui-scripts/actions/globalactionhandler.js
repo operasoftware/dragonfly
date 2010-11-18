@@ -35,7 +35,7 @@
     */
   this.onclick = function(event){};
 
-  this.register_shortcut_listener = function(listener_id, callback){};
+  this.register_shortcut_listener = function(listener_id, callback, action_list){};
 
   /* constants */
 
@@ -55,6 +55,7 @@
 
   this._broker = ActionBroker.get_instance();
   this._handlers = {};
+  this._listener_handlers = [];
 
   this._sc_listeners = {};
   
@@ -63,7 +64,7 @@
     var actions = [], key = '';
     for (key in this._handlers)
       actions.push(key);
-    return actions;
+    return actions.concat(this._listener_handlers);
   };
 
   this._handlers['continue-run'] =
@@ -113,9 +114,15 @@
                                        MODE_DEFAULT;
   };
 
-  this.register_shortcut_listener = function(listener_id, callback)
+  this.register_shortcut_listener = function(listener_id, callback, action_list)
   {
     this._sc_listeners[listener_id] = callback;
+    if (action_list)
+      action_list.forEach(function(action)
+      {
+        if (this._listener_handlers.indexOf(action) == -1)
+          this._listener_handlers.push(action);
+      }, this);
   };
 
   /* instatiation */
