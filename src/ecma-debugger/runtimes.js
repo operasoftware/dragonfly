@@ -934,7 +934,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
     {
       removeRuntime(rt_id);
       updateRuntimeViews();
-
+      host_tabs.updateActiveTab();
       messages.post('runtime-stopped', {id: rt_id} );
     }
   }
