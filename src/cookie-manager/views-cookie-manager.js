@@ -66,21 +66,11 @@ cls.CookieManagerView = function(id, name, container_class)
   };
   
   this._on_active_tab = function(msg)
-  {
-    // clear cookie dictionary
-    // this._cookies={};
-    
-    // instead of clearing this on any change of runtimes, 
-    // should look at what runtimes are added / removed and only update domains
-    // regarding that.
-    // most likely use case: iframe is added during runtime -> now causes all
-    // cookies to be refetched. not cool.
-    
+  {    
     // clear runtimes dictionary
     this._rts={};
     
     // cleanup view
-    // window.views.cookie_manager.update();
     this.clearAllContainers();
     
     // console.log("--- msg.activeTab",msg.activeTab);
@@ -101,48 +91,13 @@ cls.CookieManagerView = function(id, name, container_class)
     var type = message[1];
     var domain = message[2];
     
-    // domain list first needs to complete, all collected, then cleaned up 
-    // by removing domains from this._cookies when they are not in this._active_domains (?)
     this._rts[rt_id].get_domain_is_pending = false;
     this._rts[rt_id].domain = domain;
-    console.log("stored domain:",domain,"type ",typeof domain);
     
-    // Probably move the following to a seperate checkIfCollectedAllDomains func
-    
-    var collected_all_domains = true;
-    for (var check_id in this._rts)
+    if(this._check_if_all_domains_are_available())
     {
-      if(this._rts[check_id].get_domain_is_pending)
-      {
-        console.log("still waiting for domain of rt ",this._rts[check_id].rt_id);
-        collected_all_domains = false;
-      }
-    };
-    
-    if(collected_all_domains)
-    {
-      console.log("collected_all_domains",this._rts);
       // check this._cookies for domains that aren't in any runtime anymore
-      
-      // maybe move the following check to a separate function to be able to return quicker
-      
-      for (var checkdomain in this._cookies)
-      {
-        var was_found_in_runtime = false;
-        for (var _tmp_rtid in this._rts)
-        {
-          if(this._rts[_tmp_rtid].domain === checkdomain)
-          {
-            was_found_in_runtime = true;
-          }
-        };
-        if(!was_found_in_runtime)
-        {
-          console.log("not in runtime: ",checkdomain);
-          delete this._cookies[checkdomain];
-        }
-        console.log("clead up cookie array:",this._cookies);
-      };
+      this._clean_domain_list();
       
       // request cookies, but only once per domain
       for (var requestcookiedomain in this._rts)
@@ -150,13 +105,9 @@ cls.CookieManagerView = function(id, name, container_class)
         var domain = this._rts[requestcookiedomain].domain;
         if(domain && (!this._cookies[domain] ||  !this._cookies[domain].is_pending)) // no it's about cookies that can be pending..
         {
-          console.log("asking for cookies for domain",domain);
           this._cookies[domain] = {is_pending: true};
           var tag = tagManager.set_callback(this, this._handle_cookies,[rt_id,domain]);
           services['cookie-manager'].requestGetCookie(tag,[domain]);
-        }
-        else {
-          console.log("had already asked for cookies for domain OR domain is empty",domain);
         }
       }
     }
@@ -170,7 +121,6 @@ cls.CookieManagerView = function(id, name, container_class)
       this._cookies[domain].cookie_list=[];
       for (var i=0; i < cookies.length; i++) {
         var cookie_info = cookies[i];
-        // console.log("GO name ",cookie_info[2],"expires ",cookie_info[4],"typeof expires ",(typeof cookie_info[4]));
         this._cookies[domain].cookie_list.push({
           domain:     cookie_info[0],
           path:       cookie_info[1],
@@ -181,7 +131,6 @@ cls.CookieManagerView = function(id, name, container_class)
           isHTTPOnly: cookie_info[6],
           size:       cookie_info[7]
         });
-        // console.log("added cookies. updated dictionary:",this._cookies);
       };
       window.views.cookie_manager.update();
     }
@@ -200,6 +149,41 @@ cls.CookieManagerView = function(id, name, container_class)
     window.messages.addListener('active-tab', this._on_active_tab.bind(this));    
     this.init(id, name, container_class);
   };
+  
+  // Helpers
+  this._check_if_all_domains_are_available = function()
+  {
+    var collected_all_domains=true;
+    for (var check_id in this._rts)
+    {
+      if(this._rts[check_id].get_domain_is_pending)
+      {
+        collected_all_domains = false;
+      }
+    };
+    return collected_all_domains;
+  };
+  
+  this._clean_domain_list = function()
+  {
+    for (var checkdomain in this._cookies)
+    {
+      var was_found_in_runtime = false;
+      for (var _tmp_rtid in this._rts)
+      {
+        if(this._rts[_tmp_rtid].domain === checkdomain)
+        {
+          was_found_in_runtime = true;
+        }
+      };
+      if(!was_found_in_runtime)
+      {
+        delete this._cookies[checkdomain];
+      }
+    };
+  }
+
+  // End Helpers
   
   this._init(id, name, container_class);
 };
