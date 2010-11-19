@@ -6,6 +6,7 @@ cls.CookieManagerView = function(id, name, container_class)
   this._rts = {};
   this.createView = function(container)
   {
+    console.log("createView");
     var render_array = [];
     if (this._cookies)
     {
@@ -16,7 +17,9 @@ cls.CookieManagerView = function(id, name, container_class)
         {
           render_array.push(
             ["tr",
-              ["td", ["h2",domain], "colspan", "7"]
+              ["td", ["h2",domain], "colspan", "7"],
+              "data-domain", domain,
+              "class", "domain"
             ]
           );
           render_array.push(
@@ -28,7 +31,6 @@ cls.CookieManagerView = function(id, name, container_class)
               ["th", "Expires"],
               ["th", "isSecure"],
               ["th", "isHTTPOnly"]
-            // ,"handler", "clickfunc"
             ]
           );
           var toggle_class=true;
@@ -57,8 +59,10 @@ cls.CookieManagerView = function(id, name, container_class)
               row_array.push("class","odd");
             }
             toggle_class=!toggle_class;
-            render_array.push(row_array)
+            render_array.push(row_array);
           };
+          // Add remove cookies of this domain
+          render_array.push(["button","RemoveCookiesOfDomain", "href", "#", "handler", "cookiemanager-delete-domain-cookies"]);
         }
       };
       render_array=["table",render_array];
@@ -66,7 +70,7 @@ cls.CookieManagerView = function(id, name, container_class)
     container.clearAndRender(render_array);
     
     // Add clear button
-    container.render(["a","RemoveAllCookies", "href", "#", "handler", "cookiemanager-delete-all"]);
+    container.render(["button","RemoveAllCookies", "href", "#", "handler", "cookiemanager-delete-all"]);
   };
   
   this._on_active_tab = function(msg)
@@ -140,6 +144,25 @@ cls.CookieManagerView = function(id, name, container_class)
       window.views.cookie_manager.update();
     }
   };
+  
+  this._handle_removed_cookies = function(status,message,domain)
+  {
+    console.log("_handle_removed_cookies",status,message,domain);
+    
+    // callback is shared between all and domain specific removing.
+    if(domain)
+    {
+      // console.log("deleting cookie dir for ",domain,"which is until now",this._cookies[domain]);
+      delete window.views.cookie_manager._cookies[domain];
+    }
+    else
+    {
+      window.views.cookie_manager._cookies = {};
+    }
+    
+    window.views.cookie_manager.update();
+  };
+  
   /*
   eventHandlers.click["clickfunc"]=function(event,target)
   {
