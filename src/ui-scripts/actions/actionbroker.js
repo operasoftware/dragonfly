@@ -30,10 +30,11 @@ var ActionBroker = function()
 
   /**
     * To set a new shortcut map.
-    * @param{Object} shortcuts
-    * @param{String} handler_id
+    * @param {Object} shortcuts
+    * @param {String} handler_id
+    * @param {Boolean} clear_setting. To reste to defaults
     */
-  this.set_shortcuts = function(shortcuts, handler_id){};
+  this.set_shortcuts = function(shortcuts, handler_id, clear_setting){};
 
   /**
     * To get a list of action handler ids.
@@ -53,31 +54,31 @@ var ActionBroker = function()
   /**
     * To delay an action propagation,
     * e.g if a click could be followed by a double click.
-    * @param{String} type, the event type
-    * @param{String} handler_id
-    * @param{String} action_id
-    * @param{Event} event
-    * @param{Element} target
+    * @param {String} type, the event type
+    * @param {String} handler_id
+    * @param {String} action_id
+    * @param {Event} event
+    * @param {Element} target
     */
   this.delay_action = function(type, handler_id, action_id, event, target){};
 
   /**
     * To cancel delayed actions.
     * e.g. if a dbl click has followed a click.
-    * @param{String} type, the event type
+    * @param {String} type, the event type
     */
   this.clear_delayed_actions = function(type){};
 
   /**
     * To get a list of all actions of a given action handler.
-    * @param{String} handler_id
+    * @param {String} handler_id
     */
   this.get_actions_with_handler_id = function(handler_id){};
 
   /**
     * To the label for a given mode.
-    * @param{String} handler_id
-    * @param{String} mode
+    * @param {String} handler_id
+    * @param {String} mode
     */
   this.get_label_with_handler_id_and_mode = function(handler_id, mode){};
 
@@ -155,8 +156,9 @@ var ActionBroker = function()
     this.register_handler(this._global_handler);
     window.app.addListener('services-created', function()
     {
-      this.set_shortcuts(window.settings.general.get("shortcuts") ||
-                         window.ini.default_shortcuts.windows);
+      this._shortcuts = window.settings.general.get("shortcuts") ||
+                        window.ini.default_shortcuts.windows;
+      this._gloabal_shortcuts = this._shortcuts.global;                                
       this._set_current_handler(this._global_handler);
     }.bind(this));
     document.addEventListener('click', this._set_action_context_bound, true);
