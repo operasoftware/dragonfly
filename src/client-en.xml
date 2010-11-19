@@ -221,6 +221,7 @@ window.load_screen_timeout = window.setTimeout(function()
 
 
 <script src="./cookie-manager/views-cookie-manager.js"></script>
+<script src="./cookie-manager/actions-cookie-manager.js"></script>
 
 
 

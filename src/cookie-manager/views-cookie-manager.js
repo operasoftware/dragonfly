@@ -27,8 +27,9 @@ cls.CookieManagerView = function(id, name, container_class)
               ["th", "Value"],
               ["th", "Expires"],
               ["th", "isSecure"],
-              ["th", "isHTTPOnly"],
-            "handler", "clickfunc"]
+              ["th", "isHTTPOnly"]
+            // ,"handler", "clickfunc"
+            ]
           );
           var toggle_class=true;
           for (var i=0; i < domains_cookies.cookie_list.length ;i++)
@@ -63,6 +64,9 @@ cls.CookieManagerView = function(id, name, container_class)
       render_array=["table",render_array];
     }
     container.clearAndRender(render_array);
+    
+    // Add clear button
+    container.render(["a","RemoveAllCookies", "href", "#", "handler", "cookiemanager-delete-all"]);
   };
   
   this._on_active_tab = function(msg)
@@ -113,7 +117,8 @@ cls.CookieManagerView = function(id, name, container_class)
     }
   }
   
-  this._handle_cookies = function(status,message,rt_id,domain) {
+  this._handle_cookies = function(status,message,rt_id,domain)
+  {
     if(message.length > 0)
     {
       var cookies = message[0];
