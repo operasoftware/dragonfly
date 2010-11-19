@@ -13,8 +13,6 @@ cls.ShortcutConfigView = function(id, name, container_class)
 
   const
   GLOBAL_HANDLER = "global",
-  MODE_DEFAULT = ActionBroker.MODE_DEFAULT,
-  MODE_EDIT = ActionBroker.MODE_EDIT,
   MINUS = -1,
   PLUS = 1;
 
@@ -22,7 +20,6 @@ cls.ShortcutConfigView = function(id, name, container_class)
   this._broker = ActionBroker.get_instance();
   this._broker.register_handler(this);
   this._handlers = {};
-  this._mode = MODE_DEFAULT;
   
   this.get_action_list = function()
   {
@@ -177,6 +174,8 @@ cls.ShortcutConfigView = function(id, name, container_class)
     {
       for (mode in shortcuts[section])
       {
+        if (!shortcuts_match[section])
+          shortcuts_match[section] = {};
         shortcuts_match[section][mode] = 
           this._search_mode(shortcuts[section][mode], search);
         if (shortcuts_match[section][mode].has_match)

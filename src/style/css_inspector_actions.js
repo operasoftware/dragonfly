@@ -258,7 +258,7 @@ cls.CSSInspectorActions = function(id)
   /* ActionHandler interface */
 
   const
-  MODE_DEFAULT = ActionBroker.MODE_DEFAULT,
+  MODE_DEFAULT = "default",
   MODE_EDIT = "edit",
   MINUS = -1,
   PLUS = 1;
@@ -271,6 +271,7 @@ cls.CSSInspectorActions = function(id)
 
   this.mode_labels =
   {
+    "default": "Default",
     "edit": "Edit",
   }
   

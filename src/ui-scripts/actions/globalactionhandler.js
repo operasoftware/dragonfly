@@ -40,13 +40,14 @@
   /* constants */
 
   const
-  MODE_DEFAULT = ActionBroker.MODE_DEFAULT,
+  MODE_DEFAULT = "default",
   MODE_EDIT = "edit";
 
   this.mode = MODE_DEFAULT;
 
   this.mode_labels =
   {
+    "default": "Default",
     "edit": "Edit",
   }
 

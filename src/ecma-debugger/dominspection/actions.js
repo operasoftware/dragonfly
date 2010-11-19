@@ -13,12 +13,13 @@ cls.DOMInspectorActions = function(id)
 
   const
   SCROLL_IN_PADDING = 30,
-  MODE_DEFAULT = ActionBroker.MODE_DEFAULT,
+  MODE_DEFAULT = "default",
   MODE_EDIT_ATTR_TEXT = "edit-attributes-and-text",
   MODE_EDIT_MARKUP = "edit-markup";
 
   this.mode_labels =
   {
+    "default": "Default",
     "edit-attributes-and-text": "Edit Attributes and Text",
     "edit-markup": "Edit markup"
   }
@@ -594,7 +595,10 @@ cls.DOMInspectorActions = function(id)
 
   this._handlers["submit-edit"] = function(event, target)
   {
-    if (this.editor.type)
+    if ((this.mode == MODE_EDIT_ATTR_TEXT && 
+         this.editor.type == this.editors["dom-attr-text-editor"].type) ||
+        (this.mode == MODE_EDIT_MARKUP &&
+         this.editor.type == this.editors["dom-markup-editor"].type))
     {
       this.setSelected(this.editor.submit() || this.getFirstTarget() );
       this.mode = MODE_DEFAULT;
