@@ -225,14 +225,18 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
 
   this._on_active_tab = function(msg)
   {
-    this._on_reset_state();
-    // the top frame is per default the active tab
-    this._data_runtime_id = msg.activeTab[0];
-    messages.post("runtime-selected", {id: this._data_runtime_id});
-    window['cst-selects']['document-select'].updateElement();
-    this._active_window = msg.activeTab.slice();
-    if (window.views[this._view_id].isvisible())
-      this._on_show_view({id: this._view_id})
+    if (!this._data_runtime_id || 
+        msg.activeTab.indexOf(this._data_runtime_id) == -1)
+    {
+      this._on_reset_state();
+      // the first field is the top runtime
+      this._data_runtime_id = msg.activeTab[0];
+      messages.post("runtime-selected", {id: this._data_runtime_id});
+      window['cst-selects']['document-select'].updateElement();
+      this._active_window = msg.activeTab.slice();
+      if (window.views[this._view_id].isvisible())
+        this._on_show_view({id: this._view_id})
+    }
   }
   
   this._on_top_runtime_update = function()

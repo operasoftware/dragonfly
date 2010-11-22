@@ -588,9 +588,8 @@ var DOMAttrAndTextEditor = function(nav_filters)
     max_content_length = 
       Math.max.apply(null, this.textarea.value.split('\r\n').map(function(item){return item.length})),
     width = this.char_width * max_content_length;
-
-    //this.textarea.style.height = '0px';
-    this.textarea.style.width = ( width < this.max_width ? width : this.max_width )+ "px";
+    this.textarea.style.height = '0px';
+    this.textarea.style.width = ( width < this.max_width ? (width || 1) : this.max_width )+ "px";
     this.textarea.style.height = this.textarea.scrollHeight + 'px';
   }
 

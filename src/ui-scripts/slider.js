@@ -52,7 +52,6 @@ Slider.prototype = new function()
 
   this._onmousemove = function(event)
   {
-    this._focus_catcher.focus();
     var value = 0, box = this._ref_element.getBoundingClientRect();
     if (this._has_x)
     {
@@ -104,6 +103,7 @@ Slider.prototype = new function()
       document.addEventListener('mouseup', this._onmouseup_bound, false);
       this._interval = window.setInterval(this._onmousemoveinterval_bound, UPDATE_INTERVAL);
       this._is_active = true;
+      event.preventDefault();
     }
   }
 
@@ -120,8 +120,6 @@ Slider.prototype = new function()
     {
       this._ref_element.removeEventListener('mousedown', this._onmousedown_bound, false);
       document.removeEventListener('DOMNoderemoved', this._onremove_bound, false);
-      this._focus_catcher.parentNode.removeChild(this._focus_catcher);
-      this._focus_catcher = null;
       this._ref_element = null;
       this._element = null;
       this._onmousedown_bound = null;
@@ -158,7 +156,6 @@ Slider.prototype = new function()
       container.render(window.templates.slider(slider_base_class, slider_class, config.slider_template));
       this._ref_element = container.getElementsByClassName(slider_base_class)[0];
       this._element = container.getElementsByClassName(slider_class)[0];
-      this._focus_catcher = document.documentElement.render(window.templates.slider_focus_catcher());
       box = this._ref_element.getBoundingClientRect();
       
       if (config.onxy)

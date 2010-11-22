@@ -13,7 +13,7 @@ var TextSearch = function()
   HIGHLIGHT_STYLE = "background-color:#0f0; color:#000;",
   DEFAULT_SCROLL_MARGIN = 50,
   SEARCH_DELAY = 50, // in ms
-  MIN_TERM_LENGTH = 3; // search term must be this long or longer
+  MIN_TERM_LENGTH = 2; // search term must be this long or longer
 
   var
   self = this,
@@ -72,9 +72,19 @@ var TextSearch = function()
           {
             if(to_consume_hit_length)
             {
-              if( node.nodeValue.length >= to_consume_hit_length )
+              if (node.nodeValue.length >= to_consume_hit_length)
               {
                 node.splitText(to_consume_hit_length);
+              }
+              // if the search token does not fit in the current node value and 
+              // the current node is not part of some simple text formatting
+              // sequence disregard that match
+              else if (!(node.nextSibling || node.parentNode.nextSibling))
+              {
+                to_consume_hit_length = 0;
+                consumed_total_length += node.nodeValue.length;
+                search_results.pop();
+                return;
               }
               to_consume_hit_length -= node.nodeValue.length;
               search_result[search_result.length] = span = document.createElement('span');
@@ -86,7 +96,7 @@ var TextSearch = function()
             }
             else
             {
-              if( match - consumed_total_length < node.nodeValue.length )
+              if (match - consumed_total_length < node.nodeValue.length)
               {
                 node.splitText(match - consumed_total_length);
                 if( ( match = text_content.indexOf(search_term, last_match) ) != -1 )

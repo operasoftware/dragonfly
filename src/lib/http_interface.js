@@ -58,24 +58,7 @@ cls.ScopeHTTPInterface = function(force_stp_0)
       var status = parseInt(xhr.getResponseHeader("X-Scope-Message-Status"));
       var tag = parseInt(xhr.getResponseHeader("X-Scope-Message-Tag"));
       var message = eval(xhr.responseText);
-      try
-      {
-        _receive_callback(service, message, command, status, tag);
-      }
-      catch(e)
-      {
-        opera.postError(
-          'failed to handle message\n' +
-          '  service: ' + service + '\n' +
-          '  command: ' + command + '\n' +
-          '  message: ' + JSON.stringify(message) + '\n' +
-          '  ------------------------------------\n' +
-          '  error message: ' + e.message + '\n' +
-          '  ------------------------------------\n' +
-          '  error stacktrace: \n' + e.stacktrace + '\n' +
-          '  ------------------------------------\n'
-          )
-      }
+      _receive_callback(service, message, command, status, tag);
     }
     _proxy.GET( "/get-message?time=" + new Date().getTime(), _receive_dragonkeeper);
   }
@@ -157,7 +140,7 @@ cls.ScopeHTTPInterface = function(force_stp_0)
     self.scopeTransmit = _scopeTransmit_STP_1;
     _finalize_on_stp_version();
   }
-  
+
   var _setup_stp_1_web_socket = function()
   {
     _socket = new WebSocket("ws://" + window.location.host + "/stp-1-channel");

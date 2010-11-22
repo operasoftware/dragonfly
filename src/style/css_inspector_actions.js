@@ -18,7 +18,7 @@ cls.CSSInspectorActions = function(id)
 
   this.getFirstTarget = function()
   {
-    return self.__active_container && 
+    return self.__active_container &&
            self.__active_container.
            getElementsByTagName('styles')[1].
            getElementsByTagName('property')[0];
@@ -258,7 +258,7 @@ cls.CSSInspectorActions = function(id)
   /* ActionHandler interface */
 
   const
-  MODE_DEFAULT = ActionBroker.MODE_DEFAULT,
+  MODE_DEFAULT = "default",
   MODE_EDIT = "edit",
   MINUS = -1,
   PLUS = 1;
@@ -271,9 +271,10 @@ cls.CSSInspectorActions = function(id)
 
   this.mode_labels =
   {
-    "edit": "Edit",
+    "default": ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_DEFAULT,
+    "edit": ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_EDIT,
   }
-  
+
   this.get_action_list = function()
   {
     var actions = [], key = '';
@@ -286,9 +287,9 @@ cls.CSSInspectorActions = function(id)
   {
     if (this.__target)
     {
-      var filter = this.__target.nodeName.toLowerCase() == 'header' && 
-                   this.__target.parentElement.getAttribute('handler') ? 
-                   nav_filter.header : 
+      var filter = this.__target.nodeName.toLowerCase() == 'header' &&
+                   this.__target.parentElement.getAttribute('handler') ?
+                   nav_filter.header :
                    nav_filter._default;
       var next = this.__target.getPreviousWithFilter(this.__active_container,
                                                      filter);
@@ -304,9 +305,9 @@ cls.CSSInspectorActions = function(id)
   {
     if (this.__target)
     {
-      var filter = this.__target.nodeName.toLowerCase() == 'header' && 
+      var filter = this.__target.nodeName.toLowerCase() == 'header' &&
                    !this.__target.parentElement.getAttribute('handler') ?
-                   nav_filter.header : 
+                   nav_filter.header :
                    nav_filter._default;
       var next = this.__target.getNextWithFilter(this.__active_container,
                                                 filter);
@@ -432,7 +433,7 @@ cls.CSSInspectorActions = function(id)
     if (!this.editor.nav_previous(event, MINUS))
     {
       var new_target =
-        this.__target.getPreviousWithFilter(this.__active_container, 
+        this.__target.getPreviousWithFilter(this.__active_container,
                                             nav_filter.property_editable);
       if (new_target)
       {
@@ -451,7 +452,7 @@ cls.CSSInspectorActions = function(id)
     if (!this.editor.nav_next(event, PLUS))
     {
       var new_target =
-        this.__target.getNextWithFilter(this.__active_container, 
+        this.__target.getNextWithFilter(this.__active_container,
                                         nav_filter.property_editable);
       if (new_target)
       {
@@ -508,7 +509,7 @@ cls.CSSInspectorActions = function(id)
 
   this.focus = function(event, container)
   {
-    
+
     if (this.mode == MODE_DEFAULT)
       this.setContainer(event, container);
   }
@@ -551,17 +552,17 @@ eventHandlers.dblclick['edit-css'] = function(event, target)
   this.broker.dispatch_action('css-inspector', 'edit-css', event, target);
 }
 eventHandlers.click['css-toggle-category'] = function(event, target)
-{ 
-  this.broker.dispatch_action('css-inspector', 'css-toggle-category', 
+{
+  this.broker.dispatch_action('css-inspector', 'css-toggle-category',
                               event, target);
 }
 eventHandlers.click['display-rule-in-stylesheet'] = function(event, target)
-{ 
-  this.broker.dispatch_action('css-inspector', 'display-rule-in-stylesheet', 
+{
+  this.broker.dispatch_action('css-inspector', 'display-rule-in-stylesheet',
                               event, target);
 }
 eventHandlers.click['enable-disable'] = function(event, target)
-{ 
-  this.broker.dispatch_action('css-inspector', 'enable-disable-property', 
+{
+  this.broker.dispatch_action('css-inspector', 'enable-disable-property',
                               event, target);
 }

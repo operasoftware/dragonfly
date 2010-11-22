@@ -9,11 +9,8 @@
 
 main-view { /**/
   width: 100%;
-  height: 100%;
   display: block;
-  position: relative;
   z-index: 1;
-  overflow: hidden;
   }
 
 windows-container, 
@@ -1035,6 +1032,10 @@ button[handler="show-event-breakpoint-view"]:before
 
 
 /* editing */
+textarea
+{
+   resize: none;
+}
 
 textarea-container {
   display: block;

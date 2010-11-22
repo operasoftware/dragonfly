@@ -2,12 +2,12 @@
 
 var ActionBroker = function()
 {
-  /*  
-      static constants
-        ActionBroker.MODE_DEFAULT = "default";
+  /*
+    static constants
+      ActionBroker.GLOBAL_HANDLER_ID = "global";
 
-      static methods 
-        ActionBroker.get_instance
+    static methods
+      ActionBroker.get_instance
   */
 
   if (ActionBroker.instance)
@@ -24,50 +24,76 @@ var ActionBroker = function()
   this.register_handler = function(action_handler){};
 
   /**
-    * To get a list of (key_id, action_id) tuples.
+    * To get a copy of the current shortcut map.
     */
-  this.get_keyboard_bindings = function(view_id, mode){};
-
-  /**
-    * To set a list of (key_id, action_id) tuples.
-    */
-  this.set_keyboard_bindings = function(view_id, mode){};
-
   this.get_shortcuts = function(){};
-  this.set_shortcuts = function(shortcuts, handler_id){};
 
   /**
-    * To get a list of action implementer ids.
+    * To set a new shortcut map.
+    * @param {Object} shortcuts
+    * @param {String} handler_id
+    * @param {Boolean} clear_setting. To reste to defaults
+    */
+  this.set_shortcuts = function(shortcuts, handler_id, clear_setting){};
+
+  /**
+    * To get a list of action handler ids.
     */
   this.get_handlers = function(){};
 
   /**
-    * To bind UI inputs, e.g. click or right click menu, to actions
+    * To propagate UI inputs, e.g. click or right click menu, as actions.
     */
   this.dispatch_action = function(view_id, action_id, event, target){};
 
   /**
-    * To handle key input. The implementation must map the key id
-    * to an action id according to the current context and mode.
+    * To propagate key input as a shortcut action.
     */
   this.dispatch_key_input = function(key_id, event){};
-  
+
+  /**
+    * To delay an action propagation,
+    * e.g if a click could be followed by a double click.
+    * @param {String} type, the event type
+    * @param {String} handler_id
+    * @param {String} action_id
+    * @param {Event} event
+    * @param {Element} target
+    */
   this.delay_action = function(type, handler_id, action_id, event, target){};
 
+  /**
+    * To cancel delayed actions.
+    * e.g. if a dbl click has followed a click.
+    * @param {String} type, the event type
+    */
   this.clear_delayed_actions = function(type){};
-  
-  
+
+  /**
+    * To get a list of all actions of a given action handler.
+    * @param {String} handler_id
+    */
   this.get_actions_with_handler_id = function(handler_id){};
 
-  this.get_label_with_handler_id_and_mode = function(hnadler_id, mode){};
+  /**
+    * To the label for a given mode.
+    * @param {String} handler_id
+    * @param {String} mode
+    */
+  this.get_label_with_handler_id_and_mode = function(handler_id, mode){};
 
+  /**
+    * To the global action handler.
+    * Any action, which was not cancelled by the focused action handler,
+    * gets passed to the global action handler.
+    */
   this.get_global_handler = function(){};
 
   /* constants */
 
   const GLOBAL_HANDLER = ActionBroker.GLOBAL_HANDLER_ID;
 
-  /* privat */
+  /* private */
 
   this._handlers = {};
   this._action_context = null;
@@ -76,10 +102,8 @@ var ActionBroker = function()
   this._shortcuts = null;
   this._gloabal_shortcuts = null;
   this._current_shortcuts = null;
-
-  this._mode_labels = {};
-  this._mode_labels[ActionBroker.MODE_DEFAULT] = "Default";
   this._global_handler = new GlobalActionHandler(GLOBAL_HANDLER);
+  this._delays = {};
 
   this._set_action_context_bound = (function(event)
   {
@@ -127,12 +151,14 @@ var ActionBroker = function()
 
   this._init = function()
   {
-    this._key_identifier = new KeyIdentifier(this.dispatch_key_input.bind(this));
+    this._key_identifier = new KeyIdentifier(this.dispatch_key_input.bind(this),
+                                             window.ini.browser);
     this.register_handler(this._global_handler);
     window.app.addListener('services-created', function()
     {
-      this.set_shortcuts(window.settings.general.get("shortcuts") ||
-                         window.ini.default_shortcuts.windows);
+      this._shortcuts = window.settings.general.get("shortcuts") ||
+                        window.ini.default_shortcuts.windows;
+      this._gloabal_shortcuts = this._shortcuts.global;                                
       this._set_current_handler(this._global_handler);
     }.bind(this));
     document.addEventListener('click', this._set_action_context_bound, true);
@@ -175,10 +201,8 @@ var ActionBroker = function()
     {
       event.stopPropagation();
       event.preventDefault();
-    };
+    }
   }
-
-  this._delays = {}; 
 
   this.delay_action = function(type, handler_id, action_id, event, target)
   {
@@ -198,22 +222,22 @@ var ActionBroker = function()
 
   this.get_shortcuts = function()
   {
-    return this._shortcuts;
+    return window.helpers.copy_object(this._shortcuts);
   }
 
   this.set_shortcuts = function(shortcuts, handler_id, clear_setting)
   {
-    shortcuts = JSON.parse(JSON.stringify(shortcuts));
+    shortcuts = window.helpers.copy_object(shortcuts);
     if (handler_id)
       this._shortcuts[handler_id] = shortcuts;
     else
       this._shortcuts = shortcuts;
     this._gloabal_shortcuts = this._shortcuts.global;
-    window.settings.general.set("shortcuts", 
+    window.settings.general.set("shortcuts",
                                 clear_setting == true ? null : this._shortcuts);
     this._key_identifier.set_shortcuts(this._get_shortcut_keys());
   };
-  
+
   this.get_actions_with_handler_id = function(handler_id)
   {
     return (
@@ -240,11 +264,7 @@ var ActionBroker = function()
 
   this.get_label_with_handler_id_and_mode = function(handler_id, mode)
   {
-    var temp = this._mode_labels[mode];
-    if (temp)
-      return temp;
-    temp = this._handlers[handler_id];
-    return temp && temp.mode_labels[mode] || '';
+    return this._handlers[handler_id].mode_labels[mode];
   };
 
   this.get_global_handler = function()
@@ -257,11 +277,7 @@ var ActionBroker = function()
   else
     document.addEventListener('DOMContentLoaded', this._init.bind(this), false);
 
-
-
 }
-
-
 
 ActionBroker.get_instance = function()
 {
@@ -269,4 +285,3 @@ ActionBroker.get_instance = function()
 }
 
 ActionBroker.GLOBAL_HANDLER_ID = "global";
-ActionBroker.MODE_DEFAULT = "default";
