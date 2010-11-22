@@ -9,7 +9,10 @@ templates.repl_main = function()
          ], "class", "repl-output"],
       ["div", [[
         ["span", ">>> ", "class", "repl-prefix"],
-        ["div", ["textarea", "handler", "repl-textarea", "rows", "1"]]
+        ["div", ["textarea",
+                 "focus-handler", "repl-textarea",
+                 "blur-handler", "blur-textarea",
+                 "rows", "1"]]
       ]], "class", "repl-input"]
     ]], "class", "padding"
   ];

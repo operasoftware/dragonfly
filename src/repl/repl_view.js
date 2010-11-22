@@ -625,6 +625,17 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     messages.post("setting-changed", {id: "repl", key: "max-typed-history-length"});
   }.bind(this);
 
+  this._handle_input_focus_bound = function()
+  {
+    this._be_singleline();
+  }.bind(this);
+
+  this._handle_input_blur_bound = function()
+  {
+    this._be_singleline();
+    this.mode = "default";
+  }.bind(this);
+
   this._update_runtime_selector_bound = function(msg)
   {
     var is_multi = host_tabs.isMultiRuntime();
@@ -825,6 +836,8 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   eh.click["select-trace-frame"] = this._handle_repl_frame_select_bound;
   eh.click["repl-focus"] = this._handle_repl_focus_bound;
   eh.change['set-typed-history-length'] = this._handle_option_change_bound;
+  eh.focus["repl-textarea"] = this._handle_input_focus_bound;
+  eh.blur["repl-textarea"] = this._handle_input_blur_bound;
   messages.addListener('active-tab', this._update_runtime_selector_bound);
   messages.addListener('new-top-runtime', this._new_repl_context_bound);
   messages.addListener('debug-context-selected', this._new_repl_context_bound);
