@@ -459,9 +459,14 @@ ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_EDIT_ATTR_AND_TEXT = "Edit Attributes and
 ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_EDIT_MARKUP = "Edit markup";
 /* DESC: Label of an invalid keyboard shortcut */
 ui_strings.S_LABEL_KEYBOARDCONFIG_INVALID_SHORTCUT = 'Invalid keyboard shortcut';
-
-
- 
+/* DESC: Label of a subsection in the keyboard configuration */
+ui_strings.S_LABEL_REPL_MODE_DEFAULT = 'Default';
+/* DESC: Label of a subsection in the keyboard configuration */
+ui_strings.S_LABEL_REPL_MODE_SINGLELINE = 'Single-line edit';
+/* DESC: Label of a subsection in the keyboard configuration */
+ui_strings.S_LABEL_REPL_MODE_MULTILINE = 'Multi-line edit';
+/* DESC: Label of a subsection in the keyboard configuration */
+ui_strings.S_LABEL_REPL_MODE_AUTOCOMPLETE = 'Autocomplete';
 
 
 /*

@@ -102,6 +102,15 @@ cls.BufferManager = function(textarea)
     }
   };
 
+  this.insert_at_point = function(str)
+  {
+    var point = this.get_cursor();
+    var val = this._textarea.value;
+    val = val.slice(0, point) + str + val.slice(point);
+    this._textarea.value = val;
+    this.put_cursor(point+str.length);
+  }
+
   this.get_value = function(start, end)
   {
     if (start === undefined)
