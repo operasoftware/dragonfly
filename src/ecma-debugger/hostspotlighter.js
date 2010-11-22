@@ -104,7 +104,7 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
     if(root_id)
     {
       services['ecmascript-debugger'].requestSpotlightObjects(0,
-        [ settings.dom.get('lock-selecked-elements') && 
+        [ settings.dom.get('lock-selected-elements') && 
             locked_elements.map(get_locked_commands) || [[root_id, 0, [[0,0]]]] ]);
 
     }
@@ -339,7 +339,7 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
 
   var onElementSelected = function(msg)
   {
-    if(settings.dom.get('lock-selecked-elements') && 
+    if(settings.dom.get('lock-selected-elements') && 
         // events can be asynchronous
         window.host_tabs.is_runtime_of_active_tab(msg.rt_id) )
     {
@@ -353,7 +353,7 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
     {
       switch (msg.key)
       {
-        case 'lock-selecked-elements':
+        case 'lock-selected-elements':
         {
           if(!settings[settings_id].get(msg.key))
           {
@@ -369,6 +369,8 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
   /* helper Metrics mouse event handler */
   var setStyleMouseHandlerTarget = function(target, class_name)
   {
+    if (class_name == "position") return;
+
     var 
     index = class_names.indexOf(class_name) + 1, 
     style = target.style,

@@ -174,7 +174,7 @@ cls.DOMView.create_ui_widgets = function()
       'show-siblings-in-breadcrumb': false,
       'show-id_and_classes-in-breadcrumb': true,
       'scroll-into-view-on-spotlight': true,
-      'lock-selecked-elements': false
+      'lock-selected-elements': false
     }, 
     // key-label map
     {
@@ -190,7 +190,7 @@ cls.DOMView.create_ui_widgets = function()
       'show-siblings-in-breadcrumb': ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB,
       'show-id_and_classes-in-breadcrumb': ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB,
       'scroll-into-view-on-spotlight': ui_strings.S_SWITCH_SCROLL_INTO_VIEW_ON_FIRST_SPOTLIGHT,
-      'lock-selecked-elements': ui_strings.S_SWITCH_LOCK_SELECTED_ELEMENTS
+      'lock-selected-elements': ui_strings.S_SWITCH_LOCK_SELECTED_ELEMENTS
     
     },
     // settings map
@@ -208,11 +208,13 @@ cls.DOMView.create_ui_widgets = function()
         'show-siblings-in-breadcrumb',
         'show-id_and_classes-in-breadcrumb',
         'scroll-into-view-on-spotlight',
-        'lock-selecked-elements'
+        'lock-selected-elements'
       ],
       contextmenu:
       [
-        'dom-tree-style'
+        'dom-tree-style',
+        'show-comments',
+        'lock-selected-elements'
       ]
     },
     null,
@@ -230,11 +232,7 @@ cls.DOMView.create_ui_widgets = function()
       {
         handler: 'dom-inspection-export',
         title: ui_strings.S_BUTTON_LABEL_EXPORT_DOM
-      }/*,
-      {
-        handler: 'df-show-live-source',
-        title: 'show live source of DF'
-      }*/
+      }
     ],
     [
       {
@@ -255,36 +253,120 @@ cls.DOMView.create_ui_widgets = function()
     ]
   )
 
-  ContextMenu.register("dom-node", [
+  var contextmenu = new ContextMenu();
+
+  var dom_element_common_items = [
     {
-      label: "Remove node",
-      id: "remove_node",
-      handler: function(event, target)
+      label: ui_strings.M_CONTEXTMENU_EDIT_MARKUP,
+      handler: contextmenu_edit_markup
+    },
+    {
+      label: ui_strings.M_CONTEXTMENU_REMOVE_NODE,
+      handler: contextmenu_remove_node
+    }
+  ];
+
+  contextmenu.register("dom-element", [
+    {
+      callback: function(event, target)
       {
-        var ele = event.target.has_attr("parent-node-chain", "ref-id");
-        var rt_id = parseInt(ele.get_attr("parent-node-chain", "rt-id"));
-        var ref_id = parseInt(ele.get_attr("parent-node-chain", "ref-id"));
-        var tag = !settings.dom.get("update-on-dom-node-inserted")
-                ? tag_manager.set_callback(this, function() {
-                    // Fake an event
-                    dom_data._dom_node_removed_handler({"object_id": ref_id, "runtime_id": rt_id});
-                  })
-                : null;
-        services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, "el.parentNode.removeChild(el)", [["el", ref_id]]]);
+        var target = event.target;
+        while (target != document && !/^(?:key|value|text|node)$/i.test(target.nodeName))
+        {
+          target = target.parentNode;
+        }
+
+        switch (target.nodeName.toLowerCase())
+        {
+        case "node":
+          return [
+            {
+              label: ui_strings.M_CONTEXTMENU_ADD_ATTRIBUTE,
+              handler: contextmenu_add_attribute
+            }
+          ]
+          .concat(ContextMenu.separator)
+          .concat(dom_element_common_items);
+          break;
+
+        case "key":
+          return [
+            {
+              label: ui_strings.M_CONTEXTMENU_EDIT_ATTRIBUTE,
+              handler: contextmenu_edit_dom
+            },
+            {
+              label: ui_strings.M_CONTEXTMENU_ADD_ATTRIBUTE,
+              handler: contextmenu_add_attribute
+            }
+          ]
+          .concat(ContextMenu.separator)
+          .concat(dom_element_common_items);
+          break;
+
+        case "value":
+          return [
+            {
+              label: ui_strings.M_CONTEXTMENU_EDIT_ATTRIBUTE_VALUE,
+              handler: contextmenu_edit_dom
+            },
+            {
+              label: ui_strings.M_CONTEXTMENU_ADD_ATTRIBUTE,
+              handler: contextmenu_add_attribute
+            }
+          ]
+          .concat(ContextMenu.separator)
+          .concat(dom_element_common_items);
+          break;
+
+        case "text":
+          return [
+            {
+              label: ui_strings.M_CONTEXTMENU_EDIT_TEXT,
+              handler: contextmenu_edit_dom
+            }
+          ];
+          break;
+        }
       }
     }
   ]);
 
-  //ContextMenu.register("dom-attribute", [
-  //  {
-  //    label: "Edit attribute",
-  //    id: "edit_attribute",
-  //    handler: function(event, target)
-  //    {
-  //      window.actions['dom'].editDOM(event, event.target);
-  //    }
-  //  }
-  //]);
+  function contextmenu_edit_dom(event, target)
+  {
+    key_identifier.setView(event);
+    window.actions['dom'].editDOM(event, event.target);
+  }
+
+  function contextmenu_edit_markup(event, target)
+  {
+    key_identifier.setView(event);
+    target = event.target;
+    while (target.nodeName.toLowerCase() != "node")
+    {
+      target = target.parentNode;
+    }
+    window.actions['dom'].editDOM(event, target);
+  }
+
+  function contextmenu_add_attribute(event, target)
+  {
+    key_identifier.setView(event);
+    window.actions['dom'].insert_attribute_edit(event, event.target);
+  }
+
+  function contextmenu_remove_node(event, target)
+  {
+    var ele = event.target.has_attr("parent-node-chain", "ref-id");
+    var rt_id = parseInt(ele.get_attr("parent-node-chain", "rt-id"));
+    var ref_id = parseInt(ele.get_attr("parent-node-chain", "ref-id"));
+    var tag = !settings.dom.get("update-on-dom-node-inserted")
+            ? tag_manager.set_callback(this, function() {
+                window.dom_data._dom_node_removed_handler({"object_id": ref_id, "runtime_id": rt_id});
+              })
+            : null;
+    services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, "el.parentNode.removeChild(el)", [["el", ref_id]]]);
+  }
 
   new Switches
   (
@@ -292,8 +374,7 @@ cls.DOMView.create_ui_widgets = function()
     [
       'find-with-click',
       'highlight-on-hover',
-      'update-on-dom-node-inserted',
-      'lock-selecked-elements'
+      'update-on-dom-node-inserted'
     ]
   );
 

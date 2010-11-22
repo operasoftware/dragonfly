@@ -250,6 +250,23 @@ ui_strings.S_SWITCH_UNPACK_LIST_ALIKES = "Unpack list alikes in the command line
 ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE = "Show objects of type Element in the DOM view";
 
 
+/**
+ * Context menu items
+ */
+
+/* DESC: Context menu item for adding an attribute in the DOM view. */
+ui_strings.M_CONTEXTMENU_ADD_ATTRIBUTE = 'Add attribute';
+/* DESC: Context menu item for editing some piece of markup in the DOM view. */
+ui_strings.M_CONTEXTMENU_EDIT_MARKUP = 'Edit markup';
+/* DESC: Context menu item for removing a node in the DOM view. */
+ui_strings.M_CONTEXTMENU_REMOVE_NODE = 'Remove node';
+/* DESC: Context menu item for editing an attribute name in the DOM view. */
+ui_strings.M_CONTEXTMENU_EDIT_ATTRIBUTE = 'Edit attribute';
+/* DESC: Context menu item for editing an attribute value in the DOM view. */
+ui_strings.M_CONTEXTMENU_EDIT_ATTRIBUTE_VALUE = 'Edit attribute value';
+/* DESC: Context menu item for editing text in the DOM view. */
+ui_strings.M_CONTEXTMENU_EDIT_TEXT = 'Edit text';
+
 /*
  * Button tool-tips.
  */

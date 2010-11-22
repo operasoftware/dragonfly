@@ -145,6 +145,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./scripts/colors.js"/>
 <script src="./scripts/colorspace.js"/>
 <script src="./scripts/messages.js"/>
+<script src="./scripts/spec_links.js"/>
 
 
 

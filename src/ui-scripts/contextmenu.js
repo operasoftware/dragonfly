@@ -12,6 +12,29 @@ var ContextMenu = function() {
   }
 
   /**
+   * Holds all registered context menus.
+   */
+  this.registered_menus = {};
+
+  /**
+   * Registers a new context menu, or adds items to an already registered context menu.
+   *
+   * @param {String} menu_id An id corresponding to an id specified with a data-menu
+   *                         attribute in the markup. May be an already existing
+   *                         menu, in which case the items are added.
+   * @param {Array} item_list An array of objects with 'label' and 'handler'
+   *                          (function).
+   */
+  this.register = function(menu_id, item_list)
+  {
+    var menu = this.registered_menus[menu_id] || [];
+    if (item_list)
+    {
+      this.registered_menus[menu_id] = item_list;
+    }
+  };
+
+  /**
    * Global context menu event handler.
    */
   this.oncontextmenu = function(event)
@@ -43,14 +66,38 @@ var ContextMenu = function() {
     // finds a data-menu attribute with a blank value.
     while (ele != document && (menu_id = ele.getAttribute("data-menu")) !== "")
     {
-      if (menu_id)
+      // This is not super nice, and preferably shouldn't be done inside
+      // ContextMenu.
+      var spec;
+      if (spec = ele.getAttribute("data-spec"))
+      {
+        var speclinks = new SpecLinks();
+        if (speclinks.get_spec_links(spec).length)
+        {
+          menu_id = "spec";
+          var specs = speclinks.get_spec_links(spec);
+          var menu_items = specs.map(function(spec)
+          {
+            return {
+              label: "Specification for \"" + spec.prop + "\"",
+              handler: function(event, target) {
+                speclinks.open_spec_link(spec.url);
+              }
+            };
+          });
+          this.register(menu_id, menu_items);
+        }
+      }
+
+      var items = this.registered_menus[menu_id];
+
+      if (items && items.length)
       {
         if (all_items.length)
         {
-          all_items.push({separator: true});
+          all_items.push(ContextMenu.separator);
         }
 
-        var items = ContextMenu.registered_menus[menu_id] || [];
         items = this._expand_all_items(items, event);
         for (var i = 0, item; item = items[i]; i++)
         {
@@ -142,6 +189,7 @@ var ContextMenu = function() {
   this._expand_all_items = function(items, event)
   {
     var all_items = [];
+
     for (var i = 0, item; item = items[i]; i++)
     {
       if (typeof item.callback == "function")
@@ -153,6 +201,12 @@ var ContextMenu = function() {
         all_items.push(item);
       }
     }
+
+    for (var i = 0, item; item = all_items[i]; i++)
+    {
+      item.id = item.id || "item_" + i;
+    }
+
     return all_items;
   };
 
@@ -170,7 +224,7 @@ var ContextMenu = function() {
     {
       if (target.getAttribute("data-handler-id"))
       {
-        var items = ContextMenu.registered_menus[target.getAttribute("data-menu-id")];
+        var items = this.registered_menus[target.getAttribute("data-menu-id")];
         items = this._expand_all_items(items, this._current_event);
         for (var i = 0, item; item = items[i]; i++)
         {
@@ -188,29 +242,7 @@ var ContextMenu = function() {
   }.bind(this);
 };
 
-/**
- * Holds all registered context menus.
- */
-ContextMenu.registered_menus = {};
-
-/**
- * Registers a new context menu, or adds items to an already registered context menu.
- *
- * @param {String} menu_id An id correspoding to an id specified with a data-menu
- *                         attribute in the markup. May be an already existing
- *                         menu, in which case the items are added.
- * @param {Array} item_list An array of objects with 'id', 'label' and 'handler'
- *                          (function).
- */
-ContextMenu.register = function(menu_id, item_list)
-{
-  var menu = ContextMenu.registered_menus[menu_id] || [];
-  if (item_list)
-  {
-    // If it already is registered, merge it
-    ContextMenu.registered_menus[menu_id] = menu.concat(item_list);
-  }
-};
+ContextMenu.separator = {separator: true};
 
 window.contextmenu = new ContextMenu();
 document.addEventListener("contextmenu", window.contextmenu.oncontextmenu.bind(window.contextmenu), false);

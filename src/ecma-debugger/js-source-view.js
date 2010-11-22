@@ -972,6 +972,10 @@ cls.JsSourceView.create_ui_widgets = function()
       [
         'hr',
         'tab-size'
+      ],
+      contextmenu:
+      [
+        'error'
       ]
     },
     // custom templates

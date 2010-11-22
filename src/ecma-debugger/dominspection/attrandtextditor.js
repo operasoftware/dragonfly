@@ -606,6 +606,17 @@ var DOMAttrAndTextEditor = function(nav_filters)
       document.createElement( name == 'key' && 'value' || 'key' ), cur.nextSibling
     );
   }
+
+  // Only passing a ref_id would be better
+  this.insert_attribute_edit = function(ref_id, container)
+  {
+    var target = container.querySelector("[ref-id='" + ref_id + "'] node");
+    if (target)
+    {
+      var next = this.create_new_edit(target.firstElementChild);
+      this.edit({}, next);
+    }
+  };
   
   this.remove_attribute = function()
   {

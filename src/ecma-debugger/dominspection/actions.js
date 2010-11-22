@@ -584,15 +584,15 @@ cls.DOMInspectorActions = function(id)
 
   this._handlers["edit-dom"] = function(event, target)
   {
-    if (!_is_script_node(event.target))
+    if (!_is_script_node(target))
     {
-      switch(event.target.nodeName.toLowerCase())
+      switch(target.nodeName.toLowerCase())
       {
         case 'span':
         {
-          if(/^(?:key|value|text|node)$/.test(event.target.parentElement.nodeName.toLowerCase()) )
+          if(/^(?:key|value|text|node)$/.test(target.parentElement.nodeName.toLowerCase()) )
           {
-            event.target.parentElement.releaseEvent('dblclick');
+            target.parentElement.releaseEvent('dblclick');
           }
           break;
         }
@@ -602,18 +602,18 @@ cls.DOMInspectorActions = function(id)
         {
           this.mode = MODE_EDIT_ATTR_TEXT;
           document.documentElement.addClass('modal');
-          self.setSelected(event.target.parentNode);
+          self.setSelected(target.parentNode);
           self.set_editor("dom-attr-text-editor");
           self.editor.edit(event, event.target);
           break;
         }
         case 'node':
         {
-          var new_target = event.target;
+          var new_target = target;
           if(/^<\//.test(new_target.textContent))
           {
-            new_target = event.target.getPreviousWithFilter
-              (event.target.parentNode.parentNode, self.makeFilterGetStartTag(event.target));
+            new_target = target.getPreviousWithFilter
+              (target.parentNode.parentNode, self.makeFilterGetStartTag(target));
             if( !new_target )
             {
               opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
@@ -646,6 +646,28 @@ cls.DOMInspectorActions = function(id)
     }
     return true;
   }.bind(this);
+
+  this.insert_attribute_edit = function(event, target)
+  {
+    if (!_is_script_node(target))
+    {
+      var target = event.target;
+      if (target.nodeName.toLowerCase() != "node")
+      {
+        target = target.parentNode;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      key_identifier.setModeEdit(self);
+      document.documentElement.addClass('modal');
+      self.setSelected(target);
+      self.set_editor("dom-attr-text-editor");
+      self.editor.edit(event, target);
+
+      this.editor.insert_attribute_edit(target.get_attr("parent-node-chain", "ref-id"),
+                                        target.has_attr("parent-node-chain", "ui-id"));
+    }
+  };
 
   this._handlers["edit-next"] = function(event, target)
   {
@@ -754,6 +776,15 @@ window.eventHandlers.click['spotlight-node'] = function(event, target)
 window.eventHandlers.click['breadcrumb-link'] = function(event, target)
 {
   this.broker.dispatch_action("dom", "select-node-in-breadcrumb", event, target);
+}
+
+window.eventHandlers.mouseup['breadcrumb-link'] = function(event, target)
+{
+  var selection = window.getSelection();
+  if (!selection.isCollapsed)
+  {
+    selection.removeAllRanges();
+  }
 }
 
 window.eventHandlers.mouseover['breadcrumb-link'] =

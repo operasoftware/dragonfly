@@ -40,12 +40,6 @@
   }
 
 /* ecma script source */
-
-.js-source div {
-	font-family: monospace;
-	color: #111;
-  }
-
 .js-source .comment {
   color: #999;
   }
@@ -103,10 +97,6 @@
 
 /* dom */
 
-.dom div {
-	font-family: monospace;
-	color: #111;
-  }
 
 #target-element, .dom [handler="spotlight-node"]:hover
 {

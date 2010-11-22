@@ -109,6 +109,7 @@ var HorizontalNavigation = function(cell)
           Math.min(this.nav_back.offsetWidth, left),
           this.nav_forward.offsetLeft - this.breadcrumbs.scrollWidth + 1 /* 1 == right border on last element, which should be covered */
         ) + "px";
+      this.check_position();
     }
   };
 
@@ -138,8 +139,8 @@ var HorizontalNavigation = function(cell)
    */
   this.check_position = function()
   {
-    var left = parseInt(this.breadcrumbs.style.left);
-    if (left == this.nav_back.offsetWidth || isNaN(left))
+    var left = parseInt(window.getComputedStyle(this.breadcrumbs, null).left);
+    if (left == this.nav_back.offsetWidth)
     {
       this.nav_back.addClass("disabled");
     }
@@ -170,22 +171,13 @@ var HorizontalNavigation = function(cell)
     this.nav_back = this.element.querySelector("nav[dir='back']");
     this.nav_forward = this.element.querySelector("nav[dir='forward']");
 
-    ContextMenu.register("breadcrumb", [
+    var contextmenu = new ContextMenu();
+    contextmenu.register("breadcrumb", [
       {
         label: "Copy XPath",
-        id: "copy_xpath",
         handler: function(event, target) {
           alert("Not implemented");
         }
-      },
-      {
-        separator: true
-      },
-      {
-        label: "Test",
-        id: "",
-        disabled: true,
-        handler: function() {}
       }
     ]);
   };

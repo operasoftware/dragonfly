@@ -132,11 +132,5 @@ cls.CSSInspectorView.create_ui_widgets = function()
       'hide-shorthands',*/
     ]
   );
-
 }
-
-
-
-
-
 

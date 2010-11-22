@@ -128,7 +128,7 @@
         {
           ret.push(
             "<item>" +
-              "<key class='no-expander'>" +
+              "<key class='no-expander' data-spec='dom#" + helpers.escapeTextHtml(prop[NAME]) + "'>" +
                 helpers.escapeTextHtml(prop[NAME]) +
               "</key>" +
               "<value class='" + type + "'>" + value + "</value>" +
@@ -151,7 +151,7 @@
             ret.push(
               "<item>" +
                 "<input type='button' handler='expand-value' class='folder-key'/>" +
-                "<key>" + helpers.escapeTextHtml(prop[NAME]) + "</key>" +
+                "<key data-spec='dom#" + helpers.escapeTextHtml(prop[NAME]) + "'>" + helpers.escapeTextHtml(prop[NAME]) + "</key>" +
                 "<value class='" + type + "' data-value='" + value + "'>" +
                   "\"" + helpers.escapeTextHtml(short_val) +
                 "</value>" +
@@ -162,7 +162,7 @@
           {
             ret.push(
               "<item>" +
-                "<key class='no-expander'>" +
+                "<key class='no-expander' data-spec='dom#" + helpers.escapeTextHtml(prop[NAME]) + "'>" +
                   helpers.escapeTextHtml(prop[NAME]) +
                 "</key>" +
                 "<value class='" + type + "'>\"" + value + "\"</value>" +
@@ -180,7 +180,7 @@
         {
           ret.push(
             "<item>" +
-              "<key class='no-expander'>" +
+              "<key class='no-expander' data-spec='dom#" + helpers.escapeTextHtml(prop[NAME]) + "'>" +
                 helpers.escapeTextHtml(prop[NAME]) +
               "</key>" +
               "<value class='" + type + "'>" + type + "</value>" +
@@ -203,8 +203,8 @@
             ret.push(STYLE_EXPANDED);
           ret.push(
             "/>" +
-            "<key>" + helpers.escapeTextHtml(prop[NAME]) + "</key>" +
-            "<value class='object'>" + prop[OBJECT_VALUE][CLASS_NAME] + "</value>"
+            "<key data-spec='dom#" + helpers.escapeTextHtml(prop[NAME]) + "'>" + helpers.escapeTextHtml(prop[NAME]) + "</key>" +
+            "<value class='object' data-spec='dom#" + helpers.escapeTextHtml(prop[OBJECT_VALUE][CLASS_NAME]) + "'>" + prop[OBJECT_VALUE][CLASS_NAME] + "</value>"
           );
           if (tree.hasOwnProperty(prop[NAME]))
             _pretty_print_object(model,
