@@ -5,15 +5,16 @@
     var shortcuts = ActionBroker.get_instance().get_shortcuts();
     var quick_find =
     {
-      label: 'Quick find', 
+      label: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER, 
       handler: 'scc-quick-find', 
-      title: 'Find shortcut'
+      title: ui_strings.S_BUTTON_SEARCH_SHORTCUT
     };
     return (
     ['setting-composite',
       ['toolbar',
         ['toolbar-buttons',
-          this.scc_control(['Reset all to defaults', 'scc-reset-all-to-defaults']),
+          this.scc_control([ui_strings.S_BUTTON_RESET_ALL_TO_DEFAULTS, 
+                            'scc-reset-all-to-defaults']),
         ],
         this.filters([quick_find]),
         'style', 'position: static;',
@@ -48,7 +49,7 @@
         'type', 'button', 
         'class', section.has_match ? 'unfolded' : ''
       ],
-      "Shortcuts " + section.name,
+      ui_strings.S_LABEL_KEYBOARDCONFIG_FOR_VIEW.replace("%s", section.name),
     ];
     if (!section.is_search)
       header.push('handler', 'scc-expand-section');
@@ -94,13 +95,17 @@
                                            action_select,
                                            invalid_shortcuts));
         if (!shortcuts_match)
-          ret.push(this.scc_controls([['Add', 'scc-add-shortcut']]));
+          ret.push(this.scc_controls([[ui_strings.S_LABEL_STORAGE_ADD, 
+                                       'scc-add-shortcut']]));
       }
       if (shortcuts_match)
-        ret.push(this.scc_controls([['Save', 'scc-save-shortcuts']]));
+        ret.push(this.scc_controls([[ui_strings.S_BUTTON_SAVE, 
+                                     'scc-save-shortcuts']]));
       else
-        ret.push(this.scc_controls([['Reset to defaults', 'scc-reset-to-defaults'],
-                                    ['Save', 'scc-save-shortcuts']]));
+        ret.push(this.scc_controls([[ui_strings.S_BUTTON_RESET_TO_DEFAULTS, 
+                                     'scc-reset-to-defaults'],
+                                    [ui_strings.S_BUTTON_SAVE, 
+                                     'scc-save-shortcuts']]));
       return (
       ['table', 
         ret, 
@@ -149,7 +154,7 @@
   {
     return (
     ['tr', 
-      ['td', 'Invalid shortcut', 'colspan', '2'], 
+      ['td', ui_strings.S_LABEL_KEYBOARDCONFIG_INVALID_SHORTCUT, 'colspan', '2'], 
       'class', 'invalid-shortcut'
     ]);
   }

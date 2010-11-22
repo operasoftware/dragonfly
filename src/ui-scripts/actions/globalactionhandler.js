@@ -2,14 +2,18 @@
 {
   /* interface */
   /**
-    * A view id to identify an action implementer.
+    * A view id to identify an action handler.
     */
   this.id = id;
 
   /**
     * To handle a single action.
-    * Returning false will cancel the event (preventDefault and stopPropagation),
+    * Returning false (as in === false) will cancel the event 
+    * (preventDefault and stopPropagation),
     * true will pass it to the next level if any.
+    * @param {String} action_id
+    * @param {Event} event
+    * @param {Element} target
     */
   this.handle = function(action_id, event, target){};
 
@@ -19,22 +23,32 @@
   this.get_action_list = function(){};
 
   /**
-    * Gets called if an action implementer changes to be the current context.
+    * Gets called if an action handler changes to be the current context.
     */
   this.focus = function(container){};
 
   /**
-    * Gets called if an action implementer stops to be the current context.
+    * Gets called if an action handle stops to be the current context.
     */
   this.blur = function(){};
 
   /**
-    * Gets called if an action implementer is the current context.
-    * Returning false will cancel the event (preventDefault and stopPropagation),
+    * Gets called if an action handler is the current context.
+    * Returning false (as in === false) will cancel the event 
+    * (preventDefault and stopPropagation),
     * true will pass it to the next level if any.
     */
   this.onclick = function(event){};
 
+  /**
+    * To register a shortcut listener with a unique id token 
+    * on a global input element. Global as not being part of a view pane, e.g. 
+    * an input in a toolbar.
+    * @param {String} listener_id. A unique token.
+    * @param {Function} callback
+    * @param {Array} action_list. A list of action supported by 
+    * that listener, optional.
+    */
   this.register_shortcut_listener = function(listener_id, callback, action_list){};
 
   /* constants */
@@ -47,8 +61,8 @@
 
   this.mode_labels =
   {
-    "default": "Default",
-    "edit": "Edit",
+    "default": ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_DEFAULT,
+    "edit": ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_EDIT,
   }
 
   /* privat */
