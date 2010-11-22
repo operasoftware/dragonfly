@@ -64,8 +64,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       if(this._current_scroll === null)
       {
         this._container.scrollTop = 999999;
-        // timer works around issue where element is unfocusable when created
-        window.setTimeout(function() {this._textarea.focus();}.bind(this), 0);
       }
       else
       {
@@ -796,6 +794,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
    */
   this.focus = function()
   {
+    this._textarea.focus();
   }
 
   /**
