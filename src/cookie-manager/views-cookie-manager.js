@@ -12,7 +12,7 @@ cls.CookieManagerView = function(id, name, container_class)
       for (var domain in this._cookies)
       {
         var domains_cookies = this._cookies[domain];
-        if (!domains_cookies.is_pending && domains_cookies.cookie_list)
+        if (domains_cookies.cookie_list)
         {
           render_array.push(
             ["tr",
@@ -61,7 +61,8 @@ cls.CookieManagerView = function(id, name, container_class)
             render_array.push(row_array);
           };
           // Add button that removes cookies of this domain
-          render_array.push(["button","RemoveCookiesOfDomain", "href", "#", "handler", "cookiemanager-delete-domain-cookies"]);
+          // Depends on CORE-34615
+          // render_array.push(["button","RemoveCookiesOfDomain", "href", "#", "handler", "cookiemanager-delete-domain-cookies"]);
         }
       };
       render_array=["table",render_array];
@@ -69,7 +70,8 @@ cls.CookieManagerView = function(id, name, container_class)
     container.clearAndRender(render_array);
     
     // Add clear button
-    container.render(["button","RemoveAllCookies", "href", "#", "handler", "cookiemanager-delete-all"]);
+    // Depends on CORE-34615
+    // container.render(["button","RemoveAllCookies", "href", "#", "handler", "cookiemanager-delete-all"]);
   };
   
   this._on_active_tab = function(msg)
@@ -111,9 +113,9 @@ cls.CookieManagerView = function(id, name, container_class)
       {
         var domain = this._rts[requestcookiedomain].domain;
         // avoid repeating cookie requests for domains being in more than one runtime
-        if(domain && (!this._cookies[domain] ||  !this._cookies[domain].is_pending))
+        if(domain && (!this._cookies[domain] ||  !this._cookies[domain].get_cookies_is_pending))
         {
-          this._cookies[domain] = {is_pending: true};
+          this._cookies[domain] = {get_cookies_is_pending: true};
           var tag = tagManager.set_callback(this, this._handle_cookies,[rt_id,domain]);
           services['cookie-manager'].requestGetCookie(tag,[domain]);
         }
@@ -123,7 +125,7 @@ cls.CookieManagerView = function(id, name, container_class)
   
   this._handle_cookies = function(status,message,rt_id,domain)
   {
-    this._cookies[domain].is_pending=false;
+    this._cookies[domain].get_cookies_is_pending=false;
     if(message.length > 0)
     {
       var cookies = message[0];
@@ -147,19 +149,8 @@ cls.CookieManagerView = function(id, name, container_class)
   
   this._handle_removed_cookies = function(status,message,domain)
   {
-    console.log("_handle_removed_cookies",status,message,domain);
-    
-    // callback is shared between all and domain specific removing.
-    if(domain)
-    {
-      // console.log("deleting cookie dir for ",domain,"which is until now",this._cookies[domain]);
-      delete window.views.cookie_manager._cookies[domain];
-    }
-    else
-    {
-      window.views.cookie_manager._cookies = {};
-    }
-    
+    // console.log("_handle_removed_cookies",status,message,domain);
+    delete window.views.cookie_manager._cookies[domain];    
     window.views.cookie_manager.update();
   };
   
