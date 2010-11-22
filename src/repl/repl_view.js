@@ -822,9 +822,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   }
 
   this.mode_labels = {
-    "single-line-edit": "Single line editing",
-    "multi-line-edit": "Multi line editing",
-    "autocomplete": "Autocompleting",
+    "single-line-edit": ui_strings.S_LABEL_REPL_MODE_DEFAULT,
+    "single-line-edit": ui_strings.S_LABEL_REPL_MODE_SINGLELINE,
+    "multi-line-edit":  ui_strings.S_LABEL_REPL_MODE_MULTILINE,
+    "autocomplete":  ui_strings.S_LABEL_REPL_MODE_AUTOCOMPLETE,
   }
 
   var eh = window.eventHandlers;

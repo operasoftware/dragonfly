@@ -438,6 +438,14 @@ ui_strings.S_LABEL_UTIL_SCALE = 'Scale';
 ui_strings.S_LABEL_COLLAPSED_INSPECTED_PROTOTYPES ="Default collapsed prototype objects (a list of prototypes, e.g. Object, Array, etc. * will collapse all): ";
 /* DESC: In the command line, choose the size of the typed history */
 ui_strings.S_LABEL_REPL_BACKLOG_LENGTH = 'Number of lines of history to remember';
+/* DESC: Label of a subsection in the keyboard configuration */
+ui_strings.S_LABEL_REPL_MODE_DEFAULT = 'Default';
+/* DESC: Label of a subsection in the keyboard configuration */
+ui_strings.S_LABEL_REPL_MODE_SINGLELINE = 'Single-line edit';
+/* DESC: Label of a subsection in the keyboard configuration */
+ui_strings.S_LABEL_REPL_MODE_MULTILINE = 'Multi-line edit';
+/* DESC: Label of a subsection in the keyboard configuration */
+ui_strings.S_LABEL_REPL_MODE_AUTOCOMPLETE = 'Autocomplete';
 
 
 /*
