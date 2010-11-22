@@ -93,7 +93,7 @@ var ActionBroker = function()
 
   const GLOBAL_HANDLER = ActionBroker.GLOBAL_HANDLER_ID;
 
-  /* privat */
+  /* private */
 
   this._handlers = {};
   this._action_context = null;
@@ -201,7 +201,7 @@ var ActionBroker = function()
     {
       event.stopPropagation();
       event.preventDefault();
-    };
+    }
   }
 
   this.delay_action = function(type, handler_id, action_id, event, target)
@@ -222,12 +222,12 @@ var ActionBroker = function()
 
   this.get_shortcuts = function()
   {
-    return JSON.parse(JSON.stringify(this._shortcuts));
+    return window.helpers.copy_object(this._shortcuts);
   }
 
   this.set_shortcuts = function(shortcuts, handler_id, clear_setting)
   {
-    shortcuts = JSON.parse(JSON.stringify(shortcuts));
+    shortcuts = window.helpers.copy_object(shortcuts);
     if (handler_id)
       this._shortcuts[handler_id] = shortcuts;
     else

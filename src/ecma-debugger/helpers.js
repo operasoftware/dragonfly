@@ -157,6 +157,11 @@ window.cls.Helpers = function()
     }
   };
 
+  this.copy_object = function(obj)
+  {
+    return JSON.parse(JSON.stringify(obj));
+  };
+
   if (!Array.isArray) {
     Array.isArray = function(obj) {
       return Object.prototype.toString.call(o) == "[object Array]";
@@ -171,7 +176,7 @@ cls.Helpers.shortcut_search_cb = function(action_id, event, target)
   {
     case 'highlight-next-match':
       this.highlight_next();
-      return false
+      return false;
     case 'highlight-previous-match':
       this.highlight_previous();
       return false;

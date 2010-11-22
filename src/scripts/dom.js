@@ -314,7 +314,21 @@ Element.prototype.get_scroll_container = function()
   return (scroll_container == document.documentElement ||
           scroll_container == document) ? null : scroll_container;
 }
-
+/**
+  * A class to store a scroll position and reset it later in an asynchronous
+  * environment.
+  * The class takes a target as initialisation argument.
+  * The scroll position is stored for the first scroll container 
+  * in the parent node chain of that target. The root element is
+  * disregarded as scroll container (this is a bit too Dragonfly specific. 
+  * Better would be to check the overflow property of the computed style to 
+  * find a real scroll container).
+  * Resetting the scroll position can be done with or without argument.
+  * Without argument. it resets the scrollTop and scrollLeft properties 
+  * of the scroll container to the stored values. With a target argument, 
+  * it scroll the target in the exact same position as the target of 
+  * the initialisation.
+  */
 Element.ScrollPosition = function(target)
 {
   this._scroll_container = target.get_scroll_container();
@@ -336,6 +350,13 @@ Element.ScrollPosition = function(target)
 
 }
 
+/**
+  * To reset the scroll position. 
+  * Without target, scrollTop and scrollleft are restored to 
+  * the initialisation values.
+  * If target is set, the target is scrolled in the exact same position 
+  * as the target of the initialisation.
+  */
 Element.ScrollPosition.prototype.reset = function(target)
 {
   if (this._scroll_container)

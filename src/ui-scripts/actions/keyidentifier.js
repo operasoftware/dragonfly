@@ -1,6 +1,6 @@
 ﻿var KeyIdentifier = function(callback, browser)
 {
-  /* interafce */
+  /* interface */
   this.set_shortcuts = function(shortcuts){};
 
   /* private */
