@@ -6,14 +6,13 @@ cls.CookieManagerView = function(id, name, container_class)
   this._rts = {};
   this.createView = function(container)
   {
-    console.log("createView");
     var render_array = [];
     if (this._cookies)
     {
       for (var domain in this._cookies)
       {
         var domains_cookies = this._cookies[domain];
-        if (!domains_cookies.is_pending)
+        if (!domains_cookies.is_pending && domains_cookies.cookie_list)
         {
           render_array.push(
             ["tr",
@@ -61,7 +60,7 @@ cls.CookieManagerView = function(id, name, container_class)
             toggle_class=!toggle_class;
             render_array.push(row_array);
           };
-          // Add remove cookies of this domain
+          // Add button that removes cookies of this domain
           render_array.push(["button","RemoveCookiesOfDomain", "href", "#", "handler", "cookiemanager-delete-domain-cookies"]);
         }
       };
@@ -111,7 +110,8 @@ cls.CookieManagerView = function(id, name, container_class)
       for (var requestcookiedomain in this._rts)
       {
         var domain = this._rts[requestcookiedomain].domain;
-        if(domain && (!this._cookies[domain] ||  !this._cookies[domain].is_pending)) // no it's about cookies that can be pending..
+        // avoid repeating cookie requests for domains being in more than one runtime
+        if(domain && (!this._cookies[domain] ||  !this._cookies[domain].is_pending))
         {
           this._cookies[domain] = {is_pending: true};
           var tag = tagManager.set_callback(this, this._handle_cookies,[rt_id,domain]);
@@ -123,10 +123,10 @@ cls.CookieManagerView = function(id, name, container_class)
   
   this._handle_cookies = function(status,message,rt_id,domain)
   {
+    this._cookies[domain].is_pending=false;
     if(message.length > 0)
     {
       var cookies = message[0];
-      this._cookies[domain].is_pending=false;
       this._cookies[domain].cookie_list=[];
       for (var i=0; i < cookies.length; i++) {
         var cookie_info = cookies[i];
