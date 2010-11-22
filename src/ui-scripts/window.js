@@ -226,6 +226,7 @@ var UIWindowBase = new function()
         current_target = ui_windows[event.target.parentNode.id] || {};
         document.addEventListener('mousemove', store_event, false);
         document.addEventListener('mouseup', mouseup, false);
+        event.preventDefault();
       }
     }
   },

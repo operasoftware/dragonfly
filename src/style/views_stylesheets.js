@@ -164,6 +164,7 @@ cls.StylesheetsView.create_ui_widgets = function()
     [
       {
         handler: 'stylesheets-text-search',
+        shortcuts: 'stylesheets-text-search',
         title: 'text search'
       }
     ],
@@ -219,12 +220,8 @@ cls.StylesheetsView.create_ui_widgets = function()
     textSearch.searchDelayed(target.value);
   }
 
-  eventHandlers.keypress['stylesheets-text-search'] = function(event, target)
-  {
-    if( event.keyCode == 13 )
-    {
-      textSearch.highlight();
-    }
-  }
+  ActionBroker.get_instance().get_global_handler().
+  register_shortcut_listener('stylesheets-text-search', 
+                             cls.Helpers.shortcut_search_cb.bind(textSearch));
   
 };

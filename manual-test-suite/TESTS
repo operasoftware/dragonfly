@@ -834,6 +834,92 @@ desc:
   - Verify that the view gets cleared.
   - Verify that the typed history was NOT cleared.
 
+Scripts.Event Breakpoints
+*************************
+
+
+
+url: ./test-cases/event-breakpoints/simple-event.html
+
+id: 120
+label: Quick find
+desc:
+  - Open the 'Event Breakpoint view' (Toolbar button in scripts)
+  - Type 'mouse' in the 'Quick find' field
+  - Verify that 'DOM level 3' is expanded and displays 'mousedown', 'mouseenter', 
+    'mouseleave', 'mousemove', 'mouseout', 'mouseover', 'mouseup'
+
+id: 121
+label: Simple event
+desc: 
+  - Go to the url above
+  - Open the 'Event Breakpoint view'
+  - Quick find 'click' and check 'click'
+  - Click into the host document
+  - Verify that the debugger stops on entering the 'a' function
+
+url: ./test-cases/event-breakpoints/multiple-events.html
+
+id: 122
+label: Multiple events
+desc:
+  - Go to the url above
+  - Open the 'Event Breakpoint view'
+  - Check 'keydown', 'keyup', 'keypress', 'input'
+  - Type something in the texatarea of the tests document
+  - Verify that the debugger stops on entering the 'a' function
+  - Verify that the event type is 'keydown' in e.g. the inspection or the REPL tab
+  - Press the 'Continue' button
+  - Verify that the debugger stops three more times with event type 'keypress', 'keyup', 'input'
+  
+url: ./test-cases/event-breakpoints/multiple-listeners.html
+
+id: 123
+label: Multiple listeners
+desc:
+  - Go to the url above
+  - Open the 'Event Breakpoint view'
+  - Check 'input'
+  - Type something in the textarea
+  - Verify that the debugger stops on entering the 'a' function
+  - Press the 'Continue' button
+  - Verify that the debugger stops three more times on entering 'b', 'c' and 'd'
+
+url: ./test-cases/event-breakpoints/modifier-event.html
+
+id: 124
+label: Modifier Event
+desc:
+  - Go to the url above
+  - Open the 'Event Breakpoint view'
+  - Check 'DomNodeRemoved'
+  - Press the 'test' button in the test document
+  - Verify that the debugger stops on entering the 'a' function
+
+url: ./test-cases/event-breakpoints/attribute-event-handler.html
+
+id: 125
+label: Element attribute event handler
+desc:
+  - Go to the url above
+  - Open the 'Event Breakpoint view'
+  - Check 'click'
+  - Click 'paragraph with a 'onclick' attribute' in the test document
+  - Verify that the debugger stops in the according callback
+
+url: test-cases/event-breakpoints/custom-event.html
+
+id: 126
+label: Custom event
+desc: 
+  - Go to the url above
+  - Open the 'Event Breakpoint view'
+  - Open the 'Custom Events' section
+  - Press 'the 'Edit' button
+  - Enter 'test' and save
+  - Check 'test'
+  - Press the 'Dispatch custom event 'test'' button in the test document
+  - Verify that the debugger stops on entering the 'test' function
 
   
 Network.Request Log

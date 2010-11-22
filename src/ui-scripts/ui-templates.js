@@ -66,26 +66,38 @@
 
   this.filters = function(filters)
   {
-    var ret = ['toolbar-filters'], filter = '', i = 0, default_text = '';
-    for( ; filter = filters[i]; i++)
+    var
+    ret = ['toolbar-filters'],
+    filter = '',
+    i = 0,
+    default_text = '',
+    tpl_input = null;
+
+    for (; filter = filters[i]; i++)
     {
-      if( filter.type && this[filter.type] )
-      {
-        ret[ret.length] = this[filter.type](filter);
-      }
+      if (filter.type && this[filter.type])
+        ret.push(this[filter.type](filter));
       else
       {
-        ret[ret.length] = ['filter', 
-          ['span', ( default_text = filter.label ? filter.label : ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH ) ],
-          [
-            'input', 
-            'autocomplete', 'off', 
-            'type', 'text', 
-            'handler', filter.handler, 
-            'title', filter.title,
-            'default-text', default_text
-          ]
+        default_text = filter.label ?
+                       filter.label :
+                       ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH;
+        tpl_input =
+        [
+          'input',
+          'autocomplete', 'off',
+          'type', 'text',
+          'handler', filter.handler,
+          'shortcuts', filter.shortcuts,
+          'title', filter.title,
+          'default-text', default_text
         ];
+        ['handler', 'shortcuts'].forEach(function(attr)
+        {
+          if (filter.hasOwnProperty(attr))
+            tpl_input.push(attr, filter[attr]);
+        });
+        ret.push(['filter', ['span', default_text], tpl_input]);
       }
     }
     return ret;
@@ -93,7 +105,7 @@
 
   this.dropdown = function(filter)
   {
-    return ['filter', 
+    return ['filter',
           //['em', filter.label ? filter.label : 'search'],
           [
             'select',
@@ -110,9 +122,9 @@
     var ret = ['toolbar-buttons'], button = '', i = 0;
     for( ; button = buttons[i]; i++)
     {
-      ret[ret.length] = 
-        ['button', 
-          'handler', button.handler, 
+      ret[ret.length] =
+        ['button',
+          'handler', button.handler,
           'title', button.title
         ].concat(
             button.id ? ['id', button.id] : [],
@@ -131,19 +143,19 @@
 
   this.switches = function(switches)
   {
-    var 
-    ret = ['toolbar-switches'], 
-    _switch = '', 
-    i = 0, 
+    var
+    ret = ['toolbar-switches'],
+    _switch = '',
+    i = 0,
     setting = null;
 
     for( ; _switch = switches[i]; i++)
     {
       if(setting = Settings.get_setting_with_view_key_token(_switch))
       {
-        ret[ret.length] = 
-          ['button', 
-            'handler', 'toolbar-switch', 
+        ret[ret.length] =
+          ['button',
+            'handler', 'toolbar-switch',
             'title', setting.label,
             'key', _switch,
             'is-active', setting.value ? 'true' : 'false',
@@ -152,7 +164,7 @@
       }
       else
       {
-        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
           "Can't attach switch to a setting that does not exist: " + _switch );
       }
 
@@ -191,10 +203,10 @@
 
   this.viewMenu = function()
   {
-    return ( 
+    return (
     [
-      'ui-menu', 
-      ['h2', ui_strings.M_VIEW_LABEL_VIEWS, 'handler', 'show-menu', 'tabindex', '1'], 
+      'ui-menu',
+      ['h2', ui_strings.M_VIEW_LABEL_VIEWS, 'handler', 'show-menu', 'tabindex', '1'],
       'id', 'main-view-menu'
     ].concat(opera.attached ? ['class', 'attached'] : []) );
   }
@@ -293,7 +305,7 @@
     {
       return (
       ['window-controls',
-        ['button', 
+        ['button',
           'handler', 'top-window-close',
           'title', ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW
         ],
@@ -305,9 +317,9 @@
 
   this.settings = function(view_arr)
   {
-    var 
-      ret = ['settings-container'], 
-      view_id = null, 
+    var
+      ret = ['settings-container'],
+      view_id = null,
       view = null,
       i = 0;
     for( ; view_id = view_arr[i]; i++)
@@ -319,14 +331,13 @@
       }
     }
     return ret;
-    
+
   }
 
   // this will be called as a method from a setting object
 
   this.setting = function(view_id, view_name, is_unfolded)
   {
-    
     var ret = ['fieldset', self.settingsHeader(view_id, view_name, is_unfolded)];
     var setting = settings[view_id];
     var settings_map = setting.setting_map;
@@ -373,12 +384,12 @@
     {
       if( key.indexOf('.') == -1 )
       {
-        checkboxes[checkboxes.length] = 
+        checkboxes[checkboxes.length] =
           this.settingCheckbox
           (
-            setting.view_id, 
-            key, 
-            setting.get(key), 
+            setting.view_id,
+            key,
+            setting.get(key),
             setting.label_map[key]
           );
       }
@@ -389,19 +400,19 @@
         key = arr[1];
         if( settings[view_id] )
         {
-          checkboxes[checkboxes.length] = 
+          checkboxes[checkboxes.length] =
             this.settingCheckbox
             (
-              view_id, 
-              key, 
-              settings[view_id].get(key), 
+              view_id,
+              key,
+              settings[view_id].get(key),
               settings[view_id].label_map[key],
               setting.view_id
             );
         }
         else
         {
-          opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+          opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
             'failed in ui-templates checkboxes '+ arr + ' ' +setting.view_id);
         }
       }
@@ -421,9 +432,9 @@
 
   this.settingCheckbox = function(view_id, key, value, label, host)
   {
-    var input = ['input', 
-        'type', 'checkbox', 
-        'handler', 'checkbox-setting', 
+    var input = ['input',
+        'type', 'checkbox',
+        'handler', 'checkbox-setting',
         'name', key,
         'view-id', view_id
       ];
@@ -453,8 +464,8 @@
           ['window-control', 'handler', 'window-scale-bottom-left'],
           ['window-control', 'handler', 'window-scale-left'],
         ] : [],
-      'id', win.id, 
-      'style', 
+      'id', win.id,
+      'style',
       'top:' + win.top + 'px;' +
       'left: ' + win.left + 'px;' +
       'width: '+ win.width + 'px;' +
@@ -465,7 +476,7 @@
 
   this.window_header = function(name)
   {
-    return ['window-header',   
+    return ['window-header',
         ['window-control', 'handler', 'window-close'],
         name,
       'handler', 'window-move'

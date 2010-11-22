@@ -14,7 +14,9 @@ var Editor = function(actions)
   const
   SELECTION = 1,
   TOKEN = 2,
-  VALUE = 3;
+  VALUE = 3,
+  MINUS = -1,
+  PLUS = 1;
 
   this.base_style =
   {
@@ -623,7 +625,7 @@ var Editor = function(actions)
   {
     if (iterate && matches)
     {
-      cur_cursor += (action_id == action_ids.NAV_UP ? -1 : 1);
+      cur_cursor += action_id;
       if (cur_cursor > matches.length - 1)
       {
         cur_cursor = 0;
@@ -642,14 +644,10 @@ var Editor = function(actions)
 
   this.onclick = function(event)
   {
-    event.preventDefault();
-    event.stopPropagation();
-    if (!this.textarea_container.contains(event.target))
-    {
-      this.submit(true);
+    if (this.textarea_container.contains(event.target))
       return false;
-    }
-    return true;
+    this.submit(true);
+    return true;    
   };
 
   this.suggest_property = function(token, cur_start, cur_end, action_id, match)
@@ -671,9 +669,9 @@ var Editor = function(actions)
     var is_float = /\.(\d+)/.exec(match[2]);
     if (is_float)
     {
-      return [(parseFloat(match[1] + match[2]) + (action_id == action_ids.NAV_UP ? 0.1 : -0.1)).toFixed(is_float[1].length) + match[3]];
+      return [(parseFloat(match[1] + match[2]) + (action_id == PLUS ? 0.1 : -0.1)).toFixed(is_float[1].length) + match[3]];
     }
-    return [(parseInt(match[1] + match[2]) + (action_id == action_ids.NAV_UP ? 1 : -1)).toString() + match[3]];
+    return [(parseInt(match[1] + match[2]) + action_id).toString() + match[3]];
   };
 
   this.suggest_number.replace_type = TOKEN;

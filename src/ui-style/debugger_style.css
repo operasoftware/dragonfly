@@ -85,7 +85,7 @@ ul {
   height:80%
   }
 
-  
+
 
 .folder li li {
   margin-left:18px;
@@ -157,7 +157,7 @@ ul {
 #continues {
   margin-left:5px;
   }
-  
+
 input[type="text"] {
   cursor: text;
 }
@@ -205,7 +205,7 @@ input[type="text"] {
   content:']';
   padding-left:.3em;
   }
-  
+
 [handler="display-stylesheet"].selected {
   color:#333;
   font-weight:bold;
@@ -256,7 +256,7 @@ input[type="text"] {
 .folder li[handler="display-script"] {
   margin-left: -2px;
   padding-left: 20px;
-  background: transparent url('../ui-images/selected-frame-top.png') no-repeat 0 -16px; 
+  background: transparent url('../ui-images/selected-frame-top.png') no-repeat 0 -16px;
   }
 
 .info {
@@ -279,7 +279,7 @@ input[type="text"] {
 
 .console-output,
 .console-output pre,
-.console-input, 
+.console-input,
 .console-input textarea {
   line-height:16px;
   font-size:14px !important;
@@ -299,7 +299,7 @@ input[type="text"] {
 .console-input span + div {
   margin-left: 4ex;
   }
-  
+
 .console-input textarea {
   width:100%;
   border:0px solid;
@@ -383,11 +383,11 @@ stylesheet :last-child {
 .stylesheets pre {
   background:red;
   }
-  
+
 media {
   /*xxwhite-space: pre-wrap;*/
   }
-  
+
 media-rule rules {
   padding-left: 2ex;
   }
@@ -422,19 +422,22 @@ styles {
   padding:  0 4px;
   }
 
-category header {
+.unfolded styles {
+  padding: 5px;
+  }
+
+header {
   border: 1px solid #b3b3b3;
   border-width: 0 0 1px;
   background-color: hsl( 0, 0% , 95%);
   padding: 2px;
   }
 
-category.unfolded + category header {
+.unfolded + header {
   border-top-width: 1px;
 }
 
-
-.css-inspector header input {
+header input {
   background:transparent url('../ui-images/toggle.png') scroll no-repeat 0 0;
   border:none;
   padding:0;
@@ -443,19 +446,19 @@ category.unfolded + category header {
   height:14px;
   }
 
-.css-inspector header input:hover {
+header input:hover {
   background-position: 0 -14px;
   }
 
-.css-inspector header input:active {
+header input:active {
   background-position: 0 -28px;
   }
 
-.css-inspector header input.unfolded {
+header input.unfolded {
   background-position: -14px 0;
   }
 
-.css-inspector header input.unfolded:hover {
+header input.unfolded:hover {
   background-position: -14px -14px;
   }
 
@@ -491,10 +494,9 @@ category.unfolded + category header {
   margin: 10px -4px;
   padding-left: 4px;
   }
-  
 
-examine-objects, 
-examine-objects item 
+examine-objects,
+examine-objects item
 {
   display:block;
   font-family: monospace;
@@ -511,7 +513,7 @@ examine-objects examine-objects
 {
   padding: 0 0 0 16px;
 }
-examine-objects key 
+examine-objects key
 {
   margin-right:7px;
 }
@@ -539,14 +541,14 @@ examine-objects key.no-expander
   max-width: 250px;
   font-size: 11px;
 }
-.css-layout layout-container ul 
+.css-layout layout-container ul
 {
   margin:0;
   padding:0;
   list-style: none;
   display: table-row;
 }
-.css-layout layout-container li 
+.css-layout layout-container li
 {
   display: table-cell;
   border: 1px solid transparent;
@@ -555,27 +557,27 @@ examine-objects key.no-expander
   padding: 1px;
   min-width: 15px;
 }
-.css-layout layout-container p 
+.css-layout layout-container p
 {
   position:relative;
   margin:0;
   padding:0;
 }
-.css-layout layout-container span 
+.css-layout layout-container span
 {
   position:absolute;
   top:0;
   left:0;
 }
 
-.css-layout layout-container .dimension li 
+.css-layout layout-container .dimension li
 {
   min-width: 80px;
 }
 .css-layout layout-container .dimension,
 .css-layout layout-container .padding,
 .css-layout layout-container .margin,
-.css-layout layout-container .border 
+.css-layout layout-container .border
 {
   border-color: #324c74;
 }
@@ -584,7 +586,7 @@ examine-objects key.no-expander
     border-style: dashed;
 }
 
-  
+
 offsets-container {
   display:block;
 }
@@ -594,7 +596,7 @@ parent-offset {
   background-color:#c7d4e8;
   padding: 0 2px;
 }
-  
+
 offsets{
   display:table;
 }
@@ -641,7 +643,7 @@ div.dom {
 }
 
 
-.dom input 
+.dom input
 {
   border: 0;
   padding: 0;
@@ -702,17 +704,17 @@ breadcrumb span
 
 /* testing windows manager */
 
-.windows-manager h2 
+.windows-manager h2
 {
   font-size: 12px;
 }
 
-.windows-manager ul 
+.windows-manager ul
 {
   margin: 5px 0 5px 20px;
 }
 
-.windows-manager ul li:first-child 
+.windows-manager ul li:first-child
 {
   float: left;
   margin-left: -20px;
@@ -750,8 +752,8 @@ breadcrumb span
   background-repeat: no-repeat ;
 }
 
-.script-options cst-option.stopped 
-{ 
+.script-options cst-option.stopped
+{
   background-position: 5px 50%;
 }
 
@@ -787,7 +789,7 @@ d
   color: #4d1100;
 }
 
-.host-spotlight h3 
+.host-spotlight h3
 {
   display: inline-block;
   margin: .5em 0;
@@ -796,7 +798,7 @@ d
 }
 
 
-.host-spotlight label 
+.host-spotlight label
 {
   display: inline-block;
   margin-left: 1.5em;
@@ -861,14 +863,14 @@ d
 {
   margin: .8em;
   padding: 0;
-  
+
 }
 .color-picker pre
 {
   margin: .8em 3em;
   padding: 0;
   text-align: left;
-  
+
 }
 
 .outer-canvas-container
@@ -952,7 +954,7 @@ d
 #table-container td
 {
   line-height: 1px;
-  padding: 0;  
+  padding: 0;
 }
 
 #center-color
@@ -1009,7 +1011,7 @@ d
   margin-top: 3px;
 }
 
-.filter-container input[type='button'] 
+.filter-container input[type='button']
 {
   border: 0;
   margin: 0;
@@ -1122,6 +1124,7 @@ d
 .test-messages textarea
 {
   box-sizing: border-box;
+  -webkit-box-sizing: border-box;
   display: block;
   width: 100%;
   margin: 0;
@@ -1172,7 +1175,7 @@ d
   font-family: monospace;
 }
 
-.storage-table tr:nth-child(even)  
+.storage-table tr:nth-child(even)
 {
   background-color: hsl(0, 0%, 97%);
 }
@@ -1233,7 +1236,8 @@ d
   text-align: right;
 }
 
-.storage-table textarea
+.storage-table textarea,
+.event-list textarea
 {
   box-sizing: border-box;
   display: block;
@@ -1294,4 +1298,39 @@ color-sample
 property.disabled color-sample
 {
   opacity: .35;
+}
+
+/* Event Breakpoints */
+
+.event-list
+{
+  padding: 3px 0 3px 24px;
+}
+
+.spec-link,
+.spec-link:visited
+{
+  float: right;
+  text-decoration: none;
+  color: #6cf;
+  font-size: 10px;
+  margin: 3px 5px 0 0;
+}
+
+.event-breakpoints li:first-child header
+{
+  border-top-width: 0;
+}
+
+.search-no-match
+{
+  opacity: .3;
+}
+
+.controls
+{
+  text-align: right;
+  border-bottom: 1px solid #ccc;
+  margin-left: -24px;
+  padding-left: 24px;
 }

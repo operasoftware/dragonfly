@@ -248,6 +248,7 @@ cls.HttpLogger["2.0"].RequestListView.create_ui_widgets = function()
       [
         {
           handler: 'http-text-search',
+          shortcuts: 'http-text-search',
           title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
         }
       ]
@@ -337,11 +338,8 @@ eventHandlers.click['clear-request-list'] = function(event, target)
         textSearch.searchDelayed(target.value);
     };
 
-    eventHandlers.keypress['http-text-search'] = function(event, target)
-    {
-        if (event.keyCode == 13) {
-            textSearch.highlight();
-        }
-    };
+    ActionBroker.get_instance().get_global_handler().
+    register_shortcut_listener('http-text-search', 
+                               cls.Helpers.shortcut_search_cb.bind(textSearch));
 
 })();

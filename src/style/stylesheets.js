@@ -111,7 +111,6 @@ cls.Stylesheets = function()
   ORIGIN = 0,
   INDEX_LIST = 1,
   VALUE_LIST = 2,
-  PRIORITY_LIST = 3,
   STATUS_LIST = 4,
   SELECTOR = 5,
   SPECIFICITY = 6,
@@ -581,7 +580,7 @@ cls.Stylesheets = function()
                  (!is_disabled ? " checked='checked'" : "") +
                  " handler='enable-disable'" +
                  " data-property='" + prop + "'" +
-                 " data-rule-id='" + rule_id + "'>"
+                 " data-rule-id='" + rule_id + "' />"
                : "") +
            "<key>" + prop + "</key>: " + // TODO: rename "key" to "property"
            "<value>" + value + (is_important ? MARKUP_IMPORTANT : "") + 

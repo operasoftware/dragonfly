@@ -15,9 +15,9 @@ cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
   */
 
 cls.EcmascriptDebugger["6.0"].InspectableJSObject =
-function(rt_id, obj_id, identifier, _class, pseudo_properties)
+function(rt_id, obj_id, identifier, _class, pseudo_properties, scope_list)
 {
-  this._init(rt_id, obj_id, pseudo_properties || null, identifier, _class);
+  this._init(rt_id, obj_id, pseudo_properties || null, identifier, _class, scope_list);
 }
 
 cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
@@ -53,6 +53,9 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
   this.expand_prototype = function(path){};
   this.collapse_prototype = function(path){};
 
+  this.expand_scope_chain = function(){};
+  this.collapse_scope_chain = function(){};
+
   /* private */
 
   /*
@@ -66,7 +69,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     "}"
   */
 
-  this._init = function(rt_id, obj_id, virtual_props, identifier, _class)
+  this._init = function(rt_id, obj_id, virtual_props, identifier, _class, scope_list)
   {
     this.id = this._get_id();
     if (!window.inspections)
@@ -99,6 +102,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     this._virtual_props = virtual_props;
     this._root_path = [this._identifier, this._obj_id, 0];
     this._root_path_joined = this._root_path.join();
+    this.scope_list = scope_list;
   }
 
   this._get_subtree = function(path)
@@ -410,6 +414,23 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     return this._get_subtree(path);
   }
 
+  this.expand_scope_chain = function()
+  {
+    if (this.scope_list)
+      this.scope_list_models = this.scope_list.map(function(scope_id, index){
+        return new cls.InspectableJSObject(this._rt_id, scope_id, "scope " + index);
+      }, this);
+    return this.scope_list_models || [];
+  }
+
+  this.collapse_scope_chain = function()
+  {
+    this.scope_list_models.forEach(function(model){
+      model.collapse();
+    });
+    this.scope_list_models = null;
+  }
+
 };
 
 /* static methods of cls.EcmascriptDebugger["6.0"].InspectableJSObject */
@@ -542,20 +563,19 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
 
   this.handle_get_objects = function(status, message, rt_id, type)
   {
-    const STATUS = 0, OBJECT_VALUE = 3, OBJECT_ID = 0;
+    const STATUS = 0,
+    OBJECT_CHAIN_LIST = 0,
+    OBJECT_LIST = 0,
+    PROPERTY_LIST = 1,
+    OBJECT_VALUE = 3,
+    OBJECT_ID = 0;
+    
     if (status)
       opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
                       "static method InspectableJSObject.handle_create_filter failed, " +
                       status + ', ' + JSON.stringify(message));
     else
     {
-      const
-      OBJECT_CHAIN_LIST = 0,
-      OBJECT_LIST = 0,
-      PROPERTY_LIST = 1,
-      OBJECT_VALUE = 3,
-      OBJECT_ID = 0;
-
       var obj_list = (message &&
         (message = message[OBJECT_CHAIN_LIST]) &&
         (message = message[0]) &&
@@ -591,7 +611,8 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     NAME = 0,
     PROPERTY_TYPE = 1,
     PROPERTY_VALUE = 2,
-    OBJECT_VALUE = 3;
+    OBJECT_VALUE = 3,
+    FILTERED_PROPS = 1;
 
     var
     object = null,
@@ -636,7 +657,6 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
           filters.push([class_name, filter]);
       }
     }
-    const NAME = 0, FILTERED_PROPS = 1;
     // filter out Element
     var is_equal = function(a, b)
     {

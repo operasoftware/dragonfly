@@ -45,8 +45,16 @@ window.cls.PropertyFinder = function(rt_id) {
     var tag = tagManager.set_callback(this, this._onRequestExamineObjects,
                                       [callback, scope, identifier, input, frameinfo]);
 
+    var scopes = [frameinfo.scope_id];
+    if (frameinfo.scope_list)
+    {
+      // Skip last scope in list, it's t global one which
+      // isn't in completer (for now. should be an option)
+      scopes = frameinfo.scope_list.slice(0, -1);
+    }
+
     this._service.requestExamineObjects(
-      tag, [frameinfo.runtime_id, [frameinfo.scope_id], 0, 1]
+      tag, [frameinfo.runtime_id, scopes, 0, 1]
     );
   };
 
@@ -71,7 +79,7 @@ window.cls.PropertyFinder = function(rt_id) {
                   last_brace,
                   last_bracket,
                   input.lastIndexOf('=') ) + 1
-                ).replace(/^ +/, '').replace(/ $/, '');
+                ).replace(/^\s+/, '');
 
     var last_dot = input.lastIndexOf('.');
     var new_path = '';
@@ -81,7 +89,7 @@ window.cls.PropertyFinder = function(rt_id) {
     if(last_dot > -1)
     {
       new_path = input.slice(0, last_dot);
-      new_id = input.slice(last_dot + 1);
+      new_id = input.slice(last_dot + 1).replace(/^\s+/, '');
     }
     else
     {
@@ -110,6 +118,11 @@ window.cls.PropertyFinder = function(rt_id) {
                         function(e) { return e != ""; }
           );
         }
+
+        if (!ret.scope && ret.props.indexOf("this") == -1)
+        {
+          ret.props.push("this");
+        }
       }
     }
 
@@ -128,16 +141,28 @@ window.cls.PropertyFinder = function(rt_id) {
 
     if (status == 0) {
       const OBJECT_CHAIN_LIST = 0, OBJECT_LIST = 0, PROPERTY_LIST = 1, NAME = 0;
-      scope = (message &&
-        (message = message[OBJECT_CHAIN_LIST]) &&
-        (message = message[0]) &&
-        (message = message[OBJECT_LIST]) &&
-        (message = message[0]) &&
-        (message = message[PROPERTY_LIST]) ||
-        []).map(function(prop){return prop[NAME];});
-      ret.props = scope;
-    }
+      var names = [];
+      (message[OBJECT_CHAIN_LIST] || []).forEach(function(chain){
+        var objectlist = chain[OBJECT_LIST] || [];
+        objectlist.forEach(function(obj) {
+          names = names.concat((obj[PROPERTY_LIST] || []).map(function(prop) {
+            return prop[NAME];
+          }));
+        });
+      });
 
+      ret.props = names;
+
+      if (ret.props.indexOf("this") == -1)
+      {
+        ret.props.push("this");
+      }
+
+      if (ret.frameinfo.argument_id !== undefined && ret.props.indexOf("arguments"))
+      {
+        ret.props.push("arguments");
+      }
+    }
     this._cache_put(ret);
     callback(ret);
   };
@@ -152,7 +177,7 @@ window.cls.PropertyFinder = function(rt_id) {
     {
       runtime_id: runtimes.getSelectedRuntimeId(),
       thread_id: 0,
-      scope_id: null,
+      scope_id: runtimes.getRuntime(runtimes.getSelectedRuntimeId()).object_id,
       index: 0
     };
 
@@ -176,8 +201,8 @@ window.cls.PropertyFinder = function(rt_id) {
    * about a particular runtime. Can be hooked up to messages about closed
    * tabs/runtimes
    */
-  this.forget_runtime = function(rt_id) {
-    // fixme
+  this.clear_cache = function(rt_id) {
+    this._cache = {};
   };
 
   this._cache_key = function(scope, frameinfo) {
@@ -196,7 +221,7 @@ window.cls.PropertyFinder = function(rt_id) {
   };
 
   this._get_scope_contents = function(callback, scope, identifier, input, frameinfo) {
-    if (!scope && frameinfo.stopped) { // we're stopped and there is no scope
+    if (!scope) { // if there is no scope, use examineObject call
       this._requestExamineObjects(callback, scope, identifier, input, frameinfo);
     }
     else
@@ -212,4 +237,24 @@ window.cls.PropertyFinder = function(rt_id) {
   this.toString = function() {
     return "[PropertyFinder singleton instance]";
   };
+};
+
+cls.PropertyFinder.prop_sorter = function(a, b)
+{
+  a = a.toLowerCase();
+  b = b.toLowerCase();
+
+  if (a.isdigit() && b.isdigit())
+  {
+    return parseInt(a, 10) - parseInt(b, 10);
+  }
+  else if (a>b)
+  {
+    return 1;
+  }
+  else if (a<b)
+  {
+    return -1;
+  }
+  return 0;
 };

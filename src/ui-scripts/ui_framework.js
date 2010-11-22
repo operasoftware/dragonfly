@@ -112,9 +112,12 @@ var ui_framework = new function()
   [
     {
       id: 'test-line-height',
-      property: 'lineHeight',
+      property: 'line-height',
       target: 'js-source-line-height',
-      getValue: function(){return parseInt(document.getElementById(this.id).currentStyle[this.property])}
+      getValue: function()
+      {
+        return parseInt(window.getComputedStyle(document.getElementById(this.id), null).getPropertyValue(this.property));
+      }
     },
     {
       id: 'test-scrollbar-width',

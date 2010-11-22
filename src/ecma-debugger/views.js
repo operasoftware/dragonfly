@@ -172,7 +172,8 @@ cls.GeneralView.create_ui_widgets = function()
     {
       "show-views-menu": false,
       "window-attached": true,
-      "show-only-normal-and-gadget-type-windows": true
+      "show-only-normal-and-gadget-type-windows": true,
+      "shortcuts": null,
     }, 
     // key-label map
     {

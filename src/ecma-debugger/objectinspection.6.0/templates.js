@@ -21,7 +21,7 @@
   OBJECT_VALUE = 3,
   // added fields
   MAX_VALUE_LENGTH = 30,
-  STYLE_EXPANDED = "style='background-position: 0px -11px') ";
+  STYLE_EXPANDED = "style='background-position: 0px -11px' ";
 
   /* private */
 
@@ -231,13 +231,16 @@
     var collapsed_protos = setting.get('collapsed-prototypes');
     var filter = !setting.get('show-default-nulls-and-empty-strings') && 
                  window.inspectionfilters;
-    return _pretty_print_object(model,
+    var ret = _pretty_print_object(model,
                                 tree,
                                 tree.object_id,
                                 [],
                                 collapsed_protos,
                                 filter
                                 ).join('');
+    if (model.scope_list)
+      ret += this.inspected_js_scope_chain(model);
+    return ret;
   }
 
   this.inspected_js_prototype = function(model, path, index, name)
@@ -257,6 +260,24 @@
                                       filter,
                                       name,
                                       index).join('') : '';
+  }
+
+  this.inspected_js_scope_chain = function(model)
+  {
+    var ret = [];
+    ret.push(
+      "<div class='scope-chain'>" +
+          "<header handler='expand-scope-chain' data-id='" + model.id + "' >" +
+            "<input type='button' " +
+              "class='" + (model.scope_list_models ? "unfolded" : "") + "' >" +
+            "Scope Chain" +
+          "</header>"
+    );
+    if (model.scope_list_models)
+      for (var i = 0, scope = null; scope = model.scope_list_models[i]; i++)
+        ret.push(this.inspected_js_object(scope, true));
+    ret.push("</div>");
+    return ret.join('');
   }
 
 }).apply(window.templates || (window.templates = {}));

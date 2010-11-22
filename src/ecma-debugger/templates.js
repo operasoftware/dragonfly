@@ -38,6 +38,22 @@
     return ret;
   }
 
+  this.runtime_dropdown = function(runtimes)
+  {
+    return this._group_runtimes(runtimes, false).map(this.runtime, this);
+  }
+
+  this.runtime = function(runtime)
+  {
+    var option = ['cst-option', runtime.title, 'rt-id', String(runtime.id)];
+    if (runtime.title_attr)
+      option.push('title', runtime.title_attr);
+    var ret = [option];
+    if (runtime.extensions && runtime.extensions.length)
+      ret.push(['cst-group', runtime.extensions.map(this.runtime, this)]);
+    return ret;
+  }
+
   this['runtime-runtime'] = function(runtime, arg_list)
   {
     var display_uri = helpers.shortenURI(runtime.uri);
@@ -50,91 +66,203 @@
     ;
   }
 
-  this['runtime-script'] = function(runtime, arg_list)
+  // to extract the extension runtimes from the runtimes list
+  // and push them to a extension property of the owner runtime
+  // if the get_script flag is set, the scripts of the runtime are sorted to 
+  // scripts, browser_js and user_js_s.
+  this._group_runtimes = function(runtimes, get_scripts)
   {
-    var
-    display_uri = helpers.shortenURI(runtime.uri),
-    is_reloaded_window = runtimes.isReloadedWindow(runtime.window_id),
-    ret = [
-      ['h2', runtime['title'] || display_uri.uri].
-      concat( runtime.selected ? ['class', 'selected-runtime'] : [] ).
-      concat( display_uri.title ? ['title', display_uri.title] : [] )
-    ],
-    scripts = runtimes.getScripts(runtime.runtime_id),
-    script = null,
-    i=0,
-    stopped_script_id = arg_list[0],
-    selected_script_id = arg_list[1];
-
-
-    if( scripts.length )
-    {
-      for( ; script = scripts[i]; i++)
-      {
-
-        ret[ret.length] = templates.scriptOption(script, selected_script_id, stopped_script_id);
-      }
-    }
     /*
-    TODO handle runtimes with no scripts
-    else
-    {
-      scripts_container = ['p',
-        settings.runtimes.get('reload-runtime-automatically') || is_reloaded_window
-        ? ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS
-        : ui_strings.S_INFO_RELOAD_FOR_SCRIPT,
-        'class', 'info-text'];
-    }
+      runtime =
+      {
+        runtime_id: r_t[RUNTIME_ID],
+        html_frame_path: r_t[HTML_FRAME_PATH],
+        window_id: r_t[WINDOW_ID] || __selected_window,
+        object_id: r_t[OBJECT_ID],
+        uri: r_t[URI],
+        description: r_t[DESCRIPTION],
+      };
+
+      script =
+      {
+        runtime_id: message[RUNTIME_ID],
+        script_id: message[SCRIPT_ID],
+        script_type: message[SCRIPT_TYPE],
+        script_data: message[SCRIPT_DATA],
+        uri: message[URI]
+      };
     */
 
+    var 
+    rts = [],
+    rt_map = {},
+    rt = null, 
+    rt_obj = null,
+    i = 0,
+    display_uri = null,
+    rt_id = 0,
+    scripts = null,
+    script = null,
+    j = 0,
+    browser_js = null,
+    user_js_s = null;
+    
+    for ( ; rt = runtimes[i]; i++)
+    {
+      rt_id = rt.runtime_id;
+      switch (rt.description)
+      {
+        case "extensionjs":
+        {
+          var owner_rt = rt_map[rt.uri];
+          if (owner_rt)
+          {
+            rt_obj =
+            {
+              type: "extension",
+              id: rt_id,
+              uri: rt.uri,
+              title: "Extension Runtime " + rt.runtime_id,
+            };
+            if (get_scripts)
+              rt_obj.scripts = window.runtimes.getScripts(rt_id);
+            owner_rt.extensions.push(rt_obj);
+            runtimes.splice(i, 1);
+            i--;
+          }
+          else
+            opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+                            'extension rt without owner rt in templates.script_dropdown')
+          break
+        }
+        
+        default:
+        {
+          display_uri = helpers.shortenURI(rt.uri);
+          rt_obj = 
+          {
+            type: "document",
+            id: rt_id,
+            uri: rt.uri,
+            title: rt.title || display_uri.uri,
+            title_attr: display_uri.title,
+            selected: rt.selected,
+            extensions: [],
+          };
+          if (get_scripts)
+          {
+            scripts = window.runtimes.getScripts(rt_id);
+            browser_js = null;
+            user_js_s = [];
+            for (j = scripts.length - 1; script = scripts[j]; j--)
+            {
+              switch (script.script_type)
+              {
+                case "Browser JS":
+                  browser_js = scripts.splice(j, 1)[0];
+                  break;
+
+                case "User JS":
+                  user_js_s.push(scripts.splice(j, 1)[0]); 
+                  break;
+              }
+            }
+            rt_obj.scripts = scripts;
+            rt_obj.browser_js = browser_js;
+            rt_obj.user_js_s = user_js_s;
+          }
+          rt_map[rt.uri] = rt_obj;
+          rts.push(rt_obj);
+        }
+      }
+    }
+    return rts;
+  }
+
+  this.script_dropdown = function(runtimes, stopped_script_id, selected_script_id)
+  {
+    var context = new this._ScriptsContext(stopped_script_id, selected_script_id);
+    return context._group_runtimes(runtimes, true).map(context.runtime_script, context);
+  }
+
+  this._ScriptsContext = function(stopped_script_id, selected_script_id)
+  {
+    this.stopped_script_id = stopped_script_id;
+    this.selected_script_id = selected_script_id;
+  }
+
+  this._ScriptsContext.prototype = this;
+
+  this.runtime_script = function(runtime)
+  {
+    var 
+    ret = [], 
+    script_list = null,
+    title = runtime.type == "extension" ?
+            ['cst-title', runtime.title] :
+            ['h2', runtime.title];
+    
+    if (runtime.selected)
+      title.push('class', 'selected-runtime');
+    if (runtime.title_attr)
+      title.push('title', runtime.title_attr);
+    ret.push(title);
+    script_list = runtime.scripts.map(this.script_option, this);
+    if (runtime.type == "extension")
+      ret.push(['cst-group', script_list]);
+    else
+    {
+      ret.push.apply(ret, script_list);
+      if (runtime.browser_js)
+        ret.push(['cst-title', 'Browser JS'], 
+                 this.script_option(runtime.browser_js));
+      if (runtime.user_js_s)
+      {
+        ret.push(['cst-title', 'User JS']);
+        ret.push.apply(ret, runtime.user_js_s.map(this.script_option, this));
+      }
+      if (runtime.extensions && runtime.extensions.length)
+      {
+        ret.push.apply(ret, runtime.extensions.map(this.runtime_script, this));
+      }
+    }
     return ret;
   }
 
-  this.scriptOption = function(script, selected_script_id, stopped_script_id)
+  // script types in the protocol:
+  // "inline", "event", "linked", "timeout",
+  // "java", "generated", "unknown"
+  // "Greasemonkey JS", "Browser JS", "User JS", "Extension JS"
+  this._script_type_map =
   {
-    var
-    display_uri = helpers.shortenURI(script.uri),
-    /* script types in the protocol:
-       "inline" | "event" | "linked" | "timeout" | "java" | "generated" | "unknown" */
-    type_dict =
-    {
-      "inline": ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_INLINE,
-      "linked": ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_LINKED,
-      "unknown": ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_UNKNOWN
-    },
-    script_type = script.script_type,
-    ret = [
+    "inline": ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_INLINE,
+    "linked": ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_LINKED,
+    "unknown": ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_UNKNOWN
+  };
+
+  this.script_option = function(script)
+  {
+    var display_uri = helpers.shortenURI(script.uri);
+    var script_type = script.script_type;
+    var ret = 
+    [
       'cst-option',
-      ( type_dict[script_type] || script_type ) + ' - ' +
+      (this._script_type_map[script_type] || script_type) + ' - ' +
       (
-        display_uri.uri
-        ? display_uri.uri
-        : ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script.script_id
+        display_uri.uri ? 
+        display_uri.uri : 
+        ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script.script_id
       ),
       'script-id', script.script_id.toString()
-    ],
-    class_name = script.script_id == selected_script_id && 'selected' || '';
-
-    if(stopped_script_id == script.script_id)
-    {
+    ];
+    var class_name = script.script_id == this.selected_script_id ? 
+                     'selected' : '';
+    if (this.stopped_script_id == script.script_id)
       class_name += ( class_name && ' ' || '' ) + 'stopped';
-    }
-
-    if( display_uri.title )
-    {
-      ret.splice(ret.length, 0, 'title', display_uri.title);
-    }
-
-    if( class_name )
-    {
-      ret.splice(ret.length, 0, 'class', class_name);
-    }
-    /*
-    if( script.stop_ats.length )
-    {
-      ret.splice(ret.length, 0, 'style', 'background-position: 0 0');
-    }
-    */
+    if (display_uri.title)
+      ret.push('title', display_uri.title);
+    if (class_name)
+      ret.push('class', class_name);
     return ret;
   }
 
@@ -374,7 +502,7 @@ MODE ::= "<mode>"
 
     if( cat.handler )
     {
-      ret.splice(ret.length, 0, 'handler', cat.handler);
+      ret.splice(ret.length, 0, 'edit-handler', cat.handler);
     }
 
     return ret;

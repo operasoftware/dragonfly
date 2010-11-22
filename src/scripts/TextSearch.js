@@ -4,28 +4,28 @@
  * the target text.
  * @see VirtualTextSearch
  * @see ListTextSearch
- * @constructor 
+ * @constructor
  */
 var TextSearch = function()
 {
-  const 
+  const
   DEFAULT_STYLE = "background-color:#ff0; color:#000;",
   HIGHLIGHT_STYLE = "background-color:#0f0; color:#000;",
   DEFAULT_SCROLL_MARGIN = 50,
   SEARCH_DELAY = 50, // in ms
-  MIN_TERM_LENGTH = 3; // search term must be this long or longer
+  MIN_TERM_LENGTH = 2; // search term must be this long or longer
 
-  var 
-  self = this, 
+  var
+  self = this,
   search_term = '',
-  input_search_term = '', 
+  input_search_term = '',
   // collection of span elements. This is so because a hit may cross an
   // element border, so multiple elements needed for highlight.
-  search_results = [], 
+  search_results = [],
   cursor = -1,
   container = null,
   __input = null,
-  timeouts = new Timeouts(), 
+  timeouts = new Timeouts(),
 
   /**
    * Apply default styles to a span.
@@ -72,9 +72,19 @@ var TextSearch = function()
           {
             if(to_consume_hit_length)
             {
-              if( node.nodeValue.length >= to_consume_hit_length )
+              if (node.nodeValue.length >= to_consume_hit_length)
               {
                 node.splitText(to_consume_hit_length);
+              }
+              // if the search token does not fit in the current node value and 
+              // the current node is not part of some simple text formatting
+              // sequence disregard that match
+              else if (!(node.nextSibling || node.parentNode.nextSibling))
+              {
+                to_consume_hit_length = 0;
+                consumed_total_length += node.nodeValue.length;
+                search_results.pop();
+                return;
               }
               to_consume_hit_length -= node.nodeValue.length;
               search_result[search_result.length] = span = document.createElement('span');
@@ -86,7 +96,7 @@ var TextSearch = function()
             }
             else
             {
-              if( match - consumed_total_length < node.nodeValue.length )
+              if (match - consumed_total_length < node.nodeValue.length)
               {
                 node.splitText(match - consumed_total_length);
                 if( ( match = text_content.indexOf(search_term, last_match) ) != -1 )
@@ -104,7 +114,7 @@ var TextSearch = function()
       }
     };
     consume_node(container);
-  }
+  };
 
   this.search = function(new_search_term, old_cursor)
   {
@@ -145,13 +155,13 @@ var TextSearch = function()
         }
       }
     }
-  }
+  };
 
   this.searchDelayed = function(new_search_term)
   {
     timeouts.set(this.search, SEARCH_DELAY, ( input_search_term = new_search_term).toLowerCase());
   }
-  
+
   this.update = function()
   {
     var new_search_term = search_term;
@@ -167,39 +177,83 @@ var TextSearch = function()
    * "cursor" instance variable. If check_position is true the highlight will
    * only be applied to what is visible withing the viewport.
    */
-  this.highlight = function(check_position)
+  this.highlight = function(check_position, direction)
   {
-    if(search_results.length)
+    if (search_results.length)
     {
-      if( cursor >= 0 ) // if we have a currently highlighted hit..
+      if (cursor >= 0) // if we have a currently highlighted hit..
       {
         // then reset its style to the default
         search_results[cursor].forEach(span_set_default_style);
       }
 
-      if( check_position )
+      if (check_position)
       {
         cursor = 0;
-        while( search_results[cursor] && this.getRealOffsetTop(search_results[cursor][0]) < 0  )
+        while (search_results[cursor] &&
+               this.getRealOffsetTop(search_results[cursor][0]) < 0)
         {
           cursor++;
         }
       }
       else
       {
-        cursor++;
+        cursor += direction;
       }
-      if( cursor > search_results.length - 1)
+      if (cursor > search_results.length - 1)
       {
         cursor = 0;
       }
-      search_results[cursor].forEach(span_set_highlight_style);
-      
-      if( !check_position || this.getRealOffsetTop(search_results[cursor][0]) > DEFAULT_SCROLL_MARGIN )
+      else if (cursor < 0)
       {
-        container.scrollTop += this.getRealOffsetTop(search_results[cursor][0]) - DEFAULT_SCROLL_MARGIN;
+        cursor = search_results.length - 1;
       }
+      search_results[cursor].forEach(span_set_highlight_style);
+      var target = search_results[cursor][0];
+      this._scroll_into_margined_view(container.offsetHeight,
+                                     target.offsetHeight,
+                                     this.getRealOffsetTop(target),
+                                     DEFAULT_SCROLL_MARGIN,
+                                     direction,
+                                     'scrollTop');
+      this._scroll_into_margined_view(container.offsetWidth,
+                                     target.offsetWidth,
+                                     this.getRealOffsetLeft(target),
+                                     DEFAULT_SCROLL_MARGIN,
+                                     direction,
+                                     'scrollLeft');
     }
+  }
+
+  this._scroll_into_margined_view = function(container_dim,
+                                             target_dim,
+                                             offset_dim,
+                                             scroll_margin,
+                                             direction,
+                                             scroll_dim)
+  {
+    if (container_dim < 2 * scroll_margin + target_dim)
+      scroll_margin = (container_dim - target_dim) / 2;
+    if (offset_dim < scroll_margin ||
+        container_dim - scroll_margin - target_dim < offset_dim)
+    {
+      if (direction == 1)
+        container[scroll_dim] += offset_dim - scroll_margin;
+      else
+        container[scroll_dim] += offset_dim - (container_dim -
+                                               scroll_margin -
+                                               target_dim);
+    }
+  }
+
+  this.highlight_next = function()
+  {
+    this.highlight(null, 1);
+  }
+
+  this.highlight_previous = function()
+  {
+    this.highlight(null, -1);
   }
 
   /**
@@ -208,6 +262,11 @@ var TextSearch = function()
   this.getRealOffsetTop = function(ele)
   {
     return ele.getBoundingClientRect().top - container.getBoundingClientRect().top;
+  }
+
+  this.getRealOffsetLeft = function(ele)
+  {
+    return ele.getBoundingClientRect().left - container.getBoundingClientRect().left;
   }
 
   this.revalidateSearch = function()
@@ -250,5 +309,4 @@ var TextSearch = function()
     cursor = -1;
     __input = container = null;
   }
-  
 };

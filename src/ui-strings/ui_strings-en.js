@@ -136,6 +136,8 @@ ui_strings.M_VIEW_LABEL_STORED_COLORS = 'Stored Colors';
 ui_strings.M_VIEW_LABEL_COLOR_MAGNIFIER_AND_PICKER = 'Pixel Magnifier and Color Picker';
 /* DESC: Label of the section for selecting a color in color picker */
 ui_strings.M_VIEW_LABEL_COLOR_SELECT = 'Color Select';
+/* DESC: view to set and remove event breakpoints */
+ui_strings.M_VIEW_LABEL_EVENT_BREAKPOINTS = 'Event Breakpoints';
 
 
 
@@ -242,6 +244,10 @@ ui_strings.S_SWITCH_LOCK_SELECTED_ELEMENTS = "Draw a border on to selected eleme
 ui_strings.S_SWITCH_CLEAR_REQUESTS_ON_NEW_CONTEXT = "Clear request log when loading a new site";
 /* DESC: When enabled, the request log always scroll to the bottom on new requests */
 ui_strings.S_SWITCH_AUTO_SCROLL_REQUEST_LIST = "Auto scroll request log";
+/* DESC:  When enabled, list alike objects will be unpacked in the command line */
+ui_strings.S_SWITCH_UNPACK_LIST_ALIKES = "Unpack list alikes in the command line";
+/* DESC:  When enabled, objects of type element in the command line will be displayed in the DOM view */
+ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE = "Show objects of type Element in the DOM view";
 
 
 /*
@@ -319,6 +325,18 @@ ui_strings.S_BUTTON_TOGGLE_CONSOLE = "Toggle console";
 ui_strings.S_BUTTON_TOGGLE_SETTINGS = "Settings";
 /* DESC: Global remote debug toggle */
 ui_strings.S_BUTTON_TOGGLE_REMOTE_DEBUG = "Remote debug configuration";
+/* DESC: Expand all sections in the event breakpoints view */
+ui_strings.S_BUTTON_EXPAND_ALL_SECTIONS = "Expand all sections";
+/* DESC: Remove all event breakpoints */
+ui_strings.S_BUTTON_REMOVE_ALL_BREAKPOINTS = "Remove all event breakpoints";
+/* DESC: Search for an event in the event breakpoints view */
+ui_strings.S_BUTTON_SEARCH_EVENT = "Search for an event";
+/* DESC: Search for a keyboard shortcut in the keyboard configuration view */
+ui_strings.S_BUTTON_SEARCH_SHORTCUT = "Search keyboard shortcut";
+/* DESC: Reset all keyboard shortcuts to the default values. */
+ui_strings.S_BUTTON_RESET_ALL_TO_DEFAULTS = "Reset all to defaults";
+/* DESC: Reset the keyboard shortcuts of a specific section to the default values. */
+ui_strings.S_BUTTON_RESET_TO_DEFAULTS = "Reset to defaults";
 
 
 /*
@@ -432,6 +450,29 @@ ui_strings.S_LABEL_UTIL_AREA = 'Area';
 ui_strings.S_LABEL_UTIL_SCALE = 'Scale';
 /* DESC: A setting to define which prototypes of inspected js objects should be collapsed by default. */
 ui_strings.S_LABEL_COLLAPSED_INSPECTED_PROTOTYPES ="Default collapsed prototype objects (a list of prototypes, e.g. Object, Array, etc. * will collapse all): ";
+/* DESC: In the command line, choose the size of the typed history */
+ui_strings.S_LABEL_REPL_BACKLOG_LENGTH = 'Number of lines of history to remember';
+/* DESC: Label of a section in the keyboard configuration for a specific view */
+ui_strings.S_LABEL_KEYBOARDCONFIG_FOR_VIEW = 'Keyboard shortcuts %s';
+/* DESC: Label of a subsection in the keyboard configuration */
+ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_DEFAULT = 'Default';
+/* DESC: Label of a subsection in the keyboard configuration */
+ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_EDIT = 'Edit';
+/* DESC: Label of a subsection in the keyboard configuration */
+ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_EDIT_ATTR_AND_TEXT = "Edit Attributes and Text";
+/* DESC: Label of a subsection in the keyboard configuration */
+ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_EDIT_MARKUP = "Edit markup";
+/* DESC: Label of an invalid keyboard shortcut */
+ui_strings.S_LABEL_KEYBOARDCONFIG_INVALID_SHORTCUT = 'Invalid keyboard shortcut';
+/* DESC: Label of a subsection in the keyboard configuration */
+ui_strings.S_LABEL_REPL_MODE_DEFAULT = 'Default';
+/* DESC: Label of a subsection in the keyboard configuration */
+ui_strings.S_LABEL_REPL_MODE_SINGLELINE = 'Single-line edit';
+/* DESC: Label of a subsection in the keyboard configuration */
+ui_strings.S_LABEL_REPL_MODE_MULTILINE = 'Multi-line edit';
+/* DESC: Label of a subsection in the keyboard configuration */
+ui_strings.S_LABEL_REPL_MODE_AUTOCOMPLETE = 'Autocomplete';
+
 
 /*
  * Information strings in the UI
@@ -529,4 +570,12 @@ ui_strings.DRAGONFLY_INFO_MESSAGE = "Opera Dragonfly info message:\n";
 ui_strings.S_HTTP_REQUEST_IN_PROGRESS = "Request in progress";
 /* DESC: The string "None" used wherever there's an abscense of something */
 ui_strings.S_NONE = "None";
+
+/* DESC: Printed in the command line view when it is shown for the first time. */
+ui_strings.S_REPL_WELCOME_TEXT = "Use the clear() command to clear the console.\nType \"// help()\" for more information";
+
+/* DESC: Description of the "help" command in the repl */
+ui_strings.S_REPL_HELP_COMMAND_DESC = "Show a list of all available commands";
+/* DESC: Description of the "jquery" command in the repl */
+ui_strings.S_REPL_JQUERY_COMMAND_DESC = "Load jquery in the active tab";
 

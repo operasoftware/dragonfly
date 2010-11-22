@@ -578,7 +578,12 @@ suggest_values['float'] =
 
 suggest_values['font-family'] =
 [
-  'inherit'
+  'inherit',
+  'serif',
+  'sans-serif',
+  'cursive',
+  'fantasy',
+  'monospace'
 ];
 
 suggest_values['font-size'] =

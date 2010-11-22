@@ -30,7 +30,7 @@ cls.JsSourceView = function(id, name, container_class)
       id: 'test-line-height',
       property: 'lineHeight',
       target: 'line-height',
-      getValue: function(){return parseInt(document.getElementById(this.id).currentStyle[this.property])}
+      getValue: function(){return parseInt(window.getComputedStyle(document.getElementById(this.id), null).getPropertyValue(this.property))}
     },
     {
       id: 'test-scrollbar-width',
@@ -818,7 +818,9 @@ cls.ScriptSelect = function(id, class_name)
         opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'no runtime selected')
         return;
       }
-      return templates.runtimes(_runtimes, 'script', [stopped_script_id, runtimes.getSelectedScript()]);
+      return templates.script_dropdown(_runtimes, 
+                                 stopped_script_id, 
+                                 runtimes.getSelectedScript());
     }
   }
 
@@ -877,39 +879,50 @@ cls.ScriptSelect.prototype = new CstSelect();
 
 cls.JsSourceView.create_ui_widgets = function()
 {
+  var major_ecma_service_version = parseInt(window.services['ecmascript-debugger'].version.split('.')[0]);
+  var toolbar_buttons = 
+  [
+    {
+      handler: 'continue',
+      title: ui_strings.S_BUTTON_LABEL_CONTINUE,
+      id: 'continue-run',
+      disabled: true
+    },
+    {
+      handler: 'continue',
+      title: ui_strings.S_BUTTON_LABEL_STEP_INTO,
+      id: 'continue-step-into-call',
+      disabled: true
+    },
+    {
+      handler: 'continue',
+      title: ui_strings.S_BUTTON_LABEL_STEP_OVER,
+      id: 'continue-step-next-line',
+      disabled: true
+    },
+    {
+      handler: 'continue',
+      title: ui_strings.S_BUTTON_LABEL_STEP_OUT,
+      id: 'continue-step-out-of-call',
+      disabled: true
+    }
+  ];
+
+  if (major_ecma_service_version > 5)
+    toolbar_buttons.push(
+    {
+      handler: 'show-event-breakpoint-view',
+      title: "Show event breakpoints",
+    });
 
   new ToolbarConfig
   (
     'js_source',
-    [
-      {
-        handler: 'continue',
-        title: ui_strings.S_BUTTON_LABEL_CONTINUE,
-        id: 'continue-run',
-        disabled: true
-      },
-      {
-        handler: 'continue',
-        title: ui_strings.S_BUTTON_LABEL_STEP_INTO,
-        id: 'continue-step-into-call',
-        disabled: true
-      },
-      {
-        handler: 'continue',
-        title: ui_strings.S_BUTTON_LABEL_STEP_OVER,
-        id: 'continue-step-next-line',
-        disabled: true
-      },
-      {
-        handler: 'continue',
-        title: ui_strings.S_BUTTON_LABEL_STEP_OUT,
-        id: 'continue-step-out-of-call',
-        disabled: true
-      }
-    ],
+    toolbar_buttons,
     [
       {
         handler: 'js-source-text-search',
+        shortcuts: 'js-source-text-search',
         title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH,
         label: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
       }
@@ -925,8 +938,6 @@ cls.JsSourceView.create_ui_widgets = function()
       }
     ]
   );
-
-
 
   new Settings
   (
@@ -1036,30 +1047,20 @@ cls.JsSourceView.create_ui_widgets = function()
     }
   }
 
-
-
   messages.addListener('view-created', onViewCreated);
   messages.addListener('view-destroyed', onViewDestroyed);
   messages.addListener('script-selected', onScriptSelected);
   messages.addListener('view-scrolled', onViewScrolled);
-
-
-
 
   eventHandlers.input['js-source-text-search'] = function(event, target)
   {
     textSearch.search_delayed(target.value);
   }
 
-  eventHandlers.keypress['js-source-text-search'] = function(event, target)
-  {
-    if (event.keyCode == 13)
-    {
-      textSearch[event.shiftKey && 'highligh_previous' || 'highligh_next']();
-    }
-  }
-
-
+  ActionBroker.get_instance().get_global_handler().
+  register_shortcut_listener('js-source-text-search', 
+                             cls.Helpers.shortcut_search_cb.bind(textSearch),
+                             ['highlight-next-match', 'highlight-previous-match']);
 
   eventHandlers.change['set-tab-size'] = function(event, target)
   {
@@ -1072,6 +1073,18 @@ cls.JsSourceView.create_ui_widgets = function()
       style.setProperty('-o-tab-size', tab_size, 0);
       settings.js_source.set('tab-size', tab_size);
     }
+  }
+
+  eventHandlers.click['show-event-breakpoint-view'] = function(event, target)
+  {
+    var view = window.views['event-breakpoints'];
+    UIWindowBase.showWindow(view.id,
+                            view.window_top,
+                            view.window_left,
+                            view.window_width,
+                            window.innerHeight >= view.window_height + 80 ? 
+                            view.window_height :
+                            window.innerHeight - 80);
   }
 
 };

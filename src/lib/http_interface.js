@@ -31,6 +31,7 @@ cls.ScopeHTTPInterface = function(force_stp_0)
   var _event_map = null;
   var _status_map = null;
   var _type_map = null;
+  var _socket = null;
 
   var _get_maps = function()
   {
@@ -57,26 +58,21 @@ cls.ScopeHTTPInterface = function(force_stp_0)
       var status = parseInt(xhr.getResponseHeader("X-Scope-Message-Status"));
       var tag = parseInt(xhr.getResponseHeader("X-Scope-Message-Tag"));
       var message = eval(xhr.responseText);
-      try
-      {
-        _receive_callback(service, message, command, status, tag);
-      }
-      catch(e)
-      {
-        opera.postError(
-          'failed to handle message\n' +
-          '  service: ' + service + '\n' +
-          '  command: ' + command + '\n' +
-          '  message: ' + JSON.stringify(message) + '\n' +
-          '  ------------------------------------\n' +
-          '  error message: ' + e.message + '\n' +
-          '  ------------------------------------\n' +
-          '  error stacktrace: \n' + e.stacktrace + '\n' +
-          '  ------------------------------------\n'
-          )
-      }
+      _receive_callback(service, message, command, status, tag);
     }
     _proxy.GET( "/get-message?time=" + new Date().getTime(), _receive_dragonkeeper);
+  }
+  
+  var _receive_dragonkeeper_STP_1_websocket = function(message)
+  {
+    // message format: "[" SERVICE "," COMMAND_ID "," STATUS "," TAG "," PAYLOAD "]"
+    const SERVICE = 0, COMMAND_ID = 1, STATUS = 2, TAG = 3, PAYLOAD = 4;
+    message = JSON.parse(message.data);
+    _receive_callback(message[SERVICE], 
+                      message[PAYLOAD], 
+                      message[COMMAND_ID], 
+                      message[STATUS], 
+                      message[TAG]);
   }
 
   var _scopeTransmit_STP_0 = function(service, message, command_id, tag)
@@ -99,6 +95,15 @@ cls.ScopeHTTPInterface = function(force_stp_0)
     _proxy.POST("/post-command/" + service + "/" + command_id + "/" + tag, 
                     JSON.stringify(message));
   }
+    
+  var _scopeTransmit_STP_1_websocket = function(service, message, command_id, tag)
+  {
+    /** 
+      * message format: "[" SERVICE "," COMMAND_ID "," STATUS "," TAG "," PAYLOAD "]"
+      * format 1 is JSON structures (UMS) , encoding UTF-8
+      */
+    _socket.send(JSON.stringify([service, command_id, 0, tag, message]));
+  }
 
   var _receive_dragonkeeper = null;
 
@@ -111,12 +116,15 @@ cls.ScopeHTTPInterface = function(force_stp_0)
       {
         _receive_dragonkeeper = _receive_dragonkeeper_STP_0;
         self.scopeTransmit = _scopeTransmit_STP_0;
+        _finalize_on_stp_version();
         break;
       }
       case "STP/1":
       {
-        _receive_dragonkeeper = _receive_dragonkeeper_STP_1;
-        self.scopeTransmit = _scopeTransmit_STP_1;
+        if (window.WebSocket)
+          _setup_stp_1_web_socket();
+        else
+          _setup_stp_1_xhr_post_get();
         break;
       }
       default:
@@ -124,12 +132,37 @@ cls.ScopeHTTPInterface = function(force_stp_0)
         opera.postError("not able to handle STP version" + self.stpVersion + " in _on_stp_version");
       }
     }
-    _connect_callback(_proxy.services.join(','));
-    _proxy.GET( "/get-message?time=" + new Date().getTime(), _receive_dragonkeeper);
-    if(window.ini.debug)
+  }
+  
+  var _setup_stp_1_xhr_post_get = function()
+  {
+    _receive_dragonkeeper = _receive_dragonkeeper_STP_1;
+    self.scopeTransmit = _scopeTransmit_STP_1;
+    _finalize_on_stp_version();
+  }
+
+  var _setup_stp_1_web_socket = function()
+  {
+    _socket = new WebSocket("ws://" + window.location.host + "/stp-1-channel");
+    _socket.onopen = function()
     {
-      cls.debug.wrap_transmit();
+      this.onmessage = _receive_dragonkeeper_STP_1_websocket;
+      self.scopeTransmit = _scopeTransmit_STP_1_websocket;
+      _finalize_on_stp_version(true);
     }
+    _socket.onclose = function()
+    {
+      _setup_stp_1_xhr_post_get();
+    }
+  }
+  
+  var _finalize_on_stp_version = function(has_web_socket)
+  {
+    _connect_callback(_proxy.services.join(','));
+    if (!has_web_socket)
+      _proxy.GET( "/get-message?time=" + new Date().getTime(), _receive_dragonkeeper);
+    if(window.ini.debug)
+      cls.debug.wrap_transmit();
   }
 
   var _proxy_onsetup = function(xhr)

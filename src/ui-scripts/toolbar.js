@@ -12,13 +12,15 @@ var ToolbarBase = function()
   this.bottom_border = 1;
   this.offsetHeight = 0;
 
-  this.getCssText = function()
+  this._super_update_style = this.update_style;
+
+  this.update_style = function(style)
   {
-    return 'left:' + this.left + 'px;' +
-      'top:' + this.top + 'px;' +
-      'height:' + this.height + 'px;' +
-      'width:' + this.width + 'px;'+
-      'display:' + ( this.height ? 'block' : 'none' );
+    this._super_update_style(style);
+    if (this.height && style.display != "block")
+      style.display = "block";
+    if (!this.height && style.display != "none")
+      style.display = "none";
   }
 
   this.attributes =

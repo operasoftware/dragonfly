@@ -14,7 +14,7 @@ var EventHandler = function(type, is_capturing, handler_key)
     return;
   }
 
-  window.eventHandlers[type] = {};
+  window.eventHandlers[type] = {broker: ActionBroker.get_instance()};
 
   var handler = function(event)
   {

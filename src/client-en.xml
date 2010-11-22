@@ -125,11 +125,13 @@ window.load_screen_timeout = window.setTimeout(function()
 <link rel="stylesheet" href="./console-logger/consolelogger_style.css"/>
 <link rel="stylesheet" href="./ui-style/colorpickerstyle.css"/>
 <link rel="stylesheet" href="./repl/repl_style.css"/>
+<link rel="stylesheet" href="./shortcutconfig/style.css"/>
+
 
 <!-- This will turn off including of the UI strings if the exclude_uistrings var is set -->
 <!-- command concat_js off if exclude_uistrings -->
 <script src="./ui-strings/ui_strings-en.js"/>
-
+<script src="./scripts/ini.js"/>
 
 <!-- restart normal concatenation -->
 <!-- command concat_js "./script/dragonfly.js" -->
@@ -166,7 +168,9 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./lib/message_maps.js"/>
 <script src="./lib/test_framework.js"/>
 
-
+<script src="./ui-scripts/actions/actionbroker.js"/>
+<script src="./ui-scripts/actions/keyidentifier.js"/>
+<script src="./ui-scripts/actions/globalactionhandler.js"/>
 <script src="./ui-scripts/defaults.js"/>
 <script src="./ui-scripts/window.js"/>
 <script src="./ui-scripts/cells.js"/>
@@ -196,7 +200,6 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/animator.js"/>
 <script src="./ui-scripts/Switches.js"/>
 <script src="./ui-scripts/Editor.js"/>
-<script src="./ui-scripts/keyboard_handler.js"/>
 <script src="./ui-scripts/cst-select.js"/>
 <script src="./ui-scripts/toolbarcstselect.js"/>
 <script src="./ui-scripts/ui_framework.js"/>
@@ -204,7 +207,6 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/colorpicker.js"/>
 <script src="./ui-scripts/slider.js"/>
 <script src="./ui-scripts/contextmenu.js"/>
-
 
 
 <script src="./build-application/build_application.js"></script>
@@ -221,13 +223,17 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./debug/test_messages.js"/>
 <script src="./debug/build_debug.js"/>
 
+<script src="./shortcutconfig/shortcutconfig.js"/>
+<script src="./shortcutconfig/templates.js"/>
+
+
 
 
 
 
 
 <script src="./ecma-debugger/ListTextSearch.js"/>
-<script src="./scripts/ini.js"/>
+
 
 <script src="./ecma-debugger/helpers.js"/>
 <script src="./ecma-debugger/tabs.js"/>
@@ -279,6 +285,10 @@ window.load_screen_timeout = window.setTimeout(function()
 
 <script src="./ecma-debugger/hostspotlighter.js"/>
 
+<script src="./ecma-debugger/eventbreakpoints/data.js"/>
+<script src="./ecma-debugger/eventbreakpoints/view.js"/>
+<script src="./ecma-debugger/eventbreakpoints/templates.js"/>
+
 <script src="./style/css_initial_values.js"/>
 <script src="./style/css_inheritable_properties.js"/>
 <script src="./style/css_suggest_values.js"/>
@@ -317,10 +327,12 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./repl/commandtransformer.js"/>
 <script src="./repl/propertyfinder.js"/>
 <script src="./repl/inspectableobjectview.js"/>
+<script src="./repl/buffermanager.js"/>
 <script src="./repl/repl_service.js"/>
 <script src="./repl/repl_view.js"/>
 <script src="./repl/repl_data.js"/>
 <script src="./repl/repl_templates.js"/>
 <script src="./repl/ecmascriptdebugger.6.0.events.onconsoletrace.js"/>
+<script src="./repl/scope.1.0.responses.hostinfo.js"/>
 <body/>
 </viewport>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dragonfly - Command Processor</title>
+    <link rel="stylesheet" href="qunit/qunit.css" media="screen">
+    <script src="qunit/qunit.js"></script>
+    <script src="../src/repl/buffermanager.js"></script>
+
+
+<script>
+
+window.onload = function()
+{
+  window.testarea = document.getElementById("testarea");
+}
+
+test("set/get/clear", function() {
+  var man = new cls.BufferManager(window.testarea);
+  equals(man.get_value(), "");
+  man.set_value("hello");
+  equals(man.get_value(), "hello");
+  equals(man.get_value(3), "lo");
+  equals(man.get_value(1,3), "el");
+  man.clear();
+  equals(man.get_value(), "");
+})
+
+test("cursor positioning", function() {
+  var man = new cls.BufferManager(window.testarea);
+  man.set_value("hello world");
+  equals(man.get_cursor(), 11);
+  man.put_cursor(9999);
+  equals(man.get_cursor(), 11);
+  man.put_cursor(3);
+  equals(man.get_cursor(), 3);
+
+  man.set_value("test", 2);
+  equals(man.get_cursor(), 2);
+})
+
+
+test("kill word backwards", function() {
+  var man = new cls.BufferManager(window.testarea);
+  man.set_value("hello world(foo*bar[baz]asdf {123} bbb", 9999);
+
+equals(man.get_cursor(), 38);
+  man.kill_word_backwards();
+  equals(man.get_value(), "hello world(foo*bar[baz]asdf {123}");
+  equals(man.get_cursor(), 34);
+
+  man.kill_word_backwards();
+  equals(man.get_value(), "hello world(foo*bar[baz]asdf {123");
+  equals(man.get_cursor(), 33);
+
+  man.kill_word_backwards();
+  equals(man.get_value(), "hello world(foo*bar[baz]asdf {");
+  equals(man.get_cursor(), 30);
+
+
+  man.kill_word_backwards();
+  equals(man.get_value(), "hello world(foo*bar[baz]asdf");
+  equals(man.get_cursor(), 28);
+
+  man.kill_word_backwards();
+  equals(man.get_value(), "hello world(foo*bar[baz]");
+  equals(man.get_cursor(), 24);
+
+  man.kill_word_backwards();
+  equals(man.get_value(), "hello world(foo*bar[baz");
+  equals(man.get_cursor(), 23);
+
+  man.kill_word_backwards();
+  equals(man.get_value(), "hello world(foo*bar[");
+  equals(man.get_cursor(), 20);
+
+  man.kill_word_backwards();
+  equals(man.get_value(), "hello world(foo*bar");
+  equals(man.get_cursor(), 19);
+
+  man.kill_word_backwards();
+  equals(man.get_value(), "hello world(foo*");
+  equals(man.get_cursor(), 16);
+
+  man.kill_word_backwards();
+  equals(man.get_value(), "hello world(foo");
+  equals(man.get_cursor(), 15);
+
+  man.kill_word_backwards();
+  equals(man.get_value(), "hello world(");
+  equals(man.get_cursor(), 12);
+
+  man.kill_word_backwards();
+  equals(man.get_value(), "hello world");
+  equals(man.get_cursor(), 11);
+
+  man.kill_word_backwards();
+  equals(man.get_value(), "hello");
+  equals(man.get_cursor(), 6);
+})
+
+
+</script>
+
+</head>
+<body>
+    <h1 id="qunit-header">Dragonfly - Buffer manager</h1>
+    <h2 id="qunit-banner"></h2>
+    <div id="qunit-testrunner-toolbar"></div>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
+    <textarea id="testarea" style="vsisibility: hidden"></textarea>
+</body>
+</html>

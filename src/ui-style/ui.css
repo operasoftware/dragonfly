@@ -10,11 +10,7 @@
 
 main-view { /**/
   width: 100%;
-  height: 100%;
   display: block;
-  position: fixed;
-  z-index: 1;
-  overflow: hidden;
   }
 
 windows-container, 
@@ -396,7 +392,7 @@ toolbar-filters {
   float: right;
   }
 
-toolbar-filters filter {
+filter {
   display: inline-block;
   padding-left: 20px;
   height: 19px;
@@ -414,7 +410,7 @@ toolbar-filters span {
   vertical-align: top;
   }
 
-toolbar-filters filter input {
+filter input {
   width: 138px;
   height: 19px;
   margin-left: -140px;
@@ -933,8 +929,11 @@ window container {
   background: transparent url('../ui-images/spin.png') scroll no-repeat 0 0;
   }
 
-
 /* editing */
+textarea
+{
+   resize: none;
+}
 
 textarea-container {
   display: block;
@@ -1073,7 +1072,8 @@ cst-select-option-list
   box-shadow: 0 1px 2px rgba(0, 0, 0, .3);
 }
 
-cst-option
+cst-option,
+cst-title
 {
   display: block;
   padding:  2px 8px;
@@ -1111,7 +1111,8 @@ cst-option:hover
     background-color: #cecece;
 }
 
-.debugger-menu cst-option
+.debugger-menu cst-option,
+.debugger-menu cst-title
 {
   padding-left: 20px;
 }
@@ -1289,15 +1290,6 @@ pin-label.pinned
   font-style: italic;
 }
 
-
-
-
-
-
-
-
-
-
 horizontal-navigation {
     height: 21px;
     line-height: 21px;
@@ -1379,9 +1371,13 @@ breadcrumbs::selection {
     cursor: move;
 }
 
-
-
-
+.window-select-gadgets,
+cst-title
+{
+  background-color: hsl(0, 0%, 40%);
+  color: #fff;
+  font-style: normal;
+}
 
 overlay {
     background: rgba(0, 0, 0, .5);
@@ -1393,6 +1389,12 @@ overlay {
     z-index: 3;
     padding: 0 30px;
 }
+
+.script-options cst-title
+{
+  margin-left: 2em;
+}
+
 overlay.active {
     display: block;
 }
@@ -1471,6 +1473,14 @@ overlay fieldset, overlay hr {
 }
 overlay hr {
     border-width: 0 0 2px;
+}
+
+cst-group
+{
+  display: block;
+  margin-left: 2em;
+  background-color: hsl(0, 0%, 90%);
+  border-left: 1px solid hsl(0, 0%, 80%);
 }
 
 /* Temporary fix for flickering */

@@ -14,21 +14,16 @@ cls.ReplData = function(view)
     this._view.update();
   };
 
+  this._entry_count = 0;
   this._add_entry = function(type, data)
   {
     var entry = {
-      time: (new Date()).getTime(),
+      time: ++this._entry_count,
       type: type,
       data: data
     };
-
     this._repllog.push(entry);
     this._view.update();
-  };
-
-  this.add_message = function(msg)
-  {
-    this._add_entry("consolelog", msg);
   };
 
   /**
@@ -46,6 +41,13 @@ cls.ReplData = function(view)
    */
   this.add_output_str = function(str) {
     this._add_entry("string", str);
+  };
+
+  this.add_message = this.add_output_str; // for now, just emit strings
+
+  this.add_output_completion = function(str)
+  {
+    this._add_entry("completion", str);
   };
 
   /**
@@ -73,9 +75,6 @@ cls.ReplData = function(view)
 
   this.add_output_valuelist = function(rt, values)
   {
-    values.forEach(function(e) {
-      e.rt_id = rt;
-    });
     this._add_entry("valuelist", values);
   };
 
@@ -91,6 +90,7 @@ cls.ReplData = function(view)
 
   this.add_output_groupstart = function(data)
   {
+    data.id = String(new Date().getTime());
     this._add_entry("groupstart", data);
   };
 
@@ -115,6 +115,22 @@ cls.ReplData = function(view)
   };
 
   /**
+   * Return the entry for the groupopen with a particular id
+   */
+  this.get_group = function(id)
+  {
+    var match = this._repllog.filter(function(e) {return e.data && e.data.id == id; });
+    if (match.length)
+    {
+      return match[0].data;
+    }
+    else
+    {
+      return null;
+    }
+  };
+
+  /**
    * Return an array of strings that have been typed into to repl.
    * Adjacent duplicates are removed, so [1,2,3,3,2] would become
    * [1,2,3,2]
@@ -126,7 +142,7 @@ cls.ReplData = function(view)
 
   this._add_typed_history = function(str)
   {
-    if (this._typed_history[0] != str)
+    if (this._typed_history[0] != str && str.trim() !== "")
     {
       this._typed_history.unshift(str);
       if (this._max_typed && this._typed_history.length > this._max_typed)

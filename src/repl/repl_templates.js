@@ -1,16 +1,18 @@
-﻿
-window.templates || (window.templates = {});
+﻿window.templates || (window.templates = {});
 
 templates.repl_main = function()
 {
   return [
     "div", [[
       ["div", [
-         "ol", "", "class", "repl-lines js-source"
+         "ol", "class", "repl-lines js-source"
          ], "class", "repl-output"],
       ["div", [[
         ["span", ">>> ", "class", "repl-prefix"],
-        ["div", ["textarea", "", "handler", "repl-textarea", "rows", "1"]]
+        ["div", ["textarea",
+                 "focus-handler", "repl-textarea",
+                 "blur-handler", "blur-textarea",
+                 "rows", "1"]]
       ]], "class", "repl-input"]
     ]], "class", "padding"
   ];
@@ -34,10 +36,12 @@ templates.repl_output_native_or_pobj = function(thing)
 
 templates.repl_output_pobj = function(data)
 {
+  var is_element_type = settings.command_line.get("is-element-type-sensitive") && 
+                        /(?:Element)$/.test(data.name)
   return [
     'code',
     data.name,
-    'handler', 'inspect-object-link',
+    'handler', is_element_type ? 'inspect-node-link' : 'inspect-object-link',
     'rt-id', data.rt_id.toString(),
     'obj-id', data.obj_id.toString(),
     'class', 'repl-pobj'
@@ -70,4 +74,11 @@ templates.repl_output_trace = function(trace)
                     ],
                     "class", "console-trace-container"];
   return tpl;
+};
+
+templates.repl_group_line = function(group)
+{
+  return [["button", "class", "folder-key"+(group.collapsed ? "" : " open" ),
+                     "handler", "repl-toggle-group", "group-id", group.id
+          ], group.name];
 };

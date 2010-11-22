@@ -526,10 +526,16 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
     if( join.call(arguments) != last_spotlight_commands )
     {
       last_spotlight_commands = join.call(arguments);
-      services['ecmascript-debugger'].requestSpotlightObjects(0,
-        [last_spotlight_command = [get_command(node_id, scroll_into_view, type || "default")].concat(
-            settings.dom.get('lock-selecked-elements') && 
-            locked_elements.map(get_locked_commands) || [])])
+      var locked_s = settings.dom.get('lock-selecked-elements') && 
+                     locked_elements.map(get_locked_commands) || null;
+      var cmd = [get_command(node_id, scroll_into_view, type || "default")];
+      last_spotlight_command = [get_command(node_id, false, type || "default")];
+      if (locked_s)
+      {
+        cmd.push.apply(cmd, locked_s);
+        last_spotlight_command.push.apply(last_spotlight_command, locked_s);
+      }
+      services['ecmascript-debugger'].requestSpotlightObjects(0, [cmd]);
     }
   }
 
