@@ -238,7 +238,8 @@ cls.ShortcutConfigView.create_ui_widgets = function()
       {
         return window.templates.shortcut_config();
       }
-    }
+    },
+    "keyboard-shortcuts"
   );
   
   window.eventHandlers.click['scc-expand-section'] = function(event, target)

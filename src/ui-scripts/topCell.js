@@ -182,7 +182,8 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar)
       new SettingsGroup("Script", "script"),
       new SettingsGroup("Network", "resource_manager"),
       new SettingsGroup("Console", "console"),
-      new SettingsGroup("About", "about")
+      new SettingsGroup("About", "about"),
+      new SettingsGroup("Keyboard shortcuts", "keyboard-shortcuts")
     ]
   );
 
