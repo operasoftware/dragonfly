@@ -376,7 +376,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._handle_backlog = function(delta)
   {
-    // fixme: set mode according to backlog entry type
     this._set_input_from_backlog(this._backlog_index + delta);
   };
 
@@ -701,9 +700,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this["_handle_action_autocomplete"] = function(evt, target)
   {
-
     this._on_invoke_completer(1);
-
     return false;
   }
 
@@ -776,16 +773,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this.handle = function(action, evt, target)
   {
     var handler = this["_handle_action_" + action];
-    //opera.postError("handle " + "_handle_action_" + action)
     if (handler)
     {
-      //opera.postError("handling action in repl:  " + action + " (" + this.mode + ")");
       return handler.call(this, evt, target);
     }
-    else
-    {
-//      opera.postError("UNHANDLED action in repl: " + action + " (" + this.mode + ")");
-    }
+    else {} // if unhandled actions, add debugging here.
   };
 
   /**
@@ -838,7 +830,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   messages.addListener('debug-context-selected', this._new_repl_context_bound);
   messages.addListener('frame-selected', this._new_repl_context_bound);
 
-
   this.init(id, name, container_class, html, default_handler);
   // Happens after base class init or else the call to .update that happens in
   // when adding stuff to data will fail.
@@ -852,7 +843,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
 };
 cls.ReplView.prototype = ViewBase;
-
 
 
 cls.ReplView.create_ui_widgets = function()
