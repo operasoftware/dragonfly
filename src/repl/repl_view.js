@@ -644,14 +644,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
   }.bind(this);
 
-  this._handle_repl_focus_bound = function()
-  {
-    if (this._current_scroll === null)
-    {
-      this._textarea.focus();
-    }
-  }.bind(this);
-
   this._new_repl_context_bound = function(msg)
   {
     // This is neccessary so you dont end up with autocomplete data
@@ -802,13 +794,18 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
    */
   this.blur = function()
   {
+      this._textarea.blur();
   }
 
   /**
-   * action blur
+   * action click
    */
   this.onclick = function()
   {
+    if (this._current_scroll === null)
+    {
+      this._textarea.focus();
+    }
   }
 
   this.get_action_list = function()
@@ -833,8 +830,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   var eh = window.eventHandlers;
   eh.click["repl-toggle-group"] = this._handle_repl_toggle_group_bound;
   eh.click["select-trace-frame"] = this._handle_repl_frame_select_bound;
-  eh.click["repl-focus"] = this._handle_repl_focus_bound;
-  eh.change['set-typed-history-length'] = this._handle_option_change_bound;
+  eh.change["set-typed-history-length"] = this._handle_option_change_bound;
   eh.focus["repl-textarea"] = this._handle_input_focus_bound;
   eh.blur["repl-textarea"] = this._handle_input_blur_bound;
   messages.addListener('active-tab', this._update_runtime_selector_bound);
