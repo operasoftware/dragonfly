@@ -392,7 +392,8 @@ cls.DOMInspectorActions = function(id)
         this.setSelected(target);
       }
     }
-    return !is_in_container;
+    // don't cancel the event
+    return true;
   }
 
   this.focus = function(event, container)
@@ -463,6 +464,14 @@ cls.DOMInspectorActions = function(id)
         /<\//.test(target.firstChild.textContent))
       while ((target = target.previousSibling) &&
               target.getAttribute('ref-id') != obj_id);
+    if (target)
+    {
+      var model = this._select_node(target);
+      /* TODO
+      if (model)
+        topCell.statusbar.updateInfo(templates.breadcrumb(model, obj_id));
+      */
+    }
   }.bind(this);
 
   this._handlers["inspect-node-link"] = function(event, target)
@@ -578,15 +587,15 @@ cls.DOMInspectorActions = function(id)
 
   this._handlers["edit-dom"] = function(event, target)
   {
-    if (!_is_script_node(target))
+    if (!_is_script_node(event.target))
     {
-      switch(target.nodeName.toLowerCase())
+      switch(event.target.nodeName.toLowerCase())
       {
         case 'span':
         {
-          if(/^(?:key|value|text|node)$/.test(target.parentElement.nodeName.toLowerCase()) )
+          if(/^(?:key|value|text|node)$/.test(event.target.parentElement.nodeName.toLowerCase()) )
           {
-            target.parentElement.releaseEvent('dblclick');
+            event.target.parentElement.releaseEvent('dblclick');
           }
           break;
         }
@@ -596,18 +605,18 @@ cls.DOMInspectorActions = function(id)
         {
           this.mode = MODE_EDIT_ATTR_TEXT;
           document.documentElement.addClass('modal');
-          self.setSelected(target.parentNode);
+          self.setSelected(event.target.parentNode);
           self.set_editor("dom-attr-text-editor");
           self.editor.edit(event, event.target);
           break;
         }
         case 'node':
         {
-          var new_target = target;
+          var new_target = event.target;
           if(/^<\//.test(new_target.textContent))
           {
-            new_target = target.getPreviousWithFilter
-              (target.parentNode.parentNode, self.makeFilterGetStartTag(target));
+            new_target = event.target.getPreviousWithFilter
+              (event.target.parentNode.parentNode, self.makeFilterGetStartTag(event.target));
             if( !new_target )
             {
               opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +

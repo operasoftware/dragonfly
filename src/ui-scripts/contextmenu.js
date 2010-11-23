@@ -41,8 +41,6 @@ var ContextMenu = function() {
    */
   this.oncontextmenu = function(event)
   {
-    this._broker.clear_setter_click_handler(this);
-
     // Hide the currently visible context menu, if any
     this.dismiss();
 
@@ -114,9 +112,10 @@ var ContextMenu = function() {
     {
       this._current_event = event;
       this.show(all_items, event.clientX, event.clientY);
-      this._broker.set_setter_click_handler(this, this._modal_click_handler);
       EventHandler.__modal_mode = true;
+      this.is_shown = true;
     }
+
   };
 
   /**
@@ -186,6 +185,7 @@ var ContextMenu = function() {
     {
       contextmenu.parentElement.removeChild(contextmenu);
     }
+    this.is_shown = false;
   };
 
   this._expand_all_items = function(items, event)
@@ -246,6 +246,5 @@ var ContextMenu = function() {
 
 ContextMenu.separator = {separator: true};
 
-window.contextmenu = new ContextMenu();
-document.addEventListener("contextmenu", window.contextmenu.oncontextmenu.bind(window.contextmenu), false);
+
 

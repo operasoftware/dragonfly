@@ -122,11 +122,12 @@ var ActionBroker = function()
 
   this._set_action_context_bound = (function(event)
   {
-    if (this._modal_click_handler)
+    if (this._contextmenu.is_shown)
     {
-      this._modal_click_handler(event);
+      this._contextmenu._modal_click_handler(event);
+      return true;
     }
-    else if (!(this._action_context && this._action_context.onclick(event) === false))
+    if (!(this._action_context && this._action_context.onclick(event) === false))
     {
       var container = event.target;
       while (container && container.nodeType == 1 &&
@@ -149,7 +150,9 @@ var ActionBroker = function()
           this._set_current_handler(GLOBAL_HANDLER, event, container);
         }
       }
+      return true;
     }
+    return false;
   }).bind(this);
 
   this._set_current_handler = function(handler_id, event, container)
@@ -168,11 +171,21 @@ var ActionBroker = function()
     }
   }
 
+  this._oncontextmenubound = function(event)
+  {
+    if (this._set_action_context_bound(event) !== false)
+      this._contextmenu.oncontextmenu(event);
+    if (!event.shiftKey)
+      event.preventDefault();
+  }.bind(this);
+
   this._init = function()
   {
     this._key_identifier = new KeyIdentifier(this.dispatch_key_input.bind(this),
                                              window.ini.browser);
     this.register_handler(this._global_handler);
+    this._contextmenu = new ContextMenu();
+    document.addEventListener("contextmenu", this._oncontextmenubound, false);
     window.app.addListener('services-created', function()
     {
       this._shortcuts = window.settings.general.get("shortcuts") ||
