@@ -62,7 +62,7 @@ cls.CookieManagerView = function(id, name, container_class)
           };
           // Add button that removes cookies of this domain
           // Depends on CORE-34615
-          // render_array.push(["button","RemoveCookiesOfDomain", "href", "#", "handler", "cookiemanager-delete-domain-cookies"]);
+          render_array.push(["button","RemoveCookiesOfDomain", "href", "#", "handler", "cookiemanager-delete-domain-cookies"]);
         }
       };
       render_array=["table",render_array];
@@ -71,7 +71,7 @@ cls.CookieManagerView = function(id, name, container_class)
     
     // Add clear button
     // Depends on CORE-34615
-    // container.render(["button","RemoveAllCookies", "href", "#", "handler", "cookiemanager-delete-all"]);
+    container.render(["button","RemoveAllCookies", "href", "#", "handler", "cookiemanager-delete-all"]);
   };
   
   this._on_active_tab = function(msg)
