@@ -120,7 +120,9 @@
     return (
     ['svg:svg',
       this.svg_gradient(x, y, width, height, colors, rotate, mask),
-      'viewBox', '0 0 100% 100%'
+      'width', '100%',
+      'height', '100%',
+      'version', '1.1'
     ]);
   };
   
@@ -146,7 +148,9 @@
     ['svg:svg',
       this.svg_gradient(x, y, width, height, top_colors),
       this.svg_gradient(x, y, width, height, bottom_colors, false, true),
-      'viewBox', '0 0 100% 100%'
+      'width', '100%',
+      'height', '100%',
+      'version', '1.1'
     ]);
   };
   
@@ -264,6 +268,7 @@
           'fill', '#fff', 
         ],
         'viewBox', '0 0 100px 36px',
+        'version', '1.1',
         'class', 'color-sample-alpha-bg'
       ] : [],
       ['div', 
@@ -317,7 +322,8 @@
           'stroke', '#000', 
           'stroke-width', '1'
         ],
-      'viewBox', rotate ? '0 0 20 80' : '0 0 80 20'
+      'viewBox', rotate ? '0 0 20 80' : '0 0 80 20',
+      'version', '1.1'
     ]);
   }
   
@@ -346,7 +352,8 @@
         'hsl(0, 0%, 20%)', 
         'stroke-width', '1'
       ],
-      'viewBox', '0 0 20 20'
+      'viewBox', '0 0 20 20',
+      'version', '1.1'
     ]);
   }
   

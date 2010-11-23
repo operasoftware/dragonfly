@@ -2,14 +2,18 @@
 {
   /* interface */
   /**
-    * A view id to identify an action implementer.
+    * A view id to identify an action handler.
     */
   this.id = id;
 
   /**
     * To handle a single action.
-    * Returning false will cancel the event (preventDefault and stopPropagation),
+    * Returning false (as in === false) will cancel the event 
+    * (preventDefault and stopPropagation),
     * true will pass it to the next level if any.
+    * @param {String} action_id
+    * @param {Event} event
+    * @param {Element} target
     */
   this.handle = function(action_id, event, target){};
 
@@ -19,33 +23,64 @@
   this.get_action_list = function(){};
 
   /**
-    * Gets called if an action implementer changes to be the current context.
+    * Gets called if an action handler changes to be the current context.
     */
   this.focus = function(container){};
 
   /**
-    * Gets called if an action implementer stops to be the current context.
+    * Gets called if an action handle stops to be the current context.
     */
   this.blur = function(){};
 
   /**
-    * Gets called if an action implementer is the current context.
-    * Returning false will cancel the event (preventDefault and stopPropagation),
+    * Gets called if an action handler is the current context.
+    * Returning false (as in === false) will cancel the event 
+    * (preventDefault and stopPropagation),
     * true will pass it to the next level if any.
     */
   this.onclick = function(event){};
 
+  /**
+    * To register a shortcut listener with a unique id token 
+    * on a global input element. Global as not being part of a view pane, e.g. 
+    * an input in a toolbar.
+    * @param {String} listener_id. A unique token.
+    * @param {Function} callback
+    * @param {Array} action_list. A list of action supported by 
+    * that listener, optional.
+    */
+  this.register_shortcut_listener = function(listener_id, callback, action_list){};
+
   /* constants */
 
   const
-  MODE_DEFAULT = ActionBroker.MODE_DEFAULT,
-  MODE_EDIT = ActionBroker.MODE_EDIT;
+  MODE_DEFAULT = "default",
+  MODE_EDIT = "edit";
+
+  this.mode = MODE_DEFAULT;
+
+  this.mode_labels =
+  {
+    "default": ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_DEFAULT,
+    "edit": ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_EDIT,
+  }
 
   /* privat */
 
 
   this._broker = ActionBroker.get_instance();
   this._handlers = {};
+  this._listener_handlers = [];
+
+  this._sc_listeners = {};
+  
+  this.get_action_list = function()
+  {
+    var actions = [], key = '';
+    for (key in this._handlers)
+      actions.push(key);
+    return actions.concat(this._listener_handlers);
+  };
 
   this._handlers['continue-run'] =
   this._handlers['continue-step-next-line'] =
@@ -79,18 +114,35 @@
 
   this.handle = function(action_id, event, target)
   {
-    if (action_id in this._handlers)
-      return this._handlers[action_id](action_id, event, target);
+    if (action_id in this._handlers &&
+        this._handlers[action_id](action_id, event, target) == false)
+      return false;
+    var sc_listener = event.target.get_attr('parent-node-chain', 'shortcuts');
+      if (sc_listener && sc_listener in this._sc_listeners)
+        return this._sc_listeners[sc_listener](action_id, event, target);
   }
 
   this.onclick = function(event)
   {
-    this._broker.set_mode(this, /input|textarea/i.test(event.target.nodeName) ?
-                                MODE_EDIT :
-                                MODE_DEFAULT);
+    this.mode = /input|textarea/i.test(event.target.nodeName) ?
+                                       MODE_EDIT :
+                                       MODE_DEFAULT;
+  };
+
+  this.register_shortcut_listener = function(listener_id, callback, action_list)
+  {
+    this._sc_listeners[listener_id] = callback;
+    if (action_list)
+      action_list.forEach(function(action)
+      {
+        if (this._listener_handlers.indexOf(action) == -1)
+          this._listener_handlers.push(action);
+      }, this);
   };
 
   /* instatiation */
 
 
 }
+
+

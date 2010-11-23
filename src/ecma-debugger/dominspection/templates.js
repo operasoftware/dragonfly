@@ -39,7 +39,6 @@
 
   this._inspected_dom_node_markup_style= function(model, target, editable)
   {
-
     var data = model.getData();
     var tree = "<div class='padding table-cell dom'" +
                (editable ? " edit-handler='edit-dom'" : "") + 
@@ -184,7 +183,7 @@
                       " style='margin-left:" + 16 * node[DEPTH] + "px;' " +
                       "ref-id='" + node[ID] + "' handler='spotlight-node'>" +
                       (node[CHILDREN_LENGTH] ?
-                          "<input handler='get-children' type='button' class='open'>" : '') +
+                          "<input handler='get-children' type='button' class='open' />" : '') +
                           "<node>&lt;" + node_name + attrs + "&gt;</node>" +
                       (is_debug && (" <d>[" + node[ID] + "]</d>" ) || "") +
                       "</div>";
@@ -202,7 +201,7 @@
                       " style='margin-left:" + 16 * node[DEPTH] + "px;' " +
                       "ref-id='" + node[ID] + "' handler='spotlight-node'>" +
                       (children_length ?
-                          "<input handler='get-children' type='button' class='close'>" : '') +
+                          "<input handler='get-children' type='button' class='close' />" : '') +
                           "<node>&lt;" + node_name + attrs + (children_length ? '' : '/') + "&gt;</node>" +
                       (is_debug && (" <d>[" + node[ID] + "]</d>" ) || "") +
                       "</div>";
@@ -420,7 +419,7 @@
                     " style='margin-left:" + 16 * node[DEPTH] + "px;' " +
                     "ref-id='"+node[ID] + "' handler='spotlight-node'>" +
                     (children_length && !has_only_one_child ?
-                      "<input handler='get-children' type='button' class='open'>" : '') +
+                      "<input handler='get-children' type='button' class='open' />" : '') +
                     "<node>" + node_name + attrs + "</node>" +
                     "</div>";
           }
@@ -430,7 +429,7 @@
                     " style='margin-left:" + 16 * node[DEPTH] + "px;' " +
                     "ref-id='"+node[ID] + "' handler='spotlight-node'>" +
                     (node[CHILDREN_LENGTH] ?
-                      "<input handler='get-children' type='button' class='close'>" : '') +
+                      "<input handler='get-children' type='button' class='close' />" : '') +
                     "<node>" + node_name + attrs + "</node>" +
                     "</div>";
           }

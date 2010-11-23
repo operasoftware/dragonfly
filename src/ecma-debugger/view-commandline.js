@@ -854,7 +854,7 @@ cls.CndRtSelect = function(id, class_name)
         opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'no runtime selected')
         return;
       }
-      return templates.runtimes(_runtimes, 'runtime');
+      return templates.runtime_dropdown(_runtimes);
     }
 
   }

@@ -687,7 +687,7 @@ stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
 
 .table-cell
 {
-  display: table-cell;
+  display: table;
 }
 
 .tree-style .text-node
@@ -1148,6 +1148,7 @@ d
 .test-messages textarea
 {
   box-sizing: border-box;
+  -webkit-box-sizing: border-box;
   display: block;
   width: 100%;
   margin: 0;

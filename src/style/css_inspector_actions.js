@@ -18,7 +18,10 @@ cls.CSSInspectorActions = function(id)
 
   this.getFirstTarget = function()
   {
-    return self.__active_container && self.__active_container.getElementsByTagName('styles')[1].getElementsByTagName('property')[0];
+    return self.__active_container &&
+           self.__active_container.
+           getElementsByTagName('styles')[1].
+           getElementsByTagName('property')[0];
   };
 
   this.clearSelected = function()
@@ -60,22 +63,6 @@ cls.CSSInspectorActions = function(id)
     }
   };
 
-  this.moveFocusUp = function(event, target)
-  {
-    if (self.__target)
-    {
-      self.setSelected(self.__target.getPreviousWithFilter(self.__active_container,
-        self.__target.nodeName.toLowerCase() == 'header' && self.__target.parentElement.getAttribute('handler')
-        ? nav_filter.header
-        : nav_filter._default));
-    }
-    else
-    {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
-        'keyboard_handler: no target to move');
-    }
-  };
-
   var nav_filter =
   {
     _default: function(ele)
@@ -96,220 +83,18 @@ cls.CSSInspectorActions = function(id)
     }
   };
 
-  this.moveFocusDown = function(event, target)
+  this.setContainer = function(event, container)
   {
-    if (self.__target)
+    this.resetTarget(container);
+    this.__active_container = container;
+    if (!this.__target || !this.__target.parentElement)
     {
-      self.setSelected(self.__target.getNextWithFilter( self.__active_container,
-        self.__target.nodeName.toLowerCase() == 'header' && !self.__target.parentElement.getAttribute('handler')
-        ? nav_filter.header
-        : nav_filter._default));
+      this.__target = this.getFirstTarget()
     }
-    else
+    if (this.__target && !this.__target.hasClass('selected'))
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
-        'keyboard_handler: no target to move');
+      this.setSelected(this.__target);
     }
-  };
-
-  this.setActiveContainer = function(event, container)
-  {
-    self.resetTarget(container);
-    self.__active_container = container;
-    if (!self.__target || !self.__target.parentElement)
-    {
-      self.__target = self.getFirstTarget()
-    }
-    if (self.__target && !self.__target.hasClass('selected'))
-    {
-      self.setSelected(self.__target);
-    }
-  };
-
-  this.clearActiveContainer = function()
-  {
-    self.clearSelected();
-  };
-
-  this.edit_css = function(event, target)
-  {
-    var cat = event.target;
-
-    switch(event.target.nodeName.toLowerCase())
-    {
-      case 'key':
-      case 'value':
-      {
-        if (event.target.parentElement.parentElement.hasAttribute('rule-id') &&
-            !event.target.parentNode.hasClass(CSS_CLASS_CP_TARGET))
-        {
-          key_identifier.setModeEdit(self);
-          self.setSelected(event.target.parentNode);
-          self.editor.edit(event, event.target.parentNode);
-        }
-        break;
-      }
-      case 'property':
-      {
-        if (event.target.parentElement.hasAttribute('rule-id') &&
-            !event.target.hasClass(CSS_CLASS_CP_TARGET))
-        {
-          key_identifier.setModeEdit(self);
-          self.setSelected(event.target);
-          self.editor.edit(event);
-        }
-        // execute property click action
-        break;
-      }
-    }
-  };
-
-  this['enable-disable-property'] = function enable_disable_property(event, target)
-  {
-    var is_disabled = target.checked;
-    var rule_id = parseInt(target.getAttribute("data-rule-id"));
-    var rt_id = parseInt(target.get_attr("parent-node-chain", "rt-id"));
-    var obj_id = parseInt(target.get_attr("parent-node-chain", "obj-id"));
-
-    if (is_disabled)
-    {
-      self.enable_property(rt_id, rule_id, obj_id, target.getAttribute("data-property"));
-    }
-    else
-    {
-      self.disable_property(rt_id, rule_id, obj_id, target.getAttribute("data-property"));
-    }
-  };
-
-  this['css-toggle-category'] = function(event, target)
-  {
-    if (/header/i.test(target.nodeName))
-    {
-      target = target.firstChild;
-    }
-    var cat = target.getAttribute('cat-id'), value = target.hasClass('unfolded');
-    var cat_container = target.parentNode.parentNode;
-    if (value)
-    {
-      target.removeClass('unfolded');
-      cat_container.removeClass('unfolded');
-      var styles = cat_container.getElementsByTagName('styles')[0];
-      if (styles)
-      {
-        styles.innerHTML = "";
-      }
-    }
-    else
-    {
-      target.addClass('unfolded');
-      cat_container.addClass('unfolded');
-    }
-    self.setSelected(target.parentNode);
-    settings['css-inspector'].set(cat, !value);
-    window.elementStyle.setUnfoldedCat(cat, !value);
-  };
-
-  this['display-rule-in-stylesheet'] = function(event, target)
-  {
-    var index = parseInt(target.getAttribute('index'));
-    var rt_id = target.getAttribute('rt-id');
-    var rule_id = target.parentNode.getAttribute('rule-id');
-    // stylesheets.getRulesWithSheetIndex will call this function again if data is not avaible
-    // handleGetRulesWithIndex in stylesheets will
-    // set for this reason __call_count on the event object
-    var rules = stylesheets.getRulesWithSheetIndex(rt_id, index, arguments);
-    if (rules)
-    {
-      self.setSelected(target);
-      stylesheets.setSelectedSheet(rt_id, index, rules, rule_id);
-      topCell.showView(views.stylesheets.id);
-    }
-  };
-
-  this.target_enter = function(event, action_id)
-  {
-    if (this.__target)
-    {
-      this.__target.releaseEvent('click');
-    }
-  };
-
-  this.nav_previous_edit_mode = function(event, action_id)
-  {
-    if (!this.editor.nav_previous(event, action_id))
-    {
-      var new_target =
-        this.__target.getPreviousWithFilter(this.__active_container, nav_filter.property_editable);
-      if (new_target)
-      {
-        this.setSelected(new_target);
-        this.editor.edit(null, this.__target);
-        this.editor.focusLastToken();
-      }
-    }
-
-    // to stop default action
-    return false;
-  };
-
-  this.nav_next_edit_mode = function(event, action_id)
-  {
-    if (!this.editor.nav_next(event, action_id))
-    {
-      var new_target =
-        this.__target.getNextWithFilter(this.__active_container, nav_filter.property_editable);
-      if (new_target)
-      {
-        this.setSelected(new_target);
-        this.editor.edit(null, this.__target);
-        this.editor.focusFirstToken();
-      }
-    }
-
-    // to stop default action
-    return false;
-  };
-
-  this.autocomplete = function(event, action_id)
-  {
-    this.editor.autocomplete(event, action_id);
-    return false;
-  };
-
-  this.escape_edit_mode = function(event, action_id)
-  {
-    if (!this.editor.escape())
-    {
-      var cur_target = this.__target;
-      this.moveFocusUp();
-      cur_target.parentElement.removeChild(cur_target);
-    }
-    key_identifier.setModeDefault(self);
-    window.elementStyle.update();
-
-    return false;
-  };
-
-  this.blur_edit_mode = function()
-  {
-    this.escape_edit_mode();
-    this.clearActiveContainer();
-  };
-
-  this.enter_edit_mode = function(event, action_id)
-  {
-    if (!this.editor.enter(event, action_id))
-    {
-      key_identifier.setModeDefault(self);
-      window.elementStyle.update();
-      if (!this.__target.textContent)
-      {
-        var cur_target = this.__target;
-        this.moveFocusUp();
-        cur_target.parentElement.removeChild(cur_target);
-      }
-    }
-    return false;
   };
 
   this.edit_onclick = function(event)
@@ -317,11 +102,17 @@ cls.CSSInspectorActions = function(id)
     if (this.editor)
     {
       if (!this.editor.onclick(event))
-      {
-        key_identifier.setModeDefault(self);
-        window.elementStyle.update();
-      }
+        return false;
+      this.mode = MODE_DEFAULT;
+      window.elementStyle.update();
     }
+    return true;
+  }.bind(this);
+
+  this.blur_edit_mode = function()
+  {
+    this.escape_edit_mode();
+    this.clearSelected();
   };
 
   /**
@@ -464,7 +255,284 @@ cls.CSSInspectorActions = function(id)
     return (prop || "").replace(/^\s*|\s*$/g, "").toLowerCase();
   };
 
-  this.init(id);
+  /* ActionHandler interface */
+
+  const
+  MODE_DEFAULT = "default",
+  MODE_EDIT = "edit",
+  MINUS = -1,
+  PLUS = 1;
+
+  this.id = id;
+  this._broker = ActionBroker.get_instance();
+  this._broker.register_handler(this);
+  this._handlers = {};
+  this.mode = MODE_DEFAULT;
+
+  this.mode_labels =
+  {
+    "default": ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_DEFAULT,
+    "edit": ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_EDIT,
+  }
+
+  this.get_action_list = function()
+  {
+    var actions = [], key = '';
+    for (key in this._handlers)
+      actions.push(key);
+    return actions;
+  };
+
+  this._handlers['nav-up'] = function(event, target)
+  {
+    if (this.__target)
+    {
+      var filter = this.__target.nodeName.toLowerCase() == 'header' &&
+                   this.__target.parentElement.getAttribute('handler') ?
+                   nav_filter.header :
+                   nav_filter._default;
+      var next = this.__target.getPreviousWithFilter(this.__active_container,
+                                                     filter);
+      this.setSelected(next);
+      return false;
+    }
+    else
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+                      'keyboard_handler: no target to move');
+  }.bind(this);
+
+  this._handlers["nav-down"] = function(event, target)
+  {
+    if (this.__target)
+    {
+      var filter = this.__target.nodeName.toLowerCase() == 'header' &&
+                   !this.__target.parentElement.getAttribute('handler') ?
+                   nav_filter.header :
+                   nav_filter._default;
+      var next = this.__target.getNextWithFilter(this.__active_container,
+                                                filter);
+      this.setSelected(next);
+      return false;
+    }
+    else
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+                      'keyboard_handler: no target to move');
+  }.bind(this);
+
+  this._handlers["dispatch-dbl-click"] = function(event, target)
+  {
+    if(this.__target)
+      this.__target.dispatchMouseEvent('dblclick');
+    return false;
+  }.bind(this);
+
+  this._handlers['edit-css'] = function(event, target)
+  {
+    var cat = event.target;
+
+    switch(event.target.nodeName.toLowerCase())
+    {
+      case 'key':
+      case 'value':
+      {
+        if (event.target.parentElement.parentElement.hasAttribute('rule-id') &&
+            !event.target.parentNode.hasClass(CSS_CLASS_CP_TARGET))
+        {
+          this.mode = MODE_EDIT;
+          this.setSelected(event.target.parentNode);
+          this.editor.edit(event, event.target.parentNode);
+        }
+        break;
+      }
+      case 'property':
+      {
+        if (event.target.parentElement.hasAttribute('rule-id') &&
+            !event.target.hasClass(CSS_CLASS_CP_TARGET))
+        {
+          this.mode = MODE_EDIT;
+          this.setSelected(event.target);
+          this.editor.edit(event);
+        }
+        break;
+      }
+    }
+  }.bind(this);
+
+  this._handlers['enable-disable-property'] = function enable_disable_property(event, target)
+  {
+    var is_disabled = target.checked;
+    var rule_id = parseInt(target.getAttribute("data-rule-id"));
+    var rt_id = parseInt(target.get_attr("parent-node-chain", "rt-id"));
+    var obj_id = parseInt(target.get_attr("parent-node-chain", "obj-id"));
+
+    if (is_disabled)
+    {
+      self.enable_property(rt_id, rule_id, obj_id, target.getAttribute("data-property"));
+    }
+    else
+    {
+      self.disable_property(rt_id, rule_id, obj_id, target.getAttribute("data-property"));
+    }
+  }.bind(this);
+
+  this._handlers['css-toggle-category'] = function(event, target)
+  {
+    if (/header/i.test(target.nodeName))
+    {
+      target = target.firstChild;
+    }
+    var cat = target.getAttribute('cat-id'), value = target.hasClass('unfolded');
+    var cat_container = target.parentNode.parentNode;
+    if (value)
+    {
+      target.removeClass('unfolded');
+      cat_container.removeClass('unfolded');
+      var styles = cat_container.getElementsByTagName('styles')[0];
+      if (styles)
+      {
+        styles.innerHTML = "";
+      }
+    }
+    else
+    {
+      target.addClass('unfolded');
+      cat_container.addClass('unfolded');
+    }
+    this.setSelected(target.parentNode);
+    settings['css-inspector'].set(cat, !value);
+    window.elementStyle.setUnfoldedCat(cat, !value);
+  }.bind(this);
+
+  this._handlers['display-rule-in-stylesheet'] = function(event, target)
+  {
+    var index = parseInt(target.getAttribute('index'));
+    var rt_id = parseInt(target.getAttribute('rt-id'));
+    var rule_id = target.parentNode.getAttribute('rule-id');
+    // stylesheets.getRulesWithSheetIndex will call this function again if data is not avaible
+    // handleGetRulesWithIndex in stylesheets will
+    // set for this reason __call_count on the event object
+    var rules = stylesheets.getRulesWithSheetIndex(rt_id, index, arguments);
+    if (rules)
+    {
+      self.setSelected(target);
+      stylesheets.setSelectedSheet(rt_id, index, rules, rule_id);
+      topCell.showView(views.stylesheets.id);
+    }
+  }.bind(this);
+
+  this.target_enter = function(event, action_id)
+  {
+    if (this.__target)
+    {
+      this.__target.releaseEvent('click');
+    }
+  };
+
+  this._handlers["edit-previous"] = function(event, target)
+  {
+    if (!this.editor.nav_previous(event, MINUS))
+    {
+      var new_target =
+        this.__target.getPreviousWithFilter(this.__active_container,
+                                            nav_filter.property_editable);
+      if (new_target)
+      {
+        this.setSelected(new_target);
+        this.editor.edit(null, this.__target);
+        this.editor.focusLastToken();
+      }
+    }
+
+    // to stop default action
+    return false;
+  }.bind(this);
+
+  this._handlers["edit-next"] = function(event, target)
+  {
+    if (!this.editor.nav_next(event, PLUS))
+    {
+      var new_target =
+        this.__target.getNextWithFilter(this.__active_container,
+                                        nav_filter.property_editable);
+      if (new_target)
+      {
+        this.setSelected(new_target);
+        this.editor.edit(null, this.__target);
+        this.editor.focusFirstToken();
+      }
+    }
+    // to stop default action
+    return false;
+  }.bind(this);
+
+  this._handlers["autocomplete-previous"] = function(event, target)
+  {
+    this.editor.autocomplete(event, MINUS);
+    return false;
+  }.bind(this);
+
+  this._handlers["autocomplete-next"] = function(event, target)
+  {
+    this.editor.autocomplete(event, PLUS);
+    return false;
+  }.bind(this);
+
+  this._handlers["exit-edit"] = function(event, action_id)
+  {
+    if (!this.editor.escape())
+    {
+      var cur_target = this.__target;
+      this.moveFocusUp();
+      cur_target.parentElement.removeChild(cur_target);
+    }
+    this.mode = MODE_DEFAULT;
+    window.elementStyle.update();
+
+    return false;
+  }.bind(this);
+
+  this._handlers["submit-edit-and-new-edit"] = function(event, target)
+  {
+    if (!this.editor.enter(event))
+    {
+      this.mode = MODE_DEFAULT;
+      window.elementStyle.update();
+      if (!this.__target.textContent)
+      {
+        var cur_target = this.__target;
+        this._handlers['nav-up'](event, target);
+        cur_target.parentElement.removeChild(cur_target);
+      }
+    }
+    return false;
+  }.bind(this);
+
+  this.focus = function(event, container)
+  {
+
+    if (this.mode == MODE_DEFAULT)
+      this.setContainer(event, container);
+  }
+
+  this.blur = function(event)
+  {
+    if (this.mode == MODE_DEFAULT)
+      this.clearSelected();
+    else
+      this.blur_edit_mode();
+  }
+
+  this.onclick = function(event)
+  {
+    if (this.mode == MODE_EDIT)
+      return this.edit_onclick(event);
+  };
+
+  this.handle = function(action_id, event, target)
+  {
+    if (action_id in this._handlers)
+      return this._handlers[action_id](event, target);
+  }
 
   var onViewCreated = function(msg)
   {
@@ -479,105 +547,22 @@ cls.CSSInspectorActions = function(id)
   messages.addListener('view-created', onViewCreated)
 };
 
-cls.CSSInspectorActions.prototype = BaseActions;
-
-new cls.CSSInspectorActions('css-inspector');
-
-
-/**
- * @constructor
- * @extends BaseKeyhandler
- */
-
-cls.CSSInspectorKeyhandler = function(id)
+eventHandlers.dblclick['edit-css'] = function(event, target)
 {
-  var __actions = actions[id]
-
-  this[this.NAV_LEFT] = this[this.NAV_UP] = __actions.moveFocusUp;
-
-  this[this.NAV_RIGHT] = this[this.NAV_DOWN] = __actions.moveFocusDown;
-
-  this[this.ENTER] = function(event, action_id)
-  {
-    __actions.target_enter(event, action_id);
-  };
-
-
-  this.focus = __actions.setActiveContainer;/*function(event, container)
-  {
-    __actions.setActiveContainer(container);
-    /*
-    if( !__actions.__target )
-    {
-      __actions.setSelected(__actions.getFirstTarget());
-    }
-    */ /*
-  }*/
-
-  this.blur = __actions.clearActiveContainer;
-
-  this.init(id);
-};
-
-cls.CSSInspectorKeyhandler.prototype = BaseKeyhandler;
-
-new cls.CSSInspectorKeyhandler('css-inspector');
-
-/**
- * @constructor
- * @extends BaseEditKeyhandler
- */
-
-cls.CSSInspectorEditKeyhandler = function(id)
+  this.broker.dispatch_action('css-inspector', 'edit-css', event, target);
+}
+eventHandlers.click['css-toggle-category'] = function(event, target)
 {
-  var __actions = actions[id]
-
-  this[this.NAV_UP] = this[this.NAV_DOWN] = function(event, action_id)
-  {
-    __actions.autocomplete(event, action_id);
-  };
-
-  this[this.NAV_NEXT] = function(event, action_id)
-  {
-    __actions.nav_next_edit_mode(event, action_id);
-  };
-
-  this[this.NAV_PREVIOUS] = function(event, action_id)
-  {
-    __actions.nav_previous_edit_mode(event, action_id);
-  };
-
-  this[this.ESCAPE] = function(event, action_id)
-  {
-    __actions.escape_edit_mode(event, action_id);
-  };
-
-  this[this.ENTER] = function(event, action_id)
-  {
-    __actions.enter_edit_mode(event, action_id);
-  };
-
-  this.focus = __actions.test;
-
-  this.blur = function()
-  {
-    __actions.blur_edit_mode();
-  };
-
-  this.onclick = function(event)
-  {
-    __actions.edit_onclick(event)
-  };
-
-  this.init(id);
-};
-
-cls.CSSInspectorEditKeyhandler.prototype = BaseEditKeyhandler;
-
-new cls.CSSInspectorEditKeyhandler('css-inspector');
-
-eventHandlers.click['edit-css'] = actions['css-inspector'].edit_css;
-eventHandlers.click['css-toggle-category'] = actions['css-inspector']['css-toggle-category'];
-eventHandlers.click['display-rule-in-stylesheet'] = actions['css-inspector']['display-rule-in-stylesheet'];
-eventHandlers.click['enable-disable'] = actions['css-inspector']['enable-disable-property'];
-
+  this.broker.dispatch_action('css-inspector', 'css-toggle-category',
+                              event, target);
+}
+eventHandlers.click['display-rule-in-stylesheet'] = function(event, target)
+{
+  this.broker.dispatch_action('css-inspector', 'display-rule-in-stylesheet',
+                              event, target);
+}
+eventHandlers.click['enable-disable'] = function(event, target)
+{
+  this.broker.dispatch_action('css-inspector', 'enable-disable-property',
+                              event, target);
+}

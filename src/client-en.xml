@@ -125,11 +125,13 @@ window.load_screen_timeout = window.setTimeout(function()
 <link rel="stylesheet" href="./console-logger/consolelogger_style.css"/>
 <link rel="stylesheet" href="./ui-style/colorpickerstyle.css"/>
 <link rel="stylesheet" href="./repl/repl_style.css"/>
+<link rel="stylesheet" href="./shortcutconfig/style.css"/>
+
 
 <!-- This will turn off including of the UI strings if the exclude_uistrings var is set -->
 <!-- command concat_js off if exclude_uistrings -->
 <script src="./ui-strings/ui_strings-en.js"/>
-
+<script src="./scripts/ini.js"/>
 
 <!-- restart normal concatenation -->
 <!-- command concat_js "./script/dragonfly.js" -->
@@ -195,7 +197,6 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/animator.js"/>
 <script src="./ui-scripts/Switches.js"/>
 <script src="./ui-scripts/Editor.js"/>
-<script src="./ui-scripts/keyboard_handler.js"/>
 <script src="./ui-scripts/cst-select.js"/>
 <script src="./ui-scripts/toolbarcstselect.js"/>
 <script src="./ui-scripts/ui_framework.js"/>
@@ -218,6 +219,10 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./debug/test_messages.js"/>
 <script src="./debug/build_debug.js"/>
 
+<script src="./shortcutconfig/shortcutconfig.js"/>
+<script src="./shortcutconfig/templates.js"/>
+
+
 
 
 <script src="./cookie-manager/views-cookie-manager.js"></script>
@@ -226,7 +231,7 @@ window.load_screen_timeout = window.setTimeout(function()
 
 
 <script src="./ecma-debugger/ListTextSearch.js"/>
-<script src="./scripts/ini.js"/>
+
 
 <script src="./ecma-debugger/helpers.js"/>
 <script src="./ecma-debugger/tabs.js"/>

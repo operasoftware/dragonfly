@@ -2,7 +2,7 @@
 // this should go in a own file
 
 /**
-  * @constructor 
+  * @constructor
   * @extends BaseActions
   */
 
@@ -13,8 +13,16 @@ cls.DOMInspectorActions = function(id)
 
   const
   SCROLL_IN_PADDING = 30,
-  MODE_DEFAULT = ActionBroker.MODE_DEFAULT,
-  MODE_EDIT = ActionBroker.MODE_EDIT;
+  MODE_DEFAULT = "default",
+  MODE_EDIT_ATTR_TEXT = "edit-attributes-and-text",
+  MODE_EDIT_MARKUP = "edit-markup";
+
+  this.mode_labels =
+  {
+    "default": ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_DEFAULT,
+    "edit-attributes-and-text": ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_EDIT_ATTR_AND_TEXT,
+    "edit-markup": ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_EDIT_MARKUP
+  }
 
   var self = this;
   var view_container = null;
@@ -22,19 +30,20 @@ cls.DOMInspectorActions = function(id)
   var nav_target = null;
   var selection = null;
   var range = null;
-  var mode = MODE_DEFAULT;
+
   var broker = ActionBroker.get_instance();
 
+  this.mode = MODE_DEFAULT;
   this.serializer = new cls.DOMSerializer();
 
   this._handlers = {};
 
-  // traversal 'subtree' or 'children' 
+  // traversal 'subtree' or 'children'
   this._expand_collapse_node = function(event, target, traversal)
   {
     var container = event.target.parentNode;
     var level = parseInt(container.style.marginLeft) || 0;
-    var level_next = container.nextSibling && 
+    var level_next = container.nextSibling &&
                      parseInt(container.nextSibling.style.marginLeft) || 0;
     var ref_id = parseInt(container.getAttribute('ref-id'));
     if (container = container.has_attr("parent-node-chain", "data-model-id"))
@@ -54,7 +63,7 @@ cls.DOMInspectorActions = function(id)
       }
       else
       {
-        cb = this._get_children_callback.bind(this, container, model, 
+        cb = this._get_children_callback.bind(this, container, model,
                                               target_id, is_editable);
         model.expand(cb, ref_id, traversal);
       }
@@ -69,7 +78,7 @@ cls.DOMInspectorActions = function(id)
 
   this._select_node = function(target)
   {
-    var 
+    var
     obj_id = parseInt(target.getAttribute('ref-id')),
     model_id = target.get_attr("parent-node-chain", "data-model-id"),
     inspections = window.dominspections,
@@ -83,18 +92,21 @@ cls.DOMInspectorActions = function(id)
       if (window.settings.dom.get('highlight-on-hover'))
       {
         current_target_id = inspections.active && inspections.active.target;
-        scroll_into_view = settings.dom.get('scroll-into-view-on-spotlight') && 
+        scroll_into_view = settings.dom.get('scroll-into-view-on-spotlight') &&
                            obj_id != current_target_id;
-        hostspotlighter.spotlight(obj_id, scroll_into_view);                       
+        hostspotlighter.spotlight(obj_id, scroll_into_view);
       }
       model.target = obj_id;
       inspections.active = model;
-      window.messages.post("element-selected", {model: model, 
-                                                obj_id: obj_id, 
+      window.messages.post("element-selected", {model: model,
+                                                obj_id: obj_id,
                                                 rt_id: model.getDataRuntimeId()});
       if (document.getElementById('target-element'))
         document.getElementById('target-element').removeAttribute('id');
       target.id = 'target-element';
+      // if the view_container is null the view is not in focus
+      if (!view_container)
+        window.helpers.scroll_dom_target_into_view();
     }
     return model;
   }
@@ -123,7 +135,7 @@ cls.DOMInspectorActions = function(id)
     }
   }
 
-  var nav_filters = 
+  var nav_filters =
   {
     attr_text: function(ele)
     {
@@ -138,12 +150,12 @@ cls.DOMInspectorActions = function(id)
             return true;
           }
           case 'node':
-          { 
+          {
             return !(ele.getElementsByTagName('key')[0] || /<\//.test(ele.textContent));
           }
         }
       }
-      return false; 
+      return false;
     },
     left_right: function(ele)
     {
@@ -155,7 +167,7 @@ cls.DOMInspectorActions = function(id)
     {
       return (
       ( "input" == ele.nodeName.toLowerCase() && !ele.parentNode.contains(start_ele) ) ||
-      ( !_is_script_node(ele) && 
+      ( !_is_script_node(ele) &&
           ( "node" == ele.nodeName.toLowerCase() &&
             ( ele.textContent.slice(0,2) != "</" ||
               // it is a closing tag but it's also the only tag in this line
@@ -166,7 +178,7 @@ cls.DOMInspectorActions = function(id)
 
   this.editor = null;
   this.is_dom_type_tree = false;
-  this.editors = 
+  this.editors =
   {
     "dom-attr-text-editor": new DOMAttrAndTextEditor(nav_filters),
     "dom-markup-editor": new DOMMarkupEditor(nav_filters)
@@ -184,14 +196,12 @@ cls.DOMInspectorActions = function(id)
     }
   }
 
-  
   this.getFirstTarget = function()
-  {    
-    return view_container 
+  {
+    return view_container
       && ( document.getElementById('target-element') || view_container ).
       getElementsByTagName('input')[0];
   }
-
 
   this.resetTarget = function()
   {
@@ -205,21 +215,19 @@ cls.DOMInspectorActions = function(id)
         new_container = document.getElementById(new_container.id);
       if (new_container && new_container.firstChild)
       {
-        var 
-        tag_name = nav_target.nodeName.toLowerCase(),
-        count = 0,
-        new_container_elements = new_container.firstChild.getElementsByTagName(tag_name),
-        old_container_elements = view_container_first_child.getElementsByTagName(tag_name),
+        var
+        new_container_elements = new_container.firstChild.getElementsByTagName('*'),
+        old_container_elements = view_container_first_child.getElementsByTagName('*'),
         index = old_container_elements.indexOf(nav_target),
         cur = null;
 
-        while ( !(nav_target = new_container_elements[index - count]) && count++ < index);
+        nav_target = new_container_elements[index];
         view_container = new_container;
         view_container_first_child = new_container.firstChild;
         cur = view_container.firstElementChild;
         cur = cur && cur.firstElementChild;
         this.is_dom_type_tree = cur && cur.hasClass('tree-style');
-        this.setSelected(nav_target || ( nav_target = this.getFirstTarget() ) );
+        this.setSelected(nav_target || (nav_target = this.getFirstTarget()));
       }
       else
         this.blur();
@@ -238,7 +246,6 @@ cls.DOMInspectorActions = function(id)
 
   this.setContainer = function(event, container)
   {
-    
     document.addEventListener('DOMNodeInserted', ondomnodeinserted, false);
     view_container = container;
     view_container_first_child = container.firstChild;
@@ -273,7 +280,7 @@ cls.DOMInspectorActions = function(id)
     this.setSelected(nav_target);
   }
 
-  this.setSelected = function(new_target)
+  this.setSelected = function(new_target, scroll_into_view)
   {
     var firstChild = null, raw_delta = 0, delta = 0;
     if(new_target)
@@ -282,22 +289,26 @@ cls.DOMInspectorActions = function(id)
       {
         nav_target.blur();
       }
-      selection.collapse(view_container, 0);
+      selection.removeAllRanges();
       nav_target = new_target;
-      raw_delta = new_target.getBoundingClientRect().top - view_container.getBoundingClientRect().top; 
-      // delta positive overflow of the container
-      delta = 
-        raw_delta + new_target.offsetHeight + SCROLL_IN_PADDING - view_container.offsetHeight;
- 
-      // if delta is zero or less than zero, there is no positive overflow
-      // check for negative overflow
-      if( delta < 0 && ( delta = raw_delta - SCROLL_IN_PADDING ) > 0 )
+      if (scroll_into_view)
       {
-        // if there is no negative overfow, set the delta to 0, meanig don't scroll
-        delta = 0;
+        raw_delta = new_target.getBoundingClientRect().top -
+                    view_container.getBoundingClientRect().top;
+        // delta positive overflow of the container
+        delta =
+          raw_delta + new_target.offsetHeight + SCROLL_IN_PADDING - view_container.offsetHeight;
+
+        // if delta is zero or less than zero, there is no positive overflow
+        // check for negative overflow
+        if( delta < 0 && ( delta = raw_delta - SCROLL_IN_PADDING ) > 0 )
+        {
+          // if there is no negative overflow, set the delta to 0, meanig don't scroll
+          delta = 0;
+        }
+        view_container.scrollTop += delta;
       }
-      view_container.scrollTop += delta;
- 
+
       switch (new_target.nodeName.toLowerCase())
       {
         case 'node':
@@ -306,7 +317,8 @@ cls.DOMInspectorActions = function(id)
           firstChild = new_target.firstChild;
           range.setStart(firstChild, this.is_dom_type_tree ? 0 : 1);
           range.setEnd(firstChild,
-            firstChild.nodeValue.length - (this.is_dom_type_tree && !firstChild.nextSibling ? 0 : 1) )
+                       firstChild.nodeValue.length -
+                       (this.is_dom_type_tree && !firstChild.nextSibling ? 0 : 1));
           selection.addRange(range);
           break;
         }
@@ -343,16 +355,16 @@ cls.DOMInspectorActions = function(id)
 
   this.focus = function(event, container)
   {
-    if (mode == MODE_DEFAULT)
+    if (this.mode == MODE_DEFAULT)
       this.setContainer(event, container);
   }
 
   this.blur = function(event)
   {
-    if (mode == MODE_EDIT && this.editor)
+    if (this.mode != MODE_DEFAULT && this.editor)
       this.editor.submit();
     if (selection)
-      selection.collapse(document.documentElement, 0);
+      selection.removeAllRanges();
     view_container = null;
     view_container_first_child = null;
     nav_target = null;
@@ -363,7 +375,7 @@ cls.DOMInspectorActions = function(id)
 
   this.onclick = function(event)
   {
-    if (mode == MODE_DEFAULT)
+    if (this.mode == MODE_DEFAULT)
       return this.keyhandler_onclick(event);
     return this.edit_onclick(event);
   }
@@ -373,6 +385,14 @@ cls.DOMInspectorActions = function(id)
     if (action_id in this._handlers)
       return this._handlers[action_id](event, target);
   }
+
+  this.get_action_list = function()
+  {
+    var actions = [], key = '';
+    for (key in this._handlers)
+      actions.push(key);
+    return actions;
+  };
 
   this._handlers["expand-collapse-node"] = function(event, target)
   {
@@ -388,7 +408,7 @@ cls.DOMInspectorActions = function(id)
   {
     if(window.settings['dom'].get('highlight-on-hover'))
     {
-      var obj_id = parseInt(target.getAttribute('ref-id') || 
+      var obj_id = parseInt(target.getAttribute('ref-id') ||
                             target.getAttribute('obj-id')) ;
       window.hostspotlighter.soft_spotlight(obj_id);
     }
@@ -397,9 +417,9 @@ cls.DOMInspectorActions = function(id)
   this._handlers["select-node"] = function(event, target)
   {
     var obj_id = parseInt(target.getAttribute('ref-id'));
-    if (!window.settings.dom.get('dom-tree-style') && 
+    if (!window.settings.dom.get('dom-tree-style') &&
         /<\//.test(target.firstChild.textContent))
-      while ((target = target.previousSibling) && 
+      while ((target = target.previousSibling) &&
               target.getAttribute('ref-id') != obj_id);
     if (target)
     {
@@ -408,7 +428,7 @@ cls.DOMInspectorActions = function(id)
         topCell.statusbar.updateInfo(templates.breadcrumb(model, obj_id));
     }
   }.bind(this);
-  
+
   this._handlers["inspect-node-link"] = function(event, target)
   {
     var obj_id = parseInt(target.getAttribute('obj-id'));
@@ -425,7 +445,7 @@ cls.DOMInspectorActions = function(id)
     var target = document.getElementById('target-element');
     if (target)
     {
-      while (target && !/container/i.test(target.nodeName) && 
+      while (target && !/container/i.test(target.nodeName) &&
              (target = target.parentElement));
       if (target)
       {
@@ -436,10 +456,10 @@ cls.DOMInspectorActions = function(id)
       }
     }
   }.bind(this);
-    
+
   this._handlers["export-markup"] = function(event, target)
   {
-    window.export_data.data = 
+    window.export_data.data =
       window.helpers.escapeTextHtml(this.serializer.serialize(window.dom_data));
     window.topCell.showView('export_data');
   }.bind(this);
@@ -451,12 +471,12 @@ cls.DOMInspectorActions = function(id)
 
   this._handlers["dom-resource-link"] = function(event, target)
   {
-    var 
-    url = target.textContent, 
+    var
+    url = target.textContent,
     rt_id = target.get_attr('parent-node-chain', 'rt-id');
 
     // TODO use the exec service to open new link when it's ready
-    var url = helpers.resolveURLS(runtimes.getURI(rt_id), 
+    var url = helpers.resolveURLS(runtimes.getURI(rt_id),
                                   url.slice(1, url.length - 1));
     window.open(url, "_blank");
   }.bind(this);
@@ -464,8 +484,9 @@ cls.DOMInspectorActions = function(id)
   this._handlers["nav-up"] = function(event, target)
   {
     // TODO if setting of nav target fails
-    if ( !this.setSelected(nav_target.getPreviousWithFilter(view_container, 
-                                                            nav_filters.up_down)))
+    if ( !this.setSelected(nav_target.getPreviousWithFilter(view_container,
+                                                            nav_filters.up_down),
+                           true))
     {
       view_container.scrollTop = 0;
     }
@@ -475,7 +496,9 @@ cls.DOMInspectorActions = function(id)
   this._handlers["nav-down"] = function(event, target)
   {
     // TODO if setting of nav target fails
-    if(!this.setSelected( nav_target.getNextWithFilter(view_container, nav_filters.up_down) ) )
+    if(!this.setSelected(nav_target.getNextWithFilter(view_container,
+                                                      nav_filters.up_down),
+                         true))
     {
       view_container.scrollTop = view_container.scrollHeight;
     }
@@ -485,58 +508,35 @@ cls.DOMInspectorActions = function(id)
   this._handlers["nav-left"] = function(event, target)
   {
     // TODO if setting of nav target fails
-    this.setSelected(nav_target.getPreviousWithFilter(view_container, nav_filters.left_right));
+    this.setSelected(nav_target.getPreviousWithFilter(view_container,
+                                                      nav_filters.left_right),
+                     true);
     return true;
   }.bind(this);
 
   this._handlers["nav-right"] = function(event, target)
   {
-    
+
     // TODO if setting of nav target fails
-    this.setSelected(nav_target.getNextWithFilter(view_container, nav_filters.left_right));
+    this.setSelected(nav_target.getNextWithFilter(view_container,
+                                                  nav_filters.left_right),
+                     true);
     return true;
   }.bind(this);
 
-  this._handlers["expand-collapse-or-select"] = function(event, target)
+  this._handlers["dispatch-click"] = function(event, target)
   {
     if(nav_target)
-    {
-      var handler_target = nav_target.has_attr("parent-node-chain", "handler");
-      switch (nav_target.nodeName.toLowerCase())
-      {
-        case 'input':
-          this._handlers["expand-collapse-node"](event, handler_target);
-          break;
-        case 'value':
-          if (handler_target == nav_target)
-          {
-            this._handlers["dom-resource-link"](event, handler_target);
-            break;
-          }
-        case 'key':
-        case 'node':
-        case 'text':
-          this._handlers["select-node"](event, handler_target);
-          break;
-      }
-    }
+      nav_target.dispatchMouseEvent('click', event.ctrlKey,
+                                    event.altKey, event.shiftKey);
     return false;
   }.bind(this);
 
-  this._handlers["expand-collapse-all-or-edit"] = function(event, target)
+  this._handlers["dispatch-dbl-click"] = function(event, target)
   {
     if(nav_target)
-    {
-      var handler_target = nav_target.has_attr("parent-node-chain", "handler");
-      switch (nav_target.nodeName.toLowerCase())
-      {
-        case "input":
-          this._handlers["expand-collapse-whole-node"](event, handler_target);
-          break;
-        default:
-          this._handlers["edit-dom"]({target: nav_target}, handler_target);
-      } 
-    }
+      nav_target.dispatchMouseEvent('dblclick', event.ctrlKey,
+                                    event.altKey, event.shiftKey);
     return false;
   }.bind(this);
 
@@ -558,7 +558,7 @@ cls.DOMInspectorActions = function(id)
         case 'value':
         case 'text':
         {
-          broker.set_mode(this, mode = MODE_EDIT);
+          this.mode = MODE_EDIT_ATTR_TEXT;
           document.documentElement.addClass('modal');
           self.setSelected(event.target.parentNode);
           self.set_editor("dom-attr-text-editor");
@@ -574,12 +574,12 @@ cls.DOMInspectorActions = function(id)
               (event.target.parentNode.parentNode, self.makeFilterGetStartTag(event.target));
             if( !new_target )
             {
-              opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+              opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
                 'failed getting start tag in this.editDOM in action_dom.js')
               return;
             }
           }
-          broker.set_mode(this, mode = MODE_EDIT);
+          this.mode = MODE_EDIT_MARKUP;
           document.documentElement.addClass('modal');
           self.setSelected(new_target.parentNode);
           self.set_editor("dom-markup-editor");
@@ -590,24 +590,19 @@ cls.DOMInspectorActions = function(id)
     }
   }.bind(this);
 
-  this._handlers["submit-edit-or-new-line"] = function(event, target)
+  this._handlers["submit-edit"] = function(event, target)
   {
-    if (this.editor.type == "dom-attr-text-editor")
+    if ((this.mode == MODE_EDIT_ATTR_TEXT &&
+         this.editor.type == this.editors["dom-attr-text-editor"].type) ||
+        (this.mode == MODE_EDIT_MARKUP &&
+         this.editor.type == this.editors["dom-markup-editor"].type))
     {
       this.setSelected(this.editor.submit() || this.getFirstTarget() );
-      broker.set_mode(this, mode = MODE_DEFAULT);
+      this.mode = MODE_DEFAULT;
       document.documentElement.removeClass('modal');
       return false;
     }
     return true;
-  }.bind(this);
-
-  this._handlers["ctrl-enter-edit-mode"] = function(event, target)
-  {
-    this.setSelected(this.editor.submit() || this.getFirstTarget());
-    broker.set_mode(this, mode = MODE_DEFAULT);
-    document.documentElement.removeClass('modal');
-    return false;
   }.bind(this);
 
   this._handlers["edit-next"] = function(event, target)
@@ -616,7 +611,7 @@ cls.DOMInspectorActions = function(id)
     {
       if( !this.editor.nav_next(event) )
       {
-        broker.set_mode(this, mode = MODE_DEFAULT);
+        this.mode = MODE_DEFAULT;
         document.documentElement.removeClass('modal');
       }
       return false;
@@ -634,7 +629,7 @@ cls.DOMInspectorActions = function(id)
     {
       if( !this.editor.nav_previous(event) )
       {
-        broker.set_mode(this, mode = MODE_DEFAULT);
+        this.mode = MODE_DEFAULT;
         document.documentElement.removeClass('modal');
       }
       return false;
@@ -655,12 +650,12 @@ cls.DOMInspectorActions = function(id)
     {
       /*
         In case of markup editor the view will get re-created.
-        Setting the navigation target will be handled 
+        Setting the navigation target will be handled
         in the onViewCreated callback.
       */
       this.editor.cancel();
     }
-    broker.set_mode(this, mode = MODE_DEFAULT);
+    this.mode = MODE_DEFAULT;
     document.documentElement.removeClass('modal');
     return false;
   }.bind(this);
@@ -675,8 +670,7 @@ cls.DOMInspectorActions = function(id)
       }
       else
       {
-        broker.set_mode(this, mode = MODE_DEFAULT);
-        //key_identifier.setModeDefault(self);
+        this.mode = MODE_DEFAULT;
         document.documentElement.removeClass('modal');
       }
     }
@@ -691,7 +685,7 @@ cls.DOMInspectorActions = function(id)
     return function(node)
     {
       return (
-        node.nodeName.toLowerCase() == 'node' 
+        node.nodeName.toLowerCase() == 'node'
         && node.textContent.indexOf(start_tag) ==  0
         && node.parentElement.style.marginLeft == margin_left
         );
@@ -704,7 +698,7 @@ cls.DOMInspectorActions = function(id)
 
 window.eventHandlers.click['get-children'] = function(event, target)
 {
-  if (event.ctrlKey)
+  if (event.shiftKey)
     this.broker.dispatch_action("dom", "expand-collapse-whole-node", event, target);
   else
     this.broker.dispatch_action("dom", "expand-collapse-node", event, target);

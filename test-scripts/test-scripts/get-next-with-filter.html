@@ -19,15 +19,17 @@ p
   margin: 0;
   margin-left: 20px;
 }
+
 ::selection
 {
   background-color: #0f0;
 }
+
 </style>
-<script src="../../src/scripts/dom.js"/>
+<script src="../../src/scripts/dom.js"></script>
 <script>
 
-onload = function()
+window.onload = function()
 {
   window.selection = getSelection();
   window.range = document.createRange();
@@ -36,7 +38,8 @@ onload = function()
 
 var selectEle = function(ele)
 {
-  selection.collapse(document.body, 0)
+  if (!selection.isCollapsed)
+    selection.removeAllRanges();
   range.selectNodeContents(ele.firstChild);
   selection.addRange(range);
   active_ele = ele;
@@ -44,7 +47,7 @@ var selectEle = function(ele)
 
 var filter = function(ele){ return true }; // "div" == ele.nodeName.toLowerCase();
 
-document.onkeypress = function(event)
+document.addEventListener('keypress', function(event)
 {
   switch(event.keyCode)
   {
@@ -66,7 +69,7 @@ document.onkeypress = function(event)
       break;
     }
   }
-}
+}, false);
 
 </script>
 

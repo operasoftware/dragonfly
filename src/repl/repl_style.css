@@ -17,6 +17,11 @@
   word-wrap: break-word;
 }
 
+.repl-input .multiline {
+    border: dotted thin gray;
+    padding: 6px 0 6px 6px;
+}
+
 .repl-lines {
     white-space: pre;
     list-style: none;
@@ -95,3 +100,4 @@ li > .repl-lines {
 .repl-lines .open {
     background-position: 0 -11px;
 }
+

@@ -362,11 +362,12 @@ cls.WindowManager["2.0"].WindowsDropDown = function()
           if (win.window_type == "gadget")
             gadget_list.push(win_list.splice(i, 1)[0]);
         markup += win_list.map(this._option).join('');
-        markup += "<optgroup " +
-                    "label='Opera Extensions and Opera Unite' " +
-                    "class='window-select-gadgets' " +
-                    "></optgroup>" +
-                  gadget_list.map(this._option).join('');
+        if (gadget_list.length)
+          markup += "<optgroup " +
+                      "label='Opera Extensions and Opera Unite' " +
+                      "class='window-select-gadgets' " +
+                      "></optgroup>" +
+                    gadget_list.map(this._option).join('');
         select.innerHTML = markup;
       }
     }
@@ -447,8 +448,11 @@ cls.WindowManager["2.0"].DebuggerMenu = function(id, class_name)
     ret = ret.concat(select_obj._action_entries.map(this._action_entry));
     ret[ret.length] = ["hr"];
     ret.push.apply(ret, win_list.map(this._option_template));
-    ret.push(['cst-title', 'Opera Extensions and Opera Unite', ]);
-    ret.push.apply(ret, gadget_list.map(this._option_template));
+    if (gadget_list.length)
+    {
+      ret.push(['cst-title', 'Opera Extensions and Opera Unite', ]);
+      ret.push.apply(ret, gadget_list.map(this._option_template));
+    }
     return ret;
   };
 

@@ -9,11 +9,8 @@
 
 main-view { /**/
   width: 100%;
-  height: 100%;
   display: block;
-  position: relative;
   z-index: 1;
-  overflow: hidden;
   }
 
 windows-container, 
@@ -287,7 +284,7 @@ toolbar-filters {
   float: right;
   }
 
-toolbar-filters filter {
+filter {
   display: inline-block;
   margin: 1px;
   padding-left:20px;
@@ -297,11 +294,11 @@ toolbar-filters filter {
   
   }
 
-toolbar-filters filter.focus {
+  filter.focus {
   background-position: 0 -24px;
   }
 
-toolbar-filters em {
+filter em {
   display: inline-block;
   padding-left: 5px;
   width:135px;
@@ -309,7 +306,7 @@ toolbar-filters em {
   vertical-align: top;
   }
 
-toolbar-filters filter input {
+filter input {
   width: 138px;
   height: 20px;
   margin: 1px;
@@ -1035,6 +1032,10 @@ button[handler="show-event-breakpoint-view"]:before
 
 
 /* editing */
+textarea
+{
+   resize: none;
+}
 
 textarea-container {
   display: block;
@@ -1431,6 +1432,18 @@ cst-title
   background-color: hsl(0, 0%, 40%);
   color: #fff;
   font-style: normal;
+}
+
+.script-options cst-title
+{
+  margin-left: 2em;
+}
+cst-group
+{
+  display: block;
+  margin-left: 2em;
+  background-color: hsl(0, 0%, 90%);
+  border-left: 1px solid hsl(0, 0%, 80%);
 }
 
 

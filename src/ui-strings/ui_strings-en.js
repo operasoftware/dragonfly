@@ -327,6 +327,15 @@ ui_strings.S_BUTTON_EXPAND_ALL_SECTIONS = "Expand all sections";
 ui_strings.S_BUTTON_REMOVE_ALL_BREAKPOINTS = "Remove all event breakpoints";
 /* DESC: Search for an event in the event breakpoints view */
 ui_strings.S_BUTTON_SEARCH_EVENT = "Search for an event";
+/* DESC: Search for a keyboard shortcut in the keyboard configuration view */
+ui_strings.S_BUTTON_SEARCH_SHORTCUT = "Search keyboard shortcut";
+/* DESC: Reset all keyboard shortcuts to the default values. */
+ui_strings.S_BUTTON_RESET_ALL_TO_DEFAULTS = "Reset all to defaults";
+/* DESC: Reset the keyboard shortcuts of a specific section to the default values. */
+ui_strings.S_BUTTON_RESET_TO_DEFAULTS = "Reset to defaults";
+
+
+
 
 
 /*
@@ -440,6 +449,26 @@ ui_strings.S_LABEL_UTIL_SCALE = 'Scale';
 ui_strings.S_LABEL_COLLAPSED_INSPECTED_PROTOTYPES ="Default collapsed prototype objects (a list of prototypes, e.g. Object, Array, etc. * will collapse all): ";
 /* DESC: In the command line, choose the size of the typed history */
 ui_strings.S_LABEL_REPL_BACKLOG_LENGTH = 'Number of lines of history to remember';
+/* DESC: Label of a section in the keyboard configuration for a specific view */
+ui_strings.S_LABEL_KEYBOARDCONFIG_FOR_VIEW = 'Keyboard shortcuts %s';
+/* DESC: Label of a subsection in the keyboard configuration */
+ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_DEFAULT = 'Default';
+/* DESC: Label of a subsection in the keyboard configuration */
+ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_EDIT = 'Edit';
+/* DESC: Label of a subsection in the keyboard configuration */
+ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_EDIT_ATTR_AND_TEXT = "Edit Attributes and Text";
+/* DESC: Label of a subsection in the keyboard configuration */
+ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_EDIT_MARKUP = "Edit markup";
+/* DESC: Label of an invalid keyboard shortcut */
+ui_strings.S_LABEL_KEYBOARDCONFIG_INVALID_SHORTCUT = 'Invalid keyboard shortcut';
+/* DESC: Label of a subsection in the keyboard configuration */
+ui_strings.S_LABEL_REPL_MODE_DEFAULT = 'Default';
+/* DESC: Label of a subsection in the keyboard configuration */
+ui_strings.S_LABEL_REPL_MODE_SINGLELINE = 'Single-line edit';
+/* DESC: Label of a subsection in the keyboard configuration */
+ui_strings.S_LABEL_REPL_MODE_MULTILINE = 'Multi-line edit';
+/* DESC: Label of a subsection in the keyboard configuration */
+ui_strings.S_LABEL_REPL_MODE_AUTOCOMPLETE = 'Autocomplete';
 
 
 /*

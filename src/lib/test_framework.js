@@ -328,12 +328,12 @@ window.cls.TestFramework = function()
             "<textarea rows='10' id='proto-message'>[]</textarea>" +
             "<p class='right-aligned'><input type='button' value='send' data-service='" + this._selected_service + "'" +
             " data-command='" + event.target.textContent + 
-            "' id = 'test-send-command' ></p>" +
+            "' id = 'test-send-command' /></p>" +
             "<h3>response</h3><pre class='definition'></pre>" +
               "<p class='right-aligned'><label>pretty print message " +
                 "<input type='checkbox'" +
                   (cookies.get('pretty-print-message') == 'true' ? " checked='checked' " : "" ) +
-                  " id='pretty-print-message'>" +
+                  " id='pretty-print-message' />" +
                 "</label></p>";
           var pres = message_container.getElementsByTagName('pre');
           var service = window.services[this._dashed_name(this._selected_service)];
