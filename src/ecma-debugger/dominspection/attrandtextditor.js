@@ -607,14 +607,20 @@ var DOMAttrAndTextEditor = function(nav_filters)
     );
   }
 
-  // Only passing a ref_id would be better
-  this.insert_attribute_edit = function(ref_id, container)
+  this.insert_attribute_edit = function(ref_node)
   {
-    var target = container.querySelector("[ref-id='" + ref_id + "'] node");
-    if (target)
+    if (ref_node)
     {
-      var next = this.create_new_edit(target.firstElementChild);
-      this.edit({}, next);
+      if (ref_node.lastChild.nodeType == 3)
+      {
+        ref_node.lastChild.splitText(ref_node.lastChild.nodeValue.replace(/\/?>$/,'').length);
+        ref_node = this.create_new_edit(ref_node.lastChild.previousSibling);
+      }
+      else
+      {
+        ref_node = this.create_new_edit(ref_node.lastChild);
+      }
+      this.edit({}, ref_node);
     }
   };
   
