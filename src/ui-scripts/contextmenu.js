@@ -16,6 +16,8 @@ var ContextMenu = function() {
    */
   this.registered_menus = {};
 
+  this._broker = ActionBroker.get_instance();
+
   /**
    * Registers a new context menu, or adds items to an already registered context menu.
    *
@@ -39,7 +41,7 @@ var ContextMenu = function() {
    */
   this.oncontextmenu = function(event)
   {
-    document.removeEventListener("click", this._modal_click_handler, true);
+    this._broker.clear_setter_click_handler(this);
 
     // Hide the currently visible context menu, if any
     this.dismiss();
@@ -112,7 +114,7 @@ var ContextMenu = function() {
     {
       this._current_event = event;
       this.show(all_items, event.clientX, event.clientY);
-      document.addEventListener("click", this._modal_click_handler, true);
+      this._broker.set_setter_click_handler(this, this._modal_click_handler);
       EventHandler.__modal_mode = true;
     }
   };
@@ -237,7 +239,7 @@ var ContextMenu = function() {
       target = target.parentNode;
     }
 
-    document.removeEventListener("click", this._modal_click_handler, true);
+    this._broker.clear_setter_click_handler(this);
     EventHandler.__modal_mode = false;
   }.bind(this);
 };

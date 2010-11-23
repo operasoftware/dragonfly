@@ -641,7 +641,7 @@ cls.DOMInspectorActions = function(id)
     return true;
   }.bind(this);
 
-  this.insert_attribute_edit = function(event, target)
+  this._handlers["insert-attribute-edit"] = function(event, target)
   {
     if (!_is_script_node(target))
     {
@@ -652,7 +652,7 @@ cls.DOMInspectorActions = function(id)
       }
       event.preventDefault();
       event.stopPropagation();
-      key_identifier.setModeEdit(self);
+      this.mode = MODE_EDIT_ATTR_TEXT;
       document.documentElement.addClass('modal');
       self.setSelected(target);
       self.set_editor("dom-attr-text-editor");
@@ -661,7 +661,7 @@ cls.DOMInspectorActions = function(id)
       this.editor.insert_attribute_edit(target.get_attr("parent-node-chain", "ref-id"),
                                         target.has_attr("parent-node-chain", "ui-id"));
     }
-  };
+  }.bind(this);
 
   this._handlers["edit-next"] = function(event, target)
   {

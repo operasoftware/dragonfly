@@ -253,6 +253,7 @@ cls.DOMView.create_ui_widgets = function()
     ]
   )
 
+  var broker = ActionBroker.get_instance();
   var contextmenu = new ContextMenu();
 
   var dom_element_common_items = [
@@ -334,25 +335,22 @@ cls.DOMView.create_ui_widgets = function()
 
   function contextmenu_edit_dom(event, target)
   {
-    key_identifier.setView(event);
-    window.actions['dom'].editDOM(event, event.target);
+    broker.dispatch_action("dom", "edit-dom", event, event.target);
   }
 
   function contextmenu_edit_markup(event, target)
   {
-    key_identifier.setView(event);
     target = event.target;
     while (target.nodeName.toLowerCase() != "node")
     {
       target = target.parentNode;
     }
-    window.actions['dom'].editDOM(event, target);
+    broker.dispatch_action("dom", "edit-dom", event, event.target);
   }
 
   function contextmenu_add_attribute(event, target)
   {
-    key_identifier.setView(event);
-    window.actions['dom'].insert_attribute_edit(event, event.target);
+    broker.dispatch_action("dom", "insert-attribute-edit", event, event.target);
   }
 
   function contextmenu_remove_node(event, target)
