@@ -463,12 +463,6 @@ cls.DOMInspectorActions = function(id)
         /<\//.test(target.firstChild.textContent))
       while ((target = target.previousSibling) &&
               target.getAttribute('ref-id') != obj_id);
-    if (target)
-    {
-      var model = this._select_node(target);
-      if (model)
-        topCell.statusbar.updateInfo(templates.breadcrumb(model, obj_id));
-    }
   }.bind(this);
 
   this._handlers["inspect-node-link"] = function(event, target)
