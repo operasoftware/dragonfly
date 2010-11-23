@@ -124,7 +124,7 @@ var ActionBroker = function()
   {
     if (this._contextmenu.is_shown)
     {
-      this._contextmenu._modal_click_handler(event);
+      this._contextmenu.modal_click_handler(event);
       return true;
     }
     if (!(this._action_context && this._action_context.onclick(event) === false))

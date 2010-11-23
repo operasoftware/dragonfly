@@ -212,7 +212,7 @@ var ContextMenu = function() {
     return all_items;
   };
 
-  this._modal_click_handler = function(event)
+  this.modal_click_handler = function(event)
   {
     var target = event.target;
     var contextmenu = document.getElementById("contextmenu");
