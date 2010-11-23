@@ -89,6 +89,19 @@ var ActionBroker = function()
     */
   this.get_global_handler = function(){};
 
+  /** 
+    * To subscribe to the modal click handler. 
+    * @param {Object} setter. So far the setter must be an instance of ContextMenu
+    * @param {Function} handler. The callback for the click event.
+    */
+  this.set_setter_click_handler = function(setter, handler){};
+
+  /** 
+    * To unsubscribe to the modal click handler. 
+    * @param {Object} setter. Only the setter of the click handler can unsubscribe.
+    */
+  this.clear_setter_click_handler = function(setter){};
+
   /* constants */
 
   const GLOBAL_HANDLER = ActionBroker.GLOBAL_HANDLER_ID;
@@ -104,10 +117,16 @@ var ActionBroker = function()
   this._current_shortcuts = null;
   this._global_handler = new GlobalActionHandler(GLOBAL_HANDLER);
   this._delays = {};
+  this._modal_click_handler_setter = null;
+  this._modal_click_handler = null;
 
   this._set_action_context_bound = (function(event)
   {
-    if (!(this._action_context && this._action_context.onclick(event) === false))
+    if (this._modal_click_handler)
+    {
+      this._modal_click_handler(event);
+    }
+    else if (!(this._action_context && this._action_context.onclick(event) === false))
     {
       var container = event.target;
       while (container && container.nodeType == 1 &&
@@ -271,6 +290,24 @@ var ActionBroker = function()
   this.get_global_handler = function()
   {
     return this._global_handler;
+  };
+
+  this.set_setter_click_handler = function(setter, handler)
+  {
+    if (setter instanceof ContextMenu)
+    {
+      this._modal_click_handler_setter = setter;
+      this._modal_click_handler = handler;
+    }
+  };
+
+  this.clear_setter_click_handler = function(setter)
+  {
+    if (setter == this._modal_click_handler_setter)
+    {
+      this._modal_click_handler_setter = null;
+      this._modal_click_handler = null;
+    }
   };
 
   if (document.readyState == "complete")
