@@ -486,7 +486,7 @@ cls.DOMInspectorActions = function(id)
   this._handlers["select-node-in-breadcrumb"] = function(event, target)
   {
     // assuming the breadcrumb is visible together with the dom view
-    var obj_id = parseInt(target.getAttribute('obj-id'));
+    var obj_id = parseInt(target.getAttribute('ref-id'));
     var target = document.getElementById('target-element');
     if (target)
     {
