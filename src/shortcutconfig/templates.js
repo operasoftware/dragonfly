@@ -1,4 +1,4 @@
-(function()
+﻿(function()
 {
   this.shortcut_config = function()
   {

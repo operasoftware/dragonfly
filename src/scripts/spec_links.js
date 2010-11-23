@@ -1,4 +1,4 @@
-function SpecLinks()
+﻿function SpecLinks()
 {
   if (SpecLinks.__instance__)
   {
