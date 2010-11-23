@@ -90,14 +90,14 @@ var ActionBroker = function()
   this.get_global_handler = function(){};
 
   /** 
-    * To subscribe to the modal click handler. 
+    * To subscribe to the click handler. 
     * @param {Object} setter. So far the setter must be an instance of ContextMenu
     * @param {Function} handler. The callback for the click event.
     */
   this.set_setter_click_handler = function(setter, handler){};
 
   /** 
-    * To unsubscribe to the modal click handler. 
+    * To unsubscribe to the click handler. 
     * @param {Object} setter. Only the setter of the click handler can unsubscribe.
     */
   this.clear_setter_click_handler = function(setter){};
