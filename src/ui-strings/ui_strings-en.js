@@ -512,6 +512,8 @@ ui_strings.S_INFO_DOCUMNENT_LOADING = 'Opera Dragonfly is loading ...';
 ui_strings.M_SETTING_LABEL_GENERAL = 'General';
 /* DESC: Dragonfly is waiting for host connection */
 ui_strings.S_INFO_WAITING_FORHOST_CONNECTION = "Waiting for a host connection on port %s.";
+/* DESC: There was an error trying to listen to the specified port */
+ui_strings.S_INFO_ERROR_LISTENING = "There was an error. Please check that port %s is not in use.";
 /* DESC: the given storage type doesn't exist, e.g. a widget without the w3 widget namespace
  * will not have a widget.preferences storage object.
  */
