@@ -249,6 +249,7 @@ window.cls.Client = function()
     new CompositeView('settings_new', ui_strings.S_BUTTON_LABEL_SETTINGS, layouts.settings_rough_layout);
     new CompositeView('utils', ui_strings.M_VIEW_LABEL_UTILITIES, layouts.utils_rough_layout);
     new CompositeView('storage', ui_strings.M_VIEW_LABEL_STORAGE, layouts.storage_rough_layout);
+
     if( window.opera.attached != settings.general.get('window-attached') )
     {
       window.opera.attached = settings.general.get('window-attached') || false;
@@ -485,7 +486,7 @@ ui_framework.layouts.storage_rough_layout =
     dir: 'v',
     width: 1000,
     height: 1000,
-    children: [ { height: 1000, tabs: ['cookies', 'local_storage', 'session_storage', 'widget_preferences'] } ]
+    children: [ { height: 1000, tabs: ['cookies', 'local_storage', 'session_storage', 'widget_preferences', 'cookie_manager'] } ]
 }
 
 ui_framework.layouts.main_layout =
