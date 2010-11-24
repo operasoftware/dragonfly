@@ -20,14 +20,14 @@ html {
 }
 
 .sort-column:before {
-  content: url(ui-images/sort_desc.png);
+  content: url(../ui-images/sort_desc.png);
   position: relative;
   margin-right: 4px;
   top: 2px;
 }
 
 .sort-column.reversed:before {
-  content: url(ui-images/sort_asc.png);
+  content: url(../ui-images/sort_asc.png);
 }
 
 .sortable-table tr.header {
