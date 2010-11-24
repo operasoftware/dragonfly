@@ -746,6 +746,17 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
   };
 
+  // Same as above, but since the event isn't canceled, whatever
+  // character was pressed is added to the input.
+  this["_handle_action_commit-and-insert"] = function(evt, target)
+  {
+    if (this._use_autocomplete_highlight && this._recent_autocompletion)
+    {
+      this._highlight_completion();
+      this._commit_selection();
+    }
+  };
+
   this["_handle_action_cancel"] = function(evt, target)
   {
     this._highlight_completion();
