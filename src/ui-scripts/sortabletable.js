@@ -47,7 +47,26 @@ function SortableTable(tabledef, data, cols, sortby, reversed)
     this.groupby = null;
     this._elem = null;
     this.objectid = ObjectRegistry.get_instance().set_object(this);
+    this._init_handlers();
   }
+
+  this._init_handlers = function()
+  {
+    if (!eventHandlers.click["sortable-table-sort"])
+    {
+      eventHandlers.click["sortable-table-sort"] = this._sort_handler;
+    }
+  }
+
+  this._sort_handler = function(evt, target)
+  {
+    var table = target.parentNode.parentNode;
+    var obj = ObjectRegistry.get_instance().get_object(table.getAttribute("data-object-id"));
+    obj.sort(target.getAttribute("data-column-id"));
+    table.re_render(obj.render());
+  }
+
+
 
   this._default_sorters = {
     "number": function(getter) { return function(a, b) { return b-a; } }
