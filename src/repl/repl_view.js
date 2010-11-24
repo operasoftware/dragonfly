@@ -653,11 +653,12 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._resolver.clear_cache();
   }.bind(this);
 
-  this._handle_action_clear = function(evt, target)
+  this["_handle_action_clear"] = function(evt, target)
   {
     this.clear();
     var cursor_pos = this._textarea_handler.get_cursor();
     this._data.clear();
+    this._textarea.focus();
     this._textarea_handler.put_cursor(cursor_pos);
     return false;
   };
