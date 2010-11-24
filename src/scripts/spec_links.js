@@ -57,6 +57,7 @@ SpecLinks.prototype.open_spec_link = function(spec_link)
   }
 };
 
+// TODO: some are too general and there are overlaps
 SpecLinks.specs = {
   "css": {
     "azimuth": "http://www.w3.org/TR/CSS2/aural.html#propdef-azimuth",
@@ -175,7 +176,6 @@ SpecLinks.specs = {
     "word-spacing": "http://www.w3.org/TR/CSS2/text.html#propdef-word-spacing",
     "z-index": "http://www.w3.org/TR/CSS2/visuren.html#propdef-z-index",
 
-    // TODO: some overlap with properties above here, clean up
     //"@font-face": "http://www.w3.org/TR/css3-fonts/#the-font-face-rule",
     //"@namespace": "http://www.w3.org/TR/css3-namespace/#declaration",
     "font-family": "http://www.w3.org/TR/css3-fonts/#font-family-the-font-family-property",
@@ -276,6 +276,38 @@ SpecLinks.specs = {
   // DOM and related
   "dom": {
     // DOM 0-3
+    "doctype": "http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-B63ED1A31",
+    "implementation": "http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-1B793EBA",
+    "documentElement": "http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-87CD092",
+    "nodeName": "http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-F68D095",
+    "nodeValue": "http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-F68D080",
+    "nodeType": "http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-111237558",
+    "parentNode": "http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-1060184317",
+    "childNodes": "http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-1451460987",
+    "firstChild": "http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-169727388",
+    "lastChild": "http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-61AD09FB",
+    "previousSibling": "http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-640FB3C8",
+    "nextSibling": "http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-6AC54C2F",
+    "attributes": "http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-84CF096",
+    "ownerDocument": "http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#node-ownerDoc",
+    "length": "http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-203510337",
+    "length": "http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-6D0FB19E",
+    "data": "http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-72AB8359",
+    "length": "http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-7D61178C",
+    "name": "http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-1112119403",
+    "specified": "http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-862529273",
+    "value": "http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-221662474",
+    "tagName": "http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-104682815",
+    "name": "http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-1844763134",
+    "entities": "http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-1788794630",
+    "notations": "http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-D46829EF",
+    "publicId": "http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-54F2B4D0",
+    "systemId": "http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-E8AAB1D0",
+    "publicId": "http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-D7303025",
+    "systemId": "http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-D7C29F3E",
+    "notationName": "http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-6ABAEB38",
+    "target": "http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-1478689192",
+    "data": "http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-837822393",
     "createAttribute": "http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-1084891198",
     "createAttributeNS": "http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-DocCrAttrNS",
     "createCDATASection": "http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-D26C0AF8",
@@ -591,6 +623,11 @@ SpecLinks.specs = {
     "queryCommandSupported": "http://www.w3.org/TR/html5/dnd.html#dom-document-querycommandsupported",
     "queryCommandValue": "http://www.w3.org/TR/html5/dnd.html#dom-document-querycommandvalue",
     "data": "http://www.w3.org/TR/html5/dnd.html#dom-undomanagerevent-data",
+    "write": "http://www.w3.org/TR/html5/apis-in-html-documents.html#document.write",
+    "writeln": "http://www.w3.org/TR/html5/apis-in-html-documents.html#document.writeln",
+    "innerHTML": "http://www.w3.org/TR/html5/apis-in-html-documents.html#innerhtml",
+    "outerHTML": "http://www.w3.org/TR/html5/apis-in-html-documents.html#outerhtml",
+    "insertAdjacentHTML": "http://www.w3.org/TR/html5/apis-in-html-documents.html#insertadjacenthtml",
 
     // Element Traversal
     "firstElementChild": "http://www.w3.org/TR/ElementTraversal/#attribute-firstElementChild",
