@@ -265,8 +265,7 @@ cls.HostCommandTransformer = function() {
 
   this.clientcommand_clear = function(view, data, input)
   {
-    view.clear();
-    data.clear();
+    view._handle_action_clear();
   };
 
   this.dfcommand_help = function(view, data, service)
