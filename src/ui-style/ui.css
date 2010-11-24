@@ -1558,3 +1558,9 @@ tabs, toolbar {
   border: none;
   background-color: #ccc;
 }
+
+/* TODO: this is just a temp workaround. */
+#waiting-for-connection {
+    position: relative;
+    z-index: 2;
+}
