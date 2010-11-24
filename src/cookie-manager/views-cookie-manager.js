@@ -120,11 +120,9 @@ cls.CookieManagerView = function(id, name, container_class)
     var type = message[1];
     var domain = message[2];
     // console.log("done finding domain for ",rt_id,": ",domain);
-    if(this._rts[rt_id])
-    {
-      this._rts[rt_id].get_domain_is_pending = false;
-      this._rts[rt_id].domain = domain;
-    }
+
+    this._rts[rt_id].get_domain_is_pending = false;
+    this._rts[rt_id].domain = domain;
     if(this._check_if_all_domains_are_available())
     {
       // check this._cookies for domains that aren't in any runtime anymore
