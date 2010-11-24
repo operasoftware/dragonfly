@@ -124,6 +124,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <link rel="stylesheet" href="./http-logger/httplogger_style.css"/>
 <link rel="stylesheet" href="./console-logger/consolelogger_style.css"/>
 <link rel="stylesheet" href="./ui-style/colorpickerstyle.css"/>
+<link rel="stylesheet" href="./ui-style/sortable_table.css"/>
 <link rel="stylesheet" href="./repl/repl_style.css"/>
 <link rel="stylesheet" href="./resource-manager/resource_style.css"/>
 <link rel="stylesheet" href="./network/network_style.css"/>
@@ -147,6 +148,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./scripts/colors.js"/>
 <script src="./scripts/colorspace.js"/>
 <script src="./scripts/messages.js"/>
+<script src="./scripts/objectregistry.js"/>
 
 
 
@@ -205,6 +207,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/colorpickertemplates.js"/>
 <script src="./ui-scripts/colorpicker.js"/>
 <script src="./ui-scripts/slider.js"/>
+<script src="./ui-scripts/sortabletable.js"/>
 
 
 <script src="./build-application/build_application.js"></script>
