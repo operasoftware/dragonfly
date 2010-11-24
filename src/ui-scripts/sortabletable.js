@@ -205,6 +205,6 @@ templates.sortable_table_row = function(tabledef, item, cols)
   return ["tr",
           cols.map(function(col) {
             return ["td", tabledef.columns[col].renderer(item, tabledef.columns[col].getter)];
-          })
+          }).concat(tabledef.handler ? ["handler", tabledef.handler] : [])
          ];
 }
