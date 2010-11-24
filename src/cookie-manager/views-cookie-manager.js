@@ -6,68 +6,77 @@ cls.CookieManagerView = function(id, name, container_class)
   this._rts = {};
   this.createView = function(container)
   {
-    var render_array = [];
+    var cookieData = [];
     for (var domain in this._cookies)
     {
       var domains_cookies = this._cookies[domain];
       if (domains_cookies.cookie_list)
       {
-        render_array.push(
-          ["tr",
-            ["td", ["h2",domain+" ("+JSON.stringify(domains_cookies.runtimes)+")"], "colspan", "7"],
-            "data-domain", domain,
-            "class", "domain"
-          ]
-        );
-        render_array.push(
-          ["tr",
-            ["th", "Domain"],
-            ["th", "Path"],
-            ["th", "Name"],
-            ["th", "Value"],
-            ["th", "Expires"],
-            ["th", "isSecure"],
-            ["th", "isHTTPOnly"]
-          ]
-        );
-        var toggle_class=true;
         for (var i=0; i < domains_cookies.cookie_list.length ;i++)
         {
           var current_cookie = domains_cookies.cookie_list[i];
-          var render_date;
-          if(current_cookie.expires === 0) {
-            render_date = "When session is closed";
-          }
-          else
-          {
-            render_date = new Date(current_cookie.expires*1000).toUTCString()
-          }
-          var row_array=["tr",
-              ["td",String(current_cookie.domain)],
-              ["td",String("/"+current_cookie.path)],
-              ["td",String(current_cookie.name)],
-              ["td",String(current_cookie.value)],
-              ["td",render_date],
-              ["td",String(Boolean(current_cookie.isSecure))],
-              ["td",String(Boolean(current_cookie.isHTTPOnly))]
-            ];
-          if(toggle_class)
-          {
-            row_array.push("class","odd");
-          }
-          toggle_class=!toggle_class;
-          render_array.push(row_array);
+          cookieData.push({
+            runtimes: domains_cookies.runtimes,
+            displaydomain: current_cookie.domain,
+            path: "/"+current_cookie.path,
+            name: current_cookie.name,
+            value: current_cookie.value,
+            expires: current_cookie.expires,
+            isSecure: current_cookie.isSecure,
+            isHTTPOnly: current_cookie.isHTTPOnly
+          });
         };
         // Add button that removes cookies of this domain
-        // Depends on CORE-34615
-        render_array.push(["button","RemoveCookiesOfDomain", "href", "#", "handler", "cookiemanager-delete-domain-cookies"]);
+        // render_array.push(["button","RemoveCookiesOfDomain", "href", "#", "handler", "cookiemanager-delete-domain-cookies"]);
       }
-      render_array=["table",render_array];
     }
-    container.clearAndRender(render_array);
+    
+    var tabledef = {
+      columns: {
+        displaydomain: {
+          label: "Domain"
+        },
+        /* originaldomain: {
+          label: "Domain"
+        }, */
+        runtimes: {
+          label: "Runtimes",
+          getter: function(obj) { return JSON.stringify(obj.runtimes) }
+        },
+        path: {
+          label: "Path"
+        },
+        name: {
+          label: "Name"
+        },
+        value: {
+          label: "Value"
+        },
+        expires: {
+          label: "Expires",
+          getter: function(obj) {
+            var parsedDate=new Date(obj.expires*1000);
+            if(new Date().getTime() < parsedDate.getTime())
+            {
+              return parsedDate.toUTCString();
+            }
+            return "(when session is closed)";
+          },
+          sorter: function(obj1, obj2) {
+            return obj1.expires < obj2.expires;
+          }
+        },
+        isSecure: {
+          label: "isSecure"
+        },
+        isHTTPOnly: {
+          label: "isHTTPOnly"
+        }
+      }
+    }
+    container.clearAndRender(new SortableTable(tabledef, cookieData).render());
     
     // Add clear button
-    // Depends on CORE-34615
     container.render(["button","RemoveAllCookies", "href", "#", "handler", "cookiemanager-delete-all"]);
   };
   
