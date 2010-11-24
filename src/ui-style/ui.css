@@ -1296,8 +1296,6 @@ pin-label.pinned
   border: 1px solid #b3b3b3;
   border-radius: 8px;
   background: #f3f3f3;
-  position: relative;
-  z-index: 2;
 }
 .info-box p 
 {
