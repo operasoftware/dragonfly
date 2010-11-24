@@ -1,0 +1,148 @@
+/**
+  * This interface is meant to be implemented by a singelton,
+  * e.g. as window.action_handler.
+  * The implementation has also to take care of which action implementer
+  * is the current context.
+  * On changing the action implementer context, focus and blur is called on
+  * the according instances.
+  * The click method is called on the current context with any click,
+  * e.g. to exit edit mode properly.
+  *
+  * Later the implementation should also be able to handle any keyboard navigation.
+  */
+ 
+Interface ActionBroker
+ 
+  /**
+    * To register an instance of class which implements
+    * the ActionHandler interface.
+    */
+  void register_handler(instance ActionHandler)
+ 
+  /**
+    * To set the mode either to 'default' or 'edit'.
+    * The purpose is to have keyboard short depending on the mode.
+    * The mode can only be set by the current context.
+    */
+  void set_mode(instance ActionHandler, mode)  // "default" or "edit"
+ 
+  /**
+    * To get a list of (key_id, action_id) tuples.
+    */
+  Array get_keyboard_bindings(view_id, mode)
+ 
+  /**
+    * To set a list of (key_id, action_id) tuples.
+    */
+  void set_keyboard_bindings(view_id, mode)
+ 
+  /**
+    * To get a list of action implementer ids.
+    */
+  Array get_registered_action_implementers()
+ 
+  /**
+    * To bind UI inputs, e.g. click or right click menu, to actions
+    */
+  void dispatch_action(view_id, action_id, event, target)
+ 
+  /**
+    * To handle key input. The implementation must map the key id
+    * to an action id according to the current context and mode.
+    */
+  void dispatch_key_input(key_id, event, target)
+ 
+ 
+Interface ActionHandler
+ 
+  /**
+    * A view id to identify an action implementer.
+    */
+  String id
+ 
+  /**
+    * To handle a single action.
+    * Returning false will cancel the event (preventDefault and stopPropagation),
+    * true will pass it to the next level if any.
+    */
+  Boolean handle(action_id, event, target)
+ 
+  /**
+    * To get a list of supported actions.
+    */
+  Array get_action_list()
+ 
+  /**
+    * Gets called if an action implementer changes to be the current context.
+    */
+  void focus(event, container)
+ 
+  /**
+    * Gets called if an action implementer stops to be the current context.
+    */
+  void blur()
+ 
+  /**
+    * Gets called if an action implementer is the current context.
+    * Returning false will cancel the event (preventDefault and stopPropagation),
+    * true will pass it to the next level if any.
+    */
+  Boolean onclick(event)
+ 
+ 
+ 
+The key_identifier layer translate a key input to a key id, which is one of (so far)
+ 
+"TAB"
+"SHIFT_TAB"
+"ENTER"
+"SHIFT_ENTER"
+"CTRL_ENTER"
+"ESC"
+"SPACE"
+"LEFT"
+"UP"
+"RIGHT"
+"DOWN"
+"SHIFT_LEFT"
+"SHIFT_UP"
+"SHIFT_RIGHT"
+"SHIFT_DOWN"
+"BACKSPACE"
+"CTRL_BACKSPACE"
+"DELETE"
+"F8"
+"F9"
+"F10"
+"F11"
+"SHIFT_F11"
+"CTRL_A"
+"CTRL_I"
+"CTRL_SHIFT_S"
+ 
+generally [CTRL_][SHIFT_]character or function_name.
+The key identifier will pass the key id with the event
+to an ActionBroker on the dispatch_key_input method.
+ 
+example to binding a click action:
+ 
+window.eventHandlers.click['breadcrumb-link'] = function(event, target)
+{
+  window.action_handler.dispatch_action("dom", "breadcrumb-link", event, target);
+}
+ 
+// was window.actions['dom'].breadcrumb_link(event, target);
+ 
+example with a context menu:
+ 
+ContextMenu.register("dom-node", [
+  {
+    label: "Remove node",
+    id: "remove_node",
+    handler: function(event, target)
+    {
+      window.action_handler.dispatch_action("dom", "remove-node", event,target);
+    }
+  },
+  // next menu item
+]);

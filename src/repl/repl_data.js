@@ -14,14 +14,14 @@ cls.ReplData = function(view)
     this._view.update();
   };
 
+  this._entry_count = 0;
   this._add_entry = function(type, data)
   {
     var entry = {
-      time: (new Date()).getTime(),
+      time: ++this._entry_count,
       type: type,
       data: data
     };
-
     this._repllog.push(entry);
     this._view.update();
   };
@@ -75,9 +75,6 @@ cls.ReplData = function(view)
 
   this.add_output_valuelist = function(rt, values)
   {
-    values.forEach(function(e) {
-      e.rt_id = rt;
-    });
     this._add_entry("valuelist", values);
   };
 
@@ -145,7 +142,7 @@ cls.ReplData = function(view)
 
   this._add_typed_history = function(str)
   {
-    if (this._typed_history[0] != str)
+    if (this._typed_history[0] != str && str.trim() !== "")
     {
       this._typed_history.unshift(str);
       if (this._max_typed && this._typed_history.length > this._max_typed)

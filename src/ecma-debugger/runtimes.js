@@ -20,6 +20,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
   WINDOW_ID = 2,
   OBJECT_ID = 3,
   URI = 4,
+  DESCRIPTION = 5,
   THREAD_STARTED = 0,
   THREAD_STOPPED_AT = 1,
   THREAD_FINISHED = 2;
@@ -54,6 +55,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
   var __next_runtime_id_to_select = '';
 
   var __selected_script = '';
+  var __selected_script_type = '';
 
   var _is_first_call_create_all_runtimes_on_debug_context_change = true;
 
@@ -89,6 +91,17 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
 
   var _on_debug_context_selected = function(msg) {
     self.setActiveWindowId(msg.window_id);
+  }
+
+  var is_injected_script = function(script_type)
+  {
+    return (
+    [
+      "Greasemonkey JS", 
+      "Browser JS", 
+      "User JS", 
+      "Extension JS"
+    ].indexOf(script_type) != -1);
   }
 
   var onResetState = function()
@@ -174,7 +187,8 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
 
   var isTopRuntime = function(rt)
   {
-    return rt.html_frame_path.indexOf('[') == -1;
+    return (rt.html_frame_path.indexOf('_top') == 0 && 
+            rt.html_frame_path.indexOf('[') == -1);
   }
 
   /*
@@ -259,9 +273,10 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
       {
         runtime_id: r_t[RUNTIME_ID],
         html_frame_path: r_t[HTML_FRAME_PATH],
-        window_id: r_t[WINDOW_ID],
+        window_id: r_t[WINDOW_ID] || __selected_window,
         object_id: r_t[OBJECT_ID],
         uri: r_t[URI],
+        description: r_t[DESCRIPTION],
       };
 
       checkOldRuntimes(runtime);
@@ -408,9 +423,12 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
       }
     }
 
-    if( !__selected_script )
+    if (!__selected_script ||
+        (is_injected_script(__selected_script_type) && 
+         !is_injected_script(script.script_type)))
     {
       __selected_script = new_script_id;
+      __selected_script_type = script.script_type;
       views['js_source'].update();
       window['cst-selects']['js-script-select'].updateElement();
       window['cst-selects']['cmd-runtime-select'].updateElement();
@@ -529,7 +547,8 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
 
   this.setActiveWindowId = function(window_id)
   {
-    if( window_id != __selected_window )
+    // set the debug context
+    if (window_id != __selected_window)
     {
       __selected_window = window_id;
       cleanUpThreadOnContextChange();
@@ -915,7 +934,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
     {
       removeRuntime(rt_id);
       updateRuntimeViews();
-
+      host_tabs.updateActiveTab();
       messages.post('runtime-stopped', {id: rt_id} );
     }
   }
