@@ -10,8 +10,11 @@
 css_initial_values =
 {
 "-apple-dashboard-region": "",
+"-o-border-image": "",
 "-o-link": "",
 "-o-link-source": "",
+"-o-object-fit": "fill",
+"-o-object-position": "50% 50%",
 "-o-table-baseline": "",
 "-o-text-overflow": "",
 "-o-transform": "none",
@@ -72,6 +75,7 @@ css_initial_values =
 "border-top-width": "0px",
 "border-width": "0px",
 "bottom": "auto",
+"box-decoration-break": "slice",
 "box-sizing": "content-box",
 "box-shadow": "none",
 "caption-side": "top",
@@ -210,6 +214,7 @@ css_initial_values =
 "text-anchor": "",
 "text-decoration": "none",
 "text-indent": "0px",
+"text-overflow": "clip",
 "text-rendering": "",
 "text-shadow": "none",
 "text-transform": "none",

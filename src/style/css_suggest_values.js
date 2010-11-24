@@ -196,7 +196,26 @@ suggest_values['-o-link'] =
 suggest_values['-o-link-source'] =
 suggest_values['-o-tab-size'] =
 suggest_values['-o-table-baseline'] =
+suggest_values['-o-border-image'] =
 [
+];
+
+suggest_values['-o-object-fit'] =
+[
+  'fill',
+  'contain',
+  'cover',
+  'inherit'
+];
+
+suggest_values['-o-object-position'] =
+[
+  'top',
+  'right',
+  'bottom',
+  'left',
+  'center',
+  'inherit'
 ];
 
 suggest_values['-o-text-overflow'] =
@@ -414,6 +433,12 @@ suggest_values['border-left'] =
 suggest_values['bottom'] =
 [
   'auto',
+  'inherit'
+];
+suggest_values['box-decoration-break'] =
+[
+  'slice',
+  'clone',
   'inherit'
 ];
 
@@ -941,6 +966,13 @@ suggest_values['text-decoration'] =
 
 suggest_values['text-indent'] =
 [
+  'inherit'
+];
+
+suggest_values['text-overflow'] =
+[
+  'clip',
+  'ellipsis',
   'inherit'
 ];
 
