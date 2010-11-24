@@ -587,12 +587,14 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   {
     this.mode = "multi-line-edit";
     this._textarea.addClass("multiline");
+    this._textarea.focus();
   };
 
   this._be_singleline = function()
   {
     this.mode = "single-line-edit";
     this._textarea.removeClass("multiline");
+    this._textarea.focus();
   };
 
   this._handle_repl_frame_select_bound = function(event, target)
@@ -653,11 +655,12 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._resolver.clear_cache();
   }.bind(this);
 
-  this._handle_action_clear = function(evt, target)
+  this["_handle_action_clear"] = function(evt, target)
   {
     this.clear();
     var cursor_pos = this._textarea_handler.get_cursor();
     this._data.clear();
+    this._textarea.focus();
     this._textarea_handler.put_cursor(cursor_pos);
     return false;
   };
@@ -743,6 +746,17 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       this._highlight_completion();
       this._commit_selection();
       return false;
+    }
+  };
+
+  // Same as above, but since the event isn't canceled, whatever
+  // character was pressed is added to the input.
+  this["_handle_action_commit-and-insert"] = function(evt, target)
+  {
+    if (this._use_autocomplete_highlight && this._recent_autocompletion)
+    {
+      this._highlight_completion();
+      this._commit_selection();
     }
   };
 

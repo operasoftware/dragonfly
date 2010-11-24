@@ -161,8 +161,8 @@ var ActionBroker = function()
       this._gloabal_shortcuts = this._shortcuts.global; 
       this._key_identifier.set_shortcuts(this._get_shortcut_keys());
       this._set_current_handler(this._global_handler);
+      document.addEventListener('click', this._set_action_context_bound, true);
     }.bind(this));
-    document.addEventListener('click', this._set_action_context_bound, true);
   };
 
   /* implementation */
