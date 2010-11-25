@@ -239,8 +239,12 @@
           if (prop[PROPERTY_TYPE] == 'object')
             list.push([null, prop[OBJECT_VALUE], parseInt(prop[NAME])]);
           else
+          {
+            if (prop[PROPERTY_TYPE] == "string")
+              prop[PROPERTY_VALUE] = "\"" + prop[PROPERTY_VALUE] + "\"";
             list.push([prop[PROPERTY_VALUE] || prop[PROPERTY_TYPE],
                       null, parseInt(prop[NAME])]);
+          }
         }
         return list;
       }, []);
