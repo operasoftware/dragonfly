@@ -638,7 +638,7 @@ SpecLinks.specs = {
 
     // Selectors API
     "querySelector": "http://www.w3.org/TR/selectors-api/#queryselector",
-    "querySelectorAll": "http://www.w3.org/TR/selectors-api/#queryselectorall"
+    "querySelectorAll": "http://www.w3.org/TR/selectors-api/#queryselectorall",
 
     // SVG
     "SVGElement": "http://www.w3.org/TR/SVG/types.html#InterfaceSVGElement",
