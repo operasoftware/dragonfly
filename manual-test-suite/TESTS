@@ -182,7 +182,36 @@ desc:
   - Search for a property, e.g. margin
   - Verify that both section collapse to only contain the matching properties
 
+label: Searching for a newly added property
+desc:
+  - Add a property
+  - Search for it and make sure it shows Update
 
+label: Detaching
+desc:
+  - Add a property in attached mode
+  - Detach and make sure the property is still shown
+  - Do the same, but insetad of adding a new property, delete one, and make sure it's still removed when switching back to attached mode
+
+label: Escaping
+desc:
+  - Add a new property without submitting it
+  - Press Escape
+  - Make sure the property is removed from the view, and that the old style is re-applied
+
+label: Switching view
+desc:
+  - Add a new property
+  - Switch to some other view and then back
+  - Make sure the newly added property is still visible
+  - Do the same, but instead of adding a new property, delete one, and make sure it's still removed when switching the view back
+
+label: Toggle property
+desc:
+  - Disable a property
+  - Make sure the property is in fact disabled and that this is somehow visible in the UI
+  - Enable the property
+  - Make sure the style is re-applied and that this is reflected in the UI
 
 DOM.Properties
 **************
