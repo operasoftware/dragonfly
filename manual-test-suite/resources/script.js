@@ -2,7 +2,10 @@
 {
   var info_item = function(item)
   {
-    return "<li>" + item.replace(/</g, "&lt;");
+    return "<li>" + item.replace(/</g, "&lt;").
+                         replace(/@pre/g, '<pre>').
+                         replace(/@\/pre/g, '</pre>').
+                         replace(/\\n/g, '\n');
   };
   
   document.onclick = function(event)

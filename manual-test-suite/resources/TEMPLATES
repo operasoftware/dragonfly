@@ -1,14 +1,7 @@
 HTML_HEAD
 <!doctype html>
 <head>
-<style>
-td ul
-{
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-</style>
+<link rel="stylesheet" href="%s">
 </head>
 <body>
 #
@@ -25,6 +18,7 @@ HTML_ITEM
 HTML_TITLE
 <h3>Opera Dragonfly Manual Smoke Test Suite</h3>
 <h2>%s</h2>
+%s
 <table>
 <tr><td>Mode:<td>%s</tr>
 <tr><td>Tab:<td>%s</tr>
@@ -44,4 +38,9 @@ HTML_SECTION
 <ul>
 %s
 </ul>
+#
+HTML_DEPRECATED
+<p class="deprecated">DEPRECATED TEST</p>
+#
+
   
