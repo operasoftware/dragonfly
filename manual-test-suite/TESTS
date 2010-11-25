@@ -116,15 +116,19 @@ desc:
   - Verify that the count of all hits is displayed in the status bar.
   - Verify that the view navigates to the next hit on enter.
 
+url: ./test-cases/dom/edit-attribute.html
 id: 12
 label: Edit attributes
 desc:
-  - Double click an attribute
-  - Verify that the attribute is displayed in a edit field.
-  - Change the value and verify that the change applies instantly in the host document.
-  - Verify that escape reverts the changes
+  - Turn the 'Find element' switch on.
+  - Go the the url above 
+  - Select the paragraph 'some text' in the host
+  - Double click the class value 'foo' in the client
+  - Verify that the attribute value is displayed in a edit field.
+  - Change the value to 'bar' and verify that the background-color in the host changes instantly to green.
+  - Verify that escape reverts the background-color back to cyan.
   - Verify that enter does keep the changes an leaves the edit mode.
-  - Verify that tab moves to the next attribute
+  - Verify that tab moves to the edit field to the next attribute
   - Verify that at the end of a tag an empty field is shown to add a new attribute.
 
 id: 13
