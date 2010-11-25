@@ -339,6 +339,105 @@
     ]);
   }
 
+  this.cubic_bezier = function(cubic_bezier_base_class)
+  {
+    var pattern_id = get_id();
+    return (
+    ['div',
+      ['svg:svg',
+        ['defs', this._svg_pattern(pattern_id)],
+        this.svg_rect(0, 0, 100, 100, 0, 0, 'url(#' + pattern_id + ')'),
+        ['g', this.svg_cubic_bezier(30, 50, 70, 50), 'id', 'baba'],
+        'viewBox', '0 0 100 100',
+        'version', '1.1'
+      ],
+      'class', cubic_bezier_base_class
+    ]);
+  }
+
+  this.svg_cubic_bezier = function(x1, y1, x2, y2)
+  {
+    return (
+    [
+      this._svg_line(null, null, 0, 100, x1, 100 - y1, 'none', 'black', .5, .5),
+      this._svg_line(null, null, 100, 0, x2, 100 - y2, 'none', 'black', .5, .5),
+      this._svg_circle(null, null, x1, 100 - y1, 3.5, 'hsl(0, 0%, 70%)', 'black', .5),
+      this._svg_circle(null, null, x2, 100 - y2, 3.5, 'hsl(0, 0%, 70%)', 'black', .5),
+      this._svg_path(null, null, 'M0,100 C30,40 70,60 100,0', 'none', 'red', .5),
+    ]);
+  }
+
+  this._svg_pattern = function(id)
+  {
+    return (
+    ['pattern',
+      this._svg_line(null, null, 0, 0, 10, 0, 'none', 'hsl(0, 0%, 75%)', 1, 0.3),
+      this._svg_line(null, null, 0, 0, 0, 10, 'none', 'hsl(0, 0%, 75%)', 1, 0.3),
+      'id', id,
+      'patternUnits', 'userSpaceOnUse',
+      'x', '-.5',
+      'y', '-.5',
+      'width', '10',
+      'height', '10',
+      'viewBox', '0 0 10 10',
+    ]);
+  }
+
+  this._svg_line = function(id, _class, x1, y1, x2, y2, fill, stroke, stroke_width, opacity)
+  {
+    return (
+    [
+      ['id', id],
+      ['class', _class],
+      ['x1', x1],
+      ['y1', y1],
+      ['x2', x2],
+      ['y2', y2],
+      ['fill', fill],
+      ['stroke', stroke],
+      ['stroke-width', stroke_width],
+      ['opacity', opacity],
+    ].reduce(this._svg_reduce_attrs, ['line']));
+  }
+
+  this._svg_path = function(id, _class, d, fill, stroke, stroke_width, opacity)
+  {
+    return (
+    [
+      ['id', id],
+      ['class', _class],
+      ['d', d],
+      ['fill', fill],
+      ['stroke', stroke],
+      ['stroke-width', stroke_width],
+      ['opacity', opacity],
+    ].reduce(this._svg_reduce_attrs, ['path']));
+  }
+
+  this._svg_circle = function(id, _class, cx, cy, r, fill, stroke, stroke_width, opacity)
+  {
+    return (
+    [
+      ['id', id],
+      ['class', _class],
+      ['cx', cx],
+      ['cy', cy],
+      ['r', r],
+      ['fill', fill],
+      ['stroke', stroke],
+      ['stroke-width', stroke_width],
+      ['opacity', opacity],
+    ].reduce(this._svg_reduce_attrs, ['circle']));
+  }
+
+  this._svg_reduce_attrs = function(list, item)
+  {
+    const KEY = 0, VALUE = 1;
+    if (!(item[VALUE] === null || item[VALUE] === undefined))
+      list.push(item[KEY], String(item[VALUE]));
+    return list;
+  }
+
   this.svg_slider_circle = function()
   {
     return (

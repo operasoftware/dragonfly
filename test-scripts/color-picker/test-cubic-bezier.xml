@@ -1,0 +1,112 @@
+<html xmlns='http://www.w3.org/1999/xhtml'
+      xmlns:xlink="http://www.w3.org/1999/xlink" 
+      xmlns:svg="http://www.w3.org/2000/svg">
+<link rel="stylesheet" href="colorpickerstyle.css"/>
+<style><![CDATA[
+svg
+{
+  display: block;
+}
+.test
+{
+  margin: 10px;
+  float: left;
+  height: 210px;
+  padding: 15px;
+  border: 1px solid #ccc;
+}
+[type="number"]
+{
+  width: 4em;
+}
+.color-picker-slider-rotated
+{
+  width: 10px;
+  height: 40px;
+  position: absolute;
+  margin-left: -5px;
+  margin-top: -10px;
+  left: 0px;
+  top: 0px;
+}
+.color-picker-slider
+{
+  position: absolute;
+  width: 40px;
+  height: 10px;
+  margin-left: -10px;
+  margin-top: -5px;
+  left: 0px;
+  top: 0px;
+}
+.cubic-bezier-base
+{
+  position: relative; 
+  height: 100%;
+}
+.color-picker-pointer
+{
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  margin-top: -7px;
+}
+]]></style>
+<script src="../../src/scripts/dom.js"/>
+<script src="../../src/ui-scripts/colorpickertemplates.js"/>
+<script src="../../src/ui-scripts/cubicbezier.js"/>
+<script><![CDATA[ 
+
+
+  
+]]></script>
+<script><![CDATA[ 
+var SLIDER_BASE_CLASS = 'cubic-bezier-base', SLIDER_CLASS = 'color-picker-slider';
+
+var test_2_d_slider = function()
+{
+  var test = 
+  ['div',
+    [
+      'div',  
+      'style', 'position:relative; width:140px; height:140px; background-color:hsl(0, 0%, 95%)'
+    ],
+    'class', 'test'
+  ];
+  var container = document.documentElement.render(test);
+  var slider_config =
+  {
+    container: container.firstElementChild,
+    slider_base_class: SLIDER_BASE_CLASS,
+    slider_class: 'color-picker-pointer',
+    slider_template: window.templates.svg_slider_circle(),
+    onxy: function(x, y)
+    {
+      container.getElementsByTagName('input')[0].value =  x.toFixed(3);
+      container.getElementsByTagName('input')[1].value =  y.toFixed(3);
+    },
+    min_x: 1,
+    max_x: 0,
+    min_y: 1,
+    max_y: 0
+  }
+  var slider = new Slider(slider_config);
+}
+
+
+
+
+window.onload = function()
+{
+  test_2_d_slider();
+};
+
+
+
+
+
+
+  
+]]></script>
+</html>
