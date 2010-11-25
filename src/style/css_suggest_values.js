@@ -1095,6 +1095,18 @@ suggest_values["clip-rule"] =
   'inherit'
 ];
 
+
+suggest_values["nav-up"] =
+suggest_values["nav-right"] =
+suggest_values["nav-down"] =
+suggest_values["nav-left"] =
+[
+  'auto',
+  'current',
+  'root',
+  'inherit'
+];
+
 suggest_values["mask"] =
 [
   // <funciri>
