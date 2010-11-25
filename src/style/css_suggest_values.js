@@ -315,7 +315,9 @@ suggest_values['background-color'] = COLORS.concat('inherit');
 suggest_values['background-clip'] =
 [
   'border-box',
-  'padding-box'
+  'padding-box',
+  'content-box',
+  'inherit'
 ];
 
 suggest_values['background-image'] =
@@ -1075,3 +1077,367 @@ suggest_values['z-index'] =
   'auto',
   'inherit'
 ];
+
+
+// SVG properties
+
+suggest_values["clip-path"] =
+[
+  // <funciri>
+  'none',
+  'inherit'
+];
+
+suggest_values["clip-rule"] =
+[
+  'nonzero',
+  'evenodd',
+  'inherit'
+];
+
+suggest_values["mask"] =
+[
+  // <funciri>
+  'none',
+  'inherit'
+];
+
+suggest_values["enable-background"] =
+[
+  'accumulate',
+  // new [ <x> <y> <width> <height> ]
+  'inherit'
+];
+
+suggest_values["filter"] =
+[
+  //<funciri>
+  'none',
+  'inherit'
+];
+
+suggest_values["flood-color"] = COLORS.concat('inherit');
+
+suggest_values["flood-opacity"] =
+[
+  //<opacity-value>
+  'inherit'
+];
+
+suggest_values["lighting-color"] = COLORS.concat('inherit');
+
+suggest_values["stop-color"] = COLORS.concat('inherit');
+
+suggest_values["stop-opacity"] =
+[
+  //<opacity-value>
+  'inherit'
+];
+
+suggest_values["pointer-events"] =
+[
+  'visiblePainted',
+  'visibleFill',
+  'visibleStroke',
+  'visible',
+  'painted',
+  'fill',
+  'stroke',
+  'all',
+  'none',
+  'inherit'
+];
+
+suggest_values["color-interpolation"] =
+[
+  'auto',
+  'sRGB',
+  'linearRGB',
+  'inherit'
+];
+
+suggest_values["color-interpolation-filters"] =
+[
+  'auto',
+  'sRGB',
+  'linearRGB',
+  'inherit'
+];
+
+suggest_values["color-profile"] =
+[
+  'auto',
+  'sRGB',
+  // <name> | <iri>
+  'inherit'
+];
+
+suggest_values["color-rendering"] =
+[
+  'auto',
+  'optimizeSpeed',
+  'optimizeQuality',
+  'inherit'
+];
+
+suggest_values["fill"] = COLORS.concat('none', 'inherit');
+
+suggest_values["fill-rule"] =
+[
+  'nonzero',
+  'evenodd',
+  'inherit'
+];
+
+suggest_values["fill-opacity"] =
+[
+  //<opacity-value>
+  'inherit'
+];
+
+suggest_values["image-rendering"] =
+[
+  'auto',
+  'optimizeSpeed',
+  'optimizeQuality',
+  'inherit'
+];
+
+suggest_values["marker"] =
+[
+];
+
+suggest_values["marker-end"] =
+[
+  'none',
+  // <funciri>
+  'inherit'
+];
+
+suggest_values["marker-mid"] =
+[
+  'none',
+  // <funciri>
+  'inherit'
+];
+
+
+suggest_values["marker-start"] =
+[
+  'none',
+  // <funciri>
+  'inherit'
+];
+
+
+suggest_values["shape-rendering"] =
+[
+  'auto',
+  'optimizeSpeed',
+  'crispEdges',
+  'geometricPrecision',
+  'inherit'
+];
+
+suggest_values["stroke"] = COLORS.concat('none', 'inherit');
+
+suggest_values["stroke-dasharray"] =
+[
+  'none',
+  //<dasharray>
+  'inherit'
+];
+
+suggest_values["stroke-dashoffset"] =
+[
+  //<percentage> | <length>
+  'inherit'
+];
+
+suggest_values["stroke-width"] =
+[
+  //<percentage> | <length>
+  'inherit'
+];
+
+suggest_values["stroke-linecap"] =
+[
+  'butt',
+  'round',
+  'square',
+  'inherit'
+];
+
+suggest_values["stroke-linejoin"] =
+[
+  'miter',
+  'round',
+  'bevel',
+  'inherit'
+];
+
+suggest_values["stroke-miterlimit"] =
+[
+  // <miterlimit>
+  'inherit'
+];
+
+suggest_values["stroke-opacity"] =
+[
+  // <opacity-value>
+  'inherit'
+];
+
+suggest_values["text-rendering"] =
+[
+  'auto',
+  'optimizeSpeed',
+  'optimizeLegibility',
+  'geometricPrecision',
+  'inherit'
+];
+
+suggest_values["alignment-baseline"] =
+[
+  'auto',
+  'baseline',
+  'before-edge',
+  'text-before-edge',
+  'middle',
+  'central',
+  'after-edge',
+  'text-after-edge',
+  'ideographic',
+  'alphabetic',
+  'hanging',
+  'mathematical',
+  'inherit'
+];
+
+suggest_values["baseline-shift"] =
+[
+  'baseline',
+  'sub',
+  'super',
+  // <percentage> | <length>
+  'inherit'
+];
+
+suggest_values["dominant-baseline"] =
+[
+  'auto',
+  'use-script',
+  'no-change',
+  'reset-size',
+  'ideographic',
+  'alphabetic',
+  'hanging',
+  'mathematical',
+  'central',
+  'middle',
+  'text-after-edge',
+  'text-before-edge',
+  'inherit'
+];
+
+suggest_values["glyph-orientation-horizontal"] =
+[
+  //<angle>
+  'inherit'
+];
+
+suggest_values["glyph-orientation-vertical"] =
+[
+  'auto',
+  // <angle>
+  'inherit'
+];
+
+suggest_values["kerning"] =
+[
+  'auto',
+  // <angle>
+  'inherit'
+];
+
+suggest_values["text-anchor"] =
+[
+  'start',
+  'middle',
+  'end',
+  'inherit'
+];
+
+suggest_values["writing-mode"] =
+[
+  'lr-tb',
+  'rl-tb',
+  'tb-rl',
+  'lr',
+  'rl',
+  'tb',
+  'inherit'
+];
+
+
+// SVG 1.2 Tiny properties
+
+suggest_values["audio-level"] =
+[
+  // <number>
+  'inherit'
+];
+
+suggest_values["buffered-rendering"] =
+[
+  'auto',
+  'dynamic',
+  'static',
+  'inherit'
+];
+
+suggest_values["display-align"] =
+[
+  'auto',
+  'before',
+  'center',
+  'after',
+  'inherit'
+];
+
+suggest_values["line-increment"] =
+[
+  'auto',
+  // <number>
+  'inherit'
+];
+
+suggest_values["solid-color"] = COLORS.concat('inherit');
+
+suggest_values["solid-opacity"] =
+[
+  // <opacity-value>
+  'inherit'
+];
+
+// Overlaps with the CSS text-align property
+//suggest_values["text-align"] =
+//[
+//start | end | center | inherit
+//];
+
+suggest_values["vector-effect"] =
+[
+  'non-scaling-stroke',
+  'none',
+  'inherit'
+];
+
+suggest_values["viewport-fill"] = COLORS.concat('inherit');
+
+suggest_values["viewport-fill-opacity"] =
+[
+  // <opacity-value>
+  'inherit'
+];
+
