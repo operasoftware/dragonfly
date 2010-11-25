@@ -671,6 +671,12 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     return false;
   };
 
+  this["_handle_action_kill-to-beginning-of-line"] = function(evt, target)
+  {
+    this._textarea_handler.kill_to_beginning_of_line();
+    return false;
+  };
+
   this["_handle_action_kill-word-backwards"] = function(evt, target)
   {
     this._textarea_handler.kill_word_backwards();
@@ -686,6 +692,12 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this["_handle_action_move-to-end-of-line"] = function(evt, target)
   {
     this._textarea_handler.move_to_end_of_line();
+    return false;
+  };
+
+  this["_handle_action_yank"] = function(evt, target)
+  {
+    this._textarea_handler.yank();
     return false;
   };
 

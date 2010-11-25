@@ -97,9 +97,11 @@
           "shift enter": "enter-multiline-mode",
           "ctrl l": "clear",
           "ctrl k": "kill-to-end-of-line",
+          "ctrl u": "kill-to-beginning-of-line",
           "ctrl e": "move-to-end-of-line",
           "ctrl a": "move-to-beginning-of-line",
-          "ctrl w": "kill-word-backwards"
+          "ctrl w": "kill-word-backwards",
+          "ctrl y": "yank"
         },
         "multi-line-edit":
         {
