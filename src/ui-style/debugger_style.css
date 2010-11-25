@@ -563,6 +563,7 @@ examine-objects key.no-expander
 .css-layout layout-container .dimension li
 {
   min-width: 80px;
+  white-space: nowrap;
 }
 .css-layout layout-container .is-positioned .position,
 .css-layout layout-container .dimension,
