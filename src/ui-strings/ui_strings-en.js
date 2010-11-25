@@ -248,6 +248,8 @@ ui_strings.S_SWITCH_AUTO_SCROLL_REQUEST_LIST = "Auto scroll request log";
 ui_strings.S_SWITCH_UNPACK_LIST_ALIKES = "Unpack list alikes in the command line";
 /* DESC:  When enabled, objects of type element in the command line will be displayed in the DOM view */
 ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE = "Show objects of type Element in the DOM view";
+/* DESC: Clears the command line log */
+ui_strings.S_CLEAR_COMMAND_LINE_LOG = "Clear command line";
 
 
 /**
