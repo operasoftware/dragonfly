@@ -76,7 +76,7 @@ cls.DOMInspectorActions = function(id)
     container.re_render(tmpl);
   }
 
-  this._select_node = function(target)
+  this._select_node = function(target, skip_breadcrumbs_update)
   {
     var
     obj_id = parseInt(target.getAttribute('ref-id')),
@@ -104,7 +104,10 @@ cls.DOMInspectorActions = function(id)
       if (document.getElementById('target-element'))
         document.getElementById('target-element').removeAttribute('id');
       target.id = 'target-element';
-      window.modebar.set_content(model.id, window.templates.breadcrumb(model, obj_id), true);
+      if (!skip_breadcrumbs_update)
+      {
+        window.modebar.set_content(model.id, window.templates.breadcrumb(model, obj_id), true);
+      }
       // if the view_container is null the view is not in focus
       if (!view_container)
         window.helpers.scroll_dom_target_into_view();
@@ -485,6 +488,9 @@ cls.DOMInspectorActions = function(id)
 
   this._handlers["select-node-in-breadcrumb"] = function(event, target)
   {
+    event.target.parentNode.querySelector(".active").removeClass("active");
+    event.target.addClass("active");
+
     // assuming the breadcrumb is visible together with the dom view
     var obj_id = parseInt(target.getAttribute('ref-id'));
     var target = document.getElementById('target-element');
@@ -497,7 +503,7 @@ cls.DOMInspectorActions = function(id)
         var divs = target.getElementsByTagName('div'), div = null, i = 0;
         for ( ; (div = divs[i]) && div.getAttribute('ref-id') != obj_id; i++);
         if (div)
-          this._select_node(div);
+          this._select_node(div, true);
       }
     }
   }.bind(this);
