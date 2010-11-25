@@ -1208,7 +1208,26 @@ desc:
   - Verify that the colors for the highlight have changed accordingly.
   - Go back to 'Spotlight' and press 'Reset Default Colors'
   - Verify that the colors have changed back.
-  
+
+label: Shortcut Configuration, Quick find
+desc:
+  - Expand 'Shortcut Config'
+  - Type 'ctrl' in the 'Quick find'
+  - Verify that all shortcuts with a 'ctrl' token are displayed
+
+label: Shortcut Configuration
+desc:
+  - Expand 'Shortcut Config'
+  - Expand 'Keyboard shortcuts Global'
+  - Change 'ctrl a' to 'ctrl b'
+  - Press the 'Save' button
+  - Verify that 'ctrl b' now selects all text
+  - Press the 'Reset all to defaults' button
+  - Verify that 'ctrl b' no longer selects all text
+  - Expand 'Keyboard shortcuts Global'
+  - Change 'f8' to 'f80'
+  - Press the 'save' button
+  - Verify that a 'Invalid keyboard shortcut' label is added to the changed shortcut
 
 General
 *******
