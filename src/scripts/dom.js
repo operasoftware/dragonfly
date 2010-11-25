@@ -1,4 +1,51 @@
-﻿/**
+﻿if (!window.opera)
+{
+  window.opera = 
+  {
+    postError: function(a){console.log(a);},
+    stpVersion: true
+  };
+}
+/*
+(function()
+{
+  var div = document.createElement('div')
+  var setter = div.__lookupSetter__("scrollTop");
+  var getter = div.__lookupGetter__("scrollTop");
+  Element.prototype.__defineSetter__('scrollTop', function(scroll_top)
+  {
+    opera.postError('setter: '+this.nodeName + ', '+scroll_top);
+    setter.call(this, scroll_top);
+  });  
+  Element.prototype.__defineGetter__('scrollTop', function()
+  {
+    var scroll_top = getter.call(this);
+    return scroll_top;
+  });
+})();
+*/
+if (document.createElementNS && 
+    document.createElement('div').namespaceURI != 'http://www.w3.org/1999/xhtml')
+{  
+  Document.prototype.createElement = document.createElement = function(name)
+  {
+    return this.createElementNS('http://www.w3.org/1999/xhtml', name);
+  };
+}
+
+if (!Element.prototype.contains)
+{
+  Element.prototype.contains = function(ele)
+  {
+    if (ele == this)
+      return true;
+    var all = this.getElementsByTagName('*'), i = 0, cur = null;
+    for (; (cur = all[i]) && cur != ele; i++);
+    return Boolean(cur);
+  }
+}
+
+/**
  * @fileoverview
  * Helper function prototypes related to DOM objects and the DOM
  * <strong>fixme: Christian should document the template syntax</strong>
@@ -72,7 +119,8 @@ Element.prototype.render = Document.prototype.render = function(args, namespace)
       {
         if (typeof args[i] != 'string')
         {
-          throw "TemplateSyntaxError";
+          throw "TemplateSyntaxError, expected 'string', got " + 
+                (typeof args[i]) + "for TEXT or KEY";
         }
         if (typeof args[i + 1] == 'string')
         {
@@ -241,6 +289,93 @@ Element.prototype.releaseEvent = function(name, custom_props)
   }
   this.dispatchEvent(event);
 };
+
+Element.prototype.dispatchMouseEvent = function(type, ctrl_key, alt_key, shift_key)
+{
+  var event = document.createEvent('MouseEvents');
+  var box = this.getBoundingClientRect();
+  var client_x = box.left + box.width * .5;
+  var client_y = box.top + box.height * .5;
+  event.initMouseEvent(type, true, true, window, 1, 
+                       window.screenLeft + client_x, 
+                       window.screenTop + client_y, 
+                       client_x, client_y, 
+                       ctrl_key, alt_key, shift_key, false, 
+                       0, null);
+  this.dispatchEvent(event);
+};
+
+Element.prototype.get_scroll_container = function()
+{
+  var scroll_container = this;
+  while (scroll_container && 
+         scroll_container.scrollHeight <= scroll_container.offsetHeight)
+    scroll_container = scroll_container.parentNode;
+  return (scroll_container == document.documentElement ||
+          scroll_container == document) ? null : scroll_container;
+}
+/**
+  * A class to store a scroll position and reset it later in an asynchronous
+  * environment.
+  * The class takes a target as initialisation argument.
+  * The scroll position is stored for the first scroll container 
+  * in the parent node chain of that target. The root element is
+  * disregarded as scroll container (this is a bit too Dragonfly specific. 
+  * Better would be to check the overflow property of the computed style to 
+  * find a real scroll container).
+  * Resetting the scroll position can be done with or without argument.
+  * Without argument. it resets the scrollTop and scrollLeft properties 
+  * of the scroll container to the stored values. With a target argument, 
+  * it scroll the target in the exact same position as the target of 
+  * the initialisation.
+  */
+Element.ScrollPosition = function(target)
+{
+  this._scroll_container = target.get_scroll_container();
+  this._scroll_top = 0;
+  this._scroll_left = 0;
+  this._delta_top = 0;
+  this._delta_left = 0;
+  if (this._scroll_container)
+  {
+    this._scroll_top = this._scroll_container.scrollTop;
+    this._scroll_left = this._scroll_container.scrollLeft;
+    var target_box = target.getBoundingClientRect();
+    var scroll_box = this._scroll_container.getBoundingClientRect();
+    this._container_top = scroll_box.top;
+    this._container_left = scroll_box.left;
+    this._delta_top = target_box.top - scroll_box.top;
+    this._delta_left = target_box.left - scroll_box.left;
+  }
+
+}
+
+/**
+  * To reset the scroll position. 
+  * Without target, scrollTop and scrollleft are restored to 
+  * the initialisation values.
+  * If target is set, the target is scrolled in the exact same position 
+  * as the target of the initialisation.
+  */
+Element.ScrollPosition.prototype.reset = function(target)
+{
+  if (this._scroll_container)
+  {
+    if (target)
+    {
+      var target_box = target.getBoundingClientRect();
+      this._scroll_container.scrollTop -= this._delta_top - 
+                                          (target_box.top - this._container_top);
+      this._scroll_container.scrollTop -= this._delta_left - 
+                                          (target_box.left - this._container_left);
+    }
+    else
+    {
+      this._scroll_container.scrollTop = this._scroll_top;
+      this._scroll_container.scrollLeft = this._scroll_left; 
+    }
+  }
+}
 
 /* currently broken in Opera */
 Element.prototype.getWidth = function(e)
@@ -623,6 +758,11 @@ String.prototype.isdigit = function()
   return !(/\D/.test(this));
 };
 
+Array.prototype.extend = function(list)
+{
+  this.push.apply(this, list);
+}
+
 /**
  * Convenience function for loading a resource with XHR using the get method.
  * Will automatically append a "time" guery argument to avoid caching.
@@ -864,4 +1004,5 @@ CustomElements.add(function()
 },
 'PlaceholderFeature',
 'AutoScrollHeightFeature');
+
 

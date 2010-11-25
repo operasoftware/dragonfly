@@ -21,7 +21,7 @@
   OBJECT_VALUE = 3,
   // added fields
   MAX_VALUE_LENGTH = 30,
-  STYLE_EXPANDED = "style='background-position: 0px -11px') ";
+  STYLE_EXPANDED = "style='background-position: 0px -11px' ";
 
   /* private */
 

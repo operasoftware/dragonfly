@@ -7,6 +7,123 @@
   dragonfly_version: '$dfversion$',
   revision_number: '$revdate$', 
   mercurial_revision: "",
+  browser: window.opera ? 'opera' : window.chrome ? 'chrome' : 'firefox',
+  default_shortcuts:
+  {
+    windows:
+    {
+      "global":
+      {
+        "default":
+        {
+          "ctrl a": "select-all",
+          "ctrl i": "invert-spotlight-colors",
+          "f8": "continue-run",
+          "f10": "continue-step-next-line",
+          "f11": "continue-step-into-call",
+          "shift f11": "continue-step-out-of-call"
+        },
+        "edit":
+        {
+          "f8": "continue-run",
+          "f10": "continue-step-next-line",
+          "f11": "continue-step-into-call",
+          "shift f11": "continue-step-out-of-call",
+          "enter": "highlight-next-match",
+          "f3": "highlight-next-match",
+          "shift enter": "highlight-previous-match",
+          "shift f3": "highlight-previous-match",
+        }
+      },
+      "dom":
+      {
+        "default":
+        {
+          "up": "nav-up",
+          "down": "nav-down",
+          "left": "nav-left",
+          "right": "nav-right",
+          "enter": "dispatch-click",
+          "shift enter": "dispatch-click",
+          "ctrl enter": "dispatch-dbl-click",
+        },
+        "edit-attributes-and-text":
+        {
+          "shift tab": "edit-previous",
+          "tab": "edit-next",
+          "enter": "submit-edit",
+          "escape": "exit-edit",
+        },
+        "edit-markup":
+        {
+          "shift tab": "edit-previous",
+          "tab": "edit-next",
+          "ctrl enter": "submit-edit",
+          "escape": "exit-edit",
+        }
+      },
+      "css-inspector":
+      {
+        "default":
+        {
+          "up": "nav-up",
+          "down": "nav-down",
+          "left": "nav-up",
+          "right": "nav-down",
+          "ctrl enter": "dispatch-dbl-click",
+        },
+        "edit":
+        {
+          "up": "autocomplete-previous",
+          "down": "autocomplete-next",
+          "shift tab": "edit-previous",
+          "tab": "edit-next",
+          "enter": "submit-edit-and-new-edit",
+          "escape": "exit-edit",
+        }
+      },
+      "command_line":
+      {
+        "default":
+        {
+          "ctrl-l": "clear-repl",
+        },
+        "single-line-edit":
+        {
+          "up": "backlog-prev",
+          "down": "backlog-next",
+          "tab": "autocomplete",
+          "enter": "eval",
+          "shift enter": "enter-multiline-mode",
+          "ctrl l": "clear",
+          "ctrl k": "kill-to-end-of-line",
+          "ctrl e": "move-to-end-of-line",
+          "ctrl a": "move-to-beginning-of-line",
+          "ctrl w": "kill-word-backwards"
+        },
+        "multi-line-edit":
+        {
+          "shift enter": "exit-multiline-mode",
+          "ctrl enter": "eval",
+          "tab": "insert-tab-at-point",
+        },
+        "autocomplete":
+        {
+          "left": "prev-completion",
+          "right": "next-completion",
+          "tab": "next-completion",
+          "shift tab": "prev-completion",
+          "enter": "commit",
+          "[": "commit-and-insert",
+          "]": "commit-and-insert",
+          ".": "commit-and-insert",
+          "(": "commit-and-insert",
+          ")": "commit-and-insert",
+          "escape": "cancel",
+        },
+      },
+    },
+  },
   hostspotlight_matrixes:
   {
     /*

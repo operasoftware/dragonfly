@@ -29,8 +29,8 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       "default", "delete", "do", "else", "finally", "for", "function",
       "if", "in", "instanceof", "new", "return", "switch", "this",
       "throw", "try", "typeof", "var", "void", "while", "with"];
-
-
+  this._actionbroker = ActionBroker.get_instance();
+  this.mode = "single-line-edit";
 
   this.ondestroy = function()
   {
@@ -40,26 +40,21 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._container.removeEventListener("scroll", this._save_scroll_bound, false);
   };
 
-  this.createView = function(container)
+  this._create_structure = function(container)
   {
-    var switched_to_view = false;
-    if (!this._lastupdate)
-    {
-      container.clearAndRender(templates.repl_main());
-      this._linelist = container.querySelector("ol");
-      this._textarea = container.querySelector("textarea");
-      this._textarea_handler = new cls.BufferManager(this._textarea);
-      this._textarea.value = this._current_input;
-      this._container = container;
-      this._input_row_height = this._textarea.scrollHeight;
-      this._closed_group_nesting_level = 0;
-    }
+    container.clearAndRender(templates.repl_main());
+    this._linelist = container.querySelector("ol");
+    this._textarea = container.querySelector("textarea");
+    this._textarea_handler = new cls.BufferManager(this._textarea);
+    this._textarea.value = this._current_input;
+    this._container = container;
+    this._input_row_height = this._textarea.scrollHeight;
+    this._closed_group_nesting_level = 0;
+    this._textarea.addEventListener("input", this._handle_input_bound, false);
+  }
 
-    this._update_runtime_selector_bound();
-    this._update();
-
-    if (switched_to_view)
-    {
+  this._init_scroll_handling = function()
+  {
       var padder = this._container.querySelector(".padding");
       // defer adding listeners until after update
       this._container.addEventListener("scroll", this._save_scroll_bound, false);
@@ -69,13 +64,33 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       if(this._current_scroll === null)
       {
         this._container.scrollTop = 999999;
-        // timer works around issue where element is unfocusable when created
-        window.setTimeout(function() {this._textarea.focus();}.bind(this), 0);
       }
       else
       {
         this._container.scrollTop = this._current_scroll;
       }
+  }
+
+  this.createView = function(container)
+  {
+    var first_update = !this._lastupdate;
+
+    // on first update, render view skeleton stuff
+    if (first_update)
+    {
+      this._create_structure(container);
+    }
+
+    // Always render the lines of data
+    this._update_runtime_selector_bound();
+    this._update();
+
+    // On first update add scroll listeners and update scroll,
+    // but after the view was rendered so we don't trigger a
+    // flood of events when rendering the backlog.
+    if (first_update)
+    {
+      this._init_scroll_handling();
     }
   };
 
@@ -87,7 +102,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._update_input_height_bound = function()
   {
     this._textarea.rows = Math.max(1, Math.ceil(this._textarea.scrollHeight / this._input_row_height));
-    this._multiediting = Boolean(this._textarea.rows-1);
   }.bind(this);
 
   this._save_scroll_bound = function()
@@ -110,13 +124,12 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
    */
   this._update = function()
   {
-    var now = new Date().getTime();
     var entries = this._data.get_log(this._lastupdate);
-    this._lastupdate = now;
 
+    if (entries.length) { this._lastupdate = entries[entries.length -1].time; }
     for (var n=0, e; e=entries[n]; n++)
     {
-      switch(e.type) {
+      switch(e.type) { // free like a flying demon
         case "input":
           this._render_input(e.data);
           break;
@@ -255,16 +268,31 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._add_line(templates.repl_output_trace(data));
   };
 
-  this._render_value_list = function(values) {
-    var tpl = values.map(templates.repl_output_native_or_pobj);
-    var separated = [];
-    separated.push(tpl.shift());
-    while (tpl.length)
+  this._render_value_list = function(values)
+  {
+    const SPAN = 1, BRACKET = 2;
+    var type = 0;
+    var tpl = values.reduce(function(list, value)
     {
-      separated.push(["span", ", "]);
-      separated.push(tpl.shift());
-    }
-    this._add_line(separated);
+      switch (value.df_intern_type)
+      {
+        case "unpack-header":
+          list.push(templates.repl_output_pobj(value), ["span", "["]);
+          type = BRACKET;
+          break;
+        case "unpack-footer":
+          if (type == SPAN) { list.pop(); }
+          list.push(["span", "]"], ["span", ", "]);
+          type = SPAN;
+          break;
+        default:
+          list.push(templates.repl_output_native_or_pobj(value), ["span", ", "]);
+          type = SPAN;
+      }
+      return list;
+    }, []);
+    tpl.pop();
+    this._add_line(tpl);
   };
 
   this._render_completion = function(s)
@@ -319,137 +347,30 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     return line;
   };
 
-  this._handle_keypress_bound = function(evt)
+  this._handle_input_bound = function(evt)
   {
-    //opera.postError("" + evt.keyCode + " " + evt.which );
-
-    if (this._textarea_handler.handle(evt)) {
-      evt.preventDefault();
-      return;
+    if (this.mode == "autocomplete")
+    {
+      this._recent_autocompletion = null;
+      this._be_singleline();
     }
 
-    switch (evt.keyCode) {
-      case 9: // tab
-      {
-        evt.preventDefault();
-        if (this._multiediting) {
-          var pos = this._textarea.selectionStart;
-          this._textarea.value = this._textarea.value.slice(0, pos) + "\t" + this._textarea.value.slice(pos);
-          break; // tab should be off when in a multiline box.
-        }
-        else
-        {
-          this._on_invoke_completer(evt.shiftKey ? -1 : +1);
-          return;
-        }
-      }
-      case 13: // enter
-      {
-        if (evt.ctrlKey)
-        {
-          var pos = this._textarea.selectionStart;
-          this._textarea.value = this._textarea.value.slice(0, pos) + "\n" + this._textarea.value.slice(pos);
-          evt.preventDefault();
-          this._textarea_handler.put_cursor(pos+2); // put cursor after the newline
-        }
-        else if (this._use_autocomplete_highlight && this._recent_autocompletion)
-        {
-          evt.preventDefault();
-          this._commit_selection();
-        }
-        else
-        {
-          // stop it from adding a newline just before processing. Looks strange
-          evt.preventDefault();
-
-          var input = this._textarea.value;
-          input = input.trim();
-          this._textarea.value = "";
-          this._backlog_index = -1;
-          this._current_input = "";
-          this._service.handle_input(input);
-        }
-        break;
-      }
-      case 37: // left
-      case 39: // right
-      {
-        // workaround as long as we don't have support for keyIdentifier
-        // event.which is 0 in a keypress event for function keys
-        if( !evt.which )
-        {
-          if (this._recent_autocompletion)
-          {
-            evt.preventDefault();
-            this._update_highlight(evt.keyCode==37 ? -1 : 1);
-            return;
-          }
-        }
-        break;
-      }
-      case 38: // up and down. maybe. See DSK-246193
-      case 40:
-      {
-        // workaround as long as we don't have support for keyIdentifier
-        // event.which is 0 in a keypress event for function keys
-        if( !evt.which )
-        {
-          // the multiediting stuff here makes sure we can navigate inside
-          // multiline blocks from the typed history. Moving cursor to the
-          // 0th position of the textare and pressing up resumes backwards
-          // history navigation. The same applies when navigating forward
-          // and positioning the cursor at the end of the input.
-          if (this._multiediting)
-          {
-            if ((evt.keyCode==38 && this._textarea.selectionStart > 0) ||
-                (evt.keyCode==40 && this._textarea.selectionStart < this._textarea.value.length))
-              {
-                break;
-              }
-          }
-          evt.preventDefault();
-          this._handle_backlog(evt.keyCode == 38 ? 1 : -1);
-        }
-        // TEMP: this should be handled at the same place as '.' and '['
-        else if (evt.keyCode == 40)
-        {
-          if (this._use_autocomplete_highlight && this._recent_autocompletion)
-          {
-            this._commit_selection();
-          }
-        }
-        break;
-      }
-      case 108: // l key
-      {
-        if (evt.ctrlKey) {
-          evt.preventDefault();
-          this.clear();
-          var cursor_pos = this._textarea_handler.get_cursor();
-          this._data.clear();
-          this._textarea_handler.put_cursor(cursor_pos);
-        }
-        break;
-      }
-      case 46: // '.'
-      case 91: // '['
-      // this should have '(' too, but that clashes with down arrow,
-      // see above
-      {
-        if (this._use_autocomplete_highlight && this._recent_autocompletion)
-        {
-          this._commit_selection();
-        }
-      }
-    }
-
-    this._recent_autocompletion = null;
-    this._highlight_completion();
-
-    // timeout makes sure we do this after all events have fired to update box
-    window.setTimeout(this._update_input_height_bound, 0);
-
+    this._check_for_multiline();
+    this._update_input_height_bound();
   }.bind(this);
+
+  /**
+   * Apply a (somewhat lame) metric to guess if we should really be in
+   * multiline mode.
+   */
+  this._check_for_multiline = function()
+  {
+    if (this.mode == "single-line-edit" &&
+        this._textarea_handler.get_value().indexOf("\n") != -1)
+    {
+      this._be_multiline();
+    }
+  }
 
   this._handle_backlog = function(delta)
   {
@@ -483,6 +404,8 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._commit_selection = function()
   {
     this._update_textarea_value(this._recent_autocompletion[this._autocompletion_index][0]);
+    this._be_singleline();
+    this._recent_autocompletion = null;
   };
 
   this._update_textarea_value = function(prop)
@@ -537,18 +460,17 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     sel.addRange(range);
   };
 
-  this._on_invoke_completer = function(direction)
+
+  this._on_invoke_completer = function()
   {
-    // tab/arrows was pressed while the completer is showing something
-    if (this._recent_autocompletion)
-    {
-      this._update_highlight(direction);
+    if (this._recent_autocompletion) {
+      this.mode = "autocomplete";
     }
     else
     {
       this._handle_completer();
     }
-  };
+  }
 
   this._update_highlight = function(direction)
   {
@@ -598,6 +520,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       {
         this._data.add_input(this._textarea.value);
         this._data.add_output_completion(matches.sort(cls.PropertyFinder.prop_sorter).join(", "));
+        this.mode = "autocomplete";
 
         var completions = this._linelist.querySelectorAll(".repl-completion");
         this._autocompletion_elem = completions[completions.length-1];
@@ -660,6 +583,20 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     return "";
   };
 
+  this._be_multiline = function()
+  {
+    this.mode = "multi-line-edit";
+    this._textarea.addClass("multiline");
+    this._textarea.focus();
+  };
+
+  this._be_singleline = function()
+  {
+    this.mode = "single-line-edit";
+    this._textarea.removeClass("multiline");
+    this._textarea.focus();
+  };
+
   this._handle_repl_frame_select_bound = function(event, target)
   {
     var sourceview = window.views.js_source;
@@ -688,6 +625,17 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     messages.post("setting-changed", {id: "repl", key: "max-typed-history-length"});
   }.bind(this);
 
+  this._handle_input_focus_bound = function()
+  {
+    this._be_singleline();
+  }.bind(this);
+
+  this._handle_input_blur_bound = function()
+  {
+    this._be_singleline();
+    this.mode = "default";
+  }.bind(this);
+
   this._update_runtime_selector_bound = function(msg)
   {
     var is_multi = host_tabs.isMultiRuntime();
@@ -698,22 +646,212 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
   }.bind(this);
 
-  this._handle_repl_focus_bound = function()
+  this._new_repl_context_bound = function(msg)
+  {
+    // This is neccessary so you dont end up with autocomplete data
+    // from the previous runtime/frame when tabbing.
+    // The current tabbing context doesn't change though. Should not
+    // be a problem unless you reload while tabbing or something.
+    this._resolver.clear_cache();
+  }.bind(this);
+
+  this["_handle_action_clear"] = function(evt, target)
+  {
+    this.clear();
+    var cursor_pos = this._textarea_handler.get_cursor();
+    this._data.clear();
+    this._textarea.focus();
+    this._textarea_handler.put_cursor(cursor_pos);
+    return false;
+  };
+
+  this["_handle_action_kill-to-end-of-line"] = function(evt, target)
+  {
+    this._textarea_handler.kill_to_end_of_line();
+    return false;
+  };
+
+  this["_handle_action_kill-word-backwards"] = function(evt, target)
+  {
+    this._textarea_handler.kill_word_backwards();
+    return false;
+  };
+
+  this["_handle_action_move-to-beginning-of-line"] = function(evt, target)
+  {
+    this._textarea_handler.move_to_beginning_of_line();
+    return false;
+  };
+
+  this["_handle_action_move-to-end-of-line"] = function(evt, target)
+  {
+    this._textarea_handler.move_to_end_of_line();
+    return false;
+  };
+
+  this["_handle_action_enter-multiline-mode"] = function(evt, target)
+  {
+    this._be_multiline();
+    return false;
+  };
+
+  this["_handle_action_exit-multiline-mode"] = function(evt, target)
+  {
+    this._multiediting = false;
+    this._be_singleline();
+    return false;
+  };
+
+  this["_handle_action_autocomplete"] = function(evt, target)
+  {
+    this._on_invoke_completer(1);
+    return false;
+  }
+
+  this["_handle_action_next-completion"] = function(evt, target)
+  {
+    this._update_highlight(1);
+    return false;
+  }
+
+  this["_handle_action_prev-completion"] = function(evt, target)
+  {
+    this._update_highlight(-1);
+    return false;
+  }
+
+  this["_handle_action_insert-tab-at-point"] = function(evt, target)
+  {
+    this._textarea_handler.insert_at_point("    ");
+    return false;
+  }
+
+  this["_handle_action_eval"] = function(evt, target)
+  {
+    var input = this._textarea.value;
+    input = input.trim();
+    this._textarea.value = "";
+    this._backlog_index = -1;
+    this._current_input = "";
+    this._resolver.clear_cache(); // evaling js voids the cache.
+    this._service.handle_input(input);
+    this._be_singleline();
+    return false;
+  }
+
+  this["_handle_action_commit"] = function(evt, target)
+  {
+    if (this._use_autocomplete_highlight && this._recent_autocompletion)
+    {
+      this._highlight_completion();
+      this._commit_selection();
+      return false;
+    }
+  };
+
+  // Same as above, but since the event isn't canceled, whatever
+  // character was pressed is added to the input.
+  this["_handle_action_commit-and-insert"] = function(evt, target)
+  {
+    if (this._use_autocomplete_highlight && this._recent_autocompletion)
+    {
+      this._highlight_completion();
+      this._commit_selection();
+    }
+  };
+
+  this["_handle_action_cancel"] = function(evt, target)
+  {
+    this._highlight_completion();
+    this._recent_autocompletion = null;
+    this._be_singleline();
+    return false;
+  };
+
+  this["_handle_action_backlog-next"] = function(evt, target)
+  {
+    this._handle_backlog(-1);
+    this._update_input_height_bound();
+    return false;
+  };
+
+  this["_handle_action_backlog-prev"] = function(evt, target)
+  {
+    this._handle_backlog(+1);
+    this._update_input_height_bound();
+    return false;
+  };
+
+  /**
+   * Entry point for the action handling system
+   */
+  this.handle = function(action, evt, target)
+  {
+    var handler = this["_handle_action_" + action];
+    if (handler)
+    {
+      return handler.call(this, evt, target);
+    }
+    else {} // if unhandled actions, add debugging here.
+  };
+
+  /**
+   * action focus
+   */
+  this.focus = function()
+  {
+    this._textarea.focus();
+  }
+
+  /**
+   * action blur
+   */
+  this.blur = function()
+  {
+      this._textarea.blur();
+  }
+
+  /**
+   * action click
+   */
+  this.onclick = function()
   {
     if (this._current_scroll === null)
     {
       this._textarea.focus();
     }
-  }.bind(this);
+  }
 
+  this.get_action_list = function()
+  {
+    var actions = [];
+    for (var methodname in this)
+    {
+      if (methodname.indexOf("_handle_action_") == 0)
+      {
+        actions.push(methodname.slice(15));
+      }
+    }
+    return actions;
+  }
+
+  this.mode_labels = {
+    "single-line-edit": ui_strings.S_LABEL_REPL_MODE_DEFAULT,
+    "single-line-edit": ui_strings.S_LABEL_REPL_MODE_SINGLELINE,
+    "multi-line-edit":  ui_strings.S_LABEL_REPL_MODE_MULTILINE,
+    "autocomplete":  ui_strings.S_LABEL_REPL_MODE_AUTOCOMPLETE,
+  }
 
   var eh = window.eventHandlers;
   eh.click["repl-toggle-group"] = this._handle_repl_toggle_group_bound;
   eh.click["select-trace-frame"] = this._handle_repl_frame_select_bound;
-  eh.click["repl-focus"] = this._handle_repl_focus_bound;
-  eh.keypress['repl-textarea'] = this._handle_keypress_bound;
-  eh.change['set-typed-history-length'] = this._handle_option_change_bound;
+  eh.change["set-typed-history-length"] = this._handle_option_change_bound;
+  eh.focus["repl-textarea"] = this._handle_input_focus_bound;
+  eh.blur["repl-textarea"] = this._handle_input_blur_bound;
   messages.addListener('active-tab', this._update_runtime_selector_bound);
+  messages.addListener('new-top-runtime', this._new_repl_context_bound);
+  messages.addListener('debug-context-selected', this._new_repl_context_bound);
+  messages.addListener('frame-selected', this._new_repl_context_bound);
 
   this.init(id, name, container_class, html, default_handler);
   // Happens after base class init or else the call to .update that happens in
@@ -724,9 +862,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._data.add_message(s);
   }, this);
 
+  this._actionbroker.register_handler(this);
+
 };
 cls.ReplView.prototype = ViewBase;
-
 
 
 cls.ReplView.create_ui_widgets = function()
@@ -735,13 +874,22 @@ cls.ReplView.create_ui_widgets = function()
   new Settings(
     'command_line',
     { // key/value
-      'max-typed-history-length': 8,
-      'typed-history': []
+      'max-typed-history-length': 32,
+      'typed-history': [],
+      'unpack-list-alikes': true,
+      'is-element-type-sensitive': true
     },
     { // key/label
-      'max-typed-history-length': "Max items in typed history to remember"
+      'max-typed-history-length': ui_strings.S_LABEL_REPL_BACKLOG_LENGTH,
+      'unpack-list-alikes': ui_strings.S_SWITCH_UNPACK_LIST_ALIKES,
+      'is-element-type-sensitive': ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE
     },
     { // settings map
+      checkboxes:
+      [
+        'unpack-list-alikes',
+        'is-element-type-sensitive'
+      ],
       customSettings:
       [
         'max-typed-history-length'
@@ -786,5 +934,3 @@ cls.ReplView.create_ui_widgets = function()
     ]
   );
 };
-
-

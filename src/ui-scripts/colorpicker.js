@@ -249,7 +249,7 @@ ColorPicker.prototype = new function()
   {
     var color = this._cs.xyz(this._cur_x, this._cur_y, this._cur_z);
     this._ele_sample_color.style.backgroundColor = 
-      this._has_alpha ? color.rgba : color.hex;
+      this._has_alpha ? color.rgba : color.hhex;
   }
 
   // update the position of the slider foe the lpha value
