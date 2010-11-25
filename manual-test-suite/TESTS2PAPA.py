@@ -89,7 +89,8 @@ def get_tests():
             cur.append("@/pre")
             continue
         if is_pre:
-            line = line[pre_sapces:]
+            cur.append(line[pre_sapces:])
+            continue
         else:
             line = line.strip()
         if line.startswith('#'):
@@ -208,7 +209,10 @@ def print_stylesheet():
         f.write(content)
     
 def item2html(item):
-    return item.replace('"', '&quot;').replace('@pre', '<pre>').replace('@/pre', '</pre>')
+    ret = item.replace('<', '&lt;').replace('"', '&quot;').replace('@pre', '<pre>').replace('@/pre', '</pre>')
+    if "@line-through" in ret:
+        ret = HTML_LINE_THROUGH.strip() % ret.replace("@line-through", "")
+    return ret
     
 def test():
     load_templates()

@@ -151,7 +151,7 @@ desc:
 DOM.Styles
 **********
 
-url: http://dev.opera.com
+url: ./test-cases/dom/matching-style-declarations.html
 
 id: 15
 label: Matching style rules
@@ -160,6 +160,7 @@ desc:
   - select some elements in the DOM
   - Verify that the styles are updated
 
+url: http://dev.opera.com
 id: 16
 label: Hide initial value
 desc:
@@ -186,19 +187,31 @@ desc:
 DOM.Properties
 **************
 
-url: http://dev.opera.com
-
+url: ./test-cases/dom/matching-style-declarations.html
 id: 19
 label: Update view
 desc: 
-  - Select some elements in the DOM
-  - Verify that the view is updated accordingly
+  - Go to the url above
+  - Unfold the whole DOM tree
+  - Select the line '<p id="bar" class="foo">paragraph 1 </p>' in the DOM pane
+  - Verify that 'id' has the value "bar" in the Properties pane
+  - Select the line '<p class="foo">paragraph 2 </p>' in the DOM pane
+  - Verify that 'id' has an empty string and 'class' a "foo" value in the Properties pane
+  - Select the line '<p>paragraph 3</p>' in the DOM pane
+  - Verify that both 'id' and 'class' have empty string values in the Properties pane
 
 id: 20
 label: Unfold properties
 desc:
-  - Select an element in the DOM
-  - Verify that properties can be folded and unfolded
+  - Go to the url above
+  - Unfold the whole DOM tree
+  - Select the line '<p id="bar" class="foo">paragraph 1 </p>' in the DOM pane
+  - Unfold the 'attributes' property in the Properties pane 
+  - Verify that property '0' and '1' are unfolded and that 'length' has a value of '2'
+  - Collapse the 'attributes' property
+  - Verify that all 'attributes' properties are removed
+  - Repeat unfold and collapse several times
+  - Verify that the properties are show and removed accordingly
 
 id: 21
 label: Hide empty strings
@@ -216,12 +229,17 @@ desc:
 DOM.Layout
 **********
 
+url: highlight-element.html
 id: 23
 label: Highlight boxes
 desc:
-  - Select an element in the DOM
-  - Hover the different boxes in the Metrics view
-  - Verify that the according box is highlighted on the element in the host
+  - Go to the url above
+  - Unfold the whole DOM tree
+  - Select the line '<div>div</div>' in the DOM pane
+  - Hover the dimension box in the center of the Metrics view in the Layout pane
+  - Verify that the only the center with 'div' is highlighted in the host
+  - Hover the 'padding', 'border' and 'margin' boxes in the Metrics view in the Layout pane
+  - Verify that the boxes with the according labels are highlighted on the element in the host
 
 id: 24
 label: Parent Offsets
@@ -267,6 +285,7 @@ desc:
   - Verify that you can expand and collaps the breadcrump with the small toggle icon 
     to the right of the status icon.
 
+url: http://www.aleto.ch
 id: 29
 label: Connection status
 desc:
@@ -302,7 +321,8 @@ id: 32
 label: Remove breakpoint
 desc: 
   - Remove the previous set breakpoint on line 4, 'var aa = 1;'.
-  - Verify that a breakpoint is disappears on the clicked line.
+  - Verify that a breakpoint disappears on the clicked line.
+  - Press the 'Continue' button in the debugger
   - Press the 'e()' button
   - Verify that the engine does not stops on line 4 and that no arrow is displayed on that line.
 

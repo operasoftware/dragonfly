@@ -42,5 +42,8 @@ HTML_SECTION
 HTML_DEPRECATED
 <p class="deprecated">DEPRECATED TEST</p>
 #
+HTML_LINE_THROUGH
+<span class="line-through">%s</span>
+#
 
   
