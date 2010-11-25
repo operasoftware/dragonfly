@@ -667,7 +667,9 @@ cls.DOMInspectorActions = function(id)
       self.set_editor("dom-attr-text-editor");
       self.editor.edit(event, target);
 
-      this.editor.insert_attribute_edit(target);
+      var container = target.has_attr("parent-node-chain", "ui-id");
+      var start_tag = container.querySelector("[ref-id='" + target.get_attr("parent-node-chain", "ref-id") + "'] node");
+      this.editor.insert_attribute_edit(start_tag);
     }
   }.bind(this);
 
