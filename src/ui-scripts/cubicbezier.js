@@ -36,12 +36,7 @@ Slider.prototype = new function()
   {
     if (this._is_active)
     {
-      if (this._onxy && !(this.x == this._submitted_x && this.y == this._submitted_y))
-        this.onxy(this._submitted_x = this.x, this._submitted_y = this.y);
-      if (this._onx && this.x != this._submitted_x)
-        this.onx(this._submitted_x = this.x);
-      if (this._ony && this.y != this._submitted_y)
-        this.ony(this._submitted_y = this.y);
+      
     }
     else
     {
@@ -52,21 +47,13 @@ Slider.prototype = new function()
 
   this._onmousemove = function(event)
   {
-    var value = 0, box = this._ref_element.getBoundingClientRect();
-    if (this._has_x)
-    {
-      value = (event.clientX - this._delta_x - box.left) /
-              this._pixel_range_x * this._range_x + this._min_x;
-      value = MAX(MIN(value, this._max_x), this._min_x);
-      this.x = this._is_invers_x ? this._max_x - value + this._min_x : value;
-    }
-    if (this._has_y)
-    {
-      value = (event.clientY - this._delta_y - box.top) /
-              this._pixel_range_y * this._range_y + this._min_y;
-      value = MAX(MIN(value, this._max_y), this._min_y);
-      this.y = this._is_invers_y ? this._max_y - value + this._min_y : value;
-    }
+    var value = 0, box = this._svg.getBoundingClientRect();
+
+    value = (event.clientX - this._delta_x - box.left) * this._scale;
+    this._x0 = MAX(MIN(value, 100), 0);
+    value = (event.clientY - this._delta_y - box.top) * this._scale;
+    this._y0 = 100 - MAX(MIN(value, 100), 0);
+    this._update();
   }
 
   this._update_y = function(value)
@@ -87,6 +74,21 @@ Slider.prototype = new function()
   {
     if (!this._interval && !this._is_active)
     {
+
+      var target = event.target;
+      var class_name = target.getAttribute('class');
+      if (class_name == 'cubic-bezier-p-1'/* || class_name == 'cubic-bezier-p-2'*/)
+      {
+        var box = this._svg.getBoundingClientRect();
+        this._width = box.width;
+        this._height = box.height;
+        this._scale = 100 / this._width;
+        this._delta_x = event.clientX - (box.left + this._x0 / this._scale);
+        this._delta_y = event.clientY - (box.top + (100 - this._y0) / this._scale);
+        
+        
+        
+      /*
       if (this._element.contains(event.target))
       {
         var target_box = this._element.getBoundingClientRect();
@@ -99,11 +101,14 @@ Slider.prototype = new function()
         this._delta_y = 0;
         this._onmousemove(event);
       }
+      */
       document.addEventListener('mousemove', this._onmousemove_bound, false);
       document.addEventListener('mouseup', this._onmouseup_bound, false);
       this._interval = window.setInterval(this._onmousemoveinterval_bound, UPDATE_INTERVAL);
       this._is_active = true;
       event.preventDefault();
+      
+      }
     }
   }
 
@@ -142,47 +147,37 @@ Slider.prototype = new function()
     this['_submitted_' + axis] = 0;
     this[axis] = this['_is_invers_' + axis] ? max : min;
   }
+  
+  this._update = function()
+  {
+    var gs = this._svg.getElementsByTagName('g');
+    while (gs[0])
+      gs[0].parentNode.removeChild(gs[0]);
+    this._svg.render(['svg:g', window.templates.svg_cubic_bezier(this._x0, this._y0, this._x1, this._y1)]);
+  }
 
   this._init = function(config)
   {
     var
     container = config.container,
     cubic_bezier_class = config.slider_base_class,
-    slider_class = config.slider_class,
     box = null;
 
     if (container instanceof Element)
     {
-      container.render(window.templates.cubic_bezier(cubic_bezier_class, slider_class));
-
-
-      /*
-      this._ref_element = container.getElementsByClassName(slider_base_class)[0];
-      this._element = container.getElementsByClassName(slider_class)[0];
-      box = this._ref_element.getBoundingClientRect();
+      container.render(window.templates.cubic_bezier(cubic_bezier_class));
+      this._ref_element = container.getElementsByClassName(cubic_bezier_class)[0];
+      this._svg = this._ref_element.getElementsByTagName('svg')[0];
+      this._x0 = 30;
+      this._y0 = 50;
+      this._x1 = 70;
+      this._y1 = 50;
+      this._update();
       
-      if (config.onxy)
-      {
-        this.onxy = config.onxy;
-        this._onxy = true;
-        this._set_axis('x', config.min_x, config.max_x, box.width);
-        this._set_axis('y', config.min_y, config.max_y, box.height);
-      }
-      else
-      {
-        if (config.onx)
-        {
-          this.onx = config.onx;
-          this._onx = true;
-          this._set_axis('x', config.min_x, config.max_x, box.width);
-        }
-        if (config.ony)
-        {
-          this.ony = config.ony;
-          this._ony = true;
-          this._set_axis('y', config.min_y, config.max_y, box.height);
-        }
-      }
+      
+
+      
+
       this._onmousedown_bound = this._onmousedown.bind(this);
       this._onmousemove_bound = this._onmousemove.bind(this);
       this._onmouseup_bound = this._onmouseup.bind(this);
@@ -190,7 +185,6 @@ Slider.prototype = new function()
       this._onmousemoveinterval_bound = this._onmousemoveinterval.bind(this);
       this._ref_element.addEventListener('mousedown', this._onmousedown_bound, false);
       document.addEventListener('DOMNodeRemoved', this._onremove_bound, false);
-      */
     }
   }
 

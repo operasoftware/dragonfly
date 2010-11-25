@@ -347,7 +347,6 @@
       ['svg:svg',
         ['defs', this._svg_pattern(pattern_id)],
         this.svg_rect(0, 0, 100, 100, 0, 0, 'url(#' + pattern_id + ')'),
-        ['g', this.svg_cubic_bezier(30, 50, 70, 50), 'id', 'baba'],
         'viewBox', '0 0 100 100',
         'version', '1.1'
       ],
@@ -361,9 +360,9 @@
     [
       this._svg_line(null, null, 0, 100, x1, 100 - y1, 'none', 'black', .5, .5),
       this._svg_line(null, null, 100, 0, x2, 100 - y2, 'none', 'black', .5, .5),
-      this._svg_circle(null, null, x1, 100 - y1, 3.5, 'hsl(0, 0%, 70%)', 'black', .5),
-      this._svg_circle(null, null, x2, 100 - y2, 3.5, 'hsl(0, 0%, 70%)', 'black', .5),
-      this._svg_path(null, null, 'M0,100 C30,40 70,60 100,0', 'none', 'red', .5),
+      this._svg_circle(null, 'cubic-bezier-p-1', x1, 100 - y1, 3.5, 'hsl(0, 0%, 70%)', 'black', .5),
+      this._svg_circle(null, 'cubic-bezier-p-2', x2, 100 - y2, 3.5, 'hsl(0, 0%, 70%)', 'black', .5),
+      this._svg_path(null, null, 'M 0,100 C ' + x1 + ', ' + (100 - y1) + ' 70, 60 100, 0', 'none', 'red', .5),
     ]);
   }
 
