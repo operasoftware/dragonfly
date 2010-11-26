@@ -34,6 +34,36 @@ cls.CookieManagerView = function(id, name, container_class)
     }
     
     var tabledef = {
+      groups: {
+        runtimes: {
+          label: "Runtime",
+          grouper: function(obj) {
+            var str="";
+            for (var i=0; i < obj.runtimes.length; i++) {
+              // runtimes could be displayed smarter..
+              // 'title (url)' OR 'title (url1, url2)' OR 'title (url)(2)' OR 'title (url), title (url)'
+              var rt = window.views.cookie_manager._rts[""+obj.runtimes[i]];
+              var title = rt.title;
+              var href = rt.href;
+              if(title)
+              {
+                str+=title+"("+href+"), ";
+              }
+              else
+              {
+                href+", ";
+              }
+            };
+            return str;
+          },
+        },
+        domain: {
+          label: "Domains",
+          grouper: function(obj) {
+            return obj.domain;
+          },
+        }
+      },
       columns: {
         runtimes: {
           label: "Runtimes",
@@ -94,14 +124,23 @@ cls.CookieManagerView = function(id, name, container_class)
     }
     container.clearAndRender(new SortableTable(tabledef, cookieData).render());
     
+    var table = document.getElementsByClassName("sortable-table")[0];
+    var obj = ObjectRegistry.get_instance().get_object(table.getAttribute("data-object-id"));
+    // group by runtime
+    obj.group("runtimes");
+    // or domain
+    // obj.group("domain");
+    table.re_render(obj.render());
+    
     // Add clear button
-    container.render(["button","RemoveAllCookies", "href", "#", "handler", "cookiemanager-delete-all"]);
+    container.render(["button", "RemoveAllCookies", "href", "#", "handler", "cookiemanager-delete-all"]);
   };
   
   this._on_active_tab = function(msg)
   {
     // cleanup view
     this.clearAllContainers();
+    // console.log(msg.activeTab);
     
     // cleanup runtimes directory
     for(var item in this._rts)
@@ -125,16 +164,14 @@ cls.CookieManagerView = function(id, name, container_class)
       }
     }
     
-    // console.log("--- msg.activeTab",msg.activeTab);
     for (var i=0; i < msg.activeTab.length; i++)
     {
       var rt_id = msg.activeTab[i];
       if(!this._rts[rt_id])
       {
         this._rts[rt_id]={rt_id: rt_id, get_domain_is_pending: true};
-        // console.log("added rt ",rt_id);
       }
-      var script = "return JSON.stringify({host: location.host, hostname: location.hostname})";
+      var script = "return JSON.stringify({host: location.host, hostname: location.hostname, title: document.title, href: location.href})";
       var tag = tagManager.set_callback(this, this._handle_get_domain,[rt_id]);
       services['ecmascript-debugger'].requestEval(tag,[rt_id, 0, 0, script]);
     };
@@ -148,10 +185,14 @@ cls.CookieManagerView = function(id, name, container_class)
     var data = JSON.parse(message[2]);
     var host = data.host;
     var hostname = data.hostname;
+    var title = data.title;
+    var href = data.href;
 
     this._rts[rt_id].get_domain_is_pending = false;
     this._rts[rt_id].hostname = hostname;
     this._rts[rt_id].host = host;
+    this._rts[rt_id].title = title;
+    this._rts[rt_id].href = href;
     this._check_all_members_of_obj_to_be(this._rts, "get_domain_is_pending", false, this._clean_domains_and_ask_for_cookies);
   }
   
