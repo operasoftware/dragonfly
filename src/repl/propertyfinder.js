@@ -8,7 +8,7 @@
 window.cls = window.cls || {};
 window.cls.PropertyFinder = function(rt_id) {
   if (window.cls.PropertyFinder.instance) {
-    return window.PropertyFinder.instance;
+    return window.cls.PropertyFinder.instance;
   }
   else {
     window.cls.PropertyFinder.instance = this;
