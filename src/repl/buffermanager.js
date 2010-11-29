@@ -9,39 +9,6 @@ cls.BufferManager = function(textarea)
   this._textarea = textarea;
   this._kill_buffer = "";
 
-  this.handle = function(evt) {
-      return this._handle_event(evt);
-  };
-
-  this._handle_event = function(evt)
-  {
-    if (evt.ctrlKey)
-    {
-      switch (evt.keyCode)
-      {
-        case 97: // a key. ctrl-a == move to start of line
-          this.move_to_beginning_of_line();
-          return true;
-        case 101: // e key. ctrl-e == move to end of line
-          this.move_to_end_of_line();
-          return true;
-        case 107: // k key. ctrl-k == kill to end of line
-          this.kill_to_end_of_line();
-          return true;
-        case 117: // u key. ctrl-u == kill to beginning of line
-          this.kill_to_beginning_of_line();
-          return true;
-        case 119: // w key. ctrl-w == kill word backwards
-          this.kill_word_backwards();
-          return true;
-        case 121: // y key. ctrl-y == yank, insert the contents of the kill buffer
-          this.yank();
-          return true;
-      }
-    }
-    return false;
-  };
-
   this.move_to_beginning_of_line = function()
   {
     this.put_cursor(0);
