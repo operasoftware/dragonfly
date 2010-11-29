@@ -45,9 +45,10 @@ cls.CookieManagerView = function(id, name, container_class)
               var rt = window.views.cookie_manager._rts[""+obj.runtimes[i]];
               var title = rt.title;
               var href = rt.href;
+              var hostname = rt.hostname;
               if(title)
               {
-                str+=title+"("+href+"), ";
+                str += title+" ("+href+"), ";
               }
               else
               {
@@ -62,29 +63,26 @@ cls.CookieManagerView = function(id, name, container_class)
           grouper: function(obj) {
             return obj.domain;
           },
+        },
+        hostname: {
+          label: "Hostname",
+          renderer: function(obj) {
+            return 
+              ["p",window.views.cookie_manager._rts[""+obj.runtimes[0]].hostname,
+                [
+                  "button",            "Remove",
+                  "class",             "delete_cookie",
+                  "data-cookie-domain", obj.domain,
+                  "handler",           "cookiemanager-delete-cookies"
+                ]
+              ];
+          },
+          grouper: function(obj) {
+            return window.views.cookie_manager._rts[""+obj.runtimes[0]].hostname;
+          }
         }
       },
       columns: {
-        runtimes: {
-          label: "Runtimes",
-          getter: function(obj) {
-            var str="";
-            for (var i=0; i < obj.runtimes.length; i++) {
-              str += obj.runtimes[i];
-              if(i+1 < obj.runtimes.length)
-              {
-                str += ", ";
-              }
-            };
-            return str;
-          }
-        },
-        host: {
-          label: "Host"
-        },
-        hostname: {
-          label: "Hostname"
-        },
         domain: {
           label: "Domain"
         },
@@ -113,12 +111,25 @@ cls.CookieManagerView = function(id, name, container_class)
           }
         },
         isSecure: {
-          label: "isSecure",
+          label: "Secure",
           getter: function(obj) { return ""+obj.isSecure; }
         },
         isHTTPOnly: {
-          label: "isHTTPOnly",
+          label: "HTTP only",
           getter: function(obj) { return ""+obj.isHTTPOnly; }
+        },
+        remove: {
+          label: "",
+          getter: function(obj) {
+            return [
+              "button",
+              "Remove",
+              "class",             "delete_cookie",
+              "data-cookie-domain", obj.domain,
+              "data-cookie-path",   obj.path,
+              "data-cookie-name",   obj.name,
+              "handler",           "cookiemanager-delete-cookie"]
+          }
         }
       }
     }
@@ -127,9 +138,12 @@ cls.CookieManagerView = function(id, name, container_class)
     var table = document.getElementsByClassName("sortable-table")[0];
     var obj = ObjectRegistry.get_instance().get_object(table.getAttribute("data-object-id"));
     // group by runtime
-    obj.group("runtimes");
+    // obj.group("runtimes");
     // or domain
     // obj.group("domain");
+    // or hostname
+    obj.group("hostname");
+    
     table.re_render(obj.render());
     
     // Add clear button
@@ -171,7 +185,7 @@ cls.CookieManagerView = function(id, name, container_class)
       {
         this._rts[rt_id]={rt_id: rt_id, get_domain_is_pending: true};
       }
-      var script = "return JSON.stringify({host: location.host, hostname: location.hostname, title: document.title, href: location.href})";
+      var script = "return JSON.stringify({host: location.host || '', hostname: location.hostname || '', title: document.title || '', href: location.href || ''})";
       var tag = tagManager.set_callback(this, this._handle_get_domain,[rt_id]);
       services['ecmascript-debugger'].requestEval(tag,[rt_id, 0, 0, script]);
     };
@@ -210,9 +224,7 @@ cls.CookieManagerView = function(id, name, container_class)
         if(!this._cookies[rt_domain])
         {
           this._cookies[rt_domain] = {
-            runtimes: [runtime.rt_id],
-            host: runtime.host,
-            hostname: runtime.hostname,
+            runtimes: [runtime.rt_id]
           }
         }
         else
@@ -257,10 +269,12 @@ cls.CookieManagerView = function(id, name, container_class)
     }
   };
   
-  this._handle_removed_cookies = function(status, message, domain)
+  this._handle_removed_cookies = function(status, message, domain, path, name)
   {
     // console.log("_handle_removed_cookies",status,message,domain);
-    delete window.views.cookie_manager._cookies[domain];
+    
+    // TODO: try to be smart and delete the ones that fit from table or just throw away and re-fetch all.
+    // delete window.views.cookie_manager._cookies[domain];
     window.views.cookie_manager.update();
   };
   
