@@ -191,7 +191,7 @@ var ActionBroker = function()
     if (!(propagate_event === false) &&
          this._action_context != this._global_handler)
     {
-      shortcuts = this._gloabal_shortcuts[this._gloabal_shortcuts.mode];
+      shortcuts = this._gloabal_shortcuts[this._global_handler.mode];
       action = shortcuts && shortcuts[key_id] || '';
       if (action)
         propagate_event = this._global_handler.handle(action,
