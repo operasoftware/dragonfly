@@ -170,16 +170,16 @@ templates.sortable_table_body = function(tabledef, data, cols, groupby, sortby, 
   var groupnames = [];
   for (var key in groups) { groupnames.push(key) }
 
-  render_group_headers = groupnames.length > 1;
+  var render_group_headers = groupnames.length > 1;
   return groupnames.map(function(g) {
       return templates.sortable_table_group(tabledef, g,
                                             render_group_headers,
-                                            groups[g], cols, sortby,
+                                            groups[g], cols, groupby, sortby,
                                             reversed)
   });
 }
 
-templates.sortable_table_group = function(tabledef, groupname, render_header, data, cols, sortby, reversed)
+templates.sortable_table_group = function(tabledef, groupname, render_header, data, cols, groupby, sortby, reversed)
 {
   var sorter = tabledef.columns[sortby].sorter;
   data.sort(sorter);
@@ -187,8 +187,9 @@ templates.sortable_table_group = function(tabledef, groupname, render_header, da
   var tpl = [];
 
   if (render_header) {
+    var renderer = tabledef.groups[groupby].renderer || function(g) { return g };
     tpl.push(["tr",
-              ["th", groupname,
+              ["th", renderer(groupname),
                "colspan", String(cols.length),
                "class", "sortable-table-group-header"],
               "class", "header"
