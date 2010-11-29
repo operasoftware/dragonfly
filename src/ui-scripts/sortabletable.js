@@ -170,6 +170,15 @@ templates.sortable_table_body = function(tabledef, data, cols, groupby, sortby, 
   var groupnames = [];
   for (var key in groups) { groupnames.push(key) }
 
+  if (tabledef.groups[groupby].sorter)
+  {
+    groupnames.sort(tabledef.groups[groupby].sorter);
+  }
+  else
+  {
+    groupnames.sort()
+  }
+
   var render_group_headers = groupnames.length > 1;
   return groupnames.map(function(g) {
       return templates.sortable_table_group(tabledef, g,
