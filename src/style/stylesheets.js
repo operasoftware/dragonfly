@@ -740,7 +740,7 @@ cls.Stylesheets = function()
       if (display)
       {
         ret += (ret ? MARKUP_PROP_NL : "") +
-                MARKUP_KEY + prop + MARKUP_KEY_CLOSE +
+                "<property data-spec='css#" + prop + "'><key>" + prop + MARKUP_KEY_CLOSE +
                 MARKUP_VALUE + helpers.escapeTextHtml(value) + MARKUP_VALUE_CLOSE;
       }
     }
