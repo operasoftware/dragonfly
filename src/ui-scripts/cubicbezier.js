@@ -62,7 +62,7 @@ CubicBezierControl.prototype = new function()
       ((event.clientX - this._delta_x - box.left) * this._scale) - SHIFT;
     var value_y = 
       ((event.clientY - this._delta_y - box.top) * this._scale) - SHIFT;
-    if (this._traget_class == CLASS_P1)
+    if (this._target_class == CLASS_P1)
     {
       this._x0 = MAX(MIN(value_x, 100 + DELTA), -DELTA);
       this._y0 = 100 - MAX(MIN(value_y, 100 + DELTA), -DELTA);
@@ -91,8 +91,8 @@ CubicBezierControl.prototype = new function()
         this._width = box.width;
         this._height = box.height;
         this._scale = (2 * BORDER + 2 * DELTA + 100) / this._width;
-        this._traget_class = class_name;
-        if (this._traget_class == CLASS_P1)
+        this._target_class = class_name;
+        if (this._target_class == CLASS_P1)
         {
           this._delta_x = 
             event.clientX - (box.left + (SHIFT + this._x0) / this._scale);
