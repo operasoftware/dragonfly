@@ -151,6 +151,14 @@ def load_templates():
                 cur_value.append(line)
         if cur_value:
             globals()[cur_key] = "".join(cur_value)
+
+def label2filename(label):
+    label = ''.join(label)
+    for char in ["/", ":", "(", ")", "$"]:
+        pos = label.find(char)
+        if pos > -1:
+            label = label[0:pos]
+    return ''.join(label).strip().replace(' ', '-').replace(',', '').lower()
             
 def tests2singledocs():
     entries = get_tests()
@@ -180,7 +188,7 @@ def tests2singledocs():
             entry.urls = entry.url or cur.urls
             entry.repo = cur.repo
             entry.index = "%#04i" % cur.index_count
-            file_name = ''.join(entry.label).strip().replace(' ', '-').replace(',', '').lower()
+            file_name = label2filename(entry.label)
             entry.file_name = "%s.%s.html" % (entry.index, file_name)
             index += 1
     return filter(lambda e: e.label , entries)
@@ -260,7 +268,6 @@ def test():
         repo = os.path.join(PAPA, e.repo)
         if not os.path.exists(repo):
           os.makedirs(repo)
-        
         with open(os.path.join(repo, e.file_name), 'w') as f:
             f.write("".join(content))
         index.append((e.mode, "".join(e.label), "./%s/%s" % (e.repo, e.file_name)))
