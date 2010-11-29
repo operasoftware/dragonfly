@@ -805,6 +805,13 @@ desc:
   - Enter $("i") in th command line
   - Verify that HTMLElement is printed in the view
 
+label: Command line API: $() on sites using jquery/other libs
+desc:
+  - Navigate to a site that uses jquery, like http://jquery.com
+  - Enter $("i") in th command line
+  - Verify that HTMLElement is printed in the view
+
+  
 id: 102
 label: Command line API: $$()
 desc:
@@ -822,6 +829,7 @@ desc:
   
 id: 104
 label: Autocomplete, not stopped
+deprecated: true
 desc:
   - Type "docu"
   - Press tab
@@ -838,6 +846,7 @@ url: ./test-cases/repl/autocomplete_stopped.html
 
 id: 105
 label: Autocomplete, stopped
+deprecated: true
 desc:
   - Navigate to url
   - Verify that debugger has stopped
@@ -886,6 +895,78 @@ desc:
   - Press ctrl-l
   - Verify that the view gets cleared.
   - Verify that the typed history was NOT cleared.
+
+label: single line / multi line toggling
+desc:
+  - Press shift-enter
+  - Verify that the input box changes appearance
+  - Verify that the pressing tab inserts a tab character
+  - Verify that up/down/left/right moves the cursor inside the text box
+  - Press shift-enter
+  - Press ctrl-enter
+  - Verify that the input is evaluated
+
+label: Pasting text
+desc:
+  - Copy some text that contains multiple lines
+  - Paste the text into the command line
+  - Verify that all the text is visible
+  - Verify that the input box changed apperance and is in multi line mode
+
+label: Welcome message
+desc:
+  - Switch to the command line view
+  - Verify that the first line in the view contains the Opera version and core version
+
+label: List-like object unpacking
+desc:
+  - Type [1, "foo", window] in the command line and hit enter
+  - Verify that the output is Array[1, "foo", Window]
+  - Verify that clicking Array opens the array object for inspection
+  - Verify that clicking Window opens the window object for inspection
+  - Type document.body.childNodes and hit enter
+  - Verify that NodeList[<number of elements>] is shown.
+
+label: Help command
+desc:
+  - Type //help()
+  - Verify that a list of available commands is printed
+  - type //man()
+  - Verify that the output is identical to the output from the help command
+
+label: jquery command
+desc:
+  - Type //jquery()
+  - Verify jquery is loaded
+
+
+label: Autocomplete, not stopped
+desc:
+  - Type "docu"
+  - Press tab
+  - Verify that the input is expanded to "document"
+  - Continue typing "b", so input is "document.b"
+  - Press tab
+  - Verify that the input is the same and that the expansions "baseURI, bgColor, body" are shown above the input
+  - Verify that baseURI is highlighted
+  - Continue typing "o"
+  - Press tab
+  - Verify that the input is expanded to "document.body"
+  - Type document.b
+  - Press tab multiple times
+  - Verify that a list of completions is shown and that the highlight moves forward when pressing tab
+  - Verify that pressing the right arrow key has the same effect as pressing tab
+  - Verify that pressing shift-tab moves the higlight backwards.
+  - Verify that pressing the right arrow key has the same effect as pressing shift-tab
+  - Press enter.
+  - Verify that the higlighted word is entered in the console
+  - Type document.b
+  - Press tab
+  - Press "."
+  - Verify that the highlighted word is entered in the console
+  - Verify that the keys [, ], (, ) have the samme effect as "."
+
+
 
 Scripts.Event Breakpoints
 *************************

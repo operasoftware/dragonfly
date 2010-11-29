@@ -671,6 +671,12 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     return false;
   };
 
+  this["_handle_action_kill-to-beginning-of-line"] = function(evt, target)
+  {
+    this._textarea_handler.kill_to_beginning_of_line();
+    return false;
+  };
+
   this["_handle_action_kill-word-backwards"] = function(evt, target)
   {
     this._textarea_handler.kill_word_backwards();
@@ -686,6 +692,12 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this["_handle_action_move-to-end-of-line"] = function(evt, target)
   {
     this._textarea_handler.move_to_end_of_line();
+    return false;
+  };
+
+  this["_handle_action_yank"] = function(evt, target)
+  {
+    this._textarea_handler.yank();
     return false;
   };
 
@@ -760,7 +772,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
   };
 
-  this["_handle_action_cancel"] = function(evt, target)
+  this["_handle_action_cancel-completion"] = function(evt, target)
   {
     this._highlight_completion();
     this._recent_autocompletion = null;
@@ -781,6 +793,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._update_input_height_bound();
     return false;
   };
+
+  this["_handle_action_cancel-input"] = function(evt, target)
+  {
+    return false;
+  }
 
   /**
    * Entry point for the action handling system
