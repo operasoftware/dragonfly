@@ -32,6 +32,7 @@ class Entry(object):
         self.label = []
         self.id = []
         self.buffer = []
+        self.deprecated = False
 
 def get_ids():
     """Parse the IDS file.
@@ -55,8 +56,20 @@ def get_tests():
     entries = []
     entry = Entry()
     cur = entry.buffer
+    is_pre = False
+    pre_sapces = 0
     for line in in_file.readlines():
-        line = line.strip()
+        if "@pre" in line:
+            pre_sapces = line.find("@pre")
+            is_pre = True
+            line = line.rstrip()
+        if "@/pre" in line:
+            pre_sapces = 0
+            is_pre = False
+        if is_pre:
+            line = line[pre_sapces:].rstrip() + '\\n'
+        else:
+            line = line.strip()
         if line.startswith('#'):
             continue
         elif not line:
@@ -77,6 +90,8 @@ def get_tests():
             cur.append(line[4:])
         elif line.startswith('***'):
             entry.title = entry.buffer
+        elif line.startswith('deprecated:'):
+            entry.deprecated = "true" in line.lower() and True or False
         else:
             cur.append(line)
     in_file.close()
@@ -161,7 +176,7 @@ def write_index():
         if entry.label:
             id = "id-%s" % entry.id[0].strip()
             label = "".join(entry.label)
-            raw_items = [item.strip().replace('"', '&quot;') for item in entry.desc if item]
+            raw_items = [item.replace('"', '&quot;') for item in entry.desc if item]
             string = ""
             items = []
             for item in raw_items:
@@ -173,8 +188,9 @@ def write_index():
                     string += item
             if string:
                 items.append(string)
-            desc = "\n    ".join([""] + items + [""])   
-            entries.append(TR_TEST % (desc, label, id, id))
+            desc = "\n    ".join([""] + items + [""]) 
+            is_deprecated = entry.deprecated and "class=\"deprecated\" " or ""
+            entries.append(TR_TEST % (is_deprecated, desc, label, id, id))
     return entries
 
 

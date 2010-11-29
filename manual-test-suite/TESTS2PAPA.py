@@ -13,6 +13,8 @@ from resources.markup import *
 APP_ROOT, file_name = os.path.split(os.path.abspath(__file__))
 TEMPLATES = os.path.join(APP_ROOT, "resources", "TEMPLATES")
 TESTS = os.path.join(APP_ROOT, "TESTS")
+STYLESHEET = os.path.join(APP_ROOT, "resources", "STYLE")
+STYLESHEET_NAME = "style.css"
 PAPA = "PAPA"
 TESTCASES = 'test-cases'
 
@@ -36,6 +38,7 @@ class Entry(object):
         self.repo = ''
         self.index_count = 0
         self.file_name = ''
+        self.deprecated = False
 
     def __str__(self):
         ret = []
@@ -72,8 +75,24 @@ def get_tests():
     entry = Entry()
     cur = entry.buffer
     counter = 1
+    is_pre = False
+    pre_sapces = 0
     for line in in_file.readlines():
-        line = line.strip()
+        if "@pre" in line:
+            pre_sapces = line.find("@pre")
+            is_pre = True
+            cur.append("@pre")
+            continue
+        if "@/pre" in line:
+            pre_sapces = 0
+            is_pre = False
+            cur.append("@/pre")
+            continue
+        if is_pre:
+            cur.append(line[pre_sapces:])
+            continue
+        else:
+            line = line.strip()
         if line.startswith('#'):
             continue
         elif not line:
@@ -94,6 +113,8 @@ def get_tests():
             cur.append(line[4:])
         elif line.startswith('***'):
             entry.title = entry.buffer
+        elif line.startswith('deprecated:'):
+            entry.deprecated = "true" in line.lower() and True or False
         else:
             cur.append(line)
     in_file.close()
@@ -165,7 +186,7 @@ def tests2singledocs():
     return filter(lambda e: e.label , entries)
     
 def print_index(index):
-    content = [HTML_HEAD, HTML_MAIN_TITLE]
+    content = [HTML_HEAD % STYLESHEET_NAME, HTML_MAIN_TITLE]
     sections = []
     links = None
     cur_mode = ''
@@ -179,8 +200,19 @@ def print_index(index):
       content.append(HTML_SECTION % (title, "".join(links)))
     with open(os.path.join(PAPA, 'index.html'), 'w') as f:
         f.write("".join(content))
+
+def print_stylesheet():
+    content = ""
+    with open(STYLESHEET, 'r') as f:
+        content = f.read()
+    with open(os.path.join(PAPA, STYLESHEET_NAME), 'w') as f:
+        f.write(content)
     
-        
+def item2html(item):
+    ret = item.replace('<', '&lt;').replace('"', '&quot;').replace('@pre', '<pre>').replace('@/pre', '</pre>')
+    if "@line-through" in ret:
+        ret = HTML_LINE_THROUGH.strip() % ret.replace("@line-through", "")
+    return ret
     
 def test():
     load_templates()
@@ -200,12 +232,12 @@ def test():
         os.makedirs(PAPA)
     index = []
     for e in entries:
-        content = [HTML_HEAD]
+        content = [HTML_HEAD % ("../" + STYLESHEET_NAME)]
         urls = []
         for u in e.urls:
             u = u.replace('./', '../')
             urls.append(HTML_URL % (u, u))
-        raw_items = [item.strip().replace('"', '&quot;') for item in e.desc if item]
+        raw_items = [item2html(item) for item in e.desc if item]
         string = ""
         items = []
         for item in raw_items:
@@ -219,6 +251,7 @@ def test():
             items.append(string)
             
         content.append(HTML_TITLE % ("".join(e.label),
+                                     e.deprecated and HTML_DEPRECATED or "",
                                      e.mode,
                                      e.tabs,
                                      "".join(urls),
@@ -232,6 +265,7 @@ def test():
             f.write("".join(content))
         index.append((e.mode, "".join(e.label), "./%s/%s" % (e.repo, e.file_name)))
     print_index(index)
+    print_stylesheet()
     if not os.path.exists(os.path.join(PAPA, TESTCASES)):
         shutil.copytree(TESTCASES, os.path.join(PAPA, TESTCASES))
         

@@ -116,15 +116,19 @@ desc:
   - Verify that the count of all hits is displayed in the status bar.
   - Verify that the view navigates to the next hit on enter.
 
+url: ./test-cases/dom/edit-attribute.html
 id: 12
 label: Edit attributes
 desc:
-  - Double click an attribute
-  - Verify that the attribute is displayed in a edit field.
-  - Change the value and verify that the change applies instantly in the host document.
-  - Verify that escape reverts the changes
+  - Turn the 'Find element' switch on.
+  - Go the the url above 
+  - Select the paragraph 'some text' in the host
+  - Double click the class value 'foo' in the client
+  - Verify that the attribute value is displayed in a edit field.
+  - Change the value to 'bar' and verify that the background-color in the host changes instantly to green.
+  - Verify that escape reverts the background-color back to cyan.
   - Verify that enter does keep the changes an leaves the edit mode.
-  - Verify that tab moves to the next attribute
+  - Verify that tab moves to the edit field to the next attribute
   - Verify that at the end of a tag an empty field is shown to add a new attribute.
 
 id: 13
@@ -147,7 +151,7 @@ desc:
 DOM.Styles
 **********
 
-url: http://dev.opera.com
+url: ./test-cases/dom/matching-style-declarations.html
 
 id: 15
 label: Matching style rules
@@ -156,6 +160,7 @@ desc:
   - select some elements in the DOM
   - Verify that the styles are updated
 
+url: http://dev.opera.com
 id: 16
 label: Hide initial value
 desc:
@@ -211,19 +216,31 @@ desc:
 DOM.Properties
 **************
 
-url: http://dev.opera.com
-
+url: ./test-cases/dom/matching-style-declarations.html
 id: 19
 label: Update view
 desc: 
-  - Select some elements in the DOM
-  - Verify that the view is updated accordingly
+  - Go to the url above
+  - Unfold the whole DOM tree
+  - Select the line '<p id="bar" class="foo">paragraph 1 </p>' in the DOM pane
+  - Verify that 'id' has the value "bar" in the Properties pane
+  - Select the line '<p class="foo">paragraph 2 </p>' in the DOM pane
+  - Verify that 'id' has an empty string and 'class' a "foo" value in the Properties pane
+  - Select the line '<p>paragraph 3</p>' in the DOM pane
+  - Verify that both 'id' and 'class' have empty string values in the Properties pane
 
 id: 20
 label: Unfold properties
 desc:
-  - Select an element in the DOM
-  - Verify that properties can be folded and unfolded
+  - Go to the url above
+  - Unfold the whole DOM tree
+  - Select the line '<p id="bar" class="foo">paragraph 1 </p>' in the DOM pane
+  - Unfold the 'attributes' property in the Properties pane 
+  - Verify that property '0' and '1' are unfolded and that 'length' has a value of '2'
+  - Collapse the 'attributes' property
+  - Verify that all 'attributes' properties are removed
+  - Repeat unfold and collapse several times
+  - Verify that the properties are show and removed accordingly
 
 id: 21
 label: Hide empty strings
@@ -241,12 +258,17 @@ desc:
 DOM.Layout
 **********
 
+url: highlight-element.html
 id: 23
 label: Highlight boxes
 desc:
-  - Select an element in the DOM
-  - Hover the different boxes in the Metrics view
-  - Verify that the according box is highlighted on the element in the host
+  - Go to the url above
+  - Unfold the whole DOM tree
+  - Select the line '<div>div</div>' in the DOM pane
+  - Hover the dimension box in the center of the Metrics view in the Layout pane
+  - Verify that the only the center with 'div' is highlighted in the host
+  - Hover the 'padding', 'border' and 'margin' boxes in the Metrics view in the Layout pane
+  - Verify that the boxes with the according labels are highlighted on the element in the host
 
 id: 24
 label: Parent Offsets
@@ -292,6 +314,7 @@ desc:
   - Verify that you can expand and collaps the breadcrump with the small toggle icon 
     to the right of the status icon.
 
+url: http://www.aleto.ch
 id: 29
 label: Connection status
 desc:
@@ -327,7 +350,8 @@ id: 32
 label: Remove breakpoint
 desc: 
   - Remove the previous set breakpoint on line 4, 'var aa = 1;'.
-  - Verify that a breakpoint is disappears on the clicked line.
+  - Verify that a breakpoint disappears on the clicked line.
+  - Press the 'Continue' button in the debugger
   - Press the 'e()' button
   - Verify that the engine does not stops on line 4 and that no arrow is displayed on that line.
 
@@ -781,6 +805,13 @@ desc:
   - Enter $("i") in th command line
   - Verify that HTMLElement is printed in the view
 
+label: Command line API: $() on sites using jquery/other libs
+desc:
+  - Navigate to a site that uses jquery, like http://jquery.com
+  - Enter $("i") in th command line
+  - Verify that HTMLElement is printed in the view
+
+  
 id: 102
 label: Command line API: $$()
 desc:
@@ -798,6 +829,7 @@ desc:
   
 id: 104
 label: Autocomplete, not stopped
+deprecated: true
 desc:
   - Type "docu"
   - Press tab
@@ -814,6 +846,7 @@ url: ./test-cases/repl/autocomplete_stopped.html
 
 id: 105
 label: Autocomplete, stopped
+deprecated: true
 desc:
   - Navigate to url
   - Verify that debugger has stopped
@@ -862,6 +895,78 @@ desc:
   - Press ctrl-l
   - Verify that the view gets cleared.
   - Verify that the typed history was NOT cleared.
+
+label: single line / multi line toggling
+desc:
+  - Press shift-enter
+  - Verify that the input box changes appearance
+  - Verify that the pressing tab inserts a tab character
+  - Verify that up/down/left/right moves the cursor inside the text box
+  - Press shift-enter
+  - Press ctrl-enter
+  - Verify that the input is evaluated
+
+label: Pasting text
+desc:
+  - Copy some text that contains multiple lines
+  - Paste the text into the command line
+  - Verify that all the text is visible
+  - Verify that the input box changed apperance and is in multi line mode
+
+label: Welcome message
+desc:
+  - Switch to the command line view
+  - Verify that the first line in the view contains the Opera version and core version
+
+label: List-like object unpacking
+desc:
+  - Type [1, "foo", window] in the command line and hit enter
+  - Verify that the output is Array[1, "foo", Window]
+  - Verify that clicking Array opens the array object for inspection
+  - Verify that clicking Window opens the window object for inspection
+  - Type document.body.childNodes and hit enter
+  - Verify that NodeList[<number of elements>] is shown.
+
+label: Help command
+desc:
+  - Type //help()
+  - Verify that a list of available commands is printed
+  - type //man()
+  - Verify that the output is identical to the output from the help command
+
+label: jquery command
+desc:
+  - Type //jquery()
+  - Verify jquery is loaded
+
+
+label: Autocomplete, not stopped
+desc:
+  - Type "docu"
+  - Press tab
+  - Verify that the input is expanded to "document"
+  - Continue typing "b", so input is "document.b"
+  - Press tab
+  - Verify that the input is the same and that the expansions "baseURI, bgColor, body" are shown above the input
+  - Verify that baseURI is highlighted
+  - Continue typing "o"
+  - Press tab
+  - Verify that the input is expanded to "document.body"
+  - Type document.b
+  - Press tab multiple times
+  - Verify that a list of completions is shown and that the highlight moves forward when pressing tab
+  - Verify that pressing the right arrow key has the same effect as pressing tab
+  - Verify that pressing shift-tab moves the higlight backwards.
+  - Verify that pressing the right arrow key has the same effect as pressing shift-tab
+  - Press enter.
+  - Verify that the higlighted word is entered in the console
+  - Type document.b
+  - Press tab
+  - Press "."
+  - Verify that the highlighted word is entered in the console
+  - Verify that the keys [, ], (, ) have the samme effect as "."
+
+
 
 Scripts.Event Breakpoints
 *************************
@@ -1213,7 +1318,26 @@ desc:
   - Verify that the colors for the highlight have changed accordingly.
   - Go back to 'Spotlight' and press 'Reset Default Colors'
   - Verify that the colors have changed back.
-  
+
+label: Shortcut Configuration, Quick find
+desc:
+  - Expand 'Shortcut Config'
+  - Type 'ctrl' in the 'Quick find'
+  - Verify that all shortcuts with a 'ctrl' token are displayed
+
+label: Shortcut Configuration
+desc:
+  - Expand 'Shortcut Config'
+  - Expand 'Keyboard shortcuts Global'
+  - Change 'ctrl a' to 'ctrl b'
+  - Press the 'Save' button
+  - Verify that 'ctrl b' now selects all text
+  - Press the 'Reset all to defaults' button
+  - Verify that 'ctrl b' no longer selects all text
+  - Expand 'Keyboard shortcuts Global'
+  - Change 'f8' to 'f80'
+  - Press the 'save' button
+  - Verify that a 'Invalid keyboard shortcut' label is added to the changed shortcut
 
 General
 *******

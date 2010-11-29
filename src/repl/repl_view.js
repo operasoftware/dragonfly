@@ -772,7 +772,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
   };
 
-  this["_handle_action_cancel"] = function(evt, target)
+  this["_handle_action_cancel-completion"] = function(evt, target)
   {
     this._highlight_completion();
     this._recent_autocompletion = null;
@@ -793,6 +793,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._update_input_height_bound();
     return false;
   };
+
+  this["_handle_action_cancel-input"] = function(evt, target)
+  {
+    return false;
+  }
 
   /**
    * Entry point for the action handling system
