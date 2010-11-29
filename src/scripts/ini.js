@@ -86,7 +86,7 @@
       {
         "default":
         {
-          "ctrl-l": "clear-repl",
+          "ctrl l": "clear-repl",
         },
         "single-line-edit":
         {
@@ -135,14 +135,14 @@
           "f5": "continue-run",
           "f6": "continue-step-next-line",
           "f7": "continue-step-into-call",
-          "alt f7": "continue-step-out-of-call"
+          "shift f7": "continue-step-out-of-call"
         },
         "edit":
         {
           "f5": "continue-run",
           "f6": "continue-step-next-line",
           "f7": "continue-step-into-call",
-          "alt f7": "continue-step-out-of-call",
+          "shift f7": "continue-step-out-of-call",
           "enter": "highlight-next-match",
           "cmd g": "highlight-next-match",
           "shift enter": "highlight-previous-match",
@@ -159,7 +159,7 @@
           "right": "nav-right",
           "enter": "dispatch-click",
           "shift enter": "dispatch-click",
-          "ctrl enter": "dispatch-dbl-click",
+          "cmd enter": "dispatch-dbl-click",
         },
         "edit-attributes-and-text":
         {
@@ -200,7 +200,7 @@
       {
         "default":
         {
-         "cmd-l": "clear-repl",
+         "cmd l": "clear-repl",
         },
         "single-line-edit":
         {
@@ -214,8 +214,8 @@
          // "ctrl u": "kill-to-beginning-of-line", // non-existent on mac afaict
          // "ctrl e": "move-to-end-of-LINE",
          // "ctrl a": "move-to-beginning-of-line",
-         // "cmd w": "kill-word-backwards", // non-existent on mac afaict
-         // "cmd y": "yank" // non-existent on mac afaict
+         // "ctrl w": "kill-word-backwards", // non-existent on mac afaict
+         // "ctrl y": "yank" // non-existent on mac afaict
         },
         "multi-line-edit":
         {
