@@ -24,27 +24,20 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
 
   this._handle_open_resource_bound = function(evt, target)
   {
-    var rid = target.getAttribute("resource-id");
-    var resource = this._service.get_resource_for_id(rid);
+    var rid = target.getAttribute("data-resource-id");
+    //var resource = this._service.get_resource_for_id(rid);
     opera.postError("Should show " + rid);
   }.bind(this);
 
-  this._handle_sort_resources = function(evt, target)
-  {
-    var col = target.getAttribute("column-name");
-    if (this._sort_by == col)
-    {
-      this._reverse = !this._reverse;
-    }
-    else
-    {
-      this._sort_by = col;
-      this._reverse = false; // show unrevered when chosing new col.
-    }
-    this.update();
-  }.bind(this);
 
   this._tabledef = {
+    handler: "resources-all-open",
+    groups: {
+      hosts: {
+        label: "Hosts",
+        grouper: function(res) { return cls.ResourceUtil.url_host(res.urlload.url) }
+      }
+    },
     columns: {
       icon: {
         label: "Icon",
@@ -86,7 +79,6 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
 
   var eh = window.eventHandlers;
   eh.click["resources-all-open"] = this._handle_open_resource_bound;
-  eh.click["resources-all-sort"] = this._handle_sort_resources;
 
   this.init(id, name, container_class, html, default_handler);
 };
