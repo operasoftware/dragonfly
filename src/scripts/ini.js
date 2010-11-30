@@ -8,7 +8,7 @@
   revision_number: '$revdate$', 
   mercurial_revision: "",
   browser: window.opera ? 'opera' : window.chrome ? 'chrome' : 'firefox',
-  default_shortcuts:
+  default_shortcuts_os:
   {
     windows:
     {
@@ -126,8 +126,7 @@
         },
       },
     },
-  },
-  mac:
+    mac:
     {
       "global":
       {
@@ -212,7 +211,7 @@
          "tab": "autocomplete",
          "enter": "eval",
          "shift enter": "enter-multiline-mode",
-         "cmd l": "clear",
+         // "ctrl l": "clear",
          // "ctrl k": "kill-to-end-of-line",
          // "ctrl u": "kill-to-beginning-of-line", // non-existent on mac afaict
          // "ctrl e": "move-to-end-of-LINE",
@@ -318,5 +317,7 @@
       null
     ]
   }
-}
-
+};
+window.ini.default_shortcuts = navigator.userAgent.indexOf('Macintosh') == -1 ?
+                        ini.default_shortcuts_os.windows :
+                        ini.default_shortcuts_os.mac;
