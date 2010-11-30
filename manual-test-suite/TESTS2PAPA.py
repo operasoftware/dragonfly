@@ -70,7 +70,7 @@ def get_tests():
 
     Parse the TESTS file and return a list of Entry objects
     """
-    in_file = open(TESTS, 'r')
+    in_file = open(TESTS, 'rb')
     entries = []
     entry = Entry()
     cur = entry.buffer
@@ -170,7 +170,9 @@ def tests2singledocs():
     for entry in entries:
         if entry.title:
             cur.mode, ts = parse_title(''.join(entry.title))
-            cur.repo = cur.mode.lower()
+            cur.repo = [label2filename(cur.mode)]
+            if ts:
+              cur.repo.append(label2filename(ts[0]))
             cur.tabs = ', '.join(ts)
             type = 'title'
             index = 1
@@ -186,7 +188,7 @@ def tests2singledocs():
             entry.mode = cur.mode
             entry.tabs = cur.tabs
             entry.urls = entry.url or cur.urls
-            entry.repo = cur.repo
+            entry.repo = cur.repo[0:]
             entry.index = "%#04i" % cur.index_count
             file_name = label2filename(entry.label)
             entry.file_name = "%s.%s.html" % (entry.index, file_name)
@@ -198,22 +200,29 @@ def print_index(index):
     sections = []
     links = None
     cur_mode = ''
-    for mode, label, path in index:
+    cur_tab = ''
+    for mode, tab, label, path in index:
         if not mode == cur_mode:
             cur_mode = mode
+            sections.append((mode, None))
+        if not tab == cur_tab:
+            cur_tab = tab
             links = []
-            sections.append((mode, links))
+            sections.append((tab, links))
         links.append(HTML_URL % (path, label)) 
     for title, links in sections:
-      content.append(HTML_SECTION % (title, "".join(links)))
-    with open(os.path.join(PAPA, 'index.html'), 'w') as f:
+      if links == None:
+        content.append(HTML_MODE_SECTION % title)
+      else:
+        content.append(HTML_SECTION % (title, "".join(links)))
+    with open(os.path.join(PAPA, 'index.html'), 'wb') as f:
         f.write("".join(content))
 
 def print_stylesheet():
     content = ""
-    with open(STYLESHEET, 'r') as f:
+    with open(STYLESHEET, 'rb') as f:
         content = f.read()
-    with open(os.path.join(PAPA, STYLESHEET_NAME), 'w') as f:
+    with open(os.path.join(PAPA, STYLESHEET_NAME), 'wb') as f:
         f.write(content)
     
 def item2html(item):
@@ -265,12 +274,14 @@ def test():
                                      "".join(urls),
                                      e.index,
                                      "".join([HTML_ITEM % item for item in items])))
-        repo = os.path.join(PAPA, e.repo)
-        if not os.path.exists(repo):
-          os.makedirs(repo)
-        with open(os.path.join(repo, e.file_name), 'w') as f:
+        repo = PAPA
+        for dir in e.repo:
+          repo = os.path.join(repo, dir)
+          if not os.path.exists(repo):
+            os.makedirs(repo)
+        with open(os.path.join(repo, e.file_name), 'wb') as f:
             f.write("".join(content))
-        index.append((e.mode, "".join(e.label), "./%s/%s" % (e.repo, e.file_name)))
+        index.append((e.mode, e.tabs, "".join(e.label), "./%s/%s" % ('/'.join(e.repo), e.file_name)))
     print_index(index)
     print_stylesheet()
     if not os.path.exists(os.path.join(PAPA, TESTCASES)):
