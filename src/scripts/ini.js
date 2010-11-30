@@ -10,7 +10,7 @@
   browser: window.opera ? 'opera' : window.chrome ? 'chrome' : 'firefox',
   default_shortcuts_os:
   {
-    windows:
+    generic:
     {
       "global":
       {
@@ -238,7 +238,7 @@
          "(": "commit-and-insert",
          ")": "commit-and-insert",
          "escape": "cancel-completion",
-         "cmd l": "cancel-input",
+         // "ctrl l": "cancel-input",
         },
       },
     },
@@ -318,6 +318,6 @@
     ]
   }
 };
-window.ini.default_shortcuts = navigator.userAgent.indexOf('Macintosh') == -1 ?
-                        ini.default_shortcuts_os.windows :
-                        ini.default_shortcuts_os.mac;
+window.ini.default_shortcuts = navigator.platform.toLowerCase().indexOf('mac') == -1 ?
+                               ini.default_shortcuts_os.generic :
+                               ini.default_shortcuts_os.mac;
