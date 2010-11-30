@@ -209,7 +209,7 @@
          "tab": "autocomplete",
          "enter": "eval",
          "shift enter": "enter-multiline-mode",
-         "cmd l": "clear",
+         // "ctrl l": "clear",
          // "ctrl k": "kill-to-end-of-line",
          // "ctrl u": "kill-to-beginning-of-line", // non-existent on mac afaict
          // "ctrl e": "move-to-end-of-LINE",
