@@ -236,7 +236,7 @@
          "(": "commit-and-insert",
          ")": "commit-and-insert",
          "escape": "cancel-completion",
-         "cmd l": "cancel-input",
+         // "ctrl l": "cancel-input",
         },
       },
     },
