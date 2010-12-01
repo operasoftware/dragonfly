@@ -29,11 +29,15 @@
   this.scc_sections = function(shortcuts, shortcuts_match)
   {
     var sections = [];
+    var broker = ActionBroker.get_instance();
     for (var key in shortcuts)
-      sections.push({id: key, 
-                     name: window.views[key].name,
-                     is_search: Boolean(shortcuts_match),
-                     has_match: shortcuts_match && shortcuts_match[key].has_match});
+    {
+      if (broker.get_actions_with_handler_id(key))
+        sections.push({id: key, 
+                       name: window.views[key].name,
+                       is_search: Boolean(shortcuts_match),
+                       has_match: shortcuts_match && shortcuts_match[key].has_match});
+    }
     return (
     ['ul', 
       sections.map(this.scc_section.bind(this, shortcuts, shortcuts_match)), 
