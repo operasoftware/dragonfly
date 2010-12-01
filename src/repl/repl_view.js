@@ -593,8 +593,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._be_singleline = function()
   {
     this.mode = "single-line-edit";
-    this._textarea.removeClass("multiline");
-    this._textarea.focus();
+    if (this._textarea)
+    {
+      this._textarea.removeClass("multiline");
+      this._textarea.focus();
+    }
   };
 
   this._handle_repl_frame_select_bound = function(event, target)
