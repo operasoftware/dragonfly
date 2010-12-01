@@ -193,6 +193,7 @@ cls.DOMInspectorActions = function(id)
     if( !this.editor || this.editor.type != type )
     {
       this.editor = this.editors[type];
+      messages.post("dom-editor-changed", type == MODE_DEFAULT);
     }
   }
 

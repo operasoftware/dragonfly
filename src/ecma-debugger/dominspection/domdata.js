@@ -52,6 +52,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
   // spotlight on hover on the host side
   this._reset_spotlight_timeouts = new Timeouts();
   this._is_waiting = false;
+  this._editor_active = false;
 
   this._spotlight = function(event)
   {
@@ -244,6 +245,11 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
     window['cst-selects']['document-select'].updateElement();
   }
 
+  this._on_dom_editor_changed = function(editor_active)
+  {
+    this._editor_active = editor_active;
+  }
+
   this._click_handler_host = function(event)
   {
     var rt_id = event.runtime_id
@@ -267,8 +273,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
     // if the node is in the current data handle it otherwise not.
     var rt_id = event.runtime_id, obj_id = event.object_id;
     var node = null, i = 0, j = 0, level = 0, k = 0, view_id = '';
-    if ( !(actions[this._view_id].editor && actions[this._view_id].editor.is_active) &&
-          this._data_runtime_id == rt_id)
+    if (this._data_runtime_id == rt_id)
     {
       for ( ; (node = this._data[i]) && obj_id != node[ID]; i++);
       if (node && node[TYPE] == 1) // don't update the dom if it's only a text node
@@ -278,7 +283,10 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
         while (this._data[j] && this._data[j][DEPTH] > level)
           j++;
         this._data.splice(i, j - i);
-        window.views[this._view_id].update();
+        if (!this._editor_active)
+        {
+          window.views[this._view_id].update();
+        }
       }
     }
   }
@@ -400,6 +408,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
   this._reset_spotlight_bound = this._reset_spotlight.bind(this);
   this._set_reset_spotlight_bound = this._set_reset_spotlight.bind(this);
   this._on_top_runtime_update_bound = this._on_top_runtime_update.bind(this);
+  this._on_dom_editor_changed_bound = this._on_dom_editor_changed.bind(this);
 
   this._init(0, 0);
 
@@ -411,7 +420,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
   messages.addListener('runtime-destroyed', this._on_runtime_stopped_bound);
   messages.addListener('reset-state', this._on_reset_state_bound);
   messages.addListener('top-runtime-updated', this._on_top_runtime_update_bound);
-
+  messages.addListener('dom-editor-changed', this._on_dom_editor_changed_bound);
 };
 
 cls.EcmascriptDebugger["5.0"].DOMData.prototype = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype;
