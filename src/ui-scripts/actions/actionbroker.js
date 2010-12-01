@@ -157,7 +157,7 @@ var ActionBroker = function()
     window.app.addListener('services-created', function()
     {
       this._shortcuts = window.settings.general.get("shortcuts") ||
-                        window.ini.default_shortcuts;
+                        window.helpers.copy_object(window.ini.default_shortcuts);
       this._global_shortcuts = this._shortcuts.global; 
       this._key_identifier.set_shortcuts(this._get_shortcut_keys());
       this._set_current_handler(this._global_handler);

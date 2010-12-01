@@ -146,7 +146,7 @@ cls.ShortcutConfigView = function(id, name, container_class)
   this._handlers['reset-to-defaults'] = function(event, target)
   {
     var 
-    shortcuts = window.ini.default_shortcuts,
+    shortcuts = window.helpers.copy_object(window.ini.default_shortcuts),
     table = event.target.has_attr('parent-node-chain', 'handler-id'),
     handler_id = table && table.getAttribute('handler-id');
 
