@@ -652,6 +652,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     // from the previous runtime/frame when tabbing.
     // The current tabbing context doesn't change though. Should not
     // be a problem unless you reload while tabbing or something.
+    this["_handle_action_cancel-completion"].call(this);
     this._resolver.clear_cache();
   }.bind(this);
 
