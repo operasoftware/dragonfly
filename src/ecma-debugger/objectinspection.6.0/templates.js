@@ -238,7 +238,7 @@
                                 collapsed_protos,
                                 filter
                                 ).join('');
-    if (model.scope_list)
+    if (model.scope_list && !path)
       ret += this.inspected_js_scope_chain(model);
     return ret;
   }
