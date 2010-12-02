@@ -395,8 +395,16 @@
 
   this._on_element_selected_bound = function(msg)
   {
-    this._prev_selected = this._cur_selected;
-    this._cur_selected = msg.obj_id;
+    if (msg.obj_id == null)
+    {
+      this._prev_selected = null;
+      this._cur_selected = null;
+    }
+    else
+    {
+      this._prev_selected = this._cur_selected;
+      this._cur_selected = msg.obj_id;
+    }
   }.bind(this);
 
   this._handle_exception = function(msg, rt_id)
@@ -544,6 +552,7 @@
     this._service.addListener("consoleprofileend", this._on_consoleprofileend_bound);
     this._service.addListener("consoletrace", this._on_consoletrace_bound);
     window.messages.addListener("element-selected", this._on_element_selected_bound);
+
     this._get_host_info();
   };
 
