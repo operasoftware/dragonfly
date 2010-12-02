@@ -99,6 +99,8 @@
  *     <dt>top-runtime-updated</dt>
  *     <dd>Meta data of a top runtime has been updated, e.g. the title. Payload: msg.rt</dd>
  *
+ *     <dt>shorcuts-changed</dt>
+ *     <dd>The shortcuts have changed.</dd>
  * </dl>
  *
  */

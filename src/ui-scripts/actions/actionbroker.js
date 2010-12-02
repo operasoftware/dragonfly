@@ -89,6 +89,13 @@ var ActionBroker = function()
     */
   this.get_global_handler = function(){};
 
+  /**
+    * To get a shortcut for a given handler and action.
+    * @param {String} handler_id
+    * @param {String} action
+    */
+  this.get_shortcut_with_handler_and_action = function(handler_id, action){};
+
   /* constants */
 
   const GLOBAL_HANDLER = ActionBroker.GLOBAL_HANDLER_ID;
@@ -162,6 +169,7 @@ var ActionBroker = function()
       this._key_identifier.set_shortcuts(this._get_shortcut_keys());
       this._set_current_handler(this._global_handler);
       document.addEventListener('click', this._set_action_context_bound, true);
+      window.messages.post('shortcuts-changed');
     }.bind(this));
   };
 
@@ -237,6 +245,7 @@ var ActionBroker = function()
     window.settings.general.set("shortcuts",
                                 clear_setting == true ? null : this._shortcuts);
     this._key_identifier.set_shortcuts(this._get_shortcut_keys());
+    window.messages.post('shortcuts-changed');
   };
 
   this.get_actions_with_handler_id = function(handler_id)
@@ -271,6 +280,25 @@ var ActionBroker = function()
   this.get_global_handler = function()
   {
     return this._global_handler;
+  };
+
+  this.get_shortcut_with_handler_and_action = function(handler_id, action)
+  {
+    var 
+    shortcuts = this._shortcuts && this._shortcuts[handler_id],
+    shortcuts_mode = null,
+    mode = '',
+    key = '';
+
+    if (shortcuts)
+      for (mode in shortcuts)
+      {
+        shortcuts_mode = shortcuts[mode];
+        for (key in shortcuts_mode)
+          if (shortcuts_mode[key] == action)
+            return key;
+      }
+    return '';
   };
 
   if (document.readyState == "complete")
