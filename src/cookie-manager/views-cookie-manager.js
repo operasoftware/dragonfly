@@ -147,7 +147,9 @@ cls.CookieManagerView = function(id, name, container_class)
     table.re_render(obj.render());
     
     // Add clear button
-    container.render(["button", "RemoveAllCookies", "href", "#", "handler", "cookiemanager-delete-all"]);
+    container.render(["button", "RemoveAllCookies", "handler", "cookiemanager-delete-all"]);
+    // Add update button
+    container.render(["button", "Update", "handler", "cookiemanager-update"]);
   };
   
   this._on_active_tab = function(msg)
@@ -185,11 +187,22 @@ cls.CookieManagerView = function(id, name, container_class)
       {
         this._rts[rt_id]={rt_id: rt_id, get_domain_is_pending: true};
       }
-      var script = "return JSON.stringify({host: location.host || '', hostname: location.hostname || '', title: document.title || '', href: location.href || ''})";
-      var tag = tagManager.set_callback(this, this._handle_get_domain,[rt_id]);
-      services['ecmascript-debugger'].requestEval(tag,[rt_id, 0, 0, script]);
+      this._request_runtime_details(this._rts[rt_id]);
     };
   };
+  
+  this._request_runtime_details = function(rt_object) {
+    var script = "return JSON.stringify({host: location.host || '', hostname: location.hostname || '', title: document.title || '', href: location.href || ''})";
+    var tag = tagManager.set_callback(this, this._handle_get_domain,[rt_object.rt_id]);
+    services['ecmascript-debugger'].requestEval(tag,[rt_object.rt_id, 0, 0, script]);
+  }
+  
+  this._update = function() {
+    for (var rt_id in this._rts) {
+      this._rts[rt_id].get_domain_is_pending = true;
+      this._request_runtime_details(this._rts[rt_id]);
+    };
+  }
   
   this._handle_get_domain = function(status, message, rt_id)
   {
@@ -275,7 +288,7 @@ cls.CookieManagerView = function(id, name, container_class)
     
     // TODO: try to be smart and delete the ones that fit from table or just throw away and re-fetch all.
     // delete window.views.cookie_manager._cookies[domain];
-    window.views.cookie_manager.update();
+    window.views.cookie_manager._update();
   };
   
   this._init = function(id, update_event_name, title)

@@ -12,6 +12,12 @@
   }
   
 };
+
+window.eventHandlers.click['cookiemanager-update'] = function(event, target)
+{
+  window.views.cookie_manager._update();
+}
+
 /*
 window.eventHandlers.click['cookiemanager-delete-domain-cookies'] = function(event, target)
 {
