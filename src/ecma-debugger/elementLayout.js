@@ -246,7 +246,9 @@ cls.ElementLayout = function()
     if (!__selectedElement)
       cb(null);
     else if(__offsets_values)
-      cb(__offsets_values);
+    {
+      cb(window.helpers.copy_array(__offsets_values));
+    }
     else
     {
       var
@@ -272,11 +274,8 @@ cls.ElementLayout = function()
     if (message[STATUS] == 'completed')
     {
       __offsets_values = parse_offset_values(message[VALUE]);
-      
-      //__offsets_values = message[VALUE];
-      //opera.postError(__offsets_values);
       if (cb)
-        cb(__offsets_values);
+        cb(window.helpers.copy_array(__offsets_values));
     }
     else
     {
