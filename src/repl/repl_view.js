@@ -36,7 +36,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   {
     this._lastupdate = 0;
     this._backlog_index = -1;
-    this._current_input = this._textarea.value;
     this._container.removeEventListener("scroll", this._save_scroll_bound, false);
   };
 
@@ -96,6 +95,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this.clear = function()
   {
+    this._cancel_completion();
     this.ondestroy();
   };
 
@@ -351,8 +351,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   {
     if (this.mode == "autocomplete")
     {
-      this._recent_autocompletion = null;
-      this._be_singleline();
+      this._cancel_completion();
     }
 
     this._check_for_multiline();
@@ -384,11 +383,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       this._backlog_index = -1;
       this._textarea.value = this._current_input;
       return;
-    }
-
-    if (this._backlog_index == -1)
-    {
-      this._current_input = this._textarea.value;
     }
 
     var log = this._data.get_typed_history();
@@ -600,6 +594,17 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
   };
 
+  this._cancel_completion = function()
+  {
+    if (this.mode == "autocomplete")
+    {
+      this._resolver.clear_cache();
+      this._highlight_completion();
+      this._recent_autocompletion = null;
+      this._be_singleline();
+    }
+  }
+
   this._handle_repl_frame_select_bound = function(event, target)
   {
     var sourceview = window.views.js_source;
@@ -655,8 +660,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     // from the previous runtime/frame when tabbing.
     // The current tabbing context doesn't change though. Should not
     // be a problem unless you reload while tabbing or something.
-    this["_handle_action_cancel-completion"].call(this);
-    this._resolver.clear_cache();
+    this._cancel_completion();
   }.bind(this);
 
   this["_handle_action_clear"] = function(evt, target)
@@ -671,42 +675,49 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this["_handle_action_kill-to-end-of-line"] = function(evt, target)
   {
+    this._cancel_completion();
     this._textarea_handler.kill_to_end_of_line();
     return false;
   };
 
   this["_handle_action_kill-to-beginning-of-line"] = function(evt, target)
   {
+    this._cancel_completion();
     this._textarea_handler.kill_to_beginning_of_line();
     return false;
   };
 
   this["_handle_action_kill-word-backwards"] = function(evt, target)
   {
+    this._cancel_completion();
     this._textarea_handler.kill_word_backwards();
     return false;
   };
 
   this["_handle_action_move-to-beginning-of-line"] = function(evt, target)
   {
+    this._cancel_completion();
     this._textarea_handler.move_to_beginning_of_line();
     return false;
   };
 
   this["_handle_action_move-to-end-of-line"] = function(evt, target)
   {
+    this._cancel_completion();
     this._textarea_handler.move_to_end_of_line();
     return false;
   };
 
   this["_handle_action_yank"] = function(evt, target)
   {
+    this._cancel_completion();
     this._textarea_handler.yank();
     return false;
   };
 
   this["_handle_action_enter-multiline-mode"] = function(evt, target)
   {
+    this._cancel_completion();
     this._be_multiline();
     return false;
   };
@@ -748,10 +759,9 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     input = input.trim();
     this._textarea.value = "";
     this._backlog_index = -1;
-    this._current_input = "";
     this._resolver.clear_cache(); // evaling js voids the cache.
     this._service.handle_input(input);
-    this._be_singleline();
+    this._cancel_completion();
     return false;
   }
 
@@ -778,9 +788,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this["_handle_action_cancel-completion"] = function(evt, target)
   {
-    this._highlight_completion();
-    this._recent_autocompletion = null;
-    this._be_singleline();
+    this._cancel_completion();
     return false;
   };
 
