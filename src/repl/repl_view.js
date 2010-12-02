@@ -353,7 +353,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     {
       this._cancel_completion();
     }
-
+    this._current_input = this._textarea.value;
     this._check_for_multiline();
     this._update_input_height_bound();
   }.bind(this);
@@ -392,6 +392,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     if (entry != undefined)
     {
       this._textarea.value = entry;
+      this._current_input = this._textarea.value;
     }
   };
 
@@ -413,6 +414,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       var post = this._textarea.value.slice(this._textarea.selectionStart);
       var line = this._construct_line(pre, prop, post);
       this._textarea.value = line;
+      this._current_input = this._textarea.value;
       this._textarea_handler.put_cursor(line.length - post.length);
     }
   };
@@ -534,6 +536,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         this._autocompletion_elem = this._autocompletion_elem.firstChild;
         this._autocompletion_index = -1;
         this._update_highlight();
+        this._textarea.focus();
       }
     }
     else
@@ -758,10 +761,12 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     var input = this._textarea.value;
     input = input.trim();
     this._textarea.value = "";
+    this._current_input = this._textarea.value;
     this._backlog_index = -1;
     this._resolver.clear_cache(); // evaling js voids the cache.
     this._service.handle_input(input);
     this._cancel_completion();
+    this._be_singleline();
     return false;
   }
 
