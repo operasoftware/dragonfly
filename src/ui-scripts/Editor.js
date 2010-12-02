@@ -803,6 +803,13 @@ var Editor = function(actions)
 
   this.enter = function()
   {
+    const INDEX_LIST = 1;
+    const VALUE_LIST = 2;
+    const PRIORITY_LIST = 3;
+    const INDEX = 0;
+    const VALUE = 1;
+    const PRIORITY = 2;
+
     var
     props = self.getProperties(),
     keep_edit = false,
@@ -821,6 +828,12 @@ var Editor = function(actions)
       else if (this.textarea.selectionEnd == this.textarea.value.length ||
                this.textarea.selectionEnd >= this.textarea.value.indexOf(';'))
       {
+        // We don't know if the property is valid or not at this point, but
+        // it will simply be discarded when setting it back if it's not.
+        this.saved_style_dec[INDEX_LIST].push(css_index_map.indexOf(props[INDEX]));
+        this.saved_style_dec[VALUE_LIST].push(props[VALUE]);
+        this.saved_style_dec[PRIORITY_LIST].push(props[PRIORITY]);
+
         var propertyEle = document.createElement('property');
         if (this.textarea_container.parentNode.hasClass("overwritten"))
         {
