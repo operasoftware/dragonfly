@@ -339,9 +339,10 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
 
   var onElementSelected = function(msg)
   {
-    if(settings.dom.get('lock-selecked-elements') && 
+    if (msg.rt_id && msg.obj_id && 
+        settings.dom.get('lock-selecked-elements') && 
         // events can be asynchronous
-        window.host_tabs.is_runtime_of_active_tab(msg.rt_id) )
+        window.host_tabs.is_runtime_of_active_tab(msg.rt_id))
     {
       locked_elements[locked_elements.length] = msg.obj_id;
     }

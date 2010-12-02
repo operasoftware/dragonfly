@@ -12,24 +12,30 @@ cls.CSSLayoutView = function(id, name, container_class)
 
   this.createView = function(container)
   {
-    if( !container.getElementsByTagName('layout-container')[0] )
+    if (elementLayout.has_selected_element())
     {
-      container.innerHTML = "<div class='padding'>\
-          <h2>" + ui_strings.M_VIEW_SUB_LABEL_METRICS + "</h2>\
-          <layout-container></layout-container>\
-          <offsets-container></offsets-container>\
-          </div>";
-
-      var layout = container.getElementsByTagName('layout-container')[0];
-      if(layout)
+      if( !container.getElementsByTagName('layout-container')[0] )
       {
-        hostspotlighter.clearMouseHandlerTarget();
-        layout.addEventListener('mouseover', hostspotlighter.metricsMouseoverHandler, false);
-        layout.addEventListener('mouseout', hostspotlighter.metricsMouseoutHandler, false);
+        container.innerHTML = "<div class='padding'>\
+            <h2>" + ui_strings.M_VIEW_SUB_LABEL_METRICS + "</h2>\
+            <layout-container></layout-container>\
+            <offsets-container></offsets-container>\
+            </div>";
+
+        var layout = container.getElementsByTagName('layout-container')[0];
+        if(layout)
+        {
+          hostspotlighter.clearMouseHandlerTarget();
+          layout.addEventListener('mouseover', hostspotlighter.metricsMouseoverHandler, false);
+          layout.addEventListener('mouseout', hostspotlighter.metricsMouseoutHandler, false);
+        }
       }
+      this.updateLayout({});
+      window.elementLayout.getOffsetsValues(this.updateOffsets.bind(this, container));
     }
-    this.updateLayout({});
-    window.elementLayout.getOffsetsValues(this.updateOffsets.bind(this, container));
+    else
+      container.innerHTML = "";
+
   }
 
   this.updateLayout = function(ev)
@@ -50,7 +56,12 @@ cls.CSSLayoutView = function(id, name, container_class)
   {
     var offsets = container.getElementsByTagName('offsets-container')[0];
     if (offsets)
-      offsets.clearAndRender(window.templates.offset_values(offset_values));
+    {
+      if (offset_values)
+        offsets.clearAndRender(window.templates.offset_values(offset_values));
+      else
+        offsets.innerHTML = '';
+    }
   }
   
   this.init(id, name, container_class);

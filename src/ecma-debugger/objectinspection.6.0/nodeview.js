@@ -13,7 +13,8 @@ cls.EcmascriptDebugger["6.0"].DOMAttrsView = function(id, name, container_class)
 
   this._on_element_selected = function(msg)
   {
-    this._data = new cls.InspectableJSObject(msg.rt_id, msg.obj_id);
+    this._data = msg.rt_id &&  msg.obj_id && 
+                 new cls.InspectableJSObject(msg.rt_id, msg.obj_id) || null;
     this.update();
   };
 

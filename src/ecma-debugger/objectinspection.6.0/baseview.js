@@ -15,6 +15,8 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseView = function()
     var data_model = this._data || window.inspections[this._cur_data];
     if (data_model)
       data_model.expand(this._create_view.bind(this, container, data_model));
+    else
+      container.innerHTML = '';
   };
 
   this._on_setting_change = function(msg)

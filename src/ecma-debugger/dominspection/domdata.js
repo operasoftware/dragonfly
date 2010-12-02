@@ -84,23 +84,34 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
 
   this._on_show_view = function(msg)
   {
-    if (msg.id == this._view_id && this._active_window.length)
+    if (msg.id == this._view_id)
     {
-      // in the case there is no runtime selected
-      // set the top window to the active runtime
-      if (!this._data_runtime_id)
-        this._data_runtime_id = this._active_window[0];
-      for (var key in this._settings)
+      if (this._active_window.length)
       {
-        if (window.settings[this._settings_id].get(key))
-          this._handle_setting(key);
+        // in the case there is no runtime selected
+        // set the top window to the active runtime
+        if (!this._data_runtime_id)
+          this._data_runtime_id = this._active_window[0];
+        for (var key in this._settings)
+        {
+          if (window.settings[this._settings_id].get(key))
+            this._handle_setting(key);
+        }
+        if (!(this._is_waiting || this._data.length))
+        {
+          if(this._is_element_selected_checked)
+            this._get_initial_view(this._data_runtime_id);
+          else
+            this._get_selected_element(this._data_runtime_id);
+        }
       }
-      if (!(this._is_waiting || this._data.length))
+      else
       {
-        if(this._is_element_selected_checked)
-          this._get_initial_view(this._data_runtime_id);
-        else
-          this._get_selected_element(this._data_runtime_id);
+        // caller is also _on_active_tab.
+        // if the runtime list is empty, the view must be updated too
+        // and the element selection must be cleared
+        window.views.dom.update();
+        window.messages.post("element-selected", {obj_id: 0, rt_id: 0, model: null});
       }
     }
   }
