@@ -593,8 +593,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._be_singleline = function()
   {
     this.mode = "single-line-edit";
-    this._textarea.removeClass("multiline");
-    this._textarea.focus();
+    if (this._textarea)
+    {
+      this._textarea.removeClass("multiline");
+      this._textarea.focus();
+    }
   };
 
   this._handle_repl_frame_select_bound = function(event, target)
@@ -652,6 +655,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     // from the previous runtime/frame when tabbing.
     // The current tabbing context doesn't change though. Should not
     // be a problem unless you reload while tabbing or something.
+    this["_handle_action_cancel-completion"].call(this);
     this._resolver.clear_cache();
   }.bind(this);
 

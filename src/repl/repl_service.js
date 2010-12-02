@@ -362,8 +362,9 @@
   this._on_eval_done_bound = function(status, msg, rt_id, thread_id, frame_id)
   {
     const STATUS = 0, TYPE = 1, OBJECT_VALUE = 3;
+    const BAD_REQUEST = 3, INTERNAL_ERROR = 4;
 
-    if (status == 4)
+    if (status == BAD_REQUEST || status == INTERNAL_ERROR)
     {
       this._handle_raw(msg[0]);
     }
