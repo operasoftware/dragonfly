@@ -7,24 +7,24 @@
   cls.ReplService.instance = this;
 
   this._count_map = {};
-  
+
   this._msg_queue = [];
   this._is_processing = false;
 
   this._on_consolelog_bound = function(msg)
   {
-    if (this._is_processing)
-      this._msg_queue.push(msg);
-    else
-      this._process_on_consolelog(msg);
+    if (this._is_processing) { this._msg_queue.push(msg); }
+    else { this._process_on_consolelog(msg); }
   }.bind(this);
-  
+
   this._process_msg_queue = function()
   {
     while (!this._is_processing && this._msg_queue.length)
+    {
       this._process_on_consolelog(this._msg_queue.shift());
+    }
   }
-    
+
   this._process_on_consolelog = function(msg)
   {
     const RUNTIME = 0, TYPE = 1;
