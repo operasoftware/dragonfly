@@ -245,10 +245,10 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
     window['cst-selects']['document-select'].updateElement();
   }
 
-  this._on_dom_editor_changed = function(editor_active)
+  this._on_dom_editor_active = function(message)
   {
-    this._editor_active = editor_active;
-  }
+    this._editor_active = message.editor_active;
+  };
 
   this._click_handler_host = function(event)
   {
@@ -408,7 +408,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
   this._reset_spotlight_bound = this._reset_spotlight.bind(this);
   this._set_reset_spotlight_bound = this._set_reset_spotlight.bind(this);
   this._on_top_runtime_update_bound = this._on_top_runtime_update.bind(this);
-  this._on_dom_editor_changed_bound = this._on_dom_editor_changed.bind(this);
+  this._on_dom_editor_active_bound = this._on_dom_editor_active.bind(this);
 
   this._init(0, 0);
 
@@ -420,7 +420,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
   messages.addListener('runtime-destroyed', this._on_runtime_stopped_bound);
   messages.addListener('reset-state', this._on_reset_state_bound);
   messages.addListener('top-runtime-updated', this._on_top_runtime_update_bound);
-  messages.addListener('dom-editor-changed', this._on_dom_editor_changed_bound);
+  messages.addListener('dom-editor-active', this._on_dom_editor_active_bound);
 };
 
 cls.EcmascriptDebugger["5.0"].DOMData.prototype = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype;
