@@ -288,14 +288,17 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
   this._get_all_ids = function get_all_ids(tree, ret)
   {
     ret || (ret = []);
-    ret.push(tree.object_id);
-    for (var index in tree.protos)
+    if (tree)
     {
-      for (var key in tree.protos[index])
+      ret.push(tree.object_id);
+      for (var index in tree.protos)
       {
-        if (tree.protos[index][key])
+        for (var key in tree.protos[index])
         {
-          get_all_ids(tree.protos[index][key], ret);
+          if (tree.protos[index][key])
+          {
+            get_all_ids(tree.protos[index][key], ret);
+          }
         }
       }
     }
