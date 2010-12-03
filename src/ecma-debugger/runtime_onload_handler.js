@@ -242,7 +242,7 @@ window.cls.EcmascriptDebugger["6.0"].RuntimeOnloadHandler = function()
     __rts_checked[rt_id] = true;
     if (message[STATE] == LOAD)
     {
-      __rts[rt_id] == COMPLETE;
+      __rts[rt_id] = COMPLETE;
       if (__onload_handlers[rt_id])
         call_callbacks(rt_id);
     }

@@ -54,7 +54,6 @@ cls.Stylesheets = function()
     __shorthandIndexMap = [];
     __selectedRules = null;
     __colorIndex = 0;
-
     __new_rts = null;
     __top_rt_id = '';
     __on_new_stylesheets_cbs = {};
@@ -1484,13 +1483,7 @@ cls.Stylesheets = function()
       __sheets = {};
       // document.styleSheets[index].cssRules with runtime-id and index as keys
       __rules = {};
-      __indexMap = null;
-      __indexMapLength = 0;
-      __sortedIndexMap = [];
-      __initialValues = [];
-      __shorthandIndexMap = [];
       __selectedRules = null;
-      __colorIndex = 0;
       __new_rts = null;
       __top_rt_id = '';
       __on_new_stylesheets_cbs = {};

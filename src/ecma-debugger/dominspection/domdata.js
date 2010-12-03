@@ -373,7 +373,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
   /* implementation */
 
   
-  this.get_dom = function(rt_id, obj_id, do_highlight, scroll_into_view)
+  this.get_dom = (function(rt_id, obj_id, do_highlight, scroll_into_view)
   {
     if (obj_id)
       this._get_dom_sub(rt_id, obj_id, do_highlight, scroll_into_view);
@@ -381,7 +381,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
           runtime_onload_handler.check(rt_id, arguments))
       this._get_initial_view(rt_id);
     this._is_waiting = true;
-  }
+  }).bind(this);
 
   this.get_snapshot = function()
   {
