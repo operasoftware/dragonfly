@@ -395,7 +395,7 @@
 
   this._on_element_selected_bound = function(msg)
   {
-    if (msg.obj_id == null)
+    if (msg.obj_id == 0)
     {
       this._prev_selected = null;
       this._cur_selected = null;
