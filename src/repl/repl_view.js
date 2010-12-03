@@ -541,9 +541,16 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
     else
     {
+      var current_selection = this._service.get_selected_objects();
+      var context = {};
+      for (var n=0; n<current_selection.length; n++)
+      {
+        context["$" + n] = current_selection[n];
+      }
+
       this._resolver.find_props(this._on_completer.bind(this),
                                 this._textarea.value.slice(0, this._textarea.selectionStart),
-                                window.stop_at.getSelectedFrame());
+                                window.stop_at.getSelectedFrame(), context);
     }
   };
 

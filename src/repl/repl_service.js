@@ -492,6 +492,14 @@
 
   };
 
+  this.get_selected_objects = function()
+  {
+    var selection = [];
+    if (this._cur_selected) { selection.push(this._cur_selected) }
+    if (this._prev_selected) { selection.push(this._prev_selected) }
+    return selection;
+  };
+
   this._handle_clientcommand = function(command)
   {
     command.call(this._transformer, this._view, this._data, this);
