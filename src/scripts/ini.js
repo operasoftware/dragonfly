@@ -74,8 +74,8 @@
         },
         "edit":
         {
-          "up": "autocomplete-previous",
-          "down": "autocomplete-next",
+          "up": "autocomplete-next",
+          "down": "autocomplete-previous",
           "shift tab": "edit-previous",
           "tab": "edit-next",
           "enter": "submit-edit-and-new-edit",
