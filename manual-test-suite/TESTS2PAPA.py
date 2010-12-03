@@ -154,11 +154,12 @@ def load_templates():
 
 def label2filename(label):
     label = ''.join(label)
-    for char in ["/", ":", "(", ")", "$"]:
-        pos = label.find(char)
-        if pos > -1:
-            label = label[0:pos]
-    return ''.join(label).strip().replace(' ', '-').replace(',', '').lower()
+    for char in ["|", "\\", "?", "*", "<", "\"", ":", 
+                 ">", "+", "[", "]", "/", "%", " ", ","]:
+        label = label.replace(char, '-')
+    for pattern, repl in [[r"^-+", ""], [r"--+", "-"]]:
+        label = re.sub(pattern, repl, label)
+    return ''.join(label).strip().lower()
             
 def tests2singledocs():
     entries = get_tests()
