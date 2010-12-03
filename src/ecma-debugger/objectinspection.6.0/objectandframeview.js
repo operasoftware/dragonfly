@@ -184,7 +184,8 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
           ]
         ];
       }
-    }
+    },
+	"script"
   );
 
   window.eventHandlers.input['update-collapsed-prototypes'] = function(event, target)

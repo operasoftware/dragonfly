@@ -6,12 +6,63 @@
 
   this.tab = function(obj, is_active_tab)
   {
-    return ['tab',
-      ['input', 'type', 'button', 'value', obj.name, 'handler', 'tab', ],
-      ( obj.has_close_button ? ['input', 'type', 'button', 'handler', 'close-tab', ] : [] ),
-      'ref-id', obj.ref_id
+    return ['tab', obj.name,
+            'handler', 'tab',
+            'ref-id', obj.ref_id
+      //( obj.has_close_button ? ['input', 'type', 'button', 'handler', 'close-tab', ] : [] ),
     ].concat(is_active_tab ? ['class', 'active'] : [] );
   }
+
+  this.top_tab = function(obj, is_active_tab)
+  {
+    return ['tab', [['span', "", "class", "icon"], obj.name],
+            'handler', 'tab',
+            'ref-id', obj.ref_id
+    ].concat(is_active_tab ? ['class', 'active'] : [] );
+  };
+
+  this.horizontal_navigation_content = function()
+  {
+    return [
+        ["nav",
+          "◀",
+          "dir", "back",
+          "handler", "horizontal-nav"],
+        ["breadcrumbs",
+         "handler", "breadcrumbs-drag"],
+        ["nav",
+          "▶",
+          "dir", "forward",
+          "handler", "horizontal-nav"]
+      ];
+  };
+
+  this.contextmenu = function(items)
+  {
+    var ret = [];
+    for (var i = 0, item; item = items[i]; i++)
+    {
+      var checked = false;
+      if (item.setting)
+      {
+        checked = settings[item.menu_id].get(item.id);
+      }
+      if (!item.separator)
+      {
+        ret.push(["li",
+            [["span", checked ? "✔" : "", "class", "checkbox"], ["span", item.label]],
+            "data-handler-id", item.id,
+            "data-menu-id", item.menu_id,
+            "class", item.disabled ? "disabled" : ""
+        ]);
+      }
+      else
+      {
+        ret.push(["li", ["hr"], "class", "separator"]);
+      }
+    }
+    return ["menu", ret, "id", "contextmenu"];
+  };
 
   this.filters = function(filters)
   {
@@ -46,7 +97,7 @@
           if (filter.hasOwnProperty(attr))
             tpl_input.push(attr, filter[attr]);
         });
-        ret.push(['filter', ['em', default_text], tpl_input]);
+        ret.push(['filter', ['span', default_text], tpl_input]);
       }
     }
     return ret;
@@ -126,26 +177,6 @@
     return ['toolbar-separator'];
   }
 
-  this['top-statusbar'] = function(ui_obj)
-  {
-    return [
-      ['div',
-        'id', ui_obj.spin_animator.getId(),
-        'title', ui_strings.S_LABEL_STATUS_INDICATOR
-      ],
-      ['input',
-        'type', 'button',
-        'handler', 'switch-info-type',
-        'title', 'switch info type',
-        'class', 'switch-info-type'
-      ],
-      ['info'],
-      'onmouseover', helpers.breadcrumbSpotlight,
-      'onmouseout', helpers.breadcrumbClearSpotlight
-    ];
-  }
-
-
   this['window-statusbar'] = function()
   {
     return [ ['info']]
@@ -187,31 +218,86 @@
     // ret[ret.length] =  this.window_controls();
     for( ; tab = obj.tabs[i]; i++)
     {
-      ret[ret.length] = this.tab(tab, obj.activeTab == tab.ref_id)
+      ret[ret.length] = this.top_tab(tab, obj.activeTab == tab.ref_id)
     }
     return ret;
   }
 
   this.window_controls = function()
   {
-    var is_attached = window.opera.attached;
-    return ['window-controls',
-      is_attached
-      ? window['cst-selects']['debugger-menu'].select_template()
-      : [],
-      ['button',
-        'handler', 'top-window-toggle-attach',
-        'class', 'switch' + ( is_attached ? ' attached' : '') ,
-        'title', is_attached ? ui_strings.S_SWITCH_DETACH_WINDOW : ui_strings.S_SWITCH_ATTACH_WINDOW
-      ],
-      is_attached
-      ? ['button',
+    return window.opera.attached ?
+      this.window_controls_attached() :
+      this.window_controls_detached();
+  }
+
+  this.window_controls_attached = function()
+  {
+    return [
+      'window-controls',
+      [
+        [
+          'button',
+          'handler', 'toggle-console',
+          'class', 'switch',
+          'title', ui_strings.S_BUTTON_TOGGLE_CONSOLE
+        ],
+        [
+          'toolbar-separator'
+        ],
+        [
+          'button',
+          'handler', 'toggle-settings-overlay',
+          'class', 'switch',
+          'title', ui_strings.S_BUTTON_TOGGLE_SETTINGS
+        ],
+        [
+          'button',
+          'handler', 'toggle-remote-debug-config-overlay',
+          'class', 'switch',
+          'title', ui_strings.S_BUTTON_TOGGLE_REMOTE_DEBUG
+        ],
+        [
+          'toolbar-separator'
+        ],
+        window['cst-selects']['debugger-menu'].select_template(),
+        [
+          'button',
+          'handler', 'top-window-toggle-attach',
+          'class', 'switch attached',
+          'title', ui_strings.S_SWITCH_DETACH_WINDOW
+        ],
+        [
+          'button',
           'handler', 'top-window-close',
           'title', ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW
-        ]
-      : []
-      ].concat( is_attached ? ['class', 'attached'] : [] )
-  }
+        ],
+        'class', 'attached',
+        'id', 'window-controls-to-main-view'
+      ]
+    ];
+  };
+
+  this.window_controls_detached = function()
+  {
+    return [
+      'window-controls',
+      [
+        window['cst-selects']['debugger-menu'].select_template(),
+        [
+         'button',
+         'handler', 'reload-window',
+         'title', ui_strings.S_BUTTON_LABEL_RELOAD_HOST
+        ],
+        [
+         'button',
+         'handler', 'top-window-toggle-attach',
+         'class', 'switch',
+         'title', ui_strings.S_SWITCH_ATTACH_WINDOW
+        ],
+      ],
+      'id', 'window-controls-to-main-view'
+    ];
+  };
 
   this.window_controls_close = function()
   {
@@ -252,31 +338,44 @@
 
   this.setting = function(view_id, view_name, is_unfolded)
   {
-
-    var ret = ['settings', self.settingsHeader(view_id, view_name, is_unfolded)];
-    if( is_unfolded )
+    var ret = ['fieldset', self.settingsHeader(view_id, view_name, is_unfolded)];
+    var setting = settings[view_id];
+    var settings_map = setting.setting_map;
+    var cat_name = '';
+    // so far checkboxes, customSettings
+    for( cat_name in settings_map ) 
     {
-      var setting = settings[view_id];
-      var settings_map = setting.setting_map;
-      var cat_name = '';
-      // so far checkboxes, customSettings
-      for( cat_name in settings_map )
-      {
-        ret[ret.length] = this[cat_name](setting, settings_map[cat_name]);
-      }
+      ret[ret.length] = this[cat_name](setting, settings_map[cat_name]); 
     }
     return ret;
   }
 
   this.settingsHeader = function(view_id, view_name, is_unfolded)
   {
-    return ['settings-header',
-        ['input',
-          'type', 'button',
-          'tab-id', view_id
-        ].concat(is_unfolded ? ['class', 'unfolded'] : []),
+    return ['legend',
       view_name, 'handler', 'toggle-setting', 'view-id', view_id];
   }
+
+  this.overlay = function(groups)
+  {
+    var tabs = [];
+    for (var i = 0, group; group = groups[i]; i++)
+    {
+      tabs.push(["tab", group.label, "group", group.group_name, "handler", "overlay-tab"]);
+    }
+
+    return [
+      "overlay",
+      [
+        "overlay-window",
+        [
+          ["overlay-arrow"],
+          ["overlay-tabs", tabs],
+          ["overlay-content"]
+        ]
+      ]
+    ];
+  };
 
   this.checkboxes = function(setting, checkbox_arr)
   {
@@ -353,8 +452,7 @@
   this._window = function(win)
   {
     return ['window',
-        this.window_header(views[win.view_id].name),
-        this.window_shadows(),
+        win.header ? this.window_header(views[win.view_id].name) : [],
         win.is_resizable ?
         [
           ['window-control', 'handler', 'window-scale-top-left'],
@@ -384,19 +482,4 @@
       'handler', 'window-move'
     ]
   }
-
-  this.window_shadows = function()
-  {
-    return ['window-shadows',
-      ['window-shadow', 'class', 'top-left'],
-      ['window-shadow', 'class', 'top'],
-      ['window-shadow', 'class', 'top-right'],
-      ['window-shadow', 'class', 'left'],
-      ['window-shadow', 'class', 'right'],
-      ['window-shadow', 'class', 'bottom-left'],
-      ['window-shadow', 'class', 'bottom'],
-      ['window-shadow', 'class', 'bottom-right']
-      ];
-  }
-
 }).apply(window.templates);

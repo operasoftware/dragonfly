@@ -1,4 +1,4 @@
-﻿var ini =
+﻿window.ini =
 {
   // all files in http-clients must be updated to the cvs version of this file //
   protocol_version: '5',
@@ -21,7 +21,8 @@
           "f8": "continue-run",
           "f10": "continue-step-next-line",
           "f11": "continue-step-into-call",
-          "shift f11": "continue-step-out-of-call"
+          "shift f11": "continue-step-out-of-call",
+          "escape": "toggle-command-line"
         },
         "edit":
         {
@@ -33,6 +34,7 @@
           "f3": "highlight-next-match",
           "shift enter": "highlight-previous-match",
           "shift f3": "highlight-previous-match",
+          "escape": "toggle-command-line"
         }
       },
       "dom":

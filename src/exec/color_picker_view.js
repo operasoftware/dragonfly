@@ -354,7 +354,9 @@ cls.Exec["2.0"].ColorPicker.create_ui_widget = function()
       [
 
       ]
-    }
+    },
+    null,
+    "utilities"
   );
 }
 

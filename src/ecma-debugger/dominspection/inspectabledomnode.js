@@ -154,8 +154,8 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
       {
         if (attr[ATTR_KEY] == 'id') 
           id = "#" + attr[ATTR_VALUE];
-        if (attr[ATTR_KEY] == 'class') 
-          class_name = "." + attr[ATTR_VALUE].replace(/ /g, "."); 
+        if (attr[ATTR_KEY] == 'class' && attr[ATTR_VALUE].trim())
+          class_name = "." + attr[ATTR_VALUE].trim().replace(/\s+/g, ".");
       }
     }
     return name + id + class_name;

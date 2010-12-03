@@ -85,7 +85,7 @@ cls.DOMInspectorActions = function(id)
     container.re_render(tmpl);
   }
 
-  this._select_node = function(target)
+  this._select_node = function(target, skip_breadcrumbs_update)
   {
     var
     obj_id = parseInt(target.getAttribute('ref-id')),
@@ -113,12 +113,57 @@ cls.DOMInspectorActions = function(id)
       if (document.getElementById('target-element'))
         document.getElementById('target-element').removeAttribute('id');
       target.id = 'target-element';
+      if (!skip_breadcrumbs_update)
+      {
+        window.modebar.set_content(model.id, window.templates.breadcrumb(model, obj_id), true);
+      }
       // if the view_container is null the view is not in focus
       if (!view_container)
         window.helpers.scroll_dom_target_into_view();
     }
     return model;
+  };
+
+  // TODO check still needed?
+  /*
+  this.breadcrumb_link = function(event, target)
+  {
+    var 
+    obj_id = parseInt(target.getAttribute('ref-id')),
+    model_id = target.get_attr("parent-node-chain", "data-model-id"),
+    inspections = window.dominspections,
+    model = null;
+
+    target.parentNode.querySelector(".active").removeClass("active");
+    target.addClass("active");
+
+    if (model_id && obj_id)
+    {
+      model = inspections[model_id];
+      model.target = obj_id;
+      inspections.active = model;
+      window.messages.post("element-selected", {model: model, obj_id: obj_id, rt_id: model.getDataRuntimeId()});
+      var target = document.getElementById('target-element');
+      if (target)
+      {
+        target.removeAttribute('id');
+        while (target && !/container/i.test(target.nodeName) && (target = target.parentElement));
+        if (target)
+        {
+          var divs = target.getElementsByTagName('div'), div = null, i = 0;
+          for ( ; (div = divs[i]) && div.getAttribute('ref-id') != obj_id; i++);
+          if (div)
+          {
+            div.id = 'target-element';
+            window.helpers.scroll_dom_target_into_view();
+            if (window.settings.dom.get('highlight-on-hover'))
+              hostspotlighter.spotlight(obj_id, true);
+          }
+        }
+      }
+    }
   }
+  */
 
   var _is_script_node = function(target)
   {
@@ -359,7 +404,8 @@ cls.DOMInspectorActions = function(id)
         this.setSelected(target);
       }
     }
-    return !is_in_container;
+    // don't cancel the event
+    return true;
   }
 
   this.focus = function(event, container)
@@ -433,8 +479,10 @@ cls.DOMInspectorActions = function(id)
     if (target)
     {
       var model = this._select_node(target);
+      /* TODO
       if (model)
         topCell.statusbar.updateInfo(templates.breadcrumb(model, obj_id));
+      */
     }
   }.bind(this);
 
@@ -449,8 +497,11 @@ cls.DOMInspectorActions = function(id)
 
   this._handlers["select-node-in-breadcrumb"] = function(event, target)
   {
+    event.target.parentNode.querySelector(".active").removeClass("active");
+    event.target.addClass("active");
+
     // assuming the breadcrumb is visible together with the dom view
-    var obj_id = parseInt(target.getAttribute('obj-id'));
+    var obj_id = parseInt(target.getAttribute('ref-id'));
     var target = document.getElementById('target-element');
     if (target)
     {
@@ -461,7 +512,7 @@ cls.DOMInspectorActions = function(id)
         var divs = target.getElementsByTagName('div'), div = null, i = 0;
         for ( ; (div = divs[i]) && div.getAttribute('ref-id') != obj_id; i++);
         if (div)
-          this._select_node(div);
+          this._select_node(div, true);
       }
     }
   }.bind(this);
@@ -614,6 +665,29 @@ cls.DOMInspectorActions = function(id)
     return true;
   }.bind(this);
 
+  this._handlers["insert-attribute-edit"] = function(event, target)
+  {
+    if (!_is_script_node(target))
+    {
+      var target = event.target;
+      if (target.nodeName.toLowerCase() != "node")
+      {
+        target = target.parentNode;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      this.mode = MODE_EDIT_ATTR_TEXT;
+      document.documentElement.addClass('modal');
+      self.setSelected(target);
+      self.set_editor("dom-attr-text-editor");
+      self.editor.edit(event, target);
+
+      var container = target.has_attr("parent-node-chain", "ui-id");
+      var start_tag = container.querySelector("[ref-id='" + target.get_attr("parent-node-chain", "ref-id") + "'] node");
+      this.editor.insert_attribute_edit(start_tag);
+    }
+  }.bind(this);
+
   this._handlers["edit-next"] = function(event, target)
   {
     if( this.editor.type == "dom-attr-text-editor" )
@@ -723,6 +797,16 @@ window.eventHandlers.click['breadcrumb-link'] = function(event, target)
   this.broker.dispatch_action("dom", "select-node-in-breadcrumb", event, target);
 }
 
+window.eventHandlers.mouseup['breadcrumb-link'] = function(event, target)
+{
+  var selection = window.getSelection();
+  if (!selection.isCollapsed)
+  {
+    selection.removeAllRanges();
+  }
+}
+
+window.eventHandlers.mouseover['breadcrumb-link'] =
 window.eventHandlers.mouseover['spotlight-node'] = function(event, target)
 {
   this.broker.dispatch_action("dom", "spotlight-node", event, target);

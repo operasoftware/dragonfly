@@ -5,7 +5,7 @@
   * a bit different from a normal cell, it holds the main view ui elements but also the main conatiner
   */
 
-var TopCell = function(layout, setDimensions, onresize, TopToolbar, TopStatusbar)
+var TopCell = function(layout, setDimensions, onresize, TopToolbar)
 {
   var self = this;
   var resize_timeout = new Timeouts();
@@ -43,12 +43,13 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, TopStatusbar
   {
     this.container = new TopContainer(this); // actually just a cell
     this.tab = new TopTabs(this);
+    this.modebar = window.modebar = new Modebar(this);
+    this.overlay = new Overlay();
     this.toolbar = TopToolbar && new TopToolbar(this) || null;
     if(this.toolbar)
     {
       toolbars[this.id].setVisibility(!opera.attached);
     }
-    this.statusbar = TopStatusbar && new TopStatusbar(this) || null;
   }
 
   this.update = function()
@@ -69,10 +70,7 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, TopStatusbar
         this.toolbar.setDimensions();
         }
         this.tab.setDimensions();
-        if(this.statusbar)
-        {
-        this.statusbar.setDimensions();
-        }
+        this.modebar.setDimensions();
         this.container.setDimensions();
       }
     }
@@ -171,10 +169,30 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, TopStatusbar
   {
   this.toolbar.setup(this.id);
   }
-  if(this.statusbar)
+
+  if (this.modebar)
   {
-  this.statusbar.setup(this.id);
+    this.modebar.setup(this.id);
   }
+
+  this.overlay.add_overlay("settings-overlay",
+    [
+      new SettingsGroup("General", "general"),
+      new SettingsGroup("Document", "document"),
+      new SettingsGroup("Script", "script"),
+      new SettingsGroup("Network", "resource_manager"),
+      new SettingsGroup("Console", "console"),
+      new SettingsGroup("About", "about"),
+      new SettingsGroup("Keyboard shortcuts", "keyboard-shortcuts")
+    ]
+  );
+
+  this.overlay.add_overlay("remote-debug-overlay",
+    [
+      new SettingsGroup("Remote debug", "remote_debug")
+    ]
+  );
+
   this.addTemporaryTabs();
   this.tab.setActiveTab
   (

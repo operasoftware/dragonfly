@@ -85,7 +85,6 @@ var BaseEditor = new function()
     }
     this.textarea_container = document.createElement(this.textarea_container_name);
     this.textarea = this.textarea_container.
-      appendChild(document.createElement('textarea-inner-container')).
       appendChild(document.createElement('textarea'));
     this.textarea.style.cssText = cssText;
     this.textarea.oninput = this.getInputHandler();
@@ -607,6 +606,23 @@ var DOMAttrAndTextEditor = function(nav_filters)
       document.createElement( name == 'key' && 'value' || 'key' ), cur.nextSibling
     );
   }
+
+  this.insert_attribute_edit = function(ref_node)
+  {
+    if (ref_node)
+    {
+      if (ref_node.lastChild.nodeType == 3)
+      {
+        ref_node.lastChild.splitText(ref_node.lastChild.nodeValue.replace(/\/?>$/,'').length);
+        ref_node = this.create_new_edit(ref_node.lastChild.previousSibling);
+      }
+      else
+      {
+        ref_node = this.create_new_edit(ref_node.lastChild);
+      }
+      this.edit({}, ref_node);
+    }
+  };
   
   this.remove_attribute = function()
   {

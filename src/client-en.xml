@@ -126,6 +126,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <link rel="stylesheet" href="./ui-style/colorpickerstyle.css"/>
 <link rel="stylesheet" href="./repl/repl_style.css"/>
 <link rel="stylesheet" href="./shortcutconfig/style.css"/>
+<link rel="stylesheet" href="./ui-style/global_command_line.css"/>
 
 
 <!-- This will turn off including of the UI strings if the exclude_uistrings var is set -->
@@ -145,6 +146,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./scripts/colors.js"/>
 <script src="./scripts/colorspace.js"/>
 <script src="./scripts/messages.js"/>
+<script src="./scripts/spec_links.js"/>
 
 
 
@@ -182,6 +184,9 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/TopUIBase.js"/>
 <script src="./ui-scripts/toolbar.js"/>
 <script src="./ui-scripts/toolbarConfig.js"/>
+<script src="./ui-scripts/modebar.js"/>
+<script src="./ui-scripts/overlay.js"/>
+<script src="./ui-scripts/horizontal_navigation.js"/>
 <script src="./ui-scripts/tabs.js"/>
 <script src="./ui-scripts/topTabs.js"/>
 <script src="./ui-scripts/containers.js"/>
@@ -203,6 +208,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/colorpickertemplates.js"/>
 <script src="./ui-scripts/colorpicker.js"/>
 <script src="./ui-scripts/slider.js"/>
+<script src="./ui-scripts/contextmenu.js"/>
 
 
 <script src="./build-application/build_application.js"></script>

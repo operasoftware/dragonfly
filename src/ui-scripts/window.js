@@ -27,17 +27,17 @@ var UIWindowBase = new function()
 
   var viewport = null;
 
-  this.init = function(view_id, left, top, width, height)
+  this.init = function(view_id, top, left, width, height)
   {
     var view = window.views[view_id];
     var has_statusbar = 
       typeof view.window_statusbar == 'boolean' ? view.window_statusbar : true;
     ids[ids.length] = this.id = getId();
     this.view_id = view_id;
-    this.top = top || view && view.window_top || this.default_top;
-    this.left = left || view && view.window_left || this.default_left;
-    this.width = width || view && view.window_width || this.default_width;
-    this.height = height || view && view.window_height || this.default_height;
+    this.top = top != undefined ? top : view && view.window_top || this.default_top;
+    this.left = left != undefined ? left : view && view.window_left || this.default_left;
+    this.width = width != undefined ? width : view && view.window_width || this.default_width;
+    this.height = height != undefined ? height : view && view.window_height || this.default_height;
     this.min_top = 6;
     this.min_visible_height = 80;
     this.min_visible_width = 150;
@@ -50,6 +50,7 @@ var UIWindowBase = new function()
     {
       this.toolbar = new WindowToolbar(this, toolbars[view_id].buttons, toolbars[view_id].filters );
     }
+    this.header = typeof view.window_header == 'boolean' ? view.window_header : true;
     if(!window.ui_windows)
     {
       window.ui_windows = {};
@@ -65,7 +66,7 @@ var UIWindowBase = new function()
 
     if( this.toolbar )
     {
-      this.toolbar.setDimensions();
+      this.toolbar.setDimensions(true);
       this.toolbar.setup(this.view_id);
     }
 
@@ -161,9 +162,10 @@ var UIWindowBase = new function()
   this.closeWindow = function(view_id)
   {
     var win = this.getWindowByViewId(view_id), win_ele = null;
-    if(win && (win_ele = document.getElementById(win.id)))
+    if (win && (win_ele = document.getElementById(win.id)))
     {
       win.container.onclose();
+      messages.post("hide-view", {id: win_ele.getAttribute('view_id')});
       win_ele.parentNode.removeChild(win_ele);
     }
   }
@@ -196,28 +198,11 @@ var UIWindowBase = new function()
   bottom_delta = 0,
   right_delta = 0,
   focus_catcher = null,
-  window_shadows = null,
 
   store_event = function(event)
   {
     __event = event;
     focus_catcher.focus();
-  },
-
-  force_reflow_shadows = function()
-  {
-    if(window_shadows)
-    {
-      window_shadows.innerHTML = "" +
-        "<window-shadow class='top-left'></window-shadow>" +
-        "<window-shadow class='top'></window-shadow>" +
-        "<window-shadow class='top-right'></window-shadow>" +
-        "<window-shadow class='left'></window-shadow>" +
-        "<window-shadow class='right'></window-shadow>" +
-        "<window-shadow class='bottom-left'></window-shadow>" +
-        "<window-shadow class='bottom'></window-shadow>" +
-        "<window-shadow class='bottom-right'></window-shadow>";
-    }
   },
 
   mousedown = function(event)
@@ -234,7 +219,6 @@ var UIWindowBase = new function()
         {
           focus_catcher = UIBase.getFocusCatcher();
         }
-        window_shadows = event.target.parentNode.getElementsByTagName('window-shadows')[0];
         current_style = event.target.parentNode.style;
         self.setZIndex();
         current_style.zIndex = 200;
@@ -281,7 +265,6 @@ var UIWindowBase = new function()
     document.onselectstart = null;
     interval = clearInterval( interval );
     update_handler();
-    window_shadows = current_target = current_style = __event = update_handler = null;
   },
   
   verify_left = function(win, inner_width, left)
@@ -408,7 +391,6 @@ var UIWindowBase = new function()
         current_style.height = ( current_target.height = height ) + 'px';
         current_target.update();
         focus_catcher.focus();
-        force_reflow_shadows();
       }
     }
   }
@@ -464,14 +446,12 @@ var UIWindowBase = new function()
   click_handlers['window-close'] = function(event)
   {
     var win = event.target.parentElement.parentElement;
-    if(win)
+    if (win)
     {
-      ref_obj = ui_windows[win.id];
-      ref_obj.container.onclose();
-      messages.post("hide-view", {id: win.getAttribute('view_id')});
-      win.parentElement.removeChild(win);
+      self.closeWindow(win.getAttribute('view_id'));
     }
   }
+
   
   var resize = function()
   {

@@ -106,7 +106,9 @@ cls.CSSInspectorView.create_ui_widgets = function()
         'hide-initial-values',
         'hide-shorthands',
       ]
-    }
+    },
+    null,
+    "document"
   );
 
   new ToolbarConfig
@@ -126,15 +128,9 @@ cls.CSSInspectorView.create_ui_widgets = function()
   (
     'css-inspector',
     [
-      'hide-initial-values',
-      'hide-shorthands',
+      'hide-initial-values'/*,
+      'hide-shorthands',*/
     ]
   );
-
 }
-
-
-
-
-
 

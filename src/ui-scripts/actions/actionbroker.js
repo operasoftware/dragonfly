@@ -89,6 +89,19 @@ var ActionBroker = function()
     */
   this.get_global_handler = function(){};
 
+  /** 
+    * To subscribe to the click handler. 
+    * @param {Object} setter. So far the setter must be an instance of ContextMenu
+    * @param {Function} handler. The callback for the click event.
+    */
+  this.set_setter_click_handler = function(setter, handler){};
+
+  /** 
+    * To unsubscribe to the click handler. 
+    * @param {Object} setter. Only the setter of the click handler can unsubscribe.
+    */
+  this.clear_setter_click_handler = function(setter){};
+
   /**
     * To get a shortcut for a given handler and action.
     * @param {String} handler_id
@@ -111,9 +124,16 @@ var ActionBroker = function()
   this._current_shortcuts = null;
   this._global_handler = new GlobalActionHandler(GLOBAL_HANDLER);
   this._delays = {};
+  this._modal_click_handler_setter = null;
+  this._modal_click_handler = null;
 
   this._set_action_context_bound = (function(event)
   {
+    if (this._contextmenu.is_shown)
+    {
+      this._contextmenu.modal_click_handler(event);
+      return true;
+    }
     if (!(this._action_context && this._action_context.onclick(event) === false))
     {
       var container = event.target;
@@ -137,7 +157,9 @@ var ActionBroker = function()
           this._set_current_handler(GLOBAL_HANDLER, event, container);
         }
       }
+      return true;
     }
+    return false;
   }).bind(this);
 
   this._set_current_handler = function(handler_id, event, container)
@@ -156,11 +178,21 @@ var ActionBroker = function()
     }
   }
 
+  this._oncontextmenubound = function(event)
+  {
+    if (this._set_action_context_bound(event) !== false)
+      this._contextmenu.oncontextmenu(event);
+    if (!event.shiftKey)
+      event.preventDefault();
+  }.bind(this);
+
   this._init = function()
   {
     this._key_identifier = new KeyIdentifier(this.dispatch_key_input.bind(this),
                                              window.ini.browser);
     this.register_handler(this._global_handler);
+    this._contextmenu = new ContextMenu();
+    document.addEventListener("contextmenu", this._oncontextmenubound, false);
     window.app.addListener('services-created', function()
     {
       this._shortcuts = window.settings.general.get("shortcuts") ||
@@ -169,6 +201,7 @@ var ActionBroker = function()
       this._key_identifier.set_shortcuts(this._get_shortcut_keys());
       this._set_current_handler(this._global_handler);
       document.addEventListener('click', this._set_action_context_bound, true);
+      document.addEventListener('focus', this._set_action_context_bound, true);
       window.messages.post('shortcuts-changed');
     }.bind(this));
   };
@@ -280,6 +313,24 @@ var ActionBroker = function()
   this.get_global_handler = function()
   {
     return this._global_handler;
+  };
+
+  this.set_setter_click_handler = function(setter, handler)
+  {
+    if (setter instanceof ContextMenu)
+    {
+      this._modal_click_handler_setter = setter;
+      this._modal_click_handler = handler;
+    }
+  };
+
+  this.clear_setter_click_handler = function(setter)
+  {
+    if (setter == this._modal_click_handler_setter)
+    {
+      this._modal_click_handler_setter = null;
+      this._modal_click_handler = null;
+    }
   };
 
   this.get_shortcut_with_handler_and_action = function(handler_id, action)

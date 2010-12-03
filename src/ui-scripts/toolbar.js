@@ -29,6 +29,11 @@ var ToolbarBase = function()
     'blur-handler': 'blur'
   }
 
+  this.getTopPosition = function()
+  {
+    return this.cell.top + (this.cell.tab ? this.cell.tab.offsetHeight : 0);
+  };
+
   this.setDimensions = function(force_redraw)
   {
     var dim = '', i = 0;
@@ -40,7 +45,7 @@ var ToolbarBase = function()
       this.setCSSProperties()
     }
 
-    dim = this.cell.top;
+    dim = this.getTopPosition();
     if( dim != this.top)
     {
       this.is_dirty = true;
@@ -62,7 +67,7 @@ var ToolbarBase = function()
     }
     dim = ( this.__is_visible  && ( 
             this.buttons.length 
-            || this.switches.length
+            || this.switches && this.switches.length
             || this.filters.length
             || this.specials.length
             || this.customs.length ) ) ? this.default_height : 0;
@@ -97,7 +102,7 @@ var ToolbarBase = function()
         }
         if( previousEle )
         {
-          width -= ( previousEle.offsetLeft + previousEle.offsetWidth );
+          width -= (previousEle.offsetLeft + previousEle.offsetWidth); // TODO: take margin into account
         }
         cst_select.style.width = ( width - defaults['cst-select-margin-border-padding'] ) + 'px';
       }
@@ -120,7 +125,7 @@ var ToolbarBase = function()
     this.filters = toolbars[view_id] && toolbars[view_id].filters || [];
     this.buttons = toolbars[view_id] && toolbars[view_id].buttons || [];
     this.switches = switches[view_id] && switches[view_id].keys || [];
-    this.toolbar_settings = toolbar_settings[view_id] || null;
+    this.toolbar_settings = window.toolbar_settings && window.toolbar_settings[view_id] || null;
     this.specials = toolbars[view_id] && toolbars[view_id].specials || [];
     this.customs = toolbars[view_id] && toolbars[view_id].customs || [];
     this.__view_id = view_id;
@@ -213,6 +218,10 @@ var Toolbar = function(cell, buttons, filters, specials, customs)
 var TopToolbar = function(cell, buttons, filters, specials, customs)
 {
   this.type = 'top-toolbar';
+  this.getTopPosition = function()
+  {
+    return this.cell.top;
+  };
   this.init(cell, buttons, filters, specials, customs);
 }
 

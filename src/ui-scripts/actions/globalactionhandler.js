@@ -137,6 +137,12 @@
     return false;
   };
 
+  this._handlers["toggle-command-line"] = function(action_id, event, target)
+  {
+    eventHandlers.click["toggle-console"]();
+    return false;
+  };
+
   /* implementation */
 
   this.handle = function(action_id, event, target)

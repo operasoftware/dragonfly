@@ -11,7 +11,7 @@ var TabsBase = function()
   this.type = 'tabs';
   this.height = 25;
   this.width = 200;
-  this.top = 0;
+  this.top = -1000; // Temporary, see also ui.css: tabs, toolbar { left: -1000px }
   this.left = 0;
   this.is_dirty = true;
   this.cell_id = '';
@@ -108,6 +108,8 @@ var TabsBase = function()
       tabs = this.update();
     }
     tabs.innerHTML = '';
+    tabs.className = window.opera.attached ? "attached" : "detached"; // TODO: Do this with `.attributes` in topTabs?
+    tabs.setAttribute("handler", "change-on-scroll");
     tabs.render(templates[this.type](this));
     return tabs;
   }
@@ -142,13 +144,7 @@ var TabsBase = function()
           {
             toolbars[view_id].addContainerId(toolbar_id);
           }
-          // it's a top level tab with no view associated
-          if(topCell.statusbar && views[view_id].type == 'composite-view')
-          {
-            topCell.statusbar.updateInfo();
-          }
         }
-
       }
       
       var container = document.getElementById(this.type + '-to-' + this.cell.id) || this.render();
@@ -209,7 +205,7 @@ var TabsBase = function()
 
   this.getTopPosition = function()
   {
-    return this.cell.top + this.cell.height - this.offsetHeight;
+    return this.cell.top;
   }
 
   this.setDimensions = function(force_redraw)

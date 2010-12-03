@@ -869,7 +869,9 @@ cls.CommandLineViewTest.create_ui_widgets = function()
       [
         "show-ecma-errors"
       ]
-    }
+    },
+    null,
+    "general"
   );
 
   eventHandlers.click['cmd-focus'] = function(event, target)
