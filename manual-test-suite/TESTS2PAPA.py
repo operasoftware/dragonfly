@@ -118,7 +118,7 @@ def add_ids_test_index():
     in_file = open(TESTS, 'rb')
     lines = in_file.readlines()
     in_file.close()
-    id_count = DEFAULT_ID_DELTA
+    id_count = 0
 
     tmpfd, tmppath = tempfile.mkstemp(".tmp", "dftests.")
     tmpfile = os.fdopen(tmpfd, "w")
@@ -127,7 +127,7 @@ def add_ids_test_index():
     # title resets the id_count (counting restarts in each repo)
     for index, line in enumerate(lines):
         if line.startswith('***'):
-            id_count = DEFAULT_ID_DELTA
+            id_count = 0
         elif line.startswith('id:'):
             if not state == DESC:
                 state = ERROR
@@ -137,7 +137,7 @@ def add_ids_test_index():
         elif line.startswith('label:'):
             if state == DESC:
                 id = get_next_id(id_count, lines, index)
-                tmpfile.write("id: %#05i\n" % id_count)
+                tmpfile.write("id: %#05i\n" % id)
                 id_count = id
                 state = ID
             if not state == ID:
