@@ -452,7 +452,7 @@
   this._window = function(win)
   {
     return ['window',
-        this.window_header(views[win.view_id].name),
+        win.header ? this.window_header(views[win.view_id].name) : [],
         win.is_resizable ?
         [
           ['window-control', 'handler', 'window-scale-top-left'],

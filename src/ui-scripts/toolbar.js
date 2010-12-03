@@ -31,7 +31,7 @@ var ToolbarBase = function()
 
   this.getTopPosition = function()
   {
-    return this.cell.top + this.cell.tab.offsetHeight;
+    return this.cell.top + (this.cell.tab ? this.cell.tab.offsetHeight : 0);
   };
 
   this.setDimensions = function(force_redraw)
@@ -67,7 +67,7 @@ var ToolbarBase = function()
     }
     dim = ( this.__is_visible  && ( 
             this.buttons.length 
-            || this.switches.length
+            || this.switches && this.switches.length
             || this.filters.length
             || this.specials.length
             || this.customs.length ) ) ? this.default_height : 0;

@@ -31,6 +31,8 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       "throw", "try", "typeof", "var", "void", "while", "with"];
   this._actionbroker = ActionBroker.get_instance();
   this.mode = "single-line-edit";
+  this.window_header = false;
+  this.window_statusbar = false;
 
   this.ondestroy = function()
   {

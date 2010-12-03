@@ -9,8 +9,6 @@
 .repl-output pre,
 .repl-input, 
 .repl-input textarea {
-  line-height:16px;
-  font-size:14px !important;
   font-family:monospace;
   padding:0;
   margin:0;

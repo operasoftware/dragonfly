@@ -195,6 +195,7 @@ var ActionBroker = function()
       this._set_current_handler(this._global_handler);
     }.bind(this));
     document.addEventListener('click', this._set_action_context_bound, true);
+    document.addEventListener('focus', this._set_action_context_bound, true);
   };
 
   /* implementation */
@@ -223,7 +224,7 @@ var ActionBroker = function()
     if (!(propagate_event === false) &&
          this._action_context != this._global_handler)
     {
-      shortcuts = this._gloabal_shortcuts[this._gloabal_shortcuts.mode];
+      shortcuts = this._gloabal_shortcuts[this._global_handler.mode];
       action = shortcuts && shortcuts[key_id] || '';
       if (action)
         propagate_event = this._global_handler.handle(action,

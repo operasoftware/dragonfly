@@ -1,0 +1,51 @@
+[view_id=command_line] {
+    width: 100% !important;
+    border-width: 2px 0 0;
+    border-radius: 0;
+    bottom: 0;
+    height: auto !important;
+}
+[view_id=command_line] container {
+    border-radius: 0 !important;
+    border: 0 !important;
+}
+[view_id=command_line] textarea {
+    background: transparent;
+    color: #fff;
+}
+[view_id=command_line] examine-objects {
+    background-image: none !important;
+}
+[view_id=command_line] .js-source .js_builtins,
+[view_id=command_line] .dom value,
+[view_id=command_line] .stylesheets value,
+[view_id=command_line] .css-inspector value,
+[view_id=command_line] .js-source .string,
+[view_id=command_line] .js-source .number
+{
+  color: #f33;
+}
+[view_id=command_line] .repl-pobj {
+  color: #88f;
+}
+[view_id=command_line] .dom node,
+[view_id=command_line] key,
+[view_id=command_line] text,
+[view_id=command_line] selector,
+[view_id=command_line] .element-name,
+[view_id=command_line] #examine-objects .object,
+[view_id=command_line] examine-objects .object {
+  color: #fff;
+}
+[view_id=command_line] .prototype-chain-object {
+  background-color: rgba(0,0,0,0.2);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+[view_id=command_line] #target-element,
+[view_id=command_line] .dom [handler="spotlight-node"]:hover {
+  background-color: rgba(255,255,255,0.2);
+}
+[view_id=command_line] ::selection {
+  color: #f33;
+}
+

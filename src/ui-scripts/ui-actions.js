@@ -316,7 +316,20 @@ eventHandlers.click['toggle-remote-debug-config-overlay'] = function(event, targ
 
 eventHandlers.click['toggle-console'] = function(event, target)
 {
-    alert("Command line.");
+  var ele = document.querySelector("[view_id=command_line]");
+  if (!ele)
+  {
+    UIWindowBase.showWindow('command_line', ((document.documentElement.clientHeight / 2) | 0), 0, document.documentElement.clientWidth + 5, ((document.documentElement.clientHeight / 2) | 0));
+    // TODO: don't do this here, there's no guarantee that the element exists
+    setTimeout(function() {
+      ele = document.querySelector("[view_id=command_line] textarea");
+      ele.focus();
+    }, 0);
+  }
+  else
+  {
+    UIWindowBase.closeWindow('command_line');
+  }
 };
 
 eventHandlers.click['toolbar-switch'] = function(event)
