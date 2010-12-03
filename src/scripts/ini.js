@@ -139,7 +139,8 @@
           "f5": "continue-run",
           "f6": "continue-step-next-line",
           "f7": "continue-step-into-call",
-          "shift f7": "continue-step-out-of-call"
+          "shift f7": "continue-step-out-of-call",
+          "escape": "toggle-command-line"
         },
         "edit":
         {
@@ -151,6 +152,7 @@
           "cmd g": "highlight-next-match",
           "shift enter": "highlight-previous-match",
           "cmd shift g": "highlight-previous-match",
+          "escape": "toggle-command-line"
         }
       },
       "dom":
