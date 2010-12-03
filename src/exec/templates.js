@@ -11,7 +11,7 @@ window.templates.color_picker = function(
           ['h2', ui_strings.M_VIEW_LABEL_COLOR_MAGNIFIER_AND_PICKER],
           ['p',
             ['label',
-              ui_strings.S_LABEL_UTIL_SCALE + ': ',
+              ui_strings.S_LABEL_UTIL_AREA + ': ',
               ['select',
                 this.color_picker_create_dimension_select(screenshot_width, screenshot_height),
                 'id', 'color-picker-area',

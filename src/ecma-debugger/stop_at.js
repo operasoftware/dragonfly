@@ -207,16 +207,12 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
         scope_list: frame[SCOPE_LIST]
       }
     }
-
-    views.callstack.update();
-
     if( cur_inspection_type != 'frame' )
     {
       messages.post('active-inspection-type', {inspection_type: 'frame'});
     }
-
     messages.post('frame-selected', {frame_index: 0});
-
+    views.callstack.update();
   }
 
   this.setInitialSettings = function()

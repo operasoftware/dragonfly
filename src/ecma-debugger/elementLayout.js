@@ -187,7 +187,10 @@ cls.ElementLayout = function()
   {
     __comp_style = null;
     __offsets_values = "";
-    __selectedElement = {rt_id: msg.rt_id,  obj_id: msg.obj_id, model: msg.model};
+    __selectedElement = msg.rt_id && msg.obj_id && 
+                        {rt_id: msg.rt_id,  
+                         obj_id: msg.obj_id, 
+                         model: msg.model} || null;
 
     var i = 0, view_id = '';
     for ( i = 0; view_id = __views[i]; i++)
@@ -196,6 +199,11 @@ cls.ElementLayout = function()
     }
   }
   
+  this.has_selected_element = function()
+  {
+    return Boolean(__selectedElement);
+  };
+
   this.getLayoutValues = function(org_args)
   {
     if( !__selectedElement)
@@ -246,7 +254,9 @@ cls.ElementLayout = function()
     if (!__selectedElement)
       cb(null);
     else if(__offsets_values)
-      cb(__offsets_values);
+    {
+      cb(window.helpers.copy_array(__offsets_values));
+    }
     else
     {
       var
@@ -272,11 +282,8 @@ cls.ElementLayout = function()
     if (message[STATUS] == 'completed')
     {
       __offsets_values = parse_offset_values(message[VALUE]);
-      
-      //__offsets_values = message[VALUE];
-      //opera.postError(__offsets_values);
       if (cb)
-        cb(__offsets_values);
+        cb(window.helpers.copy_array(__offsets_values));
     }
     else
     {

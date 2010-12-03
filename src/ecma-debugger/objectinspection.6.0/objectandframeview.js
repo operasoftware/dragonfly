@@ -98,18 +98,19 @@ cls.EcmascriptDebugger["6.0"].InspectionView = function(id, name, container_clas
       this._data = null;
       this.clearAllContainers();
     }
-  }
+  };
 
   this._on_active_inspection_type = function(msg)
   {
     this._last_selected = msg.inspection_type;
-  }
+  };
 
   window.messages.addListener('object-selected', this._on_object_selected.bind(this));
   window.messages.addListener('frame-selected', this._on_frame_selected.bind(this));
   window.messages.addListener('trace-frame-selected', this._on_trace_frame_selected.bind(this));
   window.messages.addListener('runtime-destroyed', this._on_runtime_destroyed.bind(this));
   window.messages.addListener('active-inspection-type', this._on_active_inspection_type.bind(this));
+  window.messages.addListener('setting-changed', this._on_setting_change.bind(this));
   this.init(id, name, container_class);
 
 };
