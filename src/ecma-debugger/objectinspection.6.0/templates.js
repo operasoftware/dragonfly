@@ -199,7 +199,7 @@
               "class='folder-key' "
           );
           // 'in' is true for all non enumarables
-          if (tree.hasOwnProperty(prop[NAME]))
+          if (tree.hasOwnProperty(prop[NAME]) && tree[prop[NAME]])
             ret.push(STYLE_EXPANDED);
           ret.push(
             "/>" +
