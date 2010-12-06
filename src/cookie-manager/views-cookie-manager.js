@@ -3,10 +3,11 @@
 cls.CookieManagerView = function(id, name, container_class)
 {
   this._cookies = {};
+  this._flattened_cookies = [];
   this._rts = {};
   this.createView = function(container)
   {
-    var cookieData = [];
+    this._flattened_cookies = [];
     for (var domain in this._cookies)
     {
       var domains_cookies = this._cookies[domain];
@@ -20,7 +21,7 @@ cls.CookieManagerView = function(id, name, container_class)
           // info should probably just be added to it. When editing it, there should be only one list
           // that's globally accessible from actions.
           
-          cookieData.push({
+          this._flattened_cookies.push({
             runtimes:      domains_cookies.runtimes,
             host:          domains_cookies.host,
             hostname:      domains_cookies.hostname,
@@ -31,7 +32,7 @@ cls.CookieManagerView = function(id, name, container_class)
             expires:       current_cookie.expires,
             isSecure:      current_cookie.isSecure,
             isHTTPOnly:    current_cookie.isHTTPOnly,
-            objectref:     current_cookie.objectref
+            objectref:     current_cookie.domain + current_cookie.path + current_cookie.name + (parseInt(Math.random()*99999))
           });
         };
         // Add button that removes cookies of this domain
@@ -94,23 +95,32 @@ cls.CookieManagerView = function(id, name, container_class)
         },
         path: {
           label: "Path",
-          getter: function(obj) { return "/"+obj.path; }
+          getter: function(obj) {
+            if(!obj.isHTTPOnly)
+            {
+              return ["input", " ",
+                  "value", "/"+obj.path,
+                  "data-objectref", obj.objectref,
+                  "data-editproperty", "path",
+                  "blur-handler", "cookiemanager-edit"
+              ];
+            }
+            else
+            {
+              return "/"+obj.path;
+            }
+          }
         },
         name: {
           label: "Name",
           getter: function(obj) {
             if(!obj.isHTTPOnly)
             {
-              return ["span", obj.name+" ",
-                  [
-                    "a",    "Edit",
-                    "href", "#",
-                    "foo", "bar",
-                    "data-objectref", obj.objectref,
-                    /* "data-cookie-domain", "obj.domain",
-                    "data-cookie-name", "obj.name", */
-                    "handler", "cookiemanager-edit-name"
-                  ]
+              return ["input", " ",
+                  "value", obj.name,
+                  "data-objectref", obj.objectref,
+                  "data-editproperty", "name",
+                  "blur-handler", "cookiemanager-edit"
               ];
             }
             else
@@ -120,7 +130,22 @@ cls.CookieManagerView = function(id, name, container_class)
           }
         },
         value: {
-          label: "Value"
+          label: "Value",
+          getter: function(obj) {
+            if(!obj.isHTTPOnly)
+            {
+              return ["input", " ",
+                  "value", obj.value,
+                  "data-objectref", obj.objectref,
+                  "data-editproperty", "value",
+                  "blur-handler", "cookiemanager-edit"
+              ];
+            }
+            else
+            {
+              return obj.value;
+            }
+          }
         },
         expires: {
           label: "Expires",
@@ -159,7 +184,7 @@ cls.CookieManagerView = function(id, name, container_class)
         }
       }
     }
-    container.clearAndRender(new SortableTable(tabledef, cookieData).render());
+    container.clearAndRender(new SortableTable(tabledef, this._flattened_cookies).render());
     
     var table = document.getElementsByClassName("sortable-table")[0];
     var obj = ObjectRegistry.get_instance().get_object(table.getAttribute("data-object-id"));
@@ -302,8 +327,7 @@ cls.CookieManagerView = function(id, name, container_class)
           value:      cookie_info[3],
           expires:    cookie_info[4],
           isSecure:   cookie_info[5],
-          isHTTPOnly: cookie_info[6],
-          objectref:  cookie_info[0] + cookie_info[1] + cookie_info[2];
+          isHTTPOnly: cookie_info[6]
         });
       };
       window.views.cookie_manager.update();

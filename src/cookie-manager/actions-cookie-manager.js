@@ -13,24 +13,71 @@
   
 };
 
-window.eventHandlers.click['cookiemanager-edit-name'] = function(event, target)
+window.eventHandlers.blur['cookiemanager-edit'] = function(event, target)
 {
-  var objectid = target.getAttribute("data-objectref");
+  var objectref = target.getAttribute("data-objectref");
+  var editproperty = target.getAttribute("data-editproperty");
+  
   // need to find cookie object now that has all info
-  
-  /*
-  var script = "return document.cookie = "
-                + cookie.name + "=" + cookie.value + "-EDITED"
-                + "; expires="+ (new Date(cookie.value*1000).toUTCString())
-                + "; path=" + "/" + cookie.path;
-  console.log("script",script);
-  var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_changed_cookies, [cookie.runtimes[0]]);
-  services['ecmascript-debugger'].requestEval(tag,[cookie.runtimes[0], 0, 0, script]);
-  
-  */
+  var cookie;
+  for (var i=0; i < window.views.cookie_manager._flattened_cookies.length; i++) {
+    if(window.views.cookie_manager._flattened_cookies[i].objectref == objectref)
+    {
+      cookie = window.views.cookie_manager._flattened_cookies[i];
+      // console.log("foundcookie for objectref",objectref,cookie);
+      
+      // remove old cookie
+      var remove_old_cookie_script = 'document.cookie="'
+                    + cookie.name + '=' + cookie.value 
+                    + '; expires='+ (new Date(new Date().getTime()-1000).toUTCString())
+                    + '; path=' + '/' + cookie.path+'";';
+      
+      // and add modified
+      var add_modified_cookie_script = 'document.cookie="';
+            
+      if(editproperty === "name")
+      {
+        add_modified_cookie_script += target.value.trim() + '='
+      }
+      else
+      {
+        add_modified_cookie_script += cookie.name + '='
+      }
+      
+      if(editproperty === "value")
+      {
+        add_modified_cookie_script += target.value.trim();
+      }
+      else
+      {
+        add_modified_cookie_script += cookie.value;
+      }
+      
+      add_modified_cookie_script += '; expires='+ (new Date(cookie.expires*1000).toUTCString());
+      
+      if(editproperty === "path")
+      {
+        add_modified_cookie_script += '; path=' +       target.value.trim()+'"';
+      }
+      else
+      {
+        add_modified_cookie_script += '; path=' + '/' + cookie.path+'"';
+      }
+      
+      /*
+      // result should look sth like
+      var add_modified_cookie_script = 'document.cookie="'
+                    + target.value + '=' + cookie.value 
+                    + '; expires='+ (new Date(cookie.expires*1000).toUTCString())
+                    + '; path=' + '/' + cookie.path+'"';
+      */
+      
+      var script = remove_old_cookie_script + add_modified_cookie_script;
+      var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_changed_cookies, [cookie.runtimes[0]]);
+      services['ecmascript-debugger'].requestEval(tag,[cookie.runtimes[0], 0, 0, script]);
+    }
+  };
 }
-
-
 
 /*
 window.eventHandlers.click['cookiemanager-delete-domain-cookies'] = function(event, target)
