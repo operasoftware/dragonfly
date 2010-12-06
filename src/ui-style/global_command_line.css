@@ -33,6 +33,8 @@
 [view_id=command_line] text,
 [view_id=command_line] selector,
 [view_id=command_line] .element-name,
+[view_id=command_line] .repl-input,
+[view_id=command_line] .repl-output,
 [view_id=command_line] #examine-objects .object,
 [view_id=command_line] examine-objects .object {
   color: #fff;

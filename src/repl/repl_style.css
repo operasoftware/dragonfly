@@ -5,19 +5,28 @@
     cursor: default;
 }
 
+.repl-output li,
+.repl-input {
+  margin-top: 1px;
+}
+
 .repl-output,
 .repl-output pre,
-.repl-input, 
 .repl-input textarea {
-  font-family:monospace;
   padding:0;
   margin:0;
   word-wrap: break-word;
 }
 
+.repl-input {
+  display: table;
+  width: 100%;
+}
+
 .repl-input .multiline {
-    border: dotted thin gray;
-    padding: 6px 0 6px 6px;
+  border: 1px dotted gray;
+  padding: 1px;
+  margin: -2px;
 }
 
 .repl-lines {
@@ -79,12 +88,13 @@ li > .repl-lines {
     margin-left: 6em;
 }
 
-.repl-input span {
-  float:left;
+.repl-input span, .repl-input div {
+  display: table-cell;
+  vertical-align: top;
 }
 
 .repl-input span + div {
-  margin-left: 4ex;
+  width: 100%;
 }
   
 .repl-input textarea {
