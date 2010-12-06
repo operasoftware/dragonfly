@@ -13,10 +13,24 @@
   
 };
 
-window.eventHandlers.click['cookiemanager-update'] = function(event, target)
+window.eventHandlers.click['cookiemanager-edit-name'] = function(event, target)
 {
-  window.views.cookie_manager._update();
+  var objectid = target.getAttribute("data-objectref");
+  // need to find cookie object now that has all info
+  
+  /*
+  var script = "return document.cookie = "
+                + cookie.name + "=" + cookie.value + "-EDITED"
+                + "; expires="+ (new Date(cookie.value*1000).toUTCString())
+                + "; path=" + "/" + cookie.path;
+  console.log("script",script);
+  var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_changed_cookies, [cookie.runtimes[0]]);
+  services['ecmascript-debugger'].requestEval(tag,[cookie.runtimes[0], 0, 0, script]);
+  
+  */
 }
+
+
 
 /*
 window.eventHandlers.click['cookiemanager-delete-domain-cookies'] = function(event, target)
@@ -57,9 +71,7 @@ window.eventHandlers.click['cookiemanager-delete-cookie'] = function(event, targ
   services['cookie-manager'].requestRemoveCookie(tag,[domain, path, name]);
 };
 
-/*
 window.eventHandlers.click['cookiemanager-update'] = function(event, target)
 {
-  window.storages[event.target.parentNode.parentNode.parentNode.getAttribute('data-storage-id')].update();
-};
-*/
+  window.views.cookie_manager._update();
+}

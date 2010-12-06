@@ -15,6 +15,11 @@ cls.CookieManagerView = function(id, name, container_class)
         for (var i=0; i < domains_cookies.cookie_list.length ;i++)
         {
           var current_cookie = domains_cookies.cookie_list[i];
+          
+          // Instead of creating a new cookie ob that just uses most of the old one,
+          // info should probably just be added to it. When editing it, there should be only one list
+          // that's globally accessible from actions.
+          
           cookieData.push({
             runtimes:      domains_cookies.runtimes,
             host:          domains_cookies.host,
@@ -25,7 +30,8 @@ cls.CookieManagerView = function(id, name, container_class)
             value:         current_cookie.value,
             expires:       current_cookie.expires,
             isSecure:      current_cookie.isSecure,
-            isHTTPOnly:    current_cookie.isHTTPOnly
+            isHTTPOnly:    current_cookie.isHTTPOnly,
+            objectref:     current_cookie.objectref
           });
         };
         // Add button that removes cookies of this domain
@@ -91,7 +97,27 @@ cls.CookieManagerView = function(id, name, container_class)
           getter: function(obj) { return "/"+obj.path; }
         },
         name: {
-          label: "Name"
+          label: "Name",
+          getter: function(obj) {
+            if(!obj.isHTTPOnly)
+            {
+              return ["span", obj.name+" ",
+                  [
+                    "a",    "Edit",
+                    "href", "#",
+                    "foo", "bar",
+                    "data-objectref", obj.objectref,
+                    /* "data-cookie-domain", "obj.domain",
+                    "data-cookie-name", "obj.name", */
+                    "handler", "cookiemanager-edit-name"
+                  ]
+              ];
+            }
+            else
+            {
+              return obj.name;
+            }
+          }
         },
         value: {
           label: "Value"
@@ -220,6 +246,7 @@ cls.CookieManagerView = function(id, name, container_class)
     this._rts[rt_id].host = host;
     this._rts[rt_id].title = title;
     this._rts[rt_id].href = href;
+    
     this._check_all_members_of_obj_to_be(this._rts, "get_domain_is_pending", false, this._clean_domains_and_ask_for_cookies);
   }
   
@@ -275,7 +302,8 @@ cls.CookieManagerView = function(id, name, container_class)
           value:      cookie_info[3],
           expires:    cookie_info[4],
           isSecure:   cookie_info[5],
-          isHTTPOnly: cookie_info[6]
+          isHTTPOnly: cookie_info[6],
+          objectref:  cookie_info[0] + cookie_info[1] + cookie_info[2];
         });
       };
       window.views.cookie_manager.update();
@@ -288,6 +316,12 @@ cls.CookieManagerView = function(id, name, container_class)
     
     // TODO: try to be smart and delete the ones that fit from table or just throw away and re-fetch all.
     // delete window.views.cookie_manager._cookies[domain];
+    window.views.cookie_manager._update();
+  };
+  
+  this._handle_changed_cookies = function(status, message)
+  {
+    console.log("_handle_changed_cookies");
     window.views.cookie_manager._update();
   };
   
