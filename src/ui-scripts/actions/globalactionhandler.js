@@ -137,14 +137,16 @@
     return false;
   };
 
-  this._handlers["navigate-next-top-tab"]=function(action_id, event, target){
+  this._handlers["navigate-next-top-tab"]=function(action_id, event, target)
+  {
     window.topCell.tab.navigateToNextOrPreviousTab(false);
-    event.preventDefault();
+    return false;
   }
 
-  this._handlers["navigate-previous-top-tab"]=function(action_id, event, target){
+  this._handlers["navigate-previous-top-tab"]=function(action_id, event, target)
+  {
     window.topCell.tab.navigateToNextOrPreviousTab(true);
-    event.preventDefault();
+    return false;
   }
 
   /* implementation */
