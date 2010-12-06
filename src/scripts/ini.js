@@ -5,7 +5,7 @@
   max_frames: 100,
   debug: false,
   dragonfly_version: '$dfversion$',
-  revision_number: '$revdate$', 
+  revision_number: '$revdate$',
   mercurial_revision: "",
   browser: window.opera ? 'opera' : window.chrome ? 'chrome' : 'firefox',
   default_shortcuts_os:
@@ -21,7 +21,9 @@
           "f8": "continue-run",
           "f10": "continue-step-next-line",
           "f11": "continue-step-into-call",
-          "shift f11": "continue-step-out-of-call"
+          "shift f11": "continue-step-out-of-call",
+          "ctrl tab": "navigate-next-top-tab",
+          "ctrl shift tab": "navigate-previous-top-tab"
         },
         "edit":
         {
@@ -33,6 +35,8 @@
           "f3": "highlight-next-match",
           "shift enter": "highlight-previous-match",
           "shift f3": "highlight-previous-match",
+          "ctrl tab": "navigate-next-top-tab",
+          "ctrl shift tab": "navigate-previous-top-tab"
         }
       },
       "dom":
