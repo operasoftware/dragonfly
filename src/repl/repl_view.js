@@ -34,6 +34,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this.ondestroy = function()
   {
+    this._linelist = null;
     this._lastupdate = 0;
     this._backlog_index = -1;
     this._current_input = this._textarea.value;
@@ -73,8 +74,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this.createView = function(container)
   {
-    var first_update = !this._lastupdate;
-
+    var first_update = !this._linelist;
     // on first update, render view skeleton stuff
     if (first_update)
     {
