@@ -137,15 +137,15 @@
     return false;
   };
 
-  this._handlers["navigate-next-top-tab"]=function(action_id, event, target)
+  this._handlers["navigate-next-top-tab"] = function(action_id, event, target)
   {
-    window.topCell.tab.navigateToNextOrPreviousTab(false);
+    window.topCell.tab.navigate_to_next_or_previous_tab(false);
     return false;
   }
 
-  this._handlers["navigate-previous-top-tab"]=function(action_id, event, target)
+  this._handlers["navigate-previous-top-tab"] = function(action_id, event, target)
   {
-    window.topCell.tab.navigateToNextOrPreviousTab(true);
+    window.topCell.tab.navigate_to_next_or_previous_tab(true);
     return false;
   }
 

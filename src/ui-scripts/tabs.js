@@ -196,15 +196,18 @@ var TabsBase = function()
 
   }
 
-  this.navigateToNextOrPreviousTab = function(backwards)
+  this.navigate_to_next_or_previous_tab = function(backwards)
   {
-    var step=backwards?-1:1;
-    for(var i=0,tab,activate;tab=this.tabs[i];i++)
+    var step = backwards ? -1 : 1;
+    for(var i=0, tab, activate; tab=this.tabs[i]; i++)
     {
-      if(tab.ref_id==this.activeTab)
+      if(tab.ref_id == this.activeTab)
       {
-          activate=i+step;
-          if(activate>=this.tabs.length||activate<0)activate=backwards?this.tabs.length-1:0;
+          activate = i + step;
+          if(activate >= this.tabs.length || activate < 0)
+          {
+            activate = backwards ? this.tabs.length-1 : 0;
+          }
           break;
       }
     }
