@@ -345,7 +345,7 @@ def test():
         content = [HTML_HEAD % (("../" * len(e.repo)) + STYLESHEET_NAME)]
         urls = []
         for u in e.urls:
-            u = u.replace('./', '../')
+            u = u.replace('./', '../' * len(e.repo))
             urls.append(HTML_URL % (u, u))
         raw_items = [item2html(item) for item in e.desc if item]
         string = ""
