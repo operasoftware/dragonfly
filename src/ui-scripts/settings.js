@@ -40,10 +40,6 @@ var SettingsBase = function()
           force_reflow = true;
         }
       }
-      if( force_reflow )
-      {
-        _switch.innerHTML += "";
-      }
     }
   }
 
