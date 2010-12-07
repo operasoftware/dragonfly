@@ -1446,5 +1446,9 @@ cst-group
   border-left: 1px solid hsl(0, 0%, 80%);
 }
 
-
+/* TODO: this is just a temp workaround. */
+#waiting-for-connection {
+    position: relative;
+    z-index: 2;
+}
 

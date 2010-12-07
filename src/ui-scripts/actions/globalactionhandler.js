@@ -8,7 +8,7 @@
 
   /**
     * To handle a single action.
-    * Returning false (as in === false) will cancel the event 
+    * Returning false (as in === false) will cancel the event
     * (preventDefault and stopPropagation),
     * true will pass it to the next level if any.
     * @param {String} action_id
@@ -34,19 +34,19 @@
 
   /**
     * Gets called if an action handler is the current context.
-    * Returning false (as in === false) will cancel the event 
+    * Returning false (as in === false) will cancel the event
     * (preventDefault and stopPropagation),
     * true will pass it to the next level if any.
     */
   this.onclick = function(event){};
 
   /**
-    * To register a shortcut listener with a unique id token 
-    * on a global input element. Global as not being part of a view pane, e.g. 
+    * To register a shortcut listener with a unique id token
+    * on a global input element. Global as not being part of a view pane, e.g.
     * an input in a toolbar.
     * @param {String} listener_id. A unique token.
     * @param {Function} callback
-    * @param {Array} action_list. A list of action supported by 
+    * @param {Array} action_list. A list of action supported by
     * that listener, optional.
     */
   this.register_shortcut_listener = function(listener_id, callback, action_list){};
@@ -73,7 +73,7 @@
   this._listener_handlers = [];
 
   this._sc_listeners = {};
-  
+
   this.get_action_list = function()
   {
     var actions = [], key = '';
@@ -82,17 +82,44 @@
     return actions.concat(this._listener_handlers);
   };
 
+  this._clear_stopped_views = function()
+  {
+    window.views.js_source.clearLinePointer();
+    window.views.callstack.clearView();
+    window.views.inspection.clearView();
+  }
+
   this._handlers['continue-run'] =
+  function(action_id, event, target)
+  {
+    this._clear_stopped_views();
+    window.stop_at.__continue('run');
+    return false;
+  }.bind(this);
+
   this._handlers['continue-step-next-line'] =
+  function(action_id, event, target)
+  {
+    this._clear_stopped_views();
+    window.stop_at.__continue('step-next-line');
+    return false;
+  }.bind(this);
+
   this._handlers['continue-step-out-of-call'] =
+  function(action_id, event, target)
+  {
+    this._clear_stopped_views();
+    window.stop_at.__continue('step-out-of-call');
+    return false;
+  }.bind(this);
+
   this._handlers['continue-step-into-call'] =
   function(action_id, event, target)
   {
-    var button = document.getElementById(action_id);
-    if (button && !button.disabled)
-      button.click();
+    this._clear_stopped_views();
+    window.stop_at.__continue('step-into-call');
     return false;
-  };
+  }.bind(this);
 
   this._handlers["select-all"] = function(action_id, event, target)
   {
@@ -109,6 +136,18 @@
     window.hostspotlighter.invertColors();
     return false;
   };
+
+  this._handlers["navigate-next-top-tab"] = function(action_id, event, target)
+  {
+    window.topCell.tab.navigate_to_next_or_previous_tab(false);
+    return false;
+  }
+
+  this._handlers["navigate-previous-top-tab"] = function(action_id, event, target)
+  {
+    window.topCell.tab.navigate_to_next_or_previous_tab(true);
+    return false;
+  }
 
   /* implementation */
 

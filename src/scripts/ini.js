@@ -5,12 +5,12 @@
   max_frames: 100,
   debug: false,
   dragonfly_version: '$dfversion$',
-  revision_number: '$revdate$', 
+  revision_number: '$revdate$',
   mercurial_revision: "",
   browser: window.opera ? 'opera' : window.chrome ? 'chrome' : 'firefox',
-  default_shortcuts:
+  default_shortcuts_os:
   {
-    windows:
+    generic:
     {
       "global":
       {
@@ -21,7 +21,9 @@
           "f8": "continue-run",
           "f10": "continue-step-next-line",
           "f11": "continue-step-into-call",
-          "shift f11": "continue-step-out-of-call"
+          "shift f11": "continue-step-out-of-call",
+          "ctrl tab": "navigate-next-top-tab",
+          "ctrl shift tab": "navigate-previous-top-tab"
         },
         "edit":
         {
@@ -33,6 +35,8 @@
           "f3": "highlight-next-match",
           "shift enter": "highlight-previous-match",
           "shift f3": "highlight-previous-match",
+          "ctrl tab": "navigate-next-top-tab",
+          "ctrl shift tab": "navigate-previous-top-tab"
         }
       },
       "dom":
@@ -74,8 +78,8 @@
         },
         "edit":
         {
-          "up": "autocomplete-previous",
-          "down": "autocomplete-next",
+          "up": "autocomplete-next",
+          "down": "autocomplete-previous",
           "shift tab": "edit-previous",
           "tab": "edit-next",
           "enter": "submit-edit-and-new-edit",
@@ -97,9 +101,11 @@
           "shift enter": "enter-multiline-mode",
           "ctrl l": "clear",
           "ctrl k": "kill-to-end-of-line",
+          "ctrl u": "kill-to-beginning-of-line",
           "ctrl e": "move-to-end-of-line",
           "ctrl a": "move-to-beginning-of-line",
-          "ctrl w": "kill-word-backwards"
+          "ctrl w": "kill-word-backwards",
+          "ctrl y": "yank"
         },
         "multi-line-edit":
         {
@@ -119,12 +125,12 @@
           ".": "commit-and-insert",
           "(": "commit-and-insert",
           ")": "commit-and-insert",
-          "escape": "cancel",
+          "escape": "cancel-completion",
+          "ctrl l": "cancel-input",
         },
       },
     },
-  },
-  mac:
+    mac:
     {
       "global":
       {
@@ -315,5 +321,7 @@
       null
     ]
   }
-}
-
+};
+window.ini.default_shortcuts = navigator.platform.toLowerCase().indexOf('mac') == -1 ?
+                               ini.default_shortcuts_os.generic :
+                               ini.default_shortcuts_os.mac;

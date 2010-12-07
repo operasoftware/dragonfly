@@ -40,9 +40,32 @@ cls.CSSInspectorActions = function(id)
       {
         self.__target.removeClass('selected');
       }
+      if (!self.__active_container.contains(new_target))
+      {
+        // this is just a quick fix to make the keyboard navigation
+        // work somewhat after a view update.
+        // all keyboard navigation must be re-implemented 
+        // in a much more generic way
+        var 
+        rule_id = new_target.getElementsByTagName('input')[0],
+        inputs = self.__active_container.getElementsByTagName('input'),
+        input = null,
+        i = 0,
+        attr_val = '';
+
+        if (rule_id = rule_id && rule_id.getAttribute("data-rule-id"))
+        {
+          for (; input = inputs[i]; i++)
+          {
+             attr_val = input.getAttribute("data-rule-id");
+             if (attr_val && attr_val == rule_id)
+              break;
+          }
+        }
+        if (input)
+          new_target = input.parentNode;
+      }
       (self.__target = new_target).addClass('selected');
-      // TODO setting the navigation must be done more carefully and more generic
-      //self.__target.scrollSoftIntoView();
     }
   };
 
@@ -482,7 +505,7 @@ cls.CSSInspectorActions = function(id)
     if (!this.editor.escape())
     {
       var cur_target = this.__target;
-      this.moveFocusUp();
+      this._handlers['nav-up']();
       cur_target.parentElement.removeChild(cur_target);
     }
     this.mode = MODE_DEFAULT;

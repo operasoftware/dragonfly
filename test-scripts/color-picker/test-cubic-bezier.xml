@@ -1,0 +1,153 @@
+<html xmlns='http://www.w3.org/1999/xhtml'
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      xmlns:svg="http://www.w3.org/2000/svg">
+<link rel="stylesheet" href="colorpickerstyle.css"/>
+<style><![CDATA[
+svg
+{
+  display: block;
+}
+
+.test
+{
+  text-align: center;
+  margin-top: 10px;
+}
+
+.svg-container
+{
+  width: 300px;
+  height: 300px;
+  margin: auto;
+}
+
+[type="number"]
+{
+  width: 4em;
+}
+
+.cubic-bezier-base
+{
+
+}
+
+.test-anim
+{
+  position: relative;
+  width: 500px;
+  margin: auto;
+  height: 20px;
+  margin-top: 20px;
+  background-color: hsl(230, 70%, 70%);
+  border: 1px solid hsl(0, 0%, 30%);
+  cursor: pointer;
+}
+.showbox
+{
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  left: -1px;
+  top: -1px;
+  background-color: hsl(25, 90%, 50%);
+  border: 1px solid hsl(0, 0%, 30%);
+  -o-transition-duration: 1s;
+  -o-transition-timing-function: ease-out;
+}
+.test-anim:hover .showbox
+{
+  -o-transform: translate(480px, 0)
+}
+]]></style>
+<script src="../../src/scripts/dom.js"/>
+<script src="../../src/ui-scripts/colorpickertemplates.js"/>
+<script src="../../src/ui-scripts/cubicbezier.js"/>
+<script><![CDATA[
+ 
+ 
+ 
+]]></script>
+<script><![CDATA[
+var SLIDER_BASE_CLASS = 'cubic-bezier-base', SLIDER_CLASS = 'color-picker-slider';
+ 
+var test_2_d_slider = function()
+{
+  var test =
+  ['div',
+    ['div', 'class', 'svg-container'],
+    ['p',
+      ['label', 'p1x: ', 
+        ['input', 
+          'type', 'number',
+          'step', '0.01',
+          //'oninput', function(){slider.x = parseFloat(this.value)}
+        ]
+      ],
+      ['label', 'p1y: ', 
+        ['input', 
+          'type', 'number',
+          'step', '0.01',
+          //'oninput', function(){slider.y = parseFloat(this.value)}
+        ]
+      ],
+      ['label', 'p2x: ', 
+        ['input', 
+          'type', 'number',
+          'step', '0.01',
+          //'oninput', function(){slider.x = parseFloat(this.value)}
+        ]
+      ],
+      ['label', 'p2y: ', 
+        ['input', 
+          'type', 'number',
+          'step', '0.01',
+          //'oninput', function(){slider.y = parseFloat(this.value)}
+        ]
+      ],
+    ],
+    ['div', ['div',  'class', 'showbox'], 'class', 'test-anim'],
+    ['pre'],
+    'class', 'test',
+  ];
+
+  var container = document.documentElement.render(test);
+
+  var slider_config =
+  {
+    container: container.firstElementChild,
+    base_class: SLIDER_BASE_CLASS,
+    slider_class: 'color-picker-pointer',
+    slider_template: window.templates.svg_slider_circle(),
+    onxy: function(p1x, p1y, p2x, p2y)
+    {
+      container.getElementsByTagName('input')[0].value =  p1x.toFixed(2);
+      container.getElementsByTagName('input')[1].value =  p1y.toFixed(2);
+      container.getElementsByTagName('input')[2].value =  p2x.toFixed(2);
+      container.getElementsByTagName('input')[3].value =  p2y.toFixed(2);
+      var style = '-o-transition-timing-function: cubic-bezier(' + 
+                  p1x.toFixed(3) + ', ' + 
+                  p1y.toFixed(3) + ', ' + 
+                  p2x.toFixed(3) + ', ' + 
+                  p2y.toFixed(3) + ');';
+      container.getElementsByTagName('pre')[0].textContent = style;
+      document.getElementsByClassName('showbox')[0].setAttribute('style', style);
+    },
+    min_x: 1,
+    max_x: 0,
+    min_y: 1,
+    max_y: 0
+  }
+  var slider = new CubicBezierControl(slider_config);
+}
+ 
+ 
+ 
+ 
+window.onload = function()
+{
+  test_2_d_slider();
+};
+ 
+
+]]></script>
+</html>

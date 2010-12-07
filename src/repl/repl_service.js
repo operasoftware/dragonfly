@@ -8,7 +8,24 @@
 
   this._count_map = {};
 
+  this._msg_queue = [];
+  this._is_processing = false;
+
   this._on_consolelog_bound = function(msg)
+  {
+    if (this._is_processing) { this._msg_queue.push(msg); }
+    else { this._process_on_consolelog(msg); }
+  }.bind(this);
+
+  this._process_msg_queue = function()
+  {
+    while (!this._is_processing && this._msg_queue.length)
+    {
+      this._process_on_consolelog(this._msg_queue.shift());
+    }
+  }
+
+  this._process_on_consolelog = function(msg)
   {
     const RUNTIME = 0, TYPE = 1;
     var rt_id = msg[RUNTIME];
@@ -59,7 +76,7 @@
         this._handle_count(msg);
         break;
     }
-  }.bind(this);
+  };
 
   this._on_consoletime_bound = function(msg)
   {
@@ -109,10 +126,16 @@
     {
       var values = this._parse_value_list(msg[VALUELIST], rt_id);
       this._data.add_output_valuelist(rt_id, values);
+      if (is_unpacked && this._is_processing)
+      {
+        this._is_processing = false;
+        this._process_msg_queue();
+      }
     }
     else
     {
       var fallback = this._handle_log.bind(this, msg, rt_id, true);
+      this._is_processing = true;
       this._unpack_list_alikes(msg, rt_id, fallback);
     }
   };
@@ -239,8 +262,12 @@
           if (prop[PROPERTY_TYPE] == 'object')
             list.push([null, prop[OBJECT_VALUE], parseInt(prop[NAME])]);
           else
+          {
+            if (prop[PROPERTY_TYPE] == "string")
+              prop[PROPERTY_VALUE] = "\"" + prop[PROPERTY_VALUE] + "\"";
             list.push([prop[PROPERTY_VALUE] || prop[PROPERTY_TYPE],
                       null, parseInt(prop[NAME])]);
+          }
         }
         return list;
       }, []);
@@ -335,8 +362,9 @@
   this._on_eval_done_bound = function(status, msg, rt_id, thread_id, frame_id)
   {
     const STATUS = 0, TYPE = 1, OBJECT_VALUE = 3;
+    const BAD_REQUEST = 3, INTERNAL_ERROR = 4;
 
-    if (status == 4)
+    if (status == BAD_REQUEST || status == INTERNAL_ERROR)
     {
       this._handle_raw(msg[0]);
     }
@@ -367,8 +395,16 @@
 
   this._on_element_selected_bound = function(msg)
   {
-    this._prev_selected = this._cur_selected;
-    this._cur_selected = msg.obj_id;
+    if (msg.obj_id == 0)
+    {
+      this._prev_selected = null;
+      this._cur_selected = null;
+    }
+    else
+    {
+      this._prev_selected = this._cur_selected;
+      this._cur_selected = msg.obj_id;
+    }
   }.bind(this);
 
   this._handle_exception = function(msg, rt_id)
@@ -456,6 +492,14 @@
 
   };
 
+  this.get_selected_objects = function()
+  {
+    var selection = [];
+    if (this._cur_selected) { selection.push(this._cur_selected) }
+    if (this._prev_selected) { selection.push(this._prev_selected) }
+    return selection;
+  };
+
   this._handle_clientcommand = function(command)
   {
     command.call(this._transformer, this._view, this._data, this);
@@ -516,6 +560,7 @@
     this._service.addListener("consoleprofileend", this._on_consoleprofileend_bound);
     this._service.addListener("consoletrace", this._on_consoletrace_bound);
     window.messages.addListener("element-selected", this._on_element_selected_bound);
+
     this._get_host_info();
   };
 

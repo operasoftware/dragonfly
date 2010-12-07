@@ -52,6 +52,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
   // spotlight on hover on the host side
   this._reset_spotlight_timeouts = new Timeouts();
   this._is_waiting = false;
+  this._editor_active = false;
 
   this._spotlight = function(event)
   {
@@ -84,23 +85,34 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
 
   this._on_show_view = function(msg)
   {
-    if (msg.id == this._view_id && this._active_window.length)
+    if (msg.id == this._view_id)
     {
-      // in the case there is no runtime selected
-      // set the top window to the active runtime
-      if (!this._data_runtime_id)
-        this._data_runtime_id = this._active_window[0];
-      for (var key in this._settings)
+      if (this._active_window.length)
       {
-        if (window.settings[this._settings_id].get(key))
-          this._handle_setting(key);
+        // in the case there is no runtime selected
+        // set the top window to the active runtime
+        if (!this._data_runtime_id)
+          this._data_runtime_id = this._active_window[0];
+        for (var key in this._settings)
+        {
+          if (window.settings[this._settings_id].get(key))
+            this._handle_setting(key);
+        }
+        if (!(this._is_waiting || this._data.length))
+        {
+          if(this._is_element_selected_checked)
+            this._get_initial_view(this._data_runtime_id);
+          else
+            this._get_selected_element(this._data_runtime_id);
+        }
       }
-      if (!(this._is_waiting || this._data.length))
+      else
       {
-        if(this._is_element_selected_checked)
-          this._get_initial_view(this._data_runtime_id);
-        else
-          this._get_selected_element(this._data_runtime_id);
+        // caller is also _on_active_tab.
+        // if the runtime list is empty, the view must be updated too
+        // and the element selection must be cleared
+        window.views.dom.update();
+        window.messages.post("element-selected", {obj_id: 0, rt_id: 0, model: null});
       }
     }
   }
@@ -244,6 +256,11 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
     window['cst-selects']['document-select'].updateElement();
   }
 
+  this._on_dom_editor_active = function(message)
+  {
+    this._editor_active = message.editor_active;
+  };
+
   this._click_handler_host = function(event)
   {
     var rt_id = event.runtime_id
@@ -267,8 +284,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
     // if the node is in the current data handle it otherwise not.
     var rt_id = event.runtime_id, obj_id = event.object_id;
     var node = null, i = 0, j = 0, level = 0, k = 0, view_id = '';
-    if ( !(actions[this._view_id].editor && actions[this._view_id].editor.is_active) &&
-          this._data_runtime_id == rt_id)
+    if (this._data_runtime_id == rt_id)
     {
       for ( ; (node = this._data[i]) && obj_id != node[ID]; i++);
       if (node && node[TYPE] == 1) // don't update the dom if it's only a text node
@@ -278,7 +294,10 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
         while (this._data[j] && this._data[j][DEPTH] > level)
           j++;
         this._data.splice(i, j - i);
-        window.views[this._view_id].update();
+        if (!this._editor_active)
+        {
+          window.views[this._view_id].update();
+        }
       }
     }
   }
@@ -362,7 +381,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
   /* implementation */
 
   
-  this.get_dom = function(rt_id, obj_id, do_highlight, scroll_into_view)
+  this.get_dom = (function(rt_id, obj_id, do_highlight, scroll_into_view)
   {
     if (obj_id)
       this._get_dom_sub(rt_id, obj_id, do_highlight, scroll_into_view);
@@ -370,7 +389,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
           runtime_onload_handler.check(rt_id, arguments))
       this._get_initial_view(rt_id);
     this._is_waiting = true;
-  }
+  }).bind(this);
 
   this.get_snapshot = function()
   {
@@ -400,6 +419,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
   this._reset_spotlight_bound = this._reset_spotlight.bind(this);
   this._set_reset_spotlight_bound = this._set_reset_spotlight.bind(this);
   this._on_top_runtime_update_bound = this._on_top_runtime_update.bind(this);
+  this._on_dom_editor_active_bound = this._on_dom_editor_active.bind(this);
 
   this._init(0, 0);
 
@@ -411,7 +431,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
   messages.addListener('runtime-destroyed', this._on_runtime_stopped_bound);
   messages.addListener('reset-state', this._on_reset_state_bound);
   messages.addListener('top-runtime-updated', this._on_top_runtime_update_bound);
-
+  messages.addListener('dom-editor-active', this._on_dom_editor_active_bound);
 };
 
 cls.EcmascriptDebugger["5.0"].DOMData.prototype = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype;

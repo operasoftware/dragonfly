@@ -10,38 +10,22 @@ cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
 cls.EcmascriptDebugger["6.0"].DOMAttrsView = function(id, name, container_class)
 {
   this._data = null;
+
   this._on_element_selected = function(msg)
   {
-    this._data = new cls.InspectableJSObject(msg.rt_id, msg.obj_id);
+    this._data = msg.rt_id &&  msg.obj_id && 
+                 new cls.InspectableJSObject(msg.rt_id, msg.obj_id) || null;
     this.update();
   };
+
   window.messages.addListener('element-selected', this._on_element_selected.bind(this));
+  window.messages.addListener('setting-changed', this._on_setting_change.bind(this));
   this.init(id, name, container_class);
+
 }
 
 cls.EcmascriptDebugger["6.0"].DOMAttrsView.create_ui_widgets = function()
 {
-
-  new Settings
-  (
-    // id
-    'dom_attrs', 
-    // key-value map
-    {
-      "hide-null-values": true
-    }, 
-    // key-label map
-    {
-      "hide-null-values": ui_strings.S_SWITCH_HIDE_EMPTY_STRINGS
-    },
-    // settings map
-    {
-      checkboxes:
-      [
-        "hide-null-values"
-      ]
-    }
-  );
 
   new ToolbarConfig
   (
@@ -60,7 +44,9 @@ cls.EcmascriptDebugger["6.0"].DOMAttrsView.create_ui_widgets = function()
   (
     'dom_attrs',
     [
-      "hide-null-values"
+      'inspection.show-prototypes',
+      'inspection.show-non-enumerables',
+      'inspection.show-default-nulls-and-empty-strings',
     ]
   );
 

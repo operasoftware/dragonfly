@@ -33,10 +33,19 @@ cls.DOMInspectorActions = function(id)
 
   var broker = ActionBroker.get_instance();
 
-  this.mode = MODE_DEFAULT;
   this.serializer = new cls.DOMSerializer();
 
   this._handlers = {};
+  this._mode = MODE_DEFAULT;
+  this.__defineSetter__("mode", function(mode)
+  {
+    this._mode = mode;
+    messages.post("dom-editor-active", {"editor_active": mode != MODE_DEFAULT});
+  });
+  this.__defineGetter__("mode", function()
+  {
+    return this._mode;
+  });
 
   // traversal 'subtree' or 'children'
   this._expand_collapse_node = function(event, target, traversal)

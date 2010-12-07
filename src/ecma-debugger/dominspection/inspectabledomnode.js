@@ -34,14 +34,16 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
 
   this._set_mime = function()
   {
-    for (var node = null, i = 0; node = this._data[i]; i++)
-    {
-      if (node[TYPE] == 1 )
+    if (this._data)
+      for (var node = null, i = 0; node = this._data[i]; i++)
       {
-        // TODO take in account doctype if present
-        return /^[A-Z]*$/.test(node[NAME]) && "text/html" || "application/xml";
+        if (node[TYPE] == 1 )
+        {
+          // TODO take in account doctype if present
+          return /^[A-Z]*$/.test(node[NAME]) && "text/html" || "application/xml";
+        }
       }
-    }
+    return "";
   };
 
   this.get_mime = function()
