@@ -169,6 +169,7 @@ var ActionBroker = function()
       this._key_identifier.set_shortcuts(this._get_shortcut_keys());
       this._set_current_handler(this._global_handler);
       document.addEventListener('click', this._set_action_context_bound, true);
+      document.addEventListener('focus', this._set_action_context_bound, true);
       window.messages.post('shortcuts-changed');
     }.bind(this));
   };
@@ -193,9 +194,12 @@ var ActionBroker = function()
     var action = shortcuts && shortcuts[key_id] || '';
     var propagate_event = true;
     if (action)
+    {
       propagate_event = this._action_context.handle(action,
                                                     event,
                                                     this._container);
+    }
+
     if (!(propagate_event === false) &&
          this._action_context != this._global_handler)
     {
@@ -206,6 +210,7 @@ var ActionBroker = function()
                                                       event,
                                                       this._container);
     }
+
     if (propagate_event === false)
     {
       event.stopPropagation();
