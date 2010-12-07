@@ -16,7 +16,7 @@ var SettingsBase = function()
    * Update the view according to the new value of the setting key.
    * @private
    */
-  var syncView = function(key, value)
+  this._sync_view = function(key, value)
   {
     var 
     switches = document.getElementsByTagName('toolbar-switches'),
@@ -55,7 +55,7 @@ var SettingsBase = function()
     window.localStorage.setItem(key, JSON.stringify(this.map[key] = value))
     if( sync_switches && typeof value == 'boolean' )
     {
-      syncView(key, value);
+      this._sync_view(key, value);
     }
   }
 
