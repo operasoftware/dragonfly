@@ -110,6 +110,10 @@
           "shift enter": "exit-multiline-mode",
           "ctrl enter": "eval",
           "tab": "insert-tab-at-point",
+          "ctrl k": "kill-to-end-of-line",
+          "ctrl u": "kill-to-beginning-of-line",
+          "ctrl w": "kill-word-backwards",
+          "ctrl y": "yank"
         },
         "autocomplete":
         {
@@ -125,6 +129,10 @@
           ")": "commit-and-insert",
           "escape": "cancel-completion",
           "ctrl l": "cancel-input",
+          "ctrl k": "kill-to-end-of-line",
+          "ctrl u": "kill-to-beginning-of-line",
+          "ctrl w": "kill-word-backwards",
+          "ctrl y": "yank"
         },
       },
     },
@@ -228,6 +236,10 @@
          "shift enter": "exit-multiline-mode",
          "cmd enter": "eval",
          "tab": "insert-tab-at-point",
+         // "ctrl k": "kill-to-end-of-line",
+         // "ctrl u": "kill-to-beginning-of-line",
+         // "ctrl w": "kill-word-backwards",
+         // "ctrl y": "yank"
         },
         "autocomplete":
         {
@@ -243,6 +255,10 @@
          ")": "commit-and-insert",
          "escape": "cancel-completion",
          // "ctrl l": "cancel-input",
+         // "ctrl k": "kill-to-end-of-line",
+         // "ctrl u": "kill-to-beginning-of-line",
+         // "ctrl w": "kill-word-backwards",
+         // "ctrl y": "yank"
         },
       },
     },
