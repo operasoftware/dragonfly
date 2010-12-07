@@ -64,7 +64,7 @@ var ContextMenu = function() {
     // This traverses up the tree and collects all menus it finds, and
     // concatenates them with a separator between each menu. It stops if it
     // finds a data-menu attribute with a blank value.
-    while (ele != document && (menu_id = ele.getAttribute("data-menu")) !== "")
+    while (ele && ele != document && (menu_id = ele.getAttribute("data-menu")) !== "")
     {
       // This is not super nice, and preferably shouldn't be done inside
       // ContextMenu.
