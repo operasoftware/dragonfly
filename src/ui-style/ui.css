@@ -1510,59 +1510,6 @@ tabs, toolbar {
   top: -1000px;
 }
 
-#contextmenu {
-  position: fixed;
-  z-index: 10;
-  display: none;
-  padding: 0px;
-  min-width: 100px;
-  display: inline-block;
-  visibility: hidden;
-  list-style-type: none;
-  margin: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  border: 1px solid #666;
-  background-color: rgba(255,255,255,0.85);
-  border-radius: 2px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.5);
-}
-#contextmenu li {
-  padding: 2px 20px 2px 0;
-}
-#contextmenu li.separator {
-  padding: 0;
-}
-#contextmenu li.disabled {
-  color: #888;
-  text-shadow: 1px solid #eee;
-}
-#contextmenu .checkbox {
-  display: inline-block;
-  vertical-align: middle;
-  width: 12px;
-  margin: 0 4px;
-  overflow: hidden;
-}
-#contextmenu li:not(.separator):not(.disabled):hover {
-  background-color: #bbcef1;
-  color: #000;
-  -o-transition: background-color 0.2s;
-}
-
-#contextmenu li:not(.separator):not(.disabled):active {
-  background-color: #598bec;
-  color: #fff;
-}
-
-#contextmenu hr {
-  margin: 0;
-  padding: 0;
-  height: 1px;
-  border: none;
-  background-color: #ccc;
-}
-
 /* TODO: this is just a temp workaround. */
 #waiting-for-connection {
     position: relative;
