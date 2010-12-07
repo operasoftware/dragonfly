@@ -1,5 +1,5 @@
 ﻿/**
-  * @constructor 
+  * @constructor
   * @extends UIBase
   */
 
@@ -15,15 +15,15 @@ var TabsBase = function()
   this.left = 0;
   this.is_dirty = true;
   this.cell_id = '';
-  
+
 
   this.depth = 2;
-  
+
   this.tabs = [];
   this.activeTab = '';
 
   this._history = [];
-    
+
   this.hasTab = function(ref_id)
   {
     var i = 0, tab = null;
@@ -39,7 +39,7 @@ var TabsBase = function()
 
   this.addTab = function()
   {
-    
+
     var i = 0, tab = null;
     for( ; tab = arguments[i]; i++)
     {
@@ -68,12 +68,12 @@ var TabsBase = function()
         }
         else
         {
-          opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+          opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
             'tabs, removeTab. there should be a tab for that index');
         }
       }
     }
-    
+
     if(this.activeTab == ref_id)
     {
       while(this._history[this._history.length - 1] == ref_id)
@@ -136,7 +136,7 @@ var TabsBase = function()
           }
         }
         this.activeTab = view_id;
-        
+
         if( views[view_id] )
         {
           views[view_id].addContainerId(container_id);
@@ -146,7 +146,7 @@ var TabsBase = function()
           }
         }
       }
-      
+
       var container = document.getElementById(this.type + '-to-' + this.cell.id) || this.render();
       if(container)
       {
@@ -175,7 +175,7 @@ var TabsBase = function()
       this._history[this._history.length] = this.activeTab;
       if( this._history.length > HISTORY_MAX_LENGTH )
       {
-        this._history.splice(0, this._history.length - HISTORY_MAX_LENGTH); 
+        this._history.splice(0, this._history.length - HISTORY_MAX_LENGTH);
       }
 
       messages.post("show-view", {id: view_id});
@@ -189,8 +189,26 @@ var TabsBase = function()
         global_state.ui_framework.last_selected_tab = view_id;
       }
     }
-    
+
   }
+
+  this.navigate_to_next_or_previous_tab = function(backwards)
+  {
+    var step = backwards ? -1 : 1;
+    for (var i = 0, tab, activate; tab = this.tabs[i]; i++)
+    {
+      if (tab.ref_id == this.activeTab)
+      {
+          activate = i + step;
+          if (activate >= this.tabs.length || activate < 0)
+          {
+            activate = backwards ? this.tabs.length-1 : 0;
+          }
+          break;
+      }
+    }
+    this.setActiveTab(this.tabs[activate].ref_id);
+  };
 
   this.trySetAnActiveTab = function()
   {
@@ -241,7 +259,7 @@ var TabsBase = function()
     }
 
     this.update(force_redraw);
-    
+
   }
 
   this.on_view_inizialized = function(msg)
@@ -277,7 +295,7 @@ var TabsBase = function()
 }
 
 /**
-  * @constructor 
+  * @constructor
   * @extends TabsBase
   */
 

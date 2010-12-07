@@ -1,11 +1,11 @@
-﻿window.ini =
+﻿var ini =
 {
   // all files in http-clients must be updated to the cvs version of this file //
   protocol_version: '5',
   max_frames: 100,
   debug: false,
   dragonfly_version: '$dfversion$',
-  revision_number: '$revdate$', 
+  revision_number: '$revdate$',
   mercurial_revision: "",
   browser: window.opera ? 'opera' : window.chrome ? 'chrome' : 'firefox',
   default_shortcuts_os:
@@ -22,7 +22,9 @@
           "f10": "continue-step-next-line",
           "f11": "continue-step-into-call",
           "shift f11": "continue-step-out-of-call",
-          "escape": "toggle-command-line"
+          "escape": "toggle-command-line",
+          "ctrl tab": "navigate-next-top-tab",
+          "ctrl shift tab": "navigate-previous-top-tab"
         },
         "edit":
         {
@@ -34,7 +36,9 @@
           "f3": "highlight-next-match",
           "shift enter": "highlight-previous-match",
           "shift f3": "highlight-previous-match",
-          "escape": "toggle-command-line"
+          "escape": "toggle-command-line",
+          "ctrl tab": "navigate-next-top-tab",
+          "ctrl shift tab": "navigate-previous-top-tab"
         }
       },
       "dom":

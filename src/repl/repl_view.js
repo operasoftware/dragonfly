@@ -36,8 +36,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this.ondestroy = function()
   {
+    this._linelist = null;
     this._lastupdate = 0;
     this._backlog_index = -1;
+    this._current_input = this._textarea.value;
     this._container.removeEventListener("scroll", this._save_scroll_bound, false);
   };
 
@@ -74,8 +76,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this.createView = function(container)
   {
-    var first_update = !this._lastupdate;
-
+    var first_update = !this._linelist;
     // on first update, render view skeleton stuff
     if (first_update)
     {
@@ -355,7 +356,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     {
       this._cancel_completion();
     }
-    this._current_input = this._textarea.value;
     this._check_for_multiline();
     this._update_input_height_bound();
   }.bind(this);
@@ -375,7 +375,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._handle_backlog = function(delta)
   {
-    this._set_input_from_backlog(this._backlog_index + delta);
+    var new_index = this._backlog_index + delta;
+    if (delta == 1 && new_index == 0) { // started navigating back from current input
+      this._current_input = this._textarea.value;
+    }
+    this._set_input_from_backlog(new_index);
   };
 
   this._set_input_from_backlog = function(index)
@@ -394,7 +398,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     if (entry != undefined)
     {
       this._textarea.value = entry;
-      this._current_input = this._textarea.value;
     }
   };
 
@@ -416,7 +419,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       var post = this._textarea.value.slice(this._textarea.selectionStart);
       var line = this._construct_line(pre, prop, post);
       this._textarea.value = line;
-      this._current_input = this._textarea.value;
       this._textarea_handler.put_cursor(line.length - post.length);
     }
   };
@@ -770,7 +772,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     var input = this._textarea.value;
     input = input.trim();
     this._textarea.value = "";
-    this._current_input = this._textarea.value;
+    this._current_input = "";
     this._backlog_index = -1;
     this._resolver.clear_cache(); // evaling js voids the cache.
     this._service.handle_input(input);

@@ -226,9 +226,12 @@ var ActionBroker = function()
     var action = shortcuts && shortcuts[key_id] || '';
     var propagate_event = true;
     if (action)
+    {
       propagate_event = this._action_context.handle(action,
                                                     event,
                                                     this._container);
+    }
+
     if (!(propagate_event === false) &&
          this._action_context != this._global_handler)
     {
@@ -239,6 +242,7 @@ var ActionBroker = function()
                                                       event,
                                                       this._container);
     }
+
     if (propagate_event === false)
     {
       event.stopPropagation();
