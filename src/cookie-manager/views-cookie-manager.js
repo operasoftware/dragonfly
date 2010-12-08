@@ -8,9 +8,9 @@ cls.CookieManagerView = function(id, name, container_class)
   this.createView = function(container)
   {
     this._flattened_cookies = [];
-    for (var domain in this._cookies)
+    for (var id in this._cookies)
     {
-      var domains_cookies = this._cookies[domain];
+      var domains_cookies = this._cookies[id];
       if (domains_cookies.cookie_list)
       {
         for (var i=0; i < domains_cookies.cookie_list.length ;i++)
@@ -65,6 +65,12 @@ cls.CookieManagerView = function(id, name, container_class)
             return str;
           },
         },
+        hostandpath: {
+          label: "Host and path",
+          grouper: function(obj) {
+            return window.views.cookie_manager._rts[obj.runtimes[0]].hostname + window.views.cookie_manager._rts[obj.runtimes[0]].pathname;
+          },
+        },
         domain: {
           label: "Domains",
           grouper: function(obj) {
@@ -92,24 +98,6 @@ cls.CookieManagerView = function(id, name, container_class)
       columns: {
         domain: {
           label: "Domain"
-        },
-        path: {
-          label: "Path",
-          getter: function(obj) {
-            if(!obj.isHTTPOnly)
-            {
-              return ["input", " ",
-                  "value", "/"+obj.path,
-                  "data-objectref", obj.objectref,
-                  "data-editproperty", "path",
-                  "blur-handler", "cookiemanager-edit"
-              ];
-            }
-            else
-            {
-              return "/"+obj.path;
-            }
-          }
         },
         name: {
           label: "Name",
@@ -147,6 +135,12 @@ cls.CookieManagerView = function(id, name, container_class)
             }
           }
         },
+        path: {
+          label: "Path",
+          getter: function(obj) {
+            return "/"+obj.path;
+          }
+        },
         expires: {
           label: "Expires",
           getter: function(obj) {
@@ -163,11 +157,11 @@ cls.CookieManagerView = function(id, name, container_class)
         },
         isSecure: {
           label: "Secure",
-          getter: function(obj) { return ""+obj.isSecure; }
+          getter: function(obj) { return obj.isSecure? "Yes":"No"; }
         },
         isHTTPOnly: {
           label: "HTTP only",
-          getter: function(obj) { return ""+obj.isHTTPOnly; }
+          getter: function(obj) { return obj.isHTTPOnly? "Yes":"No"; }
         },
         remove: {
           label: "",
@@ -193,7 +187,9 @@ cls.CookieManagerView = function(id, name, container_class)
     // or domain
     // obj.group("domain");
     // or hostname
-    obj.group("hostname");
+    // obj.group("hostname");
+    // or host and path of the actual runtime that was asked for
+    obj.group("hostandpath");
     
     table.re_render(obj.render());
     
@@ -243,7 +239,7 @@ cls.CookieManagerView = function(id, name, container_class)
   };
   
   this._request_runtime_details = function(rt_object) {
-    var script = "return JSON.stringify({host: location.host || '', hostname: location.hostname || '', title: document.title || '', href: location.href || ''})";
+    var script = "return JSON.stringify({host: location.host || '', hostname: location.hostname || '', title: document.title || '', href: location.href || '', pathname: location.pathname || ''})";
     var tag = tagManager.set_callback(this, this._handle_get_domain,[rt_object.rt_id]);
     services['ecmascript-debugger'].requestEval(tag,[rt_object.rt_id, 0, 0, script]);
   }
@@ -265,12 +261,14 @@ cls.CookieManagerView = function(id, name, container_class)
     var hostname = data.hostname;
     var title = data.title;
     var href = data.href;
+    var pathname = data.pathname;
 
     this._rts[rt_id].get_domain_is_pending = false;
     this._rts[rt_id].hostname = hostname;
     this._rts[rt_id].host = host;
     this._rts[rt_id].title = title;
     this._rts[rt_id].href = href;
+    this._rts[rt_id].pathname = pathname;
     
     this._check_all_members_of_obj_to_be(this._rts, "get_domain_is_pending", false, this._clean_domains_and_ask_for_cookies);
   }
@@ -284,43 +282,50 @@ cls.CookieManagerView = function(id, name, container_class)
     {
       var runtime = runtime_list[str_rt_id];
       var rt_domain = runtime.hostname;
+      var rt_pathname = runtime.pathname;
+      var rt_pathname_unslashed = rt_pathname; // just for use with getCookie
+      if(rt_pathname.indexOf("/") == 0)
+      {
+        rt_pathname_unslashed = rt_pathname.slice(1,rt_pathname.length); // is this really needed?
+      }
+      
       if(rt_domain) // avoids "" values occuring on opera:* pages for example
       {
-        if(!this._cookies[rt_domain])
+        if(!this._cookies[rt_domain+rt_pathname])
         {
-          this._cookies[rt_domain] = {
+          this._cookies[rt_domain+rt_pathname] = {
             runtimes: [runtime.rt_id]
           }
         }
         else
         {
-          if(this._cookies[rt_domain].runtimes.indexOf(runtime.rt_id) === -1)
+          if(this._cookies[rt_domain+rt_pathname].runtimes.indexOf(runtime.rt_id) === -1)
           {
-            this._cookies[rt_domain].runtimes.push(runtime.rt_id);
+            this._cookies[rt_domain+rt_pathname].runtimes.push(runtime.rt_id);
           }
         }
         
         // avoid repeating cookie requests for domains being in more than one runtime
-        if(!this._cookies[rt_domain].get_cookies_is_pending)
+        if(!this._cookies[rt_domain+rt_pathname].get_cookies_is_pending)
         {
-          this._cookies[rt_domain].get_cookies_is_pending = true;
-          var tag = tagManager.set_callback(this, this._handle_cookies,[rt_domain]);
-          services['cookie-manager'].requestGetCookie(tag,[rt_domain]);
+          this._cookies[rt_domain+rt_pathname].get_cookies_is_pending = true;
+          var tag = tagManager.set_callback(this, this._handle_cookies,[rt_domain,rt_pathname]);
+          services['cookie-manager'].requestGetCookie(tag,[rt_domain,rt_pathname_unslashed]);
         }
       }
     }
   }
   
-  this._handle_cookies = function(status, message, domain)
+  this._handle_cookies = function(status, message, domain, path)
   {
-    this._cookies[domain].get_cookies_is_pending=false;
+    this._cookies[domain+path].get_cookies_is_pending=false;
     if(message.length > 0)
     {
       var cookies = message[0];
-      this._cookies[domain].cookie_list=[];
+      this._cookies[domain+path].cookie_list=[];
       for (var i=0; i < cookies.length; i++) {
         var cookie_info = cookies[i];
-        this._cookies[domain].cookie_list.push({
+        this._cookies[domain+path].cookie_list.push({
           domain:     cookie_info[0],
           path:       cookie_info[1],
           name:       cookie_info[2],

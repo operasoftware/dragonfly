@@ -24,7 +24,6 @@ window.eventHandlers.blur['cookiemanager-edit'] = function(event, target)
     if(window.views.cookie_manager._flattened_cookies[i].objectref == objectref)
     {
       cookie = window.views.cookie_manager._flattened_cookies[i];
-      // console.log("foundcookie for objectref",objectref,cookie);
       
       // remove old cookie
       var remove_old_cookie_script = 'document.cookie="'
@@ -34,7 +33,6 @@ window.eventHandlers.blur['cookiemanager-edit'] = function(event, target)
       
       // and add modified
       var add_modified_cookie_script = 'document.cookie="';
-            
       if(editproperty === "name")
       {
         add_modified_cookie_script += target.value.trim() + '='
@@ -43,7 +41,6 @@ window.eventHandlers.blur['cookiemanager-edit'] = function(event, target)
       {
         add_modified_cookie_script += cookie.name + '='
       }
-      
       if(editproperty === "value")
       {
         add_modified_cookie_script += target.value.trim();
@@ -52,26 +49,14 @@ window.eventHandlers.blur['cookiemanager-edit'] = function(event, target)
       {
         add_modified_cookie_script += cookie.value;
       }
-      
       add_modified_cookie_script += '; expires='+ (new Date(cookie.expires*1000).toUTCString());
-      
-      if(editproperty === "path")
-      {
-        add_modified_cookie_script += '; path=' +       target.value.trim()+'"';
-      }
-      else
-      {
-        add_modified_cookie_script += '; path=' + '/' + cookie.path+'"';
-      }
-      
       /*
       // result should look sth like
       var add_modified_cookie_script = 'document.cookie="'
-                    + target.value + '=' + cookie.value 
+                    + "name" + '=' + "value" 
                     + '; expires='+ (new Date(cookie.expires*1000).toUTCString())
-                    + '; path=' + '/' + cookie.path+'"';
+                    + '; path=' + '/' + "path"+'"';
       */
-      
       var script = remove_old_cookie_script + add_modified_cookie_script;
       var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_changed_cookies, [cookie.runtimes[0]]);
       services['ecmascript-debugger'].requestEval(tag,[cookie.runtimes[0], 0, 0, script]);
