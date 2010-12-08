@@ -121,7 +121,7 @@ cls.DocumentSelect = function(id)
       // selector dropdown in the DOM view
       _runtimes = _runtimes.filter(function(runtime)
       {
-        return runtime.description == "document";
+        return ["extensionjs"].indexOf(runtime.description) == -1;
       });
       for( ; ( rt = _runtimes[i] ) && !rt['selected']; i++);
       if( !rt && _runtimes[0] )
