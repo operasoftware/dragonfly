@@ -132,7 +132,7 @@
           "(": "commit-and-insert",
           ")": "commit-and-insert",
           "escape": "cancel-completion",
-          "ctrl l": "cancel-input",
+          "ctrl l": "clear",
           "ctrl k": "kill-to-end-of-line",
           "ctrl u": "kill-to-beginning-of-line",
           "ctrl w": "kill-word-backwards",
