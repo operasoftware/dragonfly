@@ -124,7 +124,8 @@ window.load_screen_timeout = window.setTimeout(function()
 <link rel="stylesheet" href="./http-logger/httplogger_style.css"/>
 <link rel="stylesheet" href="./console-logger/consolelogger_style.css"/>
 <link rel="stylesheet" href="./ui-style/colorpickerstyle.css"/>
-<link rel="stylesheet" href="./ui-style/sortable_table.css"/>
+<link rel="stylesheet" href="./ui-scripts/sortable_table/sortable_table.css"/>
+<link rel="stylesheet" href="./ui-scripts/metadata_drawer/metadata_drawer.css"/>
 <link rel="stylesheet" href="./repl/repl_style.css"/>
 <link rel="stylesheet" href="./resource-manager/resource_style.css"/>
 <link rel="stylesheet" href="./network/network_style.css"/>
@@ -207,8 +208,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/colorpickertemplates.js"/>
 <script src="./ui-scripts/colorpicker.js"/>
 <script src="./ui-scripts/slider.js"/>
-<script src="./ui-scripts/sortabletable.js"/>
-
+<script src="./ui-scripts/sortable_table/sortable_table.js"/>
 
 <script src="./build-application/build_application.js"></script>
 <script src="./build-application/build_window_manager_2_0.js"></script>
@@ -218,7 +218,6 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./build-application/build_ecmascript_debugger_5_0.js"></script>
 <script src="./build-application/build_ecmascript_debugger_6_0.js"></script>
 <script src="./build-application/build_resource_manager_1_0.js"></script>
-
 
 <script src="./debug/debug.js"/>
 <script src="./debug/configure_message_filter.js"/>
