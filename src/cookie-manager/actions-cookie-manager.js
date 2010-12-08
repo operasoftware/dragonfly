@@ -1,16 +1,12 @@
 ﻿window.eventHandlers.click['cookiemanager-delete-all'] = function(event, target)
 {
-  // instead of really deleting all cookies, just delete the one that are part of the current debug context
-  // var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_removed_cookies);
-  // services['cookie-manager'].requestRemoveAllCookies(tag);
-  
+  // just delete the one that are part of the current debug context  
   for (var domain in window.views.cookie_manager._cookies)
   {
     // console.log("removing cookies for domain",domain);
-    var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_removed_cookies,[domain]);
+    var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_changed_cookies,[domain]);
     services['cookie-manager'].requestRemoveCookie(tag, [domain]);
-  }
-  
+  }  
 };
 
 window.eventHandlers.blur['cookiemanager-edit'] = function(event, target)
@@ -74,10 +70,11 @@ window.eventHandlers.click['cookiemanager-delete-domain-cookies'] = function(eve
   }
   var domain = find_element.getAttribute("data-domain");
   // console.log("will delete cookies for domain ",domain);
-  var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_removed_cookies, [domain]);
+  var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_changed_cookies, [domain]);
   services['cookie-manager'].requestRemoveCookie(tag,[domain]);
 };
 */
+
 window.eventHandlers.click['cookiemanager-delete-cookie'] = function(event, target)
 {
   /*
@@ -98,8 +95,7 @@ window.eventHandlers.click['cookiemanager-delete-cookie'] = function(event, targ
   {
     remove_cookie_instructions.push(name);
   }
-  
-  var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_removed_cookies, remove_cookie_instructions);
+  var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_changed_cookies, remove_cookie_instructions);
   services['cookie-manager'].requestRemoveCookie(tag,[domain, path, name]);
 };
 

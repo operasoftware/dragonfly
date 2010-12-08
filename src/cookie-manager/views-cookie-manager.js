@@ -39,7 +39,6 @@ cls.CookieManagerView = function(id, name, container_class)
         // render_array.push(["button","RemoveCookiesOfDomain", "href", "#", "handler", "cookiemanager-delete-domain-cookies"]);
       }
     }
-    
     var tabledef = {
       groups: {
         runtimes: {
@@ -190,7 +189,6 @@ cls.CookieManagerView = function(id, name, container_class)
     // obj.group("hostname");
     // or host and path of the actual runtime that was asked for
     obj.group("hostandpath");
-    
     table.re_render(obj.render());
     
     // Add clear button
@@ -335,22 +333,13 @@ cls.CookieManagerView = function(id, name, container_class)
           isHTTPOnly: cookie_info[6]
         });
       };
-      window.views.cookie_manager.update();
     }
-  };
-  
-  this._handle_removed_cookies = function(status, message, domain, path, name)
-  {
-    // console.log("_handle_removed_cookies",status,message,domain);
-    
-    // TODO: try to be smart and delete the ones that fit from table or just throw away and re-fetch all.
-    // delete window.views.cookie_manager._cookies[domain];
-    window.views.cookie_manager._update();
+    window.views.cookie_manager.update();
   };
   
   this._handle_changed_cookies = function(status, message)
   {
-    console.log("_handle_changed_cookies");
+    // console.log("_handle_changed_cookies");
     window.views.cookie_manager._update();
   };
   
