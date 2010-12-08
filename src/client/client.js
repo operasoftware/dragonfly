@@ -14,6 +14,7 @@ var composite_view_convert_table =
     'dom_panel': 'dom_panel',
     'dom_new': 'dom_panel',
     'network_panel': 'network_panel',
+    'resource_panel': 'resource_panel',
     'export_new': 'export_new',
     'utils': 'utils',
     'storage': 'storage'
@@ -27,6 +28,7 @@ var composite_view_convert_table =
     'dom_panel': 'dom_new',
     'dom_new': 'dom_new',
     'network_panel': 'network_panel',
+    'resource_panel': 'resource_panel',
     'export_new': 'export_new',
     'utils': 'utils',
     'storage': 'storage'
@@ -249,6 +251,7 @@ window.cls.Client = function()
     new CompositeView('settings_new', ui_strings.S_BUTTON_LABEL_SETTINGS, layouts.settings_rough_layout);
     new CompositeView('utils', ui_strings.M_VIEW_LABEL_UTILITIES, layouts.utils_rough_layout);
     new CompositeView('storage', ui_strings.M_VIEW_LABEL_STORAGE, layouts.storage_rough_layout);
+    new CompositeView('resource_panel', ui_strings.M_VIEW_LABEL_RESOURCES, layouts.resource_rough_layout);
     if( window.opera.attached != settings.general.get('window-attached') )
     {
       window.opera.attached = settings.general.get('window-attached') || false;
@@ -469,8 +472,23 @@ ui_framework.layouts.network_rough_layout =
     dir: 'v',
     width: 1000,
     height: 1000,
-    children: [ { height: 1000, tabs: ['request_list'] } ]
+    children: [ { height: 1000, tabs: ['request_list', 'resource_manager',
+                                       'request_crafter', 'network_options']
+                }
+              ]
 }
+
+
+ui_framework.layouts.resource_rough_layout =
+{
+    dir: 'v',
+    width: 1000,
+    height: 1000,
+    children: [ { height: 1000, tabs: ['resource_all', 'resource_fonts', 'resource_images'] } ]
+}
+
+
+
 
 ui_framework.layouts.utils_rough_layout =
 {
@@ -491,11 +509,11 @@ ui_framework.layouts.storage_rough_layout =
 ui_framework.layouts.main_layout =
 {
   id: 'main-view',
-  tabs: ['dom_new', 'js_new', 'network_panel', 'storage', 'console_new', 'utils', 'settings_new']
+  tabs: ['dom_new', 'js_new', 'network_panel', 'resource_panel', 'storage', 'console_new', 'utils', 'settings_new']
 }
 
 ui_framework.layouts.panel_layout =
 {
   id: 'main-view',
-  tabs: ['dom_panel', 'js_panel', 'network_panel', 'storage', 'console_new', 'utils', 'settings_new']
+  tabs: ['dom_panel', 'js_panel', 'network_panel', 'resource_panel', 'storage', 'console_new', 'utils', 'settings_new']
 }

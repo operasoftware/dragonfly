@@ -1,4 +1,6 @@
-﻿cls.ReplService = function(view, data)
+﻿window.cls = window.cls || {};
+
+cls.ReplService = function(view, data)
 {
   if (cls.ReplService.instance)
   {
