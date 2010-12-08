@@ -1,18 +1,13 @@
-html {
-  font-family: "Dejavu Sans", "Bitstream Vera Sans", "Lucida Grande", "Segoe UI", Tahoma, sans-serif;
-  font-size: 11px;
-  color: #333;
-}
-
-.sortable-table {
+ .sortable-table {
   width: 100%;
   border-collapse: collapse;
 }
 
 .sortable-table td, .sortable-table th {
   border: 1px solid rgba(0,0,0,0.1);
-  padding: 6px 5px 2px 5px;
+  padding: 6px 5px 2px 20px;
   text-align: left;
+  position: relative;
 }
 
 .sortable-table  tr:nth-child(odd) {
@@ -20,14 +15,15 @@ html {
 }
 
 .sort-column:before {
-  content: url(../ui-images/sort_desc.png);
-  position: relative;
+  content: url(sort_desc.png);
+  position: absolute;
   margin-right: 4px;
-  top: 2px;
+  top: 8px;
+  left: 8px;
 }
 
 .sort-column.reversed:before {
-  content: url(../ui-images/sort_asc.png);
+  content: url(sort_asc.png);
 }
 
 .sortable-table tr.header {
