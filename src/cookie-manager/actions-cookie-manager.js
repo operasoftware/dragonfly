@@ -20,13 +20,11 @@ window.eventHandlers.blur['cookiemanager-edit'] = function(event, target)
     if(window.views.cookie_manager._flattened_cookies[i].objectref == objectref)
     {
       cookie = window.views.cookie_manager._flattened_cookies[i];
-      
       // remove old cookie
       var remove_old_cookie_script = 'document.cookie="'
                     + cookie.name + '=' + cookie.value 
                     + '; expires='+ (new Date(new Date().getTime()-1000).toUTCString())
                     + '; path=' + '/' + cookie.path+'";';
-      
       // and add modified
       var add_modified_cookie_script = 'document.cookie="';
       if(editproperty === "name")
@@ -46,6 +44,7 @@ window.eventHandlers.blur['cookiemanager-edit'] = function(event, target)
         add_modified_cookie_script += cookie.value;
       }
       add_modified_cookie_script += '; expires='+ (new Date(cookie.expires*1000).toUTCString());
+      add_modified_cookie_script += '; path=' + '/' + cookie.path+'"';
       /*
       // result should look sth like
       var add_modified_cookie_script = 'document.cookie="'
@@ -77,26 +76,30 @@ window.eventHandlers.click['cookiemanager-delete-domain-cookies'] = function(eve
 
 window.eventHandlers.click['cookiemanager-delete-cookie'] = function(event, target)
 {
-  /*
-     * @param domain Name of domain to remove cookies from, e.g. "opera.com"
-     * @param path   If specified only removes cookies from specified path or subpath.
-     * @param name   Name of cookie to remove, if unspecified removes all cookies matching domain/path.
-  */
-  var domain = target.getAttribute("data-cookie-domain");
-  var path = target.getAttribute("data-cookie-path");
-  var name = target.getAttribute("data-cookie-name");
+  var objectref = target.getAttribute("data-objectref");
+  var cookie;
+  for (var i=0; i < window.views.cookie_manager._flattened_cookies.length; i++) {
+    if(window.views.cookie_manager._flattened_cookies[i].objectref == objectref)
+    {
+      cookie = window.views.cookie_manager._flattened_cookies[i];
+      
+      var domain = cookie.domain;
+      var path = cookie.path;
+      var name = cookie.name;
   
-  var remove_cookie_instructions = [domain];
-  if(path)
-  {
-    remove_cookie_instructions.push(path);
+      var remove_cookie_instructions = [domain];
+      if(path)
+      {
+        remove_cookie_instructions.push(path);
+      }
+      if(name)
+      {
+        remove_cookie_instructions.push(name);
+      }
+      var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_changed_cookies, remove_cookie_instructions);
+      services['cookie-manager'].requestRemoveCookie(tag,[domain, path, name]);
+    }
   }
-  if(name)
-  {
-    remove_cookie_instructions.push(name);
-  }
-  var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_changed_cookies, remove_cookie_instructions);
-  services['cookie-manager'].requestRemoveCookie(tag,[domain, path, name]);
 };
 
 window.eventHandlers.click['cookiemanager-update'] = function(event, target)

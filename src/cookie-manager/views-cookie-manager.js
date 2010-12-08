@@ -168,11 +168,9 @@ cls.CookieManagerView = function(id, name, container_class)
             return [
               "button",
               "Remove",
-              "class",             "delete_cookie",
-              "data-cookie-domain", obj.domain,
-              "data-cookie-path",   obj.path,
-              "data-cookie-name",   obj.name,
-              "handler",           "cookiemanager-delete-cookie"]
+              "data-objectref", obj.objectref,
+              "class",          "delete_cookie",
+              "handler",        "cookiemanager-delete-cookie"]
           }
         }
       }
