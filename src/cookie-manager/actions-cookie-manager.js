@@ -22,10 +22,12 @@ window.eventHandlers.blur['cookiemanager-edit'] = function(event, target)
       cookie = window.views.cookie_manager._flattened_cookies[i];
       // remove old cookie
       var remove_old_cookie_script = 'document.cookie="'
-                    + cookie.name + '=' + cookie.value 
+                    + cookie.name + '=' + cookie.value
                     + '; expires='+ (new Date(new Date().getTime()-1000).toUTCString())
                     + '; path=' + '/' + cookie.path+'";';
       // and add modified
+      // todo: probably can be removed by just using all the values from the forms.
+      // todo: check to use encodeURIComponent, also decoded when putting things into markup. 
       var add_modified_cookie_script = 'document.cookie="';
       if(editproperty === "name")
       {
@@ -60,7 +62,7 @@ window.eventHandlers.blur['cookiemanager-edit'] = function(event, target)
 }
 
 /*
-window.eventHandlers.click['cookiemanager-delete-domain-cookies'] = function(event, target)
+window.eventHandlers.click['cookiemanager-delete-domain-path-cookies'] = function(event, target)
 {
   var find_element = target;
   while(!find_element.hasClass("domain") && find_element.previousSibling)
@@ -101,6 +103,49 @@ window.eventHandlers.click['cookiemanager-delete-cookie'] = function(event, targ
     }
   }
 };
+
+window.eventHandlers.click['add-cookie-handler'] = function(event, target)
+{
+  // walk up to find form
+  var formelem = target;
+  while (formelem.nodename !== "form" && formelem.parentNode) {
+    formelem = formelem.parentNode;
+  }
+  
+  var domain_field  = formelem.querySelector("select[name=cookiedomain]");
+  var cookie_runtime = parseInt(domain_field.options[domain_field.options.selectedIndex].getAttribute("data-runtimes").split(",")[0]);
+  
+  var domain_val  = domain_field.value;
+  var name_val    = formelem.querySelector("input[name=cookiename]").value;
+  var value_val   = formelem.querySelector("input[name=cookievalue]").value;
+  var path_val    = formelem.querySelector("input[name=cookiepath]").value || "/";
+  var expires_val = formelem.querySelector("input[name=cookieexpires]").value;
+  
+  if(domain_val && name_val && cookie_runtime!=="")
+  {
+    var add_cookie_script = 'document.cookie="';
+    add_cookie_script += encodeURIComponent(name_val) + '='
+    add_cookie_script += encodeURIComponent(value_val);
+    add_cookie_script += '; expires='+ (new Date(expires_val).toUTCString());
+    add_cookie_script += '; path=' + path_val+'"';
+    /*
+    // result should look sth like
+    var add_cookie_script = 'document.cookie="'
+                  + "name" + '=' + "value" 
+                  + '; expires='+ (new Date(cookie.expires*1000).toUTCString())
+                  + '; path=' + '/' + "path"+'"';
+    */
+    var script = add_cookie_script;
+    var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_changed_cookies, []);
+    services['ecmascript-debugger'].requestEval(tag,[cookie_runtime, 0, 0, script]);
+  }
+  else
+  {
+    // todo: show a warning or sth?
+  }
+  // todo: make domain, path and expires persist
+  // todo: scroll down to newly added cookies
+}
 
 window.eventHandlers.click['cookiemanager-update'] = function(event, target)
 {
