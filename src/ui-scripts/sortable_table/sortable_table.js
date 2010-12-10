@@ -17,7 +17,13 @@ function SortableTable(tabledef, data, cols, sortby, reversed)
   {
     if (!cols || !cols.length) {
       cols = [];
-      for (var key in tabledef.columns) { cols.push(key) }
+      for (var key in tabledef.columns) {
+        cols.push(key);
+        if (!sortby && tabledef.columns[key].sorter != "unsortable")
+        {
+          sortby = key;
+        }
+      }
     }
 
     for (var key in tabledef.columns)
@@ -33,16 +39,22 @@ function SortableTable(tabledef, data, cols, sortby, reversed)
         col.renderer = col.getter;
       }
 
-      if (!col.sorter)
+      if (col.sorter === undefined)
       {
         col.sorter = this._prop_sorter(col.getter);
       }
+      else if (col.sorter === "unsortable")
+      {
+        col.sorter = null;
+      }
     }
 
+
+
+    this.sortby = sortby;
     this.tabledef = tabledef;
     this.data = data;
     this.columns = cols;
-    this.sortby = sortby || cols[0];
     this.reversed = !!reversed;
     this.groupby = null;
     this._elem = null;
@@ -142,8 +154,7 @@ templates.sortable_table_header = function(tabledef, cols, sortby, reversed)
                     tabledef.columns[c].label,
                     "class", (sortby==c ? "sort-column" : "") + (reversed ? " reversed" : ""),
                     "data-column-id", c,
-                    "handler", "sortable-table-sort",
-                   ]
+                   ].concat(tabledef.columns[c].sorter ? ["handler", "sortable-table-sort"] : [])
           }),
           "class", "header"
           ];
@@ -191,7 +202,7 @@ templates.sortable_table_body = function(tabledef, data, cols, groupby, sortby, 
 templates.sortable_table_group = function(tabledef, groupname, render_header, data, cols, groupby, sortby, reversed)
 {
   var sorter = tabledef.columns[sortby].sorter;
-  data.sort(sorter);
+  if (sorter) { data.sort(sorter) }
   if (reversed) { data.reverse() }
   var tpl = [];
 
