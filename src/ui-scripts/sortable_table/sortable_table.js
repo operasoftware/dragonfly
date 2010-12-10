@@ -226,5 +226,6 @@ templates.sortable_table_row = function(tabledef, item, cols)
           cols.map(function(col) {
             return ["td", tabledef.columns[col].renderer(item, tabledef.columns[col].getter)];
           }).concat(tabledef.handler ? ["handler", tabledef.handler] : [])
+            .concat(tabledef.idgetter ? ["data-object-id", tabledef.idgetter(item) ] : [])
          ];
 }

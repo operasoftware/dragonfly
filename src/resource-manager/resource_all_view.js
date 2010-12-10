@@ -24,7 +24,8 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
 
   this._handle_open_resource_bound = function(evt, target)
   {
-    var rid = target.getAttribute("data-resource-id");
+
+    var rid = target.getAttribute("data-object-id");
     //var resource = this._service.get_resource_for_id(rid);
     opera.postError("Should show " + rid);
   }.bind(this);
@@ -32,6 +33,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
 
   this._tabledef = {
     handler: "resources-all-open",
+    idgetter: function(res) { return String(res.urlload.resourceID) },
     groups: {
       hosts: {
         label: "Hosts",
