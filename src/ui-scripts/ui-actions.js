@@ -116,20 +116,14 @@ eventHandlers.mousewheel['change-on-scroll'] = function(event, target)
 
 eventHandlers.click['close-tab'] = function(event, target)
 {
-  target = target.parentElement;
+  //target = target.parentElement;
 
-  var 
-  tabs = UIBase.getUIById(target.parentElement.getAttribute('ui-id')),
-  view_id = target.getAttribute('ref-id'),
-  store = global_state.ui_framework.temporary_tabs,
-  cursor = '',
-  i = 0;
-
-  tabs.removeTab(view_id);
-  for( ; ( cursor = store[i] ) && cursor != view_id; i++);
-  if(cursor)
+  var tabbar_id = target.get_attr("parent-node-chain", "tabbar-ref-id");
+  var view_id = target.get_attr("parent-node-chain", "ref-id");
+  var tabbar = tabbar_id && view_id && UI.get_instance().get_tabbar(tabbar_id) || null;
+  if (tabbar)
   {
-    store.splice(i, 1);
+    tabbar.remove_tab(view_id);
   }
 }
 

@@ -6,11 +6,20 @@
 
   this.tab = function(obj, is_active_tab)
   {
-    return ['tab', obj.name,
-            'handler', 'tab',
-            'ref-id', obj.ref_id
-      //( obj.has_close_button ? ['input', 'type', 'button', 'handler', 'close-tab', ] : [] ),
-    ].concat(is_active_tab ? ['class', 'active'] : [] );
+    var ret = ['tab', obj.name];
+    if (obj.has_close_button)
+    {
+      ret.push(['input', 
+                'type', 'button', 
+                'handler', 'close-tab', 
+                'class', 'close-tab-button']);
+    }
+    ret.push('handler', 'tab', 'ref-id', obj.ref_id);
+    if (is_active_tab)
+    {
+      ret.push('class', 'active');
+    }
+    return ret;
   }
 
   this.top_tab = function(obj, is_active_tab)
