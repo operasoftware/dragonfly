@@ -106,6 +106,8 @@ cls.CallstackView = function(id, name, container_class)
   var container_id = 'backtrace';
   var __clear_timeout = 0;
 
+  this._selected_frame = 0;
+
   var __clearView = function()
   {
     var container = document.getElementById(container_id);
@@ -133,16 +135,21 @@ cls.CallstackView = function(id, name, container_class)
     list.innerHTML = '';
     for( ; frame = _frames[i]; i++)
     {
-      list.render(templates.frame(frame, i == 0));
+      list.render(templates.frame(frame, i == this._selected_frame));
     }
-    
-  }
+  };
 
   this.clearView = function()
   {
     __clear_timeout = setTimeout( __clearView, 150 );
-  }
+  };
 
+  this._onframeselected = function(msg)
+  {
+    this._selected_frame = msg.frame_index;
+  };
+
+  window.messages.addListener('frame-selected', this._onframeselected.bind(this));
   this.init(id, name, container_class);
 }
 

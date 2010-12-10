@@ -1,4 +1,4 @@
-window.cls || (window.cls = {});
+﻿window.cls || (window.cls = {});
 
 /**
   * @constructor 
@@ -120,7 +120,7 @@ cls.ShortcutConfigView = function(id, name, container_class)
 
   this._handlers['reset-all-to-defaults'] = function(event, target)
   {
-    var shortcuts = window.ini.default_shortcuts.windows; 
+    var shortcuts = window.ini.default_shortcuts; 
     this._broker.set_shortcuts(shortcuts, null, true);
   }.bind(this);
 
@@ -146,7 +146,7 @@ cls.ShortcutConfigView = function(id, name, container_class)
   this._handlers['reset-to-defaults'] = function(event, target)
   {
     var 
-    shortcuts = window.ini.default_shortcuts.windows,
+    shortcuts = window.helpers.copy_object(window.ini.default_shortcuts),
     table = event.target.has_attr('parent-node-chain', 'handler-id'),
     handler_id = table && table.getAttribute('handler-id');
 

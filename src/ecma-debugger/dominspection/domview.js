@@ -117,6 +117,12 @@ cls.DocumentSelect = function(id)
       rt = null, 
       i = 0;
 
+      // remove the extension runtimes from the document 
+      // selector dropdown in the DOM view
+      _runtimes = _runtimes.filter(function(runtime)
+      {
+        return ["extensionjs"].indexOf(runtime.description) == -1;
+      });
       for( ; ( rt = _runtimes[i] ) && !rt['selected']; i++);
       if( !rt && _runtimes[0] )
       {

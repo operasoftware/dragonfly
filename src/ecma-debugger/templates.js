@@ -216,7 +216,7 @@
       if (runtime.browser_js)
         ret.push(['cst-title', 'Browser JS'], 
                  this.script_option(runtime.browser_js));
-      if (runtime.user_js_s)
+      if (runtime.user_js_s && runtime.user_js_s.length)
       {
         ret.push(['cst-title', 'User JS']);
         ret.push.apply(ret, runtime.user_js_s.map(this.script_option, this));

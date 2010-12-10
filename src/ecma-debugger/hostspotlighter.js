@@ -83,6 +83,7 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
   var mouse_handler_timeouts = new Timeouts();
   var class_names = ['margin', 'border', 'padding', 'dimension'];
   var last_spotlight_command = null;
+  var rts = {};
    
   /* helpers */
 
@@ -96,11 +97,11 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
     return get_command(node_id, 0, "locked");
   }
 
-  var clear_spotlight = function()
+  var clear_spotlight = function(root_id)
   {
     last_spotlight_commands = "";
     // workaround for bug CORE-18426
-    var root_id = dom_data.getRootElement();
+    root_id || (root_id = dom_data.getRootElement());
     if(root_id)
     {
       services['ecmascript-debugger'].requestSpotlightObjects(0,
@@ -330,8 +331,16 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
   // TODO make a new message for new top runtime
   var onActiveTab = function(msg)
   {
-    if( msg.activeTab[0] != top_runtime )
+    if (msg.activeTab[0] != top_runtime)
     {
+      for (var rt_id in rts)
+      {
+        if (rts[rt_id] && msg.activeTab.indexOf(rt_id) == -1)
+        {
+          clear_spotlight(rts[rt_id].root_id);
+          rts[rt_id] = null;
+        }
+      }
       top_runtime = msg.activeTab[0];
       locked_elements = [];
     }
@@ -339,9 +348,14 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
 
   var onElementSelected = function(msg)
   {
-    if(settings.dom.get('lock-selecked-elements') && 
+    if (!rts[msg.rt_id])
+    {
+      rts[msg.rt_id] = {root_id: dom_data.getRootElement()};
+    }
+    if (msg.rt_id && msg.obj_id && 
+        settings.dom.get('lock-selecked-elements') && 
         // events can be asynchronous
-        window.host_tabs.is_runtime_of_active_tab(msg.rt_id) )
+        window.host_tabs.is_runtime_of_active_tab(msg.rt_id))
     {
       locked_elements[locked_elements.length] = msg.obj_id;
     }

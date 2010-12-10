@@ -199,7 +199,7 @@
               "class='folder-key' "
           );
           // 'in' is true for all non enumarables
-          if (tree.hasOwnProperty(prop[NAME]))
+          if (tree.hasOwnProperty(prop[NAME]) && tree[prop[NAME]])
             ret.push(STYLE_EXPANDED);
           ret.push(
             "/>" +
@@ -238,7 +238,7 @@
                                 collapsed_protos,
                                 filter
                                 ).join('');
-    if (model.scope_list)
+    if (model.scope_list && !path)
       ret += this.inspected_js_scope_chain(model);
     return ret;
   }

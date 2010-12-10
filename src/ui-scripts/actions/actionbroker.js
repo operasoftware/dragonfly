@@ -89,6 +89,13 @@ var ActionBroker = function()
     */
   this.get_global_handler = function(){};
 
+  /**
+    * To get a shortcut for a given handler and action.
+    * @param {String} handler_id
+    * @param {String} action
+    */
+  this.get_shortcut_with_handler_and_action = function(handler_id, action){};
+
   /* constants */
 
   const GLOBAL_HANDLER = ActionBroker.GLOBAL_HANDLER_ID;
@@ -100,7 +107,7 @@ var ActionBroker = function()
   this._action_context_id = '';
   this._container = null;
   this._shortcuts = null;
-  this._gloabal_shortcuts = null;
+  this._global_shortcuts = null;
   this._current_shortcuts = null;
   this._global_handler = new GlobalActionHandler(GLOBAL_HANDLER);
   this._delays = {};
@@ -157,11 +164,13 @@ var ActionBroker = function()
     window.app.addListener('services-created', function()
     {
       this._shortcuts = window.settings.general.get("shortcuts") ||
-                        window.ini.default_shortcuts.windows;
-      this._gloabal_shortcuts = this._shortcuts.global; 
+                        window.helpers.copy_object(window.ini.default_shortcuts);
+      this._global_shortcuts = this._shortcuts.global; 
       this._key_identifier.set_shortcuts(this._get_shortcut_keys());
       this._set_current_handler(this._global_handler);
       document.addEventListener('click', this._set_action_context_bound, true);
+      document.addEventListener('focus', this._set_action_context_bound, true);
+      window.messages.post('shortcuts-changed');
     }.bind(this));
   };
 
@@ -185,19 +194,23 @@ var ActionBroker = function()
     var action = shortcuts && shortcuts[key_id] || '';
     var propagate_event = true;
     if (action)
+    {
       propagate_event = this._action_context.handle(action,
                                                     event,
                                                     this._container);
+    }
+
     if (!(propagate_event === false) &&
          this._action_context != this._global_handler)
     {
-      shortcuts = this._gloabal_shortcuts[this._gloabal_shortcuts.mode];
+      shortcuts = this._global_shortcuts[this._global_handler.mode];
       action = shortcuts && shortcuts[key_id] || '';
       if (action)
         propagate_event = this._global_handler.handle(action,
                                                       event,
                                                       this._container);
     }
+
     if (propagate_event === false)
     {
       event.stopPropagation();
@@ -233,10 +246,11 @@ var ActionBroker = function()
       this._shortcuts[handler_id] = shortcuts;
     else
       this._shortcuts = shortcuts;
-    this._gloabal_shortcuts = this._shortcuts.global;
+    this._global_shortcuts = this._shortcuts.global;
     window.settings.general.set("shortcuts",
                                 clear_setting == true ? null : this._shortcuts);
     this._key_identifier.set_shortcuts(this._get_shortcut_keys());
+    window.messages.post('shortcuts-changed');
   };
 
   this.get_actions_with_handler_id = function(handler_id)
@@ -271,6 +285,25 @@ var ActionBroker = function()
   this.get_global_handler = function()
   {
     return this._global_handler;
+  };
+
+  this.get_shortcut_with_handler_and_action = function(handler_id, action)
+  {
+    var 
+    shortcuts = this._shortcuts && this._shortcuts[handler_id],
+    shortcuts_mode = null,
+    mode = '',
+    key = '';
+
+    if (shortcuts)
+      for (mode in shortcuts)
+      {
+        shortcuts_mode = shortcuts[mode];
+        for (key in shortcuts_mode)
+          if (shortcuts_mode[key] == action)
+            return key;
+      }
+    return '';
   };
 
   if (document.readyState == "complete")

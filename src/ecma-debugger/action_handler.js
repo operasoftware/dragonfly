@@ -211,10 +211,7 @@ window.eventHandlers.click['display-script'] = function(event)
 
 window.eventHandlers.click['continue'] = function(event)
 {
-  views.js_source.clearLinePointer();
-  views.callstack.clearView();
-  views.inspection.clearView();
-  stop_at.__continue(event.target.id.slice(9));
+  this.broker.dispatch_action('global', event.target.id);
 };
 
 window.eventHandlers.click['set-stop-at'] = function(event)

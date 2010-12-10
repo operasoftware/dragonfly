@@ -257,13 +257,13 @@ ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE = "Show objects of type Element in the 
  */
 
 /* DESC: Debugger continues debugging. */
-ui_strings.S_BUTTON_LABEL_CONTINUE = 'Continue (F8)';
+ui_strings.S_BUTTON_LABEL_CONTINUE = 'Continue (%s)';
 /* DESC: Debugger step over current statement. */
-ui_strings.S_BUTTON_LABEL_STEP_OVER = 'Step over (F10)';
+ui_strings.S_BUTTON_LABEL_STEP_OVER = 'Step over (%s)';
 /* DESC: Debugger step into current statement. */
-ui_strings.S_BUTTON_LABEL_STEP_INTO = 'Step into (F11)';
+ui_strings.S_BUTTON_LABEL_STEP_INTO = 'Step into (%s)';
 /* DESC: Debugger step out from current statement. */
-ui_strings.S_BUTTON_LABEL_STEP_OUT = 'Step out (Shift F11)';
+ui_strings.S_BUTTON_LABEL_STEP_OUT = 'Step out (%s)';
 /* DESC: Execution stops when a new script is encountered. */
 ui_strings.S_BUTTON_LABEL_STOP_AT_THREAD = 'Stop at new script';
 /* DESC: Execution stops when encountering an exception. */

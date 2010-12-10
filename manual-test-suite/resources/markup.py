@@ -80,7 +80,7 @@ TR_TD_URL = """
 """
 
 TR_TEST = """
-<tr data-desc="%s">
+<tr %sdata-desc="%s">
   <td class="item closed"><span></span></td>
   <td>%s</td>
   <td><label><input type="radio" value="PASS" name="%s"> PASS</label></td>

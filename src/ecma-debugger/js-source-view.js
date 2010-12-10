@@ -884,29 +884,45 @@ cls.JsSourceView.create_ui_widgets = function()
   [
     {
       handler: 'continue',
-      title: ui_strings.S_BUTTON_LABEL_CONTINUE,
+      rawtitle: ui_strings.S_BUTTON_LABEL_CONTINUE,
       id: 'continue-run',
       disabled: true
     },
     {
       handler: 'continue',
-      title: ui_strings.S_BUTTON_LABEL_STEP_INTO,
+      rawtitle: ui_strings.S_BUTTON_LABEL_STEP_INTO,
       id: 'continue-step-into-call',
       disabled: true
     },
     {
       handler: 'continue',
-      title: ui_strings.S_BUTTON_LABEL_STEP_OVER,
+      rawtitle: ui_strings.S_BUTTON_LABEL_STEP_OVER,
       id: 'continue-step-next-line',
       disabled: true
     },
     {
       handler: 'continue',
-      title: ui_strings.S_BUTTON_LABEL_STEP_OUT,
+      rawtitle: ui_strings.S_BUTTON_LABEL_STEP_OUT,
       id: 'continue-step-out-of-call',
       disabled: true
     }
   ];
+
+  var set_shortcuts = function()
+  {
+    var broker = ActionBroker.get_instance();
+    var global_handler = ActionBroker.GLOBAL_HANDLER_ID;
+    toolbar_buttons.forEach(function(button)
+    {
+      if (button.rawtitle)
+      {
+        var shortcut = broker.get_shortcut_with_handler_and_action(global_handler,
+                                                                   button.id);
+        shortcut = window.helpers.capitalize_first_char(shortcut);
+        button.title = button.rawtitle.replace("%s", shortcut);
+      }
+    });
+  };
 
   if (major_ecma_service_version > 5)
     toolbar_buttons.push(
@@ -1085,5 +1101,8 @@ cls.JsSourceView.create_ui_widgets = function()
                             view.window_height :
                             window.innerHeight - 80);
   }
+
+  window.messages.addListener('shortcuts-changed', set_shortcuts);
+  set_shortcuts();
 
 };

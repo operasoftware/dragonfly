@@ -1,4 +1,4 @@
-.shortcuts-config
+﻿.shortcuts-config
 {
   width: 360px;
 }
@@ -15,25 +15,12 @@
   margin-bottom: 15px;
   border: 1px solid hsl(0, 0%, 80%);
 }
-.shortcuts td
-{
-  xvertical-align: bottom;
-  xborder: 1px solid hsl(0, 0%, 80%);
-  xpadding: 2px 5px;
-}
 .shortcuts th
 {
-  xbackground-color: hsl(0, 0%, 35%);
   background-color: hsl(0, 0%, 80%);
-  xcolor: #fff;
-  xborder: 1px solid #333;
   border: 1px solid #ccc;
   text-align: left;
   padding: 2px 7px;
-}
-.shortcuts .controls
-{
-  xbackground-color: hsl(0, 0%, 70%);
 }
 .invalid-shortcut td
 {
@@ -46,12 +33,9 @@
   font-weight: bold;
   padding: 2px 7px;
 }
-
 .scc-input,
 .scc-select
 {
-  xborder: none;
-  xbackground: none;
   width: 100%;
   height: 100%;
   vertical-align: middle;

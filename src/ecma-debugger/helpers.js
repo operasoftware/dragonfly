@@ -162,6 +162,14 @@ window.cls.Helpers = function()
     return JSON.parse(JSON.stringify(obj));
   };
 
+  this.capitalize_first_char = function(str)
+  {
+    return str.replace(/(?:^| +)(.)/g, function(_char)
+    {
+      return _char.toUpperCase();
+    });
+  }
+
   if (!Array.isArray) {
     Array.isArray = function(obj) {
       return Object.prototype.toString.call(o) == "[object Array]";

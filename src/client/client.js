@@ -183,7 +183,7 @@ window.cls.Client = function()
   {
     viewport.innerHTML =
     "<div class='padding'>" +
-      "<div class='info-box'>" + ui_strings.S_INFO_WAITING_FORHOST_CONNECTION.replace(/%s/, port) +
+      "<div class='info-box' id='waiting-for-connection' >" + ui_strings.S_INFO_WAITING_FORHOST_CONNECTION.replace(/%s/, port) +
           ( port ? "<p><input type='button' value='" + ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG + "'" +
                 " handler='cancel-remote-debug'></p>" : "") +
       "</div>" +

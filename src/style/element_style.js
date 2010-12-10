@@ -335,16 +335,27 @@ cls.ElementStyle = function()
 
   var onElementSelected = function(msg)
   {
-    __selectedElement = {rt_id: msg.rt_id,  obj_id: msg.obj_id, req_type: getRequestType() };
-    var view_id = '', i = 0, get_data = false;
-    for ( ; (view_id = __views[i]) && !(get_data = views[view_id].isvisible()); i++);
-    if (get_data && __selectedElement.req_type)
+    if (msg.rt_id && msg.obj_id)
     {
-      getData(msg.rt_id, msg.obj_id);
+      __selectedElement = {rt_id: msg.rt_id,
+                           obj_id: msg.obj_id,
+                           req_type: getRequestType()};
+      var view_id = '', i = 0, get_data = false;
+      for ( ; (view_id = __views[i]) && !(get_data = views[view_id].isvisible()); i++);
+      if (get_data && __selectedElement.req_type)
+      {
+        getData(msg.rt_id, msg.obj_id);
+      }
+      else
+      {
+        categories_data[IS_VALID] = false;
+      }
     }
     else
     {
+      onResetState();
       categories_data[IS_VALID] = false;
+      window.views['css-inspector'].update();
     }
   };
 

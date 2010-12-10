@@ -34,6 +34,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this.ondestroy = function()
   {
+    this._linelist = null;
     this._lastupdate = 0;
     this._backlog_index = -1;
     this._current_input = this._textarea.value;
@@ -73,8 +74,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this.createView = function(container)
   {
-    var first_update = !this._lastupdate;
-
+    var first_update = !this._linelist;
     // on first update, render view skeleton stuff
     if (first_update)
     {
@@ -96,6 +96,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this.clear = function()
   {
+    this._cancel_completion();
     this.ondestroy();
   };
 
@@ -351,10 +352,8 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   {
     if (this.mode == "autocomplete")
     {
-      this._recent_autocompletion = null;
-      this._be_singleline();
+      this._cancel_completion();
     }
-
     this._check_for_multiline();
     this._update_input_height_bound();
   }.bind(this);
@@ -374,7 +373,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._handle_backlog = function(delta)
   {
-    this._set_input_from_backlog(this._backlog_index + delta);
+    var new_index = this._backlog_index + delta;
+    if (delta == 1 && new_index == 0) { // started navigating back from current input
+      this._current_input = this._textarea.value;
+    }
+    this._set_input_from_backlog(new_index);
   };
 
   this._set_input_from_backlog = function(index)
@@ -384,11 +387,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       this._backlog_index = -1;
       this._textarea.value = this._current_input;
       return;
-    }
-
-    if (this._backlog_index == -1)
-    {
-      this._current_input = this._textarea.value;
     }
 
     var log = this._data.get_typed_history();
@@ -540,13 +538,21 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         this._autocompletion_elem = this._autocompletion_elem.firstChild;
         this._autocompletion_index = -1;
         this._update_highlight();
+        this._textarea.focus();
       }
     }
     else
     {
+      var current_selection = this._service.get_selected_objects();
+      var context = {};
+      for (var n=0; n<current_selection.length; n++)
+      {
+        context["$" + n] = current_selection[n];
+      }
+
       this._resolver.find_props(this._on_completer.bind(this),
                                 this._textarea.value.slice(0, this._textarea.selectionStart),
-                                window.stop_at.getSelectedFrame());
+                                window.stop_at.getSelectedFrame(), context);
     }
   };
 
@@ -587,13 +593,29 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   {
     this.mode = "multi-line-edit";
     this._textarea.addClass("multiline");
+    this._textarea.focus();
   };
 
   this._be_singleline = function()
   {
     this.mode = "single-line-edit";
-    this._textarea.removeClass("multiline");
+    if (this._textarea)
+    {
+      this._textarea.removeClass("multiline");
+      this._textarea.focus();
+    }
   };
+
+  this._cancel_completion = function()
+  {
+    if (this.mode == "autocomplete")
+    {
+      this._resolver.clear_cache();
+      this._highlight_completion();
+      this._recent_autocompletion = null;
+      this._be_singleline();
+    }
+  }
 
   this._handle_repl_frame_select_bound = function(event, target)
   {
@@ -650,44 +672,64 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     // from the previous runtime/frame when tabbing.
     // The current tabbing context doesn't change though. Should not
     // be a problem unless you reload while tabbing or something.
-    this._resolver.clear_cache();
+    this._cancel_completion();
   }.bind(this);
 
-  this._handle_action_clear = function(evt, target)
+  this["_handle_action_clear"] = function(evt, target)
   {
     this.clear();
     var cursor_pos = this._textarea_handler.get_cursor();
     this._data.clear();
+    this._textarea.focus();
     this._textarea_handler.put_cursor(cursor_pos);
     return false;
   };
 
   this["_handle_action_kill-to-end-of-line"] = function(evt, target)
   {
+    this._cancel_completion();
     this._textarea_handler.kill_to_end_of_line();
+    return false;
+  };
+
+  this["_handle_action_kill-to-beginning-of-line"] = function(evt, target)
+  {
+    this._cancel_completion();
+    this._textarea_handler.kill_to_beginning_of_line();
     return false;
   };
 
   this["_handle_action_kill-word-backwards"] = function(evt, target)
   {
+    this._cancel_completion();
     this._textarea_handler.kill_word_backwards();
     return false;
   };
 
   this["_handle_action_move-to-beginning-of-line"] = function(evt, target)
   {
+    this._cancel_completion();
     this._textarea_handler.move_to_beginning_of_line();
     return false;
   };
 
   this["_handle_action_move-to-end-of-line"] = function(evt, target)
   {
+    this._cancel_completion();
     this._textarea_handler.move_to_end_of_line();
+    return false;
+  };
+
+  this["_handle_action_yank"] = function(evt, target)
+  {
+    this._cancel_completion();
+    this._textarea_handler.yank();
     return false;
   };
 
   this["_handle_action_enter-multiline-mode"] = function(evt, target)
   {
+    this._cancel_completion();
     this._be_multiline();
     return false;
   };
@@ -728,10 +770,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     var input = this._textarea.value;
     input = input.trim();
     this._textarea.value = "";
-    this._backlog_index = -1;
     this._current_input = "";
+    this._backlog_index = -1;
     this._resolver.clear_cache(); // evaling js voids the cache.
     this._service.handle_input(input);
+    this._cancel_completion();
     this._be_singleline();
     return false;
   }
@@ -746,11 +789,20 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
   };
 
-  this["_handle_action_cancel"] = function(evt, target)
+  // Same as above, but since the event isn't canceled, whatever
+  // character was pressed is added to the input.
+  this["_handle_action_commit-and-insert"] = function(evt, target)
   {
-    this._highlight_completion();
-    this._recent_autocompletion = null;
-    this._be_singleline();
+    if (this._use_autocomplete_highlight && this._recent_autocompletion)
+    {
+      this._highlight_completion();
+      this._commit_selection();
+    }
+  };
+
+  this["_handle_action_cancel-completion"] = function(evt, target)
+  {
+    this._cancel_completion();
     return false;
   };
 
@@ -767,6 +819,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._update_input_height_bound();
     return false;
   };
+
+  this["_handle_action_cancel-input"] = function(evt, target)
+  {
+    return false;
+  }
 
   /**
    * Entry point for the action handling system

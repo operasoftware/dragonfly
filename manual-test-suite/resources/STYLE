@@ -1,0 +1,23 @@
+td ul
+{
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.deprecated
+{
+  background-color: #f60;
+  color: #fff;
+  margin: 1em 0;
+  padding: 3px 7px;
+  font-weight: bold;
+}
+pre
+{
+  border: 1px solid hsl(0, 0%, 50%);
+  background-color: hsl(0, 0%, 95%);
+}
+.line-through
+{
+  text-decoration: line-through;
+}

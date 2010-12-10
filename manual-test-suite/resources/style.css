@@ -28,6 +28,17 @@ tr:nth-child(odd)
 {
   background-color: hsl(0, 0%, 95%);
 }
+.deprecated 
+{
+  background-color: hsl(15, 90%, 50%) !important;
+}
+.deprecated td:nth-child(2):after
+{
+  content: " [DEPRECATED]";
+  color: #fff;
+  font-weight: bold;
+  text-decoration: none;
+}
 .submitted td
 {
   opacity: .3;

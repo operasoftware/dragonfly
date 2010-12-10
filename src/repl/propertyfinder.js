@@ -8,7 +8,7 @@
 window.cls = window.cls || {};
 window.cls.PropertyFinder = function(rt_id) {
   if (window.cls.PropertyFinder.instance) {
-    return window.PropertyFinder.instance;
+    return window.cls.PropertyFinder.instance;
   }
   else {
     window.cls.PropertyFinder.instance = this;
@@ -32,12 +32,14 @@ window.cls.PropertyFinder = function(rt_id) {
    * override this method
    *
    */
-  this._requestEval = function(callback, js, scope, identifier, input, frameinfo) {
+  this._requestEval = function(callback, js, scope, identifier, input, frameinfo, context) {
+    context = context || [];
+
     var tag = tagManager.set_callback(this, this._onRequestEval,
                                       [callback, scope, identifier, input, frameinfo]);
 
     this._service.requestEval(
-      tag, [frameinfo.runtime_id, frameinfo.thread_id, frameinfo.index, js]
+      tag, [frameinfo.runtime_id, frameinfo.thread_id, frameinfo.index, js, context]
     );
   };
 
@@ -172,7 +174,7 @@ window.cls.PropertyFinder = function(rt_id) {
    * runtime.
    *
    */
-  this.find_props = function(callback, input, frameinfo) {
+  this.find_props = function(callback, input, frameinfo, context) {
     frameinfo = frameinfo ||
     {
       runtime_id: runtimes.getSelectedRuntimeId(),
@@ -192,7 +194,8 @@ window.cls.PropertyFinder = function(rt_id) {
       callback(props);
     }
     else {
-      this._get_scope_contents(callback, parts.scope, parts.identifier, input, frameinfo);
+      this._get_scope_contents(callback, parts.scope, parts.identifier, input,
+                               frameinfo, context);
     }
   };
 
@@ -220,7 +223,7 @@ window.cls.PropertyFinder = function(rt_id) {
     return this._cache[key];
   };
 
-  this._get_scope_contents = function(callback, scope, identifier, input, frameinfo) {
+  this._get_scope_contents = function(callback, scope, identifier, input, frameinfo, context) {
     if (!scope) { // if there is no scope, use examineObject call
       this._requestExamineObjects(callback, scope, identifier, input, frameinfo);
     }
@@ -228,8 +231,15 @@ window.cls.PropertyFinder = function(rt_id) {
     {
       var script = "(function(scope){var a = '', b= ''; for( a in scope ){ b += a + '_,_'; }; return b;})(%s)";
       var eval_str = script.replace("%s", scope || "this");
+
+      var magicvars = [];
+      if (context) {
+        for (var key in context) { magicvars.push([key, context[key]]) }
+      }
+
       if (frameinfo.index !== undefined) {
-        this._requestEval(callback, eval_str, scope, identifier, input, frameinfo);
+        this._requestEval(callback, eval_str, scope, identifier, input,
+                          frameinfo, magicvars);
       }
     }
   };

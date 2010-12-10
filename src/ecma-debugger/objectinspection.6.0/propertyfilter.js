@@ -22,6 +22,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters = {};
 
 cls.EcmascriptDebugger["6.0"].inspection_filters._Element = new function()
 {
+  this.accessKey = {type: "string", value: ""};
   this.className = {type: "string", value: ""};
   this.dir = {type: "string", value: ""};
   this.firstChild = {type: "null"};
@@ -45,12 +46,16 @@ cls.EcmascriptDebugger["6.0"].inspection_filters._Element = new function()
   this.textContent = {type: "string", value: ""};
   this.title = {type: "string", value: ""};
   this.unselectable = {type: "string", value: ""};
+  this.onfocusin = {type: "null"};
+  this.onfocusout = {type: "null"};
   this.onclick = {type: "null"};
   this.onmousedown = {type: "null"};
   this.onmouseup = {type: "null"};
   this.onmouseover = {type: "null"};
+  this.onmouseenter = {type: "null"};
   this.onmousemove = {type: "null"};
   this.onmouseout = {type: "null"};
+  this.onmouseleave = {type: "null"};
   this.onkeypress = {type: "null"};
   this.onkeydown = {type: "null"};
   this.onkeyup = {type: "null"};
@@ -81,6 +86,10 @@ cls.EcmascriptDebugger["6.0"].inspection_filters._Element = new function()
   this.onratechange = {type: "null"};
   this.ondurationchange = {type: "null"};
   this.onvolumechange = {type: "null"};
+  this.ontouchstart = {type: "null"};
+  this.ontouchmove = {type: "null"};
+  this.ontouchend = {type: "null"};
+  this.ontouchcancel = {type: "null"};
 };
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.Window = function()
@@ -125,6 +134,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.XMLDocument = function()
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLDocument = function()
 {
+  this.activeElement = {type: "null"};
   this.alinkColor = {type: "string", value: ""};
   this.attributes = {type: "null"};
   this.baseURI = {type: "null"};
@@ -134,7 +144,6 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLDocument = function()
   this.dir = {type: "string", value: ""};
   this.doctype = {type: "null"};
   this.documentURI = {type: "null"};
-  this.domain = {type: "string", value: ""};
   this.fgColor = {type: "string", value: ""};
   this.linkColor = {type: "string", value: ""};
   this.localName = {type: "null"};
@@ -151,9 +160,10 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLDocument = function()
   this.textContent = {type: "null"};
   this.title = {type: "string", value: ""};
   this.vlinkColor = {type: "string", value: ""};
-  this.onload = {type: "null"};
-  this.onunload = {type: "null"};
-  this.onhashchange = {type: "null"};
+  this.onfocusin = {type: "null"};
+  this.onfocusout = {type: "null"};
+  this.onfocus = {type: "null"};
+  this.onblur = {type: "null"};
   this.onstorage = {type: "null"};
 };
 
@@ -348,7 +358,6 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLUnknownElement.prototype =
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLInputElement = function()
 {
   this.accept = {type: "string", value: ""};
-  this.accessKey = {type: "string", value: ""};
   this.align = {type: "string", value: ""};
   this.alt = {type: "string", value: ""};
   this.autocomplete = {type: "string", value: ""};
@@ -365,6 +374,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLInputElement = function()
   this.name = {type: "string", value: ""};
   this.outerText = {type: "string", value: ""};
   this.pattern = {type: "string", value: ""};
+  this.placeholder = {type: "string", value: ""};
   this.selectedOption = {type: "null"};
   this.src = {type: "string", value: ""};
   this.step = {type: "string", value: ""};
@@ -412,7 +422,6 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLFormElement.prototype =
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLSelectElement = function()
 {
-  this.accessKey = {type: "string", value: ""};
   this.autocomplete = {type: "string", value: ""};
   this.form = {type: "null"};
   this.name = {type: "string", value: ""};
@@ -455,7 +464,6 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLOptionElement.prototype =
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTextAreaElement = function()
 {
-  this.accessKey = {type: "string", value: ""};
   this.defaultValue = {type: "string", value: ""};
   this.form = {type: "null"};
   this.inputmode = {type: "string", value: ""};
@@ -479,7 +487,6 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTextAreaElement.prototype =
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLButtonElement = function()
 {
-  this.accessKey = {type: "string", value: ""};
   this.form = {type: "null"};
   this.formAction = {type: "string", value: ""};
   this.formEnctype = {type: "string", value: ""};
@@ -503,7 +510,6 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLButtonElement.prototype =
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLLabelElement = function()
 {
-  this.accessKey = {type: "string", value: ""};
   this.control = {type: "null"};
   this.form = {type: "null"};
   this.htmlFor = {type: "string", value: ""};
@@ -526,7 +532,6 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLFieldSetElement.prototype =
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLLegendElement = function()
 {
-  this.accessKey = {type: "string", value: ""};
   this.align = {type: "string", value: ""};
   this.form = {type: "null"};
   this.outerText = {type: "string", value: ""};
@@ -682,7 +687,6 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLModElement.prototype =
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLAnchorElement = function()
 {
-  this.accessKey = {type: "string", value: ""};
   this.charset = {type: "string", value: ""};
   this.coords = {type: "string", value: ""};
   this.href = {type: "string", value: ""};
@@ -718,6 +722,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLImageElement.prototype =
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLObjectElement = function()
 {
+  this.accessKey = {type: "string", value: ""};
   this.align = {type: "string", value: ""};
   this.archive = {type: "string", value: ""};
   this.border = {type: "string", value: ""};
@@ -775,6 +780,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLParamElement.prototype =
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLAppletElement = function()
 {
+  this.accessKey = {type: "string", value: ""};
   this.align = {type: "string", value: ""};
   this.alt = {type: "string", value: ""};
   this.archive = {type: "string", value: ""};
@@ -821,7 +827,6 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLMapElement.prototype =
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLAreaElement = function()
 {
-  this.accessKey = {type: "string", value: ""};
   this.alt = {type: "string", value: ""};
   this.coords = {type: "string", value: ""};
   this.href = {type: "string", value: ""};
