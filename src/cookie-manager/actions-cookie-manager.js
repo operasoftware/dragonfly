@@ -24,10 +24,11 @@ window.eventHandlers.blur['cookiemanager-edit'] = function(event, target)
       var remove_old_cookie_script = 'document.cookie="'
                     + cookie.name + '=' + cookie.value
                     + '; expires='+ (new Date(new Date().getTime()-1000).toUTCString())
-                    + '; path=' + '/' + cookie.path+'";';
+                    + '; path=' + cookie.path+'";';
       // and add modified
       // todo: probably can be removed by just using all the values from the forms.
-      // todo: check to use encodeURIComponent, also decoded when putting things into markup. 
+      // todo: check if encodeURIComponent is used correctly
+      
       var add_modified_cookie_script = 'document.cookie="';
       if(editproperty === "name")
       {
@@ -39,7 +40,7 @@ window.eventHandlers.blur['cookiemanager-edit'] = function(event, target)
       }
       if(editproperty === "value")
       {
-        add_modified_cookie_script += target.value.trim();
+        add_modified_cookie_script += encodeURIComponent(target.value);
       }
       else
       {
@@ -118,7 +119,7 @@ window.eventHandlers.click['add-cookie-handler'] = function(event, target)
   var domain_val  = domain_field.value;
   var name_val    = formelem.querySelector("input[name=cookiename]").value;
   var value_val   = formelem.querySelector("input[name=cookievalue]").value;
-  var path_val    = formelem.querySelector("input[name=cookiepath]").value || "/";
+  var path_val    = formelem.querySelector("input[name=cookiepath]").value || "/"; // TODO: Make sure it starts with a path if it's given
   var expires_val = formelem.querySelector("input[name=cookieexpires]").value;
   
   if(domain_val && name_val && cookie_runtime!=="")
@@ -136,6 +137,7 @@ window.eventHandlers.click['add-cookie-handler'] = function(event, target)
                   + '; path=' + '/' + "path"+'"';
     */
     var script = add_cookie_script;
+    // console.log("add_cookie_script",add_cookie_script);
     var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_changed_cookies, []);
     services['ecmascript-debugger'].requestEval(tag,[cookie_runtime, 0, 0, script]);
   }
@@ -145,6 +147,7 @@ window.eventHandlers.click['add-cookie-handler'] = function(event, target)
   }
   // todo: make domain, path and expires persist
   // todo: scroll down to newly added cookies
+  event.preventDefault();
 }
 
 window.eventHandlers.click['cookiemanager-update'] = function(event, target)

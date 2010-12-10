@@ -67,15 +67,16 @@ cls.CookieManagerView = function(id, name, container_class)
           grouper:  function(obj) {
             return window.views.cookie_manager._rts[obj.runtimes[0]].hostname + window.views.cookie_manager._rts[obj.runtimes[0]].pathname;
           },
-          renderer: function(obj) {
-            return 
-              ["p",window.views.cookie_manager._rts[obj.runtimes[0]].hostname + window.views.cookie_manager._rts[obj.runtimes[0]].pathname,
+          renderer: function(groupvalue, obj) {
+            var obj = obj[0];
+            var runtime = window.views.cookie_manager._rts[obj.runtimes[0]];
+            return ["p",runtime.hostname + runtime.pathname + " ",
                 [
-                  "a",                 "Remove",
+                  "a",                 "(Remove all)",
                   "class",             "delete_cookie",
                   "href",              "#",
-                  "data-cookie-domain", obj.domain,
-                  "data-cookie-path",   obj.path,
+                  "data-cookie-domain", runtime.hostname,
+                  "data-cookie-path",   runtime.pathname,
                   "handler",           "cookiemanager-delete-domain-path-cookies"
                 ]
               ];
@@ -116,6 +117,7 @@ cls.CookieManagerView = function(id, name, container_class)
             {
               return ["input", " ",
                   "value", obj.name,
+                  "type", "text",
                   "data-objectref", obj.objectref,
                   "data-editproperty", "name",
                   "blur-handler", "cookiemanager-edit"
@@ -133,7 +135,8 @@ cls.CookieManagerView = function(id, name, container_class)
             if(!obj.isHTTPOnly)
             {
               return ["input", " ",
-                  "value", obj.value,
+                  "value", decodeURIComponent(obj.value),
+                  "type", "text",
                   "data-objectref", obj.objectref,
                   "data-editproperty", "value",
                   "blur-handler", "cookiemanager-edit"
@@ -148,7 +151,7 @@ cls.CookieManagerView = function(id, name, container_class)
         path: {
           label:    "Path",
           renderer: function(obj) {
-            return "/"+obj.path;
+            return obj.path;
           }
         },
         expires: {
@@ -198,38 +201,6 @@ cls.CookieManagerView = function(id, name, container_class)
     table.re_render(obj.render());
     
     // Add cookie adding
-    
-    /*
-    <h2 style="padding:20px">Add Cookie</h2>
-    <div style="margin:10px; padding: 10px; background: #DDD">
-      <div style="float:left; margin-right: 10px">
-        <label>Domain</label><br/>
-        <select>
-          <option value="foo">foo.something.com</option>
-        </select>
-      </div>
-      <div style="float:left; margin-right: 10px">
-        <label>Name</label><br/>
-        <input>
-      </div>
-      <div style="float:left; margin-right: 10px">
-        <label>Value</label><br/>
-        <input>
-      </div>
-      <div style="float:left; margin-right: 10px">
-        <label>Path</label><br/>
-        <input value="/">
-      </div>
-      <div style="float:left; margin-right: 10px">
-        <label>Expires</label><br/>
-        <input type="datetime">
-      </div>
-      <div style="float:left; margin-right: 10px">
-        <label></label><br/>
-        <button>Add</button>
-      </div>
-    </div>
-    */
     var template=[["h2", "Add Cookie", "style", "padding: 20px; padding-bottom: 3px;"]];
     template.push(
       ["form",
@@ -266,21 +237,30 @@ cls.CookieManagerView = function(id, name, container_class)
             [
               ["label","Name"],
               ["br"],
-              ["input","name","cookiename"]
+              ["input",
+                "type","text",
+                "name","cookiename"
+              ]
             ],
           "class","container"],
           ["div",
             [
               ["label","Value"],
               ["br"],
-              ["input","name","cookievalue"]
+              ["input",
+                "type","text",
+                "name","cookievalue"
+              ]
             ],
           "class","container"],
           ["div",
             [
               ["label","Path"],
               ["br"],
-              ["input","name","cookiepath"]
+              ["input",
+                "type","text",
+                "name","cookiepath"
+              ]
             ],
           "class","container"],
           ["div",
@@ -297,7 +277,8 @@ cls.CookieManagerView = function(id, name, container_class)
           ["div",
             [
               ["br"],
-              ["button","Add","handler","add-cookie-handler"]
+              ["button","Add",
+               "handler","add-cookie-handler"]
             ],
           "class","container"]
         ],
@@ -316,6 +297,7 @@ cls.CookieManagerView = function(id, name, container_class)
     
     // few styles..
     container.render(["style", ".spacedbutton {margin: 10px 2px 10px 10px;}"]);
+    container.render(["style", ".delete_cookie {color: #444}"]);
     container.render(["style", ".sortable-table input[type=text], .add-cookie-form input[type=text] {width: 99%; border: 1px solid #CCC;}"]);
   };
   
@@ -403,12 +385,6 @@ cls.CookieManagerView = function(id, name, container_class)
       var runtime = runtime_list[str_rt_id];
       var rt_domain = runtime.hostname;
       var rt_pathname = runtime.pathname;
-      var rt_pathname_unslashed = rt_pathname; // just for use with getCookie
-      if(rt_pathname.indexOf("/") == 0)
-      {
-        rt_pathname_unslashed = rt_pathname.slice(1,rt_pathname.length); // is this really needed?
-      }
-      
       if(rt_domain) // avoids "" values occuring on opera:* pages for example
       {
         if(!this._cookies[rt_domain+rt_pathname])
@@ -430,7 +406,7 @@ cls.CookieManagerView = function(id, name, container_class)
         {
           this._cookies[rt_domain+rt_pathname].get_cookies_is_pending = true;
           var tag = tagManager.set_callback(this, this._handle_cookies,[rt_domain,rt_pathname]);
-          services['cookie-manager'].requestGetCookie(tag,[rt_domain,rt_pathname_unslashed]);
+          services['cookie-manager'].requestGetCookie(tag,[rt_domain,rt_pathname]);
         }
       }
     }
