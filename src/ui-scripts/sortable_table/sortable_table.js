@@ -205,11 +205,10 @@ templates.sortable_table_group = function(tabledef, groupname, render_header, da
   if (sorter) { data.sort(sorter) }
   if (reversed) { data.reverse() }
   var tpl = [];
-
   if (render_header) {
     var renderer = tabledef.groups[groupby].renderer || function(g) { return g };
     tpl.push(["tr",
-              ["th", renderer(groupname),
+              ["th", renderer(groupname, data),
                "colspan", String(cols.length),
                "class", "sortable-table-group-header"],
               "class", "header"
