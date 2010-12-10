@@ -1523,3 +1523,7 @@ tabs, toolbar {
   width: 17px;
   height: 17px;
 }
+.first-temp-tab
+{
+  margin-left: 20px;
+}

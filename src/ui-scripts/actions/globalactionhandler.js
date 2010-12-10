@@ -170,9 +170,9 @@
   this._handlers["add-temp-test-view"] = function(action_id, event, target)
   {
     var test_view = new TestTempView('Hello');
-    UI.get_instance().get_tabbar("request").add_tab(test_view.id);
-    // TODO check showView
-    topCell.showView(test_view.id);
+    var ui = UI.get_instance();
+    ui.get_tabbar("request").add_tab(test_view.id);
+    ui.show_view(test_view.id);
     return false;
   };
 

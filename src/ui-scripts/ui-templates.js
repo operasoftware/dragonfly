@@ -4,9 +4,12 @@
 {
   var self = this;
 
-  this.tab = function(obj, is_active_tab)
+  this.tab = function(obj, is_active_tab, is_first_temp_tab)
   {
     var ret = ['tab', obj.name];
+    var class_name = [is_active_tab  && 'active',
+                      is_first_temp_tab && 'first-temp-tab']
+                     .filter(Boolean).join(' ');
     if (obj.has_close_button)
     {
       ret.push(['input', 
@@ -15,9 +18,9 @@
                 'class', 'close-tab-button']);
     }
     ret.push('handler', 'tab', 'ref-id', obj.ref_id);
-    if (is_active_tab)
+    if (class_name)
     {
-      ret.push('class', 'active');
+      ret.push('class', class_name);
     }
     return ret;
   }
@@ -199,12 +202,18 @@
   this.tabs = function(obj)
   {
     var ret = [];
-    var tab = null, i = 0;
-    for( ; tab = obj.tabs[i]; i++)
+    var tab = null, i = 0, is_first_temp_tab = false;
+    for (; tab = obj.tabs[i]; i++)
     {
-      if( ! tab.disabled )
+      if (!tab.disabled)
       {
-        ret[ret.length] = this.tab(tab, obj.activeTab == tab.ref_id)
+        ret[ret.length] = this.tab(tab, 
+                                   obj.activeTab == tab.ref_id,
+                                   tab.has_close_button && !is_first_temp_tab);
+        if (!is_first_temp_tab)
+        {
+          is_first_temp_tab = Boolean(tab.has_close_button);
+        }
       }
     }
     return ret;

@@ -23,6 +23,8 @@ var UI = function()
     this.get_tabbar = function(id){};
 
     this.register_tabbar = function(id, tabs){};
+    
+    this.show_view = function(id){};
 
 
     /* implemenation */
@@ -38,6 +40,15 @@ var UI = function()
         this._tabbars[id] = new Tabbar(id, tabs);
       }
       return this._tabbars[id];
+    };
+    
+    this.show_view = function(id)
+    {
+      // TODO make topCell a private member of UI
+      if (window.topCell)
+      {
+        window.topCell.showView(id);
+      }
     };
 }
 

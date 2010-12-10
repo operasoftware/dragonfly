@@ -14,15 +14,7 @@ var TempBaseView = function()
   {
     this._init_super(this._getid(), name, container_class, html, default_handler);
   }
-}
-
-var TempView = function(name, container_class, html, default_handler)
-{
-  if (name)
-  {
-    this.init(name, container_class, html, default_handler);
-  }
-}
-
+};
+var TempView = function(name, container_class, html, default_handler){};
 TempBaseView.prototype = ViewBase;
 TempView.prototype = new TempBaseView();
