@@ -201,25 +201,102 @@
   this._friendly_print = function(msg, rt_id, fallback)
   {
     const VALUE_LIST = 2, OBJECT_VALUE = 1, OBJECT_ID = 0;
+    
+    var max = 50;
+    
     var obj_ids = (msg[VALUE_LIST]).map(function(value, index)
     {
       return value[OBJECT_VALUE] && value[OBJECT_VALUE][OBJECT_ID] || 0;
     });
-    var call_list = obj_ids.map(function(object_id)
+    
+    var queue_cb = this._friendly_print_queue_cb.bind(this, msg, rt_id, obj_ids, fallback);
+    
+    var queue = [];
+    var i = 0;
+    // chunk the request
+    while (obj_ids.length > max * i)
     {
-      return object_id && "$_" + object_id || null;
-    }).join(',');
-    var arg_list = obj_ids.reduce(function(list, obj_id)
+      queue.push(obj_ids.slice(i++ * max, i * max));
+    }    
+    
+    var queue_length = queue.length;
+    var ret_queue = [];
+    
+    queue.forEach(function(obj_ids, index)
     {
-      if (obj_id)
-        list.push(["$_" + obj_id, obj_id]);
-      return list;
-    }, []);
-    var tag = this._tagman.set_callback(this, this._handle_friendly_print,
-                                        [msg, rt_id, obj_ids, fallback]);
-    var script = this._friendly_print_host.replace("%s", call_list);
-    var msg = [rt_id, 0, 0, script, arg_list];
-    this._service.requestEval(tag, msg);
+
+      var call_list = obj_ids.map(function(object_id)
+      {
+        return object_id && "$_" + object_id || null;
+      });
+      
+      var arg_list = obj_ids.reduce(function(list, obj_id)
+      {
+        if (obj_id)
+          list.push(["$_" + obj_id, obj_id]);
+        return list;
+      }, []);
+      
+      var tag = this._tagman.set_callback(this, this._handle_queue,
+                                          [ret_queue, index, queue_length, queue_cb]);
+      var script = this._friendly_print_host.replace("%s", call_list.join(','));
+      var msg = [rt_id, 0, 0, script, arg_list];
+      this._service.requestEval(tag, msg);
+    }, this);
+  }
+  
+  this._friendly_print_queue_cb = function(orig_msg, rt_id, obj_ids, fallback, queue)
+  {
+    
+    const 
+    STATUS = 0, 
+    VALUE = 2, 
+    VALUE_LIST = 2, 
+    DF_INTERN_TYPE = 3, 
+    FRIENDLY_PRINTED = 4, 
+    OBJECT_VALUE = 1;
+    
+    var ret = [];
+    queue.forEach(function(_msg)
+    {
+      var status = _msg[0], msg=_msg[1];
+      if (status || msg[STATUS] != "completed")
+      {
+        opera.postError('Pretty printing failed: '+JSON.stringify(msg));
+        ret = null;
+      }
+      else if(ret)
+      {
+        ret.extend(JSON.parse(msg[VALUE]));
+      }
+    });
+
+    if (ret)
+    {
+      var orig_value_list = orig_msg[VALUE_LIST];
+      var obj_index = 0;
+      orig_value_list.forEach(function(value)
+      {
+        if (value[OBJECT_VALUE])
+        {
+          if (ret[obj_index])
+          {
+            value[FRIENDLY_PRINTED] = ret[obj_index];
+          }
+          obj_index++;
+        }
+      });
+    }
+    fallback();
+  }
+  
+  this._handle_queue = function(status, message, queue, index, queue_length, cb)
+  {
+      queue[index] = [status, message];
+      if (queue.filter(Boolean).length == queue_length)
+      {
+        cb(queue);
+      }
   }
 
   // Boolean(document.all) === false
@@ -242,9 +319,17 @@
     var ret = list.map(function(item)
     {
       var _class = item === null ? "" : Object.prototype.toString.call(item);
-      if (/(?:Element)\]$/.test(_class))
+      if (/Element\]$/.test(_class))
       {
-        return [ELEMENT, item.nodeName.toLowerCase(), item.id, item.className];
+        return (
+        [
+          ELEMENT, 
+          item.nodeName.toLowerCase(), 
+          item.id, 
+          item.className,
+          item.getAttribute('href'),
+          item.getAttribute('src')
+        ]);
       }
       return null;
     });
