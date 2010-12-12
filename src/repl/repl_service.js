@@ -117,9 +117,42 @@
     this._data.add_output_trace(message);
   }.bind(this);
 
-  this._handle_log = function(msg, rt_id, is_unpacked)
+  this._handle_log = function(msg, rt_id, is_unpacked, is_friendly_printed)
   {
     const VALUELIST = 2;
+    
+    var do_unpack = settings.command_line.get("unpack-list-alikes") && 
+                    !is_unpacked &&
+                    msg[VALUELIST];
+                    
+    var do_friendly_print = !do_unpack && 
+                            true && 
+                            !is_friendly_printed;
+                            
+    if (do_unpack)
+    {
+      var fallback = this._handle_log.bind(this, msg, rt_id, true);
+      this._is_processing = true;
+      this._unpack_list_alikes(msg, rt_id, fallback);
+    }
+    else if (do_friendly_print)
+    {
+      var fallback = this._handle_log.bind(this, msg, rt_id, true, true);
+      this._is_processing = true;
+      this._friendly_print(msg, rt_id, fallback);
+    }
+    else
+    {
+      var values = this._parse_value_list(msg[VALUELIST], rt_id);
+      this._data.add_output_valuelist(rt_id, values);
+      if (is_unpacked && this._is_processing)
+      {
+        this._is_processing = false;
+        this._process_msg_queue();
+      }
+    }
+    
+    /*
     if (is_unpacked ||
         !settings.command_line.get("unpack-list-alikes") ||
         !msg[VALUELIST])
@@ -138,6 +171,7 @@
       this._is_processing = true;
       this._unpack_list_alikes(msg, rt_id, fallback);
     }
+    */
   };
 
   this._unpack_list_alikes = function(msg, rt_id, fallback)
@@ -163,6 +197,30 @@
     var msg = [rt_id, 0, 0, script, arg_list];
     this._service.requestEval(tag, msg);
   }
+  
+  this._friendly_print = function(msg, rt_id, fallback)
+  {
+    const VALUE_LIST = 2, OBJECT_VALUE = 1, OBJECT_ID = 0;
+    var obj_ids = (msg[VALUE_LIST]).map(function(value, index)
+    {
+      return value[OBJECT_VALUE] && value[OBJECT_VALUE][OBJECT_ID] || 0;
+    });
+    var call_list = obj_ids.map(function(object_id)
+    {
+      return object_id && "$_" + object_id || null;
+    }).join(',');
+    var arg_list = obj_ids.reduce(function(list, obj_id)
+    {
+      if (obj_id)
+        list.push(["$_" + obj_id, obj_id]);
+      return list;
+    }, []);
+    var tag = this._tagman.set_callback(this, this._handle_friendly_print,
+                                        [msg, rt_id, obj_ids, fallback]);
+    var script = this._friendly_print_host.replace("%s", call_list);
+    var msg = [rt_id, 0, 0, script, arg_list];
+    this._service.requestEval(tag, msg);
+  }
 
   // Boolean(document.all) === false
   this._is_list_alike = "(" + (function(list)
@@ -176,6 +234,21 @@
         return 1;
       return 0;
     }).join(',');
+  }).toString() + ")([%s])";
+  
+  this._friendly_print_host = "(" + (function(list)
+  {
+    const ELEMENT = 1;
+    var ret = list.map(function(item)
+    {
+      var _class = item === null ? "" : Object.prototype.toString.call(item);
+      if (/(?:Element)\]$/.test(_class))
+      {
+        return [ELEMENT, item.nodeName.toLowerCase(), item.id, item.className];
+      }
+      return null;
+    });
+    return JSON.stringify(ret);
   }).toString() + ")([%s])";
 
   this._handle_list_alikes_list = function(status, msg, orig_msg,
@@ -206,6 +279,40 @@
         fallback();
       }
     }
+  }
+  
+  this._handle_friendly_print = function(status, msg, orig_msg,
+                                           rt_id, obj_ids, fallback)
+  {
+    const 
+    STATUS = 0, 
+    VALUE = 2, 
+    VALUE_LIST = 2, 
+    DF_INTERN_TYPE = 3, 
+    FRIENDLY_PRINTED = 4, 
+    OBJECT_VALUE = 1;
+    if (status || msg[STATUS] != "completed")
+    {
+      opera.postError('Pretty printing failed: '+JSON.stringify(msg));
+    }
+    else
+    {
+      var ret = JSON.parse(msg[VALUE]);
+      var orig_value_list = orig_msg[VALUE_LIST];
+      var obj_index = 0;
+      orig_value_list.forEach(function(value)
+      {
+        if (value[OBJECT_VALUE])
+        {
+          if (ret[obj_index])
+          {
+            value[FRIENDLY_PRINTED] = ret[obj_index];
+          }
+          obj_index++;
+        }
+      });
+    }
+    fallback();
   }
 
   this._handle_unpacked_list = function(status, msg, orig_msg, rt_id, log)
@@ -312,11 +419,13 @@
     const VALUE = 0, OBJECTVALUE = 1;
     const ID = 0, OTYPE = 2, CLASSNAME = 4, FUNCTIONNAME = 5;
     const DF_INTERN_TYPE = 3;
+    const FRIENDLY_PRINTED = 4;
 
     var ret = {
       df_intern_type: value[DF_INTERN_TYPE] || "",
       type:  value[0] === null ? "object" : "native",
-      rt_id: rt_id
+      rt_id: rt_id,
+      friendly_printed: value[FRIENDLY_PRINTED] || "",
     };
 
     if (ret.type == "object") {

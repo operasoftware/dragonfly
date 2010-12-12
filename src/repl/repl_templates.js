@@ -40,13 +40,44 @@ templates.repl_output_pobj = function(data)
                         /(?:Element)$/.test(data.name)
   return [
     'code',
-    data.name,
+    data.friendly_printed ? this.friendly_print(data.friendly_printed) : data.name,
     'handler', is_element_type ? 'inspect-node-link' : 'inspect-object-link',
     'rt-id', data.rt_id.toString(),
     'obj-id', data.obj_id.toString(),
     'class', 'repl-pobj'
   ];
 };
+
+templates.friendly_print = function(value_list)
+{
+  const 
+  TYPE = 0, 
+  ELEMENT = 1, 
+  ELEMENT_NAME = 1, 
+  ELEMENT_ID = 2, 
+  ELEMENT_CLASS = 3;
+  
+  var ret = [];
+  switch (value_list[TYPE])
+  {
+    case ELEMENT:
+    {
+      ret.push(['span', value_list[ELEMENT_NAME], 'class', 'element-name']);
+      if (value_list[ELEMENT_ID])
+      {
+        ret.push(['span', '#' + value_list[ELEMENT_ID], 'class', 'element-id']);
+      }
+      if (value_list[ELEMENT_CLASS])
+      {
+        ret.push(['span', '.' + value_list[ELEMENT_CLASS].replace(/\s+/, '.'), 
+                  'class', 'element-class']);
+      }
+      return ret;
+    }
+      
+  }
+
+}
 
 templates.repl_output_traceentry = function(frame, index)
 {
