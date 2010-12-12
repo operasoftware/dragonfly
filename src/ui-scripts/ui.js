@@ -12,6 +12,7 @@ var UI = function()
   UI.instance = this;
 
   this._tabbars = {};
+  this._modebars = {};
 
    /* interface */
  
@@ -21,8 +22,12 @@ var UI = function()
      * @returns an instance of Tabbar.
      */
     this.get_tabbar = function(id){};
+    
+    this.get_modebar = function(id){};
 
     this.register_tabbar = function(id, tabs){};
+    
+    this.register_tabbar = function(id, modebar){};
     
     this.show_view = function(id){};
 
@@ -32,6 +37,11 @@ var UI = function()
     {
       return this._tabbars[id] || null;
     };
+    
+    this.get_modebar = function(id)
+    {
+      return this._modebars[id] || null;
+    };
 
     this.register_tabbar = function(id, tabs)
     {
@@ -40,6 +50,15 @@ var UI = function()
         this._tabbars[id] = new Tabbar(id, tabs);
       }
       return this._tabbars[id];
+    };
+    
+    this.register_modebar = function(id, _class)
+    {
+      if (!this._modebars[id])
+      {
+        this._modebars[id] = new _class();
+      }
+      return this._modebars[id];
     };
     
     this.show_view = function(id)

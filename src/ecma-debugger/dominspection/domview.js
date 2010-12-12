@@ -28,7 +28,8 @@ cls.DOMView = function(id, name, container_class)
       }
       if (model == window.dom_data)
       {
-        window.modebar.set_content(model.id, window.templates.breadcrumb(model, model.target), true);
+        // TODO
+        // window.modebar.set_content(model.id, window.templates.breadcrumb(model, model.target), true);
       }
     }
     else
