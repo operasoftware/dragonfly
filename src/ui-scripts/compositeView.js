@@ -30,6 +30,7 @@ var CompositeViewBase = function()
     {
       this.modebar.cell = this.cell;
       this.modebar.setDimensions(true);
+      this.modebar.setup();
     }
   }
   

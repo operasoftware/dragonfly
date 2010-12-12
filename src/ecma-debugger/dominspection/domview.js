@@ -28,8 +28,16 @@ cls.DOMView = function(id, name, container_class)
       }
       if (model == window.dom_data)
       {
-        // TODO
-        // window.modebar.set_content(model.id, window.templates.breadcrumb(model, model.target), true);
+        if (!this._modebar)
+        {
+          this._modebar = UI.get_instance().get_modebar('dom');
+        }
+        if (this._modebar)
+        {
+          this._modebar.set_content(model.id, 
+                                    window.templates.breadcrumb(model, model.target),
+                                    true);
+        }
       }
     }
     else

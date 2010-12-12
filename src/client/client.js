@@ -252,8 +252,8 @@ window.cls.Client = function()
   {
     var layouts = ui_framework.layouts;
     var ui = UI.get_instance();
-    var modebar_dom = ui.register_modebar('dom', Modebar);
-    var modebar_scripts = ui.register_modebar('scripts', Modebar);
+    var modebar_dom = ui.register_modebar('dom', HorizontalNavigation);
+    var modebar_scripts = ui.register_modebar('scripts', HorizontalNavigation);
     new CompositeView('network_panel',
                       ui_strings.M_VIEW_LABEL_NETWORK,
                       layouts.network_rough_layout);
