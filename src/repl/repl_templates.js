@@ -48,48 +48,6 @@ templates.repl_output_pobj = function(data)
   ];
 };
 
-templates.friendly_print = function(value_list)
-{
-  const 
-  TYPE = 0, 
-  ELEMENT = 1, 
-  ELEMENT_NAME = 1, 
-  ELEMENT_ID = 2, 
-  ELEMENT_CLASS = 3,
-  ELEMENT_HREF = 4,
-  ELEMENT_SRC = 5;
-  
-  var ret = [];
-  
-  switch (value_list[TYPE])
-  {
-    case ELEMENT:
-    {
-      ret.push(['span', value_list[ELEMENT_NAME], 'class', 'element-name']);
-      if (value_list[ELEMENT_ID])
-      {
-        ret.push(['span', '#' + value_list[ELEMENT_ID], 'class', 'element-id']);
-      }
-      if (value_list[ELEMENT_CLASS])
-      {
-        ret.push(['span', '.' + value_list[ELEMENT_CLASS].replace(/\s+/g, '.'), 
-                  'class', 'element-class']);
-      }
-      if (value_list[ELEMENT_HREF])
-      {
-        ret.push(['span', ' ' + value_list[ELEMENT_HREF], 'class', 'element-href']);
-      }
-      if (value_list[ELEMENT_SRC])
-      {
-        ret.push(['span', ' ' + value_list[ELEMENT_SRC], 'class', 'element-src']);
-      }
-      return ret;
-    }
-      
-  }
-
-}
-
 templates.repl_output_traceentry = function(frame, index)
 {
     var tpl = ['li',
