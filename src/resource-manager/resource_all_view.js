@@ -24,10 +24,13 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
 
   this._handle_open_resource_bound = function(evt, target)
   {
-
     var rid = target.getAttribute("data-object-id");
-    //var resource = this._service.get_resource_for_id(rid);
-    opera.postError("Should show " + rid);
+
+    var obj = this._service.get_resource_for_id(rid);
+    var view = new cls.GenericResourceDetail(obj)
+    var ui = UI.get_instance();
+    ui.get_tabbar("resources").add_tab(view.id);
+    //ui.show_view(view.id);
   }.bind(this);
 
 
