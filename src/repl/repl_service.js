@@ -10,7 +10,7 @@
 
   this._msg_queue = [];
   this._is_processing = false;
-  
+
   this._on_consolelog_bound = function(msg)
   {
     if (this._is_processing) { this._msg_queue.push(msg); }
@@ -120,15 +120,15 @@
   this._handle_log = function(msg, rt_id, is_unpacked, is_friendly_printed)
   {
     const VALUELIST = 2;
-    
-    var do_unpack = settings.command_line.get("unpack-list-alikes") && 
+
+    var do_unpack = settings.command_line.get("unpack-list-alikes") &&
                     !is_unpacked &&
                     msg[VALUELIST];
-                    
-    var do_friendly_print = !do_unpack && 
-                            true && 
+
+    var do_friendly_print = !do_unpack &&
+                            true &&
                             !is_friendly_printed;
-                            
+
     if (do_unpack)
     {
       var fallback = this._handle_log.bind(this, msg, rt_id, true);
@@ -137,9 +137,13 @@
     }
     else if (do_friendly_print)
     {
-      var fallback = this._handle_log.bind(this, msg, rt_id, true, true);
       this._is_processing = true;
-      this._friendly_printer._friendly_print(msg, rt_id, fallback);
+      var cb = this._handle_log.bind(this, msg, rt_id, true, true);
+      var obj_list = msg[VALUELIST].reduce(this._friendly_printer.value2objlist, []);
+      // friendly prinyter works as side effect
+      // it set a FRIENDLY_PRINTED field on each object
+      // that means the callback is an error and success callback
+      this._friendly_printer._friendly_print(obj_list, rt_id, 0, 0, cb);
     }
     else
     {
@@ -151,7 +155,7 @@
         this._process_msg_queue();
       }
     }
-    
+
   };
 
   this._unpack_list_alikes = function(msg, rt_id, fallback)
@@ -177,7 +181,7 @@
     var msg = [rt_id, 0, 0, script, arg_list];
     this._service.requestEval(tag, msg);
   }
-  
+
   // Boolean(document.all) === false
   this._is_list_alike = "(" + (function(list)
   {
@@ -191,7 +195,7 @@
       return 0;
     }).join(',');
   }).toString() + ")([%s])";
-  
+
   this._handle_list_alikes_list = function(status, msg, orig_msg,
                                            rt_id, obj_ids, fallback)
   {
@@ -221,7 +225,7 @@
       }
     }
   }
-  
+
   this._handle_unpacked_list = function(status, msg, orig_msg, rt_id, log)
   {
     const OBJECT_CHAIN_LIST = 0, VALUE_LIST = 2, DF_INTERN_TYPE = 3;
@@ -326,13 +330,12 @@
     const VALUE = 0, OBJECTVALUE = 1;
     const ID = 0, OTYPE = 2, CLASSNAME = 4, FUNCTIONNAME = 5;
     const DF_INTERN_TYPE = 3;
-    const FRIENDLY_PRINTED = 4;
+    const FRIENDLY_PRINTED = 6;
 
     var ret = {
       df_intern_type: value[DF_INTERN_TYPE] || "",
       type:  value[0] === null ? "object" : "native",
       rt_id: rt_id,
-      friendly_printed: value[FRIENDLY_PRINTED] || "",
     };
 
     if (ret.type == "object") {
@@ -340,6 +343,7 @@
       ret.obj_id = object[ID];
       ret.type = object[OTYPE];
       ret.name = object[CLASSNAME] || object[FUNCTIONNAME];
+      ret.friendly_printed = object[FRIENDLY_PRINTED];
     }
     else
     {
@@ -392,50 +396,44 @@
     }
     else if (msg[TYPE] == "object")
     {
-      if (settings.command_line.get("unpack-list-alikes"))
-      {
-        (function(msg, rt_id)
-        {
-          // convert Eval to OnConsoleLog
-          // 1 - console.log
-          var val_msg = [rt_id, 1, [[null, msg[OBJECT_VALUE]]]];
-          var is_friendly = false;
-          var fallback = (function()
-          {
-            if (!is_friendly && true)
-            {
-              this._friendly_printer._friendly_print(val_msg, rt_id, fallback);
-              is_friendly = true;
-            }
-            else
-            {
-              msg[FRIENDLY_PRINTED] = val_msg[VALUELIST][0][FRIENDLY_PRINTED];
-              this._handle_object(msg, rt_id);
-            }
-          }).bind(this);
-          this._unpack_list_alikes(val_msg, rt_id, fallback);
-        }).bind(this, msg, rt_id)();
-        
-      }
-      /*
-      else if(true)
-      {
-        var msg = [rt_id, 1, [[null, msg[OBJECT_VALUE]]]];
-        var fallback = this._handle_object.bind(this, msg, rt_id);
-        alert(8)
-        this._friendly_printer._friendly_print(msg, rt_id, fallback);
-      }
-      */
-      else
-      {
-        this._handle_object(msg, rt_id);
-      }
+      this._before_handling_object(msg, rt_id, thread_id, frame_id);
     }
     else
     {
       this._handle_native(msg);
     }
   }.bind(this);
+
+  this._before_handling_object = function(msg, rt_id, thread_id, frame_id,
+                                          is_unpacked, is_friendly_printed)
+  {
+    const OBJECT_VALUE = 3;
+    var do_unpack = !is_unpacked && settings.command_line.get("unpack-list-alikes");
+    var do_friendly_print = !is_friendly_printed && true;
+    if (do_unpack)
+    {
+      var fallback = this._before_handling_object.bind(this, msg, rt_id,
+                                                       thread_id, frame_id,
+                                                       true);
+      // convert Eval to OnConsoleLog
+      // 1 - console.log
+      this._unpack_list_alikes([rt_id, 1, [[null, msg[OBJECT_VALUE]]]],
+                               rt_id, fallback);
+    }
+    else if (do_friendly_print)
+    {
+      var callback = this._before_handling_object.bind(this, msg, rt_id,
+                                                       thread_id, frame_id,
+                                                       true, true);
+      this._friendly_printer._friendly_print([msg[OBJECT_VALUE]],
+                                             rt_id, thread_id, frame_id,
+                                             callback);
+    }
+    else
+    {
+      this._handle_object(msg, rt_id);
+    }
+  }
 
   this._on_element_selected_bound = function(msg)
   {
@@ -461,10 +459,11 @@
   {
     const TYPE = 1, OBJVALUE = 3;
     const OBJID = 0, CLASS = 4; FUNCTION = 5;
-    const FRIENDLY_PRINTED = 4;
+    const FRIENDLY_PRINTED = 6;
 
     var obj = msg[OBJVALUE];
-    this._data.add_output_pobj(rt_id, obj[OBJID], obj[CLASS] || obj[FUNCTION], msg[FRIENDLY_PRINTED]);
+    this._data.add_output_pobj(rt_id, obj[OBJID], obj[CLASS] || obj[FUNCTION],
+                               obj[FRIENDLY_PRINTED]);
   };
 
   this._handle_native = function(msg)
