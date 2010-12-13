@@ -1,12 +1,25 @@
 ﻿window.eventHandlers.click['cookiemanager-delete-all'] = function(event, target)
 {
-  // just delete the one that are part of the current debug context  
-  for (var domain in window.views.cookie_manager._cookies)
-  {
-    // console.log("removing cookies for domain",domain);
-    var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_changed_cookies,[domain]);
-    services['cookie-manager'].requestRemoveCookie(tag, [domain]);
-  }  
+  // just delete cookies that are shown
+  for (var i=0; i < window.views.cookie_manager._flattened_cookies.length; i++) {
+    var cookie = window.views.cookie_manager._flattened_cookies[i];
+      
+    var domain = cookie.domain;
+    var path = cookie.path;
+    var name = cookie.name;
+
+    var remove_cookie_instructions = [domain];
+    if(path)
+    {
+      remove_cookie_instructions.push(path);
+    }
+    if(name)
+    {
+      remove_cookie_instructions.push(name);
+    }
+    var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_changed_cookies, remove_cookie_instructions);
+    services['cookie-manager'].requestRemoveCookie(tag,[domain, path, name]);
+  };
 };
 
 window.eventHandlers.blur['cookiemanager-edit'] = function(event, target)
