@@ -162,16 +162,16 @@ cls.CookieManagerView = function(id, name, container_class)
             {
               return parsedDate.toUTCString();
             }
-            return "(when session is closed)";
+            return ["span","(when session is closed)","class","replaced-val"]
           }
         },
         isSecure: {
           label:    "Secure",
-          renderer: function(obj) { return obj.isSecure? "Yes":"No"; }
+          renderer: function(obj) { return obj.isSecure? "Yes":""; }
         },
         isHTTPOnly: {
           label:    "HTTP only",
-          renderer: function(obj) { return obj.isHTTPOnly? "Yes":"No"; }
+          renderer: function(obj) { return obj.isHTTPOnly? "Yes":""; }
         },
         remove: {
           label:    "",
@@ -299,6 +299,7 @@ cls.CookieManagerView = function(id, name, container_class)
     container.render(["style", ".spacedbutton {margin: 10px 2px 10px 10px;}"]);
     container.render(["style", ".delete_cookie {color: #444}"]);
     container.render(["style", ".sortable-table input[type=text], .add-cookie-form input[type=text] {width: 99%; border: 1px solid #CCC;}"]);
+    container.render(["style", ".replaced-val {color: #444;}"]);
   };
   
   this._on_active_tab = function(msg)
