@@ -72,12 +72,7 @@ var ContextMenu = function() {
           all_items.push(ContextMenu.separator);
         }
 
-        items = this._expand_all_items(items, event);
-        for (var i = 0, item; item = items[i]; i++)
-        {
-          item.menu_id = menu_id;
-          all_items.push(item);
-        }
+        all_items = all_items.concat(this._expand_all_items(items, event, menu_id));
       }
 
       ele = ele.parentNode;
@@ -191,7 +186,7 @@ var ContextMenu = function() {
     this.is_shown = false;
   };
 
-  this._expand_all_items = function(items, event)
+  this._expand_all_items = function(items, event, menu_id)
   {
     var all_items = [];
 
@@ -199,7 +194,11 @@ var ContextMenu = function() {
     {
       if (typeof item.callback == "function")
       {
-        all_items = all_items.concat(item.callback(event, event.target));
+        var callback_items = item.callback(event, event.target);
+        if (callback_items)
+        {
+          all_items = all_items.concat(callback_items);
+        }
       }
       else
       {
@@ -210,6 +209,10 @@ var ContextMenu = function() {
     for (var i = 0, item; item = all_items[i]; i++)
     {
       item.id = item.id || "item_" + i;
+      if (menu_id)
+      {
+        item.menu_id = menu_id;
+      }
     }
 
     return all_items;
