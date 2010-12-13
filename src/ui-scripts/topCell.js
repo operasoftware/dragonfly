@@ -5,7 +5,7 @@
   * a bit different from a normal cell, it holds the main view ui elements but also the main conatiner
   */
 
-var TopCell = function(layout, setDimensions, onresize, TopToolbar)
+var TopCell = function(layout, setDimensions, onresize, TopToolbar, services)
 {
   var self = this;
   var resize_timeout = new Timeouts();
@@ -161,7 +161,7 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar)
 
   // constructor calls
   window.topCell = this;
-  this.init(layout);
+  this.init(layout, null, null, null, services);
   this.setStartDimensions();
   if(this.toolbar)
   {

@@ -47,10 +47,10 @@ var CompositeViewBase = function()
     }
   }
 
-  this.initCompositeView = function(id, name, layout_rough, modebar_id)
+  this.initCompositeView = function(id, name, layout_rough, modebar_id, services)
   {
     this._layout_rough = layout_rough;
-    this.cell = new Cell(layout_rough, layout_rough.dir);
+    this.cell = new Cell(layout_rough, layout_rough.dir, null, null, services);
     if (modebar_id)
     {
       this._modebar_id = modebar_id;
@@ -75,9 +75,9 @@ var CompositeViewBase = function()
   * @extends CompositeViewBase
   */
 
-var CompositeView = function(id, name, rough_layout, modebar_class, modebar_id)
+var CompositeView = function(id, name, rough_layout, modebar_id, services)
 {
-  this.initCompositeView(id, name, rough_layout, modebar_class, modebar_id);
+  this.initCompositeView(id, name, rough_layout, modebar_id, services);
 }
 
 CompositeViewBase.prototype = ViewBase;

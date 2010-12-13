@@ -149,7 +149,6 @@ window.cls.Client = function()
     is_connect_callback_called_map[_client_id] = false;
     window.ini || ( window.ini = {debug: false} );
     window.messages.post('reset-state');
-    this.create_top_level_views();
     if (!opera.scopeAddClient)
     {
       // implement the scope DOM API
@@ -248,7 +247,7 @@ window.cls.Client = function()
     this.send(null);
   }
 
-  this.create_top_level_views = function()
+  this.create_top_level_views = function(services)
   {
     var layouts = ui_framework.layouts;
     var ui = UI.get_instance();
@@ -256,35 +255,50 @@ window.cls.Client = function()
     var modebar_scripts = ui.register_modebar('scripts', HorizontalNavigation);
     new CompositeView('network_panel',
                       ui_strings.M_VIEW_LABEL_NETWORK,
-                      layouts.network_rough_layout);
+                      layouts.network_rough_layout,
+                      null,
+                      services);
     new CompositeView('console_new',
                       ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE,
-                      layouts.console_rough_layout);
+                      layouts.console_rough_layout,
+                      null,
+                      services);
     new CompositeView('js_new',
                       ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS,
                       layouts.js_rough_layout,
-                      'scripts');
+                      'scripts',
+                      services);
     new CompositeView('dom_new',
                       ui_strings.M_VIEW_LABEL_COMPOSITE_DOM,
                       layouts.dom_rough_layout,
-                      'dom');
+                      'dom',
+                      services);
     new CompositeView('export_new',
                       ui_strings.M_VIEW_LABEL_COMPOSITE_EXPORTS,
-                      layouts.export_rough_layout);
+                      layouts.export_rough_layout,
+                      null,
+                      services);
     new CompositeView('js_panel',
                       ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS,
                       layouts.js_rough_layout_panel,
-                      'scripts');
+                      null,
+                      'scripts',
+                      services);
     new CompositeView('dom_panel',
                       ui_strings.M_VIEW_LABEL_COMPOSITE_DOM,
                       layouts.dom_rough_layout_panel,
-                      'dom');
+                      'dom',
+                      services);
     new CompositeView('utils',
                       ui_strings.M_VIEW_LABEL_UTILITIES,
-                      layouts.utils_rough_layout);
+                      layouts.utils_rough_layout,
+                      null,
+                      services);
     new CompositeView('storage',
                       ui_strings.M_VIEW_LABEL_STORAGE,
-                      layouts.storage_rough_layout);
+                      layouts.storage_rough_layout,
+                      null,
+                      services);
     if( window.opera.attached != settings.general.get('window-attached') )
     {
       window.opera.attached = settings.general.get('window-attached') || false;
@@ -293,12 +307,14 @@ window.cls.Client = function()
 
   this.on_services_created =  function()
   {
+
     var window_controls = document.getElementsByTagName('window-controls')[0];
     if (window_controls)
     {
       window_controls.parentNode.removeChild(window_controls);
     };
-    this.setupTopCell();
+    this.create_top_level_views(window.services);
+    this.setupTopCell(window.services);
     document.querySelector("main-view").render(templates.window_controls());
     if(!arguments.callee._called_once)
     {
@@ -337,7 +353,7 @@ window.cls.Client = function()
     }
   }
 
-  this.setupTopCell = function()
+  this.setupTopCell = function(services)
   {
     var tabs = viewport.getElementsByTagName('tab'), i = 0, tab = null;
     for( ; tab = tabs[i]; i++)
@@ -357,7 +373,8 @@ window.cls.Client = function()
       window.opera.attached ? ui_framework.layouts.panel_layout : ui_framework.layouts.main_layout,
       null,
       null,
-      TopToolbar
+      TopToolbar,
+      services
     );
     windowsDropDown.update();
     var view_id = global_state && global_state.ui_framework.last_selected_tab;
@@ -536,5 +553,15 @@ ui_framework.layouts.main_layout =
 ui_framework.layouts.panel_layout =
 {
   id: 'main-view',
-  tabs: ['dom_panel', 'js_panel', 'network_panel', 'storage', 'console_new', 'utils']
+  // tab (and tabbar) can either be a layout list
+  // or a function returning a layout list
+  // the function gets called with the services returned 
+  // and created depending on Scope.HostInfo
+  tabs: function(services)
+  {
+    // return a layout depending on services
+    // e.g. services['ecmascript-debugger'].version
+    // e.g. services['ecmascript-debugger'].is_implemented
+    return ['dom_panel', 'js_panel', 'network_panel', 'storage', 'console_new', 'utils'];
+  }
 }
