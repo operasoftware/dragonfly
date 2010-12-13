@@ -102,6 +102,8 @@
           "enter": "eval",
           "shift enter": "enter-multiline-mode",
           "ctrl l": "clear",
+          "ctrl p": "backlog-prev",
+          "ctrl n": "backlog-next",
           "ctrl k": "kill-to-end-of-line",
           "ctrl u": "kill-to-beginning-of-line",
           "ctrl e": "move-to-end-of-line",
@@ -228,6 +230,8 @@
           "enter": "eval",
           "shift enter": "enter-multiline-mode",
           // "ctrl l": "clear",
+          //"ctrl p": "backlog-prev",
+          //"ctrl n": "backlog-next",
           // "ctrl k": "kill-to-end-of-line",
           // "ctrl u": "kill-to-beginning-of-line", // non-existent on mac afaict
           // "ctrl e": "move-to-end-of-LINE",
