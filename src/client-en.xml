@@ -124,6 +124,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <link rel="stylesheet" href="./http-logger/httplogger_style.css"/>
 <link rel="stylesheet" href="./console-logger/consolelogger_style.css"/>
 <link rel="stylesheet" href="./ui-style/colorpickerstyle.css"/>
+<link rel="stylesheet" href="./ui-scripts/sortable_table/sortable_table.css"/>
 <link rel="stylesheet" href="./repl/repl_style.css"/>
 <link rel="stylesheet" href="./shortcutconfig/style.css"/>
 <link rel="stylesheet" href="./ui-style/global_command_line.css"/>
@@ -147,8 +148,8 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./scripts/colors.js"/>
 <script src="./scripts/colorspace.js"/>
 <script src="./scripts/messages.js"/>
+<script src="./scripts/objectregistry.js"/>
 <script src="./scripts/spec_links.js"/>
-
 
 
 
@@ -208,6 +209,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/colorpickertemplates.js"/>
 <script src="./ui-scripts/colorpicker.js"/>
 <script src="./ui-scripts/slider.js"/>
+<script src="./ui-scripts/sortable_table/sortable_table.js"/>
 <script src="./ui-scripts/contextmenu.js"/>
 
 
@@ -218,7 +220,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./build-application/build_exec_2_0.js"></script>
 <script src="./build-application/build_ecmascript_debugger_5_0.js"></script>
 <script src="./build-application/build_ecmascript_debugger_6_0.js"></script>
-
+<script src="./build-application/build_cookie_manager_1_0.js"></script>
 
 <script src="./debug/debug.js"/>
 <script src="./debug/configure_message_filter.js"/>
@@ -231,6 +233,8 @@ window.load_screen_timeout = window.setTimeout(function()
 
 
 
+<script src="./cookie-manager/views-cookie-manager.js"></script>
+<script src="./cookie-manager/actions-cookie-manager.js"></script>
 
 
 
@@ -248,6 +252,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ecma-debugger/runtime_onload_handler.js"/>
 <script src="./ecma-debugger/views-runtimes.js"/>
 <script src="./ecma-debugger/views.js"/>
+
 
 <script src="./ecma-debugger/object_inspection/inspection_base_data.js"/>
 

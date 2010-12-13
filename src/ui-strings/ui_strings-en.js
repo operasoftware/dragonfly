@@ -31,6 +31,8 @@ ui_strings.M_VIEW_LABEL_NETWORK = 'Network';
 ui_strings.M_VIEW_LABEL_UTILITIES = 'Utilities';
 /* DESC: View for all types of storage, cookies, localStorage, sessionStorage e.t.c */
 ui_strings.M_VIEW_LABEL_STORAGE = 'Storage';
+/* DESC: Preliminary view for the new cookie manager */
+ui_strings.M_VIEW_LABEL_COOKIES = 'Cookies';
 
 /*
  * Level 2 View Tab Headings
