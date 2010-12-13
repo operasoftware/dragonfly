@@ -4,7 +4,7 @@ function MetadataDrawer(resource) {
   this._objectid = ObjectRegistry.get_instance().set_object(this);
   this._rules = {
     generic: [
-      {label: "url", getter: function(res) { return ["a", res.url, "href", res.url] } },
+      {label: "url", getter: function(res) { return ["a", res.urlload.url, "href", res.urlload.url] } },
       {label: "size", getter: function(res) { return "size" } },
       {label: "format", getter: function(res) { return "format" }},
     ],
@@ -68,7 +68,7 @@ templates.metadata_drawer = function(resource, expanded, objectid, rules)
   }
   else
   {
-    content = "URL: " + resource.url;
+    content = "URL: " + resource.urlload.url;
   }
 
   return ["div",

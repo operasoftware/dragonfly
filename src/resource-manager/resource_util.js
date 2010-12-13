@@ -82,6 +82,19 @@ cls.ResourceUtil.url_path = function(url)
   return path;
 }
 
+cls.ResourceUtil.url_filename = function(url)
+{
+  var path = cls.ResourceUtil.url_path(url);
+  var lastslash = path.lastIndexOf("/");
+  if (lastslash < 1) // 0 and -1 both mean there is no file name
+  {
+    return null;
+  }
+  else {
+    return path.slice(lastslash+1);
+  }
+}
+
 cls.ResourceUtil.url_host = function(url)
 {
   var host = url.replace(/\w+?:\/\//, "");
