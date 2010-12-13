@@ -755,7 +755,7 @@ if (!"".trim)
  */
 String.prototype.isdigit = function()
 {
-  return !(/\D/.test(this));
+  return this.length && !(/\D/.test(this));
 };
 
 Array.prototype.extend = function(list)
