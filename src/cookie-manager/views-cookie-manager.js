@@ -32,7 +32,7 @@ cls.CookieManagerView = function(id, name, container_class)
             expires:       current_cookie.expires,
             isSecure:      current_cookie.isSecure,
             isHTTPOnly:    current_cookie.isHTTPOnly,
-            objectref:     current_cookie.domain + current_cookie.path + current_cookie.name + (parseInt(Math.random()*99999))
+            objectref:     current_cookie.domain + "/" + current_cookie.path + current_cookie.name + (parseInt(Math.random()*99999))
           });
         };
       }
@@ -269,8 +269,8 @@ cls.CookieManagerView = function(id, name, container_class)
               ["br"],
               ["input",
                 "type","datetime",
-                "name","cookieexpires",
-                "value",new Date(new Date().getTime()+(1000*60*60*24)).toISOString()
+                "name","cookieexpires"
+                // ,"value",new Date(new Date().getTime()+(1000*60*60*24)).toISOString() // (when session closes) should maybe be default
               ]
             ],
           "class","container"],

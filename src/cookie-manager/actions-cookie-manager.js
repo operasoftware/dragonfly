@@ -24,7 +24,8 @@ window.eventHandlers.blur['cookiemanager-edit'] = function(event, target)
       var remove_old_cookie_script = 'document.cookie="'
                     + cookie.name + '=' + cookie.value
                     + '; expires='+ (new Date(new Date().getTime()-1000).toUTCString())
-                    + '; path=' + cookie.path+'";';
+                    + '; path=' + '/'+ cookie.path;
+      remove_old_cookie_script += '";';
       // and add modified
       // todo: probably can be removed by just using all the values from the forms.
       // todo: check if encodeURIComponent is used correctly
@@ -46,8 +47,14 @@ window.eventHandlers.blur['cookiemanager-edit'] = function(event, target)
       {
         add_modified_cookie_script += cookie.value;
       }
-      add_modified_cookie_script += '; expires='+ (new Date(cookie.expires*1000).toUTCString());
-      add_modified_cookie_script += '; path=' + '/' + cookie.path+'"';
+      if(cookie.expires) // in case of 0 value the "expires" value should not be written, otherwise it would expire 1970.
+      {
+        add_modified_cookie_script += '; expires='+ (new Date(cookie.expires*1000).toUTCString());
+      }
+      // todo: looks like in cases where the path was not set explicitely, it needs to be ommited. question is how I should know.
+      add_modified_cookie_script += '; path=' + '/' + cookie.path;
+      add_modified_cookie_script += '"';
+      
       /*
       // result should look sth like
       var add_modified_cookie_script = 'document.cookie="'
