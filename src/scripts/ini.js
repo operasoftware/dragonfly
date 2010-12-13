@@ -218,32 +218,32 @@
       {
         "default":
         {
-         "cmd l": "clear-repl",
+          // "ctrl l": "clear-repl",
         },
         "single-line-edit":
         {
-         "up": "backlog-prev",
-         "down": "backlog-next",
-         "tab": "autocomplete",
-         "enter": "eval",
-         "shift enter": "enter-multiline-mode",
-         // "ctrl l": "clear",
-         // "ctrl k": "kill-to-end-of-line",
-         // "ctrl u": "kill-to-beginning-of-line", // non-existent on mac afaict
-         // "ctrl e": "move-to-end-of-LINE",
-         // "ctrl a": "move-to-beginning-of-line",
-         // "ctrl w": "kill-word-backwards", // non-existent on mac afaict
-         // "ctrl y": "yank" // non-existent on mac afaict
+          "up": "backlog-prev",
+          "down": "backlog-next",
+          "tab": "autocomplete",
+          "enter": "eval",
+          "shift enter": "enter-multiline-mode",
+          // "ctrl l": "clear",
+          // "ctrl k": "kill-to-end-of-line",
+          // "ctrl u": "kill-to-beginning-of-line", // non-existent on mac afaict
+          // "ctrl e": "move-to-end-of-LINE",
+          // "ctrl a": "move-to-beginning-of-line",
+          // "ctrl w": "kill-word-backwards", // non-existent on mac afaict
+          // "ctrl y": "yank" // non-existent on mac afaict
         },
         "multi-line-edit":
         {
-         "shift enter": "exit-multiline-mode",
-         "cmd enter": "eval",
-         "tab": "insert-tab-at-point",
-         // "ctrl k": "kill-to-end-of-line",
-         // "ctrl u": "kill-to-beginning-of-line",
-         // "ctrl w": "kill-word-backwards",
-         // "ctrl y": "yank"
+          "shift enter": "exit-multiline-mode",
+          "cmd enter": "eval",
+          "tab": "insert-tab-at-point",
+          // "ctrl k": "kill-to-end-of-line",
+          // "ctrl u": "kill-to-beginning-of-line",
+          // "ctrl w": "kill-word-backwards",
+          // "ctrl y": "yank"
         },
         "autocomplete":
         {

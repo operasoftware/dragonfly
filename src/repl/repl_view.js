@@ -981,7 +981,7 @@ cls.ReplView.create_ui_widgets = function()
   );
 
   var broker = ActionBroker.get_instance();
-  var contextmenu = new ContextMenu();
+  var contextmenu = ContextMenu.get_instance();
   contextmenu.register("command_line", [
     {
       label: ui_strings.S_CLEAR_COMMAND_LINE_LOG,

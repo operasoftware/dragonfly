@@ -707,7 +707,9 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
       thread_id = stoped_threads[rt_id] && stoped_threads[rt_id].getNodeData("thread-id");
       if( thread_id )
       {
-        services['ecmascript-debugger'].continue_run(rt_id, thread_id);
+        services['ecmascript-debugger'].requestContinueThread(0, [rt_id, 
+                                                                  thread_id, 
+                                                                  'run']);
       }
     }
     stoped_threads = {};
@@ -860,7 +862,9 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
     }
     else
     {
-      services['ecmascript-debugger'].continue_run(rt_id, thread_id);
+      services['ecmascript-debugger'].requestContinueThread(0, [rt_id, 
+                                                                thread_id, 
+                                                                'run']);
     }
     if (__log_threads)
     {

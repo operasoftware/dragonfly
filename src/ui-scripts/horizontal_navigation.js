@@ -216,7 +216,6 @@ var HorizontalNavigationBase = function(cell)
     this._breadcrumbs.addEventListener("OTransitionEnd", this.check_position.bind(this), false);
     this._nav_back = this._element.querySelector("nav[dir='back']");
     this._nav_forward = this._element.querySelector("nav[dir='forward']");
-
     /*
     TODO seems to be the wrong place to do this
     var contextmenu = new ContextMenu();

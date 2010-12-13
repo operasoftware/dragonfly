@@ -273,7 +273,6 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ecma-debugger/dominspection/domdata.js"/>
 <script src="./ecma-debugger/js_object_filters.js"/>
 
-<script src="./ecma-debugger/elementLayout.js"/>
 <script src="./ecma-debugger/js-source-view.js"/>
 <script src="./ecma-debugger/view-commandline.js"/>
 
@@ -294,6 +293,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ecma-debugger/eventbreakpoints/view.js"/>
 <script src="./ecma-debugger/eventbreakpoints/templates.js"/>
 
+<script src="./style/element_layout.js"/>
 <script src="./style/editor.js"/>
 <script src="./style/css_initial_values.js"/>
 <script src="./style/css_inheritable_properties.js"/>

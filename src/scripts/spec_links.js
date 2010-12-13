@@ -1,14 +1,16 @@
 ﻿function SpecLinks()
 {
-  if (SpecLinks.__instance__)
+  if (SpecLinks._instance)
   {
-    return SpecLinks.__instance__;
+    return SpecLinks._instance;
   }
-  else
-  {
-    SpecLinks.__instance__ = this;
-  }
+  SpecLinks._instance = this;
 }
+
+SpecLinks.get_instance = function()
+{
+  return this._instance || new SpecLinks();
+};
 
 SpecLinks.prototype.get_spec_links = function(spec_notations)
 {

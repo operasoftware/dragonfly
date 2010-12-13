@@ -64,12 +64,105 @@ class Entry(object):
 
     def is_empty(self):
         return bool(self.title or self.url or self.desc or self.label)
+        
+def check_test_index():
+    """Verify that all tests in the TESTS file have a unique id.
+    """
+    ID = 1
+    LABEL = 2
+    DESC = 3
+    ERROR = 4
+    state = DESC
+    in_file = open(TESTS, 'r')
+    # 
+    for line in in_file.readlines():
+        if line.startswith('id:'):
+            if not state == DESC:
+                state = ERROR
+                break
+            state = ID
+        elif line.startswith('label:'):
+            if not state == ID:
+                state = ERROR
+                break
+            state = LABEL
+        elif line.startswith('desc:'):
+            if not state == LABEL:
+                state = ERROR
+                break
+            state = DESC
+    in_file.close()
+    return not state == ERROR
+    
+DEFAULT_ID_DELTA = 100
+
+def get_next_id(id_count, lines, index):
+    while True:
+        line = lines[index]
+        index += 1
+        if line.startswith('***') or index >= len(lines):
+            return id_count + DEFAULT_ID_DELTA
+        elif line.startswith('id:'):
+            return int((id_count + int(line[3:])) / 2)
+    
+def add_ids_test_index():
+    """Add an id to all tests which are missing one.
+    """
+    import shutil
+    import tempfile
+    ID = 1
+    LABEL = 2
+    DESC = 3
+    ERROR = 4
+    state = DESC
+    in_file = open(TESTS, 'rb')
+    lines = in_file.readlines()
+    in_file.close()
+    id_count = 0
+
+    tmpfd, tmppath = tempfile.mkstemp(".tmp", "dftests.")
+    tmpfile = os.fdopen(tmpfd, "w")
+    
+    # state order: ID, LABEL, DESC
+    # title resets the id_count (counting restarts in each repo)
+    for index, line in enumerate(lines):
+        if line.startswith('***'):
+            id_count = 0
+        elif line.startswith('id:'):
+            if not state == DESC:
+                state = ERROR
+                break
+            state = ID
+            id_count = int(line[3:])
+        elif line.startswith('label:'):
+            if state == DESC:
+                id = get_next_id(id_count, lines, index)
+                tmpfile.write("id: %#05i\n" % id)
+                id_count = id
+                state = ID
+            if not state == ID:
+                state = ERROR
+                break
+            state = LABEL
+        elif line.startswith('desc:'):
+            if not state == LABEL:
+                state = ERROR
+                break
+            state = DESC
+        tmpfile.write(line)
+    tmpfile.close()
+    if state == ERROR:
+        raise AssertionError("Not well formed entry!")
+    shutil.copy(tmppath, TESTS)
+    os.unlink(tmppath)
             
 def get_tests():
     """Parse the TESTS file.
 
     Parse the TESTS file and return a list of Entry objects
     """
+    if not check_test_index():
+        add_ids_test_index()
     in_file = open(TESTS, 'rb')
     entries = []
     entry = Entry()
@@ -154,11 +247,12 @@ def load_templates():
 
 def label2filename(label):
     label = ''.join(label)
-    for char in ["/", ":", "(", ")", "$"]:
-        pos = label.find(char)
-        if pos > -1:
-            label = label[0:pos]
-    return ''.join(label).strip().replace(' ', '-').replace(',', '').lower()
+    for char in ["|", "\\", "?", "*", "<", "\"", ":", 
+                 ">", "+", "[", "]", "/", "%", " ", ","]:
+        label = label.replace(char, '-')
+    for pattern, repl in [[r"^-+", ""], [r"--+", "-"]]:
+        label = re.sub(pattern, repl, label)
+    return ''.join(label).strip().lower()
             
 def tests2singledocs():
     entries = get_tests()
@@ -184,12 +278,11 @@ def tests2singledocs():
             type = 'url'
         if entry.label:
             type = 'label'
-            cur.index_count += 1
             entry.mode = cur.mode
             entry.tabs = cur.tabs
             entry.urls = entry.url or cur.urls
             entry.repo = cur.repo[0:]
-            entry.index = "%#04i" % cur.index_count
+            entry.index = ''.join(entry.id)
             file_name = label2filename(entry.label)
             entry.file_name = "%s.%s.html" % (entry.index, file_name)
             index += 1
@@ -249,10 +342,10 @@ def test():
         os.makedirs(PAPA)
     index = []
     for e in entries:
-        content = [HTML_HEAD % ("../" + STYLESHEET_NAME)]
+        content = [HTML_HEAD % (("../" * len(e.repo)) + STYLESHEET_NAME)]
         urls = []
         for u in e.urls:
-            u = u.replace('./', '../')
+            u = u.replace('./', '../' * len(e.repo))
             urls.append(HTML_URL % (u, u))
         raw_items = [item2html(item) for item in e.desc if item]
         string = ""

@@ -268,6 +268,8 @@ ui_strings.M_CONTEXTMENU_EDIT_ATTRIBUTE = 'Edit attribute';
 ui_strings.M_CONTEXTMENU_EDIT_ATTRIBUTE_VALUE = 'Edit attribute value';
 /* DESC: Context menu item for editing text in the DOM view. */
 ui_strings.M_CONTEXTMENU_EDIT_TEXT = 'Edit text';
+/* DESC: Context menu item for specification links. */
+ui_strings.M_CONTEXTMENU_SPEC_LINK = 'Specification for "%s"';
 
 /*
  * Button tool-tips.
