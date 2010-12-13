@@ -11,6 +11,16 @@
   this._msg_queue = [];
   this._is_processing = false;
 
+  this._on_consolemessage_bound = function(msg)
+  {
+    var data = new cls.ConsoleLogger["2.0"].ConsoleMessage(msg);
+    if (data.source != "ecmascript") { return }
+    opera.postError(JSON.stringify(msg, null, "  "));
+    this._data.add_output_str(data.description);
+
+
+  }.bind(this);
+
   this._on_consolelog_bound = function(msg)
   {
     if (this._is_processing) { this._msg_queue.push(msg); }
@@ -161,7 +171,7 @@
                                         [msg, rt_id, obj_ids, fallback]);
     var script = this._is_list_alike.replace("%s", call_list);
     var msg = [rt_id, 0, 0, script, arg_list];
-    this._service.requestEval(tag, msg);
+    this._edservice.requestEval(tag, msg);
   }
 
   // Boolean(document.all) === false
@@ -199,7 +209,7 @@
         }, []);
         var tag = this._tagman.set_callback(this, this._handle_unpacked_list,
                                             [orig_msg, rt_id, log]);
-        this._service.requestExamineObjects(tag, [rt_id, unpack]);
+        this._edservice.requestExamineObjects(tag, [rt_id, unpack]);
       }
       else
       {
@@ -451,7 +461,7 @@
   this._get_exception_info = function(rt, obj)
   {
     var tag = this._tagman.set_callback(this, this._on_get_exception_info.bind(this));
-    this._service.requestExamineObjects(tag, [rt, [obj], 0, 0, 1]);
+    this._edservice.requestExamineObjects(tag, [rt, [obj], 0, 0, 1]);
   };
 
   this._on_get_exception_info = function(status, msg)
@@ -529,7 +539,7 @@
     if (this._prev_selected) {
       magicvars.push(["$1", this._prev_selected]);
     }
-    this._service.requestEval(tag, [rt_id, thread, frame, cooked, magicvars]);
+    this._edservice.requestEval(tag, [rt_id, thread, frame, cooked, magicvars]);
 
   };
 
@@ -552,13 +562,17 @@
     this._prev_selected = null;
     this._transformer = new cls.HostCommandTransformer();
     this._tagman = window.tagManager; //TagManager.getInstance(); <- fixme: use singleton
-    this._service = window.services['ecmascript-debugger'];
-    this._service.addListener("consolelog", this._on_consolelog_bound);
-    this._service.addListener("consoletime", this._on_consoletime_bound);
-    this._service.addListener("consoletimeend", this._on_consoletimeend_bound);
-    this._service.addListener("consoleprofile", this._on_consoleprofile_bound);
-    this._service.addListener("consoleprofileend", this._on_consoleprofileend_bound);
-    this._service.addListener("consoletrace", this._on_consoletrace_bound);
+    this._edservice = window.services["ecmascript-debugger"];
+    this._edservice.addListener("consolelog", this._on_consolelog_bound);
+    this._edservice.addListener("consoletime", this._on_consoletime_bound);
+    this._edservice.addListener("consoletimeend", this._on_consoletimeend_bound);
+    this._edservice.addListener("consoleprofile", this._on_consoleprofile_bound);
+    this._edservice.addListener("consoleprofileend", this._on_consoleprofileend_bound);
+    this._edservice.addListener("consoletrace", this._on_consoletrace_bound);
+
+    this._clservice = window.services["console-logger"];
+    this._clservice.addListener("consolemessage", this._on_consolemessage_bound);
+
     window.messages.addListener("element-selected", this._on_element_selected_bound);
 
     this._get_host_info();
