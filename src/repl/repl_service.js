@@ -379,6 +379,8 @@
   {
     const STATUS = 0, TYPE = 1, OBJECT_VALUE = 3;
     const BAD_REQUEST = 3, INTERNAL_ERROR = 4;
+    const FRIENDLY_PRINTED = 4;
+    const VALUELIST = 2;
 
     if (status == BAD_REQUEST || status == INTERNAL_ERROR)
     {
@@ -392,12 +394,38 @@
     {
       if (settings.command_line.get("unpack-list-alikes"))
       {
-        var fallback = this._handle_object.bind(this, msg, rt_id);
-        // convert Eval to OnConsoleLog
-        // 1 - console.log
-        var msg = [rt_id, 1, [[null, msg[OBJECT_VALUE]]]];
-        this._unpack_list_alikes(msg, rt_id, fallback);
+        (function(msg, rt_id)
+        {
+          // convert Eval to OnConsoleLog
+          // 1 - console.log
+          var val_msg = [rt_id, 1, [[null, msg[OBJECT_VALUE]]]];
+          var is_friendly = false;
+          var fallback = (function()
+          {
+            if (!is_friendly && true)
+            {
+              this._friendly_printer._friendly_print(val_msg, rt_id, fallback);
+              is_friendly = true;
+            }
+            else
+            {
+              msg[FRIENDLY_PRINTED] = val_msg[VALUELIST][0][FRIENDLY_PRINTED];
+              this._handle_object(msg, rt_id);
+            }
+          }).bind(this);
+          this._unpack_list_alikes(val_msg, rt_id, fallback);
+        }).bind(this, msg, rt_id)();
+        
       }
+      /*
+      else if(true)
+      {
+        var msg = [rt_id, 1, [[null, msg[OBJECT_VALUE]]]];
+        var fallback = this._handle_object.bind(this, msg, rt_id);
+        alert(8)
+        this._friendly_printer._friendly_print(msg, rt_id, fallback);
+      }
+      */
       else
       {
         this._handle_object(msg, rt_id);
@@ -433,9 +461,10 @@
   {
     const TYPE = 1, OBJVALUE = 3;
     const OBJID = 0, CLASS = 4; FUNCTION = 5;
+    const FRIENDLY_PRINTED = 4;
 
     var obj = msg[OBJVALUE];
-    this._data.add_output_pobj(rt_id, obj[OBJID], obj[CLASS] || obj[FUNCTION]);
+    this._data.add_output_pobj(rt_id, obj[OBJID], obj[CLASS] || obj[FUNCTION], msg[FRIENDLY_PRINTED]);
   };
 
   this._handle_native = function(msg)
