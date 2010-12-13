@@ -398,6 +398,11 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
     services['ecmascript-debugger'].requestEval(tag, [this._data_runtime_id, 0, 0, script_data]);
   }
 
+  this.remove_node = function(rt_id, ref_id)
+  {
+    this._dom_node_removed_handler({"object_id": ref_id, "runtime_id": rt_id});
+  };
+
   this.bind = function(ecma_debugger)
   {
     ecma_debugger.onObjectSelected =

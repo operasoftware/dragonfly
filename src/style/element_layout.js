@@ -405,12 +405,9 @@ cls.ElementLayout = function()
     if (value == "auto") { return value; }
     if (value == "0px")
     {
-        return no_replace ? "0" : "–";
+      return no_replace ? "0" : "–";
     }
-    else
-    {
-        return "" + parseInt(value);
-    }
+    return "" + parseInt(value);
   }
 
   messages.addListener('element-selected', onElementSelected);

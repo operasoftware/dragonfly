@@ -2,14 +2,11 @@
  * @constructor
  */
 var ContextMenu = function() {
-  if (ContextMenu.instance)
+  if (ContextMenu._instance)
   {
-    return ContextMenu.instance;
+    return ContextMenu._instance;
   }
-  else
-  {
-    ContextMenu.instance = this;
-  }
+  ContextMenu._instance = this;
 
   /**
    * Holds all registered context menus.
@@ -19,7 +16,7 @@ var ContextMenu = function() {
   this._broker = ActionBroker.get_instance();
 
   /**
-   * Registers a new context menu, or adds items to an already registered context menu.
+   * Registers a new context menu.
    *
    * @param {String} menu_id An id corresponding to an id specified with a data-menu
    *                         attribute in the markup. May be an already existing
@@ -29,7 +26,6 @@ var ContextMenu = function() {
    */
   this.register = function(menu_id, item_list)
   {
-    var menu = this.registered_menus[menu_id] || [];
     if (item_list)
     {
       this.registered_menus[menu_id] = item_list;
@@ -58,39 +54,17 @@ var ContextMenu = function() {
       return;
     }
 
+    var speclinks = SpecLinks.get_instance();
     var ele = event.target;
     var all_items = [];
+    var items = [];
     var menu_id = null;
     // This traverses up the tree and collects all menus it finds, and
     // concatenates them with a separator between each menu. It stops if it
     // finds a data-menu attribute with a blank value.
     while (ele && ele != document && (menu_id = ele.getAttribute("data-menu")) !== "")
     {
-      // This is not super nice, and preferably shouldn't be done inside
-      // ContextMenu.
-      var spec;
-      if (spec = ele.getAttribute("data-spec"))
-      {
-        var speclinks = new SpecLinks();
-        if (speclinks.get_spec_links(spec).length)
-        {
-          menu_id = "spec";
-          var specs = speclinks.get_spec_links(spec);
-          var menu_items = specs.map(function(spec)
-          {
-            return {
-              label: "Specification for \"" + spec.prop + "\"",
-              handler: function(event, target) {
-                speclinks.open_spec_link(spec.url);
-              }
-            };
-          });
-          this.register(menu_id, menu_items);
-        }
-      }
-
-      var items = this.registered_menus[menu_id];
-
+      items = this.registered_menus[menu_id];
       if (items && items.length)
       {
         if (all_items.length)
@@ -105,17 +79,46 @@ var ContextMenu = function() {
           all_items.push(item);
         }
       }
+
       ele = ele.parentNode;
+    }
+
+    // Grab the first spec link in the parent node chain.
+    // This should preferably not be done inside ContextMenu.
+    var spec = event.target.get_attr("parent-node-chain", "data-spec");
+    if (spec)
+    {
+      var specs = speclinks.get_spec_links(spec);
+      if (specs.length)
+      {
+        items = specs.map(function(spec)
+        {
+          return {
+            label: ui_strings.M_CONTEXTMENU_SPEC_LINK.replace("%s", spec.prop),
+            handler: function(event, target) {
+              speclinks.open_spec_link(spec.url);
+            },
+            id: spec.prop,
+            menu_id: "spec"
+          };
+        });
+        this.register("spec", items);
+      }
+
+      if (all_items.length)
+      {
+        all_items.push(ContextMenu.separator);
+      }
+      all_items = all_items.concat(items);
     }
 
     if (all_items.length)
     {
       this._current_event = event;
       this.show(all_items, event.clientX, event.clientY);
-      EventHandler.__modal_mode = true;
       this.is_shown = true;
+      EventHandler.__modal_mode = true;
     }
-
   };
 
   /**
@@ -242,6 +245,11 @@ var ContextMenu = function() {
     this._broker.clear_setter_click_handler(this);
     EventHandler.__modal_mode = false;
   }.bind(this);
+};
+
+ContextMenu.get_instance = function()
+{
+  return this._instance || new ContextMenu();
 };
 
 ContextMenu.separator = {separator: true};

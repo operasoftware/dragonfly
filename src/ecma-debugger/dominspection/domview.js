@@ -254,7 +254,7 @@ cls.DOMView.create_ui_widgets = function()
   )
 
   var broker = ActionBroker.get_instance();
-  var contextmenu = new ContextMenu();
+  var contextmenu = ContextMenu.get_instance();
 
   var dom_element_common_items = [
     {
@@ -341,11 +341,15 @@ cls.DOMView.create_ui_widgets = function()
   function contextmenu_edit_markup(event, target)
   {
     target = event.target;
-    while (target.nodeName.toLowerCase() != "node")
+    while (target && target.nodeName.toLowerCase() != "node")
     {
       target = target.parentNode;
     }
-    broker.dispatch_action("dom", "edit-dom", event, event.target);
+
+    if (target)
+    {
+      broker.dispatch_action("dom", "edit-dom", event, event.target);
+    }
   }
 
   function contextmenu_add_attribute(event, target)
@@ -358,11 +362,12 @@ cls.DOMView.create_ui_widgets = function()
     var ele = event.target.has_attr("parent-node-chain", "ref-id");
     var rt_id = parseInt(ele.get_attr("parent-node-chain", "rt-id"));
     var ref_id = parseInt(ele.get_attr("parent-node-chain", "ref-id"));
-    var tag = !settings.dom.get("update-on-dom-node-inserted")
-            ? tag_manager.set_callback(this, function() {
-                window.dom_data._dom_node_removed_handler({"object_id": ref_id, "runtime_id": rt_id});
-              })
-            : null;
+    var tag = 0;
+    if (!settings.dom.get("update-on-dom-node-inserted"))
+    {
+      var cb = window.dom_data.remove_node.bind(window.dom_data, rt_id, ref_id);
+      tag = tag_manager.set_callback(null, cb);
+    }
     services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, "el.parentNode.removeChild(el)", [["el", ref_id]]]);
   }
 

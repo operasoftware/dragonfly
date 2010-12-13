@@ -191,7 +191,7 @@ var ActionBroker = function()
     this._key_identifier = new KeyIdentifier(this.dispatch_key_input.bind(this),
                                              window.ini.browser);
     this.register_handler(this._global_handler);
-    this._contextmenu = new ContextMenu();
+    this._contextmenu = ContextMenu.get_instance();
     document.addEventListener("contextmenu", this._oncontextmenubound, false);
     window.app.addListener('services-created', function()
     {
