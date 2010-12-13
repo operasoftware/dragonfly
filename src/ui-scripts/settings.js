@@ -16,7 +16,7 @@ var SettingsBase = function()
    * Update the view according to the new value of the setting key.
    * @private
    */
-  var syncView = function(key, value)
+  this._sync_view = function(key, value)
   {
     var 
     switches = document.getElementsByTagName('toolbar-switches'),
@@ -40,10 +40,6 @@ var SettingsBase = function()
           force_reflow = true;
         }
       }
-      if( force_reflow )
-      {
-        _switch.innerHTML += "";
-      }
     }
   }
 
@@ -55,7 +51,7 @@ var SettingsBase = function()
     window.localStorage.setItem(key, JSON.stringify(this.map[key] = value))
     if( sync_switches && typeof value == 'boolean' )
     {
-      syncView(key, value);
+      this._sync_view(key, value);
     }
   }
 
@@ -81,13 +77,14 @@ var SettingsBase = function()
     return key in this.map;
   }
 
-  this.init = function(view_id, key_map, label_map, setting_map, templates)
+  this.init = function(view_id, key_map, label_map, setting_map, templates, group)
   {
     this.map = {};
     this.view_id = view_id;
     this.label_map = label_map;
     this.setting_map = setting_map;
     this.templates = templates || {};
+    this.group = group;
     var stored_map = key_map, key = '', val = '';
     for( key in stored_map)
     {
@@ -99,6 +96,28 @@ var SettingsBase = function()
       window.settings = {};
     }
     window.settings[arguments[0]] = this;
+
+    // Add a context menu
+    var contextmenu = ContextMenu.get_instance();
+    var menu = setting_map && setting_map.contextmenu;
+    if (menu)
+    {
+      var items = [];
+      for (var i = 0, item; item = menu[i]; i++)
+      {
+        items.push({
+          label: label_map[item],
+          id: item,
+          setting: true,
+          handler: function(event, target) {
+            var item = target.getAttribute("data-handler-id");
+            settings[view_id].set(item, !settings[view_id].get(item), true);
+            views[view_id].update();
+          }
+        });
+      }
+      contextmenu.register(view_id, items);
+    }
   }
 
   if(!window.localStorage)
@@ -129,9 +148,9 @@ var SettingsBase = function()
  * @constructor 
  * @extends SettingsBase
  */
-var Settings = function(view_id, key_map, label_map, setting_map, template)
+var Settings = function(view_id, key_map, label_map, setting_map, template, group)
 {
-  this.init(view_id, key_map, label_map, setting_map, template);
+  this.init(view_id, key_map, label_map, setting_map, template, group);
 }
 
 Settings.get_setting_with_view_key_token = function(token)
@@ -146,5 +165,40 @@ Settings.get_setting_with_view_key_token = function(token)
     } || null;
 }
 
+/**
+ * Get all settings belonging to the group `group`
+ */
+Settings.get_settings_by_group = function(group)
+{
+    //var group_settings = {};
+    var group_settings = [];
+    var settings = window.settings;
+    for (var setting in settings)
+    {
+        if (settings[setting].group == group)
+        {
+            //group_settings[setting] = settings[setting];
+            group_settings.push(setting);
+        }
+    }
+    return group_settings;
+};
+
 Settings.prototype = new SettingsBase();
+
+/**
+ * A group for settings.
+ *
+ * @param label The visible label for this group
+ * @param group_name The name of the group that a Setting can be added to
+ */
+var SettingsGroup = function(label, group_name)
+{
+    this.label = label;
+    this.group_name = group_name;
+
+    SettingsGroup.groups.push(this);
+}
+
+SettingsGroup.groups = [];
 

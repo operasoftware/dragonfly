@@ -130,6 +130,8 @@ window.load_screen_timeout = window.setTimeout(function()
 <link rel="stylesheet" href="./resource-manager/resource_style.css"/>
 <link rel="stylesheet" href="./network/network_style.css"/>
 <link rel="stylesheet" href="./shortcutconfig/style.css"/>
+<link rel="stylesheet" href="./ui-style/global_command_line.css"/>
+<link rel="stylesheet" href="./ui-style/contextmenu.css"/>
 
 
 <!-- This will turn off including of the UI strings if the exclude_uistrings var is set -->
@@ -150,7 +152,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./scripts/colorspace.js"/>
 <script src="./scripts/messages.js"/>
 <script src="./scripts/objectregistry.js"/>
-
+<script src="./scripts/spec_links.js"/>
 
 
 
@@ -173,6 +175,8 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./lib/message_maps.js"/>
 <script src="./lib/test_framework.js"/>
 
+<script src="./ui-scripts/ui.js"/>
+<script src="./ui-scripts/tabbar.js"/>
 <script src="./ui-scripts/actions/actionbroker.js"/>
 <script src="./ui-scripts/actions/keyidentifier.js"/>
 <script src="./ui-scripts/actions/globalactionhandler.js"/>
@@ -181,12 +185,16 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/cells.js"/>
 <script src="./ui-scripts/topCell.js"/>
 <script src="./ui-scripts/view.js"/>
+<script src="./ui-scripts/tempview.js"/>
 <script src="./ui-scripts/compositeView.js"/>
 <script src="./ui-scripts/settingView.js"/>
 <script src="./ui-scripts/ui-base.js"/>
 <script src="./ui-scripts/TopUIBase.js"/>
 <script src="./ui-scripts/toolbar.js"/>
 <script src="./ui-scripts/toolbarConfig.js"/>
+<script src="./ui-scripts/modebar.js"/>
+<script src="./ui-scripts/overlay.js"/>
+<script src="./ui-scripts/horizontal_navigation.js"/>
 <script src="./ui-scripts/tabs.js"/>
 <script src="./ui-scripts/topTabs.js"/>
 <script src="./ui-scripts/containers.js"/>
@@ -201,7 +209,6 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/viewSlider.js"/>
 <script src="./ui-scripts/animator.js"/>
 <script src="./ui-scripts/Switches.js"/>
-<script src="./ui-scripts/Editor.js"/>
 <script src="./ui-scripts/cst-select.js"/>
 <script src="./ui-scripts/toolbarcstselect.js"/>
 <script src="./ui-scripts/ui_framework.js"/>
@@ -209,6 +216,8 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/colorpicker.js"/>
 <script src="./ui-scripts/slider.js"/>
 <script src="./ui-scripts/sortable_table/sortable_table.js"/>
+<script src="./ui-scripts/contextmenu.js"/>
+
 
 <script src="./build-application/build_application.js"></script>
 <script src="./build-application/build_window_manager_2_0.js"></script>
@@ -269,7 +278,6 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ecma-debugger/dominspection/domdata.js"/>
 <script src="./ecma-debugger/js_object_filters.js"/>
 
-<script src="./ecma-debugger/elementLayout.js"/>
 <script src="./ecma-debugger/js-source-view.js"/>
 <script src="./ecma-debugger/view-commandline.js"/>
 
@@ -290,6 +298,8 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ecma-debugger/eventbreakpoints/view.js"/>
 <script src="./ecma-debugger/eventbreakpoints/templates.js"/>
 
+<script src="./style/element_layout.js"/>
+<script src="./style/editor.js"/>
 <script src="./style/css_initial_values.js"/>
 <script src="./style/css_inheritable_properties.js"/>
 <script src="./style/css_suggest_values.js"/>

@@ -20,9 +20,9 @@ window.ui_strings.lang_code = "en";
 /* DESC: View for script debugging. */
 ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS = 'Scripts';
 /* DESC: View for DOM debugging. */
-ui_strings.M_VIEW_LABEL_COMPOSITE_DOM = 'DOM';
+ui_strings.M_VIEW_LABEL_COMPOSITE_DOM = 'Document';
 /* DESC: View for error log. */
-ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE = 'Error Console';
+ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE = 'Errors';
 /* DESC: View for exported code. */
 ui_strings.M_VIEW_LABEL_COMPOSITE_EXPORTS = 'Export';
 /* DESC: View for network debugging (and http logger) */
@@ -250,7 +250,28 @@ ui_strings.S_SWITCH_AUTO_SCROLL_REQUEST_LIST = "Auto scroll request log";
 ui_strings.S_SWITCH_UNPACK_LIST_ALIKES = "Unpack list alikes in the command line";
 /* DESC:  When enabled, objects of type element in the command line will be displayed in the DOM view */
 ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE = "Show objects of type Element in the DOM view";
+/* DESC: Clears the command line log */
+ui_strings.S_CLEAR_COMMAND_LINE_LOG = "Clear command line";
 
+
+/**
+ * Context menu items
+ */
+
+/* DESC: Context menu item for adding an attribute in the DOM view. */
+ui_strings.M_CONTEXTMENU_ADD_ATTRIBUTE = 'Add attribute';
+/* DESC: Context menu item for editing some piece of markup in the DOM view. */
+ui_strings.M_CONTEXTMENU_EDIT_MARKUP = 'Edit markup';
+/* DESC: Context menu item for removing a node in the DOM view. */
+ui_strings.M_CONTEXTMENU_REMOVE_NODE = 'Remove node';
+/* DESC: Context menu item for editing an attribute name in the DOM view. */
+ui_strings.M_CONTEXTMENU_EDIT_ATTRIBUTE = 'Edit attribute';
+/* DESC: Context menu item for editing an attribute value in the DOM view. */
+ui_strings.M_CONTEXTMENU_EDIT_ATTRIBUTE_VALUE = 'Edit attribute value';
+/* DESC: Context menu item for editing text in the DOM view. */
+ui_strings.M_CONTEXTMENU_EDIT_TEXT = 'Edit text';
+/* DESC: Context menu item for specification links. */
+ui_strings.M_CONTEXTMENU_SPEC_LINK = 'Specification for "%s"';
 
 /*
  * Button tool-tips.
@@ -321,6 +342,12 @@ ui_strings.S_BUTTON_COLOR_RESTORE_DEFAULTS = "Restore defaults";
 ui_strings.S_BUTTON_COLOR_MANAGE_STORED = "Manage stored colors";
 /* DESC: */
 ui_strings.S_BUTTON_COLOR_STORE_COLOR = "Store color";
+/* DESC: Global console toggle */
+ui_strings.S_BUTTON_TOGGLE_CONSOLE = "Toggle console";
+/* DESC: Global settings toggle */
+ui_strings.S_BUTTON_TOGGLE_SETTINGS = "Settings";
+/* DESC: Global remote debug toggle */
+ui_strings.S_BUTTON_TOGGLE_REMOTE_DEBUG = "Remote debug configuration";
 /* DESC: Expand all sections in the event breakpoints view */
 ui_strings.S_BUTTON_EXPAND_ALL_SECTIONS = "Expand all sections";
 /* DESC: Remove all event breakpoints */
@@ -335,9 +362,6 @@ ui_strings.S_BUTTON_RESET_ALL_TO_DEFAULTS = "Reset all to defaults";
 ui_strings.S_BUTTON_RESET_TO_DEFAULTS = "Reset to defaults";
 
 
-
-
-
 /*
   * Menus
   */
@@ -346,6 +370,8 @@ ui_strings.S_BUTTON_RESET_TO_DEFAULTS = "Reset to defaults";
 ui_strings.S_MENU_SELECT_ACTIVE_WINDOW = 'Select Active Window';
 /* DESC: Reload the debug context. */
 ui_strings.S_MENU_RELOAD_DEBUG_CONTEXT = 'Reload Debug Context';
+/* DESC: Debug context menu */
+ui_strings.S_MENU_DEBUG_CONTEXT = 'Debug context';
 
 
 /*
@@ -492,6 +518,8 @@ ui_strings.S_INFO_DOCUMNENT_LOADING = 'Opera Dragonfly is loading ...';
 ui_strings.M_SETTING_LABEL_GENERAL = 'General';
 /* DESC: Dragonfly is waiting for host connection */
 ui_strings.S_INFO_WAITING_FORHOST_CONNECTION = "Waiting for a host connection on port %s.";
+/* DESC: There was an error trying to listen to the specified port */
+ui_strings.S_INFO_ERROR_LISTENING = "There was an error. Please check that port %s is not in use.";
 /* DESC: the given storage type doesn't exist, e.g. a widget without the w3 widget namespace
  * will not have a widget.preferences storage object.
  */

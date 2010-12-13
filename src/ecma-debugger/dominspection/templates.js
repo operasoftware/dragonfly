@@ -40,7 +40,7 @@
   this._inspected_dom_node_markup_style= function(model, target, editable)
   {
     var data = model.getData();
-    var tree = "<div class='padding table-cell dom'" +
+    var tree = "<div class='padding dom'" +
                (editable ? " edit-handler='edit-dom'" : "") + 
                " rt-id='" + model.getDataRuntimeId() + "'" +
                " data-model-id='" + model.id + "'" +
@@ -168,7 +168,7 @@
               class_name = re_formatted.test(node_name) ? " class='pre-wrap'" : '';
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                       " style='margin-left:" + 16 * node[DEPTH] + "px;' "+
-                      "ref-id='" + node[ID] + "' handler='spotlight-node' " +
+                      "ref-id='" + node[ID] + "' handler='spotlight-node' data-menu='dom-element'" +
                       class_name + ">"+
                           "<node>&lt;" + node_name + attrs + "&gt;</node>" +
                               one_child_text_content +
@@ -181,7 +181,7 @@
             {
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                       " style='margin-left:" + 16 * node[DEPTH] + "px;' " +
-                      "ref-id='" + node[ID] + "' handler='spotlight-node'>" +
+                      "ref-id='" + node[ID] + "' handler='spotlight-node' data-menu='dom-element'>" +
                       (node[CHILDREN_LENGTH] ?
                           "<input handler='get-children' type='button' class='open' />" : '') +
                           "<node>&lt;" + node_name + attrs + "&gt;</node>" +
@@ -190,7 +190,7 @@
 
               closing_tags.push("<div style='margin-left:" +
                                 (16 * node[DEPTH]) + "px;' " +
-                                "ref-id='" + node[ID] + "' handler='spotlight-node'><node>" +
+                                "ref-id='" + node[ID] + "' handler='spotlight-node' data-menu='dom-element'><node>" +
                                 "&lt;/" + node_name + "&gt;" +
                                 "</node></div>");
             }
@@ -199,7 +199,7 @@
           {
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                       " style='margin-left:" + 16 * node[DEPTH] + "px;' " +
-                      "ref-id='" + node[ID] + "' handler='spotlight-node'>" +
+                      "ref-id='" + node[ID] + "' handler='spotlight-node' data-menu='dom-element'>" +
                       (children_length ?
                           "<input handler='get-children' type='button' class='close' />" : '') +
                           "<node>&lt;" + node_name + attrs + (children_length ? '' : '/') + "&gt;</node>" +
@@ -315,7 +315,7 @@
     var show_comments = window.settings.dom.get('show-comments');
     var show_attrs = window.settings.dom.get('show-attributes');
     var show_white_space_nodes = window.settings.dom.get('show-whitespace-nodes');
-    var tree = "<div class='padding table-cell dom'" +
+    var tree = "<div class='padding dom'" +
                (editable ? " edit-handler='edit-dom'" : "") + 
                " rt-id='" + model.getDataRuntimeId() + "'" +
                " data-model-id='" + model.id + "'" +
@@ -417,7 +417,7 @@
           {
             tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                     " style='margin-left:" + 16 * node[DEPTH] + "px;' " +
-                    "ref-id='"+node[ID] + "' handler='spotlight-node'>" +
+                    "ref-id='"+node[ID] + "' handler='spotlight-node' data-menu='dom-element'>" +
                     (children_length && !has_only_one_child ?
                       "<input handler='get-children' type='button' class='open' />" : '') +
                     "<node>" + node_name + attrs + "</node>" +
@@ -427,7 +427,7 @@
           {
             tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                     " style='margin-left:" + 16 * node[DEPTH] + "px;' " +
-                    "ref-id='"+node[ID] + "' handler='spotlight-node'>" +
+                    "ref-id='"+node[ID] + "' handler='spotlight-node' data-menu='dom-element'>" +
                     (node[CHILDREN_LENGTH] ?
                       "<input handler='get-children' type='button' class='close' />" : '') +
                     "<node>" + node_name + attrs + "</node>" +
@@ -512,7 +512,8 @@
     return (Boolean(index) ?
     ['item',
       ['key', this._OFFSETS[index]],
-      ['value', value]
+      ['value', value],
+      "data-spec", "dom#" + this._OFFSETS[index]
     ] : []);
   }
   

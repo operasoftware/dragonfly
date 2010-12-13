@@ -202,6 +202,11 @@ window.app.build_application = function(on_services_created, on_services_enabled
   cls.ShortcutConfigView.prototype = ViewBase;
   new cls.ShortcutConfigView('shortcut-config', 'Shortcut Config', '');
   cls.ShortcutConfigView.create_ui_widgets();
+  
+  /* Modebar */
+  cls.ModebarView.prototype = ViewBase;
+  new cls.ModebarView('modebar', 'Modebar', '');
+  cls.ModebarView.create_ui_widgets();
 
   // create the client
   if(window.services.scope)

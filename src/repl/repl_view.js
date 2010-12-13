@@ -31,6 +31,8 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       "throw", "try", "typeof", "var", "void", "while", "with"];
   this._actionbroker = ActionBroker.get_instance();
   this.mode = "single-line-edit";
+  this.window_header = false;
+  this.window_statusbar = false;
 
   this.ondestroy = function()
   {
@@ -957,7 +959,8 @@ cls.ReplView.create_ui_widgets = function()
           ]
         ]);
       }
-    }
+    },
+    "general"
   );
 
   new ToolbarConfig
@@ -976,4 +979,15 @@ cls.ReplView.create_ui_widgets = function()
       }
     ]
   );
+
+  var broker = ActionBroker.get_instance();
+  var contextmenu = ContextMenu.get_instance();
+  contextmenu.register("command_line", [
+    {
+      label: ui_strings.S_CLEAR_COMMAND_LINE_LOG,
+      handler: function() {
+        broker.dispatch_action("command_line", "clear");
+      }
+    }
+  ]);
 };

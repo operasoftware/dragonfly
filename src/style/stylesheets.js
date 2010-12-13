@@ -631,8 +631,8 @@ cls.Stylesheets = function()
 
     return "<import-rule rule-id='" + rule[RULE_ID] +
                   "' imported-sheet='" + rule[IMPORT_STYLESHEET_ID] + "'>" +
-              "<span class='import-rule'>@import url(\"" + rule[HREF] + "\") " +
-              rule[MEDIA_LIST].join(', ') + "</span>" +
+              "<at>@import</at> url(\"" + rule[HREF] + "\") " +
+              rule[MEDIA_LIST].join(', ') + ";" +
            "</import-rule>";
   };
 
@@ -652,7 +652,7 @@ cls.Stylesheets = function()
       }
     }
     return "<media-rule rule-id='" + rule[RULE_ID] + "'>" +
-              "<at>@media " + rule[MEDIA_LIST].join(', ') + " </at>{" +
+              "<at>@media</at> " + rule[MEDIA_LIST].join(', ') + " {" +
               (ret ? "<rules>" + ret + "</rules>" : " ") +
             "}</media-rule>";
   };
@@ -739,7 +739,7 @@ cls.Stylesheets = function()
       if (display)
       {
         ret += (ret ? MARKUP_PROP_NL : "") +
-                MARKUP_KEY + prop + MARKUP_KEY_CLOSE +
+                "<property data-spec='css#" + prop + "'><key>" + prop + MARKUP_KEY_CLOSE +
                 MARKUP_VALUE + helpers.escapeTextHtml(value) + MARKUP_VALUE_CLOSE;
       }
     }
@@ -768,7 +768,7 @@ cls.Stylesheets = function()
 
       if (i)
       {
-        ret += "<h2>inherited from <b>" + node_casc[ELEMENT_NAME] + "</b></h2>";
+        ret += "<h2>Inherited from <code class='element-name'>" + node_casc[ELEMENT_NAME] + "</code></h2>";
       }
 
       // TODO
@@ -839,7 +839,8 @@ cls.Stylesheets = function()
               INDENT +
               // TODO: rename "property" to "declaration"
               "<property class='" + (overwritten_list[index] ? "" : "overwritten") +
-                                    (disabled_list[index] ? " disabled" : "") + "'>" +
+                                    (disabled_list[index] ? " disabled" : "") + "'" +
+                                    "data-spec='css#" + __indexMap[prop_index] + "'>" +
                 self.create_declaration(__indexMap[prop_index],
                                         value_list[index],
                                         priority_list[index],

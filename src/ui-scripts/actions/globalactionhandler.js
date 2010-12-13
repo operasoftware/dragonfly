@@ -137,17 +137,44 @@
     return false;
   };
 
+  this._handlers["toggle-command-line"] = function(action_id, event, target)
+  {
+    eventHandlers.click["toggle-console"]();
+    return false;
+  };
+
   this._handlers["navigate-next-top-tab"] = function(action_id, event, target)
   {
     window.topCell.tab.navigate_to_next_or_previous_tab(false);
     return false;
-  }
+  };
 
   this._handlers["navigate-previous-top-tab"] = function(action_id, event, target)
   {
     window.topCell.tab.navigate_to_next_or_previous_tab(true);
     return false;
-  }
+  };
+
+  var TestTempView = function(name)
+  {
+    this.createView = function(container)
+    {
+      container.innerHTML =
+        "<div class='padding'><h2>Test view, id: " + this.id + "</h2></div>";
+    };
+    this.init(name);
+  };
+
+  TestTempView.prototype = new TempView();
+
+  this._handlers["add-temp-test-view"] = function(action_id, event, target)
+  {
+    var test_view = new TestTempView('Hello');
+    var ui = UI.get_instance();
+    ui.get_tabbar("request").add_tab(test_view.id);
+    ui.show_view(test_view.id);
+    return false;
+  };
 
   /* implementation */
 

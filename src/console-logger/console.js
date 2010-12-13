@@ -273,7 +273,6 @@ var ErrorConsoleView = function(id, name, container_class, source)
     // Switch on whether we have a table element allready. If we do, just
     // render the latest log entry
     var entries = window.error_console_data.get_messages(source);
-    topCell.statusbar.updateInfo(ui_strings.S_CONSOLE_TOOLBAR_MESSAGES_COUNT.replace("%s", entries.length));
     var expand_all = settings.console.get('expand-all-entries');
 
     // If there is no table, it's empty or expand state changed, render all
@@ -566,6 +565,8 @@ cls.ConsoleLogger["2.0"].ConsoleView.create_ui_widgets = function()
         'console-voice',
         'console-widget'
       ]
-    }
+    },
+    null,
+    "console"
   );
 };

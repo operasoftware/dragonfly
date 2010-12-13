@@ -523,8 +523,8 @@ MODE ::= "<mode>"
     css_path = model._get_css_path(obj_id, parent_node_chain,
                                    window.settings.dom.get('force-lowercase'),
                                    window.settings.dom.get('show-id_and_classes-in-breadcrumb'),
-                                   window.settings.dom.get('show-siblings-in-breadcrumb')),
-    ret = ["breadcrumb"],
+                                   window.settings.dom.get('show-siblings-in-breadcrumb'));
+    ret = [],
     i = 0;
 
     if (css_path)
@@ -533,15 +533,15 @@ MODE ::= "<mode>"
       {
         ret[ret.length] =
         [
-          "span", css_path[i].name,
-          'obj-id', css_path[i].id.toString(),
+          "breadcrumb", css_path[i].name,
+          'ref-id', css_path[i].id.toString(),
           'handler', 'breadcrumb-link',
-          'class', css_path[i].is_parent_offset ? 'parent-offset' : '',
+          'data-menu', 'breadcrumb',
+          'class', (css_path[i].is_parent_offset ? 'parent-offset' : '') + (css_path[i].id == obj_id ? ' active' : ''),
         ];
-        ret[ret.length] = css_path[i].combinator;
+        //ret[ret.length] = css_path[i].combinator;
       }
     }
-    ret.push('data-model-id', model.id);
     return ret;
   }
 

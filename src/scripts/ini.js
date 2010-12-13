@@ -22,6 +22,7 @@
           "f10": "continue-step-next-line",
           "f11": "continue-step-into-call",
           "shift f11": "continue-step-out-of-call",
+          "escape": "toggle-command-line",
           "ctrl tab": "navigate-next-top-tab",
           "ctrl shift tab": "navigate-previous-top-tab"
         },
@@ -35,6 +36,7 @@
           "f3": "highlight-next-match",
           "shift enter": "highlight-previous-match",
           "shift f3": "highlight-previous-match",
+          "escape": "toggle-command-line",
           "ctrl tab": "navigate-next-top-tab",
           "ctrl shift tab": "navigate-previous-top-tab"
         }
@@ -112,6 +114,10 @@
           "shift enter": "exit-multiline-mode",
           "ctrl enter": "eval",
           "tab": "insert-tab-at-point",
+          "ctrl k": "kill-to-end-of-line",
+          "ctrl u": "kill-to-beginning-of-line",
+          "ctrl w": "kill-word-backwards",
+          "ctrl y": "yank"
         },
         "autocomplete":
         {
@@ -126,7 +132,11 @@
           "(": "commit-and-insert",
           ")": "commit-and-insert",
           "escape": "cancel-completion",
-          "ctrl l": "cancel-input",
+          "ctrl l": "clear",
+          "ctrl k": "kill-to-end-of-line",
+          "ctrl u": "kill-to-beginning-of-line",
+          "ctrl w": "kill-word-backwards",
+          "ctrl y": "yank"
         },
       },
     },
@@ -141,7 +151,8 @@
           "f5": "continue-run",
           "f6": "continue-step-next-line",
           "f7": "continue-step-into-call",
-          "shift f7": "continue-step-out-of-call"
+          "shift f7": "continue-step-out-of-call",
+          "escape": "toggle-command-line"
         },
         "edit":
         {
@@ -153,6 +164,7 @@
           "cmd g": "highlight-next-match",
           "shift enter": "highlight-previous-match",
           "cmd shift g": "highlight-previous-match",
+          "escape": "toggle-command-line"
         }
       },
       "dom":
@@ -228,21 +240,29 @@
           "shift enter": "exit-multiline-mode",
           "cmd enter": "eval",
           "tab": "insert-tab-at-point",
+          // "ctrl k": "kill-to-end-of-line",
+          // "ctrl u": "kill-to-beginning-of-line",
+          // "ctrl w": "kill-word-backwards",
+          // "ctrl y": "yank"
         },
         "autocomplete":
         {
-          "left": "prev-completion",
-          "right": "next-completion",
-          "tab": "next-completion",
-          "shift tab": "prev-completion",
-          "enter": "commit",
-          "[": "commit-and-insert",
-          "]": "commit-and-insert",
-          ".": "commit-and-insert",
-          "(": "commit-and-insert",
-          ")": "commit-and-insert",
-          "escape": "cancel-completion",
-          // "ctrl l": "cancel-input",
+         "left": "prev-completion",
+         "right": "next-completion",
+         "tab": "next-completion",
+         "shift tab": "prev-completion",
+         "enter": "commit",
+         "[": "commit-and-insert",
+         "]": "commit-and-insert",
+         ".": "commit-and-insert",
+         "(": "commit-and-insert",
+         ")": "commit-and-insert",
+         "escape": "cancel-completion",
+         // "ctrl l": "cancel-input",
+         // "ctrl k": "kill-to-end-of-line",
+         // "ctrl u": "kill-to-beginning-of-line",
+         // "ctrl w": "kill-word-backwards",
+         // "ctrl y": "yank"
         },
       },
     },

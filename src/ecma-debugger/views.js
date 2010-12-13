@@ -43,8 +43,8 @@ cls.EnvironmentView.create_ui_widgets = function()
       {
         return templates.hello(window.services['scope'].get_hello_message());
       }
-    }
-
+    },
+    "general"
 
   );
 };
@@ -91,7 +91,8 @@ cls.AboutView.create_ui_widgets = function()
         });
         return ['ul', ['li', 'id', 'about-authors']];
       }
-    }
+    },
+    "about"
   );
 }
 
@@ -219,7 +220,8 @@ cls.GeneralView.create_ui_widgets = function()
           ]
         ];
       }
-    }
+    },
+    "general"
   );
 
   eventHandlers.change['set-ui-language'] = function(event)
@@ -280,7 +282,8 @@ cls.HostSpotlightView.create_ui_widgets = function()
       {
         return hostspotlighter.colorSelectsTemplate();
       }
-    }
+    },
+    "document"
   );
 }
 
@@ -331,16 +334,19 @@ cls.DebugRemoteSettingView = function(id, name, container_class)
 
 cls.DebugRemoteSettingView.create_ui_widgets = function()
 {
+  const PORT_DEFAULT = 7001;
+  const PORT_MIN = 1024;
+  const PORT_MAX = 65535;
 
   new Settings
   (
     // id
-    'debug_remote_setting', 
+    'debug_remote_setting',
     // key-value map
     {
       "debug-remote": false,
-      "port": 7001
-    }, 
+      "port": PORT_DEFAULT
+    },
     // key-label map
     {
       "debug-remote": ui_strings.S_SWITCH_REMOTE_DEBUG
@@ -357,87 +363,119 @@ cls.DebugRemoteSettingView.create_ui_widgets = function()
       'debug-remote':
       function(setting)
       {
-        return [
-          ['setting-composite',
-            ['label',
-              ['input',
-                'type', 'checkbox',
-                'checked', setting.get('debug-remote'),
-                'handler', 'toggle-remote-debug'
-              ],
-              setting.label_map['debug-remote']
-            ],
-            ['label',
-              ui_strings.S_LABEL_PORT + ': ',
-              ['input',
-                'type', 'number',
-                'min', '1',
-                'max', '65535',
-                'value', setting.get('port'),
-                'disabled', !setting.get('debug-remote'),
-                'handler', 'change-port-number-remote-debug',
-                'current-port', setting.get('port').toString()
+        return (
+            !settings.debug_remote_setting.get('debug-remote')
+            ?
+              [
+                ['setting-composite',
+                  ['label',
+                    ui_strings.S_LABEL_PORT + ': ',
+                    ['input',
+                      'type', 'number',
+                      'min', PORT_MIN,
+                      'max', PORT_MAX,
+                      'value', setting.get('port'),
+                      'current-port', setting.get('port').toString()
+                    ]
+                  ],
+                  ['input',
+                    'type', 'button',
+                    'value', ui_strings.S_BUTTON_TEXT_APPLY,
+                    'handler', 'apply-remote-debugging'
+                  ],
+                  ['p',
+                   'id', 'remote-debug-info'
+                  ],
+                  'class', 'apply-button'
+                ]
               ]
-            ],
-            ['input',
-              'type', 'button',
-              'disabled', 'disabled',
-              'value', ui_strings.S_BUTTON_TEXT_APPLY,
-              'handler', 'apply-remote-debugging'
-            ],
-            'class', 'apply-button'
-          ]
-        ];
+            :
+              ['setting-composite',
+                ['input',
+                  'type', 'button',
+                  'value', "Cancel",
+                  'handler', 'cancel-remote-debug'
+                ]
+              ]
+        );
       }
-    }
+    },
+    "remote_debug"
   );
-
-  eventHandlers.change['change-port-number-remote-debug'] = function(event, target)
-  {
-    target.parentNode.nextSibling.disabled = target.getAttribute('current-port') == target.value;
-  }
-
-  eventHandlers.change['toggle-remote-debug'] = function(event, target)
-  {
-    target.parentNode.nextSibling.childNodes[1].disabled = !event.target.checked; 
-    target.parentNode.nextSibling.nextSibling.disabled = 
-      event.target.checked == settings.debug_remote_setting.get('debug-remote') 
-  }
 
   eventHandlers.click['apply-remote-debugging'] = function(event, target)
   {
-    var is_debug_remote = target.parentNode.getElementsByTagName('input')[0].checked;
-    var port = parseInt(target.parentNode.getElementsByTagName('input')[1].value);
+    var port = parseInt(target.parentNode.getElementsByTagName('input')[0].value);
     if (typeof port == 'number')
     {
-      if(0 < port && port <= 0xffff)
+      if (PORT_MIN <= port && port <= PORT_MAX)
       {
-        settings.debug_remote_setting.set('debug-remote', is_debug_remote);
-        settings.debug_remote_setting.set('port', port);  
+        settings.debug_remote_setting.set('debug-remote', true);
+        settings.debug_remote_setting.set('port', port);
         // for older clients
-        window.helpers.setCookie('debug-remote', JSON.stringify(is_debug_remote));
+        window.helpers.setCookie('debug-remote', "true");
         window.helpers.setCookie('port', JSON.stringify(port));
         window.topCell.showView('dom');
         client.setup();
-        target.disabled = (
-          target.previousSibling.previousSibling.firstChild.checked == 
-                        settings.debug_remote_setting.get('debug-remote'));
       }
       else
       {
-        alert(ui_strings.S_INFO_NO_VALID_PORT_NUMBER);
-        target.parentNode.getElementsByTagName('input')[1].value = port < 1 && 1 || 0xffff;
+        // TODO: fix string to show new min port number
+        document.querySelector("#remote-debug-info").textContent = ui_strings.S_INFO_NO_VALID_PORT_NUMBER;
+        target.parentNode.getElementsByTagName('input')[0].value = port < PORT_MIN ? PORT_MIN : PORT_MAX;
       }
     }
-
-  }
+  };
 
   eventHandlers.click['cancel-remote-debug'] = function(event, target)
   {
-    settings.debug_remote_setting.set('debug-remote', false); 
-    window.helpers.setCookie('debug-remote', false);
+    settings.debug_remote_setting.set('debug-remote', false);
+    window.helpers.setCookie('debug-remote', "false");
     client.setup();
-  }
+  };
+};
+
+/**
+  * @constructor
+  * @extends ViewBase
+  * Settings are bound to a view. This class it only to have 'General Settings'.
+  */
+
+cls.ModebarView = function(id, name, container_class)
+{
+  this.ishidden_in_menu = true;
+  this.createView = function(container) {};
+  this.init(id, name, container_class);
+};
+
+cls.ModebarView.create_ui_widgets = function()
+{
+  new Settings
+  (
+    // id
+    'modebar',
+    // key-value map
+    {
+      "show-modebar-dom": true,
+      "show-modebar-scripts": true,
+    },
+    // key-label map
+    {
+      "show-modebar-dom": "Show DOM modebar",
+      "show-modebar-scripts": "Show Scripts modebar",
+    },
+    // settings map
+    {
+      checkboxes:
+      [
+        "show-modebar-dom",
+        "show-modebar-scripts",
+      ]
+    },
+    // custom templates
+    null,
+    "general"
+  );
 };
 
 
@@ -453,29 +491,37 @@ cls.MainView .create_ui_widgets = function()
     'main-view',
     [
       {
-        handler: 'reload-window',
-        title: ui_strings.S_BUTTON_LABEL_RELOAD_HOST
+        handler: 'toggle-console',
+        title: ui_strings.S_BUTTON_TOGGLE_CONSOLE
+      },
+      {
+        handler: 'toggle-settings-overlay',
+        title: ui_strings.S_BUTTON_TOGGLE_SETTINGS
+      },
+      {
+        handler: 'toggle-remote-debug-config-overlay',
+        title: ui_strings.S_BUTTON_TOGGLE_REMOTE_DEBUG
       }
     ],
     null,
     null,
     [
-      {
-        handler: 'select-window',
-        title: ui_strings.S_BUTTON_LABEL_SELECT_WINDOW,
-        type: 'dropdown',
-        class: 'window-select-dropdown',
-        template: function()
-        {
-          return (
-          ['window-select',
-            [
-              'select',
-              'handler', this.handler
-            ]
-          ]);
-        }
-      }
+      //{
+      //  handler: 'select-window',
+      //  title: ui_strings.S_BUTTON_LABEL_SELECT_WINDOW,
+      //  type: 'dropdown',
+      //  class: 'window-select-dropdown',
+      //  template: function()
+      //  {
+      //    return (
+      //    ['window-select',
+      //      [
+      //        'select',
+      //        'handler', this.handler
+      //      ]
+      //    ]);
+      //  }
+      //}
     ]
   )
 

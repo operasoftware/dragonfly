@@ -114,20 +114,6 @@ var TextSearch = function()
       }
     };
     consume_node(container);
-  },
-
-  /**
-   * Update status bar with the current state of the search.
-   */
-  update_status_bar = function()
-  {
-    if(topCell.statusbar)
-    {
-      topCell.statusbar.updateInfo(ui_strings.S_TEXT_STATUS_SEARCH.
-        replace("%(SEARCH_TERM)s", search_term).
-        replace("%(SEARCH_COUNT_TOTAL)s", search_results.length).
-        replace("%(SEARCH_COUNT_INDEX)s", ( cursor + 1 )) );
-    }
   };
 
   this.search = function(new_search_term, old_cursor)
@@ -161,26 +147,15 @@ var TextSearch = function()
           {
             cursor = old_cursor;
             search_results[cursor].style.cssText = HIGHLIGHT_STYLE;
-            update_status_bar();
           }
           else
           {
-            if(topCell.statusbar)
-            {
-              topCell.statusbar.updateInfo(ui_strings.S_TEXT_STATUS_SEARCH_NO_MATCH.
-                replace("%(SEARCH_TERM)s", new_search_term));
-            }
             self.highlight(true);
           }
         }
       }
-      else if(topCell.statusbar)
-      {
-        topCell.statusbar.updateInfo('');
-      }
     }
-
-  }
+  };
 
   this.searchDelayed = function(new_search_term)
   {
@@ -247,7 +222,6 @@ var TextSearch = function()
                                      DEFAULT_SCROLL_MARGIN,
                                      direction,
                                      'scrollLeft');
-      update_status_bar();
     }
   }
 
@@ -335,5 +309,4 @@ var TextSearch = function()
     cursor = -1;
     __input = container = null;
   }
-
 };

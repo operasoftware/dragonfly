@@ -28,7 +28,16 @@ cls.DOMView = function(id, name, container_class)
       }
       if (model == window.dom_data)
       {
-        window.topCell.statusbar.updateInfo(templates.breadcrumb(model, model.target));
+        if (!this._modebar)
+        {
+          this._modebar = UI.get_instance().get_modebar('dom');
+        }
+        if (this._modebar)
+        {
+          this._modebar.set_content(model.id, 
+                                    window.templates.breadcrumb(model, model.target),
+                                    true);
+        }
       }
     }
     else
@@ -52,7 +61,6 @@ cls.DOMView = function(id, name, container_class)
     {
       container.innerHTML = "<div class='padding' edit-handler='edit-dom'><p></p></div>";
     }
-    topCell.statusbar.updateInfo('');
   }
 
   this.ondestroy = function()
@@ -181,7 +189,7 @@ cls.DOMView.create_ui_widgets = function()
       'show-siblings-in-breadcrumb': false,
       'show-id_and_classes-in-breadcrumb': true,
       'scroll-into-view-on-spotlight': true,
-      'lock-selecked-elements': false
+      'lock-selected-elements': false
     }, 
     // key-label map
     {
@@ -197,7 +205,7 @@ cls.DOMView.create_ui_widgets = function()
       'show-siblings-in-breadcrumb': ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB,
       'show-id_and_classes-in-breadcrumb': ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB,
       'scroll-into-view-on-spotlight': ui_strings.S_SWITCH_SCROLL_INTO_VIEW_ON_FIRST_SPOTLIGHT,
-      'lock-selecked-elements': ui_strings.S_SWITCH_LOCK_SELECTED_ELEMENTS
+      'lock-selected-elements': ui_strings.S_SWITCH_LOCK_SELECTED_ELEMENTS
     
     },
     // settings map
@@ -205,6 +213,7 @@ cls.DOMView.create_ui_widgets = function()
       checkboxes:
       [
         'force-lowercase',
+        'dom-tree-style',
         'show-comments',
         'show-attributes',
         'show-whitespace-nodes',
@@ -214,9 +223,17 @@ cls.DOMView.create_ui_widgets = function()
         'show-siblings-in-breadcrumb',
         'show-id_and_classes-in-breadcrumb',
         'scroll-into-view-on-spotlight',
-        'lock-selecked-elements'
+        'lock-selected-elements'
+      ],
+      contextmenu:
+      [
+        'dom-tree-style',
+        'show-comments',
+        'lock-selected-elements'
       ]
-    }
+    },
+    null,
+    "document"
   );
 
   new ToolbarConfig
@@ -230,11 +247,7 @@ cls.DOMView.create_ui_widgets = function()
       {
         handler: 'dom-inspection-export',
         title: ui_strings.S_BUTTON_LABEL_EXPORT_DOM
-      }/*,
-      {
-        handler: 'df-show-live-source',
-        title: 'show live source of DF'
-      }*/
+      }
     ],
     [
       {
@@ -255,16 +268,123 @@ cls.DOMView.create_ui_widgets = function()
     ]
   )
 
+  var broker = ActionBroker.get_instance();
+  var contextmenu = ContextMenu.get_instance();
 
-  new CstSelectToolbarSettings
-  (
-    'dom', 
-    [
-      'show-comments',
-      'show-whitespace-nodes',
-      'dom-tree-style'
-    ]
-  );
+  var dom_element_common_items = [
+    {
+      label: ui_strings.M_CONTEXTMENU_EDIT_MARKUP,
+      handler: contextmenu_edit_markup
+    },
+    {
+      label: ui_strings.M_CONTEXTMENU_REMOVE_NODE,
+      handler: contextmenu_remove_node
+    }
+  ];
+
+  contextmenu.register("dom-element", [
+    {
+      callback: function(event, target)
+      {
+        var target = event.target;
+        while (target != document && !/^(?:key|value|text|node)$/i.test(target.nodeName))
+        {
+          target = target.parentNode;
+        }
+
+        switch (target.nodeName.toLowerCase())
+        {
+        case "node":
+          return [
+            {
+              label: ui_strings.M_CONTEXTMENU_ADD_ATTRIBUTE,
+              handler: contextmenu_add_attribute
+            }
+          ]
+          .concat(ContextMenu.separator)
+          .concat(dom_element_common_items);
+          break;
+
+        case "key":
+          return [
+            {
+              label: ui_strings.M_CONTEXTMENU_EDIT_ATTRIBUTE,
+              handler: contextmenu_edit_dom
+            },
+            {
+              label: ui_strings.M_CONTEXTMENU_ADD_ATTRIBUTE,
+              handler: contextmenu_add_attribute
+            }
+          ]
+          .concat(ContextMenu.separator)
+          .concat(dom_element_common_items);
+          break;
+
+        case "value":
+          return [
+            {
+              label: ui_strings.M_CONTEXTMENU_EDIT_ATTRIBUTE_VALUE,
+              handler: contextmenu_edit_dom
+            },
+            {
+              label: ui_strings.M_CONTEXTMENU_ADD_ATTRIBUTE,
+              handler: contextmenu_add_attribute
+            }
+          ]
+          .concat(ContextMenu.separator)
+          .concat(dom_element_common_items);
+          break;
+
+        case "text":
+          return [
+            {
+              label: ui_strings.M_CONTEXTMENU_EDIT_TEXT,
+              handler: contextmenu_edit_dom
+            }
+          ];
+          break;
+        }
+      }
+    }
+  ]);
+
+  function contextmenu_edit_dom(event, target)
+  {
+    broker.dispatch_action("dom", "edit-dom", event, event.target);
+  }
+
+  function contextmenu_edit_markup(event, target)
+  {
+    target = event.target;
+    while (target && target.nodeName.toLowerCase() != "node")
+    {
+      target = target.parentNode;
+    }
+
+    if (target)
+    {
+      broker.dispatch_action("dom", "edit-dom", event, event.target);
+    }
+  }
+
+  function contextmenu_add_attribute(event, target)
+  {
+    broker.dispatch_action("dom", "insert-attribute-edit", event, event.target);
+  }
+
+  function contextmenu_remove_node(event, target)
+  {
+    var ele = event.target.has_attr("parent-node-chain", "ref-id");
+    var rt_id = parseInt(ele.get_attr("parent-node-chain", "rt-id"));
+    var ref_id = parseInt(ele.get_attr("parent-node-chain", "ref-id"));
+    var tag = 0;
+    if (!settings.dom.get("update-on-dom-node-inserted"))
+    {
+      var cb = window.dom_data.remove_node.bind(window.dom_data, rt_id, ref_id);
+      tag = tag_manager.set_callback(null, cb);
+    }
+    services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, "el.parentNode.removeChild(el)", [["el", ref_id]]]);
+  }
 
   new Switches
   (
@@ -272,8 +392,7 @@ cls.DOMView.create_ui_widgets = function()
     [
       'find-with-click',
       'highlight-on-hover',
-      'update-on-dom-node-inserted',
-      'lock-selecked-elements'
+      'update-on-dom-node-inserted'
     ]
   );
 
@@ -293,7 +412,6 @@ cls.DOMView.create_ui_widgets = function()
     if( msg.id == 'dom' )
     {
       textSearch.cleanup();
-      topCell.statusbar.updateInfo();
     }
   }
 

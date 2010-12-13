@@ -21,6 +21,13 @@ cls.ElementLayout = function()
   MARGIN_LEFT = 11,
   WIDTH = 12,
   HEIGHT = 13,
+  TOP = 14,
+  RIGHT = 15,
+  BOTTOM = 16,
+  LEFT = 17,
+  POSITION = 18,
+  Z_INDEX = 19,
+  BOX_SIZING = 20,
   OFFSET_TOP= 1,
   OFFSET_LEFT= 2,
   OFFSET_WIDTH= 3,
@@ -174,6 +181,41 @@ cls.ElementLayout = function()
           layout_map[HEIGHT] = i;
           break;
         }
+        case 'top':
+        {
+          layout_map[TOP] = i;
+          break;
+        }
+        case 'right':
+        {
+          layout_map[RIGHT] = i;
+          break;
+        }
+        case 'bottom':
+        {
+          layout_map[BOTTOM] = i;
+          break;
+        }
+        case 'left':
+        {
+          layout_map[LEFT] = i;
+          break;
+        }
+        case 'position':
+        {
+          layout_map[POSITION] = i;
+          break;
+        }
+        case 'z-index':
+        {
+          layout_map[Z_INDEX] = i;
+          break;
+        }
+        case 'box-sizing':
+        {
+          layout_map[BOX_SIZING] = i;
+          break;
+        }
       }
     }
   }
@@ -294,40 +336,78 @@ cls.ElementLayout = function()
   
   this.metricsTemplate = function(styles)
   {
+    var is_positioned = __comp_style[layout_map[POSITION]] != "static";
     return (
-    ['ul', ['li',
-    ['ul', 
-      ['li',['p','\u00a0',['span', 'margin']]],
-      ['li', __comp_style[layout_map[MARGIN_TOP]]],
-      ['li']
-    ],
-    ['ul', ['li', __comp_style[layout_map[MARGIN_LEFT]]], ['li', 
-      ['ul', 
-        ['li',['p','\u00a0',['span', 'border']]], 
-        ['li', __comp_style[layout_map[BORDER_TOP_WIDTH]]],
-        ['li']
-      ],
-      ['ul', ['li', __comp_style[layout_map[BORDER_LEFT_WIDTH]]], ['li',
-        ['ul', 
-          ['li',['p','\u00a0',['span', 'padding']]], 
-          ['li', __comp_style[layout_map[PADDING_TOP]]], 
-          ['li']
-        ],
-        ['ul', 
-          ['li', __comp_style[layout_map[PADDING_LEFT]]], 
-          ['li', 
-            ['ul', ['li', __comp_style[layout_map[WIDTH]]]],
-            ['ul', ['li', __comp_style[layout_map[HEIGHT]]]],
-            ['ul', ['li', '\u00a0']],
-            'class', 'dimension'], 
-          ['li', __comp_style[layout_map[PADDING_RIGHT]]]
-        ],
-        ['ul', ['li', __comp_style[layout_map[PADDING_BOTTOM]], 'colspan', '3']],
-        'class', 'padding'], ['li', __comp_style[layout_map[BORDER_RIGHT_WIDTH]]]],
-      ['ul', ['li', __comp_style[layout_map[BORDER_BOTTOM_WIDTH]], 'colspan', '3']],
-      'class', 'border'], ['li', __comp_style[layout_map[MARGIN_RIGHT]]]],
-    ['ul', ['li', __comp_style[layout_map[MARGIN_BOTTOM]], 'colspan', '3']],
-    'class', 'margin']] );
+      ['div',
+        [['ul',
+          ['li',
+            ['ul',
+              (is_positioned ? [['li',['p','\u00a0',['span', 'position']]],
+              ['li', convert_to_unitless(__comp_style[layout_map[TOP]])],
+              ['li']] : [])
+            ],
+            ['ul', (is_positioned ? ['li', convert_to_unitless(__comp_style[layout_map[LEFT]])] : []), ['li',
+              ['ul',
+                ['li',['p','\u00a0',['span', 'margin']]],
+                ['li', convert_to_unitless(__comp_style[layout_map[MARGIN_TOP]])],
+                ['li']
+              ],
+            ['ul', ['li', convert_to_unitless(__comp_style[layout_map[MARGIN_LEFT]])], ['li',
+              ['ul',
+                ['li',['p','\u00a0',['span', 'border']]],
+                ['li', convert_to_unitless(__comp_style[layout_map[BORDER_TOP_WIDTH]])],
+                ['li']
+              ],
+              ['ul', ['li', convert_to_unitless(__comp_style[layout_map[BORDER_LEFT_WIDTH]])], ['li',
+                ['ul',
+                  ['li',['p','\u00a0',['span', 'padding']]],
+                  ['li', convert_to_unitless(__comp_style[layout_map[PADDING_TOP]])],
+                  ['li']
+                ],
+                ['ul',
+                  ['li', convert_to_unitless(__comp_style[layout_map[PADDING_LEFT]])],
+                  ['li',
+                    ['ul', ['li', '\u00a0']],
+                    ['ul', ['li', '↔' + convert_to_unitless(__comp_style[layout_map[WIDTH]], true) + ' × ↕' + convert_to_unitless(__comp_style[layout_map[HEIGHT]], true)]],
+                    ['ul', ['li', '\u00a0']],
+                    'class', 'dimension'],
+                  ['li', convert_to_unitless(__comp_style[layout_map[PADDING_RIGHT]])]
+                ],
+                ['ul', [['li'],['li', convert_to_unitless(__comp_style[layout_map[PADDING_BOTTOM]])],['li']]],
+                'class', 'padding'], ['li', convert_to_unitless(__comp_style[layout_map[BORDER_RIGHT_WIDTH]])]],
+              ['ul', [['li'],['li', convert_to_unitless(__comp_style[layout_map[BORDER_BOTTOM_WIDTH]])],['li']]],
+              'class', 'border'], ['li', convert_to_unitless(__comp_style[layout_map[MARGIN_RIGHT]])]],
+            ['ul', [['li'],['li', convert_to_unitless(__comp_style[layout_map[MARGIN_BOTTOM]])],['li']]],
+            'class', 'margin'], (is_positioned ? ['li', convert_to_unitless(__comp_style[layout_map[RIGHT]])] : [])],
+          ['ul', (is_positioned ? [['li'],['li', convert_to_unitless(__comp_style[layout_map[BOTTOM]])],['li']] : [])],
+          'class', 'position'],
+        'class', __comp_style[layout_map[BOX_SIZING]] + (is_positioned ? ' is-positioned' : '')]],
+        ['table',
+          ['tr',
+            [['td', 'position', 'data-spec', 'css#position'],
+             ['td', __comp_style[layout_map[POSITION]]]],
+          ],
+          ['tr',
+            [['td', 'z-index', 'data-spec', 'css#z-index'],
+             ['td', __comp_style[layout_map[Z_INDEX]]]],
+          ],
+          ['tr',
+            [['td', 'box-sizing', 'data-spec', 'css#box-sizing'],
+             ['td', __comp_style[layout_map[BOX_SIZING]]]],
+          ],
+        ]
+      ]
+    );
+  }
+
+  function convert_to_unitless(value, no_replace)
+  {
+    if (value == "auto") { return value; }
+    if (value == "0px")
+    {
+      return no_replace ? "0" : "–";
+    }
+    return "" + parseInt(value);
   }
 
   messages.addListener('element-selected', onElementSelected);

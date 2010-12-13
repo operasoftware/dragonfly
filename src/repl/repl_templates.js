@@ -8,7 +8,7 @@ templates.repl_main = function()
          "ol", "class", "repl-lines js-source"
          ], "class", "repl-output"],
       ["div", [[
-        ["span", ">>> ", "class", "repl-prefix"],
+        ["span", ">>>\xA0", "class", "repl-prefix"],
         ["div", ["textarea",
                  "focus-handler", "repl-textarea",
                  "blur-handler", "blur-textarea",

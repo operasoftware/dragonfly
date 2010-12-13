@@ -24,9 +24,9 @@ var TopContainerBase = function()
       this.setCSSProperties();
     }
 
-    var toolbar_and_tabs_height =  ( this.cell.toolbar && this.cell.toolbar.offsetHeight || 0 ) + this.cell.tab.offsetHeight;
-
-
+    var toolbar_and_tabs_height = 
+      (this.cell.toolbar && this.cell.toolbar.height ? 
+       this.cell.toolbar.offsetHeight : 0) + this.cell.tab.offsetHeight;
     dim = this.cell.top + toolbar_and_tabs_height;
     if( dim != this.top)
     {
@@ -48,7 +48,7 @@ var TopContainerBase = function()
       this.width = dim;
     }
 
-    dim = this.cell.height - toolbar_and_tabs_height - ( this.cell.statusbar && this.cell.statusbar.offsetHeight || 0 ) - this.vertical_border_padding;;
+    dim = this.cell.height - toolbar_and_tabs_height - this.vertical_border_padding;
     if( dim != this.height)
     {
       this.is_dirty = true;

@@ -11,7 +11,7 @@ var TabsBase = function()
   this.type = 'tabs';
   this.height = 25;
   this.width = 200;
-  this.top = 0;
+  this.top = -1000; // Temporary, see also ui.css: tabs, toolbar { left: -1000px }
   this.left = 0;
   this.is_dirty = true;
   this.cell_id = '';
@@ -108,6 +108,12 @@ var TabsBase = function()
       tabs = this.update();
     }
     tabs.innerHTML = '';
+    tabs.className = window.opera.attached ? "attached" : "detached"; // TODO: Do this with `.attributes` in topTabs?
+    tabs.setAttribute("handler", "change-on-scroll");
+    if (this.tabbar_id)
+    {
+      tabs.setAttribute("tabbar-ref-id", this.tabbar_id);
+    }
     tabs.render(templates[this.type](this));
     return tabs;
   }
@@ -142,13 +148,7 @@ var TabsBase = function()
           {
             toolbars[view_id].addContainerId(toolbar_id);
           }
-          // it's a top level tab with no view associated
-          if(topCell.statusbar && views[view_id].type == 'composite-view')
-          {
-            topCell.statusbar.updateInfo();
-          }
         }
-
       }
 
       var container = document.getElementById(this.type + '-to-' + this.cell.id) || this.render();
@@ -199,12 +199,12 @@ var TabsBase = function()
   this.navigate_to_next_or_previous_tab = function(backwards)
   {
     var step = backwards ? -1 : 1;
-    for(var i=0, tab, activate; tab=this.tabs[i]; i++)
+    for (var i = 0, tab, activate; tab = this.tabs[i]; i++)
     {
-      if(tab.ref_id == this.activeTab)
+      if (tab.ref_id == this.activeTab)
       {
           activate = i + step;
-          if(activate >= this.tabs.length || activate < 0)
+          if (activate >= this.tabs.length || activate < 0)
           {
             activate = backwards ? this.tabs.length-1 : 0;
           }
@@ -212,7 +212,7 @@ var TabsBase = function()
       }
     }
     this.setActiveTab(this.tabs[activate].ref_id);
-  }
+  };
 
   this.trySetAnActiveTab = function()
   {
@@ -227,7 +227,7 @@ var TabsBase = function()
 
   this.getTopPosition = function()
   {
-    return this.cell.top + this.cell.height - this.offsetHeight;
+    return this.cell.top;
   }
 
   this.setDimensions = function(force_redraw)
@@ -287,12 +287,14 @@ var TabsBase = function()
     };
   }
 
-  this.init = function(cell)
+  this.init = function(cell, tabbar)
   {
+    
     this.tabs = [];
     this.activeTab = '';
     this.cell = cell;
     this.initBase();
+    this.tabbar_id = tabbar && tabbar.id || '';
     window.messages.addListener('view-initialized', this.on_view_inizialized_bound());
   }
 
@@ -304,9 +306,9 @@ var TabsBase = function()
   */
 
 
-var Tabs = function(cell)
+var Tabs = function(cell, tabbar)
 {
-  this.init(cell);
+  this.init(cell, tabbar);
 }
 
 TabsBase.prototype = UIBase;

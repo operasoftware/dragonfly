@@ -50,9 +50,11 @@ window.cls.Client = function()
   var _first_setup = true;
   var _waiting_screen_timeout = 0;
   var cbs = [];
+  var is_connect_callback_called_map = {};
 
-  var _on_host_connected = function(servicelist)
+  var _on_host_connected = function(client_id, servicelist)
   {
+    is_connect_callback_called_map[_client_id] = true;
     if(_waiting_screen_timeout)
     {
       clearTimeout(_waiting_screen_timeout);
@@ -98,14 +100,21 @@ window.cls.Client = function()
     }
   }
 
-  var _on_host_quit = function()
+  var _on_host_quit = function(client_id, port)
   {
-    window.window_manager_data.clear_debug_context();
-    messages.post('host-state', {state: global_state.ui_framework.spin_state = 'inactive'});
-    client.setup();
+    if (is_connect_callback_called_map[client_id])
+    {
+      window.window_manager_data.clear_debug_context();
+      messages.post('host-state', {state: global_state.ui_framework.spin_state = 'inactive'});
+      client.setup();
+    }
+    else
+    {
+      show_error(ui_strings.S_INFO_ERROR_LISTENING.replace(/%s/, port), port);
+    }
   }
 
-  var get_quit_callback = function(client_id)
+  var get_quit_callback = function(client_id, port)
   {
     // workaround for bug CORE-25389
     // onQuit() callback is called twice when
@@ -114,7 +123,7 @@ window.cls.Client = function()
     {
       if(client_id == _client_id)
       {
-        _on_host_quit();
+        _on_host_quit(client_id, port);
       }
     }
   }
@@ -139,6 +148,7 @@ window.cls.Client = function()
   this.setup = function()
   {
     _client_id++;
+    is_connect_callback_called_map[_client_id] = false;
     window.ini || ( window.ini = {debug: false} );
     window.messages.post('reset-state');
     this.create_top_level_views();
@@ -154,9 +164,9 @@ window.cls.Client = function()
       cls.STP_0_Wrapper.call(opera);
     }
     var port = _get_port_number();
-    var cb_index = cbs.push(get_quit_callback(_client_id)) - 1;
+    var cb_index = cbs.push(get_quit_callback(_client_id, port)) - 1;
     opera.scopeAddClient(
-        _on_host_connected,
+        _on_host_connected.bind(this, _client_id),
         cls.ServiceBase.get_generic_message_handler(),
         cbs[cb_index],
         port
@@ -172,20 +182,22 @@ window.cls.Client = function()
     if(_first_setup)
     {
       _first_setup = false;
-      _waiting_screen_timeout = setTimeout(show_waiting_screen, 250, port);
+      _waiting_screen_timeout = setTimeout(function() {
+        show_error(ui_strings.S_INFO_WAITING_FORHOST_CONNECTION.replace(/%s/, port), port);
+      }, 250);
 
     }
     else
     {
-      show_waiting_screen(port);
+      show_error(ui_strings.S_INFO_WAITING_FORHOST_CONNECTION.replace(/%s/, port), port);
     }
   }
 
-  var show_waiting_screen = function(port)
+  var show_error = function(msg, port)
   {
     viewport.innerHTML =
-    "<div class='padding'>" +
-      "<div class='info-box' id='waiting-for-connection' >" + ui_strings.S_INFO_WAITING_FORHOST_CONNECTION.replace(/%s/, port) +
+    "<div class='padding' id='waiting-for-connection'>" +
+      "<div class='info-box'>" + msg +
           ( port ? "<p><input type='button' value='" + ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG + "'" +
                 " handler='cancel-remote-debug'></p>" : "") +
       "</div>" +
@@ -241,17 +253,44 @@ window.cls.Client = function()
   this.create_top_level_views = function()
   {
     var layouts = ui_framework.layouts;
-    new CompositeView('network_panel', ui_strings.M_VIEW_LABEL_NETWORK, layouts.network_rough_layout);
-    new CompositeView('console_new', ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE, layouts.console_rough_layout);
-    new CompositeView('js_new', ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS, layouts.js_rough_layout);
-    new CompositeView('dom_new', ui_strings.M_VIEW_LABEL_COMPOSITE_DOM, layouts.dom_rough_layout);
-    new CompositeView('export_new', ui_strings.M_VIEW_LABEL_COMPOSITE_EXPORTS, layouts.export_rough_layout);
-    new CompositeView('js_panel', ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS, layouts.js_rough_layout_panel);
-    new CompositeView('dom_panel', ui_strings.M_VIEW_LABEL_COMPOSITE_DOM, layouts.dom_rough_layout_panel);
-    new CompositeView('settings_new', ui_strings.S_BUTTON_LABEL_SETTINGS, layouts.settings_rough_layout);
-    new CompositeView('utils', ui_strings.M_VIEW_LABEL_UTILITIES, layouts.utils_rough_layout);
-    new CompositeView('storage', ui_strings.M_VIEW_LABEL_STORAGE, layouts.storage_rough_layout);
-    new CompositeView('resource_panel', ui_strings.M_VIEW_LABEL_RESOURCES, layouts.resource_rough_layout);
+    var ui = UI.get_instance();
+    var modebar_dom = ui.register_modebar('dom', HorizontalNavigation);
+    var modebar_scripts = ui.register_modebar('scripts', HorizontalNavigation);
+    new CompositeView('network_panel',
+                      ui_strings.M_VIEW_LABEL_NETWORK,
+                      layouts.network_rough_layout);
+    new CompositeView('console_new',
+                      ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE,
+                      layouts.console_rough_layout);
+    new CompositeView('js_new',
+                      ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS,
+                      layouts.js_rough_layout,
+                      'scripts');
+    new CompositeView('dom_new',
+                      ui_strings.M_VIEW_LABEL_COMPOSITE_DOM,
+                      layouts.dom_rough_layout,
+                      'dom');
+    new CompositeView('export_new',
+                      ui_strings.M_VIEW_LABEL_COMPOSITE_EXPORTS,
+                      layouts.export_rough_layout);
+    new CompositeView('js_panel',
+                      ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS,
+                      layouts.js_rough_layout_panel,
+                      'scripts');
+    new CompositeView('dom_panel',
+                      ui_strings.M_VIEW_LABEL_COMPOSITE_DOM,
+                      layouts.dom_rough_layout_panel,
+                      'dom');
+    new CompositeView('utils',
+                      ui_strings.M_VIEW_LABEL_UTILITIES,
+                      layouts.utils_rough_layout);
+    new CompositeView('storage',
+                      ui_strings.M_VIEW_LABEL_STORAGE,
+                      layouts.storage_rough_layout);
+    new CompositeView('resource_panel',
+                      ui_strings.M_VIEW_LABEL_RESOURCES,
+                      layouts.resource_rough_layout);
+
     if( window.opera.attached != settings.general.get('window-attached') )
     {
       window.opera.attached = settings.general.get('window-attached') || false;
@@ -265,8 +304,8 @@ window.cls.Client = function()
     {
       window_controls.parentNode.removeChild(window_controls);
     };
-    document.documentElement.render(templates.window_controls());
     this.setupTopCell();
+    document.querySelector("main-view").render(templates.window_controls());
     if(!arguments.callee._called_once)
     {
       if( window.opera.attached )
@@ -314,14 +353,17 @@ window.cls.Client = function()
         messages.post("hide-view", {id: tab.getAttribute('ref-id')});
       }
     }
+    for (var id in window.views)
+    {
+      window.views[id].reset_containers();
+    }
     viewport.innerHTML = '';
     new TopCell
     (
       window.opera.attached ? ui_framework.layouts.panel_layout : ui_framework.layouts.main_layout,
       null,
       null,
-      TopToolbar,
-      TopStatusbar
+      TopToolbar
     );
     windowsDropDown.update();
     var view_id = global_state && global_state.ui_framework.last_selected_tab;
@@ -484,10 +526,8 @@ ui_framework.layouts.resource_rough_layout =
     dir: 'v',
     width: 1000,
     height: 1000,
-    children: [ { height: 1000, tabs: ['resource_all', 'resource_fonts', 'resource_images'] } ]
+    children: [ { height: 1000, tabbar: { id: "resources", tabs: ['resource_all', 'resource_fonts', 'resource_images'] } } ]
 }
-
-
 
 
 ui_framework.layouts.utils_rough_layout =
@@ -509,11 +549,11 @@ ui_framework.layouts.storage_rough_layout =
 ui_framework.layouts.main_layout =
 {
   id: 'main-view',
-  tabs: ['dom_new', 'js_new', 'network_panel', 'resource_panel', 'storage', 'console_new', 'utils', 'settings_new']
+  tabs: ['dom_new', 'js_new', 'network_panel', 'resource_panel', 'storage', 'console_new', 'utils']
 }
 
 ui_framework.layouts.panel_layout =
 {
   id: 'main-view',
-  tabs: ['dom_panel', 'js_panel', 'network_panel', 'resource_panel', 'storage', 'console_new', 'utils', 'settings_new']
+  tabs: ['dom_panel', 'js_panel', 'network_panel', 'resource_panel', 'storage', 'console_new', 'utils']
 }
