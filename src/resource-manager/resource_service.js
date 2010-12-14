@@ -218,6 +218,13 @@ cls.ResourceManagerService = function(view, data)
     return null;
   };
 
+  this.fetch_resource_data = function(callback, rid, type)
+  {
+    var typecode = {datauri: 3, string: 1}[type] || 1;
+    var tag = window.tagManager.set_callback(null, callback);
+    this._res_service.requestGetResource(tag, [rid, [typecode, 1]]);
+  }
+
   this.init();
   };
 
