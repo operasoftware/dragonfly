@@ -266,11 +266,11 @@
           'class', 'switch' + (opera.attached ? ' attached' : ''),
           'title', ui_strings.S_SWITCH_DETACH_WINDOW
         ],
-        [
+        opera.attached ? [
           'button',
           'handler', 'top-window-close',
           'title', ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW
-        ],
+        ] : [],
         'class', (opera.attached ? ' attached' : ''),
         'id', 'window-controls-to-main-view'
       ]
