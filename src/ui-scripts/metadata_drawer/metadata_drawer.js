@@ -5,8 +5,12 @@ function MetadataDrawer(resource) {
   this._rules = {
     generic: [
       {label: "url", getter: function(res) { return ["a", res.urlload.url, "href", res.urlload.url] } },
-      {label: "size", getter: function(res) { return "size" } },
-      {label: "format", getter: function(res) { return "format" }},
+      {label: "size", getter: function(res) { return  res.urlfinished
+                                              ? "" + res.urlfinished.contentLength + " bytes"
+                                              : "-"
+                                            }
+      },
+      {label: "format", getter: function(res) { return res.urlfinished ? res.urlfinished.mimeType : "-" }},
     ],
     image: [
       {label: "dimensions", getter: function(res) { return "123 x 321" } },
@@ -22,11 +26,10 @@ function MetadataDrawer(resource) {
     ],
   }
 
-
   this.render = function()
   {
-    var t = "image";
-    var rules = this._rules.generic.concat(this._rules[t]);
+    var t = null;
+    var rules = this._rules.generic.concat(this._rules[t] || []);
     return window.templates.metadata_drawer(this.resource, this.expanded, this._objectid, rules);
   }
 
@@ -70,7 +73,7 @@ templates.metadata_drawer = function(resource, expanded, objectid, rules)
   {
     content = "URL: " + resource.urlload.url;
   }
-
+  
   return ["div",
           ["button",
            "handler", "metadata-drawer-toggle"
