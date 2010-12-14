@@ -1,13 +1,56 @@
-var SidePanelView = function(id, view_list)
+var SidePanelBaseView = function(id, view_list)
 {
   this.container_class = 'scroll side-panel';
+  this._container = null;
+  this._divs = null;
 
-  this._views = view_list.map(function(view_id)
+  this._init_super = this.init;
+
+  this.init = function(id, view_list)
   {
-    return new PanelContainer(view_id, false);
-  }, this);
+    var key_value_map = {};
+    key_value_map['panel-expanded-' + id] = [];
+    new Settings(id, key_value_map);
+    var unfolded_views = window.settings[id].get('panel-expanded-' + id);
+    this._views = view_list.map(function(view_id, index)
+    {
+      return new PanelContainer(view_id, unfolded_views[index]);
+    }, this);
+    this._init_super(id, 'Side Panel', this.container_class);
+    this._toolbar = new Toolbar();
+  }
 
+  this.createView = function(container)
+  {
+    this._container = container;
+    this._divs = container.clearAndRender(templates.side_panel(this._views)).childNodes;
+    this._views.forEach(function(obj, index)
+    {
+      if (obj.is_unfolded)
+      {
+        this._show_view(obj, this._divs[index]);
+      }
+    }, this);
+  }
 
+  this.ondestroy = function()
+  {
+    this._views.forEach(function(obj, index)
+    {
+      if (obj.is_unfolded)
+      {
+        this._hide_view(obj, this._divs[index]);
+      }
+    }, this);
+    this._container = null;
+    this._divs = null;
+    
+  }
+
+  this._store_views_unfolded = function()
+  {
+    window.settings[this.id].set('panel-expanded-' + this.id, this._views.map(function(view){return view.is_unfolded}));
+  }
 
   this._show_view = function(obj, div)
   {
@@ -15,15 +58,21 @@ var SidePanelView = function(id, view_list)
     if (view)
     {
       div.addClass('unfolded');
+
+      
+      if(toolbars[view.id])
+      {
+        var toolbar = div.render(['panel-toolbar', 
+                                  'id', 'panel-toolbar-' + obj.id, 
+                                  'ui-id', toolbars[view.id].id,
+                                  'focus-handler', 'focus', 
+                                  'blur-handler', 'blur']);
+        toolbars[view.id].addContainerId('panel-toolbar-' + obj.id);
+        this._toolbar.create_toolbar_content(view.id, toolbar)
+      }
+      
       var container = div.render(['panel-container', 'id', 'panel-container-' + obj.id, 'ui-id', obj.id]);
       view.addContainerId('panel-container-' + obj.id);
-      /*
-      if(toolbars[view_id])
-      {
-        toolbars[view_id].addContainerId(toolbar_id);
-      }
-      */
-      
       if (view.default_handler)
       {
         container.setAttribute('handler', view.default_handler); 
@@ -32,6 +81,7 @@ var SidePanelView = function(id, view_list)
       container.setAttribute('data-menu', view.id || '');
       view.update();
       messages.post("show-view", {id: view.id});
+      this._store_views_unfolded();
     }
   }
 
@@ -44,53 +94,46 @@ var SidePanelView = function(id, view_list)
       var container = div.getElementsByTagName('panel-container')[0];
       container.parentNode.removeChild(container);
       view.removeContainerId('panel-container-' + obj.id);
-      /*
-      if(toolbars[view_id])
+      if(toolbars[view.id])
       {
-        toolbars[view_id].addContainerId(toolbar_id);
+        var toolbar = div.getElementsByTagName('panel-toolbar')[0];
+        toolbar.parentNode.removeChild(toolbar);
+        toolbars[view.id].addContainerId('panel-toolbar-' + obj.id);
       }
-      */
       messages.post("hide-view", {id: view.id});
-      //view.update();
+      this._store_views_unfolded();
     }
   }
 
   this.toggle_view = function(evenet, target)
   {
-    var div = target.has_attr('parent-node-chain', 'data-view-index');
-    if (div)
+    var index = target.get_attr('parent-node-chain', 'data-view-index');
+    if (index && this._divs)
     {
-      var obj = this._views[parseInt(div.getAttribute('data-view-index'))];
+      index = parseInt(index);
+      var obj = this._views[index];
+      obj.is_unfolded = !obj.is_unfolded;
       if (obj.is_unfolded)
       {
-        this._hide_view(obj, div);
+        this._show_view(obj, this._divs[index]);
       }
       else
       {
-        this._show_view(obj, div);
+        this._hide_view(obj, this._divs[index]);
       }
-      obj.is_unfolded = !obj.is_unfolded;
+      
     }
   }
 
-  this.createView = function(container)
-  {
-    var divs = container.clearAndRender(templates.side_panel(this._views)).childNodes;
-    this._views.forEach(function(obj, index)
-    {
-      if (obj.is_unfolded)
-      {
-        this._show_view(obj, divs[index]);
-      }
-    }, this);
-  }
-
-  
-
-  this.init(id, 'Side Panel', this.container_class);
 };
 
-SidePanelView.prototype = ViewBase;
+var SidePanelView = function(id, view_list)
+{
+  this.init(id, view_list);
+}
+
+SidePanelBaseView.prototype = ViewBase;
+SidePanelView.prototype = new SidePanelBaseView();
 
 var PanelContainer = function(view_id, is_unfolded)
 {

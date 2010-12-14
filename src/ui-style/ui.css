@@ -41,6 +41,10 @@ top-toolbar {
   position: absolute;
   }
 
+panel-toolbar {
+  display: block;
+}
+
 panel-container {
   width: 100%;
   display: block;
@@ -102,14 +106,16 @@ window-toolbar { /**/
 
 /* set with css. height, border and padding are supported */
 
-toolbar { /**/
+toolbar, panel-toolbar { /**/
   border: 0 solid #999;
   border-width: 0 1px 1px;
   padding: 3px 2px 2px;
   height: 21px; /* 21 + 3 + 2 (padding) = 26 */
   background: #f3f3f3 url("../ui-images/shine_2.png") 0 0 repeat-x;
   }
-
+panel-toolbar {
+  border-width: 0 0 1px 0;
+}
 toolbar-buttons, toolbar-switches {
   display: block;
   float: left;
@@ -231,6 +237,7 @@ cst-icon[class="debugger-menu"] {
     content: url("../ui-images/icons/icon_tabs.png");
 }
 toolbar button,
+panel-toolbar button,
 top-toolbar button,
 window-controls button,
 cst-select-toolbar-setting,
@@ -270,6 +277,7 @@ cst-select:active {
     padding: 1px;
 }
 toolbar button[is-active="true"],
+panel-toolbar button[is-active="true"],
 top-toolbar button[is-active="true"],
 window-controls button[is-active="true"],
 cst-select[is-active="true"] {
