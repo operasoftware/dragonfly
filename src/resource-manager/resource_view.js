@@ -8,7 +8,8 @@ cls.ResourceManagerView = function(id, name, container_class, html, default_hand
   this._service = new cls.ResourceManagerService(this, this._data);
   this._container = null;
   this._selected_resource = null;
-
+  this._loading = false;
+  
   this.ondestroy = function()
   {
     this._container = null;
@@ -35,6 +36,16 @@ cls.ResourceManagerView = function(id, name, container_class, html, default_hand
                                                        width,
                                                        templates.millis_to_render(ctx.get_duration())));
     }
+    else if (this._loading)
+    {
+      container.clearAndRender(
+        ['div',
+         ['p', "Loading page..."],
+         'class', 'info-box'
+        ]
+      );
+    }
+
     else
     {
       container.clearAndRender(
@@ -48,6 +59,18 @@ cls.ResourceManagerView = function(id, name, container_class, html, default_hand
       );
     }
   };
+
+  this._on_abouttoloaddocument_bound = function()
+  {
+    this._loading = true;
+    this.update();
+  }.bind(this);
+
+  this._on_documentloaded_bound = function()
+  {
+    this._loading = false;
+    this.update();
+  }.bind(this);
 
   this._handle_resource_select_bound = function(evt, target)
   {
@@ -64,6 +87,9 @@ cls.ResourceManagerView = function(id, name, container_class, html, default_hand
   var eh = window.eventHandlers;
   eh.click["resource-select-resource"] = this._handle_resource_select_bound;
   eh.click["resource-select-graph"] = this._handle_graph_select_bound;
+  var doc_service = window.services['document-manager'];
+  doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
+  doc_service.addListener("documentloaded", this._on_documentloaded_bound);
 
 
   this.init(id, name, container_class, html, default_handler);
