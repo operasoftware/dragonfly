@@ -287,8 +287,9 @@ var ActionBroker = function()
 
   this.get_actions_with_handler_id = function(handler_id)
   {
+    
     return (
-    this._handlers[handler_id] && this._handlers[handler_id].get_action_list());
+    this._handlers[handler_id] && this._handlers[handler_id].get_action_list().sort());
   };
 
   this._get_shortcut_keys = function()
