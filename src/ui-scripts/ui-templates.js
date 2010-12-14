@@ -225,7 +225,7 @@
 
   this.window_controls = function()
   {
-    return window.opera.attached ?
+    return 1||window.opera.attached ?
       this.window_controls_attached() :
       this.window_controls_detached();
   }
@@ -263,7 +263,7 @@
         [
           'button',
           'handler', 'top-window-toggle-attach',
-          'class', 'switch attached',
+          'class', 'switch' + (opera.attached ? ' attached' : ''),
           'title', ui_strings.S_SWITCH_DETACH_WINDOW
         ],
         [
@@ -271,7 +271,7 @@
           'handler', 'top-window-close',
           'title', ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW
         ],
-        'class', 'attached',
+        'class', (opera.attached ? ' attached' : ''),
         'id', 'window-controls-to-main-view'
       ]
     ];

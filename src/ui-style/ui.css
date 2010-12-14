@@ -594,6 +594,12 @@ top-tabs [ref-id="dom_panel"] .icon {
 top-tabs [ref-id="js_panel"] .icon {
     content: url("../ui-images/scripts_attached.png");
 }
+top-tabs [ref-id="dom_new"] .icon {
+    content: url("../ui-images/documents_attached.png");
+}
+top-tabs [ref-id="js_new"] .icon {
+    content: url("../ui-images/scripts_attached.png");
+}
 top-tabs [ref-id="network_panel"] .icon {
     content: url("../ui-images/network_attached.png");
 }
@@ -666,7 +672,7 @@ window-controls {
   height: 22px;
   background: #f3f3f3 url("../ui-images/shine_1_attached.png") repeat-x;
 }
-window-controls.attached::before {
+window-controls/*.attached*/::before {
     content: url("../ui-images/window_controls_border.png");
     height: 30px;
     position: relative;

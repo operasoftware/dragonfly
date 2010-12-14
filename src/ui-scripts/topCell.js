@@ -48,7 +48,7 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar)
     this.toolbar = TopToolbar && new TopToolbar(this) || null;
     if(this.toolbar)
     {
-      toolbars[this.id].setVisibility(!opera.attached);
+      toolbars[this.id].setVisibility(0&&!opera.attached);
     }
   }
 
