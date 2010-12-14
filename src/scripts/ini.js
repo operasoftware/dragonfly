@@ -52,6 +52,7 @@
           "enter": "dispatch-click",
           "shift enter": "dispatch-click",
           "ctrl enter": "dispatch-dbl-click",
+          "delete": "remove-node"
         },
         "edit-attributes-and-text":
         {
@@ -180,6 +181,7 @@
           "enter": "dispatch-click",
           "shift enter": "dispatch-click",
           "cmd enter": "dispatch-dbl-click",
+          "delete": "remove-node"
         },
         "edit-attributes-and-text":
         {
