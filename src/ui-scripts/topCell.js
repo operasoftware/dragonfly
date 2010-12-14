@@ -43,7 +43,6 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar)
   {
     this.container = new TopContainer(this); // actually just a cell
     this.tab = new TopTabs(this);
-    this.modebar = window.modebar = new Modebar(this);
     this.overlay = new Overlay();
     this.toolbar = TopToolbar && new TopToolbar(this) || null;
     if(this.toolbar)
@@ -67,10 +66,9 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar)
       {
         if(this.toolbar)
         {
-        this.toolbar.setDimensions();
+          this.toolbar.setDimensions();
         }
         this.tab.setDimensions();
-        this.modebar.setDimensions();
         this.container.setDimensions();
       }
     }

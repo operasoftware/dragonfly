@@ -110,6 +110,10 @@ var TabsBase = function()
     tabs.innerHTML = '';
     tabs.className = window.opera.attached ? "attached" : "detached"; // TODO: Do this with `.attributes` in topTabs?
     tabs.setAttribute("handler", "change-on-scroll");
+    if (this.tabbar_id)
+    {
+      tabs.setAttribute("tabbar-ref-id", this.tabbar_id);
+    }
     tabs.render(templates[this.type](this));
     return tabs;
   }
@@ -283,12 +287,14 @@ var TabsBase = function()
     };
   }
 
-  this.init = function(cell)
+  this.init = function(cell, tabbar)
   {
+    
     this.tabs = [];
     this.activeTab = '';
     this.cell = cell;
     this.initBase();
+    this.tabbar_id = tabbar && tabbar.id || '';
     window.messages.addListener('view-initialized', this.on_view_inizialized_bound());
   }
 
@@ -300,9 +306,9 @@ var TabsBase = function()
   */
 
 
-var Tabs = function(cell)
+var Tabs = function(cell, tabbar)
 {
-  this.init(cell);
+  this.init(cell, tabbar);
 }
 
 TabsBase.prototype = UIBase;

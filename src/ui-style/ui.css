@@ -1515,3 +1515,15 @@ tabs, toolbar {
     position: relative;
     z-index: 2;
 }
+
+.close-tab-button
+{
+  background: transparent url("../ui-images/icons/icon_close.png") no-repeat 0 0;
+  border: none;
+  width: 17px;
+  height: 17px;
+}
+.first-temp-tab
+{
+  margin-left: 20px;
+}

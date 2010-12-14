@@ -17,10 +17,10 @@
 
   // constructor call
 
-  this.appendUiNodes = function()
+  this.appendUiNodes = function(tabbar)
   {
     this.container = new Container(this);
-    this.tab = new Tabs(this);
+    this.tab = new Tabs(this, tabbar);
     this.toolbar = new Toolbar(this);
   }
 
@@ -166,12 +166,26 @@
     else
     {
 
-      this.appendUiNodes();
+      this.appendUiNodes(rough_cell.tabbar);
 
-      var tabs = rough_cell.tabs, tab = '', i = 0;
-      for( ; tab = tabs[i]; i++)
+      var tabs = null, tabbar = null;
+      if (rough_cell.tabbar)
+      {
+        tabs = rough_cell.tabbar.tabs;
+        tabbar = UI.get_instance().register_tabbar(rough_cell.tabbar.id,
+                                                   rough_cell.tabbar.tabs);
+      }
+      else
+      {
+        tabs = rough_cell.tabs;
+      }
+      for (var tab, i = 0; tab = tabs[i]; i++)
       {
         this.tab.addTab(new Tab(tab, views[tab] && views[tab].name || ''));
+      }
+      if (tabbar)
+      {
+        tabbar.register_ui_tabs(this.tab);
       }
     }
   }
