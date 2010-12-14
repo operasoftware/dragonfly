@@ -18,21 +18,35 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
   this._render_main_view = function(container)
   {
     var ctx = this._service.get_request_context();
-    this._table = new SortableTable(this._tabledef, ctx.resources.slice(0))
-    container.clearAndRender(this._table.render())
+
+    if (ctx)
+    {
+      this._table = new SortableTable(this._tabledef, ctx.resources.slice(0))
+      container.clearAndRender(this._table.render())
+    }
+    else
+    {
+      container.clearAndRender(
+        ['div',
+         ['button',
+          'class', 'ui-button',
+          'handler', 'reload-window'],
+         ['p', "Click the reload button above to fetch the resources for the selected window"],
+         'class', 'info-box'
+        ]
+      );
+    }
   };
 
   this._handle_open_resource_bound = function(evt, target)
   {
     var rid = target.getAttribute("data-object-id");
-
     var obj = this._service.get_resource_for_id(rid);
     var view = new cls.GenericResourceDetail(obj)
     var ui = UI.get_instance();
     ui.get_tabbar("resources").add_tab(view.id);
-    //ui.show_view(view.id);
+    ui.show_view(view.id);
   }.bind(this);
-
 
   this._tabledef = {
     handler: "resources-all-open",
