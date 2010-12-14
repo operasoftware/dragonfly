@@ -9,6 +9,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
   this._sort_by = "name";
   this._reverse = false;
   this._columns = [];
+  this._loading = false;
 
   this.createView = function(container)
   {
@@ -24,6 +25,15 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
       this._table = new SortableTable(this._tabledef, ctx.resources.slice(0))
       container.clearAndRender(this._table.render())
     }
+    else if (this._loading)
+    {
+      container.clearAndRender(
+        ['div',
+         ['p', "Loading page..."],
+         'class', 'info-box'
+        ]
+      );
+    }
     else
     {
       container.clearAndRender(
@@ -31,7 +41,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
          ['button',
           'class', 'ui-button',
           'handler', 'reload-window'],
-         ['p', "Click the reload button above to fetch the resources for the selected window"],
+         ['p', "Click the reload button above to reload the debugged window and fetch its resources"],
          'class', 'info-box'
         ]
       );
@@ -97,8 +107,24 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
     },
   }
 
+  this._on_abouttoloaddocument_bound = function()
+  {
+    this._loading = true;
+    this.update();
+  }.bind(this);
+
+  this._on_documentloaded_bound = function()
+  {
+    this._loading = false;
+    this.update();
+  }.bind(this);
+
   var eh = window.eventHandlers;
   eh.click["resources-all-open"] = this._handle_open_resource_bound;
+
+  var doc_service = window.services['document-manager'];
+  doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
+  doc_service.addListener("documentloaded", this._on_documentloaded_bound);
 
   this.init(id, name, container_class, html, default_handler);
 };
