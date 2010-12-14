@@ -9,6 +9,7 @@ templates.resource_main = function(ctx, selected, width, millis_to_render)
     ["div", templates.load_time_overview(ctx),
      templates.resource_list(ctx), "class", "resource-listwrapper"],
     ["div",
+     ["div", "", "style", "height: 63px;"], // fixme: temporary padder
      selected == null ? templates.resource_graph(ctx, millis_to_render, graphwidth) : templates.resource_details(ctx, selected),
      "class", "resource-graphwrapper"],
     "class", "resource-main"
@@ -39,16 +40,16 @@ templates.resource_list = function(ctx)
 
 templates.resource_details = function(ctx, resourceid)
 {
-  var resource = ctx.get_resource(resourceid);
+  var res = ctx.get_resource(resourceid);
 
   var tpl = [
-  ["h1", "Request"],
-  ["ul",
-    ["li", ["strong", "URL:"], resource.urlload.url],
-    ["li", ["strong", "Method"], "GET", ["a", "spec", "href", "#"]],
-    ["li", ["strong", "Status"], "200 OK", ["a", "spec", "href", "#"]],
-    "class", "resource-detail"
-  ],
+    ["h1", "Request"],
+    ["ul",
+     ["li", ["strong", "URL:"], res.urlload.url],
+     ["li", ["strong", "Method"], (res.request ? res.request.method : "-")],
+     ["li", ["strong", "Status"], (res.response ? String(res.response.responseCode) : "-")],
+     "class", "resource-detail"
+     ],
   ["h1", "Request headers"],
   ["ul",
     ["li", ["strong", "Accept-languages:"], "adsf"],
@@ -101,7 +102,7 @@ templates.resource_graph = function(ctx, duration, contwidth, lineheight)
                           "class", "resource-graph",
                           "width", "" + contwidth + "px",
                           "height", "" + n*lineheight + "px",
-                          "style", "border:solid thin red; background-color: blue"];
+                          "style", ""];
 
 
     return tpl;
@@ -149,7 +150,6 @@ templates.resource_bar = function(offset, entry, basetime, totaltime, contwidth,
 templates.graph_scale = function(duration, contwidth)
 {
   var stepcnt = (contwidth / 100);
-
   return [
 
   ];

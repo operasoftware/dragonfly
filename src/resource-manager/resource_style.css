@@ -113,3 +113,15 @@
 .resource-type-image {
     background-image: url(../ui-images/filetype_image.png);
 }
+
+.resource-data-wrapper {
+    text-align: center;
+}
+
+.resource-data-wrapper > *{
+    text-align: left;
+}
+
+.resource-data-wrapper.image > * {
+    text-align: center;
+}
