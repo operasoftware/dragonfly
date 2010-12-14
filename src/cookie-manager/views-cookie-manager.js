@@ -209,6 +209,9 @@ cls.CookieManagerView = function(id, name, container_class)
     
     container.render(template);
     
+    // temporary solution, have to triggert his once after the form is created
+    window.eventHandlers.change['cookiemanager-add-cookie-domain-select']();
+    
     // Add clear button
     container.render(["button", "RemoveAllCookies", "handler", "cookiemanager-delete-all", "class", "spacedbutton"]);
     // Add update button

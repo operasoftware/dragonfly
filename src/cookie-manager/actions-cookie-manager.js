@@ -131,7 +131,7 @@ window.eventHandlers.click['add-cookie-handler'] = function(event, target)
   
   // walk up to find form
   var formelem = target;
-  while (formelem.nodename !== "form" && formelem.parentNode) {
+  while (formelem.nodeName !== "form" && formelem.parentNode) {
     formelem = formelem.parentNode;
   }
   
@@ -139,14 +139,15 @@ window.eventHandlers.click['add-cookie-handler'] = function(event, target)
   var domain_select  = formelem.querySelector("select[name=add_cookie_domain_select]");
   if(domain_select)
   {
-    cookie_runtime = parseInt(domain_select.options[domain_select.options.selectedIndex].getAttribute("data-runtimes").split(",")[0]);
+    cookie_runtime = parseInt(domain_select.options[domain_select.options.selectedIndex].value.split(",")[0]);
   }
   else {    
-    cookie_runtime = parseInt(formelem.querySelector("input[name=add_cookie_runtime]").value);
+    cookie_runtime = parseInt(formelem.querySelector("input[name=add_cookie_runtime]").value.split(",")[0]);
   }
   var name_val    = formelem.querySelector("input[name=cookiename]").value;
   var value_val   = formelem.querySelector("input[name=cookievalue]").value;
-  var path_val    = formelem.querySelector("input[name=cookiepath]").value || "/"; // TODO: Make sure it starts with a path if it's given
+  var path_val_form_elem = formelem.querySelector("input[name=cookiepath]") || formelem.querySelector("select[name=cookie_path_select]");
+  var path_val    = path_val_form_elem.value || "/"; // TODO: Make sure it starts with a path if it's given
   var expires_val = formelem.querySelector("input[name=cookieexpires]").value;
   
   if(name_val && cookie_runtime)
@@ -179,4 +180,65 @@ window.eventHandlers.click['add-cookie-handler'] = function(event, target)
 window.eventHandlers.click['cookiemanager-update'] = function(event, target)
 {
   window.views.cookie_manager._update();
+}
+
+window.eventHandlers.change['cookiemanager-add-cookie-domain-select'] = function(event, target)
+{
+  console.log("cookiemanager-add-cookie-domain-select", event, target);
+  // find selected, change name[cookiepath] input into select elem
+  if(!target)
+  {
+    target = document.querySelector("form.add-cookie-form");
+  }
+  
+  // walk up to find form
+  var formelem = target;
+  while (formelem.nodeName !== "form" && formelem.parentNode) {
+    formelem = formelem.parentNode;
+  }
+  
+  // function will also be called initial, so it needs to be
+  // checked if there is add_cookie_domain_select (the selected item of that has the runtimes (value))
+  // or there is add_cookie_runtime directly, it has the runtimes directly (value)
+  var selected_runtime_ids = [];
+  var add_cookie_runtime = formelem.querySelector("input[name=add_cookie_runtime]");
+  var domain_select = formelem.querySelector("select[name=add_cookie_domain_select]");
+  if(add_cookie_runtime) {
+    selected_runtime_ids = add_cookie_runtime.value.split(",");
+  }
+  else if(domain_select) {
+    selected_runtime_ids = domain_select.value.split(",");
+    console.log("selected_runtime_ids",selected_runtime_ids);
+  }
+  var pathvalues = ["/"];
+  for (var i=0; i < selected_runtime_ids.length; i++) {
+    var pathname = window.views.cookie_manager._rts[selected_runtime_ids[i]].pathname;
+    if(pathvalues.indexOf(pathname) === -1)
+    {
+      pathvalues.push(pathname);
+    }
+  };
+  // console.log("pathvalues",pathvalues);
+  
+  // Remove old
+  var path_select_elem = formelem.querySelector("input[name=cookiepath]") || formelem.querySelector("select[name=cookie_path_select]");
+  
+  var parent = path_select_elem.parentNode;
+  if(path_select_elem) {
+    parent.removeChild(path_select_elem);
+  }
+  // Insert new
+  var render_object = [];
+  if(pathvalues.length > 1) {
+    var option_arr = [];
+    for (var i=0; i < pathvalues.length; i++) {
+      option_arr.push(["option",pathvalues[i],"value",pathvalues[i]]);
+    };
+    render_object.push(["select",option_arr,"name","cookie_path_select","class","add_cookie_dropdown"]);
+  }
+  else
+  {
+    render_object.push(["input","value",pathvalues[0],"name","cookiepath"]);
+  }
+  parent.render(render_object);
 }

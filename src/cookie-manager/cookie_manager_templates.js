@@ -28,18 +28,18 @@ templates.cookie_manager = {
                   }
                 };
                 if(domain_count <= 1) {
-                  var first_runtime_id = domains[domain].runtimes[0]; // 'domain' is left on the first and only value. maybe not the best way to do it.
+                  // 'domain' is left on the first and only value. maybe not the best way to do it.
                   return [
-                    ["input", "type", "hidden", "name", "add_cookie_runtime", "value", first_runtime_id],
+                    ["input", "type", "hidden", "name", "add_cookie_runtime", "value", domains[domain].runtimes.toString()],
                     ["span", runtimes[first_runtime_id].hostname]
                   ]
                 }
                 else {
                   var option_arr = [];
                   for (var id in domains) {
-                    option_arr.push(["option", id, "data-runtimes", domains[id].runtimes.toString()]);
+                    option_arr.push(["option", id, "value", domains[id].runtimes.toString()]);
                   };
-                  return ["select", option_arr, "name", "add_cookie_domain_select"];
+                  return ["select", option_arr, "name", "add_cookie_domain_select", "handler", "cookiemanager-add-cookie-domain-select", "class", "add_cookie_dropdown"];
                 }
               })()
             ],
