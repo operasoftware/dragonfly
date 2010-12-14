@@ -255,6 +255,7 @@ window.cls.Client = function()
     var modebar_scripts = ui.register_modebar('scripts', HorizontalNavigation);
 
     new SidePanelView('dom-side-panel', ['css-comp-style', 'css-inspector', 'dom_attrs', 'css-layout']);
+    new SidePanelView('scripts-side-panel', ['callstack', 'inspection']);
     new CompositeView('network_panel',
                       ui_strings.M_VIEW_LABEL_NETWORK,
                       layouts.network_rough_layout,
@@ -283,7 +284,6 @@ window.cls.Client = function()
     new CompositeView('js_panel',
                       ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS,
                       layouts.js_rough_layout_panel,
-                      null,
                       'scripts',
                       services);
     new CompositeView('dom_panel',
@@ -468,7 +468,7 @@ ui_framework.layouts.dom_rough_layout_panel =
   children:
   [
     {
-      width: 700, tabs: ['dom', 'stylesheets']
+      width: 700, tabs: ['dom', /*'stylesheets'*/]
     },
     {
       width: 250, tabs: ['dom-side-panel'/*'css-comp-style', 'css-inspector', 'dom_attrs', 'css-layout'*/]
@@ -509,14 +509,14 @@ ui_framework.layouts.js_rough_layout_panel =
       width: 700,
       children:
       [
-        { height: 150, tabs: [/*'runtimes', */'js_source', 'command_line'] }
+        { height: 150, tabs: [/*'runtimes', */'js_source'/*, 'command_line'*/] }
       ]
     },
     {
       width: 250,
       children:
       [
-        { height: 250, tabs: ['callstack', 'inspection', 'threads'] }
+        { height: 250, tabs: ['scripts-side-panel' /*callstack', 'inspection', 'threads'*/] }
       ]
     }
   ]
