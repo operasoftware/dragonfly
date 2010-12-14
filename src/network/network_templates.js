@@ -26,10 +26,12 @@ templates.network_options_main = function(clearing_cache, caching, headers)
              caching == "disabled" ? "checked" : "non-checked", "true"
             ]]
           ],
+          /*
           ["hr"],
           ["fieldset", ["legend", "Global header rewrites"],
            templates.network_options_header_table(headers)
           ],
+          */
           "class", "padding network-options"
          ];
 };

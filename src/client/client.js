@@ -514,8 +514,13 @@ ui_framework.layouts.network_rough_layout =
     dir: 'v',
     width: 1000,
     height: 1000,
-    children: [ { height: 1000, tabs: ['request_list', 'resource_manager',
-                                       'request_crafter', 'network_options']
+    children: [ { height: 1000, tabs:
+                  [
+                    //'request_list',
+                    'resource_manager',
+                    'request_crafter',
+                    'network_options'
+                  ]
                 }
               ]
 }
@@ -526,7 +531,9 @@ ui_framework.layouts.resource_rough_layout =
     dir: 'v',
     width: 1000,
     height: 1000,
-    children: [ { height: 1000, tabbar: { id: "resources", tabs: ['resource_all', 'resource_fonts', 'resource_images'] } } ]
+    children: [ { height: 1000, tabbar: { id: "resources", tabs: ['resource_all',
+                                                                  // 'resource_fonts', 'resource_images'
+                                                                 ] } } ]
 }
 
 
