@@ -37,7 +37,15 @@ cls.ResourceManagerView = function(id, name, container_class, html, default_hand
     }
     else
     {
-      container.innerHTML = "<div class='padding'><h1>No document loaded</h1></div>";
+      container.clearAndRender(
+        ['div',
+         ['button',
+          'class', 'ui-button',
+          'handler', 'reload-window'],
+         ['p', "Click the reload button above to fetch the resources for the selected window"],
+         'class', 'info-box'
+        ]
+      );
     }
   };
 
