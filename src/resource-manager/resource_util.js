@@ -68,6 +68,27 @@ cls.ResourceUtil.mime_type_map = {
   "application/xml": "xml"
 }
 
+/**
+ * Returns the most sensible way of getting this resource,
+ * as datauri or string, based on the mime type.
+ */
+cls.ResourceUtil.mime_to_content_mode = function(mime)
+{
+  var type = cls.ResourceUtil.mime_to_type(mime);
+  switch (type) {
+    case "image":
+    case "pdf":
+    case "flash":
+      return "datauri";
+    case "markup":
+    case "css":
+    case "xml":
+    case "script":
+      return "text";
+  }
+  return "text";
+}
+
 cls.ResourceUtil.mime_to_type = function(mime)
 {
   return this.mime_type_map[mime] || "unknown";
