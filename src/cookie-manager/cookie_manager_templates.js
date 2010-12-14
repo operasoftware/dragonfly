@@ -8,7 +8,7 @@ templates.cookie_manager = {
         [
           ["div",
             [
-              ["label","Domain"],
+              ["label", "Domain"],
               ["br"],
               (function(){
                 // depending on amount of domains, return selection list or text and hidden input field
@@ -39,59 +39,60 @@ templates.cookie_manager = {
                   for (var id in domains) {
                     option_arr.push(["option", id, "value", domains[id].runtimes.toString()]);
                   };
-                  return ["select", option_arr, "name", "add_cookie_domain_select", "handler", "cookiemanager-add-cookie-domain-select", "class", "add_cookie_dropdown"];
+                  return ["select", option_arr, "name", "add_cookie_runtime_select", "handler", "cookiemanager-add-cookie-domain-select", "class", "add_cookie_dropdown"];
                 }
               })()
             ],
-          "class","container"],
+          "class", "container"],
           ["div",
             [
-              ["label","Name"],
+              ["label", "Name"],
               ["br"],
               ["input",
-                "type","text",
-                "name","cookiename"
+                "type", "text",
+                "name", "cookiename"
               ]
             ],
-          "class","container"],
+          "class", "container"],
           ["div",
             [
-              ["label","Value"],
+              ["label", "Value"],
               ["br"],
               ["input",
-                "type","text",
-                "name","cookievalue"
+                "type", "text",
+                "name", "cookievalue"
               ]
             ],
-          "class","container"],
+          "class", "container"],
           ["div",
             [
-              ["label","Path"],
+              ["label", "Path"],
               ["br"],
               ["input",
-                "type","text",
-                "name","cookiepath"
+                "type", "text",
+                "name", "cookiepath",
+                "list", "cookiepathlist",
+                "value", "/"
               ]
             ],
-          "class","container"],
+          "class", "container"],
           ["div",
             [
-              ["label","Expires"],
+              ["label", "Expires"],
               ["br"],
               ["input",
-                "type","datetime",
-                "name","cookieexpires"
-                // ,"value",new Date(new Date().getTime()+(1000*60*60*24)).toISOString() // (when session closes) is default
+                "type", "datetime",
+                "name", "cookieexpires"
               ]
             ],
-          "class","container"],
+          "class", "container"],
           ["div",
             [
               ["br"],
-              ["button","Add",
-               "handler","add-cookie-handler"]
+              ["button", "Add",
+               "handler", "add-cookie-handler"]
             ],
-          "class","container"]
+          "class", "container"]
         ],
       "class", "add-cookie-form"]
     ]
