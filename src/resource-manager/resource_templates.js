@@ -45,30 +45,39 @@ templates.resource_details = function(ctx, resourceid)
   var tpl = [
     ["h1", "Request"],
     ["ul",
-     ["li", ["strong", "URL:"], res.urlload.url],
-     ["li", ["strong", "Method"], (res.request ? res.request.method : "-")],
-     ["li", ["strong", "Status"], (res.response ? String(res.response.responseCode) : "-")],
+     ["li", ["strong", "URL: "], res.urlload.url],
+     ["li", ["strong", "Method: "], (res.request ? res.request.method : "-")],
+     ["li", ["strong", "Status: "], (res.response ? String(res.response.responseCode) : "-")],
      "class", "resource-detail"
      ],
   ["h1", "Request headers"],
   ["ul",
-    ["li", ["strong", "Accept-languages:"], "adsf"],
-    ["li", ["strong", "Accept-languages:"], "adsf"],
-    ["li", ["strong", "Accept-languages:"], "adsf"],
-    ["li", ["strong", "Accept-languages:"], "adsf"],
-    "class", "resource-detail"
+   [].concat(res.requestheader
+             ? res.requestheader.headerList.map(function(e)
+                                                {
+                                                  return ["li", ["strong", e.name + ": "], e.value];
+                                                })
+             : []
+            )
   ],
-  ["h1", "Query data"],
+/*
+    ["h1", "Query data"],
   ["ul",
     ["li", ["strong", "avcd:"], "adsf"],
     ["li", ["strong", "gers:"], "adsf"],
     "class", "resource-detail"
   ],
+  */
   ["h1", "Response headers"],
   ["ul",
-    ["li", ["strong", "avcd:"], "adsf"],
-    ["li", ["strong", "gers:"], "adsf"],
-    "class", "resource-detail"
+   [].concat(res.responseheader
+             ? res.responseheader.headerList.map(function(e)
+                                                {
+                                                  return ["li", ["strong", e.name + ": "], e.value];
+                                                })
+             : []
+            )
+
   ]
   ];
 
