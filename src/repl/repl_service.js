@@ -373,7 +373,16 @@
 
     if (status == BAD_REQUEST || status == INTERNAL_ERROR)
     {
-      this._handle_raw(msg[0]);
+      // hackhack: If there are errors when evaluation, as in syntax
+      // errors, we get the literal error message here. However, we
+      // also get it through the console-log service. To avoid showing
+      // duplicates, we swallow the error message here if the user
+      // has enabled showing errors in the repl. The error message
+      // will still be printed, but as a result of the console-log
+      // event.
+      if (!settings.command_line.get('show-js-errors-in-repl')) {
+        this._handle_raw(msg[0]);
+      }
     }
     else if (msg[STATUS] == "unhandled-exception")
     {
