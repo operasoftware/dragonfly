@@ -127,22 +127,29 @@ window.eventHandlers.click['cookiemanager-delete-cookie'] = function(event, targ
 
 window.eventHandlers.click['add-cookie-handler'] = function(event, target)
 {
+  event.preventDefault();
+  
   // walk up to find form
   var formelem = target;
   while (formelem.nodename !== "form" && formelem.parentNode) {
     formelem = formelem.parentNode;
   }
   
-  var domain_field  = formelem.querySelector("select[name=cookiedomain]");
-  var cookie_runtime = parseInt(domain_field.options[domain_field.options.selectedIndex].getAttribute("data-runtimes").split(",")[0]);
-  
-  var domain_val  = domain_field.value;
+  var cookie_runtime;
+  var domain_select  = formelem.querySelector("select[name=add_cookie_domain_select]");
+  if(domain_select)
+  {
+    cookie_runtime = parseInt(domain_select.options[domain_select.options.selectedIndex].getAttribute("data-runtimes").split(",")[0]);
+  }
+  else {    
+    cookie_runtime = parseInt(formelem.querySelector("input[name=add_cookie_runtime]").value);
+  }
   var name_val    = formelem.querySelector("input[name=cookiename]").value;
   var value_val   = formelem.querySelector("input[name=cookievalue]").value;
   var path_val    = formelem.querySelector("input[name=cookiepath]").value || "/"; // TODO: Make sure it starts with a path if it's given
   var expires_val = formelem.querySelector("input[name=cookieexpires]").value;
   
-  if(domain_val && name_val && cookie_runtime!=="")
+  if(name_val && cookie_runtime)
   {
     var add_cookie_script = 'document.cookie="';
     add_cookie_script += encodeURIComponent(name_val) + '='
@@ -167,7 +174,6 @@ window.eventHandlers.click['add-cookie-handler'] = function(event, target)
   }
   // todo: make domain, path and expires persist
   // todo: scroll down to newly added cookies
-  event.preventDefault();
 }
 
 window.eventHandlers.click['cookiemanager-update'] = function(event, target)
