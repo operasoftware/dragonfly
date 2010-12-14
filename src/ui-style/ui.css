@@ -41,6 +41,14 @@ top-toolbar {
   position: absolute;
   }
 
+panel-container {
+  width: 100%;
+  display: block;
+  /* not sure if this is needed
+     so far any container was positioned absolute */
+  position: relative;
+}
+
 top-toolbar, top-tabs, modebar, tabs {
     border-bottom: 1px solid #999;
 }

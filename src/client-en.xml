@@ -212,6 +212,8 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/colorpicker.js"/>
 <script src="./ui-scripts/slider.js"/>
 <script src="./ui-scripts/contextmenu.js"/>
+<script src="./ui-scripts/sidepanels/view.js"/>
+<script src="./ui-scripts/sidepanels/templates.js"/>
 
 
 <script src="./build-application/build_application.js"></script>

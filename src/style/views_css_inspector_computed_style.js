@@ -18,7 +18,6 @@ cls.CSSInspectorCompStyleView = function(id, name, container_class)
     data = elementStyle.get_computed_style();
     if (data)
     {
-      opera.postError('container.__cal_count: '+container.__cal_count)
       // stylesheets.prettyPrintCat call will also ensure 
       // that all style sheets for the given runtime and the index map
       // will be avaible, that means the call will not return any data 

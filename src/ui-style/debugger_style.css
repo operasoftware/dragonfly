@@ -431,8 +431,8 @@ header {
   border-bottom-color: #ccc;
   }
 
-.unfolded + header {
-  border-top-width: 1px;
+div.unfolded {
+  border-bottom: 1px solid #ccc;;
 }
 
 header:hover {
@@ -453,7 +453,7 @@ header input {
   -o-transition: .2s;
   }
 
-.css-inspector header input.unfolded {
+.unfolded header input {
   -o-transform: rotate(90deg);
   }
 

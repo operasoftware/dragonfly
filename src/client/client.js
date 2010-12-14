@@ -253,6 +253,8 @@ window.cls.Client = function()
     var ui = UI.get_instance();
     var modebar_dom = ui.register_modebar('dom', HorizontalNavigation);
     var modebar_scripts = ui.register_modebar('scripts', HorizontalNavigation);
+
+    new SidePanelView('dom-side-panel', ['css-comp-style', 'css-inspector', 'dom_attrs', 'css-layout']);
     new CompositeView('network_panel',
                       ui_strings.M_VIEW_LABEL_NETWORK,
                       layouts.network_rough_layout,
@@ -469,7 +471,7 @@ ui_framework.layouts.dom_rough_layout_panel =
       width: 700, tabs: ['dom', 'stylesheets']
     },
     {
-      width: 250, tabs: ['css-comp-style', 'css-inspector', 'dom_attrs', 'css-layout']
+      width: 250, tabs: ['dom-side-panel'/*'css-comp-style', 'css-inspector', 'dom_attrs', 'css-layout'*/]
     }
   ]
 }
