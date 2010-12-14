@@ -153,4 +153,5 @@ window.eventHandlers.click['toggle-panel-view'] = function(event, target)
   {
     panel.toggle_view(event,target);
   }
-}
+};
+
