@@ -50,6 +50,11 @@ cls.ReplData = function(view)
     this._add_entry("completion", str);
   };
 
+  this.add_output_errorlog = function(str)
+  {
+    this._add_entry("errorlog", str);
+  };
+
   /**
    * Inspectable element, as used by dirxml()
    */

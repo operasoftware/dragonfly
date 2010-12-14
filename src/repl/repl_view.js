@@ -169,6 +169,9 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         case "completion":
           this._render_completion(e.data);
           break;
+        case "errorlog":
+          this._render_errorlog(e.data);
+          break;
       default:
           this._render_string("unknown");
       }
@@ -302,6 +305,13 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   {
     this._add_line(["span", s, "class", "repl-completion"]);
   };
+
+  this._render_errorlog = function(s) {
+    if (settings.command_line.get('show-js-errors-in-repl'))
+    {
+      this._render_string(s);
+    }
+  }
 
   /**
    * Render a string. Return the element that was rendered.
@@ -922,18 +932,21 @@ cls.ReplView.create_ui_widgets = function()
       'max-typed-history-length': 32,
       'typed-history': [],
       'unpack-list-alikes': true,
-      'is-element-type-sensitive': true
+      'is-element-type-sensitive': true,
+      'show-js-errors-in-repl': true,
     },
     { // key/label
       'max-typed-history-length': ui_strings.S_LABEL_REPL_BACKLOG_LENGTH,
       'unpack-list-alikes': ui_strings.S_SWITCH_UNPACK_LIST_ALIKES,
-      'is-element-type-sensitive': ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE
+      'is-element-type-sensitive': ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE,
+      'show-js-errors-in-repl': ui_strings.S_SWITCH_SHOW_ERRORS_IN_REPL,
     },
     { // settings map
       checkboxes:
       [
         'unpack-list-alikes',
-        'is-element-type-sensitive'
+        'is-element-type-sensitive',
+        'show-js-errors-in-repl',
       ],
       customSettings:
       [

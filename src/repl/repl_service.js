@@ -15,10 +15,7 @@
   {
     var data = new cls.ConsoleLogger["2.0"].ConsoleMessage(msg);
     if (data.source != "ecmascript") { return }
-    opera.postError(JSON.stringify(msg, null, "  "));
-    this._data.add_output_str(data.description);
-
-
+    this._data.add_output_errorlog(data.description);
   }.bind(this);
 
   this._on_consolelog_bound = function(msg)
