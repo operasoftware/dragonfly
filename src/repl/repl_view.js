@@ -24,6 +24,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._autocompletion_scope = null;
   this._use_autocomplete_highlight = true; // fixme: turn this in to a setting
   this._textarea_handler = null;
+  this._prev_frame_index = null;
   this._closed_group_nesting_level = 0;
   this._keywords = ["break", "case", "catch", "continue", "debugger",
       "default", "delete", "do", "else", "finally", "for", "function",
@@ -684,6 +685,17 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     // from the previous runtime/frame when tabbing.
     // The current tabbing context doesn't change though. Should not
     // be a problem unless you reload while tabbing or something.
+    if (msg.type == "frame-selected")
+    {
+      if (msg.frame_index == this._prev_frame_index)
+      {
+        return; // do nothing if there's no new frame index.
+      }
+      else
+      {
+        this._prev_frame_index = msg.frame_index;
+      }
+    }
     this._cancel_completion();
   }.bind(this);
 
