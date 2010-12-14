@@ -5,45 +5,32 @@
   * @extends ViewBase
   */
 
-cls.CSSInspectorView = function(id, name, container_class)
+cls.CSSInspectorCompStyleView = function(id, name, container_class)
 {
   var self = this;
 
+  // TODO set unfold key on show and hide view
+
   this.createView = function(container)
   {
-    // TODO set unfold key on show and hide view
-
-    var styles = container.clearAndRender(['category', ['styles'], 'edit-handler', 'edit-css']).firstElementChild;
-    var search_active = elementStyle.getSearchActive();
-    var cat_index = 1;
-    data = elementStyle.getCategoryData(cat_index);
+    container.innerHTML ='';
+    var styles = container.render(['category', ['styles']]).firstElementChild;
+    data = elementStyle.get_computed_style();
     if (data)
     {
+      opera.postError('container.__cal_count: '+container.__cal_count)
       // stylesheets.prettyPrintCat call will also ensure 
       // that all style sheets for the given runtime and the index map
       // will be avaible, that means the call will not return any data 
       // before this datas are avaible
-      styles.innerHTML = 
-        stylesheets.prettyPrintStyleCasc(data, arguments, search_active);
+      styles.innerHTML = stylesheets.prettyPrintCompStyle(data, arguments);
       styles.setAttribute('rt-id', data.rt_id);
     }
-
-    var quick_find = this.getToolbarControl( container, 'css-inspector-text-search');
-    if( quick_find && elementStyle.getSearchTerm() )
-    {
-      quick_find.value = elementStyle.getSearchTerm();
-      quick_find.previousElementSibling.textContent = "";
-    }
   }
-
-  this.ondestroy = function()
-  {
-    UIWindowBase.closeWindow('color-selector');
-  }
-
   this.init(id, name, container_class);
 }
 
+/*
 cls.CSSInspectorView.create_ui_widgets = function()
 {
 
@@ -93,8 +80,9 @@ cls.CSSInspectorView.create_ui_widgets = function()
     'css-inspector',
     [
       'hide-initial-values'/*,
-      'hide-shorthands',*/
+      'hide-shorthands',*//*
     ]
   );
 }
 
+*/
