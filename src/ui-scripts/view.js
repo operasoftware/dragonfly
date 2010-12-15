@@ -195,9 +195,18 @@ var ViewBase = new function()
       }
     }
   }
-  
+
+  this.has_container_id = function(id)
+  {
+    return this.container_ids.indexOf(id) > -1;
+  }
+
   this.reset_containers = function() 
   {
+    if (this.container_ids.length)
+    {
+      window.messages.post('hide-view', {id: this.id});
+    }
     this.container_ids = [];
   };
 

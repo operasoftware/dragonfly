@@ -21,7 +21,7 @@
     ['header',
       ['input',
         'type', 'button',
-      ].concat(obj.is_unfolded ? ['class', 'unfolded'] : [] ),
+      ], //.concat(obj.is_unfolded ? ['class', 'unfolded'] : [] ),
       window.views[obj.view_id].name,
       'handler', 'toggle-panel-view'
     ]);
