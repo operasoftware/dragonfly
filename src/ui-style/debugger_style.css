@@ -453,7 +453,8 @@ header input {
   -o-transition: .2s;
   }
 
-.unfolded header input {
+.unfolded > header input,
+input.unfolded {
   -o-transform: rotate(90deg);
   }
 
