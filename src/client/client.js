@@ -253,9 +253,18 @@ window.cls.Client = function()
     var ui = UI.get_instance();
     var modebar_dom = ui.register_modebar('dom', HorizontalNavigation);
     var modebar_scripts = ui.register_modebar('scripts', HorizontalNavigation);
-
-    new SidePanelView('dom-side-panel', ['css-comp-style', 'css-inspector', 'dom_attrs', 'css-layout']);
-    new SidePanelView('scripts-side-panel', ['callstack', 'inspection']);
+    var major_ecma_service_version = parseInt(services['ecmascript-debugger']
+                                              .version.split('.')[0]);
+    var scripts_side_panel_views = ['callstack', 'inspection'];
+    if (major_ecma_service_version > 5)
+    {
+      scripts_side_panel_views = ['callstack', 'inspection', 'event-breakpoints']
+    }
+    new SidePanelView('dom-side-panel', ['css-comp-style', 
+                                         'css-inspector', 
+                                         'dom_attrs', 
+                                         'css-layout']);
+    new SidePanelView('scripts-side-panel', scripts_side_panel_views);
     new CompositeView('network_panel',
                       ui_strings.M_VIEW_LABEL_NETWORK,
                       layouts.network_rough_layout,
