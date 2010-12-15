@@ -356,7 +356,8 @@ property.disabled, .disabled key, .disabled value {
 .enable-disable {
   float: left;
   opacity: 0; /* This is a hack (instead of visibility: hidden) to make sure the checkbox is always clickable */
-  margin: 1px 0 -10px -20px; /* This is rather hackish too */
+  margin-bottom: -10px; /* This is rather hackish too */
+  margin-left: -20px;
   cursor: default;
   }
 .enable-disable.hidden { visibility: hidden; }
