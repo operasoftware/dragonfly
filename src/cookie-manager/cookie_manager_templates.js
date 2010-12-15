@@ -138,22 +138,40 @@ templates.cookie_manager = {
   table_view: {
     editable_name: function(name, objectref) {
       return [
-        "input", " ",
-        "value", name,
-        "type", "text",
-        "data-objectref", objectref,
-        "data-editproperty", "name",
-        "blur-handler", "cookiemanager-edit"
+        "span",
+        [
+          "input", " ",
+          "value", name,
+          "type", "text",
+          "data-objectref", objectref,
+          "data-editproperty", "name",
+          "blur-handler", "cookiemanager-edit",
+          "class", "hidden edit_formelem",
+        ],
+        [
+          "div", name,
+          "handler", "cookiemanager-init-edit-mode"
+        ],
+        "class", "edit_container"
       ];
     },
     editable_value: function(value, objectref) {
       return [
-        "input", " ",
-        "value", value,
-        "type", "text",
-        "data-objectref", objectref,
-        "data-editproperty", "value",
-        "blur-handler", "cookiemanager-edit"
+        "span",
+        [
+          "input", " ",
+          "value", value,
+          "type", "text",
+          "data-objectref", objectref,
+          "data-editproperty", "value",
+          "blur-handler", "cookiemanager-edit",
+          "class", "hidden edit_formelem"
+        ],
+        [
+          "div", value,
+          "handler", "cookiemanager-init-edit-mode"
+        ],
+        "class", "edit_container"
       ];
     },
     expires_0values: function() {

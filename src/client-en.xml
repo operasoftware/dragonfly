@@ -231,8 +231,8 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./shortcutconfig/templates.js"/>
 
 <script src="./cookie-manager/cookie_manager_templates.js"></script>
-<script src="./cookie-manager/views-cookie-manager.js"></script>
-<script src="./cookie-manager/actions-cookie-manager.js"></script>
+<script src="./cookie-manager/cookie_manager_views.js"></script>
+<script src="./cookie-manager/cookie_manager_actions.js"></script>
 
 <script src="./ecma-debugger/ListTextSearch.js"/>
 

@@ -22,8 +22,27 @@
   };
 };
 
+window.eventHandlers.click['cookiemanager-init-edit-mode'] = function(event, target)
+{
+  var editcontainer = target;
+  while (!editcontainer.hasClass("edit_container") && editcontainer.parentNode) {
+    editcontainer = editcontainer.parentNode;
+  }
+  target.addClass("hidden");
+  var edit_formelem = editcontainer.getElementsByClassName("edit_formelem")[0];
+  edit_formelem.removeClass("hidden");
+  edit_formelem.focus();
+}
+
 window.eventHandlers.blur['cookiemanager-edit'] = function(event, target)
 {
+  var editcontainer = target;
+  while (!editcontainer.hasClass("edit_container") && editcontainer.parentNode) {
+    editcontainer = editcontainer.parentNode;
+  }
+  target.addClass("hidden");
+  editcontainer.getElementsByClassName("edit_formelem")[0].removeClass("hidden");
+  
   var objectref = target.getAttribute("data-objectref");
   var editproperty = target.getAttribute("data-editproperty");
   

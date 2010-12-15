@@ -108,7 +108,7 @@ cls.CookieManagerView = function(id, name, container_class)
         },
         remove: {
           label:    "",
-          renderer: function(obj) { window.templates.cookie_manager.table_view.remove_button(obj.objectref); }
+          renderer: function(obj) { return window.templates.cookie_manager.table_view.remove_button(obj.objectref); }
         }
       }
     }

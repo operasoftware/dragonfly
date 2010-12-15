@@ -18,6 +18,10 @@
   max-width: 200px;
 }
 
+.cookie_manager .hidden {
+  display: none;
+}
+
 /* Prepared styles for a show-all-cookies-of-domain feature */
 /*
 .cookie_manager .group_hostname {
@@ -33,7 +37,7 @@
 }
 */
 
-/* Add cookies styles */
+/* "Add cookies" styles */
 
 .cookie_manager h2 {
   padding: 20px; padding-bottom: 3px;
