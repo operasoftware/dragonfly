@@ -139,6 +139,7 @@
         "default":
         {
           "cmd shift a": "select-all",
+          "cmd f": "focus-container-search-field",
           "cmd i": "invert-spotlight-colors",
           "f5": "continue-run",
           "f6": "continue-step-next-line",
