@@ -21,16 +21,21 @@ var HorizontalNavigationBase = function(cell)
    */
   this.set_content = function(id, template_list, focus_end)
   {
-    this._breadcrumbs.clearAndRender(template_list);
-    this._breadcrumbs.setAttribute("data-model-id", id);
-    this.check_width();
-    if (focus_end)
+    this._template_list = template_list;
+    this._data_model_id = id;
+    if (this._breadcrumbs)
     {
-      this.set_position(-this._breadcrumbs.scrollWidth); // Not exact, but large enough
-    }
-    else
-    {
-      this._breadcrumbs.style.removeProperty("left");
+      this._breadcrumbs.clearAndRender(template_list);
+      this._breadcrumbs.setAttribute("data-model-id", id);
+      this.check_width();
+      if (focus_end)
+      {
+        this.set_position(-this._breadcrumbs.scrollWidth); // Not exact, but large enough
+      }
+      else
+      {
+        this._breadcrumbs.style.removeProperty("left");
+      }
     }
   };
 
@@ -216,6 +221,10 @@ var HorizontalNavigationBase = function(cell)
     this._breadcrumbs.addEventListener("OTransitionEnd", this.check_position.bind(this), false);
     this._nav_back = this._element.querySelector("nav[dir='back']");
     this._nav_forward = this._element.querySelector("nav[dir='forward']");
+    if (this._template_list)
+    {
+      this.set_content(this._data_model_id, this._template_list);
+    }
     /*
     TODO seems to be the wrong place to do this
     var contextmenu = new ContextMenu();
