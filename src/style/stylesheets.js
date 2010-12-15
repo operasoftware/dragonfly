@@ -895,7 +895,7 @@ cls.Stylesheets = function()
     {
       if (!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS])
       {
-        ret += "<rule rule-id='" + style_dec[RULE_ID] + "' obj-id='" + obj_id + "'>" +
+        ret += "<rule data-menu='style-inspector-rule' rule-id='" + style_dec[RULE_ID] + "' obj-id='" + obj_id + "'>" +
           "<stylesheet-link rt-id='" + rt_id + "'"+
             " index='" + sheet.index + "' handler='display-rule-in-stylesheet'>" + sheet.name +
           "</stylesheet-link>" +

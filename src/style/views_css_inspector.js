@@ -132,5 +132,61 @@ cls.CSSInspectorView.create_ui_widgets = function()
       'hide-shorthands',*/
     ]
   );
+
+  var broker = ActionBroker.get_instance();
+  var contextmenu = ContextMenu.get_instance();
+  contextmenu.register("style-inspector-rule", [
+    {
+      callback: function(event, target)
+      {
+        var items = [
+          {
+            label: ui_strings.M_CONTEXTMENU_DISABLE_DECLARATIONS,
+            handler: function(event, target) {
+              broker.dispatch_action("css-inspector", "disable-all-properties", event, target);
+            }
+          },
+          {
+            label: ui_strings.M_CONTEXTMENU_ADD_DECLARATION,
+            handler: function(event, target) {
+              broker.dispatch_action("css-inspector", "insert-declaration-edit", event, target);
+            }
+          }
+        ];
+
+        // Only add this for a declaration, not on the whole rule
+        while (target && target.nodeName.toLowerCase() != "property")
+        {
+          target = target.parentNode;
+        }
+
+        if (target)
+        {
+          items.push({
+            label: ui_strings.M_CONTEXTMENU_EDIT_DECLARATION,
+            handler: function(event, target) {
+              broker.dispatch_action("css-inspector", "edit-css", event, target);
+            }
+          });
+        }
+
+        // Only add this for the color swatch
+        if (event.target.nodeName.toLowerCase() == "color-sample")
+        {
+          items.push(
+            ContextMenu.separator,
+            {
+              label: ui_strings.M_CONTEXTMENU_OPEN_COLOR_PICKER,
+              handler: function(event, target) {
+                window.views['color-selector'].show_color_picker(event);
+              }
+            }
+          );
+        }
+
+        return items;
+      }
+    }
+  ]);
 }
 
