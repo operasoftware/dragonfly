@@ -100,8 +100,37 @@ var TabsBase = function()
     }
   }
 
+  this.__defineGetter__("offsetHeight", function()
+  {
+    if (!this.default_height)
+    {
+      this.setCSSProperties();
+    }
+    return this.tabs.length > 1 ? this._offset_height : 0;
+  });
+  
+  this.__defineSetter__("offsetHeight", function(offset_height)
+  {
+    this._offset_height = offset_height;
+  });
+
+  this._super_update = this.update;
+    
+  this.update = function(force_redraw)
+  {
+    if (this.tabs.length > 1)
+    {
+      return this._super_update(force_redraw);
+    }
+    return null;
+  }
+
   this.render = function()
   {
+    if (this.tabs.length < 2)
+    {
+      return null;
+    }
     var tabs = document.getElementById(this.type + '-to-' + this.cell.id);
     if( !tabs )
     {
@@ -110,6 +139,10 @@ var TabsBase = function()
     tabs.innerHTML = '';
     tabs.className = window.opera.attached ? "attached" : "detached"; // TODO: Do this with `.attributes` in topTabs?
     tabs.setAttribute("handler", "change-on-scroll");
+    if (this.tabbar_id)
+    {
+      tabs.setAttribute("tabbar-ref-id", this.tabbar_id);
+    }
     tabs.render(templates[this.type](this));
     return tabs;
   }
@@ -283,12 +316,14 @@ var TabsBase = function()
     };
   }
 
-  this.init = function(cell)
+  this.init = function(cell, tabbar)
   {
+    
     this.tabs = [];
     this.activeTab = '';
     this.cell = cell;
     this.initBase();
+    this.tabbar_id = tabbar && tabbar.id || '';
     window.messages.addListener('view-initialized', this.on_view_inizialized_bound());
   }
 
@@ -300,9 +335,9 @@ var TabsBase = function()
   */
 
 
-var Tabs = function(cell)
+var Tabs = function(cell, tabbar)
 {
-  this.init(cell);
+  this.init(cell, tabbar);
 }
 
 TabsBase.prototype = UIBase;

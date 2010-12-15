@@ -104,6 +104,11 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     cls.CSSInspectorView.prototype = ViewBase;
     new cls.CSSInspectorView('css-inspector', ui_strings.M_VIEW_LABEL_STYLES, 'scroll css-inspector');
     cls.CSSInspectorView.create_ui_widgets();
+    
+    cls.CSSInspectorCompStyleView.prototype = ViewBase;
+    new cls.CSSInspectorCompStyleView('css-comp-style', ui_strings.M_VIEW_LABEL_COMPUTED_STYLE, 'scroll css-inspector');
+    cls.CSSInspectorCompStyleView.create_ui_widgets();
+
     new cls.ColorPickerView('color-selector', 'Color Picker', 'color-selector');
     new cls.CSSInspectorActions('css-inspector');
 
@@ -167,11 +172,6 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     cls.HostSpotlightView.prototype = ViewBase;
     new cls.HostSpotlightView('host-spotlight', ui_strings.S_LABEL_SPOTLIGHT_TITLE, '');
     cls.HostSpotlightView.create_ui_widgets();
-
-    /* Modebar */
-    cls.ModebarView.prototype = ViewBase;
-    new cls.ModebarView('modebar', 'Modebar', '');
-    cls.ModebarView.create_ui_widgets();
 
     /* main view doesn't really exist */
     cls.MainView.create_ui_widgets();

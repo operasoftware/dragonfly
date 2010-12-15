@@ -417,7 +417,7 @@ stylesheet-link:hover {
 
 styles {
   /*xxwhite-space: pre-wrap;*/
-  padding:  0 4px;
+  padding: 8px 4px;
   }
 
 .unfolded styles {
@@ -431,8 +431,8 @@ header {
   border-bottom-color: #ccc;
   }
 
-.unfolded + header {
-  border-top-width: 1px;
+div.unfolded {
+  border-bottom: 1px solid #ccc;;
 }
 
 header:hover {
@@ -453,7 +453,8 @@ header input {
   -o-transition: .2s;
   }
 
-.css-inspector header input.unfolded {
+.unfolded > header input,
+input.unfolded {
   -o-transform: rotate(90deg);
   }
 

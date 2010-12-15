@@ -20,7 +20,7 @@ cls.CSSInspectorActions = function(id)
   {
     return self.__active_container &&
            self.__active_container.
-           getElementsByTagName('styles')[1].
+           getElementsByTagName('styles')[0].
            getElementsByTagName('property')[0];
   };
 
@@ -352,7 +352,6 @@ cls.CSSInspectorActions = function(id)
   this._handlers['edit-css'] = function(event, target)
   {
     var cat = event.target;
-
     switch(event.target.nodeName.toLowerCase())
     {
       case 'key':

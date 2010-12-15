@@ -195,6 +195,11 @@ var ViewBase = new function()
       }
     }
   }
+  
+  this.reset_containers = function() 
+  {
+    this.container_ids = [];
+  };
 
   this.onresize = function(container)
   {

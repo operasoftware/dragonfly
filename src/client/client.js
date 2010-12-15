@@ -149,7 +149,6 @@ window.cls.Client = function()
     is_connect_callback_called_map[_client_id] = false;
     window.ini || ( window.ini = {debug: false} );
     window.messages.post('reset-state');
-    this.create_top_level_views();
     if (!opera.scopeAddClient)
     {
       // implement the scope DOM API
@@ -248,18 +247,69 @@ window.cls.Client = function()
     this.send(null);
   }
 
-  this.create_top_level_views = function()
+  this.create_top_level_views = function(services)
   {
     var layouts = ui_framework.layouts;
-    new CompositeView('network_panel', ui_strings.M_VIEW_LABEL_NETWORK, layouts.network_rough_layout);
-    new CompositeView('console_new', ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE, layouts.console_rough_layout);
-    new CompositeView('js_new', ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS, layouts.js_rough_layout, true);
-    new CompositeView('dom_new', ui_strings.M_VIEW_LABEL_COMPOSITE_DOM, layouts.dom_rough_layout, true);
-    new CompositeView('export_new', ui_strings.M_VIEW_LABEL_COMPOSITE_EXPORTS, layouts.export_rough_layout);
-    new CompositeView('js_panel', ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS, layouts.js_rough_layout_panel, true);
-    new CompositeView('dom_panel', ui_strings.M_VIEW_LABEL_COMPOSITE_DOM, layouts.dom_rough_layout_panel, true);
-    new CompositeView('utils', ui_strings.M_VIEW_LABEL_UTILITIES, layouts.utils_rough_layout);
-    new CompositeView('storage', ui_strings.M_VIEW_LABEL_STORAGE, layouts.storage_rough_layout);
+    var ui = UI.get_instance();
+    var modebar_dom = ui.register_modebar('dom', HorizontalNavigation);
+    var modebar_scripts = ui.register_modebar('scripts', HorizontalNavigation);
+    var major_ecma_service_version = parseInt(services['ecmascript-debugger']
+                                              .version.split('.')[0]);
+    var scripts_side_panel_views = ['callstack', 'inspection'];
+    if (major_ecma_service_version > 5)
+    {
+      scripts_side_panel_views = ['callstack', 'inspection', 'event-breakpoints']
+    }
+    new SidePanelView('dom-side-panel', ['css-comp-style', 
+                                         'css-inspector', 
+                                         'dom_attrs', 
+                                         'css-layout']);
+    new SidePanelView('scripts-side-panel', scripts_side_panel_views);
+    new CompositeView('network_panel',
+                      ui_strings.M_VIEW_LABEL_NETWORK,
+                      layouts.network_rough_layout,
+                      null,
+                      services);
+    new CompositeView('console_new',
+                      ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE,
+                      layouts.console_rough_layout,
+                      null,
+                      services);
+    new CompositeView('js_new',
+                      ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS,
+                      layouts.js_rough_layout,
+                      'scripts',
+                      services);
+    new CompositeView('dom_new',
+                      ui_strings.M_VIEW_LABEL_COMPOSITE_DOM,
+                      layouts.dom_rough_layout,
+                      'dom',
+                      services);
+    new CompositeView('export_new',
+                      ui_strings.M_VIEW_LABEL_COMPOSITE_EXPORTS,
+                      layouts.export_rough_layout,
+                      null,
+                      services);
+    new CompositeView('js_panel',
+                      ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS,
+                      layouts.js_rough_layout_panel,
+                      'scripts',
+                      services);
+    new CompositeView('dom_panel',
+                      ui_strings.M_VIEW_LABEL_COMPOSITE_DOM,
+                      layouts.dom_rough_layout_panel,
+                      'dom',
+                      services);
+    new CompositeView('utils',
+                      ui_strings.M_VIEW_LABEL_UTILITIES,
+                      layouts.utils_rough_layout,
+                      null,
+                      services);
+    new CompositeView('storage',
+                      ui_strings.M_VIEW_LABEL_STORAGE,
+                      layouts.storage_rough_layout,
+                      null,
+                      services);
     if( window.opera.attached != settings.general.get('window-attached') )
     {
       window.opera.attached = settings.general.get('window-attached') || false;
@@ -268,12 +318,14 @@ window.cls.Client = function()
 
   this.on_services_created =  function()
   {
+
     var window_controls = document.getElementsByTagName('window-controls')[0];
     if (window_controls)
     {
       window_controls.parentNode.removeChild(window_controls);
     };
-    this.setupTopCell();
+    this.create_top_level_views(window.services);
+    this.setupTopCell(window.services);
     document.querySelector("main-view").render(templates.window_controls());
     if(!arguments.callee._called_once)
     {
@@ -312,7 +364,7 @@ window.cls.Client = function()
     }
   }
 
-  this.setupTopCell = function()
+  this.setupTopCell = function(services)
   {
     var tabs = viewport.getElementsByTagName('tab'), i = 0, tab = null;
     for( ; tab = tabs[i]; i++)
@@ -322,13 +374,18 @@ window.cls.Client = function()
         messages.post("hide-view", {id: tab.getAttribute('ref-id')});
       }
     }
+    for (var id in window.views)
+    {
+      window.views[id].reset_containers();
+    }
     viewport.innerHTML = '';
     new TopCell
     (
       window.opera.attached ? ui_framework.layouts.panel_layout : ui_framework.layouts.main_layout,
       null,
       null,
-      TopToolbar
+      TopToolbar,
+      services
     );
     windowsDropDown.update();
     var view_id = global_state && global_state.ui_framework.last_selected_tab;
@@ -420,10 +477,10 @@ ui_framework.layouts.dom_rough_layout_panel =
   children:
   [
     {
-      width: 700, tabs: ['dom', 'stylesheets']
+      width: 700, tabs: ['dom', /*'stylesheets'*/]
     },
     {
-      width: 250, tabs: ['css-inspector', 'dom_attrs', 'css-layout']
+      width: 250, tabs: ['dom-side-panel'/*'css-comp-style', 'css-inspector', 'dom_attrs', 'css-layout'*/]
     }
   ]
 }
@@ -461,14 +518,14 @@ ui_framework.layouts.js_rough_layout_panel =
       width: 700,
       children:
       [
-        { height: 150, tabs: [/*'runtimes', */'js_source', 'command_line'] }
+        { height: 150, tabs: [/*'runtimes', */'js_source'/*, 'command_line'*/] }
       ]
     },
     {
       width: 250,
       children:
       [
-        { height: 250, tabs: ['callstack', 'inspection', 'threads'] }
+        { height: 250, tabs: ['scripts-side-panel' /*callstack', 'inspection', 'threads'*/] }
       ]
     }
   ]
@@ -479,7 +536,7 @@ ui_framework.layouts.network_rough_layout =
     dir: 'v',
     width: 1000,
     height: 1000,
-    children: [ { height: 1000, tabs: ['request_list'] } ]
+    children: [ { height: 1000, tabbar: { id: "request", tabs: ['request_list'] } } ]
 }
 
 ui_framework.layouts.utils_rough_layout =
@@ -500,12 +557,22 @@ ui_framework.layouts.storage_rough_layout =
 
 ui_framework.layouts.main_layout =
 {
-  id: 'main-view', 
+  id: 'main-view',
   tabs: ['dom_new', 'js_new', 'network_panel', 'storage', 'console_new', 'utils']
 }
 
 ui_framework.layouts.panel_layout =
 {
-  id: 'main-view', 
-  tabs: ['dom_panel', 'js_panel', 'network_panel', 'storage', 'console_new', 'utils']
+  id: 'main-view',
+  // tab (and tabbar) can either be a layout list
+  // or a function returning a layout list
+  // the function gets called with the services returned 
+  // and created depending on Scope.HostInfo
+  tabs: function(services)
+  {
+    // return a layout depending on services
+    // e.g. services['ecmascript-debugger'].version
+    // e.g. services['ecmascript-debugger'].is_implemented
+    return ['dom_panel', 'js_panel', 'network_panel', 'storage', 'console_new', 'utils'];
+  }
 }
