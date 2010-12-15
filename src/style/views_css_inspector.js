@@ -47,34 +47,6 @@ cls.CSSInspectorView = function(id, name, container_class)
 cls.CSSInspectorView.create_ui_widgets = function()
 {
 
-  new Settings
-  (
-    // id
-    'css-inspector', 
-    // key-value map
-    {
-      'computedStyle': false, 
-      'css': true,
-      'hide-initial-values': true,
-      'hide-shorthands': true
-    }, 
-    // key-label map
-    {
-      'hide-initial-values': ui_strings.S_SWITCH_SHOW_INITIAL_VALUES,
-      'hide-shorthands': ui_strings.S_SWITCH_SHOW_SHORTHANDS
-    },
-    // settings map
-    {
-      checkboxes:
-      [
-        'hide-initial-values',
-        'hide-shorthands',
-      ]
-    },
-    null,
-    "document"
-  );
-
   new ToolbarConfig
   (
     'css-inspector',
@@ -88,13 +60,5 @@ cls.CSSInspectorView.create_ui_widgets = function()
     ]
   );
 
-  new Switches
-  (
-    'css-inspector',
-    [
-      'hide-initial-values'/*,
-      'hide-shorthands',*/
-    ]
-  );
 }
 

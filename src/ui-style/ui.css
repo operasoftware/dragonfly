@@ -161,7 +161,7 @@ button[handler="reload-window"] {
 [key="stylesheets.shortcuts"] {
     content: url("../ui-images/icons/icon_shorthand.png");
 }
-[key="css-inspector.hide-initial-values"] {
+[key="css-comp-style.hide-initial-values"] {
     content: url("../ui-images/icons/icon_hidedefaults.png");
 }
 [key="css-inspector.hide-shorthands"] {

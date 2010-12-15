@@ -29,18 +29,21 @@ cls.CSSInspectorCompStyleView = function(id, name, container_class)
   this.init(id, name, container_class);
 }
 
-/*
-cls.CSSInspectorView.create_ui_widgets = function()
+
+cls.CSSInspectorCompStyleView.create_ui_widgets = function()
 {
+
+  new ToolbarConfig
+  (
+    'css-comp-style'
+  );
 
   new Settings
   (
     // id
-    'css-inspector', 
+    'css-comp-style', 
     // key-value map
     {
-      'computedStyle': false, 
-      'css': true,
       'hide-initial-values': true,
       'hide-shorthands': true
     }, 
@@ -61,27 +64,12 @@ cls.CSSInspectorView.create_ui_widgets = function()
     "document"
   );
 
-  new ToolbarConfig
-  (
-    'css-inspector',
-    null,
-    [
-      {
-        handler: 'css-inspector-text-search',
-        title: 'text search',
-        label: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER
-      }
-    ]
-  );
-
   new Switches
   (
-    'css-inspector',
+    'css-comp-style',
     [
       'hide-initial-values'/*,
-      'hide-shorthands',*//*
+      'hide-shorthands',*/
     ]
   );
-}
-
-*/
+};

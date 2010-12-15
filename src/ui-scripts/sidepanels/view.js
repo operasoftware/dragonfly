@@ -58,8 +58,6 @@ var SidePanelBaseView = function(id, view_list)
     if (view)
     {
       div.addClass('unfolded');
-
-      
       if(toolbars[view.id])
       {
         var toolbar = div.render(['panel-toolbar', 
@@ -70,7 +68,6 @@ var SidePanelBaseView = function(id, view_list)
         toolbars[view.id].addContainerId('panel-toolbar-' + obj.id);
         this._toolbar.create_toolbar_content(view.id, toolbar)
       }
-      
       var container = div.render(['panel-container', 'id', 'panel-container-' + obj.id, 'ui-id', obj.id]);
       view.addContainerId('panel-container-' + obj.id);
       if (view.default_handler)
@@ -121,7 +118,6 @@ var SidePanelBaseView = function(id, view_list)
       {
         this._hide_view(obj, this._divs[index]);
       }
-      
     }
   }
 
