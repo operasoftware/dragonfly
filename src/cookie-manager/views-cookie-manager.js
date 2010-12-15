@@ -39,29 +39,6 @@ cls.CookieManagerView = function(id, name, container_class)
     }
     var tabledef = {
       groups: {
-        runtimes: {
-          label: "Runtime",
-          grouper: function(obj) {
-            var str="";
-            for (var i=0; i < obj.runtimes.length; i++) {
-              // runtimes could be displayed smarter..
-              // 'title (url)' OR 'title (url1, url2)' OR 'title (url)(2)' OR 'title (url), title (url)'
-              var rt = window.views.cookie_manager._rts[""+obj.runtimes[i]];
-              var title = rt.title;
-              var href = rt.href;
-              var hostname = rt.hostname;
-              if(title)
-              {
-                str += title+" ("+href+"), ";
-              }
-              else
-              {
-                href+", ";
-              }
-            };
-            return str;
-          },
-        },
         hostandpath: {
           label:    "Host and path",
           grouper:  function(obj) {
@@ -70,39 +47,7 @@ cls.CookieManagerView = function(id, name, container_class)
           renderer: function(groupvalue, obj) {
             var obj = obj[0];
             var runtime = window.views.cookie_manager._rts[obj.runtimes[0]];
-            return ["p",runtime.hostname + runtime.pathname + " ",
-                [
-                  "a",                 "(Remove all)",
-                  "class",             "delete_cookie",
-                  "href",              "#",
-                  "data-cookie-domain", runtime.hostname,
-                  "data-cookie-path",   runtime.pathname,
-                  "handler",           "cookiemanager-delete-domain-path-cookies"
-                ]
-              ];
-          }
-        },
-        domain: {
-          label:   "Domains",
-          grouper: function(obj) {
-            return obj.domain;
-          },
-        },
-        hostname: {
-          label:    "Hostname",
-          renderer: function(obj) {
-            return 
-              ["p",window.views.cookie_manager._rts[""+obj.runtimes[0]].hostname,
-                [
-                  "button",            "Remove",
-                  "class",             "delete_cookie",
-                  "data-cookie-domain", obj.domain,
-                  "handler",           "cookiemanager-delete-domain-cookies"
-                ]
-              ];
-          },
-          grouper:  function(obj) {
-            return window.views.cookie_manager._rts[""+obj.runtimes[0]].hostname;
+            return window.templates.cookie_manager.hostname_group_render(runtime);
           }
         }
       },
@@ -115,13 +60,7 @@ cls.CookieManagerView = function(id, name, container_class)
           renderer: function(obj) {
             if(!obj.isHTTPOnly)
             {
-              return ["input", " ",
-                  "value", obj.name,
-                  "type", "text",
-                  "data-objectref", obj.objectref,
-                  "data-editproperty", "name",
-                  "blur-handler", "cookiemanager-edit"
-              ];
+              return window.templates.cookie_manager.table_view.editable_name(obj.name, obj.objectref);
             }
             else
             {
@@ -134,13 +73,7 @@ cls.CookieManagerView = function(id, name, container_class)
           renderer: function(obj) {
             if(!obj.isHTTPOnly)
             {
-              return ["input", " ",
-                  "value", decodeURIComponent(obj.value),
-                  "type", "text",
-                  "data-objectref", obj.objectref,
-                  "data-editproperty", "value",
-                  "blur-handler", "cookiemanager-edit"
-              ];
+              return window.templates.cookie_manager.table_view.editable_value(decodeURIComponent(obj.value), obj.objectref);
             }
             else
             {
@@ -162,7 +95,7 @@ cls.CookieManagerView = function(id, name, container_class)
             {
               return parsedDate.toUTCString();
             }
-            return ["span","(when session is closed)","class","replaced-val"]
+            return window.templates.cookie_manager.table_view.expires_0values();
           }
         },
         isSecure: {
@@ -175,60 +108,29 @@ cls.CookieManagerView = function(id, name, container_class)
         },
         remove: {
           label:    "",
-          renderer: function(obj) {
-            return [
-              "button",
-              "Remove",
-              "data-objectref", obj.objectref,
-              "class",          "delete_cookie",
-              "handler",        "cookiemanager-delete-cookie"]
-          }
+          renderer: function(obj) { window.templates.cookie_manager.table_view.remove_button(obj.objectref); }
         }
       }
     }
     container.clearAndRender(new SortableTable(tabledef, this._flattened_cookies).render());
     
-    var table = document.getElementsByClassName("sortable-table")[0];
+    var table = document.getElementsByClassName("cookie_manager")[0].getElementsByClassName("sortable-table")[0];
     var obj = ObjectRegistry.get_instance().get_object(table.getAttribute("data-object-id"));
-    // group by runtime
-    // obj.group("runtimes");
-    // or domain
-    // obj.group("domain");
-    // or hostname
-    // obj.group("hostname");
-    // or host and path of the actual runtime that was asked for
+    // group by host and path as that is what what was part of the actual query
     obj.group("hostandpath");
     table.re_render(obj.render());
     
-    // Add cookie adding
-    var template = window.templates.cookie_manager.add_cookie_form(this._rts);
-    
-    template.push(["style",".add-cookie-form { margin:10px; padding: 10px; background: #DEDEDE; overflow: auto; }"]);
-    template.push(["style",".container { float:left; margin-right: 10px; }"]);
-    template.push(["style","input[type=datetime] { padding: 1px 90px; }"]);
-    
-    container.render(template);
-    
-    // temporary solution, have to triggert his once after the form is created
+    // render cookie adding
+    container.render(window.templates.cookie_manager.add_cookie_form(this._rts));
     window.eventHandlers.change['cookiemanager-add-cookie-domain-select']();
-    
-    // Add clear button
-    container.render(["button", "RemoveAllCookies", "handler", "cookiemanager-delete-all", "class", "spacedbutton"]);
-    // Add update button
-    container.render(["button", "Update", "handler", "cookiemanager-update", "class", "spacedbutton"]);
-    
-    // few styles..
-    container.render(["style", ".spacedbutton {margin: 10px 2px 10px 10px;}"]);
-    container.render(["style", ".delete_cookie {color: #444}"]);
-    container.render(["style", ".sortable-table input[type=text], .add-cookie-form input[type=text] {width: 99%; border: 1px solid #CCC;}"]);
-    container.render(["style", ".replaced-val {color: #444;}"]);
+    // render clear and update button. todo: move to where it always appears
+    container.render(window.templates.cookie_manager.clear_and_update_button());
   };
   
   this._on_active_tab = function(msg)
   {
     // cleanup view
     this.clearAllContainers();
-    // console.log(msg.activeTab);
     
     // cleanup runtimes directory
     for(var item in this._rts)

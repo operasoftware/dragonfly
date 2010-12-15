@@ -3,7 +3,7 @@ window.templates || (window.templates = {});
 templates.cookie_manager = {
   add_cookie_form: function(runtimes) {
     return [
-      ["h2", "Add Cookie", "style", "padding: 20px; padding-bottom: 3px;"],
+      ["h2", "Add Cookie"],
       ["form",
         [
           ["div",
@@ -31,7 +31,7 @@ templates.cookie_manager = {
                   // 'domain' is left on the first and only value. maybe not the best way to do it.
                   return [
                     ["input", "type", "hidden", "name", "add_cookie_runtime", "value", domains[domain].runtimes.toString()],
-                    ["span", runtimes[first_runtime_id].hostname]
+                    ["span", runtimes[domains[domain].runtimes[0]].hostname]
                   ]
                 }
                 else {
@@ -75,7 +75,8 @@ templates.cookie_manager = {
                 "value", "/"
               ]
             ],
-          "class", "container"],
+            "class", "container"
+          ],
           ["div",
             [
               ["label", "Expires"],
@@ -85,16 +86,87 @@ templates.cookie_manager = {
                 "name", "cookieexpires"
               ]
             ],
-          "class", "container"],
-          ["div",
+            "class", "container"
+          ],
+          [
+            "div",
             [
               ["br"],
-              ["button", "Add",
-               "handler", "add-cookie-handler"]
+              [
+                "button", "Add",
+                "handler", "add-cookie-handler"
+              ]
             ],
-          "class", "container"]
+            "class", "container"
+          ]
         ],
-      "class", "add-cookie-form"]
+        "class", "add-cookie-form"
+      ]
+    ];
+  },
+  hostname_group_render: function(runtime) {
+    return [
+      [
+        "span", runtime.hostname,
+        "class", "group_hostname"
+      ],
+      runtime.pathname + " ",
+      [
+        "a",                 "(Remove all)",
+        "class",             "delete_cookie",
+        "href",              "#",
+        "data-cookie-domain", runtime.hostname,
+        "data-cookie-path",   runtime.pathname,
+        "handler",           "cookiemanager-delete-domain-path-cookies"
+      ]
+    ];
+  },
+  clear_and_update_button: function(){
+    return [
+      [
+        "button", "RemoveAllCookies",
+        "handler", "cookiemanager-delete-all",
+        "class", "spacedbutton"
+      ],
+      [
+        "button", "Update",
+        "handler", "cookiemanager-update",
+        "class", "spacedbutton"
+      ]
     ]
+  },
+  table_view: {
+    editable_name: function(name, objectref) {
+      return [
+        "input", " ",
+        "value", name,
+        "type", "text",
+        "data-objectref", objectref,
+        "data-editproperty", "name",
+        "blur-handler", "cookiemanager-edit"
+      ];
+    },
+    editable_value: function(value, objectref) {
+      return [
+        "input", " ",
+        "value", value,
+        "type", "text",
+        "data-objectref", objectref,
+        "data-editproperty", "value",
+        "blur-handler", "cookiemanager-edit"
+      ];
+    },
+    expires_0values: function() {
+      return ["span", "(when session is closed)", "class", "replaced-val"];
+    },
+    remove_button: function(objectref) {
+      return [
+        "button",
+        "Remove",
+        "data-objectref", objectref,
+        "class",          "delete_cookie",
+        "handler",        "cookiemanager-delete-cookie"
+      ];
+    }
   }
 }

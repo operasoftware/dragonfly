@@ -129,7 +129,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <link rel="stylesheet" href="./shortcutconfig/style.css"/>
 <link rel="stylesheet" href="./ui-style/global_command_line.css"/>
 <link rel="stylesheet" href="./ui-style/contextmenu.css"/>
-
+<link rel="stylesheet" href="./cookie-manager/cookie_manager_style.css"/>
 
 <!-- This will turn off including of the UI strings if the exclude_uistrings var is set -->
 <!-- command concat_js off if exclude_uistrings -->
@@ -230,9 +230,9 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./shortcutconfig/shortcutconfig.js"/>
 <script src="./shortcutconfig/templates.js"/>
 
+<script src="./cookie-manager/cookie_manager_templates.js"></script>
 <script src="./cookie-manager/views-cookie-manager.js"></script>
 <script src="./cookie-manager/actions-cookie-manager.js"></script>
-<script src="./cookie-manager/cookie_manager_templates.js"></script>
 
 <script src="./ecma-debugger/ListTextSearch.js"/>
 
