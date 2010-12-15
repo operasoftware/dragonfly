@@ -178,7 +178,12 @@ var ToolbarBase = function()
       } 
     }
   }
-
+  
+  this.get_filters = function()
+  {
+    return this.filters;
+  }
+  
   this.init = function(cell, buttons, filters, specials, customs)
   {
     this.cell = cell;

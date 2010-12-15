@@ -148,6 +148,19 @@
     window.topCell.tab.navigate_to_next_or_previous_tab(true);
     return false;
   }
+  
+  this._handlers["focus-container-search-field"] = function(action_id, event, target)
+  {
+    /* get context -> get container (representation? view?) ->  get UI object -> get cell -> get toolbar -> get search field. If found, focus and return false */
+    var container = ActionBroker.get_instance().get_action_container();
+    var ui_obj = UIBase.getUIById(container.getAttribute('ui-id'));
+    var filters = ui_obj.cell.toolbar.get_filters(), element;
+    if( filters[0] && ( element = ViewBase.getToolbarControl( container, filters[0].handler ) ) )
+    {
+      element.focus();
+      return false;
+    }
+  }
 
   /* implementation */
 

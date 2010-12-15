@@ -300,6 +300,11 @@ var ActionBroker = function()
       }
     return '';
   };
+  
+  this.get_action_container = function()
+  {
+    return this._container;
+  }
 
   if (document.readyState == "complete")
     this._init();

@@ -17,7 +17,9 @@
         "default":
         {
           "ctrl a": "select-all",
+          "ctrl f": "focus-container-search-field",
           "ctrl i": "invert-spotlight-colors",
+          "f3": "focus-container-search-field",
           "f8": "continue-run",
           "f10": "continue-step-next-line",
           "f11": "continue-step-into-call",
