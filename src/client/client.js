@@ -463,10 +463,10 @@ ui_framework.layouts.dom_rough_layout =
   children:
   [
     {
-      width: 700, tabs: ['dom', 'stylesheets']
+      width: 700, tabs: ['dom', /*'stylesheets'*/]
     },
     {
-      width: 250, tabs: ['css-inspector', 'dom_attrs', 'css-layout']
+      width: 250, tabs: ['dom-side-panel' /*'css-inspector', 'dom_attrs', 'css-layout'*/]
     }
   ]
 }
@@ -495,15 +495,15 @@ ui_framework.layouts.js_rough_layout =
       children:
       [
         { height: 350, tabs: ['js_source']},
-        { height: 250, tabs:['command_line']}
+        //{ height: 250, tabs:['command_line']}
       ]
     },
     {
       width: 250,
       children:
       [
-        { height: 250, tabs: ['callstack', 'threads'] },
-        { height: 1000, tabs: ['inspection'] }
+        { height: 250, tabs: ['scripts-side-panel' /*'callstack', 'threads'*/] },
+        //{ height: 1000, tabs: ['inspection'] }
       ]
     }
   ]
