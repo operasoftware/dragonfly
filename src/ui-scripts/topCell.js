@@ -177,13 +177,13 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar)
 
   this.overlay.add_overlay("settings-overlay",
     [
-      new SettingsGroup("General", "general"),
-      new SettingsGroup("Document", "document"),
-      new SettingsGroup("Script", "script"),
-      new SettingsGroup("Network", "resource_manager"),
-      new SettingsGroup("Console", "console"),
-      new SettingsGroup("Keyboard shortcuts", "keyboard-shortcuts"),
-      new SettingsGroup("About", "about")
+      new SettingsGroup(ui_strings.S_SETTINGS_HEADER_GENERAL, "general"),
+      new SettingsGroup(ui_strings.S_SETTINGS_HEADER_DOCUMENT, "document"),
+      new SettingsGroup(ui_strings.S_SETTINGS_HEADER_SCRIPT, "script"),
+      new SettingsGroup(ui_strings.S_SETTINGS_HEADER_NETWORK, "resource_manager"),
+      new SettingsGroup(ui_strings.S_SETTINGS_HEADER_CONSOLE, "console"),
+      new SettingsGroup(ui_strings.S_SETTINGS_HEADER_KEYBOARD_SHORTCUTS, "keyboard-shortcuts"),
+      new SettingsGroup(ui_strings.S_SETTINGS_HEADER_ABOUT, "about")
     ]
   );
 

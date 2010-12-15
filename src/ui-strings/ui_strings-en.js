@@ -251,6 +251,20 @@ ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE = "Show objects of type Element in the 
 /* DESC: Clears the command line log */
 ui_strings.S_CLEAR_COMMAND_LINE_LOG = "Clear command line";
 
+/* DESC: Header for settings group "General" */
+ui_strings.S_SETTINGS_HEADER_GENERAL = "General";
+/* DESC: Header for settings group "Document" */
+ui_strings.S_SETTINGS_HEADER_DOCUMENT = "Document";
+/* DESC: Header for settings group "Script" */
+ui_strings.S_SETTINGS_HEADER_SCRIPT = "Script";
+/* DESC: Header for settings group "Network" */
+ui_strings.S_SETTINGS_HEADER_NETWORK = "Network";
+/* DESC: Header for settings group "Console" */
+ui_strings.S_SETTINGS_HEADER_CONSOLE = "Console";
+/* DESC: Header for settings group "Keyboard shortcuts" */
+ui_strings.S_SETTINGS_HEADER_KEYBOARD_SHORTCUTS = "Keyboard shortcuts";
+/* DESC: Header for settings group "About" */
+ui_strings.S_SETTINGS_HEADER_ABOUT = "About";
 
 /**
  * Context menu items
@@ -268,6 +282,16 @@ ui_strings.M_CONTEXTMENU_EDIT_ATTRIBUTE = 'Edit attribute';
 ui_strings.M_CONTEXTMENU_EDIT_ATTRIBUTE_VALUE = 'Edit attribute value';
 /* DESC: Context menu item for editing text in the DOM view. */
 ui_strings.M_CONTEXTMENU_EDIT_TEXT = 'Edit text';
+
+/* DESC: Context menu item for disabling all declarations in a rule. */
+ui_strings.M_CONTEXTMENU_DISABLE_DECLARATIONS = 'Disable all declarations';
+/* DESC: Context menu item for adding a declaration in a rule. */
+ui_strings.M_CONTEXTMENU_ADD_DECLARATION = 'Add declaration';
+/* DESC: Context menu item for editiing a declaration in a rule. */
+ui_strings.M_CONTEXTMENU_EDIT_DECLARATION = 'Edit declaration';
+/* DESC: Context menu item for showing the color picker. */
+ui_strings.M_CONTEXTMENU_OPEN_COLOR_PICKER = 'Open color picker';
+
 /* DESC: Context menu item for specification links. */
 ui_strings.M_CONTEXTMENU_SPEC_LINK = 'Specification for "%s"';
 
