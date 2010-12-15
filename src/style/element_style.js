@@ -85,7 +85,7 @@ cls.ElementStyle = function()
     return {
       id: id,
       name: name,
-      is_unfolded: function() { return settings['css-inspector'].get(id); },
+      is_unfolded: true,
       handler: handler || null
     }
   };
@@ -278,7 +278,7 @@ cls.ElementStyle = function()
 
   var getRequestType = function()
   {
-    return (categories[COMP_STYLE].is_unfolded() || categories[CSS].is_unfolded()) && REQ_TYPE_CSS || 0;
+    return (categories[COMP_STYLE].is_unfolded || categories[CSS].is_unfolded) && REQ_TYPE_CSS || 0;
   };
 
   var getUnfoldedKey = function()
@@ -286,7 +286,7 @@ cls.ElementStyle = function()
     var ret = '', i = 0;
     for ( ; i < 2; i++)
     {
-      ret += categories[i].is_unfolded() ? '1' : '0';
+      ret += categories[i].is_unfolded ? '1' : '0';
     }
     return ret;
   };
