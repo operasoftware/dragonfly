@@ -138,6 +138,10 @@ ul {
   background-position: 0 0;
   }
 
+#backtrace-container .scope-name {
+  font-weight: bold;
+}
+
 #ecma-debugger-toolbar {
   background-color:#ccc;
   }

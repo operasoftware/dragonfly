@@ -578,7 +578,7 @@ ui_strings.S_INFO_NO_VALID_PORT_NUMBER = "Please select a port number between 1 
  */
 
 /* DESC: Entry format in the call stack view showing the function name, line number and script ID. Please do not modify the %(VARIABLE)s . */
-ui_strings.S_TEXT_CALL_STACK_FRAME_LINE =  "%(FUNCTION_NAME)s: Line %(LINE_NUMBER)s (Script ID %(SCRIPT_ID)s)";
+ui_strings.S_TEXT_CALL_STACK_FRAME_LINE =  "%(FUNCTION_NAME)s: %(SCRIPT_ID)s:%(LINE_NUMBER)s";
 /* DESC: The layout subview showing the box-model metrics of an element. */
 ui_strings.M_VIEW_SUB_LABEL_METRICS =  "Metrics";
 /* DESC: The layout subview showing the parent node chain used to calculøate the offset. */
