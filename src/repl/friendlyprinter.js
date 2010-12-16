@@ -111,41 +111,29 @@ window.cls.FriendlyPrinter = function()
   this.templates = function()
   {
     const
-    ELEMENT_NAME = 1,
-    ELEMENT_ID = 2,
-    ELEMENT_CLASS = 3,
-    ELEMENT_HREF = 4,
-    ELEMENT_SRC = 5;
+    ELE_NAME = 1,
+    ELE_ID = 2,
+    ELE_CLASS = 3,
+    ELE_HREF = 4,
+    ELE_SRC = 5;
 
     var classes = {};
-    classes[ELEMENT_NAME] = 'element-name';
-    classes[ELEMENT_ID] = 'element-id';
-    classes[ELEMENT_CLASS] = 'element-class';
-    classes[ELEMENT_HREF] = 'element-href';
-    classes[ELEMENT_SRC] = 'element-src';
+    classes[ELE_NAME] = 'element-name';
+    classes[ELE_ID] = 'element-id';
+    classes[ELE_CLASS] = 'element-class';
+    classes[ELE_HREF] = 'element-href';
+    classes[ELE_SRC] = 'element-src';
 
-    var print_values = {};
-    print_values[ELEMENT_NAME] = function(val)
+    var print_val = {};
+    print_val[ELE_NAME] = function(val) {return val;};
+    print_val[ELE_ID] = function(val) {return '#' + val;};
+    print_val[ELE_CLASS] = function(val)
     {
-      return val;
+      return (' ' + val).replace(/\s+/g, '.');
     };
-    print_values[ELEMENT_ID] = function(val)
-    {
-      return '#' + val;
-    };
-    print_values[ELEMENT_CLASS] = function(val)
-    {
-      return '.' + val.replace(/\s+/g, '.');
-    };
-    print_values[ELEMENT_HREF] = function(val)
-    {
-      return ' ' + val;
-    };
-    print_values[ELEMENT_SRC] = function(val)
-    {
-      return ' ' + val;
-    };
-    
+    print_val[ELE_HREF] = function(val) {return ' ' + val;};
+    print_val[ELE_SRC] = function(val) {return ' ' + val;};
+
     this._friendly_print_element = function(value_list)
     {
       return value_list.reduce(function(list, prop, index)
@@ -173,7 +161,7 @@ window.cls.FriendlyPrinter = function()
         }
       }
     };
-    
+
   };
 
   this._obj2obj_id_list = function(obj, index)
