@@ -550,7 +550,6 @@ top-tabs tab {  /**/
   position: static;
   text-shadow: 0 1px rgba(255, 255, 255, .5);
   background: #e6e6e6 url("../ui-images/shine_1_attached.png") repeat-x;
-  -o-transition: background-color 0.2s;
   box-shadow: inset 0 0 1px #fff;
   }
 
@@ -1108,7 +1107,7 @@ cst-select[disabled] cst-drop-down
 cst-select-option-list {
   display: block;
   border: 1px solid #666;
-  background-color: rgba(255,255,255,0.85);
+  background-color: #fff;
   max-height: 200px;
   overflow: auto;
   width: auto;
@@ -1135,7 +1134,6 @@ cst-select-option-list hr {
 cst-option:hover {
   background-color: #bbcef1;
   color: #000;
-  -o-transition: background-color 0.2s;
 }
 
 cst-option.selected, cst-option:active {

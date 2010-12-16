@@ -250,8 +250,9 @@ input[type="text"] {
   /*xxfont-family:monospace;*/
 }
 
-.selected-runtime {
-  background-color: #cce5f3;
+cst-option.selected-runtime {
+  background-color: #598bec;
+  color: #fff;
 }
 
 .thread-stopped-event {
@@ -471,7 +472,7 @@ header input {
   }
 
 .css-inspector .selected {
-  background-color: #cce5f3;
+  background-color: #bbcef1;
   }
 .css-inspector property.selected {
     border-radius: 3px;
@@ -487,7 +488,7 @@ header input {
   border: 0 solid #b3b3b3;
   border-width: 1px 0;
   background-color: #eee;
-  margin: 10px -4px;
+  margin: 10px -5px;
   padding-left: 4px;
   }
 
@@ -658,7 +659,7 @@ div.dom {
   background-position: 1px -14px;
   }
 .dom input:focus {
-  outline: 2px solid #78bae0;
+  outline: 2px solid #598bec;
   outline-offset: -2px; /* Hides the normal (dotted) outline when pressing Enter on the expand/collapse button */
   }
 
@@ -728,6 +729,9 @@ breadcrumb span
   background-color: #e6e6e6;
   white-space: nowrap;
   font-size: 1em;
+}
+.script-options h2.selected-runtime, .stylesheet-options h2.selected-runtime {
+  color: #000;
 }
 
 .script-options h2:first-child, .stylesheet-options h2:first-child,

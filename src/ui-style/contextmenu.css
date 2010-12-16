@@ -52,7 +52,6 @@
   background-color: #bbcef1;
   color: #000;
   text-shadow: none;
-  -o-transition: background-color 0.2s;
 }
 
 #contextmenu li:not(.separator):not(.disabled):active {
