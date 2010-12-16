@@ -126,7 +126,7 @@
                     msg[VALUELIST];
 
     var do_friendly_print = !do_unpack &&
-                            true &&
+                            settings.command_line.get("do-friendly-print") &&
                             !is_friendly_printed;
 
     if (do_unpack)
@@ -409,7 +409,9 @@
   {
     const OBJECT_VALUE = 3;
     var do_unpack = !is_unpacked && settings.command_line.get("unpack-list-alikes");
-    var do_friendly_print = !is_friendly_printed && true;
+    var do_friendly_print = !do_unpack &&
+                            !is_friendly_printed && 
+                            settings.command_line.get("do-friendly-print");
     if (do_unpack)
     {
       var fallback = this._before_handling_object.bind(this, msg, rt_id,

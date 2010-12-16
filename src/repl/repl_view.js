@@ -922,17 +922,20 @@ cls.ReplView.create_ui_widgets = function()
       'max-typed-history-length': 32,
       'typed-history': [],
       'unpack-list-alikes': true,
+      'do-friendly-print': true,
       'is-element-type-sensitive': true
     },
     { // key/label
       'max-typed-history-length': ui_strings.S_LABEL_REPL_BACKLOG_LENGTH,
       'unpack-list-alikes': ui_strings.S_SWITCH_UNPACK_LIST_ALIKES,
+      'do-friendly-print': ui_strings.S_SWITCH_FRIENDLY_PRINT,
       'is-element-type-sensitive': ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE
     },
     { // settings map
       checkboxes:
       [
         'unpack-list-alikes',
+        'do-friendly-print',
         'is-element-type-sensitive'
       ],
       customSettings:

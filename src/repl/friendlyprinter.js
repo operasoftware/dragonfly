@@ -140,7 +140,7 @@ window.cls.FriendlyPrinter = function()
       {
         if (index in classes && prop)
         {
-          list.push(['span', print_values[index](prop), 'class', classes[index]]);
+          list.push(['span', print_val[index](prop), 'class', classes[index]]);
         }
         return list
       }, []);

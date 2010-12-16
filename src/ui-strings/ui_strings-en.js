@@ -246,6 +246,8 @@ ui_strings.S_SWITCH_CLEAR_REQUESTS_ON_NEW_CONTEXT = "Clear request log when load
 ui_strings.S_SWITCH_AUTO_SCROLL_REQUEST_LIST = "Auto scroll request log";
 /* DESC:  When enabled, list alike objects will be unpacked in the command line */
 ui_strings.S_SWITCH_UNPACK_LIST_ALIKES = "Unpack list alikes in the command line";
+/* DESC:  When enabled, objects of type element will be friendly printed */
+ui_strings.S_SWITCH_FRIENDLY_PRINT = "Use specific information to represent object in the commandline.";
 /* DESC:  When enabled, objects of type element in the command line will be displayed in the DOM view */
 ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE = "Show objects of type Element in the DOM view";
 /* DESC: Clears the command line log */
