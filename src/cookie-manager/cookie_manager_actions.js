@@ -22,7 +22,7 @@
   };
 };
 
-window.eventHandlers.click['cookiemanager-init-edit-mode'] = function(event, target)
+window.eventHandlers.dblclick['cookiemanager-init-edit-mode'] = function(event, target)
 {
   var editcontainer = target;
   while (!editcontainer.hasClass("edit_container") && editcontainer.parentNode) {

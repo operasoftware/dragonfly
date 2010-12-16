@@ -23,8 +23,6 @@ cls.CookieManagerView = function(id, name, container_class)
           
           this._flattened_cookies.push({
             runtimes:      domains_cookies.runtimes,
-            host:          domains_cookies.host,
-            hostname:      domains_cookies.hostname,
             domain:        current_cookie.domain,
             path:          current_cookie.path,
             name:          current_cookie.name,
@@ -166,7 +164,7 @@ cls.CookieManagerView = function(id, name, container_class)
   };
   
   this._request_runtime_details = function(rt_object) {
-    var script = "return JSON.stringify({host: location.host || '', hostname: location.hostname || '', title: document.title || '', href: location.href || '', pathname: location.pathname || ''})";
+    var script = "return JSON.stringify({hostname: location.hostname || '', pathname: location.pathname || ''})";
     var tag = tagManager.set_callback(this, this._handle_get_domain,[rt_object.rt_id]);
     services['ecmascript-debugger'].requestEval(tag,[rt_object.rt_id, 0, 0, script]);
   }
@@ -184,17 +182,11 @@ cls.CookieManagerView = function(id, name, container_class)
     var type = message[1];
     
     var data = JSON.parse(message[2]);
-    var host = data.host;
     var hostname = data.hostname;
-    var title = data.title;
-    var href = data.href;
     var pathname = data.pathname;
 
     this._rts[rt_id].get_domain_is_pending = false;
     this._rts[rt_id].hostname = hostname;
-    this._rts[rt_id].host = host;
-    this._rts[rt_id].title = title;
-    this._rts[rt_id].href = href;
     this._rts[rt_id].pathname = pathname;
     
     this._check_all_members_of_obj_to_be(this._rts, "get_domain_is_pending", false, this._clean_domains_and_ask_for_cookies);
