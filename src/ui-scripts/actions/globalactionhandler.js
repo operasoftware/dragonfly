@@ -155,16 +155,6 @@
     return false;
   };
 
-  var TestTempView = function(name)
-  {
-    this.createView = function(container)
-    {
-      container.innerHTML =
-        "<div class='padding'><h2>Test view, id: " + this.id + "</h2></div>";
-    };
-    this.init(name);
-  };
-
   /* implementation */
 
   this.handle = function(action_id, event, target)
