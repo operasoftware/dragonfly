@@ -3,12 +3,12 @@ window.templates || (window.templates = {});
 templates.cookie_manager = {
   add_cookie_form: function(runtimes) {
     return [
-      ["h2", "Add Cookie"],
+      ["h2", ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE_HEADLINE],
       ["form",
         [
           ["div",
             [
-              ["label", "Domain"],
+              ["label", ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_DOMAIN],
               ["br"],
               (function(){
                 // depending on amount of domains, return selection list or text and hidden input field
@@ -46,7 +46,7 @@ templates.cookie_manager = {
           "class", "container"],
           ["div",
             [
-              ["label", "Name"],
+              ["label", ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_NAME],
               ["br"],
               ["input",
                 "type", "text",
@@ -56,7 +56,7 @@ templates.cookie_manager = {
           "class", "container"],
           ["div",
             [
-              ["label", "Value"],
+              ["label", ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_VALUE],
               ["br"],
               ["input",
                 "type", "text",
@@ -66,12 +66,12 @@ templates.cookie_manager = {
           "class", "container"],
           ["div",
             [
-              ["label", "Path"],
+              ["label", ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_PATH],
               ["br"],
               ["input",
-                "type", "text",
-                "name", "cookiepath",
-                "list", "cookiepathlist",
+                "type",  "text",
+                "name",  "cookiepath",
+                "list",  "cookiepathlist",
                 "value", "/"
               ]
             ],
@@ -79,7 +79,7 @@ templates.cookie_manager = {
           ],
           ["div",
             [
-              ["label", "Expires"],
+              ["label", ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES],
               ["br"],
               ["input",
                 "type", "datetime",
@@ -93,7 +93,7 @@ templates.cookie_manager = {
             [
               ["br"],
               [
-                "button", "Add",
+                "button",  ui_strings.S_BUTTON_ADD,
                 "handler", "add-cookie-handler"
               ]
             ],
@@ -107,12 +107,12 @@ templates.cookie_manager = {
   hostname_group_render: function(runtime) {
     return [
       [
-        "span", runtime.hostname,
+        "span",  runtime.hostname,
         "class", "group_hostname"
       ],
       runtime.pathname + " ",
       [
-        "a",                 "(Remove all)",
+        "a",                 "("+ui_strings.S_BUTTON_STORAGE_DELETE_ALL+")",
         "class",             "delete_cookie",
         "href",              "#",
         "data-cookie-domain", runtime.hostname,
@@ -124,14 +124,14 @@ templates.cookie_manager = {
   clear_and_update_button: function(){
     return [
       [
-        "button", "RemoveAllCookies",
+        "button",  ui_strings.S_BUTTON_STORAGE_DELETE_ALL,
         "handler", "cookiemanager-delete-all",
-        "class", "spacedbutton"
+        "class",   "spacedbutton"
       ],
       [
-        "button", "Update",
+        "button",  ui_strings.S_LABEL_STORAGE_UPDATE,
         "handler", "cookiemanager-update",
-        "class", "spacedbutton"
+        "class",   "spacedbutton"
       ]
     ]
   },
@@ -140,18 +140,18 @@ templates.cookie_manager = {
       return [
         "span",
         [
-          "input", " ",
-          "value", name,
-          "type", "text",
-          "data-objectref", objectref,
+          "input",             " ",
+          "value",             name,
+          "type",              "text",
+          "data-objectref",    objectref,
           "data-editproperty", "name",
-          "blur-handler", "cookiemanager-edit",
-          "class", "hidden edit_formelem",
+          "blur-handler",      "cookiemanager-edit",
+          "class",             "hidden edit_formelem",
         ],
         [
-          "div", name,
+          "div",          name,
           "edit-handler", "cookiemanager-init-edit-mode",
-          "title", ui_strings.S_LABEL_STORAGE_DOUBLE_CLICK_TO_EDIT
+          "title",        ui_strings.S_LABEL_STORAGE_DOUBLE_CLICK_TO_EDIT
         ],
         "class", "edit_container"
       ];
@@ -160,24 +160,24 @@ templates.cookie_manager = {
       return [
         "span",
         [
-          "input", " ",
-          "value", value,
-          "type", "text",
-          "data-objectref", objectref,
+          "input",             " ",
+          "value",             value,
+          "type",              "text",
+          "data-objectref",    objectref,
           "data-editproperty", "value",
-          "blur-handler", "cookiemanager-edit",
-          "class", "hidden edit_formelem"
+          "blur-handler",      "cookiemanager-edit",
+          "class",             "hidden edit_formelem"
         ],
         [
-          "div", value,
+          "div",          value,
           "edit-handler", "cookiemanager-init-edit-mode",
-          "title", ui_strings.S_LABEL_STORAGE_DOUBLE_CLICK_TO_EDIT
+          "title",        ui_strings.S_LABEL_STORAGE_DOUBLE_CLICK_TO_EDIT
         ],
         "class", "edit_container"
       ];
     },
     expires_0values: function() {
-      return ["span", "(when session is closed)", "class", "replaced-val"];
+      return ["span", ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES_ON_SESSION_CLOSE, "class", "replaced-val"];
     },
     remove_button: function(objectref) {
       return [

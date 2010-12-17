@@ -327,6 +327,8 @@ ui_strings.S_BUTTON_OK = "Ok";
 ui_strings.S_BUTTON_SAVE = "Save";
 /* DESC: */
 ui_strings.S_BUTTON_CANCEL = "Cancel";
+/* DESC: */
+ui_strings.S_BUTTON_ADD = "Add";
 /* DESC: Show request summary. */
 ui_strings.S_BUTTON_SHOW_REQUEST_SUMMARY = 'Summary';
 /* DESC: Show request headers. */
@@ -497,8 +499,22 @@ ui_strings.S_LABEL_REPL_MODE_SINGLELINE = 'Single-line edit';
 ui_strings.S_LABEL_REPL_MODE_MULTILINE = 'Multi-line edit';
 /* DESC: Label of a subsection in the keyboard configuration */
 ui_strings.S_LABEL_REPL_MODE_AUTOCOMPLETE = 'Autocomplete';
-
-
+/* DESC: Label for the domain that is set for a cookie */
+ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_DOMAIN = 'Domain';
+/* DESC: Label for the name (key) of a cookie */
+ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_NAME = 'Name';
+/* DESC: Label for the value of a cookie */
+ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_VALUE = 'Value';
+/* DESC: Label for the value of a cookie */
+ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_PATH = 'Path';
+/* DESC: Label for the expiry value of a cookie */
+ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES = 'Expires';
+/* DESC: Label for the expiry when cookie expires after the session is closed */
+ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES_ON_SESSION_CLOSE = "(when session is closed)";
+/* DESC: Label for isHTTPOnly flag on a cookie */
+ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY = "HTTP only";
+/* DESC: Label for isSecure flag on a cookie, set if cookie is only transmitted on secure connections */
+ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY = "Secure";
 /*
  * Information strings in the UI
  */
@@ -605,4 +621,5 @@ ui_strings.S_REPL_WELCOME_TEXT = "Use the clear() command to clear the console.\
 ui_strings.S_REPL_HELP_COMMAND_DESC = "Show a list of all available commands";
 /* DESC: Description of the "jquery" command in the repl */
 ui_strings.S_REPL_JQUERY_COMMAND_DESC = "Load jquery in the active tab";
-
+/* DESC: Headline for section that adds cookies in the cookie manager */
+ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE_HEADLINE = "Add Cookie";

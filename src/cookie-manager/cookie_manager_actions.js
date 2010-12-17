@@ -87,13 +87,8 @@ window.eventHandlers.blur['cookiemanager-edit'] = function(event, target)
       add_modified_cookie_script += '; path=' + '/' + cookie.path;
       add_modified_cookie_script += '"';
       
-      /*
-      // result should look sth like
-      var add_modified_cookie_script = 'document.cookie="'
-                    + "name" + '=' + "value" 
-                    + '; expires='+ (new Date(cookie.expires*1000).toUTCString())
-                    + '; path=' + '/' + "path"+'"';
-      */
+      // TODO: the scripts needs to be executed on a window that has the hostname of the cookies domain.
+      //       this way it it gets duplicated.
       var script = remove_old_cookie_script + add_modified_cookie_script;
       var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_changed_cookies, [cookie.runtimes[0]]);
       services['ecmascript-debugger'].requestEval(tag,[cookie.runtimes[0], 0, 0, script]);

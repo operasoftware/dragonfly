@@ -51,10 +51,10 @@ cls.CookieManagerView = function(id, name, container_class)
       },
       columns: {
         domain: {
-          label: "Domain"
+          label: ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_DOMAIN
         },
         name: {
-          label:    "Name",
+          label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_NAME,
           renderer: function(obj) {
             if(!obj.isHTTPOnly)
             {
@@ -67,7 +67,7 @@ cls.CookieManagerView = function(id, name, container_class)
           }
         },
         value: {
-          label:    "Value",
+          label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_VALUE,
           renderer: function(obj) {
             if(!obj.isHTTPOnly)
             {
@@ -80,13 +80,13 @@ cls.CookieManagerView = function(id, name, container_class)
           }
         },
         path: {
-          label:    "Path",
+          label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_PATH,
           renderer: function(obj) {
             return obj.path;
           }
         },
         expires: {
-          label:    "Expires",
+          label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES,
           renderer: function(obj) {
             var parsedDate=new Date(obj.expires*1000);
             if(new Date().getTime() < parsedDate.getTime())
@@ -97,11 +97,11 @@ cls.CookieManagerView = function(id, name, container_class)
           }
         },
         isSecure: {
-          label:    "Secure",
+          label:    ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY,
           renderer: function(obj) { return obj.isSecure? "Yes":""; }
         },
         isHTTPOnly: {
-          label:    "HTTP only",
+          label:    ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY,
           renderer: function(obj) { return obj.isHTTPOnly? "Yes":""; }
         },
         remove: {
@@ -254,7 +254,6 @@ cls.CookieManagerView = function(id, name, container_class)
   
   this._handle_changed_cookies = function(status, message)
   {
-    // console.log("_handle_changed_cookies");
     window.views.cookie_manager._update();
   };
   
