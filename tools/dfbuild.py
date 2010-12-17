@@ -540,6 +540,13 @@ def export(src, dst, process_directives=True, keywords={},
 
     shutil.rmtree(tmpbase)
 
+def _ansi2utf8(path):
+    f = codecs.open(path, 'r', 'utf-8')
+    c = f.read()
+    f.close()
+    f = codecs.open(path, 'w', 'utf_8_sig')
+    f.write(c)
+    f.close()
 
 def main(argv=sys.argv):
     """
@@ -547,7 +554,7 @@ def main(argv=sys.argv):
     as a module.
     """
     import optparse
-    usage = """%prog [options] source destination
+    usage = """%prog [options] source [destination]
     
 Destination can be either a directory or a zip file"""
     parser = optparse.OptionParser(usage)
@@ -590,8 +597,18 @@ Destination can be either a directory or a zip file"""
                       """ e.g. handling all different core version on the "/app/" path"""
                       """ without redirects.""")
 
+    parser.add_option("--fixBOM", default=False,
+                      action="store_false", dest="fix_BOM",
+                      help="Try to convert ANSI to UTF8 with BOM. Use only with source.")
+
     options, args = parser.parse_args()
     globals()['options'] = options
+
+    if len(args) == 1 and options.fix_BOM:
+        bad = _get_bad_encoding_files(args[0])
+        for path in bad:
+            _ansi2utf8(path)
+        return 0
     
     # Make sure we have a source and destination
     if len(args) != 2:
