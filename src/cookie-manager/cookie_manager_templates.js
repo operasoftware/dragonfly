@@ -110,7 +110,7 @@ templates.cookie_manager = {
         "span",  runtime.hostname,
         "class", "group_hostname"
       ],
-      runtime.pathname + " ",
+      runtime.pathname/* + " ",
       [
         "a",                 "("+ui_strings.S_BUTTON_STORAGE_DELETE_ALL+")",
         "class",             "delete_cookie",
@@ -118,7 +118,7 @@ templates.cookie_manager = {
         "data-cookie-domain", runtime.hostname,
         "data-cookie-path",   runtime.pathname,
         "handler",           "cookiemanager-delete-domain-path-cookies"
-      ]
+      ] */
     ];
   },
   clear_and_update_button: function(){
@@ -181,8 +181,7 @@ templates.cookie_manager = {
     },
     remove_button: function(objectref) {
       return [
-        "button",
-        "Remove",
+        "button",         ui_strings.S_LABEL_STORAGE_DELETE,
         "data-objectref", objectref,
         "class",          "delete_cookie",
         "handler",        "cookiemanager-delete-cookie"

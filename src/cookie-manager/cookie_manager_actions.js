@@ -3,21 +3,12 @@
   // just delete cookies that are shown
   for (var i=0; i < window.views.cookie_manager._flattened_cookies.length; i++) {
     var cookie = window.views.cookie_manager._flattened_cookies[i];
-      
+    
     var domain = cookie.domain;
     var path = cookie.path;
     var name = cookie.name;
 
-    var remove_cookie_instructions = [domain];
-    if(path)
-    {
-      remove_cookie_instructions.push(path);
-    }
-    if(name)
-    {
-      remove_cookie_instructions.push(name);
-    }
-    var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_changed_cookies, remove_cookie_instructions);
+    var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_changed_cookies, []);
     services['cookie-manager'].requestRemoveCookie(tag,[domain, path, name]);
   };
 };
@@ -51,6 +42,7 @@ window.eventHandlers.blur['cookiemanager-edit'] = function(event, target)
   for (var i=0; i < window.views.cookie_manager._flattened_cookies.length; i++) {
     if(window.views.cookie_manager._flattened_cookies[i].objectref == objectref)
     {
+      // todo: this will need to be done over the cookie service to work reliably.
       cookie = window.views.cookie_manager._flattened_cookies[i];
       // remove old cookie
       var remove_old_cookie_script = 'document.cookie="'
@@ -58,10 +50,7 @@ window.eventHandlers.blur['cookiemanager-edit'] = function(event, target)
                     + '; expires='+ (new Date(new Date().getTime()-1000).toUTCString())
                     + '; path=' + '/'+ cookie.path;
       remove_old_cookie_script += '";';
-      // and add modified
-      // todo: probably can be removed by just using all the values from the forms.
-      // todo: check if encodeURIComponent is used correctly
-      
+      // and add modified      
       var add_modified_cookie_script = 'document.cookie="';
       if(editproperty === "name")
       {
@@ -83,12 +72,9 @@ window.eventHandlers.blur['cookiemanager-edit'] = function(event, target)
       {
         add_modified_cookie_script += '; expires='+ (new Date(cookie.expires*1000).toUTCString());
       }
-      // todo: looks like in cases where the path was not set explicitely, it needs to be ommited. question is how I should know.
       add_modified_cookie_script += '; path=' + '/' + cookie.path;
       add_modified_cookie_script += '"';
       
-      // TODO: the scripts needs to be executed on a window that has the hostname of the cookies domain.
-      //       this way it it gets duplicated.
       var script = remove_old_cookie_script + add_modified_cookie_script;
       var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_changed_cookies, [cookie.runtimes[0]]);
       services['ecmascript-debugger'].requestEval(tag,[cookie.runtimes[0], 0, 0, script]);
@@ -96,20 +82,13 @@ window.eventHandlers.blur['cookiemanager-edit'] = function(event, target)
   };
 }
 
-/*
 window.eventHandlers.click['cookiemanager-delete-domain-path-cookies'] = function(event, target)
 {
-  var find_element = target;
-  while(!find_element.hasClass("domain") && find_element.previousSibling)
-  {
-    find_element = find_element.previousSibling;
-  }
-  var domain = find_element.getAttribute("data-domain");
-  // console.log("will delete cookies for domain ",domain);
+  var domain = target.getAttribute("data-cookie-domain");
+  var path = target.getAttribute("data-cookie-path");
   var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_changed_cookies, [domain]);
-  services['cookie-manager'].requestRemoveCookie(tag,[domain]);
+  services['cookie-manager'].requestRemoveCookie(tag,[domain,path]);
 };
-*/
 
 window.eventHandlers.click['cookiemanager-delete-cookie'] = function(event, target)
 {
@@ -123,17 +102,8 @@ window.eventHandlers.click['cookiemanager-delete-cookie'] = function(event, targ
       var domain = cookie.domain;
       var path = cookie.path;
       var name = cookie.name;
-  
-      var remove_cookie_instructions = [domain];
-      if(path)
-      {
-        remove_cookie_instructions.push(path);
-      }
-      if(name)
-      {
-        remove_cookie_instructions.push(name);
-      }
-      var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_changed_cookies, remove_cookie_instructions);
+      
+      var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_changed_cookies, []);
       services['cookie-manager'].requestRemoveCookie(tag,[domain, path, name]);
     }
   }

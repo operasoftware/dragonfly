@@ -184,7 +184,6 @@ cls.CookieManagerView = function(id, name, container_class)
     var data = JSON.parse(message[2]);
     var hostname = data.hostname;
     var pathname = data.pathname;
-
     this._rts[rt_id].get_domain_is_pending = false;
     this._rts[rt_id].hostname = hostname;
     this._rts[rt_id].pathname = pathname;
