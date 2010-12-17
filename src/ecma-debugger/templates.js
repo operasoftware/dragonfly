@@ -345,7 +345,7 @@
   {
     return ['li',
              ['span', frame.fn_name, 'class', 'scope-name'],
-             ['span', " " + (frame.script_id ? helpers.basename(runtimes.getScript(frame.script_id).uri) + ':' + frame.line : "")],
+             ['span', " " + (frame.script_id ? helpers.basename(runtimes.getScript(frame.script_id).uri) + ':' + frame.line : ""), 'class', 'file-line'],
       'handler', 'show-frame',
       'ref-id', frame.id,
     ].concat( is_top ? ['class', 'selected'] : [] );
