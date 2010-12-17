@@ -24,6 +24,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._autocompletion_scope = null;
   this._use_autocomplete_highlight = true; // fixme: turn this in to a setting
   this._textarea_handler = null;
+  this._prev_frame_index = null;
   this._closed_group_nesting_level = 0;
   this._keywords = ["break", "case", "catch", "continue", "debugger",
       "default", "delete", "do", "else", "finally", "for", "function",
@@ -169,6 +170,9 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         case "completion":
           this._render_completion(e.data);
           break;
+        case "errorlog":
+          this._render_errorlog(e.data);
+          break;
       default:
           this._render_string("unknown");
       }
@@ -302,6 +306,13 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   {
     this._add_line(["span", s, "class", "repl-completion"]);
   };
+
+  this._render_errorlog = function(s) {
+    if (settings.command_line.get('show-js-errors-in-repl'))
+    {
+      this._render_string(s);
+    }
+  }
 
   /**
    * Render a string. Return the element that was rendered.
@@ -674,6 +685,17 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     // from the previous runtime/frame when tabbing.
     // The current tabbing context doesn't change though. Should not
     // be a problem unless you reload while tabbing or something.
+    if (msg.type == "frame-selected")
+    {
+      if (msg.frame_index == this._prev_frame_index)
+      {
+        return; // do nothing if there's no new frame index.
+      }
+      else
+      {
+        this._prev_frame_index = msg.frame_index;
+      }
+    }
     this._cancel_completion();
   }.bind(this);
 
@@ -922,18 +944,21 @@ cls.ReplView.create_ui_widgets = function()
       'max-typed-history-length': 32,
       'typed-history': [],
       'unpack-list-alikes': true,
-      'is-element-type-sensitive': true
+      'is-element-type-sensitive': true,
+      'show-js-errors-in-repl': true,
     },
     { // key/label
       'max-typed-history-length': ui_strings.S_LABEL_REPL_BACKLOG_LENGTH,
       'unpack-list-alikes': ui_strings.S_SWITCH_UNPACK_LIST_ALIKES,
-      'is-element-type-sensitive': ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE
+      'is-element-type-sensitive': ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE,
+      'show-js-errors-in-repl': ui_strings.S_SWITCH_SHOW_ERRORS_IN_REPL,
     },
     { // settings map
       checkboxes:
       [
         'unpack-list-alikes',
-        'is-element-type-sensitive'
+        'is-element-type-sensitive',
+        'show-js-errors-in-repl',
       ],
       customSettings:
       [
