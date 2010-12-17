@@ -598,7 +598,7 @@ Destination can be either a directory or a zip file"""
                       """ without redirects.""")
 
     parser.add_option("--fixBOM", default=False,
-                      action="store_false", dest="fix_BOM",
+                      action="store_true", dest="fix_BOM",
                       help="Try to convert ANSI to UTF8 with BOM. Use only with source.")
 
     options, args = parser.parse_args()
