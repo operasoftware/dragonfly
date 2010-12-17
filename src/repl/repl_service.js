@@ -128,6 +128,10 @@
     var do_friendly_print = !do_unpack &&
                             settings.command_line.get("do-friendly-print") &&
                             !is_friendly_printed;
+    if (do_friendly_print)
+    {
+      var obj_list = msg[VALUELIST].reduce(this._friendly_printer.value2objlist, []);
+    }
 
     if (do_unpack)
     {
@@ -135,11 +139,10 @@
       this._is_processing = true;
       this._unpack_list_alikes(msg, rt_id, fallback);
     }
-    else if (do_friendly_print)
+    else if (do_friendly_print && obj_list.length)
     {
       this._is_processing = true;
       var cb = this._handle_log.bind(this, msg, rt_id, true, true);
-      var obj_list = msg[VALUELIST].reduce(this._friendly_printer.value2objlist, []);
       // friendly prinyter works as side effect
       // it set a FRIENDLY_PRINTED field on each object
       // that means the callback is an error and success callback
