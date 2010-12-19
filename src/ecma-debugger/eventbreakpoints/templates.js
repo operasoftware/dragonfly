@@ -19,7 +19,6 @@
         ['header',
           ['input', 'type', 'button', 'class', section.is_unfolded ? 'unfolded' : ''],
           section.title,
-          ['a', 'spec', 'href', section.spec, 'target', '_blank', 'class', 'spec-link'],
           'handler', 'ev-brp-expand-section',
         ],
         section.is_unfolded ?
@@ -51,7 +50,8 @@
           'index', event[INDEX].toString(), // the index of the map callback is wrong with a search
           'handler', 'event-breakpoint',
         ].concat(event[CHECKED] ? ['checked', 'checked'] : []),
-        event[NAME]
+        event[NAME],
+        'data-spec', "dom#" + event[NAME]
       ]
     ]);
   }
