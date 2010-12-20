@@ -213,7 +213,20 @@ cls.ResourceManagerService = function(view, data)
   {
     if (this._current_document && id in this._current_document.resourcemap)
     {
-        return this._current_document.resourcemap[id];
+      return this._current_document.resourcemap[id];
+    }
+    return null;
+  };
+
+  this.get_resource_for_url = function(url)
+  {
+    if (this._current_document) {
+      for (var key in this._current_document.resourcemap) {
+        if (this._current_document.resourcemap[key].urlload.url == url)
+        {
+          return this._current_document.resourcemap[key];
+        }
+      }
     }
     return null;
   };
@@ -226,9 +239,7 @@ cls.ResourceManagerService = function(view, data)
   }
 
   this.init();
-  };
-
-
+};
 
 
 cls.RequestContext = function(reslist)
