@@ -121,7 +121,7 @@ templates.cookie_manager = {
       ] */
     ];
   },
-  clear_and_update_button: function(){
+  clear_and_refetch_button: function(){
     return [
       [
         "button",  ui_strings.S_BUTTON_STORAGE_DELETE_ALL,

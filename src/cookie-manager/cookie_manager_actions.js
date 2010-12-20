@@ -3,13 +3,8 @@
   // just delete cookies that are shown
   for (var i=0; i < window.views.cookie_manager._flattened_cookies.length; i++) {
     var cookie = window.views.cookie_manager._flattened_cookies[i];
-    
-    var domain = cookie.domain;
-    var path = cookie.path;
-    var name = cookie.name;
-
     var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_changed_cookies, []);
-    services['cookie-manager'].requestRemoveCookie(tag,[domain, path, name]);
+    services['cookie-manager'].requestRemoveCookie(tag,[cookie.domain, cookie.path, cookie.name]);
   };
 };
 
@@ -33,10 +28,10 @@ window.eventHandlers.blur['cookiemanager-edit'] = function(event, target)
   }
   target.addClass("hidden");
   editcontainer.getElementsByClassName("edit_formelem")[0].removeClass("hidden");
-  
+
   var objectref = target.getAttribute("data-objectref");
   var editproperty = target.getAttribute("data-editproperty");
-  
+
   // need to find cookie object now that has all info
   var cookie;
   for (var i=0; i < window.views.cookie_manager._flattened_cookies.length; i++) {
@@ -50,7 +45,7 @@ window.eventHandlers.blur['cookiemanager-edit'] = function(event, target)
                     + '; expires='+ (new Date(new Date().getTime()-1000).toUTCString())
                     + '; path=' + '/'+ cookie.path;
       remove_old_cookie_script += '";';
-      // and add modified      
+      // and add modified
       var add_modified_cookie_script = 'document.cookie="';
       if(editproperty === "name")
       {
@@ -74,7 +69,7 @@ window.eventHandlers.blur['cookiemanager-edit'] = function(event, target)
       }
       add_modified_cookie_script += '; path=' + '/' + cookie.path;
       add_modified_cookie_script += '"';
-      
+
       var script = remove_old_cookie_script + add_modified_cookie_script;
       var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_changed_cookies, [cookie.runtimes[0]]);
       services['ecmascript-debugger'].requestEval(tag,[cookie.runtimes[0], 0, 0, script]);
@@ -98,13 +93,8 @@ window.eventHandlers.click['cookiemanager-delete-cookie'] = function(event, targ
     if(window.views.cookie_manager._flattened_cookies[i].objectref == objectref)
     {
       cookie = window.views.cookie_manager._flattened_cookies[i];
-      
-      var domain = cookie.domain;
-      var path = cookie.path;
-      var name = cookie.name;
-      
       var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_changed_cookies, []);
-      services['cookie-manager'].requestRemoveCookie(tag,[domain, path, name]);
+      services['cookie-manager'].requestRemoveCookie(tag,[cookie.domain, cookie.path, cookie.name]);
     }
   }
 };
@@ -112,28 +102,28 @@ window.eventHandlers.click['cookiemanager-delete-cookie'] = function(event, targ
 window.eventHandlers.click['add-cookie-handler'] = function(event, target)
 {
   event.preventDefault();
-  
+
   // walk up to find form
   var formelem = target;
   while (formelem.nodeName !== "form" && formelem.parentNode) {
     formelem = formelem.parentNode;
   }
-  
+
   var cookie_runtime;
   var domain_select  = formelem.querySelector("select[name=add_cookie_runtime_select]");
   if(domain_select)
   {
     cookie_runtime = parseInt(domain_select.options[domain_select.options.selectedIndex].value.split(",")[0]);
   }
-  else {    
+  else {
     cookie_runtime = parseInt(formelem.querySelector("input[name=add_cookie_runtime]").value.split(",")[0]);
   }
   var name_val    = formelem.querySelector("input[name=cookiename]").value;
   var value_val   = formelem.querySelector("input[name=cookievalue]").value;
   var path_val_form_elem = formelem.querySelector("input[name=cookiepath]") || formelem.querySelector("select[name=cookie_path_select]");
-  var path_val    = path_val_form_elem.value || "/"; // TODO: Make sure it starts with a path if it's given
+  var path_val    = path_val_form_elem.value || "/";
   var expires_val = formelem.querySelector("input[name=cookieexpires]").value;
-  
+
   if(name_val && cookie_runtime)
   {
     var add_cookie_script = 'document.cookie="';
@@ -141,21 +131,16 @@ window.eventHandlers.click['add-cookie-handler'] = function(event, target)
     add_cookie_script += encodeURIComponent(value_val);
     add_cookie_script += '; expires='+ (new Date(expires_val).toUTCString());
     add_cookie_script += '; path=' + path_val+'"';
-    /*
-    // result should look sth like
-    var add_cookie_script = 'document.cookie="'
-                  + "name" + '=' + "value" 
+    /**
+     * result should look sth like
+     * var add_cookie_script = 'document.cookie="'
+                  + "name" + '=' + "value"
                   + '; expires='+ (new Date(cookie.expires*1000).toUTCString())
                   + '; path=' + '/' + "path"+'"';
     */
     var script = add_cookie_script;
-    // console.log("add_cookie_script",add_cookie_script);
     var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_changed_cookies, []);
     services['ecmascript-debugger'].requestEval(tag,[cookie_runtime, 0, 0, script]);
-  }
-  else
-  {
-    // todo: show a warning or sth?
   }
   // todo: make domain, path and expires persist
   // todo: scroll down to newly added cookies
@@ -173,16 +158,16 @@ window.eventHandlers.change['cookiemanager-add-cookie-domain-select'] = function
   {
     target = document.querySelector("form.add-cookie-form");
   }
-  
+
   // walk up to find form
   var formelem = target;
   while (formelem.nodeName !== "form" && formelem.parentNode) {
     formelem = formelem.parentNode;
   }
-  
+
   var runtime_field = formelem.querySelector("input[name=add_cookie_runtime]") || formelem.querySelector("select[name=add_cookie_runtime_select]");
   var selected_runtime_ids = runtime_field.value.split(",");
-  
+
   var pathvalues = [];
   for (var i=0; i < selected_runtime_ids.length; i++) {
     var pathname = window.views.cookie_manager._rts[selected_runtime_ids[i]].pathname;
@@ -191,7 +176,7 @@ window.eventHandlers.change['cookiemanager-add-cookie-domain-select'] = function
       pathvalues.push(pathname);
     }
   };
-  
+
   // Remove old datatable
   if(document.getElementById("cookiepathlist")) {
     formelem.removeChild(document.getElementById("cookiepathlist"));
