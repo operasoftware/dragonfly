@@ -272,24 +272,14 @@ cls.CookieManagerView = function(id, name, container_class)
         for (var i=0; i < domaincookies.cookies.length ;i++)
         {
           var current_cookie = domaincookies.cookies[i];
-
-          /**
-           * Instead of creating a new cookie ob that just uses most of the old one,
-           * info should probably just be added to it. When editing it, there should be only one list
-           * that's globally accessible from actions.
-           */
-
-          flattened_cookies.push({
-            runtimes:      domaincookies.runtimes,
-            domain:        current_cookie.domain,
-            path:          current_cookie.path,
-            name:          current_cookie.name,
-            value:         current_cookie.value,
-            expires:       current_cookie.expires,
-            isSecure:      current_cookie.isSecure,
-            isHTTPOnly:    current_cookie.isHTTPOnly,
-            objectref:     current_cookie.domain + "/" + current_cookie.path + current_cookie.name + (parseInt(Math.random()*99999))
-          });
+          var flattened_cookie = {
+            objectref: current_cookie.domain + "/" + current_cookie.path + current_cookie.name + (parseInt(Math.random()*99999)),
+            runtimes:  domaincookies.runtimes
+          };
+          for (var key in current_cookie) {
+            flattened_cookie[key] = current_cookie[key];
+          };
+          flattened_cookies.push(flattened_cookie);
         };
       }
     }
