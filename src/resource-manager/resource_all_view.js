@@ -65,6 +65,12 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
       hosts: {
         label: "Hosts",
         grouper: function(res) { return cls.ResourceUtil.url_host(res.urlload.url) }
+      },
+      types: {
+        label: "Types",
+        grouper: function(res) { return cls.ResourceUtil.mime_to_type(res.urlfinished ?
+                                                                      res.urlfinished.mimeType :
+                                                                      "unknown")}
       }
     },
     columns: {

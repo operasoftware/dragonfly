@@ -49,8 +49,6 @@ function SortableTable(tabledef, data, cols, sortby, reversed)
       }
     }
 
-
-
     this.sortby = sortby;
     this.tabledef = tabledef;
     this.data = data;
@@ -67,6 +65,37 @@ function SortableTable(tabledef, data, cols, sortby, reversed)
     if (!eventHandlers.click["sortable-table-sort"])
     {
       eventHandlers.click["sortable-table-sort"] = this._sort_handler;
+    }
+
+    var menuitems = [];
+    for (var group in this.tabledef.groups)
+    {
+      menuitems.push({
+        label: "Group by " + (this.tabledef.groups[group].label || group),
+        handler: this._make_group_handler(group)
+      });
+    }
+
+    if (menuitems.length)
+    {
+      menuitems.push({
+        label: "No grouping",
+        handler: this._make_group_handler(null)
+      })
+
+      var contextmenu = ContextMenu.get_instance();
+      contextmenu.register("sortable-table-grouper", menuitems);
+    }
+  }
+
+  this._make_group_handler = function(group)
+  {
+    return function(evt) {
+      var target = evt.target;
+      while (target.nodeName.toLowerCase() != "table") { target = target.parentNode };
+      var obj = ObjectRegistry.get_instance().get_object(target.getAttribute("data-object-id"));
+      obj.group(group);
+      target.re_render(obj.render());
     }
   }
 
@@ -86,9 +115,9 @@ function SortableTable(tabledef, data, cols, sortby, reversed)
 
   this.render = function()
   {
-      return templates.sortable_table(this.tabledef, this.data, this.objectid,
-                                      this.columns, this.groupby, this.sortby,
-                                      this.reversed);
+    return templates.sortable_table(this.tabledef, this.data, this.objectid,
+                                    this.columns, this.groupby, this.sortby,
+                                    this.reversed);
   };
 
   this._prop_getter = function(name)
@@ -142,7 +171,8 @@ templates.sortable_table = function(tabledef, data, objectid, cols, groupby, sor
           templates.sortable_table_header(tabledef, cols, sortby, reversed),
           templates.sortable_table_body(tabledef, data, cols, groupby, sortby, reversed),
           "class", "sortable-table",
-          "data-object-id", objectid
+          "data-object-id", objectid,
+          "data-menu", "sortable-table-grouper"
          ]
 }
 
