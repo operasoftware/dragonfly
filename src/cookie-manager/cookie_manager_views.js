@@ -26,7 +26,7 @@ cls.CookieManagerView = function(id, name, container_class)
       name: {
         label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_NAME,
         renderer: function(obj) {
-          if(!obj.isHTTPOnly)
+          if(obj.is_editable)
           {
             return window.templates.cookie_manager.table_view.editable_name(obj.name, obj.objectref);
           }
@@ -39,7 +39,7 @@ cls.CookieManagerView = function(id, name, container_class)
       value: {
         label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_VALUE,
         renderer: function(obj) {
-          if(!obj.isHTTPOnly)
+          if(obj.is_editable)
           {
             return window.templates.cookie_manager.table_view.editable_value(decodeURIComponent(obj.value), obj.objectref);
           }
@@ -273,8 +273,25 @@ cls.CookieManagerView = function(id, name, container_class)
         {
           var current_cookie = domaincookies.cookies[i];
           var flattened_cookie = {
-            objectref: current_cookie.domain + "/" + current_cookie.path + current_cookie.name + (parseInt(Math.random()*99999)),
-            runtimes:  domaincookies.runtimes
+            objectref:   current_cookie.domain + "/" + current_cookie.path + current_cookie.name + (parseInt(Math.random()*99999)),
+            runtimes:    domaincookies.runtimes,
+            is_editable: (function(cookie){
+              /**
+               * Decides if the cookie name & value can be edited.
+               * Must remove the cookie.path condition when CORE-35055 is fixed, must remove 
+               * the cookie.domain when a new "add cookie" interface from CORE-35370 is used
+               * (allows specifying the domain when creating new cookie)
+              */
+              if(
+                cookie.isHTTPOnly ||
+                cookie.path ||
+                cookie.domain != window.views.cookie_manager._rts[domaincookies.runtimes[0]].hostname
+              )
+              {
+                return false;
+              }
+              return true;
+            })(current_cookie)
           };
           for (var key in current_cookie) {
             flattened_cookie[key] = current_cookie[key];
