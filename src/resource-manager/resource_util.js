@@ -50,29 +50,66 @@ cls.ResourceUtil.millis_to_human_readable = function(millis)
 cls.ResourceUtil.mime_type_map = {
   "text/html": "markup",
   "application/xhtml+xml": "markup",
+  "application/mathml+xml": "markup",
+  "application/xslt+xml": "markup",
+  "text/xsl": "markup",
+  "application/xml": "markup",
 
   "text/css": "css",
+  
+  "text/plain": "text",
 
   "application/x-javascript": "script",
   "application/javascript": "script",
   "text/javascript": "script",
-  "application/json": "script",
 
   "image/png": "image",
   "image/gif": "image",
   "image/jpeg": "image",
   "image/x-icon": "image",
+  "image/vnd.microsoft.icon": "image",
   "image/svg+xml": "image",
+  "image/vnd.wap.wbmp": "image",
 
-  "application/vnd.ms-fontobject": font,
+  "application/vnd.ms-fontobject": "font",
   "application/x-font-ttf": "font",
   "font/ttf": "font",
   "font/otf": "font",
   "application/x-woff": "font",
-
+  
+  "audio/mid": "audio",
+  "audio/mpeg": "audio",
+  "audio/ogg": "audio",
+  "audio/vorbis": "audio",
+  "audio/x-pn-realaudio": "audio",
+  "audio/wav": "audio",
+  "audio/x-wav": "audio",
+  "audio/vnd.wave": "audio",
+  "audio/x-ms-wax": "audio",
+  "audio/x-ms-wma": "audio",
+  
+  "video/3gpp": "video",
+  "video/x-matroska": "video",
+  "video/mp4": "video",
+  "video/mpeg": "video",
+  "video/ogg": "video",
+  "video/quicktime": "video",
+  "video/webm": "video",
+  "video/x-ms-wmv": "video",
+  
+  "application/json": "data",
+  "application/rdf+xml": "data",
+  "text/rdf+n3": "data",
+  "application/x-turtle": "data",
+  "text/turtle": "data",
+  
+  "application/atom+xml": "feed",
+  "application/rss+xml": "feed",
+  
   "application/pdf": "pdf",
+  "application/postscript": "postscript",
   "application/x-shockwave-flash": "flash",
-  "application/xml": "xml"
+  "application/x-silverlight-app": "silverlight"
 }
 
 /**
