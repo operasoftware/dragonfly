@@ -150,9 +150,10 @@ cls.CookieManagerView = function(id, name, container_class)
 
   this._handle_get_domain = function(status, message, rt_id)
   {
-    var data = JSON.parse(message[2]);
-    var hostname = data.hostname;
-    var pathname = data.pathname;
+    const DATA = 2;
+    var parsed_data = JSON.parse(message[2]);
+    var hostname = parsed_data.hostname;
+    var pathname = parsed_data.pathname;
     this._rts[rt_id].get_domain_is_pending = false;
     this._rts[rt_id].hostname = hostname;
     this._rts[rt_id].pathname = pathname;
@@ -209,10 +210,11 @@ cls.CookieManagerView = function(id, name, container_class)
 
   this._handle_cookies = function(status, message, domain, path)
   {
+    const COOKIE = 0;
     this._cookie_dict[domain+path].get_cookies_is_pending=false;
     if(message.length > 0)
     {
-      var cookies = message[0];
+      var cookies = message[COOKIE];
       this._cookie_dict[domain+path].cookies=[];
       for (var i=0; i < cookies.length; i++) {
         var cookie_info = cookies[i];
