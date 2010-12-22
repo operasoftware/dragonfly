@@ -45,7 +45,7 @@ window.templates.error_log_row = function(entry, allExpanded, toggledList, viewI
                  "data-viewid", viewId
                ]
       ],
-      ["td", entry.uri],
+        ["td", entry.uri],
       ["td", (entry.line==null ? "?" : entry.line) ],
       ["td", entry.title]
      ],  "class", (expanded ? "expanded" : "collapsed"),
@@ -68,8 +68,11 @@ window.templates.error_log_detail_row = function(entry)
   return [
     "tr", [
       ["td",
-        [ "a", entry.uri, "href", entry.uri, "target", "_blank" ],
-        [ "pre", entry.description ],
+       [ "span", entry.uri,
+         "handler", "open-resource-tab",
+         "data-resource-url", entry.uri
+       ],
+       [ "pre", entry.description ],
                  "colspan", "4"
       ]
     ]

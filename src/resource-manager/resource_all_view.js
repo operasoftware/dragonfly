@@ -48,14 +48,36 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
     }
   };
 
+  this._open_resource_tab = function(resource)
+  {
+    var view = new cls.GenericResourceDetail(resource, this._service);
+    var ui = UI.get_instance();
+    ui.get_tabbar("resources").add_tab(view.id);
+    ui.show_view(view.id);
+  }
+
+  this._handle_open_resource_tab_bound = function(evt, target) {
+    var rid = target.getAttribute("data-resource-id");
+    if (rid)
+    {
+      var res = services.get_resource_for_id(rid);
+    }
+    else
+    {
+      var res = this._service.get_resource_for_url(target.getAttribute("data-resource-url"));
+    }
+
+    if (res)
+    {
+      this._open_resource_tab(res);
+    }
+  }.bind(this);
+
   this._handle_open_resource_bound = function(evt, target)
   {
     var rid = target.getAttribute("data-object-id");
     var obj = this._service.get_resource_for_id(rid);
-    var view = new cls.GenericResourceDetail(obj, this._service);
-    var ui = UI.get_instance();
-    ui.get_tabbar("resources").add_tab(view.id);
-    ui.show_view(view.id);
+    this._open_resource_tab(obj);
   }.bind(this);
 
   this._tabledef = {
@@ -126,7 +148,12 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
   }.bind(this);
 
   var eh = window.eventHandlers;
+  // fixme: this is in the wrong place! Doesn't belong in UI and even if it
+  // did, the event handler doesn't get added until the view is created
+  // which means you can't open tabs from elsewhere if you haven't opened
+  // the resources view first
   eh.click["resources-all-open"] = this._handle_open_resource_bound;
+  eh.click["open-resource-tab"] = this._handle_open_resource_tab_bound;
 
   var doc_service = window.services['document-manager'];
   doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
