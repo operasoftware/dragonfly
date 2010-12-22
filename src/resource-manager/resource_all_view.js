@@ -22,7 +22,10 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
 
     if (ctx)
     {
-      this._table = new SortableTable(this._tabledef, ctx.resources.slice(0))
+      if (!this._table)
+      {
+        this._table = new SortableTable(this._tabledef, ctx.resources.slice(0))
+      }
       container.clearAndRender(this._table.render())
     }
     else if (this._loading)
@@ -138,6 +141,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
   this._on_abouttoloaddocument_bound = function()
   {
     this._loading = true;
+    this._table = null;
     this.update();
   }.bind(this);
 
