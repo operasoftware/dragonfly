@@ -62,6 +62,13 @@ cls.ResourceUtil.mime_type_map = {
   "image/gif": "image",
   "image/jpeg": "image",
   "image/x-icon": "image",
+  "image/svg+xml": "image",
+
+  "application/vnd.ms-fontobject": font,
+  "application/x-font-ttf": "font",
+  "font/ttf": "font",
+  "font/otf": "font",
+  "application/x-woff": "font",
 
   "application/pdf": "pdf",
   "application/x-shockwave-flash": "flash",
