@@ -3,7 +3,7 @@
 cls.CookieManagerView = function(id, name, container_class)
 {
   this._cookie_dict = {};
-  this._flattened_cookies = [];
+  this.flattened_cookies = [];
   this._rts = {};
   this._tabledef = {
     groups: {
@@ -82,8 +82,8 @@ cls.CookieManagerView = function(id, name, container_class)
   };
   this.createView = function(container)
   {
-    this._flattened_cookies = this._flatten_cookies(this._cookie_dict);
-    container.clearAndRender(new SortableTable(this._tabledef, this._flattened_cookies).render());
+    this.flattened_cookies = this._flatten_cookies(this._cookie_dict);
+    container.clearAndRender(new SortableTable(this._tabledef, this.flattened_cookies).render());
 
     var table = document.getElementsByClassName("cookie_manager")[0].getElementsByClassName("sortable-table")[0];
     var obj = ObjectRegistry.get_instance().get_object(table.getAttribute("data-object-id"));

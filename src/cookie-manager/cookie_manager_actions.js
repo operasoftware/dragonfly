@@ -1,8 +1,8 @@
 ﻿window.eventHandlers.click['cookiemanager-delete-all'] = function(event, target)
 {
   // just delete cookies that are shown
-  for (var i=0; i < window.views.cookie_manager._flattened_cookies.length; i++) {
-    var cookie = window.views.cookie_manager._flattened_cookies[i];
+  for (var i=0; i < window.views.cookie_manager.flattened_cookies.length; i++) {
+    var cookie = window.views.cookie_manager.flattened_cookies[i];
     var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_changed_cookies, []);
     services['cookie-manager'].requestRemoveCookie(tag,[cookie.domain, cookie.path, cookie.name]);
   };
@@ -34,11 +34,11 @@ window.eventHandlers.blur['cookiemanager-edit'] = function(event, target)
 
   // need to find cookie object now that has all info
   var cookie;
-  for (var i=0; i < window.views.cookie_manager._flattened_cookies.length; i++) {
-    if(window.views.cookie_manager._flattened_cookies[i].objectref == objectref)
+  for (var i=0; i < window.views.cookie_manager.flattened_cookies.length; i++) {
+    if(window.views.cookie_manager.flattened_cookies[i].objectref == objectref)
     {
       // todo: this will need to be done over the cookie service to work reliably.
-      cookie = window.views.cookie_manager._flattened_cookies[i];
+      cookie = window.views.cookie_manager.flattened_cookies[i];
       // remove old cookie
       var remove_old_cookie_script = 'document.cookie="'
                     + cookie.name + '=' + cookie.value
@@ -89,10 +89,10 @@ window.eventHandlers.click['cookiemanager-delete-cookie'] = function(event, targ
 {
   var objectref = target.getAttribute("data-objectref");
   var cookie;
-  for (var i=0; i < window.views.cookie_manager._flattened_cookies.length; i++) {
-    if(window.views.cookie_manager._flattened_cookies[i].objectref == objectref)
+  for (var i=0; i < window.views.cookie_manager.flattened_cookies.length; i++) {
+    if(window.views.cookie_manager.flattened_cookies[i].objectref == objectref)
     {
-      cookie = window.views.cookie_manager._flattened_cookies[i];
+      cookie = window.views.cookie_manager.flattened_cookies[i];
       var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_changed_cookies, []);
       services['cookie-manager'].requestRemoveCookie(tag,[cookie.domain, cookie.path, cookie.name]);
     }
@@ -148,7 +148,7 @@ window.eventHandlers.click['add-cookie-handler'] = function(event, target)
 
 window.eventHandlers.click['cookiemanager-update'] = function(event, target)
 {
-  window.views.cookie_manager._update();
+  window.views.cookie_manager._refetch();
 }
 
 window.eventHandlers.change['cookiemanager-add-cookie-domain-select'] = function(event, target)
