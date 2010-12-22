@@ -151,6 +151,7 @@ templates.cookie_manager = {
         [
           "div",          name,
           "edit-handler", "cookiemanager-init-edit-mode",
+          "class",        "editable",
           "title",        ui_strings.S_LABEL_STORAGE_DOUBLE_CLICK_TO_EDIT
         ],
         "class", "edit_container"
@@ -170,6 +171,7 @@ templates.cookie_manager = {
         ],
         [
           "div",          value,
+          "class",        "editable",
           "edit-handler", "cookiemanager-init-edit-mode",
           "title",        ui_strings.S_LABEL_STORAGE_DOUBLE_CLICK_TO_EDIT
         ],
