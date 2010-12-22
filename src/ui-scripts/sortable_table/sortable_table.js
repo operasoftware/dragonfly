@@ -67,25 +67,34 @@ function SortableTable(tabledef, data, cols, sortby, reversed)
       eventHandlers.click["sortable-table-sort"] = this._sort_handler;
     }
 
-    var menuitems = [];
-    for (var group in this.tabledef.groups)
+    // should be conditional, but doesn't matter as you don't get
+    // dupes in the context menu registry anyhow.
+    var contextmenu = ContextMenu.get_instance();
+    contextmenu.register("sortable-table-grouper", [
+      { callback: this._make_context_menu }
+    ]);
+  }
+
+  this._make_context_menu = function(evt)
+  {
+    var table = evt.target;
+    while (table.nodeName.toLowerCase() != "table") { table = table.parentNode };
+    var obj = ObjectRegistry.get_instance().get_object(table.getAttribute("data-object-id"));
+    if (!obj.tabledef.groups) { return [] }
+
+    var menuitems = [{
+      label: "No grouping",
+      handler: obj._make_group_handler(null)
+    }];
+
+    for (var group in obj.tabledef.groups)
     {
       menuitems.push({
-        label: "Group by " + (this.tabledef.groups[group].label || group),
-        handler: this._make_group_handler(group)
+        label: "Group by " + (obj.tabledef.groups[group].label || group) + (obj.groupby == group ? " (selected)" : ""),
+        handler: obj._make_group_handler(group)
       });
     }
-
-    if (menuitems.length)
-    {
-      menuitems.push({
-        label: "No grouping",
-        handler: this._make_group_handler(null)
-      })
-
-      var contextmenu = ContextMenu.get_instance();
-      contextmenu.register("sortable-table-grouper", menuitems);
-    }
+    return menuitems;
   }
 
   this._make_group_handler = function(group)
@@ -106,8 +115,6 @@ function SortableTable(tabledef, data, cols, sortby, reversed)
     obj.sort(target.getAttribute("data-column-id"));
     table.re_render(obj.render());
   }
-
-
 
   this._default_sorters = {
     "number": function(getter) { return function(a, b) { return b-a; } }
