@@ -1,4 +1,4 @@
-﻿.request-table {
+.request-table {
     border-collapse: collapse;
     width: 100%;
     table-layout: fixed;
@@ -43,6 +43,7 @@
     width: 24ex;
     overflow: hidden;
     -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
     white-space: nowrap;
     font-weight: bold;
 }
