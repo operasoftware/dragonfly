@@ -118,7 +118,23 @@ window.cls.SimpleJSParser = function()
     '\u000B': 1, //  Vertical Tab <VT>
     '\u000C': 1, //  Form Feed <FF>
     '\u0020': 1, //  Space <SP>
-    '\u00A0': 1  //  No-break space <NBSP>
+    '\u00A0': 1, //  No-break space <NBSP>
+    '\uFEFF': 1, //  Byte Order Mark <BOM>
+    //  other space charcters not explicitly mentioned in ES5 spec, but defined in Unicode 3.0
+    '\u2000': 1, //  En quad
+    '\u2001': 1, //  Em quad
+    '\u2002': 1, //  En space
+    '\u2003': 1, //  Em space
+    '\u2004': 1, //  Three-per-Em space
+    '\u2005': 1, //  Four-per-Em space
+    '\u2006': 1, //  Six-per-Em space
+    '\u2007': 1, //  Figure space
+    '\u2008': 1, //  Punctuation space
+    '\u2009': 1, //  Thin space
+    '\u200A': 1, //  Hair space
+    '\u200B': 1, //  Zero width space
+    '\u202F': 1, //  Narrow no-break space
+    '\u3000': 1  //  Ideographic space
   }
   var LINETERMINATOR_CHARS =
   {
