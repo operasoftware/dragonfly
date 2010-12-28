@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @fileoverview
  * Dictionaries of JavaScript keywords and builtins. Used by the JavaScript
  * formatter for syntax highlighting.
@@ -16,11 +16,14 @@ var js_keywords=
   'class': 1,
   'const': 1,
   'continue': 1,
+  'debugger': 1,
   'default': 1,
   'delete': 1,
   'do': 1,
   'double': 1,
   'else': 1,
+  'enum': 1,
+  'export': 1,
   'extends': 1,
   'false': 1,
   'final': 1,
@@ -36,6 +39,7 @@ var js_keywords=
   'instanceof': 1,
   'int': 1,
   'interface': 1,
+  'let': 1,
   'long': 1,
   'native': 1,
   'new': 1,
@@ -60,7 +64,8 @@ var js_keywords=
   'var': 1,
   'void': 1,
   'while': 1,
-  'with': 1
+  'with': 1,
+  'yield': 1
 }
 
 var js_builtins=
