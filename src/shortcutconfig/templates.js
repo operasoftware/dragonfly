@@ -103,12 +103,12 @@
                                        'scc-add-shortcut']]));
       }
       if (shortcuts_match)
-        ret.push(this.scc_controls([[ui_strings.S_BUTTON_SAVE, 
+        ret.push(this.scc_controls([[ui_strings.S_BUTTON_TEXT_APPLY, 
                                      'scc-save-shortcuts']]));
       else
         ret.push(this.scc_controls([[ui_strings.S_BUTTON_RESET_TO_DEFAULTS, 
                                      'scc-reset-to-defaults'],
-                                    [ui_strings.S_BUTTON_SAVE, 
+                                    [ui_strings.S_BUTTON_TEXT_APPLY, 
                                      'scc-save-shortcuts']]));
       return (
       ['table', 
