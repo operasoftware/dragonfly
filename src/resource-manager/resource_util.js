@@ -86,6 +86,7 @@ cls.ResourceUtil.mime_to_content_mode = function(mime)
     case "image":
     case "pdf":
     case "flash":
+    case "font":
       return "datauri";
     case "markup":
     case "css":
