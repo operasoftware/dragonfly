@@ -409,6 +409,13 @@ def _data_uri_from_path(path):
     else:
         return None
 
+def _find_file_path(base, file_name):
+    for dirpath, dirs, fns in os.walk(base):
+        for fn in fns:
+            if fn == file_name:
+                return os.path.join(dirpath, fn)
+    return None
+
 def _convert_imgs_to_data_uris(src):
     re_img = re.compile(r""".*?url\((['"]?(.*?)['"]?)\)""")
     deletions = []
@@ -422,9 +429,16 @@ def _convert_imgs_to_data_uris(src):
                 if match:
                     for full, stripped in match:
                         if stripped.startswith("data:"): temp.write(line.encode("ascii"))
-                        deletions.append(os.path.join(base, stripped))
-                        uri = _data_uri_from_path(os.path.join(base, stripped))
-
+                        file_path = os.path.join(base, stripped)
+                        if not os.path.isfile(file_path):
+                            # src is the actual the target destination of the build
+                            # that means the relations of css and according images 
+                            # are lost. Clashing filenames will cause problems.
+                            file_path = _find_file_path(src, stripped)
+                        uri = ""
+                        if file_path:
+                            deletions.append(file_path)
+                            uri = _data_uri_from_path(file_path)
                         if uri:
                             temp.write(line.replace(full, uri).encode("ascii"))
                         else:
