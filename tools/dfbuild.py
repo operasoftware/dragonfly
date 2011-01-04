@@ -431,7 +431,7 @@ def _convert_imgs_to_data_uris(src):
                         if stripped.startswith("data:"): temp.write(line.encode("ascii"))
                         file_path = os.path.join(base, stripped)
                         if not os.path.isfile(file_path):
-                            # src is the actual the target destination of the build
+                            # src is actually the target destination of the build
                             # that means the relations of css and according images 
                             # are lost. Clashing filenames will cause problems.
                             file_path = _find_file_path(src, stripped)
