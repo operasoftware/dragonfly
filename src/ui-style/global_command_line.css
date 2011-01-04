@@ -21,6 +21,7 @@
 [view_id=command_line] .stylesheets value,
 [view_id=command_line] .css-inspector value,
 [view_id=command_line] .js-source .string,
+[view_id=command_line] .js-source .object,
 [view_id=command_line] .js-source .number
 {
   color: #f33;
