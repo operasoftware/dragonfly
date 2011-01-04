@@ -295,6 +295,13 @@ ui_strings.M_CONTEXTMENU_OPEN_COLOR_PICKER = 'Open color picker';
 /* DESC: Context menu item for specification links. */
 ui_strings.M_CONTEXTMENU_SPEC_LINK = 'Specification for "%s"';
 
+/* DESC: Context menu item for adding an item in the storage view. */
+ui_strings.M_CONTEXTMENU_STORAGE_ADD = 'Add item';
+/* DESC: Context menu item for editing an item in the storage view. */
+ui_strings.M_CONTEXTMENU_STORAGE_EDIT = 'Edit item';
+/* DESC: Context menu item for deleting an item in the storage view. */
+ui_strings.M_CONTEXTMENU_STORAGE_DELETE = 'Delete item';
+
 /*
  * Button tool-tips.
  */
