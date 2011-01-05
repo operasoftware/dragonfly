@@ -42,6 +42,13 @@ cls.ResourceManagerService = function(view, data)
     this._current_context.update("urlfinished", data);
   }.bind(this);
 
+  this._on_response_bound = function(msg)
+  {
+    if (!this._current_context) { return; }
+    var data = new cls.ResourceManager["1.0"].Response(msg);
+    this._current_context.update("response", data);
+  }.bind(this);
+
   this._on_urlredirect_bound = function(msg)
   {
     return
@@ -58,6 +65,7 @@ cls.ResourceManagerService = function(view, data)
   {
     this._res_service = window.services['resource-manager'];
     this._res_service.addListener("urlload", this._on_urlload_bound);
+    this._res_service.addListener("response", this._on_response_bound);
     //this._res_service.addListener("responsefinished", this._on_responsefinished_bound);
     this._res_service.addListener("urlfinished", this._on_urlfinished_bound);
     this._doc_service = window.services['document-manager'];
@@ -120,13 +128,23 @@ cls.ResourceContext = function()
   {
     var res = this.get_resource(event.resourceID);
 
-    if (!res)
+    if (!res && eventname == "urlload")
     {
       res = new cls.Resource(event.resourceID)
       if (this.resources.length == 0) { this.topresource = event.resourceID; }
       this.resources.push(res);
     }
+    else if (!res)
+    {
+      // ignoring. Never saw an urlload, or it's allready invalidated
+      return
+    }
+
     res.update(eventname, event);
+    if (res.invalid)
+    {
+      this.resources.splice(this.resources.indexOf(res), 1);
+    }
   }
 
   this.get_resource = function(id)
@@ -178,6 +196,7 @@ cls.Resource = function(id)
   this.encoding = null;
   this.size = null;
   this.type = null;
+  this.invalid = false;
 
   this.update = function(eventname, eventdata)
   {
@@ -193,6 +212,13 @@ cls.Resource = function(id)
       this.size = eventdata.contentLength;
       this.finished = true;
       this._guess_type();
+    }
+    else if (eventname == "response")
+    {
+      if (eventdata.responseCode <= 100 || eventdata.responseCode >= 300)
+      {
+        this.invalid = true;
+      }
     }
     else
     {
