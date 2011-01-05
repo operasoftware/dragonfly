@@ -19,14 +19,14 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
   this._render_main_view = function(container)
   {
     var ctx = this._service.get_resource_context();
-    
-    if (ctx)
+    if (ctx && ctx.resources.length)
     {
-      if (true || !this._table)
+      if (!this._table)
       {
-        this._table = new SortableTable(this._tabledef, ctx.resources.slice(0))
+        this._table = new SortableTable(this._tabledef, null)
       }
-      container.clearAndRender(this._table.render())
+      this._table.data = ctx.resources.slice(0);
+      container.clearAndRender(this._table.render());
     }
     else if (this._loading)
     {
