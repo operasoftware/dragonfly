@@ -370,7 +370,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
 
   this.is_extension_runtime = function(rt_id)
   {
-    return __runtimes[rt_id].description == "extensionjs";
+    return __runtimes[rt_id] && __runtimes[rt_id].description == "extensionjs";
   };
 
   var __scripts = {};
