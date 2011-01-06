@@ -4,13 +4,13 @@ function MetadataDrawer(resource) {
   this._objectid = ObjectRegistry.get_instance().set_object(this);
   this._rules = {
     generic: [
-      {label: "url", getter: function(res) { return ["a", res.urlload.url, "href", res.urlload.url] } },
-      {label: "size", getter: function(res) { return  res.urlfinished
-                                              ? "" + res.urlfinished.contentLength + " bytes"
+      {label: "url", getter: function(res) { return ["a", res.url, "href", res.url] } },
+      {label: "size", getter: function(res) { return  res.size
+                                              ? "" + res.size + " bytes"
                                               : "-"
                                             }
       },
-      {label: "format", getter: function(res) { return res.urlfinished ? res.urlfinished.mimeType : "-" }},
+      {label: "format", getter: function(res) { return res.type ? res.type : "-" }},
     ],
     image: [
       {label: "dimensions", getter: function(res) { return "123 x 321" } },
@@ -71,9 +71,9 @@ templates.metadata_drawer = function(resource, expanded, objectid, rules)
   }
   else
   {
-    content = "URL: " + resource.urlload.url;
+    content = "URL: " + resource.url;
   }
-  
+
   return ["div",
           ["button",
            "handler", "metadata-drawer-toggle"
