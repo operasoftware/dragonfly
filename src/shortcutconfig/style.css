@@ -1,11 +1,12 @@
-﻿.shortcuts-config
+﻿.shortcuts-config header
 {
-  width: 360px;
-}
-.shortcuts-config header
-{
+  background: transparent;
   border-left: 1px solid #ccc;
   border-right: 1px solid #ccc;
+}
+.shortcuts-config header:hover
+{
+  background: #fff;
 }
 .shortcuts
 {

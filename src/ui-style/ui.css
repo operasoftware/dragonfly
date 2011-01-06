@@ -87,9 +87,11 @@ top-toolbar { /**/
 
 window-toolbar { /**/
   display: block;
-  height: 26px;
-  background-color: #e1e4e9;
-  border-bottom: 1px solid #999;
+  border: 0 solid #999;
+  border-width: 0 1px 1px;
+  padding: 3px 2px 2px;
+  height: 21px; /* 21 + 3 + 2 (padding) = 26 */
+  background: #f3f3f3 url("../ui-images/shine_2.png") 0 0 repeat-x;
   }
 
 /* set with css. height, border and padding are supported */
@@ -223,6 +225,7 @@ cst-icon[class="debugger-menu"] {
     content: url("../ui-images/icons/icon_tabs.png");
 }
 toolbar button,
+window-toolbar button,
 top-toolbar button,
 window-controls button,
 cst-select-toolbar-setting,
@@ -243,12 +246,14 @@ toolbar button[disabled]
   vertical-align: top;
   -o-transition: background-color 0.2s;
 }
-toolbar button[disabled] { /* :disabled seems to be buggy */
+toolbar button[disabled],
+window-toolbar button[disabled] { /* :disabled seems to be buggy */
   background: #e0e0e0 !important;
   opacity: 0.4;
   border-color: #333;
 }
 toolbar button:not([disabled]):active,
+window-toolbar button:not([disabled]):active,
 top-toolbar button:active,
 window-controls button:active,
 cst-select-toolbar-setting:active,
@@ -262,6 +267,7 @@ cst-select:active {
     padding: 1px;
 }
 toolbar button[is-active="true"],
+window-toolbar button[is-active="true"],
 top-toolbar button[is-active="true"],
 window-controls button[is-active="true"],
 cst-select[is-active="true"] {
@@ -271,6 +277,7 @@ cst-select[is-active="true"] {
     background-position: 0 1px;
 }
 toolbar button[is-active="true"]:active,
+window-toolbar button[is-active="true"]:active,
 top-toolbar button[is-active="true"]:active,
 window-controls button[is-active="true"]:active {
     background-color: #e6e6e6;
@@ -857,20 +864,15 @@ windows-container [handler="window-move"] { /**/
 
 windows-container [handler='window-close'] { /**/
   float: right;
-  width: 24px;
-  height: 20px;
-  margin: -3px -3px 0 0;
+  width: 17px;
+  height: 17px;
   position: relative;
-  background: transparent url('../ui-images/btn-window-close.png') scroll no-repeat 0 0;
+  background: transparent url('../ui-images/icons/icon_close.png') scroll no-repeat 0 0;
 	z-index:11;
   }
 
-windows-container [handler='window-close']:hover  { /**/
-  background-position:  0 -20px;
-  }
-
 windows-container [handler='window-close']:active { /**/
-  background-position:  0 -40px;
+  background-position: 0 1px;
   }
 
 windows-container [handler='window-scale-top-left'] { /**/
