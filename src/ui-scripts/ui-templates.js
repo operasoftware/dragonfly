@@ -42,15 +42,19 @@
     var ret = [];
     for (var i = 0, item; item = items[i]; i++)
     {
-      var checked = false;
-      if (item.setting)
+      var icon = "";
+      if (settings[item.menu_id] && !!settings[item.menu_id].get(item.id))
       {
-        checked = settings[item.menu_id].get(item.id);
+        icon = "✔";
+      }
+      else if (!!item.selected)
+      {
+        icon = "⚫";
       }
       if (!item.separator)
       {
         ret.push(["li",
-            [["span", checked ? "✔" : "", "class", "checkbox"], ["span", item.label]],
+            [["span", icon, "class", "contextmenu-icon"], ["span", item.label]],
             "data-handler-id", item.id,
             "data-menu-id", item.menu_id,
             "class", item.disabled ? "disabled" : ""

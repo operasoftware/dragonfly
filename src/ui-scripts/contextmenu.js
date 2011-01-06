@@ -1,7 +1,7 @@
 ﻿/**
  * @constructor
  */
-var ContextMenu = function() {
+function ContextMenu() {
   if (ContextMenu._instance)
   {
     return ContextMenu._instance;
@@ -9,9 +9,9 @@ var ContextMenu = function() {
   ContextMenu._instance = this;
 
   /**
-   * Holds all registered context menus.
+   * All registered context menus.
    */
-  this.registered_menus = {};
+  this._registered_menus = {};
 
   this._broker = ActionBroker.get_instance();
 
@@ -28,7 +28,7 @@ var ContextMenu = function() {
   {
     if (item_list)
     {
-      this.registered_menus[menu_id] = item_list;
+      this._registered_menus[menu_id] = item_list;
     }
   };
 
@@ -62,7 +62,7 @@ var ContextMenu = function() {
     // finds a data-menu attribute with a blank value.
     while (ele && ele != document && (menu_id = ele.getAttribute("data-menu")) !== "")
     {
-      var items = this.registered_menus[menu_id];
+      var items = this._registered_menus[menu_id];
       if (items && items.length)
       {
         if (all_items.length)
@@ -234,7 +234,7 @@ var ContextMenu = function() {
     {
       if (target.getAttribute("data-handler-id"))
       {
-        var items = this.registered_menus[target.getAttribute("data-menu-id")];
+        var items = this._registered_menus[target.getAttribute("data-menu-id")];
         items = this._expand_all_items(items, this._current_event);
         for (var i = 0, item; item = items[i]; i++)
         {
@@ -258,6 +258,4 @@ ContextMenu.get_instance = function()
 };
 
 ContextMenu.separator = {separator: true};
-
-
 
