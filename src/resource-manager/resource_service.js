@@ -88,22 +88,18 @@ cls.ResourceManagerService = function(view, data)
 
   this.get_resource_for_id = function(id)
   {
-    if (this._current_document && id in this._current_document.resourcemap)
+    if (this._current_context)
     {
-      return this._current_document.resourcemap[id];
+      return this._current_context.get_resource(id);
     }
     return null;
   };
 
   this.get_resource_for_url = function(url)
   {
-    if (this._current_document) {
-      for (var key in this._current_document.resourcemap) {
-        if (this._current_document.resourcemap[key].urlload.url == url)
-        {
-          return this._current_document.resourcemap[key];
-        }
-      }
+    if (this._current_context) {
+      var filterfun = function(res) { return res.url == url };
+      return this._current_context.resources.filter(filterfun).pop();
     }
     return null;
   };
