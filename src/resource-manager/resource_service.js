@@ -35,6 +35,17 @@ cls.ResourceManagerService = function(view, data)
     this._current_context.update("urlload", data);
   }.bind(this);
 
+  this._on_urlredirect_bound = function(msg)
+  {
+    if (!this._current_context) { return; }
+
+    var data = new cls.ResourceManager["1.0"].UrlRedirect(msg);
+    // a bit of cheating since further down we use .resouceID to determine
+    // what resource the event applies to:
+    data.resourceID = data.fromResourceID;
+    this._current_context.update("urlredirect", data);
+  }.bind(this);
+
   this._on_urlfinished_bound = function(msg)
   {
     if (!this._current_context) { return; }
@@ -49,24 +60,12 @@ cls.ResourceManagerService = function(view, data)
     this._current_context.update("response", data);
   }.bind(this);
 
-  this._on_urlredirect_bound = function(msg)
-  {
-    return
-    var data = new cls.ResourceManager["1.0"].UrlRedirect(msg)
-    var old_res = this._current_document.resourcemap[data.fromResourceID];
-    var new_res = {urlload: data, redirect_from: old_res}
-    delete this._current_document.resourcemap[data.fromResourceID];
-    this._current_document.resourcelist.splice(this._current_document.resourcelist.indexOf(data.fromResourceID), 1);
-    this._current_document.redirects[new_res.resourceID] = old_res;
-  }.bind(this);
-
-
   this.init = function()
   {
     this._res_service = window.services['resource-manager'];
     this._res_service.addListener("urlload", this._on_urlload_bound);
     this._res_service.addListener("response", this._on_response_bound);
-    //this._res_service.addListener("responsefinished", this._on_responsefinished_bound);
+    this._res_service.addListener("urlredirect", this._on_urlredirect_bound);
     this._res_service.addListener("urlfinished", this._on_urlfinished_bound);
     this._doc_service = window.services['document-manager'];
     this._doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
@@ -219,6 +218,10 @@ cls.Resource = function(id)
       {
         this.invalid = true;
       }
+    }
+    else if (eventname == "urlredirect")
+    {
+      this.invalid = true;
     }
     else
     {
