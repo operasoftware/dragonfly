@@ -252,6 +252,8 @@ ui_strings.S_SWITCH_FRIENDLY_PRINT = "Use specific information to represent obje
 ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE = "Show objects of type Element in the DOM view";
 /* DESC: Clears the command line log */
 ui_strings.S_CLEAR_COMMAND_LINE_LOG = "Clear command line";
+/* DESC: When enabled, compilation errors etc are shown in repl as well as error console */
+ui_strings.S_SWITCH_SHOW_ERRORS_IN_REPL = 'Show page javascript errors in command line';
 
 
 /**
@@ -270,6 +272,8 @@ ui_strings.M_CONTEXTMENU_EDIT_ATTRIBUTE = 'Edit attribute';
 ui_strings.M_CONTEXTMENU_EDIT_ATTRIBUTE_VALUE = 'Edit attribute value';
 /* DESC: Context menu item for editing text in the DOM view. */
 ui_strings.M_CONTEXTMENU_EDIT_TEXT = 'Edit text';
+/* DESC: Context menu item for specification links. */
+ui_strings.M_CONTEXTMENU_SPEC_LINK = 'Specification for "%s"';
 
 /*
  * Button tool-tips.
