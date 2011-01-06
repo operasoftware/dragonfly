@@ -1,26 +1,5 @@
 /**
  *
- * A document as represented here looks like this
- *
- * var document = {
- *   id: <document id>,
- *   resourcelist: <list of resources in load order>
- *   resourcemap: <dict of resource id -> resource object>
- * }
- *
- * A resource looks like this:
- *
- * {
- *   documentID: doc id,
- *   resourceID: res id,
- *   // maps to resman events:
- *   urlload:
- *   request: requeststart object
- *   requestheader
- *   response
- *   responseheader
- *   urldone
- *
  */
 
 cls.ResourceManagerService = function(view, data)
@@ -31,9 +10,7 @@ cls.ResourceManagerService = function(view, data)
   }
   cls.ResourceManagerService.instance = this;
 
-  this._seen_doc_ids = [];
-  this._document_contexts = {}; // mapping document id -> list of requests
-  this._current_document = null;
+  this._current_context = null;
 
   this._enable_content_tracking = function()
   {
@@ -43,114 +20,38 @@ cls.ResourceManagerService = function(view, data)
   this._on_abouttoloaddocument_bound = function(msg)
   {
     var data = new cls.DocumentManager["1.0"].AboutToLoadDocument(msg);
-
     // if not a top resource, just ignore. This usually means it's an iframe
     if (data.parentDocumentID) { return; }
-
-    this._seen_doc_ids = [];
-    this._current_document = {
-      id: null,
-      topresource: data.resourceID,
-      resourcelist: [],
-      resourcemap: {},
-      redirects: {},
-      firsttime: data.time,
-      lasttime: null
-    };
-
+    this._current_context = new cls.ResourceContext();
   }.bind(this);
 
   this._on_urlload_bound = function(msg)
   {
-    if (!this._current_document) { return; }
+    if (!this._current_context) { return; }
     var data = new cls.ResourceManager["1.0"].UrlLoad(msg);
 
     //bail if we get dupes. Why do we get dupes? fixme
-    if (data.resourceID in this._current_document.resourcemap) { return }
-
-    this._current_document.resourcelist.push(data.resourceID);
-    var resource = {urlload: data,
-                    redirected_from: this._current_document.redirects[data.resourceID]};
-    this._current_document.resourcemap[data.resourceID] = resource;
-  }.bind(this);
-
-  this._on_request_bound = function(msg)
-  {
-    if (!this._current_document) { return; }
-    var data = new cls.ResourceManager["1.0"].Request(msg);
-
-    var resource = this._current_document.resourcemap[data.resourceID];
-    if (!resource) {
-      opera.postError("No exist! " + JSON.stringify(data));
-    }
-    resource.request = data;
-
-  }.bind(this);
-
-  this._on_requestheader_bound = function(msg)
-  {
-    if (!this._current_document) { return; }
-    var data = new cls.ResourceManager["1.0"].RequestHeader(msg);
-    var resource = this._current_document.resourcemap[data.resourceID];
-    if (resource) {
-      resource.requestheader = data;
-    }
-  }.bind(this);
-
-  this._on_requestfinished_bound = function(msg)
-  {
-    if (!this._current_document) { return; }
-    var data = new cls.ResourceManager["1.0"].RequestFinished(msg);
-    var resource = this._current_document.resourcemap[data.resourceID];
-    if (resource) {
-      resource.requestfinished = data;
-    }
-  }.bind(this);
-
-  this._on_response_bound = function(msg)
-  {
-    if (!this._current_document) { return; }
-    var data = new cls.ResourceManager["1.0"].Response(msg);
-
-    var resource = this._current_document.resourcemap[data.resourceID];
-    if (resource) {
-      resource.response = data;
-    }
-  }.bind(this);
-
-  this._on_responseheader_bound = function(msg)
-  {
-    if (!this._current_document) { return; }
-    var data = new cls.ResourceManager["1.0"].ResponseHeader(msg);
-    var resource = this._current_document.resourcemap[data.resourceID];
-    if (resource) {
-      resource.responseheader = data;
-    }
-  }.bind(this);
-
-  this._on_responsefinished_bound = function(msg)
-  {
-    if (!this._current_document) { return; }
-    var data = new cls.ResourceManager["1.0"].ResponseFinished(msg);
-    var resource = this._current_document.resourcemap[data.resourceID];
-    if (resource) {
-      resource.responsefinished = data;
-    }
+    //if (data.resourceID in this._current_document.resourcemap) { return }
+    this._current_context.update("urlload", data);
   }.bind(this);
 
   this._on_urlfinished_bound = function(msg)
   {
-    if (!this._current_document) { return; }
+    if (!this._current_context) { return; }
     var data = new cls.ResourceManager["1.0"].UrlFinished(msg);
-    var resource = this._current_document.resourcemap[data.resourceID];
-    if (resource) {
-      resource.urlfinished = data;
-      this._current_document.lasttime = data.time;
-    }
+    this._current_context.update("urlfinished", data);
+  }.bind(this);
+
+  this._on_response_bound = function(msg)
+  {
+    if (!this._current_context) { return; }
+    var data = new cls.ResourceManager["1.0"].Response(msg);
+    this._current_context.update("response", data);
   }.bind(this);
 
   this._on_urlredirect_bound = function(msg)
   {
+    return
     var data = new cls.ResourceManager["1.0"].UrlRedirect(msg)
     var old_res = this._current_document.resourcemap[data.fromResourceID];
     var new_res = {urlload: data, redirect_from: old_res}
@@ -159,39 +60,21 @@ cls.ResourceManagerService = function(view, data)
     this._current_document.redirects[new_res.resourceID] = old_res;
   }.bind(this);
 
-  this._on_requestretry_bound = function(msg)
-  {
-//    opera.postError("got a retry " + JSON.stringify(msg, null, "    "));
-  }.bind(this);
-
 
   this.init = function()
   {
     this._res_service = window.services['resource-manager'];
     this._res_service.addListener("urlload", this._on_urlload_bound);
-    this._res_service.addListener("request", this._on_request_bound);
-    this._res_service.addListener("requestretry", this._on_requestretry_bound);
-    this._res_service.addListener("requestheader", this._on_requestheader_bound);
-    this._res_service.addListener("requestfinished", this._on_requestfinished_bound);
     this._res_service.addListener("response", this._on_response_bound);
-    this._res_service.addListener("responseheader", this._on_responseheader_bound);
-    this._res_service.addListener("responsefinished", this._on_responsefinished_bound);
-    this._res_service.addListener("urlredirect", this._on_urlredirect_bound);
+    //this._res_service.addListener("responsefinished", this._on_responsefinished_bound);
     this._res_service.addListener("urlfinished", this._on_urlfinished_bound);
-
     this._doc_service = window.services['document-manager'];
     this._doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
   };
 
-  this.get_request_context = function()
+  this.get_resource_context = function()
   {
-    if (this._current_document &&
-        this._current_document.resourcelist &&
-        this._current_document.resourcelist.length)
-    {
-      return new cls.RequestContext(this.get_resource_list());
-    }
-    return null;
+    return this._current_context;
   };
 
   /**
@@ -200,13 +83,8 @@ cls.ResourceManagerService = function(view, data)
    */
   this.get_resource_list = function()
   {
-    if (! this._current_document) { return []; }
-    var mapfun = function(e)
-    {
-      return this._current_document.resourcemap[e];
-    };
-
-    return this._current_document.resourcelist.map(mapfun, this);
+    if (! this._current_context) { return []; }
+    return this._current_context.resources;
   };
 
   this.get_resource_for_id = function(id)
@@ -242,48 +120,51 @@ cls.ResourceManagerService = function(view, data)
 };
 
 
-cls.RequestContext = function(reslist)
+cls.ResourceContext = function()
 {
-  this.resources = reslist;
+  this.resources = [];
+
+  this.update = function(eventname, event)
+  {
+    var res = this.get_resource(event.resourceID);
+
+    if (!res && eventname == "urlload")
+    {
+      res = new cls.Resource(event.resourceID)
+      if (this.resources.length == 0) { this.topresource = event.resourceID; }
+      this.resources.push(res);
+    }
+    else if (!res)
+    {
+      // ignoring. Never saw an urlload, or it's allready invalidated
+      return
+    }
+
+    res.update(eventname, event);
+    if (res.invalid)
+    {
+      this.resources.splice(this.resources.indexOf(res), 1);
+    }
+  }
+
   this.get_resource = function(id)
   {
-    return this.resources.filter(function(e) { return e.urlload.resourceID == id; })[0];
+    return this.resources.filter(function(e) { return e.id == id; })[0];
   };
 
-  /**
-   * Grab stuff based on mime type, ignoring subtype
-   */
-  this.get_resources_for_type = function()
+  this.get_resources_for_types = function()
   {
-    // FIXME: this will change, as it will be using urlfinished not responsefinished
     var types = Array.prototype.slice.call(arguments, 0);
-
-    var filterfun = function(e)
-    {
-      if (! e.responsefinished) { return false; }
-      var type = e.responsefinished.data.mimeType.split("/")[0];
-      return types.indexOf(type) > -1;
-    };
-
+    var filterfun = function(e) { return types.indexOf(e.type) > -1;};
     return this.resources.filter(filterfun);
   };
-  // alias with plural name
-  this.get_resources_for_types = this.get_resources_for_type;
 
-
-  this.get_resources_for_mime = function()
+  this.get_resources_for_mimes = function()
   {
-    // FIXME: this will change, as it will be using urlfinished not responsefinished
     var mimes = Array.prototype.slice.call(arguments, 0);
-
-    var filterfun = function(e)
-    {
-      return e.responsefinished && mimes.indexOf(e.responsefinished.data.mimeType) > -1;
-    };
-
+    var filterfun = function(e) { return mimes.indexOf(e.mime) > -1; };
     return this.resources.filter(filterfun);
   };
-
 
   this.get_resource_groups = function()
   {
@@ -303,57 +184,66 @@ cls.RequestContext = function(reslist)
       scripts: scripts, other: other
     }
   }
+}
 
-  this.get_resource_sizes = function()
+cls.Resource = function(id)
+{
+  this.id = id;
+  this.finished = false;
+  this.url = null;
+  this.result = null;
+  this.mime = null;
+  this.encoding = null;
+  this.size = null;
+  this.type = null;
+  this.invalid = false;
+
+  this.update = function(eventname, eventdata)
   {
-    var groups = this.get_resource_groups();
-    var ret = {};
-    var sizefun = function(e) { return e.urlfinished ? e.urlfinished.contentLength : 0; };
-    var total = 0;
-    for (var key in groups)
+    if (eventname == "urlload")
     {
-      var current = groups[key].sum(sizefun);
-      total += current;
-      ret[key] = current;
+      this.url = eventdata.url;
     }
-    ret.total = total;
-    return ret;
-  }
-
-  this.get_resource_times = function()
-  {
-    var groups = this.get_resource_groups();
-    var ret = {};
-    // don't count stuff in progress!
-    var timefun = function(e) { return e.urlfinished ? e.urlfinished.time - e.urlload.time : 0; };
-
-    var total = 0;
-    for (var key in groups)
+    else if (eventname == "urlfinished")
     {
-      var current = groups[key].sum(timefun);
-      total += current;
-      ret[key] = current;
+      this.result = eventdata.result;
+      this.mime = eventdata.mimeType;
+      this.encoding = eventdata.characterEncoding;
+      this.size = eventdata.contentLength;
+      this.finished = true;
+      this._guess_type();
     }
-    ret.total = total;
-
-    return ret;
-  };
-
-  this.get_start_time = function()
-  {
-    return this.resources[0].urlload.time;
+    else if (eventname == "response")
+    {
+      if (eventdata.responseCode <= 100 || eventdata.responseCode >= 300)
+      {
+        this.invalid = true;
+      }
+    }
+    else
+    {
+      opera.postError("got unknown event: " + eventname);
+    }
   }
 
-  this.get_end_time = function()
+  this.get_source = function()
   {
-    return this.resources[this.resources.length-1].urlfinished.time;
+    // cache, file, http, https ..
   }
 
-  this.get_duration = function()
+  this._guess_type = function()
   {
-    var last = 0;
-    this.resources.forEach(function(e) { if (e.urlfinished) { last = e.urlfinished.time; }});
-    return last - this.resources[0].urlload.time;
-  };
-
+    if (!this.finished)
+    {
+      this.type = undefined;
+    }
+    else if (this.mime.toLowerCase() == "application/octet-stream")
+    {
+      this.type = cls.ResourceUtil.path_to_type(this.url);
+    }
+    else
+    {
+      this.type = cls.ResourceUtil.mime_to_type(this.mime);
+    }
+  }
 }

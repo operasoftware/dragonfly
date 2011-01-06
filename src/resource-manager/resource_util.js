@@ -44,6 +44,24 @@ cls.ResourceUtil.millis_to_human_readable = function(millis)
   }
 }
 
+
+/**
+ * Common extensions mapped to generic type strings
+ */
+cls.ResourceUtil.extension_type_map = {
+  png: "image",
+  jpg: "image",
+  bmp: "image",
+  pcx: "image",
+  ico: "image",
+  jpeg: "image",
+
+  oex: "extension",
+
+  otf: "font",
+  ttf: "font",
+}
+
 /**
  * Common mime types mapped to more generic strings
  */
@@ -123,6 +141,7 @@ cls.ResourceUtil.mime_to_content_mode = function(mime)
     case "image":
     case "pdf":
     case "flash":
+    case "font":
       return "datauri";
     case "markup":
     case "css":
@@ -133,13 +152,19 @@ cls.ResourceUtil.mime_to_content_mode = function(mime)
   return "text";
 }
 
-cls.ResourceUtil.mime_to_type = function(mime)
+cls.ResourceUtil.mime_to_type = function(mime, extension)
 {
-  return this.mime_type_map[mime] || "unknown";
+  return this.mime_type_map[mime];
+}
+
+cls.ResourceUtil.path_to_type = function(path)
+{
+  var extension = path.slice(path.lastIndexOf(".") + 1);
 }
 
 cls.ResourceUtil.url_path = function(url)
 {
+  if (!url) { return null; }
   var firstslash = url.replace("://", "xxx").indexOf("/");
   var querystart = url.indexOf("?");
   if (querystart == -1) { querystart = url.length; }
@@ -162,6 +187,7 @@ cls.ResourceUtil.url_filename = function(url)
 
 cls.ResourceUtil.url_host = function(url)
 {
+  if (!url) { return null; }
   var host = url.replace(/\w+?:\/\//, "");
   var firstslash = host.indexOf("/");
   host = host.slice(0, firstslash == -1 ? host.length : firstslash);

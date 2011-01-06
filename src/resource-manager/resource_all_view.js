@@ -18,15 +18,15 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
 
   this._render_main_view = function(container)
   {
-    var ctx = this._service.get_request_context();
-
-    if (ctx)
+    var ctx = this._service.get_resource_context();
+    if (ctx && ctx.resources.length)
     {
       if (!this._table)
       {
-        this._table = new SortableTable(this._tabledef, ctx.resources.slice(0))
+        this._table = new SortableTable(this._tabledef, null)
       }
-      container.clearAndRender(this._table.render())
+      this._table.data = ctx.resources.slice(0);
+      container.clearAndRender(this._table.render());
     }
     else if (this._loading)
     {
@@ -53,7 +53,17 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
 
   this._open_resource_tab = function(resource)
   {
-    var view = new cls.GenericResourceDetail(resource, this._service);
+    var type = cls.ResourceUtil.mime_to_type(resource.urlfinished.mimeType);
+
+    if (type == "font")
+    {
+      var view = new cls.FontResource(resource, this._service);
+    }
+    else
+    {
+      var view = new cls.GenericResourceDetail(resource, this._service);
+    }
+
     var ui = UI.get_instance();
     ui.get_tabbar("resources").add_tab(view.id);
     ui.show_view(view.id);
@@ -85,53 +95,48 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
 
   this._tabledef = {
     handler: "resources-all-open",
-    idgetter: function(res) { return String(res.urlload.resourceID) },
+    idgetter: function(res) { return String(res.id) },
     groups: {
       hosts: {
         label: "Hosts",
-        grouper: function(res) { return cls.ResourceUtil.url_host(res.urlload.url) }
+        grouper: function(res) { return cls.ResourceUtil.url_host(res.url) }
       },
       types: {
         label: "Types",
-        grouper: function(res) { return cls.ResourceUtil.mime_to_type(res.urlfinished ?
-                                                                      res.urlfinished.mimeType :
-                                                                      "unknown")}
+        grouper: function(res) { return res.type || "unknown"}
       }
     },
     columns: {
       icon: {
         label: "Icon",
         sorter: "unsortable",
-        renderer: function(res) {
-          return templates.resource_icon(res.urlfinished ?
-                                         res.urlfinished.mimeType :
-                                         null) },
+        renderer: function(res) { return templates.resource_icon(res.mime) }
       },
       host: {
         label: "Host",
-        getter: function(res) { return cls.ResourceUtil.url_host(res.urlload.url) },
+        getter: function(res) { return cls.ResourceUtil.url_host(res.url) },
       },
       path: {
         label: "Path",
-        getter: function(res) { return cls.ResourceUtil.url_path(res.urlload.url) },
+        getter: function(res) { return cls.ResourceUtil.url_path(res.url) },
       },
       mime: {
         label: "Mime",
-        getter: function(res) { return res.urlfinished ? res.urlfinished.mimeType : "n/a" }
+        getter: function(res) { return res.mime || "n/a" }
       },
       type: {
         label: "Type",
-        getter: function(res) { return res.urlfinished ? cls.ResourceUtil.mime_to_type(res.urlfinished.mimeType) : "n/a" }
+        getter: function(res) { return res.type || "n/a" }
       },
       size: {
         label: "Size",
-        getter: function(res) { return String(res.urlfinished ? res.urlfinished.contentLength : "n/a") },
+        getter: function(res) { return res.size ? String(res.size) : "n/a" },
       },
       size_h: {
         label: "Size(h)",
         getter: function(res) {
-          return String(res.urlfinished ?
-                        cls.ResourceUtil.bytes_to_human_readable(res.urlfinished.contentLength) :
+          return String(res.size ?
+                        cls.ResourceUtil.bytes_to_human_readable(res.size) :
                         "n/a")
         }
       }
