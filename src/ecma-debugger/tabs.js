@@ -224,7 +224,7 @@ cls.EcmascriptDebugger["5.0"].HostTabs = function()
     var rt_p = '', i = 0, id = '';
     for( ; rt_p = __activeTab[i]; i++ )
     {
-      if (window.runtimes.is_extension_runtime(rt_p))
+      if (!window.runtimes.runtime_has_dom(rt_p))
       {
         continue;
       }
