@@ -293,7 +293,12 @@ cls.DOMView.create_ui_widgets = function()
             }
           ]
           .concat(ContextMenu.separator)
-          .concat(dom_element_common_items);
+          .concat(dom_element_common_items)
+          .concat(ContextMenu.separator)
+          .concat({
+            label: ui_strings.M_CONTEXTMENU_EXPAND_COLLAPSE_SUBTREE,
+            handler: contextmenu_expand_collapse_subtree
+          });
           break;
 
         case "key":
@@ -305,7 +310,11 @@ cls.DOMView.create_ui_widgets = function()
             {
               label: ui_strings.M_CONTEXTMENU_ADD_ATTRIBUTE,
               handler: contextmenu_add_attribute
-            }
+            }/*,
+            {
+              label: "Remove attribute", // Add ui string
+              handler: contextmenu_remove_attribute
+            }*/
           ]
           .concat(ContextMenu.separator)
           .concat(dom_element_common_items);
@@ -363,9 +372,18 @@ cls.DOMView.create_ui_widgets = function()
     broker.dispatch_action("dom", "insert-attribute-edit", event, event.target);
   }
 
+  function contextmenu_remove_attribute(event, target)
+  {
+    broker.dispatch_action("dom", "remove-attribute", event, event.target);
+  }
+
   function contextmenu_remove_node(event, target)
   {
     broker.dispatch_action("dom", "remove-node", event, event.target);
+  }
+
+  function contextmenu_expand_collapse_subtree(event, target) {
+    broker.dispatch_action("dom", "expand-collapse-whole-node", event, event.target);
   }
 
   new Switches

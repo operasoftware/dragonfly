@@ -282,6 +282,8 @@ ui_strings.M_CONTEXTMENU_EDIT_ATTRIBUTE = 'Edit attribute';
 ui_strings.M_CONTEXTMENU_EDIT_ATTRIBUTE_VALUE = 'Edit attribute value';
 /* DESC: Context menu item for editing text in the DOM view. */
 ui_strings.M_CONTEXTMENU_EDIT_TEXT = 'Edit text';
+/* DESC: Context menu item for expanding/collapsing a node subtree. */
+ui_strings.M_CONTEXTMENU_EXPAND_COLLAPSE_SUBTREE = 'Expand/collapse subtree';
 
 /* DESC: Context menu item for disabling all declarations in a rule. */
 ui_strings.M_CONTEXTMENU_DISABLE_DECLARATIONS = 'Disable all declarations';

@@ -91,7 +91,7 @@ cls.DOMInspectorActions = function(id)
     obj_id = parseInt(target.getAttribute('ref-id')),
     model_id = target.get_attr("parent-node-chain", "data-model-id"),
     inspections = window.dominspections,
-    model = null
+    model = null,
     scroll_into_view = false,
     current_target_id = 0;
 
@@ -686,6 +686,21 @@ cls.DOMInspectorActions = function(id)
       var start_tag = container.querySelector("[ref-id='" + target.get_attr("parent-node-chain", "ref-id") + "'] node");
       this.editor.insert_attribute_edit(start_tag);
     }
+  }.bind(this);
+
+  this._handlers["remove-attribute"] = function(event, target)
+  {
+    var ele = event.target.has_attr("parent-node-chain", "ref-id");
+    var rt_id = parseInt(ele.get_attr("parent-node-chain", "rt-id"));
+    var ref_id = parseInt(ele.get_attr("parent-node-chain", "ref-id"));
+    var attr = target.textContent;
+    var tag = 0;
+    if (!settings.dom.get("update-on-dom-node-inserted"))
+    {
+      var cb = window.dom_data.remove_node.bind(window.dom_data, rt_id, ref_id);
+      tag = tag_manager.set_callback(null, cb);
+    }
+    services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, "el.removeAttribute(\"" + attr + "\")", [["el", ref_id]]]);
   }.bind(this);
 
   this._handlers["edit-next"] = function(event, target)
