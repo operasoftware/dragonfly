@@ -53,7 +53,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
 
   this._open_resource_tab = function(resource)
   {
-    var type = cls.ResourceUtil.mime_to_type(resource.urlfinished.mimeType);
+    var type = resource.type;
 
     if (type == "font")
     {
