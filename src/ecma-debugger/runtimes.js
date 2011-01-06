@@ -368,6 +368,11 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
 
   }
 
+  this.is_extension_runtime = function(rt_id)
+  {
+    return __runtimes[rt_id].description == "extensionjs";
+  };
+
   var __scripts = {};
 
 /** checks if that script is already known from a previous runtime
