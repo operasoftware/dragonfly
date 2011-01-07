@@ -142,9 +142,12 @@
 
     if (do_unpack)
     {
-      var fallback = this._handle_log.bind(this, msg, rt_id, true);
+      // list unpacker works as side effect
+      // it replace the VALUE_LIST with an unpacked list in the scope message
+      // that means the callback is an error and success callback
+      var callback = this._handle_log.bind(this, msg, rt_id, true);
       this._is_processing = true;
-      this._unpack_list_alikes(msg, rt_id, fallback);
+      this._list_unpacker.unpack_list_alikes(msg, rt_id, callback);
     }
     else if (do_friendly_print && obj_list.length)
     {
@@ -166,145 +169,6 @@
       }
     }
 
-  };
-
-  this._unpack_list_alikes = function(msg, rt_id, fallback)
-  {
-    const VALUE_LIST = 2, OBJECT_VALUE = 1, OBJECT_ID = 0;
-    var obj_ids = (msg[VALUE_LIST]).map(function(value, index)
-    {
-      return value[OBJECT_VALUE] && value[OBJECT_VALUE][OBJECT_ID] || 0;
-    });
-    var call_list = obj_ids.map(function(object_id)
-    {
-      return object_id && "$_" + object_id || null;
-    }).join(',');
-    var arg_list = obj_ids.reduce(function(list, obj_id)
-    {
-      if (obj_id)
-        list.push(["$_" + obj_id, obj_id]);
-      return list;
-    }, []);
-    var tag = this._tagman.set_callback(this, this._handle_list_alikes_list,
-                                        [msg, rt_id, obj_ids, fallback]);
-    var script = this._is_list_alike.replace("%s", call_list);
-    var msg = [rt_id, 0, 0, script, arg_list];
-    this._edservice.requestEval(tag, msg);
-  }
-
-  // Boolean(document.all) === false
-  this._is_list_alike = "(" + (function(list)
-  {
-    return list.map(function(item)
-    {
-      var _class = item === null ? "" : Object.prototype.toString.call(item);
-      if (/(?:Array|Collection|List|Map)\]$/.test(_class))
-        return 2;
-      if (_class == "[object Object]" && typeof item.length == "number")
-        return 1;
-      return 0;
-    }).join(',');
-  }).toString() + ")([%s])";
-
-  this._handle_list_alikes_list = function(status, msg, orig_msg,
-                                           rt_id, obj_ids, fallback)
-  {
-    const STATUS = 0, VALUE = 2;
-    if (status || msg[STATUS] != "completed")
-    {
-      fallback();
-    }
-    else
-    {
-      var log = msg[VALUE].split(',').map(Number);
-      if (log.filter(Boolean).length)
-      {
-        var unpack = log.reduce(function(list, entry, index)
-        {
-          if (entry)
-            list.push(obj_ids[index]);
-          return list;
-        }, []);
-        var tag = this._tagman.set_callback(this, this._handle_unpacked_list,
-                                            [orig_msg, rt_id, log]);
-        this._edservice.requestExamineObjects(tag, [rt_id, unpack]);
-      }
-      else
-      {
-        fallback();
-      }
-    }
-  }
-
-  this._handle_unpacked_list = function(status, msg, orig_msg, rt_id, log)
-  {
-    const OBJECT_CHAIN_LIST = 0, VALUE_LIST = 2, DF_INTERN_TYPE = 3;
-    if (status || !msg[OBJECT_CHAIN_LIST])
-    {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
-                      " ExamineObjects failed in _handle_unpacked_list in repl_service");
-    }
-    else
-    {
-      var object_list =
-        (msg[OBJECT_CHAIN_LIST]).map(this._examine_objects_to_value_list, this);
-      var orig_value_list = orig_msg[VALUE_LIST];
-      orig_msg[VALUE_LIST] = log.reduce(function(list, log_entry, index)
-      {
-        if (log_entry)
-        {
-          var unpack_header = orig_value_list[index];
-          unpack_header[DF_INTERN_TYPE] = "unpack-header";
-          list.push(unpack_header);
-          list.push.apply(list, object_list.shift());
-          list.push(["", null, 0, "unpack-footer"]);
-        }
-        else
-          list.push(orig_value_list[index]);
-        return list;
-      }, []);
-      this._handle_log(orig_msg, rt_id, true);
-    }
-  }
-
-  this._examine_objects_to_value_list = function(object_chain)
-  {
-    const
-    // message ExamineObjects
-    OBJECT_LIST = 0,
-    // sub message ObjectInfo
-    VALUE = 0, PROPERTY_LIST = 1,
-    // sub message ObjectValue
-    CLASS_NAME = 4,
-    // sub message Property
-    NAME = 0, PROPERTY_TYPE = 1, PROPERTY_VALUE = 2, OBJECT_VALUE = 3;
-
-    var value_list = [];
-    var object = object_chain[OBJECT_LIST] && object_chain[OBJECT_LIST][0];
-    if (object && object[PROPERTY_LIST])
-    {
-      value_list = (object[PROPERTY_LIST]).reduce(function(list, prop)
-      {
-        if (prop[NAME].isdigit())
-        {
-          if (prop[PROPERTY_TYPE] == 'object')
-            list.push([null, prop[OBJECT_VALUE], parseInt(prop[NAME])]);
-          else
-          {
-            if (prop[PROPERTY_TYPE] == "string")
-              prop[PROPERTY_VALUE] = "\"" + prop[PROPERTY_VALUE] + "\"";
-            list.push([prop[PROPERTY_VALUE] || prop[PROPERTY_TYPE],
-                      null, parseInt(prop[NAME])]);
-          }
-        }
-        return list;
-      }, []);
-      value_list.sort(function(a, b)
-      {
-        return a[2] < b[2] ? -1 : a[2] > b[2] ? 1 : 0;
-      });
-    }
-    return value_list;
   };
 
   this._handle_count = function(msg)
@@ -438,8 +302,8 @@
                                                        true);
       // convert Eval to OnConsoleLog
       // 1 - console.log
-      this._unpack_list_alikes([rt_id, 1, [[null, msg[OBJECT_VALUE]]]],
-                               rt_id, fallback);
+      this._list_unpacker.unpack_list_alikes([rt_id, 1, [[null, msg[OBJECT_VALUE]]]],
+                                             rt_id, fallback);
     }
     else if (do_friendly_print)
     {
@@ -617,6 +481,7 @@
     this._prev_selected = null;
     this._transformer = new cls.HostCommandTransformer();
     this._friendly_printer = new cls.FriendlyPrinter();
+    this._list_unpacker = new cls.ListUnpacker();
     this._tagman = window.tagManager; //TagManager.getInstance(); <- fixme: use singleton
     this._edservice = window.services["ecmascript-debugger"];
     this._edservice.addListener("consolelog", this._on_consolelog_bound);

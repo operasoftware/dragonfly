@@ -335,6 +335,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./repl/inspectableobjectview.js"/>
 <script src="./repl/buffermanager.js"/>
 <script src="./repl/friendlyprinter.js"/>
+<script src="./repl/listunpacker.js"/>
 <script src="./repl/repl_service.js"/>
 <script src="./repl/repl_view.js"/>
 <script src="./repl/repl_data.js"/>
