@@ -8,8 +8,8 @@
 
   this._count_map = {};
 
-  this._msg_queue = [];
-  this._is_processing = false;
+  
+  //this._is_processing = false;
 
   this._on_consolemessage_bound = function(msg)
   {
@@ -18,23 +18,7 @@
     this._data.add_output_errorlog(data.description);
   }.bind(this);
 
-  this._queue_msg_with_handler = function(handler)
-  {
-    var args = Array.prototype.slice.call(arguments, 1);
-    if (this._is_processing) { this._msg_queue.push([handler, args]); }
-    else { handler.apply(this, args); }
-  };
 
-  this._process_msg_queue = function()
-  {
-    const METHOD = 0, ARGS = 1;
-    var item = null;
-    while (!this._is_processing && this._msg_queue.length)
-    {
-      item = this._msg_queue.shift();
-      item[METHOD].apply(this, item[ARGS]);
-    }
-  }
 /*
     this._on_consolelog_bound = 
       this._queue_msg_with_handler.bind(this, this._process_on_consolelog);
@@ -149,16 +133,16 @@
 
     if (do_unpack)
     {
-      // list unpacker works as side effect
-      // it replace the VALUE_LIST with an unpacked list in the scope message
-      // that means the callback is an error and success callback
+      // the callback works as error and success callback
+      // the _list_unpacker replace the VALUE_LIST 
+      // with an unpacked list in the scope message
       var callback = this._handle_log.bind(this, msg, rt_id, true);
-      this._is_processing = true;
-      this._list_unpacker.unpack_list_alikes(msg, rt_id, callback);
+      this._msg_queue.stop_processing();
+      this._list_unpacker.unpack_list_alikes(msg, rt_id, callback, callback);
     }
     else if (do_friendly_print && obj_list.length)
     {
-      this._is_processing = true;
+      this._msg_queue.stop_processing();
       var cb = this._handle_log.bind(this, msg, rt_id, true, true);
       // friendly prinyter works as side effect
       // it set a FRIENDLY_PRINTED field on each object
@@ -169,13 +153,11 @@
     {
       var values = this._parse_value_list(msg[VALUELIST], rt_id);
       this._data.add_output_valuelist(rt_id, values);
-      if (is_unpacked && this._is_processing)
+      if (is_unpacked)
       {
-        this._is_processing = false;
-        this._process_msg_queue();
+        this._msg_queue.continue_processing();
       }
     }
-
   };
 
   this._handle_count = function(msg)
@@ -304,13 +286,14 @@
                             settings.command_line.get("do-friendly-print");
     if (do_unpack)
     {
-      var fallback = this._before_handling_object.bind(this, msg, rt_id,
+      var error_cb = this._before_handling_object.bind(this, msg, rt_id,
                                                        thread_id, frame_id,
                                                        true);
-      // convert Eval to OnConsoleLog
+      // convert Eval to OnConsoleLog message
       // 1 - console.log
-      this._list_unpacker.unpack_list_alikes([rt_id, 1, [[null, msg[OBJECT_VALUE]]]],
-                                             rt_id, fallback);
+      var log_msg = [rt_id, 1, [[null, msg[OBJECT_VALUE]]]];
+      var success_cb = this._handle_log.bind(this, log_msg, rt_id, true);
+      this._list_unpacker.unpack_list_alikes(log_msg, rt_id, error_cb, success_cb);
     }
     else if (do_friendly_print)
     {
@@ -487,12 +470,11 @@
     this._cur_selected = null;
     this._prev_selected = null;
     this._transformer = new cls.HostCommandTransformer();
+    this._msg_queue = new Queue(this);
     this._friendly_printer = new cls.FriendlyPrinter();
     this._list_unpacker = new cls.ListUnpacker();
-    this._on_consolelog_bound = 
-      this._queue_msg_with_handler.bind(this, this._process_on_consolelog);
-    this._on_eval_done_bound = 
-      this._queue_msg_with_handler.bind(this, this._process_on_eval_done);
+    this._on_consolelog_bound = this._msg_queue.queue(this._process_on_consolelog);
+    this._on_eval_done_bound = this._msg_queue.queue(this._process_on_eval_done);
     this._tagman = window.tagManager; //TagManager.getInstance(); <- fixme: use singleton
     this._edservice = window.services["ecmascript-debugger"];
     this._edservice.addListener("consolelog", this._on_consolelog_bound);
