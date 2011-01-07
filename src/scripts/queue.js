@@ -1,3 +1,12 @@
+/**
+  * @constructor
+  *
+  *
+  * @class
+  * A queue to handle message is order, if the handling of messages itself
+  * is asynchron, e.g. due to new calls on the scope interface to be 
+  * able to handle the message.
+  */
 var Queue = function(handler_object)
 {
   /* interface */
@@ -10,7 +19,7 @@ var Queue = function(handler_object)
     * otherwise it will be stored on top of the queue.
     * The signature of the handler does not change.
     * Handlers will be called on the handler_object.
-    * @param {Function} handler. A bound message handler.
+    * @param {Function} handler. A method of the handler_object.
     * @return a queued handler.
     */
   this.queue = function(handler){};
