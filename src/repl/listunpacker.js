@@ -1,9 +1,9 @@
 window.cls || (window.cls = {});
 
-window.cls.ListUnpacker = function(repl_service)
+window.cls.ListUnpacker = function()
 {
 
-  this.unpack_list_alikes = function(msg, rt_id, callback)
+  this.unpack_list_alikes = function(msg, rt_id, error_callback, success_callback)
   {
     const VALUE_LIST = 2, OBJECT_VALUE = 1, OBJECT_ID = 0;
     var value_list = msg[VALUE_LIST];
@@ -22,7 +22,8 @@ window.cls.ListUnpacker = function(repl_service)
       }
     };
     var tag = this._tagman.set_callback(this, this._handle_list_alikes_list,
-                                        [msg, rt_id, obj_ids, callback]);
+                                        [msg, rt_id, obj_ids,
+                                         error_callback, success_callback]);
     var script = this._is_list_alike_to_string.replace("%s", call_list.join(','));
     var msg = [rt_id, 0, 0, script, arg_list];
     this._edservice.requestEval(tag, msg);
@@ -47,12 +48,13 @@ window.cls.ListUnpacker = function(repl_service)
   };
 
   this._handle_list_alikes_list = function(status, msg, orig_msg,
-                                           rt_id, obj_ids, callback)
+                                           rt_id, obj_ids,
+                                           error_callback, success_callback)
   {
     const STATUS = 0, VALUE = 2;
     if (status || msg[STATUS] != "completed")
     {
-      callback();
+      error_callback();
     }
     else
     {
@@ -68,23 +70,26 @@ window.cls.ListUnpacker = function(repl_service)
           return list;
         }, []);
         var tag = this._tagman.set_callback(this, this._handle_unpacked_list,
-                                            [orig_msg, rt_id, log, callback]);
+                                            [orig_msg, rt_id, log,
+                                             error_callback, success_callback]);
         this._edservice.requestExamineObjects(tag, [rt_id, unpack]);
       }
       else
       {
-        callback();
+        error_callback();
       }
     }
   }
 
-  this._handle_unpacked_list = function(status, msg, orig_msg, rt_id, log, callback)
+  this._handle_unpacked_list = function(status, msg, orig_msg, rt_id, log,
+                                        error_callback, success_callback)
   {
     const OBJECT_CHAIN_LIST = 0, VALUE_LIST = 2, DF_INTERN_TYPE = 3;
     if (status || !msg[OBJECT_CHAIN_LIST])
     {
       opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
                       " ExamineObjects failed in _handle_unpacked_list in ListUnpacker");
+      error_callback();
     }
     else
     {
@@ -107,8 +112,9 @@ window.cls.ListUnpacker = function(repl_service)
         }
         return list;
       }, []);
+      success_callback();
     }
-    callback();
+
   }
 
   this._examine_objects_to_value_list = function(object_chain)
@@ -155,16 +161,14 @@ window.cls.ListUnpacker = function(repl_service)
     return value_list;
   };
 
-  this.init = function(repl_service)
+  this.init = function()
   {
-    this._repl_service = repl_service;
     this._tagman = window.tagManager;
     this._edservice = window.services["ecmascript-debugger"];
-    this._is_list_alike_to_string = "(" + 
-                                    this._is_list_alike.toString() + 
-                                    ")([%s])";
+    this._is_list_alike_to_string =
+      "(" + this._is_list_alike.toString() + ")([%s])";
   };
 
-  this.init(repl_service);
+  this.init();
 
 };
