@@ -18,20 +18,27 @@
     this._data.add_output_errorlog(data.description);
   }.bind(this);
 
-  this._on_consolelog_bound = function(msg)
+  this._queue_msg_with_handler = function(handler)
   {
-    if (this._is_processing) { this._msg_queue.push(msg); }
-    else { this._process_on_consolelog(msg); }
-  }.bind(this);
+    var args = Array.prototype.slice.call(arguments, 1);
+    if (this._is_processing) { this._msg_queue.push([handler, args]); }
+    else { handler.apply(this, args); }
+  };
 
   this._process_msg_queue = function()
   {
+    const METHOD = 0, ARGS = 1;
+    var item = null;
     while (!this._is_processing && this._msg_queue.length)
     {
-      this._process_on_consolelog(this._msg_queue.shift());
+      item = this._msg_queue.shift();
+      item[METHOD].apply(this, item[ARGS]);
     }
   }
-
+/*
+    this._on_consolelog_bound = 
+      this._queue_msg_with_handler.bind(this, this._process_on_consolelog);
+      */
   this._process_on_consolelog = function(msg)
   {
     const RUNTIME = 0, TYPE = 1;
@@ -253,7 +260,7 @@
     }
   };
 
-  this._on_eval_done_bound = function(status, msg, rt_id, thread_id, frame_id)
+  this._process_on_eval_done = function(status, msg, rt_id, thread_id, frame_id)
   {
     const STATUS = 0, TYPE = 1, OBJECT_VALUE = 3;
     const BAD_REQUEST = 3, INTERNAL_ERROR = 4;
@@ -285,7 +292,7 @@
     {
       this._handle_native(msg);
     }
-  }.bind(this);
+  };
 
   this._before_handling_object = function(msg, rt_id, thread_id, frame_id,
                                           is_unpacked, is_friendly_printed)
@@ -482,6 +489,10 @@
     this._transformer = new cls.HostCommandTransformer();
     this._friendly_printer = new cls.FriendlyPrinter();
     this._list_unpacker = new cls.ListUnpacker();
+    this._on_consolelog_bound = 
+      this._queue_msg_with_handler.bind(this, this._process_on_consolelog);
+    this._on_eval_done_bound = 
+      this._queue_msg_with_handler.bind(this, this._process_on_eval_done);
     this._tagman = window.tagManager; //TagManager.getInstance(); <- fixme: use singleton
     this._edservice = window.services["ecmascript-debugger"];
     this._edservice.addListener("consolelog", this._on_consolelog_bound);
