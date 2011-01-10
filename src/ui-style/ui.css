@@ -280,20 +280,75 @@ toolbar button[is-active="true"]:active,
 window-toolbar button[is-active="true"]:active,
 top-toolbar button[is-active="true"]:active,
 window-controls button[is-active="true"]:active {
-    background-color: #e6e6e6;
+    background-color: #999;
 }
+
 /* Show the button topmost when the overlay is visible */
 [handler="toggle-settings-overlay"][is-active="true"],
 [handler="toggle-remote-debug-config-overlay"][is-active="true"] {
     position: relative;
     z-index: 4;
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, .5);
-    border-color: #333;
+    border-color: #444;
 }
 [handler="toggle-settings-overlay"][is-active="true"]:active,
 [handler="toggle-remote-debug-config-overlay"][is-active="true"]:active {
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, .5);
 }
+
+
+/* Alert state */
+toolbar button.alert,
+window-toolbar button.alert,
+top-toolbar button.alert,
+window-controls button.alert,
+cst-select-toolbar-setting.alert,
+.ui-button.alert,
+cst-select.alert,
+toolbar button[disabled].alert
+{
+  background-color: #ff8040;
+  border-color: #bf3000;
+  color: #993d1f;
+  box-shadow: inset 0 0 1px #fff, inset 0 0 10px #ff4433,  0 1px rgba(255,255,255,0.5), 0 0 2px #ff0000;
+}
+
+toolbar button.alert:not([disabled]):active,
+window-toolbar button.alert:not([disabled]):active,
+top-toolbar button.alert:active,
+window-controls button.alert:active,
+cst-select-toolbar-setting.alert:active,
+.ui-button.alert:active,
+cst-select.alert:active {
+    background-color: #ff8040;
+    border-color: #bf3000;
+    box-shadow: inset 0 1px 2px #bf1000, inset 0 0 10px #ff4433,  0 1px rgba(255,255,255,0.5), 0 0 2px #ff0000;
+}
+toolbar button.alert[is-active="true"],
+window-toolbar button.alert[is-active="true"],
+top-toolbar button.alert[is-active="true"],
+window-controls button.alert[is-active="true"],
+cst-select.alert[is-active="true"] {
+    background-color: #e54c2e;
+    border-color: #bf3000;
+    box-shadow: inset 0 1px 2px #bf1000, inset 0 0 10px #ff4433,  0 1px rgba(255,255,255,0.5), 0 0 2px #ff0000;
+}
+toolbar button.alert[is-active="true"]:active,
+window-toolbar button.alert[is-active="true"]:active,
+top-toolbar button.alert[is-active="true"]:active,
+window-controls button.alert[is-active="true"]:active {
+    background-color: #bf381d;
+}
+
+.alert[handler="toggle-settings-overlay"][is-active="true"],
+.alert[handler="toggle-remote-debug-config-overlay"][is-active="true"],
+.alert[handler="toggle-settings-overlay"][is-active="true"]:active,
+.alert[handler="toggle-remote-debug-config-overlay"][is-active="true"]:active
+{
+    box-shadow: inset 0 1px 2px #bf1000, inset 0 0 10px #ff4433,  0 1px rgba(255,255,255,0.2), 0 0 4px #ff0000;
+    border-color: #721;
+}
+
 
 cst-select[cst-id="debugger-menu"] {
     width: 33px;
