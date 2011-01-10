@@ -770,10 +770,7 @@ ui-menu { /**/
   right:30px;
   top: 0px;
   z-index:10;
-  }
-
-ui-menu.attached { /**/
-  right: 100px;
+  right: 200px;
   }
 
 ui-menu > h2 { /**/
@@ -1432,7 +1429,7 @@ overlay-window {
     box-shadow: 0 1px 6px rgba(0, 0, 0, .6);
     background: rgba(40, 40, 40, .9);
     width: 70%;
-    min-width: 600px;
+    min-width: 650px;
     border: 2px solid #b1b1b1;
     display: block;
     position: absolute;
@@ -1460,6 +1457,8 @@ overlay-tabs {
     border-radius: 7px 7px 0 0;
     border-bottom: none;
     padding: 5px 5px 0;
+    overflow: hidden;
+    white-space: nowrap;
 }
 overlay-tabs tab {
     border-radius: 3px 3px 0 0;

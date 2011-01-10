@@ -138,8 +138,17 @@ ul {
   background-position: 0 0;
   }
 
+#backtrace-container .scope-name {
+  font-family: monospace;
+}
+
+#backtrace-container li:hover .scope-name {
+  color: #000;
+  text-decoration: underline;
+}
+
 #backtrace-container .file-line {
-  color: #999
+  color: #999;
 }
 
 #ecma-debugger-toolbar {
