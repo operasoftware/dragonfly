@@ -5,7 +5,7 @@ viewport, .info-box, #about-authors pre {
   color: #444;
 }
 
-.dom div, .js-source div, .console-output, .console-output pre, .console-input, .console-input textarea, property, rule, font-face-rule, page-rule, import-rule, charset-rule, media-rule, examine-objects, examine-objects item, .storage-table td, .storage-table .new-key, .repl-input, .repl-output  {
+.dom div, .js-source div, .console-output, .console-output pre, .console-input, .console-input textarea, property, rule, font-face-rule, page-rule, import-rule, charset-rule, media-rule, examine-objects, examine-objects item, .storage-table td, .storage-table .new-key, .repl-input, .repl-output, .color-picker-text, .color-picker-number  {
   font-family: "Menlo", "Dejavu Sans Mono", "Bitstream Vera Sans Mono", "Consolas", "Monaco", "Lucida Console", monospace;
   font-size: 11px;
   color: #111;
@@ -849,13 +849,15 @@ window-control {
 
 window-header {
   display: block;
-  color: #bbb;
+  font-weight: bold;
+  text-shadow: 0 1px 1px #000;
   height: 21px;
   line-height: 21px;
   padding-left: 5px;
-  border: 0 solid #000;
-  border-width: 1px 1px 0;
-  border-radius: 7px 7px 0 0;
+  background: rgba(255,255,255,0.1);
+  border-radius: 3px 3px 0 0;
+  border-top: 1px solid rgba(255,255,255,0.2);
+  border-bottom: 1px solid rgba(0,0,0,0.4); 
 }
 
 windows-container [handler="window-move"] { /**/
@@ -867,7 +869,9 @@ windows-container [handler='window-close'] { /**/
   width: 17px;
   height: 17px;
   position: relative;
-  background: transparent url('../ui-images/icons/icon_close.png') scroll no-repeat 0 0;
+  top: 4px;
+  right: 1px;
+  background: transparent url('../ui-images/icons/hud_close.png') scroll no-repeat 0 0;
 	z-index:11;
   }
 
@@ -952,18 +956,18 @@ window {
   height: 300px;
   left: 20px;
   color: #fff;
-  border-radius: 7px;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, .6);
-  background: rgba(40, 40, 40, .9);
-  border: 2px solid #b1b1b1;
+  border-radius: 3px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  border: 1px solid rgba(0,0,0,0.3);
+  background: rgba(50,50,50,0.9) url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAUCAQAAADmB58qAAAAIElEQVQIW2NgYGFiYGICkaxgxA5DHDASjuBSQGVsQC0AEiIAo3s7awoAAAAASUVORK5CYII%3D") 0 0 repeat-x;
+  background-size: auto 100%;
 }
 window container {
-  border: 1px solid #000;
-  border-width: 0 1px 1px;
-  border-radius: 0 0 7px 7px;
+  border: none;
+  border-radius: 0 0 3px 3px;
   display: block;
   position: relative;
-  background-color: rgba(0, 0, 0, .4);
+  background-color: transparent;
 }
 
 
