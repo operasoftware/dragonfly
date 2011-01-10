@@ -98,7 +98,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
     groups: {
       hosts: {
         label: "Hosts",
-        grouper: function(res) { return cls.ResourceUtil.url_host(res.url) }
+        grouper: function(res) { return res.urltype == 4 ? "No host" : cls.ResourceUtil.url_host(res.url) }
       },
       types: {
         label: "Types",
@@ -111,13 +111,17 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
         sorter: "unsortable",
         renderer: function(res) { return templates.resource_icon(res.mime) }
       },
+      protocol: {
+        label: "Protocol",
+        getter: function(res) { return res.urltypeName },
+      },
       host: {
         label: "Host",
-        getter: function(res) { return cls.ResourceUtil.url_host(res.url) },
+        getter: function(res) { return res.urltype == 4 ? "No host. Data URI" : cls.ResourceUtil.url_host(res.url) },
       },
       path: {
         label: "Path",
-        getter: function(res) { return cls.ResourceUtil.url_path(res.url) },
+        getter: function(res) { return res.urltype == 4 ? "No path. Data URI" : cls.ResourceUtil.url_path(res.url) },
       },
       mime: {
         label: "Mime",

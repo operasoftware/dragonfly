@@ -191,6 +191,7 @@ cls.Resource = function(id)
   this.encoding = null;
   this.size = null;
   this.type = null;
+  this.urltype = null;
   this.invalid = false;
 
   this.update = function(eventname, eventdata)
@@ -198,6 +199,9 @@ cls.Resource = function(id)
     if (eventname == "urlload")
     {
       this.url = eventdata.url;
+      this.urltype = eventdata.urlType;
+      // fixme: complete list
+      this.urltypeName = {0: "unknown", 1: "http", 2: "https", 3: "file", 4: "data" }[eventdata.urlType];
     }
     else if (eventname == "urlfinished")
     {
