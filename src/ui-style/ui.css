@@ -584,7 +584,7 @@ top-tabs .icon {
   display: inline-block;
   height: 26px;
   width: 26px;
-  vertical-align: middle;
+  vertical-align: top;
   margin-right: 3px;
 }
 top-tabs.detached .icon {

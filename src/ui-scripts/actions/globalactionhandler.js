@@ -143,7 +143,7 @@
     var visible = false;
     if (!ele)
     {
-      UIWindowBase.showWindow('command_line', ((document.documentElement.clientHeight / 2) | 0), 0, document.documentElement.clientWidth + 5, ((document.documentElement.clientHeight / 2) | 0));
+      UIWindowBase.showWindow('command_line', ((document.documentElement.clientHeight / 2) | 0), 0, document.documentElement.clientWidth, ((document.documentElement.clientHeight / 2) | 0));
       // TODO: don't do this here, there's no guarantee that the element exists
       setTimeout(function() {
         ele = document.querySelector("[view_id=command_line] textarea");
