@@ -54,16 +54,15 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
   this._open_resource_tab = function(resource)
   {
     var type = resource.type;
-
-    if (type == "font")
-    {
-      var view = new cls.FontResource(resource, this._service);
+    viewclasses = {
+      image: cls.ImageResourceDetail,
+      font: cls.FontResourceDetail,
+      script: cls.TextResourceDetail,
+      markup: cls.TextResourceDetail,
+      css: cls.TextResourceDetail,
     }
-    else
-    {
-      var view = new cls.GenericResourceDetail(resource, this._service);
-    }
-
+    var viewclass = viewclasses[type] || cls.GenericResourceDetail;
+    var view = new viewclass(resource, this._service);
     var ui = UI.get_instance();
     ui.get_tabbar("resources").add_tab(view.id);
     ui.show_view(view.id);

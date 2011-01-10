@@ -27,7 +27,7 @@ cls.ResourceDetailBase = function()
 
   this.render_type_details = function(container, resource, resourcedata)
   {
-    return templates.resource_contents(resource, resourcedata)
+    return ["h1", "No resource details"];
   }
 
   this.on_resource_data = function(type, data)
@@ -52,20 +52,83 @@ cls.ResourceDetailBase.prototype = new TempView();
 
 cls.GenericResourceDetail = function(res, service)
 {
+  this.render_type_details = function(container, resource, resourcedata)
+  {
+    return ["h1", "Don't know what this resource is"];
+  }
+
   this.init(res, service);
 }
 cls.GenericResourceDetail.prototype = new cls.ResourceDetailBase();
 
 
+// any textual resource, like html, js and css
+cls.TextResourceDetail = function(res, service)
+{
+  this.render_type_details = function(container, resource, resourcedata)
+  {
+    return window.templates.text_resource_view(resource, resourcedata);
+  }
+
+  this.init(res, service);
+}
+cls.TextResourceDetail.prototype = new cls.ResourceDetailBase();
+
+
+cls.ImageResourceDetail = function(res, service)
+{
+  this.render_type_details = function(container, resource, resourcedata)
+  {
+    return window.templates.image_resource_view(resource, resourcedata);
+  }
+
+  this.init(res, service);
+}
+cls.ImageResourceDetail.prototype = new cls.ResourceDetailBase();
+
+
+cls.FontResourceDetail = function(res, service)
+{
+  this.render_type_details = function(container, resource, resourcedata)
+  {
+    return window.templates.font_resource_view(resource, resourcedata);
+  }
+
+  this.init(res, service);
+}
+cls.FontResourceDetail.prototype = new cls.ResourceDetailBase();
+
+
+
+
+
 window.templates = window.templates || {};
 
 
-window.templates.font_resource = function(resource, data)
+window.templates.text_resource_view = function(resource, resourcedata)
+{
+  return [
+    ["h1", "Text details view"],
+    ["code", ["pre", resourcedata]]
+  ]
+}
+
+
+window.templates.image_resource_view = function(resource, resourcedata)
+{
+  return [
+    ["h1", "Image details view"],
+    ["img", "src", resourcedata]
+  ]
+}
+
+
+window.templates.font_resource_view = function(resource, data)
 {
   return [
     templates.font_style(resource, data),
-    ["h2", "font name"],
-    ["div", "asdf qwr sdgh sdfgs",
+    ["h1", "Font details view"],
+    ["div", "The quick brown fox jumped over the lazy dog",
      "style", "font-family: fontresource-" + resource.id]
   ]
 }
@@ -80,30 +143,3 @@ window.templates.font_style = function(resource, data)
   ].join("\n\n");
   return ["style", rule];
 };
-
-window.templates.resource_contents = function(resource, data)
-{
-  var type = cls.ResourceUtil.mime_to_type(resource.mime);
-  var tpl = null;
-
-  switch (type) {
-  case "image":
-    tpl = ["img", "src", data];
-    break
-  case "script":
-  case "css":
-  case "markup":
-    tpl = ["code", ["pre", data]];
-    break;
-  default:
-    tpl = ["strong", "Unknown type"];
-    break;
-  }
-
-  return ["div",
-          ["div",
-           tpl
-          ],
-          "class", "padding resource-data-wrapper " + type
-         ];
-}
