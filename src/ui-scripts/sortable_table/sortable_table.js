@@ -94,6 +94,30 @@ function SortableTable(tabledef, data, cols, sortby, reversed)
         handler: obj._make_group_handler(group)
       });
     }
+
+
+
+    // visible column selection stuff
+    /*
+    menuitems.push(ContextMenu.separator);
+
+    var allcols = [];
+    for (var key in obj.tabledef.columns)
+    {
+      allcols.push(key);
+    }
+
+    allcols.sort();
+
+    for (var n=0, colname; colname=allcols[n]; n++)
+    {
+      coldef = obj.tabledef.columns[colname];
+      menuitems.push({
+        label: coldef.label + (obj.columns.indexOf(colname) != -1 ? " (selected)" : ""),
+        handler: obj._make_colselect_handler(colname)
+      });
+    }
+    */
     return menuitems;
   }
 
@@ -104,6 +128,17 @@ function SortableTable(tabledef, data, cols, sortby, reversed)
       while (target.nodeName.toLowerCase() != "table") { target = target.parentNode };
       var obj = ObjectRegistry.get_instance().get_object(target.getAttribute("data-object-id"));
       obj.group(group);
+      target.re_render(obj.render());
+    }
+  }
+
+  this._make_colselect_handler = function(col)
+  {
+    return function(evt) {
+      var target = evt.target;
+      while (target.nodeName.toLowerCase() != "table") { target = target.parentNode };
+      var obj = ObjectRegistry.get_instance().get_object(target.getAttribute("data-object-id"));
+      obj.togglecol(col);
       target.re_render(obj.render());
     }
   }
@@ -164,6 +199,20 @@ function SortableTable(tabledef, data, cols, sortby, reversed)
     else
     {
       this.groupby = group;
+    }
+  }
+
+  this.togglecol = function(col)
+  {
+    var index = this.columns.indexOf(col);
+    if (index == -1)
+    {
+      // fixme: figure out where to put added cols.
+      this.columns.push(col);
+    }
+    else
+    {
+      this.columns.splice(index, 1);
     }
   }
 
