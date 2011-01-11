@@ -94,6 +94,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
 
   this._tabledef = {
     handler: "resources-all-open",
+    column_order: ["icon", "protocol", "host", "path", "mime", "type", "size", "size_h"],
     idgetter: function(res) { return String(res.id) },
     groups: {
       hosts: {

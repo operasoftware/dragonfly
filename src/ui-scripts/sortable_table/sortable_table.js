@@ -96,18 +96,20 @@ function SortableTable(tabledef, data, cols, sortby, reversed)
     }
 
 
-
     // visible column selection stuff
-    /*
+
     menuitems.push(ContextMenu.separator);
 
-    var allcols = [];
-    for (var key in obj.tabledef.columns)
-    {
-      allcols.push(key);
-    }
 
-    allcols.sort();
+    var allcols = obj.tabledef.column_order;
+    if (!allcols)
+    {
+      allcols = [];
+      for (var key in obj.tabledef.columns)
+      {
+        allcols.push(key);
+      }
+    }
 
     for (var n=0, colname; colname=allcols[n]; n++)
     {
@@ -117,8 +119,20 @@ function SortableTable(tabledef, data, cols, sortby, reversed)
         handler: obj._make_colselect_handler(colname)
       });
     }
-    */
     return menuitems;
+  }
+
+  this._find_col_insertion_point = function(col)
+  {
+    var colpoint = this.tabledef.column_order.indexOf(col);
+    for (var n=colpoint+1, current; current=this.tabledef.column_order[n]; n++)
+    {
+      var point = this.columns.indexOf(current);
+      if (point != -1) {
+        return point;
+      }
+    }
+    return this.columns.length;
   }
 
   this._make_group_handler = function(group)
@@ -207,8 +221,8 @@ function SortableTable(tabledef, data, cols, sortby, reversed)
     var index = this.columns.indexOf(col);
     if (index == -1)
     {
-      // fixme: figure out where to put added cols.
-      this.columns.push(col);
+      var point = this._find_col_insertion_point(col);
+      this.columns.splice(point, 0, col);
     }
     else
     {
