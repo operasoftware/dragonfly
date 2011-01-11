@@ -74,7 +74,7 @@ cls.ResourceUtil.mime_type_map = {
   "application/xml": "markup",
 
   "text/css": "css",
-  
+
   "text/plain": "text",
 
   "application/x-javascript": "script",
@@ -93,8 +93,9 @@ cls.ResourceUtil.mime_type_map = {
   "application/x-font-ttf": "font",
   "font/ttf": "font",
   "font/otf": "font",
+  "font/opentype": "font",
   "application/x-woff": "font",
-  
+
   "audio/mid": "audio",
   "audio/mpeg": "audio",
   "audio/ogg": "audio",
@@ -105,7 +106,7 @@ cls.ResourceUtil.mime_type_map = {
   "audio/vnd.wave": "audio",
   "audio/x-ms-wax": "audio",
   "audio/x-ms-wma": "audio",
-  
+
   "video/3gpp": "video",
   "video/x-matroska": "video",
   "video/mp4": "video",
@@ -114,16 +115,16 @@ cls.ResourceUtil.mime_type_map = {
   "video/quicktime": "video",
   "video/webm": "video",
   "video/x-ms-wmv": "video",
-  
+
   "application/json": "data",
   "application/rdf+xml": "data",
   "text/rdf+n3": "data",
   "application/x-turtle": "data",
   "text/turtle": "data",
-  
+
   "application/atom+xml": "feed",
   "application/rss+xml": "feed",
-  
+
   "application/pdf": "pdf",
   "application/postscript": "postscript",
   "application/x-shockwave-flash": "flash",
