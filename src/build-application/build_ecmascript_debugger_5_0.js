@@ -67,6 +67,9 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
     new cls.ScriptSelect('js-script-select', 'script-options');
     cls.JsSourceView.create_ui_widgets();
 
+    /* Runtime State */
+    new SidePanelView('scripts-side-panel', "State", ['callstack', 'inspection']);
+
     /* Callstack */
     cls.CallstackView.prototype = ViewBase;
     new cls.CallstackView('callstack', ui_strings.M_VIEW_LABEL_CALLSTACK, 'scroll');

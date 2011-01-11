@@ -152,7 +152,7 @@
     {
       for( ; rough_child = rough_children[i]; i++)
       {
-        next = this.children[this.children.length] = new Cell( rough_child, dir, this, container_id);
+        next = this.children[this.children.length] = new Cell( rough_child, dir, this, container_id, services);
         if( child )
         {
           child.previous = previous;

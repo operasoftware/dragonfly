@@ -57,8 +57,11 @@ var CompositeViewBase = function()
       this.modebar = UI.get_instance().get_modebar(modebar_id);
       this.has_modebar = true;
       window.messages.addListener('setting-changed', this._on_setting_change.bind(this));
-      this.modebar.setVisibility(window.settings.modebar
-                                 .get("show-modebar-" + this._modebar_id));
+      if (this.modebar)
+      {
+        this.modebar.setVisibility(window.settings.modebar
+                                   .get("show-modebar-" + this._modebar_id));
+      }
     }
     this.init(id, name);
   }

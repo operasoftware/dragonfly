@@ -252,15 +252,6 @@ window.cls.Client = function()
     var layouts = ui_framework.layouts;
     var ui = UI.get_instance();
     var modebar_dom = ui.register_modebar('dom', HorizontalNavigation);
-    var modebar_scripts = ui.register_modebar('scripts', HorizontalNavigation);
-    var major_ecma_service_version = parseInt(services['ecmascript-debugger']
-                                              .version.split('.')[0]);
-    var scripts_side_panel_views = ['callstack', 'inspection'];
-    if (major_ecma_service_version > 5)
-    {
-      scripts_side_panel_views = ['callstack', 'inspection', 'event-breakpoints']
-    }
-    new SidePanelView('scripts-side-panel', "State", scripts_side_panel_views);
     new CompositeView('network_panel',
                       ui_strings.M_VIEW_LABEL_NETWORK,
                       layouts.network_rough_layout,
@@ -521,7 +512,15 @@ ui_framework.layouts.js_rough_layout_panel =
       width: 250,
       children:
       [
-        { height: 250, tabs: ['scripts-side-panel' /*callstack', 'inspection', 'threads'*/] }
+        { 
+          height: 250,
+          tabs: function(services)
+          {
+            return services['ecmascript-debugger'].major_version > 5 ? 
+                   ['scripts-side-panel', 'event-breakpoints'] :
+                   ['scripts-side-panel'];
+          }
+        }
       ]
     }
   ]
