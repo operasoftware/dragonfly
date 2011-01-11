@@ -1518,11 +1518,47 @@ tabs, toolbar {
 
 .close-tab-button
 {
-  background: transparent url("../ui-images/icons/icon_close.png") no-repeat 0 0;
+  background: rgba(0,0,0,0) url("../ui-images/icons/icon_close_tab.png") no-repeat 50% 50%;
   border: none;
-  width: 17px;
-  height: 17px;
+  width: 20px;
+  height: 20px;
+  margin-top: -2px;
+  margin-right: -6px;
+  margin-left: 4px;
+  border-radius: 0 2px 0 0;
+  opacity: 0.6;
+  border-bottom: 1px solid rgba(0,0,0,0.0);
+  border-left: 1px solid rgba(0,0,0,0.0);
 }
+
+.close-tab-button:hover
+{
+  background-color: rgba(0,0,0,0.08);
+  border-left-color: rgba(0,0,0,0.2);
+}
+
+.close-tab-button:active
+{
+  opacity: 0.8;
+}
+
+tabs tab:not(.active):hover .close-tab-button
+{
+  border-color: #999;
+}
+
+tab.active .close-tab-button 
+{
+  background-color: rgba(0,0,0,0.1);
+  border-color: #666;
+}
+
+tab.active .close-tab-button:hover
+{
+  background-color: rgba(0,0,0,0.2);
+}
+
+
 .first-temp-tab
 {
   margin-left: 20px;
