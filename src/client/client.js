@@ -260,11 +260,7 @@ window.cls.Client = function()
     {
       scripts_side_panel_views = ['callstack', 'inspection', 'event-breakpoints']
     }
-    new SidePanelView('dom-side-panel', ['css-comp-style', 
-                                         'css-inspector', 
-                                         'dom_attrs', 
-                                         'css-layout']);
-    new SidePanelView('scripts-side-panel', scripts_side_panel_views);
+    new SidePanelView('scripts-side-panel', "State", scripts_side_panel_views);
     new CompositeView('network_panel',
                       ui_strings.M_VIEW_LABEL_NETWORK,
                       layouts.network_rough_layout,
@@ -466,7 +462,7 @@ ui_framework.layouts.dom_rough_layout =
       width: 700, tabs: ['dom', /*'stylesheets'*/]
     },
     {
-      width: 250, tabs: ['dom-side-panel' /*'css-inspector', 'dom_attrs', 'css-layout'*/]
+      width: 250, tabs: ['dom-side-panel', 'dom_attrs', 'css-layout']
     }
   ]
 }
@@ -480,7 +476,7 @@ ui_framework.layouts.dom_rough_layout_panel =
       width: 700, tabs: ['dom', /*'stylesheets'*/]
     },
     {
-      width: 250, tabs: ['dom-side-panel'/*'css-comp-style', 'css-inspector', 'dom_attrs', 'css-layout'*/]
+      width: 250, tabs: ['dom-side-panel', 'dom_attrs', 'css-layout']
     }
   ]
 }

@@ -47,7 +47,6 @@ var Tabbar = function(id, tabs)
         var view = window.views[view_id];
         tabs.addTab(new Tab(view_id, view && view.name || '', true));
       });
-      opera.postError('tabs pushed');
     }
   };
 

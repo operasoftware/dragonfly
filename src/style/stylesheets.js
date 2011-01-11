@@ -928,9 +928,9 @@ cls.Stylesheets = function()
     return "";
   };
 
-  this.prettyPrintCompStyle = function(data, org_args)
+  this.prettyPrintCompStyle = function(data, org_args, search_active)
   {
-    return this.prettyPrintCat(COMP_STYLE, data, org_args);
+    return this.prettyPrintCat(COMP_STYLE, data, org_args, search_active);
   }
 
   this.prettyPrintStyleCasc = function(data, org_args, search_active)

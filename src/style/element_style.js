@@ -108,6 +108,7 @@ cls.ElementStyle = function()
     {
       doSearch(search_term);
       views['css-inspector'].update();
+      views['css-comp-style'].update();
       __old_search_term = search_term;
     }
   };

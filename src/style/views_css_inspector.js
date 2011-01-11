@@ -27,13 +27,6 @@ cls.CSSInspectorView = function(id, name, container_class)
         stylesheets.prettyPrintStyleCasc(data, arguments, search_active);
       styles.setAttribute('rt-id', data.rt_id);
     }
-
-    var quick_find = this.getToolbarControl( container, 'css-inspector-text-search');
-    if( quick_find && elementStyle.getSearchTerm() )
-    {
-      quick_find.value = elementStyle.getSearchTerm();
-      quick_find.previousElementSibling.textContent = "";
-    }
   }
 
   this.ondestroy = function()
@@ -43,22 +36,3 @@ cls.CSSInspectorView = function(id, name, container_class)
 
   this.init(id, name, container_class);
 }
-
-cls.CSSInspectorView.create_ui_widgets = function()
-{
-
-  new ToolbarConfig
-  (
-    'css-inspector',
-    null,
-    [
-      {
-        handler: 'css-inspector-text-search',
-        title: 'text search',
-        label: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER
-      }
-    ]
-  );
-
-}
-

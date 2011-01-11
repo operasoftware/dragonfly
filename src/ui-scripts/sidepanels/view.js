@@ -1,4 +1,4 @@
-var SidePanelBaseView = function(id, view_list)
+var SidePanelBaseView = function(id, name, view_list)
 {
   this.container_class = 'scroll side-panel';
   this._container = null;
@@ -6,7 +6,7 @@ var SidePanelBaseView = function(id, view_list)
 
   this._init_super = this.init;
 
-  this.init = function(id, view_list)
+  this.init = function(id, name, view_list)
   {
     var key_value_map = {};
     key_value_map['panel-expanded-' + id] = [];
@@ -16,7 +16,7 @@ var SidePanelBaseView = function(id, view_list)
     {
       return new PanelContainer(view_id, unfolded_views[index]);
     }, this);
-    this._init_super(id, 'Side Panel', this.container_class);
+    this._init_super(id, name, this.container_class);
     this._toolbar = new Toolbar();
   }
 
@@ -123,9 +123,9 @@ var SidePanelBaseView = function(id, view_list)
 
 };
 
-var SidePanelView = function(id, view_list)
+var SidePanelView = function(id, name, view_list)
 {
-  this.init(id, view_list);
+  this.init(id, name, view_list);
 }
 
 SidePanelBaseView.prototype = ViewBase;
