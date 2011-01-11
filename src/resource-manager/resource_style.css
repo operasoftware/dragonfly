@@ -91,27 +91,27 @@
     display: inline-block;
     width: 16px;
     height: 16px;
-    background-image: url(../ui-images/filetype_unknown.png);
+    background-image: url(../ui-images/type_other.png);
 }
 
 .resource-type-markup {
-    background-image: url(../ui-images/filetype_html.png);
+    background-image: url(../ui-images/type_markup.png);
 }
 
 .resource-type-css {
-    background-image: url(../ui-images/filetype_stylesheet.png);
+    background-image: url(../ui-images/type_style.png);
 }
 
 .resource-type-script {
-    background-image: url(../ui-images/filetype_javascript.png);
+    background-image: url(../ui-images/type_script.png);
 }
 
 .resource-type-flash {
-    background-image: url(../ui-images/filetype_flash.png);
+    background-image: url(../ui-images/type_flash.png);
 }
 
 .resource-type-image {
-    background-image: url(../ui-images/filetype_image.png);
+    background-image: url(../ui-images/type_picture.png);
 }
 
 .resource-data-wrapper {
