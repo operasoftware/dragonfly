@@ -1,25 +1,25 @@
 .metadata-drawer {
-  background-color: #fffac4;
-  border: 2px solid black;
-  border-top: none;
-  border-bottom-right-radius: 12px;
-  border-bottom-left-radius: 12px;
+  background-color: #fafafa;
+  border-bottom: 1px solid #999;
   margin: 0;
   padding: 6px;
   position: relative;
 }
 
 .metadata-drawer.collapsed {
-    text-align: center;
 }
 
 .metadata-drawer button {
     position: absolute;
-    top: 6px;
-    right: 6px;
-    width: 16px;
-    height: 16px;
+    bottom: -9px;
+    left: 50%;
+    margin-left: -9px;
+    width: 18px;
+    height: 18px;
     border: none;
+    border: 1px solid #999;
+    border-radius: 9px;
+    background: #fafafa 50% 50% no-repeat;
 }
 
 .metadata-drawer.collapsed button {
@@ -27,12 +27,17 @@
 }
 
 .metadata-drawer.expanded button {
-    background-image: url(expand-drawer.png);
+    background-image: url(collapse-drawer.png);
 }
 
 .metadata-drawer button:hover {
-    background-color: blue;
+    background-color: #fff;
 }
+
+.metadata-drawer button:active {
+    background-color: #ccc;
+}
+
 
 .metadata-drawer th {
     text-align: right;
