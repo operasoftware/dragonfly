@@ -118,7 +118,7 @@
     }
   }
 
-  this.init = function(rough_cell, dir, parent, container_id)
+  this.init = function(rough_cell, dir, parent, container_id, services)
   {
     this.width =
       rough_cell.width && rough_cell.width > defaults.min_view_width ?
@@ -165,6 +165,13 @@
     }
     else
     {
+      ["tabs", "tabbar"].forEach(function(prop)
+      {
+        if (rough_cell[prop] && typeof rough_cell[prop] == "function")
+        {
+          rough_cell[prop] = rough_cell[prop](services);
+        }
+      });
 
       this.appendUiNodes(rough_cell.tabbar);
 
@@ -598,9 +605,9 @@
   * @extends ViewBase
   */
 
-var Cell = function(rough_cell, dir, parent, container_id)
+var Cell = function(rough_cell, dir, parent, container_id, services)
 {
-  this.init(rough_cell, dir, parent, container_id)
+  this.init(rough_cell, dir, parent, container_id, services)
 }
 
 Cell.prototype = CellBase;

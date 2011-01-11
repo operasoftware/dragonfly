@@ -21,16 +21,21 @@ var HorizontalNavigationBase = function(cell)
    */
   this.set_content = function(id, template_list, focus_end)
   {
-    this._breadcrumbs.clearAndRender(template_list);
-    this._breadcrumbs.setAttribute("data-model-id", id);
-    this.check_width();
-    if (focus_end)
+    this._template_list = template_list;
+    this._data_model_id = id;
+    if (this._breadcrumbs)
     {
-      this.set_position(-this._breadcrumbs.scrollWidth); // Not exact, but large enough
-    }
-    else
-    {
-      this._breadcrumbs.style.removeProperty("left");
+      this._breadcrumbs.clearAndRender(template_list);
+      this._breadcrumbs.setAttribute("data-model-id", id);
+      this.check_width();
+      if (focus_end)
+      {
+        this.set_position(-this._breadcrumbs.scrollWidth); // Not exact, but large enough
+      }
+      else
+      {
+        this._breadcrumbs.style.removeProperty("left");
+      }
     }
   };
 
@@ -216,12 +221,22 @@ var HorizontalNavigationBase = function(cell)
     this._breadcrumbs.addEventListener("OTransitionEnd", this.check_position.bind(this), false);
     this._nav_back = this._element.querySelector("nav[dir='back']");
     this._nav_forward = this._element.querySelector("nav[dir='forward']");
-    this.element = this.update();
-    this.element.render(window.templates.horizontal_navigation_content());
-    this.breadcrumbs = this.element.querySelector("breadcrumbs");
-    this.breadcrumbs.addEventListener("OTransitionEnd", this.check_position.bind(this), false);
-    this.nav_back = this.element.querySelector("nav[dir='back']");
-    this.nav_forward = this.element.querySelector("nav[dir='forward']");
+    if (this._template_list)
+    {
+      this.set_content(this._data_model_id, this._template_list);
+    }
+    /*
+    TODO seems to be the wrong place to do this
+    var contextmenu = new ContextMenu();
+    contextmenu.register("breadcrumb", [
+      {
+        label: "Copy XPath",
+        handler: function(event, target) {
+          alert("Not implemented");
+        }
+      }
+    ]);
+    */
   };
   
   this._super_set_dimension = this.setDimensions;

@@ -100,8 +100,37 @@ var TabsBase = function()
     }
   }
 
+  this.__defineGetter__("offsetHeight", function()
+  {
+    if (!this.default_height)
+    {
+      this.setCSSProperties();
+    }
+    return this.tabs.length > 1 ? this._offset_height : 0;
+  });
+  
+  this.__defineSetter__("offsetHeight", function(offset_height)
+  {
+    this._offset_height = offset_height;
+  });
+
+  this._super_update = this.update;
+    
+  this.update = function(force_redraw)
+  {
+    if (this.tabs.length > 1)
+    {
+      return this._super_update(force_redraw);
+    }
+    return null;
+  }
+
   this.render = function()
   {
+    if (this.tabs.length < 2)
+    {
+      return null;
+    }
     var tabs = document.getElementById(this.type + '-to-' + this.cell.id);
     if( !tabs )
     {

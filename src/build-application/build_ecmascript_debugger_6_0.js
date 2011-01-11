@@ -104,6 +104,11 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     cls.CSSInspectorView.prototype = ViewBase;
     new cls.CSSInspectorView('css-inspector', ui_strings.M_VIEW_LABEL_STYLES, 'scroll css-inspector');
     cls.CSSInspectorView.create_ui_widgets();
+    
+    cls.CSSInspectorCompStyleView.prototype = ViewBase;
+    new cls.CSSInspectorCompStyleView('css-comp-style', ui_strings.M_VIEW_LABEL_COMPUTED_STYLE, 'scroll css-inspector');
+    cls.CSSInspectorCompStyleView.create_ui_widgets();
+
     new cls.ColorPickerView('color-selector', 'Color Picker', 'color-selector');
     new cls.CSSInspectorActions('css-inspector');
 
