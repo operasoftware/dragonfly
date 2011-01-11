@@ -301,7 +301,7 @@ window-controls button[is-active="true"]:active {
 toolbar button.alert,
 window-toolbar button.alert,
 top-toolbar button.alert,
-window-controls button,
+window-controls button.alert,
 cst-select-toolbar-setting.alert,
 .ui-button.alert,
 cst-select.alert,
