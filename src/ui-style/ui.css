@@ -597,6 +597,9 @@ top-tabs [ref-id="js_panel"] .icon {
 top-tabs [ref-id="network_panel"] .icon {
     content: url("../ui-images/network_attached.png");
 }
+top-tabs [ref-id="resource_panel"] .icon {
+    content: url("../ui-images/resources_attached.png");
+}
 top-tabs [ref-id="storage"] .icon {
     content: url("../ui-images/storage_attached.png");
 }
@@ -617,6 +620,9 @@ top-tabs.detached [ref-id="js_new"] .icon {
 }
 top-tabs.detached [ref-id="network_panel"] .icon {
     content: url("../ui-images/network_detached.png");
+}
+top-tabs.detached [ref-id="resource_panel"] .icon {
+    content: url("../ui-images/resources_detached.png");
 }
 top-tabs.detached [ref-id="storage"] .icon {
     content: url("../ui-images/storage_detached.png");
