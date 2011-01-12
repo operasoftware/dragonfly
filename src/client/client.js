@@ -267,7 +267,7 @@ window.cls.Client = function()
     };
     this.create_top_level_views(window.services);
     this.setupTopCell(window.services);
-    document.querySelector("main-view").render(templates.window_controls());
+    document.documentElement.render(templates.window_controls());
     if(!arguments.callee._called_once)
     {
       if( window.opera.attached )

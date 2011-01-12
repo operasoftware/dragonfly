@@ -250,15 +250,8 @@ eventHandlers.click['toggle-remote-debug-config-overlay'] = function(event, targ
   var element = overlay.element.querySelector("overlay-window");
   var arrow = overlay.element.querySelector("overlay-arrow");
   element.style.top = button_dims.bottom + OVERLAY_TOP_MARGIN + "px";
-  if (window.opera.attached)
-  {
-    element.addClass("attached");
-    arrow.style.right = document.documentElement.clientWidth - button_dims.right - OVERLAY_RIGHT_MARGIN + "px";
-  }
-  else
-  {
-    arrow.style.left = button_dims.left - OVERLAY_LEFT_MARGIN + "px";
-  }
+  element.addClass("attached");
+  arrow.style.right = document.documentElement.clientWidth - button_dims.right - OVERLAY_RIGHT_MARGIN + "px";
 };
 
 eventHandlers.click['toggle-console'] = function(event, target)

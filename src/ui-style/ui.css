@@ -1421,16 +1421,12 @@ overlay-window {
     position: absolute;
     height: 80%;
     max-height: 600px;
-    left: 10px;
+    right: 20px;
 }
 overlay-arrow {
   content: url("../ui-images/overlay_arrow.png");
   position: absolute;
   top: -12px;
-}
-overlay-window.attached {
-  left: auto;
-  right: 20px;
 }
 overlay-window h2 {
     font-size: 1em;
