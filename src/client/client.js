@@ -516,8 +516,7 @@ ui_framework.layouts.network_rough_layout =
     height: 1000,
     children: [ { height: 1000, tabs:
                   [
-                    //'request_list',
-                    'resource_manager',
+                    'network_logger',
                     'request_crafter',
                     'network_options'
                   ]
