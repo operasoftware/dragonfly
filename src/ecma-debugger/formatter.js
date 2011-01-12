@@ -144,7 +144,7 @@ window.cls.SimpleJSParser = function()
     '\u000B': 1, //  Vertical Tab <VT>
     '\u000C': 1, //  Form Feed <FF>
     '\u0020': 1, //  Space <SP>
-    '\u00A0': 1  //  No-break space <NBSP>
+    '\u00A0': 1 //  No-break space <NBSP>
   }
   var LINETERMINATOR_CHARS =
   {

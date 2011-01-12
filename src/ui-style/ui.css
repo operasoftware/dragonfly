@@ -1282,6 +1282,7 @@ pin-label span
   margin: 0px;
   overflow: hidden;
   -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 

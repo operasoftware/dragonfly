@@ -1,4 +1,4 @@
-var UI = function()
+﻿var UI = function()
 {
   /*
 
