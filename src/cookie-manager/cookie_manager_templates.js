@@ -181,6 +181,9 @@ templates.cookie_manager = {
     expires_0values: function() {
       return ["span", ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES_ON_SESSION_CLOSE, "class", "replaced-val"];
     },
+    unknown_value: function() {
+      return ["span", "-", "class", "replaced-val"];
+    },
     remove_button: function(objectref) {
       return [
         "button",         ui_strings.S_LABEL_STORAGE_DELETE,

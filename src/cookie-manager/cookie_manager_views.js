@@ -21,7 +21,10 @@ cls.CookieManagerView = function(id, name, container_class)
     },
     columns: {
       domain: {
-        label: ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_DOMAIN
+        label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_DOMAIN,
+        renderer: function(obj) {
+          return obj.domain || window.templates.cookie_manager.table_view.unknown_value();
+        }
       },
       name: {
         label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_NAME,
@@ -52,27 +55,47 @@ cls.CookieManagerView = function(id, name, container_class)
       path: {
         label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_PATH,
         renderer: function(obj) {
-          return obj.path;
+          if(typeof obj.path === "string")
+          {
+            return obj.path;
+          }
+          return window.templates.cookie_manager.table_view.unknown_value();
         }
       },
       expires: {
         label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES,
         renderer: function(obj) {
-          var parsedDate=new Date(obj.expires*1000);
-          if(new Date().getTime() < parsedDate.getTime())
+          if(typeof obj.expires === "number")
           {
-            return parsedDate.toUTCString();
+            var parsedDate=new Date(obj.expires*1000);
+            if(new Date().getTime() < parsedDate.getTime())
+            {
+              return parsedDate.toUTCString();
+            }
+            return window.templates.cookie_manager.table_view.expires_0values();
           }
-          return window.templates.cookie_manager.table_view.expires_0values();
+          return window.templates.cookie_manager.table_view.unknown_value();
         }
       },
       isSecure: {
         label:    ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY,
-        renderer: function(obj) { return obj.isSecure? "Yes":""; }
+        renderer: function(obj) {
+          if(typeof obj.isSecure === "number")
+          {
+            return obj.isSecure? "Yes":"";
+          }
+          return window.templates.cookie_manager.table_view.unknown_value();
+        }
       },
       isHTTPOnly: {
         label:    ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY,
-        renderer: function(obj) { return obj.isHTTPOnly? "Yes":""; }
+        renderer: function(obj) {
+          if(typeof obj.isHTTPOnly === "number")
+          {
+            return obj.isHTTPOnly? "Yes":"";
+          }
+          return window.templates.cookie_manager.table_view.unknown_value();
+        }
       },
       remove: {
         label:    "",
@@ -229,8 +252,44 @@ cls.CookieManagerView = function(id, name, container_class)
         });
       };
     }
+    else
+    {
+      // In case no cookies come back, check via JS (workaround for CORE-35055)
+      // Find runtime that has the appropriate domain and path
+      for(var id in window.views.cookie_manager._rts)
+      {
+        var runtime = window.views.cookie_manager._rts[id];
+        if(runtime.hostname === domain && runtime.pathname === path)
+        {
+          var script = "return document.cookie";
+          var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_js_retrieved_cookies, [domain, path]);
+          services['ecmascript-debugger'].requestEval(tag,[parseInt(id), 0, 0, script]);
+          break;
+        }
+      }
+    }
     window.views.cookie_manager.update();
   };
+  
+  this._handle_js_retrieved_cookies = function(status, message, domain, path)
+  {
+    const DATA = 2;
+    var cookie_string = message[DATA];
+    if(cookie_string.length > 0)
+    {
+      this._cookie_dict[domain+path].cookies=[];
+      var cookies = cookie_string.split(';');
+      for (var i=0; i < cookies.length; i++) {
+        var cookie_info = cookies[i];
+        var pos = cookie_info.indexOf('=', 0);
+        this._cookie_dict[domain+path].cookies.push({
+          name:  cookie_info.slice(0, pos),
+          value: decodeURIComponent(cookie_info.slice(pos+1))
+        });
+      };
+      window.views.cookie_manager.update();
+    }
+  }
 
   this._handle_changed_cookies = function(status, message)
   {

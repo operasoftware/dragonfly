@@ -3,8 +3,7 @@
   // just delete cookies that are shown
   for (var i=0; i < window.views.cookie_manager.flattened_cookies.length; i++) {
     var cookie = window.views.cookie_manager.flattened_cookies[i];
-    var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_changed_cookies, []);
-    services['cookie-manager'].requestRemoveCookie(tag,[cookie.domain, cookie.path, cookie.name]);
+    remove_cookie_by_objectref(cookie.objectref);
   };
 };
 
@@ -77,26 +76,10 @@ window.eventHandlers.blur['cookiemanager-edit'] = function(event, target)
   };
 }
 
-window.eventHandlers.click['cookiemanager-delete-domain-path-cookies'] = function(event, target)
-{
-  var domain = target.getAttribute("data-cookie-domain");
-  var path = target.getAttribute("data-cookie-path");
-  var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_changed_cookies, [domain]);
-  services['cookie-manager'].requestRemoveCookie(tag,[domain,path]);
-};
-
 window.eventHandlers.click['cookiemanager-delete-cookie'] = function(event, target)
 {
   var objectref = target.getAttribute("data-objectref");
-  var cookie;
-  for (var i=0; i < window.views.cookie_manager.flattened_cookies.length; i++) {
-    if(window.views.cookie_manager.flattened_cookies[i].objectref == objectref)
-    {
-      cookie = window.views.cookie_manager.flattened_cookies[i];
-      var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_changed_cookies, []);
-      services['cookie-manager'].requestRemoveCookie(tag,[cookie.domain, cookie.path, cookie.name]);
-    }
-  }
+  remove_cookie_by_objectref(objectref);
 };
 
 window.eventHandlers.click['add-cookie-handler'] = function(event, target)
@@ -191,4 +174,27 @@ window.eventHandlers.change['cookiemanager-add-cookie-domain-select'] = function
     render_object.push(["datalist",option_arr,"id","cookiepathlist"]);
   }
   formelem.render(render_object);
+}
+
+var remove_cookie_by_objectref = function(objectref)
+{
+  var cookie;
+  for (var i=0; i < window.views.cookie_manager.flattened_cookies.length; i++) {
+    if(window.views.cookie_manager.flattened_cookies[i].objectref === objectref)
+    {
+      cookie = window.views.cookie_manager.flattened_cookies[i];
+      var domain = cookie.domain;
+      if(!domain) {
+        // in case the cookies domain is undefined (cookie is retrieved via JS), try using the runtime domain
+        domain = window.views.cookie_manager._rts[cookie.runtimes[0]].hostname;
+      }
+      var path = cookie.path;
+      if(!path) {
+        // in case the cookies path is undefined (cookie is retrieved via JS), try using "/" which is most likely
+        path = "/";
+      }
+      var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_changed_cookies, []);
+      services['cookie-manager'].requestRemoveCookie(tag,[domain, path, cookie.name]);
+    }
+  }
 }
