@@ -2,37 +2,6 @@
   * @constructor
   */
 
-var composite_view_convert_table =
-{
-  // opera.attached.toString()
-  "true":
-  {
-    'console_new': 'console_new',
-    'settings_new': 'settings_new',
-    'js_panel': 'js_panel',
-    'js_new': 'js_panel',
-    'dom_panel': 'dom_panel',
-    'dom_new': 'dom_panel',
-    'network_panel': 'network_panel',
-    'export_new': 'export_new',
-    'utils': 'utils',
-    'storage': 'storage'
-  },
-  "false":
-  {
-    'console_new': 'console_new',
-    'settings_new': 'settings_new',
-    'js_panel': 'js_new',
-    'js_new': 'js_new',
-    'dom_panel': 'dom_new',
-    'dom_new': 'dom_new',
-    'network_panel': 'network_panel',
-    'export_new': 'export_new',
-    'utils': 'utils',
-    'storage': 'storage'
-  }
-}
-
 window.cls || ( window.cls = {} );
 
 window.cls.Client = function()
@@ -252,44 +221,19 @@ window.cls.Client = function()
     var layouts = ui_framework.layouts;
     var ui = UI.get_instance();
     var modebar_dom = ui.register_modebar('dom', HorizontalNavigation);
-    new CompositeView('network_panel',
-                      ui_strings.M_VIEW_LABEL_NETWORK,
-                      layouts.network_rough_layout,
-                      null,
-                      services);
-    new CompositeView('console_new',
-                      ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE,
-                      layouts.console_rough_layout,
-                      null,
-                      services);
-    new CompositeView('js_new',
-                      ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS,
-                      layouts.js_rough_layout,
-                      'scripts',
-                      services);
-    new CompositeView('dom_new',
+    new CompositeView('dom_mode',
                       ui_strings.M_VIEW_LABEL_COMPOSITE_DOM,
                       layouts.dom_rough_layout,
                       'dom',
                       services);
-    new CompositeView('export_new',
-                      ui_strings.M_VIEW_LABEL_COMPOSITE_EXPORTS,
-                      layouts.export_rough_layout,
-                      null,
-                      services);
-    new CompositeView('js_panel',
+    new CompositeView('js_mode',
                       ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS,
-                      layouts.js_rough_layout_panel,
+                      layouts.js_rough_layout,
                       'scripts',
                       services);
-    new CompositeView('dom_panel',
-                      ui_strings.M_VIEW_LABEL_COMPOSITE_DOM,
-                      layouts.dom_rough_layout_panel,
-                      'dom',
-                      services);
-    new CompositeView('utils',
-                      ui_strings.M_VIEW_LABEL_UTILITIES,
-                      layouts.utils_rough_layout,
+    new CompositeView('network_mode',
+                      ui_strings.M_VIEW_LABEL_NETWORK,
+                      layouts.network_rough_layout,
                       null,
                       services);
     new CompositeView('storage',
@@ -297,15 +241,25 @@ window.cls.Client = function()
                       layouts.storage_rough_layout,
                       null,
                       services);
-    if( window.opera.attached != settings.general.get('window-attached') )
-    {
-      window.opera.attached = settings.general.get('window-attached') || false;
-    }
+    new CompositeView('console_mode',
+                      ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE,
+                      layouts.console_rough_layout,
+                      null,
+                      services);
+    new CompositeView('utils',
+                      ui_strings.M_VIEW_LABEL_UTILITIES,
+                      layouts.utils_rough_layout,
+                      null,
+                      services);
+    new CompositeView('export_new',
+                      ui_strings.M_VIEW_LABEL_COMPOSITE_EXPORTS,
+                      layouts.export_rough_layout,
+                      null,
+                      services);
   }
 
   this.on_services_created =  function()
   {
-
     var window_controls = document.getElementsByTagName('window-controls')[0];
     if (window_controls)
     {
@@ -320,17 +274,12 @@ window.cls.Client = function()
       {
         topCell.tab.changeStyleProperty("padding-right", 80);
       }
-      else
-      {
-        topCell.toolbar.changeStyleProperty("padding-right", 30);
-      }
       if(window.ini.debug)
       {
         window.viewsMenu.create();
         if(window.settings.debug.get('show-as-tab'))
         {
           ui_framework.layouts.main_layout.tabs.push('debug_new');
-          ui_framework.layouts.panel_layout.tabs.push('debug_new');
           window.topCell.tab.addTab(new Tab('debug_new', window.views['debug_new'].name));
         }
       }
@@ -368,7 +317,7 @@ window.cls.Client = function()
     viewport.innerHTML = '';
     new TopCell
     (
-      window.opera.attached ? ui_framework.layouts.panel_layout : ui_framework.layouts.main_layout,
+      ui_framework.layouts.main_layout,
       null,
       null,
       TopToolbar,
@@ -459,21 +408,6 @@ ui_framework.layouts.dom_rough_layout =
   ]
 }
 
-ui_framework.layouts.dom_rough_layout_panel =
-{
-  dir: 'h', width: 700, height: 700,
-  children:
-  [
-    {
-      width: 700, 
-      tabbar: { tabs: ['dom'], is_hidden: true }
-    },
-    {
-      width: 250, tabs: ['dom-side-panel', 'dom_attrs', 'css-layout']
-    }
-  ]
-}
-
 ui_framework.layouts.js_rough_layout =
 {
   dir: 'h', width: 700, height: 700,
@@ -485,39 +419,6 @@ ui_framework.layouts.js_rough_layout =
       [
         { 
           height: 350, 
-          tabbar: { tabs: ['js_source'], is_hidden: true }
-        }
-      ]
-    },
-    {
-      width: 250,
-      children:
-      [
-        { 
-          height: 250,
-          tabs: function(services)
-          {
-            return services['ecmascript-debugger'].major_version > 5 ? 
-                   ['scripts-side-panel', 'event-breakpoints'] :
-                   ['scripts-side-panel'];
-          }
-        }
-      ]
-    }
-  ]
-}
-
-ui_framework.layouts.js_rough_layout_panel =
-{
-  dir: 'h', width: 700, height: 700,
-  children:
-  [
-    {
-      width: 700,
-      children:
-      [
-        { 
-          height: 150, 
           tabbar: { tabs: ['js_source'], is_hidden: true }
         }
       ]
@@ -567,12 +468,6 @@ ui_framework.layouts.storage_rough_layout =
 ui_framework.layouts.main_layout =
 {
   id: 'main-view',
-  tabs: ['dom_new', 'js_new', 'network_panel', 'storage', 'console_new', 'utils']
-}
-
-ui_framework.layouts.panel_layout =
-{
-  id: 'main-view',
   // tab (and tabbar) can either be a layout list
   // or a function returning a layout list
   // the function gets called with the services returned 
@@ -582,6 +477,6 @@ ui_framework.layouts.panel_layout =
     // return a layout depending on services
     // e.g. services['ecmascript-debugger'].version
     // e.g. services['ecmascript-debugger'].is_implemented
-    return ['dom_panel', 'js_panel', 'network_panel', 'storage', 'console_new', 'utils'];
+    return ['dom_mode', 'js_mode', 'network_mode', 'storage', 'console_mode', 'utils'];
   }
 }

@@ -44,11 +44,7 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, services)
     this.container = new TopContainer(this); // actually just a cell
     this.tab = new TopTabs(this);
     this.overlay = new Overlay();
-    this.toolbar = TopToolbar && new TopToolbar(this) || null;
-    if(this.toolbar)
-    {
-      toolbars[this.id].setVisibility(!opera.attached);
-    }
+    this.toolbar = null;
   }
 
   this.update = function()
@@ -165,7 +161,7 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, services)
   this.setStartDimensions();
   if(this.toolbar)
   {
-  this.toolbar.setup(this.id);
+    this.toolbar.setup(this.id);
   }
 
   if (this.modebar)
@@ -196,7 +192,6 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, services)
   (
     global_state
     && global_state.ui_framework.last_selected_top_tab
-    && composite_view_convert_table[opera.attached.toString()][global_state.ui_framework.last_selected_top_tab]
     || this.tab.tabs[0].ref_id
   );
   this.container.setup(this.id);

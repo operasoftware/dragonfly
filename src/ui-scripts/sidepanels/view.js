@@ -35,13 +35,16 @@ var SidePanelBaseView = function(id, name, view_list)
 
   this.ondestroy = function()
   {
-    this._views.forEach(function(obj, index)
+    if (this._divs)
     {
-      if (obj.is_unfolded)
+      this._views.forEach(function(obj, index)
       {
-        this._hide_view(obj, this._divs[index]);
-      }
-    }, this);
+        if (obj.is_unfolded)
+        {
+          this._hide_view(obj, this._divs[index]);
+        }
+      }, this);
+    }
     this._container = null;
     this._divs = null;
     

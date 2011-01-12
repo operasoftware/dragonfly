@@ -597,51 +597,24 @@ top-tabs .icon {
   vertical-align: middle;
   margin-right: 3px;
 }
-top-tabs.detached .icon {
-  display: block;
-  height: 48px;
-  width: 48px;
-  margin: auto;
-}
 
-top-tabs [ref-id="dom_panel"] .icon {
-    content: url("../ui-images/documents_attached.png");
+.dom_mode {
+    background-image: url("../ui-images/documents_attached.png");
 }
-top-tabs [ref-id="js_panel"] .icon {
+.js_mode {
     content: url("../ui-images/scripts_attached.png");
 }
-top-tabs [ref-id="network_panel"] .icon {
-    content: url("../ui-images/network_attached.png");
+.network_mode {
+    background: url("../ui-images/network_attached.png");
 }
-top-tabs [ref-id="storage"] .icon {
-    content: url("../ui-images/storage_attached.png");
+.storage {
+    background: url("../ui-images/storage_attached.png");
 }
-top-tabs [ref-id="console_new"] .icon {
-    content: url("../ui-images/errorlog_attached.png");
+.console_mode {
+    background: url("../ui-images/errorlog_attached.png");
 }
-top-tabs [ref-id="utils"] .icon {
-    content: url("../ui-images/utilities_attached.png");
-}
-top-tabs [ref-id="dom_panel"] .icon {
-    content: url("../ui-images/documents_attached.png");
-}
-top-tabs.detached [ref-id="dom_new"] .icon {
-    content: url("../ui-images/documents_detached.png");
-}
-top-tabs.detached [ref-id="js_new"] .icon {
-    content: url("../ui-images/scripts_detached.png");
-}
-top-tabs.detached [ref-id="network_panel"] .icon {
-    content: url("../ui-images/network_detached.png");
-}
-top-tabs.detached [ref-id="storage"] .icon {
-    content: url("../ui-images/storage_detached.png");
-}
-top-tabs.detached [ref-id="console_new"] .icon {
-    content: url("../ui-images/errorlog_detached.png");
-}
-top-tabs.detached [ref-id="utils"] .icon {
-    content: url("../ui-images/utilities_detached.png");
+.utils {
+    background: url("../ui-images/utilities_attached.png");
 }
 
 button[handler="top-settings"]
