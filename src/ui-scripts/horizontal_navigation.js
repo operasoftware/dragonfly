@@ -2,12 +2,15 @@
  * @constructor
  * @extends UIBase
  */
-var HorizontalNavigation = function(cell)
+var HorizontalNavigationBase = function(cell)
 {
-  this.type = 'horizontal-navigation';
-  this.current_breadcrumb_el = null;
 
-  var last_dir = null;
+  this._element = null;
+  this._breadcrumbs = null;
+  this._current_breadcrumb_el = null;
+  this._nav_back = null;
+  this._nav_forward = null;
+  this._last_dir = null;
 
   /**
    * Updates the list of breadcrumbs.
@@ -18,16 +21,16 @@ var HorizontalNavigation = function(cell)
    */
   this.set_content = function(id, template_list, focus_end)
   {
-    this.breadcrumbs.clearAndRender(template_list);
-    this.breadcrumbs.setAttribute("data-model-id", id);
+    this._breadcrumbs.clearAndRender(template_list);
+    this._breadcrumbs.setAttribute("data-model-id", id);
     this.check_width();
     if (focus_end)
     {
-      this.set_position(-this.breadcrumbs.scrollWidth); // Not exact, but large enough
+      this.set_position(-this._breadcrumbs.scrollWidth); // Not exact, but large enough
     }
     else
     {
-      this.breadcrumbs.style.removeProperty("left");
+      this._breadcrumbs.style.removeProperty("left");
     }
   };
 
@@ -40,20 +43,20 @@ var HorizontalNavigation = function(cell)
    *                         - An integer: Navigates this many pixels
    *
    */
-  this.nav = function(dir)
+  this.nav = function(dir, repeat)
   {
     var left = 0;
-    var pos = parseInt(getComputedStyle(this.breadcrumbs, null).left);
-    var breadcrumbs_dim = this.breadcrumbs.getBoundingClientRect();
-    var element = (last_dir == dir) ? this.current_breadcrumb_el : null;
-    last_dir = dir;
+    var pos = parseInt(getComputedStyle(this._breadcrumbs, null).left);
+    var breadcrumbs_dim = this._breadcrumbs.getBoundingClientRect();
+    var element = (this._last_dir == dir) ? this._current_breadcrumb_el : null;
+    this._last_dir = dir;
 
     if (dir == "back")
     {
       if (!element)
       {
-        element = this.breadcrumbs.firstElementChild;
-        while (element && element.getBoundingClientRect().right < this.nav_back.offsetWidth)
+        element = this._breadcrumbs.firstElementChild;
+        while (element && element.getBoundingClientRect().right < this._nav_back.offsetWidth)
         {
             element = element.nextElementSibling;
         }
@@ -62,7 +65,7 @@ var HorizontalNavigation = function(cell)
       if (element)
       {
         var left_edge = element.getBoundingClientRect().left;
-        left = this.nav_back.getBoundingClientRect().right - left_edge;
+        left = this._nav_back.getBoundingClientRect().right - left_edge;
         element = element.previousElementSibling;
       }
     }
@@ -70,8 +73,8 @@ var HorizontalNavigation = function(cell)
     {
       if (!element)
       {
-        element = this.breadcrumbs.firstElementChild;
-        while (element && element.getBoundingClientRect().right - 1 <= this.nav_forward.offsetLeft)
+        element = this._breadcrumbs.firstElementChild;
+        while (element && element.getBoundingClientRect().right - 1 <= this._nav_forward.offsetLeft)
         {
             element = element.nextElementSibling;
         }
@@ -89,11 +92,54 @@ var HorizontalNavigation = function(cell)
       left += dir;
     }
 
-    this.current_breadcrumb_el = element;
-    this.breadcrumbs.style.OTransitionDuration = Math.min(Math.abs(left) / 200, .2) + "s";
+    this._current_breadcrumb_el = element;
+    this._breadcrumbs.style.OTransitionDuration = Math.min(Math.abs(left) / 200, .2) + "s";
     this.set_position(pos + left);
-  };
+    
+    if (repeat)
+    {
+      this._nav_timeout = setTimeout(this.nav, 400, dir, repeat);
+    }
+    
+  }
 
+  this.clear_nav_timeout = function()
+  {
+    clearTimeout(this._nav_timeout);
+  }
+  
+  this.drag_breadcrumb = function(event, target)
+  {
+    if (this._breadcrumbs)
+    {
+      var left = getComputedStyle(this._breadcrumbs, null).getPropertyValue("left");
+      this._drag_start = parseInt(left) - event.clientX;
+      this._breadcrumbs.style.OTransitionDuration = 0;
+      if (this._breadcrumbs.previousElementSibling.offsetWidth > 0) 
+      {
+        this._breadcrumbs.addClass("drag")
+        document.addEventListener("mousemove", this._drag_breadcrumbs_bound, false);
+        document.addEventListener("mouseup", this._drag_end_bound, false);
+      }
+    }
+  }
+
+  this._drag_breadcrumbs = function(e) 
+  {
+    this.set_position(this._drag_start + e.clientX);
+  }
+
+  this._drag_end = function () 
+  {
+    this._current_breadcrumb_el = null;
+    if (this._breadcrumbs)
+    {
+      this._breadcrumbs.removeClass("drag");
+    }
+    document.removeEventListener("mousemove", this._drag_breadcrumbs_bound, false);
+    document.removeEventListener("mouseup", this._drag_end_bound, false);
+  }
+  
   /**
    * Sets the left position of the breadcrumbs. This method does boundary checking,
    * so the breadcrumbs never overflow on any direction.
@@ -102,12 +148,12 @@ var HorizontalNavigation = function(cell)
    */
   this.set_position = function(left)
   {
-    if (this.element.hasClass("navs"))
+    if (this._element.hasClass("navs"))
     {
-      this.breadcrumbs.style.left =
+      this._breadcrumbs.style.left =
         Math.max(
-          Math.min(this.nav_back.offsetWidth, left),
-          this.nav_forward.offsetLeft - this.breadcrumbs.scrollWidth + 1 /* 1 == right border on last element, which should be covered */
+          Math.min(this._nav_back.offsetWidth, left),
+          this._nav_forward.offsetLeft - this._breadcrumbs.scrollWidth + 1 /* 1 == right border on last element, which should be covered */
         ) + "px";
       this.check_position();
     }
@@ -119,18 +165,21 @@ var HorizontalNavigation = function(cell)
    */
   this.check_width = function()
   {
-    this.current_breadcrumb_el = null;
-    if (this.breadcrumbs.scrollWidth > this.breadcrumbs.offsetWidth + this.breadcrumbs.offsetLeft)
+    if (this._breadcrumbs)
     {
-      this.element.addClass("navs");
-    }
-    else
-    {
-      this.element.removeClass("navs");
-      this.breadcrumbs.style.removeProperty("left");
-    }
+      this._current_breadcrumb_el = null;
+      if (this._breadcrumbs.scrollWidth > this._breadcrumbs.offsetWidth + this._breadcrumbs.offsetLeft)
+      {
+        this._element.addClass("navs");
+      }
+      else
+      {
+        this._element.removeClass("navs");
+        this._breadcrumbs.style.removeProperty("left");
+      }
 
-    this.check_position();
+      this.check_position();
+    }
   };
 
   /**
@@ -139,31 +188,34 @@ var HorizontalNavigation = function(cell)
    */
   this.check_position = function()
   {
-    var left = parseInt(window.getComputedStyle(this.breadcrumbs, null).left);
-    if (left == this.nav_back.offsetWidth)
+    var left = parseInt(window.getComputedStyle(this._breadcrumbs, null).left);
+    if (left == this._nav_back.offsetWidth)
     {
-      this.nav_back.addClass("disabled");
+      this._nav_back.addClass("disabled");
     }
     else
     {
-      this.nav_back.removeClass("disabled");
+      this._nav_back.removeClass("disabled");
     }
 
-    if (this.breadcrumbs.offsetWidth == this.breadcrumbs.scrollWidth)
+    if (this._breadcrumbs.offsetWidth == this._breadcrumbs.scrollWidth)
     {
-      this.nav_forward.addClass("disabled");
+      this._nav_forward.addClass("disabled");
     }
     else
     {
-      this.nav_forward.removeClass("disabled");
+      this._nav_forward.removeClass("disabled");
     }
   };
 
-  this.init = function(cell)
+  this.setup = function()
   {
-    this.cell = cell;
-    this.initBase();
-
+    this._element = this.update();
+    this._element.render(window.templates.horizontal_navigation_content());
+    this._breadcrumbs = this._element.querySelector("breadcrumbs");
+    this._breadcrumbs.addEventListener("OTransitionEnd", this.check_position.bind(this), false);
+    this._nav_back = this._element.querySelector("nav[dir='back']");
+    this._nav_forward = this._element.querySelector("nav[dir='forward']");
     this.element = this.update();
     this.element.render(window.templates.horizontal_navigation_content());
     this.breadcrumbs = this.element.querySelector("breadcrumbs");
@@ -171,9 +223,29 @@ var HorizontalNavigation = function(cell)
     this.nav_back = this.element.querySelector("nav[dir='back']");
     this.nav_forward = this.element.querySelector("nav[dir='forward']");
   };
-
-  this.init(cell);
+  
+  this._super_set_dimension = this.setDimensions;
+  this.setDimensions = function(force_redraw)
+  {
+    this._super_set_dimension(force_redraw);
+    this.check_width();
+  }
+  
+  this._super_init = this.init;
+  this.init = function()
+  {
+    this._super_init();
+    this.nav = this.nav.bind(this);
+    this._drag_breadcrumbs_bound = this._drag_breadcrumbs.bind(this);
+    this._drag_end_bound = this._drag_end.bind(this);
+  }
+  
 };
 
-HorizontalNavigation.prototype = UIBase;
+var HorizontalNavigation = function()
+{
+  this.init();
+};
 
+HorizontalNavigation.prototype = new Modebar();
+HorizontalNavigationBase.apply(HorizontalNavigation.prototype);

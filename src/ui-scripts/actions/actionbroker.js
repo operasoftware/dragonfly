@@ -200,6 +200,7 @@ var ActionBroker = function()
       this._global_shortcuts = this._shortcuts.global; 
       this._key_identifier.set_shortcuts(this._get_shortcut_keys());
       this._set_current_handler(this._global_handler);
+      document.addEventListener("contextmenu", this._oncontextmenubound, false);
       document.addEventListener('click', this._set_action_context_bound, true);
       document.addEventListener('focus', this._set_action_context_bound, true);
       window.messages.post('shortcuts-changed');

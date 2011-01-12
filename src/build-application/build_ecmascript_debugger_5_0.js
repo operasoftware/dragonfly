@@ -150,11 +150,6 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
     new cls.HostSpotlightView('host-spotlight', ui_strings.S_LABEL_SPOTLIGHT_TITLE, '');
     cls.HostSpotlightView.create_ui_widgets();
 
-    /* Modebar */
-    cls.ModebarView.prototype = ViewBase;
-    new cls.ModebarView('modebar', 'Modebar', '');
-    cls.ModebarView.create_ui_widgets();
-
     /* main view doesn't really exist */
     cls.MainView.create_ui_widgets();
 
