@@ -117,7 +117,7 @@ cls.CookieManagerView = function(id, name, container_class)
     // render cookie adding
     container.render(window.templates.cookie_manager.add_cookie_form(this._rts));
     window.eventHandlers.change['cookiemanager-add-cookie-domain-select']();
-    // render clear and update button. todo: move to where it always appears
+    // render clear and update button
     container.render(window.templates.cookie_manager.clear_and_refetch_button());
   };
 
@@ -362,6 +362,28 @@ cls.CookieManagerView = function(id, name, container_class)
       }
     }
     return flattened_cookies;
+  }
+  this.remove_cookie_by_objectref = function(objectref)
+  {
+    var cookie;
+    for (var i=0; i < this.flattened_cookies.length; i++) {
+      if(this.flattened_cookies[i].objectref === objectref)
+      {
+        cookie = this.flattened_cookies[i];
+        var domain = cookie.domain;
+        if(!domain) {
+          // in case the cookies domain is undefined (cookie is retrieved via JS), try using the runtime domain
+          domain = this._rts[cookie.runtimes[0]].hostname;
+        }
+        var path = cookie.path;
+        if(!path) {
+          // in case the cookies path is undefined (cookie is retrieved via JS), try using "/" which is most likely
+          path = "/";
+        }
+        var tag = tagManager.set_callback(this, this._handle_changed_cookies, []);
+        services['cookie-manager'].requestRemoveCookie(tag,[domain, path, cookie.name]);
+      }
+    }
   }
   // End Helpers
   this._init(id, name);
