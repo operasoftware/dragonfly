@@ -450,7 +450,8 @@ ui_framework.layouts.dom_rough_layout =
   children:
   [
     {
-      width: 700, tabs: ['dom', /*'stylesheets'*/]
+      width: 700, 
+      tabbar: { tabs: ['dom'], is_hidden: true }
     },
     {
       width: 250, tabs: ['dom-side-panel', 'dom_attrs', 'css-layout']
@@ -464,7 +465,8 @@ ui_framework.layouts.dom_rough_layout_panel =
   children:
   [
     {
-      width: 700, tabs: ['dom', /*'stylesheets'*/]
+      width: 700, 
+      tabbar: { tabs: ['dom'], is_hidden: true }
     },
     {
       width: 250, tabs: ['dom-side-panel', 'dom_attrs', 'css-layout']
@@ -481,16 +483,25 @@ ui_framework.layouts.js_rough_layout =
       width: 700,
       children:
       [
-        { height: 350, tabs: ['js_source']},
-        //{ height: 250, tabs:['command_line']}
+        { 
+          height: 350, 
+          tabbar: { tabs: ['js_source'], is_hidden: true }
+        }
       ]
     },
     {
       width: 250,
       children:
       [
-        { height: 250, tabs: ['scripts-side-panel' /*'callstack', 'threads'*/] },
-        //{ height: 1000, tabs: ['inspection'] }
+        { 
+          height: 250,
+          tabs: function(services)
+          {
+            return services['ecmascript-debugger'].major_version > 5 ? 
+                   ['scripts-side-panel', 'event-breakpoints'] :
+                   ['scripts-side-panel'];
+          }
+        }
       ]
     }
   ]
@@ -505,7 +516,10 @@ ui_framework.layouts.js_rough_layout_panel =
       width: 700,
       children:
       [
-        { height: 150, tabs: [/*'runtimes', */'js_source'/*, 'command_line'*/] }
+        { 
+          height: 150, 
+          tabbar: { tabs: ['js_source'], is_hidden: true }
+        }
       ]
     },
     {
@@ -539,7 +553,7 @@ ui_framework.layouts.utils_rough_layout =
     dir: 'v',
     width: 1000,
     height: 1000,
-    children: [ { height: 1000, tabs: ['color_picker'] } ]
+    children: [ { height: 1000, tabbar: { tabs: ['color_picker'], is_hidden: true } } ]
 }
 
 ui_framework.layouts.storage_rough_layout =

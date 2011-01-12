@@ -106,7 +106,7 @@ var TabsBase = function()
     {
       this.setCSSProperties();
     }
-    return this.tabs.length > 1 ? this._offset_height : 0;
+    return this.is_hidden ? 0 : this._offset_height;
   });
   
   this.__defineSetter__("offsetHeight", function(offset_height)
@@ -118,16 +118,12 @@ var TabsBase = function()
     
   this.update = function(force_redraw)
   {
-    if (this.tabs.length > 1)
-    {
-      return this._super_update(force_redraw);
-    }
-    return null;
+    return this.is_hidden ? null : this._super_update(force_redraw);
   }
 
   this.render = function()
   {
-    if (this.tabs.length < 2)
+    if (this.is_hidden)
     {
       return null;
     }
@@ -318,11 +314,11 @@ var TabsBase = function()
 
   this.init = function(cell, tabbar)
   {
-    
     this.tabs = [];
     this.activeTab = '';
     this.cell = cell;
     this.initBase();
+    this.is_hidden = tabbar && tabbar.is_hidden || false;
     this.tabbar_id = tabbar && tabbar.id || '';
     window.messages.addListener('view-initialized', this.on_view_inizialized_bound());
   }
