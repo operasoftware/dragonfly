@@ -22,7 +22,9 @@ function ContextMenu() {
    *                         attribute in the markup. May be an already existing
    *                         menu, in which case the items are added.
    * @param {Array} item_list An array of objects with 'label' and 'handler'
-   *                          (function).
+   *                          (function). Optionally it may have 'checked' (boolean)
+   *                          for showing a checkbox before the item, or 'selected'
+   *                          (boolean) for showing the selected item in a group.
    */
   this.register = function(menu_id, item_list)
   {
