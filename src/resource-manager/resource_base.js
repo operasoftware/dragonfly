@@ -6,6 +6,7 @@ cls.ResourceDetailBase = function()
   this.resourcedata = null;
   this.container = null;
   this.drawer = null;
+  this.title = null
 
   this.createView = function(container)
   {
@@ -43,7 +44,7 @@ cls.ResourceDetailBase = function()
     this.resource = res;
     this.resourcedata = null;
     this.filename = cls.ResourceUtil.url_filename(res.url) || "<no name>";
-    this.drawer = new MetadataDrawer(res);
+    this.drawer = new MetadataDrawer(res, "Details for " + (res.type || "unknown type"));
     this.drawer.expanded = true;
     cls.ResourceDetailBase.prototype.init.call(this, this.filename);
   }

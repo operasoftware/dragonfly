@@ -1,6 +1,7 @@
-function MetadataDrawer(resource) {
+function MetadataDrawer(resource, title) {
   this.expanded = false;
   this.resource = resource;
+  this.title = title;
   this._objectid = ObjectRegistry.get_instance().set_object(this);
   this._rules = {
     generic: [
@@ -30,7 +31,7 @@ function MetadataDrawer(resource) {
   {
     var t = null;
     var rules = this._rules.generic.concat(this._rules[t] || []);
-    return window.templates.metadata_drawer(this.resource, this.expanded, this._objectid, rules);
+    return window.templates.metadata_drawer(this.resource, this.expanded, this._objectid, rules, this.title);
   }
 
   this.toggle = function()
@@ -60,7 +61,7 @@ function MetadataDrawer(resource) {
 
 window.templates = window.templates || {};
 
-templates.metadata_drawer = function(resource, expanded, objectid, rules)
+templates.metadata_drawer = function(resource, expanded, objectid, rules, title)
 {
 //  var type = resource.getType();
 
@@ -79,6 +80,7 @@ templates.metadata_drawer = function(resource, expanded, objectid, rules)
            "handler", "metadata-drawer-toggle"
           ],
           content,
+          (expanded && title ? ["h2", title] : []),
           "class", "metadata-drawer " + (expanded ? "expanded" : "collapsed"),
           "data-object-id", objectid,
          ]
