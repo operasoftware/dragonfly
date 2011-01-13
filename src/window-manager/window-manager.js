@@ -343,7 +343,7 @@ cls.WindowManager["2.0"].WindowsDropDown = function()
 
   this.update = function()
   {
-    var toolbar = topCell.toolbar.getElement();
+    var toolbar = topCell.toolbar && topCell.toolbar.getElement();
     if(toolbar)
     {
       var

@@ -33,6 +33,9 @@
  *     <dt>show-view</dt>
  *     <dd>a view was created. Payload: id msg.view</dd>
  *
+ *     <dt>hide-view</dt>
+ *     <dd>a view was removed. Payload: id msg.view</dd>
+ *
  *     <dt>remove-view</dt>
  *     <dd>a view was removed. Payload: id msg.view</dd>
  *

@@ -72,7 +72,7 @@ cls.ElementStyle = function()
 
   var searchtimeout = new Timeouts();
 
-  var __views = ['css-inspector'];
+  var __views = ['css-comp-style', 'css-inspector'];
 
   var id_index_map =
   {
@@ -85,7 +85,7 @@ cls.ElementStyle = function()
     return {
       id: id,
       name: name,
-      is_unfolded: function() { return settings['css-inspector'].get(id); },
+      is_unfolded: true,
       handler: handler || null
     }
   };
@@ -107,10 +107,8 @@ cls.ElementStyle = function()
        (__search_is_active || search_term.length >= MIN_SEARCH_TERM_LENGTH))
     {
       doSearch(search_term);
-      for (i = 0; view_id = __views[i]; i++)
-      {
-        views[view_id].updateCategories({}, getUnfoldedKey());
-      }
+      views['css-inspector'].update();
+      views['css-comp-style'].update();
       __old_search_term = search_term;
     }
   };
@@ -281,7 +279,7 @@ cls.ElementStyle = function()
 
   var getRequestType = function()
   {
-    return (categories[COMP_STYLE].is_unfolded() || categories[CSS].is_unfolded()) && REQ_TYPE_CSS || 0;
+    return (categories[COMP_STYLE].is_unfolded || categories[CSS].is_unfolded) && REQ_TYPE_CSS || 0;
   };
 
   var getUnfoldedKey = function()
@@ -289,7 +287,7 @@ cls.ElementStyle = function()
     var ret = '', i = 0;
     for ( ; i < 2; i++)
     {
-      ret += categories[i].is_unfolded() ? '1' : '0';
+      ret += categories[i].is_unfolded ? '1' : '0';
     }
     return ret;
   };
@@ -367,6 +365,11 @@ cls.ElementStyle = function()
     }
   };
 
+  this.get_computed_style = function()
+  {
+    return this.getCategoryData(COMP_STYLE);
+  }
+
   var getData = function(rt_id, obj_id)
   {
     _rt_id = rt_id;
@@ -442,7 +445,7 @@ cls.ElementStyle = function()
 
       for (i = 0; view_id = __views[i]; i++)
       {
-        views[view_id].updateCategories({}, getUnfoldedKey());
+        views[view_id].update();
       }
     }
   };

@@ -5,7 +5,7 @@
   * a bit different from a normal cell, it holds the main view ui elements but also the main conatiner
   */
 
-var TopCell = function(layout, setDimensions, onresize, TopToolbar)
+var TopCell = function(layout, setDimensions, onresize, TopToolbar, services)
 {
   var self = this;
   var resize_timeout = new Timeouts();
@@ -44,11 +44,7 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar)
     this.container = new TopContainer(this); // actually just a cell
     this.tab = new TopTabs(this);
     this.overlay = new Overlay();
-    this.toolbar = TopToolbar && new TopToolbar(this) || null;
-    if(this.toolbar)
-    {
-      toolbars[this.id].setVisibility(!opera.attached);
-    }
+    this.toolbar = null;
   }
 
   this.update = function()
@@ -161,11 +157,11 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar)
 
   // constructor calls
   window.topCell = this;
-  this.init(layout);
+  this.init(layout, null, null, null, services);
   this.setStartDimensions();
   if(this.toolbar)
   {
-  this.toolbar.setup(this.id);
+    this.toolbar.setup(this.id);
   }
 
   if (this.modebar)
@@ -196,7 +192,6 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar)
   (
     global_state
     && global_state.ui_framework.last_selected_top_tab
-    && composite_view_convert_table[opera.attached.toString()][global_state.ui_framework.last_selected_top_tab]
     || this.tab.tabs[0].ref_id
   );
   this.container.setup(this.id);

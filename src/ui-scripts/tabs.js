@@ -100,15 +100,39 @@ var TabsBase = function()
     }
   }
 
+  this.__defineGetter__("offsetHeight", function()
+  {
+    if (!this.default_height)
+    {
+      this.setCSSProperties();
+    }
+    return this.is_hidden ? 0 : this._offset_height;
+  });
+  
+  this.__defineSetter__("offsetHeight", function(offset_height)
+  {
+    this._offset_height = offset_height;
+  });
+
+  this._super_update = this.update;
+    
+  this.update = function(force_redraw)
+  {
+    return this.is_hidden ? null : this._super_update(force_redraw);
+  }
+
   this.render = function()
   {
+    if (this.is_hidden)
+    {
+      return null;
+    }
     var tabs = document.getElementById(this.type + '-to-' + this.cell.id);
     if( !tabs )
     {
       tabs = this.update();
     }
     tabs.innerHTML = '';
-    tabs.className = window.opera.attached ? "attached" : "detached"; // TODO: Do this with `.attributes` in topTabs?
     tabs.setAttribute("handler", "change-on-scroll");
     if (this.tabbar_id)
     {
@@ -289,11 +313,11 @@ var TabsBase = function()
 
   this.init = function(cell, tabbar)
   {
-    
     this.tabs = [];
     this.activeTab = '';
     this.cell = cell;
     this.initBase();
+    this.is_hidden = tabbar && tabbar.is_hidden || false;
     this.tabbar_id = tabbar && tabbar.id || '';
     window.messages.addListener('view-initialized', this.on_view_inizialized_bound());
   }
