@@ -310,6 +310,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./exec/templates.js"/>
 
 <script src="./client/client.js"/>
+<script src="./client/templates.js"/>
 <script src="./window-manager/window-manager.js"/>
 <script src="./console-logger/console.js"/>
 <script src="./console-logger/console_templates.js"/>

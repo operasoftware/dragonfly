@@ -44,15 +44,14 @@ window.cls.Client = function()
   arguments.callee.instance = this;
 
   var self = this;
-  var _client_id = 0;
+  var clients = [];
   var _first_setup = true;
   var _waiting_screen_timeout = 0;
   var cbs = [];
-  var is_connect_callback_called_map = {};
 
-  var _on_host_connected = function(client_id, servicelist)
+  var _on_host_connected = function(client, servicelist)
   {
-    is_connect_callback_called_map[_client_id] = true;
+    client.connected = true;
     if(_waiting_screen_timeout)
     {
       clearTimeout(_waiting_screen_timeout);
@@ -98,30 +97,40 @@ window.cls.Client = function()
     }
   }
 
-  var _on_host_quit = function(client_id, port)
+  var _on_host_quit = function(client, port)
   {
-    if (is_connect_callback_called_map[client_id])
+    if (client.connected)
     {
       window.window_manager_data.clear_debug_context();
       messages.post('host-state', {state: global_state.ui_framework.spin_state = 'inactive'});
       client.setup();
     }
+    else if (client.is_remote_debug)
+    {
+      document.getElementById("remote-debug-settings").clearAndRender(
+        window.templates.remote_debug_settings(port + 1, ui_strings.S_INFO_ERROR_LISTENING.replace(/%s/, port))
+      );
+
+      // Reset this so we don't start in remote debug next time
+      settings.debug_remote_setting.set('debug-remote', false);
+      window.helpers.setCookie('debug-remote', "false");
+    }
     else
     {
-      show_error(ui_strings.S_INFO_ERROR_LISTENING.replace(/%s/, port), port);
+      show_info(ui_strings.S_INFO_ERROR_LISTENING.replace(/%s/, port), port);
     }
   }
 
-  var get_quit_callback = function(client_id, port)
+  var get_quit_callback = function(client, port)
   {
     // workaround for bug CORE-25389
     // onQuit() callback is called twice when
     // creating new client with addScopeClient
     return function()
     {
-      if(client_id == _client_id)
+      if (client.id == clients.length)
       {
-        _on_host_quit(client_id, port);
+        _on_host_quit(client, port);
       }
     }
   }
@@ -143,55 +152,100 @@ window.cls.Client = function()
       0);
   }
 
-  this.setup = function()
+  this.setup = function(is_remote_debug)
   {
-    _client_id++;
-    is_connect_callback_called_map[_client_id] = false;
-    window.ini || ( window.ini = {debug: false} );
+    var client = {
+      id: clients.length + 1,
+      connected: false,
+      is_remote_debug: !!is_remote_debug
+    };
+    clients.push(client);
+
+    window.ini || (window.ini = {debug: false});
     window.messages.post('reset-state');
-    this.create_top_level_views();
+
     if (!opera.scopeAddClient)
     {
       // implement the scope DOM API
       cls.ScopeHTTPInterface.call(opera /*, force_stp_0 */);
     }
-    if( !opera.stpVersion )
+
+    if (!opera.stpVersion)
     {
       // reimplement the scope DOM API STP/1 compatible
       // in case of a (builtin) STP/0 proxy
       cls.STP_0_Wrapper.call(opera);
     }
+
     var port = _get_port_number();
-    var cb_index = cbs.push(get_quit_callback(_client_id, port)) - 1;
+    var cb_index = cbs.push(get_quit_callback(client, port)) - 1;
     opera.scopeAddClient(
-        _on_host_connected.bind(this, _client_id),
+        _on_host_connected.bind(this, client),
         cls.ServiceBase.get_generic_message_handler(),
         cbs[cb_index],
         port
       );
+
     if(window.ini.debug && !opera.scopeHTTPInterface)
     {
       cls.debug.wrap_transmit();
     }
-    if(window.topCell)
+
+    this._create_ui(is_remote_debug, port);
+  }
+
+  // TODO: rename
+  this._create_ui = function(is_remote_debug, port)
+  {
+    // Move this to some function
+    if (!is_remote_debug)
     {
-      window.topCell.cleanUp();
+      this.create_top_level_views();
+      if(window.topCell)
+      {
+        window.topCell.cleanUp();
+      }
     }
+
     if(_first_setup)
     {
       _first_setup = false;
       _waiting_screen_timeout = setTimeout(function() {
-        show_error(ui_strings.S_INFO_WAITING_FORHOST_CONNECTION.replace(/%s/, port), port);
+        show_info(ui_strings.S_INFO_WAITING_FORHOST_CONNECTION.replace(/%s/, port), port);
       }, 250);
-
+    }
+    else if (is_remote_debug)
+    {
+      document.getElementById("remote-debug-settings").clearAndRender([
+        ["p",
+          ui_strings.S_INFO_WAITING_FORHOST_CONNECTION.replace(/%s/, port)
+          //"Waiting for a host connection." +
+          //" Go to opera:debug in your host and use <IP> and %s to connect.".replace(/%s/, port)
+        ],
+        //["p",
+        //  ["img",
+        //    "src",
+        //    "https://chart.googleapis.com/chart?chs=100x100&cht=qr&chl=opera%3Adebug&chld=L|0&choe=UTF-8",
+        //    "width", "100",
+        //    "height", "100"
+        //  ]
+        //],
+        ["p",
+          ["button",
+            ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG,
+            "handler",
+            "cancel-remote-debug"
+          ]
+        ]
+      ]);
     }
     else
     {
-      show_error(ui_strings.S_INFO_WAITING_FORHOST_CONNECTION.replace(/%s/, port), port);
+      show_info(ui_strings.S_INFO_WAITING_FORHOST_CONNECTION.replace(/%s/, port), port);
     }
-  }
+  };
 
-  var show_error = function(msg, port)
+  var show_info = function(msg, port)
   {
     viewport.innerHTML =
     "<div class='padding' id='waiting-for-connection'>" +
