@@ -1163,8 +1163,8 @@ d
 {
   overflow: hidden;
   white-space: nowrap;
-  text-overflow: ellipsis;
   -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
   border: 1px solid #ccc;
   padding: 0px 5px;
   line-height: 16px;

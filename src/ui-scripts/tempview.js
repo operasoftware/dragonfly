@@ -1,4 +1,4 @@
-var TempBaseView = function()
+﻿var TempBaseView = function()
 {
   this._count = 0;
   this._init_super = this.init;
