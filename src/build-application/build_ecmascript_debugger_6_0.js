@@ -73,7 +73,9 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     cls.JsSourceView.create_ui_widgets();
     
     /* Runtime State */
-    new SidePanelView('scripts-side-panel', "State", ['callstack', 'inspection']);
+    new SidePanelView('scripts-side-panel', 
+                      ui_strings.M_VIEW_LABEL_RUNTIME_STATE,
+                      ['callstack', 'inspection']);
 
     /* Callstack */
     cls.CallstackView.prototype = ViewBase;

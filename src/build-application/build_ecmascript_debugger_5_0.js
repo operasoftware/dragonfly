@@ -68,7 +68,9 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
     cls.JsSourceView.create_ui_widgets();
 
     /* Runtime State */
-    new SidePanelView('scripts-side-panel', "State", ['callstack', 'inspection']);
+    new SidePanelView('scripts-side-panel',
+                      ui_strings.M_VIEW_LABEL_RUNTIME_STATE,
+                      ['callstack', 'inspection']);
 
     /* Callstack */
     cls.CallstackView.prototype = ViewBase;
@@ -109,7 +111,7 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
     new cls.CSSInspectorActions('css-inspector');
 
     /* DOM sidepanel */
-    new cls.DOMSidePanelView('dom-side-panel', 
+    new cls.DOMSidePanelView('dom-side-panel',
                              ui_strings.M_VIEW_LABEL_STYLES,
                              ['css-comp-style', 'css-inspector']);
     cls.DOMSidePanelView.create_ui_widgets();
