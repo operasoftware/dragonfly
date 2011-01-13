@@ -109,3 +109,8 @@ li > .repl-lines {
     background-position: 0 -11px;
 }
 
+.element-href ,
+.element-src {
+  color: hsl(0, 0%, 50%);
+}
+

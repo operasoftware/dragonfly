@@ -122,6 +122,11 @@ var ToolbarBase = function()
   {
     var toolbar = document.getElementById(this.type + '-to-' + this.cell.id) || this.update();
     toolbar.innerHTML ='';
+    this.create_toolbar_content(view_id, toolbar)
+  }
+
+  this.create_toolbar_content = function(view_id, toolbar)
+  {
     this.filters = toolbars[view_id] && toolbars[view_id].filters || [];
     this.buttons = toolbars[view_id] && toolbars[view_id].buttons || [];
     this.switches = switches[view_id] && switches[view_id].keys || [];
@@ -183,7 +188,12 @@ var ToolbarBase = function()
       } 
     }
   }
-
+  
+  this.get_filters = function()
+  {
+    return this.filters;
+  }
+  
   this.init = function(cell, buttons, filters, specials, customs)
   {
     this.cell = cell;

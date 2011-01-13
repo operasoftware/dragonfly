@@ -101,7 +101,7 @@ window.templates.storage_item_edit = function(item, index)
       ['h4', item.key],
       ['_auto_height_textarea', item.value],
       ['p',
-        this.storage_button({label: ui_strings.S_BUTTON_SAVE, handler: 'storage-save'}),
+        this.storage_button({label: ui_strings.S_BUTTON_TEXT_APPLY, handler: 'storage-save'}),
         this.storage_button({label: ui_strings.S_BUTTON_CANCEL, handler: 'storage-edit-cancel'}),
       ],
       'class', 'storage-edit',

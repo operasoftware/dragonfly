@@ -80,6 +80,10 @@ var ContainerBase = function()
       container.className = view.container_class || '';
       container.setAttribute('data-menu', view_id || '');
       container.innerHTML = '';
+      if (!view.has_container_id(container.id))
+      {
+        view.addContainerId(container.id);
+      }
       view.update();
     }
   }

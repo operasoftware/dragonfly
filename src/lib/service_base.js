@@ -30,6 +30,10 @@ window.cls.ServiceBase = function ()
     if (map)
     {
       this.version = version;
+      version = version.split('.').map(Number);
+      this.major_version = version[0];
+      this.minor_version = version[1] || 0;
+      this.patch_version = version[2] || 0;
       for (var cmd_id in map)
       {
         this._expose_method(parseInt(cmd_id), map[cmd_id].name);

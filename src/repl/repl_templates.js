@@ -40,7 +40,7 @@ templates.repl_output_pobj = function(data)
                         /(?:Element)$/.test(data.name)
   return [
     'code',
-    data.name,
+    data.friendly_printed ? this.friendly_print(data.friendly_printed) : data.name,
     'handler', is_element_type ? 'inspect-node-link' : 'inspect-object-link',
     'rt-id', data.rt_id.toString(),
     'obj-id', data.obj_id.toString(),

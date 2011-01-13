@@ -67,6 +67,11 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
     new cls.ScriptSelect('js-script-select', 'script-options');
     cls.JsSourceView.create_ui_widgets();
 
+    /* Runtime State */
+    new SidePanelView('scripts-side-panel',
+                      ui_strings.M_VIEW_LABEL_RUNTIME_STATE,
+                      ['callstack', 'inspection']);
+
     /* Callstack */
     cls.CallstackView.prototype = ViewBase;
     new cls.CallstackView('callstack', ui_strings.M_VIEW_LABEL_CALLSTACK, 'scroll');
@@ -98,9 +103,18 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
     window.elementStyle = new cls.ElementStyle();
     cls.CSSInspectorView.prototype = ViewBase;
     new cls.CSSInspectorView('css-inspector', ui_strings.M_VIEW_LABEL_STYLES, 'scroll css-inspector');
-    cls.CSSInspectorView.create_ui_widgets();
+
+    cls.CSSInspectorCompStyleView.prototype = ViewBase;
+    new cls.CSSInspectorCompStyleView('css-comp-style', ui_strings.M_VIEW_LABEL_COMPUTED_STYLE, 'scroll css-inspector');
+
     new cls.ColorPickerView('color-selector', 'Color Picker', 'color-selector');
     new cls.CSSInspectorActions('css-inspector');
+
+    /* DOM sidepanel */
+    new cls.DOMSidePanelView('dom-side-panel',
+                             ui_strings.M_VIEW_LABEL_STYLES,
+                             ['css-comp-style', 'css-inspector']);
+    cls.DOMSidePanelView.create_ui_widgets();
 
     /* Layout */
     window.elementLayout = new cls.ElementLayout();
@@ -149,11 +163,6 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
     cls.HostSpotlightView.prototype = ViewBase;
     new cls.HostSpotlightView('host-spotlight', ui_strings.S_LABEL_SPOTLIGHT_TITLE, '');
     cls.HostSpotlightView.create_ui_widgets();
-
-    /* Modebar */
-    cls.ModebarView.prototype = ViewBase;
-    new cls.ModebarView('modebar', 'Modebar', '');
-    cls.ModebarView.create_ui_widgets();
 
     /* main view doesn't really exist */
     cls.MainView.create_ui_widgets();

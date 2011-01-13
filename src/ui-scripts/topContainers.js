@@ -24,10 +24,10 @@ var TopContainerBase = function()
       this.setCSSProperties();
     }
 
-    var toolbar_and_tabs_height = (this.cell.toolbar && this.cell.toolbar.height ? this.cell.toolbar.offsetHeight : 0) + this.cell.tab.offsetHeight;
-    var modebar_height = (this.cell.modebar.is_visible ? this.cell.modebar.offsetHeight : 0);
-
-    dim = this.cell.top + toolbar_and_tabs_height + modebar_height;
+    var toolbar_and_tabs_height = 
+      (this.cell.toolbar && this.cell.toolbar.height ? 
+       this.cell.toolbar.offsetHeight : 0) + this.cell.tab.offsetHeight;
+    dim = this.cell.top + toolbar_and_tabs_height;
     if( dim != this.top)
     {
       this.is_dirty = true;
@@ -48,7 +48,7 @@ var TopContainerBase = function()
       this.width = dim;
     }
 
-    dim = this.cell.height - toolbar_and_tabs_height - this.vertical_border_padding - modebar_height;
+    dim = this.cell.height - toolbar_and_tabs_height - this.vertical_border_padding;
     if( dim != this.height)
     {
       this.is_dirty = true;
@@ -68,19 +68,15 @@ var TopContainerBase = function()
     {
       var children = viewport.childNodes, child = null, i = children.length - 1;
       var id = this.cell.id;
-      var tabs = null, tab = null, k = 0;
+      var container = null;
       for( ; child = children[i]; i--)
       {
-        if( child.nodeType == 1 && child.id.indexOf(id) == -1 )
+        if (child.nodeType == 1 && child.id.indexOf(id) == -1)
         {
-          
-          tabs = child.getElementsByTagName('tab');
-          for( k = 0; tab = tabs[k]; k++)
+          if (child.nodeName.toLowerCase() == 'container')
           {
-            if( tab.hasClass('active') )
-            {
-              messages.post("hide-view", {id: tab.getAttribute('ref-id')});
-            }
+            container = UIBase.getUIById(child.getAttribute('ui-id'));
+            messages.post("hide-view", {id: container.view_id});
           }
           viewport.removeChild(child);
         }

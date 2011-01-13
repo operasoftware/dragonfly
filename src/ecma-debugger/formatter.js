@@ -38,6 +38,10 @@ window.cls.SimpleJSParser = function()
     */
   this.parse = function(script_source, token_arr, type_arr){};
 
+  // TODO clean up the interface
+  // returns an array with TYPE, VALUE tuples
+  this.parse2 = function(script_source){};
+
   /* privat */
 
   /* optimized to return fotmatted HTML */
@@ -85,6 +89,8 @@ window.cls.SimpleJSParser = function()
   var __token_arr = null;
   var __token_type_arr = null;
 
+  var __return_arr = null;
+
   var __highlight_line_start = -1;
   var __highlight_line_end = -1;
 
@@ -112,13 +118,33 @@ window.cls.SimpleJSParser = function()
     __buffer = '';
   }
 
+  var __read_buffer_parse_simple = function()
+  {
+    if (__buffer)
+    {
+      __return_arr.push([__type, __buffer]);
+      if (__type==IDENTIFIER)
+      {
+        __previous_type=__type;
+        __previous_value = __buffer;
+      }
+    }
+    __buffer = '';
+  };
+
+  var __online_parse_simple = function()
+  {
+    __return_arr.push([LINETERMINATOR, __buffer]);
+    __buffer = '';
+  };
+
   var WHITESPACE_CHARS =
   {
     '\u0009': 1, //  Tab <TAB>
     '\u000B': 1, //  Vertical Tab <VT>
     '\u000C': 1, //  Form Feed <FF>
     '\u0020': 1, //  Space <SP>
-    '\u00A0': 1  //  No-break space <NBSP>
+    '\u00A0': 1 //  No-break space <NBSP>
   }
   var LINETERMINATOR_CHARS =
   {
@@ -964,6 +990,22 @@ window.cls.SimpleJSParser = function()
     __online = __online_with_arrs;
     read_buffer = __read_buffer_with_arrs;
     parser(__source.charAt(__pointer));
+  }
+
+  this.parse2 = function(script)
+  {
+    var ret = __return_arr = [];
+    parser = default_parser;
+    __previous_type = '';
+    __type = IDENTIFIER;
+    __escape = {};
+    __source = script;
+    __pointer = 0;
+    __online = __online_parse_simple;
+    read_buffer = __read_buffer_parse_simple;
+    parser(__source.charAt(__pointer));
+    __return_arr = null;
+    return ret;
   }
 
   var __online_raw = function(c)

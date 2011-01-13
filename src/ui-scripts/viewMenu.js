@@ -99,10 +99,6 @@ var ViewsMenu = function(menu_id)
     {
       topCell.tab.changeStyleProperty("padding-right", 188);
     }
-    else
-    {
-      topCell.toolbar.changeStyleProperty("padding-right", 188);
-    }
     
   }
 
@@ -115,10 +111,6 @@ var ViewsMenu = function(menu_id)
       if(opera.attached)
       {
         topCell.tab.changeStyleProperty("padding-right", -188);
-      }
-      else
-      {
-        topCell.toolbar.changeStyleProperty("padding-right", -188);
       }
     }
   }

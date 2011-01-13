@@ -438,17 +438,20 @@ cls.ModebarView.create_ui_widgets = function()
     'modebar',
     // key-value map
     {
-      "show-modebar": true
+      "show-modebar-dom": true,
+      "show-modebar-scripts": true,
     },
     // key-label map
     {
-      "show-modebar": "Show modebar"
+      "show-modebar-dom": "Show DOM modebar",
+      "show-modebar-scripts": "Show Scripts modebar",
     },
     // settings map
     {
       checkboxes:
       [
-        "show-modebar"
+        "show-modebar-dom",
+        "show-modebar-scripts",
       ]
     },
     // custom templates

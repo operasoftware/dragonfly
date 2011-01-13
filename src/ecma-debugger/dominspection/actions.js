@@ -115,7 +115,16 @@ cls.DOMInspectorActions = function(id)
       target.id = 'target-element';
       if (!skip_breadcrumbs_update)
       {
-        window.modebar.set_content(model.id, window.templates.breadcrumb(model, obj_id), true);
+        if (!this._modebar)
+        {
+          this._modebar = UI.get_instance().get_modebar('dom');
+        }
+        if (this._modebar)
+        {
+          this._modebar.set_content(model.id, 
+                                    window.templates.breadcrumb(model, obj_id), 
+                                    true);
+        }
       }
       // if the view_container is null the view is not in focus
       if (!view_container)

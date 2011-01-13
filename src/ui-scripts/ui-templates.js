@@ -4,18 +4,30 @@
 {
   var self = this;
 
-  this.tab = function(obj, is_active_tab)
+  this.tab = function(obj, is_active_tab, is_first_temp_tab)
   {
-    return ['tab', obj.name,
-            'handler', 'tab',
-            'ref-id', obj.ref_id
-      //( obj.has_close_button ? ['input', 'type', 'button', 'handler', 'close-tab', ] : [] ),
-    ].concat(is_active_tab ? ['class', 'active'] : [] );
+    var ret = ['tab', obj.name];
+    var class_name = [is_active_tab  && 'active',
+                      is_first_temp_tab && 'first-temp-tab']
+                     .filter(Boolean).join(' ');
+    if (obj.has_close_button)
+    {
+      ret.push(['input', 
+                'type', 'button', 
+                'handler', 'close-tab', 
+                'class', 'close-tab-button']);
+    }
+    ret.push('handler', 'tab', 'ref-id', obj.ref_id);
+    if (class_name)
+    {
+      ret.push('class', class_name);
+    }
+    return ret;
   }
 
   this.top_tab = function(obj, is_active_tab)
   {
-    return ['tab', [['span', "", "class", "icon"], obj.name],
+    return ['tab', [['span', "class", "icon " + obj.ref_id], obj.name],
             'handler', 'tab',
             'ref-id', obj.ref_id
     ].concat(is_active_tab ? ['class', 'active'] : [] );
@@ -194,12 +206,18 @@
   this.tabs = function(obj)
   {
     var ret = [];
-    var tab = null, i = 0;
-    for( ; tab = obj.tabs[i]; i++)
+    var tab = null, i = 0, is_first_temp_tab = false;
+    for (; tab = obj.tabs[i]; i++)
     {
-      if( ! tab.disabled )
+      if (!tab.disabled)
       {
-        ret[ret.length] = this.tab(tab, obj.activeTab == tab.ref_id)
+        ret[ret.length] = this.tab(tab, 
+                                   obj.activeTab == tab.ref_id,
+                                   tab.has_close_button && !is_first_temp_tab);
+        if (!is_first_temp_tab)
+        {
+          is_first_temp_tab = Boolean(tab.has_close_button);
+        }
       }
     }
     return ret;
@@ -229,13 +247,7 @@
 
   this.window_controls = function()
   {
-    return 1||window.opera.attached ?
-      this.window_controls_attached() :
-      this.window_controls_detached();
-  }
-
-  this.window_controls_attached = function()
-  {
+    var is_attached = window.opera.attached;
     return [
       'window-controls',
       [
@@ -267,39 +279,19 @@
         [
           'button',
           'handler', 'top-window-toggle-attach',
-          'class', 'switch' + (opera.attached ? ' attached' : ''),
+          'class', 'switch' + (is_attached ? ' attached' : ''),
           'title', ui_strings.S_SWITCH_DETACH_WINDOW
         ],
-        opera.attached ? [
-          'button',
-          'handler', 'top-window-close',
-          'title', ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW
-        ] : [],
-        'class', (opera.attached ? ' attached' : ''),
+        is_attached
+        ? [
+            'button',
+            'handler', 'top-window-close',
+            'title', ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW
+          ]
+        : [],
+        'class', 'attached',
         'id', 'window-controls-to-main-view'
       ]
-    ];
-  };
-
-  this.window_controls_detached = function()
-  {
-    return [
-      'window-controls',
-      [
-        window['cst-selects']['debugger-menu'].select_template(),
-        [
-         'button',
-         'handler', 'reload-window',
-         'title', ui_strings.S_BUTTON_LABEL_RELOAD_HOST
-        ],
-        [
-         'button',
-         'handler', 'top-window-toggle-attach',
-         'class', 'switch',
-         'title', ui_strings.S_SWITCH_ATTACH_WINDOW
-        ],
-      ],
-      'id', 'window-controls-to-main-view'
     ];
   };
 

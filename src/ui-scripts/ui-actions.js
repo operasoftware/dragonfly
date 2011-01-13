@@ -116,32 +116,22 @@ eventHandlers.mousewheel['change-on-scroll'] = function(event, target)
 
 eventHandlers.click['close-tab'] = function(event, target)
 {
-  target = target.parentElement;
+  //target = target.parentElement;
 
-  var 
-  tabs = UIBase.getUIById(target.parentElement.getAttribute('ui-id')),
-  view_id = target.getAttribute('ref-id'),
-  store = global_state.ui_framework.temporary_tabs,
-  cursor = '',
-  i = 0;
-
-  tabs.removeTab(view_id);
-  for( ; ( cursor = store[i] ) && cursor != view_id; i++);
-  if(cursor)
+  var tabbar_id = target.get_attr("parent-node-chain", "tabbar-ref-id");
+  var view_id = target.get_attr("parent-node-chain", "ref-id");
+  var tabbar = tabbar_id && view_id && UI.get_instance().get_tabbar(tabbar_id) || null;
+  if (tabbar)
   {
-    store.splice(i, 1);
+    tabbar.remove_tab(view_id);
   }
 }
 
-eventHandlers.nav_timeout = null;
 eventHandlers.mousedown['horizontal-nav'] = function(event, target)
 {
   var horizontal_nav = UIBase.getUIById(target.get_attr('parent-node-chain', 'ui-id'));
   var dir = target.get_attr('parent-node-chain', 'dir');
-  (function nav() {
-    horizontal_nav.nav(dir);
-    eventHandlers.nav_timeout = setTimeout(nav, 400);
-  })();
+  horizontal_nav.nav(dir, true);
 };
 
 eventHandlers.mouseup['horizontal-nav'] =
@@ -152,7 +142,8 @@ eventHandlers.mouseout['horizontal-nav'] = function(event, target)
   {
     selection.removeAllRanges();
   }
-  clearTimeout(eventHandlers.nav_timeout);
+  var horizontal_nav = UIBase.getUIById(target.get_attr('parent-node-chain', 'ui-id'));
+  horizontal_nav.clear_nav_timeout();
 };
 
 eventHandlers.mousewheel['breadcrumbs-drag'] = function(event, target)
@@ -164,30 +155,8 @@ eventHandlers.mousewheel['breadcrumbs-drag'] = function(event, target)
 eventHandlers.mousedown['breadcrumbs-drag'] = function(event, target)
 {
   var horizontal_nav = UIBase.getUIById(target.get_attr('parent-node-chain', 'ui-id'));
-  var breadcrumbs = target;
-  var pos = parseInt(getComputedStyle(breadcrumbs, null).getPropertyValue("left"));
-  breadcrumbs.style.OTransitionDuration = 0;
-
-  if (breadcrumbs.previousElementSibling.offsetWidth > 0) {
-    document.addEventListener("mousemove", mouse_move, false);
-    document.addEventListener("mouseup", mouse_up, false);
-  }
-
-  function mouse_move(e) {
-    drag_breadcrumbs(e, event.clientX, pos);
-  }
-
-  function mouse_up() {
-    horizontal_nav.current_breadcrumb_el = null;
-    breadcrumbs.removeClass("drag");
-    document.removeEventListener("mousemove", mouse_move, false);
-    document.removeEventListener("mouseup", mouse_up, false);
-  }
-
-  function drag_breadcrumbs(e, mouse_start, pos) {
-    breadcrumbs.addClass("drag")
-    horizontal_nav.set_position(pos + e.clientX - mouse_start);
-  }
+  horizontal_nav.drag_breadcrumb(event, target);
+  
 };
 
 eventHandlers.click['settings-tabs'] = function(event, target)
@@ -233,37 +202,13 @@ eventHandlers.click['top-window-close'] = function(event)
 
 eventHandlers.click['top-window-toggle-attach'] = function(event)
 {
-  viewsMenu.remove();
-  window.topCell.onresize = function(){};
-  var is_attached = ( window.opera.attached = !window.opera.attached );
-  event.target.parentNode.parentNode.removeChild(event.target.parentNode);
-
-  // TODO active window must be set correct
-  // then the window dropdown will be removed in the attached view
-  // topCell.tab.changeStyleProperty("padding-right", 60);
-  topCell.tab.switch_history(is_attached);
-  
-  if( is_attached )
+  window.opera.attached = !window.opera.attached;
+  window.settings.general.set('window-attached',  window.opera.attached);
+  var window_controls = document.getElementsByTagName('window-controls')[0];
+  if (window_controls)
   {
-    topCell.tab.changeStyleProperty("padding-right", 50);
-    topCell.toolbar.changeStyleProperty("padding-right", -30);
+    window_controls.re_render(templates.window_controls())
   }
-  else
-  {
-    topCell.tab.changeStyleProperty("padding-right", -50);
-    topCell.toolbar.changeStyleProperty("padding-right", 30);
-  }
-
-  settings.general.set('window-attached',  is_attached || false);
-  if(window.ini.debug)
-  {
-    viewsMenu.create();
-  }
-
-  setTimeout(function() {
-    client.setupTopCell();
-    document.querySelector("main-view").render(templates.window_controls(is_attached));
-  }, 0);
 }
 
 eventHandlers.click['overlay-tab'] = function(event, target)
@@ -305,15 +250,8 @@ eventHandlers.click['toggle-remote-debug-config-overlay'] = function(event, targ
   var element = overlay.element.querySelector("overlay-window");
   var arrow = overlay.element.querySelector("overlay-arrow");
   element.style.top = button_dims.bottom + OVERLAY_TOP_MARGIN + "px";
-  if (1||window.opera.attached)
-  {
-    element.addClass("attached");
-    arrow.style.right = document.documentElement.clientWidth - button_dims.right - OVERLAY_RIGHT_MARGIN + "px";
-  }
-  else
-  {
-    arrow.style.left = button_dims.left - OVERLAY_LEFT_MARGIN + "px";
-  }
+  element.addClass("attached");
+  arrow.style.right = document.documentElement.clientWidth - button_dims.right - OVERLAY_RIGHT_MARGIN + "px";
 };
 
 eventHandlers.click['toggle-console'] = function(event, target)

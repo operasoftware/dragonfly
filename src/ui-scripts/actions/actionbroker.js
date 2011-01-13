@@ -139,12 +139,13 @@ var ActionBroker = function()
       var container = event.target;
       while (container && container.nodeType == 1 &&
              container.parentNode.nodeType == 1 &&
-             !/^(?:top-)?(?:container|toolbar|tabs)$/i.test(container.nodeName))
+             !/^(?:top-|panel-)?(?:container|toolbar|tabs)$/i.test(container.nodeName))
         container = container.parentNode;
 
       switch (container && container.nodeName.toLowerCase() || '')
       {
         case 'container':
+        case 'panel-container':
         {
           var ui_obj = UIBase.getUIById(container.getAttribute('ui-id'));
           if (ui_obj)
@@ -192,7 +193,6 @@ var ActionBroker = function()
                                              window.ini.browser);
     this.register_handler(this._global_handler);
     this._contextmenu = ContextMenu.get_instance();
-    document.addEventListener("contextmenu", this._oncontextmenubound, false);
     window.app.addListener('services-created', function()
     {
       this._shortcuts = window.settings.general.get("shortcuts") ||
@@ -200,6 +200,7 @@ var ActionBroker = function()
       this._global_shortcuts = this._shortcuts.global; 
       this._key_identifier.set_shortcuts(this._get_shortcut_keys());
       this._set_current_handler(this._global_handler);
+      document.addEventListener("contextmenu", this._oncontextmenubound, false);
       document.addEventListener('click', this._set_action_context_bound, true);
       document.addEventListener('focus', this._set_action_context_bound, true);
       window.messages.post('shortcuts-changed');
@@ -356,6 +357,11 @@ var ActionBroker = function()
       }
     return '';
   };
+  
+  this.get_action_container = function()
+  {
+    return this._container;
+  }
 
   if (document.readyState == "complete")
     this._init();

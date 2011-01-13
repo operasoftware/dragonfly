@@ -50,6 +50,11 @@ cls.ReplData = function(view)
     this._add_entry("completion", str);
   };
 
+  this.add_output_errorlog = function(str)
+  {
+    this._add_entry("errorlog", str);
+  };
+
   /**
    * Inspectable element, as used by dirxml()
    */
@@ -68,9 +73,9 @@ cls.ReplData = function(view)
   /**
    * Pointer to object, like when evaluating an object without using dir etc.
    */
-  this.add_output_pobj = function(rt, objid, name)
+  this.add_output_pobj = function(rt, objid, name, friendly_printed)
   {
-    this._add_entry("pobj", {rt_id: rt, obj_id: objid, name: name});
+    this._add_entry("pobj", {rt_id: rt, obj_id: objid, name: name, friendly_printed: friendly_printed});
   };
 
   this.add_output_valuelist = function(rt, values)
