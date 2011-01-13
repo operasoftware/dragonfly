@@ -12,3 +12,68 @@
     min-height: 200px;
     border: solid thin black;
 }
+
+#main-scroll-container
+{
+  height: 100%;
+  overflow: auto;
+}
+
+#main-scroll-content
+{
+  position: relative;
+}
+
+#left-side-content
+{
+  width: 120px;
+  overflow: hidden;
+}
+
+#left-side-content > ol
+{
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+tr:nth-child(odd)
+{
+  background-color: hsl(0, 0%, 95%);
+}
+
+#left-side-content li
+{
+  height: 22px;
+  line-height: 22px;
+  padding: 0 5px;
+  border: solid thin red;
+  overflow: hidden;
+
+}
+
+#right-side-container
+{
+  position: absolute;
+  height: 100%;
+  top: 0px;
+  left: 120px;
+  right: 0px;
+  overflow: hidden;
+}
+#right-side-content
+{
+  width: 1000px;
+  height: 100%;
+}
+#scroll-bar-container
+{
+  width: 480px;
+  margin-left: 120px;
+  overflow: auto;
+}
+#scrollbar
+{
+  height: 1px;
+}

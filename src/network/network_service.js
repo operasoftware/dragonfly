@@ -60,10 +60,18 @@ cls.NetworkLoggerService = function(view, data)
     this._current_context.update("response", data);
   }.bind(this);
 
+  this._on_request_bound = function(msg)
+  {
+    if (!this._current_context) { return; }
+    var data = new cls.ResourceManager["1.0"].Response(msg);
+    this._current_context.update("request", data);
+  }.bind(this);
+
   this.init = function()
   {
     this._res_service = window.services['resource-manager'];
     this._res_service.addListener("urlload", this._on_urlload_bound);
+    this._res_service.addListener("request", this._on_request_bound);
     this._res_service.addListener("response", this._on_response_bound);
     this._res_service.addListener("urlredirect", this._on_urlredirect_bound);
     this._res_service.addListener("urlfinished", this._on_urlfinished_bound);
@@ -71,28 +79,10 @@ cls.NetworkLoggerService = function(view, data)
     this._doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
   };
 
-  this.get_network_context = function()
+  this.get_request_context = function()
   {
     return this._current_context;
   };
-
-  /**
-   * Returns an array of resource objects. The internal representation is to
-   * keep separate lists of seen resources and a map of id/resource.
-   */
-  this.get_request_list = function()
-  {
-    if (! this._current_context) { return []; }
-    return this._current_context.resources;
-  };
-
-
-  this.fetch_resource_data = function(callback, rid, type)
-  {
-    var typecode = {datauri: 3, string: 1}[type] || 1;
-    var tag = window.tagManager.set_callback(null, callback);
-    this._res_service.requestGetResource(tag, [rid, [typecode, 1]]);
-  }
 
   this.init();
 };
@@ -192,12 +182,18 @@ cls.Request = function(id)
       // fixme: complete list
       this.urltypeName = {0: "unknown", 1: "http", 2: "https", 3: "file", 4: "data" }[eventdata.urlType];
     }
+    else if (eventname == "request")
+    {
+      //opera.postError("le request");
+    }
     else if (eventname == "urlfinished")
     {
       this.result = eventdata.result;
       this.mime = eventdata.mimeType;
       this.encoding = eventdata.characterEncoding;
       this.size = eventdata.contentLength;
+      this.endtime = eventdata.time;
+      this.duration = this.endtime - this.starttime;
       this.finished = true;
       this._guess_type();
     }

@@ -72,3 +72,44 @@ templates.network_request_crafter_main = function(url, request, response)
           "class", "padding request-crafter"
          ];
 };
+
+
+templates.network_log_main = function(ctx)
+{
+  return [
+    ["div",
+     ["div",
+      ["div", templates.network_log_url_list(ctx), "id", "left-side-content"],
+      ["div",
+       ["div", "aaaaa", "id", "right-side-content"],
+       "id", "right-side-container"
+      ],
+      "id", "main-scroll-content"
+     ],
+     "id", "main-scroll-container"
+    ],
+    ["div", ["div", "id", "scrollbar"], "id", "scroll-bar-container"]
+  ];
+}
+
+
+templates.network_log_main_table = function(ctx)
+{
+  return [
+    ["div", templates.network_log_url_list(ctx),
+     "style", "height:100%; width: 300px; position: absolute; overflow: hidden;",
+     "class", "resourcelist"
+    ],
+    ["div", templates.network_log_url_list(ctx),
+     "style", "height:100%; position: absolute; left: 310px; overflow: scroll",
+     "class", "timeline"]
+  ]
+}
+
+templates.network_log_url_list = function(ctx)
+{
+  var itemfun = function(res) {
+    return ["li", res.url]
+  }
+  return ["ol", ctx.resources.map(itemfun)];
+}
