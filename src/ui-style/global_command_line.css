@@ -9,6 +9,7 @@
     border-radius: 0;
     bottom: 0;
     height: auto !important;
+    background: rgba(0, 0, 0, .85);
 }
 [view_id=command_line] container {
     border-radius: 0 !important;
