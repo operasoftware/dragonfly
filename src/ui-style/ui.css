@@ -1298,13 +1298,11 @@ pin-label.pinned
 
 .info-box
 {
-  font-size: 22px;
-  color: #999 !important;
-  margin: 30px 50px 0 50px;
+  margin: 50px 75px 0 75px;
   text-align: center;
   padding: 1em;
-  border: 1px solid #b3b3b3;
-  border-radius: 8px;
+  border: 1px dashed #b3b3b3;
+  border-radius: 4px;
   background: #f3f3f3;
 }
 .info-box p 
