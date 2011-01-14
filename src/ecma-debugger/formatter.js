@@ -42,6 +42,8 @@ window.cls.SimpleJSParser = function()
   // returns an array with TYPE, VALUE tuples
   this.parse2 = function(script_source){};
 
+  this.tokenize = function(script_source, ontoken){};
+
   /* privat */
 
   /* optimized to return fotmatted HTML */
@@ -96,6 +98,7 @@ window.cls.SimpleJSParser = function()
 
   var __default_line_ele = "div";
   var __current_line_ele = "";
+  var __ontoken = null;
 
   var __read_buffer_with_arrs = function()
   {
@@ -135,6 +138,26 @@ window.cls.SimpleJSParser = function()
   var __online_parse_simple = function()
   {
     __return_arr.push([LINETERMINATOR, __buffer]);
+    __buffer = '';
+  };
+
+  var __read_buffer_tokenize = function()
+  {
+    if (__buffer)
+    {
+      __ontoken(__type, __buffer);
+      if (__type==IDENTIFIER)
+      {
+        __previous_type=__type;
+        __previous_value = __buffer;
+      }
+    }
+    __buffer = '';
+  };
+
+  var __online_tokenize = function()
+  {
+    __ontoken(LINETERMINATOR, __buffer);
     __buffer = '';
   };
 
@@ -559,11 +582,12 @@ window.cls.SimpleJSParser = function()
         if(c in LINETERMINATOR_CHARS)
         {
           read_buffer();
-          CRLF=c;
+          __buffer=CRLF=c;
           CRLF+=c=__source.charAt(++__pointer);
           if(CRLF in LINETERMINATOR_CHARS)
           {
             c=__source.charAt(++__pointer);
+            __buffer = CRLF;
           }
           if(__online && __online())
           {
@@ -1007,6 +1031,20 @@ window.cls.SimpleJSParser = function()
     __return_arr = null;
     return ret;
   }
+
+  this.tokenize = function(script_source, ontoken)
+  {
+    parser = default_parser;
+    __previous_type = '';
+    __type = IDENTIFIER;
+    __escape = {};
+    __source = script_source;
+    __pointer = 0;
+    __ontoken = ontoken;
+    __online = __online_tokenize;
+    read_buffer = __read_buffer_tokenize;
+    parser(__source.charAt(__pointer));
+  };
 
   var __online_raw = function(c)
   {
