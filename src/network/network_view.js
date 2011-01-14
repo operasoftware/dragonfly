@@ -19,8 +19,12 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     if (ctx)
     {
       this._container = container;
-      opera.postError("aa");
+
+      var contheight = container.getBoundingClientRect().height - 2;
+      opera.postError("aa  " + contheight);
+
       container.clearAndRender(templates.network_log_main(ctx));
+      container.querySelector("#main-scroll-container").style.height = "" + (contheight-50) + "px";
 
       //container.querySelector(".timeline").addEventListener("scroll", this._on_scroll_bound, false);
     }

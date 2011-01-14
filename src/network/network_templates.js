@@ -81,11 +81,12 @@ templates.network_log_main = function(ctx)
      ["div",
       ["div", templates.network_log_url_list(ctx), "id", "left-side-content"],
       ["div",
-       ["div", "aaaaa", "id", "right-side-content"],
+       ["div", templates.network_log_graph(ctx), "id", "right-side-content"],
        "id", "right-side-container"
       ],
       "id", "main-scroll-content"
      ],
+     "class", "network-log",
      "id", "main-scroll-container"
     ],
     ["div", ["div", "id", "scrollbar"], "id", "scroll-bar-container"]
@@ -109,7 +110,16 @@ templates.network_log_main_table = function(ctx)
 templates.network_log_url_list = function(ctx)
 {
   var itemfun = function(res) {
+    return ["li", templates.resource_icon(res.mime), ["span", res.url]]
+  }
+  return ["ol", ctx.resources.map(itemfun)];
+}
+
+templates.network_log_graph = function(ctx)
+{
+  var itemfun = function(res) {
     return ["li", res.url]
   }
   return ["ol", ctx.resources.map(itemfun)];
+
 }

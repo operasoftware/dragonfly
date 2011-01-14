@@ -26,11 +26,11 @@
 
 #left-side-content
 {
-  width: 120px;
+  width: 260px;
   overflow: hidden;
 }
 
-#left-side-content > ol
+.network-log ol
 {
   width: 100%;
   margin: 0;
@@ -38,19 +38,18 @@
   list-style: none;
 }
 
-tr:nth-child(odd)
+
+.network-log li
 {
-  background-color: hsl(0, 0%, 95%);
+  height: 36px;
+  line-height: 36px;
+  padding: 0 5px;
+  overflow: hidden;
 }
 
-#left-side-content li
+.network-log li:nth-child(even)
 {
-  height: 22px;
-  line-height: 22px;
-  padding: 0 5px;
-  border: solid thin red;
-  overflow: hidden;
-
+  background-color: #dddddd;
 }
 
 #right-side-container
@@ -58,7 +57,7 @@ tr:nth-child(odd)
   position: absolute;
   height: 100%;
   top: 0px;
-  left: 120px;
+  left: 260px;
   right: 0px;
   overflow: hidden;
 }
@@ -70,7 +69,7 @@ tr:nth-child(odd)
 #scroll-bar-container
 {
   width: 480px;
-  margin-left: 120px;
+  margin-left: 260px;
   overflow: auto;
 }
 #scrollbar
