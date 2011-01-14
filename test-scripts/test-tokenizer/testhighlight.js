@@ -42,26 +42,40 @@ var builtin_highlighter = function(script, with_line_numbers)
     "layout: " + (t2 - t1) + "\n" +
     TOATL +
     "total: " + (t2 - t0);
+};
+
+var JSTokens2DOM = function()
+{
+  this._init();
 }
 
-var callback_dom = function(script, with_line_numbers)
+JSTokens2DOM.prototype = new function()
 {
-  var t0 = Date.now();
-  var doc_frag = document.createDocumentFragment();
-  var text = "";
-  var line_count = 1;
-  var lines = "";
-  var ontoken = function(token_type, token)
+  const
+  WHITESPACE = window.cls.SimpleJSParser.WHITESPACE,
+  LINETERMINATOR = window.cls.SimpleJSParser.LINETERMINATOR,
+  IDENTIFIER = window.cls.SimpleJSParser.IDENTIFIER,
+  NUMBER = window.cls.SimpleJSParser.NUMBER,
+  STRING = window.cls.SimpleJSParser.STRING,
+  PUNCTUATOR = window.cls.SimpleJSParser.PUNCTUATOR,
+  DIV_PUNCTUATOR = window.cls.SimpleJSParser.DIV_PUNCTUATOR,
+  REG_EXP = window.cls.SimpleJSParser.REG_EXP,
+  COMMENT = window.cls.SimpleJSParser.COMMENT;
+
+  this._classes = {};
+  this._classes[STRING] = "string";
+  this._classes[NUMBER] ='number';
+  this._classes[COMMENT] ='comment';
+  this._classes[REG_EXP] ='reg_exp';
+ 
+  this._ontoken = function(token_type, token)
   {
     var class_name = "";
     switch (token_type)
     {
       case LINETERMINATOR:
       {
-        if (with_line_numbers)
-        {
-          lines += (line_count++) + "\n";
-        }
+        this._lines.push(this._line_counter++);
       }
       case IDENTIFIER:
       {
@@ -83,26 +97,57 @@ var callback_dom = function(script, with_line_numbers)
       case COMMENT:
       case REG_EXP:
       {
-        if (text)
+        if (this._text)
         {
-          doc_frag.appendChild(document.createTextNode(text));
-          text = "";
+          this._doc_frag.appendChild(document.createTextNode(this._text));
+          this._text = "";
         }
-        var span = doc_frag.appendChild(document.createElement('span'));
+        var span = this._doc_frag.appendChild(document.createElement('span'));
         span.appendChild(document.createTextNode(token));
-        span.className = class_name || classes[token_type];
+        span.className = class_name || this._classes[token_type];
         return;
       }
     }
-    text += token;
+    this._text += token;
   };
-  tokenizer.tokenize(script, ontoken);
-  doc_frag.appendChild(document.createTextNode(text));
+
+  this._init = function()
+  {
+    this._doc_frag = document.createDocumentFragment();
+    this._line_counter = 1;
+    this._lines = [this._line_counter++];
+    this._text = "";
+    this.ontoken = this._ontoken.bind(this);
+  }
+
+  this.__defineGetter__("document_fragment", function()
+  {
+    return this._doc_frag;
+  });
+
+  this.__defineSetter__("document_fragment", function(){});
+
+  this.__defineGetter__("lines", function()
+  {
+    return this._lines;
+  });
+
+  this.__defineSetter__("lines", function(){});
+
+}
+
+
+
+var callback_dom = function(script, with_line_numbers)
+{
+  var t0 = Date.now();
+  var tok2dom = new JSTokens2DOM();
+  tokenizer.tokenize(script, tok2dom.ontoken);
   var t1 = Date.now();
-  document.getElementsByClassName('js-source')[0].appendChild(doc_frag);
+  document.getElementsByClassName('js-source')[0].appendChild(tok2dom.document_fragment);
   if (with_line_numbers)
   {
-    document.getElementsByClassName('line-numbers')[0].textContent = lines;
+    document.getElementsByClassName('line-numbers')[0].textContent = tok2dom.lines.join('\n');
   }
   var h = document.body.offsetHeight + document.body.offsetWidth;
   var t2 = Date.now();
@@ -111,7 +156,6 @@ var callback_dom = function(script, with_line_numbers)
     "layout: " + (t2 - t1) + "\n" +
     TOATL +
     "total: " + (t2 - t0);
-
 }
 
 var test = function(method)
