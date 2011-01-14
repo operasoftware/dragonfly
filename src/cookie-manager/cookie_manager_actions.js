@@ -101,11 +101,14 @@ window.eventHandlers.click['add-cookie-handler'] = function(event, target)
   else {
     cookie_runtime = parseInt(formelem.querySelector("input[name=add_cookie_runtime]").value.split(",")[0]);
   }
-  var name_val    = formelem.querySelector("input[name=cookiename]").value;
-  var value_val   = formelem.querySelector("input[name=cookievalue]").value;
-  var path_val_form_elem = formelem.querySelector("input[name=cookiepath]") || formelem.querySelector("select[name=cookie_path_select]");
-  var path_val    = path_val_form_elem.value || "/";
-  var expires_val = formelem.querySelector("input[name=cookieexpires]").value;
+  var name_form_elem    = formelem.querySelector("input[name=cookiename]");
+  var name_val          = name_form_elem.value;
+  var value_form_elem   = formelem.querySelector("input[name=cookievalue]");
+  var value_val         = value_form_elem.value;
+  var path_form_elem    = formelem.querySelector("input[name=cookiepath]") || formelem.querySelector("select[name=cookie_path_select]");
+  var path_val          = path_form_elem.value || "/";
+  var expires_form_elem = formelem.querySelector("input[name=cookieexpires]")
+  var expires_val       = expires_form_elem.value;
 
   if(name_val && cookie_runtime)
   {
@@ -125,8 +128,12 @@ window.eventHandlers.click['add-cookie-handler'] = function(event, target)
     var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_changed_cookies, []);
     services['ecmascript-debugger'].requestEval(tag,[cookie_runtime, 0, 0, script]);
   }
-  // todo: make domain, path and expires persist
-  // todo: scroll down to newly added cookies
+  // reset form fields
+  name_form_elem.value    = "";
+  value_form_elem.value   = "";
+  path_form_elem.value    = "/";
+  expires_form_elem.value = ""; // todo: seems this has no effect
+  // todo: scroll in case newly added cookies aren't visible
 }
 
 window.eventHandlers.click['cookiemanager-update'] = function(event, target)
@@ -159,7 +166,8 @@ window.eventHandlers.change['cookiemanager-add-cookie-domain-select'] = function
       pathvalues.push(pathname);
     }
   };
-
+  
+  // Todo: move this to templates and call it on init and runtime change.
   // Remove old datatable
   if(document.getElementById("cookiepathlist")) {
     formelem.removeChild(document.getElementById("cookiepathlist"));

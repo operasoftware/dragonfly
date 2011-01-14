@@ -106,26 +106,30 @@ cls.CookieManagerView = function(id, name, container_class)
   this.createView = function(container)
   {
     this.flattened_cookies = this._flatten_cookies(this._cookie_dict);
-    container.clearAndRender(new SortableTable(this._tabledef, this.flattened_cookies).render());
-
-    var table = document.getElementsByClassName("cookie_manager")[0].getElementsByClassName("sortable-table")[0];
-    var obj = ObjectRegistry.get_instance().get_object(table.getAttribute("data-object-id"));
-    // group by host and path as that is what's used for the actual query
-    obj.group("hostandpath");
-    table.re_render(obj.render());
-
-    // render cookie adding
-    container.render(window.templates.cookie_manager.add_cookie_form(this._rts));
-    window.eventHandlers.change['cookiemanager-add-cookie-domain-select']();
-    // render clear and update button
-    container.render(window.templates.cookie_manager.clear_and_refetch_button());
+    this._table_obj;
+    if(!this._table)
+    {
+      container.render(new SortableTable(this._tabledef, this.flattened_cookies).render());
+      this._table = container.getElementsByClassName("sortable-table")[0];
+      this._table_obj = ObjectRegistry.get_instance().get_object(this._table.getAttribute("data-object-id"));
+      this._table_obj.group("hostandpath");
+      container.render(window.templates.cookie_manager.add_cookie_form(this._rts));
+      window.eventHandlers.change['cookiemanager-add-cookie-domain-select']();
+      container.render(window.templates.cookie_manager.clear_and_refetch_button());
+    }
+    else
+    {
+      // replace domain select input as the runtime may have changed. ideally just do in that case, but skipping that for now.
+      container.getElementsByClassName("domain_select_container")[0].clearAndRender(window.templates.cookie_manager.domain_selector(this._rts));
+    }
+    this._table = container.getElementsByClassName("sortable-table")[0];
+    this._table_obj = ObjectRegistry.get_instance().get_object(this._table.getAttribute("data-object-id"));
+    this._table_obj.data = this.flattened_cookies;
+    this._table.re_render(this._table_obj.render());
   };
 
   this._on_active_tab = function(msg)
   {
-    // cleanup view
-    this.clearAllContainers();
-
     // cleanup runtimes directory
     for(var item in this._rts)
     {
@@ -158,17 +162,17 @@ cls.CookieManagerView = function(id, name, container_class)
     };
   };
 
-  this._request_runtime_details = function(rt_object) {
-    var script = "return JSON.stringify({hostname: location.hostname || '', pathname: location.pathname || ''})";
-    var tag = tagManager.set_callback(this, this._handle_get_domain,[rt_object.rt_id]);
-    services['ecmascript-debugger'].requestEval(tag,[rt_object.rt_id, 0, 0, script]);
-  }
-
   this._refetch = function() {
     for (var rt_id in this._rts) {
       this._rts[rt_id].get_domain_is_pending = true;
       this._request_runtime_details(this._rts[rt_id]);
     };
+  }
+
+  this._request_runtime_details = function(rt_object) {
+    var script = "return JSON.stringify({hostname: location.hostname || '', pathname: location.pathname || ''})";
+    var tag = tagManager.set_callback(this, this._handle_get_domain,[rt_object.rt_id]);
+    services['ecmascript-debugger'].requestEval(tag,[rt_object.rt_id, 0, 0, script]);
   }
 
   this._handle_get_domain = function(status, message, rt_id)
