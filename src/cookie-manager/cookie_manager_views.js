@@ -149,12 +149,17 @@ cls.CookieManagerView = function(id, name, container_class)
         // runtime was not active and is to be removed from this._rts
         delete this._rts[rt_id];
         // loop over existing cookies to remove the rt_id from the runtimes of each
-        for(var domain in this._cookie_dict)
+        for(var domain_and_path in this._cookie_dict)
         {
-          if(this._cookie_dict[domain].runtimes && (this._cookie_dict[domain].runtimes.indexOf(rt_id) !== -1))
+          if(this._cookie_dict[domain_and_path].runtimes && (this._cookie_dict[domain_and_path].runtimes.indexOf(rt_id) !== -1))
           {
-            var index = this._cookie_dict[domain].runtimes.indexOf(rt_id);
-            this._cookie_dict[domain].runtimes.splice(index,1);
+            var index = this._cookie_dict[domain_and_path].runtimes.indexOf(rt_id);
+            this._cookie_dict[domain_and_path].runtimes.splice(index,1);
+            // if no runtimes are left, delete from _cookie_dict
+            if(this._cookie_dict[domain_and_path].runtimes.length < 1)
+            {
+              delete this._cookie_dict[domain_and_path];
+            }
           }
         }
       }
@@ -193,7 +198,6 @@ cls.CookieManagerView = function(id, name, container_class)
     this._rts[rt_id].get_domain_is_pending = false;
     this._rts[rt_id].hostname = hostname;
     this._rts[rt_id].pathname = pathname;
-
     (function(context)
     {
       for (var key in context._rts)
@@ -203,21 +207,19 @@ cls.CookieManagerView = function(id, name, container_class)
           return;
         }
       };
-      context._clean_domains_and_ask_for_cookies.call(context,context._rts);
+      context._request_cookies.call(context,context._rts);
     })(this);
   };
 
-  this._clean_domains_and_ask_for_cookies = function(runtime_list)
-  {
-    // check this._cookies for domains that aren't in any runtime anymore, modifies "this._cookie_dict" directly
-    this._clean_domain_list(this._cookie_dict, runtime_list);
+  this._request_cookies = function(runtime_list)
+  {    
     // go over runtimes and ask for cookies once per domain
     for (var str_rt_id in runtime_list)
     {
       var runtime = runtime_list[str_rt_id];
       var rt_domain = runtime.hostname;
       var rt_pathname = runtime.pathname;
-      if(rt_domain) // avoids "" values occuring on opera:* pages for example
+      if(rt_domain)
       {
         if(!this._cookie_dict[rt_domain+rt_pathname])
         {
@@ -240,6 +242,11 @@ cls.CookieManagerView = function(id, name, container_class)
           var tag = tagManager.set_callback(this, this._handle_cookies,[rt_domain,rt_pathname]);
           services['cookie-manager'].requestGetCookie(tag,[rt_domain,rt_pathname]);
         }
+      }
+      else
+      {
+        // if runtime has no location.hostname, only update view. occurs on opera:* pages for example.
+        window.views.cookie_manager.update();
       }
     }
   };
@@ -316,26 +323,6 @@ cls.CookieManagerView = function(id, name, container_class)
   };
 
   // Helpers
-  this._clean_domain_list = function(cookies, runtime_list)
-  {
-    for (var domain in cookies)
-    {
-      var was_found_in_runtime = false;
-      for (var rtid in runtime_list)
-      {
-        if(runtime_list[rtid].domain === domain)
-        {
-          was_found_in_runtime = true;
-          break;
-        }
-      };
-      if(!was_found_in_runtime)
-      {
-        delete cookies[domain];
-      }
-    };
-  };
-
   this.update_path_datalist = function()
   {
     formelem = document.querySelector("form.add-cookie-form");
