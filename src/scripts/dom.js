@@ -45,6 +45,22 @@ if (!Element.prototype.contains)
   }
 }
 
+if (!Element.prototype.insertAdjacentHTML)
+{
+  Element.prototype.insertAdjacentHTML = function(position, markup)
+  {
+    if (position == 'beforeend')
+    {
+      var div = this.appendChild(document.createElement('div'));
+      div.innerHTML = markup;
+      var range = document.createRange();
+      range.selectNodeContents(div);
+      this.replaceChild(range.extractContents(), div);
+      return this.firstElementChild;
+    }
+  }
+}
+
 /**
  * @fileoverview
  * Helper function prototypes related to DOM objects and the DOM
