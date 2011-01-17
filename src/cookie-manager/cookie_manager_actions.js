@@ -70,7 +70,7 @@ window.eventHandlers.blur['cookiemanager-edit'] = function(event, target)
       add_modified_cookie_script += '"';
 
       var script = remove_old_cookie_script + add_modified_cookie_script;
-      var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_changed_cookies, [cookie.runtimes[0]]);
+      var tag = tagManager.set_callback(this, window.views.cookie_manager.handle_changed_cookies, [cookie.runtimes[0]]);
       services['ecmascript-debugger'].requestEval(tag,[cookie.runtimes[0], 0, 0, script]);
     }
   };
@@ -125,7 +125,7 @@ window.eventHandlers.click['add-cookie-handler'] = function(event, target)
                   + '; path=' + '/' + "path"+'"';
     */
     var script = add_cookie_script;
-    var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_changed_cookies, []);
+    var tag = tagManager.set_callback(this, window.views.cookie_manager.handle_changed_cookies, []);
     services['ecmascript-debugger'].requestEval(tag,[cookie_runtime, 0, 0, script]);
   }
   // reset form fields
@@ -138,48 +138,10 @@ window.eventHandlers.click['add-cookie-handler'] = function(event, target)
 
 window.eventHandlers.click['cookiemanager-update'] = function(event, target)
 {
-  window.views.cookie_manager._refetch();
+  window.views.cookie_manager.refetch();
 }
 
 window.eventHandlers.change['cookiemanager-add-cookie-domain-select'] = function(event, target)
 {
-  // find selected, change name[cookiepath] input into select elem
-  if(!target)
-  {
-    target = document.querySelector("form.add-cookie-form");
-  }
-
-  // walk up to find form
-  var formelem = target;
-  while (formelem.nodeName !== "form" && formelem.parentNode) {
-    formelem = formelem.parentNode;
-  }
-
-  var runtime_field = formelem.querySelector("input[name=add_cookie_runtime]") || formelem.querySelector("select[name=add_cookie_runtime_select]");
-  var selected_runtime_ids = runtime_field.value.split(",");
-
-  var pathvalues = [];
-  for (var i=0; i < selected_runtime_ids.length; i++) {
-    var pathname = window.views.cookie_manager._rts[selected_runtime_ids[i]].pathname;
-    if(pathvalues.indexOf(pathname) === -1)
-    {
-      pathvalues.push(pathname);
-    }
-  };
-  
-  // Todo: move this to templates and call it on init and runtime change.
-  // Remove old datatable
-  if(document.getElementById("cookiepathlist")) {
-    formelem.removeChild(document.getElementById("cookiepathlist"));
-  }
-  // Insert new datatable
-  var render_object = [];
-  if(pathvalues.length > 1) {
-    var option_arr = [];
-    for (var i=0; i < pathvalues.length; i++) {
-      option_arr.push(["option","value",pathvalues[i]]);
-    };
-    render_object.push(["datalist",option_arr,"id","cookiepathlist"]);
-  }
-  formelem.render(render_object);
+  window.views.cookie_manager.update_path_datalist();
 }

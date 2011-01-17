@@ -8,8 +8,8 @@ cls.CookieManagerView = function(id, name, container_class)
   this._tabledef = {
     groups: {
       hostandpath: {
-        label:    "Host and path",
-        grouper:  function(obj) {
+        label:   "Host and path",
+        grouper: function(obj) {
           return window.views.cookie_manager._rts[obj.runtimes[0]].hostname + window.views.cookie_manager._rts[obj.runtimes[0]].pathname;
         },
         renderer: function(groupvalue, obj) {
@@ -67,10 +67,10 @@ cls.CookieManagerView = function(id, name, container_class)
         renderer: function(obj) {
           if(typeof obj.expires === "number")
           {
-            var parsedDate=new Date(obj.expires*1000);
-            if(new Date().getTime() < parsedDate.getTime())
+            var parsed_date=new Date(obj.expires*1000);
+            if(new Date().getTime() < parsed_date.getTime())
             {
-              return parsedDate.toUTCString();
+              return parsed_date.toUTCString();
             }
             return window.templates.cookie_manager.table_view.expires_0values();
           }
@@ -99,33 +99,42 @@ cls.CookieManagerView = function(id, name, container_class)
       },
       remove: {
         label:    "",
-        renderer: function(obj) { return window.templates.cookie_manager.table_view.remove_button(obj.objectref); }
+        renderer: function(obj) {
+          if(obj.is_removable)
+          {
+            return window.templates.cookie_manager.table_view.remove_button(obj.objectref);
+          }
+        },
+        sorter: "unsortable"
       }
     }
   };
   this.createView = function(container)
   {
     this.flattened_cookies = this._flatten_cookies(this._cookie_dict);
-    this._table_obj;
-    if(!this._table)
+    this._table_elem = container.getElementsByClassName("sortable-table")[0];
+    if(!this._table_elem)
     {
-      container.render(new SortableTable(this._tabledef, this.flattened_cookies).render());
-      this._table = container.getElementsByClassName("sortable-table")[0];
-      this._table_obj = ObjectRegistry.get_instance().get_object(this._table.getAttribute("data-object-id"));
+      this._table_elem = container.render(new SortableTable(this._tabledef, this.flattened_cookies).render());
+      this._table_obj = ObjectRegistry.get_instance().get_object(this._table_elem.getAttribute("data-object-id"));
       this._table_obj.group("hostandpath");
       container.render(window.templates.cookie_manager.add_cookie_form(this._rts));
-      window.eventHandlers.change['cookiemanager-add-cookie-domain-select']();
+      window.eventHandlers.change["cookiemanager-add-cookie-domain-select"]();
+      this.update_path_datalist();
       container.render(window.templates.cookie_manager.clear_and_refetch_button());
     }
     else
     {
       // replace domain select input as the runtime may have changed. ideally just do in that case, but skipping that for now.
-      container.getElementsByClassName("domain_select_container")[0].clearAndRender(window.templates.cookie_manager.domain_selector(this._rts));
+      var domain_select_container = container.getElementsByClassName("domain_select_container")[0];
+      if(domain_select_container) // seems initial rendering can not have resulted in a domain_select_container?
+      {
+        domain_select_container.clearAndRender(window.templates.cookie_manager.domain_selector(this._rts));
+      }
     }
-    this._table = container.getElementsByClassName("sortable-table")[0];
-    this._table_obj = ObjectRegistry.get_instance().get_object(this._table.getAttribute("data-object-id"));
+    this._table_obj = ObjectRegistry.get_instance().get_object(this._table_elem.getAttribute("data-object-id"));
     this._table_obj.data = this.flattened_cookies;
-    this._table.re_render(this._table_obj.render());
+    this._table_elem.re_render(this._table_obj.render());
   };
 
   this._on_active_tab = function(msg)
@@ -162,18 +171,18 @@ cls.CookieManagerView = function(id, name, container_class)
     };
   };
 
-  this._refetch = function() {
+  this.refetch = function() {
     for (var rt_id in this._rts) {
       this._rts[rt_id].get_domain_is_pending = true;
       this._request_runtime_details(this._rts[rt_id]);
     };
-  }
+  };
 
   this._request_runtime_details = function(rt_object) {
     var script = "return JSON.stringify({hostname: location.hostname || '', pathname: location.pathname || ''})";
     var tag = tagManager.set_callback(this, this._handle_get_domain,[rt_object.rt_id]);
     services['ecmascript-debugger'].requestEval(tag,[rt_object.rt_id, 0, 0, script]);
-  }
+  };
 
   this._handle_get_domain = function(status, message, rt_id)
   {
@@ -194,13 +203,13 @@ cls.CookieManagerView = function(id, name, container_class)
           return;
         }
       };
-      context._clean_domains_and_ask_for_cookies.call(context,context._rts)
+      context._clean_domains_and_ask_for_cookies.call(context,context._rts);
     })(this);
-  }
+  };
 
   this._clean_domains_and_ask_for_cookies = function(runtime_list)
   {
-    // check this._cookies for domains that aren't in any runtime anymore, modifies "this._cookies" directly
+    // check this._cookies for domains that aren't in any runtime anymore, modifies "this._cookie_dict" directly
     this._clean_domain_list(this._cookie_dict, runtime_list);
     // go over runtimes and ask for cookies once per domain
     for (var str_rt_id in runtime_list)
@@ -233,7 +242,7 @@ cls.CookieManagerView = function(id, name, container_class)
         }
       }
     }
-  }
+  };
 
   this._handle_cookies = function(status, message, domain, path)
   {
@@ -274,7 +283,7 @@ cls.CookieManagerView = function(id, name, container_class)
     }
     window.views.cookie_manager.update();
   };
-  
+
   this._handle_js_retrieved_cookies = function(status, message, domain, path)
   {
     const DATA = 2;
@@ -293,11 +302,11 @@ cls.CookieManagerView = function(id, name, container_class)
       };
       window.views.cookie_manager.update();
     }
-  }
+  };
 
-  this._handle_changed_cookies = function(status, message)
+  this.handle_changed_cookies = function(status, message)
   {
-    window.views.cookie_manager._refetch();
+    window.views.cookie_manager.refetch();
   };
 
   this._init = function(id, update_event_name)
@@ -325,7 +334,39 @@ cls.CookieManagerView = function(id, name, container_class)
         delete cookies[domain];
       }
     };
-  }
+  };
+
+  this.update_path_datalist = function()
+  {
+    formelem = document.querySelector("form.add-cookie-form");
+    var runtime_field = formelem.querySelector("input[name=add_cookie_runtime]") || formelem.querySelector("select[name=add_cookie_runtime_select]");
+    var selected_runtime_ids = runtime_field.value.split(",");
+
+    var pathvalues = [];
+    for (var i=0; i < selected_runtime_ids.length; i++) {
+      var pathname = window.views.cookie_manager._rts[selected_runtime_ids[i]].pathname;
+      if(pathvalues.indexOf(pathname) === -1)
+      {
+        pathvalues.push(pathname);
+      }
+    };
+    // Remove old
+    var _old_path_list = formelem.querySelector("#cookiepathlist");
+    if(_old_path_list) {
+      formelem.removeChild(_old_path_list);
+    }
+    // Insert new
+    var render_object = [];
+    if(pathvalues.length > 0) {
+      var option_arr = [];
+      for (var i=0; i < pathvalues.length; i++) {
+        option_arr.push(["option","value",pathvalues[i]]);
+      };
+      render_object.push(["datalist",option_arr,"id","cookiepathlist"]);
+    }
+    formelem.render(render_object);
+  };
+
   this._flatten_cookies = function(cookies)
   {
     var flattened_cookies = [];
@@ -338,19 +379,34 @@ cls.CookieManagerView = function(id, name, container_class)
         {
           var current_cookie = domaincookies.cookies[i];
           var flattened_cookie = {
-            objectref:   current_cookie.domain + "/" + current_cookie.path + current_cookie.name + (parseInt(Math.random()*99999)),
-            runtimes:    domaincookies.runtimes,
-            is_editable: (function(cookie){
+            objectref:    current_cookie.domain + "/" + current_cookie.path + current_cookie.name + (parseInt(Math.random()*99999)),
+            runtimes:     domaincookies.runtimes,
+            is_editable:  (function(cookie){
               /**
                * Decides if the cookie name & value can be edited.
-               * Must remove the cookie.path condition when CORE-35055 is fixed, must remove 
-               * the cookie.domain when a new "add cookie" interface from CORE-35370 is used
-               * (allows specifying the domain when creating new cookie)
+               * The cookie.domain condition should be removed when a new "add cookie" interface as defined
+               * in CORE-35370 is used, which will allow specifying the domain when creating cookies
               */
               if(
                 cookie.isHTTPOnly ||
-                cookie.path ||
+                cookie.path || // remove when CORE-35055 is fixed
                 cookie.domain != window.views.cookie_manager._rts[domaincookies.runtimes[0]].hostname
+              )
+              {
+                return false;
+              }
+              return true;
+            })(current_cookie),
+            is_removable: (function(cookie){
+              /**
+               * Cookie retrieved via JS can't reliably be removed because domain (and path) are unknown.
+               * Also while path info is mostly incorrect when present (CORE-35055), cookie with path
+               * won't be removable for now.
+              */
+              if(
+                cookie.domain === undefined ||
+                cookie.path === undefined ||
+                cookie.path // remove when CORE-35055 is fixed
               )
               {
                 return false;
@@ -366,7 +422,8 @@ cls.CookieManagerView = function(id, name, container_class)
       }
     }
     return flattened_cookies;
-  }
+  };
+
   this.remove_cookie_by_objectref = function(objectref)
   {
     var cookie;
@@ -384,11 +441,11 @@ cls.CookieManagerView = function(id, name, container_class)
           // in case the cookies path is undefined (cookie is retrieved via JS), try using "/" which is most likely
           path = "/";
         }
-        var tag = tagManager.set_callback(this, this._handle_changed_cookies, []);
+        var tag = tagManager.set_callback(this, this.handle_changed_cookies, []);
         services['cookie-manager'].requestRemoveCookie(tag,[domain, path, cookie.name]);
       }
     }
-  }
+  };
   // End Helpers
   this._init(id, name);
 };
