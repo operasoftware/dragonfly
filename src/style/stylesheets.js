@@ -897,7 +897,7 @@ cls.Stylesheets = function()
       {
         ret += "<rule data-menu='style-inspector-rule' rule-id='" + style_dec[RULE_ID] + "' obj-id='" + obj_id + "'>" +
           "<stylesheet-link rt-id='" + rt_id + "'"+
-            " index='" + sheet.index + "' handler='display-rule-in-stylesheet'>" + sheet.name +
+            " index='" + sheet.index + "' handler='display-rule-in-stylesheet' data-menu=''>" + sheet.name +
           "</stylesheet-link>" +
           "<selector>" + helpers.escapeTextHtml(style_dec[SELECTOR]) + "</selector>" +
           " {\n" +
