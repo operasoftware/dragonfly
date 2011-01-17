@@ -107,14 +107,15 @@ cls.DOMSidePanelView.create_ui_widgets = function()
         }
 
         // Only add this for the color swatch
-        if (event.target.nodeName.toLowerCase() == "color-sample")
+        var swatch = target.querySelector("color-sample");
+        if (swatch)
         {
           items.push(
             ContextMenu.separator,
             {
               label: ui_strings.M_CONTEXTMENU_OPEN_COLOR_PICKER,
               handler: function(event, target) {
-                window.views['color-selector'].show_color_picker(event);
+                window.views['color-selector'].show_color_picker(swatch);
               }
             }
           );
