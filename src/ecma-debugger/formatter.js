@@ -1,6 +1,6 @@
-﻿window.cls || (window.cls = {});
+﻿this.cls || (this.cls = {});
 
-window.cls.SimpleJSParser = function()
+cls.SimpleJSParser = function()
 {
   /**
     * This is a simple js parser. There are edge cases where it will fail,
@@ -42,7 +42,7 @@ window.cls.SimpleJSParser = function()
   // returns an array with TYPE, VALUE tuples
   this.parse2 = function(script_source){};
 
-  this.tokenize = function(script_source, ontoken){};
+  this.tokenize = function(script_source, ontoken, escape){};
 
   /* privat */
 
@@ -56,15 +56,15 @@ window.cls.SimpleJSParser = function()
   COMMENT_STATE = 4,
 
   //local copy of token types, local vars have better performance. :
-  WHITESPACE = window.cls.SimpleJSParser.WHITESPACE,
-  LINETERMINATOR = window.cls.SimpleJSParser.LINETERMINATOR,
-  IDENTIFIER = window.cls.SimpleJSParser.IDENTIFIER,
-  NUMBER = window.cls.SimpleJSParser.NUMBER,
-  STRING = window.cls.SimpleJSParser.STRING,
-  PUNCTUATOR = window.cls.SimpleJSParser.PUNCTUATOR,
-  DIV_PUNCTUATOR = window.cls.SimpleJSParser.DIV_PUNCTUATOR,
-  REG_EXP = window.cls.SimpleJSParser.REG_EXP,
-  COMMENT = window.cls.SimpleJSParser.COMMENT;
+  WHITESPACE = cls.SimpleJSParser.WHITESPACE,
+  LINETERMINATOR = cls.SimpleJSParser.LINETERMINATOR,
+  IDENTIFIER = cls.SimpleJSParser.IDENTIFIER,
+  NUMBER = cls.SimpleJSParser.NUMBER,
+  STRING = cls.SimpleJSParser.STRING,
+  PUNCTUATOR = cls.SimpleJSParser.PUNCTUATOR,
+  DIV_PUNCTUATOR = cls.SimpleJSParser.DIV_PUNCTUATOR,
+  REG_EXP = cls.SimpleJSParser.REG_EXP,
+  COMMENT = cls.SimpleJSParser.COMMENT;
 
   var parser=null;
   var __source=null;
@@ -1032,12 +1032,12 @@ window.cls.SimpleJSParser = function()
     return ret;
   }
 
-  this.tokenize = function(script_source, ontoken)
+  this.tokenize = function(script_source, ontoken, espace)
   {
     parser = default_parser;
     __previous_type = '';
     __type = IDENTIFIER;
-    __escape = {};
+    __escape = espace == "html" && ESCAPE || {};
     __source = script_source;
     __pointer = 0;
     __ontoken = ontoken;
@@ -1074,12 +1074,12 @@ window.cls.SimpleJSParser = function()
 }
 
 // CONSTS for external code that needs to know about token types
-window.cls.SimpleJSParser.WHITESPACE = 1,
-window.cls.SimpleJSParser.LINETERMINATOR = 2,
-window.cls.SimpleJSParser.IDENTIFIER = 3,
-window.cls.SimpleJSParser.NUMBER = 4,
-window.cls.SimpleJSParser.STRING = 5,
-window.cls.SimpleJSParser.PUNCTUATOR = 6,
-window.cls.SimpleJSParser.DIV_PUNCTUATOR = 7,
-window.cls.SimpleJSParser.REG_EXP = 8,
-window.cls.SimpleJSParser.COMMENT = 9;
+cls.SimpleJSParser.WHITESPACE = 1,
+cls.SimpleJSParser.LINETERMINATOR = 2,
+cls.SimpleJSParser.IDENTIFIER = 3,
+cls.SimpleJSParser.NUMBER = 4,
+cls.SimpleJSParser.STRING = 5,
+cls.SimpleJSParser.PUNCTUATOR = 6,
+cls.SimpleJSParser.DIV_PUNCTUATOR = 7,
+cls.SimpleJSParser.REG_EXP = 8,
+cls.SimpleJSParser.COMMENT = 9;

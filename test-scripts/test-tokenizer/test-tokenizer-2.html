@@ -21,18 +21,26 @@ body
 form
 {
   background-color: hsl(0, 0%, 80%);
+  margin: 0;
+  padding: 0;
+}
+p
+{
+  margin: 0;
+  padding: 7px 7px;
 }
 #header
 {
-  padding: 7px;
+  xpadding: 7px;
 }
 textarea
 {
   display: block;
   box-sizing: border-box;
-
+  padding: 7px;
   width: 100%;
   border: none;
+  overflow: hidden;
 }
 .source
 {
@@ -65,13 +73,21 @@ textarea
 <script src="../../src/ecma-debugger/helpers.js"></script>
 <script src="../../src/ecma-debugger/syntax.js"></script>
 <script src="./testhighlight.js"></script>
+
+
 <div id="header">
   <form>
-    <textarea id="output" rows="5" cols="70"></textarea>
-    <label><input type="checkbox" id="make-line-numbers" checked> with line numbers</label>
-    <label><input type="checkbox" onchange="enable_stylesheets(this.checked)"> enable Dragonfly stylesheet</label>
-    <label><input type="radio" name="file-size" value="small" checked> 250KB</label>
-    <label><input type="radio" name="file-size" value="big"> 1.5MB</label>
+    <textarea id="output" rows="4" cols="70"></textarea>
+    <p><label><input type="checkbox" id="make-line-numbers" checked> with line numbers</label>
+       <label><input type="checkbox" onchange="enable_stylesheets(this.checked)"> enable Dragonfly stylesheet</label>
+    <p>file size: <label><input type="radio" name="file-size" value="small" checked> 250KB</label>
+                  <label><input type="radio" name="file-size" value="big"> 1.5MB</label>
+    <p><label> test runs: <select name="test-runs" id ="test-runs">
+                            <option>1</option>
+                            <option>10</option>
+                            <option>50</option>
+                          </select></label>
+    <div></div>
   </form>
   <div id="controls"></div>
 </div>
