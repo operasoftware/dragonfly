@@ -372,7 +372,7 @@ cls.DOMView.create_ui_widgets = function()
 
     if (target)
     {
-      broker.dispatch_action("dom", "edit-dom", event, event.target);
+      broker.dispatch_action("dom", "edit-dom", event, target);
     }
   }
 
