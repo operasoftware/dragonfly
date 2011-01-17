@@ -277,11 +277,18 @@
           'toolbar-separator'
         ],
         window['cst-selects']['debugger-menu'].select_template(),
-        [
+        is_attached
+        ? [
           'button',
           'handler', 'top-window-toggle-attach',
-          'class', 'switch' + (is_attached ? ' attached' : ''),
+          'class', 'switch attached',
           'title', ui_strings.S_SWITCH_DETACH_WINDOW
+          ]
+        : [
+          'button',
+          'handler', 'top-window-toggle-attach',
+          'class', 'switch',
+          'title', ui_strings.S_SWITCH_ATTACH_WINDOW
         ],
         is_attached
         ? [

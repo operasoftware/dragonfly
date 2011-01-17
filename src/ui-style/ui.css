@@ -142,7 +142,7 @@ button[handler="reload-window"] {
 [handler="top-window-toggle-attach"] {
     content: url("../ui-images/icons/icon_attach.png");
 }
-.attached [handler="top-window-toggle-attach"] {
+[handler="top-window-toggle-attach"].attached  {
     content: url("../ui-images/icons/icon_detach.png");
 }
 [handler="dom-inspection-snapshot"] {
