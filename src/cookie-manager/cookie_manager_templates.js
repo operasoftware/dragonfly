@@ -80,7 +80,7 @@ templates.cookie_manager = {
     var domain_count = 0;
     var domain;
     for (var runtime_id in runtimes) {
-      domain = runtimes[runtime_id].hostname;
+      domain = runtimes[runtime_id].hostname || ""; // avoids undefined values where hostname is non-existent
       if(!domains[domain])
       {
         domains[domain] = { runtimes: [runtime_id] };

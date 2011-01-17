@@ -177,6 +177,7 @@ cls.CookieManagerView = function(id, name, container_class)
   };
 
   this.refetch = function() {
+    this._cookie_dict = {};
     for (var rt_id in this._rts) {
       this._rts[rt_id].get_domain_is_pending = true;
       this._request_runtime_details(this._rts[rt_id]);
