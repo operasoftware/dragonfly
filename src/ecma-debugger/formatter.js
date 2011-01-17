@@ -1,4 +1,5 @@
-﻿this.cls || (this.cls = {});
+﻿// web worker doesn't have a window
+this.cls || (this.cls = {});
 
 cls.SimpleJSParser = function()
 {

@@ -1,4 +1,5 @@
 
+const NEXT_RUN_DELAY = 20;
 var tokenizer = new window.cls.SimpleJSParser();
 var labels = {};
 var ts1 = null;
@@ -24,6 +25,7 @@ var HighlightWorker = function()
     else
     {
       var self = this;
+      //self._onmarkup(event.data.script);
       setTimeout(function(){self._onmarkup(event.data.script);}, 0);
     }
   };
@@ -77,7 +79,7 @@ var integrated_highlighter = function(script, with_line_numbers)
   ts2.push(t2 - t1);
   // total
   ts3.push(t2 - t0);
-  setTimeout(ontestcompleted, 10);
+  setTimeout(ontestcompleted, NEXT_RUN_DELAY);
 };
 
 labels["integrated_highlighter"] =
@@ -105,7 +107,7 @@ var callback_dom = function(script, with_line_numbers)
   ts2.push(t2 - t1);
   // total
   ts3.push(t2 - t0);
-  setTimeout(ontestcompleted, 10);
+  setTimeout(ontestcompleted, NEXT_RUN_DELAY);
 };
 
 labels["callback_dom"] =
@@ -138,7 +140,7 @@ var callback_template = function(script, with_line_numbers)
   ts2.push(t2 - t1);
   // total
   ts3.push(t2 - t0);
-  setTimeout(ontestcompleted, 10);
+  setTimeout(ontestcompleted, NEXT_RUN_DELAY);
 
 };
 
@@ -172,7 +174,7 @@ var callback_template_markup = function(script, with_line_numbers)
   ts2.push(t2 - t1);
   // total
   ts3.push(t2 - t0);
-  setTimeout(ontestcompleted, 10);
+  setTimeout(ontestcompleted, NEXT_RUN_DELAY);
 
 };
 
@@ -221,7 +223,7 @@ var webworker = function(script, with_line_numbers)
       ts2.push(0);
       // total
       ts3.push(t2 - t0);
-      setTimeout(ontestcompleted, 10);
+      setTimeout(ontestcompleted, NEXT_RUN_DELAY);
     }
   });
 
@@ -256,7 +258,7 @@ var no_highlight = function(script, with_line_numbers)
   ts2.push(t2 - t0);
   // total
   ts3.push(t2 - t0);
-  setTimeout(ontestcompleted, 10);
+  setTimeout(ontestcompleted, NEXT_RUN_DELAY);
 
 };
 
@@ -563,7 +565,7 @@ var ontestcompleted = function()
                             window.small_script_source :
                             window.script_source, 
                             document.getElementById('make-line-numbers').checked);
-    }, 10);
+    }, NEXT_RUN_DELAY);
   }
   else
   {
