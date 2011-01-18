@@ -48,6 +48,8 @@ ui_strings.M_VIEW_LABEL_SOURCE = 'Source';
 ui_strings.M_VIEW_LABEL_COMMAND_LINE = 'Command Line';
 /* DESC: Call stack overview, a list of function calls. */
 ui_strings.M_VIEW_LABEL_CALLSTACK = 'Call Stack';
+/* DESC: side panel in the script view with the callstack and the inspection view. */
+ui_strings.M_VIEW_LABEL_RUNTIME_STATE = 'State';
 /* DESC: Thread log overview, a list of threads. */
 ui_strings.M_VIEW_LABEL_THREAD_LOG = 'Thread Log';
 /* DESC: The JS properties of a frame or object. */

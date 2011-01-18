@@ -41,6 +41,18 @@ top-toolbar {
   position: absolute;
   }
 
+panel-toolbar {
+  display: block;
+}
+
+panel-container {
+  width: 100%;
+  display: block;
+  /* not sure if this is needed
+     so far any container was positioned absolute */
+  position: relative;
+}
+
 top-toolbar, top-tabs, modebar, tabs {
     border-bottom: 1px solid #999;
 }
@@ -94,14 +106,16 @@ window-toolbar { /**/
 
 /* set with css. height, border and padding are supported */
 
-toolbar { /**/
+toolbar, panel-toolbar { /**/
   border: 0 solid #999;
   border-width: 0 1px 1px;
   padding: 3px 2px 2px;
   height: 21px; /* 21 + 3 + 2 (padding) = 26 */
   background: #f3f3f3 url("../ui-images/shine_2.png") 0 0 repeat-x;
   }
-
+panel-toolbar {
+  border-width: 0 0 1px 0;
+}
 toolbar-buttons, toolbar-switches {
   display: block;
   float: left;
@@ -147,7 +161,7 @@ button[handler="reload-window"] {
 [key="stylesheets.shortcuts"] {
     content: url("../ui-images/icons/icon_shorthand.png");
 }
-[key="css-inspector.hide-initial-values"] {
+[key="css-comp-style.hide-initial-values"] {
     content: url("../ui-images/icons/icon_hidedefaults.png");
 }
 [key="css-inspector.hide-shorthands"] {
@@ -223,6 +237,7 @@ cst-icon[class="debugger-menu"] {
     content: url("../ui-images/icons/icon_tabs.png");
 }
 toolbar button,
+panel-toolbar button,
 top-toolbar button,
 window-controls button,
 cst-select-toolbar-setting,
@@ -262,6 +277,7 @@ cst-select:active {
     padding: 1px;
 }
 toolbar button[is-active="true"],
+panel-toolbar button[is-active="true"],
 top-toolbar button[is-active="true"],
 window-controls button[is-active="true"],
 cst-select[is-active="true"] {
@@ -581,51 +597,24 @@ top-tabs .icon {
   vertical-align: middle;
   margin-right: 3px;
 }
-top-tabs.detached .icon {
-  display: block;
-  height: 48px;
-  width: 48px;
-  margin: auto;
-}
 
-top-tabs [ref-id="dom_panel"] .icon {
-    content: url("../ui-images/documents_attached.png");
+.dom_mode {
+    background-image: url("../ui-images/documents_attached.png");
 }
-top-tabs [ref-id="js_panel"] .icon {
+.js_mode {
     content: url("../ui-images/scripts_attached.png");
 }
-top-tabs [ref-id="network_panel"] .icon {
-    content: url("../ui-images/network_attached.png");
+.network_mode {
+    background: url("../ui-images/network_attached.png");
 }
-top-tabs [ref-id="storage"] .icon {
-    content: url("../ui-images/storage_attached.png");
+.storage {
+    background: url("../ui-images/storage_attached.png");
 }
-top-tabs [ref-id="console_new"] .icon {
-    content: url("../ui-images/errorlog_attached.png");
+.console_mode {
+    background: url("../ui-images/errorlog_attached.png");
 }
-top-tabs [ref-id="utils"] .icon {
-    content: url("../ui-images/utilities_attached.png");
-}
-top-tabs [ref-id="dom_panel"] .icon {
-    content: url("../ui-images/documents_attached.png");
-}
-top-tabs.detached [ref-id="dom_new"] .icon {
-    content: url("../ui-images/documents_detached.png");
-}
-top-tabs.detached [ref-id="js_new"] .icon {
-    content: url("../ui-images/scripts_detached.png");
-}
-top-tabs.detached [ref-id="network_panel"] .icon {
-    content: url("../ui-images/network_detached.png");
-}
-top-tabs.detached [ref-id="storage"] .icon {
-    content: url("../ui-images/storage_detached.png");
-}
-top-tabs.detached [ref-id="console_new"] .icon {
-    content: url("../ui-images/errorlog_detached.png");
-}
-top-tabs.detached [ref-id="utils"] .icon {
-    content: url("../ui-images/utilities_detached.png");
+.utils {
+    background: url("../ui-images/utilities_attached.png");
 }
 
 button[handler="top-settings"]
@@ -1433,16 +1422,12 @@ overlay-window {
     position: absolute;
     height: 80%;
     max-height: 600px;
-    left: 10px;
+    right: 20px;
 }
 overlay-arrow {
   content: url("../ui-images/overlay_arrow.png");
   position: absolute;
   top: -12px;
-}
-overlay-window.attached {
-  left: auto;
-  right: 20px;
 }
 overlay-window h2 {
     font-size: 1em;

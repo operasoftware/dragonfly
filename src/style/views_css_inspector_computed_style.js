@@ -5,34 +5,27 @@
   * @extends ViewBase
   */
 
-cls.CSSInspectorView = function(id, name, container_class)
+cls.CSSInspectorCompStyleView = function(id, name, container_class)
 {
   var self = this;
 
+  // TODO set unfold key on show and hide view
+
   this.createView = function(container)
   {
-    // TODO set unfold key on show and hide view
-
-    var styles = container.clearAndRender(['category', ['styles'], 'edit-handler', 'edit-css']).firstElementChild;
+    container.innerHTML ='';
+    var styles = container.render(['category', ['styles']]).firstElementChild;
+    data = elementStyle.get_computed_style();
     var search_active = elementStyle.getSearchActive();
-    var cat_index = 1;
-    data = elementStyle.getCategoryData(cat_index);
     if (data)
     {
       // stylesheets.prettyPrintCat call will also ensure 
       // that all style sheets for the given runtime and the index map
       // will be avaible, that means the call will not return any data 
       // before this datas are avaible
-      styles.innerHTML = 
-        stylesheets.prettyPrintStyleCasc(data, arguments, search_active);
+      styles.innerHTML = stylesheets.prettyPrintCompStyle(data, arguments, search_active);
       styles.setAttribute('rt-id', data.rt_id);
     }
   }
-
-  this.ondestroy = function()
-  {
-    UIWindowBase.closeWindow('color-selector');
-  }
-
   this.init(id, name, container_class);
 }

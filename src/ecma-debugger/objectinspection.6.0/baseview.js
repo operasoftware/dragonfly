@@ -12,7 +12,7 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseView = function()
 
   this.createView = function(container)
   {
-    var data_model = this._data || window.inspections[this._cur_data];
+    var data_model = this._data || window.inspections && window.inspections[this._cur_data];
     if (data_model)
       data_model.expand(this._create_view.bind(this, container, data_model));
     else

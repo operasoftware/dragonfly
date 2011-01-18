@@ -53,14 +53,6 @@ var TopTabsBase = function()
     this.update(force_redraw);
   }
 
-  this.switch_history = function(is_attached)
-  {
-    var cur = '', i = 0, map = composite_view_convert_table[is_attached.toString()];
-    for( ; cur = this._history[i]; i++)
-    {
-      this._history[i] = map[cur] || cur;
-    }
-  }
 }
 
 /**
