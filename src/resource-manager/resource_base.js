@@ -1,12 +1,27 @@
 window.cls = window.cls || {};
 
 
+/**
+ * Base class for views that show details about a resource
+ */
 cls.ResourceDetailBase = function()
 {
   this.resourcedata = null;
   this.container = null;
   this.drawer = null;
   this.title = null
+
+  // interface:
+
+  /**
+   * Override this method in subclasses to to the type specific rendering.
+   * The method is called from the main createView function. If it returns
+   * something, that is treated as a template and inserted.
+   * If it returns something falsy, then the assumption is that the method
+   * has inserted the approprate content into the container itself.
+   */
+  this.render_type_details = function(container, resource, resourcedata) {}
+
 
   this.createView = function(container)
   {
@@ -17,12 +32,14 @@ cls.ResourceDetailBase = function()
       this.service.fetch_resource_data(this.on_resource_data.bind(this),
                                        this.resource.id,
                                        resptype);
-      // fixme: show progress thingy
     }
     else
     {
       var tpl = this.render_type_details(container, this.resource, this.resourcedata);
-      container.render(tpl);
+      if (tpl)
+      {
+        container.render(tpl);
+      }
     }
   }
 
@@ -98,7 +115,6 @@ cls.FontResourceDetail = function(res, service)
   this.init(res, service);
 }
 cls.FontResourceDetail.prototype = new cls.ResourceDetailBase();
-
 
 
 
