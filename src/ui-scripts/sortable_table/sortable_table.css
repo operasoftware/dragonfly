@@ -7,8 +7,8 @@
   border: 1px solid rgba(0,0,0,0.1);
   padding: 4px 5px 1px 20px;
   text-align: left;
-  position: relative;
-  word-wrap: break-word;
+  overflow: hidden;
+  xxwhite-space: nowrap;
 }
 
 tr > td:first-child, tr > th:first-child {
