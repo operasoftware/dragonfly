@@ -126,11 +126,13 @@ templates.network_log_graph = function(ctx, width)
   var height = ctx.resources.length * 36;
 
   var gradients = templates.gradient_defs();
+  var background = templates.network_log_background(ctx, 36);
   var bars = templates.graph_bars(ctx, width, 30);
   var grid = templates.grid_lines(ctx, width, height);
 
   var tpl = ["svg:svg",
              gradients,
+             background,
              bars,
              grid,
              "viewBox", "0 0 " + width + " " + height,
@@ -263,35 +265,17 @@ templates.gradient = function(id, c1, c2, c3, c4)
 };
 
 
-templates.resource_graph = function(ctx, duration, contwidth, lineheight)
+templates.network_log_background = function(ctx, lineheight)
 {
-  duration = duration || 3000;
-  lineheight = lineheight || 36;
-  contwidth = contwidth || 800;
-
-  var bars = [];
-
-  var requests = ctx.resources;
-  var basetime = ctx.get_start_time();
-
-  for (var n=0, req; req=requests[n]; n++)
+  var cnt = ctx.resources.length;
+  var tpls = [];
+  while (cnt--)
   {
-    var bar = templates.resource_bar(n, req, basetime, duration, contwidth, lineheight);
-    bars.push(bar);
+    tpls.push(["rect", "x", "0",
+                       "y", String(cnt*lineheight),
+                       "width", "100%",
+                       "height", String(lineheight),
+                       "stroke-width", "0", "fill", (cnt%2 ?  "#dddddd" : "white")]);
   }
-
-  var defs = templates.bar_defs();
-  var background = templates.graph_background(ctx.resources.length, lineheight);
-  var grid = templates.grid_lines(duration, contwidth, n*lineheight);
-
-    var tpl = ["svg:svg", defs, bars, grid, "viewBox", "0 0 " + contwidth + " " + (n*lineheight), "xmlns", "http://www.w3.org/2000/svg", "class", "resource-graph"];
-
-    var tpl = ["svg:svg", defs, background, bars, grid, "xmlns", "http://www.w3.org/2000/svg",
-                          "class", "resource-graph",
-                          "width", "" + contwidth + "px",
-                          "height", "" + n*lineheight + "px",
-                          "style", ""];
-
-
-    return tpl;
+  return tpls;
 };
