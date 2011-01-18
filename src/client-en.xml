@@ -234,7 +234,10 @@ window.load_screen_timeout = window.setTimeout(function()
 
 
 
-
+<script src="./syntaxhighlight/js/pre_lexer.js"/>
+<script src="./syntaxhighlight/js/syntax.js"/>
+<script src="./syntaxhighlight/js/tokenizer.js"/>
+<script src="./syntaxhighlight/js/templates.js"/>
 
 
 <script src="./ecma-debugger/ListTextSearch.js"/>
@@ -242,11 +245,8 @@ window.load_screen_timeout = window.setTimeout(function()
 
 <script src="./ecma-debugger/helpers.js"/>
 <script src="./ecma-debugger/tabs.js"/>
-<script src="./ecma-debugger/syntax.js"/>
-<script src="./ecma-debugger/pre_lexer.js"/>
-<script src="./ecma-debugger/formatter.js"/>
+
 <script src="./ecma-debugger/templates.js"/>
-<script src="./ecma-debugger/templates_js_syntax_highlight.js"/>
 <script src="./ecma-debugger/runtimes.js"/>
 <script src="./ecma-debugger/stop_at.js"/>
 <script src="./ecma-debugger/runtime_onload_handler.js"/>
