@@ -1,5 +1,5 @@
 ﻿/**
- *    Copyright 2006 - 2010 Opera Software ASA
+ *    Copyright 2006 - 2011 Opera Software ASA
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
