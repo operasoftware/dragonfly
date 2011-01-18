@@ -42,6 +42,14 @@
               return [ this.tab, tab.ref_id].concat(ret);
             }
           }
+          else if (view.type == 'side-panel')
+          {
+            if (view.has_view(view_id))
+            {
+              view.set_view_unfolded(view_id);
+              return [this.tab, view.id];
+            }
+          }
           else if( tab.ref_id == view_id )
           {
             return [this.tab, view_id];
