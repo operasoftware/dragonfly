@@ -91,6 +91,19 @@ cls.NetworkLoggerService = function(view, data)
 cls.RequestContext = function()
 {
   this.resources = [];
+  this.duration = 0;
+
+  this.get_duration = function()
+  {
+    var starttimes = this.resources.map(function(e) { return e.starttime });
+    var endtimes = this.resources.map(function(e) { return e.endtime });
+    return Math.max.apply(null, endtimes) - Math.min.apply(null, starttimes);
+  }
+
+  this.get_starttime = function()
+  {
+    return Math.min.apply(null, this.resources.map(function(e) { return e.starttime }));
+  }
 
   this.update = function(eventname, event)
   {
@@ -98,7 +111,7 @@ cls.RequestContext = function()
 
     if (!res && eventname == "urlload")
     {
-      res = new cls.Resource(event.resourceID)
+      res = new cls.Request(event.resourceID)
       if (this.resources.length == 0) { this.topresource = event.resourceID; }
       this.resources.push(res);
     }
@@ -179,6 +192,7 @@ cls.Request = function(id)
     {
       this.url = eventdata.url;
       this.urltype = eventdata.urlType;
+      this.starttime = eventdata.time;
       // fixme: complete list
       this.urltypeName = {0: "unknown", 1: "http", 2: "https", 3: "file", 4: "data" }[eventdata.urlType];
     }
@@ -199,14 +213,9 @@ cls.Request = function(id)
     }
     else if (eventname == "response")
     {
-      if (eventdata.responseCode <= 100 || eventdata.responseCode >= 300)
-      {
-        this.invalid = true;
-      }
     }
     else if (eventname == "urlredirect")
     {
-      this.invalid = true;
     }
     else
     {
