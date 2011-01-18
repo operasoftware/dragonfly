@@ -123,11 +123,12 @@ templates.network_request_icon = function(request)
 templates.network_log_graph = function(ctx, width)
 {
   width = width || 1000;
-  var height = ctx.resources.length * 36;
+  var rowheight = 36;
+  var height = ctx.resources.length * rowheight;
 
   var gradients = templates.gradient_defs();
-  var background = templates.network_log_background(ctx, 36);
-  var bars = templates.graph_bars(ctx, width, 30);
+  var background = templates.network_log_background(ctx, rowheight);
+  var bars = templates.graph_bars(ctx, width, rowheight);
   var grid = templates.grid_lines(ctx, width, height);
 
   var tpl = ["svg:svg",
@@ -160,7 +161,9 @@ templates.graph_bars = function(ctx, width, height)
 templates.request_bar = function(index, request, basetime, totaltime, contwidth, lineheight)
 {
   var y = lineheight * index;
-  var bary = y + (lineheight / 2);
+
+  var barheight = 24;
+  var bary = y + (lineheight / 2) - (barheight / 2);
   var multiplier = contwidth / totaltime;
 
   if (!request.duration) {
@@ -169,7 +172,6 @@ templates.request_bar = function(index, request, basetime, totaltime, contwidth,
   }
 
   var start = request.starttime;
-
 
   var reqwidth = request.duration
 
@@ -181,12 +183,12 @@ templates.request_bar = function(index, request, basetime, totaltime, contwidth,
 
   var tpl = [
     ["rect", "x", String((start-basetime)*multiplier), "y", String(bary),
-     "width", String(reqwidth*multiplier), "height", "16",
+     "width", String(reqwidth*multiplier), "height", String(barheight),
              "rx", "4", "ry", "4",
              "fill", "#e5e5e5", "stroke", "#969696", "stroke-width", "0.5"],
 
       ["rect", "x", String((resstart-basetime)*multiplier), "y", String(bary),
-             "width", String(reswidth*multiplier), "height", "16",
+             "width", String(reswidth*multiplier), "height", String(barheight),
              "rx", "4", "ry", "4",
              "fill", "url(#" + texture + ")", "stroke", "#4a507d", "stroke-width", "0.5"]
 
@@ -210,6 +212,15 @@ templates.grid_lines = function(ctx, width, height)
   const THRESH_100MS = 200;
   const THRESH_500MS = 100;
 
+  ret.push(["line",
+            "x1", "0",
+            "y1", "0",
+            "x2", "0",
+            "y2", String(height),
+            "stroke", "black",
+            "stroke-width", "1",
+           ]);
+
   for (var n=100; n<millis; n+=100)
   {
     var color = null;
@@ -227,8 +238,11 @@ templates.grid_lines = function(ctx, width, height)
     }
 
     if (color) {
-      ret.push(["line", "x1", String(n*multiplier), "y1", "0",
-                "x2", String(n*multiplier), "y2", String(height),
+      ret.push(["line",
+                "x1", String(n*multiplier),
+                "y1", "0",
+                "x2", String(n*multiplier),
+                "y2", String(height),
                 "stroke", color,
                 "stroke-width", "0.5",
                 "opacity", "0.7"
