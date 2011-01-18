@@ -97,9 +97,7 @@ function SortableTable(tabledef, data, cols, sortby, reversed)
 
 
     // visible column selection stuff
-
     menuitems.push(ContextMenu.separator);
-
 
     var allcols = obj.tabledef.column_order;
     if (!allcols)
@@ -324,7 +322,33 @@ templates.sortable_table_row = function(tabledef, item, cols)
 {
   return ["tr",
           cols.map(function(col) {
-            return ["td", tabledef.columns[col].renderer(item, tabledef.columns[col].getter)];
+            var content = tabledef.columns[col].renderer(item, tabledef.columns[col].getter);
+
+            if (typeof content == "string")
+            {
+              var title = content; // fixme: use custom title renderer.
+            }
+            else
+            {
+              title = "";
+            }
+
+            if (typeof content == "string" &&
+                tabledef.columns[col].maxlength &&
+                tabledef.columns[col].maxlength < content.length)
+            {
+              if (tabledef.columns[col].ellipsis=="start")
+              {
+                content = "…" + content.slice(-tabledef.columns[col].maxlength);
+              }
+              else
+              {
+                content = content.slice(0, tabledef.columns[col].maxlength) + "…";
+              }
+            }
+
+            return ["td", content,
+                    "title", title];
           }).concat(tabledef.handler ? ["handler", tabledef.handler] : [])
             .concat(tabledef.idgetter ? ["data-object-id", tabledef.idgetter(item) ] : [])
          ];
