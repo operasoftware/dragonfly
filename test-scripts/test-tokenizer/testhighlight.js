@@ -1,5 +1,7 @@
 
 const NEXT_RUN_DELAY = 20;
+const MAX_LINES = 2500;
+
 var tokenizer = new window.cls.SimpleJSParser();
 var labels = {};
 var ts1 = null;
@@ -7,92 +9,10 @@ var ts2 = null;
 var ts3 = null;
 var method = "";
 
-var HighlightWorker = function()
-{
-
-  this._onerror = function(event)
-  {
-    throw event.message;
-  };
-
-  this._onmessage = function(event)
-  {
-
-    if (event.data.log)
-    {
-      opera.postError(event.data.log);
-    }
-    else
-    {
-      var self = this;
-      //self._onmarkup(event.data.script);
-      setTimeout(function(){self._onmarkup(event.data.script);}, 0);
-    }
-  };
-
-  this._init = function()
-  {
-    this._worker = new Worker('highlightworker.js');
-    var self = this;
-    this._worker.onerror = function(event)
-    {
-      self._onerror(event);
-    };
-    this._worker.onmessage = function(event)
-    {
-      self._onmessage(event);
-    };
-  };
-
-  this.highlight_script = function(script, onmarkup)
-  {
-    this._onmarkup = onmarkup;
-    this._worker.postMessage({script: script});
-  };
-
-  this._init();
-}
-
-var highlight_worker = new HighlightWorker();
-
-var integrated_highlighter = function(script, with_line_numbers)
-{
-  var t0 = Date.now();
-  var markup_lines = tokenizer.format_source(script);
-  var markup = markup_lines.join('\n');
-  var t1 = Date.now();
-  document.getElementsByClassName('js-source')[0].innerHTML = markup;
-  if (with_line_numbers)
-  {
-    markup = "";
-    for (var i = 0, length = markup_lines.length; i < length; )
-    {
-      markup += ++i + "\n";
-    }
-    document.getElementsByClassName('line-numbers')[0].textContent = markup;
-  }
-  var h = document.body.offsetHeight + document.body.offsetWidth;
-  var t2 = Date.now();
-  // tokenize and create markup string
-  ts1.push(t1 - t0);
-  // layout
-  ts2.push(t2 - t1);
-  // total
-  ts3.push(t2 - t0);
-  setTimeout(ontestcompleted, NEXT_RUN_DELAY);
-};
-
-labels["integrated_highlighter"] =
-[
-  "tokenize and create markup string",
-  "layout"
-];
-
-var callback_dom = function(script, with_line_numbers)
+var dom_fragment = function(script, with_line_numbers)
 {
   var t0 = Date.now();
   var tok2dom = new JSTokens2DOM(script);
-  
   var t1 = Date.now();
   document.getElementsByClassName('js-source')[0].appendChild(tok2dom.document_fragment);
   if (with_line_numbers)
@@ -110,13 +30,13 @@ var callback_dom = function(script, with_line_numbers)
   setTimeout(ontestcompleted, NEXT_RUN_DELAY);
 };
 
-labels["callback_dom"] =
+labels["dom_fragment"] =
 [
   "tokenize and create document fragment",
   "layout"
 ];
 
-var callback_template = function(script, with_line_numbers)
+var template = function(script, with_line_numbers)
 {
   var t0 = Date.now();
   var line_count = 1;
@@ -141,16 +61,15 @@ var callback_template = function(script, with_line_numbers)
   // total
   ts3.push(t2 - t0);
   setTimeout(ontestcompleted, NEXT_RUN_DELAY);
-
 };
 
-labels["callback_template"] =
+labels["template"] =
 [
   "tokenize and create template",
   "create DOM and layout"
 ];
 
-var callback_template_markup = function(script, with_line_numbers)
+var markup = function(script, with_line_numbers)
 {
   var t0 = Date.now();
   var line_count = 1;
@@ -175,16 +94,13 @@ var callback_template_markup = function(script, with_line_numbers)
   // total
   ts3.push(t2 - t0);
   setTimeout(ontestcompleted, NEXT_RUN_DELAY);
-
 };
 
-labels["callback_template_markup"] =
+labels["markup"] =
 [
   "tokenize and create template",
   "create DOM and layout"
 ];
-
-const MAX_LINES = 2500;
 
 var webworker = function(script, with_line_numbers)
 {
@@ -217,16 +133,13 @@ var webworker = function(script, with_line_numbers)
     {
       var h = document.body.offsetHeight + document.body.offsetWidth;
       var t2 = Date.now();
-      // tokenize and create template
       ts1.push(0);
-      // create DOM and layout
       ts2.push(0);
       // total
       ts3.push(t2 - t0);
       setTimeout(ontestcompleted, NEXT_RUN_DELAY);
     }
   });
-
 };
 
 labels["webworker"] =
@@ -259,7 +172,6 @@ var no_highlight = function(script, with_line_numbers)
   // total
   ts3.push(t2 - t0);
   setTimeout(ontestcompleted, NEXT_RUN_DELAY);
-
 };
 
 labels["no_highlight"] =
@@ -380,7 +292,6 @@ JSTokens2DOM.prototype = new function()
 
 (function()
 {
-
   const
   WHITESPACE = cls.SimpleJSParser.WHITESPACE,
   LINETERMINATOR = cls.SimpleJSParser.LINETERMINATOR,
@@ -515,6 +426,53 @@ JSTokens2DOM.prototype = new function()
 
 }).apply(window.templates || (window.templates = {}));
 
+var HighlightWorker = function()
+{
+
+  this._onerror = function(event)
+  {
+    throw event.message;
+  };
+
+  this._onmessage = function(event)
+  {
+
+    if (event.data.log)
+    {
+      opera.postError(event.data.log);
+    }
+    else
+    {
+      var self = this;
+      //self._onmarkup(event.data.script);
+      setTimeout(function(){self._onmarkup(event.data.script);}, 0);
+    }
+  };
+
+  this._init = function()
+  {
+    this._worker = new Worker('highlightworker.js');
+    var self = this;
+    this._worker.onerror = function(event)
+    {
+      self._onerror(event);
+    };
+    this._worker.onmessage = function(event)
+    {
+      self._onmessage(event);
+    };
+  };
+
+  this.highlight_script = function(script, onmarkup)
+  {
+    this._onmarkup = onmarkup;
+    this._worker.postMessage({script: script});
+  };
+
+  this._init();
+};
+
+var highlight_worker = new HighlightWorker();
 
 var enable_stylesheets = function(do_enable)
 {
@@ -536,19 +494,6 @@ var test = function(method)
   window.method = method;
   window.test_runs = parseInt(document.forms[0]['test-runs'].value);
   ontestcompleted();
-
-  /*
-  var t0 = Date.now();
-  var line_count = script.split('\n').map(function(t, i){return ' ' + (i + 1);}).join('\n');
-
-
-  document.getElementsByClassName('js-source')[0].textContent = script;
-  document.getElementsByClassName('line-numbers')[0].textContent = line_count;
-    var h = document.body.offsetHeight + document.body.offsetWidth;
-    var t2 = Date.now();
-    
-    alert("total: " + (t2 - t0));
-  */
 }
 
 var ontestcompleted = function()
@@ -591,16 +536,16 @@ window.onload = function()
     window.script_source = this.responseText;
     window.small_script_source = window.script_source.slice(0, 250000);
     document.getElementById('controls').innerHTML = 
-      "<p>" +
-        "<input type='button' value='integrated_highlighter' onclick='test(this.value)'>" +
-        "<input type='button' value='callback_dom' onclick='test(this.value)'>" +
-        "<input type='button' value='callback_template' onclick='test(this.value)'>" +
-        "<input type='button' value='callback_template_markup' onclick='test(this.value)'>" +
-        "<input type='button' value='webworker' onclick='test(this.value)'>" +
-        "<input type='button' value='no_highlight' onclick='test(this.value)'>";
-      
-      ;
+      "<p>" + ['dom_fragment',
+               'template',
+               'markup',
+               'webworker',
+               'no_highlight'].map(function(method)
+               {
+                  return "<input type='button' value='" + method + 
+                         "' onclick='test(this.value)'>";
+               }).join('');
   }
   xhr.open("GET", "./dragonfly.js");
   xhr.send(null);
-}
+};

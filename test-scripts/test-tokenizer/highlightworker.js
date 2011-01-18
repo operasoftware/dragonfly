@@ -69,11 +69,7 @@ onmessage = function(event)
   var is_chunk_ready = false;
   var online = function()
   {
-    count++;
-    if (count >= MAX_LINES)
-    {
-      is_chunk_ready = true;
-    }
+    is_chunk_ready = ++count >= MAX_LINES;
   };
   tokenizer.tokenize(event.data.script, function(token_type, token)
   {
