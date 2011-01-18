@@ -110,9 +110,14 @@ templates.network_log_main_table = function(ctx)
 templates.network_log_url_list = function(ctx)
 {
   var itemfun = function(res) {
-    return ["li", templates.resource_icon(res.mime), ["span", res.url]]
+    return ["li", templates.network_request_icon(res), ["span", res.url]]
   }
   return ["ol", ctx.resources.map(itemfun)];
+}
+
+templates.network_request_icon = function(request)
+{
+  return ["span", "class", "resource-icon resource-type-" + request.type];
 }
 
 templates.network_log_graph = function(ctx, width)

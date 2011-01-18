@@ -246,10 +246,9 @@ templates.grid_lines = function(millis, width, height)
 };
 
 
-templates.resource_icon = function(mime)
+templates.resource_icon = function(resource)
 {
-  var type = cls.ResourceUtil.mime_to_type(mime);
-  return ["span", "class", "resource-icon resource-type-" + type];
+  return ["span", "class", "resource-icon resource-type-" + resource.type];
 }
 
 /**

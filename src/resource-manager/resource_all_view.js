@@ -110,7 +110,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
       icon: {
         label: "Icon",
         sorter: "unsortable",
-        renderer: function(res) { return templates.resource_icon(res.mime) }
+        renderer: function(res) { return templates.resource_icon(res) }
       },
       protocol: {
         label: "Protocol",
