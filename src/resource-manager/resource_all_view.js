@@ -135,6 +135,13 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
       size: {
         label: "Size",
         getter: function(res) { return res.size ? String(res.size) : "n/a" },
+/*
+        summer: function(values, groupname, getter) {
+          var n = 0;
+          values.forEach(function(res) { n+= res.size ? res.size : 0 });
+          return String(n);
+        }
+*/
       },
       size_h: {
         label: "Size(h)",
