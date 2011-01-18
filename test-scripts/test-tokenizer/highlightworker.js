@@ -1,5 +1,5 @@
-importScripts("../../src/ecma-debugger/formatter.js",
-              "../../src/ecma-debugger/syntax.js");
+importScripts("../../src/syntaxhighlight/js/tokenizer.js",
+              "../../src/syntaxhighlight/js/syntax.js");
 
 var tokenizer = new cls.SimpleJSParser();
 
