@@ -67,14 +67,17 @@ cls.CookieManagerView = function(id, name, container_class)
         renderer: function(obj) {
           if(typeof obj.expires === "number")
           {
-            var parsed_date=new Date(obj.expires*1000);
-            if(new Date().getTime() < parsed_date.getTime())
+            if(obj.expires === 0)
             {
-              return parsed_date.toUTCString();
+              return window.templates.cookie_manager.table_view.expires_0values()
             }
-            return window.templates.cookie_manager.table_view.expires_0values();
+            // return empty container to be filled by _update_expiry func
+            return window.templates.cookie_manager.table_view.expires_container(obj.objectref, new Date(obj.expires*1000));
           }
-          return window.templates.cookie_manager.table_view.unknown_value();
+          else
+          {
+            return window.templates.cookie_manager.table_view.unknown_value();
+          }
         }
       },
       isSecure: {
@@ -134,7 +137,13 @@ cls.CookieManagerView = function(id, name, container_class)
     }
     this._table_obj = ObjectRegistry.get_instance().get_object(this._table_elem.getAttribute("data-object-id"));
     this._table_obj.data = this.flattened_cookies;
-    this._table_elem.re_render(this._table_obj.render());
+    this._table_elem.clearAndRender(this._table_obj.render());
+
+    this._update_expiry();
+    if(!this._update_expiry_interval)
+    {
+      this._update_expiry_interval = setInterval(this._update_expiry,15000);
+    }
   };
 
   this._on_active_tab = function(msg)
@@ -176,7 +185,77 @@ cls.CookieManagerView = function(id, name, container_class)
     };
   };
 
-  this.refetch = function() {
+  this._update_expiry = function()
+  {
+    for (var i=0; i < window.views.cookie_manager.flattened_cookies.length; i++)
+    {
+      var obj = window.views.cookie_manager.flattened_cookies[i];
+      var elem = document.getElementById("expires_container_"+obj.objectref);
+      if(elem)
+      {
+        var parsed_date=new Date(obj.expires*1000);
+        var compare_date = new Date();
+        if(compare_date.getTime() < parsed_date.getTime())
+        {
+          var diff = parsed_date.getTime() - compare_date.getTime();
+          var in_sec = diff / 1000;
+          var in_min = in_sec / 60;
+          var in_dec_min = in_min / 10;
+          var in_hours = in_min / 60;
+          var in_days = in_hours / 24;
+
+          if(in_sec < 60)
+          {
+            elem.textContent = "Soon";
+          }
+          else if (Math.round(in_min) === 1)
+          {
+            elem.textContent = "In "+ Math.round(in_min) +" minute";
+          }
+          else if (in_min < 10)
+          {
+            elem.textContent = "In " + Math.round(in_min) + " minutes";
+          }
+          else if (in_dec_min < 5)
+          {
+            elem.textContent = "In " + Math.round(in_dec_min) * 10 + " minutes";
+          }
+          else if (Math.round(in_hours) === 1)
+          {
+            elem.textContent = "In " + Math.round(in_hours) + " hour";
+          }
+          else if (in_hours < 23)
+          {
+            elem.textContent = "In " + Math.round(in_hours) + " hours";
+          }
+          else if (Math.round(in_days) === 1)
+          {
+            elem.textContent = "In " + Math.round(in_days) + " day";
+          }
+          else
+          {
+            elem.textContent = "In " + Math.round(in_days) + " days";
+          }
+        }
+        else
+        {
+          elem.clearAndRender(window.templates.cookie_manager.table_view.has_expired_value());
+          // find row, add expired_cookie class
+          while(elem.nodeName !== "tr" || !elem.parentNode)
+          {
+            elem = elem.parentNode;
+          }
+          if(elem.nodeName === "tr")
+          {
+            elem.addClass("expired_cookie");
+          }
+        }
+      }
+    }
+  };
+
+  this.refetch = function()
+  {
     this._cookie_dict = {};
     for (var rt_id in this._rts) {
       this._rts[rt_id].get_domain_is_pending = true;
@@ -184,7 +263,8 @@ cls.CookieManagerView = function(id, name, container_class)
     };
   };
 
-  this._request_runtime_details = function(rt_object) {
+  this._request_runtime_details = function(rt_object)
+  {
     var script = "return JSON.stringify({hostname: location.hostname || '', pathname: location.pathname || ''})";
     var tag = tagManager.set_callback(this, this._handle_get_domain,[rt_object.rt_id]);
     services['ecmascript-debugger'].requestEval(tag,[rt_object.rt_id, 0, 0, script]);
@@ -213,7 +293,7 @@ cls.CookieManagerView = function(id, name, container_class)
   };
 
   this._request_cookies = function(runtime_list)
-  {    
+  {
     // go over runtimes and ask for cookies once per domain
     for (var str_rt_id in runtime_list)
     {
@@ -296,7 +376,7 @@ cls.CookieManagerView = function(id, name, container_class)
   {
     const DATA = 2;
     var cookie_string = message[DATA];
-    if(cookie_string.length > 0)
+    if(cookie_string && cookie_string.length > 0)
     {
       this._cookie_dict[domain+path].cookies=[];
       var cookies = cookie_string.split(';');

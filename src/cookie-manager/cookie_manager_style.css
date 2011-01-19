@@ -14,6 +14,10 @@
   color: #AAA;
 }
 
+.cookie_manager .expired_cookie {
+  color: #AAA;
+}
+
 .cookie_manager .add_cookie_dropdown {
   max-width: 200px;
 }

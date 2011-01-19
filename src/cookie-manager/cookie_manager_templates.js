@@ -106,7 +106,7 @@ templates.cookie_manager = {
       container[1]=[["select", option_arr, "name", "add_cookie_runtime_select", "handler", "cookiemanager-add-cookie-domain-select", "class", "add_cookie_dropdown"]];
     }
     return container;
-  },  
+  },
   hostname_group_render: function(runtime) {
     return [
       [
@@ -181,8 +181,14 @@ templates.cookie_manager = {
         "class", "edit_container"
       ];
     },
+    expires_container: function(objectref, parsed_date) {
+      return ["div", "id", "expires_container_"+objectref, "title", parsed_date.toUTCString()];
+    },
     expires_0values: function() {
       return ["span", ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES_ON_SESSION_CLOSE, "class", "replaced-val"];
+    },
+    has_expired_value: function() {
+      return ["span", ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRED, "class", "replaced-val"];
     },
     unknown_value: function() {
       return ["span", "-", "class", "replaced-val"];
