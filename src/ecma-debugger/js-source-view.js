@@ -924,13 +924,6 @@ cls.JsSourceView.create_ui_widgets = function()
     });
   };
 
-  if (major_ecma_service_version > 5)
-    toolbar_buttons.push(
-    {
-      handler: 'show-event-breakpoint-view',
-      title: "Show event breakpoints",
-    });
-
   new ToolbarConfig
   (
     'js_source',

@@ -17,7 +17,10 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
   this.ondestroy = function()
   {
-    this._scroll= this._scrollcontainer.scrollTop
+    if (this._scrollcontainer)
+    {
+      this._scroll= this._scrollcontainer.scrollTop;
+    }
   }
 
   this._render_main_view = function(container)
@@ -26,7 +29,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     if (ctx && ctx.resources.length)
     {
       this._container = container;
-
 
       if (this._selected !== null)
       {

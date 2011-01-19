@@ -68,19 +68,15 @@ var TopContainerBase = function()
     {
       var children = viewport.childNodes, child = null, i = children.length - 1;
       var id = this.cell.id;
-      var tabs = null, tab = null, k = 0;
+      var container = null;
       for( ; child = children[i]; i--)
       {
-        if( child.nodeType == 1 && child.id.indexOf(id) == -1 )
+        if (child.nodeType == 1 && child.id.indexOf(id) == -1)
         {
-          
-          tabs = child.getElementsByTagName('tab');
-          for( k = 0; tab = tabs[k]; k++)
+          if (child.nodeName.toLowerCase() == 'container')
           {
-            if( tab.hasClass('active') )
-            {
-              messages.post("hide-view", {id: tab.getAttribute('ref-id')});
-            }
+            container = UIBase.getUIById(child.getAttribute('ui-id'));
+            messages.post("hide-view", {id: container.view_id});
           }
           viewport.removeChild(child);
         }

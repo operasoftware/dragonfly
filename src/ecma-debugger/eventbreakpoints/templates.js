@@ -84,7 +84,7 @@
       ['li', 
         ['input', 
           'type', 'button', 
-          'value', ui_strings.S_BUTTON_SAVE, 
+          'value', ui_strings.S_BUTTON_TEXT_APPLY, 
           'handler', 'ev-brp-edit-custom-events-save'
         ],
         ['input', 

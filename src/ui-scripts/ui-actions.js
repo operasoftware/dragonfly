@@ -202,37 +202,13 @@ eventHandlers.click['top-window-close'] = function(event)
 
 eventHandlers.click['top-window-toggle-attach'] = function(event)
 {
-  viewsMenu.remove();
-  window.topCell.onresize = function(){};
-  var is_attached = ( window.opera.attached = !window.opera.attached );
-  event.target.parentNode.parentNode.removeChild(event.target.parentNode);
-
-  // TODO active window must be set correct
-  // then the window dropdown will be removed in the attached view
-  // topCell.tab.changeStyleProperty("padding-right", 60);
-  topCell.tab.switch_history(is_attached);
-  
-  if( is_attached )
+  window.opera.attached = !window.opera.attached;
+  window.settings.general.set('window-attached',  window.opera.attached);
+  var window_controls = document.getElementsByTagName('window-controls')[0];
+  if (window_controls)
   {
-    topCell.tab.changeStyleProperty("padding-right", 50);
-    topCell.toolbar.changeStyleProperty("padding-right", -30);
+    window_controls.re_render(templates.window_controls())
   }
-  else
-  {
-    topCell.tab.changeStyleProperty("padding-right", -50);
-    topCell.toolbar.changeStyleProperty("padding-right", 30);
-  }
-
-  settings.general.set('window-attached',  is_attached || false);
-  if(window.ini.debug)
-  {
-    viewsMenu.create();
-  }
-
-  setTimeout(function() {
-    client.setupTopCell();
-    document.querySelector("main-view").render(templates.window_controls(is_attached));
-  }, 0);
 }
 
 eventHandlers.click['overlay-tab'] = function(event, target)
@@ -274,15 +250,8 @@ eventHandlers.click['toggle-remote-debug-config-overlay'] = function(event, targ
   var element = overlay.element.querySelector("overlay-window");
   var arrow = overlay.element.querySelector("overlay-arrow");
   element.style.top = button_dims.bottom + OVERLAY_TOP_MARGIN + "px";
-  if (window.opera.attached)
-  {
-    element.addClass("attached");
-    arrow.style.right = document.documentElement.clientWidth - button_dims.right - OVERLAY_RIGHT_MARGIN + "px";
-  }
-  else
-  {
-    arrow.style.left = button_dims.left - OVERLAY_LEFT_MARGIN + "px";
-  }
+  element.addClass("attached");
+  arrow.style.right = document.documentElement.clientWidth - button_dims.right - OVERLAY_RIGHT_MARGIN + "px";
 };
 
 eventHandlers.click['toggle-console'] = function(event, target)

@@ -27,7 +27,7 @@
 
   this.top_tab = function(obj, is_active_tab)
   {
-    return ['tab', [['span', "", "class", "icon"], obj.name],
+    return ['tab', [['span', "class", "icon " + obj.ref_id], obj.name],
             'handler', 'tab',
             'ref-id', obj.ref_id
     ].concat(is_active_tab ? ['class', 'active'] : [] );
@@ -243,13 +243,7 @@
 
   this.window_controls = function()
   {
-    return window.opera.attached ?
-      this.window_controls_attached() :
-      this.window_controls_detached();
-  }
-
-  this.window_controls_attached = function()
-  {
+    var is_attached = window.opera.attached;
     return [
       'window-controls',
       [
@@ -281,39 +275,19 @@
         [
           'button',
           'handler', 'top-window-toggle-attach',
-          'class', 'switch attached',
+          'class', 'switch' + (is_attached ? ' attached' : ''),
           'title', ui_strings.S_SWITCH_DETACH_WINDOW
         ],
-        [
-          'button',
-          'handler', 'top-window-close',
-          'title', ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW
-        ],
+        is_attached
+        ? [
+            'button',
+            'handler', 'top-window-close',
+            'title', ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW
+          ]
+        : [],
         'class', 'attached',
         'id', 'window-controls-to-main-view'
       ]
-    ];
-  };
-
-  this.window_controls_detached = function()
-  {
-    return [
-      'window-controls',
-      [
-        window['cst-selects']['debugger-menu'].select_template(),
-        [
-         'button',
-         'handler', 'reload-window',
-         'title', ui_strings.S_BUTTON_LABEL_RELOAD_HOST
-        ],
-        [
-         'button',
-         'handler', 'top-window-toggle-attach',
-         'class', 'switch',
-         'title', ui_strings.S_SWITCH_ATTACH_WINDOW
-        ],
-      ],
-      'id', 'window-controls-to-main-view'
     ];
   };
 
