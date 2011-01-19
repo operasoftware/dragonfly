@@ -22,7 +22,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   this._render_main_view = function(container)
   {
     var ctx = this._service.get_request_context();
-    if (ctx)
+    if (ctx && ctx.resources.length)
     {
       this._container = container;
       if (this._scrollcontainer)
