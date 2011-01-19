@@ -667,6 +667,9 @@ top-tabs .icon {
 .network_mode {
     background: url("../ui-images/network_attached.png");
 }
+.resource_panel {
+    background: url("../ui-images/resources_attached.png");
+}
 .storage {
     background: url("../ui-images/storage_attached.png");
 }
