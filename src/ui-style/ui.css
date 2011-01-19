@@ -468,6 +468,7 @@ toolbar-filters {
   }
 
 filter {
+  margin: 0 2px;
   display: inline-block;
   padding-left: 20px;
   height: 19px;
