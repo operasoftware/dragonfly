@@ -90,7 +90,8 @@ function SortableTable(tabledef, data, cols, sortby, reversed)
     for (var group in obj.tabledef.groups)
     {
       menuitems.push({
-        label: "Group by " + (obj.tabledef.groups[group].label || group) + (obj.groupby == group ? " (selected)" : ""),
+        label: "Group by " + (obj.tabledef.groups[group].label || group),
+        selected: obj.groupby == group,
         handler: obj._make_group_handler(group)
       });
     }
@@ -113,7 +114,8 @@ function SortableTable(tabledef, data, cols, sortby, reversed)
     {
       coldef = obj.tabledef.columns[colname];
       menuitems.push({
-        label: coldef.label + (obj.columns.indexOf(colname) != -1 ? " (selected)" : ""),
+        label: coldef.label,
+        checked: obj.columns.indexOf(colname) != -1,
         handler: obj._make_colselect_handler(colname)
       });
     }
