@@ -80,12 +80,14 @@
       ret.push(
         "<div class='prototype-chain-object'>" +
           "<input type='button' " +
-                 "handler='expand-prototype' " +
+                 " " +
                  "class='folder-key inverted' " +
                  "proto-index='" + index + "' " +
-                 (is_unfolded ? STYLE_EXPANDED + "is-unfolded='true'" : "") +
+                 (is_unfolded ? STYLE_EXPANDED : "") +
                  "/>",
-          "<key>" + name + "</key>",
+          "<key handler='expand-prototype' " +
+                (is_unfolded ? "is-unfolded='true'" : "") +
+                ">" + name + "</key>",
         "</div>");
     if (is_unfolded)
       _pretty_print_properties(model,

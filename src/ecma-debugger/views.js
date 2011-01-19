@@ -368,32 +368,14 @@ cls.DebugRemoteSettingView.create_ui_widgets = function()
             ?
               [
                 ['setting-composite',
-                  ['label',
-                    ui_strings.S_LABEL_PORT + ': ',
-                    ['input',
-                      'type', 'number',
-                      'min', PORT_MIN,
-                      'max', PORT_MAX,
-                      'value', setting.get('port'),
-                      'current-port', setting.get('port').toString()
-                    ]
-                  ],
-                  ['input',
-                    'type', 'button',
-                    'value', ui_strings.S_BUTTON_TEXT_APPLY,
-                    'handler', 'apply-remote-debugging'
-                  ],
-                  ['p',
-                   'id', 'remote-debug-info'
-                  ],
-                  'class', 'apply-button'
+                  window.templates.remote_debug_settings(setting.get('port'))
                 ]
               ]
             :
               ['setting-composite',
                 ['input',
                   'type', 'button',
-                  'value', "Cancel",
+                  'value', ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG,
                   'handler', 'cancel-remote-debug'
                 ]
               ]
@@ -416,12 +398,12 @@ cls.DebugRemoteSettingView.create_ui_widgets = function()
         window.helpers.setCookie('debug-remote', "true");
         window.helpers.setCookie('port', JSON.stringify(port));
         window.topCell.showView('dom');
-        client.setup();
+        client.setup(true);
       }
       else
       {
         // TODO: fix string to show new min port number
-        document.querySelector("#remote-debug-info").textContent = ui_strings.S_INFO_NO_VALID_PORT_NUMBER;
+        document.getElementById("remote-debug-info").textContent = ui_strings.S_INFO_NO_VALID_PORT_NUMBER;
         target.parentNode.getElementsByTagName('input')[0].value = port < PORT_MIN ? PORT_MIN : PORT_MAX;
       }
     }

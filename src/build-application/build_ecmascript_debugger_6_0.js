@@ -164,6 +164,8 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     new cls.StorageView('session_storage', ui_strings.M_VIEW_LABEL_SESSION_STORAGE, 'scroll');
     new cls.StorageView('cookies', ui_strings.M_VIEW_LABEL_COOKIES, 'scroll');
     new cls.StorageView('widget_preferences', ui_strings.M_VIEW_LABEL_WIDGET_PREFERNCES, 'scroll');
+    new cls.StorageViewActions('storage-view');
+    cls.StorageView.create_ui_widgets();
 
     /* the following views must be created to get entry in the Settings tab */
 
