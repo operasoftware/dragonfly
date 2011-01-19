@@ -141,13 +141,14 @@
     {
       ret[ret.length] =
         ['button',
+          'id', button.handler,
           'handler', button.handler,
-          'title', button.title
+          'title', button.title,
+          'class', 'ui-control' + (button.class_name ? ' ' + button.class_name : '')
         ].concat(
             button.id ? ['id', button.id] : [],
             button.disabled ? ['disabled', 'disabled'] : [],
-            button.param ? ['param', button.param] :[],
-            button.class_name ? ['class', button.class_name] :[]
+            button.param ? ['param', button.param] :[]
         );
     }
     return ret;
@@ -172,11 +173,12 @@
       {
         ret[ret.length] =
           ['button',
+            'id', _switch,
             'handler', 'toolbar-switch',
             'title', setting.label,
             'key', _switch,
             'is-active', setting.value ? 'true' : 'false',
-            'class', 'switch'
+            'class', 'ui-control switch'
           ];
       }
       else
@@ -246,60 +248,19 @@
     return ret;
   }
 
-  this.window_controls = function()
+  this.window_controls = function(controls)
   {
     var is_attached = window.opera.attached;
+    var template = [];
+    for (var i = 0, control; control = controls[i]; i++)
+    {
+      template.push(control.get_template());
+    }
+
     return [
       'window-controls',
-      [
-        [
-          'button',
-          'handler', 'toggle-console',
-          'class', 'switch',
-          'title', ui_strings.S_BUTTON_TOGGLE_CONSOLE
-        ],
-        [
-          'toolbar-separator'
-        ],
-        [
-          'button',
-          'handler', 'toggle-settings-overlay',
-          'class', 'switch',
-          'title', ui_strings.S_BUTTON_TOGGLE_SETTINGS
-        ],
-        [
-          'button',
-          'handler', 'toggle-remote-debug-config-overlay',
-          'class', 'switch',
-          'title', ui_strings.S_BUTTON_TOGGLE_REMOTE_DEBUG
-        ],
-        [
-          'toolbar-separator'
-        ],
-        window['cst-selects']['debugger-menu'].select_template(),
-        is_attached
-        ? [
-          'button',
-          'handler', 'top-window-toggle-attach',
-          'class', 'switch attached',
-          'title', ui_strings.S_SWITCH_DETACH_WINDOW
-          ]
-        : [
-          'button',
-          'handler', 'top-window-toggle-attach',
-          'class', 'switch',
-          'title', ui_strings.S_SWITCH_ATTACH_WINDOW
-        ],
-        is_attached
-        ? [
-            'button',
-            'handler', 'top-window-close',
-            'title', ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW
-          ]
-        : [],
-        'class', 'attached',
-        'id', 'window-controls-to-main-view'
-      ]
+      template,
+      'class', 'attached'
     ];
   };
 

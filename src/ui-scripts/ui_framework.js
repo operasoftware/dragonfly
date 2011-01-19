@@ -7,7 +7,7 @@ var ui_framework = new function()
   this.afterSetup = function(){};
   // namespace to register layouts
   this.layouts = {};
-  this.setupTopCell = function(){};
+  this.setup_top_cell = function(){};
 
   var self = this;
 

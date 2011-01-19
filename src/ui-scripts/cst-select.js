@@ -652,7 +652,8 @@ CstSelectWithAction.prototype = new CstSelectWithActionBase();
       ["cst-drop-down"],
     "cst-id", select.getId(),
     "handler", select.getId(),
-    "unselectable", "on"
+    "unselectable", "on",
+    "class", "ui-control"
   ].
   concat( select.type ? ['class', select.type] : [] ).
   concat( disabled ? ['disabled', 'disabled'] : [] ).

@@ -18,6 +18,8 @@ window.cls.Client = function()
   var _waiting_screen_timeout = 0;
   var cbs = [];
 
+  this._current_client = null;
+
   var _on_host_connected = function(client, servicelist)
   {
     client.connected = true;
@@ -80,6 +82,9 @@ window.cls.Client = function()
         window.templates.remote_debug_settings(port + 1, ui_strings.S_INFO_ERROR_LISTENING.replace(/%s/, port))
       );
 
+      UI.get_instance().get_button("toggle-remote-debug-config-overlay")
+                       .addClass("alert");
+
       // Reset this so we don't start in remote debug next time
       settings.debug_remote_setting.set('debug-remote', false);
       window.helpers.setCookie('debug-remote', "false");
@@ -128,6 +133,7 @@ window.cls.Client = function()
       connected: false,
       is_remote_debug: !!is_remote_debug
     };
+    this._current_client = client;
     clients.push(client);
 
     window.ini || (window.ini = {debug: false});
@@ -184,6 +190,8 @@ window.cls.Client = function()
     }
     else if (is_remote_debug)
     {
+      UI.get_instance().get_button("toggle-remote-debug-config-overlay")
+                       .removeClass("alert");
       document.getElementById("remote-debug-settings").clearAndRender([
         ["p",
           ui_strings.S_INFO_WAITING_FORHOST_CONNECTION.replace(/%s/, port)
@@ -312,16 +320,42 @@ window.cls.Client = function()
                       services);
   }
 
-  this.on_services_created =  function()
+  this.create_window_controls = function()
   {
-    var window_controls = document.getElementsByTagName('window-controls')[0];
+    var window_controls = document.querySelector("window-controls");
     if (window_controls)
     {
       window_controls.parentNode.removeChild(window_controls);
-    };
+    }
+
+    // FIXME: avoid creating them every time (initialize outside)
+    document.documentElement.render(templates.window_controls([
+      new Button("toggle-console", "", ui_strings.S_BUTTON_TOGGLE_CONSOLE),
+      new ToolbarSeparator(),
+      new Button("toggle-settings-overlay", "", ui_strings.S_BUTTON_TOGGLE_SETTINGS),
+      new Button("toggle-remote-debug-config-overlay", "", ui_strings.S_BUTTON_TOGGLE_REMOTE_DEBUG),
+      new ToolbarSeparator(),
+      window['cst-selects']['debugger-menu'], // TODO: Change this to a class
+      new Button("top-window-toggle-attach", "", ""), // TODO: attach/detach
+      new Button("top-window-close", "", ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW) // TODO: attach/detach
+    ]));
+
+    var button = UI.get_instance().get_button("toggle-remote-debug-config-overlay");
+    if (this._current_client && this._current_client.is_remote_debug)
+    {
+      button.addClass("remote-active");
+    }
+    else
+    {
+      button.removeClass("remote-active");
+    }
+  };
+
+  this.on_services_created = function()
+  {
     this.create_top_level_views(window.services);
-    this.setupTopCell(window.services);
-    document.documentElement.render(templates.window_controls());
+    this.setup_top_cell(window.services);
+    this.create_window_controls();
     if(!arguments.callee._called_once)
     {
       if( window.opera.attached )
@@ -354,7 +388,7 @@ window.cls.Client = function()
     }
   }
 
-  this.setupTopCell = function(services)
+  this.setup_top_cell = function(services)
   {
     var tabs = viewport.getElementsByTagName('tab'), i = 0, tab = null;
     for( ; tab = tabs[i]; i++)

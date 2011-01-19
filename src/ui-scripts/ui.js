@@ -69,9 +69,16 @@
         window.topCell.showView(id);
       }
     };
+
+    this.get_button = function(id)
+    {
+      // TODO: make this a bit more sophisticated
+      return document.getElementById(id);
+    };
 }
 
 UI.get_instance = function()
 {
   return this.instance || new UI();
-}
+};
+

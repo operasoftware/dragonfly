@@ -204,11 +204,7 @@ eventHandlers.click['top-window-toggle-attach'] = function(event)
 {
   window.opera.attached = !window.opera.attached;
   window.settings.general.set('window-attached',  window.opera.attached);
-  var window_controls = document.getElementsByTagName('window-controls')[0];
-  if (window_controls)
-  {
-    window_controls.re_render(templates.window_controls())
-  }
+  window.client.create_window_controls();
 }
 
 eventHandlers.click['overlay-tab'] = function(event, target)

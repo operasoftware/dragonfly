@@ -242,7 +242,7 @@ cls.JsSourceView = function(id, name, container_class)
               ] :
               ['div',
                 ['button',
-                  'class', 'ui-button',
+                  'class', 'ui-control',
                   'handler', 'reload-window'],
                 ['p', ui_strings.S_INFO_RELOAD_FOR_SCRIPT],
                 'class', 'info-box'

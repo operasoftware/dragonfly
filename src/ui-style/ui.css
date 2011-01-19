@@ -127,49 +127,49 @@ toolbar-buttons, toolbar-switches {
 button[handler="reload-window"] {
     content: url("../ui-images/icons/icon_reload.png");
 }
-[handler="top-window-close"] {
+#top-window-close {
     content: url("../ui-images/icons/icon_close.png");
 }
-[handler="toggle-console"] {
+#toggle-console {
     content: url("../ui-images/icons/icon_console.png");
 }
-[handler="toggle-settings-overlay"] {
+#toggle-settings-overlay {
     content: url("../ui-images/icons/icon_settings.png");
 }
-[handler="toggle-remote-debug-config-overlay"] {
+#toggle-remote-debug-config-overlay {
     content: url("../ui-images/icons/icon_remote.png");
 }
-[handler="top-window-toggle-attach"] {
+#top-window-toggle-attach {
     content: url("../ui-images/icons/icon_attach.png");
 }
-[handler="top-window-toggle-attach"].attached  {
+#top-window-toggle-attach.attached  {
     content: url("../ui-images/icons/icon_detach.png");
 }
-[handler="dom-inspection-snapshot"] {
+#dom-inspection-snapshot {
     content: url("../ui-images/icons/icon_expand.png");
 }
-[handler="dom-inspection-export"] {
+#dom-inspection-export {
     content: url("../ui-images/icons/icon_export.png");
 }
-[key="dom.find-with-click"] {
+#dom\.find-with-click {
     content: url("../ui-images/icons/icon_click.png");
 }
-[key="dom.highlight-on-hover"] {
+#dom\.highlight-on-hover {
     content: url("../ui-images/icons/icon_hover.png");
 }
-[key="dom.lock-selected-elements"] {
+#dom\.lock-selected-elements {
     content: url("../ui-images/icons/icon_border.png");
 }
-[key="stylesheets.shortcuts"] {
+#stylesheets.shortcuts {
     content: url("../ui-images/icons/icon_shorthand.png");
 }
-[key="css-comp-style.hide-initial-values"] {
+#css-comp-style\.hide-initial-values {
     content: url("../ui-images/icons/icon_hidedefaults.png");
 }
-[key="css-inspector.hide-shorthands"] {
+#css-inspector.hide-shorthands {
     content: url("../ui-images/icons/icon_shorthands.png");
 }
-[key="dom_attrs.hide-null-values"] {
+#dom_attrs.hide-null-values {
     content: url("../ui-images/icons/icon_empty.png");
 }
 [id="continue-run"] {
@@ -184,68 +184,61 @@ button[handler="reload-window"] {
 [id="continue-step-out-of-call"] {
     content: url("../ui-images/icons/icon_stepout.png");
 }
-[key="js_source.script"] {
+#js_source\.script {
     content: url("../ui-images/icons/icon_haltonscript.png");
 }
-[key="js_source.error"] {
+#js_source\.error {
     content: url("../ui-images/icons/icon_haltonerror.png");
 }
-[key="threads.log-threads"] {
+#threads\.log-threads {
     content: url("../ui-images/icons/icon_threads.png");
 }
-[key="inspection.show-prototypes"] {
+#inspection\.show-prototypes {
     content: url("../ui-images/icons/icon_prototype.png");
 }
-[key="inspection.show-non-enumerables"] {
+#inspection\.show-non-enumerables {
     content: url("../ui-images/icons/icon_hidedefaults.png"); /* temporarily using this icon */
 }
-[key="inspection.show-default-nulls-and-empty-strings"] {
+#inspection\.show-default-nulls-and-empty-strings {
     content: url("../ui-images/icons/icon_empty.png");
 }
-[handler="threads-clear-log"] {
+#threads-clear-log {
     content: url("../ui-images/icons/icon_clear.png");
 }
-[handler="threads-export-log"] {
+#threads-export-log {
     content: url("../ui-images/icons/icon_export.png");
 }
-[handler="clear-request-list"] {
+#clear-request-list {
     content: url("../ui-images/icons/icon_clear.png");
 }
-[key="request_list.clear-log-on-runtime-switch"] {
+#request_list\.clear-log-on-runtime-switch {
     content: url("../ui-images/icons/icon_clearonreload.png");
 }
-[key="request_list.auto-scroll-request-list"] {
+#request_list\.auto-scroll-request-list {
     content: url("../ui-images/icons/icon_autoscroll.png");
 }
-[handler="storage-add-key"] {
+#storage-add-key {
     content: url("../ui-images/icons/icon_add.png");
 }
-[handler="storage-update"] {
+#storage-update {
     content: url("../ui-images/icons/icon_reload.png");
 }
-[handler="storage-delete-all"] {
+#storage-delete-all {
     content: url("../ui-images/icons/icon_clear.png");
 }
-[handler="storage-delete"] {
+#storage-delete {
     content: url("../ui-images/icons/icon_delete.png");
 }
 [handler^="clear-error-console"] {
     content: url("../ui-images/icons/icon_clear.png");
 }
-[key="console.expand-all-entries"] {
+#console\.expand-all-entries {
     content: url("../ui-images/icons/icon_expand.png");
 }
 cst-icon[class="debugger-menu"] {
     content: url("../ui-images/icons/icon_tabs.png");
 }
-toolbar button,
-panel-toolbar button,
-top-toolbar button,
-window-controls button,
-cst-select-toolbar-setting,
-.ui-button,
-cst-select,
-toolbar button[disabled]
+.ui-control
 {
   background: #e6e6e6 url("../ui-images/shine_button.png") repeat-x;
   border: 1px solid rgba(0, 0, 0, .5);
@@ -256,45 +249,34 @@ toolbar button[disabled]
   padding: 1px;
   box-sizing: content-box;
   display: inline-block;
-  box-shadow: 0 1px rgba(255,255,255,0.5), inset 0 1px 1px #fff;
+  box-shadow: 0 1px rgba(255,255,255,0.5),
+              inset 0 1px 1px #fff;
   vertical-align: top;
   -o-transition: background-color 0.2s;
 }
-toolbar button[disabled],
-window-toolbar button[disabled] { /* :disabled seems to be buggy */
+.ui-control[disabled] { /* :disabled seems to be buggy */
   background: #e0e0e0 !important;
   opacity: 0.4;
   border-color: #333;
 }
-toolbar button:not([disabled]):active,
-window-toolbar button:not([disabled]):active,
-top-toolbar button:active,
-window-controls button:active,
-cst-select-toolbar-setting:active,
-.ui-button:active,
-cst-select:active {
+.ui-control:not([disabled]):active {
     padding: 2px 1px 0;
-    box-shadow: 0 1px #fff, inset 0 1px 2px rgba(0, 0, 0, .4);
+    box-shadow: 0 1px #fff,
+                inset 0 1px 2px rgba(0, 0, 0, .4);
     background-position: 0 1px;
 }
 cst-select:active {
     padding: 1px;
 }
-toolbar button[is-active="true"],
-window-toolbar button[is-active="true"],
-panel-toolbar button[is-active="true"],
-top-toolbar button[is-active="true"],
-window-controls button[is-active="true"],
-cst-select[is-active="true"] {
-    box-shadow: 0 1px #fff, inset 0 1px 2px rgba(0,0,0,0.1), inset 0 0 7px rgba(0,0,0,0.25);
+.ui-control[is-active="true"] {
+    box-shadow: 0 1px #fff,
+                inset 0 1px 2px rgba(0,0,0,0.1),
+                inset 0 0 7px rgba(0,0,0,0.25);
     background-color: #bfbfbf;
     padding: 2px 1px 0;
     background-position: 0 1px;
 }
-toolbar button[is-active="true"]:active,
-window-toolbar button[is-active="true"]:active,
-top-toolbar button[is-active="true"]:active,
-window-controls button[is-active="true"]:active {
+.ui-control[is-active="true"]:active {
     background-color: #999;
 }
 
@@ -313,45 +295,32 @@ window-controls button[is-active="true"]:active {
 
 
 /* Alert state */
-toolbar button.alert,
-window-toolbar button.alert,
-top-toolbar button.alert,
-window-controls button.alert,
-cst-select-toolbar-setting.alert,
-.ui-button.alert,
-cst-select.alert,
-toolbar button[disabled].alert
-{
+.ui-control.alert {
   background-color: #ff8040;
   border-color: #bf3000;
   color: #993d1f;
-  box-shadow: inset 0 0 1px #fff, inset 0 0 10px #ff4433,  0 1px rgba(255,255,255,0.5), 0 0 2px #ff0000;
+  box-shadow: inset 0 0 1px #fff,
+              inset 0 0 10px #ff4433,
+              0 1px rgba(255,255,255,0.5),
+              0 0 2px #ff0000;
 }
-
-toolbar button.alert:not([disabled]):active,
-window-toolbar button.alert:not([disabled]):active,
-top-toolbar button.alert:active,
-window-controls button.alert:active,
-cst-select-toolbar-setting.alert:active,
-.ui-button.alert:active,
-cst-select.alert:active {
+.ui-control.alert:not([disabled]):active {
     background-color: #ff8040;
     border-color: #bf3000;
-    box-shadow: inset 0 1px 2px #bf1000, inset 0 0 10px #ff4433,  0 1px rgba(255,255,255,0.5), 0 0 2px #ff0000;
+    box-shadow: inset 0 1px 2px #bf1000,
+                inset 0 0 10px #ff4433,
+                0 1px rgba(255,255,255,0.5),
+                0 0 2px #ff0000;
 }
-toolbar button.alert[is-active="true"],
-window-toolbar button.alert[is-active="true"],
-top-toolbar button.alert[is-active="true"],
-window-controls button.alert[is-active="true"],
-cst-select.alert[is-active="true"] {
+.ui-control.alert[is-active="true"] {
     background-color: #e54c2e;
     border-color: #bf3000;
-    box-shadow: inset 0 1px 2px #bf1000, inset 0 0 10px #ff4433,  0 1px rgba(255,255,255,0.5), 0 0 2px #ff0000;
+    box-shadow: inset 0 1px 2px #bf1000,
+                inset 0 0 10px #ff4433,
+                0 1px rgba(255,255,255,0.5),
+                0 0 2px #ff0000;
 }
-toolbar button.alert[is-active="true"]:active,
-window-toolbar button.alert[is-active="true"]:active,
-top-toolbar button.alert[is-active="true"]:active,
-window-controls button.alert[is-active="true"]:active {
+.ui-control.alert[is-active="true"]:active {
     background-color: #bf381d;
 }
 
@@ -360,8 +329,18 @@ window-controls button.alert[is-active="true"]:active {
 .alert[handler="toggle-settings-overlay"][is-active="true"]:active,
 .alert[handler="toggle-remote-debug-config-overlay"][is-active="true"]:active
 {
-    box-shadow: inset 0 1px 2px #bf1000, inset 0 0 10px #ff4433,  0 1px rgba(255,255,255,0.2), 0 0 4px #ff0000;
     border-color: #721;
+    box-shadow: inset 0 1px 2px #bf1000,
+                inset 0 0 10px #ff4433,
+                0 1px rgba(255,255,255,0.2),
+                0 0 4px #ff0000;
+}
+
+window-controls button.alert {
+    content: url("../ui-images/icons/icon_remote_alert.png");
+}
+window-controls button.remote-active {
+    content: url("../ui-images/icons/icon_remote_active.png");
 }
 
 
