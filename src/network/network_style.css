@@ -30,7 +30,7 @@
   overflow: hidden;
 }
 
-.network-log ol
+.network-log-url-list
 {
   width: 100%;
   margin: 0;
@@ -39,7 +39,7 @@
 }
 
 
-.network-log li
+.network-log-url-list li
 {
   height: 36px;
   line-height: 36px;

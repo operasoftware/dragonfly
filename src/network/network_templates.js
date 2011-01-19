@@ -94,15 +94,21 @@ templates.network_log_main = function(ctx)
 }
 
 
+templates.network_log_details = function(ctx, selected)
+{
+  return  ["div", templates.network_log_url_list(ctx),
+
+          ]
+
+}
+
 templates.network_log_main_table = function(ctx)
 {
   return [
     ["div", templates.network_log_url_list(ctx),
-     "style", "height:100%; width: 300px; position: absolute; overflow: hidden;",
      "class", "resourcelist"
     ],
     ["div", templates.network_log_url_list(ctx),
-     "style", "height:100%; position: absolute; left: 310px; overflow: scroll",
      "class", "timeline"]
   ]
 }
@@ -110,9 +116,13 @@ templates.network_log_main_table = function(ctx)
 templates.network_log_url_list = function(ctx)
 {
   var itemfun = function(res) {
-    return ["li", templates.network_request_icon(res), ["span", res.url]]
+    return ["li", templates.network_request_icon(res), ["span", res.url],
+            "handler", "select-network-request",
+            "data-resource-id", String(res.id)
+           ]
   }
-  return ["ol", ctx.resources.map(itemfun)];
+  return ["ol", ctx.resources.map(itemfun),
+          "class", "network-log-url-list"];
 }
 
 templates.network_request_icon = function(request)
