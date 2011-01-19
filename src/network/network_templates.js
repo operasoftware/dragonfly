@@ -167,7 +167,7 @@ templates.request_bar = function(index, request, basetime, totaltime, contwidth,
   var multiplier = contwidth / totaltime;
 
   if (!request.duration) {
-    opera.postError("Brokan! ");
+    // fixme: request not done, so emit something saner here.
     return [];
   }
 

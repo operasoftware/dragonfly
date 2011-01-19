@@ -7,11 +7,17 @@ window.cls = window.cls || {};
 cls.NetworkLogView = function(id, name, container_class, html, default_handler) {
   this._service = new cls.NetworkLoggerService()
   this._loading = false;
-  
+  this._scroll = 0;
+
   this.createView = function(container)
   {
     this._render_main_view(container);
   };
+
+  this.ondestroy = function()
+  {
+    this._scroll= this._scrollcontainer.scrollTop
+  }
 
   this._render_main_view = function(container)
   {
@@ -19,13 +25,16 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     if (ctx)
     {
       this._container = container;
+      if (this._scrollcontainer)
+      {
+        this._scroll = this._scrollcontainer.scrollTop;
+      }
 
       var contheight = container.getBoundingClientRect().height - 2;
-      opera.postError("aa  " + contheight);
-
       container.clearAndRender(templates.network_log_main(ctx));
-      container.querySelector("#main-scroll-container").style.height = "" + (contheight-50) + "px";
-
+      this._scrollcontainer = container.querySelector("#main-scroll-container");
+      this._scrollcontainer.style.height = "" + (contheight-50) + "px";
+      this._scrollcontainer.scrollTop = this._scroll;
       //container.querySelector(".timeline").addEventListener("scroll", this._on_scroll_bound, false);
     }
     else if (this._loading)
