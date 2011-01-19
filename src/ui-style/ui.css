@@ -139,6 +139,12 @@ button[handler="reload-window"] {
 #toggle-remote-debug-config-overlay {
     content: url("../ui-images/icons/icon_remote.png");
 }
+#toggle-remote-debug-config-overlay.remote-active {
+    content: url("../ui-images/icons/icon_remote_active.png");
+}
+#toggle-remote-debug-config-overlay.alert {
+    content: url("../ui-images/icons/icon_remote_alert.png");
+}
 #top-window-toggle-attach {
     content: url("../ui-images/icons/icon_attach.png");
 }
@@ -335,14 +341,6 @@ cst-select:active {
                 0 1px rgba(255,255,255,0.2),
                 0 0 4px #ff0000;
 }
-
-window-controls button.alert {
-    content: url("../ui-images/icons/icon_remote_alert.png");
-}
-window-controls button.remote-active {
-    content: url("../ui-images/icons/icon_remote_active.png");
-}
-
 
 cst-select[cst-id="debugger-menu"] {
     width: 33px;
