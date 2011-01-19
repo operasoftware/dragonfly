@@ -6,14 +6,14 @@
  * @see ListTextSearch
  * @constructor
  */
-var TextSearch = function()
+var TextSearch = function(min_length, onbeforesearch)
 {
   const
   DEFAULT_STYLE = "background-color:#ff0; color:#000;",
   HIGHLIGHT_STYLE = "background-color:#0f0; color:#000;",
   DEFAULT_SCROLL_MARGIN = 50,
   SEARCH_DELAY = 50, // in ms
-  MIN_TERM_LENGTH = 2; // search term must be this long or longer
+  MIN_TERM_LENGTH = min_length || 2; // search term must be this long or longer
 
   var
   self = this,
@@ -138,6 +138,7 @@ var TextSearch = function()
       }
       search_results = [];
       cursor = -1;
+      onbeforesearch(search_term.length >= MIN_TERM_LENGTH ? search_term : "");
       if( search_term.length >= MIN_TERM_LENGTH )
       {
         if(container)

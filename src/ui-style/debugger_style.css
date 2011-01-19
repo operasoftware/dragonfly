@@ -1327,3 +1327,8 @@ property.disabled color-sample
   margin-left: -24px;
   padding-left: 24px;
 }
+
+.no-match
+{
+  opacity: .3;
+}

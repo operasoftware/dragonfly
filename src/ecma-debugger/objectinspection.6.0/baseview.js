@@ -14,9 +14,14 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseView = function()
   {
     var data_model = this._data || window.inspections && window.inspections[this._cur_data];
     if (data_model)
-      data_model.expand(this._create_view.bind(this, container, data_model));
+    {
+      this._create_view_bound = this._create_view.bind(this, container, data_model);
+      data_model.expand(this._create_view_bound);
+    }
     else
+    {
       container.innerHTML = '';
+    }
   };
 
   this._on_setting_change = function(msg)
@@ -32,8 +37,19 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseView = function()
 
   this._create_view = function(container, data_model)
   {
-    container.clearAndRender(window.templates.inspected_js_object(data_model, false));
+    var tmpl = window.templates.inspected_js_object(data_model, false, 
+                                                    null, this._searchterm);
+    container.clearAndRender(tmpl);
   };
+
+  this._onbeforesearch = function(searchterm)
+  {
+    if (this._create_view_bound && this.isvisible())
+    {
+      this._searchterm = searchterm;
+      this._create_view_bound();
+    }
+  }
 
 }
 

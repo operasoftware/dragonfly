@@ -774,6 +774,11 @@ String.prototype.isdigit = function()
   return this.length && !(/\D/.test(this));
 };
 
+String.prototype.contains = function(str)
+{
+  return this.indexOf(str) != -1;
+};
+
 Array.prototype.extend = function(list)
 {
   this.push.apply(this, list);
