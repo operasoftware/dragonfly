@@ -317,18 +317,28 @@ templates.sortable_table_group = function(tabledef, groupname, render_header, da
     return templates.sortable_table_row(tabledef, item, cols)
   }));
 
-  ret.push(templates.sortable_table_sumrow(tabledef, groupname, data, cols));
+  for (var n=0, col; col = cols[n]; n++)
+  {
+    if (tabledef.columns[col].summer)
+    {
+      ret.push(templates.sortable_table_sumrow(tabledef, groupname, data, cols));
+      break;
+    }
+  }
   return ret;
 }
 
 templates.sortable_table_sumrow = function(tabledef, groupname, data, cols)
 {
-  return ["tr", cols.map(function(e) {
-    var val = "";
-    var summer = tabledef.columns[e].summer;
-    if (summer) { val = summer(data, groupname) }
-    return ["td", val ]
-  })];
+  return ["tr",
+          cols.map(function(e) {
+            var val = "";
+            var summer = tabledef.columns[e].summer;
+            if (summer) { val = summer(data, groupname) }
+            return ["td", val];
+          }),
+          "class", "sortable-table-summation-row"
+         ];
 }
 
 templates.sortable_table_row = function(tabledef, item, cols)
