@@ -1021,8 +1021,7 @@ cls.JsSourceView.create_ui_widgets = function()
     'js_source',
     [
       'script',
-      'error',
-      'threads.log-threads'
+      'error'
     ]
   );
 
