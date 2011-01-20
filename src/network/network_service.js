@@ -95,10 +95,48 @@ cls.NetworkLoggerService = function(view, data)
     this._doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
   };
 
+  this.request_body = function(rid, callback)
+  {
+    var resource = this.get_resource(rid);
+    var contentmode = cls.ResourceUtil.mime_to_content_mode(resource.mime);
+    var typecode = {datauri: 3, string: 1}[contentmode] || 1;
+    var tag = window.tagManager.set_callback(null, this._on_request_body_bound, [callback]);
+    this._res_service.requestGetResource(tag, [rid, [typecode, 1]]);
+  }
+
+  this._on_request_body_bound = function(type, data, callback)
+  {
+    // fixme: generate class for this.
+    var msg = {
+      resourceID: data[0],
+      mimeType: data[2],
+      characterEncoding: data[3],
+      contentLength: data[4],
+      content: {
+        length: data[5][0],
+        characterEncoding: data[5][1],
+        byteData: data[5][2],
+        textData: data[5][3]
+      }
+    }
+    if (!this._current_context) { return; }
+    this._current_context.update("responsebody", msg);
+    if (callback) { callback() }
+  }.bind(this)
+
   this.get_request_context = function()
   {
     return this._current_context;
   };
+
+  this.get_resource = function(rid)
+  {
+    if (this._current_context)
+    {
+      return this._current_context.get_resource(rid);
+    }
+    return null;
+  }
 
   this.init();
 };
@@ -204,6 +242,7 @@ cls.Request = function(id)
   this.method = null;
   this.status = null;
   this.responsecode = null;
+  this.responsebody = null;
 
   this.update = function(eventname, eventdata)
   {
@@ -244,6 +283,10 @@ cls.Request = function(id)
     }
     else if (eventname == "urlredirect")
     {
+    }
+    else if (eventname == "responsebody")
+    {
+      this.responsebody = eventdata;
     }
     else
     {
