@@ -3,33 +3,28 @@ window.cls || (window.cls = {});
 cls.ResourceManager || (cls.ResourceManager = {});
 cls.ResourceManager["1.0"] || (cls.ResourceManager["1.0"] = {});
 
-cls.ResourceManager["1.0"].RequestHeader = function(arr, parent)
+cls.ResourceManager["1.0"].RequestHeader = function(arr)
 {
-  this.parent = parent || null;
   this.requestID = arr[0];
   this.resourceID = arr[1];
   this.time = arr[2];
   this.raw = arr[3];
-  var self = this;
   this.headerList = (arr[4] || []).map(function(item)
   {
-    return new cls.ResourceManager["1.0"].Header(item, self);
+    return new cls.ResourceManager["1.0"].Header(item);
   });
   this.toString = function() { return "[message RequestHeader]"; }
 };
 
-cls.ResourceManager["1.0"].Header = function(arr, parent)
+cls.ResourceManager["1.0"].Header = function(arr)
 {
-  this.parent = parent || null;
-  /** 
+  /**
     * The name of the HTTP header, for instance "Accept-Charset".
     */
   this.name = arr[0];
-  /** 
+  /**
     * The value of the HTTP header, for instance "utf-8" when using
     * Accept-Charset, or "text/html; charset=utf8" for Content-Type.
     */
   this.value = arr[1];
-  this.toString = function() { return "[message Header]"; }
 };
-
