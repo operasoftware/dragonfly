@@ -248,14 +248,16 @@ cls.CookieManagerView = function(id, name, container_class)
           var in_dec_min = in_min / 10;
           var in_hours = in_min / 60;
           var in_days = in_hours / 24;
+          var in_months = in_days / 30.5;
+          var in_years = in_months / 12;
 
           if(in_sec < 60)
           {
-            elem.textContent = "Soon";
+            elem.textContent = "< 1 minute";
           }
           else if (Math.round(in_min) === 1)
           {
-            elem.textContent = "In "+ Math.round(in_min) +" minute";
+            elem.textContent = "In " + Math.round(in_min) +" minute";
           }
           else if (in_min < 10)
           {
@@ -277,9 +279,25 @@ cls.CookieManagerView = function(id, name, container_class)
           {
             elem.textContent = "In " + Math.round(in_days) + " day";
           }
-          else
+          else if (in_days < 30.5)
           {
             elem.textContent = "In " + Math.round(in_days) + " days";
+          }
+          else if (Math.round(in_months) === 1)
+          {
+            elem.textContent = "In " + Math.round(in_months) + " month";
+          }
+          else if (in_months < 11)
+          {
+            elem.textContent = "In " + Math.round(in_months) + " months";
+          }
+          else if (Math.round(in_years) === 1)
+          {
+            elem.textContent = "In " + Math.round(in_years) + " year";
+          }
+          else 
+          {
+            elem.textContent = "In " + Math.round(in_years) + " years";
           }
         }
         else
