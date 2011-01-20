@@ -187,7 +187,7 @@ templates.cookie_manager = {
     expires_0values: function() {
       return ["span", ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES_ON_SESSION_CLOSE, "class", "replaced-val"];
     },
-    has_expired_value: function() {
+    expired_value: function() {
       return ["span", ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRED, "class", "replaced-val"];
     },
     unknown_value: function() {

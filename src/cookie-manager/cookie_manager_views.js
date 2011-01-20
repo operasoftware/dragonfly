@@ -150,7 +150,7 @@ cls.CookieManagerView = function(id, name, container_class)
     }
     this._update_expiry();
   };
-  
+
   this._add_context_menus = function ()
   {
     // add delete cookie context menu per tr
@@ -243,66 +243,42 @@ cls.CookieManagerView = function(id, name, container_class)
         if(compare_date.getTime() < parsed_date.getTime())
         {
           var diff = parsed_date.getTime() - compare_date.getTime();
-          var in_sec = diff / 1000;
-          var in_min = in_sec / 60;
+          var in_sec     = diff / 1000;
+          var in_min     = in_sec / 60;
           var in_dec_min = in_min / 10;
-          var in_hours = in_min / 60;
-          var in_days = in_hours / 24;
-          var in_months = in_days / 30.5;
-          var in_years = in_months / 12;
+          var in_hours   = in_min / 60;
+          var in_days    = in_hours / 24;
+          var in_months  = in_days / 30.5;
+          var in_years   = in_months / 12;
 
           if(in_sec < 60)
-          {
             elem.textContent = "< 1 minute";
-          }
           else if (Math.round(in_min) === 1)
-          {
-            elem.textContent = "In " + Math.round(in_min) +" minute";
-          }
+            elem.textContent = "In " + Math.round(in_min)          +" minute";
           else if (in_min < 10)
-          {
-            elem.textContent = "In " + Math.round(in_min) + " minutes";
-          }
+            elem.textContent = "In " + Math.round(in_min)          + " minutes";
           else if (in_dec_min < 5)
-          {
             elem.textContent = "In " + Math.round(in_dec_min) * 10 + " minutes";
-          }
           else if (Math.round(in_hours) === 1)
-          {
-            elem.textContent = "In " + Math.round(in_hours) + " hour";
-          }
+            elem.textContent = "In " + Math.round(in_hours)        + " hour";
           else if (in_hours < 23)
-          {
-            elem.textContent = "In " + Math.round(in_hours) + " hours";
-          }
+            elem.textContent = "In " + Math.round(in_hours)        + " hours";
           else if (Math.round(in_days) === 1)
-          {
-            elem.textContent = "In " + Math.round(in_days) + " day";
-          }
+            elem.textContent = "In " + Math.round(in_days)         + " day";
           else if (in_days < 30.5)
-          {
-            elem.textContent = "In " + Math.round(in_days) + " days";
-          }
+            elem.textContent = "In " + Math.round(in_days)         + " days";
           else if (Math.round(in_months) === 1)
-          {
-            elem.textContent = "In " + Math.round(in_months) + " month";
-          }
+            elem.textContent = "In " + Math.round(in_months)       + " month";
           else if (in_months < 11)
-          {
-            elem.textContent = "In " + Math.round(in_months) + " months";
-          }
+            elem.textContent = "In " + Math.round(in_months)       + " months";
           else if (Math.round(in_years) === 1)
-          {
-            elem.textContent = "In " + Math.round(in_years) + " year";
-          }
-          else 
-          {
-            elem.textContent = "In " + Math.round(in_years) + " years";
-          }
+            elem.textContent = "In " + Math.round(in_years)        + " year";
+          else
+            elem.textContent = "In " + Math.round(in_years)        + " years";
         }
         else
         {
-          elem.clearAndRender(window.templates.cookie_manager.table_view.has_expired_value());
+          elem.clearAndRender(window.templates.cookie_manager.table_view.expired_value());
           // find row, add expired_cookie class
           while(elem.nodeName !== "tr" || !elem.parentNode)
           {
