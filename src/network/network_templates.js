@@ -111,17 +111,41 @@ templates.network_log_request_detail = function(ctx, selected)
   var req = ctx.get_resource(selected);
   return [
     ["button", "X", "handler", "close-request-detail"],
-    ["h1", "Request"],
     ["ul",
      ["li", ["strong", "URL: "], req.url],
-     ["li", ["strong", "Method: "], (req.method || "-")],
-     ["li", ["strong", "Status: "], "status"],
+     ["li", ["strong", "Method: "], req.method || "-"],
+     ["li", ["strong", "Status: "], String(req.responsecode || "-")],
      "class", "resource-detail"
     ],
+    ["hr"],
     ["h2", "Request details"],
+    templates.network_header_table(req.request_headers),
+    ["hr"],
     ["h2", "Response details"],
+    templates.network_header_table(req.response_headers),
+    ["hr"],
     ["h2", "Body"],
   ]
+}
+
+templates.network_header_table = function(headers)
+{
+  var rowfun = function(header)
+  {
+    return ["tr",
+            ["th", header.name],
+            ["td", header.value]
+           ]
+  }
+
+  var headers = headers.slice(0); // copy so we can sort withouth nuking original
+  headers.sort(function(a, b) {
+    if (a.name>b.name) { return 1 }
+    else if (b.name>a.name) { return -1 }
+    else { return 0 }
+  });
+  return ["table", headers.map(rowfun),
+          "class", "header-list"];
 }
 
 

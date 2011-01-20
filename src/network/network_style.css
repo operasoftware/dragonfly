@@ -52,6 +52,11 @@
   background-color: #dddddd;
 }
 
+.header-list th
+{
+  text-align: right;
+}
+
 #right-side-container
 {
   position: absolute;
@@ -81,6 +86,7 @@
 {
     width: 300px;
     height: 100%;
+    overflow: hidden;
     overflow-x: scroll;
 }
 
@@ -90,5 +96,6 @@
     top:0;
     left: 300px;
     height: 100%;
+    overflow: hidden;
     overflow-x: scroll;
 }
