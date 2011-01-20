@@ -115,6 +115,17 @@
     return ret;
   }
 
+  this.search_button = function(filters)
+  {
+    return (
+    ['toolbar-search', 
+      ['button', 
+        'class', 'search', 
+        'handler', 'show-search',
+        'title', ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH]
+     ]);
+  }
+
   this.dropdown = function(filter)
   {
     return ['filter',

@@ -248,14 +248,16 @@ cls.DOMView.create_ui_widgets = function()
         handler: 'dom-inspection-export',
         title: ui_strings.S_BUTTON_LABEL_EXPORT_DOM
       }
-    ],
+    ], 
+    null, 
+    /*
     [
       {
         handler: 'dom-text-search',
         shortcuts: 'dom-text-search',
         title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
       }
-    ],
+    ], */
     null,
     [
       {
@@ -265,7 +267,8 @@ cls.DOMView.create_ui_widgets = function()
         class: 'window-select-dropdown',
         template: window['cst-selects']['document-select'].getTemplate()
       }
-    ]
+    ],
+    true
   )
 
   var broker = ActionBroker.get_instance();

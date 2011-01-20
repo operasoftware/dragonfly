@@ -243,7 +243,8 @@ window-controls button,
 cst-select-toolbar-setting,
 .ui-button,
 cst-select,
-toolbar button[disabled]
+toolbar button[disabled],
+.search
 {
   background: #e6e6e6 url("../ui-images/shine_button.png") repeat-x;
   border: 1px solid rgba(0, 0, 0, .5);
@@ -422,7 +423,8 @@ toolbar-separator {
   border-right: 1px solid #8e8e8e;*/
   }
 	
-toolbar-filters {
+toolbar-filters,
+toolbar-search {
   display: block;
   float: right;
   }

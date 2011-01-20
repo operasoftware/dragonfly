@@ -968,6 +968,8 @@ cls.JsSourceView.create_ui_widgets = function()
   (
     'js_source',
     toolbar_buttons,
+    null,
+    /*
     [
       {
         handler: 'js-source-text-search',
@@ -975,7 +977,7 @@ cls.JsSourceView.create_ui_widgets = function()
         title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH,
         label: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
       }
-    ],
+    ],*/
     null,
     [
       {
@@ -985,7 +987,8 @@ cls.JsSourceView.create_ui_widgets = function()
         class: 'window-select-dropdown',
         template: window['cst-selects']["js-script-select"].getTemplate()
       }
-    ]
+    ],
+    true
   );
 
   new Settings
