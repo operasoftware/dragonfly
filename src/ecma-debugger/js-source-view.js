@@ -701,9 +701,98 @@ cls.JsSourceView = function(id, name, container_class)
     __view_is_destroyed = true;
   }
 
+
+  /* action broker interface */
+
+  /**
+    * To handle a single action.
+    * Returning false (as in === false) will cancel the event
+    * (preventDefault and stopPropagation),
+    * true will pass it to the next level if any.
+    * @param {String} action_id
+    * @param {Event} event
+    * @param {Element} target
+    */
+  this.handle = function(action_id, event, target){};
+
+  /**
+    * To get a list of supported actions.
+    */
+  this.get_action_list = function(){};
+
+  /**
+    * Gets called if an action handler changes to be the current context.
+    */
+  this.focus = function(container){};
+
+  /**
+    * Gets called if an action handle stops to be the current context.
+    */
+  this.blur = function(){};
+
+  /**
+    * Gets called if an action handler is the current context.
+    * Returning false (as in === false) will cancel the event
+    * (preventDefault and stopPropagation),
+    * true will pass it to the next level if any.
+    */
+  this.onclick = function(event){};
+
+  this.handle = function(action_id, event, target)
+  {
+    if (action_id in this._handlers)
+      return this._handlers[action_id](event, target);
+  }
+
+  this.get_action_list = function()
+  {
+    var actions = [], key = '';
+    for (key in this._handlers)
+      actions.push(key);
+    return actions;
+  };
+
+  this.mode = "default";
+
+  this._handlers = {};
+
+  this.mode_labels =
+  {
+    "default": ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_DEFAULT,
+  }
+
+  const PAGE_SCROLL = 20;
+  const ARROW_SCROLL = 2;
+  /*
+    this.showLine = function(script_id,
+                           line_nr,
+                           clear_scroll,
+                           is_parse_error,
+                           update_scroll_height,
+                           keep_line_highlight)
+                           */
+  this._scroll_lines = function(lines, event, target)
+  {
+    var target_line = Math.max(1, Math.min(__current_line + lines, 
+                                           script.line_arr.length + 1));
+    if (__current_line != target_line)
+    {
+      __disregard_scroll_event = true;
+      document.getElementById(scroll_container_id).scrollTop =
+        target_line * context['line-height'];
+      this.showLine(script.id, target_line, null, null, false, true);
+    }
+    return false;
+  }
+
+  this._handlers['scroll-page-up'] = this._scroll_lines.bind(this, -PAGE_SCROLL);
+  this._handlers['scroll-page-down'] = this._scroll_lines.bind(this, PAGE_SCROLL);
+  this._handlers['scroll-arrow-up'] = this._scroll_lines.bind(this, -ARROW_SCROLL);
+  this._handlers['scroll-arrow-down'] = this._scroll_lines.bind(this, ARROW_SCROLL);
   this.init(id, name, container_class);
   messages.addListener('update-layout', updateLayout);
   messages.addListener('runtime-destroyed', onRuntimeDestroyed);
+  ActionBroker.get_instance().register_handler(this);
 }
 
 cls.JsSourceView.prototype = ViewBase;
