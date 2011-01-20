@@ -116,7 +116,7 @@ cls.CookieManagerView = function(id, name, container_class)
   this.createView = function(container)
   {
     this.flattened_cookies = this._flatten_cookies(this._cookie_dict);
-    if(!this._table_container)
+    if(container.getElementsByClassName("table_container").length < 1)
     {
       this._table_container = container.render(["div",new SortableTable(this._tabledef, this.flattened_cookies).render(),"class","table_container"]);
       this._table_elem = container.getElementsByClassName("sortable-table")[0];
