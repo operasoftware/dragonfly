@@ -6,7 +6,7 @@
  * @see ListTextSearch
  * @constructor
  */
-var TextSearch = function(min_length, onbeforesearch)
+var TextSearch = function(onbeforesearch, min_length)
 {
   const
   DEFAULT_STYLE = "background-color:#ff0; color:#000;",

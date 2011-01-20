@@ -249,7 +249,7 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
     ]
   );
 
-  var text_search = new TextSearch(1, window.views.inspection.onbeforesearch);
+  var text_search = new TextSearch(window.views.inspection.onbeforesearch, 1);
 
   var onViewCreated = function(msg)
   {
