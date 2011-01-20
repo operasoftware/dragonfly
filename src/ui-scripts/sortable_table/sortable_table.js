@@ -15,6 +15,7 @@ function SortableTable(tabledef, data, cols, sortby, reversed)
 {
   this._init = function()
   {
+    window.cls.MessageMixin.apply(this);
     if (!cols || !cols.length) {
       cols = [];
       for (var key in tabledef.columns) {
@@ -76,6 +77,7 @@ function SortableTable(tabledef, data, cols, sortby, reversed)
     var obj = ObjectRegistry.get_instance().get_object(table.getAttribute("data-object-id"));
     obj.sort(target.getAttribute("data-column-id"));
     table.re_render(obj.render());
+    obj.post_message("rendered");
   }
 
 

@@ -29,13 +29,14 @@ cls.CookieManagerView = function(id, name, container_class)
       name: {
         label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_NAME,
         renderer: function(obj) {
+          // currently using "name" to make sure to store the objectref somewhere
           if(obj.is_editable)
           {
-            return window.templates.cookie_manager.table_view.editable_name(obj.name, obj.objectref);
+            return ["div", window.templates.cookie_manager.table_view.editable_name(obj.name, obj.objectref), "data-objectref", obj.objectref];
           }
           else
           {
-            return obj.name;
+            return ["div", obj.name, "data-objectref", obj.objectref];
           }
         }
       },
@@ -138,13 +139,57 @@ cls.CookieManagerView = function(id, name, container_class)
     this._table_obj = ObjectRegistry.get_instance().get_object(this._table_elem.getAttribute("data-object-id"));
     this._table_obj.data = this.flattened_cookies;
     this._table_container.clearAndRender(this._table_obj.render());
-
-    this._update_expiry();
+    // context menus
+    this._table_obj.add_listener("rendered",this._add_context_menus.bind(this));
+    this._add_context_menus();
+    // live expiry
+    this._table_obj.add_listener("rendered",this._update_expiry.bind(this));
     if(!this._update_expiry_interval)
     {
       this._update_expiry_interval = setInterval(this._update_expiry,15000);
     }
+    this._update_expiry();
   };
+  
+  this._add_context_menus = function ()
+  {
+    // add delete cookie context menu per tr
+    this._table_elem = this._table_container.getElementsByClassName("sortable-table")[0];
+    for(var i=0; i < this._table_elem.childNodes.length; i++)
+    {
+      if(!this._table_elem.childNodes[i].hasClass("header"))
+      {
+        this._table_elem.childNodes[i].setAttribute("data-menu", "remove_cookie");
+      }
+    }
+    var contextmenu = ContextMenu.get_instance();
+    contextmenu.register("remove_cookie", [
+      {
+        callback: function(evt, target){
+          while(target.getAttribute("data-menu") !== "remove_cookie" || !target.parentNode)
+          {
+            target = target.parentNode;
+          }
+          var objectref = target.querySelector("*[data-objectref]").getAttribute("data-objectref");
+          var cookie_obj = {};
+          for (var i=0; i < window.views.cookie_manager.flattened_cookies.length; i++) {
+            if(window.views.cookie_manager.flattened_cookies[i].objectref === objectref)
+            {
+              cookie_obj = window.views.cookie_manager.flattened_cookies[i];
+            }
+          };
+          return [
+            {
+              label: "Delete Cookie "+(cookie_obj.name || ""),
+              handler: function() {
+                window.views.cookie_manager.remove_cookie_by_objectref(objectref);
+              }
+            }
+          ];
+        }
+      }
+    ]);
+  }
 
   this._on_active_tab = function(msg)
   {
@@ -447,7 +492,7 @@ cls.CookieManagerView = function(id, name, container_class)
         {
           var current_cookie = domaincookies.cookies[i];
           var flattened_cookie = {
-            objectref:    current_cookie.domain + "/" + current_cookie.path + current_cookie.name + (parseInt(Math.random()*99999)),
+            objectref:    current_cookie.domain + "/" + current_cookie.path + "/" + current_cookie.name + (parseInt(Math.random()*99999)),
             runtimes:     domaincookies.runtimes,
             is_editable:  (function(cookie){
               /**
