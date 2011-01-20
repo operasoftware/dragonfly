@@ -108,7 +108,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
     },
     columns: {
       icon: {
-        label: "Icon",
+        label: "",
         sorter: "unsortable",
         renderer: function(res) { return templates.resource_icon(res) }
       },

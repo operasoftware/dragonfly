@@ -249,15 +249,34 @@ templates.sortable_table = function(tabledef, data, objectid, cols, groupby, sor
 templates.sortable_table_header = function(tabledef, cols, sortby, reversed)
 {
   return ["tr",
-           cols.map(function(c) {
+          cols.map(function(c) {
+            var coldef = tabledef.columns[c];
+            var tdclass = "";
+
+            if (!coldef.sorter)
+            {
+              tdclass = "unsortable";
+            }
+            else
+            {
+              if (sortby==c)
+              {
+                tdclass = "sort-column";
+              }
+
+              if (reversed)
+              {
+                tdclass += " reversed";
+              }
+            }
             return ["th",
                     tabledef.columns[c].label,
-                    "class", (sortby==c ? "sort-column" : "") + (reversed ? " reversed" : ""),
+                    "class", tdclass,
                     "data-column-id", c,
                    ].concat(tabledef.columns[c].sorter ? ["handler", "sortable-table-sort"] : [])
           }),
           "class", "header"
-          ];
+         ];
 }
 
 templates.sortable_table_body = function(tabledef, data, cols, groupby, sortby, reversed)
