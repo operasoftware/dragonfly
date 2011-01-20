@@ -11,7 +11,7 @@
   xxwhite-space: nowrap;
 }
 
-tr > td:first-child, tr > th:first-child {
+.sortable-table tr > td:first-child, .sortable-table tr > th:first-child {
   padding: 4px 5px 1px 4px;
   text-align: center;
 }
@@ -40,6 +40,7 @@ tr > td:first-child, tr > th:first-child {
   background-color: rgba(0,0,0,0.1);
   font-weight: bold;
 }
+
 .sortable-table tr.header .sortable-table-group-header {
   text-align: left;
   padding: 2px;

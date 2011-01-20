@@ -58,10 +58,6 @@
   background-color: #aaaaaa;
 }
 
-.header-list th
-{
-  text-align: right;
-}
 
 #right-side-container
 {
@@ -105,4 +101,9 @@
     height: 100%;
     overflow: hidden;
     overflow-y: auto;
+}
+
+.network-details-request th
+{
+    text-align: right;
 }

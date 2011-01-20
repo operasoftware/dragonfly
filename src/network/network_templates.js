@@ -111,10 +111,10 @@ templates.network_log_request_detail = function(ctx, selected)
   var req = ctx.get_resource(selected);
   return [
     ["button", "X", "handler", "close-request-detail"],
-    ["ul",
-     ["li", ["strong", "URL: "], req.url],
-     ["li", ["strong", "Method: "], req.method || "-"],
-     ["li", ["strong", "Status: "], String(req.responsecode || "-")],
+    ["table",
+     ["tr", ["th", "URL:"], ["td", req.url]],
+     ["tr", ["th", "Method:"], ["td", req.method || "-"]],
+     ["tr", ["th", "Status:"], ["td", String(req.responsecode || "-")]],
      "class", "resource-detail"
     ],
     ["hr"],
