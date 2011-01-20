@@ -225,6 +225,15 @@ eventHandlers.click['toggle-remote-debug-config-overlay'] = function(event, targ
   target.setAttribute("is-active", target.getAttribute("is-active") != "true");
 
   var overlay = window.topCell.overlay;
+  var handler = target.getAttribute("handler");
+  var client = window.client.current_client;
+
+  if (handler == "toggle-remote-debug-config-overlay" && (!client || !client.connected))
+  {
+    // TODO: make a proper action
+    eventHandlers.click['cancel-remote-debug']();
+    return;
+  }
 
   if (overlay.is_visible())
   {
@@ -232,7 +241,7 @@ eventHandlers.click['toggle-remote-debug-config-overlay'] = function(event, targ
     return;
   }
 
-  switch (target.getAttribute("handler"))
+  switch (handler)
   {
   case "toggle-settings-overlay":
     overlay.show_overlay("settings-overlay");

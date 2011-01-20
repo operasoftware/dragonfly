@@ -18,7 +18,7 @@ window.cls.Client = function()
   var _waiting_screen_timeout = 0;
   var cbs = [];
 
-  this._current_client = null;
+  this.current_client = null;
 
   var _on_host_connected = function(client, servicelist)
   {
@@ -70,6 +70,7 @@ window.cls.Client = function()
 
   var _on_host_quit = function(client, port)
   {
+    self.current_client = null;
     if (client.connected)
     {
       window.window_manager_data.clear_debug_context();
@@ -133,7 +134,7 @@ window.cls.Client = function()
       connected: false,
       is_remote_debug: !!is_remote_debug
     };
-    this._current_client = client;
+    this.current_client = client;
     clients.push(client);
 
     window.ini || (window.ini = {debug: false});
@@ -348,7 +349,7 @@ window.cls.Client = function()
     document.documentElement.render(templates.window_controls(controls));
 
     var button = UI.get_instance().get_button("toggle-remote-debug-config-overlay");
-    if (this._current_client && this._current_client.is_remote_debug)
+    if (this.current_client && this.current_client.is_remote_debug)
     {
       button.addClass("remote-active");
     }
