@@ -7,16 +7,19 @@ window.templates.error_log_table = function(entries, allExpanded, expandedList, 
     return window.templates.error_log_row(e, allExpanded, expandedList, viewId);
   };
 
-  return ["table", [
-            "tr", [
-               ['th', " "],
-               //['th', "TT"],
-               ['th', ui_strings.S_COLUMN_LABEL_FILE],
-               ['th', ui_strings.S_COLUMN_LABEL_LINE],
-               ['th', ui_strings.S_COLUMN_LABEL_ERROR]
-              ]
-          ],
-          entries.map(rowClosure)
+  return [
+    "table", [
+      "tr", [
+        ['th', " "],
+        //['th', "TT"],
+        ['th', ui_strings.S_COLUMN_LABEL_FILE],
+        ['th', ui_strings.S_COLUMN_LABEL_LINE],
+        ['th', ui_strings.S_COLUMN_LABEL_ERROR]
+      ],
+      "class", "header",
+    ],
+    entries.map(rowClosure),
+    "class", "sortable-table",
   ];
 };
 
