@@ -96,10 +96,21 @@ templates.network_log_main = function(ctx)
 
 templates.network_log_details = function(ctx, selected)
 {
-  return  ["div", templates.network_log_url_list(ctx),
+  return  [
+    ["div", templates.network_log_url_list(ctx),
+     "class", "network-details-url-list"
+    ],
+    ["div", templates.network_log_request_detail(ctx, selected),
+     "class", "network-details-request"
+    ]
+  ]
+}
 
-          ]
-
+templates.network_log_request_detail = function(ctx, selected)
+{
+  return [
+    "span", "adsf asd adsf asdf"
+  ];
 }
 
 templates.network_log_main_table = function(ctx)

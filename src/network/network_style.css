@@ -76,3 +76,19 @@
 {
   height: 1px;
 }
+
+.network-details-url-list
+{
+    width: 300px;
+    height: 100%;
+    overflow-x: scroll;
+}
+
+.network-details-request
+{
+    position: absolute;
+    top:0;
+    left: 300px;
+    height: 100%;
+    overflow-x: scroll;
+}
