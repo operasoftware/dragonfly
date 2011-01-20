@@ -108,10 +108,22 @@ templates.network_log_details = function(ctx, selected)
 
 templates.network_log_request_detail = function(ctx, selected)
 {
+  var req = ctx.get_resource(selected);
   return [
-    "span", "adsf asd adsf asdf"
-  ];
+    ["button", "X", "handler", "close-request-detail"],
+    ["h1", "Request"],
+    ["ul",
+     ["li", ["strong", "URL: "], req.url],
+     ["li", ["strong", "Method: "], (req.method || "-")],
+     ["li", ["strong", "Status: "], "status"],
+     "class", "resource-detail"
+    ],
+    ["h2", "Request details"],
+    ["h2", "Response details"],
+    ["h2", "Body"],
+  ]
 }
+
 
 templates.network_log_main_table = function(ctx)
 {

@@ -185,6 +185,9 @@ cls.Request = function(id)
   this.duration = null;
   this.request_headers = [];
   this.response_headers = [];
+  this.method = null;
+  this.status = null;
+  this.responsecode = null;
 
   this.update = function(eventname, eventdata)
   {

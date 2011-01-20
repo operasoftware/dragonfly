@@ -30,23 +30,26 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     {
       this._container = container;
 
-      if (this._selected !== null)
-      {
-        container.clearAndRender(templates.network_log_details(ctx, this._selected));
-        return;
-      }
-
       if (this._scrollcontainer)
       {
         this._scroll = this._scrollcontainer.scrollTop;
       }
 
-      var contheight = container.getBoundingClientRect().height - 2;
-      container.clearAndRender(templates.network_log_main(ctx));
-      this._scrollcontainer = container.querySelector("#main-scroll-container");
-      this._scrollcontainer.style.height = "" + (contheight-50) + "px";
-      this._scrollcontainer.scrollTop = this._scroll;
-      //container.querySelector(".timeline").addEventListener("scroll", this._on_scroll_bound, false);
+      if (this._selected !== null)
+      {
+        container.clearAndRender(templates.network_log_details(ctx, this._selected));
+        this._scrollcontainer = container.querySelector(".network-details-url-list");
+        this._scrollcontainer.scrollTop = this._scroll;
+      }
+      else
+      {
+        var contheight = container.getBoundingClientRect().height - 2;
+        container.clearAndRender(templates.network_log_main(ctx));
+        this._scrollcontainer = container.querySelector("#main-scroll-container");
+        this._scrollcontainer.style.height = "" + (contheight-50) + "px";
+        this._scrollcontainer.scrollTop = this._scroll;
+        //container.querySelector(".timeline").addEventListener("scroll", this._on_scroll_bound, false);
+      }
     }
     else if (this._loading)
     {
@@ -70,6 +73,12 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       );
     }
   };
+
+  this._on_clicked_close_bound = function(evt, target)
+  {
+    this._selected = null;
+    this.update();
+  }.bind(this);
 
   this._on_clicked_request_bound = function(evt, target)
   {
@@ -105,9 +114,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   //  eh.click["resources-all-open"] = this._handle_open_resource_bound;
 
   eh.click["select-network-request"] = this._on_clicked_request_bound;
+  eh.click["close-request-detail"] = this._on_clicked_close_bound;
 
-
-  
   var doc_service = window.services['document-manager'];
   doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
   doc_service.addListener("documentloaded", this._on_documentloaded_bound);
