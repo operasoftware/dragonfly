@@ -53,13 +53,9 @@ cls.JsSourceView = function(id, name, container_class)
   var __current_pointer = 0;
   var __current_pointer_type = 0;  // 2 for top frame, else 4
 
-  var __scroll_interval = 0;
-  var __scrollEvent = 0;
   var __target_scroll_top = -1;
   var __view_is_destroyed = true;
   var __disregard_scroll_event = false;
-
-  var __keyEvent = 0;
 
   var __isHorizontalScrollbar = false;
 
@@ -435,11 +431,6 @@ cls.JsSourceView = function(id, name, container_class)
       __timeout_clear_view = clearTimeout( __timeout_clear_view );
     }
 
-    if(clear_scroll && __scroll_interval )
-    {
-      __scroll_interval = clearInterval(__scroll_interval);
-    }
-
     var is_visible = ( source_content = document.getElementById(container_id) ) ? true : false;
     // if the view is visible it shows the first new script
     // before any parse error, that means in case of a parse error
@@ -642,56 +633,16 @@ cls.JsSourceView = function(id, name, container_class)
 
   this.scroll = function()
   {
-    if(view_invalid || __disregard_scroll_event)
+    if (!view_invalid && !__disregard_scroll_event)
     {
-      __disregard_scroll_event = false;
-      return;
-    }
-    if(!__scroll_interval && script.id)
-    {
-      __scroll_interval = setInterval(__scroll, 60);
-    }
-    __scrollEvent = new Date().getTime() + 100;
-  }
-
-  var __scroll = function()
-  {
-    var
-    top = document.getElementById(scroll_container_id).scrollTop,
-    target_line = Math.round(top / context['line-height']) ;
-
-    if( __keyEvent )
-    {
-      target_line = __keyEvent;
-    }
-    if(new Date().getTime() > __scrollEvent ||
-      (__current_line - 2 <= target_line &&
-      __current_line + 2 >= target_line))
-    {
-      __scroll_interval = clearInterval(__scroll_interval);
-      if(__current_line != target_line)
+      var top = document.getElementById(scroll_container_id).scrollTop;
+      var target_line = Math.ceil(top / context['line-height']);
+      if (__current_line != target_line)
       {
         self.showLine(script.id, target_line, null, null, false, true);
       }
-      __keyEvent = 0;
     }
-    else
-    {
-      self.showLine( script.id, Math.round((__current_line + target_line) / 2), null, null, false, true);
-    }
-  }
-
-  this.scrollUp = function()
-  {
-    __keyEvent = __current_line - 38;
-    if( __keyEvent < 1 ) __keyEvent = 1;
-    self.scroll();
-  }
-
-  this.scrollDown = function()
-  {
-    __keyEvent = __current_line + 38;
-    self.scroll();
+    __disregard_scroll_event = false;
   }
 
   this.getCurrentScriptId = function()
