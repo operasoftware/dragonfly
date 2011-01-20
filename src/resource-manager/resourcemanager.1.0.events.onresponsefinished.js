@@ -3,20 +3,17 @@ window.cls || (window.cls = {});
 cls.ResourceManager || (cls.ResourceManager = {});
 cls.ResourceManager["1.0"] || (cls.ResourceManager["1.0"] = {});
 
-cls.ResourceManager["1.0"].ResponseFinished = function(arr, parent)
+cls.ResourceManager["1.0"].ResponseFinished = function(arr)
 {
-  this.parent = parent || null;
   this.requestID = arr[0];
   this.resourceID = arr[1];
   this.time = arr[2];
   this.contentLength = arr[3];
-  this.data = arr[4] ? new cls.ResourceManager["1.0"].ResourceData(arr[4], this) : null;
-  this.toString = function() { return "[message ResponseFinished]"; }
+  this.data = arr[4] ? new cls.ResourceManager["1.0"].ResourceData(arr[4]) : null;
 };
 
-cls.ResourceManager["1.0"].ResourceData = function(arr, parent)
+cls.ResourceManager["1.0"].ResourceData = function(arr)
 {
-  this.parent = parent || null;
   this.resourceID = arr[0];
   this.url = arr[1];
   /** 
@@ -32,13 +29,11 @@ cls.ResourceManager["1.0"].ResourceData = function(arr, parent)
     * Content-Length, as advertised by HTTP headers.
     */
   this.contentLength = arr[4];
-  this.content = arr[5] ? new cls.ResourceManager["1.0"].Content(arr[5], this) : null;
-  this.toString = function() { return "[message ResourceData]"; }
+  this.content = arr[5] ? new cls.ResourceManager["1.0"].Content(arr[5]) : null;
 };
 
-cls.ResourceManager["1.0"].Content = function(arr, parent)
+cls.ResourceManager["1.0"].Content = function(arr)
 {
-  this.parent = parent || null;
   /** 
     * If BYTES or DATA_URI was chosen as the transport mode, this field
     * contains the size of the data. (If, in addition, decoding was enabled,
@@ -67,6 +62,5 @@ cls.ResourceManager["1.0"].Content = function(arr, parent)
     * @ee ContentMode::Transport
     */
   this.stringData = arr[3];
-  this.toString = function() { return "[message Content]"; }
 };
 
