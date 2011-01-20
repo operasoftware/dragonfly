@@ -328,17 +328,24 @@ window.cls.Client = function()
       window_controls.parentNode.removeChild(window_controls);
     }
 
-    // FIXME: avoid creating them every time (initialize outside)
-    document.documentElement.render(templates.window_controls([
+    var is_attached = window.opera.attached;
+
+    var controls = [
       new Button("toggle-console", "", ui_strings.S_BUTTON_TOGGLE_CONSOLE),
       new ToolbarSeparator(),
       new Button("toggle-settings-overlay", "", ui_strings.S_BUTTON_TOGGLE_SETTINGS),
       new Button("toggle-remote-debug-config-overlay", "", ui_strings.S_BUTTON_TOGGLE_REMOTE_DEBUG),
       new ToolbarSeparator(),
-      window['cst-selects']['debugger-menu'], // TODO: Change this to a class
-      new Button("top-window-toggle-attach", "", ""), // TODO: attach/detach
-      new Button("top-window-close", "", ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW) // TODO: attach/detach
-    ]));
+      window['cst-selects']['debugger-menu'],
+      new Button("top-window-toggle-attach", is_attached ? "attached" : "", is_attached ? ui_strings.S_SWITCH_DETACH_WINDOW : ui_strings.S_SWITCH_ATTACH_WINDOW),
+    ];
+
+    if (is_attached)
+    {
+      controls.push(new Button("top-window-close", "", ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW));
+    }
+
+    document.documentElement.render(templates.window_controls(controls));
 
     var button = UI.get_instance().get_button("toggle-remote-debug-config-overlay");
     if (this._current_client && this._current_client.is_remote_debug)
