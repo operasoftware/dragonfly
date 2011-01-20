@@ -132,7 +132,7 @@ window.templates.storage_button = function(action)
 {
   var templ =
   ['input',
-    'id', action.handler,
+    'class', action.handler,
     'type', 'button',
     'handler', action.handler
   ];

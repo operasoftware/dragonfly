@@ -127,9 +127,7 @@ toolbar-buttons, toolbar-switches {
 button[handler="reload-window"] {
     content: url("../ui-images/icons/icon_reload.png");
 }
-#top-window-close {
-    content: url("../ui-images/icons/icon_close.png");
-}
+/* Window control buttons */
 #toggle-console {
     content: url("../ui-images/icons/icon_console.png");
 }
@@ -151,99 +149,105 @@ button[handler="reload-window"] {
 #top-window-toggle-attach.attached  {
     content: url("../ui-images/icons/icon_detach.png");
 }
-#dom-inspection-snapshot {
+#top-window-close {
+    content: url("../ui-images/icons/icon_close.png");
+}
+
+/* View buttons */
+.dom-inspection-snapshot {
     content: url("../ui-images/icons/icon_expand.png");
 }
-#dom-inspection-export {
+.dom-inspection-export {
     content: url("../ui-images/icons/icon_export.png");
 }
-#dom\.find-with-click {
+.dom\.find-with-click {
     content: url("../ui-images/icons/icon_click.png");
 }
-#dom\.highlight-on-hover {
+.dom\.highlight-on-hover {
     content: url("../ui-images/icons/icon_hover.png");
 }
-#dom\.lock-selected-elements {
+.dom\.lock-selected-elements {
     content: url("../ui-images/icons/icon_border.png");
 }
-#stylesheets.shortcuts {
+.stylesheets.shortcuts {
     content: url("../ui-images/icons/icon_shorthand.png");
 }
-#css-comp-style\.hide-initial-values {
+.css-comp-style\.hide-initial-values {
     content: url("../ui-images/icons/icon_hidedefaults.png");
 }
-#css-inspector.hide-shorthands {
+.css-inspector.hide-shorthands {
     content: url("../ui-images/icons/icon_shorthands.png");
 }
-#dom_attrs.hide-null-values {
+.dom_attrs.hide-null-values {
     content: url("../ui-images/icons/icon_empty.png");
 }
-[id="continue-run"] {
+#continue-run {
     content: url("../ui-images/icons/icon_play.png");
 }
-[id="continue-step-into-call"] {
+#continue-step-into-call {
     content: url("../ui-images/icons/icon_stepinto.png");
 }
-[id="continue-step-next-line"] {
+#continue-step-next-line {
     content: url("../ui-images/icons/icon_stepover.png");
 }
-[id="continue-step-out-of-call"] {
+#continue-step-out-of-call {
     content: url("../ui-images/icons/icon_stepout.png");
 }
-#js_source\.script {
+.js_source\.script {
     content: url("../ui-images/icons/icon_haltonscript.png");
 }
-#js_source\.error {
+.js_source\.error {
     content: url("../ui-images/icons/icon_haltonerror.png");
 }
-#threads\.log-threads {
+.threads\.log-threads {
     content: url("../ui-images/icons/icon_threads.png");
 }
-#inspection\.show-prototypes {
+.inspection\.show-prototypes {
     content: url("../ui-images/icons/icon_prototype.png");
 }
-#inspection\.show-non-enumerables {
+.inspection\.show-non-enumerables {
     content: url("../ui-images/icons/icon_hidedefaults.png"); /* temporarily using this icon */
 }
-#inspection\.show-default-nulls-and-empty-strings {
+.inspection\.show-default-nulls-and-empty-strings {
     content: url("../ui-images/icons/icon_empty.png");
 }
-#threads-clear-log {
+.threads-clear-log {
     content: url("../ui-images/icons/icon_clear.png");
 }
-#threads-export-log {
+.threads-export-log {
     content: url("../ui-images/icons/icon_export.png");
 }
-#clear-request-list {
+.clear-request-list {
     content: url("../ui-images/icons/icon_clear.png");
 }
-#request_list\.clear-log-on-runtime-switch {
+.request_list\.clear-log-on-runtime-switch {
     content: url("../ui-images/icons/icon_clearonreload.png");
 }
-#request_list\.auto-scroll-request-list {
+.request_list\.auto-scroll-request-list {
     content: url("../ui-images/icons/icon_autoscroll.png");
 }
-#storage-add-key {
+.storage-add-key {
     content: url("../ui-images/icons/icon_add.png");
 }
-#storage-update {
+.storage-update {
     content: url("../ui-images/icons/icon_reload.png");
 }
-#storage-delete-all {
+.storage-delete-all {
     content: url("../ui-images/icons/icon_clear.png");
 }
-#storage-delete {
+.storage-delete {
     content: url("../ui-images/icons/icon_delete.png");
 }
-[handler^="clear-error-console"] {
+[class^="clear-error-console"] {
     content: url("../ui-images/icons/icon_clear.png");
 }
-#console\.expand-all-entries {
+.console\.expand-all-entries {
     content: url("../ui-images/icons/icon_expand.png");
 }
 cst-icon[class="debugger-menu"] {
     content: url("../ui-images/icons/icon_tabs.png");
 }
+
 .ui-control
 {
   background: #e6e6e6 url("../ui-images/shine_button.png") repeat-x;
@@ -287,15 +291,15 @@ cst-select:active {
 }
 
 /* Show the button topmost when the overlay is visible */
-[handler="toggle-settings-overlay"][is-active="true"],
-[handler="toggle-remote-debug-config-overlay"][is-active="true"] {
+#toggle-settings-overlay[is-active="true"],
+#toggle-remote-debug-config-overlay[is-active="true"] {
     position: relative;
     z-index: 4;
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, .5);
     border-color: #444;
 }
-[handler="toggle-settings-overlay"][is-active="true"]:active,
-[handler="toggle-remote-debug-config-overlay"][is-active="true"]:active {
+#toggle-settings-overlay[is-active="true"]:active,
+#toggle-remote-debug-config-overlay[is-active="true"]:active {
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, .5);
 }
 
@@ -330,10 +334,10 @@ cst-select:active {
     background-color: #bf381d;
 }
 
-.alert[handler="toggle-settings-overlay"][is-active="true"],
-.alert[handler="toggle-remote-debug-config-overlay"][is-active="true"],
-.alert[handler="toggle-settings-overlay"][is-active="true"]:active,
-.alert[handler="toggle-remote-debug-config-overlay"][is-active="true"]:active
+#toggle-settings-overlay.alert[is-active="true"],
+#toggle-remote-debug-config-overlay.alert[is-active="true"],
+#toggle-settings-overlay.alert[is-active="true"]:active,
+#toggle-remote-debug-config-overlay.alert[is-active="true"]:active
 {
     border-color: #721;
     box-shadow: inset 0 1px 2px #bf1000,
@@ -350,107 +354,7 @@ cst-icon {
     height: 100%;
     width: 19px;
 }
-/*
-toolbar button:before, 
-top-toolbar button:before, 
-window-controls button:before, 
-window-toolbar button:before
-{
-  content: '\00A0';
-  display: inline-block;
-  background: transparent url('../ui-images/btn-test.png') scroll no-repeat 0 0;
-  height: 24px;
-  width: 26px; 
-  margin: -4px -12px;
-  vertical-align: 4px;
-}
-toolbar-switches button:before 
-{
-  background: transparent url('../ui-images/btn-test-switch.png') scroll no-repeat 0 0;
-}
-toolbar button[disabled]:before,
-toolbar button[disabled]:hover:before,
-toolbar button[disabled]:active:before,
-window-toolbar button[disabled]:before,
-window-toolbar button[disabled]:hover:before,
-window-toolbar button[disabled]:active:before
-{
-  background-position: 0 -72px;
-}
-.ui-button:hover,
-toolbar button:hover:before, 
-window-controls button:hover:before,
-window-toolbar button:hover:before
-{
-  background-position: 0px -24px;
-}
-.ui-button:active
-toolbar button:active:before, 
-window-controls button:active:before,
-window-toolbar button:hover:before
-{
-  background-position: 0px -48px;
-}
-/* switches /
-toolbar button.switch[is-active="true"]:before,
-window-toolbar button.switch[is-active="true"]:before
-{
-  background-position: -26px 0px;
-}
-toolbar button.switch[is-active="true"]:hover:before,
-window-toolbar button.switch[is-active="true"]:hover:before
-{
-  background-position: -26px -24px;
-}
-toolbar button.switch[is-active="true"]:active:before,
-window-toolbar button.switch[is-active="true"]:active:before
-{
-  background-position: -26px -48px;
-}
-.attached:before 
-{
-  background-position: -26px 0;
-}
-.attached:hover:before 
-{
-  background-position: -26px -24px;
-}
-.attached:active:before 
-{
-  background-position: -26px -48px;
-}
 
-/* mode modal /
-.modal toolbar button[disabled]:before,
-.modal toolbar button[disabled]:hover:before,
-.modal toolbar button[disabled]:active:before,
-.modal window-toolbar button[disabled]:before,
-.modal window-toolbar button[disabled]:hover:before,
-.modal window-toolbar button[disabled]:active:before,
-.modal toolbar button:hover:before, 
-.modal window-controls button:hover:before,
-.modal window-toolbar button:hover:before,
-.modal toolbar button:active:before, 
-.modal window-controls button:active:before,
-.modal window-toolbar button:hover:before
-{
-  background-position: 0 0;
-}
-
-.modal toolbar button.switch[is-active="true"]:before,
-.modal window-toolbar button.switch[is-active="true"]:before,
-.modal toolbar button.switch[is-active="true"]:hover:before,
-.modal window-toolbar button.switch[is-active="true"]:hover:before,
-.modal toolbar button.switch[is-active="true"]:active:before,
-.modal window-toolbar button.switch[is-active="true"]:active:before,
-.modal .attached:before,
-.modal .attached:hover:before,
-.modal .attached:active:before
-{
-  background-position: -26px 0;
-}
-
-*/
 toolbar-separator {
   display: block;
   float: left;
@@ -693,7 +597,7 @@ window-controls {
   height: 22px;
   background: #f3f3f3 url("../ui-images/shine_1_attached.png") repeat-x;
 }
-window-controls/*.attached*/::before {
+window-controls::before {
     content: url("../ui-images/window_controls_border.png");
     height: 30px;
     position: relative;

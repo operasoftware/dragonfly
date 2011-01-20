@@ -141,10 +141,9 @@
     {
       ret[ret.length] =
         ['button',
-          'id', button.handler,
           'handler', button.handler,
           'title', button.title,
-          'class', 'ui-control' + (button.class_name ? ' ' + button.class_name : '')
+          'class', button.handler + ' ui-control' + (button.class_name ? ' ' + button.class_name : '')
         ].concat(
             button.id ? ['id', button.id] : [],
             button.disabled ? ['disabled', 'disabled'] : [],
@@ -173,12 +172,11 @@
       {
         ret[ret.length] =
           ['button',
-            'id', _switch,
             'handler', 'toolbar-switch',
             'title', setting.label,
             'key', _switch,
             'is-active', setting.value ? 'true' : 'false',
-            'class', 'ui-control switch'
+            'class', _switch + ' ui-control switch'
           ];
       }
       else
