@@ -71,9 +71,25 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
     this._service.requestSetReloadPolicy(null, [ this._cache_policy == "default" ? DEFAULT : NO_CACHE]);
   }.bind(this);
 
+  this._handle_toggle_content_tracking_bound = function(evt, target)
+  {
+    this._tracking_policy = target.value;
+    var arg = [[3, 1],
+               [ "text/html", "application/xhtml+xml", "application/mathml+xml",
+                 "application/xslt+xml", "text/xsl", "application/xml",
+                 "text/css", "text/plain", "application/x-javascript",
+                 "application/javascript", "text/javascript"
+               ].map(function(e) { return [e, [1, 1]] })
+              ];
+    this._service.requestSetResponseMode(null, arg);
+  }.bind(this);
+
   var eh = window.eventHandlers;
   eh.click["network-options-clear-cache"] = this._handle_clear_cache_bound;
   eh.change["network-options-toggle-caching"] = this._handle_toggle_caching_bound;
+  eh.change["network-options-toggle-body-tracking"] = this._handle_toggle_content_tracking_bound;
+
+
 
   this.init(id, name, container_class, html, default_handler);
 };

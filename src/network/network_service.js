@@ -74,11 +74,11 @@ cls.NetworkLoggerService = function(view, data)
     this._current_context.update("requestheader", data);
   }.bind(this);
 
-  this._on_responseheader_bound = function(msg)
+  this._on_responsefinished_bound = function(msg)
   {
     if (!this._current_context) { return; }
-    var data = new cls.ResourceManager["1.0"].ResponseHeader(msg);
-    this._current_context.update("responseheader", data);
+    var data = new cls.ResourceManager["1.0"].ResponseFinished(msg);
+    this._current_context.update("responsefinished", data);
   }.bind(this);
 
   this.init = function()
@@ -89,6 +89,7 @@ cls.NetworkLoggerService = function(view, data)
     this._res_service.addListener("requestheader", this._on_requestheader_bound);
     this._res_service.addListener("responseheader", this._on_responseheader_bound);
     this._res_service.addListener("response", this._on_response_bound);
+    this._res_service.addListener("responsefinished", this._on_responsefinished_bound);
     this._res_service.addListener("urlredirect", this._on_urlredirect_bound);
     this._res_service.addListener("urlfinished", this._on_urlfinished_bound);
     this._doc_service = window.services['document-manager'];
@@ -281,6 +282,12 @@ cls.Request = function(id)
     {
       this.responsecode = eventdata.responseCode;
     }
+    else if (eventname == "responsefinished")
+    {
+      //opera.postError("respfin " + JSON.stringify(eventdata, null, "    "));
+      this.responsebody = eventdata.data;
+    }
+
     else if (eventname == "urlredirect")
     {
     }

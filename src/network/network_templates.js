@@ -26,6 +26,27 @@ templates.network_options_main = function(clearing_cache, caching, headers)
              caching == "disabled" ? "checked" : "non-checked", "true"
             ]]
           ],
+          ["hr"],
+          ["div", "Content tracking behaviour:",
+           ["br"],
+           ["label", "Don't track content (default)",
+            ["input", "type", "radio",
+             "name", "network-options-track-bodies",
+             "value", "notrack",
+             "handler", "network-options-toggle-body-tracking",
+             caching == "default" ? "checked" : "non-checked", "true"
+            ]],
+
+           ["br"],
+           ["label", "Track content (affects speed/memory)",
+            ["input", "type", "radio",
+             "name", "network-options-track-bodies",
+             "value", "track",
+             "handler", "network-options-toggle-body-tracking",
+             caching == "disabled" ? "checked" : "non-checked", "true"
+            ]]
+          ],
+
           /*
           ["hr"],
           ["fieldset", ["legend", "Global header rewrites"],
