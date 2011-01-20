@@ -115,10 +115,10 @@ cls.CookieManagerView = function(id, name, container_class)
   this.createView = function(container)
   {
     this.flattened_cookies = this._flatten_cookies(this._cookie_dict);
-    this._table_elem = container.getElementsByClassName("sortable-table")[0];
-    if(!this._table_elem)
+    if(!this._table_container)
     {
-      this._table_elem = container.render(new SortableTable(this._tabledef, this.flattened_cookies).render());
+      this._table_container = container.render(["div",new SortableTable(this._tabledef, this.flattened_cookies).render(),"class","table_container"]);
+      this._table_elem = container.getElementsByClassName("sortable-table")[0];
       this._table_obj = ObjectRegistry.get_instance().get_object(this._table_elem.getAttribute("data-object-id"));
       this._table_obj.group("hostandpath");
       container.render(window.templates.cookie_manager.add_cookie_form(this._rts));
@@ -130,14 +130,14 @@ cls.CookieManagerView = function(id, name, container_class)
     {
       // replace domain select input as the runtime may have changed. ideally just do in that case, but skipping that for now.
       var domain_select_container = container.getElementsByClassName("domain_select_container")[0];
-      if(domain_select_container) // seems initial rendering can not have resulted in a domain_select_container?
+      if(domain_select_container)
       {
         domain_select_container.clearAndRender(window.templates.cookie_manager.domain_selector(this._rts));
       }
     }
     this._table_obj = ObjectRegistry.get_instance().get_object(this._table_elem.getAttribute("data-object-id"));
     this._table_obj.data = this.flattened_cookies;
-    this._table_elem.clearAndRender(this._table_obj.render());
+    this._table_container.clearAndRender(this._table_obj.render());
 
     this._update_expiry();
     if(!this._update_expiry_interval)
