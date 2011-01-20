@@ -63,8 +63,22 @@ cls.NetworkLoggerService = function(view, data)
   this._on_request_bound = function(msg)
   {
     if (!this._current_context) { return; }
-    var data = new cls.ResourceManager["1.0"].Response(msg);
+    var data = new cls.ResourceManager["1.0"].Request(msg);
     this._current_context.update("request", data);
+  }.bind(this);
+
+  this._on_requestheader_bound = function(msg)
+  {
+    if (!this._current_context) { return; }
+    var data = new cls.ResourceManager["1.0"].RequestHeader(msg);
+    this._current_context.update("requestheader", data);
+  }.bind(this);
+
+  this._on_responseheader_bound = function(msg)
+  {
+    if (!this._current_context) { return; }
+    var data = new cls.ResourceManager["1.0"].ResponseHeader(msg);
+    this._current_context.update("responseheader", data);
   }.bind(this);
 
   this.init = function()
@@ -72,6 +86,8 @@ cls.NetworkLoggerService = function(view, data)
     this._res_service = window.services['resource-manager'];
     this._res_service.addListener("urlload", this._on_urlload_bound);
     this._res_service.addListener("request", this._on_request_bound);
+    this._res_service.addListener("requestheader", this._on_requestheader_bound);
+    this._res_service.addListener("responseheader", this._on_responseheader_bound);
     this._res_service.addListener("response", this._on_response_bound);
     this._res_service.addListener("urlredirect", this._on_urlredirect_bound);
     this._res_service.addListener("urlfinished", this._on_urlfinished_bound);
@@ -183,8 +199,8 @@ cls.Request = function(id)
   this.endtime = null;
   this.cached = false;
   this.duration = null;
-  this.request_headers = [];
-  this.response_headers = [];
+  this.request_headers = null;
+  this.response_headers = null;
   this.method = null;
   this.status = null;
   this.responsecode = null;
@@ -201,7 +217,15 @@ cls.Request = function(id)
     }
     else if (eventname == "request")
     {
-      //opera.postError("le request");
+      this.method = eventdata.method;
+    }
+    else if (eventname == "requestheader")
+    {
+      this.request_headers = eventdata.headerList;
+    }
+    else if (eventname == "responseheader")
+    {
+      this.response_headers = eventdata.headerList;
     }
     else if (eventname == "urlfinished")
     {
@@ -216,6 +240,7 @@ cls.Request = function(id)
     }
     else if (eventname == "response")
     {
+      this.responsecode = eventdata.responseCode;
     }
     else if (eventname == "urlredirect")
     {
