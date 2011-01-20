@@ -97,7 +97,7 @@ templates.network_log_main = function(ctx)
 templates.network_log_details = function(ctx, selected)
 {
   return  [
-    ["div", templates.network_log_url_list(ctx),
+    ["div", templates.network_log_url_list(ctx, selected),
      "class", "network-details-url-list"
     ],
     ["div", templates.network_log_request_detail(ctx, selected),
@@ -148,7 +148,6 @@ templates.network_header_table = function(headers)
           "class", "header-list"];
 }
 
-
 templates.network_log_main_table = function(ctx)
 {
   return [
@@ -160,12 +159,13 @@ templates.network_log_main_table = function(ctx)
   ]
 }
 
-templates.network_log_url_list = function(ctx)
+templates.network_log_url_list = function(ctx, selected)
 {
   var itemfun = function(res) {
     return ["li", templates.network_request_icon(res), ["span", res.url],
             "handler", "select-network-request",
-            "data-resource-id", String(res.id)
+            "data-resource-id", String(res.id),
+            "class", selected===res.id ? "selected" : ""
            ]
   }
   return ["ol", ctx.resources.map(itemfun),
@@ -218,8 +218,7 @@ templates.graph_bars = function(ctx, width, height)
 templates.request_bar = function(index, request, basetime, totaltime, contwidth, lineheight)
 {
   var y = lineheight * index;
-
-  var barheight = 24;
+  var barheight = 18;
   var bary = y + (lineheight / 2) - (barheight / 2);
   var multiplier = contwidth / totaltime;
 

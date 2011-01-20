@@ -52,6 +52,12 @@
   background-color: #dddddd;
 }
 
+.network-log-url-list li.selected,
+.network-log-url-list li:nth-child(even).selected
+{
+  background-color: #aaaaaa;
+}
+
 .header-list th
 {
   text-align: right;
@@ -87,15 +93,16 @@
     width: 300px;
     height: 100%;
     overflow: hidden;
-    overflow-x: scroll;
+    overflow-y: auto;
 }
 
 .network-details-request
 {
+    background-color: #aaaaaa;
     position: absolute;
     top:0;
     left: 300px;
     height: 100%;
     overflow: hidden;
-    overflow-x: scroll;
+    overflow-y: auto;
 }

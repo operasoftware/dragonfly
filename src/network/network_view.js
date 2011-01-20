@@ -83,13 +83,13 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   this._on_clicked_request_bound = function(evt, target)
   {
     var rid = target.getAttribute("data-resource-id");
+    rid = parseInt(rid);
     this._selected = rid;
     this.update();
   }.bind(this);
 
   this._on_scroll_bound = function(evt)
   {
-    opera.postError("scrall ");
     this._container.querySelector(".resourcelist").scrollTop = evt.target.scrollTop;
   }.bind(this);
 
