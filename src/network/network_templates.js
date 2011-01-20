@@ -130,6 +130,11 @@ templates.network_log_request_detail = function(ctx, selected)
 
 templates.network_header_table = function(headers)
 {
+  if (!headers)
+  {
+    return ["table", ["tr", ["td", "No headers"]]];
+  }
+
   var rowfun = function(header)
   {
     return ["tr",
