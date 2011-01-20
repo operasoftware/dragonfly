@@ -125,8 +125,46 @@ templates.network_log_request_detail = function(ctx, selected)
     templates.network_header_table(req.response_headers),
     ["hr"],
     ["h2", "Body"],
+    templates.network_response_body(req)
   ]
 }
+
+templates.network_response_body = function(req)
+{
+  if (!req.responsebody)
+  {
+    return ["div",
+            "Response body not tracked. To always fetch response bodies, toggle the response body option on the \"network options\" tab. To retrieve only this body, click the button.",
+            ["button",
+             "Get response body",
+             "data-resource-id", String(req.id),
+             "handler", "get-response-body"
+             ]
+            ]
+  }
+  else
+  {
+    var bodytpl;
+    if (["script", "markup", "css", "text"].indexOf(req.type) != -1)
+    {
+      bodytpl = ["code", ["pre", req.responsebody.content.textData]];
+    }
+    else if (req.type == "image")
+    {
+      bodytpl = ["img", "src", req.responsebody.content.textData];
+    }
+    else
+    {
+      bodytpl = ["span", "not able to show data of type " + req.mime];
+    }
+
+    return ["div",
+            bodytpl,
+            "class", "response-body-content"
+           ];
+  }
+}
+
 
 templates.network_header_table = function(headers)
 {

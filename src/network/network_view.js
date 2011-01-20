@@ -88,6 +88,13 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     this.update();
   }.bind(this);
 
+  this._on_clicked_get_body = function(evt, target)
+  {
+    var rid = target.getAttribute("data-resource-id");
+    rid = parseInt(rid);
+    this._service.request_body(rid, this.update.bind(this));
+  }.bind(this);
+
   this._on_scroll_bound = function(evt)
   {
     this._container.querySelector(".resourcelist").scrollTop = evt.target.scrollTop;
@@ -115,6 +122,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
   eh.click["select-network-request"] = this._on_clicked_request_bound;
   eh.click["close-request-detail"] = this._on_clicked_close_bound;
+  eh.click["get-response-body"] = this._on_clicked_get_body;
 
   var doc_service = window.services['document-manager'];
   doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
