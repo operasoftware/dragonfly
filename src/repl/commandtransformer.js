@@ -84,7 +84,7 @@ cls.HostCommandTransformer = function() {
 
     dirty: // we jump back here if we need to re-process all tokens
     for (var n=0, token; token=tokens[n]; n++) {
-      if (token.type == IDENTIFIER && token.value in this.transform_map) {
+      if (token.type == IDENTIFIER && this.transform_map.hasOwnProperty(token.value)) {
         var fun = this.transform_map[token.value];
         if (fun.call(this, token, tokens)) {
           break dirty;
