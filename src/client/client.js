@@ -75,7 +75,7 @@ window.cls.Client = function()
     {
       window.window_manager_data.clear_debug_context();
       messages.post('host-state', {state: global_state.ui_framework.spin_state = 'inactive'});
-      client.setup();
+      window.client.setup();
     }
     else if (client.is_remote_debug)
     {
@@ -173,13 +173,9 @@ window.cls.Client = function()
   this._create_ui = function(is_remote_debug, port)
   {
     // Move this to some function
-    if (!is_remote_debug)
+    if (!is_remote_debug && window.topCell)
     {
-      this.create_top_level_views(window.services);
-      if(window.topCell)
-      {
-        window.topCell.cleanUp();
-      }
+      window.topCell.cleanUp();
     }
 
     if(_first_setup)
