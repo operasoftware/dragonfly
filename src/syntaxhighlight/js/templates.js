@@ -117,6 +117,10 @@
     {
       onjstoken(context, token_type, token);
     });
+    if (context.text)
+    {
+      context.template.push(context.text);
+    }
     return context.template;
   };
 
