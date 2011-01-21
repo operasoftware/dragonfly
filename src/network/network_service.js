@@ -254,61 +254,79 @@ cls.Request = function(id)
 
   this.update = function(eventname, eventdata)
   {
-    if (eventname == "urlload")
+    var updatefun = this["_update_event_" + eventname];
+    if (updatefun)
     {
-      this.url = eventdata.url;
-      this.urltype = eventdata.urlType;
-      this.starttime = eventdata.time;
-      // fixme: complete list
-      this.urltypeName = {0: "unknown", 1: "http", 2: "https", 3: "file", 4: "data" }[eventdata.urlType];
-    }
-    else if (eventname == "request")
-    {
-      this.method = eventdata.method;
-    }
-    else if (eventname == "requestheader")
-    {
-      this.request_headers = eventdata.headerList;
-    }
-    else if (eventname == "responseheader")
-    {
-      this.response_headers = eventdata.headerList;
-    }
-    else if (eventname == "urlfinished")
-    {
-      this.result = eventdata.result;
-      this.mime = eventdata.mimeType;
-      this.encoding = eventdata.characterEncoding;
-      this.size = eventdata.contentLength;
-      this.endtime = eventdata.time;
-      this.duration = this.endtime - this.starttime;
-      this.finished = true;
-      this._guess_type();
-    }
-    else if (eventname == "response")
-    {
-      this.responsecode = eventdata.responseCode;
-    }
-    else if (eventname == "responsefinished")
-    {
-      //opera.postError("respfin " + JSON.stringify(eventdata, null, "    "));
-      if (eventdata.data && eventdata.data.content)
-      {
-        this.responsebody = eventdata.data;
-      }
-    }
-
-    else if (eventname == "urlredirect")
-    {
-    }
-    else if (eventname == "responsebody")
-    {
-      this.responsebody = eventdata;
+      updatefun.call(this, eventdata);
     }
     else
     {
       opera.postError("got unknown event: " + eventname);
     }
+  }
+
+  this._update_event_urlload = function(event)
+  {
+    this.url = event.url;
+    this.urltype = event.urlType;
+    this.starttime = event.time;
+    // fixme: complete list
+    this.urltypeName = {0: "unknown", 1: "http", 2: "https", 3: "file", 4: "data" }[event.urlType];
+  }
+
+  this._update_event_urlfinished = function(event)
+  {
+    this.result = event.result;
+    this.mime = event.mimeType;
+    this.encoding = event.characterEncoding;
+    this.size = event.contentLength;
+    this.endtime = event.time;
+    this.duration = this.endtime - this.starttime;
+    this.finished = true;
+    this._guess_type();
+  }
+
+  this._update_event_request = function(event)
+  {
+    this.method = event.method;
+  }
+
+  this._update_event_requestheader = function(event)
+  {
+    this.request_headers = event.headerList;
+  }
+
+  this._update_event_responseheader = function(event)
+  {
+    this.response_headers = event.headerList;
+  }
+
+  this._update_event_response = function(event)
+  {
+    this.responsebody = event;
+  }
+
+  this._update_event_responsefinished = function(event)
+  {
+    if (event.data && event.data.content)
+    {
+      this.responsebody = event.data;
+    }
+  }
+
+  this._update_event_responsebody = function(event)
+  {
+    this.responsebody = event;
+  }
+
+  this._update_event_response = function(event)
+  {
+    this.responsecode = event.responseCode;
+  }
+
+  this._update_event_urlredirect = function(event)
+  {
+
   }
 
   this.get_source = function()
