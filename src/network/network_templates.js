@@ -298,8 +298,7 @@ templates.request_bar = function(index, request, basetime, totaltime, contwidth,
   var resstart = start+10//entry.requestfinished.time;
   var reswidth = 30; // reqwidth - (resstart - reqstart);
 
-  var gid = Math.floor(Math.random() * 3);
-  var texture = ["gradient-css", "gradient-img", "gradient-js"][gid];
+  var texture = "gradient-" + (request.type || "unknown");
 
   var tpl = [
     ["rect", "x", String((start-basetime)*multiplier), "y", String(bary),
@@ -377,10 +376,12 @@ templates.grid_lines = function(ctx, width, height)
 templates.gradient_defs = function()
 {
   return ["defs",
-    templates.gradient("img", "#e3ffff", "#92c5ff", "#70a5f0", "#8db8f2"),
-    templates.gradient("js", "#d9dfff", "#828bbf", "#6269a0", "#7f88b4"),
-    templates.gradient("css", "#ff7d7d", "#d21a1a", "#b40000", "#c32121")
-  ];
+          templates.gradient("image", "#F1B5B5", "#F1B5B5", "#F1B5B5", "#ffffff"),
+          templates.gradient("script", "#FAEFBB","#FAEFBB","#FAEFBB", "#ffffff"),
+          templates.gradient("css", "#C4D9F5", "#C4D9F5", "#C4D9F5", "#ffffff"),
+          templates.gradient("markup", "#CCD3FF", "#CCD3FF", "#CCD3FF", "#ffffff"),
+          templates.gradient("unknown", "#E6E6E6", "#E6E6E6", "#E6E6E6", "#ffffff")
+         ];
 };
 
 templates.gradient = function(id, c1, c2, c3, c4)
