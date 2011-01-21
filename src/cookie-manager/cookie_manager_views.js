@@ -178,14 +178,17 @@ cls.CookieManagerView = function(id, name, container_class)
               cookie_obj = window.views.cookie_manager.flattened_cookies[i];
             }
           };
-          return [
-            {
-              label: "Delete Cookie "+(cookie_obj.name || ""),
-              handler: function() {
-                window.views.cookie_manager.remove_cookie_by_objectref(objectref);
+          if(cookie_obj && cookie_obj.is_removable)
+          {
+            return [
+              {
+                label: "Delete Cookie "+(cookie_obj.name || ""),
+                handler: function() {
+                  window.views.cookie_manager.remove_cookie_by_objectref(objectref);
+                }
               }
-            }
-          ];
+            ];
+          }
         }
       }
     ]);
