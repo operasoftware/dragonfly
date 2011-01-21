@@ -124,7 +124,7 @@ cls.NetworkLoggerService = function(view, data)
         length: data[5][0],
         characterEncoding: data[5][1],
         byteData: data[5][2],
-        textData: data[5][3]
+        stringData: data[5][3]
       }
     }
     if (!this._current_context) { return; }
