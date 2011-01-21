@@ -74,6 +74,13 @@ cls.NetworkLoggerService = function(view, data)
     this._current_context.update("requestheader", data);
   }.bind(this);
 
+  this._on_responseheader_bound = function(msg)
+  {
+    if (!this._current_context) { return; }
+    var data = new cls.ResourceManager["1.0"].ResponseHeader(msg);
+    this._current_context.update("responseheader", data);
+  }.bind(this);
+
   this._on_responsefinished_bound = function(msg)
   {
     if (!this._current_context) { return; }
