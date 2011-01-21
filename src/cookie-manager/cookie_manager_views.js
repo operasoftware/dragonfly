@@ -327,24 +327,27 @@ cls.CookieManagerView = function(id, name, container_class)
 
   this._handle_get_domain = function(status, message, rt_id)
   {
-    const DATA = 2;
-    var parsed_data = JSON.parse(message[2]);
-    var hostname = parsed_data.hostname;
-    var pathname = parsed_data.pathname;
-    this._rts[rt_id].get_domain_is_pending = false;
-    this._rts[rt_id].hostname = hostname;
-    this._rts[rt_id].pathname = pathname;
-    (function(context)
+    if(status === 0)
     {
-      for (var key in context._rts)
+      const DATA = 2;
+      var parsed_data = JSON.parse(message[DATA]);
+      var hostname = parsed_data.hostname;
+      var pathname = parsed_data.pathname;
+      this._rts[rt_id].get_domain_is_pending = false;
+      this._rts[rt_id].hostname = hostname;
+      this._rts[rt_id].pathname = pathname;
+      (function(context)
       {
-        if(context._rts[key]["get_domain_is_pending"] !== false)
+        for (var key in context._rts)
         {
-          return;
-        }
-      };
-      context._request_cookies.call(context,context._rts);
-    })(this);
+          if(context._rts[key]["get_domain_is_pending"] !== false)
+          {
+            return;
+          }
+        };
+        context._request_cookies.call(context,context._rts);
+      })(this);
+    }
   };
 
   this._request_cookies = function(runtime_list)
@@ -389,38 +392,41 @@ cls.CookieManagerView = function(id, name, container_class)
 
   this._handle_cookies = function(status, message, domain, path)
   {
-    const COOKIE = 0;
-    this._cookie_dict[domain+path].get_cookies_is_pending=false;
-    if(message.length > 0)
+    if(status === 0)
     {
-      var cookies = message[COOKIE];
-      this._cookie_dict[domain+path].cookies=[];
-      for (var i=0; i < cookies.length; i++) {
-        var cookie_info = cookies[i];
-        this._cookie_dict[domain+path].cookies.push({
-          domain:     cookie_info[0],
-          path:       cookie_info[1],
-          name:       cookie_info[2],
-          value:      cookie_info[3],
-          expires:    cookie_info[4],
-          isSecure:   cookie_info[5],
-          isHTTPOnly: cookie_info[6]
-        });
-      };
-    }
-    else
-    {
-      // In case no cookies come back, check via JS (workaround for CORE-35055)
-      // Find runtime that has the appropriate domain and path
-      for(var id in window.views.cookie_manager._rts)
+      const COOKIE = 0;
+      this._cookie_dict[domain+path].get_cookies_is_pending=false;
+      if(message.length > 0)
       {
-        var runtime = window.views.cookie_manager._rts[id];
-        if(runtime.hostname === domain && runtime.pathname === path)
+        var cookies = message[COOKIE];
+        this._cookie_dict[domain+path].cookies=[];
+        for (var i=0; i < cookies.length; i++) {
+          var cookie_info = cookies[i];
+          this._cookie_dict[domain+path].cookies.push({
+            domain:     cookie_info[0],
+            path:       cookie_info[1],
+            name:       cookie_info[2],
+            value:      cookie_info[3],
+            expires:    cookie_info[4],
+            isSecure:   cookie_info[5],
+            isHTTPOnly: cookie_info[6]
+          });
+        };
+      }
+      else
+      {
+        // In case no cookies come back, check via JS (workaround for CORE-35055)
+        // Find runtime that has the appropriate domain and path
+        for(var id in window.views.cookie_manager._rts)
         {
-          var script = "return document.cookie";
-          var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_js_retrieved_cookies, [domain, path]);
-          services['ecmascript-debugger'].requestEval(tag,[parseInt(id), 0, 0, script]);
-          break;
+          var runtime = window.views.cookie_manager._rts[id];
+          if(runtime.hostname === domain && runtime.pathname === path)
+          {
+            var script = "return document.cookie";
+            var tag = tagManager.set_callback(this, window.views.cookie_manager._handle_js_retrieved_cookies, [domain, path]);
+            services['ecmascript-debugger'].requestEval(tag,[parseInt(id), 0, 0, script]);
+            break;
+          }
         }
       }
     }
@@ -429,21 +435,24 @@ cls.CookieManagerView = function(id, name, container_class)
 
   this._handle_js_retrieved_cookies = function(status, message, domain, path)
   {
-    const DATA = 2;
-    var cookie_string = message[DATA];
-    if(cookie_string && cookie_string.length > 0)
+    if(status === 0)
     {
-      this._cookie_dict[domain+path].cookies=[];
-      var cookies = cookie_string.split(';');
-      for (var i=0; i < cookies.length; i++) {
-        var cookie_info = cookies[i];
-        var pos = cookie_info.indexOf('=', 0);
-        this._cookie_dict[domain+path].cookies.push({
-          name:  cookie_info.slice(0, pos),
-          value: decodeURIComponent(cookie_info.slice(pos+1))
-        });
-      };
-      window.views.cookie_manager.update();
+      const DATA = 2;
+      var cookie_string = message[DATA];
+      if(cookie_string && cookie_string.length > 0)
+      {
+        this._cookie_dict[domain+path].cookies=[];
+        var cookies = cookie_string.split(';');
+        for (var i=0; i < cookies.length; i++) {
+          var cookie_info = cookies[i];
+          var pos = cookie_info.indexOf('=', 0);
+          this._cookie_dict[domain+path].cookies.push({
+            name:  cookie_info.slice(0, pos),
+            value: decodeURIComponent(cookie_info.slice(pos+1))
+          });
+        };
+        window.views.cookie_manager.update();
+      }
     }
   };
 
