@@ -238,43 +238,56 @@ cls.CookieManagerView = function(id, name, container_class)
       var elem = document.getElementById("expires_container_"+obj.objectref);
       if(elem)
       {
-        var parsed_date=new Date(obj.expires*1000);
-        var compare_date = new Date();
-        if(compare_date.getTime() < parsed_date.getTime())
+        if(new Date().getTime() < new Date(obj.expires*1000))
         {
-          var diff = parsed_date.getTime() - compare_date.getTime();
-          var in_sec     = diff / 1000;
-          var in_min     = in_sec / 60;
-          var in_dec_min = in_min / 10;
-          var in_hours   = in_min / 60;
-          var in_days    = in_hours / 24;
-          var in_months  = in_days / 30.5;
-          var in_years   = in_months / 12;
+          var fuzzy_date = function(date)
+          {
+            var compare_date = new Date();
+            var diff = date.getTime() - compare_date.getTime();
+            var in_sec     = diff / 1000;
+            var in_min     = in_sec / 60;
+            var in_5_min   = in_min / 20;
+            var in_hours   = in_min / 60;
+            var in_days    = in_hours / 24;
+            var in_weeks   = in_days / 7;
+            var in_months  = in_weeks / 4.3;
+            var in_years   = in_months / 12;
 
-          if(in_sec < 60)
-            elem.textContent = "< 1 minute";
-          else if (Math.round(in_min) === 1)
-            elem.textContent = "In " + Math.round(in_min)          +" minute";
-          else if (in_min < 10)
-            elem.textContent = "In " + Math.round(in_min)          + " minutes";
-          else if (in_dec_min < 5)
-            elem.textContent = "In " + Math.round(in_dec_min) * 10 + " minutes";
-          else if (Math.round(in_hours) === 1)
-            elem.textContent = "In " + Math.round(in_hours)        + " hour";
-          else if (in_hours < 23)
-            elem.textContent = "In " + Math.round(in_hours)        + " hours";
-          else if (Math.round(in_days) === 1)
-            elem.textContent = "In " + Math.round(in_days)         + " day";
-          else if (in_days < 30.5)
-            elem.textContent = "In " + Math.round(in_days)         + " days";
-          else if (Math.round(in_months) === 1)
-            elem.textContent = "In " + Math.round(in_months)       + " month";
-          else if (in_months < 11)
-            elem.textContent = "In " + Math.round(in_months)       + " months";
-          else if (Math.round(in_years) === 1)
-            elem.textContent = "In " + Math.round(in_years)        + " year";
-          else
-            elem.textContent = "In " + Math.round(in_years)        + " years";
+            if(in_sec < 60)
+              return "< 1 minute";
+            else if (Math.round(in_min) === 1)
+              return "In " + Math.round(in_min)        +" minute";
+            else if (in_min < 15)
+              return "In " + Math.round(in_min)        + " minutes";
+            else if (in_5_min < 11)
+              return "In " + Math.round(in_5_min) * 5  + " minutes";
+
+            else if (Math.round(in_hours) === 1)
+              return "In " + Math.round(in_hours)      + " hour";
+            else if (in_hours < 23)
+              return "In " + Math.round(in_hours)      + " hours";
+
+            else if (Math.round(in_days) === 1)
+              return                                     "Tomorrow";
+            else if (in_days < 7)
+              return "In " + Math.round(in_days)       + " days";
+
+            else if (Math.round(in_weeks) === 1)
+              return "In " + Math.round(in_weeks)      + " week";
+            else if (in_weeks < 4.3)
+              return "In " + Math.round(in_weeks)      + " weeks";
+
+            else if (Math.round(in_months) === 1)
+              return "In " + Math.round(in_months)     + " month";
+            else if (in_months < 11)
+              return "In " + Math.round(in_months)     + " months";
+
+            else if (Math.round(in_years) === 1)
+              return "In " + Math.round(in_years)      + " year";
+            else
+              return "In " + Math.round(in_years)      + " years";
+          };
+          elem.textContent = fuzzy_date(new Date(obj.expires*1000));
         }
         else
         {
