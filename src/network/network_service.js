@@ -285,7 +285,10 @@ cls.Request = function(id)
     else if (eventname == "responsefinished")
     {
       //opera.postError("respfin " + JSON.stringify(eventdata, null, "    "));
-      this.responsebody = eventdata.data;
+      if (eventdata.data && eventdata.data.content)
+      {
+        this.responsebody = eventdata.data;
+      }
     }
 
     else if (eventname == "urlredirect")

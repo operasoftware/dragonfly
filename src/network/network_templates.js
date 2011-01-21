@@ -168,11 +168,11 @@ templates.network_response_body = function(req)
     var bodytpl;
     if (["script", "markup", "css", "text"].indexOf(req.type) != -1)
     {
-      bodytpl = ["code", ["pre", req.responsebody.content.textData]];
+      bodytpl = ["code", ["pre", req.responsebody.content.stringData]];
     }
     else if (req.type == "image")
     {
-      bodytpl = ["img", "src", req.responsebody.content.textData];
+      bodytpl = ["img", "src", req.responsebody.content.stringData];
     }
     else
     {
