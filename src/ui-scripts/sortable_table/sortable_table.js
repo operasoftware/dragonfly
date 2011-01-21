@@ -84,6 +84,7 @@ function SortableTable(tabledef, data, cols, sortby, reversed)
 
     var menuitems = [{
       label: "No grouping",
+      selected: !obj.groupby,
       handler: obj._make_group_handler(null)
     }];
 
