@@ -1,6 +1,6 @@
 window.templates || (window.templates = {});
 
-templates.network_options_main = function(clearing_cache, caching, headers)
+templates.network_options_main = function(clearing_cache, caching, tracking, headers)
 {
   var checked = true;
   return ["div",
@@ -34,7 +34,7 @@ templates.network_options_main = function(clearing_cache, caching, headers)
              "name", "network-options-track-bodies",
              "value", "notrack",
              "handler", "network-options-toggle-body-tracking",
-             caching == "default" ? "checked" : "non-checked", "true"
+             tracking == "notrack" ? "checked" : "non-checked", "true"
             ]],
 
            ["br"],
@@ -43,7 +43,7 @@ templates.network_options_main = function(clearing_cache, caching, headers)
              "name", "network-options-track-bodies",
              "value", "track",
              "handler", "network-options-toggle-body-tracking",
-             caching == "disabled" ? "checked" : "non-checked", "true"
+             tracking == "track" ? "checked" : "non-checked", "true"
             ]]
           ],
 
