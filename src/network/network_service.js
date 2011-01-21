@@ -74,6 +74,13 @@ cls.NetworkLoggerService = function(view, data)
     this._current_context.update("requestheader", data);
   }.bind(this);
 
+  this._on_responseheader_bound = function(msg)
+  {
+    if (!this._current_context) { return; }
+    var data = new cls.ResourceManager["1.0"].ResponseHeader(msg);
+    this._current_context.update("responseheader", data);
+  }.bind(this);
+
   this._on_responsefinished_bound = function(msg)
   {
     if (!this._current_context) { return; }
@@ -117,7 +124,7 @@ cls.NetworkLoggerService = function(view, data)
         length: data[5][0],
         characterEncoding: data[5][1],
         byteData: data[5][2],
-        textData: data[5][3]
+        stringData: data[5][3]
       }
     }
     if (!this._current_context) { return; }
@@ -285,7 +292,10 @@ cls.Request = function(id)
     else if (eventname == "responsefinished")
     {
       //opera.postError("respfin " + JSON.stringify(eventdata, null, "    "));
-      this.responsebody = eventdata.data;
+      if (eventdata.data && eventdata.data.content)
+      {
+        this.responsebody = eventdata.data;
+      }
     }
 
     else if (eventname == "urlredirect")
