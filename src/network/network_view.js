@@ -37,17 +37,23 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
       if (this._selected !== null)
       {
+        var w = container.getBoundingClientRect().width - 320;
+        var h = container.getBoundingClientRect().height;
         container.clearAndRender(templates.network_log_details(ctx, this._selected));
         this._scrollcontainer = container.querySelector(".network-details-url-list");
         this._scrollcontainer.scrollTop = this._scroll;
+
+        var content = container.querySelector(".network-details-request");
+        content.style.width = "" + w + "px";
       }
       else
       {
         var contheight = container.getBoundingClientRect().height - 2;
         container.clearAndRender(templates.network_log_main(ctx));
         this._scrollcontainer = container.querySelector("#main-scroll-container");
-        this._scrollcontainer.style.height = "" + (contheight-50) + "px";
+        this._scrollcontainer.style.height = "" + contheight + "px";
         this._scrollcontainer.scrollTop = this._scroll;
+        container.className = "";
         //container.querySelector(".timeline").addEventListener("scroll", this._on_scroll_bound, false);
       }
     }
