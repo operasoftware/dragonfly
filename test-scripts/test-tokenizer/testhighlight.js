@@ -410,6 +410,6 @@ window.onload = function()
                          "' onclick='test(this.value)'>";
                }).join('');
   }
-  xhr.open("GET", "./dragonfly.js");
+  xhr.open("GET", "./ga.js");
   xhr.send(null);
 };

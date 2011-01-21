@@ -24,6 +24,7 @@
   });
 })();
 */
+/*
 if (document.createElementNS && 
     document.createElement('div').namespaceURI != 'http://www.w3.org/1999/xhtml')
 {  
@@ -32,7 +33,7 @@ if (document.createElementNS &&
     return this.createElementNS('http://www.w3.org/1999/xhtml', name);
   };
 }
-
+*/
 if (!Element.prototype.contains)
 {
   Element.prototype.contains = function(ele)
@@ -110,7 +111,12 @@ Element.prototype.render = Document.prototype.render = function(args, namespace)
         else if (namespace)
           ele = doc.createElementNS(namespace, first_arg.slice(prefix_pos + 1));
         else
+        {
+          try
+          {
           ele = first_arg in CustomElements ? CustomElements[first_arg].create() : doc.createElement(first_arg);
+          }catch(e){debugger;};
+        }
         i++;
       }
       arg = args[i];

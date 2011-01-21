@@ -34,6 +34,11 @@ var ToolbarBase = function()
     return this.cell.top + (this.cell.tab ? this.cell.tab.offsetHeight : 0);
   };
 
+  this.getBottomPosition = function()
+  {
+    return this.__is_visible ? this.getTopPosition() + this.offsetHeight : 0;
+  }
+   
   this.setDimensions = function(force_redraw)
   {
     var dim = '', i = 0;
