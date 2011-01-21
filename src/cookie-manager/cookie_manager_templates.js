@@ -149,6 +149,7 @@ templates.cookie_manager = {
           "data-objectref",    objectref,
           "data-editproperty", "name",
           "blur-handler",      "cookiemanager-edit",
+          "handler",           "cookiemanager-edit",
           "class",             "hidden edit_formelem",
         ],
         [
@@ -170,6 +171,7 @@ templates.cookie_manager = {
           "data-objectref",    objectref,
           "data-editproperty", "value",
           "blur-handler",      "cookiemanager-edit",
+          "handler",           "cookiemanager-edit",
           "class",             "hidden edit_formelem"
         ],
         [

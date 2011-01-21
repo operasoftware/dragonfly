@@ -19,6 +19,15 @@ window.eventHandlers.dblclick['cookiemanager-init-edit-mode'] = function(event, 
   edit_formelem.focus();
 }
 
+window.eventHandlers.keyup['cookiemanager-edit'] = function(event, target)
+{
+  // blur (and save) on <enter>
+  if(event.keyCode === 13)
+  {
+    target.blur();
+  }
+}
+
 window.eventHandlers.blur['cookiemanager-edit'] = function(event, target)
 {
   var editcontainer = target;
