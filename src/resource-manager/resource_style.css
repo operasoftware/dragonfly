@@ -125,3 +125,10 @@
 .resource-data-wrapper.image > * {
     text-align: center;
 }
+
+.resource-detail-container {
+    display: block;
+    box-sizing: border-box;
+    height: 100%;
+    overflow: auto;
+}

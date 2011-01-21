@@ -39,8 +39,10 @@ cls.ResourceDetailBase = function()
       if (tpl)
       {
         container.render(tpl);
+        cls.ResourceDetailBase.sync_dimensions(container);
       }
     }
+
   }
 
   this.render_type_details = function(container, resource, resourcedata)
@@ -68,6 +70,16 @@ cls.ResourceDetailBase = function()
 }
 cls.ResourceDetailBase.prototype = new TempView();
 
+cls.ResourceDetailBase.sync_dimensions = function(container)
+{
+    var metadata_drawer = container.getElementsByClassName('metadata-drawer')[0];
+    var resource_details = container.getElementsByClassName('resource-detail-container')[0];
+    if (metadata_drawer && resource_details)
+    {
+        resource_details.style.borderTopWidth = metadata_drawer.offsetHeight + 'px';
+    }
+}
+
 cls.GenericResourceDetail = function(res, service)
 {
   this.render_type_details = function(container, resource, resourcedata)
@@ -91,6 +103,17 @@ cls.TextResourceDetail = function(res, service)
   this.init(res, service);
 }
 cls.TextResourceDetail.prototype = new cls.ResourceDetailBase();
+
+cls.JSResourceDetail = function(res, service)
+{
+  this.render_type_details = function(container, resource, resourcedata)
+  {
+    return window.templates.js_resource_view(resource, resourcedata);
+  }
+
+  this.init(res, service);
+}
+cls.JSResourceDetail.prototype = new cls.ResourceDetailBase();
 
 
 cls.ImageResourceDetail = function(res, service)
@@ -125,8 +148,21 @@ window.templates = window.templates || {};
 window.templates.text_resource_view = function(resource, resourcedata)
 {
   return [
-    ["h1", "Text details view"],
-    ["code", ["pre", resourcedata]]
+    ['code',
+        ["pre", resourcedata],
+        'class', 'resource-detail-container'
+    ]
+  ]
+}
+
+window.templates.js_resource_view = function(resource, resourcedata)
+{
+  return [
+    ['code',
+        ['div', 'js-resource'],
+        ["pre", resourcedata],
+        'class', 'resource-detail-container'
+    ]
   ]
 }
 

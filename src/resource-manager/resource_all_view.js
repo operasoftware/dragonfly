@@ -57,7 +57,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
     viewclasses = {
       image: cls.ImageResourceDetail,
       font: cls.FontResourceDetail,
-      script: cls.TextResourceDetail,
+      script: cls.JSResourceDetail,
       markup: cls.TextResourceDetail,
       css: cls.TextResourceDetail,
     }

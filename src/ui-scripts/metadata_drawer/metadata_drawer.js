@@ -51,8 +51,10 @@ function MetadataDrawer(resource, title) {
   {
     var div = target.parentNode;
     var obj = ObjectRegistry.get_instance().get_object(div.getAttribute("data-object-id"));
+    var container = div.parentNode;
     obj.toggle();
     div.re_render(obj.render());
+    cls.ResourceDetailBase.sync_dimensions(container);
   }
 
   this._init_handlers();

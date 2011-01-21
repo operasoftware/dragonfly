@@ -3,7 +3,11 @@
   border-bottom: 1px solid #999;
   margin: 0;
   padding: 6px;
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 2;
 }
 
 .metadata-drawer.collapsed {
