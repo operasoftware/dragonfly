@@ -72,10 +72,10 @@ cls.EcmascriptDebugger["6.0"].InspectionView = function(id, name, container_clas
           [frame.this_id == '0' ? frame.rt_id : frame.this_id, 0, 'object', , '']
         ]
       ] || null;
-      this._data = new cls.InspectableJSObject(frame.rt_id, 
-                                               frame.scope_id, 
-                                               null, 
-                                               null, 
+      this._data = new cls.InspectableJSObject(frame.rt_id,
+                                               frame.scope_id,
+                                               null,
+                                               null,
                                                virtual_properties,
                                                frame.scope_list);
     }
@@ -109,14 +109,17 @@ cls.EcmascriptDebugger["6.0"].InspectionView = function(id, name, container_clas
 
   this.init = function(id, name, container_class)
   {
-    var msgs = window.messages; 
+    var msgs = window.messages;
     msgs.addListener('object-selected', this._on_object_selected.bind(this));
     msgs.addListener('frame-selected', this._on_frame_selected.bind(this));
     msgs.addListener('trace-frame-selected', this._on_trace_frame_selected.bind(this));
     msgs.addListener('runtime-destroyed', this._on_runtime_destroyed.bind(this));
     msgs.addListener('active-inspection-type', this._on_active_inspection_type.bind(this));
     msgs.addListener('setting-changed', this._on_setting_change.bind(this));
-    this.onbeforesearch = this._onbeforesearch.bind(this);
+    this.onbeforesearch = function(msg)
+    {
+      this._onbeforesearch(msg.search_term);
+    }.bind(this);
     this._super_init(id, name, container_class);
   };
 
@@ -249,7 +252,9 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
     ]
   );
 
-  var text_search = new TextSearch(window.views.inspection.onbeforesearch, 1);
+  var text_search = new TextSearch(1);
+  text_search.add_listener("onbeforesearch",
+                           window.views.inspection.onbeforesearch);
 
   var onViewCreated = function(msg)
   {
@@ -277,7 +282,7 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
   };
 
   ActionBroker.get_instance().get_global_handler().
-  register_shortcut_listener('inspection-text-search', 
+  register_shortcut_listener('inspection-text-search',
                              cls.Helpers.shortcut_search_cb.bind(text_search));
 
 };

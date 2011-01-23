@@ -26,7 +26,11 @@ cls.EcmascriptDebugger["6.0"].DOMAttrsView = function(id, name, container_class)
     var msgs = window.messages; 
     msgs.addListener('element-selected', this._on_element_selected.bind(this));
     msgs.addListener('setting-changed', this._on_setting_change.bind(this));
-    this.onbeforesearch = this._onbeforesearch.bind(this);
+    this.onbeforesearch = function(msg)
+    {
+      opera.postError(msg.search_term)
+      this._onbeforesearch(msg.search_term);
+    }.bind(this);
     this._super_init(id, name, container_class);
   };
 
@@ -62,7 +66,10 @@ cls.EcmascriptDebugger["6.0"].DOMAttrsView.create_ui_widgets = function()
   );
 
 
-  var text_search = new TextSearch(window.views.dom_attrs.onbeforesearch, 1);
+  var text_search = new TextSearch(1);
+  
+  text_search.add_listener("onbeforesearch", 
+                           window.views.dom_attrs.onbeforesearch);
 
   var onViewCreated = function(msg)
   {

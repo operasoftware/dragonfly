@@ -142,13 +142,12 @@ window.load_screen_timeout = window.setTimeout(function()
 
 
 <script src="./scripts/Timeouts.js"/>
-<script src="./scripts/TextSearch.js"/>
-<script src="./scripts/VirtualTextSearch.js"/>
 <script src="./scripts/colors.js"/>
 <script src="./scripts/colorspace.js"/>
 <script src="./scripts/messages.js"/>
 <script src="./scripts/spec_links.js"/>
 <script src="./scripts/queue.js"/>
+
 
 <script src="./scripts/debug-helpers-liveSource.js"/>
 
@@ -168,6 +167,9 @@ window.load_screen_timeout = window.setTimeout(function()
 
 <script src="./lib/message_maps.js"/>
 <script src="./lib/test_framework.js"/>
+
+<script src="./scripts/TextSearch.js"/>
+<script src="./scripts/VirtualTextSearch.js"/>
 
 <script src="./ui-scripts/ui.js"/>
 <script src="./ui-scripts/tabbar.js"/>

@@ -108,6 +108,9 @@
  *     <dt>dom-editor-active</dt>
  *     <dd>The editor mode was changed in the DOM view. It's considered active if the mode is anything else than "default". Payload: msg.editor_active</dd>
  *
+ *     <dt>onbeforesearch</dt>
+ *     <dd>Before TextSearch executes a search. Payload: msg.search_term.</dd>
+ *
  * </dl>
  *
  */
