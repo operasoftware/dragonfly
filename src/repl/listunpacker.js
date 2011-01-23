@@ -96,7 +96,7 @@ window.cls.ListUnpacker = function()
         if (!has_xpathresult)
         {
           this._examine_list_alikes(orig_msg,
-                                    rt_id, obj_ids, log, xpathresults,
+                                    rt_id, obj_ids, log,
                                     error_callback, success_callback);
         }
       }
