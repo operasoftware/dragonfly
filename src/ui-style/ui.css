@@ -1,5 +1,5 @@
 ﻿/* Font stack defaults */
-viewport, .info-box, #about-authors pre {
+viewport, .info-box, #about-authors pre, button {
   font-family: "Dejavu Sans", "Bitstream Vera Sans", "Lucida Grande", "Segoe UI", Tahoma, sans-serif;
   font-size: 11px;
   color: #444;
@@ -1599,4 +1599,24 @@ tab.active .close-tab-button:hover
 .first-temp-tab
 {
   margin-left: 20px;
+}
+
+/* Button style. Use for buttons inside the <container>. */
+container button
+{
+  background: #e6e6e6 url("../ui-images/shine_button.png") repeat-x;
+  border: 1px solid rgba(0, 0, 0, .5);
+  text-shadow: 0 1px rgba(255,255,255,0.5);
+  border-radius: 10px;
+  height: 20px;
+  padding: 1px 10px;
+  box-shadow: 0 1px rgba(255,255,255,0.5), inset 0 1px 1px #fff;
+  -o-transition: background-color 0.2s;
+}
+
+container button:active
+{
+  box-shadow: 0 1px rgba(255,255,255,0.5), inset 0 1px 2px rgba(0, 0, 0, .4);
+  background-position: 0 1px;
+  text-shadow: none;
 }
