@@ -378,7 +378,8 @@ filter {
   border: 1px solid #8e8e8e;
   border-radius: 3px;
   background: #fff url("../ui-images/icon_search.png") 2px 50% no-repeat;
-  box-shadow: 0 1px #fff, inset 0 1px 1px #d5d5d5;
+  box-shadow: 0 1px #fff,
+              inset 0 1px 1px #d5d5d5;
   }
 
 toolbar-filters span {
@@ -504,12 +505,11 @@ top-tabs tab {  /**/
   height: 26px;
   line-height: 26px;
   border: 0;
-  border-right: 1px solid rgba(0,0,0,0.15);
+  border-right: 1px solid rgba(0,0,0,0.2);
   padding: 2px 6px;
   position: static;
   text-shadow: 0 1px rgba(255, 255, 255, .5);
   background: #e6e6e6 url("../ui-images/shine_1_attached.png") repeat-x;
-  box-shadow: inset 0 0 1px #fff;
   }
 
 top-tabs.detached tab {
@@ -522,9 +522,12 @@ top-tabs.detached tab {
 }
 
 top-tabs tab.active {
-  background-color: #cecece;
-  box-shadow: inset 0 0 15px rgba(0,0,0,0.1);
-
+  background-color: #ccc;
+  text-shadow: none !important;
+  border-color: rgba(0,0,0,0.3);
+  box-shadow: inset 0 1px 4px rgba(0,0,0,0.2),
+              inset 0 1px 2px rgba(0,0,0,0.3),
+              -1px 0 rgba(0,0,0,0.3);
 }
 top-tabs tab.active:first-of-type {
   border-left-color: transparent;
@@ -532,6 +535,35 @@ top-tabs tab.active:first-of-type {
 top-tabs.detached tab.active {
   background-image: url("../ui-images/shine_1_detached.png");
 }
+
+/* Alert state - Warning & Error */
+top-tabs tab.alert {
+  text-shadow: 0 1px rgba(255, 255, 255, .3);
+  background-color: #f6ae66;
+  color: #662914;
+}
+
+top-tabs tab.alert.active {
+  background-color: #f2883d;
+  box-shadow: inset 0 1px 4px rgba(128,0,0,0.3),
+              inset 0 1px 2px rgba(128,0,0,0.4),
+              -1px 0 rgba(0,0,0,0.3);
+}
+
+/* Alert state - Information */
+top-tabs tab.information {
+  background-color: #aadaf2;
+  color: #263f5d;
+}
+
+top-tabs tab.information.active {
+  background-color: #8ac7e5;
+  box-shadow: inset 0 1px 4px
+              rgba(0,64,128,0.3),
+              inset 0 1px 2px rgba(0,64,128,0.4),
+              -1px 0 rgba(0,0,0,0.3);
+}
+
 top-tabs .icon {
   display: inline-block;
   height: 26px;
