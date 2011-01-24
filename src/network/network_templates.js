@@ -311,7 +311,7 @@ templates.request_bar = function(index, request, basetime, totaltime, contwidth,
       ["rect", "x", String((resstart-basetime)*multiplier), "y", String(bary),
              "width", String(reswidth*multiplier), "height", String(barheight),
              "rx", "4", "ry", "4",
-             "fill", "url(#" + texture + ")", "stroke", "#939393", "stroke-width", "1.0"]
+             "fill", "url(#" + texture + ")", "stroke", "#333333", "stroke-width", "1.0"]
 
   ];
   return tpl;
@@ -379,11 +379,11 @@ templates.grid_lines = function(ctx, width, height)
 templates.gradient_defs = function()
 {
   return ["defs",
-          templates.gradient("image", "#F1B5B5", "#F1B5B5", "#F1B5B5", "#ffffff"),
-          templates.gradient("script", "#FAEFBB","#FAEFBB","#FAEFBB", "#ffffff"),
-          templates.gradient("css", "#C4D9F5", "#C4D9F5", "#C4D9F5", "#ffffff"),
-          templates.gradient("markup", "#f2f9ff", "#e5eeff", "#d9e2ff", "#e5e9ff"),
-          templates.gradient("unknown", "#E6E6E6", "#E6E6E6", "#E6E6E6", "#ffffff")
+          templates.gradient("image", "#ff7c7c", "#cb1313", "#b40000", "#c42222"),
+          templates.gradient("script", "#ffffeb","#e2dd9a","#c6bf7a", "#d1cd95"),
+          templates.gradient("css", "#e6ffff", "#91c4ff", "#71a6f0", "#8eb8f3"),
+          templates.gradient("markup", "#d9deff", "#7c85b9", "#6972a6", "#8088b4"),
+          templates.gradient("unknown", "#ffffff", "#c0c0c0", "#aaaaaa", "#b8b8b8")
          ];
 };
 
@@ -391,7 +391,7 @@ templates.gradient = function(id, c1, c2, c3, c4)
 {
   return ["linearGradient",
           ["stop", "offset", "5%", "stop-color", c1],
-          ["stop", "offset", "50%", "stop-color", c2],
+          ["stop", "offset", "49%", "stop-color", c2],
           ["stop", "offset", "50%", "stop-color", c3],
           ["stop", "offset", "100%", "stop-color", c4],
           "x1", "0",
