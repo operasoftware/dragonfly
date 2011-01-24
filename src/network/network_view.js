@@ -44,17 +44,29 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
         this._scrollcontainer.scrollTop = this._scroll;
 
         var content = container.querySelector(".network-details-request");
-        content.style.width = "" + w + "px";
+         content.style.width = "" + w + "px";
       }
       else
       {
         var contheight = container.getBoundingClientRect().height - 2;
         container.clearAndRender(templates.network_log_main(ctx));
         this._scrollcontainer = container.querySelector("#main-scroll-container");
-        this._scrollcontainer.style.height = "" + contheight + "px";
+        this._scrollcontainer.style.height = "" + (contheight-30) + "px";
         this._scrollcontainer.scrollTop = this._scroll;
         container.className = "";
-        //container.querySelector(".timeline").addEventListener("scroll", this._on_scroll_bound, false);
+
+        var w = container.getBoundingClientRect().width - 300;
+        var scrollable = container.querySelector("#main-scroll-container");
+        var scrollercont = container.querySelector("#scrollbar-container");
+        var scroller = container.querySelector("#scrollbar");
+        scroller.style.width = "" + 4000 + "px";
+
+        container.querySelector("#right-side-content").style.width="3000px";
+        var scrollfun = function(evt) {
+          var e = document.getElementById("right-side-container");
+          e.scrollLeft = evt.target.scrollLeft;
+        }
+        scrollercont.addEventListener("scroll", scrollfun, false)
       }
     }
     else if (this._loading)

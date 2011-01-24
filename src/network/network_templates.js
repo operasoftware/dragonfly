@@ -102,15 +102,17 @@ templates.network_log_main = function(ctx)
      ["div",
       ["div", templates.network_log_url_list(ctx), "id", "left-side-content"],
       ["div",
-       ["div", templates.network_log_graph(ctx), "id", "right-side-content"],
-       "id", "right-side-container"
+       ["div", templates.network_log_graph(ctx),
+        "id", "right-side-content"
+       ],
+       "id", "right-side-container",
       ],
-      "id", "main-scroll-content"
+      "id", "main-scroll-content",
      ],
      "class", "network-log",
-     "id", "main-scroll-container"
+     "id", "main-scroll-container",
     ],
-    ["div", ["div", "id", "scrollbar"], "id", "scroll-bar-container"]
+    ["div", ["div", "id", "scrollbar"], "id", "scrollbar-container"]
   ];
 }
 
@@ -243,7 +245,7 @@ templates.network_request_icon = function(request)
 
 templates.network_log_graph = function(ctx, width)
 {
-  width = width || 1000;
+  width = width || 2600;
   var rowheight = 36;
   var height = ctx.resources.length * rowheight;
 
@@ -257,7 +259,7 @@ templates.network_log_graph = function(ctx, width)
              background,
              bars,
              grid,
-             "viewBox", "0 0 " + width + " " + height,
+             //'viewBox', '0 0 ' + 3000 + 'px ' + 500 +'px',
              "xmlns", "http://www.w3.org/2000/svg",
              "class", "resource-graph"];
 

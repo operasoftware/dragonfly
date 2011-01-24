@@ -1,5 +1,4 @@
 .request-crafter {
-    
 }
 
 .request-crafter textarea {
@@ -12,6 +11,7 @@
     min-height: 200px;
     border: solid thin black;
 }
+
 
 #main-scroll-container
 {
@@ -26,18 +26,43 @@
 
 #left-side-content
 {
-  xxwidth: 300px;
+  width: 300px;
+}
+
+#right-side-container
+{
+  position: absolute;
+  height: 100%;
+  top: 0px;
+  left: 300px;
+  right: 0px;
   overflow: hidden;
 }
 
-.network-log-url-list
+#right-side-content
 {
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  list-style: none;
+  height: 100%;
 }
 
+#scrollbar-container
+{
+  margin-left: 300px;
+  margin-right: 13px;
+  overflow: auto;
+}
+#scrollbar
+{
+    height: 1px;
+}
+
+
+/* list view */
+
+.network-log-url-list
+{
+    list-style: none;
+    padding: 0;
+}
 
 .network-log-url-list li
 {
@@ -59,30 +84,8 @@
 }
 
 
-#right-side-container
-{
-  position: absolute;
-  height: 100%;
-  top: 0px;
-  left: 300px;
-  right: 0px;
-  overflow: hidden;
-}
-#right-side-content
-{
-  width: 1000px;
-  height: 100%;
-}
-#scroll-bar-container
-{
-  width: 480px;
-  margin-left: 300px;
-  overflow: auto;
-}
-#scrollbar
-{
-  height: 1px;
-}
+
+/* detail view */
 
 .network-details-url-list
 {
