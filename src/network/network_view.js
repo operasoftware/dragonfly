@@ -102,7 +102,14 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   {
     var rid = target.getAttribute("data-resource-id");
     rid = parseInt(rid);
-    this._selected = rid;
+    if (this._selected == rid)
+    {
+      this._selected = null;
+    }
+    else
+    {
+      this._selected = rid;
+    }
     this.update();
   }.bind(this);
 
