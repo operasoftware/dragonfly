@@ -266,12 +266,13 @@ templates.network_log_graph = function(ctx, width)
     return tpl;
 }
 
-
 templates.graph_bars = function(ctx, width, height)
 {
   var bars = [];
   var basetime = ctx.get_starttime();
   var duration = ctx.get_duration();
+  duration = Math.ceil(duration / 1000) * 1000
+
   for (var n=0, req; req=ctx.resources[n]; n++)
   {
     var bar = templates.request_bar(n, req, basetime, duration, width, height);
@@ -279,7 +280,6 @@ templates.graph_bars = function(ctx, width, height)
   }
   return bars;
 }
-
 
 templates.request_bar = function(index, request, basetime, totaltime, contwidth, lineheight)
 {
@@ -324,6 +324,7 @@ templates.grid_lines = function(ctx, width, height)
 {
   var ret = [];
   var millis = ctx.get_duration();
+  millis = Math.ceil(millis / 1000) * 1000
   var secondwidth = width / (millis / 1000);
   var multiplier = width / millis;
 
