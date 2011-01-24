@@ -507,9 +507,9 @@ top-tabs tab {  /**/
   border: 0;
   border-right: 1px solid rgba(0,0,0,0.2);
   padding: 2px 6px;
-  position: static;
   text-shadow: 0 1px rgba(255, 255, 255, .5);
   background: #e6e6e6 url("../ui-images/shine_1_attached.png") repeat-x;
+  top: 0;
   }
 
 top-tabs.detached tab {
@@ -570,6 +570,23 @@ top-tabs .icon {
   width: 26px;
   vertical-align: top;
   margin-right: 3px;
+}
+top-tabs .badge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: #df6531;
+  color: #000;
+  text-shadow: none;
+  line-height: 1;
+  padding: 2px 3px;
+  border-radius: 4px;
+  top: 15px;
+  left: 14px;
+  font-size: 9px;
+}
+top-tabs .badge:empty {
+  display: none;
 }
 
 .dom_mode {

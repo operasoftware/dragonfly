@@ -75,6 +75,21 @@
       // TODO: make this a bit more sophisticated
       return document.getElementById(id);
     };
+
+    this.set_tab_badge = function(id, type, content)
+    {
+      var badge = document.querySelector("top-tabs").querySelector("[ref-id='" + id + "'] .badge");
+      if (badge)
+      {
+        badge.addClass(type || "");
+        badge.textContent = content || "";
+      }
+    };
+
+    this.clear_tab_badge = function(id)
+    {
+      this.set_tab_badge(id);
+    };
 }
 
 UI.get_instance = function()
