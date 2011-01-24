@@ -182,10 +182,6 @@ cls.RequestContext = function()
     }
 
     res.update(eventname, event);
-    if (res.invalid)
-    {
-      this.resources.splice(this.resources.indexOf(res), 1);
-    }
   }
 
   this.get_resource = function(id)
@@ -240,6 +236,7 @@ cls.Request = function(id)
   this.urltype = null;
   this.invalid = false;
   this.starttime = null;
+  this.responsetime = null;
   this.endtime = null;
   this.cached = false;
   this.duration = null;
@@ -294,14 +291,16 @@ cls.Request = function(id)
     this.request_headers = event.headerList;
   }
 
+  this._update_event_response = function(event)
+  {
+    opera.postError("aaa " + JSON.stringify(event));
+    this.responsestart = event.time;
+    this.responsecode = event.responseCode;
+  }
+
   this._update_event_responseheader = function(event)
   {
     this.response_headers = event.headerList;
-  }
-
-  this._update_event_response = function(event)
-  {
-    this.responsebody = event;
   }
 
   this._update_event_responsefinished = function(event)
@@ -317,14 +316,8 @@ cls.Request = function(id)
     this.responsebody = event;
   }
 
-  this._update_event_response = function(event)
-  {
-    this.responsecode = event.responseCode;
-  }
-
   this._update_event_urlredirect = function(event)
   {
-
   }
 
   this.get_source = function()
