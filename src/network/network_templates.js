@@ -246,7 +246,7 @@ templates.network_request_icon = function(request)
 templates.network_log_graph = function(ctx, width)
 {
   width = width;
-  var rowheight = 36;
+  var rowheight = 23;
   var height = ctx.resources.length * rowheight;
 
   var gradients = templates.gradient_defs();
@@ -284,7 +284,7 @@ templates.graph_bars = function(ctx, width, height)
 templates.request_bar = function(index, request, basetime, totaltime, contwidth, lineheight)
 {
   var y = lineheight * index;
-  var barheight = 18;
+  var barheight = 12;
   var bary = y + (lineheight / 2) - (barheight / 2);
   var multiplier = contwidth / totaltime;
 
@@ -306,12 +306,12 @@ templates.request_bar = function(index, request, basetime, totaltime, contwidth,
     ["rect", "x", String((start-basetime)*multiplier), "y", String(bary),
      "width", String(reqwidth*multiplier), "height", String(barheight),
              "rx", "4", "ry", "4",
-             "fill", "#e5e5e5", "stroke", "#969696", "stroke-width", "0.5"],
+             "fill", "#dfdfdf", "stroke", "#969696", "stroke-width", "1.0"],
 
       ["rect", "x", String((resstart-basetime)*multiplier), "y", String(bary),
              "width", String(reswidth*multiplier), "height", String(barheight),
              "rx", "4", "ry", "4",
-             "fill", "url(#" + texture + ")", "stroke", "#4a507d", "stroke-width", "0.5"]
+             "fill", "url(#" + texture + ")", "stroke", "#939393", "stroke-width", "1.0"]
 
   ];
   return tpl;
@@ -365,8 +365,8 @@ templates.grid_lines = function(ctx, width, height)
                 "x2", String(n*multiplier),
                 "y2", String(height),
                 "stroke", color,
-                "stroke-width", "0.5",
-                "opacity", "0.7"
+                "stroke-width", "1.0",
+                "opacity", "1.0"
       ]);
     }
   }
@@ -381,7 +381,7 @@ templates.gradient_defs = function()
           templates.gradient("image", "#F1B5B5", "#F1B5B5", "#F1B5B5", "#ffffff"),
           templates.gradient("script", "#FAEFBB","#FAEFBB","#FAEFBB", "#ffffff"),
           templates.gradient("css", "#C4D9F5", "#C4D9F5", "#C4D9F5", "#ffffff"),
-          templates.gradient("markup", "#CCD3FF", "#CCD3FF", "#CCD3FF", "#ffffff"),
+          templates.gradient("markup", "#f2f9ff", "#e5eeff", "#d9e2ff", "#e5e9ff"),
           templates.gradient("unknown", "#E6E6E6", "#E6E6E6", "#E6E6E6", "#ffffff")
          ];
 };
@@ -412,7 +412,7 @@ templates.network_log_background = function(ctx, lineheight)
                        "y", String(cnt*lineheight),
                        "width", "100%",
                        "height", String(lineheight),
-                       "stroke-width", "0", "fill", (cnt%2 ?  "#dddddd" : "white")]);
+                       "stroke-width", "0", "fill", (cnt%2 ?  "#f2f2f2" : "white")]);
   }
   return tpls;
 };
