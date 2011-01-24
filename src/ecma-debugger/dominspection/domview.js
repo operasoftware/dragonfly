@@ -249,15 +249,15 @@ cls.DOMView.create_ui_widgets = function()
         title: ui_strings.S_BUTTON_LABEL_EXPORT_DOM
       }
     ], 
-    null, 
-    /*
+    // null, 
+    /* */
     [
       {
         handler: 'dom-text-search',
         shortcuts: 'dom-text-search',
         title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
       }
-    ], */
+    ], /* */
     null,
     [
       {
@@ -268,7 +268,7 @@ cls.DOMView.create_ui_widgets = function()
         template: window['cst-selects']['document-select'].getTemplate()
       }
     ],
-    true
+    false // true
   )
 
   var broker = ActionBroker.get_instance();
