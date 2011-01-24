@@ -95,14 +95,14 @@ templates.network_request_crafter_main = function(url, request, response)
 };
 
 
-templates.network_log_main = function(ctx)
+templates.network_log_main = function(ctx, graphwidth)
 {
   return [
     ["div",
      ["div",
       ["div", templates.network_log_url_list(ctx), "id", "left-side-content"],
       ["div",
-       ["div", templates.network_log_graph(ctx),
+       ["div", templates.network_log_graph(ctx, graphwidth),
         "id", "right-side-content"
        ],
        "id", "right-side-container",
@@ -245,7 +245,7 @@ templates.network_request_icon = function(request)
 
 templates.network_log_graph = function(ctx, width)
 {
-  width = width || 2600;
+  width = width;
   var rowheight = 36;
   var height = ctx.resources.length * rowheight;
 

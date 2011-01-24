@@ -49,19 +49,29 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       else
       {
         var contheight = container.getBoundingClientRect().height - 2;
-        container.clearAndRender(templates.network_log_main(ctx));
+        var availwidth = container.getBoundingClientRect().width - 300;
+        var duration = ctx.get_duration();
+        var graphwidth = availwidth;
+
+        if (duration > 3000)
+        {
+          graphwidth = Math.ceil(duration);
+        }
+
+        // fixme: round up to nearest second when rendering grid
+
+        container.clearAndRender(templates.network_log_main(ctx, graphwidth));
         this._scrollcontainer = container.querySelector("#main-scroll-container");
         this._scrollcontainer.style.height = "" + (contheight-30) + "px";
         this._scrollcontainer.scrollTop = this._scroll;
         container.className = "";
 
-        var w = container.getBoundingClientRect().width - 300;
         var scrollable = container.querySelector("#main-scroll-container");
         var scrollercont = container.querySelector("#scrollbar-container");
         var scroller = container.querySelector("#scrollbar");
-        scroller.style.width = "" + 4000 + "px";
+        scroller.style.width = "" + graphwidth + "px";
 
-        container.querySelector("#right-side-content").style.width="3000px";
+        container.querySelector("#right-side-content").style.width = "" + graphwidth + "px";
         var scrollfun = function(evt) {
           var e = document.getElementById("right-side-container");
           e.scrollLeft = evt.target.scrollLeft;

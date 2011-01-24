@@ -153,8 +153,6 @@ cls.NetworkLoggerService = function(view, data)
 cls.RequestContext = function()
 {
   this.resources = [];
-  this.duration = 0;
-
   this.get_duration = function()
   {
     var starttimes = this.resources.map(function(e) { return e.starttime });
