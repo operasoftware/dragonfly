@@ -4,11 +4,14 @@ templates.network_options_main = function(clearing_cache, caching, tracking, hea
 {
   var checked = true;
   return ["div",
+
+          ["div",
+           ["h2", "Clear browser cache"],
           ["button", "Clear cache", "handler", "network-options-clear-cache"],
-          clearing_cache ? ["span", "CLEARING"] : [],
-          ["hr"],
-          ["div", "Caching behaviour:",
-           ["br"],
+          clearing_cache ? ["span", "CLEARING", "class", "clearing"] : [],
+          ],
+          ["div",
+           ["h2", "Caching behaviour"],
            ["label", "Standard browser caching behaviour",
             ["input", "type", "radio",
              "name", "network-options-caching",
@@ -26,9 +29,8 @@ templates.network_options_main = function(clearing_cache, caching, tracking, hea
              caching == "disabled" ? "checked" : "non-checked", "true"
             ]]
           ],
-          ["hr"],
-          ["div", "Content tracking behaviour:",
-           ["br"],
+          ["div",
+           ["h2", "Content tracking behaviour"],
            ["label", "Don't track content (default)",
             ["input", "type", "radio",
              "name", "network-options-track-bodies",
