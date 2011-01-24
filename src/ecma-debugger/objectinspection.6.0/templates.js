@@ -315,7 +315,7 @@
   this.inspected_js_scope_chain = function(model, searchterm)
   {
     var ret = [];
-    var name = "Scope Chain";
+    var name = ui_strings.S_LABEL_SCOPE_CHAIN;
     var has_match = !searchterm || name.toLowerCase().contains(searchterm);
     if (model.scope_list_models)
     {

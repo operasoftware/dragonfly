@@ -499,6 +499,8 @@ ui_strings.S_LABEL_REPL_MODE_SINGLELINE = 'Single-line edit';
 ui_strings.S_LABEL_REPL_MODE_MULTILINE = 'Multi-line edit';
 /* DESC: Label of a subsection in the keyboard configuration */
 ui_strings.S_LABEL_REPL_MODE_AUTOCOMPLETE = 'Autocomplete';
+/* DESC: Label of the section with the scvope chaine in the Inspection view */
+ui_strings.S_LABEL_SCOPE_CHAIN = 'Scope Chain';
 
 
 /*
