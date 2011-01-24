@@ -90,6 +90,25 @@
     {
       this.set_tab_badge(id);
     };
+
+    this.set_tab_state = function(id, state)
+    {
+      var tab = document.querySelector("top-tabs").querySelector("[ref-id='" + id + "']");
+      if (tab)
+      {
+        tab.addClass(state);
+      }
+    };
+
+    this.clear_tab_state = function(id)
+    {
+      var tab = document.querySelector("top-tabs").querySelector("[ref-id='" + id + "']");
+      if (tab)
+      {
+        // Clear all class names. Add "active" back in case the tab was active.
+        tab.className = tab.hasClass("active") ? "active" : "";
+      }
+    };
 }
 
 UI.get_instance = function()
