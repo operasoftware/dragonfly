@@ -264,7 +264,7 @@ cls.Request = function(id)
   {
     this.url = event.url;
     this.urltype = event.urlType;
-    this.starttime = event.time;
+    this.starttime = Math.round(event.time);
     // fixme: complete list
     this.urltypeName = {0: "unknown", 1: "http", 2: "https", 3: "file", 4: "data" }[event.urlType];
   }
@@ -275,7 +275,7 @@ cls.Request = function(id)
     this.mime = event.mimeType;
     this.encoding = event.characterEncoding;
     this.size = event.contentLength;
-    this.endtime = event.time;
+    this.endtime = Math.round(event.time);
     this.duration = this.endtime - this.starttime;
     this.finished = true;
     this._guess_type();
@@ -293,8 +293,7 @@ cls.Request = function(id)
 
   this._update_event_response = function(event)
   {
-    opera.postError("aaa " + JSON.stringify(event));
-    this.responsestart = event.time;
+    this.responsestart = Math.round(event.time);
     this.responsecode = event.responseCode;
   }
 
