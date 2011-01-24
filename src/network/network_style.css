@@ -66,21 +66,22 @@
 
 .network-log-url-list li
 {
-  height: 36px;
-  line-height: 36px;
+  height: 23px;
+  line-height: 23px;
   padding: 0 5px;
   overflow: hidden;
 }
 
 .network-log-url-list li:nth-child(even)
 {
-  background-color: #dddddd;
+  background-color: #f2f2f2;
 }
 
 .network-log-url-list li.selected,
 .network-log-url-list li:nth-child(even).selected
 {
-  background-color: #aaaaaa;
+  background-color: #598bec;
+  color: #fff;
 }
 
 
@@ -95,9 +96,18 @@
     overflow-y: auto;
 }
 
+
+.network-details-url-list .resource-icon, .network-log-url-list .resource-icon {
+  position: relative;
+  top: 3px;
+  margin-right: 5px;
+}
+
+
+
 .network-details-request
 {
-    background-color: #aaaaaa;
+    background-color: #fafafa;
     position: absolute;
     top:0;
     left: 300px;
