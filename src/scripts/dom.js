@@ -112,10 +112,7 @@ Element.prototype.render = Document.prototype.render = function(args, namespace)
           ele = doc.createElementNS(namespace, first_arg.slice(prefix_pos + 1));
         else
         {
-          try
-          {
           ele = first_arg in CustomElements ? CustomElements[first_arg].create() : doc.createElement(first_arg);
-          }catch(e){debugger;};
         }
         i++;
       }
