@@ -139,6 +139,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   {
     this._loading = true;
     this._table = null;
+    this._selected = null;
     this.update();
   }.bind(this);
 
