@@ -140,16 +140,6 @@ h2
   text-shadow: 0 0 7px #bbb;
 }
 
-.network-details-request div
-{
-  padding: 0px 25px; 
-}
-
-.network-details-request div button {
-  display: block;
-}
-
-
 /* Request crafter */
 .request-crafter
 {
