@@ -447,10 +447,19 @@ templates.network_log_background = function(ctx, lineheight)
   while (cnt--)
   {
     tpls.push(["rect", "x", "0",
-                       "y", String(cnt*lineheight),
-                       "width", "100%",
-                       "height", String(lineheight),
-                       "stroke-width", "0", "fill", (cnt%2 ?  "rgba(0,0,0,0.025)" : "white")]);
+               "y", String(cnt*lineheight),
+               "width", "100%",
+               "height", String(lineheight),
+               "stroke-width", "0", "fill", (cnt%2 ?  "rgba(0,0,0,0.025)" : "white")]);
+
+    tpls.push(["line",
+               "x1", "0",
+               "y1", String((cnt*lineheight) + lineheight - 0.5),
+               "x2", "100%",
+               "y2", String((cnt*lineheight) + lineheight - 0.5),
+               "stroke", "rgba(0, 0, 0, 0.1)",
+               "stroke-width", "1",
+              ]);
   }
   return tpls;
 };
