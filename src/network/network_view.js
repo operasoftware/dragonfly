@@ -132,11 +132,17 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
   this._on_clicked_toggle_response_bound = function()
   {
-  }
+    var mode = settings.network_logger.get("response-view-mode") == "raw" ? "cooked" : "raw";
+    settings.network_logger.set("response-view-mode", mode);
+    this.update();
+  }.bind(this);
 
   this._on_clicked_toggle_request_bound = function()
   {
-  }
+    var mode = settings.network_logger.get("request-view-mode") == "raw" ? "cooked" : "raw";
+    settings.network_logger.set("request-view-mode", mode);
+    this.update();
+  }.bind(this);
 
   this._on_scroll_bound = function(evt)
   {
@@ -174,6 +180,27 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   var doc_service = window.services['document-manager'];
   doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
   doc_service.addListener("documentloaded", this._on_documentloaded_bound);
+
+  new Settings
+  (
+    // id
+    "network_logger",
+    // key-value map
+    {
+      "request-view-mode": "cooked",
+      "response-view-mode": "cooked"
+    },
+    // key-label map
+    {
+
+    },
+    // settings map
+    {
+      checkboxes: []
+    },
+    null,
+    null
+  );
 
   this.init(id, name, container_class, html, default_handler);
 };

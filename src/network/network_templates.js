@@ -155,7 +155,7 @@ templates.network_log_request_detail = function(ctx, selected)
 
 templates.request_details = function(req)
 {
-  if (0 && "raw")
+  if (settings.network_logger.get("request-view-mode") == "raw")
   {
     return templates.network_raw(req.request_raw);
   }
@@ -167,7 +167,7 @@ templates.request_details = function(req)
 
 templates.response_details = function(req)
 {
-  if (0 && "raw")
+  if (settings.network_logger.get("response-view-mode") == "raw")
   {
     return templates.network_raw(req.response_raw);
   }
