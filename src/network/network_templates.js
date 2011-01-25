@@ -261,7 +261,11 @@ templates.network_log_main_table = function(ctx)
 templates.network_log_url_list = function(ctx, selected)
 {
   var itemfun = function(res) {
-    return ["li", templates.network_request_icon(res), ["span", res.url],
+    return ["li",
+            templates.network_request_icon(res),
+            ["span", res.url],
+            ["span", String(res.responsecode),
+             "class", "log-url-list-status " + "status-" + String(res.responsecode)],
             "handler", "select-network-request",
             "data-resource-id", String(res.id),
             "class", selected===res.id ? "selected" : ""
