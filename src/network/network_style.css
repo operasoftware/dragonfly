@@ -85,7 +85,7 @@ li span + span {
 }
 
 .status-200 {
-
+  content: "";
 }
 
 .network-log-url-list li:active,
@@ -142,6 +142,7 @@ button[handler="close-request-detail"]
 .network-details-request th
 {
   text-align: left;
+  vertical-align: top;
   width: 110px;
 }
 
