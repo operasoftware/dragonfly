@@ -1,15 +1,8 @@
 window.templates || (window.templates = {});
 
-templates.network_options_main = function(clearing_cache, caching, tracking, headers)
+templates.network_options_main = function(caching, tracking, headers)
 {
-  var checked = true;
   return ["div",
-
-          ["div",
-           ["h2", "Clear browser cache"],
-          ["button", "Clear cache", "handler", "network-options-clear-cache"],
-          clearing_cache ? ["span", "CLEARING", "class", "clearing"] : [],
-          ],
           ["div",
            ["h2", "Caching behaviour"],
            ["label", "Standard browser caching behaviour",

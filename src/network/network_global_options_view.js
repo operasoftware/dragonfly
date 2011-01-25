@@ -5,7 +5,6 @@ window.cls = window.cls || {};
  * @extends ViewBase
  */
 cls.NetworkOptionsView = function(id, name, container_class, html, default_handler) {
-  this._clearing_cache = false;
   this._cache_policy = "default";
   this._tracking_policy = "notrack";
   this._service = window.services["resource-manager"];
@@ -18,8 +17,7 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
   this._render_main_view = function(container)
   {
     var headers = [{name:"foo", value:"bar"}];
-    container.clearAndRender(templates.network_options_main(this._clearing_cache,
-                                                            this._cache_policy,
+    container.clearAndRender(templates.network_options_main(this._cache_policy,
                                                             this._tracking_policy,
                                                             headers));
     this._input = new cls.BufferManager(container.querySelector("textarea"));
@@ -51,21 +49,6 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
 
   };
 
-  this._handle_clear_cache_bound = function(evt, target)
-  {
-    var tagman = new cls.TagManager();
-    tag = tagman.set_callback(this, this._on_cleared_cache_bound);
-    this._clearing_cache = true;
-    this.update();
-    this._service.requestClearCache(tag);
-  }.bind(this);
-
-  this._on_cleared_cache_bound = function(msg)
-  {
-    this._clearing_cache = false;
-    this.update();
-  }.bind(this);
-
   this._handle_toggle_caching_bound = function(evt, target)
   {
     this._cache_policy = target.value;
@@ -95,7 +78,6 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
   }.bind(this);
 
   var eh = window.eventHandlers;
-  eh.click["network-options-clear-cache"] = this._handle_clear_cache_bound;
   eh.change["network-options-toggle-caching"] = this._handle_toggle_caching_bound;
   eh.change["network-options-toggle-body-tracking"] = this._handle_toggle_content_tracking_bound;
 
