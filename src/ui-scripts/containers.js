@@ -25,9 +25,9 @@ var ContainerBase = function()
     }
 
     var toolbar_height =  this.cell.toolbar.height ? this.cell.toolbar.offsetHeight : 0;
+    var searchbar_height =  this.cell.searchbar ? this.cell.searchbar.offsetHeight : 0;
 
-
-    dim = this.cell.top + toolbar_height + this.cell.tab.offsetHeight;
+    dim = this.cell.top + toolbar_height + + searchbar_height + this.cell.tab.offsetHeight;
     if( dim != this.top)
     {
       this.is_dirty = true;
@@ -48,7 +48,7 @@ var ContainerBase = function()
       this.width = dim;
     }
 
-    dim = this.cell.height - toolbar_height - this.cell.tab.offsetHeight - this.vertical_border_padding;
+    dim = this.cell.height - toolbar_height - searchbar_height - this.cell.tab.offsetHeight - this.vertical_border_padding;
     if( dim != this.height)
     {
       this.is_dirty = true;

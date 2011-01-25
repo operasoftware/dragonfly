@@ -249,15 +249,15 @@ cls.DOMView.create_ui_widgets = function()
         title: ui_strings.S_BUTTON_LABEL_EXPORT_DOM
       }
     ], 
-    // null, 
-    /* */
+    null, 
+    /*
     [
       {
         handler: 'dom-text-search',
         shortcuts: 'dom-text-search',
         title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
       }
-    ], /* */
+    ], */
     null,
     [
       {
@@ -268,7 +268,7 @@ cls.DOMView.create_ui_widgets = function()
         template: window['cst-selects']['document-select'].getTemplate()
       }
     ],
-    false // true
+    true
   )
 
   var broker = ActionBroker.get_instance();
@@ -399,6 +399,9 @@ cls.DOMView.create_ui_widgets = function()
     ]
   );
 
+
+  new Search('dom', Searchbar);
+  /*
   var textSearch = new TextSearch();
 
   var onViewCreated = function(msg)
@@ -448,5 +451,6 @@ cls.DOMView.create_ui_widgets = function()
         return false;
     }
   });
+  */
 
 };

@@ -70,6 +70,57 @@
     return null;
   }
 
+  // return a layout_box if the associated view id is view_id
+  this.get_cell = function(view_id)
+  {
+    var ret = null, tab = '', view = null, child = null, i = 0;
+    if (this.tab && (view = window.views[this.tab.activeTab]))
+    {
+      if (view.type == 'composite-view')
+      {
+        if (ret = view.cell.get_cell(view_id))
+        {
+          return ret;
+        }
+      }
+      else if (view.type == 'side-panel')
+      {
+        // TODO
+        opera.postError('Getting a layout box is not supported for side panel views.');
+        return null;
+      }
+      else
+      {
+        return view.id == view_id ? this : null;
+      }
+    }
+    else
+    {
+      for (i = 0 ; child = this.children[i]; i++)
+      {
+        if (ret = child.get_cell(view_id))
+        {
+          return ret;
+        }
+      }
+    }
+    return null;
+  }
+
+  this.add_searchbar = function(searchbar)
+  {
+    this.searchbar = searchbar;
+    searchbar.cell = this;
+    this.update(this.left, this.top, true);
+  }
+
+  this.remove_searchbar = function(searchbar)
+  {
+    this.searchbar = null;
+    searchbar.cell = null;
+    this.update(this.left, this.top, true);
+  }
+
   this.setTooolbarVisibility = function(view_id, bool)
   {
     var child = null, i = 0;
@@ -208,9 +259,11 @@
   this.setup = function(view_id)
   {
     var view_id = this.tab && this.tab.activeTab;
-    if( view_id )
+    if (view_id)
     {
       this.toolbar.setup(view_id);
+      var search = UI.get_instance().get_search(view_id);
+      this.searchbar = search && search.get_searchbar() || null;
       this.update(this.left, this.top, true);
       this.container.setup(view_id);
     }
@@ -256,22 +309,30 @@
         this.left = left;
         this.top = top;
 
-        if( !this.tab.activeTab )
+        if (!this.tab.activeTab)
         {
           this.tab.trySetAnActiveTab();
         }
-        else if( !document.getElementById('toolbar-to-' + this.id)) // check if frame for view is created
-        {
-           this.tab.setActiveTab( '', true );
+        else if (!document.getElementById('toolbar-to-' + this.id)) // check if frame for view is created
+        {  
+           // This will trigger this.setup(), 
+           // which will call update again, but now with a toolbar, 
+           // meaning executing the next block.
+           // The view_id will be the current active view_id
+           // this will also cause a show-view message for that view 
+           // in setActiveTab.
+           this.tab.setActiveTab('', true);
         }
         else
         {
-
           this.tab.setDimensions(force_redraw);
           this.toolbar.setDimensions(force_redraw);
+          if (this.searchbar)
+          {
+            this.searchbar.setDimensions(force_redraw);
+          }
           this.container.setDimensions(force_redraw, is_resize);
         }
-
         this.is_dirty = false;
       }
     }

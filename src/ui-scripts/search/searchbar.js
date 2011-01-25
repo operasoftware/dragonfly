@@ -25,7 +25,7 @@ var SearchbarBase = function()
     {
       this.setCSSProperties()
     }
-    dim = this.cell.top - this.cell.toolbar.getBottomPosition();
+    dim = this.cell.toolbar.getBottomPosition();
     if (dim != this.top)
     {
       this.is_dirty = true;
@@ -53,13 +53,12 @@ var SearchbarBase = function()
       this.height = dim;
       this.offsetHeight = dim + this.vertical_border_padding;
     }
-
-    this.update(force_redraw)
+    this.update(force_redraw);
     // TODO
     // this.horizontal_nav.check_width();
   };
   
-  /*
+  // general to toolbar
   this.__defineGetter__("offsetHeight", function()
   {
     if (!this.default_height)
@@ -73,20 +72,21 @@ var SearchbarBase = function()
   {
     this._offset_height = offset_height;
   });
-  */
+  
 
-  /*
+  
   this.setVisibility = function(is_visible)
   {
     this.__is_visible = is_visible;
     if (this.cell && this.isvisible() && !is_visible)
     {
-      var modebar = this.getElement();
-      modebar.parentNode.removeChild(modebar);
+      var searchbar = this.getElement();
+      searchbar.parentNode.removeChild(searchbar);
     }
   };
 
 
+  /*
   this.setup = function(view_id)
   {
     // TODO
@@ -95,9 +95,8 @@ var SearchbarBase = function()
   };
   */  
 
-  this.init = function(view_id)
+  this.init = function()
   {
-    (window.searches || (window.searches = view_id))[view_id] = this;
     this.initBase();
   };
 };

@@ -65,7 +65,7 @@ var UIBase = new function()
 
   this.isvisible = function()
   {
-    return document.getElementById(this.type + '-to-' + this.cell.id) && true || false;
+    return this.cell && document.getElementById(this.type + '-to-' + this.cell.id) && true || false;
   }
 
   this.getElement = function()

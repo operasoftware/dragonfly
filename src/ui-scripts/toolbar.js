@@ -146,15 +146,16 @@ var ToolbarBase = function()
       this.__is_visible = toolbars[view_id].getVisibility();
     }
     var set_separator = this.buttons.length;
+    var search = this.has_search_button && UI.get_instance().get_search(view_id);
     if(this.__is_visible)
     {
       if(this.filters.length)
       {
         toolbar.render(templates.filters(this.filters));
       }
-      if(this.has_search_button)
+      if(search)
       {
-        toolbar.render(templates.search_button(this.filters));
+        toolbar.render(templates.search_button(search));
       }
       if( this.buttons.length )
       {

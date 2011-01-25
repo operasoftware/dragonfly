@@ -13,6 +13,7 @@
 
   this._tabbars = {};
   this._modebars = {};
+  this._searches = {};
 
    /* interface */
  
@@ -25,11 +26,17 @@
     
     this.get_modebar = function(id){};
 
+    this.get_search = function(id){};
+
     this.register_tabbar = function(id, tabs){};
     
     this.register_tabbar = function(id, modebar){};
+
+    this.register_search = function(id, search){};
     
     this.show_view = function(id){};
+
+    this.get_layout_box = function(view_id){};
 
 
     /* implemenation */
@@ -41,6 +48,16 @@
     this.get_modebar = function(id)
     {
       return this._modebars[id] || null;
+    };
+
+    this.get_search = function(id)
+    {
+      return this._searches[id] || null;
+    };
+
+    this.get_layout_box = function(view_id)
+    {
+      return window.topCell.get_cell(view_id);
     };
 
     this.register_tabbar = function(id, tabs)
@@ -59,6 +76,15 @@
         this._modebars[id] = new _class();
       }
       return this._modebars[id];
+    };
+
+    this.register_search = function(id, search)
+    {
+      if (!this._searches[id])
+      {
+        this._searches[id] = search;
+      }
+      return this._searches[id];
     };
     
     this.show_view = function(id)

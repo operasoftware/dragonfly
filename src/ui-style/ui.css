@@ -32,6 +32,7 @@ main-view { /**/
 windows-container, 
 toolbar, 
 modebar,
+searchbar,
 tabs, 
 container, 
 top-tabs, 
@@ -469,6 +470,13 @@ modebar {
 }
 modebar.hidden {
   display: none;
+}
+searchbar {
+  border: 0 solid #999;
+  border-width: 0 1px 1px;
+  padding: 3px 2px 2px;
+  height: 21px; /* 21 + 3 + 2 (padding) = 26 */
+  background: hsl(240, 90%, 90%);
 }
 
 window-select {
