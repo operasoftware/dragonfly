@@ -186,14 +186,15 @@ templates.network_response_body = function(req)
 {
   if (!req.responsebody)
   {
-    return ["div",
+    return ["p",
             "Response body not tracked. To always fetch response bodies, toggle the response body option on the \"network options\" tab. To retrieve only this body, click the button.",
             ["button",
              "Get response body",
              "data-resource-id", String(req.id),
              "handler", "get-response-body"
-             ]
-            ]
+            ],
+            "class", "response-view-body-container"
+           ];
   }
   else
   {
