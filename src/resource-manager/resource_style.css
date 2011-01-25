@@ -36,7 +36,7 @@
 }
 
 .request-list li:nth-child(odd) {
-    background-color: #d9d9d9;
+    background-color: rgba(0,0,0,0.025);
 }
 
 .request-list li > * {

@@ -248,7 +248,7 @@ templates.network_request_icon = function(request)
 templates.network_log_graph = function(ctx, width)
 {
   width = width;
-  var rowheight = 23;
+  var rowheight = 25;
   var height = ctx.resources.length * rowheight;
 
   var gradients = templates.gradient_defs();
@@ -354,11 +354,11 @@ templates.grid_lines = function(ctx, width, height)
     }
     else if (secondwidth > THRESH_500MS && !(n % 500))
     {
-      color = "gray";
+      color = "rgba(0,0,0,0.3)";
     }
     else if (secondwidth > THRESH_100MS && !(n % 100))
     {
-      color = "silver";
+      color = "rgba(0,0,0,0.1)";
     }
 
     if (color) {
@@ -415,7 +415,7 @@ templates.network_log_background = function(ctx, lineheight)
                        "y", String(cnt*lineheight),
                        "width", "100%",
                        "height", String(lineheight),
-                       "stroke-width", "0", "fill", (cnt%2 ?  "#f2f2f2" : "white")]);
+                       "stroke-width", "0", "fill", (cnt%2 ?  "rgba(0,0,0,0.025)" : "white")]);
   }
   return tpls;
 };

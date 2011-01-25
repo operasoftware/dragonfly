@@ -52,11 +52,26 @@
 
 .network-log-url-list li {
   height: 23px;
-  line-height: 23px;
-  padding: 0 5px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  border-top: 1px solid rgba(0,0,0,0.1);
+  padding: 1px 5px 00px 8px;
+  text-align: left;
+  overflow: hidden;
+}
+
+.network-log-url-list li:first-child {
+  border-top: none;
+}
+
+.network-log-url-list li:nth-child(even) {
+  background-color: rgba(0,0,0,0.025);
+}
+
+.network-log-url-list li:hover {
+  background-color: rgba(55,115,211,0.2);
+  color: #000;
 }
 
 li .resource-icon{
@@ -65,14 +80,12 @@ li .resource-icon{
   margin-right: 5px;
 }
 
-.network-log-url-list li:nth-child(even) {
-  background-color: #f2f2f2;
-}
-
+.network-log-url-list li:active,
+.network-log-url-list li:nth-child(even):active,
 .network-log-url-list li.selected,
 .network-log-url-list li:nth-child(even).selected
 {
-  background-color: #598bec;
+  background-color: rgba(55,115,211,0.8);
   color: #fff;
 }
 
