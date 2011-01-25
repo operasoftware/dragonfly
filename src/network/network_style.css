@@ -51,14 +51,8 @@
 }
 
 .network-log-url-list li {
-  height: 23px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
   border-top: 1px solid rgba(0,0,0,0.1);
-  padding: 1px 5px 00px 8px;
-  text-align: left;
-  overflow: hidden;
+  padding: 4px 0px 1px 8px;
 }
 
 .network-log-url-list li:first-child {
@@ -74,10 +68,24 @@
   color: #000;
 }
 
-li .resource-icon{
-  position: relative;
-  top: 3px;
-  margin-right: 5px;
+li span {
+  display: inline-block;
+}
+
+li span + span {
+  padding-left: 5px;
+  width: 189px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.log-url-list-status {
+  width: 25px;
+}
+
+.status-200 {
+  content: "";
 }
 
 .network-log-url-list li:active,
@@ -98,18 +106,18 @@ button[handler="close-request-detail"]
 }
 
 .network-details-url-list {
-  width: 250px;
+  width: 265px;
   height: 100%;
   padding: 0;
   overflow: hidden;
-  overflow-y: auto;
+  overflow-y: scroll;
 }
 
 .network-details-request
 {
   position: absolute;
   top:0;
-  left: 250px;
+  left: 265px;
   height: 100%;
   overflow: hidden;
   overflow-y: auto;
@@ -134,8 +142,10 @@ button[handler="close-request-detail"]
 .network-details-request th
 {
   text-align: left;
+  vertical-align: top;
   width: 110px;
 }
+
 
 h2
 {
