@@ -242,6 +242,8 @@ cls.Request = function(id)
   this.duration = null;
   this.request_headers = null;
   this.response_headers = null;
+  this.request_raw = null;
+  this.response_raw = null;
   this.method = null;
   this.status = null;
   this.responsecode = null;
@@ -289,6 +291,7 @@ cls.Request = function(id)
   this._update_event_requestheader = function(event)
   {
     this.request_headers = event.headerList;
+    this.request_raw = event.raw;
   }
 
   this._update_event_response = function(event)
@@ -300,6 +303,7 @@ cls.Request = function(id)
   this._update_event_responseheader = function(event)
   {
     this.response_headers = event.headerList;
+    this.response_raw = event.raw;
   }
 
   this._update_event_responsefinished = function(event)

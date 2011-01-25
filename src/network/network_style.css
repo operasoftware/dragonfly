@@ -105,12 +105,6 @@ button[handler="close-request-detail"]
   overflow-y: auto;
 }
 
-/* DELETE ME */
-.network-details-request hr
-{
-  display: none;
-}
-
 .network-details-request
 {
   position: absolute;

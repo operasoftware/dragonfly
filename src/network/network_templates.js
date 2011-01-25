@@ -136,36 +136,67 @@ templates.network_log_request_detail = function(ctx, selected)
   var req = ctx.get_resource(selected);
   return [
     ["button", "X", "handler", "close-request-detail"],
+    ["h2", "Summary"],
     ["table",
      ["tr", ["th", "URL:"], ["td", req.url]],
      ["tr", ["th", "Method:"], ["td", req.method || "-"]],
      ["tr", ["th", "Status:"], ["td", String(req.responsecode || "-")]],
+     ["tr", ["th", "Duration:"], ["td", String(req.duration ? "" + req.duration + "ms" : "-")]],
      "class", "resource-detail"
     ],
-    ["hr"],
-    ["h2", "Request details"],
-    templates.network_header_table(req.request_headers),
-    ["hr"],
-    ["h2", "Response details"],
-    templates.network_header_table(req.response_headers),
-    ["hr"],
+    ["h2", "Request details", ["button", "raw/cooked",
+                               "handler", "toggle-raw-cooked-request"]],
+    templates.request_details(req),
+    ["h2", "Response details", ["button", "raw/cooked",
+                                "handler", "toggle-raw-cooked-response"]],
+    templates.response_details(req),
     ["h2", "Body"],
     templates.network_response_body(req)
   ]
+}
+
+templates.request_details = function(req)
+{
+  if (settings.network_logger.get("request-view-mode") == "raw")
+  {
+    return templates.network_raw(req.request_raw);
+  }
+  else
+  {
+    return templates.network_header_table(req.request_headers);
+  }
+}
+
+templates.response_details = function(req)
+{
+  if (settings.network_logger.get("response-view-mode") == "raw")
+  {
+    return templates.network_raw(req.response_raw);
+  }
+  else
+  {
+    return templates.network_header_table(req.response_headers);
+  }
+}
+
+templates.network_raw = function(raw)
+{
+  return ["pre", ["code", raw]];
 }
 
 templates.network_response_body = function(req)
 {
   if (!req.responsebody)
   {
-    return ["div",
+    return ["p",
             "Response body not tracked. To always fetch response bodies, toggle the response body option on the \"network options\" tab. To retrieve only this body, click the button.",
             ["button",
              "Get response body",
              "data-resource-id", String(req.id),
              "handler", "get-response-body"
-             ]
-            ]
+            ],
+            "class", "response-view-body-container"
+           ];
   }
   else
   {
