@@ -11,11 +11,12 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
   this._is_listening = false;
   this._listening_for = null;
   this._resources = {};
+  this._uastring = window.services.scope.get_hello_message().userAgent;
 
   this._request_template = [
     "GET / HTTP/1.1",
     "Host: www.opera.com",
-    "User-Agent: Opera/9.80 (Windows NT 5.1; U; en) Presto/2.2.15 Version/10.00",
+    "User-Agent: " + this._uastring,
     "Accept: text/html, application/xml;q=0.9, application/xhtml xml, image/png, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1",
     "Accept-Language: nb-NO,nb;q=0.9,no-NO;q=0.8,no;q=0.7,en;q=0.6",
     "Accept-Charset: iso-8859-1, utf-8, utf-16, *;q=0.1",
@@ -32,7 +33,6 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
   {
     this._prev_url = this._urlfield.get_value();
     this._prev_request = this._input.get_value();
-    this._prev_response = this._output.textContent;
   };
 
   this.createView = function(container)
@@ -43,6 +43,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
   this._render_main_view = function(container)
   {
     container.clearAndRender(templates.network_request_crafter_main(this._prev_url,
+                                                                    this._is_listening,
                                                                     this._prev_request,
                                                                     this._prev_response));
     this._urlfield = new cls.BufferManager(container.querySelector("input"));
@@ -99,7 +100,6 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
   this._parse_headers = function(lines)
   {
     var headers = [];
-
     for (var n=0, line; line=lines[n]; n++)
     {
       if (line.indexOf(" ") == 0 || line.indexOf("\t") == 0)
@@ -115,17 +115,16 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
         }
         else
         { // should never happen with well formed headers
-          opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + "this header is malformed\n" + line);
+          opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + " Crafter: this header is malformed\n" + line);
         }
       }
       else
       {
         var parts = line.match(/([\w-]*?): (.*)/);
         if (!parts || parts.length!=3) {
-          opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + "Could not parse header!:\n" + line);
+          opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + "Crafter could not parse header!:\n" + line);
           continue;
         }
-
         headers.push([parts[1], parts[2]]);
       }
     }
@@ -153,9 +152,9 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
     this._resources = [];
     this._is_listening = true;
     this.ondestroy(); // saves state of in/out
-
     var tag = window.tagManager.set_callback(null, this._on_send_request_bound)
     this._service.requestCreateRequest(tag, request);
+    this.update();
   };
 
   this._handle_send_request_bound = function()
@@ -251,23 +250,16 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
     this.update();
   };
 
-  
-  
   var eh = window.eventHandlers;
   eh.click["request-crafter-send"] = this._handle_send_request_bound;
   eh.change["request-crafter-url-change"] = this._handle_url_change_bound;
   eh.keyup["request-crafter-url-change"] = this._handle_url_change_bound;
-  
-
 
   // for onchange and buffermanager  eh.click["request-crafter-send"] = this._handle_send_request_bound;
-
 
   this._service = window.services['resource-manager'];
   this._service.addListener("urlload", this._on_urlload_bound);
   this._service.addListener("request", this._on_request_bound);
-  this._service.addListener("requestheader", this._on_requestheader_bound);
-  this._service.addListener("requestfinished", this._on_requestfinished_bound);
   this._service.addListener("response", this._on_response_bound);
   this._service.addListener("responseheader", this._on_responseheader_bound);
   this._service.addListener("responsefinished", this._on_responsefinished_bound);
@@ -276,11 +268,3 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
   this.init(id, name, container_class, html, default_handler);
 };
 cls.RequestCraftingView.prototype = ViewBase;
-
-
-
-
-
-
-
-

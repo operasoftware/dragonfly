@@ -73,21 +73,21 @@ templates.network_options_header_table = function(headers)
   return tpl;
 };
 
-templates.network_request_crafter_main = function(url, request, response)
+templates.network_request_crafter_main = function(url, loading, request, response)
 {
   return ["div",
           ["div",
-           ["label", "URL:", ["input", "type", "text",
-                              "value", url || "",
-                              "handler", "request-crafter-url-change"
-                             ]
-           ],
-           ["textarea", request]
-          ],
-          ["button", "Send request", "handler", "request-crafter-send"],
-          ["hr"],
-          ["div", ["pre", ["code", response]]],
-          "class", "padding request-crafter"
+           ["h2", "URL"],
+           ["input", "type", "text",
+            "value", url || "",
+            "handler", "request-crafter-url-change"],
+           ["h2", "Request body"],
+            ["textarea", request],
+           ["button", "Send request", "handler", "request-crafter-send"],
+           ["h2", "Response body"],
+           (loading ? ["span", "Request in progress"] : ["div", ["pre", ["code", response]]]),
+           "class", "padding request-crafter"
+          ]
          ];
 };
 

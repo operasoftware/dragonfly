@@ -163,6 +163,11 @@ h2
   padding: 10px 30px;
 }
 
+.request-crafter input
+{
+  width: 100%;
+}
+
 .request-crafter textarea
 {
   width: 100%;
