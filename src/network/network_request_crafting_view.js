@@ -166,8 +166,17 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
 
   this._on_send_request_bound = function(status, msg)
   {
-    const RESOURCEID = 0;
-    this._listening_for = msg[RESOURCEID];
+    if (status == 0)
+    {
+      const RESOURCEID = 0;
+      this._listening_for = msg[RESOURCEID];
+    }
+    else
+    {
+      this._stop_loading();
+      this._prev_response = msg[0];
+      this.update();
+    }
   }.bind(this);
 
   this._handle_url_change_bound = function(evt, target)
@@ -190,12 +199,11 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
    * requested, we need to keep track of all of them until we figure it out.
    * This method determines if the event in data is still relevant.
    */
-  this._is_relevant = function(data)
+  this._is_relevant = function(rid)
   {
     if (!this._is_listening) { return false; }
-    else if (this._listening_for !== null &&
-             data.resourceID != this._listening_for) { return false; }
-    else if (! (data.resourceID in this._resources)) { return false; }
+    else if (this._listening_for !== null && rid != this._listening_for) { return false; }
+    else if (! (rid in this._resources)) { return false; }
     else { return true; }
   }
 
@@ -210,28 +218,28 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
   this._on_response_bound = function(msg)
   {
     var data = new cls.ResourceManager["1.0"].Response(msg);
-    if (!this._is_relevant(data)) { return; }
+    if (!this._is_relevant(data.resourceID)) { return; }
     this._resources[data.resourceID].response = data;
   }.bind(this);
 
   this._on_responseheader_bound = function(msg)
   {
     var data = new cls.ResourceManager["1.0"].ResponseHeader(msg);
-    if (!this._is_relevant(data)) { return; }
+    if (!this._is_relevant(data.resourceID)) { return; }
     this._resources[data.resourceID].responseheader = data;
   }.bind(this);
 
   this._on_responsefinished_bound = function(msg)
   {
     var data = new cls.ResourceManager["1.0"].ResponseFinished(msg);
-    if (!this._is_relevant(data)) { return; }
+    if (!this._is_relevant(data.resourceID)) { return; }
     this._resources[data.resourceID].responsefinished = data;
   }.bind(this);
 
   this._on_urlfinished_bound = function(msg)
   {
     var data = new cls.ResourceManager["1.0"].UrlFinished(msg);
-    if (!this._is_relevant(data)) { return; }
+    if (!this._is_relevant(data.resourceID)) { return; }
     this._resources[data.resourceID].urlfinished = data;
     if (this._listening_for == data.resourceID)
     {
@@ -239,16 +247,37 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
     }
   }.bind(this);
 
-  this._on_got_relevant_response = function(data)
+  this._on_urlredirect_bound = function(data)
   {
-    this._is_listening = false;
-    var resource = this._resources[this._listening_for]
-    this._listening_for = null;
-    this._resources = {};
-    var response = resource.responseheader.raw + resource.responsefinished.data.content.stringData;
+    var data = new cls.ResourceManager["1.0"].UrlRedirect(msg);
+    if (!this._is_relevant(data.fromResourceID)) { return; }
+    this._resources[data.fromResourceID].urlredirect = data;
+    if (this._listening_for == data.fromResourceID)
+    {
+      this._on_got_relevant_response();
+    }
+  }.bind(this);
+
+  this._on_got_relevant_response = function()
+  {
+    var resource = this._resources[this._listening_for];
+    this._stop_loading();
+    var response = resource.responseheader.raw;
+    if (!resource.urlredirect)
+    {
+      response += resource.responsefinished.data.content.stringData;
+    }
+
     this._prev_response = response;
     this.update();
   };
+
+  this._stop_loading = function()
+  {
+    this._is_listening = false;
+    this._listening_for = null;
+    this._resources = {};
+  }
 
   var eh = window.eventHandlers;
   eh.click["request-crafter-send"] = this._handle_send_request_bound;
@@ -263,6 +292,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
   this._service.addListener("response", this._on_response_bound);
   this._service.addListener("responseheader", this._on_responseheader_bound);
   this._service.addListener("responsefinished", this._on_responsefinished_bound);
+  this._service.addListener("urlredirect", this._on_urlredirect_bound);
   this._service.addListener("urlfinished", this._on_urlfinished_bound);
 
   this.init(id, name, container_class, html, default_handler);
