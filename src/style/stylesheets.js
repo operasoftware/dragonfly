@@ -28,6 +28,8 @@ cls.Stylesheets = function()
 
   var line_height_index = 0;
 
+  this._is_getting_index_map = false;
+
   var __color_properties = 
   {
     'fill': true,
@@ -949,8 +951,9 @@ cls.Stylesheets = function()
       return '';
     }
 
-    if (!__indexMap)
+    if (!__indexMap && !this._is_getting_index_map)
     {
+      this._is_getting_index_map = true;
       var tag = tagManager.set_callback(null, handleGetIndexMap, [org_args]);
       services['ecmascript-debugger'].requestCssGetIndexMap(tag);
       return '';
@@ -968,8 +971,9 @@ cls.Stylesheets = function()
 
     if (org_args && runtime_onload_handler.check(rt_id, org_args))
     {
-      if (!__indexMap)
+      if (!__indexMap && !this._is_getting_index_map)
       {
+        this._is_getting_index_map = true;
         var tag = tagManager.set_callback(null, handleGetIndexMap, []);
         services['ecmascript-debugger'].requestCssGetIndexMap(tag);
       }
@@ -1094,7 +1098,12 @@ cls.Stylesheets = function()
   var handleGetIndexMap = function(status, message, org_args)
   {
     const NAME_LIST = 0;
-    window.css_index_map = __indexMap = message[NAME_LIST];
+    var index_map = message[NAME_LIST];
+    if (!index_map)
+    {
+      return;
+    }
+    window.css_index_map = __indexMap = index_map;
     window.inherited_props_index_list = [];
     var prop = '', i = 0;
     var temp = [];
@@ -1484,14 +1493,14 @@ cls.Stylesheets = function()
     {
       var rt_id = __selectedRules.runtime_id, cur_rt_id = '', i = 0;
 
-      for ( ; (cur_rt_id = msg.activeTab[i]) && cur_rt_id != rt_id ; i++);
+      for ( ; (cur_rt_id = msg.runtimes_with_dom[i]) && cur_rt_id != rt_id ; i++);
       if (!cur_rt_id)
       {
         views.stylesheets.clearAllContainers();
       }
     }
 
-    if (!msg.activeTab.length)
+    if (!msg.runtimes_with_dom.length)
     {
       __sheets = {};
       // document.styleSheets[index].cssRules with runtime-id and index as keys
@@ -1503,7 +1512,7 @@ cls.Stylesheets = function()
     }
     else
     {
-      updateOnNewStylesheets(msg.activeTab.slice(0));
+      updateOnNewStylesheets(msg.runtimes_with_dom.slice(0));
       checkNewRts({});
     }
   };
