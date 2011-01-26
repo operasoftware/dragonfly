@@ -37,7 +37,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
       if (this._selected !== null)
       {
-        var w = container.getBoundingClientRect().width - 320;
+        var w = container.getBoundingClientRect().width - 250;
         var h = container.getBoundingClientRect().height;
         container.clearAndRender(templates.network_log_details(ctx, this._selected));
         this._scrollcontainer = container.querySelector(".network-details-url-list");
@@ -49,7 +49,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       else
       {
         var contheight = container.getBoundingClientRect().height - 2;
-        var availwidth = container.getBoundingClientRect().width - 300;
+        var availwidth = container.getBoundingClientRect().width - 250;
         var duration = ctx.get_duration();
         var graphwidth = availwidth;
 
