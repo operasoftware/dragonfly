@@ -22,7 +22,7 @@
  *     <dd>If the application was set up</dd>
  *
  *     <dt>active-tab</dt>
- *     <dd>When the debug context changes or the top runtime of the active window changes. This will happen if a link is clicked in the active window. Payload: array msg.activeTab</dd>
+ *     <dd>When the debug context changes or the top runtime of the active window changes. This will happen if a link is clicked in the active window. Payload: array msg.activeTab (contains all runtimes), array msg.runtimes_with_dom (contains all runtimes which have a DOM, i.e. filters out extensions)</dd>
  *
        <dt>new-top-runtime</dt>
        <dd>the top runtime of the selected window has changed. Payload: msg.top_runtime_id</dd>
