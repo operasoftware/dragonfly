@@ -54,15 +54,20 @@
     var ret = [];
     for (var i = 0, item; item = items[i]; i++)
     {
-      var checked = false;
-      if (item.setting)
+      var icon = "";
+      if (!!item.checked || (settings[item.menu_id] && !!settings[item.menu_id].get(item.id)))
       {
-        checked = settings[item.menu_id].get(item.id);
+        icon = "✔";
       }
+      else if (!!item.selected)
+      {
+        icon = "⚫";
+      }
+
       if (!item.separator)
       {
         ret.push(["li",
-            [["span", checked ? "✔" : "", "class", "checkbox"], ["span", item.label]],
+            [["span", icon, "class", "contextmenu-icon"], ["span", item.label]],
             "data-handler-id", item.id,
             "data-menu-id", item.menu_id,
             "class", item.disabled ? "disabled" : ""
@@ -283,11 +288,18 @@
           'toolbar-separator'
         ],
         window['cst-selects']['debugger-menu'].select_template(),
-        [
+        is_attached
+        ? [
           'button',
           'handler', 'top-window-toggle-attach',
-          'class', 'switch' + (is_attached ? ' attached' : ''),
+          'class', 'switch attached',
           'title', ui_strings.S_SWITCH_DETACH_WINDOW
+          ]
+        : [
+          'button',
+          'handler', 'top-window-toggle-attach',
+          'class', 'switch',
+          'title', ui_strings.S_SWITCH_ATTACH_WINDOW
         ],
         is_attached
         ? [

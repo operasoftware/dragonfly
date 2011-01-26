@@ -305,7 +305,12 @@ cls.DOMView.create_ui_widgets = function()
             }
           ]
           .concat(ContextMenu.separator)
-          .concat(dom_element_common_items);
+          .concat(dom_element_common_items)
+          .concat(ContextMenu.separator)
+          .concat({
+            label: ui_strings.M_CONTEXTMENU_EXPAND_COLLAPSE_SUBTREE,
+            handler: contextmenu_expand_collapse_subtree
+          });
           break;
 
         case "key":
@@ -317,7 +322,11 @@ cls.DOMView.create_ui_widgets = function()
             {
               label: ui_strings.M_CONTEXTMENU_ADD_ATTRIBUTE,
               handler: contextmenu_add_attribute
-            }
+            }/*,
+            {
+              label: "Remove attribute", // Add ui string
+              handler: contextmenu_remove_attribute
+            }*/
           ]
           .concat(ContextMenu.separator)
           .concat(dom_element_common_items);
@@ -366,7 +375,7 @@ cls.DOMView.create_ui_widgets = function()
 
     if (target)
     {
-      broker.dispatch_action("dom", "edit-dom", event, event.target);
+      broker.dispatch_action("dom", "edit-dom", event, target);
     }
   }
 
@@ -375,18 +384,18 @@ cls.DOMView.create_ui_widgets = function()
     broker.dispatch_action("dom", "insert-attribute-edit", event, event.target);
   }
 
+  function contextmenu_remove_attribute(event, target)
+  {
+    broker.dispatch_action("dom", "remove-attribute", event, event.target);
+  }
+
   function contextmenu_remove_node(event, target)
   {
-    var ele = event.target.has_attr("parent-node-chain", "ref-id");
-    var rt_id = parseInt(ele.get_attr("parent-node-chain", "rt-id"));
-    var ref_id = parseInt(ele.get_attr("parent-node-chain", "ref-id"));
-    var tag = 0;
-    if (!settings.dom.get("update-on-dom-node-inserted"))
-    {
-      var cb = window.dom_data.remove_node.bind(window.dom_data, rt_id, ref_id);
-      tag = tag_manager.set_callback(null, cb);
-    }
-    services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, "el.parentNode.removeChild(el)", [["el", ref_id]]]);
+    broker.dispatch_action("dom", "remove-node", event, event.target);
+  }
+
+  function contextmenu_expand_collapse_subtree(event, target) {
+    broker.dispatch_action("dom", "expand-collapse-whole-node", event, event.target);
   }
 
   new Switches

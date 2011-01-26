@@ -1,7 +1,7 @@
 ﻿/**
  * @constructor
  */
-var ContextMenu = function() {
+function ContextMenu() {
   if (ContextMenu._instance)
   {
     return ContextMenu._instance;
@@ -9,9 +9,9 @@ var ContextMenu = function() {
   ContextMenu._instance = this;
 
   /**
-   * Holds all registered context menus.
+   * All registered context menus.
    */
-  this.registered_menus = {};
+  this._registered_menus = {};
 
   this._broker = ActionBroker.get_instance();
 
@@ -22,13 +22,15 @@ var ContextMenu = function() {
    *                         attribute in the markup. May be an already existing
    *                         menu, in which case the items are added.
    * @param {Array} item_list An array of objects with 'label' and 'handler'
-   *                          (function).
+   *                          (function). Optionally it may have 'checked' (boolean)
+   *                          for showing a checkbox before the item, or 'selected'
+   *                          (boolean) for showing the selected item in a group.
    */
   this.register = function(menu_id, item_list)
   {
     if (item_list)
     {
-      this.registered_menus[menu_id] = item_list;
+      this._registered_menus[menu_id] = item_list;
     }
   };
 
@@ -54,17 +56,15 @@ var ContextMenu = function() {
       return;
     }
 
-    var speclinks = SpecLinks.get_instance();
     var ele = event.target;
     var all_items = [];
-    var items = [];
     var menu_id = null;
     // This traverses up the tree and collects all menus it finds, and
     // concatenates them with a separator between each menu. It stops if it
     // finds a data-menu attribute with a blank value.
     while (ele && ele != document && (menu_id = ele.getAttribute("data-menu")) !== "")
     {
-      items = this.registered_menus[menu_id];
+      var items = this._registered_menus[menu_id];
       if (items && items.length)
       {
         if (all_items.length)
@@ -78,15 +78,15 @@ var ContextMenu = function() {
       ele = ele.parentNode;
     }
 
-    // Grab the first spec link in the parent node chain.
     // This should preferably not be done inside ContextMenu.
+    var speclinks = SpecLinks.get_instance();
     var spec = event.target.get_attr("parent-node-chain", "data-spec");
     if (spec)
     {
       var specs = speclinks.get_spec_links(spec);
       if (specs.length)
       {
-        items = specs.map(function(spec)
+        var items = specs.map(function(spec)
         {
           return {
             label: ui_strings.M_CONTEXTMENU_SPEC_LINK.replace("%s", spec.prop),
@@ -104,7 +104,11 @@ var ContextMenu = function() {
       {
         all_items.push(ContextMenu.separator);
       }
-      all_items = all_items.concat(items);
+
+      if (items)
+      {
+        all_items = all_items.concat(items);
+      }
     }
 
     if (all_items.length)
@@ -232,7 +236,7 @@ var ContextMenu = function() {
     {
       if (target.getAttribute("data-handler-id"))
       {
-        var items = this.registered_menus[target.getAttribute("data-menu-id")];
+        var items = this._registered_menus[target.getAttribute("data-menu-id")];
         items = this._expand_all_items(items, this._current_event);
         for (var i = 0, item; item = items[i]; i++)
         {
@@ -256,6 +260,4 @@ ContextMenu.get_instance = function()
 };
 
 ContextMenu.separator = {separator: true};
-
-
 

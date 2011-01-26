@@ -343,6 +343,17 @@ var Editor = function(actions)
     }
   };
 
+  this.insert_declaration_edit = function(event, target)
+  {
+    var rule = event.target.has_attr("parent-node-chain", "rule-id");
+    var last_decl = rule.querySelector("property:last-of-type");
+    var new_decl = document.createElement("property");
+    rule.insertBefore(new_decl, last_decl.nextSibling);
+    new_decl.textContent = "\u00A0"; // Need some content for the height to be set correctly
+    this.edit(event, new_decl);
+    this.textarea.value = "";
+  };
+
   this.edit = function(event, ref_ele)
   {
     var ele = ref_ele || event.target;
@@ -833,19 +844,19 @@ var Editor = function(actions)
         this.saved_style_dec[VALUE_LIST].push(props[VALUE]);
         this.saved_style_dec[PRIORITY_LIST].push(props[PRIORITY]);
 
-        var propertyEle = document.createElement('property');
+        var property_ele = document.createElement('property');
         if (this.textarea_container.parentNode.hasClass("overwritten"))
         {
-          propertyEle.addClass("overwritten");
+          property_ele.addClass("overwritten");
         }
         if (is_disabled)
         {
-          propertyEle.addClass("disabled");
+          property_ele.addClass("disabled");
         }
         this.textarea_container.parentNode.removeClass("overwritten");
         this.textarea_container.parentNode.removeClass("disabled");
         prop = this.textarea_container.parentElement.parentElement.
-          insertBefore(propertyEle, this.textarea_container.parentElement);
+          insertBefore(property_ele, this.textarea_container.parentElement);
         prop.innerHTML = window.stylesheets.create_declaration(props[0], props[1], props[2], this.context_rule_id, is_disabled);
         this.textarea.value =
         this.context_cur_text_content =

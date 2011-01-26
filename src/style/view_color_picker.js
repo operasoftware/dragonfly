@@ -63,9 +63,9 @@ window.cls.ColorPickerView = function(id, name, container_class)
     container.clearAndRender(color_picker.render());
   }
 
-  this.show_color_picker = function(event)
+  this.show_color_picker = function(target)
   {
-    var target = event.target, parent = target.parentNode;
+    var parent = target.parentNode;
     if (!parent.parentNode.hasClass('disabled'))
     {
       if (this._edit_context)
@@ -149,5 +149,5 @@ window.cls.ColorPickerView.prototype = ViewBase;
 
 window.eventHandlers.click['show-color-picker'] = function(event, target)
 {
-  window.views['color-selector'].show_color_picker(event);
+  window.views['color-selector'].show_color_picker(event.target);
 };

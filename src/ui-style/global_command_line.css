@@ -1,9 +1,15 @@
-﻿[view_id=command_line] {
+/**
+ * Note that everything here is very temporary. This needs to be done properly.
+ *
+ */
+
+[view_id=command_line] {
     width: 100% !important;
     border-width: 2px 0 0;
     border-radius: 0;
     bottom: 0;
     height: auto !important;
+    background: rgba(0, 0, 0, .85);
 }
 [view_id=command_line] container {
     border-radius: 0 !important;
@@ -21,6 +27,7 @@
 [view_id=command_line] .stylesheets value,
 [view_id=command_line] .css-inspector value,
 [view_id=command_line] .js-source .string,
+[view_id=command_line] .js-source .object,
 [view_id=command_line] .js-source .number
 {
   color: #f33;
@@ -50,4 +57,7 @@
 [view_id=command_line] ::selection {
   color: #f33;
 }
-
+[view_id=command_line] cst-select {
+  width: 50%;
+  color: #000;
+}

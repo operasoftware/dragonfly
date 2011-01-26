@@ -13,15 +13,14 @@ window.cls.Client = function()
   arguments.callee.instance = this;
 
   var self = this;
-  var _client_id = 0;
+  var clients = [];
   var _first_setup = true;
   var _waiting_screen_timeout = 0;
   var cbs = [];
-  var is_connect_callback_called_map = {};
 
-  var _on_host_connected = function(client_id, servicelist)
+  var _on_host_connected = function(client, servicelist)
   {
-    is_connect_callback_called_map[_client_id] = true;
+    client.connected = true;
     if(_waiting_screen_timeout)
     {
       clearTimeout(_waiting_screen_timeout);
@@ -67,30 +66,40 @@ window.cls.Client = function()
     }
   }
 
-  var _on_host_quit = function(client_id, port)
+  var _on_host_quit = function(client, port)
   {
-    if (is_connect_callback_called_map[client_id])
+    if (client.connected)
     {
       window.window_manager_data.clear_debug_context();
       messages.post('host-state', {state: global_state.ui_framework.spin_state = 'inactive'});
       client.setup();
     }
+    else if (client.is_remote_debug)
+    {
+      document.getElementById("remote-debug-settings").clearAndRender(
+        window.templates.remote_debug_settings(port + 1, ui_strings.S_INFO_ERROR_LISTENING.replace(/%s/, port))
+      );
+
+      // Reset this so we don't start in remote debug next time
+      settings.debug_remote_setting.set('debug-remote', false);
+      window.helpers.setCookie('debug-remote', "false");
+    }
     else
     {
-      show_error(ui_strings.S_INFO_ERROR_LISTENING.replace(/%s/, port), port);
+      show_info(ui_strings.S_INFO_ERROR_LISTENING.replace(/%s/, port), port);
     }
   }
 
-  var get_quit_callback = function(client_id, port)
+  var get_quit_callback = function(client, port)
   {
     // workaround for bug CORE-25389
     // onQuit() callback is called twice when
     // creating new client with addScopeClient
     return function()
     {
-      if(client_id == _client_id)
+      if (client.id == clients.length)
       {
-        _on_host_quit(client_id, port);
+        _on_host_quit(client, port);
       }
     }
   }
@@ -112,54 +121,99 @@ window.cls.Client = function()
       0);
   }
 
-  this.setup = function()
+  this.setup = function(is_remote_debug)
   {
-    _client_id++;
-    is_connect_callback_called_map[_client_id] = false;
-    window.ini || ( window.ini = {debug: false} );
+    var client = {
+      id: clients.length + 1,
+      connected: false,
+      is_remote_debug: !!is_remote_debug
+    };
+    clients.push(client);
+
+    window.ini || (window.ini = {debug: false});
     window.messages.post('reset-state');
     if (!opera.scopeAddClient)
     {
       // implement the scope DOM API
       cls.ScopeHTTPInterface.call(opera /*, force_stp_0 */);
     }
-    if( !opera.stpVersion )
+
+    if (!opera.stpVersion)
     {
       // reimplement the scope DOM API STP/1 compatible
       // in case of a (builtin) STP/0 proxy
       cls.STP_0_Wrapper.call(opera);
     }
+
     var port = _get_port_number();
-    var cb_index = cbs.push(get_quit_callback(_client_id, port)) - 1;
+    var cb_index = cbs.push(get_quit_callback(client, port)) - 1;
     opera.scopeAddClient(
-        _on_host_connected.bind(this, _client_id),
+        _on_host_connected.bind(this, client),
         cls.ServiceBase.get_generic_message_handler(),
         cbs[cb_index],
         port
       );
+
     if(window.ini.debug && !opera.scopeHTTPInterface)
     {
       cls.debug.wrap_transmit();
     }
-    if(window.topCell)
+
+    this._create_ui(is_remote_debug, port);
+  };
+
+  // TODO: rename
+  this._create_ui = function(is_remote_debug, port)
+  {
+    // Move this to some function
+    if (!is_remote_debug)
     {
-      window.topCell.cleanUp();
+      this.create_top_level_views(window.services);
+      if(window.topCell)
+      {
+        window.topCell.cleanUp();
+      }
     }
+
     if(_first_setup)
     {
       _first_setup = false;
       _waiting_screen_timeout = setTimeout(function() {
-        show_error(ui_strings.S_INFO_WAITING_FORHOST_CONNECTION.replace(/%s/, port), port);
+        show_info(ui_strings.S_INFO_WAITING_FORHOST_CONNECTION.replace(/%s/, port), port);
       }, 250);
-
+    }
+    else if (is_remote_debug)
+    {
+      document.getElementById("remote-debug-settings").clearAndRender([
+        ["p",
+          ui_strings.S_INFO_WAITING_FORHOST_CONNECTION.replace(/%s/, port)
+          //"Waiting for a host connection." +
+          //" Go to opera:debug in your host and use <IP> and %s to connect.".replace(/%s/, port)
+        ],
+        //["p",
+        //  ["img",
+        //    "src",
+        //    "https://chart.googleapis.com/chart?chs=100x100&cht=qr&chl=opera%3Adebug&chld=L|0&choe=UTF-8",
+        //    "width", "100",
+        //    "height", "100"
+        //  ]
+        //],
+        ["p",
+          ["button",
+            ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG,
+            "handler",
+            "cancel-remote-debug"
+          ]
+        ]
+      ]);
     }
     else
     {
-      show_error(ui_strings.S_INFO_WAITING_FORHOST_CONNECTION.replace(/%s/, port), port);
+      show_info(ui_strings.S_INFO_WAITING_FORHOST_CONNECTION.replace(/%s/, port), port);
     }
-  }
+  };
 
-  var show_error = function(msg, port)
+  var show_info = function(msg, port)
   {
     viewport.innerHTML =
     "<div class='padding' id='waiting-for-connection'>" +
@@ -256,6 +310,9 @@ window.cls.Client = function()
                       layouts.export_rough_layout,
                       null,
                       services);
+    new CompositeView('resource_panel',
+                      ui_strings.M_VIEW_LABEL_RESOURCES,
+                      layouts.resource_rough_layout);
   }
 
   this.on_services_created =  function()
@@ -399,7 +456,7 @@ ui_framework.layouts.dom_rough_layout =
   children:
   [
     {
-      width: 700, 
+      width: 700,
       tabbar: { tabs: ['dom'], is_hidden: true }
     },
     {
@@ -417,8 +474,8 @@ ui_framework.layouts.js_rough_layout =
       width: 700,
       children:
       [
-        { 
-          height: 350, 
+        {
+          height: 350,
           tabbar: { tabs: ['js_source'], is_hidden: true }
         }
       ]
@@ -427,11 +484,11 @@ ui_framework.layouts.js_rough_layout =
       width: 250,
       children:
       [
-        { 
+        {
           height: 250,
           tabs: function(services)
           {
-            return services['ecmascript-debugger'].major_version > 5 ? 
+            return services['ecmascript-debugger'].major_version > 5 ?
                    ['scripts-side-panel', 'event-breakpoints'] :
                    ['scripts-side-panel'];
           }
@@ -446,8 +503,27 @@ ui_framework.layouts.network_rough_layout =
     dir: 'v',
     width: 1000,
     height: 1000,
-    children: [ { height: 1000, tabbar: { id: "request", tabs: ['request_list'] } } ]
+    children: [ { height: 1000, tabs:
+                  [
+                    'network_logger',
+                    'request_crafter',
+                    'network_options'
+                  ]
+                }
+              ]
 }
+
+
+ui_framework.layouts.resource_rough_layout =
+{
+    dir: 'v',
+    width: 1000,
+    height: 1000,
+    children: [ { height: 1000, tabbar: { id: "resources", tabs: ['resource_all',
+                                                                  // 'resource_fonts', 'resource_images'
+                                                                 ] } } ]
+}
+
 
 ui_framework.layouts.utils_rough_layout =
 {
@@ -470,13 +546,13 @@ ui_framework.layouts.main_layout =
   id: 'main-view',
   // tab (and tabbar) can either be a layout list
   // or a function returning a layout list
-  // the function gets called with the services returned 
+  // the function gets called with the services returned
   // and created depending on Scope.HostInfo
   tabs: function(services)
   {
     // return a layout depending on services
     // e.g. services['ecmascript-debugger'].version
     // e.g. services['ecmascript-debugger'].is_implemented
-    return ['dom_mode', 'js_mode', 'network_mode', 'storage', 'console_mode', 'utils'];
+      return ['dom_mode', 'js_mode', 'network_mode', 'resource_panel', 'storage', 'console_mode', 'utils'];
   }
 }

@@ -861,8 +861,8 @@ cls.SimpleJSParser.prototype = new function()
     }
     __ret[__ret.length] = __line_number >=  __highlight_line_start &&
                           __line_number <=  __highlight_line_end ?
-                          "<" + __current_line_ele + " class='highlight-source'>" + __line + "</" + __current_line_ele + ">" :
-                          "<" + __current_line_ele + ">" + __line + "</" + __current_line_ele + ">";
+                          "<" + __current_line_ele + " class='highlight-source' data-line-number='" + (__line_number+1) + "'>" + __line + "</" + __current_line_ele + ">" :
+                          "<" + __current_line_ele + " data-line-number='" + (__line_number+1) + "'>" + __line + "</" + __current_line_ele + ">";
     __line='';
     __buffer = '';
     return (++__line_number) > __max_line_number;
@@ -876,15 +876,15 @@ cls.SimpleJSParser.prototype = new function()
     }
     if(__line_number < __parse_error_line)
     {
-      __ret[__ret.length] = "<" + __current_line_ele + ">" + __line + "</" + __current_line_ele + ">";
+      __ret[__ret.length] = "<" + __current_line_ele + " data-line-number='" + (__line_number+1) + "'>" + __line + "</" + __current_line_ele + ">";
     }
     else if(__line_number == __parse_error_line)
     {
-      __ret[__ret.length] = "<" + __current_line_ele + " class='first-error-line'>" + __line + "</" + __current_line_ele + ">";
+      __ret[__ret.length] = "<" + __current_line_ele + " class='first-error-line' data-line-number='" + (__line_number+1) + "'>" + __line + "</" + __current_line_ele + ">";
     }
     else
     {
-      __ret[__ret.length] = "<" + __current_line_ele + " class='error-line error'>" + __line + "</" + __current_line_ele + ">";
+      __ret[__ret.length] = "<" + __current_line_ele + " class='error-line error' data-line-number='" + (__line_number+1) + "'>" + __line + "</" + __current_line_ele + ">";
     }
     __line='';
     __buffer = '';

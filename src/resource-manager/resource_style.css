@@ -1,0 +1,134 @@
+.resource-main {
+    padding: 0;
+    margin: 0;
+}
+
+.resource-listwrapper {
+    vertical-align: top;
+    width: 190px;
+    display: inline-block;
+}
+
+.resource-graphwrapper {
+    vertical-align: top;
+    width: 800px;
+    display: inline-block;
+}
+
+
+.request-list {
+    margin: 0;
+    width: 190px;
+    font-family: sans-serif;
+    font-size: 10px;
+    table-style: none;
+    display: table;
+    table-layout: fixed;
+    padding-left: 0;
+    background-color: #e6e6e6;
+}
+
+.request-list li {
+    height: 30px;
+    line-height: 30px;
+    vertical-align: middle;
+    display: table-row;
+}
+
+.request-list li:nth-child(odd) {
+    background-color: rgba(0,0,0,0.025);
+}
+
+.request-list li > * {
+    display: table-cell;
+}
+
+.request-list li > *:nth-child(1) {
+    width: 28px;
+}
+
+.request-list li > *:nth-child(2) {
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.request-list li > *:nth-child(3) {
+    width: 20px;
+    text-align: right;
+    padding-right: 6px;
+    color: #999999;
+}
+
+
+.resource-detail {
+
+}
+
+.resource-image-view {
+
+}
+
+.resource-image-box {
+    padding: 8px;
+    margin: 8px;
+    vertical-align: top;
+    display: inline-block;
+    width: 100px;
+    height: 120px;
+    border: solid thin black;
+    text-align: center;
+    overflow: hidden;
+}
+
+.resource-image-box img {
+    max-width: 70px;
+    max-height: 70px;
+}
+
+.resource-icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background-image: url(../ui-images/type_other.png);
+}
+
+.resource-type-markup {
+    background-image: url(../ui-images/type_markup.png);
+}
+
+.resource-type-css {
+    background-image: url(../ui-images/type_style.png);
+}
+
+.resource-type-script {
+    background-image: url(../ui-images/type_script.png);
+}
+
+.resource-type-flash {
+    background-image: url(../ui-images/type_flash.png);
+}
+
+.resource-type-image {
+    background-image: url(../ui-images/type_picture.png);
+}
+
+.resource-data-wrapper {
+    text-align: center;
+}
+
+.resource-data-wrapper > *{
+    text-align: left;
+}
+
+.resource-data-wrapper.image > * {
+    text-align: center;
+}
+
+.resource-detail-container {
+    display: block;
+    box-sizing: border-box;
+    height: 100%;
+    overflow: auto;
+}

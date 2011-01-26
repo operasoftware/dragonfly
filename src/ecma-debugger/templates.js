@@ -1,4 +1,4 @@
-﻿window.templates = window.templates || {};
+window.templates = window.templates || {};
 
 (function()
 {
@@ -343,15 +343,11 @@
 
   this.frame = function(frame, is_top)
   {
-    // %(function name)s line %(line number)s script id %(script id)s
     return ['li',
-      ui_strings.S_TEXT_CALL_STACK_FRAME_LINE.
-        replace("%(FUNCTION_NAME)s", ( frame.fn_name || ui_strings.ANONYMOUS_FUNCTION_NAME ) ).
-        replace("%(LINE_NUMBER)s", ( frame.line || '-' ) ).
-        replace("%(SCRIPT_ID)s", ( frame.script_id || '-' ) ),
+             ['span', frame.fn_name, 'class', 'scope-name'],
+             ['span', " " + (frame.script_id ? helpers.basename(runtimes.getScript(frame.script_id).uri) + ':' + frame.line : ""), 'class', 'file-line'],
       'handler', 'show-frame',
       'ref-id', frame.id,
-
     ].concat( is_top ? ['class', 'selected'] : [] );
   }
 
@@ -552,7 +548,12 @@ MODE ::= "<mode>"
       {
         browserLanguge: "be",
         key: "be",
-        name: "български език"
+        name: "Беларуская"
+      },
+      {
+        browserLanguge: "bg",
+        key: "bg",
+        name: "Български"
       },
       {
         browserLanguge: "cs",
@@ -577,7 +578,12 @@ MODE ::= "<mode>"
       {
         browserLanguge: "en",
         key: "en",
-        name: "English"
+        name: "U.S. English"
+      },
+      {
+        browserLanguge: "en-GB",
+        key: "en-GB",
+        name: "British English"
       },
       {
         browserLanguge: "es-ES",
@@ -695,9 +701,24 @@ MODE ::= "<mode>"
         name: "Português (Brasil)"
       },
       {
+        browserLanguge: "ro",
+        key: "ro",
+        name: "Română"
+      },
+      {
         browserLanguge: "ru",
         key: "ru",
         name: "Русский язык"
+      },
+      {
+        browserLanguge: "sk",
+        key: "sk",
+        name: "Slovenčina"
+      },
+      {
+        browserLanguge: "sr",
+        key: "sr",
+        name: "српски"
       },
       {
         browserLanguge: "sv",
