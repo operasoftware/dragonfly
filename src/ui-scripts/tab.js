@@ -54,7 +54,8 @@ var Tab = function(ref_id, name, has_close_button)
   // These methods really belong to TopTabs, should make a TopTab class
   this._get_top_tab_element = function()
   {
-    return document.querySelector("top-tabs").querySelector("[ref-id='" + this.ref_id + "']");
+    var top_tabs = document.querySelector("top-tabs");
+    return top_tabs ? top_tabs.querySelector("[ref-id='" + this.ref_id + "']") : null;
   };
 
   this.set_tab_badge = function(type, content)
