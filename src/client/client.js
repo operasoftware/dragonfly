@@ -569,6 +569,6 @@ ui_framework.layouts.main_layout =
     // return a layout depending on services
     // e.g. services['ecmascript-debugger'].version
     // e.g. services['ecmascript-debugger'].is_implemented
-    return ['dom_mode', 'js_mode', 'network_mode', 'storage', 'console_mode', 'utils'];
+    return ['dom_mode', {view: 'js_mode', tab_class: JSTab}, 'network_mode', 'storage', 'console_mode', 'utils'];
   }
 }

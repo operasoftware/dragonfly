@@ -551,12 +551,12 @@ top-tabs tab.alert.active {
 }
 
 /* Alert state - Information */
-top-tabs tab.information {
+top-tabs tab[data-state="waiting"] {
   background-color: #aadaf2;
   color: #263f5d;
 }
 
-top-tabs tab.information.active {
+top-tabs tab[data-state="waiting"].active {
   background-color: #8ac7e5;
   box-shadow: inset 0 1px 4px
               rgba(0,64,128,0.3),

@@ -76,38 +76,9 @@
       return document.getElementById(id);
     };
 
-    this.set_tab_badge = function(id, type, content)
+    this.get_mode_tab = function(id)
     {
-      var badge = document.querySelector("top-tabs").querySelector("[ref-id='" + id + "'] .badge");
-      if (badge)
-      {
-        badge.addClass(type || "");
-        badge.textContent = content || "";
-      }
-    };
-
-    this.clear_tab_badge = function(id)
-    {
-      this.set_tab_badge(id);
-    };
-
-    this.set_tab_state = function(id, state)
-    {
-      var tab = document.querySelector("top-tabs").querySelector("[ref-id='" + id + "']");
-      if (tab)
-      {
-        tab.addClass(state);
-      }
-    };
-
-    this.clear_tab_state = function(id)
-    {
-      var tab = document.querySelector("top-tabs").querySelector("[ref-id='" + id + "']");
-      if (tab)
-      {
-        // Clear all class names. Add "active" back in case the tab was active.
-        tab.className = tab.hasClass("active") ? "active" : "";
-      }
+      return TabBase.get_tab_by_ref_id(id);
     };
 }
 

@@ -188,7 +188,13 @@
       }
       for (var tab, i = 0; tab = tabs[i]; i++)
       {
-        this.tab.addTab(new Tab(tab, views[tab] && views[tab].name || ''));
+        var tab_class = Tab;
+        if (typeof tab != "string")
+        {
+          tab_class = tab.tab_class;
+          tab = tab.view;
+        }
+        this.tab.addTab(new tab_class(tab, views[tab] && views[tab].name || ''));
       }
       if (tabbar)
       {
