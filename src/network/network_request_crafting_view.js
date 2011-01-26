@@ -59,7 +59,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
     var match = url.match(/^(?:(http(?:s)?):\/\/)(\S*?)(?:\/|$)(?:(.*))/);
     if (match)
     {
-      return {protocol: match[1], host: match[2], path: "/" + (match[3] || "")};
+      return {protocol: match[1].toUpperCase(), host: match[2], path: "/" + (match[3] || "")};
     }
     return null;
   }
@@ -189,8 +189,8 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
   {
     if (!urldata) { return; }
     var current = this._input.get_value();
+    current = current.replace(/^(\w+? )(.*?)( .*)/, function(s, m1, m2, m3, all) {return m1 + urldata.path + " " + urldata.protocol + "/1.1" ; });
     current = current.replace(/^Host: .*$?/m, "Host: " + urldata.host);
-    current = current.replace(/^(\w+? )(.*?)( .*)/, function(s, m1, m2, m3, all) { return m1 + urldata.path + m3; });
     this._input.set_value(current);
   }
 
