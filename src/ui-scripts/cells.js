@@ -112,6 +112,7 @@
     this.searchbar = searchbar;
     searchbar.cell = this;
     this.update(this.left, this.top, true);
+    searchbar.post_message("searchbar-created");
   }
 
   this.remove_searchbar = function(searchbar)

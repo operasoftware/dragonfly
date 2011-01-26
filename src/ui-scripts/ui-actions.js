@@ -183,7 +183,6 @@ eventHandlers.click['show-search'] = function(event, target)
     if (search)
     {
       target.getAttribute("is-active") == "true" ? search.hide() : search.show();
-      target.setAttribute("is-active", String(search.is_active));
     }
   }
 }

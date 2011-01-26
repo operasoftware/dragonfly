@@ -16,6 +16,10 @@ var SearchbarBase = function()
   this.left = 0;
   this.is_dirty = true;
 
+
+
+  window.cls.MessageMixin.apply(this); // mix in message handler behaviour.
+
   this.setDimensions = function(force_redraw)
   {
     var dim = 0;
@@ -84,6 +88,14 @@ var SearchbarBase = function()
       searchbar.parentNode.removeChild(searchbar);
     }
   };
+
+  this.attributes =
+  {
+    'focus-handler': 'focus',
+    'blur-handler': 'blur'
+  }
+
+  // general to toolbar
 
 
   /*

@@ -26,7 +26,8 @@
           "shift f11": "continue-step-out-of-call",
           "escape": "toggle-command-line",
           "ctrl tab": "navigate-next-top-tab",
-          "ctrl shift tab": "navigate-previous-top-tab"
+          "ctrl shift tab": "navigate-previous-top-tab",
+          "ctrl f": "show-serach"
         },
         "edit":
         {
@@ -38,9 +39,10 @@
           "f3": "highlight-next-match",
           "shift enter": "highlight-previous-match",
           "shift f3": "highlight-previous-match",
-          "escape": "toggle-command-line",
+          "escape": "hide-search",
           "ctrl tab": "navigate-next-top-tab",
-          "ctrl shift tab": "navigate-previous-top-tab"
+          "ctrl shift tab": "navigate-previous-top-tab",
+          "ctrl f": "show-serach"
         }
       },
       "dom":

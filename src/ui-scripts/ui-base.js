@@ -70,7 +70,7 @@ var UIBase = new function()
 
   this.getElement = function()
   {
-    return document.getElementById(this.type + '-to-' + this.cell.id);
+    return this.cell && document.getElementById(this.type + '-to-' + this.cell.id);
   }
 
   this.update = function(force_redraw)

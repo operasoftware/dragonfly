@@ -18,8 +18,9 @@ TextSearch.prototype = new function()
   HIGHLIGHT_STYLE = "background-color:#0f0; color:#000;",
   DEFAULT_SCROLL_MARGIN = 50,
   SEARCH_DELAY = 50, // in ms
-  MIN_TERM_LENGTH = 2; // search term must be this long or longer
-  
+  MIN_TERM_LENGTH = 2, // search term must be this long or longer
+  NO_MATCH = 1,
+  EMPTY = 2;
   window.cls.MessageMixin.apply(this); // mix in message handler behaviour.
 
   this._init = function(min_length)
@@ -52,6 +53,35 @@ TextSearch.prototype = new function()
   this._span_set_highlight_style = function(span)
   {
     span.style.cssText = HIGHLIGHT_STYLE;
+  };
+
+  this._update_info = function(type)
+  {
+    if(this._info_ele)
+    {
+      var info = "";
+      switch (type)
+      {
+        case EMPTY:
+        {
+          break;
+        }
+        case NO_MATCH:
+        {
+          info = ui_strings.S_TEXT_STATUS_SEARCH_NO_MATCH.
+                 replace("%(SEARCH_TERM)s", this._search_term);
+          break;
+        }
+        default:
+        {
+          info = ui_strings.S_TEXT_STATUS_SEARCH.
+                 replace("%(SEARCH_TERM)s", this._search_term).
+                 replace("%(SEARCH_COUNT_TOTAL)s", this._search_results.length).
+                 replace("%(SEARCH_COUNT_INDEX)s", this._cursor + 1);
+        }
+      }
+      this._info_ele.textContent = info;
+    }
   };
     
   this._consume_node = function(node)
@@ -128,25 +158,30 @@ TextSearch.prototype = new function()
     this._consume_node(this._container);
   };
 
-  this.search = function(new_search_term, old_cursor)
+  this._clear_search_results = function()
   {
     var cur = null, i = 0, parent = null, search_hit = null, j = 0;
+    for (; cur = this._search_results[i]; i++)
+    {
+      for (j = 0; search_hit = cur[j]; j++)
+      {
+        if (parent = search_hit.parentNode)
+        {
+          parent.replaceChild(search_hit.firstChild, search_hit);
+          parent.normalize();
+        }
+      }
+    }
+  };
+
+  this.search = function(new_search_term, old_cursor)
+  {
     if (new_search_term != this._search_term)
     {
       this._search_term = new_search_term;
       if(this._search_results)
       {
-        for( ; cur = this._search_results[i]; i++)
-        {
-          for( j = 0; search_hit = cur[j]; j++)
-          {
-            if( parent = search_hit.parentNode )
-            {
-              parent.replaceChild(search_hit.firstChild, search_hit);
-              parent.normalize();
-            }
-          }
-        }
+        this._clear_search_results();
       }
       this._search_results = [];
       this._cursor = -1;
@@ -162,12 +197,18 @@ TextSearch.prototype = new function()
           {
             this._cursor = old_cursor;
             this._search_results[this._cursor].style.cssText = HIGHLIGHT_STYLE;
+            this._update_info();
           }
           else
           {
+            this._update_info(NO_MATCH);
             this.highlight(true);
           }
         }
+      }
+      else
+      {
+        this._update_info(EMPTY);
       }
     }
   };
@@ -239,6 +280,7 @@ TextSearch.prototype = new function()
                                      DEFAULT_SCROLL_MARGIN,
                                      direction,
                                      'scrollLeft');
+      this._update_info();
     }
   };
 
@@ -304,6 +346,11 @@ TextSearch.prototype = new function()
     }
   };
 
+  this.set_info_element = function(info_ele)
+  {
+    this._info_ele = info_ele;
+  };
+
   this.setFormInput = function(input)
   {
     this._input = input;
@@ -322,8 +369,9 @@ TextSearch.prototype = new function()
    */
   this.cleanup = function()
   {
+    this._clear_search_results();
     this._search_results = [];
     this._cursor = -1;
-    this._input = this._container = null;
+    this._input = this._container = this._info_ele = null;
   };
 };

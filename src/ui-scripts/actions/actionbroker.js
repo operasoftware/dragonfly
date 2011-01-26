@@ -109,6 +109,10 @@ var ActionBroker = function()
     */
   this.get_shortcut_with_handler_and_action = function(handler_id, action){};
 
+  this.get_action_container = function(){};
+
+  this.get_current_handler_id = function(){};
+
   /* constants */
 
   const GLOBAL_HANDLER = ActionBroker.GLOBAL_HANDLER_ID;
@@ -361,6 +365,11 @@ var ActionBroker = function()
   {
     return this._container;
   }
+
+  this.get_current_handler_id = function()
+  {
+    return this._action_context_id;
+  };
 
   if (document.readyState == "complete")
     this._init();

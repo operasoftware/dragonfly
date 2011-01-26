@@ -476,7 +476,8 @@ searchbar {
   border-width: 0 1px 1px;
   padding: 3px 2px 2px;
   height: 21px; /* 21 + 3 + 2 (padding) = 26 */
-  background: hsl(240, 90%, 90%);
+  line-height: 21px;
+  background: #f3f3f3 url("../ui-images/shine_2.png") 0 0 repeat-x;
 }
 
 window-select {

@@ -400,7 +400,7 @@ cls.DOMView.create_ui_widgets = function()
   );
 
 
-  new Search('dom', Searchbar);
+  new Search('dom', new Searchbar(), new TextSearch());
   /*
   var textSearch = new TextSearch();
 

@@ -38,6 +38,24 @@ var ToolbarBase = function()
   {
     return this.__is_visible ? this.getTopPosition() + this.offsetHeight : 0;
   }
+
+  this.get_control = function(handler, handler_name) 
+  {
+    handler_name || (handler_name = 'handler');
+    var toolbar = this.getElement();
+    if(toolbar)
+    {
+      var all = toolbar.getElementsByTagName('*'), control = null, i = 0;
+      for (; control = all[i]; i++)
+      {
+        if (control.getAttribute(handler_name)  == handler)
+        {
+          return control;
+        }
+      }
+    }
+    return null;
+  }
    
   this.setDimensions = function(force_redraw)
   {

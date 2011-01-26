@@ -160,34 +160,25 @@
     /* get context -> get container (representation? view?) ->  get UI object -> get cell -> get toolbar -> get search field. If found, focus and return false */
     var container = ActionBroker.get_instance().get_action_container();
     var ui_obj = UIBase.getUIById(container.getAttribute('ui-id'));
-    var filters = ui_obj.cell.toolbar.get_filters(), element;
-    if (filters[0] && (element = ViewBase.getToolbarControl(container, filters[0].handler)))
+    var filters = ui_obj && ui_obj.cell.toolbar && ui_obj.cell.toolbar.get_filters();
+    var element = null;
+    if (filters && filters[0] && (element = ViewBase.getToolbarControl(container, filters[0].handler)))
     {
       element.focus();
       return false;
     }
   }
 
-  var TestTempView = function(name)
+  this._handlers["show-serach"] = function(action_id, event, target)
   {
-    this.createView = function(container)
+    var action_id = ActionBroker.get_instance().get_current_handler_id();
+    var search = UI.get_instance().get_search(action_id);
+    if (search)
     {
-      container.innerHTML =
-        "<div class='padding'><h2>Test view, id: " + this.id + "</h2></div>";
-    };
-    this.init(name);
-  };
-
-  TestTempView.prototype = new TempView();
-
-  this._handlers["add-temp-test-view"] = function(action_id, event, target)
-  {
-    var test_view = new TestTempView('Hello');
-    var ui = UI.get_instance();
-    ui.get_tabbar("request").add_tab(test_view.id);
-    ui.show_view(test_view.id);
-    return false;
-  };
+      search.show();
+      return false;
+    }
+  }
 
   /* implementation */
 
@@ -206,6 +197,13 @@
     this.mode = /input|textarea/i.test(event.target.nodeName) ?
                                        MODE_EDIT :
                                        MODE_DEFAULT;
+  };
+
+  this.focus = function(event, container)
+  {
+    this.mode = event && /input|textarea/i.test(event.target.nodeName) ?
+                                                MODE_EDIT :
+                                                MODE_DEFAULT;
   };
 
   this.register_shortcut_listener = function(listener_id, callback, action_list)

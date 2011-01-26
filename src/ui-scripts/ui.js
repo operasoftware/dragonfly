@@ -27,10 +27,11 @@
     this.get_modebar = function(id){};
 
     this.get_search = function(id){};
-
+    
     this.register_tabbar = function(id, tabs){};
     
-    this.register_tabbar = function(id, modebar){};
+    this.register_modebar = function(id, modebar){};
+
 
     this.register_search = function(id, search){};
     
