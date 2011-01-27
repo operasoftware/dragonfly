@@ -134,8 +134,12 @@ templates.network_log_request_detail = function(ctx, selected)
     ["h2", "Summary"],
     ["table",
      ["tr", ["th", "URL:"], ["td", req.url]],
-     ["tr", ["th", "Method:"], ["td", req.method || "-"]],
-     ["tr", ["th", "Status:"], ["td", String(req.responsecode || "-")]],
+     ["tr", ["th", "Method:"], ["td", req.method || "-"],
+      "data-spec", "http#" + req.method
+     ],
+     ["tr", ["th", "Status:"], ["td", String(req.responsecode || "-")],
+      "data-spec", "http#" + req.responsecode
+     ],
      ["tr", ["th", "Duration:"], ["td", String(req.duration ? "" + req.duration + "ms" : "-")]],
      "class", "resource-detail"
     ],
@@ -228,7 +232,8 @@ templates.network_header_table = function(headers)
   {
     return ["tr",
             ["th", header.name],
-            ["td", header.value]
+            ["td", header.value],
+            "data-spec", "http#" + header.name
            ]
   }
 
