@@ -35,13 +35,32 @@ SpecLinks.prototype.get_spec_link = function(spec_notation)
     var spec = spec_notation.slice(0, hash_pos);
     var prop = spec_notation.slice(hash_pos + 1);
     var props = SpecLinks.specs[spec];
-    if (props && props.propertyIsEnumerable(prop))
+
+    if (props)
     {
-      return {
-        spec: spec,
-        prop: prop,
-        url: props[prop]
-      };
+      var url = null;
+      // note: We loop over everything in the dict instead of normal access
+      // so that we can resolve stuff regardless of case. We copuld convert
+      // the keys to lowercase but that's information loss for some of the
+      // spec types, so we wont for now.
+
+      for (key in props)
+      {
+        if (key.toLowerCase() == prop.toLowerCase())
+        {
+          url = props[key];
+          break;
+        }
+      }
+
+      if (url)
+      {
+        return {
+          spec: spec,
+          prop: prop,
+          url: url
+        };
+      }
     }
   }
   return null;
@@ -1300,7 +1319,7 @@ SpecLinks.specs = {
     //"valueOf": "http://sideshowbarker.github.com/es5-spec/#x15.2.4.4",
     "hasOwnProperty": "http://sideshowbarker.github.com/es5-spec/#x15.2.4.5",
     "isPrototypeOf": "http://sideshowbarker.github.com/es5-spec/#x15.2.4.6",
-    //"propertyIsEnumerable": "http://sideshowbarker.github.com/es5-spec/#x15.2.4.7", //wont work with this line for some reason
+    "propertyIsEnumerable": "http://sideshowbarker.github.com/es5-spec/#x15.2.4.7",
 
     "Function": "http://sideshowbarker.github.com/es5-spec/#x15.3",
     //"prototype": "http://sideshowbarker.github.com/es5-spec/#x15.3.3.1",
