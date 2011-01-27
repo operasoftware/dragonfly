@@ -41,6 +41,8 @@ var VirtualTextSearch = function()
     * @param {Element} The DOM element with the visible view.
     */
   this.set_container = function(container){};
+
+   this.set_info_element = function(info_ele){};
   /**
     * Register the DOM input to enter a search.
     * This is not used to trigger the search, 
@@ -447,6 +449,11 @@ var VirtualTextSearch = function()
       source_container_parent = null;
     }
   }
+
+  this.set_info_element = function(info_ele)
+  {
+    this._info_ele = info_ele;
+  };
 
   this.set_form_input = function(input)
   {

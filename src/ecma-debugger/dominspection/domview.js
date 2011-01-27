@@ -399,58 +399,6 @@ cls.DOMView.create_ui_widgets = function()
     ]
   );
 
-
   new Search('dom', new Searchbar(), new TextSearch());
-  /*
-  var textSearch = new TextSearch();
-
-  var onViewCreated = function(msg)
-  {
-    if( msg.id == 'dom' )
-    {
-      textSearch.setContainer(msg.container);
-      textSearch.setFormInput(views.dom.getToolbarControl( msg.container, 'dom-text-search'));
-    }
-  }
-
-  var onViewDestroyed = function(msg)
-  {
-    if( msg.id == 'dom' )
-    {
-      textSearch.cleanup();
-    }
-  }
-
-  var onActionModeChanged = function(msg)
-  {
-    if( msg.id == 'dom' && msg.mode == 'default' )
-    {
-      textSearch.revalidateSearch();
-    }
-  }
-
-  messages.addListener('view-created', onViewCreated);
-  messages.addListener('view-destroyed', onViewDestroyed);
-  messages.addListener('action-mode-changed', onActionModeChanged);
-
-  eventHandlers.input['dom-text-search'] = function(event, target)
-  {
-    textSearch.searchDelayed(target.value);
-  }
-
-  ActionBroker.get_instance().get_global_handler().
-  register_shortcut_listener('dom-text-search', function(action_id, event, target)
-  {
-    switch (action_id)
-    {
-      case 'highlight-next-match':
-        textSearch.highlight_next();
-        return false
-      case 'highlight-previous-match':
-        textSearch.highlight_previous();
-        return false;
-    }
-  });
-  */
 
 };

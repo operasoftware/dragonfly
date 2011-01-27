@@ -213,6 +213,7 @@ TextSearch.prototype = new function()
     }
   };
 
+  this.search_delayed = 
   this.searchDelayed = function(new_search_term)
   {
     this._input_search_term = new_search_term;
@@ -338,6 +339,7 @@ TextSearch.prototype = new function()
     }
   };
 
+  this.set_container =
   this.setContainer = function(cont)
   {
     if( this._container != cont )
@@ -351,6 +353,7 @@ TextSearch.prototype = new function()
     this._info_ele = info_ele;
   };
 
+  this.set_form_input = 
   this.setFormInput = function(input)
   {
     this._input = input;

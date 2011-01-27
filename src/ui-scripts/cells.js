@@ -111,7 +111,7 @@
   {
     this.searchbar = searchbar;
     searchbar.cell = this;
-    this.update(this.left, this.top, true);
+    this.update(this.left, this.top, true, true);
     searchbar.post_message("searchbar-created");
   }
 
@@ -119,7 +119,7 @@
   {
     this.searchbar = null;
     searchbar.cell = null;
-    this.update(this.left, this.top, true);
+    this.update(this.left, this.top, true, true);
   }
 
   this.setTooolbarVisibility = function(view_id, bool)

@@ -1070,53 +1070,7 @@ cls.JsSourceView.create_ui_widgets = function()
   );
 
 
-
-  var textSearch = new VirtualTextSearch();
-
-  var onViewCreated = function(msg)
-  {
-    if( msg.id == 'js_source' )
-    {
-      textSearch.set_container(msg.container);
-      textSearch.set_form_input(views.js_source.getToolbarControl(msg.container, 'js-source-text-search'));
-    }
-  }
-
-  var onViewDestroyed = function(msg)
-  {
-    if( msg.id == 'js_source' )
-    {
-      textSearch.cleanup();
-    }
-  }
-
-  var onScriptSelected = function(msg)
-  {
-    textSearch.set_script(msg.script);
-  }
-
-  var onViewScrolled = function(msg)
-  {
-    if( msg.id == 'js_source' )
-    {
-      textSearch.update_hits(msg.top_line, msg.bottom_line);
-    }
-  }
-
-  messages.addListener('view-created', onViewCreated);
-  messages.addListener('view-destroyed', onViewDestroyed);
-  messages.addListener('script-selected', onScriptSelected);
-  messages.addListener('view-scrolled', onViewScrolled);
-
-  eventHandlers.input['js-source-text-search'] = function(event, target)
-  {
-    textSearch.search_delayed(target.value);
-  }
-
-  ActionBroker.get_instance().get_global_handler().
-  register_shortcut_listener('js-source-text-search', 
-                             cls.Helpers.shortcut_search_cb.bind(textSearch),
-                             ['highlight-next-match', 'highlight-previous-match']);
+  new JSSourceSearch('js_source', new Searchbar(), new VirtualTextSearch());
 
   eventHandlers.change['set-tab-size'] = function(event, target)
   {

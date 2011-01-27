@@ -102,11 +102,11 @@ Search.prototype = new function()
     if (ele && !ele.firstChild)
     {
       ele.render(window.templates.searchbar_content(this));
-      this._simple_text_search.setContainer(this._container);
+      this._simple_text_search.set_container(this._container);
       cur = ele.getElementsByTagName('info')[0];
       this._simple_text_search.set_info_element(cur);
       cur = ele.getElementsByTagName('filter')[0].getElementsByTagName('input')[0];
-      this._simple_text_search.setFormInput(cur);
+      this._simple_text_search.set_form_input(cur);
       setTimeout(function(){cur.focus();}, 0);
     }
   };
@@ -136,7 +136,7 @@ Search.prototype = new function()
   {
     if (this._mode == MODE_SEARCHBAR)
     {
-      this._simple_text_search.searchDelayed(target.value);
+      this._simple_text_search.search_delayed(target.value);
     }
   }
 
@@ -184,7 +184,7 @@ Search.prototype = new function()
         handler: this._view_id + '-simple-text-search',
         shortcuts: this._view_id + '-simple-text-search',
         title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
-      }
+      };
       messages.addListener('view-destroyed', this._onviewdestroyed.bind(this));
       messages.addListener('view-created', this._onviewcreated.bind(this));
       eventHandlers.input[this.search_field.handler] = 
@@ -203,3 +203,35 @@ Search.prototype = new function()
   };
 
 };
+
+var JSSourceSearch = function(view_id, searchbar_class, searchwindow_class)
+{
+  this._init(view_id, searchbar_class, searchwindow_class);
+};
+
+var JSSourceSearchBase = function()
+{
+  this._onscriptselected = function(msg)
+  {
+    this._simple_text_search.set_script(msg.script);
+  };
+
+  this._onviewscrolled = function(msg)
+  {
+    if (msg.id == this._view_id)
+    {
+      this._simple_text_search.update_hits(msg.top_line, msg.bottom_line);
+    }
+  };
+
+  this._init = function(view_id, searchbar_class, searchwindow_class)
+  {
+    Search.prototype._init.call(this, view_id, searchbar_class, searchwindow_class);
+    messages.addListener('script-selected', this._onscriptselected.bind(this));
+    messages.addListener('view-scrolled', this._onviewscrolled.bind(this));
+  }
+  
+};
+
+JSSourceSearchBase.prototype = Search.prototype;
+JSSourceSearch.prototype = new JSSourceSearchBase();
