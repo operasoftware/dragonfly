@@ -116,7 +116,7 @@ cls.CookieManagerView = function(id, name, container_class)
   };
   this.createView = function(container)
   {
-    this.flattened_cookies = this._flatten_cookies(this._cookie_dict);
+    this.flattened_cookies = this._flatten_cookies(this._cookie_dict, this._rts);
     if(container.getElementsByClassName("table_container").length < 1)
     {
       this._table_container = container.render(["div",new SortableTable(this._tabledef, this.flattened_cookies).render(),"class","table_container"]);
@@ -500,7 +500,7 @@ cls.CookieManagerView = function(id, name, container_class)
     formelem.render(render_object);
   };
 
-  this._flatten_cookies = function(cookies)
+  this._flatten_cookies = function(cookies, runtimes)
   {
     var flattened_cookies = [];
     for (var id in cookies)
@@ -523,7 +523,7 @@ cls.CookieManagerView = function(id, name, container_class)
               if(
                 cookie.isHTTPOnly ||
                 cookie.path || // remove when CORE-35055 is fixed
-                cookie.domain != window.views.cookie_manager._rts[domaincookies.runtimes[0]].hostname
+                cookie.domain != runtimes[domaincookies.runtimes[0]].hostname
               )
               {
                 return false;
@@ -552,6 +552,13 @@ cls.CookieManagerView = function(id, name, container_class)
           };
           flattened_cookies.push(flattened_cookie);
         };
+      }
+      else
+      {
+        // There are no cookies for this domain/path. The group needs to be shown anyhow.
+        flattened_cookies.push({
+          runtimes: domaincookies.runtimes
+        });
       }
     }
     return flattened_cookies;
