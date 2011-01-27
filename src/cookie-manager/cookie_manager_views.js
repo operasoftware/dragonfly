@@ -19,6 +19,7 @@ cls.CookieManagerView = function(id, name, container_class)
         }
       }
     },
+    column_order: ["domain", "name", "value", "path", "expires", "isSecure", "isHTTPOnly", "remove"],
     columns: {
       domain: {
         label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_DOMAIN,
