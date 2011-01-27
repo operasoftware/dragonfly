@@ -45,12 +45,12 @@ TextSearch.prototype = new function()
     this._search_bound = this.search.bind(this);
   }
 
-  this._span_set_default_style = function(span)
+  this._set_default_style = function(span)
   {
     span.style.cssText = DEFAULT_STYLE;
   };
 
-  this._span_set_highlight_style = function(span)
+  this._set_highlight_style = function(span)
   {
     span.style.cssText = HIGHLIGHT_STYLE;
   };
@@ -76,8 +76,8 @@ TextSearch.prototype = new function()
         {
           info = ui_strings.S_TEXT_STATUS_SEARCH.
                  replace("%(SEARCH_TERM)s", this._search_term).
-                 replace("%(SEARCH_COUNT_TOTAL)s", this._search_results.length).
-                 replace("%(SEARCH_COUNT_INDEX)s", this._cursor + 1);
+                 replace("%(SEARCH_COUNT_TOTAL)s", this._get_match_counts()).
+                 replace("%(SEARCH_COUNT_INDEX)s", this._get_serach_cursor());
         }
       }
       this._info_ele.textContent = info;
@@ -243,7 +243,7 @@ TextSearch.prototype = new function()
       if (this._cursor >= 0) // if we have a currently highlighted hit..
       {
         // then reset its style to the default
-        this._search_results[this._cursor].forEach(this._span_set_default_style);
+        this._search_results[this._cursor].forEach(this._set_default_style);
       }
 
       if (check_position)
@@ -267,7 +267,7 @@ TextSearch.prototype = new function()
       {
         this._cursor = this._search_results.length - 1;
       }
-      this._search_results[this._cursor].forEach(this._span_set_highlight_style);
+      this._search_results[this._cursor].forEach(this._set_highlight_style);
       var target = this._search_results[this._cursor][0];
       this._scroll_into_margined_view(this._container.offsetHeight,
                                      target.offsetHeight,

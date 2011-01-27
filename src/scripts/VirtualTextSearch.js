@@ -11,6 +11,11 @@
  */
 var VirtualTextSearch = function()
 {
+  this._init();
+};
+
+var VirtualTextSearchBase = function()
+{
 
   /* interface */
 
@@ -42,7 +47,6 @@ var VirtualTextSearch = function()
     */
   this.set_container = function(container){};
 
-   this.set_info_element = function(info_ele){};
   /**
     * Register the DOM input to enter a search.
     * This is not used to trigger the search, 
@@ -71,68 +75,76 @@ var VirtualTextSearch = function()
   HIGHLIGHT_STYLE = document.styleSheets.getDeclaration ('.search-highlight-selected').cssText,
   DEFAULT_SCROLL_MARGIN = 50,
   SEARCH_DELAY = 50, // in ms
-  MIN_TERM_LENGTH = 1;
+  MIN_TERM_LENGTH = 1,
+  NO_MATCH = 1,
+  EMPTY = 2;
 
   /* private */
-
-  var 
-  self = this, 
-  search_term = '',
-  cursor = -1,
-  container = null,
-  source_container = null,
-  source_container_parent = null,
-  timeouts = new Timeouts(),
-  __script = null,
-  __offset = -1,
-  __length = 0,
-  __highlight_style = '', 
-  __search_hits_valid = false,
-  __top_line = 0,
-  __bottom_line = 0,
-  __hits = [], // list of DOM highlight elements for all matches
-  __hit = [],  // list of DOM highlight elements for a single match
-  __input = null,
-  __last_match_cursor = 0;
+  this._init = function()
+  {
+    this._search_term = '';
+    this._cursor = -1;
+    this._container = null;
+    this._source_container = null;
+    this._source_container_parent = null;
+    this._timeouts = new Timeouts();
+    this._script = null;
+    this._offset = -1;
+    this._length = 0;
+    this._highlight_style = ''; 
+    this._search_hits_valid = false;
+    this._top_line = 0;
+    this._bottom_line = 0;
+    this._hits = []; // list of DOM highlight elements for all matches
+    this._hit = [];  // list of DOM highlight elements for a single match
+    this._input = null;
+    this._last_match_cursor = 0;
+    this._search_bound = this._search.bind(this);
+  };
 
   /**
     * Starts a new search.
     */
-  var search = function(new_search_term)
+  this._search = function(new_search_term)
   {    
     var pos = -1, source = '', line_arr = null, line_arr_length = 0, line_cur = 0;
     new_search_term = new_search_term.toLowerCase();
-    if (new_search_term != search_term)
+    if (new_search_term != this._search_term)
     {
-      search_term = new_search_term;
+      this._search_term = new_search_term;
       if(new_search_term.length >= MIN_TERM_LENGTH)
       {
-        clear_hits();
-        if (__script)
+        this._clear_hits();
+        if (this._script)
         {
-          search_source();
-          if (__script.line_matches.length)
+          this._search_source();
+          if (this._script.line_matches.length)
           {
-            highlight(true);
-            scroll_selected_hit_in_to_view();
+            this._highlight(true);
+            this._scroll_selected_hit_in_to_view();
+          }
+          else
+          {
+            this._update_info(NO_MATCH);
           }
         }
       }
       else
       {
-        if (__hits.length)
+        if (this._hits.length)
         {
-          clear_hits();
+          this._clear_hits();
         }
-        clear_script_context();
-        search_term = '';
+        this._clear_script_context();
+        this._search_term = '';
+        this._update_info(EMPTY);
       }
     }
-  }
+  };
 
   /**
     * Searches the actual data.
-    * Updates the __script object with the following properties for all matches:
+    * Updates the this._script object with the following properties for all matches:
     *   - line_matches, a list of all matches in the source, 
     *     the values are the lines numbers of a given match
     *   - line_offsets, a list of all matches in the source,
@@ -140,23 +152,23 @@ var VirtualTextSearch = function()
     *   - match_cursor, pointing to the selected match
     *   _ match_length, the length of the search term
     */
-  var search_source = function()
+  this._search_source = function()
   {
-    __script.line_matches = [];
-    __script.line_offsets = [];
-    __script.match_cursor = 0;
-    __script.match_length = search_term.length;
+    this._script.line_matches = [];
+    this._script.line_offsets = [];
+    this._script.match_cursor = 0;
+    this._script.match_length = this._search_term.length;
 
     var
     pos = -1,
     line_cur = 0,
-    source = __script.source.toLowerCase(),
-    line_arr = __script.line_arr,
+    source = this._script.source.toLowerCase(),
+    line_arr = this._script.line_arr,
     line_arr_length = line_arr.length,
-    line_matches = __script.line_matches,
-    line_offsets = __script.line_offsets;
+    line_matches = this._script.line_matches,
+    line_offsets = this._script.line_offsets;
 
-    while ((pos = source.indexOf(search_term, pos + 1)) != -1)
+    while ((pos = source.indexOf(this._search_term, pos + 1)) != -1)
     {
       while (line_cur < line_arr_length && line_arr[line_cur] <= pos)
       {
@@ -165,15 +177,15 @@ var VirtualTextSearch = function()
       line_matches[line_matches.length] = line_cur;
       line_offsets[line_offsets.length] = pos - line_arr[line_cur - 1];
     }
-    if (__last_match_cursor)
+    if (this._last_match_cursor)
     {
-      if (__last_match_cursor < __script.match_length)
+      if (this._last_match_cursor < this._script.match_length)
       {
-        __script.match_cursor = __last_match_cursor;
+        this._script.match_cursor = this._last_match_cursor;
       }
-      __last_match_cursor = 0;
+      this._last_match_cursor = 0;
     }
-  }
+  };
 
   /**
     * Initiate the search in the actual DOM.
@@ -183,202 +195,189 @@ var VirtualTextSearch = function()
     *     If true the match cursor is set starting from the current top line
     *     (so that the view doesn't scroll if there is a match in the visible slice).
     */
-  var highlight = function(set_match_cursor)
+  this._highlight = function(set_match_cursor)
   {
     if (views.js_source.isvisible() &&
-          __script && __script.line_matches && __script.line_matches.length)
+          this._script && this._script.line_matches && this._script.line_matches.length)
     {
-      var line = __script.line_matches[__script.match_cursor];
-      __top_line = views.js_source.getTopLine();
-      __bottom_line = views.js_source.getBottomLine();
+      var line = this._script.line_matches[this._script.match_cursor];
+      this._top_line = views.js_source.getTopLine();
+      this._bottom_line = views.js_source.getBottomLine();
       if (set_match_cursor)
       {
-        __script.match_cursor = 0;
-        while (__script.line_matches[__script.match_cursor] < __top_line)
+        this._script.match_cursor = 0;
+        while (this._script.line_matches[this._script.match_cursor] < this._top_line)
         {
-          __script.match_cursor++;
+          this._script.match_cursor++;
         }
-        line = __script.line_matches[__script.match_cursor];
+        line = this._script.line_matches[this._script.match_cursor];
       }
-      if (line < __top_line || line >= __bottom_line)
+      if (line < this._top_line || line >= this._bottom_line)
       {
         var plus_lines = views.js_source.getMaxLines() <= 7 
           ? views.js_source.getMaxLines() / 2 >> 0 
           : 7;
-        views.js_source.showLine(__script.id, line - plus_lines, true);
-        __top_line = views.js_source.getTopLine();
-        __bottom_line = views.js_source.getBottomLine();
-        __search_hits_valid = false;
+        views.js_source.showLine(this._script.id, line - plus_lines, true);
+        this._top_line = views.js_source.getTopLine();
+        this._bottom_line = views.js_source.getBottomLine();
+        this._search_hits_valid = false;
       }
-      if (!source_container)
+      if (!this._source_container)
       {
-        source_container_parent = container.getElementsByTagName('div')[0];
-        source_container = container.getElementsByTagName('div')[1];
+        this._source_container_parent = this._container.getElementsByTagName('div')[0];
+        this._source_container = this._container.getElementsByTagName('div')[1];
       }
       // views.js_source.showLine can invalidate the current script source
-      if (!__script.line_offsets) 
+      if (!this._script.line_offsets) 
       {
-        search_source();
+        this._search_source();
       }
-      if (__search_hits_valid)
+      if (this._search_hits_valid)
       {
-        __hits.forEach(update_hit);
+        this._hits.forEach(this._update_hit, this);
       }
       else
       {
-        clear_hits();
-        __script.line_matches.forEach(set_hit);
-        __search_hits_valid = true;
+        this._clear_hits();
+        this._script.line_matches.forEach(this._set_hit, this);
+        this._search_hits_valid = true;
       }
-      __last_match_cursor = __script.match_cursor;
+      this._last_match_cursor = this._script.match_cursor;
+      this._update_info();
     }
-  }
+  };
 
   /**
     * Create the highlight spans in a DOM element 
     * which represents a line of the source file.
-    * __offset and __length are variables of the scope of the class.
+    * this._offset and this._length are variables of the scope of the class.
     * The function is called recursively on all nodes in there flow 
     * of the containing line node till the two values are consumed.
     *
     * @param {Element} node The DOM element which represents a line of the source file.
     */
-  var search_node = function(node) 
+  this._search_node = function(node) 
   {
     var cur_node = node && node.firstChild, pos = 0, hit = null, span = null, length = 0;
-    while (cur_node && __offset > -1) 
+    while (cur_node && this._offset > -1) 
     {
       switch (cur_node.nodeType)
       {
         case 1:
         {
-          search_node(cur_node);
+          this._search_node(cur_node);
           break;
         }
         case 3:
         {
-          if (cur_node.nodeValue.length > __offset)
+          if (cur_node.nodeValue.length > this._offset)
           {
-            pos = __offset;
+            pos = this._offset;
             hit = cur_node.splitText(pos);
-            if ((length = hit.nodeValue.length) >= __length)
+            if ((length = hit.nodeValue.length) >= this._length)
             {
-              length = __length;
-              __offset = -1;
+              length = this._length;
+              this._offset = -1;
             }
             else
             {
-              __length -= length;
-              __offset = 0;
+              this._length -= length;
+              this._offset = 0;
             }
             cur_node = hit.splitText(length);
             span = node.insertBefore(node.ownerDocument.createElement('span'), hit);
-            span.style.cssText = __highlight_style;
+            span.style.cssText = this._highlight_style;
             span.appendChild(node.removeChild(hit));
-            __hit[__hit.length] = span;
+            this._hit[this._hit.length] = span;
           }
           else
           {
-            __offset -= cur_node.nodeValue.length;
+            this._offset -= cur_node.nodeValue.length;
           }
           break;
         };
       }
       cur_node = cur_node.nextSibling;
     }
-  }
+  };
 
   /**
     * Helper to initiate the search in a single line.
     */
-  var set_hit = function(line, index)
+  this._set_hit = function(line, index)
   {
-    if (__top_line <= line && line <= __bottom_line)
+    if (this._top_line <= line && line <= this._bottom_line)
     {
-      __offset = __script.line_offsets[index];
-      __length = __script.match_length;
-      __highlight_style = index == __script.match_cursor && HIGHLIGHT_STYLE || DEFAULT_STYLE;
-      __hits[index] = __hit = [];
-      search_node(source_container.getElementsByTagName('div')[line - __top_line]);
+      this._offset = this._script.line_offsets[index];
+      this._length = this._script.match_length;
+      this._highlight_style = index == this._script.match_cursor && HIGHLIGHT_STYLE || DEFAULT_STYLE;
+      this._hits[index] = this._hit = [];
+      this._search_node(this._source_container.getElementsByTagName('div')[line - this._top_line]);
     }
-  }
+  };
 
   /**
     * Helper to scroll the view vertically if the selected match is not in the view.
     */
-  var scroll_selected_hit_in_to_view = function()
+  this._scroll_selected_hit_in_to_view = function()
   {
-    source_container.parentNode.scrollLeft = 0;
-    __hit = __hits[__script.match_cursor];
-    if (__hit.length
-       && __hit[0].offsetLeft > source_container_parent.scrollLeft + source_container_parent.offsetWidth)
+    this._source_container.parentNode.scrollLeft = 0;
+    this._hit = this._hits[this._script.match_cursor];
+    if (this._hit.length
+       && this._hit[0].offsetLeft > this._source_container_parent.scrollLeft + this._source_container_parent.offsetWidth)
     {
-      source_container.parentNode.scrollLeft = __hit[0].offsetLeft - 50;
+      this._source_container.parentNode.scrollLeft = this._hit[0].offsetLeft - 50;
     }
   }
 
   /**
     * Helper to update the match cursor.
     */
-  var move_match_cursor = function(dir)
+  this._move_match_cursor = function(dir)
   {
-    if (__script && __script.line_matches && __script.line_matches.length)
+    if (this._script && this._script.line_matches && this._script.line_matches.length)
     {
       if (dir > 0)
       {
-        if (--__script.match_cursor < 0 )
+        if (--this._script.match_cursor < 0 )
         {
-          __script.match_cursor = __script.line_matches.length - 1;
+          this._script.match_cursor = this._script.line_matches.length - 1;
         }
       }
       else
       {
-        if (++__script.match_cursor >= __script.line_matches.length )
+        if (++this._script.match_cursor >= this._script.line_matches.length )
         {
-          __script.match_cursor = 0;
+          this._script.match_cursor = 0;
         }
       }
-      highlight();
-      scroll_selected_hit_in_to_view();
+      this._highlight();
+      this._scroll_selected_hit_in_to_view();
     }
-  }
+  };
 
   /**
     * Helper to update the css style in list of matches.
     */
-  var update_hit = function(hit_arr, index)
+  this._update_hit = function(hit_arr, index)
   {
-    hit_arr.forEach(index == __script.match_cursor && set_highlight_style || set_default_style);
-  }
-
-  /**
-    * Helper to update the css style of a single DOM element.
-    */
-  var set_highlight_style = function(ele)
-  {
-    ele.style.cssText = HIGHLIGHT_STYLE;
-  }
-
-  /**
-    * Helper to update the css style of a single DOM element.
-    */
-  var set_default_style = function(ele)
-  {
-    ele.style.cssText = DEFAULT_STYLE;
+    hit_arr.forEach(index == this._script.match_cursor && 
+                    this._set_highlight_style || 
+                    this._set_default_style, this);
   }
 
   /**
     * Helper to remove a list of highlight elements from the DOM.
     */
-  var clear_highlight_spans = function(hit)
+  this._clear_highlight_spans = function(hit)
   {
-    hit.forEach(clear_highlight_span);
+    hit.forEach(this._clear_highlight_span, this);
   }
 
   /**
     * Helper to remove a highlight element from the DOM.
     */
-  var clear_highlight_span = function(ele)
+  this._clear_highlight_span = function(ele)
   {
     var parent = ele.parentNode;
     parent.replaceChild(ele.firstChild, ele);
@@ -389,54 +388,64 @@ var VirtualTextSearch = function()
   /**
     * Helper to reset the list of highlight elements.
     */
-  var clear_hits = function()
+  this._clear_hits = function()
   {
-    __hits.forEach(clear_highlight_spans);
-    __hits = [];
-    __hit = null;
-    __search_hits_valid = false;
+    this._hits.forEach(this._clear_highlight_spans, this);
+    this._hits = [];
+    this._hit = null;
+    this._search_hits_valid = false;
   }
 
   /**
     * Helper to reset the search data.
     */
-  var clear_script_context = function()
+  this._clear_script_context = function()
   {
-    if(__script)
+    if(this._script)
     {
-      __script.line_matches = null;
-      __script.line_offsets = null;
-      __script.match_cursor = null;
-      __script.match_length = null;
+      this._script.line_matches = null;
+      this._script.line_offsets = null;
+      this._script.match_cursor = null;
+      this._script.match_length = null;
     }
+  }
+
+  this._get_match_counts = function()
+  {
+    return this._script.line_matches.length;
+  }
+
+  this._get_serach_cursor = function()
+  {
+    return this._script.match_cursor + 1;
   }
 
   /* interface implementation */
 
   this.search_delayed = function(new_search_term)
   {
-    timeouts.set(search, SEARCH_DELAY, new_search_term);
+    this._timeouts.set(this._search_bound, SEARCH_DELAY, new_search_term);
   }
 
   this.highlight_next = function()
   {
-    move_match_cursor(-1);
+    this._move_match_cursor(-1);
   }
 
   this.highlight_previous = function()
   {
-    move_match_cursor(1);
+    this._move_match_cursor(1);
   }
 
   this.update_hits = function(top_line, bottom_line)
   {
-    if (search_term && __script && __script.line_matches && __script.line_matches.length)
+    if (this._search_term && this._script && this._script.line_matches && this._script.line_matches.length)
     {
-      clear_hits();
-      __top_line = top_line;
-      __bottom_line = bottom_line;
-      __script.line_matches.forEach(set_hit);
-      __search_hits_valid = true;
+      this._clear_hits();
+      this._top_line = top_line;
+      this._bottom_line = bottom_line;
+      this._script.line_matches.forEach(this._set_hit, this);
+      this._search_hits_valid = true;
     }
   }
 
@@ -444,47 +453,46 @@ var VirtualTextSearch = function()
   {
     if(_container)
     {
-      container = _container;
-      source_container = null;
-      source_container_parent = null;
+      this._container = _container;
+      this._source_container = null;
+      this._source_container_parent = null;
     }
   }
-
-  this.set_info_element = function(info_ele)
-  {
-    this._info_ele = info_ele;
-  };
 
   this.set_form_input = function(input)
   {
     if(input)
     {
-      __input = input;
-      if(search_term)
+      this._input = input;
+      if(this._search_term)
       {
-        __input.value = search_term;
-        __input.parentNode.firstChild.textContent = '';
-        var new_search_term = search_term;
-        search_term = '';
-        search(new_search_term);
+        this._input.value = this._search_term;
+        this._input.parentNode.firstChild.textContent = '';
+        var new_search_term = this._search_term;
+        this._search_term = '';
+        this._search_bound(new_search_term);
       }
     }
   }
   
   this.set_script = function(script)
   {
-    __script = script;
-    source_container = null;
-    source_container_parent = null;
+    this._script = script;
+    this._source_container = null;
+    this._source_container_parent = null;
   }
 
   this.cleanup = function()
   {
-    __last_match_cursor = __script && __script.match_cursor || 0;
-    cursor = -1;
-    clear_script_context();
-    clear_hits();
-    container = source_container = source_container_parent = __input = null;
-    __offset = -1;
+    this._last_match_cursor = this._script && this._script.match_cursor || 0;
+    this._cursor = -1;
+    this._clear_script_context();
+    this._clear_hits();
+    this._container = this._source_container = this._source_container_parent = this._input = null;
+    this._offset = -1;
+    this._update_info(EMPTY);
   }
 };
+
+VirtualTextSearchBase.prototype = TextSearch.prototype;
+VirtualTextSearch.prototype = new VirtualTextSearchBase();
