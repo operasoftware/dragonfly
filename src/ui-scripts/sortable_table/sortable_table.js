@@ -11,7 +11,7 @@
  *         columns: {
  *
  */
-function SortableTable(tabledef, data, cols, sortby, reversed)
+function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
 {
   this._init = function()
   {
@@ -55,7 +55,7 @@ function SortableTable(tabledef, data, cols, sortby, reversed)
     this.data = data;
     this.columns = cols;
     this.reversed = !!reversed;
-    this.groupby = null;
+    this.groupby = groupby;
     this._elem = null;
     this.objectid = ObjectRegistry.get_instance().set_object(this);
     this._init_handlers();
