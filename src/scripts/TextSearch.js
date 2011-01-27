@@ -14,8 +14,8 @@ var TextSearch = function(min_length)
 TextSearch.prototype = new function()
 {
   const
-  DEFAULT_STYLE = "background-color:#ff0; color:#000;",
-  HIGHLIGHT_STYLE = "background-color:#0f0; color:#000;",
+  DEFAULT_STYLE = document.styleSheets.getDeclaration ('.search-highlight').cssText,
+  HIGHLIGHT_STYLE = document.styleSheets.getDeclaration ('.search-highlight-selected').cssText,
   DEFAULT_SCROLL_MARGIN = 50,
   SEARCH_DELAY = 50, // in ms
   MIN_TERM_LENGTH = 2, // search term must be this long or longer
