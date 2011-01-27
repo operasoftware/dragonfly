@@ -25,6 +25,9 @@ cls.CookieManagerView = function(id, name, container_class)
         label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_DOMAIN,
         renderer: function(obj) {
           return obj.domain || window.templates.cookie_manager.table_view.unknown_value();
+        },
+        summer: function(values, groupname, getter) {
+          return ["button", "Add Cookie", "class", "add_cookie_button"];
         }
       },
       name: {
@@ -119,10 +122,11 @@ cls.CookieManagerView = function(id, name, container_class)
     this.flattened_cookies = this._flatten_cookies(this._cookie_dict, this._rts);
     if(container.getElementsByClassName("table_container").length < 1)
     {
-      this._table_container = container.render(["div",new SortableTable(this._tabledef, this.flattened_cookies).render(),"class","table_container"]);
+      var sortable_table = new SortableTable(this._tabledef, this.flattened_cookies, null, "domain", "hostandpath", true);
+      this._table_container = container.render(["div",sortable_table.render(),"class","table_container"]);
       this._table_elem = container.getElementsByClassName("sortable-table")[0];
       this._table_obj = ObjectRegistry.get_instance().get_object(this._table_elem.getAttribute("data-object-id"));
-      this._table_obj.group("hostandpath");
+      // this._table_obj.group("hostandpath");
       container.render(window.templates.cookie_manager.add_cookie_form(this._rts));
       window.eventHandlers.change["cookiemanager-add-cookie-domain-select"]();
       this.update_path_datalist();
@@ -139,6 +143,7 @@ cls.CookieManagerView = function(id, name, container_class)
     }
     this._table_obj = ObjectRegistry.get_instance().get_object(this._table_elem.getAttribute("data-object-id"));
     this._table_obj.data = this.flattened_cookies;
+    // todo: since the table wasn't re-grouped, check if this still makes sense.
     this._table_container.clearAndRender(this._table_obj.render());
     // context menus
     this._table_obj.add_listener("rendered",this._add_context_menus.bind(this));
