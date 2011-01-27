@@ -180,6 +180,27 @@
     }
   }
 
+  var TestTempView = function(name)
+  {
+    this.createView = function(container)
+    {
+      container.innerHTML =
+        "<div class='padding'><h2>Test view, id: " + this.id + "</h2></div>";
+    };
+    this.init(name);
+  };
+
+  TestTempView.prototype = new TempView();
+
+  this._handlers["add-temp-test-view"] = function(action_id, event, target)
+  {
+    var test_view = new TestTempView('Hello');
+    var ui = UI.get_instance();
+    ui.get_tabbar("request").add_tab(test_view.id);
+    ui.show_view(test_view.id);
+    return false;
+  };
+
   /* implementation */
 
   this.handle = function(action_id, event, target)
