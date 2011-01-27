@@ -154,7 +154,7 @@
               "<item>" +
                 "<input type='button' handler='expand-value' class='folder-key'/>" +
                 "<key data-spec='dom#" + helpers.escapeTextHtml(prop[NAME]) + "'>" + helpers.escapeTextHtml(prop[NAME]) + "</key>" +
-                "<value class='" + type + "' data-value='" + value + "'>" +
+                "<value class='" + type + "' data-value='\"" + value + "\"'>" +
                   "\"" + helpers.escapeTextHtml(short_val) +
                 "</value>" +
               "</item>"
