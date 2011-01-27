@@ -199,9 +199,9 @@ cls.CookieManagerView = function(id, name, container_class)
     // cleanup runtimes directory
     for(var item in this._rts)
     {
-      // item is a string, rt_id is a number which can now be compared with what's in msg.activeTab
+      // item is a string, rt_id is a number which can now be compared with what's in msg.runtimes_with_dom
       var rt_id = this._rts[item].rt_id;
-      if(msg.activeTab.indexOf(rt_id) === -1)
+      if(msg.runtimes_with_dom.indexOf(rt_id) === -1)
       {
         // runtime was not active and is to be removed from this._rts
         delete this._rts[rt_id];
@@ -222,9 +222,9 @@ cls.CookieManagerView = function(id, name, container_class)
       }
     }
 
-    for (var i=0; i < msg.activeTab.length; i++)
+    for (var i=0; i < msg.runtimes_with_dom.length; i++)
     {
-      var rt_id = msg.activeTab[i];
+      var rt_id = msg.runtimes_with_dom[i];
       if(!this._rts[rt_id])
       {
         this._rts[rt_id]={rt_id: rt_id, get_domain_is_pending: true};
