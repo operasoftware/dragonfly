@@ -157,32 +157,42 @@ window.templates.text_resource_view = function(resource, resourcedata)
 
 window.templates.js_resource_view = function(resource, resourcedata)
 {
-  return [
-    ['code',
-        ['div', 'js-resource'],
-        ["pre", resourcedata],
-        'class', 'resource-detail-container'
-    ]
+  var line_count = 1;
+  var lines = [line_count++];
+  var source = this.highlight_js_source(resourcedata, function()
+  {
+    lines.push(line_count++);
+  });
+  source.unshift('div');
+  source.push('class', 'js-source js-resource-content');
+  return ['code',
+    ['div',
+      source,
+      ['div', lines.join('\n'), 'class', 'resource-line-numbers'],
+      'class', 'js-resource'
+    ],
+    'class', 'resource-detail-container'
   ]
 }
 
 
 window.templates.image_resource_view = function(resource, resourcedata)
 {
-  return [
-    ["h1", "Image details view"],
-    ["img", "src", resourcedata]
+  return ['div',
+    ["img", "src", resourcedata, 'class', 'resource-image'],
+    'class', 'resource-detail-container resource-image-container'
   ]
 }
 
 
 window.templates.font_resource_view = function(resource, data)
 {
-  return [
+  return ['div',
     templates.font_style(resource, data),
     ["h1", "Font details view"],
     ["div", "The quick brown fox jumped over the lazy dog",
-     "style", "font-family: fontresource-" + resource.id]
+     "style", "font-family: fontresource-" + resource.id],
+    'class', 'resource-detail-container'
   ]
 }
 
