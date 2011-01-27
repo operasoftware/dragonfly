@@ -1,0 +1,65 @@
+.cookie_manager .spacedbutton {
+  margin: 10px 2px 10px 10px;
+}
+
+.cookie_manager .delete_cookie {
+  color: #444
+}
+
+.cookie_manager .sortable-table input[type=text], .cookie_manager .add-cookie-form input[type=text] {
+  width: 99%; border: 1px solid #CCC;
+}
+
+.cookie_manager .replaced-val {
+  color: #AAA;
+}
+
+.cookie_manager .expired_cookie {
+  color: #AAA;
+}
+
+.cookie_manager .add_cookie_dropdown {
+  max-width: 200px;
+}
+
+.cookie_manager .hidden {
+  display: none;
+}
+
+/* Prepared styles for a show-all-cookies-of-domain feature */
+/*
+.cookie_manager .group_hostname {
+  border: 2px solid transparent;
+  padding: 2px;
+  margin: -3px 1px 1px -4px;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.cookie_manager .group_hostname:hover {
+  border: 2px dashed #777;
+}
+*/
+
+/* "Add cookies" styles */
+
+.cookie_manager h2 {
+  padding: 20px; padding-bottom: 3px;
+}
+
+.cookie_manager .add-cookie-form {
+  margin: 10px;
+  padding: 10px 0 10px 10px;
+  background: #DEDEDE;
+  overflow: auto;
+}
+
+.cookie_manager .add-cookie-form .container {
+  float: left;
+  margin-right: 10px;
+  min-height: 40px;
+}
+
+.cookie_manager .add-cookie-form input[type=datetime] {
+  padding: 1px 90px;
+}

@@ -124,11 +124,12 @@ window.load_screen_timeout = window.setTimeout(function()
 <link rel="stylesheet" href="./http-logger/httplogger_style.css"/>
 <link rel="stylesheet" href="./console-logger/consolelogger_style.css"/>
 <link rel="stylesheet" href="./ui-style/colorpickerstyle.css"/>
+<link rel="stylesheet" href="./ui-scripts/sortable_table/sortable_table.css"/>
 <link rel="stylesheet" href="./repl/repl_style.css"/>
 <link rel="stylesheet" href="./shortcutconfig/style.css"/>
 <link rel="stylesheet" href="./ui-style/global_command_line.css"/>
 <link rel="stylesheet" href="./ui-style/contextmenu.css"/>
-
+<link rel="stylesheet" href="./cookie-manager/cookie_manager_style.css"/>
 
 <!-- This will turn off including of the UI strings if the exclude_uistrings var is set -->
 <!-- command concat_js off if exclude_uistrings -->
@@ -145,8 +146,10 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./scripts/colors.js"/>
 <script src="./scripts/colorspace.js"/>
 <script src="./scripts/messages.js"/>
+<script src="./scripts/objectregistry.js"/>
 <script src="./scripts/spec_links.js"/>
 <script src="./scripts/queue.js"/>
+
 
 
 <script src="./scripts/debug-helpers-liveSource.js"/>
@@ -212,6 +215,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/colorpickertemplates.js"/>
 <script src="./ui-scripts/colorpicker.js"/>
 <script src="./ui-scripts/slider.js"/>
+<script src="./ui-scripts/sortable_table/sortable_table.js"/>
 <script src="./ui-scripts/contextmenu.js"/>
 <script src="./ui-scripts/sidepanels/view.js"/>
 <script src="./ui-scripts/sidepanels/templates.js"/>
@@ -224,7 +228,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./build-application/build_exec_2_0.js"></script>
 <script src="./build-application/build_ecmascript_debugger_5_0.js"></script>
 <script src="./build-application/build_ecmascript_debugger_6_0.js"></script>
-
+<script src="./build-application/build_cookie_manager_1_0.js"></script>
 
 <script src="./debug/debug.js"/>
 <script src="./debug/configure_message_filter.js"/>
@@ -234,6 +238,9 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./shortcutconfig/shortcutconfig.js"/>
 <script src="./shortcutconfig/templates.js"/>
 
+<script src="./cookie-manager/cookie_manager_templates.js"></script>
+<script src="./cookie-manager/cookie_manager_views.js"></script>
+<script src="./cookie-manager/cookie_manager_actions.js"></script>
 
 
 
@@ -241,6 +248,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./syntaxhighlight/js/syntax.js"/>
 <script src="./syntaxhighlight/js/tokenizer.js"/>
 <script src="./syntaxhighlight/js/templates.js"/>
+
 
 
 <script src="./ecma-debugger/ListTextSearch.js"/>
@@ -255,6 +263,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ecma-debugger/runtime_onload_handler.js"/>
 <script src="./ecma-debugger/views-runtimes.js"/>
 <script src="./ecma-debugger/views.js"/>
+
 
 <script src="./ecma-debugger/object_inspection/inspection_base_data.js"/>
 
