@@ -26,6 +26,21 @@
   display: none;
 }
 
+.sortable-table .ellipsis_cont {
+  position: relative;
+  height: 12px;
+}
+
+.sortable-table .ellipsis_cont .ellipsis {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 /* Prepared styles for a show-all-cookies-of-domain feature */
 /*
 .cookie_manager .group_hostname {

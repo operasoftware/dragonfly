@@ -10,7 +10,7 @@ cls.CookieManagerView = function(id, name, container_class)
       hostandpath: {
         label:   "Host and path",
         grouper: function(obj) {
-          return window.views.cookie_manager._rts[obj.runtimes[0]].hostname + window.views.cookie_manager._rts[obj.runtimes[0]].pathname;
+          return views.cookie_manager._rts[obj.runtimes[0]].hostname + window.views.cookie_manager._rts[obj.runtimes[0]].pathname;
         },
         renderer: function(groupvalue, obj) {
           var obj = obj[0];
@@ -19,12 +19,16 @@ cls.CookieManagerView = function(id, name, container_class)
         }
       }
     },
-    column_order: ["domain", "name", "value", "path", "expires", "isSecure", "isHTTPOnly", "remove"],
+    column_order: ["domain", "name", "value", "path", "expires", "isSecure", "isHTTPOnly"],
     columns: {
       domain: {
         label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_DOMAIN,
         renderer: function(obj) {
-          return obj.domain || window.templates.cookie_manager.table_view.unknown_value();
+          if(obj.domain)
+          {
+            return window.templates.cookie_manager.wrap_ellipsis(obj.domain);
+          }
+          return window.templates.cookie_manager.unknown_value();
         },
         summer: function(values, groupname, getter) {
           return ["button", "Add Cookie", "class", "add_cookie_button"];
@@ -34,27 +38,31 @@ cls.CookieManagerView = function(id, name, container_class)
         label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_NAME,
         renderer: function(obj) {
           // currently using "name" to make sure to store the objectref somewhere
+          /*
           if(obj.is_editable)
           {
-            return ["div", window.templates.cookie_manager.table_view.editable_name(obj.name, obj.objectref), "data-objectref", obj.objectref];
+            return ["div", window.templates.cookie_manager.editable_name(obj.name, obj.objectref), "data-objectref", obj.objectref];
           }
           else
           {
-            return ["div", obj.name, "data-objectref", obj.objectref];
-          }
+          */
+            return window.templates.cookie_manager.wrap_ellipsis(["div", obj.name, "data-objectref", obj.objectref]);
+          // }
         }
       },
       value: {
         label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_VALUE,
         renderer: function(obj) {
+          /*
           if(obj.is_editable)
           {
-            return window.templates.cookie_manager.table_view.editable_value(decodeURIComponent(obj.value), obj.objectref);
+            return window.templates.cookie_manager.editable_value(decodeURIComponent(obj.value), obj.objectref);
           }
           else
           {
-            return obj.value;
-          }
+          */
+            return window.templates.cookie_manager.wrap_ellipsis(obj.value);
+          // }
         }
       },
       path: {
@@ -62,9 +70,9 @@ cls.CookieManagerView = function(id, name, container_class)
         renderer: function(obj) {
           if(typeof obj.path === "string")
           {
-            return obj.path;
+            return window.templates.cookie_manager.wrap_ellipsis(obj.path);
           }
-          return window.templates.cookie_manager.table_view.unknown_value();
+          return window.templates.cookie_manager.unknown_value();
         }
       },
       expires: {
@@ -74,46 +82,36 @@ cls.CookieManagerView = function(id, name, container_class)
           {
             if(obj.expires === 0)
             {
-              return window.templates.cookie_manager.table_view.expires_0values()
+              return window.templates.cookie_manager.wrap_ellipsis(window.templates.cookie_manager.expires_0values())
             }
             // return empty container to be filled by _update_expiry func
-            return window.templates.cookie_manager.table_view.expires_container(obj.objectref, new Date(obj.expires*1000));
+            return window.templates.cookie_manager.wrap_ellipsis(window.templates.cookie_manager.expires_container(obj.objectref, new Date(obj.expires*1000)));
           }
           else
           {
-            return window.templates.cookie_manager.table_view.unknown_value();
+            return window.templates.cookie_manager.unknown_value();
           }
         }
       },
       isSecure: {
-        label:    ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY,
+        label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY),
         renderer: function(obj) {
           if(typeof obj.isSecure === "number")
           {
             return obj.isSecure? "Yes":"";
           }
-          return window.templates.cookie_manager.table_view.unknown_value();
+          return window.templates.cookie_manager.unknown_value();
         }
       },
       isHTTPOnly: {
-        label:    ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY,
+        label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY),
         renderer: function(obj) {
           if(typeof obj.isHTTPOnly === "number")
           {
             return obj.isHTTPOnly? "Yes":"";
           }
-          return window.templates.cookie_manager.table_view.unknown_value();
+          return window.templates.cookie_manager.unknown_value();
         }
-      },
-      remove: {
-        label:    "",
-        renderer: function(obj) {
-          if(obj.is_removable)
-          {
-            return window.templates.cookie_manager.table_view.remove_button(obj.objectref);
-          }
-        },
-        sorter: "unsortable"
       }
     }
   };
@@ -124,32 +122,16 @@ cls.CookieManagerView = function(id, name, container_class)
     {
       var sortable_table = new SortableTable(this._tabledef, this.flattened_cookies, null, "domain", "hostandpath", true);
       this._table_container = container.render(["div",sortable_table.render(),"class","table_container"]);
-      this._table_elem = container.getElementsByClassName("sortable-table")[0];
-      this._table_obj = ObjectRegistry.get_instance().get_object(this._table_elem.getAttribute("data-object-id"));
-      // this._table_obj.group("hostandpath");
-      container.render(window.templates.cookie_manager.add_cookie_form(this._rts));
-      window.eventHandlers.change["cookiemanager-add-cookie-domain-select"]();
-      this.update_path_datalist();
-      container.render(window.templates.cookie_manager.clear_and_refetch_button());
     }
-    else
-    {
-      // replace domain select input as the runtime may have changed. ideally just do in that case, but skipping that for now.
-      var domain_select_container = container.getElementsByClassName("domain_select_container")[0];
-      if(domain_select_container)
-      {
-        domain_select_container.clearAndRender(window.templates.cookie_manager.domain_selector(this._rts));
-      }
-    }
-    this._table_obj = ObjectRegistry.get_instance().get_object(this._table_elem.getAttribute("data-object-id"));
-    this._table_obj.data = this.flattened_cookies;
-    // todo: since the table wasn't re-grouped, check if this still makes sense.
-    this._table_container.clearAndRender(this._table_obj.render());
+    this._table_elem = container.getElementsByClassName("sortable-table")[0];
+    sortable_table = ObjectRegistry.get_instance().get_object(this._table_elem.getAttribute("data-object-id"));
+    sortable_table.data = this.flattened_cookies;
+    this._table_container = container.clearAndRender(["div",sortable_table.render(),"class","table_container"]);
     // context menus
-    this._table_obj.add_listener("rendered",this._add_context_menus.bind(this));
+    sortable_table.add_listener("rendered",this._add_context_menus.bind(this));
     this._add_context_menus();
     // live expiry
-    this._table_obj.add_listener("rendered",this._update_expiry.bind(this));
+    sortable_table.add_listener("rendered",this._update_expiry.bind(this));
     if(!this._update_expiry_interval)
     {
       this._update_expiry_interval = setInterval(this._update_expiry,15000);
@@ -300,7 +282,7 @@ cls.CookieManagerView = function(id, name, container_class)
         }
         else
         {
-          elem.clearAndRender(window.templates.cookie_manager.table_view.expired_value());
+          elem.clearAndRender(window.templates.cookie_manager.expired_value());
           // find row, add expired_cookie class
           while(elem.nodeName !== "tr" || !elem.parentNode)
           {
@@ -471,38 +453,6 @@ cls.CookieManagerView = function(id, name, container_class)
   {
     window.messages.addListener('active-tab', this._on_active_tab.bind(this));
     this.init(id, name, container_class);
-  };
-
-  // Helpers
-  this.update_path_datalist = function()
-  {
-    formelem = document.querySelector("form.add-cookie-form");
-    var runtime_field = formelem.querySelector("input[name=add_cookie_runtime]") || formelem.querySelector("select[name=add_cookie_runtime_select]");
-    var selected_runtime_ids = runtime_field.value.split(",");
-
-    var pathvalues = [];
-    for (var i=0; i < selected_runtime_ids.length; i++) {
-      var pathname = window.views.cookie_manager._rts[selected_runtime_ids[i]].pathname;
-      if(pathvalues.indexOf(pathname) === -1)
-      {
-        pathvalues.push(pathname);
-      }
-    };
-    // Remove old
-    var _old_path_list = formelem.querySelector("#cookiepathlist");
-    if(_old_path_list) {
-      formelem.removeChild(_old_path_list);
-    }
-    // Insert new
-    var render_object = [];
-    if(pathvalues.length > 0) {
-      var option_arr = [];
-      for (var i=0; i < pathvalues.length; i++) {
-        option_arr.push(["option","value",pathvalues[i]]);
-      };
-      render_object.push(["datalist",option_arr,"id","cookiepathlist"]);
-    }
-    formelem.render(render_object);
   };
 
   this._flatten_cookies = function(cookies, runtimes)

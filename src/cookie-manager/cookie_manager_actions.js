@@ -85,12 +85,6 @@ window.eventHandlers.blur['cookiemanager-edit'] = function(event, target)
   };
 }
 
-window.eventHandlers.click['cookiemanager-delete-cookie'] = function(event, target)
-{
-  var objectref = target.getAttribute("data-objectref");
-  window.views.cookie_manager.remove_cookie_by_objectref(objectref);
-};
-
 window.eventHandlers.click['add-cookie-handler'] = function(event, target)
 {
   event.preventDefault();
@@ -143,14 +137,4 @@ window.eventHandlers.click['add-cookie-handler'] = function(event, target)
   path_form_elem.value    = "/";
   expires_form_elem.value = ""; // todo: seems this has no effect
   // todo: scroll in case newly added cookies aren't visible
-}
-
-window.eventHandlers.click['cookiemanager-update'] = function(event, target)
-{
-  window.views.cookie_manager.refetch();
-}
-
-window.eventHandlers.change['cookiemanager-add-cookie-domain-select'] = function(event, target)
-{
-  window.views.cookie_manager.update_path_datalist();
 }
