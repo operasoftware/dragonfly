@@ -144,9 +144,15 @@ templates.network_log_request_detail = function(ctx, selected)
      "class", "resource-detail"
     ],
     ["h2", "Request details", ["button", "raw/cooked",
+                               "type", "button",
+                               // unselectable attribute works around bug CORE-35118
+                               "unselectable", "on",
                                "handler", "toggle-raw-cooked-request"]],
     templates.request_details(req),
     ["h2", "Response details", ["button", "raw/cooked",
+                                "type", "button",
+                                // unselectable attribute works around bug CORE-35118
+                                "unselectable", "on",
                                 "handler", "toggle-raw-cooked-response"]],
     templates.response_details(req),
     ["h2", "Body"],
@@ -192,6 +198,8 @@ templates.network_response_body = function(req)
             ["button",
              "Get response body",
              "data-resource-id", String(req.id),
+             // unselectable attribute works around bug CORE-35118
+             "unselectable", "on",
              "handler", "get-response-body"
             ],
             "class", "response-view-body-container"
