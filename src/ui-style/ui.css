@@ -150,6 +150,9 @@ button[handler="reload-window"] {
 [handler="dom-inspection-export"] {
     content: url("../ui-images/icons/icon_export.png");
 }
+[handler="show-search"] {
+    content: url("../ui-images/icons/icon_export.png");
+}
 [key="dom.find-with-click"] {
     content: url("../ui-images/icons/icon_click.png");
 }
@@ -472,12 +475,12 @@ modebar.hidden {
   display: none;
 }
 searchbar {
-  border: 0 solid #999;
-  border-width: 0 1px 1px;
-  padding: 3px 2px 2px;
+  border: 1px solid #999;
+  border-top: none;
+  padding: 3px;
   height: 21px; /* 21 + 3 + 2 (padding) = 26 */
   line-height: 21px;
-  background: #f3f3f3 url("../ui-images/shine_2.png") 0 0 repeat-x;
+  background: #eee;
 }
 
 window-select {
