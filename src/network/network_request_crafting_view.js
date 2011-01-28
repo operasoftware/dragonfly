@@ -247,7 +247,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
     }
   }.bind(this);
 
-  this._on_urlredirect_bound = function(data)
+  this._on_urlredirect_bound = function(msg)
   {
     var data = new cls.ResourceManager["1.0"].UrlRedirect(msg);
     if (!this._is_relevant(data.fromResourceID)) { return; }
