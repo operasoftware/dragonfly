@@ -1070,7 +1070,9 @@ cls.JsSourceView.create_ui_widgets = function()
   );
 
 
-  new JSSourceSearch('js_source', new Searchbar(), new VirtualTextSearch());
+  new JSSourceSearch('js_source', 
+                     [Searchbar, VirtualTextSearch],
+                     [cls.SearchWindow]);
 
   eventHandlers.change['set-tab-size'] = function(event, target)
   {

@@ -399,6 +399,6 @@ cls.DOMView.create_ui_widgets = function()
     ]
   );
 
-  new Search('dom', new Searchbar(), new TextSearch());
+  new Search('dom', [Searchbar]);
 
 };

@@ -465,8 +465,15 @@
     return ['checkbox', ['label', input, label ] ];
   }
 
+  this._window_types = {};
+  this._window_types[UIWindow.HUD] = "_window_type_hud";
+
   this._window = function(win)
   {
+    if (this._window_types.hasOwnProperty(win.window_type))
+    {
+      return this[this._window_types[UIWindow.HUD]](win);
+    }
     return ['window',
         win.header ? this.window_header(views[win.view_id].name) : [],
         win.is_resizable ?
@@ -488,6 +495,22 @@
       'height: ' + win.height + 'px;',
       'view_id', win.view_id
     ]
+  }
+
+  this._window_type_hud = function(win)
+  {
+    return (
+    ['window',
+      ['window-control', 'handler', 'window-scale-top'],
+      'id', win.id,
+      'style',
+      'top:' + win.top + 'px;' +
+      'left: ' + win.left + 'px;' +
+      'width: '+ win.width + 'px;' +
+      'height: ' + win.height + 'px;',
+      'view_id', win.view_id,
+      'class', 'hud'
+    ]);
   }
 
   this.window_header = function(name)

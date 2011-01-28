@@ -86,7 +86,7 @@
       else if (view.type == 'side-panel')
       {
         // TODO
-        opera.postError('Getting a layout box is not supported for side panel views.');
+        // opera.postError('Getting a layout box is not supported for side panel views.');
         return null;
       }
       else
@@ -101,6 +101,17 @@
         if (ret = child.get_cell(view_id))
         {
           return ret;
+        }
+      }
+    }
+    var windows = window.ui_windows;
+    if (windows)
+    {
+      for (var win in windows)
+      {
+        if (windows[win].container && windows[win].container.view_id == view_id)
+        {
+          return windows[win];
         }
       }
     }

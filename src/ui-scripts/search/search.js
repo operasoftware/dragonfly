@@ -1,6 +1,6 @@
-var Search = function(view_id, searchbar_class, searchwindow_class)
+var Search = function(view_id, searchbar, searchwindow)
 {
-  this._init(view_id, searchbar_class, searchwindow_class);
+  this._init(view_id, searchbar, searchwindow);
 };
 
 Search.prototype = new function()
@@ -59,7 +59,7 @@ Search.prototype = new function()
   MOVE_HIGHLIGHT_UP = 0,
   MOVE_HIGHLIGHT_DOWN = 1,  
   SEARCHFIELD = 2,
-  MORE = 3;
+  SEARCH_MORE = 3;
 
 
   this.__defineSetter__('is_active', function(){});
@@ -173,44 +173,46 @@ Search.prototype = new function()
     }
   };
 
-  this._init = function(view_id, searchbar, simple_search, searchwindow)
+  this._show_search_window = function()
   {
+    window.views[this._window_view_id].show_search_window();
+  }
+
+  this._init = function(view_id, searchbar, searchwindow)
+  {
+    var searchbarclass = searchbar && searchbar[0];
+    var simplesearchclass = searchbar && (searchbar[1] || TextSearch);
+    var searchwindowclass = searchwindow && searchwindow[0];
+    var advancedserachclass  = '';
     this._is_active = false;
     this._mode = MODE_SEARCHBAR;
     this._view_id = view_id;
-    if (searchbar)
+    this.controls = [];
+    this._searchbar = null;
+    this._searchwindow = null;
+    if (searchbarclass)
     {
-      this._searchbar = searchbar;
+      this._searchbar = new searchbarclass();
       this._searchbar.add_listener("searchbar-created", 
-                                  this._onserachbar_created.bind(this));
-      this._simple_text_search = simple_search;
-      this.controls =
-      [
-        {
-          handler: this._view_id + '-move-highlight-up',
-          type: "move_highlight_button",
-          class: "search-move-highlight-up",
-          title: "Move highlight up"
-        },
-        {
-          handler: this._view_id + '-move-highlight-down',
-          type: "move_highlight_button",
-          class: "search-move-highlight-down",
-          title: "Move highlight down"
-        },
-        this.search_field =
-        {
-          handler: this._view_id + '-simple-text-search',
-          shortcuts: this._view_id + '-simple-text-search',
-          title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
-        },
-        {
-          handler: this._view_id + '-move-highlight-down',
-          type: "move_highlight_button",
-          class: "search-more",
-          title: "Move highlight down"
-        },
-      ];
+                                   this._onserachbar_created.bind(this));
+      this._simple_text_search = new simplesearchclass();
+      this.controls.push({
+                           handler: this._view_id + '-move-highlight-up',
+                           type: "move_highlight_button",
+                           class: "search-move-highlight-up",
+                           title: "Move highlight up"
+                         },
+                         {
+                           handler: this._view_id + '-move-highlight-down',
+                           type: "move_highlight_button",
+                           class: "search-move-highlight-down",
+                           title: "Move highlight down"
+                         },
+                         {
+                           handler: this._view_id + '-simple-text-search',
+                           shortcuts: this._view_id + '-simple-text-search',
+                           title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
+                         });
       messages.addListener('view-destroyed', this._onviewdestroyed.bind(this));
       messages.addListener('view-created', this._onviewcreated.bind(this));
       eventHandlers.input[this.controls[SEARCHFIELD].handler] = 
@@ -223,9 +225,21 @@ Search.prototype = new function()
       register_shortcut_listener(this.controls[SEARCHFIELD].shortcuts, 
                                  this._onshortcut.bind(this));
     }
-    else
+    if (searchwindowclass)
     {
-      this._searchbar = null;
+      this._window_view_id = view_id + "-search-window";
+      this._searchwindow = new searchwindowclass(this._window_view_id, 
+                                                 "Search", 
+                                                 view_id + "-search-window scroll");
+      this.controls[SEARCH_MORE] =
+      {
+        handler: this._view_id + '-show-search-window',
+        type: "move_highlight_button",
+        class: "search-more",
+        title: "Show advanced search"
+      };
+      eventHandlers.click[this.controls[SEARCH_MORE].handler] = 
+        this._show_search_window.bind(this);
     }
     this._searchwindow = null;
     this._ui = UI.get_instance();
@@ -234,9 +248,9 @@ Search.prototype = new function()
 
 };
 
-var JSSourceSearch = function(view_id, searchbar_class, searchwindow_class)
+var JSSourceSearch = function(view_id, searchbar, searchwindow)
 {
-  this._init(view_id, searchbar_class, searchwindow_class);
+  this._init(view_id, searchbar, searchwindow);
 };
 
 var JSSourceSearchBase = function()
@@ -254,9 +268,9 @@ var JSSourceSearchBase = function()
     }
   };
 
-  this._init = function(view_id, searchbar_class, searchwindow_class)
+  this._init = function(view_id, searchbar, searchwindow)
   {
-    Search.prototype._init.call(this, view_id, searchbar_class, searchwindow_class);
+    Search.prototype._init.call(this, view_id, searchbar, searchwindow);
     messages.addListener('script-selected', this._onscriptselected.bind(this));
     messages.addListener('view-scrolled', this._onviewscrolled.bind(this));
   }

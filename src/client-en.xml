@@ -190,6 +190,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/toolbarConfig.js"/>
 <script src="./ui-scripts/modebar.js"/>
 <script src="./ui-scripts/search/searchbar.js"/>
+<script src="./ui-scripts/search/searchwindow.js"/>
 <script src="./ui-scripts/search/search.js"/>
 <script src="./ui-scripts/search/templates.js"/>
 <script src="./ui-scripts/overlay.js"/>
