@@ -151,6 +151,12 @@ ul {
   color: #999;
 }
 
+#backtrace-container .not-stopped {
+  cursor: auto;
+  color: #999;
+  font-style: italic;
+}
+
 #ecma-debugger-toolbar {
   background-color:#ccc;
   }

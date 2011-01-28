@@ -46,6 +46,8 @@ ui_strings.M_VIEW_LABEL_SOURCE = 'Source';
 ui_strings.M_VIEW_LABEL_COMMAND_LINE = 'Command Line';
 /* DESC: Call stack overview, a list of function calls. */
 ui_strings.M_VIEW_LABEL_CALLSTACK = 'Call Stack';
+/* DESC: Text to show in call stack when the execution is not stopped. */
+ui_strings.M_VIEW_LABEL_NOT_STOPPED = 'Not stopped';
 /* DESC: side panel in the script view with the callstack and the inspection view. */
 ui_strings.M_VIEW_LABEL_RUNTIME_STATE = 'State';
 /* DESC: Thread log overview, a list of threads. */
