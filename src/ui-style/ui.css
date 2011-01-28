@@ -151,7 +151,7 @@ button[handler="reload-window"] {
     content: url("../ui-images/icons/icon_export.png");
 }
 [handler="show-search"] {
-    content: url("../ui-images/icons/icon_export.png");
+    content: url("../ui-images/icons/icon_search.png");
 }
 [key="dom.find-with-click"] {
     content: url("../ui-images/icons/icon_click.png");
