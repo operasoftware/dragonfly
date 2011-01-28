@@ -115,6 +115,17 @@
     return ret;
   }
 
+  this.move_highlight_button = function(button)
+  {
+    return (
+    ['input',
+        'type', 'button',
+        'class', button.class,
+        'handler', button.handler,
+        'title', button.title
+    ]);
+  }
+
   this.search_button = function(search)
   {
     return (

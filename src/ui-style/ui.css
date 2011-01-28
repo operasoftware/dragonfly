@@ -1524,3 +1524,16 @@ tabs, toolbar {
 {
   margin-left: 20px;
 }
+
+.search-move-highlight-up
+{
+  content: "up";
+}
+.search-move-highlight-down
+{
+  content: "down";
+}
+.search-more
+{
+  content: "More";
+}

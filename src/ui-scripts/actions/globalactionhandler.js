@@ -207,10 +207,14 @@
   {
     if (action_id in this._handlers &&
         this._handlers[action_id](action_id, event, target) == false)
+    {
       return false;
+    }
     var sc_listener = event.target.get_attr('parent-node-chain', 'shortcuts');
-      if (sc_listener && sc_listener in this._sc_listeners)
-        return this._sc_listeners[sc_listener](action_id, event, target);
+    if (sc_listener && sc_listener in this._sc_listeners)
+    {
+      return this._sc_listeners[sc_listener](action_id, event, target);
+    }
   }
 
   this.onclick = function(event)

@@ -55,7 +55,12 @@ Search.prototype = new function()
 
   const 
   MODE_SEARCHBAR = 1, 
-  MODE_SEARCHWINDOW = 2;
+  MODE_SEARCHWINDOW = 2,
+  MOVE_HIGHLIGHT_UP = 0,
+  MOVE_HIGHLIGHT_DOWN = 1,  
+  SEARCHFIELD = 2,
+  MORE = 3;
+
 
   this.__defineSetter__('is_active', function(){});
   this.__defineGetter__('is_active', function(){return this._is_active;});
@@ -179,18 +184,43 @@ Search.prototype = new function()
       this._searchbar.add_listener("searchbar-created", 
                                   this._onserachbar_created.bind(this));
       this._simple_text_search = simple_search;
-      this.search_field =
-      {
-        handler: this._view_id + '-simple-text-search',
-        shortcuts: this._view_id + '-simple-text-search',
-        title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
-      };
+      this.controls =
+      [
+        {
+          handler: this._view_id + '-move-highlight-up',
+          type: "move_highlight_button",
+          class: "search-move-highlight-up",
+          title: "Move highlight up"
+        },
+        {
+          handler: this._view_id + '-move-highlight-down',
+          type: "move_highlight_button",
+          class: "search-move-highlight-down",
+          title: "Move highlight down"
+        },
+        this.search_field =
+        {
+          handler: this._view_id + '-simple-text-search',
+          shortcuts: this._view_id + '-simple-text-search',
+          title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
+        },
+        {
+          handler: this._view_id + '-move-highlight-down',
+          type: "move_highlight_button",
+          class: "search-more",
+          title: "Move highlight down"
+        },
+      ];
       messages.addListener('view-destroyed', this._onviewdestroyed.bind(this));
       messages.addListener('view-created', this._onviewcreated.bind(this));
-      eventHandlers.input[this.search_field.handler] = 
+      eventHandlers.input[this.controls[SEARCHFIELD].handler] = 
         this._onsearchfieldinput.bind(this)
+      eventHandlers.click[this.controls[MOVE_HIGHLIGHT_DOWN].handler] = 
+        this._onshortcut.bind(this, 'highlight-next-match');
+      eventHandlers.click[this.controls[MOVE_HIGHLIGHT_UP].handler] = 
+        this._onshortcut.bind(this, 'highlight-previous-match');
       ActionBroker.get_instance().get_global_handler().
-      register_shortcut_listener(this.search_field.shortcuts, 
+      register_shortcut_listener(this.controls[SEARCHFIELD].shortcuts, 
                                  this._onshortcut.bind(this));
     }
     else

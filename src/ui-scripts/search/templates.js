@@ -4,7 +4,7 @@
   {
     return (
     [
-      this.filters([search.search_field]),
+      this.filters(search.controls),
       ['info'],
     ]);
   }

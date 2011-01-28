@@ -83,6 +83,16 @@ TextSearch.prototype = new function()
       this._info_ele.textContent = info;
     }
   };
+
+  this._get_match_counts = function()
+  {
+    return this._search_results.length;
+  }
+
+  this._get_serach_cursor = function()
+  {
+    return this._cursor + 1;
+  }
     
   this._consume_node = function(node)
   {
