@@ -50,7 +50,7 @@ templates.network_options_main = function(caching, tracking, headers)
            templates.network_options_header_table(headers)
           ],
           */
-          "class", "padding network-options"
+          "class", "padding network-options",
          ];
 };
 
@@ -130,6 +130,7 @@ templates.network_log_request_detail = function(ctx, selected)
 {
   var req = ctx.get_resource(selected);
   return [
+  ["div",
     ["button", "X", "handler", "close-request-detail"],
     ["h2", "Summary"],
     ["table",
@@ -156,7 +157,10 @@ templates.network_log_request_detail = function(ctx, selected)
                                 "handler", "toggle-raw-cooked-response"]],
     templates.response_details(req),
     ["h2", "Body"],
-    templates.network_response_body(req)
+    templates.network_response_body(req),
+    ],
+    "data-resource-id", String(req.id),
+    "data-menu", "request-context-options",
   ]
 }
 

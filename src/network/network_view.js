@@ -19,7 +19,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   {
     if (this._scrollcontainer)
     {
-      this._scroll= this._scrollcontainer.scrollTop;
+      this._scroll = this._scrollcontainer.scrollTop;
     }
   }
 
@@ -180,6 +180,25 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   var doc_service = window.services['document-manager'];
   doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
   doc_service.addListener("documentloaded", this._on_documentloaded_bound);
+
+  var contextmenu = ContextMenu.get_instance();
+  contextmenu.register("request-context-options", [
+    {
+      label: "Show in resource view",
+      handler: function(evt, target) {
+        var rid = target.getAttribute("data-resource-id");
+        opera.postError("will show in resman " + rid)
+      }
+    },
+    {
+      label: "Copy to resource crafter",
+      handler: function(evt, target) {
+        var rid = target.getAttribute("data-resource-id");
+        opera.postError("will show crafter " + rid)
+      }
+    }
+  ]);
+
 
   new Settings
   (
