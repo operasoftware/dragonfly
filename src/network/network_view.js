@@ -44,7 +44,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
         this._scrollcontainer.scrollTop = this._scroll;
 
         var content = container.querySelector(".network-details-request");
-         content.style.width = "" + w + "px";
+        content.style.width = "" + w + "px";
       }
       else
       {
@@ -55,7 +55,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
         if (duration > 3000)
         {
-          graphwidth = Math.ceil(duration);
+          graphwidth = Math.ceil(duration*0.5);
         }
 
         // fixme: round up to nearest second when rendering grid
