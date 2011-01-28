@@ -66,8 +66,8 @@ var UIWindowBase = new function()
 
     if( this.toolbar )
     {
-      this.toolbar.setDimensions(true);
       this.toolbar.setup(this.view_id);
+      this.toolbar.setDimensions(true);
     }
 
     this.container.setup(this.view_id);
