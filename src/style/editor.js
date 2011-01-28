@@ -359,6 +359,8 @@ var Editor = function(actions)
     var ele = ref_ele || event.target;
     var sheet_link = ele.parentElement.getElementsByTagName('stylesheet-link')[0];
 
+    var scroll_pos = new Element.ScrollPosition(ele);
+
     if (!this.base_style['font-size'])
     {
       this.get_base_style(ref_ele || ele);
@@ -404,6 +406,7 @@ var Editor = function(actions)
     {
       this.getCharPosition(event);
       this.textarea.focus();
+      scroll_pos.reset();
     }
   };
 
