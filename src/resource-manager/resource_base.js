@@ -170,8 +170,11 @@ window.templates.js_resource_view = function(resource, resourcedata)
 window.templates.image_resource_view = function(resource, resourcedata)
 {
   return [
-    ["h1", "Image details view"],
-    ["img", "src", resourcedata]
+    ["div",
+     ["h1", "Image details view"],
+     ["img", "src", resourcedata],
+     "class", "image-resource-view"
+    ]
   ]
 }
 

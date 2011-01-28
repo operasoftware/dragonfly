@@ -66,8 +66,12 @@
 
 }
 
-.resource-image-view {
+.image-resource-view {
+    border: solid thin black;
+    background-image: url(../ui-images/transparency_background.png);
+}
 
+.resource-image-view img {
 }
 
 .resource-image-box {
