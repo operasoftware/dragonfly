@@ -135,4 +135,41 @@
     box-sizing: border-box;
     height: 100%;
     overflow: auto;
+    border-top: 100px solid #ccc;
+    /* is currently needed due to a bug. otherwise the scroll height is bigger than the height. */
+    position: relative;
+}
+
+.js-resource {
+  position: relative;
+  white-space: pre;
+  font-family: monospace;
+  font-size: 12px;
+  line-height: 15px;
+}
+
+.js-resource-content {
+  margin-left: 10ex;
+}
+
+.resource-line-numbers {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 7ex;
+  padding-right: 1ex;
+  text-align: right;
+  background-color: hsl(0, 0%, 96%);
+  color: hsl(0, 0%, 70%);
+  border-right: 1px solid hsl(0, 0%, 70%);
+}
+
+.resource-image-container {
+  background-color: hsl(0, 0%, 30%);  
+}
+.resource-image {
+  display: block;
+  max-height: 100%;
+  max-width: 100%;
+  margin:auto;
 }
