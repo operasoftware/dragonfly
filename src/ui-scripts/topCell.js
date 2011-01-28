@@ -43,7 +43,6 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, services)
   {
     this.container = new TopContainer(this); // actually just a cell
     this.tab = new TopTabs(this);
-    this.overlay = new Overlay();
     this.toolbar = null;
   }
 
@@ -169,7 +168,8 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, services)
     this.modebar.setup(this.id);
   }
 
-  this.overlay.add_overlay("settings-overlay",
+  var ui = UI.get_instance();
+  ui.register_overlay("settings-overlay",
     [
       new SettingsGroup(ui_strings.S_SETTINGS_HEADER_GENERAL, "general"),
       new SettingsGroup(ui_strings.S_SETTINGS_HEADER_DOCUMENT, "document"),
@@ -181,7 +181,7 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, services)
     ]
   );
 
-  this.overlay.add_overlay("remote-debug-overlay",
+  ui.register_overlay("remote-debug-overlay",
     [
       new SettingsGroup("Remote debug", "remote_debug")
     ]

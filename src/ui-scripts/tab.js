@@ -58,7 +58,7 @@ var Tab = function(ref_id, name, has_close_button)
     return top_tabs ? top_tabs.querySelector("[ref-id='" + this.ref_id + "']") : null;
   };
 
-  this.set_tab_badge = function(type, content)
+  this.set_badge = function(type, content)
   {
     var badge = this._get_top_tab_element().querySelector(".badge");
     if (badge)
@@ -68,12 +68,12 @@ var Tab = function(ref_id, name, has_close_button)
     }
   };
 
-  this.clear_tab_badge = function()
+  this.clear_badge = function()
   {
-    this.set_tab_badge(this.ref_id);
+    this.set_badge();
   };
 
-  this.set_tab_state = function(state)
+  this.set_state = function(state)
   {
     var tab = this._get_top_tab_element();
     if (tab)
@@ -82,7 +82,7 @@ var Tab = function(ref_id, name, has_close_button)
     }
   };
 
-  this.clear_tab_state = function()
+  this.clear_state = function()
   {
     var tab = document.querySelector("top-tabs").querySelector("[ref-id='" + this.ref_id + "']");
     if (tab)
@@ -103,7 +103,14 @@ var JSTab = function(ref_id, name, has_close_button)
   this.init(ref_id, name, has_close_button)
 
   window.messages.addListener("host-state", function(msg) {
-    this.set_tab_state(msg.state);
+    switch (msg.state)
+    {
+      case "waiting":
+        this.set_badge("", "→");
+        break;
+      default:
+        this.clear_badge();
+    }
   }.bind(this));
 };
 
