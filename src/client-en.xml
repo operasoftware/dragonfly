@@ -192,6 +192,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/search/searchbar.js"/>
 <script src="./ui-scripts/search/searchwindow.js"/>
 <script src="./ui-scripts/search/search.js"/>
+<script src="./ui-scripts/search/advancedjssearch.js"/>
 <script src="./ui-scripts/search/templates.js"/>
 <script src="./ui-scripts/overlay.js"/>
 <script src="./ui-scripts/horizontal_navigation.js"/>

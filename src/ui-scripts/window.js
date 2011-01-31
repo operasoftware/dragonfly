@@ -53,6 +53,7 @@ var UIWindowBase = new function()
       this.toolbar = new WindowToolbar(this, toolbars[view_id].buttons, toolbars[view_id].filters );
     }
     this.header = typeof view.window_header == 'boolean' ? view.window_header : true;
+    this.window_class = view.window_class || '';
     if(!window.ui_windows)
     {
       window.ui_windows = {};

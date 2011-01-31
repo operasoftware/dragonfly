@@ -170,6 +170,10 @@ Search.prototype = new function()
         {
           this._simple_text_search.highlight_next();
         }
+        else if (this._mode == MODE_SEARCHWINDOW)
+        {
+          this._searchwindow.highlight_next();
+        }
         return false;
       }
       case 'highlight-previous-match':
@@ -177,6 +181,10 @@ Search.prototype = new function()
         if (this._mode == MODE_SEARCHBAR)
         {
           this._simple_text_search.highlight_previous();
+        }
+        else if (this._mode == MODE_SEARCHWINDOW)
+        {
+          this._searchwindow.highlight_previous();
         }
         return false;
       }
@@ -232,6 +240,7 @@ Search.prototype = new function()
     this._mode = MODE_SEARCHBAR;
     this._view_id = view_id;
     this.controls = [];
+    this.advanced_controls = [];
     this._searchbar = null;
     this._searchwindow = null;
     if (searchbarclass)
@@ -242,13 +251,13 @@ Search.prototype = new function()
       this._simple_text_search = new simplesearchclass();
       this.controls.push({
                            handler: this._view_id + '-move-highlight-up',
-                           type: "move_highlight_button",
+                           type: "search_control",
                            class: "search-move-highlight-up",
                            title: "Move highlight up"
                          },
                          {
                            handler: this._view_id + '-move-highlight-down',
-                           type: "move_highlight_button",
+                           type: "search_control",
                            class: "search-move-highlight-down",
                            title: "Move highlight down"
                          },
@@ -274,18 +283,35 @@ Search.prototype = new function()
     }
     if (searchwindowclass)
     {
-      this._window_view_id = view_id + "-search-window";
-      this._searchwindow = new searchwindowclass(this._window_view_id, 
-                                                 "Search", 
-                                                 view_id + "-search-window scroll");
 
+
+      if (this.controls.length)
+      {
+        this.advanced_controls = this.controls.slice(0);
+      }
       this.controls[SEARCH_MORE] =
       {
         handler: this._view_id + '-show-search-window',
-        type: "move_highlight_button",
+        type: "search_control",
         class: "search-more",
-        title: "Show advanced search"
+        title: "Show advanced search",
+        label: "More"
       };
+      this.advanced_controls[SEARCH_MORE] =
+      {
+        handler: this._view_id + '-show-search-window',
+        type: "search_control",
+        class: "search-more",
+        title: "Show search bar",
+        label: "Less"
+      };
+      this._window_view_id = view_id + "-search-window";
+      this._searchwindow = new searchwindowclass(this._window_view_id, 
+                                                 "Search", 
+                                                 view_id + "-search-window scroll",
+                                                 this.controls[SEARCHFIELD].handler);
+
+      new ToolbarConfig(this._window_view_id, null, this.advanced_controls);
       eventHandlers.click[this.controls[SEARCH_MORE].handler] = 
         this._toggle_mode.bind(this);
       messages.addListener('view-destroyed', this._onserachwindowclosed.bind(this));

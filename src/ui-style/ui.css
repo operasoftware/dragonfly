@@ -964,7 +964,7 @@ window:after {
   width: 100%;
   
 }
-window container {
+window-container {
   border: 1px solid #000;
   border-width: 0 1px 1px;
   border-radius: 0 0 7px 7px;
@@ -1560,5 +1560,16 @@ tabs, toolbar {
 }
 .search-more
 {
-  content: "More";
+
+}
+.search-window-content
+{
+  background-color: #fff;
+  height: 100%;
+}
+
+.context-window
+{
+  background-color: #fff;
+  color: #000;
 }

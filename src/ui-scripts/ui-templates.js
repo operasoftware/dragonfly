@@ -115,15 +115,20 @@
     return ret;
   }
 
-  this.move_highlight_button = function(button)
+  this.search_control = function(button)
   {
-    return (
+    var ret = 
     ['input',
         'type', 'button',
         'class', button.class,
         'handler', button.handler,
         'title', button.title
-    ]);
+    ];
+    if (button.label)
+    {
+      ret.push('value', button.label);
+    }
+    return ret;
   }
 
   this.search_button = function(search)
@@ -474,7 +479,8 @@
     {
       return this[this._window_types[UIWindow.HUD]](win);
     }
-    return ['window',
+    var ret = 
+    ['window',
         win.header ? this.window_header(views[win.view_id].name) : [],
         win.is_resizable ?
         [
@@ -494,7 +500,12 @@
       'width: '+ win.width + 'px;' +
       'height: ' + win.height + 'px;',
       'view_id', win.view_id
-    ]
+    ];
+    if (win.window_class)
+    {
+      ret.push('class', win.window_class);
+    }
+    return ret;
   }
 
   this._window_type_hud = function(win)
