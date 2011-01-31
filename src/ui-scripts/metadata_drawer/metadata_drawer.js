@@ -5,7 +5,7 @@ function MetadataDrawer(resource, title) {
   this._objectid = ObjectRegistry.get_instance().set_object(this);
   this._rules = {
     generic: [
-      {label: "url", getter: function(res) { return ["a", res.urltype == 4 ? "data:URI" : res.url, "href", res.url] } },
+      {label: "url", getter: function(res) { return ["a", (res.urltype == 4 ? "data:URI" : res.url), "href", res.url, "target", "_blank"] } },
       {label: "size", getter: function(res) { return  res.size
                                               ? "" + res.size + " bytes"
                                               : "-"
