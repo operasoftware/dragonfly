@@ -5,10 +5,6 @@
   {
     target = target.parentNode;
   }
-  debugger
-  var ul = target.parentNode;
-  ul.querySelector(".selected").className = "";
-  target.className = "selected";
 
   var frame = stop_at.getFrame(target['ref-id']);
   if (frame)
@@ -18,7 +14,7 @@
     messages.post('frame-selected', {frame_index: target['ref-id']});
     if (event.type == 'click')
     {
-      helpers.setSelected(event);
+      helpers.setSelected(target);
       if (views.js_source.isvisible())
       {
         if (frame.script_id)
@@ -176,7 +172,7 @@ window.eventHandlers.click['display-stylesheet'] = function(event, target)
   {
     stylesheets.setSelectedSheet(rt_id, index, rules);
     topCell.showView(views.stylesheets.id);
-    helpers.setSelected(event);
+    helpers.setSelected(event.target);
   }
 };
 
