@@ -18,16 +18,20 @@ templates.cookie_manager = {
       ] */
     ];
   },
-  wrap_ellipsis: function(text) {
-    return [
+  wrap_ellipsis: function(elem) {
+    var template = [
       "div",
         [
-          "div", text,
+          "div", elem,
           "class", "ellipsis"
         ],
-      "class", "ellipsis_cont",
-      "title", text
-    ]
+      "class", "ellipsis_cont"
+    ];
+    if(typeof elem === "string")
+    {
+      template.push("title", elem);
+    }
+    return template;
   },
   editable_name: function(name, objectref) {
     return [

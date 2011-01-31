@@ -20,6 +20,7 @@ cls.CookieManagerView = function(id, name, container_class)
       }
     },
     column_order: ["domain", "name", "value", "path", "expires", "isSecure", "isHTTPOnly"],
+    idgetter: function(res) { return res.objectref },
     columns: {
       domain: {
         label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_DOMAIN,
@@ -48,7 +49,7 @@ cls.CookieManagerView = function(id, name, container_class)
           else
           {
           */
-            return window.templates.cookie_manager.wrap_ellipsis(["div", obj.name, "data-objectref", obj.objectref]);
+            return window.templates.cookie_manager.wrap_ellipsis(obj.name);
           // }
         }
       },
@@ -152,7 +153,7 @@ cls.CookieManagerView = function(id, name, container_class)
     this._table_elem = this._table_container.getElementsByClassName("sortable-table")[0];
     for(var i=0; i < this._table_elem.childNodes.length; i++)
     {
-      if(!this._table_elem.childNodes[i].hasClass("header"))
+      if(this._table_elem.childNodes[i].getAttribute("data-object-id"))
       {
         this._table_elem.childNodes[i].setAttribute("data-menu", "remove_cookie");
       }
@@ -161,11 +162,11 @@ cls.CookieManagerView = function(id, name, container_class)
     contextmenu.register("remove_cookie", [
       {
         callback: function(evt, target){
-          while(target.getAttribute("data-menu") !== "remove_cookie" || !target.parentNode)
+          while(!target.getAttribute("data-object-id") || !target.parentNode)
           {
             target = target.parentNode;
           }
-          var objectref = target.querySelector("*[data-objectref]").getAttribute("data-objectref");
+          var objectref = target.getAttribute("data-object-id");
           var cookie_obj = {};
           for (var i=0; i < window.views.cookie_manager.flattened_cookies.length; i++) {
             if(window.views.cookie_manager.flattened_cookies[i].objectref === objectref)
