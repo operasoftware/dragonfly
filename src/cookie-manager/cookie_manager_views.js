@@ -26,6 +26,10 @@ cls.CookieManagerView = function(id, name, container_class)
         label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_DOMAIN,
         classname: "col_domain",
         renderer: function(obj) {
+          if(obj.is_runtimes_placeholder)
+          {
+            return;
+          }
           if(obj.domain)
           {
             return window.templates.cookie_manager.wrap_ellipsis(obj.domain);
@@ -40,6 +44,10 @@ cls.CookieManagerView = function(id, name, container_class)
         label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_NAME,
         classname: "col_name",
         renderer: function(obj) {
+          if(obj.is_runtimes_placeholder)
+          {
+            return;
+          }
           // currently using "name" to make sure to store the objectref somewhere
           /*
           if(obj.is_editable)
@@ -57,6 +65,10 @@ cls.CookieManagerView = function(id, name, container_class)
         label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_VALUE,
         classname: "col_value",
         renderer: function(obj) {
+          if(obj.is_runtimes_placeholder)
+          {
+            return;
+          }
           /*
           if(obj.is_editable)
           {
@@ -73,6 +85,10 @@ cls.CookieManagerView = function(id, name, container_class)
         label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_PATH,
         classname: "col_path",
         renderer: function(obj) {
+          if(obj.is_runtimes_placeholder)
+          {
+            return;
+          }
           if(typeof obj.path === "string")
           {
             return window.templates.cookie_manager.wrap_ellipsis(obj.path);
@@ -84,6 +100,10 @@ cls.CookieManagerView = function(id, name, container_class)
         label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES,
         classname: "col_expires",
         renderer: function(obj) {
+          if(obj.is_runtimes_placeholder)
+          {
+            return;
+          }
           if(typeof obj.expires === "number")
           {
             if(obj.expires === 0)
@@ -103,6 +123,10 @@ cls.CookieManagerView = function(id, name, container_class)
         label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY),
         classname: "col_secure",
         renderer: function(obj) {
+          if(obj.is_runtimes_placeholder)
+          {
+            return;
+          }
           if(typeof obj.isSecure === "number")
           {
             return obj.isSecure? "Yes":"";
@@ -114,6 +138,10 @@ cls.CookieManagerView = function(id, name, container_class)
         label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY),
         classname: "col_httponly",
         renderer: function(obj) {
+          if(obj.is_runtimes_placeholder)
+          {
+            return;
+          }
           if(typeof obj.isHTTPOnly === "number")
           {
             return obj.isHTTPOnly? "Yes":"";
@@ -554,7 +582,8 @@ cls.CookieManagerView = function(id, name, container_class)
       {
         // There are no cookies for this domain/path. The group needs to be shown anyhow.
         flattened_cookies.push({
-          runtimes: domaincookies.runtimes
+          runtimes: domaincookies.runtimes,
+          is_runtimes_placeholder: true
         });
       }
     }
