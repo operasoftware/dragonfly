@@ -136,8 +136,8 @@ cls.CookieManagerView = function(id, name, container_class)
     sortable_table.data = this.flattened_cookies;
     this._table_container = container.clearAndRender(["div",sortable_table.render(),"class","table_container"]);
     // context menus
-    sortable_table.add_listener("rendered",this._add_context_menus.bind(this));
-    this._add_context_menus();
+    sortable_table.add_listener("rendered",this._add_context_menus.bind(this, container));
+    this._add_context_menus(container);
     // live expiry
     sortable_table.add_listener("rendered",this._update_expiry.bind(this));
     if(!this._update_expiry_interval)
@@ -147,8 +147,26 @@ cls.CookieManagerView = function(id, name, container_class)
     this._update_expiry();
   };
 
-  this._add_context_menus = function ()
+  this._add_context_menus = function(container)
   {
+    // add refresh to container
+    container.setAttribute("data-menu", "cookie_refetch");
+    var contextmenu = ContextMenu.get_instance();
+    contextmenu.register("cookie_refetch", [
+      {
+        callback: (function(context){
+          return function(evt, target){
+            return [
+              {
+                label: "Reload",
+                handler: function(){context.refetch()}
+              }
+            ]
+          }
+        })(this)
+      }
+    ]);
+    
     // add delete cookie context menu per tr
     this._table_elem = this._table_container.getElementsByClassName("sortable-table")[0];
     for(var i=0; i < this._table_elem.childNodes.length; i++)
