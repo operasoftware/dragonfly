@@ -274,6 +274,10 @@ templates.sortable_table_header = function(tabledef, cols, sortby, reversed)
                 tdclass += " reversed";
               }
             }
+            if (coldef.classname)
+            {
+              tdclass += " "+coldef.classname;
+            }
             return ["th",
                     tabledef.columns[c].label,
                     "class", tdclass,

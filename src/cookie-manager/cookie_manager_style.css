@@ -41,20 +41,29 @@
   text-overflow: ellipsis;
 }
 
-/* Prepared styles for a show-all-cookies-of-domain feature */
-/*
-.cookie_manager .group_hostname {
-  border: 2px solid transparent;
-  padding: 2px;
-  margin: -3px 1px 1px -4px;
-  display: inline-block;
-  border-radius: 4px;
-}
+/* columns */
 
-.cookie_manager .group_hostname:hover {
-  border: 2px dashed #777;
+.sortable-table .col_domain {
+  width: 20%;
 }
-*/
+.sortable-table .col_name {
+  width: 10%;
+}
+.sortable-table .col_value {
+  width: 25%;
+}
+.sortable-table .col_path {
+  width: 5%;
+}
+.sortable-table .col_expires {
+  width: 15%;
+}
+.sortable-table .col_secure {
+  width: 7.5%;
+}
+.sortable-table .col_httponly {
+  width: 7.5%;
+}
 
 /* "Add cookies" styles */
 

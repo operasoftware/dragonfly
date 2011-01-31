@@ -23,6 +23,7 @@ cls.CookieManagerView = function(id, name, container_class)
     columns: {
       domain: {
         label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_DOMAIN,
+        classname: "col_domain",
         renderer: function(obj) {
           if(obj.domain)
           {
@@ -36,6 +37,7 @@ cls.CookieManagerView = function(id, name, container_class)
       },
       name: {
         label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_NAME,
+        classname: "col_name",
         renderer: function(obj) {
           // currently using "name" to make sure to store the objectref somewhere
           /*
@@ -52,6 +54,7 @@ cls.CookieManagerView = function(id, name, container_class)
       },
       value: {
         label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_VALUE,
+        classname: "col_value",
         renderer: function(obj) {
           /*
           if(obj.is_editable)
@@ -67,6 +70,7 @@ cls.CookieManagerView = function(id, name, container_class)
       },
       path: {
         label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_PATH,
+        classname: "col_path",
         renderer: function(obj) {
           if(typeof obj.path === "string")
           {
@@ -77,6 +81,7 @@ cls.CookieManagerView = function(id, name, container_class)
       },
       expires: {
         label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES,
+        classname: "col_expires",
         renderer: function(obj) {
           if(typeof obj.expires === "number")
           {
@@ -95,6 +100,7 @@ cls.CookieManagerView = function(id, name, container_class)
       },
       isSecure: {
         label:    ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY,
+        classname: "col_secure",
         renderer: function(obj) {
           if(typeof obj.isSecure === "number")
           {
@@ -105,6 +111,7 @@ cls.CookieManagerView = function(id, name, container_class)
       },
       isHTTPOnly: {
         label:    ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY,
+        classname: "col_httponly",
         renderer: function(obj) {
           if(typeof obj.isHTTPOnly === "number")
           {
