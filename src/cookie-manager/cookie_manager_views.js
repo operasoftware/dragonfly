@@ -186,7 +186,7 @@ cls.CookieManagerView = function(id, name, container_class)
           return function(evt, target){
             return [
               {
-                label: "Reload",
+                label: "Refresh",
                 handler: function(){context.refetch()}
               }
             ]
@@ -199,30 +199,25 @@ cls.CookieManagerView = function(id, name, container_class)
     this._table_elem = this._table_container.getElementsByClassName("sortable-table")[0];
     for(var i=0; i < this._table_elem.childNodes.length; i++)
     {
-      if(this._table_elem.childNodes[i].getAttribute("data-object-id"))
-      {
-        this._table_elem.childNodes[i].setAttribute("data-menu", "cookie_context");
-      }
+      this._table_elem.childNodes[i].setAttribute("data-menu", "cookie_context");
     }
-    var contextmenu = ContextMenu.get_instance();
-    contextmenu.register("cookie_context", [
+    var cookie_row_context = [
       {
-        callback: function(evt, target){
-          while(!target.getAttribute("data-object-id") || !target.parentNode)
+        callback: function(evt, target)
+        {
+          var row = target;
+          while(row.nodeName !== "tr" || !row.parentNode)
           {
-            target = target.parentNode;
+            row = row.parentNode;
           }
-          var objectref = target.getAttribute("data-object-id");
-          var cookie_obj = {};
-          for (var i=0; i < window.views.cookie_manager.flattened_cookies.length; i++) {
-            if(window.views.cookie_manager.flattened_cookies[i].objectref === objectref)
-            {
-              cookie_obj = window.views.cookie_manager.flattened_cookies[i];
-            }
-          };
-          if(cookie_obj)
+          
+          var options = [];
+          var cookie_obj;
+          // if row has an object-id, add edit and remove options
+          var objectref = row.getAttribute("data-object-id");
+          if(objectref)
           {
-            var options = [];
+            cookie_obj = window.views.cookie_manager.get_cookie_by_objectref(objectref);
             if(cookie_obj.is_removable)
             {
               options.push(
@@ -245,11 +240,53 @@ cls.CookieManagerView = function(id, name, container_class)
                 }
               );
             }
-            return options;
           }
+          else
+          {
+            // no cookie object existing, find basic data from above the summer or below the header
+            var next_objectref_holder = row;
+            if(row.hasClass("sortable-table-summation-row"))
+            {
+              // walk upwards
+              while(!next_objectref_holder.getAttribute("data-object-id") || !next_objectref_holder.previousElementSibling)
+              {
+                next_objectref_holder = next_objectref_holder.previousElementSibling;
+              }
+            }
+            else if(row.hasClass("header"))
+            {
+              // walk downwards
+              while(!next_objectref_holder.getAttribute("data-object-id") || !next_objectref_holder.nextElementSibling)
+              {
+                next_objectref_holder = next_objectref_holder.nextElementSibling;
+              }
+            }
+            cookie_obj = window.views.cookie_manager.get_cookie_by_objectref(next_objectref_holder.getAttribute("data-object-id"));
+          }
+          // Add "Remove all from domain-and-path"
+          var first_runtime_id = cookie_obj.runtimes[0]; // all cookie_obj.runtimes have host and path
+          var runtime = window.views.cookie_manager._rts[first_runtime_id];
+          options.push(
+            {
+              label: "Remove cookies of " + runtime.hostname + runtime.pathname,
+              handler: (function(runtime_id){
+                return function() {
+                  for (var i=0; i < window.views.cookie_manager.flattened_cookies.length; i++) {
+                    var cookie = window.views.cookie_manager.flattened_cookies[i];
+                    if(cookie.runtimes.indexOf(runtime_id) > -1)
+                    {
+                      window.views.cookie_manager.remove_cookie_by_objectref(cookie.objectref);
+                    }
+                  };
+                }
+              })(first_runtime_id)
+            }
+          );
+          return options;
         }
       }
-    ]);
+    ];
+    contextmenu.register("cookie_context", cookie_row_context);
   }
 
   this._on_active_tab = function(msg)
@@ -582,13 +619,24 @@ cls.CookieManagerView = function(id, name, container_class)
       {
         // There are no cookies for this domain/path. The group needs to be shown anyhow.
         flattened_cookies.push({
-          runtimes: domaincookies.runtimes,
+          runtimes:                domaincookies.runtimes,
+          objectref:               ""+parseInt(Math.random()*99999),
           is_runtimes_placeholder: true
         });
       }
     }
     return flattened_cookies;
   };
+  
+  this.get_cookie_by_objectref = function(objectref)
+  {
+    for (var i=0; i < window.views.cookie_manager.flattened_cookies.length; i++) {
+      if(window.views.cookie_manager.flattened_cookies[i].objectref === objectref)
+      {
+        return window.views.cookie_manager.flattened_cookies[i];
+      }
+    };
+  }
 
   this.remove_cookie_by_objectref = function(objectref)
   {
