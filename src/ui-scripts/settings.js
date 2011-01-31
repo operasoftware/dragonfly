@@ -109,11 +109,12 @@ var SettingsBase = function()
           label: label_map[item],
           id: item,
           setting: true,
-          handler: function(event, target) {
-            var item = target.getAttribute("data-handler-id");
-            settings[view_id].set(item, !settings[view_id].get(item), true);
-            views[view_id].update();
-          }
+          handler: function(item) {
+            return function(event, target) {
+              settings[view_id].set(item, !settings[view_id].get(item), true);
+              views[view_id].update();
+            }
+          }(item)
         });
       }
       contextmenu.register(view_id, items);
