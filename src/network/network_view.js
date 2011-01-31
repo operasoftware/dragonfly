@@ -186,15 +186,25 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     {
       label: "Show in resource view",
       handler: function(evt, target) {
-        var rid = target.getAttribute("data-resource-id");
-        opera.postError("will show in resman " + rid)
+        var cur = evt.target, rid;
+        while (cur)
+        {
+          if (rid = cur.getAttribute("data-resource-id")) { break }
+          cur = cur.parentNode;
+        }
+        var view = cls.ResourceManagerAllView.get_instance();
+        view.show_resource_for_id(rid);
       }
     },
     {
       label: "Copy to resource crafter",
       handler: function(evt, target) {
-        var rid = target.getAttribute("data-resource-id");
-        opera.postError("will show crafter " + rid)
+        var cur = evt.target, rid;
+        while (cur)
+        {
+          if (rid = cur.getAttribute("data-resource-id")) { break }
+          cur = cur.parentNode;
+        }
       }
     }
   ]);

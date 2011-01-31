@@ -24,7 +24,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
 
   this.show_resource_for_id = function(rid)
   {
-    var res = services.get_resource_for_id(rid);
+    var res = this._service.get_resource_for_id(rid);
     if (res)
     {
       this._open_resource_tab(res);
@@ -201,4 +201,11 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
 
   this.init(id, name, container_class, html, default_handler);
 };
+cls.ResourceManagerAllView.get_instance = function()
+{
+  return this.instance;
+}
+
 cls.ResourceManagerAllView.prototype = ViewBase;
+
+
