@@ -47,7 +47,11 @@ window.cls.Helpers = function()
    */
   this.basename = function(path)
   {
-    // Cut away any query string or fragment identifier
+    if (!path)
+    {
+      return "";
+    }
+    // Strip away any query string or fragment identifier
     var end = Math.min(path.indexOf("?"), path.indexOf("#"));
     if (end != -1)
     {

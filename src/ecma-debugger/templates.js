@@ -343,9 +343,11 @@
 
   this.frame = function(frame, is_top)
   {
+    // Fall back to document URI if it's inline
+    var uri = frame.script_id && runtimes.getScript(frame.script_id).uri || runtimes.getRuntime(frame.rt_id).uri;
     return ['li',
              ['span', frame.fn_name, 'class', 'scope-name'],
-             ['span', " " + (frame.script_id ? helpers.basename(runtimes.getScript(frame.script_id).uri) + ':' + frame.line : ""), 'class', 'file-line'],
+             ['span', " " + (uri ? helpers.basename(uri) + ':' + frame.line : ""), 'class', 'file-line'],
       'handler', 'show-frame',
       'ref-id', frame.id,
     ].concat( is_top ? ['class', 'selected'] : [] );
