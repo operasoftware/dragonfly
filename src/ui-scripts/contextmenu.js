@@ -236,13 +236,20 @@ function ContextMenu() {
     {
       if (target.getAttribute("data-handler-id"))
       {
-        var items = this._registered_menus[target.getAttribute("data-menu-id")];
+        var data_menu_id = target.getAttribute("data-menu-id");
+        var items = this._registered_menus[data_menu_id];
         items = this._expand_all_items(items, this._current_event);
         for (var i = 0, item; item = items[i]; i++)
         {
           if (item.id == target.getAttribute("data-handler-id"))
           {
-            item.handler(this._current_event, target);
+            var current_target = this._current_event.target;
+            while (current_target && (data_menu_id != "spec" ? current_target.getAttribute("data-menu") != data_menu_id
+                                                             : current_target.getAttribute("data-spec") === null))
+            {
+              current_target = current_target.parentNode;
+            }
+            item.handler(this._current_event, current_target);
           }
         }
       }

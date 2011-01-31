@@ -5,6 +5,11 @@
   {
     target = target.parentNode;
   }
+  debugger
+  var ul = target.parentNode;
+  ul.querySelector(".selected").className = "";
+  target.className = "selected";
+
   var frame = stop_at.getFrame(target['ref-id']);
   if (frame)
   {
