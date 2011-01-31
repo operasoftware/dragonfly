@@ -94,7 +94,7 @@ cls.CookieManagerView = function(id, name, container_class)
         }
       },
       isSecure: {
-        label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY),
+        label:    ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY,
         renderer: function(obj) {
           if(typeof obj.isSecure === "number")
           {
@@ -104,7 +104,7 @@ cls.CookieManagerView = function(id, name, container_class)
         }
       },
       isHTTPOnly: {
-        label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY),
+        label:    ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY,
         renderer: function(obj) {
           if(typeof obj.isHTTPOnly === "number")
           {
