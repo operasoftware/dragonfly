@@ -23,7 +23,7 @@ Search.prototype = new function()
       }
       else
       {
-
+        this._toggle_searchwindow(this._is_active);
       }
     }
   };
@@ -40,7 +40,7 @@ Search.prototype = new function()
       }
       else
       {
-
+        this._toggle_searchwindow(this._is_active);
       }
     }
   };
@@ -90,12 +90,18 @@ Search.prototype = new function()
           layout_box.remove_searchbar(this._searchbar);
           
         }
-        var button = layout_box.toolbar.get_control("show-search");
-        if (button)
-        {
-          button.setAttribute("is-active", String(bool));
-        }
+        this._update_toolbarbutton(layout_box);
       }
+    }
+  };
+
+  this._update_toolbarbutton = function(layout_box)
+  {
+    layout_box || (layout_box = this._ui.get_layout_box(this._view_id));
+    var button = layout_box && layout_box.toolbar.get_control("show-search");
+    if (button)
+    {
+      button.setAttribute("is-active", String(this._is_active));
     }
   };
 
@@ -137,6 +143,15 @@ Search.prototype = new function()
     }
   };
 
+  this._onserachwindowclosed = function(msg)
+  {
+    if (this._searchwindow && msg.id == this._searchwindow.id)
+    {
+      this._is_active = false;
+      this._update_toolbarbutton()
+    }
+  }
+
   this._onsearchfieldinput = function(event, target)
   {
     if (this._mode == MODE_SEARCHBAR)
@@ -173,10 +188,39 @@ Search.prototype = new function()
     }
   };
 
-  this._show_search_window = function()
+  this._toggle_mode = function()
   {
-    window.views[this._window_view_id].show_search_window();
+    var is_active = this._is_active;
+    if (is_active)
+    {
+      this.hide();
+    }
+    this._mode = this._mode == MODE_SEARCHBAR ?
+                 MODE_SEARCHWINDOW :
+                 MODE_SEARCHBAR;
+    if (is_active)
+    {
+      this.show();
+    }
   }
+
+  this._toggle_searchwindow = function(bool)
+  {
+    if (this._searchwindow && this._searchwindow.isvisible() != bool)
+    {
+      if (bool)
+      {
+        this._searchwindow.show_search_window();
+      }
+      else
+      {
+        this._searchwindow.close_search_window();
+      }
+      this._update_toolbarbutton();
+    }
+  }
+
+
 
   this._init = function(view_id, searchbar, searchwindow)
   {
@@ -223,7 +267,10 @@ Search.prototype = new function()
         this._onshortcut.bind(this, 'highlight-previous-match');
       ActionBroker.get_instance().get_global_handler().
       register_shortcut_listener(this.controls[SEARCHFIELD].shortcuts, 
-                                 this._onshortcut.bind(this));
+                                 this._onshortcut.bind(this), 
+                                 ['highlight-next-match',
+                                  'highlight-previous-match',
+                                  'hide-search']);
     }
     if (searchwindowclass)
     {
@@ -231,6 +278,7 @@ Search.prototype = new function()
       this._searchwindow = new searchwindowclass(this._window_view_id, 
                                                  "Search", 
                                                  view_id + "-search-window scroll");
+
       this.controls[SEARCH_MORE] =
       {
         handler: this._view_id + '-show-search-window',
@@ -239,9 +287,11 @@ Search.prototype = new function()
         title: "Show advanced search"
       };
       eventHandlers.click[this.controls[SEARCH_MORE].handler] = 
-        this._show_search_window.bind(this);
+        this._toggle_mode.bind(this);
+      messages.addListener('view-destroyed', this._onserachwindowclosed.bind(this));
+      
     }
-    this._searchwindow = null;
+    
     this._ui = UI.get_instance();
     this._ui.register_search(view_id, this);
   };

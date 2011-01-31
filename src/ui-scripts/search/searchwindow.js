@@ -1,6 +1,6 @@
 ﻿window.cls || (window.cls = {});
 
-window.cls.SearchWindow = function(id, name, container_class)
+window.cls.SearchWindowBase = function(id, name, container_class)
 {
   /* interface */
   this.createView = function(container){};
@@ -9,6 +9,8 @@ window.cls.SearchWindow = function(id, name, container_class)
     * @param {Event} event. The event target is the color sample to be edited.
     */
   this.show_search_window = function(event){};
+
+  this.close_search_window = function(event){};
 
   /* settings */
   this.show_in_views_menu = true;
@@ -38,9 +40,10 @@ window.cls.SearchWindow = function(id, name, container_class)
                             this.window_height);
   }
 
-
-
-
+  this.close_search_window = function(event)
+  {
+    UIWindowBase.closeWindow(this.id);
+  };
 
   this.ondestroy = function()
   {
@@ -52,6 +55,4 @@ window.cls.SearchWindow = function(id, name, container_class)
 
 }
 
-window.cls.SearchWindow.CSS_CLASS_TARGET = 'color-picker-target-element';
-
-window.cls.SearchWindow.prototype = ViewBase;
+window.cls.SearchWindowBase.prototype = ViewBase;
