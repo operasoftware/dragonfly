@@ -280,7 +280,8 @@ templates.network_log_url_list = function(ctx, selected)
              "class", "log-url-list-status " + "status-" + String(res.responsecode)],
             "handler", "select-network-request",
             "data-resource-id", String(res.id),
-            "class", selected===res.id ? "selected" : ""
+            "class", selected===res.id ? "selected" : "",
+            "data-menu", "request-context-options"
            ]
   }
   return ["ol", ctx.resources.map(itemfun),
@@ -309,6 +310,7 @@ templates.network_log_graph = function(ctx, width)
              bars,
              grid,
              //'viewBox', '0 0 ' + 3000 + 'px ' + 500 +'px',
+             "data-menu", "request-context-options",
              "xmlns", "http://www.w3.org/2000/svg",
              "class", "resource-graph"];
 
@@ -352,16 +354,31 @@ templates.request_bar = function(index, request, basetime, totaltime, contwidth,
   var texture = "gradient-" + (request.type || "unknown");
 
   var tpl = [
-    ["rect", "x", String((start-basetime)*multiplier), "y", String(bary),
-     "width", String(reqwidth*multiplier), "height", String(barheight),
-             "rx", "4", "ry", "4",
-             "fill", "#dfdfdf", "stroke", "#969696", "stroke-width", "1.0"],
+    ["rect", 
+      "x", String((start-basetime)*multiplier), 
+      "y", String(bary),
+      "width", String(reqwidth*multiplier),
+      "height", String(barheight),
+      "rx", "4",
+      "ry", "4",
+      "fill", "#dfdfdf",
+      "stroke", "#969696",
+      "stroke-width", "1.0",
+      "data-resource-id", String(request.id),
+    ],
 
-      ["rect", "x", String((resstart-basetime)*multiplier), "y", String(bary),
-             "width", String(reswidth*multiplier), "height", String(barheight),
-             "rx", "4", "ry", "4",
-             "fill", "url(#" + texture + ")", "stroke", "#333333", "stroke-width", "1.0"]
-
+    ["rect",
+      "x", String((resstart-basetime)*multiplier),
+      "y", String(bary),
+      "width", String(reswidth*multiplier),
+      "height", String(barheight),
+      "rx", "4",
+      "ry", "4",
+      "fill", "url(#" + texture + ")", 
+      "stroke", "#333333", 
+      "stroke-width", "1.0",
+      "data-resource-id", String(request.id),
+    ]
   ];
   return tpl;
 };
@@ -462,7 +479,9 @@ templates.network_log_background = function(ctx, lineheight)
                "y", String(cnt*lineheight),
                "width", "100%",
                "height", String(lineheight),
-               "stroke-width", "0", "fill", (cnt%2 ?  "rgba(0,0,0,0.025)" : "white")]);
+               "stroke-width", "0", "fill", (cnt%2 ?  "rgba(0,0,0,0.025)" : "white"),
+               "data-resource-id", String(ctx.resources[cnt].id),
+               ]);
 
     tpls.push(["line",
                "x1", "0",
