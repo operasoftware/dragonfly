@@ -18,14 +18,15 @@ templates.cookie_manager = {
       ] */
     ];
   },
-  wrap_ellipsis: function(elem) {
+  wrap_ellipsis: function(text) {
     return [
       "div",
         [
-          "div", elem,
+          "div", text,
           "class", "ellipsis"
         ],
-      "class", "ellipsis_cont"
+      "class", "ellipsis_cont",
+      "title", text
     ]
   },
   editable_name: function(name, objectref) {

@@ -44,10 +44,10 @@
 /* columns */
 
 .sortable-table .col_domain {
-  width: 20%;
+  width: 15%;
 }
 .sortable-table .col_name {
-  width: 10%;
+  width: 15%;
 }
 .sortable-table .col_value {
   width: 25%;
