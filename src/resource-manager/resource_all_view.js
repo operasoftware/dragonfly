@@ -5,6 +5,12 @@ window.cls = window.cls || {};
  * @extends ViewBase
  */
 cls.ResourceManagerAllView = function(id, name, container_class, html, default_handler) {
+  if (cls.ResourceManagerAllView.instance)
+  {
+    return cls.ResourceManagerAllView.instance;
+  }
+  cls.ResourceManagerAllView.instance = this;
+
   this._service = new cls.ResourceManagerService();
   this._sort_by = "name";
   this._reverse = false;
@@ -14,6 +20,25 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
   this.createView = function(container)
   {
     this._render_main_view(container);
+  };
+
+  this.show_resource_for_id = function(rid)
+  {
+    var res = services.get_resource_for_id(rid);
+    if (res)
+    {
+      this._open_resource_tab(res);
+    }
+
+  };
+
+  this.show_resource_for_url = function(url)
+  {
+    var res = this._service.get_resource_for_url(url);
+    if (res)
+    {
+      this._open_resource_tab(res);
+    }
   };
 
   this._render_main_view = function(container)
@@ -72,16 +97,11 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
     var rid = target.getAttribute("data-resource-id");
     if (rid)
     {
-      var res = services.get_resource_for_id(rid);
+      this.show_resource_for_id(rid);
     }
     else
     {
-      var res = this._service.get_resource_for_url(target.getAttribute("data-resource-url"));
-    }
-
-    if (res)
-    {
-      this._open_resource_tab(res);
+      this.show_resource_for_url(target.getAttribute("data-resource-url"))
     }
   }.bind(this);
 
