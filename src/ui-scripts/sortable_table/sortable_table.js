@@ -377,31 +377,34 @@ templates.sortable_table_row = function(tabledef, item, cols)
           cols.map(function(col) {
             var content = tabledef.columns[col].renderer(item, tabledef.columns[col].getter);
 
-            if (typeof content == "string")
+            if (typeof content !== "undefined" && typeof content !== "null")
             {
-              var title = content; // fixme: use custom title renderer.
-            }
-            else
-            {
-              title = "";
-            }
-
-            if (typeof content == "string" &&
-                tabledef.columns[col].maxlength &&
-                tabledef.columns[col].maxlength < content.length)
-            {
-              if (tabledef.columns[col].ellipsis=="start")
+              if (typeof content == "string")
               {
-                content = "…" + content.slice(-tabledef.columns[col].maxlength);
+                var title = content; // fixme: use custom title renderer.
               }
               else
               {
-                content = content.slice(0, tabledef.columns[col].maxlength) + "…";
+                title = "";
               }
-            }
 
-            return ["td", content,
+              if (typeof content == "string" &&
+                  tabledef.columns[col].maxlength &&
+                  tabledef.columns[col].maxlength < content.length)
+              {
+                if (tabledef.columns[col].ellipsis=="start")
+                {
+                  content = "…" + content.slice(-tabledef.columns[col].maxlength);
+                }
+                else
+                {
+                  content = content.slice(0, tabledef.columns[col].maxlength) + "…";
+                }
+              }
+              return ["td", content,
                     "title", title];
+            }
+            return [];
           }).concat(tabledef.handler ? ["handler", tabledef.handler] : [])
             .concat(tabledef.idgetter ? ["data-object-id", tabledef.idgetter(item) ] : [])
          ];
