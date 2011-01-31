@@ -155,11 +155,11 @@ cls.CookieManagerView = function(id, name, container_class)
     {
       if(this._table_elem.childNodes[i].getAttribute("data-object-id"))
       {
-        this._table_elem.childNodes[i].setAttribute("data-menu", "remove_cookie");
+        this._table_elem.childNodes[i].setAttribute("data-menu", "cookie_context");
       }
     }
     var contextmenu = ContextMenu.get_instance();
-    contextmenu.register("remove_cookie", [
+    contextmenu.register("cookie_context", [
       {
         callback: function(evt, target){
           while(!target.getAttribute("data-object-id") || !target.parentNode)
@@ -174,16 +174,32 @@ cls.CookieManagerView = function(id, name, container_class)
               cookie_obj = window.views.cookie_manager.flattened_cookies[i];
             }
           };
-          if(cookie_obj && cookie_obj.is_removable)
+          if(cookie_obj)
           {
-            return [
-              {
-                label: "Delete Cookie "+(cookie_obj.name || ""),
-                handler: function() {
-                  window.views.cookie_manager.remove_cookie_by_objectref(objectref);
+            var options = [];
+            if(cookie_obj.is_removable)
+            {
+              options.push(
+                {
+                  label: "Delete Cookie "+(cookie_obj.name || ""),
+                  handler: function() {
+                    window.views.cookie_manager.remove_cookie_by_objectref(objectref);
+                  }
                 }
-              }
-            ];
+              );
+            }
+            if(cookie_obj.is_editable)
+            {
+              options.push(
+                {
+                  label: "Edit Cookie "+(cookie_obj.name || ""),
+                  handler: function() {
+                    window.views.cookie_manager.enter_edit_mode(objectref);
+                  }
+                }
+              );
+            }
+            return options;
           }
         }
       }
@@ -549,6 +565,13 @@ cls.CookieManagerView = function(id, name, container_class)
       }
     }
   };
+  
+  this.enter_edit_mode = function(objectref)
+  {
+    console.log("tr[data-object-id="+objectref+"]");
+    console.log(document.querySelector("tr[data-object-id='"+objectref+"']"));
+  }
+  
   // End Helpers
   this._init(id, name);
 };
