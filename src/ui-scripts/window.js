@@ -231,18 +231,23 @@ var UIWindowBase = new function()
   {
     var handler = event.target.getAttribute('handler');
     {
-      if( handler in handlers )
+      if (handler in handlers)
       {
         if( interval )
         {
           interval = clearInterval( interval );
         }
+        var id = event.target.parentNode.id;
         current_style = event.target.parentNode.style;
-        self.setZIndex();
-        current_style.zIndex = 200;
+        if (id != click_target)
+        {
+          click_target = id;
+          self.setZIndex();
+          current_style.zIndex = 200;
+        }
         update_handler = update[handler];
         set[handler](event);
-        current_target = ui_windows[event.target.parentNode.id] || {};
+        current_target = ui_windows[id] || {};
         document.addEventListener('mousemove', store_event, false);
         document.addEventListener('mouseup', mouseup, false);
         event.preventDefault();

@@ -1064,7 +1064,6 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
     return ret;
   }
 
-
   this.hasBreakpoint = function(script_id, line_nr)
   {
     return __scripts[script_id] && (line_nr in __scripts[script_id].breakpoints);

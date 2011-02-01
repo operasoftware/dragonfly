@@ -13,10 +13,41 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
 
 
 
+  this._on_active_tab_bound = function(msg)
+  {
+    this._rt_ids = msg.activeTab.slice(0);
+  }.bind(this);
+
 
   this._onhighlightnext = function()
   {
-    this._output.textContent = this._input.value;
+    var searchterm = this._input.value;
+    if (searchterm == this._searchterm)
+    {
+
+    }
+    else
+    {
+      this._searchterm = searchterm;
+      this.searchresults = {};
+      if (this._rt_ids)
+      {
+        this._rt_ids.forEach(function(rt_id)
+        {
+          var scripts = window.runtimes.getScripts(rt_id).filter(function(script)
+          {
+            script.search_source(searchterm);
+            return script.line_matches.length;
+          });
+          if (scripts.length)
+          {
+            this.searchresults[rt_id] = scripts;
+          }
+        }, this);
+      }
+      this._output.clearAndRender(window.templates.js_serach_results(this.searchresults));
+    }
+
   }
 
   this._onhighlightprevious = function()
@@ -57,6 +88,10 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
     this.highligh_previous = this._onhighlightprevious.bind(this);
     this._input = null;
     this._output = null;
+    this._rt_ids = null;
+    this._searchterm = '';
+    this.searchresults = {};
+    window.messages.addListener('active-tab', this._on_active_tab_bound);
   }
 
   this.init(id, name, container_class, searchhandler);

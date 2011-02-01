@@ -1568,7 +1568,8 @@ tabs, toolbar {
   height: 100%;
 }
 
-.context-window
+.context-window, 
+.context-window window-container
 {
   background-color: #fff;
   color: #000;
