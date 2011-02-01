@@ -514,8 +514,9 @@ ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_PATH = 'Path';
 /* DESC: Label for the expiry value of a cookie */
 ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES = 'Expires';
 /* DESC: Label for the expiry when cookie expires after the session is closed */
-ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES_ON_SESSION_CLOSE = "(when session is closed)";
-/* DESC: Label for the expiry when cookie expires after the session is closed */
+ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES_ON_SESSION_CLOSE = "When session ends, e.g. the tab is closed";
+ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES_ON_SESSION_CLOSE_SHORT = "Session";
+/* DESC: Label for the expiry when cookie has already expired */
 ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRED = "(expired)";
 /* DESC: Label for isHTTPOnly flag on a cookie */
 ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY = "HTTP only";

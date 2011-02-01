@@ -32,7 +32,7 @@ cls.CookieManagerView = function(id, name, container_class)
           }
           if(obj.domain)
           {
-            return window.templates.cookie_manager.wrap_ellipsis(obj.domain);
+            return window.templates.cookie_manager.editable_domain(obj.domain, obj.objectref, window.views.cookie_manager._rts);
           }
           return window.templates.cookie_manager.unknown_value();
         },
@@ -48,17 +48,7 @@ cls.CookieManagerView = function(id, name, container_class)
           {
             return;
           }
-          // currently using "name" to make sure to store the objectref somewhere
-          /*
-          if(obj.is_editable)
-          {
-            return ["div", window.templates.cookie_manager.editable_name(obj.name, obj.objectref), "data-objectref", obj.objectref];
-          }
-          else
-          {
-          */
-            return window.templates.cookie_manager.wrap_ellipsis(obj.name);
-          // }
+          return window.templates.cookie_manager.editable_name(obj.name);
         }
       },
       value: {
@@ -69,16 +59,7 @@ cls.CookieManagerView = function(id, name, container_class)
           {
             return;
           }
-          /*
-          if(obj.is_editable)
-          {
-            return window.templates.cookie_manager.editable_value(decodeURIComponent(obj.value), obj.objectref);
-          }
-          else
-          {
-          */
-            return window.templates.cookie_manager.wrap_ellipsis(obj.value);
-          // }
+          return window.templates.cookie_manager.editable_value(obj.value);
         }
       },
       path: {
@@ -91,7 +72,7 @@ cls.CookieManagerView = function(id, name, container_class)
           }
           if(typeof obj.path === "string")
           {
-            return window.templates.cookie_manager.wrap_ellipsis(obj.path);
+            return window.templates.cookie_manager.editable_path(obj.path);
           }
           return window.templates.cookie_manager.unknown_value();
         }
@@ -106,17 +87,9 @@ cls.CookieManagerView = function(id, name, container_class)
           }
           if(typeof obj.expires === "number")
           {
-            if(obj.expires === 0)
-            {
-              return window.templates.cookie_manager.wrap_ellipsis(window.templates.cookie_manager.expires_0values())
-            }
-            // return empty container to be filled by _update_expiry func
-            return window.templates.cookie_manager.wrap_ellipsis(window.templates.cookie_manager.expires_container(obj.objectref, new Date(obj.expires*1000)));
+            return window.templates.cookie_manager.editable_expires(obj.expires, obj.objectref);
           }
-          else
-          {
-            return window.templates.cookie_manager.unknown_value();
-          }
+          return window.templates.cookie_manager.unknown_value();
         }
       },
       isSecure: {
@@ -194,7 +167,7 @@ cls.CookieManagerView = function(id, name, container_class)
         })(this)
       }
     ]);
-    
+
     // add delete cookie context menu per tr
     this._table_elem = this._table_container.getElementsByClassName("sortable-table")[0];
     for(var i=0; i < this._table_elem.childNodes.length; i++)
@@ -210,7 +183,7 @@ cls.CookieManagerView = function(id, name, container_class)
           {
             row = row.parentNode;
           }
-          
+
           var options = [];
           var cookie_obj;
           // if row has an object-id, add edit and remove options
@@ -556,12 +529,18 @@ cls.CookieManagerView = function(id, name, container_class)
     window.views.cookie_manager.refetch();
   };
 
+  this.enter_edit_mode = function(objectref)
+  {
+    document.querySelector("tr[data-object-id='"+objectref+"']").addClass("edit_mode");
+  }
+
   this._init = function(id, update_event_name)
   {
     window.messages.addListener('active-tab', this._on_active_tab.bind(this));
     this.init(id, name, container_class);
   };
 
+  // Helpers
   this._flatten_cookies = function(cookies, runtimes)
   {
     var flattened_cookies = [];
@@ -627,7 +606,7 @@ cls.CookieManagerView = function(id, name, container_class)
     }
     return flattened_cookies;
   };
-  
+
   this.get_cookie_by_objectref = function(objectref)
   {
     for (var i=0; i < window.views.cookie_manager.flattened_cookies.length; i++) {
@@ -660,13 +639,7 @@ cls.CookieManagerView = function(id, name, container_class)
       }
     }
   };
-  
-  this.enter_edit_mode = function(objectref)
-  {
-    console.log("tr[data-object-id="+objectref+"]");
-    console.log(document.querySelector("tr[data-object-id='"+objectref+"']"));
-  }
-  
+
   // End Helpers
   this._init(id, name);
 };

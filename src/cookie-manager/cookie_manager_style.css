@@ -10,7 +10,19 @@
   color: #AAA;
 }
 
-.cookie_manager .hidden {
+.cookie_manager .edit_container {
+  display: none;
+}
+
+.cookie_manager .value_container {
+  position: relative;
+}
+
+.cookie_manager .edit_mode .edit_container {
+  display: block;
+}
+
+.cookie_manager .edit_mode .value_container {
   display: none;
 }
 
