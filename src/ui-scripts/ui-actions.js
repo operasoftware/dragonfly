@@ -212,45 +212,14 @@ eventHandlers.click['overlay-tab'] = function(event, target)
   Overlay.get_instance().change_group(event.target.getAttribute("group"));
 };
 
-eventHandlers.click['toggle-settings-overlay'] =
-eventHandlers.click['toggle-remote-debug-config-overlay'] = function(event, target)
+eventHandlers.click['toggle-overlay'] = function(event, target)
 {
-  const OVERLAY_TOP_MARGIN = 10;
-  const OVERLAY_RIGHT_MARGIN = 20;
-
   var overlay = Overlay.get_instance();
-  var client = window.client.current_client;
-  var overlay_name = {
-    "toggle-settings-overlay": "settings-overlay",
-    "toggle-remote-debug-config-overlay": "remote-debug-overlay"
-  }[target.getAttribute("handler")];
+  var overlay_id = target.getAttribute("data-overlay-id");
 
-  // This should really just be a class, this is just for consistency with
-  // existing stuff
-  target.setAttribute("is-active", target.getAttribute("is-active") != "true");
-
-  if (overlay_name == "toggle-remote-debug-config-overlay" && (!client || !client.connected))
-  {
-    // TODO: make a proper action
-    overlay.hide_overlay();
-    eventHandlers.click['cancel-remote-debug']();
-    return;
-  }
-
-  if (overlay.is_visible)
-  {
-    overlay.hide_overlay();
-    return;
-  }
-
-  overlay.show_overlay(overlay_name);
-
-  var button_dims = target.getBoundingClientRect();
-  var element = overlay.element.querySelector("overlay-window");
-  var arrow = overlay.element.querySelector("overlay-arrow");
-  element.style.top = button_dims.bottom + OVERLAY_TOP_MARGIN + "px";
-  element.addClass("attached");
-  arrow.style.right = document.documentElement.clientWidth - button_dims.right - OVERLAY_RIGHT_MARGIN + "px";
+  overlay.is_visible ?
+      this.broker.dispatch_action("global", "hide-overlay", event, target) :
+      this.broker.dispatch_action("global", "show-overlay", event, target);
 };
 
 eventHandlers.click['toggle-console'] = function(event, target)

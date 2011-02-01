@@ -330,8 +330,8 @@ window.cls.Client = function()
     var controls = [
       new Button("toggle-console", "", ui_strings.S_BUTTON_TOGGLE_CONSOLE),
       new ToolbarSeparator(),
-      new Button("toggle-settings-overlay", "", ui_strings.S_BUTTON_TOGGLE_SETTINGS),
-      new Button("toggle-remote-debug-config-overlay", "", ui_strings.S_BUTTON_TOGGLE_REMOTE_DEBUG),
+      new Button("toggle-settings-overlay", "", ui_strings.S_BUTTON_TOGGLE_SETTINGS, "toggle-overlay", {"data-overlay-id": "settings-overlay"}),
+      new Button("toggle-remote-debug-overlay", "", ui_strings.S_BUTTON_TOGGLE_REMOTE_DEBUG, "toggle-overlay", {"data-overlay-id": "remote-debug-overlay"}),
       new ToolbarSeparator(),
       window['cst-selects']['debugger-menu'],
       new Button("top-window-toggle-attach", is_attached ? "attached" : "", is_attached ? ui_strings.S_SWITCH_DETACH_WINDOW : ui_strings.S_SWITCH_ATTACH_WINDOW),
@@ -344,7 +344,7 @@ window.cls.Client = function()
 
     document.documentElement.render(templates.window_controls(controls));
 
-    var button = UI.get_instance().get_button("toggle-remote-debug-config-overlay");
+    var button = UI.get_instance().get_button("toggle-remote-debug-overlay");
     if (this.current_client && this.current_client.is_remote_debug)
     {
       button.addClass("remote-active");

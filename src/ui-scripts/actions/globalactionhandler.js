@@ -70,6 +70,7 @@
 
   this._broker = ActionBroker.get_instance();
   this._handlers = {};
+  this._private_handlers = [];
   this._listener_handlers = [];
 
   this._sc_listeners = {};
@@ -78,7 +79,12 @@
   {
     var actions = [], key = '';
     for (key in this._handlers)
-      actions.push(key);
+    {
+      if (this._private_handlers.indexOf(key) == -1)
+      {
+        actions.push(key);
+      }
+    }
     return actions.concat(this._listener_handlers);
   };
 
@@ -139,8 +145,16 @@
 
   this._handlers["toggle-command-line"] = function(action_id, event, target)
   {
+    var overlay = Overlay.get_instance();
+    if (overlay.is_visible)
+    {
+      this["hide-overlay"](action_id, event, target);
+      return;
+    }
+
     var ele = document.querySelector("[view_id=command_line]");
     var visible = false;
+
     if (!ele)
     {
       UIWindowBase.showWindow('command_line', ((document.documentElement.clientHeight / 2) | 0), 0, document.documentElement.clientWidth, ((document.documentElement.clientHeight / 2) | 0));
@@ -160,6 +174,49 @@
                      .setAttribute("is-active", visible);
     return false;
   };
+
+  this._handlers["show-overlay"] = function(action_id, event, target)
+  {
+    const OVERLAY_TOP_MARGIN = 10;
+    const OVERLAY_RIGHT_MARGIN = 20;
+
+    var overlay = Overlay.get_instance();
+    var ui = UI.get_instance();
+    var overlay_id = target.getAttribute("data-overlay-id");
+
+    ui.get_button("toggle-" + overlay_id).setAttribute("is-active", "true");
+
+    overlay.show(overlay_id);
+
+    if (target)
+    {
+      var button_dims = target.getBoundingClientRect();
+      var element = overlay.element.querySelector("overlay-window");
+      var arrow = overlay.element.querySelector("overlay-arrow");
+      element.style.top = button_dims.bottom + OVERLAY_TOP_MARGIN + "px";
+      element.addClass("attached");
+      arrow.style.right = document.documentElement.clientWidth - button_dims.right - OVERLAY_RIGHT_MARGIN + "px";
+    }
+  };
+  this._private_handlers.push("show-overlay");
+
+  this._handlers["hide-overlay"] = function(action_id, event, target)
+  {
+    var overlay = Overlay.get_instance();
+    var ui = UI.get_instance();
+    var client = window.client.current_client;
+    var overlay_id = overlay.active_overlay;
+
+    ui.get_button("toggle-" + overlay_id).setAttribute("is-active", "false");
+
+    if (overlay_id == "toggle-remote-debug-overlay" && (!client || !client.connected))
+    {
+      eventHandlers.click['cancel-remote-debug'](); // TODO: make a proper action
+    }
+
+    overlay.hide();
+  };
+  this._private_handlers.push("hide-overlay");
 
   this._handlers["navigate-next-top-tab"] = function(action_id, event, target)
   {

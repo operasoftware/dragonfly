@@ -12,28 +12,31 @@ var Overlay = function()
   Overlay._instance = this;
 
   this._ui = UI.get_instance();
+  this.active_overlay = null;
 
   this.__defineGetter__("is_visible", function()
   {
     return !!(this.element && this.element.parentNode);
   });
 
-  this.show_overlay = function(id)
+  this.show = function(id)
   {
-    this.hide_overlay();
+    this.hide();
     var overlay = this._ui.get_overlay(id);
     if (overlay)
     {
+      this.active_overlay = id;
       this.element = document.documentElement.render(window.templates.overlay(overlay));
       this.change_group(overlay[0].group_name); // Always show the first tab
     }
   };
 
-  this.hide_overlay = function()
+  this.hide = function()
   {
     if (this.element)
     {
       this.element.parentElement.removeChild(this.element);
+      this.active_overlay = null;
       this.element = null;
     }
   };
