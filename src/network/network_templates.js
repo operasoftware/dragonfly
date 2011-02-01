@@ -345,11 +345,11 @@ templates.request_bar = function(index, request, basetime, totaltime, contwidth,
   }
 
   var start = request.starttime;
-
   var reqwidth = request.duration
+  var resstart = request.requesttime || start
 
-  var resstart = start+10//entry.requestfinished.time;
-  var reswidth = 30; // reqwidth - (resstart - reqstart);
+
+  var reswidth = reqwidth - (resstart - start);
 
   var texture = "gradient-" + (request.type || "unknown");
 

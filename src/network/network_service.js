@@ -74,6 +74,13 @@ cls.NetworkLoggerService = function(view, data)
     this._current_context.update("requestheader", data);
   }.bind(this);
 
+  this._on_requestfinished_bound = function(msg)
+  {
+    if (!this._current_context) { return; }
+    var data = new cls.ResourceManager["1.0"].RequestFinished(msg);
+    this._current_context.update("requestfinished", data);
+  }.bind(this);
+
   this._on_responseheader_bound = function(msg)
   {
     if (!this._current_context) { return; }
@@ -94,6 +101,7 @@ cls.NetworkLoggerService = function(view, data)
     this._res_service.addListener("urlload", this._on_urlload_bound);
     this._res_service.addListener("request", this._on_request_bound);
     this._res_service.addListener("requestheader", this._on_requestheader_bound);
+    this._res_service.addListener("requestfinished", this._on_requestfinished_bound);
     this._res_service.addListener("responseheader", this._on_responseheader_bound);
     this._res_service.addListener("response", this._on_response_bound);
     this._res_service.addListener("responsefinished", this._on_responsefinished_bound);
@@ -236,6 +244,7 @@ cls.Request = function(id)
   this.urltype = null;
   this.invalid = false;
   this.starttime = null;
+  this.requesttime = null;
   this.responsetime = null;
   this.endtime = null;
   this.cached = false;
@@ -292,6 +301,11 @@ cls.Request = function(id)
   {
     this.request_headers = event.headerList;
     this.request_raw = event.raw;
+  }
+
+  this._update_event_requestfinished = function(event)
+  {
+    this.requesttime = Math.round(event.time)
   }
 
   this._update_event_response = function(event)
