@@ -14,7 +14,26 @@ window.eventHandlers.dblclick['cookiemanager-init-edit-mode'] = function(event, 
 
 window.eventHandlers.click['cookiemanager-row-select'] = function(event, target)
 {
-  // console.log("select", target);
+  var was_selected = target.hasClass("selected");
+  // unselect old if not doing multiple selction
+  if(!event.ctrlKey)
+  {
+    var selection = document.querySelectorAll(".sortable-table .selected");
+    for (var i=0; i < selection.length; i++) {
+      selection[i].removeClass("selected");
+    };
+  }
+  
+  if(!was_selected)
+  {
+    target.addClass("selected");
+  }
+  else
+  {
+    // need to subtract from selection
+    target.removeClass("selected");
+  }
+  event.stopPropagation();
 }
 
 window.eventHandlers.keyup['cookiemanager-edit'] = function(event, target)
