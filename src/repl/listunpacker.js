@@ -35,6 +35,10 @@ window.cls.ListUnpacker = function()
     return list.map(function(item)
     {
       var _class = item === null ? "" : Object.prototype.toString.call(item);
+      if (_class == "[object XPathResult]")
+      {
+        return 3;
+      }
       if (/(?:Array|Collection|List|Map)\]$/.test(_class))
       {
         return 2;
@@ -46,12 +50,22 @@ window.cls.ListUnpacker = function()
       return 0;
     }).join(',');
   };
+  
+  this._xpathresult2array = function(result)
+  {
+    for (var i = 0, ret = []; i < result.snapshotLength; i++)
+    {
+      ret.push(result.snapshotItem(i));
+    }
+    return ret;
+  };
 
   this._handle_list_alikes_list = function(status, msg, orig_msg,
                                            rt_id, obj_ids,
                                            error_callback, success_callback)
   {
     const STATUS = 0, VALUE = 2;
+    const XPATH_RESULT = 3;
     if (status || msg[STATUS] != "completed")
     {
       error_callback();
@@ -61,24 +75,83 @@ window.cls.ListUnpacker = function()
       var log = msg[VALUE].split(',').map(Number);
       if (log.filter(Boolean).length)
       {
-        var unpack = log.reduce(function(list, entry, index)
+        var xpathresults = {};
+        var has_xpathresult = false;
+        for (var i = 0, tag, msg; i < log.length; i++)
         {
-          if (entry)
+          if (log[i] == XPATH_RESULT)
           {
-            list.push(obj_ids[index]);
-          }
-          return list;
-        }, []);
-        var tag = this._tagman.set_callback(this, this._handle_unpacked_list,
-                                            [orig_msg, rt_id, log,
+            has_xpathresult = true;
+            xpathresults[i] = false;
+            tag = this._tagman.set_callback(this, this._handle_xpathresult,
+                                            [orig_msg, rt_id, obj_ids, 
+                                             log, i, xpathresults,
                                              error_callback, success_callback]);
-        this._edservice.requestExamineObjects(tag, [rt_id, unpack]);
+            msg = [rt_id, 0, 0, 
+                   this._xpathresult2array_to_string, 
+                   [["xpathresult", obj_ids[i]]]];
+            this._edservice.requestEval(tag, msg);
+          }
+        }
+        if (!has_xpathresult)
+        {
+          this._examine_list_alikes(orig_msg,
+                                    rt_id, obj_ids, log,
+                                    error_callback, success_callback);
+        }
       }
       else
       {
         error_callback();
       }
     }
+  }
+  
+  this._handle_xpathresult = function(status, msg,
+                                      orig_msg, rt_id, 
+                                      obj_ids, log, index, xpathresults,
+                                      error_callback, success_callback)
+  {
+    const STATUS = 0, OBJECT_VALUE = 3, OBJECT_ID = 0;
+    if (status || msg[STATUS] != "completed" || !msg[OBJECT_VALUE])
+    {
+      error_callback();
+    }
+    else
+    {
+      obj_ids[index] = msg[OBJECT_VALUE][OBJECT_ID];
+      xpathresults[index] = true;
+      var all_returned_check = true;
+      for (index in xpathresults)
+      {
+        all_returned_check = all_returned_check && xpathresults[index];
+      }
+      if (all_returned_check)
+      {
+        this._examine_list_alikes(orig_msg,
+                                  rt_id, obj_ids, log,
+                                  error_callback, success_callback);
+      }
+    }
+  }
+  
+  this._examine_list_alikes = function(orig_msg,
+                                       rt_id, obj_ids, log,
+                                       error_callback, success_callback)
+  {
+    var unpack = log.reduce(function(list, entry, index)
+    {
+      if (entry)
+      {
+        list.push(obj_ids[index]);
+      }
+      return list;
+    }, []);
+    var tag = this._tagman.set_callback(this, this._handle_unpacked_list,
+                                        [orig_msg, rt_id, log,
+                                         error_callback, success_callback]);
+    this._edservice.requestExamineObjects(tag, [rt_id, unpack]);
+  
   }
 
   this._handle_unpacked_list = function(status, msg, orig_msg, rt_id, log,
@@ -167,6 +240,8 @@ window.cls.ListUnpacker = function()
     this._edservice = window.services["ecmascript-debugger"];
     this._is_list_alike_to_string =
       "(" + this._is_list_alike.toString() + ")([%s])";
+    this._xpathresult2array_to_string = 
+      "(" + this._xpathresult2array.toString() + ")(xpathresult)";
   };
 
   this.init();

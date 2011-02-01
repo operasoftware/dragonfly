@@ -144,6 +144,16 @@
           "ctrl y": "yank"
         },
       },
+      "js_source":
+      {
+        "default":
+        {
+          "up": "scroll-arrow-up",
+          "down": "scroll-arrow-down",
+          "page-up": "scroll-page-up",
+          "page-down": "scroll-page-down",
+        },
+      },
     },
     mac:
     {

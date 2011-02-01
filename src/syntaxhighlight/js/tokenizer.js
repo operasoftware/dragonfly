@@ -1,7 +1,21 @@
-﻿window.cls || (window.cls = {});
+﻿// web worker doesn't have a window
+this.cls || (this.cls = {});
+cls.SimpleJSParser = function() {};
 
-window.cls.SimpleJSParser = function()
+// CONSTS for external code that needs to know about token types
+cls.SimpleJSParser.WHITESPACE = 1,
+cls.SimpleJSParser.LINETERMINATOR = 2,
+cls.SimpleJSParser.IDENTIFIER = 3,
+cls.SimpleJSParser.NUMBER = 4,
+cls.SimpleJSParser.STRING = 5,
+cls.SimpleJSParser.PUNCTUATOR = 6,
+cls.SimpleJSParser.DIV_PUNCTUATOR = 7,
+cls.SimpleJSParser.REG_EXP = 8,
+cls.SimpleJSParser.COMMENT = 9;
+
+cls.SimpleJSParser.prototype = new function()
 {
+
   /**
     * This is a simple js parser. There are edge cases where it will fail,
     * but with 'normal' js syntax it should work ok.
@@ -38,9 +52,14 @@ window.cls.SimpleJSParser = function()
     */
   this.parse = function(script_source, token_arr, type_arr){};
 
-  // TODO clean up the interface
-  // returns an array with TYPE, VALUE tuples
-  this.parse2 = function(script_source){};
+  /**
+    * Tokenize a give script string.
+    * @param {String} script_source The script string.
+    * @param {Function} ontoken. Signature of the callback is (token_type, token).
+    * @param {String} escape. Optional. Currently supports only "html" 
+    * to escape "<" and "&" to "&lt;" and "&amp;".
+    */
+  this.tokenize = function(script_source, ontoken, escape){};
 
   /* privat */
 
@@ -54,15 +73,15 @@ window.cls.SimpleJSParser = function()
   COMMENT_STATE = 4,
 
   //local copy of token types, local vars have better performance. :
-  WHITESPACE = window.cls.SimpleJSParser.WHITESPACE,
-  LINETERMINATOR = window.cls.SimpleJSParser.LINETERMINATOR,
-  IDENTIFIER = window.cls.SimpleJSParser.IDENTIFIER,
-  NUMBER = window.cls.SimpleJSParser.NUMBER,
-  STRING = window.cls.SimpleJSParser.STRING,
-  PUNCTUATOR = window.cls.SimpleJSParser.PUNCTUATOR,
-  DIV_PUNCTUATOR = window.cls.SimpleJSParser.DIV_PUNCTUATOR,
-  REG_EXP = window.cls.SimpleJSParser.REG_EXP,
-  COMMENT = window.cls.SimpleJSParser.COMMENT;
+  WHITESPACE = cls.SimpleJSParser.WHITESPACE,
+  LINETERMINATOR = cls.SimpleJSParser.LINETERMINATOR,
+  IDENTIFIER = cls.SimpleJSParser.IDENTIFIER,
+  NUMBER = cls.SimpleJSParser.NUMBER,
+  STRING = cls.SimpleJSParser.STRING,
+  PUNCTUATOR = cls.SimpleJSParser.PUNCTUATOR,
+  DIV_PUNCTUATOR = cls.SimpleJSParser.DIV_PUNCTUATOR,
+  REG_EXP = cls.SimpleJSParser.REG_EXP,
+  COMMENT = cls.SimpleJSParser.COMMENT;
 
   var parser=null;
   var __source=null;
@@ -96,6 +115,7 @@ window.cls.SimpleJSParser = function()
 
   var __default_line_ele = "div";
   var __current_line_ele = "";
+  var __ontoken = null;
 
   var __read_buffer_with_arrs = function()
   {
@@ -135,6 +155,26 @@ window.cls.SimpleJSParser = function()
   var __online_parse_simple = function()
   {
     __return_arr.push([LINETERMINATOR, __buffer]);
+    __buffer = '';
+  };
+
+  var __read_buffer_tokenize = function()
+  {
+    if (__buffer)
+    {
+      __ontoken(__type, __buffer);
+      if (__type==IDENTIFIER)
+      {
+        __previous_type=__type;
+        __previous_value = __buffer;
+      }
+    }
+    __buffer = '';
+  };
+
+  var __online_tokenize = function()
+  {
+    __ontoken(LINETERMINATOR, __buffer);
     __buffer = '';
   };
 
@@ -559,11 +599,12 @@ window.cls.SimpleJSParser = function()
         if(c in LINETERMINATOR_CHARS)
         {
           read_buffer();
-          CRLF=c;
+          __buffer=CRLF=c;
           CRLF+=c=__source.charAt(++__pointer);
           if(CRLF in LINETERMINATOR_CHARS)
           {
             c=__source.charAt(++__pointer);
+            __buffer = CRLF;
           }
           if(__online && __online())
           {
@@ -992,21 +1033,19 @@ window.cls.SimpleJSParser = function()
     parser(__source.charAt(__pointer));
   }
 
-  this.parse2 = function(script)
+  this.tokenize = function(script_source, ontoken, espace)
   {
-    var ret = __return_arr = [];
     parser = default_parser;
     __previous_type = '';
     __type = IDENTIFIER;
-    __escape = {};
-    __source = script;
+    __escape = espace == "html" && ESCAPE || {};
+    __source = script_source;
     __pointer = 0;
-    __online = __online_parse_simple;
-    read_buffer = __read_buffer_parse_simple;
+    __ontoken = ontoken;
+    __online = __online_tokenize;
+    read_buffer = __read_buffer_tokenize;
     parser(__source.charAt(__pointer));
-    __return_arr = null;
-    return ret;
-  }
+  };
 
   var __online_raw = function(c)
   {
@@ -1033,15 +1072,4 @@ window.cls.SimpleJSParser = function()
     return __ret;
   }
 
-}
-
-// CONSTS for external code that needs to know about token types
-window.cls.SimpleJSParser.WHITESPACE = 1,
-window.cls.SimpleJSParser.LINETERMINATOR = 2,
-window.cls.SimpleJSParser.IDENTIFIER = 3,
-window.cls.SimpleJSParser.NUMBER = 4,
-window.cls.SimpleJSParser.STRING = 5,
-window.cls.SimpleJSParser.PUNCTUATOR = 6,
-window.cls.SimpleJSParser.DIV_PUNCTUATOR = 7,
-window.cls.SimpleJSParser.REG_EXP = 8,
-window.cls.SimpleJSParser.COMMENT = 9;
+};

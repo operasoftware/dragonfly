@@ -687,6 +687,13 @@ settings-header { /**/
   clear: both;
   }
 
+
+.apply-button input[type="button"] 
+{
+  float: right;
+  margin-right: 26px;
+}
+
 setting-composite select
 {
   padding: 0;

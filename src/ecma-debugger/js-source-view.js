@@ -53,13 +53,9 @@ cls.JsSourceView = function(id, name, container_class)
   var __current_pointer = 0;
   var __current_pointer_type = 0;  // 2 for top frame, else 4
 
-  var __scroll_interval = 0;
-  var __scrollEvent = 0;
   var __target_scroll_top = -1;
   var __view_is_destroyed = true;
   var __disregard_scroll_event = false;
-
-  var __keyEvent = 0;
 
   var __isHorizontalScrollbar = false;
 
@@ -435,11 +431,6 @@ cls.JsSourceView = function(id, name, container_class)
       __timeout_clear_view = clearTimeout( __timeout_clear_view );
     }
 
-    if(clear_scroll && __scroll_interval )
-    {
-      __scroll_interval = clearInterval(__scroll_interval);
-    }
-
     var is_visible = ( source_content = document.getElementById(container_id) ) ? true : false;
     // if the view is visible it shows the first new script
     // before any parse error, that means in case of a parse error
@@ -642,56 +633,16 @@ cls.JsSourceView = function(id, name, container_class)
 
   this.scroll = function()
   {
-    if(view_invalid || __disregard_scroll_event)
+    if (!view_invalid && !__disregard_scroll_event)
     {
-      __disregard_scroll_event = false;
-      return;
-    }
-    if(!__scroll_interval && script.id)
-    {
-      __scroll_interval = setInterval(__scroll, 60);
-    }
-    __scrollEvent = new Date().getTime() + 100;
-  }
-
-  var __scroll = function()
-  {
-    var
-    top = document.getElementById(scroll_container_id).scrollTop,
-    target_line = Math.round(top / context['line-height']) ;
-
-    if( __keyEvent )
-    {
-      target_line = __keyEvent;
-    }
-    if(new Date().getTime() > __scrollEvent ||
-      (__current_line - 2 <= target_line &&
-      __current_line + 2 >= target_line))
-    {
-      __scroll_interval = clearInterval(__scroll_interval);
-      if(__current_line != target_line)
+      var top = document.getElementById(scroll_container_id).scrollTop;
+      var target_line = Math.ceil(top / context['line-height']);
+      if (__current_line != target_line)
       {
         self.showLine(script.id, target_line, null, null, false, true);
       }
-      __keyEvent = 0;
     }
-    else
-    {
-      self.showLine( script.id, Math.round((__current_line + target_line) / 2), null, null, false, true);
-    }
-  }
-
-  this.scrollUp = function()
-  {
-    __keyEvent = __current_line - 38;
-    if( __keyEvent < 1 ) __keyEvent = 1;
-    self.scroll();
-  }
-
-  this.scrollDown = function()
-  {
-    __keyEvent = __current_line + 38;
-    self.scroll();
+    __disregard_scroll_event = false;
   }
 
   this.getCurrentScriptId = function()
@@ -750,9 +701,98 @@ cls.JsSourceView = function(id, name, container_class)
     __view_is_destroyed = true;
   }
 
+
+  /* action broker interface */
+
+  /**
+    * To handle a single action.
+    * Returning false (as in === false) will cancel the event
+    * (preventDefault and stopPropagation),
+    * true will pass it to the next level if any.
+    * @param {String} action_id
+    * @param {Event} event
+    * @param {Element} target
+    */
+  this.handle = function(action_id, event, target){};
+
+  /**
+    * To get a list of supported actions.
+    */
+  this.get_action_list = function(){};
+
+  /**
+    * Gets called if an action handler changes to be the current context.
+    */
+  this.focus = function(container){};
+
+  /**
+    * Gets called if an action handle stops to be the current context.
+    */
+  this.blur = function(){};
+
+  /**
+    * Gets called if an action handler is the current context.
+    * Returning false (as in === false) will cancel the event
+    * (preventDefault and stopPropagation),
+    * true will pass it to the next level if any.
+    */
+  this.onclick = function(event){};
+
+  this.handle = function(action_id, event, target)
+  {
+    if (action_id in this._handlers)
+      return this._handlers[action_id](event, target);
+  }
+
+  this.get_action_list = function()
+  {
+    var actions = [], key = '';
+    for (key in this._handlers)
+      actions.push(key);
+    return actions;
+  };
+
+  this.mode = "default";
+
+  this._handlers = {};
+
+  this.mode_labels =
+  {
+    "default": ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_DEFAULT,
+  }
+
+  const PAGE_SCROLL = 20;
+  const ARROW_SCROLL = 2;
+  /*
+    this.showLine = function(script_id,
+                           line_nr,
+                           clear_scroll,
+                           is_parse_error,
+                           update_scroll_height,
+                           keep_line_highlight)
+                           */
+  this._scroll_lines = function(lines, event, target)
+  {
+    var target_line = Math.max(1, Math.min(__current_line + lines, 
+                                           script.line_arr.length + 1));
+    if (__current_line != target_line)
+    {
+      __disregard_scroll_event = true;
+      document.getElementById(scroll_container_id).scrollTop =
+        target_line * context['line-height'];
+      this.showLine(script.id, target_line, null, null, false, true);
+    }
+    return false;
+  }
+
+  this._handlers['scroll-page-up'] = this._scroll_lines.bind(this, -PAGE_SCROLL);
+  this._handlers['scroll-page-down'] = this._scroll_lines.bind(this, PAGE_SCROLL);
+  this._handlers['scroll-arrow-up'] = this._scroll_lines.bind(this, -ARROW_SCROLL);
+  this._handlers['scroll-arrow-down'] = this._scroll_lines.bind(this, ARROW_SCROLL);
   this.init(id, name, container_class);
   messages.addListener('update-layout', updateLayout);
   messages.addListener('runtime-destroyed', onRuntimeDestroyed);
+  ActionBroker.get_instance().register_handler(this);
 }
 
 cls.JsSourceView.prototype = ViewBase;
@@ -928,6 +968,8 @@ cls.JsSourceView.create_ui_widgets = function()
   (
     'js_source',
     toolbar_buttons,
+    null,
+    /*
     [
       {
         handler: 'js-source-text-search',
@@ -935,7 +977,7 @@ cls.JsSourceView.create_ui_widgets = function()
         title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH,
         label: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
       }
-    ],
+    ],*/
     null,
     [
       {
@@ -945,7 +987,8 @@ cls.JsSourceView.create_ui_widgets = function()
         class: 'window-select-dropdown',
         template: window['cst-selects']["js-script-select"].getTemplate()
       }
-    ]
+    ],
+    true
   );
 
   new Settings

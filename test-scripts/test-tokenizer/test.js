@@ -81,3 +81,47 @@ b >>> 1;
 d >>= 6;
 d <<= 7;
 
+  GET_OFFSETS_SCRIPT = "\
+    (function(ele)\
+    {\
+      var \
+      parent = ele,\
+      log = ele.nodeName + '|0;',\
+      offsetParent = ele.offsetParent,\
+      offsets =\
+      [\
+        '" + OFFSETS[OFFSET_TOP] + "',\
+        '" + OFFSETS[OFFSET_LEFT] + "',\
+        '" + OFFSETS[OFFSET_WIDTH] + "',\
+        '" + OFFSETS[OFFSET_HEIGHT] + "',\
+        '" + OFFSETS[SCROLL_TOP] + "',\
+        '" + OFFSETS[SCROLL_LEFT] + "',\
+        '" + OFFSETS[SCROLL_WIDTH] + "',\
+        '" + OFFSETS[SCROLL_HEIGHT] + "',\
+        '" + OFFSETS[CLIENT_TOP] + "',\
+        '" + OFFSETS[CLIENT_LEFT] + "',\
+        '" + OFFSETS[CLIENT_WIDTH] + "',\
+        '" + OFFSETS[CLIENT_HEIGHT] + "'\
+      ],\
+      offset = '',\
+      i = 0;\
+      while( ( parent = parent.parentNode ) && parent.nodeType == 1 )\
+      {\
+        if(parent == offsetParent)\
+        {\
+          log = parent.nodeName + '|1,' + log;\
+          offsetParent = parent.offsetParent;\
+        }\
+        else\
+        {\
+          log = parent.nodeName + '|0,' + log;\
+        }\
+      };\
+      for( ; offset = offsets[i]; i++)\
+      {\
+        log += ele[offset] + ';';\
+      }\
+      return log;\
+    })(ele)\
+    ";
+

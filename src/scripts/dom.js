@@ -24,6 +24,7 @@
   });
 })();
 */
+/*
 if (document.createElementNS && 
     document.createElement('div').namespaceURI != 'http://www.w3.org/1999/xhtml')
 {  
@@ -32,7 +33,7 @@ if (document.createElementNS &&
     return this.createElementNS('http://www.w3.org/1999/xhtml', name);
   };
 }
-
+*/
 if (!Element.prototype.contains)
 {
   Element.prototype.contains = function(ele)
@@ -42,6 +43,22 @@ if (!Element.prototype.contains)
     var all = this.getElementsByTagName('*'), i = 0, cur = null;
     for (; (cur = all[i]) && cur != ele; i++);
     return Boolean(cur);
+  }
+}
+
+if (!Element.prototype.insertAdjacentHTML)
+{
+  Element.prototype.insertAdjacentHTML = function(position, markup)
+  {
+    if (position == 'beforeend')
+    {
+      var div = this.appendChild(document.createElement('div'));
+      div.innerHTML = markup;
+      var range = document.createRange();
+      range.selectNodeContents(div);
+      this.replaceChild(range.extractContents(), div);
+      return this.firstElementChild;
+    }
   }
 }
 
@@ -94,7 +111,12 @@ Element.prototype.render = Document.prototype.render = function(args, namespace)
         else if (namespace)
           ele = doc.createElementNS(namespace, first_arg.slice(prefix_pos + 1));
         else
+        {
+          try
+          {
           ele = first_arg in CustomElements ? CustomElements[first_arg].create() : doc.createElement(first_arg);
+          }catch(e){debugger;};
+        }
         i++;
       }
       arg = args[i];
@@ -767,6 +789,11 @@ if (!"".trim)
 String.prototype.isdigit = function()
 {
   return this.length && !(/\D/.test(this));
+};
+
+String.prototype.contains = function(str)
+{
+  return this.indexOf(str) != -1;
 };
 
 Array.prototype.extend = function(list)

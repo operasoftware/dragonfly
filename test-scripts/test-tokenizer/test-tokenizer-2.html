@@ -1,0 +1,97 @@
+﻿<!doctype HTML>
+<meta http-equiv="Content-Type" content="text/html; utf-8">
+<link rel="stylesheet" href="../../src/ui-style/syntax-highlight.css">
+<link rel="alternate stylesheet" title="t1" href="../../src/ui-style/ui.css">
+<link rel="alternate stylesheet" title="t1"  href="../../src/ui-style/debugger_style.css">
+<link rel="alternate stylesheet" title="t2"  href="../../src/ui-style/js-source.css">
+<link rel="alternate stylesheet" title="t3"  href="../../src/ui-style/syntax-highlight.css">
+<link rel="alternate stylesheet" title="t4"  href="../../src/http-logger/httplogger_style.css">
+<link rel="alternate stylesheet" title="t5"  href="../../src/console-logger/consolelogger_style.css">
+<link rel="alternate stylesheet" title="t6"  href="../../src/ui-style/colorpickerstyle.css">
+<link rel="alternate stylesheet" title="t7"  href="../../src/repl/repl_style.css">
+<link rel="alternate stylesheet" title="t8"  href="../../src/shortcutconfig/style.css">
+<link rel="alternate stylesheet" title="t9"  href="../../src/ui-style/global_command_line.css">
+<link rel="alternate stylesheet" title="t10"  href="../../src/ui-style/contextmenu.css">
+<style>
+body
+{
+  margin: 0;
+  padding: 0;
+}
+form
+{
+  background-color: hsl(0, 0%, 80%);
+  margin: 0;
+  padding: 0;
+}
+p
+{
+  margin: 0;
+  padding: 7px 7px;
+}
+#header
+{
+  xpadding: 7px;
+}
+textarea
+{
+  display: block;
+  box-sizing: border-box;
+  padding: 7px;
+  width: 100%;
+  border: none;
+  overflow: hidden;
+}
+.source
+{
+  position: relative;
+  white-space: pre;
+  font-family: monospace;
+  font-size: 12px;
+  line-height: 15px;
+  border-top: 1px solid hsl(0, 0%, 70%);
+}
+.js-source 
+{
+  margin-left: 10ex;
+}
+.line-numbers
+{
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 7ex;
+  padding-right: 1ex;
+  text-align: right;
+  background-color: hsl(0, 0%, 96%);
+  color: hsl(0, 0%, 70%);
+  border-right: 1px solid hsl(0, 0%, 70%);
+}
+</style>
+<script src="../../src/scripts/dom.js"></script>
+<script src="../../src/ecma-debugger/helpers.js"></script>
+<script src="../../src/syntaxhighlight/js/tokenizer.js"></script>
+<script src="../../src/syntaxhighlight/js/syntax.js"></script>
+<script src="../../src/syntaxhighlight/js/templates.js"></script>
+<script src="./testhighlight.js"></script>
+
+
+<div id="header">
+  <form>
+    <textarea id="output" rows="4" cols="70"></textarea>
+    <p><label><input type="checkbox" id="make-line-numbers" checked> with line numbers</label>
+       <label><input type="checkbox" onchange="enable_stylesheets(this.checked)"> enable Dragonfly stylesheet</label>
+    <p>file size: <label><input type="radio" name="file-size" value="small" checked> 250KB</label>
+                  <label><input type="radio" name="file-size" value="big"> 1.5MB</label>
+    <p><label> test runs: <select name="test-runs" id ="test-runs">
+                            <option>1</option>
+                            <option>10</option>
+                            <option>50</option>
+                          </select></label>
+    <div></div>
+  </form>
+  <div id="controls"></div>
+</div>
+<div class="source"><div class="js-source"></div><div class='line-numbers'></div>
+</div>
+

@@ -174,6 +174,17 @@ eventHandlers.click['toggle-setting'] = function(event, target)
   old_setting.parentElement.replaceChild(setting, old_setting);
 }
 
+eventHandlers.click['show-search'] = function(event, target)
+{
+  var toolbar = UIBase.getUIById(target.get_attr('parent-node-chain', 'ui-id'));
+  if (toolbar)
+  {
+    opera.postError(toolbar.cell.container.view_id);
+  }
+}
+
+
+
 
 
 eventHandlers.click['show-window'] = function(event)

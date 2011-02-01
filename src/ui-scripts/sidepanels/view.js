@@ -1,6 +1,7 @@
 var SidePanelBaseView = function(id, name, view_list)
 {
   this.container_class = 'scroll side-panel';
+  this.type = 'side-panel';
   this._container = null;
   this._divs = null;
 
@@ -18,6 +19,24 @@ var SidePanelBaseView = function(id, name, view_list)
     }, this);
     this._init_super(id, name, this.container_class);
     this._toolbar = new Toolbar();
+  }
+
+  this.has_view = function(view_id)
+  {
+    var view, i = 0;
+    for (; (view = this._views[i]) && view_id != view.view_id; i++);
+    return Boolean(view);
+  }
+
+  this.set_view_unfolded = function(view_id)
+  {
+    var view, i = 0
+    for (; (view = this._views[i]) && view.view_id != view_id; i++);
+    if (view && !view.is_unfolded)
+    {
+      view.is_unfolded = true;
+      this._store_views_unfolded();
+    }
   }
 
   this.createView = function(container)
@@ -47,7 +66,7 @@ var SidePanelBaseView = function(id, name, view_list)
     }
     this._container = null;
     this._divs = null;
-    
+
   }
 
   this._store_views_unfolded = function()
@@ -63,10 +82,10 @@ var SidePanelBaseView = function(id, name, view_list)
       div.addClass('unfolded');
       if(toolbars[view.id])
       {
-        var toolbar = div.render(['panel-toolbar', 
-                                  'id', 'panel-toolbar-' + obj.id, 
+        var toolbar = div.render(['panel-toolbar',
+                                  'id', 'panel-toolbar-' + obj.id,
                                   'ui-id', toolbars[view.id].id,
-                                  'focus-handler', 'focus', 
+                                  'focus-handler', 'focus',
                                   'blur-handler', 'blur']);
         toolbars[view.id].addContainerId('panel-toolbar-' + obj.id);
         this._toolbar.create_toolbar_content(view.id, toolbar)
@@ -75,7 +94,7 @@ var SidePanelBaseView = function(id, name, view_list)
       view.addContainerId('panel-container-' + obj.id);
       if (view.default_handler)
       {
-        container.setAttribute('handler', view.default_handler); 
+        container.setAttribute('handler', view.default_handler);
       }
       container.className = view.container_class || '';
       container.setAttribute('data-menu', view.id || '');

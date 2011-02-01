@@ -158,7 +158,7 @@ window.cls.Helpers = function()
     return ret;
   }
 
-  this.service_class_name = window.app.helpers.dash_to_class_name;
+  this.service_class_name = window.app && window.app.helpers.dash_to_class_name;
 
   this.scroll_dom_target_into_view = function()
   {

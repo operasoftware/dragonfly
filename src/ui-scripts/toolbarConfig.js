@@ -111,7 +111,12 @@ var ToolbarConfigBase = new function()
     return this.__is_visible;
   }
 
-  this.init = function(name, optional_button_array, optional_filter_array, optional_special_button_array, optional_custom_button_array)
+  this.init = function(name, 
+                       optional_button_array, 
+                       optional_filter_array, 
+                       optional_special_button_array, 
+                       optional_custom_button_array,
+                       has_search_button)
   {
     ids [ this.id = getId() ] = this;
     this.buttons = optional_button_array || [];
@@ -119,6 +124,7 @@ var ToolbarConfigBase = new function()
     this.specials = optional_special_button_array || [];
     this.customs = optional_custom_button_array || [];
     this.container_ids = [];
+    this.has_search_button = Boolean(has_search_button)
     this.__is_visible = true;
     if(!window.toolbars)
     {
@@ -143,9 +149,19 @@ var ToolbarConfigBase = new function()
   * @extends ToolbarConfigBase
   */
 
-var ToolbarConfig = function(name, optional_button_array, optional_filter_array, optional_special_button_array, optional_custom_button_array)
+var ToolbarConfig = function(name, 
+                             optional_button_array, 
+                             optional_filter_array, 
+                             optional_special_button_array, 
+                             optional_custom_button_array,
+                             has_search_button)
 {
-  this.init(name, optional_button_array, optional_filter_array, optional_special_button_array, optional_custom_button_array);
+  this.init(name, 
+            optional_button_array, 
+            optional_filter_array, 
+            optional_special_button_array, 
+            optional_custom_button_array,
+            has_search_button);
 }
 
 ToolbarConfig.prototype = ToolbarConfigBase;

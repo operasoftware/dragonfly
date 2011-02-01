@@ -60,7 +60,7 @@
     {
       if (!KeyIdentifier.validate_shortcut(shortcut))
         throw "Invalid shortcut " + shortcut;
-      tokens = shortcut.split(/[ \-,\+]+/).reverse().
+      tokens = shortcut.split(/[ ,\+]+/).reverse().
                map(function(t){return t.toLowerCase()});
       shift = tokens.indexOf("shift") != -1;
       ctrl = (tokens.indexOf("ctrl") != -1) || (tokens.indexOf("cmd") != -1);
@@ -229,7 +229,7 @@ KeyIdentifier.validate_shortcut = function(shortcut)
     * Separaters of the shortcut tokens can be a space, a comma, '+' or '-'.
     */
 
-  var tokens = shortcut.split(/[ \-,\+]+/).reverse().map(function(t)
+  var tokens = shortcut.split(/[ ,\+]+/).reverse().map(function(t)
                {
                   t = t.toLowerCase();
                   if (t == "cmd")

@@ -34,6 +34,11 @@ var ToolbarBase = function()
     return this.cell.top + (this.cell.tab ? this.cell.tab.offsetHeight : 0);
   };
 
+  this.getBottomPosition = function()
+  {
+    return this.__is_visible ? this.getTopPosition() + this.offsetHeight : 0;
+  }
+   
   this.setDimensions = function(force_redraw)
   {
     var dim = '', i = 0;
@@ -93,7 +98,8 @@ var ToolbarBase = function()
       {
         var 
         width = this.width,
-        filter = toolbar.getElementsByTagName('filter')[0],
+        filter = toolbar.getElementsByTagName('filter')[0] ||
+                 toolbar.getElementsByTagName('toolbar-search')[0],
         previousEle = cst_select.previousElementSibling;
 
         if( filter )
@@ -136,6 +142,7 @@ var ToolbarBase = function()
     this.toolbar_settings = window.toolbar_settings && window.toolbar_settings[view_id] || null;
     this.specials = toolbars[view_id] && toolbars[view_id].specials || [];
     this.customs = toolbars[view_id] && toolbars[view_id].customs || [];
+    this.has_search_button = toolbars[view_id] && toolbars[view_id].has_search_button;
     this.__view_id = view_id;
     if(toolbars[view_id])
     {
@@ -147,6 +154,10 @@ var ToolbarBase = function()
       if(this.filters.length)
       {
         toolbar.render(templates.filters(this.filters));
+      }
+      if(this.has_search_button)
+      {
+        toolbar.render(templates.search_button(this.filters));
       }
       if( this.buttons.length )
       {
