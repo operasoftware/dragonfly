@@ -259,17 +259,6 @@ templates.network_header_table = function(headers)
           "class", "header-list"];
 }
 
-templates.network_log_main_table = function(ctx)
-{
-  return [
-    ["div", templates.network_log_url_list(ctx),
-     "class", "resourcelist"
-    ],
-    ["div", templates.network_log_url_list(ctx),
-     "class", "timeline"]
-  ]
-}
-
 templates.network_log_url_list = function(ctx, selected)
 {
   var itemfun = function(res) {
@@ -347,8 +336,6 @@ templates.request_bar = function(index, request, basetime, totaltime, contwidth,
   var start = request.starttime;
   var reqwidth = request.duration
   var resstart = request.requesttime || start
-
-
   var reswidth = reqwidth - (resstart - start);
 
   var texture = "gradient-" + (request.type || "unknown");
