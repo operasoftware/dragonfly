@@ -63,7 +63,7 @@ window.templates["button"] = function(id, class_name, title, handler, attributes
     "id", id,
     "class", "ui-control " + class_name,
     "title", title,
-    "handler", handler
+    "handler", handler || id
   ].concat(attrs);
 };
 
