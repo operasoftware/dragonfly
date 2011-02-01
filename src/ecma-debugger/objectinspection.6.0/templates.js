@@ -94,12 +94,11 @@
       if (index)
       {
         ret.push(
-          "<div class='prototype-chain-object" + (has_match ? "" : " no-match") + "'>" +
+          "<div handler='expand-prototype' class='prototype-chain-object" + (has_match ? "" : " no-match") + "'" +
+                (is_unfolded ? STYLE_EXPANDED + "is-unfolded='true'" : "")+ ">" +
             "<input type='button' " +
-                   "handler='expand-prototype' " +
                    "class='folder-key inverted' " +
                    "proto-index='" + index + "' " +
-                   (is_unfolded ? STYLE_EXPANDED + "is-unfolded='true'" : "") +
                    "/>",
             "<key>" + name + "</key>",
           "</div>");
