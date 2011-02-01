@@ -1573,3 +1573,23 @@ tabs, toolbar {
   background-color: #fff;
   color: #000;
 }
+
+toolbar-filters input[type=button]
+{
+  background: #e6e6e6 url("../ui-images/shine_button.png") repeat-x;
+  border: 1px solid rgba(0, 0, 0, .5);
+  border-radius: 3px;
+  margin: 0 2px;
+  padding: 3px 10px;
+  text-shadow: 0 1px rgba(255,255,255,0.5);
+  box-shadow: 0 1px rgba(255,255,255,0.5), inset 0 1px 1px #fff;
+  vertical-align: top;
+  -o-transition: background-color 0.2s;
+}
+
+
+toolbar-filters input[type=button]:active
+{
+  box-shadow: 0 1px #fff, inset 0 1px 2px rgba(0, 0, 0, .4);
+  background-position: 0 1px;
+}
