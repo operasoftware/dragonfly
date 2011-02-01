@@ -145,7 +145,7 @@ var VirtualTextSearchBase = function()
 
   this._search_source = function()
   {
-    if (this._search_term != this._script.serach_term)
+    if (this._search_term != this._script.search_term)
     {
       this._script.search_source(this._search_term);
       if (this._last_match_cursor)
@@ -173,6 +173,7 @@ var VirtualTextSearchBase = function()
           this._script && this._script.line_matches && this._script.line_matches.length)
     {
       var line = this._script.line_matches[this._script.match_cursor];
+      
       this._top_line = views.js_source.getTopLine();
       this._bottom_line = views.js_source.getBottomLine();
       if (set_match_cursor)
@@ -189,15 +190,14 @@ var VirtualTextSearchBase = function()
         var plus_lines = views.js_source.getMaxLines() <= 7 
           ? views.js_source.getMaxLines() / 2 >> 0 
           : 7;
-        views.js_source.showLine(this._script.id, line - plus_lines, true);
+        views.js_source.showLine(this._script.script_id, line - plus_lines, true);
         this._top_line = views.js_source.getTopLine();
         this._bottom_line = views.js_source.getBottomLine();
         this._search_hits_valid = false;
       }
       if (!this._source_container)
       {
-        this._source_container_parent = this._container.getElementsByTagName('div')[0];
-        this._source_container = this._container.getElementsByTagName('div')[1];
+        this._set_source_container();
       }
       // views.js_source.showLine can invalidate the current script source
       // _search_source only performs the serach if the current search term 
@@ -216,6 +216,12 @@ var VirtualTextSearchBase = function()
       this._last_match_cursor = this._script.match_cursor;
       this._update_info();
     }
+  };
+
+  this._set_source_container = function()
+  {
+    this._source_container_parent = this._container.getElementsByTagName('div')[0];
+    this._source_container = this._container.getElementsByTagName('div')[1];
   };
 
   /**
@@ -283,6 +289,10 @@ var VirtualTextSearchBase = function()
       this._length = this._script.match_length;
       this._highlight_style = index == this._script.match_cursor && HIGHLIGHT_STYLE || DEFAULT_STYLE;
       this._hits[index] = this._hit = [];
+      if (!this._source_container)
+      {
+        this._set_source_container();
+      }
       this._search_node(this._source_container.getElementsByTagName('div')[line - this._top_line]);
     }
   };
@@ -292,6 +302,10 @@ var VirtualTextSearchBase = function()
     */
   this._scroll_selected_hit_in_to_view = function()
   {
+    if (!this._source_container)
+    {
+      this._set_source_container();
+    }
     this._source_container.parentNode.scrollLeft = 0;
     this._hit = this._hits[this._script.match_cursor];
     if (this._hit.length

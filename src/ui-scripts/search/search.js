@@ -113,7 +113,6 @@ Search.prototype = new function()
     if (ele && !ele.firstChild)
     {
       ele.render(window.templates.searchbar_content(this));
-      this._simple_text_search.set_container(this._container);
       cur = ele.getElementsByTagName('info')[0];
       this._simple_text_search.set_info_element(cur);
       cur = ele.getElementsByTagName('filter')[0].getElementsByTagName('input')[0];
@@ -131,6 +130,11 @@ Search.prototype = new function()
       {
         this._container = layout_box.container.getElement();
         this._onserachbar_created();
+        this._simple_text_search.set_container(this._container);
+        if (this._searchwindow)
+        {
+          this._searchwindow;
+        }
       }
     }
   };
@@ -140,6 +144,10 @@ Search.prototype = new function()
     if (msg.id == this._view_id)
     {
       this._simple_text_search.cleanup();
+      if (this._searchwindow)
+      {
+        this._searchwindow;
+      }
     }
   };
 
