@@ -98,6 +98,26 @@ li span + span {
 }
 
 
+.network-graph-bg-row:hover
+{
+  fill: rgba(55,115,211,0.2);
+}
+
+
+/*
+.network-graph-bg-row
+{
+  fill: white;
+}
+
+
+.network-graph-bg-row:nth-of-type(odd)
+{
+  fill: rgba(0,0,0,0.025);
+}
+
+*/
+
 /* Network log / Detail view */
 
 button[handler="close-request-detail"]
@@ -191,3 +211,4 @@ h2
 .network-options .clearing
 {
 }
+

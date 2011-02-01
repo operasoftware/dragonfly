@@ -470,9 +470,11 @@ templates.network_log_background = function(ctx, lineheight)
                "y", String(cnt*lineheight),
                "width", "100%",
                "height", String(lineheight-1),
-               "stroke-width", "0", "fill", (cnt%2 ?  "rgba(0,0,0,0.025)" : "white"),
+               "stroke-width", "0", 
+               "fill", (cnt%2 ?  "rgba(0,0,0,0.025)" : "white"),
                "data-resource-id", String(ctx.resources[cnt].id),
-               "handler", "xxselect-network-request-graph",
+               "class", "network-graph-bg-row",
+               "handler", "select-network-request-graph",
                ]);
 
     tpls.push(["line",

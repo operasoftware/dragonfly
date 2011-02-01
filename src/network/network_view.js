@@ -124,11 +124,13 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   }.bind(this);
 
 
+  // fixme: unify methods. Move bgcolor to css
   this._on_hover_request_bound = function(evt, target)
   {
     if (this._prev_hovered)
     {
       this._prev_hovered.setAttribute("fill", this._prev_hovered_color)
+      this._prev_hovered.style.backgroundColor = "";
       this._prev_hovered = null;
     }
     var rid = target.getAttribute("data-resource-id");
@@ -140,9 +142,22 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     }
   }.bind(this);
 
-  this._on_hover_request_graph_bound = function()
+  this._on_hover_request_graph_bound = function(evt, target)
   {
-      opera.postError(111)
+    if (this._prev_hovered)
+    {
+      this._prev_hovered.setAttribute("fill", this._prev_hovered_color)
+      this._prev_hovered.style.backgroundColor = "";
+      this._prev_hovered = null;
+    }
+    var rid = target.getAttribute("data-resource-id");
+    var ele = document.querySelector("li[data-resource-id=\"" + rid + "\"]");
+
+    if (ele) { 
+      this._prev_hovered = ele;
+      this._prev_hovered_color = ele.getAttribute("fill");
+      ele.style.backgroundColor = "rgba(55,115,211,0.2)";
+    }
   }.bind(this);
 
 
@@ -196,7 +211,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
   eh.click["select-network-request"] = this._on_clicked_request_bound;
   eh.mouseover["select-network-request"] = this._on_hover_request_bound;
-  //eh.mouseover["select-network-request-graph"] = this._on_hover_request_graph_bound;
+  eh.mouseover["select-network-request-graph"] = this._on_hover_request_graph_bound;
 
 
   eh.click["close-request-detail"] = this._on_clicked_close_bound;
