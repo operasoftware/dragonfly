@@ -39,11 +39,19 @@
 
   this._search_result_script = function(script)
   {
-     return (
-     [
-       ['h3', 'script ' + (script.uri || script.script_type)],
-       ['div', 'matches: ' + String(script.line_matches.length)]
-     ]);
+    var ret = [['h3', 'script ' + (script.uri || script.script_type)]];
+    var line = 0, cur_line = 0;
+    for (var i = 0; i < script.line_matches.length; i++)
+    {
+      cur_line = script.line_matches[i];
+      if (cur_line != line)
+      {
+        line = cur_line;
+       ret.push(['div', line + ' ' + script.script_data.slice(script.line_arr[line-1], 
+                                                              script.line_arr[line])]);
+      }
+    }
+     return ret;
   };
 
 }).apply(window.templates || (window.templates = {}));

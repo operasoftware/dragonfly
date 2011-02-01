@@ -16,6 +16,7 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
   this._on_active_tab_bound = function(msg)
   {
     this._rt_ids = msg.activeTab.slice(0);
+    this._searchterm = '';
   }.bind(this);
 
 
