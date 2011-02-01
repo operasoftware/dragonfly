@@ -351,7 +351,8 @@ templates.request_bar = function(index, request, basetime, totaltime, contwidth,
       "fill", "#dfdfdf",
       "stroke", "#969696",
       "stroke-width", "1.0",
-      "data-resource-id", String(request.id),
+      "pointer-events", "none",
+      "data-resource-id", String(request.id),      
     ],
 
     ["rect",
@@ -364,6 +365,7 @@ templates.request_bar = function(index, request, basetime, totaltime, contwidth,
       "fill", "url(#" + texture + ")", 
       "stroke", "#333333", 
       "stroke-width", "1.0",
+      "pointer-events", "none",
       "data-resource-id", String(request.id),
     ]
   ];
@@ -394,6 +396,7 @@ templates.grid_lines = function(ctx, width, height)
             "y2", String(height),
             "stroke", "black",
             "stroke-width", "1",
+            "pointer-events", "none",
            ]);
 
   for (var n=100; n<millis; n+=100)
@@ -420,6 +423,7 @@ templates.grid_lines = function(ctx, width, height)
                 "y2", String(height),
                 "stroke", color,
                 "stroke-width", "1.0",
+                "pointer-events", "none",
                 "opacity", "1.0"
       ]);
     }
@@ -465,9 +469,10 @@ templates.network_log_background = function(ctx, lineheight)
     tpls.push(["rect", "x", "0",
                "y", String(cnt*lineheight),
                "width", "100%",
-               "height", String(lineheight),
+               "height", String(lineheight-1),
                "stroke-width", "0", "fill", (cnt%2 ?  "rgba(0,0,0,0.025)" : "white"),
                "data-resource-id", String(ctx.resources[cnt].id),
+               "handler", "xxselect-network-request-graph",
                ]);
 
     tpls.push(["line",

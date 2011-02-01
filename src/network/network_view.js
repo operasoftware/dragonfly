@@ -123,6 +123,30 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     this.update();
   }.bind(this);
 
+
+  this._on_hover_request_bound = function(evt, target)
+  {
+    if (this._prev_hovered)
+    {
+      this._prev_hovered.setAttribute("fill", this._prev_hovered_color)
+      this._prev_hovered = null;
+    }
+    var rid = target.getAttribute("data-resource-id");
+    var ele = document.querySelector("rect[data-resource-id=\"" + rid + "\"]");
+    if (ele) { 
+      this._prev_hovered = ele;
+      this._prev_hovered_color = ele.getAttribute("fill");
+      ele.setAttribute("fill", "rgba(55,115,211,0.2)") 
+    }
+  }.bind(this);
+
+  this._on_hover_request_graph_bound = function()
+  {
+      opera.postError(111)
+  }.bind(this);
+
+
+
   this._on_clicked_get_body = function(evt, target)
   {
     var rid = target.getAttribute("data-resource-id");
@@ -171,6 +195,10 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   //  eh.click["resources-all-open"] = this._handle_open_resource_bound;
 
   eh.click["select-network-request"] = this._on_clicked_request_bound;
+  eh.mouseover["select-network-request"] = this._on_hover_request_bound;
+  //eh.mouseover["select-network-request-graph"] = this._on_hover_request_graph_bound;
+
+
   eh.click["close-request-detail"] = this._on_clicked_close_bound;
   eh.click["get-response-body"] = this._on_clicked_get_body;
 
