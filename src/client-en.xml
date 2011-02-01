@@ -191,8 +191,8 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/modebar.js"/>
 <script src="./ui-scripts/search/searchbar.js"/>
 <script src="./ui-scripts/search/searchwindow.js"/>
+<script src="./ui-scripts/search/jssearchwindow.js"/>
 <script src="./ui-scripts/search/search.js"/>
-<script src="./ui-scripts/search/advancedjssearch.js"/>
 <script src="./ui-scripts/search/templates.js"/>
 <script src="./ui-scripts/overlay.js"/>
 <script src="./ui-scripts/horizontal_navigation.js"/>
@@ -254,6 +254,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ecma-debugger/tabs.js"/>
 
 <script src="./ecma-debugger/templates.js"/>
+<script src="./ecma-debugger/newscript.js"/>
 <script src="./ecma-debugger/runtimes.js"/>
 <script src="./ecma-debugger/stop_at.js"/>
 <script src="./ecma-debugger/runtime_onload_handler.js"/>

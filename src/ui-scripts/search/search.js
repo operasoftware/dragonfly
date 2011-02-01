@@ -333,7 +333,11 @@ var JSSourceSearchBase = function()
 {
   this._onscriptselected = function(msg)
   {
-    this._simple_text_search.set_script(msg.script);
+    var script = window.runtimes.getScript(msg.script_id);
+    if (script)
+    {
+      this._simple_text_search.set_script(script);
+    }
   };
 
   this._onviewscrolled = function(msg)

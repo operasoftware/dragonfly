@@ -124,12 +124,12 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
 
   var registerRuntime = function(id)
   {
-    if( !(id in __runtimes) )
+    if (!(id in __runtimes))
     {
       opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
                       'runtime id does not exist');
       __runtimes[id] = null;
-      services['ecmascript-debugger'].getRuntime( tagManager.set_callback(null, parseRuntime), id );
+      services['ecmascript-debugger'].getRuntime(tagManager.set_callback(null, parseRuntime), id);
     }
   }
 
@@ -618,38 +618,13 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
     __threads = [];
   }
 
-
-
   this.onNewScript = function(status, message)
   {
-
-    const
-    RUNTIME_ID = 0,
-    SCRIPT_ID = 1,
-    SCRIPT_TYPE = 2,
-    SCRIPT_DATA = 3,
-    URI = 4;
-
-    var script =
-    {
-      runtime_id: message[RUNTIME_ID],
-      script_id: message[SCRIPT_ID],
-      script_type: message[SCRIPT_TYPE],
-      script_data: message[SCRIPT_DATA],
-      uri: message[URI]
-    };
-
-    if( !script.script_data )
-    {
-      script.script_data = '';
-    }
-
+    var script = new cls.NewScript(message);
     if( is_runtime_of_debug_context(script.runtime_id))
     {
-      script.breakpoints = {};
-      script.stop_ats = [];
-      registerRuntime( script.runtime_id );
-      registerScript( script );
+      registerRuntime(script.runtime_id);
+      registerScript(script);
     }
   }
 

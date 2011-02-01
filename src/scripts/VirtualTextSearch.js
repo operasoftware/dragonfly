@@ -68,6 +68,8 @@ var VirtualTextSearchBase = function()
     */
   this.cleanup = function(){};
 
+  this.highlight_matches = function(script){};
+
   /* constants */
 
   const 
@@ -112,7 +114,7 @@ var VirtualTextSearchBase = function()
     if (new_search_term != this._search_term)
     {
       this._search_term = new_search_term;
-      if(new_search_term.length >= MIN_TERM_LENGTH)
+      if (new_search_term.length >= MIN_TERM_LENGTH)
       {
         this._clear_hits();
         if (this._script)
@@ -135,55 +137,25 @@ var VirtualTextSearchBase = function()
         {
           this._clear_hits();
         }
-        this._clear_script_context();
         this._search_term = '';
         this._update_info(EMPTY);
       }
     }
   };
 
-  /**
-    * Searches the actual data.
-    * Updates the this._script object with the following properties for all matches:
-    *   - line_matches, a list of all matches in the source, 
-    *     the values are the lines numbers of a given match
-    *   - line_offsets, a list of all matches in the source,
-    *     the values are the character offset in the line of the match
-    *   - match_cursor, pointing to the selected match
-    *   _ match_length, the length of the search term
-    */
   this._search_source = function()
   {
-    this._script.line_matches = [];
-    this._script.line_offsets = [];
-    this._script.match_cursor = 0;
-    this._script.match_length = this._search_term.length;
-
-    var
-    pos = -1,
-    line_cur = 0,
-    source = this._script.source.toLowerCase(),
-    line_arr = this._script.line_arr,
-    line_arr_length = line_arr.length,
-    line_matches = this._script.line_matches,
-    line_offsets = this._script.line_offsets;
-
-    while ((pos = source.indexOf(this._search_term, pos + 1)) != -1)
+    if (this._search_term != this._script.serach_term)
     {
-      while (line_cur < line_arr_length && line_arr[line_cur] <= pos)
+      this._script.search_source(this._search_term);
+      if (this._last_match_cursor)
       {
-        ++line_cur;
+        if (this._last_match_cursor < this._script.line_matches.length)
+        {
+          this._script.match_cursor = this._last_match_cursor;
+        }
+        this._last_match_cursor = 0;
       }
-      line_matches[line_matches.length] = line_cur;
-      line_offsets[line_offsets.length] = pos - line_arr[line_cur - 1];
-    }
-    if (this._last_match_cursor)
-    {
-      if (this._last_match_cursor < this._script.match_length)
-      {
-        this._script.match_cursor = this._last_match_cursor;
-      }
-      this._last_match_cursor = 0;
     }
   };
 
@@ -228,10 +200,9 @@ var VirtualTextSearchBase = function()
         this._source_container = this._container.getElementsByTagName('div')[1];
       }
       // views.js_source.showLine can invalidate the current script source
-      if (!this._script.line_offsets) 
-      {
-        this._search_source();
-      }
+      // _search_source only performs the serach if the current search term 
+      // is not the search term of the script
+      this._search_source();
       if (this._search_hits_valid)
       {
         this._hits.forEach(this._update_hit, this);
@@ -396,20 +367,6 @@ var VirtualTextSearchBase = function()
     this._search_hits_valid = false;
   }
 
-  /**
-    * Helper to reset the search data.
-    */
-  this._clear_script_context = function()
-  {
-    if(this._script)
-    {
-      this._script.line_matches = null;
-      this._script.line_offsets = null;
-      this._script.match_cursor = null;
-      this._script.match_length = null;
-    }
-  }
-
   this._get_match_counts = function()
   {
     return this._script.line_matches.length;
@@ -477,21 +434,28 @@ var VirtualTextSearchBase = function()
   
   this.set_script = function(script)
   {
-    this._script = script;
-    this._source_container = null;
-    this._source_container_parent = null;
+    if (script != this._script)
+    {
+      this._script = script;
+      this._source_container = null;
+      this._source_container_parent = null;
+    }
   }
 
   this.cleanup = function()
   {
     this._last_match_cursor = this._script && this._script.match_cursor || 0;
     this._cursor = -1;
-    this._clear_script_context();
     this._clear_hits();
     this._container = this._source_container = this._source_container_parent = this._input = null;
     this._offset = -1;
     this._update_info(EMPTY);
   }
+
+  this.highlight_matches = function(script)
+  {
+  
+  };
 };
 
 VirtualTextSearchBase.prototype = TextSearch.prototype;
