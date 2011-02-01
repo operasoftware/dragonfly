@@ -109,13 +109,13 @@ templates.cookie_manager = {
     return this.edit_mode_switch_container(this.value_container(name), this.edit_container(edit_elem));
   },
   editable_expires: function(date_in_seconds, objectref) {
-    var date_string = new Date(date_in_seconds*1000).toUTCString();
-    var expires_container = this.expires_container(objectref, date_string);
-    var edit_elem = [ // todo: change this into datepicker or link that shows date-picker
+    var parsed_date = new Date(date_in_seconds*1000);
+    var expires_container = this.expires_container(objectref, parsed_date.toUTCString());
+    var edit_elem = [
       "input",
-      "value", date_in_seconds,
-      "type",  "text",
-      "name",  "value"
+      "value", parsed_date.toISOString(),
+      "type",  "datetime",
+      "name",  "expires"
     ];
     if(date_in_seconds === 0)
     {

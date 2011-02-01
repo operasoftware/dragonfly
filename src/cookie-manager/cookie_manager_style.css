@@ -10,12 +10,15 @@
   color: #AAA;
 }
 
-.cookie_manager .edit_container {
-  display: none;
-}
-
 .cookie_manager .value_container {
   position: relative;
+  height: 15px;
+}
+
+.cookie_manager .edit_container {
+  display: none;
+  margin-top: -2px;
+  margin-left: -15px;
 }
 
 .cookie_manager .edit_mode .edit_container {
