@@ -190,28 +190,81 @@ cls.CookieManagerView = function(id, name, container_class)
           var objectref = row.getAttribute("data-object-id");
           if(objectref)
           {
+            // row represents a cookie, so it can be selected
+            window.views.cookie_manager.select_row(evt, row);
+            var selection = document.querySelectorAll(".sortable-table .selected");
+            var selected_cookie_objects = [];
+            for (var i=0; i < selection.length; i++) {
+              var cookie_obj = window.views.cookie_manager.get_cookie_by_objectref(selection[i].getAttribute("data-object-id"));
+              selected_cookie_objects.push(cookie_obj);
+            };
             cookie_obj = window.views.cookie_manager.get_cookie_by_objectref(objectref);
-            if(cookie_obj.is_removable)
+            
+            if(selected_cookie_objects.length === 1)
             {
-              options.push(
-                {
-                  label: "Delete Cookie "+(cookie_obj.name || ""),
-                  handler: function() {
-                    window.views.cookie_manager.remove_cookie_by_objectref(objectref);
+              // single selection
+              var cookie_obj = selected_cookie_objects[0];
+              if(cookie_obj.is_editable)
+              {
+                options.push(
+                  {
+                    label: "Edit cookie "+(selected_cookie_objects[0].name || ""),
+                    handler: function() {
+                      window.views.cookie_manager.enter_edit_mode(selected_cookie_objects[0].objectref);
+                    }
                   }
-                }
-              );
+                );
+              }
+              if(cookie_obj.is_removable)
+              {
+                options.push(
+                  {
+                    label: "Remove cookie "+(cookie_obj.name || ""),
+                    handler: function() {
+                      window.views.cookie_manager.remove_cookie_by_objectref(objectref);
+                    }
+                  }
+                );
+              }
             }
-            if(cookie_obj.is_editable)
+            else
             {
-              options.push(
+              // multiple selection
+              var removable_cookies = [];
+              for (var j=0; j < selected_cookie_objects.length; j++) {
+                if(selected_cookie_objects[j].is_removable)
                 {
-                  label: "Edit Cookie "+(cookie_obj.name || ""),
-                  handler: function() {
-                    window.views.cookie_manager.enter_edit_mode(objectref);
-                  }
+                  removable_cookies.push(selected_cookie_objects[j]);
                 }
-              );
+              };
+              if(removable_cookies.length === 1)
+              {
+                options.push(
+                  {
+                    label: "Remove cookie "+(cookie_obj.name || ""),
+                    handler: function() {
+                      window.views.cookie_manager.remove_cookie_by_objectref(objectref);
+                    }
+                  }
+                );
+              }
+              else
+              {
+                options.push(
+                  {
+                    label: "Remove selected cookies",
+                    handler: (function(cookie_list) {
+                      return function()
+                      {
+                        for (var i=0; i < cookie_list.length; i++)
+                        {
+                          window.views.cookie_manager.remove_cookie_by_objectref(cookie_list[i].objectref);
+                        }
+                      }
+                    })(removable_cookies)
+                  }
+                );
+              }
             }
           }
           else
@@ -541,6 +594,30 @@ cls.CookieManagerView = function(id, name, container_class)
     document.querySelector("tr[data-object-id='"+objectref+"']").addClass("edit_mode");
     // Todo: focus input in clicked td if applicable
   }
+  
+  this.select_row = function(event, elem)
+  {
+    var was_selected = elem.hasClass("selected");
+    // unselect old if not doing multiple selection.
+    // cmd / ctrl key makes it multiple-select, so does having more
+    // than 1 item selected when using right-click.
+    var selection = document.querySelectorAll(".sortable-table .selected");
+    if(!( event.ctrlKey || (event.button === 2 && selection.length > 1) ))
+    {
+      for (var i=0; i < selection.length; i++) {
+        selection[i].removeClass("selected");
+      };
+    }
+  
+    if(!was_selected)
+    {
+      elem.addClass("selected");
+    }
+    else if(!(event.button === 2 && selection.length > 1))
+    {
+      elem.removeClass("selected");
+    }
+  };
 
   this._init = function(id, update_event_name)
   {
