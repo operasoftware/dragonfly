@@ -136,9 +136,9 @@ cls.CookieManagerView = function(id, name, container_class)
     sortable_table = ObjectRegistry.get_instance().get_object(this._table_elem.getAttribute("data-object-id"));
     sortable_table.data = this.flattened_cookies;
     this._table_container = container.clearAndRender(["div",sortable_table.render(),"class","table_container"]);
-    // context menus
-    sortable_table.add_listener("rendered",this._add_context_menus.bind(this, container));
-    this._add_context_menus(container);
+    // context menus, focussing
+    sortable_table.add_listener("rendered",this._after_table_render.bind(this, container));
+    this._after_table_render(container);
     // live expiry
     sortable_table.add_listener("rendered",this._update_expiry.bind(this));
     if(!this._update_expiry_interval)
@@ -148,8 +148,9 @@ cls.CookieManagerView = function(id, name, container_class)
     this._update_expiry();
   };
 
-  this._add_context_menus = function(container)
+  this._after_table_render = function(container)
   {
+    // context menus
     // add refresh to container
     container.setAttribute("data-menu", "cookie_refetch");
     var contextmenu = ContextMenu.get_instance();
@@ -179,11 +180,10 @@ cls.CookieManagerView = function(id, name, container_class)
         callback: function(evt, target)
         {
           var row = target;
-          while(row.nodeName !== "tr" || !row.parentNode)
+          while(row.nodeName !== "tr" || !row.parentNode) // todo: remove when it's fixed on menus
           {
             row = row.parentNode;
           }
-
           var options = [];
           var cookie_obj;
           // if row has an object-id, add edit and remove options
@@ -260,6 +260,13 @@ cls.CookieManagerView = function(id, name, container_class)
       }
     ];
     contextmenu.register("cookie_context", cookie_row_context);
+    
+    // select and dbl-click to edit
+    var rows = this._table_elem.querySelectorAll("tr[data-object-id]");
+    for (var i=0; i < rows.length; i++) {
+      rows[i].setAttribute("handler", "cookiemanager-row-select");
+      rows[i].setAttribute("edit-handler", "cookiemanager-init-edit-mode");
+    };
   }
 
   this._on_active_tab = function(msg)
@@ -529,9 +536,10 @@ cls.CookieManagerView = function(id, name, container_class)
     window.views.cookie_manager.refetch();
   };
 
-  this.enter_edit_mode = function(objectref)
+  this.enter_edit_mode = function(objectref, event)
   {
     document.querySelector("tr[data-object-id='"+objectref+"']").addClass("edit_mode");
+    // Todo: focus input in clicked td if applicable
   }
 
   this._init = function(id, update_event_name)

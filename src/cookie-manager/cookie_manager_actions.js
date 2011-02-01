@@ -9,14 +9,12 @@
 
 window.eventHandlers.dblclick['cookiemanager-init-edit-mode'] = function(event, target)
 {
-  var editcontainer = target;
-  while (!editcontainer.hasClass("edit_container") && editcontainer.parentNode) {
-    editcontainer = editcontainer.parentNode;
-  }
-  target.addClass("hidden");
-  var edit_formelem = editcontainer.getElementsByClassName("edit_formelem")[0];
-  edit_formelem.removeClass("hidden");
-  edit_formelem.focus();
+  window.views.cookie_manager.enter_edit_mode(target.getAttribute("data-object-id"), event);
+}
+
+window.eventHandlers.click['cookiemanager-row-select'] = function(event, target)
+{
+  // console.log("select", target);
 }
 
 window.eventHandlers.keyup['cookiemanager-edit'] = function(event, target)
