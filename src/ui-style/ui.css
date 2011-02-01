@@ -5,7 +5,7 @@ viewport, .info-box, #about-authors pre {
   color: #444;
 }
 
-.dom div, .js-source div, .console-output, .console-output pre, .console-input, .console-input textarea, property, rule, font-face-rule, page-rule, import-rule, charset-rule, media-rule, examine-objects, examine-objects item, .storage-table td, .storage-table .new-key, .repl-input, .repl-output, .color-picker-text, .color-picker-number  {
+.dom, .js-source, .console-output, .console-output pre, .console-input, .console-input textarea, property, rule, font-face-rule, page-rule, import-rule, charset-rule, media-rule, examine-objects, examine-objects item, .storage-table td, .storage-table .new-key, .repl-input, .repl-output, .color-picker-text, .color-picker-number  {
   font-family: "Menlo", "Dejavu Sans Mono", "Bitstream Vera Sans Mono", "Consolas", "Monaco", "Lucida Console", monospace;
   font-size: 11px;
   color: #111;
@@ -1261,8 +1261,6 @@ pin-label.pinned
 
 .info-box
 {
-  font-size: 22px;
-  color: #999 !important;
   margin: 30px 50px 0 50px;
   text-align: center;
   padding: 1em;
@@ -1272,7 +1270,7 @@ pin-label.pinned
 }
 .info-box p 
 {
-  margin: 0;
+  margin: 4px 0 0;
   padding: 0;
 }
 
