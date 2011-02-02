@@ -785,6 +785,7 @@ String.prototype.contains = function(str)
 Array.prototype.extend = function(list)
 {
   this.push.apply(this, list);
+  return this;
 }
 
 /**

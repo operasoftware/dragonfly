@@ -103,11 +103,11 @@
     return token;
   };
 
-  this.highlight_js_source = function(script, online)
+  this.highlight_js_source = function(script, online, start_state, context)
   {
     var context =
     {
-      template: ['pre'],
+      template: context || [pre],
       text: "",
       online: online
     };
