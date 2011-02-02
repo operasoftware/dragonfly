@@ -166,6 +166,9 @@ button[handler="reload-window"] {
 .dom\.highlight-on-hover {
     content: url("../ui-images/icons/icon_hover.png");
 }
+.dom\.update-on-dom-node-inserted {
+    content: url("../ui-images/icons/icon_update_on_delete.png");
+}
 .dom\.lock-selected-elements {
     content: url("../ui-images/icons/icon_border.png");
 }
@@ -246,6 +249,12 @@ button[handler="reload-window"] {
 }
 cst-icon[class="debugger-menu"] {
     content: url("../ui-images/icons/icon_tabs.png");
+}
+.ev-brp-expand-all-sections {
+    content: url("../ui-images/icons/icon_expand.png");
+}
+.ev-brp-remove-all-breakpoints {
+    content: url("../ui-images/icons/icon_clear.png");
 }
 
 .ui-control
