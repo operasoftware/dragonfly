@@ -59,7 +59,7 @@ cls.CookieManagerView = function(id, name, container_class)
           {
             return;
           }
-          return window.templates.cookie_manager.editable_value(obj.value);
+          return window.templates.cookie_manager.editable_value(decodeURIComponent(obj.value));
         }
       },
       path: {
@@ -126,6 +126,7 @@ cls.CookieManagerView = function(id, name, container_class)
   };
   this.createView = function(container)
   {
+    container.setAttribute("handler", "cookiemanager-container");
     this.flattened_cookies = this._flatten_cookies(this._cookie_dict, this._rts);
     if(container.getElementsByClassName("table_container").length < 1)
     {
@@ -192,82 +193,102 @@ cls.CookieManagerView = function(id, name, container_class)
           {
             // row represents a cookie, so it can be selected
             window.views.cookie_manager.select_row(evt, row);
-            var selection = document.querySelectorAll(".sortable-table .selected");
-            var selected_cookie_objects = [];
-            for (var i=0; i < selection.length; i++) {
-              var cookie_obj = window.views.cookie_manager.get_cookie_by_objectref(selection[i].getAttribute("data-object-id"));
-              selected_cookie_objects.push(cookie_obj);
-            };
-            cookie_obj = window.views.cookie_manager.get_cookie_by_objectref(objectref);
-            
-            if(selected_cookie_objects.length === 1)
+          }
+          var selection = document.querySelectorAll(".sortable-table .selected");
+          var selected_cookie_objects = [];
+          for (var i=0; i < selection.length; i++) {
+            var sel_cookie_obj = window.views.cookie_manager.get_cookie_by_objectref(selection[i].getAttribute("data-object-id"));
+            selected_cookie_objects.push(sel_cookie_obj);
+          };
+          
+          if(selected_cookie_objects.length === 1)
+          {
+            // single selection
+            var sel_cookie_obj = selected_cookie_objects[0];
+            if(sel_cookie_obj.is_editable)
             {
-              // single selection
-              var cookie_obj = selected_cookie_objects[0];
-              if(cookie_obj.is_editable)
-              {
-                options.push(
-                  {
-                    label: "Edit cookie "+(selected_cookie_objects[0].name || ""),
-                    handler: function() {
-                      window.views.cookie_manager.enter_edit_mode(selected_cookie_objects[0].objectref);
-                    }
+              options.push(
+                {
+                  label: "Edit cookie "+(sel_cookie_obj.name || ""),
+                  handler: function() {
+                    // todo: make this work
+                    window.views.cookie_manager.enter_edit_mode(sel_cookie_obj.objectref);
                   }
-                );
-              }
-              if(cookie_obj.is_removable)
-              {
-                options.push(
-                  {
-                    label: "Remove cookie "+(cookie_obj.name || ""),
-                    handler: function() {
-                      window.views.cookie_manager.remove_cookie_by_objectref(objectref);
-                    }
+                }
+              );
+            }
+            if(sel_cookie_obj.is_removable)
+            {
+              options.push(
+                {
+                  label: "Remove cookie "+(sel_cookie_obj.name || ""),
+                  handler: function() {
+                    window.views.cookie_manager.remove_cookie_by_objectref(objectref);
                   }
-                );
+                }
+              );
+            }
+            // Add "Remove all from domain-and-path"
+            var runtime = window.views.cookie_manager._rts[sel_cookie_obj.runtimes[0]];
+            options.push(
+              {
+                label: "Remove cookies of " + runtime.hostname + runtime.pathname,
+                handler: (function(runtime_id){
+                  return function() {
+                    for (var i=0; i < window.views.cookie_manager.flattened_cookies.length; i++) {
+                      var cookie = window.views.cookie_manager.flattened_cookies[i];
+                      if(cookie.runtimes.indexOf(runtime_id) > -1)
+                      {
+                        window.views.cookie_manager.remove_cookie_by_objectref(cookie.objectref);
+                      }
+                    };
+                  }
+                })(runtime.rt_id)
               }
+            );
+          }
+          else
+          {
+            // multiple selection
+            var removable_cookies = [];
+            for (var j=0; j < selected_cookie_objects.length; j++) {
+              if(selected_cookie_objects[j].is_removable)
+              {
+                removable_cookies.push(selected_cookie_objects[j]);
+              }
+            };
+            if(removable_cookies.length === 1)
+            {
+              options.push(
+                {
+                  label: "Remove cookie "+(removable_cookies[0].name || ""),
+                  handler: function() {
+                    window.views.cookie_manager.remove_cookie_by_objectref(objectref);
+                  }
+                }
+              );
             }
             else
             {
-              // multiple selection
-              var removable_cookies = [];
-              for (var j=0; j < selected_cookie_objects.length; j++) {
-                if(selected_cookie_objects[j].is_removable)
+              options.push(
                 {
-                  removable_cookies.push(selected_cookie_objects[j]);
-                }
-              };
-              if(removable_cookies.length === 1)
-              {
-                options.push(
-                  {
-                    label: "Remove cookie "+(cookie_obj.name || ""),
-                    handler: function() {
-                      window.views.cookie_manager.remove_cookie_by_objectref(objectref);
-                    }
-                  }
-                );
-              }
-              else
-              {
-                options.push(
-                  {
-                    label: "Remove selected cookies",
-                    handler: (function(cookie_list) {
-                      return function()
+                  label: "Remove selected cookies",
+                  handler: (function(cookie_list) {
+                    return function()
+                    {
+                      for (var i=0; i < cookie_list.length; i++)
                       {
-                        for (var i=0; i < cookie_list.length; i++)
-                        {
-                          window.views.cookie_manager.remove_cookie_by_objectref(cookie_list[i].objectref);
-                        }
+                        window.views.cookie_manager.remove_cookie_by_objectref(cookie_list[i].objectref);
                       }
-                    })(removable_cookies)
-                  }
-                );
-              }
+                    }
+                  })(removable_cookies)
+                }
+              );
             }
           }
-          else
+          
+          /*
+          // removing rightclick on summer or header rows for now
           {
             // no cookie object existing, find basic data from above the summer or below the header
             var next_objectref_holder = row;
@@ -289,25 +310,7 @@ cls.CookieManagerView = function(id, name, container_class)
             }
             cookie_obj = window.views.cookie_manager.get_cookie_by_objectref(next_objectref_holder.getAttribute("data-object-id"));
           }
-          // Add "Remove all from domain-and-path"
-          var first_runtime_id = cookie_obj.runtimes[0]; // all cookie_obj.runtimes have host and path
-          var runtime = window.views.cookie_manager._rts[first_runtime_id];
-          options.push(
-            {
-              label: "Remove cookies of " + runtime.hostname + runtime.pathname,
-              handler: (function(runtime_id){
-                return function() {
-                  for (var i=0; i < window.views.cookie_manager.flattened_cookies.length; i++) {
-                    var cookie = window.views.cookie_manager.flattened_cookies[i];
-                    if(cookie.runtimes.indexOf(runtime_id) > -1)
-                    {
-                      window.views.cookie_manager.remove_cookie_by_objectref(cookie.objectref);
-                    }
-                  };
-                }
-              })(first_runtime_id)
-            }
-          );
+          */
           return options;
         }
       }
@@ -318,7 +321,10 @@ cls.CookieManagerView = function(id, name, container_class)
     var rows = this._table_elem.querySelectorAll("tr[data-object-id]");
     for (var i=0; i < rows.length; i++) {
       rows[i].setAttribute("handler", "cookiemanager-row-select");
-      rows[i].setAttribute("edit-handler", "cookiemanager-init-edit-mode");
+      if(this.get_cookie_by_objectref(rows[i].getAttribute("data-object-id")).is_editable)
+      {
+        rows[i].setAttribute("edit-handler", "cookiemanager-init-edit-mode");
+      }
     };
   }
 
@@ -591,16 +597,80 @@ cls.CookieManagerView = function(id, name, container_class)
 
   this.enter_edit_mode = function(objectref, event)
   {
-    document.querySelector("tr[data-object-id='"+objectref+"']").addClass("edit_mode");
+    var row = document.querySelector(".sortable-table tr[data-object-id='"+objectref+"']").addClass("edit_mode");
+    this.select_row(event, row);
     // Todo: focus input in clicked td if applicable
+  }
+  
+  this.check_to_exit_edit_mode = function(event, target)
+  {
+    // find out if target is within some .edit_mode node. don't exit then.
+    var walk_up = target;
+    while(walk_up)
+    {
+      if(walk_up.hasClass("edit_mode"))
+      {
+        return;
+      }
+      walk_up = walk_up.parentElement;
+    }
+    var edit_tr = document.querySelector("tr.edit_mode");
+    if(edit_tr)
+    {
+      edit_tr.removeClass("edit_mode");
+      var name    = edit_tr.querySelector("[name=name]").value.trim();
+      var value   = encodeURIComponent(edit_tr.querySelector("[name=value]").value);
+      var expires = edit_tr.querySelector("[name=expires]").value;
+      var path    = edit_tr.querySelector("[name=path]").value.trim();
+    
+      var cookie = window.views.cookie_manager.get_cookie_by_objectref(edit_tr.getAttribute("data-object-id"));
+      if(
+        name !== cookie.name ||
+        value !== cookie.value ||
+        expires !== new Date(cookie.expires*1000).toISOString() ||
+        path !== cookie.path
+      )
+      {
+        /*
+        // dbg
+        console.log("modified.");
+        if(name !== cookie.name)
+          console.log(name,cookie.name);
+        if(value !== cookie.value)
+          console.log(value,cookie.value);
+        if(expires !== new Date(cookie.expires*1000).toISOString())
+          console.log(expires,new Date(cookie.expires*1000).toISOString());
+        if(path !== cookie.path)
+          console.log(expires,new Date(cookie.expires*1000).toISOString());
+        // end dbg
+        */
+        // remove old cookie
+        window.views.cookie_manager.remove_cookie_by_objectref(cookie.objectref, true);
+
+        // and add modified
+        var add_modified_cookie_script = 'document.cookie="' + name + '=' + value;
+        if(expires) // in case of 0 value the "expires" value should not be written, represents "Session" value
+        {
+          add_modified_cookie_script += '; expires='+ (new Date(expires).toUTCString());
+        }
+        add_modified_cookie_script += '; path=' + '/' + path + '"';
+    
+        var script = add_modified_cookie_script;
+        var tag = tagManager.set_callback(this, window.views.cookie_manager.handle_changed_cookies, [cookie.runtimes[0]]);
+        services['ecmascript-debugger'].requestEval(tag,[cookie.runtimes[0], 0, 0, script]);
+      }
+    }
   }
   
   this.select_row = function(event, elem)
   {
     var was_selected = elem.hasClass("selected");
-    // unselect old if not doing multiple selection.
-    // cmd / ctrl key makes it multiple-select, so does having more
-    // than 1 item selected when using right-click.
+    var is_in_edit_mode = elem.hasClass("edit_mode");
+    // unselect everything, as long as
+    //   not doing multiple selection. that's when:
+    //     cmd / ctrl key is used
+    //     more than 1 item selected and event is a right-click
+    //   not currently editing this row
     var selection = document.querySelectorAll(".sortable-table .selected");
     if(!( event.ctrlKey || (event.button === 2 && selection.length > 1) ))
     {
@@ -609,7 +679,7 @@ cls.CookieManagerView = function(id, name, container_class)
       };
     }
   
-    if(!was_selected)
+    if(!was_selected || is_in_edit_mode)
     {
       elem.addClass("selected");
     }
@@ -702,7 +772,7 @@ cls.CookieManagerView = function(id, name, container_class)
     };
   }
 
-  this.remove_cookie_by_objectref = function(objectref)
+  this.remove_cookie_by_objectref = function(objectref, avoid_refresh)
   {
     var cookie;
     for (var i=0; i < this.flattened_cookies.length; i++) {
@@ -719,7 +789,11 @@ cls.CookieManagerView = function(id, name, container_class)
           // in case the cookies path is undefined (cookie is retrieved via JS), try using "/" which is most likely
           path = "/";
         }
-        var tag = tagManager.set_callback(this, this.handle_changed_cookies, []);
+        var tag;
+        if(!avoid_refresh)
+        {
+          tag = tagManager.set_callback(this, this.handle_changed_cookies, []);
+        }
         services['cookie-manager'].requestRemoveCookie(tag,[domain, path, cookie.name]);
       }
     }

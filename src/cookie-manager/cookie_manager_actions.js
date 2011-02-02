@@ -9,13 +9,14 @@
 
 window.eventHandlers.dblclick['cookiemanager-init-edit-mode'] = function(event, target)
 {
+  window.views.cookie_manager.select_row(event, target);
   window.views.cookie_manager.enter_edit_mode(target.getAttribute("data-object-id"), event);
 }
 
 window.eventHandlers.click['cookiemanager-row-select'] = function(event, target)
 {
+  window.views.cookie_manager.check_to_exit_edit_mode(event, target);
   window.views.cookie_manager.select_row(event, target);
-  event.stopPropagation();
 }
 
 window.eventHandlers.keyup['cookiemanager-edit'] = function(event, target)
@@ -27,61 +28,9 @@ window.eventHandlers.keyup['cookiemanager-edit'] = function(event, target)
   }
 }
 
-window.eventHandlers.blur['cookiemanager-edit'] = function(event, target)
+window.eventHandlers.click['cookiemanager-container'] = function(event, target)
 {
-  var editcontainer = target;
-  while (!editcontainer.hasClass("edit_container") && editcontainer.parentNode) {
-    editcontainer = editcontainer.parentNode;
-  }
-  target.addClass("hidden");
-  editcontainer.getElementsByClassName("edit_formelem")[0].removeClass("hidden");
-
-  var objectref = target.getAttribute("data-objectref");
-  var editproperty = target.getAttribute("data-editproperty");
-
-  // need to find cookie object now that has all info
-  var cookie;
-  for (var i=0; i < window.views.cookie_manager.flattened_cookies.length; i++) {
-    if(window.views.cookie_manager.flattened_cookies[i].objectref == objectref)
-    {
-      // todo: this will need to be done over the cookie service to work reliably.
-      cookie = window.views.cookie_manager.flattened_cookies[i];
-      // remove old cookie
-      var remove_old_cookie_script = 'document.cookie="'
-                    + cookie.name + '=' + cookie.value
-                    + '; expires='+ (new Date(new Date().getTime()-1000).toUTCString())
-                    + '; path=' + '/'+ cookie.path;
-      remove_old_cookie_script += '";';
-      // and add modified
-      var add_modified_cookie_script = 'document.cookie="';
-      if(editproperty === "name")
-      {
-        add_modified_cookie_script += target.value.trim() + '='
-      }
-      else
-      {
-        add_modified_cookie_script += cookie.name + '='
-      }
-      if(editproperty === "value")
-      {
-        add_modified_cookie_script += encodeURIComponent(target.value);
-      }
-      else
-      {
-        add_modified_cookie_script += cookie.value;
-      }
-      if(cookie.expires) // in case of 0 value the "expires" value should not be written, otherwise it would expire 1970.
-      {
-        add_modified_cookie_script += '; expires='+ (new Date(cookie.expires*1000).toUTCString());
-      }
-      add_modified_cookie_script += '; path=' + '/' + cookie.path;
-      add_modified_cookie_script += '"';
-
-      var script = remove_old_cookie_script + add_modified_cookie_script;
-      var tag = tagManager.set_callback(this, window.views.cookie_manager.handle_changed_cookies, [cookie.runtimes[0]]);
-      services['ecmascript-debugger'].requestEval(tag,[cookie.runtimes[0], 0, 0, script]);
-    }
-  };
+  window.views.cookie_manager.check_to_exit_edit_mode(event, target);
 }
 
 window.eventHandlers.click['add-cookie-handler'] = function(event, target)
