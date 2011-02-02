@@ -108,10 +108,6 @@ li span + span {
   content: url("../ui-images/network_cached.png");
 }
 
-
-
-.status-200 {
-
 .network-log-url-list li:active,
 .network-log-url-list li:nth-child(even):active,
 .network-log-url-list li.selected,
