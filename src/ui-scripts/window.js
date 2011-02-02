@@ -28,6 +28,8 @@ var UIWindowBase = new function()
 
   var viewport = null;
 
+  var click_target = '';
+
   this.init = function(view_id, top, left, width, height)
   {
     var view = window.views[view_id];
@@ -99,14 +101,27 @@ var UIWindowBase = new function()
 
   this.setZIndex = function()
   {
-    var win = null, id = '', i = 0, z = 0;
-    for( ; id = ids[i]; i++)
+    var win = null, id = '', i = 0, z = 0, cuir = null, scroll_top = 0;
+    for (; id = ids[i]; i++)
     {
-      win = document.getElementById( id );
-      if( win )
+      win = document.getElementById(id);
+      if (win)
       {
-        if( ( z = parseInt( win.style.zIndex ) ) && z > min_z_index )
-        win.style.zIndex = z - 1;
+        if ((z = parseInt(win.style.zIndex)) && z > min_z_index)
+        {
+          // Opera sets scrollTop to o on setting the z-index
+          cur = win.querySelector('window-container');
+          if (cur)
+          {
+            scroll_top = cur.scrollTop;
+          }
+          win.style.zIndex = z - 1;
+          if (cur)
+          {
+            setTimeout(function(){cur.scrollTop = scroll_top;},0);
+          }
+
+        }
       }
     }
   }
@@ -127,6 +142,10 @@ var UIWindowBase = new function()
   this.update = function()
   {
     this.container.setDimensions();
+    if (this.toolbar)
+    {
+      this.toolbar.setDimensions(true);
+    }
   }
 
   this.showWindow = function(view_id, top, left, width, height)
@@ -212,18 +231,23 @@ var UIWindowBase = new function()
   {
     var handler = event.target.getAttribute('handler');
     {
-      if( handler in handlers )
+      if (handler in handlers)
       {
         if( interval )
         {
           interval = clearInterval( interval );
         }
+        var id = event.target.parentNode.id;
         current_style = event.target.parentNode.style;
-        self.setZIndex();
-        current_style.zIndex = 200;
+        if (id != click_target)
+        {
+          click_target = id;
+          self.setZIndex();
+          current_style.zIndex = 200;
+        }
         update_handler = update[handler];
         set[handler](event);
-        current_target = ui_windows[event.target.parentNode.id] || {};
+        current_target = ui_windows[id] || {};
         document.addEventListener('mousemove', store_event, false);
         document.addEventListener('mouseup', mouseup, false);
         event.preventDefault();
@@ -246,8 +270,12 @@ var UIWindowBase = new function()
         {
           if( /^window$/i.test(parent.nodeName) )
           {
-            self.setZIndex();
-            parent.style.zIndex = 200;
+            if (parent.id != click_target)
+            {
+              click_target = parent.id;
+              self.setZIndex();
+              parent.style.zIndex = 200;
+            }
             break;
           }
           parent = parent.parentElement;

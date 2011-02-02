@@ -410,6 +410,6 @@ window.onload = function()
                          "' onclick='test(this.value)'>";
                }).join('');
   }
-  xhr.open("GET", "./ga.js");
+  xhr.open("GET", "./jq.js");
   xhr.send(null);
 };

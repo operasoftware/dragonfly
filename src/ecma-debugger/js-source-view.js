@@ -447,15 +447,12 @@ cls.JsSourceView = function(id, name, container_class)
       {
         if (!script_obj.line_arr)
         {
-          script_obj.source_data = script_obj.script_data;
-          script_obj.line_arr = [];
-          script_obj.state_arr = [];
-          pre_lexer(script_obj);
+          script_obj.set_line_states();
         }
         script =
         {
           id: script_id,
-          source: script_obj.source_data,
+          source: script_obj.script_data,
           line_arr: script_obj.line_arr,
           state_arr: script_obj.state_arr,
           breakpoints: [],
@@ -488,7 +485,7 @@ cls.JsSourceView = function(id, name, container_class)
         {
           script.has_context = setScriptContext(script_id, line_nr);
         }
-        messages.post('script-selected', {script: script});
+        messages.post('script-selected', {script_id: script_id});
         runtimes.setSelectedScript(script_id);
       }
       else

@@ -939,8 +939,6 @@ windows-container { /**/
   height: 100%;
   display: block;
   overflow: hidden;
-  left: 0;
-  top: 0;
   }
 window {
   display: block;
@@ -971,6 +969,7 @@ window-container {
   display: block;
   position: relative;
   background-color: rgba(0, 0, 0, .4);
+  width: 100%;
 }
 
 window.hud {
@@ -1568,7 +1567,8 @@ tabs, toolbar {
   height: 100%;
 }
 
-.context-window
+.context-window, 
+.context-window window-container
 {
   background-color: #fff;
   color: #000;

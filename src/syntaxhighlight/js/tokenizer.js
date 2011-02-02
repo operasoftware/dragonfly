@@ -26,8 +26,8 @@ cls.SimpleJSParser.prototype = new function()
   /**
     * Creates html markup to syntax highlight a slice of a js scource file.
     * @param {Object} script
-    *     An object with the properties source_data, line_arr, state_arr.
-    *     source_data is the whole source file.
+    *     An object with the properties script_data, line_arr, state_arr.
+    *     script_data is the whole source file.
     *     line_arr is a list with offset for each new line
     *     satte_arr is the according list with the state for each line
     * @param {Number} line The line number to start the formatting.
