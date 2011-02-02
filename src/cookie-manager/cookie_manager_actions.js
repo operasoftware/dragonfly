@@ -9,7 +9,6 @@
 
 window.eventHandlers.dblclick['cookiemanager-init-edit-mode'] = function(event, target)
 {
-  window.views.cookie_manager.select_row(event, target);
   window.views.cookie_manager.enter_edit_mode(target.getAttribute("data-object-id"), event);
 }
 

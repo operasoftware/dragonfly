@@ -223,7 +223,7 @@ cls.CookieManagerView = function(id, name, container_class)
                 {
                   label: "Remove cookie "+(sel_cookie_obj.name || ""),
                   handler: function() {
-                    window.views.cookie_manager.remove_cookie_by_objectref(objectref);
+                    window.views.cookie_manager.remove_cookie_by_objectref(sel_cookie_obj.objectref);
                   }
                 }
               );
@@ -263,7 +263,7 @@ cls.CookieManagerView = function(id, name, container_class)
                 {
                   label: "Remove cookie "+(removable_cookies[0].name || ""),
                   handler: function() {
-                    window.views.cookie_manager.remove_cookie_by_objectref(objectref);
+                    window.views.cookie_manager.remove_cookie_by_objectref(removable_cookies[0].objectref);
                   }
                 }
               );
@@ -654,14 +654,15 @@ cls.CookieManagerView = function(id, name, container_class)
           add_modified_cookie_script += '; expires='+ (new Date(expires).toUTCString());
         }
         add_modified_cookie_script += '; path=' + '/' + path + '"';
-    
+
+        // todo: use runtime that fits with selected domain
         var script = add_modified_cookie_script;
         var tag = tagManager.set_callback(this, window.views.cookie_manager.handle_changed_cookies, [cookie.runtimes[0]]);
         services['ecmascript-debugger'].requestEval(tag,[cookie.runtimes[0], 0, 0, script]);
       }
     }
   }
-  
+
   this.select_row = function(event, elem)
   {
     var was_selected = elem.hasClass("selected");
@@ -678,15 +679,7 @@ cls.CookieManagerView = function(id, name, container_class)
         selection[i].removeClass("selected");
       };
     }
-  
-    if(!was_selected || is_in_edit_mode)
-    {
-      elem.addClass("selected");
-    }
-    else if(!(event.button === 2 && selection.length > 1))
-    {
-      elem.removeClass("selected");
-    }
+    elem.addClass("selected");
   };
 
   this._init = function(id, update_event_name)
