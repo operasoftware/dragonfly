@@ -180,7 +180,7 @@ cls.CookieManagerView = function(id, name, container_class)
       {
         callback: function(event, target)
         {
-          window.views.cookie_manager.check_to_exit_edit(event, target);
+          window.views.cookie_manager.check_to_exit_edit_mode(event, target);
           var row = target;
           while(row.nodeName !== "tr" || !row.parentNode) // todo: remove when it's fixed on menus
           {
@@ -603,7 +603,7 @@ cls.CookieManagerView = function(id, name, container_class)
     // Todo: focus input in clicked td if applicable
   }
   
-  this.check_to_exit_edit = function(event, target)
+  this.check_to_exit_edit_mode = function(event, target)
   {
     // find out if target is within some .edit_mode node. don't exit then.
     var walk_up = target;
