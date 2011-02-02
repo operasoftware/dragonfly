@@ -158,7 +158,7 @@ cls.CookieManagerView = function(id, name, container_class)
     contextmenu.register("cookie_refetch", [
       {
         callback: (function(context){
-          return function(evt, target){
+          return function(){
             return [
               {
                 label: "Refresh",
@@ -178,8 +178,9 @@ cls.CookieManagerView = function(id, name, container_class)
     }
     var cookie_row_context = [
       {
-        callback: function(evt, target)
+        callback: function(event, target)
         {
+          window.views.cookie_manager.check_to_exit_edit(event, target);
           var row = target;
           while(row.nodeName !== "tr" || !row.parentNode) // todo: remove when it's fixed on menus
           {
@@ -192,7 +193,7 @@ cls.CookieManagerView = function(id, name, container_class)
           if(objectref)
           {
             // row represents a cookie, so it can be selected
-            window.views.cookie_manager.select_row(evt, row);
+            window.views.cookie_manager.select_row(event, row);
           }
           var selection = document.querySelectorAll(".sortable-table .selected");
           var selected_cookie_objects = [];
@@ -602,7 +603,7 @@ cls.CookieManagerView = function(id, name, container_class)
     // Todo: focus input in clicked td if applicable
   }
   
-  this.check_to_exit_edit_mode = function(event, target)
+  this.check_to_exit_edit = function(event, target)
   {
     // find out if target is within some .edit_mode node. don't exit then.
     var walk_up = target;
@@ -614,6 +615,11 @@ cls.CookieManagerView = function(id, name, container_class)
       }
       walk_up = walk_up.parentElement;
     }
+    this.exit_edit_and_save();
+  }
+
+  this.exit_edit_and_save = function()
+  {
     var edit_tr = document.querySelector("tr.edit_mode");
     if(edit_tr)
     {
@@ -649,13 +655,11 @@ cls.CookieManagerView = function(id, name, container_class)
 
         // and add modified
         var add_modified_cookie_script = 'document.cookie="' + name + '=' + value;
-        console.log("expires", expires);
         if(expires) // in case of 0 value the "expires" value should not be written, represents "Session" value
         {
           add_modified_cookie_script += '; expires='+ (new Date(expires).toUTCString());
         }
         add_modified_cookie_script += '; path=' + '/' + path + '"';
-        console.log(add_modified_cookie_script);
 
         // todo: use runtime that fits with selected domain
         var script = add_modified_cookie_script;
