@@ -106,7 +106,7 @@ templates.cookie_manager = {
       "type",  "text",
       "name",  "path"
     ];
-    return this.edit_mode_switch_container(this.value_container(name), this.edit_container(edit_elem));
+    return this.edit_mode_switch_container(this.value_container(path), this.edit_container(edit_elem));
   },
   editable_expires: function(date_in_seconds, objectref) {
     var parsed_date = new Date(date_in_seconds*1000);
