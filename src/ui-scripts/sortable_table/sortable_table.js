@@ -144,8 +144,9 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
       while (target.nodeName.toLowerCase() != "table") { target = target.parentNode };
       var obj = ObjectRegistry.get_instance().get_object(target.getAttribute("data-object-id"));
       obj.group(group);
+      obj.post_message("before-render");
       target.re_render(obj.render());
-      obj.post_message("rendered");
+      obj.post_message("after-render");
     }
   }
 
@@ -156,8 +157,9 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
       while (target.nodeName.toLowerCase() != "table") { target = target.parentNode };
       var obj = ObjectRegistry.get_instance().get_object(target.getAttribute("data-object-id"));
       obj.togglecol(col);
+      obj.post_message("before-render");
       target.re_render(obj.render());
-      obj.post_message("rendered");
+      obj.post_message("after-render");
     }
   }
 
@@ -166,8 +168,9 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
     var table = target.parentNode.parentNode;
     var obj = ObjectRegistry.get_instance().get_object(table.getAttribute("data-object-id"));
     obj.sort(target.getAttribute("data-column-id"));
+    obj.post_message("before-render");
     table.re_render(obj.render());
-    obj.post_message("rendered");
+    obj.post_message("after-render");
   }
 
   this._default_sorters = {
