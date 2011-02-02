@@ -412,6 +412,7 @@ cls.DebugRemoteSettingView.create_ui_widgets = function()
 
   eventHandlers.click['cancel-remote-debug'] = function(event, target)
   {
+    Overlay.get_instance().hide();
     settings.debug_remote_setting.set('debug-remote', false);
     window.helpers.setCookie('debug-remote', "false");
     client.setup();
@@ -482,7 +483,7 @@ cls.MainView .create_ui_widgets = function()
         title: ui_strings.S_BUTTON_TOGGLE_SETTINGS
       },
       {
-        handler: 'toggle-remote-debug-config-overlay',
+        handler: 'toggle-remote-debug-overlay',
         title: ui_strings.S_BUTTON_TOGGLE_REMOTE_DEBUG
       }
     ],

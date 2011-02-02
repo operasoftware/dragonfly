@@ -60,7 +60,8 @@ var Tab = function(ref_id, name, has_close_button)
 
   this.set_badge = function(type, content)
   {
-    var badge = this._get_top_tab_element().querySelector(".badge");
+    var tab = this._get_top_tab_element();
+    var badge = tab ? tab.querySelector(".badge") : null;
     if (badge)
     {
       badge.addClass(type || "");

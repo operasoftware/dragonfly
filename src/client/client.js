@@ -22,6 +22,7 @@ window.cls.Client = function()
 
   var _on_host_connected = function(client, servicelist)
   {
+    Overlay.get_instance().hide();
     client.connected = true;
     if(_waiting_screen_timeout)
     {
@@ -83,7 +84,7 @@ window.cls.Client = function()
         window.templates.remote_debug_settings(port + 1, ui_strings.S_INFO_ERROR_LISTENING.replace(/%s/, port))
       );
 
-      UI.get_instance().get_button("toggle-remote-debug-config-overlay")
+      UI.get_instance().get_button("toggle-remote-debug-overlay")
                        .addClass("alert");
 
       // Reset this so we don't start in remote debug next time
@@ -187,7 +188,7 @@ window.cls.Client = function()
     }
     else if (is_remote_debug)
     {
-      UI.get_instance().get_button("toggle-remote-debug-config-overlay")
+      UI.get_instance().get_button("toggle-remote-debug-overlay")
                        .removeClass("alert");
       document.getElementById("remote-debug-settings").clearAndRender([
         ["p",
