@@ -288,6 +288,11 @@ cls.Request = function(id)
     this.size = event.contentLength;
     this.endtime = Math.round(event.time);
     this.duration = this.endtime - this.starttime;
+
+    // the assumption is that if we got this far, and there was no
+    // response code, meaning no request was sent, the url was cached
+    // fixme: special case for file URIs
+    if (!this.responsecode) { this.cached = true }
     this.finished = true;
     this._guess_type();
   }
@@ -312,6 +317,7 @@ cls.Request = function(id)
   {
     this.responsestart = Math.round(event.time);
     this.responsecode = event.responseCode;
+    if (this.responsecode == "304") { this.cached = true }
   }
 
   this._update_event_responseheader = function(event)

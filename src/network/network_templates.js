@@ -262,11 +262,13 @@ templates.network_header_table = function(headers)
 templates.network_log_url_list = function(ctx, selected)
 {
   var itemfun = function(res) {
+    var statusclass = "status-" + res.responsecode;
+    if (res.cached) { statusclass = "status-cached" } 
     return ["li",
             templates.network_request_icon(res),
             ["span", res.url],
             ["span", String(res.responsecode),
-             "class", "log-url-list-status " + "status-" + String(res.responsecode),
+             "class", "log-url-list-status " + statusclass,
              "title", String(res.responsecode)
              ],
             "handler", "select-network-request",
