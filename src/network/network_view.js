@@ -211,8 +211,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
   eh.click["select-network-request"] = this._on_clicked_request_bound;
   eh.mouseover["select-network-request"] = this._on_hover_request_bound;
-  eh.mouseover["select-network-request-graph"] = this._on_hover_request_graph_bound;
 
+  eh.click["select-network-request-graph"] = this._on_clicked_request_bound;
+  eh.mouseover["select-network-request-graph"] = this._on_hover_request_graph_bound;
 
   eh.click["close-request-detail"] = this._on_clicked_close_bound;
   eh.click["get-response-body"] = this._on_clicked_get_body;
