@@ -11,10 +11,11 @@
  *         columns: {
  *
  */
-function SortableTable(tabledef, data, cols, sortby, reversed)
+function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
 {
   this._init = function()
   {
+    window.cls.MessageMixin.apply(this);
     if (!cols || !cols.length) {
       cols = [];
       for (var key in tabledef.columns) {
@@ -54,7 +55,7 @@ function SortableTable(tabledef, data, cols, sortby, reversed)
     this.data = data;
     this.columns = cols;
     this.reversed = !!reversed;
-    this.groupby = null;
+    this.groupby = groupby;
     this._elem = null;
     this.objectid = ObjectRegistry.get_instance().set_object(this);
     this._init_handlers();
@@ -144,6 +145,7 @@ function SortableTable(tabledef, data, cols, sortby, reversed)
       var obj = ObjectRegistry.get_instance().get_object(target.getAttribute("data-object-id"));
       obj.group(group);
       target.re_render(obj.render());
+      obj.post_message("rendered");
     }
   }
 
@@ -155,6 +157,7 @@ function SortableTable(tabledef, data, cols, sortby, reversed)
       var obj = ObjectRegistry.get_instance().get_object(target.getAttribute("data-object-id"));
       obj.togglecol(col);
       target.re_render(obj.render());
+      obj.post_message("rendered");
     }
   }
 
@@ -164,6 +167,7 @@ function SortableTable(tabledef, data, cols, sortby, reversed)
     var obj = ObjectRegistry.get_instance().get_object(table.getAttribute("data-object-id"));
     obj.sort(target.getAttribute("data-column-id"));
     table.re_render(obj.render());
+    obj.post_message("rendered");
   }
 
   this._default_sorters = {
@@ -270,6 +274,10 @@ templates.sortable_table_header = function(tabledef, cols, sortby, reversed)
                 tdclass += " reversed";
               }
             }
+            if (coldef.classname)
+            {
+              tdclass += " "+coldef.classname;
+            }
             return ["th",
                     tabledef.columns[c].label,
                     "class", tdclass,
@@ -369,31 +377,34 @@ templates.sortable_table_row = function(tabledef, item, cols)
           cols.map(function(col) {
             var content = tabledef.columns[col].renderer(item, tabledef.columns[col].getter);
 
-            if (typeof content == "string")
+            if (typeof content !== "undefined" && typeof content !== "null")
             {
-              var title = content; // fixme: use custom title renderer.
-            }
-            else
-            {
-              title = "";
-            }
-
-            if (typeof content == "string" &&
-                tabledef.columns[col].maxlength &&
-                tabledef.columns[col].maxlength < content.length)
-            {
-              if (tabledef.columns[col].ellipsis=="start")
+              if (typeof content == "string")
               {
-                content = "…" + content.slice(-tabledef.columns[col].maxlength);
+                var title = content; // fixme: use custom title renderer.
               }
               else
               {
-                content = content.slice(0, tabledef.columns[col].maxlength) + "…";
+                title = "";
               }
-            }
 
-            return ["td", content,
+              if (typeof content == "string" &&
+                  tabledef.columns[col].maxlength &&
+                  tabledef.columns[col].maxlength < content.length)
+              {
+                if (tabledef.columns[col].ellipsis=="start")
+                {
+                  content = "…" + content.slice(-tabledef.columns[col].maxlength);
+                }
+                else
+                {
+                  content = content.slice(0, tabledef.columns[col].maxlength) + "…";
+                }
+              }
+              return ["td", content,
                     "title", title];
+            }
+            return [];
           }).concat(tabledef.handler ? ["handler", tabledef.handler] : [])
             .concat(tabledef.idgetter ? ["data-object-id", tabledef.idgetter(item) ] : [])
          ];
