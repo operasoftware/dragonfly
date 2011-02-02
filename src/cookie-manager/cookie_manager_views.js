@@ -138,10 +138,12 @@ cls.CookieManagerView = function(id, name, container_class)
     sortable_table.data = this.flattened_cookies;
     this._table_container = container.clearAndRender(["div",sortable_table.render(),"class","table_container"]);
     // context menus, focussing
-    sortable_table.add_listener("rendered",this._after_table_render.bind(this, container));
+    sortable_table.add_listener("after-render",this._after_table_render.bind(this, container));
     this._after_table_render(container);
+    // selection restore
+    sortable_table.add_listener("before-render",this._before_table_re_render.bind(this, container));
     // live expiry
-    sortable_table.add_listener("rendered",this._update_expiry.bind(this));
+    sortable_table.add_listener("after-render",this._update_expiry.bind(this));
     if(!this._update_expiry_interval)
     {
       this._update_expiry_interval = setInterval(this._update_expiry,15000);
@@ -149,8 +151,32 @@ cls.CookieManagerView = function(id, name, container_class)
     this._update_expiry();
   };
 
+  this._before_table_re_render = function(container)
+  {
+    // save selection
+    var selection = document.querySelectorAll(".sortable-table .selected");
+    var selected_cookie_objects = [];
+    for (var i=0; i < selection.length; i++) {
+      selected_cookie_objects.push(this.get_cookie_by_objectref(selection[i].getAttribute("data-object-id")));
+    };
+    this._restore_selection = selected_cookie_objects;
+  }
+
   this._after_table_render = function(container)
   {
+    // restore selection
+    if(this._restore_selection)
+    {
+      for (var i=0; i < this._restore_selection.length; i++) {
+        var objectref = this._restore_selection[i].objectref;
+        var elem = container.querySelector("[data-object-id='"+objectref+"']");
+        if(elem)
+        {
+          elem.addClass("selected");
+        }
+      };
+      this._restore_selection = null;
+    }
     // context menus
     // add refresh to container
     container.setAttribute("data-menu", "cookie_refetch");
