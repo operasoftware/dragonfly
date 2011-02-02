@@ -88,7 +88,11 @@ li span + span {
   content: "";
 }
 
-.status-300 {
+.status-301 {
+  content: url("../ui-images/network_redirect.png");
+}
+
+.status-302 {
   content: url("../ui-images/network_redirect.png");
 }
 
@@ -96,7 +100,7 @@ li span + span {
   content: url("../ui-images/network_error.png");
 }
 
-.status-400 {
+.status-404 {
   content: url("../ui-images/network_error.png");
 }
 

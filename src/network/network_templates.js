@@ -266,7 +266,9 @@ templates.network_log_url_list = function(ctx, selected)
             templates.network_request_icon(res),
             ["span", res.url],
             ["span", String(res.responsecode),
-             "class", "log-url-list-status " + "status-" + String(res.responsecode)],
+             "class", "log-url-list-status " + "status-" + String(res.responsecode),
+             "title", String(res.responsecode)
+             ],
             "handler", "select-network-request",
             "data-resource-id", String(res.id),
             "class", selected===res.id ? "selected" : "",
