@@ -620,14 +620,14 @@ cls.CookieManagerView = function(id, name, container_class)
       edit_tr.removeClass("edit_mode");
       var name    = edit_tr.querySelector("[name=name]").value.trim();
       var value   = encodeURIComponent(edit_tr.querySelector("[name=value]").value);
-      var expires = edit_tr.querySelector("[name=expires]").value;
+      var expires = new Date(edit_tr.querySelector("[name=expires]").value).getTime();
       var path    = edit_tr.querySelector("[name=path]").value.trim();
     
       var cookie = window.views.cookie_manager.get_cookie_by_objectref(edit_tr.getAttribute("data-object-id"));
       if(
         name !== cookie.name ||
         value !== cookie.value ||
-        expires !== new Date(cookie.expires*1000).toISOString() ||
+        expires !== new Date(cookie.expires*1000).getTime() ||
         path !== cookie.path
       )
       {
@@ -649,11 +649,13 @@ cls.CookieManagerView = function(id, name, container_class)
 
         // and add modified
         var add_modified_cookie_script = 'document.cookie="' + name + '=' + value;
+        console.log("expires", expires);
         if(expires) // in case of 0 value the "expires" value should not be written, represents "Session" value
         {
           add_modified_cookie_script += '; expires='+ (new Date(expires).toUTCString());
         }
         add_modified_cookie_script += '; path=' + '/' + path + '"';
+        console.log(add_modified_cookie_script);
 
         // todo: use runtime that fits with selected domain
         var script = add_modified_cookie_script;
