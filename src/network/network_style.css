@@ -81,12 +81,36 @@ li span + span {
 }
 
 .log-url-list-status {
-  width: 25px;
+  width: 20px;
 }
 
 .status-200 {
   content: "";
 }
+
+.status-300 {
+  content: url("../ui-images/network_redirect.png");
+}
+
+.status-400 {
+  content: url("../ui-images/network_error.png");
+}
+
+.status-400 {
+  content: url("../ui-images/network_error.png");
+}
+
+.status-500 {
+  content: url("../ui-images/network_error.png");
+}
+
+.status-cached {
+  content: url("../ui-images/network_cached.png");
+}
+
+
+
+.status-200 {
 
 .network-log-url-list li:active,
 .network-log-url-list li:nth-child(even):active,
