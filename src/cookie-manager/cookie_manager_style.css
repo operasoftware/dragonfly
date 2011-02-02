@@ -10,6 +10,8 @@
   color: #AAA;
 }
 
+/* editing */
+
 .cookie_manager .value_container {
   position: relative;
   height: 15px;
@@ -29,6 +31,8 @@
   display: none;
 }
 
+/* ellipsis */
+
 .sortable-table .ellipsis_cont {
   position: relative;
   height: 12px;
@@ -42,6 +46,10 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+#contextmenu .ellipsis_cont, #contextmenu .ellipsis {
+  display: inline; /* hide containers in context menu */
 }
 
 /* columns */
