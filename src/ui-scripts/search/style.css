@@ -1,0 +1,34 @@
+.js-search-results-runtime h2
+{
+  margin: 0;
+  font: 16px/16px monospace;
+  padding: 2px 5px;
+}
+
+.js-search-results-script h3
+{
+  background-color: hsl(0, 0%, 90%);
+  color: #000;
+  margin: 0;
+  font: 16px/16px monospace;
+  padding: 1px 5px;
+  white-space: nowrap;
+}
+
+.js-search-results-script div 
+{
+  color: #000;
+  line-height: 16px;
+  height: 16px;
+  white-space: pre;
+  -o-tab-size: 4;
+}
+
+.line-no
+{
+  background-color: hsl(0, 0%, 90%);
+  color: hsl(0, 0%, 70%);
+  border-right: 1px solid hsl(0, 0%, 70%);
+  padding-right: 1ex;
+  margin-right: 1ex;
+}
