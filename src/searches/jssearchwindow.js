@@ -56,10 +56,17 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
       var script_eles = null, script_ele = null, i = 0;
       for (var rt_id in this.searchresults)
       {
-        script_eles = rts[rt_index].getElementsByClassName('js-search-results-script');
+        script_eles = rts[rt_index++].getElementsByClassName('js-search-results-script');
         for (i = 0; script_ele = script_eles[i]; i++)
         {
+          if (this.searchresults[rt_id][i])
+          {
           this._set_hits(this.searchresults[rt_id][i], script_ele);
+          }
+          else
+          {
+            opera.postError('>>>> '+script_ele.textContent)
+          }
         }
       }
       // TODO subclass VirtualTextSerach

@@ -12,11 +12,7 @@
 
   this.js_search_window = function()
   {
-    return (
-    ['div',
-      ['div', 'class', 'js-search-results'],
-      'class', 'search-window-content padding'
-    ]);
+    return ['div', 'class', 'js-search-results'];
   };
 
   this.js_serach_results = function(results)
@@ -57,15 +53,19 @@
       if (cur_line != line)
       {
         line = cur_line;
-        cur = ['div', ['span', this._format_line_no(line), 'class', 'line-no']];
         script_data = script.script_data.slice(script.line_arr[line-1], 
                                                script.line_arr[line]);
+        script_tmpl = this.highlight_js_source(script_data, 
+                                               null, 
+                                               script.state_arr[cur_line], 
+                                               ['code']);
         if (script_data.length > MAX_LINE_CHARS)
         {
-          script_data = script_data.slice(0, MAX_LINE_CHARS) + " ... max line width exceeded";
+          script_tmpl.push('class', 'wrap-long-lines');
         }
-        this.highlight_js_source(script_data, null, script.state_arr[cur_line], cur);
-        ret.push(cur);
+        ret.push(['div', 
+                   ['span', this._format_line_no(line), 'class', 'line-no'],
+                   script_tmpl]);
       }
     }
     ret.push('class', 'js-search-results-script js-source');
