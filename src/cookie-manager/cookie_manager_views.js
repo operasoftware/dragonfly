@@ -712,7 +712,6 @@ cls.CookieManagerView = function(id, name, container_class)
         add_cookie_script += '; expires='+ (new Date(expires).toUTCString());
       }
       add_cookie_script += '; path=' + '/' + path + '"';
-      console.log("rt",runtime,": ",add_cookie_script);
       var script = add_cookie_script;
       var tag = tagManager.set_callback(this, window.views.cookie_manager.handle_changed_cookies, [runtime]);
       services['ecmascript-debugger'].requestEval(tag,[runtime, 0, 0, script]);
