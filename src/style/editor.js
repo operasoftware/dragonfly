@@ -350,16 +350,16 @@ var Editor = function(actions)
     var new_decl = document.createElement("property");
     rule.insertBefore(new_decl, last_decl.nextSibling);
     new_decl.textContent = "\u00A0"; // Need some content for the height to be set correctly
-    this.edit(event, new_decl);
+    this.edit(event, new_decl, true);
     this.textarea.value = "";
   };
 
-  this.edit = function(event, ref_ele)
+  this.edit = function(event, ref_ele, force_focus)
   {
     var ele = ref_ele || event.target;
     var sheet_link = ele.parentElement.getElementsByTagName('stylesheet-link')[0];
 
-    var scroll_pos = new Element.ScrollPosition(ele);
+    var scroll_pos = force_focus ? null : new Element.ScrollPosition(ele);
 
     if (!this.base_style['font-size'])
     {
@@ -406,7 +406,10 @@ var Editor = function(actions)
     {
       this.getCharPosition(event);
       this.textarea.focus();
-      scroll_pos.reset();
+      if (scroll_pos)
+      {
+        scroll_pos.reset();
+      }
     }
   };
 
