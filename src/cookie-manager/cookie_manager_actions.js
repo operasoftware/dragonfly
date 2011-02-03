@@ -32,6 +32,11 @@ window.eventHandlers.click['cookiemanager-container'] = function(event, target)
   window.views.cookie_manager.check_to_exit_edit_mode(event, target);
 }
 
+window.eventHandlers.click['cookiemanager-add-cookie-row'] = function(event, target)
+{
+  window.views.cookie_manager.insert_add_cookie_row(target);
+}
+
 window.eventHandlers.click['add-cookie-handler'] = function(event, target)
 {
   event.preventDefault();
