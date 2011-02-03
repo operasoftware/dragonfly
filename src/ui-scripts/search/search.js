@@ -319,7 +319,11 @@ Search.prototype = new function()
                                                  view_id + "-search-window scroll",
                                                  this.controls[SEARCHFIELD].handler);
 
-      new ToolbarConfig(this._window_view_id, null, this.advanced_controls);
+      new ToolbarConfig(this._window_view_id, 
+                        null, 
+                        this.advanced_controls, 
+                        null,
+                        [{template: function(){return ['info']}}]);
       eventHandlers.click[this.controls[SEARCH_MORE].handler] = 
         this._toggle_mode.bind(this);
       messages.addListener('view-destroyed', this._onserachwindowclosed.bind(this));

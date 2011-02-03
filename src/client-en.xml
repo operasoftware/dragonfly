@@ -128,6 +128,8 @@ window.load_screen_timeout = window.setTimeout(function()
 <link rel="stylesheet" href="./shortcutconfig/style.css"/>
 <link rel="stylesheet" href="./ui-style/global_command_line.css"/>
 <link rel="stylesheet" href="./ui-style/contextmenu.css"/>
+<link rel="stylesheet" href="./ui-scripts/search/style.css"/>
+
 
 
 <!-- This will turn off including of the UI strings if the exclude_uistrings var is set -->

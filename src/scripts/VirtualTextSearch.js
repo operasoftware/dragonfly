@@ -70,6 +70,10 @@ var VirtualTextSearchBase = function()
 
   this.highlight_matches = function(script){};
 
+  this.set_hit = function(node, offset, length, style){};
+
+  this.get_hit_count = function(){};
+
   /* constants */
 
   const 
@@ -466,10 +470,21 @@ var VirtualTextSearchBase = function()
     this._update_info(EMPTY);
   }
 
+  /* search window */
+  this.set_hit = function(node, offset, length, style)
+  {
+    this._offset = offset;
+    this._length = length;
+    this._highlight_style = style || DEFAULT_STYLE;
+    this._hits.push(this._hit = []);
+    this._search_node(node);
+  };
+
   this.highlight_matches = function(script)
   {
   
   };
+
 };
 
 VirtualTextSearchBase.prototype = TextSearch.prototype;
