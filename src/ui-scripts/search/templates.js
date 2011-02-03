@@ -64,7 +64,7 @@
         {
           script_data = script_data.slice(0, MAX_LINE_CHARS) + " ... max line width exceeded";
         }
-        this.highlight_js_source(script_data, null, null, cur);
+        this.highlight_js_source(script_data, null, script.state_arr[cur_line], cur);
         ret.push(cur);
       }
     }

@@ -224,7 +224,6 @@ var UIWindowBase = new function()
   store_event = function(event)
   {
     __event = event;
-    update_handler();
   },
 
   mousedown = function(event)
@@ -248,6 +247,7 @@ var UIWindowBase = new function()
         update_handler = update[handler];
         set[handler](event);
         current_target = ui_windows[id] || {};
+        interval = setInterval(update_handler, 10);
         document.addEventListener('mousemove', store_event, false);
         document.addEventListener('mouseup', mouseup, false);
         event.preventDefault();

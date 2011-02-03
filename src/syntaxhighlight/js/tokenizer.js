@@ -1033,7 +1033,7 @@ cls.SimpleJSParser.prototype = new function()
     parser(__source.charAt(__pointer));
   }
 
-  this.tokenize = function(script_source, ontoken, espace)
+  this.tokenize = function(script_source, ontoken, espace, start_state)
   {
     parser = default_parser;
     __previous_type = '';
@@ -1044,6 +1044,13 @@ cls.SimpleJSParser.prototype = new function()
     __ontoken = ontoken;
     __online = __online_tokenize;
     read_buffer = __read_buffer_tokenize;
+    if (start_state)
+    {
+      if (states[start_state]())
+      {
+        return;
+      }
+    }
     parser(__source.charAt(__pointer));
   };
 

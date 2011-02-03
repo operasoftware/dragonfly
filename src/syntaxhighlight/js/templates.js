@@ -116,7 +116,7 @@
     tokenizer.tokenize(script, function(token_type, token)
     {
       onjstoken(context, token_type, token);
-    });
+    }, null, start_state);
     if (context.text)
     {
       context.template.push(context.text);
