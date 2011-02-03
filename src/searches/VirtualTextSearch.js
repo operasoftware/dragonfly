@@ -14,6 +14,27 @@ var VirtualTextSearch = function()
   this._init();
 };
 
+var JSSearchWindowHighlight = function()
+{
+  this._get_match_counts = function()
+  {
+    return this._hits.length;
+  }
+
+  this._get_serach_cursor = function()
+  {
+    return this._match_cursor + 1;
+  }
+
+  this._init = function()
+  {
+    this._match_cursor = 0;
+    VirtualTextSearch.prototype._init.call(this);
+  };
+  this._init();
+
+};
+
 var VirtualTextSearchBase = function()
 {
 
@@ -488,4 +509,7 @@ var VirtualTextSearchBase = function()
 };
 
 VirtualTextSearchBase.prototype = TextSearch.prototype;
-VirtualTextSearch.prototype = new VirtualTextSearchBase();
+VirtualTextSearch.prototype = 
+  JSSearchWindowHighlight.prototype = 
+  new VirtualTextSearchBase();
+

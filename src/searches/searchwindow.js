@@ -14,8 +14,8 @@ window.cls.SearchWindowBase = function(id, name, container_class)
 
   /* settings */
   this.show_in_views_menu = true;
-  this.window_top = 20;
-  this.window_left = 20;
+  this.window_top = 100;
+  this.window_left = 150;
   this.window_width = 450;
   this.window_height = 250;
   this.window_statusbar = false;
@@ -38,7 +38,7 @@ window.cls.SearchWindowBase = function(id, name, container_class)
     UIWindowBase.showWindow(this.id,
                             this.window_top,
                             this.window_left,
-                            this.window_width,
+                            Math.max(this.window_width, innerWidth / 2),
                             this.window_height);
   }
 

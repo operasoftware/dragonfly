@@ -70,7 +70,7 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
         }
       }
       // TODO subclass VirtualTextSerach
-      //this._text_search._update_info();
+      this._text_search._update_info();
     }
 
   }
@@ -139,7 +139,7 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
     this._rt_ids = null;
     this._searchterm = '';
     this.searchresults = {};
-    this._text_search = new VirtualTextSearch();
+    this._text_search = new JSSearchWindowHighlight();
     window.messages.addListener('active-tab', this._on_active_tab_bound);
   }
 

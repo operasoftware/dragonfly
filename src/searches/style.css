@@ -1,5 +1,7 @@
 .js-search-results-runtime h2
 {
+  background-color: hsl(0, 0%, 40%);
+  color: #fff;
   margin: 0;
   font: inherit;
   line-height: 16px;
@@ -32,9 +34,9 @@
   -o-tab-size: 4;
 }
 
-.js-search-results-script code
+.js-search-results-script div:hover
 {
-  
+  background-color: #cce5f3;
 }
 
 .js-search-results-script code.wrap-long-lines
