@@ -82,7 +82,7 @@ templates.cookie_manager = {
         option_arr.push(["option", id, "value", domains[id].runtimes.toString()]);
       };
       return [
-        ["select", option_arr, "name", "add_cookie_runtime_select", "handler", "cookiemanager-add-cookie-domain-select", "class", "add_cookie_dropdown"]
+        ["select", option_arr, "name", "add_cookie_runtime", "handler", "cookiemanager-add-cookie-domain-select", "class", "add_cookie_dropdown"]
       ];
     }
   },

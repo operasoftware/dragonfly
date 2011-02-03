@@ -663,7 +663,7 @@ cls.CookieManagerView = function(id, name, container_class)
       var value   = encodeURIComponent(edit_tr.querySelector("[name=value]").value);
       var expires = new Date(edit_tr.querySelector("[name=expires]").value).getTime();
       var path    = edit_tr.querySelector("[name=path]").value.trim();
-      var runtime = parseInt(edit_tr.querySelector("[name=add_cookie_runtime]").value);
+      var runtime = parseInt(edit_tr.querySelector("[name=add_cookie_runtime]").value.split(",")[0]);
 
       var cookie;
       var object_id = edit_tr.getAttribute("data-object-id");
@@ -687,10 +687,11 @@ cls.CookieManagerView = function(id, name, container_class)
       */
       if(cookie &&
           (
-            name === cookie.name ||
-            value === cookie.value ||
-            expires === new Date(cookie.expires*1000).getTime() ||
-            path === cookie.path
+            name === cookie.name &&
+            value === cookie.value &&
+            expires === new Date(cookie.expires*1000).getTime() &&
+            path === cookie.path &&
+            cookie.runtimes.indexOf(runtime) > -1
           )
       )
       {
@@ -708,6 +709,7 @@ cls.CookieManagerView = function(id, name, container_class)
         add_cookie_script += '; expires='+ (new Date(expires).toUTCString());
       }
       add_cookie_script += '; path=' + '/' + path + '"';
+      console.log("rt",runtime,": ",add_cookie_script);
       var script = add_cookie_script;
       var tag = tagManager.set_callback(this, window.views.cookie_manager.handle_changed_cookies, [runtime]);
       services['ecmascript-debugger'].requestEval(tag,[runtime, 0, 0, script]);
