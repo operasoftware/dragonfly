@@ -34,7 +34,24 @@ window.eventHandlers.click['cookiemanager-container'] = function(event, target)
 
 window.eventHandlers.click['cookiemanager-add-cookie-row'] = function(event, target)
 {
-  window.views.cookie_manager.insert_add_cookie_row(target);
+  // find runtime the row relates to
+  // walk up to find button-containing tr
+  var row = target;
+  while(row.nodeName !== "tr" && row.parentNode)
+  {
+    row = row.parentNode;
+  }
+  // find previousElementSibling with a data-object-id, last item of the group
+  var last_item_in_group = row;
+  while(!last_item_in_group.getAttribute("data-object-id") && last_item_in_group.previousElementSibling)
+  {
+    last_item_in_group = last_item_in_group.previousElementSibling;
+  }
+  
+  var objectref = last_item_in_group.getAttribute("data-object-id");
+  var runtime_id = window.views.cookie_manager.get_cookie_by_objectref(objectref).runtimes[0];
+  var inserted = window.views.cookie_manager.insert_add_cookie_row(row, runtime_id);
+  window.views.cookie_manager.select_row(null, inserted);
 }
 
 window.eventHandlers.click['add-cookie-handler'] = function(event, target)

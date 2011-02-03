@@ -58,18 +58,18 @@ templates.cookie_manager = {
     var domains = {};
     var domain_count = 0;
     var domain;
-    for (var runtime_ids in runtimes) {
-      domain = runtimes[runtime_ids].hostname || ""; // avoids undefined values where hostname is non-existent
+    for (var runtime_id in runtimes) {
+      domain = runtimes[runtime_id].hostname || ""; // avoids undefined values where hostname is non-existent
       if(!domains[domain])
       {
-        domains[domain] = { runtimes: [runtime_ids] };
+        domains[domain] = { runtimes: [runtime_id] };
         domain_count++;
       }
       else
       {
-        domains[domain].runtimes.push(runtime_ids);
+        domains[domain].runtimes.push(runtime_id);
       }
-      if(runtime_ids[current_runtime])
+      if(runtime_id == current_runtime)
       {
         domains[domain].is_current = true;
       }
@@ -83,11 +83,12 @@ templates.cookie_manager = {
     else {
       var option_arr = [];
       for (var id in domains) {
-        option_arr.push(["option", id, "value", domains[id].runtimes.toString()]);
+        var option = ["option", id, "value", domains[id].runtimes.toString()];
         if(domains[id].is_current)
         {
-          option_arr[option_arr.length-1].concat(["selected", "selected"])
+          option = option.concat(["selected", "selected"]);
         }
+        option_arr.push(option);
       };
       return [
         ["select", option_arr, "name", "add_cookie_runtime", "handler", "cookiemanager-add-cookie-domain-select", "class", "add_cookie_dropdown"]
@@ -133,7 +134,7 @@ templates.cookie_manager = {
   unknown_value: function() {
     return ["span", "-", "class", "replaced-val"];
   },
-  add_cookie_row: function(runtimes) {
+  add_cookie_row: function(current_runtime, runtimes) {
     return ["tr",
       [
         ["td", this.input_domain(current_runtime, runtimes)],

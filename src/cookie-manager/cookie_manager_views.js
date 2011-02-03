@@ -235,7 +235,9 @@ cls.CookieManagerView = function(id, name, container_class)
               {
                 label: "Add cookie",
                 handler: function() {
-                  var inserted = window.views.cookie_manager.insert_add_cookie_row(row);
+                  // todo: add runtime
+                  var runtime = selected_cookie_objects[0].runtimes[0];
+                  var inserted = window.views.cookie_manager.insert_add_cookie_row(row, runtime);
                   window.views.cookie_manager.select_row(null, inserted);
                 }
               }
@@ -738,15 +740,9 @@ cls.CookieManagerView = function(id, name, container_class)
     elem.addClass("selected");
   };
   
-  this.insert_add_cookie_row = function(elem)
+  this.insert_add_cookie_row = function(row, runtime)
   {
-    // walk up to find tr
-    var row = elem;
-    while(row.nodeName !== "tr" && row.parentNode)
-    {
-      row = row.parentNode;
-    }
-    var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row(window.views.cookie_manager._rts));
+    var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row(runtime, window.views.cookie_manager._rts));
     var inserted = row.parentElement.insertBefore(templ, row);
     inserted.querySelector("[name=name]").focus();
     return inserted;
