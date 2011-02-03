@@ -35,7 +35,7 @@ templates.cookie_manager = {
   },
   edit_container: function(elem) {
     return [
-      "div", elem, "class", "edit_container"
+      "div", elem, "class", "edit_container", "handler", "cookiemanager-edit"
     ];
   },
   input_text_container: function(name, value) {
