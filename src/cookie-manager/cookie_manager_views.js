@@ -32,7 +32,7 @@ cls.CookieManagerView = function(id, name, container_class)
           }
           if(obj.domain)
           {
-            return window.templates.cookie_manager.editable_domain(obj.domain, window.views.cookie_manager._rts);
+            return window.templates.cookie_manager.editable_domain(obj.runtimes[0], window.views.cookie_manager._rts, obj.domain);
           }
           return window.templates.cookie_manager.unknown_value();
         },
@@ -672,19 +672,8 @@ cls.CookieManagerView = function(id, name, container_class)
         cookie = window.views.cookie_manager.get_cookie_by_objectref(object_id);
       }
       // check if unmodified
-      /*
-      // dbg
-      console.log("modified.");
-      if(name !== cookie.name)
-        console.log(name,cookie.name);
-      if(value !== cookie.value)
-        console.log(value,cookie.value);
-      if(expires !== new Date(cookie.expires*1000).toISOString())
-        console.log(expires,new Date(cookie.expires*1000).toISOString());
-      if(path !== cookie.path)
-        console.log(expires,new Date(cookie.expires*1000).toISOString());
-      // end dbg
-      */
+      // fixme: the cookie.runtimes check should check if the hostname of that rt is actually correct,
+      // the id doesn't really matter. this check finds more differences then it should.
       if(cookie &&
           (
             name === cookie.name &&
@@ -697,6 +686,20 @@ cls.CookieManagerView = function(id, name, container_class)
       {
         return;
       }
+      /* // dbg
+      console.log("no old cookie, or old cookie modified.");
+      if(name !== cookie.name)
+        console.log(name, cookie.name);
+      if(value !== cookie.value)
+        console.log(value, cookie.value);
+      if(expires !== new Date(cookie.expires*1000).getTime())
+        console.log(expires, new Date(cookie.expires*1000).getTime());
+      if(path !== cookie.path)
+        console.log(path, cookie.path);
+      if(cookie.runtimes.indexOf(runtime) === -1)
+        console.log(cookie.runtimes, runtime);
+      // end dbg */
+      
       // remove old cookie
       if(cookie)
       {

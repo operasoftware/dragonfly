@@ -54,20 +54,24 @@ templates.cookie_manager = {
       "name",  name
     ]
   },
-  input_domain: function(runtimes) {
+  input_domain: function(current_runtime, runtimes) {
     var domains = {};
     var domain_count = 0;
     var domain;
-    for (var runtime_id in runtimes) {
-      domain = runtimes[runtime_id].hostname || ""; // avoids undefined values where hostname is non-existent
+    for (var runtime_ids in runtimes) {
+      domain = runtimes[runtime_ids].hostname || ""; // avoids undefined values where hostname is non-existent
       if(!domains[domain])
       {
-        domains[domain] = { runtimes: [runtime_id] };
+        domains[domain] = { runtimes: [runtime_ids] };
         domain_count++;
       }
       else
       {
-        domains[domain].runtimes.push(runtime_id);
+        domains[domain].runtimes.push(runtime_ids);
+      }
+      if(runtime_ids[current_runtime])
+      {
+        domains[domain].is_current = true;
       }
     };
     if(domain_count <= 1) {
@@ -80,14 +84,18 @@ templates.cookie_manager = {
       var option_arr = [];
       for (var id in domains) {
         option_arr.push(["option", id, "value", domains[id].runtimes.toString()]);
+        if(domains[id].is_current)
+        {
+          option_arr[option_arr.length-1].concat(["selected", "selected"])
+        }
       };
       return [
         ["select", option_arr, "name", "add_cookie_runtime", "handler", "cookiemanager-add-cookie-domain-select", "class", "add_cookie_dropdown"]
       ];
     }
   },
-  editable_domain: function(domain, runtimes) {
-    var edit_elem = this.input_domain(runtimes);
+  editable_domain: function(current_runtime, runtimes, domain) {
+    var edit_elem = this.input_domain(current_runtime, runtimes);
     return this.edit_mode_switch_container(this.value_container(domain), this.edit_container(edit_elem));
   },
   editable_name: function(name) {
@@ -128,7 +136,7 @@ templates.cookie_manager = {
   add_cookie_row: function(runtimes) {
     return ["tr",
       [
-        ["td", this.input_domain(runtimes)],
+        ["td", this.input_domain(current_runtime, runtimes)],
         ["td", this.input_text_container("name")],
         ["td", this.input_text_container("value")],
         ["td", this.input_text_container("path")],
