@@ -248,7 +248,7 @@ cls.CookieManagerView = function(id, name, container_class)
             {
               options.push(
                 {
-                  label: "Edit cookie "+(sel_cookie_obj.name || ""),
+                  label: "Edit cookie",
                   handler: function() {
                     window.views.cookie_manager.enter_edit_mode(sel_cookie_obj.objectref);
                   }
@@ -259,7 +259,7 @@ cls.CookieManagerView = function(id, name, container_class)
             {
               options.push(
                 {
-                  label: "Remove cookie "+(sel_cookie_obj.name || ""),
+                  label: "Remove cookie",
                   handler: function() {
                     window.views.cookie_manager.remove_cookie_by_objectref(sel_cookie_obj.objectref);
                   }
