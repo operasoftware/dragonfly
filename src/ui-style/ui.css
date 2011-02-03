@@ -100,9 +100,10 @@ top-toolbar { /**/
 
 window-toolbar { /**/
   display: block;
-  height: 26px;
-  background-color: #e1e4e9;
+  height: 21px;
+  background-color: #eee;
   border-bottom: 1px solid #999;
+  padding: 2px;
   }
 
 /* set with css. height, border and padding are supported */
@@ -1549,16 +1550,20 @@ tabs, toolbar {
   margin-left: 20px;
 }
 
-.search-move-highlight-up
+toolbar-filters input[type=button].search-move-highlight-up
 {
-  content: "up";
+  content: url("../ui-images/icons/icon_back.png");
+  border-radius: 10px 2px 2px 10px;
+  padding: 1px 2px;
 }
-.search-move-highlight-down
+toolbar-filters input[type=button].search-move-highlight-down
 {
-  content: "down";
+  content: url("../ui-images/icons/icon_forward.png");
+  border-radius: 2px 10px 10px 2px;
+  padding: 1px 2px;
+  margin-left: 1px;
+  margin-right: 2px;
 }
-.search-more
-{
 
 }
 .search-window-content
@@ -1579,12 +1584,16 @@ toolbar-filters input[type=button]
   background: #e6e6e6 url("../ui-images/shine_button.png") repeat-x;
   border: 1px solid rgba(0, 0, 0, .5);
   border-radius: 3px;
-  margin: 0 2px;
-  padding: 3px 10px;
+  margin: 0 0 0 4px;
+  padding: 1px 10px;
+  height: 17px;
+  line-height: 27px;
   text-shadow: 0 1px rgba(255,255,255,0.5);
   box-shadow: 0 1px rgba(255,255,255,0.5), inset 0 1px 1px #fff;
+  display: inline-block;
   vertical-align: top;
   -o-transition: background-color 0.2s;
+  box-sizing: content-box;
 }
 
 
@@ -1592,4 +1601,6 @@ toolbar-filters input[type=button]:active
 {
   box-shadow: 0 1px #fff, inset 0 1px 2px rgba(0, 0, 0, .4);
   background-position: 0 1px;
+  padding-top: 2px;
+  padding-bottom: 0;
 }
