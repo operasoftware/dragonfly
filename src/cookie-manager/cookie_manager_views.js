@@ -129,9 +129,10 @@ cls.CookieManagerView = function(id, name, container_class)
     container.setAttribute("handler", "cookiemanager-container");
     container.setAttribute("data-menu", "cookie_refetch");
     this.flattened_cookies = this._flatten_cookies(this._cookie_dict, this._rts);
+    var sortable_table;
     if(container.getElementsByClassName("table_container").length < 1)
     {
-      var sortable_table = new SortableTable(this._tabledef, this.flattened_cookies, null, "domain", "hostandpath", true);
+      sortable_table = new SortableTable(this._tabledef, this.flattened_cookies, null, "domain", "hostandpath", true);
       this._table_container = container.render(["div",sortable_table.render(),"class","table_container"]);
     }
     this._table_elem = container.getElementsByClassName("sortable-table")[0];
@@ -634,6 +635,9 @@ cls.CookieManagerView = function(id, name, container_class)
 
   this.enter_edit_mode = function(objectref, event)
   {
+    var table_elem = document.querySelector(".sortable-table");
+    var sortable_table = ObjectRegistry.get_instance().get_object(table_elem.getAttribute("data-object-id"));
+    sortable_table.restore_columns();
     var row = document.querySelector(".sortable-table tr[data-object-id='"+objectref+"']").addClass("edit_mode");
     this.select_row(event, row);
     // Todo: focus input in clicked td if applicable
@@ -677,7 +681,7 @@ cls.CookieManagerView = function(id, name, container_class)
       }
       // check if unmodified
       // fixme: the cookie.runtimes check should check if the hostname of that rt is actually correct,
-      // the id doesn't really matter. this check finds more differences then it should.
+      // not is the id matches. the following check finds more differences then it should.
       if(cookie &&
           (
             name === cookie.name &&
