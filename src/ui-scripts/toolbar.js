@@ -275,6 +275,38 @@ var WindowToolbar = function(cell, buttons, filters, specials, customs)
   this.type = 'window-toolbar';
   this.parent_container_id = cell.id;
   this.init(cell, buttons, filters, specials, customs);
+
+  // window toolbar is positioned static, no need to update style.
+  this.setDimensions = function(force_redraw)
+  {
+    var dim = '', i = 0;
+
+    // set css properties
+
+    if(!this.default_height)
+    {
+      this.setCSSProperties()
+    }
+
+    dim = ( this.__is_visible  && ( 
+            this.buttons.length 
+            || this.switches && this.switches.length
+            || this.filters.length
+            || this.specials.length
+            || this.customs.length ) ) ? this.default_height : 0;
+
+    if( dim != this.height)
+    {
+      this.is_dirty = true;
+      this.height = dim;
+      this.offsetHeight = dim + this.vertical_border_padding;
+    }
+
+     
+  } 
+  // window toolbar is positioned static, no need to update style.
+  this.update_style = function(style){};
+
   this.getCssText = function()
   {
     return '';

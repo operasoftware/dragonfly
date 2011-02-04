@@ -12,7 +12,7 @@
 
   this.js_search_window = function()
   {
-    return ['div', 'class', 'js-search-results'];
+    return ['div', 'class', 'js-search-results', 'handler', 'show-script'];
   };
 
   this.js_serach_results = function(results)
@@ -65,10 +65,12 @@
         }
         ret.push(['div', 
                    ['span', this._format_line_no(line), 'class', 'line-no'],
-                   script_tmpl]);
+                   script_tmpl,
+                   'data-line-no', String(line)]);
       }
     }
-    ret.push('class', 'js-search-results-script js-source');
+    ret.push('class', 'js-search-results-script js-source',
+             'data-script-id', String(script.script_id));
     return ret;
   };
 

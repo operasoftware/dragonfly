@@ -16,23 +16,17 @@ var VirtualTextSearch = function()
 
 var JSSearchWindowHighlight = function()
 {
-  this._get_match_counts = function()
+  this._get_match_counts = TextSearch.prototype._get_match_counts;
+  this._get_serach_cursor = TextSearch.prototype._get_serach_cursor;
+  this.highlight_next = TextSearch.prototype.highlight_next;
+  this.highlight_previous = TextSearch.prototype.highlight_previous;
+  this.reset_match_cursor = function()
   {
-    return this._hits.length;
+    this._match_cursor = -1;
+    this._hits = [];
+    this._hit = null;
   }
-
-  this._get_serach_cursor = function()
-  {
-    return this._match_cursor + 1;
-  }
-
-  this._init = function()
-  {
-    this._match_cursor = 0;
-    VirtualTextSearch.prototype._init.call(this);
-  };
   this._init();
-
 };
 
 var VirtualTextSearchBase = function()

@@ -23,15 +23,10 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
   this._onhighlightnext = function()
   {
     var searchterm = this._input.value;
-    if (searchterm == this._searchterm)
-    {
-
-    }
-    else
+    if (searchterm != this._searchterm)
     {
       this._searchterm = searchterm;
       this.searchresults = {};
-      this._text_search.cleanup();
       if (this._rt_ids)
       {
         this._rt_ids.forEach(function(rt_id)
@@ -47,37 +42,36 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
           }
         }, this);
       }
-      this._output.clearAndRender(window.templates.js_serach_results(this.searchresults));
-      // .js-search-results-runtime
-      //   .js-search-results-script
-      //     div (for each line)
-      var rts = this._output.getElementsByClassName('js-search-results-runtime');
-      var rt_index = 0;
-      var script_eles = null, script_ele = null, i = 0;
-      for (var rt_id in this.searchresults)
-      {
-        script_eles = rts[rt_index++].getElementsByClassName('js-search-results-script');
-        for (i = 0; script_ele = script_eles[i]; i++)
-        {
-          if (this.searchresults[rt_id][i])
-          {
-          this._set_hits(this.searchresults[rt_id][i], script_ele);
-          }
-          else
-          {
-            opera.postError('>>>> '+script_ele.textContent)
-          }
-        }
-      }
-      // TODO subclass VirtualTextSerach
-      this._text_search._update_info();
+      this._text_search.reset_match_cursor();
+      this._create_search_results_view();
     }
+    this._text_search.highlight_next();
+  }
 
+  this._create_search_results_view = function()
+  {
+    this._output.style.removeProperty('width');
+    this._output.clearAndRender(window.templates.js_serach_results(this.searchresults));
+    // .js-search-results-runtime
+    //   .js-search-results-script
+    //     div (for each line)
+    var rts = this._output.getElementsByClassName('js-search-results-runtime');
+    var rt_index = 0;
+    var script_eles = null, script_ele = null, i = 0;
+    for (var rt_id in this.searchresults)
+    {
+      script_eles = rts[rt_index++].getElementsByClassName('js-search-results-script');
+      for (i = 0; script_ele = script_eles[i]; i++)
+      {
+        this._set_hits(this.searchresults[rt_id][i], script_ele);
+      }
+    }
+    this._output.style.width = this._output.parentNode.scrollWidth + 'px';
   }
 
   this._set_hits = function(script, script_ele)
   {
-    var line_eles = script_ele.getElementsByTagName('div');
+    var line_eles = script_ele.getElementsByTagName('code');
     var cur_line_no = 0;
     var line_no = 0;
     var line_ele = null;
@@ -90,14 +84,13 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
         line_no = cur_line;
         line_ele = line_eles[line_ele_index++];
       }
-      // a bit sheaky
-      this._text_search.set_hit(line_ele, script.line_offsets[i] + 6, script.match_length);
+      this._text_search.set_hit(line_ele, script.line_offsets[i], script.match_length);
     }
   }
 
   this._onhighlightprevious = function()
   {
-
+    this._text_search.highlight_previous();
   }
 
 
@@ -111,12 +104,14 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
     var output = container.querySelector('.js-search-results');
     var toolbar = document.getElementById(container.id.replace("container", "toolbar"));
     info_ele = toolbar && toolbar.getElementsByTagName('info')[0];
-    this._text_search.set_info_element(info_ele);
+    
     if (input && output)
     {
       // TODO content of serach view to highlight matches in a single file
       this._input = input;
       this._output = output;
+      this._text_search.set_info_element(info_ele);
+      this._text_search.set_container(container);
     }
   }
 
@@ -127,13 +122,24 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
 
   /* initialistaion */
 
+  window.eventHandlers.click['show-script'] = function(event, target)
+  {
+    var script_id = event.target.get_attr('parent-node-chain', 'data-script-id');
+    var line_no = event.target.get_attr('parent-node-chain', 'data-line-no');
+    if (script_id && line_no)
+    {
+      //window.views.js_source.highlight
+      window.views.js_source.highlight(parseInt(script_id), parseInt(line_no));
+    }
+  }
+
   this.init = function(id, name, container_class, searchhandler)
   {
     ViewBase.init.call(this, id, name, container_class);
     this._searchhandler = searchhandler;
     this._ui = UI.get_instance();
     this.highlight_next = this._onhighlightnext.bind(this);
-    this.highligh_previous = this._onhighlightprevious.bind(this);
+    this.highlight_previous = this._onhighlightprevious.bind(this);
     this._input = null;
     this._output = null;
     this._rt_ids = null;

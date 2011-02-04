@@ -29,8 +29,8 @@ TextSearch.prototype = new function()
     this._input_search_term = '';
     // collection of span elements. This is so because a hit may cross an
     // element border, so multiple elements needed for highlight.
-    this._search_results = [];
-    this._cursor = -1;
+    this._hits = [];
+    this._match_cursor = -1;
     this._container = null;
     this._input = null;
     this._min_term_length = min_length || MIN_TERM_LENGTH;
@@ -86,12 +86,12 @@ TextSearch.prototype = new function()
 
   this._get_match_counts = function()
   {
-    return this._search_results.length;
+    return this._hits.length;
   }
 
   this._get_serach_cursor = function()
   {
-    return this._cursor + 1;
+    return this._match_cursor + 1;
   }
     
   this._consume_node = function(node)
@@ -120,7 +120,7 @@ TextSearch.prototype = new function()
             {
               this._to_consume_hit_length = 0;
               this._consumed_total_length += node.nodeValue.length;
-              this._search_results.pop();
+              this._hits.pop();
               return;
             }
             this._to_consume_hit_length -= node.nodeValue.length;
@@ -144,7 +144,7 @@ TextSearch.prototype = new function()
                 this._last_match_index = this._current_match_index + this._search_term_length;
               }
               this._to_consume_hit_length = this._search_term_length;
-              this._curent_search_result = this._search_results[this._search_results.length] = [];
+              this._curent_search_result = this._hits[this._hits.length] = [];
             }
             this._consumed_total_length += node.nodeValue.length;
           }
@@ -171,7 +171,7 @@ TextSearch.prototype = new function()
   this._clear_search_results = function()
   {
     var cur = null, i = 0, parent = null, search_hit = null, j = 0;
-    for (; cur = this._search_results[i]; i++)
+    for (; cur = this._hits[i]; i++)
     {
       for (j = 0; search_hit = cur[j]; j++)
       {
@@ -189,12 +189,12 @@ TextSearch.prototype = new function()
     if (new_search_term != this._search_term)
     {
       this._search_term = new_search_term;
-      if(this._search_results)
+      if(this._hits)
       {
         this._clear_search_results();
       }
-      this._search_results = [];
-      this._cursor = -1;
+      this._hits = [];
+      this._match_cursor = -1;
       this.post_message("onbeforesearch", 
                         {search_term: this._search_term.length >= this._min_term_length ? 
                                       this._search_term : ""});
@@ -203,10 +203,10 @@ TextSearch.prototype = new function()
         if(this._container)
         {
           this._search_node(this._container);
-          if( old_cursor && this._search_results[old_cursor] )
+          if( old_cursor && this._hits[old_cursor] )
           {
-            this._cursor = old_cursor;
-            this._search_results[this._cursor].style.cssText = HIGHLIGHT_STYLE;
+            this._match_cursor = old_cursor;
+            this._hits[this._match_cursor].style.cssText = HIGHLIGHT_STYLE;
             this._update_info();
           }
           else
@@ -243,54 +243,54 @@ TextSearch.prototype = new function()
 
   /**
    * Highlight a search result. The result to highlight is kept in the
-   * "this._cursor" instance variable. If check_position is true the highlight will
+   * "this._match_cursor" instance variable. If check_position is true the highlight will
    * only be applied to what is visible withing the viewport.
    */
   this.highlight = function(check_position, direction)
   {
-    if (this._search_results.length)
+    if (this._hits.length)
     {
-      if (this._cursor >= 0) // if we have a currently highlighted hit..
+      if (this._match_cursor >= 0) // if we have a currently highlighted hit..
       {
         // then reset its style to the default
-        this._search_results[this._cursor].forEach(this._set_default_style);
+        this._hits[this._match_cursor].forEach(this._set_default_style);
       }
 
       if (check_position)
       {
-        this._cursor = 0;
-        while (this._search_results[this._cursor] &&
-               this.getRealOffsetTop(this._search_results[this._cursor][0]) < 0)
+        this._match_cursor = 0;
+        while (this._hits[this._match_cursor] &&
+               this.getRealOffsetTop(this._hits[this._match_cursor][0]) < 0)
         {
-          this._cursor++;
+          this._match_cursor++;
         }
       }
       else
       {
-        this._cursor += direction;
+        this._match_cursor += direction;
       }
-      if (this._cursor > this._search_results.length - 1)
+      if (this._match_cursor > this._hits.length - 1)
       {
-        this._cursor = 0;
+        this._match_cursor = 0;
       }
-      else if (this._cursor < 0)
+      else if (this._match_cursor < 0)
       {
-        this._cursor = this._search_results.length - 1;
+        this._match_cursor = this._hits.length - 1;
       }
-      this._search_results[this._cursor].forEach(this._set_highlight_style);
-      var target = this._search_results[this._cursor][0];
+      this._hits[this._match_cursor].forEach(this._set_highlight_style);
+      var target = this._hits[this._match_cursor][0];
       this._scroll_into_margined_view(this._container.offsetHeight,
-                                     target.offsetHeight,
-                                     this.getRealOffsetTop(target),
-                                     DEFAULT_SCROLL_MARGIN,
-                                     direction,
-                                     'scrollTop');
+                                      target.offsetHeight,
+                                      this.getRealOffsetTop(target),
+                                      DEFAULT_SCROLL_MARGIN,
+                                      direction,
+                                      'scrollTop');
       this._scroll_into_margined_view(this._container.offsetWidth,
-                                     target.offsetWidth,
-                                     this.getRealOffsetLeft(target),
-                                     DEFAULT_SCROLL_MARGIN,
-                                     direction,
-                                     'scrollLeft');
+                                      target.offsetWidth,
+                                      this.getRealOffsetLeft(target),
+                                      DEFAULT_SCROLL_MARGIN,
+                                      direction,
+                                      'scrollLeft');
       this._update_info();
     }
   };
@@ -345,7 +345,7 @@ TextSearch.prototype = new function()
     {
       var new_search_term = this._search_term;
       this._search_term = '';
-      this.search(new_search_term, this._cursor);
+      this.search(new_search_term, this._match_cursor);
     }
   };
 
@@ -383,8 +383,8 @@ TextSearch.prototype = new function()
   this.cleanup = function()
   {
     this._clear_search_results();
-    this._search_results = [];
-    this._cursor = -1;
+    this._hits = [];
+    this._match_cursor = -1;
     this._input = this._container = this._info_ele = null;
   };
 };
