@@ -23,6 +23,8 @@ var JSSearchWindowHighlight = function()
   this.reset_match_cursor = function()
   {
     this._match_cursor = -1;
+    this._hits = [];
+    this._hit = null;
   }
   this._init();
 };

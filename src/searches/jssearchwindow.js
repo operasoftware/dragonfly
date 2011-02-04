@@ -42,6 +42,7 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
           }
         }, this);
       }
+      this._text_search.reset_match_cursor();
       this._create_search_results_view();
     }
     this._text_search.highlight_next();
@@ -70,12 +71,11 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
 
   this._set_hits = function(script, script_ele)
   {
-    var line_eles = script_ele.getElementsByTagName('div');
+    var line_eles = script_ele.getElementsByTagName('code');
     var cur_line_no = 0;
     var line_no = 0;
     var line_ele = null;
     var line_ele_index = 0;
-    this._text_search.reset_match_cursor();
     for (var i = 0; i < script.line_matches.length; i++)
     {
       cur_line = script.line_matches[i];
@@ -84,7 +84,7 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
         line_no = cur_line;
         line_ele = line_eles[line_ele_index++];
       }
-      this._text_search.set_hit(line_ele, script.line_offsets[i] + 6, script.match_length);
+      this._text_search.set_hit(line_ele, script.line_offsets[i], script.match_length);
     }
   }
 
@@ -121,6 +121,17 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
   }
 
   /* initialistaion */
+
+  window.eventHandlers.click['show-script'] = function(event, target)
+  {
+    var script_id = event.target.get_attr('parent-node-chain', 'data-script-id');
+    var line_no = event.target.get_attr('parent-node-chain', 'data-line-no');
+    if (script_id && line_no)
+    {
+      //window.views.js_source.highlight
+      window.views.js_source.highlight(parseInt(script_id), parseInt(line_no));
+    }
+  }
 
   this.init = function(id, name, container_class, searchhandler)
   {
