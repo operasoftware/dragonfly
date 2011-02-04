@@ -54,6 +54,9 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
     this.tabledef = tabledef;
     this.data = data;
     this.columns = cols;
+    this.orgininal_columns = [];
+    for(var i=0; i < this.columns.length; i++)
+      this.orgininal_columns.push(this.columns[i]);
     this.reversed = !!reversed;
     this.groupby = groupby;
     this._elem = null;
@@ -183,6 +186,14 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
                                     this.columns, this.groupby, this.sortby,
                                     this.reversed);
   };
+
+  this.restore_columns = function()
+  {
+    this.columns = this.orgininal_columns;
+    this.post_message("before-render");
+    document.querySelector(".sortable-table").re_render(this.render());
+    this.post_message("after-render");
+  }
 
   this._prop_getter = function(name)
   {
