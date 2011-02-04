@@ -99,7 +99,7 @@
                                                  (is_unfolded ? " unfolded" : "") +
           "'>" +
             "<input type='button' " +
-                   "class='folder-key inverted'" +
+                   "class='folder-key'" +
                    "proto-index='" + index + "' " +
                    "/>",
             "<key>" + name + "</key>",
