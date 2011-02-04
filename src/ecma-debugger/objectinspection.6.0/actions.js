@@ -29,7 +29,7 @@
 
     var
     data_model = window.inspections[target.get_attr('parent-node-chain', 'data-id')],
-    is_unfolded = target.hasAttribute('is-unfolded'),
+    is_unfolded = target.hasClass('unfolded'),
     path = get_path(target),
     name = target.getElementsByTagName('key')[0].textContent;
 
