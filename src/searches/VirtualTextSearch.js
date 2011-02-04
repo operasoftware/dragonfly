@@ -20,11 +20,29 @@ var JSSearchWindowHighlight = function()
   this._get_serach_cursor = TextSearch.prototype._get_serach_cursor;
   this.highlight_next = TextSearch.prototype.highlight_next;
   this.highlight_previous = TextSearch.prototype.highlight_previous;
+  
   this.reset_match_cursor = function()
   {
     this._match_cursor = -1;
     this._hits = [];
     this._hit = null;
+  }
+  this.set_match_cursor = function(target)
+  {
+    
+    var hit = null;
+    for (var i = 0, hit = null; hit = this._hits[i]; i++)
+    {
+      if (hit.indexOf(target) != -1)
+      {
+        this._hits[this._match_cursor].forEach(this._set_default_style);
+        this._match_cursor = i;
+        this._hits[this._match_cursor].forEach(this._set_highlight_style);
+        break;
+      }
+    }
+
+    
   }
   this._init();
 };
@@ -281,7 +299,7 @@ var VirtualTextSearchBase = function()
               this._offset = 0;
             }
             cur_node = hit.splitText(length);
-            span = node.insertBefore(node.ownerDocument.createElement('span'), hit);
+            span = node.insertBefore(node.ownerDocument.createElement('em'), hit);
             span.style.cssText = this._highlight_style;
             span.appendChild(node.removeChild(hit));
             this._hit[this._hit.length] = span;

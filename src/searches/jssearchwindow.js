@@ -124,6 +124,34 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
 
   window.eventHandlers.click['show-script'] = function(event, target)
   {
+    var cur = event.target;
+    while (cur && cur.nodeName.toLowerCase() != 'div' && (cur = cur.parentNode));
+    if (cur)
+    {
+      var matches = cur.getElementsByTagName('em');
+      var match_cursor = 0;
+      var match = matches[match_cursor];
+      if (match)
+      {
+        var left = event.clientX;
+        var cur_left = match.getBoundingClientRect().left;
+        var temp_left = 0;
+        while (match && matches[++match_cursor])
+        {
+          temp_left = matches[match_cursor].getBoundingClientRect().left;
+          if (Math.abs(left - temp_left) < Math.abs(left - cur_left))
+          {
+            match = matches[match_cursor];
+          }
+          else
+          {
+            break;
+          }
+        }
+        this._text_search.set_match_cursor(match);
+      }
+    }
+    /*
     var script_id = event.target.get_attr('parent-node-chain', 'data-script-id');
     var line_no = event.target.get_attr('parent-node-chain', 'data-line-no');
     if (script_id && line_no)
@@ -131,7 +159,8 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
       //window.views.js_source.highlight
       window.views.js_source.highlight(parseInt(script_id), parseInt(line_no));
     }
-  }
+    */
+  }.bind(this);
 
   this.init = function(id, name, container_class, searchhandler)
   {

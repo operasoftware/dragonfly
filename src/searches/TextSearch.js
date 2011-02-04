@@ -124,7 +124,7 @@ TextSearch.prototype = new function()
               return;
             }
             this._to_consume_hit_length -= node.nodeValue.length;
-            var span = document.createElement('span');
+            var span = document.createElement('em');
             this._curent_search_result.push(span); 
             node.parentNode.replaceChild(span, node);
             span.appendChild(node);
