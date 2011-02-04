@@ -18,7 +18,7 @@ window.eventHandlers.click['cookiemanager-row-select'] = function(event, target)
   window.views.cookie_manager.select_row(event, target);
 }
 
-window.eventHandlers.keyup['cookiemanager-edit'] = function(event, target)
+window.eventHandlers.keyup['cookiemanager-keys'] = function(event, target)
 {
   // Save on <enter>
   if(event.keyCode === 13)

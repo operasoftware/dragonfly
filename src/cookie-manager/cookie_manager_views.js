@@ -177,6 +177,8 @@ cls.CookieManagerView = function(id, name, container_class)
       };
       this._restore_selection = null;
     }
+    // key handling
+    container.setAttribute("handler", "cookiemanager-keys");
     // context menus
     // add refresh to container
     container.setAttribute("data-menu", "cookie_refetch");
@@ -691,16 +693,16 @@ cls.CookieManagerView = function(id, name, container_class)
       /* // dbg
       console.log("no old cookie, or old cookie modified.");
       if(name !== cookie.name)
-        console.log(name, cookie.name);
+        console.log("NAME CHANGED ",name, cookie.name);
       if(value !== cookie.value)
-        console.log(value, cookie.value);
+        console.log("VALUE CHANGED ",value, cookie.value);
       if(expires !== new Date(cookie.expires*1000).getTime())
-        console.log(expires, new Date(cookie.expires*1000).getTime());
+        console.log("EXPIRY CHANGED", expires, new Date(cookie.expires*1000).getTime());
       if(path !== cookie.path)
-        console.log(path, cookie.path);
+        console.log("PATH CHANGED", path, cookie.path);
       if(cookie.runtimes.indexOf(runtime) === -1)
-        console.log(cookie.runtimes, runtime);
-      // end dbg */
+        console.log("RUNTIME CHANGED", cookie.runtimes, runtime);
+      end dbg */
       
       // remove old cookie
       if(cookie)
