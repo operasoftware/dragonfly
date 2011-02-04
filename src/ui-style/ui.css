@@ -1575,8 +1575,19 @@ toolbar-filters input[type=button].search-move-highlight-down
   height: 100%;
 }
 
-.context-window, 
+.context-window,
+.context-window window-toolbar,
+.context-window window-header,
 .context-window window-container
+{
+  border: none;
+}
+
+.context-window [handler='window-close'] { /**/
+  background-image: url('../ui-images/icons/context_window_close.png');
+  }
+
+.context-window
 {
   background-color: #fff;
   color: #000;
