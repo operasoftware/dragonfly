@@ -690,7 +690,7 @@ cls.CookieManagerView = function(id, name, container_class)
       {
         return;
       }
-      // /* // dbg
+      /* // dbg
       if(cookie)
       {
         console.log("no old cookie, or old cookie modified.");
@@ -705,7 +705,7 @@ cls.CookieManagerView = function(id, name, container_class)
         if(cookie.runtimes.indexOf(runtime) === -1)
           console.log("RUNTIME CHANGED", "\n"+cookie.runtimes, "\n"+runtime);
       }
-      // end dbg */
+      end dbg */
       
       // remove old cookie
       if(cookie)
@@ -720,7 +720,7 @@ cls.CookieManagerView = function(id, name, container_class)
       }
       add_cookie_script += '; path=' + '/' + path + '"';
       var script = add_cookie_script;
-      console.log(script);
+      // console.log(script);
       var tag = tagManager.set_callback(this, window.views.cookie_manager.handle_changed_cookies, [runtime]);
       services['ecmascript-debugger'].requestEval(tag,[runtime, 0, 0, script]);
     }
