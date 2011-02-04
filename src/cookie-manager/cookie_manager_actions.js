@@ -29,7 +29,7 @@ window.eventHandlers.keyup['cookiemanager-container'] = function(event, target)
 
 window.eventHandlers.click['cookiemanager-container'] = function(event, target)
 {
-  window.views.cookie_manager.exit_edit_and_save();
+  window.views.cookie_manager.check_to_exit_edit_mode(event, target);
 }
 
 window.eventHandlers.click['cookiemanager-add-cookie-row'] = function(event, target)

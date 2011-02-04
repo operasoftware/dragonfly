@@ -641,17 +641,20 @@ cls.CookieManagerView = function(id, name, container_class)
   
   this.check_to_exit_edit_mode = function(event, target)
   {
-    // find out if target is within some .edit_mode node. don't exit then.
-    var walk_up = target;
-    while(walk_up)
+    if(document.querySelector(".edit_mode"))
     {
-      if(walk_up.hasClass("edit_mode"))
+      // find out if target is within some .edit_mode node. don't exit then.
+      var walk_up = target;
+      while(walk_up)
       {
-        return;
+        if(walk_up.hasClass("edit_mode"))
+        {
+          return;
+        }
+        walk_up = walk_up.parentElement;
       }
-      walk_up = walk_up.parentElement;
+      this.exit_edit_and_save();
     }
-    this.exit_edit_and_save();
   }
 
   this.exit_edit_and_save = function()
@@ -687,19 +690,22 @@ cls.CookieManagerView = function(id, name, container_class)
       {
         return;
       }
-      /* // dbg
-      console.log("no old cookie, or old cookie modified.");
-      if(name !== cookie.name)
-        console.log("NAME CHANGED ","\n"+name, "\n"+cookie.name);
-      if(value !== cookie.value)
-        console.log("VALUE CHANGED","\n"+value,"\n"+cookie.value);
-      if(expires !== new Date(cookie.expires*1000).getTime())
-        console.log("EXPIRY CHANGED", "\n"+expires, "\n"+new Date(cookie.expires*1000).getTime());
-      if(path !== cookie.path)
-        console.log("PATH CHANGED", "\n"+path, "\n"+cookie.path);
-      if(cookie.runtimes.indexOf(runtime) === -1)
-        console.log("RUNTIME CHANGED", "\n"+cookie.runtimes, "\n"+runtime);
-      end dbg */
+      // /* // dbg
+      if(cookie)
+      {
+        console.log("no old cookie, or old cookie modified.");
+        if(name !== cookie.name)
+          console.log("NAME CHANGED ","\n"+name, "\n"+cookie.name);
+        if(value !== cookie.value)
+          console.log("VALUE CHANGED","\n"+value,"\n"+cookie.value);
+        if(expires !== new Date(cookie.expires*1000).getTime())
+          console.log("EXPIRY CHANGED", "\n"+expires, "\n"+new Date(cookie.expires*1000).getTime());
+        if(path !== cookie.path)
+          console.log("PATH CHANGED", "\n"+path, "\n"+cookie.path);
+        if(cookie.runtimes.indexOf(runtime) === -1)
+          console.log("RUNTIME CHANGED", "\n"+cookie.runtimes, "\n"+runtime);
+      }
+      // end dbg */
       
       // remove old cookie
       if(cookie)
@@ -714,6 +720,7 @@ cls.CookieManagerView = function(id, name, container_class)
       }
       add_cookie_script += '; path=' + '/' + path + '"';
       var script = add_cookie_script;
+      console.log(script);
       var tag = tagManager.set_callback(this, window.views.cookie_manager.handle_changed_cookies, [runtime]);
       services['ecmascript-debugger'].requestEval(tag,[runtime, 0, 0, script]);
     }
