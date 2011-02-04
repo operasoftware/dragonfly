@@ -1263,8 +1263,12 @@ d
   height: 14ex;
   margin: 0;
   padding: 2px 5px;
-  border: 0px;
   background-color: #fff;
+  border: 1px solid #8e8e8e;
+  border-radius: 3px;
+}
+.storage-table textarea {
+  border: 0;
 }
 
 .storage-table .new-key
@@ -1320,7 +1324,7 @@ property.disabled color-sample
 
 .event-list
 {
-  padding: 3px 0 3px 24px;
+  padding: 4px;
 }
 
 .event-breakpoints li:first-child header
