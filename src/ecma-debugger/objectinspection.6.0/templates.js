@@ -170,7 +170,7 @@
             continue;
           }
           short_val = value.length > MAX_VALUE_LENGTH ?
-                        value.slice(0, MAX_VALUE_LENGTH) + '…"' : '';
+                        value.slice(0, MAX_VALUE_LENGTH) + '…' : '';
           value = helpers.escapeTextHtml(value).replace(/'/g, '&#39;');
           if (short_val)
           {
@@ -182,8 +182,8 @@
                 "<item>" +
                   "<input type='button' handler='expand-value' class='folder-key'/>" +
                   "<key data-spec='dom#" + esc_name + "'>" + esc_name + "</key>" +
-                  "<value class='" + type + "' data-value='" + value + "'>" +
-                    "\"" + helpers.escapeTextHtml(short_val) +
+                  "<value class='" + type + "' data-value='\"" + value + "\"'>" +
+                    "\"" + helpers.escapeTextHtml(short_val) + "\"" +
                   "</value>" +
                 "</item>"
               );
