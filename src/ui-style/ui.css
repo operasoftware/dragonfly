@@ -85,7 +85,8 @@ window-statusbar { /**/
   }
 
 info { /**/
-  padding: 0 7px;
+  padding: 0 3px;
+  line-height: 21px;
   }
 
 
@@ -951,7 +952,7 @@ window {
   left: 20px;
   color: #fff;
   border-radius: 7px;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, .6);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .4),  0 1px 8px rgba(0, 0, 0, .4);
   background: rgba(40, 40, 40, .9);
   border: 2px solid #b1b1b1;
 }
@@ -1568,7 +1569,12 @@ toolbar-filters input[type=button].search-move-highlight-down
   margin-right: 2px;
 }
 
+.context-window
+{
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
 }
+
 .search-window-content
 {
   background-color: #fff;
@@ -1583,9 +1589,28 @@ toolbar-filters input[type=button].search-move-highlight-down
   border: none;
 }
 
+.context-window window-header {
+  color: #000;
+  background-color: #eee;
+  xborder-bottom: 1px solid #999;
+  xpadding: 2px 5px;
+}
+
+.context-window window-toolbar
+{
+  border-bottom: 1px solid #999;
+  background: #eee;
+}
+
+.context-window window-container
+{
+  background: transparent;
+}
+
+
 .context-window [handler='window-close'] { /**/
   background-image: url('../ui-images/icons/context_window_close.png');
-  }
+}
 
 .context-window
 {
