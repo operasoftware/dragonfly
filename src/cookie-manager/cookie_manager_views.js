@@ -127,6 +127,7 @@ cls.CookieManagerView = function(id, name, container_class)
   this.createView = function(container)
   {
     container.setAttribute("handler", "cookiemanager-container");
+    container.setAttribute("data-menu", "cookie_refetch");
     this.flattened_cookies = this._flatten_cookies(this._cookie_dict, this._rts);
     if(container.getElementsByClassName("table_container").length < 1)
     {
@@ -177,11 +178,7 @@ cls.CookieManagerView = function(id, name, container_class)
       };
       this._restore_selection = null;
     }
-    // key handling
-    container.setAttribute("handler", "cookiemanager-keys");
     // context menus
-    // add refresh to container
-    container.setAttribute("data-menu", "cookie_refetch");
     var contextmenu = ContextMenu.get_instance();
     contextmenu.register("cookie_refetch", [
       {
@@ -693,15 +690,15 @@ cls.CookieManagerView = function(id, name, container_class)
       /* // dbg
       console.log("no old cookie, or old cookie modified.");
       if(name !== cookie.name)
-        console.log("NAME CHANGED ",name, cookie.name);
+        console.log("NAME CHANGED ","\n"+name, "\n"+cookie.name);
       if(value !== cookie.value)
-        console.log("VALUE CHANGED ",value, cookie.value);
+        console.log("VALUE CHANGED","\n"+value,"\n"+cookie.value);
       if(expires !== new Date(cookie.expires*1000).getTime())
-        console.log("EXPIRY CHANGED", expires, new Date(cookie.expires*1000).getTime());
+        console.log("EXPIRY CHANGED", "\n"+expires, "\n"+new Date(cookie.expires*1000).getTime());
       if(path !== cookie.path)
-        console.log("PATH CHANGED", path, cookie.path);
+        console.log("PATH CHANGED", "\n"+path, "\n"+cookie.path);
       if(cookie.runtimes.indexOf(runtime) === -1)
-        console.log("RUNTIME CHANGED", cookie.runtimes, runtime);
+        console.log("RUNTIME CHANGED", "\n"+cookie.runtimes, "\n"+runtime);
       end dbg */
       
       // remove old cookie
