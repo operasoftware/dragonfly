@@ -53,11 +53,11 @@
       if (cur_line != line)
       {
         line = cur_line;
-        script_data = script.script_data.slice(script.line_arr[line-1], 
+        script_data = script.script_data.slice(script.line_arr[line - 1], 
                                                script.line_arr[line]);
         script_tmpl = this.highlight_js_source(script_data, 
                                                null, 
-                                               script.state_arr[cur_line], 
+                                               script.state_arr[line - 1], 
                                                ['code']);
         if (script_data.length > MAX_LINE_CHARS)
         {

@@ -256,23 +256,19 @@ window.cls.NewScript.prototype = new function()
                 if( slash_cur != -1 )
                 {
                   cur_cur = slash_cur+1;
-                  if (line_cur < cur_cur)
+                  while (line_cur < cur_cur)
                   {
-                    while (line_cur < cur_cur)
+                    line_arr[line_count] = line_cur;
+                    state_arr[line_count++] = COMMENT;
+                    
+                    if ((line_cur = string.indexOf('\n', line_cur) + 1) == 0)
                     {
-                      line_arr[line_count] = line_cur;
-                      state_arr[line_count++] = COMMENT;
-                      
-                      if ((line_cur = string.indexOf('\n', line_cur) + 1) == 0)
+                      if (line_arr[ line_arr.length - 1 ] < string.length)
                       {
-                        if (line_arr[ line_arr.length - 1 ] < string.length)
-                        {
-                          line_arr[line_count] = string.length;
-                        }
-                        return;
+                        line_arr[line_count] = string.length;
                       }
+                      return;
                     }
-                    state_arr[line_count] = COMMENT;
                   }
                 }
                 continue;
