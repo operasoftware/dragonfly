@@ -142,6 +142,7 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
           if (Math.abs(left - temp_left) < Math.abs(left - cur_left))
           {
             match = matches[match_cursor];
+            cur_left = match.getBoundingClientRect().left;
           }
           else
           {
