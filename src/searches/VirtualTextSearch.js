@@ -454,7 +454,8 @@ var VirtualTextSearchBase = function()
 
   this.update_hits = function(top_line, bottom_line)
   {
-    if (this._search_term && this._script && this._script.line_matches && this._script.line_matches.length)
+    if (this._script && this._script.search_term && 
+        this._script.line_matches && this._script.line_matches.length)
     {
       this._clear_hits();
       this._top_line = top_line;

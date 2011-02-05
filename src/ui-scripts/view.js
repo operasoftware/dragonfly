@@ -164,6 +164,12 @@ var ViewBase = new function()
     }
     return ret;
   }
+  /* returns the first container, if there is any, otherwise null */
+  this.get_container = function() 
+  {
+    return (this.container_ids[0] && 
+            document.getElementById(this.container_ids[0] ) || null);
+  }
 
   this.getToolbarControl = function( container, handler, handler_name) 
   {

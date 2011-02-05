@@ -44,7 +44,7 @@ window.cls.NewScript.prototype = new function()
       this.search_term = search_term;
       this.line_matches = [];
       this.line_offsets = [];
-      this.match_cursor = 0;
+      this.match_cursor = -1;
       this.match_length = search_term.length;
       if (!this.script_data_lower)
       {
@@ -62,7 +62,7 @@ window.cls.NewScript.prototype = new function()
       }
     }
   };
-
+  
   this.set_line_states = function()
   {
     this.line_arr = [];

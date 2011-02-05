@@ -182,7 +182,18 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
     }
     if (script)
     {
-      window.views.js_source.highlight(script.script_id, script.line_matches[cursor]);
+      var js_source_view = window.views.js_source;
+      if (!js_source_view.isvisible())
+      {
+        this._ui.show_view('js_source');
+      }
+      script.match_cursor = cursor;
+      js_source_view.showLine(script.script_id, script.line_matches[cursor] - 10);
+      this._source_highlighter.set_container(js_source_view.get_container());
+      this._source_highlighter.set_script(script);
+      this._source_highlighter.update_hits(js_source_view.getTopLine(),
+                                      js_source_view.getBottomLine());
+      
     }
     /*
     var script_id = event.target.get_attr('parent-node-chain', 'data-script-id');
@@ -214,6 +225,7 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
     this._searchterm = '';
     this.searchresults = {};
     this._text_search = new JSSearchWindowHighlight();
+    this._source_highlighter = new VirtualTextSearch();
     window.messages.addListener('active-tab', this._on_active_tab_bound);
     ActionBroker.get_instance().register_handler(this);
   }
