@@ -120,9 +120,9 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
 
   }
 
-  /* initialistaion */
+  
 
-  window.eventHandlers.click['show-script'] = function(event, target)
+  this._update_match_highlight = function(event, target)
   {
     var cur = event.target;
     while (cur && cur.nodeName.toLowerCase() != 'div' && (cur = cur.parentNode));
@@ -151,6 +151,39 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
         this._text_search.set_match_cursor(match);
       }
     }
+
+  };
+  
+  this.show_script = function(event, target)
+  {
+    if (event.type == "click")
+    {
+      this._update_match_highlight(event);
+    }
+    var cursor = this._text_search.get_match_cursor();
+    var script = null, i = 0;
+    for (var rt_id in this.searchresults)
+    {
+      for (i = 0; script = this.searchresults[rt_id][i]; i++)
+      {
+        if (cursor < script.line_matches.length)
+        {
+          break;
+        }
+        else
+        {
+          cursor -= script.line_matches.length;
+        }
+      }
+      if (script)
+      {
+        break;
+      }
+    }
+    if (script)
+    {
+      window.views.js_source.highlight(script.script_id, script.line_matches[cursor]);
+    }
     /*
     var script_id = event.target.get_attr('parent-node-chain', 'data-script-id');
     var line_no = event.target.get_attr('parent-node-chain', 'data-line-no');
@@ -160,8 +193,14 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
       window.views.js_source.highlight(parseInt(script_id), parseInt(line_no));
     }
     */
-  }.bind(this);
+  }
+  
+  ActionHandlerInterface.apply(this);
+  
+  this._handlers['show-script'] = this.show_script.bind(this);
 
+  /* initialistaion */
+  
   this.init = function(id, name, container_class, searchhandler)
   {
     ViewBase.init.call(this, id, name, container_class);
@@ -176,6 +215,7 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
     this.searchresults = {};
     this._text_search = new JSSearchWindowHighlight();
     window.messages.addListener('active-tab', this._on_active_tab_bound);
+    ActionBroker.get_instance().register_handler(this);
   }
 
   this.init(id, name, container_class, searchhandler);

@@ -16,6 +16,11 @@ var VirtualTextSearch = function()
 
 var JSSearchWindowHighlight = function()
 {
+  this._init();
+};
+
+var JSSearchWindowHighlightPrototype = function()
+{
   this._get_match_counts = TextSearch.prototype._get_match_counts;
   this._get_serach_cursor = TextSearch.prototype._get_serach_cursor;
   this.highlight_next = TextSearch.prototype.highlight_next;
@@ -26,10 +31,10 @@ var JSSearchWindowHighlight = function()
     this._match_cursor = -1;
     this._hits = [];
     this._hit = null;
-  }
+  };
+  
   this.set_match_cursor = function(target)
   {
-    
     var hit = null;
     for (var i = 0, hit = null; hit = this._hits[i]; i++)
     {
@@ -41,10 +46,12 @@ var JSSearchWindowHighlight = function()
         break;
       }
     }
-
-    
+  };
+  
+  this.get_match_cursor = function()
+  {
+    return this._match_cursor;
   }
-  this._init();
 };
 
 var VirtualTextSearchBase = function()
@@ -521,7 +528,7 @@ var VirtualTextSearchBase = function()
 };
 
 VirtualTextSearchBase.prototype = TextSearch.prototype;
-VirtualTextSearch.prototype = 
-  JSSearchWindowHighlight.prototype = 
-  new VirtualTextSearchBase();
+VirtualTextSearch.prototype = new VirtualTextSearchBase();
+JSSearchWindowHighlightPrototype.prototype = VirtualTextSearch.prototype;
+JSSearchWindowHighlight.prototype = new JSSearchWindowHighlightPrototype();
 

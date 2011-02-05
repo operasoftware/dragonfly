@@ -196,6 +196,14 @@ Search.prototype = new function()
         }
         return false;
       }
+      case 'show-script':
+      {
+        if (this._mode == MODE_SEARCHWINDOW)
+        {
+          this._searchwindow.show_script(event, target);
+          return false;
+        }
+      }
       case 'hide-search':
       {
         this.hide();
@@ -345,16 +353,19 @@ var JSSourceSearchBase = function()
 {
   this._onscriptselected = function(msg)
   {
-    var script = window.runtimes.getScript(msg.script_id);
-    if (script)
+    if (this.has_searchbar)
     {
-      this._simple_text_search.set_script(script);
+      var script = window.runtimes.getScript(msg.script_id);
+      if (script)
+      {
+        this._simple_text_search.set_script(script);
+      }
     }
   };
 
   this._onviewscrolled = function(msg)
   {
-    if (msg.id == this._view_id)
+    if (msg.id == this._view_id && this.has_searchbar)
     {
       this._simple_text_search.update_hits(msg.top_line, msg.bottom_line);
     }
@@ -363,7 +374,9 @@ var JSSourceSearchBase = function()
   this._init = function(view_id, searchbar, searchwindow)
   {
     Search.prototype._init.call(this, view_id, searchbar, searchwindow);
+    // TODO add listeners when serach-bar is shown
     messages.addListener('script-selected', this._onscriptselected.bind(this));
+    // TODO only when searchbar active
     messages.addListener('view-scrolled', this._onviewscrolled.bind(this));
   }
   
