@@ -88,6 +88,7 @@ Search.prototype = new function()
         {
           this._container = null;
           layout_box.remove_searchbar(this._searchbar);
+          this._onsearchbar_remove();
           
         }
         this._update_toolbarbutton(layout_box);
@@ -112,6 +113,7 @@ Search.prototype = new function()
     var ele = this._searchbar.getElement(), cur = null;
     if (ele && !ele.firstChild)
     {
+      this._simple_text_search.set_container(this._container);
       ele.render(window.templates.searchbar_content(this));
       cur = ele.getElementsByTagName('info')[0];
       this._simple_text_search.set_info_element(cur);
@@ -120,6 +122,8 @@ Search.prototype = new function()
       setTimeout(function(){cur.focus();}, 0);
     }
   };
+  
+  this._onsearchbar_remove = function(){};
 
   this._onviewcreated = function(msg)
   {
@@ -129,8 +133,8 @@ Search.prototype = new function()
       if (layout_box)
       {
         this._container = layout_box.container.getElement();
-        this._onserachbar_created();
         this._simple_text_search.set_container(this._container);
+        this._onserachbar_created();
         if (this._searchwindow)
         {
           this._searchwindow;
@@ -144,6 +148,7 @@ Search.prototype = new function()
     if (msg.id == this._view_id)
     {
       this._simple_text_search.cleanup();
+      this._onsearchbar_remove();
       if (this._searchwindow)
       {
         this._searchwindow;
@@ -283,7 +288,7 @@ Search.prototype = new function()
                            title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
                          });
       messages.addListener('view-destroyed', this._onviewdestroyed.bind(this));
-      messages.addListener('view-created', this._onviewcreated.bind(this));
+      messages.addListener('show-view', this._onviewcreated.bind(this));
       eventHandlers.input[this.controls[SEARCHFIELD].handler] = 
         this._onsearchfieldinput.bind(this)
       eventHandlers.click[this.controls[MOVE_HIGHLIGHT_DOWN].handler] = 
@@ -351,12 +356,14 @@ var JSSourceSearch = function(view_id, searchbar, searchwindow)
 
 var JSSourceSearchBase = function()
 {
+
   this._onscriptselected = function(msg)
   {
     var script = window.runtimes.getScript(msg.script_id);
     if (script)
     {
       this._simple_text_search.set_script(script);
+      this._simple_text_search.update();
     }
   };
 
@@ -367,14 +374,36 @@ var JSSourceSearchBase = function()
       this._simple_text_search.update_hits(msg.top_line, msg.bottom_line);
     }
   };
+  
+  this._super_onserachbar_created = this._onserachbar_created;
+  
+  this._onserachbar_created = function()
+  {
+    this._super_onserachbar_created();
+    if (this._searchbar.getElement())
+    {
+      messages.addListener('script-selected', this._onscriptselected_bound);
+      messages.addListener('view-scrolled', this._onviewscrolled_bound);
+      var script_id = window.views.js_source.getCurrentScriptId();
+      var script = script_id && window.runtimes.getScript(script_id);
+      if (script)
+      {
+        this._simple_text_search.set_script(script);
+      }
+    }
+  };
+  
+  this._onsearchbar_remove = function()
+  {
+    messages.removeListener('script-selected', this._onscriptselected_bound);
+    messages.removeListener('view-scrolled', this._onviewscrolled_bound);
+  };
 
   this._init = function(view_id, searchbar, searchwindow)
   {
     Search.prototype._init.call(this, view_id, searchbar, searchwindow);
-    // TODO add listeners when serach-bar is shown
-    messages.addListener('script-selected', this._onscriptselected.bind(this));
-    // TODO only when searchbar active
-    messages.addListener('view-scrolled', this._onviewscrolled.bind(this));
+    this._onscriptselected_bound = this._onscriptselected.bind(this);
+    this._onviewscrolled_bound = this._onviewscrolled.bind(this);
   }
   
 };

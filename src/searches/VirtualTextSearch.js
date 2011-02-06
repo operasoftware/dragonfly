@@ -113,6 +113,8 @@ var VirtualTextSearchBase = function()
   this.set_hit = function(node, offset, length, style){};
 
   this.get_hit_count = function(){};
+  
+  this.update = function(){};
 
   /* constants */
 
@@ -525,6 +527,13 @@ var VirtualTextSearchBase = function()
   {
   
   };
+  
+  this.update = function()
+  {
+    var new_search_term = this._search_term;
+    this._search_term = '';
+    this._search_bound(new_search_term);
+  }
 
 };
 
