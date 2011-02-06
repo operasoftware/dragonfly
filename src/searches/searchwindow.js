@@ -13,6 +13,7 @@ window.cls.SearchWindowBase = function(id, name, container_class)
   this.close_search_window = function(event){};
 
   /* settings */
+  
   this.show_in_views_menu = true;
   this.window_top = 100;
   this.window_left = 150;
@@ -38,7 +39,7 @@ window.cls.SearchWindowBase = function(id, name, container_class)
     UIWindowBase.showWindow(this.id,
                             this.window_top,
                             this.window_left,
-                            Math.max(this.window_width, innerWidth / 2),
+                            Math.max(this.window_width, innerWidth * .7),
                             this.window_height);
   }
 
@@ -51,8 +52,6 @@ window.cls.SearchWindowBase = function(id, name, container_class)
   {
 
   }
-
-
 
 }
 

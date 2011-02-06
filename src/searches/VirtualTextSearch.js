@@ -115,6 +115,8 @@ var VirtualTextSearchBase = function()
   this.get_hit_count = function(){};
   
   this.update = function(){};
+  
+  this.scroll_selected_hit_in_to_view = function(){};
 
   /* constants */
 
@@ -169,7 +171,7 @@ var VirtualTextSearchBase = function()
           if (this._script.line_matches.length)
           {
             this._highlight(true);
-            this._scroll_selected_hit_in_to_view();
+            this.scroll_selected_hit_in_to_view();
           }
           else
           {
@@ -346,7 +348,7 @@ var VirtualTextSearchBase = function()
   /**
     * Helper to scroll the view vertically if the selected match is not in the view.
     */
-  this._scroll_selected_hit_in_to_view = function()
+  this.scroll_selected_hit_in_to_view = function()
   {
     if (!this._source_container)
     {
@@ -383,7 +385,7 @@ var VirtualTextSearchBase = function()
         }
       }
       this._highlight();
-      this._scroll_selected_hit_in_to_view();
+      this.scroll_selected_hit_in_to_view();
     }
   };
 

@@ -1,24 +1,26 @@
 window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
 {
   /* interface */
+
   this.createView = function(container){};
 
   this.highlight_next = function(){};
 
   this.highligh_previous = function(){};
 
+  this.show_script_of_search_match = function(){};
 
+  /* constants */
+
+  const JS_SOURCE_ID = 'js_source';
   /* private */
 
 
-
-
-  this._on_active_tab_bound = function(msg)
+  this._on_active_tab = function(msg)
   {
     this._rt_ids = msg.activeTab.slice(0);
     this._searchterm = '';
-  }.bind(this);
-
+  };
 
   this._onhighlightnext = function()
   {
@@ -27,6 +29,7 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
     {
       this._searchterm = searchterm;
       this.searchresults = {};
+      this._onscriptselected();
       if (this._rt_ids)
       {
         this._rt_ids.forEach(function(rt_id)
@@ -42,11 +45,38 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
           }
         }, this);
       }
-      this._text_search.reset_match_cursor();
+      this._window_highlighter.reset_match_cursor();
       this._create_search_results_view();
     }
-    this._text_search.highlight_next();
-  }
+    this._window_highlighter.highlight_next();
+  };
+
+  this._onhighlightprevious = function()
+  {
+    this._window_highlighter.highlight_previous();
+  };
+
+  this._onscriptselected = function(msg)
+  {
+    messages.removeListener('view-scrolled', this._onviewscrolled_bound);
+    this._source_highlighter.cleanup();
+  };
+
+  this._onviewscrolled = function(msg)
+  {
+    if (msg.id == JS_SOURCE_ID)
+    {
+      this._source_highlighter.update_hits(msg.top_line, msg.bottom_line);
+    }
+  };
+
+  this._onsourceviewdestroyed = function(msg)
+  {
+    if (msg.id == JS_SOURCE_ID)
+    {
+      this._onscriptselected();
+    }
+  };
 
   this._create_search_results_view = function()
   {
@@ -67,7 +97,7 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
       }
     }
     this._output.style.width = this._output.parentNode.scrollWidth + 'px';
-  }
+  };
 
   this._set_hits = function(script, script_ele)
   {
@@ -84,43 +114,9 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
         line_no = cur_line;
         line_ele = line_eles[line_ele_index++];
       }
-      this._text_search.set_hit(line_ele, script.line_offsets[i], script.match_length);
+      this._window_highlighter.set_hit(line_ele, script.line_offsets[i], script.match_length);
     }
-  }
-
-  this._onhighlightprevious = function()
-  {
-    this._text_search.highlight_previous();
-  }
-
-
-  /* implementation */
-
-  this.createView = function(container)
-  {
-    container.clearAndRender(window.templates.js_search_window());
-    // TODO improve this method
-    var input = this.getToolbarControl(container, this._searchhandler);
-    var output = container.querySelector('.js-search-results');
-    var toolbar = document.getElementById(container.id.replace("container", "toolbar"));
-    info_ele = toolbar && toolbar.getElementsByTagName('info')[0];
-    
-    if (input && output)
-    {
-      // TODO content of serach view to highlight matches in a single file
-      this._input = input;
-      this._output = output;
-      this._text_search.set_info_element(info_ele);
-      this._text_search.set_container(container);
-    }
-  }
-
-  this.ondestroy = function()
-  {
-
-  }
-
-  
+  };
 
   this._update_match_highlight = function(event, target)
   {
@@ -149,19 +145,52 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
             break;
           }
         }
-        this._text_search.set_match_cursor(match);
+        this._window_highlighter.set_match_cursor(match);
       }
     }
-
   };
-  
-  this.show_script = function(event, target)
+
+  this._show_script = function(event, target)
   {
-    if (event.type == "click")
+    this._update_match_highlight(event, target);
+    this.show_script_of_search_match(event, target)
+  };
+
+  /* implementation */
+
+  this.createView = function(container)
+  {
+    container.clearAndRender(window.templates.js_search_window());
+    // TODO improve this method
+    var input = this.getToolbarControl(container, this._searchhandler);
+    var output = container.querySelector('.js-search-results');
+    var toolbar = document.getElementById(container.id.replace("container", "toolbar"));
+    info_ele = toolbar && toolbar.getElementsByTagName('info')[0];
+    if (input && output)
     {
-      this._update_match_highlight(event);
+      this._input = input;
+      this._output = output;
+      this._window_highlighter.set_info_element(info_ele);
+      this._window_highlighter.set_container(container);
+      messages.addListener('script-selected', this._onscriptselected_bound);
+      messages.addListener('view-destroyed', this._onsourceviewdestroyed.bind(this));
+      setTimeout(function(){input.focus();}, 0);
     }
-    var cursor = this._text_search.get_match_cursor();
+  };
+
+  this.ondestroy = function()
+  {
+    this._searchterm = '';
+    this.searchresults = null;
+    this._window_highlighter.cleanup();
+    this._source_highlighter.cleanup();
+    messages.removeListener('script-selected', this._onscriptselected_bound);
+    messages.removeListener('view-scrolled', this._onviewscrolled_bound);
+  };
+
+  this.show_script_of_search_match = function(event, target)
+  {
+    var cursor = this._window_highlighter.get_match_cursor();
     var script = null, i = 0;
     for (var rt_id in this.searchresults)
     {
@@ -186,33 +215,26 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
       var js_source_view = window.views.js_source;
       if (!js_source_view.isvisible())
       {
-        this._ui.show_view('js_source');
+        this._ui.show_view(JS_SOURCE_ID);
       }
       script.match_cursor = cursor;
       js_source_view.showLine(script.script_id, script.line_matches[cursor] - 10);
       this._source_highlighter.set_container(js_source_view.get_container());
       this._source_highlighter.set_script(script);
       this._source_highlighter.update_hits(js_source_view.getTopLine(),
-                                      js_source_view.getBottomLine());
-      
+                                           js_source_view.getBottomLine());
+      this._source_highlighter.scroll_selected_hit_in_to_view();
+      messages.addListener('view-scrolled', this._onviewscrolled_bound);
     }
-    /*
-    var script_id = event.target.get_attr('parent-node-chain', 'data-script-id');
-    var line_no = event.target.get_attr('parent-node-chain', 'data-line-no');
-    if (script_id && line_no)
-    {
-      //window.views.js_source.highlight
-      window.views.js_source.highlight(parseInt(script_id), parseInt(line_no));
-    }
-    */
-  }
-  
+  };
+
+  /* action handler interface */
+
   ActionHandlerInterface.apply(this);
-  
-  this._handlers['show-script'] = this.show_script.bind(this);
+  this._handlers['show-script'] = this._show_script.bind(this);
 
   /* initialistaion */
-  
+
   this.init = function(id, name, container_class, searchhandler)
   {
     ViewBase.init.call(this, id, name, container_class);
@@ -225,14 +247,16 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
     this._rt_ids = null;
     this._searchterm = '';
     this.searchresults = {};
-    this._text_search = new JSSearchWindowHighlight();
+    this._window_highlighter = new JSSearchWindowHighlight();
     this._source_highlighter = new VirtualTextSearch();
-    window.messages.addListener('active-tab', this._on_active_tab_bound);
+    this._onscriptselected_bound = this._onscriptselected.bind(this);
+    this._onviewscrolled_bound = this._onviewscrolled.bind(this);
+    window.messages.addListener('active-tab', this._on_active_tab.bind(this));
     ActionBroker.get_instance().register_handler(this);
   }
 
   this.init(id, name, container_class, searchhandler);
 
-}
+};
 
 window.cls.JSSearchWindow.prototype = new window.cls.SearchWindowBase();

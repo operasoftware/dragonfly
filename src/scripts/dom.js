@@ -24,7 +24,7 @@
   });
 })();
 */
-/*
+/* testing in Chrom or FF
 if (document.createElementNS && 
     document.createElement('div').namespaceURI != 'http://www.w3.org/1999/xhtml')
 {  

@@ -164,7 +164,7 @@ Search.prototype = new function()
       {
         if (this._mode == MODE_SEARCHWINDOW)
         {
-          this._searchwindow.show_script(event, target);
+          this._searchwindow.show_script_of_search_match(event, target);
           return false;
         }
       }
