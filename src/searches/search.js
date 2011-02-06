@@ -10,49 +10,17 @@ Search.prototype = new function()
   /* interface */
 
   this.is_active;
+  
   this.hashas_searchbar;
+  
+  this.show = function(){};
+  
+  this.hide = function(){};
+  
+  this.get_searchbar = function(){};
 
-  this.show = function()
-  {
-    if (!this._is_active)
-    {
-      this._is_active = true;
-      if (this._mode == MODE_SEARCHBAR)
-      {
-        this._toggle_searchbar(this._is_active);
-      }
-      else
-      {
-        this._toggle_searchwindow(this._is_active);
-      }
-    }
-  };
-
-  this.hide = function()
-  {
-    if (this._is_active)
-    {
-      this._is_active = false;
-      if (this._mode == MODE_SEARCHBAR)
-      {
-        this._toggle_searchbar(this._is_active);
-        this._simple_text_search.cleanup();
-      }
-      else
-      {
-        this._toggle_searchwindow(this._is_active);
-      }
-    }
-  };
-
-  this.get_searchbar = function()
-  {
-    return this._is_active && 
-           this._searchbar && 
-           this._mode == MODE_SEARCHBAR && 
-           this._searchbar || null;
-  };
-
+  /* constants */
+  
   const 
   MODE_SEARCHBAR = 1, 
   MODE_SEARCHWINDOW = 2,
@@ -60,15 +28,6 @@ Search.prototype = new function()
   MOVE_HIGHLIGHT_DOWN = 1,  
   SEARCHFIELD = 2,
   SEARCH_MORE = 3;
-
-
-  this.__defineSetter__('is_active', function(){});
-  this.__defineGetter__('is_active', function(){return this._is_active;});
-  this.__defineSetter__('has_searchbar', function(){});
-  this.__defineGetter__('has_searchbar', function()
-  {
-    return this._is_active && this._searchbar && this._mode == MODE_SEARCHBAR;
-  });
 
   this._toggle_searchbar = function(bool)
   {
@@ -161,7 +120,7 @@ Search.prototype = new function()
     if (this._searchwindow && msg.id == this._searchwindow.id)
     {
       this._is_active = false;
-      this._update_toolbarbutton()
+      this._update_toolbarbutton();
     }
   }
 
@@ -249,8 +208,6 @@ Search.prototype = new function()
     }
   }
 
-
-
   this._init = function(view_id, searchbar, searchwindow)
   {
     var searchbarclass = searchbar && searchbar[0];
@@ -304,8 +261,6 @@ Search.prototype = new function()
     }
     if (searchwindowclass)
     {
-
-
       if (this.controls.length)
       {
         this.advanced_controls = this.controls.slice(0);
@@ -331,7 +286,6 @@ Search.prototype = new function()
                                                  "Search", 
                                                  view_id + "-search-window scroll",
                                                  this.controls[SEARCHFIELD].handler);
-
       new ToolbarConfig(this._window_view_id, 
                         null, 
                         this.advanced_controls, 
@@ -340,12 +294,61 @@ Search.prototype = new function()
       eventHandlers.click[this.controls[SEARCH_MORE].handler] = 
         this._toggle_mode.bind(this);
       messages.addListener('view-destroyed', this._onserachwindowclosed.bind(this));
-      
     }
-    
     this._ui = UI.get_instance();
     this._ui.register_search(view_id, this);
   };
+  
+  /* implementation */
+  
+  this.show = function()
+  {
+    if (!this._is_active)
+    {
+      this._is_active = true;
+      if (this._mode == MODE_SEARCHBAR)
+      {
+        this._toggle_searchbar(this._is_active);
+      }
+      else
+      {
+        this._toggle_searchwindow(this._is_active);
+      }
+    }
+  };
+
+  this.hide = function()
+  {
+    if (this._is_active)
+    {
+      this._is_active = false;
+      if (this._mode == MODE_SEARCHBAR)
+      {
+        this._toggle_searchbar(this._is_active);
+        this._simple_text_search.cleanup();
+      }
+      else
+      {
+        this._toggle_searchwindow(this._is_active);
+      }
+    }
+  };
+
+  this.get_searchbar = function()
+  {
+    return this._is_active && 
+           this._searchbar && 
+           this._mode == MODE_SEARCHBAR && 
+           this._searchbar || null;
+  };
+  
+  this.__defineSetter__('is_active', function(){});
+  this.__defineGetter__('is_active', function(){return this._is_active;});
+  this.__defineSetter__('has_searchbar', function(){});
+  this.__defineGetter__('has_searchbar', function()
+  {
+    return this._is_active && this._searchbar && this._mode == MODE_SEARCHBAR;
+  });
 
 };
 
@@ -404,7 +407,7 @@ var JSSourceSearchBase = function()
     Search.prototype._init.call(this, view_id, searchbar, searchwindow);
     this._onscriptselected_bound = this._onscriptselected.bind(this);
     this._onviewscrolled_bound = this._onviewscrolled.bind(this);
-  }
+  };
   
 };
 
