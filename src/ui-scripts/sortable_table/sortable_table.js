@@ -54,9 +54,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
     this.tabledef = tabledef;
     this.data = data;
     this.columns = cols;
-    this.orgininal_columns = [];
-    for(var i=0; i < this.columns.length; i++)
-      this.orgininal_columns.push(this.columns[i]);
+    this.orgininal_columns = this.columns.slice(0);
     this.reversed = !!reversed;
     this.groupby = groupby;
     this._elem = null;
