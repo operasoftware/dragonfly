@@ -132,7 +132,7 @@ cls.CookieManagerView = function(id, name, container_class)
     var sortable_table;
     if(container.getElementsByClassName("table_container").length < 1)
     {
-      sortable_table = new SortableTable(this._tabledef, this.flattened_cookies, null, "domain", true, "hostandpath");
+      sortable_table = new SortableTable(this._tabledef, this.flattened_cookies, null, "domain", "hostandpath", true);
       this._table_container = container.render(["div",sortable_table.render(),"class","table_container"]);
     }
     this._table_elem = container.getElementsByClassName("sortable-table")[0];
