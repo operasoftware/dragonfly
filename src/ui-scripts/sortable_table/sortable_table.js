@@ -11,7 +11,7 @@
  *         columns: {
  *
  */
-function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
+function SortableTable(tabledef, data, cols, sortby, reversed, groupby)
 {
   this._init = function()
   {

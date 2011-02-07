@@ -132,7 +132,7 @@ cls.CookieManagerView = function(id, name, container_class)
     var sortable_table;
     if(container.getElementsByClassName("table_container").length < 1)
     {
-      sortable_table = new SortableTable(this._tabledef, this.flattened_cookies, null, "domain", "hostandpath", true);
+      sortable_table = new SortableTable(this._tabledef, this.flattened_cookies, null, "domain", true, "hostandpath");
       this._table_container = container.render(["div",sortable_table.render(),"class","table_container"]);
     }
     this._table_elem = container.getElementsByClassName("sortable-table")[0];
@@ -620,7 +620,7 @@ cls.CookieManagerView = function(id, name, container_class)
           var pos = cookie_info.indexOf('=', 0);
           this._cookie_dict[domain+path].cookies.push({
             name:  cookie_info.slice(0, pos),
-            value: decodeURIComponent(cookie_info.slice(pos+1))
+            value: cookie_info.slice(pos+1)
           });
         };
         window.views.cookie_manager.update();
@@ -668,7 +668,7 @@ cls.CookieManagerView = function(id, name, container_class)
     {
       edit_tr.removeClass("edit_mode");
       var name    = edit_tr.querySelector("[name=name]").value.trim();
-      var value   = encodeURIComponent(edit_tr.querySelector("[name=value]").value);
+      var value   = edit_tr.querySelector("[name=value]").value;
       var expires = new Date(edit_tr.querySelector("[name=expires]").value).getTime();
       var path    = edit_tr.querySelector("[name=path]").value.trim();
       var runtime = parseInt(edit_tr.querySelector("[name=add_cookie_runtime]").value.split(",")[0]);
@@ -717,14 +717,13 @@ cls.CookieManagerView = function(id, name, container_class)
         window.views.cookie_manager.remove_cookie_by_objectref(cookie.objectref, true);
       }
       // and add modified / new
-      var add_cookie_script = 'document.cookie="' + name + '=' + value;
+      var add_cookie_script = 'document.cookie="' + name + '=' + encodeURIComponent(value);
       if(expires) // in case of 0 value the "expires" value should not be written, represents "Session" value
       {
         add_cookie_script += '; expires='+ (new Date(expires).toUTCString());
       }
       add_cookie_script += '; path=' + '/' + path + '"';
       var script = add_cookie_script;
-      // console.log(script);
       var tag = tagManager.set_callback(this, window.views.cookie_manager.handle_changed_cookies, [runtime]);
       services['ecmascript-debugger'].requestEval(tag,[runtime, 0, 0, script]);
     }
