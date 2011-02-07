@@ -157,11 +157,10 @@ cls.CookieManagerView = function(id, name, container_class)
   {
     // save selection
     var selection = document.querySelectorAll(".sortable-table .selected");
-    var selected_cookie_objects = [];
+    this._restore_selection = this._restore_selection || [];
     for (var i=0; i < selection.length; i++) {
-      selected_cookie_objects.push(this.get_cookie_by_objectref(selection[i].getAttribute("data-object-id")));
+      this._restore_selection.push(selection[i].getAttribute("data-object-id"));
     };
-    this._restore_selection = selected_cookie_objects;
   }
 
   this._after_table_render = function(container)
@@ -170,7 +169,7 @@ cls.CookieManagerView = function(id, name, container_class)
     if(this._restore_selection)
     {
       for (var i=0; i < this._restore_selection.length; i++) {
-        var objectref = this._restore_selection[i].objectref;
+        var objectref = this._restore_selection[i];
         var elem = container.querySelector("[data-object-id='"+objectref+"']");
         if(elem)
         {
@@ -725,6 +724,17 @@ cls.CookieManagerView = function(id, name, container_class)
         add_cookie_script += '; expires='+ (new Date(expires).toUTCString());
       }
       add_cookie_script += '; path=' + '/' + path + '"';
+      // select changed / created cookie
+      this._restore_selection = [
+        this._create_object_ref(
+          {
+            domain: this._rts[runtime].hostname,
+            name: name,
+            value: value,
+            path: path
+          }
+        )
+      ];
       var script = add_cookie_script;
       var tag = tagManager.set_callback(this, window.views.cookie_manager.handle_changed_cookies, [runtime]);
       services['ecmascript-debugger'].requestEval(tag,[runtime, 0, 0, script]);
@@ -766,6 +776,11 @@ cls.CookieManagerView = function(id, name, container_class)
   };
 
   // Helpers
+  this._create_object_ref = function(cookie)
+  {
+    return cookie.domain + "/" + cookie.path + "/" + cookie.name;
+  };
+  
   this._flatten_cookies = function(cookies, runtimes)
   {
     var flattened_cookies = [];
@@ -778,7 +793,7 @@ cls.CookieManagerView = function(id, name, container_class)
         {
           var current_cookie = domaincookies.cookies[i];
           var flattened_cookie = {
-            objectref:    current_cookie.domain + "/" + current_cookie.path + "/" + current_cookie.name + (parseInt(Math.random()*99999)),
+            objectref:    this._create_object_ref(current_cookie),
             runtimes:     domaincookies.runtimes,
             is_editable:  (function(cookie){
               /**
