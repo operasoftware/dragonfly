@@ -499,9 +499,10 @@ cls.CookieManagerView = function(id, name, container_class)
 
   this._handle_get_domain = function(status, message, rt_id)
   {
-    if(status === 0)
+    const STATUS = 0;
+    const DATA = 2;
+    if(status === 0 && message[STATUS] == "completed")
     {
-      const DATA = 2;
       var parsed_data = JSON.parse(message[DATA]);
       var hostname = parsed_data.hostname;
       var pathname = parsed_data.pathname;
@@ -607,9 +608,10 @@ cls.CookieManagerView = function(id, name, container_class)
 
   this._handle_js_retrieved_cookies = function(status, message, domain, path)
   {
-    if(status === 0)
+    const STATUS = 0;
+    const DATA = 2;
+    if(status === 0 && message[STATUS] == "completed")
     {
-      const DATA = 2;
       var cookie_string = message[DATA];
       if(cookie_string && cookie_string.length > 0)
       {
