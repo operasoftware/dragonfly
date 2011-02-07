@@ -1,13 +1,4 @@
-﻿window.eventHandlers.click['cookiemanager-delete-all'] = function(event, target)
-{
-  // just delete cookies that are shown
-  for (var i=0; i < window.views.cookie_manager.flattened_cookies.length; i++) {
-    var cookie = window.views.cookie_manager.flattened_cookies[i];
-    window.views.cookie_manager.remove_cookie_by_objectref(cookie.objectref);
-  };
-};
-
-window.eventHandlers.dblclick['cookiemanager-init-edit-mode'] = function(event, target)
+﻿window.eventHandlers.dblclick['cookiemanager-init-edit-mode'] = function(event, target)
 {
   window.views.cookie_manager.enter_edit_mode(target.getAttribute("data-object-id"), event);
 }
