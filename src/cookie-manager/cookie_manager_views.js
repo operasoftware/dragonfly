@@ -719,7 +719,7 @@ cls.CookieManagerView = function(id, name, container_class)
         window.views.cookie_manager.remove_cookie_by_objectref(cookie.objectref, true);
       }
       // and add modified / new
-      var add_cookie_script = 'document.cookie="' + name + '=' + encodeURIComponent(value);
+      var add_cookie_script = 'document.cookie="' + name + '=' + value;
       if(expires) // in case of 0 value the "expires" value should not be written, represents "Session" value
       {
         add_cookie_script += '; expires='+ (new Date(expires).toUTCString());
