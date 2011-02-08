@@ -703,7 +703,8 @@ cls.CookieManagerView = function(id, name, container_class)
             name: name,
             value: value,
             path: path
-          }
+          },
+          runtime
         )
       ];
       var script = add_cookie_script;
@@ -747,9 +748,9 @@ cls.CookieManagerView = function(id, name, container_class)
   };
 
   // Helpers
-  this._create_objectref = function(cookie)
+  this._create_objectref = function(cookie, runtimes)
   {
-    return cookie.domain + "/" + cookie.path + "/" + cookie.name;
+    return cookie.domain + "/" + cookie.path + "/" + cookie.name + "/" + (runtimes || "");
   };
   
   this._flatten_cookies = function(cookies, runtimes)
@@ -764,7 +765,7 @@ cls.CookieManagerView = function(id, name, container_class)
         {
           var current_cookie = domaincookies.cookies[i];
           var flattened_cookie = {
-            objectref:    this._create_objectref(current_cookie),
+            objectref:    this._create_objectref(current_cookie, domaincookies.runtimes),
             runtimes:     domaincookies.runtimes,
             is_editable:  (function(cookie){
               /**
