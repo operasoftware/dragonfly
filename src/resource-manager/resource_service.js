@@ -123,10 +123,9 @@ cls.ResourceContext = function()
   {
     var res = this.get_resource(event.resourceID);
 
-    if (!res && eventname == "urlload")
+    if (eventname == "urlload" && !res)
     {
-      res = new cls.Resource(event.resourceID)
-      if (this.resources.length == 0) { this.topresource = event.resourceID; }
+      res = new cls.Resource(event.resourceID);
       this.resources.push(res);
     }
     else if (!res)
@@ -136,6 +135,7 @@ cls.ResourceContext = function()
     }
 
     res.update(eventname, event);
+
     if (res.invalid)
     {
       this.resources.splice(this.resources.indexOf(res), 1);
@@ -214,7 +214,7 @@ cls.Resource = function(id)
     }
     else if (eventname == "response")
     {
-      if (eventdata.responseCode <= 100 || eventdata.responseCode >= 300)
+      if ([200, 304].indexOf(eventdata.responseCode) == -1)
       {
         this.invalid = true;
       }
