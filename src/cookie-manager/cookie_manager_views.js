@@ -128,6 +128,21 @@ cls.CookieManagerView = function(id, name, container_class)
   {
     container.setAttribute("handler", "cookiemanager-container");
     container.setAttribute("data-menu", "cookie_refetch");
+    var contextmenu = ContextMenu.get_instance();
+    contextmenu.register("cookie_refetch", [
+      {
+        callback: (function(context){
+          return function(){
+            return [
+              {
+                label: "Refresh",
+                handler: function(){context.refetch()}
+              }
+            ]
+          }
+        })(this)
+      }
+    ]);
     this.flattened_cookies = this._flatten_cookies(this._cookie_dict, this._rts);
     if(!this._sortable_table)
     {
@@ -176,23 +191,8 @@ cls.CookieManagerView = function(id, name, container_class)
     }
     // context menus
     var contextmenu = ContextMenu.get_instance();
-    contextmenu.register("cookie_refetch", [
-      {
-        callback: (function(context){
-          return function(){
-            return [
-              {
-                label: "Refresh",
-                handler: function(){context.refetch()}
-              }
-            ]
-          }
-        })(this)
-      }
-    ]);
-
     // add delete cookie context menu per tr
-    this._table_elem = this._table_container.getElementsByClassName("sortable-table")[0];
+    this._table_elem = this._table_container.firstChild;
     for(var i=0; i < this._table_elem.childNodes.length; i++)
     {
       this._table_elem.childNodes[i].setAttribute("data-menu", "cookie_context");
@@ -336,45 +336,6 @@ cls.CookieManagerView = function(id, name, container_class)
     };
   }
 
-  this._on_active_tab = function(msg)
-  {
-    // cleanup runtimes directory
-    for(var item in this._rts)
-    {
-      // item is a string, rt_id is a number which can now be compared with what's in msg.runtimes_with_dom
-      var rt_id = this._rts[item].rt_id;
-      if(msg.runtimes_with_dom.indexOf(rt_id) === -1)
-      {
-        // runtime was not active and is to be removed from this._rts
-        delete this._rts[rt_id];
-        // loop over existing cookies to remove the rt_id from the runtimes of each
-        for(var domain_and_path in this._cookie_dict)
-        {
-          if(this._cookie_dict[domain_and_path].runtimes && (this._cookie_dict[domain_and_path].runtimes.indexOf(rt_id) !== -1))
-          {
-            var index = this._cookie_dict[domain_and_path].runtimes.indexOf(rt_id);
-            this._cookie_dict[domain_and_path].runtimes.splice(index,1);
-            // if no runtimes are left, delete from _cookie_dict
-            if(this._cookie_dict[domain_and_path].runtimes.length < 1)
-            {
-              delete this._cookie_dict[domain_and_path];
-            }
-          }
-        }
-      }
-    }
-
-    for (var i=0; i < msg.runtimes_with_dom.length; i++)
-    {
-      var rt_id = msg.runtimes_with_dom[i];
-      if(!this._rts[rt_id])
-      {
-        this._rts[rt_id]={rt_id: rt_id, get_domain_is_pending: true};
-      }
-      this._request_runtime_details(this._rts[rt_id]);
-    };
-  };
-
   this._update_expiry = function()
   {
     for (var i=0; i < window.views.cookie_manager.flattened_cookies.length; i++)
@@ -449,6 +410,73 @@ cls.CookieManagerView = function(id, name, container_class)
         }
       }
     }
+  };
+
+  this.select_row = function(event, elem)
+  {
+    var event = event || {};
+    var was_selected = elem.hasClass("selected");
+    var is_in_edit_mode = elem.hasClass("edit_mode");
+    // unselect everything, as long as
+    //   not doing multiple selection. that's when:
+    //     cmd / ctrl key is used
+    //     more than 1 item selected and event is a right-click
+    //   not currently editing this row
+    var selection = document.querySelectorAll(".sortable-table .selected");
+    if(!( event.ctrlKey || (event.button === 2 && selection.length > 1) ))
+    {
+      for (var i=0; i < selection.length; i++) {
+        selection[i].removeClass("selected");
+      };
+    }
+    elem.addClass("selected");
+  };
+
+  this.insert_add_cookie_row = function(row, runtime)
+  {
+    var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row(runtime, window.views.cookie_manager._rts));
+    var inserted = row.parentElement.insertBefore(templ, row);
+    inserted.querySelector("[name=name]").focus();
+    return inserted;
+  }
+
+  this._on_active_tab = function(msg)
+  {
+    // cleanup runtimes directory
+    for(var item in this._rts)
+    {
+      // item is a string, rt_id is a number which can now be compared with what's in msg.runtimes_with_dom
+      var rt_id = this._rts[item].rt_id;
+      if(msg.runtimes_with_dom.indexOf(rt_id) === -1)
+      {
+        // runtime was not active and is to be removed from this._rts
+        delete this._rts[rt_id];
+        // loop over existing cookies to remove the rt_id from the runtimes of each
+        for(var domain_and_path in this._cookie_dict)
+        {
+          if(this._cookie_dict[domain_and_path].runtimes && (this._cookie_dict[domain_and_path].runtimes.indexOf(rt_id) !== -1))
+          {
+            var index = this._cookie_dict[domain_and_path].runtimes.indexOf(rt_id);
+            this._cookie_dict[domain_and_path].runtimes.splice(index,1);
+            // if no runtimes are left, delete from _cookie_dict
+            if(this._cookie_dict[domain_and_path].runtimes.length < 1)
+            {
+              delete this._cookie_dict[domain_and_path];
+            }
+          }
+        }
+      }
+    }
+
+    for (var i=0; i < msg.runtimes_with_dom.length; i++)
+    {
+      var rt_id = msg.runtimes_with_dom[i];
+      if(!this._rts[rt_id])
+      {
+        this._rts[rt_id]={rt_id: rt_id, get_domain_is_pending: true};
+      }
+      this._request_runtime_details(this._rts[rt_id]);
+    };
   };
 
   this.refetch = function()
@@ -711,34 +739,6 @@ cls.CookieManagerView = function(id, name, container_class)
       var tag = tagManager.set_callback(this, window.views.cookie_manager.handle_changed_cookies, [runtime]);
       services['ecmascript-debugger'].requestEval(tag,[runtime, 0, 0, script]);
     }
-  }
-
-  this.select_row = function(event, elem)
-  {
-    var event = event || {};
-    var was_selected = elem.hasClass("selected");
-    var is_in_edit_mode = elem.hasClass("edit_mode");
-    // unselect everything, as long as
-    //   not doing multiple selection. that's when:
-    //     cmd / ctrl key is used
-    //     more than 1 item selected and event is a right-click
-    //   not currently editing this row
-    var selection = document.querySelectorAll(".sortable-table .selected");
-    if(!( event.ctrlKey || (event.button === 2 && selection.length > 1) ))
-    {
-      for (var i=0; i < selection.length; i++) {
-        selection[i].removeClass("selected");
-      };
-    }
-    elem.addClass("selected");
-  };
-
-  this.insert_add_cookie_row = function(row, runtime)
-  {
-    var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row(runtime, window.views.cookie_manager._rts));
-    var inserted = row.parentElement.insertBefore(templ, row);
-    inserted.querySelector("[name=name]").focus();
-    return inserted;
   }
 
   this._init = function(id, update_event_name)
