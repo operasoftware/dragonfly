@@ -27,7 +27,10 @@ cls.NetworkLoggerService = function(view, data)
 
   this._on_urlload_bound = function(msg)
   {
-    if (!this._current_context) { return; }
+    if (!this._current_context)
+    {
+      this._current_context = new cls.RequestContext();
+    }
     var data = new cls.ResourceManager["1.0"].UrlLoad(msg);
 
     //bail if we get dupes. Why do we get dupes? fixme
