@@ -187,7 +187,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
 
   this.restore_columns = function()
   {
-    this.columns = this.orgininal_columns;
+    this.columns = this.orgininal_columns.slice(0);
     this.post_message("before-render");
     document.querySelector(".sortable-table").re_render(this.render());
     this.post_message("after-render");
