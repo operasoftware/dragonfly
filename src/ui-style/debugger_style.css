@@ -482,14 +482,6 @@ input.unfolded {
   -o-transform: rotate(90deg);
   }
 
-.overwritten {
-  text-decoration: line-through;
-  }
-
-.css-inspector .overwritten value:after {
-  color: #c90;
-  }
-
 .css-inspector .selected {
   background-color: #bbcef1;
   }
