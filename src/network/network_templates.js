@@ -292,7 +292,7 @@ templates.network_log_graph = function(ctx, width)
   var rowheight = 25;
   var height = ctx.resources.length * rowheight;
 
-  var gradients = templates.gradient_defs();
+  var gradients = templates.network_graph_gradient_defs();
   var background = templates.network_log_background(ctx, rowheight);
   var bars = templates.graph_bars(ctx, width, rowheight);
   var grid = templates.grid_lines(ctx, width, height);
@@ -437,18 +437,18 @@ templates.grid_lines = function(ctx, width, height)
 };
 
 
-templates.gradient_defs = function()
+templates.network_graph_gradient_defs = function()
 {
   return ["defs",
-          templates.gradient("image", "#ff7c7c", "#cb1313", "#b40000", "#c42222"),
-          templates.gradient("script", "#ffffeb","#e2dd9a","#c6bf7a", "#d1cd95"),
-          templates.gradient("css", "#e6ffff", "#91c4ff", "#71a6f0", "#8eb8f3"),
-          templates.gradient("markup", "#d9deff", "#7c85b9", "#6972a6", "#8088b4"),
-          templates.gradient("unknown", "#ffffff", "#c0c0c0", "#aaaaaa", "#b8b8b8")
+          templates.network_graph_gradient("image", "#ff7c7c", "#cb1313", "#b40000", "#c42222"),
+          templates.network_graph_gradient("script", "#ffffeb","#e2dd9a","#c6bf7a", "#d1cd95"),
+          templates.network_graph_gradient("css", "#e6ffff", "#91c4ff", "#71a6f0", "#8eb8f3"),
+          templates.network_graph_gradient("markup", "#d9deff", "#7c85b9", "#6972a6", "#8088b4"),
+          templates.network_graph_gradient("unknown", "#ffffff", "#c0c0c0", "#aaaaaa", "#b8b8b8")
          ];
 };
 
-templates.gradient = function(id, c1, c2, c3, c4)
+templates.network_graph_gradient = function(id, c1, c2, c3, c4)
 {
   return ["linearGradient",
           ["stop", "offset", "5%", "stop-color", c1],
