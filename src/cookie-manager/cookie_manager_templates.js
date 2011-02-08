@@ -43,7 +43,8 @@ templates.cookie_manager = {
       "input",
       "value", value || "",
       "type",  "text",
-      "name",  name
+      "name",  name,
+      "handler", "cookiemanager-input-field"
     ]
   },
   input_datetime_container: function(name, value) {
@@ -51,7 +52,8 @@ templates.cookie_manager = {
       "input",
       "value", value || "",
       "type",  "datetime",
-      "name",  name
+      "name",  name,
+      "handler", "cookiemanager-input-field"
     ]
   },
   input_domain: function(current_runtime, runtimes) {
@@ -76,7 +78,12 @@ templates.cookie_manager = {
     };
     if(domain_count <= 1) {
       return [
-        ["input", "type", "hidden", "name", "add_cookie_runtime", "value", domains[domain].runtimes.toString()],
+        [
+          "input",
+          "type", "hidden",
+          "name", "add_cookie_runtime",
+          "value", domains[domain].runtimes.toString()
+        ],
         ["span", runtimes[domains[domain].runtimes[0]].hostname]
       ];
     }
@@ -91,7 +98,13 @@ templates.cookie_manager = {
         option_arr.push(option);
       };
       return [
-        ["select", option_arr, "name", "add_cookie_runtime", "handler", "cookiemanager-add-cookie-domain-select", "class", "add_cookie_dropdown"]
+        [
+          "select", option_arr,
+          "name", "add_cookie_runtime",
+          "handler", "cookiemanager-add-cookie-domain-select",
+          "class", "add_cookie_dropdown",
+          "handler", "cookiemanager-input-field"
+        ]
       ];
     }
   },

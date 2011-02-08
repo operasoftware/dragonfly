@@ -9,6 +9,12 @@ window.eventHandlers.click['cookiemanager-row-select'] = function(event, target)
   window.views.cookie_manager.select_row(event, target);
 }
 
+window.eventHandlers.click['cookiemanager-input-field'] = function(event, target)
+{
+  // Empty for now, but preventing click['cookiemanager-container']
+  // which exits editing
+}
+
 window.eventHandlers.keyup['cookiemanager-container'] = function(event, target)
 {
   // Save on <enter>
