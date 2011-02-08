@@ -129,31 +129,26 @@ cls.CookieManagerView = function(id, name, container_class)
     container.setAttribute("handler", "cookiemanager-container");
     container.setAttribute("data-menu", "cookie_refetch");
     this.flattened_cookies = this._flatten_cookies(this._cookie_dict, this._rts);
-    var sortable_table;
-    if(container.getElementsByClassName("table_container").length < 1)
+    if(!this._sortable_table)
     {
-      sortable_table = new SortableTable(this._tabledef, this.flattened_cookies, null, "domain", "hostandpath", true);
-      this._table_container = container.render(["div",sortable_table.render(),"class","table_container"]);
+      this._sortable_table = new SortableTable(this._tabledef, this.flattened_cookies, null, "domain", "hostandpath", true);
+      this._sortable_table.add_listener("before-render", this._before_table_render.bind(this, container));
+      this._sortable_table.add_listener("after-render", this._after_table_render.bind(this, container));
     }
-    this._table_elem = container.getElementsByClassName("sortable-table")[0];
-    sortable_table = ObjectRegistry.get_instance().get_object(this._table_elem.getAttribute("data-object-id"));
-    sortable_table.data = this.flattened_cookies;
-    this._table_container = container.clearAndRender(["div",sortable_table.render(),"class","table_container"]);
-    // context menus, focussing
-    sortable_table.add_listener("after-render",this._after_table_render.bind(this, container));
-    this._after_table_render(container);
-    // selection restore
-    sortable_table.add_listener("before-render",this._before_table_re_render.bind(this, container));
-    // live expiry
-    sortable_table.add_listener("after-render",this._update_expiry.bind(this));
+    else
+    {
+      this._sortable_table.data = this.flattened_cookies;
+    }
     if(!this._update_expiry_interval)
     {
       this._update_expiry_interval = setInterval(this._update_expiry, 15000);
     }
-    this._update_expiry();
+    this._before_table_render(container);
+    this._table_container = container.clearAndRender(["div",this._sortable_table.render(),"class","table_container"]);
+    this._after_table_render(container);
   };
 
-  this._before_table_re_render = function(container)
+  this._before_table_render = function(container)
   {
     // save selection
     var selection = document.querySelectorAll(".sortable-table .selected");
@@ -165,6 +160,7 @@ cls.CookieManagerView = function(id, name, container_class)
 
   this._after_table_render = function(container)
   {
+    this._update_expiry();
     // restore selection
     if(this._restore_selection)
     {
@@ -226,7 +222,7 @@ cls.CookieManagerView = function(id, name, container_class)
             var sel_cookie_obj = window.views.cookie_manager.get_cookie_by_objectref(selection[i].getAttribute("data-object-id"));
             selected_cookie_objects.push(sel_cookie_obj);
           };
-          
+
           if(selected_cookie_objects.length === 1)
           {
             // Add cookie
@@ -323,39 +319,14 @@ cls.CookieManagerView = function(id, name, container_class)
               );
             }
           }
-          
-          /*
-          // removing rightclick on summer or header rows for now
-          {
-            // no cookie object existing, find basic data from above the summer or below the header
-            var next_objectref_holder = row;
-            if(row.hasClass("sortable-table-summation-row"))
-            {
-              // walk upwards
-              while(!next_objectref_holder.getAttribute("data-object-id") || !next_objectref_holder.previousElementSibling)
-              {
-                next_objectref_holder = next_objectref_holder.previousElementSibling;
-              }
-            }
-            else if(row.hasClass("header"))
-            {
-              // walk downwards
-              while(!next_objectref_holder.getAttribute("data-object-id") || !next_objectref_holder.nextElementSibling)
-              {
-                next_objectref_holder = next_objectref_holder.nextElementSibling;
-              }
-            }
-            cookie_obj = window.views.cookie_manager.get_cookie_by_objectref(next_objectref_holder.getAttribute("data-object-id"));
-          }
-          */
           return options;
         }
       }
     ];
     contextmenu.register("cookie_context", cookie_row_context);
-    
+
     // select and dbl-click to edit
-    var rows = this._table_elem.querySelectorAll("tr[data-object-id]");
+    var rows = container.querySelectorAll("tr[data-object-id]");
     for (var i=0; i < rows.length; i++) {
       rows[i].setAttribute("handler", "cookiemanager-row-select");
       if(this.get_cookie_by_objectref(rows[i].getAttribute("data-object-id")).is_editable)
@@ -643,7 +614,7 @@ cls.CookieManagerView = function(id, name, container_class)
     this.select_row(event, row);
     // Todo: focus input in clicked td if applicable
   }
-  
+
   this.check_to_exit_edit_mode = function(event, target)
   {
     if(document.querySelector(".edit_mode"))
@@ -711,14 +682,14 @@ cls.CookieManagerView = function(id, name, container_class)
           console.log("RUNTIME CHANGED", "\n"+cookie.runtimes, "\n"+runtime);
       }
       end dbg */
-      
+
       // remove old cookie
       if(cookie)
       {
         window.views.cookie_manager.remove_cookie_by_objectref(cookie.objectref, true);
       }
       // and add modified / new
-      var add_cookie_script = 'document.cookie="' + name + '=' + value;
+      var add_cookie_script = 'document.cookie="' + name + '=' + encodeURIComponent(value);
       if(expires) // in case of 0 value the "expires" value should not be written, represents "Session" value
       {
         add_cookie_script += '; expires='+ (new Date(expires).toUTCString());
@@ -760,7 +731,7 @@ cls.CookieManagerView = function(id, name, container_class)
     }
     elem.addClass("selected");
   };
-  
+
   this.insert_add_cookie_row = function(row, runtime)
   {
     var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row(runtime, window.views.cookie_manager._rts));
@@ -793,7 +764,7 @@ cls.CookieManagerView = function(id, name, container_class)
         {
           var current_cookie = domaincookies.cookies[i];
           var flattened_cookie = {
-            objectref:    this._create_object_ref(current_cookie),
+            objectref:    current_cookie.domain + "/" + current_cookie.path + "/" + current_cookie.name + (parseInt(Math.random()*99999)),
             runtimes:     domaincookies.runtimes,
             is_editable:  (function(cookie){
               /**
