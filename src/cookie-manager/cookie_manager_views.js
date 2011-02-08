@@ -59,7 +59,7 @@ cls.CookieManagerView = function(id, name, container_class)
           {
             return;
           }
-          return window.templates.cookie_manager.editable_value(decodeURIComponent(obj.value));
+          return window.templates.cookie_manager.editable_value(obj.value);
         }
       },
       path: {
@@ -577,7 +577,7 @@ cls.CookieManagerView = function(id, name, container_class)
             domain:     cookie_info[0],
             path:       cookie_info[1],
             name:       cookie_info[2],
-            value:      cookie_info[3],
+            value:      decodeURIComponent(cookie_info[3]),
             expires:    cookie_info[4],
             isSecure:   cookie_info[5],
             isHTTPOnly: cookie_info[6]
@@ -620,7 +620,7 @@ cls.CookieManagerView = function(id, name, container_class)
           var pos = cookie_info.indexOf('=', 0);
           this._cookie_dict[domain+path].cookies.push({
             name:  cookie_info.slice(0, pos),
-            value: cookie_info.slice(pos+1)
+            value: decodeURIComponent(cookie_info.slice(pos+1))
           });
         };
         window.views.cookie_manager.update();
