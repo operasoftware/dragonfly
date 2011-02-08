@@ -179,6 +179,14 @@ Search.prototype = new function()
   this._toggle_mode = function()
   {
     var is_active = this._is_active;
+    if (this._mode == MODE_SEARCHBAR)
+    {
+      this._searchwindow.set_search_term(this._search_term);
+    }
+    else
+    {
+      this._simple_text_search.set_search_term(this._search_term);
+    }
     if (is_active)
     {
       this.hide();
@@ -190,6 +198,11 @@ Search.prototype = new function()
     {
       this.show();
     }
+  }
+
+  this._beforesearch = function(msg)
+  {
+    this._search_term = msg.search_term;
   }
 
   this._toggle_searchwindow = function(bool)
@@ -221,12 +234,15 @@ Search.prototype = new function()
     this.advanced_controls = [];
     this._searchbar = null;
     this._searchwindow = null;
+    this._beforesearch_bound = this._beforesearch.bind(this);
     if (searchbarclass)
     {
       this._searchbar = new searchbarclass();
       this._searchbar.add_listener("searchbar-created", 
                                    this._onserachbar_created.bind(this));
       this._simple_text_search = new simplesearchclass();
+      this._simple_text_search.add_listener('onbeforesearch',
+                                            this._beforesearch_bound);
       this.controls.push({
                            handler: this._view_id + '-move-highlight-up',
                            type: "search_control",
@@ -286,6 +302,7 @@ Search.prototype = new function()
                                                  "Search", 
                                                  view_id + "-search-window scroll",
                                                  this.controls[SEARCHFIELD].handler);
+      this._searchwindow.add_listener('onbeforesearch', this._beforesearch_bound);
       new ToolbarConfig(this._window_view_id, 
                         null, 
                         this.advanced_controls, 

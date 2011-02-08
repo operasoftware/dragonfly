@@ -19,35 +19,52 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
   this._on_active_tab = function(msg)
   {
     this._rt_ids = msg.activeTab.slice(0);
-    this._searchterm = '';
+    this._search_term = '';
   };
 
   this._onhighlightnext = function()
   {
     var searchterm = this._input.value;
-    if (searchterm != this._searchterm)
+    if (searchterm != this._search_term)
     {
-      this._searchterm = searchterm;
+      this._search_term = searchterm;
+      this.post_message("onbeforesearch", {search_term: this._search_term});
       this.searchresults = {};
       this._onscriptselected();
-      if (this._rt_ids)
-      {
-        this._rt_ids.forEach(function(rt_id)
-        {
-          var scripts = window.runtimes.getScripts(rt_id).filter(function(script)
-          {
-            script.search_source(searchterm);
-            return script.line_matches.length;
-          });
-          if (scripts.length)
-          {
-            this.searchresults[rt_id] = scripts;
-          }
-        }, this);
-      }
       this._window_highlighter.reset_match_cursor();
-      this._create_search_results_view();
+      this._window_highlighter.set_search_term(searchterm);
+      this._output.style.removeProperty('width');
+      this._output.clearAndRender(['div', 'searching ...', 
+                                   'class', 'info-is-searching']);
+      if (searchterm)
+      {
+        if (this._rt_ids)
+        {
+          this._rt_ids.forEach(function(rt_id)
+          {
+            var scripts = window.runtimes.getScripts(rt_id).filter(function(script)
+            {
+              script.search_source(searchterm);
+              return script.line_matches.length;
+            });
+            if (scripts.length)
+            {
+              this.searchresults[rt_id] = scripts;
+            }
+          }, this);
+        }
+      }
+      setTimeout(this._show_search_results_bound, 5);
     }
+    else
+    {
+      this._window_highlighter.highlight_next();
+    }
+  };
+
+  this._show_search_results = function()
+  {
+    this._create_search_results_view();
     this._window_highlighter.highlight_next();
   };
 
@@ -80,7 +97,6 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
 
   this._create_search_results_view = function()
   {
-    this._output.style.removeProperty('width');
     this._output.clearAndRender(window.templates.js_serach_results(this.searchresults));
     // .js-search-results-runtime
     //   .js-search-results-script
@@ -174,13 +190,18 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
       this._window_highlighter.set_container(container);
       messages.addListener('script-selected', this._onscriptselected_bound);
       messages.addListener('view-destroyed', this._onsourceviewdestroyed.bind(this));
-      setTimeout(function(){input.focus();}, 0);
+      if (this._search_term)
+      {
+        this._input.value = this._search_term;
+        this._search_term = "";
+        this._onhighlightnext();
+      }
+      input.focus();
     }
   };
 
   this.ondestroy = function()
   {
-    this._searchterm = '';
     this.searchresults = null;
     this._window_highlighter.cleanup();
     this._source_highlighter.cleanup();
@@ -228,6 +249,15 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
     }
   };
 
+  this.set_search_term = function(search_term)
+  {
+    this._search_term = search_term;
+  }
+
+  /* message interface */
+
+  window.cls.MessageMixin.apply(this);
+
   /* action handler interface */
 
   ActionHandlerInterface.apply(this);
@@ -245,12 +275,13 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
     this._input = null;
     this._output = null;
     this._rt_ids = null;
-    this._searchterm = '';
+    this._search_term = '';
     this.searchresults = {};
     this._window_highlighter = new JSSearchWindowHighlight();
     this._source_highlighter = new VirtualTextSearch();
     this._onscriptselected_bound = this._onscriptselected.bind(this);
     this._onviewscrolled_bound = this._onviewscrolled.bind(this);
+    this._show_search_results_bound = this._show_search_results.bind(this);
     window.messages.addListener('active-tab', this._on_active_tab.bind(this));
     ActionBroker.get_instance().register_handler(this);
   }

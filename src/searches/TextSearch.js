@@ -293,6 +293,14 @@ TextSearch.prototype = new function()
                                       'scrollLeft');
       this._update_info();
     }
+    else if (this._search_term)
+    {
+      this._update_info(NO_MATCH);
+    }
+    else
+    {
+      this._update_info(EMPTY);
+    }
   };
 
   this._scroll_into_margined_view = function(container_dim,
@@ -387,4 +395,10 @@ TextSearch.prototype = new function()
     this._match_cursor = -1;
     this._input = this._container = this._info_ele = null;
   };
+
+  this.set_search_term = function(search_term)
+  {
+    this._search_term = search_term;
+  }
+
 };

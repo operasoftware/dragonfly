@@ -51,7 +51,8 @@ var JSSearchWindowHighlightPrototype = function()
   this.get_match_cursor = function()
   {
     return this._match_cursor;
-  }
+  };
+
 };
 
 var VirtualTextSearchBase = function()
@@ -162,6 +163,9 @@ var VirtualTextSearchBase = function()
     if (new_search_term != this._search_term)
     {
       this._search_term = new_search_term;
+      this.post_message("onbeforesearch", 
+                        {search_term: this._search_term.length >= MIN_TERM_LENGTH ? 
+                                      this._search_term : ""});
       if (new_search_term.length >= MIN_TERM_LENGTH)
       {
         this._clear_hits();
