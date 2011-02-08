@@ -697,7 +697,7 @@ cls.CookieManagerView = function(id, name, container_class)
       add_cookie_script += '; path=' + '/' + path + '"';
       // select changed / created cookie
       this._restore_selection = [
-        this._create_object_ref(
+        this._create_objectref(
           {
             domain: this._rts[runtime].hostname,
             name: name,
@@ -747,7 +747,7 @@ cls.CookieManagerView = function(id, name, container_class)
   };
 
   // Helpers
-  this._create_object_ref = function(cookie)
+  this._create_objectref = function(cookie)
   {
     return cookie.domain + "/" + cookie.path + "/" + cookie.name;
   };
@@ -764,7 +764,7 @@ cls.CookieManagerView = function(id, name, container_class)
         {
           var current_cookie = domaincookies.cookies[i];
           var flattened_cookie = {
-            objectref:    current_cookie.domain + "/" + current_cookie.path + "/" + current_cookie.name + (parseInt(Math.random()*99999)),
+            objectref:    this._create_objectref(current_cookie),
             runtimes:     domaincookies.runtimes,
             is_editable:  (function(cookie){
               /**
