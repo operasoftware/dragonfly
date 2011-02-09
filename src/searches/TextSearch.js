@@ -77,7 +77,7 @@ TextSearch.prototype = new function()
           info = ui_strings.S_TEXT_STATUS_SEARCH.
                  replace("%(SEARCH_TERM)s", this._search_term).
                  replace("%(SEARCH_COUNT_TOTAL)s", this._get_match_counts()).
-                 replace("%(SEARCH_COUNT_INDEX)s", this._get_serach_cursor());
+                 replace("%(SEARCH_COUNT_INDEX)s", this._get_search_cursor());
         }
       }
       this._info_ele.textContent = info;
@@ -89,7 +89,7 @@ TextSearch.prototype = new function()
     return this._hits.length;
   }
 
-  this._get_serach_cursor = function()
+  this._get_search_cursor = function()
   {
     return this._match_cursor + 1;
   }

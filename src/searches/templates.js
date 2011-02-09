@@ -15,7 +15,7 @@
     return ['div', 'class', 'js-search-results', 'handler', 'show-script'];
   };
 
-  this.js_serach_results = function(results)
+  this.js_search_results = function(results)
   {
     var ret = ['div'], div = null;
     for (var rt_id in results)

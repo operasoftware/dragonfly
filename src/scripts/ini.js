@@ -27,7 +27,7 @@
           "escape": "toggle-command-line",
           "ctrl tab": "navigate-next-top-tab",
           "ctrl shift tab": "navigate-previous-top-tab",
-          "ctrl f": "show-serach"
+          "ctrl f": "show-search"
         },
         "edit":
         {
@@ -43,7 +43,7 @@
           "escape": "hide-search",
           "ctrl tab": "navigate-next-top-tab",
           "ctrl shift tab": "navigate-previous-top-tab",
-          "ctrl f": "show-serach"
+          "ctrl f": "show-search"
         }
       },
       "dom":

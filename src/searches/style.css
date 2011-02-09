@@ -68,3 +68,14 @@ em
 {
   padding: 7px;
 }
+
+.search-highlight
+{
+  background-color: #ff0; 
+  color: #000;
+}
+.search-highlight-selected
+{
+  background-color: #23dc23; 
+  color: #000;
+}

@@ -169,7 +169,7 @@
     }
   }
 
-  this._handlers["show-serach"] = function(action_id, event, target)
+  this._handlers["show-search"] = function(action_id, event, target)
   {
     var action_id = ActionBroker.get_instance().get_current_handler_id();
     var search = UI.get_instance().get_search(action_id);

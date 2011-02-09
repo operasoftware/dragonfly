@@ -22,7 +22,7 @@ var JSSearchWindowHighlight = function()
 var JSSearchWindowHighlightPrototype = function()
 {
   this._get_match_counts = TextSearch.prototype._get_match_counts;
-  this._get_serach_cursor = TextSearch.prototype._get_serach_cursor;
+  this._get_search_cursor = TextSearch.prototype._get_search_cursor;
   this.highlight_next = TextSearch.prototype.highlight_next;
   this.highlight_previous = TextSearch.prototype.highlight_previous;
   
@@ -252,7 +252,7 @@ var VirtualTextSearchBase = function()
         this._set_source_container();
       }
       // views.js_source.showLine can invalidate the current script source
-      // _search_source only performs the serach if the current search term 
+      // _search_source only performs the search if the current search term 
       // is not the search term of the script
       this._search_source();
       if (this._search_hits_valid)
@@ -438,7 +438,7 @@ var VirtualTextSearchBase = function()
     return this._script.line_matches.length;
   }
 
-  this._get_serach_cursor = function()
+  this._get_search_cursor = function()
   {
     return this._script.match_cursor + 1;
   }

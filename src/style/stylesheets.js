@@ -713,7 +713,7 @@ cls.Stylesheets = function()
     var setProps = elementStyle.getSetProps();
     var hideInitialValue = settings['css-comp-style'].get('hide-initial-values');
     var hide_shorthands = settings['css-comp-style'].get('hide-shorthands'); // TODO make a setting
-    var serach_map = search_active && elementStyle.getSearchMap() || [];
+    var search_map = search_active && elementStyle.getSearchMap() || [];
     var is_not_initial_value = false;
     var display = false;
 
@@ -735,7 +735,7 @@ cls.Stylesheets = function()
           || is_not_initial_value
         )
         && !(hide_shorthands && short_hand_props[prop])
-        && !(search_active && !serach_map[index]);
+        && !(search_active && !search_map[index]);
       if (display)
       {
         ret += (ret ? MARKUP_PROP_NL : "") +

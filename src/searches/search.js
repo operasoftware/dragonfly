@@ -67,7 +67,7 @@ Search.prototype = new function()
 
   /* event handlers */
 
-  this._onserachbar_created = function()
+  this._onsearchbar_created = function()
   {
     var ele = this._searchbar.getElement(), cur = null;
     if (ele && !ele.firstChild)
@@ -93,7 +93,7 @@ Search.prototype = new function()
       {
         this._container = layout_box.container.getElement();
         this._simple_text_search.set_container(this._container);
-        this._onserachbar_created();
+        this._onsearchbar_created();
         if (this._searchwindow)
         {
           this._searchwindow;
@@ -115,7 +115,7 @@ Search.prototype = new function()
     }
   };
 
-  this._onserachwindowclosed = function(msg)
+  this._onsearchwindowclosed = function(msg)
   {
     if (this._searchwindow && msg.id == this._searchwindow.id)
     {
@@ -226,7 +226,7 @@ Search.prototype = new function()
     var searchbarclass = searchbar && searchbar[0];
     var simplesearchclass = searchbar && (searchbar[1] || TextSearch);
     var searchwindowclass = searchwindow && searchwindow[0];
-    var advancedserachclass  = '';
+    var advancedsearchclass  = '';
     this._is_active = false;
     this._mode = MODE_SEARCHBAR;
     this._view_id = view_id;
@@ -239,7 +239,7 @@ Search.prototype = new function()
     {
       this._searchbar = new searchbarclass();
       this._searchbar.add_listener("searchbar-created", 
-                                   this._onserachbar_created.bind(this));
+                                   this._onsearchbar_created.bind(this));
       this._simple_text_search = new simplesearchclass();
       this._simple_text_search.add_listener('onbeforesearch',
                                             this._beforesearch_bound);
@@ -310,7 +310,7 @@ Search.prototype = new function()
                         [{template: function(){return ['info']}}]);
       eventHandlers.click[this.controls[SEARCH_MORE].handler] = 
         this._toggle_mode.bind(this);
-      messages.addListener('view-destroyed', this._onserachwindowclosed.bind(this));
+      messages.addListener('view-destroyed', this._onsearchwindowclosed.bind(this));
     }
     this._ui = UI.get_instance();
     this._ui.register_search(view_id, this);
@@ -395,11 +395,11 @@ var JSSourceSearchBase = function()
     }
   };
   
-  this._super_onserachbar_created = this._onserachbar_created;
+  this._super_onsearchbar_created = this._onsearchbar_created;
   
-  this._onserachbar_created = function()
+  this._onsearchbar_created = function()
   {
-    this._super_onserachbar_created();
+    this._super_onsearchbar_created();
     if (this._searchbar.getElement())
     {
       messages.addListener('script-selected', this._onscriptselected_bound);

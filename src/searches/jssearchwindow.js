@@ -97,7 +97,7 @@ window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
 
   this._create_search_results_view = function()
   {
-    this._output.clearAndRender(window.templates.js_serach_results(this.searchresults));
+    this._output.clearAndRender(window.templates.js_search_results(this.searchresults));
     // .js-search-results-runtime
     //   .js-search-results-script
     //     div (for each line)
