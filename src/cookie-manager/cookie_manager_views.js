@@ -768,38 +768,27 @@ cls.CookieManagerView = function(id, name, container_class, service_version)
           var flattened_cookie = {
             objectref:    this._create_objectref(current_cookie, domaincookies.runtimes),
             runtimes:     domaincookies.runtimes,
-            is_editable:  (function(cookie){
-              /**
-               * Decides if the cookie name & value can be edited.
-               * The cookie.domain condition should be removed when a new "add cookie" interface as defined
-               * in CORE-35370 is used, which will allow specifying the domain when creating cookies
-              */
-              if(
-                cookie.isHTTPOnly ||
-                cookie.path || // remove when CORE-35055 is fixed
-                cookie.domain != runtimes[domaincookies.runtimes[0]].hostname
-              )
-              {
-                return false;
-              }
-              return true;
-            })(current_cookie),
-            is_removable: (function(cookie){
-              /**
-               * Cookie retrieved via JS can't reliably be removed because domain (and path) are unknown.
-               * Also while path info is mostly incorrect when present (CORE-35055), cookie with path
-               * won't be removable for now.
-              */
-              if(
-                cookie.domain === undefined ||
-                cookie.path === undefined ||
-                cookie.path // remove when CORE-35055 is fixed
-              )
-              {
-                return false;
-              }
-              return true;
-            })(current_cookie)
+            /**
+             * Decide if the cookie can be edited.
+             * The cookie.domain condition should be removed when a new "add cookie" interface as defined
+             * in CORE-35370 is used, which will allow specifying the domain when creating cookies
+            */
+            is_editable:  (
+                            !current_cookie.isHTTPOnly &&
+                            !current_cookie.path && // remove when CORE-35055 is fixed
+                            current_cookie.domain === runtimes[domaincookies.runtimes[0]].hostname
+                          ),
+            /**
+             * Decide if the cookie can be removed.
+             * Cookie retrieved via JS can't reliably be removed because domain (and path) are unknown.
+             * Also while path info is mostly incorrect when present (CORE-35055), cookie with path
+             * won't be removable for now.
+            */
+            is_removable: (
+                            current_cookie.domain !== undefined &&
+                            current_cookie.path !== undefined &&
+                            !current_cookie.path // remove when CORE-35055 is fixed
+                          )
           };
           for (var key in current_cookie) {
             flattened_cookie[key] = current_cookie[key];
