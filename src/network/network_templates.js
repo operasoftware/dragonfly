@@ -86,7 +86,7 @@ templates.network_request_crafter_main = function(url, loading, request, respons
           ["div",
            ["h2", "URL"],
            ["input", "type", "text",
-            "value", url || "",
+            "value", url || "http://example.org",
             "handler", "request-crafter-url-change"],
            ["h2", "Request body"],
             ["textarea", request],

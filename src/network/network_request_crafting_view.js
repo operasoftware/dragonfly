@@ -15,7 +15,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
 
   this._request_template = [
     "GET / HTTP/1.1",
-    "Host: www.opera.com",
+    "Host: example.org",
     "User-Agent: " + this._uastring,
     "Accept: text/html, application/xml;q=0.9, application/xhtml xml, image/png, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1",
     "Accept-Language: nb-NO,nb;q=0.9,no-NO;q=0.8,no;q=0.7,en;q=0.6",
