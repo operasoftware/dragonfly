@@ -138,11 +138,11 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
       },
       host: {
         label: "Host",
-        getter: function(res) { return res.urltype == 4 ? "No host. Data URI" : cls.ResourceUtil.url_host(res.url) },
+        getter: function(res) { return res.urltype == 4 ? res.human_url : cls.ResourceUtil.url_host(res.url) },
       },
       path: {
         label: "Path",
-        getter: function(res) { return res.urltype == 4 ? "No path. Data URI" : cls.ResourceUtil.url_path(res.url) },
+        getter: function(res) { return res.urltype == 4 ? res.human_url : cls.ResourceUtil.url_path(res.url) },
       },
       mime: {
         label: "Mime",

@@ -141,7 +141,7 @@ templates.network_log_request_detail = function(ctx, selected)
     ["button", "X", "handler", "close-request-detail", "unselectable", "on"],
     ["h2", "Summary"],
     ["table",
-     ["tr", ["th", "URL:"], ["td", req.url]],
+     ["tr", ["th", "URL:"], ["td", req.human_url]],
      ["tr", ["th", "Method:"], ["td", req.method || "-"],
       "data-spec", "http#" + req.method
      ],
@@ -273,7 +273,7 @@ templates.network_log_url_list = function(ctx, selected)
     if (res.cached) { statusclass = "status-cached" } 
     return ["li",
             templates.network_request_icon(res),
-            ["span", res.url],
+            ["span", res.human_url],
             ["span", String(res.responsecode),
              "class", "log-url-list-status " + statusclass,
              "title", String(res.responsecode)
@@ -282,7 +282,7 @@ templates.network_log_url_list = function(ctx, selected)
             "data-resource-id", String(res.id),
             "class", selected===res.id ? "selected" : "",
             "data-menu", "request-context-options",
-            "title", res.url
+            "title", res.human_url
            ]
   }
   return ["ol", ctx.resources.map(itemfun),

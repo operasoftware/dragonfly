@@ -239,6 +239,7 @@ cls.Request = function(id)
   this.id = id;
   this.finished = false;
   this.url = null;
+  this.human_url = "No URL";
   this.result = null;
   this.mime = null;
   this.encoding = null;
@@ -281,6 +282,7 @@ cls.Request = function(id)
     this.starttime = Math.round(event.time);
     // fixme: complete list
     this.urltypeName = {0: "unknown", 1: "http", 2: "https", 3: "file", 4: "data" }[event.urlType];
+    this._humanize_url();
   }
 
   this._update_event_urlfinished = function(event)
@@ -298,6 +300,7 @@ cls.Request = function(id)
     if (!this.responsecode) { this.cached = true }
     this.finished = true;
     this._guess_type();
+    this._humanize_url();
   }
 
   this._update_event_request = function(event)
@@ -364,6 +367,22 @@ cls.Request = function(id)
     else
     {
       this.type = cls.ResourceUtil.mime_to_type(this.mime);
+    }
+  }
+
+  this._humanize_url = function()
+  {
+    this.human_url = this.url;
+    if (this.urltype == 4) // data URI
+    {
+      if (this.type)
+      {
+        this.human_url = this.type + " data URI";
+      }
+      else
+      {
+        this.human_url = "data URI";
+      }
     }
   }
 }
