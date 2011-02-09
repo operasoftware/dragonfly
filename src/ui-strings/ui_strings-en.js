@@ -256,6 +256,10 @@ ui_strings.S_SWITCH_FRIENDLY_PRINT = "Use specific information to represent obje
 ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE = "Show objects of type Element in the DOM view";
 /* DESC: Clears the command line log */
 ui_strings.S_CLEAR_COMMAND_LINE_LOG = "Clear command line";
+/* DESC: Show help in command line */
+ui_strings.S_HELP_COMMAND_LINE = "Help";
+/* DESC: Close command line window */
+ui_strings.S_CLOSE_COMMAND_LINE = "Close command line";
 /* DESC: When enabled, compilation errors etc are shown in repl as well as error console */
 ui_strings.S_SWITCH_SHOW_ERRORS_IN_REPL = 'Show page javascript errors in command line';
 

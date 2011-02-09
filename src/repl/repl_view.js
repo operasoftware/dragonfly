@@ -103,6 +103,12 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this.ondestroy();
   };
 
+  this.show_help = function()
+  {
+    opera.postError("fixme: implement help function and split into help/commands")
+  };
+
+
   this._update_input_height_bound = function()
   {
     this._textarea.rows = Math.max(1, Math.ceil(this._textarea.scrollHeight / this._input_row_height));
@@ -849,6 +855,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     return false;
   }
 
+  this["_handle_action_help"] = function(evt, target)
+  {
+    this.show_help();
+  }
+
   /**
    * Entry point for the action handling system
    */
@@ -1016,6 +1027,16 @@ cls.ReplView.create_ui_widgets = function()
       handler: function() {
         broker.dispatch_action("command_line", "clear");
       }
-    }
-  ]);
+    },
+    {
+      label: ui_strings.S_HELP_COMMAND_LINE,
+      handler: function() {
+        broker.dispatch_action("command_line", "help");
+      }
+    },    {
+      label: ui_strings.S_CLOSE_COMMAND_LINE,
+      handler: function() {
+        broker.dispatch_action("global", "toggle-command-line");
+      }
+    },  ]);
 };
