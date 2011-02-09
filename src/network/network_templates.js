@@ -6,42 +6,49 @@ templates.network_options_main = function(caching, tracking, headers)
           ["div",
            ["h2", "Caching behaviour"],
            ["p", "This setting controls how caching works in Opera. When caching is disable, Opera will bypass all caching, always doing full reloads"],
-           ["label", "Standard browser caching behaviour",
-            ["input", "type", "radio",
-             "name", "network-options-caching",
-             "value", "default",
-             "handler", "network-options-toggle-caching",
-             caching == "default" ? "checked" : "non-checked", "true"
-            ]],
-
+           ["label",
+             ["input", "type", "radio",
+              "name", "network-options-caching",
+              "value", "default",
+              "handler", "network-options-toggle-caching",
+              caching == "default" ? "checked" : "non-checked", "true"
+             ],
+             "Standard browser caching behaviour",
+           ],
            ["br"],
-           ["label", "Disable all caching",
+           ["label",
             ["input", "type", "radio",
              "name", "network-options-caching",
              "value", "disabled",
              "handler", "network-options-toggle-caching",
              caching == "disabled" ? "checked" : "non-checked", "true"
-            ]]
+            ],
+            "Disable all caching",
+           ]
           ],
           ["div",
            ["h2", "Content tracking behaviour"],
            ["p", "This setting controls if the bodies of responses will be available to Dragonfly when a page loads. Enabling it will make load operations slower, and use more memory. It will also make network body reporting more accurate"],
-           ["label", "Don't track content (default)",
+           ["label",
             ["input", "type", "radio",
              "name", "network-options-track-bodies",
              "value", "notrack",
              "handler", "network-options-toggle-body-tracking",
              tracking == "notrack" ? "checked" : "non-checked", "true"
-            ]],
+            ],
+            "Don't track content (default)",
+            ],
 
            ["br"],
-           ["label", "Track content (affects speed/memory)",
+           ["label",
             ["input", "type", "radio",
              "name", "network-options-track-bodies",
              "value", "track",
              "handler", "network-options-toggle-body-tracking",
              tracking == "track" ? "checked" : "non-checked", "true"
-            ]]
+            ],
+            "Track content (affects speed/memory)",
+           ]
           ],
 
           /*
