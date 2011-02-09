@@ -97,7 +97,7 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
     new cls.StylesheetsView('stylesheets', ui_strings.M_VIEW_LABEL_STYLESHEET, 'scroll stylesheets');
     cls.StylesheetSelect.prototype = new CstSelect();
     new cls.StylesheetSelect('stylesheet-select', 'stylesheet-options');
-    cls.StylesheetsView.create_ui_widgets();
+    //cls.StylesheetsView.create_ui_widgets();
 
     /* CSS inspector */
     window.elementStyle = new cls.ElementStyle();

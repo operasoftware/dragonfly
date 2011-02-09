@@ -44,7 +44,7 @@ cls.EnvironmentView.create_ui_widgets = function()
         return templates.hello(window.services['scope'].get_hello_message());
       }
     },
-    "general"
+    "about"
 
   );
 };
@@ -440,20 +440,17 @@ cls.ModebarView.create_ui_widgets = function()
     'modebar',
     // key-value map
     {
-      "show-modebar-dom": true,
-      "show-modebar-scripts": true,
+      "show-modebar-dom": true
     },
     // key-label map
     {
-      "show-modebar-dom": "Show DOM modebar",
-      "show-modebar-scripts": "Show Scripts modebar",
+      "show-modebar-dom": "Show DOM modebar"
     },
     // settings map
     {
       checkboxes:
       [
-        "show-modebar-dom",
-        "show-modebar-scripts",
+        "show-modebar-dom"
       ]
     },
     // custom templates
