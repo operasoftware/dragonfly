@@ -89,10 +89,10 @@ templates.network_request_crafter_main = function(url, loading, request, respons
             "value", url || "http://example.org",
             "handler", "request-crafter-url-change"],
            ["h2", "Request body"],
-            ["textarea", request],
+            ["_auto_height_textarea", request],
            ["button", "Send request", "handler", "request-crafter-send"],
            ["h2", "Response body"],
-           (loading ? ["span", "Request in progress"] : ["div", ["pre", ["code", response]]]),
+           (loading ? ["span", "Request in progress"] : ["div", ["textarea", response]]),
            "class", "padding request-crafter"
           ]
          ];
