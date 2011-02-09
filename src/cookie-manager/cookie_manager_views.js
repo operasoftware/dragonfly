@@ -749,9 +749,9 @@ cls.CookieManagerView = function(id, name, container_class, service_version)
   };
 
   // Helpers
-  this._create_objectref = function(cookie, runtimes)
+  this._create_objectref = function(cookie, runtimes, fixed_name)
   {
-    return cookie.domain + "/" + cookie.path + "/" + cookie.name + "/" + (runtimes || "");
+    return (fixed_name || (cookie.domain + "/" + cookie.path + "/" + cookie.name + "/")) + (runtimes || "");
   };
   
   this._flatten_cookies = function(cookies, runtimes)
@@ -802,7 +802,7 @@ cls.CookieManagerView = function(id, name, container_class, service_version)
         // There are no cookies for this domain/path. The group needs to be shown anyhow.
         flattened_cookies.push({
           runtimes:                domaincookies.runtimes,
-          objectref:               ""+parseInt(Math.random()*99999),
+          objectref:               this._create_objectref(this, domaincookies.runtimes, "domain_path_placeholder"),
           is_runtimes_placeholder: true
         });
       }
