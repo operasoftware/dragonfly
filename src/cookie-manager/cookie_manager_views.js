@@ -715,28 +715,37 @@ cls.CookieManagerView = function(id, name, container_class, service_version)
       {
         window.views.cookie_manager.remove_cookie_by_objectref(cookie.objectref, true);
       }
-      // and add modified / new
-      var add_cookie_script = 'document.cookie="' + name + '=' + encodeURIComponent(value);
-      if(expires) // in case of 0 value the "expires" value should not be written, represents "Session" value
-      {
-        add_cookie_script += '; expires='+ (new Date(expires).toUTCString());
-      }
-      add_cookie_script += '; path=' + '/' + path + '"';
-      // select changed / created cookie
+      
+      // select changed / created cookie after table had rendered
       this._restore_selection = [
         this._create_objectref(
           {
             domain: this._rts[runtime].hostname,
-            name: name,
-            value: value,
-            path: path
+            name:   name,
+            value:  value,
+            path:   path
           },
           runtime
         )
       ];
-      var script = add_cookie_script;
-      var tag = tagManager.set_callback(this, window.views.cookie_manager.handle_changed_cookies, [runtime]);
-      services['ecmascript-debugger'].requestEval(tag,[runtime, 0, 0, script]);
+      // and add modified / new
+      if(this._is_min_service_version("1.1"))
+      {
+        var tag = tagManager.set_callback(this, this.handle_changed_cookies);
+        services['cookie-manager'].requestAddCookie(tag,[this._rts[runtime].hostname, name, path, value, expires/1000]);
+      }
+      else
+      {
+        var add_cookie_script = 'document.cookie="' + name + '=' + encodeURIComponent(value);
+        if(expires) // in case of 0 value the "expires" value should not be written, represents "Session" value
+        {
+          add_cookie_script += '; expires='+ (new Date(expires).toUTCString());
+        }
+        add_cookie_script += '; path=' + '/' + path + '"';
+        var script = add_cookie_script;
+        var tag = tagManager.set_callback(this, window.views.cookie_manager.handle_changed_cookies, [runtime]);
+        services['ecmascript-debugger'].requestEval(tag,[runtime, 0, 0, script]);
+      }
     }
   }
 
