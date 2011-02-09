@@ -681,15 +681,13 @@ cls.CookieManagerView = function(id, name, container_class, service_version)
         cookie = window.views.cookie_manager.get_cookie_by_objectref(object_id);
       }
       // check if unmodified
-      // fixme: the cookie.runtimes check should check if the hostname of that rt is actually correct,
-      // not is the id matches. the following check finds more differences then it should.
       if(cookie &&
           (
             name === cookie.name &&
             value === cookie.value &&
             expires === new Date(cookie.expires*1000).getTime() &&
             path === cookie.path &&
-            cookie.runtimes.indexOf(runtime) > -1
+            this._rts[cookie.runtimes[0]].hostname === this._rts[runtime].hostname
           )
       )
       {
@@ -710,7 +708,7 @@ cls.CookieManagerView = function(id, name, container_class, service_version)
         if(cookie.runtimes.indexOf(runtime) === -1)
           console.log("RUNTIME CHANGED", "\n"+cookie.runtimes, "\n"+runtime);
       }
-      end dbg */
+      // end dbg */
 
       // remove old cookie
       if(cookie)
