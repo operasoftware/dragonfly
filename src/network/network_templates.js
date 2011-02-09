@@ -281,7 +281,8 @@ templates.network_log_url_list = function(ctx, selected)
             "handler", "select-network-request",
             "data-resource-id", String(res.id),
             "class", selected===res.id ? "selected" : "",
-            "data-menu", "request-context-options"
+            "data-menu", "request-context-options",
+            "title", res.url
            ]
   }
   return ["ol", ctx.resources.map(itemfun),
@@ -435,7 +436,6 @@ templates.grid_lines = function(ctx, width, height)
                 "stroke", color,
                 "stroke-width", "1.0",
                 "pointer-events", "none",
-                "opacity", "1.0"
       ]);
     }
   }
@@ -481,7 +481,6 @@ templates.network_log_background = function(ctx, lineheight)
                "y", String(cnt*lineheight),
                "width", "100%",
                "height", String(lineheight-1),
-               "stroke-width", "0", 
                "fill", (cnt%2 ?  "rgba(0,0,0,0.025)" : "white"),
                "data-resource-id", String(ctx.resources[cnt].id),
                "class", "network-graph-bg-row",
