@@ -1,7 +1,8 @@
 ﻿window.cls || (window.cls = {});
 
-cls.CookieManagerView = function(id, name, container_class)
+cls.CookieManagerView = function(id, name, container_class, service_version)
 {
+  this.service_version = service_version;
   this._cookie_dict = {};
   this.flattened_cookies = [];
   this._rts = {};
@@ -854,6 +855,19 @@ cls.CookieManagerView = function(id, name, container_class)
         services['cookie-manager'].requestRemoveCookie(tag,[domain, path, cookie.name]);
       }
     }
+  };
+
+  this._is_min_version = function(compare_version)
+  {
+    var compare_version = compare_version.split(".").map(Number);
+    var service_version = this.service_version.split(".").map(Number);
+    for (var i=0; i < compare_version.length; i++) {
+      if((service_version[i] || 0) < compare_version[i])
+      {
+        return false;
+      }
+    };
+    return true;
   };
 
   // End Helpers
