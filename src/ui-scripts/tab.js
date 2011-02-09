@@ -65,7 +65,7 @@ var Tab = function(ref_id, name, has_close_button)
     if (badge)
     {
       badge.addClass(type || "");
-      badge.textContent = content || "";
+      badge.textContent = content != null ? content : "";
     }
   };
 
@@ -85,7 +85,12 @@ var Tab = function(ref_id, name, has_close_button)
 
   this.clear_state = function()
   {
-    var tab = document.querySelector("top-tabs").querySelector("[ref-id='" + this.ref_id + "']");
+    var tabs = document.querySelector("top-tabs")
+    var tab = null;
+    if (tabs)
+    {
+      tab = tabs.querySelector("[ref-id='" + this.ref_id + "']");
+    }
     if (tab)
     {
       tab.remoteAttribute("data-state");
@@ -97,10 +102,8 @@ var Tab = function(ref_id, name, has_close_button)
   * @constructor
   * @extends Tab
   */
-
-var JSTab = function(ref_id, name, has_close_button)
+var JavaScriptTab = function(ref_id, name, has_close_button)
 {
-  // at some point all tabs will have a close button
   this.init(ref_id, name, has_close_button)
 
   window.messages.addListener("host-state", function(msg) {
@@ -115,6 +118,22 @@ var JSTab = function(ref_id, name, has_close_button)
   }.bind(this));
 };
 
+/**
+  * @constructor
+  * @extends Tab
+  */
+var ErrorConsoleTab = function(ref_id, name, has_close_button)
+{
+  this.init(ref_id, name, has_close_button)
+
+  window.messages.addListener("error-count-update", function(msg) {
+    (msg.current_error_count == 0) ?
+      this.clear_badge() :
+      this.set_badge("", msg.current_error_count);
+  }.bind(this));
+};
+
 Tab.prototype = TabBase;
-JSTab.prototype = new Tab();
+JavaScriptTab.prototype = new Tab();
+ErrorConsoleTab.prototype = new Tab();
 
