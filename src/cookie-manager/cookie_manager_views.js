@@ -770,12 +770,13 @@ cls.CookieManagerView = function(id, name, container_class, service_version)
             runtimes:     domaincookies.runtimes,
             /**
              * Decide if the cookie can be edited.
-             * The cookie.domain condition should be removed when a new "add cookie" interface as defined
-             * in CORE-35370 is used, which will allow specifying the domain when creating cookies
+             * The cookie.domain and .isHTTPOnly conditions should be removed when a new "add cookie" 
+             * interface is used, which will allow specifying the domain when creating cookies
+             * cookie_service 1.0.2 fixes CORE-35055 -> correct paths, allows for editing
             */
             is_editable:  (
                             !current_cookie.isHTTPOnly &&
-                            !current_cookie.path && // remove when CORE-35055 is fixed
+                            (!current_cookie.path || this._is_min_service_version("1.0.2")) &&
                             current_cookie.domain === runtimes[domaincookies.runtimes[0]].hostname
                           ),
             /**
@@ -787,7 +788,7 @@ cls.CookieManagerView = function(id, name, container_class, service_version)
             is_removable: (
                             current_cookie.domain !== undefined &&
                             current_cookie.path !== undefined &&
-                            !current_cookie.path // remove when CORE-35055 is fixed
+                            (!current_cookie.path || this._is_min_service_version("1.0.2"))
                           )
           };
           for (var key in current_cookie) {
@@ -846,7 +847,7 @@ cls.CookieManagerView = function(id, name, container_class, service_version)
     }
   };
 
-  this._is_min_version = function(compare_version)
+  this._is_min_service_version = function(compare_version)
   {
     var compare_version = compare_version.split(".").map(Number);
     var service_version = this.service_version.split(".").map(Number);
