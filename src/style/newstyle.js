@@ -15,9 +15,15 @@ cls.NewStyle = function(id, name, container_class)
   {
     if (this._stylesheet)
     {
-      container.clearAndRender(['_auto_height_textarea',
+      var t = container.clearAndRender(['_auto_height_textarea',
                                 'handler', 'css-update-new-style',
                                 'class', 'css-new-style-sheet']);
+      t.value = this._current_style;
+      setTimeout(function() {
+        t.focus();
+        t.selectionEnd = t.value.length;
+        t.releaseEvent('input');
+      }, 1);
     }
     else
     {
