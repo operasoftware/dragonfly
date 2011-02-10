@@ -271,7 +271,7 @@
         {
           if (!/^\s*$/.test(node[ VALUE ]))
           {
-            tree += "<div" + this._get_indent(node) +
+            tree += "<div" + this._get_indent(node) + ">" +
                     "<text" +
                     (is_not_script_node ? " ref-id='"+ node[ID] + "' " : "") +
                     ">" + helpers.escapeTextHtml(node[VALUE]) + "</text>" +
@@ -457,14 +457,14 @@
 
         case DOCUMENT_NODE:
         {
-          tree += "<div" + this._get_indent(node) +
+          tree += "<div" + this._get_indent(node) + ">" +
                     "<span class='document-node'>#document</span></div>";
           break;
         }
 
         case DOCUMENT_TYPE_NODE:
         {
-          tree += "<div" + this._get_indent(node) +
+          tree += "<div" + this._get_indent(node) + ">" +
                     "<span class='doctype'>" + model.getDoctypeName(data) + " " +
                       this._get_doctype_external_identifier(node) +
                     "</span></div>";
