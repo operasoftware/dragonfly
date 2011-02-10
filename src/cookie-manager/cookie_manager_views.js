@@ -723,6 +723,7 @@ cls.CookieManager.CookieManagerViewBase = function()
       }
 
       // select changed / created cookie after table had rendered
+      // todo: find runtimes where this will probably end up to make the selection restore work
       this._restore_selection = [
         this._create_objectref(
           {
@@ -775,7 +776,7 @@ cls.CookieManager.CookieManagerViewBase = function()
   // Helpers
   this._create_objectref = function(cookie, runtimes, fixed_name)
   {
-    return (fixed_name || (cookie.domain + "/" + cookie.path + "/" + cookie.name + "/")) + (runtimes || "");
+    return ((fixed_name || (cookie.domain + "/" + cookie.path + "/" + cookie.name + "/")) + (runtimes || "")).replace(/'/g,"");
   };
 
   this._flatten_cookies = function(cookies, runtimes)

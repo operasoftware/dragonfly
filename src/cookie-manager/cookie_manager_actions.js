@@ -31,6 +31,7 @@ window.eventHandlers.click['cookiemanager-container'] = function(event, target)
 
 window.eventHandlers.click['cookiemanager-add-cookie-row'] = function(event, target)
 {
+  window.views.cookie_manager.check_to_exit_edit_mode(event, target);
   // find runtime the row relates to
   // walk up to find button-containing tr
   var row = target;

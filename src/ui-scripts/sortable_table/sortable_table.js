@@ -391,13 +391,10 @@ templates.sortable_table_row = function(tabledef, item, cols)
 
             if (typeof content !== "undefined" && typeof content !== "null")
             {
+              var title_templ=[];
               if (typeof content == "string")
               {
-                var title = content; // fixme: use custom title renderer.
-              }
-              else
-              {
-                title = "";
+                title_templ = ["title", content]; // fixme: use custom title renderer.
               }
 
               if (typeof content == "string" &&
@@ -413,8 +410,7 @@ templates.sortable_table_row = function(tabledef, item, cols)
                   content = content.slice(0, tabledef.columns[col].maxlength) + "…";
                 }
               }
-              return ["td", content,
-                    "title", title];
+              return ["td", content].concat(title_templ);
             }
             return [];
           }).concat(tabledef.handler ? ["handler", tabledef.handler] : [])
