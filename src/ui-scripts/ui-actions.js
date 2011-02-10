@@ -20,12 +20,12 @@ var EventHandler = function(type, is_capturing, handler_key)
 
   var handler = function(event)
   {
-
     var ele = event.target, handler = null, container = null;
     if( ele.nodeType != 1 )
     {
       return;
     }
+
     if (event.which == 3 && event.type in {"click": 1, "mousedown": 1, "mouseup": 1})
     {
       // right click
@@ -33,10 +33,12 @@ var EventHandler = function(type, is_capturing, handler_key)
       event.preventDefault();
       return;
     }
+
     handler = ele.getAttribute(handler_key);
-    while( !(handler && eventHandlers[type][handler]) && ( ele = ele.parentElement ) )
+
+    while( !(handler && eventHandlers[type][handler]) && (ele = ele.parentNode) )
     {
-      handler = ele.getAttribute(handler_key);
+      handler = ele && ele.getAttribute ? ele.getAttribute(handler_key) : null;
     }
     if( handler && ele )
     {
