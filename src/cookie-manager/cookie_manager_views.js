@@ -1,130 +1,9 @@
 ﻿window.cls || (window.cls = {});
+cls.CookieManager || (cls.CookieManager = {});
+cls.CookieManager["1.0"] || (cls.CookieManager["1.0"] = {});
 
-cls.CookieManagerView = function(id, name, container_class, service_version)
+cls.CookieManager.CookieManagerViewBase = function()
 {
-  this.service_version = service_version;
-  this._cookie_dict = {};
-  this.flattened_cookies = [];
-  this._rts = {};
-  this._tabledef = {
-    groups: {
-      hostandpath: {
-        label:   "Host and path",
-        grouper: function(obj) {
-          return views.cookie_manager._rts[obj.runtimes[0]].hostname + window.views.cookie_manager._rts[obj.runtimes[0]].pathname;
-        },
-        renderer: function(groupvalue, obj) {
-          var obj = obj[0];
-          var runtime = window.views.cookie_manager._rts[obj.runtimes[0]];
-          return window.templates.cookie_manager.hostname_group_render(runtime);
-        }
-      }
-    },
-    column_order: ["domain", "name", "value", "path", "expires", "isSecure", "isHTTPOnly"],
-    idgetter: function(res) { return res.objectref },
-    columns: {
-      domain: {
-        label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_DOMAIN,
-        classname: "col_domain",
-        renderer: function(obj) {
-          if(obj.is_runtimes_placeholder)
-          {
-            return;
-          }
-          if(obj.domain)
-          {
-            return window.templates.cookie_manager.editable_domain(obj.runtimes[0], window.views.cookie_manager._rts, obj.domain);
-          }
-          return window.templates.cookie_manager.unknown_value();
-        },
-        summer: function(values, groupname, getter) {
-          return ["button", "Add Cookie", "class", "add_cookie_button", "handler", "cookiemanager-add-cookie-row"];
-        }
-      },
-      name: {
-        label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_NAME,
-        classname: "col_name",
-        renderer: function(obj) {
-          if(obj.is_runtimes_placeholder)
-          {
-            return;
-          }
-          return window.templates.cookie_manager.editable_name(obj.name);
-        }
-      },
-      value: {
-        label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_VALUE,
-        classname: "col_value",
-        renderer: function(obj) {
-          if(obj.is_runtimes_placeholder)
-          {
-            return;
-          }
-          return window.templates.cookie_manager.editable_value(obj.value);
-        }
-      },
-      path: {
-        label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_PATH,
-        classname: "col_path",
-        renderer: function(obj) {
-          if(obj.is_runtimes_placeholder)
-          {
-            return;
-          }
-          if(typeof obj.path === "string")
-          {
-            return window.templates.cookie_manager.editable_path(obj.path);
-          }
-          return window.templates.cookie_manager.unknown_value();
-        }
-      },
-      expires: {
-        label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES,
-        classname: "col_expires",
-        renderer: function(obj) {
-          if(obj.is_runtimes_placeholder)
-          {
-            return;
-          }
-          if(typeof obj.expires === "number")
-          {
-            return window.templates.cookie_manager.editable_expires(obj.expires, obj.objectref);
-          }
-          return window.templates.cookie_manager.unknown_value();
-        }
-      },
-      isSecure: {
-        label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY),
-        classname: "col_secure",
-        renderer: function(obj) {
-          if(obj.is_runtimes_placeholder)
-          {
-            return;
-          }
-          if(typeof obj.isSecure === "number")
-          {
-            return obj.isSecure? "Yes":"";
-          }
-          return window.templates.cookie_manager.unknown_value();
-        }
-      },
-      isHTTPOnly: {
-        label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY),
-        classname: "col_httponly",
-        renderer: function(obj) {
-          if(obj.is_runtimes_placeholder)
-          {
-            return;
-          }
-          if(typeof obj.isHTTPOnly === "number")
-          {
-            return obj.isHTTPOnly? "Yes":"";
-          }
-          return window.templates.cookie_manager.unknown_value();
-        }
-      }
-    }
-  };
   this.createView = function(container)
   {
     container.setAttribute("handler", "cookiemanager-container");
@@ -441,6 +320,135 @@ cls.CookieManagerView = function(id, name, container_class, service_version)
     return inserted;
   }
 
+  this._tabledef = {
+    groups: {
+      hostandpath: {
+        label:   "Host and path",
+        grouper: function(obj) {
+          return views.cookie_manager._rts[obj.runtimes[0]].hostname + window.views.cookie_manager._rts[obj.runtimes[0]].pathname;
+        },
+        renderer: function(groupvalue, obj) {
+          var obj = obj[0];
+          var runtime = window.views.cookie_manager._rts[obj.runtimes[0]];
+          return window.templates.cookie_manager.hostname_group_render(runtime);
+        }
+      }
+    },
+    column_order: ["domain", "name", "value", "path", "expires", "isSecure", "isHTTPOnly"],
+    idgetter: function(res) { return res.objectref },
+    columns: {
+      domain: {
+        label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_DOMAIN,
+        classname: "col_domain",
+        renderer: function(obj) {
+          if(obj.is_runtimes_placeholder)
+          {
+            return;
+          }
+          if(obj.domain)
+          {
+            return window.templates.cookie_manager.editable_domain(obj.runtimes[0], window.views.cookie_manager._rts, obj.domain);
+          }
+          return window.templates.cookie_manager.unknown_value();
+        },
+        summer: function(values, groupname, getter) {
+          return ["button", "Add Cookie", "class", "add_cookie_button", "handler", "cookiemanager-add-cookie-row"];
+        }
+      },
+      name: {
+        label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_NAME,
+        classname: "col_name",
+        renderer: function(obj) {
+          if(obj.is_runtimes_placeholder)
+          {
+            return;
+          }
+          return window.templates.cookie_manager.editable_name(obj.name);
+        }
+      },
+      value: {
+        label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_VALUE,
+        classname: "col_value",
+        renderer: function(obj) {
+          if(obj.is_runtimes_placeholder)
+          {
+            return;
+          }
+          return window.templates.cookie_manager.editable_value(obj.value);
+        }
+      },
+      path: {
+        label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_PATH,
+        classname: "col_path",
+        renderer: function(obj) {
+          if(obj.is_runtimes_placeholder)
+          {
+            return;
+          }
+          if(typeof obj.path === "string")
+          {
+            return window.templates.cookie_manager.editable_path(obj.path);
+          }
+          return window.templates.cookie_manager.unknown_value();
+        }
+      },
+      expires: {
+        label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES,
+        classname: "col_expires",
+        renderer: function(obj) {
+          if(obj.is_runtimes_placeholder)
+          {
+            return;
+          }
+          if(typeof obj.expires === "number")
+          {
+            return window.templates.cookie_manager.editable_expires(obj.expires, obj.objectref);
+          }
+          return window.templates.cookie_manager.unknown_value();
+        }
+      },
+      isSecure: {
+        label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY),
+        classname: "col_secure",
+        renderer: function(obj) { return window.views.cookie_manager._is_secure_renderer(obj) }
+      },
+      isHTTPOnly: {
+        label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY),
+        classname: "col_httponly",
+        renderer: function(obj) { return window.views.cookie_manager._is_http_only_renderer(obj) }
+      }
+    }
+  };
+
+  this._is_secure_renderer = function(obj)
+  {
+    // this depends on the service version, can get overwritten
+    if(obj.is_runtimes_placeholder)
+    {
+      return;
+    }
+    if(typeof obj.isSecure === "number")
+    {
+      return obj.isSecure? "Yes":"";
+    }
+    return window.templates.cookie_manager.unknown_value();
+  }
+
+  this._is_http_only_renderer = function(obj)
+  {
+    // this depends on the service version, can get overwritten
+    if(obj.is_runtimes_placeholder)
+    {
+      return;
+    }
+    if(typeof obj.isHTTPOnly === "number")
+    {
+      // this will depend on the service version, it gets editable with 1.1
+      return obj.isHTTPOnly? "Yes":"";
+    }
+    return window.templates.cookie_manager.unknown_value();
+  }
+
   this._on_active_tab = function(msg)
   {
     // cleanup runtimes directory
@@ -668,11 +676,23 @@ cls.CookieManagerView = function(id, name, container_class, service_version)
     if(edit_tr)
     {
       edit_tr.removeClass("edit_mode");
-      var name    = edit_tr.querySelector("[name=name]").value.trim();
-      var value   = edit_tr.querySelector("[name=value]").value;
-      var expires = new Date(edit_tr.querySelector("[name=expires]").value).getTime();
-      var path    = edit_tr.querySelector("[name=path]").value.trim();
-      var runtime = parseInt(edit_tr.querySelector("[name=add_cookie_runtime]").value.split(",")[0]);
+
+      var is_secure_input    = edit_tr.querySelector("[name=is_secure]");
+      var is_http_only_input = edit_tr.querySelector("[name=is_http_only]");
+      var runtime_input      = edit_tr.querySelector("[name=add_cookie_runtime]");
+      var domain_input       = edit_tr.querySelector("[name=domain]");
+
+      var name         = edit_tr.querySelector("[name=name]").value.trim();
+      var value        = edit_tr.querySelector("[name=value]").value;
+      var expires      = new Date(edit_tr.querySelector("[name=expires]").value || 0).getTime();
+      var path         = edit_tr.querySelector("[name=path]").value.trim();
+      var is_secure    = !!(is_secure_input && is_secure_input.checked);
+      var is_http_only = !!(is_http_only_input && is_http_only_input.checked);
+      // "runtime" comes from [select] or [input type=hidden], domain comes directly from [input]
+      // or from the runtimes .hostname in case there's a limited choice because addcookie is not
+      // present
+      var runtime      = runtime_input && parseInt(runtime_input.value.split(",")[0]);
+      var domain       = domain_input && domain_input.value.trim() || runtime && this._rts[runtime].hostname;
 
       var cookie;
       var object_id = edit_tr.getAttribute("data-object-id");
@@ -687,40 +707,26 @@ cls.CookieManagerView = function(id, name, container_class, service_version)
             value === cookie.value &&
             expires === new Date(cookie.expires*1000).getTime() &&
             path === cookie.path &&
-            this._rts[cookie.runtimes[0]].hostname === this._rts[runtime].hostname
+            is_secure === cookie.isSecure &&
+            is_http_only === cookie.isHTTPOnly &&
+            domain === this._rts[cookie.runtimes[0]].hostname
           )
       )
       {
         return;
       }
-      /* // dbg
-      if(cookie)
-      {
-        console.log("no old cookie, or old cookie modified.");
-        if(name !== cookie.name)
-          console.log("NAME CHANGED ","\n"+name, "\n"+cookie.name);
-        if(value !== cookie.value)
-          console.log("VALUE CHANGED","\n"+value,"\n"+cookie.value);
-        if(expires !== new Date(cookie.expires*1000).getTime())
-          console.log("EXPIRY CHANGED", "\n"+expires, "\n"+new Date(cookie.expires*1000).getTime());
-        if(path !== cookie.path)
-          console.log("PATH CHANGED", "\n"+path, "\n"+cookie.path);
-        if(cookie.runtimes.indexOf(runtime) === -1)
-          console.log("RUNTIME CHANGED", "\n"+cookie.runtimes, "\n"+runtime);
-      }
-      // end dbg */
 
       // remove old cookie
       if(cookie)
       {
         window.views.cookie_manager.remove_cookie_by_objectref(cookie.objectref, true);
       }
-      
+
       // select changed / created cookie after table had rendered
       this._restore_selection = [
         this._create_objectref(
           {
-            domain: this._rts[runtime].hostname,
+            domain: domain,
             name:   name,
             value:  value,
             path:   path
@@ -728,29 +734,40 @@ cls.CookieManagerView = function(id, name, container_class, service_version)
           runtime
         )
       ];
+
       // and add modified / new
-      if(this._is_min_service_version("1.1"))
-      {
-        var tag = tagManager.set_callback(this, this.handle_changed_cookies);
-        services['cookie-manager'].requestAddCookie(tag,[this._rts[runtime].hostname, name, path, value, expires/1000]);
-      }
-      else
-      {
-        var add_cookie_script = 'document.cookie="' + name + '=' + encodeURIComponent(value);
-        if(expires) // in case of 0 value the "expires" value should not be written, represents "Session" value
-        {
-          add_cookie_script += '; expires='+ (new Date(expires).toUTCString());
-        }
-        add_cookie_script += '; path=' + '/' + path + '"';
-        var script = add_cookie_script;
-        var tag = tagManager.set_callback(this, window.views.cookie_manager.handle_changed_cookies, [runtime]);
-        services['ecmascript-debugger'].requestEval(tag,[runtime, 0, 0, script]);
-      }
+      this._write_cookie({
+        domain:       domain,
+        name:         name,
+        path:         path || "/",
+        value:        value,
+        expires:      expires / 1000,
+        is_secure:    +is_secure,
+        is_http_only: +is_http_only,
+        runtime:      runtime
+      });
     }
   }
 
-  this._init = function(id, update_event_name)
+  this._write_cookie = function(c)
   {
+    var add_cookie_script = 'document.cookie="' + c.name + '=' + encodeURIComponent(c.value);
+    if(c.expires) // in case of 0 value the "expires" value should not be written, represents "Session" value
+    {
+      add_cookie_script += '; expires='+ (new Date(c.expires).toUTCString());
+    }
+    add_cookie_script += '; path=' + c.path + '"';
+    var script = add_cookie_script;
+    var tag = tagManager.set_callback(this, window.views.cookie_manager.handle_changed_cookies, [c.runtime]);
+    services['ecmascript-debugger'].requestEval(tag,[c.runtime, 0, 0, script]);
+  }
+
+  this._init = function(id, name, container_class, service_version)
+  {
+    this.service_version = service_version;
+    this._cookie_dict = {};
+    this.flattened_cookies = [];
+    this._rts = {};
     window.messages.addListener('active-tab', this._on_active_tab.bind(this));
     this.init(id, name, container_class);
   };
@@ -760,7 +777,7 @@ cls.CookieManagerView = function(id, name, container_class, service_version)
   {
     return (fixed_name || (cookie.domain + "/" + cookie.path + "/" + cookie.name + "/")) + (runtimes || "");
   };
-  
+
   this._flatten_cookies = function(cookies, runtimes)
   {
     var flattened_cookies = [];
@@ -777,11 +794,11 @@ cls.CookieManagerView = function(id, name, container_class, service_version)
             runtimes:     domaincookies.runtimes,
             /**
              * Decide if the cookie can be edited.
-             * The cookie.domain and .isHTTPOnly conditions should be removed when a new "add cookie" 
+             * The cookie.domain and .isHTTPOnly conditions should be removed when a new "add cookie"
              * interface is used, which will allow specifying the domain when creating cookies
              * cookie_service 1.0.2 fixes CORE-35055 -> correct paths, allows for editing
             */
-            is_editable:  (
+            is_editable:  this._is_min_service_version("1.1") || (
                             !current_cookie.isHTTPOnly &&
                             (!current_cookie.path || this._is_min_service_version("1.0.2")) &&
                             current_cookie.domain === runtimes[domaincookies.runtimes[0]].hostname
@@ -866,9 +883,58 @@ cls.CookieManagerView = function(id, name, container_class, service_version)
     };
     return true;
   };
-
-  // End Helpers
-  this._init(id, name);
 };
+cls.CookieManager.CookieManagerViewBase.prototype = ViewBase;
 
-cls.CookieManagerView.prototype = ViewBase;
+cls.CookieManager["1.0"].CookieManagerView = function(id, name, container_class, service_version)
+{
+  this._init(id, name, container_class, service_version);
+}
+cls.CookieManager["1.0"].CookieManagerView.prototype = new cls.CookieManager.CookieManagerViewBase();
+
+cls.CookieManager["1.1"] || (cls.CookieManager["1.1"] = {});
+cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class, service_version)
+{
+  this._write_cookie = function(c)
+  {
+    var tag = tagManager.set_callback(this, this.handle_changed_cookies);
+    services['cookie-manager'].requestAddCookie(tag,[c.domain, c.name, c.path, c.value, c.expires, c.is_secure, c.is_http_only]);
+  }
+
+  this._is_secure_renderer = function(obj) {
+    if(obj.is_runtimes_placeholder)
+    {
+      return;
+    }
+    if(typeof obj.isSecure === "number")
+    {
+      return window.templates.cookie_manager.editable_secure(obj.isSecure);
+    }
+    return window.templates.cookie_manager.unknown_value();
+  }
+
+  this._is_http_only_renderer = function(obj) {
+    if(obj.is_runtimes_placeholder)
+    {
+      return;
+    }
+    if(typeof obj.isHTTPOnly === "number")
+    {
+      return window.templates.cookie_manager.editable_http_only(obj.isHTTPOnly);
+    }
+    return window.templates.cookie_manager.unknown_value();
+  }
+
+  this.insert_add_cookie_row = function(row, runtime)
+  {
+    var default_domain = window.views.cookie_manager._rts[runtime].hostname;
+    var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row_all_editable(default_domain));
+    var inserted = row.parentElement.insertBefore(templ, row);
+    inserted.querySelector("[name=name]").focus();
+    return inserted;
+  }
+
+
+  this._init(id, name, container_class, service_version);
+}
+cls.CookieManager["1.1"].CookieManagerView.prototype = new cls.CookieManager.CookieManagerViewBase();

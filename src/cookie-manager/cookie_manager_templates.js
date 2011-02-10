@@ -25,12 +25,13 @@ templates.cookie_manager = {
     }
     return template;
   },
-  edit_mode_switch_container: function(value_container, edit_container) {
-    return [value_container, edit_container];
-  },
-  value_container: function(elem) {
+  edit_mode_switch_container: function(value, edit_elem) {
     return [
-      "div", this.wrap_ellipsis(elem), "class", "value_container"
+      [
+        "div", this.wrap_ellipsis(value),
+        "class", "value_container"
+      ],
+      this.edit_container(edit_elem)
     ];
   },
   edit_container: function(elem) {
@@ -46,6 +47,19 @@ templates.cookie_manager = {
       "name",  name,
       "handler", "cookiemanager-input-field"
     ]
+  },
+  input_checkbox_container: function(name, checked) {
+    var checked_template = [];
+    if(checked)
+    {
+      checked_template = ["checked", "checked"];
+    }
+    return [
+      "input",
+      "type",  "checkbox",
+      "name",  name,
+      "handler", "cookiemanager-input-field"
+    ].concat(checked_template);
   },
   input_datetime_container: function(name, value) {
     return [
@@ -110,19 +124,19 @@ templates.cookie_manager = {
   },
   editable_domain: function(current_runtime, runtimes, domain) {
     var edit_elem = this.input_domain(current_runtime, runtimes);
-    return this.edit_mode_switch_container(this.value_container(domain), this.edit_container(edit_elem));
+    return this.edit_mode_switch_container(domain, edit_elem);
   },
   editable_name: function(name) {
     var edit_elem = this.input_text_container("name", name);
-    return this.edit_mode_switch_container(this.value_container(name), this.edit_container(edit_elem));
+    return this.edit_mode_switch_container(name, edit_elem);
   },
   editable_value: function(value) {
     var edit_elem = this.input_text_container("value", value);
-    return this.edit_mode_switch_container(this.value_container(value), this.edit_container(edit_elem));
+    return this.edit_mode_switch_container(value, edit_elem);
   },
   editable_path: function(path) {
     var edit_elem = this.input_text_container("path", path);
-    return this.edit_mode_switch_container(this.value_container(path), this.edit_container(edit_elem));
+    return this.edit_mode_switch_container(path, edit_elem);
   },
   editable_expires: function(date_in_seconds, objectref) {
     var parsed_date = new Date(date_in_seconds*1000);
@@ -130,9 +144,17 @@ templates.cookie_manager = {
     var edit_elem = this.input_datetime_container("expires", parsed_date.toISOString())
     if(date_in_seconds === 0)
     {
-      return this.edit_mode_switch_container(this.value_container(this.expires_0values()), this.edit_container(edit_elem));
+      return this.edit_mode_switch_container(this.expires_0values(), edit_elem);
     }
-    return this.edit_mode_switch_container(this.value_container(expires_container), this.edit_container(edit_elem));
+    return this.edit_mode_switch_container(expires_container, edit_elem);
+  },
+  editable_secure: function(is_secure) {
+    var edit_elem = this.input_checkbox_container("is_secure", is_secure);
+    return this.edit_mode_switch_container(is_secure? "Yes":"", edit_elem);
+  },
+  editable_http_only: function(is_http_only) {
+    var edit_elem = this.input_checkbox_container("is_http_only", is_http_only);
+    return this.edit_mode_switch_container(is_http_only? "Yes":"", edit_elem);
   },
   expires_0values: function() {
     return [
@@ -157,6 +179,20 @@ templates.cookie_manager = {
         ["td", this.input_datetime_container("expires")],
         ["td"],
         ["td"]
+      ],
+      "class", "edit_mode"
+    ];
+  },
+  add_cookie_row_all_editable: function(default_domain) {
+    return ["tr",
+      [
+        ["td", this.input_text_container("domain", default_domain)],
+        ["td", this.input_text_container("name")],
+        ["td", this.input_text_container("value")],
+        ["td", this.input_text_container("path")],
+        ["td", this.input_datetime_container("expires")],
+        ["td", this.input_checkbox_container("is_secure")],
+        ["td", this.input_checkbox_container("is_http_only")]
       ],
       "class", "edit_mode"
     ];
