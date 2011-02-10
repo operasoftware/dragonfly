@@ -213,6 +213,10 @@ cls.CookieManager.CookieManagerViewBase = function()
       {
         rows[i].setAttribute("edit-handler", "cookiemanager-init-edit-mode");
       }
+      else
+      {
+        rows[i].addClass("uneditable");
+      }
     };
   }
 
@@ -742,7 +746,7 @@ cls.CookieManager.CookieManagerViewBase = function()
         name:         name,
         path:         path || "/",
         value:        value,
-        expires:      expires / 1000,
+        expires:      expires,
         is_secure:    +is_secure,
         is_http_only: +is_http_only,
         runtime:      runtime
@@ -899,7 +903,7 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
   this._write_cookie = function(c)
   {
     var tag = tagManager.set_callback(this, this.handle_changed_cookies);
-    services['cookie-manager'].requestAddCookie(tag,[c.domain, c.name, c.path, c.value, c.expires, c.is_secure, c.is_http_only]);
+    services['cookie-manager'].requestAddCookie(tag,[c.domain, c.name, c.path, c.value, c.expires / 1000, c.is_secure, c.is_http_only]);
   }
 
   this._is_secure_renderer = function(obj) {
