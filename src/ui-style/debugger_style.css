@@ -654,7 +654,6 @@ div.dom {
 {
   padding-left: 1px;
   padding-right: 3px;
-  border-left: 1px solid transparent; /* TODO: why this instead of padding? */
 }
 
 
