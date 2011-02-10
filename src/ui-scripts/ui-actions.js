@@ -21,6 +21,7 @@ var EventHandler = function(type, is_capturing, handler_key)
   var handler = function(event)
   {
     var ele = event.target, handler = null, container = null;
+
     if( ele.nodeType != 1 )
     {
       return;
@@ -38,8 +39,9 @@ var EventHandler = function(type, is_capturing, handler_key)
 
     while( !(handler && eventHandlers[type][handler]) && (ele = ele.parentNode) )
     {
-      handler = ele && ele.getAttribute ? ele.getAttribute(handler_key) : null;
+      handler = ele.nodeType == 1 ? ele.getAttribute(handler_key) : null;
     }
+
     if( handler && ele )
     {
       if( type == 'click' && /toolbar-buttons/i.test(ele.parentNode.nodeName) )
