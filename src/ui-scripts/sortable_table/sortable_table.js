@@ -138,6 +138,26 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
     return this.columns.length;
   }
 
+  this.discard_next_render = function()
+  {
+    this._discard_render = true;
+  }
+
+  this._render = function(target)
+  {
+    console.log("target",arguments[0]);
+    this.post_message("before-render");
+    if (this._discard_render)
+    {
+      this._discard_render = false;
+    }
+    else
+    {
+      target.re_render(this.render());
+      this.post_message("after-render");
+    }
+  }
+
   this._make_group_handler = function(group)
   {
     return function(evt) {
@@ -145,9 +165,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
       while (target.nodeName.toLowerCase() != "table") { target = target.parentNode };
       var obj = ObjectRegistry.get_instance().get_object(target.getAttribute("data-object-id"));
       obj.group(group);
-      obj.post_message("before-render");
-      target.re_render(obj.render());
-      obj.post_message("after-render");
+      obj._render(target);
     }
   }
 
@@ -158,9 +176,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
       while (target.nodeName.toLowerCase() != "table") { target = target.parentNode };
       var obj = ObjectRegistry.get_instance().get_object(target.getAttribute("data-object-id"));
       obj.togglecol(col);
-      obj.post_message("before-render");
-      target.re_render(obj.render());
-      obj.post_message("after-render");
+      obj._render(target);
     }
   }
 
@@ -169,9 +185,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
     var table = target.parentNode.parentNode;
     var obj = ObjectRegistry.get_instance().get_object(table.getAttribute("data-object-id"));
     obj.sort(target.getAttribute("data-column-id"));
-    obj.post_message("before-render");
-    table.re_render(obj.render());
-    obj.post_message("after-render");
+    obj._render(table);
   }
 
   this._default_sorters = {
@@ -185,12 +199,10 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
                                     this.reversed);
   };
 
-  this.restore_columns = function()
+  this.restore_columns = function(target)
   {
     this.columns = this.orgininal_columns.slice(0);
-    this.post_message("before-render");
-    document.querySelector(".sortable-table").re_render(this.render());
-    this.post_message("after-render");
+    this._render(target);
   }
 
   this._prop_getter = function(name)

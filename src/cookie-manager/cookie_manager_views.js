@@ -42,14 +42,21 @@ cls.CookieManager.CookieManagerViewBase = function()
     this._after_table_render(container);
   };
 
-  this._before_table_render = function(container)
+  this._before_table_render = function(container, message)
   {
-    // save selection
-    var selection = document.querySelectorAll(".sortable-table .selected");
-    this._restore_selection = this._restore_selection || [];
-    for (var i=0; i < selection.length; i++) {
-      this._restore_selection.push(selection[i].getAttribute("data-object-id"));
-    };
+    if(this._hold_redraw_mem.active)
+    {
+      message.target.discard_next_render();
+    }
+    else
+    {
+      // save selection
+      var selection = document.querySelectorAll(".sortable-table .selected");
+      this._restore_selection = this._restore_selection || [];
+      for (var i=0; i < selection.length; i++) {
+        this._restore_selection.push(selection[i].getAttribute("data-object-id"));
+      };
+    }
   }
 
   this._after_table_render = function(container)
@@ -500,6 +507,29 @@ cls.CookieManager.CookieManagerViewBase = function()
     };
   };
 
+  this._update = function()
+  {
+    if(this._hold_redraw_mem.active)
+    {
+      this._hold_redraw_mem.callback = this.update.bind(this);
+      return;
+    }
+    this.update();
+  }
+
+  this._hold_redraw = function()
+  {
+    this._hold_redraw_mem.active = true;
+    this._hold_redraw_mem.timeout = setTimeout(this._resume_redraw.bind(this), 30000);
+  }
+
+  this._resume_redraw = function()
+  {
+    this._hold_redraw_mem.timeout && clearTimeout(this._hold_redraw_mem.timeout);
+    this._hold_redraw_mem.callback && this._hold_redraw_mem.callback();
+    this._hold_redraw_mem = {};
+  }
+
   this._request_runtime_details = function(rt_object)
   {
     var script = "return JSON.stringify({hostname: location.hostname || '', pathname: location.pathname || ''})";
@@ -568,7 +598,7 @@ cls.CookieManager.CookieManagerViewBase = function()
       else
       {
         // if runtime has no location.hostname, only update view. occurs on opera:* pages for example.
-        window.views.cookie_manager.update();
+        window.views.cookie_manager._update();
       }
     }
   };
@@ -613,7 +643,7 @@ cls.CookieManager.CookieManagerViewBase = function()
         }
       }
     }
-    window.views.cookie_manager.update();
+    window.views.cookie_manager._update();
   };
 
   this._handle_js_retrieved_cookies = function(status, message, domain, path)
@@ -635,7 +665,7 @@ cls.CookieManager.CookieManagerViewBase = function()
             value: decodeURIComponent(cookie_info.slice(pos+1))
           });
         };
-        window.views.cookie_manager.update();
+        window.views.cookie_manager._update();
       }
     }
   };
@@ -649,14 +679,16 @@ cls.CookieManager.CookieManagerViewBase = function()
   {
     var table_elem = document.querySelector(".sortable-table");
     var sortable_table = ObjectRegistry.get_instance().get_object(table_elem.getAttribute("data-object-id"));
-    sortable_table.restore_columns();
+    sortable_table.restore_columns(table_elem);
     var row = document.querySelector(".sortable-table tr[data-object-id='"+objectref+"']").addClass("edit_mode");
     this.select_row(event, row);
+    this._hold_redraw();
     // Todo: focus input in clicked td if applicable
   }
 
   this.check_to_exit_edit_mode = function(event, target)
   {
+    this._resume_redraw();
     if(document.querySelector(".edit_mode"))
     {
       // find out if target is within some .edit_mode node. don't exit then.
@@ -773,6 +805,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     this.flattened_cookies = [];
     this._rts = {};
     window.messages.addListener('active-tab', this._on_active_tab.bind(this));
+    this._hold_redraw_mem = {};
     this.init(id, name, container_class);
   };
 
