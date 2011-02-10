@@ -127,6 +127,14 @@ property.disabled, /* TODO: rename to .declaration */
 .origin-local {
     background: transparent url("../ui-images/disabled_stripe_tile.png");
 }
+.origin-user-agent key,
+.origin-local key {
+    color: #4c7899;
+}
+.origin-user-agent value,
+.origin-local value {
+    color: #aaa;
+}
 
 media, at { /* TODO: Use classes */
     color: #279;

@@ -257,7 +257,7 @@ input[type="text"] {
 /*** views ***/
 
 .padding {
-  padding:9px;
+  padding:5px;
   box-sizing: border-box;
   }
 
@@ -426,7 +426,7 @@ category, header, styles, stylesheet-link {
 
 stylesheet-link {
   text-align:right;
-  color: #ccc;
+  color: #999;
   text-decoration: underline;
   float: right;
   margin-left: 10px;
@@ -438,6 +438,11 @@ stylesheet-link[handler], [handler="dom-resource-link"] {
 stylesheet-link:hover {
   color: #666;
   }
+
+stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
+  text-decoration: none;
+  color: #666;
+}
 
 styles {
   /*xxwhite-space: pre-wrap;*/
@@ -483,7 +488,7 @@ input.unfolded {
   }
 
 .css-inspector .selected {
-  background-color: #bbcef1;
+  background-color: #d4e3f4;
   }
 .css-inspector property.selected {
     border-radius: 3px;
@@ -493,7 +498,8 @@ input.unfolded {
   background-color: transparent;
   }
 
-.css-inspector h2 {
+.css-inspector h2,
+.css-layout h2 {
   font-size: 1em;
   font-weight: normal;
   border: 0 solid #b3b3b3;
@@ -547,7 +553,7 @@ examine-objects key.no-expander
 {
   display: table;
   margin: 0 auto;
-  padding: 15px;
+  padding: 5px;
   max-width: 250px;
   font-size: 11px;
 }
@@ -629,11 +635,6 @@ offsets value  {
   padding-left: 8px;
 }
 
-stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
-  text-decoration: none;
-  color: hsl(0, 0%, 50%);
-}
-
 .info-text {
   margin: 10px 0;
   padding: 8px;
@@ -680,17 +681,6 @@ div.dom {
 {
   padding-right: 1ex;
 }
-
-
-.css-layout h2 {
-  font-size: 1em;
-  border: 1px solid #ccc;
-  border-width: 1px 0;
-  background-color: hsl( 0, 0% , 95%);
-  padding: 2px;
-  margin: 7px -9px;
-  text-align: center;
-  }
 
 .css-layout > div > h2:first-child {
 
@@ -782,10 +772,21 @@ breadcrumb span
   line-height: 15px;
 }
 
-breadcrumb span.parent-offset
+parent-node-chain breadcrumb {
+    color: #999;
+}
+parent-node-chain breadcrumb:last-of-type {
+    border: 0;
+}
+parent-node-chain breadcrumb:hover {
+    background: #ddd;
+}
+parent-node-chain breadcrumb.active {
+    background: #eee;
+}
+breadcrumb.parent-offset
 {
-  color: #900;
-  font-weight: bold;
+  color: #000;
 }
 
 breadcrumb span:hover, .css-layout breadcrumb span:hover
