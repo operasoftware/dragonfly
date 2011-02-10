@@ -239,7 +239,6 @@ templates.network_response_body = function(req)
   }
 }
 
-
 templates.network_header_table = function(headers)
 {
   if (!headers)
@@ -301,44 +300,75 @@ templates.network_log_graph = function(ctx, width)
   var height = ctx.resources.length * rowheight;
 
   var gradients = templates.network_graph_gradient_defs();
-  var background = templates.network_log_background(ctx, rowheight);
-  var bars = templates.graph_bars(ctx, width, rowheight);
+  var rows = templates.network_graph_rows(ctx, rowheight, width)
   var grid = templates.grid_lines(ctx, width, height);
+
 
   var tpl = ["svg:svg",
              gradients,
-             background,
-             bars,
+             rows,
              grid,
+
              //'viewBox', '0 0 ' + 3000 + 'px ' + 500 +'px',
              "data-menu", "request-context-options",
              "xmlns", "http://www.w3.org/2000/svg",
              "class", "resource-graph"];
-
     return tpl;
 }
 
-templates.graph_bars = function(ctx, width, height)
+
+templates.network_graph_rows = function(ctx, rowheight, width)
 {
-  var bars = [];
   var basetime = ctx.get_starttime();
   var duration = ctx.get_duration();
-  duration = Math.ceil(duration / 1000) * 1000
-
-  for (var n=0, req; req=ctx.resources[n]; n++)
+  duration = Math.ceil(duration / 1000) * 1000;
+  var tpls = [];
+  for (var n=0, res; res=ctx.resources[n]; n++)
   {
-    var bar = templates.request_bar(n, req, basetime, duration, width, height);
-    bars.push(bar);
+    tpls.push(templates.network_graph_row(res, rowheight, width, n, basetime, duration));
   }
-  return bars;
+  return tpls;
 }
 
-templates.request_bar = function(index, request, basetime, totaltime, contwidth, lineheight)
+templates.network_graph_row = function(resource, rowheight, width, index, basetime, duration)
 {
-  var y = lineheight * index;
+  return ["g",
+          templates.network_graph_row_background(resource, rowheight, width, index),
+          templates.network_graph_row_bar(resource, rowheight, width, index, basetime, duration),
+          "handler", "select-network-request-graph",
+          "data-resource-id", String(resource.id)
+  ];
+}
+
+templates.network_graph_row_background = function(resource, rowheight, width, index)
+{
+  return [
+          ["rect", "x", "0",
+           "y", String(index * rowheight),
+           "width", "100%",
+           "height", String(rowheight-1),
+           "fill", (index % 2 ?  "rgba(0,0,0,0.025)" : "white"),
+           "class", "network-graph-bg-row",
+           //"handler", "select-network-request-graph",
+
+          ],
+          ["line",
+           "x1", "0",
+           "y1", String((index * rowheight) + rowheight - 0.5),
+           "x2", "100%",
+           "y2", String((index * rowheight) + rowheight - 0.5),
+           "stroke", "rgba(0, 0, 0, 0.1)",
+           "stroke-width", "1",
+          ]
+        ];
+}
+
+templates.network_graph_row_bar = function(request, rowheight, width, index, basetime, duration)
+{
+  var y = rowheight * index;
   var barheight = 12;
-  var bary = y + (lineheight / 2) - (barheight / 2);
-  var multiplier = contwidth / totaltime;
+  var bary = y + (rowheight / 2) - (barheight / 2);
+  var multiplier = width / duration;
 
   if (!request.duration) {
     // fixme: request not done, so emit something saner here.
@@ -354,17 +384,15 @@ templates.request_bar = function(index, request, basetime, totaltime, contwidth,
 
   var tpl = [
     ["rect", 
-      "x", String((start-basetime)*multiplier), 
+      "x", String((start-basetime) * multiplier), 
       "y", String(bary),
-      "width", String(reqwidth*multiplier),
+      "width", String(reqwidth * multiplier),
       "height", String(barheight),
       "rx", "4",
       "ry", "4",
       "fill", "#dfdfdf",
       "stroke", "#969696",
       "stroke-width", "1.0",
-      "pointer-events", "none",
-      "data-resource-id", String(request.id),      
     ],
 
     ["rect",
@@ -377,15 +405,10 @@ templates.request_bar = function(index, request, basetime, totaltime, contwidth,
       "fill", "url(#" + texture + ")", 
       "stroke", "#333333", 
       "stroke-width", "1.0",
-      "pointer-events", "none",
-      "data-resource-id", String(request.id),
     ]
   ];
   return tpl;
-};
-
-
-
+}
 
 templates.grid_lines = function(ctx, width, height)
 {
@@ -439,10 +462,8 @@ templates.grid_lines = function(ctx, width, height)
       ]);
     }
   }
-
   return ret;
 };
-
 
 templates.network_graph_gradient_defs = function()
 {
@@ -468,33 +489,4 @@ templates.network_graph_gradient = function(id, c1, c2, c3, c4)
           "y2", "100%",
           "id", "gradient-" + id
          ];
-};
-
-
-templates.network_log_background = function(ctx, lineheight)
-{
-  var cnt = ctx.resources.length;
-  var tpls = [];
-  while (cnt--)
-  {
-    tpls.push(["rect", "x", "0",
-               "y", String(cnt*lineheight),
-               "width", "100%",
-               "height", String(lineheight-1),
-               "fill", (cnt%2 ?  "rgba(0,0,0,0.025)" : "white"),
-               "data-resource-id", String(ctx.resources[cnt].id),
-               "class", "network-graph-bg-row",
-               "handler", "select-network-request-graph",
-               ]);
-
-    tpls.push(["line",
-               "x1", "0",
-               "y1", String((cnt*lineheight) + lineheight - 0.5),
-               "x2", "100%",
-               "y2", String((cnt*lineheight) + lineheight - 0.5),
-               "stroke", "rgba(0, 0, 0, 0.1)",
-               "stroke-width", "1",
-              ]);
-  }
-  return tpls;
 };
