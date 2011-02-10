@@ -57,17 +57,17 @@
       var icon = "";
       if (!!item.checked || (settings[item.menu_id] && !!settings[item.menu_id].get(item.id)))
       {
-        icon = "✔";
+        icon = "check";
       }
       else if (!!item.selected)
       {
-        icon = "⚫";
+        icon = "radio";
       }
 
       if (!item.separator)
       {
         ret.push(["li",
-            [["span", icon, "class", "contextmenu-icon"], ["span", item.label]],
+            [["span", "class", "contextmenu-icon " + icon], ["span", item.label]],
             "data-handler-id", item.id,
             "data-menu-id", item.menu_id,
             "class", item.disabled ? "disabled" : ""
