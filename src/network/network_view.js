@@ -58,8 +58,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
           graphwidth = Math.ceil(duration*0.5);
         }
 
-        // fixme: round up to nearest second when rendering grid
-
         container.clearAndRender(templates.network_log_main(ctx, graphwidth));
         this._scrollcontainer = container.querySelector("#main-scroll-container");
         this._scrollcontainer.style.height = "" + (contheight-30) + "px";
