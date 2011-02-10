@@ -1121,6 +1121,18 @@ cst-option.selected, cst-option:active {
   color: #fff;
 }
 
+cst-option.selected span,
+cst-option.selected code,
+cst-option:active span,
+cst-option:active code {
+  color: #fff;
+}
+
+cst-select-option-list code {
+  font-family: monospace;
+  color: #999;
+}
+
 .debugger-menu cst-option,
 .debugger-menu cst-title
 {

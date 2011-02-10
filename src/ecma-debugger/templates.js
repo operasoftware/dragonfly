@@ -247,12 +247,13 @@
     var ret = 
     [
       'cst-option',
-      (this._script_type_map[script_type] || script_type) + ' - ' +
-      (
-        display_uri.uri ? 
-        display_uri.uri : 
-        ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script.script_id
-      ),
+      ["span", (this._script_type_map[script_type] || script_type) + ' – ',
+        [(
+          display_uri.uri ?
+          ["span", display_uri.uri] :
+          ["code", script.script_data.length > 60 ? script.script_data.slice(0, 60) + "…" : script.script_data, "class", "code-snippet"]
+        )]
+      ],
       'script-id', script.script_id.toString()
     ];
     var class_name = script.script_id == this.selected_script_id ? 
