@@ -112,13 +112,16 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     cls.CSSInspectorCompStyleView.prototype = ViewBase;
     new cls.CSSInspectorCompStyleView('css-comp-style', ui_strings.M_VIEW_LABEL_COMPUTED_STYLE, 'scroll css-inspector');
 
+    cls.NewStyle.prototype = ViewBase;
+    new cls.NewStyle('new-style', 'New Style', 'scroll css-new-style');
+
     new cls.ColorPickerView('color-selector', 'Color Picker', 'color-selector');
     new cls.CSSInspectorActions('css-inspector');
 
     /* DOM sidepanel */
     new cls.DOMSidePanelView('dom-side-panel', 
                              ui_strings.M_VIEW_LABEL_STYLES,
-                             ['css-comp-style', 'css-inspector']);
+                             ['css-comp-style', 'css-inspector', 'new-style']);
     cls.DOMSidePanelView.create_ui_widgets();
 
     /* Layout */

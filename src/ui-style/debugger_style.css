@@ -1332,3 +1332,13 @@ property.disabled color-sample
 {
   opacity: .3;
 }
+
+/* new style sheet */
+.css-new-style-sheet
+{
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  border: 0px solid;
+  padding: 5px;
+}

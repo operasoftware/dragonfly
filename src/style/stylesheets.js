@@ -891,21 +891,20 @@ cls.Stylesheets = function()
     i = 0,
     sheet = self.getSheetWithObjId(rt_id, style_dec[STYLESHEET_ID]);
 
-    if (sheet)
+    if (!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS])
     {
-      if (!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS])
-      {
-        ret += "<rule rule-id='" + style_dec[RULE_ID] + "' obj-id='" + obj_id + "'>" +
-          "<stylesheet-link rt-id='" + rt_id + "'"+
-            " index='" + sheet.index + "' handler='display-rule-in-stylesheet'>" + sheet.name +
-          "</stylesheet-link>" +
-          "<selector>" + helpers.escapeTextHtml(style_dec[SELECTOR]) + "</selector>" +
-          " {\n" +
-              prettyPrintRuleInInspector(style_dec, false, search_active) +
-          "\n}</rule>";
-      }
+      ret += "<rule rule-id='" + style_dec[RULE_ID] + "' obj-id='" + obj_id + "'>" +
+        (sheet ?
+         "<stylesheet-link rt-id='" + rt_id + "'"+
+           " index='" + sheet.index + "' handler='display-rule-in-stylesheet'>" + sheet.name +
+         "</stylesheet-link>" : 
+        "")+
+        "<selector>" + helpers.escapeTextHtml(style_dec[SELECTOR]) + "</selector>" +
+        " {\n" +
+            prettyPrintRuleInInspector(style_dec, false, search_active) +
+        "\n}</rule>";
     }
-    else
+    if (!sheet)
     {
       opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
         'stylesheet is missing in stylesheets, prettyPrintStyleDec[ORIGIN_AUTHOR]');
