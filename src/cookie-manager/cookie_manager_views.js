@@ -11,16 +11,15 @@ cls.CookieManager.CookieManagerViewBase = function()
     var contextmenu = ContextMenu.get_instance();
     contextmenu.register("cookie_refetch", [
       {
-        callback: (function(context){
-          return function(){
-            return [
-              {
-                label: "Refresh",
-                handler: function(){context.refetch()}
-              }
-            ]
-          }
-        })(this)
+        callback: function()
+        {
+          return [
+            {
+              label: "Refresh",
+              handler: function(){window.views.cookie_manager.refetch()}
+            }
+          ]
+        }
       }
     ]);
     this.flattened_cookies = this._flatten_cookies(this._cookie_dict, this._rts);
