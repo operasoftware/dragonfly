@@ -117,14 +117,15 @@ selector { /* TODO: use class */
     color: #555;
 }
 
-.overwritten key {
-    color: #777;
-}
-
 property.disabled, /* TODO: rename to .declaration */
 .disabled key,
 .disabled value {
     color: #999;
+}
+
+.origin-user-agent,
+.origin-local {
+    background: transparent url("../ui-images/disabled_stripe_tile.png");
 }
 
 media, at { /* TODO: Use classes */
