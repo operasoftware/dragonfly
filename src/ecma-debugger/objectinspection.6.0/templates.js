@@ -21,7 +21,9 @@
   OBJECT_VALUE = 3,
   // added fields
   MAX_VALUE_LENGTH = 30,
-  STYLE_EXPANDED = "style='background-position: 0px -11px' ";
+  STYLE_EXPANDED = "style='background-position: 0px -11px' ",
+  IS_EDITABLE = 5,
+  UID = 6;
 
   /* private */
 
@@ -111,9 +113,16 @@
       ret.push("</div>");
     }
     return ret;
-  }
+  };
 
-
+  var editable = function(prop)
+  {
+    if (prop[IS_EDITABLE])
+    {
+      return " data-prop-uid='" + prop[UID] + "' ";
+    }
+    return "";
+  };
 
   var _pretty_print_properties = function(model,
                                           tree,
@@ -143,6 +152,7 @@
       {
         case "number":
         case "boolean":
+        case "error":
         {
           if (!searchterm ||
               prop[NAME].toLowerCase().contains(searchterm) ||
@@ -150,7 +160,8 @@
           {
             ret.push(
               "<item>" +
-                "<key class='no-expander' data-spec='dom#" + esc_name + "'>" +
+                "<key class='no-expander' data-spec='dom#" + esc_name + "'" + 
+                  editable(prop) + ">" +
                   esc_name +
                 "</key>" +
                 "<value class='" + type + "'>" + value + "</value>" +
@@ -180,7 +191,8 @@
               ret.push(
                 "<item>" +
                   "<input type='button' handler='expand-value' class='folder-key'/>" +
-                  "<key data-spec='dom#" + esc_name + "'>" + esc_name + "</key>" +
+                  "<key data-spec='dom#" + esc_name + "'" + 
+                    editable(prop) + ">" + esc_name + "</key>" +
                   "<value class='" + type + "' data-value='" + value + "'>" +
                     "\"" + helpers.escapeTextHtml(short_val) +
                   "</value>" +
@@ -196,7 +208,8 @@
             {
               ret.push(
                 "<item>" +
-                  "<key class='no-expander' data-spec='dom#" + esc_name + "'>" +
+                  "<key class='no-expander' data-spec='dom#" + esc_name + "'" + 
+                    editable(prop) + ">" +
                     esc_name +
                   "</key>" +
                   "<value class='" + type + "'>\"" + value + "\"</value>" +
@@ -219,7 +232,8 @@
           {
             ret.push(
               "<item>" +
-                "<key class='no-expander' data-spec='dom#" + esc_name + "'>" +
+                "<key class='no-expander' data-spec='dom#" + esc_name + "'" + 
+                  editable(prop) + ">" +
                   esc_name +
                 "</key>" +
                 "<value class='" + type + "'>" + type + "</value>" +
@@ -257,7 +271,7 @@
             ret.push(
               "/>" +
               "<key " + (has_match ? "" : " class='no-match'") +
-                        "data-spec='dom#" + esc_name + "'" +
+                        "data-spec='dom#" + esc_name + "'" + editable(prop) +
                         ">" + esc_name + "</key>" +
               "<value class='object" + (has_match ? "" : " no-match") + "' " +
                      "data-spec='dom#" + value + "'>" + value + "</value>"

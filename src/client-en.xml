@@ -305,6 +305,10 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ecma-debugger/eventbreakpoints/view.js"/>
 <script src="./ecma-debugger/eventbreakpoints/templates.js"/>
 
+<script src="./ecma-debugger/watches/data.js"/>
+<script src="./ecma-debugger/watches/view.js"/>
+<script src="./ecma-debugger/watches/propertyeditor.js"/>
+
 <script src="./style/element_layout.js"/>
 <script src="./style/editor.js"/>
 <script src="./style/css_initial_values.js"/>

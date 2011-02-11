@@ -3,7 +3,7 @@ cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
 cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
 
 /**
-  * @constructor 
+  * @constructor
   * @extends ViewBase
   */
 
@@ -37,7 +37,7 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseView = function()
 
   this._create_view = function(container, data_model)
   {
-    var tmpl = window.templates.inspected_js_object(data_model, false, 
+    var tmpl = window.templates.inspected_js_object(data_model, false,
                                                     null, this._searchterm);
     container.clearAndRender(tmpl);
   };

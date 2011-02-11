@@ -41,6 +41,7 @@
           "shift f3": "highlight-previous-match",
           "ctrl enter": "show-script",
           "escape": "hide-search",
+          "escape": "toggle-command-line",
           "ctrl tab": "navigate-next-top-tab",
           "ctrl shift tab": "navigate-previous-top-tab",
           "ctrl f": "show-search"
@@ -153,6 +154,18 @@
           "page-up": "scroll-page-up",
           "page-down": "scroll-page-down",
         },
+      },
+      "watches":
+      {
+        "default":
+        {
+
+        },
+        "edit":
+        {
+          "enter": "submit",
+          "escape": "cancel",
+        }
       },
     },
     mac:

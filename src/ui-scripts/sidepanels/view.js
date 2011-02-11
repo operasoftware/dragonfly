@@ -96,6 +96,10 @@ var SidePanelBaseView = function(id, name, view_list)
       {
         container.setAttribute('handler', view.default_handler);
       }
+      if (view.edit_handler)
+      {
+        container.setAttribute('edit-handler', view.edit_handler);
+      }
       container.className = view.container_class || '';
       container.setAttribute('data-menu', view.id || '');
       view.update();

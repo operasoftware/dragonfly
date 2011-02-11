@@ -55,6 +55,7 @@ cls.ElementStyle = function()
   var __search_is_active = false;
   var __old_search_term = '';
   var __setProps = [];
+  var __setPriorities = [];
   var _rt_id;
   var _obj_id;
 

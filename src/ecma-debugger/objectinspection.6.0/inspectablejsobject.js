@@ -108,7 +108,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
   this._get_subtree = function(path)
   {
     const PATH_KEY = 0, PATH_OBJ_ID = 1, PATH_PROTO_INDEX = 2;
-    var key = '', obj_id = 0, proto_index = 0, i = 0, tree = this._expand_tree;
+    var key = '', obj_id = 0, proto_index = 0, i = 0, tree = this._expand_tree, index = 0;
     for ( ; path && path[i]; i++)
     {
       key = path[i][PATH_KEY];
@@ -228,7 +228,9 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     re_d = /^\d+$/;
 
     if (status)
+    {
       opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + ' failed to examine object');
+    }
     else
     {
       proto_chain = message[OBJECT_CHAIN_LIST][0][OBJECT_LIST];

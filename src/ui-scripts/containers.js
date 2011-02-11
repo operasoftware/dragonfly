@@ -69,13 +69,15 @@ var ContainerBase = function()
     var container = document.getElementById(this.type + '-to-' + this.cell.id) || this.update();
     if( view )
     {
-      if( view.default_handler )
+      container.removeAttribute('handler');
+      container.removeAttribute('edit-handler');
+      if (view.default_handler)
       {
         container.setAttribute('handler', view.default_handler); 
       }
-      else
+      if (view.edit_handler)
       {
-        container.removeAttribute('handler');
+        container.setAttribute('edit-handler', view.edit_handler); 
       }
       container.className = view.container_class || '';
       container.setAttribute('data-menu', view_id || '');

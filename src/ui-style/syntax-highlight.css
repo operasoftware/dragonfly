@@ -31,6 +31,11 @@
   font-style: italic;
   }
 
+examine-objects .error {
+  color:#f60;
+  font-style: italic;
+  }
+
 #examine-objects .boolean, examine-objects .boolean {
   color:#920;
   }
