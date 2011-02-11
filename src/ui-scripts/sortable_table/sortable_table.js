@@ -145,7 +145,6 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
 
   this._render = function(target)
   {
-    console.log("target",arguments[0]);
     this.post_message("before-render");
     if (this._discard_render)
     {

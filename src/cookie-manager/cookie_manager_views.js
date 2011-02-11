@@ -439,7 +439,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     }
     if(typeof obj.isSecure === "number")
     {
-      return obj.isSecure? "Yes":"";
+      return window.templates.cookie_manager.boolean_value(obj.isSecure);
     }
     return window.templates.cookie_manager.unknown_value();
   }
@@ -454,7 +454,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     if(typeof obj.isHTTPOnly === "number")
     {
       // this will depend on the service version, it gets editable with 1.1
-      return obj.isHTTPOnly? "Yes":"";
+      return window.templates.cookie_manager.boolean_value(obj.isHTTPOnly);
     }
     return window.templates.cookie_manager.unknown_value();
   }

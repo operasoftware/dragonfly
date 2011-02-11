@@ -150,11 +150,11 @@ templates.cookie_manager = {
   },
   editable_secure: function(is_secure) {
     var edit_elem = this.input_checkbox_container("is_secure", is_secure);
-    return this.edit_mode_switch_container(is_secure? "Yes":"", edit_elem);
+    return this.edit_mode_switch_container(this.boolean_value(is_secure), edit_elem);
   },
   editable_http_only: function(is_http_only) {
     var edit_elem = this.input_checkbox_container("is_http_only", is_http_only);
-    return this.edit_mode_switch_container(is_http_only? "Yes":"", edit_elem);
+    return this.edit_mode_switch_container(this.boolean_value(is_http_only), edit_elem);
   },
   expires_0values: function() {
     return [
@@ -168,6 +168,15 @@ templates.cookie_manager = {
   },
   unknown_value: function() {
     return ["span", "-", "class", "replaced-val"];
+  },
+  boolean_value: function(bool) {
+    if(bool)
+    {
+      return ["img", "src", "ui-images/menu_check.png"];
+    }
+    else {
+      return [];
+    }
   },
   add_cookie_row: function(current_runtime, runtimes) {
     return ["tr",
