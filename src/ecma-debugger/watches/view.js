@@ -207,8 +207,8 @@ cls.WatchesData = function()
     update_list[prop[UID]] = false;
     this._update_prop(uid, key, update_list);
     // workaround
-    update_list[0] = false;
-    this._update_prop(0, 1, update_list);
+    // update_list[0] = false;
+    // this._update_prop(0, 1, update_list);
   };
 
   this._update_prop = function(uid, key, update_list)
@@ -299,8 +299,8 @@ cls.WatchesData = function()
       this._update_prop(prop[UID], prop[NAME], update_list);
     }, this);
     // workaround
-    update_list[0] = false;
-    this._update_prop(0, 1, update_list);
+    // update_list[0] = false;
+    // this._update_prop(0, 1, update_list);
   };
 
   this.set_data_list = function(list)
