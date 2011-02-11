@@ -1076,7 +1076,7 @@ cst-select-option-list-container
   /* don't add here any border, padding or margin */
   display: block;
   position:absolute;
-  z-index: 10;
+  z-index: 302;
 }
 
 cst-select[disabled] cst-drop-down

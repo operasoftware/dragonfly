@@ -650,11 +650,6 @@ cls.JsSourceView = function(id, name, container_class)
     return script.id;
   }
 
-  this.getCurrentScriptId = function()
-  {
-    return script.id;
-  }
-
   this.clearView = function()
   {
     if( !__timeout_clear_view )
@@ -866,7 +861,7 @@ cls.ScriptSelect = function(id, class_name)
 
   this.checkChange = function(target_ele)
   {
-    var script_id = parseInt(target_ele.getAttribute('script-id'));
+    var script_id = parseInt(target_ele.get_attr('parent-node-chain', 'script-id'));
 
     if(script_id)
     {
