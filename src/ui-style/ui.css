@@ -717,7 +717,7 @@ setting-buttons {
 }
 
 settings-container { /**/
-  padding: 7px;
+  padding: 0 8px 8px;
   }
 
 settings hr
@@ -1466,28 +1466,46 @@ overlay-tabs tab.active {
     background: rgba(0, 0, 0, .4);
     cursor: auto;
 }
-overlay-content {
-    background: rgba(0, 0, 0, .4);
-    border-radius: 7px;
-    border-top-width: 1px;
-    padding: 10px;
+overlay-content, overlay-info {
     position: absolute;
-    top: 0;
+    top: 31px;
     bottom: 0;
-    left: 0;
     right: 0;
+    padding: 10px;
     overflow: auto;
 }
-overlay-tabs + overlay-content { /* Need to style a bit differently in case there are tabs */
-    top: 31px;
-    border-top-width: 0;
+overlay-content {
+    background: rgba(0, 0, 0, .4);
     border-radius: 0 0 7px 7px;
+    border-top-width: 0;
+    left: 0;
+}
+overlay-info:not(:empty) + overlay-content {
+    padding-right: 200px;
+}
+overlay-info:not(:empty) {
+    z-index: 2;
+    border-left: 1px solid rgba(255, 255, 255, .1);
+    width: 180px;
+}
+overlay-info p {
+    margin: 0 0 8px;
+}
+overlay-info ol {
+    margin: 0;
+    padding: 0 0 0 20px;;
+}
+overlay-info li {
+    margin-bottom: 8px;
 }
 overlay fieldset, overlay hr {
-    border: 2px ridge rgba(255, 255, 255, .2);
+    border: 1px solid rgba(255, 255, 255, .1);
+}
+overlay fieldset {
+    margin: 0;
 }
 overlay hr {
-    border-width: 0 0 2px;
+    border-width: 0 0 1px;
 }
 
 cst-group

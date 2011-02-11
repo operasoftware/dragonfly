@@ -364,23 +364,34 @@ cls.DebugRemoteSettingView.create_ui_widgets = function()
       'debug-remote':
       function(setting)
       {
-        return (
-            !settings.debug_remote_setting.get('debug-remote')
-            ?
-              [
-                ['setting-composite',
-                  window.templates.remote_debug_settings(setting.get('port'))
-                ]
+        if (!settings.debug_remote_setting.get('debug-remote'))
+        {
+          Overlay.get_instance().set_info_content(
+            [
+              ["p", ui_strings.S_REMOTE_DEBUG_GUIDE_PRECONNECT_HEADER],
+              ["ol",
+                ["li", ui_strings.S_REMOTE_DEBUG_GUIDE_PRECONNECT_STEP_1],
+                ["li", ui_strings.S_REMOTE_DEBUG_GUIDE_PRECONNECT_STEP_2]
               ]
-            :
-              ['setting-composite',
-                ['input',
-                  'type', 'button',
-                  'value', ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG,
-                  'handler', 'cancel-remote-debug'
-                ]
-              ]
-        );
+            ]
+          );
+
+          return [
+            ['setting-composite',
+              window.templates.remote_debug_settings(setting.get('port'))
+            ]
+          ]
+        }
+        else
+        {
+          return ['setting-composite',
+            ['input',
+              'type', 'button',
+              'value', ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG,
+              'handler', 'cancel-remote-debug'
+            ]
+          ]
+        }
       }
     },
     "remote_debug"

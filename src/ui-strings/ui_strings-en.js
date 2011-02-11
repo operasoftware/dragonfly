@@ -650,3 +650,22 @@ ui_strings.S_REPL_HELP_COMMAND_DESC = "Show a list of all available commands";
 /* DESC: Description of the "jquery" command in the repl */
 ui_strings.S_REPL_JQUERY_COMMAND_DESC = "Load jquery in the active tab";
 
+/* DESC: Remote debug guide, connection setup */
+ui_strings.S_REMOTE_DEBUG_GUIDE_PRECONNECT_HEADER = "Steps to enable remote debugging:";
+/* DESC: Remote debug guide, connection setup */
+ui_strings.S_REMOTE_DEBUG_GUIDE_PRECONNECT_STEP_1 = "Specify the port number you wish to connect over, or leave as the default";
+/* DESC: Remote debug guide, connection setup */
+ui_strings.S_REMOTE_DEBUG_GUIDE_PRECONNECT_STEP_2 = "Click “Apply”";
+
+/* DESC: Remote debug guide, waiting for connection */
+ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_HEADER = "On the remote device:";
+/* DESC: Remote debug guide, waiting for connection */
+ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_1 = "Enter opera:debug in the URL field";
+/* DESC: Remote debug guide, waiting for connection */
+ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_2 = "Enter the IP address of the machine running Opera Dragonfly";
+/* DESC: Remote debug guide, waiting for connection */
+ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_3 = "Enter the port number specified earlier";
+/* DESC: Remote debug guide, waiting for connection */
+ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_4 = "Click “Connect”";
+/* DESC: Remote debug guide, waiting for connection */
+ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_5 = "Once connected navigate to the page you wish to debug";

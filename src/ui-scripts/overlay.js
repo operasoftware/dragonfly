@@ -13,6 +13,8 @@ var Overlay = function()
 
   this._ui = UI.get_instance();
   this.active_overlay = null;
+  this.content_element = null;
+  this.info_element = null;
 
   this.__defineGetter__("is_visible", function()
   {
@@ -52,9 +54,15 @@ var Overlay = function()
           tab.addClass("active");
       }
     }
-    var content_element = this.element.querySelector("overlay-content");
-    content_element.clearAndRender(window.templates.settings(Settings.get_settings_by_group(group)));
-    content_element.scrollTop = 0;
+    this.info_element = this.element.querySelector("overlay-info");
+    this.content_element = this.element.querySelector("overlay-content");
+    this.content_element.clearAndRender(window.templates.settings(Settings.get_settings_by_group(group)));
+    this.content_element.scrollTop = 0;
+  };
+
+  this.set_info_content = function(template)
+  {
+    this.info_element.clearAndRender(template);
   };
 };
 

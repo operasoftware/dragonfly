@@ -345,7 +345,8 @@
         [
           ["overlay-arrow"],
           ["overlay-tabs", tabs],
-          ["overlay-content"]
+          ["overlay-info"],
+          ["overlay-content"],
         ]
       ]
     ];

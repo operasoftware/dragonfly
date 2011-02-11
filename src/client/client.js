@@ -81,11 +81,15 @@ window.cls.Client = function()
     else if (client.is_remote_debug)
     {
       document.getElementById("remote-debug-settings").clearAndRender(
-        window.templates.remote_debug_settings(port + 1, ui_strings.S_INFO_ERROR_LISTENING.replace(/%s/, port))
+        window.templates.remote_debug_settings(port + 1)
       );
 
       UI.get_instance().get_button("toggle-remote-debug-overlay")
                        .addClass("alert");
+
+      Overlay.get_instance().set_info_content(
+        ["p", ui_strings.S_INFO_ERROR_LISTENING.replace(/%s/, port)]
+      );
 
       // Reset this so we don't start in remote debug next time
       settings.debug_remote_setting.set('debug-remote', false);
@@ -190,11 +194,23 @@ window.cls.Client = function()
     {
       UI.get_instance().get_button("toggle-remote-debug-overlay")
                        .removeClass("alert");
+
+      Overlay.get_instance().set_info_content(
+        [
+          ["p", ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_HEADER],
+          ["ol",
+            ["li", ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_1],
+            ["li", ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_2],
+            ["li", ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_3],
+            ["li", ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_4],
+            ["li", ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_5]
+          ]
+        ]
+      );
+
       document.getElementById("remote-debug-settings").clearAndRender([
         ["p",
           ui_strings.S_INFO_WAITING_FORHOST_CONNECTION.replace(/%s/, port)
-          //"Waiting for a host connection." +
-          //" Go to opera:debug in your host and use <IP> and %s to connect.".replace(/%s/, port)
         ],
         //["p",
         //  ["img",
