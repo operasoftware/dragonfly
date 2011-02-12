@@ -50,7 +50,14 @@ cls.WatchesView = function(id, name, container_class)
 
   this.add_watch = function(uid, key)
   {
-    this._data.add_property(uid, key);
+    if (key)
+    {
+      this._data.add_property(uid, key);
+    }
+    else
+    {
+      this._data.remove_property(uid);
+    }
   }
 
   /* action handler interface */
@@ -129,8 +136,8 @@ cls.WatchesView = function(id, name, container_class)
   {
     this.init(id, name, container_class, null, null, 'watches-edit-prop');
     this._last_selected_frame_index = 0;
-    this._data = new cls.WatchesData();
     this._watch_container = null;
+    this._data = new cls.WatchesData(this);
     this._editor = new cls.JSPropertyEditor(this);
     eventHandlers.dblclick['watches-edit-prop'] = this._handlers['edit'];
     eventHandlers.click['watches-add'] = this._handlers['add'];
@@ -142,7 +149,7 @@ cls.WatchesView = function(id, name, container_class)
 
 };
 
-cls.WatchesData = function()
+cls.WatchesData = function(view)
 {
  
   const 
@@ -178,7 +185,7 @@ cls.WatchesData = function()
     ]
   */
  
-  this._init = function()
+  this._init = function(view)
   {
     this._super_init(0, "watches");
     this._obj_map = 
@@ -193,6 +200,7 @@ cls.WatchesData = function()
     };
     this._esdb = window.services['ecmascript-debugger'];
     this._tagman = window.tag_manager;
+    this._view = view;
   };
 
   this.add_property = function(uid, key)
@@ -207,6 +215,22 @@ cls.WatchesData = function()
     var update_list = {};
     update_list[prop[UID]] = false;
     this._update_prop(uid, key, update_list);
+  };
+  
+  this.remove_property = function(uid)
+  {
+    var prop_list = this._obj_map.watches[0][PROPERTY_LIST];
+    for (var i = 0; i < prop_list.length && prop_list[i][UID] != uid; i++);
+    if (prop_list[i])
+    {
+      var prop = prop_list[i];
+      if (prop[TYPE] == "object")
+      {
+        this.collapse([[prop[NAME], prop[OBJECT_VALUE][OBJECT_ID], 0]]);
+      }
+      prop_list.splice(i, 1);
+      this._view.update();
+    }
   };
 
   this._update_prop = function(uid, key, update_list)
@@ -270,7 +294,7 @@ cls.WatchesData = function()
       }
       if (all_updated)
       {
-        window.views.watches.update();
+        this._view.update();
       }
     }
   }
@@ -299,7 +323,7 @@ cls.WatchesData = function()
     this._obj_map.watches[0][PROPERTY_LIST] = list;
   };
 
-  this._init();
+  this._init(view);
 
 }
 
