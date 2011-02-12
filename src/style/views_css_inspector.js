@@ -16,7 +16,7 @@ cls.CSSInspectorView = function(id, name, container_class)
     var styles = container.clearAndRender(['category', ['styles'], 'edit-handler', 'edit-css']).firstElementChild;
     var search_active = elementStyle.getSearchActive();
     var cat_index = 1;
-    data = elementStyle.getCategoryData(cat_index);
+    var data = elementStyle.getCategoryData(cat_index);
     if (data)
     {
       // stylesheets.prettyPrintCat call will also ensure 
