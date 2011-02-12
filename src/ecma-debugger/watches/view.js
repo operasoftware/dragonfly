@@ -1,4 +1,4 @@
-window.cls || (window.cls = {});
+﻿window.cls || (window.cls = {});
 
 /**
   * @constructor 
@@ -206,9 +206,6 @@ cls.WatchesData = function()
     var update_list = {};
     update_list[prop[UID]] = false;
     this._update_prop(uid, key, update_list);
-    // workaround
-    // update_list[0] = false;
-    // this._update_prop(0, 1, update_list);
   };
 
   this._update_prop = function(uid, key, update_list)
@@ -228,7 +225,7 @@ cls.WatchesData = function()
     this._esdb.requestEval(tag, [frame.runtime_id, 
                                  frame.thread_id,
                                  frame.index,
-                                 script]);
+                                 key, [["dummy", 0]]]);
   }
 
   this._handle_update_prop = function(status, message, uid, prop, update_list)
@@ -238,7 +235,7 @@ cls.WatchesData = function()
       ["completed","object",null,[2,0,"object",3,"HTMLDocument"]]
       ["unhandled-exception","object",null,[26,0,"object",27,"Error"]]
     */
-    if (status /* */ || message[STATUS] != "completed" /* */)
+    if (status)
     {
       opera.postError("Watching " + prop + " failed.");
     }
@@ -249,18 +246,6 @@ cls.WatchesData = function()
       for (var i = 0; i < prop_list.length && prop_list[i][UID] != uid; i++);
       if (prop_list[i])
       {
-        if (message[VALUE] == DFL_EVAL_ERROR)
-        {
-          prop_list[i][TYPE] = "error";
-          prop_list[i][VALUE] = "Error";
-        }
-        else
-        {
-          prop_list[i][TYPE] = message[TYPE];
-          prop_list[i][VALUE] = message[VALUE];
-          prop_list[i][OBJECT_VALUE] = message[OBJECT_VALUE];
-        }
-        /*
         if (message[STATUS] == "completed")
         {
           prop_list[i][TYPE] = message[TYPE];
@@ -272,7 +257,6 @@ cls.WatchesData = function()
           prop_list[i][TYPE] = "error";
           prop_list[i][VALUE] = "Error";
         }
-        */
       }
       else if(uid != 0)
       {
@@ -298,9 +282,6 @@ cls.WatchesData = function()
       update_list[prop[UID]] = false;
       this._update_prop(prop[UID], prop[NAME], update_list);
     }, this);
-    // workaround
-    // update_list[0] = false;
-    // this._update_prop(0, 1, update_list);
   };
 
   this.set_data_list = function(list)
