@@ -152,6 +152,7 @@ cls.WatchesData = function()
   TYPE = 1,
   VALUE = 2,
   OBJECT_VALUE = 3,
+  OBJECT_ID = 0,
   IS_EDITABLE = 5, 
   UID = 6,
   IS_UPDATED = 7,
@@ -176,7 +177,7 @@ cls.WatchesData = function()
       ...
     ]
   */
-
+ 
   this._init = function()
   {
     this._super_init(0, "watches");
@@ -279,6 +280,10 @@ cls.WatchesData = function()
     var update_list = {};
     this._obj_map.watches[0][PROPERTY_LIST].forEach(function(prop)
     {
+      if (prop[TYPE] == "object")
+      {
+        this.collapse([[prop[NAME], prop[OBJECT_VALUE][OBJECT_ID], 0]]);
+      }
       update_list[prop[UID]] = false;
       this._update_prop(prop[UID], prop[NAME], update_list);
     }, this);

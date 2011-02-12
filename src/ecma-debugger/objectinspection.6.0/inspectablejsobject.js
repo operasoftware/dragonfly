@@ -148,9 +148,11 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
       key = path[i][PATH_KEY];
       obj_id = path[i][PATH_OBJ_ID];
       index = path[i][PATH_PROTO_INDEX];
-      if (!(tree.protos[index] && tree.protos[index][key]))
+      if (!(tree.protos && tree.protos[index] && tree.protos[index][key]))
       {
-        throw 'not valid path in InspectionBaseData._remove_subtree';
+        // with watches it can happen that we try to collapse
+        // a path which was never expanded.
+        return ret;
       }
       if (i == path.length - 1)
       {
@@ -377,7 +379,11 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     if (path)
     {
       this._norm_path(path);
-      this._cleanup_maps(this._remove_subtree(path));
+      var sub_tree = this._remove_subtree(path);
+      if (sub_tree)
+      {
+        this._cleanup_maps(sub_tree);
+      }
     }
     else
     {

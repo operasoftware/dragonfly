@@ -526,7 +526,7 @@ MODE ::= "<mode>"
     var ret = [];
     if (css_path)
     {
-      for(var i; i < css_path.length; i++ )
+      for (var i = 0; i < css_path.length; i++ )
       {
         ret[ret.length] =
         [
