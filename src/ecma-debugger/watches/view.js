@@ -1,7 +1,7 @@
 ﻿window.cls || (window.cls = {});
 
 /**
-  * @constructor 
+  * @constructor
   * @extends ViewBase
   */
 
@@ -15,8 +15,8 @@ cls.WatchesView = function(id, name, container_class)
   {
     return (
     [
-      ['div'], 
-      ['div', 
+      ['div'],
+      ['div',
         ['input',
           'type', 'button',
           'value', 'Add',
@@ -80,14 +80,20 @@ cls.WatchesView = function(id, name, container_class)
 
   this._handlers['edit'] = function(event, target)
   {
-    var ele = event.target;
-    while (ele && ele.nodeName.toLowerCase() != 'item' && 
-          (ele = ele.parentNode) && ele != target);
-    ele = ele && ele.getElementsByTagName('key')[0];
-    if (ele && ele.hasAttribute('data-prop-uid'))
+    var ele = this._get_editable_item(event, target);
+    if (ele)
     {
       this.mode = MODE_EDIT;
       this._editor.edit(event, ele);
+    }
+  }.bind(this);
+
+  this._handlers['delete'] = function(event, target)
+  {
+    var ele = this._get_editable_item(event, target);
+    if (ele)
+    {
+      this._data.remove_property(ele.getAttribute('data-prop-uid'));
     }
   }.bind(this);
 
@@ -132,6 +138,8 @@ cls.WatchesView = function(id, name, container_class)
     this._last_selected_frame_index = msg.frame_index;
   }
 
+  this._get_editable_item = cls.WatchesView.get_editable_item;
+
   this._init = function(id, name, container_class)
   {
     this.init(id, name, container_class, null, null, 'watches-edit-prop');
@@ -149,10 +157,77 @@ cls.WatchesView = function(id, name, container_class)
 
 };
 
+cls.WatchesView.get_editable_item = function(event, target)
+{
+  var ele = event.target;
+  while (ele && ele.nodeName.toLowerCase() != 'item' &&
+        (ele = ele.parentNode) && ele != target);
+  ele = ele && ele.getElementsByTagName('key')[0];
+  if (ele && ele.hasAttribute('data-prop-uid'))
+  {
+    return ele;
+  }
+  return null;
+};
+
+cls.WatchesView.create_ui_widgets = function()
+{
+
+  var broker = ActionBroker.get_instance();
+  var contextmenu = ContextMenu.get_instance();
+
+  var watches_common_items =
+  [
+    {
+      label: "Add watch",
+      handler: function (event, target)
+      {
+        broker.dispatch_action("watches", "add", event, event.target);
+      },
+    },
+  ];
+
+  var watches_editable_items =
+  [
+    {
+      label: "Edit",
+      handler: function (event, target)
+      {
+        broker.dispatch_action("watches", "edit", event, target);
+      },
+    },
+    {
+      label: "Delete",
+      handler: function (event, target)
+      {
+        broker.dispatch_action("watches", "delete", event, target);
+      },
+    },
+  ]
+  .concat(ContextMenu.separator)
+  .concat(watches_common_items);
+
+  var watches_menu =
+  [
+    {
+      callback: function(event, target)
+      {
+        return (
+        cls.WatchesView.get_editable_item(event, target) ?
+        watches_editable_items :
+        watches_common_items);
+      }
+    },
+  ];
+
+  contextmenu.register("watches", watches_menu);
+
+};
+
 cls.WatchesData = function(view)
 {
- 
-  const 
+
+  const
   STATUS = 0,
   PROPERTY_LIST = 1,
   NAME = 0,
@@ -160,7 +235,7 @@ cls.WatchesData = function(view)
   VALUE = 2,
   OBJECT_VALUE = 3,
   OBJECT_ID = 0,
-  IS_EDITABLE = 5, 
+  IS_EDITABLE = 5,
   UID = 6,
   IS_UPDATED = 7,
   DFL_EVAL_ERROR = "__DFLEvalError__";
@@ -179,21 +254,21 @@ cls.WatchesData = function(view)
       ["a", "string", "a"],
       ["b", "string", "b"],
       ["activeElement", "object", null, [26, 0, "object", 41, "HTMLButtonElement"]],
-      ["alinkColor", "string", ""], 
+      ["alinkColor", "string", ""],
       ["all", "object", null, [27, 1, "object", 42, "HTMLCollection"]],
       ...
     ]
   */
- 
+
   this._init = function(view)
   {
     this._super_init(0, "watches");
-    this._obj_map = 
+    this._obj_map =
     {
       "0": [[["watches"]]],
       "watches": [[[], []]]
     };
-    this._expand_tree = 
+    this._expand_tree =
     {
       "object_id": 0,
       "protos": {"0": {"": {"object_id": "watches"}}}
@@ -216,7 +291,7 @@ cls.WatchesData = function(view)
     update_list[prop[UID]] = false;
     this._update_prop(uid, key, update_list);
   };
-  
+
   this.remove_property = function(uid)
   {
     var prop_list = this._obj_map.watches[0][PROPERTY_LIST];
@@ -235,19 +310,19 @@ cls.WatchesData = function(view)
 
   this._update_prop = function(uid, key, update_list)
   {
-    var frame = window.stop_at.getSelectedFrame() || 
+    var frame = window.stop_at.getSelectedFrame() ||
                 {
                   runtime_id: window.runtimes.getSelectedRuntimeId(),
                   thread_id: 0,
                   index: 0,
                 };
     this._rt_id = frame.runtime_id;
-    var tag = this._tagman.set_callback(this, 
+    var tag = this._tagman.set_callback(this,
                                         this._handle_update_prop,
                                         [uid, key, update_list]);
-    var script = "try{return " + key + "}" + 
+    var script = "try{return " + key + "}" +
                  "catch(e){return \"" + DFL_EVAL_ERROR + "\"};";
-    this._esdb.requestEval(tag, [frame.runtime_id, 
+    this._esdb.requestEval(tag, [frame.runtime_id,
                                  frame.thread_id,
                                  frame.index,
                                  key, [["dummy", 0]]]);
@@ -255,7 +330,7 @@ cls.WatchesData = function(view)
 
   this._handle_update_prop = function(status, message, uid, prop, update_list)
   {
-    /* 
+    /*
       examples
       ["completed","object",null,[2,0,"object",3,"HTMLDocument"]]
       ["unhandled-exception","object",null,[26,0,"object",27,"Error"]]
@@ -327,5 +402,5 @@ cls.WatchesData = function(view)
 
 }
 
-cls.WatchesData.prototype = 
+cls.WatchesData.prototype =
   cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype;
