@@ -75,7 +75,6 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     /* Watches */
     cls.WatchesView.prototype = ViewBase;
     new cls.WatchesView('watches', 'Watches', 'scroll');
-    cls.WatchesView.create_ui_widgets();
     
     /* Runtime State */
     new SidePanelView('scripts-side-panel', 

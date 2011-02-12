@@ -26,18 +26,17 @@ window.cls.JSPropertyEditor = function(watches)
     {
       this.get_base_style(ele);
     }
-    
     // this should never be needed
-    
     if (this.textarea_container.parentElement)
     {
       opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
         "this.textarea_container.parentElement is not null in submit");
-    } 
+    }
     this.textarea.value = ele.textContent;
     ele.textContent = "";
     ele.appendChild(this.textarea_container);
-    this.max_width = parseInt(getComputedStyle(ele.parentNode, null).getPropertyValue('width'));
+    this.max_width = parseInt(getComputedStyle(ele.parentNode, 
+                                               null).getPropertyValue('width'));
     this.set_textarea_dimensions();
     for (var prop in this.context_enter)
     {
@@ -50,7 +49,7 @@ window.cls.JSPropertyEditor = function(watches)
     }
     this.textarea.selectionStart = 0;
     this.textarea.selectionEnd = this.textarea.value.length;
-  }
+  };
 
   this.oninput = function(event)
   {
@@ -59,7 +58,7 @@ window.cls.JSPropertyEditor = function(watches)
       this.set_textarea_dimensions();
       this.context_cur.key = this.textarea.value;
     }
-  }
+  };
 
   this.submit = function()
   {
@@ -71,7 +70,7 @@ window.cls.JSPropertyEditor = function(watches)
       this._watches.add_watch(this.context_cur.uid, this.context_cur.key);
     }
     return nav_target;
-  }
+  };
 
   this.cancel = function()
   {
@@ -82,17 +81,7 @@ window.cls.JSPropertyEditor = function(watches)
       nav_target.textContent = this.context_enter.key;
     }
     return nav_target;
-  }
-
-  this.nav_previous = function(event, action_id)
-  {
-
-  }
-
-  this.nav_next = function(event, action_id)
-  {
-
-  }
+  };
 
   // helpers
   this.set_textarea_dimensions = function()
@@ -100,27 +89,16 @@ window.cls.JSPropertyEditor = function(watches)
     // TODO force new lines if needed
     var 
     max_content_length = 
-      Math.max.apply(null, this.textarea.value.split('\r\n').map(function(item){return item.length})),
+      Math.max.apply(null, this.textarea.value.split('\r\n').map(function(item){
+        return item.length
+      })),
     width = this.char_width * max_content_length;
     this.textarea.style.height = '0px';
-    this.textarea.style.width = ( width < this.max_width ? (width || 1) : this.max_width )+ "px";
+    this.textarea.style.width = (width < this.max_width ? 
+                                 (width || 1) : 
+                                 this.max_width) + "px";
     this.textarea.style.height = this.textarea.scrollHeight + 'px';
-  }
-
-  this.create_new_edit = function(ref_node)
-  {
-    var 
-    name = ref_node.nodeName.toLowerCase(),
-    parent = ref_node.parentNode,
-    cur = parent.insertBefore
-    (
-      document.createTextNode( name == 'key' && '=' || ' ' ), ref_node.nextSibling
-    );
-    return parent.insertBefore
-    (
-      document.createElement( name == 'key' && 'value' || 'key' ), cur.nextSibling
-    );
-  }
+  };
   
   // could be the default method?
   this.onclick = function(event)
@@ -131,8 +109,8 @@ window.cls.JSPropertyEditor = function(watches)
       return true;
     }
     return false;
-  }
+  };
 
-}
+};
 
 cls.JSPropertyEditor.prototype = BaseEditor;
