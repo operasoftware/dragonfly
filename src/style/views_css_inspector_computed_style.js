@@ -15,7 +15,7 @@ cls.CSSInspectorCompStyleView = function(id, name, container_class)
   {
     container.innerHTML ='';
     var styles = container.render(['category', ['styles']]).firstElementChild;
-    data = elementStyle.get_computed_style();
+    var data = elementStyle.get_computed_style();
     var search_active = elementStyle.getSearchActive();
     if (data)
     {
