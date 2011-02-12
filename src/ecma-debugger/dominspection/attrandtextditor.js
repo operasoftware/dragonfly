@@ -21,32 +21,6 @@ var BaseEditor = new function()
   // must return a valid navigation target or null
   this.nav_previous = function(){return null};
 
-  var _init = function(instance)
-  {
-    this.context_enter = null;
-    this.context_cur = null;
-    this.base_style =
-    {
-      'font-family': '',
-      'line-height': 0,
-      'font-size': 0
-    }
-    this.char_width = 0;
-    this.line_height = 0;
-    this.cssText = '';
-    this.textarea_container = null;
-    this.textarea = null;
-    this.host_element_border_padding_left = 0;
-    this.host_element_border_padding_top = 0;
-    this.getInputHandler = function()
-    {
-      return function(event)
-      {
-        instance.oninput(event);
-      }
-    }
-  }
-
   this.textarea_container_name = "textarea-container";
   this.get_base_style = function(ele)
   {
@@ -91,9 +65,42 @@ var BaseEditor = new function()
   }
   this.__is_active = function(){return false};
   this.__defineGetter__("is_active", function(){return this.__is_active()});
+  this.getInputHandler = function()
+  {
+    return this.oninput.bind(this);
+  };
+  this._set_textarea_dimensions = function()
+  {
+    // TODO force new lines if needed
+    var 
+    max_content_length = 
+      Math.max.apply(null, this.textarea.value.split('\r\n').map(function(item){
+        return item.length
+      })),
+    width = this.char_width * max_content_length;
+    this.textarea.style.height = '0px';
+    this.textarea.style.width = (width < this.max_width ? 
+                                 (width || 1) : 
+                                 this.max_width) + "px";
+    this.textarea.style.height = this.textarea.scrollHeight + 'px';
+  };
   this.base_init = function(instance)
   {
-    _init.apply(instance, [instance]);
+    this.context_enter = null;
+    this.context_cur = null;
+    this.base_style =
+    {
+      'font-family': '',
+      'line-height': 0,
+      'font-size': 0
+    }
+    this.char_width = 0;
+    this.line_height = 0;
+    this.cssText = '';
+    this.textarea_container = null;
+    this.textarea = null;
+    this.host_element_border_padding_left = 0;
+    this.host_element_border_padding_top = 0;
   }
 }
 
@@ -294,7 +301,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
     }
 
     this.max_width = parseInt( getComputedStyle(parent_parent, null).getPropertyValue('width'));
-    this.set_textarea_dimensions();
+    this._set_textarea_dimensions();
     this.context_enter = enter_state;
     for( prop in enter_state )
     {
@@ -318,7 +325,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
 
     if( this.textarea_container.parentElement )
     {
-      this.set_textarea_dimensions();
+      this._set_textarea_dimensions();
       switch(state.type)
       {
         case "key":
@@ -577,19 +584,6 @@ var DOMAttrAndTextEditor = function(nav_filters)
       this.edit({}, next);
     }
     return next;
-  }
-
-  // helpers
-  this.set_textarea_dimensions = function()
-  {
-    // TODO force new lines if needed
-    var 
-    max_content_length = 
-      Math.max.apply(null, this.textarea.value.split('\r\n').map(function(item){return item.length})),
-    width = this.char_width * max_content_length;
-    this.textarea.style.height = '0px';
-    this.textarea.style.width = ( width < this.max_width ? (width || 1) : this.max_width )+ "px";
-    this.textarea.style.height = this.textarea.scrollHeight + 'px';
   }
 
   this.create_new_edit = function(ref_node)

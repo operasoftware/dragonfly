@@ -1,18 +1,28 @@
 ﻿window.cls || (window.cls = {});
 
 /**
-  * @constructor 
+  * @constructor
   * @extends BaseEditor
   */
 
 window.cls.JSPropertyEditor = function(watches)
 {
-  this.base_init(this);
-  this._watches = watches;
-  this.textarea_container_name = "textarea-container-inline";
-  // specific context 
-  this.context_enter = {};
-  this.context_cur = {};
+
+  /* interface */
+  /* inherits from BaseEditor */
+
+  /* private */
+
+  this._init = function()
+  {
+    this.base_init();
+    this._watches = watches;
+    this.textarea_container_name = "textarea-container-inline";
+    this.context_enter = {};
+    this.context_cur = {};
+  };
+
+  /* implementation */
 
   this.edit = function(event, ele)
   {
@@ -29,15 +39,15 @@ window.cls.JSPropertyEditor = function(watches)
     // this should never be needed
     if (this.textarea_container.parentElement)
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
         "this.textarea_container.parentElement is not null in submit");
     }
     this.textarea.value = ele.textContent;
     ele.textContent = "";
     ele.appendChild(this.textarea_container);
-    this.max_width = parseInt(getComputedStyle(ele.parentNode, 
+    this.max_width = parseInt(getComputedStyle(ele.parentNode,
                                                null).getPropertyValue('width'));
-    this.set_textarea_dimensions();
+    this._set_textarea_dimensions();
     for (var prop in this.context_enter)
     {
       this.context_cur[prop] = this.context_enter[prop];
@@ -55,7 +65,7 @@ window.cls.JSPropertyEditor = function(watches)
   {
     if (this.textarea_container.parentElement)
     {
-      this.set_textarea_dimensions();
+      this._set_textarea_dimensions();
       this.context_cur.key = this.textarea.value;
     }
   };
@@ -83,24 +93,6 @@ window.cls.JSPropertyEditor = function(watches)
     return nav_target;
   };
 
-  // helpers
-  this.set_textarea_dimensions = function()
-  {
-    // TODO force new lines if needed
-    var 
-    max_content_length = 
-      Math.max.apply(null, this.textarea.value.split('\r\n').map(function(item){
-        return item.length
-      })),
-    width = this.char_width * max_content_length;
-    this.textarea.style.height = '0px';
-    this.textarea.style.width = (width < this.max_width ? 
-                                 (width || 1) : 
-                                 this.max_width) + "px";
-    this.textarea.style.height = this.textarea.scrollHeight + 'px';
-  };
-  
-  // could be the default method?
   this.onclick = function(event)
   {
     if(!this.textarea_container.contains(event.target))
@@ -110,6 +102,8 @@ window.cls.JSPropertyEditor = function(watches)
     }
     return false;
   };
+
+  this._init();
 
 };
 

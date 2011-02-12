@@ -7,9 +7,20 @@
 
 cls.WatchesView = function(id, name, container_class)
 {
+  /* interface */
+  /* inherits from ViewBase */
+  /* implements action handler interface */
+
+  this.add_watch = function(uid, key){};
+
+  /* constants */
+
   const
   MODE_DEFAULT = "default",
   MODE_EDIT = "edit";
+
+  /* private */
+  /* templates */
 
   this._tmpl_main = function()
   {
@@ -30,34 +41,6 @@ cls.WatchesView = function(id, name, container_class)
   this._tmpl_new_prop = function()
   {
     return ['item', ['key', 'class', 'no-expander', 'data-prop-uid','0']];
-  };
-
-  this.createView = function(container)
-  {
-    if (!this._watch_container)
-    {
-      container.clearAndRender(this._tmpl_main());
-      this._watch_container = container.firstElementChild;
-    }
-    var tmpl = window.templates.inspected_js_object(this._data, false, null);
-    this._watch_container.clearAndRender(tmpl);
-  };
-
-  this.ondestroy = function()
-  {
-    this._watch_container = null;
-  };
-
-  this.add_watch = function(uid, key)
-  {
-    if (key)
-    {
-      this._data.add_property(uid, key);
-    }
-    else
-    {
-      this._data.remove_property(uid);
-    }
   };
 
   /* action handler interface */
@@ -138,6 +121,8 @@ cls.WatchesView = function(id, name, container_class)
     this._last_selected_frame_index = msg.frame_index;
   };
 
+  /* rightclick menu */
+
   this._get_editable_item = function(event, target)
   {
     var ele = event.target;
@@ -150,16 +135,16 @@ cls.WatchesView = function(id, name, container_class)
     }
     return null;
   };
-  
-  var watches_common_items = 
+
+  this._menu_common_items =
   [
     {
       label: "Add watch",
       handler: this._handlers['add'],
     }
   ];
-                              
-  var watches_editable_items = 
+
+  this._menu_editable_items =
   [
     {
       label: "Edit",
@@ -171,17 +156,17 @@ cls.WatchesView = function(id, name, container_class)
     }
   ]
   .concat(ContextMenu.separator)
-  .concat(watches_common_items);
+  .concat(this._menu_common_items);
 
-  var watches_menu =
+  this._menu =
   [
     {
       callback: function(event, target)
       {
         return (
         this._get_editable_item(event, target) ?
-        watches_editable_items :
-        watches_common_items);
+        this._menu_editable_items :
+        this._menu_common_items);
       }.bind(this)
     }
   ];
@@ -196,8 +181,38 @@ cls.WatchesView = function(id, name, container_class)
     eventHandlers.dblclick['watches-edit-prop'] = this._handlers['edit'];
     eventHandlers.click['watches-add'] = this._handlers['add'];
     ActionBroker.get_instance().register_handler(this);
-    ContextMenu.get_instance().register("watches", watches_menu);
+    ContextMenu.get_instance().register("watches", this._menu);
     messages.addListener('frame-selected', this._onframeselected.bind(this));
+  };
+
+  /* implementation */
+
+  this.createView = function(container)
+  {
+    if (!this._watch_container)
+    {
+      container.clearAndRender(this._tmpl_main());
+      this._watch_container = container.firstElementChild;
+    }
+    var tmpl = window.templates.inspected_js_object(this._data, false, null);
+    this._watch_container.clearAndRender(tmpl);
+  };
+
+  this.ondestroy = function()
+  {
+    this._watch_container = null;
+  };
+
+  this.add_watch = function(uid, key)
+  {
+    if (key)
+    {
+      this._data.add_property(uid, key);
+    }
+    else
+    {
+      this._data.remove_property(uid);
+    }
   };
 
   this._init(id, name, container_class);
