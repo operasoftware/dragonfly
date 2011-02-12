@@ -1,4 +1,4 @@
-(function()
+﻿(function()
 {
   const
   WHITESPACE = cls.SimpleJSParser.WHITESPACE,

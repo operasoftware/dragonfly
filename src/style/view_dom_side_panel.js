@@ -1,4 +1,4 @@
-window.cls || (window.cls = {});
+﻿window.cls || (window.cls = {});
 
 cls.DOMSidePanelView = function(id, name, view_list)
 {

@@ -1,4 +1,4 @@
-var Search = function(view_id, searchbar, searchwindow)
+﻿var Search = function(view_id, searchbar, searchwindow)
 {
   this._init(view_id, searchbar, searchwindow);
 };

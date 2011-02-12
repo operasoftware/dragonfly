@@ -1,4 +1,4 @@
-var SidePanelBaseView = function(id, name, view_list)
+﻿var SidePanelBaseView = function(id, name, view_list)
 {
   this.container_class = 'scroll side-panel';
   this.type = 'side-panel';

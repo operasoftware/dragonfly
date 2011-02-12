@@ -1,4 +1,4 @@
-(function()
+﻿(function()
 {
   const MAX_LINE_CHARS = 4000;
   this.searchbar_content = function(search)

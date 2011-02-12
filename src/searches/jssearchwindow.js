@@ -1,4 +1,4 @@
-window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
+﻿window.cls.JSSearchWindow = function(id, name, container_class, searchhandler)
 {
   /* interface */
 

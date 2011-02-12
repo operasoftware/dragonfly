@@ -1,4 +1,4 @@
- var ActionHandlerInterface = function()
+﻿ var ActionHandlerInterface = function()
  {
   /* action broker interface */
 
