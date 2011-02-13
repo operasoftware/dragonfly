@@ -232,24 +232,3 @@ h2
 {
   padding: 0px 30px;
 }
-
-.network-options .clearing
-{
-}
-
-.network-options button
-{
-   width: 17px;
-   height: 17px;
-   border: none;  
-}
-
-.network-options .deletebutton
-{
-   background-image: url("../ui-images/icons/icon_clear.png");
-}
-
-.network-options .addbutton
-{
-   background-image: url("../ui-images/icons/icon_add.png");
-}

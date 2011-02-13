@@ -66,24 +66,12 @@ templates.network_options_main = function(caching, tracking, headers, overrides)
 
 templates.network_options_override_list = function(headers, overrides)
 {
-  var rows = [
-    ["tr", ["th", "a"], ["th", "b"], ["th"]]
-  ];
-
-  rows = rows.concat(headers.map(function(e) {
-    return ["tr",
-            ["td", e.name],
-            ["td", e.value],
-            ["td", ["button", "class", "deletebutton", "handler", "del-header-override"].concat(overrides ? [] : ["disabled", "disabled"])],
-            "data-header-id", String(e.id)
-           ];
-  }))
-
-  rows.push(["tr",
-             ["td", ["input"].concat(overrides ? [""] : ["disabled", "disabled"])],
-             ["td", ["input"].concat(overrides ? [""] : ["disabled", "disabled"])],
-             ["td", ["button", "class", "addbutton", "handler", "del-header-override"]]]);
-  return ["table", rows];  
+  var tpl = ["_auto_height_textarea", 
+             headers.map(function(e) {return e.name + ": " + e.value}).join("\n"),
+             "class", "header-override-input",
+            ].concat(overrides ? [] : ["disabled", "disabled"]);
+  return [tpl, ["br"], ["button", "save",
+                "handler", "update-header-overrides",]];
 }
 
 templates.network_options_header_table = function(headers)

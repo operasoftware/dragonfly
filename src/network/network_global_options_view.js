@@ -10,6 +10,7 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
   this._service = window.services["resource-manager"];
   this._overrides = false;
   this._headers = [];
+  this._headerele = null;
 
   this.createView = function(container)
   {
@@ -25,7 +26,7 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
                                                             this._overrides));
     this._input = new cls.BufferManager(container.querySelector("textarea"));
     this._output = container.querySelector("code");
-    this._headertable = container.querySelector("table");
+    this._headerele = container.querySelector(".header-override-input");
   };
 
   /**
@@ -95,6 +96,22 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
     this.update();
   }.bind(this);
 
+  this._get_headers = function()
+  {
+    var raw = this._headerele ? this._headerele.value : "";
+    return raw.split("\n").map(function(e) {
+      var parts = e.split(": ");
+      if (parts.length != 2) { return null }
+      return {name: parts[0], value: parts[1].trim()};
+    }).filter(function(e) { return e });
+  }
+
+  this._handle_update_header_overrides_bound = function(evt, target)
+  {
+    var headers = this._get_headers();
+    this._headers = headers;
+    this._set_header_overrides(headers);
+  }.bind(this);
 
   this._clear_header_overrides = function()
   {
@@ -112,6 +129,8 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
   eh.change["network-options-toggle-caching"] = this._handle_toggle_caching_bound;
   eh.change["network-options-toggle-body-tracking"] = this._handle_toggle_content_tracking_bound;
   eh.change["toggle-header-overrides"] = this._handle_toggle_header_overrides_bound;
+  eh.click["update-header-overrides"] = this._handle_update_header_overrides_bound;
+
 
   this.init(id, name, container_class, html, default_handler);
 };
