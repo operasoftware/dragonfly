@@ -77,7 +77,7 @@ window.cls.JSPropertyEditor = function(watches)
     if (nav_target)
     {
       nav_target.textContent = this.context_cur.key;
-      this._watches.add_watch(this.context_cur.uid, this.context_cur.key);
+      this._watches.add_watch(this.context_cur.key, this.context_cur.uid);
     }
     return nav_target;
   };

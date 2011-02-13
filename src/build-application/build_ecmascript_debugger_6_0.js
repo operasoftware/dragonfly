@@ -79,7 +79,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     /* Runtime State */
     new SidePanelView('scripts-side-panel', 
                       ui_strings.M_VIEW_LABEL_RUNTIME_STATE,
-                      ['callstack', 'inspection', 'watches']);
+                      ['watches', 'callstack', 'inspection']);
 
     /* Callstack */
     cls.CallstackView.prototype = ViewBase;

@@ -10,7 +10,7 @@ cls.Watches = function(view)
   /* interface */
   /* inherits from InspectableJSObject */
 
-  this.add_property = function(uid, key){};
+  this.add_property = function(key, uid){};
 
   this.remove_property = function(uid){};
 
@@ -28,8 +28,7 @@ cls.Watches = function(view)
   OBJECT_ID = 0,
   IS_EDITABLE = 5,
   UID = 6,
-  IS_UPDATED = 7,
-  DFL_EVAL_ERROR = "__DFLEvalError__";
+  IS_UPDATED = 7;
 
   /* private */
 
@@ -45,7 +44,7 @@ cls.Watches = function(view)
     ]
   */
 
-  this._update_prop = function(uid, key, update_list)
+  this._update_prop = function(key, uid, update_list)
   {
     var frame = window.stop_at.getSelectedFrame() ||
                 {
@@ -56,16 +55,14 @@ cls.Watches = function(view)
     this._rt_id = frame.runtime_id;
     var tag = this._tagman.set_callback(this,
                                         this._handle_update_prop,
-                                        [uid, key, update_list]);
-    var script = "try{return " + key + "}" +
-                 "catch(e){return \"" + DFL_EVAL_ERROR + "\"};";
+                                        [key, uid, update_list]);
     this._esdb.requestEval(tag, [frame.runtime_id,
                                  frame.thread_id,
                                  frame.index,
                                  key, [["dummy", 0]]]);
   }
 
-  this._handle_update_prop = function(status, message, uid, prop, update_list)
+  this._handle_update_prop = function(status, message, key, uid, update_list)
   {
     /*
       examples
@@ -75,7 +72,7 @@ cls.Watches = function(view)
 
     if (status)
     {
-      opera.postError("Watching " + prop + " failed.");
+      opera.postError("Watching " + key + " failed.");
     }
     else
     {
@@ -140,18 +137,18 @@ cls.Watches = function(view)
 
   /* implementation */
 
-  this.add_property = function(uid, key)
+  this.add_property = function(key, uid)
   {
     var prop = [];
     var prop_list = this._obj_map.watches[0][PROPERTY_LIST];
     for (var i = 0; i < prop_list.length && prop_list[i][UID] != uid; i++);
     prop[NAME] = key;
     prop[IS_EDITABLE] = true;
-    uid = prop[UID] = prop_list[i] && prop_list[i][UID] || this._get_uid();
+    prop[UID] = prop_list[i] && prop_list[i][UID] || this._get_uid();
     prop_list[i] = prop;
     var update_list = {};
     update_list[prop[UID]] = false;
-    this._update_prop(uid, key, update_list);
+    this._update_prop(key, prop[UID], update_list);
   };
 
   this.remove_property = function(uid)
@@ -180,7 +177,7 @@ cls.Watches = function(view)
         this.collapse([[prop[NAME], prop[OBJECT_VALUE][OBJECT_ID], 0]]);
       }
       update_list[prop[UID]] = false;
-      this._update_prop(prop[UID], prop[NAME], update_list);
+      this._update_prop(prop[NAME], prop[UID], update_list);
     }, this);
   };
 

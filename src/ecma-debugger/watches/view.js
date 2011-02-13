@@ -11,7 +11,7 @@ cls.WatchesView = function(id, name, container_class)
   /* inherits from ViewBase */
   /* implements action handler interface */
 
-  this.add_watch = function(uid, key){};
+  this.add_watch = function(key, uid){};
 
   /* constants */
 
@@ -40,7 +40,7 @@ cls.WatchesView = function(id, name, container_class)
 
   this._tmpl_new_prop = function()
   {
-    return ['item', ['key', 'class', 'no-expander', 'data-prop-uid','0']];
+    return ['item', ['key', 'class', 'no-expander', 'data-prop-uid', '0']];
   };
 
   /* action handler interface */
@@ -120,9 +120,7 @@ cls.WatchesView = function(id, name, container_class)
     }
     this._last_selected_frame_index = msg.frame_index;
   };
-
-  /* rightclick menu */
-
+  
   this._get_editable_item = function(event, target)
   {
     var ele = event.target;
@@ -135,6 +133,8 @@ cls.WatchesView = function(id, name, container_class)
     }
     return null;
   };
+
+  /* rightclick menu */
 
   this._menu_common_items =
   [
@@ -203,11 +203,11 @@ cls.WatchesView = function(id, name, container_class)
     this._watch_container = null;
   };
 
-  this.add_watch = function(uid, key)
+  this.add_watch = function(key, uid)
   {
     if (key)
     {
-      this._data.add_property(uid, key);
+      this._data.add_property(key, uid);
     }
     else
     {
