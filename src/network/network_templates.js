@@ -1,6 +1,6 @@
 window.templates || (window.templates = {});
 
-templates.network_options_main = function(caching, tracking, headers)
+templates.network_options_main = function(caching, tracking, headers, overrides)
 {
   return ["div",
           ["div",
@@ -50,16 +50,41 @@ templates.network_options_main = function(caching, tracking, headers)
             "Track content (affects speed/memory)",
            ]
           ],
+          ["div",
+           ["h2", "Global header overrides"],
+           ["p", "help help help"],
+           ["label", ["input", "type", "checkbox", "handler", "toggle-header-overrides"].concat(overrides ? ["checked", "checked"] : []), "Enable global header overides"],
+           ["fieldset",
+            ["legend", "Headers"],
+            templates.network_options_override_list(headers, overrides),
+           ]
 
-          /*
-          ["hr"],
-          ["fieldset", ["legend", "Global header rewrites"],
-           templates.network_options_header_table(headers)
           ],
-          */
           "class", "padding network-options",
          ];
 };
+
+templates.network_options_override_list = function(headers, overrides)
+{
+  var rows = [
+    ["tr", ["th", "a"], ["th", "b"], ["th"]]
+  ];
+
+  rows = rows.concat(headers.map(function(e) {
+    return ["tr",
+            ["td", e.name],
+            ["td", e.value],
+            ["td", ["button", "class", "deletebutton", "handler", "del-header-override"].concat(overrides ? [] : ["disabled", "disabled"])],
+            "data-header-id", String(e.id)
+           ];
+  }))
+
+  rows.push(["tr",
+             ["td", ["input"].concat(overrides ? [""] : ["disabled", "disabled"])],
+             ["td", ["input"].concat(overrides ? [""] : ["disabled", "disabled"])],
+             ["td", ["button", "class", "addbutton", "handler", "del-header-override"]]]);
+  return ["table", rows];  
+}
 
 templates.network_options_header_table = function(headers)
 {

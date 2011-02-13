@@ -8,6 +8,8 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
   this._cache_policy = "default";
   this._tracking_policy = "notrack";
   this._service = window.services["resource-manager"];
+  this._overrides = false;
+  this._headers = [];
 
   this.createView = function(container)
   {
@@ -19,7 +21,8 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
     var headers = [{name:"foo", value:"bar"}];
     container.clearAndRender(templates.network_options_main(this._cache_policy,
                                                             this._tracking_policy,
-                                                            headers));
+                                                            this._headers,
+                                                            this._overrides));
     this._input = new cls.BufferManager(container.querySelector("textarea"));
     this._output = container.querySelector("code");
     this._headertable = container.querySelector("table");
@@ -77,9 +80,38 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
     this._service.requestSetResponseMode(null, arg);
   }.bind(this);
 
+  this._handle_toggle_header_overrides_bound = function(evt, target)
+  {
+    this._overrides = target.checked;
+    if (this._overrides)
+    {
+      this._set_header_overrides(this._headers);
+    }
+    else
+    {
+      this._clear_header_overrides();
+    }
+
+    this.update();
+  }.bind(this);
+
+
+  this._clear_header_overrides = function()
+  {
+    this._service.requestClearHeaderOverrides(null, []);
+  }
+
+  this._set_header_overrides = function(headers)
+  {
+    this._clear_header_overrides();
+    var args = [headers.map(function(e) {return [e.name, e.value] })];
+    this._service.requestAddHeaderOverrides(null, args);
+  }
+
   var eh = window.eventHandlers;
   eh.change["network-options-toggle-caching"] = this._handle_toggle_caching_bound;
   eh.change["network-options-toggle-body-tracking"] = this._handle_toggle_content_tracking_bound;
+  eh.change["toggle-header-overrides"] = this._handle_toggle_header_overrides_bound;
 
   this.init(id, name, container_class, html, default_handler);
 };
