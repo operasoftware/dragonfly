@@ -393,7 +393,7 @@ property:hover .enable-disable,
 rule, font-face-rule, page-rule, import-rule, charset-rule, media-rule {
   display:block;
   /*xxwhite-space: pre-wrap;*/
-  margin: 0 0 1em;
+  margin: 5px 0;
   }
 
 /* This selectors are super slow, find replacement
@@ -450,7 +450,7 @@ styles {
   }
 
 .unfolded styles {
-  padding: 5px;
+  padding: 0 5px;
   }
 
 header {
@@ -505,7 +505,7 @@ input.unfolded {
   border: 0 solid #b3b3b3;
   border-width: 1px 0;
   background-color: #eee;
-  margin: 10px -5px;
+  margin: 5px -5px;
   padding-left: 4px;
   }
 
