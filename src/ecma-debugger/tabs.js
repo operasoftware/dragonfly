@@ -120,7 +120,12 @@ cls.EcmascriptDebugger["5.0"].HostTabs = function()
 
   this.post_messages = function()
   {
-    messages.post('active-tab', {activeTab: __activeTab});
+    messages.post('active-tab', {
+      activeTab: __activeTab,
+      runtimes_with_dom: __activeTab.filter(function(rt) {
+        return window.runtimes.runtime_has_dom(rt);
+      })
+    });
     // first runtime is the top runtime of the selected window
     if(__activeTab.length && __activeTab[0] != _top_runtime_id)
     {
