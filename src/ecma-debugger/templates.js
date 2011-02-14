@@ -348,9 +348,12 @@
     var uri = frame.script_id && runtimes.getScript(frame.script_id).uri || runtimes.getRuntime(frame.rt_id).uri;
     return ['li',
              ['span', frame.fn_name, 'class', 'scope-name'],
-             ['span', " " + (uri && frame.line ? helpers.basename(uri) + ':' + frame.line : ""), 'class', 'file-line'],
+             ['span',
+              " " + (uri && frame.line ? helpers.basename(uri) + ':' + frame.line : ""),
+              'class', 'file-line'],
       'handler', 'show-frame',
       'ref-id', frame.id,
+      'title', uri
     ].concat( is_top ? ['class', 'selected'] : [] );
   }
 
