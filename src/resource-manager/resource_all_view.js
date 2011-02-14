@@ -14,7 +14,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
   this._service = new cls.ResourceManagerService();
   this._sort_by = "name";
   this._reverse = false;
-  this._columns = [];
+  this._columns = ["icon", "protocol", "host", "path", "type", "size_h"];
   this._loading = false;
 
   this.createView = function(container)
@@ -48,7 +48,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
     {
       if (!this._table)
       {
-        this._table = new SortableTable(this._tabledef, null)
+        this._table = new SortableTable(this._tabledef, null, this._columns)
       }
       this._table.data = ctx.resources.slice(0);
       container.clearAndRender(this._table.render());
