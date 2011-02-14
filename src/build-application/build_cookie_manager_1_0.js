@@ -13,8 +13,9 @@ window.app.builders.CookieManager["1.0"] = function(service)
   if(service_interface)
   {
     // namespace.data = new cls.CookieManager["1.0"].Data(service.version);
-    window.cookie_manager_data = new cls.CookieManager["1.0"].Data(service.version);
-    new cls.CookieManager["1.0"].CookieManagerView("cookie_manager", "Cookies", "scroll cookie_manager", service.version); // todo: use service instead
+    // window.cookie_manager_data = new cls.CookieManager["1.0"].Data(service.version);
+    var data = new cls.CookieManager["1.0"].Data(service);
+    new cls.CookieManager["1.0"].CookieManagerView("cookie_manager", "Cookies", "scroll cookie_manager", data);
   }
 }
 
@@ -24,6 +25,7 @@ window.app.builders.CookieManager["1.1"] = function(service)
   var service_interface = window.services['cookie-manager'];
   if(service_interface)
   {
-    new cls.CookieManager["1.1"].CookieManagerView("cookie_manager", "Cookies", "scroll cookie_manager", service.version); // todo: use service instead
+    var data = new cls.CookieManager["1.0"].Data(service); // todo: this should probably not live on ["1.0"]
+    new cls.CookieManager["1.1"].CookieManagerView("cookie_manager", "Cookies", "scroll cookie_manager", data);
   }
 }

@@ -46,7 +46,7 @@ window.eventHandlers.click['cookiemanager-add-cookie-row'] = function(event, tar
     last_item_in_group = last_item_in_group.previousElementSibling;
   }
   var objectref = last_item_in_group.getAttribute("data-object-id");
-  var runtime_id = window.views.cookie_manager.get_cookie_by_objectref(objectref).runtimes[0];
-  var inserted = window.views.cookie_manager.insert_add_cookie_row(row, runtime_id);
+  var runtime_id = window.views.cookie_manager._data_reference.get_item_by_objectref(objectref).runtimes[0]; // using the internal _data_reference for now until I know what to do with actions
+  var inserted = window.views.cookie_manager.insert_add_item_row(row, runtime_id);
   window.views.cookie_manager.select_row(null, inserted);
 }
