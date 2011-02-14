@@ -123,16 +123,13 @@ property.disabled, /* TODO: rename to .declaration */
     color: #999;
 }
 
-.origin-user-agent,
-.origin-local {
+.non-editable {
     background: transparent url("../ui-images/disabled_stripe_tile.png");
 }
-.origin-user-agent key,
-.origin-local key {
+.css-inspector .non-editable key {
     color: #4c7899;
 }
-.origin-user-agent value,
-.origin-local value {
+css-inspector .non-editable value {
     color: #aaa;
 }
 

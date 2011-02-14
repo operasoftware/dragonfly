@@ -859,7 +859,7 @@ cls.Stylesheets = function()
   {
     if (!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS])
     {
-      return "<rule class='origin-user-agent' obj-id='" + obj_id + "'>" +
+      return "<rule class='non-editable' obj-id='" + obj_id + "'>" +
               "<stylesheet-link class='pseudo'>default values</stylesheet-link>" +
         "<selector>" + element_name + "</selector>" +
         " {\n" +
@@ -874,7 +874,7 @@ cls.Stylesheets = function()
   {
     if (!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS])
     {
-      return "<rule class='origin-local' obj-id='" + obj_id + "'>" +
+      return "<rule class='non-editable' obj-id='" + obj_id + "'>" +
               "<stylesheet-link class='pseudo'>local user stylesheet</stylesheet-link>" +
         "<selector>" + helpers.escapeTextHtml(style_dec[SELECTOR]) + "</selector>" +
         " {\n" +
@@ -897,7 +897,7 @@ cls.Stylesheets = function()
     {
       if (!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS])
       {
-        ret += "<rule class='origin-author' data-menu='style-inspector-rule' rule-id='" + style_dec[RULE_ID] + "' obj-id='" + obj_id + "'>" +
+        ret += "<rule data-menu='style-inspector-rule' rule-id='" + style_dec[RULE_ID] + "' obj-id='" + obj_id + "'>" +
           "<stylesheet-link rt-id='" + rt_id + "'"+
             " index='" + sheet.index + "' handler='display-rule-in-stylesheet' data-menu=''>" + sheet.name +
           "</stylesheet-link>" +
@@ -921,7 +921,7 @@ cls.Stylesheets = function()
   {
     if (!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS])
     {
-      return "<rule class='origin-element' rule-id='change-this' rt-id='" + rt_id + "' obj-id='" + obj_id + "'>" +
+      return "<rule rule-id='change-this' rt-id='" + rt_id + "' obj-id='" + obj_id + "'>" +
         "<inline-style>element.style</inline-style>" +
         " {\n" +
             prettyPrintRuleInInspector(style_dec, false, search_active) +

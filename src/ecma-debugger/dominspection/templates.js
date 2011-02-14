@@ -93,7 +93,7 @@
     var class_name = '';
     var re_formatted = /script|style|#comment/i;
     var style = null;
-    var is_not_script_node = true;
+    var is_script_node = true;
     var is_debug = ini.debug;
     var disregard_force_lower_case_whitelist = cls.EcmascriptDebugger["5.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST;
     var disregard_force_lower_case_depth = 0;
@@ -130,7 +130,7 @@
       {
         case ELEMENT_NODE:
         {
-          is_not_script_node = node[NAME].toLowerCase() != 'script';
+          is_script_node = node[NAME].toLowerCase() == 'script';
           if (show_attrs)
           {
             attrs = '';
@@ -179,7 +179,7 @@
               if (!one_child_text_content || !/^\s*$/.test(data[child_pointer][VALUE]))
               {
                 one_child_text_content += "<text" +
-                  (is_not_script_node ? " ref-id='" + data[child_pointer][ID] + "' " : "") +
+                  (!is_script_node ? " ref-id='" + data[child_pointer][ID] + "' " : "") +
                   ">" + helpers.escapeTextHtml(data[child_pointer][VALUE]) + "</text>";
               }
             }
@@ -189,7 +189,7 @@
           {
             if (has_only_one_child)
             {
-              class_name = re_formatted.test(node_name) ? " class='pre-wrap'" : '';
+              class_name = re_formatted.test(node_name) ? " class='pre-wrap " + (is_script_node ? "non-editable" : "") +  "'" : '';
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                       this._get_indent(node) +
                       "ref-id='" + node[ID] + "' handler='spotlight-node' data-menu='dom-element'" +
@@ -205,7 +205,7 @@
             {
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                       this._get_indent(node) +
-                      "ref-id='" + node[ID] + "' handler='spotlight-node' data-menu='dom-element'>" +
+                      "ref-id='" + node[ID] + "' handler='spotlight-node' data-menu='dom-element' " + (is_script_node ? "class='non-editable'" : "") + ">" +
                       (node[CHILDREN_LENGTH] ?
                           "<input handler='get-children' type='button' class='open' />" : '') +
                           "<node>&lt;" + node_name + attrs + "&gt;</node>" +
@@ -222,7 +222,7 @@
           {
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                       this._get_indent(node) +
-                      "ref-id='" + node[ID] + "' handler='spotlight-node' data-menu='dom-element'>" +
+                      "ref-id='" + node[ID] + "' handler='spotlight-node' data-menu='dom-element' " + (is_script_node ? "class='non-editable'" : "") + ">" +
                       (children_length ?
                           "<input handler='get-children' type='button' class='close' />" : '') +
                           "<node>&lt;" + node_name + attrs + (children_length ? '' : '/') + "&gt;</node>" +
@@ -273,7 +273,7 @@
           {
             tree += "<div" + this._get_indent(node) + ">" +
                     "<text" +
-                    (is_not_script_node ? " ref-id='"+ node[ID] + "' " : "") +
+                    (!is_script_node ? " ref-id='"+ node[ID] + "' " : "") +
                     ">" + helpers.escapeTextHtml(node[VALUE]) + "</text>" +
                     "</div>";
           }
@@ -348,7 +348,7 @@
     var current_formatting = '';
     var re_formatted = /script|style/i;
     var style = null;
-    var is_not_script_node = true;
+    var is_script_node = true;
     var disregard_force_lower_case_whitelist = cls.EcmascriptDebugger["5.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST;
     var disregard_force_lower_case_depth = 0;
     var graphic_arr = [];
@@ -380,7 +380,7 @@
       {
         case ELEMENT_NODE:
         {
-          is_not_script_node = node[NAME].toLowerCase() != 'script';
+          is_script_node = node[NAME].toLowerCase() == 'script';
           attrs = '';
           if (show_attrs)
           {
@@ -424,7 +424,7 @@
           {
             tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                     this._get_indent(node) +
-                    "ref-id='"+node[ID] + "' handler='spotlight-node' data-menu='dom-element'>" +
+                    "ref-id='"+node[ID] + "' handler='spotlight-node' data-menu='dom-element' " + (is_script_node ? "class='non-editable'" : "") + ">" +
                     (children_length && !has_only_one_child ?
                       "<input handler='get-children' type='button' class='open' />" : '') +
                     "<node>" + node_name + attrs + "</node>" +
@@ -434,7 +434,7 @@
           {
             tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                     this._get_indent(node) +
-                    "ref-id='"+node[ID] + "' handler='spotlight-node' data-menu='dom-element'>" +
+                    "ref-id='"+node[ID] + "' handler='spotlight-node' data-menu='dom-element' " + (is_script_node ? "class='non-editable'" : "") + ">" +
                     (node[CHILDREN_LENGTH] ?
                       "<input handler='get-children' type='button' class='close' />" : '') +
                     "<node>" + node_name + attrs + "</node>" +
@@ -480,7 +480,7 @@
                tree += "<div" + this._get_indent(node) +
                        current_formatting + ">" +
                        (node[NAME] ? node[NAME] : nodeNameMap[node[TYPE]]) +
-                       "<text" + (is_not_script_node ? " ref-id='" + node[ID] + "' " : "") + ">" +
+                       "<text" + (!is_script_node ? " ref-id='" + node[ID] + "' " : "") + ">" +
                          helpers.escapeTextHtml(node[VALUE]) + "</text>" +
                        "</div>";
             }
@@ -490,7 +490,7 @@
             tree += "<div" + this._get_indent(node) +
                     current_formatting + ">" +
                     (node[NAME] ? node[NAME] : nodeNameMap[node[TYPE]]) +
-                      "<text" + (is_not_script_node ? " ref-id='" + node[ID]+  "' " : "") + ">" +
+                      "<text" + (!is_script_node ? " ref-id='" + node[ID]+  "' " : "") + ">" +
                         (/^\s*$/.test(node[VALUE]) ? _escape(node[VALUE]) : helpers.escapeTextHtml(node[VALUE])) +
                       "</text>" +
                     "</div>";
