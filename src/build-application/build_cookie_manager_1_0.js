@@ -12,6 +12,9 @@ window.app.builders.CookieManager["1.0"] = function(service)
   var service_interface = window.services['cookie-manager'];
   if(service_interface)
   {
+    console.log(cls.CookieManager["1.0"]);
+    // namespace.data = new cls.CookieManager["1.0"].Data(service.version);
+    window.cookie_manager_data = new cls.CookieManager["1.0"].Data(service.version);
     new cls.CookieManager["1.0"].CookieManagerView("cookie_manager", "Cookies", "scroll cookie_manager", service.version); // todo: use service instead
   }
 }

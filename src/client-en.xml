@@ -239,6 +239,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./shortcutconfig/templates.js"/>
 
 <script src="./cookie-manager/cookie_manager_templates.js"></script>
+<script src="./cookie-manager/cookie_manager_data.js"></script>
 <script src="./cookie-manager/cookie_manager_views.js"></script>
 <script src="./cookie-manager/cookie_manager_actions.js"></script>
 
