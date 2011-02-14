@@ -20,10 +20,6 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
       cols = [];
       for (var key in tabledef.columns) {
         cols.push(key);
-        if (!sortby && tabledef.columns[key].sorter != "unsortable")
-        {
-          sortby = key;
-        }
       }
     }
 
@@ -47,6 +43,18 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
       else if (col.sorter === "unsortable")
       {
         col.sorter = null;
+      }
+    }
+
+    if (!sortby)
+    {
+      for (var n=0, key; key=cols[n]; n++)
+      {
+        if (tabledef.columns[key].sorter != "unsortable")
+        {
+          sortby = key;
+          break;
+        }
       }
     }
 
