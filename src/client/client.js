@@ -201,7 +201,7 @@ window.cls.Client = function()
           ["ol",
             ["li", ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_1],
             ["li", ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_2],
-            ["li", ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_3],
+            ["li", ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_3.replace("%s", port)],
             ["li", ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_4],
             ["li", ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_5]
           ]

@@ -664,7 +664,7 @@ ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_1 = "Enter opera:debug in the URL f
 /* DESC: Remote debug guide, waiting for connection */
 ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_2 = "Enter the IP address of the machine running Opera Dragonfly";
 /* DESC: Remote debug guide, waiting for connection */
-ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_3 = "Enter the port number specified earlier";
+ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_3 = "Enter the port number %s";
 /* DESC: Remote debug guide, waiting for connection */
 ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_4 = "Click “Connect”";
 /* DESC: Remote debug guide, waiting for connection */
