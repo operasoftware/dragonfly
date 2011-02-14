@@ -190,7 +190,7 @@ cls.Resource = function(id)
   this.result = null;
   this.mime = null;
   this.encoding = null;
-  this.size = null;
+  this.size = 0;
   this.type = null;
   this.urltype = null;
   this.invalid = false;
@@ -210,7 +210,7 @@ cls.Resource = function(id)
       this.result = eventdata.result;
       this.mime = eventdata.mimeType;
       this.encoding = eventdata.characterEncoding;
-      this.size = eventdata.contentLength;
+      this.size = eventdata.contentLength || 0;
       this.finished = true;
       this._guess_type();
       this._humanize_url();

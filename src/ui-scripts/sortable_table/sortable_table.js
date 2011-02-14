@@ -200,6 +200,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
     {
       a = getter(a);
       b = getter(b);
+      if (typeof a === "number" && typeof b === "number") { return b - a }
       if (a > b) { return 1 }
       else if (a < b) { return -1 }
       else { return 0 }
