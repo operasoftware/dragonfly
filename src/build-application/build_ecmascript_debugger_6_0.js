@@ -145,9 +145,10 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     cls.EventBreakpointsView.create_ui_widgets();
 
     /* Breakpoints */
-
     cls.BreakpointsView.prototype = ViewBase;
     new cls.BreakpointsView('breakpoints', 'Breakpoints', 'scroll breakpoints');
+    cls.BreakpointsView.create_ui_widgets();
+    
     /* adjust the base class */
 
     var StorageDataBase = new namespace.StorageDataBase();

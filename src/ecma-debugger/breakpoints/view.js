@@ -141,3 +141,21 @@ cls.BreakpointsView = function(id, name, container_class)
   this._init(id, name, container_class);
 
 };
+
+cls.BreakpointsView.create_ui_widgets = function()
+{
+  new ToolbarConfig
+  (
+    'breakpoints',
+    [
+      {
+        handler: 'disable-all-breakpoints',
+        title: "Disable all breakpoints",
+      }, 
+      {
+        handler: 'remove-all-breakpoints',
+        title: "Remove all breakpoints",
+      },
+    ]
+  );
+}
