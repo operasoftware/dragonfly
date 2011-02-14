@@ -27,26 +27,24 @@ cls.CookieManager.CookieManagerViewBase = function()
     var cookie_data = window.cookie_manager_data.flattened_cookies;
     if(!this._sortable_table)
     {
-      this._sortable_table = new SortableTable(this._tabledef, cookie_data, null, "domain", "hostandpath", true);
+      this._sortable_table = window.cookie_manager_data.sortable_table;
       this._sortable_table.add_listener("before-render", this._before_table_render.bind(this, container));
       this._sortable_table.add_listener("after-render", this._after_table_render.bind(this, container));
-    }
-    else
-    {
-      this._sortable_table.data = cookie_data;
     }
     if(!this._update_expiry_interval)
     {
       this._update_expiry_interval = setInterval(this._update_expiry, 15000);
     }
+    this._sortable_table.data = cookie_data;
     this._before_table_render(container);
-    this._table_container = container.clearAndRender(["div",this._sortable_table.render(),"class","table_container"]);
+    this._table_container = container.clearAndRender(["div", this._sortable_table.render(), "class", "table_container"]);
     this._after_table_render(container);
   };
 
   this._before_table_render = function(container, message)
   {
-    if(this._hold_redraw_mem.active)
+    var message = message || {};
+    if(this._hold_redraw_mem.active && message.target)
     {
       message.target.discard_next_render();
     }
@@ -219,7 +217,8 @@ cls.CookieManager.CookieManagerViewBase = function()
     var rows = container.querySelectorAll("tr[data-object-id]");
     for (var i=0; i < rows.length; i++) {
       rows[i].setAttribute("handler", "cookiemanager-row-select");
-      if(this.get_cookie_by_objectref(rows[i].getAttribute("data-object-id")).is_editable)
+      var objectref = rows[i].getAttribute("data-object-id");
+      if(objectref && this.get_cookie_by_objectref(objectref) && this.get_cookie_by_objectref(objectref).is_editable)
       {
         rows[i].setAttribute("edit-handler", "cookiemanager-init-edit-mode");
       }
@@ -334,110 +333,10 @@ cls.CookieManager.CookieManagerViewBase = function()
     return inserted;
   }
 
-  this._tabledef = {
-    groups: {
-      hostandpath: {
-        label:   "Host and path",
-        grouper: function(obj) {
-          return window.cookie_manager_data._rts[obj.runtimes[0]].hostname + window.cookie_manager_data._rts[obj.runtimes[0]].pathname;
-        },
-        renderer: function(groupvalue, obj) {
-          var obj = obj[0];
-          var runtime = window.cookie_manager_data._rts[obj.runtimes[0]];
-          return window.templates.cookie_manager.hostname_group_render(runtime);
-        }
-      }
-    },
-    column_order: ["domain", "name", "value", "path", "expires", "isSecure", "isHTTPOnly"],
-    idgetter: function(res) { return res.objectref },
-    columns: {
-      domain: {
-        label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_DOMAIN,
-        classname: "col_domain",
-        renderer: function(obj) {
-          if(obj.is_runtimes_placeholder)
-          {
-            return;
-          }
-          if(obj.domain)
-          {
-            return window.templates.cookie_manager.editable_domain(obj.runtimes[0], window.cookie_manager_data._rts, obj.domain);
-          }
-          return window.templates.cookie_manager.unknown_value();
-        },
-        summer: function(values, groupname, getter) {
-          return ["button", "Add Cookie", "class", "add_cookie_button", "handler", "cookiemanager-add-cookie-row"];
-        }
-      },
-      name: {
-        label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_NAME,
-        classname: "col_name",
-        renderer: function(obj) {
-          if(obj.is_runtimes_placeholder)
-          {
-            return;
-          }
-          return window.templates.cookie_manager.editable_name(obj.name);
-        }
-      },
-      value: {
-        label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_VALUE,
-        classname: "col_value",
-        renderer: function(obj) {
-          if(obj.is_runtimes_placeholder)
-          {
-            return;
-          }
-          return window.templates.cookie_manager.editable_value(obj.value);
-        }
-      },
-      path: {
-        label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_PATH,
-        classname: "col_path",
-        renderer: function(obj) {
-          if(obj.is_runtimes_placeholder)
-          {
-            return;
-          }
-          if(typeof obj.path === "string")
-          {
-            return window.templates.cookie_manager.editable_path(obj.path);
-          }
-          return window.templates.cookie_manager.unknown_value();
-        }
-      },
-      expires: {
-        label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES,
-        classname: "col_expires",
-        renderer: function(obj) {
-          if(obj.is_runtimes_placeholder)
-          {
-            return;
-          }
-          if(typeof obj.expires === "number")
-          {
-            return window.templates.cookie_manager.editable_expires(obj.expires, obj.objectref);
-          }
-          return window.templates.cookie_manager.unknown_value();
-        }
-      },
-      isSecure: {
-        label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY),
-        classname: "col_secure",
-        renderer: function(obj) { return window.views.cookie_manager._is_secure_renderer(obj) }
-      },
-      isHTTPOnly: {
-        label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY),
-        classname: "col_httponly",
-        renderer: function(obj) { return window.views.cookie_manager._is_http_only_renderer(obj) }
-      }
-    }
-  };
-
   this._hold_redraw = function()
   {
     this._hold_redraw_mem.active = true;
-    this._hold_redraw_mem.timeout = setTimeout(this._resume_redraw.bind(this), 30000);
+    this._hold_redraw_mem.timeout = setTimeout(this._resume_redraw.bind(this), 15000);
   }
 
   this._resume_redraw = function()
@@ -479,6 +378,7 @@ cls.CookieManager.CookieManagerViewBase = function()
 
   this.exit_edit_and_save = function()
   {
+    this._resume_redraw();
     var edit_tr = document.querySelector("tr.edit_mode");
     if(edit_tr)
     {
