@@ -109,7 +109,7 @@ var UIWindowBase = new function()
       {
         if ((z = parseInt(win.style.zIndex)) && z > min_z_index)
         {
-          // Opera sets scrollTop to o on setting the z-index
+          // Opera sets scrollTop to 0 on setting the z-index
           cur = win.querySelector('window-container');
           if (cur)
           {

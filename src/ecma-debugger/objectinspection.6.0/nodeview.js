@@ -28,7 +28,6 @@ cls.EcmascriptDebugger["6.0"].DOMAttrsView = function(id, name, container_class)
     msgs.addListener('setting-changed', this._on_setting_change.bind(this));
     this.onbeforesearch = function(msg)
     {
-      opera.postError(msg.search_term)
       this._onbeforesearch(msg.search_term);
     }.bind(this);
     this._super_init(id, name, container_class);

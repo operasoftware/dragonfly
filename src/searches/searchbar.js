@@ -58,11 +58,10 @@ var SearchbarBase = function()
       this.offsetHeight = dim + this.vertical_border_padding;
     }
     this.update(force_redraw);
-    // TODO
-    // this.horizontal_nav.check_width();
   };
   
-  // general to toolbar
+  // TODO common with toolbar  toolbar
+
   this.__defineGetter__("offsetHeight", function()
   {
     if (!this.default_height)
@@ -95,18 +94,9 @@ var SearchbarBase = function()
     'blur-handler': 'blur'
   }
 
-  // general to toolbar
+  // end common with toolbar  toolbar
 
-
-  /*
-  this.setup = function(view_id)
-  {
-    // TODO
-    // this.element = document.getElementById(this.type + '-to-' + this.cell.id) || this.update();
-    // this.element.appendChild(this.horizontal_nav.element);
-  };
-  */  
-
+ 
   this.init = function()
   {
     this.initBase();
