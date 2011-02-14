@@ -9,7 +9,7 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
   this._tracking_policy = "notrack";
   this._service = window.services["resource-manager"];
   this._overrides = false;
-  this._headers = [];
+  this._headers = [{name: "Header-name", value: "Header-value"}];
   this._headerele = null;
 
   this.createView = function(container)

@@ -52,13 +52,9 @@ templates.network_options_main = function(caching, tracking, headers, overrides)
           ],
           ["div",
            ["h2", "Global header overrides"],
-           ["p", "help help help"],
+           ["p", "Headers in the override box will be used for all requests in the debugged browser. They will override normal headers."],
            ["label", ["input", "type", "checkbox", "handler", "toggle-header-overrides"].concat(overrides ? ["checked", "checked"] : []), "Enable global header overides"],
-           ["fieldset",
-            ["legend", "Headers"],
             templates.network_options_override_list(headers, overrides),
-           ]
-
           ],
           "class", "padding network-options",
          ];
