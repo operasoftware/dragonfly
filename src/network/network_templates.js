@@ -397,6 +397,7 @@ templates.network_graph_row_bar = function(request, rowheight, width, index, bas
 
   var tpl = [
     ["rect", 
+      ["title", String(request.duration) + "ms"],
       "x", String((start-basetime) * multiplier), 
       "y", String(bary),
       "width", String(reqwidth * multiplier),
@@ -409,6 +410,7 @@ templates.network_graph_row_bar = function(request, rowheight, width, index, bas
     ],
 
     ["rect",
+      ["title", String(request.duration)],
       "x", String((resstart-basetime)*multiplier),
       "y", String(bary),
       "width", String(reswidth*multiplier),
@@ -418,6 +420,7 @@ templates.network_graph_row_bar = function(request, rowheight, width, index, bas
       "fill", "url(#" + texture + ")", 
       "stroke", "#333333", 
       "stroke-width", "1.0",
+      "pointer-events", "none"
     ]
   ];
   return tpl;
