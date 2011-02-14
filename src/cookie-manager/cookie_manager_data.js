@@ -4,8 +4,6 @@ cls.CookieManager["1.0"] || (cls.CookieManager["1.0"] = {});
 
 cls.CookieManager["1.0"].Data = function(service_version)
 {
-  this.service_version = service_version;
-  // console.log("service_version",service_version);
   this._on_active_tab = function(msg)
   {
     // cleanup runtimes directory
@@ -67,9 +65,6 @@ cls.CookieManager["1.0"].Data = function(service_version)
 
   this._is_min_service_version = function(compare_version)
   {
-    // RRR this.service_version is for some reason missing, skipping for now
-    return true;
-    
     var compare_version = compare_version.split(".").map(Number);
     var service_version = this.service_version.split(".").map(Number);
     for (var i=0; i < compare_version.length; i++) {
@@ -288,7 +283,7 @@ cls.CookieManager["1.0"].Data = function(service_version)
     window.cookie_manager_data.refetch();
   };
 
-  this._init = function(id, name, container_class, service_version)
+  this._init = function(service_version)
   {
     this.service_version = service_version;
     this._cookie_dict = {};
@@ -397,5 +392,5 @@ cls.CookieManager["1.0"].Data = function(service_version)
     };
     this.sortable_table = new SortableTable(this._tabledef, this.flattened_cookies, null, "domain", "hostandpath", true);
   };
-  this._init();
+  this._init(service_version);
 };
