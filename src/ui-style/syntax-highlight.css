@@ -36,8 +36,9 @@ offsets value { /* TODO: use class */
     color: #ac35a9;
 }
 
-.js_keywords { /* TODO: Not specified */
-    color: #da7948;
+.js_keywords {
+    color: #000;
+    font-weight: bold;
 }
 
 /* JavaScript */
