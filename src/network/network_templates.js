@@ -391,6 +391,7 @@ templates.network_graph_row_bar = function(request, rowheight, width, index, bas
 {
   var y = rowheight * index;
   var barheight = 12;
+  var min_bar_width = barheight;
   var bary = y + (rowheight / 2) - (barheight / 2);
   var multiplier = width / duration;
 
@@ -399,19 +400,31 @@ templates.network_graph_row_bar = function(request, rowheight, width, index, bas
     return [];
   }
 
-  var start = request.starttime;
-  var reqwidth = request.duration
-  var resstart = request.requesttime || start
-  var reswidth = reqwidth - (resstart - start);
-
+  var start = (request.starttime - basetime) * multiplier;
+  var reqwidth = request.duration * multiplier;
+  var resstart = ((request.requesttime || start) - basetime) * multiplier;
+  var reswidth = (request.duration - (request.requesttime - request.starttime)) * multiplier;
   var texture = "gradient-" + (request.type || "unknown");
+
+  if (reqwidth < min_bar_width) // too small bar looks ugly
+  {
+    reqwidth = barheight;
+    resstart = start;
+    reswidth = reqwidth;
+  }
+
+  if (reswidth < min_bar_width)
+  {
+    reswidth = barheight;
+    resstart = start + reqwidth - reswidth;
+  }
 
   var tpl = [
     ["rect", 
       ["title", String(request.duration) + "ms"],
-      "x", String((start-basetime) * multiplier), 
+      "x", String(start),
       "y", String(bary),
-      "width", String(reqwidth * multiplier),
+      "width", String(reqwidth),
       "height", String(barheight),
       "rx", "4",
       "ry", "4",
@@ -422,9 +435,9 @@ templates.network_graph_row_bar = function(request, rowheight, width, index, bas
 
     ["rect",
       ["title", String(request.duration)],
-      "x", String((resstart-basetime)*multiplier),
+      "x", String(resstart),
       "y", String(bary),
-      "width", String(reswidth*multiplier),
+      "width", String(reswidth),
       "height", String(barheight),
       "rx", "4",
       "ry", "4",
