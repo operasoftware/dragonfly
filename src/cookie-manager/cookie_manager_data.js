@@ -1,8 +1,9 @@
 ﻿window.cls || (window.cls = {});
 cls.CookieManager || (cls.CookieManager = {});
 cls.CookieManager["1.0"] || (cls.CookieManager["1.0"] = {});
+cls.CookieManager.StorageData || (cls.CookieManager.StorageData = {});
 
-cls.CookieManager["1.0"].Data = function(service_version)
+cls.CookieManager.StorageData.Base = function()
 {
   this._on_active_tab = function(msg)
   {
@@ -16,16 +17,16 @@ cls.CookieManager["1.0"].Data = function(service_version)
         // runtime was not active and is to be removed from this._rts
         delete this._rts[rt_id];
         // loop over existing cookies to remove the rt_id from the runtimes of each
-        for(var domain_and_path in this._cookie_dict)
+        for(var domain_and_path in this._dict)
         {
-          if(this._cookie_dict[domain_and_path].runtimes && (this._cookie_dict[domain_and_path].runtimes.indexOf(rt_id) !== -1))
+          if(this._dict[domain_and_path].runtimes && (this._dict[domain_and_path].runtimes.indexOf(rt_id) !== -1))
           {
-            var index = this._cookie_dict[domain_and_path].runtimes.indexOf(rt_id);
-            this._cookie_dict[domain_and_path].runtimes.splice(index,1);
-            // if no runtimes are left, delete from _cookie_dict
-            if(this._cookie_dict[domain_and_path].runtimes.length < 1)
+            var index = this._dict[domain_and_path].runtimes.indexOf(rt_id);
+            this._dict[domain_and_path].runtimes.splice(index,1);
+            // if no runtimes are left, delete from _dict
+            if(this._dict[domain_and_path].runtimes.length < 1)
             {
-              delete this._cookie_dict[domain_and_path];
+              delete this._dict[domain_and_path];
             }
           }
         }
@@ -50,8 +51,9 @@ cls.CookieManager["1.0"].Data = function(service_version)
     }
     else
     {
-      this.item_list = this._flatten_cookies(this._cookie_dict, this._rts);
-      window.views.cookie_manager.update();
+      // console.log("_flatten_data", this._dict);
+      this.item_list = this._flatten_data(this._dict, this._rts);
+      this.view.update();
     }
   }
 
@@ -68,7 +70,7 @@ cls.CookieManager["1.0"].Data = function(service_version)
     return true;
   };
 
-  this._flatten_cookies = function(cookies, runtimes)
+  this._flatten_data = function(cookies, runtimes)
   {
     var flattened_cookies = [];
     for (var id in cookies)
@@ -124,9 +126,14 @@ cls.CookieManager["1.0"].Data = function(service_version)
     return flattened_cookies;
   };
 
+  this.set_view = function(view)
+  {
+    this.view = view;
+  }
+
   this.refetch = function()
   {
-    this._cookie_dict = {};
+    this._dict = {};
     for (var rt_id in this._rts) {
       this._rts[rt_id].get_domain_is_pending = true;
       this._request_runtime_details(this._rts[rt_id]);
@@ -208,6 +215,7 @@ cls.CookieManager["1.0"].Data = function(service_version)
 
   this._request_runtime_details = function(rt_object)
   {
+    // console.log("_request_runtime_details", rt_object);
     var script = "return JSON.stringify({hostname: location.hostname || '', pathname: location.pathname || ''})";
     var tag = tagManager.set_callback(this, this._handle_get_domain,[rt_object.rt_id]);
     services['ecmascript-debugger'].requestEval(tag,[rt_object.rt_id, 0, 0, script]);
@@ -215,6 +223,7 @@ cls.CookieManager["1.0"].Data = function(service_version)
 
   this._handle_get_domain = function(status, message, rt_id)
   {
+    // console.log("_handle_get_domain", status, message, rt_id);
     const STATUS = 0;
     const DATA = 2;
     if(status === 0 && message[STATUS] == "completed")
@@ -225,6 +234,7 @@ cls.CookieManager["1.0"].Data = function(service_version)
       this._rts[rt_id].get_domain_is_pending = false;
       this._rts[rt_id].hostname = hostname;
       this._rts[rt_id].pathname = pathname;
+      
       (function(context)
       {
         for (var key in context._rts)
@@ -234,12 +244,12 @@ cls.CookieManager["1.0"].Data = function(service_version)
             return;
           }
         };
-        context._request_cookies.call(context,context._rts);
+        context._request_data.call(context,context._rts);
       })(this);
     }
   };
 
-  this._request_cookies = function(runtime_list)
+  this._request_data = function(runtime_list)
   {
     // go over runtimes and ask for cookies once per domain
     for (var str_rt_id in runtime_list)
@@ -249,24 +259,24 @@ cls.CookieManager["1.0"].Data = function(service_version)
       var rt_pathname = runtime.pathname;
       if(rt_domain)
       {
-        if(!this._cookie_dict[rt_domain+rt_pathname])
+        if(!this._dict[rt_domain+rt_pathname])
         {
-          this._cookie_dict[rt_domain+rt_pathname] = {
+          this._dict[rt_domain+rt_pathname] = {
             runtimes: [runtime.rt_id]
           }
         }
         else
         {
-          if(this._cookie_dict[rt_domain+rt_pathname].runtimes.indexOf(runtime.rt_id) === -1)
+          if(this._dict[rt_domain+rt_pathname].runtimes.indexOf(runtime.rt_id) === -1)
           {
-            this._cookie_dict[rt_domain+rt_pathname].runtimes.push(runtime.rt_id);
+            this._dict[rt_domain+rt_pathname].runtimes.push(runtime.rt_id);
           }
         }
 
         // avoid repeating cookie requests for domains being in more than one runtime
-        if(!this._cookie_dict[rt_domain+rt_pathname].get_cookies_is_pending)
+        if(!this._dict[rt_domain+rt_pathname].get_cookies_is_pending)
         {
-          this._cookie_dict[rt_domain+rt_pathname].get_cookies_is_pending = true;
+          this._dict[rt_domain+rt_pathname].get_cookies_is_pending = true;
           var tag = tagManager.set_callback(this, this._handle_cookies,[rt_domain,rt_pathname]);
           services['cookie-manager'].requestGetCookie(tag,[rt_domain,rt_pathname]);
         }
@@ -284,14 +294,14 @@ cls.CookieManager["1.0"].Data = function(service_version)
     if(status === 0)
     {
       const COOKIE = 0;
-      this._cookie_dict[domain+path].get_cookies_is_pending=false;
+      this._dict[domain+path].get_cookies_is_pending=false;
       if(message.length > 0)
       {
         var cookies = message[COOKIE];
-        this._cookie_dict[domain+path].cookies=[];
+        this._dict[domain+path].cookies=[];
         for (var i=0; i < cookies.length; i++) {
           var cookie_info = cookies[i];
-          this._cookie_dict[domain+path].cookies.push({
+          this._dict[domain+path].cookies.push({
             domain:     cookie_info[0],
             path:       cookie_info[1],
             name:       cookie_info[2],
@@ -331,12 +341,12 @@ cls.CookieManager["1.0"].Data = function(service_version)
       var cookie_string = message[DATA];
       if(cookie_string && cookie_string.length > 0)
       {
-        this._cookie_dict[domain+path].cookies=[];
+        this._dict[domain+path].cookies=[];
         var cookies = cookie_string.split(';');
         for (var i=0; i < cookies.length; i++) {
           var cookie_info = cookies[i];
           var pos = cookie_info.indexOf('=', 0);
-          this._cookie_dict[domain+path].cookies.push({
+          this._dict[domain+path].cookies.push({
             name:  cookie_info.slice(0, pos),
             value: decodeURIComponent(cookie_info.slice(pos+1))
           });
@@ -348,113 +358,244 @@ cls.CookieManager["1.0"].Data = function(service_version)
 
   this._init = function(service_version)
   {
-    console.log("service_version", service_version);
     this.service_version = service_version.version;
-    this._cookie_dict = {};
+    this._dict = {};
     this.item_list = [];
     this._rts = {};
     window.messages.addListener('active-tab', this._on_active_tab.bind(this));
     this._hold_redraw_mem = {};
-    this._tabledef = {
-      groups: {
-        hostandpath: {
-          label:   "Host and path",
-          grouper: (function(obj) {
-            // todo: check to avoid using this._rts (to skip the bind) by putting hostname etc on the cookie_object directly? would remove lots of this cryptic this._rts[obj.runtimes[0]].pathname stuff.
-            return this._rts[obj.runtimes[0]].hostname + this._rts[obj.runtimes[0]].pathname;
-          }).bind(this),
-          renderer: (function(groupvalue, obj) {
-            var obj = obj[0];
-            var runtime = this._rts[obj.runtimes[0]];
-            return window.templates.cookie_manager.hostname_group_render(runtime);
-          }).bind(this)
+  };
+};
+
+cls.CookieManager.StorageData.CookieService = function(service_version)
+{
+  this._init(service_version);
+  this._tabledef = {
+    groups: {
+      host_and_path: {
+        label:   "Host and path",
+        grouper: (function(obj) {
+          // todo: check to avoid using this._rts (to skip the bind) by putting hostname etc on the cookie_object directly? would remove lots of this cryptic this._rts[obj.runtimes[0]].pathname stuff.
+          return this._rts[obj.runtimes[0]].hostname + this._rts[obj.runtimes[0]].pathname;
+        }).bind(this),
+        renderer: (function(groupvalue, obj) {
+          var obj = obj[0];
+          var runtime = this._rts[obj.runtimes[0]];
+          return window.templates.cookie_manager.hostname_group_render(runtime);
+        }).bind(this)
+      }
+    },
+    column_order: ["domain", "name", "value", "path", "expires", "isSecure", "isHTTPOnly"],
+    idgetter: function(res) { return res.objectref },
+    columns: {
+      domain: {
+        label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_DOMAIN,
+        classname: "col_domain",
+        renderer: (function(obj) {
+          if(obj.is_runtimes_placeholder)
+          {
+            return;
+          }
+          if(obj.domain)
+          {
+            return window.templates.cookie_manager.editable_domain(obj.runtimes[0], this._rts, obj.domain);
+          }
+          return window.templates.cookie_manager.unknown_value();
+        }).bind(this),
+        summer: function(values, groupname, getter) {
+          return ["button", "Add Cookie", "class", "add_cookie_button", "handler", "cookiemanager-add-cookie-row"];
         }
       },
-      column_order: ["domain", "name", "value", "path", "expires", "isSecure", "isHTTPOnly"],
-      idgetter: function(res) { return res.objectref },
-      columns: {
-        domain: {
-          label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_DOMAIN,
-          classname: "col_domain",
-          renderer: (function(obj) {
-            if(obj.is_runtimes_placeholder)
-            {
-              return;
-            }
-            if(obj.domain)
-            {
-              return window.templates.cookie_manager.editable_domain(obj.runtimes[0], this._rts, obj.domain);
-            }
-            return window.templates.cookie_manager.unknown_value();
-          }).bind(this),
-          summer: function(values, groupname, getter) {
-            return ["button", "Add Cookie", "class", "add_cookie_button", "handler", "cookiemanager-add-cookie-row"];
+      name: {
+        label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_NAME,
+        classname: "col_name",
+        renderer: function(obj) {
+          if(obj.is_runtimes_placeholder)
+          {
+            return;
           }
-        },
-        name: {
-          label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_NAME,
-          classname: "col_name",
-          renderer: function(obj) {
-            if(obj.is_runtimes_placeholder)
-            {
-              return;
-            }
-            return window.templates.cookie_manager.editable_name(obj.name);
-          }
-        },
-        value: {
-          label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_VALUE,
-          classname: "col_value",
-          renderer: function(obj) {
-            if(obj.is_runtimes_placeholder)
-            {
-              return;
-            }
-            return window.templates.cookie_manager.editable_value(obj.value);
-          }
-        },
-        path: {
-          label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_PATH,
-          classname: "col_path",
-          renderer: function(obj) {
-            if(obj.is_runtimes_placeholder)
-            {
-              return;
-            }
-            if(typeof obj.path === "string")
-            {
-              return window.templates.cookie_manager.editable_path(obj.path);
-            }
-            return window.templates.cookie_manager.unknown_value();
-          }
-        },
-        expires: {
-          label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES,
-          classname: "col_expires",
-          renderer: function(obj) {
-            if(obj.is_runtimes_placeholder)
-            {
-              return;
-            }
-            if(typeof obj.expires === "number")
-            {
-              return window.templates.cookie_manager.editable_expires(obj.expires, obj.objectref);
-            }
-            return window.templates.cookie_manager.unknown_value();
-          }
-        },
-        isSecure: {
-          label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY),
-          classname: "col_secure",
-          renderer: function(obj) { return window.views.cookie_manager._is_secure_renderer(obj) }
-        },
-        isHTTPOnly: {
-          label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY),
-          classname: "col_httponly",
-          renderer: function(obj) { return window.views.cookie_manager._is_http_only_renderer(obj) }
+          return window.templates.cookie_manager.editable_name(obj.name);
         }
+      },
+      value: {
+        label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_VALUE,
+        classname: "col_value",
+        renderer: function(obj) {
+          if(obj.is_runtimes_placeholder)
+          {
+            return;
+          }
+          return window.templates.cookie_manager.editable_value(obj.value);
+        }
+      },
+      path: {
+        label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_PATH,
+        classname: "col_path",
+        renderer: function(obj) {
+          if(obj.is_runtimes_placeholder)
+          {
+            return;
+          }
+          if(typeof obj.path === "string")
+          {
+            return window.templates.cookie_manager.editable_path(obj.path);
+          }
+          return window.templates.cookie_manager.unknown_value();
+        }
+      },
+      expires: {
+        label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES,
+        classname: "col_expires",
+        renderer: function(obj) {
+          if(obj.is_runtimes_placeholder)
+          {
+            return;
+          }
+          if(typeof obj.expires === "number")
+          {
+            return window.templates.cookie_manager.editable_expires(obj.expires, obj.objectref);
+          }
+          return window.templates.cookie_manager.unknown_value();
+        }
+      },
+      isSecure: {
+        label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY),
+        classname: "col_secure",
+        renderer: function(obj) { return window.views.cookie_manager._is_secure_renderer(obj) }
+      },
+      isHTTPOnly: {
+        label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY),
+        classname: "col_httponly",
+        renderer: function(obj) { return window.views.cookie_manager._is_http_only_renderer(obj) }
       }
+    }
+  };
+  this.sortby = "domain";
+  this.groupby = "host_and_path";
+}
+cls.CookieManager.StorageData.CookieService.prototype = new cls.CookieManager.StorageData.Base();
+
+cls.CookieManager.StorageData.LocalStorage = function()
+{
+  this._init({version:"111.0"}); // todo: make version optional
+  
+  // overwrite _on_active_tab to organize dict by rt_id instead of domain_and_path
+  this._on_active_tab = function(msg)
+  {
+    // console.log("LocalStorage _on_active_tab", msg);
+    // cleanup runtimes directory
+    /*
+    for(var item in this._rts)
+    {
+      // item is a string, rt_id is a number which can now be compared with what's in msg.runtimes_with_dom
+      var rt_id = this._rts[item].rt_id;
+      if(msg.runtimes_with_dom.indexOf(rt_id) === -1)
+      {
+        // runtime was not active and is to be removed from this._rts
+        delete this._rts[rt_id];
+      }
+    }
+    */
+    this._rts = [];
+    for (var i=0; i < msg.runtimes_with_dom.length; i++)
+    {
+      var rt_id = msg.runtimes_with_dom[i];
+      if(!this._rts[rt_id])
+      {
+        this._rts[rt_id]={rt_id: rt_id, get_domain_is_pending: true};
+      }
+      // console.log("_request_runtime_details",this._rts[rt_id]);
+      this._request_runtime_details(this._rts[rt_id]);
     };
   };
-  this._init(service_version);
-};
+  
+  this._request_data = function(runtime_list)
+  {
+    // go over runtimes and ask for localStorage
+    // console.log("_request_data(LS)", runtime_list);
+    for (var str_rt_id in runtime_list)
+    {
+      // todo: check other _request_data
+      var runtime = parseInt(runtime_list[str_rt_id].rt_id);
+      var script = "return JSON.stringify(window.localStorage)";
+      var tag = tagManager.set_callback(this, this._handle_storage.bind(this), [runtime]);
+      // var tag = tagManager.set_callback(this, this._handle_cookies,[rt_domain,rt_pathname]);
+      services['ecmascript-debugger'].requestEval(tag,[runtime, 0, 0, script]);
+    }
+  };
+  
+  this._handle_storage = function(status, message, runtime)
+  {
+    const STATUS = 0;
+    const DATA = 2;
+    // console.log("_handle_storage(LS)", message[DATA], runtime);
+    if(status === 0 && message[STATUS] == "completed")
+    {
+      var parsed_data = JSON.parse(message[DATA]);
+      // console.log("parsed_data", parsed_data);
+      if(!this._dict[runtime])
+      {
+        this._dict[runtime] = {};
+      }
+      if(!this._dict[runtime].cookies) // todo: make generic
+      {
+       this._dict[runtime].cookies = [];
+      }
+      for (var key in parsed_data) {
+        this._dict[runtime].cookies.push({
+          key: key,
+          value: parsed_data[key]
+        });
+      };
+      // console.log("updated dict",this._dict);
+    }
+    this._update();
+  }
+  
+  this._tabledef = {
+    groups: {
+      runtime: {
+        label:   "Runtime",
+        grouper: function(obj) {
+          return obj.runtimes[0];
+        }
+      }
+    },
+    column_order: ["key", "value"],
+    idgetter: function(res) { return res.objectref },
+    columns: {
+      key: {
+        label:     "Key",
+        classname: "col_key",
+        renderer: function(obj) {
+          if(obj.is_runtimes_placeholder)
+          {
+            return;
+          }
+          if(obj.key)
+          {
+            return obj.key; // window.templates.cookie_manager.editable_domain(obj.runtimes[0], this._rts, obj.domain);
+          }
+        },
+        summer: function(values, groupname, getter) {
+          return ["button", "Add Item", "class", "add_cookie_button", "handler", "cookiemanager-add-cookie-row"]; // todo: abstr
+        }
+      },
+      value: {
+        label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_VALUE,
+        classname: "col_value",
+        renderer: function(obj) {
+          if(obj.is_runtimes_placeholder)
+          {
+            return;
+          }
+          return obj.value; // window.templates.cookie_manager.editable_value(obj.value);
+        }
+      }
+    }
+  };
+  
+  this.sortby = "key";
+  this.groupby = "runtime";
+}
+cls.CookieManager.StorageData.LocalStorage.prototype = new cls.CookieManager.StorageData.Base();

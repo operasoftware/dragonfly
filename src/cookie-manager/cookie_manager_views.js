@@ -24,9 +24,11 @@ cls.CookieManager.CookieManagerViewBase = function()
     ]);
     // RRR these now come in from data
     var storage_data = this._data_reference.item_list;
+    var sortby = this._data_reference.sortby || null;
+    var groupby = this._data_reference.groupby || null;
     if(!this._sortable_table)
     {
-      this._sortable_table = new SortableTable(this._data_reference._tabledef, storage_data, null, "domain", "hostandpath", true);
+      this._sortable_table = new SortableTable(this._data_reference._tabledef, storage_data, null, sortby, groupby, true);
       this._sortable_table.add_listener("before-render", this._before_table_render.bind(this, container));
       this._sortable_table.add_listener("after-render", this._after_table_render.bind(this, container));
     }
@@ -86,7 +88,7 @@ cls.CookieManager.CookieManagerViewBase = function()
       {
         callback: (function(event, target)
         {
-          window.views.cookie_manager.check_to_exit_edit_mode(event, target);
+          this.view.check_to_exit_edit_mode(event, target);
           var row = target;
           while(row.nodeName !== "tr" || !row.parentNode) // todo: remove when it's fixed on menus
           {
@@ -99,7 +101,7 @@ cls.CookieManager.CookieManagerViewBase = function()
           if(objectref)
           {
             // row represents a cookie, so it can be selected
-            window.views.cookie_manager.select_row(event, row);
+            this.view.select_row(event, row);
           }
           var selection = document.querySelectorAll(".sortable-table .selected");
           var selected_cookie_objects = [];
@@ -116,8 +118,8 @@ cls.CookieManager.CookieManagerViewBase = function()
                 label: "Add cookie",
                 handler: function() {
                   var runtime = selected_cookie_objects[0].runtimes[0];
-                  var inserted = window.views.cookie_manager.insert_add_item_row(row, runtime);
-                  window.views.cookie_manager.select_row(null, inserted);
+                  var inserted = this.view.insert_add_item_row(row, runtime);
+                  this.view.select_row(null, inserted);
                 }
               }
             );
@@ -129,7 +131,7 @@ cls.CookieManager.CookieManagerViewBase = function()
                 {
                   label: "Edit cookie",
                   handler: function() {
-                    window.views.cookie_manager.enter_edit_mode(sel_cookie_obj.objectref);
+                    this.view.enter_edit_mode(sel_cookie_obj.objectref);
                   }
                 }
               );
@@ -289,7 +291,7 @@ cls.CookieManager.CookieManagerViewBase = function()
         }
         else
         {
-          elem.clearAndRender(window.templates.cookie_manager.expired_value());
+          elem.clearAndRender(this.view.expired_value());
           // find row, add expired_cookie class
           while(elem.nodeName !== "tr" || !elem.parentNode)
           {
@@ -326,7 +328,7 @@ cls.CookieManager.CookieManagerViewBase = function()
 
   this.insert_add_item_row = function(row, runtime) // public just towards actions
   {
-    var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row(runtime, this._data_reference._rts));
+    var templ = document.documentElement.render(this.view.add_cookie_row(runtime, this._data_reference._rts));
     var inserted = row.parentElement.insertBefore(templ, row);
     inserted.querySelector("[name=name]").focus();
     return inserted;
@@ -487,9 +489,9 @@ cls.CookieManager["1.0"].CookieManagerView = function(id, name, container_class,
   this._init(id, name, container_class, data_reference);
 }
 cls.CookieManager["1.0"].CookieManagerView.prototype = new cls.CookieManager.CookieManagerViewBase();
-
+/* 1.1
 cls.CookieManager["1.1"] || (cls.CookieManager["1.1"] = {});
-cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class)
+cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class, data_reference)
 {
   this._write_cookie = function(c)
   {
@@ -529,5 +531,15 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class)
     inserted.querySelector("[name=name]").focus();
     return inserted;
   }
+
+  this._init(id, name, container_class, data_reference);
 }
 cls.CookieManager["1.1"].CookieManagerView.prototype = new cls.CookieManager.CookieManagerViewBase();
+*/
+cls.Local_Storage || (cls.Local_Storage = {});
+cls.Local_Storage["1.0"] || (cls.Local_Storage["1.0"] = {});
+cls.Local_Storage["1.0"].View = function(id, name, container_class, data_reference)
+{
+  this._init(id, name, container_class, data_reference);
+}
+cls.Local_Storage["1.0"].View.prototype = new cls.CookieManager.CookieManagerViewBase();

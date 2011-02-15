@@ -471,7 +471,7 @@ ui_framework.layouts.storage_rough_layout =
         {
           var cookie_module = 'cookie_manager';
         }
-        return [cookie_module, 'local_storage', 'session_storage', 'widget_preferences']
+        return [cookie_module, 'local_storage', 'session_storage', 'widget_preferences', 'new_local_storage']
       }
     } ]
 }
