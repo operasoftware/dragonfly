@@ -504,7 +504,6 @@ cls.CookieManager.StorageData.LocalStorage = function()
       {
         this._rts[rt_id]={rt_id: rt_id, get_domain_is_pending: true};
       }
-      // console.log("_request_runtime_details",this._rts[rt_id]);
       this._request_runtime_details(this._rts[rt_id]);
     };
   };
@@ -533,19 +532,29 @@ cls.CookieManager.StorageData.LocalStorage = function()
     {
       var parsed_data = JSON.parse(message[DATA]);
       // console.log("parsed_data", parsed_data);
+      // todo: this is just to match the structure with cookie, which are not directly organized by runtime.
       if(!this._dict[runtime])
       {
         this._dict[runtime] = {};
       }
+      if(!this._dict[runtime].runtimes)
+      {
+        this._dict[runtime].runtimes=[];
+      }
+      this._dict[runtime].runtimes.push(runtime);
+      
       if(!this._dict[runtime].cookies) // todo: make generic
       {
        this._dict[runtime].cookies = [];
       }
       for (var key in parsed_data) {
-        this._dict[runtime].cookies.push({
-          key: key,
-          value: parsed_data[key]
-        });
+        if(key !== "length")
+        {
+          this._dict[runtime].cookies.push({
+            key: String(key),
+            value: String(parsed_data[key])
+          });
+        }
       };
       // console.log("updated dict",this._dict);
     }
@@ -557,7 +566,8 @@ cls.CookieManager.StorageData.LocalStorage = function()
       runtime: {
         label:   "Runtime",
         grouper: function(obj) {
-          return obj.runtimes[0];
+          var rts = views.new_local_storage._data_reference._rts;
+          return rts[obj.runtimes[0]].hostname + rts[obj.runtimes[0]].pathname;
         }
       }
     },

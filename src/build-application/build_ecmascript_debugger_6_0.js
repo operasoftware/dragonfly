@@ -167,7 +167,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     
     
     var new_local_storage_data = new cls.CookieManager.StorageData.LocalStorage(); // todo: this shouldn't be at cls.CookieManager
-    var storage_view = new cls.Local_Storage["1.0"].View("new_local_storage", "Local storage 2", "scroll cookie_manager", new_local_storage_data);
+    var storage_view = new cls.Local_Storage["1.0"].View("new_local_storage", "Local Storage_", "scroll cookie_manager", new_local_storage_data);
     new_local_storage_data.set_view(storage_view);
 
     /* the following views must be created to get entry in the Settings tab */
