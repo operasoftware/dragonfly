@@ -98,10 +98,7 @@ cls.BreakpointsView = function(id, name, container_class)
     var bp_ele = event.target.has_attr('parent-node-chain', 'data-breakpoint-id');
     this.mode = MODE_EDIT;
     var ele = bp_ele.getElementsByClassName('condition')[0] ||
-              bp_ele.render(['div', 
-                              'condition: ', 
-                              ['span'], 
-                              'class', 'condition']);
+              bp_ele.render(this._tmpls.breakpoint_condition());
     this._editor.edit(event, ele.firstElementChild);
   }.bind(this);
 

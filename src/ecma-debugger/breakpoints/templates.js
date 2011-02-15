@@ -1,6 +1,15 @@
 (function()
 {
 
+  this.breakpoint_condition = function(condition)
+  {
+    return (
+    ['div', 
+      'condition: ', 
+      ['span', condition || ''], 
+      'class', 'condition'
+    ]);
+  }
   this.breakpoint = function(bp)
   {
     var ret = ['div'];
@@ -31,6 +40,10 @@
                                                  script.state_arr[line_nr - 1], 
                                                  ['code']);
       ret.push(['div', script_tmpl, 'class', 'source-line']);
+      if (bp.condition)
+      {
+        ret.push(this.breakpoint_condition(bp.condition));
+      }
     }
     else
     {

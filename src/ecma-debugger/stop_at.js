@@ -280,8 +280,6 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
       stopped_reason: message[STOPPED_REASON],
       breakpoint_id: message[BREAKPOINT_ID]
     };
-    // var id = getStopAtId();
-
 
     var line = stopAt.line_number;
     if( typeof line == 'number' )
@@ -294,7 +292,6 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
       */
       if(stopAt.stopped_reason == 'unknown')
       {
-
         runtime_id = stopAt.runtime_id;
         if(  settings['js_source'].get('script')
              || runtimes.getObserve(runtime_id)
@@ -307,26 +304,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
           {
             runtimes.setSelectedRuntimeId(runtime_id);
           }
-          // the runtime id can be different for each frame.
-          var tag = tagManager.set_callback(null, parseBacktrace, [stopAt.runtime_id]);
-          services['ecmascript-debugger'].requestGetBacktrace(tag,
-              [stopAt.runtime_id, stopAt.thread_id, ini.max_frames]);
-          if( !views.js_source.isvisible() )
-          {
-            topCell.showView(views.js_source.id);
-          }
-          var plus_lines = views.js_source.getMaxLines() <= 10
-            ? views.js_source.getMaxLines() / 2 >> 0
-            : 10;
-          if( views.js_source.showLine( stopAt.script_id, line - plus_lines ) )
-          {
-            runtimes.setSelectedScript(stopAt.script_id);
-            views.js_source.showLinePointer( line, true );
-          }
-          __controls_enabled = true;
-          toolbars.js_source.enableButtons('continue');
-          messages.post('thread-stopped-event', {stop_at: stopAt});
-          messages.post('host-state', {state: 'waiting'});
+          this._stop_in_script(stopAt);
         }
         else
         {
@@ -339,11 +317,11 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
           example
 
           "runtime_id":2,
-          "thread-id":7,
+          "thread_id":7,
           "script_id":3068,
-          "line-number":8,
-          "stopped-reason":"breakpoint",
-          "breakpoint-id":1
+          "line_number":8,
+          "stopped_reason":"breakpoint",
+          "breakpoint_id":1
 
         */
         var condition = this._bps.get_condition(stopAt.breakpoint_id);
@@ -377,6 +355,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     if (status)
     {
       opera.postError('Evaling breakpoint condition failed');
+      this.__continue('run');
     }
     else if(message[STATUS] == "completed" &&
             message[TYPE] == "boolean" && 
@@ -390,12 +369,10 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     }
   }
 
-  this._stop_in_script = function(stopAt)
+  this._stop_in_script = function(stop_at)
   {
-    var runtime_id = stopAt.runtime_id;
-    // the runtime id can be different for each frame
-    var tag = tagManager.set_callback(null, parseBacktrace, [stopAt.runtime_id]);
-    var msg = [stopAt.runtime_id, stopAt.thread_id, ini.max_frames];
+    var tag = tagManager.set_callback(null, parseBacktrace, [stop_at.runtime_id]);
+    var msg = [stop_at.runtime_id, stop_at.thread_id, ini.max_frames];
     services['ecmascript-debugger'].requestGetBacktrace(tag, msg);
     if (!views.js_source.isvisible())
     {
@@ -404,14 +381,14 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     var plus_lines = views.js_source.getMaxLines() <= 10 ? 
                      views.js_source.getMaxLines() / 2 >> 0 :
                      10;
-    if (views.js_source.showLine(stopAt.script_id, stopAt.line_number - plus_lines))
+    if (views.js_source.showLine(stop_at.script_id, stop_at.line_number - plus_lines))
     {
-      runtimes.setSelectedScript(stopAt.script_id);
-      views.js_source.showLinePointer(stopAt.line_number, true);
+      runtimes.setSelectedScript(stop_at.script_id);
+      views.js_source.showLinePointer(stop_at.line_number, true);
     }
     __controls_enabled = true;
     toolbars.js_source.enableButtons('continue');
-    messages.post('thread-stopped-event', {stop_at: stopAt});
+    messages.post('thread-stopped-event', {stop_at: stop_at});
     messages.post('host-state', {state: 'waiting'});
   }
 
