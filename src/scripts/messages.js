@@ -111,6 +111,12 @@
  *     <dt>onbeforesearch</dt>
  *     <dd>Before TextSearch executes a search. Payload: msg.search_term.</dd>
  *
+ *     <dt>breakpoint-added</dt>
+ *     <dd>A breakpoint was set. Payload: msg.script_id, msg.line_nr, msg.id, msg.event_type.</dd>
+ *
+ *     <dt>breakpoint-removed</dt>
+ *     <dd>A breakpoint was set. Payload: msg.id</dd>
+ *
  * </dl>
  *
  */

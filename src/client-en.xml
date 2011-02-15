@@ -129,6 +129,8 @@ window.load_screen_timeout = window.setTimeout(function()
 <link rel="stylesheet" href="./ui-style/global_command_line.css"/>
 <link rel="stylesheet" href="./ui-style/contextmenu.css"/>
 <link rel="stylesheet" href="./searches/style.css"/>
+<link rel="stylesheet" href="./ecma-debugger/breakpoints/style.css"/>
+
 
 
 
@@ -306,6 +308,10 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ecma-debugger/eventbreakpoints/templates.js"/>
 
 <script src="./ecma-debugger/breakpoints/view.js"/>
+<script src="./ecma-debugger/breakpoints/breakpoints.js"/>
+<script src="./ecma-debugger/breakpoints/templates.js"/>
+<script src="./ecma-debugger/breakpoints/conditioneditor.js"/>
+
 
 <script src="./ecma-debugger/watches/watches.js"/>
 <script src="./ecma-debugger/watches/view.js"/>

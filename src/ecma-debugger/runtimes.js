@@ -1066,20 +1066,28 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
 
   this.hasBreakpoint = function(script_id, line_nr)
   {
-    return __scripts[script_id] && (line_nr in __scripts[script_id].breakpoints);
+    return __scripts[script_id] && (__scripts[script_id].breakpoints[line_nr]);
   }
 
 
 
   if (service_version == "6.0")
   {
-    this.setBreakpoint = function(script_id, line_nr)
+    this.setBreakpoint = function(script_id, line_nr, b_p_id)
     {
       if (!__scripts[script_id]) { return; }
-      var b_p_id = __scripts[script_id].breakpoints[line_nr] = this.getBreakpointId();
+      b_p_id = b_p_id ||
+               // if a breakpoint was set on the same script and line before
+               this._bps.get_breakpoint_with_script_id_and_line_nr(script_id, 
+                                                                   line_nr) ||
+               this.getBreakpointId();
+      __scripts[script_id].breakpoints[line_nr] = b_p_id;
       // message signature has changes, AddBreakpoint means always to a source line
       // for events it's now AddEventBreakpoint
       services['ecmascript-debugger'].requestAddBreakpoint(0, [b_p_id, script_id, line_nr]);
+      window.messages.post("breakpoint-added", {script_id: script_id,
+                                                line_nr: line_nr,
+                                                id: b_p_id});
     }
   }
   else
@@ -1094,9 +1102,10 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
 
   this.removeBreakpoint = function(script_id, line_nr)
   {
-    services['ecmascript-debugger'].requestRemoveBreakpoint(0,
-      [__scripts[script_id].breakpoints[line_nr]] );
-    delete __scripts[script_id].breakpoints[line_nr];
+    var b_p_id = __scripts[script_id].breakpoints[line_nr];
+    services['ecmascript-debugger'].requestRemoveBreakpoint(0, [b_p_id]);
+    __scripts[script_id].breakpoints[line_nr] = null;
+    window.messages.post("breakpoint-removed", {id: b_p_id});
   }
 
   this.getBreakpoints = function(script_id)
@@ -1287,7 +1296,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
   }
 
 
-
+  this._bps = cls.Breakpoints.get_instance();
 
 
   messages.addListener("thread-stopped-event", onThreadStopped);
