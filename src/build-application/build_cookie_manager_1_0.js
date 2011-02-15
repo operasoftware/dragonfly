@@ -12,11 +12,7 @@ window.app.builders.CookieManager["1.0"] = function(service)
   var service_interface = window.services['cookie-manager'];
   if(service_interface)
   {
-    // namespace.data = new cls.CookieManager["1.0"].Data(service.version);
-    // window.cookie_manager_data = new cls.CookieManager["1.0"].Data(service.version);
-    var data = new cls.CookieManager.StorageData.CookieService(service);
-    var view = new cls.CookieManager["1.0"].CookieManagerView("cookie_manager", "Cookies", "scroll cookie_manager", data);
-    data.set_view(view);
+    new cls.CookieManager["1.0"].CookieManagerView("cookie_manager", "Cookies", "scroll cookie_manager", cls.CookieManager.StorageData.CookieService, service.version);
   }
 }
 /*

@@ -53,7 +53,7 @@ cls.CookieManager.StorageData.Base = function()
     {
       // console.log("_flatten_data", this._dict);
       this.item_list = this._flatten_data(this._dict, this._rts);
-      this.view.update();
+      this._view.update();
     }
   }
 
@@ -126,11 +126,6 @@ cls.CookieManager.StorageData.Base = function()
     return flattened_cookies;
   };
 
-  this.set_view = function(view)
-  {
-    this.view = view;
-  }
-
   this.refetch = function()
   {
     this._dict = {};
@@ -175,7 +170,7 @@ cls.CookieManager.StorageData.Base = function()
     // select changed / created cookie after table had rendered
     // todo: find runtimes where this will probably end up to make the selection restore work
     // todo: need a way to access the views restore_selection array. hardcoding views.cookie_manager for now.
-    window.views.cookie_manager._restore_selection = [
+    this._view._restore_selection = [
       this.create_objectref(
         {
           domain: c.domain,
@@ -356,9 +351,11 @@ cls.CookieManager.StorageData.Base = function()
     }
   };
 
-  this._init = function(service_version)
+  this._init = function(service_version, view)
   {
-    this.service_version = service_version.version;
+    this.service_version = service_version || 0;
+    this._view = view;
+    console.log("init data. view:", this._view);
     this._dict = {};
     this.item_list = [];
     this._rts = {};
@@ -367,135 +364,22 @@ cls.CookieManager.StorageData.Base = function()
   };
 };
 
-cls.CookieManager.StorageData.CookieService = function(service_version)
+cls.CookieManager.StorageData.CookieService = function(service_version, view)
 {
-  this._init(service_version);
-  this._tabledef = {
-    groups: {
-      host_and_path: {
-        label:   "Host and path",
-        grouper: (function(obj) {
-          // todo: check to avoid using this._rts (to skip the bind) by putting hostname etc on the cookie_object directly? would remove lots of this cryptic this._rts[obj.runtimes[0]].pathname stuff.
-          return this._rts[obj.runtimes[0]].hostname + this._rts[obj.runtimes[0]].pathname;
-        }).bind(this),
-        renderer: (function(groupvalue, obj) {
-          var obj = obj[0];
-          var runtime = this._rts[obj.runtimes[0]];
-          return window.templates.cookie_manager.hostname_group_render(runtime);
-        }).bind(this)
-      }
-    },
-    column_order: ["domain", "name", "value", "path", "expires", "isSecure", "isHTTPOnly"],
-    idgetter: function(res) { return res.objectref },
-    columns: {
-      domain: {
-        label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_DOMAIN,
-        classname: "col_domain",
-        renderer: (function(obj) {
-          if(obj.is_runtimes_placeholder)
-          {
-            return;
-          }
-          if(obj.domain)
-          {
-            return window.templates.cookie_manager.editable_domain(obj.runtimes[0], this._rts, obj.domain);
-          }
-          return window.templates.cookie_manager.unknown_value();
-        }).bind(this),
-        summer: function(values, groupname, getter) {
-          return ["button", "Add Cookie", "class", "add_cookie_button", "handler", "cookiemanager-add-cookie-row"];
-        }
-      },
-      name: {
-        label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_NAME,
-        classname: "col_name",
-        renderer: function(obj) {
-          if(obj.is_runtimes_placeholder)
-          {
-            return;
-          }
-          return window.templates.cookie_manager.editable_name(obj.name);
-        }
-      },
-      value: {
-        label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_VALUE,
-        classname: "col_value",
-        renderer: function(obj) {
-          if(obj.is_runtimes_placeholder)
-          {
-            return;
-          }
-          return window.templates.cookie_manager.editable_value(obj.value);
-        }
-      },
-      path: {
-        label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_PATH,
-        classname: "col_path",
-        renderer: function(obj) {
-          if(obj.is_runtimes_placeholder)
-          {
-            return;
-          }
-          if(typeof obj.path === "string")
-          {
-            return window.templates.cookie_manager.editable_path(obj.path);
-          }
-          return window.templates.cookie_manager.unknown_value();
-        }
-      },
-      expires: {
-        label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES,
-        classname: "col_expires",
-        renderer: function(obj) {
-          if(obj.is_runtimes_placeholder)
-          {
-            return;
-          }
-          if(typeof obj.expires === "number")
-          {
-            return window.templates.cookie_manager.editable_expires(obj.expires, obj.objectref);
-          }
-          return window.templates.cookie_manager.unknown_value();
-        }
-      },
-      isSecure: {
-        label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY),
-        classname: "col_secure",
-        renderer: function(obj) { return window.views.cookie_manager._is_secure_renderer(obj) }
-      },
-      isHTTPOnly: {
-        label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY),
-        classname: "col_httponly",
-        renderer: function(obj) { return window.views.cookie_manager._is_http_only_renderer(obj) }
-      }
-    }
-  };
-  this.sortby = "domain";
-  this.groupby = "host_and_path";
+  this._init(service_version, view);
 }
 cls.CookieManager.StorageData.CookieService.prototype = new cls.CookieManager.StorageData.Base();
 
+/*
 cls.CookieManager.StorageData.LocalStorage = function()
 {
-  this._init({version:"111.0"}); // todo: make version optional
+  this._init();
   
   // overwrite _on_active_tab to organize dict by rt_id instead of domain_and_path
   this._on_active_tab = function(msg)
   {
     // console.log("LocalStorage _on_active_tab", msg);
     // cleanup runtimes directory
-    /*
-    for(var item in this._rts)
-    {
-      // item is a string, rt_id is a number which can now be compared with what's in msg.runtimes_with_dom
-      var rt_id = this._rts[item].rt_id;
-      if(msg.runtimes_with_dom.indexOf(rt_id) === -1)
-      {
-        // runtime was not active and is to be removed from this._rts
-        delete this._rts[rt_id];
-      }
-    }
-    */
     this._rts = [];
     for (var i=0; i < msg.runtimes_with_dom.length; i++)
     {
@@ -609,3 +493,4 @@ cls.CookieManager.StorageData.LocalStorage = function()
   this.groupby = "runtime";
 }
 cls.CookieManager.StorageData.LocalStorage.prototype = new cls.CookieManager.StorageData.Base();
+*/
