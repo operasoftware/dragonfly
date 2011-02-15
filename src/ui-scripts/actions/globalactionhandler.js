@@ -139,7 +139,22 @@
 
   this._handlers["toggle-command-line"] = function(action_id, event, target)
   {
-    eventHandlers.click["toggle-console"]();
+    var ele = document.querySelector("[view_id=command_line]");
+    var visible = false;
+    if (!ele)
+    {
+      UIWindowBase.showWindow('command_line', ((document.documentElement.clientHeight / 2) | 0), 0, document.documentElement.clientWidth, ((document.documentElement.clientHeight / 2) | 0));
+      // TODO: don't do this here, there's no guarantee that the element exists
+      setTimeout(function() {
+        ele = document.querySelector("[view_id=command_line] textarea");
+        ele.focus();
+      }, 0);
+      visible = true;
+    }
+    else
+    {
+      UIWindowBase.closeWindow('command_line');
+    }
     return false;
   };
 

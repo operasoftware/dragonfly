@@ -174,7 +174,7 @@ cls.JsSourceView = function(id, name, container_class)
     frame_id = container.id;
     container.innerHTML = "" +
       "<div id='js-source-scroll-content'>"+
-        "<div id='js-source-content' class='js-source'></div>"+
+        "<div id='js-source-content' class='js-source' data-menu='js-source-content'></div>"+
       "</div>"+
       "<div id='js-source-scroll-container' handler='scroll-js-source'>"+
         "<div id='js-source-scroller'></div>"+
@@ -1104,4 +1104,39 @@ cls.JsSourceView.create_ui_widgets = function()
   window.messages.addListener('shortcuts-changed', set_shortcuts);
   set_shortcuts();
 
+  var broker = ActionBroker.get_instance();
+  var contextmenu = ContextMenu.get_instance();
+  contextmenu.register("js-source-content", [
+    {
+      callback: function(event, target)
+      {
+        var line = parseInt(event.target.get_attr("parent-node-chain", "data-line-number"));
+        var script_id = views.js_source.getCurrentScriptId();
+
+        if (line)
+        {
+          if (runtimes.hasBreakpoint(script_id, line))
+          {
+            return {
+              label: ui_strings.M_CONTEXTMENU_REMOVE_BREAKPOINT,
+              handler: function(event, target) {
+                runtimes.removeBreakpoint(script_id, line);
+                views.js_source.removeBreakpoint(line);
+              }
+            };
+          }
+          else
+          {
+            return {
+              label: ui_strings.M_CONTEXTMENU_ADD_BREAKPOINT,
+              handler: function(event, target) {
+                runtimes.setBreakpoint(script_id, line);
+                views.js_source.addBreakpoint(line);
+              }
+            };
+          }
+        }
+      }
+    }
+  ]);
 };

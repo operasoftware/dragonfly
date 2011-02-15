@@ -79,7 +79,7 @@
     var ret = [];
     var name = proto[VALUE][CLASS_NAME] || "";
     var is_unfolded = _is_unfolded(tree, index, name, collapsed_protos);
-    var expanded_props = is_unfolded && 
+    var expanded_props = is_unfolded &&
                          _pretty_print_properties(model,
                                                   tree.protos && tree.protos[index] || {},
                                                   proto[PROPERTY_LIST] || [],
@@ -184,8 +184,8 @@
           value = helpers.escapeTextHtml(value).replace(/'/g, '&#39;');
           if (short_val)
           {
-            if (!searchterm || 
-                prop[NAME].toLowerCase().contains(searchterm) || 
+            if (!searchterm ||
+                prop[NAME].toLowerCase().contains(searchterm) ||
                 short_val.toLowerCase().contains(searchterm))
             {
               ret.push(
@@ -202,8 +202,8 @@
           }
           else
           {
-            if (!searchterm || 
-                prop[NAME].toLowerCase().contains(searchterm) || 
+            if (!searchterm ||
+                prop[NAME].toLowerCase().contains(searchterm) ||
                 value.toLowerCase().contains(searchterm))
             {
               ret.push(
@@ -226,7 +226,7 @@
             continue;
         case "undefined":
         {
-          if (!searchterm || 
+          if (!searchterm ||
               prop[NAME].toLowerCase().contains(searchterm) ||
               type.toLowerCase().contains(searchterm))
           {
@@ -257,7 +257,7 @@
                       prop[NAME].toLowerCase().contains(searchterm) ||
                       value.toLowerCase().contains(searchterm);
           if (has_match || expanded_prop.length)
-          {    
+          {
             ret.push(
               "<item obj-id='" + obj_id + "'>" +
               "<input " +
@@ -297,7 +297,7 @@
     var tree = model.get_expanded_tree(show_root, path);
     var setting = window.settings.inspection;
     var collapsed_protos = setting.get('collapsed-prototypes');
-    var filter = !setting.get('show-default-nulls-and-empty-strings') && 
+    var filter = !setting.get('show-default-nulls-and-empty-strings') &&
                  window.inspectionfilters;
     var ret = _pretty_print_object(model,
                                    tree,
@@ -316,7 +316,7 @@
     var data = tree && model.get_data(tree.object_id);
     var setting = window.settings.inspection;
     var collapsed_protos = setting.get('collapsed-prototypes');
-    var filter = !setting.get('show-default-nulls-and-empty-strings') && 
+    var filter = !setting.get('show-default-nulls-and-empty-strings') &&
                  window.inspectionfilters;
     return data ? _pretty_print_proto(model,
                                       tree,

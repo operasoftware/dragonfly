@@ -20,13 +20,13 @@ var EventHandler = function(type, is_capturing, handler_key)
 
   var handler = function(event)
   {
-
     var ele = event.target, handler = null, container = null;
 
     if( ele.nodeType != 1 )
     {
       return;
     }
+
     if (event.which == 3 && event.type in {"click": 1, "mousedown": 1, "mouseup": 1})
     {
       // right click
@@ -34,12 +34,15 @@ var EventHandler = function(type, is_capturing, handler_key)
       event.preventDefault();
       return;
     }
+
     handler = ele.getAttribute(handler_key);
-    while( !(handler && eventHandlers[type][handler]) && ( ele = ele.parentElement ) )
+
+    while( !(handler && eventHandlers[type][handler]) && (ele = ele.parentNode) )
     {
-      handler = ele.getAttribute(handler_key);
+      handler = ele.nodeType == 1 ? ele.getAttribute(handler_key) : null;
     }
-    if( handler )
+
+    if( handler && ele )
     {
       if( type == 'click' && /toolbar-buttons/i.test(ele.parentNode.nodeName) )
       {
@@ -271,21 +274,7 @@ eventHandlers.click['toggle-remote-debug-config-overlay'] = function(event, targ
 
 eventHandlers.click['toggle-console'] = function(event, target)
 {
-  if (!(window.views.command_line && window.views.command_line.isvisible()))
-  {
-    UIWindowBase.showWindow('command_line', 
-                            innerHeight/2, 0, 
-                            innerWidth, innerHeight/2);
-    setTimeout(function() {
-      var box = UI.get_instance().get_layout_box('command_line');
-      var ele = box && box.container.getElement();
-      ele && (ele = ele.getElementsByTagName('textarea')[0]) && ele.focus();
-    }, 0);
-  }
-  else
-  {
-    UIWindowBase.closeWindow('command_line');
-  }
+  this.broker.dispatch_action("global", "toggle-command-line", event, target);
 };
 
 eventHandlers.click['toolbar-switch'] = function(event)
@@ -294,6 +283,7 @@ eventHandlers.click['toolbar-switch'] = function(event)
   var arr = target.getAttribute('key').split('.');
   var setting = arr[0], key = arr[1];
   var is_active = !( target.getAttribute('is-active') == 'true' && true || false );
+  target.setAttribute('is-active', is_active ? 'true' : 'false');
 
   settings[setting].set(key, is_active);
   views.settings_view.syncSetting(setting, key, is_active);
@@ -305,7 +295,6 @@ eventHandlers.click['toolbar-switch'] = function(event)
   view && view.update();
   */
   messages.post("setting-changed", {id: setting, key: key});
-  target.setAttribute('is-active', is_active ? 'true' : 'false');
   // hack to trigger a repaint while
   target.style.backgroundColor = "transparent";
   target.style.removeProperty('background-color');

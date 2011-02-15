@@ -1,4 +1,4 @@
-﻿.command-line textarea {
+.command-line textarea {
     background: transparent;
     color: #fff;
 }
@@ -10,6 +10,7 @@
 .command-line .stylesheets value,
 .command-line .css-inspector value,
 .command-line .js-source .string,
+.command-line .js-source .object,
 .command-line .js-source .number
 {
   color: #f33;
@@ -39,4 +40,3 @@
 .command-line ::selection {
   color: #f33;
 }
-

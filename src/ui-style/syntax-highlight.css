@@ -105,7 +105,7 @@ examine-objects .error {
 
 #target-element, .dom [handler="spotlight-node"]:hover
 {
-  background-color: #cce5f3;
+  background-color: #bbcef1;
   /*margin: -1px;
   border: 1px solid #78bae0;
   position: relative;
@@ -119,8 +119,8 @@ examine-objects .error {
 }
 .dom ::selection {
   /* TEMP */
-  background-color: #78bae0;
-  color: #000;
+  background-color: #598bec;
+  color: #fff;
 }
 
 .dom node, selector, .element-name {

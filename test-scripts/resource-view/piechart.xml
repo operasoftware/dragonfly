@@ -1,0 +1,72 @@
+<html xmlns='http://www.w3.org/1999/xhtml'
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      xmlns:svg="http://www.w3.org/2000/svg">
+<script src="../../src/scripts/dom.js"/>
+<script><![CDATA[
+
+window.onload = function()
+{
+  show_pie_chart();
+}
+
+function show_pie_chart()
+{
+  var val = document.getElementById("pie_values").value;
+  val = val.replace(/,/g, " "); // allow space or comma as separator
+  items = val.split(/\s+/)
+  items = (items.map(function(e) { return parseInt(e) }))
+
+  var body = document.getElementsByTagName("body")[0];
+  document.getElementById("pie_chart").render(resource_pie_chart(items))
+}
+
+function resource_pie_chart(values)
+{
+  var sum = function(arr) { return arr.reduce(function(p, c) { return p+c })};
+  var total = sum(values);
+  var radius = 50;
+
+  var tpl = [["circle", "cx", String(radius), "cy", String(radius), "r", "52", "fill", "white",
+               "stroke", "black", "stroke-width", "1"]]
+
+  var colors = ["#777fae", "#85c1f3", "#f94c4c", "#edde37", "#7a9f68"];
+  var colorindex = 0;
+
+  var prev = {x:radius*2, y:radius}
+  var deg = 0;
+  values.forEach(function(pie) {
+    deg = pie / total * 360 + deg;
+
+    var rad = deg * Math.PI / 180;
+
+    var cur = {
+      x: (parseInt(Math.cos(rad) * radius)) + radius,
+      y: (parseInt(Math.sin(rad) * radius)) + radius
+    };
+
+    var arc = ((pie/total * 360) > 180) ? 1 : 0;
+
+    tpl.push(["path", "d", ["M", radius, radius,
+                            "L", prev.x, prev.y,
+                            "A", radius, radius, 0, arc, 1, cur.x, cur.y,
+                            "Z"].join(" "),
+                      "fill", colors[colorindex++],
+                      "stroke", "black",
+                      "stroke-width", "1"
+    ]);
+    prev = cur;
+  });
+
+  tpl = ["svg:svg", tpl, "viewBox", "0 0 100 100", "xmlns", "http://www.w3.org/2000/svg"]
+  return tpl;
+}
+
+]]></script>
+<body>
+  <p>
+    <input type="text" id="pie_values" value="20, 14, 46, 32, 76" />
+    <input type='button' value='Show pie chart' onclick='show_pie_chart()'/>
+  </p>
+  <div id="pie_chart" style="border:solid thin black; height: 140px;" />
+</body>
+</html>

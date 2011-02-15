@@ -1,11 +1,16 @@
 ﻿window.eventHandlers.click['show-frame'] = function(event)
 {
-  var frame = stop_at.getFrame(event.target['ref-id']);
+  var target = event.target;
+  while (target && target["ref-id"] == undefined)
+  {
+    target = target.parentNode;
+  }
+  var frame = stop_at.getFrame(target['ref-id']);
   if (frame)
   {
     topCell.showView(views['inspection'].id);
     messages.post('active-inspection-type', {inspection_type: 'frame'});
-    messages.post('frame-selected', {frame_index: event.target['ref-id']});
+    messages.post('frame-selected', {frame_index: target['ref-id']});
     if (event.type == 'click')
     {
       helpers.setSelected(event);

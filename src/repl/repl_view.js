@@ -1,4 +1,4 @@
-﻿window.cls = window.cls || (window.cls = {});
+﻿window.cls = window.cls || {};
 
 /**
  * @constructor
@@ -103,6 +103,12 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._cancel_completion();
     this.ondestroy();
   };
+
+  this.show_help = function()
+  {
+    opera.postError("fixme: implement help function and split into help/commands")
+  };
+
 
   this._update_input_height_bound = function()
   {
@@ -438,7 +444,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._construct_line = function(pre, prop, post)
   {
     // This doesn't cover every allowed character, but should be fine most of the time
-    var is_valid_identifier = /^[a-z$_]$|^[a-z$_][a-z$_0-9]/i.test(prop);
+    var is_valid_identifier = /^[a-z$_][a-z$_0-9]*$/i.test(prop);
     var is_number_without_leading_zero = /^0$|^[1-9][0-9]*$/;
     if ((!is_valid_identifier || this._keywords.indexOf(prop) != -1)
          && this._autocompletion_scope) {
@@ -850,6 +856,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     return false;
   }
 
+  this["_handle_action_help"] = function(evt, target)
+  {
+    this.show_help();
+  }
+
   /**
    * Entry point for the action handling system
    */
@@ -1017,6 +1028,16 @@ cls.ReplView.create_ui_widgets = function()
       handler: function() {
         broker.dispatch_action("command_line", "clear");
       }
-    }
-  ]);
+    },
+    {
+      label: ui_strings.S_HELP_COMMAND_LINE,
+      handler: function() {
+        broker.dispatch_action("command_line", "help");
+      }
+    },    {
+      label: ui_strings.S_CLOSE_COMMAND_LINE,
+      handler: function() {
+        broker.dispatch_action("global", "toggle-command-line");
+      }
+    },  ]);
 };

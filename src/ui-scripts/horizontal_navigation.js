@@ -100,19 +100,19 @@ var HorizontalNavigationBase = function(cell)
     this._current_breadcrumb_el = element;
     this._breadcrumbs.style.OTransitionDuration = Math.min(Math.abs(left) / 200, .2) + "s";
     this.set_position(pos + left);
-    
+
     if (repeat)
     {
       this._nav_timeout = setTimeout(this.nav, 400, dir, repeat);
     }
-    
+
   }
 
   this.clear_nav_timeout = function()
   {
     clearTimeout(this._nav_timeout);
   }
-  
+
   this.drag_breadcrumb = function(event, target)
   {
     if (this._breadcrumbs)
@@ -120,7 +120,7 @@ var HorizontalNavigationBase = function(cell)
       var left = getComputedStyle(this._breadcrumbs, null).getPropertyValue("left");
       this._drag_start = parseInt(left) - event.clientX;
       this._breadcrumbs.style.OTransitionDuration = 0;
-      if (this._breadcrumbs.previousElementSibling.offsetWidth > 0) 
+      if (this._breadcrumbs.previousElementSibling.offsetWidth > 0)
       {
         this._breadcrumbs.addClass("drag")
         document.addEventListener("mousemove", this._drag_breadcrumbs_bound, false);
@@ -129,12 +129,12 @@ var HorizontalNavigationBase = function(cell)
     }
   }
 
-  this._drag_breadcrumbs = function(e) 
+  this._drag_breadcrumbs = function(e)
   {
     this.set_position(this._drag_start + e.clientX);
   }
 
-  this._drag_end = function () 
+  this._drag_end = function ()
   {
     this._current_breadcrumb_el = null;
     if (this._breadcrumbs)
@@ -144,7 +144,7 @@ var HorizontalNavigationBase = function(cell)
     document.removeEventListener("mousemove", this._drag_breadcrumbs_bound, false);
     document.removeEventListener("mouseup", this._drag_end_bound, false);
   }
-  
+
   /**
    * Sets the left position of the breadcrumbs. This method does boundary checking,
    * so the breadcrumbs never overflow on any direction.
@@ -238,14 +238,14 @@ var HorizontalNavigationBase = function(cell)
     ]);
     */
   };
-  
+
   this._super_set_dimension = this.setDimensions;
   this.setDimensions = function(force_redraw)
   {
     this._super_set_dimension(force_redraw);
     this.check_width();
   }
-  
+
   this._super_init = this.init;
   this.init = function()
   {
@@ -254,7 +254,7 @@ var HorizontalNavigationBase = function(cell)
     this._drag_breadcrumbs_bound = this._drag_breadcrumbs.bind(this);
     this._drag_end_bound = this._drag_end.bind(this);
   }
-  
+
 };
 
 var HorizontalNavigation = function()

@@ -1,6 +1,6 @@
 ﻿#contextmenu {
   position: fixed;
-  z-index: 10;
+  z-index: 300;
   display: none;
   padding: 0px;
   min-width: 100px;
@@ -10,13 +10,13 @@
   margin: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  border: 2px solid #fff;
-  background: rgba(38,38,38,0.88) url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAUCAQAAADmB58qAAAAIElEQVQIW2NgYGFiYGICkaxgxA5DHDASjuBSQGVsQC0AEiIAo3s7awoAAAAASUVORK5CYII%3D") 0 0 repeat-x;
+  border: 1px solid #727272;
+  background: rgba(230,230,230,0.95) url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAATCAQAAAD7Aq%2BSAAAAIElEQVQIW2P5f4yF4ScLw3cw%2BgpGX8DoMwYDIgtR%2BRMANLETUgRzmpgAAAAASUVORK5CYII%3D") 0 0 repeat-x;
   background-size: auto 100%;
-  color: #ccc;
-  text-shadow: 0 1px #000;
-  border-radius: 4px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.5),inset 0 0 1px #000;
+  color: #333;
+  text-shadow: 0 1px rgba(255,255,255,0.5);
+  border-radius: 2px;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.1);
 }
 
 #contextmenu ::selection {
@@ -27,23 +27,23 @@
   padding: 3px 20px 3px 0;
 }
 #contextmenu li:first-of-type {
-  border-top-left-radius: 2px;
-  border-top-right-radius: 2px;
+  border-top-left-radius: 1px;
+  border-top-right-radius: 1px;
 }
 #contextmenu li:last-of-type {
-  border-bottom-left-radius: 2px;
-  border-bottom-right-radius: 2px;
+  border-bottom-left-radius: 1px;
+  border-bottom-right-radius: 1px;
 }
 #contextmenu li.separator {
   padding: 0;
 }
 #contextmenu li.disabled {
-  color: #999;
-  text-shadow: none;
+  color: #aaa;
 }
-#contextmenu .checkbox {
+#contextmenu .contextmenu-icon {
   display: inline-block;
-  vertical-align: middle;
+  vertical-align: top;
+  text-align: center;
   width: 12px;
   margin: 0 4px;
   overflow: hidden;
@@ -52,7 +52,6 @@
   background-color: #bbcef1;
   color: #000;
   text-shadow: none;
-  -o-transition: background-color 0.2s;
 }
 
 #contextmenu li:not(.separator):not(.disabled):active {
@@ -66,5 +65,5 @@
   height: 1px;
   border: none;
   background-color: rgba(0,0,0,0.2);
-  box-shadow: 0 1px rgba(255,255,255,0.1);
+  box-shadow: 0 1px #fff;
 }

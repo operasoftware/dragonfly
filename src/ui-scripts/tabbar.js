@@ -67,7 +67,7 @@ var Tabbar = function(id, tabs)
   {
     this._dynamic_tabs = this._dynamic_tabs.filter(function(id)
     {
-      return id !== view_id;  
+      return id !== view_id;
     });
     this._ui_tabs.forEach(function(tabs)
     {
