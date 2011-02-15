@@ -24,7 +24,6 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
                                                             this._tracking_policy,
                                                             this._headers,
                                                             this._overrides));
-    this._input = new cls.BufferManager(container.querySelector("textarea"));
     this._output = container.querySelector("code");
     this._headerele = container.querySelector(".header-override-input");
   };
@@ -113,6 +112,11 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
     this._set_header_overrides(headers);
   }.bind(this);
 
+  this._handle_select_preset_bound = function(evt, target)
+  {
+    this._headerele.value = target.value;
+  }.bind(this);
+
   this._clear_header_overrides = function()
   {
     this._service.requestClearHeaderOverrides(null, []);
@@ -129,6 +133,9 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
   eh.change["network-options-toggle-caching"] = this._handle_toggle_caching_bound;
   eh.change["network-options-toggle-body-tracking"] = this._handle_toggle_content_tracking_bound;
   eh.change["toggle-header-overrides"] = this._handle_toggle_header_overrides_bound;
+  eh.change["network-options-select-preset"] = this._handle_select_preset_bound;
+
+
   eh.click["update-header-overrides"] = this._handle_update_header_overrides_bound;
 
 

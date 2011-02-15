@@ -66,8 +66,23 @@ templates.network_options_override_list = function(headers, overrides)
              headers.map(function(e) {return e.name + ": " + e.value}).join("\n"),
              "class", "header-override-input",
             ].concat(overrides ? [] : ["disabled", "disabled"]);
-  return [tpl, ["br"], ["button", "save",
-                "handler", "update-header-overrides",]];
+  return [
+          ["br"],
+          "Presets:", templates.network_options_override_presets(overrides),
+          ["br"],
+          tpl, 
+          ["br"], 
+          ["button", "save",
+           "handler", "update-header-overrides"].concat(overrides ? [] : ["disabled", "disabled"])
+         ];
+}
+
+templates.network_options_override_presets = function(overrides)
+{
+    return ["select", 
+            cls.ResourceUtil.header_presets.map(function(e) { return ["option", e.name, "value", e.headers] }),
+            "handler", "network-options-select-preset",
+            ].concat(overrides ? [] : ["disabled", "disabled"]);
 }
 
 templates.network_options_header_table = function(headers)

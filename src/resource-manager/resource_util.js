@@ -194,3 +194,18 @@ cls.ResourceUtil.url_host = function(url)
   host = host.slice(0, firstslash == -1 ? host.length : firstslash);
   return host;
 }
+
+cls.ResourceUtil.header_presets = [
+  {name: "Opera 11 linux", headers: 
+    [
+      "foo: bar11",
+      "baz: meh"
+    ].join("\n")
+  },
+  {name: "Opera 10 linux", headers: 
+    [
+      "foo: bar10",
+      "baz: meh"
+    ].join("\n")
+  },
+];
