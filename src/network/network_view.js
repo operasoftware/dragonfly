@@ -69,7 +69,10 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
         var scroller = container.querySelector("#scrollbar");
         scroller.style.width = "" + graphwidth + "px";
 
+        container.querySelector("#right-side-content").style.minHeight = "" + (contheight-window.defaults["scrollbar-width"]) + "px";
         container.querySelector("#right-side-content").style.width = "" + graphwidth + "px";
+
+
         var scrollfun = function(evt) {
           var e = document.getElementById("right-side-container");
           e.scrollLeft = evt.target.scrollLeft;

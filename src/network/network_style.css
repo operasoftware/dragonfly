@@ -13,6 +13,7 @@
 #left-side-content
 {
   width: 250px;
+  border-right: solid thin gray;
 }
 
 #right-side-container
@@ -20,7 +21,7 @@
   position: absolute;
   height: 100%;
   top: 0px;
-  left: 250px;
+  left: 251px;
   right: 0px;
   overflow: hidden;
 }

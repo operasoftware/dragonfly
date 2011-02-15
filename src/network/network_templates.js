@@ -451,16 +451,6 @@ templates.grid_lines = function(ctx, width, height)
   const THRESH_100MS = 200;
   const THRESH_500MS = 100;
 
-  ret.push(["line",
-            "x1", "0",
-            "y1", "0",
-            "x2", "0",
-            "y2", String(height),
-            "stroke", "black",
-            "stroke-width", "1",
-            "pointer-events", "none",
-           ]);
-
   for (var n=100; n<millis; n+=100)
   {
     var color = null;
