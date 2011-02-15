@@ -2,6 +2,7 @@
 {
   height: 100%;
   overflow: auto;
+  overflow-y: scroll;
 }
 
 #main-scroll-content

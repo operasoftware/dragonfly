@@ -49,7 +49,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       else
       {
         var contheight = container.getBoundingClientRect().height - 2;
-        var availwidth = container.getBoundingClientRect().width - 250;
+        var availwidth = container.getBoundingClientRect().width - 250 - window.defaults["scrollbar-width"];
         var duration = ctx.get_duration();
         var graphwidth = availwidth;
 
