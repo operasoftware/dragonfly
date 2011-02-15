@@ -49,18 +49,18 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       else
       {
         var contheight = container.getBoundingClientRect().height - 2;
-        var availwidth = container.getBoundingClientRect().width - 250;
+        var availwidth = container.getBoundingClientRect().width - 250 - window.defaults["scrollbar-width"];
         var duration = ctx.get_duration();
         var graphwidth = availwidth;
 
         if (duration > 3000)
         {
-          graphwidth = Math.ceil(duration*0.5);
+          graphwidth = Math.ceil(duration * 0.35);
         }
 
         container.clearAndRender(templates.network_log_main(ctx, graphwidth));
         this._scrollcontainer = container.querySelector("#main-scroll-container");
-        this._scrollcontainer.style.height = "" + (contheight-30) + "px";
+        this._scrollcontainer.style.height = "" + (contheight-window.defaults["scrollbar-width"]) + "px";
         this._scrollcontainer.scrollTop = this._scroll;
         container.className = "";
 
