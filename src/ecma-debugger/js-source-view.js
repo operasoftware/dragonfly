@@ -208,7 +208,7 @@ cls.JsSourceView = function(id, name, container_class)
         var stop_at = runtimes.getStoppedAt(selected_script_id);
         if(stop_at && stop_at[0])
         {
-          var line = parseInt( stop_at[0]['line-number'] );
+          var line = parseInt( stop_at[0].line_number );
           var plus_lines = max_lines <= 10
             ? max_lines / 2 >> 0
             : 10;

@@ -129,7 +129,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
 
   this.getThreadId = function()
   {
-    return stopAt && stopAt['thread-id'] || '';
+    return stopAt && stopAt.thread_id || '';
   }
 
   /**
@@ -157,7 +157,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
       {
         runtime_id: frame.rt_id,
         scope_id: frame.scope_id,
-        thread_id: stopAt['thread-id'],
+        thread_id: stopAt.thread_id,
         index: __selected_frame_index,
         argument_id: frame.argument_id,
         scope_list: frame.scope_list
@@ -239,7 +239,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     runtimes.setObserve(stopAt.runtime_id, mode != 'run');
 
     services['ecmascript-debugger'].requestContinueThread(0,
-        [stopAt.runtime_id, stopAt['thread-id'], mode]);
+        [stopAt.runtime_id, stopAt.thread_id, mode]);
     messages.post('frame-selected', {frame_index: -1});
     messages.post('thread-continue-event', {stop_at: stopAt});
     toolbars.js_source.disableButtons('continue');
@@ -274,16 +274,16 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     stopAt =
     {
       runtime_id: message[RUNTIME_ID],
-      'thread-id': message[THREAD_ID],
+      thread_id: message[THREAD_ID],
       script_id: message[SCRIPT_ID],
-      'line-number': message[LINE_NUMBER],
-      'stopped-reason': message[STOPPED_REASON],
-      'breakpoint-id': message[BREAKPOINT_ID]
+      line_number: message[LINE_NUMBER],
+      stopped_reason: message[STOPPED_REASON],
+      breakpoint_id: message[BREAKPOINT_ID]
     };
     // var id = getStopAtId();
 
 
-    var line = stopAt['line-number'];
+    var line = stopAt.line_number;
     if( typeof line == 'number' )
     {
       /**
@@ -292,7 +292,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
       * At the moment this is a hack because the stop reason is not set for that case.
       * The check is if the stop reason is 'unknown' ( should be 'new script')
       */
-      if(stopAt['stopped-reason'] == 'unknown')
+      if(stopAt.stopped_reason == 'unknown')
       {
 
         runtime_id = stopAt.runtime_id;
@@ -310,7 +310,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
           // the runtime id can be different for each frame.
           var tag = tagManager.set_callback(null, parseBacktrace, [stopAt.runtime_id]);
           services['ecmascript-debugger'].requestGetBacktrace(tag,
-              [stopAt.runtime_id, stopAt['thread-id'], ini.max_frames]);
+              [stopAt.runtime_id, stopAt.thread_id, ini.max_frames]);
           if( !views.js_source.isvisible() )
           {
             topCell.showView(views.js_source.id);
@@ -346,14 +346,14 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
           "breakpoint-id":1
 
         */
-        var condition = this._bps.get_condition(stopAt["breakpoint-id"]);
+        var condition = this._bps.get_condition(stopAt.breakpoint_id);
         if (condition)
         {
           var tag = tagManager.set_callback(this, 
                                             this._handle_condition,
                                             [stopAt]);
           var msg = [stopAt.runtime_id, 
-                     stopAt['thread-id'], 
+                     stopAt.thread_id, 
                      0, 
                      condition, 
                      [['dummy', 0]]];
@@ -367,7 +367,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     }
     else
     {
-      throw 'not a line number: '+stopAt['line-number'];
+      throw 'not a line number: '+stopAt.line_number;
     }
   }
 
@@ -395,7 +395,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     var runtime_id = stopAt.runtime_id;
     // the runtime id can be different for each frame
     var tag = tagManager.set_callback(null, parseBacktrace, [stopAt.runtime_id]);
-    var msg = [stopAt.runtime_id, stopAt['thread-id'], ini.max_frames];
+    var msg = [stopAt.runtime_id, stopAt.thread_id, ini.max_frames];
     services['ecmascript-debugger'].requestGetBacktrace(tag, msg);
     if (!views.js_source.isvisible())
     {
@@ -404,10 +404,10 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     var plus_lines = views.js_source.getMaxLines() <= 10 ? 
                      views.js_source.getMaxLines() / 2 >> 0 :
                      10;
-    if (views.js_source.showLine(stopAt.script_id, stopAt['line-number'] - plus_lines))
+    if (views.js_source.showLine(stopAt.script_id, stopAt.line_number - plus_lines))
     {
       runtimes.setSelectedScript(stopAt.script_id);
-      views.js_source.showLinePointer(stopAt['line-number'], true);
+      views.js_source.showLinePointer(stopAt.line_number, true);
     }
     __controls_enabled = true;
     toolbars.js_source.enableButtons('continue');
