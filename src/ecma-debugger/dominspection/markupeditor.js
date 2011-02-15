@@ -568,8 +568,8 @@ var DOMMarkupEditor = function()
     {
       this.textarea.focus();
     }
+    scroll_position.reset(null, this.textarea);
     this.textarea.selectionEnd = this.textarea.selectionStart = 0;
-    scroll_position.reset();
   }
 }
 

@@ -247,12 +247,13 @@
     var ret = 
     [
       'cst-option',
-      (this._script_type_map[script_type] || script_type) + ' - ' +
-      (
-        display_uri.uri ? 
-        display_uri.uri : 
-        ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script.script_id
-      ),
+      ["span", (this._script_type_map[script_type] || script_type) + ' – ',
+        [(
+          display_uri.uri ?
+          ["span", display_uri.uri] :
+          ["code", script.script_data.length > 60 ? script.script_data.slice(0, 60) + "…" : script.script_data, "class", "code-snippet"]
+        )]
+      ],
       'script-id', script.script_id.toString()
     ];
     var class_name = script.script_id == this.selected_script_id ? 
@@ -343,15 +344,16 @@
 
   this.frame = function(frame, is_top)
   {
-    // %(function name)s line %(line number)s script id %(script id)s
+    // Fall back to document URI if it's inline
+    var uri = frame.script_id && runtimes.getScript(frame.script_id).uri || runtimes.getRuntime(frame.rt_id).uri;
     return ['li',
-      ui_strings.S_TEXT_CALL_STACK_FRAME_LINE.
-        replace("%(FUNCTION_NAME)s", ( frame.fn_name || ui_strings.ANONYMOUS_FUNCTION_NAME ) ).
-        replace("%(LINE_NUMBER)s", ( frame.line || '-' ) ).
-        replace("%(SCRIPT_ID)s", ( frame.script_id || '-' ) ),
+             ['span', frame.fn_name, 'class', 'scope-name'],
+             ['span',
+              " " + (uri && frame.line ? helpers.basename(uri) + ':' + frame.line : ""),
+              'class', 'file-line'],
       'handler', 'show-frame',
       'ref-id', frame.id,
-
+      'title', uri
     ].concat( is_top ? ['class', 'selected'] : [] );
   }
 

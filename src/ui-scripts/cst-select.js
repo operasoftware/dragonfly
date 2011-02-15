@@ -29,9 +29,9 @@
     */
   this.handleClick = function(target_ele, modal_box, select_obj)
   {
-    return target_ele.nodeName.toLowerCase() != 'cst-option'  && 2 || 
-          ( target_ele.hasAttribute('handler') || 
-            select_obj.checkChange(target_ele) ) && 1  || 0;
+    return ( target_ele.hasAttribute('handler') || 
+            select_obj.checkChange(target_ele) ) && 1 ||
+            target_ele.nodeName.toLowerCase() != 'cst-option'  && 2 || 0;
   };
 
   var modal_box = null;
@@ -652,7 +652,8 @@ CstSelectWithAction.prototype = new CstSelectWithActionBase();
       ["cst-drop-down"],
     "cst-id", select.getId(),
     "handler", select.getId(),
-    "unselectable", "on"
+    "unselectable", "on",
+    "class", "ui-control"
   ].
   concat( select.type ? ['class', select.type] : [] ).
   concat( disabled ? ['disabled', 'disabled'] : [] ).

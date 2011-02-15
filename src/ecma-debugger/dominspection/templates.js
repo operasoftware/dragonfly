@@ -1,6 +1,5 @@
 ﻿(function()
 {
-
   const
   ID = 0,
   TYPE = 1,
@@ -13,10 +12,39 @@
   ATTR_KEY = 1,
   ATTR_VALUE = 2,
   CHILDREN_LENGTH = 6,
-  PUBLIC_ID = 8,
-  SYSTEM_ID = 9,
   INDENT = "  ",
   LINEBREAK = '\n';
+
+  const ELEMENT_NODE = Node.ELEMENT_NODE;
+  const PROCESSING_INSTRUCTION_NODE = Node.PROCESSING_INSTRUCTION_NODE;
+  const COMMENT_NODE = Node.COMMENT_NODE;
+  const DOCUMENT_NODE = Node.DOCUMENT_NODE;
+  const DOCUMENT_TYPE_NODE = Node.DOCUMENT_TYPE_NODE;
+
+  /**
+   * Generates the part of the document type declaration after the document
+   * element type name.
+   */
+  this._get_doctype_external_identifier = function(node)
+  {
+    const PUBLIC_ID = 8
+    const SYSTEM_ID = 9;
+
+    // Missing public IDs and system IDs are returned as empty strings,
+    // so it's impossible to distinguish them from empty ones. In reality
+    // this should happen very seldom, so it's not really a problem.
+    var public_id = node[PUBLIC_ID];
+    var system_id = node[SYSTEM_ID];
+    return (public_id
+             ? " PUBLIC \"" + public_id + "\""
+             : "") +
+           (!public_id && system_id
+             ? " SYSTEM"
+             : "") +
+           (system_id
+             ? " \"" + system_id + "\""
+             : "");
+  };
 
   var formatProcessingInstructionValue = function(str, force_lower_case)
   {
@@ -62,14 +90,10 @@
     var show_comments = window.settings.dom.get('show-comments');
     var show_attrs = window.settings.dom.get('show-attributes');
     var node_name = '';
-    var tag_head = '';
     var class_name = '';
     var re_formatted = /script|style|#comment/i;
-    var scrollTop = 0;
-    var container_scroll_width = 0;
-    var container_first_child = null;
     var style = null;
-    var is_not_script_node = true;
+    var is_script_node = true;
     var is_debug = ini.debug;
     var disregard_force_lower_case_whitelist = cls.EcmascriptDebugger["5.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST;
     var disregard_force_lower_case_depth = 0;
@@ -104,9 +128,9 @@
 
       switch (node[TYPE])
       {
-        case 1:  // elements
+        case ELEMENT_NODE:
         {
-          is_not_script_node = node[NAME].toLowerCase() != 'script';
+          is_script_node = node[NAME].toLowerCase() == 'script';
           if (show_attrs)
           {
             attrs = '';
@@ -155,7 +179,7 @@
               if (!one_child_text_content || !/^\s*$/.test(data[child_pointer][VALUE]))
               {
                 one_child_text_content += "<text" +
-                  (is_not_script_node ? " ref-id='" + data[child_pointer][ID] + "' " : "") +
+                  (!is_script_node ? " ref-id='" + data[child_pointer][ID] + "' " : "") +
                   ">" + helpers.escapeTextHtml(data[child_pointer][VALUE]) + "</text>";
               }
             }
@@ -165,9 +189,9 @@
           {
             if (has_only_one_child)
             {
-              class_name = re_formatted.test(node_name) ? " class='pre-wrap'" : '';
+              class_name = re_formatted.test(node_name) ? " class='pre-wrap " + (is_script_node ? "non-editable" : "") +  "'" : '';
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
-                      " style='margin-left:" + 16 * node[DEPTH] + "px;' "+
+                      this._get_indent(node) +
                       "ref-id='" + node[ID] + "' handler='spotlight-node' data-menu='dom-element'" +
                       class_name + ">"+
                           "<node>&lt;" + node_name + attrs + "&gt;</node>" +
@@ -180,16 +204,15 @@
             else
             {
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
-                      " style='margin-left:" + 16 * node[DEPTH] + "px;' " +
-                      "ref-id='" + node[ID] + "' handler='spotlight-node' data-menu='dom-element'>" +
+                      this._get_indent(node) +
+                      "ref-id='" + node[ID] + "' handler='spotlight-node' data-menu='dom-element' " + (is_script_node ? "class='non-editable'" : "") + ">" +
                       (node[CHILDREN_LENGTH] ?
                           "<input handler='get-children' type='button' class='open' />" : '') +
                           "<node>&lt;" + node_name + attrs + "&gt;</node>" +
                       (is_debug && (" <d>[" + node[ID] + "]</d>" ) || "") +
                       "</div>";
 
-              closing_tags.push("<div style='margin-left:" +
-                                (16 * node[DEPTH]) + "px;' " +
+              closing_tags.push("<div" + this._get_indent(node) +
                                 "ref-id='" + node[ID] + "' handler='spotlight-node' data-menu='dom-element'><node>" +
                                 "&lt;/" + node_name + "&gt;" +
                                 "</node></div>");
@@ -198,8 +221,8 @@
           else
           {
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
-                      " style='margin-left:" + 16 * node[DEPTH] + "px;' " +
-                      "ref-id='" + node[ID] + "' handler='spotlight-node' data-menu='dom-element'>" +
+                      this._get_indent(node) +
+                      "ref-id='" + node[ID] + "' handler='spotlight-node' data-menu='dom-element' " + (is_script_node ? "class='non-editable'" : "") + ">" +
                       (children_length ?
                           "<input handler='get-children' type='button' class='close' />" : '') +
                           "<node>&lt;" + node_name + attrs + (children_length ? '' : '/') + "&gt;</node>" +
@@ -209,49 +232,38 @@
           break;
         }
 
-        case 7:  // processing instruction
+        case PROCESSING_INSTRUCTION_NODE:
         {
-          tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;' " +
+          tree += "<div" + this._get_indent(node) +
             "class='processing-instruction'>&lt;?" + node[NAME] + ' ' +
             formatProcessingInstructionValue(node[VALUE], force_lower_case) + "?&gt;</div>";
           break;
 
         }
 
-        case 8:  // comments
+        case COMMENT_NODE:
         {
           if (show_comments)
           {
             if (!/^\s*$/.test(node[VALUE]))
             {
-              tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;' " +
+              tree += "<div" + this._get_indent(node) +
                       "class='comment pre-wrap'>&lt;!--" + helpers.escapeTextHtml(node[VALUE]) + "--&gt;</div>";
             }
           }
           break;
-
         }
 
-        case 9:  // document node
-        {
-          /* makes not too much sense in the markup view
-          tree += "<div style='margin-left:" + 16 * node[ DEPTH ] + "px;' " +
-            ">#document</div>";
-          */
+        case DOCUMENT_NODE:
+          // Don't show this in markup view
           break;
-        }
 
-        case 10:  // doctype
+        case DOCUMENT_TYPE_NODE:
         {
-          tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;' class='doctype'>" +
-                  "&lt;!DOCTYPE <doctype-attrs>" + node[NAME] +
-                  (node[PUBLIC_ID] ?
-                    (" PUBLIC " + "\"" + node[PUBLIC_ID] + "\"") : "") +
-                  (!node[PUBLIC_ID] && node[SYSTEM_ID] ?
-                    " SYSTEM" : "") +
-                  (node[SYSTEM_ID] ?
-                    (" \"" + node[SYSTEM_ID] + "\"") : "") +
-                  "</doctype-attrs>&gt;</div>";
+          tree += "<div" + this._get_indent(node) + "class='doctype'>" +
+                  "&lt;!DOCTYPE " + node[NAME] +
+                    this._get_doctype_external_identifier(node) +
+                  "&gt;</div>";
           break;
         }
 
@@ -259,9 +271,9 @@
         {
           if (!/^\s*$/.test(node[ VALUE ]))
           {
-            tree += "<div style='margin-left:" + (16 * node[DEPTH])  + "px;'>" +
+            tree += "<div" + this._get_indent(node) + ">" +
                     "<text" +
-                    (is_not_script_node ? " ref-id='"+ node[ID] + "' " : "") +
+                    (!is_script_node ? " ref-id='"+ node[ID] + "' " : "") +
                     ">" + helpers.escapeTextHtml(node[VALUE]) + "</text>" +
                     "</div>";
           }
@@ -321,7 +333,6 @@
                " data-model-id='" + model.id + "'" +
                "><div class='tree-style'>";
     var i = 0, node = null, length = data.length;
-    var scrollTop = 0;
     var attrs = null, key = '';
     var is_open = 0;
     var has_only_one_child = 0;
@@ -334,14 +345,10 @@
     var children_length = 0;
     var closing_tags = [];
     var node_name = '';
-    var tag_head = '';
     var current_formatting = '';
     var re_formatted = /script|style/i;
-    var scrollTop = 0;
-    var container_scroll_width = 0;
-    var container_first_child = null;
     var style = null;
-    var is_not_script_node = true;
+    var is_script_node = true;
     var disregard_force_lower_case_whitelist = cls.EcmascriptDebugger["5.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST;
     var disregard_force_lower_case_depth = 0;
     var graphic_arr = [];
@@ -371,9 +378,9 @@
 
       switch (node[TYPE])
       {
-        case 1:  // elements
+        case ELEMENT_NODE:
         {
-          is_not_script_node = node[NAME].toLowerCase() != 'script';
+          is_script_node = node[NAME].toLowerCase() == 'script';
           attrs = '';
           if (show_attrs)
           {
@@ -416,8 +423,8 @@
           if (is_open)
           {
             tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
-                    " style='margin-left:" + 16 * node[DEPTH] + "px;' " +
-                    "ref-id='"+node[ID] + "' handler='spotlight-node' data-menu='dom-element'>" +
+                    this._get_indent(node) +
+                    "ref-id='"+node[ID] + "' handler='spotlight-node' data-menu='dom-element' " + (is_script_node ? "class='non-editable'" : "") + ">" +
                     (children_length && !has_only_one_child ?
                       "<input handler='get-children' type='button' class='open' />" : '') +
                     "<node>" + node_name + attrs + "</node>" +
@@ -426,8 +433,8 @@
           else
           {
             tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
-                    " style='margin-left:" + 16 * node[DEPTH] + "px;' " +
-                    "ref-id='"+node[ID] + "' handler='spotlight-node' data-menu='dom-element'>" +
+                    this._get_indent(node) +
+                    "ref-id='"+node[ID] + "' handler='spotlight-node' data-menu='dom-element' " + (is_script_node ? "class='non-editable'" : "") + ">" +
                     (node[CHILDREN_LENGTH] ?
                       "<input handler='get-children' type='button' class='close' />" : '') +
                     "<node>" + node_name + attrs + "</node>" +
@@ -437,32 +444,29 @@
           break;
         }
 
-        case 8:  // comments
+        case COMMENT_NODE:
         {
           if (show_comments)
           {
-            tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;' " +
+            tree += "<div" + this._get_indent(node) +
                     "class='comment pre-wrap'><span class='comment-node'>#comment</span>" +
                     helpers.escapeTextHtml(node[VALUE]) + "</div>";
           }
           break;
         }
 
-        case 9:  // comments
+        case DOCUMENT_NODE:
         {
-          tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;' " +
-                    "><span class='document-node'>#document</span></div>";
+          tree += "<div" + this._get_indent(node) + ">" +
+                    "<span class='document-node'>#document</span></div>";
           break;
         }
 
-        case 10:  // doctype
+        case DOCUMENT_TYPE_NODE:
         {
-          tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;' class='doctype'>" +
-                    "<span class='doctype-value'>" + model.getDoctypeName(data) + " " +
-                    (node[PUBLIC_ID] ?
-                      (" PUBLIC " + "\"" + node[PUBLIC_ID] + "\"") : "") +
-                    (node[SYSTEM_ID] ?
-                      (" \"" + node[SYSTEM_ID] + "\"") : "") +
+          tree += "<div" + this._get_indent(node) + ">" +
+                    "<span class='doctype'>" + model.getDoctypeName(data) + " " +
+                      this._get_doctype_external_identifier(node) +
                     "</span></div>";
           break;
         }
@@ -473,20 +477,20 @@
           {
             if (!/^\s*$/.test(node[VALUE]))
             {
-               tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;'" +
+               tree += "<div" + this._get_indent(node) +
                        current_formatting + ">" +
                        (node[NAME] ? node[NAME] : nodeNameMap[node[TYPE]]) +
-                       "<text" + (is_not_script_node ? " ref-id='" + node[ID] + "' " : "") + ">" +
+                       "<text" + (!is_script_node ? " ref-id='" + node[ID] + "' " : "") + ">" +
                          helpers.escapeTextHtml(node[VALUE]) + "</text>" +
                        "</div>";
             }
           }
           else
           {
-            tree += "<div style='margin-left:" + 16 * node[DEPTH] + "px;'" +
+            tree += "<div" + this._get_indent(node) +
                     current_formatting + ">" +
                     (node[NAME] ? node[NAME] : nodeNameMap[node[TYPE]]) +
-                      "<text" + (is_not_script_node ? " ref-id='" + node[ID]+  "' " : "") + ">" +
+                      "<text" + (!is_script_node ? " ref-id='" + node[ID]+  "' " : "") + ">" +
                         (/^\s*$/.test(node[VALUE]) ? _escape(node[VALUE]) : helpers.escapeTextHtml(node[VALUE])) +
                       "</text>" +
                     "</div>";
@@ -504,6 +508,12 @@
            this._inspected_dom_node_tree_style(model, target, editable) :
            this._inspected_dom_node_markup_style(model, target, editable));
   }
+
+  this._get_indent = function(node)
+  {
+    const INDENT_AMOUNT = 16;
+    return " style='margin-left:" + INDENT_AMOUNT * node[DEPTH] + "px;' ";
+  };
 
   this._offsets = function(value, index)
   {

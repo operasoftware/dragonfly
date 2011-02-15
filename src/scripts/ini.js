@@ -24,7 +24,7 @@
           "f10": "continue-step-next-line",
           "f11": "continue-step-into-call",
           "shift f11": "continue-step-out-of-call",
-          "escape": "toggle-command-line",
+          "escape": "toggle-console",
           "ctrl tab": "navigate-next-top-tab",
           "ctrl shift tab": "navigate-previous-top-tab",
           "ctrl f": "show-search"
@@ -41,7 +41,7 @@
           "shift f3": "highlight-previous-match",
           "ctrl enter": "show-script",
           "escape": "hide-search",
-          "escape": "toggle-command-line",
+          "escape": "toggle-console",
           "ctrl tab": "navigate-next-top-tab",
           "ctrl shift tab": "navigate-previous-top-tab",
           "ctrl f": "show-search"
@@ -58,6 +58,7 @@
           "enter": "dispatch-click",
           "shift enter": "dispatch-click",
           "ctrl enter": "dispatch-dbl-click",
+          "delete": "remove-node"
         },
         "edit-attributes-and-text":
         {
@@ -108,6 +109,8 @@
           "enter": "eval",
           "shift enter": "enter-multiline-mode",
           "ctrl l": "clear",
+          "ctrl p": "backlog-prev",
+          "ctrl n": "backlog-next",
           "ctrl k": "kill-to-end-of-line",
           "ctrl u": "kill-to-beginning-of-line",
           "ctrl e": "move-to-end-of-line",
@@ -181,7 +184,7 @@
           "f6": "continue-step-next-line",
           "f7": "continue-step-into-call",
           "shift f7": "continue-step-out-of-call",
-          "escape": "toggle-command-line"
+          "escape": "toggle-console"
         },
         "edit":
         {
@@ -193,7 +196,7 @@
           "cmd g": "highlight-next-match",
           "shift enter": "highlight-previous-match",
           "cmd shift g": "highlight-previous-match",
-          "escape": "toggle-command-line"
+          "escape": "toggle-console"
         }
       },
       "dom":
@@ -207,6 +210,7 @@
           "enter": "dispatch-click",
           "shift enter": "dispatch-click",
           "cmd enter": "dispatch-dbl-click",
+          "delete": "remove-node"
         },
         "edit-attributes-and-text":
         {
@@ -257,6 +261,8 @@
           "enter": "eval",
           "shift enter": "enter-multiline-mode",
           // "ctrl l": "clear",
+          //"ctrl p": "backlog-prev",
+          //"ctrl n": "backlog-next",
           // "ctrl k": "kill-to-end-of-line",
           // "ctrl u": "kill-to-beginning-of-line", // non-existent on mac afaict
           // "ctrl e": "move-to-end-of-LINE",
@@ -306,68 +312,76 @@
     [
       // dimension box
       [
-        [0, 0, 255, 51],
-        [41, 41, 51, 153],
+        [51,117,215, 52],
+        0,
         0
       ],
       // padding box
       [
-        [51, 51, 184, 114.75],
-        [31, 31, 37, 204],
+        [51,117,215, 104],
+        0,
         0
       ],
       // border box
       [
-        [63, 63, 112, 178.5],
-        [20, 20, 22, 25.5],
-        [170, 33, 18, 76.5]
+        [51,117,215, 255],
+        0,
+        [51,117,215, 128]
       ],
       // margin box
-      null
+      [
+        [51,117,215, 156],
+        0,
+        0
+      ]
     ],
     "metrics-hover":
     [
       // inner inner * box
       [
-        [0, 0, 255, 51],
+        [51,117,215, 48],
         0,
         0
       ],
       // inner box
       [
-        [51, 51, 184, 51],
-        [31, 31, 37, 204],
+        [51,117,215, 48],
+        0,
         0
       ],
       // active box
       [
-        [63, 63, 112, 178.5],
-        [20, 20, 22, 204],
-        [170, 33, 18, 76.5]
+        [51,117,215, 128],
+        0,
+        0
       ]
     ],
     "locked":
     [
       // dimension box
       [
-        [0, 0, 255, 12.75],
-        [41, 41, 51, 25.5],
+        [51,117,215, 24],
+        0,
         0
       ],
       // padding box
       [
-        [51, 51, 184, 25.5],
-        [31, 31, 37, 38.25],
+        [51,117,215, 52],
+        0,
         0
       ],
       // border box
       [
-        [63, 63, 112, 38.25],
-        [170, 33, 18, 127.5],
-        0
+        [51,117,215, 128],
+        0,
+        [51,117,215, 64]
       ],
       // margin box
-      null
+      [
+        [51,117,215, 76],
+        0,
+        0
+      ]
     ]
   }
 };

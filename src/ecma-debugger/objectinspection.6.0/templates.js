@@ -96,12 +96,13 @@
       if (index)
       {
         ret.push(
-          "<div class='prototype-chain-object" + (has_match ? "" : " no-match") + "'>" +
+          "<div handler='expand-prototype' class='prototype-chain-object" +
+                                                 (has_match ? "" : " no-match") +
+                                                 (is_unfolded ? " unfolded" : "") +
+          "'>" +
             "<input type='button' " +
-                   "handler='expand-prototype' " +
-                   "class='folder-key inverted' " +
+                   "class='folder-key'" +
                    "proto-index='" + index + "' " +
-                   (is_unfolded ? STYLE_EXPANDED + "is-unfolded='true'" : "") +
                    "/>",
             "<key>" + name + "</key>",
           "</div>");
@@ -180,7 +181,7 @@
             continue;
           }
           short_val = value.length > MAX_VALUE_LENGTH ?
-                        value.slice(0, MAX_VALUE_LENGTH) + '…"' : '';
+                        value.slice(0, MAX_VALUE_LENGTH) + '…' : '';
           value = helpers.escapeTextHtml(value).replace(/'/g, '&#39;');
           if (short_val)
           {
@@ -193,8 +194,8 @@
                   "<input type='button' handler='expand-value' class='folder-key'/>" +
                   "<key data-spec='dom#" + esc_name + "'" + 
                     editable(prop) + ">" + esc_name + "</key>" +
-                  "<value class='" + type + "' data-value='" + value + "'>" +
-                    "\"" + helpers.escapeTextHtml(short_val) +
+                  "<value class='" + type + "' data-value='\"" + value + "\"'>" +
+                    "\"" + helpers.escapeTextHtml(short_val) + "\"" +
                   "</value>" +
                 "</item>"
               );

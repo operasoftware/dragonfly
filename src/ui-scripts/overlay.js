@@ -5,33 +5,42 @@
  */
 var Overlay = function()
 {
-  if (Overlay.instance)
+  if (Overlay._instance)
   {
-    return Overlay.instance;
+    return Overlay._instance;
   }
-  else
-  {
-    Overlay.instance = this;
-  }
+  Overlay._instance = this;
 
-  this.groups = {};
+  this._ui = UI.get_instance();
+  this.active_overlay = null;
+  this.content_element = null;
+  this.info_element = null;
 
-  this.show_overlay = function(overlay_id)
-  {
-    var group = this.groups[overlay_id];
-    this.element = document.querySelector("main-view").render(window.templates.overlay(group));
-    this.change_group(group[0].group_name); // Always show the first tab
-  };
-
-  this.hide_overlay = function()
-  {
-    this.element.parentElement.removeChild(this.element);
-    this.element = null;
-  };
-
-  this.is_visible = function()
+  this.__defineGetter__("is_visible", function()
   {
     return !!(this.element && this.element.parentNode);
+  });
+
+  this.show = function(id)
+  {
+    this.hide();
+    var overlay = this._ui.get_overlay(id);
+    if (overlay)
+    {
+      this.active_overlay = id;
+      this.element = document.documentElement.render(window.templates.overlay(overlay));
+      this.change_group(overlay[0].group_name); // Always show the first tab
+    }
+  };
+
+  this.hide = function()
+  {
+    if (this.element)
+    {
+      this.element.parentElement.removeChild(this.element);
+      this.active_overlay = null;
+      this.element = null;
+    }
   };
 
   this.change_group = function(group)
@@ -45,14 +54,20 @@ var Overlay = function()
           tab.addClass("active");
       }
     }
-    var content_element = this.element.querySelector("overlay-content");
-    content_element.clearAndRender(window.templates.settings(Settings.get_settings_by_group(group)));
-    content_element.scrollTop = 0;
+    this.info_element = this.element.querySelector("overlay-info");
+    this.content_element = this.element.querySelector("overlay-content");
+    this.content_element.clearAndRender(window.templates.settings(Settings.get_settings_by_group(group)));
+    this.content_element.scrollTop = 0;
   };
 
-  this.add_overlay = function(overlay_id, groups)
+  this.set_info_content = function(template)
   {
-    this.groups[overlay_id] = groups;
+    this.info_element.clearAndRender(template);
   };
+};
+
+Overlay.get_instance = function()
+{
+  return this._instance || new Overlay();
 };
 

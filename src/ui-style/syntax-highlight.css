@@ -1,4 +1,149 @@
-﻿/* ecma object tree */
+﻿/* JavaScript and generic */
+
+.null,
+.undefined {
+    color: #aaa;
+}
+
+.boolean {
+        color: #d60;
+    }
+
+.number,
+offsets value { /* TODO: use class */
+    color: #6c0;
+}
+
+.string,
+.dom value { /* TODO: use class .attribute-name */
+    color: #c44;
+}
+
+.object {
+    color: #666;
+    background-color: rgba(0, 0, 0, .075);
+}
+
+.punctuator { /* TODO: Not specified */
+    color: #000;
+}
+
+.reg_exp { /* TODO: Not specified */
+    color: #c71;
+}
+
+.js_builtins { /* TODO: Not specified */
+    color: #ac35a9;
+}
+
+.js_keywords {
+    font-weight: bold;
+}
+
+/* JavaScript */
+
+.js-source .not-error { /* TODO: Not specified */
+    background-color: #fff;
+}
+
+.js-source .first-error { /* TODO: Not specified */
+    color: #333;
+    background-color: #f90;
+}
+
+.js-source .error { /* TODO: Not specified */
+    color: #999;
+}
+
+.js-source .first-error-line,
+.js-source .error-line { /* TODO: Not specified */
+    background-color: #e6e6e6;
+}
+
+.highlight-source { /* TODO: Not specified */
+    background-color: yellow;
+}
+
+/* Property inspector */
+
+#examine-objects .key,
+examine-objects key {
+    color: #111;
+}
+
+/* DOM */
+
+.doctype,
+.comment {
+    color: #bbb;
+}
+
+.text-node,
+.comment-node,
+.cdata-node {
+	color: #abbaba; /* TODO: Not specified */
+}
+
+.document-node {
+    color: #294556; /* TODO: Not specified */
+}
+
+.dom node, /* TODO: use class */
+.element-name {
+    color: #55b;
+}
+
+.dom key { /* TODO: Rename to .attribute-name */
+    color: #336;
+}
+
+/* CSS */
+
+selector { /* TODO: use class */
+    color: #08d;
+}
+
+.css-inspector key { /* Rename to .property */
+    color: #059;
+}
+
+.css-inspector value { /* Use class */
+    color: #111;
+}
+
+.overwritten {
+    text-decoration: line-through;
+    /* more... */
+    color: #555;
+}
+
+property.disabled, /* TODO: rename to .declaration */
+.disabled key,
+.disabled value {
+    color: #999;
+}
+
+.non-editable {
+    background: transparent url("../ui-images/disabled_stripe_tile.png");
+}
+.css-inspector .non-editable key {
+    color: #4c7899;
+}
+css-inspector .non-editable value {
+    color: #aaa;
+}
+
+media, at { /* TODO: Use classes */
+    color: #279;
+}
+
+.import-rule {
+    color: #279;
+}
+
+/* Much of this does not belong here since it's not syntax highlighting */
+
+/* ecma object tree */
 
 #examine-objects li li {
   padding-left:18px;
@@ -8,161 +153,43 @@
   margin-right:7px;
   }
 
-
-#examine-objects .key, examine-objects key {
-  color: #111;
-  }
-
-#examine-objects .string, examine-objects .string {
-  color:#742;
-  }
-
-#examine-objects .number, examine-objects .number, offsets value {
-  color:#920;
-  }
-
-#examine-objects .undefined, examine-objects .undefined {
-  color:#c00;
-  font-style: italic;
-  }
-
-#examine-objects .null, examine-objects .null {
-  color:#c00;
-  font-style: italic;
-  }
-
-examine-objects .error {
-  color:#f60;
-  font-style: italic;
-  }
-
-#examine-objects .boolean, examine-objects .boolean {
-  color:#920;
-  }
-
-#examine-objects .object, examine-objects .object {
-  color:#18a;
-  }
-
-/* ecma script source */
-.js-source .comment {
-  color: #999;
-  }
-
-.js-source .js_builtins {
-  color: #ac35a9;
-  }
-
-.js-source .js_keywords {
-  color: #da7948;
-  }
-
-.js-source .number {
-  color: #920;
-  }
-
-.js-source .punctuator {
-  color: #000;
-  }
-
-.js-source .reg_exp {
-  color: #c71;
-  }
-
-.js-source .string {
-  color: #003c9c;
-  }
-
-.js-source .not-error
-{
-  background-color: #fff;
-}
-
-.js-source .first-error {
-  color: #333;
-  background-color: #f90;
-  }
-
-.js-source .error {
-  color: #999;
-  }
-
-.js-source .first-error-line,
-.js-source .error-line
-{
-  background-color: #e6e6e6;
-}
-
-.highlight-source
-{
-  background-color: yellow;
-}
-
-
-
 /* dom */
 
-
-#target-element, .dom [handler="spotlight-node"]:hover
-{
-  background-color: #cce5f3;
-  /*margin: -1px;
-  border: 1px solid #78bae0;
-  position: relative;
-  z-index: 1;*/
-  border-radius: 3px;
+[handler="spotlight-node"] { /* TODO: Use same highlighting in CSS inspector */
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: 2px;
 }
 
-.dom [handler="spotlight-node"]:hover
-{
-  background-color: #eee;
+[handler="spotlight-node"]:hover,
+property:hover {
+    border-color: #e0eaf6;
+    background: #f2f5f9;
 }
+
+#target-element,
+[handler="spotlight-node"]:active {
+    border-color: #c5daf1;
+    background: #d4e3f4;
+}
+
 .dom ::selection {
   /* TEMP */
-  background-color: #78bae0;
-  color: #000;
+  background-color: #598bec;
+  color: #fff;
 }
 
-.dom node, selector, .element-name {
-  color: #952598;
-  }
-
-.dom key, .stylesheets key, .css-inspector key {
-	color: #c4663a;
-  }
-
-.dom value, .stylesheets value, .css-inspector value {
-	color: #1c2897;
-  }
-
-.dom .text-node, .dom .comment-node, .dom .cdata-node {
-	color: #abbaba;
-  }
-
-.dom .document-node {
-	color: #294556;
-  }
-
-.dom .document-node {
-	color: #294556;
-  }
-
-.dom .doctype, .dom .comment
-{
-    color: #999;
-}
-
-.tree-style 
+.tree-style
 {
   background:transparent url('../ui-images/dom-tree-style.gif') scroll repeat 8px 0;
 }
 
-.tree-style > div 
+.tree-style > div
 {
-  background-color: #fff;
+  background-color: #fafafa;
 }
 
-.tree-style > div > node:first-child:before 
+.tree-style > div > node:first-child:before
 {
   display:inline-block;
   vertical-align: middle;
@@ -174,15 +201,18 @@ examine-objects .error {
   margin-right: 1px;
 }
 
-.tree-style > div:first-child > span:first-child:before 
+.tree-style > div:first-child > span:first-child:before
 {
   display:none;
 }
-  
-media, at {
-  color: #279;
-  }
 
-.stylesheets .import-rule {
-  color: #279;
-  }
+.search-highlight
+{
+  background-color: #ff0;
+  color: #000;
+}
+.search-highlight-selected
+{
+  background-color: #0f0;
+  color: #000;
+}

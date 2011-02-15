@@ -91,7 +91,7 @@ cls.DOMInspectorActions = function(id)
     obj_id = parseInt(target.getAttribute('ref-id')),
     model_id = target.get_attr("parent-node-chain", "data-model-id"),
     inspections = window.dominspections,
-    model = null
+    model = null,
     scroll_into_view = false,
     current_target_id = 0;
 
@@ -611,15 +611,15 @@ cls.DOMInspectorActions = function(id)
 
   this._handlers["edit-dom"] = function(event, target)
   {
-    if (!_is_script_node(event.target))
+    if (!_is_script_node(target))
     {
-      switch(event.target.nodeName.toLowerCase())
+      switch(target.nodeName.toLowerCase())
       {
         case 'span':
         {
-          if(/^(?:key|value|text|node)$/.test(event.target.parentElement.nodeName.toLowerCase()) )
+          if(/^(?:key|value|text|node)$/.test(target.parentElement.nodeName.toLowerCase()) )
           {
-            event.target.parentElement.releaseEvent('dblclick');
+            target.parentElement.releaseEvent('dblclick');
           }
           break;
         }
@@ -629,18 +629,18 @@ cls.DOMInspectorActions = function(id)
         {
           this.mode = MODE_EDIT_ATTR_TEXT;
           document.documentElement.addClass('modal');
-          self.setSelected(event.target.parentNode);
+          self.setSelected(target.parentNode);
           self.set_editor("dom-attr-text-editor");
-          self.editor.edit(event, event.target);
+          self.editor.edit(event, target);
           break;
         }
         case 'node':
         {
-          var new_target = event.target;
+          var new_target = target;
           if(/^<\//.test(new_target.textContent))
           {
-            new_target = event.target.getPreviousWithFilter
-              (event.target.parentNode.parentNode, self.makeFilterGetStartTag(event.target));
+            new_target = target.getPreviousWithFilter
+              (target.parentNode.parentNode, self.makeFilterGetStartTag(target));
             if( !new_target )
             {
               opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
@@ -697,6 +697,21 @@ cls.DOMInspectorActions = function(id)
     }
   }.bind(this);
 
+  this._handlers["remove-attribute"] = function(event, target)
+  {
+    var ele = event.target.has_attr("parent-node-chain", "ref-id");
+    var rt_id = parseInt(ele.get_attr("parent-node-chain", "rt-id"));
+    var ref_id = parseInt(ele.get_attr("parent-node-chain", "ref-id"));
+    var attr = target.textContent;
+    var tag = 0;
+    if (!settings.dom.get("update-on-dom-node-inserted"))
+    {
+      var cb = window.dom_data.remove_node.bind(window.dom_data, rt_id, ref_id);
+      tag = tag_manager.set_callback(null, cb);
+    }
+    services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, "el.removeAttribute(\"" + attr + "\")", [["el", ref_id]]]);
+  }.bind(this);
+
   this._handlers["edit-next"] = function(event, target)
   {
     if( this.editor.type == "dom-attr-text-editor" )
@@ -750,6 +765,20 @@ cls.DOMInspectorActions = function(id)
     this.mode = MODE_DEFAULT;
     document.documentElement.removeClass('modal');
     return false;
+  }.bind(this);
+
+  this._handlers["remove-node"] = function(event, target)
+  {
+    var ele = event.target.has_attr("parent-node-chain", "ref-id");
+    var rt_id = parseInt(ele.get_attr("parent-node-chain", "rt-id"));
+    var ref_id = parseInt(ele.get_attr("parent-node-chain", "ref-id"));
+    var tag = 0;
+    if (!settings.dom.get("update-on-dom-node-inserted"))
+    {
+      var cb = window.dom_data.remove_node.bind(window.dom_data, rt_id, ref_id);
+      tag = tag_manager.set_callback(null, cb);
+    }
+    services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, "el.parentNode.removeChild(el)", [["el", ref_id]]]);
   }.bind(this);
 
   this.edit_onclick = function(event)
@@ -839,7 +868,7 @@ window.eventHandlers.click['dom-resource-link'] = function (event, target)
 window.eventHandlers.dblclick['edit-dom'] = function(event, target)
 {
   this.broker.clear_delayed_actions("click");
-  this.broker.dispatch_action("dom", "edit-dom", event, target);
+  this.broker.dispatch_action("dom", "edit-dom", event, event.target);
 }
 
 window.eventHandlers.click['inspect-node-link'] = function(event, target)

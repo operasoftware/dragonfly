@@ -14,9 +14,8 @@
 window.cls.Helpers = function()
 {
 
-  this.setSelected = function(event)
+  this.setSelected = function(ele)
   {
-    var ele=event.target;
     var parent = ele.parentNode;
     var siblings = parent.getElementsByTagName(ele.nodeName), sibling = null, i=0;
     for( ; sibling = siblings[i]; i++)
@@ -34,6 +33,39 @@ window.cls.Helpers = function()
       }
     }
   }
+
+  /**
+   * Returns the file name in a path. If there is no filename, it returns
+   * the last directory. Query string and fragment identifier is stripped.
+   *
+   * E.g. "http://example.com/scripts/main.js" -> "main.js"
+   *      "http://example.com/main.js?a=b#c"   -> "main.js"
+   *      "http://example.com/scripts/"        -> "scripts"
+   *
+   * @param {String} path The path to shorten
+   */
+  this.basename = function(path)
+  {
+    if (!path)
+    {
+      return "";
+    }
+    // Strip away any query string or fragment identifier
+    var end = Math.min(path.indexOf("?"), path.indexOf("#"));
+    if (end != -1)
+    {
+      path = path.slice(0, end);
+    }
+
+    // If there is no file name, show the last directory including slash
+    var last = path.lastIndexOf("/") + 1;
+    if (path.slice(-1) == "/")
+    {
+      last = path.slice(0, path.lastIndexOf("/")).lastIndexOf("/") + 1;
+    }
+
+    return path.slice(last);
+  };
 
   this.shortenURI = function(uri)
   {

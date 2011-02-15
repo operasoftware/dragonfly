@@ -495,12 +495,12 @@ cls.WindowManager["2.0"].DebuggerMenu = function(id, class_name)
           "cst-id", select.getId(),
           "handler", select.getId(),
           "unselectable", "on",
-          "class", select.class_name,
+          "class", "ui-control " + select.class_name,
           "title", ui_strings.S_MENU_DEBUG_CONTEXT
       ];
     };
   };
 
   this.init(id, class_name);
-  this.select_template = this.getTemplate();
+  this.get_template = this.getTemplate();
 };

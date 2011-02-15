@@ -438,7 +438,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._construct_line = function(pre, prop, post)
   {
     // This doesn't cover every allowed character, but should be fine most of the time
-    var is_valid_identifier = /^[a-z$_]$|^[a-z$_][a-z$_0-9]/i.test(prop);
+    var is_valid_identifier = /^[a-z$_][a-z$_0-9]*$/i.test(prop);
     var is_number_without_leading_zero = /^0$|^[1-9][0-9]*$/;
     if ((!is_valid_identifier || this._keywords.indexOf(prop) != -1)
          && this._autocompletion_scope) {

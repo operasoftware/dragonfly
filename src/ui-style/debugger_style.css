@@ -107,6 +107,9 @@ ul {
 {
   background-image: url("../ui-images/expand-collapse-inverted.gif");
 }
+.unfolded .folder-key {
+  background-position: 0px -11px;
+}
 
 .folder-key[disabled="true"] {
   opacity: .3;
@@ -137,6 +140,25 @@ ul {
 #backtrace-container li.selected {
   background-position: 0 0;
   }
+
+#backtrace-container .scope-name {
+  font-family: monospace;
+}
+
+#backtrace-container li:hover .scope-name {
+  color: #000;
+  text-decoration: underline;
+}
+
+#backtrace-container .file-line {
+  color: #999;
+}
+
+#backtrace-container .not-stopped {
+  cursor: auto;
+  color: #999;
+  font-style: italic;
+}
 
 #ecma-debugger-toolbar {
   background-color:#ccc;
@@ -235,7 +257,7 @@ input[type="text"] {
 /*** views ***/
 
 .padding {
-  padding:9px;
+  padding:5px;
   box-sizing: border-box;
   }
 
@@ -246,8 +268,9 @@ input[type="text"] {
   /*xxfont-family:monospace;*/
 }
 
-.selected-runtime {
-  background-color: #cce5f3;
+cst-option.selected-runtime {
+  background-color: #598bec;
+  color: #fff;
 }
 
 .thread-stopped-event {
@@ -356,7 +379,8 @@ property.disabled, .disabled key, .disabled value {
 .enable-disable {
   float: left;
   opacity: 0; /* This is a hack (instead of visibility: hidden) to make sure the checkbox is always clickable */
-  margin: 1px 0 -10px -20px; /* This is rather hackish too */
+  margin-bottom: -10px; /* This is rather hackish too */
+  margin-left: -20px;
   cursor: default;
   }
 .enable-disable.hidden { visibility: hidden; }
@@ -369,7 +393,7 @@ property:hover .enable-disable,
 rule, font-face-rule, page-rule, import-rule, charset-rule, media-rule {
   display:block;
   /*xxwhite-space: pre-wrap;*/
-  margin: 0 0 1em;
+  margin: 5px 0;
   }
 
 /* This selectors are super slow, find replacement
@@ -402,7 +426,7 @@ category, header, styles, stylesheet-link {
 
 stylesheet-link {
   text-align:right;
-  color: #ccc;
+  color: #999;
   text-decoration: underline;
   float: right;
   margin-left: 10px;
@@ -415,13 +439,18 @@ stylesheet-link:hover {
   color: #666;
   }
 
+stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
+  text-decoration: none;
+  color: #666;
+}
+
 styles {
   /*xxwhite-space: pre-wrap;*/
   padding: 8px 4px;
   }
 
 .unfolded styles {
-  padding: 5px;
+  padding: 0 5px;
   }
 
 header {
@@ -458,16 +487,8 @@ input.unfolded {
   -o-transform: rotate(90deg);
   }
 
-.overwritten {
-  text-decoration: line-through;
-  }
-
-.css-inspector .overwritten value:after {
-  color: #c90;
-  }
-
 .css-inspector .selected {
-  background-color: #cce5f3;
+  background-color: #d4e3f4;
   }
 .css-inspector property.selected {
     border-radius: 3px;
@@ -477,13 +498,14 @@ input.unfolded {
   background-color: transparent;
   }
 
-.css-inspector h2 {
+.css-inspector h2,
+.css-layout h2 {
   font-size: 1em;
   font-weight: normal;
   border: 0 solid #b3b3b3;
   border-width: 1px 0;
   background-color: #eee;
-  margin: 10px -4px;
+  margin: 5px -5px;
   padding-left: 4px;
   }
 
@@ -514,21 +536,24 @@ examine-objects key.no-expander
 }
 .prototype-chain-object
 {
-  background-color: #666;
-  color: #fff;
-  font-weight: bold;
+  background-color: #d7d7d7;
+  color: #111;
   padding: 1px 2px;
   margin: 2px -2px;
 }
 .prototype-chain-object key
 {
-  color: #fff;
+  color: #111;
+}
+.prototype-chain-object.unfolded
+{
+  border: none;
 }
 .css-layout layout-container
 {
   display: table;
   margin: 0 auto;
-  padding: 15px;
+  padding: 5px;
   max-width: 250px;
   font-size: 11px;
 }
@@ -610,11 +635,6 @@ offsets value  {
   padding-left: 8px;
 }
 
-stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
-  text-decoration: none;
-  color: hsl(0, 0%, 50%);
-}
-
 .info-text {
   margin: 10px 0;
   padding: 8px;
@@ -635,7 +655,6 @@ div.dom {
 {
   padding-left: 1px;
   padding-right: 3px;
-  border-left: 1px solid transparent; /* TODO: why this instead of padding? */
 }
 
 
@@ -654,7 +673,7 @@ div.dom {
   background-position: 1px -14px;
   }
 .dom input:focus {
-  outline: 2px solid #78bae0;
+  outline: 2px solid #598bec;
   outline-offset: -2px; /* Hides the normal (dotted) outline when pressing Enter on the expand/collapse button */
   }
 
@@ -662,17 +681,6 @@ div.dom {
 {
   padding-right: 1ex;
 }
-
-
-.css-layout h2 {
-  font-size: 1em;
-  border: 1px solid #ccc;
-  border-width: 1px 0;
-  background-color: hsl( 0, 0% , 95%);
-  padding: 2px;
-  margin: 7px -9px;
-  text-align: center;
-  }
 
 .css-layout > div > h2:first-child {
 
@@ -725,6 +733,9 @@ breadcrumb span
   white-space: nowrap;
   font-size: 1em;
 }
+.script-options h2.selected-runtime, .stylesheet-options h2.selected-runtime {
+  color: #000;
+}
 
 .script-options h2:first-child, .stylesheet-options h2:first-child,
 .script-options h2 + h2, .stylesheet-options h2 + h2
@@ -761,10 +772,21 @@ breadcrumb span
   line-height: 15px;
 }
 
-breadcrumb span.parent-offset
+parent-node-chain breadcrumb {
+    color: #999;
+}
+parent-node-chain breadcrumb:last-of-type {
+    border: 0;
+}
+parent-node-chain breadcrumb:hover {
+    background: #ddd;
+}
+parent-node-chain breadcrumb.active {
+    background: #eee;
+}
+breadcrumb.parent-offset
 {
-  color: #900;
-  font-weight: bold;
+  color: #000;
 }
 
 breadcrumb span:hover, .css-layout breadcrumb span:hover
@@ -978,11 +1000,6 @@ d
   padding: 2px 7px;
 }
 
-.filter-container
-{
-  background-color: #fff;
-}
-
 .filter-container ul ul
 {
   margin-left: 20px;
@@ -1002,7 +1019,6 @@ d
 .filter-container ul div
 {
   border-top: 1px solid #999;
-  background-color: hsl(0, 0%, 97%);
   padding: 5px 7px;
   margin-top: 3px;
 }
@@ -1020,7 +1036,6 @@ d
 
 .filter-container li.open
 {
-  background-color: hsl(0, 0%, 90%);
   border-color: #999;
 }
 
@@ -1240,8 +1255,12 @@ d
   height: 14ex;
   margin: 0;
   padding: 2px 5px;
-  border: 0px;
   background-color: #fff;
+  border: 1px solid #8e8e8e;
+  border-radius: 3px;
+}
+.storage-table textarea {
+  border: 0;
 }
 
 .storage-table .new-key
@@ -1297,17 +1316,7 @@ property.disabled color-sample
 
 .event-list
 {
-  padding: 3px 0 3px 24px;
-}
-
-.spec-link,
-.spec-link:visited
-{
-  float: right;
-  text-decoration: none;
-  color: #6cf;
-  font-size: 10px;
-  margin: 3px 5px 0 0;
+  padding: 4px;
 }
 
 .event-breakpoints li:first-child header

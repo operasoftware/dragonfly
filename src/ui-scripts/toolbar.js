@@ -122,11 +122,14 @@ var ToolbarBase = function()
 
         if( filter )
         {
-          width -= filter.offsetWidth;
+          var filter_style = window.getComputedStyle(filter, null);
+          var margin = parseInt(filter_style.marginLeft) +
+                       parseInt(filter_style.marginRight);
+          width -= filter.offsetWidth + margin;
         }
         if( previousEle )
         {
-          width -= (previousEle.offsetLeft + previousEle.offsetWidth); // TODO: take margin into account
+          width -= (previousEle.offsetLeft + previousEle.offsetWidth);
         }
         cst_select.style.width = ( width - defaults['cst-select-margin-border-padding'] ) + 'px';
       }
@@ -321,4 +324,22 @@ TopToolbar.prototype.constructor = TopToolbar;
 WindowToolbar.prototype = new ToolbarBase();
 
 
+/**
+ * @constructor
+ */
+var ToolbarSeparator = function()
+{
+  this.type = "toolbar-separator";
+
+  this.get_template = function()
+  {
+    return window.templates[this.type]();
+  };
+};
+
+window.templates || (window.templates = {});
+window.templates["toolbar-separator"] = function()
+{
+  return ["toolbar-separator"];
+};
 
