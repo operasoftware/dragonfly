@@ -220,10 +220,11 @@ cls.BreakpointsView = function(id, name, container_class)
     this._bps = cls.Breakpoints.get_instance();
     this._ev_bps = cls.EventBreakpoints.get_instance();
     this._tmpls = window.templates;
-    window.eventHandlers.change['toggle-breakpoint'] = 
-      this._handlers['toggle-breakpoint'];
-    window.eventHandlers.click['show-breakpoint-in-script-source'] = 
-      this._handlers['show-breakpoint-in-script-source'];
+    var ev_hs = window.eventHandlers;
+    ev_hs.change['toggle-breakpoint'] = this._handlers['toggle-breakpoint'];
+    ev_hs.click['show-breakpoint-in-script-source'] = this._handlers['show-breakpoint-in-script-source'];
+    ev_hs.click['disable-all-breakpoints'] =  this._handlers['disable-all'];
+    ev_hs.click['delete-all-breakpoints'] =  this._handlers['delete-all'];
     ActionBroker.get_instance().register_handler(this);
     ContextMenu.get_instance().register("breakpoints", this._menu);
   };
@@ -261,8 +262,8 @@ cls.BreakpointsView.create_ui_widgets = function()
         title: "Disable all breakpoints",
       }, 
       {
-        handler: 'remove-all-breakpoints',
-        title: "Remove all breakpoints",
+        handler: 'delete-all-breakpoints',
+        title: "Delete all breakpoints",
       },
     ]
   );
