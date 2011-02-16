@@ -42,6 +42,12 @@ cls.Breakpoints = function()
       }
     }
     return 0;
+  };
+
+  this.remove_breakpoint = function(bp_id)
+  {
+    this._bps.splice(this._get_bp_index(bp_id), 1);
+    window.views.breakpoints.update();
   }
 
   this.get_breakpoint_id_with_event_name = function(event_name)

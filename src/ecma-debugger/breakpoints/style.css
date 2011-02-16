@@ -9,12 +9,18 @@
   float: left; 
 }
 
-.file-line,
+.breakpoint .file-line,
 .source-line,
 .event-type,
 .condition
 {
   margin-left: 26px;
+}
+
+.breakpoint .file-line,
+.event-type
+{
+  line-height: 20px;
 }
 
 .source-line

@@ -40,38 +40,9 @@ cls.BreakpointsView = function(id, name, container_class)
     var bp_id = parseInt(event.target.get_attr('parent-node-chain', 
                                                'data-breakpoint-id'));
     var bp = this._bps.get_breakpoint_with_id(bp_id);
-
     if (bp)
     {
-      if (bp.script_id)
-      {
-        var js_source_view = window.views[JS_SOURCE_ID];
-        var is_displayed_script = js_source_view.isvisible() && 
-                                  js_source_view.getCurrentScriptId() == bp.script_id;
-        if (event.target.checked)
-        {
-          bp.is_enabled = true;
-          window.runtimes.setBreakpoint(bp.script_id, bp.line_nr, bp.id);
-          if (is_displayed_script)
-          {
-            js_source_view.addBreakpoint(bp.line_nr);
-          }
-        }
-        else
-        {
-          bp.is_enabled = false;
-          window.runtimes.removeBreakpoint(bp.script_id, bp.line_nr);
-          if (is_displayed_script)
-          {
-            js_source_view.removeBreakpoint(bp.line_nr);
-          }
-        }
-      }
-      else if(bp.event_type)
-      {
-        bp.is_enabled = event.target.checked;
-        this._ev_bps.handle_breakpoint_with_name(bp.event_type, bp.is_enabled);
-      }
+      this._toggle_bp(bp, event.target.checked);
     }
   }.bind(this);
 
@@ -91,14 +62,31 @@ cls.BreakpointsView = function(id, name, container_class)
     }
   }.bind(this);
 
-  this._handlers['disable'] = function(event, target)
-  {
-
-  }.bind(this);
-
   this._handlers['delete'] = function(event, target)
   {
+    var bp_id = parseInt(event.target.get_attr('parent-node-chain', 
+                                               'data-breakpoint-id'));
+    var bp = this._bps.get_breakpoint_with_id(bp_id);
+    if (bp)
+    {
+      this._delete_bp(bp);
+    }
+  }.bind(this);
 
+  this._handlers['disable-all'] = function(event, target)
+  {
+    this._bps.get_breakpoints().forEach(function(bp)
+    {
+      if (bp.is_enabled)
+      {
+        this._toggle_bp(bp, false);
+      }
+    }, this);
+  }.bind(this);
+
+  this._handlers['delete-all'] = function(event, target)
+  {
+    this._bps.get_breakpoints().slice().forEach(this._delete_bp, this);
   }.bind(this);
 
   this._handlers['add-or-edit-condition'] = function(event, target)
@@ -109,8 +97,6 @@ cls.BreakpointsView = function(id, name, container_class)
               bp_ele.render(this._tmpls.breakpoint_condition());
     this._editor.edit(event, ele.firstElementChild);
   }.bind(this);
-
-
 
   this._handlers['submit'] = function(event, target)
   {
@@ -132,18 +118,64 @@ cls.BreakpointsView = function(id, name, container_class)
     }
   }.bind(this);
 
+  this._toggle_bp = function(bp, is_checked)
+  {
+    if (bp.script_id)
+    {
+      var js_source_view = window.views[JS_SOURCE_ID];
+      var is_displayed_script = js_source_view.isvisible() && 
+                                js_source_view.getCurrentScriptId() == bp.script_id;
+      if (is_checked)
+      {
+        bp.is_enabled = true;
+        window.runtimes.setBreakpoint(bp.script_id, bp.line_nr, bp.id);
+        if (is_displayed_script)
+        {
+          js_source_view.addBreakpoint(bp.line_nr);
+        }
+      }
+      else
+      {
+        bp.is_enabled = false;
+        window.runtimes.removeBreakpoint(bp.script_id, bp.line_nr);
+        if (is_displayed_script)
+        {
+          js_source_view.removeBreakpoint(bp.line_nr);
+        }
+      }
+    }
+    else if(bp.event_type)
+    {
+      bp.is_enabled = is_checked;
+      this._ev_bps.handle_breakpoint_with_name(bp.event_type, is_checked);
+    }
+  };
+
+  this._delete_bp = function(bp)
+  {
+    if (bp.is_enabled)
+    {
+      this._toggle_bp(bp, false);
+    }
+    this._bps.remove_breakpoint(bp.id);
+  };
 
   /* rightclick menu */
 
   this._menu_common_items =
   [
     {
-      label: "Disable",
-      handler: this._handlers['disable'],
-    },
-    {
       label: "Delete",
       handler: this._handlers['delete'],
+    },
+    {separator: true},
+    {
+      label: "Disable all",
+      handler: this._handlers['disable-all'],
+    },
+    {
+      label: "Delete all",
+      handler: this._handlers['delete-all'],
     }
   ];
 
@@ -188,15 +220,12 @@ cls.BreakpointsView = function(id, name, container_class)
     this._bps = cls.Breakpoints.get_instance();
     this._ev_bps = cls.EventBreakpoints.get_instance();
     this._tmpls = window.templates;
-
     window.eventHandlers.change['toggle-breakpoint'] = 
       this._handlers['toggle-breakpoint'];
     window.eventHandlers.click['show-breakpoint-in-script-source'] = 
       this._handlers['show-breakpoint-in-script-source'];
     ActionBroker.get_instance().register_handler(this);
     ContextMenu.get_instance().register("breakpoints", this._menu);
-    
-
   };
 
   /* implementation */
