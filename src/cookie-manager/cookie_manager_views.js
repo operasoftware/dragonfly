@@ -327,7 +327,7 @@ cls.CookieManager.CookieManagerViewBase = function()
 
   this.insert_add_item_row = function(row, runtime) // public just towards actions
   {
-    var templ = document.documentElement.render(this.add_cookie_row(runtime, this._data_reference._rts));
+    var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row(runtime, this._data_reference._rts));
     var inserted = row.parentElement.insertBefore(templ, row);
     inserted.querySelector("[name=name]").focus();
     return inserted;
