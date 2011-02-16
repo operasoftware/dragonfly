@@ -107,7 +107,7 @@ ul {
 {
   background-image: url("../ui-images/expand-collapse-inverted.gif");
 }
-.unfolded .folder-key {
+.unfolded > .folder-key {
   background-position: 0px -11px;
 }
 

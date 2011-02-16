@@ -99,11 +99,11 @@ function ContextMenu() {
           };
         });
         this.register("spec", items);
-      }
 
-      if (all_items.length)
-      {
-        all_items.push(ContextMenu.separator);
+        if (all_items.length)
+        {
+          all_items.push(ContextMenu.separator);
+        }
       }
 
       if (items)
