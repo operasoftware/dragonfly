@@ -319,21 +319,18 @@ templates.network_request_icon = function(request)
 
 templates.network_log_graph = function(ctx, width)
 {
-  width = width;
   var rowheight = 25;
-  var height = ctx.resources.length * rowheight;
+  var height = (ctx.resources.length + 1) * rowheight; // +1 accounts for time line in graph. Takes up a row
 
   var gradients = templates.network_graph_gradient_defs();
   var rows = templates.network_graph_rows(ctx, rowheight, width)
-  var grid = templates.grid_lines(ctx, width, height);
+  var grid = templates.grid_lines(ctx, width, height, rowheight);
 
 
   var tpl = ["svg:svg",
              gradients,
              rows,
              grid,
-
-             //'viewBox', '0 0 ' + 3000 + 'px ' + 500 +'px',
              "data-menu", "request-context-options",
              "xmlns", "http://www.w3.org/2000/svg",
              "class", "resource-graph"];
@@ -349,7 +346,7 @@ templates.network_graph_rows = function(ctx, rowheight, width)
   var tpls = [];
   for (var n=0, res; res=ctx.resources[n]; n++)
   {
-    tpls.push(templates.network_graph_row(res, rowheight, width, n, basetime, duration));
+    tpls.push(templates.network_graph_row(res, rowheight, width, n+1, basetime, duration));
   }
   return tpls;
 }
@@ -370,26 +367,25 @@ templates.network_graph_row_background = function(resource, rowheight, width, in
           ["rect", "x", "0",
            "y", String(index * rowheight),
            "width", "100%",
-           "height", String(rowheight-1),
-           "fill", (index % 2 ?  "rgba(0,0,0,0.025)" : "white"),
+           "height", String(rowheight),
+           "fill", (index % 2 ? "rgba(0,0,0,0.025)" : "white"),
            "class", "network-graph-bg-row",
-           //"handler", "select-network-request-graph",
-
           ],
           ["line",
            "x1", "0",
-           "y1", String((index * rowheight) + rowheight - 0.5),
+           "y1", String((index * rowheight) - 0.5),
            "x2", "100%",
-           "y2", String((index * rowheight) + rowheight - 0.5),
+           "y2", String((index * rowheight) - 0.5),
            "stroke", "rgba(0, 0, 0, 0.1)",
            "stroke-width", "1",
+           "pointer-events", "none",
           ]
         ];
 }
 
 templates.network_graph_row_bar = function(request, rowheight, width, index, basetime, duration)
 {
-  var y = rowheight * index;
+  var y = (rowheight * index);
   var barheight = 12;
   var min_bar_width = barheight;
   var bary = y + (rowheight / 2) - (barheight / 2);
@@ -450,8 +446,9 @@ templates.network_graph_row_bar = function(request, rowheight, width, index, bas
   return tpl;
 }
 
-templates.grid_lines = function(ctx, width, height)
+templates.grid_lines = function(ctx, width, height, topoffset)
 {
+  topoffset = String(topoffset || 25);
   var ret = [];
   var millis = ctx.get_duration();
   millis = Math.ceil(millis / 1000) * 1000
@@ -483,13 +480,22 @@ templates.grid_lines = function(ctx, width, height)
     if (color) {
       ret.push(["line",
                 "x1", String(n*multiplier),
-                "y1", "0",
+                "y1", topoffset,
                 "x2", String(n*multiplier),
                 "y2", String(height),
                 "stroke", color,
                 "stroke-width", "1.0",
                 "pointer-events", "none",
       ]);
+
+      if (color == "black")
+      {
+        ret.push([
+          "text", "" + (n/1000) + "s",
+          "x", String(n*multiplier) + "px",
+          "y", "20px",
+        ]);
+      }
     }
   }
   return ret;

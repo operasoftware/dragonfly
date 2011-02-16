@@ -49,6 +49,7 @@
   list-style: none;
   padding: 0;
   margin: 0;
+  padding-top: 25px;
 }
 
 .network-log-url-list li {
@@ -122,19 +123,22 @@ li span + span {
   color: #fff;
 }
 
+.resource-graph text
+{
+  font-size: 12px;
+  text-anchor: middle;
+}
 
 .network-graph-bg-row:hover
 {
   fill: rgba(55,115,211,0.2);
 }
 
-
 /*
 .network-graph-bg-row
 {
   fill: white;
 }
-
 
 .network-graph-bg-row:nth-of-type(odd)
 {
