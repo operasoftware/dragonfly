@@ -317,6 +317,9 @@ ui_strings.M_CONTEXTMENU_STORAGE_EDIT = 'Edit item';
 /* DESC: Context menu item for deleting an item in the storage view. */
 ui_strings.M_CONTEXTMENU_STORAGE_DELETE = 'Delete item';
 
+/* DESC: Context menu item for adding a something to watches. */
+ui_strings.M_CONTEXTMENU_ADD_WATCH = 'Add "%s" to watches';
+
 /*
  * Button tool-tips.
  */

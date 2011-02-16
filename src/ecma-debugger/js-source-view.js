@@ -1106,29 +1106,47 @@ cls.JsSourceView.create_ui_widgets = function()
       {
         var line = parseInt(event.target.get_attr("parent-node-chain", "data-line-number"));
         var script_id = views.js_source.getCurrentScriptId();
+        var items = [];
 
         if (line)
         {
+          var selection = window.getSelection();
+          if (!selection.isCollapsed)
+          {
+            // TODO: maybe this can be made nicer
+            var start = Math.min(selection.anchorOffset, selection.focusOffset);
+            var end = Math.max(selection.anchorOffset, selection.focusOffset);
+            var key = selection.anchorNode.textContent.slice(start, end);
+            items.push({
+              label: ui_strings.M_CONTEXTMENU_ADD_WATCH.replace("%s", key),
+              handler: function(event, target) {
+                window.views.watches.add_watch(key);
+              }
+            });
+          }
+
           if (runtimes.hasBreakpoint(script_id, line))
           {
-            return {
+            items.push({
               label: ui_strings.M_CONTEXTMENU_REMOVE_BREAKPOINT,
               handler: function(event, target) {
                 runtimes.removeBreakpoint(script_id, line);
                 views.js_source.removeBreakpoint(line);
               }
-            };
+            });
           }
           else
           {
-            return {
+            items.push({
               label: ui_strings.M_CONTEXTMENU_ADD_BREAKPOINT,
               handler: function(event, target) {
                 runtimes.setBreakpoint(script_id, line);
                 views.js_source.addBreakpoint(line);
               }
-            };
+            });
           }
+
+          return items;
         }
       }
     }
