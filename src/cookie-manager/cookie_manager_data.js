@@ -1,9 +1,9 @@
 ﻿window.cls || (window.cls = {});
 cls.CookieManager || (cls.CookieManager = {});
 cls.CookieManager["1.0"] || (cls.CookieManager["1.0"] = {});
-cls.CookieManager.StorageData || (cls.CookieManager.StorageData = {});
+cls.CookieManager["1.1"] || (cls.CookieManager["1.1"] = {});
 
-cls.CookieManager.StorageData.Base = function()
+cls.CookieManager.StorageDataBase = function()
 {
   this._on_active_tab = function(msg)
   {
@@ -164,34 +164,6 @@ cls.CookieManager.StorageData.Base = function()
       }
     }
   };
-
-  this.write_item = function(c)
-  {
-    // select changed / created cookie after table had rendered
-    // todo: find runtimes where this will probably end up to make the selection restore work
-    // todo: need a way to access the views restore_selection array. hardcoding views.cookie_manager for now.
-    this._view._restore_selection = [
-      this.create_objectref(
-        {
-          domain: c.domain,
-          name:   c.name,
-          value:  c.value,
-          path:   c.path
-        },
-        c.runtime
-      )
-    ];
-    
-    var add_cookie_script = 'document.cookie="' + c.name + '=' + encodeURIComponent(c.value);
-    if(c.expires) // in case of 0 value the "expires" value should not be written, represents "Session" value
-    {
-      add_cookie_script += '; expires='+ (new Date(c.expires).toUTCString());
-    }
-    add_cookie_script += '; path=' + c.path + '"';
-    var script = add_cookie_script;
-    var tag = tagManager.set_callback(this, this.refetch.bind(this), [c.runtime]);
-    services['ecmascript-debugger'].requestEval(tag,[c.runtime, 0, 0, script]);
-  }
 
   this.get_items = function()
   {
@@ -367,8 +339,58 @@ cls.CookieManager.StorageData.Base = function()
   };
 };
 
-cls.CookieManager.StorageData.CookieService = function(service_version, view)
+cls.CookieManager["1.0"].CookieManagerData = function(service_version, view)
 {
+  // console.log("init 1.0");
+  this.write_item = function(c)
+  {
+    // todo: find runtimes where this will probably end up to make the selection restore work
+    this._view._restore_selection = [
+      this.create_objectref(
+        {
+          domain: c.domain,
+          name:   c.name,
+          value:  c.value,
+          path:   c.path
+        },
+        c.runtime
+      )
+    ];
+    
+    var add_cookie_script = 'document.cookie="' + c.name + '=' + encodeURIComponent(c.value);
+    if(c.expires) // in case of 0 value the "expires" value should not be written, represents "Session" value
+    {
+      add_cookie_script += '; expires='+ (new Date(c.expires).toUTCString());
+    }
+    add_cookie_script += '; path=' + c.path + '"';
+    var script = add_cookie_script;
+    var tag = tagManager.set_callback(this, this.refetch.bind(this), [c.runtime]);
+    services['ecmascript-debugger'].requestEval(tag,[c.runtime, 0, 0, script]);
+  }
+  
   this._init(service_version, view);
 }
-cls.CookieManager.StorageData.CookieService.prototype = new cls.CookieManager.StorageData.Base();
+cls.CookieManager["1.0"].CookieManagerData.prototype = new cls.CookieManager.StorageDataBase();
+
+cls.CookieManager["1.1"].CookieManagerData = function(service_version, view)
+{
+  // console.log("init 1.1");
+  this._write_cookie = function(c)
+  {
+    this._view._restore_selection = [
+      this.create_objectref(
+        {
+          domain: c.domain,
+          name:   c.name,
+          value:  c.value,
+          path:   c.path
+        },
+        c.runtime
+      )
+    ];
+    var tag = tagManager.set_callback(this, this._data_reference.refetch);
+    services['cookie-manager'].requestAddCookie(tag,[c.domain, c.name, c.path, c.value, c.expires / 1000, c.is_secure, c.is_http_only]);
+  }
+  this._init(service_version, view);
+}
+cls.CookieManager["1.1"].CookieManagerData.prototype = new cls.CookieManager.StorageDataBase();

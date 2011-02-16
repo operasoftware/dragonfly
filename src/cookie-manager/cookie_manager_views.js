@@ -607,12 +607,6 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
     data = new data_reference(service_version, this);
   }
 
-  this._write_cookie = function(c)
-  {
-    var tag = tagManager.set_callback(this, this._data_reference.refetch);
-    services['cookie-manager'].requestAddCookie(tag,[c.domain, c.name, c.path, c.value, c.expires / 1000, c.is_secure, c.is_http_only]);
-  }
-
   this._is_secure_renderer = function(obj) {
     if(obj.is_runtimes_placeholder)
     {

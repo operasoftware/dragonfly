@@ -12,7 +12,7 @@ window.app.builders.CookieManager["1.0"] = function(service)
   var service_interface = window.services['cookie-manager'];
   if(service_interface)
   {
-    new cls.CookieManager["1.0"].CookieManagerView("cookie_manager", "Cookies", "scroll cookie_manager", cls.CookieManager.StorageData.CookieService, service.version);
+    new cls.CookieManager["1.0"].CookieManagerView("cookie_manager", "Cookies", "scroll cookie_manager", cls.CookieManager["1.0"].CookieManagerData, service.version);
   }
 }
 
@@ -22,6 +22,6 @@ window.app.builders.CookieManager["1.1"] = function(service)
   var service_interface = window.services['cookie-manager'];
   if(service_interface)
   {
-    new cls.CookieManager["1.1"].CookieManagerView("cookie_manager", "Cookies", "scroll cookie_manager", cls.CookieManager.StorageData.CookieService, service.version);
+    new cls.CookieManager["1.1"].CookieManagerView("cookie_manager", "Cookies", "scroll cookie_manager", cls.CookieManager["1.1"].CookieManagerData, service.version);
   }
 }
