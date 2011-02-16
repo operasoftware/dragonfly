@@ -87,7 +87,7 @@ cls.CookieManager.CookieManagerViewBase = function()
       {
         callback: (function(event, target)
         {
-          this.view.check_to_exit_edit_mode(event, target);
+          this.check_to_exit_edit_mode(event, target);
           var row = target;
           while(row.nodeName !== "tr" || !row.parentNode) // todo: remove when it's fixed on menus
           {
@@ -100,7 +100,7 @@ cls.CookieManager.CookieManagerViewBase = function()
           if(objectref)
           {
             // row represents a cookie, so it can be selected
-            this.view.select_row(event, row);
+            this.select_row(event, row);
           }
           var selection = document.querySelectorAll(".sortable-table .selected");
           var selected_cookie_objects = [];
@@ -117,8 +117,8 @@ cls.CookieManager.CookieManagerViewBase = function()
                 label: "Add cookie",
                 handler: function() {
                   var runtime = selected_cookie_objects[0].runtimes[0];
-                  var inserted = this.view.insert_add_item_row(row, runtime);
-                  this.view.select_row(null, inserted);
+                  var inserted = this.insert_add_item_row(row, runtime);
+                  this.select_row(null, inserted);
                 }
               }
             );
@@ -130,7 +130,7 @@ cls.CookieManager.CookieManagerViewBase = function()
                 {
                   label: "Edit cookie",
                   handler: function() {
-                    this.view.enter_edit_mode(sel_cookie_obj.objectref);
+                    this.enter_edit_mode(sel_cookie_obj.objectref);
                   }
                 }
               );
@@ -327,7 +327,7 @@ cls.CookieManager.CookieManagerViewBase = function()
 
   this.insert_add_item_row = function(row, runtime) // public just towards actions
   {
-    var templ = document.documentElement.render(this.view.add_cookie_row(runtime, this._data_reference._rts));
+    var templ = document.documentElement.render(this.add_cookie_row(runtime, this._data_reference._rts));
     var inserted = row.parentElement.insertBefore(templ, row);
     inserted.querySelector("[name=name]").focus();
     return inserted;
@@ -597,10 +597,16 @@ cls.CookieManager["1.0"].CookieManagerView = function(id, name, container_class,
 }
 cls.CookieManager["1.0"].CookieManagerView.prototype = new cls.CookieManager.CookieManagerViewBase();
 
-/* 1.1
 cls.CookieManager["1.1"] || (cls.CookieManager["1.1"] = {});
-cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class, data_reference)
+cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class, data_reference, service_version)
 {
+  var data = data_reference;
+  // init func takes this as this._data_reference
+  if(typeof data_reference === "function")
+  {
+    data = new data_reference(service_version, this);
+  }
+
   this._write_cookie = function(c)
   {
     var tag = tagManager.set_callback(this, this._data_reference.refetch);
@@ -640,87 +646,72 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
     return inserted;
   }
 
-  this._init(id, name, container_class, data_reference);
+  this._init(id, name, container_class, data);
 }
 cls.CookieManager["1.1"].CookieManagerView.prototype = new cls.CookieManager.CookieManagerViewBase();
-*/
+
 cls.Local_Storage || (cls.Local_Storage = {});
 cls.Local_Storage["1.0"] || (cls.Local_Storage["1.0"] = {});
 cls.Local_Storage["1.0"].View = function(id, name, container_class, data_reference, id)
 {
-  console.log("localstorage view", data_reference);
-  // data doesn't have a _dict member directly
-  // will convert so that data object with flattened items and all methods are passed to view as data-modell
+  // console.log("localstorage view data:", data_reference);
   /*
     needed interface:
     refetch, remove_item, write_item, create_objectref, get_item_by_objectref, get_items
   */
-  var datastructure = {};
-  var storage = window.storages[id];
-  if(storage)
-  {
-    if (storage.is_setup)
-    {
-      if (storage.exists)
+  // init func takes data as this._data_reference
+  var data = {
+    _rts: runtimes.getRuntimes(),
+    refetch: (function(){this.update}).bind(data_reference),
+    remove_item: function(){console.log("remove_item")},
+    write_item: function(){console.log("write_item")},
+    create_objectref: function(){console.log("create_objectref")},
+    get_item_by_objectref: function(){console.log("create_objectref")},
+    get_items: function(){
+      var data = window.storages.local_storage.get_storages();
+      var returndata = [];
+      if(data)
       {
-        console.log("storage.get_storages()",storage.get_storages());
-        // container.clearAndRender(window.templates.storage(storage.get_storages(), storage.id, storage.title));
-        var rt_id = '', storage = null, rt = null, ret = [];
-        for (rt_id in storages)
-        {
-          if ((storage = storages[rt_id]) && (rt = window.runtimes.getRuntime(storage.rt_id)))
+        for (var rt in data) {
+          if(!data[rt] || data[rt].storage.length === 0)
           {
-            datastructure[rt_id] = {items:[]};
-            for (var i=0; i < storage.storage.length; i++) {
-              datastructure[rt_id].items.push(storage.storage[i])
-            };
-            /*
-            ret.push(
-            ['div',
-              ['table',
-                this.storage_domain_header(rt),
-                storage.storage.map(this.storage_item, this),
-                ['tr',
-                  ['th',
-                    this.storage_button({title: ui_strings.S_LABEL_STORAGE_ADD, handler: 'storage-add-key'}),
-                    this.storage_button({title: ui_strings.S_LABEL_STORAGE_UPDATE, handler: 'storage-update'}),
-                    this.storage_button({label: ui_strings.S_BUTTON_STORAGE_DELETE_ALL, handler: 'storage-delete-all'}),
-                    'colspan', '3',
-                    'class', 'single-control'
-                  ]
-                ],
-                'data-rt-id', rt_id,
-                'data-storage-id', storage_id,
-                'class', 'storage-table'
-              ],
-              'class', 'storage-domain'
-            ]);
-            */
+            returndata.push({
+              runtimes: [rt],
+              is_runtimes_placeholder: true // todo: add objectref
+            });
           }
-        }
+          else
+          {
+            for (var j=0; j < data[rt].storage.length; j++) {
+              returndata.push({
+                runtimes: [rt],
+                key: data[rt].storage[j].key,
+                value: data[rt].storage[j].value
+              });
+            };
+          }
+        };
       }
+      return returndata;
     }
-  };
-/*
-  this.on_storage_update = function(msg)
-  {
-    if (msg.storage_id == this.id)
-    {
-      this.update();
-    }
-  };
-*/
-  console.log("datastructure",datastructure);
-  return;
-  
+  }
+
   this._tabledef = {
     groups: {
       runtime: {
         label:   "Runtime",
-        grouper: function(obj) {
-          var rts = this._data_reference._rts; // todo: data_reference won't contain this
-          return rts[obj.runtimes[0]].hostname + rts[obj.runtimes[0]].pathname;
-        }
+        grouper: (function(obj) {
+          // find runtime
+          var runtimes = window.runtimes.getRuntimes();
+          var runtime = {};
+          for (var i=0; i < runtimes.length; i++) {
+            if(runtimes[i].runtime_id == obj.runtimes[0])
+            {
+              runtime = runtimes[i];
+            }
+          };
+          return runtime.uri || "";
+        }).bind(this)
       }
     },
     column_order: ["key", "value"],
@@ -758,6 +749,12 @@ cls.Local_Storage["1.0"].View = function(id, name, container_class, data_referen
   };
   this.sortby = "key";
   this.groupby = "runtime";
+  this.main_createView = this.createView;
+  this.createView = function(container)
+  {
+    this.main_createView(container);
+    // window.storages.local_storage.addListener("storage-update", this.update.bind(data_reference));
+  }
   this._init(id, name, container_class, data);
 }
 cls.Local_Storage["1.0"].View.prototype = new cls.CookieManager.CookieManagerViewBase();

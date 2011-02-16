@@ -15,16 +15,13 @@ window.app.builders.CookieManager["1.0"] = function(service)
     new cls.CookieManager["1.0"].CookieManagerView("cookie_manager", "Cookies", "scroll cookie_manager", cls.CookieManager.StorageData.CookieService, service.version);
   }
 }
-/*
+
 window.app.builders.CookieManager["1.1"] = function(service)
 {
   var namespace = cls.CookieManager && cls.CookieManager["1.1"];
   var service_interface = window.services['cookie-manager'];
   if(service_interface)
   {
-    var data = new cls.CookieManager.StorageData.CookieService(service);
-    var view = new cls.CookieManager["1.1"].CookieManagerView("cookie_manager", "Cookies", "scroll cookie_manager", data);
-    data.set_view(view);
+    new cls.CookieManager["1.1"].CookieManagerView("cookie_manager", "Cookies", "scroll cookie_manager", cls.CookieManager.StorageData.CookieService, service.version);
   }
 }
-*/

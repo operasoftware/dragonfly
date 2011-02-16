@@ -223,7 +223,6 @@ cls.CookieManager.StorageData.Base = function()
 
   this._handle_get_domain = function(status, message, rt_id)
   {
-    // console.log("_handle_get_domain", status, message, rt_id);
     const STATUS = 0;
     const DATA = 2;
     if(status === 0 && message[STATUS] == "completed")
@@ -360,7 +359,6 @@ cls.CookieManager.StorageData.Base = function()
   {
     this.service_version = service_version || 0;
     this._view = view;
-    console.log("init data. view:", this._view);
     this._dict = {};
     this.item_list = [];
     this._rts = {};
