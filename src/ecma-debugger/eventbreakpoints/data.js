@@ -7,6 +7,14 @@
 
 cls.EventBreakpoints = function()
 {
+
+  if (cls.EventBreakpoints.instance)
+  {
+    return cls.EventBreakpoints.instance;
+  }
+
+  cls.EventBreakpoints.instance = this;
+
   /* interface */
 
   /**
@@ -52,6 +60,7 @@ cls.EventBreakpoints = function()
   /* private */
   this._is_synced = false;
   this._breakpoints = {};
+  this._bps = cls.Breakpoints.get_instance();
   this._events =
   [
     {
@@ -272,23 +281,51 @@ cls.EventBreakpoints = function()
     var event = this._events[section_index] && this._events[section_index].events[event_index];
     if (event)
     {
-      if (checked)
-      {
-        event[CHECKED] = window.runtimes.getBreakpointId();
-        this._breakpoints[event[CHECKED]] = event;
-        window.services['ecmascript-debugger'].requestAddEventBreakpoint(0, [event[CHECKED], event[NAME]]);
-      }
-      else
-      {
-        window.services['ecmascript-debugger'].requestRemoveBreakpoint(0, [event[CHECKED]]);
-        this._breakpoints[event[CHECKED]] = 0;
-        event[CHECKED] = 0;
-      }
-      if (this.has_breakpoints())
-        window.toolbars['event-breakpoints'].enableButtons('ev-brp-remove-all-breakpoints');
-      else
-        window.toolbars['event-breakpoints'].disableButtons('ev-brp-remove-all-breakpoints');
+      this._handle_breakpoint_with_event(event, checked);
     }
+  }
+
+  this.handle_breakpoint_with_name = function(event_name, checked)
+  {
+    var i = 0, j = 0, section = null, events = null, event = null;
+    for (; section = this._events[i]; i++)
+    {
+      for (j = 0, events = section.events; event = events[j]; j++)
+      {
+        if (event[NAME] == event_name)
+        {
+          this._handle_breakpoint_with_event(event, checked);
+          i = this._events.length;
+          window.views['event-breakpoints'].update();
+          break;
+        }
+      }
+    }
+  }
+
+  this._handle_breakpoint_with_event = function(event, checked)
+  {
+    if (checked)
+    {
+      event[CHECKED] = this._bps.get_breakpoint_id_with_event_name(event[NAME]) ||
+                       window.runtimes.getBreakpointId();
+      this._breakpoints[event[CHECKED]] = event;
+      window.services['ecmascript-debugger'].requestAddEventBreakpoint(0, [event[CHECKED], event[NAME]]);
+      window.messages.post("breakpoint-added", {event_type: event[NAME],
+                                                id: event[CHECKED]});
+    }
+    else
+    {
+      window.services['ecmascript-debugger'].requestRemoveBreakpoint(0, [event[CHECKED]]);
+      window.messages.post("breakpoint-removed", {event_type: event[NAME],
+                                                  id: event[CHECKED]});
+      this._breakpoints[event[CHECKED]] = 0;
+      event[CHECKED] = 0;
+    }
+    if (this.has_breakpoints())
+      window.toolbars['event-breakpoints'].enableButtons('ev-brp-remove-all-breakpoints');
+    else
+      window.toolbars['event-breakpoints'].disableButtons('ev-brp-remove-all-breakpoints');
   }
 
   this.remove_all_breakpoints = function()
@@ -358,5 +395,10 @@ cls.EventBreakpoints = function()
 
 
 
-}
+};
+
+cls.EventBreakpoints.get_instance = function()
+{
+  return this.instance || new cls.EventBreakpoints();
+};
 

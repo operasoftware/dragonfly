@@ -32,7 +32,7 @@ cls.Breakpoints = function()
     return this._bps[this._get_bp_index(bp_id)];
   };
 
-  this.get_breakpoint_with_script_id_and_line_nr = function(script_id, line_nr)
+  this.get_breakpoint_id_with_script_id_and_line_nr = function(script_id, line_nr)
   {
     for(var i = 0, bp; bp = this._bps[i]; i++)
     {
@@ -43,6 +43,18 @@ cls.Breakpoints = function()
     }
     return 0;
   }
+
+  this.get_breakpoint_id_with_event_name = function(event_name)
+  {
+    for(var i = 0, bp; bp = this._bps[i]; i++)
+    {
+      if (bp.event_type == event_name)
+      {
+        return bp.id;
+      }
+    }
+    return 0;
+  };
 
   this.set_condition = function(condition, bp_id)
   {
@@ -87,11 +99,24 @@ cls.Breakpoints = function()
     window.views.breakpoints.update();
   };
 
+  this._onscriptidreplaced = function(msg)
+  {
+    for (var i = 0, bp; bp = this._bps[i]; i++)
+    {
+      if (bp.script_id == msg.old_script_id)
+      {
+        bp.script_id = msg.new_script_id;
+      }
+    }
+  };
+
   this._get_bp_index = function(id)
   {
     for(var i = 0; i < this._bps.length && this._bps[i].id != id; i++);
     return i;
   }
+
+
 
 
 
@@ -101,6 +126,8 @@ cls.Breakpoints = function()
     this._bp_class = window.cls.Breakpoint;
     window.messages.addListener('breakpoint-added', this._onbpadded.bind(this));
     window.messages.addListener('breakpoint-removed', this._onbpremoved.bind(this));
+    window.messages.addListener('script-id-replaced', this._onscriptidreplaced.bind(this));
+    
   }
 
   this._init();

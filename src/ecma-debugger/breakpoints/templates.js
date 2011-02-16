@@ -1,6 +1,6 @@
 (function()
 {
-
+  const MAX_SOURCE_CHARS = 160;
   this.breakpoint_condition = function(condition)
   {
     return (
@@ -33,8 +33,16 @@
                   'title', uri,
                   'handler', 'show-breakpoint-in-script-source',
                   'class', 'file-line']);
+      if (!script.line_arr)
+      {
+        script.set_line_states();
+      }
       var script_data = script.script_data.slice(script.line_arr[line_nr - 1], 
                                                  script.line_arr[line_nr]);
+      if (script_data.length > MAX_SOURCE_CHARS)
+      {
+        script_data = script_data.slice(0, MAX_SOURCE_CHARS) + " ...";
+      }
       var script_tmpl = this.highlight_js_source(script_data, 
                                                  null, 
                                                  script.state_arr[line_nr - 1], 
@@ -45,9 +53,15 @@
         ret.push(this.breakpoint_condition(bp.condition));
       }
     }
-    else
+    else if (bp.event_type)
     {
-
+      ret.push(['div',
+                  'event: ' + bp.event_type,
+                  'class', 'event-type']);
+      if (bp.condition)
+      {
+        ret.push(this.breakpoint_condition(bp.condition));
+      }
     }
     ret.push('class', 'breakpoint', 
              'data-breakpoint-id', String(bp.id));

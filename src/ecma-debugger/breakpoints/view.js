@@ -43,26 +43,34 @@ cls.BreakpointsView = function(id, name, container_class)
 
     if (bp)
     {
-      var js_source_view = window.views[JS_SOURCE_ID];
-      var is_displayed_script = js_source_view.isvisible() && 
-                                js_source_view.getCurrentScriptId() == bp.script_id;
-      if (event.target.checked)
+      if (bp.script_id)
       {
-        bp.is_enabled = true;
-        window.runtimes.setBreakpoint(bp.script_id, bp.line_nr, bp.id);
-        if (is_displayed_script)
+        var js_source_view = window.views[JS_SOURCE_ID];
+        var is_displayed_script = js_source_view.isvisible() && 
+                                  js_source_view.getCurrentScriptId() == bp.script_id;
+        if (event.target.checked)
         {
-          js_source_view.addBreakpoint(bp.line_nr);
+          bp.is_enabled = true;
+          window.runtimes.setBreakpoint(bp.script_id, bp.line_nr, bp.id);
+          if (is_displayed_script)
+          {
+            js_source_view.addBreakpoint(bp.line_nr);
+          }
+        }
+        else
+        {
+          bp.is_enabled = false;
+          window.runtimes.removeBreakpoint(bp.script_id, bp.line_nr);
+          if (is_displayed_script)
+          {
+            js_source_view.removeBreakpoint(bp.line_nr);
+          }
         }
       }
-      else
+      else if(bp.event_type)
       {
-        bp.is_enabled = false;
-        window.runtimes.removeBreakpoint(bp.script_id, bp.line_nr);
-        if (is_displayed_script)
-        {
-          js_source_view.removeBreakpoint(bp.line_nr);
-        }
+        bp.is_enabled = event.target.checked;
+        this._ev_bps.handle_breakpoint_with_name(bp.event_type, bp.is_enabled);
       }
     }
   }.bind(this);
@@ -178,6 +186,7 @@ cls.BreakpointsView = function(id, name, container_class)
     this.init(id, name, container_class, null, null, 'breakpoints-edit');
     this._editor = new window.cls.ConditionEditor(this);
     this._bps = cls.Breakpoints.get_instance();
+    this._ev_bps = cls.EventBreakpoints.get_instance();
     this._tmpls = window.templates;
 
     window.eventHandlers.change['toggle-breakpoint'] = 

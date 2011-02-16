@@ -391,39 +391,44 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
     var old_break_points = null;
     var line_nr = '';
 
-    for( sc in __scripts )
+    for (sc in __scripts)
     {
-      old_rt = __runtimes[__scripts[sc].runtime_id] || __old_runtimes[__scripts[sc].runtime_id] || {};
+      old_rt = __runtimes[__scripts[sc].runtime_id] || 
+               __old_runtimes[__scripts[sc].runtime_id] || {};
       // TODO check for script-type as well?
-      if( (
-            ( __scripts[sc].uri && __scripts[sc].uri == script.uri )
+      if ((
+            (__scripts[sc].uri && __scripts[sc].uri == script.uri)
             || __scripts[sc].script_data == script.script_data
           ) &&
           old_rt.uri == new_rt.uri &&
-          ( old_rt.window_id == new_rt.window_id ||
-            ( new_rt.opener_window_id &&
-              old_rt.opener_window_id == new_rt.opener_window_id  ) ) &&
-          old_rt.html_frame_path == new_rt.html_frame_path )
+          (old_rt.window_id == new_rt.window_id ||
+            (new_rt.opener_window_id &&
+             old_rt.opener_window_id == new_rt.opener_window_id)) &&
+          old_rt.html_frame_path == new_rt.html_frame_path)
       {
         is_known = true;
         break;
       }
     }
     __scripts[new_script_id] = script;
-    if( is_known )
+    if (is_known)
     {
+      messages.post("script-id-replaced", {new_script_id: new_script_id, 
+                                           old_script_id: sc});
       old_break_points = __scripts[sc].breakpoints;
-      for( line_nr in old_break_points )
+      for (line_nr in old_break_points)
       {
         // do we need to remove the old breakpoints?
-        self.setBreakpoint(new_script_id, parseInt(line_nr));
+        self.setBreakpoint(new_script_id,
+                           parseInt(line_nr),
+                           old_break_points[line_nr]);
       }
-      if( __scripts[sc].script_id == __selected_script )
+      if (__scripts[sc].script_id == __selected_script)
       {
         __selected_script = new_script_id;
       }
       // the script could be in a pop-up window
-      if( old_rt.window_id == new_rt.window_id )
+      if (old_rt.window_id == new_rt.window_id)
       {
         __replaced_scripts[sc] = script;
         delete __scripts[sc];
@@ -1078,8 +1083,8 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
       if (!__scripts[script_id]) { return; }
       b_p_id = b_p_id ||
                // if a breakpoint was set on the same script and line before
-               this._bps.get_breakpoint_with_script_id_and_line_nr(script_id, 
-                                                                   line_nr) ||
+               this._bps.get_breakpoint_id_with_script_id_and_line_nr(script_id, 
+                                                                      line_nr) ||
                this.getBreakpointId();
       __scripts[script_id].breakpoints[line_nr] = b_p_id;
       // message signature has changes, AddBreakpoint means always to a source line
