@@ -8,103 +8,28 @@
 window.cls.ConditionEditor = function(breakpoints)
 {
 
-  /* interface */
-  /* inherits from BaseEditor */
-
-  /* private */
-
   this._init = function()
   {
-    this.base_init();
+    SimpleBaseEditor.prototype._init.call(this);
     this._breakpoints = breakpoints;
-    this.textarea_container_name = "textarea-container-inline";
-    this.context_enter = {};
-    this.context_cur = {};
   };
 
-  /* implementation */
+  /* interface implementation */
 
-  this.edit = function(event, ele)
+  this.set_enter_context = function(ele)
   {
-    ele || (ele = event.target);
-    this.context_enter =
-    {
-      uid: parseInt(ele.get_attr('parent-node-chain', 'data-breakpoint-id')),
-      key: ele.textContent,
-    };
-    if (!this.base_style['font-size'])
-    {
-      this.get_base_style(ele);
-    }
-    // this should never be needed
-    if (this.textarea_container.parentElement)
-    {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
-        "this.textarea_container.parentElement is not null in submit");
-    }
-    this.textarea.value = ele.textContent;
-    ele.textContent = "";
-    ele.appendChild(this.textarea_container);
-    this.max_width = parseInt(getComputedStyle(ele.parentNode,
-                                               null).getPropertyValue('width'));
-    this._set_textarea_dimensions();
-    for (var prop in this.context_enter)
-    {
-      this.context_cur[prop] = this.context_enter[prop];
-    }
-    // only for click events
-    if (event)
-    {
-      this.textarea.focus();
-    }
-    this.textarea.selectionStart = 0;
-    this.textarea.selectionEnd = this.textarea.value.length;
+    return {uid: parseInt(ele.get_attr('parent-node-chain', 
+                                       'data-breakpoint-id')),
+		        value: ele.textContent};
   };
 
-  this.oninput = function(event)
+  this.onsubmit = function(context)
   {
-    if (this.textarea_container.parentElement)
-    {
-      this._set_textarea_dimensions();
-      this.context_cur.key = this.textarea.value;
-    }
-  };
-
-  this.submit = function()
-  {
-    // return a valid navigation target or null
-    var nav_target = this.textarea_container.parentElement;
-    if (nav_target)
-    {
-      nav_target.textContent = this.context_cur.key;
-      this._breakpoints.add_condition(this.context_cur.key, this.context_cur.uid);
-    }
-    return nav_target;
-  };
-
-  this.cancel = function()
-  {
-    // return a valid navigation target or null
-    var nav_target = this.textarea_container.parentElement;
-    if (nav_target)
-    {
-      nav_target.textContent = this.context_enter.key;
-    }
-    return nav_target;
-  };
-
-  this.onclick = function(event)
-  {
-    if(!this.textarea_container.contains(event.target))
-    {
-      this.submit();
-      return true;
-    }
-    return false;
-  };
+    this._breakpoints.add_condition(context.value, context.uid);
+  }
 
   this._init();
 
 };
 
-cls.ConditionEditor.prototype = BaseEditor;
+cls.ConditionEditor.prototype = new SimpleBaseEditor();
