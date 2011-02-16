@@ -76,11 +76,11 @@ cls.CookieManager.StorageData.Base = function()
     for (var id in cookies)
     {
       var domaincookies = cookies[id];
-      if (domaincookies.cookies)
+      if (domaincookies.items)
       {
-        for (var i=0; i < domaincookies.cookies.length ;i++)
+        for (var i=0; i < domaincookies.items.length ;i++)
         {
-          var current_cookie = domaincookies.cookies[i];
+          var current_cookie = domaincookies.items[i];
           var flattened_cookie = {
             objectref:    this.create_objectref(current_cookie, domaincookies.runtimes),
             runtimes:     domaincookies.runtimes,
@@ -192,7 +192,12 @@ cls.CookieManager.StorageData.Base = function()
     var tag = tagManager.set_callback(this, this.refetch.bind(this), [c.runtime]);
     services['ecmascript-debugger'].requestEval(tag,[c.runtime, 0, 0, script]);
   }
-  
+
+  this.get_items = function()
+  {
+    return this.item_list;
+  }
+
   this.create_objectref = function(cookie, runtimes, fixed_name) // public only to be used directly from view
   {
     return ((fixed_name || (cookie.domain + "/" + cookie.path + "/" + cookie.name + "/")) + (runtimes || "")).replace(/'/g,"");
@@ -293,10 +298,10 @@ cls.CookieManager.StorageData.Base = function()
       if(message.length > 0)
       {
         var cookies = message[COOKIE];
-        this._dict[domain+path].cookies=[];
+        this._dict[domain+path].items=[];
         for (var i=0; i < cookies.length; i++) {
           var cookie_info = cookies[i];
-          this._dict[domain+path].cookies.push({
+          this._dict[domain+path].items.push({
             domain:     cookie_info[0],
             path:       cookie_info[1],
             name:       cookie_info[2],
@@ -336,12 +341,12 @@ cls.CookieManager.StorageData.Base = function()
       var cookie_string = message[DATA];
       if(cookie_string && cookie_string.length > 0)
       {
-        this._dict[domain+path].cookies=[];
+        this._dict[domain+path].items=[];
         var cookies = cookie_string.split(';');
         for (var i=0; i < cookies.length; i++) {
           var cookie_info = cookies[i];
           var pos = cookie_info.indexOf('=', 0);
-          this._dict[domain+path].cookies.push({
+          this._dict[domain+path].items.push({
             name:  cookie_info.slice(0, pos),
             value: decodeURIComponent(cookie_info.slice(pos+1))
           });
@@ -427,14 +432,14 @@ cls.CookieManager.StorageData.LocalStorage = function()
       }
       this._dict[runtime].runtimes.push(runtime);
       
-      if(!this._dict[runtime].cookies) // todo: make generic
+      if(!this._dict[runtime].items)
       {
-       this._dict[runtime].cookies = [];
+       this._dict[runtime].items = [];
       }
       for (var key in parsed_data) {
         if(key !== "length")
         {
-          this._dict[runtime].cookies.push({
+          this._dict[runtime].items.push({
             key: String(key),
             value: String(parsed_data[key])
           });

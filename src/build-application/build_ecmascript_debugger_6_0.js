@@ -171,7 +171,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     var storage_view = new cls.Local_Storage["1.0"].View("new_local_storage", "Local Storage_", "scroll cookie_manager", new_local_storage_data);
     new_local_storage_data.set_view(storage_view);
     */
-    new cls.Local_Storage["1.0"].View("new_local_storage", "Local Storage_", "scroll cookie_manager", ls);
+    new cls.Local_Storage["1.0"].View("new_local_storage", "Local Storage_", "scroll cookie_manager", ls, "local-storage");
 
     /* the following views must be created to get entry in the Settings tab */
 

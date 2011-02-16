@@ -22,8 +22,7 @@ cls.CookieManager.CookieManagerViewBase = function()
         }).bind(this)
       }
     ]);
-    // RRR these now come in from data
-    var storage_data = this._data_reference.item_list;
+    var storage_data = this._data_reference.get_items();
     var sortby = this.sortby || null;
     var groupby = this.groupby || null;
     if(!this._sortable_table)
@@ -148,16 +147,15 @@ cls.CookieManager.CookieManagerViewBase = function()
               );
             }
             // Add "Remove all from domain-and-path"
-            // todo rrr: move to function on data instead
-            // todo: use less globals
             var runtime = this._data_reference._rts[sel_cookie_obj.runtimes[0]];
             options.push(
               {
                 label: "Remove cookies of " + runtime.hostname + runtime.pathname,
                 handler: (function(runtime_id){
                   return function() {
-                    for (var i=0; i < this._data_reference.item_list.length; i++) {
-                      var cookie = this._data_reference.item_list[i];
+                    var items = this._data_reference.get_items();
+                    for (var i=0; i < items.length; i++) {
+                      var cookie = items[i];
                       if(cookie.runtimes.indexOf(runtime_id) > -1)
                       {
                         this._data_reference.remove_item(cookie.objectref);
@@ -232,9 +230,10 @@ cls.CookieManager.CookieManagerViewBase = function()
 
   this._update_expiry = function()
   {
-    for (var i=0; i < this._data_reference.item_list.length; i++)
+    var items = this._data_reference.get_items();
+    for (var i=0; i < items.length; i++)
     {
-      var obj = this._data_reference.item_list[i];
+      var obj = items[i];
       var elem = document.getElementById("expires_container_"+obj.objectref);
       if(elem)
       {
@@ -489,7 +488,6 @@ cls.CookieManager["1.0"].CookieManagerView = function(id, name, container_class,
   var data = data_reference;
   if(typeof data_reference === "function")
   {
-    // for cookie_manager_data, the view is constructed here, so that the data obj can be passed
     data = new data_reference(service_version, this);
   }
   this._tabledef = {
@@ -648,16 +646,73 @@ cls.CookieManager["1.1"].CookieManagerView.prototype = new cls.CookieManager.Coo
 */
 cls.Local_Storage || (cls.Local_Storage = {});
 cls.Local_Storage["1.0"] || (cls.Local_Storage["1.0"] = {});
-cls.Local_Storage["1.0"].View = function(id, name, container_class, data_reference)
+cls.Local_Storage["1.0"].View = function(id, name, container_class, data_reference, id)
 {
-  console.log("localstorage view");
-  var data = data_reference;
-  if(typeof data_reference === "function")
+  console.log("localstorage view", data_reference);
+  // data doesn't have a _dict member directly
+  // will convert so that data object with flattened items and all methods are passed to view as data-modell
+  /*
+    needed interface:
+    refetch, remove_item, write_item, create_objectref, get_item_by_objectref, get_items
+  */
+  var datastructure = {};
+  var storage = window.storages[id];
+  if(storage)
   {
-    // for cookie_manager_data, the view is constructed here, so that the data obj can be passed
-    data = new data_reference(service_version, this);
-  }
-  console.log("will init with data", data);
+    if (storage.is_setup)
+    {
+      if (storage.exists)
+      {
+        console.log("storage.get_storages()",storage.get_storages());
+        // container.clearAndRender(window.templates.storage(storage.get_storages(), storage.id, storage.title));
+        var rt_id = '', storage = null, rt = null, ret = [];
+        for (rt_id in storages)
+        {
+          if ((storage = storages[rt_id]) && (rt = window.runtimes.getRuntime(storage.rt_id)))
+          {
+            datastructure[rt_id] = {items:[]};
+            for (var i=0; i < storage.storage.length; i++) {
+              datastructure[rt_id].items.push(storage.storage[i])
+            };
+            /*
+            ret.push(
+            ['div',
+              ['table',
+                this.storage_domain_header(rt),
+                storage.storage.map(this.storage_item, this),
+                ['tr',
+                  ['th',
+                    this.storage_button({title: ui_strings.S_LABEL_STORAGE_ADD, handler: 'storage-add-key'}),
+                    this.storage_button({title: ui_strings.S_LABEL_STORAGE_UPDATE, handler: 'storage-update'}),
+                    this.storage_button({label: ui_strings.S_BUTTON_STORAGE_DELETE_ALL, handler: 'storage-delete-all'}),
+                    'colspan', '3',
+                    'class', 'single-control'
+                  ]
+                ],
+                'data-rt-id', rt_id,
+                'data-storage-id', storage_id,
+                'class', 'storage-table'
+              ],
+              'class', 'storage-domain'
+            ]);
+            */
+          }
+        }
+      }
+    }
+  };
+/*
+  this.on_storage_update = function(msg)
+  {
+    if (msg.storage_id == this.id)
+    {
+      this.update();
+    }
+  };
+*/
+  console.log("datastructure",datastructure);
+  return;
+  
   this._tabledef = {
     groups: {
       runtime: {
