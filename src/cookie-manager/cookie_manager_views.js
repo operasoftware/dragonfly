@@ -4,6 +4,13 @@ cls.CookieManager["1.0"] || (cls.CookieManager["1.0"] = {});
 
 cls.CookieManager.CookieManagerViewBase = function()
 {
+  this._init = function(id, name, container_class, data_reference)
+  {
+    this._hold_redraw_mem = {};
+    this._data_reference = data_reference;
+    this.init(id, name, container_class);
+  };
+
   this.createView = function(container)
   {
     container.setAttribute("handler", "cookiemanager-container");
@@ -40,6 +47,131 @@ cls.CookieManager.CookieManagerViewBase = function()
     this._table_container = container.clearAndRender(["div", this._sortable_table.render(), "class", "table_container"]);
     this._after_table_render(container);
   };
+
+  this.select_row = function(event, elem) // public just towards actions
+  {
+    var event = event || {};
+    var was_selected = elem.hasClass("selected");
+    var is_in_edit_mode = elem.hasClass("edit_mode");
+    // unselect everything, as long as
+    //   not doing multiple selection. that's when:
+    //     cmd / ctrl key is used
+    //     more than 1 item selected and event is a right-click
+    //   not currently editing this row
+    var selection = document.querySelectorAll(".sortable-table .selected");
+    if(!( event.ctrlKey || (event.button === 2 && selection.length > 1) ))
+    {
+      for (var i=0; i < selection.length; i++) {
+        selection[i].removeClass("selected");
+      };
+    }
+    elem.addClass("selected");
+  };
+
+  this.insert_add_item_row = function(row, runtime) // public just towards actions
+  {
+    var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row(runtime, this._data_reference._rts));
+    var inserted = row.parentElement.insertBefore(templ, row);
+    inserted.querySelector("[name=name]").focus();
+    return inserted;
+  }
+
+  this.enter_edit_mode = function(objectref, event) // public just towards actions
+  {
+    var table_elem = document.querySelector(".sortable-table");
+    var sortable_table = ObjectRegistry.get_instance().get_object(table_elem.getAttribute("data-object-id"));
+    sortable_table.restore_columns(table_elem);
+    var row = document.querySelector(".sortable-table tr[data-object-id='"+objectref+"']").addClass("edit_mode");
+    this.select_row(event, row);
+    this._hold_redraw();
+    // Todo: focus input in clicked td if applicable
+  }
+
+  this.check_to_exit_edit_mode = function(event, target) // public just towards actions
+  {
+    this._resume_redraw();
+    if(document.querySelector(".edit_mode"))
+    {
+      // find out if target is within some .edit_mode node. don't exit then.
+      var walk_up = target;
+      while(walk_up)
+      {
+        if(walk_up.hasClass("edit_mode"))
+        {
+          return;
+        }
+        walk_up = walk_up.parentElement;
+      }
+      this.exit_edit_and_save();
+    }
+  }
+
+  this.exit_edit_and_save = function() // public just towards actions
+  {
+    this._resume_redraw();
+    var edit_tr = document.querySelector("tr.edit_mode");
+    if(edit_tr)
+    {
+      edit_tr.removeClass("edit_mode");
+
+      var is_secure_input    = edit_tr.querySelector("[name=is_secure]");
+      var is_http_only_input = edit_tr.querySelector("[name=is_http_only]");
+      var runtime_input      = edit_tr.querySelector("[name=add_cookie_runtime]");
+      var domain_input       = edit_tr.querySelector("[name=domain]");
+
+      var name         = edit_tr.querySelector("[name=name]").value.trim();
+      var value        = edit_tr.querySelector("[name=value]").value;
+      var expires      = new Date(edit_tr.querySelector("[name=expires]").value || 0).getTime();
+      var path         = edit_tr.querySelector("[name=path]").value.trim();
+      var is_secure    = !!(is_secure_input && is_secure_input.checked);
+      var is_http_only = !!(is_http_only_input && is_http_only_input.checked);
+      // "runtime" comes from [select] or [input type=hidden], domain comes directly from [input]
+      // or from the runtimes .hostname in case there's a limited choice because addcookie is not
+      // present
+      var runtime      = runtime_input && parseInt(runtime_input.value.split(",")[0]);
+      var domain       = domain_input && domain_input.value.trim() || runtime && this._data_reference._rts[runtime].hostname;
+
+      var cookie;
+      var object_id = edit_tr.getAttribute("data-object-id");
+      if(object_id)
+      {
+        cookie = this._data_reference.get_item_by_objectref(object_id);
+      }
+      // check if unmodified
+      if(cookie &&
+          (
+            name === cookie.name &&
+            value === cookie.value &&
+            expires === new Date(cookie.expires*1000).getTime() &&
+            path === cookie.path &&
+            is_secure === cookie.isSecure &&
+            is_http_only === cookie.isHTTPOnly &&
+            domain === this._data_reference._rts[cookie.runtimes[0]].hostname
+          )
+      )
+      {
+        return;
+      }
+
+      // remove old cookie
+      if(cookie)
+      {
+        this._data_reference.remove_item(cookie.objectref, true);
+      }
+
+      // and add modified / new
+      this._data_reference.write_item({
+        domain:       domain,
+        name:         name,
+        path:         path || "/",
+        value:        value,
+        expires:      expires,
+        is_secure:    +is_secure,
+        is_http_only: +is_http_only,
+        runtime:      runtime
+      });
+    }
+  }
 
   this._before_table_render = function(container, message)
   {
@@ -305,34 +437,6 @@ cls.CookieManager.CookieManagerViewBase = function()
     }
   };
 
-  this.select_row = function(event, elem) // public just towards actions
-  {
-    var event = event || {};
-    var was_selected = elem.hasClass("selected");
-    var is_in_edit_mode = elem.hasClass("edit_mode");
-    // unselect everything, as long as
-    //   not doing multiple selection. that's when:
-    //     cmd / ctrl key is used
-    //     more than 1 item selected and event is a right-click
-    //   not currently editing this row
-    var selection = document.querySelectorAll(".sortable-table .selected");
-    if(!( event.ctrlKey || (event.button === 2 && selection.length > 1) ))
-    {
-      for (var i=0; i < selection.length; i++) {
-        selection[i].removeClass("selected");
-      };
-    }
-    elem.addClass("selected");
-  };
-
-  this.insert_add_item_row = function(row, runtime) // public just towards actions
-  {
-    var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row(runtime, this._data_reference._rts));
-    var inserted = row.parentElement.insertBefore(templ, row);
-    inserted.querySelector("[name=name]").focus();
-    return inserted;
-  }
-
   this._hold_redraw = function()
   {
     this._hold_redraw_mem.active = true;
@@ -344,103 +448,6 @@ cls.CookieManager.CookieManagerViewBase = function()
     this._hold_redraw_mem.timeout && clearTimeout(this._hold_redraw_mem.timeout);
     this._hold_redraw_mem.callback && this._hold_redraw_mem.callback();
     this._hold_redraw_mem = {};
-  }
-  
-  this.enter_edit_mode = function(objectref, event) // public just towards actions
-  {
-    var table_elem = document.querySelector(".sortable-table");
-    var sortable_table = ObjectRegistry.get_instance().get_object(table_elem.getAttribute("data-object-id"));
-    sortable_table.restore_columns(table_elem);
-    var row = document.querySelector(".sortable-table tr[data-object-id='"+objectref+"']").addClass("edit_mode");
-    this.select_row(event, row);
-    this._hold_redraw();
-    // Todo: focus input in clicked td if applicable
-  }
-
-  this.check_to_exit_edit_mode = function(event, target) // public just towards actions
-  {
-    this._resume_redraw();
-    if(document.querySelector(".edit_mode"))
-    {
-      // find out if target is within some .edit_mode node. don't exit then.
-      var walk_up = target;
-      while(walk_up)
-      {
-        if(walk_up.hasClass("edit_mode"))
-        {
-          return;
-        }
-        walk_up = walk_up.parentElement;
-      }
-      this.exit_edit_and_save();
-    }
-  }
-
-  this.exit_edit_and_save = function() // public just towards actions
-  {
-    this._resume_redraw();
-    var edit_tr = document.querySelector("tr.edit_mode");
-    if(edit_tr)
-    {
-      edit_tr.removeClass("edit_mode");
-
-      var is_secure_input    = edit_tr.querySelector("[name=is_secure]");
-      var is_http_only_input = edit_tr.querySelector("[name=is_http_only]");
-      var runtime_input      = edit_tr.querySelector("[name=add_cookie_runtime]");
-      var domain_input       = edit_tr.querySelector("[name=domain]");
-
-      var name         = edit_tr.querySelector("[name=name]").value.trim();
-      var value        = edit_tr.querySelector("[name=value]").value;
-      var expires      = new Date(edit_tr.querySelector("[name=expires]").value || 0).getTime();
-      var path         = edit_tr.querySelector("[name=path]").value.trim();
-      var is_secure    = !!(is_secure_input && is_secure_input.checked);
-      var is_http_only = !!(is_http_only_input && is_http_only_input.checked);
-      // "runtime" comes from [select] or [input type=hidden], domain comes directly from [input]
-      // or from the runtimes .hostname in case there's a limited choice because addcookie is not
-      // present
-      var runtime      = runtime_input && parseInt(runtime_input.value.split(",")[0]);
-      var domain       = domain_input && domain_input.value.trim() || runtime && this._data_reference._rts[runtime].hostname;
-
-      var cookie;
-      var object_id = edit_tr.getAttribute("data-object-id");
-      if(object_id)
-      {
-        cookie = this._data_reference.get_item_by_objectref(object_id);
-      }
-      // check if unmodified
-      if(cookie &&
-          (
-            name === cookie.name &&
-            value === cookie.value &&
-            expires === new Date(cookie.expires*1000).getTime() &&
-            path === cookie.path &&
-            is_secure === cookie.isSecure &&
-            is_http_only === cookie.isHTTPOnly &&
-            domain === this._data_reference._rts[cookie.runtimes[0]].hostname
-          )
-      )
-      {
-        return;
-      }
-
-      // remove old cookie
-      if(cookie)
-      {
-        this._data_reference.remove_item(cookie.objectref, true);
-      }
-
-      // and add modified / new
-      this._data_reference.write_item({
-        domain:       domain,
-        name:         name,
-        path:         path || "/",
-        value:        value,
-        expires:      expires,
-        is_secure:    +is_secure,
-        is_http_only: +is_http_only,
-        runtime:      runtime
-      });
-    }
   }
 
   // DEPENDEND ON SERVICE VERSION - those might get overwritten
@@ -472,14 +479,6 @@ cls.CookieManager.CookieManagerViewBase = function()
     return window.templates.cookie_manager.unknown_value();
   }
   // END DEPENDEND ON SERVICE VERSION
-
-  this._init = function(id, name, container_class, data_reference)
-  {
-    this._hold_redraw_mem = {};
-    this.init(id, name, container_class);
-    this._data_reference = data_reference;
-  };
-
 };
 cls.CookieManager.CookieManagerViewBase.prototype = ViewBase;
 

@@ -5,6 +5,65 @@ cls.CookieManager["1.1"] || (cls.CookieManager["1.1"] = {});
 
 cls.CookieManager.StorageDataBase = function()
 {
+  this.refetch = function()
+  {
+    this._dict = {};
+    for (var rt_id in this._rts) {
+      this._rts[rt_id].get_domain_is_pending = true;
+      this._request_runtime_details(this._rts[rt_id]);
+    };
+  };
+
+  this.remove_item = function(objectref, avoid_refresh)
+  {
+    var cookie;
+    for (var i=0; i < this.item_list.length; i++)
+    {
+      if(this.item_list[i].objectref === objectref)
+      {
+        cookie = this.item_list[i];
+        var domain = cookie.domain;
+        if(!domain)
+        {
+          // in case the cookies domain is undefined (cookie is retrieved via JS), try using the runtime domain
+          domain = this._rts[cookie.runtimes[0]].hostname;
+        }
+        var path = cookie.path;
+        if(!path)
+        {
+          // in case the cookies path is undefined (cookie is retrieved via JS), try using "/" which is most likely
+          path = "/";
+        }
+        var tag;
+        if(!avoid_refresh)
+        {
+          tag = tagManager.set_callback(this, this.refetch.bind(this), []);
+        }
+        services['cookie-manager'].requestRemoveCookie(tag,[domain, path, cookie.name]);
+      }
+    }
+  };
+
+  this.get_items = function()
+  {
+    return this.item_list;
+  }
+
+  this.create_objectref = function(cookie, runtimes, fixed_name) // public only to be used directly from view
+  {
+    return ((fixed_name || (cookie.domain + "/" + cookie.path + "/" + cookie.name + "/")) + (runtimes || "")).replace(/'/g,"");
+  };
+
+  this.get_item_by_objectref = function(objectref)
+  {
+    for (var i=0; i < this.item_list.length; i++) {
+      if(this.item_list[i].objectref === objectref)
+      {
+        return this.item_list[i];
+      }
+    };
+  }
+
   this._on_active_tab = function(msg)
   {
     // cleanup runtimes directory
@@ -43,6 +102,7 @@ cls.CookieManager.StorageDataBase = function()
       this._request_runtime_details(this._rts[rt_id]);
     };
   };
+
   this._update = function()
   {
     if(this._hold_redraw_mem.active)
@@ -51,7 +111,6 @@ cls.CookieManager.StorageDataBase = function()
     }
     else
     {
-      // console.log("_flatten_data", this._dict);
       this.item_list = this._flatten_data(this._dict, this._rts);
       this._view.update();
     }
@@ -126,65 +185,6 @@ cls.CookieManager.StorageDataBase = function()
     return flattened_cookies;
   };
 
-  this.refetch = function()
-  {
-    this._dict = {};
-    for (var rt_id in this._rts) {
-      this._rts[rt_id].get_domain_is_pending = true;
-      this._request_runtime_details(this._rts[rt_id]);
-    };
-  };
-
-  this.remove_item = function(objectref, avoid_refresh)
-  {
-    var cookie;
-    for (var i=0; i < this.item_list.length; i++)
-    {
-      if(this.item_list[i].objectref === objectref)
-      {
-        cookie = this.item_list[i];
-        var domain = cookie.domain;
-        if(!domain)
-        {
-          // in case the cookies domain is undefined (cookie is retrieved via JS), try using the runtime domain
-          domain = this._rts[cookie.runtimes[0]].hostname;
-        }
-        var path = cookie.path;
-        if(!path)
-        {
-          // in case the cookies path is undefined (cookie is retrieved via JS), try using "/" which is most likely
-          path = "/";
-        }
-        var tag;
-        if(!avoid_refresh)
-        {
-          tag = tagManager.set_callback(this, this.refetch.bind(this), []);
-        }
-        services['cookie-manager'].requestRemoveCookie(tag,[domain, path, cookie.name]);
-      }
-    }
-  };
-
-  this.get_items = function()
-  {
-    return this.item_list;
-  }
-
-  this.create_objectref = function(cookie, runtimes, fixed_name) // public only to be used directly from view
-  {
-    return ((fixed_name || (cookie.domain + "/" + cookie.path + "/" + cookie.name + "/")) + (runtimes || "")).replace(/'/g,"");
-  };
-
-  this.get_item_by_objectref = function(objectref)
-  {
-    for (var i=0; i < this.item_list.length; i++) {
-      if(this.item_list[i].objectref === objectref)
-      {
-        return this.item_list[i];
-      }
-    };
-  }
-
   this._request_runtime_details = function(rt_object)
   {
     // console.log("_request_runtime_details", rt_object);
@@ -205,7 +205,7 @@ cls.CookieManager.StorageDataBase = function()
       this._rts[rt_id].get_domain_is_pending = false;
       this._rts[rt_id].hostname = hostname;
       this._rts[rt_id].pathname = pathname;
-      
+
       (function(context)
       {
         for (var key in context._rts)
@@ -356,7 +356,7 @@ cls.CookieManager["1.0"].CookieManagerData = function(service_version, view)
         c.runtime
       )
     ];
-    
+
     var add_cookie_script = 'document.cookie="' + c.name + '=' + encodeURIComponent(c.value);
     if(c.expires) // in case of 0 value the "expires" value should not be written, represents "Session" value
     {
@@ -367,14 +367,13 @@ cls.CookieManager["1.0"].CookieManagerData = function(service_version, view)
     var tag = tagManager.set_callback(this, this.refetch.bind(this), [c.runtime]);
     services['ecmascript-debugger'].requestEval(tag,[c.runtime, 0, 0, script]);
   }
-  
   this._init(service_version, view);
 }
 cls.CookieManager["1.0"].CookieManagerData.prototype = new cls.CookieManager.StorageDataBase();
 
 cls.CookieManager["1.1"].CookieManagerData = function(service_version, view)
 {
-  // console.log("init 1.1");
+  // console.log("init CookieManagerData 1.1");
   this._write_cookie = function(c)
   {
     this._view._restore_selection = [
