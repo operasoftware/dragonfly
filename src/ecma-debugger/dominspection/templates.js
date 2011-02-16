@@ -465,7 +465,7 @@
         case DOCUMENT_TYPE_NODE:
         {
           tree += "<div" + this._get_indent(node) + ">" +
-                    "<span class='doctype'>" + model.getDoctypeName(data) + " " +
+                    "<span class='doctype'>" + node[NAME] + " " +
                       this._get_doctype_external_identifier(node) +
                     "</span></div>";
           break;
