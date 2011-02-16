@@ -12,6 +12,7 @@ function ContextMenu() {
    * All registered context menus.
    */
   this._registered_menus = {};
+  this._current_items = null;
 
   this._broker = ActionBroker.get_instance();
 
@@ -111,6 +112,8 @@ function ContextMenu() {
       }
     }
 
+    this._current_items = all_items;
+
     if (all_items.length)
     {
       this._current_event = event;
@@ -190,12 +193,6 @@ function ContextMenu() {
     this.is_shown = false;
   };
 
-  this._get_uid = (function()
-  {
-    var uid = 0;
-    return function() {return "item_" + (++uid);};
-  })();
-
   this._expand_all_items = function(items, event, menu_id)
   {
     var all_items = [];
@@ -218,7 +215,7 @@ function ContextMenu() {
 
     for (var i = 0, item; item = all_items[i]; i++)
     {
-      item.id = item.id || this._get_uid();
+      item.id = "item_" + i;
       if (menu_id)
       {
         item.menu_id = menu_id;
@@ -243,11 +240,11 @@ function ContextMenu() {
       if (target.getAttribute("data-handler-id"))
       {
         var data_menu_id = target.getAttribute("data-menu-id");
-        var items = this._registered_menus[data_menu_id];
-        items = this._expand_all_items(items, this._current_event);
+        var items = this._current_items;
         for (var i = 0, item; item = items[i]; i++)
         {
-          if (item.id == target.getAttribute("data-handler-id"))
+          if (item.id == target.getAttribute("data-handler-id") &&
+              item.menu_id == data_menu_id)
           {
             var current_target = this._current_event.target;
             while (current_target && (data_menu_id != "spec" ? current_target.getAttribute("data-menu") != data_menu_id

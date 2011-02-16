@@ -107,8 +107,7 @@ var SettingsBase = function()
       {
         items.push({
           label: label_map[item],
-          id: item,
-          setting: true,
+          settings_id: item,
           handler: function(item) {
             return function(event, target) {
               settings[view_id].set(item, !settings[view_id].get(item), true);

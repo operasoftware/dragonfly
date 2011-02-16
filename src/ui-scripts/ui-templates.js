@@ -55,7 +55,7 @@
     for (var i = 0, item; item = items[i]; i++)
     {
       var icon = "";
-      if (!!item.checked || (settings[item.menu_id] && !!settings[item.menu_id].get(item.id)))
+      if (!!item.checked || (settings[item.menu_id] && !!settings[item.menu_id].get(item.settings_id)))
       {
         icon = "check";
       }
