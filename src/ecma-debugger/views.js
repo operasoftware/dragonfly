@@ -415,7 +415,7 @@ cls.DebugRemoteSettingView.create_ui_widgets = function()
       else
       {
         // TODO: fix string to show new min port number
-        document.getElementById("remote-debug-info").textContent = ui_strings.S_INFO_NO_VALID_PORT_NUMBER;
+        document.getElementById("remote-debug-info").textContent = ui_strings.S_INFO_NO_VALID_PORT_NUMBER.replace("%s", PORT_MIN).replace("%s", PORT_MAX);
         target.parentNode.getElementsByTagName('input')[0].value = port < PORT_MIN ? PORT_MIN : PORT_MAX;
       }
     }
