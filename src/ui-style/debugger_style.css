@@ -1287,9 +1287,9 @@ d
     margin: 0 2px;
 }
 
-#about-authors pre
+#about-authors
 {
-  padding: 0 2em;
+  white-space: pre;
 }
 
 color-sample

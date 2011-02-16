@@ -86,10 +86,10 @@ cls.AboutView.create_ui_widgets = function()
           response_text = xml.responseText;
           if(authors && response_text)
           {
-            authors.render(['pre', response_text]);
+            authors.textContent = response_text;
           }
         });
-        return ['ul', ['li', 'id', 'about-authors']];
+        return ['ul', ['li', 'id', 'about-authors', 'class', 'padding']];
       }
     },
     "about"

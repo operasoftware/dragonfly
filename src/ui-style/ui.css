@@ -1,5 +1,5 @@
 ﻿/* Font stack defaults */
-viewport, .info-box, #about-authors pre {
+viewport, .info-box {
   font-family: "Dejavu Sans", "Bitstream Vera Sans", "Lucida Grande", "Segoe UI", Tahoma, sans-serif;
   font-size: 11px;
   color: #444;
