@@ -8,6 +8,110 @@ cls.CookieManager.CookieManagerViewBase = function()
   {
     this._hold_redraw_mem = {};
     this._data_reference = data_reference;
+    this._tabledef = {
+      groups: {
+        host_and_path: {
+          label:   "Host and path",
+          grouper: (function(obj) {
+            // todo: check to avoid using this._rts (to skip the bind) by putting hostname etc on the cookie_object directly?
+            // would remove lots of this cryptic this._rts[obj.runtimes[0]].pathname stuff.
+            return this._data_reference._rts[obj.runtimes[0]].hostname + this._data_reference._rts[obj.runtimes[0]].pathname;
+          }).bind(this),
+          renderer: (function(groupvalue, obj) {
+            var obj = obj[0];
+            var runtime = this._data_reference._rts[obj.runtimes[0]];
+            return window.templates.cookie_manager.hostname_group_render(runtime);
+          }).bind(this)
+        }
+      },
+      column_order: ["domain", "name", "value", "path", "expires", "isSecure", "isHTTPOnly"],
+      idgetter: function(res) { return res.objectref },
+      columns: {
+        domain: {
+          label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_DOMAIN,
+          classname: "col_domain",
+          renderer: (function(obj) {
+            if(obj.is_runtimes_placeholder)
+            {
+              return;
+            }
+            if(obj.domain)
+            {
+              return window.templates.cookie_manager.editable_domain(obj.runtimes[0], this._data_reference._rts, obj.domain);
+            }
+            return window.templates.cookie_manager.unknown_value();
+          }).bind(this),
+          summer: function(values, groupname, getter) {
+            return ["button", "Add Cookie", "class", "add_cookie_button", "handler", "cookiemanager-add-cookie-row"];
+          }
+        },
+        name: {
+          label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_NAME,
+          classname: "col_name",
+          renderer: function(obj) {
+            if(obj.is_runtimes_placeholder)
+            {
+              return;
+            }
+            return window.templates.cookie_manager.editable_name(obj.name);
+          }
+        },
+        value: {
+          label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_VALUE,
+          classname: "col_value",
+          renderer: function(obj) {
+            if(obj.is_runtimes_placeholder)
+            {
+              return;
+            }
+            return window.templates.cookie_manager.editable_value(obj.value);
+          }
+        },
+        path: {
+          label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_PATH,
+          classname: "col_path",
+          renderer: function(obj) {
+            if(obj.is_runtimes_placeholder)
+            {
+              return;
+            }
+            if(typeof obj.path === "string")
+            {
+              return window.templates.cookie_manager.editable_path(obj.path);
+            }
+            return window.templates.cookie_manager.unknown_value();
+          }
+        },
+        expires: {
+          label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES,
+          classname: "col_expires",
+          renderer: function(obj) {
+            if(obj.is_runtimes_placeholder)
+            {
+              return;
+            }
+            if(typeof obj.expires === "number")
+            {
+              return window.templates.cookie_manager.editable_expires(obj.expires, obj.objectref);
+            }
+            return window.templates.cookie_manager.unknown_value();
+          }
+        },
+        isSecure: {
+          label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY),
+          classname: "col_secure",
+          renderer: (function(obj) { return this._is_secure_renderer(obj) }).bind(this)
+        },
+        isHTTPOnly: {
+          label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY),
+          classname: "col_httponly",
+          renderer: (function(obj) { return this._is_http_only_renderer(obj) }).bind(this)
+        }
+      }
+    };
+    this.sortby = "domain";
+    this.groupby = "host_and_path";
+
     this.init(id, name, container_class);
   };
 
@@ -489,109 +593,6 @@ cls.CookieManager["1.0"].CookieManagerView = function(id, name, container_class,
   {
     data = new data_reference(service_version, this);
   }
-  this._tabledef = {
-    groups: {
-      host_and_path: {
-        label:   "Host and path",
-        grouper: (function(obj) {
-          // todo: check to avoid using this._rts (to skip the bind) by putting hostname etc on the cookie_object directly?
-          // would remove lots of this cryptic this._rts[obj.runtimes[0]].pathname stuff.
-          return this._data_reference._rts[obj.runtimes[0]].hostname + this._data_reference._rts[obj.runtimes[0]].pathname;
-        }).bind(this),
-        renderer: (function(groupvalue, obj) {
-          var obj = obj[0];
-          var runtime = this._data_reference._rts[obj.runtimes[0]];
-          return window.templates.cookie_manager.hostname_group_render(runtime);
-        }).bind(this)
-      }
-    },
-    column_order: ["domain", "name", "value", "path", "expires", "isSecure", "isHTTPOnly"],
-    idgetter: function(res) { return res.objectref },
-    columns: {
-      domain: {
-        label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_DOMAIN,
-        classname: "col_domain",
-        renderer: (function(obj) {
-          if(obj.is_runtimes_placeholder)
-          {
-            return;
-          }
-          if(obj.domain)
-          {
-            return window.templates.cookie_manager.editable_domain(obj.runtimes[0], this._data_reference._rts, obj.domain);
-          }
-          return window.templates.cookie_manager.unknown_value();
-        }).bind(this),
-        summer: function(values, groupname, getter) {
-          return ["button", "Add Cookie", "class", "add_cookie_button", "handler", "cookiemanager-add-cookie-row"];
-        }
-      },
-      name: {
-        label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_NAME,
-        classname: "col_name",
-        renderer: function(obj) {
-          if(obj.is_runtimes_placeholder)
-          {
-            return;
-          }
-          return window.templates.cookie_manager.editable_name(obj.name);
-        }
-      },
-      value: {
-        label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_VALUE,
-        classname: "col_value",
-        renderer: function(obj) {
-          if(obj.is_runtimes_placeholder)
-          {
-            return;
-          }
-          return window.templates.cookie_manager.editable_value(obj.value);
-        }
-      },
-      path: {
-        label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_PATH,
-        classname: "col_path",
-        renderer: function(obj) {
-          if(obj.is_runtimes_placeholder)
-          {
-            return;
-          }
-          if(typeof obj.path === "string")
-          {
-            return window.templates.cookie_manager.editable_path(obj.path);
-          }
-          return window.templates.cookie_manager.unknown_value();
-        }
-      },
-      expires: {
-        label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES,
-        classname: "col_expires",
-        renderer: function(obj) {
-          if(obj.is_runtimes_placeholder)
-          {
-            return;
-          }
-          if(typeof obj.expires === "number")
-          {
-            return window.templates.cookie_manager.editable_expires(obj.expires, obj.objectref);
-          }
-          return window.templates.cookie_manager.unknown_value();
-        }
-      },
-      isSecure: {
-        label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY),
-        classname: "col_secure",
-        renderer: (function(obj) { return this._is_secure_renderer(obj) }).bind(this)
-      },
-      isHTTPOnly: {
-        label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY),
-        classname: "col_httponly",
-        renderer: (function(obj) { return this._is_http_only_renderer(obj) }).bind(this)
-      }
-    }
-  };
-  this.sortby = "domain";
-  this.groupby = "host_and_path";
   this._init(id, name, container_class, data);
 }
 cls.CookieManager["1.0"].CookieManagerView.prototype = new cls.CookieManager.CookieManagerViewBase();

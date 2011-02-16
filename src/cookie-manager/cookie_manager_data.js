@@ -374,7 +374,7 @@ cls.CookieManager["1.0"].CookieManagerData.prototype = new cls.CookieManager.Sto
 cls.CookieManager["1.1"].CookieManagerData = function(service_version, view)
 {
   // console.log("init CookieManagerData 1.1");
-  this._write_cookie = function(c)
+  this.write_item = function(c)
   {
     this._view._restore_selection = [
       this.create_objectref(
@@ -387,7 +387,7 @@ cls.CookieManager["1.1"].CookieManagerData = function(service_version, view)
         c.runtime
       )
     ];
-    var tag = tagManager.set_callback(this, this._data_reference.refetch);
+    var tag = tagManager.set_callback(this, this.refetch);
     services['cookie-manager'].requestAddCookie(tag,[c.domain, c.name, c.path, c.value, c.expires / 1000, c.is_secure, c.is_http_only]);
   }
   this._init(service_version, view);
