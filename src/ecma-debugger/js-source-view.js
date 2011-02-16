@@ -1113,10 +1113,7 @@ cls.JsSourceView.create_ui_widgets = function()
           var selection = window.getSelection();
           if (!selection.isCollapsed)
           {
-            // TODO: maybe this can be made nicer
-            var start = Math.min(selection.anchorOffset, selection.focusOffset);
-            var end = Math.max(selection.anchorOffset, selection.focusOffset);
-            var key = selection.anchorNode.textContent.slice(start, end);
+            var key = selection.toString();
             items.push({
               label: ui_strings.M_CONTEXTMENU_ADD_WATCH.replace("%s", key),
               handler: function(event, target) {
