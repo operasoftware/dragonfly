@@ -26,6 +26,7 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
                                                             this._overrides));
     this._output = container.querySelector("code");
     this._headerele = container.querySelector(".header-override-input");
+
   };
 
   /**
@@ -91,7 +92,6 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
     {
       this._clear_header_overrides();
     }
-
     this.update();
   }.bind(this);
 
@@ -115,6 +115,7 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
   this._handle_select_preset_bound = function(evt, target)
   {
     this._headerele.value = target.value;
+    this._headerele.releaseEvent('input');
   }.bind(this);
 
   this._clear_header_overrides = function()
