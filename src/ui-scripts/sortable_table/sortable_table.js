@@ -341,7 +341,7 @@ templates.sortable_table_body = function(tabledef, data, cols, groupby, sortby, 
     groupnames.sort()
   }
 
-  var render_group_headers = groupnames.length > 1;
+  var render_group_headers = groupby && groupnames.length > 0;
   return groupnames.map(function(g) {
       return templates.sortable_table_group(tabledef, g,
                                             render_group_headers,
