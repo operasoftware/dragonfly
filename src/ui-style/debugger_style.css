@@ -775,15 +775,6 @@ breadcrumb span
 parent-node-chain breadcrumb {
     color: #999;
 }
-parent-node-chain breadcrumb:last-of-type {
-    border: 0;
-}
-parent-node-chain breadcrumb:hover {
-    background: #ddd;
-}
-parent-node-chain breadcrumb.active {
-    background: #eee;
-}
 breadcrumb.parent-offset
 {
   color: #000;

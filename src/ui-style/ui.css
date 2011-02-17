@@ -1400,23 +1400,56 @@ breadcrumbs {
     right: 15px; /* minus one pixel to hide the right border of the last breadcrumb */
 }
 breadcrumb {
-    border-right: 1px solid #b3b3b3;
     height: 21px;
     line-height: 21px;
     display: inline-block;
-    padding: 0 4px;
-}
-breadcrumb.active {
-    background: #ccc url("../ui-images/shadow_0.png");
-}
-breadcrumb:hover {
-    background: #cecece url("../ui-images/shadow_0.png")
+    position: relative;
+    padding: 0 0 0 15px;
+    background: transparent url("../ui-images/crumb_middle.png");
 }
 breadcrumbs::selection {
     background: transparent;
 }
 .drag breadcrumb {
     cursor: move;
+}
+/* Styling of arrows */
+breadcrumb:not(:first-of-type)::before,
+breadcrumb:last-of-type::after {
+    content: "";
+    height: 21px;
+    width: 11px;
+    position: absolute;
+    left: 0;
+    background: transparent url("../ui-images/crumb_arrow.png");
+}
+breadcrumb:last-of-type::after {
+    left: auto;
+    right: -11px;
+}
+breadcrumb:first-of-type {
+    padding-left: 4px;
+}
+breadcrumb:hover,
+breadcrumb:hover + breadcrumb::before,
+breadcrumb:hover:last-of-type::after {
+    background-position: 0 -21px;
+}
+breadcrumb.active,
+breadcrumb.active:last-of-type::after {
+    background-position: 0 -42px;
+}
+breadcrumb.active + breadcrumb::before {
+    background-position: 0 -105px;
+}
+breadcrumb:hover::before {
+    background-position: 0 -126px;
+}
+breadcrumb.active + breadcrumb:hover::before {
+    background-position: 0 -168px;
+}
+breadcrumb.active::before {
+    background-position: 0 -189px;
 }
 
 .window-select-gadgets,

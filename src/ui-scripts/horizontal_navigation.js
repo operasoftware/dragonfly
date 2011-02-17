@@ -4,6 +4,7 @@
  */
 var HorizontalNavigationBase = function(cell)
 {
+  const ARROW_IMAGE_WIDTH = 11;
 
   this._element = null;
   this._breadcrumbs = null;
@@ -85,7 +86,7 @@ var HorizontalNavigationBase = function(cell)
       if (element)
       {
         var right_edge = element.getBoundingClientRect().right - breadcrumbs_dim.left;
-        left = breadcrumbs_dim.width - right_edge;
+        left = breadcrumbs_dim.width - right_edge - ARROW_IMAGE_WIDTH;
         element = element.nextElementSibling;
       }
     }
