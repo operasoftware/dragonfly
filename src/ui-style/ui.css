@@ -1086,7 +1086,6 @@ cst-drop-down
   background: transparent url("../ui-images/dropdown.png") 50% 50% no-repeat;
   float: right;
   padding: 0 2px;
-  border-left: 1px solid #8e8e8e;
   position: relative;
   top: -1px;
 }
