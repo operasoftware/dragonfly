@@ -171,6 +171,10 @@ cls.CookieManager.StorageDataBase = function()
           };
           flattened_cookies.push(flattened_cookie);
         };
+        if(!flattened_cookie.is_editable)
+        {
+          console.log(flattened_cookie);
+        }
       }
       else
       {

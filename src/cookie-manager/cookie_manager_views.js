@@ -4,6 +4,16 @@ cls.CookieManager["1.0"] || (cls.CookieManager["1.0"] = {});
 
 cls.CookieManager.CookieManagerViewBase = function()
 {
+  /** 
+    * CookieManagerViewBase
+    *
+    * this.createView = function(container)
+    * this.insert_add_item_row = function(row, runtime)
+    * this.enter_edit_mode = function(objectref, event)
+    * this.check_to_exit_edit_mode = function(event, target)
+    * this.exit_edit_and_save = function()
+    *
+    */
   this._init = function(id, name, container_class, data_reference)
   {
     this._hold_redraw_mem = {};
@@ -365,9 +375,9 @@ cls.CookieManager.CookieManagerViewBase = function()
               options.push(
                 {
                   label: "Edit cookie",
-                  handler: function() {
+                  handler: (function() {
                     this.enter_edit_mode(sel_cookie_obj.objectref);
-                  }
+                  }).bind(this)
                 }
               );
             }
@@ -376,9 +386,9 @@ cls.CookieManager.CookieManagerViewBase = function()
               options.push(
                 {
                   label: "Remove cookie",
-                  handler: function() {
+                  handler: (function() {
                     this._data_reference.remove_item(sel_cookie_obj.objectref);
-                  }
+                  }).bind(this)
                 }
               );
             }
@@ -453,6 +463,7 @@ cls.CookieManager.CookieManagerViewBase = function()
       rows[i].setAttribute("handler", "cookiemanager-row-select");
       var objectref = rows[i].getAttribute("data-object-id");
       // todo: find out why this sometimes doesn't work on startup
+      // console.log("this._data_reference",this._data_reference,"this._data_reference.get_item_by_objectref", this._data_reference.get_item_by_objectref, "this._data_reference.get_item_by_objectref(objectref)", this._data_reference.get_item_by_objectref(objectref));
       if(this._data_reference.get_item_by_objectref(objectref).is_editable)
       {
         rows[i].setAttribute("edit-handler", "cookiemanager-init-edit-mode");
