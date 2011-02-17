@@ -70,11 +70,11 @@
   color: #000;
 }
 
-li span {
+.network-log-url-list li span {
   display: inline-block;
 }
 
-li span + span {
+.network-log-url-list li span + span {
   padding-left: 5px;
   width: 189px;
   overflow: hidden;
