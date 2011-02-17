@@ -181,7 +181,7 @@ property:hover {
 
 .tree-style
 {
-  background:transparent url('../ui-images/dom-tree-style.gif') scroll repeat 9px 0;
+  background:transparent url('../ui-images/dom-tree-style.png') scroll repeat 9px 0;
 }
 
 .tree-style > div
@@ -196,7 +196,7 @@ property:hover {
   content: '';
   width: 7px;
   height: 1px;
-  background:transparent url('../ui-images/dom-tree-style-h.gif') scroll no-repeat 0 0;
+  background:transparent url('../ui-images/dom-tree-style-h.png') scroll no-repeat 0 0;
   margin-left: -8px;
   margin-right: 1px;
 }
