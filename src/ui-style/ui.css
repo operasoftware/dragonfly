@@ -591,16 +591,14 @@ top-tabs .icon {
 }
 top-tabs .badge {
   position: absolute;
-  top: 0;
-  left: 0;
   background: #df6531;
   color: #000;
   text-shadow: none;
   line-height: 1;
-  padding: 2px 3px;
+  padding: 1px 3px;
   border-radius: 4px;
-  top: 15px;
-  left: 14px;
+  top: 1px;
+  right: 1px;
   font-size: 9px;
 }
 top-tabs .badge:empty {
