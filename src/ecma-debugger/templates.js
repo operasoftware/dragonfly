@@ -251,7 +251,7 @@
         [(
           display_uri.uri ?
           ["span", display_uri.uri] :
-          ["code", script.script_data.length > 60 ? script.script_data.slice(0, 60) + "…" : script.script_data, "class", "code-snippet"]
+          ["code", script.script_data.slice(0, 120), "class", "code-snippet"]
         )]
       ],
       'script-id', script.script_id.toString()

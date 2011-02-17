@@ -58,8 +58,11 @@ panel-container {
   position: relative;
 }
 
-top-toolbar, top-tabs, modebar, tabs {
+top-toolbar, top-tabs, tabs {
     border-bottom: 1px solid #999;
+}
+modebar {
+    border-top: 1px solid #999;
 }
 
 /* set with css. height, border and padding are supported */
@@ -1129,6 +1132,8 @@ cst-title
   display: block;
   padding:  2px 8px;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 cst-select-option-list hr {

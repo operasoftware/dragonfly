@@ -26,7 +26,7 @@ var ModebarBase = function()
     {
       this.setCSSProperties()
     }
-    dim = this.cell.top - this.offsetHeight;
+    dim = this.cell.top + this.cell.height;
     if (dim != this.top)
     {
       this.is_dirty = true;
