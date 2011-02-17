@@ -249,7 +249,6 @@ cls.Request = function(id)
   this.invalid = false;
   this.starttime = null;
   this.requesttime = null;
-  this.responsetime = null;
   this.endtime = null;
   this.cached = false;
   this.duration = null;

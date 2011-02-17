@@ -415,9 +415,19 @@ templates.network_graph_row_bar = function(request, rowheight, width, index, bas
     resstart = start + reqwidth - reswidth;
   }
 
+  var title = "";
+  if (request.cached)
+  {
+    title = "Cached" + (request.duration ? " " + request.duration + "ms" : "")
+  }
+  else
+  {
+    title = "Total duration: " + request.duration + "\nRequest time: " + (request.requesttime - request.starttime) + "\nResponse time: " + (request.endtime - request.requesttime)
+  }
+
   var tpl = [
     ["rect", 
-      ["title", String(request.duration) + "ms"],
+      ["title", title],
       "x", String(start),
       "y", String(bary),
       "width", String(reqwidth),
@@ -430,7 +440,6 @@ templates.network_graph_row_bar = function(request, rowheight, width, index, bas
     ],
 
     ["rect",
-      ["title", String(request.duration)],
       "x", String(resstart),
       "y", String(bary),
       "width", String(reswidth),
