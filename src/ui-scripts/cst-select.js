@@ -132,13 +132,14 @@
       }
       if (modal_box_width > max_width && max_width_2 > max_width)
       {
-        style += "left: " + (right - Math.min(modal_box_width, max_width_2)) + "px;";
+        style += "left: " + (right - Math.min(modal_box_width, max_width_2)) + "px;" +
+          "max-width: " + Math.min(modal_box_width, max_width_2) + "px;";
       }
       else
       {
-        style += "left: " + left + "px;";
+        style += "left: " + left + "px; max-width: " + max_width + "px;";
       }
-      style += "width:" + ( select.offsetWidth < max_width ? select.offsetWidth : (  max_width > 0 ? max_width : 0 ) ) + "px;";
+      style += "min-width:" + ( select.offsetWidth < max_width ? select.offsetWidth : (  max_width > 0 ? max_width : 0 ) ) + "px;";
       modal_box.style.cssText = style;
       EventHandler.__modal_mode= true;
     }
