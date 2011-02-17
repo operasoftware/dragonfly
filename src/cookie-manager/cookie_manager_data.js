@@ -37,7 +37,7 @@ cls.CookieManager.StorageDataBase = function()
         var tag;
         if(!avoid_refresh)
         {
-          tag = tagManager.set_callback(this, this.refetch.bind(this), []);
+          tag = tagManager.set_callback(this, this.refetch, []);
         }
         services['cookie-manager'].requestRemoveCookie(tag,[domain, path, cookie.name]);
       }
@@ -364,7 +364,7 @@ cls.CookieManager["1.0"].CookieManagerData = function(service_version, view)
     }
     add_cookie_script += '; path=' + c.path + '"';
     var script = add_cookie_script;
-    var tag = tagManager.set_callback(this, this.refetch.bind(this), [c.runtime]);
+    var tag = tagManager.set_callback(this, this.refetch, [c.runtime]);
     services['ecmascript-debugger'].requestEval(tag,[c.runtime, 0, 0, script]);
   }
   this._init(service_version, view);

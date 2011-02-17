@@ -134,8 +134,8 @@ cls.CookieManager.CookieManagerViewBase = function()
       }
     ]);
     var storage_data = this._data_reference.get_items();
-    var sortby = this.sortby || null;
-    var groupby = this.groupby || null;
+    var sortby = this.sortby;
+    var groupby = this.groupby;
     if(!this._sortable_table)
     {
       this._sortable_table = new SortableTable(this._tabledef, storage_data, null, sortby, groupby, true);
@@ -387,18 +387,18 @@ cls.CookieManager.CookieManagerViewBase = function()
             options.push(
               {
                 label: "Remove cookies of " + runtime.hostname + runtime.pathname,
-                handler: (function(runtime_id){
+                handler: (function(runtime_id, context){
                   return function() {
-                    var items = this._data_reference.get_items();
+                    var items = context._data_reference.get_items();
                     for (var i=0; i < items.length; i++) {
                       var cookie = items[i];
                       if(cookie.runtimes.indexOf(runtime_id) > -1)
                       {
-                        this._data_reference.remove_item(cookie.objectref);
+                        context._data_reference.remove_item(cookie.objectref);
                       }
                     };
                   }
-                })(runtime.rt_id)
+                })(runtime.rt_id, this)
               }
             );
           }
@@ -417,9 +417,9 @@ cls.CookieManager.CookieManagerViewBase = function()
               options.push(
                 {
                   label: "Remove cookie "+(removable_cookies[0].name || ""),
-                  handler: function() {
+                  handler: (function() {
                     this._data_reference.remove_item(removable_cookies[0].objectref);
-                  }
+                  }).bind(this)
                 }
               );
             }
@@ -428,15 +428,15 @@ cls.CookieManager.CookieManagerViewBase = function()
               options.push(
                 {
                   label: "Remove selected cookies",
-                  handler: (function(cookie_list) {
+                  handler: (function(removable_cookies, context) {
                     return function()
                     {
-                      for (var i=0; i < cookie_list.length; i++)
+                      for (var i=0; i < removable_cookies.length; i++)
                       {
-                        this._data_reference.remove_item(cookie_list[i].objectref);
+                        context._data_reference.remove_item(removable_cookies[i].objectref);
                       }
                     }
-                  })(removable_cookies)
+                  })(removable_cookies, this)
                 }
               );
             }
