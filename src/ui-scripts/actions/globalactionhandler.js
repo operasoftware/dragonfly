@@ -198,6 +198,12 @@
       element.addClass("attached");
       arrow.style.right = document.documentElement.clientWidth - button_dims.right - OVERLAY_RIGHT_MARGIN + "px";
     }
+
+    var first_button = overlay.element.querySelector("button, input[type='button']");
+    if (first_button)
+    {
+      first_button.focus();
+    }
   };
   this._private_handlers.push("show-overlay");
 
