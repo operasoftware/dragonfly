@@ -196,16 +196,73 @@ cls.ResourceUtil.url_host = function(url)
 }
 
 cls.ResourceUtil.header_presets = [
-  {name: "Opera 11 linux", headers: 
+  {name: "None", headers: ""},
+  {name: "Chrome 9", headers:
     [
-      "foo: bar11",
-      "baz: meh"
+      "Accept: application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5",
+      "Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.3",
+      "Accept-Encoding: gzip,deflate,sdch",
+      "Accept-Language: en-GB,en-US;q=0.8,fr;q=0.6,en;q=0.4",
+      "User-Agent: Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US) AppleWebKit/534.13 (KHTML, like Gecko) Chrome/9.0.597.98 Safari/534.13",
     ].join("\n")
   },
-  {name: "Opera 10 linux", headers: 
+  {name: "Firefox 4 beta 11", headers:
     [
-      "foo: bar10",
-      "baz: meh"
+      "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      "Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7",
+      "Accept-Encoding: gzip,deflate,sdch",
+      "Accept-Language: en-gb,en;q=0.5",
+      "Connection: keep-alive",
+      "Keep-Alive: 115",
+      "User-Agent: Mozilla/5.0 (Windows NT 6.0; rv:2.0b11) Gecko/20100101 Firefox/4.0b11",
+    ].join("\n")
+  },
+  {name: "IE8 (compatibility mode)", headers:
+    [
+      "Accept: */*",
+      "Accept-Encoding: gzip, deflate",
+      "Accept-Language: en-gb",
+      "Connection: Keep-Alive",
+      "User-Agent: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; Trident/4.0; chromeframe; SLCC1; .NET CLR 2.0.50727; Media Center PC 5.0; MDDC; .NET CLR 3.5.30729; .NET CLR 1.1.4322; .NET CLR 3.0.30729; .NET4.0C)",
+    ].join("\n")
+  },
+  {name: "IE8", headers:
+    [
+      "Accept: image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/vnd.ms-xpsdocument, application/xaml+xml, application/x-ms-xbap, application/x-shockwave-flash, */*",
+      "Accept-Encoding: gzip, deflate",
+      "Accept-Language: en-gb",
+      "Connection: Keep-Alive",
+      "User-Agent: Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0; Trident/4.0; chromeframe; SLCC1; .NET CLR 2.0.50727; Media Center PC 5.0; MDDC; .NET CLR 3.5.30729; .NET CLR 1.1.4322; .NET CLR 3.0.30729; .NET4.0C)",
+    ].join("\n")
+  },
+  {name: "IE9 platform preview", headers:
+    [
+      "Accept: text/html, application/xhtml+xml",
+      "Accept-Encoding: gzip, deflate",
+      "Accept-Language: en-gb",
+      "Connection: Keep-Alive",
+      "User-Agent: Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.0; Trident/5.0)",
+    ].join("\n")
+  },
+  {name: "Opera 11.01", headers:
+    [
+      "Accept: text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1",
+      "Accept-Charset: iso-8859-1, utf-8, utf-16, *;q=0.1",
+      "Accept-Encoding: deflate, gzip, x-gzip, identity, *;q=0",
+      "Accept-Language: en-gb,en;q=0.9",
+      "Connection: Keep-Alive, TE",
+      "Keep-Alive: 115",
+      "Transfer-Encoding: deflate, gzip, chunked, identity, trailers",
+      "User-Agent: Opera/9.80 (Windows NT 6.0; U; en-GB) Presto/2.7.62 Version/11.01",
+    ].join("\n")
+  },
+  {name: "Safari 5", headers:
+    [
+      "Accept: application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5",
+      "Accept-Encoding: gzip, deflate",
+      "Accept-Language: en-us",
+      "Connection: keep-alive",
+      "User-Agent: Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US) AppleWebKit/533.19.4 (KHTML, like Gecko) Version/5.0.3 Safari/533.19.4",
     ].join("\n")
   },
 ];
