@@ -1163,7 +1163,7 @@ cst-option:active code {
 
 cst-select-option-list code {
   font-family: monospace;
-  color: #999;
+  color: rgba(0, 0, 0, .4);
 }
 
 .debugger-menu cst-option,
