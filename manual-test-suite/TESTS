@@ -1092,6 +1092,8 @@ desc:
   - Delete some of the cookies
   - Reload the document
   - Verify that the deleted cookies are gone.
+  - In case the host has the cookie-service:
+  - Select multiple cookies and delete them
 
 id: 00300
 label: Edit cookies
@@ -1100,11 +1102,16 @@ desc:
   - Change the value and save.
   - Reload the document
   - Verify that the values still are changed
+  - In case the host has the cookie-service:
+  - Verify that the edited cookie is selected after it was saved
+  - Edit again, and try to confirm by pressing 'enter' or clicking outside of the current row.
+  - Right-click and remove a column by unchecking 'Name'
+  - Verify that when you then try to edit, 'Name' is shown again.
 
 id: 00400
 label: Delete all cookies
 desc:
-  - Press the 'Delete all' button
+  - Press the 'Delete all' button / right-click and select 'Remove cookie of domain/path'
   - Reload the document.
   - Verify that all cookies are gone.
 
@@ -1115,17 +1122,30 @@ desc:
   - Add some key and value
   - Reload the document
   - Verify that there is a new created cookie with the according key and value.
+  - In case the host has the cookie-service:
+  - When you have entered values, try to sort by a different column. Also reload the document.
+  - Verify that the values are still there and you can finish adding the cookie.
 
-Storage.Cookies
-***************
-
-id: 00100
-label: Inspect cookies
+id: 00600
+label: Refresh
 desc:
-  - Go to the above url in the above order
-  - Verify that you see cookie a - j
+  - Execute 'document.cookie="k"' on the command line
+  - Press the update button or choose Refresh from the context menu
+  - Verify that a cookie with the name 'k' shows up.
 
-url: ./test-cases/storages/check-storages.html
+id: 00700
+label: Sort cookies
+desc:
+  In case the host has the cookie-service:
+  - While you are not editing / adding: Sort the table by 'Name' and 'Expires'
+  - Verify that the order makes sense
+
+id: 00800
+label: Group cookies
+desc:
+  In case the host has the cookie-service:
+  - Switch to 'No grouping' in the context menu
+  - Verify that the group headers are gone
 
 Storage.Local Storage
 *********************
