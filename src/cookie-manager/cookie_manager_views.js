@@ -269,14 +269,7 @@ cls.CookieManager.CookieManagerViewBase = function()
 
       if(domain && name)
       {
-        // remove old cookie
-        if(cookie)
-        {
-          this._data_reference.remove_item(cookie.objectref, true);
-        }
-
-        // and add modified / new
-        this._data_reference.write_item({
+        var new_cookie_desc = {
           domain:       domain,
           name:         name,
           path:         path || "/",
@@ -285,7 +278,23 @@ cls.CookieManager.CookieManagerViewBase = function()
           is_secure:    +is_secure,
           is_http_only: +is_http_only,
           runtime:      runtime
-        });
+        }
+        
+        if(cookie)
+        {
+          // remove old cookie, on finished add new cookie
+          this._data_reference.remove_item(cookie.objectref, (function(cookie_desc, dataref){
+            return function(status, message)
+            {
+              dataref.write_item(cookie_desc);
+            }
+          })(new_cookie_desc, this._data_reference));
+        }
+        else
+        {
+          // only add new cookie
+          this._data_reference.write_item(new_cookie_desc);
+        }
       }
       else
       {

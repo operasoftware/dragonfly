@@ -1116,6 +1116,17 @@ desc:
   - Reload the document
   - Verify that there is a new created cookie with the according key and value.
 
+Storage.Cookies
+***************
+
+id: 00100
+label: Inspect cookies
+desc:
+  - Go to the above url in the above order
+  - Verify that you see cookie a - j
+
+url: ./test-cases/storages/check-storages.html
+
 Storage.Local Storage
 *********************
 

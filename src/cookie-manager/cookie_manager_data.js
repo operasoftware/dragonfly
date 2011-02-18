@@ -14,9 +14,10 @@ cls.CookieManager.StorageDataBase = function()
     };
   };
 
-  this.remove_item = function(objectref, avoid_refresh)
+  this.remove_item = function(objectref, callback)
   {
     var cookie;
+    var callback = callback || this.refetch;
     for (var i=0; i < this.item_list.length; i++)
     {
       if(this.item_list[i].objectref === objectref)
@@ -34,11 +35,7 @@ cls.CookieManager.StorageDataBase = function()
           // in case the cookies path is undefined (cookie is retrieved via JS), try using "/" which is most likely
           path = "/";
         }
-        var tag;
-        if(!avoid_refresh)
-        {
-          tag = tagManager.set_callback(this, this.refetch, []);
-        }
+        var tag = tagManager.set_callback(this, callback, []);
         services['cookie-manager'].requestRemoveCookie(tag,[domain, path, cookie.name]);
       }
     }
