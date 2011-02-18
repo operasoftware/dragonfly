@@ -126,6 +126,10 @@ templates.cookie_manager = {
     var edit_elem = this.input_domain(current_runtime, runtimes);
     return this.edit_mode_switch_container(domain, edit_elem);
   },
+  all_editable_domain: function(domain) {
+    var edit_elem = this.input_text_container("domain", domain);
+    return this.edit_mode_switch_container(domain, edit_elem);
+  },
   editable_name: function(name) {
     var edit_elem = this.input_text_container("name", name);
     return this.edit_mode_switch_container(name, edit_elem);

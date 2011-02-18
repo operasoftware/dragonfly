@@ -40,17 +40,7 @@ cls.CookieManager.CookieManagerViewBase = function()
         domain: {
           label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_DOMAIN,
           classname: "col_domain",
-          renderer: (function(obj) {
-            if(obj.is_runtimes_placeholder)
-            {
-              return;
-            }
-            if(obj.domain)
-            {
-              return window.templates.cookie_manager.editable_domain(obj.runtimes[0], this._data_reference._rts, obj.domain);
-            }
-            return window.templates.cookie_manager.unknown_value();
-          }).bind(this),
+          renderer: (function(obj) { return this._domain_renderer(obj) }).bind(this),
           summer: function(values, groupname, getter) {
             return ["button", "Add Cookie", "class", "add_cookie_button", "handler", "cookiemanager-add-cookie-row"];
           }
@@ -583,6 +573,19 @@ cls.CookieManager.CookieManagerViewBase = function()
   }
 
   // DEPENDEND ON SERVICE VERSION - those might get overwritten
+  this._domain_renderer = function(obj)
+  {
+    if(obj.is_runtimes_placeholder)
+    {
+      return;
+    }
+    if(obj.domain)
+    {
+      return window.templates.cookie_manager.editable_domain(obj.runtimes[0], this._data_reference._rts, obj.domain);
+    }
+    return window.templates.cookie_manager.unknown_value();
+  }
+  
   this._is_secure_renderer = function(obj)
   {
     if(obj.is_runtimes_placeholder)
@@ -635,7 +638,21 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
     data = new data_reference(service_version, this);
   }
 
-  this._is_secure_renderer = function(obj) {
+  this._domain_renderer = function(obj)
+  {
+    if(obj.is_runtimes_placeholder)
+    {
+      return;
+    }
+    if(obj.domain)
+    {
+      return window.templates.cookie_manager.all_editable_domain(obj.domain);
+    }
+    return window.templates.cookie_manager.unknown_value();
+  }
+
+  this._is_secure_renderer = function(obj)
+  {
     if(obj.is_runtimes_placeholder)
     {
       return;
@@ -647,7 +664,8 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
     return window.templates.cookie_manager.unknown_value();
   }
 
-  this._is_http_only_renderer = function(obj) {
+  this._is_http_only_renderer = function(obj)
+  {
     if(obj.is_runtimes_placeholder)
     {
       return;
