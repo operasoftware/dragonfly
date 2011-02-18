@@ -126,6 +126,10 @@ property.disabled, /* TODO: rename to .declaration */
 .non-editable {
     background: transparent url("../ui-images/disabled_stripe_tile.png");
 }
+rule.non-editable {
+    margin: -5px; /* This is ugly */
+    padding: 5px;
+}
 .css-inspector .non-editable key {
     color: #4c7899;
 }
