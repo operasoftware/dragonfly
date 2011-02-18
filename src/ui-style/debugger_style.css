@@ -852,28 +852,16 @@ d
 {
   display: table-cell;
   vertical-align: top;
-  width: 260px;
   padding: 0 5px;
-  margin: auto;
-  text-align: center;
 }
 
 .color-picker h2,
 .manage-stored-colors h2
 {
-  background-color: hsl(0, 0%, 95%);
-  padding: .2em .5em;
-  font-size: 1.3em;
-  font-weight: normal;
-  border: 1px solid #ccc;
+  font-size: 1em;
+  font-weight: bold;
 }
 
-.color-picker p
-{
-  margin: .8em;
-  padding: 0;
-
-}
 .color-picker pre
 {
   margin: .8em 3em;
@@ -969,7 +957,6 @@ d
 #center-color
 {
   height: 40px;
-  margin:.8em 3em;
   border: 1px solid #666;
 }
 
@@ -1318,14 +1305,6 @@ property.disabled color-sample
 .search-no-match
 {
   opacity: .3;
-}
-
-.controls
-{
-  text-align: right;
-  border-bottom: 1px solid #ccc;
-  margin-left: -24px;
-  padding-left: 24px;
 }
 
 .no-match
