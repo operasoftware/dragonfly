@@ -1429,6 +1429,12 @@ breadcrumb:last-of-type::after {
     left: auto;
     right: -11px;
 }
+.navs breadcrumb:last-of-type {
+    padding-right: 4px;
+}
+.navs breadcrumb:last-of-type::after {
+    display: none;
+}
 breadcrumb:first-of-type {
     padding-left: 4px;
 }
