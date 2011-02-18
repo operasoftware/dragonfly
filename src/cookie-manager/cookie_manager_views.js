@@ -260,30 +260,38 @@ cls.CookieManager.CookieManagerViewBase = function()
             path === cookie.path &&
             is_secure === cookie.isSecure &&
             is_http_only === cookie.isHTTPOnly &&
-            domain === this._data_reference._rts[cookie.runtimes[0]].hostname
+            domain === this._data_reference._rts[cookie.runtimes[0]].hostname // todo: probably compare with cookie.domain if set
           )
       )
       {
         return;
       }
 
-      // remove old cookie
-      if(cookie)
+      if(domain && name)
       {
-        this._data_reference.remove_item(cookie.objectref, true);
-      }
+        // remove old cookie
+        if(cookie)
+        {
+          this._data_reference.remove_item(cookie.objectref, true);
+        }
 
-      // and add modified / new
-      this._data_reference.write_item({
-        domain:       domain,
-        name:         name,
-        path:         path || "/",
-        value:        value,
-        expires:      expires,
-        is_secure:    +is_secure,
-        is_http_only: +is_http_only,
-        runtime:      runtime
-      });
+        // and add modified / new
+        this._data_reference.write_item({
+          domain:       domain,
+          name:         name,
+          path:         path || "/",
+          value:        value,
+          expires:      expires,
+          is_secure:    +is_secure,
+          is_http_only: +is_http_only,
+          runtime:      runtime
+        });
+      }
+      else
+      {
+        // todo: missing required info, needs feedback in UI. will refetch and discard for now.
+        this._data_reference.refetch();
+      }
     }
   }
 
