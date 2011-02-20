@@ -15,9 +15,20 @@ window.cls.NewScript = function(message)
   this.script_data = message[SCRIPT_DATA] || '';
   this.uri = message[URI];
   this.breakpoints = {};
+  this.breakpoint_states = [];
+  this.line_pointer = {line: 0, state: 0};
   this.stop_ats = [];
-
+  this.scroll_height = 0;
+  this.scroll_width = 0;
 };
+
+window.cls.NewScript.BP_NONE = 0;
+window.cls.NewScript.BP_DISABLED = 3;
+window.cls.NewScript.BP_DISABLED_CONDITION = 6;
+window.cls.NewScript.BP_ENABLED = 9;
+window.cls.NewScript.BP_ENABLED_CONDITION = 12;
+window.cls.NewScript.LINE_POINTER_TOP = 1;
+window.cls.NewScript.LINE_POINTER = 2;
 
 window.cls.NewScript.prototype = new function()
 {

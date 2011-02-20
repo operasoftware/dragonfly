@@ -112,10 +112,18 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     return runtime_id;
   }
 
+  
   this.getControlsEnabled = function()
   {
     return __controls_enabled;
   }
+  
+  this.__defineGetter__("is_stopped", function()
+  {
+    return __controls_enabled;
+  });
+  
+  this.__defineSetter__("is_stopped", function(){});
 
   this.getFrames = function()
   {
@@ -166,7 +174,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     return null;
   }
 
-  var parseBacktrace = function(status, message, runtime_id, thread_id)
+  var parseBacktrace = function(status, message, stop_at)
   {
 
     const
@@ -183,36 +191,59 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     OBJECT_ID = 0,
     NAME = 5,
     SCOPE_LIST = 7;
-
-    var _frames = message[FRAME_LIST], frame = null, i = 0;
-    var fn_name = '', line = '', script_id = '', argument_id = '', scope_id = '';
-    var _frames_length = _frames.length;
-
-    var is_all_frames = _frames_length <= ini.max_frames;
-    callstack = [];
-    for( ; frame  = _frames[i]; i++ )
+    
+    if (status)
     {
-      callstack[i] =
+      opera.postError("parseBacktrace failed scope message: " + message);
+    }
+    else
+    {
+      var _frames = message[FRAME_LIST], frame = null, i = 0;
+      var fn_name = '', line = '', script_id = '', argument_id = '', scope_id = '';
+      var _frames_length = _frames.length;
+      var is_all_frames = _frames_length <= ini.max_frames;
+      callstack = [];
+      for( ; frame  = _frames[i]; i++ )
       {
-        fn_name : is_all_frames && i == _frames_length - 1
-                  ? 'global scope'
-                  : frame[OBJECT_VALUE][NAME] || 'anonymous',
-        line : frame[LINE_NUMBER],
-        script_id : frame[SCRIPT_ID],
-        argument_id : frame[ARGUMENT_OBJECT],
-        scope_id : frame[VARIABLE_OBJECT],
-        this_id : frame[THIS_OBJECT],
-        id: i,
-        rt_id: runtime_id,
-        scope_list: frame[SCOPE_LIST]
+        callstack[i] =
+        {
+          fn_name : is_all_frames && i == _frames_length - 1
+                    ? 'global scope'
+                    : frame[OBJECT_VALUE][NAME] || 'anonymous',
+          line : frame[LINE_NUMBER],
+          script_id : frame[SCRIPT_ID],
+          argument_id : frame[ARGUMENT_OBJECT],
+          scope_id : frame[VARIABLE_OBJECT],
+          this_id : frame[THIS_OBJECT],
+          id: i,
+          rt_id: stop_at.runtime_id,
+          scope_list: frame[SCOPE_LIST]
+        }
       }
+      
+      if( cur_inspection_type != 'frame' )
+      {
+        messages.post('active-inspection-type', {inspection_type: 'frame'});
+      }
+      messages.post('frame-selected', {frame_index: 0});
+      views.callstack.update();
+      if (!views.js_source.isvisible())
+      {
+        topCell.showView(views.js_source.id);
+      }
+      var plus_lines = views.js_source.getMaxLines() <= 10 ? 
+                       views.js_source.getMaxLines() / 2 >> 0 :
+                       10;
+      if (views.js_source.showLine(stop_at.script_id, stop_at.line_number - plus_lines))
+      {
+        runtimes.setSelectedScript(stop_at.script_id);
+        views.js_source.showLinePointer(stop_at.line_number, true);
+      }
+      toolbars.js_source.enableButtons('continue');
+      messages.post('thread-stopped-event', {stop_at: stop_at});
+      messages.post('host-state', {state: 'waiting'});
+      setTimeout(function(){ __controls_enabled = true;}, 50);
     }
-    if( cur_inspection_type != 'frame' )
-    {
-      messages.post('active-inspection-type', {inspection_type: 'frame'});
-    }
-    messages.post('frame-selected', {frame_index: 0});
-    views.callstack.update();
   }
 
   this.setInitialSettings = function()
@@ -233,32 +264,29 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
 
   this.__continue = function (mode) //
   {
+    var tag = tag_manager.set_callback(this, this._handle_continue, [mode]);
+    var msg = [stopAt.runtime_id, stopAt.thread_id, mode];
+    services['ecmascript-debugger'].requestContinueThread(tag, msg);
+  }
+  
+  this.continue_thread = function (mode) //
+  {
+    if (this.is_stopped)
+    {
+      this.__continue(mode);
+    }
+  }
+  
+  this._handle_continue = function(status, message, mode)
+  {
     __controls_enabled = false;
     callstack = [];
-
     runtimes.setObserve(stopAt.runtime_id, mode != 'run');
-
-    services['ecmascript-debugger'].requestContinueThread(0,
-        [stopAt.runtime_id, stopAt.thread_id, mode]);
     messages.post('frame-selected', {frame_index: -1});
     messages.post('thread-continue-event', {stop_at: stopAt});
     toolbars.js_source.disableButtons('continue');
     messages.post('host-state', {state: 'ready'});
   }
-
-
-
-  /*
-
-  <thread-stopped-at>
-    <runtime-id>2</runtime-id>
-    <thread-id>1</thread-id>
-    <script-id>41</script-id>
-    <line-number>2</line-number>
-    <stopped-reason>unknown</stopped-reason>
-  </thread-stopped-at>
-
-  */
 
   this.handle = function(message)
   {
@@ -371,25 +399,9 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
 
   this._stop_in_script = function(stop_at)
   {
-    var tag = tagManager.set_callback(null, parseBacktrace, [stop_at.runtime_id]);
+    var tag = tagManager.set_callback(null, parseBacktrace, [stop_at]);
     var msg = [stop_at.runtime_id, stop_at.thread_id, ini.max_frames];
     services['ecmascript-debugger'].requestGetBacktrace(tag, msg);
-    if (!views.js_source.isvisible())
-    {
-      topCell.showView(views.js_source.id);
-    }
-    var plus_lines = views.js_source.getMaxLines() <= 10 ? 
-                     views.js_source.getMaxLines() / 2 >> 0 :
-                     10;
-    if (views.js_source.showLine(stop_at.script_id, stop_at.line_number - plus_lines))
-    {
-      runtimes.setSelectedScript(stop_at.script_id);
-      views.js_source.showLinePointer(stop_at.line_number, true);
-    }
-    __controls_enabled = true;
-    toolbars.js_source.enableButtons('continue');
-    messages.post('thread-stopped-event', {stop_at: stop_at});
-    messages.post('host-state', {state: 'waiting'});
   }
 
   var onRuntimeDestroyed = function(msg)

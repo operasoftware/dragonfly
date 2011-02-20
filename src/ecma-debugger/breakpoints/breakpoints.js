@@ -21,6 +21,23 @@ cls.Breakpoints = function()
   }
 
   cls.Breakpoints.instance = this;
+  
+  /* interface */
+  
+  this.get_breakpoints = function(){};
+  this.get_breakpoint_with_id = function(bp_id){};
+  this.get_breakpoint_id_with_script_id_and_line_nr = function(script_id, line_nr){};
+  this.get_breakpoint_id_with_event_name = function(event_name){};
+  this.delete_breakpoint = function(bp_id){};
+  this.set_condition = function(condition, bp_id){};
+  this.get_condition = function(bp_id){};
+  
+  /* constants */
+  
+  const 
+  BP_NONE = cls.NewScript.BP_NONE;
+  BP_DELTA_CONDITION = cls.NewScript.BP_ENABLED_CONDITION - 
+                       cls.NewScript.BP_ENABLED;
 
   this.get_breakpoints = function()
   {
@@ -43,9 +60,29 @@ cls.Breakpoints = function()
     }
     return 0;
   };
-
-  this.remove_breakpoint = function(bp_id)
+    
+  this._update_bp_state = function(bp, delta, absolute)
   {
+    var script = bp && window.runtimes.getScript(bp.script_id);
+    if (script)
+    {
+      if (delta)
+      {
+        script.breakpoint_states[bp.line_nr] += delta;
+      }
+      else
+      {
+        script.breakpoint_states[bp.line_nr] = absolute;
+      }
+      window.messages.post('breakpoint-state-changed', {script_id: bp.script_id,
+                                                        line_nr: bp.line_nr,
+                                                        id: bp.id});
+    }
+  }
+
+  this.delete_breakpoint = function(bp_id)
+  {
+    this._update_bp_state(this.get_breakpoint_with_id(bp_id), 0, BP_NONE);
     this._bps.splice(this._get_bp_index(bp_id), 1);
     window.views.breakpoints.update();
   }
@@ -67,6 +104,14 @@ cls.Breakpoints = function()
     var bp = this.get_breakpoint_with_id(bp_id);
     if (bp)
     {
+      if (condition && !bp.condition)
+      {
+        this._update_bp_state(bp, BP_DELTA_CONDITION);
+      }
+      else if(!condition && bp.condition)
+      {
+        this._update_bp_state(bp, -BP_DELTA_CONDITION);
+      }
       bp.condition = condition;
     }
   };
@@ -80,7 +125,7 @@ cls.Breakpoints = function()
   this._onbpadded = function(msg)
   {
     var bp = this.get_breakpoint_with_id(msg.id);
-    if (this.get_breakpoint_with_id(msg.id))
+    if (bp)
     {
       bp.is_enabled = true;
     }

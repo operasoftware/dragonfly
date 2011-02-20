@@ -122,26 +122,15 @@ cls.BreakpointsView = function(id, name, container_class)
   {
     if (bp.script_id)
     {
-      var js_source_view = window.views[JS_SOURCE_ID];
-      var is_displayed_script = js_source_view.isvisible() && 
-                                js_source_view.getCurrentScriptId() == bp.script_id;
       if (is_checked)
       {
         bp.is_enabled = true;
         window.runtimes.setBreakpoint(bp.script_id, bp.line_nr, bp.id);
-        if (is_displayed_script)
-        {
-          js_source_view.addBreakpoint(bp.line_nr);
-        }
       }
       else
       {
         bp.is_enabled = false;
         window.runtimes.removeBreakpoint(bp.script_id, bp.line_nr);
-        if (is_displayed_script)
-        {
-          js_source_view.removeBreakpoint(bp.line_nr);
-        }
       }
     }
     else if(bp.event_type)
@@ -153,11 +142,11 @@ cls.BreakpointsView = function(id, name, container_class)
 
   this._delete_bp = function(bp)
   {
+    this._bps.delete_breakpoint(bp.id);
     if (bp.is_enabled)
     {
       this._toggle_bp(bp, false);
     }
-    this._bps.remove_breakpoint(bp.id);
   };
 
   /* rightclick menu */
@@ -245,6 +234,7 @@ cls.BreakpointsView = function(id, name, container_class)
   this.add_condition = function(condition, bp_id)
   {
     this._bps.set_condition(condition, bp_id);
+    this.update();
   }
 
   this._init(id, name, container_class);

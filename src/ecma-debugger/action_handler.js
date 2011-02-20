@@ -228,12 +228,10 @@ window.eventHandlers.click['set-break-point'] = function(event)
     if (runtimes.hasBreakpoint(script_id, line))
     {
       runtimes.removeBreakpoint(script_id, line);
-      views.js_source.removeBreakpoint(line);
     }
     else
     {
       runtimes.setBreakpoint(script_id, line);
-      views.js_source.addBreakpoint(line);
     }
   }
 };

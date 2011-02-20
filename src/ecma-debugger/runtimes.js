@@ -413,15 +413,18 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
     __scripts[new_script_id] = script;
     if (is_known)
     {
+      script.breakpoint_states = __scripts[sc].breakpoint_states;
       messages.post("script-id-replaced", {new_script_id: new_script_id, 
                                            old_script_id: sc});
       old_break_points = __scripts[sc].breakpoints;
       for (line_nr in old_break_points)
       {
-        // do we need to remove the old breakpoints?
-        self.setBreakpoint(new_script_id,
-                           parseInt(line_nr),
-                           old_break_points[line_nr]);
+        if (old_break_points[line_nr])
+        {
+          self.setBreakpoint(new_script_id,
+                             parseInt(line_nr),
+                             old_break_points[line_nr]);
+        }
       }
       if (__scripts[sc].script_id == __selected_script)
       {
@@ -1074,19 +1077,31 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
     return __scripts[script_id] && (__scripts[script_id].breakpoints[line_nr]);
   }
 
-
+  const 
+  BP_DISABLED = window.cls.NewScript.BP_DISABLED,
+  BP_ENABLED = window.cls.NewScript.BP_ENABLED,
+  DELTA_ENABLE_BP = BP_ENABLED - BP_DISABLED;
 
   if (service_version == "6.0")
   {
     this.setBreakpoint = function(script_id, line_nr, b_p_id)
     {
-      if (!__scripts[script_id]) { return; }
+      var script = __scripts[script_id];
+      if (!script) { return; }
       b_p_id = b_p_id ||
                // if a breakpoint was set on the same script and line before
                this._bps.get_breakpoint_id_with_script_id_and_line_nr(script_id, 
                                                                       line_nr) ||
                this.getBreakpointId();
-      __scripts[script_id].breakpoints[line_nr] = b_p_id;
+      script.breakpoints[line_nr] = b_p_id;
+      if (!script.breakpoint_states[line_nr])
+      {
+        script.breakpoint_states[line_nr] = BP_DISABLED;
+      }
+      if (script.breakpoint_states[line_nr] < BP_ENABLED)
+      {
+        script.breakpoint_states[line_nr] += DELTA_ENABLE_BP;
+      }
       // message signature has changes, AddBreakpoint means always to a source line
       // for events it's now AddEventBreakpoint
       services['ecmascript-debugger'].requestAddBreakpoint(0, [b_p_id, script_id, line_nr]);
@@ -1107,10 +1122,17 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
 
   this.removeBreakpoint = function(script_id, line_nr)
   {
-    var b_p_id = __scripts[script_id].breakpoints[line_nr];
+    var script = __scripts[script_id];
+    var b_p_id = script.breakpoints[line_nr];
     services['ecmascript-debugger'].requestRemoveBreakpoint(0, [b_p_id]);
-    __scripts[script_id].breakpoints[line_nr] = null;
-    window.messages.post("breakpoint-removed", {id: b_p_id});
+    script.breakpoints[line_nr] = 0;
+    if (script.breakpoint_states[line_nr] >= BP_ENABLED)
+    {
+      script.breakpoint_states[line_nr] -= DELTA_ENABLE_BP;
+    }
+    window.messages.post("breakpoint-removed", {script_id: script_id,
+                                                line_nr: line_nr,
+                                                id: b_p_id});
   }
 
   this.getBreakpoints = function(script_id)
