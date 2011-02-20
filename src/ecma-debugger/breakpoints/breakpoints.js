@@ -26,16 +26,17 @@ cls.Breakpoints = function()
   
   this.get_breakpoints = function(){};
   this.get_breakpoint_with_id = function(bp_id){};
-  this.delete_breakpoint = function(bp_id){};
-  this.set_condition = function(condition, bp_id){};
-  this.get_condition = function(bp_id){};
-  this.copy_breakpoints = function(new_script, old_script){};
+  this.script_has_breakpoint_on_line = function(script_id, line_nr){};
   // bp_id optional
   this.add_breakpoint = function(script_id, line_nr, bp_id){};
   this.remove_breakpoint = function(script_id, line_nr){};
+  this.delete_breakpoint = function(bp_id){};
   this.add_event_breakpoint = function(event_name){};
   this.remove_event_breakpoint = function(bp_id, event_name){};
-  this.script_has_breakpoint_on_line = function(script_id, line_nr){};
+  this.copy_breakpoints = function(new_script, old_script){};
+  this.set_condition = function(condition, bp_id){};
+  this.get_condition = function(bp_id){};
+  
   
   /* constants */
   
@@ -86,7 +87,7 @@ cls.Breakpoints = function()
       bp_id = bp_id ||
               // if a breakpoint was set on the same script and line before
               this._get_breakpoint_id_with_script_id_and_line_nr(script_id, 
-                                                                      line_nr) ||
+                                                                 line_nr) ||
               this._get_breakpoint_id();
       script.breakpoints[line_nr] = bp_id;
       if (!script.breakpoint_states[line_nr])
