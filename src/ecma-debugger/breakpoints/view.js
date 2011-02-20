@@ -216,6 +216,7 @@ cls.BreakpointsView = function(id, name, container_class)
     ev_hs.click['delete-all-breakpoints'] =  this._handlers['delete-all'];
     ActionBroker.get_instance().register_handler(this);
     ContextMenu.get_instance().register("breakpoints", this._menu);
+    window.messages.addListener('breakpoint-updated', function(){this.update()}.bind(this));
   };
 
   /* implementation */

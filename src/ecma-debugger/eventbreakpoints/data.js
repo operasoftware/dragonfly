@@ -307,18 +307,12 @@ cls.EventBreakpoints = function()
   {
     if (checked)
     {
-      event[CHECKED] = this._bps.get_breakpoint_id_with_event_name(event[NAME]) ||
-                       this._bps.get_breakpoint_id();
+      event[CHECKED] = this._bps.add_event_breakpoint(event[NAME]);
       this._breakpoints[event[CHECKED]] = event;
-      window.services['ecmascript-debugger'].requestAddEventBreakpoint(0, [event[CHECKED], event[NAME]]);
-      window.messages.post("breakpoint-added", {event_type: event[NAME],
-                                                id: event[CHECKED]});
     }
     else
     {
-      window.services['ecmascript-debugger'].requestRemoveBreakpoint(0, [event[CHECKED]]);
-      window.messages.post("breakpoint-removed", {event_type: event[NAME],
-                                                  id: event[CHECKED]});
+      this._bps.remove_event_breakpoint(event[CHECKED], event[NAME]);
       this._breakpoints[event[CHECKED]] = 0;
       event[CHECKED] = 0;
     }
@@ -380,7 +374,7 @@ cls.EventBreakpoints = function()
     {
       if (old_events[event_name])
       {
-        window.services['ecmascript-debugger'].requestRemoveBreakpoint(0, [old_events[event_name]]);
+        this._bps.remove_event_breakpoint(old_events[event_name], event_name);
         this._breakpoints[old_events[event_name]] = 0;
       }
     }

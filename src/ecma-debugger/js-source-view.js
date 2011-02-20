@@ -758,7 +758,7 @@ cls.JsSourceView = function(id, name, container_class)
     return false;
   }
   
-  this._onbreakpointchange = function(msg)
+  this._onbreakpointupdated = function(msg)
   {
     if (__current_script && __current_script.script_id == msg.script_id)
     {
@@ -773,10 +773,7 @@ cls.JsSourceView = function(id, name, container_class)
   this.init(id, name, container_class);
   messages.addListener('update-layout', updateLayout);
   messages.addListener('runtime-destroyed', onRuntimeDestroyed);
-  this._onbreakpointchange_bound = this._onbreakpointchange.bind(this);
-  messages.addListener('breakpoint-added', this._onbreakpointchange_bound);
-  messages.addListener('breakpoint-removed', this._onbreakpointchange_bound);
-  messages.addListener('breakpoint-state-changed', this._onbreakpointchange_bound);
+  messages.addListener('breakpoint-updated', this._onbreakpointupdated.bind(this));
   
   ActionBroker.get_instance().register_handler(this);
 }

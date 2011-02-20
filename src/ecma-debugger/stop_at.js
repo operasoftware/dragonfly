@@ -231,13 +231,14 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
       {
         topCell.showView(views.js_source.id);
       }
+      var top_frame = callstack[0];
       var plus_lines = views.js_source.getMaxLines() <= 10 ? 
                        views.js_source.getMaxLines() / 2 >> 0 :
                        10;
-      if (views.js_source.showLine(stop_at.script_id, stop_at.line_number - plus_lines))
+      if (views.js_source.showLine(top_frame.script_id, top_frame.line - plus_lines))
       {
-        runtimes.setSelectedScript(stop_at.script_id);
-        views.js_source.showLinePointer(stop_at.line_number, true);
+        runtimes.setSelectedScript(top_frame.script_id);
+        views.js_source.showLinePointer(top_frame.line, true);
       }
       toolbars.js_source.enableButtons('continue');
       messages.post('thread-stopped-event', {stop_at: stop_at});
