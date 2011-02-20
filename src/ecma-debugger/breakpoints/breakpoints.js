@@ -38,6 +38,94 @@ cls.Breakpoints = function()
   BP_NONE = cls.NewScript.BP_NONE;
   BP_DELTA_CONDITION = cls.NewScript.BP_ENABLED_CONDITION - 
                        cls.NewScript.BP_ENABLED;
+                       
+  BP_DISABLED = window.cls.NewScript.BP_DISABLED,
+  BP_ENABLED = window.cls.NewScript.BP_ENABLED,
+  DELTA_ENABLE_BP = BP_ENABLED - BP_DISABLED;
+  
+    
+
+  this.get_breakpoint_id = (function()
+  {
+    var count = 1;
+    return function() {return count++;}
+  })();
+  
+  this.copy_breakpoints = function(new_script, old_script)
+  {
+    new_script.breakpoint_states = old_script.breakpoint_states;
+    this._replace_script_id(new_script.script_id, old_script.script_id);
+    var old_break_points = old_script.breakpoints;
+    for (line_nr in old_break_points)
+    {
+      if (old_break_points[line_nr])
+      {
+        this.add_breakpoint(new_script.script_id,
+                            parseInt(line_nr),
+                            old_break_points[line_nr]);
+      }
+    }
+  }
+  
+  this.script_has_breakpoint_on_line = function(script_id, line_nr)
+  {
+    var script = window.runtimes.getScript(script_id);
+    return Boolean(script && script.breakpoints[line_nr]);
+  }
+
+  this.add_breakpoint = function(script_id, line_nr, b_p_id)
+  {
+    var script = window.runtimes.getScript(script_id);
+    if (script)
+    {
+      b_p_id = b_p_id ||
+               // if a breakpoint was set on the same script and line before
+               this.get_breakpoint_id_with_script_id_and_line_nr(script_id, 
+                                                                      line_nr) ||
+               this.get_breakpoint_id();
+      script.breakpoints[line_nr] = b_p_id;
+      if (!script.breakpoint_states[line_nr])
+      {
+        script.breakpoint_states[line_nr] = BP_DISABLED;
+      }
+      if (script.breakpoint_states[line_nr] < BP_ENABLED)
+      {
+        script.breakpoint_states[line_nr] += DELTA_ENABLE_BP;
+      }
+      // message signature has changes with version 6.0
+      // AddBreakpoint means always to a source line
+      // for events it's now AddEventBreakpoint
+      if (this._esdb.major_version > 5)
+      {
+        this._esdb.requestAddBreakpoint(0, [b_p_id, script_id, line_nr]);
+      }
+      else
+      {
+        this._esdb.requestAddBreakpoint(0, [b_p_id, "line", script_id, line_nr]);
+      }
+      window.messages.post("breakpoint-added", {script_id: script_id,
+                                                line_nr: line_nr,
+                                                id: b_p_id});
+    }
+  };
+  
+  this.remove_breakpoint = function(script_id, line_nr)
+  {
+    var script = window.runtimes.getScript(script_id);
+    if (script)
+    {
+      var b_p_id = script.breakpoints[line_nr];
+      this._esdb.requestRemoveBreakpoint(0, [b_p_id]);
+      script.breakpoints[line_nr] = 0;
+      if (script.breakpoint_states[line_nr] >= BP_ENABLED)
+      {
+        script.breakpoint_states[line_nr] -= DELTA_ENABLE_BP;
+      }
+      window.messages.post("breakpoint-removed", {script_id: script_id,
+                                                  line_nr: line_nr,
+                                                  id: b_p_id});
+    }
+  };
 
   this.get_breakpoints = function()
   {
@@ -150,13 +238,13 @@ cls.Breakpoints = function()
     window.views.breakpoints.update();
   };
 
-  this._onscriptidreplaced = function(msg)
+  this._replace_script_id = function(new_script_id, old_script_id)
   {
     for (var i = 0, bp; bp = this._bps[i]; i++)
     {
-      if (bp.script_id == msg.old_script_id)
+      if (bp.script_id == old_script_id)
       {
-        bp.script_id = msg.new_script_id;
+        bp.script_id = new_script_id;
       }
     }
   };
@@ -167,17 +255,13 @@ cls.Breakpoints = function()
     return i;
   }
 
-
-
-
-
   this._init = function()
   {
     this._bps = [];
     this._bp_class = window.cls.Breakpoint;
+    this._esdb = window.services['ecmascript-debugger'];
     window.messages.addListener('breakpoint-added', this._onbpadded.bind(this));
     window.messages.addListener('breakpoint-removed', this._onbpremoved.bind(this));
-    window.messages.addListener('script-id-replaced', this._onscriptidreplaced.bind(this));
     
   }
 

@@ -125,12 +125,12 @@ cls.BreakpointsView = function(id, name, container_class)
       if (is_checked)
       {
         bp.is_enabled = true;
-        window.runtimes.setBreakpoint(bp.script_id, bp.line_nr, bp.id);
+        this._bps.add_breakpoint(bp.script_id, bp.line_nr, bp.id);
       }
       else
       {
         bp.is_enabled = false;
-        window.runtimes.removeBreakpoint(bp.script_id, bp.line_nr);
+        this._bps.remove_breakpoint(bp.script_id, bp.line_nr);
       }
     }
     else if(bp.event_type)

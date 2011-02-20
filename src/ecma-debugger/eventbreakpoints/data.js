@@ -308,7 +308,7 @@ cls.EventBreakpoints = function()
     if (checked)
     {
       event[CHECKED] = this._bps.get_breakpoint_id_with_event_name(event[NAME]) ||
-                       window.runtimes.getBreakpointId();
+                       this._bps.get_breakpoint_id();
       this._breakpoints[event[CHECKED]] = event;
       window.services['ecmascript-debugger'].requestAddEventBreakpoint(0, [event[CHECKED], event[NAME]]);
       window.messages.post("breakpoint-added", {event_type: event[NAME],

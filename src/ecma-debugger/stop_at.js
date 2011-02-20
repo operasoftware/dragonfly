@@ -326,7 +326,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
               // this is a workaround for Bug 328220
               // if there is a breakpoint at the first statement of a script
               // the event for stop at new script and the stop at breakpoint are the same
-             || runtimes.hasBreakpoint(stopAt.script_id, line) )
+             || this._bps.script_has_breakpoint_on_line(stopAt.script_id, line))
         {
           if( runtimes.getSelectedRuntimeId() != runtime_id )
           {
@@ -427,6 +427,8 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     __selected_frame_index = msg.frame_index;
   }
 
+  this._bps = cls.Breakpoints.get_instance();
+  
   messages.addListener('active-inspection-type', onActiveInspectionType);
 
 
