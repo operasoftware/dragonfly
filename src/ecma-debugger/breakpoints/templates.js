@@ -7,7 +7,8 @@
     ['div', 
       'condition: ', 
       ['span', condition || ''], 
-      'class', 'condition'
+      'class', 'condition',
+      'edit-handler', 'edit-condition'
     ]);
   }
   this.breakpoint = function(bp)
