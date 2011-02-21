@@ -46,7 +46,7 @@ cls.CookieManager.StorageDataBase = function()
     return this.item_list;
   }
 
-  this.create_objectref = function(cookie, runtimes, fixed_name) // public only to be used directly from view
+  this.create_objectref = function(cookie, runtimes, fixed_name)
   {
     return ((fixed_name || (cookie.domain + "/" + cookie.path + "/" + cookie.name + "/")) + (runtimes || "")).replace(/'/g,"");
   };
@@ -126,6 +126,32 @@ cls.CookieManager.StorageDataBase = function()
     return true;
   };
 
+  this.write_item = function(c)
+  {
+    // todo: find runtimes where this will probably end up to make the selection restore work
+    this._view._restore_selection = [
+      this.create_objectref(
+        {
+          domain: c.domain,
+          name:   c.name,
+          value:  c.value,
+          path:   c.path
+        },
+        c.runtime
+      )
+    ];
+
+    var add_cookie_script = 'document.cookie="' + c.name + '=' + encodeURIComponent(c.value);
+    if(c.expires) // in case of 0 value the "expires" value should not be written, represents "Session" value
+    {
+      add_cookie_script += '; expires='+ (new Date(c.expires).toUTCString());
+    }
+    add_cookie_script += '; path=' + c.path + '"';
+    var script = add_cookie_script;
+    var tag = tagManager.set_callback(this, this.refetch, [c.runtime]);
+    services['ecmascript-debugger'].requestEval(tag,[c.runtime, 0, 0, script]);
+  }
+
   this._flatten_data = function(cookies, runtimes)
   {
     var flattened_cookies = [];
@@ -142,8 +168,8 @@ cls.CookieManager.StorageDataBase = function()
             runtimes:     domaincookies.runtimes,
             /**
              * Decide if the cookie can be edited.
-             * The cookie.domain and .isHTTPOnly conditions should be removed when a new "add cookie"
-             * interface is used, which will allow specifying the domain when creating cookies
+             * The cookie.domain and .isHTTPOnly conditions applies only when the "add cookie"
+             * interface is not used, which allows specifying the domain when creating cookies
              * cookie_service 1.0.2 fixes CORE-35055 -> correct paths, allows for editing
             */
             is_editable:  this._is_min_service_version("1.1") || (
@@ -155,7 +181,7 @@ cls.CookieManager.StorageDataBase = function()
              * Decide if the cookie can be removed.
              * Cookie retrieved via JS can't reliably be removed because domain (and path) are unknown.
              * Also while path info is mostly incorrect when present (CORE-35055), cookie with path
-             * won't be removable for now.
+             * won't be removable for service_versions < 1.0.2.
             */
             is_removable: (
                             current_cookie.domain !== undefined &&
@@ -184,7 +210,6 @@ cls.CookieManager.StorageDataBase = function()
 
   this._request_runtime_details = function(rt_object)
   {
-    // console.log("_request_runtime_details", rt_object);
     var script = "return JSON.stringify({hostname: location.hostname || '', pathname: location.pathname || ''})";
     var tag = tagManager.set_callback(this, this._handle_get_domain,[rt_object.rt_id]);
     services['ecmascript-debugger'].requestEval(tag,[rt_object.rt_id, 0, 0, script]);
@@ -338,39 +363,12 @@ cls.CookieManager.StorageDataBase = function()
 
 cls.CookieManager["1.0"].CookieManagerData = function(service_version, view)
 {
-  // console.log("init 1.0");
-  this.write_item = function(c)
-  {
-    // todo: find runtimes where this will probably end up to make the selection restore work
-    this._view._restore_selection = [
-      this.create_objectref(
-        {
-          domain: c.domain,
-          name:   c.name,
-          value:  c.value,
-          path:   c.path
-        },
-        c.runtime
-      )
-    ];
-
-    var add_cookie_script = 'document.cookie="' + c.name + '=' + encodeURIComponent(c.value);
-    if(c.expires) // in case of 0 value the "expires" value should not be written, represents "Session" value
-    {
-      add_cookie_script += '; expires='+ (new Date(c.expires).toUTCString());
-    }
-    add_cookie_script += '; path=' + c.path + '"';
-    var script = add_cookie_script;
-    var tag = tagManager.set_callback(this, this.refetch, [c.runtime]);
-    services['ecmascript-debugger'].requestEval(tag,[c.runtime, 0, 0, script]);
-  }
   this._init(service_version, view);
 }
 cls.CookieManager["1.0"].CookieManagerData.prototype = new cls.CookieManager.StorageDataBase();
 
 cls.CookieManager["1.1"].CookieManagerData = function(service_version, view)
 {
-  // console.log("init CookieManagerData 1.1");
   this.write_item = function(c)
   {
     this._view._restore_selection = [

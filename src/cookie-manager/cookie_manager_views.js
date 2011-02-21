@@ -4,7 +4,7 @@ cls.CookieManager["1.0"] || (cls.CookieManager["1.0"] = {});
 
 cls.CookieManager.CookieManagerViewBase = function()
 {
-  /** 
+  /**
     * CookieManagerViewBase
     *
     * this.createView = function(container)
@@ -21,7 +21,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     this._tabledef = {
       groups: {
         host_and_path: {
-          label:   "Host and path",
+          label:   ui_strings.S_LABEL_COOKIE_MANAGER_GROUPER_HOST_AND_PATH,
           grouper: (function(obj) {
             // todo: check to avoid using this._rts (to skip the bind) by putting hostname etc on the cookie_object directly?
             // would remove lots of this cryptic this._rts[obj.runtimes[0]].pathname stuff.
@@ -126,7 +126,7 @@ cls.CookieManager.CookieManagerViewBase = function()
         {
           return [
             {
-              label: "Refresh",
+              label: ui_strings.S_LABEL_STORAGE_UPDATE,
               handler: (function(){ this._data_reference.refetch() }).bind(this)
             }
           ]
@@ -155,15 +155,17 @@ cls.CookieManager.CookieManagerViewBase = function()
   this.select_row = function(event, elem) // public just towards actions
   {
     var event = event || {};
-    var was_selected = elem.hasClass("selected");
-    var is_in_edit_mode = elem.hasClass("edit_mode");
-    // unselect everything, as long as
-    //   not doing multiple selection. that's when:
-    //     cmd / ctrl key is used
-    //     more than 1 item selected and event is a right-click
-    //   not currently editing this row
+    /**
+      *
+      * unselect everything while not doing multiple selection mode.
+      * that's when:
+      *   cmd / ctrl key is pressed
+      *   OR
+      *   more than 1 item is already selected and event is a right-click
+      *
+      */
     var selection = document.querySelectorAll(".sortable-table .selected");
-    if(!( event.ctrlKey || (event.button === 2 && selection.length > 1) ))
+    if(!( event.ctrlKey || (selection.length > 1 && event.button === 2) ))
     {
       for (var i=0; i < selection.length; i++) {
         selection[i].removeClass("selected");
@@ -172,7 +174,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     elem.addClass("selected");
   };
 
-  this.insert_add_item_row = function(row, runtime) // public just towards actions
+  this.insert_add_item_row = function(row, runtime)
   {
     var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row(runtime, this._data_reference._rts));
     var inserted = row.parentElement.insertBefore(templ, row);
@@ -180,7 +182,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     return inserted;
   }
 
-  this.enter_edit_mode = function(objectref, event) // public just towards actions
+  this.enter_edit_mode = function(objectref, event)
   {
     var table_elem = document.querySelector(".sortable-table");
     var sortable_table = ObjectRegistry.get_instance().get_object(table_elem.getAttribute("data-object-id"));
@@ -191,7 +193,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     // Todo: focus input in clicked td if applicable
   }
 
-  this.check_to_exit_edit_mode = function(event, target) // public just towards actions
+  this.check_to_exit_edit_mode = function(event, target)
   {
     this._resume_redraw();
     if(document.querySelector(".edit_mode"))
@@ -210,7 +212,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     }
   }
 
-  this.exit_edit_and_save = function() // public just towards actions
+  this.exit_edit_and_save = function()
   {
     this._resume_redraw();
     var edit_tr = document.querySelector("tr.edit_mode");
@@ -220,7 +222,7 @@ cls.CookieManager.CookieManagerViewBase = function()
 
       var is_secure_input    = edit_tr.querySelector("[name=is_secure]");
       var is_http_only_input = edit_tr.querySelector("[name=is_http_only]");
-      var runtime_input      = edit_tr.querySelector("[name=add_cookie_runtime]");
+      var runtime_elem      = edit_tr.querySelector("[name=add_cookie_runtime]");
       var domain_input       = edit_tr.querySelector("[name=domain]");
 
       var name         = edit_tr.querySelector("[name=name]").value.trim();
@@ -229,32 +231,31 @@ cls.CookieManager.CookieManagerViewBase = function()
       var path         = edit_tr.querySelector("[name=path]").value.trim();
       var is_secure    = !!(is_secure_input && is_secure_input.checked);
       var is_http_only = !!(is_http_only_input && is_http_only_input.checked);
-      // "runtime" comes from [select] or [input type=hidden], domain comes directly from [input]
-      // or from the runtimes .hostname in case there's a limited choice because addcookie is not
-      // present
-      var runtime      = runtime_input && parseInt(runtime_input.value.split(",")[0]);
+      // "runtime" is val of [select] or [input type=hidden] (no add_cookie service)
+      var runtime      = runtime_elem && parseInt(runtime_elem.value.split(",")[0]);
+      // "domain" is val of [input] (with add_cookie service present), or runtimes .hostname
       var domain       = domain_input && domain_input.value.trim() || runtime && this._data_reference._rts[runtime].hostname;
 
-      var cookie;
       var object_id = edit_tr.getAttribute("data-object-id");
+      var old_cookie;
       if(object_id)
       {
-        cookie = this._data_reference.get_item_by_objectref(object_id);
-      }
-      // check if unmodified
-      if(cookie &&
-          (
-            name === cookie.name &&
-            value === cookie.value &&
-            expires === new Date(cookie.expires*1000).getTime() &&
-            path === cookie.path &&
-            is_secure === cookie.isSecure &&
-            is_http_only === cookie.isHTTPOnly &&
-            domain === this._data_reference._rts[cookie.runtimes[0]].hostname // todo: probably compare with cookie.domain if set
-          )
-      )
-      {
-        return;
+        old_cookie = this._data_reference.get_item_by_objectref(object_id);
+        // check if unmodified
+        if(old_cookie &&
+            (
+              name === old_cookie.name &&
+              value === old_cookie.value &&
+              expires === new Date(old_cookie.expires*1000).getTime() &&
+              path === old_cookie.path &&
+              is_secure === old_cookie.isSecure &&
+              is_http_only === old_cookie.isHTTPOnly &&
+              domain === (old_cookie.domain || this._data_reference._rts[old_cookie.runtimes[0]].hostname)
+            )
+        )
+        {
+          return;
+        }
       }
 
       if(domain && name)
@@ -269,11 +270,11 @@ cls.CookieManager.CookieManagerViewBase = function()
           is_http_only: +is_http_only,
           runtime:      runtime
         }
-        
-        if(cookie)
+
+        if(old_cookie)
         {
-          // remove old cookie, on finished add new cookie
-          this._data_reference.remove_item(cookie.objectref, (function(cookie_desc, dataref){
+          // remove old_cookie, on finished add new cookie
+          this._data_reference.remove_item(old_cookie.objectref, (function(cookie_desc, dataref){
             return function(status, message)
             {
               dataref.write_item(cookie_desc);
@@ -282,7 +283,6 @@ cls.CookieManager.CookieManagerViewBase = function()
         }
         else
         {
-          // only add new cookie
           this._data_reference.write_item(new_cookie_desc);
         }
       }
@@ -367,7 +367,7 @@ cls.CookieManager.CookieManagerViewBase = function()
             // Add cookie
             options.push(
               {
-                label: "Add cookie",
+                label: ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE,
                 handler: function() {
                   var runtime = selected_cookie_objects[0].runtimes[0];
                   var inserted = this.insert_add_item_row(row, runtime);
@@ -381,7 +381,7 @@ cls.CookieManager.CookieManagerViewBase = function()
             {
               options.push(
                 {
-                  label: "Edit cookie",
+                  label: ui_strings.S_LABEL_COOKIE_MANAGER_EDIT_COOKIE,
                   handler: (function() {
                     this.enter_edit_mode(sel_cookie_obj.objectref);
                   }).bind(this)
@@ -392,7 +392,7 @@ cls.CookieManager.CookieManagerViewBase = function()
             {
               options.push(
                 {
-                  label: "Remove cookie",
+                  label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIE,
                   handler: (function() {
                     this._data_reference.remove_item(sel_cookie_obj.objectref);
                   }).bind(this)
@@ -403,7 +403,7 @@ cls.CookieManager.CookieManagerViewBase = function()
             var runtime = this._data_reference._rts[sel_cookie_obj.runtimes[0]];
             options.push(
               {
-                label: "Remove cookies of " + runtime.hostname + runtime.pathname,
+                label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES_OF.replace(/%s/, runtime.hostname + runtime.pathname),
                 handler: (function(runtime_id, context){
                   return function() {
                     var items = context._data_reference.get_items();
@@ -433,7 +433,7 @@ cls.CookieManager.CookieManagerViewBase = function()
             {
               options.push(
                 {
-                  label: "Remove cookie "+(removable_cookies[0].name || ""),
+                  label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIE,
                   handler: (function() {
                     this._data_reference.remove_item(removable_cookies[0].objectref);
                   }).bind(this)
@@ -444,7 +444,7 @@ cls.CookieManager.CookieManagerViewBase = function()
             {
               options.push(
                 {
-                  label: "Remove selected cookies",
+                  label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES,
                   handler: (function(removable_cookies, context) {
                     return function()
                     {
@@ -585,7 +585,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     }
     return window.templates.cookie_manager.unknown_value();
   }
-  
+
   this._is_secure_renderer = function(obj)
   {
     if(obj.is_runtimes_placeholder)
@@ -632,7 +632,6 @@ cls.CookieManager["1.1"] || (cls.CookieManager["1.1"] = {});
 cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class, data_reference, service_version)
 {
   var data = data_reference;
-  // init func takes this as this._data_reference
   if(typeof data_reference === "function")
   {
     data = new data_reference(service_version, this);

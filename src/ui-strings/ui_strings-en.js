@@ -522,6 +522,18 @@ ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRED = "(expired)";
 ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY = "HTTP only";
 /* DESC: Label for isSecure flag on a cookie, set if cookie is only transmitted on secure connections */
 ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY = "Secure";
+/* DESC: Label for grouping by (location.hostname + location.pathname) */
+ui_strings.S_LABEL_COOKIE_MANAGER_GROUPER_HOST_AND_PATH = "Host and path";
+/* DESC: Context menu entry that brings up "Add cookie" UI */
+ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE = "Add Cookie";
+/* DESC: Context menu entry that brings up "Edit cookie" UI */
+ui_strings.S_LABEL_COOKIE_MANAGER_EDIT_COOKIE = "Edit cookie";
+/* DESC: Context menu entry that removes cookie */
+ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIE = "Remove cookie";
+/* DESC: Context menu entry that removes cookies (plural) */
+ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES = "Remove cookies";
+/* DESC: Context menu entry that removes cookies of specific group */
+ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES_OF = "Remove cookies of %s";
 /* DESC: Label of the section with the scvope chaine in the Inspection view */
 ui_strings.S_LABEL_SCOPE_CHAIN = 'Scope Chain';
 /*
@@ -630,5 +642,3 @@ ui_strings.S_REPL_WELCOME_TEXT = "Use the clear() command to clear the console.\
 ui_strings.S_REPL_HELP_COMMAND_DESC = "Show a list of all available commands";
 /* DESC: Description of the "jquery" command in the repl */
 ui_strings.S_REPL_JQUERY_COMMAND_DESC = "Load jquery in the active tab";
-/* DESC: Headline for section that adds cookies in the cookie manager */
-ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE_HEADLINE = "Add Cookie";
