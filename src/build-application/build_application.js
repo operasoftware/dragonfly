@@ -28,7 +28,6 @@
  * window.app.on_services_enabled
  *
  */
-
 if( window.app )
 {
   throw "window.app does already exist";
