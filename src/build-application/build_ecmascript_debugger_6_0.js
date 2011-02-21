@@ -141,12 +141,11 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
 
     /* storage objects and cookies */
     new cls.Namespace("storages");
-    var ls = new cls.LocalStorageData(
+    window.storages.add(new cls.LocalStorageData(
       'local_storage',
       'local-storage',
       ui_strings.M_VIEW_LABEL_LOCAL_STORAGE,
-      'localStorage');
-    window.storages.add(ls);
+      'localStorage'));
     window.storages.add(new cls.LocalStorageData(
       'session_storage',
       'session-storage',
@@ -165,7 +164,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     new cls.StorageView('session_storage', ui_strings.M_VIEW_LABEL_SESSION_STORAGE, 'scroll');
     new cls.StorageView('cookies', ui_strings.M_VIEW_LABEL_COOKIES, 'scroll');
     new cls.StorageView('widget_preferences', ui_strings.M_VIEW_LABEL_WIDGET_PREFERNCES, 'scroll');
-    // new cls.Local_Storage["1.0"].View("new_local_storage", "Local Storage_", "scroll cookie_manager", ls, "new_local_storage");
+
     /* the following views must be created to get entry in the Settings tab */
 
     /* Environment */
