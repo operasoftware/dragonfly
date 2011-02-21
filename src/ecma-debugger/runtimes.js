@@ -124,12 +124,12 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
 
   var registerRuntime = function(id)
   {
-    if( !(id in __runtimes) )
+    if (!(id in __runtimes))
     {
       opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
                       'runtime id does not exist');
       __runtimes[id] = null;
-      services['ecmascript-debugger'].getRuntime( tagManager.set_callback(null, parseRuntime), id );
+      services['ecmascript-debugger'].getRuntime(tagManager.set_callback(null, parseRuntime), id);
     }
   }
 
@@ -388,42 +388,37 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
     var new_script_id = script.script_id;
     var new_rt = __runtimes[script.runtime_id];
     var old_rt = null;
-    var old_break_points = null;
     var line_nr = '';
 
-    for( sc in __scripts )
+    for (sc in __scripts)
     {
-      old_rt = __runtimes[__scripts[sc].runtime_id] || __old_runtimes[__scripts[sc].runtime_id] || {};
+      old_rt = __runtimes[__scripts[sc].runtime_id] || 
+               __old_runtimes[__scripts[sc].runtime_id] || {};
       // TODO check for script-type as well?
-      if( (
-            ( __scripts[sc].uri && __scripts[sc].uri == script.uri )
+      if ((
+            (__scripts[sc].uri && __scripts[sc].uri == script.uri)
             || __scripts[sc].script_data == script.script_data
           ) &&
           old_rt.uri == new_rt.uri &&
-          ( old_rt.window_id == new_rt.window_id ||
-            ( new_rt.opener_window_id &&
-              old_rt.opener_window_id == new_rt.opener_window_id  ) ) &&
-          old_rt.html_frame_path == new_rt.html_frame_path )
+          (old_rt.window_id == new_rt.window_id ||
+            (new_rt.opener_window_id &&
+             old_rt.opener_window_id == new_rt.opener_window_id)) &&
+          old_rt.html_frame_path == new_rt.html_frame_path)
       {
         is_known = true;
         break;
       }
     }
     __scripts[new_script_id] = script;
-    if( is_known )
+    if (is_known)
     {
-      old_break_points = __scripts[sc].breakpoints;
-      for( line_nr in old_break_points )
-      {
-        // do we need to remove the old breakpoints?
-        self.setBreakpoint(new_script_id, parseInt(line_nr));
-      }
-      if( __scripts[sc].script_id == __selected_script )
+      self._bps.copy_breakpoints(script, __scripts[sc]);
+      if (__scripts[sc].script_id == __selected_script)
       {
         __selected_script = new_script_id;
       }
       // the script could be in a pop-up window
-      if( old_rt.window_id == new_rt.window_id )
+      if (old_rt.window_id == new_rt.window_id)
       {
         __replaced_scripts[sc] = script;
         delete __scripts[sc];
@@ -439,27 +434,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
       views['js_source'].update();
       window['cst-selects']['js-script-select'].updateElement();
       window['cst-selects']['cmd-runtime-select'].updateElement();
-
     }
-  }
-
-/*
-"<new-script>"
-   "<runtime-id>" UNSIGNED "</runtime-id>"
-   "<script-id>" UNSIGNED "</script-id>"
-   "<script-type>"
-      ( "inline" | "event" | "linked" | "timeout" | "java" | "unknown" )
-   "</script-type>"
-   "<script-data>" TEXT "</script-data>"
-   "<uri>" TEXT "</uri>"             ; present if SCRIPT-TYPE is "linked"
- "</new-script>" ;
-*/
-
-  var breakpoint_count = 1;
-
-  this.getBreakpointId = function()
-  {
-    return ( breakpoint_count++ );
   }
 
   var script_count = 1;
@@ -618,38 +593,13 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
     __threads = [];
   }
 
-
-
   this.onNewScript = function(status, message)
   {
-
-    const
-    RUNTIME_ID = 0,
-    SCRIPT_ID = 1,
-    SCRIPT_TYPE = 2,
-    SCRIPT_DATA = 3,
-    URI = 4;
-
-    var script =
-    {
-      runtime_id: message[RUNTIME_ID],
-      script_id: message[SCRIPT_ID],
-      script_type: message[SCRIPT_TYPE],
-      script_data: message[SCRIPT_DATA],
-      uri: message[URI]
-    };
-
-    if( !script.script_data )
-    {
-      script.script_data = '';
-    }
-
+    var script = new cls.NewScript(message);
     if( is_runtime_of_debug_context(script.runtime_id))
     {
-      script.breakpoints = {};
-      script.stop_ats = [];
-      registerRuntime( script.runtime_id );
-      registerScript( script );
+      registerRuntime(script.runtime_id);
+      registerScript(script);
     }
   }
 
@@ -1089,48 +1039,6 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
     return ret;
   }
 
-
-  this.hasBreakpoint = function(script_id, line_nr)
-  {
-    return __scripts[script_id] && (line_nr in __scripts[script_id].breakpoints);
-  }
-
-
-
-  if (service_version == "6.0")
-  {
-    this.setBreakpoint = function(script_id, line_nr)
-    {
-      if (!__scripts[script_id]) { return; }
-      var b_p_id = __scripts[script_id].breakpoints[line_nr] = this.getBreakpointId();
-      // message signature has changes, AddBreakpoint means always to a source line
-      // for events it's now AddEventBreakpoint
-      services['ecmascript-debugger'].requestAddBreakpoint(0, [b_p_id, script_id, line_nr]);
-    }
-  }
-  else
-  {
-    this.setBreakpoint = function(script_id, line_nr)
-    {
-      if (!__scripts[script_id]) { return; }
-      var b_p_id = __scripts[script_id].breakpoints[line_nr] = this.getBreakpointId();
-      services['ecmascript-debugger'].requestAddBreakpoint(0, [b_p_id, "line", script_id, line_nr]);
-    }
-  }
-
-  this.removeBreakpoint = function(script_id, line_nr)
-  {
-    services['ecmascript-debugger'].requestRemoveBreakpoint(0,
-      [__scripts[script_id].breakpoints[line_nr]] );
-    delete __scripts[script_id].breakpoints[line_nr];
-  }
-
-  this.getBreakpoints = function(script_id)
-  {
-    return __scripts[script_id] && __scripts[script_id].breakpoints;
-  }
-
-
   this.setUnfolded = function(runtime_id, view, is_unfolded)
   {
 
@@ -1312,9 +1220,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
     }
   }
 
-
-
-
+  this._bps = cls.Breakpoints.get_instance();
 
   messages.addListener("thread-stopped-event", onThreadStopped);
   messages.addListener("thread-continue-event", onThreadContinue);

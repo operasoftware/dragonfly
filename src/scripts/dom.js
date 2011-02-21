@@ -24,7 +24,8 @@
   });
 })();
 */
-/*
+
+/* testing in Chrome or FF
 if (document.createElementNS && 
     document.createElement('div').namespaceURI != 'http://www.w3.org/1999/xhtml')
 {  
@@ -34,6 +35,7 @@ if (document.createElementNS &&
   };
 }
 */
+
 if (!Element.prototype.contains)
 {
   Element.prototype.contains = function(ele)
@@ -112,10 +114,7 @@ Element.prototype.render = Document.prototype.render = function(args, namespace)
           ele = doc.createElementNS(namespace, first_arg.slice(prefix_pos + 1));
         else
         {
-          try
-          {
           ele = first_arg in CustomElements ? CustomElements[first_arg].create() : doc.createElement(first_arg);
-          }catch(e){debugger;};
         }
         i++;
       }
@@ -788,6 +787,7 @@ String.prototype.contains = function(str)
 Array.prototype.extend = function(list)
 {
   this.push.apply(this, list);
+  return this;
 }
 
 /**

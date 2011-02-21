@@ -22,7 +22,7 @@ var TabsBase = function()
   this.tabs = [];
   this.activeTab = '';
 
-  this._history = [];
+  
 
   this.hasTab = function(ref_id)
   {
@@ -332,6 +332,7 @@ var TabsBase = function()
 
 var Tabs = function(cell, tabbar)
 {
+  this._history = [];
   this.init(cell, tabbar);
 }
 

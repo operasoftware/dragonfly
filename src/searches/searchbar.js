@@ -16,6 +16,10 @@ var SearchbarBase = function()
   this.left = 0;
   this.is_dirty = true;
 
+
+
+  window.cls.MessageMixin.apply(this); // mix in message handler behaviour.
+
   this.setDimensions = function(force_redraw)
   {
     var dim = 0;
@@ -25,7 +29,7 @@ var SearchbarBase = function()
     {
       this.setCSSProperties()
     }
-    dim = this.cell.top - this.cell.toolbar.getBottomPosition();
+    dim = this.cell.toolbar.getBottomPosition();
     if (dim != this.top)
     {
       this.is_dirty = true;
@@ -53,13 +57,11 @@ var SearchbarBase = function()
       this.height = dim;
       this.offsetHeight = dim + this.vertical_border_padding;
     }
-
-    this.update(force_redraw)
-    // TODO
-    // this.horizontal_nav.check_width();
+    this.update(force_redraw);
   };
   
-  /*
+  // TODO common with toolbar  toolbar
+
   this.__defineGetter__("offsetHeight", function()
   {
     if (!this.default_height)
@@ -73,31 +75,30 @@ var SearchbarBase = function()
   {
     this._offset_height = offset_height;
   });
-  */
+  
 
-  /*
+  
   this.setVisibility = function(is_visible)
   {
     this.__is_visible = is_visible;
     if (this.cell && this.isvisible() && !is_visible)
     {
-      var modebar = this.getElement();
-      modebar.parentNode.removeChild(modebar);
+      var searchbar = this.getElement();
+      searchbar.parentNode.removeChild(searchbar);
     }
   };
 
-
-  this.setup = function(view_id)
+  this.attributes =
   {
-    // TODO
-    // this.element = document.getElementById(this.type + '-to-' + this.cell.id) || this.update();
-    // this.element.appendChild(this.horizontal_nav.element);
-  };
-  */  
+    'focus-handler': 'focus',
+    'blur-handler': 'blur'
+  }
 
-  this.init = function(view_id)
+  // end common with toolbar  toolbar
+
+ 
+  this.init = function()
   {
-    (window.searches || (window.searches = view_id))[view_id] = this;
     this.initBase();
   };
 };

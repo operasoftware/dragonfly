@@ -26,8 +26,8 @@ cls.SimpleJSParser.prototype = new function()
   /**
     * Creates html markup to syntax highlight a slice of a js scource file.
     * @param {Object} script
-    *     An object with the properties source_data, line_arr, state_arr.
-    *     source_data is the whole source file.
+    *     An object with the properties script_data, line_arr, state_arr.
+    *     script_data is the whole source file.
     *     line_arr is a list with offset for each new line
     *     satte_arr is the according list with the state for each line
     * @param {Number} line The line number to start the formatting.
@@ -979,7 +979,7 @@ cls.SimpleJSParser.prototype = new function()
     parser=default_parser;
     __previous_type='';
     __type=IDENTIFIER;
-    __source = script.source;
+    __source = script.script_data;
     __escape = ESCAPE;
     var length=__source.length;
     __pointer = script.line_arr[line];
@@ -1033,7 +1033,7 @@ cls.SimpleJSParser.prototype = new function()
     parser(__source.charAt(__pointer));
   }
 
-  this.tokenize = function(script_source, ontoken, espace)
+  this.tokenize = function(script_source, ontoken, espace, start_state)
   {
     parser = default_parser;
     __previous_type = '';
@@ -1044,6 +1044,13 @@ cls.SimpleJSParser.prototype = new function()
     __ontoken = ontoken;
     __online = __online_tokenize;
     read_buffer = __read_buffer_tokenize;
+    if (start_state)
+    {
+      if (states[start_state]())
+      {
+        return;
+      }
+    }
     parser(__source.charAt(__pointer));
   };
 

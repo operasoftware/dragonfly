@@ -179,7 +179,11 @@ eventHandlers.click['show-search'] = function(event, target)
   var toolbar = UIBase.getUIById(target.get_attr('parent-node-chain', 'ui-id'));
   if (toolbar)
   {
-    opera.postError(toolbar.cell.container.view_id);
+    var search = UI.get_instance().get_search(toolbar.cell.container.view_id);
+    if (search)
+    {
+      target.getAttribute("is-active") == "true" ? search.hide() : search.show();
+    }
   }
 }
 
@@ -267,14 +271,15 @@ eventHandlers.click['toggle-remote-debug-config-overlay'] = function(event, targ
 
 eventHandlers.click['toggle-console'] = function(event, target)
 {
-  var ele = document.querySelector("[view_id=command_line]");
-  if (!ele)
+  if (!(window.views.command_line && window.views.command_line.isvisible()))
   {
-    UIWindowBase.showWindow('command_line', ((document.documentElement.clientHeight / 2) | 0), 0, document.documentElement.clientWidth + 5, ((document.documentElement.clientHeight / 2) | 0));
-    // TODO: don't do this here, there's no guarantee that the element exists
+    UIWindowBase.showWindow('command_line', 
+                            innerHeight/2, 0, 
+                            innerWidth, innerHeight/2);
     setTimeout(function() {
-      ele = document.querySelector("[view_id=command_line] textarea");
-      ele.focus();
+      var box = UI.get_instance().get_layout_box('command_line');
+      var ele = box && box.container.getElement();
+      ele && (ele = ele.getElementsByTagName('textarea')[0]) && ele.focus();
     }, 0);
   }
   else

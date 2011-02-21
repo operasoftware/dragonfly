@@ -1,104 +1,5 @@
 ﻿/**
   * @constructor 
-  */
-
-var BaseEditor = new function()
-{
-  // an editable element must have monospace font
-  
-  /* interface */
-  this.edit = 
-  this.oninput = 
-  // must return a valid navigation target or null
-  this.submit =
-  // must return a valid navigation target or null
-  this.cancel = 
-  // to handle click events while editing
-  // could be perhaps a base method
-  this.onclick = 
-  // must return a valid navigation target or null
-  this.nav_next =
-  // must return a valid navigation target or null
-  this.nav_previous = function(){return null};
-
-  var _init = function(instance)
-  {
-    this.context_enter = null;
-    this.context_cur = null;
-    this.base_style =
-    {
-      'font-family': '',
-      'line-height': 0,
-      'font-size': 0
-    }
-    this.char_width = 0;
-    this.line_height = 0;
-    this.cssText = '';
-    this.textarea_container = null;
-    this.textarea = null;
-    this.host_element_border_padding_left = 0;
-    this.host_element_border_padding_top = 0;
-    this.getInputHandler = function()
-    {
-      return function(event)
-      {
-        instance.oninput(event);
-      }
-    }
-  }
-
-  this.textarea_container_name = "textarea-container";
-  this.get_base_style = function(ele)
-  {
-    // stores style properties in base_style
-    // and creates the markup for the textarea
-    var
-    style = getComputedStyle(ele, null),
-    props = ['font-family', 'line-height', 'font-size'],
-    prop = null,
-    i = 0,
-    span = document.createElement('test-element'),
-    cssText = 'display:block;position:absolute;left:-100px;top:0;white-space:pre;';
- 
-    for( ; prop = props[i]; i++)
-    {
-      this.base_style[prop] = style.getPropertyValue(prop);
-      cssText += prop +':' + this.base_style[prop] + ';';
-    }
-    span.textContent = '1234567890';
-    document.documentElement.appendChild(span);
-    span.style.cssText = cssText;
-    this.char_width = span.offsetWidth / 10;
-    this.base_style['line-height'] = ( this.line_height = span.offsetHeight ) + 'px';
-    document.documentElement.removeChild(span);
-    // host element style
-    this.host_element_border_padding_left = 
-      parseInt(style.getPropertyValue('padding-left')) +
-      parseInt(style.getPropertyValue('border-left-width'));
-    this.host_element_border_padding_top = 
-      parseInt(style.getPropertyValue('padding-top')) +
-      parseInt(style.getPropertyValue('border-top-width'));
-    cssText = '';
-    for( prop in this.base_style )
-    {
-      cssText += prop +':' + this.base_style[prop] + ';';
-    }
-    this.textarea_container = document.createElement(this.textarea_container_name);
-    this.textarea = this.textarea_container.
-      appendChild(document.createElement('textarea'));
-    this.textarea.style.cssText = cssText;
-    this.textarea.oninput = this.getInputHandler();
-  }
-  this.__is_active = function(){return false};
-  this.__defineGetter__("is_active", function(){return this.__is_active()});
-  this.base_init = function(instance)
-  {
-    _init.apply(instance, [instance]);
-  }
-}
-
-/**
-  * @constructor 
   * @extends BaseEditor
   */
 
@@ -294,7 +195,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
     }
 
     this.max_width = parseInt( getComputedStyle(parent_parent, null).getPropertyValue('width'));
-    this.set_textarea_dimensions();
+    this._set_textarea_dimensions();
     this.context_enter = enter_state;
     for( prop in enter_state )
     {
@@ -318,7 +219,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
 
     if( this.textarea_container.parentElement )
     {
-      this.set_textarea_dimensions();
+      this._set_textarea_dimensions();
       switch(state.type)
       {
         case "key":
@@ -577,19 +478,6 @@ var DOMAttrAndTextEditor = function(nav_filters)
       this.edit({}, next);
     }
     return next;
-  }
-
-  // helpers
-  this.set_textarea_dimensions = function()
-  {
-    // TODO force new lines if needed
-    var 
-    max_content_length = 
-      Math.max.apply(null, this.textarea.value.split('\r\n').map(function(item){return item.length})),
-    width = this.char_width * max_content_length;
-    this.textarea.style.height = '0px';
-    this.textarea.style.width = ( width < this.max_width ? (width || 1) : this.max_width )+ "px";
-    this.textarea.style.height = this.textarea.scrollHeight + 'px';
   }
 
   this.create_new_edit = function(ref_node)

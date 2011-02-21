@@ -300,10 +300,7 @@ var DOMMarkupEditor = function()
         range_target.setEndAfter(last);
         
       };
-      if(temp && temp.parentElement)
-      {
-        temp.parentNode.removeChild(temp);
-      };
+      clean_up_temp();
       timeout = 0;
     },
     lexer = new function()
@@ -471,6 +468,14 @@ var DOMMarkupEditor = function()
       {
         ele.textContent = "<parseerror/>";
       }
+    },
+    clean_up_temp = function()
+    {
+      var temp = null;
+      while (temp = document.getElementsByTagName('df-temp-element')[0])
+      {
+        temp.parentNode.removeChild(temp);
+      }
     };
 
     range_target.selectNode(target);
@@ -500,6 +505,7 @@ var DOMMarkupEditor = function()
         timeout = clearTimeout(timeout);
         update();
       };
+      clean_up_temp();
       lexer = range_target = timeout = new_str = enter_node = update = null;
     };
   };

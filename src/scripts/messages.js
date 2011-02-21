@@ -111,6 +111,12 @@
  *     <dt>onbeforesearch</dt>
  *     <dd>Before TextSearch executes a search. Payload: msg.search_term.</dd>
  *
+ *     <dt>breakpoint-added</dt>
+ *     <dd>A breakpoint was set. Payload: msg.script_id, msg.line_nr, msg.id, msg.event_type.</dd>
+ *
+ *     <dt>breakpoint-removed</dt>
+ *     <dd>A breakpoint was set. Payload: msg.id</dd>
+ *
  * </dl>
  *
  */
@@ -125,13 +131,16 @@ var messages = new function()
    */
   this.addListener = function(key, cb)
   {
-    if( __listeners[ key ] )
+    if (__listeners[key])
     {
-      __listeners[ key ].push( cb );
+      if (__listeners[key].indexOf(cb) == -1)
+      {
+        __listeners[key].push(cb);
+      }
     }
     else
     {
-      __listeners[ key ] = [ cb ];
+      __listeners[key] = [cb];
     }
   }
 
@@ -142,10 +151,10 @@ var messages = new function()
    */
   this.removeListener = function(key, cb)
   {
-    var cur = null, listeners = __listeners[ key ], i = 0;
-    if( listeners )
+    var cur = null, listeners = __listeners[key], i = 0;
+    if (listeners)
     {
-      for( ; cur = listeners[i]; i++)
+      for (; cur = listeners[i]; i++)
       {
         if (cur == cb)
         {
@@ -162,14 +171,14 @@ var messages = new function()
    * @param key {String} the name of the message to dispatch
    * @param msg {Object} the payload to the message. Optional
    */
-  this.post = function( key, msg )
+  this.post = function(key, msg)
   {
-    msg = msg || {};
-    var listeners = __listeners[ key ], cb = null, i = 0;
+    msg || (msg = {});
+    var listeners = __listeners[key];
     msg.type = key;
-    if( listeners )
+    if (listeners)
     {
-      for( ; cb = listeners[i]; i++)
+      for (var  cb = null, i = 0; cb = listeners[i]; i++)
       {
         cb(msg);
       }

@@ -115,14 +115,32 @@
     return ret;
   }
 
-  this.search_button = function(filters)
+  this.search_control = function(button)
+  {
+    var ret = 
+    ['input',
+        'type', 'button',
+        'class', button.class,
+        'handler', button.handler,
+        'title', button.title
+    ];
+    if (button.label)
+    {
+      ret.push('value', button.label);
+    }
+    return ret;
+  }
+
+  this.search_button = function(search)
   {
     return (
     ['toolbar-search', 
       ['button', 
         'class', 'search', 
         'handler', 'show-search',
-        'title', ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH]
+        'title', ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH,
+        'is-active', String(search.is_active)
+      ]
      ]);
   }
 
@@ -452,9 +470,17 @@
     return ['checkbox', ['label', input, label ] ];
   }
 
+  this._window_types = {};
+  this._window_types[UIWindow.HUD] = "_window_type_hud";
+
   this._window = function(win)
   {
-    return ['window',
+    if (this._window_types.hasOwnProperty(win.window_type))
+    {
+      return this[this._window_types[UIWindow.HUD]](win);
+    }
+    var ret = 
+    ['window',
         win.header ? this.window_header(views[win.view_id].name) : [],
         win.is_resizable ?
         [
@@ -474,7 +500,28 @@
       'width: '+ win.width + 'px;' +
       'height: ' + win.height + 'px;',
       'view_id', win.view_id
-    ]
+    ];
+    if (win.window_class)
+    {
+      ret.push('class', win.window_class);
+    }
+    return ret;
+  }
+
+  this._window_type_hud = function(win)
+  {
+    return (
+    ['window',
+      ['window-control', 'handler', 'window-scale-top'],
+      'id', win.id,
+      'style',
+      'top:' + win.top + 'px;' +
+      'left: ' + win.left + 'px;' +
+      'width: '+ win.width + 'px;' +
+      'height: ' + win.height + 'px;',
+      'view_id', win.view_id,
+      'class', 'hud'
+    ]);
   }
 
   this.window_header = function(name)

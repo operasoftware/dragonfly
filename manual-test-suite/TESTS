@@ -68,27 +68,34 @@ desc:
 id: 00500
 label: Update DOM on node remove
 desc:
-  - Turn the 'Update DOM' switch on.
-  - Remove a node, e.g. do javascript:(function(){document.body.innerHTML=""})().
-  - Verify that the DOM view is updated.
-  - Verify that the feature can be turned off.
+  - Turn the 'Update DOM when a node is removed' switch on.
+  - Enter URL: javascript:(function(){document.body.innerHTML=""})()
+  - Verify that the DOM view is updated and body is empty.
+  - Disable the switch.
+  - Reload the original URL
+  - Expand the DOM to see it.
+  - Enter URL again: javascript:(function(){document.body.innerHTML=""})()
+  - Verify that the DOM view is not changed and body contents are still visible.
 
 id: 00600
 label: Select multiple elements
+deprecated: true
 desc:
-  - Turn the 'Draw border' switch on.
+  - Turn the 'Draw border on selected elements' switch on.
   - Click some elements in the host.
   - Verify that all clicked elements keep a border.
   - Verify that the feature can be turned off.
 
 id: 00700
 label: Dropdown settings, comment nodes
+deprecated: true
 desc:
   - Select and unselect 'Show comment nodes'.
   - Verify that the DOM view is updated accordingly.
 
 id: 00800
 label: Dropdown settings, white space nodes
+deprecated: true
 desc:
   - Select 'Show DOM tree view'
   - Select and unselect 'Show white space nodes'.
@@ -97,6 +104,7 @@ desc:
 
 id: 00900
 label: Dropdown settings, tree view
+deprecated: true
 desc:
   - Select and unselect 'Show DOM tree view'.
   - Verify that the view displays the DOM accordingly.
@@ -172,6 +180,7 @@ desc:
 
 id: 00300
 label: Hide shorthands
+deprecated: true
 desc:
   - Select and unselect the 'Hide shorthands' switch
   - Verify that the Computed Style section is updated accordingly,
@@ -196,7 +205,7 @@ label: Detaching
 desc:
   - Add a property in attached mode
   - Detach and make sure the property is still shown
-  - Do the same, but insetad of adding a new property, delete one, and make sure it's still removed when switching back to attached mode
+  - Do the same, but instead of adding a new property, delete one, and make sure it's still removed when switching back to attached mode
 
 id: 00700
 label: Escaping
@@ -302,6 +311,7 @@ url: http://aleto.ch
 
 id: 00100
 label: Status info
+deprecated: true
 desc:
   - Select some elements in the DOM
   - Verify that the statusbar is updated with an according breadcrumb
@@ -310,6 +320,7 @@ desc:
 
 id: 00200
 label: Breadcrumb navigation
+deprecated: true
 desc:
   - Select some elements in the DOM
   - Verify that elements are highlighted on hover in the host
@@ -319,6 +330,7 @@ url: http://nzz.ch
 
 id: 00300
 label: Toggle long breadcrumbs
+deprecated: true
 desc:
   - Select a deep nested element in the document so that the breadcrumb is shortened,
     e.g. starts with 3 dots.
@@ -329,6 +341,7 @@ url: http://www.aleto.ch
 
 id: 00400
 label: Connection status
+deprecated: true
 desc:
   - Set a breakpoint on line 18 scrollFolders.js
   - Hover over the titles in the document
@@ -458,6 +471,7 @@ url: http://aleto.ch
 
 id: 01400
 label: Log threads
+deprecated: true
 desc:
   - Turn the 'Log threads' switch on.
   - Open 'Thread Log' view
@@ -467,7 +481,7 @@ desc:
 id: 01500
 label: Search
 desc:
-  - Search for e.g. 'default'.
+  - Search for 'default'.
   - Verify that you 5 hits and that the view scrolls on enter to each of them.
 
 Scripts.Call Stack
@@ -489,6 +503,7 @@ Scripts.Inspection
 
 id: 00100
 label: Hide default properties
+deprecated: true
 desc:
   - Do 'dir(window)' in the command line.
   - Select and unselect the *hide default properties' switch.
@@ -1067,6 +1082,7 @@ desc:
 
 id: 00300
 label: Clear log
+deprecated: true
 desc:
   - Press the 'Clear log' button
   - Verify that the view gets cleared.
@@ -1311,12 +1327,14 @@ Settings.Settings
 
 id: 00100
 label: Expand sections
+deprecated: true
 desc:
   - Expand all the sections
   - Verify that the sections display additional info and settings
 
 id: 00200
 label: Remote debug
+deprecated: true
 desc:
   - Start Dragonfly with the Opera built-in proxy
   - Unfold 'Remote Debug'
@@ -1330,6 +1348,7 @@ desc:
 
 id: 00300
 label: Host highlight
+deprecated: true
 desc:
   - Expand 'Spotlight' and expand 'Advanced'
   - Change some colors
@@ -1340,6 +1359,7 @@ desc:
 
 id: 00400
 label: Shortcut Configuration, Quick find
+deprecated: true
 desc:
   - Expand 'Shortcut Config'
   - Type 'ctrl' in the 'Quick find'
@@ -1347,6 +1367,7 @@ desc:
 
 id: 00500
 label: Shortcut Configuration
+deprecated: true
 desc:
   - Expand 'Shortcut Config'
   - Expand 'Keyboard shortcuts Global'

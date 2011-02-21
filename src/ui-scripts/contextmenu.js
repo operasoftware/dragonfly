@@ -186,6 +186,12 @@ var ContextMenu = function() {
     this.is_shown = false;
   };
 
+  this._get_uid = (function()
+  {
+    var uid = 0;
+    return function() {return "item_" + (++uid);};
+  })();
+
   this._expand_all_items = function(items, event, menu_id)
   {
     var all_items = [];
@@ -208,7 +214,7 @@ var ContextMenu = function() {
 
     for (var i = 0, item; item = all_items[i]; i++)
     {
-      item.id = item.id || "item_" + i;
+      item.id = item.id || this._get_uid();
       if (menu_id)
       {
         item.menu_id = menu_id;

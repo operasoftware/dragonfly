@@ -23,9 +23,12 @@ var UIWindowBase = new function()
   var
   min_width = 200,
   min_height = 100,
-  min_z_index = 100;
+  min_z_index = 100,
+  min_top = 30;
 
   var viewport = null;
+
+  var click_target = '';
 
   this.init = function(view_id, top, left, width, height)
   {
@@ -46,11 +49,13 @@ var UIWindowBase = new function()
       typeof view.window_resizable == 'boolean' ? view.window_resizable : true;
     if (has_statusbar)
       this.statusbar = new WindowStatusbar(this);
+    this.window_type = view.window_type || 0;
     if(toolbars[view_id])
     {
       this.toolbar = new WindowToolbar(this, toolbars[view_id].buttons, toolbars[view_id].filters );
     }
     this.header = typeof view.window_header == 'boolean' ? view.window_header : true;
+    this.window_class = view.window_class || '';
     if(!window.ui_windows)
     {
       window.ui_windows = {};
@@ -96,14 +101,27 @@ var UIWindowBase = new function()
 
   this.setZIndex = function()
   {
-    var win = null, id = '', i = 0, z = 0;
-    for( ; id = ids[i]; i++)
+    var win = null, id = '', i = 0, z = 0, cuir = null, scroll_top = 0;
+    for (; id = ids[i]; i++)
     {
-      win = document.getElementById( id );
-      if( win )
+      win = document.getElementById(id);
+      if (win)
       {
-        if( ( z = parseInt( win.style.zIndex ) ) && z > min_z_index )
-        win.style.zIndex = z - 1;
+        if ((z = parseInt(win.style.zIndex)) && z > min_z_index)
+        {
+          // Opera sets scrollTop to 0 on setting the z-index
+          cur = win.querySelector('window-container');
+          if (cur)
+          {
+            scroll_top = cur.scrollTop;
+          }
+          win.style.zIndex = z - 1;
+          if (cur)
+          {
+            setTimeout(function(){cur.scrollTop = scroll_top;},0);
+          }
+
+        }
       }
     }
   }
@@ -124,6 +142,10 @@ var UIWindowBase = new function()
   this.update = function()
   {
     this.container.setDimensions();
+    if (this.toolbar)
+    {
+      this.toolbar.setDimensions(true);
+    }
   }
 
   this.showWindow = function(view_id, top, left, width, height)
@@ -202,30 +224,30 @@ var UIWindowBase = new function()
   store_event = function(event)
   {
     __event = event;
-    focus_catcher.focus();
   },
 
   mousedown = function(event)
   {
     var handler = event.target.getAttribute('handler');
     {
-      if( handler in handlers )
+      if (handler in handlers)
       {
         if( interval )
         {
           interval = clearInterval( interval );
         }
-        if(!focus_catcher)
-        {
-          focus_catcher = UIBase.getFocusCatcher();
-        }
+        var id = event.target.parentNode.id;
         current_style = event.target.parentNode.style;
-        self.setZIndex();
-        current_style.zIndex = 200;
-        interval = setInterval( update[handler], 30 );
+        if (id != click_target)
+        {
+          click_target = id;
+          self.setZIndex();
+          current_style.zIndex = 200;
+        }
         update_handler = update[handler];
         set[handler](event);
-        current_target = ui_windows[event.target.parentNode.id] || {};
+        current_target = ui_windows[id] || {};
+        interval = setInterval(update_handler, 10);
         document.addEventListener('mousemove', store_event, false);
         document.addEventListener('mouseup', mouseup, false);
         event.preventDefault();
@@ -248,8 +270,12 @@ var UIWindowBase = new function()
         {
           if( /^window$/i.test(parent.nodeName) )
           {
-            self.setZIndex();
-            parent.style.zIndex = 200;
+            if (parent.id != click_target)
+            {
+              click_target = parent.id;
+              self.setZIndex();
+              parent.style.zIndex = 200;
+            }
             break;
           }
           parent = parent.parentElement;
@@ -265,6 +291,7 @@ var UIWindowBase = new function()
     document.onselectstart = null;
     interval = clearInterval( interval );
     update_handler();
+    __event = null;
   },
   
   verify_left = function(win, inner_width, left)
@@ -309,7 +336,6 @@ var UIWindowBase = new function()
                                         __event.pageY - top_delta)
         current_style.top = current_target.top + 'px';
       }
-      focus_catcher.focus();
     }
   }
 
@@ -324,14 +350,17 @@ var UIWindowBase = new function()
     if( __event )
     {
       var top = __event.pageY - top_delta;
+      top < min_top && (top = min_top);
       var height =  bottom_delta - top;
-      if( height > min_width )
+      if (height < min_height)
       {
-        current_style.height = ( current_target.height = height ) + 'px';
-        current_style.top = ( current_target.top = top ) + 'px';
-        current_target.update();
-        focus_catcher.focus();
+        height = min_height;
+        top = innerHeight - height;
       }
+      current_style.height = (current_target.height = height) + 'px';
+      current_style.top = (current_target.top = top) + 'px';
+      current_target.update();
+      
     }
   }
 
@@ -349,7 +378,6 @@ var UIWindowBase = new function()
       {
         current_style.width = ( current_target.width = width ) + 'px';
         current_target.update();
-        focus_catcher.focus();
       }
     }
   }
@@ -371,7 +399,6 @@ var UIWindowBase = new function()
         current_style.width = ( current_target.width = width ) + 'px';
         current_style.left = ( current_target.left = left ) + 'px';
         current_target.update();
-        focus_catcher.focus();
       }
     }
   }
@@ -390,7 +417,6 @@ var UIWindowBase = new function()
       {
         current_style.height = ( current_target.height = height ) + 'px';
         current_target.update();
-        focus_catcher.focus();
       }
     }
   }
@@ -472,12 +498,34 @@ var UIWindowBase = new function()
         if (current_style = (document.getElementById(id) && 
                              document.getElementById(id).style))
         {
-          left = verify_left(current_target, inner_width, current_target.left);
-          if (left != current_target.left)
-            current_style.left = (current_target.left = left) + 'px';
-          top = verify_left(current_target, inner_height, current_target.top);
-          if (top != current_target.top)
-            current_style.top = (current_target.top = top) + 'px';
+          if (current_target.window_type == UIWindow.HUD)
+          {
+            top = 0;
+            current_target.width = inner_width
+            current_target.height = inner_height - current_target.top;
+            if (current_target.height < min_height)
+            {
+              current_target.height = min_height;
+              top = current_target.top = inner_height - current_target.height;
+               top;
+            }
+            if (top)
+            {
+              current_style.top = top + 'px';
+            }
+            current_style.width = current_target.width + 'px';
+            current_style.height = current_target.height + 'px';
+          }
+          else
+          {
+            left = verify_left(current_target, inner_width, current_target.left);
+            if (left != current_target.left)
+              current_style.left = (current_target.left = left) + 'px';
+            top = verify_left(current_target, inner_height, current_target.top);
+            if (top != current_target.top)
+              current_style.top = (current_target.top = top) + 'px';
+          }
+          current_target.update();
         }
       }
     }
@@ -513,3 +561,5 @@ var UIWindow = function(view_id, top, left, width, height)
 }
 
 UIWindow.prototype = UIWindowBase;
+
+UIWindow.HUD = 1;

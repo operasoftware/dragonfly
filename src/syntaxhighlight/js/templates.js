@@ -1,4 +1,4 @@
-(function()
+﻿(function()
 {
   const
   WHITESPACE = cls.SimpleJSParser.WHITESPACE,
@@ -103,11 +103,11 @@
     return token;
   };
 
-  this.highlight_js_source = function(script, online)
+  this.highlight_js_source = function(script, online, start_state, context)
   {
     var context =
     {
-      template: ['pre'],
+      template: context || [pre],
       text: "",
       online: online
     };
@@ -116,7 +116,7 @@
     tokenizer.tokenize(script, function(token_type, token)
     {
       onjstoken(context, token_type, token);
-    });
+    }, null, start_state);
     if (context.text)
     {
       context.template.push(context.text);

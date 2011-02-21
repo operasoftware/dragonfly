@@ -38,6 +38,24 @@ var ToolbarBase = function()
   {
     return this.__is_visible ? this.getTopPosition() + this.offsetHeight : 0;
   }
+
+  this.get_control = function(handler, handler_name) 
+  {
+    handler_name || (handler_name = 'handler');
+    var toolbar = this.getElement();
+    if(toolbar)
+    {
+      var all = toolbar.getElementsByTagName('*'), control = null, i = 0;
+      for (; control = all[i]; i++)
+      {
+        if (control.getAttribute(handler_name)  == handler)
+        {
+          return control;
+        }
+      }
+    }
+    return null;
+  }
    
   this.setDimensions = function(force_redraw)
   {
@@ -146,15 +164,16 @@ var ToolbarBase = function()
       this.__is_visible = toolbars[view_id].getVisibility();
     }
     var set_separator = this.buttons.length;
+    var search = this.has_search_button && UI.get_instance().get_search(view_id);
     if(this.__is_visible)
     {
       if(this.filters.length)
       {
         toolbar.render(templates.filters(this.filters));
       }
-      if(this.has_search_button)
+      if(search)
       {
-        toolbar.render(templates.search_button(this.filters));
+        toolbar.render(templates.search_button(search));
       }
       if( this.buttons.length )
       {
@@ -256,6 +275,50 @@ var WindowToolbar = function(cell, buttons, filters, specials, customs)
   this.type = 'window-toolbar';
   this.parent_container_id = cell.id;
   this.init(cell, buttons, filters, specials, customs);
+
+  // window toolbar is positioned static, no need to update style.
+  this.setDimensions = function(force_redraw)
+  {
+    var dim = '', i = 0;
+
+    // set css properties
+
+    if(!this.default_height)
+    {
+      this.setCSSProperties()
+    }
+
+    dim = this.cell.width - this.horizontal_border_padding;
+    if( dim != this.width)
+    {
+      this.is_dirty = true;
+      this.width = dim;
+    }
+
+    dim = ( this.__is_visible  && ( 
+            this.buttons.length 
+            || this.switches && this.switches.length
+            || this.filters.length
+            || this.specials.length
+            || this.customs.length ) ) ? this.default_height : 0;
+
+    if( dim != this.height)
+    {
+      this.is_dirty = true;
+      this.height = dim;
+      this.offsetHeight = dim + this.vertical_border_padding;
+    }
+    this.update(force_redraw)
+  } 
+  // window toolbar is positioned static, no need to update style.
+  this.update_style = function(style)
+  {
+    if (this.height && style.display != "block")
+      style.display = "block";
+    if (!this.height && style.display != "none")
+      style.display = "none";
+  }
+
   this.getCssText = function()
   {
     return '';
@@ -270,4 +333,22 @@ TopToolbar.prototype.constructor = TopToolbar;
 WindowToolbar.prototype = new ToolbarBase();
 
 
+/**
+ * @constructor
+ */
+var ToolbarSeparator = function()
+{
+  this.type = "toolbar-separator";
+
+  this.get_template = function()
+  {
+    return window.templates[this.type]();
+  };
+};
+
+window.templates || (window.templates = {});
+window.templates["toolbar-separator"] = function()
+{
+  return ["toolbar-separator"];
+};
 

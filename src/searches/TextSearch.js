@@ -14,13 +14,21 @@ var TextSearch = function(min_length)
 TextSearch.prototype = new function()
 {
   const
-  DEFAULT_STYLE = "background-color:#ff0; color:#000;",
-  HIGHLIGHT_STYLE = "background-color:#0f0; color:#000;",
   DEFAULT_SCROLL_MARGIN = 50,
   SEARCH_DELAY = 50, // in ms
-  MIN_TERM_LENGTH = 2; // search term must be this long or longer
-  
+  MIN_TERM_LENGTH = 2, // search term must be this long or longer
+  NO_MATCH = 1,
+  EMPTY = 2;
   window.cls.MessageMixin.apply(this); // mix in message handler behaviour.
+
+  window.addEventListener('load', function()
+  {
+    var style_sheets = document.styleSheets;
+    this._match_style_default = 
+      style_sheets.getDeclaration ('.search-highlight').cssText;
+    this._match_style_highlight = 
+      style_sheets.getDeclaration ('.search-highlight-selected').cssText;
+  }.bind(this), false);
 
   this._init = function(min_length)
   {
@@ -28,8 +36,8 @@ TextSearch.prototype = new function()
     this._input_search_term = '';
     // collection of span elements. This is so because a hit may cross an
     // element border, so multiple elements needed for highlight.
-    this._search_results = [];
-    this._cursor = -1;
+    this._hits = [];
+    this._match_cursor = -1;
     this._container = null;
     this._input = null;
     this._min_term_length = min_length || MIN_TERM_LENGTH;
@@ -42,17 +50,58 @@ TextSearch.prototype = new function()
     this._curent_search_result = null;
     this._timeouts = new Timeouts();
     this._search_bound = this.search.bind(this);
+
+
   }
 
-  this._span_set_default_style = function(span)
+  this._set_default_style = function(span)
   {
-    span.style.cssText = DEFAULT_STYLE;
+    span.style.cssText = this._match_style_default;
   };
 
-  this._span_set_highlight_style = function(span)
+  this._set_highlight_style = function(span)
   {
-    span.style.cssText = HIGHLIGHT_STYLE;
+    span.style.cssText = this._match_style_highlight;
   };
+
+  this._update_info = function(type)
+  {
+    if(this._info_ele)
+    {
+      var info = "";
+      switch (type)
+      {
+        case EMPTY:
+        {
+          break;
+        }
+        case NO_MATCH:
+        {
+          info = ui_strings.S_TEXT_STATUS_SEARCH_NO_MATCH.
+                 replace("%(SEARCH_TERM)s", this._search_term);
+          break;
+        }
+        default:
+        {
+          info = ui_strings.S_TEXT_STATUS_SEARCH.
+                 replace("%(SEARCH_TERM)s", this._search_term).
+                 replace("%(SEARCH_COUNT_TOTAL)s", this._get_match_counts()).
+                 replace("%(SEARCH_COUNT_INDEX)s", this._get_search_cursor());
+        }
+      }
+      this._info_ele.textContent = info;
+    }
+  };
+
+  this._get_match_counts = function()
+  {
+    return this._hits.length;
+  }
+
+  this._get_search_cursor = function()
+  {
+    return this._match_cursor + 1;
+  }
     
   this._consume_node = function(node)
   {
@@ -80,15 +129,15 @@ TextSearch.prototype = new function()
             {
               this._to_consume_hit_length = 0;
               this._consumed_total_length += node.nodeValue.length;
-              this._search_results.pop();
+              this._hits.pop();
               return;
             }
             this._to_consume_hit_length -= node.nodeValue.length;
-            var span = document.createElement('span');
+            var span = document.createElement('em');
             this._curent_search_result.push(span); 
             node.parentNode.replaceChild(span, node);
             span.appendChild(node);
-            span.style.cssText = DEFAULT_STYLE;
+            span.style.cssText = this._match_style_default;
             this._consumed_total_length += node.nodeValue.length;
             node = span;
           }
@@ -104,7 +153,7 @@ TextSearch.prototype = new function()
                 this._last_match_index = this._current_match_index + this._search_term_length;
               }
               this._to_consume_hit_length = this._search_term_length;
-              this._curent_search_result = this._search_results[this._search_results.length] = [];
+              this._curent_search_result = this._hits[this._hits.length] = [];
             }
             this._consumed_total_length += node.nodeValue.length;
           }
@@ -128,28 +177,33 @@ TextSearch.prototype = new function()
     this._consume_node(this._container);
   };
 
-  this.search = function(new_search_term, old_cursor)
+  this._clear_search_results = function()
   {
     var cur = null, i = 0, parent = null, search_hit = null, j = 0;
+    for (; cur = this._hits[i]; i++)
+    {
+      for (j = 0; search_hit = cur[j]; j++)
+      {
+        if (parent = search_hit.parentNode)
+        {
+          parent.replaceChild(search_hit.firstChild, search_hit);
+          parent.normalize();
+        }
+      }
+    }
+  };
+
+  this.search = function(new_search_term, old_cursor)
+  {
     if (new_search_term != this._search_term)
     {
       this._search_term = new_search_term;
-      if(this._search_results)
+      if(this._hits)
       {
-        for( ; cur = this._search_results[i]; i++)
-        {
-          for( j = 0; search_hit = cur[j]; j++)
-          {
-            if( parent = search_hit.parentNode )
-            {
-              parent.replaceChild(search_hit.firstChild, search_hit);
-              parent.normalize();
-            }
-          }
-        }
+        this._clear_search_results();
       }
-      this._search_results = [];
-      this._cursor = -1;
+      this._hits = [];
+      this._match_cursor = -1;
       this.post_message("onbeforesearch", 
                         {search_term: this._search_term.length >= this._min_term_length ? 
                                       this._search_term : ""});
@@ -158,20 +212,27 @@ TextSearch.prototype = new function()
         if(this._container)
         {
           this._search_node(this._container);
-          if( old_cursor && this._search_results[old_cursor] )
+          if( old_cursor && this._hits[old_cursor] )
           {
-            this._cursor = old_cursor;
-            this._search_results[this._cursor].style.cssText = HIGHLIGHT_STYLE;
+            this._match_cursor = old_cursor;
+            this._hits[this._match_cursor].style.cssText = this._match_style_highlight;
+            this._update_info();
           }
           else
           {
+            this._update_info(NO_MATCH);
             this.highlight(true);
           }
         }
       }
+      else
+      {
+        this._update_info(EMPTY);
+      }
     }
   };
 
+  this.search_delayed = 
   this.searchDelayed = function(new_search_term)
   {
     this._input_search_term = new_search_term;
@@ -191,54 +252,63 @@ TextSearch.prototype = new function()
 
   /**
    * Highlight a search result. The result to highlight is kept in the
-   * "this._cursor" instance variable. If check_position is true the highlight will
+   * "this._match_cursor" instance variable. If check_position is true the highlight will
    * only be applied to what is visible withing the viewport.
    */
   this.highlight = function(check_position, direction)
   {
-    if (this._search_results.length)
+    if (this._hits.length)
     {
-      if (this._cursor >= 0) // if we have a currently highlighted hit..
+      if (this._match_cursor >= 0) // if we have a currently highlighted hit..
       {
         // then reset its style to the default
-        this._search_results[this._cursor].forEach(this._span_set_default_style);
+        this._hits[this._match_cursor].forEach(this._set_default_style, this);
       }
 
       if (check_position)
       {
-        this._cursor = 0;
-        while (this._search_results[this._cursor] &&
-               this.getRealOffsetTop(this._search_results[this._cursor][0]) < 0)
+        this._match_cursor = 0;
+        while (this._hits[this._match_cursor] &&
+               this.getRealOffsetTop(this._hits[this._match_cursor][0]) < 0)
         {
-          this._cursor++;
+          this._match_cursor++;
         }
       }
       else
       {
-        this._cursor += direction;
+        this._match_cursor += direction;
       }
-      if (this._cursor > this._search_results.length - 1)
+      if (this._match_cursor > this._hits.length - 1)
       {
-        this._cursor = 0;
+        this._match_cursor = 0;
       }
-      else if (this._cursor < 0)
+      else if (this._match_cursor < 0)
       {
-        this._cursor = this._search_results.length - 1;
+        this._match_cursor = this._hits.length - 1;
       }
-      this._search_results[this._cursor].forEach(this._span_set_highlight_style);
-      var target = this._search_results[this._cursor][0];
+      this._hits[this._match_cursor].forEach(this._set_highlight_style, this);
+      var target = this._hits[this._match_cursor][0];
       this._scroll_into_margined_view(this._container.offsetHeight,
-                                     target.offsetHeight,
-                                     this.getRealOffsetTop(target),
-                                     DEFAULT_SCROLL_MARGIN,
-                                     direction,
-                                     'scrollTop');
+                                      target.offsetHeight,
+                                      this.getRealOffsetTop(target),
+                                      DEFAULT_SCROLL_MARGIN,
+                                      direction,
+                                      'scrollTop');
       this._scroll_into_margined_view(this._container.offsetWidth,
-                                     target.offsetWidth,
-                                     this.getRealOffsetLeft(target),
-                                     DEFAULT_SCROLL_MARGIN,
-                                     direction,
-                                     'scrollLeft');
+                                      target.offsetWidth,
+                                      this.getRealOffsetLeft(target),
+                                      DEFAULT_SCROLL_MARGIN,
+                                      direction,
+                                      'scrollLeft');
+      this._update_info();
+    }
+    else if (this._search_term)
+    {
+      this._update_info(NO_MATCH);
+    }
+    else
+    {
+      this._update_info(EMPTY);
     }
   };
 
@@ -292,10 +362,11 @@ TextSearch.prototype = new function()
     {
       var new_search_term = this._search_term;
       this._search_term = '';
-      this.search(new_search_term, this._cursor);
+      this.search(new_search_term, this._match_cursor);
     }
   };
 
+  this.set_container =
   this.setContainer = function(cont)
   {
     if( this._container != cont )
@@ -304,6 +375,12 @@ TextSearch.prototype = new function()
     }
   };
 
+  this.set_info_element = function(info_ele)
+  {
+    this._info_ele = info_ele;
+  };
+
+  this.set_form_input = 
   this.setFormInput = function(input)
   {
     this._input = input;
@@ -322,8 +399,15 @@ TextSearch.prototype = new function()
    */
   this.cleanup = function()
   {
-    this._search_results = [];
-    this._cursor = -1;
-    this._input = this._container = null;
+    this._clear_search_results();
+    this._hits = [];
+    this._match_cursor = -1;
+    this._input = this._container = this._info_ele = null;
   };
+
+  this.set_search_term = function(search_term)
+  {
+    this._search_term = search_term;
+  }
+
 };

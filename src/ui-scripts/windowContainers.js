@@ -6,6 +6,7 @@
 var WindowContainerBase = function()
 {
 
+  this.type = 'window-container';
   this.vertical_delta = 0;
 
   this.update_style = function(style)

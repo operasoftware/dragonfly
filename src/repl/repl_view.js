@@ -34,6 +34,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this.mode = "single-line-edit";
   this.window_header = false;
   this.window_statusbar = false;
+  this.window_type = UIWindow.HUD;
 
   this.ondestroy = function()
   {

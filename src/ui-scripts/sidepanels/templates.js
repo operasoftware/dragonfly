@@ -1,4 +1,4 @@
-(function()
+﻿(function()
 {
 
   this.side_panel = function(views)

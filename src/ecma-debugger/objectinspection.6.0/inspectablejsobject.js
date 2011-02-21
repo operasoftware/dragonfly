@@ -108,7 +108,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
   this._get_subtree = function(path)
   {
     const PATH_KEY = 0, PATH_OBJ_ID = 1, PATH_PROTO_INDEX = 2;
-    var key = '', obj_id = 0, proto_index = 0, i = 0, tree = this._expand_tree;
+    var key = '', obj_id = 0, proto_index = 0, i = 0, tree = this._expand_tree, index = 0;
     for ( ; path && path[i]; i++)
     {
       key = path[i][PATH_KEY];
@@ -148,9 +148,11 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
       key = path[i][PATH_KEY];
       obj_id = path[i][PATH_OBJ_ID];
       index = path[i][PATH_PROTO_INDEX];
-      if (!(tree.protos[index] && tree.protos[index][key]))
+      if (!(tree.protos && tree.protos[index] && tree.protos[index][key]))
       {
-        throw 'not valid path in InspectionBaseData._remove_subtree';
+        // with watches it can happen that we try to collapse
+        // a path which was never expanded.
+        return ret;
       }
       if (i == path.length - 1)
       {
@@ -228,7 +230,9 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     re_d = /^\d+$/;
 
     if (status)
+    {
       opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + ' failed to examine object');
+    }
     else
     {
       proto_chain = message[OBJECT_CHAIN_LIST][0][OBJECT_LIST];
@@ -375,7 +379,11 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     if (path)
     {
       this._norm_path(path);
-      this._cleanup_maps(this._remove_subtree(path));
+      var sub_tree = this._remove_subtree(path);
+      if (sub_tree)
+      {
+        this._cleanup_maps(sub_tree);
+      }
     }
     else
     {

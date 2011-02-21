@@ -518,18 +518,15 @@ MODE ::= "<mode>"
 
   this.breadcrumb = function(model, obj_id, parent_node_chain)
   {
-
-    var
-    css_path = model._get_css_path(obj_id, parent_node_chain,
-                                   window.settings.dom.get('force-lowercase'),
-                                   window.settings.dom.get('show-id_and_classes-in-breadcrumb'),
-                                   window.settings.dom.get('show-siblings-in-breadcrumb'));
-    ret = [],
-    i = 0;
-
+    var setting = window.settings.dom;
+    var css_path = model._get_css_path(obj_id, parent_node_chain,
+                                       setting.get('force-lowercase'),
+                                       setting.get('show-id_and_classes-in-breadcrumb'),
+                                       setting.get('show-siblings-in-breadcrumb'));
+    var ret = [];
     if (css_path)
     {
-      for( ; i < css_path.length; i++ )
+      for (var i = 0; i < css_path.length; i++ )
       {
         ret[ret.length] =
         [

@@ -715,7 +715,7 @@ cls.Stylesheets = function()
     var setProps = elementStyle.getSetProps();
     var hideInitialValue = settings['css-comp-style'].get('hide-initial-values');
     var hide_shorthands = settings['css-comp-style'].get('hide-shorthands'); // TODO make a setting
-    var serach_map = search_active && elementStyle.getSearchMap() || [];
+    var search_map = search_active && elementStyle.getSearchMap() || [];
     var is_not_initial_value = false;
     var display = false;
 
@@ -737,7 +737,7 @@ cls.Stylesheets = function()
           || is_not_initial_value
         )
         && !(hide_shorthands && short_hand_props[prop])
-        && !(search_active && !serach_map[index]);
+        && !(search_active && !search_map[index]);
       if (display)
       {
         ret += (ret ? MARKUP_PROP_NL : "") +
@@ -893,21 +893,20 @@ cls.Stylesheets = function()
     i = 0,
     sheet = self.getSheetWithObjId(rt_id, style_dec[STYLESHEET_ID]);
 
-    if (sheet)
+    if (!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS])
     {
-      if (!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS])
-      {
-        ret += "<rule rule-id='" + style_dec[RULE_ID] + "' obj-id='" + obj_id + "'>" +
-          "<stylesheet-link rt-id='" + rt_id + "'"+
-            " index='" + sheet.index + "' handler='display-rule-in-stylesheet'>" + sheet.name +
-          "</stylesheet-link>" +
-          "<selector>" + helpers.escapeTextHtml(style_dec[SELECTOR]) + "</selector>" +
-          " {\n" +
-              prettyPrintRuleInInspector(style_dec, false, search_active) +
-          "\n}</rule>";
-      }
+      ret += "<rule rule-id='" + style_dec[RULE_ID] + "' obj-id='" + obj_id + "'>" +
+        (sheet ?
+         "<stylesheet-link rt-id='" + rt_id + "'"+
+           " index='" + sheet.index + "' handler='display-rule-in-stylesheet'>" + sheet.name +
+         "</stylesheet-link>" : 
+        "")+
+        "<selector>" + helpers.escapeTextHtml(style_dec[SELECTOR]) + "</selector>" +
+        " {\n" +
+            prettyPrintRuleInInspector(style_dec, false, search_active) +
+        "\n}</rule>";
     }
-    else
+    if (!sheet)
     {
       opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
         'stylesheet is missing in stylesheets, prettyPrintStyleDec[ORIGIN_AUTHOR]');

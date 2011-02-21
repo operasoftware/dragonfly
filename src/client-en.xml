@@ -130,7 +130,8 @@ window.load_screen_timeout = window.setTimeout(function()
 <link rel="stylesheet" href="./ui-style/global_command_line.css"/>
 <link rel="stylesheet" href="./ui-style/contextmenu.css"/>
 <link rel="stylesheet" href="./cookie-manager/cookie_manager_style.css"/>
-
+<link rel="stylesheet" href="./searches/style.css"/>
+<link rel="stylesheet" href="./ecma-debugger/breakpoints/style.css"/>
 
 
 <!-- This will turn off including of the UI strings if the exclude_uistrings var is set -->
@@ -173,13 +174,13 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./lib/message_maps.js"/>
 <script src="./lib/test_framework.js"/>
 
-<script src="./scripts/TextSearch.js"/>
-<script src="./scripts/VirtualTextSearch.js"/>
+
 
 <script src="./ui-scripts/ui.js"/>
 <script src="./ui-scripts/tabbar.js"/>
 <script src="./ui-scripts/actions/actionbroker.js"/>
 <script src="./ui-scripts/actions/keyidentifier.js"/>
+<script src="./ui-scripts/actions/actionhandlerinterface.js"/>
 <script src="./ui-scripts/actions/globalactionhandler.js"/>
 <script src="./ui-scripts/defaults.js"/>
 <script src="./ui-scripts/window.js"/>
@@ -194,7 +195,14 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/toolbar.js"/>
 <script src="./ui-scripts/toolbarConfig.js"/>
 <script src="./ui-scripts/modebar.js"/>
-<script src="./ui-scripts/searchbar.js"/>
+<script src="./ui-scripts/editor.js"/>
+<script src="./searches/TextSearch.js"/>
+<script src="./searches/VirtualTextSearch.js"/>
+<script src="./searches/searchbar.js"/>
+<script src="./searches/searchwindow.js"/>
+<script src="./searches/jssearchwindow.js"/>
+<script src="./searches/search.js"/>
+<script src="./searches/templates.js"/>
 <script src="./ui-scripts/overlay.js"/>
 <script src="./ui-scripts/horizontal_navigation.js"/>
 <script src="./ui-scripts/tabs.js"/>
@@ -247,7 +255,6 @@ window.load_screen_timeout = window.setTimeout(function()
 
 
 
-<script src="./syntaxhighlight/js/pre_lexer.js"/>
 <script src="./syntaxhighlight/js/syntax.js"/>
 <script src="./syntaxhighlight/js/tokenizer.js"/>
 <script src="./syntaxhighlight/js/templates.js"/>
@@ -261,6 +268,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ecma-debugger/tabs.js"/>
 
 <script src="./ecma-debugger/templates.js"/>
+<script src="./ecma-debugger/newscript.js"/>
 <script src="./ecma-debugger/runtimes.js"/>
 <script src="./ecma-debugger/stop_at.js"/>
 <script src="./ecma-debugger/runtime_onload_handler.js"/>
@@ -309,6 +317,16 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ecma-debugger/eventbreakpoints/view.js"/>
 <script src="./ecma-debugger/eventbreakpoints/templates.js"/>
 
+<script src="./ecma-debugger/breakpoints/view.js"/>
+<script src="./ecma-debugger/breakpoints/breakpoints.js"/>
+<script src="./ecma-debugger/breakpoints/templates.js"/>
+<script src="./ecma-debugger/breakpoints/conditioneditor.js"/>
+
+
+<script src="./ecma-debugger/watches/watches.js"/>
+<script src="./ecma-debugger/watches/view.js"/>
+<script src="./ecma-debugger/watches/propertyeditor.js"/>
+
 <script src="./style/element_layout.js"/>
 <script src="./style/editor.js"/>
 <script src="./style/css_initial_values.js"/>
@@ -323,6 +341,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./style/view_color_picker.js"/>
 <script src="./style/css_inspector_actions.js"/>
 <script src="./style/view_dom_side_panel.js"/>
+<script src="./style/newstyle.js"/>
 
 
 <script src="./exec/color_picker_data.js"/>

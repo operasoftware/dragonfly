@@ -81,46 +81,26 @@
       actions.push(key);
     return actions.concat(this._listener_handlers);
   };
-
-  this._clear_stopped_views = function()
+  
+  this._continue_with_mode = function(mode, action_id, event, target)
   {
     window.views.js_source.clearLinePointer();
     window.views.callstack.clearView();
     window.views.inspection.clearView();
-  }
-
-  this._handlers['continue-run'] =
-  function(action_id, event, target)
-  {
-    this._clear_stopped_views();
-    window.stop_at.__continue('run');
+    window.stop_at.continue_thread(mode);
     return false;
-  }.bind(this);
+  };
 
-  this._handlers['continue-step-next-line'] =
-  function(action_id, event, target)
+  [
+    'run', 
+    'step-next-line',
+    'step-into-call',
+    'step-out-of-call',
+  ].forEach(function(mode)
   {
-    this._clear_stopped_views();
-    window.stop_at.__continue('step-next-line');
-    return false;
-  }.bind(this);
-
-  this._handlers['continue-step-out-of-call'] =
-  function(action_id, event, target)
-  {
-    this._clear_stopped_views();
-    window.stop_at.__continue('step-out-of-call');
-    return false;
-  }.bind(this);
-
-  this._handlers['continue-step-into-call'] =
-  function(action_id, event, target)
-  {
-    this._clear_stopped_views();
-    window.stop_at.__continue('step-into-call');
-    return false;
-  }.bind(this);
-
+    this._handlers['continue-' + mode] = this._continue_with_mode.bind(this, mode);
+  }, this);
+    
   this._handlers["select-all"] = function(action_id, event, target)
   {
     var selection = getSelection();
@@ -160,10 +140,22 @@
     /* get context -> get container (representation? view?) ->  get UI object -> get cell -> get toolbar -> get search field. If found, focus and return false */
     var container = ActionBroker.get_instance().get_action_container();
     var ui_obj = UIBase.getUIById(container.getAttribute('ui-id'));
-    var filters = ui_obj.cell.toolbar.get_filters(), element;
-    if (filters[0] && (element = ViewBase.getToolbarControl(container, filters[0].handler)))
+    var filters = ui_obj && ui_obj.cell.toolbar && ui_obj.cell.toolbar.get_filters();
+    var element = null;
+    if (filters && filters[0] && (element = ViewBase.getToolbarControl(container, filters[0].handler)))
     {
       element.focus();
+      return false;
+    }
+  }
+
+  this._handlers["show-search"] = function(action_id, event, target)
+  {
+    var action_id = ActionBroker.get_instance().get_current_handler_id();
+    var search = UI.get_instance().get_search(action_id);
+    if (search)
+    {
+      search.show();
       return false;
     }
   }
@@ -195,10 +187,14 @@
   {
     if (action_id in this._handlers &&
         this._handlers[action_id](action_id, event, target) == false)
+    {
       return false;
+    }
     var sc_listener = event.target.get_attr('parent-node-chain', 'shortcuts');
-      if (sc_listener && sc_listener in this._sc_listeners)
-        return this._sc_listeners[sc_listener](action_id, event, target);
+    if (sc_listener && sc_listener in this._sc_listeners)
+    {
+      return this._sc_listeners[sc_listener](action_id, event, target);
+    }
   }
 
   this.onclick = function(event)
@@ -206,6 +202,13 @@
     this.mode = /input|textarea/i.test(event.target.nodeName) ?
                                        MODE_EDIT :
                                        MODE_DEFAULT;
+  };
+
+  this.focus = function(event, container)
+  {
+    this.mode = event && /input|textarea/i.test(event.target.nodeName) ?
+                                                MODE_EDIT :
+                                                MODE_DEFAULT;
   };
 
   this.register_shortcut_listener = function(listener_id, callback, action_list)

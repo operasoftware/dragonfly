@@ -51,7 +51,7 @@ var ViewBase = new function()
     return false;
   }
 
-  this.init = function(id, name, container_class, html, default_handler)
+  this.init = function(id, name, container_class, html, default_handler, edit_handler)
   {
     this.id = id || getId();
     this.name = name;
@@ -60,6 +60,7 @@ var ViewBase = new function()
     this.container_ids = [];
     this.type = this.type || 'single-view';
     this.default_handler = default_handler || '';
+    this.edit_handler = edit_handler || '';
     this.requires_view || ( this.requires_view = '' );
     if(!window.views)
     {
@@ -163,6 +164,12 @@ var ViewBase = new function()
       }
     }
     return ret;
+  }
+  /* returns the first container, if there is any, otherwise null */
+  this.get_container = function() 
+  {
+    return (this.container_ids[0] && 
+            document.getElementById(this.container_ids[0] ) || null);
   }
 
   this.getToolbarControl = function( container, handler, handler_name) 

@@ -64,18 +64,22 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     new cls.CndRtSelect('cmd-runtime-select', 'cmd-line-runtimes');
 
     cls.ReplView.create_ui_widgets();
-    new cls.ReplView('command_line', "REPL", 'scroll', '', 'repl-focus');
+    new cls.ReplView('command_line', "REPL", 'scroll command-line', '', 'repl-focus');
 
     /* JS source */
     window.simple_js_parser = new window.cls.SimpleJSParser();
     new cls.JsSourceView('js_source', ui_strings.M_VIEW_LABEL_SOURCE, 'scroll js-source');
     new cls.ScriptSelect('js-script-select', 'script-options');
     cls.JsSourceView.create_ui_widgets();
+
+    /* Watches */
+    cls.WatchesView.prototype = ViewBase;
+    new cls.WatchesView('watches', 'Watches', 'scroll');
     
     /* Runtime State */
     new SidePanelView('scripts-side-panel', 
                       ui_strings.M_VIEW_LABEL_RUNTIME_STATE,
-                      ['callstack', 'inspection']);
+                      ['watches', 'callstack', 'inspection']);
 
     /* Callstack */
     cls.CallstackView.prototype = ViewBase;
@@ -112,13 +116,16 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     cls.CSSInspectorCompStyleView.prototype = ViewBase;
     new cls.CSSInspectorCompStyleView('css-comp-style', ui_strings.M_VIEW_LABEL_COMPUTED_STYLE, 'scroll css-inspector');
 
+    cls.NewStyle.prototype = ViewBase;
+    new cls.NewStyle('new-style', 'New Style', 'scroll css-new-style');
+
     new cls.ColorPickerView('color-selector', 'Color Picker', 'color-selector');
     new cls.CSSInspectorActions('css-inspector');
 
     /* DOM sidepanel */
     new cls.DOMSidePanelView('dom-side-panel', 
                              ui_strings.M_VIEW_LABEL_STYLES,
-                             ['css-comp-style', 'css-inspector']);
+                             ['css-comp-style', 'css-inspector', 'new-style']);
     cls.DOMSidePanelView.create_ui_widgets();
 
     /* Layout */
@@ -126,13 +133,22 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     cls.CSSLayoutView.prototype = ViewBase;
     new cls.CSSLayoutView('css-layout', ui_strings.M_VIEW_LABEL_LAYOUT, 'scroll css-layout');
 
+    /* Runtime State */
+    new SidePanelView('breakpoints-side-panel', 
+                      'Breakpoints',
+                      ['breakpoints', 'event-breakpoints']);
+
     /* Event Breakpoints */
-    window.event_breakpoints = new cls.EventBreakpoints();
+    window.event_breakpoints = cls.EventBreakpoints.get_instance();
     cls.EventBreakpointsView.prototype = ViewBase;
     new cls.EventBreakpointsView('event-breakpoints', ui_strings.M_VIEW_LABEL_EVENT_BREAKPOINTS, 'scroll event-breakpoints');
     cls.EventBreakpointsView.create_ui_widgets();
 
-
+    /* Breakpoints */
+    cls.BreakpointsView.prototype = ViewBase;
+    new cls.BreakpointsView('breakpoints', 'Breakpoints', 'scroll breakpoints');
+    cls.BreakpointsView.create_ui_widgets();
+    
     /* adjust the base class */
 
     var StorageDataBase = new namespace.StorageDataBase();
