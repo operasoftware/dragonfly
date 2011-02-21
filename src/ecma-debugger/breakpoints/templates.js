@@ -39,7 +39,7 @@
         script.set_line_states();
       }
       var script_data = script.script_data.slice(script.line_arr[line_nr - 1], 
-                                                 script.line_arr[line_nr]);
+                                                 script.line_arr[line_nr]).trim();
       if (script_data.length > MAX_SOURCE_CHARS)
       {
         script_data = script_data.slice(0, MAX_SOURCE_CHARS) + " ...";
