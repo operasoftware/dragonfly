@@ -171,7 +171,7 @@ cls.BreakpointsView = function(id, name, container_class)
   this._menu_add_condition =
   [
     {
-      label: "Add condition",
+      label: ui_strings.M_CONTEXTMENU_ADD_CONDITION,
       handler: this._handlers['add-or-edit-condition'],
     },
   ]
@@ -180,7 +180,7 @@ cls.BreakpointsView = function(id, name, container_class)
   this._menu_edit_condition =
   [
     {
-      label: "Edit condition",
+      label: ui_strings.M_CONTEXTMENU_EDIT_CONDITION,
       handler: this._handlers['add-or-edit-condition'],
     },
   ]
