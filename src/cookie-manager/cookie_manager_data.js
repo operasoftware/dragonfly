@@ -5,6 +5,17 @@ cls.CookieManager["1.1"] || (cls.CookieManager["1.1"] = {});
 
 cls.CookieManager.StorageDataBase = function()
 {
+  /**
+    * StorageDataBase
+    *
+    * this.refetch = function()
+    * this.remove_item = function(objectref, callback)
+    * this.get_items = function()
+    * this.create_objectref = function(cookie, runtimes, /fixed_name/)
+    * this.get_item_by_objectref = function(objectref)
+    * this.write_item = function(cookie_details)
+    *
+    */
   this.refetch = function()
   {
     this._dict = {};
@@ -59,6 +70,32 @@ cls.CookieManager.StorageDataBase = function()
         return this.item_list[i];
       }
     };
+  }
+
+  this.write_item = function(cookie_details)
+  {
+    // todo: find runtimes where this will probably end up to make the selection restore work
+    this._view._restore_selection = [
+      this.create_objectref(
+        {
+          domain: cookie_details.domain,
+          name:   cookie_details.name,
+          value:  cookie_details.value,
+          path:   cookie_details.path
+        },
+        cookie_details.runtime
+      )
+    ];
+
+    var add_cookie_script = 'document.cookie="' + cookie_details.name + '=' + encodeURIComponent(cookie_details.value);
+    if(cookie_details.expires) // in case of 0 value the "expires" value should not be written, represents "Session" value
+    {
+      add_cookie_script += '; expires='+ (new Date(cookie_details.expires).toUTCString());
+    }
+    add_cookie_script += '; path=' + cookie_details.path + '"';
+    var script = add_cookie_script;
+    var tag = tagManager.set_callback(this, this.refetch, [cookie_details.runtime]);
+    services['ecmascript-debugger'].requestEval(tag,[cookie_details.runtime, 0, 0, script]);
   }
 
   this._on_active_tab = function(msg)
@@ -125,32 +162,6 @@ cls.CookieManager.StorageDataBase = function()
     };
     return true;
   };
-
-  this.write_item = function(c)
-  {
-    // todo: find runtimes where this will probably end up to make the selection restore work
-    this._view._restore_selection = [
-      this.create_objectref(
-        {
-          domain: c.domain,
-          name:   c.name,
-          value:  c.value,
-          path:   c.path
-        },
-        c.runtime
-      )
-    ];
-
-    var add_cookie_script = 'document.cookie="' + c.name + '=' + encodeURIComponent(c.value);
-    if(c.expires) // in case of 0 value the "expires" value should not be written, represents "Session" value
-    {
-      add_cookie_script += '; expires='+ (new Date(c.expires).toUTCString());
-    }
-    add_cookie_script += '; path=' + c.path + '"';
-    var script = add_cookie_script;
-    var tag = tagManager.set_callback(this, this.refetch, [c.runtime]);
-    services['ecmascript-debugger'].requestEval(tag,[c.runtime, 0, 0, script]);
-  }
 
   this._flatten_data = function(cookies, runtimes)
   {
@@ -369,21 +380,22 @@ cls.CookieManager["1.0"].CookieManagerData.prototype = new cls.CookieManager.Sto
 
 cls.CookieManager["1.1"].CookieManagerData = function(service_version, view)
 {
-  this.write_item = function(c)
+  this.write_item = function(cookie_details)
   {
     this._view._restore_selection = [
       this.create_objectref(
         {
-          domain: c.domain,
-          name:   c.name,
-          value:  c.value,
-          path:   c.path
+          domain: cookie_details.domain,
+          name:   cookie_details.name,
+          value:  cookie_details.value,
+          path:   cookie_details.path
         },
-        c.runtime
+        cookie_details.runtime
       )
     ];
     var tag = tagManager.set_callback(this, this.refetch);
-    services['cookie-manager'].requestAddCookie(tag,[c.domain, c.name, c.path, c.value, c.expires / 1000, c.is_secure, c.is_http_only]);
+    var cookie_detail_arr = [cookie_details.domain, cookie_details.name, cookie_details.path, cookie_details.value, cookie_details.expires / 1000, cookie_details.is_secure, cookie_details.is_http_only];
+    services['cookie-manager'].requestAddCookie(tag, cookie_detail_arr);
   }
   this._init(service_version, view);
 }

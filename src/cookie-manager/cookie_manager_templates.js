@@ -31,12 +31,10 @@ templates.cookie_manager = {
         "div", this.wrap_ellipsis(value),
         "class", "value_container"
       ],
-      this.edit_container(edit_elem)
-    ];
-  },
-  edit_container: function(elem) {
-    return [
-      "div", elem, "class", "edit_container"
+      [
+        "div", edit_elem,
+        "class", "edit_container"
+      ]
     ];
   },
   input_text_container: function(name, value) {
