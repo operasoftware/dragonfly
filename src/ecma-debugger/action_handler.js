@@ -228,18 +228,16 @@ window.eventHandlers.click['set-break-point'] = function(event)
 {
   var line = parseInt(event.target.parentElement.children[0].value);
   var script_id = views.js_source.getCurrentScriptId();
-
+  var bps = cls.Breakpoints.get_instance();
   if (line)
   {
-    if (runtimes.hasBreakpoint(script_id, line))
+    if (bps.script_has_breakpoint_on_line(script_id, line))
     {
-      runtimes.removeBreakpoint(script_id, line);
-      views.js_source.removeBreakpoint(line);
+      bps.remove_breakpoint(script_id, line);
     }
     else
     {
-      runtimes.setBreakpoint(script_id, line);
-      views.js_source.addBreakpoint(line);
+      bps.add_breakpoint(script_id, line);
     }
   }
 };

@@ -39,7 +39,7 @@ cls.JsSourceView = function(id, name, container_class)
     }
   ];
 
-  var script = {};
+  var __current_script = {};
 
   var source_content = null;
 
@@ -50,8 +50,8 @@ cls.JsSourceView = function(id, name, container_class)
 
 
   var __current_line = 0;
-  var __current_pointer = 0;
-  var __current_pointer_type = 0;  // 2 for top frame, else 4
+  
+  var __current_pointer_script_id = 0;
 
   var __target_scroll_top = -1;
   var __view_is_destroyed = true;
@@ -69,6 +69,10 @@ cls.JsSourceView = function(id, name, container_class)
   var __timeout_clear_view = 0;
   var __container = null;
   var view_invalid = true;
+  
+  const
+  LINE_POINTER_TOP = window.cls.NewScript.LINE_POINTER_TOP;
+  LINE_POINTER = window.cls.NewScript.LINE_POINTER;
 
   templates.line_nummer_container = function(lines)
   {
@@ -92,9 +96,9 @@ cls.JsSourceView = function(id, name, container_class)
   {
     var lines = line_numbers.getElementsByTagName('input'), line = null, i=0;
     var breakpoints = line_numbers.getElementsByTagName('span');
-    if( script.breakpoints )
+    if (__current_script.line_arr)
     {
-      for( ; line = lines[i]; i++)
+      for (; line = lines[i]; i++)
       {
         line.value = fromLine++;
       }
@@ -133,42 +137,39 @@ cls.JsSourceView = function(id, name, container_class)
 
   var updateBreakpoints = function()
   {
-    var breakpoints = line_numbers.getElementsByTagName('span'), breakpoint = null, i=0;
-    var script_breakpoints = script.breakpoints;
+    var lines = line_numbers.getElementsByTagName('span');
+    var bp_states = __current_script.breakpoint_states;
     var line_height = context['line-height'];
-    if( script_breakpoints )
+    if (bp_states)
     {
-      for( ; breakpoint = breakpoints[i]; i++)
+      for (var i = 0, line; line = lines[i]; i++)
       {
-        if (script_breakpoints[__current_line + i])
+        if (bp_states[__current_line + i])
         {
-          breakpoint.style.backgroundPosition=
-            '0 ' + (-1 * script_breakpoints[__current_line + i] * line_height) + 'px';
+          line.style.backgroundPosition=
+            '0 ' + (-1 * bp_states[__current_line + i] * line_height) + 'px';
         }
         else
         {
-          breakpoint.style.backgroundPosition='0 0';
-          //breakpoint.style.removeProperty('background-position');
+          line.style.backgroundPosition = '0 0';
         }
       }
     }
-  }
+  };
 
   this.createView = function(container)
   {
     // TODO this must be refactored
     // the challenge is to do as less as possible in the right moment
     view_invalid = view_invalid
-    && script.id
+    && __current_script.script_id
     && runtimes.getSelectedScript()
-    && runtimes.getSelectedScript() != script.id
+    && runtimes.getSelectedScript() != __current_script.script_id
     || !runtimes.getSelectedScript();
     if( view_invalid )
     {
-      script = {};
+      __current_script = {};
       __current_line = 0;
-      __current_pointer = 0;
-      __current_pointer_type = 0;
     }
     __container = container;
     frame_id = container.id;
@@ -203,12 +204,12 @@ cls.JsSourceView = function(id, name, container_class)
       line_numbers = document.getElementById(container_line_nr_id);
 
       var selected_script_id = runtimes.getSelectedScript();
-      if(selected_script_id && selected_script_id != script.id)
+      if(selected_script_id && selected_script_id != __current_script.script_id)
       {
         var stop_at = runtimes.getStoppedAt(selected_script_id);
         if(stop_at && stop_at[0])
         {
-          var line = parseInt( stop_at[0]['line-number'] );
+          var line = parseInt( stop_at[0].line_number );
           var plus_lines = max_lines <= 10
             ? max_lines / 2 >> 0
             : 10;
@@ -220,10 +221,10 @@ cls.JsSourceView = function(id, name, container_class)
           this.showLine(selected_script_id, 0);
         }
       }
-      else if( script.id )
+      else if(__current_script.script_id)
       {
-        script.has_context = setScriptContext(script.id, __current_line);
-        this.showLine( script.id, __current_line );
+        setScriptContext(__current_script.script_id, __current_line);
+        this.showLine(__current_script.script_id, __current_line);
       }
       else
       {
@@ -285,11 +286,11 @@ cls.JsSourceView = function(id, name, container_class)
 
   var __updateLayout = function()
   {
-    if( script.line_arr )
+    if( __current_script.line_arr )
     {
       self.setup();
-      setScriptContext(script.id, __current_line);
-      self.showLine(script.id, __current_line);
+      setScriptContext(__current_script.script_id, __current_line);
+      self.showLine(__current_script.script_id, __current_line);
     }
     else
     {
@@ -304,7 +305,7 @@ cls.JsSourceView = function(id, name, container_class)
       max = 0,
       max_index = 0,
       previous = 0,
-      line_arr = script.line_arr,
+      line_arr = __current_script.line_arr,
       length = line_arr.length;
     for( ; i < length; i++)
     {
@@ -320,19 +321,21 @@ cls.JsSourceView = function(id, name, container_class)
 
   var updateScriptContext = function()
   {
-    if( script.scrollWidth > script.offsetWidth )
+    if (__current_script.scroll_width && 
+        source_content.firstChild &&
+        __current_script.scroll_width > source_content.firstChild.firstChild.offsetWidth)
     {
       document.getElementById(scroll_container_id).style.bottom =
           context['scrollbar-width'] + 'px';
-      source_content.style.width = script.scrollWidth +'px';
+      source_content.style.width = __current_script.scroll_width +'px';
     }
     else
     {
       document.getElementById(scroll_container_id).style.removeProperty('bottom');
       source_content.style.removeProperty('width');
     }
-    document.getElementById(scroll_id).style.height = script.scrollHeight + 'px';
-    if( script.scrollHeight > context['line-height'] * max_lines )
+    document.getElementById(scroll_id).style.height = __current_script.scroll_height + 'px';
+    if( __current_script.scroll_height > context['line-height'] * max_lines )
     {
       document.getElementById(horizontal_scoller).style.right =
         context['scrollbar-width'] + 'px';
@@ -346,14 +349,14 @@ cls.JsSourceView = function(id, name, container_class)
   var setScriptContext = function(script_id, line_nr)
   {
     source_content.innerHTML = "<div style='visibility:hidden'>" +
-      simple_js_parser.format(script, getMaxLineLength() - 1, 1).join('') + "</div>";
-    var scrollWidth = script.scrollWidth = source_content.firstChild.firstChild.scrollWidth + 7;
-    var offsetWidth = script.offsetWidth = source_content.firstChild.firstChild.offsetWidth;
+      simple_js_parser.format(__current_script, getMaxLineLength() - 1, 1).join('') + "</div>";
+    var scrollWidth = __current_script.scroll_width = source_content.firstChild.firstChild.scrollWidth + 7;
+    var offsetWidth = source_content.firstChild.firstChild.offsetWidth;
     // ensure that a scrollbar is also displayed with very long one-liner scripts
     // max width which produces a scrollbar is 0x7FFF - 1
-    if(script.scrollWidth > 0x7FFE)
+    if(__current_script.scroll_width > 0x7FFE)
     {
-      script.scrollWidth = 0x7FFE;
+      __current_script.scroll_width = 0x7FFE;
     }
     if( scrollWidth > offsetWidth )
     {
@@ -364,9 +367,9 @@ cls.JsSourceView = function(id, name, container_class)
     {
       max_lines = context['container-height'] / context['line-height'] >> 0;
     }
-    if( max_lines > script.line_arr.length )
+    if( max_lines > __current_script.line_arr.length )
     {
-      max_lines = script.line_arr.length;
+      max_lines = __current_script.line_arr.length;
     }
     var lines = document.getElementById(container_line_nr_id);
 
@@ -377,7 +380,7 @@ cls.JsSourceView = function(id, name, container_class)
     document.getElementById(frame_id).render(templates.line_nummer_container(max_lines));
     line_numbers = document.getElementById(container_line_nr_id);
     source_content.style.height = ( context['line-height'] * max_lines ) +'px';
-    script.scrollHeight = script.line_arr.length * context['line-height'];
+    __current_script.scroll_height = __current_script.line_arr.length * context['line-height'];
     updateScriptContext();
     source_content.innerHTML = "";
     return true;
@@ -435,11 +438,11 @@ cls.JsSourceView = function(id, name, container_class)
     // if the view is visible it shows the first new script
     // before any parse error, that means in case of a parse error
     // the current script has not set the parse_error property
-    if(script.parse_error)
+    if(__current_script.parse_error)
     {
       is_parse_error = true;
     }
-    if (script.id != script_id || is_parse_error)
+    if (__current_script.script_id != script_id || is_parse_error)
     {
       var script_obj = runtimes.getScript(script_id);
 
@@ -449,16 +452,8 @@ cls.JsSourceView = function(id, name, container_class)
         {
           script_obj.set_line_states();
         }
-        script =
-        {
-          id: script_id,
-          source: script_obj.script_data,
-          line_arr: script_obj.line_arr,
-          state_arr: script_obj.state_arr,
-          breakpoints: [],
-          has_context: false
-        }
-        if(script_obj.parse_error)
+        __current_script = script_obj;
+        if (script_obj.parse_error)
         {
           var error_line = 0;
           while(error_line < script_obj.line_arr.length &&
@@ -469,21 +464,10 @@ cls.JsSourceView = function(id, name, container_class)
           script_obj.parse_error.error_line = error_line - 1;
           script_obj.parse_error.error_line_offset =
             script_obj.parse_error.offset - script_obj.line_arr[error_line - 1];
-          script.parse_error = script_obj.parse_error;
         }
-        var b_ps = runtimes.getBreakpoints(script_id), b_p = '';
-        if( b_ps )
+        if (is_visible)
         {
-          for( b_p in b_ps )
-          {
-            script.breakpoints[parseInt(b_p)] = 1;
-          }
-        }
-        __current_pointer = 0;
-        __current_pointer_type = 0;
-        if( is_visible )
-        {
-          script.has_context = setScriptContext(script_id, line_nr);
+          setScriptContext(script_id, line_nr);
         }
         messages.post('script-selected', {script_id: script_id});
         runtimes.setSelectedScript(script_id);
@@ -503,47 +487,44 @@ cls.JsSourceView = function(id, name, container_class)
     {
       line_nr = 1;
     }
-    else if( line_nr > script.line_arr.length - max_lines )
+    else if( line_nr > __current_script.line_arr.length - max_lines )
     {
-      line_nr = script.line_arr.length - max_lines + 1;
+      line_nr = __current_script.line_arr.length - max_lines + 1;
     }
 
-    if( is_visible )
+    if (is_visible)
     {
-      if( !script.has_context )
+      if (!__current_script.scroll_width)
       {
-        script.has_context = setScriptContext(script_id, line_nr);
+        setScriptContext(script_id, line_nr);
       }
-      if(view_invalid)
+      if (view_invalid)
       {
         updateScriptContext();
       }
       // TODO check if __current_line != line_nr makes any sense
-      if(__current_line != line_nr || __view_is_destroyed || !source_content.innerHTML)
+      if (__current_line != line_nr || __view_is_destroyed || !source_content.innerHTML)
       {
-        source_content.innerHTML =
-          simple_js_parser.format(script,
-                                  line_nr - 1,
-                                  max_lines - 1,
-                                  __highlight_line_start,
-                                  __highlight_line_end).join('');
-
+        source_content.innerHTML = simple_js_parser.format(__current_script,
+                                                           line_nr - 1,
+                                                           max_lines - 1,
+                                                           __highlight_line_start,
+                                                           __highlight_line_end).join('');
         __current_line = line_nr;
         __view_is_destroyed = false;
         updateLineNumbers(line_nr);
-
         var scroll_container = !(update_scroll_height === false) && document.getElementById(scroll_container_id);
         if(scroll_container)
         {
           __disregard_scroll_event = true;
           // setting scrollTop will trigger a scroll event
           scroll_container.scrollTop =
-            __current_line / script.line_arr.length * scroll_container.scrollHeight;
+            __current_line / __current_script.line_arr.length * scroll_container.scrollHeight;
         }
       }
-      if(script.parse_error)
+      if(__current_script.parse_error)
       {
-        views.js_source.showLinePointer(script.parse_error.error_line + 1, true )
+        views.js_source.showLinePointer(__current_script.parse_error.error_line + 1, true )
       }
     }
     __current_line = line_nr;
@@ -580,53 +561,48 @@ cls.JsSourceView = function(id, name, container_class)
   {
     return __current_line + max_lines;
   }
-
+  
   /* first allays use showLine */
   this.showLinePointer = function(line, is_top_frame)
   {
-    var script_breakpoints = script.breakpoints;
-    // TODO fix from Johannes. Why is that needed?
-    if (!script_breakpoints) {
-      return;
-    }
-    if( __current_pointer )
+    this._clear_line_pointer();
+    var bp_states = __current_script && __current_script.breakpoint_states;
+    if (bp_states)
     {
-      script_breakpoints[ __current_pointer ] -= __current_pointer_type;
+      __current_pointer_script_id = __current_script.script_id;
+      __current_script.line_pointer.line = line;
+      __current_script.line_pointer.state = is_top_frame ?
+                                            LINE_POINTER_TOP :
+                                            LINE_POINTER;
+      if (!bp_states[line])
+      {
+        bp_states[line] = 0;
+      }
+      bp_states[line] += __current_script.line_pointer.state;
+      updateBreakpoints();
     }
-    __current_pointer = line;
-    __current_pointer_type = is_top_frame ? 2 : 4;
-    if( !script_breakpoints[ line ] )  script_breakpoints[ line ] = 0;
-    script_breakpoints[ line ] += __current_pointer_type;
-    updateBreakpoints();
-  }
+  };
 
   this.clearLinePointer = function()
   {
-    if( __current_pointer )
-    {
-      script.breakpoints[ __current_pointer ] -= __current_pointer_type;
-    }
-    __current_pointer = 0;
-    __current_pointer_type = 0;
+    this._clear_line_pointer();
     updateBreakpoints();
-  }
-
-  this.addBreakpoint = function(line)
+  };
+  
+  this._clear_line_pointer = function()
   {
-    if (!script.breakpoints) { return; }
-    if (!script.breakpoints[line])
+    if (__current_pointer_script_id)
     {
-      script.breakpoints[line] = 0;
+      var p_s = window.runtimes.getScript(__current_pointer_script_id);
+      if (p_s)
+      {
+        p_s.breakpoint_states[p_s.line_pointer.line] -= p_s.line_pointer.state;
+        p_s.line_pointer.line = 0;
+        p_s.line_pointer.state = 0;
+      }
+      __current_pointer_script_id = 0;
     }
-    script.breakpoints[line] += 1;
-    updateBreakpoints();
-  }
-
-  this.removeBreakpoint = function(line)
-  {
-    script.breakpoints[line] -= 1;
-    updateBreakpoints();
-  }
+  };
 
   this.scroll = function()
   {
@@ -636,7 +612,7 @@ cls.JsSourceView = function(id, name, container_class)
       var target_line = Math.ceil(top / context['line-height']);
       if (__current_line != target_line)
       {
-        self.showLine(script.id, target_line, null, null, false, true);
+        self.showLine(__current_script.script_id, target_line, null, null, false, true);
       }
     }
     __disregard_scroll_event = false;
@@ -644,12 +620,12 @@ cls.JsSourceView = function(id, name, container_class)
 
   this.getCurrentScriptId = function()
   {
-    return script.id;
+    return __current_script.script_id;
   }
 
   this.getCurrentScriptId = function()
   {
-    return script.id;
+    return __current_script.script_id;
   }
 
   this.clearView = function()
@@ -685,8 +661,8 @@ cls.JsSourceView = function(id, name, container_class)
 
   var onRuntimeDestroyed = function(msg)
   {
-    // TODO this is not good, clean up the the local script
-    if( script && runtimes.getRuntimeIdWithScriptId(script.id) == msg.id )
+    // TODO this is not good, clean up the the local __current_script
+    if( __current_script && runtimes.getRuntimeIdWithScriptId(__current_script.script_id) == msg.id )
     {
       __clearView();
     }
@@ -771,16 +747,24 @@ cls.JsSourceView = function(id, name, container_class)
   this._scroll_lines = function(lines, event, target)
   {
     var target_line = Math.max(1, Math.min(__current_line + lines, 
-                                           script.line_arr.length + 1));
+                                           __current_script.line_arr.length + 1));
     if (__current_line != target_line)
     {
       __disregard_scroll_event = true;
       document.getElementById(scroll_container_id).scrollTop =
         target_line * context['line-height'];
-      this.showLine(script.id, target_line, null, null, false, true);
+      this.showLine(__current_script.script_id, target_line, null, null, false, true);
     }
     return false;
   }
+  
+  this._onbreakpointupdated = function(msg)
+  {
+    if (__current_script && __current_script.script_id == msg.script_id)
+    {
+      updateBreakpoints();
+    }
+  };
 
   this._handlers['scroll-page-up'] = this._scroll_lines.bind(this, -PAGE_SCROLL);
   this._handlers['scroll-page-down'] = this._scroll_lines.bind(this, PAGE_SCROLL);
@@ -789,6 +773,8 @@ cls.JsSourceView = function(id, name, container_class)
   this.init(id, name, container_class);
   messages.addListener('update-layout', updateLayout);
   messages.addListener('runtime-destroyed', onRuntimeDestroyed);
+  messages.addListener('breakpoint-updated', this._onbreakpointupdated.bind(this));
+  
   ActionBroker.get_instance().register_handler(this);
 }
 

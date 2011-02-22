@@ -308,6 +308,10 @@ ui_strings.M_CONTEXTMENU_OPEN_COLOR_PICKER = 'Open color picker';
 
 /* DESC: Context menu item for specification links. */
 ui_strings.M_CONTEXTMENU_SPEC_LINK = 'Specification for "%s"';
+/* DESC: Context menu item for breakpoints to add a condition. */
+ui_strings.M_CONTEXTMENU_ADD_CONDITION = 'Add condition';
+/* DESC: Context menu item for breakpoints to edit a condition. */
+ui_strings.M_CONTEXTMENU_EDIT_CONDITION = 'Edit condition';
 
 /* DESC: Context menu item for adding a breakpoint. */
 ui_strings.M_CONTEXTMENU_ADD_BREAKPOINT = 'Add breakpoint';

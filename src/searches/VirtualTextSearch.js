@@ -122,8 +122,6 @@ var VirtualTextSearchBase = function()
   /* constants */
 
   const 
-  DEFAULT_STYLE = document.styleSheets.getDeclaration ('.search-highlight').cssText,
-  HIGHLIGHT_STYLE = document.styleSheets.getDeclaration ('.search-highlight-selected').cssText,
   DEFAULT_SCROLL_MARGIN = 50,
   SEARCH_DELAY = 50, // in ms
   MIN_TERM_LENGTH = 1,
@@ -339,7 +337,7 @@ var VirtualTextSearchBase = function()
     {
       this._offset = this._script.line_offsets[index];
       this._length = this._script.match_length;
-      this._highlight_style = index == this._script.match_cursor && HIGHLIGHT_STYLE || DEFAULT_STYLE;
+      this._highlight_style = index == this._script.match_cursor && this._match_style_highlight || this._match_style_default;
       this._hits[index] = this._hit = [];
       if (!this._source_container)
       {
@@ -524,7 +522,7 @@ var VirtualTextSearchBase = function()
   {
     this._offset = offset;
     this._length = length;
-    this._highlight_style = style || DEFAULT_STYLE;
+    this._highlight_style = style || this._match_style_default;
     this._hits.push(this._hit = []);
     this._search_node(node);
   };

@@ -142,6 +142,7 @@ var ActionBroker = function()
     {
       var container = event.target;
       while (container && container.nodeType == 1 &&
+             container.parentNode && 
              container.parentNode.nodeType == 1 &&
              !/^(?:top-|panel-|window-)?(?:container|toolbar|tabs)$/i.test(container.nodeName))
         container = container.parentNode;

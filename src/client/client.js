@@ -488,8 +488,8 @@ ui_framework.layouts.js_rough_layout =
           height: 250,
           tabs: function(services)
           {
-            return services['ecmascript-debugger'].major_version > 5 ?
-                   ['scripts-side-panel', 'event-breakpoints'] :
+            return services['ecmascript-debugger'].major_version > 5 ? 
+                   ['scripts-side-panel', 'breakpoints-side-panel'] :
                    ['scripts-side-panel'];
           }
         }

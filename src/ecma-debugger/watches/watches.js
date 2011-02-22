@@ -163,8 +163,8 @@ cls.Watches = function(view)
         this.collapse([[prop[NAME], prop[OBJECT_VALUE][OBJECT_ID], 0]]);
       }
       prop_list.splice(i, 1);
-      this._view.update();
     }
+    this._view.update();
   };
 
   this.update_watches = function()

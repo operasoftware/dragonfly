@@ -170,6 +170,18 @@
           "escape": "cancel",
         }
       },
+      "breakpoints":
+      {
+        "default":
+        {
+
+        },
+        "edit":
+        {
+          "enter": "submit",
+          "escape": "cancel",
+        }
+      },
     },
     mac:
     {
