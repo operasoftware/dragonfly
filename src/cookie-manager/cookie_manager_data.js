@@ -222,11 +222,11 @@ cls.CookieManager.StorageDataBase = function()
   this._request_runtime_details = function(rt_object)
   {
     var script = "return JSON.stringify({hostname: location.hostname || '', pathname: location.pathname || ''})";
-    var tag = tagManager.set_callback(this, this._handle_get_domain,[rt_object.rt_id]);
+    var tag = tagManager.set_callback(this, this._handle_runtime_details,[rt_object.rt_id]);
     services['ecmascript-debugger'].requestEval(tag,[rt_object.rt_id, 0, 0, script]);
   };
 
-  this._handle_get_domain = function(status, message, rt_id)
+  this._handle_runtime_details = function(status, message, rt_id)
   {
     const STATUS = 0;
     const DATA = 2;
@@ -239,17 +239,19 @@ cls.CookieManager.StorageDataBase = function()
       this._rts[rt_id].hostname = hostname;
       this._rts[rt_id].pathname = pathname;
 
-      (function(context)
+      // wait for domain info for runtime details of all runtimes
+      var do_request_data = true;
+      for (var key in this._rts)
       {
-        for (var key in context._rts)
+        if(this._rts[key].get_domain_is_pending === true)
         {
-          if(context._rts[key]["get_domain_is_pending"] !== false)
-          {
-            return;
-          }
-        };
-        context._request_data.call(context,context._rts);
-      })(this);
+          do_request_data = false;
+        }
+      };
+      if(do_request_data)
+      {
+        this._request_data(this._rts);
+      }
     }
   };
 
