@@ -152,6 +152,14 @@ cls.CookieManager.CookieManagerViewBase = function()
     this._after_table_render(container);
   };
 
+  this.ondestroy = function()
+  {
+    if(this._update_expiry_interval)
+    {
+      this._update_expiry_interval = clearInterval(this._update_expiry_interval);
+    }
+  }
+
   this.select_row = function(event, elem) // public just towards actions
   {
     var event = event || {};
