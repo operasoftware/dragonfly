@@ -541,7 +541,7 @@ ui_framework.layouts.js_rough_layout =
           tabs: function(services)
           {
             return services['ecmascript-debugger'].major_version > 5 ? 
-                   ['scripts-side-panel', 'event-breakpoints'] :
+                   ['scripts-side-panel', 'breakpoints-side-panel'] :
                    ['scripts-side-panel'];
           }
         }

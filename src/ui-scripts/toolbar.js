@@ -291,6 +291,13 @@ var WindowToolbar = function(cell, buttons, filters, specials, customs)
       this.setCSSProperties()
     }
 
+    dim = this.cell.width - this.horizontal_border_padding;
+    if( dim != this.width)
+    {
+      this.is_dirty = true;
+      this.width = dim;
+    }
+
     dim = ( this.__is_visible  && ( 
             this.buttons.length 
             || this.switches && this.switches.length
@@ -304,11 +311,16 @@ var WindowToolbar = function(cell, buttons, filters, specials, customs)
       this.height = dim;
       this.offsetHeight = dim + this.vertical_border_padding;
     }
-
-     
+    this.update(force_redraw)
   } 
   // window toolbar is positioned static, no need to update style.
-  this.update_style = function(style){};
+  this.update_style = function(style)
+  {
+    if (this.height && style.display != "block")
+      style.display = "block";
+    if (!this.height && style.display != "none")
+      style.display = "none";
+  }
 
   this.getCssText = function()
   {

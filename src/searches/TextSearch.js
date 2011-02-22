@@ -14,14 +14,21 @@ var TextSearch = function(min_length)
 TextSearch.prototype = new function()
 {
   const
-  DEFAULT_STYLE = document.styleSheets.getDeclaration ('.search-highlight').cssText,
-  HIGHLIGHT_STYLE = document.styleSheets.getDeclaration ('.search-highlight-selected').cssText,
   DEFAULT_SCROLL_MARGIN = 50,
   SEARCH_DELAY = 50, // in ms
   MIN_TERM_LENGTH = 2, // search term must be this long or longer
   NO_MATCH = 1,
   EMPTY = 2;
   window.cls.MessageMixin.apply(this); // mix in message handler behaviour.
+
+  window.addEventListener('load', function()
+  {
+    var style_sheets = document.styleSheets;
+    this._match_style_default = 
+      style_sheets.getDeclaration ('.search-highlight').cssText;
+    this._match_style_highlight = 
+      style_sheets.getDeclaration ('.search-highlight-selected').cssText;
+  }.bind(this), false);
 
   this._init = function(min_length)
   {
@@ -43,16 +50,18 @@ TextSearch.prototype = new function()
     this._curent_search_result = null;
     this._timeouts = new Timeouts();
     this._search_bound = this.search.bind(this);
+
+
   }
 
   this._set_default_style = function(span)
   {
-    span.style.cssText = DEFAULT_STYLE;
+    span.style.cssText = this._match_style_default;
   };
 
   this._set_highlight_style = function(span)
   {
-    span.style.cssText = HIGHLIGHT_STYLE;
+    span.style.cssText = this._match_style_highlight;
   };
 
   this._update_info = function(type)
@@ -128,7 +137,7 @@ TextSearch.prototype = new function()
             this._curent_search_result.push(span); 
             node.parentNode.replaceChild(span, node);
             span.appendChild(node);
-            span.style.cssText = DEFAULT_STYLE;
+            span.style.cssText = this._match_style_default;
             this._consumed_total_length += node.nodeValue.length;
             node = span;
           }
@@ -206,7 +215,7 @@ TextSearch.prototype = new function()
           if( old_cursor && this._hits[old_cursor] )
           {
             this._match_cursor = old_cursor;
-            this._hits[this._match_cursor].style.cssText = HIGHLIGHT_STYLE;
+            this._hits[this._match_cursor].style.cssText = this._match_style_highlight;
             this._update_info();
           }
           else
@@ -253,7 +262,7 @@ TextSearch.prototype = new function()
       if (this._match_cursor >= 0) // if we have a currently highlighted hit..
       {
         // then reset its style to the default
-        this._hits[this._match_cursor].forEach(this._set_default_style);
+        this._hits[this._match_cursor].forEach(this._set_default_style, this);
       }
 
       if (check_position)
@@ -277,7 +286,7 @@ TextSearch.prototype = new function()
       {
         this._match_cursor = this._hits.length - 1;
       }
-      this._hits[this._match_cursor].forEach(this._set_highlight_style);
+      this._hits[this._match_cursor].forEach(this._set_highlight_style, this);
       var target = this._hits[this._match_cursor][0];
       this._scroll_into_margined_view(this._container.offsetHeight,
                                       target.offsetHeight,

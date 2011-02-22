@@ -113,6 +113,11 @@
  *
  *     <dt>error-count-update</dt>
  *     <dd>When the error count changes (new error or reset). Payload: msg.current_error_count</dd>
+ *     <dt>breakpoint-added</dt>
+ *     <dd>A breakpoint was set. Payload: msg.script_id, msg.line_nr, msg.id, msg.event_type.</dd>
+ *
+ *     <dt>breakpoint-removed</dt>
+ *     <dd>A breakpoint was set. Payload: msg.id</dd>
  *
  * </dl>
  *

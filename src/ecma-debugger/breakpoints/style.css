@@ -1,0 +1,34 @@
+.breakpoint
+{
+  border-bottom: 1px solid #ccc;
+  padding: 2px 0;
+}
+
+.breakpoint-checkbox
+{
+  float: left; 
+}
+
+.breakpoint .file-line,
+.source-line,
+.event-type,
+.condition
+{
+  margin-left: 26px;
+}
+
+.breakpoint .file-line,
+.event-type
+{
+  line-height: 20px;
+}
+
+.source-line
+{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: pre;
+  line-height: 16px;
+  height: 16px;
+}
+

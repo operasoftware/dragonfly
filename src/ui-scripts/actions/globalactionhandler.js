@@ -87,46 +87,26 @@
     }
     return actions.concat(this._listener_handlers);
   };
-
-  this._clear_stopped_views = function()
+  
+  this._continue_with_mode = function(mode, action_id, event, target)
   {
     window.views.js_source.clearLinePointer();
     window.views.callstack.clearView();
     window.views.inspection.clearView();
-  }
-
-  this._handlers['continue-run'] =
-  function(action_id, event, target)
-  {
-    this._clear_stopped_views();
-    window.stop_at.__continue('run');
+    window.stop_at.continue_thread(mode);
     return false;
-  }.bind(this);
+  };
 
-  this._handlers['continue-step-next-line'] =
-  function(action_id, event, target)
+  [
+    'run', 
+    'step-next-line',
+    'step-into-call',
+    'step-out-of-call',
+  ].forEach(function(mode)
   {
-    this._clear_stopped_views();
-    window.stop_at.__continue('step-next-line');
-    return false;
-  }.bind(this);
-
-  this._handlers['continue-step-out-of-call'] =
-  function(action_id, event, target)
-  {
-    this._clear_stopped_views();
-    window.stop_at.__continue('step-out-of-call');
-    return false;
-  }.bind(this);
-
-  this._handlers['continue-step-into-call'] =
-  function(action_id, event, target)
-  {
-    this._clear_stopped_views();
-    window.stop_at.__continue('step-into-call');
-    return false;
-  }.bind(this);
-
+    this._handlers['continue-' + mode] = this._continue_with_mode.bind(this, mode);
+  }, this);
+    
   this._handlers["select-all"] = function(action_id, event, target)
   {
     var selection = getSelection();

@@ -112,10 +112,18 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     return runtime_id;
   }
 
+  
   this.getControlsEnabled = function()
   {
     return __controls_enabled;
   }
+  
+  this.__defineGetter__("is_stopped", function()
+  {
+    return __controls_enabled;
+  });
+  
+  this.__defineSetter__("is_stopped", function(){});
 
   this.getFrames = function()
   {
@@ -129,7 +137,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
 
   this.getThreadId = function()
   {
-    return stopAt && stopAt['thread-id'] || '';
+    return stopAt && stopAt.thread_id || '';
   }
 
   /**
@@ -157,7 +165,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
       {
         runtime_id: frame.rt_id,
         scope_id: frame.scope_id,
-        thread_id: stopAt['thread-id'],
+        thread_id: stopAt.thread_id,
         index: __selected_frame_index,
         argument_id: frame.argument_id,
         scope_list: frame.scope_list
@@ -166,7 +174,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     return null;
   }
 
-  var parseBacktrace = function(status, message, runtime_id, thread_id)
+  var parseBacktrace = function(status, message, stop_at)
   {
 
     const
@@ -183,36 +191,60 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     OBJECT_ID = 0,
     NAME = 5,
     SCOPE_LIST = 7;
-
-    var _frames = message[FRAME_LIST], frame = null, i = 0;
-    var fn_name = '', line = '', script_id = '', argument_id = '', scope_id = '';
-    var _frames_length = _frames.length;
-
-    var is_all_frames = _frames_length <= ini.max_frames;
-    callstack = [];
-    for( ; frame  = _frames[i]; i++ )
+    
+    if (status)
     {
-      callstack[i] =
+      opera.postError("parseBacktrace failed scope message: " + message);
+    }
+    else
+    {
+      var _frames = message[FRAME_LIST], frame = null, i = 0;
+      var fn_name = '', line = '', script_id = '', argument_id = '', scope_id = '';
+      var _frames_length = _frames.length;
+      var is_all_frames = _frames_length <= ini.max_frames;
+      callstack = [];
+      for( ; frame  = _frames[i]; i++ )
       {
-        fn_name : is_all_frames && i == _frames_length - 1
-                  ? 'global scope'
-                  : frame[OBJECT_VALUE][NAME] || 'anonymous',
-        line : frame[LINE_NUMBER],
-        script_id : frame[SCRIPT_ID],
-        argument_id : frame[ARGUMENT_OBJECT],
-        scope_id : frame[VARIABLE_OBJECT],
-        this_id : frame[THIS_OBJECT],
-        id: i,
-        rt_id: runtime_id,
-        scope_list: frame[SCOPE_LIST]
+        callstack[i] =
+        {
+          fn_name : is_all_frames && i == _frames_length - 1
+                    ? 'global scope'
+                    : frame[OBJECT_VALUE][NAME] || 'anonymous',
+          line : frame[LINE_NUMBER],
+          script_id : frame[SCRIPT_ID],
+          argument_id : frame[ARGUMENT_OBJECT],
+          scope_id : frame[VARIABLE_OBJECT],
+          this_id : frame[THIS_OBJECT],
+          id: i,
+          rt_id: stop_at.runtime_id,
+          scope_list: frame[SCOPE_LIST]
+        }
       }
+      
+      if( cur_inspection_type != 'frame' )
+      {
+        messages.post('active-inspection-type', {inspection_type: 'frame'});
+      }
+      messages.post('frame-selected', {frame_index: 0});
+      views.callstack.update();
+      if (!views.js_source.isvisible())
+      {
+        topCell.showView(views.js_source.id);
+      }
+      var top_frame = callstack[0];
+      var plus_lines = views.js_source.getMaxLines() <= 10 ? 
+                       views.js_source.getMaxLines() / 2 >> 0 :
+                       10;
+      if (views.js_source.showLine(top_frame.script_id, top_frame.line - plus_lines))
+      {
+        runtimes.setSelectedScript(top_frame.script_id);
+        views.js_source.showLinePointer(top_frame.line, true);
+      }
+      toolbars.js_source.enableButtons('continue');
+      messages.post('thread-stopped-event', {stop_at: stop_at});
+      messages.post('host-state', {state: 'waiting'});
+      setTimeout(function(){ __controls_enabled = true;}, 50);
     }
-    if( cur_inspection_type != 'frame' )
-    {
-      messages.post('active-inspection-type', {inspection_type: 'frame'});
-    }
-    messages.post('frame-selected', {frame_index: 0});
-    views.callstack.update();
   }
 
   this.setInitialSettings = function()
@@ -233,32 +265,29 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
 
   this.__continue = function (mode) //
   {
+    var tag = tag_manager.set_callback(this, this._handle_continue, [mode]);
+    var msg = [stopAt.runtime_id, stopAt.thread_id, mode];
+    services['ecmascript-debugger'].requestContinueThread(tag, msg);
+  }
+  
+  this.continue_thread = function (mode) //
+  {
+    if (this.is_stopped)
+    {
+      this.__continue(mode);
+    }
+  }
+  
+  this._handle_continue = function(status, message, mode)
+  {
     __controls_enabled = false;
     callstack = [];
-
     runtimes.setObserve(stopAt.runtime_id, mode != 'run');
-
-    services['ecmascript-debugger'].requestContinueThread(0,
-        [stopAt.runtime_id, stopAt['thread-id'], mode]);
     messages.post('frame-selected', {frame_index: -1});
     messages.post('thread-continue-event', {stop_at: stopAt});
     toolbars.js_source.disableButtons('continue');
     messages.post('host-state', {state: 'ready'});
   }
-
-
-
-  /*
-
-  <thread-stopped-at>
-    <runtime-id>2</runtime-id>
-    <thread-id>1</thread-id>
-    <script-id>41</script-id>
-    <line-number>2</line-number>
-    <stopped-reason>unknown</stopped-reason>
-  </thread-stopped-at>
-
-  */
 
   this.handle = function(message)
   {
@@ -274,16 +303,14 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     stopAt =
     {
       runtime_id: message[RUNTIME_ID],
-      'thread-id': message[THREAD_ID],
+      thread_id: message[THREAD_ID],
       script_id: message[SCRIPT_ID],
-      'line-number': message[LINE_NUMBER],
-      'stopped-reason': message[STOPPED_REASON],
-      'breakpoint-id': message[BREAKPOINT_ID]
+      line_number: message[LINE_NUMBER],
+      stopped_reason: message[STOPPED_REASON],
+      breakpoint_id: message[BREAKPOINT_ID]
     };
-    // var id = getStopAtId();
 
-
-    var line = stopAt['line-number'];
+    var line = stopAt.line_number;
     if( typeof line == 'number' )
     {
       /**
@@ -292,41 +319,21 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
       * At the moment this is a hack because the stop reason is not set for that case.
       * The check is if the stop reason is 'unknown' ( should be 'new script')
       */
-      if(stopAt['stopped-reason'] == 'unknown')
+      if(stopAt.stopped_reason == 'unknown')
       {
-
         runtime_id = stopAt.runtime_id;
         if(  settings['js_source'].get('script')
              || runtimes.getObserve(runtime_id)
               // this is a workaround for Bug 328220
               // if there is a breakpoint at the first statement of a script
               // the event for stop at new script and the stop at breakpoint are the same
-             || runtimes.hasBreakpoint(stopAt.script_id, line) )
+             || this._bps.script_has_breakpoint_on_line(stopAt.script_id, line))
         {
           if( runtimes.getSelectedRuntimeId() != runtime_id )
           {
             runtimes.setSelectedRuntimeId(runtime_id);
           }
-          // the runtime id can be different for each frame.
-          var tag = tagManager.set_callback(null, parseBacktrace, [stopAt.runtime_id]);
-          services['ecmascript-debugger'].requestGetBacktrace(tag,
-              [stopAt.runtime_id, stopAt['thread-id'], ini.max_frames]);
-          if( !views.js_source.isvisible() )
-          {
-            topCell.showView(views.js_source.id);
-          }
-          var plus_lines = views.js_source.getMaxLines() <= 10
-            ? views.js_source.getMaxLines() / 2 >> 0
-            : 10;
-          if( views.js_source.showLine( stopAt.script_id, line - plus_lines ) )
-          {
-            runtimes.setSelectedScript(stopAt.script_id);
-            views.js_source.showLinePointer( line, true );
-          }
-          __controls_enabled = true;
-          toolbars.js_source.enableButtons('continue');
-          messages.post('thread-stopped-event', {stop_at: stopAt});
-          messages.post('host-state', {state: 'waiting'});
+          this._stop_in_script(stopAt);
         }
         else
         {
@@ -335,48 +342,81 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
       }
       else
       {
-        runtime_id = stopAt.runtime_id;
+        /* 
+          example
 
-        // the runtime id can be different for each frame
-        var tag = tagManager.set_callback(null, parseBacktrace, [stopAt.runtime_id]);
-        services['ecmascript-debugger'].requestGetBacktrace(tag,
-          [stopAt.runtime_id, stopAt['thread-id'], ini.max_frames]);
-        if( !views.js_source.isvisible() )
+          "runtime_id":2,
+          "thread_id":7,
+          "script_id":3068,
+          "line_number":8,
+          "stopped_reason":"breakpoint",
+          "breakpoint_id":1
+
+        */
+        var condition = this._bps.get_condition(stopAt.breakpoint_id);
+        if (condition)
         {
-          topCell.showView(views.js_source.id);
+          var tag = tagManager.set_callback(this, 
+                                            this._handle_condition,
+                                            [stopAt]);
+          var msg = [stopAt.runtime_id, 
+                     stopAt.thread_id, 
+                     0, 
+                     condition, 
+                     [['dummy', 0]]];
+          services['ecmascript-debugger'].requestEval(tag, msg);
         }
-        var plus_lines = views.js_source.getMaxLines() <= 10
-          ? views.js_source.getMaxLines() / 2 >> 0
-          : 10;
-        if( views.js_source.showLine( stopAt.script_id, line - plus_lines ) )
+        else
         {
-          runtimes.setSelectedScript(stopAt.script_id);
-          views.js_source.showLinePointer( line, true );
+          this._stop_in_script(stopAt);
         }
-        __controls_enabled = true;
-        toolbars.js_source.enableButtons('continue');
-        messages.post('thread-stopped-event', {stop_at: stopAt});
-        messages.post('host-state', {state: 'waiting'});
       }
     }
     else
     {
-      throw 'not a line number: '+stopAt['line-number'];
+      throw 'not a line number: '+stopAt.line_number;
     }
   }
 
-    var onRuntimeDestroyed = function(msg)
+  this._handle_condition = function(status, message, stop_at)
+  {
+    const STATUS = 0, TYPE = 1, VALUE = 2;
+    if (status)
     {
-      if( stopAt && stopAt.runtime_id == msg.id )
-      {
-        views.callstack.clearView();
-        views.inspection.clearView();
-        self.__continue('run');
-      }
+      opera.postError('Evaling breakpoint condition failed');
+      this.__continue('run');
+    }
+    else if(message[STATUS] == "completed" &&
+            message[TYPE] == "boolean" && 
+            message[VALUE] == "true")
+    {
+      this._stop_in_script(stop_at);
+    }
+    else
+    {
+      this.__continue('run');
+    }
+  }
 
+  this._stop_in_script = function(stop_at)
+  {
+    var tag = tagManager.set_callback(null, parseBacktrace, [stop_at]);
+    var msg = [stop_at.runtime_id, stop_at.thread_id, ini.max_frames];
+    services['ecmascript-debugger'].requestGetBacktrace(tag, msg);
+  }
+
+  var onRuntimeDestroyed = function(msg)
+  {
+    if( stopAt && stopAt.runtime_id == msg.id )
+    {
+      views.callstack.clearView();
+      views.inspection.clearView();
+      self.__continue('run');
     }
 
-    messages.addListener('runtime-destroyed', onRuntimeDestroyed);
+  }
+
+  messages.addListener('runtime-destroyed', onRuntimeDestroyed);
 
   var onActiveInspectionType = function(msg)
   {
@@ -388,6 +428,8 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     __selected_frame_index = msg.frame_index;
   }
 
+  this._bps = cls.Breakpoints.get_instance();
+  
   messages.addListener('active-inspection-type', onActiveInspectionType);
 
 
@@ -409,6 +451,8 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
       self.setInitialSettings();
     });
   }
+
+  this._bps = window.cls.Breakpoints.get_instance();
 
 
 }

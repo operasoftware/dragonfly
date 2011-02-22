@@ -129,6 +129,8 @@ window.load_screen_timeout = window.setTimeout(function()
 <link rel="stylesheet" href="./ui-style/global_command_line.css"/>
 <link rel="stylesheet" href="./ui-style/contextmenu.css"/>
 <link rel="stylesheet" href="./searches/style.css"/>
+<link rel="stylesheet" href="./ecma-debugger/breakpoints/style.css"/>
+
 
 
 
@@ -191,6 +193,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/toolbar.js"/>
 <script src="./ui-scripts/toolbarConfig.js"/>
 <script src="./ui-scripts/modebar.js"/>
+<script src="./ui-scripts/editor.js"/>
 <script src="./searches/TextSearch.js"/>
 <script src="./searches/VirtualTextSearch.js"/>
 <script src="./searches/searchbar.js"/>
@@ -305,6 +308,12 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ecma-debugger/eventbreakpoints/data.js"/>
 <script src="./ecma-debugger/eventbreakpoints/view.js"/>
 <script src="./ecma-debugger/eventbreakpoints/templates.js"/>
+
+<script src="./ecma-debugger/breakpoints/view.js"/>
+<script src="./ecma-debugger/breakpoints/breakpoints.js"/>
+<script src="./ecma-debugger/breakpoints/templates.js"/>
+<script src="./ecma-debugger/breakpoints/conditioneditor.js"/>
+
 
 <script src="./ecma-debugger/watches/watches.js"/>
 <script src="./ecma-debugger/watches/view.js"/>
