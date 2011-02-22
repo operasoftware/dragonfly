@@ -32,7 +32,6 @@
   markup_classes[ML_BOGUS_DATA] = "markup-bogus-comment";
   markup_classes[ML_DOCTYPE] = "markup-doctype";
 
-  var markup_tokenizer = new cls.MarkupTokenizer();
   
   var root_markup_handler = function(context, token_type, token)
   { 
@@ -116,6 +115,8 @@
   
   this.highlight_markup = function(script, onnewline)
   {
+    var markup_tokenizer = new cls.MarkupTokenizer();
+    next_markup_handler = root_markup_handler;
     var context =
     {
       template: ["pre"],
@@ -141,7 +142,6 @@
       context.template.push(context.text);
     }
     
- //   alert(JSON.stringify(context.template));
     return context.template;
   };
 

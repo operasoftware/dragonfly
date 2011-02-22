@@ -194,15 +194,13 @@ window.templates.markup_resource_view = function(resource, resourcedata)
   {
     lines.push(line_count++);
   });
-  return [
-    'code',
+  return ['code',
     ['div',
       source,
       ['div', lines.join('\n'), 'class', 'resource-line-numbers'],
       'class', 'markup-resource'
     ],
     'class', 'resource-detail-container markup-source markup-resource-content'
-
   ]
 }
 
