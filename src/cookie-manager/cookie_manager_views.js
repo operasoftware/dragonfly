@@ -272,12 +272,24 @@ cls.CookieManager.CookieManagerViewBase = function()
         var new_cookie_desc = {
           domain:       domain,
           name:         name,
-          path:         path || "/",
+          path:         path,
           value:        value,
           expires:      expires,
           is_secure:    +is_secure,
           is_http_only: +is_http_only,
           runtime:      runtime
+        }
+
+        if(!new_cookie_desc.runtime)
+        {
+          // try to find runtime where this might end up to make highlighting work
+          for (var id in this._data_reference._rts) {
+            if(this._data_reference._rts[id].hostname === new_cookie_desc.domain)
+            {
+              new_cookie_desc.runtime = this._data_reference._rts[id].rt_id;
+              break;
+            }
+          };
         }
 
         if(old_cookie)
