@@ -196,8 +196,19 @@ button[handler="close-request-detail"]
   width: 110px;
 }
 
+.network-details-header-list {
+  border: dotted 1px black;
+  list-style: none;
+  padding-left: 0;
+  font-family: monospace;
+}
 
-h2
+.network-details-header-list span
+{
+  font-weight: bold;
+}
+
+.request-details h2
 {
   font-size: 1em;
   font-weight: bold;

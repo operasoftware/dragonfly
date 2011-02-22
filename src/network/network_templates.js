@@ -175,48 +175,42 @@ templates.network_log_request_detail = function(ctx, selected)
      ["tr", ["th", "Duration:"], ["td", String(req.duration ? "" + req.duration + "ms" : "-")]],
      "class", "resource-detail"
     ],
-    ["h2", "Request details", ["button", "raw/cooked",
-                               "type", "button",
-                               // unselectable attribute works around bug CORE-35118
-                               "unselectable", "on",
-                               "handler", "toggle-raw-cooked-request"]],
+    ["h2", "Request details"],
     templates.request_details(req),
-    ["h2", "Response details", ["button", "raw/cooked",
-                                "type", "button",
-                                // unselectable attribute works around bug CORE-35118
-                                "unselectable", "on",
-                                "handler", "toggle-raw-cooked-response"]],
+    ["h2", "Response details"],
     templates.response_details(req),
     ["h2", "Body"],
     templates.network_response_body(req),
     ],
     "data-resource-id", String(req.id),
     "data-menu", "request-context-options",
+    "class", "request-details"
   ]
 }
 
 templates.request_details = function(req)
 {
-  if (settings.network_logger.get("request-view-mode") == "raw")
-  {
-    return templates.network_raw(req.request_raw);
-  }
-  else
-  {
-    return templates.network_header_table(req.request_headers);
-  }
+  return templates.network_headers_list(req.request_headers, "first line request");
 }
 
 templates.response_details = function(req)
 {
-  if (settings.network_logger.get("response-view-mode") == "raw")
+  return templates.network_headers_list(req.response_headers, "first line response");
+}
+
+templates.network_headers_list = function(headers, firstline)
+{
+  if (!headers) { return "No headers"}
+  var tpl = [];
+  var lis = headers.map(function(header) { return [
+    ["li", ["span", header.name + ": "], header.value,  "data-spec", "http#" + header.name]
+  ]});
+
+  if (firstline)
   {
-    return templates.network_raw(req.response_raw);
+    lis.unshift(["li", firstline]);
   }
-  else
-  {
-    return templates.network_header_table(req.response_headers);
-  }
+  return ["ol", lis, "class", "network-details-header-list"]  
 }
 
 templates.network_raw = function(raw)

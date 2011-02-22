@@ -161,27 +161,11 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     }
   }.bind(this);
 
-
-
   this._on_clicked_get_body = function(evt, target)
   {
     var rid = target.getAttribute("data-resource-id");
     rid = parseInt(rid);
     this._service.request_body(rid, this.update.bind(this));
-  }.bind(this);
-
-  this._on_clicked_toggle_response_bound = function()
-  {
-    var mode = settings.network_logger.get("response-view-mode") == "raw" ? "cooked" : "raw";
-    settings.network_logger.set("response-view-mode", mode);
-    this.update();
-  }.bind(this);
-
-  this._on_clicked_toggle_request_bound = function()
-  {
-    var mode = settings.network_logger.get("request-view-mode") == "raw" ? "cooked" : "raw";
-    settings.network_logger.set("request-view-mode", mode);
-    this.update();
   }.bind(this);
 
   this._on_scroll_bound = function(evt)
