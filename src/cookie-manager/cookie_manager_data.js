@@ -59,7 +59,7 @@ cls.CookieManager.StorageDataBase = function()
 
   this.create_objectref = function(cookie, runtimes, fixed_name)
   {
-    return ((fixed_name || (cookie.domain + "/" + cookie.path + "/" + cookie.name + "/")) + (runtimes || "")).replace(/'/g,"");
+    return ((fixed_name || cookie.domain + "/" + cookie.path + "/" + cookie.name + "/") + (runtimes || "")).replace(/'/g,"");
   };
 
   this.get_item_by_objectref = function(objectref)
@@ -211,7 +211,7 @@ cls.CookieManager.StorageDataBase = function()
         // There are no cookies for this domain/path. The group needs to be shown anyhow.
         flattened_cookies.push({
           runtimes:                domaincookies.runtimes,
-          objectref:               this.create_objectref(this, domaincookies.runtimes, "domain_path_placeholder"),
+          objectref:               this.create_objectref(null, domaincookies.runtimes, "domain_path_placeholder"),
           is_runtimes_placeholder: true
         });
       }
