@@ -119,14 +119,14 @@ var render_template = function(doc)
     document.getElementsByClassName('js-source')[0].render(tmpl);
     document.getElementsByClassName('line-numbers')[0].textContent = lines.join('\n');
     var h = document.body.offsetHeight + document.body.offsetWidth;
-//    alert(Date.now()-t1+ " "+(t2-t1));
+    alert(Date.now()-t1+ " "+(t2-t1));
     
 };
 
 window.onload = function()
 {
     var xhr = new XMLHttpRequest();
-    xhr.open("GET","test-document.html",true);
+    xhr.open("GET","opera.html",true);
     xhr.onload = function()
     {
         // console.log(this.responseText)
