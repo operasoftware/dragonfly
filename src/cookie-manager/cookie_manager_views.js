@@ -282,9 +282,16 @@ cls.CookieManager.CookieManagerViewBase = function()
 
         if(!new_cookie_desc.runtime)
         {
-          // try to find runtime where this might end up to make highlighting work
+          /**
+            * Try to find runtime where this might end up to be able to highlight it. Using endsWith 
+            * makes it work for subdomains, it can get the wrong one too, but chances are good
+            * and it doesnt matter too much. Todo: Improve by making a runtimes list with those that fit.
+            */
           for (var id in this._data_reference._rts) {
-            if(this._data_reference._rts[id].hostname === new_cookie_desc.domain)
+            // check if runtime hostname endsWith cookie-domain val
+            var hostname = this._data_reference._rts[id].hostname;
+            var last_index = hostname.lastIndexOf(new_cookie_desc.domain);
+            if(last_index !== -1 && last_index + new_cookie_desc.domain.length == hostname.length)
             {
               new_cookie_desc.runtime = this._data_reference._rts[id].rt_id;
               break;
