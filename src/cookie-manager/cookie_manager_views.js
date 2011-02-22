@@ -376,11 +376,11 @@ cls.CookieManager.CookieManagerViewBase = function()
             options.push(
               {
                 label: ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE,
-                handler: function() {
+                handler: (function() {
                   var runtime = selected_cookie_objects[0].runtimes[0];
                   var inserted = this.insert_add_item_row(row, runtime);
                   this.select_row(null, inserted);
-                }
+                }).bind(this)
               }
             );
             // single selection
