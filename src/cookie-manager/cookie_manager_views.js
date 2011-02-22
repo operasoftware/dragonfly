@@ -150,6 +150,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     this._before_table_render(container);
     this._table_container = container.clearAndRender(["div", this._sortable_table.render(), "class", "table_container"]);
     this._after_table_render(container);
+    window.messages.addListener("debug-context-selected", this._clear_element.bind(this, container));
   };
 
   this.ondestroy = function()
@@ -300,6 +301,11 @@ cls.CookieManager.CookieManagerViewBase = function()
         this._data_reference.refetch();
       }
     }
+  }
+
+  this._clear_element = function(container)
+  {
+    container.innerHTML = "";
   }
 
   this._before_table_render = function(container, message)
