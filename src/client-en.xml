@@ -254,6 +254,8 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./syntaxhighlight/js/syntax.js"/>
 <script src="./syntaxhighlight/js/tokenizer.js"/>
 <script src="./syntaxhighlight/js/templates.js"/>
+<script src="./syntaxhighlight/markup/tokenizer.js"/>
+<script src="./syntaxhighlight/markup/syntax.js"/>
 
 
 <script src="./ecma-debugger/ListTextSearch.js"/>
