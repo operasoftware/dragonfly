@@ -569,7 +569,7 @@ cls.ConsoleLogger["2.0"].ConsoleView.create_ui_widgets = function()
       'console-widget': false,
       'use-selected-runtime-as-filter': false,
       'expand-all-entries': false,
-      'use-css-filter': true,
+      'use-css-filter': false,
       'css-filter': 
       [
         '-webkit-',
@@ -582,8 +582,26 @@ cls.ConsoleLogger["2.0"].ConsoleView.create_ui_widgets = function()
         '_position',
         '_display',
         '_zoom',
+        '_word-wrap',
+        '_z-index',
+        '_background',
+        '_padding',
+        '_line-height',
+        '_vertical-align',
+        '*width',
+        '*border',
+        '*margin',
+        '*padding',
+        '*font',
+        '*display',
+        '*top',
+        '*z-index',
+        '*line-height',
+        '*left',
         'zoom:',
         'filter:',
+        'behavior:',
+        'DXImageTransform.Microsoft',
       ]
     },
     // key-label map
@@ -640,5 +658,5 @@ eventHandlers.input['error-console-css-filter'] = function(event, target)
   {
     return token.trim();
   }).filter(Boolean);
-  window.settings.console.set('css-filters', filters);
+  window.settings.console.set('css-filter', filters);
 };
