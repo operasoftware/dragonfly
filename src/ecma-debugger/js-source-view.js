@@ -1087,6 +1087,7 @@ cls.JsSourceView.create_ui_widgets = function()
 
   var broker = ActionBroker.get_instance();
   var contextmenu = ContextMenu.get_instance();
+  var breakpoints = cls.Breakpoints.get_instance();
   contextmenu.register("js-source-content", [
     {
       callback: function(event, target)
@@ -1109,13 +1110,12 @@ cls.JsSourceView.create_ui_widgets = function()
             });
           }
 
-          if (runtimes.hasBreakpoint(script_id, line))
+          if (breakpoints.script_has_breakpoint_on_line(script_id, line))
           {
             items.push({
               label: ui_strings.M_CONTEXTMENU_REMOVE_BREAKPOINT,
               handler: function(event, target) {
-                runtimes.removeBreakpoint(script_id, line);
-                views.js_source.removeBreakpoint(line);
+                breakpoints.remove_breakpoint(script_id, line);
               }
             });
           }
@@ -1124,8 +1124,7 @@ cls.JsSourceView.create_ui_widgets = function()
             items.push({
               label: ui_strings.M_CONTEXTMENU_ADD_BREAKPOINT,
               handler: function(event, target) {
-                runtimes.setBreakpoint(script_id, line);
-                views.js_source.addBreakpoint(line);
+                breakpoints.add_breakpoint(script_id, line);
               }
             });
           }
