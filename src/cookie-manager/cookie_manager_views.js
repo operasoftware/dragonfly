@@ -1,4 +1,4 @@
-﻿window.cls || (window.cls = {});
+window.cls || (window.cls = {});
 cls.CookieManager || (cls.CookieManager = {});
 cls.CookieManager["1.0"] || (cls.CookieManager["1.0"] = {});
 
@@ -188,6 +188,8 @@ cls.CookieManager.CookieManagerViewBase = function()
     var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row(runtime, this._data_reference._rts));
     var inserted = row.parentElement.insertBefore(templ, row);
     inserted.querySelector("[name=name]").focus();
+    this.select_row(null, inserted);
+    this._hold_redraw();
     return inserted;
   }
 
@@ -204,8 +206,7 @@ cls.CookieManager.CookieManagerViewBase = function()
 
   this.check_to_exit_edit_mode = function(event, target)
   {
-    this._resume_redraw();
-    if(document.querySelector(".edit_mode"))
+    if(document.querySelector(".edit_mode") && !target.hasClass("add_cookie_button"))
     {
       // find out if target is within some .edit_mode node. don't exit then.
       var walk_up = target;
@@ -224,14 +225,14 @@ cls.CookieManager.CookieManagerViewBase = function()
   this.exit_edit_and_save = function()
   {
     this._resume_redraw();
-    var edit_tr = document.querySelector("tr.edit_mode");
-    if(edit_tr)
-    {
+    var edit_trs = document.querySelectorAll("tr.edit_mode");
+    for (var i=0; i < edit_trs.length; i++) {
+      var edit_tr = edit_trs[i];
       edit_tr.removeClass("edit_mode");
 
       var is_secure_input    = edit_tr.querySelector("[name=is_secure]");
       var is_http_only_input = edit_tr.querySelector("[name=is_http_only]");
-      var runtime_elem      = edit_tr.querySelector("[name=add_cookie_runtime]");
+      var runtime_elem       = edit_tr.querySelector("[name=add_cookie_runtime]");
       var domain_input       = edit_tr.querySelector("[name=domain]");
 
       var name         = edit_tr.querySelector("[name=name]").value.trim();
@@ -253,13 +254,13 @@ cls.CookieManager.CookieManagerViewBase = function()
         // check if unmodified
         if(old_cookie &&
             (
-              name === old_cookie.name &&
-              value === old_cookie.value &&
-              expires === new Date(old_cookie.expires*1000).getTime() &&
-              path === old_cookie.path &&
-              is_secure === old_cookie.isSecure &&
+              name         === old_cookie.name &&
+              value        === old_cookie.value &&
+              expires      === new Date(old_cookie.expires*1000).getTime() &&
+              path         === old_cookie.path &&
+              is_secure    === old_cookie.isSecure &&
               is_http_only === old_cookie.isHTTPOnly &&
-              domain === (old_cookie.domain || this._data_reference._rts[old_cookie.runtimes[0]].hostname)
+              domain       === (old_cookie.domain || this._data_reference._rts[old_cookie.runtimes[0]].hostname)
             )
         )
         {
@@ -710,11 +711,13 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
   }
 
   this.insert_add_item_row = function(row, runtime)
-  {
+  {    
     var default_domain = this._data_reference._rts[runtime].hostname;
     var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row_all_editable(default_domain));
     var inserted = row.parentElement.insertBefore(templ, row);
     inserted.querySelector("[name=name]").focus();
+    this.select_row(null, inserted);
+    this._hold_redraw();
     return inserted;
   }
 

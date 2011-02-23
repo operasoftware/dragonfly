@@ -205,15 +205,12 @@ cls.CookieManager.StorageDataBase = function()
           flattened_cookies.push(flattened_cookie);
         };
       }
-      else
-      {
-        // There are no cookies for this domain/path. The group needs to be shown anyhow.
-        flattened_cookies.push({
-          runtimes:                domaincookies.runtimes,
-          objectref:               this.create_objectref(null, domaincookies.runtimes, "domain_path_placeholder"),
-          is_runtimes_placeholder: true
-        });
-      }
+      // Also add a placeholder which won't be rendered but makes sure the group shows up and the runtime can be referenced
+      flattened_cookies.push({
+        runtimes:                domaincookies.runtimes,
+        objectref:               this.create_objectref(null, domaincookies.runtimes, "domain_path_placeholder"),
+        is_runtimes_placeholder: true
+      });
     }
     return flattened_cookies;
   };
