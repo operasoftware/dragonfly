@@ -40,7 +40,7 @@ var template = function(script, with_line_numbers)
 {
   var t0 = Date.now();
   var line_count = 1;
-  var lines = [line_count++];
+  var lines = [];
   var online = with_line_numbers && function()
   {
     lines.push(line_count++);
@@ -410,6 +410,6 @@ window.onload = function()
                          "' onclick='test(this.value)'>";
                }).join('');
   }
-  xhr.open("GET", "./jq.js");
+  xhr.open("GET", "./testhighlight.js");
   xhr.send(null);
 };
