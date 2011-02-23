@@ -510,7 +510,7 @@ cls.CookieManager.CookieManagerViewBase = function()
       }
       else
       {
-        rows[i].addClass("uneditable");
+        rows[i].addClass("non-editable");
       }
     };
   }
