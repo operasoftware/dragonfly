@@ -711,13 +711,17 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
   }
 
   this.insert_add_item_row = function(row, runtime)
-  {    
+  {
+    this._hold_redraw();
+    var table_elem = document.querySelector(".sortable-table");
+    var sortable_table = ObjectRegistry.get_instance().get_object(table_elem.getAttribute("data-object-id"));
+    sortable_table.restore_columns(table_elem);
+
     var default_domain = this._data_reference._rts[runtime].hostname;
     var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row_all_editable(default_domain));
     var inserted = row.parentElement.insertBefore(templ, row);
     inserted.querySelector("[name=name]").focus();
     this.select_row(null, inserted);
-    this._hold_redraw();
     return inserted;
   }
 
