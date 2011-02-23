@@ -169,7 +169,7 @@ cls.MarkupTokenizer = function()
             
             var c = this._buffer.charAt(this._current_pos++);
     
-            if (c === "!") // COMMENT_OR_BOGUS
+            if ((c === "!") || (c === "?") )// COMMENT_OR_BOGUS
             {
                 this._tmp_buffer[1] +=c;
                 this._tokenizer_state_handler = this._tokenizer_state_handlers.COMMENT_OR_BOGUS_COMMENT_OPEN;

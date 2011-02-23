@@ -116,6 +116,7 @@ var render_template = function(doc)
     tmpl = window.templates.highlight_markup(doc, line_counter);
     
     t2 = Date.now();
+    document.getElementsByClassName('js-source')[0].style.height = line_count*15+"px";
     document.getElementsByClassName('js-source')[0].render(tmpl);
     document.getElementsByClassName('line-numbers')[0].textContent = lines.join('\n');
     var h = document.body.offsetHeight + document.body.offsetWidth;
