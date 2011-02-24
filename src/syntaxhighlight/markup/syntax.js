@@ -65,18 +65,18 @@
        return;
     }
 
-    if (token_type == ML_SCRIPT_DATA)
+  /*  if (token_type == ML_SCRIPT_DATA)
     {
       context.template.push(context.text);
       context.template.push("");
       context.text = token;
       next_markup_handler = script_markup_handler;
       return;
-    }  
+    }   */
     context.text += token;
     return;
   }
-  
+  /*
   var script_markup_handler = function(context, token_type, token)
   {
     if (context.onnewline && (token_type == ML_EOL_DATA))
@@ -96,7 +96,7 @@
     context.tag_template = ["span"];
     next_markup_handler = element_markup_handler;
     return;
-  }
+  } */
   
   var element_markup_handler = function(context, token_type, token)
   {
@@ -116,7 +116,7 @@
        return;
     }
     
-/*    if (token_type == ML_TAG_OPEN)
+    if (token_type == ML_TAG_OPEN)
     {
        context.template.push(context.tag_template);
        context.tag_template = ["span"];
@@ -132,7 +132,7 @@
        context.text = "";
        context.tag_template.push(["span", token, "class", markup_classes[token_type]]);
        return;
-    }  */
+    }  
     
     
     if (token_type == ML_EOF)
