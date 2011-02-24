@@ -262,7 +262,6 @@ cls.CookieManager.CookieDataBase = function()
         if(!sub_dict)
         {
           sub_dict = this._domain_and_path_dict[rt_domain + rt_pathname] = { runtimes: [] };
-          console.log("added subdict to", this._domain_and_path_dict);
         }
         sub_dict.runtimes.push(runtime.rt_id);
 
@@ -288,7 +287,6 @@ cls.CookieManager.CookieDataBase = function()
     {
       const COOKIE = 0;
       var sub_dict = this._domain_and_path_dict[domain + path];
-      console.log("need subdict for domain + path:",domain + path, this._domain_and_path_dict, sub_dict);
       sub_dict.get_cookies_is_pending = false;
       if(message.length > 0)
       {
