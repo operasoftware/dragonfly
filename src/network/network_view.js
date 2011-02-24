@@ -43,9 +43,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       else
       {
         var contheight = container.getBoundingClientRect().height - 2;
-        var availwidth = container.getBoundingClientRect().width - url_list_width - window.defaults["scrollbar-width"];
+        var graphwidth = container.getBoundingClientRect().width - url_list_width - window.defaults["scrollbar-width"];
         var duration = ctx.get_duration();
-        var graphwidth = availwidth;
 
         if (duration > 3000)
         {
@@ -58,14 +57,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
         this._scrollcontainer.scrollTop = this._scroll;
         container.className = "";
 
-        var scrollable = container.querySelector("#main-scroll-container");
         var scrollercont = container.querySelector("#scrollbar-container");
-        var scroller = container.querySelector("#scrollbar");
-        scroller.style.width = "" + graphwidth + "px";
-
         container.querySelector("#left-side-content").style.minHeight = "" + (contheight-window.defaults["scrollbar-width"]) + "px";
-        container.querySelector("#right-side-content").style.width = "" + graphwidth + "px";
-
 
         var scrollfun = function(evt) {
           var e = document.getElementById("right-side-container");

@@ -131,7 +131,8 @@ templates.network_log_main = function(ctx, graphwidth)
       ["div", templates.network_log_url_list(ctx), "id", "left-side-content"],
       ["div",
        ["div", templates.network_log_graph(ctx, graphwidth),
-        "id", "right-side-content"
+        "id", "right-side-content",
+         "style", "width: " + graphwidth + "px",
        ],
        "id", "right-side-container",
       ],
@@ -140,7 +141,11 @@ templates.network_log_main = function(ctx, graphwidth)
      "class", "network-log",
      "id", "main-scroll-container",
     ],
-    ["div", ["div", "id", "scrollbar"], "id", "scrollbar-container"]
+    ["div", ["div",
+             "id", "scrollbar",
+             "style", "width: " + graphwidth + "px"],
+     "id", "scrollbar-container"
+    ]
   ];
 }
 
