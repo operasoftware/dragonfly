@@ -1,52 +1,38 @@
-﻿window.eventHandlers.dblclick['cookiemanager-init-edit-mode'] = function(event, target)
+﻿cls.CookieManager.create_ui_widgets = function()
 {
-  window.views.cookie_manager.enter_edit_mode(target.getAttribute("data-object-id"), event);
-}
-
-window.eventHandlers.click['cookiemanager-row-select'] = function(event, target)
-{
-  window.views.cookie_manager.check_to_exit_edit_mode(event, target);
-  window.views.cookie_manager.select_row(event, target);
-}
-
-window.eventHandlers.click['cookiemanager-input-field'] = function(event, target)
-{
-  // Empty for now, but preventing click['cookiemanager-container']
-  // which exits editing
-}
-
-window.eventHandlers.keyup['cookiemanager-container'] = function(event, target)
-{
-  // Save on <enter>
-  if(event.keyCode === 13)
+  window.eventHandlers.dblclick['cookiemanager-init-edit-mode'] = function(event, target)
   {
-    window.views.cookie_manager.exit_edit_and_save();
+    window.views.cookie_manager.enter_edit_mode(target.getAttribute("data-object-id"), event);
   }
-}
 
-window.eventHandlers.click['cookiemanager-container'] = function(event, target)
-{
-  window.views.cookie_manager.check_to_exit_edit_mode(event, target);
-}
+  window.eventHandlers.click['cookiemanager-row-select'] = function(event, target)
+  {
+    window.views.cookie_manager.check_to_exit_edit_mode(event, target);
+    window.views.cookie_manager.select_row(event, target);
+  }
 
-window.eventHandlers.click['cookiemanager-add-cookie-row'] = function(event, target)
-{
-  window.views.cookie_manager.check_to_exit_edit_mode(event, target);
-  // find runtime the row relates to
-  // walk up to find button-containing tr
-  var row = target;
-  while(row.nodeName !== "tr" && row.parentNode)
+  window.eventHandlers.click['cookiemanager-input-field'] = function(event, target)
   {
-    row = row.parentNode;
+    // Empty for now, but preventing click['cookiemanager-container']
+    // which exits editing
   }
-  // find previousElementSibling with a data-object-id
-  var row_with_data_id = row;
-  while(!row_with_data_id.getAttribute("data-object-id") && row_with_data_id.previousElementSibling)
+
+  window.eventHandlers.keyup['cookiemanager-container'] = function(event, target)
   {
-    row_with_data_id = row_with_data_id.previousElementSibling;
+    // Save on <enter>
+    if(event.keyCode === 13)
+    {
+      window.views.cookie_manager.exit_edit_and_save();
+    }
   }
-  var objectref = row_with_data_id.getAttribute("data-object-id");
-  var runtime_id = window.views.cookie_manager._data_reference.get_item_by_objectref(objectref).runtimes[0]; // using the internal _data_reference for now until I know what to do with actions
-  var inserted = window.views.cookie_manager.insert_add_item_row(row, runtime_id);
-  window.views.cookie_manager.select_row(null, inserted);
+
+  window.eventHandlers.click['cookiemanager-container'] = function(event, target)
+  {
+    window.views.cookie_manager.check_to_exit_edit_mode(event, target);
+  }
+
+  window.eventHandlers.click['cookiemanager-add-cookie-row'] = function(event, target)
+  {
+    window.views.cookie_manager.click_add_cookie_button(event, target);
+  }
 }
