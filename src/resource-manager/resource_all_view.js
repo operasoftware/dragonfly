@@ -83,7 +83,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
       image: cls.ImageResourceDetail,
       font: cls.FontResourceDetail,
       script: cls.JSResourceDetail,
-      markup: cls.TextResourceDetail,
+      markup: cls.MarkupResourceDetail,
       css: cls.TextResourceDetail,
     }
     var viewclass = viewclasses[type] || cls.GenericResourceDetail;

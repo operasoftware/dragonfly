@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; utf-8">
+<style>
+  .dom-element{
+    color: red;
+  }
+  .dom-attribute {
+    color: #039;
+  }
+</style>
+<title>Page Title</title>
+    <script src="../../src/scripts/dom.js"></script>
+<script>
+
+// If switching to sub template 
+
+
+var render_template = function()
+{
+
+    return ["span", "<div ",
+        ["span","class","class","dom-attribute"],
+        "=",
+        ["span", "\"source\"", "class", "dom-attribute"],
+        " ",
+        ["span","id","class","dom-attribute"],
+        "=",
+        ["span", "\"shit\"", "class", "dom-attribute"],
+        " >",
+        "class", "dom-element"
+      ]
+    }
+
+var tmpl;
+
+window.onload = function()
+{
+    tmpl = render_template();
+    document.getElementsByClassName("js-source")[0].render(tmpl);
+}
+
+</script>
+
+
+</head>
+
+<body>
+<div class="source"><div class="js-source"></div><div class='line-numbers'></div>
+</body>
+</html>

@@ -139,6 +139,17 @@ cls.FontResourceDetail = function(res, service)
 }
 cls.FontResourceDetail.prototype = new cls.ResourceDetailBase();
 
+cls.MarkupResourceDetail = function(res, service)
+{
+  this.render_type_details = function(container, resource, resourcedata)
+  {
+    return window.templates.markup_resource_view(resource, resourcedata);
+  }
+
+  this.init(res, service);
+}
+
+cls.MarkupResourceDetail.prototype = new cls.ResourceDetailBase();
 
 
 
@@ -163,18 +174,35 @@ window.templates.js_resource_view = function(resource, resourcedata)
   {
     lines.push(line_count++);
   });
-  source.unshift('div');
-  source.push('class', 'js-source js-resource-content');
+ /* source.unshift('div');
+  source.push('class', 'js-source js-resource-content'); */
   return ['code',
     ['div',
       source,
       ['div', lines.join('\n'), 'class', 'resource-line-numbers'],
       'class', 'js-resource'
     ],
-    'class', 'resource-detail-container'
+    'class', 'resource-detail-container js-source js-resource-content'
   ]
 }
 
+window.templates.markup_resource_view = function(resource, resourcedata)
+{
+  var line_count = 1;
+  var lines = [line_count++];
+  var source = this.highlight_markup(resourcedata, function()
+  {
+    lines.push(line_count++);
+  });
+  return ['code',
+    ['div',
+      source,
+      ['div', lines.join('\n'), 'class', 'resource-line-numbers'],
+      'class', 'markup-resource'
+    ],
+    'class', 'resource-detail-container markup-source markup-resource-content'
+  ]
+}
 
 window.templates.image_resource_view = function(resource, resourcedata)
 {

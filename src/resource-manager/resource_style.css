@@ -140,7 +140,7 @@
     position: relative;
 }
 
-.js-resource {
+.js-resource, .markup-resource {
   position: relative;
   white-space: pre;
   font-family: monospace;
@@ -148,8 +148,13 @@
   line-height: 15px;
 }
 
-.js-resource-content {
-  margin-left: 10ex;
+.js-resource-content, .markup-resource-content {
+    
+}
+.js-resource-content pre, .markup-resource-content pre {
+    padding-top: 0;
+    margin-top: 0;
+    margin-left: 10ex;
 }
 
 .resource-line-numbers {

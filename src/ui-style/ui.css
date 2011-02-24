@@ -5,7 +5,7 @@ viewport, .info-box, #about-authors pre, button {
   color: #444;
 }
 
-.dom, .js-source, .console-output, .console-output pre, .console-input, 
+.dom, .js-source, .markup-source, .console-output, .console-output pre, .console-input, 
 .console-input textarea, property, rule, font-face-rule, page-rule, import-rule, 
 charset-rule, media-rule, examine-objects, examine-objects item, .storage-table td, 
 .storage-table .new-key, .repl-input, .repl-output, .js-search-results-script, code,
