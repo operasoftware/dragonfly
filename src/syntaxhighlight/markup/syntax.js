@@ -34,7 +34,12 @@
 
   
   var root_markup_handler = function(context, token_type, token)
-  { 
+  {
+    if (context.onnewline && (token_type == ML_EOL_DATA))
+    {
+      context.onnewline();
+    }
+    
     if (token_type == ML_COMMENT)
     {
        context.template.push(context.text);
@@ -59,13 +64,46 @@
        next_markup_handler = element_markup_handler;
        return;
     }
-    
+
+    if (token_type == ML_SCRIPT_DATA)
+    {
+      context.template.push(context.text);
+      context.template.push("");
+      context.text = token;
+      next_markup_handler = script_markup_handler;
+      return;
+    }  
     context.text += token;
+    return;
+  }
+  
+  var script_markup_handler = function(context, token_type, token)
+  {
+    if (context.onnewline && (token_type == ML_EOL_DATA))
+    {
+      context.onnewline();
+    }
+    
+    if (  (token_type == ML_EOL_DATA)
+        ||(token_type == ML_SCRIPT_DATA)
+       )
+    {
+      context.text+=token;
+      return;
+    }
+    context.template.push(context.text);
+//    context.text=token;
+    context.tag_template = ["span"];
+    next_markup_handler = element_markup_handler;
     return;
   }
   
   var element_markup_handler = function(context, token_type, token)
   {
+    if (context.onnewline && (token_type == ML_EOL_DATA))
+    {
+      context.onnewline();
+    }
     
     if (token_type == ML_TAG_CLOSE)
     {
@@ -122,17 +160,14 @@
       template: ["pre"],
       text: "",
       onnewline: onnewline,
-      tag_template: null
+      tag_template: null,
+      self: this
     };
     
     // the js implementation of bind causes a noticable overhead here
     // when we get a native implementation we can adjust the code
     markup_tokenizer.tokenize(script, function(token_type, token)
     {
-        if (context.onnewline && (token_type == ML_EOL_DATA))
-        {
-        context.onnewline();
-        }
         next_markup_handler(context, token_type, token);
     });
     

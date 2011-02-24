@@ -30,6 +30,7 @@
         {
           context.online();
         }
+        break;
       }
       case IDENTIFIER:
       {
