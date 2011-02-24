@@ -151,9 +151,9 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     
     /* adjust the base class */
 
-    var CookieDataBase = new namespace.CookieDataBase();
-    cls.CookiesData.prototype = CookieDataBase;
-    cls.LocalStorageData.prototype = CookieDataBase;
+    var StorageDataBase = new namespace.StorageDataBase();
+    cls.CookiesData.prototype = StorageDataBase;
+    cls.LocalStorageData.prototype = StorageDataBase;
 
     /* storage objects and cookies */
     new cls.Namespace("storages");
