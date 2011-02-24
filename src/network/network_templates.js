@@ -190,17 +190,39 @@ templates.network_log_request_detail = function(ctx, selected)
 
 templates.request_details = function(req)
 {
-  return templates.network_headers_list(req.request_headers, "first line request");
+  if (!req.request_headers) { return [] }
+  var firstline = req.request_raw.split("\n")[0];
+  var parts = firstline.split(" ");
+  if (parts.length == 3)
+  {
+    firstline = [
+      ["span", parts[0] + " ", "data-spec", "http#" + parts[0]],
+      ["span", parts[1] + " "],
+      ["span", parts[2] + " "]
+    ]
+  }
+  return templates.network_headers_list(req.request_headers, firstline);
 }
 
 templates.response_details = function(req)
 {
-  return templates.network_headers_list(req.response_headers, "first line response");
+  if (!req.response_headers) { return [] }
+  var firstline = req.response_raw.split("\n")[0];
+  var parts = firstline.split(" ", 2)
+  if (parts.length == 2)
+  {
+    firstline = [
+      ["span", parts[0] + " "],
+      ["span", parts[1], "data-spec", "http#" + parts[1]],
+      ["span", firstline.slice(parts[0].length + parts[1].length + 1)]
+    ]
+  }
+  return templates.network_headers_list(req.response_headers, firstline);
 }
 
 templates.network_headers_list = function(headers, firstline)
 {
-  if (!headers) { return "No headers"}
+  if (!headers) { return "No headers" }
   var tpl = [];
   var lis = headers.map(function(header) { return [
     ["li", ["span", header.name + ": "], header.value,  "data-spec", "http#" + header.name]
@@ -211,11 +233,6 @@ templates.network_headers_list = function(headers, firstline)
     lis.unshift(["li", firstline]);
   }
   return ["ol", lis, "class", "network-details-header-list"]  
-}
-
-templates.network_raw = function(raw)
-{
-  return ["pre", ["code", raw]];
 }
 
 templates.network_response_body = function(req)
