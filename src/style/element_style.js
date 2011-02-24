@@ -427,7 +427,7 @@ cls.ElementStyle = function()
                 style_dec = self.sync_declarations(style_dec, disabled_style_dec, i > 0);
               }
             }
-            length = style_dec[INDEX_LIST].length;
+            length = style_dec[INDEX_LIST] && style_dec[INDEX_LIST].length || 0;
             for (k = 0; k < length; k++)
             {
               if (style_dec[STATUS_LIST][k])
