@@ -14,7 +14,9 @@ cls.NetworkLoggerService = function(view, data)
 
   this._enable_content_tracking = function()
   {
-    this._res_service.requestSetResponseMode(null, [[3, 1]]);
+    const DATA_URI = 3, DECODE = 1;
+    // set default content mode to give us data URIs, and to decode (unzip etc.) them.
+    this._res_service.requestSetResponseMode(null, [[DATA_URI, DECODE]]);
   }
 
   this._on_abouttoloaddocument_bound = function(msg)
@@ -33,8 +35,6 @@ cls.NetworkLoggerService = function(view, data)
     }
     var data = new cls.ResourceManager["1.0"].UrlLoad(msg);
 
-    //bail if we get dupes. Why do we get dupes? fixme
-    //if (data.resourceID in this._current_document.resourcemap) { return }
     this._current_context.update("urlload", data);
   }.bind(this);
 
@@ -355,7 +355,7 @@ cls.Request = function(id)
 
   this._guess_type = function()
   {
-    if (!this.finished)
+    if (!this.finished || !this.mime)
     {
       this.type = undefined;
     }
