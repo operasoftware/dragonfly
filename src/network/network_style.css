@@ -123,6 +123,12 @@
   color: #fff;
 }
 
+.response-body-content textarea
+{
+  width: 80%;
+  height: 300px;
+}
+
 .resource-graph text
 {
   font-size: 12px;
