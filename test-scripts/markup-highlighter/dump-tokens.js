@@ -43,6 +43,7 @@
   
   onmarkuptoken = function(context, token_type, token)
   {
+    var spacer = " "
     if (token)
     {
       if (token_type == EOL_DATA)
@@ -54,8 +55,9 @@
       {
         spacer = " ";
       }
-      context.template.push(["span", "[\""+token_type+"\",", ["span", "\""+token+"\"],", "class", "comment"], spacer ,"class", "dom-element"]);
     }
+    context.template.push(["span", "[\""+token_type+"\",", ["span", "\""+token+"\"],", "class", "comment"], spacer ,"class", "dom-element"]);
+
   }
   
   this.highlight_markup = function(script, onnewline, c)

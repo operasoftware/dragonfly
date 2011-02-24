@@ -65,38 +65,37 @@
        return;
     }
 
-  /*  if (token_type == ML_SCRIPT_DATA)
+    if ((token_type == ML_SCRIPT_DATA) && window.templates.highlight_js_source)
     {
       context.template.push(context.text);
-      context.template.push("");
+   //   context.template.push("");
       context.text = token;
       next_markup_handler = script_markup_handler;
       return;
-    }   */
+    }
     context.text += token;
     return;
   }
-  /*
+
   var script_markup_handler = function(context, token_type, token)
   {
-    if (context.onnewline && (token_type == ML_EOL_DATA))
-    {
-      context.onnewline();
-    }
     
     if (  (token_type == ML_EOL_DATA)
         ||(token_type == ML_SCRIPT_DATA)
        )
     {
       context.text+=token;
+      
       return;
     }
-    context.template.push(context.text);
-//    context.text=token;
+    var script_template = this.templates.highlight_js_source(context.text,context.onnewline,null,["span"]);
+    script_template.push("class","js-source");
+    context.template.push(script_template) //context.text);
     context.tag_template = ["span"];
+    context.text = token;
     next_markup_handler = element_markup_handler;
     return;
-  } */
+  } 
   
   var element_markup_handler = function(context, token_type, token)
   {

@@ -426,6 +426,7 @@ cls.MarkupTokenizer = function()
                     if (this._last_tag_name.toLowerCase() == "script")
                     {
                         this._tmp_buffer[0] = cls.MarkupTokenizer.types.SCRIPT_DATA;
+                        this._emitToken(cls.MarkupTokenizer.types.SCRIPT_DATA,"");
                         this._tokenizer_state_handler = this._tokenizer_state_handlers.SCRIPT_DATA;
                         return false;
                     }
@@ -477,6 +478,7 @@ cls.MarkupTokenizer = function()
                     if (this._last_tag_name.toLowerCase() == "script")
                     {
                         this._tmp_buffer[0] = cls.MarkupTokenizer.types.SCRIPT_DATA;
+                        this._emitToken(cls.MarkupTokenizer.types.SCRIPT_DATA,"");
                         this._tokenizer_state_handler = this._tokenizer_state_handlers.SCRIPT_DATA;
                         return false;
                     }
@@ -533,6 +535,7 @@ cls.MarkupTokenizer = function()
                     if (this._last_tag_name.toLowerCase() == "script")
                     {
                         this._tmp_buffer[0] = cls.MarkupTokenizer.types.SCRIPT_DATA;
+                        this._emitToken(cls.MarkupTokenizer.types.SCRIPT_DATA,"");
                         this._tokenizer_state_handler = this._tokenizer_state_handlers.SCRIPT_DATA;
                         return false;
                     }
@@ -600,6 +603,7 @@ cls.MarkupTokenizer = function()
                     if (this._last_tag_name.toLowerCase() == "script")
                     {
                         this._tmp_buffer[0] = cls.MarkupTokenizer.types.SCRIPT_DATA;
+                        this._emitToken(cls.MarkupTokenizer.types.SCRIPT_DATA,"");
                         this._tokenizer_state_handler = this._tokenizer_state_handlers.SCRIPT_DATA;
                         return false;
                     }
@@ -653,6 +657,7 @@ cls.MarkupTokenizer = function()
                     if (this._last_tag_name.toLowerCase() == "script")
                     {
                         this._tmp_buffer[0] = cls.MarkupTokenizer.types.SCRIPT_DATA;
+                        this._emitToken(cls.MarkupTokenizer.types.SCRIPT_DATA,"");
                         this._tokenizer_state_handler = this._tokenizer_state_handlers.SCRIPT_DATA;
                         return false;
                     }
@@ -790,6 +795,7 @@ cls.MarkupTokenizer = function()
                     if (this._last_tag_name.toLowerCase() == "script")
                     {
                         this._tmp_buffer[0] = cls.MarkupTokenizer.types.SCRIPT_DATA;
+                        this._emitToken(cls.MarkupTokenizer.types.SCRIPT_DATA,"");
                         this._tokenizer_state_handler = this._tokenizer_state_handlers.SCRIPT_DATA;
                         return false;
                     }

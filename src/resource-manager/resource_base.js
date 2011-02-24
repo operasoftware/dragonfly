@@ -179,7 +179,7 @@ window.templates.js_resource_view = function(resource, resourcedata)
   return ['code',
     ['div',
       source,
-      ['div', lines.join('\n'), 'class', 'resource-line-numbers'],
+      ['div', lines.join('\n'), 'class', 'resource-line-numbers', 'unselectable', 'on'],
       'class', 'js-resource'
     ],
     'class', 'resource-detail-container js-source js-resource-content'
@@ -197,7 +197,7 @@ window.templates.markup_resource_view = function(resource, resourcedata)
   return ['code',
     ['div',
       source,
-      ['div', lines.join('\n'), 'class', 'resource-line-numbers'],
+      ['div', lines.join('\n'), 'class', 'resource-line-numbers', 'unselectable', 'on'],
       'class', 'markup-resource'
     ],
     'class', 'resource-detail-container markup-source markup-resource-content'

@@ -110,7 +110,7 @@ examine-objects .error {
 }
 
 .markup-attribute-value {
-    color: #03a;
+    color: brown; /* #03a; */
 }
 
 .markup-comment {
