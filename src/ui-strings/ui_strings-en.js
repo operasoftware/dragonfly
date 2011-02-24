@@ -538,6 +538,22 @@ ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIE = "Remove cookie";
 ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES = "Remove cookies";
 /* DESC: Context menu entry that removes cookies of specific group */
 ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES_OF = "Remove cookies of %s";
+
+/* DESC: Time strings that express in how long something will happen */
+ui_strings.COOKIE_MANAGER_SOONER_THEN_1_MINUTE = "< 1 minute";
+ui_strings.COOKIE_MANAGER_IN_1_MINUTE = "In 1 minute";
+ui_strings.COOKIE_MANAGER_IN_X_MINUTES = "In %s minutes";
+ui_strings.COOKIE_MANAGER_IN_1_HOUR = "In 1 hour";
+ui_strings.COOKIE_MANAGER_IN_X_HOURS = "In %s hours";
+ui_strings.S_LABEL_COOKIE_MANAGER_TOMORROW = "Tomorrow";
+ui_strings.COOKIE_MANAGER_IN_X_DAYS = "In %s days";
+ui_strings.COOKIE_MANAGER_IN_1_WEEK = "In 1 week";
+ui_strings.COOKIE_MANAGER_IN_X_WEEKS = "In %s weeks";
+ui_strings.COOKIE_MANAGER_IN_1_MONTH = "In 1 month";
+ui_strings.COOKIE_MANAGER_IN_X_MONTHS = "In %s month";
+ui_strings.COOKIE_MANAGER_IN_1_YEAR = "In 1 year";
+ui_strings.COOKIE_MANAGER_IN_X_YEARS = "In %s years";
+
 /* DESC: Label of the section with the scvope chaine in the Inspection view */
 ui_strings.S_LABEL_SCOPE_CHAIN = 'Scope Chain';
 /*
