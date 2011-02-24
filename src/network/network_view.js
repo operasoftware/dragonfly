@@ -30,26 +30,20 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     {
       this._container = container;
 
-      if (this._scrollcontainer)
-      {
-        this._scroll = this._scrollcontainer.scrollTop;
-      }
+      if (this._scrollcontainer) { this._scroll = this._scrollcontainer.scrollTop; }
+
+      var url_list_width = 250;
 
       if (this._selected !== null)
       {
-        var w = container.getBoundingClientRect().width - 250;
-        var h = container.getBoundingClientRect().height;
-        container.clearAndRender(templates.network_log_details(ctx, this._selected));
+        container.clearAndRender(templates.network_log_details(ctx, this._selected, url_list_width));
         this._scrollcontainer = container.querySelector(".network-details-url-list");
         this._scrollcontainer.scrollTop = this._scroll;
-
-        var content = container.querySelector(".network-details-request");
-        content.style.width = "" + w + "px";
       }
       else
       {
         var contheight = container.getBoundingClientRect().height - 2;
-        var availwidth = container.getBoundingClientRect().width - 250 - window.defaults["scrollbar-width"];
+        var availwidth = container.getBoundingClientRect().width - url_list_width - window.defaults["scrollbar-width"];
         var duration = ctx.get_duration();
         var graphwidth = availwidth;
 

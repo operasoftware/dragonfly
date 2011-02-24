@@ -162,7 +162,6 @@ button[handler="close-request-detail"]
 }
 
 .network-details-url-list {
-  width: 265px;
   height: 100%;
   padding: 0;
   overflow: hidden;
@@ -172,9 +171,9 @@ button[handler="close-request-detail"]
 .network-details-request
 {
   position: absolute;
+  right: 0;
   top:0;
-  left: 265px;
-  height: 100%;
+  bottom: 0;
   overflow: hidden;
   overflow-y: auto;
   padding: 10px 30px;

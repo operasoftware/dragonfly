@@ -145,14 +145,16 @@ templates.network_log_main = function(ctx, graphwidth)
 }
 
 
-templates.network_log_details = function(ctx, selected)
+templates.network_log_details = function(ctx, selected, listwidth)
 {
   return  [
-    ["div", templates.network_log_url_list(ctx, selected),
-     "class", "network-details-url-list"
+    ["div", templates.network_log_url_list(ctx, selected, listwidth),
+     "class", "network-details-url-list",
+     "style", "width: " + listwidth + "px"
     ],
     ["div", templates.network_log_request_detail(ctx, selected),
-     "class", "network-details-request"
+     "class", "network-details-request",
+     "style", "left: " + listwidth + "px;"
     ]
   ]
 }
