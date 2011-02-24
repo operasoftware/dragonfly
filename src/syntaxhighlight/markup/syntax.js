@@ -116,7 +116,7 @@
        return;
     }
     
-    if (token_type == ML_TAG_OPEN)
+/*    if (token_type == ML_TAG_OPEN)
     {
        context.template.push(context.tag_template);
        context.tag_template = ["span"];
@@ -132,8 +132,7 @@
        context.text = "";
        context.tag_template.push(["span", token, "class", markup_classes[token_type]]);
        return;
-      
-    } 
+    }  */
     
     
     if (token_type == ML_EOF)
