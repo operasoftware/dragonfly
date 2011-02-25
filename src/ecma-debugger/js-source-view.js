@@ -766,6 +766,12 @@ cls.JsSourceView = function(id, name, container_class)
     }
   };
 
+  /*
+  eventHandlers.mousewheel['scroll-js-source-view'] = function(event, target)
+  {
+    this._scroll_lines((event.detail > 0 ? 1 : -1) * 3 , event, target);
+  }.bind(this);
+  */
   this._handlers['scroll-page-up'] = this._scroll_lines.bind(this, -PAGE_SCROLL);
   this._handlers['scroll-page-down'] = this._scroll_lines.bind(this, PAGE_SCROLL);
   this._handlers['scroll-arrow-up'] = this._scroll_lines.bind(this, -ARROW_SCROLL);
