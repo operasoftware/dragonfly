@@ -7,8 +7,11 @@ window.cls = window.cls || {};
 cls.NetworkLogView = function(id, name, container_class, html, default_handler) {
   this._service = new cls.NetworkLoggerService()
   this._loading = false;
-  this._scroll = 0;
+  this._hscroll = 0;
+  this._vscroll = 0;
   this._selected = null;
+  this._hscrollcontainer = null;
+  this._vscrollcontainer = null;
 
   this.createView = function(container)
   {
@@ -17,10 +20,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
   this.ondestroy = function()
   {
-    if (this._scrollcontainer)
-    {
-      this._scroll = this._scrollcontainer.scrollTop;
-    }
+    this._vscroll = this._vscrollcontainer ? this._vscrollcontainer.scrollTop : 0;
+    this._hscroll = this._hscrollcontainer ? this._hscrollcontainer.scrollLeft : 0;
   }
 
   this._render_main_view = function(container)
@@ -29,19 +30,17 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     if (ctx && ctx.resources.length)
     {
       this._container = container;
-
-      if (this._scrollcontainer) { this._scroll = this._scrollcontainer.scrollTop; }
-
       var url_list_width = 250;
-
       if (this._selected !== null)
       {
+        this.ondestroy(); // saves scroll pos
         container.clearAndRender(templates.network_log_details(ctx, this._selected, url_list_width));
-        this._scrollcontainer = container.querySelector(".network-details-url-list");
-        this._scrollcontainer.scrollTop = this._scroll;
+        this._vscrollcontainer = container.querySelector(".network-details-url-list");
+        this._vscrollcontainer.scrollTop = this._vscroll;
       }
       else
       {
+        container.className = "";
         var contheight = container.getBoundingClientRect().height - 2;
         var graphwidth = container.getBoundingClientRect().width - url_list_width - window.defaults["scrollbar-width"];
         var duration = ctx.get_duration();
@@ -52,19 +51,20 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
         }
 
         container.clearAndRender(templates.network_log_main(ctx, graphwidth));
-        this._scrollcontainer = container.querySelector("#main-scroll-container");
-        this._scrollcontainer.style.height = "" + (contheight-window.defaults["scrollbar-width"]) + "px";
-        this._scrollcontainer.scrollTop = this._scroll;
-        container.className = "";
+        this._vscrollcontainer = container.querySelector("#main-scroll-container");
+        this._vscrollcontainer.style.height = "" + (contheight-window.defaults["scrollbar-width"]) + "px";
+        this._vscrollcontainer.scrollTop = this._vscroll;
 
-        var scrollercont = container.querySelector("#scrollbar-container");
+        this._hscrollcontainer = container.querySelector("#scrollbar-container");
+        this._hscrollcontainer.scrollLeft = this._hscroll;
         container.querySelector("#left-side-content").style.minHeight = "" + (contheight-window.defaults["scrollbar-width"]) + "px";
 
         var scrollfun = function(evt) {
           var e = document.getElementById("right-side-container");
           e.scrollLeft = evt.target.scrollLeft;
         }
-        scrollercont.addEventListener("scroll", scrollfun, false)
+        scrollfun({target:this._hscrollcontainer});
+        this._hscrollcontainer.addEventListener("scroll", scrollfun, false)
       }
     }
     else if (this._loading)
