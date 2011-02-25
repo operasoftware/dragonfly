@@ -1,13 +1,13 @@
 window.templates || (window.templates = {});
 
 templates.cookie_manager = {
-  hostname_group_render: function(runtime) {
+  hostname_group_render: function(domain, path) {
     return [
       [
-        "span",  runtime.hostname,
+        "span",  domain,
         "class", "group_hostname"
       ],
-      runtime.pathname
+      path
     ];
   },
   wrap_ellipsis: function(elem) {

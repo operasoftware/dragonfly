@@ -78,7 +78,7 @@ cls.CookieManager.CookieManagerViewBase = function()
                 {
                   label: ui_strings.S_LABEL_COOKIE_MANAGER_EDIT_COOKIE,
                   handler: (function() {
-                    this.enter_edit_mode(sel_cookie_obj.objectref);
+                    this.enter_edit_mode(sel_cookie_obj._objectref);
                   }).bind(this)
                 }
               );
@@ -89,13 +89,13 @@ cls.CookieManager.CookieManagerViewBase = function()
                 {
                   label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIE,
                   handler: (function() {
-                    this._data_reference.remove_cookie(sel_cookie_obj.objectref);
+                    this._data_reference.remove_cookie(sel_cookie_obj._objectref);
                   }).bind(this)
                 }
               );
             }
             // Add "Remove all from domain-and-path"
-            var runtime = this._data_reference._rts[sel_cookie_obj.runtimes[0]];
+            var runtime = this._data_reference._rts[sel_cookie_obj.runtime];
             options.push(
               {
                 label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES_OF.replace(/%s/, runtime.hostname + runtime.pathname),
@@ -106,7 +106,7 @@ cls.CookieManager.CookieManagerViewBase = function()
                       var cookie = items[i];
                       if(cookie.runtimes.indexOf(runtime_id) > -1)
                       {
-                        context._data_reference.remove_cookie(cookie.objectref);
+                        context._data_reference.remove_cookie(cookie._objectref);
                       }
                     };
                   }
@@ -130,7 +130,7 @@ cls.CookieManager.CookieManagerViewBase = function()
                 {
                   label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIE,
                   handler: (function() {
-                    this._data_reference.remove_cookie(removable_cookies[0].objectref);
+                    this._data_reference.remove_cookie(removable_cookies[0]._objectref);
                   }).bind(this)
                 }
               );
@@ -145,7 +145,7 @@ cls.CookieManager.CookieManagerViewBase = function()
                     {
                       for (var i=0; i < removable_cookies.length; i++)
                       {
-                        context._data_reference.remove_cookie(removable_cookies[i].objectref);
+                        context._data_reference.remove_cookie(removable_cookies[i]._objectref);
                       }
                     }
                   })(removable_cookies, this)
@@ -162,25 +162,21 @@ cls.CookieManager.CookieManagerViewBase = function()
       groups: {
         host_and_path: {
           label:   ui_strings.S_LABEL_COOKIE_MANAGER_GROUPER_HOST_AND_PATH,
-          grouper: (function(obj) {
-            // todo: check to avoid using this._rts (to skip the bind) by putting hostname etc on the cookie_object directly?
-            // would remove lots of this cryptic this._rts[obj.runtimes[0]].pathname stuff.
-            return this._rts[obj.runtimes[0]].hostname + this._rts[obj.runtimes[0]].pathname;
-          }).bind(this._data_reference),
-          renderer: (function(groupvalue, obj) {
-            var obj = obj[0];
-            var runtime = this._rts[obj.runtimes[0]];
-            return window.templates.cookie_manager.hostname_group_render(runtime);
-          }).bind(this._data_reference)
+          grouper: function(obj) {
+            return obj._requested_domain + obj._requested_path;
+          },
+          renderer: function(groupvalue, obj) {
+            return window.templates.cookie_manager.hostname_group_render(obj[0]._requested_domain, obj[0]._requested_path);
+          }
         }
       },
       column_order: ["domain", "name", "value", "path", "expires", "isSecure", "isHTTPOnly"],
-      idgetter: function(res) { return res.objectref },
+      idgetter: function(res) { return res._objectref },
       columns: {
         domain: {
           label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_DOMAIN,
           classname: "col_domain",
-          renderer: (function(obj) { return this._domain_renderer(obj) }).bind(this),
+          renderer: this._domain_renderer.bind(this),
           summer: function(values, groupname, getter) {
             return ["button", "Add Cookie", "class", "add_cookie_button", "handler", "cookiemanager-add-cookie-row"];
           }
@@ -232,7 +228,7 @@ cls.CookieManager.CookieManagerViewBase = function()
             }
             if(typeof obj.expires === "number")
             {
-              return window.templates.cookie_manager.editable_expires(obj.expires, obj.objectref);
+              return window.templates.cookie_manager.editable_expires(obj.expires, obj._objectref);
             }
             return window.templates.cookie_manager.unknown_value();
           }
@@ -240,12 +236,12 @@ cls.CookieManager.CookieManagerViewBase = function()
         isSecure: {
           label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY),
           classname: "col_secure",
-          renderer: (function(obj) { return this._is_secure_renderer(obj) }).bind(this)
+          renderer: this._is_secure_renderer.bind(this)
         },
         isHTTPOnly: {
           label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY),
           classname: "col_httponly",
-          renderer: (function(obj) { return this._is_http_only_renderer(obj) }).bind(this)
+          renderer: this._is_http_only_renderer.bind(this)
         }
       }
     };
@@ -446,7 +442,7 @@ cls.CookieManager.CookieManagerViewBase = function()
         if(old_cookie)
         {
           // remove old_cookie, on finished add new cookie
-          this._data_reference.remove_cookie(old_cookie.objectref, this._data_reference.set_cookie.bind(this._data_reference, new_cookie_desc));
+          this._data_reference.remove_cookie(old_cookie._objectref, this._data_reference.set_cookie.bind(this._data_reference, new_cookie_desc));
         }
         else
         {
@@ -580,7 +576,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     for (var i=0; i < items.length; i++)
     {
       var obj = items[i];
-      var elem = document.getElementById("expires_container_"+obj.objectref);
+      var elem = document.getElementById("expires_container_"+obj._objectref);
       if(elem)
       {
         if(new Date().getTime() < new Date(obj.expires*1000))
