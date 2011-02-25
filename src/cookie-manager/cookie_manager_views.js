@@ -64,8 +64,8 @@ cls.CookieManager.CookieManagerViewBase = function()
               {
                 label: ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE,
                 handler: (function() {
-                  var runtime = selected_cookie_objects[0].runtime;
-                  var inserted = this.insert_add_cookie_row(row, runtime);
+                  var runtime_id = selected_cookie_objects[0]._requested_rt_id;
+                  var inserted = this.insert_add_cookie_row(row, runtime_id);
                   this.select_row(null, inserted);
                 }).bind(this)
               }
@@ -77,7 +77,7 @@ cls.CookieManager.CookieManagerViewBase = function()
               options.push(
                 {
                   label: ui_strings.S_LABEL_COOKIE_MANAGER_EDIT_COOKIE,
-                  handler: (function() {
+                  handler: (function() { // TODO: check to remove binds and put sel_cookie_obj on the view instead
                     this.enter_edit_mode(sel_cookie_obj._objectref);
                   }).bind(this)
                 }
@@ -95,22 +95,22 @@ cls.CookieManager.CookieManagerViewBase = function()
               );
             }
             // Add "Remove all from domain-and-path"
-            var runtime = this._data_reference._rts[sel_cookie_obj.runtime];
+            var runtime_id = sel_cookie_obj._requested_rt_id;
             options.push(
               {
-                label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES_OF.replace(/%s/, runtime.hostname + runtime.pathname),
+                label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES_OF.replace(/%s/, sel_cookie_obj._requested_protocol + sel_cookie_obj._requested_domain + sel_cookie_obj._requested_path),
                 handler: (function(runtime_id, context){
                   return function() {
                     var items = context._data_reference.get_cookies();
                     for (var i=0; i < items.length; i++) {
                       var cookie = items[i];
-                      if(cookie.runtime == runtime_id)
+                      if(cookie._requested_rt_id == runtime_id)
                       {
                         context._data_reference.remove_cookie(cookie._objectref);
                       }
                     };
                   }
-                })(runtime.rt_id, this)
+                })(runtime_id, this)
               }
             );
           }
@@ -166,7 +166,7 @@ cls.CookieManager.CookieManagerViewBase = function()
             return obj._requested_domain + obj._requested_path;
           },
           renderer: function(groupvalue, obj) {
-            return window.templates.cookie_manager.hostname_group_render(obj[0]._requested_domain, obj[0]._requested_path);
+            return window.templates.cookie_manager.hostname_group_render(obj[0]._requested_protocol, obj[0]._requested_domain, obj[0]._requested_path);
           }
         }
       },
@@ -328,7 +328,7 @@ cls.CookieManager.CookieManagerViewBase = function()
       row_with_data_id = row_with_data_id.previousElementSibling;
     }
     var objectref = row_with_data_id.getAttribute("data-object-id");
-    var runtime_id = this._data_reference.get_cookie_by_objectref(objectref).runtimes[0];
+    var runtime_id = this._data_reference.get_cookie_by_objectref(objectref)._runtime_id;
     this.insert_add_cookie_row(row, runtime_id);
   }
 
@@ -392,15 +392,15 @@ cls.CookieManager.CookieManagerViewBase = function()
         old_cookie = this._data_reference.get_cookie_by_objectref(object_id);
         // check if unmodified
         if(old_cookie &&
-            (
-              name         === old_cookie.name &&
-              value        === old_cookie.value &&
-              expires      === new Date(old_cookie.expires*1000).getTime() &&
-              path         === old_cookie.path &&
-              is_secure    === old_cookie.isSecure &&
-              is_http_only === old_cookie.isHTTPOnly &&
-              domain       === (old_cookie.domain || this._data_reference._rts[old_cookie.runtimes[0]].hostname)
-            )
+          (
+            name         === old_cookie.name &&
+            value        === old_cookie.value &&
+            expires      === new Date(old_cookie.expires*1000).getTime() &&
+            path         === old_cookie.path &&
+            is_secure    === old_cookie.isSecure &&
+            is_http_only === old_cookie.isHTTPOnly &&
+            domain       === (old_cookie.domain || old_cookie._requested_hostname)
+          )
         )
         {
           return;
@@ -409,31 +409,33 @@ cls.CookieManager.CookieManagerViewBase = function()
 
       if(domain && name)
       {
-        var new_cookie_desc = {
-          domain:       domain,
-          name:         name,
-          path:         path,
-          value:        value,
-          expires:      expires,
-          is_secure:    +is_secure,
-          is_http_only: +is_http_only,
-          runtime:      runtime
-        }
+        var new_cookie = new cls.CookieManager.Cookie({
+                                domain:           domain,
+                                name:             name,
+                                path:             path,
+                                value:            value,
+                                expires:          expires,
+                                is_secure:        +is_secure,
+                                is_http_only:     +is_http_only,
+                                _requested_rt_id: runtime
+                              });
 
-        if(!new_cookie_desc.runtime)
+        if(!new_cookie._requested_rt_id)
         {
           /**
             * Try to find runtime where this might end up to be able to highlight it. Using endsWith 
             * makes it work for subdomains, it can get the wrong one too, but chances are good
             * and it doesnt matter too much. Todo: Improve by making a runtimes list with those that fit.
             */
+          
+          // todo: fix this, shouldn't be the only reason to keep _rts
           for (var id in this._data_reference._rts) {
             // check if runtime hostname endsWith cookie-domain val
             var hostname = this._data_reference._rts[id].hostname;
-            var last_index = hostname.lastIndexOf(new_cookie_desc.domain);
-            if(last_index !== -1 && last_index + new_cookie_desc.domain.length == hostname.length)
+            var last_index = hostname.lastIndexOf(new_cookie.domain);
+            if(last_index !== -1 && last_index + new_cookie.domain.length == hostname.length)
             {
-              new_cookie_desc.runtime = this._data_reference._rts[id].rt_id;
+              new_cookie.runtime = this._data_reference._rts[id].rt_id;
               break;
             }
           };
@@ -442,11 +444,11 @@ cls.CookieManager.CookieManagerViewBase = function()
         if(old_cookie)
         {
           // remove old_cookie, on finished add new cookie
-          this._data_reference.remove_cookie(old_cookie._objectref, this._data_reference.set_cookie.bind(this._data_reference, new_cookie_desc));
+          this._data_reference.remove_cookie(old_cookie._objectref, this._data_reference.set_cookie.bind(this._data_reference, new_cookie));
         }
         else
         {
-          this._data_reference.set_cookie(new_cookie_desc);
+          this._data_reference.set_cookie(new_cookie);
         }
       }
       else
@@ -496,9 +498,7 @@ cls.CookieManager.CookieManagerViewBase = function()
       };
       this._restore_selection = null;
     }
-    // context menus
-    // todo: check to include in template
-    // add delete cookie context menu per tr
+    // add context menus per tr
     this._table_elem = this._table_container.firstChild;
     for(var i=0; i < this._table_elem.childNodes.length; i++)
     {
@@ -628,7 +628,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     }
     if(obj.domain)
     {
-      return window.templates.cookie_manager.editable_domain(obj.runtimes[0], this._data_reference._rts, obj.domain);
+      return window.templates.cookie_manager.editable_domain(obj._requested_rt_id, this._data_reference._rts, obj.domain);
     }
     return window.templates.cookie_manager.unknown_value();
   }

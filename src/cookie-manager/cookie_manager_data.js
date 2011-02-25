@@ -3,23 +3,23 @@ cls.CookieManager || (cls.CookieManager = {});
 cls.CookieManager["1.0"] || (cls.CookieManager["1.0"] = {});
 cls.CookieManager["1.1"] || (cls.CookieManager["1.1"] = {});
 
-cls.CookieManager.Cookie = function(cookie_details, data_reference)
+cls.CookieManager.Cookie = function(details, data_reference)
 {
-  this._requested_domain    = cookie_details._requested_domain;
-  this._requested_path      = cookie_details._requested_path;
-  this._requested_rt_id     = cookie_details._requested_rt_id;
-  this._requested_protocoll = cookie_details._requested_protocoll;
+  this._requested_domain    = details._requested_domain;
+  this._requested_path      = details._requested_path;
+  this._requested_rt_id     = details._requested_rt_id; // todo: not really _requested_ rt, just belonging
+  this._requested_protocoll = details._requested_protocoll;
 
-  this._is_runtime_placeholder = cookie_details._is_runtime_placeholder;
+  this._is_runtime_placeholder = details._is_runtime_placeholder;
   if(!this._is_runtime_placeholder)
   {
-    this.domain     = cookie_details.domain;
-    this.path       = cookie_details.path;
-    this.name       = cookie_details.name;
-    this.value      = cookie_details.value;
-    this.expires    = cookie_details.expires;
-    this.isSecure   = cookie_details.isSecure;
-    this.isHTTPOnly = cookie_details.isHTTPOnly;
+    this.domain     = details.domain || "";
+    this.path       = details.path || "";
+    this.name       = details.name;
+    this.value      = details.value;
+    this.expires    = details.expires || "";
+    this.isSecure   = details.isSecure || "";
+    this.isHTTPOnly = details.isHTTPOnly || "";
     this._objectref = (this.domain + "/" + this.path + "/" + this.name + "/" + this._requested_rt_id).replace(/'/g,"")
   }
   else
@@ -37,7 +37,7 @@ cls.CookieManager.Cookie = function(cookie_details, data_reference)
     data_reference._is_min_service_version_1_1 || (
       !this.isHTTPOnly &&
       (!this.path || data_reference._is_min_service_version_1_0_2) &&
-      this.domain === runtimes[domaincookies.runtimes[0]].hostname
+      this.domain === this._requested_domain
     );
   /**
    * Decide if the cookie can be removed.
@@ -59,7 +59,7 @@ cls.CookieManager.CookieDataBase = function()
   this.get_cookies = function(){};
   this.create_objectref = function(cookie, runtimes, fixed_name){};
   this.get_cookie_by_objectref = function(objectref){};
-  this.set_cookie = function(cookie_details){};
+  this.set_cookie = function(cookie_instance){};
 
   this.refetch = function()
   {
@@ -82,7 +82,7 @@ cls.CookieManager.CookieDataBase = function()
         if(!domain)
         {
           // in case the cookies domain is undefined (cookie is retrieved via JS), try using the runtime domain
-          domain = this._rts[cookie.runtimes[0]].hostname;
+          domain = this._rts[cookie._requested_rt_id].hostname;
         }
         var path = cookie.path;
         if(!path)
@@ -111,28 +111,18 @@ cls.CookieManager.CookieDataBase = function()
     };
   }
 
-  this.set_cookie = function(cookie_details)
+  this.set_cookie = function(cookie_instance)
   {
-    this._view._restore_selection = [
-      this.create_objectref(
-        {
-          domain: cookie_details.domain,
-          name:   cookie_details.name,
-          value:  cookie_details.value,
-          path:   cookie_details.path
-        },
-        cookie_details.runtime
-      )
-    ];
+    this._view._restore_selection = [cookie_instance._objectref];
 
-    var add_cookie_script = 'document.cookie="' + cookie_details.name + '=' + encodeURIComponent(cookie_details.value);
-    if(cookie_details.expires) // in case of 0 value the "expires" value should not be written, represents "Session" value
+    var add_cookie_script = 'document.cookie="' + cookie_instance.name + '=' + encodeURIComponent(cookie_instance.value);
+    if(cookie_instance.expires) // in case of 0 value the "expires" value should not be written, represents "Session" value
     {
-      add_cookie_script += '; expires='+ (new Date(cookie_details.expires).toUTCString());
+      add_cookie_script += '; expires='+ (new Date(cookie_instance.expires).toUTCString());
     }
-    add_cookie_script += '; path=' + (cookie_details.path || "/") + '"';
-    var tag = tagManager.set_callback(this, this.refetch, [cookie_details.runtime]);
-    services['ecmascript-debugger'].requestEval(tag,[cookie_details.runtime, 0, 0, add_cookie_script]);
+    add_cookie_script += '; path=' + (cookie_instance.path || "/") + '"';
+    var tag = tagManager.set_callback(this, this.refetch, [cookie_instance._requested_rt_id]);
+    services['ecmascript-debugger'].requestEval(tag,[cookie_instance.runtime, 0, 0, add_cookie_script]);
   }
 
   this._on_active_tab = function(msg)
@@ -187,35 +177,6 @@ cls.CookieManager.CookieDataBase = function()
     return true;
   };
 
-  this._flatten_data = function(cookies, runtimes)
-  {
-    var flattened_cookies = [];
-    for (var id in cookies)
-    {
-      var domaincookies = cookies[id];
-      if (domaincookies.cookies)
-      {
-        for (var i=0; i < domaincookies.cookies.length ;i++)
-        {
-          var current_cookie = domaincookies.cookies[i];
-          var flattened_cookie = {
-            
-          };
-          for (var key in current_cookie) {
-            flattened_cookie[key] = current_cookie[key];
-          };
-          flattened_cookies.push(flattened_cookie);
-        };
-      }
-      // Also add a placeholder which won't be rendered but makes sure the group shows up and the runtime can be referenced
-      flattened_cookies.push({
-        objectref:               this.create_objectref(null, domaincookies.runtimes, "domain_path_placeholder"),
-        is_runtimes_placeholder: true
-      });
-    }
-    return flattened_cookies;
-  };
-
   this._request_runtime_details = function(rt_object)
   {
     var script = "return JSON.stringify({protocol: location.protocol || '', hostname: location.hostname || '', pathname: location.pathname || ''})";
@@ -230,32 +191,24 @@ cls.CookieManager.CookieDataBase = function()
     if(status === 0 && message[STATUS] == "completed")
     {
       var parsed_data = JSON.parse(message[DATA]);
-      var protocol = parsed_data.protocol;
-      var hostname = parsed_data.hostname;
-      var pathname = parsed_data.pathname;
+      var rt_protocol = parsed_data.protocol;
+      var rt_domain = parsed_data.hostname;
+      var rt_pathname = parsed_data.pathname;
+      /* todo: remove
       this._rts[rt_id].protocol = protocol;
       this._rts[rt_id].hostname = hostname;
       this._rts[rt_id].pathname = pathname;
-
-      this._request_data(rt_id); // todo: check to skip this._rts and just kill it. just hand the details along.
-    }
-  };
-
-  this._request_data = function(rt_id)
-  {
-    var runtime = this._rts[rt_id];
-    var rt_protocol = runtime.protocol;
-    var rt_domain = runtime.hostname;
-    var rt_pathname = runtime.pathname;
-    if(rt_domain)
-    {
-      var tag = tagManager.set_callback(this, this._handle_cookies,[rt_id, rt_protocol, rt_domain, rt_pathname]);
-      services['cookie-manager'].requestGetCookie(tag,[rt_domain,rt_pathname]);
-    }
-    else
-    {
-      // if runtime has no location.hostname, only update view. occurs on opera:* pages for example.
-      this._update();
+      */
+      if(rt_domain)
+      {
+        var tag = tagManager.set_callback(this, this._handle_cookies,[rt_id, rt_protocol, rt_domain, rt_pathname]);
+        services['cookie-manager'].requestGetCookie(tag,[rt_domain,rt_pathname]);
+      }
+      else
+      {
+        // if runtime has no location.hostname, only update view. occurs on opera:* pages for example.
+        this._update();
+      }
     }
   };
 
@@ -295,14 +248,14 @@ cls.CookieManager.CookieDataBase = function()
         services['ecmascript-debugger'].requestEval(tag,[rt_id, 0, 0, script]);
       }
     }
-    // add a placeholder per runtime to make the group show up
+    // add a placeholder per runtime to make the group show up even if there were no cookies
     this.cookie_list.push(
       new cls.CookieManager.Cookie({
         _is_runtime_placeholder: true,
+        _requested_rt_id:    rt_id,
         _requested_domain:   rt_domain,
         _requested_path:     rt_pathname,
-        _requested_rt_id:    rt_id,
-        _requested_protocol: rt_protocol,
+        _requested_protocol: rt_protocol
       }, this)
     );
     this._update();
@@ -322,14 +275,17 @@ cls.CookieManager.CookieDataBase = function()
           var cookie_info = cookies[i];
           var pos = cookie_info.indexOf('=', 0);
           
-          this.cookie_list.push.push({
-            name:  cookie_info.slice(0, pos),
-            value: decodeURIComponent(cookie_info.slice(pos+1)),
+          this.cookie_list.push(
+            new cls.CookieManager.Cookie(
+              {
+              name:  cookie_info.slice(0, pos),
+              value: decodeURIComponent(cookie_info.slice(pos+1)),
 
-            _requested_domain:  rt_domain,
-            _requested_path:    rt_pathname,
-            _requested_runtime: rt_id
-          });
+              _requested_domain:  rt_domain,
+              _requested_path:    rt_pathname,
+              _requested_runtime: rt_id
+            }, this)
+          );
         };
       }
     }
@@ -364,28 +320,18 @@ cls.CookieManager["1.0"].CookieManagerData.prototype = new cls.CookieManager.Coo
 
 cls.CookieManager["1.1"].CookieManagerData = function(service_version, view)
 {
-  this.set_cookie = function(cookie_details)
+  this.set_cookie = function(details)
   {
-    this._view._restore_selection = [
-      this.create_objectref(
-        {
-          domain: cookie_details.domain,
-          name:   cookie_details.name,
-          value:  cookie_details.value,
-          path:   cookie_details.path
-        },
-        cookie_details.runtime
-      )
-    ];
+    this._view._restore_selection = [cookie_instance._objectref];
     var tag = tagManager.set_callback(this, this.refetch);
     var cookie_detail_arr = [
-      cookie_details.domain,
-      cookie_details.name,
-      (cookie_details.path || "/"),
-      cookie_details.value,
-      cookie_details.expires / 1000,
-      cookie_details.is_secure,
-      cookie_details.is_http_only
+      details.domain,
+      details.name,
+      (details.path || "/"),
+      details.value,
+      details.expires / 1000,
+      details.is_secure,
+      details.is_http_only
     ];
     services['cookie-manager'].requestAddCookie(tag, cookie_detail_arr);
   }
