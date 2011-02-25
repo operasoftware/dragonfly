@@ -5,14 +5,13 @@ cls.CookieManager["1.1"] || (cls.CookieManager["1.1"] = {});
 
 cls.CookieManager.Cookie = function(cookie_details, data_reference)
 {
-  console.log("cookie constr ",data_reference);
   this._requested_domain    = cookie_details._requested_domain;
   this._requested_path      = cookie_details._requested_path;
   this._requested_rt_id     = cookie_details._requested_rt_id;
   this._requested_protocoll = cookie_details._requested_protocoll;
 
-  this.is_runtime_placeholder = cookie_details.is_runtime_placeholder;
-  if(!this.is_runtime_placeholder)
+  this._is_runtime_placeholder = cookie_details._is_runtime_placeholder;
+  if(!this._is_runtime_placeholder)
   {
     this.domain     = cookie_details.domain;
     this.path       = cookie_details.path;
@@ -296,6 +295,16 @@ cls.CookieManager.CookieDataBase = function()
         services['ecmascript-debugger'].requestEval(tag,[rt_id, 0, 0, script]);
       }
     }
+    // add a placeholder per runtime to make the group show up
+    this.cookie_list.push(
+      new cls.CookieManager.Cookie({
+        _is_runtime_placeholder: true,
+        _requested_domain:   rt_domain,
+        _requested_path:     rt_pathname,
+        _requested_rt_id:    rt_id,
+        _requested_protocol: rt_protocol,
+      }, this)
+    );
     this._update();
   };
 

@@ -64,7 +64,7 @@ cls.CookieManager.CookieManagerViewBase = function()
               {
                 label: ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE,
                 handler: (function() {
-                  var runtime = selected_cookie_objects[0].runtimes[0];
+                  var runtime = selected_cookie_objects[0].runtime;
                   var inserted = this.insert_add_cookie_row(row, runtime);
                   this.select_row(null, inserted);
                 }).bind(this)
@@ -104,7 +104,7 @@ cls.CookieManager.CookieManagerViewBase = function()
                     var items = context._data_reference.get_cookies();
                     for (var i=0; i < items.length; i++) {
                       var cookie = items[i];
-                      if(cookie.runtimes.indexOf(runtime_id) > -1)
+                      if(cookie.runtime == runtime_id)
                       {
                         context._data_reference.remove_cookie(cookie._objectref);
                       }
@@ -185,7 +185,7 @@ cls.CookieManager.CookieManagerViewBase = function()
           label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_NAME,
           classname: "col_name",
           renderer: function(obj) {
-            if(obj.is_runtimes_placeholder)
+            if(obj._is_runtime_placeholder)
             {
               return;
             }
@@ -196,7 +196,7 @@ cls.CookieManager.CookieManagerViewBase = function()
           label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_VALUE,
           classname: "col_value",
           renderer: function(obj) {
-            if(obj.is_runtimes_placeholder)
+            if(obj._is_runtime_placeholder)
             {
               return;
             }
@@ -207,7 +207,7 @@ cls.CookieManager.CookieManagerViewBase = function()
           label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_PATH,
           classname: "col_path",
           renderer: function(obj) {
-            if(obj.is_runtimes_placeholder)
+            if(obj._is_runtime_placeholder)
             {
               return;
             }
@@ -222,7 +222,7 @@ cls.CookieManager.CookieManagerViewBase = function()
           label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES,
           classname: "col_expires",
           renderer: function(obj) {
-            if(obj.is_runtimes_placeholder)
+            if(obj._is_runtime_placeholder)
             {
               return;
             }
@@ -622,7 +622,7 @@ cls.CookieManager.CookieManagerViewBase = function()
   // DEPENDEND ON SERVICE VERSION - those might get overwritten
   this._domain_renderer = function(obj)
   {
-    if(obj.is_runtimes_placeholder)
+    if(obj._is_runtime_placeholder)
     {
       return;
     }
@@ -635,7 +635,7 @@ cls.CookieManager.CookieManagerViewBase = function()
 
   this._is_secure_renderer = function(obj)
   {
-    if(obj.is_runtimes_placeholder)
+    if(obj._is_runtime_placeholder)
     {
       return;
     }
@@ -648,7 +648,7 @@ cls.CookieManager.CookieManagerViewBase = function()
 
   this._is_http_only_renderer = function(obj)
   {
-    if(obj.is_runtimes_placeholder)
+    if(obj._is_runtime_placeholder)
     {
       return;
     }
@@ -685,7 +685,7 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
 
   this._domain_renderer = function(obj)
   {
-    if(obj.is_runtimes_placeholder)
+    if(obj._is_runtime_placeholder)
     {
       return;
     }
@@ -698,7 +698,7 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
 
   this._is_secure_renderer = function(obj)
   {
-    if(obj.is_runtimes_placeholder)
+    if(obj._is_runtime_placeholder)
     {
       return;
     }
@@ -711,7 +711,7 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
 
   this._is_http_only_renderer = function(obj)
   {
-    if(obj.is_runtimes_placeholder)
+    if(obj._is_runtime_placeholder)
     {
       return;
     }
