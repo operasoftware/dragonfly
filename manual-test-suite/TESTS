@@ -230,6 +230,69 @@ desc:
   - Enable the property
   - Make sure the style is re-applied and that this is reflected in the UI
 
+
+DOM.Colorpicker
+***************
+
+url: ./test-cases/dom/colorpicker/index.html
+id: 00100
+label: Show colorpicker
+desc:
+  - Open the testcase and inspect "test"
+  - Verify that a small color swatch appears at the end of the color declaration for 'h1'
+  - Click the color swatch
+  - Verify that an utility window to edit the color value opens
+  - Verify that no other property can be edited while the color picker is opened
+  - Verify that the window can be closed by clicking the close button
+  - Verify that the window gets closed on switching to an other mode
+
+id: 00200
+label: Edit color with visual controls
+desc:
+  - Open the testcase and inspect "test"
+  - Click the color swatch of the color declaration to open the color picker
+  - Verify that you can move around the circle with the mouse
+  - Verify that the color examples in the top right corner changes accordingly
+  - Verify that the values in all inputs updated accordingly
+  - Verify that the color value gets updated accordingly in the 'Styles' panel
+  - Verify that the color in the host document changes accordingly
+  - Verify that you can change the color in the same way with the vertical slider
+  - Select all other views of the color model with the radio select and verify the above for each color model
+
+id: 00300
+label: Edit color with inputs
+desc:
+  - Open the testcase and inspect "test"
+  - Click the color swatch of the color declaration to open the color picker
+  - Edit the value of one of the inputs
+  - Verify that the other inputs are updated accordingly
+  - Verify that the color examples in the top right corner changes accordingly
+  - Verify that the color in the host document changes accordingly
+  - Verify the above for each of the inputs
+
+id: 00400
+label: Edit transparent color
+desc:
+  - Open the testcase and inspect "test"
+  - Click the color swatch of the background-color declaration to open the color picker
+  - Verify that there are additional controls for the alpha value, a vertical slider and an input
+  - Verify that the color examples gets a splitted background with black and white
+  - Change the alpha value with the slider
+  - Verify that the color examples in the top right corner changes accordingly
+  - Verify that the values in the input updates accordingly
+  - Verify that the color value gets updated accordingly in the 'Styles' panel
+  - Verify that the color in the host document changes accordingly
+  - Verify that the aplpha value can be changed in the same way with in the alpha input field
+
+id: 00500
+label: Reset color value
+desc:
+  - Open the testcase and inspect "test"
+  - Click the color swatch of the color declaration to open the color picker
+  - Change the current color
+  - Verify that the color can be reset to the initial value by clicking the left part of the color example in the top right corner
+
+
 DOM.Properties
 **************
 

@@ -133,6 +133,8 @@
   height: 12px;
   margin-left: -6px;
   margin-top: -6px;
+  /* to prevent painting artefacts on moving the pointer */
+  border: 1px solid transparent;
 }
 .color-picker-target-element
 {
