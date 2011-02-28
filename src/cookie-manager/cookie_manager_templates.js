@@ -1,7 +1,7 @@
 window.templates || (window.templates = {});
 
 templates.cookie_manager = {
-  hostname_group_render: function(domain, path) {
+  hostname_group_render: function(protocol, domain, path) {
     return [
       [
         "span",  domain,

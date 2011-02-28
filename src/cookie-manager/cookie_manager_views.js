@@ -13,7 +13,7 @@ cls.CookieManager.CookieManagerViewBase = function()
   this._init = function(id, name, container_class, data_reference)
   {
     this._hold_redraw_mem = {};
-    this._data_reference = data_reference;
+    this.data = data_reference;
     this._bound_update_expiry = this._update_expiry.bind(this);
 
     var contextmenu = ContextMenu.get_instance();
@@ -24,7 +24,7 @@ cls.CookieManager.CookieManagerViewBase = function()
           return [
             {
               label: ui_strings.S_LABEL_STORAGE_UPDATE,
-              handler: (function(){ this._data_reference.refetch() }).bind(this)
+              handler: (function(){ this.data.refetch() }).bind(this)
             }
           ]
         }).bind(this)
@@ -53,7 +53,7 @@ cls.CookieManager.CookieManagerViewBase = function()
           var selection = document.querySelectorAll(".sortable-table .selected");
           var selected_cookie_objects = [];
           for (var i=0; i < selection.length; i++) {
-            var sel_cookie_obj = this._data_reference.get_cookie_by_objectref(selection[i].getAttribute("data-object-id"));
+            var sel_cookie_obj = this.data.get_cookie_by_objectref(selection[i].getAttribute("data-object-id"));
             selected_cookie_objects.push(sel_cookie_obj);
           };
 
@@ -64,7 +64,7 @@ cls.CookieManager.CookieManagerViewBase = function()
               {
                 label: ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE,
                 handler: (function() {
-                  var runtime_id = selected_cookie_objects[0]._requested_rt_id;
+                  var runtime_id = selected_cookie_objects[0]._rt_id;
                   var inserted = this.insert_add_cookie_row(row, runtime_id);
                   this.select_row(null, inserted);
                 }).bind(this)
@@ -89,24 +89,25 @@ cls.CookieManager.CookieManagerViewBase = function()
                 {
                   label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIE,
                   handler: (function() {
-                    this._data_reference.remove_cookie(sel_cookie_obj._objectref);
+                    this.data.remove_cookie(sel_cookie_obj._objectref);
                   }).bind(this)
                 }
               );
             }
             // Add "Remove all from domain-and-path"
-            var runtime_id = sel_cookie_obj._requested_rt_id;
+            var runtime_id = sel_cookie_obj._rt_id;
             options.push(
               {
-                label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES_OF.replace(/%s/, sel_cookie_obj._requested_protocol + sel_cookie_obj._requested_domain + sel_cookie_obj._requested_path),
+                // todo: would like to show the protocol too, would have to use sel_cookie_obj._rt_protocol + "://" though, but only for http / https cases
+                label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES_OF.replace(/%s/, sel_cookie_obj._rt_hostname + sel_cookie_obj._rt_path),
                 handler: (function(runtime_id, context){
                   return function() {
-                    var items = context._data_reference.get_cookies();
+                    var items = context.data.get_cookies();
                     for (var i=0; i < items.length; i++) {
                       var cookie = items[i];
-                      if(cookie._requested_rt_id == runtime_id)
+                      if(cookie._rt_id == runtime_id)
                       {
-                        context._data_reference.remove_cookie(cookie._objectref);
+                        context.data.remove_cookie(cookie._objectref);
                       }
                     };
                   }
@@ -130,7 +131,7 @@ cls.CookieManager.CookieManagerViewBase = function()
                 {
                   label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIE,
                   handler: (function() {
-                    this._data_reference.remove_cookie(removable_cookies[0]._objectref);
+                    this.data.remove_cookie(removable_cookies[0]._objectref);
                   }).bind(this)
                 }
               );
@@ -145,7 +146,7 @@ cls.CookieManager.CookieManagerViewBase = function()
                     {
                       for (var i=0; i < removable_cookies.length; i++)
                       {
-                        context._data_reference.remove_cookie(removable_cookies[i]._objectref);
+                        context.data.remove_cookie(removable_cookies[i]._objectref);
                       }
                     }
                   })(removable_cookies, this)
@@ -163,10 +164,10 @@ cls.CookieManager.CookieManagerViewBase = function()
         host_and_path: {
           label:   ui_strings.S_LABEL_COOKIE_MANAGER_GROUPER_HOST_AND_PATH,
           grouper: function(obj) {
-            return obj._requested_domain + obj._requested_path;
+            return obj._rt_hostname + obj._rt_path;
           },
           renderer: function(groupvalue, obj) {
-            return window.templates.cookie_manager.hostname_group_render(obj[0]._requested_protocol, obj[0]._requested_domain, obj[0]._requested_path);
+            return window.templates.cookie_manager.hostname_group_render(obj[0]._rt_protocol, obj[0]._rt_hostname, obj[0]._rt_path);
           }
         }
       },
@@ -256,7 +257,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     this._container = container;
     container.setAttribute("handler", "cookiemanager-container");
     container.setAttribute("data-menu", "cookie_refetch");
-    var storage_data = this._data_reference.get_cookies();
+    var storage_data = this.data.get_cookies();
     var sortby = this.sortby;
     var groupby = this.groupby;
     if(!this._sortable_table)
@@ -309,7 +310,7 @@ cls.CookieManager.CookieManagerViewBase = function()
 
   this.insert_add_cookie_row = function(row, runtime)
   {
-    var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row(runtime, this._data_reference._rts));
+    var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row(runtime, this.data._rts));
     var inserted = row.parentElement.insertBefore(templ, row);
     inserted.querySelector("[name=name]").focus();
     this.select_row(null, inserted);
@@ -319,7 +320,7 @@ cls.CookieManager.CookieManagerViewBase = function()
 
   this.click_add_cookie_button = function(event, target)
   {
-    window.views.cookie_manager.check_to_exit_edit_mode(event, target);
+    this.check_to_exit_edit_mode(event, target);
     // find runtime the row relates to
     var row = target.parentElement.parentElement;
     var row_with_data_id = row.previousElementSibling;
@@ -328,7 +329,7 @@ cls.CookieManager.CookieManagerViewBase = function()
       row_with_data_id = row_with_data_id.previousElementSibling;
     }
     var objectref = row_with_data_id.getAttribute("data-object-id");
-    var runtime_id = this._data_reference.get_cookie_by_objectref(objectref)._runtime_id;
+    var runtime_id = this.data.get_cookie_by_objectref(objectref)._runtime_id;
     this.insert_add_cookie_row(row, runtime_id);
   }
 
@@ -383,13 +384,13 @@ cls.CookieManager.CookieManagerViewBase = function()
       // "runtime" is val of [select] or [input type=hidden] (no add_cookie service)
       var runtime      = runtime_elem && parseInt(runtime_elem.value.split(",")[0]);
       // "domain" is val of [input] (with add_cookie service present), or runtimes .hostname
-      var domain       = domain_input && domain_input.value.trim() || runtime && this._data_reference._rts[runtime].hostname;
+      var domain       = domain_input && domain_input.value.trim() || runtime && this.data._rts[runtime].hostname;
 
       var object_id = edit_tr.getAttribute("data-object-id");
       var old_cookie;
       if(object_id)
       {
-        old_cookie = this._data_reference.get_cookie_by_objectref(object_id);
+        old_cookie = this.data.get_cookie_by_objectref(object_id);
         // check if unmodified
         if(old_cookie &&
           (
@@ -399,7 +400,7 @@ cls.CookieManager.CookieManagerViewBase = function()
             path         === old_cookie.path &&
             is_secure    === old_cookie.isSecure &&
             is_http_only === old_cookie.isHTTPOnly &&
-            domain       === (old_cookie.domain || old_cookie._requested_hostname)
+            domain       === (old_cookie.domain || old_cookie._rt_hostname)
           )
         )
         {
@@ -410,32 +411,30 @@ cls.CookieManager.CookieManagerViewBase = function()
       if(domain && name)
       {
         var new_cookie = new cls.CookieManager.Cookie({
-                                domain:           domain,
-                                name:             name,
-                                path:             path,
-                                value:            value,
-                                expires:          expires,
-                                is_secure:        +is_secure,
-                                is_http_only:     +is_http_only,
-                                _requested_rt_id: runtime
-                              });
+                           domain:         domain,
+                           name:           name,
+                           path:           path,
+                           value:          value,
+                           expires:        expires,
+                           is_secure:      +is_secure,
+                           is_http_only:   +is_http_only,
+                           _rt_id: runtime 
+                          }, this.data);
 
-        if(!new_cookie._requested_rt_id)
+        if(!new_cookie._rt_id)
         {
           /**
             * Try to find runtime where this might end up to be able to highlight it. Using endsWith 
             * makes it work for subdomains, it can get the wrong one too, but chances are good
             * and it doesnt matter too much. Todo: Improve by making a runtimes list with those that fit.
             */
-          
-          // todo: fix this, shouldn't be the only reason to keep _rts
-          for (var id in this._data_reference._rts) {
+          for (var id in this.data._rts) {
             // check if runtime hostname endsWith cookie-domain val
-            var hostname = this._data_reference._rts[id].hostname;
+            var hostname = this.data._rts[id].hostname;
             var last_index = hostname.lastIndexOf(new_cookie.domain);
             if(last_index !== -1 && last_index + new_cookie.domain.length == hostname.length)
             {
-              new_cookie.runtime = this._data_reference._rts[id].rt_id;
+              new_cookie.runtime = this.data._rts[id].rt_id;
               break;
             }
           };
@@ -444,24 +443,27 @@ cls.CookieManager.CookieManagerViewBase = function()
         if(old_cookie)
         {
           // remove old_cookie, on finished add new cookie
-          this._data_reference.remove_cookie(old_cookie._objectref, this._data_reference.set_cookie.bind(this._data_reference, new_cookie));
+          this.data.remove_cookie(old_cookie._objectref, this.data.set_cookie.bind(this.data, new_cookie));
         }
         else
         {
-          this._data_reference.set_cookie(new_cookie);
+          this.data.set_cookie(new_cookie);
         }
       }
       else
       {
         // todo: missing required info, needs feedback in UI. will refetch and discard for now.
-        this._data_reference.refetch();
+        this.data.refetch();
       }
     }
   }
 
   this._clear_container = function()
   {
-    this._container.innerHTML = "";
+    if(this._container)
+    {
+      this._container.innerHTML = "";
+    }
   }
 
   this._before_table_render = function(message)
@@ -511,8 +513,8 @@ cls.CookieManager.CookieManagerViewBase = function()
       rows[i].setAttribute("handler", "cookiemanager-row-select");
       var objectref = rows[i].getAttribute("data-object-id");
       // todo: find out why this sometimes doesn't work on startup
-      // console.log("this._data_reference",this._data_reference,"this._data_reference.get_cookie_by_objectref", this._data_reference.get_cookie_by_objectref, "this._data_reference.get_cookie_by_objectref(objectref)", this._data_reference.get_cookie_by_objectref(objectref));
-      if(this._data_reference.get_cookie_by_objectref(objectref).is_editable)
+      // console.log("this.data",this.data,"this.data.get_cookie_by_objectref", this.data.get_cookie_by_objectref, "this.data.get_cookie_by_objectref(objectref)", this.data.get_cookie_by_objectref(objectref));
+      if(this.data.get_cookie_by_objectref(objectref).is_editable)
       {
         rows[i].setAttribute("edit-handler", "cookiemanager-init-edit-mode");
       }
@@ -572,7 +574,7 @@ cls.CookieManager.CookieManagerViewBase = function()
 
   this._update_expiry = function()
   {
-    var items = this._data_reference.get_cookies();
+    var items = this.data.get_cookies();
     for (var i=0; i < items.length; i++)
     {
       var obj = items[i];
@@ -628,7 +630,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     }
     if(obj.domain)
     {
-      return window.templates.cookie_manager.editable_domain(obj._requested_rt_id, this._data_reference._rts, obj.domain);
+      return window.templates.cookie_manager.editable_domain(obj._rt_id, this.data._rts, obj.domain);
     }
     return window.templates.cookie_manager.unknown_value();
   }
@@ -734,7 +736,7 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
     var sortable_table = ObjectRegistry.get_instance().get_object(table_elem.getAttribute("data-object-id"));
     sortable_table.restore_columns(table_elem);
 
-    var default_domain = this._data_reference._rts[runtime].hostname;
+    var default_domain = this.data._rts[runtime].hostname;
     var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row_all_editable(default_domain));
     var inserted = row.parentElement.insertBefore(templ, row);
     inserted.querySelector("[name=name]").focus();
