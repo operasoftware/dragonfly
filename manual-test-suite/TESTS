@@ -367,6 +367,25 @@ desc:
   - Hover over the different nodes in the parent node chain.
   - Verify that the according elements are highlighted in the host
 
+DOM.Searchbar
+*************
+
+url: ./test-cases/dom/searchbar/index.html
+
+label: Show and hide the search bar
+desc:
+  - Select the 'Document' tab
+  - Press the search button at the end of the toolbar
+  - Verify that the search button keeps the pressed state
+  - Verify that the searchbar appears and the search field gets focused
+  - Press the search button again
+  - Verify that the search button gets and keepes the unpressed state
+  - Verify that the search bar disapears
+  - Repeat several times and verify that the searchbar appeasr and disappears accordingly
+  - Press the serach buton to make the bar appear and switch to an other tab, e.g. Scripts
+  - Switch back to 'Document'
+  - Verify that the search bar is still displayed
+
 Statusbar
 *********
 
