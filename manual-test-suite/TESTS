@@ -370,21 +370,64 @@ desc:
 DOM.Searchbar
 *************
 
-url: ./test-cases/dom/searchbar/index.html
+url: ./test-cases/dom/searchbar/basic-search.html
 
-label: Show and hide the search bar
+id: 00100
+label: Show and hide the search-bar with search button
 desc:
   - Select the 'Document' tab
   - Press the search button at the end of the toolbar
   - Verify that the search button keeps the pressed state
-  - Verify that the searchbar appears and the search field gets focused
+  - Verify that the search-bar appears and the search field gets focused
   - Press the search button again
-  - Verify that the search button gets and keepes the unpressed state
-  - Verify that the search bar disapears
-  - Repeat several times and verify that the searchbar appeasr and disappears accordingly
-  - Press the serach buton to make the bar appear and switch to an other tab, e.g. Scripts
+  - Verify that the search button gets and keeps the unpressed state
+  - Verify that the search-bar disappears
+  - Repeat several times and verify that the search-bar appears and disappears accordingly
+  - Press the search button to make the bar appear and switch to an other tab, e.g. Scripts
   - Switch back to 'Document'
-  - Verify that the search bar is still displayed
+  - Verify that the search-bar is still displayed
+  - Switch forth and back several times between tabs and verify that the search-bar is always displayed
+
+id: 00200
+label: Show and hide the search-bar with shortcuts
+desc:
+  - Select the 'Document' tab
+  - Click the DOM pane to ensure that the DOM view has focus
+  - Hit 'ctrl f'
+  - Verify that the search-bar gets displayed
+  - Hit escape
+  - Verify that the search-bar disappears
+  - Display the search-bar again
+  - Focus some other element in the DOM view, e.g. expand a node to blur the search field
+  - Verify that if you hit 'escape' now the command line gets displayed instead
+
+id: 00300
+label: Perform a search
+desc:
+ - Open the test case, select the 'Document' tab and expand the whole DOM tree
+ - Open the search-bar by hitting the search button
+ - Search for 'cla'
+ - Verify the 'Matches for "cla": Match 1 out of 7' is displayed in the bar
+ - Verify that the matching tokens are highlighted in the document
+ - Verify that the first match is highlighted differently
+ - Continue to type 'class' and verify that all matches are instantly updated accordingly
+ - Continue to type 'classe' and verify that all matches disappear and the string 'No match for "classe"' is displayed in the bar
+
+url: ./test-cases/dom/searchbar/long-document.html
+id: 00400
+label: Move the search highlight
+desc: 
+ - Open the test case, select the 'Document' tab and expand the whole DOM tree
+ - Open the search-bar by hitting the search button
+ - Search for 'class' and verify that you get 7 hits
+ - Hit 'enter'
+ - Verify that the match highlight moves to the next match
+ - Repeat and verify that the according match is scrolled into view
+ - Hit 'Shift enter' and verify that the match highlight now moves in the other direction
+ - Verify that you can move the search highlight in the same way with 'F3' and 'Shift F3'
+ - Verify that you can move the search highlight in the same way with the two buttons close to the search filed
+
+
 
 Statusbar
 *********
