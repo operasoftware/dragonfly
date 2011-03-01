@@ -89,7 +89,7 @@
       return;
     }
     var script_template = this.templates.highlight_js_source(context.text,context.onnewline,null,["span"]);
-    script_template.push("class","js-source");
+    script_template.push("class","js-inline-resource");
     context.template.push(script_template) //context.text);
     context.tag_template = ["span"];
     context.text = token;

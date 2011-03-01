@@ -144,13 +144,9 @@
   position: relative;
   white-space: pre;
   font-family: monospace;
-  font-size: 12px;
-  line-height: 15px;
+  line-height: 16px;
 }
 
-.js-resource-content, .markup-resource-content {
-    
-}
 .js-resource-content pre, .markup-resource-content pre {
     padding-top: 0;
     margin-top: 0;

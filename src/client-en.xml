@@ -134,6 +134,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <link rel="stylesheet" href="./ui-style/contextmenu.css"/>
 <link rel="stylesheet" href="./searches/style.css"/>
 <link rel="stylesheet" href="./ecma-debugger/breakpoints/style.css"/>
+<link rel="stylesheet" href="./syntaxhighlight/markup/default_color_theme.css"/>
 
 
 
