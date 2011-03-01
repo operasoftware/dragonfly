@@ -12,7 +12,6 @@ cls.CookieManager.CookieManagerViewBase = function()
 
   this._init = function(id, name, container_class, data_reference)
   {
-    this._hold_redraw_mem = {};
     this.data = data_reference;
     this._bound_update_expiry = this._update_expiry.bind(this);
 
@@ -309,7 +308,6 @@ cls.CookieManager.CookieManagerViewBase = function()
     var inserted = row.parentElement.insertBefore(templ, row);
     inserted.querySelector("[name=name]").focus();
     this.select_row(null, inserted);
-    this._hold_redraw();
     return inserted;
   }
 
@@ -335,7 +333,6 @@ cls.CookieManager.CookieManagerViewBase = function()
     sortable_table.restore_columns(table_elem);
     var row = document.querySelector(".sortable-table tr[data-object-id='"+objectref+"']").addClass("edit_mode");
     this.select_row(event, row);
-    this._hold_redraw();
     // Todo: focus input in clicked td if applicable
   }
 
@@ -359,7 +356,6 @@ cls.CookieManager.CookieManagerViewBase = function()
 
   this.exit_edit_and_save = function()
   {
-    this._resume_redraw();
     var edit_trs = document.querySelectorAll("tr.edit_mode");
     for (var i=0; i < edit_trs.length; i++) {
       var edit_tr = edit_trs[i];
@@ -464,21 +460,14 @@ cls.CookieManager.CookieManagerViewBase = function()
   this._before_table_render = function(message)
   {
     var message = message || {};
-    if(this._hold_redraw_mem.active && message.target)
+    // save selection
+    if(this._table_elem)
     {
-      message.target.discard_next_render();
-    }
-    else
-    {
-      // save selection
-      if(this._table_elem)
-      {
-        var selection = this._table_elem.querySelectorAll(".selected");
-        this._restore_selection = this._restore_selection || [];
-        for (var i=0; i < selection.length; i++) {
-          this._restore_selection.push(selection[i].getAttribute("data-object-id"));
-        };
-      }
+      var selection = this._table_elem.querySelectorAll(".selected");
+      this._restore_selection = this._restore_selection || [];
+      for (var i=0; i < selection.length; i++) {
+        this._restore_selection.push(selection[i].getAttribute("data-object-id"));
+      };
     }
   }
 
@@ -522,7 +511,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     };
   }
 
-  this._fuzzy_date = function(date)
+  this._fuzzy_date = function(date) // todo: move to templates?
   {
     var compare_date = new Date();
     var diff = date.getTime() - compare_date.getTime();
@@ -598,25 +587,6 @@ cls.CookieManager.CookieManagerViewBase = function()
       }
     }
   };
-
-  this._hold_redraw = function()
-  {
-    this._hold_redraw_mem.active = true;
-    this._hold_redraw_mem.timeout = setTimeout(this._resume_redraw.bind(this), 15000);
-  }
-
-  this._resume_redraw = function()
-  {
-    if(this._hold_redraw_mem.timeout)
-    {
-      clearTimeout(this._hold_redraw_mem.timeout);
-    }
-    if(this._hold_redraw_mem.callback)
-    {
-      this._hold_redraw_mem.callback();
-    }
-    this._hold_redraw_mem = {};
-  }
 
   // DEPENDEND ON SERVICE VERSION - those might get overwritten
   this._domain_renderer = function(obj)
@@ -723,7 +693,6 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
 
   this.insert_add_cookie_row = function(row, runtime)
   {
-    this._hold_redraw();
     var table_elem = document.querySelector(".sortable-table");
     var sortable_table = ObjectRegistry.get_instance().get_object(table_elem.getAttribute("data-object-id"));
     sortable_table.restore_columns(table_elem);

@@ -7,7 +7,7 @@ cls.CookieManager.Cookie = function(details, data)
 {
   this._rt_hostname = details._rt_hostname;
   this._rt_path     = details._rt_path;
-  this._rt_id       = details._rt_id;
+  this._rt_id       = Number(details._rt_id);
   this._rt_protocol = details._rt_protocol;
 
   this._is_runtime_placeholder = details._is_runtime_placeholder;
@@ -65,7 +65,7 @@ cls.CookieManager.CookieDataBase = function()
   {
     this.cookie_list = [];
     for (var rt_id in this._rts) {
-      this._request_runtime_details(rt_id);
+      this._request_runtime_details(Number(rt_id));
     };
   };
 
@@ -121,8 +121,8 @@ cls.CookieManager.CookieDataBase = function()
       add_cookie_script += '; expires='+ (new Date(cookie_instance.expires).toUTCString());
     }
     add_cookie_script += '; path=' + (cookie_instance.path || "/") + '"';
-    var tag = tagManager.set_callback(this, this.refetch, [cookie_instance._rt_id]);
-    services['ecmascript-debugger'].requestEval(tag,[cookie_instance.runtime, 0, 0, add_cookie_script]);
+    var tag = tagManager.set_callback(this, this.refetch, []);
+    services['ecmascript-debugger'].requestEval(tag,[cookie_instance._rt_id, 0, 0, add_cookie_script]);
   }
 
   this._on_active_tab = function(msg)
@@ -150,20 +150,6 @@ cls.CookieManager.CookieDataBase = function()
       this._request_runtime_details(rt_id);
     };
   };
-
-  // todo: its a bit strange that data has _update and the view has update through the prototype.
-  // consider rename or moving hold_redraw to view
-  this._update = function()
-  {
-    if(this._hold_redraw_mem.active)
-    {
-      this._hold_redraw_mem.callback = this._bound_view_update;
-    }
-    else
-    {
-      this._view.update();
-    }
-  }
 
   this._is_min_service_version = function(compare_version)
   {
@@ -205,7 +191,7 @@ cls.CookieManager.CookieDataBase = function()
       else
       {
         // if runtime has no location.hostname, only update view. occurs on opera:* pages for example.
-        this._update();
+        this._view.update()
       }
     }
   };
@@ -231,8 +217,8 @@ cls.CookieManager.CookieDataBase = function()
               isSecure:   cookie_info[5],
               isHTTPOnly: cookie_info[6],
 
-              _rt_id:    rt_id,
-              _rt_hostname:   rt.hostname,
+              _rt_id:       rt_id,
+              _rt_hostname: rt.hostname,
               _rt_path:     rt.pathname,
               _rt_protocol: rt.protocol
             }, this)
@@ -257,7 +243,7 @@ cls.CookieManager.CookieDataBase = function()
         _rt_path:     rt.pathname
       }, this)
     );
-    this._update();
+    this._view.update()
   };
 
   this._handle_js_retrieved_cookies = function(status, message, rt_id)
@@ -290,7 +276,7 @@ cls.CookieManager.CookieDataBase = function()
         };
       }
     }
-    this._update();
+    this._view.update();
   };
 
   this._init = function(service_version, view)
@@ -302,13 +288,6 @@ cls.CookieManager.CookieDataBase = function()
     this.cookie_list = [];
     this._rts = {};
     window.messages.addListener('active-tab', this._on_active_tab.bind(this));
-    this._hold_redraw_mem = {};
-    this._bound_view_update = this._view.update.bind(this);
-    /* is practically
-    this._bound_update = (function(context){
-      return function context.update();
-    }(this);
-    */
   };
 };
 
@@ -320,19 +299,20 @@ cls.CookieManager["1.0"].CookieManagerData.prototype = new cls.CookieManager.Coo
 
 cls.CookieManager["1.1"].CookieManagerData = function(service_version, view)
 {
-  this.set_cookie = function(details)
+  this.set_cookie = function(cookie_instance)
   {
     this._view._restore_selection = [cookie_instance._objectref];
-    var tag = tagManager.set_callback(this, this.refetch);
+    // todo: work around CORE-36742 - possibly move that to the Cookie class
     var cookie_detail_arr = [
-      details.domain,
-      details.name,
-      (details.path || "/"),
-      details.value,
-      details.expires / 1000,
-      details.is_secure,
-      details.is_http_only
+      cookie_instance.domain,
+      cookie_instance.name,
+      (cookie_instance.path || "/"),
+      cookie_instance.value,
+      cookie_instance.expires / 1000,
+      cookie_instance.isSecure,
+      cookie_instance.isHTTPOnly
     ];
+    var tag = tagManager.set_callback(this, this.refetch);
     services['cookie-manager'].requestAddCookie(tag, cookie_detail_arr);
   }
   this._init(service_version, view);
