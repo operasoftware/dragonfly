@@ -106,22 +106,22 @@ templates.network_options_header_table = function(headers)
 
 templates.network_request_crafter_main = function(url, loading, request, response)
 {
+  // fixme: replace request in progress text with spinner or similar.
   return ["div",
           ["div",
-           ["h2", "URL"],
+           ["h2", ui_strings.S_HTTP_LABEL_URL],
            ["input", "type", "text",
             "value", url || "http://example.org",
             "handler", "request-crafter-url-change"],
-           ["h2", "Request body"],
+           ["h2", ui_strings.M_NETWORK_CRAFTER_REQUEST_BODY],
             ["_auto_height_textarea", request],
            ["button", "Send request", "handler", "request-crafter-send"],
-           ["h2", "Response body"],
-           (loading ? ["span", "Request in progress"] : ["div", ["textarea", response]]),
+           ["h2", ui_strings.M_NETWORK_CRAFTER_RESPONSE_BODY],
+           (loading ? ["span", ui_strings.M_NETWORK_CRAFTER_SEND] : ["div", ["textarea", response]]),
            "class", "padding request-crafter"
           ]
          ];
 };
-
 
 templates.network_log_main = function(ctx, graphwidth)
 {
