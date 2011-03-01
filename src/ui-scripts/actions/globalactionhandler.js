@@ -132,7 +132,6 @@
       return;
     }
 
-    var ele = document.querySelector("[view_id=command_line]");
     var visible = (window.views.command_line && window.views.command_line.isvisible());
 
     if (!visible)
@@ -141,9 +140,11 @@
                               innerHeight/2, 0,
                               innerWidth, innerHeight/2);
       setTimeout(function() {
-        var box = UI.get_instance().get_layout_box('command_line');
-        var ele = box && box.container.getElement();
-        ele && (ele = ele.getElementsByTagName('textarea')[0]) && ele.focus();
+        var ele = window.views.command_line.get_container();
+        if (ele)
+        {
+          (ele = ele.getElementsByTagName('textarea')[0]) && ele.focus();
+        }
       }, 0);
     }
     else

@@ -1000,7 +1000,7 @@ window.hud {
   background: rgba(0, 0, 0, .75);
 }
 
-window.hud container {
+window.hud window-container {
   border-radius: 0;
   border: 0;
 }

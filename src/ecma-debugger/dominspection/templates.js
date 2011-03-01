@@ -189,11 +189,15 @@
           {
             if (has_only_one_child)
             {
-              class_name = re_formatted.test(node_name) ? " class='pre-wrap " + (is_script_node ? "non-editable" : "") +  "'" : '';
+              class_name = re_formatted.test(node_name)
+                         ? " class='pre-wrap " +
+                           (is_script_node ? "non-editable" : "") + "'"
+                         : '';
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                       this._get_indent(node) +
-                      "ref-id='" + node[ID] + "' handler='spotlight-node' data-menu='dom-element'" +
-                      class_name + ">"+
+                      "ref-id='" + node[ID] + "' handler='spotlight-node' " +
+                      "data-menu='dom-element'" +
+                      class_name + ">" +
                           "<node>&lt;" + node_name + attrs + "&gt;</node>" +
                               one_child_text_content +
                           "<node>&lt;/" + node_name + "&gt;</node>" +
@@ -205,7 +209,9 @@
             {
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                       this._get_indent(node) +
-                      "ref-id='" + node[ID] + "' handler='spotlight-node' data-menu='dom-element' " + (is_script_node ? "class='non-editable'" : "") + ">" +
+                      "ref-id='" + node[ID] + "' handler='spotlight-node' " +
+                      "data-menu='dom-element' " +
+                      (is_script_node ? "class='non-editable'" : "") + ">" +
                       (node[CHILDREN_LENGTH] ?
                           "<input handler='get-children' type='button' class='open' />" : '') +
                           "<node>&lt;" + node_name + attrs + "&gt;</node>" +
@@ -213,7 +219,8 @@
                       "</div>";
 
               closing_tags.push("<div" + this._get_indent(node) +
-                                "ref-id='" + node[ID] + "' handler='spotlight-node' data-menu='dom-element'><node>" +
+                                "ref-id='" + node[ID] + "' handler='spotlight-node' " +
+                                "data-menu='dom-element'><node>" +
                                 "&lt;/" + node_name + "&gt;" +
                                 "</node></div>");
             }
@@ -222,7 +229,9 @@
           {
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                       this._get_indent(node) +
-                      "ref-id='" + node[ID] + "' handler='spotlight-node' data-menu='dom-element' " + (is_script_node ? "class='non-editable'" : "") + ">" +
+                      "ref-id='" + node[ID] + "' handler='spotlight-node' " +
+                      "data-menu='dom-element' " +
+                      (is_script_node ? "class='non-editable'" : "") + ">" +
                       (children_length ?
                           "<input handler='get-children' type='button' class='close' />" : '') +
                           "<node>&lt;" + node_name + attrs + (children_length ? '' : '/') + "&gt;</node>" +

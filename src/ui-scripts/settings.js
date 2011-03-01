@@ -77,6 +77,12 @@ var SettingsBase = function()
     return key in this.map;
   }
 
+  this._menu_item_handler = function(item, event, target)
+  {
+    this.set(item, !this.get(item), true);
+    views[this.view_id].update();
+  };
+
   this.init = function(view_id, key_map, label_map, setting_map, templates, group)
   {
     this.map = {};
@@ -108,12 +114,7 @@ var SettingsBase = function()
         items.push({
           label: label_map[item],
           settings_id: item,
-          handler: function(item) {
-            return function(event, target) {
-              settings[view_id].set(item, !settings[view_id].get(item), true);
-              views[view_id].update();
-            }
-          }(item)
+          handler: this._menu_item_handler.bind(this, item)
         });
       }
       contextmenu.register(view_id, items);

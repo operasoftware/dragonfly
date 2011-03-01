@@ -258,6 +258,8 @@ ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE = "Show objects of type Element in the 
 ui_strings.S_CLEAR_COMMAND_LINE_LOG = "Clear command line";
 /* DESC: When enabled, compilation errors etc are shown in repl as well as error console */
 ui_strings.S_SWITCH_SHOW_ERRORS_IN_REPL = 'Show page javascript errors in command line';
+/* DESC: Enabling/disabling DOM modebar */
+ui_strings.S_TOGGLE_DOM_MODEBAR = 'Show DOM modebar';
 
 /* DESC: Header for settings group "General" */
 ui_strings.S_SETTINGS_HEADER_GENERAL = "General";

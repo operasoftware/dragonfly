@@ -410,13 +410,16 @@ cls.DebugRemoteSettingView.create_ui_widgets = function()
         window.helpers.setCookie('debug-remote', "true");
         window.helpers.setCookie('port', JSON.stringify(port));
         window.topCell.showView('dom');
-        client.setup(true);
+        client.setup();
       }
       else
       {
         // TODO: fix string to show new min port number
-        document.getElementById("remote-debug-info").textContent = ui_strings.S_INFO_NO_VALID_PORT_NUMBER.replace("%s", PORT_MIN).replace("%s", PORT_MAX);
-        target.parentNode.getElementsByTagName('input')[0].value = port < PORT_MIN ? PORT_MIN : PORT_MAX;
+        document.getElementById("remote-debug-info").textContent =
+            ui_strings.S_INFO_NO_VALID_PORT_NUMBER.replace("%s", PORT_MIN)
+                                                  .replace("%s", PORT_MAX);
+        target.parentNode.getElementsByTagName('input')[0].value =
+            port < PORT_MIN ? PORT_MIN : PORT_MAX;
       }
     }
   };
@@ -455,7 +458,7 @@ cls.ModebarView.create_ui_widgets = function()
     },
     // key-label map
     {
-      "show-modebar-dom": "Show DOM modebar"
+      "show-modebar-dom": ui_strings.S_TOGGLE_DOM_MODEBAR
     },
     // settings map
     {

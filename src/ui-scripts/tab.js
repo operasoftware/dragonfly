@@ -39,23 +39,10 @@ var TabBase = new function()
     delete ids[id];
   }
 
-}
-
-/**
-  * @constructor
-  * @extends TabBase
-  */
-
-var Tab = function(ref_id, name, has_close_button)
-{
-  // at some point all tabs will have a close button
-  this.init(ref_id, name, has_close_button)
-
   // These methods really belong to TopTabs, should make a TopTab class
   this._get_top_tab_element = function()
   {
-    var top_tabs = document.querySelector("top-tabs");
-    return top_tabs ? top_tabs.querySelector("[ref-id='" + this.ref_id + "']") : null;
+    return document.querySelector("tab[ref-id='" + this.ref_id + "']");
   };
 
   this.set_badge = function(type, content)
@@ -71,7 +58,7 @@ var Tab = function(ref_id, name, has_close_button)
 
   this.clear_badge = function()
   {
-    this.set_badge();
+    this.set_badge("", null);
   };
 
   this.set_state = function(state)
@@ -85,17 +72,23 @@ var Tab = function(ref_id, name, has_close_button)
 
   this.clear_state = function()
   {
-    var tabs = document.querySelector("top-tabs")
-    var tab = null;
-    if (tabs)
-    {
-      tab = tabs.querySelector("[ref-id='" + this.ref_id + "']");
-    }
+    var tab = this._get_top_tab_element();
     if (tab)
     {
-      tab.remoteAttribute("data-state");
+      tab.removeAttribute("data-state");
     }
   };
+}
+
+/**
+  * @constructor
+  * @extends TabBase
+  */
+
+var Tab = function(ref_id, name, has_close_button)
+{
+  // at some point all tabs will have a close button
+  this.init(ref_id, name, has_close_button)
 };
 
 /**
@@ -134,6 +127,6 @@ var ErrorConsoleTab = function(ref_id, name, has_close_button)
 };
 
 Tab.prototype = TabBase;
-JavaScriptTab.prototype = new Tab();
-ErrorConsoleTab.prototype = new Tab();
+JavaScriptTab.prototype = TabBase;
+ErrorConsoleTab.prototype = TabBase;
 

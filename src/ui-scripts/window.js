@@ -507,7 +507,6 @@ var UIWindowBase = new function()
             {
               current_target.height = min_height;
               top = current_target.top = inner_height - current_target.height;
-               top;
             }
             if (top)
             {

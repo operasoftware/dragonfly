@@ -237,18 +237,20 @@ function ContextMenu() {
 
     while (target != contextmenu && target != document)
     {
-      if (target.getAttribute("data-handler-id"))
+      var handler_id = target.getAttribute("data-handler-id");
+      if (handler_id)
       {
-        var data_menu_id = target.getAttribute("data-menu-id");
+        var menu_id = target.getAttribute("data-menu-id");
         var items = this._current_items;
         for (var i = 0, item; item = items[i]; i++)
         {
-          if (item.id == target.getAttribute("data-handler-id") &&
-              item.menu_id == data_menu_id)
+          if (item.id == handler_id && item.menu_id == menu_id)
           {
             var current_target = this._current_event.target;
-            while (current_target && (data_menu_id != "spec" ? current_target.getAttribute("data-menu") != data_menu_id
-                                                             : current_target.getAttribute("data-spec") === null))
+            while (current_target && (menu_id == "spec"
+                        ? current_target.getAttribute("data-spec") === null
+                        : current_target.getAttribute("data-menu") != menu_id)
+            )
             {
               current_target = current_target.parentNode;
             }

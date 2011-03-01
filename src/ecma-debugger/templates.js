@@ -354,7 +354,7 @@
               " " + (uri && frame.line ? helpers.basename(uri) + ':' + frame.line : ""),
               'class', 'file-line'],
       'handler', 'show-frame',
-      'ref-id', frame.id,
+      'ref-id', String(frame.id),
       'title', uri
     ].concat( is_top ? ['class', 'selected'] : [] );
   }
