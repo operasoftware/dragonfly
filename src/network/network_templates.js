@@ -4,8 +4,8 @@ templates.network_options_main = function(caching, tracking, headers, overrides)
 {
   return ["div",
           ["div",
-           ["h2", "Caching behaviour"],
-           ["p", "This setting controls how caching works in Opera. When caching is disable, Opera will bypass all caching, always doing full reloads"],
+           ["h2", ui_strings.S_NETWORK_CACHING_SETTING_TITLE],
+           ["p", ui_strings.S_NETWORK_CACHING_SETTING_DESC],
            ["label",
              ["input", "type", "radio",
               "name", "network-options-caching",
@@ -13,7 +13,7 @@ templates.network_options_main = function(caching, tracking, headers, overrides)
               "handler", "network-options-toggle-caching",
               caching == "default" ? "checked" : "non-checked", "true"
              ],
-             "Standard browser caching behaviour",
+             ui_strings.S_NETWORK_CACHING_SETTING_DEFAULT_LABEL,
            ],
            ["br"],
            ["label",
@@ -23,12 +23,12 @@ templates.network_options_main = function(caching, tracking, headers, overrides)
              "handler", "network-options-toggle-caching",
              caching == "disabled" ? "checked" : "non-checked", "true"
             ],
-            "Disable all caching",
+            ui_strings.S_NETWORK_CACHING_SETTING_DISABLED_LABEL,
            ]
           ],
           ["div",
-           ["h2", "Content tracking behaviour"],
-           ["p", "This setting controls if the bodies of responses will be available to Dragonfly when a page loads. Enabling it will make load operations slower, and use more memory. It will also make network body reporting more accurate"],
+           ["h2", ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TITLE],
+           ["p", ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_DESC,
            ["label",
             ["input", "type", "radio",
              "name", "network-options-track-bodies",
@@ -36,7 +36,7 @@ templates.network_options_main = function(caching, tracking, headers, overrides)
              "handler", "network-options-toggle-body-tracking",
              tracking == "notrack" ? "checked" : "non-checked", "true"
             ],
-            "Don't track content (default)",
+            ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_NO_TRACK_LABEL,
             ],
 
            ["br"],
@@ -47,13 +47,13 @@ templates.network_options_main = function(caching, tracking, headers, overrides)
              "handler", "network-options-toggle-body-tracking",
              tracking == "track" ? "checked" : "non-checked", "true"
             ],
-            "Track content (affects speed/memory)",
+            ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL,
            ]
           ],
           ["div",
-           ["h2", "Global header overrides"],
-           ["p", "Headers in the override box will be used for all requests in the debugged browser. They will override normal headers."],
-           ["label", ["input", "type", "checkbox", "handler", "toggle-header-overrides"].concat(overrides ? ["checked", "checked"] : []), "Enable global header overides"],
+           ["h2", ui_strings.S_NETWORK_HEADER_OVERRIDES_TITLE],
+           ["p", ui_strings.S_NETWORK_HEADER_OVERRIDES_DESC],
+           ["label", ["input", "type", "checkbox", "handler", "toggle-header-overrides"].concat(overrides ? ["checked", "checked"] : []), ui_strings.S_NETWORK_HEADER_OVERRIDES_LABEL],
             templates.network_options_override_list(headers, overrides),
           ],
           "class", "padding network-options",
