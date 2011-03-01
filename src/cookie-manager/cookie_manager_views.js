@@ -269,6 +269,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     this._sortable_table.data = storage_data;
     this._before_table_render();
     this._table_container = container.clearAndRender(["div", this._sortable_table.render(), "class", "table_container"]);
+    this._table_elem = this._table_container.firstChild;
     this._after_table_render();
     window.messages.addListener("debug-context-selected", this._clear_container);
   };
@@ -286,15 +287,13 @@ cls.CookieManager.CookieManagerViewBase = function()
   {
     var event = event || {};
     /**
-      *
       * unselect everything while not doing multiple selection mode.
       * that's when:
       *   cmd / ctrl key is pressed
       *   OR
       *   more than 1 item is already selected and event is a right-click
-      *
       */
-    var selection = window.views.cookie_manager._table_elem.querySelectorAll(".selected");
+    var selection = this._table_elem.querySelectorAll(".selected");
     if(!( event.ctrlKey || (selection.length > 1 && event.button === 2) ))
     {
       for (var i=0; i < selection.length; i++) {
@@ -472,11 +471,14 @@ cls.CookieManager.CookieManagerViewBase = function()
     else
     {
       // save selection
-      var selection = window.views.cookie_manager._table_elem.querySelectorAll(".selected");
-      this._restore_selection = this._restore_selection || [];
-      for (var i=0; i < selection.length; i++) {
-        this._restore_selection.push(selection[i].getAttribute("data-object-id"));
-      };
+      if(this._table_elem)
+      {
+        var selection = this._table_elem.querySelectorAll(".selected");
+        this._restore_selection = this._restore_selection || [];
+        for (var i=0; i < selection.length; i++) {
+          this._restore_selection.push(selection[i].getAttribute("data-object-id"));
+        };
+      }
     }
   }
 
@@ -497,7 +499,6 @@ cls.CookieManager.CookieManagerViewBase = function()
       this._restore_selection = null;
     }
     // add context menus per tr
-    this._table_elem = this._table_container.firstChild;
     for(var i=0; i < this._table_elem.childNodes.length; i++)
     {
       this._table_elem.childNodes[i].setAttribute("data-menu", "cookie_context");
@@ -722,11 +723,6 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
 
   this.insert_add_cookie_row = function(row, runtime)
   {
-    // this is called from the context menu
-    /*            
-                  var runtime = selected_cookie_objects[0].runtimes[0];
-                  var inserted = this.insert_add_cookie_row(row, runtime);
-    */
     this._hold_redraw();
     var table_elem = document.querySelector(".sortable-table");
     var sortable_table = ObjectRegistry.get_instance().get_object(table_elem.getAttribute("data-object-id"));
