@@ -324,7 +324,7 @@ cls.CookieManager.CookieManagerViewBase = function()
       row_with_data_id = row_with_data_id.previousElementSibling;
     }
     var objectref = row_with_data_id.getAttribute("data-object-id");
-    var runtime_id = this.data.get_cookie_by_objectref(objectref)._runtime_id;
+    var runtime_id = this.data.get_cookie_by_objectref(objectref)._rt_id;
     this.insert_add_cookie_row(row, runtime_id);
   }
 
@@ -550,7 +550,7 @@ cls.CookieManager.CookieManagerViewBase = function()
       return ui_strings.COOKIE_MANAGER_IN_X_HOURS.replace(/%s/, Math.round(in_hours));
 
     if (Math.round(in_days) === 1)
-      return ui_strings.S_LABEL_COOKIE_MANAGER_TODAY;
+      return ui_strings.COOKIE_MANAGER_TOMORROW;
     if (in_days < 7)
       return ui_strings.COOKIE_MANAGER_IN_X_DAYS.replace(/%s/, Math.round(in_days));
 

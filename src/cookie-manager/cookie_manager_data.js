@@ -17,9 +17,9 @@ cls.CookieManager.Cookie = function(details, data)
     this.path       = details.path || "";
     this.name       = details.name;
     this.value      = details.value;
-    this.expires    = details.expires || "";
-    this.isSecure   = details.isSecure || "";
-    this.isHTTPOnly = details.isHTTPOnly || "";
+    this.expires    = details.expires;
+    this.isSecure   = details.isSecure;
+    this.isHTTPOnly = details.isHTTPOnly;
     this._objectref = (this.domain + "/" + this.path + "/" + this.name + "/" + this._rt_id).replace(/'/g,"")
   }
   else
@@ -299,7 +299,6 @@ cls.CookieManager.CookieDataBase = function()
     this._is_min_service_version_1_0_2 = this._is_min_service_version("1.0.2");
     this._is_min_service_version_1_1 = this._is_min_service_version("1.1");
     this._view = view;
-    this._domain_and_path_dict = {};
     this.cookie_list = [];
     this._rts = {};
     window.messages.addListener('active-tab', this._on_active_tab.bind(this));
