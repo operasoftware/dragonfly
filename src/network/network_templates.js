@@ -164,29 +164,37 @@ templates.network_log_details = function(ctx, selected, listwidth)
   ]
 }
 
+ = "URL";
+/* DESC: label for response in http request details */
+ui_strings.S_HTTP_LABEL_RESPONSE = "Response";
+/* DESC: label for method in http request details */
+ui_strings.S_HTTP_LABEL_METHOD = "Method";
+
+
+
 templates.network_log_request_detail = function(ctx, selected)
 {
   var req = ctx.get_resource(selected);
   return [
   ["div",
     ["button", "X", "handler", "close-request-detail", "unselectable", "on"],
-    ["h2", "Summary"],
+    ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_SUMMARY],
     ["table",
-     ["tr", ["th", "URL:"], ["td", req.human_url]],
-     ["tr", ["th", "Method:"], ["td", req.method || "-"],
+     ["tr", ["th", ui_strings.S_HTTP_LABEL_URL + ":"], ["td", req.human_url]],
+     ["tr", ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"], ["td", req.method || "-"],
       "data-spec", "http#" + req.method
      ],
-     ["tr", ["th", "Status:"], ["td", String(req.responsecode || "-")],
+     ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS], ["td", String(req.responsecode || "-")],
       "data-spec", "http#" + req.responsecode
      ],
-     ["tr", ["th", "Duration:"], ["td", String(req.duration ? "" + req.duration + "ms" : "-")]],
+     ["tr", ["th", "ui_strings.M_NETWORK_REQUEST_DETAIL_DURATION" + ":"], ["td", String(req.duration ? "" + req.duration + "ms" : "-")]],
      "class", "resource-detail"
     ],
-    ["h2", "Request details"],
+    ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE],
     templates.request_details(req),
-    ["h2", "Response details"],
+    ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE],
     templates.response_details(req),
-    ["h2", "Body"],
+    ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_TITLE],
     templates.network_response_body(req),
     ],
     "data-resource-id", String(req.id),
@@ -229,7 +237,7 @@ templates.response_details = function(req)
 
 templates.network_headers_list = function(headers, firstline)
 {
-  if (!headers) { return "No headers" }
+  if (!headers) { return ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL }
   var tpl = [];
   var lis = headers.map(function(header) { return [
     ["li", ["span", header.name + ": "], header.value,  "data-spec", "http#" + header.name]
@@ -247,9 +255,9 @@ templates.network_response_body = function(req)
   if (!req.responsebody)
   {
     return ["p",
-            "Response body not tracked. To always fetch response bodies, toggle the response body option on the \"network options\" tab. To retrieve only this body, click the button.",
+            ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC,
             ["button",
-             "Get response body",
+             ui_strings.M_NETWORK_REQUEST_DETAIL_GET_RESPONSE_BODY_LABEL,
              "data-resource-id", String(req.id),
              // unselectable attribute works around bug CORE-35118
              "unselectable", "on",
@@ -271,7 +279,7 @@ templates.network_response_body = function(req)
     }
     else
     {
-      bodytpl = ["span", "not able to show data of type " + req.mime];
+      bodytpl = ["span", "Not able to show data of type %s".replace("%s", req.mime)];
     }
 
     return ["div",

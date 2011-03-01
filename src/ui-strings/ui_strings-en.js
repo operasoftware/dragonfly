@@ -661,43 +661,65 @@ ui_strings.S_REPL_JQUERY_COMMAND_DESC = "Load jquery in the active tab";
 
 /* DESC: Title for caching settings section in global network options */
 ui_strings.S_NETWORK_CACHING_SETTING_TITLE = "Caching behaviour";
-
 /* DESC: Help text for explaining caching setting in global network options */
 ui_strings.S_NETWORK_CACHING_SETTING_DESC = "This setting controls how caching works in Opera. When caching is disable, Opera will bypass all caching, always doing full reloads";
-
 /* DESC: Name of network caching setting for default browser caching policy */
 ui_strings.S_NETWORK_CACHING_SETTING_DEFAULT_LABEL = "Standard browser caching behaviour";
-
 /* DESC: Name of network caching setting for disabling browser caching policy */
 ui_strings.S_NETWORK_CACHING_SETTING_DISABLED_LABEL = "Disable all caching";
 
 
 /* DESC: Title for content tracking settings section in global network options */
 ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TITLE = "Content tracking behaviour";
-
 /* DESC: Help text for explaing content tracking setting in global network options */
 ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_DESC = "This setting controls if the bodies of responses will be available to Dragonfly when a page loads. Enabling it will make load operations slower, and use more memory. It will also make network body reporting more accurate";
-
 /* DESC: Name of content tracking setting for no tracking */
 ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_NO_TRACK_LABEL = "Don't track content (default)";
-
 /* DESC: Name of content tracking setting for tracking content */
 ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL = "Track content (affects speed/memory)";
 
 /* DESC: Title of global header overrides section in global network settings */
 ui_strings.S_NETWORK_HEADER_OVERRIDES_TITLE = "Global header overrides";
-
 /* DESC: Description of network header overrides feature. */
 ui_strings.S_NETWORK_HEADER_OVERRIDES_DESC = "Headers in the override box will be used for all requests in the debugged browser. They will override normal headers";
-
 /* DESC: Label for checkbox to enable global header overrides */
 ui_strings.S_NETWORK_HEADER_OVERRIDES_LABEL = "Enable global header overides";
 
 /* DESC: Label for request body input in network crafter */
 ui_strings.M_NETWORK_CRAFTER_REQUEST_BODY = "Request body";
-
 /* DESC: Label for response body input in network crafter */
 ui_strings.M_NETWORK_CRAFTER_RESPONSE_BODY = "Response";
-
 /* DESC: Label for send request button in network crafter */
 ui_strings.M_NETWORK_CRAFTER_SEND = "Send request";
+
+
+/* DESC: Title request summary */
+ui_strings.S_NETWORK_REQUEST_DETAIL_SUMMARY_TITLE = "Summary";
+
+/* DESC: Label request status */
+ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS = "Status";
+
+/* DESC: Label for request duration */
+ui_strings.M_NETWORK_REQUEST_DETAIL_DURATION = "Duration";
+
+/* DESC: Title for request details section */
+ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE = "Request details";
+
+/* DESC: Title for response details section */
+ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE = "Response details";
+
+/* DESC: Title for response body section */
+ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_TITLE = "Body";
+
+/* DESC: Label for area telling user there were no headers for request or response */
+ui_strings.S_NETWORK_REQUEST_DETAIL_NO_HEADERS_LABEL = "No headers";
+
+/* DESC: Help text about how to always track resources in request view */
+ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC = "Response body not tracked. To always fetch response bodies, toggle the response body option on the \"network options\" tab. To retrieve only this body, click the button.";
+
+/* DESC: Label for get response body int network request view */
+ui_strings.M_NETWORK_REQUEST_DETAIL_GET_RESPONSE_BODY_LABEL = "Get response body";
+
+/* DESC: Message about file types we have no good way of showing. */
+ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL = "Not able to show data of type %s";
+
