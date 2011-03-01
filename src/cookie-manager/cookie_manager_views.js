@@ -41,8 +41,6 @@ cls.CookieManager.CookieManagerViewBase = function()
           {
             row = row.parentNode;
           }
-          var options = [];
-          var cookie_obj;
           // if row has an object-id, add edit and remove options
           var objectref = row.getAttribute("data-object-id");
           if(objectref)
@@ -50,29 +48,27 @@ cls.CookieManager.CookieManagerViewBase = function()
             // row represents a cookie, so it can be selected
             this.select_row(event, row);
           }
-          var selection = document.querySelectorAll(".sortable-table .selected");
+          var selection = this._table_elem.querySelectorAll(".selected");
           var selected_cookie_objects = [];
           for (var i=0; i < selection.length; i++) {
             var sel_cookie_obj = this.data.get_cookie_by_objectref(selection[i].getAttribute("data-object-id"));
             selected_cookie_objects.push(sel_cookie_obj);
           };
 
+          var options = [
+            {
+              label: ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE,
+              handler: (function() {
+                var runtime_id = selected_cookie_objects[0]._rt_id;
+                var inserted = this.insert_add_cookie_row(row, runtime_id);
+                this.select_row(null, inserted);
+              }).bind(this)
+            }
+          ];
           if(selected_cookie_objects.length === 1)
           {
-            // Add cookie
-            options.push(
-              {
-                label: ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE,
-                handler: (function() {
-                  var runtime_id = selected_cookie_objects[0]._rt_id;
-                  var inserted = this.insert_add_cookie_row(row, runtime_id);
-                  this.select_row(null, inserted);
-                }).bind(this)
-              }
-            );
-            // single selection
             var sel_cookie_obj = selected_cookie_objects[0];
-            if(sel_cookie_obj.is_editable)
+            if(sel_cookie_obj._is_editable)
             {
               options.push(
                 {
@@ -83,7 +79,7 @@ cls.CookieManager.CookieManagerViewBase = function()
                 }
               );
             }
-            if(sel_cookie_obj.is_removable)
+            if(sel_cookie_obj._is_removable)
             {
               options.push(
                 {
@@ -120,7 +116,7 @@ cls.CookieManager.CookieManagerViewBase = function()
             // multiple selection
             var removable_cookies = [];
             for (var j=0; j < selected_cookie_objects.length; j++) {
-              if(selected_cookie_objects[j].is_removable)
+              if(selected_cookie_objects[j]._is_removable)
               {
                 removable_cookies.push(selected_cookie_objects[j]);
               }
@@ -298,7 +294,7 @@ cls.CookieManager.CookieManagerViewBase = function()
       *   more than 1 item is already selected and event is a right-click
       *
       */
-    var selection = document.querySelectorAll(".sortable-table .selected");
+    var selection = window.views.cookie_manager._table_elem.querySelectorAll(".selected");
     if(!( event.ctrlKey || (selection.length > 1 && event.button === 2) ))
     {
       for (var i=0; i < selection.length; i++) {
@@ -476,7 +472,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     else
     {
       // save selection
-      var selection = document.querySelectorAll(".sortable-table .selected");
+      var selection = window.views.cookie_manager._table_elem.querySelectorAll(".selected");
       this._restore_selection = this._restore_selection || [];
       for (var i=0; i < selection.length; i++) {
         this._restore_selection.push(selection[i].getAttribute("data-object-id"));
@@ -514,7 +510,7 @@ cls.CookieManager.CookieManagerViewBase = function()
       var objectref = rows[i].getAttribute("data-object-id");
       // todo: find out why this sometimes doesn't work on startup
       // console.log("this.data",this.data,"this.data.get_cookie_by_objectref", this.data.get_cookie_by_objectref, "this.data.get_cookie_by_objectref(objectref)", this.data.get_cookie_by_objectref(objectref));
-      if(this.data.get_cookie_by_objectref(objectref).is_editable)
+      if(this.data.get_cookie_by_objectref(objectref)._is_editable)
       {
         rows[i].setAttribute("edit-handler", "cookiemanager-init-edit-mode");
       }
