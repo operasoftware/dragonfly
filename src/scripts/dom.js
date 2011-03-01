@@ -275,6 +275,7 @@ Element.prototype.insertAfter = function(node, target)
   {
     this.appendChild(node);
   }
+  return node;
 };
 
 /**

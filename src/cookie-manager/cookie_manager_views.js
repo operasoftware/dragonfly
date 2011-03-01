@@ -293,18 +293,10 @@ cls.CookieManager.CookieManagerViewBase = function()
     elem.addClass("selected");
   };
 
-  this.insert_add_cookie_row = function(row, runtime)
-  {
-    var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row(runtime, this.data._rts));
-    var inserted = row.parentElement.insertBefore(templ, row);
-    inserted.querySelector("[name=name]").focus();
-    this.select_row(null, inserted);
-  }
-
   this.click_add_cookie_button = function(event, target)
   {
     this.check_to_exit_edit_mode(event, target);
-    // find runtime the row relates to
+    // find closest runtime above button
     var row = target.parentElement.parentElement;
     var row_with_data_id = row.previousElementSibling;
     while(!row_with_data_id.getAttribute("data-object-id"))
@@ -312,15 +304,23 @@ cls.CookieManager.CookieManagerViewBase = function()
       row_with_data_id = row_with_data_id.previousElementSibling;
     }
     var objectref = row_with_data_id.getAttribute("data-object-id");
+    this._sortable_table.restore_columns(this._table_elem);
+    var row_after_re_render = document.querySelector("[data-object-id='"+objectref+"']");
     var runtime_id = this.data.get_cookie_by_objectref(objectref)._rt_id;
-    this.insert_add_cookie_row(row, runtime_id);
+    this.insert_add_cookie_row(row_after_re_render, runtime_id);
+  }
+
+  this.insert_add_cookie_row = function(row, runtime)
+  {
+    var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row(runtime, this.data._rts));
+    var inserted = row.parentElement.insertAfter(templ, row);
+    inserted.querySelector("[name=name]").focus();
+    this.select_row(null, inserted);
   }
 
   this.enter_edit_mode = function(objectref, event)
   {
-    var table_elem = document.querySelector(".sortable-table");
-    var sortable_table = ObjectRegistry.get_instance().get_object(table_elem.getAttribute("data-object-id"));
-    sortable_table.restore_columns(table_elem);
+    this._sortable_table.restore_columns(this._table_elem);
     var row = document.querySelector(".sortable-table tr[data-object-id='"+objectref+"']").addClass("edit_mode");
     this.select_row(event, row);
     // Todo: focus input in clicked td if applicable
@@ -684,13 +684,9 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
 
   this.insert_add_cookie_row = function(row, runtime)
   {
-    var table_elem = document.querySelector(".sortable-table");
-    var sortable_table = ObjectRegistry.get_instance().get_object(table_elem.getAttribute("data-object-id"));
-    sortable_table.restore_columns(table_elem);
-
     var default_domain = this.data._rts[runtime].hostname;
     var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row_all_editable(default_domain));
-    var inserted = row.parentElement.insertBefore(templ, row);
+    var inserted = row.parentElement.insertAfter(templ, row);
     inserted.querySelector("[name=name]").focus();
     this.select_row(null, inserted);
   }
