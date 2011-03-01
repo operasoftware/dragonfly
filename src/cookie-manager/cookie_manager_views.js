@@ -59,8 +59,7 @@ cls.CookieManager.CookieManagerViewBase = function()
               label: ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE,
               handler: (function() {
                 var runtime_id = selected_cookie_objects[0]._rt_id;
-                var inserted = this.insert_add_cookie_row(row, runtime_id);
-                this.select_row(null, inserted);
+                this.insert_add_cookie_row(row, runtime_id);
               }).bind(this)
             }
           ];
@@ -72,7 +71,7 @@ cls.CookieManager.CookieManagerViewBase = function()
               options.push(
                 {
                   label: ui_strings.S_LABEL_COOKIE_MANAGER_EDIT_COOKIE,
-                  handler: (function() { // TODO: check to remove binds and put sel_cookie_obj on the view instead
+                  handler: (function() {
                     this.enter_edit_mode(sel_cookie_obj._objectref);
                   }).bind(this)
                 }
@@ -157,7 +156,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     this._tabledef = {
       groups: {
         host_and_path: {
-          label:   ui_strings.S_LABEL_COOKIE_MANAGER_GROUPER_HOST_AND_PATH,
+          label: ui_strings.S_LABEL_COOKIE_MANAGER_GROUPER_HOST_AND_PATH,
           grouper: function(obj) {
             return obj._rt_hostname + obj._rt_path;
           },
@@ -170,7 +169,7 @@ cls.CookieManager.CookieManagerViewBase = function()
       idgetter: function(res) { return res._objectref },
       columns: {
         domain: {
-          label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_DOMAIN,
+          label: ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_DOMAIN,
           classname: "col_domain",
           renderer: this._domain_renderer.bind(this),
           summer: function(values, groupname, getter) {
@@ -178,7 +177,7 @@ cls.CookieManager.CookieManagerViewBase = function()
           }
         },
         name: {
-          label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_NAME,
+          label: ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_NAME,
           classname: "col_name",
           renderer: function(obj) {
             if(obj._is_runtime_placeholder)
@@ -189,7 +188,7 @@ cls.CookieManager.CookieManagerViewBase = function()
           }
         },
         value: {
-          label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_VALUE,
+          label: ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_VALUE,
           classname: "col_value",
           renderer: function(obj) {
             if(obj._is_runtime_placeholder)
@@ -307,7 +306,6 @@ cls.CookieManager.CookieManagerViewBase = function()
     var inserted = row.parentElement.insertBefore(templ, row);
     inserted.querySelector("[name=name]").focus();
     this.select_row(null, inserted);
-    return inserted;
   }
 
   this.click_add_cookie_button = function(event, target)
@@ -702,7 +700,6 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
     var inserted = row.parentElement.insertBefore(templ, row);
     inserted.querySelector("[name=name]").focus();
     this.select_row(null, inserted);
-    return inserted;
   }
 
   this._init(id, name, container_class, data);
