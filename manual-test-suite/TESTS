@@ -1143,6 +1143,44 @@ desc:
   - Verify that the highlighted word is entered in the console
   - Verify that the keys [, ], (, ) have the samme effect as "."
 
+url: ./test-cases/repl/unpack-list-alikes.html
+
+label: Unpack list alikes
+desc:
+  - Open the test case
+  - Ensure that 'Unpack list alikes in the command line' in settings &gt; 'General' is checked
+  - Open the command line (hit 'escape' or hit the command line button)
+  - Hit the 'console.log([1,2,3,4])' button
+  - Verify that you get 'Array[1, 2, 3, 4]' in the command line (ignore a '[object Array]' before that)
+  - Verify that 'Array' is clickable and opens the 'Inspection' view with the Array
+  - Hit 'console.log(document.all)' button
+  - Verify that you get 'HTMLCollection[html, head, body, p, input, p, input, p, input]' (ignore a '[object HTMLCollection]' before that)
+  - Verify that each element in that list is clickable and opens the according 'Inspection' view
+  - Hit the 'console.log(document.childNodes)' button 
+  - Verify that you get 'NodeList[DocumentType, html]' in the command line (ignore a '[object HTMLCollection]' before that)
+  - Verify that each element is clickable and opens the according 'Inspection' view
+  - Hit the 'console.log(xPathResult)' button
+  - Verify that you get 'XPathResult[p, p, p, p]' in the command line (ignore a '[object XPathResult]' before that)
+  - Verify that each element in that list is clickable and opens the according 'Inspection' view
+  - Write '[1,2,3,4]', 'document.all' and 'document.childNodes' in the command line
+  - Verify that you get the same output back as before (without the ignorable line)
+  - Write 'console.log([1,2,3,4])', 'console.log(document.all)' and 'console.log(document.childNodes)' in the command line
+  - Verify that you get the same output as before, except that each output is followed by a 'undefined' return statement
+
+label: Setting for unpack list alikes
+desc:
+  - Open the test case
+  - Uncheck 'Unpack list alikes in the command line' in settings &gt; 'General'
+  - Open the command line (hit 'escape' or hit the command line button)
+  - Hit the 'console.log([1,2,3,4])' button
+  - Verify that the output is now only a clickable 'Array' (ignore a '[object Array]' before that)
+  - Hit 'console.log(document.all)' button
+  - Verify that the ourtput is now only a clickable 'HTMLCollection' (ignore a '[object HTMLCollection]' before that)
+  - Hit the 'console.log(document.childNodes)' button 
+  - Verify that the output is now only a clickable 'NodeList' (ignore a '[object HTMLCollection]' before that)
+  - Hit the 'console.log(xPathResult)' button
+  - Verify that the output is now only a clickable 'XPathResult'
+
 Scripts.Event Breakpoints
 *************************
 
