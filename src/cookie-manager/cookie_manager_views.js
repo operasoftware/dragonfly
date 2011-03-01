@@ -18,15 +18,8 @@ cls.CookieManager.CookieManagerViewBase = function()
     var contextmenu = ContextMenu.get_instance();
     contextmenu.register("cookie_refetch", [
       {
-        callback: (function()
-        {
-          return [
-            {
-              label: ui_strings.S_LABEL_STORAGE_UPDATE,
-              handler: (function(){ this.data.refetch() }).bind(this)
-            }
-          ]
-        }).bind(this)
+        label: ui_strings.S_LABEL_STORAGE_UPDATE,
+        handler: this.data.refetch.bind(this.data)
       }
     ]);
 
