@@ -236,7 +236,7 @@ DOM.Colorpicker
 
 url: ./test-cases/dom/colorpicker/index.html
 id: 00100
-label: Show colorpicker
+label: Show and hide colorpicker
 desc:
   - Open the testcase and inspect "test"
   - Verify that a small color swatch appears at the end of the color declaration for 'h1'
@@ -608,6 +608,48 @@ label: Search
 desc:
   - Search for 'default'.
   - Verify that you 5 hits and that the view scrolls on enter to each of them.
+
+Scripts.Search bar and window
+*****************************
+
+url: ./test-cases/scripts/searchbar-window/search.html
+
+id: 00100
+label: Switch between search bar and window
+desc:
+  - Select the 'Scripts' tab
+  - Press the search button at the end of the toolbar to show the search bar
+  - Press the 'More' button on the search bar
+  - Verify that the search bar disappears and a search window gets displayed instead
+  - Press the 'Less' button on the search window
+  - Verify that the window closes and the search bar gets displayed instead
+  - Switch between 'More' and 'Less' several times and verify that it works
+  - Switch to 'More' and close the search window with the close button
+  - Hit the search button on the tool bar again and verify that the search window opens directly
+  - Switch back to 'Less', close the search bar, hit the search button again and verify that it now opens the search bar
+
+id: 00200
+label: Perform a search in the search window
+desc:
+  - Open the test url
+  - Select the 'Scripts' tab, hit the search button and hit the 'More' button to open the search window
+  - Verify that the search field has focus
+  - Type 'abrax' and hit enter
+  - Verify that the string 'Matches for "abrax": Match 1 out of 4' appears in the tool bar
+  - Verify that four matches are displayed in the window
+  - Verify that the first match is highlighted differently
+  - Verify that for each match the according source line including line number is displayed
+  - Hit 'Enter'
+  - Verify that the match highlight moves down
+  - Hit 'Shift Enter' 
+  - Verify that the match highlight moves in the other direction
+  - Verify that the match highlight can be moved in the same way with 'F3' and 'Shift F3'
+  - Verify that the match highlight can be moved in the same way with the buttons close to the search field
+  - Hit 'Ctrl Enter'
+  - Verify that the file of the highlighted match is displayed in the source view
+  - Verify that for each match the according file can be displayed with 'Ctrl Enter'
+
+
 
 Scripts.Call Stack
 ******************
