@@ -268,7 +268,6 @@ cls.CookieManager.CookieManagerViewBase = function()
     this._sortable_table.data = storage_data;
     this._before_table_render();
     this._table_container = container.clearAndRender(["div", this._sortable_table.render(), "class", "table_container"]);
-    this._table_elem = this._table_container.firstChild;
     this._after_table_render();
     window.messages.addListener("debug-context-selected", this._clear_container);
   };
@@ -474,6 +473,7 @@ cls.CookieManager.CookieManagerViewBase = function()
   this._after_table_render = function()
   {
     this._update_expiry();
+    this._table_elem = this._table_container.firstChild;
     // restore selection
     if(this._restore_selection)
     {
