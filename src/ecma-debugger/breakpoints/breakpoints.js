@@ -82,9 +82,9 @@ cls.Breakpoints = function()
     if (bp)
     {
       bp.is_enabled = false;
+      window.messages.post("breakpoint-updated", 
+                           {id: bp.id, script_id: bp.script_id});
     }
-    window.messages.post("breakpoint-updated",
-                         {id: bp.id, script_id: bp.script_id});
   };
 
   this._get_bp_id_with_script_id_and_line_nr = function(script_id, line_nr)
