@@ -13,7 +13,9 @@ cls.MarkupTokenizer = function()
     this._buffer = "";
     this._current_pos = 0;
     this.ontoken = function(){};
-    this._tmp_buffer = [cls.MarkupTokenizer.types.DATA,''];
+    this._token_type = cls.MarkupTokenizer.types.DATA;
+    this._token_buffer = '';
+//     this._tmp_buffer = [cls.MarkupTokenizer.types.DATA,''];
     this._last_tag_type = 0;
     
     this._is_script = false;
@@ -76,10 +78,10 @@ cls.MarkupTokenizer = function()
         EOL: function()
         {
             // This handling causes a useless extra 
-            if (this._tmp_buffer[1].length)
+            if (this._token_buffer.length)
             {
-                this._emitToken(this._tmp_buffer[0],this._tmp_buffer[1]);
-                this._tmp_buffer[1] = "";
+                this._emitToken(this._token_type,this._token_buffer);
+                this._token_buffer = "";
             }
             
             var c = this._buffer.charCodeAt(this._current_pos)
@@ -118,7 +120,7 @@ cls.MarkupTokenizer = function()
         
         
         EOF: function(){
-            this._emitToken(this._tmp_buffer[0],this._tmp_buffer[1]);
+            this._emitToken(this._token_type,this._token_buffer);
             this._emitToken(cls.MarkupTokenizer.types.EOF, '');
             return false;
         },
@@ -138,16 +140,16 @@ cls.MarkupTokenizer = function()
             var c = this._buffer.charAt(this._current_pos++);
             if (c !== "<")
             {
-                this._tmp_buffer[1] +=c; // TODO: RegEx? Dirty, but fast
+                this._token_buffer +=c; // TODO: RegEx? Dirty, but fast
                 return false;
             }
             // switching to some state, so flushing current token
-            this._emitToken(this._tmp_buffer[0],this._tmp_buffer[1]);
+            this._emitToken(this._token_type,this._token_buffer);
             
             if (c === "<")
             {
-                this._tmp_buffer[0] = cls.MarkupTokenizer.types.TAG_OPEN;
-                this._tmp_buffer[1] = c;
+                this._token_type = cls.MarkupTokenizer.types.TAG_OPEN;
+                this._token_buffer = c;
                 this._tokenizer_state_handler = this._tokenizer_state_handlers.TAG_OPEN;
                 return false;
             } 
@@ -171,18 +173,18 @@ cls.MarkupTokenizer = function()
     
             if ((c === "!") || (c === "?") )// COMMENT_OR_BOGUS
             {
-                this._tmp_buffer[1] +=c;
+                this._token_buffer +=c;
                 this._tokenizer_state_handler = this._tokenizer_state_handlers.COMMENT_OR_BOGUS_COMMENT_OPEN;
                 return false;
             }
 
             if (c === "/") // END_TAG_OPEN
             {
-                this._tmp_buffer[1] += c;
+                this._token_buffer += c;
                 this._last_tag_type = 1;
-                this._emitToken(this._tmp_buffer[0],this._tmp_buffer[1]);
-                this._tmp_buffer[1] = "";
-                this._tmp_buffer[0] = cls.MarkupTokenizer.types.TAG_NAME;
+                this._emitToken(this._token_type,this._token_buffer);
+                this._token_buffer = "";
+                this._token_type = cls.MarkupTokenizer.types.TAG_NAME;
                                 
                 this._tokenizer_state_handler = this._tokenizer_state_handlers.TAG_NAME;
                 return false;
@@ -192,9 +194,9 @@ cls.MarkupTokenizer = function()
             var s = c.toLowerCase().charCodeAt(0);
             if ((s > 96 && s < 123) || c === ":") // TAG_NAME_STATE
             {
-                this._emitToken(this._tmp_buffer[0],this._tmp_buffer[1]);
-                this._tmp_buffer[0] = cls.MarkupTokenizer.types.TAG_NAME;
-                this._tmp_buffer[1] = c;
+                this._emitToken(this._token_type,this._token_buffer);
+                this._token_type = cls.MarkupTokenizer.types.TAG_NAME;
+                this._token_buffer = c;
                 this._tokenizer_state_handler = this._tokenizer_state_handlers.TAG_NAME;
                 return false;
             }
@@ -202,11 +204,11 @@ cls.MarkupTokenizer = function()
             
             
             // When all else fails we simply emit the buffer as bogus data and reconsume the last character in DATA mocde
-            this._tmp_buffer[0] = cls.MarkupTokenizer.types.BOGUS_DATA;
-            this._tmp_buffer[1] += c;
-            this._emitToken(this._tmp_buffer[0],this._tmp_buffer[1]);
-            this._tmp_buffer[0] = cls.MarkupTokenizer.types.DATA;
-            this._tmp_buffer[1] = "";
+            this._token_type = cls.MarkupTokenizer.types.BOGUS_DATA;
+            this._token_buffer += c;
+            this._emitToken(this._token_type,this._token_buffer);
+            this._token_type = cls.MarkupTokenizer.types.DATA;
+            this._token_buffer = "";
             this._tokenizer_state_handler = this._tokenizer_state_handlers.DATA;
             
             return false;
@@ -223,15 +225,16 @@ cls.MarkupTokenizer = function()
                 return false;
             }
             var c = this._buffer.charAt(this._current_pos++);
-            this._tmp_buffer[1]+=c;
+            this._token_buffer+=c;
             var next = this._buffer.substr(this._current_pos-1,2);
             if (next === "--")
             {
-                this._tmp_buffer[0] = cls.MarkupTokenizer.types.COMMENT;
+                this._token_type = cls.MarkupTokenizer.types.COMMENT;
                 this._tokenizer_state_handler = this._tokenizer_state_handlers.COMMENT;
                 return false;
-            } 
-            this._tmp_buffer[0] = cls.MarkupTokenizer.types.BOGUS_COMMENT;
+            }
+            // If we want a proper doctype handler, this is where you would start
+            this._token_type = cls.MarkupTokenizer.types.BOGUS_COMMENT;
             this._tokenizer_state_handler = this._tokenizer_state_handlers.BOGUS_COMMENT;
                             
             
@@ -250,15 +253,15 @@ cls.MarkupTokenizer = function()
             }
 
             var c = this._buffer.charAt(this._current_pos++);
-            this._tmp_buffer[1] += c;
+            this._token_buffer += c;
             var needle = "-->";
             var haystack = this._buffer.substr(this._current_pos, needle.length);
             if (haystack === needle)
             {
                 this._current_pos+=3;
-                this._emitToken(this._tmp_buffer[0],this._tmp_buffer[1]+"-->");
-                this._tmp_buffer[0] = cls.MarkupTokenizer.types.DATA;
-                this._tmp_buffer[1] ="";
+                this._emitToken(this._token_type,this._token_buffer+"-->");
+                this._token_type = cls.MarkupTokenizer.types.DATA;
+                this._token_buffer ="";
                 this._tokenizer_state_handler = this._tokenizer_state_handlers.DATA;
                 return false;
             }            
@@ -277,13 +280,13 @@ cls.MarkupTokenizer = function()
             }
 
             var c = this._buffer.charAt(this._current_pos++);
-            this._tmp_buffer[1] += c;
+            this._token_buffer += c;
             
             if (c === ">")
             {
-                this._emitToken(this._tmp_buffer[0],this._tmp_buffer[1]);
-                this._tmp_buffer[0] = cls.MarkupTokenizer.types.DATA;
-                this._tmp_buffer[1] ="";
+                this._emitToken(this._token_type,this._token_buffer);
+                this._token_type = cls.MarkupTokenizer.types.DATA;
+                this._token_buffer ="";
                 this._tokenizer_state_handler = this._tokenizer_state_handlers.DATA;
             }
             return false;
@@ -308,16 +311,16 @@ cls.MarkupTokenizer = function()
                 var haystack = this._buffer.substr(this._current_pos, needle.length)
                 if (haystack.toLowerCase() === needle)
                 {
-                    this._emitToken(this._tmp_buffer[0], this._tmp_buffer[1]);
-                    this._tmp_buffer[0] = cls.MarkupTokenizer.types.TAG_OPEN;
-                    this._tmp_buffer[1] = "<";
+                    this._emitToken(this._token_type, this._token_buffer);
+                    this._token_type = cls.MarkupTokenizer.types.TAG_OPEN;
+                    this._token_buffer = "<";
                     this._tokenizer_state_handler = this._tokenizer_state_handlers.TAG_OPEN;
                     return false;
                 }
-                this._tmp_buffer[1] += c;
+                this._token_buffer += c;
                 return false;
             }
-            this._tmp_buffer[1] += c;
+            this._token_buffer += c;
             return false;
         },
         
@@ -340,16 +343,16 @@ cls.MarkupTokenizer = function()
                 var haystack = this._buffer.substr(this._current_pos, needle.length)
                 if (haystack.toLowerCase() === needle)
                 {
-                    this._emitToken(this._tmp_buffer[0], this._tmp_buffer[1]);
-                    this._tmp_buffer[0] = cls.MarkupTokenizer.types.TAG_OPEN;
-                    this._tmp_buffer[1] = "<";
+                    this._emitToken(this._token_type, this._token_buffer);
+                    this._token_type = cls.MarkupTokenizer.types.TAG_OPEN;
+                    this._token_buffer = "<";
                     this._tokenizer_state_handler = this._tokenizer_state_handlers.TAG_OPEN;
                     return false;
                 }
-                this._tmp_buffer[1] += c;
+                this._token_buffer += c;
                 return false;
             }
-            this._tmp_buffer[1] += c;
+            this._token_buffer += c;
             return false;
         },        
         
@@ -361,7 +364,7 @@ cls.MarkupTokenizer = function()
             }
             if (this._is_EOL())
             {
-                this._last_tag_name = this._tmp_buffer[1];
+                this._last_tag_name = this._token_buffer;
                 this._tokenizer_state_handler = this._tokenizer_state_handlers.BEFORE_ATTRIBUTE;
                 return false;
             }
@@ -372,42 +375,42 @@ cls.MarkupTokenizer = function()
             
             if ((s > 96 && s < 123) || (c === ":") ) 
             {
-                this._tmp_buffer[1] += c;
+                this._token_buffer += c;
                 return false;
             }
 
             if (c in this._NUMBERS)
             {
-                this._tmp_buffer[1] += c;
+                this._token_buffer += c;
                 return false;
             } */
 
             
-            this._last_tag_name = this._tmp_buffer[1];
+            this._last_tag_name = this._token_buffer;
 
 
             if (c in this._WHITESPACE)
             {
-                this._emitToken(this._tmp_buffer[0],this._tmp_buffer[1]);
-                this._tmp_buffer[0] = cls.MarkupTokenizer.types.TAG_WHITESPACE;
-                this._tmp_buffer[1] = c;
+                this._emitToken(this._token_type,this._token_buffer);
+                this._token_type = cls.MarkupTokenizer.types.TAG_WHITESPACE;
+                this._token_buffer = c;
                 this._tokenizer_state_handler = this._tokenizer_state_handlers.BEFORE_ATTRIBUTE;
                 return false;
             }
             
             if (c === "/") // Self-closing tag
             {
-                this._emitToken(this._tmp_buffer[0],this._tmp_buffer[1]);
-                this._tmp_buffer[0] = cls.MarkupTokenizer.types.TAG_CLOSE;
-                this._tmp_buffer[1] = c;
+                this._emitToken(this._token_type,this._token_buffer);
+                this._token_type = cls.MarkupTokenizer.types.TAG_CLOSE;
+                this._token_buffer = c;
                 return false;
             }
             
             if (c === "<")
             {
-                this._emitToken(this._tmp_buffer[0],this._tmp_buffer[1]);
-                this._tmp_buffer[0] = cls.MarkupTokenizer.types.TAG_OPEN;
-                this._tmp_buffer[1] = c;
+                this._emitToken(this._token_type,this._token_buffer);
+                this._token_type = cls.MarkupTokenizer.types.TAG_OPEN;
+                this._token_buffer = c;
                 this._tokenizer_state_handler = this._tokenizer_state_handlers.TAG_OPEN;
                 return false;
             }
@@ -415,34 +418,34 @@ cls.MarkupTokenizer = function()
             
             if (c === ">")
             {
-                this._emitToken(this._tmp_buffer[0],this._tmp_buffer[1]);
-                this._tmp_buffer[0] = cls.MarkupTokenizer.types.TAG_CLOSE;
-                this._tmp_buffer[1] = c;
-                this._emitToken(this._tmp_buffer[0],this._tmp_buffer[1]);
-                this._tmp_buffer[1] = "";
+                this._emitToken(this._token_type,this._token_buffer);
+                this._token_type = cls.MarkupTokenizer.types.TAG_CLOSE;
+                this._token_buffer = c;
+                this._emitToken(this._token_type,this._token_buffer);
+                this._token_buffer = "";
                 
                 if (this._last_tag_type == 0)
                 {
                     if (this._last_tag_name.toLowerCase() == "script")
                     {
-                        this._tmp_buffer[0] = cls.MarkupTokenizer.types.SCRIPT_DATA;
+                        this._token_type = cls.MarkupTokenizer.types.SCRIPT_DATA;
                         this._emitToken(cls.MarkupTokenizer.types.SCRIPT_DATA,"");
                         this._tokenizer_state_handler = this._tokenizer_state_handlers.SCRIPT_DATA;
                         return false;
                     }
                     if (this._last_tag_name.toLowerCase() == "style")
                     {
-                        this._tmp_buffer[0] = cls.MarkupTokenizer.types.STYLE_DATA;
+                        this._token_type = cls.MarkupTokenizer.types.STYLE_DATA;
                         this._tokenizer_state_handler = this._tokenizer_state_handlers.STYLE_DATA;
                         return false;
                     }
                 }
                 
-                this._tmp_buffer[0] = cls.MarkupTokenizer.types.DATA;
+                this._token_type = cls.MarkupTokenizer.types.DATA;
                 this._tokenizer_state_handler = this._tokenizer_state_handlers.DATA;
                 return false;
             }
-            this._tmp_buffer[1] += c;
+            this._token_buffer += c;
             return false;
         },
         
@@ -462,52 +465,52 @@ cls.MarkupTokenizer = function()
           
             if (c in this._WHITESPACE)
             {
-                this._tmp_buffer[1] += c;
+                this._token_buffer += c;
                 return false;
             }
             
             if (c === ">")
             {
-                this._emitToken(this._tmp_buffer[0], this._tmp_buffer[1]);
-                this._tmp_buffer[0] = cls.MarkupTokenizer.types.TAG_CLOSE;
-                this._tmp_buffer[1] = c;
-                this._emitToken(this._tmp_buffer[0], this._tmp_buffer[1]);
-                this._tmp_buffer[1] = "";
+                this._emitToken(this._token_type, this._token_buffer);
+                this._token_type = cls.MarkupTokenizer.types.TAG_CLOSE;
+                this._token_buffer = c;
+                this._emitToken(this._token_type, this._token_buffer);
+                this._token_buffer = "";
                 if (this._last_tag_type == 0)
                 {
                     if (this._last_tag_name.toLowerCase() == "script")
                     {
-                        this._tmp_buffer[0] = cls.MarkupTokenizer.types.SCRIPT_DATA;
+                        this._token_type = cls.MarkupTokenizer.types.SCRIPT_DATA;
                         this._emitToken(cls.MarkupTokenizer.types.SCRIPT_DATA,"");
                         this._tokenizer_state_handler = this._tokenizer_state_handlers.SCRIPT_DATA;
                         return false;
                     }
                     if (this._last_tag_name.toLowerCase() == "style")
                     {
-                        this._tmp_buffer[0] = cls.MarkupTokenizer.types.STYLE_DATA;
+                        this._token_type = cls.MarkupTokenizer.types.STYLE_DATA;
                         this._tokenizer_state_handler = this._tokenizer_state_handlers.STYLE_DATA;
                         return false;
                     }
                 }
                 
-                this._tmp_buffer[0] = cls.MarkupTokenizer.types.DATA;
+                this._token_type = cls.MarkupTokenizer.types.DATA;
                 this._tokenizer_state_handler = this._tokenizer_state_handlers.DATA;
                 return false;
             }
             
             if (c === "/")
             {
-                this._emitToken(this._tmp_buffer[0], this._tmp_buffer[1]);
+                this._emitToken(this._token_type, this._token_buffer);
                 this._tokenizer_state_handler = this._tokenizer_state_handlers.SELF_CLOSING_TAG;
-                this._tmp_buffer[0] = cls.MarkupTokenizer.types.TAG_CLOSE;
-                this._tmp_buffer[1] = c;
+                this._token_type = cls.MarkupTokenizer.types.TAG_CLOSE;
+                this._token_buffer = c;
                 return false;
             }
            
             this._tokenizer_state_handler = this._tokenizer_state_handlers.ATTRIBUTE_NAME;
-            this._emitToken(this._tmp_buffer[0], this._tmp_buffer[1]);
-            this._tmp_buffer[0] = cls.MarkupTokenizer.types.ATTRIBUTE_NAME;
-            this._tmp_buffer[1] = c;
+            this._emitToken(this._token_type, this._token_buffer);
+            this._token_type = cls.MarkupTokenizer.types.ATTRIBUTE_NAME;
+            this._token_buffer = c;
             
             return false;
         },
@@ -527,34 +530,34 @@ cls.MarkupTokenizer = function()
             
             if (c === ">")
             {
-                this._tmp_buffer[1] += c;
-                this._emitToken(this._tmp_buffer[0], this._tmp_buffer[1]);
-                this._tmp_buffer[1] = "";
+                this._token_buffer += c;
+                this._emitToken(this._token_type, this._token_buffer);
+                this._token_buffer = "";
                 if (this._last_tag_type == 0)
                 {
                     if (this._last_tag_name.toLowerCase() == "script")
                     {
-                        this._tmp_buffer[0] = cls.MarkupTokenizer.types.SCRIPT_DATA;
+                        this._token_type = cls.MarkupTokenizer.types.SCRIPT_DATA;
                         this._emitToken(cls.MarkupTokenizer.types.SCRIPT_DATA,"");
                         this._tokenizer_state_handler = this._tokenizer_state_handlers.SCRIPT_DATA;
                         return false;
                     }
                     if (this._last_tag_name.toLowerCase() == "style")
                     {
-                        this._tmp_buffer[0] = cls.MarkupTokenizer.types.STYLE_DATA;
+                        this._token_type = cls.MarkupTokenizer.types.STYLE_DATA;
                         this._tokenizer_state_handler = this._tokenizer_state_handlers.STYLE_DATA;
                         return false;
                     }
                 }
                                 
-                this._tmp_buffer[0] = cls.MarkupTokenizer.types.DATA;
+                this._token_type = cls.MarkupTokenizer.types.DATA;
                 this._tokenizer_state_handler = this._tokenizer_state_handlers.DATA;
                 return false;
             
             }
           
-            this._tmp_buffer[0] = cls.MarkupTokenizer.types.BOGUS_DATA;
-            this._tmp_buffer[1] +=c;
+            this._token_type = cls.MarkupTokenizer.types.BOGUS_DATA;
+            this._token_buffer +=c;
             this._tokenizer_state_handler = this._tokenizer_state_handlers.BEFORE_ATTRIBUTE;
             return false;
         },
@@ -574,62 +577,62 @@ cls.MarkupTokenizer = function()
             
             if (c === "=")
             {
-                this._emitToken(this._tmp_buffer[0],this._tmp_buffer[1])
-                this._tmp_buffer[1] = c;
-                this._emitToken(cls.MarkupTokenizer.types.ATTRIBUTE_ASSIGNMENT, this._tmp_buffer[1]);
-                this._tmp_buffer[1] = "";
+                this._emitToken(this._token_type,this._token_buffer)
+                this._token_buffer = c;
+                this._emitToken(cls.MarkupTokenizer.types.ATTRIBUTE_ASSIGNMENT, this._token_buffer);
+                this._token_buffer = "";
                 this._tokenizer_state_handler = this._tokenizer_state_handlers.BEFORE_ATTRIBUTE_VALUE;
                 return false;
             }
 
             if (c === "/")
             {
-                this._emitToken(this._tmp_buffer[0],this._tmp_buffer[1]);
-                this._tmp_buffer[0] = cls.MarkupTokenizer.types.TAG_CLOSE;
-                this._tmp_buffer[1] = c;
+                this._emitToken(this._token_type,this._token_buffer);
+                this._token_type = cls.MarkupTokenizer.types.TAG_CLOSE;
+                this._token_buffer = c;
                 this._tokenizer_state_handler = this._tokenizer_state_handlers.SELF_CLOSING_TAG;
                 return false;
             }
             
             if (c === ">")
             {
-                this._emitToken(this._tmp_buffer[0],this._tmp_buffer[1])
-                this._tmp_buffer[0] = cls.MarkupTokenizer.types.TAG_CLOSE;
-                this._tmp_buffer[1] = c;
-                this._emitToken(this._tmp_buffer[0], this._tmp_buffer[1]);
-                this._tmp_buffer[1] = "";
+                this._emitToken(this._token_type,this._token_buffer)
+                this._token_type = cls.MarkupTokenizer.types.TAG_CLOSE;
+                this._token_buffer = c;
+                this._emitToken(this._token_type, this._token_buffer);
+                this._token_buffer = "";
                 if (this._last_tag_type == 0)
                 {
                     if (this._last_tag_name.toLowerCase() == "script")
                     {
-                        this._tmp_buffer[0] = cls.MarkupTokenizer.types.SCRIPT_DATA;
+                        this._token_type = cls.MarkupTokenizer.types.SCRIPT_DATA;
                         this._emitToken(cls.MarkupTokenizer.types.SCRIPT_DATA,"");
                         this._tokenizer_state_handler = this._tokenizer_state_handlers.SCRIPT_DATA;
                         return false;
                     }
                     if (this._last_tag_name.toLowerCase() == "style")
                     {
-                        this._tmp_buffer[0] = cls.MarkupTokenizer.types.STYLE_DATA;
+                        this._token_type = cls.MarkupTokenizer.types.STYLE_DATA;
                         this._tokenizer_state_handler = this._tokenizer_state_handlers.STYLE_DATA;
                         return false;
                     }
                 }
                 
-                this._tmp_buffer[0] = cls.MarkupTokenizer.types.DATA;
+                this._token_type = cls.MarkupTokenizer.types.DATA;
                 this._tokenizer_state_handler = this._tokenizer_state_handlers.DATA;
                 return false;
             }
             
             if (c in this._WHITESPACE)
             {
-                this._emitToken(this._tmp_buffer[0],this._tmp_buffer[1]);
-                this._tmp_buffer[0] = cls.MarkupTokenizer.types.TAG_WHITESPACE;
-                this._tmp_buffer[1] = c;
+                this._emitToken(this._token_type,this._token_buffer);
+                this._token_type = cls.MarkupTokenizer.types.TAG_WHITESPACE;
+                this._token_buffer = c;
                 this._tokenizer_state_handler = this._tokenizer_state_handlers.BEFORE_ATTRIBUTE;
                 return false;
             }
             
-            this._tmp_buffer[1] += c;
+            this._token_buffer += c;
             return false;
             
         },
@@ -649,33 +652,33 @@ cls.MarkupTokenizer = function()
             
             if (c === ">")
             {
-                this._tmp_buffer[0] = cls.MarkupTokenizer.types.TAG_CLOSE;
-                this._tmp_buffer[1] = c;
-                this._emitToken(this._tmp_buffer[0], this._tmp_buffer[1]);
+                this._token_type = cls.MarkupTokenizer.types.TAG_CLOSE;
+                this._token_buffer = c;
+                this._emitToken(this._token_type, this._token_buffer);
                 if (this._last_tag_type == 0)
                 {
                     if (this._last_tag_name.toLowerCase() == "script")
                     {
-                        this._tmp_buffer[0] = cls.MarkupTokenizer.types.SCRIPT_DATA;
+                        this._token_type = cls.MarkupTokenizer.types.SCRIPT_DATA;
                         this._emitToken(cls.MarkupTokenizer.types.SCRIPT_DATA,"");
                         this._tokenizer_state_handler = this._tokenizer_state_handlers.SCRIPT_DATA;
                         return false;
                     }
                     if (this._last_tag_name.toLowerCase() == "style")
                     {
-                        this._tmp_buffer[0] = cls.MarkupTokenizer.types.STYLE_DATA;
+                        this._token_type = cls.MarkupTokenizer.types.STYLE_DATA;
                         this._tokenizer_state_handler = this._tokenizer_state_handlers.STYLE_DATA;
                         return false;
                     }
                 }
                 
-                this._tmp_buffer[0] = cls.MarkupTokenizer.types.DATA;
+                this._token_type = cls.MarkupTokenizer.types.DATA;
                 this._tokenizer_state_handler = this._tokenizer_state_handlers.DATA;
                 return false;                
             }
             
-            this._tmp_buffer[0] = cls.MarkupTokenizer.types.ATTRIBUTE_VALUE;
-            this._tmp_buffer[1] = c;
+            this._token_type = cls.MarkupTokenizer.types.ATTRIBUTE_VALUE;
+            this._token_buffer = c;
             
             if (c === "\"")
             {
@@ -706,7 +709,7 @@ cls.MarkupTokenizer = function()
             }            
             var c = this._buffer.charAt(this._current_pos++);
             
-            if ((c === "'") && (this._tmp_buffer[1].charAt(this._tmp_buffer[1].length-1) === "\\"))
+            if ((c === "'") && (this._token_buffer.charAt(this._token_buffer.length-1) === "\\"))
             {
                 this._tmp_buffer += c;
                 return false;
@@ -715,14 +718,14 @@ cls.MarkupTokenizer = function()
             
             if (c === "\"")
             {
-                this._tmp_buffer[1] += c;
-                this._emitToken(this._tmp_buffer[0], this._tmp_buffer[1]);
-                this._tmp_buffer[0] = cls.MarkupTokenizer.types.TAG_WHITESPACE;
-                this._tmp_buffer[1] = "";
+                this._token_buffer += c;
+                this._emitToken(this._token_type, this._token_buffer);
+                this._token_type = cls.MarkupTokenizer.types.TAG_WHITESPACE;
+                this._token_buffer = "";
                 this._tokenizer_state_handler = this._tokenizer_state_handlers.BEFORE_ATTRIBUTE;
                 return false;
             }
-            this._tmp_buffer[1] += c;
+            this._token_buffer += c;
             
             return false;
         },
@@ -739,7 +742,7 @@ cls.MarkupTokenizer = function()
             }            
             var c = this._buffer.charAt(this._current_pos++);
             
-            if ((c === "\"") && (this._tmp_buffer[1].charAt(this._tmp_buffer[1].length-1) === "\\"))
+            if ((c === "\"") && (this._token_buffer.charAt(this._token_buffer.length-1) === "\\"))
             {
                 this._tmp_buffer += c;
                 return false;
@@ -748,14 +751,14 @@ cls.MarkupTokenizer = function()
             
             if (c === "'")
             {
-                this._tmp_buffer[1] += c;
-                this._emitToken(this._tmp_buffer[0], this._tmp_buffer[1]);
-                this._tmp_buffer[0] = cls.MarkupTokenizer.types.TAG_WHITESPACE;
-                this._tmp_buffer[1] = "";
+                this._token_buffer += c;
+                this._emitToken(this._token_type, this._token_buffer);
+                this._token_type = cls.MarkupTokenizer.types.TAG_WHITESPACE;
+                this._token_buffer = "";
                 this._tokenizer_state_handler = this._tokenizer_state_handlers.BEFORE_ATTRIBUTE;
                 return false;
             }
-            this._tmp_buffer[1] += c;
+            this._token_buffer += c;
             
             return false;
  
@@ -776,43 +779,43 @@ cls.MarkupTokenizer = function()
             var c = this._buffer.charAt(this._current_pos++);
             if (c in this._WHITESPACE)
             {
-                this._emitToken(this._tmp_buffer[0], this._tmp_buffer[1]);
-                this._tmp_buffer[0] = cls.MarkupTokenizer.types.TAG_WHITESPACE;
-                this._tmp_buffer[1] = c;
+                this._emitToken(this._token_type, this._token_buffer);
+                this._token_type = cls.MarkupTokenizer.types.TAG_WHITESPACE;
+                this._token_buffer = c;
                 this._tokenizer_state_handler = this._tokenizer_state_handlers.BEFORE_ATTRIBUTE;
                 return false;
             }
             
             if (c === ">")
             {
-                this._emitToken(this._tmp_buffer[0],this._tmp_buffer[1])
-                this._tmp_buffer[0] = cls.MarkupTokenizer.types.TAG_CLOSE;
-                this._tmp_buffer[1] = c;
-                this._emitToken(this._tmp_buffer[0], this._tmp_buffer[1]);
-                this._tmp_buffer[1] = "";
+                this._emitToken(this._token_type,this._token_buffer)
+                this._token_type = cls.MarkupTokenizer.types.TAG_CLOSE;
+                this._token_buffer = c;
+                this._emitToken(this._token_type, this._token_buffer);
+                this._token_buffer = "";
                 if (this._last_tag_type == 0)
                 {
                     if (this._last_tag_name.toLowerCase() == "script")
                     {
-                        this._tmp_buffer[0] = cls.MarkupTokenizer.types.SCRIPT_DATA;
+                        this._token_type = cls.MarkupTokenizer.types.SCRIPT_DATA;
                         this._emitToken(cls.MarkupTokenizer.types.SCRIPT_DATA,"");
                         this._tokenizer_state_handler = this._tokenizer_state_handlers.SCRIPT_DATA;
                         return false;
                     }
                     if (this._last_tag_name.toLowerCase() == "style")
                     {
-                        this._tmp_buffer[0] = cls.MarkupTokenizer.types.STYLE_DATA;
+                        this._token_type = cls.MarkupTokenizer.types.STYLE_DATA;
                         this._tokenizer_state_handler = this._tokenizer_state_handlers.STYLE_DATA;
                         return false;
                     }
                 }
                 
-                this._tmp_buffer[0] = cls.MarkupTokenizer.types.DATA;
+                this._token_type = cls.MarkupTokenizer.types.DATA;
                 this._tokenizer_state_handler = this._tokenizer_state_handlers.DATA;
                 return false;
             }
             
-            this._tmp_buffer[1] += c;
+            this._token_buffer += c;
             return false;
         }
 
