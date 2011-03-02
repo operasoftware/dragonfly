@@ -5,9 +5,13 @@
 
 .sortable-table td, .sortable-table th {
   border: 1px solid rgba(0,0,0,0.1);
-  padding: 6px 5px 2px 20px;
+  padding: 4px 5px 1px 20px;
   text-align: left;
-  position: relative;
+  overflow: hidden;
+}
+
+.sortable-table th {
+  word-wrap: normal;
 }
 
 .sortable-table  tr:nth-child(odd) {
@@ -31,15 +35,29 @@
   font-weight: bold;
 }
 
-.sortable-table tr:not(.header):hover, .sortable-table tr.header th:hover  {
-  background-color: rgba(55,115,211,0.5);
+.sortable-table tr.header .sortable-table-group-header {
+  text-align: left;
+  padding: 2px;
+  z-index: 3;
+  box-shadow: 0 1px rgba(0,0,0,0.1);
 }
 
-.sortable-table tr:not(.header):active, .sortable-table tr.header th:active, .sortable-table tr.selected:not(.header) {
-  background-color: rgba(55,115,211,1.0);
+.sortable-table tr:not(.header):hover,
+.sortable-table tr.header th:not(.sortable-table-group-header):hover 
+{
+  background-color: rgba(55,115,211,0.2);
+  color: #000;
+}
+
+.sortable-table tr:not(.header):active,
+.sortable-table tr.header th:not(.sortable-table-group-header):active,
+.sortable-table tr.selected:not(.header)
+{
+  background-color: rgba(55,115,211,0.7);
   color: #fff;
+  border-color: rgba(55,115,211,1.0);
 }
 
-.sortable-table tr .sorted-by {
+.sortable-table tr .sort-column {
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQIHWNgYAcAAAoACCRAuTwAAAAASUVORK5CYII%3D);
 }

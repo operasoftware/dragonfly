@@ -17,7 +17,6 @@ window.cls.Client = function()
   var _first_setup = true;
   var _waiting_screen_timeout = 0;
   var cbs = [];
-
   this.current_client = null;
 
   var _on_host_connected = function(client, servicelist)
@@ -90,6 +89,16 @@ window.cls.Client = function()
 
       Overlay.get_instance().set_info_content(
         ["p", ui_strings.S_INFO_ERROR_LISTENING.replace(/%s/, port)]
+      );
+
+      // Reset this so we don't start in remote debug next time
+      settings.debug_remote_setting.set('debug-remote', false);
+      window.helpers.setCookie('debug-remote', "false");
+    }
+    else if (client.is_remote_debug)
+    {
+      document.getElementById("remote-debug-settings").clearAndRender(
+        window.templates.remote_debug_settings(port + 1, ui_strings.S_INFO_ERROR_LISTENING.replace(/%s/, port))
       );
 
       // Reset this so we don't start in remote debug next time
@@ -188,7 +197,11 @@ window.cls.Client = function()
 
     if (!is_remote_connection && window.topCell)
     {
-      window.topCell.cleanUp();
+      this.create_top_level_views(window.services);
+      if(window.topCell)
+      {
+        window.topCell.cleanUp();
+      }
     }
 
     if(_first_setup)
@@ -314,6 +327,9 @@ window.cls.Client = function()
                       layouts.export_rough_layout,
                       null,
                       services);
+    new CompositeView('resource_panel',
+                      ui_strings.M_VIEW_LABEL_RESOURCES,
+                      layouts.resource_rough_layout);
   }
 
   this.create_window_controls = function()
@@ -490,7 +506,7 @@ ui_framework.layouts.dom_rough_layout =
   children:
   [
     {
-      width: 700, 
+      width: 700,
       tabbar: { tabs: ['dom'], is_hidden: true }
     },
     {
@@ -508,8 +524,8 @@ ui_framework.layouts.js_rough_layout =
       width: 700,
       children:
       [
-        { 
-          height: 350, 
+        {
+          height: 350,
           tabbar: { tabs: ['js_source'], is_hidden: true }
         }
       ]
@@ -518,7 +534,7 @@ ui_framework.layouts.js_rough_layout =
       width: 250,
       children:
       [
-        { 
+        {
           height: 250,
           tabs: function(services)
           {
@@ -537,8 +553,27 @@ ui_framework.layouts.network_rough_layout =
     dir: 'v',
     width: 1000,
     height: 1000,
-    children: [ { height: 1000, tabbar: { id: "request", tabs: ['request_list'] } } ]
+    children: [ { height: 1000, tabs:
+                  [
+                    'network_logger',
+                    'request_crafter',
+                    'network_options'
+                  ]
+                }
+              ]
 }
+
+
+ui_framework.layouts.resource_rough_layout =
+{
+    dir: 'v',
+    width: 1000,
+    height: 1000,
+    children: [ { height: 1000, tabbar: { id: "resources", tabs: ['resource_all',
+                                                                  // 'resource_fonts', 'resource_images'
+                                                                 ] } } ]
+}
+
 
 ui_framework.layouts.utils_rough_layout =
 {
@@ -572,7 +607,7 @@ ui_framework.layouts.main_layout =
   id: 'main-view',
   // tab (and tabbar) can either be a layout list
   // or a function returning a layout list
-  // the function gets called with the services returned 
+  // the function gets called with the services returned
   // and created depending on Scope.HostInfo
   tabs: function(services)
   {
@@ -583,6 +618,7 @@ ui_framework.layouts.main_layout =
       'dom_mode',
       {view: 'js_mode', tab_class: JavaScriptTab},
       'network_mode',
+      'resource_panel',
       'storage',
       {view: 'console_mode', tab_class: ErrorConsoleTab},
       'utils'

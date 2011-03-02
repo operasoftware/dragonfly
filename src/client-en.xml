@@ -125,7 +125,10 @@ window.load_screen_timeout = window.setTimeout(function()
 <link rel="stylesheet" href="./console-logger/consolelogger_style.css"/>
 <link rel="stylesheet" href="./ui-style/colorpickerstyle.css"/>
 <link rel="stylesheet" href="./ui-scripts/sortable_table/sortable_table.css"/>
+<link rel="stylesheet" href="./ui-scripts/metadata_drawer/metadata_drawer.css"/>
 <link rel="stylesheet" href="./repl/repl_style.css"/>
+<link rel="stylesheet" href="./resource-manager/resource_style.css"/>
+<link rel="stylesheet" href="./network/network_style.css"/>
 <link rel="stylesheet" href="./shortcutconfig/style.css"/>
 <link rel="stylesheet" href="./ui-style/global_command_line.css"/>
 <link rel="stylesheet" href="./ui-style/contextmenu.css"/>
@@ -240,6 +243,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./build-application/build_ecmascript_debugger_5_0.js"></script>
 <script src="./build-application/build_ecmascript_debugger_6_0.js"></script>
 <script src="./build-application/build_cookie_manager_1_0.js"></script>
+<script src="./build-application/build_resource_manager_1_0.js"></script>
 
 <script src="./debug/debug.js"/>
 <script src="./debug/configure_message_filter.js"/>
@@ -382,6 +386,36 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./repl/ecmascriptdebugger.6.0.events.onconsoletrace.js"/>
 <script src="./repl/scope.1.0.responses.hostinfo.js"/>
 <script src="./repl/consolelogger.2.0.events.onconsolemessage.js"/>
+
+
+<script src="./resource-manager/resource_service.js"/>
+<!--
+<script src="./resource-manager/resource_view.js"/>
+<script src="./resource-manager/resource_font_view.js"/>
+<script src="./resource-manager/resource_image_view.js"/>
+-->
+<script src="./resource-manager/resource_all_view.js"/>
+<script src="./resource-manager/resource_templates.js"/>
+<script src="./resource-manager/resource_util.js"/>
+<script src="./resource-manager/resource_base.js"/>
+<script src="./ui-scripts/metadata_drawer/metadata_drawer.js"/>
+<script src="./resource-manager/resourcemanager.1.0.events.onurlload.js"/>
+<script src="./resource-manager/resourcemanager.1.0.events.onurlredirect.js"/>
+<script src="./resource-manager/resourcemanager.1.0.events.onurlfinished.js"/>
+<script src="./resource-manager/resourcemanager.1.0.events.onrequest.js"/>
+<script src="./resource-manager/resourcemanager.1.0.events.onrequestretry.js"/>
+<script src="./resource-manager/resourcemanager.1.0.events.onrequestheader.js"/>
+<script src="./resource-manager/resourcemanager.1.0.events.onrequestfinished.js"/>
+<script src="./resource-manager/resourcemanager.1.0.events.onresponse.js"/>
+<script src="./resource-manager/resourcemanager.1.0.events.onresponseheader.js"/>
+<script src="./resource-manager/resourcemanager.1.0.events.onresponsefinished.js"/>
+<script src="./resource-manager/documentmanager.1.0.events.onabouttoloaddocument.js"/>
+
+<script src="./network/network_service.js"/>
+<script src="./network/network_view.js"/>
+<script src="./network/network_request_crafting_view.js"/>
+<script src="./network/network_global_options_view.js"/>
+<script src="./network/network_templates.js"/>
 
 <body/>
 </viewport>

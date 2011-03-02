@@ -1,4 +1,4 @@
-﻿.shortcuts-config toolbar
+.shortcuts-config toolbar
 {
   background: none;
   border: none;
@@ -30,7 +30,6 @@
   -o-transition: .2s;
 }
 
-
 .shortcuts-config filter {
   font-size: inherit;
   vertical-align: middle;
@@ -47,7 +46,6 @@
 .shortcuts-config filter input {
   background: yellow /* FIXME */
 }
-
 
 .shortcuts
 {
@@ -92,7 +90,6 @@
 .scc-select option {
     color: #000;
 }
-
 
 .scc-input:focus,
 .scc-select:focus {

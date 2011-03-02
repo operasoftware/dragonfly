@@ -87,3 +87,11 @@
 .cookie_manager .sortable-table tr.sortable-table-summation-row {
   background: none;
 }
+
+/* other sortable-table stuff specific to cookie-manager (for now) */
+
+.cookie_manager .sortable-table td, .cookie_manager .sortable-table th {
+  padding: 6px 5px 2px 20px;
+  position: relative;
+  overflow: normal;
+}

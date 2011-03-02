@@ -20,10 +20,6 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
       cols = [];
       for (var key in tabledef.columns) {
         cols.push(key);
-        if (!sortby && tabledef.columns[key].sorter != "unsortable")
-        {
-          sortby = key;
-        }
       }
     }
 
@@ -47,6 +43,18 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
       else if (col.sorter === "unsortable")
       {
         col.sorter = null;
+      }
+    }
+
+    if (!sortby)
+    {
+      for (var n=0, key; key=cols[n]; n++)
+      {
+        if (tabledef.columns[key].sorter != "unsortable")
+        {
+          sortby = key;
+          break;
+        }
       }
     }
 
@@ -79,13 +87,13 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
 
   this._make_context_menu = function(evt)
   {
-    var table = evt.target;
-    while (table.nodeName.toLowerCase() != "table") { table = table.parentNode };
-    var obj = ObjectRegistry.get_instance().get_object(table.getAttribute("data-object-id"));
+    var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id')
+    opera.postError(obj_id)
+    var obj = ObjectRegistry.get_instance().get_object(obj_id);
     if (!obj.tabledef.groups) { return [] }
 
     var menuitems = [{
-      label: "No grouping",
+      label: ui_strings.M_SORTABLE_TABLE_CONTEXT_NO_GROUPING,
       selected: !obj.groupby,
       handler: obj._make_group_handler(null)
     }];
@@ -93,12 +101,11 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
     for (var group in obj.tabledef.groups)
     {
       menuitems.push({
-        label: "Group by " + (obj.tabledef.groups[group].label || group),
+        label: ui_strings.M_SORTABLE_TABLE_CONTEXT_GROUP_BY.replace("%s", obj.tabledef.groups[group].label || group),
         selected: obj.groupby == group,
         handler: obj._make_group_handler(group)
       });
     }
-
 
     // visible column selection stuff
     menuitems.push(ContextMenu.separator);
@@ -138,53 +145,40 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
     return this.columns.length;
   }
 
-  this.discard_next_render = function()
-  {
-    this._discard_render = true;
-  }
-
-  this._render = function(target)
-  {
-    this.post_message("before-render");
-    if (this._discard_render)
-    {
-      this._discard_render = false;
-    }
-    else
-    {
-      target.re_render(this.render());
-      this.post_message("after-render");
-    }
-  }
-
   this._make_group_handler = function(group)
   {
     return function(evt) {
-      var target = evt.target;
-      while (target.nodeName.toLowerCase() != "table") { target = target.parentNode };
-      var obj = ObjectRegistry.get_instance().get_object(target.getAttribute("data-object-id"));
+      var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id')
+      var obj = ObjectRegistry.get_instance().get_object(obj_id);
       obj.group(group);
-      obj._render(target);
+      obj.post_message("before-render");
+      evt.target.re_render(obj.render());
+      obj.post_message("after-render");
     }
   }
 
   this._make_colselect_handler = function(col)
   {
     return function(evt) {
-      var target = evt.target;
-      while (target.nodeName.toLowerCase() != "table") { target = target.parentNode };
-      var obj = ObjectRegistry.get_instance().get_object(target.getAttribute("data-object-id"));
+      var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id')
+      var obj = ObjectRegistry.get_instance().get_object(obj_id);
       obj.togglecol(col);
-      obj._render(target);
+      obj.post_message("before-render");
+      evt.target.re_render(obj.render());
+      obj.post_message("after-render");
     }
   }
 
   this._sort_handler = function(evt, target)
   {
     var table = target.parentNode.parentNode;
-    var obj = ObjectRegistry.get_instance().get_object(table.getAttribute("data-object-id"));
-    obj.sort(target.getAttribute("data-column-id"));
-    obj._render(table);
+    var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id')
+    var obj = ObjectRegistry.get_instance().get_object(obj_id);
+    var col_id = evt.target.get_attr('parent-node-chain', 'data-column-id')
+    obj.sort(col_id);
+    obj.post_message("before-render");
+    table.re_render(obj.render());
+    obj.post_message("after-render");
   }
 
   this._default_sorters = {
@@ -201,7 +195,9 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
   this.restore_columns = function(target)
   {
     this.columns = this.orgininal_columns.slice(0);
-    this._render(target);
+    obj.post_message("before-render");
+    target.re_render(this.render());
+    obj.post_message("after-render");
   }
 
   this._prop_getter = function(name)
@@ -215,6 +211,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
     {
       a = getter(a);
       b = getter(b);
+      if (typeof a === "number" && typeof b === "number") { return b - a }
       if (a > b) { return 1 }
       else if (a < b) { return -1 }
       else { return 0 }
@@ -269,7 +266,7 @@ templates.sortable_table = function(tabledef, data, objectid, cols, groupby, sor
           templates.sortable_table_header(tabledef, cols, sortby, reversed),
           templates.sortable_table_body(tabledef, data, cols, groupby, sortby, reversed),
           "class", "sortable-table",
-          "data-object-id", objectid,
+          "data-table-object-id", objectid,
           "data-menu", "sortable-table-grouper"
          ]
 }
