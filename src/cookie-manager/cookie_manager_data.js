@@ -208,6 +208,12 @@ cls.CookieManager.CookieDataBase = function()
         var cookies = message[COOKIE];
         for (var i=0; i < cookies.length; i++) {
           var cookie_info = cookies[i];
+          // workaround: GetCookie doesn't allow to specify protocol, requested in CORE-35925
+          var is_secure = cookie_info[5];
+          if(is_secure && rt.protocol !== "https:")
+          {
+            continue;
+          }
           this.cookie_list.push(
             new cls.CookieManager.Cookie({
               domain:     cookie_info[0],
