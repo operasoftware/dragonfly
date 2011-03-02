@@ -723,3 +723,9 @@ ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL = "Not able to show
 ui_strings.S_NETWORK_GRAPH_DURATION_HOVER_CACHED = "Cached: %s ms";
 /* DESC: String describing duration of a request when hovering it in the graph. Applied to NON-cached requests */
 ui_strings.S_NETWORK_GRAPH_DURATION_HOVER_NORMAL = "Total duration: %(total)s ms\nRequest time: %(request)s ms\nResponse time: %(response)s ms";
+
+/* DESC: Context menu entry to select that there should be no grouping in the table */
+ui_strings.M_SORTABLE_TABLE_CONTEXT_NO_GROUPING = "No grouping";
+/* DESC: Context menu entry to selecting to group by %s */
+ui_strings.M_SORTABLE_TABLE_CONTEXT_GROUP_BY = "Group by \"%s\"";
+

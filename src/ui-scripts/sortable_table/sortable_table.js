@@ -92,7 +92,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
     if (!obj.tabledef.groups) { return [] }
 
     var menuitems = [{
-      label: "No grouping",
+      label: ui_strings.M_SORTABLE_TABLE_CONTEXT_NO_GROUPING,
       selected: !obj.groupby,
       handler: obj._make_group_handler(null)
     }];
@@ -100,12 +100,11 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
     for (var group in obj.tabledef.groups)
     {
       menuitems.push({
-        label: "Group by " + (obj.tabledef.groups[group].label || group),
+        label: ui_strings.M_SORTABLE_TABLE_CONTEXT_GROUP_BY.replace("%s", obj.tabledef.groups[group].label || group),
         selected: obj.groupby == group,
         handler: obj._make_group_handler(group)
       });
     }
-
 
     // visible column selection stuff
     menuitems.push(ContextMenu.separator);
