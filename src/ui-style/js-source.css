@@ -12,16 +12,20 @@ ul {
 
 #js-source-scroll-content, #js-source-scroll-container {
   position:absolute;
-  left:40px; 
   right:0px;
   top:0px;
   bottom:0px;
   overflow:auto;
   }
 
-#js-source-content {
-    position: relative;
-    z-index: 2;
+#js-source-scroll-content {
+  left:40px;
+  }
+
+#js-source-scroll-container {
+  /* the correct width is set dynamically 
+     to scroll bar width in JsSourceView */
+  width: 50px;
   }
 
 #js-source-content div {

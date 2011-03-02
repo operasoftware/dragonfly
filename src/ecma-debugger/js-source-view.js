@@ -18,27 +18,6 @@ cls.JsSourceView = function(id, name, container_class)
 
   var context = {};
 
-  var setup_map =
-  [
-    {
-      id: frame_id,
-      property: 'height',
-      target: 'container-height',
-      getValue: function(){return document.getElementById(this.id).clientHeight}
-    },
-    {
-      id: 'test-line-height',
-      property: 'lineHeight',
-      target: 'line-height',
-      getValue: function(){return parseInt(window.getComputedStyle(document.getElementById(this.id), null).getPropertyValue(this.property))}
-    },
-    {
-      id: 'test-scrollbar-width',
-      target: 'scrollbar-width',
-      getValue: function(){return ( 100 - document.getElementById(this.id).offsetWidth )}
-    }
-  ];
-
   var __current_script = {};
 
   var source_content = null;
@@ -135,9 +114,12 @@ cls.JsSourceView = function(id, name, container_class)
 
   }
 
-  var updateBreakpoints = function()
+  var updateBreakpoints = function(force_repaint)
   {
-    line_numbers.style.visibility = "hidden";
+    if (force_repaint)
+    {
+      line_numbers.style.visibility = "hidden";
+    }
     var lines = line_numbers.getElementsByTagName('span');
     var bp_states = __current_script.breakpoint_states;
     var line_height = context['line-height'];
@@ -156,7 +138,10 @@ cls.JsSourceView = function(id, name, container_class)
         }
       }
     }
-    setTimeout(force_repaint, 1);
+    if (force_repaint)
+    {
+      setTimeout(force_repaint, 1);
+    }
   };
 
   var force_repaint = function()
@@ -194,6 +179,11 @@ cls.JsSourceView = function(id, name, container_class)
     {
       context['line-height'] = defaults['js-source-line-height'];
       context['scrollbar-width'] = defaults['scrollbar-width'];
+      var style = document.styleSheets.getDeclaration('#js-source-scroll-container');
+      if (style)
+      {
+        style.width = defaults['scrollbar-width'] + 'px';
+      }
     }
     context['container-height'] = parseInt(container.style.height);
     var set = null, i = 0;
@@ -241,7 +231,7 @@ cls.JsSourceView = function(id, name, container_class)
         updateLineNumbers(0);
         if(runtimes.getSelectedRuntimeId())
         {
-          document.getElementById('js-source-scroller').render(
+          document.getElementById(horizontal_scoller).render(
               runtimes.isReloadedWindow(runtimes.getActiveWindowId()) ?
               ['div',
                 ['p', ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS],
@@ -258,7 +248,7 @@ cls.JsSourceView = function(id, name, container_class)
         }
         else
         {
-          document.getElementById('js-source-scroller').render(
+          document.getElementById(horizontal_scoller).render(
               ['div',
                 ['p', ui_strings.S_INFO_WINDOW_HAS_NO_RUNTIME],
                 'class', 'info-box'
@@ -590,7 +580,7 @@ cls.JsSourceView = function(id, name, container_class)
       }
       bp_states[line] += __current_script.line_pointer.state;
     }
-    updateBreakpoints();
+    updateBreakpoints(true);
   };
 
   this.clearLinePointer = function(do_not_update)
@@ -775,17 +765,16 @@ cls.JsSourceView = function(id, name, container_class)
     }
   };
 
-  /*
   eventHandlers.mousewheel['scroll-js-source-view'] = function(event, target)
   {
     this._scroll_lines((event.detail > 0 ? 1 : -1) * 3 , event, target);
   }.bind(this);
-  */
+
   this._handlers['scroll-page-up'] = this._scroll_lines.bind(this, -PAGE_SCROLL);
   this._handlers['scroll-page-down'] = this._scroll_lines.bind(this, PAGE_SCROLL);
   this._handlers['scroll-arrow-up'] = this._scroll_lines.bind(this, -ARROW_SCROLL);
   this._handlers['scroll-arrow-down'] = this._scroll_lines.bind(this, ARROW_SCROLL);
-  this.init(id, name, container_class);
+  this.init(id, name, container_class, null, 'scroll-js-source-view');
   messages.addListener('update-layout', updateLayout);
   messages.addListener('runtime-destroyed', onRuntimeDestroyed);
   messages.addListener('breakpoint-updated', this._onbreakpointupdated.bind(this));
