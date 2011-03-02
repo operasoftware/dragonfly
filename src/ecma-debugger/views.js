@@ -364,6 +364,7 @@ cls.DebugRemoteSettingView.create_ui_widgets = function()
       'debug-remote':
       function(setting)
       {
+
         if (!settings.debug_remote_setting.get('debug-remote'))
         {
           Overlay.get_instance().set_info_content(
@@ -410,7 +411,7 @@ cls.DebugRemoteSettingView.create_ui_widgets = function()
         window.helpers.setCookie('debug-remote', "true");
         window.helpers.setCookie('port', JSON.stringify(port));
         window.topCell.showView('dom');
-        client.setup();
+        client.setup(true);
       }
       else
       {

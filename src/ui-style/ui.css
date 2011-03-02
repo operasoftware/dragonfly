@@ -101,13 +101,12 @@ top-toolbar { /**/
   height: 22px;
   padding: 5px 4px 3px 4px;
   background: #f3f3f3 url("../ui-images/shine_1_attached.png") repeat-x;
-  }
-
+}
 
 
 window-toolbar { /**/
   display: block;
-  }
+}
 
 /* set with css. height, border and padding are supported */
 
@@ -617,6 +616,9 @@ top-tabs .badge:empty {
 .network_mode {
     background: url("../ui-images/network_attached.png");
 }
+.resource_panel {
+    background: url("../ui-images/resources_attached.png");
+}
 .storage {
     background: url("../ui-images/storage_attached.png");
 }
@@ -643,11 +645,11 @@ button[handler="top-settings"]:before
   display: inline-block;
   background: transparent url('../ui-images/btn-config.png') scroll no-repeat 0 0;
   height: 24px;
-  width: 26px; 
+  width: 26px;
   margin: -4px -12px;
   vertical-align: 4px;
 }
-button[handler="top-settings"]:hover:before 
+button[handler="top-settings"]:hover:before
 {
   background-position:0 -24px;
 }
@@ -678,12 +680,9 @@ window-controls toolbar-separator {
     height: auto;
 }
 
-
-
-
 .default-container {
   padding: 7px;
-  }
+}
 
 settings-container, settings, settings-header, checkboxes, checkbox, setting-composite {
   display: block;
@@ -733,13 +732,6 @@ settings-container button:active, settings-container input[type=button]:active {
 
 settings-container checkbox label:hover{
   color: #fff;
-}
-
-
-.apply-button input[type="button"] 
-{
-  float: right;
-  margin-right: 26px;
 }
 
 setting-composite select
@@ -961,6 +953,7 @@ windows-container { /**/
   display: block;
   overflow: hidden;
   }
+
 window {
   display: block;
   position: absolute;
@@ -1354,8 +1347,8 @@ pin-label.pinned
   margin: 30px 50px 0 50px;
   text-align: center;
   padding: 1em;
-  border: 1px solid #b3b3b3;
-  border-radius: 8px;
+  border: 1px dashed #b3b3b3;
+  border-radius: 4px;
   background: #f3f3f3;
 }
 .info-box p 
@@ -1635,13 +1628,25 @@ tabs, toolbar {
     z-index: 2;
 }
 
-.close-tab-button
-{
-  background: transparent url("../ui-images/icons/icon_close.png") no-repeat 0 0;
+.close-tab-button {
+  background: rgba(0,0,0,0) url("../ui-images/icons/icon_close_tab.png") no-repeat 50% 50%;
   border: none;
-  width: 17px;
-  height: 17px;
+  width: 11px;
+  height: 11px;
+  margin-top: -1px;
+  margin-right: -4px;
+  margin-left: 4px;
+  opacity: 0.4;
 }
+
+tab.active .close-tab-button {
+  opacity: 0.6;
+}
+
+.close-tab-button:active {
+  background-position: 50% 100%;
+}
+
 .first-temp-tab
 {
   margin-left: 20px;
@@ -1701,9 +1706,14 @@ toolbar-filters input[type=button].search-move-highlight-down
   background: transparent;
 }
 
-
 .context-window [handler='window-close'] { /**/
   background-image: url('../ui-images/icons/context_window_close.png');
+}
+
+.context-window
+{
+  background-color: #fff;
+  color: #000;
 }
 
 toolbar-filters input[type=button]
@@ -1723,11 +1733,30 @@ toolbar-filters input[type=button]
   box-sizing: content-box;
 }
 
-
 toolbar-filters input[type=button]:active
 {
   box-shadow: 0 1px #fff, inset 0 1px 2px rgba(0, 0, 0, .4);
   background-position: 0 1px;
   padding-top: 2px;
   padding-bottom: 0;
+}
+
+/* Button style. Use for buttons inside the <container>. */
+container button
+{
+  background: #e6e6e6 url("../ui-images/shine_button.png") repeat-x;
+  border: 1px solid rgba(0, 0, 0, .5);
+  text-shadow: 0 1px rgba(255,255,255,0.5);
+  border-radius: 10px;
+  height: 20px;
+  padding: 1px 10px;
+  box-shadow: 0 1px rgba(255,255,255,0.5), inset 0 1px 1px #fff;
+  -o-transition: background-color 0.2s;
+}
+
+container button:active
+{
+  box-shadow: 0 1px rgba(255,255,255,0.5), inset 0 1px 2px rgba(0, 0, 0, .4);
+  background-position: 0 1px;
+  text-shadow: none;
 }
