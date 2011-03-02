@@ -79,7 +79,7 @@
     var ret = [];
     var name = proto[VALUE][CLASS_NAME] || "";
     var is_unfolded = _is_unfolded(tree, index, name, collapsed_protos);
-    var expanded_props = is_unfolded && 
+    var expanded_props = is_unfolded &&
                          _pretty_print_properties(model,
                                                   tree.protos && tree.protos[index] || {},
                                                   proto[PROPERTY_LIST] || [],
@@ -96,12 +96,13 @@
       if (index)
       {
         ret.push(
-          "<div class='prototype-chain-object" + (has_match ? "" : " no-match") + "'>" +
+          "<div handler='expand-prototype' class='prototype-chain-object" +
+                                                 (has_match ? "" : " no-match") +
+                                                 (is_unfolded ? " unfolded" : "") +
+          "'>" +
             "<input type='button' " +
-                   "handler='expand-prototype' " +
-                   "class='folder-key inverted' " +
+                   "class='folder-key'" +
                    "proto-index='" + index + "' " +
-                   (is_unfolded ? STYLE_EXPANDED + "is-unfolded='true'" : "") +
                    "/>",
             "<key>" + name + "</key>",
           "</div>");
@@ -160,7 +161,7 @@
           {
             ret.push(
               "<item>" +
-                "<key class='no-expander' data-spec='dom#" + esc_name + "'" + 
+                "<key class='no-expander' data-menu='object-inspection-key' data-spec='dom#" + esc_name + "'" + 
                   editable(prop) + ">" +
                   esc_name +
                 "</key>" +
@@ -180,21 +181,21 @@
             continue;
           }
           short_val = value.length > MAX_VALUE_LENGTH ?
-                        value.slice(0, MAX_VALUE_LENGTH) + '…"' : '';
+                        value.slice(0, MAX_VALUE_LENGTH) + '…' : '';
           value = helpers.escapeTextHtml(value).replace(/'/g, '&#39;');
           if (short_val)
           {
-            if (!searchterm || 
-                prop[NAME].toLowerCase().contains(searchterm) || 
+            if (!searchterm ||
+                prop[NAME].toLowerCase().contains(searchterm) ||
                 short_val.toLowerCase().contains(searchterm))
             {
               ret.push(
                 "<item>" +
                   "<input type='button' handler='expand-value' class='folder-key'/>" +
-                  "<key data-spec='dom#" + esc_name + "'" + 
+                  "<key data-menu='object-inspection-key' data-spec='dom#" + esc_name + "'" + 
                     editable(prop) + ">" + esc_name + "</key>" +
-                  "<value class='" + type + "' data-value='" + value + "'>" +
-                    "\"" + helpers.escapeTextHtml(short_val) +
+                  "<value class='" + type + "' data-value='\"" + value + "\"'>" +
+                    "\"" + helpers.escapeTextHtml(short_val) + "\"" +
                   "</value>" +
                 "</item>"
               );
@@ -202,13 +203,13 @@
           }
           else
           {
-            if (!searchterm || 
-                prop[NAME].toLowerCase().contains(searchterm) || 
+            if (!searchterm ||
+                prop[NAME].toLowerCase().contains(searchterm) ||
                 value.toLowerCase().contains(searchterm))
             {
               ret.push(
                 "<item>" +
-                  "<key class='no-expander' data-spec='dom#" + esc_name + "'" + 
+                  "<key class='no-expander' data-menu='object-inspection-key' data-spec='dom#" + esc_name + "'" + 
                     editable(prop) + ">" +
                     esc_name +
                   "</key>" +
@@ -226,13 +227,13 @@
             continue;
         case "undefined":
         {
-          if (!searchterm || 
+          if (!searchterm ||
               prop[NAME].toLowerCase().contains(searchterm) ||
               type.toLowerCase().contains(searchterm))
           {
             ret.push(
               "<item>" +
-                "<key class='no-expander' data-spec='dom#" + esc_name + "'" + 
+                "<key class='no-expander' data-menu='object-inspection-key' data-spec='dom#" + esc_name + "'" + 
                   editable(prop) + ">" +
                   esc_name +
                 "</key>" +
@@ -257,7 +258,7 @@
                       prop[NAME].toLowerCase().contains(searchterm) ||
                       value.toLowerCase().contains(searchterm);
           if (has_match || expanded_prop.length)
-          {    
+          {
             ret.push(
               "<item obj-id='" + obj_id + "'>" +
               "<input " +
@@ -271,10 +272,10 @@
             ret.push(
               "/>" +
               "<key " + (has_match ? "" : " class='no-match'") +
-                        "data-spec='dom#" + esc_name + "'" + editable(prop) +
+                        "data-menu='object-inspection-key' data-spec='dom#" + esc_name + "'" + editable(prop) +
                         ">" + esc_name + "</key>" +
               "<value class='object" + (has_match ? "" : " no-match") + "' " +
-                     "data-spec='dom#" + value + "'>" + value + "</value>"
+                     "data-menu='object-inspection-key' data-spec='dom#" + value + "'>" + value + "</value>"
             );
             if (tree.hasOwnProperty(prop[NAME]))
             {
@@ -297,7 +298,7 @@
     var tree = model.get_expanded_tree(show_root, path);
     var setting = window.settings.inspection;
     var collapsed_protos = setting.get('collapsed-prototypes');
-    var filter = !setting.get('show-default-nulls-and-empty-strings') && 
+    var filter = !setting.get('show-default-nulls-and-empty-strings') &&
                  window.inspectionfilters;
     var ret = _pretty_print_object(model,
                                    tree,
@@ -316,7 +317,7 @@
     var data = tree && model.get_data(tree.object_id);
     var setting = window.settings.inspection;
     var collapsed_protos = setting.get('collapsed-prototypes');
-    var filter = !setting.get('show-default-nulls-and-empty-strings') && 
+    var filter = !setting.get('show-default-nulls-and-empty-strings') &&
                  window.inspectionfilters;
     return data ? _pretty_print_proto(model,
                                       tree,

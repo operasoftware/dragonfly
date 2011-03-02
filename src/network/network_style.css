@@ -1,0 +1,259 @@
+#main-scroll-container
+{
+  height: 100%;
+  overflow: auto;
+  overflow-y: scroll;
+}
+
+#main-scroll-content
+{
+  position: relative;
+}
+
+#left-side-content
+{
+  width: 250px;
+  border-right: solid thin gray;
+}
+
+#right-side-container
+{
+  position: absolute;
+  height: 100%;
+  top: 0px;
+  left: 251px;
+  right: 0px;
+  overflow: hidden;
+}
+
+#right-side-content
+{
+  height: 100%;
+}
+
+#scrollbar-container
+{
+  margin-right: 13px;
+  overflow: auto;
+}
+
+#scrollbar
+{
+    height: 1px;
+}
+
+
+/* Network log / Overview */
+
+.network-log-url-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  padding-top: 25px;
+}
+
+.network-log-url-list li {
+  border-top: 1px solid rgba(0,0,0,0.1);
+  padding: 4px 0px 1px 8px;
+}
+
+.network-log-url-list li:first-child {
+  border-top: none;
+}
+
+.network-log-url-list li:nth-child(odd) {
+  background-color: rgba(0,0,0,0.025);
+}
+
+.network-log-url-list li:hover {
+  background-color: rgba(55,115,211,0.2);
+  color: #000;
+}
+
+.network-log-url-list li span {
+  display: inline-block;
+}
+
+.network-log-url-list li span + span {
+  padding-left: 5px;
+  width: 186px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.network-log-url-list .log-url-list-status {
+  width: 20px;
+}
+
+.status-200 {
+  content: "";
+}
+
+.status-301 {
+  content: url("../ui-images/network_redirect.png");
+}
+
+.status-302 {
+  content: url("../ui-images/network_redirect.png");
+}
+
+.status-400 {
+  content: url("../ui-images/network_error.png");
+}
+
+.status-404 {
+  content: url("../ui-images/network_error.png");
+}
+
+.status-500 {
+  content: url("../ui-images/network_error.png");
+}
+
+.status-cached {
+  content: url("../ui-images/network_cached.png");
+}
+
+.network-log-url-list li:active,
+.network-log-url-list li:nth-child(even):active,
+.network-log-url-list li.selected,
+.network-log-url-list li:nth-child(even).selected
+{
+  background-color: rgba(55,115,211,0.8);
+  color: #fff;
+}
+
+.response-body-content textarea
+{
+  width: 80%;
+  height: 300px;
+}
+
+.resource-graph text
+{
+  font-size: 12px;
+  text-anchor: middle;
+}
+
+.network-graph-bg-row:hover
+{
+  fill: rgba(55,115,211,0.2);
+}
+
+/*
+.network-graph-bg-row
+{
+  fill: white;
+}
+
+.network-graph-bg-row:nth-of-type(odd)
+{
+  fill: rgba(0,0,0,0.025);
+}
+
+*/
+
+/* Network log / Detail view */
+
+button[handler="close-request-detail"]
+{
+  border: solid thin red;
+  xxfloat: right;
+}
+
+.network-details-url-list {
+  height: 100%;
+  padding: 0;
+  overflow: hidden;
+  overflow-y: auto;
+}
+
+.network-details-request
+{
+  position: absolute;
+  right: 0;
+  top:0;
+  bottom: 0;
+  overflow: hidden;
+  overflow-y: auto;
+  padding: 10px 30px;
+  border-left: 1px solid #999;
+  background-color: #fff;
+}
+
+.network-details-request table
+{
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.network-details-request td,
+.network-details-request th
+{
+  border-top: 1px solid #eee;
+  padding: 6px 5px 4px 5px;
+}
+
+.network-details-request th
+{
+  text-align: left;
+  vertical-align: top;
+  width: 110px;
+}
+
+.network-details-header-list {
+  border: dotted 1px black;
+  list-style: none;
+  padding-left: 0;
+  font-family: monospace;
+}
+
+.network-details-header-list span
+{
+  font-weight: bold;
+}
+
+.request-details h2
+{
+  font-size: 1em;
+  font-weight: bold;
+  padding: 25px 0px 4px 0;
+  text-transform: uppercase;
+  color: #000;
+  text-shadow: 0 0 7px #bbb;
+}
+
+/* Request crafter */
+.request-crafter
+{
+  padding: 10px 30px;
+}
+
+.request-crafter input
+{
+  width: 100%;
+}
+
+.request-crafter textarea
+{
+  width: 100%;
+  height: 250px;
+}
+
+.request-crafter pre
+{
+  width: 100%;
+  min-height: 250px;
+  border: solid thin black;
+}
+
+/* Options */
+.network-options
+{
+  padding: 0px 30px;
+}
+
+.header-override-input
+{
+  width: 100%;
+}

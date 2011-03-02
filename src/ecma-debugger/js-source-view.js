@@ -185,7 +185,7 @@ cls.JsSourceView = function(id, name, container_class)
     frame_id = container.id;
     container.innerHTML = "" +
       "<div id='js-source-scroll-content'>"+
-        "<div id='js-source-content' class='js-source'></div>"+
+        "<div id='js-source-content' class='js-source' data-menu='js-source-content'></div>"+
       "</div>"+
       "<div id='js-source-scroll-container' handler='scroll-js-source'>"+
         "<div id='js-source-scroller'></div>"+
@@ -249,7 +249,7 @@ cls.JsSourceView = function(id, name, container_class)
               ] :
               ['div',
                 ['button',
-                  'class', 'ui-button',
+                  'class', 'ui-control',
                   'handler', 'reload-window'],
                 ['p', ui_strings.S_INFO_RELOAD_FOR_SCRIPT],
                 'class', 'info-box'
@@ -571,7 +571,7 @@ cls.JsSourceView = function(id, name, container_class)
   {
     return __current_line + max_lines;
   }
-  
+
   /* first allays use showLine */
   this.showLinePointer = function(line, is_top_frame)
   {
@@ -636,10 +636,6 @@ cls.JsSourceView = function(id, name, container_class)
     return __current_script.script_id;
   }
 
-  this.getCurrentScriptId = function()
-  {
-    return __current_script.script_id;
-  }
 
   this.clearView = function()
   {
@@ -868,7 +864,7 @@ cls.ScriptSelect = function(id, class_name)
 
   this.checkChange = function(target_ele)
   {
-    var script_id = parseInt(target_ele.getAttribute('script-id'));
+    var script_id = parseInt(target_ele.get_attr('parent-node-chain', 'script-id'));
 
     if(script_id)
     {
@@ -1066,8 +1062,7 @@ cls.JsSourceView.create_ui_widgets = function()
     'js_source',
     [
       'script',
-      'error',
-      'threads.log-threads'
+      'error'
     ]
   );
 
@@ -1109,4 +1104,52 @@ cls.JsSourceView.create_ui_widgets = function()
   window.messages.addListener('shortcuts-changed', set_shortcuts);
   set_shortcuts();
 
+  var broker = ActionBroker.get_instance();
+  var contextmenu = ContextMenu.get_instance();
+  var breakpoints = cls.Breakpoints.get_instance();
+  contextmenu.register("js-source-content", [
+    {
+      callback: function(event, target)
+      {
+        var line = parseInt(event.target.get_attr("parent-node-chain", "data-line-number"));
+        var script_id = views.js_source.getCurrentScriptId();
+        var items = [];
+
+        if (line)
+        {
+          var selection = window.getSelection();
+          if (!selection.isCollapsed)
+          {
+            var key = selection.toString();
+            items.push({
+              label: ui_strings.M_CONTEXTMENU_ADD_WATCH.replace("%s", key),
+              handler: function(event, target) {
+                window.views.watches.add_watch(key);
+              }
+            });
+          }
+
+          if (breakpoints.script_has_breakpoint_on_line(script_id, line))
+          {
+            items.push({
+              label: ui_strings.M_CONTEXTMENU_REMOVE_BREAKPOINT,
+              handler: function(event, target) {
+                breakpoints.remove_breakpoint(script_id, line);
+              }
+            });
+          }
+          else
+          {
+            items.push({
+              label: ui_strings.M_CONTEXTMENU_ADD_BREAKPOINT,
+              handler: function(event, target) {
+                breakpoints.add_breakpoint(script_id, line);
+              }
+            });
+          }
+          return items;
+        }
+      }
+    }
+  ]);
 };

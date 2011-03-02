@@ -53,6 +53,7 @@ var WindowContainerBase = function()
     if( view )
     {
       container.className = view.container_class || '';
+      container.setAttribute('data-menu', view_id || '');
       view.update();
     }
   }

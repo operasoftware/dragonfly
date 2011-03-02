@@ -377,8 +377,10 @@ Element.ScrollPosition = function(target)
   * the initialisation values.
   * If target is set, the target is scrolled in the exact same position 
   * as the target of the initialisation.
+  * A secondary container can be specified. This will be used in case the
+  * initial scroll container was not set in get_scroll_container().
   */
-Element.ScrollPosition.prototype.reset = function(target)
+Element.ScrollPosition.prototype.reset = function(target, sec_container)
 {
   if (this._scroll_container)
   {
@@ -394,6 +396,15 @@ Element.ScrollPosition.prototype.reset = function(target)
     {
       this._scroll_container.scrollTop = this._scroll_top;
       this._scroll_container.scrollLeft = this._scroll_left; 
+    }
+  }
+  else if (sec_container)
+  {
+    var scroll_container = sec_container.get_scroll_container();
+    if (scroll_container)
+    {
+      scroll_container.scrollTop = 0;
+      scroll_container.scrollLeft = 0;
     }
   }
 }
@@ -695,6 +706,25 @@ NodeList.prototype.indexOf = function(item)
     }
   }
   return -1;
+};
+
+/**
+ * Return the sum of all the values in the array. If selectorfun is given,
+ * it will be called to retrieve the relevant value for each item in the
+ * array.
+ */
+Array.prototype.sum = function(selectorfun)
+{
+  if (selectorfun)
+  {
+    return this.map(selectorfun).sum();
+  }
+  else
+  {
+    var ret = 0;
+    this.forEach(function(e) { ret += e });
+    return ret
+  }
 };
 
 StyleSheetList.prototype.getDeclaration = function(selector)

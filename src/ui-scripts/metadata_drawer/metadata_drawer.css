@@ -1,0 +1,48 @@
+.metadata-drawer {
+  background-color: #fafafa;
+  border-bottom: 1px solid #999;
+  margin: 0;
+  padding: 6px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 2;
+}
+
+.metadata-drawer.collapsed {
+}
+
+.metadata-drawer button {
+    position: absolute;
+    bottom: -9px;
+    left: 50%;
+    margin-left: -9px;
+    width: 18px;
+    height: 18px;
+    border: none;
+    border: 1px solid #999;
+    border-radius: 9px;
+    background: #fafafa 50% 50% no-repeat;
+}
+
+.metadata-drawer.collapsed button {
+    background-image: url(expand-drawer.png);
+}
+
+.metadata-drawer.expanded button {
+    background-image: url(collapse-drawer.png);
+}
+
+.metadata-drawer button:hover {
+    background-color: #fff;
+}
+
+.metadata-drawer button:active {
+    background-color: #ccc;
+}
+
+
+.metadata-drawer th {
+    text-align: right;
+}

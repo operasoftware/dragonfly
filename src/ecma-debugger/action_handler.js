@@ -1,14 +1,17 @@
 ﻿window.eventHandlers.click['show-frame'] = function(event)
 {
-  var frame = stop_at.getFrame(event.target['ref-id']);
+  var target = event.target.has_attr("parent-node-chain", "ref-id");
+  var ref_id = target.getAttribute("ref-id");
+
+  var frame = stop_at.getFrame(ref_id);
   if (frame)
   {
     topCell.showView(views['inspection'].id);
     messages.post('active-inspection-type', {inspection_type: 'frame'});
-    messages.post('frame-selected', {frame_index: event.target['ref-id']});
+    messages.post('frame-selected', {frame_index: ref_id});
     if (event.type == 'click')
     {
-      helpers.setSelected(event);
+      helpers.setSelected(target);
       if (views.js_source.isvisible())
       {
         if (frame.script_id)
@@ -166,7 +169,7 @@ window.eventHandlers.click['display-stylesheet'] = function(event, target)
   {
     stylesheets.setSelectedSheet(rt_id, index, rules);
     topCell.showView(views.stylesheets.id);
-    helpers.setSelected(event);
+    helpers.setSelected(event.target);
   }
 };
 
@@ -235,16 +238,6 @@ window.eventHandlers.click['set-break-point'] = function(event)
       bps.add_breakpoint(script_id, line);
     }
   }
-};
-
-window.eventHandlers.click['create-all-runtimes'] = function()
-{
-  services['ecmascript-debugger'].createAllRuntimes();
-};
-
-window.eventHandlers.click['update-global-scope'] = function(event)
-{
-  window.eventHandlers.click['show-frame']({'target': { 'ref-id': 0 } });
 };
 
 window.eventHandlers.click['inspect-object-link'] = function(event, target)

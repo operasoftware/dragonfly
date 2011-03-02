@@ -1,0 +1,185 @@
+<html xmlns='http://www.w3.org/1999/xhtml'
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      xmlns:svg="http://www.w3.org/2000/svg">
+<script src="../../src/scripts/dom.js"/>
+<script><![CDATA[
+
+window.onload = function()
+{
+  show_resource_bar()
+}
+
+function random_request(maxtime, clamp)
+{
+  var reqstart = Math.max(Math.floor(Math.random() * maxtime) - (maxtime/10), 0);
+  var resstart = reqstart + ((Math.random() + 0.2) * 500);
+  var resend = ((maxtime-resstart) * Math.random()) + resstart;
+
+  var e = {
+            request: {start: reqstart},
+            response: {start: resstart, end: resend}
+          };
+
+  return e;
+}
+
+function show_resource_bar()
+{
+  var val = document.getElementById("bars");
+
+  var requests = [];
+  for (var n=42; n; n--)
+  {
+    requests.push(random_request(6000));
+  }
+
+  var sortfun = function(a, b)
+  {
+    return (a.request.start - b.request.start);
+  }
+
+  requests = requests.sort(sortfun);
+  var tpl = resource_overview(requests, val.clientWidth);
+  val.render(tpl);
+}
+
+function resource_overview(requests, contwidth, lineheight)
+{
+  lineheight = lineheight || 30;
+  var bars = [];
+  for (var n=0, req; req=requests[n]; n++)
+  {
+    var bar = resource_bar(n, req, 6000, contwidth, lineheight);
+    bars.push(bar);
+  }
+
+  defs = bar_defs();
+  var grid = grid_lines(6000, contwidth, n*lineheight);
+
+  tpl = ["svg:svg", defs, bars, grid, "viewBox", "0 0 1000 1000", "xmlns", "http://www.w3.org/2000/svg"]
+  return tpl;
+
+}
+
+
+function resource_bar(offset, entry, totaltime, contwidth, lineheight)
+{
+  var y = lineheight * offset;
+  bary = (lineheight/2 - 16/2) + y
+  var multiplier = contwidth / totaltime;
+
+  var reqstart = Math.max(0, (entry.request.start*multiplier));
+  var reqwidth = (entry.response.end - entry.request.start) * multiplier;
+  var resstart = Math.max(0, (entry.response.start*multiplier));
+  var reswidth = reqwidth - (resstart - reqstart);
+  
+  var gid = Math.floor(Math.random() * 3);
+  var texture = ["gradient-css", "gradient-img", "gradient-js"][gid];
+
+  var tpl = [
+    ["rect", "x", "0", "y", String(y),
+             "width", String(contwidth), "height", String(lineheight),
+             "stroke-width", "0", "fill", (offset%2 ? "white" : "#f2f2f2")],
+    ["rect", "x", String(reqstart), "y", String(bary),
+             "width", String(reqwidth), "height", "16",
+             "rx", "4", "ry", "4",
+             "fill", "#e5e5e5", "stroke", "#969696", "stroke-width", "1"],
+    ["rect", "x", String(resstart), "y", String(bary),
+             "width", String(reswidth), "height", "16",
+             "rx", "4", "ry", "4",
+             "fill", "url(#" + texture + ")", "stroke", "#4a507d", "stroke-width", "1"]
+
+  ];
+
+  return tpl;
+}
+
+function bar_defs()
+{
+  return ["defs",
+              bar_gradient("img", "#e3ffff", "#92c5ff", "#70a5f0", "#8db8f2"),
+              bar_gradient("js", "#d9dfff", "#828bbf", "#6269a0", "#7f88b4"),
+              bar_gradient("css", "#ff7d7d", "#d21a1a", "#b40000", "#c32121")
+  ];
+
+}
+
+function bar_gradient(id, c1, c2, c3, c4)
+{
+
+  return ["linearGradient",
+           ["stop", "offset", "5%", "stop-color", c1],
+           ["stop", "offset", "50%", "stop-color", c2],
+           ["stop", "offset", "50%", "stop-color", c3],
+           ["stop", "offset", "100%", "stop-color", c4],
+            "x1", "0",
+            "x2", "0",
+            "y1", "0",
+            "y2", "100%",
+            "id", "gradient-" + id
+           ]
+}
+
+
+function grid_lines(millis, width, height)
+{
+  var ret = [];
+  var seconds = Math.floor(millis / 1000);
+  var secondwidth = width / (millis / 1000);
+  var n = 1;
+  while (n++<seconds)
+  {
+    ret.push(["line", "x1", String(n*secondwidth), "y1", "0",
+                      "x2", String(n*secondwidth), "y2", String(height),
+                      "stroke", "gray",
+                      "stroke-width", "1",
+                      "opacity", "0.6"
+    ]);
+  }
+
+  return ret;
+}
+
+
+
+
+]]></script>
+<body>
+
+<br/>
+<!--
+<div id="res_bar" style="height: 100px">
+    <svg:svg viewBox="0 0 800 100"  >
+
+<svg:defs>
+      <svg:linearGradient x1="0" x2="0" y1="0" y2="100%" id="MyGradient">
+        <svg:stop offset="5%" stop-color="#F60" />
+        <svg:stop offset="95%" stop-color="#FF6" />
+      </svg:linearGradient>
+      <svg:linearGradient x1="0" x2="0" y1="0" y2="100%" id="MyGradient2">
+        <svg:stop offset="0%" stop-color="#e3ffff" />
+        <svg:stop offset="50%" stop-color="#92c5ff" />
+        <svg:stop offset="50%" stop-color="#70a5f0" />
+        <svg:stop offset="100%" stop-color="#8db8f2" />
+
+      </svg:linearGradient>
+    </svg:defs>
+
+    <svg:rect width="800" y="1" height="70" rx="14" ry="14"
+              fill="#e1e1e1"
+              stroke="#999999"
+              stroke-width="2"
+            />
+
+    <svg:rect x="400" y="1" width="400" height="70" rx="14" ry="14"
+              fill="url(#MyGradient2)"
+              stroke="#2978b8"
+              stroke-width="2"
+            />
+    </svg:svg>
+
+  </div>
+-->
+<div id="bars" style="border:solid thin black; width: 1000px; border: solid blue thin" />
+</body>
+</html>

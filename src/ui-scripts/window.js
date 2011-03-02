@@ -71,8 +71,8 @@ var UIWindowBase = new function()
 
     if( this.toolbar )
     {
-      this.toolbar.setDimensions(true);
       this.toolbar.setup(this.view_id);
+      this.toolbar.setDimensions(true);
     }
 
     this.container.setup(this.view_id);
@@ -507,7 +507,6 @@ var UIWindowBase = new function()
             {
               current_target.height = min_height;
               top = current_target.top = inner_height - current_target.height;
-               top;
             }
             if (top)
             {

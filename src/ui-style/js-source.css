@@ -20,7 +20,8 @@ ul {
   }
 
 #js-source-content {
-
+    position: relative;
+    z-index: 2;
   }
 
 #js-source-content div {
