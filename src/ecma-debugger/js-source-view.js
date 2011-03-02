@@ -137,6 +137,7 @@ cls.JsSourceView = function(id, name, container_class)
 
   var updateBreakpoints = function()
   {
+    line_numbers.style.visibility = "hidden";
     var lines = line_numbers.getElementsByTagName('span');
     var bp_states = __current_script.breakpoint_states;
     var line_height = context['line-height'];
@@ -154,6 +155,15 @@ cls.JsSourceView = function(id, name, container_class)
           line.style.backgroundPosition = '0 0';
         }
       }
+    }
+    setTimeout(force_repaint, 1);
+  };
+
+  var force_repaint = function()
+  {
+    if (line_numbers)
+    {
+      line_numbers.style.visibility = "visible";
     }
   };
 
@@ -565,7 +575,7 @@ cls.JsSourceView = function(id, name, container_class)
   /* first allays use showLine */
   this.showLinePointer = function(line, is_top_frame)
   {
-    this._clear_line_pointer();
+    this._clear_line_pointer(false);
     var bp_states = __current_script && __current_script.breakpoint_states;
     if (bp_states)
     {
@@ -579,14 +589,17 @@ cls.JsSourceView = function(id, name, container_class)
         bp_states[line] = 0;
       }
       bp_states[line] += __current_script.line_pointer.state;
-      updateBreakpoints();
     }
+    updateBreakpoints();
   };
 
-  this.clearLinePointer = function()
+  this.clearLinePointer = function(do_not_update)
   {
     this._clear_line_pointer();
-    updateBreakpoints();
+    if (do_not_update !== false)
+    {
+      updateBreakpoints();
+    }
   };
   
   this._clear_line_pointer = function()
