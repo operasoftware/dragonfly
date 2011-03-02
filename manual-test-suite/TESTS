@@ -1210,6 +1210,7 @@ Scripts.Breakpoints
 
 url: ./test-cases/breakpoints/breakpoints.html
 
+id: 00100
 label: Default breakpoint
 desc:
   - Open the test case
@@ -1230,6 +1231,7 @@ desc:
   - Verify that the breakpoint has no effect by hitting the 'test' button
 
 
+id: 00200
 label: Conditional breakpoint
 desc:
   - Open the test case
@@ -1255,6 +1257,7 @@ desc:
   - Verify that the breakpoint looks like a disabled breakpoint in the source view and the panel
   - Verify that the breakpoint no longer has any effect by hitting the 'test' button
 
+id: 00300
 label: Delete breakpoint
 desc:
   - Open the test case
@@ -1268,7 +1271,9 @@ desc:
   - Reload the host document and hit 'test'
   - Verify that there is no longer a breakpoint
 
+id: 00400
 label: Disable and delete all breakpoints
+desc:
   - Open the test case
   - Select the 'Scripts' tab and reload the document
   - Select the 'Breakpoints' panel and expand the 'Breakpoints' section
