@@ -277,14 +277,12 @@ cls.CookieManager.CookieManagerViewBase = function()
   {
     var event = event || {};
     /**
-      * unselect everything while not doing multiple selection mode.
-      * that's when:
-      *   cmd / ctrl key is pressed
-      *   OR
-      *   more than 1 item is already selected and event is a right-click
+      * unselect everything while not doing multiple selection, which is when:
+      *   cmd / ctrl key is pressed OR
+      *   more than 1 item is already selected && event is right-click, clicked item was already selected
       */
     var selection = this._table_elem.querySelectorAll(".selected");
-    if(!( event.ctrlKey || (selection.length > 1 && event.button === 2) ))
+    if(!( event.ctrlKey || (selection.length > 1 && event.button === 2 && elem.hasClass("selected")) ))
     {
       for (var i=0; i < selection.length; i++) {
         selection[i].removeClass("selected");
