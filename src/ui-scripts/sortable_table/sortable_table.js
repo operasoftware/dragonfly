@@ -148,11 +148,13 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
   this._make_group_handler = function(group)
   {
     return function(evt) {
-      var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id')
+      var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id');
       var obj = ObjectRegistry.get_instance().get_object(obj_id);
       obj.group(group);
+      var table = evt.target;
+      while (table.nodeName.toLowerCase() != "table") { table = table.parentNode };
       obj.post_message("before-render");
-      evt.target.re_render(obj.render());
+      table.re_render(obj.render());
       obj.post_message("after-render");
     }
   }
@@ -160,11 +162,13 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
   this._make_colselect_handler = function(col)
   {
     return function(evt) {
-      var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id')
+      var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id');
       var obj = ObjectRegistry.get_instance().get_object(obj_id);
       obj.togglecol(col);
+      var table = evt.target;
+      while (table.nodeName.toLowerCase() != "table") { table = table.parentNode };
       obj.post_message("before-render");
-      evt.target.re_render(obj.render());
+      table.re_render(obj.render());
       obj.post_message("after-render");
     }
   }
@@ -172,7 +176,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
   this._sort_handler = function(evt, target)
   {
     var table = target.parentNode.parentNode;
-    var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id')
+    var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id');
     var obj = ObjectRegistry.get_instance().get_object(obj_id);
     var col_id = evt.target.get_attr('parent-node-chain', 'data-column-id')
     obj.sort(col_id);
@@ -195,9 +199,9 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
   this.restore_columns = function(target)
   {
     this.columns = this.orgininal_columns.slice(0);
-    obj.post_message("before-render");
+    this.post_message("before-render");
     target.re_render(this.render());
-    obj.post_message("after-render");
+    this.post_message("after-render");
   }
 
   this._prop_getter = function(name)
