@@ -524,7 +524,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
 
   var on_services_created = function(msg)
   {
-    __log_threads = window.settings['threads'].get('log-threads');
+    //__log_threads = window.settings['threads'].get('log-threads');
   }
 
   this.setActiveWindowId = function(window_id)

@@ -17,7 +17,7 @@ var CompositeViewBase = function()
     {
       isvisible = true;
       this.cell.left = cell.left + cell.left_border_padding;
-      this.cell.top = cell.top + cell.top_border_padding + modebar_height;
+      this.cell.top = cell.top + cell.top_border_padding;
       this.cell.width = cell.width;
       this.cell.height = cell.height - modebar_height;
       if(this.cell.width + this.cell.height > 0) 

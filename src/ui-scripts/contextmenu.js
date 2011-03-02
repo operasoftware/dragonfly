@@ -1,7 +1,7 @@
 ﻿/**
  * @constructor
  */
-var ContextMenu = function() {
+function ContextMenu() {
   if (ContextMenu._instance)
   {
     return ContextMenu._instance;
@@ -9,9 +9,10 @@ var ContextMenu = function() {
   ContextMenu._instance = this;
 
   /**
-   * Holds all registered context menus.
+   * All registered context menus.
    */
-  this.registered_menus = {};
+  this._registered_menus = {};
+  this._current_items = null;
 
   this._broker = ActionBroker.get_instance();
 
@@ -22,13 +23,15 @@ var ContextMenu = function() {
    *                         attribute in the markup. May be an already existing
    *                         menu, in which case the items are added.
    * @param {Array} item_list An array of objects with 'label' and 'handler'
-   *                          (function).
+   *                          (function). Optionally it may have 'checked' (boolean)
+   *                          for showing a checkbox before the item, or 'selected'
+   *                          (boolean) for showing the selected item in a group.
    */
   this.register = function(menu_id, item_list)
   {
     if (item_list)
     {
-      this.registered_menus[menu_id] = item_list;
+      this._registered_menus[menu_id] = item_list;
     }
   };
 
@@ -54,17 +57,15 @@ var ContextMenu = function() {
       return;
     }
 
-    var speclinks = SpecLinks.get_instance();
     var ele = event.target;
     var all_items = [];
-    var items = [];
     var menu_id = null;
     // This traverses up the tree and collects all menus it finds, and
     // concatenates them with a separator between each menu. It stops if it
     // finds a data-menu attribute with a blank value.
     while (ele && ele != document && (menu_id = ele.getAttribute("data-menu")) !== "")
     {
-      items = this.registered_menus[menu_id];
+      var items = this._registered_menus[menu_id];
       if (items && items.length)
       {
         if (all_items.length)
@@ -78,15 +79,15 @@ var ContextMenu = function() {
       ele = ele.parentNode;
     }
 
-    // Grab the first spec link in the parent node chain.
     // This should preferably not be done inside ContextMenu.
+    var speclinks = SpecLinks.get_instance();
     var spec = event.target.get_attr("parent-node-chain", "data-spec");
     if (spec)
     {
       var specs = speclinks.get_spec_links(spec);
       if (specs.length)
       {
-        items = specs.map(function(spec)
+        var items = specs.map(function(spec)
         {
           return {
             label: ui_strings.M_CONTEXTMENU_SPEC_LINK.replace("%s", spec.prop),
@@ -98,14 +99,20 @@ var ContextMenu = function() {
           };
         });
         this.register("spec", items);
+
+        if (all_items.length)
+        {
+          all_items.push(ContextMenu.separator);
+        }
       }
 
-      if (all_items.length)
+      if (items)
       {
-        all_items.push(ContextMenu.separator);
+        all_items = all_items.concat(items);
       }
-      all_items = all_items.concat(items);
     }
+
+    this._current_items = all_items;
 
     if (all_items.length)
     {
@@ -186,12 +193,6 @@ var ContextMenu = function() {
     this.is_shown = false;
   };
 
-  this._get_uid = (function()
-  {
-    var uid = 0;
-    return function() {return "item_" + (++uid);};
-  })();
-
   this._expand_all_items = function(items, event, menu_id)
   {
     var all_items = [];
@@ -214,7 +215,7 @@ var ContextMenu = function() {
 
     for (var i = 0, item; item = all_items[i]; i++)
     {
-      item.id = item.id || this._get_uid();
+      item.id = "item_" + i;
       if (menu_id)
       {
         item.menu_id = menu_id;
@@ -236,15 +237,24 @@ var ContextMenu = function() {
 
     while (target != contextmenu && target != document)
     {
-      if (target.getAttribute("data-handler-id"))
+      var handler_id = target.getAttribute("data-handler-id");
+      if (handler_id)
       {
-        var items = this.registered_menus[target.getAttribute("data-menu-id")];
-        items = this._expand_all_items(items, this._current_event);
+        var menu_id = target.getAttribute("data-menu-id");
+        var items = this._current_items;
         for (var i = 0, item; item = items[i]; i++)
         {
-          if (item.id == target.getAttribute("data-handler-id"))
+          if (item.id == handler_id && item.menu_id == menu_id)
           {
-            item.handler(this._current_event, target);
+            var current_target = this._current_event.target;
+            while (current_target && (menu_id == "spec"
+                        ? current_target.getAttribute("data-spec") === null
+                        : current_target.getAttribute("data-menu") != menu_id)
+            )
+            {
+              current_target = current_target.parentNode;
+            }
+            item.handler(this._current_event, current_target);
           }
         }
       }
@@ -262,6 +272,4 @@ ContextMenu.get_instance = function()
 };
 
 ContextMenu.separator = {separator: true};
-
-
 

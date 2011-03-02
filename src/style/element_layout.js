@@ -334,7 +334,7 @@ cls.ElementLayout = function()
     }
   }
   
-  this.metricsTemplate = function(styles)
+  this.metricsTemplate = function()
   {
     var is_positioned = __comp_style[layout_map[POSITION]] != "static";
     return (
@@ -385,15 +385,15 @@ cls.ElementLayout = function()
         ['table',
           ['tr',
             [['td', 'position', 'data-spec', 'css#position'],
-             ['td', __comp_style[layout_map[POSITION]]]],
+             ['td', __comp_style[layout_map[POSITION]] || "–"]],
           ],
           ['tr',
             [['td', 'z-index', 'data-spec', 'css#z-index'],
-             ['td', __comp_style[layout_map[Z_INDEX]]]],
+             ['td', __comp_style[layout_map[Z_INDEX]] || "–"]],
           ],
           ['tr',
             [['td', 'box-sizing', 'data-spec', 'css#box-sizing'],
-             ['td', __comp_style[layout_map[BOX_SIZING]]]],
+             ['td', __comp_style[layout_map[BOX_SIZING]] || "–"]],
           ],
         ]
       ]
@@ -402,12 +402,17 @@ cls.ElementLayout = function()
 
   function convert_to_unitless(value, no_replace)
   {
-    if (value == "auto") { return value; }
-    if (value == "0px")
+    switch (value)
     {
+    case "auto":
+      return value;
+    case "0px":
       return no_replace ? "0" : "–";
+    case "":
+      return "–";
+    default:
+      return "" + parseInt(value)
     }
-    return "" + parseInt(value);
   }
 
   messages.addListener('element-selected', onElementSelected);

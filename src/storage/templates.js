@@ -88,7 +88,8 @@ window.templates.storage_item = function(entry, index, storage_arr)
       this.storage_button({title: ui_strings.S_LABEL_STORAGE_DELETE, handler: 'storage-delete'}),
       'class', 'control'
     ],
-    'data-storage-key', entry.key
+    'data-storage-key', entry.key,
+    'data-menu', 'storage-item'
   ]);
 };
 
@@ -131,6 +132,7 @@ window.templates.storage_button = function(action)
 {
   var templ =
   ['input',
+    'class', action.handler,
     'type', 'button',
     'handler', action.handler
   ];

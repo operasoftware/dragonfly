@@ -96,12 +96,13 @@
       if (index)
       {
         ret.push(
-          "<div class='prototype-chain-object" + (has_match ? "" : " no-match") + "'>" +
+          "<div handler='expand-prototype' class='prototype-chain-object" +
+                                                 (has_match ? "" : " no-match") +
+                                                 (is_unfolded ? " unfolded" : "") +
+          "'>" +
             "<input type='button' " +
-                   "handler='expand-prototype' " +
-                   "class='folder-key inverted' " +
+                   "class='folder-key'" +
                    "proto-index='" + index + "' " +
-                   (is_unfolded ? STYLE_EXPANDED + "is-unfolded='true'" : "") +
                    "/>",
             "<key>" + name + "</key>",
           "</div>");
@@ -160,7 +161,7 @@
           {
             ret.push(
               "<item>" +
-                "<key class='no-expander' data-spec='dom#" + esc_name + "'" + 
+                "<key class='no-expander' data-menu='object-inspection-key' data-spec='dom#" + esc_name + "'" + 
                   editable(prop) + ">" +
                   esc_name +
                 "</key>" +
@@ -180,7 +181,7 @@
             continue;
           }
           short_val = value.length > MAX_VALUE_LENGTH ?
-                        value.slice(0, MAX_VALUE_LENGTH) + '…"' : '';
+                        value.slice(0, MAX_VALUE_LENGTH) + '…' : '';
           value = helpers.escapeTextHtml(value).replace(/'/g, '&#39;');
           if (short_val)
           {
@@ -191,10 +192,10 @@
               ret.push(
                 "<item>" +
                   "<input type='button' handler='expand-value' class='folder-key'/>" +
-                  "<key data-spec='dom#" + esc_name + "'" + 
+                  "<key data-menu='object-inspection-key' data-spec='dom#" + esc_name + "'" + 
                     editable(prop) + ">" + esc_name + "</key>" +
-                  "<value class='" + type + "' data-value='" + value + "'>" +
-                    "\"" + helpers.escapeTextHtml(short_val) +
+                  "<value class='" + type + "' data-value='\"" + value + "\"'>" +
+                    "\"" + helpers.escapeTextHtml(short_val) + "\"" +
                   "</value>" +
                 "</item>"
               );
@@ -208,7 +209,7 @@
             {
               ret.push(
                 "<item>" +
-                  "<key class='no-expander' data-spec='dom#" + esc_name + "'" + 
+                  "<key class='no-expander' data-menu='object-inspection-key' data-spec='dom#" + esc_name + "'" + 
                     editable(prop) + ">" +
                     esc_name +
                   "</key>" +
@@ -232,7 +233,7 @@
           {
             ret.push(
               "<item>" +
-                "<key class='no-expander' data-spec='dom#" + esc_name + "'" + 
+                "<key class='no-expander' data-menu='object-inspection-key' data-spec='dom#" + esc_name + "'" + 
                   editable(prop) + ">" +
                   esc_name +
                 "</key>" +
@@ -271,10 +272,10 @@
             ret.push(
               "/>" +
               "<key " + (has_match ? "" : " class='no-match'") +
-                        "data-spec='dom#" + esc_name + "'" + editable(prop) +
+                        "data-menu='object-inspection-key' data-spec='dom#" + esc_name + "'" + editable(prop) +
                         ">" + esc_name + "</key>" +
               "<value class='object" + (has_match ? "" : " no-match") + "' " +
-                     "data-spec='dom#" + value + "'>" + value + "</value>"
+                     "data-menu='object-inspection-key' data-spec='dom#" + value + "'>" + value + "</value>"
             );
             if (tree.hasOwnProperty(prop[NAME]))
             {

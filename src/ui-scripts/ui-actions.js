@@ -219,73 +219,27 @@ eventHandlers.click['top-window-toggle-attach'] = function(event)
 {
   window.opera.attached = !window.opera.attached;
   window.settings.general.set('window-attached',  window.opera.attached);
-  var window_controls = document.getElementsByTagName('window-controls')[0];
-  if (window_controls)
-  {
-    window_controls.re_render(templates.window_controls())
-  }
+  window.client.create_window_controls();
 }
 
 eventHandlers.click['overlay-tab'] = function(event, target)
 {
-  var overlay = window.topCell.overlay;
-  overlay.change_group(event.target.getAttribute("group"));
+  Overlay.get_instance().change_group(event.target.getAttribute("group"));
 };
 
-eventHandlers.click['toggle-settings-overlay'] =
-eventHandlers.click['toggle-remote-debug-config-overlay'] = function(event, target)
+eventHandlers.click['toggle-overlay'] = function(event, target)
 {
-  const OVERLAY_TOP_MARGIN = 10;
-  const OVERLAY_LEFT_MARGIN = 10;
-  const OVERLAY_RIGHT_MARGIN = 20;
+  var overlay = Overlay.get_instance();
+  var overlay_id = target.getAttribute("data-overlay-id");
 
-  // This should really just be a class, this is just for consistency with
-  // existing stuff
-  target.setAttribute("is-active", target.getAttribute("is-active") != "true");
-
-  var overlay = window.topCell.overlay;
-
-  if (overlay.is_visible())
-  {
-    overlay.hide_overlay();
-    return;
-  }
-
-  switch (target.getAttribute("handler"))
-  {
-  case "toggle-settings-overlay":
-    overlay.show_overlay("settings-overlay");
-    break;
-  case "toggle-remote-debug-config-overlay":
-    overlay.show_overlay("remote-debug-overlay");
-    break;
-  }
-
-  var button_dims = target.getBoundingClientRect();
-  var element = overlay.element.querySelector("overlay-window");
-  var arrow = overlay.element.querySelector("overlay-arrow");
-  element.style.top = button_dims.bottom + OVERLAY_TOP_MARGIN + "px";
-  element.addClass("attached");
-  arrow.style.right = document.documentElement.clientWidth - button_dims.right - OVERLAY_RIGHT_MARGIN + "px";
+  overlay.is_visible ?
+      this.broker.dispatch_action("global", "hide-overlay", event, target) :
+      this.broker.dispatch_action("global", "show-overlay", event, target);
 };
 
 eventHandlers.click['toggle-console'] = function(event, target)
 {
-  if (!(window.views.command_line && window.views.command_line.isvisible()))
-  {
-    UIWindowBase.showWindow('command_line', 
-                            innerHeight/2, 0, 
-                            innerWidth, innerHeight/2);
-    setTimeout(function() {
-      var box = UI.get_instance().get_layout_box('command_line');
-      var ele = box && box.container.getElement();
-      ele && (ele = ele.getElementsByTagName('textarea')[0]) && ele.focus();
-    }, 0);
-  }
-  else
-  {
-    UIWindowBase.closeWindow('command_line');
-  }
+  this.broker.dispatch_action("global", "toggle-console", event, target);
 };
 
 eventHandlers.click['toolbar-switch'] = function(event)
@@ -294,6 +248,7 @@ eventHandlers.click['toolbar-switch'] = function(event)
   var arr = target.getAttribute('key').split('.');
   var setting = arr[0], key = arr[1];
   var is_active = !( target.getAttribute('is-active') == 'true' && true || false );
+  target.setAttribute('is-active', is_active ? 'true' : 'false');
 
   settings[setting].set(key, is_active);
   views.settings_view.syncSetting(setting, key, is_active);
@@ -305,7 +260,6 @@ eventHandlers.click['toolbar-switch'] = function(event)
   view && view.update();
   */
   messages.post("setting-changed", {id: setting, key: key});
-  target.setAttribute('is-active', is_active ? 'true' : 'false');
   // hack to trigger a repaint while
   target.style.backgroundColor = "transparent";
   target.style.removeProperty('background-color');

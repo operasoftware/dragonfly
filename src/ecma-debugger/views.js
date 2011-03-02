@@ -44,7 +44,7 @@ cls.EnvironmentView.create_ui_widgets = function()
         return templates.hello(window.services['scope'].get_hello_message());
       }
     },
-    "general"
+    "about"
 
   );
 };
@@ -86,10 +86,10 @@ cls.AboutView.create_ui_widgets = function()
           response_text = xml.responseText;
           if(authors && response_text)
           {
-            authors.render(['pre', response_text]);
+            authors.textContent = response_text;
           }
         });
-        return ['ul', ['li', 'id', 'about-authors']];
+        return ['ul', ['li', 'id', 'about-authors', 'class', 'padding']];
       }
     },
     "about"
@@ -106,6 +106,7 @@ cls.CallstackView = function(id, name, container_class)
 {
   var container_id = 'backtrace';
   var __clear_timeout = 0;
+  var not_stopped_content = "<li class='not-stopped'>" + ui_strings.M_VIEW_LABEL_NOT_STOPPED + "</li>";
 
   this._selected_frame = 0;
 
@@ -114,7 +115,7 @@ cls.CallstackView = function(id, name, container_class)
     var container = document.getElementById(container_id);
     if( container ) 
     {
-      container.innerHTML = ''; 
+      container.innerHTML = not_stopped_content; 
       __clear_timeout = 0;
     }
   }
@@ -133,7 +134,7 @@ cls.CallstackView = function(id, name, container_class)
       __clear_timeout = clearTimeout( __clear_timeout );
     }
     var _frames = stop_at.getFrames(), frame = null, i = 0;
-    list.innerHTML = '';
+    list.innerHTML = _frames.length ? "" : not_stopped_content;
     for( ; frame = _frames[i]; i++)
     {
       list.render(templates.frame(frame, i == this._selected_frame));
@@ -363,41 +364,34 @@ cls.DebugRemoteSettingView.create_ui_widgets = function()
       'debug-remote':
       function(setting)
       {
-        return (
-            !settings.debug_remote_setting.get('debug-remote')
-            ?
-              [
-                ['setting-composite',
-                  ['label',
-                    ui_strings.S_LABEL_PORT + ': ',
-                    ['input',
-                      'type', 'number',
-                      'min', PORT_MIN,
-                      'max', PORT_MAX,
-                      'value', setting.get('port'),
-                      'current-port', setting.get('port').toString()
-                    ]
-                  ],
-                  ['input',
-                    'type', 'button',
-                    'value', ui_strings.S_BUTTON_TEXT_APPLY,
-                    'handler', 'apply-remote-debugging'
-                  ],
-                  ['p',
-                   'id', 'remote-debug-info'
-                  ],
-                  'class', 'apply-button'
-                ]
+        if (!settings.debug_remote_setting.get('debug-remote'))
+        {
+          Overlay.get_instance().set_info_content(
+            [
+              ["p", ui_strings.S_REMOTE_DEBUG_GUIDE_PRECONNECT_HEADER],
+              ["ol",
+                ["li", ui_strings.S_REMOTE_DEBUG_GUIDE_PRECONNECT_STEP_1],
+                ["li", ui_strings.S_REMOTE_DEBUG_GUIDE_PRECONNECT_STEP_2]
               ]
-            :
-              ['setting-composite',
-                ['input',
-                  'type', 'button',
-                  'value', "Cancel",
-                  'handler', 'cancel-remote-debug'
-                ]
-              ]
-        );
+            ]
+          );
+
+          return [
+            ['setting-composite',
+              window.templates.remote_debug_settings(setting.get('port'))
+            ]
+          ]
+        }
+        else
+        {
+          return ['setting-composite',
+            ['input',
+              'type', 'button',
+              'value', ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG,
+              'handler', 'cancel-remote-debug'
+            ]
+          ]
+        }
       }
     },
     "remote_debug"
@@ -421,14 +415,18 @@ cls.DebugRemoteSettingView.create_ui_widgets = function()
       else
       {
         // TODO: fix string to show new min port number
-        document.querySelector("#remote-debug-info").textContent = ui_strings.S_INFO_NO_VALID_PORT_NUMBER;
-        target.parentNode.getElementsByTagName('input')[0].value = port < PORT_MIN ? PORT_MIN : PORT_MAX;
+        document.getElementById("remote-debug-info").textContent =
+            ui_strings.S_INFO_NO_VALID_PORT_NUMBER.replace("%s", PORT_MIN)
+                                                  .replace("%s", PORT_MAX);
+        target.parentNode.getElementsByTagName('input')[0].value =
+            port < PORT_MIN ? PORT_MIN : PORT_MAX;
       }
     }
   };
 
   eventHandlers.click['cancel-remote-debug'] = function(event, target)
   {
+    Overlay.get_instance().hide();
     settings.debug_remote_setting.set('debug-remote', false);
     window.helpers.setCookie('debug-remote', "false");
     client.setup();
@@ -456,20 +454,17 @@ cls.ModebarView.create_ui_widgets = function()
     'modebar',
     // key-value map
     {
-      "show-modebar-dom": true,
-      "show-modebar-scripts": true,
+      "show-modebar-dom": true
     },
     // key-label map
     {
-      "show-modebar-dom": "Show DOM modebar",
-      "show-modebar-scripts": "Show Scripts modebar",
+      "show-modebar-dom": ui_strings.S_TOGGLE_DOM_MODEBAR
     },
     // settings map
     {
       checkboxes:
       [
-        "show-modebar-dom",
-        "show-modebar-scripts",
+        "show-modebar-dom"
       ]
     },
     // custom templates
@@ -499,7 +494,7 @@ cls.MainView .create_ui_widgets = function()
         title: ui_strings.S_BUTTON_TOGGLE_SETTINGS
       },
       {
-        handler: 'toggle-remote-debug-config-overlay',
+        handler: 'toggle-remote-debug-overlay',
         title: ui_strings.S_BUTTON_TOGGLE_REMOTE_DEBUG
       }
     ],

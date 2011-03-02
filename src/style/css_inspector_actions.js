@@ -211,7 +211,8 @@ cls.CSSInspectorActions = function(id)
     for (var i = 0; i < len; i++) {
       var prop = window.css_index_map[rule[INDEX_LIST][i]];
       if (!window.elementStyle.disabled_style_dec_list[rule_id] ||
-          !window.elementStyle.has_property(window.elementStyle.disabled_style_dec_list[rule_id], prop)) {
+          !window.elementStyle.has_property(window.elementStyle.disabled_style_dec_list[rule_id], prop))
+      {
         script += "object.style.setProperty(\"" +
                      prop + "\", \"" +
                      rule[VALUE_LIST][i].replace(/"/g, "'") + "\", " +
@@ -239,8 +240,8 @@ cls.CSSInspectorActions = function(id)
     var disabled_style_dec = window.elementStyle.disabled_style_dec_list[id];
     var style_dec = window.elementStyle.remove_property(disabled_style_dec, property);
     this.set_property(rt_id, rule_id || obj_id, [window.css_index_map[style_dec[INDEX_LIST][0]],
-                       style_dec[VALUE_LIST][0],
-                       style_dec[PRIORITY_LIST][0]], null, window.elementStyle.update);
+                      style_dec[VALUE_LIST][0],
+                      style_dec[PRIORITY_LIST][0]], null, window.elementStyle.update);
   };
 
   /**
@@ -250,12 +251,11 @@ cls.CSSInspectorActions = function(id)
    */
   this.disable_property = function disable_property(rt_id, rule_id, obj_id, property)
   {
-    var disabled_style_dec_list = window.elementStyle.disabled_style_dec_list;
-
     var id = rule_id || window.elementStyle.get_inline_obj_id(obj_id);
     var style_dec = rule_id
                   ? window.elementStyle.get_style_dec_by_id(rule_id)
                   : window.elementStyle.get_inline_style_dec_by_id(obj_id);
+    var disabled_style_dec_list = window.elementStyle.disabled_style_dec_list;
 
     if (!disabled_style_dec_list[id])
     {
@@ -265,6 +265,36 @@ cls.CSSInspectorActions = function(id)
     window.elementStyle.copy_property(style_dec, disabled_style_dec_list[id], property);
     window.elementStyle.remove_property(style_dec, property);
     this.remove_property(rt_id, rule_id || obj_id, property, window.elementStyle.update);
+  };
+
+  /**
+   * Disables all properties.
+   */
+  this.disable_all_properties = function disable_property(rt_id, rule_id, obj_id)
+  {
+    const INDEX_LIST = 1;
+
+    var id = rule_id || window.elementStyle.get_inline_obj_id(obj_id);
+    var style_dec = rule_id
+                  ? window.elementStyle.get_style_dec_by_id(rule_id)
+                  : window.elementStyle.get_inline_style_dec_by_id(obj_id);
+    var disabled_style_dec_list = window.elementStyle.disabled_style_dec_list;
+    var script = "";
+
+    if (!disabled_style_dec_list[id])
+    {
+      disabled_style_dec_list[id] = window.elementStyle.get_new_style_dec();
+    }
+
+    style_dec[INDEX_LIST].forEach(function(prop_idx) {
+      var property = window.css_index_map[prop_idx];
+      window.elementStyle.copy_property(style_dec, disabled_style_dec_list[id], property);
+      window.elementStyle.remove_property(style_dec, property);
+    }, this);
+
+    var tag = tagManager.set_callback(null, window.elementStyle.update);
+    services['ecmascript-debugger'].requestEval(tag,
+      [rt_id, 0, 0, "object.style.cssText='';", [["object", rule_id]]]);
   };
 
   /**
@@ -353,7 +383,7 @@ cls.CSSInspectorActions = function(id)
   {
     var cat = event.target;
     switch(event.target.nodeName.toLowerCase())
-    {
+     {
       case 'key':
       case 'value':
       {
@@ -389,11 +419,11 @@ cls.CSSInspectorActions = function(id)
 
     if (is_disabled)
     {
-      self.enable_property(rt_id, rule_id, obj_id, target.getAttribute("data-property"));
+      this.enable_property(rt_id, rule_id, obj_id, target.getAttribute("data-property"));
     }
     else
     {
-      self.disable_property(rt_id, rule_id, obj_id, target.getAttribute("data-property"));
+      this.disable_property(rt_id, rule_id, obj_id, target.getAttribute("data-property"));
     }
   }.bind(this);
 
@@ -527,6 +557,20 @@ cls.CSSInspectorActions = function(id)
       }
     }
     return false;
+  }.bind(this);
+
+  this._handlers["insert-declaration-edit"] = function(event, target)
+  {
+    this.mode = MODE_EDIT;
+    this.editor.insert_declaration_edit(event, target);
+  }.bind(this);
+
+  this._handlers["disable-all-properties"] = function(event, target)
+  {
+    var rt_id = parseInt(event.target.get_attr("parent-node-chain", "rt-id"));
+    var rule_id = parseInt(event.target.get_attr("parent-node-chain", "rule-id"));
+    var obj_id = parseInt(event.target.get_attr("parent-node-chain", "obj-id"));
+    this.disable_all_properties(rt_id, rule_id, obj_id);
   }.bind(this);
 
   this.focus = function(event, container)

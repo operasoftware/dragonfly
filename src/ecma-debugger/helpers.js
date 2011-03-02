@@ -14,9 +14,8 @@
 window.cls.Helpers = function()
 {
 
-  this.setSelected = function(event)
+  this.setSelected = function(ele)
   {
-    var ele=event.target;
     var parent = ele.parentNode;
     var siblings = parent.getElementsByTagName(ele.nodeName), sibling = null, i=0;
     for( ; sibling = siblings[i]; i++)

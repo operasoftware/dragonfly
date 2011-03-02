@@ -46,6 +46,8 @@ ui_strings.M_VIEW_LABEL_SOURCE = 'Source';
 ui_strings.M_VIEW_LABEL_COMMAND_LINE = 'Command Line';
 /* DESC: Call stack overview, a list of function calls. */
 ui_strings.M_VIEW_LABEL_CALLSTACK = 'Call Stack';
+/* DESC: Text to show in call stack when the execution is not stopped. */
+ui_strings.M_VIEW_LABEL_NOT_STOPPED = 'Not stopped';
 /* DESC: side panel in the script view with the callstack and the inspection view. */
 ui_strings.M_VIEW_LABEL_RUNTIME_STATE = 'State';
 /* DESC: Thread log overview, a list of threads. */
@@ -256,7 +258,23 @@ ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE = "Show objects of type Element in the 
 ui_strings.S_CLEAR_COMMAND_LINE_LOG = "Clear command line";
 /* DESC: When enabled, compilation errors etc are shown in repl as well as error console */
 ui_strings.S_SWITCH_SHOW_ERRORS_IN_REPL = 'Show page javascript errors in command line';
+/* DESC: Enabling/disabling DOM modebar */
+ui_strings.S_TOGGLE_DOM_MODEBAR = 'Show DOM modebar';
 
+/* DESC: Header for settings group "General" */
+ui_strings.S_SETTINGS_HEADER_GENERAL = "General";
+/* DESC: Header for settings group "Document" */
+ui_strings.S_SETTINGS_HEADER_DOCUMENT = "Document";
+/* DESC: Header for settings group "Script" */
+ui_strings.S_SETTINGS_HEADER_SCRIPT = "Script";
+/* DESC: Header for settings group "Network" */
+ui_strings.S_SETTINGS_HEADER_NETWORK = "Network";
+/* DESC: Header for settings group "Console" */
+ui_strings.S_SETTINGS_HEADER_CONSOLE = "Console";
+/* DESC: Header for settings group "Keyboard shortcuts" */
+ui_strings.S_SETTINGS_HEADER_KEYBOARD_SHORTCUTS = "Keyboard shortcuts";
+/* DESC: Header for settings group "About" */
+ui_strings.S_SETTINGS_HEADER_ABOUT = "About";
 
 /**
  * Context menu items
@@ -274,12 +292,39 @@ ui_strings.M_CONTEXTMENU_EDIT_ATTRIBUTE = 'Edit attribute';
 ui_strings.M_CONTEXTMENU_EDIT_ATTRIBUTE_VALUE = 'Edit attribute value';
 /* DESC: Context menu item for editing text in the DOM view. */
 ui_strings.M_CONTEXTMENU_EDIT_TEXT = 'Edit text';
+/* DESC: Context menu item for expanding/collapsing a node subtree. */
+ui_strings.M_CONTEXTMENU_EXPAND_COLLAPSE_SUBTREE = 'Expand/collapse subtree';
+
+/* DESC: Context menu item for disabling all declarations in a rule. */
+ui_strings.M_CONTEXTMENU_DISABLE_DECLARATIONS = 'Disable all declarations';
+/* DESC: Context menu item for adding a declaration in a rule. */
+ui_strings.M_CONTEXTMENU_ADD_DECLARATION = 'Add declaration';
+/* DESC: Context menu item for editiing a declaration in a rule. */
+ui_strings.M_CONTEXTMENU_EDIT_DECLARATION = 'Edit declaration';
+/* DESC: Context menu item for showing the color picker. */
+ui_strings.M_CONTEXTMENU_OPEN_COLOR_PICKER = 'Open color picker';
+
 /* DESC: Context menu item for specification links. */
 ui_strings.M_CONTEXTMENU_SPEC_LINK = 'Specification for "%s"';
 /* DESC: Context menu item for breakpoints to add a condition. */
 ui_strings.M_CONTEXTMENU_ADD_CONDITION = 'Add condition';
 /* DESC: Context menu item for breakpoints to edit a condition. */
 ui_strings.M_CONTEXTMENU_EDIT_CONDITION = 'Edit condition';
+
+/* DESC: Context menu item for adding a breakpoint. */
+ui_strings.M_CONTEXTMENU_ADD_BREAKPOINT = 'Add breakpoint';
+/* DESC: Context menu item for removing a breakpoint. */
+ui_strings.M_CONTEXTMENU_REMOVE_BREAKPOINT = 'Remove breakpoint';
+
+/* DESC: Context menu item for adding an item in the storage view. */
+ui_strings.M_CONTEXTMENU_STORAGE_ADD = 'Add item';
+/* DESC: Context menu item for editing an item in the storage view. */
+ui_strings.M_CONTEXTMENU_STORAGE_EDIT = 'Edit item';
+/* DESC: Context menu item for deleting an item in the storage view. */
+ui_strings.M_CONTEXTMENU_STORAGE_DELETE = 'Delete item';
+
+/* DESC: Context menu item for adding a something to watches. */
+ui_strings.M_CONTEXTMENU_ADD_WATCH = 'Add "%s" to watches';
 
 /*
  * Button tool-tips.
@@ -559,14 +604,14 @@ ui_strings.S_INFO_NO_COMPATIBLE_VERSION =  "There is no compatible Opera Dragonf
 
 ui_strings.S_CONFIRM_LOAD_COMPATIBLE_VERSION = "The protocol version of Opera does not match the one which Opera Dragonfly is using.\n\nTry to load a compatible version?";
 /* DESC: The info text in an alert box if the user has specified an invalid port number for remote debugging. */
-ui_strings.S_INFO_NO_VALID_PORT_NUMBER = "Please select a port number between 1 and 65535.";
+ui_strings.S_INFO_NO_VALID_PORT_NUMBER = "Please select a port number between %s and %s.";
 
 /*
  * other strings
  */
 
 /* DESC: Entry format in the call stack view showing the function name, line number and script ID. Please do not modify the %(VARIABLE)s . */
-ui_strings.S_TEXT_CALL_STACK_FRAME_LINE =  "%(FUNCTION_NAME)s: Line %(LINE_NUMBER)s (Script ID %(SCRIPT_ID)s)";
+ui_strings.S_TEXT_CALL_STACK_FRAME_LINE =  "%(FUNCTION_NAME)s: %(SCRIPT_ID)s:%(LINE_NUMBER)s";
 /* DESC: The layout subview showing the box-model metrics of an element. */
 ui_strings.M_VIEW_SUB_LABEL_METRICS =  "Metrics";
 /* DESC: The layout subview showing the parent node chain used to calculøate the offset. */
@@ -614,3 +659,22 @@ ui_strings.S_REPL_HELP_COMMAND_DESC = "Show a list of all available commands";
 /* DESC: Description of the "jquery" command in the repl */
 ui_strings.S_REPL_JQUERY_COMMAND_DESC = "Load jquery in the active tab";
 
+/* DESC: Remote debug guide, connection setup */
+ui_strings.S_REMOTE_DEBUG_GUIDE_PRECONNECT_HEADER = "Steps to enable remote debugging:";
+/* DESC: Remote debug guide, connection setup */
+ui_strings.S_REMOTE_DEBUG_GUIDE_PRECONNECT_STEP_1 = "Specify the port number you wish to connect over, or leave as the default";
+/* DESC: Remote debug guide, connection setup */
+ui_strings.S_REMOTE_DEBUG_GUIDE_PRECONNECT_STEP_2 = "Click “Apply”";
+
+/* DESC: Remote debug guide, waiting for connection */
+ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_HEADER = "On the remote device:";
+/* DESC: Remote debug guide, waiting for connection */
+ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_1 = "Enter opera:debug in the URL field";
+/* DESC: Remote debug guide, waiting for connection */
+ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_2 = "Enter the IP address of the machine running Opera Dragonfly";
+/* DESC: Remote debug guide, waiting for connection */
+ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_3 = "Enter the port number %s";
+/* DESC: Remote debug guide, waiting for connection */
+ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_4 = "Click “Connect”";
+/* DESC: Remote debug guide, waiting for connection */
+ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_5 = "Once connected navigate to the page you wish to debug";

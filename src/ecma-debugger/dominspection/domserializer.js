@@ -165,7 +165,7 @@ window.cls.DOMSerializer.prototype = new function()
             {
               tree += LINEBREAK  + getIndent(node[DEPTH] - start_depth) +
                       "<" + node_name +  attrs + ">" +
-                      one_child_value + 
+                        helpers.escapeTextHtml(one_child_value) +
                       "</" + node_name + ">";
               i = child_pointer - 1;
             }

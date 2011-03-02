@@ -13,15 +13,17 @@ window.cls.Client = function()
   arguments.callee.instance = this;
 
   var self = this;
-  var _client_id = 0;
+  var clients = [];
   var _first_setup = true;
   var _waiting_screen_timeout = 0;
   var cbs = [];
-  var is_connect_callback_called_map = {};
 
-  var _on_host_connected = function(client_id, servicelist)
+  this.current_client = null;
+
+  var _on_host_connected = function(client, servicelist)
   {
-    is_connect_callback_called_map[_client_id] = true;
+    Overlay.get_instance().hide();
+    client.connected = true;
     if(_waiting_screen_timeout)
     {
       clearTimeout(_waiting_screen_timeout);
@@ -67,30 +69,49 @@ window.cls.Client = function()
     }
   }
 
-  var _on_host_quit = function(client_id, port)
+  var _on_host_quit = function(client)
   {
-    if (is_connect_callback_called_map[client_id])
+    var port = client.port;
+    self.current_client = null;
+    if (client.connected)
     {
       window.window_manager_data.clear_debug_context();
       messages.post('host-state', {state: global_state.ui_framework.spin_state = 'inactive'});
-      client.setup();
+      window.client.setup();
+    }
+    else if (self.connection_is_remote(client))
+    {
+      document.getElementById("remote-debug-settings").clearAndRender(
+        window.templates.remote_debug_settings(port + 1)
+      );
+
+      UI.get_instance().get_button("toggle-remote-debug-overlay")
+                       .addClass("alert");
+
+      Overlay.get_instance().set_info_content(
+        ["p", ui_strings.S_INFO_ERROR_LISTENING.replace(/%s/, port)]
+      );
+
+      // Reset this so we don't start in remote debug next time
+      settings.debug_remote_setting.set('debug-remote', false);
+      window.helpers.setCookie('debug-remote', "false");
     }
     else
     {
-      show_error(ui_strings.S_INFO_ERROR_LISTENING.replace(/%s/, port), port);
+      show_info(ui_strings.S_INFO_ERROR_LISTENING.replace(/%s/, port), port);
     }
   }
 
-  var get_quit_callback = function(client_id, port)
+  var get_quit_callback = function(client)
   {
     // workaround for bug CORE-25389
     // onQuit() callback is called twice when
     // creating new client with addScopeClient
     return function()
     {
-      if(client_id == _client_id)
+      if (self.current_client && self.current_client.id == client.id)
       {
-        _on_host_quit(client_id, port);
+        _on_host_quit(client);
       }
     }
   }
@@ -112,54 +133,91 @@ window.cls.Client = function()
       0);
   }
 
+  this.connection_is_remote = function(client)
+  {
+    return client.port != 0;
+  };
+
   this.setup = function()
   {
-    _client_id++;
-    is_connect_callback_called_map[_client_id] = false;
-    window.ini || ( window.ini = {debug: false} );
+    var port = _get_port_number();
+    var client = {
+      id: clients.length + 1,
+      connected: false,
+      port: port
+    };
+    this.current_client = client;
+    clients.push(client);
+
+    window.ini || (window.ini = {debug: false});
     window.messages.post('reset-state');
     if (!opera.scopeAddClient)
     {
       // implement the scope DOM API
       cls.ScopeHTTPInterface.call(opera /*, force_stp_0 */);
     }
-    if( !opera.stpVersion )
+
+    if (!opera.stpVersion)
     {
       // reimplement the scope DOM API STP/1 compatible
       // in case of a (builtin) STP/0 proxy
       cls.STP_0_Wrapper.call(opera);
     }
-    var port = _get_port_number();
-    var cb_index = cbs.push(get_quit_callback(_client_id, port)) - 1;
+
+    var cb_index = cbs.push(get_quit_callback(client)) - 1;
     opera.scopeAddClient(
-        _on_host_connected.bind(this, _client_id),
+        _on_host_connected.bind(this, client),
         cls.ServiceBase.get_generic_message_handler(),
         cbs[cb_index],
         port
       );
+
     if(window.ini.debug && !opera.scopeHTTPInterface)
     {
       cls.debug.wrap_transmit();
     }
-    if(window.topCell)
+
+    this._create_ui(client);
+  };
+
+  // TODO: rename
+  this._create_ui = function(client)
+  {
+    var is_remote_connection = this.connection_is_remote(client);
+    var port = client.port;
+
+    if (!is_remote_connection && window.topCell)
     {
       window.topCell.cleanUp();
     }
+
     if(_first_setup)
     {
       _first_setup = false;
       _waiting_screen_timeout = setTimeout(function() {
-        show_error(ui_strings.S_INFO_WAITING_FORHOST_CONNECTION.replace(/%s/, port), port);
+        show_info(ui_strings.S_INFO_WAITING_FORHOST_CONNECTION.replace(/%s/, port), port);
       }, 250);
+    }
+    else if (is_remote_connection)
+    {
+      UI.get_instance().get_button("toggle-remote-debug-overlay")
+                       .removeClass("alert");
 
+      Overlay.get_instance().set_info_content(
+        window.templates.remote_debug_waiting_help(port)
+      );
+
+      document.getElementById("remote-debug-settings").clearAndRender(
+        window.templates.remote_debug_waiting(port)
+      );
     }
     else
     {
-      show_error(ui_strings.S_INFO_WAITING_FORHOST_CONNECTION.replace(/%s/, port), port);
+      show_info(ui_strings.S_INFO_WAITING_FORHOST_CONNECTION.replace(/%s/, port), port);
     }
-  }
+  };
 
-  var show_error = function(msg, port)
+  var show_info = function(msg, port)
   {
     viewport.innerHTML =
     "<div class='padding' id='waiting-for-connection'>" +
@@ -258,16 +316,49 @@ window.cls.Client = function()
                       services);
   }
 
-  this.on_services_created =  function()
+  this.create_window_controls = function()
   {
-    var window_controls = document.getElementsByTagName('window-controls')[0];
+    var window_controls = document.querySelector("window-controls");
     if (window_controls)
     {
       window_controls.parentNode.removeChild(window_controls);
-    };
+    }
+
+    var is_attached = window.opera.attached;
+
+    var controls = [
+      new Button("toggle-console", "", ui_strings.S_BUTTON_TOGGLE_CONSOLE),
+      new ToolbarSeparator(),
+      new Button("toggle-settings-overlay", "", ui_strings.S_BUTTON_TOGGLE_SETTINGS, "toggle-overlay", {"data-overlay-id": "settings-overlay"}),
+      new Button("toggle-remote-debug-overlay", "", ui_strings.S_BUTTON_TOGGLE_REMOTE_DEBUG, "toggle-overlay", {"data-overlay-id": "remote-debug-overlay"}),
+      new ToolbarSeparator(),
+      window['cst-selects']['debugger-menu'],
+      new Button("top-window-toggle-attach", is_attached ? "attached" : "", is_attached ? ui_strings.S_SWITCH_DETACH_WINDOW : ui_strings.S_SWITCH_ATTACH_WINDOW),
+    ];
+
+    if (is_attached)
+    {
+      controls.push(new Button("top-window-close", "", ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW));
+    }
+
+    document.documentElement.render(templates.window_controls(controls));
+
+    var button = UI.get_instance().get_button("toggle-remote-debug-overlay");
+    if (this.current_client && this.connection_is_remote(this.current_client))
+    {
+      button.addClass("remote-active");
+    }
+    else
+    {
+      button.removeClass("remote-active");
+    }
+  };
+
+  this.on_services_created = function()
+  {
     this.create_top_level_views(window.services);
-    this.setupTopCell(window.services);
-    document.documentElement.render(templates.window_controls());
+    this.setup_top_cell(window.services);
+    this.create_window_controls();
     if(!arguments.callee._called_once)
     {
       if( window.opera.attached )
@@ -300,7 +391,7 @@ window.cls.Client = function()
     }
   }
 
-  this.setupTopCell = function(services)
+  this.setup_top_cell = function(services)
   {
     var tabs = viewport.getElementsByTagName('tab'), i = 0, tab = null;
     for( ; tab = tabs[i]; i++)
@@ -477,6 +568,13 @@ ui_framework.layouts.main_layout =
     // return a layout depending on services
     // e.g. services['ecmascript-debugger'].version
     // e.g. services['ecmascript-debugger'].is_implemented
-    return ['dom_mode', 'js_mode', 'network_mode', 'storage', 'console_mode', 'utils'];
+    return [
+      'dom_mode',
+      {view: 'js_mode', tab_class: JavaScriptTab},
+      'network_mode',
+      'storage',
+      {view: 'console_mode', tab_class: ErrorConsoleTab},
+      'utils'
+    ];
   }
 }

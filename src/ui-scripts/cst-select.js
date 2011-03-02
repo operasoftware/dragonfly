@@ -29,9 +29,9 @@
     */
   this.handleClick = function(target_ele, modal_box, select_obj)
   {
-    return target_ele.nodeName.toLowerCase() != 'cst-option'  && 2 || 
-          ( target_ele.hasAttribute('handler') || 
-            select_obj.checkChange(target_ele) ) && 1  || 0;
+    return ( target_ele.hasAttribute('handler') || 
+            select_obj.checkChange(target_ele) ) && 1 ||
+            target_ele.nodeName.toLowerCase() != 'cst-option'  && 2 || 0;
   };
 
   var modal_box = null;
@@ -129,7 +129,7 @@
       {
         style += "top: " + (bottom - 1) + "px;";
         modal_box.firstElementChild.style.cssText = "max-height: " + max_height + "px;"
-      };
+      }
       if (modal_box_width > max_width && max_width_2 > max_width)
       {
         style += "left: " + (right - Math.min(modal_box_width, max_width_2)) + "px;" +
@@ -138,7 +138,7 @@
       else
       {
         style += "left: " + left + "px; max-width: " + max_width + "px;";
-      };
+      }
       style += "min-width:" + ( select.offsetWidth < max_width ? select.offsetWidth : (  max_width > 0 ? max_width : 0 ) ) + "px;";
       modal_box.style.cssText = style;
       EventHandler.__modal_mode= true;
@@ -652,7 +652,8 @@ CstSelectWithAction.prototype = new CstSelectWithActionBase();
       ["cst-drop-down"],
     "cst-id", select.getId(),
     "handler", select.getId(),
-    "unselectable", "on"
+    "unselectable", "on",
+    "class", "ui-control"
   ].
   concat( select.type ? ['class', select.type] : [] ).
   concat( disabled ? ['disabled', 'disabled'] : [] ).
