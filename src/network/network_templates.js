@@ -57,6 +57,7 @@ templates.network_options_main = function(caching, tracking, headers, overrides)
             templates.network_options_override_list(headers, overrides),
           ],
           "class", "padding network-options",
+          ]
          ];
 };
 
