@@ -326,7 +326,7 @@ cls.CookieManager.CookieManagerViewBase = function()
 
   this.insert_add_cookie_row_after_objectref = function(objectref)
   {
-    if(!document.querySelector(".add_cookie_row")) // (lousy) fix for adding multiple cookies at once
+    if(!document.querySelector(".add_cookie_row")) // fix for adding multiple cookies at once
     {
       this._sortable_table.restore_columns(this._table_elem);
     }
@@ -425,12 +425,12 @@ cls.CookieManager.CookieManagerViewBase = function()
                            path:           path,
                            value:          value,
                            expires:        expires,
-                           is_secure:      +is_secure,
-                           is_http_only:   +is_http_only,
+                           isSecure:      +is_secure,
+                           isHTTPOnly:    +is_http_only,
                            _rt_id:         runtime
                           }, this.data);
 
-        if(!new_cookie._rt_id)
+        if(typeof new_cookie._rt_id !== "number")
         {
           /**
             * Try to find runtime where this might end up to be able to highlight it. Using endsWith
@@ -443,7 +443,7 @@ cls.CookieManager.CookieManagerViewBase = function()
             var last_index = hostname.lastIndexOf(new_cookie.domain);
             if(last_index !== -1 && last_index + new_cookie.domain.length == hostname.length)
             {
-              new_cookie.runtime = this.data._rts[id].rt_id;
+              new_cookie._rt_id = this.data._rts[id].rt_id;
               break;
             }
           };
@@ -462,7 +462,7 @@ cls.CookieManager.CookieManagerViewBase = function()
       else
       {
         // todo: missing required info, needs feedback in UI. will refetch and discard for now.
-        this.data.refetch();
+        callback_after_set_cookie.call(this);
       }
     }
   }
@@ -712,7 +712,10 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
 
   this.insert_add_cookie_row_after_objectref = function(objectref)
   {
-    this._sortable_table.restore_columns(this._table_elem);
+    if(!document.querySelector(".add_cookie_row")) // fix for adding multiple cookies at once
+    {
+      this._sortable_table.restore_columns(this._table_elem);
+    }
     var row = document.querySelector("[data-object-id='"+objectref+"']");
     var default_domain = this.data.get_cookie_by_objectref(objectref)._rt_hostname;
     var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row_all_editable(default_domain));

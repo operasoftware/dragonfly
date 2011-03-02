@@ -244,7 +244,7 @@ cls.CookieManager.CookieDataBase = function()
         _rt_path:     rt.pathname
       }, this)
     );
-    this._view.update()
+    this._view.update();
   };
 
   this._handle_js_retrieved_cookies = function(status, message, rt_id)
@@ -270,7 +270,7 @@ cls.CookieManager.CookieDataBase = function()
 
               _rt_runtime:  rt_id,
               _rt_protocol: rt.protocol,
-              _rt_hostname:   rt.hostname,
+              _rt_hostname: rt.hostname,
               _rt_path:     rt.pathname
             }, this)
           );
@@ -304,11 +304,17 @@ cls.CookieManager["1.1"].CookieManagerData = function(service_version, view)
   {
     var callback = callback || (function(){});
     this._view._restore_selection = [cookie_instance._objectref];
-    // todo: work around CORE-36742 - possibly move that to the Cookie class
+
+    // work around CORE-36742, cookies with path "/" don't show up on document.cookie, "" to be used instead
+    var path_val = cookie_instance.path;
+    if(path_val && path_val.trim() === "/")
+    {
+      path_val = "";
+    }
     var cookie_detail_arr = [
       cookie_instance.domain,
       cookie_instance.name,
-      (cookie_instance.path || "/"),
+      path_val,
       cookie_instance.value,
       cookie_instance.expires / 1000,
       cookie_instance.isSecure,
