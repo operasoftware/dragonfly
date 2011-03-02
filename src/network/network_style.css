@@ -61,7 +61,7 @@
   border-top: none;
 }
 
-.network-log-url-list li:nth-child(even) {
+.network-log-url-list li:nth-child(odd) {
   background-color: rgba(0,0,0,0.025);
 }
 
@@ -76,13 +76,13 @@
 
 .network-log-url-list li span + span {
   padding-left: 5px;
-  width: 189px;
+  width: 186px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
-.log-url-list-status {
+.network-log-url-list .log-url-list-status {
   width: 20px;
 }
 
@@ -247,13 +247,11 @@ button[handler="close-request-detail"]
   border: solid thin black;
 }
 
-
 /* Options */
 .network-options
 {
   padding: 0px 30px;
 }
-
 
 .header-override-input
 {
