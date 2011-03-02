@@ -240,16 +240,6 @@ window.eventHandlers.click['set-break-point'] = function(event)
   }
 };
 
-window.eventHandlers.click['create-all-runtimes'] = function()
-{
-  services['ecmascript-debugger'].createAllRuntimes();
-};
-
-window.eventHandlers.click['update-global-scope'] = function(event)
-{
-  window.eventHandlers.click['show-frame']({'target': { 'ref-id': 0 } });
-};
-
 window.eventHandlers.click['inspect-object-link'] = function(event, target)
 {
   var rt_id = parseInt(target.getAttribute('rt-id'));
