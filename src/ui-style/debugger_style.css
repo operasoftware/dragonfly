@@ -773,7 +773,7 @@ breadcrumb span
 }
 
 parent-node-chain breadcrumb {
-    color: #999;
+    color: rgba(0, 0, 0, .5);
 }
 breadcrumb.parent-offset
 {
