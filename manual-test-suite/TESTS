@@ -1138,9 +1138,6 @@ desc:
   - Add some key and value
   - Reload the document
   - Verify that there is a new created cookie with the according key and value.
-  - In case the host has the cookie-service:
-  - When you have entered values, try to sort by a different column. Also reload the document.
-  - Verify that the values are still there and you can finish adding the cookie.
 
 id: 00600
 label: Refresh
@@ -1153,7 +1150,7 @@ id: 00700
 label: Sort cookies
 desc:
   In case the host has the cookie-service:
-  - While you are not editing / adding: Sort the table by 'Name' and 'Expires'
+  - Sort the table by 'Name' and 'Expires'
   - Verify that the order makes sense
 
 id: 00800
