@@ -1378,6 +1378,42 @@ desc:
   - Press the 'Dispatch custom event 'test'' button in the test document
   - Verify that the debugger stops on entering the 'test' function
 
+Scripts.Watches
+*******************
+
+url: ./test-cases/breakpoints/breakpoints.html
+
+id: 00100
+label: Add a watch
+desc:
+  - Open the test case
+  - Select the 'Scripts' tab and reload the document
+  - Set a breakpoint on line 8 in script 'a.js'
+  - Select the 'State' tab and expand the 'Watches' section
+  - Click the 'Add' button, write 'i' and add the watch by hitting 'Enter'
+  - Verify that 'i' now has the value 'Error'
+  - Hit the 'test' button
+  - Verify that 'i' has now the value 0
+  - Continue with hitting the 'Continue' button or with 'F8'
+  - Verify that i updates accordingly and fals back to 'Error' at the end
+  - Add an other watch 'document'
+  - Verify that 'document' is an expandable entry
+
+id: 00200
+label: Right click option for a watch entry
+desc:
+  - Select the 'Scripts' tab and reload the document
+  - Select the 'State' tab and expand the 'Watches' section
+  - Add a watch 'document'
+  - Right click the watch and select 'Edit'
+  - Change the value to 'window'
+  - Verify that the entry is now an expandable 'Window' object
+  - Right click the watch and select 'Delete'
+  - Verify that the watch is removed from the view
+  - Right click the panel, select 'Add' and verify that you can some watch  
+
+
+
 Network.Request Log
 *******************
 
