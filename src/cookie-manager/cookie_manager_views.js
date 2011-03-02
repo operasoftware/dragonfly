@@ -167,13 +167,13 @@ cls.CookieManager.CookieManagerViewBase = function()
 
     this._tabledef = {
       groups: {
-        host_and_path: {
-          label: ui_strings.S_LABEL_COOKIE_MANAGER_GROUPER_HOST_AND_PATH,
+        runtime: {
+          label: ui_strings.S_LABEL_COOKIE_MANAGER_GROUPER_RUNTIME,
           grouper: function(obj) {
-            return obj._rt_hostname + obj._rt_path;
+            return obj._rt_id;
           },
           renderer: function(groupvalue, obj) {
-            return window.templates.cookie_manager.hostname_group_render(obj[0]._rt_protocol, obj[0]._rt_hostname, obj[0]._rt_path);
+            return window.templates.cookie_manager.runtime_group_render(obj[0]._rt_protocol, obj[0]._rt_hostname, obj[0]._rt_path);
           }
         }
       },
@@ -253,7 +253,7 @@ cls.CookieManager.CookieManagerViewBase = function()
       }
     };
     this.sortby = "domain";
-    this.groupby = "host_and_path";
+    this.groupby = "runtime";
 
     this.init(id, name, container_class);
   };
@@ -517,8 +517,6 @@ cls.CookieManager.CookieManagerViewBase = function()
     for (var i=0; i < rows.length; i++) {
       rows[i].setAttribute("handler", "cookiemanager-row-select");
       var objectref = rows[i].getAttribute("data-object-id");
-      // todo: find out why this sometimes doesn't work on startup
-      // console.log("this.data",this.data,"this.data.get_cookie_by_objectref", this.data.get_cookie_by_objectref, "this.data.get_cookie_by_objectref(objectref)", this.data.get_cookie_by_objectref(objectref));
       if(this.data.get_cookie_by_objectref(objectref)._is_editable)
       {
         rows[i].setAttribute("edit-handler", "cookiemanager-init-edit-mode");
@@ -530,7 +528,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     };
   }
 
-  this._fuzzy_date = function(date) // todo: move to templates?
+  this._fuzzy_date = function(date)
   {
     var compare_date = new Date();
     var diff = date.getTime() - compare_date.getTime();

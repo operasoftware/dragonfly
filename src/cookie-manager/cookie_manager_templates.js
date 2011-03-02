@@ -1,7 +1,7 @@
 window.templates || (window.templates = {});
 
 templates.cookie_manager = {
-  hostname_group_render: function(protocol, domain, path) {
+  runtime_group_render: function(protocol, domain, path) {
     return this.wrap_ellipsis(protocol + "//" + domain + path);
   },
   wrap_ellipsis: function(elem) {
