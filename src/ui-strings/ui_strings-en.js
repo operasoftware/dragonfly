@@ -526,8 +526,8 @@ ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRED = "(expired)";
 ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY = "HTTP only";
 /* DESC: Label for isSecure flag on a cookie, set if cookie is only transmitted on secure connections */
 ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY = "Secure";
-/* DESC: Label for grouping by (location.hostname + location.pathname) */
-ui_strings.S_LABEL_COOKIE_MANAGER_GROUPER_HOST_AND_PATH = "host and path";
+/* DESC: Label for grouping by runtime (lowercase) */
+ui_strings.S_LABEL_COOKIE_MANAGER_GROUPER_RUNTIME = "runtime";
 /* DESC: Context menu entry that brings up "Add cookie" UI, Label for "Add Cookie" button */
 ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE = "Add Cookie";
 /* DESC: Context menu entry that brings up "Edit cookie" UI */
