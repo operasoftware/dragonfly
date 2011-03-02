@@ -724,6 +724,33 @@ ui_strings.S_NETWORK_GRAPH_DURATION_HOVER_CACHED = "Cached: %s ms";
 /* DESC: String describing duration of a request when hovering it in the graph. Applied to NON-cached requests */
 ui_strings.S_NETWORK_GRAPH_DURATION_HOVER_NORMAL = "Total duration: %(total)s ms\nRequest time: %(request)s ms\nResponse time: %(response)s ms";
 
+
+/* DESC: Name of protocol column */
+ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PROTOCOL = "Protocol";
+/* DESC: Name of host column */
+ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_HOST = "Host";
+/* DESC: Name of path column */
+ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PATH = "Path";
+/* DESC: Name of mime column */
+ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_MIME = "Mime";
+/* DESC: Name of type column */
+ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_TYPE = "Type";
+/* DESC: Name of size column */
+ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_SIZE = "Size";
+/* DESC: Name of pretty printed size column */
+ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PPSIZE = "Size (pretty printed)";
+/* DESC: Name of hosts size group */
+ui_strings.S_RESOURCE_ALL_TABLE_GROUP_HOSTS = "Hosts";
+/* DESC: Name of types size group */
+ui_strings.S_RESOURCE_ALL_TABLE_GROUP_GROUPS = "Groups";
+/* DESC: Fallback text for unknown groups */
+ui_strings.S_RESOURCE_ALL_TABLE_UNKNOWN_GROUP = "Unknown";
+/* DESC: Fallback text for no host */
+ui_strings.S_RESOURCE_ALL_TABLE_NO_HOST = "No host";
+/* DESC: "Not applicable" abbreviation */
+ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE = "n/a";
+
+
 /* DESC: Context menu entry to select that there should be no grouping in the table */
 ui_strings.M_SORTABLE_TABLE_CONTEXT_NO_GROUPING = "No grouping";
 /* DESC: Context menu entry to selecting to group by %s */
