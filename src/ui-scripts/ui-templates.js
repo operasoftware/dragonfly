@@ -27,7 +27,7 @@
 
   this.top_tab = function(obj, is_active_tab)
   {
-    return ['tab', [['span', "class", "icon " + obj.ref_id], obj.name],
+    return ['tab', [['span', "class", "icon " + obj.ref_id], ['span', "class", "badge"], obj.name],
             'handler', 'tab',
             'ref-id', obj.ref_id
     ].concat(is_active_tab ? ['class', 'active'] : [] );
@@ -55,19 +55,19 @@
     for (var i = 0, item; item = items[i]; i++)
     {
       var icon = "";
-      if (!!item.checked || (settings[item.menu_id] && !!settings[item.menu_id].get(item.id)))
+      if (item.checked || (settings[item.menu_id] && settings[item.menu_id].get(item.settings_id)))
       {
-        icon = "✔";
+        icon = "check";
       }
-      else if (!!item.selected)
+      else if (item.selected)
       {
-        icon = "⚫";
+        icon = "radio";
       }
 
       if (!item.separator)
       {
         ret.push(["li",
-            [["span", icon, "class", "contextmenu-icon"], ["span", item.label]],
+            [["span", "class", "contextmenu-icon " + icon], ["span", item.label]],
             "data-handler-id", item.id,
             "data-menu-id", item.menu_id,
             "class", item.disabled ? "disabled" : ""
@@ -141,7 +141,7 @@
     return (
     ['toolbar-search', 
       ['button', 
-        'class', 'search', 
+        'class', 'search ui-control', 
         'handler', 'show-search',
         'title', ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH,
         'is-active', String(search.is_active)
@@ -171,12 +171,12 @@
       ret[ret.length] =
         ['button',
           'handler', button.handler,
-          'title', button.title
+          'title', button.title,
+          'class', button.handler + ' ui-control' + (button.class_name ? ' ' + button.class_name : '')
         ].concat(
             button.id ? ['id', button.id] : [],
             button.disabled ? ['disabled', 'disabled'] : [],
-            button.param ? ['param', button.param] :[],
-            button.class_name ? ['class', button.class_name] :[]
+            button.param ? ['param', button.param] :[]
         );
     }
     return ret;
@@ -205,7 +205,7 @@
             'title', setting.label,
             'key', _switch,
             'is-active', setting.value ? 'true' : 'false',
-            'class', 'switch'
+            'class', _switch + ' ui-control switch'
           ];
       }
       else
@@ -275,60 +275,19 @@
     return ret;
   }
 
-  this.window_controls = function()
+  this.window_controls = function(controls)
   {
     var is_attached = window.opera.attached;
+    var template = [];
+    for (var i = 0, control; control = controls[i]; i++)
+    {
+      template.push(control.get_template());
+    }
+
     return [
       'window-controls',
-      [
-        [
-          'button',
-          'handler', 'toggle-console',
-          'class', 'switch',
-          'title', ui_strings.S_BUTTON_TOGGLE_CONSOLE
-        ],
-        [
-          'toolbar-separator'
-        ],
-        [
-          'button',
-          'handler', 'toggle-settings-overlay',
-          'class', 'switch',
-          'title', ui_strings.S_BUTTON_TOGGLE_SETTINGS
-        ],
-        [
-          'button',
-          'handler', 'toggle-remote-debug-config-overlay',
-          'class', 'switch',
-          'title', ui_strings.S_BUTTON_TOGGLE_REMOTE_DEBUG
-        ],
-        [
-          'toolbar-separator'
-        ],
-        window['cst-selects']['debugger-menu'].select_template(),
-        is_attached
-        ? [
-          'button',
-          'handler', 'top-window-toggle-attach',
-          'class', 'switch attached',
-          'title', ui_strings.S_SWITCH_DETACH_WINDOW
-          ]
-        : [
-          'button',
-          'handler', 'top-window-toggle-attach',
-          'class', 'switch',
-          'title', ui_strings.S_SWITCH_ATTACH_WINDOW
-        ],
-        is_attached
-        ? [
-            'button',
-            'handler', 'top-window-close',
-            'title', ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW
-          ]
-        : [],
-        'class', 'attached',
-        'id', 'window-controls-to-main-view'
-      ]
+      template,
+      'class', 'attached'
     ];
   };
 
@@ -404,7 +363,8 @@
         [
           ["overlay-arrow"],
           ["overlay-tabs", tabs],
-          ["overlay-content"]
+          ["overlay-info"],
+          ["overlay-content"],
         ]
       ]
     ];

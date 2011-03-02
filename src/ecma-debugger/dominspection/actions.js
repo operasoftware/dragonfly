@@ -697,19 +697,31 @@ cls.DOMInspectorActions = function(id)
     }
   }.bind(this);
 
-  this._handlers["remove-attribute"] = function(event, target)
+  this._remove_from_dom = function(event, target, script)
   {
     var ele = event.target.has_attr("parent-node-chain", "ref-id");
-    var rt_id = parseInt(ele.get_attr("parent-node-chain", "rt-id"));
-    var ref_id = parseInt(ele.get_attr("parent-node-chain", "ref-id"));
-    var attr = target.textContent;
-    var tag = 0;
-    if (!settings.dom.get("update-on-dom-node-inserted"))
+    if (ele)
     {
-      var cb = window.dom_data.remove_node.bind(window.dom_data, rt_id, ref_id);
-      tag = tag_manager.set_callback(null, cb);
+      var rt_id = parseInt(ele.get_attr("parent-node-chain", "rt-id"));
+      var ref_id = parseInt(ele.get_attr("parent-node-chain", "ref-id"));
+      var tag = 0;
+      if (!settings.dom.get("update-on-dom-node-inserted"))
+      {
+        var cb = window.dom_data.remove_node.bind(window.dom_data, rt_id, ref_id);
+        tag = tag_manager.set_callback(null, cb);
+      }
+      services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, script, [["el", ref_id]]]);
     }
-    services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, "el.removeAttribute(\"" + attr + "\")", [["el", ref_id]]]);
+  }.bind(this);
+
+  this._handlers["remove-attribute"] = function(event, target)
+  {
+    this._remove_from_dom(event, target, "el.removeAttribute(\"" + target.textContent + "\")");
+  }.bind(this);
+
+  this._handlers["remove-node"] = function(event, target)
+  {
+    this._remove_from_dom(event, target, "el.parentNode.removeChild(el)");
   }.bind(this);
 
   this._handlers["edit-next"] = function(event, target)
@@ -860,7 +872,7 @@ window.eventHandlers.click['dom-inspection-snapshot'] = function(event, target)
   this.broker.dispatch_action("dom", "expand-whole-dom", event, target);
 };
 
-window.eventHandlers.click['dom-resource-link'] = function (event, target)
+window.eventHandlers.click['dom-resource-link'] = function(event, target)
 {
   this.broker.delay_action("click", "dom", "dom-resource-link", event, target);
 };

@@ -64,11 +64,6 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
     return null;
   }
 
-  this._check_raw_request = function()
-  {
-
-  };
-
   this._parse_request = function(requeststr)
   {
     var retval = {};
@@ -120,12 +115,12 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
       }
       else
       {
-        var parts = line.match(/([\w-]*?): (.*)/);
+        var parts = line.match(/([\w-]*?):(.*)/);
         if (!parts || parts.length!=3) {
           opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + "Crafter could not parse header!:\n" + line);
           continue;
         }
-        headers.push([parts[1], parts[2]]);
+        headers.push([parts[1], parts[2].trim()]);
       }
     }
 
@@ -135,7 +130,6 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
   this._send_request = function(requestdata)
   {
     var url = this._urlfield.get_value();
-    if (url.lastIndexOf("/") != url.length)
     var windowid = window_manager_data.get_debug_context();
     var request = [
       windowid,
@@ -146,7 +140,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
       3, // header policy. 2 == overwrite, 3 == replace
       2, // reload policy. 2 == no cache, always reload from network
       null, // request content mode
-      [1, 1]
+      [1, 1] // response content mode 1 == string, 1 == decodee
     ];
     this._listening_for = null;
     this._resources = [];

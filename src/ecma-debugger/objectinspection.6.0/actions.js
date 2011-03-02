@@ -28,11 +28,10 @@
     const PATH_PROTO_INDEX = 2;
 
     var
-    parent = target.parentNode,
-    data_model = window.inspections[parent.get_attr('parent-node-chain', 'data-id')],  
-    is_unfolded = target.hasAttribute('is-unfolded'),
-    path = get_path(parent),
-    name = parent.getElementsByTagName('key')[0].textContent;
+    data_model = window.inspections[target.get_attr('parent-node-chain', 'data-id')],
+    is_unfolded = target.hasClass('unfolded'),
+    path = get_path(target),
+    name = target.getElementsByTagName('key')[0].textContent;
 
     if (is_unfolded)
       data_model.collapse_prototype(path);
@@ -40,7 +39,7 @@
       data_model.expand_prototype(path);
     var index = path.pop()[PATH_PROTO_INDEX];
     var templ = window.templates.inspected_js_prototype(data_model, path, index, name);
-    parent.parentNode.re_render(templ);
+    target.parentNode.re_render(templ);
   }
 
   window.eventHandlers.click['examine-object'] = function examine_objects(event, target)

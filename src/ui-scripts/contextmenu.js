@@ -12,6 +12,7 @@ function ContextMenu() {
    * All registered context menus.
    */
   this._registered_menus = {};
+  this._current_items = null;
 
   this._broker = ActionBroker.get_instance();
 
@@ -98,11 +99,11 @@ function ContextMenu() {
           };
         });
         this.register("spec", items);
-      }
 
-      if (all_items.length)
-      {
-        all_items.push(ContextMenu.separator);
+        if (all_items.length)
+        {
+          all_items.push(ContextMenu.separator);
+        }
       }
 
       if (items)
@@ -110,6 +111,8 @@ function ContextMenu() {
         all_items = all_items.concat(items);
       }
     }
+
+    this._current_items = all_items;
 
     if (all_items.length)
     {
@@ -190,12 +193,6 @@ function ContextMenu() {
     this.is_shown = false;
   };
 
-  this._get_uid = (function()
-  {
-    var uid = 0;
-    return function() {return "item_" + (++uid);};
-  })();
-
   this._expand_all_items = function(items, event, menu_id)
   {
     var all_items = [];
@@ -218,7 +215,7 @@ function ContextMenu() {
 
     for (var i = 0, item; item = all_items[i]; i++)
     {
-      item.id = item.id || this._get_uid();
+      item.id = "item_" + i;
       if (menu_id)
       {
         item.menu_id = menu_id;
@@ -240,15 +237,24 @@ function ContextMenu() {
 
     while (target != contextmenu && target != document)
     {
-      if (target.getAttribute("data-handler-id"))
+      var handler_id = target.getAttribute("data-handler-id");
+      if (handler_id)
       {
-        var items = this._registered_menus[target.getAttribute("data-menu-id")];
-        items = this._expand_all_items(items, this._current_event);
+        var menu_id = target.getAttribute("data-menu-id");
+        var items = this._current_items;
         for (var i = 0, item; item = items[i]; i++)
         {
-          if (item.id == target.getAttribute("data-handler-id"))
+          if (item.id == handler_id && item.menu_id == menu_id)
           {
-            item.handler(this._current_event, target);
+            var current_target = this._current_event.target;
+            while (current_target && (menu_id == "spec"
+                        ? current_target.getAttribute("data-spec") === null
+                        : current_target.getAttribute("data-menu") != menu_id)
+            )
+            {
+              current_target = current_target.parentNode;
+            }
+            item.handler(this._current_event, current_target);
           }
         }
       }

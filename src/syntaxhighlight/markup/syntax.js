@@ -65,14 +65,14 @@
        return;
     }
 
-    if ((token_type == ML_SCRIPT_DATA) && window.templates.highlight_js_source)
+/*    if ((token_type == ML_SCRIPT_DATA) && window.templates.highlight_js_source)
     {
       context.template.push(context.text);
    //   context.template.push("");
       context.text = token;
       next_markup_handler = script_markup_handler;
       return;
-    }
+    } */
     context.text += token;
     return;
   }

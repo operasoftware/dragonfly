@@ -107,6 +107,9 @@ ul {
 {
   background-image: url("../ui-images/expand-collapse-inverted.gif");
 }
+.unfolded > .folder-key {
+  background-position: 0px -11px;
+}
 
 .folder-key[disabled="true"] {
   opacity: .3;
@@ -149,6 +152,12 @@ ul {
 
 #backtrace-container .file-line {
   color: #999;
+}
+
+#backtrace-container .not-stopped {
+  cursor: auto;
+  color: #999;
+  font-style: italic;
 }
 
 #ecma-debugger-toolbar {
@@ -248,7 +257,7 @@ input[type="text"] {
 /*** views ***/
 
 .padding {
-  padding:9px;
+  padding:5px;
   box-sizing: border-box;
   }
 
@@ -384,7 +393,7 @@ property:hover .enable-disable,
 rule, font-face-rule, page-rule, import-rule, charset-rule, media-rule {
   display:block;
   /*xxwhite-space: pre-wrap;*/
-  margin: 0 0 1em;
+  margin: 5px 0;
   }
 
 /* This selectors are super slow, find replacement
@@ -417,7 +426,7 @@ category, header, styles, stylesheet-link {
 
 stylesheet-link {
   text-align:right;
-  color: #ccc;
+  color: #999;
   text-decoration: underline;
   float: right;
   margin-left: 10px;
@@ -430,13 +439,18 @@ stylesheet-link:hover {
   color: #666;
   }
 
+stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
+  text-decoration: none;
+  color: #666;
+}
+
 styles {
   /*xxwhite-space: pre-wrap;*/
   padding: 8px 4px;
   }
 
 .unfolded styles {
-  padding: 5px;
+  padding: 0 5px;
   }
 
 header {
@@ -473,16 +487,8 @@ input.unfolded {
   -o-transform: rotate(90deg);
   }
 
-.overwritten {
-  text-decoration: line-through;
-  }
-
-.css-inspector .overwritten value:after {
-  color: #c90;
-  }
-
 .css-inspector .selected {
-  background-color: #bbcef1;
+  background-color: #d4e3f4;
   }
 .css-inspector property.selected {
     border-radius: 3px;
@@ -492,13 +498,14 @@ input.unfolded {
   background-color: transparent;
   }
 
-.css-inspector h2 {
+.css-inspector h2,
+.css-layout h2 {
   font-size: 1em;
   font-weight: normal;
   border: 0 solid #b3b3b3;
   border-width: 1px 0;
   background-color: #eee;
-  margin: 10px -5px;
+  margin: 5px -5px;
   padding-left: 4px;
   }
 
@@ -513,7 +520,7 @@ examine-objects
 }
 examine-objects examine-objects
 {
-  background: transparent url('../ui-images/dom-tree-style.gif') scroll repeat-y 5px 0;
+  background: transparent url('../ui-images/dom-tree-style.png') scroll repeat-y 5px 0;
 }
 examine-objects examine-objects
 {
@@ -529,21 +536,24 @@ examine-objects key.no-expander
 }
 .prototype-chain-object
 {
-  background-color: #666;
-  color: #fff;
-  font-weight: bold;
+  background-color: #d7d7d7;
+  color: #111;
   padding: 1px 2px;
   margin: 2px -2px;
 }
 .prototype-chain-object key
 {
-  color: #fff;
+  color: #111;
+}
+.prototype-chain-object.unfolded
+{
+  border: none;
 }
 .css-layout layout-container
 {
   display: table;
   margin: 0 auto;
-  padding: 15px;
+  padding: 5px;
   max-width: 250px;
   font-size: 11px;
 }
@@ -625,11 +635,6 @@ offsets value  {
   padding-left: 8px;
 }
 
-stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
-  text-decoration: none;
-  color: hsl(0, 0%, 50%);
-}
-
 .info-text {
   margin: 10px 0;
   padding: 8px;
@@ -650,7 +655,6 @@ div.dom {
 {
   padding-left: 1px;
   padding-right: 3px;
-  border-left: 1px solid transparent; /* TODO: why this instead of padding? */
 }
 
 
@@ -677,17 +681,6 @@ div.dom {
 {
   padding-right: 1ex;
 }
-
-
-.css-layout h2 {
-  font-size: 1em;
-  border: 1px solid #ccc;
-  border-width: 1px 0;
-  background-color: hsl( 0, 0% , 95%);
-  padding: 2px;
-  margin: 7px -9px;
-  text-align: center;
-  }
 
 .css-layout > div > h2:first-child {
 
@@ -779,10 +772,12 @@ breadcrumb span
   line-height: 15px;
 }
 
-breadcrumb span.parent-offset
+parent-node-chain breadcrumb {
+    color: #999;
+}
+breadcrumb.parent-offset
 {
-  color: #900;
-  font-weight: bold;
+  color: #000;
 }
 
 breadcrumb span:hover, .css-layout breadcrumb span:hover
@@ -857,28 +852,16 @@ d
 {
   display: table-cell;
   vertical-align: top;
-  width: 260px;
   padding: 0 5px;
-  margin: auto;
-  text-align: center;
 }
 
 .color-picker h2,
 .manage-stored-colors h2
 {
-  background-color: hsl(0, 0%, 95%);
-  padding: .2em .5em;
-  font-size: 1.3em;
-  font-weight: normal;
-  border: 1px solid #ccc;
+  font-size: 1em;
+  font-weight: bold;
 }
 
-.color-picker p
-{
-  margin: .8em;
-  padding: 0;
-
-}
 .color-picker pre
 {
   margin: .8em 3em;
@@ -974,7 +957,6 @@ d
 #center-color
 {
   height: 40px;
-  margin:.8em 3em;
   border: 1px solid #666;
 }
 
@@ -1251,8 +1233,12 @@ d
   height: 14ex;
   margin: 0;
   padding: 2px 5px;
-  border: 0px;
   background-color: #fff;
+  border: 1px solid #8e8e8e;
+  border-radius: 3px;
+}
+.storage-table textarea {
+  border: 0;
 }
 
 .storage-table .new-key
@@ -1279,9 +1265,9 @@ d
     margin: 0 2px;
 }
 
-#about-authors pre
+#about-authors
 {
-  padding: 0 2em;
+  white-space: pre;
 }
 
 color-sample
@@ -1308,7 +1294,7 @@ property.disabled color-sample
 
 .event-list
 {
-  padding: 3px 0 3px 24px;
+  padding: 4px;
 }
 
 .event-breakpoints li:first-child header
@@ -1319,14 +1305,6 @@ property.disabled color-sample
 .search-no-match
 {
   opacity: .3;
-}
-
-.controls
-{
-  text-align: right;
-  border-bottom: 1px solid #ccc;
-  margin-left: -24px;
-  padding-left: 24px;
 }
 
 .no-match

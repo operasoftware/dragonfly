@@ -86,13 +86,13 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
 
   this._make_context_menu = function(evt)
   {
-    var table = evt.target;
-    while (table.nodeName.toLowerCase() != "table") { table = table.parentNode };
-    var obj = ObjectRegistry.get_instance().get_object(table.getAttribute("data-object-id"));
+    var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id')
+    opera.postError(obj_id)
+    var obj = ObjectRegistry.get_instance().get_object(obj_id);
     if (!obj.tabledef.groups) { return [] }
 
     var menuitems = [{
-      label: "No grouping",
+      label: ui_strings.M_SORTABLE_TABLE_CONTEXT_NO_GROUPING,
       selected: !obj.groupby,
       handler: obj._make_group_handler(null)
     }];
@@ -100,12 +100,11 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
     for (var group in obj.tabledef.groups)
     {
       menuitems.push({
-        label: "Group by " + (obj.tabledef.groups[group].label || group),
+        label: ui_strings.M_SORTABLE_TABLE_CONTEXT_GROUP_BY.replace("%s", obj.tabledef.groups[group].label || group),
         selected: obj.groupby == group,
         handler: obj._make_group_handler(group)
       });
     }
-
 
     // visible column selection stuff
     menuitems.push(ContextMenu.separator);
@@ -148,11 +147,11 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
   this._make_group_handler = function(group)
   {
     return function(evt) {
-      var target = evt.target;
-      while (target.nodeName.toLowerCase() != "table") { target = target.parentNode };
-      var obj = ObjectRegistry.get_instance().get_object(target.getAttribute("data-object-id"));
+      debugger;
+      var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id')
+      var obj = ObjectRegistry.get_instance().get_object(obj_id);
       obj.group(group);
-      target.re_render(obj.render());
+      evt.target.re_render(obj.render());
       obj.post_message("rendered");
     }
   }
@@ -160,11 +159,10 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
   this._make_colselect_handler = function(col)
   {
     return function(evt) {
-      var target = evt.target;
-      while (target.nodeName.toLowerCase() != "table") { target = target.parentNode };
-      var obj = ObjectRegistry.get_instance().get_object(target.getAttribute("data-object-id"));
+      var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id')
+      var obj = ObjectRegistry.get_instance().get_object(obj_id);
       obj.togglecol(col);
-      target.re_render(obj.render());
+      evt.target.re_render(obj.render());
       obj.post_message("rendered");
     }
   }
@@ -172,8 +170,10 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
   this._sort_handler = function(evt, target)
   {
     var table = target.parentNode.parentNode;
-    var obj = ObjectRegistry.get_instance().get_object(table.getAttribute("data-object-id"));
-    obj.sort(target.getAttribute("data-column-id"));
+    var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id')
+    var obj = ObjectRegistry.get_instance().get_object(obj_id);
+    var col_id = evt.target.get_attr('parent-node-chain', 'data-column-id')
+    obj.sort(col_id);
     table.re_render(obj.render());
     obj.post_message("rendered");
   }
@@ -255,7 +255,7 @@ templates.sortable_table = function(tabledef, data, objectid, cols, groupby, sor
           templates.sortable_table_header(tabledef, cols, sortby, reversed),
           templates.sortable_table_body(tabledef, data, cols, groupby, sortby, reversed),
           "class", "sortable-table",
-          "data-object-id", objectid,
+          "data-table-object-id", objectid,
           "data-menu", "sortable-table-grouper"
          ]
 }

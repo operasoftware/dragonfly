@@ -1,6 +1,6 @@
 ﻿/* Font stack defaults */
-viewport, .info-box, #about-authors pre, button {
-  font-family: "Dejavu Sans", "Bitstream Vera Sans", "Lucida Grande", "Segoe UI", Tahoma, sans-serif;
+viewport, .info-box {
+  font-family: "Lucida Grande", "Dejavu Sans", "Bitstream Vera Sans", "Segoe UI", Tahoma, sans-serif;
   font-size: 11px;
   color: #444;
 }
@@ -58,8 +58,11 @@ panel-container {
   position: relative;
 }
 
-top-toolbar, top-tabs, modebar, tabs {
+top-toolbar, top-tabs, tabs {
     border-bottom: 1px solid #999;
+}
+modebar {
+    border-top: 1px solid #999;
 }
 
 /* set with css. height, border and padding are supported */
@@ -73,7 +76,7 @@ top-container { /**/
 container { /**/
   border-left: 1px solid #999;
   border-right: 1px solid #999;
-  background-color: #fefefe;
+  background-color: #fafafa;
   overflow: hidden;
   } 
 
@@ -86,8 +89,7 @@ window-statusbar { /**/
   }
 
 info { /**/
-  padding: 0 3px;
-  line-height: 21px;
+  padding: 0 7px;
   }
 
 
@@ -99,13 +101,12 @@ top-toolbar { /**/
   height: 22px;
   padding: 5px 4px 3px 4px;
   background: #f3f3f3 url("../ui-images/shine_1_attached.png") repeat-x;
-  }
-
+}
 
 
 window-toolbar { /**/
   display: block;
-  }
+}
 
 /* set with css. height, border and padding are supported */
 
@@ -128,129 +129,140 @@ toolbar-buttons, toolbar-switches {
 button[handler="reload-window"] {
     content: url("../ui-images/icons/icon_reload.png");
 }
-[handler="top-window-close"] {
-    content: url("../ui-images/icons/icon_close.png");
-}
-[handler="toggle-console"] {
+/* Window control buttons */
+#toggle-console {
     content: url("../ui-images/icons/icon_console.png");
 }
-[handler="toggle-settings-overlay"] {
+#toggle-settings-overlay {
     content: url("../ui-images/icons/icon_settings.png");
 }
-[handler="toggle-remote-debug-config-overlay"] {
+#toggle-remote-debug-overlay {
     content: url("../ui-images/icons/icon_remote.png");
 }
-[handler="top-window-toggle-attach"] {
+#toggle-remote-debug-overlay.remote-active {
+    content: url("../ui-images/icons/icon_remote_active.png");
+}
+#toggle-remote-debug-overlay.alert {
+    content: url("../ui-images/icons/icon_remote_alert.png");
+}
+#top-window-toggle-attach {
     content: url("../ui-images/icons/icon_attach.png");
 }
-[handler="top-window-toggle-attach"].attached  {
+#top-window-toggle-attach.attached  {
     content: url("../ui-images/icons/icon_detach.png");
 }
-[handler="dom-inspection-snapshot"] {
-    content: url("../ui-images/icons/icon_expand.png");
+#top-window-close {
+    content: url("../ui-images/icons/icon_close.png");
 }
-[handler="dom-inspection-export"] {
-    content: url("../ui-images/icons/icon_export.png");
-}
-[handler="show-search"] {
+
+/* View buttons */
+.search {
     content: url("../ui-images/icons/icon_search.png");
 }
-[key="dom.find-with-click"] {
-    content: url("../ui-images/icons/icon_click.png");
+.dom-inspection-snapshot {
+    content: url("../ui-images/icons/icon_expand.png");
 }
-[key="dom.highlight-on-hover"] {
-    content: url("../ui-images/icons/icon_hover.png");
-}
-[key="dom.lock-selected-elements"] {
-    content: url("../ui-images/icons/icon_border.png");
-}
-[key="stylesheets.shortcuts"] {
-    content: url("../ui-images/icons/icon_shorthand.png");
-}
-[key="css-comp-style.hide-initial-values"] {
-    content: url("../ui-images/icons/icon_hidedefaults.png");
-}
-[key="css-inspector.hide-shorthands"] {
-    content: url("../ui-images/icons/icon_shorthands.png");
-}
-[key="dom_attrs.hide-null-values"] {
-    content: url("../ui-images/icons/icon_empty.png");
-}
-[id="continue-run"] {
-    content: url("../ui-images/icons/icon_play.png");
-}
-[id="continue-step-into-call"] {
-    content: url("../ui-images/icons/icon_stepinto.png");
-}
-[id="continue-step-next-line"] {
-    content: url("../ui-images/icons/icon_stepover.png");
-}
-[id="continue-step-out-of-call"] {
-    content: url("../ui-images/icons/icon_stepout.png");
-}
-[key="js_source.script"] {
-    content: url("../ui-images/icons/icon_haltonscript.png");
-}
-[key="js_source.error"] {
-    content: url("../ui-images/icons/icon_haltonerror.png");
-}
-[key="threads.log-threads"] {
-    content: url("../ui-images/icons/icon_threads.png");
-}
-[key="inspection.show-prototypes"] {
-    content: url("../ui-images/icons/icon_prototype.png");
-}
-[key="inspection.show-non-enumerables"] {
-    content: url("../ui-images/icons/icon_hidedefaults.png"); /* temporarily using this icon */
-}
-[key="inspection.show-default-nulls-and-empty-strings"] {
-    content: url("../ui-images/icons/icon_empty.png");
-}
-[handler="threads-clear-log"] {
-    content: url("../ui-images/icons/icon_clear.png");
-}
-[handler="threads-export-log"] {
+.dom-inspection-export {
     content: url("../ui-images/icons/icon_export.png");
 }
-[handler="clear-request-list"] {
+.dom\.find-with-click {
+    content: url("../ui-images/icons/icon_click.png");
+}
+.dom\.highlight-on-hover {
+    content: url("../ui-images/icons/icon_hover.png");
+}
+.dom\.update-on-dom-node-inserted {
+    content: url("../ui-images/icons/icon_update_on_delete.png");
+}
+.dom\.lock-selected-elements {
+    content: url("../ui-images/icons/icon_border.png");
+}
+.stylesheets.shortcuts {
+    content: url("../ui-images/icons/icon_shorthand.png");
+}
+.css-comp-style\.hide-initial-values {
+    content: url("../ui-images/icons/icon_hidedefaults.png");
+}
+.css-inspector.hide-shorthands {
+    content: url("../ui-images/icons/icon_shorthands.png");
+}
+.dom_attrs.hide-null-values {
+    content: url("../ui-images/icons/icon_empty.png");
+}
+#continue-run {
+    content: url("../ui-images/icons/icon_play.png");
+}
+#continue-step-into-call {
+    content: url("../ui-images/icons/icon_stepinto.png");
+}
+#continue-step-next-line {
+    content: url("../ui-images/icons/icon_stepover.png");
+}
+#continue-step-out-of-call {
+    content: url("../ui-images/icons/icon_stepout.png");
+}
+.js_source\.script {
+    content: url("../ui-images/icons/icon_haltonscript.png");
+}
+.js_source\.error {
+    content: url("../ui-images/icons/icon_haltonerror.png");
+}
+.threads\.log-threads {
+    content: url("../ui-images/icons/icon_threads.png");
+}
+.inspection\.show-prototypes {
+    content: url("../ui-images/icons/icon_prototype.png");
+}
+.inspection\.show-non-enumerables {
+    content: url("../ui-images/icons/icon_hidedefaults.png"); /* temporarily using this icon */
+}
+.inspection\.show-default-nulls-and-empty-strings {
+    content: url("../ui-images/icons/icon_empty.png");
+}
+.threads-clear-log {
     content: url("../ui-images/icons/icon_clear.png");
 }
-[key="request_list.clear-log-on-runtime-switch"] {
+.threads-export-log {
+    content: url("../ui-images/icons/icon_export.png");
+}
+.clear-request-list {
+    content: url("../ui-images/icons/icon_clear.png");
+}
+.request_list\.clear-log-on-runtime-switch {
     content: url("../ui-images/icons/icon_clearonreload.png");
 }
-[key="request_list.auto-scroll-request-list"] {
+.request_list\.auto-scroll-request-list {
     content: url("../ui-images/icons/icon_autoscroll.png");
 }
-[handler="storage-add-key"] {
+.storage-add-key {
     content: url("../ui-images/icons/icon_add.png");
 }
-[handler="storage-update"] {
+.storage-update {
     content: url("../ui-images/icons/icon_reload.png");
 }
-[handler="storage-delete-all"] {
+.storage-delete-all {
     content: url("../ui-images/icons/icon_clear.png");
 }
-[handler="storage-delete"] {
+.storage-delete {
     content: url("../ui-images/icons/icon_delete.png");
 }
-[handler^="clear-error-console"] {
+[class^="clear-error-console"] {
     content: url("../ui-images/icons/icon_clear.png");
 }
-[key="console.expand-all-entries"] {
+.console\.expand-all-entries {
     content: url("../ui-images/icons/icon_expand.png");
 }
 cst-icon[class="debugger-menu"] {
     content: url("../ui-images/icons/icon_tabs.png");
 }
-toolbar button,
-panel-toolbar button,
-top-toolbar button,
-window-controls button,
-cst-select-toolbar-setting,
-.ui-button,
-cst-select,
-toolbar button[disabled],
-.search
+.ev-brp-expand-all-sections {
+    content: url("../ui-images/icons/icon_expand.png");
+}
+.ev-brp-remove-all-breakpoints {
+    content: url("../ui-images/icons/icon_clear.png");
+}
+
+.ui-control
 {
   background: #e6e6e6 url("../ui-images/shine_button.png") repeat-x;
   border: 1px solid rgba(0, 0, 0, .5);
@@ -261,114 +273,92 @@ toolbar button[disabled],
   padding: 1px;
   box-sizing: content-box;
   display: inline-block;
-  box-shadow: 0 1px rgba(255,255,255,0.5), inset 0 1px 1px #fff;
+  box-shadow: 0 1px rgba(255,255,255,0.5),
+              inset 0 1px 1px #fff;
   vertical-align: top;
   -o-transition: background-color 0.2s;
 }
-toolbar button[disabled],
-window-toolbar button[disabled] { /* :disabled seems to be buggy */
+.ui-control[disabled] { /* :disabled seems to be buggy */
   background: #e0e0e0 !important;
   opacity: 0.4;
   border-color: #333;
 }
-toolbar button:not([disabled]):active,
-window-toolbar button:not([disabled]):active,
-top-toolbar button:active,
-window-controls button:active,
-cst-select-toolbar-setting:active,
-.ui-button:active,
-cst-select:active {
+.ui-control:not([disabled]):active {
     padding: 2px 1px 0;
-    box-shadow: 0 1px #fff, inset 0 1px 2px rgba(0, 0, 0, .4);
+    box-shadow: 0 1px #fff,
+                inset 0 1px 2px rgba(0, 0, 0, .4);
     background-position: 0 1px;
 }
 cst-select:active {
     padding: 1px;
 }
-toolbar button[is-active="true"],
-window-toolbar button[is-active="true"],
-panel-toolbar button[is-active="true"],
-top-toolbar button[is-active="true"],
-window-controls button[is-active="true"],
-cst-select[is-active="true"] {
-    box-shadow: 0 1px #fff, inset 0 1px 2px rgba(0,0,0,0.1), inset 0 0 7px rgba(0,0,0,0.25);
+.ui-control[is-active="true"] {
+    box-shadow: 0 1px #fff,
+                inset 0 1px 2px rgba(0,0,0,0.1),
+                inset 0 0 7px rgba(0,0,0,0.25);
     background-color: #bfbfbf;
     padding: 2px 1px 0;
     background-position: 0 1px;
 }
-toolbar button[is-active="true"]:active,
-window-toolbar button[is-active="true"]:active,
-top-toolbar button[is-active="true"]:active,
-window-controls button[is-active="true"]:active {
+.ui-control[is-active="true"]:active {
     background-color: #999;
 }
 
 /* Show the button topmost when the overlay is visible */
-[handler="toggle-settings-overlay"][is-active="true"],
-[handler="toggle-remote-debug-config-overlay"][is-active="true"] {
+#toggle-settings-overlay[is-active="true"],
+#toggle-remote-debug-overlay[is-active="true"] {
     position: relative;
-    z-index: 4;
+    z-index: 301;
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, .5);
     border-color: #444;
 }
-[handler="toggle-settings-overlay"][is-active="true"]:active,
-[handler="toggle-remote-debug-config-overlay"][is-active="true"]:active {
+#toggle-settings-overlay[is-active="true"]:active,
+#toggle-remote-debug-overlay[is-active="true"]:active {
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, .5);
 }
 
 
 /* Alert state */
-toolbar button.alert,
-window-toolbar button.alert,
-top-toolbar button.alert,
-window-controls button.alert,
-cst-select-toolbar-setting.alert,
-.ui-button.alert,
-cst-select.alert,
-toolbar button[disabled].alert
-{
+.ui-control.alert {
   background-color: #ff8040;
   border-color: #bf3000;
   color: #993d1f;
-  box-shadow: inset 0 0 1px #fff, inset 0 0 10px #ff4433,  0 1px rgba(255,255,255,0.5), 0 0 2px #ff0000;
+  box-shadow: inset 0 0 1px #fff,
+              inset 0 0 10px #ff4433,
+              0 1px rgba(255,255,255,0.5),
+              0 0 2px #ff0000;
 }
-
-toolbar button.alert:not([disabled]):active,
-window-toolbar button.alert:not([disabled]):active,
-top-toolbar button.alert:active,
-window-controls button.alert:active,
-cst-select-toolbar-setting.alert:active,
-.ui-button.alert:active,
-cst-select.alert:active {
+.ui-control.alert:not([disabled]):active {
     background-color: #ff8040;
     border-color: #bf3000;
-    box-shadow: inset 0 1px 2px #bf1000, inset 0 0 10px #ff4433,  0 1px rgba(255,255,255,0.5), 0 0 2px #ff0000;
+    box-shadow: inset 0 1px 2px #bf1000,
+                inset 0 0 10px #ff4433,
+                0 1px rgba(255,255,255,0.5),
+                0 0 2px #ff0000;
 }
-toolbar button.alert[is-active="true"],
-window-toolbar button.alert[is-active="true"],
-top-toolbar button.alert[is-active="true"],
-window-controls button.alert[is-active="true"],
-cst-select.alert[is-active="true"] {
+.ui-control.alert[is-active="true"] {
     background-color: #e54c2e;
     border-color: #bf3000;
-    box-shadow: inset 0 1px 2px #bf1000, inset 0 0 10px #ff4433,  0 1px rgba(255,255,255,0.5), 0 0 2px #ff0000;
+    box-shadow: inset 0 1px 2px #bf1000,
+                inset 0 0 10px #ff4433,
+                0 1px rgba(255,255,255,0.5),
+                0 0 2px #ff0000;
 }
-toolbar button.alert[is-active="true"]:active,
-window-toolbar button.alert[is-active="true"]:active,
-top-toolbar button.alert[is-active="true"]:active,
-window-controls button.alert[is-active="true"]:active {
+.ui-control.alert[is-active="true"]:active {
     background-color: #bf381d;
 }
 
-.alert[handler="toggle-settings-overlay"][is-active="true"],
-.alert[handler="toggle-remote-debug-config-overlay"][is-active="true"],
-.alert[handler="toggle-settings-overlay"][is-active="true"]:active,
-.alert[handler="toggle-remote-debug-config-overlay"][is-active="true"]:active
+#toggle-settings-overlay.alert[is-active="true"],
+#toggle-remote-debug-overlay.alert[is-active="true"],
+#toggle-settings-overlay.alert[is-active="true"]:active,
+#toggle-remote-debug-overlay.alert[is-active="true"]:active
 {
-    box-shadow: inset 0 1px 2px #bf1000, inset 0 0 10px #ff4433,  0 1px rgba(255,255,255,0.2), 0 0 4px #ff0000;
     border-color: #721;
+    box-shadow: inset 0 1px 2px #bf1000,
+                inset 0 0 10px #ff4433,
+                0 1px rgba(255,255,255,0.2),
+                0 0 4px #ff0000;
 }
-
 
 cst-select[cst-id="debugger-menu"] {
     width: 33px;
@@ -378,107 +368,7 @@ cst-icon {
     height: 100%;
     width: 19px;
 }
-/*
-toolbar button:before, 
-top-toolbar button:before, 
-window-controls button:before, 
-window-toolbar button:before
-{
-  content: '\00A0';
-  display: inline-block;
-  background: transparent url('../ui-images/btn-test.png') scroll no-repeat 0 0;
-  height: 24px;
-  width: 26px; 
-  margin: -4px -12px;
-  vertical-align: 4px;
-}
-toolbar-switches button:before 
-{
-  background: transparent url('../ui-images/btn-test-switch.png') scroll no-repeat 0 0;
-}
-toolbar button[disabled]:before,
-toolbar button[disabled]:hover:before,
-toolbar button[disabled]:active:before,
-window-toolbar button[disabled]:before,
-window-toolbar button[disabled]:hover:before,
-window-toolbar button[disabled]:active:before
-{
-  background-position: 0 -72px;
-}
-.ui-button:hover,
-toolbar button:hover:before, 
-window-controls button:hover:before,
-window-toolbar button:hover:before
-{
-  background-position: 0px -24px;
-}
-.ui-button:active
-toolbar button:active:before, 
-window-controls button:active:before,
-window-toolbar button:hover:before
-{
-  background-position: 0px -48px;
-}
-/* switches /
-toolbar button.switch[is-active="true"]:before,
-window-toolbar button.switch[is-active="true"]:before
-{
-  background-position: -26px 0px;
-}
-toolbar button.switch[is-active="true"]:hover:before,
-window-toolbar button.switch[is-active="true"]:hover:before
-{
-  background-position: -26px -24px;
-}
-toolbar button.switch[is-active="true"]:active:before,
-window-toolbar button.switch[is-active="true"]:active:before
-{
-  background-position: -26px -48px;
-}
-.attached:before 
-{
-  background-position: -26px 0;
-}
-.attached:hover:before 
-{
-  background-position: -26px -24px;
-}
-.attached:active:before 
-{
-  background-position: -26px -48px;
-}
 
-/* mode modal /
-.modal toolbar button[disabled]:before,
-.modal toolbar button[disabled]:hover:before,
-.modal toolbar button[disabled]:active:before,
-.modal window-toolbar button[disabled]:before,
-.modal window-toolbar button[disabled]:hover:before,
-.modal window-toolbar button[disabled]:active:before,
-.modal toolbar button:hover:before, 
-.modal window-controls button:hover:before,
-.modal window-toolbar button:hover:before,
-.modal toolbar button:active:before, 
-.modal window-controls button:active:before,
-.modal window-toolbar button:hover:before
-{
-  background-position: 0 0;
-}
-
-.modal toolbar button.switch[is-active="true"]:before,
-.modal window-toolbar button.switch[is-active="true"]:before,
-.modal toolbar button.switch[is-active="true"]:hover:before,
-.modal window-toolbar button.switch[is-active="true"]:hover:before,
-.modal toolbar button.switch[is-active="true"]:active:before,
-.modal window-toolbar button.switch[is-active="true"]:active:before,
-.modal .attached:before,
-.modal .attached:hover:before,
-.modal .attached:active:before
-{
-  background-position: -26px 0;
-}
-
-*/
 toolbar-separator {
   display: block;
   float: left;
@@ -495,6 +385,7 @@ toolbar-search {
   }
 
 filter {
+  margin: 0 2px;
   display: inline-block;
   padding-left: 20px;
   height: 19px;
@@ -502,7 +393,8 @@ filter {
   border: 1px solid #8e8e8e;
   border-radius: 3px;
   background: #fff url("../ui-images/icon_search.png") 2px 50% no-repeat;
-  box-shadow: 0 1px #fff, inset 0 1px 1px #d5d5d5;
+  box-shadow: 0 1px #fff,
+              inset 0 1px 1px #d5d5d5;
   }
 
 toolbar-filters span {
@@ -636,12 +528,11 @@ top-tabs tab {  /**/
   height: 26px;
   line-height: 26px;
   border: 0;
-  border-right: 1px solid rgba(0,0,0,0.15);
+  border-right: 1px solid rgba(0,0,0,0.2);
   padding: 2px 6px;
-  position: static;
   text-shadow: 0 1px rgba(255, 255, 255, .5);
   background: #e6e6e6 url("../ui-images/shine_1_attached.png") repeat-x;
-  box-shadow: inset 0 0 1px #fff;
+  top: 0;
   }
 
 top-tabs.detached tab {
@@ -664,12 +555,56 @@ top-tabs tab.active:first-of-type {
 top-tabs.detached tab.active {
   background-image: url("../ui-images/shine_1_detached.png");
 }
+
+/* Alert state - Warning & Error */
+top-tabs tab.alert {
+  text-shadow: 0 1px rgba(255, 255, 255, .3);
+  background-color: #f6ae66;
+  color: #662914;
+}
+
+top-tabs tab.alert.active {
+  background-color: #f2883d;
+  box-shadow: inset 0 1px 4px rgba(128,0,0,0.3),
+              inset 0 1px 2px rgba(128,0,0,0.4),
+              -1px 0 rgba(0,0,0,0.3);
+}
+
+/* Alert state - Information */
+top-tabs tab[data-state="waiting"] {
+  background-color: #aadaf2;
+  color: #263f5d;
+}
+
+top-tabs tab[data-state="waiting"].active {
+  background-color: #8ac7e5;
+  box-shadow: inset 0 1px 4px
+              rgba(0,64,128,0.3),
+              inset 0 1px 2px rgba(0,64,128,0.4),
+              -1px 0 rgba(0,0,0,0.3);
+}
+
 top-tabs .icon {
   display: inline-block;
   height: 26px;
   width: 26px;
   vertical-align: top;
   margin-right: 3px;
+}
+top-tabs .badge {
+  position: absolute;
+  background: #df6531;
+  color: #000;
+  text-shadow: none;
+  line-height: 1;
+  padding: 1px 3px;
+  border-radius: 4px;
+  top: 1px;
+  right: 1px;
+  font-size: 9px;
+}
+top-tabs .badge:empty {
+  display: none;
 }
 
 .dom_mode {
@@ -732,7 +667,7 @@ window-controls {
   height: 22px;
   background: #f3f3f3 url("../ui-images/shine_1_attached.png") repeat-x;
 }
-window-controls/*.attached*/::before {
+window-controls::before {
     content: url("../ui-images/window_controls_border.png");
     height: 30px;
     position: relative;
@@ -744,9 +679,6 @@ window-controls toolbar-separator {
     float: none;
     height: auto;
 }
-
-
-
 
 .default-container {
   padding: 7px;
@@ -772,6 +704,35 @@ settings-header { /**/
   font-size: 1.2em;
   clear: both;
   }
+settings-container input[type=text], settings-container input[type=number], settings-container button, settings-container input[type=button] {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.5);
+  border-radius: 3px;
+  padding: 3px;
+  margin: 2px;
+  color: #fff;
+}
+
+settings-container input[type=text]:focus, settings-container input[type=number]:focus {
+  border: 1px solid rgba(255,255,255,1.0);
+}
+
+settings-container button, settings-container input[type=button] {
+  background-color: rgba(255,255,255,0.1);
+  padding: 3px 12px 3px 12px;
+}
+
+settings-container button:hover, settings-container input[type=button]:hover {
+  background-color: rgba(255,255,255,0.15);
+}
+
+settings-container button:active, settings-container input[type=button]:active {
+  background-color: rgba(255,255,255,0.3);
+}
+
+settings-container checkbox label:hover{
+  color: #fff;
+}
 
 setting-composite select
 {
@@ -787,7 +748,7 @@ setting-buttons {
 }
 
 settings-container { /**/
-  padding: 7px;
+  padding: 0 8px 8px;
   }
 
 settings hr
@@ -1014,10 +975,9 @@ window:after {
   left: 0;
   height: 10px;
   width: 100%;
-  
 }
 window-container {
-  border: 1px solid #000;
+ /* border: 1px solid #000; <-- TODO: Do we need this */
   border-width: 0 1px 1px;
   border-radius: 0 0 7px 7px;
   display: block;
@@ -1030,9 +990,10 @@ window.hud {
   border-width: 0;
   border-top-width: 2px;
   border-radius: 0;
+  background: rgba(0, 0, 0, .75);
 }
 
-window.hud container {
+window.hud window-container {
   border-radius: 0;
   border: 0;
 }
@@ -1150,7 +1111,6 @@ cst-drop-down
   background: transparent url("../ui-images/dropdown.png") 50% 50% no-repeat;
   float: right;
   padding: 0 2px;
-  border-left: 1px solid #8e8e8e;
   position: relative;
   top: -1px;
 }
@@ -1169,7 +1129,7 @@ cst-select-option-list-container
   /* don't add here any border, padding or margin */
   display: block;
   position:absolute;
-  z-index: 10;
+  z-index: 302;
 }
 
 cst-select[disabled] cst-drop-down
@@ -1194,6 +1154,8 @@ cst-title
   display: block;
   padding:  2px 8px;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 cst-select-option-list hr {
@@ -1212,6 +1174,18 @@ cst-option:hover {
 cst-option.selected, cst-option:active {
   background-color: #598bec;
   color: #fff;
+}
+
+cst-option.selected span,
+cst-option.selected code,
+cst-option:active span,
+cst-option:active code {
+  color: #fff;
+}
+
+cst-select-option-list code {
+  font-family: monospace;
+  color: rgba(0, 0, 0, .4);
 }
 
 .debugger-menu cst-option,
@@ -1370,7 +1344,7 @@ pin-label.pinned
 
 .info-box
 {
-  margin: 50px 75px 0 75px;
+  margin: 30px 50px 0 50px;
   text-align: center;
   padding: 1em;
   border: 1px dashed #b3b3b3;
@@ -1379,7 +1353,7 @@ pin-label.pinned
 }
 .info-box p 
 {
-  margin: 0;
+  margin: 5px 0 0;
   padding: 0;
 }
 
@@ -1450,23 +1424,62 @@ breadcrumbs {
     right: 15px; /* minus one pixel to hide the right border of the last breadcrumb */
 }
 breadcrumb {
-    border-right: 1px solid #b3b3b3;
     height: 21px;
     line-height: 21px;
     display: inline-block;
-    padding: 0 4px;
-}
-breadcrumb.active {
-    background: #ccc url("../ui-images/shadow_0.png");
-}
-breadcrumb:hover {
-    background: #cecece url("../ui-images/shadow_0.png")
+    position: relative;
+    padding: 0 0 0 15px;
+    background: transparent url("../ui-images/crumb_middle.png");
 }
 breadcrumbs::selection {
     background: transparent;
 }
 .drag breadcrumb {
     cursor: move;
+}
+/* Styling of arrows */
+breadcrumb:not(:first-of-type)::before,
+breadcrumb:last-of-type::after {
+    content: "";
+    height: 21px;
+    width: 11px;
+    position: absolute;
+    left: 0;
+    background: transparent url("../ui-images/crumb_arrow.png");
+}
+breadcrumb:last-of-type::after {
+    left: auto;
+    right: -11px;
+}
+.navs breadcrumb:last-of-type {
+    padding-right: 4px;
+}
+.navs breadcrumb:last-of-type::after {
+    display: none;
+}
+breadcrumb:first-of-type {
+    padding-left: 4px;
+}
+breadcrumb:hover,
+breadcrumb:hover + breadcrumb::before,
+breadcrumb:hover:last-of-type::after {
+    background-position: 0 -21px;
+}
+breadcrumb.active,
+breadcrumb.active:last-of-type::after {
+    background-position: 0 -42px;
+}
+breadcrumb.active + breadcrumb::before {
+    background-position: 0 -105px;
+}
+breadcrumb:hover::before {
+    background-position: 0 -126px;
+}
+breadcrumb.active + breadcrumb:hover::before {
+    background-position: 0 -168px;
+}
+breadcrumb.active::before {
+    background-position: 0 -189px;
 }
 
 .window-select-gadgets,
@@ -1484,7 +1497,7 @@ overlay {
     bottom: 0;
     right: 0;
     left: 0;
-    z-index: 3;
+    z-index: 300; /* Need to clean this up, there is no reason for z-index to ever be this high. */
     padding: 0 30px;
 }
 
@@ -1501,8 +1514,7 @@ overlay-window {
     border-radius: 7px;
     box-shadow: 0 1px 6px rgba(0, 0, 0, .6);
     background: rgba(40, 40, 40, .9);
-    width: 70%;
-    min-width: 650px;
+    width: 650px;
     border: 2px solid #b1b1b1;
     display: block;
     position: absolute;
@@ -1541,34 +1553,60 @@ overlay-tabs tab {
     position: static;
     border: none;
 }
+overlay-tabs tab:hover {
+     background: rgba(0, 0, 0, .2);
+}
 overlay-tabs tab.active {
     color: #fff;
+    text-shadow: 0 0 10px rgba(255,255,255,0.75);
     border-color: #000;
     background: rgba(0, 0, 0, .4);
     cursor: auto;
 }
-overlay-content {
-    background: rgba(0, 0, 0, .4);
-    border-radius: 7px;
-    border-top-width: 1px;
-    padding: 10px;
+overlay-content, overlay-info {
     position: absolute;
-    top: 0;
+    top: 31px;
     bottom: 0;
-    left: 0;
     right: 0;
+    padding: 10px;
     overflow: auto;
 }
-overlay-tabs + overlay-content { /* Need to style a bit differently in case there are tabs */
-    top: 31px;
-    border-top-width: 0;
+overlay-content {
+    background: rgba(0, 0, 0, .4);
     border-radius: 0 0 7px 7px;
+    border-top-width: 0;
+    left: 0;
+}
+overlay-info:not(:empty) + overlay-content {
+    padding-right: 200px;
+}
+overlay-info:not(:empty) {
+    z-index: 2;
+    border-left: 1px solid rgba(255, 255, 255, .1);
+    width: 180px;
+}
+overlay-info p {
+    margin: 0 0 8px;
+}
+overlay-info ol {
+    margin: 0;
+    padding: 0 0 0 20px;;
+}
+overlay-info li {
+    margin-bottom: 8px;
 }
 overlay fieldset, overlay hr {
-    border: 2px ridge rgba(255, 255, 255, .2);
+    border: 1px solid rgba(255, 255, 255, .1);
+}
+overlay fieldset {
+    margin: 10px 5px 10px 5px;
+    color: #999;
+}
+overlay fieldset legend {
+    color: #fff;
 }
 overlay hr {
-    border-width: 0 0 2px;
+    border-width: 0 0 1px;
 }
 
 cst-group
@@ -1633,6 +1671,8 @@ toolbar-filters input[type=button].search-move-highlight-down
 {
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
+  background: #fff;
+  color: #000;
 }
 
 .search-window-content
@@ -1652,8 +1692,7 @@ toolbar-filters input[type=button].search-move-highlight-down
 .context-window window-header {
   color: #000;
   background-color: #eee;
-  xborder-bottom: 1px solid #999;
-  xpadding: 2px 5px;
+  text-shadow: 0 1px 1px #fff;
 }
 
 .context-window window-toolbar
@@ -1675,13 +1714,6 @@ toolbar-filters input[type=button].search-move-highlight-down
 {
   background-color: #fff;
   color: #000;
-}
-
-container button:active
-{
-  box-shadow: 0 1px rgba(255,255,255,0.5), inset 0 1px 2px rgba(0, 0, 0, .4);
-  background-position: 0 1px;
-  text-shadow: none;
 }
 
 toolbar-filters input[type=button]

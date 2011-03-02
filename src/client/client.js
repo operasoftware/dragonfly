@@ -17,9 +17,11 @@ window.cls.Client = function()
   var _first_setup = true;
   var _waiting_screen_timeout = 0;
   var cbs = [];
+  this.current_client = null;
 
   var _on_host_connected = function(client, servicelist)
   {
+    Overlay.get_instance().hide();
     client.connected = true;
     if(_waiting_screen_timeout)
     {
@@ -66,13 +68,32 @@ window.cls.Client = function()
     }
   }
 
-  var _on_host_quit = function(client, port)
+  var _on_host_quit = function(client)
   {
+    var port = client.port;
+    self.current_client = null;
     if (client.connected)
     {
       window.window_manager_data.clear_debug_context();
       messages.post('host-state', {state: global_state.ui_framework.spin_state = 'inactive'});
-      client.setup();
+      window.client.setup();
+    }
+    else if (self.connection_is_remote(client))
+    {
+      document.getElementById("remote-debug-settings").clearAndRender(
+        window.templates.remote_debug_settings(port + 1)
+      );
+
+      UI.get_instance().get_button("toggle-remote-debug-overlay")
+                       .addClass("alert");
+
+      Overlay.get_instance().set_info_content(
+        ["p", ui_strings.S_INFO_ERROR_LISTENING.replace(/%s/, port)]
+      );
+
+      // Reset this so we don't start in remote debug next time
+      settings.debug_remote_setting.set('debug-remote', false);
+      window.helpers.setCookie('debug-remote', "false");
     }
     else if (client.is_remote_debug)
     {
@@ -90,16 +111,16 @@ window.cls.Client = function()
     }
   }
 
-  var get_quit_callback = function(client, port)
+  var get_quit_callback = function(client)
   {
     // workaround for bug CORE-25389
     // onQuit() callback is called twice when
     // creating new client with addScopeClient
     return function()
     {
-      if (client.id == clients.length)
+      if (self.current_client && self.current_client.id == client.id)
       {
-        _on_host_quit(client, port);
+        _on_host_quit(client);
       }
     }
   }
@@ -121,13 +142,20 @@ window.cls.Client = function()
       0);
   }
 
-  this.setup = function(is_remote_debug)
+  this.connection_is_remote = function(client)
   {
+    return client.port != 0;
+  };
+
+  this.setup = function()
+  {
+    var port = _get_port_number();
     var client = {
       id: clients.length + 1,
       connected: false,
-      is_remote_debug: !!is_remote_debug
+      port: port
     };
+    this.current_client = client;
     clients.push(client);
 
     window.ini || (window.ini = {debug: false});
@@ -145,8 +173,7 @@ window.cls.Client = function()
       cls.STP_0_Wrapper.call(opera);
     }
 
-    var port = _get_port_number();
-    var cb_index = cbs.push(get_quit_callback(client, port)) - 1;
+    var cb_index = cbs.push(get_quit_callback(client)) - 1;
     opera.scopeAddClient(
         _on_host_connected.bind(this, client),
         cls.ServiceBase.get_generic_message_handler(),
@@ -159,14 +186,16 @@ window.cls.Client = function()
       cls.debug.wrap_transmit();
     }
 
-    this._create_ui(is_remote_debug, port);
+    this._create_ui(client);
   };
 
   // TODO: rename
-  this._create_ui = function(is_remote_debug, port)
+  this._create_ui = function(client)
   {
-    // Move this to some function
-    if (!is_remote_debug)
+    var is_remote_connection = this.connection_is_remote(client);
+    var port = client.port;
+
+    if (!is_remote_connection && window.topCell)
     {
       this.create_top_level_views(window.services);
       if(window.topCell)
@@ -182,30 +211,18 @@ window.cls.Client = function()
         show_info(ui_strings.S_INFO_WAITING_FORHOST_CONNECTION.replace(/%s/, port), port);
       }, 250);
     }
-    else if (is_remote_debug)
+    else if (is_remote_connection)
     {
-      document.getElementById("remote-debug-settings").clearAndRender([
-        ["p",
-          ui_strings.S_INFO_WAITING_FORHOST_CONNECTION.replace(/%s/, port)
-          //"Waiting for a host connection." +
-          //" Go to opera:debug in your host and use <IP> and %s to connect.".replace(/%s/, port)
-        ],
-        //["p",
-        //  ["img",
-        //    "src",
-        //    "https://chart.googleapis.com/chart?chs=100x100&cht=qr&chl=opera%3Adebug&chld=L|0&choe=UTF-8",
-        //    "width", "100",
-        //    "height", "100"
-        //  ]
-        //],
-        ["p",
-          ["button",
-            ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG,
-            "handler",
-            "cancel-remote-debug"
-          ]
-        ]
-      ]);
+      UI.get_instance().get_button("toggle-remote-debug-overlay")
+                       .removeClass("alert");
+
+      Overlay.get_instance().set_info_content(
+        window.templates.remote_debug_waiting_help(port)
+      );
+
+      document.getElementById("remote-debug-settings").clearAndRender(
+        window.templates.remote_debug_waiting(port)
+      );
     }
     else
     {
@@ -315,16 +332,49 @@ window.cls.Client = function()
                       layouts.resource_rough_layout);
   }
 
-  this.on_services_created =  function()
+  this.create_window_controls = function()
   {
-    var window_controls = document.getElementsByTagName('window-controls')[0];
+    var window_controls = document.querySelector("window-controls");
     if (window_controls)
     {
       window_controls.parentNode.removeChild(window_controls);
-    };
+    }
+
+    var is_attached = window.opera.attached;
+
+    var controls = [
+      new Button("toggle-console", "", ui_strings.S_BUTTON_TOGGLE_CONSOLE),
+      new ToolbarSeparator(),
+      new Button("toggle-settings-overlay", "", ui_strings.S_BUTTON_TOGGLE_SETTINGS, "toggle-overlay", {"data-overlay-id": "settings-overlay"}),
+      new Button("toggle-remote-debug-overlay", "", ui_strings.S_BUTTON_TOGGLE_REMOTE_DEBUG, "toggle-overlay", {"data-overlay-id": "remote-debug-overlay"}),
+      new ToolbarSeparator(),
+      window['cst-selects']['debugger-menu'],
+      new Button("top-window-toggle-attach", is_attached ? "attached" : "", is_attached ? ui_strings.S_SWITCH_DETACH_WINDOW : ui_strings.S_SWITCH_ATTACH_WINDOW),
+    ];
+
+    if (is_attached)
+    {
+      controls.push(new Button("top-window-close", "", ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW));
+    }
+
+    document.documentElement.render(templates.window_controls(controls));
+
+    var button = UI.get_instance().get_button("toggle-remote-debug-overlay");
+    if (this.current_client && this.connection_is_remote(this.current_client))
+    {
+      button.addClass("remote-active");
+    }
+    else
+    {
+      button.removeClass("remote-active");
+    }
+  };
+
+  this.on_services_created = function()
+  {
     this.create_top_level_views(window.services);
-    this.setupTopCell(window.services);
-    document.documentElement.render(templates.window_controls());
+    this.setup_top_cell(window.services);
+    this.create_window_controls();
     if(!arguments.callee._called_once)
     {
       if( window.opera.attached )
@@ -357,7 +407,7 @@ window.cls.Client = function()
     }
   }
 
-  this.setupTopCell = function(services)
+  this.setup_top_cell = function(services)
   {
     var tabs = viewport.getElementsByTagName('tab'), i = 0, tab = null;
     for( ; tab = tabs[i]; i++)
@@ -553,6 +603,14 @@ ui_framework.layouts.main_layout =
     // return a layout depending on services
     // e.g. services['ecmascript-debugger'].version
     // e.g. services['ecmascript-debugger'].is_implemented
-      return ['dom_mode', 'js_mode', 'network_mode', 'resource_panel', 'storage', 'console_mode', 'utils'];
+    return [
+      'dom_mode',
+      {view: 'js_mode', tab_class: JavaScriptTab},
+      'network_mode',
+      'resource_panel',
+      'storage',
+      {view: 'console_mode', tab_class: ErrorConsoleTab},
+      'utils'
+    ];
   }
 }

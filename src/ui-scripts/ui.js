@@ -14,6 +14,7 @@
   this._tabbars = {};
   this._modebars = {};
   this._searches = {};
+  this._overlays = {};
 
    /* interface */
  
@@ -28,12 +29,15 @@
 
     this.get_search = function(id){};
     
+    this.get_overlay = function(id){};
+
     this.register_tabbar = function(id, tabs){};
     
     this.register_modebar = function(id, modebar){};
 
-
     this.register_search = function(id, search){};
+
+    this.register_overlay = function(id, items){};
     
     this.show_view = function(id){};
 
@@ -54,6 +58,11 @@
     this.get_search = function(id)
     {
       return this._searches[id] || null;
+    };
+
+    this.get_overlay = function(id)
+    {
+      return this._overlays[id] || null;
     };
 
     this.get_layout_box = function(view_id)
@@ -87,7 +96,16 @@
       }
       return this._searches[id];
     };
-    
+
+    this.register_overlay = function(id, items)
+    {
+      if (!this._overlays[id])
+      {
+        this._overlays[id] = items;
+      }
+      return this._overlays[id];
+    };    
+
     this.show_view = function(id)
     {
       // TODO make topCell a private member of UI
@@ -96,9 +114,21 @@
         window.topCell.showView(id);
       }
     };
+
+    this.get_button = function(id)
+    {
+      // TODO: make this a bit more sophisticated
+      return document.getElementById(id);
+    };
+
+    this.get_mode_tab = function(id)
+    {
+      return TabBase.get_tab_by_ref_id(id);
+    };
 }
 
 UI.get_instance = function()
 {
   return this.instance || new UI();
-}
+};
+

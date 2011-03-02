@@ -44,13 +44,6 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
             emptyrows.push(row);
           }
     }
-
-    if (emptyrows.length &&
-        emptyrows[emptyrows.length-1] == this._headertable.lastChild )
-      {
-
-      }
-
   };
 
   this._handle_toggle_caching_bound = function(evt, target)
@@ -62,20 +55,21 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
 
   this._handle_toggle_content_tracking_bound = function(evt, target)
   {
+    const OFF = 4, DATA_URI = 3, STRING = 1, DECODE = 1;
     this._tracking_policy = target.value;
 
     if (this._tracking_policy == "notrack")
     {
-      var arg = [[4]];
+      var arg = [[OFF]];
     }
     else
     {
-      var arg = [[3, 1],
+      var arg = [[DATA_URI, DECODE],
                  [ "text/html", "application/xhtml+xml", "application/mathml+xml",
                    "application/xslt+xml", "text/xsl", "application/xml",
                    "text/css", "text/plain", "application/x-javascript",
                    "application/javascript", "text/javascript"
-                 ].map(function(e) { return [e, [1, 1]] })
+                 ].map(function(e) { return [e, [STRING, DECODE]] })
                 ];
     }
     this._service.requestSetResponseMode(null, arg);
@@ -102,7 +96,7 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
       var parts = e.split(": ");
       if (parts.length != 2) { return null }
       return {name: parts[0], value: parts[1].trim()};
-    }).filter(function(e) { return e });
+    }).filter(Boolean);
   }
 
   this._handle_update_header_overrides_bound = function(evt, target)

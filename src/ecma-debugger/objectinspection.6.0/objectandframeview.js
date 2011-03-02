@@ -285,5 +285,29 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
   register_shortcut_listener('inspection-text-search',
                              cls.Helpers.shortcut_search_cb.bind(text_search));
 
+  var broker = ActionBroker.get_instance();
+  var contextmenu = ContextMenu.get_instance();
+
+  contextmenu.register("object-inspection-key", [
+    {
+      callback: function(event, target)
+      {
+        // Prevent "Add <key> to watches" from showing up in the actual watches view.
+        // TODO: Not optimal, and we also don't get spec links, but this will do for now.
+        if (target.parentNode.get_attr("parent-node-chain", "data-menu") == "watches")
+        {
+          return;
+        }
+
+        var key = target.textContent;
+        return {
+          label: ui_strings.M_CONTEXTMENU_ADD_WATCH.replace("%s", key),
+          handler: function(event, target) {
+            window.views.watches.add_watch(key);
+          }
+        };
+      }
+    }
+  ]);
 };
 

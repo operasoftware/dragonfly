@@ -4,6 +4,7 @@
  */
 var HorizontalNavigationBase = function(cell)
 {
+  const ARROW_IMAGE_WIDTH = 11;
 
   this._element = null;
   this._breadcrumbs = null;
@@ -27,14 +28,11 @@ var HorizontalNavigationBase = function(cell)
     {
       this._breadcrumbs.clearAndRender(template_list);
       this._breadcrumbs.setAttribute("data-model-id", id);
+      this._breadcrumbs.style.cssText = "";
       this.check_width();
       if (focus_end)
       {
         this.set_position(-this._breadcrumbs.scrollWidth); // Not exact, but large enough
-      }
-      else
-      {
-        this._breadcrumbs.style.removeProperty("left");
       }
     }
   };
@@ -88,7 +86,7 @@ var HorizontalNavigationBase = function(cell)
       if (element)
       {
         var right_edge = element.getBoundingClientRect().right - breadcrumbs_dim.left;
-        left = breadcrumbs_dim.width - right_edge;
+        left = breadcrumbs_dim.width - right_edge - ARROW_IMAGE_WIDTH;
         element = element.nextElementSibling;
       }
     }
@@ -105,7 +103,6 @@ var HorizontalNavigationBase = function(cell)
     {
       this._nav_timeout = setTimeout(this.nav, 400, dir, repeat);
     }
-
   }
 
   this.clear_nav_timeout = function()
@@ -134,7 +131,7 @@ var HorizontalNavigationBase = function(cell)
     this.set_position(this._drag_start + e.clientX);
   }
 
-  this._drag_end = function ()
+  this._drag_end = function()
   {
     this._current_breadcrumb_el = null;
     if (this._breadcrumbs)
@@ -180,7 +177,7 @@ var HorizontalNavigationBase = function(cell)
       else
       {
         this._element.removeClass("navs");
-        this._breadcrumbs.style.removeProperty("left");
+        this._breadcrumbs.style.cssText = "";
       }
 
       this.check_position();
@@ -225,18 +222,6 @@ var HorizontalNavigationBase = function(cell)
     {
       this.set_content(this._data_model_id, this._template_list);
     }
-    /*
-    TODO seems to be the wrong place to do this
-    var contextmenu = new ContextMenu();
-    contextmenu.register("breadcrumb", [
-      {
-        label: "Copy XPath",
-        handler: function(event, target) {
-          alert("Not implemented");
-        }
-      }
-    ]);
-    */
   };
 
   this._super_set_dimension = this.setDimensions;
@@ -254,7 +239,6 @@ var HorizontalNavigationBase = function(cell)
     this._drag_breadcrumbs_bound = this._drag_breadcrumbs.bind(this);
     this._drag_end_bound = this._drag_end.bind(this);
   }
-
 };
 
 var HorizontalNavigation = function()

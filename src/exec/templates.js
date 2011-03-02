@@ -33,6 +33,17 @@ window.templates.color_picker = function(
               'handler', 'color-picker-reset-default-values'],
             'class', 'color-picker-button-controls'
           ],
+          ['h2', ui_strings.M_VIEW_LABEL_COLOR_SELECT],
+          this.color_picker_average_select(),
+          ['div', 'id', 'center-color'],
+          ['pre', 'id', 'center-color-values'],
+          ['p',
+            ['input',
+              'type', 'button',
+              'value', ui_strings.S_BUTTON_COLOR_STORE_COLOR,
+              'handler', 'color-picker-store-color'],
+            'class', 'color-picker-button-controls'
+          ],
           ['h2', ui_strings.M_VIEW_LABEL_STORED_COLORS],
           this.color_picker_stored_colors(),
           ['p',
@@ -53,19 +64,6 @@ window.templates.color_picker = function(
             'class', 'outer-canvas-container'],
             'id', 'table-container',
             'handler', 'color-picker-picked'],
-        'class', 'color-picker'],
-        ['div',
-          ['h2', ui_strings.M_VIEW_LABEL_COLOR_SELECT],
-          this.color_picker_average_select(),
-          ['div', 'id', 'center-color'],
-          ['pre', 'id', 'center-color-values'],
-          ['p',
-            ['input',
-              'type', 'button',
-              'value', ui_strings.S_BUTTON_COLOR_STORE_COLOR,
-              'handler', 'color-picker-store-color'],
-            'class', 'color-picker-button-controls'
-          ],
         'class', 'color-picker'],
       'class', 'table padding']);
 }

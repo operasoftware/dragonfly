@@ -247,12 +247,13 @@ window.templates = window.templates || {};
     var ret = 
     [
       'cst-option',
-      (this._script_type_map[script_type] || script_type) + ' - ' +
-      (
-        display_uri.uri ? 
-        display_uri.uri : 
-        ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script.script_id
-      ),
+      ["span", (this._script_type_map[script_type] || script_type) + ' – ',
+        [(
+          display_uri.uri ?
+          ["span", display_uri.uri] :
+          ["code", script.script_data.slice(0, 120), "class", "code-snippet"]
+        )]
+      ],
       'script-id', script.script_id.toString()
     ];
     var class_name = script.script_id == this.selected_script_id ? 
@@ -343,11 +344,18 @@ window.templates = window.templates || {};
 
   this.frame = function(frame, is_top)
   {
+    // Fall back to document URI if it's inline
+    var uri = (frame.script_id && runtimes.getScript(frame.script_id)
+            ? runtimes.getScript(frame.script_id).uri
+            : runtimes.getRuntime(frame.rt_id).uri) || null;
     return ['li',
              ['span', frame.fn_name, 'class', 'scope-name'],
-             ['span', " " + (frame.script_id ? helpers.basename(runtimes.getScript(frame.script_id).uri) + ':' + frame.line : ""), 'class', 'file-line'],
+             ['span',
+              " " + (uri && frame.line ? helpers.basename(uri) + ':' + frame.line : ""),
+              'class', 'file-line'],
       'handler', 'show-frame',
-      'ref-id', frame.id,
+      'ref-id', String(frame.id),
+      'title', uri
     ].concat( is_top ? ['class', 'selected'] : [] );
   }
 

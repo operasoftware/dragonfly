@@ -118,12 +118,12 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
     idgetter: function(res) { return String(res.id) },
     groups: {
       hosts: {
-        label: "Hosts",
-        grouper: function(res) { return res.urltype == 4 ? "No host" : cls.ResourceUtil.url_host(res.url) }
+        label: ui_strings.S_RESOURCE_ALL_TABLE_GROUP_HOSTS,
+        grouper: function(res) { return res.urltype == 4 ? ui_strings.S_RESOURCE_ALL_TABLE_NO_HOST : cls.ResourceUtil.url_host(res.url) }
       },
       types: {
-        label: "Types",
-        grouper: function(res) { return res.type || "unknown"}
+        label: ui_strings.S_RESOURCE_ALL_TABLE_GROUP_GROUPS,
+        grouper: function(res) { return res.type || ui_strings.S_RESOURCE_ALL_TABLE_UNKNOWN_GROUP}
       }
     },
     columns: {
@@ -133,37 +133,37 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
         renderer: function(res) { return templates.resource_icon(res) }
       },
       protocol: {
-        label: "Protocol",
+        label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PROTOCOL,
         getter: function(res) { return res.urltypeName },
       },
       host: {
-        label: "Host",
+        label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_HOST,
         getter: function(res) { return res.urltype == 4 ? res.human_url : cls.ResourceUtil.url_host(res.url) },
       },
       path: {
-        label: "Path",
+        label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PATH,
         getter: function(res) { return res.urltype == 4 ? res.human_url : cls.ResourceUtil.url_path(res.url) },
       },
       mime: {
-        label: "Mime",
-        getter: function(res) { return res.mime || "n/a" }
+        label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_MIME,
+        getter: function(res) { return res.mime || ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE }
       },
       type: {
-        label: "Type",
-        getter: function(res) { return res.type || "n/a" }
+        label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_TYPE,
+        getter: function(res) { return res.type || ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE }
       },
       size: {
-        label: "Size",
-        renderer: function(res) { return res.size ? String(res.size) : "n/a" },
+        label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_SIZE,
+        renderer: function(res) { return res.size ? String(res.size) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE },
         getter: function(res) { return res.size }
       },
       size_h: {
-        label: "Size(h)",
+        label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PPSIZE,
         getter: function(res) { return res.size },
         renderer: function(res) {
           return String(res.size ?
                         cls.ResourceUtil.bytes_to_human_readable(res.size) :
-                        "n/a")
+                        ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE)
         }
       }
     },

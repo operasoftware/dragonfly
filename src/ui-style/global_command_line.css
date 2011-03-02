@@ -12,6 +12,7 @@
 .command-line .js-source .string,
 .command-line .js-source .object,
 .command-line .js-source .number
+.command-line .js-source .object
 {
   color: #f33;
 }
@@ -22,6 +23,7 @@
 .command-line key,
 .command-line text,
 .command-line selector,
+.command-line .js-source,
 .command-line .element-name,
 .command-line .repl-input,
 .command-line .repl-output,

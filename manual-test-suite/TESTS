@@ -304,6 +304,42 @@ desc:
   - Hover over the different nodes in the parent node chain.
   - Verify that the according elements are highlighted in the host
 
+DOM.Settings
+************
+
+url: ./test-cases/dom/edit-attribute.html
+
+label: Use lower case tag names
+desc:
+  - Open Settings/Document
+  - Verify that "Use lower case tag names for text/html" is checked (default setting)
+  - Uncheck it.
+  - Verify that tag names are displayed in uppercase.
+  - Check it again.
+  - Verify that tag names are displayed in lowercase.
+
+url: ./test-cases/dom/nodes.html
+  
+label: Show DOM in tree view
+desc:
+  - Verify that comment is shown in document (1 comment node).
+  - Open Settings/Document.
+  - Verify that "Show comment nodes" is checked.
+  - Uncheck it.
+  - Verify that comment node is not shown.
+  - Check it again.
+  - Verify that comment node is shown again.
+
+label: Show attributes
+desc:
+  - Verify that comment is shown in document (1 comment node).
+  - Open Settings/Document.
+  - Verify that "Show comment nodes" is checked.
+  - Uncheck it.
+  - Verify that comment node is not shown.
+  - Check it again.
+  - Verify that comment node is shown again.
+
 Statusbar
 *********
 
@@ -1294,12 +1330,35 @@ desc:
 Settings.Settings
 *****************
 
+label: Settings window
+desc:
+- Check if settings button is visible.
+- Click settings button.
+- Verify that the button is styled as pressed.
+- Verify that settings window appears and background is faded.
+- Verify that UI elements other than settings window are disabled/inaccessible.
+- Click settings button again.
+- Verify that the button styled as unpressed.
+- Verify that settings window disappeared.
+
 id: 00100
 label: Expand sections
 deprecated: true
 desc:
-  - Expand all the sections
-  - Verify that the sections display additional info and settings
+- Expand all the sections
+- Verify that the sections display additional info and settings
+
+label: Settings tabs
+desc:
+- Verify if all tabs are clickable in settings window.
+- Verify that contents are properly changed.
+
+label: General settings
+- Uncheck "Show only browser windows..." checkbox.
+- Open a bookmark manager window.
+- Verify that the new window is shown in debug context menu.
+- Check "Show only browser windows..." checkbox.
+- Verify that the bookmarks window is not shown in debug context menu.
 
 id: 00200
 label: Remote debug
@@ -1330,6 +1389,13 @@ id: 00400
 label: Shortcut Configuration, Quick find
 deprecated: true
 desc:
+  - Keyboard shortcuts tab
+  - Type 'ctrl' in the 'Quick find' field
+  - Verify that all shortcuts with a 'ctrl' token are displayed
+
+label: Keyboard shortcuts, Quick find
+desc:
+  - Click Keyboard shortcuts tab
   - Expand 'Shortcut Config'
   - Type 'ctrl' in the 'Quick find'
   - Verify that all shortcuts with a 'ctrl' token are displayed
@@ -1350,6 +1416,24 @@ desc:
   - Press the 'save' button
   - Verify that a 'Invalid keyboard shortcut' label is added to the changed shortcut
 
+label: Keyboard shortcuts
+desc:
+  - Expand 'Keyboard shortcuts Global'
+  - Change 'ctrl a' to 'ctrl b'
+  - Click 'Apply' button
+  - Verify that 'ctrl b' now selects all text
+  - Press the 'Reset to defaults' button
+  - Verify that 'ctrl b' no longer selects all text
+  - Expand 'Keyboard shortcuts Global'
+  - Change 'f8' to 'f80'
+  - Click 'Apply' button
+  - Verify that a 'Invalid keyboard shortcut' label is added to the changed shortcut
+
+label: About tab
+desc:
+  - Verify contents of the About tab
+  - Verify that the system related information is present and correct.
+
 General
 *******
 
@@ -1361,9 +1445,45 @@ desc:
 
 id: 00200
 label: Dragonfly menu
+deprecated: true
 desc:
   - Verify that 'Reload Debug Context' works
   - Focus an other window than the current debug context.
   - Verify that 'Select Active Window' works
   - Verify that each open tab can be selected as debug context.
 
+id: 00300
+label: Debug context menu display
+desc:
+  - Click debug context menu button.
+  - Verify that the menu opens and button is styled as pressed.
+  - Verify that the settings
+
+Remote debug
+************
+
+label: Enable remote debug mode
+desc:
+  - Click remote debug button.
+  - Verify that remote debug dialog appears.
+  - Verify that port shown by default is 7001.
+  - Click Apply button.
+  - Verify that displayed instructions are correct.
+  - Connect your opera instance according to instructions.
+  - Verify that the debugging context is properly displayed.
+  - Verify that remote debug button shows an animation for remote debug.
+
+label: Disable remote debug mode
+desc:
+  - Click remote debug button.
+  - Verify that displayed window has the button "Cancel Remote Debug".
+  - Click button.
+  - Verify that you are returned to debugging your previous environment.
+
+label: Dragonfly startup in remote debug mode
+desc:
+  - Enable remote debug mode in Dragonfly on port 7101.
+  - Close Dragonfly.
+  - Open Dragonfly.
+  - Verify that Dragonfly starts up in remote debug mode.
+  - Verify that port number is 7101.

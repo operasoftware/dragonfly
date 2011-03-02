@@ -20,6 +20,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
   this._selected_rt_url = '';
   this._url_self = location.host + location.pathname;
   this._lastid = 0;
+  this.current_error_count = 0;
 
   this._updateviews = function()
   {
@@ -62,6 +63,8 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
       this._toggled = [];
     }
     this._updateviews();
+    this.current_error_count = 0;
+    window.messages.post("error-count-update", {current_error_count: this.current_error_count});
   };
 
   /**
@@ -180,6 +183,8 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     message.title =  this._extract_title(message.description);
     message.line = this._extract_line(message.description);
     this.addentry(message);
+    this.current_error_count++;
+    window.messages.post("error-count-update", {current_error_count: this.current_error_count});
   };
 
   this._stringify_log_args = function(message)

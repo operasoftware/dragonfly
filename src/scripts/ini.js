@@ -24,7 +24,7 @@
           "f10": "continue-step-next-line",
           "f11": "continue-step-into-call",
           "shift f11": "continue-step-out-of-call",
-          "escape": "toggle-command-line",
+          "escape": "toggle-console",
           "ctrl tab": "navigate-next-top-tab",
           "ctrl shift tab": "navigate-previous-top-tab",
           "ctrl f": "show-search"
@@ -41,7 +41,7 @@
           "shift f3": "highlight-previous-match",
           "ctrl enter": "show-script",
           "escape": "hide-search",
-          "escape": "toggle-command-line",
+          "escape": "toggle-console",
           "ctrl tab": "navigate-next-top-tab",
           "ctrl shift tab": "navigate-previous-top-tab",
           "ctrl f": "show-search"
@@ -196,7 +196,7 @@
           "f6": "continue-step-next-line",
           "f7": "continue-step-into-call",
           "shift f7": "continue-step-out-of-call",
-          "escape": "toggle-command-line"
+          "escape": "toggle-console"
         },
         "edit":
         {
@@ -208,7 +208,7 @@
           "cmd g": "highlight-next-match",
           "shift enter": "highlight-previous-match",
           "cmd shift g": "highlight-previous-match",
-          "escape": "toggle-command-line"
+          "escape": "toggle-console"
         }
       },
       "dom":

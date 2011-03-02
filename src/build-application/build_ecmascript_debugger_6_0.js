@@ -88,7 +88,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     /* Threads */
     cls.ThreadsView.prototype = ViewBase;
     new cls.ThreadsView('threads', ui_strings.M_VIEW_LABEL_THREAD_LOG, 'scroll threads');
-    cls.ThreadsView.create_ui_widgets();
+    //cls.ThreadsView.create_ui_widgets();
 
     /* DOM */
     cls.InspectableDOMNode = namespace.InspectableDOMNode;
@@ -101,12 +101,13 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     cls.DOMView.create_ui_widgets();
 
     /* Stylesheets */
+    // TODO: remove, this is old
     window.stylesheets = new cls.Stylesheets();
     cls.StylesheetsView.prototype = ViewBase;
     new cls.StylesheetsView('stylesheets', ui_strings.M_VIEW_LABEL_STYLESHEET, 'scroll stylesheets');
     cls.StylesheetSelect.prototype = new CstSelect();
     new cls.StylesheetSelect('stylesheet-select', 'stylesheet-options');
-    cls.StylesheetsView.create_ui_widgets();
+    //cls.StylesheetsView.create_ui_widgets();
 
     /* CSS inspector */
     window.elementStyle = new cls.ElementStyle();

@@ -4,6 +4,7 @@
   display: none;
   padding: 0px;
   min-width: 100px;
+  max-width: 300px;
   display: inline-block;
   visibility: hidden;
   list-style-type: none;
@@ -24,22 +25,30 @@
 }
 
 #contextmenu li {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
   padding: 3px 20px 3px 0;
 }
+
 #contextmenu li:first-of-type {
   border-top-left-radius: 1px;
   border-top-right-radius: 1px;
 }
+
 #contextmenu li:last-of-type {
   border-bottom-left-radius: 1px;
   border-bottom-right-radius: 1px;
 }
+
 #contextmenu li.separator {
   padding: 0;
 }
+
 #contextmenu li.disabled {
   color: #aaa;
 }
+
 #contextmenu .contextmenu-icon {
   display: inline-block;
   vertical-align: top;
@@ -48,6 +57,7 @@
   margin: 0 4px;
   overflow: hidden;
 }
+
 #contextmenu li:not(.separator):not(.disabled):hover {
   background-color: #bbcef1;
   color: #000;
@@ -67,3 +77,20 @@
   background-color: rgba(0,0,0,0.2);
   box-shadow: 0 1px #fff;
 }
+
+#contextmenu .check {
+  content: url("../ui-images/menu_check.png");
+}
+
+#contextmenu li:not(.disabled):active .check {
+  content: url("../ui-images/menu_check_selected.png");
+}
+
+#contextmenu .radio {
+  content: url("../ui-images/menu_bullet.png");
+}
+
+#contextmenu li:not(.disabled):active .radio {
+  content: url("../ui-images/menu_bullet_selected.png");
+}
+
