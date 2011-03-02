@@ -1145,28 +1145,33 @@ desc:
 
 url: ./test-cases/repl/unpack-list-alikes.html
 
+id: 04100
 label: Unpack list alikes
 desc:
   - Open the test case
   - Ensure that 'Unpack list alikes in the command line' in settings &gt; 'General' is checked
+  - Uncheck 'Use specific information to represent object in the commandline' in settings &gt; 'General'
   - Open the command line (hit 'escape' or hit the command line button)
   - Hit the 'console.log([1,2,3,4])' button
   - Verify that you get 'Array[1, 2, 3, 4]' in the command line (ignore a '[object Array]' before that)
   - Verify that 'Array' is clickable and opens the 'Inspection' view with the Array
   - Hit 'console.log(document.all)' button
-  - Verify that you get 'HTMLCollection[html, head, body, p, input, p, input, p, input]' (ignore a '[object HTMLCollection]' before that)
-  - Verify that each element in that list is clickable and opens the according 'Inspection' view
+  - Verify that you get 'HTMLCollection[HTMLHtmlElement, HTMLHeadElement, HTMLBodyElement, HTMLParagraphElement, HTMLInputElement, HTMLParagraphElement, HTMLInputElement, HTMLParagraphElement, HTMLInputElement, HTMLParagraphElement, HTMLInputElement]' (ignore a '[object HTMLCollection]' before that)
+  - Verify that 'HTMLCollection' is clickable and opens the 'Inspection' view with the HTMLCollection
+  - Verify that each element in the list is clickable and shows the according element in the DOM tree
   - Hit the 'console.log(document.childNodes)' button 
-  - Verify that you get 'NodeList[DocumentType, html]' in the command line (ignore a '[object HTMLCollection]' before that)
-  - Verify that each element is clickable and opens the according 'Inspection' view
+  - Verify that you get 'NodeList[DocumentType, HTMLHtmlElement]' in the command line (ignore a '[object HTMLCollection]' before that)
+  - Verify that each object of type Element is clickable and shows the according element in the DOM tree
+  - Verify that other objects are clickable too and open the according 'Inspection' view
   - Hit the 'console.log(xPathResult)' button
-  - Verify that you get 'XPathResult[p, p, p, p]' in the command line (ignore a '[object XPathResult]' before that)
-  - Verify that each element in that list is clickable and opens the according 'Inspection' view
+  - Verify that you get 'XPathResult[HTMLParagraphElement, HTMLParagraphElement, HTMLParagraphElement, HTMLParagraphElement]' in the command line (ignore a '[object XPathResult]' before that)
+  - Verify that all objects are clickable and open the appropriated view
   - Write '[1,2,3,4]', 'document.all' and 'document.childNodes' in the command line
   - Verify that you get the same output back as before (without the ignorable line)
   - Write 'console.log([1,2,3,4])', 'console.log(document.all)' and 'console.log(document.childNodes)' in the command line
   - Verify that you get the same output as before, except that each output is followed by a 'undefined' return statement
 
+id: 04200
 label: Setting for unpack list alikes
 desc:
   - Open the test case
@@ -1180,6 +1185,25 @@ desc:
   - Verify that the output is now only a clickable 'NodeList' (ignore a '[object HTMLCollection]' before that)
   - Hit the 'console.log(xPathResult)' button
   - Verify that the output is now only a clickable 'XPathResult'
+
+id: 04300
+label: User friendly object representation
+desc:
+  - Open the test case
+  - Ensure that 'Unpack list alikes in the command line' in settings &gt; 'General' is checked
+  - Enable 'Use specific information to represent object in the commandline' in settings &gt; 'General'
+  - Open the command line (hit 'escape' or hit the command line button)
+  - Hit 'console.log(document.all)' button
+  - Verify that you get 'HTMLCollection[html, head, body, p, input.foo, p, input#bar, p, input, p, input]'
+  - Verify that all objects are clickable and open the appropriated view
+  - Hit the 'console.log(document.childNodes)' button 
+  - Verify that you get 'NodeList[DocumentType, html]' in the command line
+  - Verify clickability
+  - Hit the 'console.log(xPathResult)' button
+  - Verify that you get 'XPathResult[p, p, p, p]' in the command line
+  - Verify clickability
+  - Write 'console.log(document.all)' and 'console.log(document.childNodes)' in the command line
+  - Verify that you get the same output as before, except that each output is followed by a 'undefined' return statement
 
 Scripts.Event Breakpoints
 *************************
